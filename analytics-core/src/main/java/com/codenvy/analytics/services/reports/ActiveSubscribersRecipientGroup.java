@@ -18,12 +18,9 @@
 package com.codenvy.analytics.services.reports;
 
 import com.codenvy.analytics.Injector;
-import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.SetValueData;
 import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.Metric;
-import com.codenvy.analytics.metrics.MetricFactory;
-import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.persistent.OrganizationClient;
 import com.codenvy.analytics.services.configuration.ParameterConfiguration;
 import com.codenvy.organization.client.AccountManager;
@@ -35,7 +32,6 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /** @author Anatoliy Bazko */
@@ -62,7 +58,7 @@ public class ActiveSubscribersRecipientGroup extends AbstractRecipientGroup {
     }
 
     @Override
-    public Set<String> getEmails(Map<String, String> context) throws IOException {
+    public Set<String> getEmails(Context context) throws IOException {
         Set<String> emails = new HashSet<>();
 
         SetValueData activeOrgId = getActiveOrgId(context);
@@ -79,7 +75,7 @@ public class ActiveSubscribersRecipientGroup extends AbstractRecipientGroup {
         return emails;
     }
 
-    protected SetValueData getActiveOrgId(Map<String, String> context) throws IOException {
+    protected SetValueData getActiveOrgId(Context context) throws IOException {
         Metric metric = MetricFactory.getMetric(MetricType.ACTIVE_ORG_ID_SET);
         return (SetValueData)metric.getValue(context);
     }
@@ -100,18 +96,17 @@ public class ActiveSubscribersRecipientGroup extends AbstractRecipientGroup {
         }
     }
 
-    protected boolean isActiveSubscriber(Account account, Map<String, String> context) throws IOException {
+    protected boolean isActiveSubscriber(Account account, Context context) throws IOException {
         if (tariffPlan.contains(account.getAttribute(TARIFF_PLAN))) {
             String startTimeStr = account.getAttribute(TARIFF_START_TIME);
             String endTimeStr = account.getAttribute(TARIFF_END_TIME);
 
             if (startTimeStr != null && endTimeStr != null) {
                 long startTime = Long.parseLong(startTimeStr);
-                long endTime = Long.parseLong(endTimeStr);
 
                 Long currTime;
                 try {
-                    currTime = Utils.getToDate(context).getTimeInMillis();
+                    currTime = context.getAsDate(Parameters.TO_DATE).getTimeInMillis();
                 } catch (ParseException e) {
                     throw new IOException(e);
                 }

@@ -17,29 +17,6 @@
  */
 package com.codenvy.analytics.api;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.annotation.security.RolesAllowed;
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
-import javax.ws.rs.core.UriInfo;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.MetricNotFoundException;
 import com.codenvy.analytics.services.view.SectionData;
@@ -50,6 +27,20 @@ import com.codenvy.api.analytics.MetricHandler;
 import com.codenvy.api.analytics.dto.MetricValueDTO;
 import com.codenvy.dto.server.JsonArrayImpl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.annotation.security.RolesAllowed;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import javax.ws.rs.*;
+import javax.ws.rs.core.*;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
 /**
  * @author Alexander Reshetnyak
  * @author Anatoliy Bazko
@@ -58,7 +49,7 @@ import com.codenvy.dto.server.JsonArrayImpl;
 @Singleton
 public class View {
 
-    private static final Logger        LOG            = LoggerFactory.getLogger(View.class);
+    private static final Logger LOG = LoggerFactory.getLogger(View.class);
 
     @Inject
     private ViewBuilder viewBuilder;
@@ -77,10 +68,10 @@ public class View {
                                    @Context SecurityContext securityContext) {
 
         try {
-            Map<String, String> context = Utils.extractContext(uriInfo,
-                                                               page,
-                                                               perPage,
-                                                               securityContext);
+            Map<String, String> context = Utils.extractParams(uriInfo,
+                                                              page,
+                                                              perPage,
+                                                              securityContext);
 
             MetricValueDTO value = metricHandler.getValue(metricName, context, uriInfo);
             return Response.status(Response.Status.OK).entity(value).build();
@@ -98,10 +89,11 @@ public class View {
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed({"user", "system/admin", "system/manager"})
     public Response getViewDataAsJson(@PathParam("name") String name,
-                                @Context UriInfo uriInfo,
-                                @Context SecurityContext securityContext) {
+                                      @Context UriInfo uriInfo,
+                                      @Context SecurityContext securityContext) {
         try {
-            Map<String, String> context = Utils.extractContext(uriInfo, securityContext);
+            Map<String, String> params = Utils.extractParams(uriInfo, securityContext);
+            com.codenvy.analytics.metrics.Context context = com.codenvy.analytics.metrics.Context.valueOf(params);
 
             ViewData result = viewBuilder.getViewData(name, context);
             String json = transformToJson(result);
@@ -118,10 +110,11 @@ public class View {
     @Produces({"text/csv"})
     @RolesAllowed({"user", "system/admin", "system/manager"})
     public Response getViewDataAsCsv(@PathParam("name") String name,
-                                @Context UriInfo uriInfo,
-                                @Context SecurityContext securityContext) {
+                                     @Context UriInfo uriInfo,
+                                     @Context SecurityContext securityContext) {
         try {
-            Map<String, String> context = Utils.extractContext(uriInfo, securityContext);
+            Map<String, String> params = Utils.extractParams(uriInfo, securityContext);
+            com.codenvy.analytics.metrics.Context context = com.codenvy.analytics.metrics.Context.valueOf(params);
 
             ViewData result = viewBuilder.getViewData(name, context);
             String csv = transformToCsv(result);
@@ -132,23 +125,24 @@ public class View {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
         }
     }
-    
+
     /**
      * Transforms view data into table in json format.
+     *
      * @return the resulted format will be:
-     *  [
-     *     [ 
-     *         ["section0-row0-column0", "section0-row0-column1", ...]
-     *         ["section0-row1-column0", "section0-row1-column1", ...]
-     *         ...
-     *     ],
-     *     [
-     *         ["section1-row0-column0", "section0-row0-column1", ...]
-     *         ["section1-row1-column0", "section0-row1-column1", ...]
-     *         ...
-     *     ],
-     *     ...
-     *  ]
+     * [
+     * [
+     * ["section0-row0-column0", "section0-row0-column1", ...]
+     * ["section0-row1-column0", "section0-row1-column1", ...]
+     * ...
+     * ],
+     * [
+     * ["section1-row0-column0", "section0-row0-column1", ...]
+     * ["section1-row1-column0", "section0-row1-column1", ...]
+     * ...
+     * ],
+     * ...
+     * ]
      */
     private String transformToJson(ViewData data) {
         List<LinkedHashSet<Object>> result = new ArrayList<>(data.size());
@@ -172,20 +166,21 @@ public class View {
 
         return new JsonArrayImpl<>(result).toJson();
     }
-    
+
     /**
      * Transforms view data into table in csv format.
+     *
      * @return the resulted format will be:
-     *  section0-row0-column0, section0-row0-column1, ...
-     *  section0-row1-column0, section0-row1-column1, ...
-     *  ...
-     *  section1-row0-column0, section0-row0-column1, ...
-     *  section1-row1-column0, section0-row1-column1, ...
-     *  ...
+     * section0-row0-column0, section0-row0-column1, ...
+     * section0-row1-column0, section0-row1-column1, ...
+     * ...
+     * section1-row0-column0, section0-row0-column1, ...
+     * section1-row1-column0, section0-row1-column1, ...
+     * ...
      */
     private String transformToCsv(ViewData data) {
         StringBuilder result = new StringBuilder();
-        
+
         for (Entry<String, SectionData> sectionEntry : data.entrySet()) {
             for (int i = 0; i < sectionEntry.getValue().size(); i++) {
                 List<ValueData> rowData = sectionEntry.getValue().get(i);
@@ -196,8 +191,8 @@ public class View {
 
         return result.toString();
     }
-    
-    
+
+
     public String getCsvRow(List<ValueData> data) {
         StringBuilder builder = new StringBuilder();
 

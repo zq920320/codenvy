@@ -20,16 +20,13 @@
 package com.codenvy.analytics.metrics;
 
 import com.codenvy.analytics.BaseTest;
-import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.mongodb.DBObject;
 
 import org.testng.annotations.Test;
 
-import java.util.Map;
-
-import static org.mockito.Matchers.anyMap;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.testng.Assert.assertEquals;
@@ -41,9 +38,9 @@ public class TestReadBasedMetric extends BaseTest {
     @Test
     public void testEvaluateValue() throws Exception {
         TestMetric spyMetric = spy(new TestMetric());
-        doReturn(new LongValueData(10)).when(spyMetric).getValue(anyMap());
+        doReturn(new LongValueData(10)).when(spyMetric).getValue(any(Context.class));
 
-        assertEquals(spyMetric.getValue(Utils.newContext()), new LongValueData(10L));
+        assertEquals(spyMetric.getValue(new Context.Builder().build()), new LongValueData(10L));
     }
 
 
@@ -68,7 +65,7 @@ public class TestReadBasedMetric extends BaseTest {
         }
 
         @Override
-        public DBObject[] getSpecificDBOperations(Map<String, String> clauses) {
+        public DBObject[] getSpecificDBOperations(Context clauses) {
             return new DBObject[0];
         }
     }

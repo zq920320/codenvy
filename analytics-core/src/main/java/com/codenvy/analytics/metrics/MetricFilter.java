@@ -18,10 +18,6 @@
 
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.Utils;
-
-import java.util.Map;
-
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public enum MetricFilter {
     _ID,
@@ -53,43 +49,12 @@ public enum MetricFilter {
         this.isNumeric = false;
     }
 
-
-    /** Puts value into execution context */
-    public void put(Map<String, String> context, String value) {
-        context.put(name(), value);
-    }
-
-    public void putIfAbsent(Map<String, String> context, String value) {
-        if (!exists(context)) {
-            context.put(name(), value);
-        }
-    }
-
-    /** Gets value from execution context */
-    public String get(Map<String, String> context) {
-        return context.get(name());
-    }
-
-    /** @return true if context contains given parameter */
-    public boolean exists(Map<String, String> context) {
-        return context.get(name()) != null;
-    }
-
-    /** Puts value into execution context */
-    public Map<String, String> cloneAndPut(Map<String, String> context, String value) {
-        context = Utils.clone(context);
-        context.put(name(), value);
-        return context;
-    }
-
-    /** Removes parameters from execution context */
-    public void remove(Map<String, String> context) {
-        context.remove(name());
-    }
-
-
     public boolean isNumericType() {
         return isNumeric;
+    }
+
+    public String getFieldName() {
+        return toString().toLowerCase();
     }
 }
 

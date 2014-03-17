@@ -18,11 +18,10 @@
 package com.codenvy.analytics.services;
 
 import com.codenvy.analytics.Injector;
+import com.codenvy.analytics.metrics.Context;
 
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
-
-import java.util.Map;
 
 /**
  * @author Dmytro Nochevnov
@@ -41,7 +40,7 @@ public abstract class FeatureWrapper extends Feature {
     }
 
     @Override
-    public void forceExecute(Map<String, String> context) throws JobExecutionException {
+    public void forceExecute(Context context) throws JobExecutionException {
         delegated.forceExecute(context);
     }
 
@@ -51,12 +50,12 @@ public abstract class FeatureWrapper extends Feature {
     }
 
     @Override
-    protected void putParametersInContext(Map<String, String> context) {
+    protected void putParametersInContext(Context.Builder builder) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    protected void doExecute(Map<String, String> context) throws Exception {
+    protected void doExecute(Context context) throws Exception {
         throw new UnsupportedOperationException();
     }
 }

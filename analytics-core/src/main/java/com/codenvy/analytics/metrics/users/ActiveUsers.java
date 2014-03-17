@@ -18,13 +18,13 @@
 package com.codenvy.analytics.metrics.users;
 
 import com.codenvy.analytics.metrics.AbstractActiveEntities;
+import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricType;
 import com.mongodb.DBObject;
 
 import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
@@ -37,7 +37,7 @@ public class ActiveUsers extends AbstractActiveEntities {
     }
 
     @Override
-    public DBObject getFilter(Map<String, String> clauses) throws ParseException, IOException {
+    public DBObject getFilter(Context clauses) throws ParseException, IOException {
         DBObject filter = super.getFilter(clauses);
 
         DBObject match = (DBObject)filter.get("$match");

@@ -18,18 +18,17 @@
 package com.codenvy.analytics.pig.scripts;
 
 import com.codenvy.analytics.BaseTest;
-import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.users.CompletedProfiles;
 import com.codenvy.analytics.metrics.users.UsersProfiles;
 import com.codenvy.analytics.metrics.users.UsersProfilesList;
-import com.codenvy.analytics.metrics.workspaces.UsageTimeByWorkspacesList;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
@@ -60,15 +59,14 @@ public class TestUserUpdateProfile extends BaseTest {
                                 .withDate("2013-01-01").build());
         File log = LogGenerator.generateLog(events);
 
-        Map<String, String> params = Utils.newContext();
-        Parameters.FROM_DATE.put(params, "20130101");
-        Parameters.TO_DATE.put(params, "20130101");
-        Parameters.USER.put(params, Parameters.USER_TYPES.REGISTERED.name());
-        Parameters.WS.put(params, Parameters.WS_TYPES.ANY.name());
-        Parameters.STORAGE_TABLE.put(params, COLLECTION);
-        Parameters.LOG.put(params, log.getAbsolutePath());
-
-        pigServer.execute(ScriptType.USERS_UPDATE_PROFILES, params);
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20130101");
+        builder.put(Parameters.TO_DATE, "20130101");
+        builder.put(Parameters.USER, Parameters.USER_TYPES.REGISTERED.name());
+        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
+        builder.put(Parameters.STORAGE_TABLE, COLLECTION);
+        builder.put(Parameters.LOG, log.getAbsolutePath());
+        pigServer.execute(ScriptType.USERS_UPDATE_PROFILES, builder.build());
 
         events.add(Event.Builder.createUserUpdateProfile("user1@gmail.com", "f3", "l3", "company1", "22", "2")
                                 .withDate("2013-01-02").build());
@@ -78,20 +76,19 @@ public class TestUserUpdateProfile extends BaseTest {
                                 .withDate("2013-01-02").build());
         log = LogGenerator.generateLog(events);
 
-        Parameters.FROM_DATE.put(params, "20130102");
-        Parameters.TO_DATE.put(params, "20130102");
-        Parameters.LOG.put(params, log.getAbsolutePath());
-
-        pigServer.execute(ScriptType.USERS_UPDATE_PROFILES, params);
+        builder.put(Parameters.FROM_DATE, "20130102");
+        builder.put(Parameters.TO_DATE, "20130102");
+        builder.put(Parameters.LOG, log.getAbsolutePath());
+        pigServer.execute(ScriptType.USERS_UPDATE_PROFILES, builder.build());
     }
 
     @Test
     public void testAllProfiles() throws Exception {
-        Map<String, String> context = Utils.newContext();
+        Context.Builder builder = new Context.Builder();
 
         Metric metric = new TestedUsersProfilesList();
 
-        ListValueData value = (ListValueData)metric.getValue(context);
+        ListValueData value = (ListValueData)metric.getValue(builder.build());
         assertEquals(value.size(), 4);
 
         for (ValueData object : value.getAll()) {
@@ -134,17 +131,17 @@ public class TestUserUpdateProfile extends BaseTest {
         }
 
         metric = new TestedUsersProfiles();
-        assertEquals(metric.getValue(context).getAsString(), "4");
+        assertEquals(metric.getValue(builder.build()).getAsString(), "4");
     }
 
     @Test
     public void testSingleProfile() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        MetricFilter.USER.put(context, "user1@gmail.com");
+        Context.Builder builder = new Context.Builder();
+        builder.put(MetricFilter.USER, "user1@gmail.com");
 
         Metric metric = new TestedUsersProfilesList();
 
-        ListValueData value = (ListValueData)metric.getValue(context);
+        ListValueData value = (ListValueData)metric.getValue(builder.build());
         assertEquals(value.size(), 1);
 
         MapValueData item = (MapValueData)value.getAll().get(0);
@@ -160,134 +157,134 @@ public class TestUserUpdateProfile extends BaseTest {
 
     @Test
     public void testSearchUsersByCompany() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        MetricFilter.USER_COMPANY.put(context, "company1");
+        Context.Builder builder = new Context.Builder();
+        builder.put(MetricFilter.USER_COMPANY, "company1");
 
         Metric metric = new TestedUsersProfilesList();
 
-        ListValueData value = (ListValueData)metric.getValue(context);
+        ListValueData value = (ListValueData)metric.getValue(builder.build());
         assertEquals(value.size(), 1);
     }
 
     @Test
     public void testSearchUsersByCompanyUseCase1() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        MetricFilter.USER_COMPANY.put(context, "company");
+        Context.Builder builder = new Context.Builder();
+        builder.put(MetricFilter.USER_COMPANY, "company");
 
         Metric metric = new TestedUsersProfilesList();
 
-        ListValueData value = (ListValueData)metric.getValue(context);
+        ListValueData value = (ListValueData)metric.getValue(builder.build());
         assertEquals(value.size(), 4);
     }
 
     @Test
     public void testSearchUsersByCompanyUseCase2() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        MetricFilter.USER_COMPANY.put(context, "company1,company2");
+        Context.Builder builder = new Context.Builder();
+        builder.put(MetricFilter.USER_COMPANY, "company1,company2");
 
         Metric metric = new TestedUsersProfilesList();
 
-        ListValueData value = (ListValueData)metric.getValue(context);
+        ListValueData value = (ListValueData)metric.getValue(builder.build());
         assertEquals(value.size(), 2);
     }
 
     @Test
     public void testSearchUsersByCompanyUseCase3() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        MetricFilter.USER_COMPANY.put(context, "company1,company4");
+        Context.Builder builder = new Context.Builder();
+        builder.put(MetricFilter.USER_COMPANY, "company1,company4");
 
         Metric metric = new TestedUsersProfilesList();
 
-        ListValueData value = (ListValueData)metric.getValue(context);
+        ListValueData value = (ListValueData)metric.getValue(builder.build());
         assertEquals(value.size(), 2);
     }
 
     @Test
     public void testSearchUsersByCompanyUseCase4() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        MetricFilter.USER_COMPANY.put(context, "ompan");
+        Context.Builder builder = new Context.Builder();
+        builder.put(MetricFilter.USER_COMPANY, "ompan");
 
         Metric metric = new TestedUsersProfilesList();
 
-        ListValueData value = (ListValueData)metric.getValue(context);
+        ListValueData value = (ListValueData)metric.getValue(builder.build());
         assertEquals(value.size(), 4);
     }
 
     @Test
     public void testSearchUsersByCompanyUseCase5() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        MetricFilter.USER_COMPANY.put(context, "company4");
+        Context.Builder builder = new Context.Builder();
+        builder.put(MetricFilter.USER_COMPANY, "company4");
 
         Metric metric = new TestedUsersProfilesList();
 
-        ListValueData value = (ListValueData)metric.getValue(context);
+        ListValueData value = (ListValueData)metric.getValue(builder.build());
         assertEquals(value.size(), 1);
     }
 
     @Test
     public void testSearchUsersByCompanyCaseInsensitive() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        MetricFilter.USER_COMPANY.put(context, "COMPANY2");
+        Context.Builder builder = new Context.Builder();
+        builder.put(MetricFilter.USER_COMPANY, "COMPANY2");
 
         Metric metric = new TestedUsersProfilesList();
 
-        ListValueData value = (ListValueData)metric.getValue(context);
+        ListValueData value = (ListValueData)metric.getValue(builder.build());
         assertEquals(value.size(), 1);
     }
 
 
     @Test
     public void testSearchUsersByCompanyWithSpecialCharacters() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        MetricFilter.USER_COMPANY.put(context, "company4 :)");
+        Context.Builder builder = new Context.Builder();
+        builder.put(MetricFilter.USER_COMPANY, "company4 :)");
 
         Metric metric = new TestedUsersProfilesList();
 
-        ListValueData value = (ListValueData)metric.getValue(context);
+        ListValueData value = (ListValueData)metric.getValue(builder.build());
         assertEquals(value.size(), 1);
     }
 
     @Test
     public void testSearchUsersByFirstName() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        MetricFilter.USER_FIRST_NAME.put(context, "f4");
+        Context.Builder builder = new Context.Builder();
+        builder.put(MetricFilter.USER_FIRST_NAME, "f4");
 
         Metric metric = new TestedUsersProfilesList();
 
-        ListValueData value = (ListValueData)metric.getValue(context);
+        ListValueData value = (ListValueData)metric.getValue(builder.build());
         assertEquals(value.size(), 2);
-        
+
         List<ValueData> items = value.getAll();
         MapValueData entry = (MapValueData)items.get(0);
         assertEquals(entry.getAll().get(UsersProfilesList.ID).getAsString(), "user3@gmail.com");
-        
+
         entry = (MapValueData)items.get(1);
         assertEquals(entry.getAll().get(UsersProfilesList.ID).getAsString(), "user4@gmail.com");
     }
-    
+
     @Test
     public void testSearchUsersByLastName() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        MetricFilter.USER_LAST_NAME.put(context, "l4");
+        Context.Builder builder = new Context.Builder();
+        builder.put(MetricFilter.USER_LAST_NAME, "l4");
 
         Metric metric = new TestedUsersProfilesList();
 
-        ListValueData value = (ListValueData)metric.getValue(context);
+        ListValueData value = (ListValueData)metric.getValue(builder.build());
         assertEquals(value.size(), 2);
-        
+
         List<ValueData> items = value.getAll();
         MapValueData entry = (MapValueData)items.get(0);
         assertEquals(entry.getAll().get(UsersProfilesList.ID).getAsString(), "user3@gmail.com");
-        
+
         entry = (MapValueData)items.get(1);
         assertEquals(entry.getAll().get(UsersProfilesList.ID).getAsString(), "user4@gmail.com");
     }
-    
+
     @Test
     public void testCompletedProfiles() throws Exception {
         Metric metric = new TestedCompletedProfiles();
 
-        ValueData value = metric.getValue(Utils.newContext());
+        ValueData value = metric.getValue(new Context.Builder().build());
         assertEquals(value, LongValueData.valueOf(3));
     }
 

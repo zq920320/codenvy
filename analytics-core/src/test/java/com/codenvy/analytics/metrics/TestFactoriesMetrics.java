@@ -18,7 +18,6 @@
 package com.codenvy.analytics.metrics;
 
 import com.codenvy.analytics.BaseTest;
-import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.metrics.sessions.factory.TotalFactories;
 import com.codenvy.analytics.pig.scripts.ScriptType;
@@ -31,7 +30,6 @@ import org.testng.annotations.Test;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static org.testng.Assert.assertEquals;
 
@@ -42,8 +40,6 @@ public class TestFactoriesMetrics extends BaseTest {
 
     @BeforeClass
     public void init() throws Exception {
-        Map<String, String> params = Utils.newContext();
-
         List<Event> events = new ArrayList<>();
         events.add(Event.Builder
                            .createFactoryCreatedEvent("ws1", "user1", "project1", "type1", "repo1", "factory1",
@@ -56,33 +52,33 @@ public class TestFactoriesMetrics extends BaseTest {
 
         File log = LogGenerator.generateLog(events);
 
-        Parameters.USER.put(params, Parameters.USER_TYPES.ANY.name());
-        Parameters.WS.put(params, Parameters.WS_TYPES.ANY.name());
-        Parameters.STORAGE_TABLE.put(params, "created_factories_set");
-        Parameters.LOG.put(params, log.getAbsolutePath());
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20130210");
+        builder.put(Parameters.TO_DATE, "20130210");
+        builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.name());
+        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
+        builder.put(Parameters.STORAGE_TABLE, "created_factories_set");
+        builder.put(Parameters.LOG, log.getAbsolutePath());
+        pigServer.execute(ScriptType.CREATED_FACTORIES, builder.build());
 
-        Parameters.FROM_DATE.put(params, "20130210");
-        Parameters.TO_DATE.put(params, "20130210");
-        pigServer.execute(ScriptType.CREATED_FACTORIES, params);
-
-        Parameters.FROM_DATE.put(params, "20130211");
-        Parameters.TO_DATE.put(params, "20130211");
-        pigServer.execute(ScriptType.CREATED_FACTORIES, params);
+        builder.put(Parameters.FROM_DATE, "20130211");
+        builder.put(Parameters.TO_DATE, "20130211");
+        pigServer.execute(ScriptType.CREATED_FACTORIES, builder.build());
     }
 
     @Test
     public void testTotalFactories() throws Exception {
-        Map<String, String> context = Utils.newContext();
+        Context.Builder builder = new Context.Builder();
         TotalFactories metric = (TotalFactories)MetricFactory.getMetric(MetricType.TOTAL_FACTORIES);
 
         // total factories for one day             
-        Parameters.TO_DATE.put(context, "20130210");
-        LongValueData value = (LongValueData)metric.getValue(context);
+        builder.put(Parameters.TO_DATE, "20130210");
+        LongValueData value = (LongValueData)metric.getValue(builder.build());
         assertEquals(value.getAsLong(), INITIAL_VALUE_OF_TOTAL_FACTORIES + 1);
 
         // total factories for two days
-        Parameters.TO_DATE.put(context, "20130211");
-        value = (LongValueData)metric.getValue(context);
+        builder.put(Parameters.TO_DATE, "20130211");
+        value = (LongValueData)metric.getValue(builder.build());
         assertEquals(value.getAsLong(), INITIAL_VALUE_OF_TOTAL_FACTORIES + 2);
 
     }

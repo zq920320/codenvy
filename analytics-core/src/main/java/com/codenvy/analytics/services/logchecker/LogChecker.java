@@ -20,7 +20,7 @@ package com.codenvy.analytics.services.logchecker;
 import com.codenvy.analytics.Configurator;
 import com.codenvy.analytics.Injector;
 import com.codenvy.analytics.MailService;
-import com.codenvy.analytics.Utils;
+import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.ScriptType;
@@ -40,7 +40,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Iterator;
-import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @Singleton
@@ -66,20 +65,20 @@ public class LogChecker extends Feature {
     }
 
     @Override
-    protected void putParametersInContext(Map<String, String> context) {
-        Parameters.USER.put(context, Parameters.USER_TYPES.ANY.name());
-        Parameters.WS.put(context, Parameters.WS_TYPES.ANY.name());
+    protected void putParametersInContext(Context.Builder builder) {
+        builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.name());
+        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
     }
 
     @Override
-    protected void doExecute(Map<String, String> context) throws IOException {
+    protected void doExecute(Context context) throws IOException {
         LOG.info("logchecker is started");
         long start = System.currentTimeMillis();
 
         try {
             File reportFile = getReport(context);
 
-            Calendar toDate = Utils.getToDate(context);
+            Calendar toDate = context.getAsDate(Parameters.TO_DATE);
             String date = new SimpleDateFormat("yyyy-MM-dd").format(toDate.getTime());
 
             sendReport(reportFile, date);
@@ -90,7 +89,7 @@ public class LogChecker extends Feature {
         }
     }
 
-    private File getReport(Map<String, String> context) throws IOException, ParseException {
+    private File getReport(Context context) throws IOException, ParseException {
         File reportFile = new File(configurator.getTmpDir(), "report.txt");
         try (BufferedWriter out = new BufferedWriter(new FileWriter(reportFile))) {
             writeReport(ScriptType.CHECK_LOGS_1, context, out);
@@ -101,7 +100,7 @@ public class LogChecker extends Feature {
     }
 
     private void writeReport(ScriptType scriptType,
-                             Map<String, String> context,
+                             Context context,
                              BufferedWriter out) throws IOException, ParseException {
 
         PigServer pigServer = Injector.getInstance(PigServer.class);
@@ -114,7 +113,6 @@ public class LogChecker extends Feature {
         } finally {
             if (pigServer != null) {
                 pigServer.close();
-                pigServer = null;
             }
         }
     }

@@ -18,7 +18,6 @@
 package com.codenvy.analytics.metrics;
 
 import com.codenvy.analytics.BaseTest;
-import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
@@ -32,10 +31,8 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.fail;
@@ -47,9 +44,7 @@ import static org.testng.Assert.fail;
 public class TestUsersEvents extends BaseTest {
 
     @BeforeClass
-    public void init() throws IOException, Exception {
-        Map<String, String> params = Utils.newContext();
-
+    public void init() throws Exception {
         List<Event> events = new ArrayList<>();
         events.add(
                 Event.Builder.createUserEvent("user1", "action1").withDate("2013-02-10").withTime("10:00:00").build());
@@ -64,25 +59,26 @@ public class TestUsersEvents extends BaseTest {
 
         File log = LogGenerator.generateLog(events);
 
-        Parameters.FROM_DATE.put(params, "20130210");
-        Parameters.TO_DATE.put(params, "20130210");
-        Parameters.USER.put(params, Parameters.USER_TYPES.ANY.name());
-        Parameters.WS.put(params, Parameters.WS_TYPES.ANY.name());
-        Parameters.STORAGE_TABLE.put(params, "testusersevents");
-        Parameters.LOG.put(params, log.getAbsolutePath());
-        Parameters.EVENT.put(params, "users-events");
-        Parameters.PARAM.put(params, "ACTION");
-        pigServer.execute(ScriptType.USERS_EVENTS, params);
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20130210");
+        builder.put(Parameters.TO_DATE, "20130210");
+        builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.name());
+        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
+        builder.put(Parameters.STORAGE_TABLE, "testusersevents");
+        builder.put(Parameters.EVENT, "users-events");
+        builder.put(Parameters.PARAM, "ACTION");
+        builder.put(Parameters.LOG, log.getAbsolutePath());
+        pigServer.execute(ScriptType.USERS_EVENTS, builder.build());
     }
 
     @Test
     public void testUserEvents() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20130210");
-        Parameters.TO_DATE.put(context, "20130210");
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20130210");
+        builder.put(Parameters.TO_DATE, "20130210");
 
         Metric metric = new TestMetricUserEvent();
-        ListValueData lvd = (ListValueData)metric.getValue(context);
+        ListValueData lvd = (ListValueData)metric.getValue(builder.build());
 
         assertEquals(lvd.size(), 4);
 

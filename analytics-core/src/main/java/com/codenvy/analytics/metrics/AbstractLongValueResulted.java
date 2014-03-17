@@ -22,8 +22,6 @@ import com.codenvy.analytics.datamodel.ValueData;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
-import java.util.Map;
-
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public abstract class AbstractLongValueResulted extends ReadBasedMetric {
 
@@ -48,7 +46,7 @@ public abstract class AbstractLongValueResulted extends ReadBasedMetric {
     }
 
     @Override
-    public DBObject[] getSpecificDBOperations(Map<String, String> clauses) {
+    public DBObject[] getSpecificDBOperations(Context clauses) {
         DBObject group = new BasicDBObject();
 
         String field = getTrackedFields()[0];

@@ -17,16 +17,15 @@
  */
 package com.codenvy.analytics.services.reports;
 
+import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.Parameters;
-
-import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class RecipientAsFilterContextModifier implements ContextModifier {
 
     @Override
-    public Map<String, String> update(Map<String, String> context) {
-        return MetricFilter.USER.cloneAndPut(context, Parameters.RECIPIENT.get(context));
+    public Context update(Context context) {
+        return context.cloneAndPut(MetricFilter.USER, context.get(Parameters.RECIPIENT));
     }
 }

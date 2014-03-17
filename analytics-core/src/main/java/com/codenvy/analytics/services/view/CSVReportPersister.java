@@ -18,8 +18,9 @@
 package com.codenvy.analytics.services.view;
 
 import com.codenvy.analytics.Configurator;
-import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Parameters;
 import com.google.common.io.Files;
 
 import org.apache.commons.io.FileUtils;
@@ -33,7 +34,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @Singleton
@@ -43,8 +43,8 @@ public class CSVReportPersister {
     private static final SimpleDateFormat DIR_FORMAT =
             new SimpleDateFormat("yyyy" + File.separator + "MM" + File.separator + "dd");
 
-    private final String REPORTS_DIR        = "analytics.reports.dir";
-    private final String BACKUP_REPORTS_DIR = "analytics.reports.backup_dir";
+    private static final String REPORTS_DIR        = "analytics.reports.dir";
+    private static final String BACKUP_REPORTS_DIR = "analytics.reports.backup_dir";
 
     private final String reportsDir;
     private final String backupReportsDir;
@@ -57,7 +57,7 @@ public class CSVReportPersister {
 
     public File storeData(String viewId,
                           ViewData viewData,
-                          Map<String, String> context) throws IOException {
+                          Context context) throws IOException {
         try {
             File csvBackupFile = getFile(backupReportsDir, viewId, context);
             createParentDirIfNotExists(csvBackupFile);
@@ -76,8 +76,8 @@ public class CSVReportPersister {
         }
     }
 
-    protected File getFile(String reportsDir, String viewId, Map<String, String> context) throws ParseException {
-        Calendar reportDate = Utils.getReportDate(context);
+    protected File getFile(String reportsDir, String viewId, Context context) throws ParseException {
+        Calendar reportDate = context.getAsDate(Parameters.REPORT_DATE);
 
         StringBuilder filePath = new StringBuilder();
         filePath.append(reportsDir);

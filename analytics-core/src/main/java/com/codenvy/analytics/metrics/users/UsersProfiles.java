@@ -19,12 +19,12 @@ package com.codenvy.analytics.metrics.users;
 
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricType;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
 import javax.annotation.security.RolesAllowed;
-import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
@@ -40,7 +40,7 @@ public class UsersProfiles extends AbstractUsersProfile {
     }
 
     @Override
-    public DBObject[] getSpecificDBOperations(Map<String, String> clauses) {
+    public DBObject[] getSpecificDBOperations(Context clauses) {
         DBObject group = new BasicDBObject();
         group.put(ID, null);
         group.put("value", new BasicDBObject("$sum", 1));

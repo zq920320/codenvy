@@ -19,6 +19,7 @@
 
 package com.codenvy.analytics;
 
+import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.services.*;
 import com.codenvy.analytics.services.view.CSVReportPersister;
@@ -155,7 +156,7 @@ public class Scheduler implements ServletContextListener {
     }
 
     private void doExecute(Feature job, String fromDateParam, String toDateParam) throws Exception {
-        Map<String, String> context = Utils.newContext();
+        Context.Builder builder = new Context.Builder();
 
         Calendar fromDate = Utils.parseDate(fromDateParam);
         Calendar toDate = Utils.parseDate(toDateParam);
@@ -164,15 +165,15 @@ public class Scheduler implements ServletContextListener {
             throw new IllegalStateException("FROM_DATE Parameters is bigger than TO_DATE Parameters");
         }
 
-        Utils.putFromDate(context, fromDate);
-        Utils.putToDate(context, fromDate);
+        builder.put(Parameters.FROM_DATE, fromDate);
+        builder.put(Parameters.TO_DATE, fromDate);
         do {
-            job.forceExecute(context);
+            job.forceExecute(builder.build());
 
             fromDate.add(Calendar.DAY_OF_MONTH, 1);
-            Utils.putFromDate(context, fromDate);
-            Utils.putToDate(context, fromDate);
-        } while (!Utils.getFromDate(context).after(toDate));
+            builder.put(Parameters.FROM_DATE, fromDate);
+            builder.put(Parameters.TO_DATE, fromDate);
+        } while (!builder.getAsDate(Parameters.FROM_DATE).after(toDate));
     }
 
     private void executeForLastDay(Feature job) throws Exception {

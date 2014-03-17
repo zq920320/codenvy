@@ -18,6 +18,7 @@
 package com.codenvy.analytics.pig.udf;
 
 import com.codenvy.analytics.BaseTest;
+import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.pig.scripts.ScriptType;
 import com.codenvy.analytics.pig.scripts.util.Event;
@@ -29,8 +30,9 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import static com.mongodb.util.MyAsserts.assertTrue;
 import static org.testng.AssertJUnit.assertEquals;
@@ -39,25 +41,27 @@ import static org.testng.AssertJUnit.assertEquals;
 public class TestMongoStorage extends BaseTest {
 
     private DBCollection dbCollection;
-    private Map<String, String> params = new HashMap<>();
+    private Context      context;
 
     @BeforeClass
     public void prepare() throws Exception {
         List<Event> events = new ArrayList<>();
         events.add(Event.Builder.createTenantCreatedEvent("ws1", "user1@gmail.com")
-                        .withDate("2013-01-02")
-                        .withTime("00:00:00")
-                        .build());
+                                .withDate("2013-01-02")
+                                .withTime("00:00:00")
+                                .build());
 
         File log = LogGenerator.generateLog(events);
 
-        Parameters.FROM_DATE.put(params, "20130102");
-        Parameters.TO_DATE.put(params, "20130102");
-        Parameters.USER.put(params, Parameters.USER_TYPES.REGISTERED.name());
-        Parameters.WS.put(params, Parameters.WS_TYPES.PERSISTENT.name());
-        Parameters.EVENT.put(params, "tenant-created");
-        Parameters.STORAGE_TABLE.put(params, "testmongostorage");
-        Parameters.LOG.put(params, log.getAbsolutePath());
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20130102");
+        builder.put(Parameters.TO_DATE, "20130102");
+        builder.put(Parameters.USER, Parameters.USER_TYPES.REGISTERED.name());
+        builder.put(Parameters.WS, Parameters.WS_TYPES.PERSISTENT.name());
+        builder.put(Parameters.EVENT, "tenant-created");
+        builder.put(Parameters.STORAGE_TABLE, "testmongostorage");
+        builder.put(Parameters.LOG, log.getAbsolutePath());
+        context = builder.build();
 
         DB db = mongoDataStorage.getDb();
         dbCollection = db.getCollection("testmongostorage");
@@ -65,7 +69,7 @@ public class TestMongoStorage extends BaseTest {
 
     @Test
     public void testExecute() throws Exception {
-        pigServer.execute(ScriptType.EVENTS, params);
+        pigServer.execute(ScriptType.EVENTS, context);
 
         BasicDBObject dbObject = new BasicDBObject();
         dbObject.put("date", dateFormat.parse("20130102").getTime());
@@ -78,7 +82,7 @@ public class TestMongoStorage extends BaseTest {
         assertEquals(next.get("user"), "user1@gmail.com");
         assertEquals(next.get("value"), 1L);
 
-        Iterator<Tuple> iterator = pigServer.executeAndReturn(ScriptType.TEST_MONGO_LOADER, params);
+        Iterator<Tuple> iterator = pigServer.executeAndReturn(ScriptType.TEST_MONGO_LOADER, context);
         assertTrue(iterator.hasNext());
 
         Tuple tuple = iterator.next();

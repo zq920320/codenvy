@@ -18,6 +18,7 @@
 package com.codenvy.analytics.persistent;
 
 import com.codenvy.analytics.datamodel.*;
+import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.ReadBasedMetric;
 import com.mongodb.AggregationOutput;
 import com.mongodb.DB;
@@ -38,7 +39,7 @@ public class MongoDataLoader implements DataLoader {
     }
 
     @Override
-    public ValueData loadValue(ReadBasedMetric metric, Map<String, String> clauses) throws IOException {
+    public ValueData loadValue(ReadBasedMetric metric, Context clauses) throws IOException {
         DBCollection dbCollection = db.getCollection(metric.getStorageCollectionName());
 
         try {

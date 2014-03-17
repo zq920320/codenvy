@@ -19,6 +19,7 @@ package com.codenvy.analytics.metrics.sessions;
 
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ReadBasedMetric;
 import com.mongodb.BasicDBObject;
@@ -26,7 +27,6 @@ import com.mongodb.DBObject;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.Map;
 
 /** @author Anatoliy Bazko */
 public abstract class AbstractProductTime extends ReadBasedMetric {
@@ -41,7 +41,7 @@ public abstract class AbstractProductTime extends ReadBasedMetric {
     }
 
     @Override
-    public DBObject[] getSpecificDBOperations(Map<String, String> clauses) {
+    public DBObject[] getSpecificDBOperations(Context clauses) {
         DBObject match = new BasicDBObject();
         match.put(getTrackedFields()[0], new BasicDBObject("$ne", ""));
 
@@ -61,7 +61,7 @@ public abstract class AbstractProductTime extends ReadBasedMetric {
     }
 
     @Override
-    public DBObject getFilter(Map<String, String> clauses) throws ParseException, IOException {
+    public DBObject getFilter(Context clauses) throws ParseException, IOException {
         DBObject filter = super.getFilter(clauses);
 
         DBObject match = (DBObject)filter.get("$match");

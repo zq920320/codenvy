@@ -19,14 +19,13 @@
 
 package com.codenvy.analytics;
 
-import com.codenvy.analytics.metrics.MetricFilter;
+import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.Parameters;
 
-import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Calendar;
 
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
@@ -38,7 +37,7 @@ public class Utils {
     /**
      * Parse date represented by give string using {@link com.codenvy.analytics.metrics.Parameters#PARAM_DATE_FORMAT}
      * format. Wraps {@link
-     * ParseException} into {@link IOException}.
+     * ParseException} into {@link java.io.IOException}.
      */
     public static Calendar parseDate(String date) throws ParseException {
         DateFormat df = new SimpleDateFormat(Parameters.PARAM_DATE_FORMAT);
@@ -55,77 +54,38 @@ public class Utils {
         return df.format(date.getTime());
     }
 
-    /** Extracts {@link Parameters#TIME_UNIT} parameter value from context. */
-    public static Parameters.TimeUnit getTimeUnit(Map<String, String> context) {
-        return Parameters.TimeUnit.valueOf(Parameters.TIME_UNIT.get(context).toUpperCase());
-    }
-
-    /** @return fromDate value */
-    public static Calendar getFromDate(Map<String, String> context) throws ParseException {
-        return parseDate(Parameters.FROM_DATE.get(context));
-    }
-
     public static boolean isDateFormat(String date) {
         return date.length() == Parameters.PARAM_DATE_FORMAT.length();
     }
 
-    /** @return toDate value */
-    public static Calendar getToDate(Map<String, String> context) throws ParseException {
-        return parseDate(Parameters.TO_DATE.get(context));
-    }
-
-    public static Calendar getPrevToDate(Map<String, String> context) throws ParseException {
-        Calendar toDate = parseDate(Parameters.TO_DATE.get(context));
-        toDate.add(Calendar.DAY_OF_MONTH, -1);
-
-        return toDate;
-    }
-
-    public static Calendar getReportDate(Map<String, String> context) throws ParseException {
-        return parseDate(Parameters.REPORT_DATE.get(context));
-    }
-
-    /** Puts {@link Parameters#FROM_DATE} parameter into context. */
-    public static void putFromDate(Map<String, String> context, Calendar fromDate) {
-        Parameters.FROM_DATE.put(context, formatDate(fromDate));
-    }
-
-    /** Puts {@link Parameters#TO_DATE} parameter into context. */
-    public static void putToDate(Map<String, String> context, Calendar toDate) {
-        Parameters.TO_DATE.put(context, formatDate(toDate));
-    }
-
-    /** Puts {@link Parameters#TIME_UNIT} parameter into context. */
-    public static void putTimeUnit(Map<String, String> context, Parameters.TimeUnit timeUnit) {
-        Parameters.TIME_UNIT.put(context, timeUnit.name());
-    }
-
     /** Initialize date interval accordingly to passed {@link Parameters#TIME_UNIT} */
-    public static void initDateInterval(Calendar date, Map<String, String> context) throws ParseException {
-        Parameters.TimeUnit timeUnit = getTimeUnit(context);
+    public static Context initDateInterval(Calendar date, Context.Builder builder) throws ParseException {
+        Parameters.TimeUnit timeUnit = builder.getTimeUnit();
 
         switch (timeUnit) {
             case DAY:
-                initByDay(date, context);
+                initByDay(date, builder);
                 break;
             case WEEK:
-                initByWeek(date, context);
+                initByWeek(date, builder);
                 break;
             case MONTH:
-                initByMonth(date, context);
+                initByMonth(date, builder);
                 break;
             case LIFETIME:
-                initByLifeTime(context);
+                initByLifeTime(builder);
                 break;
         }
+
+        return builder.build();
     }
 
-    private static void initByLifeTime(Map<String, String> context) {
-        Parameters.FROM_DATE.putDefaultValue(context);
-        Parameters.TO_DATE.putDefaultValue(context);
+    private static void initByLifeTime(Context.Builder builder) {
+        builder.putDefaultValue(Parameters.FROM_DATE);
+        builder.putDefaultValue(Parameters.TO_DATE);
     }
 
-    private static void initByWeek(Calendar date, Map<String, String> context) {
+    private static void initByWeek(Calendar date, Context.Builder builder) {
         Calendar fromDate = (Calendar)date.clone();
         fromDate.add(Calendar.DAY_OF_MONTH,
                      fromDate.getActualMinimum(Calendar.DAY_OF_WEEK) - fromDate.get(Calendar.DAY_OF_WEEK));
@@ -134,170 +94,137 @@ public class Utils {
         toDate.add(Calendar.DAY_OF_MONTH,
                    toDate.getActualMaximum(Calendar.DAY_OF_WEEK) - toDate.get(Calendar.DAY_OF_WEEK));
 
-        putFromDate(context, fromDate);
-        putToDate(context, toDate);
+        builder.put(Parameters.FROM_DATE, fromDate);
+        builder.put(Parameters.TO_DATE, toDate);
     }
 
-    private static void initByMonth(Calendar date, Map<String, String> context) {
+    private static void initByMonth(Calendar date, Context.Builder builder) {
         Calendar fromDate = (Calendar)date.clone();
         fromDate.set(Calendar.DAY_OF_MONTH, 1);
 
         Calendar toDate = (Calendar)date.clone();
         toDate.set(Calendar.DAY_OF_MONTH, toDate.getActualMaximum(Calendar.DAY_OF_MONTH));
 
-        putFromDate(context, fromDate);
-        putToDate(context, toDate);
+        builder.put(Parameters.FROM_DATE, fromDate);
+        builder.put(Parameters.TO_DATE, toDate);
     }
 
-    private static void initByDay(Calendar date, Map<String, String> context) {
-        putFromDate(context, date);
-        putToDate(context, date);
+    private static void initByDay(Calendar date, Context.Builder builder) {
+        builder.put(Parameters.FROM_DATE, date);
+        builder.put(Parameters.TO_DATE, date);
     }
 
     /**
      * Shift date interval forward depending on {@link com.codenvy.analytics.metrics.Parameters.TimeUnit}. Should also
      * be placed in context.
      */
-    public static Map<String, String> nextDateInterval(Map<String, String> context) throws ParseException {
-        Map<String, String> resultContext = new HashMap<>(context);
-
-        Calendar fromDate = getFromDate(context);
-        Calendar toDate = getToDate(context);
-        Parameters.TimeUnit timeUnit = getTimeUnit(context);
+    public static Context nextDateInterval(Context.Builder builder) throws ParseException {
+        Calendar fromDate = builder.getAsDate(Parameters.FROM_DATE);
+        Calendar toDate = builder.getAsDate(Parameters.TO_DATE);
+        Parameters.TimeUnit timeUnit = builder.getTimeUnit();
 
         switch (timeUnit) {
             case DAY:
-                nextDay(toDate, resultContext);
+                nextDay(toDate, builder);
                 break;
             case WEEK:
-                nextWeek(fromDate, toDate, resultContext);
+                nextWeek(fromDate, toDate, builder);
                 break;
             case MONTH:
-                nextMonth(toDate, resultContext);
+                nextMonth(toDate, builder);
                 break;
             case LIFETIME:
                 break;
         }
 
-        return resultContext;
+        return builder.build();
     }
 
     /**
      * Shift date interval backward depending on {@link com.codenvy.analytics.metrics.Parameters.TimeUnit}. Should also
      * be placed in context.
      */
-    public static Map<String, String> prevDateInterval(Map<String, String> context) throws ParseException {
-        Map<String, String> resultContext = new HashMap<>(context);
-
-        Calendar fromDate = getFromDate(context);
-        Calendar toDate = getToDate(context);
-        Parameters.TimeUnit timeUnit = getTimeUnit(context);
+    public static Context prevDateInterval(Context.Builder builder) throws ParseException {
+        Calendar fromDate = builder.getAsDate(Parameters.FROM_DATE);
+        Calendar toDate = builder.getAsDate(Parameters.TO_DATE);
+        Parameters.TimeUnit timeUnit = builder.getTimeUnit();
 
         switch (timeUnit) {
             case DAY:
-                prevDay(toDate, resultContext);
+                prevDay(toDate, builder);
                 break;
             case WEEK:
-                prevWeek(fromDate, toDate, resultContext);
+                prevWeek(fromDate, toDate, builder);
                 break;
             case MONTH:
-                prevMonth(fromDate, resultContext);
+                prevMonth(fromDate, builder);
                 break;
             case LIFETIME:
                 break;
         }
 
-        return resultContext;
+        return builder.build();
     }
 
-    private static void prevWeek(Calendar fromDate, Calendar toDate, Map<String, String> context) {
+    private static void prevWeek(Calendar fromDate, Calendar toDate, Context.Builder builder) {
         fromDate.add(Calendar.DAY_OF_MONTH, -7);
         toDate.add(Calendar.DAY_OF_MONTH, -7);
 
-        putFromDate(context, fromDate);
-        putToDate(context, toDate);
+        builder.put(Parameters.FROM_DATE, fromDate);
+        builder.put(Parameters.TO_DATE, toDate);
     }
 
-    private static void prevMonth(Calendar fromDate, Map<String, String> context) {
+    private static void prevMonth(Calendar fromDate, Context.Builder builder) {
         Calendar toDate = (Calendar)fromDate.clone();
         toDate.add(Calendar.DAY_OF_MONTH, -1);
 
         fromDate = (Calendar)toDate.clone();
         fromDate.set(Calendar.DAY_OF_MONTH, 1);
 
-        putFromDate(context, fromDate);
-        putToDate(context, toDate);
+        builder.put(Parameters.FROM_DATE, fromDate);
+        builder.put(Parameters.TO_DATE, toDate);
     }
 
-    private static void prevDay(Calendar toDate, Map<String, String> context) {
+    private static void prevDay(Calendar toDate, Context.Builder builder) {
         toDate.add(Calendar.DAY_OF_MONTH, -1);
 
-        putFromDate(context, toDate);
-        putToDate(context, toDate);
+        builder.put(Parameters.FROM_DATE, toDate);
+        builder.put(Parameters.TO_DATE, toDate);
     }
 
-    private static void nextMonth(Calendar toDate, Map<String, String> context) {
+    private static void nextMonth(Calendar toDate, Context.Builder builder) {
         Calendar fromDate = (Calendar)toDate.clone();
         fromDate.add(Calendar.DAY_OF_MONTH, 1);
 
         toDate.add(Calendar.MONTH, 1);
 
-        putFromDate(context, fromDate);
-        putToDate(context, toDate);
+        builder.put(Parameters.FROM_DATE, fromDate);
+        builder.put(Parameters.TO_DATE, toDate);
     }
 
-    private static void nextWeek(Calendar fromDate, Calendar toDate, Map<String, String> context) {
+    private static void nextWeek(Calendar fromDate, Calendar toDate, Context.Builder builder) {
         fromDate.add(Calendar.DAY_OF_MONTH, 7);
         toDate.add(Calendar.DAY_OF_MONTH, 7);
 
-        putFromDate(context, fromDate);
-        putToDate(context, toDate);
+        builder.put(Parameters.FROM_DATE, fromDate);
+        builder.put(Parameters.TO_DATE, toDate);
     }
 
-    private static void nextDay(Calendar toDate, Map<String, String> context) throws ParseException {
+    private static void nextDay(Calendar toDate, Context.Builder builder) throws ParseException {
         toDate.add(Calendar.DAY_OF_MONTH, 1);
 
-        putFromDate(context, toDate);
-        putToDate(context, toDate);
+        builder.put(Parameters.FROM_DATE, toDate);
+        builder.put(Parameters.TO_DATE, toDate);
     }
 
-    public static Map<String, String> initializeContext(Parameters.TimeUnit timeUnit) throws ParseException {
+    public static Context initializeContext(Parameters.TimeUnit timeUnit) throws ParseException {
         Calendar cal = Calendar.getInstance();
 
-        Map<String, String> context = newContext();
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.TIME_UNIT, timeUnit.name());
 
-        Parameters.TIME_UNIT.put(context, timeUnit.name());
-        initDateInterval(cal, context);
+        initDateInterval(cal, builder);
 
-        return timeUnit == Parameters.TimeUnit.DAY ? Utils.prevDateInterval(context) : context;
-    }
-
-    public static Map<String, String> clone(Map<String, String> context) {
-        Map<String, String> result = new HashMap<>(context.size());
-        result.putAll(context);
-
-        return result;
-    }
-
-    public static Map<String, String> newContext() {
-        return new HashMap<>();
-    }
-
-
-    /** Returns all filters existed in context. */
-    public static Set<MetricFilter> getFilters(Map<String, String> context) {
-        Set<MetricFilter> result = new HashSet<>();
-
-        for (MetricFilter filter : MetricFilter.values()) {
-            if (filter.exists(context)) {
-                result.add(filter);
-            }
-        }
-
-        return result;
-    }
-
-    public static boolean isSimpleContext(Map<String, String> context) {
-        return !Parameters.SORT.exists(context) && !Parameters.PAGE.exists(context) && getFilters(context).isEmpty();
+        return timeUnit == Parameters.TimeUnit.DAY ? Utils.prevDateInterval(builder) : builder.build();
     }
 }

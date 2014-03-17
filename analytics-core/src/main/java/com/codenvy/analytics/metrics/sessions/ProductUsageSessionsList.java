@@ -19,6 +19,7 @@ package com.codenvy.analytics.metrics.sessions;
 
 import com.codenvy.analytics.datamodel.*;
 import com.codenvy.analytics.metrics.AbstractListValueResulted;
+import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricType;
 
 import javax.annotation.security.RolesAllowed;
@@ -28,9 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author Anatoliy Bazko
- */
+/** @author Anatoliy Bazko */
 @RolesAllowed({"system/admin", "system/manager"})
 public class ProductUsageSessionsList extends AbstractListValueResulted {
 
@@ -53,18 +52,17 @@ public class ProductUsageSessionsList extends AbstractListValueResulted {
     }
 
     @Override
-    protected ValueData postEvaluation(ValueData valueData, Map<String, String> clauses) throws IOException {
+    protected ValueData postEvaluation(ValueData valueData, Context clauses) throws IOException {
         List<ValueData> value = new ArrayList<>();
         ListValueData list2Return = (ListValueData)valueData;
 
         for (ValueData items : list2Return.getAll()) {
 
-            // add END_TIME field
             MapValueData prevItems = (MapValueData)items;
             Map<String, ValueData> items2Return = new HashMap<>(prevItems.getAll());
 
-            long date = ValueDataUtil.getAsLong(items2Return.get(DATE));
-            long delta = ValueDataUtil.getAsLong(items2Return.get(TIME));
+            long date = ValueDataUtil.treatAsLong(items2Return.get(DATE));
+            long delta = ValueDataUtil.treatAsLong(items2Return.get(TIME));
 
             items2Return.put(END_TIME, LongValueData.valueOf(date + delta));
 

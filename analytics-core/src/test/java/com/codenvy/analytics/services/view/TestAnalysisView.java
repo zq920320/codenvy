@@ -20,8 +20,8 @@ package com.codenvy.analytics.services.view;
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.Configurator;
 import com.codenvy.analytics.Injector;
-import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.persistent.JdbcDataPersisterFactory;
 import com.codenvy.analytics.pig.scripts.ScriptType;
@@ -62,19 +62,19 @@ public class TestAnalysisView extends BaseTest {
                                                                                 "May 2013", "Apr 2013",
                                                                                 "Mar 2013", "Feb 2013", "Jan 2013",
                                                                                 "Dec 2012");
-    
-    private static final List<String>   weeklyReportColumnLabels    = Arrays.asList("", "04 Jan", "28 Dec", "21 Dec",
-                                                                                    "14 Dec", "07 Dec", "30 Nov",
-                                                                                    "23 Nov", "16 Nov", "09 Nov",
-                                                                                    "02 Nov", "26 Oct", "19 Oct",
-                                                                                    "12 Oct", "05 Oct");
 
-    private static final List<String>   dailyReportColumnLabels     = Arrays.asList("", "01 Jan", "31 Dec", "30 Dec",
-                                                                                    "29 Dec", "28 Dec", "27 Dec",
-                                                                                    "26 Dec", "25 Dec", "24 Dec",
-                                                                                    "23 Dec", "22 Dec", "21 Dec",
-                                                                                    "20 Dec", "19 Dec");                                                                               
-    
+    private static final List<String> weeklyReportColumnLabels = Arrays.asList("", "04 Jan", "28 Dec", "21 Dec",
+                                                                               "14 Dec", "07 Dec", "30 Nov",
+                                                                               "23 Nov", "16 Nov", "09 Nov",
+                                                                               "02 Nov", "26 Oct", "19 Oct",
+                                                                               "12 Oct", "05 Oct");
+
+    private static final List<String> dailyReportColumnLabels = Arrays.asList("", "01 Jan", "31 Dec", "30 Dec",
+                                                                              "29 Dec", "28 Dec", "27 Dec",
+                                                                              "26 Dec", "25 Dec", "24 Dec",
+                                                                              "23 Dec", "22 Dec", "21 Dec",
+                                                                              "20 Dec", "19 Dec");
+
     private static final List<RowLabel> rowsLabels = Arrays.asList(RowLabel.EMPTY,
                                                                    RowLabel.TOTAL_USERS,
                                                                    RowLabel.TOTAL_NUMBER_OF_USERS_WE_TRACK,
@@ -113,18 +113,17 @@ public class TestAnalysisView extends BaseTest {
 
     @BeforeMethod
     public void prepare() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        Parameters.USER.put(context, Parameters.USER_TYPES.REGISTERED.toString());
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.USER, Parameters.USER_TYPES.REGISTERED.toString());
+        builder.put(Parameters.LOG, prepareLog().getAbsolutePath());
+        builder.put(Parameters.FROM_DATE, DATE1.replace("-", ""));
+        builder.put(Parameters.TO_DATE, DATE1.replace("-", ""));
 
-        Parameters.LOG.put(context, prepareLog().getAbsolutePath());
+        extractDataFromLog(builder);
 
-        Parameters.FROM_DATE.put(context, DATE1.replace("-", ""));
-        Parameters.TO_DATE.put(context, DATE1.replace("-", ""));
-        extractDataFromLog(context);
-
-        Parameters.FROM_DATE.put(context, DATE2.replace("-", ""));
-        Parameters.TO_DATE.put(context, DATE2.replace("-", ""));
-        extractDataFromLog(context);
+        builder.put(Parameters.FROM_DATE, DATE2.replace("-", ""));
+        builder.put(Parameters.TO_DATE, DATE2.replace("-", ""));
+        extractDataFromLog(builder);
 
         XmlConfigurationManager configurationManager = mock(XmlConfigurationManager.class);
 
@@ -149,34 +148,34 @@ public class TestAnalysisView extends BaseTest {
     public void testAnalysisReport() throws Exception {
         ArgumentCaptor<String> viewId = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<ViewData> viewData = ArgumentCaptor.forClass(ViewData.class);
-        ArgumentCaptor<Map> context = ArgumentCaptor.forClass(Map.class);
+        ArgumentCaptor<Context> context = ArgumentCaptor.forClass(Context.class);
 
-        Map<String, String> executionContext = Utils.newContext();
-        Parameters.TO_DATE.put(executionContext, "20140101");
-        Parameters.TIME_UNIT.put(executionContext, Parameters.TimeUnit.MONTH.toString().toLowerCase());
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.TO_DATE, "20140101");
+        builder.put(Parameters.TIME_UNIT, Parameters.TimeUnit.MONTH.toString().toLowerCase());
 
-        viewBuilder.computeDisplayData(executionContext);
+        viewBuilder.computeDisplayData(builder.build());
         verify(viewBuilder, atLeastOnce()).retainViewData(viewId.capture(), viewData.capture(), context.capture());
-        
+
         List<ViewData> allReports = viewData.getAllValues();
-        
+
         assertEquals(allReports.size(), 4);
-        
-        for (ViewData data: allReports) {
+
+        for (ViewData data : allReports) {
             if (data.containsKey("analysis_lifetime")) {
                 testLifetimeReport(data.get("analysis_lifetime"));
             } else if (data.containsKey("analysis_month")) {
-                testMonthlyReport(data.get("analysis_month"));                
+                testMonthlyReport(data.get("analysis_month"));
             } else if (data.containsKey("analysis_week")) {
-                testWeeklyReport(data.get("analysis_week"));       
+                testWeeklyReport(data.get("analysis_week"));
             } else if (data.containsKey("analysis_day")) {
-                testDailyReport(data.get("analysis_day"));       
+                testDailyReport(data.get("analysis_day"));
             } else {
                 fail("Unknown analysis report: '" + data.keySet().toString() + "'");
             }
         }
     }
-    
+
     private void testLifetimeReport(SectionData lifetimeAnalysisReport) {
         // test row labels
         assertEquals(lifetimeAnalysisReport.size(), 9);
@@ -202,7 +201,7 @@ public class TestAnalysisView extends BaseTest {
         assertEquals(columnData.get(RowLabel.SHELL_LAUNCHED), "2");
     }
 
-    private void testMonthlyReport(SectionData monthlyAnalysisReport) { 
+    private void testMonthlyReport(SectionData monthlyAnalysisReport) {
         // test row labels
         assertEquals(monthlyAnalysisReport.size(), 9);
         for (int i = 0; i < monthlyAnalysisReport.size(); i++) {
@@ -265,7 +264,7 @@ public class TestAnalysisView extends BaseTest {
         assertEquals(column1Data.get(RowLabel.SHELL_LAUNCHED), "2");
     }
 
-    private void testWeeklyReport(SectionData weeklyAnalysisReport) { 
+    private void testWeeklyReport(SectionData weeklyAnalysisReport) {
         // test row labels
         assertEquals(weeklyAnalysisReport.size(), 9);
         for (int i = 0; i < weeklyAnalysisReport.size(); i++) {
@@ -310,7 +309,7 @@ public class TestAnalysisView extends BaseTest {
         }
 
         // test data of column 11 with label "26 Oct"
-        { 
+        {
             Map<RowLabel, String> columnData = getColumn(11, weeklyAnalysisReport, rowsLabels, true);
             assertEquals(columnData.get(RowLabel.TOTAL_USERS), "20");
             assertEquals(columnData.get(RowLabel.TOTAL_NUMBER_OF_USERS_WE_TRACK), "0");
@@ -322,8 +321,8 @@ public class TestAnalysisView extends BaseTest {
             assertEquals(columnData.get(RowLabel.SHELL_LAUNCHED), "0");
         }
     }
-    
-    private void testDailyReport(SectionData weeklyAnalysisReport) { 
+
+    private void testDailyReport(SectionData weeklyAnalysisReport) {
         // test row labels
         assertEquals(weeklyAnalysisReport.size(), 9);
         for (int i = 0; i < weeklyAnalysisReport.size(); i++) {
@@ -366,8 +365,8 @@ public class TestAnalysisView extends BaseTest {
             assertEquals(columnData.get(RowLabel.SENT_INVITES), "2");
             assertEquals(columnData.get(RowLabel.SHELL_LAUNCHED), "2");
         }
-    }    
-    
+    }
+
     /**
      * Returns column from section table of view
      */
@@ -523,62 +522,61 @@ public class TestAnalysisView extends BaseTest {
         return LogGenerator.generateLog(events);
     }
 
-    private void extractDataFromLog(Map<String, String> context) throws IOException, ParseException {
-        /** create collections "created_users", "removed_users" to calculate "total_users" metric */
-        Parameters.WS.put(context, Parameters.WS_TYPES.ANY.toString());
-        Parameters.EVENT.put(context, "user-created");
-        Parameters.STORAGE_TABLE.put(context, "created_users");
-        pigServer.execute(ScriptType.EVENTS, context);
+    private void extractDataFromLog(Context.Builder builder) throws IOException, ParseException {
+        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.toString());
+        builder.put(Parameters.EVENT, "user-created");
+        builder.put(Parameters.STORAGE_TABLE, "created_users");
+        pigServer.execute(ScriptType.EVENTS, builder.build());
 
-        Parameters.EVENT.put(context, "user-removed");
-        Parameters.STORAGE_TABLE.put(context, "removed_users");
-        pigServer.execute(ScriptType.EVENTS, context);
+        builder.put(Parameters.EVENT, "user-removed");
+        builder.put(Parameters.STORAGE_TABLE, "removed_users");
+        pigServer.execute(ScriptType.EVENTS, builder.build());
 
         /** create collections "active_users_set" to calculate "active_users" metric */
-        Parameters.WS.put(context, Parameters.WS_TYPES.ANY.toString());
-        Parameters.USER.put(context, Parameters.USER_TYPES.ANY.toString());
-        Parameters.STORAGE_TABLE.put(context, "users_activity_list");
-        pigServer.execute(ScriptType.USERS_ACTIVITY, context);
+        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.toString());
+        builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.toString());
+        builder.put(Parameters.STORAGE_TABLE, "users_activity_list");
+        pigServer.execute(ScriptType.USERS_ACTIVITY, builder.build());
 
         /** create collections "created_project" to calculate "users_who_created_project" metric */
-        Parameters.WS.put(context, Parameters.WS_TYPES.PERSISTENT.toString());
-        Parameters.EVENT.put(context, "project-created");
-        Parameters.STORAGE_TABLE.put(context, "created_projects");
-        pigServer.execute(ScriptType.EVENTS, context);
+        builder.put(Parameters.WS, Parameters.WS_TYPES.PERSISTENT.toString());
+        builder.put(Parameters.EVENT, "project-created");
+        builder.put(Parameters.STORAGE_TABLE, "created_projects");
+        pigServer.execute(ScriptType.EVENTS, builder.build());
 
         /** create collections "builds" to calculate "users_who_built" metric */
-        Parameters.WS.put(context, Parameters.WS_TYPES.PERSISTENT.toString());
-        Parameters.EVENT.put(context, "project-built,project-deployed,application-created");
-        Parameters.STORAGE_TABLE.put(context, "builds");
-        pigServer.execute(ScriptType.EVENTS, context);
+        builder.put(Parameters.WS, Parameters.WS_TYPES.PERSISTENT.toString());
+        builder.put(Parameters.EVENT, "project-built,project-deployed,application-created");
+        builder.put(Parameters.STORAGE_TABLE, "builds");
+        pigServer.execute(ScriptType.EVENTS, builder.build());
 
         /** create collections "deploys" to calculate "users_who_deployed" metric */
-        Parameters.WS.put(context, Parameters.WS_TYPES.PERSISTENT.toString());
-        Parameters.EVENT.put(context, "project-deployed,application-created");
-        Parameters.STORAGE_TABLE.put(context, "deploys");
-        pigServer.execute(ScriptType.EVENTS, context);
+        builder.put(Parameters.WS, Parameters.WS_TYPES.PERSISTENT.toString());
+        builder.put(Parameters.EVENT, "project-deployed,application-created");
+        builder.put(Parameters.STORAGE_TABLE, "deploys");
+        pigServer.execute(ScriptType.EVENTS, builder.build());
 
         /** create collections "deploys_to_paas" to calculate "users_who_deployed_to_paas" metric */
-        Parameters.WS.put(context, Parameters.WS_TYPES.PERSISTENT.toString());
-        Parameters.EVENT.put(context, "application-created");
-        Parameters.STORAGE_TABLE.put(context, "deploys_to_paas");
-        pigServer.execute(ScriptType.EVENTS, context);
+        builder.put(Parameters.WS, Parameters.WS_TYPES.PERSISTENT.toString());
+        builder.put(Parameters.EVENT, "application-created");
+        builder.put(Parameters.STORAGE_TABLE, "deploys_to_paas");
+        pigServer.execute(ScriptType.EVENTS, builder.build());
 
         /** create collections "user_invite" to calculate "users_who_invited" metric */
-        Parameters.WS.put(context, Parameters.WS_TYPES.PERSISTENT.toString());
-        Parameters.EVENT.put(context, "user-invite");
-        Parameters.STORAGE_TABLE.put(context, "user_invite");
-        pigServer.execute(ScriptType.EVENTS, context);
+        builder.put(Parameters.WS, Parameters.WS_TYPES.PERSISTENT.toString());
+        builder.put(Parameters.EVENT, "user-invite");
+        builder.put(Parameters.STORAGE_TABLE, "user_invite");
+        pigServer.execute(ScriptType.EVENTS, builder.build());
 
         /** create collections "shell_launched" to calculate "users_who_launched_shell" metric */
-        Parameters.WS.put(context, Parameters.WS_TYPES.PERSISTENT.toString());
-        Parameters.EVENT.put(context, "shell-launched");
-        Parameters.STORAGE_TABLE.put(context, "shell_launched");
-        pigServer.execute(ScriptType.EVENTS, context);
+        builder.put(Parameters.WS, Parameters.WS_TYPES.PERSISTENT.toString());
+        builder.put(Parameters.EVENT, "shell-launched");
+        builder.put(Parameters.STORAGE_TABLE, "shell_launched");
+        pigServer.execute(ScriptType.EVENTS, builder.build());
 
         /** create collections "users_profiles_list" to calculate "completed_profiles" metric */
-        Parameters.WS.put(context, Parameters.WS_TYPES.ANY.toString());
-        Parameters.STORAGE_TABLE.put(context, "users_profiles_list");
-        pigServer.execute(ScriptType.USERS_UPDATE_PROFILES, context);
+        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.toString());
+        builder.put(Parameters.STORAGE_TABLE, "users_profiles_list");
+        pigServer.execute(ScriptType.USERS_UPDATE_PROFILES, builder.build());
     }
 }

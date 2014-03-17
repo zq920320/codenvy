@@ -27,6 +27,7 @@ import de.flapdoodle.embed.mongo.config.Storage;
 import de.flapdoodle.embed.mongo.distribution.Version;
 
 import com.codenvy.analytics.Configurator;
+import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.Parameters;
 import com.mongodb.DB;
 import com.mongodb.MongoClient;
@@ -41,7 +42,6 @@ import javax.inject.Singleton;
 import java.io.File;
 import java.io.IOException;
 import java.net.*;
-import java.util.Map;
 
 /**
  * Utility class. Provides connection with underlying storage.
@@ -115,17 +115,17 @@ public class MongoDataStorage {
         return new MongoDataLoader(getDb());
     }
 
-    public void putStorageParameters(Map<String, String> context) {
+    public void putStorageParameters(Context.Builder builder) {
         if (uri.getUsername() == null) {
-            Parameters.STORAGE_URL.put(context, uri.toString());
-            Parameters.STORAGE_USER.put(context, "''");
-            Parameters.STORAGE_PASSWORD.put(context, "''");
+            builder.put(Parameters.STORAGE_URL, uri.toString());
+            builder.put(Parameters.STORAGE_USER, "''");
+            builder.put(Parameters.STORAGE_PASSWORD, "''");
         } else {
             String password = new String(uri.getPassword());
             String serverUrlNoPassword = uri.toString().replace(uri.getUsername() + ":" + password + "@", "");
-            Parameters.STORAGE_URL.put(context, serverUrlNoPassword);
-            Parameters.STORAGE_USER.put(context, uri.getUsername());
-            Parameters.STORAGE_PASSWORD.put(context, password);
+            builder.put(Parameters.STORAGE_URL, serverUrlNoPassword);
+            builder.put(Parameters.STORAGE_USER, uri.getUsername());
+            builder.put(Parameters.STORAGE_PASSWORD, password);
         }
     }
 

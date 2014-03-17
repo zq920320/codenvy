@@ -21,7 +21,6 @@ package com.codenvy.analytics.metrics;
 import com.codenvy.analytics.datamodel.ValueData;
 
 import java.io.IOException;
-import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public interface Metric {
@@ -35,11 +34,11 @@ public interface Metric {
      * @throws IOException
      *         if any errors are occurred
      */
-    ValueData getValue(Map<String, String> context) throws IOException;
+    ValueData getValue(Context context) throws IOException;
 
     /**
-     * @return which type of {@link ValueData} the {@link #getValue(java.util.Map)} method returns.
-     *         The possible variants are:
+     * @return which type of {@link ValueData} the {@link #getValue(com.codenvy.analytics.metrics.Context)} method
+     *         returns. The possible variants are:
      *         {@link com.codenvy.analytics.datamodel.StringValueData}
      *         {@link com.codenvy.analytics.datamodel.LongValueData}
      *         {@link com.codenvy.analytics.datamodel.DoubleValueData}

@@ -19,6 +19,7 @@ package com.codenvy.analytics.services.view;
 
 import com.codenvy.analytics.Configurator;
 import com.codenvy.analytics.Utils;
+import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.persistent.DataPersister;
 import com.codenvy.analytics.persistent.JdbcDataPersisterFactory;
@@ -74,10 +75,10 @@ public class ViewBuilder extends Feature {
         this.csvReportPersister = csvReportPersister;
     }
 
-    public ViewData getViewData(String name, Map<String, String> context) throws IOException, ParseException {
+    public ViewData getViewData(String name, Context context) throws IOException, ParseException {
         ViewConfiguration view = displayConfiguration.getView(name);
 
-        if (!view.isOnDemand() && Utils.isSimpleContext(context)) {
+        if (!view.isOnDemand() && context.isSimplified()) {
             return queryViewData(view, context);
         } else {
             ComputeViewDataAction computeViewDataAction = new ComputeViewDataAction(view, context);
@@ -91,11 +92,11 @@ public class ViewBuilder extends Feature {
     }
 
     @Override
-    protected void putParametersInContext(Map<String, String> context) {
+    protected void putParametersInContext(Context.Builder builder) {
     }
 
     @Override
-    protected void doExecute(Map<String, String> context) throws Exception {
+    protected void doExecute(Context context) throws Exception {
         LOG.info("ViewBuilder is started");
         long start = System.currentTimeMillis();
 
@@ -106,7 +107,7 @@ public class ViewBuilder extends Feature {
         }
     }
 
-    protected void computeDisplayData(Map<String, String> context) throws Exception {
+    protected void computeDisplayData(Context context) throws Exception {
         List<RecursiveAction> tasks = new ArrayList<>();
 
         ForkJoinPool forkJoinPool = new ForkJoinPool();
@@ -120,9 +121,7 @@ public class ViewBuilder extends Feature {
                     tasks.add(task);
                 } else {
                     for (String timeUnitParam : viewConf.getTimeUnit().split(",")) {
-                        Map<String, String> newContext =
-                                Parameters.TIME_UNIT.cloneAndPut(context, timeUnitParam.toUpperCase());
-
+                        Context newContext = context.cloneAndPut(Parameters.TIME_UNIT, timeUnitParam.toUpperCase());
                         ComputeViewDataAction task = new ComputeViewDataAction(viewConf, newContext);
                         forkJoinPool.submit(task);
 
@@ -146,7 +145,7 @@ public class ViewBuilder extends Feature {
     }
 
     /** Query data for specific view. */
-    protected ViewData queryViewData(ViewConfiguration viewConf, Map<String, String> context)
+    protected ViewData queryViewData(ViewConfiguration viewConf, Context context)
             throws IOException {
         try {
             ViewData viewData = new ViewData(viewConf.getSections().size());
@@ -164,18 +163,18 @@ public class ViewBuilder extends Feature {
 
     protected void retainViewData(String viewId,
                                   ViewData viewData,
-                                  Map<String, String> context) throws SQLException, IOException {
+                                  Context context) throws SQLException, IOException {
         jdbcPersister.storeData(viewData);
         csvReportPersister.storeData(viewId, viewData, context);
     }
 
     private class ComputeViewDataAction extends RecursiveAction {
 
-        private final ViewConfiguration   viewConf;
-        private final Map<String, String> context;
+        private final ViewConfiguration viewConf;
+        private final Context           context;
 
         private ComputeViewDataAction(ViewConfiguration viewConfiguration,
-                                      Map<String, String> context) throws ParseException {
+                                      Context context) throws ParseException {
             this.viewConf = viewConfiguration;
             this.context = initializeFirstInterval(context);
         }
@@ -220,35 +219,36 @@ public class ViewBuilder extends Feature {
         }
     }
 
-    private Map<String, String> initializeFirstInterval(Map<String, String> context) throws ParseException {
-        if (!Parameters.TO_DATE.exists(context)) {
-            context = Utils.clone(context);
-            Parameters.TO_DATE.putDefaultValue(context);
-            Parameters.FROM_DATE.putDefaultValue(context);
-            Parameters.REPORT_DATE.put(context, Parameters.TO_DATE.get(context));
+    private Context initializeFirstInterval(Context context) throws ParseException {
+        Context.Builder builder = new Context.Builder(context);
+
+        if (!context.exists(Parameters.TO_DATE)) {
+            builder.putDefaultValue(Parameters.TO_DATE);
+            builder.putDefaultValue(Parameters.FROM_DATE);
+            builder.put(Parameters.REPORT_DATE, builder.get(Parameters.TO_DATE));
         } else {
-            context = Parameters.REPORT_DATE.cloneAndPut(context, Parameters.TO_DATE.get(context));
+            builder.put(Parameters.REPORT_DATE, context.get(Parameters.TO_DATE));
         }
 
-        if (Parameters.TIME_UNIT.exists(context)) {
-            Utils.initDateInterval(Utils.getToDate(context), context);
+        if (context.exists(Parameters.TIME_UNIT)) {
+            return Utils.initDateInterval(builder.getAsDate(Parameters.TO_DATE), builder);
+        } else {
+            return builder.build();
         }
-
-        return context;
     }
 
-    private int getRowCount(int rowCountFromConf, Map<String, String> context) {
-        if (Parameters.TIME_UNIT.exists(context) && Utils.getTimeUnit(context) == Parameters.TimeUnit.LIFETIME) {
+    private int getRowCount(int rowCountFromConf, Context context) {
+        if (context.exists(Parameters.TIME_UNIT) && context.getTimeUnit() == Parameters.TimeUnit.LIFETIME) {
             return 2;
         } else {
             return rowCountFromConf;
         }
     }
 
-    private String getId(String idFromConf, Map<String, String> context) {
+    private String getId(String idFromConf, Context context) {
         String id = idFromConf;
-        if (Parameters.TIME_UNIT.exists(context)) {
-            id += "_" + Parameters.TIME_UNIT.get(context).toLowerCase();
+        if (context.exists(Parameters.TIME_UNIT)) {
+            id += "_" + context.get(Parameters.TIME_UNIT).toLowerCase();
         }
 
         return id;

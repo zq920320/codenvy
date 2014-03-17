@@ -19,9 +19,7 @@
 package com.codenvy.analytics.metrics;
 
 import com.codenvy.analytics.Configurator;
-import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.datamodel.ValueData;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -53,8 +51,8 @@ public class InitialValueContainer {
     private static final String INITIAL_VALUES_METRICS = "analytics.initial_values.metrics";
     private static final String INITIAL_VALUES_METRIC  = "analytics.initial_values.metric_";
 
-    private final Calendar               initialValueDate = Calendar.getInstance();
-    private final Map<String, ValueData> initialValues    = new HashMap<>();
+    private final Calendar                   initialValueDate = Calendar.getInstance();
+    private final Map<String, LongValueData> initialValues    = new HashMap<>();
 
     @Inject
     public InitialValueContainer(Configurator configurator) {
@@ -79,16 +77,20 @@ public class InitialValueContainer {
     }
 
     /** @return initial value for give metric or null */
-    public ValueData getInitialValue(String metricName) throws ParseException {
+    public LongValueData getInitialValue(String metricName) throws ParseException {
         return initialValues.get(metricName.toLowerCase());
     }
 
-    /** Checks if container contains initial value for given metric below or equal to the given date. */
-    public void validateExistenceInitialValueBefore(Map<String, String> context)
+    /**
+     * Checks if container contains initial value for given metric below or equal to the given date.
+     *
+     * @param context
+     */
+    public void validateExistenceInitialValueBefore(Context context)
             throws InitialValueNotFoundException {
 
         try {
-            Calendar toDate = Utils.getToDate(context);
+            Calendar toDate = context.getAsDate(Parameters.TO_DATE);
 
             if (toDate.before(initialValueDate)) {
                 throw new InitialValueNotFoundException("There is no initial value below given date");

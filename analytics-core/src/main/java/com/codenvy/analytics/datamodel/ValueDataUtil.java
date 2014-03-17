@@ -17,16 +17,27 @@
  */
 package com.codenvy.analytics.datamodel;
 
-/**
- * @author Anatoliy Bazko
- */
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Metric;
+
+import java.io.IOException;
+
+/** @author Anatoliy Bazko */
 public class ValueDataUtil {
 
-    public static long getAsLong(ValueData valueData) {
+    public static NumericValueData getAsNumeric(Metric metric, Context context) throws IOException {
+        return (NumericValueData)metric.getValue(context);
+    }
+
+    public static LongValueData getAsLong(Metric metric, Context context) throws IOException {
+        return (LongValueData)metric.getValue(context);
+    }
+
+    public static long treatAsLong(ValueData valueData) {
         return ((LongValueData)valueData).getAsLong();
     }
 
-    public static double getAsDouble(ValueData valueData) {
-        return ((NumericValueData)valueData).getAsDouble();
+    public static ListValueData getAsList(Metric metric, Context context) throws IOException {
+        return (ListValueData)metric.getValue(context);
     }
 }

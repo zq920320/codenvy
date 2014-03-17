@@ -18,15 +18,15 @@
 package com.codenvy.analytics.persistent;
 
 import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.ReadBasedMetric;
 
 import java.io.IOException;
-import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public interface DataLoader {
 
     /** Loads value from the storage. */
-    ValueData loadValue(ReadBasedMetric metric, Map<String, String> clauses) throws IOException;
+    ValueData loadValue(ReadBasedMetric metric, Context clauses) throws IOException;
 
 }

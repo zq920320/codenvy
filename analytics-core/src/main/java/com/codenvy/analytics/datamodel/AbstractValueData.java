@@ -25,7 +25,6 @@ public abstract class AbstractValueData implements ValueData {
 
     private Integer hash;
 
-    /** {@inheritDoc} */
     @Override
     public ValueData union(ValueData valueData) {
         if (getClass() != valueData.getClass()) {
@@ -36,20 +35,17 @@ public abstract class AbstractValueData implements ValueData {
         return doUnion(valueData);
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString() {
         return getAsString();
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean equals(Object object) {
         return getClass() == object.getClass() && doEquals((ValueData)object);
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         if (hash == null) {

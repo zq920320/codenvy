@@ -17,7 +17,6 @@
  */
 package com.codenvy.analytics.metrics.top;
 
-import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.*;
 import com.codenvy.analytics.metrics.*;
 
@@ -62,7 +61,7 @@ public abstract class AbstractTopEntitiesTime extends CalculatedMetric {
     }
 
     @Override
-    public ValueData getValue(Map<String, String> context) throws IOException {
+    public ValueData getValue(Context context) throws IOException {
 
         try {
             ListValueData top = getTopEntities(context, dayCount);
@@ -168,38 +167,38 @@ public abstract class AbstractTopEntitiesTime extends CalculatedMetric {
     }
 
     /** @return top entities for required period sorted by usage time */
-    private ListValueData getTopEntities(Map<String, String> context, int dayCount)
-            throws ParseException, IOException {
+    private ListValueData getTopEntities(Context context, int dayCount) throws ParseException, IOException {
+        Context.Builder builder = initContextBuilder(context, dayCount);
+        builder.put(Parameters.SORT, "-" + TIME);
+        builder.put(Parameters.PAGE, 1);
+        builder.put(Parameters.PER_PAGE, MAX_DOCUMENT_COUNT);
 
-        context = initContext(context, dayCount);
-        Parameters.SORT.put(context, "-" + TIME);
-        Parameters.PAGE.put(context, "1");
-        Parameters.PER_PAGE.put(context, "" + MAX_DOCUMENT_COUNT);
-
-        return (ListValueData)basedMetric[0].getValue(context);
+        return ValueDataUtil.getAsList(basedMetric[0], builder.build());
     }
 
-    private ListValueData getEntities(Map<String, String> context, int dayCount, String filterValue)
+    private ListValueData getEntities(Context context, int dayCount, String filterValue)
             throws ParseException, IOException {
 
-        context = initContext(context, dayCount);
-        filterParameter.put(context, filterValue);
+        Context.Builder builder = initContextBuilder(context, dayCount);
+        builder.put(filterParameter, filterValue);
 
-        return (ListValueData)basedMetric[0].getValue(context);
+        return ValueDataUtil.getAsList(basedMetric[0], builder.build());
     }
 
-    private Map<String, String> initContext(Map<String, String> context, int dayCount) throws ParseException {
-        Calendar toDate = Utils.getToDate(context);
-        context = Utils.clone(context);
+    private Context.Builder initContextBuilder(Context basedContext, int dayCount) throws ParseException {
+        Calendar toDate = basedContext.getAsDate(Parameters.TO_DATE);
+
+        Context.Builder builder = new Context.Builder();
+        builder.putAll(basedContext);
 
         if (dayCount == LIFE_TIME_PERIOD) {
-            Parameters.FROM_DATE.putDefaultValue(context);
+            builder.putDefaultValue(Parameters.FROM_DATE);
         } else {
             Calendar fromDate = (Calendar)toDate.clone();
             fromDate.add(Calendar.DAY_OF_MONTH, 1 - dayCount);
-            Utils.putFromDate(context, fromDate);
+            builder.put(Parameters.FROM_DATE, fromDate);
         }
 
-        return context;
+        return builder;
     }
 }

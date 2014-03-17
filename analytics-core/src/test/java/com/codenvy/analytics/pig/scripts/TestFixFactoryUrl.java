@@ -19,6 +19,7 @@
 package com.codenvy.analytics.pig.scripts;
 
 import com.codenvy.analytics.BaseTest;
+import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
@@ -29,7 +30,6 @@ import org.testng.annotations.Test;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -40,7 +40,7 @@ import static org.testng.AssertJUnit.assertEquals;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestFixFactoryUrl extends BaseTest {
 
-    private HashMap<String, String> context = new HashMap<>();
+    private Context context;
 
     @BeforeClass
     public void prepare() throws Exception {
@@ -59,13 +59,14 @@ public class TestFixFactoryUrl extends BaseTest {
 
         File log = LogGenerator.generateLog(events);
 
-        context = new HashMap<>();
-        Parameters.LOG.put(context, log.getAbsolutePath());
-        Parameters.WS.put(context, Parameters.WS_TYPES.ANY.name());
-        Parameters.USER.put(context, Parameters.USER_TYPES.ANY.name());
-        Parameters.FROM_DATE.put(context, "20130101");
-        Parameters.TO_DATE.put(context, "20130101");
-        Parameters.STORAGE_TABLE.put(context, "fake");
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20130101");
+        builder.put(Parameters.TO_DATE, "20130101");
+        builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.name());
+        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
+        builder.put(Parameters.STORAGE_TABLE, "fake");
+        builder.put(Parameters.LOG, log.getAbsolutePath());
+        context = builder.build();
     }
 
     @Test

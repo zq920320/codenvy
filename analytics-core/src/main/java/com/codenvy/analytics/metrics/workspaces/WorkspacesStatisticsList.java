@@ -17,41 +17,27 @@
  */
 package com.codenvy.analytics.metrics.workspaces;
 
-import static com.codenvy.analytics.metrics.users.UsersStatisticsList.*;
-
-import java.io.IOException;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Pattern;
-
-import javax.annotation.security.RolesAllowed;
-import javax.naming.directory.BasicAttribute;
-
-import com.codenvy.analytics.datamodel.ListValueData;
-import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.datamodel.MapValueData;
-import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.AbstractListValueResulted;
-import com.codenvy.analytics.metrics.MetricFilter;
+import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.metrics.users.UsersStatisticsList;
-import com.codenvy.organization.client.WorkspaceManager;
-import com.codenvy.organization.exception.OrganizationServiceException;
-import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
+
+import javax.annotation.security.RolesAllowed;
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.regex.Pattern;
+
+import static com.codenvy.analytics.metrics.users.UsersStatisticsList.*;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
 public class WorkspacesStatisticsList extends AbstractListValueResulted {
-    
-    public static final String USERS = "users";
+
+    public static final String USERS        = "users";
     public static final String JOINED_USERS = "joined_users";
-    
+
     public WorkspacesStatisticsList() {
         super(MetricType.WORKSPACES_STATISTICS_LIST);
     }
@@ -85,27 +71,29 @@ public class WorkspacesStatisticsList extends AbstractListValueResulted {
     }
 
     @Override
-    public DBObject getFilter(Map<String, String> clauses) throws ParseException, IOException {        
+    public DBObject getFilter(Context clauses) throws ParseException, IOException {
         DBObject filter = super.getFilter(clauses);
 
         BasicDBObject match = (BasicDBObject)filter.get("$match");
-        
+
         // filter temporary workspaces and "default" workspace
-        BasicDBObject wsMatch = (BasicDBObject) match.get(WS);
+        BasicDBObject wsMatch = (BasicDBObject)match.get(WS);
         if (wsMatch == null) {
             match.put(WS, NON_DEFAULT_WS);
         } else {
             // create pattern like "(?=^(?!(TMP-|DEFAULT)).*)(?=targetWorkspace)"
-            String persistentWsAndTargetWorkspace = String.format("(?=%1$s)(?=%2$s)", NON_DEFAULT_WS.pattern(), Parameters.WS.get(clauses));
-            Pattern persistentWsAndTargetWorkspacePattern = Pattern.compile(persistentWsAndTargetWorkspace, Pattern.CASE_INSENSITIVE);
+            String persistentWsAndTargetWorkspace =
+                    String.format("(?=%1$s)(?=%2$s)", NON_DEFAULT_WS.pattern(), clauses.get(Parameters.WS));
+            Pattern persistentWsAndTargetWorkspacePattern =
+                    Pattern.compile(persistentWsAndTargetWorkspace, Pattern.CASE_INSENSITIVE);
             match.put(WS, persistentWsAndTargetWorkspacePattern);
         }
- 
+
         return filter;
     }
 
     @Override
-    public DBObject[] getSpecificDBOperations(Map<String, String> clauses) {
+    public DBObject[] getSpecificDBOperations(Context clauses) {
         DBObject group = new BasicDBObject();
         group.put(ID, "$" + WS);
         group.put(PROJECTS, new BasicDBObject("$sum", "$" + PROJECTS));

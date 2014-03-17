@@ -17,8 +17,9 @@
  */
 package com.codenvy.analytics.services.reports;
 
+import com.codenvy.analytics.metrics.Context;
+
 import java.io.IOException;
-import java.util.Map;
 import java.util.Set;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
@@ -28,6 +29,6 @@ public interface RecipientGroup {
      * @param context
      * @return the list of e-mails
      */
-    public Set<String> getEmails(Map<String, String> context) throws IOException;
+    public Set<String> getEmails(Context context) throws IOException;
 
 }

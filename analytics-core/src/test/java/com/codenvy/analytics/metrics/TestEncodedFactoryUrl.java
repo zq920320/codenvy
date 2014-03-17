@@ -18,7 +18,6 @@
 package com.codenvy.analytics.metrics;
 
 import com.codenvy.analytics.BaseTest;
-import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.metrics.sessions.factory.ProductUsageFactorySessionsList;
@@ -34,7 +33,6 @@ import org.testng.annotations.Test;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static org.testng.Assert.assertEquals;
 
@@ -86,8 +84,6 @@ public class TestEncodedFactoryUrl extends BaseTest {
 
     @BeforeClass
     public void init() throws Exception {
-        Map<String, String> params = Utils.newContext();
-
         List<Event> events = new ArrayList<>();
 
         // broken event, factory url contains new line character
@@ -106,29 +102,30 @@ public class TestEncodedFactoryUrl extends BaseTest {
 
         File log = LogGenerator.generateLog(events);
 
-        Parameters.FROM_DATE.put(params, "20130210");
-        Parameters.TO_DATE.put(params, "20130210");
-        Parameters.USER.put(params, Parameters.USER_TYPES.ANY.name());
-        Parameters.WS.put(params, Parameters.WS_TYPES.ANY.name());
-        Parameters.STORAGE_TABLE.put(params, COLLECTION_ACCEPTED);
-        Parameters.LOG.put(params, log.getAbsolutePath());
-        pigServer.execute(ScriptType.ACCEPTED_FACTORIES, params);
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20130210");
+        builder.put(Parameters.TO_DATE, "20130210");
+        builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.name());
+        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
+        builder.put(Parameters.STORAGE_TABLE, COLLECTION_ACCEPTED);
+        builder.put(Parameters.LOG, log.getAbsolutePath());
+        pigServer.execute(ScriptType.ACCEPTED_FACTORIES, builder.build());
 
-        Parameters.WS.put(params, Parameters.WS_TYPES.TEMPORARY.name());
-        Parameters.STORAGE_TABLE.put(params, COLLECTION);
-        pigServer.execute(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, params);
+        builder.put(Parameters.WS, Parameters.WS_TYPES.TEMPORARY.name());
+        builder.put(Parameters.STORAGE_TABLE, COLLECTION);
+        pigServer.execute(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, builder.build());
     }
 
     @Test
     public void testAbstractTopFactories() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20130210");
-        Parameters.TO_DATE.put(context, "20130210");
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20130210");
+        builder.put(Parameters.TO_DATE, "20130210");
 
         AbstractTopMetrics metric =
                 new TestAbstractTopFactories(MetricType.TOP_FACTORIES_BY_LIFETIME, AbstractTopMetrics.LIFE_TIME_PERIOD);
 
-        ListValueData value = (ListValueData)metric.getValue(context);
+        ListValueData value = (ListValueData)metric.getValue(builder.build());
 
         assertEquals(value.size(), 1);
         checkTopFactoriesDataItem((MapValueData)value.getAll().get(0),
@@ -142,9 +139,8 @@ public class TestEncodedFactoryUrl extends BaseTest {
                                   "100.0",
                                   "0.0",
                                   "100.0",
-                                  "0.0",
-                                  "" + dateAndTimeFormat.parse("20130210 11:00:00").getTime(),
-                                  "" + dateAndTimeFormat.parse("20130210 11:00:00").getTime());
+                                  "0.0"
+                                 );
     }
 
     private void checkTopFactoriesDataItem(MapValueData item,
@@ -158,9 +154,7 @@ public class TestEncodedFactoryUrl extends BaseTest {
                                            String anonymousFactorySessionRate,
                                            String authenticatedFactorySessionRate,
                                            String abandonFactorySessionRate,
-                                           String convertedFactorySessionRate,
-                                           String firstSessionDate,
-                                           String lastSessionDate) {
+                                           String convertedFactorySessionRate) {
 
         assertEquals(item.getAll().get(ProductUsageFactorySessionsList.FACTORY).getAsString(), factory);
         assertEquals(item.getAll().get(ProductUsageFactorySessionsList.WS_CREATED).getAsString(), wsCreated);

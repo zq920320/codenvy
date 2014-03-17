@@ -49,7 +49,6 @@ public class ListValueData extends AbstractValueData {
         return value.size();
     }
 
-    /** {@inheritDoc} */
     @Override
     protected ValueData doUnion(ValueData valueData) {
         ListValueData object = (ListValueData)valueData;
@@ -61,7 +60,6 @@ public class ListValueData extends AbstractValueData {
         return new ListValueData(result);
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getAsString() {
         StringBuilder builder = new StringBuilder();
@@ -85,25 +83,21 @@ public class ListValueData extends AbstractValueData {
         return builder.toString();
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getType() {
         return ValueDataTypes.LIST.toString();
     }
 
-    /** {@inheritDoc} */
     @Override
     protected boolean doEquals(ValueData valueData) {
         return this.value.equals(((ListValueData)valueData).value);
     }
 
-    /** {@inheritDoc} */
     @Override
     protected int doHashCode() {
         return value.hashCode();
     }
 
-    /** {@inheritDoc} */
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
         out.writeInt(value.size());
@@ -112,7 +106,6 @@ public class ListValueData extends AbstractValueData {
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         int size = in.readInt();

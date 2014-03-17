@@ -18,10 +18,10 @@
 package com.codenvy.analytics.pig.scripts;
 
 import com.codenvy.analytics.BaseTest;
-import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.Parameters;
@@ -47,8 +47,6 @@ public class TestUsersAddedToWorkspaces extends BaseTest {
 
     @BeforeClass
     public void init() throws Exception {
-        Map<String, String> params = Utils.newContext();
-
         List<Event> events = new ArrayList<>();
         events.add(Event.Builder.createUserAddedToWsEvent("user1@gmail.com", "ws1", "", "", "", "website")
                         .withDate("2013-01-02").withTime("10:00:00").build());
@@ -63,114 +61,114 @@ public class TestUsersAddedToWorkspaces extends BaseTest {
 
         File log = LogGenerator.generateLog(events);
 
-        Parameters.FROM_DATE.put(params, "20130102");
-        Parameters.TO_DATE.put(params, "20130102");
-        Parameters.PARAM.put(params, "FROM");
-        Parameters.USER.put(params, Parameters.USER_TYPES.REGISTERED.name());
-        Parameters.WS.put(params, Parameters.WS_TYPES.PERSISTENT.name());
-        Parameters.EVENT.put(params, "user-added-to-ws");
-        Parameters.STORAGE_TABLE.put(params, COLLECTION);
-        Parameters.LOG.put(params, log.getAbsolutePath());
-
-        pigServer.execute(ScriptType.EVENTS_BY_TYPE, params);
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20130102");
+        builder.put(Parameters.TO_DATE, "20130102");
+        builder.put(Parameters.USER, Parameters.USER_TYPES.REGISTERED.name());
+        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
+        builder.put(Parameters.EVENT, "user-added-to-ws");
+        builder.put(Parameters.PARAM, "FROM");
+        builder.put(Parameters.STORAGE_TABLE, COLLECTION);
+        builder.put(Parameters.LOG, log.getAbsolutePath());
+        pigServer.execute(ScriptType.EVENTS_BY_TYPE, builder.build());
     }
 
     @Test
     public void testDatePeriod() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20130102");
-        Parameters.TO_DATE.put(context, "20130102");
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20130102");
+        builder.put(Parameters.TO_DATE, "20130102");
 
         Metric metric = new TestedUsersAddedToWorkspaces();
-        Map<String, ValueData> values = ((MapValueData)metric.getValue(context)).getAll();
+        Map<String, ValueData> values = ((MapValueData)metric.getValue(builder.build())).getAll();
         assertEquals(values.size(), 2);
         assertEquals(values.get("website"), LongValueData.valueOf(2));
         assertEquals(values.get("invite"), LongValueData.valueOf(3));
 
         metric = new TestedWebsiteAbstractUsersAddedToWorkspaces();
-        assertEquals(metric.getValue(context), LongValueData.valueOf(2));
+        assertEquals(metric.getValue(builder.build()), LongValueData.valueOf(2));
 
         metric = new TestedInviteAbstractUsersAddedToWorkspaces();
-        assertEquals(metric.getValue(context), LongValueData.valueOf(3));
+        assertEquals(metric.getValue(builder.build()), LongValueData.valueOf(3));
     }
 
     @Test
     public void testDatePeriodUserFilter() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20130102");
-        Parameters.TO_DATE.put(context, "20130102");
-        MetricFilter.USER.put(context, "user1@gmail.com");
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20130102");
+        builder.put(Parameters.TO_DATE, "20130102");
+        builder.put(MetricFilter.USER, "user1@gmail.com");
 
         Metric metric = new TestedUsersAddedToWorkspaces();
-        Map<String, ValueData> values = ((MapValueData)metric.getValue(context)).getAll();
+        Map<String, ValueData> values = ((MapValueData)metric.getValue(builder.build())).getAll();
         assertEquals(values.size(), 1);
         assertEquals(values.get("website"), LongValueData.valueOf(1));
 
         metric = new TestedWebsiteAbstractUsersAddedToWorkspaces();
-        assertEquals(metric.getValue(context), LongValueData.valueOf(1));
+        assertEquals(metric.getValue(builder.build()), LongValueData.valueOf(1));
     }
 
     @Test
     public void testWrongDatePeriod() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20130101");
-        Parameters.TO_DATE.put(context, "20130101");
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20130101");
+        builder.put(Parameters.TO_DATE, "20130101");
 
         Metric metric = new TestedUsersAddedToWorkspaces();
-        Map<String, ValueData> values = ((MapValueData)metric.getValue(context)).getAll();
+        Map<String, ValueData> values = ((MapValueData)metric.getValue(builder.build())).getAll();
         assertEquals(values.size(), 0);
 
         metric = new TestedWebsiteAbstractUsersAddedToWorkspaces();
-        assertEquals(metric.getValue(context), LongValueData.valueOf(0));
+        assertEquals(metric.getValue(builder.build()), LongValueData.valueOf(0));
     }
 
     @Test
     public void testComplexFilter() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20130102");
-        Parameters.TO_DATE.put(context, "20130102");
-        MetricFilter.USER.put(context, "user1@gmail.com,user1@yahoo.com");
-        MetricFilter.WS.put(context, "ws1,ws2");
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20130102");
+        builder.put(Parameters.TO_DATE, "20130102");
+        builder.put(Parameters.USER, "user1@gmail.com,user1@yahoo.com");
+        builder.put(Parameters.WS, "ws1,ws2");
 
         Metric metric = new TestedUsersAddedToWorkspaces();
-        Map<String, ValueData> values = ((MapValueData)metric.getValue(context)).getAll();
+        Map<String, ValueData> values = ((MapValueData)metric.getValue(builder.build())).getAll();
         assertEquals(values.size(), 1);
         assertEquals(values.get("website"), LongValueData.valueOf(1));
 
         metric = new TestedWebsiteAbstractUsersAddedToWorkspaces();
-        assertEquals(metric.getValue(context), LongValueData.valueOf(1));
+        assertEquals(metric.getValue(builder.build()), LongValueData.valueOf(1));
     }
 
     @Test
     public void testComplexFilterWhenAllParamHasTilda() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20130102");
-        Parameters.TO_DATE.put(context, "20130102");
-        MetricFilter.USER.put(context, "~user1@gmail.com,~user2@gmail.com");
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20130102");
+        builder.put(Parameters.TO_DATE, "20130102");
+        builder.put(Parameters.USER, "~user1@gmail.com,~user2@gmail.com");
 
         Metric metric = new TestedUsersAddedToWorkspaces();
-        Map<String, ValueData> values = ((MapValueData)metric.getValue(context)).getAll();
+        Map<String, ValueData> values = ((MapValueData)metric.getValue(builder.build())).getAll();
         assertEquals(values.size(), 1);
         assertEquals(values.get("invite"), LongValueData.valueOf(3));
 
         metric = new TestedInviteAbstractUsersAddedToWorkspaces();
-        assertEquals(metric.getValue(context), LongValueData.valueOf(3));
+        assertEquals(metric.getValue(builder.build()), LongValueData.valueOf(3));
     }
 
     @Test
     public void testComplexFilterWhenSomeParamHasTilda() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20130102");
-        Parameters.TO_DATE.put(context, "20130102");
-        MetricFilter.USER.put(context, "user1@gmail.com,~user3@gmail.com");
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20130102");
+        builder.put(Parameters.TO_DATE, "20130102");
+        builder.put(Parameters.USER, "user1@gmail.com,~user3@gmail.com");
 
         Metric metric = new TestedUsersAddedToWorkspaces();
-        Map<String, ValueData> values = ((MapValueData)metric.getValue(context)).getAll();
+        Map<String, ValueData> values = ((MapValueData)metric.getValue(builder.build())).getAll();
         assertEquals(values.size(), 1);
         assertEquals(values.get("website"), LongValueData.valueOf(1));
 
         metric = new TestedWebsiteAbstractUsersAddedToWorkspaces();
-        assertEquals(metric.getValue(context), LongValueData.valueOf(1));
+        assertEquals(metric.getValue(builder.build()), LongValueData.valueOf(1));
     }
 
     //------------------------- Tested classed

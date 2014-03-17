@@ -17,6 +17,7 @@
  */
 package com.codenvy.analytics.services.reports;
 
+import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.services.configuration.ParameterConfiguration;
 
 import java.io.BufferedReader;
@@ -24,7 +25,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -42,7 +42,7 @@ public class FileStoredRecipientGroup extends AbstractRecipientGroup {
     }
 
     @Override
-    public Set<String> getEmails(Map<String, String> context) throws IOException {
+    public Set<String> getEmails(Context context) throws IOException {
         Set<String> emails = new HashSet<>();
         Set<String> files = getParameters(FILE);
 

@@ -17,10 +17,10 @@
  */
 package com.codenvy.analytics.services.reports;
 
+import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.services.configuration.ParameterConfiguration;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -37,7 +37,7 @@ public class ItemizedRecipientGroup extends AbstractRecipientGroup {
     }
 
     @Override
-    public Set<String> getEmails(Map<String, String> context) {
+    public Set<String> getEmails(Context context) {
         return getParameters(E_MAIL);
     }
 }

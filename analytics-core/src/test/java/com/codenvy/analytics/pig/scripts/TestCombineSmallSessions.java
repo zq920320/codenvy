@@ -21,6 +21,7 @@ package com.codenvy.analytics.pig.scripts;
 
 
 import com.codenvy.analytics.BaseTest;
+import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
@@ -37,7 +38,7 @@ import static org.testng.AssertJUnit.assertEquals;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestCombineSmallSessions extends BaseTest {
 
-    private HashMap<String, String> context = new HashMap<>();
+    private Context context;
 
     @BeforeClass
     public void prepare() throws Exception {
@@ -45,50 +46,51 @@ public class TestCombineSmallSessions extends BaseTest {
 
         // 6m, single big session
         events.add(Event.Builder.createSessionStartedEvent("user1", "ws1", "ide", "1").withDate("2013-01-01")
-                        .withTime("19:00:00").build());
+                                .withTime("19:00:00").build());
         events.add(Event.Builder.createSessionFinishedEvent("user1", "ws1", "ide", "1").withDate("2013-01-01")
-                        .withTime("19:02:00").build());
+                                .withTime("19:02:00").build());
 
         events.add(Event.Builder.createSessionStartedEvent("user1", "ws1", "ide", "2").withDate("2013-01-01")
-                        .withTime("19:03:00").build());
+                                .withTime("19:03:00").build());
         events.add(Event.Builder.createSessionFinishedEvent("user1", "ws1", "ide", "2").withDate("2013-01-01")
-                        .withTime("19:04:00").build());
+                                .withTime("19:04:00").build());
 
         events.add(Event.Builder.createSessionStartedEvent("user1", "ws1", "ide", "3").withDate("2013-01-01")
-                        .withTime("19:05:00").build());
+                                .withTime("19:05:00").build());
         events.add(Event.Builder.createSessionFinishedEvent("user1", "ws1", "ide", "3").withDate("2013-01-01")
-                        .withTime("19:06:00").build());
+                                .withTime("19:06:00").build());
 
         // 2m
         events.add(Event.Builder.createSessionStartedEvent("user2", "ws1", "ide", "5").withDate("2013-01-01")
-                        .withTime("19:20:00").build());
+                                .withTime("19:20:00").build());
         events.add(Event.Builder.createSessionFinishedEvent("user2", "ws1", "ide", "5").withDate("2013-01-01")
-                        .withTime("19:22:00").build());
+                                .withTime("19:22:00").build());
 
         // 5m
         events.add(Event.Builder.createSessionStartedEvent("user3", "ws1", "ide", "6").withDate("2013-01-01")
-                        .withTime("20:00:00").build());
+                                .withTime("20:00:00").build());
         events.add(Event.Builder.createSessionFinishedEvent("user3", "ws1", "ide", "6").withDate("2013-01-01")
-                        .withTime("20:05:00").build());
+                                .withTime("20:05:00").build());
         events.add(Event.Builder.createSessionFinishedEvent("user3", "ws1", "ide", "6").withDate("2013-01-01")
-                        .withTime("20:10:00").build());
+                                .withTime("20:10:00").build());
 
         // 1m
         events.add(Event.Builder.createSessionStartedEvent("user4", "ws1", "ide", "7").withDate("2013-01-01")
-                        .withTime("20:00:00").build());
+                                .withTime("20:00:00").build());
         events.add(Event.Builder.createSessionFinishedEvent("user4", "ws1", "ide", "7").withDate("2013-01-01")
-                        .withTime("20:00:30").build());
+                                .withTime("20:00:30").build());
 
 
         File log = LogGenerator.generateLog(events);
 
-        context = new HashMap<>();
-        Parameters.LOG.put(context, log.getAbsolutePath());
-        Parameters.WS.put(context, Parameters.WS_TYPES.ANY.name());
-        Parameters.USER.put(context, Parameters.USER_TYPES.ANY.name());
-        Parameters.FROM_DATE.put(context, "20130101");
-        Parameters.TO_DATE.put(context, "20130101");
-        Parameters.STORAGE_TABLE.put(context, "fake");
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20130101");
+        builder.put(Parameters.TO_DATE, "20130101");
+        builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.name());
+        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
+        builder.put(Parameters.STORAGE_TABLE, "fake");
+        builder.put(Parameters.LOG, log.getAbsolutePath());
+        context = builder.build();
     }
 
     @Test

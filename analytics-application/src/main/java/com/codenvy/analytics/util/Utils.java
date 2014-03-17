@@ -34,10 +34,10 @@ public class Utils {
 
     private static final Pattern ADMIN_ROLE_EMAIL_PATTERN = Pattern.compile("@codenvy[.]com$");
 
-    public static Map<String, String> extractContext(UriInfo info,
-                                                     String page,
-                                                     String perPage,
-                                                     SecurityContext securityContext) {
+    public static Map<String, String> extractParams(UriInfo info,
+                                                    String page,
+                                                    String perPage,
+                                                    SecurityContext securityContext) {
 
         MultivaluedMap<String, String> parameters = info.getQueryParameters();
         Map<String, String> context = new HashMap<>(parameters.size());
@@ -49,8 +49,8 @@ public class Utils {
         return context;
     }
 
-    public static Map<String, String> extractContext(UriInfo info, SecurityContext securityContext) {
-        return extractContext(info, null, null, securityContext);
+    public static Map<String, String> extractParams(UriInfo info, SecurityContext securityContext) {
+        return extractParams(info, null, null, securityContext);
     }
 
     public static boolean isRolesAllowed(MetricInfoDTO metricInfoDTO, SecurityContext securityContext) {

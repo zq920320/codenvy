@@ -22,6 +22,7 @@ import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.StringValueData;
 import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.Parameters;
 
@@ -40,7 +41,7 @@ import static org.testng.Assert.assertEquals;
  */
 public class TestTimeFieldsMetricRow extends BaseTest {
 
-    private Map<String, String> context;
+    private Context             context;
     private Map<String, String> parameters;
 
     @BeforeClass
@@ -118,7 +119,7 @@ public class TestTimeFieldsMetricRow extends BaseTest {
         }
 
         @Override
-        public ValueData getValue(Map<String, String> context) throws IOException {
+        public ValueData getValue(Context context) throws IOException {
             return LongValueData.valueOf(value);
         }
 

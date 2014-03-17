@@ -18,7 +18,6 @@
 package com.codenvy.analytics.pig.scripts;
 
 import com.codenvy.analytics.BaseTest;
-import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.SetValueData;
 import com.codenvy.analytics.datamodel.StringValueData;
@@ -35,7 +34,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import static org.testng.Assert.assertEquals;
 
@@ -46,8 +44,6 @@ public class TestActiveEntitiesList extends BaseTest {
 
     @BeforeClass
     public void init() throws Exception {
-        Map<String, String> params = Utils.newContext();
-
         List<Event> events = new ArrayList<>();
         events.add(Event.Builder.createTenantCreatedEvent("ws1", "user1@gmail.com")
                                 .withDate("2013-01-01")
@@ -63,14 +59,14 @@ public class TestActiveEntitiesList extends BaseTest {
                                 .build());
         File log = LogGenerator.generateLog(events);
 
-        Parameters.FROM_DATE.put(params, "20130101");
-        Parameters.TO_DATE.put(params, "20130101");
-        Parameters.USER.put(params, Parameters.USER_TYPES.REGISTERED.name());
-        Parameters.WS.put(params, Parameters.WS_TYPES.PERSISTENT.name());
-        Parameters.STORAGE_TABLE.put(params, COLLECTION);
-        Parameters.LOG.put(params, log.getAbsolutePath());
-
-        pigServer.execute(ScriptType.USERS_ACTIVITY, params);
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20130101");
+        builder.put(Parameters.TO_DATE, "20130101");
+        builder.put(Parameters.USER, Parameters.USER_TYPES.REGISTERED.name());
+        builder.put(Parameters.WS, Parameters.WS_TYPES.PERSISTENT.name());
+        builder.put(Parameters.STORAGE_TABLE, COLLECTION);
+        builder.put(Parameters.LOG, log.getAbsolutePath());
+        pigServer.execute(ScriptType.USERS_ACTIVITY, builder.build());
 
         events = new ArrayList<>();
         events.add(Event.Builder.createTenantCreatedEvent("ws2", "user2@gmail.com")
@@ -87,86 +83,90 @@ public class TestActiveEntitiesList extends BaseTest {
                                 .build());
         log = LogGenerator.generateLog(events);
 
-        Parameters.FROM_DATE.put(params, "20130102");
-        Parameters.TO_DATE.put(params, "20130102");
-        Parameters.LOG.put(params, log.getAbsolutePath());
-
-        pigServer.execute(ScriptType.USERS_ACTIVITY, params);
+        builder.put(Parameters.FROM_DATE, "20130102");
+        builder.put(Parameters.TO_DATE, "20130102");
+        builder.put(Parameters.LOG, log.getAbsolutePath());
+        pigServer.execute(ScriptType.USERS_ACTIVITY, builder.build());
     }
 
     @Test
     public void testSingleDateFilter() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20130101");
-        Parameters.TO_DATE.put(context, "20130101");
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20130101");
+        builder.put(Parameters.TO_DATE, "20130101");
 
         Metric metric = new TestedSetValueResulted();
-        assertEquals(metric.getValue(context), new SetValueData(Arrays.<ValueData>asList(new StringValueData("ws1"),
-                                                                                         new StringValueData("ws2"))));
+        assertEquals(metric.getValue(builder.build()),
+                     new SetValueData(Arrays.<ValueData>asList(new StringValueData("ws1"),
+                                                               new StringValueData("ws2"))));
         metric = new TestedActiveUsersMetric();
-        assertEquals(metric.getValue(context), new LongValueData(2));
+        assertEquals(metric.getValue(builder.build()), new LongValueData(2));
     }
 
     @Test
     public void testDatePeriodFilter() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20130101");
-        Parameters.TO_DATE.put(context, "20130102");
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20130101");
+        builder.put(Parameters.TO_DATE, "20130102");
 
         Metric metric = new TestedSetValueResulted();
-        assertEquals(metric.getValue(context), new SetValueData(Arrays.<ValueData>asList(new StringValueData("ws1"),
-                                                                                         new StringValueData("ws2"),
-                                                                                         new StringValueData("ws3"),
-                                                                                         new StringValueData("ws4"))));
+        assertEquals(metric.getValue(builder.build()),
+                     new SetValueData(Arrays.<ValueData>asList(new StringValueData("ws1"),
+                                                               new StringValueData("ws2"),
+                                                               new StringValueData("ws3"),
+                                                               new StringValueData("ws4"))));
 
         metric = new TestedActiveUsersMetric();
-        assertEquals(metric.getValue(context), new LongValueData(3));
+        assertEquals(metric.getValue(builder.build()), new LongValueData(3));
     }
 
     @Test
     public void testSingleUserFilter() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20130101");
-        Parameters.TO_DATE.put(context, "20130102");
-        MetricFilter.USER.put(context, "user1@gmail.com");
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20130101");
+        builder.put(Parameters.TO_DATE, "20130102");
+        builder.put(Parameters.USER, "user1@gmail.com");
 
         Metric metric = new TestedSetValueResulted();
-        assertEquals(metric.getValue(context), new SetValueData(Arrays.<ValueData>asList(new StringValueData("ws1"),
-                                                                                         new StringValueData("ws3"))));
+        assertEquals(metric.getValue(builder.build()),
+                     new SetValueData(Arrays.<ValueData>asList(new StringValueData("ws1"),
+                                                               new StringValueData("ws3"))));
 
         metric = new TestedActiveUsersMetric();
-        assertEquals(metric.getValue(context), new LongValueData(1));
+        assertEquals(metric.getValue(builder.build()), new LongValueData(1));
     }
 
     @Test
     public void testDoubleUserFilter() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20130101");
-        Parameters.TO_DATE.put(context, "20130102");
-        MetricFilter.USER.put(context, "user1@gmail.com,user2@gmail.com");
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20130101");
+        builder.put(Parameters.TO_DATE, "20130102");
+        builder.put(Parameters.USER, "user1@gmail.com,user2@gmail.com");
 
         Metric metric = new TestedSetValueResulted();
-        assertEquals(metric.getValue(context), new SetValueData(Arrays.<ValueData>asList(new StringValueData("ws1"),
-                                                                                         new StringValueData("ws2"),
-                                                                                         new StringValueData("ws3"))));
+        assertEquals(metric.getValue(builder.build()),
+                     new SetValueData(Arrays.<ValueData>asList(new StringValueData("ws1"),
+                                                               new StringValueData("ws2"),
+                                                               new StringValueData("ws3"))));
 
         metric = new TestedActiveUsersMetric();
-        assertEquals(metric.getValue(context), new LongValueData(2));
+        assertEquals(metric.getValue(builder.build()), new LongValueData(2));
     }
 
     @Test
     public void testSeveralFilter() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20130101");
-        Parameters.TO_DATE.put(context, "20130102");
-        MetricFilter.USER.put(context, "user1@gmail.com,user2@gmail.com");
-        MetricFilter.WS.put(context, "ws2");
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20130101");
+        builder.put(Parameters.TO_DATE, "20130102");
+        builder.put(Parameters.USER, "user1@gmail.com,user2@gmail.com");
+        builder.put(Parameters.WS, "ws2");
 
         Metric metric = new TestedSetValueResulted();
-        assertEquals(metric.getValue(context), new SetValueData(Arrays.<ValueData>asList(new StringValueData("ws2"))));
+        assertEquals(metric.getValue(builder.build()),
+                     new SetValueData(Arrays.<ValueData>asList(new StringValueData("ws2"))));
 
         metric = new TestedActiveUsersMetric();
-        assertEquals(metric.getValue(context), new LongValueData(1));
+        assertEquals(metric.getValue(builder.build()), new LongValueData(1));
     }
 
     // =======================> Tested Metrics
@@ -217,7 +217,7 @@ public class TestActiveEntitiesList extends BaseTest {
         }
 
         @Override
-        public DBObject[] getSpecificDBOperations(Map<String, String> clauses) {
+        public DBObject[] getSpecificDBOperations(Context clauses) {
             return new DBObject[0];
         }
 

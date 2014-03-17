@@ -18,7 +18,7 @@
 package com.codenvy.analytics.services.reports;
 
 import com.codenvy.analytics.Configurator;
-import com.codenvy.analytics.Utils;
+import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.services.configuration.ParameterConfiguration;
 import com.codenvy.analytics.services.configuration.ParametersConfiguration;
 import com.codenvy.analytics.services.configuration.XmlConfigurationManager;
@@ -30,7 +30,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
@@ -48,14 +47,14 @@ public class RecipientsHolder {
     }
 
     public Set<String> getEmails(String groupName) throws IOException {
-        return doGetEmails(groupName, Utils.newContext());
+        return doGetEmails(groupName, new Context.Builder().build());
     }
 
-    public Set<String> getEmails(String groupName, Map<String, String> context) throws IOException {
+    public Set<String> getEmails(String groupName, Context context) throws IOException {
         return doGetEmails(groupName, context);
     }
 
-    protected Set<String> doGetEmails(String groupName, Map<String, String> context) throws IOException {
+    protected Set<String> doGetEmails(String groupName, Context context) throws IOException {
         try {
             for (GroupConfiguration groupConf : configuration.getGroups()) {
                 if (groupConf.getName().equals(groupName)) {

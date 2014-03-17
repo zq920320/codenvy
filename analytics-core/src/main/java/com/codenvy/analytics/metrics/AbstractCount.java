@@ -24,7 +24,6 @@ import com.mongodb.DBObject;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public abstract class AbstractCount extends ReadBasedMetric {
@@ -56,12 +55,12 @@ public abstract class AbstractCount extends ReadBasedMetric {
     }
 
     @Override
-    public DBObject getFilter(Map<String, String> clauses) throws IOException, ParseException {
+    public DBObject getFilter(Context clauses) throws IOException, ParseException {
         return basedMetric.getFilter(clauses);
     }
 
     @Override
-    public DBObject[] getSpecificDBOperations(Map<String, String> clauses) {
+    public DBObject[] getSpecificDBOperations(Context clauses) {
         DBObject group = new BasicDBObject();
         group.put(ID, null);
         group.put(VALUE, new BasicDBObject("$sum", 1));

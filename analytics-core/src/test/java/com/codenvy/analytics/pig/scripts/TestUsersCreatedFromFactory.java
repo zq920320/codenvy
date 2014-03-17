@@ -18,8 +18,8 @@
 package com.codenvy.analytics.pig.scripts;
 
 import com.codenvy.analytics.BaseTest;
-import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.LongValueData;
+import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.Parameters;
@@ -31,39 +31,33 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static org.testng.Assert.assertEquals;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestUsersCreatedFromFactory extends BaseTest {
 
-    private Map<String, String>   params;
-
     @BeforeClass
     public void prepare() throws Exception {
-        params = Utils.newContext();
-
         List<Event> events = new ArrayList<>();
 
         events.add(
                 Event.Builder.createFactoryUrlAcceptedEvent("tmp-1", "factoryUrl1", "referrer1", "org1", "affiliate1")
-                     .withDate("2013-01-01").withTime("11:00:00").build());
+                             .withDate("2013-01-01").withTime("11:00:00").build());
 
         events.add(Event.Builder.createUserAddedToWsEvent("", "", "", "tmp-1", "Anonymoususer_1", "website")
-                        .withDate("2013-01-01").build());
+                                .withDate("2013-01-01").build());
 
         events.add(Event.Builder.createUserChangedNameEvent("user1@gmail.com", "user3@gmail.com").withDate("2013-01-01")
-                        .build());
+                                .build());
         events.add(Event.Builder.createUserChangedNameEvent("Anonymoususer_2", "user5@gmail.com").withDate("2013-01-01")
-                        .build());
+                                .build());
         events.add(Event.Builder.createUserChangedNameEvent("Anonymoususer_1", "user4@gmail.com").withDate("2013-01-01")
-                        .build());
+                                .build());
         events.add(Event.Builder.createUserChangedNameEvent("Anonymoususer_2", "user5@gmail.com").withDate("2013-01-01")
-                        .build());
+                                .build());
 
         events.add(Event.Builder.createUserCreatedEvent("user-id1", "user3@gmail.com").withDate("2013-01-01").build());
         events.add(Event.Builder.createUserCreatedEvent("user-id2", "user4@gmail.com").withDate("2013-01-01").build());
@@ -73,57 +67,57 @@ public class TestUsersCreatedFromFactory extends BaseTest {
 
         File log = LogGenerator.generateLog(events);
 
-        Parameters.LOG.put(params, log.getAbsolutePath());
-        Parameters.FROM_DATE.put(params, "20130101");
-        Parameters.TO_DATE.put(params, "20130101");
-        Parameters.USER.put(params, Parameters.USER_TYPES.ANY.name());
-        Parameters.WS.put(params, Parameters.WS_TYPES.ANY.name());
-        Parameters.STORAGE_TABLE.put(params, "testuserscreatedfromfactory");
-
-        pigServer.execute(ScriptType.CREATED_USERS_FROM_FACTORY, params);
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20130101");
+        builder.put(Parameters.TO_DATE, "20130101");
+        builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.name());
+        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
+        builder.put(Parameters.STORAGE_TABLE, "testuserscreatedfromfactory");
+        builder.put(Parameters.LOG, log.getAbsolutePath());
+        pigServer.execute(ScriptType.CREATED_USERS_FROM_FACTORY, builder.build());
     }
 
     @Test
     public void shouldReturnAllUsers() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20130101");
-        Parameters.TO_DATE.put(context, "20130101");
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20130101");
+        builder.put(Parameters.TO_DATE, "20130101");
 
         Metric metric = new TestedUsersCreatedFromFactory();
-        assertEquals(metric.getValue(context), LongValueData.valueOf(1));
+        assertEquals(metric.getValue(builder.build()), LongValueData.valueOf(1));
     }
 
     @Test
     public void shouldReturnAllUsersForSpecificOrgId() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20130101");
-        Parameters.TO_DATE.put(context, "20130101");
-        MetricFilter.ORG_ID.put(context, "org1");
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20130101");
+        builder.put(Parameters.TO_DATE, "20130101");
+        builder.put(MetricFilter.ORG_ID, "org1");
 
         Metric metric = new TestedUsersCreatedFromFactory();
-        assertEquals(metric.getValue(context), LongValueData.valueOf(1));
+        assertEquals(metric.getValue(builder.build()), LongValueData.valueOf(1));
     }
 
     @Test
     public void shouldReturnAllUsersForSpecificAffiliateId() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20130101");
-        Parameters.TO_DATE.put(context, "20130101");
-        MetricFilter.AFFILIATE_ID.put(context, "affiliate1");
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20130101");
+        builder.put(Parameters.TO_DATE, "20130101");
+        builder.put(MetricFilter.AFFILIATE_ID, "affiliate1");
 
         Metric metric = new TestedUsersCreatedFromFactory();
-        assertEquals(metric.getValue(context), LongValueData.valueOf(1));
+        assertEquals(metric.getValue(builder.build()), LongValueData.valueOf(1));
     }
 
     @Test
     public void shouldNotReturnAllUsersForSpecificAffiliateId() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20130101");
-        Parameters.TO_DATE.put(context, "20130101");
-        MetricFilter.AFFILIATE_ID.put(context, "affiliate2");
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20130101");
+        builder.put(Parameters.TO_DATE, "20130101");
+        builder.put(MetricFilter.AFFILIATE_ID, "affiliate2");
 
         Metric metric = new TestedUsersCreatedFromFactory();
-        assertEquals(metric.getValue(context), LongValueData.valueOf(0));
+        assertEquals(metric.getValue(builder.build()), LongValueData.valueOf(0));
     }
 
     private class TestedUsersCreatedFromFactory extends CreatedUsersFromFactory {

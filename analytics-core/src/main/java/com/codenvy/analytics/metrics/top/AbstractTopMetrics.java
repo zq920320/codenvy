@@ -17,9 +17,9 @@
  */
 package com.codenvy.analytics.metrics.top;
 
-import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.ReadBasedMetric;
@@ -30,7 +30,6 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Map;
 
 /** @author <a href="mailto:dnochevnov@codenvy.com">Dmytro Nochevnov</a> */
 public abstract class AbstractTopMetrics extends ReadBasedMetric {
@@ -51,24 +50,25 @@ public abstract class AbstractTopMetrics extends ReadBasedMetric {
     }
 
     @Override
-    protected Map<String, String> modifyContext(Map<String, String> context) throws IOException {
-        context = Utils.clone(context);
-        Parameters.TO_DATE.putDefaultValue(context);
+    protected Context modifyContext(Context context) throws IOException {
+        Context.Builder builder = new Context.Builder();
+        builder.putAll(context);
+        builder.putDefaultValue(Parameters.TO_DATE);
 
         if (this.dayCount == LIFE_TIME_PERIOD) {
-            Parameters.FROM_DATE.putDefaultValue(context);
+            builder.putDefaultValue(Parameters.FROM_DATE);
         } else {
             try {
-                Calendar date = Utils.getToDate(context);
+                Calendar date = context.getAsDate(Parameters.TO_DATE);
                 date.add(Calendar.DAY_OF_MONTH, 1 - dayCount);
 
-                Utils.putFromDate(context, date);
+                builder.put(Parameters.FROM_DATE, date);
             } catch (ParseException e) {
                 throw new IOException(e);
             }
         }
 
-        return context;
+        return builder.build();
     }
 
     /** @return mongodb operation (100% * (subjectField / predicateField)) */
@@ -81,9 +81,7 @@ public abstract class AbstractTopMetrics extends ReadBasedMetric {
         multiplyArgs.add(100);
         multiplyArgs.add(new BasicDBObject("$divide", divideArgs));
 
-        BasicDBObject rateOperation = new BasicDBObject("$multiply", multiplyArgs);
-
-        return rateOperation;
+        return new BasicDBObject("$multiply", multiplyArgs);
     }
 
     /** @return mongodb operation (arg1 - arg2Field) */
@@ -92,9 +90,7 @@ public abstract class AbstractTopMetrics extends ReadBasedMetric {
         subtractArgs.add(arg1);
         subtractArgs.add(arg2Field);
 
-        BasicDBObject subtractOperation = new BasicDBObject("$subtract", subtractArgs);
-
-        return subtractOperation;
+        return new BasicDBObject("$subtract", subtractArgs);
     }
 
     protected BasicDBObject getAndOperation(BasicDBObject... predicates) {
@@ -102,8 +98,6 @@ public abstract class AbstractTopMetrics extends ReadBasedMetric {
 
         Collections.addAll(andArgs, predicates);
 
-        BasicDBObject andOperation = new BasicDBObject("$and", andArgs);
-
-        return andOperation;
+        return new BasicDBObject("$and", andArgs);
     }
 }

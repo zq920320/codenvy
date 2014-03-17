@@ -22,10 +22,7 @@ package com.codenvy.analytics.services.view;
 import com.codenvy.analytics.Injector;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.*;
-import com.codenvy.analytics.metrics.InitialValueNotFoundException;
-import com.codenvy.analytics.metrics.Metric;
-import com.codenvy.analytics.metrics.MetricFactory;
-import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.pig.scripts.EventsHolder;
 
 import java.io.IOException;
@@ -160,7 +157,7 @@ public class MetricRow extends AbstractRow {
     }
 
     @Override
-    public List<List<ValueData>> getData(Map<String, String> initialContext, int iterationsCount) throws IOException {
+    public List<List<ValueData>> getData(Context initialContext, int iterationsCount) throws IOException {
         try {
             if (isMultipleColumnsMetric()) {
                 return getMultipleValues(initialContext);
@@ -176,7 +173,7 @@ public class MetricRow extends AbstractRow {
         return metric.getValueDataClass() == ListValueData.class;
     }
 
-    private List<List<ValueData>> getSingleValue(Map<String, String> initialContext,
+    private List<List<ValueData>> getSingleValue(Context initialContext,
                                                  int iterationsCount) throws IOException,
                                                                              ParseException {
         List<ValueData> result = new ArrayList<>();
@@ -193,7 +190,7 @@ public class MetricRow extends AbstractRow {
                 formatAndAddSingleValue(DoubleValueData.DEFAULT, result);
             }
 
-            initialContext = Utils.prevDateInterval(initialContext);
+            initialContext = Utils.prevDateInterval(new Context.Builder(initialContext));
         }
 
         return Arrays.asList(result);
@@ -229,9 +226,9 @@ public class MetricRow extends AbstractRow {
         }
     }
 
-    private List<List<ValueData>> getMultipleValues(Map<String, String> initialContext) throws
-                                                                                        IOException,
-                                                                                        ParseException {
+    private List<List<ValueData>> getMultipleValues(Context initialContext) throws
+                                                                            IOException,
+                                                                            ParseException {
         List<List<ValueData>> result = new ArrayList<>();
         formatAndAddMultipleValues(getMetricValue(initialContext), result);
 
@@ -318,12 +315,11 @@ public class MetricRow extends AbstractRow {
         return StringValueData.valueOf(format);
     }
 
-    protected ValueData getMetricValue(Map<String, String> context) throws IOException {
+    protected ValueData getMetricValue(Context context) throws IOException {
         if (parameters.containsKey(SET_FROM_DATE_TO_DEFAULT_VALUE)
             && Boolean.parseBoolean(parameters.get(SET_FROM_DATE_TO_DEFAULT_VALUE))) {
 
-            context = Utils.clone(context);
-            Parameters.FROM_DATE.putDefaultValue(context);
+            context = context.cloneAndPut(Parameters.FROM_DATE, Parameters.FROM_DATE.getDefaultValue());
         }
 
         return metric.getValue(context);

@@ -20,11 +20,11 @@ package com.codenvy.analytics.metrics.users;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.CalculatedMetric;
+import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricType;
 
 import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
-import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
@@ -36,7 +36,7 @@ public class UsersAcceptedInvites extends CalculatedMetric {
     }
 
     @Override
-    public ValueData getValue(Map<String, String> context) throws IOException {
+    public ValueData getValue(Context context) throws IOException {
         return basedMetric[0].getValue(context);
     }
 

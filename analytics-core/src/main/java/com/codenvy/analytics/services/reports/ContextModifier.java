@@ -17,7 +17,7 @@
  */
 package com.codenvy.analytics.services.reports;
 
-import java.util.Map;
+import com.codenvy.analytics.metrics.Context;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public interface ContextModifier {
@@ -29,5 +29,5 @@ public interface ContextModifier {
      *         the execution context, contains {@link com.codenvy.analytics.metrics.Parameters#RECIPIENT} as
      * @return
      */
-    Map<String, String> update(Map<String, String> context);
+    Context update(Context context);
 }

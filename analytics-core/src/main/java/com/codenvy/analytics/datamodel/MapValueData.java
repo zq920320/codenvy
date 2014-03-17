@@ -48,12 +48,10 @@ public class MapValueData extends AbstractValueData {
         return Collections.unmodifiableMap(value);
     }
 
-    /** {@inheritDoc} */
     public int size() {
         return value.size();
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getAsString() {
         StringBuilder builder = new StringBuilder();
@@ -79,13 +77,11 @@ public class MapValueData extends AbstractValueData {
         return builder.toString();
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getType() {
         return ValueDataTypes.MAP.toString();
     }
 
-    /** {@inheritDoc} */
     @Override
     protected ValueData doUnion(ValueData valueData) {
         MapValueData object = (MapValueData)valueData;
@@ -104,19 +100,16 @@ public class MapValueData extends AbstractValueData {
         return new MapValueData(result);
     }
 
-    /** {@inheritDoc} */
     @Override
     protected boolean doEquals(ValueData valueData) {
         return value.equals(((MapValueData)valueData).value);
     }
 
-    /** {@inheritDoc} */
     @Override
     public int doHashCode() {
         return value.hashCode();
     }
 
-    /** {@inheritDoc} */
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
         out.writeInt(value.size());
@@ -126,7 +119,6 @@ public class MapValueData extends AbstractValueData {
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         int size = in.readInt();

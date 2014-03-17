@@ -21,6 +21,7 @@ package com.codenvy.analytics.services.view;
 
 import com.codenvy.analytics.datamodel.StringValueData;
 import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.metrics.Context;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -36,7 +37,7 @@ class EmptyRow extends AbstractRow {
     }
 
     @Override
-    public List<List<ValueData>> getData(Map<String, String> initialContext, int iterationsCount) throws IOException {
+    public List<List<ValueData>> getData(Context initialContext, int iterationsCount) throws IOException {
         List<ValueData> result = new ArrayList<>(iterationsCount);
 
         for (int i = 0; i < iterationsCount; i++) {

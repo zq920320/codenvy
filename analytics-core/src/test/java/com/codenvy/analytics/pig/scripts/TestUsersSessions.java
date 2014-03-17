@@ -18,11 +18,11 @@
 package com.codenvy.analytics.pig.scripts;
 
 import com.codenvy.analytics.BaseTest;
-import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.StringValueData;
+import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.Parameters;
@@ -37,7 +37,6 @@ import org.testng.annotations.Test;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static org.testng.Assert.assertEquals;
 
@@ -50,8 +49,6 @@ public class TestUsersSessions extends BaseTest {
 
     @BeforeClass
     public void prepare() throws Exception {
-        Map<String, String> params = Utils.newContext();
-
         List<Event> events = new ArrayList<>();
 
         // sessions #1 - 240s
@@ -84,34 +81,33 @@ public class TestUsersSessions extends BaseTest {
 
         File log = LogGenerator.generateLog(events);
 
-        Parameters.FROM_DATE.put(params, "20131101");
-        Parameters.TO_DATE.put(params, "20131101");
-        Parameters.USER.put(params, Parameters.USER_TYPES.ANY.name());
-        Parameters.WS.put(params, Parameters.WS_TYPES.ANY.name());
-        Parameters.STORAGE_TABLE.put(params, COLLECTION_PROFILES);
-        Parameters.LOG.put(params, log.getAbsolutePath());
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20131101");
+        builder.put(Parameters.TO_DATE, "20131101");
+        builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.name());
+        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
+        builder.put(Parameters.STORAGE_TABLE, COLLECTION_PROFILES);
+        builder.put(Parameters.LOG, log.getAbsolutePath());
+        pigServer.execute(ScriptType.USERS_UPDATE_PROFILES, builder.build());
 
-        pigServer.execute(ScriptType.USERS_UPDATE_PROFILES, params);
-
-        Parameters.STORAGE_TABLE.put(params, COLLECTION);
-        Parameters.STORAGE_TABLE_USERS_STATISTICS.put(params, COLLECTION_STATS);
-        Parameters.STORAGE_TABLE_USERS_PROFILES.put(params, COLLECTION_PROFILES);
-        Parameters.LOG.put(params, log.getAbsolutePath());
-
-        pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, params);
+        builder.put(Parameters.STORAGE_TABLE, COLLECTION);
+        builder.put(Parameters.STORAGE_TABLE_USERS_STATISTICS, COLLECTION_STATS);
+        builder.put(Parameters.STORAGE_TABLE_USERS_PROFILES, COLLECTION_PROFILES);
+        builder.put(Parameters.LOG, log.getAbsolutePath());
+        pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, builder.build());
     }
 
     @Test
     public void shouldReturnSessionsListForAnonUser() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20131101");
-        Parameters.TO_DATE.put(context, "20131101");
-        Parameters.SORT.put(context, "+date");
-        MetricFilter.USER.put(context, "ANONYMOUSUSER_user11");
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20131101");
+        builder.put(Parameters.TO_DATE, "20131101");
+        builder.put(Parameters.SORT, "+date");
+        builder.put(MetricFilter.USER, "ANONYMOUSUSER_user11");
 
         Metric metric = new TestProductUsageSessionsList();
 
-        ListValueData valueData = (ListValueData)metric.getValue(context);
+        ListValueData valueData = (ListValueData)metric.getValue(builder.build());
         assertEquals(2, valueData.size());
 
         MapValueData items = (MapValueData)valueData.getAll().get(0);
@@ -139,19 +135,19 @@ public class TestUsersSessions extends BaseTest {
         assertEquals(items.getAll().get("logout_interval"), LongValueData.valueOf(0));
 
         metric = new TestProductUsageSessions();
-        assertEquals(metric.getValue(context), LongValueData.valueOf(2));
+        assertEquals(metric.getValue(builder.build()), LongValueData.valueOf(2));
     }
 
     @Test
     public void shouldReturnSessionsListForRegisteredUser() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20131101");
-        Parameters.TO_DATE.put(context, "20131101");
-        MetricFilter.USER.put(context, "user@gmail.com");
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20131101");
+        builder.put(Parameters.TO_DATE, "20131101");
+        builder.put(MetricFilter.USER, "user@gmail.com");
 
         Metric metric = new TestProductUsageSessionsList();
 
-        ListValueData valueData = (ListValueData)metric.getValue(context);
+        ListValueData valueData = (ListValueData)metric.getValue(builder.build());
         assertEquals(1, valueData.size());
 
         MapValueData items = (MapValueData)valueData.getAll().get(0);
@@ -167,23 +163,23 @@ public class TestUsersSessions extends BaseTest {
         assertEquals(items.getAll().get("logout_interval"), LongValueData.valueOf(60 * 1000));
 
         metric = new TestProductUsageSessions();
-        assertEquals(metric.getValue(context), LongValueData.valueOf(1));
+        assertEquals(metric.getValue(builder.build()), LongValueData.valueOf(1));
     }
 
     @Test
     public void shouldReturnEmptyList() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20131101");
-        Parameters.TO_DATE.put(context, "20131101");
-        MetricFilter.USER.put(context, "user@gmail");
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20131101");
+        builder.put(Parameters.TO_DATE, "20131101");
+        builder.put(MetricFilter.USER, "user@gmail");
 
         Metric metric = new TestProductUsageSessionsList();
 
-        ListValueData valueData = (ListValueData)metric.getValue(context);
+        ListValueData valueData = (ListValueData)metric.getValue(builder.build());
         assertEquals(0, valueData.size());
 
         metric = new TestProductUsageSessions();
-        assertEquals(metric.getValue(context).getAsString(), "0");
+        assertEquals(metric.getValue(builder.build()).getAsString(), "0");
     }
 
     //----------------- Tested Metrics

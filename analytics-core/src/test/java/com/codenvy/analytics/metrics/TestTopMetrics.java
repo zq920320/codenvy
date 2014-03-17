@@ -18,7 +18,6 @@
 package com.codenvy.analytics.metrics;
 
 import com.codenvy.analytics.BaseTest;
-import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
@@ -38,7 +37,6 @@ import org.testng.annotations.Test;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static org.testng.Assert.assertEquals;
 
@@ -50,8 +48,6 @@ public class TestTopMetrics extends BaseTest {
 
     @BeforeClass
     public void init() throws Exception {
-        Map<String, String> params = Utils.newContext();
-
         List<Event> events = new ArrayList<>();
         events.add(Event.Builder.createSessionFactoryStartedEvent("id1", "tmp-1", "user1", "true", "brType")
                                 .withDate("2013-02-10").withTime("10:00:00").build());
@@ -116,29 +112,31 @@ public class TestTopMetrics extends BaseTest {
 
         File log = LogGenerator.generateLog(events);
 
-        Parameters.FROM_DATE.put(params, "20130210");
-        Parameters.TO_DATE.put(params, "20130210");
-        Parameters.USER.put(params, Parameters.USER_TYPES.ANY.name());
-        Parameters.WS.put(params, Parameters.WS_TYPES.ANY.name());
-        Parameters.STORAGE_TABLE.put(params, COLLECTION_ACCEPTED);
-        Parameters.LOG.put(params, log.getAbsolutePath());
-        pigServer.execute(ScriptType.ACCEPTED_FACTORIES, params);
 
-        Parameters.WS.put(params, Parameters.WS_TYPES.TEMPORARY.name());
-        Parameters.STORAGE_TABLE.put(params, COLLECTION);
-        pigServer.execute(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, params);
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20130210");
+        builder.put(Parameters.TO_DATE, "20130210");
+        builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.name());
+        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
+        builder.put(Parameters.STORAGE_TABLE, COLLECTION_ACCEPTED);
+        builder.put(Parameters.LOG, log.getAbsolutePath());
+        pigServer.execute(ScriptType.ACCEPTED_FACTORIES, builder.build());
+
+        builder.put(Parameters.WS, Parameters.WS_TYPES.TEMPORARY.name());
+        builder.put(Parameters.STORAGE_TABLE, COLLECTION);
+        pigServer.execute(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, builder.build());
     }
 
     @Test
     public void testAbstractTopSessions() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20130210");
-        Parameters.TO_DATE.put(context, "20130210");
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20130210");
+        builder.put(Parameters.TO_DATE, "20130210");
 
         AbstractTopSessions metric = new TestAbstractTopSessions(MetricType.TOP_FACTORY_SESSIONS_BY_LIFETIME,
                                                                  AbstractTopMetrics.LIFE_TIME_PERIOD);
 
-        ListValueData value = (ListValueData)metric.getValue(context);
+        ListValueData value = (ListValueData)metric.getValue(builder.build());
 
         assertEquals(value.size(), 3);
 
@@ -150,14 +148,14 @@ public class TestTopMetrics extends BaseTest {
 
     @Test
     public void testAbstractTopFactories() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20130210");
-        Parameters.TO_DATE.put(context, "20130210");
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20130210");
+        builder.put(Parameters.TO_DATE, "20130210");
 
         AbstractTopMetrics metric =
                 new TestAbstractTopFactories(MetricType.TOP_FACTORIES_BY_LIFETIME, AbstractTopMetrics.LIFE_TIME_PERIOD);
 
-        ListValueData value = (ListValueData)metric.getValue(context);
+        ListValueData value = (ListValueData)metric.getValue(builder.build());
 
         assertEquals(value.size(), 2);
 
@@ -214,14 +212,14 @@ public class TestTopMetrics extends BaseTest {
 
     @Test
     public void testAbstractTopReferrers() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20130210");
-        Parameters.TO_DATE.put(context, "20130210");
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20130210");
+        builder.put(Parameters.TO_DATE, "20130210");
 
         AbstractTopMetrics metric =
                 new TestAbstractTopReferrers(MetricType.TOP_REFERRERS_BY_LIFETIME, AbstractTopMetrics.LIFE_TIME_PERIOD);
 
-        ListValueData value = (ListValueData)metric.getValue(context);
+        ListValueData value = (ListValueData)metric.getValue(builder.build());
 
         assertEquals(value.size(), 2);
 
@@ -237,27 +235,27 @@ public class TestTopMetrics extends BaseTest {
 
     @Test
     public void testFactoriesRun() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20130210");
-        Parameters.TO_DATE.put(context, "20130210");
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20130210");
+        builder.put(Parameters.TO_DATE, "20130210");
 
         Metric metric = new TestFactoriesRun();
-        assertEquals(metric.getValue(context).getAsString(), "1");
+        assertEquals(metric.getValue(builder.build()).getAsString(), "1");
     }
 
     @Test
     public void testFactoriesRunWithFilter() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20130210");
-        Parameters.TO_DATE.put(context, "20130210");
-        MetricFilter.FACTORY.put(context, "factoryUrl0");
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20130210");
+        builder.put(Parameters.TO_DATE, "20130210");
+        builder.put(MetricFilter.FACTORY, "factoryUrl0");
 
         Metric metric = new TestFactoriesRun();
-        assertEquals(metric.getValue(context).getAsString(), "1");
+        assertEquals(metric.getValue(builder.build()).getAsString(), "1");
 
-        MetricFilter.FACTORY.put(context, "factoryUrl1");
+        builder.put(MetricFilter.FACTORY, "factoryUrl1");
         metric = new TestFactoriesRun();
-        assertEquals(metric.getValue(context).getAsString(), "0");
+        assertEquals(metric.getValue(builder.build()).getAsString(), "0");
     }
 
     private void checkTopReferrersDataItem(MapValueData item,

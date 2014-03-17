@@ -20,7 +20,7 @@
 package com.codenvy.analytics.pig;
 
 import com.codenvy.analytics.Configurator;
-import com.codenvy.analytics.Utils;
+import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.persistent.MongoDataStorage;
 import com.codenvy.analytics.pig.scripts.ScriptType;
@@ -56,7 +56,7 @@ public class PigServer implements AutoCloseable {
     private final String scriptDir;
     private final String logsDir;
 
-    private org.apache.pig.PigServer server;
+    private       org.apache.pig.PigServer server;
     private final MongoDataStorage         mongoDataStorage;
     private final List<String>             outdatedScriptDirectories;
 
@@ -87,8 +87,7 @@ public class PigServer implements AutoCloseable {
     }
 
     private org.apache.pig.PigServer initEmbeddedServer() throws IOException {
-        final org.apache.pig.PigServer server = initializeServer();
-        return server;
+        return initializeServer();
     }
 
     /**
@@ -102,12 +101,12 @@ public class PigServer implements AutoCloseable {
      * @throws IOException
      *         if something gone wrong or if a required parameter is absent
      */
-    public void execute(ScriptType scriptType, Map<String, String> context) throws IOException, ParseException {
+    public void execute(ScriptType scriptType, Context context) throws IOException, ParseException {
         context = validateAndAdjustContext(scriptType, context);
 
         LOG.info("Script execution " + scriptType + " is started: " + getSecureContext(context).toString());
         try {
-            if (Parameters.LOG.get(context).isEmpty()) {
+            if (context.get(Parameters.LOG).isEmpty()) {
                 return;
             }
 
@@ -115,7 +114,7 @@ public class PigServer implements AutoCloseable {
 
             try (InputStream scriptContent = new ByteArrayInputStream(script.getBytes())) {
                 server.setBatchOn();
-                server.registerScript(scriptContent, context);
+                server.registerScript(scriptContent, context.getAll());
                 server.executeBatch();
                 server.discardBatch();
             } finally {
@@ -161,9 +160,7 @@ public class PigServer implements AutoCloseable {
         return server;
     }
 
-    /**
-     * Cell shutdown on org.apache.pig.PigServer
-     */
+    /** Cell shutdown on org.apache.pig.PigServer */
     public void close() {
         server.shutdown();
         server = null;
@@ -181,8 +178,7 @@ public class PigServer implements AutoCloseable {
      * @throws IOException
      *         if something gone wrong or if a required parameter is absent
      */
-    public Iterator<Tuple> executeAndReturn(ScriptType scriptType,
-                                            Map<String, String> context) throws IOException, ParseException {
+    public Iterator<Tuple> executeAndReturn(ScriptType scriptType, Context context) throws IOException, ParseException {
         context = validateAndAdjustContext(scriptType, context);
 
         LOG.info("Script execution " + scriptType + " is started: " + getSecureContext(context).toString());
@@ -192,12 +188,12 @@ public class PigServer implements AutoCloseable {
 
         try (InputStream scriptContent = new ByteArrayInputStream(script.getBytes())) {
 
-            if (Parameters.LOG.get(context).isEmpty()) {
+            if (context.get(Parameters.LOG).isEmpty()) {
                 return Collections.emptyIterator();
             }
 
             server.setBatchOn();
-            server.registerScript(scriptContent, context);
+            server.registerScript(scriptContent, context.getAll());
             Iterator<Tuple> iterator = server.openIterator("result");
 
             List<Tuple> tuples = new ArrayList<>();
@@ -215,34 +211,33 @@ public class PigServer implements AutoCloseable {
     }
 
     /** Checks if all parameters that are needed to script execution are added to context; */
-    private Map<String, String> validateAndAdjustContext(ScriptType scriptType,
-                                                         Map<String, String> context) throws IOException {
-        context = Utils.clone(context);
-        mongoDataStorage.putStorageParameters(context);
+    private Context validateAndAdjustContext(ScriptType scriptType, Context basedContext) throws IOException {
+        Context.Builder builder = new Context.Builder(basedContext);
+        mongoDataStorage.putStorageParameters(builder);
 
-        if (!Parameters.LOG.exists(context)) {
-            setOptimizedPaths(context);
+        if (!builder.exists(Parameters.LOG)) {
+            setOptimizedPaths(builder);
         }
 
+        Context context = builder.build();
+
         for (Parameters param : scriptType.getParams()) {
-            if (!param.exists(context)) {
+            if (!context.exists(param)) {
                 throw new IOException("Key field " + param + " is absent in execution context");
             }
 
-            param.validate(param.get(context), context);
+            param.validate(context.get(param), context);
         }
 
         return context;
     }
 
-    /**
-     * @return the script file name, check if outdated script should be used based on date from context.
-     */
-    private File getScriptFileName(ScriptType scriptType, Map<String, String> context) throws ParseException {
+    /** @return the script file name, check if outdated script should be used based on date from context. */
+    private File getScriptFileName(ScriptType scriptType, Context context) throws ParseException {
         for (String dir : outdatedScriptDirectories) {
             Date date = DATE_FORMAT.parse(dir);
 
-            if (Utils.getToDate(context).getTimeInMillis() < date.getTime()) {
+            if (context.getAsDate(Parameters.TO_DATE).getTimeInMillis() < date.getTime()) {
                 File script = new File(scriptDir, dir + File.separator + scriptType.toString().toLowerCase() + ".pig");
 
                 if (script.exists()) {
@@ -263,19 +258,19 @@ public class PigServer implements AutoCloseable {
      * @throws IOException
      *         if any exception is occurred
      */
-    private void setOptimizedPaths(Map<String, String> context) throws IOException {
+    private void setOptimizedPaths(Context.Builder builder) throws IOException {
         try {
             String path = LogLocationOptimizer.generatePaths(new File(logsDir).getAbsolutePath(),
-                                                             Parameters.FROM_DATE.get(context),
-                                                             Parameters.TO_DATE.get(context));
-            Parameters.LOG.put(context, path);
+                                                             builder.get(Parameters.FROM_DATE),
+                                                             builder.get(Parameters.TO_DATE));
+            builder.put(Parameters.LOG, path);
         } catch (ParseException e) {
             throw new IOException(e);
         }
     }
 
     /** Reads script from file. */
-    private String readScriptContent(ScriptType scriptType, Map<String, String> context)
+    private String readScriptContent(ScriptType scriptType, Context context)
             throws IOException, ParseException {
         File scriptFile = getScriptFileName(scriptType, context);
         if (!scriptFile.exists()) {
@@ -355,12 +350,12 @@ public class PigServer implements AutoCloseable {
         }
     }
 
-    private static Map<String, String> getSecureContext(Map<String, String> context) {
-        Map<String, String> secureContext = Utils.clone(context);
-        Parameters.STORAGE_URL.remove(secureContext);
-        Parameters.STORAGE_PASSWORD.remove(secureContext);
-        Parameters.STORAGE_USER.remove(secureContext);
+    private static Context getSecureContext(Context context) {
+        Context.Builder builder = new Context.Builder(context);
+        builder.remove(Parameters.STORAGE_URL);
+        builder.remove(Parameters.STORAGE_PASSWORD);
+        builder.remove(Parameters.STORAGE_USER);
 
-        return secureContext;
+        return builder.build();
     }
 }

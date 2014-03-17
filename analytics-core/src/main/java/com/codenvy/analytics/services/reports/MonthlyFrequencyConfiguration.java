@@ -17,21 +17,20 @@
  */
 package com.codenvy.analytics.services.reports;
 
-import com.codenvy.analytics.Utils;
+import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.Parameters;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.text.ParseException;
 import java.util.Calendar;
-import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @XmlRootElement(name = "monthly")
 public class MonthlyFrequencyConfiguration extends AbstractFrequencyConfiguration {
 
     @Override
-    public boolean isAppropriateDateToSendReport(Map<String, String> context) throws ParseException {
-        Calendar toDate = Utils.getToDate(context);
+    public boolean isAppropriateDateToSendReport(Context context) throws ParseException {
+        Calendar toDate = context.getAsDate(Parameters.TO_DATE);
         return toDate.get(Calendar.DAY_OF_MONTH) == toDate.getActualMinimum(Calendar.DAY_OF_MONTH);
     }
 

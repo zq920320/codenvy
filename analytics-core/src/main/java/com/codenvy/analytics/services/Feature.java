@@ -19,7 +19,7 @@
 
 package com.codenvy.analytics.services;
 
-import com.codenvy.analytics.Utils;
+import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.Parameters;
 
 import org.quartz.Job;
@@ -29,7 +29,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.text.ParseException;
-import java.util.Map;
 
 /**
  * Extended interface for {@link Job}
@@ -47,16 +46,16 @@ public abstract class Feature implements Job {
      *         the execution context
      * @throws JobExecutionException
      */
-    public void forceExecute(Map<String, String> context) throws JobExecutionException {
+    public void forceExecute(Context context) throws JobExecutionException {
         try {
-            if (!Parameters.FROM_DATE.get(context).equals(Parameters.TO_DATE.get(context))) {
+            if (!context.get(Parameters.FROM_DATE).equals(context.get(Parameters.TO_DATE))) {
                 throw new IllegalStateException("Force execution is allowed only per day");
             }
 
-            Map<String, String> newContext = Utils.clone(context);
-            putParametersInContext(newContext);
+            Context.Builder builder = new Context.Builder(context);
+            putParametersInContext(builder);
 
-            doExecute(newContext);
+            doExecute(builder.build());
         } catch (Throwable e) {
             LOG.error(e.getMessage(), e);
             throw new JobExecutionException(e);
@@ -66,10 +65,10 @@ public abstract class Feature implements Job {
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         try {
-            Map<String, String> newContext = initializeDefaultContext();
-            putParametersInContext(newContext);
+            Context.Builder builder = initializeContextBuilder();
+            putParametersInContext(builder);
 
-            doExecute(newContext);
+            doExecute(builder.build());
         } catch (Throwable e) {
             LOG.error(e.getMessage(), e);
             throw new JobExecutionException(e);
@@ -77,16 +76,16 @@ public abstract class Feature implements Job {
     }
 
     /** Initialize context if job is being executed on regular basis */
-    protected Map<String, String> initializeDefaultContext() throws ParseException {
-        Map<String, String> context = Utils.newContext();
-        Parameters.TO_DATE.putDefaultValue(context);
-        Parameters.FROM_DATE.put(context, Parameters.TO_DATE.getDefaultValue());
+    protected Context.Builder initializeContextBuilder() throws ParseException {
+        Context.Builder builder = new Context.Builder();
+        builder.putDefaultValue(Parameters.TO_DATE);
+        builder.put(Parameters.FROM_DATE, Parameters.TO_DATE.getDefaultValue());
 
-        return context;
+        return builder;
     }
 
     /** If need to override context or put additional parameters to it, */
-    protected abstract void putParametersInContext(Map<String, String> context);
+    protected abstract void putParametersInContext(Context.Builder builder);
 
     /**
      * Execution.
@@ -94,7 +93,7 @@ public abstract class Feature implements Job {
      * @param context
      *         the execution context
      */
-    protected abstract void doExecute(Map<String, String> context) throws Exception;
+    protected abstract void doExecute(Context context) throws Exception;
 
     /** @return true if feature can be executed on regular basis. */
     public abstract boolean isAvailable();

@@ -24,7 +24,6 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public enum Parameters {
@@ -52,7 +51,7 @@ public enum Parameters {
 
     TIME_UNIT {
         @Override
-        public void validate(String value, Map<String, String> context) throws IllegalArgumentException {
+        public void validate(String value, Context context) throws IllegalArgumentException {
             TimeUnit.valueOf(value.toUpperCase());
         }
 
@@ -68,10 +67,10 @@ public enum Parameters {
         }
 
         @Override
-        public void validate(String value, Map<String, String> context) throws IllegalArgumentException {
+        public void validate(String value, Context context) throws IllegalArgumentException {
             try {
                 Calendar fromDate = Utils.parseDate(value);
-                Calendar toDate = Utils.getToDate(context);
+                Calendar toDate = context.getAsDate(TO_DATE);
                 Calendar minDate = Utils.parseDate(getDefaultValue());
 
                 if (fromDate.before(minDate)) {
@@ -104,11 +103,11 @@ public enum Parameters {
         }
 
         @Override
-        public void validate(String value, Map<String, String> context) throws IllegalArgumentException {
+        public void validate(String value, Context context) throws IllegalArgumentException {
             try {
                 Calendar toDate = Utils.parseDate(value);
                 Calendar maxDate = Utils.parseDate(getDefaultValue());
-                Calendar fromDate = Utils.getFromDate(context);
+                Calendar fromDate = context.getAsDate(FROM_DATE);
 
                 if (toDate.after(maxDate)) {
                     throw new IllegalArgumentException("The illegal TO_DATE parameter value: '"
@@ -140,58 +139,16 @@ public enum Parameters {
     },
     USER {
         @Override
-        public void validate(String value, Map<String, String> context) throws IllegalArgumentException {
+        public void validate(String value, Context context) throws IllegalArgumentException {
             USER_TYPES.valueOf(value);
         }
     },
     WS {
         @Override
-        public void validate(String value, Map<String, String> context) throws IllegalArgumentException {
+        public void validate(String value, Context context) throws IllegalArgumentException {
             WS_TYPES.valueOf(value);
         }
     };
-
-    /** Removes parameters from execution context */
-    public void remove(Map<String, String> context) {
-        context.remove(name());
-    }
-
-    /** Puts value into execution context */
-    public void put(Map<String, String> context, String value) {
-        context.put(name(), value);
-    }
-
-    /** Puts value into execution context */
-    public void put(Map<String, String> context, long value) {
-        context.put(name(), Long.toString(value));
-    }
-
-    /** Puts value into execution context */
-    public Map<String, String> cloneAndPut(Map<String, String> context, String value) {
-        context = Utils.clone(context);
-        context.put(name(), value);
-        return context;
-    }
-
-    /** Puts default value into execution context */
-    public void putDefaultValue(Map<String, String> context) {
-        context.put(name(), getDefaultValue());
-    }
-
-    /** Gets value from execution context */
-    public String get(Map<String, String> context) {
-        return context.get(name());
-    }
-
-    /** Gets value from execution context */
-    public long getAsLong(Map<String, String> context) {
-        return Long.valueOf(context.get(name()));
-    }
-
-    /** @return true if context contains given parameter */
-    public boolean exists(Map<String, String> context) {
-        return context.get(name()) != null;
-    }
 
     /** @return the default value for given parameter. */
     public String getDefaultValue() {
@@ -199,10 +156,14 @@ public enum Parameters {
     }
 
     /** Validates the value of parameter. Throws {@link IllegalArgumentException} if something wrong. */
-    public void validate(String value, Map<String, String> context) throws IllegalArgumentException {
+    public void validate(String value, Context context) throws IllegalArgumentException {
         if (value == null || value.isEmpty()) {
             throw new IllegalArgumentException(this.name() + " parameter is null or empty");
         }
+    }
+
+    public String getFieldName() {
+        return toString().toLowerCase();
     }
 
     /** The date format is used in scripts. */

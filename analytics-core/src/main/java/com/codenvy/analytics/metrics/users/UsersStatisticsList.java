@@ -17,7 +17,6 @@
  */
 package com.codenvy.analytics.metrics.users;
 
-import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.StringValueData;
@@ -78,7 +77,7 @@ public class UsersStatisticsList extends AbstractListValueResulted {
     }
 
     @Override
-    public DBObject getFilter(Map<String, String> clauses) throws ParseException, IOException {
+    public DBObject getFilter(Context clauses) throws ParseException, IOException {
         DBObject filter = super.getFilter(clauses);
 
         DBObject match = (DBObject)filter.get("$match");
@@ -90,7 +89,7 @@ public class UsersStatisticsList extends AbstractListValueResulted {
     }
 
     @Override
-    public DBObject[] getSpecificDBOperations(Map<String, String> clauses) {
+    public DBObject[] getSpecificDBOperations(Context clauses) {
         DBObject group = new BasicDBObject();
         group.put(ID, "$" + USER);
         group.put(PROJECTS, new BasicDBObject("$sum", "$" + PROJECTS));
@@ -127,11 +126,9 @@ public class UsersStatisticsList extends AbstractListValueResulted {
                               new BasicDBObject("$project", project)};
     }
 
-    /**
-     * To add user profile data.
-     */
+    /** To add user profile data. */
     @Override
-    protected ValueData postEvaluation(ValueData valueData, Map<String, String> clauses) throws IOException {
+    protected ValueData postEvaluation(ValueData valueData, Context clauses) throws IOException {
         List<ValueData> value = new ArrayList<>();
         ListValueData listValueData = (ListValueData)valueData;
 
@@ -163,9 +160,10 @@ public class UsersStatisticsList extends AbstractListValueResulted {
      * Get user profile by using USERS_PROFILES_LIST metric.
      * Returns null if USERS_PROFILES_LIST metric returns empty list on certain user.
      */
-    private Map<String, ValueData> getUserProfile(String user, Map<String, String> clauses) throws IOException {
-        Map<String, String> context = Utils.clone(clauses);
-        Parameters.USER.put(context, user);
+    private Map<String, ValueData> getUserProfile(String user, Context basedClauses) throws IOException {
+        Context.Builder builder = new Context.Builder(basedClauses);
+        builder.put(Parameters.USER, user);
+        Context context = builder.build();
 
         Metric metric = MetricFactory.getMetric(MetricType.USERS_PROFILES_LIST);
         List<ValueData> users = ((ListValueData)metric.getValue(context)).getAll();

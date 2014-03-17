@@ -19,10 +19,7 @@
 package com.codenvy.analytics.impl;
 
 import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.Metric;
-import com.codenvy.analytics.metrics.MetricFactory;
-import com.codenvy.analytics.metrics.MetricNotFoundException;
-import com.codenvy.analytics.metrics.MetricRestrictionException;
+import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.util.MetricDTOFactory;
 import com.codenvy.api.analytics.MetricHandler;
 import com.codenvy.api.analytics.dto.MetricInfoDTO;
@@ -54,7 +51,7 @@ public class FileBasedMetricHandler implements MetricHandler {
         MetricValueDTO metricValueDTO = DtoFactory.getInstance().createDto(MetricValueDTO.class);
         metricValueDTO.setName(metricName);
         try {
-            ValueData vd = getMetricValue(metricName, context);
+            ValueData vd = getMetricValue(metricName, Context.valueOf(context));
             metricValueDTO.setType(vd.getType());
             metricValueDTO.setValue(vd.getAsString());
         } catch (IOException e) {
@@ -109,7 +106,7 @@ public class FileBasedMetricHandler implements MetricHandler {
         return metricInfoListDTO;
     }
 
-    protected ValueData getMetricValue(String metricName, Map<String, String> context) throws IOException {
+    protected ValueData getMetricValue(String metricName, Context context) throws IOException {
         return MetricFactory.getMetric(metricName).getValue(context);
     }
 }

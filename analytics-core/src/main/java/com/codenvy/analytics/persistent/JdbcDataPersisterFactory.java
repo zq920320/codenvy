@@ -19,9 +19,6 @@ package com.codenvy.analytics.persistent;
 
 import com.codenvy.analytics.Configurator;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.lang.reflect.InvocationTargetException;
@@ -30,8 +27,6 @@ import java.sql.SQLException;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @Singleton
 public class JdbcDataPersisterFactory {
-
-    private static final Logger LOG = LoggerFactory.getLogger(JdbcDataPersisterFactory.class);
 
     private static final String URL      = "analytics.jdbc.url";
     private static final String USER     = "analytics.jdbc.user";

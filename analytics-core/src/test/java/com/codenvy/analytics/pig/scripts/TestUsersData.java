@@ -18,15 +18,11 @@
 package com.codenvy.analytics.pig.scripts;
 
 import com.codenvy.analytics.BaseTest;
-import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.StringValueData;
 import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.Metric;
-import com.codenvy.analytics.metrics.MetricFilter;
-import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.metrics.sessions.ProductUsageSessionsList;
 import com.codenvy.analytics.metrics.users.UsersStatisticsList;
 import com.codenvy.analytics.metrics.workspaces.UsageTimeByWorkspacesList;
@@ -50,8 +46,6 @@ public class TestUsersData extends BaseTest {
 
     @BeforeClass
     public void prepare() throws Exception {
-        Map<String, String> params = Utils.newContext();
-
         List<Event> events = new ArrayList<>();
 
         events.add(Event.Builder.createUserSSOLoggedInEvent("user2@gmail.com", "google")
@@ -104,13 +98,13 @@ public class TestUsersData extends BaseTest {
                                 .withDate("2013-11-01").withTime("20:06:00").build());
 
         events.add(Event.Builder.createSessionStartedEvent("user3@gmail.com", "ws2", "ide", "2").withDate("2013-11-01")
-                   .withTime("19:00:00").build());
+                                .withTime("19:00:00").build());
 
         events.add(Event.Builder.createUserUpdateProfile("user3@gmail.com", "", "", "", "", "")
-                   .withDate("2013-11-01").withTime("19:10:00,155").build());
+                                .withDate("2013-11-01").withTime("19:10:00,155").build());
         events.add(Event.Builder.createUserUpdateProfile("user3@gmail.com", "f3", "l3", "company3", "33", "3")
-                   .withDate("2013-11-01").withTime("19:15:00,155").build());
-        
+                                .withDate("2013-11-01").withTime("19:15:00,155").build());
+
         // projects deployed
         events.add(
                 Event.Builder.createApplicationCreatedEvent("user2@gmail.com", "ws2", "", "project1", "type1", "paas1")
@@ -121,36 +115,36 @@ public class TestUsersData extends BaseTest {
                 Event.Builder.createApplicationCreatedEvent("user3@gmail.com", "ws2", "", "project1", "type1", "paas2")
                              .withDate("2013-11-01")
                              .withTime("20:15:00")
-                             .build());      
-        
+                             .build());
+
         File log = LogGenerator.generateLog(events);
 
-        Parameters.FROM_DATE.put(params, "20131101");
-        Parameters.TO_DATE.put(params, "20131101");
-        Parameters.USER.put(params, Parameters.USER_TYPES.ANY.name());
-        Parameters.WS.put(params, Parameters.WS_TYPES.ANY.name());
-        Parameters.STORAGE_TABLE.put(params, MetricType.PRODUCT_USAGE_SESSIONS_LIST.toString().toLowerCase());
-        Parameters.STORAGE_TABLE_USERS_STATISTICS.put(params, MetricType.USERS_STATISTICS_LIST.name().toLowerCase());
-        Parameters.STORAGE_TABLE_USERS_PROFILES.put(params, MetricType.USERS_PROFILES_LIST.name().toLowerCase());
-        Parameters.LOG.put(params, log.getAbsolutePath());
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20131101");
+        builder.put(Parameters.TO_DATE, "20131101");
+        builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.name());
+        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
+        builder.put(Parameters.STORAGE_TABLE, MetricType.PRODUCT_USAGE_SESSIONS_LIST.toString().toLowerCase());
+        builder.put(Parameters.STORAGE_TABLE_USERS_STATISTICS, MetricType.USERS_STATISTICS_LIST.name().toLowerCase());
+        builder.put(Parameters.STORAGE_TABLE_USERS_PROFILES, MetricType.USERS_PROFILES_LIST.name().toLowerCase());
+        builder.put(Parameters.LOG, log.getAbsolutePath());
+        pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, builder.build());
 
-        pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, params);
+        builder.put(Parameters.USER, Parameters.USER_TYPES.REGISTERED.name());
+        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
+        builder.put(Parameters.STORAGE_TABLE, MetricType.USERS_STATISTICS_LIST.toString().toLowerCase());
+        pigServer.execute(ScriptType.USERS_STATISTICS, builder.build());
 
-        Parameters.USER.put(params, Parameters.USER_TYPES.REGISTERED.name());
-        Parameters.WS.put(params, Parameters.WS_TYPES.ANY.name());
-        Parameters.STORAGE_TABLE.put(params, MetricType.USERS_STATISTICS_LIST.toString().toLowerCase());
-        pigServer.execute(ScriptType.USERS_STATISTICS, params);
-
-        Parameters.STORAGE_TABLE.put(params, MetricType.USERS_PROFILES_LIST.name().toLowerCase());
-        pigServer.execute(ScriptType.USERS_UPDATE_PROFILES, params);
+        builder.put(Parameters.STORAGE_TABLE, MetricType.USERS_PROFILES_LIST.toString().toLowerCase());
+        pigServer.execute(ScriptType.USERS_UPDATE_PROFILES, builder.build());
     }
 
-//    @Test
+    @Test
     public void testUserStatistics() throws Exception {
-        Map<String, String> context = Utils.newContext();
+        Context.Builder builder = new Context.Builder();
 
         Metric metric = new UsersStatisticsList();
-        ListValueData value = (ListValueData)metric.getValue(context);
+        ListValueData value = (ListValueData)metric.getValue(builder.build());
 
         assertEquals(value.size(), 4);
 
@@ -179,7 +173,7 @@ public class TestUsersData extends BaseTest {
                     assertEquals(all.get(UsersStatisticsList.USER_FIRST_NAME).getAsString(), "f1");
                     assertEquals(all.get(UsersStatisticsList.USER_LAST_NAME).getAsString(), "l1");
                     assertEquals(all.get(UsersStatisticsList.USER_COMPANY).getAsString(), "company1");
-                    assertEquals(all.get(UsersStatisticsList.USER_JOB).getAsString(), "Other");                    
+                    assertEquals(all.get(UsersStatisticsList.USER_JOB).getAsString(), "Other");
                     break;
 
                 case "user2@gmail.com":
@@ -250,10 +244,10 @@ public class TestUsersData extends BaseTest {
 
     @Test
     public void testWorkspaceStatistics() throws Exception {
-        Map<String, String> context = Utils.newContext();
+        Context.Builder builder = new Context.Builder();
 
         Metric metric = new WorkspacesStatisticsList();
-        ListValueData value = (ListValueData)metric.getValue(context);
+        ListValueData value = (ListValueData)metric.getValue(builder.build());
 
         assertEquals(value.size(), 2);
 
@@ -298,20 +292,20 @@ public class TestUsersData extends BaseTest {
                     assertEquals(all.get(UsersStatisticsList.RUNS).getAsString(), "1");
                     assertEquals(all.get(UsersStatisticsList.RUN_TIME).getAsString(), "120500");
                     break;
-                    
+
                 default:
                     fail("unknown workspace: " + ws);
                     break;
             }
         }
     }
-    
-//    @Test
+
+    @Test
     public void testUsersTimeInWorkspaces() throws Exception {
-        Map<String, String> context = Utils.newContext();
+        Context.Builder builder = new Context.Builder();
 
         UsageTimeByWorkspacesList metric = new UsageTimeByWorkspacesList();
-        ListValueData value = (ListValueData)metric.getValue(context);
+        ListValueData value = (ListValueData)metric.getValue(builder.build());
 
         assertEquals(value.size(), 2);
 
@@ -342,13 +336,13 @@ public class TestUsersData extends BaseTest {
         }
     }
 
-//    @Test
+    @Test
     public void testUsersTimeInWorkspacesWithFilter() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        MetricFilter.USER.put(context, "user1@gmail.com");
+        Context.Builder builder = new Context.Builder();
+        builder.put(MetricFilter.USER, "user1@gmail.com");
 
         UsageTimeByWorkspacesList metric = new UsageTimeByWorkspacesList();
-        ListValueData valueData = (ListValueData)metric.getValue(context);
+        ListValueData valueData = (ListValueData)metric.getValue(builder.build());
 
         assertEquals(valueData.size(), 1);
 
@@ -361,13 +355,13 @@ public class TestUsersData extends BaseTest {
 
     }
 
-//    @Test
+    @Test
     public void testUsersStatisticsByCompany() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        MetricFilter.USER_COMPANY.put(context, "company1");
+        Context.Builder builder = new Context.Builder();
+        builder.put(MetricFilter.USER_COMPANY, "company1");
 
         UsersStatisticsList metric = new UsersStatisticsList();
-        ListValueData valueData = (ListValueData)metric.getValue(context);
+        ListValueData valueData = (ListValueData)metric.getValue(builder.build());
 
         assertEquals(valueData.size(), 2);
     }

@@ -19,6 +19,7 @@
 package com.codenvy.analytics.pig.scripts;
 
 import com.codenvy.analytics.BaseTest;
+import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
@@ -35,7 +36,7 @@ import static org.testng.AssertJUnit.assertEquals;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestExtractUserAndWs extends BaseTest {
 
-    private HashMap<String, String> context = new HashMap<>();
+    private Context.Builder builder;
 
     @BeforeClass
     public void prepare() throws Exception {
@@ -59,25 +60,27 @@ public class TestExtractUserAndWs extends BaseTest {
                                       .withParam("PHONE", "123456").withDate("2013-01-01").build());
         events.add(new Event.Builder().withParam("EVENT", "fake").withDate("2013-01-01").build());
         events.add(Event.Builder.createUserAddedToWsEvent("default", "default", "default", "ws10", "user10", "website")
-                        .withDate("2013-01-01").build());
+                                .withDate("2013-01-01").build());
 
         File log = LogGenerator.generateLog(events);
 
-        context = new HashMap<>();
-        Parameters.FROM_DATE.put(context, "20130101");
-        Parameters.TO_DATE.put(context, "20130101");
-        Parameters.LOG.put(context, log.getAbsolutePath());
-        Parameters.STORAGE_TABLE.put(context, "fake");
+        builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20130101");
+        builder.put(Parameters.TO_DATE, "20130101");
+        builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.name());
+        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
+        builder.put(Parameters.STORAGE_TABLE, "fake");
+        builder.put(Parameters.LOG, log.getAbsolutePath());
     }
 
     @Test
     public void testExtractAllUsers() throws Exception {
-        Parameters.WS.put(context, Parameters.WS_TYPES.ANY.name());
-        Parameters.USER.put(context, Parameters.USER_TYPES.ANY.name());
+        builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.name());
+        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
 
         Set<String> actual = new HashSet<>();
 
-        Iterator<Tuple> iterator = pigServer.executeAndReturn(ScriptType.TEST_EXTRACT_USER, context);
+        Iterator<Tuple> iterator = pigServer.executeAndReturn(ScriptType.TEST_EXTRACT_USER, builder.build());
         while (iterator.hasNext()) {
             actual.add(iterator.next().toString());
         }
@@ -97,12 +100,12 @@ public class TestExtractUserAndWs extends BaseTest {
 
     @Test
     public void testExtractAnonymousUsers() throws Exception {
-        Parameters.WS.put(context, Parameters.WS_TYPES.ANY.name());
-        Parameters.USER.put(context, Parameters.USER_TYPES.ANTONYMOUS.name());
+        builder.put(Parameters.USER, Parameters.USER_TYPES.ANTONYMOUS.name());
+        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
 
         Set<String> actual = new HashSet<>();
 
-        Iterator<Tuple> iterator = pigServer.executeAndReturn(ScriptType.TEST_EXTRACT_USER, context);
+        Iterator<Tuple> iterator = pigServer.executeAndReturn(ScriptType.TEST_EXTRACT_USER, builder.build());
         while (iterator.hasNext()) {
             actual.add(iterator.next().toString());
         }
@@ -117,12 +120,12 @@ public class TestExtractUserAndWs extends BaseTest {
 
     @Test
     public void testExtractRegisteredUsers() throws Exception {
-        Parameters.WS.put(context, Parameters.WS_TYPES.ANY.name());
-        Parameters.USER.put(context, Parameters.USER_TYPES.REGISTERED.name());
+        builder.put(Parameters.USER, Parameters.USER_TYPES.REGISTERED.name());
+        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
 
         Set<String> actual = new HashSet<>();
 
-        Iterator<Tuple> iterator = pigServer.executeAndReturn(ScriptType.TEST_EXTRACT_USER, context);
+        Iterator<Tuple> iterator = pigServer.executeAndReturn(ScriptType.TEST_EXTRACT_USER, builder.build());
         while (iterator.hasNext()) {
             actual.add(iterator.next().toString());
         }
@@ -140,12 +143,12 @@ public class TestExtractUserAndWs extends BaseTest {
 
     @Test
     public void testExtractAllWs() throws Exception {
-        Parameters.WS.put(context, Parameters.WS_TYPES.ANY.name());
-        Parameters.USER.put(context, Parameters.USER_TYPES.ANY.name());
+        builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.name());
+        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
 
         Set<String> actual = new HashSet<>();
 
-        Iterator<Tuple> iterator = pigServer.executeAndReturn(ScriptType.TEST_EXTRACT_WS, context);
+        Iterator<Tuple> iterator = pigServer.executeAndReturn(ScriptType.TEST_EXTRACT_WS, builder.build());
         while (iterator.hasNext()) {
             actual.add(iterator.next().toString());
         }
@@ -164,12 +167,12 @@ public class TestExtractUserAndWs extends BaseTest {
 
     @Test
     public void testExtractTmpWs() throws Exception {
-        Parameters.WS.put(context, Parameters.WS_TYPES.TEMPORARY.name());
-        Parameters.USER.put(context, Parameters.USER_TYPES.ANY.name());
+        builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.name());
+        builder.put(Parameters.WS, Parameters.WS_TYPES.TEMPORARY.name());
 
         Set<String> actual = new HashSet<>();
 
-        Iterator<Tuple> iterator = pigServer.executeAndReturn(ScriptType.TEST_EXTRACT_WS, context);
+        Iterator<Tuple> iterator = pigServer.executeAndReturn(ScriptType.TEST_EXTRACT_WS, builder.build());
         while (iterator.hasNext()) {
             actual.add(iterator.next().toString());
         }
@@ -185,12 +188,12 @@ public class TestExtractUserAndWs extends BaseTest {
 
     @Test
     public void testExtractPersistentWs() throws Exception {
-        Parameters.WS.put(context, Parameters.WS_TYPES.PERSISTENT.name());
-        Parameters.USER.put(context, Parameters.USER_TYPES.ANY.name());
+        builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.name());
+        builder.put(Parameters.WS, Parameters.WS_TYPES.PERSISTENT.name());
 
         Set<String> actual = new HashSet<>();
 
-        Iterator<Tuple> iterator = pigServer.executeAndReturn(ScriptType.TEST_EXTRACT_WS, context);
+        Iterator<Tuple> iterator = pigServer.executeAndReturn(ScriptType.TEST_EXTRACT_WS, builder.build());
         while (iterator.hasNext()) {
             actual.add(iterator.next().toString());
         }
@@ -206,12 +209,12 @@ public class TestExtractUserAndWs extends BaseTest {
 
     @Test
     public void testExtractRegisteredUsersInPersistentWs() throws Exception {
-        Parameters.WS.put(context, Parameters.WS_TYPES.PERSISTENT.name());
-        Parameters.USER.put(context, Parameters.USER_TYPES.REGISTERED.name());
+        builder.put(Parameters.USER, Parameters.USER_TYPES.REGISTERED.name());
+        builder.put(Parameters.WS, Parameters.WS_TYPES.PERSISTENT.name());
 
         Set<String> actual = new HashSet<>();
 
-        Iterator<Tuple> iterator = pigServer.executeAndReturn(ScriptType.TEST_EXTRACT_WS, context);
+        Iterator<Tuple> iterator = pigServer.executeAndReturn(ScriptType.TEST_EXTRACT_WS, builder.build());
         while (iterator.hasNext()) {
             actual.add(iterator.next().toString());
         }
@@ -225,7 +228,7 @@ public class TestExtractUserAndWs extends BaseTest {
 
         actual = new HashSet<>();
 
-        iterator = pigServer.executeAndReturn(ScriptType.TEST_EXTRACT_USER, context);
+        iterator = pigServer.executeAndReturn(ScriptType.TEST_EXTRACT_USER, builder.build());
         while (iterator.hasNext()) {
             actual.add(iterator.next().toString());
         }

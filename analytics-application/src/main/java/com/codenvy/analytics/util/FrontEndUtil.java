@@ -20,6 +20,7 @@ package com.codenvy.analytics.util;
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricFactory;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.Parameters;
@@ -27,7 +28,6 @@ import com.codenvy.analytics.metrics.users.UsersProfilesList;
 
 import java.io.IOException;
 import java.security.Principal;
-import java.util.HashMap;
 import java.util.Map;
 
 /** @author Dmytro Nochevnov */
@@ -50,15 +50,15 @@ public class FrontEndUtil {
             email = userPrincipal.getName();
         }
 
-        HashMap<String, String> metricContext = new HashMap<>();
-
+        Context.Builder builder = new Context.Builder();
         if (email != null) {
-            metricContext.put(Parameters.USER.toString(), email);
+            builder.put(Parameters.USER, email);
         }
+        Context context = builder.build();
 
         ListValueData value;
         try {
-            value = (ListValueData)MetricFactory.getMetric(MetricType.USERS_PROFILES_LIST).getValue(metricContext);
+            value = (ListValueData)MetricFactory.getMetric(MetricType.USERS_PROFILES_LIST).getValue(context);
         } catch (IOException e) {
             // return user email if there was impossible to read data from metric
             return email;

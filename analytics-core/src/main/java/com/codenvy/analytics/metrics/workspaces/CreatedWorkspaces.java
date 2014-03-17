@@ -32,7 +32,6 @@ public class CreatedWorkspaces extends AbstractLongValueResulted {
         super(MetricType.CREATED_WORKSPACES);
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The number of created persistent workspaces";

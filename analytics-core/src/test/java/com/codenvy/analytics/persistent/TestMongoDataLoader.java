@@ -20,10 +20,10 @@ package com.codenvy.analytics.persistent;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.Injector;
-import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.AbstractLongValueResulted;
+import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.Parameters;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
@@ -33,7 +33,6 @@ import org.testng.AssertJUnit;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.util.Map;
 import java.util.UUID;
 
 import static org.testng.AssertJUnit.assertEquals;
@@ -64,20 +63,22 @@ public class TestMongoDataLoader extends BaseTest {
 
     @Test
     public void testSingleDay() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20130910");
-        Parameters.TO_DATE.put(context, "20130910");
-        ValueData valueData = dataLoader.loadValue(new TestLongValueResulted(), context);
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20130910");
+        builder.put(Parameters.TO_DATE, "20130910");
+
+        ValueData valueData = dataLoader.loadValue(new TestLongValueResulted(), builder.build());
 
         AssertJUnit.assertEquals(new LongValueData(100), valueData);
     }
 
     @Test
     public void testPeriod() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20130910");
-        Parameters.TO_DATE.put(context, "20130911");
-        ValueData valueData = dataLoader.loadValue(new TestLongValueResulted(), context);
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20130910");
+        builder.put(Parameters.TO_DATE, "20130911");
+
+        ValueData valueData = dataLoader.loadValue(new TestLongValueResulted(), builder.build());
 
         assertEquals(new LongValueData(200), valueData);
     }

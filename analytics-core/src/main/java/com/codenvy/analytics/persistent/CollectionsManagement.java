@@ -17,7 +17,7 @@
  */
 package com.codenvy.analytics.persistent;
 
-import com.codenvy.analytics.Utils;
+import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.ReadBasedMetric;
 import com.codenvy.analytics.services.configuration.XmlConfigurationManager;
@@ -31,7 +31,6 @@ import javax.inject.Singleton;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Utility class to perform MongoDB index management operations like dropping or ensuring indexes based on
@@ -127,7 +126,7 @@ public class CollectionsManagement {
      *
      * @throws IOException
      */
-    public void removeData(Map<String, String> context) throws IOException, ParseException {
+    public void removeData(Context context) throws IOException, ParseException {
         long start = System.currentTimeMillis();
 
         LOG.info("Start removing data...");
@@ -175,13 +174,14 @@ public class CollectionsManagement {
         }
     }
 
-    private DBObject getDateFilter(Map<String, String> context) throws ParseException {
+    private DBObject getDateFilter(Context context) throws ParseException {
         DBObject dateFilter = new BasicDBObject();
-        dateFilter.put("$gte", Parameters.FROM_DATE.exists(context)
-                               ? Utils.getFromDate(context).getTimeInMillis()
+        dateFilter.put("$gte", context.exists(Parameters.FROM_DATE)
+                               ? context.getAsDate(Parameters.FROM_DATE).getTimeInMillis()
                                : 0);
-        dateFilter.put("$lt", Parameters.TO_DATE.exists(context)
-                              ? Utils.getToDate(context).getTimeInMillis() + ReadBasedMetric.DAY_IN_MILLISECONDS
+        dateFilter.put("$lt", context.exists(Parameters.TO_DATE)
+                              ? context.getAsDate(Parameters.TO_DATE).getTimeInMillis() +
+                                ReadBasedMetric.DAY_IN_MILLISECONDS
                               : Long.MAX_VALUE);
 
         return new BasicDBObject(ReadBasedMetric.DATE, dateFilter);

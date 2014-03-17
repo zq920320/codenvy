@@ -20,7 +20,6 @@ package com.codenvy.analytics.metrics;
 import com.codenvy.analytics.datamodel.ValueData;
 
 import java.io.IOException;
-import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public abstract class AbstractAlias extends CalculatedMetric {
@@ -35,7 +34,7 @@ public abstract class AbstractAlias extends CalculatedMetric {
     }
 
     @Override
-    public ValueData getValue(Map<String, String> context) throws IOException {
+    public ValueData getValue(Context context) throws IOException {
         return basedMetric[0].getValue(context);
     }
 

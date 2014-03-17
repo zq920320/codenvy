@@ -23,6 +23,7 @@ import com.codenvy.analytics.Injector;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.StringValueData;
 import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.persistent.JdbcDataPersisterFactory;
 import com.codenvy.analytics.services.configuration.XmlConfigurationManager;
@@ -109,18 +110,18 @@ public class TestViewBuilder extends BaseTest {
     public void testIfShippedConfigurationCorrect() throws Exception {
         ViewBuilder viewBuilder = Injector.getInstance(ViewBuilder.class);
 
-        Map<String, String> context = Utils.newContext();
-        Parameters.TO_DATE.putDefaultValue(context);
-        Parameters.FROM_DATE.put(context, Parameters.TO_DATE.get(context));
+        Context.Builder builder = new Context.Builder();
+        builder.putDefaultValue(Parameters.TO_DATE);
+        builder.put(Parameters.FROM_DATE, builder.get(Parameters.TO_DATE));
 
-        viewBuilder.doExecute(context);
+        viewBuilder.doExecute(builder.build());
     }
 
     @Test
     public void testLastDayPeriod() throws Exception {
         ArgumentCaptor<String> viewId = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<ViewData> viewData = ArgumentCaptor.forClass(ViewData.class);
-        ArgumentCaptor<Map> context = ArgumentCaptor.forClass(Map.class);
+        ArgumentCaptor<Context> context = ArgumentCaptor.forClass(Context.class);
 
         viewBuilder.computeDisplayData(Utils.initializeContext(Parameters.TimeUnit.DAY));
         verify(viewBuilder, atLeastOnce()).retainViewData(viewId.capture(), viewData.capture(), context.capture());
@@ -135,7 +136,7 @@ public class TestViewBuilder extends BaseTest {
         assertEquals(actualData.size(), 1);
         assertLastDayData(actualData.values().iterator().next());
 
-        Calendar calendar = Utils.getToDate(Utils.initializeContext(Parameters.TimeUnit.DAY));
+        Calendar calendar = Utils.initializeContext(Parameters.TimeUnit.DAY).getAsDate(Parameters.TO_DATE);
 
         File csvReport = new File("./target/reports/" + dirFormat.format(calendar.getTime()) + "/view_day.csv");
         assertTrue(csvReport.exists());
@@ -157,13 +158,13 @@ public class TestViewBuilder extends BaseTest {
     public void testSpecificDayPeriod() throws Exception {
         ArgumentCaptor<String> viewId = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<ViewData> viewData = ArgumentCaptor.forClass(ViewData.class);
-        ArgumentCaptor<Map> context = ArgumentCaptor.forClass(Map.class);
+        ArgumentCaptor<Context> context = ArgumentCaptor.forClass(Context.class);
 
-        Map<String, String> executionContext = Utils.newContext();
-        Parameters.TO_DATE.put(executionContext, "20130930");
-        Parameters.FROM_DATE.put(executionContext, "20130930");
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.TO_DATE, "20130930");
+        builder.put(Parameters.FROM_DATE, "20130930");
 
-        viewBuilder.computeDisplayData(executionContext);
+        viewBuilder.computeDisplayData(builder.build());
         verify(viewBuilder, atLeastOnce()).retainViewData(viewId.capture(), viewData.capture(), context.capture());
 
         ViewData actualData = viewData.getAllValues().get(0);
@@ -191,7 +192,7 @@ public class TestViewBuilder extends BaseTest {
 
     @Test
     public void testQueryViewData() throws Exception {
-        Map<String, String> context = Utils.initializeContext(Parameters.TimeUnit.DAY);
+        Context context = Utils.initializeContext(Parameters.TimeUnit.DAY);
         viewBuilder.computeDisplayData(context);
 
         ViewData actualData = viewBuilder.getViewData("view", context);
@@ -258,8 +259,8 @@ public class TestViewBuilder extends BaseTest {
         }
 
         @Override
-        protected ValueData getMetricValue(Map<String, String> context) throws IOException {
-            if (Parameters.TO_DATE.get(context).equals(Parameters.TO_DATE.getDefaultValue())) {
+        protected ValueData getMetricValue(Context context) throws IOException {
+            if (context.get(Parameters.TO_DATE).equals(Parameters.TO_DATE.getDefaultValue())) {
                 return new StringValueData("10");
             } else {
                 return new StringValueData("5");

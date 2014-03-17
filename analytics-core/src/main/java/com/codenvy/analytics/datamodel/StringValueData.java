@@ -38,13 +38,11 @@ public class StringValueData extends AbstractValueData {
         this.value = value;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getAsString() {
         return value;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getType() {
         return ValueDataTypes.STRING.toString();
@@ -54,31 +52,26 @@ public class StringValueData extends AbstractValueData {
         return new StringValueData(value);
     }
 
-    /** {@inheritDoc} */
     @Override
     protected boolean doEquals(ValueData valueData) {
         return value.equals(((StringValueData)valueData).value);
     }
 
-    /** {@inheritDoc} */
     @Override
     protected int doHashCode() {
         return value.hashCode();
     }
 
-    /** {@inheritDoc} */
     @Override
     protected ValueData doUnion(ValueData valueData) {
         return new StringValueData(value + "\n" + valueData.getAsString());
     }
 
-    /** {@inheritDoc} */
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
         out.writeUTF(value);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         value = in.readUTF();

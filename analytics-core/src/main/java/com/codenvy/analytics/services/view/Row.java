@@ -21,15 +21,15 @@ package com.codenvy.analytics.services.view;
 
 
 import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.metrics.Context;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public interface Row {
 
     /** @return row data depending on execution context */
-    List<List<ValueData>> getData(Map<String, String> initialContext, int iterationsCount) throws IOException;
+    List<List<ValueData>> getData(Context initialContext, int iterationsCount) throws IOException;
 
 }

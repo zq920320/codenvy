@@ -17,11 +17,10 @@
  */
 package com.codenvy.analytics.metrics.top;
 
+import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricType;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
-
-import java.util.Map;
 
 
 /** @author <a href="mailto:dnochevnov@codenvy.com">Dmytro Nochevnov</a> */
@@ -40,7 +39,7 @@ public abstract class AbstractTopSessions extends AbstractTopMetrics {
     }
 
     @Override
-    public DBObject[] getSpecificDBOperations(Map<String, String> clauses) {
+    public DBObject[] getSpecificDBOperations(Context clauses) {
         DBObject[] dbOperations = new DBObject[4];
 
         dbOperations[0] = new BasicDBObject("$match", new BasicDBObject(FACTORY, new BasicDBObject("$ne", "")));

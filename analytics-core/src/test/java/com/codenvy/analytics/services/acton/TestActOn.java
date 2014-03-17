@@ -21,8 +21,8 @@ package com.codenvy.analytics.services.acton;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.Injector;
-import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.metrics.AbstractMetric;
+import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.users.UsersStatisticsList;
@@ -51,52 +51,52 @@ public class TestActOn extends BaseTest {
 
     @BeforeClass
     public void prepare() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20131101");
-        Parameters.TO_DATE.put(context, "20131101");
-        Parameters.WS.put(context, Parameters.WS_TYPES.ANY.name());
-        Parameters.USER.put(context, Parameters.USER_TYPES.ANY.name());
-        Parameters.LOG.put(context, prepareLog().getAbsolutePath());
-        Parameters.STORAGE_TABLE_USERS_STATISTICS.put(context, MetricType.USERS_STATISTICS_LIST.name().toLowerCase());
-        Parameters.STORAGE_TABLE_USERS_PROFILES.put(context, MetricType.USERS_PROFILES_LIST.name().toLowerCase());
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20131101");
+        builder.put(Parameters.TO_DATE, "20131101");
+        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
+        builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.name());
+        builder.put(Parameters.LOG, prepareLog().getAbsolutePath());
+        builder.put(Parameters.STORAGE_TABLE_USERS_STATISTICS, MetricType.USERS_STATISTICS_LIST.name().toLowerCase());
+        builder.put(Parameters.STORAGE_TABLE_USERS_PROFILES, MetricType.USERS_PROFILES_LIST.name().toLowerCase());
 
-        Parameters.STORAGE_TABLE.put(context, MetricType.USERS_PROFILES_LIST.name().toLowerCase());
-        pigServer.execute(ScriptType.USERS_UPDATE_PROFILES, context);
+        builder.put(Parameters.STORAGE_TABLE, MetricType.USERS_PROFILES_LIST.name().toLowerCase());
+        pigServer.execute(ScriptType.USERS_UPDATE_PROFILES, builder.build());
 
-        Parameters.STORAGE_TABLE.put(context, MetricType.PRODUCT_USAGE_SESSIONS_LIST.name().toLowerCase());
-        pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, context);
+        builder.put(Parameters.STORAGE_TABLE, MetricType.PRODUCT_USAGE_SESSIONS_LIST.name().toLowerCase());
+        pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, builder.build());
 
-        Parameters.STORAGE_TABLE.put(context, MetricType.USERS_STATISTICS_LIST.name().toLowerCase());
-        pigServer.execute(ScriptType.USERS_STATISTICS, context);
+        builder.put(Parameters.STORAGE_TABLE, MetricType.USERS_STATISTICS_LIST.name().toLowerCase());
+        pigServer.execute(ScriptType.USERS_STATISTICS, builder.build());
 
-        Parameters.STORAGE_TABLE.put(context, MetricType.USERS_ACTIVITY_LIST.name().toLowerCase());
-        pigServer.execute(ScriptType.USERS_ACTIVITY, context);
+        builder.put(Parameters.STORAGE_TABLE, MetricType.USERS_ACTIVITY_LIST.name().toLowerCase());
+        pigServer.execute(ScriptType.USERS_ACTIVITY, builder.build());
 
-        Parameters.FROM_DATE.put(context, "20131102");
-        Parameters.TO_DATE.put(context, "20131102");
+        builder.put(Parameters.FROM_DATE, "20131102");
+        builder.put(Parameters.TO_DATE, "20131102");
 
-        Parameters.STORAGE_TABLE.put(context, MetricType.USERS_ACTIVITY_LIST.name().toLowerCase());
-        pigServer.execute(ScriptType.USERS_ACTIVITY, context);
+        builder.put(Parameters.STORAGE_TABLE, MetricType.USERS_ACTIVITY_LIST.name().toLowerCase());
+        pigServer.execute(ScriptType.USERS_ACTIVITY, builder.build());
 
-        Parameters.STORAGE_TABLE.put(context, MetricType.USERS_PROFILES_LIST.name().toLowerCase());
-        pigServer.execute(ScriptType.USERS_UPDATE_PROFILES, context);
+        builder.put(Parameters.STORAGE_TABLE, MetricType.USERS_PROFILES_LIST.name().toLowerCase());
+        pigServer.execute(ScriptType.USERS_UPDATE_PROFILES, builder.build());
 
-        Parameters.STORAGE_TABLE.put(context, MetricType.PRODUCT_USAGE_SESSIONS_LIST.name().toLowerCase());
-        pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, context);
+        builder.put(Parameters.STORAGE_TABLE, MetricType.PRODUCT_USAGE_SESSIONS_LIST.name().toLowerCase());
+        pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, builder.build());
 
-        Parameters.STORAGE_TABLE.put(context, MetricType.USERS_STATISTICS_LIST.name().toLowerCase());
-        pigServer.execute(ScriptType.USERS_STATISTICS, context);
+        builder.put(Parameters.STORAGE_TABLE, MetricType.USERS_STATISTICS_LIST.name().toLowerCase());
+        pigServer.execute(ScriptType.USERS_STATISTICS, builder.build());
     }
 
     @Test
     public void testWholePeriod() throws Exception {
         ActOn job = Injector.getInstance(ActOn.class);
 
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20131101");
-        Parameters.TO_DATE.put(context, "20131102");
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20131101");
+        builder.put(Parameters.TO_DATE, "20131102");
 
-        File jobFile = job.prepareFile(context);
+        File jobFile = job.prepareFile(builder.build());
         assertEquals(jobFile.getName(), ActOn.FILE_NAME);
 
         Map<String, Map<String, String>> content = read(jobFile);
@@ -187,11 +187,11 @@ public class TestActOn extends BaseTest {
     public void testOneDayPeriod() throws Exception {
         ActOn job = Injector.getInstance(ActOn.class);
 
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20131101");
-        Parameters.TO_DATE.put(context, "20131101");
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20131101");
+        builder.put(Parameters.TO_DATE, "20131101");
 
-        File jobFile = job.prepareFile(context);
+        File jobFile = job.prepareFile(builder.build());
         assertEquals(jobFile.getName(), ActOn.FILE_NAME);
 
         Map<String, Map<String, String>> content = read(jobFile);

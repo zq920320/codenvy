@@ -19,12 +19,13 @@ package com.codenvy.analytics.metrics.users;
 
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.datamodel.ValueDataUtil;
 import com.codenvy.analytics.metrics.CalculatedMetric;
+import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricType;
 
 import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
-import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
@@ -36,9 +37,9 @@ public class NonActiveUsers extends CalculatedMetric {
     }
 
     @Override
-    public ValueData getValue(Map<String, String> context) throws IOException {
-        LongValueData active = (LongValueData)basedMetric[0].getValue(context);
-        LongValueData total = (LongValueData)basedMetric[1].getValue(context);
+    public ValueData getValue(Context context) throws IOException {
+        LongValueData active = ValueDataUtil.getAsLong(basedMetric[0], context);
+        LongValueData total = ValueDataUtil.getAsLong(basedMetric[1], context);
 
         return new LongValueData(total.getAsLong() - active.getAsLong());
     }

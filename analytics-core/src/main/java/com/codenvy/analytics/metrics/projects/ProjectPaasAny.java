@@ -19,13 +19,14 @@ package com.codenvy.analytics.metrics.projects;
 
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.datamodel.ValueDataUtil;
 import com.codenvy.analytics.metrics.CalculatedMetric;
+import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricType;
 
 import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
-import java.util.Map;
 
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
@@ -46,11 +47,11 @@ public class ProjectPaasAny extends CalculatedMetric {
     }
 
     @Override
-    public ValueData getValue(Map<String, String> context) throws IOException {
+    public ValueData getValue(Context context) throws IOException {
         long projectsAnyPaaS = 0;
 
         for (Metric metric : basedMetric) {
-            projectsAnyPaaS += ((LongValueData)metric.getValue(context)).getAsLong();
+            projectsAnyPaaS += ValueDataUtil.getAsLong(metric, context).getAsLong();
         }
 
         return new LongValueData(projectsAnyPaaS);

@@ -19,6 +19,7 @@ package com.codenvy.analytics.services.reports;
 
 import com.codenvy.analytics.Configurator;
 import com.codenvy.analytics.MailService;
+import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.services.Feature;
 import com.codenvy.analytics.services.configuration.XmlConfigurationManager;
@@ -37,7 +38,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Singleton
 public class ReportSender extends Feature {
@@ -70,7 +70,7 @@ public class ReportSender extends Feature {
     }
 
     @Override
-    protected void putParametersInContext(Map<String, String> context) {
+    protected void putParametersInContext(Context.Builder builder) {
     }
 
     @Override
@@ -78,17 +78,17 @@ public class ReportSender extends Feature {
         return configurator.getBoolean(AVAILABLE);
     }
 
-    protected void doExecute(Map<String, String> context) throws IOException,
-                                                                 ParseException,
-                                                                 ClassNotFoundException,
-                                                                 NoSuchMethodException,
-                                                                 InstantiationException,
-                                                                 IllegalAccessException,
-                                                                 InvocationTargetException {
+    protected void doExecute(Context context) throws IOException,
+                                                     ParseException,
+                                                     ClassNotFoundException,
+                                                     NoSuchMethodException,
+                                                     InstantiationException,
+                                                     IllegalAccessException,
+                                                     InvocationTargetException {
         LOG.info("ReportSender is started");
         long start = System.currentTimeMillis();
 
-        context = Parameters.REPORT_DATE.cloneAndPut(context, Parameters.TO_DATE.get(context));
+        context = context.cloneAndPut(Parameters.REPORT_DATE, context.get(Parameters.TO_DATE));
 
         try {
             for (ReportConfiguration reportConfiguration : configuration.getReports()) {
@@ -111,7 +111,7 @@ public class ReportSender extends Feature {
         }
     }
 
-    protected void sendReport(Map<String, String> context,
+    protected void sendReport(Context context,
                               AbstractFrequencyConfiguration frequency,
                               RecipientsConfiguration recipients) throws IOException,
                                                                          ParseException,
@@ -139,7 +139,7 @@ public class ReportSender extends Feature {
         }
     }
 
-    private List<File> getReports(Map<String, String> context,
+    private List<File> getReports(Context context,
                                   String recipient,
                                   AbstractFrequencyConfiguration frequency) throws IOException,
                                                                                    ParseException,
@@ -153,8 +153,7 @@ public class ReportSender extends Feature {
         ViewsConfiguration viewsConfiguration = frequency.getViews();
 
         for (String view : viewsConfiguration.getViews()) {
-            Parameters.VIEW.cloneAndPut(context, view);
-            Parameters.RECIPIENT.put(context, recipient);
+            context = context.cloneAndPut(Parameters.RECIPIENT, recipient);
             context = putSpecificParameters(context, frequency);
 
             ViewData viewData = viewBuilder.getViewData(view, context);
@@ -167,8 +166,7 @@ public class ReportSender extends Feature {
         return reports;
     }
 
-    private Map<String, String> putSpecificParameters(Map<String, String> context,
-                                                      AbstractFrequencyConfiguration frequency)
+    private Context putSpecificParameters(Context context, AbstractFrequencyConfiguration frequency)
             throws ClassNotFoundException,
                    InstantiationException,
                    IllegalAccessException,

@@ -21,9 +21,9 @@ package com.codenvy.analytics.metrics;
 
 import com.codenvy.analytics.Injector;
 import com.codenvy.analytics.Utils;
-import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.datamodel.ValueDataUtil;
 import com.codenvy.analytics.persistent.DataLoader;
 import com.codenvy.analytics.persistent.MongoDataStorage;
 import com.mongodb.BasicDBObject;
@@ -68,7 +68,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
     }
 
     @Override
-    public ValueData getValue(Map<String, String> context) throws IOException {
+    public ValueData getValue(Context context) throws IOException {
         context = modifyContext(context);
         validateRestrictions(context);
 
@@ -83,22 +83,22 @@ public abstract class ReadBasedMetric extends AbstractMetric {
      * @param context
      *         the execution context
      */
-    private void validateRestrictions(Map<String, String> context) {
+    private void validateRestrictions(Context context) {
         if (getClass().isAnnotationPresent(FilterRequired.class)) {
             MetricFilter requiredFilter = getClass().getAnnotation(FilterRequired.class).value();
-            if (!requiredFilter.exists(context)) {
+            if (!context.exists(requiredFilter)) {
                 throw new MetricRestrictionException(
                         "Parameter " + requiredFilter + " required to be passed to get the value of the metric");
             }
         }
     }
 
-    protected ValueData postEvaluation(ValueData valueData, Map<String, String> clauses) throws IOException {
+    protected ValueData postEvaluation(ValueData valueData, Context clauses) throws IOException {
         return valueData;
     }
 
     /** Allows modify context before evaluation if necessary. */
-    protected Map<String, String> modifyContext(Map<String, String> context) throws IOException {
+    protected Context modifyContext(Context context) throws IOException {
         return context;
     }
 
@@ -106,7 +106,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
 
     /**
      * @return the fields are interested in by given metric. In other words, they are valuable for given metric. It
-     * might returns empty array to read all available fields
+     *         might returns empty array to read all available fields
      */
     public abstract String[] getTrackedFields();
 
@@ -130,25 +130,26 @@ public abstract class ReadBasedMetric extends AbstractMetric {
      *         the execution context
      * @return {@link DBObject}
      */
-    public DBObject getFilter(Map<String, String> clauses) throws IOException, ParseException {
+    public DBObject getFilter(Context clauses) throws IOException, ParseException {
         BasicDBObject match = new BasicDBObject();
         setDateFilter(clauses, match);
 
-        for (MetricFilter filter : Utils.getFilters(clauses)) {
+        for (MetricFilter filter : clauses.getFilters()) {
             String[] values;
 
             if (filter == MetricFilter.USER_COMPANY
                 || filter == MetricFilter.USER_FIRST_NAME
                 || filter == MetricFilter.USER_LAST_NAME) {
-                values = getUsers(filter, filter.get(clauses));
-                match.put(MetricFilter.USER.name().toLowerCase(), new BasicDBObject("$in", values));
+
+                values = getUsers(filter, clauses.get(filter));
+                match.put(MetricFilter.USER.getFieldName(), new BasicDBObject("$in", values));
 
             } else if (filter == MetricFilter.DOMAIN) {
-                String[] domains = filter.get(clauses).split(SEPARATOR);
-                match.put(MetricFilter.USER.name().toLowerCase(), getUsersInDomains(domains));
+                String[] domains = clauses.get(filter).split(SEPARATOR);
+                match.put(MetricFilter.USER.getFieldName(), getUsersInDomains(domains));
 
             } else {
-                values = filter.get(clauses).split(SEPARATOR);
+                values = clauses.get(filter).split(SEPARATOR);
                 match.put(filter.name().toLowerCase(), processExclusiveValues(values, filter.isNumericType()));
             }
         }
@@ -195,30 +196,28 @@ public abstract class ReadBasedMetric extends AbstractMetric {
         return result;
     }
 
-    /**
-     * The date field contains the date of the event.
-     */
-    private void setDateFilter(Map<String, String> clauses, BasicDBObject match) throws ParseException {
+    /** The date field contains the date of the event. */
+    private void setDateFilter(Context clauses, BasicDBObject match) throws ParseException {
         DBObject dateFilter = new BasicDBObject();
         match.put(DATE, dateFilter);
 
-        String fromDate = Parameters.FROM_DATE.get(clauses);
+        String fromDate = clauses.get(Parameters.FROM_DATE);
         if (fromDate != null) {
             if (Utils.isDateFormat(fromDate)) {
-                dateFilter.put("$gte", Utils.parseDate(fromDate).getTimeInMillis());
+                dateFilter.put("$gte", clauses.getAsDate(Parameters.FROM_DATE).getTimeInMillis());
             } else {
-                dateFilter.put("$gte", Long.parseLong(fromDate));
+                dateFilter.put("$gte", clauses.getAsLong(Parameters.FROM_DATE));
             }
         } else {
             dateFilter.put("$gte", 0);
         }
 
-        String toDate = Parameters.TO_DATE.get(clauses);
+        String toDate = clauses.get(Parameters.TO_DATE);
         if (toDate != null) {
             if (Utils.isDateFormat(toDate)) {
-                dateFilter.put("$lt", Utils.parseDate(toDate).getTimeInMillis() + DAY_IN_MILLISECONDS);
+                dateFilter.put("$lt", clauses.getAsDate(Parameters.TO_DATE).getTimeInMillis() + DAY_IN_MILLISECONDS);
             } else {
-                dateFilter.put("$lte", Long.parseLong(toDate));
+                dateFilter.put("$lte", clauses.getAsLong(Parameters.TO_DATE));
             }
         } else {
             dateFilter.put("$lte", Long.MAX_VALUE);
@@ -243,11 +242,12 @@ public abstract class ReadBasedMetric extends AbstractMetric {
     }
 
     private String[] getUsers(MetricFilter filter, String pattern) throws IOException {
-        Map<String, String> context = Utils.newContext();
-        filter.put(context, pattern);
+        Context.Builder builder = new Context.Builder();
+        builder.put(filter, pattern);
+        Context context = builder.build();
 
         Metric metric = MetricFactory.getMetric(MetricType.USERS_PROFILES_LIST);
-        List<ValueData> users = ((ListValueData)metric.getValue(context)).getAll();
+        List<ValueData> users = ValueDataUtil.getAsList(metric, context).getAll();
 
         String[] result = new String[users.size()];
 
@@ -269,20 +269,20 @@ public abstract class ReadBasedMetric extends AbstractMetric {
      *         the execution context
      * @return {@link DBObject}
      */
-    public final DBObject[] getDBOperations(Map<String, String> clauses) {
+    public final DBObject[] getDBOperations(Context clauses) {
         return unionDBOperations(getSpecificDBOperations(clauses),
                                  getPaginationDBOperations(clauses));
     }
 
     /** Provides basic DB operations: sorting and pagination. */
-    private DBObject[] getPaginationDBOperations(Map<String, String> clauses) {
-        boolean sortExists = Parameters.SORT.exists(clauses);
-        boolean pageExists = Parameters.PAGE.exists(clauses);
+    private DBObject[] getPaginationDBOperations(Context clauses) {
+        boolean sortExists = clauses.exists(Parameters.SORT);
+        boolean pageExists = clauses.exists(Parameters.PAGE);
 
         DBObject[] dbOp = new DBObject[(sortExists ? 1 : 0) + (pageExists ? 2 : 0)];
 
         if (sortExists) {
-            String sortCondition = Parameters.SORT.get(clauses);
+            String sortCondition = clauses.get(Parameters.SORT);
 
             String field = sortCondition.substring(1);
             boolean asc = sortCondition.substring(0, 1).equals(ASC_SORT_SIGN);
@@ -291,8 +291,8 @@ public abstract class ReadBasedMetric extends AbstractMetric {
         }
 
         if (pageExists) {
-            long page = Long.parseLong(Parameters.PAGE.get(clauses));
-            long perPage = Long.parseLong(Parameters.PER_PAGE.get(clauses));
+            long page = clauses.getAsLong(Parameters.PAGE);
+            long perPage = clauses.getAsLong(Parameters.PER_PAGE);
 
             dbOp[sortExists ? 1 : 0] = new BasicDBObject("$skip", (page - 1) * perPage);
             dbOp[sortExists ? 2 : 1] = new BasicDBObject("$limit", perPage);
@@ -311,7 +311,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
     }
 
     /** @return DB operations specific for given metric */
-    public abstract DBObject[] getSpecificDBOperations(Map<String, String> clauses);
+    public abstract DBObject[] getSpecificDBOperations(Context clauses);
 
 }
 

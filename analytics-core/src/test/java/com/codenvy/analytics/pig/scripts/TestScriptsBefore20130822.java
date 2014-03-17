@@ -18,13 +18,9 @@
 package com.codenvy.analytics.pig.scripts;
 
 import com.codenvy.analytics.BaseTest;
-import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.Metric;
-import com.codenvy.analytics.metrics.MetricFactory;
-import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
@@ -33,7 +29,6 @@ import org.testng.annotations.Test;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static org.testng.Assert.assertEquals;
 
@@ -50,12 +45,12 @@ public class TestScriptsBefore20130822 extends BaseTest {
 
         prepareDataFor(date);
 
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, date);
-        Parameters.TO_DATE.put(context, date);
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, date);
+        builder.put(Parameters.TO_DATE, date);
 
         Metric metric = MetricFactory.getMetric(MetricType.USAGE);
-        ValueData valueData = metric.getValue(context);
+        ValueData valueData = metric.getValue(builder.build());
 
         assertEquals(valueData, LongValueData.valueOf((2 + 4 + 5) * 60 * 1000));
     }
@@ -69,12 +64,12 @@ public class TestScriptsBefore20130822 extends BaseTest {
 
         prepareDataFor(date);
 
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, date);
-        Parameters.TO_DATE.put(context, date);
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, date);
+        builder.put(Parameters.TO_DATE, date);
 
         Metric metric = MetricFactory.getMetric(MetricType.USAGE);
-        ValueData valueData = metric.getValue(context);
+        ValueData valueData = metric.getValue(builder.build());
 
         assertEquals(valueData, LongValueData.valueOf(0));
     }
@@ -109,15 +104,15 @@ public class TestScriptsBefore20130822 extends BaseTest {
 
         File log = LogGenerator.generateLog(events);
 
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, date);
-        Parameters.TO_DATE.put(context, date);
-        Parameters.USER.put(context, Parameters.USER_TYPES.ANY.name());
-        Parameters.WS.put(context, Parameters.WS_TYPES.PERSISTENT.name());
-        Parameters.STORAGE_TABLE.put(context, COLLECTION_SESSIONS);
-        Parameters.STORAGE_TABLE_USERS_STATISTICS.put(context, COLLECTION_STAT);
-        Parameters.STORAGE_TABLE_USERS_PROFILES.put(context, COLLECTION_PROFILES);
-        Parameters.LOG.put(context, log.getAbsolutePath());
-        pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, context);
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, date);
+        builder.put(Parameters.TO_DATE, date);
+        builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.name());
+        builder.put(Parameters.WS, Parameters.WS_TYPES.PERSISTENT.name());
+        builder.put(Parameters.STORAGE_TABLE, COLLECTION_SESSIONS);
+        builder.put(Parameters.STORAGE_TABLE_USERS_STATISTICS, COLLECTION_STAT);
+        builder.put(Parameters.STORAGE_TABLE_USERS_PROFILES, COLLECTION_PROFILES);
+        builder.put(Parameters.LOG, log.getAbsolutePath());
+        pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, builder.build());
     }
 }

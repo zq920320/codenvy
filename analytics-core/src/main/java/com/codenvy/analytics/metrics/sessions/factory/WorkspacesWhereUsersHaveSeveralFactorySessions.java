@@ -19,6 +19,7 @@ package com.codenvy.analytics.metrics.sessions.factory;
 
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ReadBasedMetric;
 import com.mongodb.BasicDBObject;
@@ -44,13 +45,13 @@ public class WorkspacesWhereUsersHaveSeveralFactorySessions extends ReadBasedMet
     }
 
     @Override
-    public DBObject[] getSpecificDBOperations(Map<String, String> clauses) {
+    public DBObject[] getSpecificDBOperations(Context clauses) {
         List<DBObject> dbOperations = new ArrayList<>();
 
         DBObject group = new BasicDBObject();
         Map<String, String> m = new HashMap<>();
-        m.put("user", "$" + USER);
-        m.put("ws", "$" + WS);
+        m.put(USER, "$" + USER);
+        m.put(WS, "$" + WS);
         group.put(ID, m);
         group.put("sum", new BasicDBObject("$sum", 1));
         dbOperations.add(new BasicDBObject("$group", group));

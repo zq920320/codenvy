@@ -18,11 +18,11 @@
 package com.codenvy.analytics.pig.scripts;
 
 import com.codenvy.analytics.BaseTest;
-import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.Parameters;
@@ -40,7 +40,6 @@ import org.testng.annotations.Test;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static org.testng.Assert.assertEquals;
 
@@ -49,50 +48,50 @@ public class TestProductUsersTime extends BaseTest {
 
     @BeforeClass
     public void init() throws Exception {
-        Map<String, String> params = Utils.newContext();
-
         List<Event> events = new ArrayList<>();
         events.add(Event.Builder.createSessionStartedEvent("user1@gmail.com", "ws1", "ide", "1").withDate("2013-11-01")
-                        .withTime("20:00:00").build());
+                                .withTime("20:00:00").build());
         events.add(Event.Builder.createSessionFinishedEvent("user1@gmail.com", "ws1", "ide", "1").withDate("2013-11-01")
-                        .withTime("20:05:00").build());
+                                .withTime("20:05:00").build());
 
         events.add(Event.Builder.createSessionStartedEvent("user1@gmail.com", "ws1", "ide", "2").withDate("2013-11-01")
-                        .withTime("21:00:00").build());
+                                .withTime("21:00:00").build());
         events.add(Event.Builder.createSessionFinishedEvent("user1@gmail.com", "ws1", "ide", "2").withDate("2013-11-01")
-                        .withTime("21:03:00").build());
+                                .withTime("21:03:00").build());
 
         events.add(Event.Builder.createSessionStartedEvent("user2@gmail.com", "ws1", "ide", "3").withDate("2013-11-01")
-                        .withTime("20:00:00").build());
+                                .withTime("20:00:00").build());
         events.add(Event.Builder.createSessionFinishedEvent("user2@gmail.com", "ws1", "ide", "3").withDate("2013-11-01")
-                        .withTime("20:01:00").build());
+                                .withTime("20:01:00").build());
 
         events.add(Event.Builder.createSessionStartedEvent("user3@gmail.com", "ws1", "ide", "4").withDate("2013-11-01")
-                        .withTime("20:00:00").build());
+                                .withTime("20:00:00").build());
         events.add(Event.Builder.createSessionFinishedEvent("user3@gmail.com", "ws1", "ide", "4").withDate("2013-11-01")
-                        .withTime("20:07:00").build());
+                                .withTime("20:07:00").build());
         File log = LogGenerator.generateLog(events);
 
-        Parameters.FROM_DATE.put(params, "20131101");
-        Parameters.TO_DATE.put(params, "20131101");
-        Parameters.USER.put(params, Parameters.USER_TYPES.ANY.name());
-        Parameters.WS.put(params, Parameters.WS_TYPES.ANY.name());
-        Parameters.STORAGE_TABLE.put(params, "testproductuserstime");
-        Parameters.STORAGE_TABLE_USERS_STATISTICS.put(params, "testproductuserstime-stat");
-        Parameters.STORAGE_TABLE_USERS_PROFILES.put(params, "testproductuserstime-profiles");
-        Parameters.LOG.put(params, log.getAbsolutePath());
-        pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, params);
+
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20131101");
+        builder.put(Parameters.TO_DATE, "20131101");
+        builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.name());
+        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
+        builder.put(Parameters.STORAGE_TABLE, "testproductuserstime");
+        builder.put(Parameters.STORAGE_TABLE_USERS_STATISTICS, "testproductuserstime-stat");
+        builder.put(Parameters.STORAGE_TABLE_USERS_PROFILES, "testproductuserstime-profiles");
+        builder.put(Parameters.LOG, log.getAbsolutePath());
+        pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, builder.build());
     }
 
     @Test
     public void testProductUsersTime() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20131101");
-        Parameters.TO_DATE.put(context, "20131101");
-        Parameters.SORT.put(context, "-time");
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20131101");
+        builder.put(Parameters.TO_DATE, "20131101");
+        builder.put(Parameters.SORT, "-time");
 
         Metric metric = new TestedProductUsersTime();
-        ListValueData value = (ListValueData)metric.getValue(context);
+        ListValueData value = (ListValueData)metric.getValue(builder.build());
 
         List<ValueData> all = value.getAll();
         MapValueData valueData = (MapValueData)all.get(0);
@@ -113,12 +112,12 @@ public class TestProductUsersTime extends BaseTest {
 
     @Test
     public void testTopEntities() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20131101");
-        Parameters.TO_DATE.put(context, "20131101");
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20131101");
+        builder.put(Parameters.TO_DATE, "20131101");
 
         Metric metric = new TestedAbstractTopUsers();
-        ListValueData value = (ListValueData)metric.getValue(context);
+        ListValueData value = (ListValueData)metric.getValue(builder.build());
 
         assertEquals(value.size(), 3);
         MapValueData item = (MapValueData)value.getAll().get(0);
@@ -142,17 +141,17 @@ public class TestProductUsersTime extends BaseTest {
 
     @Test
     public void testConditions1() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20131101");
-        Parameters.TO_DATE.put(context, "20131101");
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20131101");
+        builder.put(Parameters.TO_DATE, "20131101");
 
         Metric metric = new TestedAbstractProductUsageCondition(0, 450000, true, true, "$and", 0, 2, true, true);
-        LongValueData value = (LongValueData)metric.getValue(context);
+        LongValueData value = (LongValueData)metric.getValue(builder.build());
 
         assertEquals(2, value.getAsLong());
 
         metric = new TestedAbstractTimelineProductUsageCondition(0, 450000, true, true, "$and", 0, 2, true, true);
-        ListValueData listVD = (ListValueData)metric.getValue(context);
+        ListValueData listVD = (ListValueData)metric.getValue(builder.build());
 
         assertEquals(1, listVD.size());
         MapValueData entities = (MapValueData)listVD.getAll().get(0);
@@ -166,24 +165,26 @@ public class TestProductUsersTime extends BaseTest {
 
     @Test
     public void testConditions2() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20131101");
-        Parameters.TO_DATE.put(context, "20131101");
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20131101");
+        builder.put(Parameters.TO_DATE, "20131101");
+
 
         Metric metric = new TestedAbstractProductUsageCondition(0, 450000, true, true, "$or", 0, 2, true, true);
-        LongValueData value = (LongValueData)metric.getValue(context);
+        LongValueData value = (LongValueData)metric.getValue(builder.build());
 
         assertEquals(3, value.getAsLong());
     }
 
     @Test
     public void testConditions3() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20131101");
-        Parameters.TO_DATE.put(context, "20131101");
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20131101");
+        builder.put(Parameters.TO_DATE, "20131101");
+
 
         Metric metric = new TestedAbstractProductUsageCondition(0, 600000, true, true, "$and", 0, 2, true, true);
-        LongValueData value = (LongValueData)metric.getValue(context);
+        LongValueData value = (LongValueData)metric.getValue(builder.build());
 
         assertEquals(3, value.getAsLong());
     }

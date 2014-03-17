@@ -18,11 +18,10 @@
 package com.codenvy.analytics.pig.scripts;
 
 import com.codenvy.analytics.BaseTest;
-import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.MetricFilter;
+import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.users.AbstractLoggedInType;
 import com.codenvy.analytics.metrics.users.UsersLoggedInTypes;
@@ -33,7 +32,6 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -47,92 +45,92 @@ public class TestNumberOfUsersByTypes_UsersLoggedInTypes extends BaseTest {
 
     @BeforeClass
     public void init() throws Exception {
-        Map<String, String> params = Utils.newContext();
         metric = new TestUsersLoggedInTypes();
 
         List<Event> events = new ArrayList<>();
         events.add(Event.Builder.createUserSSOLoggedInEvent("user1@gmail.com", "google")
-                        .withDate("2013-01-02")
-                        .withTime("10:00:00")
-                        .build());
+                                .withDate("2013-01-02")
+                                .withTime("10:00:00")
+                                .build());
         events.add(Event.Builder.createUserSSOLoggedInEvent("user2@gmail.com", "google")
-                        .withDate("2013-01-02")
-                        .withTime("10:00:01")
-                        .build());
+                                .withDate("2013-01-02")
+                                .withTime("10:00:01")
+                                .build());
         events.add(Event.Builder.createUserSSOLoggedInEvent("user2@gmail.com", "jaas")
-                        .withDate("2013-01-02")
-                        .withTime("10:00:02")
-                        .build());
+                                .withDate("2013-01-02")
+                                .withTime("10:00:02")
+                                .build());
         File log = LogGenerator.generateLog(events);
 
-        Parameters.FROM_DATE.put(params, "20130102");
-        Parameters.TO_DATE.put(params, "20130102");
-        Parameters.PARAM.put(params, "USING");
-        Parameters.USER.put(params, Parameters.USER_TYPES.REGISTERED.name());
-        Parameters.WS.put(params, Parameters.WS_TYPES.PERSISTENT.name());
-        Parameters.EVENT.put(params, "user-sso-logged-in");
-        Parameters.STORAGE_TABLE.put(params, "testnumberofusersbytypes_usersloggedintypes");
-        Parameters.LOG.put(params, log.getAbsolutePath());
 
-        pigServer.execute(ScriptType.EVENTS_BY_TYPE, params);
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20130102");
+        builder.put(Parameters.TO_DATE, "20130102");
+        builder.put(Parameters.USER, Parameters.USER_TYPES.REGISTERED.name());
+        builder.put(Parameters.WS, Parameters.WS_TYPES.PERSISTENT.name());
+        builder.put(Parameters.STORAGE_TABLE, "testnumberofusersbytypes_usersloggedintypes");
+        builder.put(Parameters.EVENT, "user-sso-logged-in");
+        builder.put(Parameters.PARAM, "USING");
+        builder.put(Parameters.LOG, log.getAbsolutePath());
+        pigServer.execute(ScriptType.EVENTS_BY_TYPE, builder.build());
     }
 
     @Test
     public void testDatePeriod() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20130102");
-        Parameters.TO_DATE.put(context, "20130102");
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20130102");
+        builder.put(Parameters.TO_DATE, "20130102");
 
-        Map<String, ValueData> values = ((MapValueData)metric.getValue(context)).getAll();
+        Map<String, ValueData> values = ((MapValueData)metric.getValue(builder.build())).getAll();
         assertEquals(values.size(), 2);
         assertEquals(values.get("google"), new LongValueData(2));
         assertEquals(values.get("jaas"), new LongValueData(1));
 
         TestAbstractLoggedInType metric = new TestAbstractLoggedInType(new String[]{"google", "jaas"});
-        assertEquals(metric.getValue(context).getAsString(), "3");
+        assertEquals(metric.getValue(builder.build()).getAsString(), "3");
     }
 
     @Test
     public void testDatePeriodUserFilter() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20130102");
-        Parameters.TO_DATE.put(context, "20130102");
-        MetricFilter.USER.put(context, "user1@gmail.com");
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20130102");
+        builder.put(Parameters.TO_DATE, "20130102");
+        builder.put(Parameters.USER, "user1@gmail.com");
 
-        Map<String, ValueData> values = ((MapValueData)metric.getValue(context)).getAll();
+        Map<String, ValueData> values = ((MapValueData)metric.getValue(builder.build())).getAll();
         assertEquals(values.size(), 1);
         assertEquals(values.get("google"), new LongValueData(1));
 
         TestAbstractLoggedInType metric = new TestAbstractLoggedInType(new String[]{"google", "jaas"});
-        assertEquals(metric.getValue(context).getAsString(), "1");
+        assertEquals(metric.getValue(builder.build()).getAsString(), "1");
     }
 
     @Test
     public void testWrongDatePeriod() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20130101");
-        Parameters.TO_DATE.put(context, "20130101");
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20130101");
+        builder.put(Parameters.TO_DATE, "20130101");
 
-        Map<String, ValueData> values = ((MapValueData)metric.getValue(context)).getAll();
+        Map<String, ValueData> values = ((MapValueData)metric.getValue(builder.build())).getAll();
         assertEquals(values.size(), 0);
 
         TestAbstractLoggedInType metric = new TestAbstractLoggedInType(new String[]{"google", "jaas"});
-        assertEquals(metric.getValue(context).getAsString(), "0");
+        assertEquals(metric.getValue(builder.build()).getAsString(), "0");
     }
 
     @Test
     public void testComplexFilter() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20130102");
-        Parameters.TO_DATE.put(context, "20130102");
-        MetricFilter.USER.put(context, "user1@gmail.com,user1@yahoo.com");
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20130102");
+        builder.put(Parameters.TO_DATE, "20130102");
+        builder.put(Parameters.USER, "user1@gmail.com,user1@yahoo.com");
 
-        Map<String, ValueData> values = ((MapValueData)metric.getValue(context)).getAll();
+        Map<String, ValueData> values = ((MapValueData)metric.getValue(builder.build())).getAll();
         assertEquals(values.size(), 1);
         assertEquals(values.get("google"), new LongValueData(1));
 
         TestAbstractLoggedInType metric = new TestAbstractLoggedInType(new String[]{"google", "jaas"});
-        assertEquals(metric.getValue(context).getAsString(), "1");
+        assertEquals(metric.getValue(builder.build()).getAsString(), "1");
     }
 
     private class TestUsersLoggedInTypes extends UsersLoggedInTypes {

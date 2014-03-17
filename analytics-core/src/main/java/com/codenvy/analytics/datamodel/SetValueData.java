@@ -50,7 +50,6 @@ public class SetValueData extends AbstractValueData {
         return value.size();
     }
 
-    /** {@inheritDoc} */
     @Override
     protected ValueData doUnion(ValueData valueData) {
         SetValueData object = (SetValueData)valueData;
@@ -62,7 +61,6 @@ public class SetValueData extends AbstractValueData {
         return new SetValueData(result);
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getAsString() {
         StringBuilder builder = new StringBuilder();
@@ -86,25 +84,21 @@ public class SetValueData extends AbstractValueData {
         return builder.toString();
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getType() {
         return ValueDataTypes.SET.toString();
     }
 
-    /** {@inheritDoc} */
     @Override
     protected boolean doEquals(ValueData valueData) {
         return this.value.equals(((SetValueData)valueData).value);
     }
 
-    /** {@inheritDoc} */
     @Override
     protected int doHashCode() {
         return value.hashCode();
     }
 
-    /** {@inheritDoc} */
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
         out.writeInt(value.size());
@@ -113,7 +107,6 @@ public class SetValueData extends AbstractValueData {
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         int size = in.readInt();

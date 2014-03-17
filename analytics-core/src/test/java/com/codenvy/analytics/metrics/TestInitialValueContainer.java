@@ -22,14 +22,12 @@ package com.codenvy.analytics.metrics;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.Injector;
-import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.LongValueData;
 
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.text.ParseException;
-import java.util.Map;
 
 import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertNull;
@@ -58,27 +56,27 @@ public class TestInitialValueContainer extends BaseTest {
 
     @Test(expectedExceptions = InitialValueNotFoundException.class)
     public void shouldThrowExceptionIfToDateBefore() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        Parameters.TO_DATE.put(context, "20111231");
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.TO_DATE, "20111231");
 
-        initialValueContainer.validateExistenceInitialValueBefore(context);
+        initialValueContainer.validateExistenceInitialValueBefore(builder.build());
     }
 
     @Test
     public void shouldNotThrowExceptionIfToDateEquals() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        Parameters.TO_DATE.put(context, "201120101");
-        Parameters.FROM_DATE.put(context, "20120101");
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.TO_DATE, "201120101");
+        builder.put(Parameters.FROM_DATE, "201120101");
 
-        initialValueContainer.validateExistenceInitialValueBefore(context);
+        initialValueContainer.validateExistenceInitialValueBefore(builder.build());
     }
 
     @Test
     public void shouldNotThrowExceptionIfToDateAfter() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        Parameters.TO_DATE.put(context, "201120102");
-        Parameters.FROM_DATE.put(context, "20120102");
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.TO_DATE, "201120102");
+        builder.put(Parameters.FROM_DATE, "201120102");
 
-        initialValueContainer.validateExistenceInitialValueBefore(context);
+        initialValueContainer.validateExistenceInitialValueBefore(builder.build());
     }
 }

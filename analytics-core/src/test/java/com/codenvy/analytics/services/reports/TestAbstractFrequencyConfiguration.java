@@ -18,12 +18,10 @@
 package com.codenvy.analytics.services.reports;
 
 import com.codenvy.analytics.BaseTest;
-import com.codenvy.analytics.Utils;
+import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.Parameters;
 
 import org.testng.annotations.Test;
-
-import java.util.Map;
 
 import static com.mongodb.util.MyAsserts.assertFalse;
 import static com.mongodb.util.MyAsserts.assertTrue;
@@ -38,15 +36,15 @@ public class TestAbstractFrequencyConfiguration extends BaseTest {
 
         assertEquals(conf.getTimeUnit(), Parameters.TimeUnit.DAY);
 
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20130930");
-        Parameters.TO_DATE.put(context, "20130930");
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20130930");
+        builder.put(Parameters.TO_DATE, "20130930");
 
-        assertTrue(conf.isAppropriateDateToSendReport(context));
+        assertTrue(conf.isAppropriateDateToSendReport(builder.build()));
 
-        context = conf.initContext(context);
-        assertEquals(Parameters.FROM_DATE.get(context), "20130929");
-        assertEquals(Parameters.TO_DATE.get(context), "20130929");
+        Context context = conf.initContext(builder.build());
+        assertEquals(context.get(Parameters.FROM_DATE), "20130929");
+        assertEquals(context.get(Parameters.TO_DATE), "20130929");
     }
 
     @Test
@@ -55,20 +53,20 @@ public class TestAbstractFrequencyConfiguration extends BaseTest {
 
         assertEquals(conf.getTimeUnit(), Parameters.TimeUnit.WEEK);
 
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20140111");
-        Parameters.TO_DATE.put(context, "20140111");
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20140111");
+        builder.put(Parameters.TO_DATE, "20140111");
 
-        assertFalse(conf.isAppropriateDateToSendReport(context));
+        assertFalse(conf.isAppropriateDateToSendReport(builder.build()));
 
-        Parameters.FROM_DATE.put(context, "20140112");
-        Parameters.TO_DATE.put(context, "20140112");
+        builder.put(Parameters.FROM_DATE, "20140112");
+        builder.put(Parameters.TO_DATE, "20140112");
 
-        assertTrue(conf.isAppropriateDateToSendReport(context));
+        assertTrue(conf.isAppropriateDateToSendReport(builder.build()));
 
-        context = conf.initContext(context);
-        assertEquals(Parameters.FROM_DATE.get(context), "20140105");
-        assertEquals(Parameters.TO_DATE.get(context), "20140111");
+        Context context = conf.initContext(builder.build());
+        assertEquals(context.get(Parameters.FROM_DATE), "20140105");
+        assertEquals(context.get(Parameters.TO_DATE), "20140111");
     }
 
     @Test
@@ -77,19 +75,19 @@ public class TestAbstractFrequencyConfiguration extends BaseTest {
 
         assertEquals(conf.getTimeUnit(), Parameters.TimeUnit.MONTH);
 
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20140102");
-        Parameters.TO_DATE.put(context, "20140102");
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20140102");
+        builder.put(Parameters.TO_DATE, "20140102");
 
-        assertFalse(conf.isAppropriateDateToSendReport(context));
+        assertFalse(conf.isAppropriateDateToSendReport(builder.build()));
 
-        Parameters.FROM_DATE.put(context, "20140101");
-        Parameters.TO_DATE.put(context, "20140101");
+        builder.put(Parameters.FROM_DATE, "20140101");
+        builder.put(Parameters.TO_DATE, "20140101");
 
-        assertTrue(conf.isAppropriateDateToSendReport(context));
+        assertTrue(conf.isAppropriateDateToSendReport(builder.build()));
 
-        context = conf.initContext(context);
-        assertEquals(Parameters.FROM_DATE.get(context), "20131201");
-        assertEquals(Parameters.TO_DATE.get(context), "20131231");
+        Context context = conf.initContext(builder.build());
+        assertEquals(context.get(Parameters.FROM_DATE), "20131201");
+        assertEquals(context.get(Parameters.TO_DATE), "20131231");
     }
 }

@@ -17,15 +17,11 @@
  */
 package com.codenvy.analytics.metrics.sessions;
 
-import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.CalculatedMetric;
-import com.codenvy.analytics.metrics.Metric;
-import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.metrics.*;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -52,7 +48,7 @@ public abstract class AbstractTimelineProductUsageCondition extends CalculatedMe
     }
 
     @Override
-    public ValueData getValue(Map<String, String> context) throws IOException {
+    public ValueData getValue(Context context) throws IOException {
         try {
             LongValueData by1Day = getNumberOfUsers(context, 1);
             LongValueData by7Day = getNumberOfUsers(context, 7);
@@ -78,28 +74,27 @@ public abstract class AbstractTimelineProductUsageCondition extends CalculatedMe
         }
     }
 
-    private LongValueData getNumberOfUsers(Map<String, String> context, int dayCount) throws ParseException,
-                                                                                             IOException {
+    private LongValueData getNumberOfUsers(Context context, int dayCount) throws ParseException, IOException {
         context = initContext(context, dayCount);
         return (LongValueData)basedMetric[0].getValue(context);
     }
 
-    private Map<String, String> initContext(Map<String, String> context, int dayCount) throws ParseException {
-        context = Utils.clone(context);
+    private Context initContext(Context basedContext, int dayCount) throws ParseException {
+        Context.Builder builder = new Context.Builder(basedContext);
 
-        Parameters.FROM_DATE.putDefaultValue(context);
+        builder.putDefaultValue(Parameters.FROM_DATE);
 
-        Calendar toDate = Utils.getToDate(context);
-        Calendar fromDate = Utils.getFromDate(context);
+        Calendar toDate = builder.getAsDate(Parameters.TO_DATE);
+        Calendar fromDate = builder.getAsDate(Parameters.FROM_DATE);
 
         toDate.add(Calendar.DAY_OF_MONTH, 1 - dayCount);
         if (fromDate.after(toDate)) {
-            Utils.putToDate(context, fromDate);
+            builder.put(Parameters.TO_DATE, fromDate);
         } else {
-            Utils.putToDate(context, toDate);
+            builder.put(Parameters.TO_DATE, toDate);
         }
 
-        return context;
+        return builder.build();
     }
 
     @Override

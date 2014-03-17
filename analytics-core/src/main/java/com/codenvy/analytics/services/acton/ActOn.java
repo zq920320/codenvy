@@ -104,11 +104,11 @@ public class ActOn extends Feature {
     }
 
     @Override
-    protected void putParametersInContext(Map<String, String> context) {
+    protected void putParametersInContext(Context.Builder builder) {
     }
 
     @Override
-    protected void doExecute(Map<String, String> context) throws IOException, ParseException {
+    protected void doExecute(Context context) throws IOException, ParseException {
         LOG.info("ActOn is started");
         long start = System.currentTimeMillis();
 
@@ -192,7 +192,7 @@ public class ActOn extends Feature {
         }
     }
 
-    protected File prepareFile(Map<String, String> context) throws IOException, ParseException {
+    protected File prepareFile(Context context) throws IOException, ParseException {
         File file = new File(configurator.getTmpDir(), FILE_NAME);
 
         int pageSize = configurator.getInt(PAGE_SIZE, 1000);
@@ -200,13 +200,13 @@ public class ActOn extends Feature {
         Map<ValueData, Map<String, ValueData>> usersProfiles = getUsersProfiles();
         Set<ValueData> activeUsers = getActiveUsersLastMonth(context);
 
-        context = Parameters.PER_PAGE.cloneAndPut(context, "" + pageSize);
+        context = context.cloneAndPut(Parameters.PER_PAGE, pageSize);
 
         try (BufferedWriter out = new BufferedWriter(new FileWriter(file))) {
             writeHeader(out);
 
             for (int currentPage = 1; ; currentPage++) {
-                Parameters.PAGE.put(context, "" + currentPage++);
+                context = context.cloneAndPut(Parameters.PAGE, currentPage++);
 
                 List<ValueData> usersStatistics = getUsersStatistics(context);
                 writeUsersWithStatistics(activeUsers, usersStatistics, usersProfiles, out);
@@ -252,21 +252,21 @@ public class ActOn extends Feature {
         }
     }
 
-    private Set<ValueData> getActiveUsersLastMonth(Map<String, String> context) throws ParseException, IOException {
-        context = Utils.clone(context);
-
-        Calendar calendar = Utils.getToDate(context);
+    private Set<ValueData> getActiveUsersLastMonth(Context context) throws ParseException, IOException {
+        Calendar calendar = context.getAsDate(Parameters.TO_DATE);
         calendar.add(Calendar.DAY_OF_MONTH, -29);
-        Utils.putFromDate(context, calendar);
+
+        Context.Builder builder = new Context.Builder(context);
+        builder.put(Parameters.FROM_DATE, calendar);
 
         Metric activeUsersList = MetricFactory.getMetric(MetricType.ACTIVE_USERS_SET);
-        SetValueData valueData = (SetValueData)activeUsersList.getValue(context);
+        SetValueData valueData = (SetValueData)activeUsersList.getValue(builder.build());
 
         return valueData.getAll();
     }
 
-    private List<ValueData> getUsersStatistics(Map<String, String> context) throws IOException, ParseException {
-        context = Parameters.FROM_DATE.cloneAndPut(context, Parameters.FROM_DATE.getDefaultValue());
+    private List<ValueData> getUsersStatistics(Context context) throws IOException, ParseException {
+        context = context.cloneAndPut(Parameters.FROM_DATE, Parameters.FROM_DATE.getDefaultValue());
 
         Metric usersStatistics = MetricFactory.getMetric(MetricType.USERS_STATISTICS_LIST);
         ListValueData valueData = (ListValueData)usersStatistics.getValue(context);
@@ -275,10 +275,10 @@ public class ActOn extends Feature {
     }
 
     private Map<ValueData, Map<String, ValueData>> getUsersProfiles() throws IOException, ParseException {
-        Map<String, String> context = Utils.initializeContext(Parameters.TimeUnit.LIFETIME);
+        Context context = Utils.initializeContext(Parameters.TimeUnit.LIFETIME);
 
         Metric usersProfiles = MetricFactory.getMetric(MetricType.USERS_PROFILES_LIST);
-        ListValueData valueData = (ListValueData)usersProfiles.getValue(context);
+        ListValueData valueData = ValueDataUtil.getAsList(usersProfiles, context);
 
         Map<ValueData, Map<String, ValueData>> result = new HashMap<>(valueData.size());
 

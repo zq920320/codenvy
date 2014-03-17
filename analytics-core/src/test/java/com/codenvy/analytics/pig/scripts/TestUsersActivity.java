@@ -18,7 +18,6 @@
 package com.codenvy.analytics.pig.scripts;
 
 import com.codenvy.analytics.BaseTest;
-import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.*;
 import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.metrics.users.UsersActivity;
@@ -49,8 +48,6 @@ public class TestUsersActivity extends BaseTest {
 
     @BeforeClass
     public void prepare() throws Exception {
-        Map<String, String> params = Utils.newContext();
-
         List<Event> events = new ArrayList<>();
 
         // start main session
@@ -105,34 +102,33 @@ public class TestUsersActivity extends BaseTest {
 
         File log = LogGenerator.generateLog(events);
 
-        Parameters.FROM_DATE.put(params, "20131101");
-        Parameters.TO_DATE.put(params, "20131101");
-        Parameters.USER.put(params, Parameters.USER_TYPES.REGISTERED.name());
-        Parameters.WS.put(params, Parameters.WS_TYPES.ANY.name());
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20131101");
+        builder.put(Parameters.TO_DATE, "20131101");
+        builder.put(Parameters.USER, Parameters.USER_TYPES.REGISTERED.name());
+        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
+        builder.put(Parameters.STORAGE_TABLE, COLLECTION);
+        builder.put(Parameters.LOG, log.getAbsolutePath());
+        pigServer.execute(ScriptType.USERS_ACTIVITY, builder.build());
 
-        Parameters.STORAGE_TABLE.put(params, COLLECTION);
-        Parameters.LOG.put(params, log.getAbsolutePath());
-        pigServer.execute(ScriptType.USERS_ACTIVITY, params);
-
-        String ProductUsageSessionsTableName =
+        String productUsageSessionsablepame =
                 ((ReadBasedMetric)MetricFactory.getMetric(MetricType.PRODUCT_USAGE_SESSIONS_LIST))
                         .getStorageCollectionName();
-        Parameters.STORAGE_TABLE.put(params, ProductUsageSessionsTableName);
 
-        Parameters.STORAGE_TABLE_USERS_STATISTICS.put(params, "testuserssessions-stat");
-        Parameters.STORAGE_TABLE_USERS_PROFILES.put(params, "testuserssessions-profiles");
-        Parameters.LOG.put(params, log.getAbsolutePath());
-        pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, params);
+        builder.put(Parameters.STORAGE_TABLE, productUsageSessionsablepame);
+        builder.put(Parameters.STORAGE_TABLE_USERS_STATISTICS, "testuserssessions-stat");
+        builder.put(Parameters.STORAGE_TABLE_USERS_PROFILES, "testuserssessions-profiles");
+        pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, builder.build());
     }
 
     @Test
     public void testActivity() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20131101");
-        Parameters.TO_DATE.put(context, "20131101");
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20131101");
+        builder.put(Parameters.TO_DATE, "20131101");
 
         Metric metric = new TestedUsersActivityList();
-        ListValueData value = (ListValueData)metric.getValue(context);
+        ListValueData value = (ListValueData)metric.getValue(builder.build());
 
         assertEquals(value.size(), 12);
 
@@ -233,17 +229,17 @@ public class TestUsersActivity extends BaseTest {
                    0, 0);
 
         metric = new TestedNumberOfUsersOfActivity();
-        Assert.assertEquals(metric.getValue(context), LongValueData.valueOf(12));
+        Assert.assertEquals(metric.getValue(builder.build()), LongValueData.valueOf(12));
     }
 
     @Test
     public void testOneSessionActivityWithHidedSessionEvents() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        MetricFilter.SESSION_ID.put(context, SESSION_ID);
-        MetricFilter.EVENT.put(context, NON_SESSIONS_EVENTS);
+        Context.Builder builder = new Context.Builder();
+        builder.put(MetricFilter.SESSION_ID, SESSION_ID);
+        builder.put(Parameters.EVENT, NON_SESSIONS_EVENTS);
 
         Metric metric = new TestedUsersActivityList();
-        ListValueData value = (ListValueData)metric.getValue(context);
+        ListValueData value = (ListValueData)metric.getValue(builder.build());
 
         assertEquals(value.size(), 6);
 
@@ -306,17 +302,17 @@ public class TestUsersActivity extends BaseTest {
                    fullDateFormatMils.parse("2013-11-01 20:04:00,220").getTime() - startTime);
 
         metric = new TestedNumberOfUsersOfActivity();
-        Assert.assertEquals(metric.getValue(context), LongValueData.valueOf(3));
+        Assert.assertEquals(metric.getValue(builder.build()), LongValueData.valueOf(3));
     }
 
 
     @Test
     public void testOneSessionActivity() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        MetricFilter.SESSION_ID.put(context, SESSION_ID);
+        Context.Builder builder = new Context.Builder();
+        builder.put(MetricFilter.SESSION_ID, SESSION_ID);
 
         Metric metric = new TestedUsersActivityList();
-        ListValueData value = (ListValueData)metric.getValue(context);
+        ListValueData value = (ListValueData)metric.getValue(builder.build());
 
         assertEquals(value.size(), 10);
 
@@ -420,19 +416,19 @@ public class TestUsersActivity extends BaseTest {
 
 
         metric = new TestedNumberOfUsersOfActivity();
-        Assert.assertEquals(metric.getValue(context), LongValueData.valueOf(7));
+        Assert.assertEquals(metric.getValue(builder.build()), LongValueData.valueOf(7));
     }
 
     @Test
     public void testOneSessionActivityPagination() throws Exception {
         Metric metric = new TestedUsersActivityList();
 
-        Map<String, String> context = Utils.newContext();
-        MetricFilter.SESSION_ID.put(context, SESSION_ID);
-        Parameters.PAGE.put(context, 1);
-        Parameters.PER_PAGE.put(context, 3);
+        Context.Builder builder = new Context.Builder();
+        builder.put(MetricFilter.SESSION_ID, SESSION_ID);
+        builder.put(Parameters.PAGE, 1);
+        builder.put(Parameters.PER_PAGE, 3);
 
-        ListValueData value = (ListValueData)metric.getValue(context);
+        ListValueData value = (ListValueData)metric.getValue(builder.build());
         assertEquals(value.size(), 4);
 
         long startTime = fullDateFormatMils.parse("2013-11-01 19:00:00,155").getTime();
@@ -475,8 +471,9 @@ public class TestUsersActivity extends BaseTest {
                    fullDateFormatMils.parse("2013-11-01 19:08:00,600").getTime(),
                    fullDateFormatMils.parse("2013-11-01 19:10:00,900").getTime() - startTime);
 
-        Parameters.PAGE.put(context, 2);
-        value = (ListValueData)metric.getValue(context);
+        builder.put(Parameters.PAGE, 2);
+
+        value = (ListValueData)metric.getValue(builder.build());
         assertEquals(value.size(), 3);
 
         assertItem(value,
@@ -509,8 +506,9 @@ public class TestUsersActivity extends BaseTest {
                    fullDateFormatMils.parse("2013-11-01 20:00:00,100").getTime(),
                    fullDateFormatMils.parse("2013-11-01 20:02:00,600").getTime() - startTime);
 
-        Parameters.PAGE.put(context, 3);
-        value = (ListValueData)metric.getValue(context);
+        builder.put(Parameters.PAGE, 3);
+
+        value = (ListValueData)metric.getValue(builder.build());
         assertEquals(value.size(), 3);
 
         assertItem(value,

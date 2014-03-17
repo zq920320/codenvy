@@ -17,13 +17,13 @@
  */
 package com.codenvy.analytics.metrics.top;
 
+import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricType;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 
 /** @author Dmytro Nochevnov */
@@ -58,7 +58,7 @@ public abstract class AbstractTopFactories extends AbstractTopMetrics {
     }
 
     @Override
-    public DBObject[] getSpecificDBOperations(Map<String, String> clauses) {
+    public DBObject[] getSpecificDBOperations(Context clauses) {
         List<DBObject> dbOperations = new ArrayList<>();
 
         dbOperations.add(new BasicDBObject("$match", new BasicDBObject(FACTORY, new BasicDBObject("$ne", ""))));

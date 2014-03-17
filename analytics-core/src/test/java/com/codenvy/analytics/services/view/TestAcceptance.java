@@ -25,10 +25,7 @@ import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.StringValueData;
 import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.Metric;
-import com.codenvy.analytics.metrics.MetricFactory;
-import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.persistent.CollectionsManagement;
 import com.codenvy.analytics.persistent.JdbcDataPersisterFactory;
 import com.codenvy.analytics.services.configuration.XmlConfigurationManager;
@@ -78,13 +75,14 @@ public class TestAcceptance extends BaseTest {
     }
 
     private void runScript() throws Exception {
-        Map<String, String> context = Utils.initializeContext(Parameters.TimeUnit.DAY);
+        Context context = Utils.initializeContext(Parameters.TimeUnit.DAY);
 
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DAY_OF_MONTH, -1);
 
-        Parameters.LOG.put(context, getResourceAsBytes("2013-11-24", df.format(calendar.getTime())).getAbsolutePath());
+        context = context.cloneAndPut(Parameters.LOG, getResourceAsBytes("2013-11-24", df.format(calendar.getTime()))
+                .getAbsolutePath());
         pigRunner.forceExecute(context);
     }
 
@@ -124,7 +122,7 @@ public class TestAcceptance extends BaseTest {
 
         ArgumentCaptor<String> viewId = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<ViewData> viewData = ArgumentCaptor.forClass(ViewData.class);
-        ArgumentCaptor<Map> context = ArgumentCaptor.forClass(Map.class);
+        ArgumentCaptor<Context> context = ArgumentCaptor.forClass(Context.class);
 
         verify(viewBuilder, atLeastOnce()).retainViewData(viewId.capture(), viewData.capture(), context.capture());
 
@@ -144,7 +142,7 @@ public class TestAcceptance extends BaseTest {
     }
 
     private void assertNumberOfItems(MetricType listMetricType, MetricType countMetricType) throws IOException {
-        Map<String, String> context = Utils.newContext();
+        Context context = new Context.Builder().build();
 
         Metric listMetric = MetricFactory.getMetric(listMetricType);
         Metric countMetric = MetricFactory.getMetric(countMetricType);

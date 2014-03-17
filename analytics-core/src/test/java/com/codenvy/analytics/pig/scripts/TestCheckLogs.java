@@ -19,6 +19,7 @@
 package com.codenvy.analytics.pig.scripts;
 
 import com.codenvy.analytics.BaseTest;
+import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
@@ -27,7 +28,9 @@ import org.apache.pig.data.Tuple;
 import org.testng.annotations.Test;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import static org.testng.Assert.assertEquals;
 
@@ -39,28 +42,28 @@ public class TestCheckLogs extends BaseTest {
         List<Event> events = new ArrayList<>();
 
         events.add(Event.Builder.createApplicationCreatedEvent("user1", "ws1", "session", "project1", "type1", "null")
-                        .withDate("2013-01-01").build());
+                                .withDate("2013-01-01").build());
         events.add(Event.Builder.createApplicationCreatedEvent("user1", "ws1", "session", "project2", "type1", "")
-                        .withDate("2013-01-01").build());
+                                .withDate("2013-01-01").build());
         events.add(Event.Builder.createProjectCreatedEvent("", "", "", "project3", "type1")
-                        .withDate("2013-01-01").build());
+                                .withDate("2013-01-01").build());
 
         File log = LogGenerator.generateLog(events);
 
-        Map<String, String> params = new HashMap<String, String>();
-        Parameters.FROM_DATE.put(params, "20130101");
-        Parameters.TO_DATE.put(params, "20130101");
-        Parameters.USER.put(params, Parameters.USER_TYPES.ANY.name());
-        Parameters.WS.put(params, Parameters.WS_TYPES.ANY.name());
-        Parameters.LOG.put(params, log.getAbsolutePath());
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20130101");
+        builder.put(Parameters.TO_DATE, "20130101");
+        builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.name());
+        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
+        builder.put(Parameters.LOG, log.getAbsolutePath());
 
         int count = 0;
-        Iterator<Tuple> iterator = pigServer.executeAndReturn(ScriptType.CHECK_LOGS_1, params);
+        Iterator<Tuple> iterator = pigServer.executeAndReturn(ScriptType.CHECK_LOGS_1, builder.build());
         for (; iterator.hasNext(); iterator.next()) {
             count++;
         }
         assertEquals(count, 3);
 
-        pigServer.execute(ScriptType.CHECK_LOGS_2, params);
+        pigServer.execute(ScriptType.CHECK_LOGS_2, builder.build());
     }
 }

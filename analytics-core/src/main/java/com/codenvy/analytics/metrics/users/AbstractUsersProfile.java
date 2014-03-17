@@ -17,7 +17,7 @@
  */
 package com.codenvy.analytics.metrics.users;
 
-import com.codenvy.analytics.Utils;
+import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ReadBasedMetric;
@@ -25,7 +25,6 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
 import java.text.ParseException;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
@@ -36,21 +35,21 @@ abstract public class AbstractUsersProfile extends ReadBasedMetric {
     }
 
     @Override
-    public DBObject getFilter(Map<String, String> clauses) throws ParseException {
+    public DBObject getFilter(Context clauses) throws ParseException {
         BasicDBObject match = new BasicDBObject();
 
-        for (MetricFilter filter : Utils.getFilters(clauses)) {
-            String[] values = filter.get(clauses).split(",");
+        for (MetricFilter filter : clauses.getFilters()) {
+            String[] values = clauses.get(filter).split(",");
 
             if (filter == MetricFilter.USER) {
                 match.put(ID, new BasicDBObject("$in", values));
 
-            } else if (filter == MetricFilter.USER_COMPANY 
+            } else if (filter == MetricFilter.USER_COMPANY
                        || filter == MetricFilter.USER_FIRST_NAME
                        || filter == MetricFilter.USER_LAST_NAME) {
                 StringBuilder builder = new StringBuilder();
 
-                for (String value : filter.get(clauses).split(",")) {
+                for (String value : clauses.get(filter).split(",")) {
                     if (builder.length() > 0) {
                         builder.append("|");
                     }
@@ -70,7 +69,7 @@ abstract public class AbstractUsersProfile extends ReadBasedMetric {
     }
 
     @Override
-    public DBObject[] getSpecificDBOperations(Map<String, String> clauses) {
+    public DBObject[] getSpecificDBOperations(Context clauses) {
         return new DBObject[0];
     }
 }

@@ -21,8 +21,6 @@ import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.mongodb.DBObject;
 
-import java.util.Map;
-
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public abstract class AbstractMapValueResulted extends ReadBasedMetric {
 
@@ -40,7 +38,7 @@ public abstract class AbstractMapValueResulted extends ReadBasedMetric {
     }
 
     @Override
-    public DBObject[] getSpecificDBOperations(Map<String, String> clauses) {
+    public DBObject[] getSpecificDBOperations(Context clauses) {
         return new DBObject[0];
     }
 }

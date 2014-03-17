@@ -22,6 +22,7 @@ package com.codenvy.analytics.services.view;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.StringValueData;
 import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.Parameters;
 
 import java.io.IOException;
@@ -63,18 +64,18 @@ class DateRow extends AbstractRow {
     }
 
     @Override
-    public List<List<ValueData>> getData(Map<String, String> initialContext, int iterationsCount) throws IOException {
+    public List<List<ValueData>> getData(Context initialContext, int iterationsCount) throws IOException {
         List<ValueData> result = new ArrayList<>(iterationsCount);
 
         try {
-            DateFormat dateFormat = new SimpleDateFormat(format.get(Utils.getTimeUnit(initialContext)));
+            DateFormat dateFormat = new SimpleDateFormat(format.get(initialContext.getTimeUnit()));
 
             result.add(new StringValueData(parameters.get(SECTION_NAME)));
             for (int i = 1; i < iterationsCount; i++) {
-                Calendar toDate = Utils.getToDate(initialContext);
+                Calendar toDate = initialContext.getAsDate(Parameters.TO_DATE);
                 result.add(new StringValueData(dateFormat.format(toDate.getTime())));
 
-                initialContext = Utils.prevDateInterval(initialContext);
+                initialContext = Utils.prevDateInterval(new Context.Builder(initialContext));
             }
         } catch (ParseException e) {
             throw new IOException(e);

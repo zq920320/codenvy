@@ -20,6 +20,7 @@ package com.codenvy.analytics.services.view;
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.*;
+import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.Parameters;
 
@@ -36,7 +37,7 @@ import static org.testng.Assert.assertEquals;
  */
 public class TestDateFieldsMetricRow extends BaseTest {
 
-    private Map<String, String> context;
+    private Context context;
     private Map<String, String> parameters;
 
     @BeforeClass
@@ -69,7 +70,7 @@ public class TestDateFieldsMetricRow extends BaseTest {
     private class TestedMetric implements Metric {
 
         @Override
-        public ValueData getValue(Map<String, String> context) throws IOException {
+        public ValueData getValue(Context context) throws IOException {
             Map<String, ValueData> values = new HashMap<>();
             values.put("date1", LongValueData.valueOf(1 * 60 * 60 * 1000));
             values.put("date2", LongValueData.valueOf(2 * 60 * 60 * 1000));

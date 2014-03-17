@@ -20,10 +20,9 @@ package com.codenvy.analytics.pig.scripts;
 
 
 import com.codenvy.analytics.BaseTest;
-import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.LongValueData;
+import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.Metric;
-import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.ide_usage.AbstractTimeSpentInAction;
 import com.codenvy.analytics.pig.scripts.util.Event;
@@ -36,7 +35,6 @@ import org.testng.annotations.Test;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestTimeSpentInAction extends BaseTest {
@@ -75,71 +73,70 @@ public class TestTimeSpentInAction extends BaseTest {
 
         File log = LogGenerator.generateLog(events);
 
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20130101");
-        Parameters.TO_DATE.put(context, "20130101");
-        Parameters.USER.put(context, Parameters.USER_TYPES.REGISTERED.name());
-        Parameters.WS.put(context, Parameters.WS_TYPES.ANY.name());
-        Parameters.EVENT.put(context, "run");
-        Parameters.LOG.put(context, log.getAbsolutePath());
-        Parameters.STORAGE_TABLE.put(context, COLLECTION);
-
-        pigServer.execute(ScriptType.TIME_SPENT_IN_ACTION, context);
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20130101");
+        builder.put(Parameters.TO_DATE, "20130101");
+        builder.put(Parameters.USER, Parameters.USER_TYPES.REGISTERED.name());
+        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
+        builder.put(Parameters.STORAGE_TABLE, COLLECTION);
+        builder.put(Parameters.EVENT, "run");
+        builder.put(Parameters.LOG, log.getAbsolutePath());
+        pigServer.execute(ScriptType.TIME_SPENT_IN_ACTION, builder.build());
     }
 
     @Test
     public void testDateFilter() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20130101");
-        Parameters.TO_DATE.put(context, "20130101");
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20130101");
+        builder.put(Parameters.TO_DATE, "20130101");
 
         Metric metric = new TestedAbstractTimeSpentInAction();
-        Assert.assertEquals(metric.getValue(context), new LongValueData(540000));
+        Assert.assertEquals(metric.getValue(builder.build()), new LongValueData(540000));
     }
 
     @Test
     public void testWrongDateFilter() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20130102");
-        Parameters.TO_DATE.put(context, "20130102");
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20130102");
+        builder.put(Parameters.TO_DATE, "20130102");
 
         Metric metric = new TestedAbstractTimeSpentInAction();
-        Assert.assertEquals(metric.getValue(context), new LongValueData(0));
+        Assert.assertEquals(metric.getValue(builder.build()), new LongValueData(0));
     }
 
 
     @Test
     public void testSingleUserFilter() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20130101");
-        Parameters.TO_DATE.put(context, "20130101");
-        MetricFilter.USER.put(context, "user1@gmail.com");
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20130101");
+        builder.put(Parameters.TO_DATE, "20130101");
+        builder.put(Parameters.USER, "user1@gmail.com");
 
         Metric metric = new TestedAbstractTimeSpentInAction();
-        Assert.assertEquals(metric.getValue(context), new LongValueData(420000));
+        Assert.assertEquals(metric.getValue(builder.build()), new LongValueData(420000));
     }
 
     @Test
     public void testDoubleUserFilter() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20130101");
-        Parameters.TO_DATE.put(context, "20130102");
-        MetricFilter.USER.put(context, "user1@gmail.com,user2@gmail.com");
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20130101");
+        builder.put(Parameters.TO_DATE, "20130101");
+        builder.put(Parameters.USER, "user1@gmail.com,user2@gmail.com");
 
         Metric metric = new TestedAbstractTimeSpentInAction();
-        Assert.assertEquals(metric.getValue(context), new LongValueData(540000));
+        Assert.assertEquals(metric.getValue(builder.build()), new LongValueData(540000));
     }
 
     @Test
     public void testSeveralFilters() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20130101");
-        Parameters.TO_DATE.put(context, "20130102");
-        MetricFilter.USER.put(context, "user1@gmail.com,user2@gmail.com");
-        MetricFilter.WS.put(context, "ws2");
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20130101");
+        builder.put(Parameters.TO_DATE, "20130101");
+        builder.put(Parameters.USER, "user1@gmail.com,user2@gmail.com");
+        builder.put(Parameters.WS, "ws2");
 
         Metric metric = new TestedAbstractTimeSpentInAction();
-        Assert.assertEquals(metric.getValue(context), new LongValueData(120000));
+        Assert.assertEquals(metric.getValue(builder.build()), new LongValueData(120000));
 
     }
 

@@ -19,12 +19,13 @@ package com.codenvy.analytics.metrics.users;
 
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.datamodel.ValueDataUtil;
 import com.codenvy.analytics.metrics.CalculatedMetric;
+import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricType;
 
 import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
-import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
@@ -37,10 +38,10 @@ public class UsersLoggedInTotal extends CalculatedMetric {
     }
 
     @Override
-    public ValueData getValue(Map<String, String> context) throws IOException {
-        LongValueData form = (LongValueData)basedMetric[0].getValue(context);
-        LongValueData github = (LongValueData)basedMetric[1].getValue(context);
-        LongValueData google = (LongValueData)basedMetric[2].getValue(context);
+    public ValueData getValue(Context context) throws IOException {
+        LongValueData form = ValueDataUtil.getAsLong(basedMetric[0], context);
+        LongValueData github = ValueDataUtil.getAsLong(basedMetric[1], context);
+        LongValueData google = ValueDataUtil.getAsLong(basedMetric[2], context);
 
         return new LongValueData(form.getAsLong() + github.getAsLong() + google.getAsLong());
     }

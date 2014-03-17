@@ -17,7 +17,6 @@
  */
 package com.codenvy.analytics.metrics.users;
 
-import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.*;
 import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.pig.scripts.EventsHolder;
@@ -41,9 +40,7 @@ public class UsersActivityList extends AbstractListValueResulted {
         super(MetricType.USERS_ACTIVITY_LIST);
     }
 
-    /**
-     * For testing purpose only.
-     */
+    /** For testing purpose only. */
     public UsersActivityList(Metric totalActionsNumberMetric) {
         super(MetricType.USERS_ACTIVITY_LIST);
         this.totalActionsNumberMetric = totalActionsNumberMetric;
@@ -64,18 +61,17 @@ public class UsersActivityList extends AbstractListValueResulted {
     }
 
     @Override
-    public DBObject getFilter(Map<String, String> clauses) throws ParseException, IOException {
-        clauses = Utils.clone(clauses);
+    public DBObject getFilter(Context clauses) throws ParseException, IOException {
+        Context.Builder builder = new Context.Builder(clauses);
+        overrideSortOrder(builder);
+        excludeStartAndStopFactorySessionsEvents(builder);
 
-        overrideSortOrder(clauses);
-        excludeStartAndStopFactorySessionsEvents(clauses);
-
-        if (MetricFilter.SESSION_ID.exists(clauses)) {
-            setUserWsAndDateFilters(clauses);
-            MetricFilter.SESSION_ID.remove(clauses);
+        if (clauses.exists(MetricFilter.SESSION_ID)) {
+            setUserWsAndDateFilters(builder);
+            builder.remove(MetricFilter.SESSION_ID);
         }
 
-        return super.getFilter(clauses);
+        return super.getFilter(builder.build());
     }
 
     /**
@@ -84,7 +80,7 @@ public class UsersActivityList extends AbstractListValueResulted {
      * {@link com.codenvy.analytics.pig.scripts.EventsHolder#IDE_CLOSED} events.
      */
     @Override
-    protected ValueData postEvaluation(ValueData valueData, Map<String, String> clauses) throws IOException {
+    protected ValueData postEvaluation(ValueData valueData, Context clauses) throws IOException {
         SessionData sessionData = SessionData.init(clauses);
 
         long prevActionDate = -1;
@@ -121,20 +117,18 @@ public class UsersActivityList extends AbstractListValueResulted {
         return new ListValueData(item2Return);
     }
 
-    /**
-     * Calculate duration of action, in millisec.
-     */
+    /** Calculate duration of action, in millisec. */
     private long getTime(long actionDate,
                          long prevActionDate,
                          int actionNumber,
-                         Map<String, String> clauses) throws IOException {
+                         Context clauses) throws IOException {
         if (actionNumber == 0) {
             if (isFirstPage(clauses)) {
                 return 0;
             } else {
-                if (Parameters.PER_PAGE.exists(clauses) && Parameters.PER_PAGE.getAsLong(clauses) > 1) {
+                if (clauses.exists(Parameters.PER_PAGE) && clauses.getAsLong(Parameters.PER_PAGE) > 1) {
                     long prevGlobalActionNumber =
-                            (Parameters.PAGE.getAsLong(clauses) - 1) * Parameters.PER_PAGE.getAsLong(clauses);
+                            (clauses.getAsLong(Parameters.PAGE) - 1) * clauses.getAsLong(Parameters.PER_PAGE);
 
                     return actionDate - getDateOfAction(clauses, prevGlobalActionNumber);
                 } else {
@@ -152,12 +146,13 @@ public class UsersActivityList extends AbstractListValueResulted {
      * @param globalActionNumber
      *         starting from 0
      */
-    private long getDateOfAction(Map<String, String> clauses, long globalActionNumber) throws IOException {
-        Map<String, String> context = Utils.clone(clauses);
-        Parameters.PAGE.put(context, globalActionNumber);
-        Parameters.PER_PAGE.put(context, 1);
+    private long getDateOfAction(Context clauses, long globalActionNumber) throws IOException {
+        Context.Builder builder = new Context.Builder(clauses);
+        builder.put(Parameters.PAGE, globalActionNumber);
+        builder.put(Parameters.PER_PAGE, 1);
+        Context context = builder.build();
 
-        ListValueData valueData = (ListValueData)getValue(context);
+        ListValueData valueData = ValueDataUtil.getAsList(this, context);
 
         List<ValueData> items = valueData.getAll();
         if (items.size() == 0) {
@@ -165,11 +160,11 @@ public class UsersActivityList extends AbstractListValueResulted {
         }
 
         Map<String, ValueData> row = ((MapValueData)items.get(0)).getAll();
-        return ((LongValueData)row.get(DATE)).getAsLong();
+        return ValueDataUtil.treatAsLong(row.get(DATE));
     }
 
     private void addArtificialActions(SessionData sessionData,
-                                      Map<String, String> clauses,
+                                      Context clauses,
                                       List<ValueData> items2Return) throws IOException {
         if (isFirstPage(clauses)) {
             items2Return.add(0, getIdeOpenedEvent(sessionData));
@@ -229,61 +224,60 @@ public class UsersActivityList extends AbstractListValueResulted {
         return new MapValueData(items);
     }
 
-    private boolean isFirstPage(Map<String, String> clauses) {
-        return !Parameters.PAGE.exists(clauses) || Parameters.PAGE.get(clauses).equals("1");
+    private boolean isFirstPage(Context clauses) {
+        return !clauses.exists(Parameters.PAGE) || clauses.getAsLong(Parameters.PAGE) == 1;
     }
 
-    private boolean isLastPage(Map<String, String> clauses) throws IOException {
-        if (!Parameters.PAGE.exists(clauses)) {
+    private boolean isLastPage(Context clauses) throws IOException {
+        if (!clauses.exists(Parameters.PAGE)) {
             return true;
         }
 
-        long maxActionNumber = Parameters.PAGE.getAsLong(clauses) * Parameters.PER_PAGE.getAsLong(clauses);
+        long maxActionNumber = clauses.getAsLong(Parameters.PAGE) * clauses.getAsLong(Parameters.PER_PAGE);
         return maxActionNumber >= getTotalActionsNumber(clauses);
     }
 
-    private long getTotalActionsNumber(Map<String, String> clauses) throws IOException {
-        clauses = Utils.clone(clauses);
-        Parameters.PAGE.remove(clauses);
-        Parameters.PER_PAGE.remove(clauses);
+    private long getTotalActionsNumber(Context basedClauses) throws IOException {
+        Context.Builder builder = new Context.Builder(basedClauses);
+        builder.remove(Parameters.PAGE);
+        builder.remove(Parameters.PER_PAGE);
+        Context context = builder.build();
 
         if (totalActionsNumberMetric == null) {
             totalActionsNumberMetric = MetricFactory.getMetric(MetricType.USERS_ACTIVITY);
         }
-        return ValueDataUtil.getAsLong(totalActionsNumberMetric.getValue(clauses));
+        return ValueDataUtil.getAsLong(totalActionsNumberMetric, context).getAsLong();
     }
 
-    private void overrideSortOrder(Map<String, String> clauses) {
-        Parameters.SORT.put(clauses, ASC_SORT_SIGN + DATE);
+    private void overrideSortOrder(Context.Builder builder) {
+        builder.put(Parameters.SORT, ASC_SORT_SIGN + DATE);
     }
 
-    private void excludeStartAndStopFactorySessionsEvents(Map<String, String> clauses) {
-        String eventFilter = MetricFilter.EVENT.get(clauses);
+    private void excludeStartAndStopFactorySessionsEvents(Context.Builder builder) {
+        String eventFilter = builder.get(MetricFilter.EVENT);
 
         if (eventFilter != null) {
-            MetricFilter.EVENT.put(clauses, eventFilter + "," + EventsHolder.NOT_FACTORY_SESSIONS);
+            builder.put(MetricFilter.EVENT, eventFilter + "," + EventsHolder.NOT_FACTORY_SESSIONS);
         } else {
-            MetricFilter.EVENT.put(clauses, EventsHolder.NOT_FACTORY_SESSIONS);
+            builder.put(MetricFilter.EVENT, EventsHolder.NOT_FACTORY_SESSIONS);
         }
     }
 
-    private void setUserWsAndDateFilters(Map<String, String> clauses) throws IOException {
-        SessionData sessionData = SessionData.init(clauses);
+    private void setUserWsAndDateFilters(Context.Builder builder) throws IOException {
+        SessionData sessionData = SessionData.init(builder.build());
 
         if (sessionData != null) {
-            MetricFilter.USER.putIfAbsent(clauses, sessionData.user);
-            MetricFilter.WS.put(clauses, sessionData.ws);
-            Parameters.FROM_DATE.put(clauses, sessionData.fromDate);
-            Parameters.TO_DATE.put(clauses, sessionData.toDate);
+            builder.putIfAbsent(Parameters.USER, sessionData.user);
+            builder.put(Parameters.WS, sessionData.ws);
+            builder.put(Parameters.TO_DATE, sessionData.toDate);
+            builder.put(Parameters.FROM_DATE, sessionData.fromDate);
         } else {
-            Parameters.FROM_DATE.put(clauses, 0);
-            Parameters.TO_DATE.put(clauses, 0);
+            builder.put(Parameters.TO_DATE, 0);
+            builder.put(Parameters.FROM_DATE, 0);
         }
     }
 
-    /**
-     * The data of the sessions that contains all given user's actions.
-     */
+    /** The data of the sessions that contains all given user's actions. */
     private static class SessionData {
         private long fromDate;
         private long toDate;
@@ -296,8 +290,8 @@ public class UsersActivityList extends AbstractListValueResulted {
         private SessionData() {
         }
 
-        private static SessionData init(Map<String, String> clauses) throws IOException {
-            String sessionId = MetricFilter.SESSION_ID.get(clauses);
+        private static SessionData init(Context clauses) throws IOException {
+            String sessionId = clauses.get(MetricFilter.SESSION_ID);
             if (sessionId == null) {
                 return null;
             }
@@ -319,8 +313,9 @@ public class UsersActivityList extends AbstractListValueResulted {
         }
 
         private static MapValueData getValueData(String sessionId) throws IOException {
-            Map<String, String> context = Utils.newContext();
-            MetricFilter.SESSION_ID.put(context, sessionId);
+            Context.Builder builder = new Context.Builder();
+            builder.put(MetricFilter.SESSION_ID, sessionId);
+            Context context = builder.build();
 
             Metric metric = MetricFactory.getMetric(MetricType.PRODUCT_USAGE_SESSIONS_LIST);
             ListValueData valueData = (ListValueData)metric.getValue(context);
@@ -365,7 +360,7 @@ public class UsersActivityList extends AbstractListValueResulted {
 
         private static long getLongParameter(MapValueData valueData, String param) {
             if (valueData.getAll().containsKey(param)) {
-                return ValueDataUtil.getAsLong(valueData.getAll().get(param));
+                return ValueDataUtil.treatAsLong(valueData.getAll().get(param));
             } else {
                 return LongValueData.DEFAULT.getAsLong();
             }

@@ -19,6 +19,7 @@ package com.codenvy.analytics.persistent;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.Utils;
+import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.ReadBasedMetric;
 import com.codenvy.analytics.services.configuration.XmlConfigurationManager;
@@ -35,7 +36,6 @@ import org.testng.annotations.Test;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.Calendar;
-import java.util.Map;
 import java.util.UUID;
 
 import static org.mockito.Matchers.any;
@@ -198,11 +198,11 @@ public class TestCollectionsManagement extends BaseTest {
     private void removeData(String collectionSuffix, String fromDate, String toDate) throws Exception {
         CollectionsManagement collectionsManagement = initCollectionManagement(collectionSuffix);
 
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, fromDate);
-        Parameters.TO_DATE.put(context, toDate);
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, fromDate);
+        builder.put(Parameters.TO_DATE, toDate);
 
-        collectionsManagement.removeData(context);
+        collectionsManagement.removeData(builder.build());
     }
 
     private void assertRowsCount(String collectionSuffix, int rowCount) {
@@ -246,21 +246,35 @@ public class TestCollectionsManagement extends BaseTest {
     private CollectionsManagement initCollectionManagement(final String collectionSuffix) throws Exception {
         XmlConfigurationManager confManager = mock(XmlConfigurationManager.class);
         when(confManager.loadConfiguration(any(Class.class), anyString())).
-                thenAnswer(new Answer() {
-                    @Override
-                    public Object answer(InvocationOnMock invocation) throws Throwable {
-                        String configuration =
-                                CONFIGURATION.replace(COLLECTION_NAME, COLLECTION_NAME + collectionSuffix);
-                        String file = FILE + "_" + collectionSuffix;
+                                                                                  thenAnswer(new Answer() {
+                                                                                      @Override
+                                                                                      public Object answer(
+                                                                                              InvocationOnMock
+                                                                                                      invocation)
+                                                                                              throws Throwable {
+                                                                                          String configuration =
+                                                                                                  CONFIGURATION.replace(
+                                                                                                          COLLECTION_NAME,
+                                                                                                          COLLECTION_NAME +
+                                                                                                          collectionSuffix);
+                                                                                          String file = FILE + "_" +
+                                                                                                        collectionSuffix;
 
-                        try (BufferedWriter out = new BufferedWriter(new FileWriter(file))) {
-                            out.write(configuration);
-                        }
+                                                                                          try (BufferedWriter out = new BufferedWriter(
+                                                                                                  new FileWriter(
+                                                                                                          file))) {
+                                                                                              out.write(configuration);
+                                                                                          }
 
-                        XmlConfigurationManager manager = new XmlConfigurationManager();
-                        return manager.loadConfiguration(CollectionsConfiguration.class, file);
-                    }
-                });
+                                                                                          XmlConfigurationManager
+                                                                                                  manager =
+                                                                                                  new XmlConfigurationManager();
+                                                                                          return manager
+                                                                                                  .loadConfiguration(
+                                                                                                          CollectionsConfiguration.class,
+                                                                                                          file);
+                                                                                      }
+                                                                                  });
 
         return new CollectionsManagement(mongoDataStorage, confManager);
     }

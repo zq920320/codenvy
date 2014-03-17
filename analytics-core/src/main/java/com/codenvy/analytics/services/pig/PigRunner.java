@@ -18,6 +18,7 @@
 package com.codenvy.analytics.services.pig;
 
 import com.codenvy.analytics.Injector;
+import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.persistent.CollectionsManagement;
 import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.ScriptType;
@@ -56,11 +57,11 @@ public class PigRunner extends Feature {
     }
 
     @Override
-    protected void putParametersInContext(Map<String, String> context) {
+    protected void putParametersInContext(Context.Builder builder) {
     }
 
     @Override
-    protected void doExecute(Map<String, String> context) throws IOException, ParseException {
+    protected void doExecute(Context context) throws IOException, ParseException {
         LOG.info("PigRunner is started");
         long start = System.currentTimeMillis();
 
@@ -74,9 +75,10 @@ public class PigRunner extends Feature {
                 Map<String, String> parameters = scriptConfiguration.getParamsAsMap();
 
                 ScriptType scriptType = ScriptType.valueOf(scriptName.toUpperCase());
-                parameters.putAll(context);
+                parameters.putAll(context.getAll());
 
-                pigServer.execute(scriptType, parameters);
+                Context.Builder builder = new Context.Builder(parameters);
+                pigServer.execute(scriptType, builder.build());
             }
 
             collectionsManagement.ensureIndexes();
@@ -85,7 +87,6 @@ public class PigRunner extends Feature {
             LOG.info("PigRunner is finished in " + (System.currentTimeMillis() - start) / 1000 + " sec.");
             if (pigServer != null) {
                 pigServer.close();
-                pigServer = null;
             }
         }
     }

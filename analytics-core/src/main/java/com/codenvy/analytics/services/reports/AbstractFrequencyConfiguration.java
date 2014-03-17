@@ -18,11 +18,12 @@
 package com.codenvy.analytics.services.reports;
 
 import com.codenvy.analytics.Utils;
+import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.Parameters;
 
 import javax.xml.bind.annotation.XmlElement;
 import java.text.ParseException;
-import java.util.Map;
+import java.util.Calendar;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public abstract class AbstractFrequencyConfiguration {
@@ -48,14 +49,17 @@ public abstract class AbstractFrequencyConfiguration {
         return contextModifier;
     }
 
-    public Map<String, String> initContext(Map<String, String> context) throws ParseException {
-        context = Utils.clone(context);
-        Utils.putTimeUnit(context, getTimeUnit());
-        Utils.initDateInterval(Utils.getPrevToDate(context), context);
-        return context;
+    public Context initContext(Context context) throws ParseException {
+        Calendar toDate = context.getAsDate(Parameters.TO_DATE);
+        toDate.add(Calendar.DAY_OF_MONTH, -1);
+
+        Context.Builder builder = new Context.Builder(context);
+        builder.put(getTimeUnit());
+
+        return Utils.initDateInterval(toDate, builder);
     }
 
-    abstract public boolean isAppropriateDateToSendReport(Map<String, String> context) throws ParseException;
+    abstract public boolean isAppropriateDateToSendReport(Context context) throws ParseException;
 
     abstract public Parameters.TimeUnit getTimeUnit();
 }

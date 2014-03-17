@@ -21,8 +21,6 @@ package com.codenvy.analytics.metrics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.ServiceLoader;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -47,10 +45,6 @@ public class MetricFactory {
         }
     }
 
-    public static Collection<Metric> getAllMetrics() {
-        return Collections.unmodifiableCollection(metrics.values());
-    }
-
     public static Metric getMetric(MetricType metricType) {
         return getMetric(metricType.toString());
     }
@@ -62,5 +56,9 @@ public class MetricFactory {
         }
 
         return metric;
+    }
+
+    public static Metric[] getAllMetrics() {
+        return metrics.values().toArray(new Metric[metrics.size()]);
     }
 }

@@ -18,12 +18,9 @@
 package com.codenvy.analytics.metrics;
 
 import com.codenvy.analytics.BaseTest;
-import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.LongValueData;
 
 import org.testng.annotations.Test;
-
-import java.util.Map;
 
 import static org.testng.Assert.assertEquals;
 
@@ -34,17 +31,16 @@ public class TestMetricRestrictions extends BaseTest {
     public void shouldThrowExceptionIfFilterMissed() throws Exception {
         Metric metric = MetricFactory.getMetric(MetricType.FACTORY_USED);
 
-        Map<String, String> context = Utils.newContext();
-        metric.getValue(context);
+        metric.getValue(new Context.Builder().build());
     }
 
     @Test
     public void shouldReturnValueIfFilterExists() throws Exception {
         Metric metric = MetricFactory.getMetric(MetricType.FACTORY_USED);
 
-        Map<String, String> context = Utils.newContext();
-        MetricFilter.FACTORY.put(context, "some value");
+        Context.Builder builder = new Context.Builder();
+        builder.put(MetricFilter.FACTORY, "some value");
 
-        assertEquals(metric.getValue(context), LongValueData.valueOf(0));
+        assertEquals(metric.getValue(builder.build()), LongValueData.valueOf(0));
     }
 }

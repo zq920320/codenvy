@@ -72,10 +72,10 @@ public class AnalyticsPrivate {
                 return Response.status(Response.Status.UNAUTHORIZED).build();
             }
 
-            Map<String, String> context = Utils.extractContext(uriInfo,
-                                                               page,
-                                                               perPage,
-                                                               securityContext);
+            Map<String, String> context = Utils.extractParams(uriInfo,
+                                                              page,
+                                                              perPage,
+                                                              securityContext);
             MetricValueDTO value = metricHandler.getValue(metricName, context, uriInfo);
             return Response.status(Response.Status.OK).entity(value).build();
         } catch (MetricNotFoundException e) {
@@ -113,7 +113,7 @@ public class AnalyticsPrivate {
                                   @Context UriInfo uriInfo,
                                   @Context SecurityContext securityContext) {
         try {
-            Map<String, String> context = Utils.extractContext(uriInfo, securityContext);
+            Map<String, String> context = Utils.extractParams(uriInfo, securityContext);
             MetricValueListDTO list = metricHandler.getUserValues(metricNames, context, uriInfo);
             return Response.status(Response.Status.OK).entity(list).build();
         } catch (MetricNotFoundException e) {
