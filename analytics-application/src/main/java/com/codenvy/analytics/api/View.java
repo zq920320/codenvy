@@ -95,16 +95,16 @@ public class View {
 
     @GET
     @Path("{name}")
-    @Produces({"application/json"})
+    @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed({"user", "system/admin", "system/manager"})
-    public Response getViewData(@PathParam("name") String name,
+    public Response getViewDataAsJson(@PathParam("name") String name,
                                 @Context UriInfo uriInfo,
                                 @Context SecurityContext securityContext) {
         try {
             Map<String, String> context = Utils.extractContext(uriInfo, securityContext);
 
             ViewData result = viewBuilder.getViewData(name, context);
-            String json = transform(result).toJson();
+            String json = transformToJson(result);
 
             return Response.status(Response.Status.OK).entity(json).build();
         } catch (Exception e) {
@@ -113,6 +113,26 @@ public class View {
         }
     }
 
+    @GET
+    @Path("{name}.csv")
+    @Produces({"text/csv"})
+    @RolesAllowed({"user", "system/admin", "system/manager"})
+    public Response getViewDataAsCsv(@PathParam("name") String name,
+                                @Context UriInfo uriInfo,
+                                @Context SecurityContext securityContext) {
+        try {
+            Map<String, String> context = Utils.extractContext(uriInfo, securityContext);
+
+            ViewData result = viewBuilder.getViewData(name, context);
+            String csv = transformToCsv(result);
+
+            return Response.status(Response.Status.OK).entity(csv).build();
+        } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+        }
+    }
+    
     /**
      * Transforms view data into table in json format.
      * @return the resulted format will be:
@@ -130,8 +150,8 @@ public class View {
      *     ...
      *  ]
      */
-    private JsonArrayImpl transform(ViewData data) {
-        List result = new ArrayList(data.size());
+    private String transformToJson(ViewData data) {
+        List<LinkedHashSet<Object>> result = new ArrayList<>(data.size());
 
         for (Entry<String, SectionData> sectionEntry : data.entrySet()) {
             LinkedHashSet<Object> newSectionData = new LinkedHashSet<>(sectionEntry.getValue().size());
@@ -150,6 +170,48 @@ public class View {
             result.add(newSectionData);
         }
 
-        return new JsonArrayImpl(result);
+        return new JsonArrayImpl<>(result).toJson();
+    }
+    
+    /**
+     * Transforms view data into table in csv format.
+     * @return the resulted format will be:
+     *  section0-row0-column0, section0-row0-column1, ...
+     *  section0-row1-column0, section0-row1-column1, ...
+     *  ...
+     *  section1-row0-column0, section0-row0-column1, ...
+     *  section1-row1-column0, section0-row1-column1, ...
+     *  ...
+     */
+    private String transformToCsv(ViewData data) {
+        StringBuilder result = new StringBuilder();
+        
+        for (Entry<String, SectionData> sectionEntry : data.entrySet()) {
+            for (int i = 0; i < sectionEntry.getValue().size(); i++) {
+                List<ValueData> rowData = sectionEntry.getValue().get(i);
+
+                result.append(getCsvRow(rowData));
+            }
+        }
+
+        return result.toString();
+    }
+    
+    
+    public String getCsvRow(List<ValueData> data) {
+        StringBuilder builder = new StringBuilder();
+
+        for (ValueData valueData : data) {
+            if (builder.length() != 0) {
+                builder.append(',');
+            }
+
+            builder.append('\"');
+            builder.append(valueData.getAsString().replace("\"", "\"\""));
+            builder.append('\"');
+        }
+        builder.append('\n');
+
+        return builder.toString();
     }
 }
