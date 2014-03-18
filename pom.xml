@@ -31,8 +31,11 @@
     <packaging>pom</packaging>
     <name>Codenvy Service :: Parent</name>
     <modules>
+        <module>codenvy-service-invite</module>
+        <module>codenvy-infra-platform-api</module>
         <module>codenvy-service-premiumworkspace</module>
         <module>codenvy-service-trackedfactory</module>
+        <module>codenvy-infra-v3migration-tools</module>
     </modules>
     <scm>
         <connection>scm:git:git@github.com:codenvy/hosted-infrastructure.git</connection>
@@ -41,8 +44,13 @@
         <url>https://github.com/codenvy/hosted-infrastructure</url>
     </scm>
     <properties>
+        <apacheds.version>1.5.7</apacheds.version>
+        <codenvy-commons.version>0.18.0-SNAPSHOT</codenvy-commons.version>
         <codenvy.organization.version>0.14.0-SNAPSHOT</codenvy.organization.version>
         <codenvy.platform-api.version>0.11.0-SNAPSHOT</codenvy.platform-api.version>
+        <commons-codec.version>1.6</commons-codec.version>
+        <commons-io.version>2.1</commons-io.version>
+        <commons-lang.version>2.3</commons-lang.version>
         <commons.fileupload.version>1.0</commons.fileupload.version>
         <everrest.assured.version>0.17</everrest.assured.version>
         <everrest.version>1.1.9</everrest.version>
@@ -51,6 +59,7 @@
         <javax.inject.version>1</javax.inject.version>
         <javax.servlet-api.version>3.0.1</javax.servlet-api.version>
         <javax.ws.rs.version>1.0</javax.ws.rs.version>
+        <jcommander.version>1.30</jcommander.version>
         <logback.version>1.0.13</logback.version>
         <maven.releases.repo.url>https://maven.codenvycorp.com/content/repositories/codenvy-private-releases/</maven.releases.repo.url>
         <maven.snapshots.repo.url>https://maven.codenvycorp.com/content/repositories/codenvy-private-snapshots/</maven.snapshots.repo.url>
