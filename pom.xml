@@ -43,7 +43,6 @@
     </scm>
     <properties>
         <codenvy.commons.version>0.18.0-SNAPSHOT</codenvy.commons.version>
-        <codenvy.organization.version>0.15.0-SNAPSHOT</codenvy.organization.version>
         <codenvy.platform-api.version>0.12.0-SNAPSHOT</codenvy.platform-api.version>
         <commons.fileupload.version>1.0</commons.fileupload.version>
         <everrest.assured.version>0.17</everrest.assured.version>
