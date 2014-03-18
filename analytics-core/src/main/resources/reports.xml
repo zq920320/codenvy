@@ -25,7 +25,7 @@
             <daily>
                 <views>
                     <view>summary_report</view>
-                    <view>workspace_report.xml</view>
+                    <view>workspace_report</view>
                     <view>user_report</view>
                     <view>collaboration_report</view>
                     <view>usage_report</view>

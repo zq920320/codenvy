@@ -41,12 +41,10 @@ analytics.api.metric_handler=com.codenvy.analytics.impl.FileBasedMetricHandler
 analytics.views=views/summary-report.xml,views/collaboration-report.xml,views/project-report.xml,views/session-report.xml,views/usage-report.xml,views/user-report.xml,views/workspace-report.xml,views/factory-timeline.xml,views/ide-usage.xml,views/users.xml,views/top-factory-sessions.xml,views/top-factories.xml,views/top-referrers.xml,views/top-users.xml,views/top-domains.xml,views/top-companies.xml,views/analysis.xml,views/sessions.xml,views/workspaces.xml
 
 # Common mail configuration
-analytics.mail.smtp_auth=true
-analytics.mail.smtp_starttls_enable=true
-analytics.mail.smtp_host=smtp.gmail.com
-analytics.mail.smpt_port=465
-analytics.mail.user=
-analytics.mail.password=
+analytics.mail.auth=false
+analytics.mail.host=localhost
+analytics.mail.port=25
+analytics.mail.from=noreply@codenvy.com
 
 # LogChecker configuration
 analytics.log-checker.available=true

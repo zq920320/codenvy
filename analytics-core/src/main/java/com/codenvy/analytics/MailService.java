@@ -19,6 +19,9 @@
 
 package com.codenvy.analytics;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
 import javax.mail.*;
@@ -36,12 +39,12 @@ import java.util.Properties;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class MailService {
 
-    private static final String SMTP_AUTH            = "analytics.mail.smtp_auth";
-    private static final String SMTP_STARTTLS_ENABLE = "analytics.mail.smtp_starttls_enable";
-    private static final String SMTP_HOST            = "analytics.mail.smtp_host";
-    private static final String SMTP_PORT            = "analytics.mail.smtp_port";
-    private static final String USER                 = "analytics.mail.user";
-    private static final String PASSWORD             = "analytics.mail.password";
+    private static final Logger LOG = LoggerFactory.getLogger(MailService.class);
+
+    private static final String SMTP_AUTH = "analytics.mail.auth";
+    private static final String SMTP_HOST = "analytics.mail.host";
+    private static final String SMTP_PORT = "analytics.mail.port";
+    private static final String SMTP_FROM = "analytics.mail.from";
 
     private final String     subject;
     private final String     text;
@@ -71,6 +74,7 @@ public class MailService {
             message.setContent(multipart);
 
             Transport.send(message);
+            LOG.info("Mail sent from {} to {}", new Object[]{configurator.getString(SMTP_FROM), to});
         } catch (MessagingException e) {
             throw new IOException(e);
         }
@@ -138,7 +142,7 @@ public class MailService {
     private Message getMessage(Session session) throws MessagingException {
         Message message = new MimeMessage(session);
 
-        message.setFrom(new InternetAddress(configurator.getString(USER)));
+        message.setFrom(new InternetAddress(configurator.getString(SMTP_FROM)));
         message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
         message.setSubject(subject);
         message.setSentDate(new Date());
@@ -148,21 +152,11 @@ public class MailService {
 
     private Session getSession() {
         Properties properties = new Properties();
-        properties.setProperty(SMTP_AUTH, configurator.getString(SMTP_AUTH));
-        properties.setProperty(SMTP_STARTTLS_ENABLE, configurator.getString(SMTP_STARTTLS_ENABLE));
-        properties.setProperty(SMTP_HOST, configurator.getString(SMTP_HOST));
-        properties.setProperty(SMTP_PORT, configurator.getString(SMTP_PORT));
+        properties.setProperty("mail.smtp.auth", configurator.getString(SMTP_AUTH));
+        properties.setProperty("mail.smtp.host", configurator.getString(SMTP_HOST));
+        properties.setProperty("mail.smtp.port", configurator.getString(SMTP_PORT));
 
-        return Session.getInstance(properties, getAuthenticator());
-    }
-
-    private Authenticator getAuthenticator() {
-        return new Authenticator() {
-            @Override
-            protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(configurator.getString(USER), configurator.getString(PASSWORD));
-            }
-        };
+        return Session.getInstance(properties);
     }
 }
 

@@ -55,9 +55,9 @@ public class Scheduler implements ServletContextListener {
     private org.quartz.Scheduler scheduler;
 
     private static final Class[] features = new Class[]{PigRunnerFeature.class,
+                                                        ViewBuilderFeature.class,
                                                         LogCheckerFeature.class,
                                                         ReportSenderFeature.class,
-                                                        ViewBuilderFeature.class,
                                                         ActOnFeature.class};
 
 
