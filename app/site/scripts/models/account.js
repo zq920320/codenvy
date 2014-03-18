@@ -469,40 +469,26 @@
 
             // Returns true if User has WS with tariff plan
             supportTab : function(){
-                var getUserUrl = "/api/user";
-                var getAccountUrl = "/api/account/";
+                var getAccountUrl = "/api/organization/subscriptions";
                 var paid = false;
                 $.ajax({
-                    url : getUserUrl,
+                    url : getAccountUrl,
                     type : "GET",
                     async : false,
-                    success : function(user){
-                        if (typeof(user)==='object'){
-                            user.accounts.forEach(
-                                function(account){
-                                    $.ajax({
-                                        url : getAccountUrl + account.id,
-                                        type : "GET",
-                                        async : false,
-                                        success : function(account){
-                                            if (typeof(account.attributes)){
-                                                if (account.attributes.tariff_plan){
-                                                    paid = true;
-                                                }
-                                            }
-                                        },
-                                        error : function(){
+                    success : function(subscriptions){
+                        if (typeof(subscriptions)==='object'){
+                            subscriptions.forEach(
+                                function(subscription){
+                                        if (subscription.serviceId){
+                                            paid = true;
                                         }
-                                    });
-                                }
-                            );
+                            });
+                                
                         }
-
                     },
                     error : function(){
                     }
                 });
-            
             showSupportLink(paid);
             },
 
