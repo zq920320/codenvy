@@ -28,4 +28,31 @@
     <artifactId>codenvy-service-premiumworkspace</artifactId>
     <packaging>jar</packaging>
     <name>Codenvy Service :: Premium workspace</name>
+    <dependencies>
+        <dependency>
+            <groupId>com.codenvy.organization</groupId>
+            <artifactId>codenvy-organization-backend</artifactId>
+            <version>${codenvy.organization.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.codenvy.platform-api</groupId>
+            <artifactId>codenvy-api-organization</artifactId>
+            <version>${codenvy.platform-api.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.codenvy.platform-api</groupId>
+            <artifactId>codenvy-api-vfs</artifactId>
+            <version>${codenvy.platform-api.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.inject</groupId>
+            <artifactId>javax.inject</artifactId>
+            <version>${javax.inject.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+    </dependencies>
 </project>

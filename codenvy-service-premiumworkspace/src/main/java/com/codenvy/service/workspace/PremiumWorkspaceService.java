@@ -17,8 +17,20 @@
  */
 package com.codenvy.service.workspace;
 
+import com.codenvy.api.organization.server.SubscriptionService;
+
+import javax.inject.Inject;
+
 /**
+ * Service provide functionality of Premium tariff plan.
+ *
  * @author Sergii Kabashniuk
  */
-public class PremiumWorkspaceService {
+public class PremiumWorkspaceService extends SubscriptionService {
+
+    @Inject
+    public PremiumWorkspaceService(PrivateVFSSubscriptionHandler vfsSubscriptionHandler) {
+        super("PremiumWorkspace", "Premium Workspace");
+        addHandler(vfsSubscriptionHandler);
+    }
 }
