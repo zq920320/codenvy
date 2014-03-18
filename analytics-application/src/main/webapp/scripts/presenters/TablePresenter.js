@@ -106,12 +106,9 @@ analytics.presenter.TablePresenter.prototype.printTable = function(csvButtonLink
     var view = presenter.view;
     
     var widgetLabel = analytics.configuration.getProperty(presenter.widgetName, "widgetLabel");
-    
-    view.printCsvButton(csvButtonLink);
-    
-    view.print("<div class='header'>" + widgetLabel + "</div>");
+    view.printWidgetHeader(widgetLabel, csvButtonLink);
+
     view.print("<div class='body'>");
-        
     view.printTable(table, false);
     
     // display pagination

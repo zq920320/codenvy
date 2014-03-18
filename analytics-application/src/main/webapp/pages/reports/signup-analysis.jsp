@@ -40,7 +40,12 @@
             </div>
             <div class="hero-unit">
                 <div class="single-column-gadget">
-                <div id="signupAnalysis" class="single-column-gadget"></div>
+                    <div class="view">
+                        <div class="tables">
+                            <div class="item" id="signupAnalysis"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

@@ -22,6 +22,7 @@ function Configuration() {
     var widgetConfiguration = {
         /** Reports */
         signupAnalysis: {
+            widgetLabel: "Signup Analysis",
             presenterType: "ReportPresenter",
             modelViewName: "analysis",
 
@@ -33,6 +34,7 @@ function Configuration() {
         },
         
         factoryStatistics: {
+            widgetLabel: "Factory Statistics",
             presenterType: "ReportPresenter",
             modelViewName: "factory-timeline",
 
@@ -44,6 +46,7 @@ function Configuration() {
         },
 
         summaryReport: {
+            widgetLabel: "Summary Report",
             presenterType: "ReportPresenter",
             modelViewName: "summary_report",
 
@@ -55,6 +58,7 @@ function Configuration() {
         },
 
         workspaceReport: {
+            widgetLabel: "Workspace Report",
             presenterType: "ReportPresenter",
             modelViewName: "workspace_report",
 
@@ -66,6 +70,7 @@ function Configuration() {
         },
 
         userReport: {
+            widgetLabel: "User Report",
             presenterType: "ReportPresenter",
             modelViewName: "user_report",
 
@@ -77,6 +82,7 @@ function Configuration() {
         },
 
         engagementLevels: {
+            widgetLabel: "Engagement Levels",
             presenterType: "ReportPresenter",
             modelViewName: "engagement_levels",
             
@@ -86,6 +92,7 @@ function Configuration() {
         },
         
         collaborationReport: {
+            widgetLabel: "Collaboration Report",
             presenterType: "ReportPresenter",
             modelViewName: "collaboration_report",
 
@@ -97,6 +104,7 @@ function Configuration() {
         },        
         
         usageReport: {
+            widgetLabel: "Usage Report",
             presenterType: "ReportPresenter",
             modelViewName: "usage_report",
 
@@ -108,6 +116,7 @@ function Configuration() {
         },
         
         sessionReport: {
+            widgetLabel: "Session Report",
             presenterType: "ReportPresenter",
             modelViewName: "session_report",
 
@@ -119,6 +128,7 @@ function Configuration() {
         },
 
         projectReport: {
+            widgetLabel: "Project Report",
             presenterType: "ReportPresenter",
             modelViewName: "project_report",
 
@@ -130,6 +140,7 @@ function Configuration() {
         },        
         
         topMetrics: {
+            widgetLabel: "Top Metrics",
             presenterType: "TopMetricsPresenter",
 
             defaultModelParams: {
@@ -142,6 +153,7 @@ function Configuration() {
 
         /** for User View */
         users: {
+            widgetLabel: "Users",
             presenterType: "UsersPresenter",
             modelViewName: "users",
             modelMetricName: "users_statistics",
@@ -215,6 +227,7 @@ function Configuration() {
 
         /** for Session View */
         sessions: {
+            widgetLabel: "Sessions",            
             presenterType: "SessionsPresenter",
             modelViewName: "session_overview",
             modelMetricName: "product_usage_sessions",
@@ -257,6 +270,7 @@ function Configuration() {
 
         /** for Workspace View */
         workspaces: {
+            widgetLabel: "Workspaces",
             presenterType: "WorkspacesPresenter",
             modelViewName: "workspaces",
             modelMetricName: "workspaces_statistics",

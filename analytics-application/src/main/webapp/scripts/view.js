@@ -113,11 +113,18 @@ function View() {
 	};
 	
 	function printCsvButton(csvButtonLink) {
-	    print("<div class='table-buttons'>");
+	    var csvButtonLabel = "CSV";
+	    
 	    print("  <a href='" + csvButtonLink + "' target='_blank'>");
-	    print("    <button class='btn'> to CSV </button>");
+	    print(csvButtonLabel);
 	    print("  </a>");
-	    print("</div>");
+	}
+	
+	function printWidgetHeader(widgetLabel, csvButtonLink) {
+        print("<div class='header'>");
+        print(widgetLabel);        
+        printCsvButton(csvButtonLink);        
+        print("</div>");
 	}
 	
 	function printTableVerticalRow(table) {	    
@@ -309,8 +316,8 @@ function View() {
     	printTableVerticalRow: printTableVerticalRow,
     	makeTableColumnLinked: makeTableColumnLinked,
 
-    	// buttons
-    	printCsvButton: printCsvButton,
+    	// widget header
+    	printWidgetHeader: printWidgetHeader,
     	
     	// page navigation
     	printBottomPageNavigator: printBottomPageNavigator,

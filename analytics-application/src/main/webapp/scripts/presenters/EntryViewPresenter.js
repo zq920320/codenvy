@@ -70,6 +70,10 @@ EntryViewPresenter.prototype.load = function() {
         model.popDoneFunction();
         model.pushDoneFunction(function(data) {
             var csvButtonLink = presenter.getLinkForExportToCsvButton();
+            var widgetLabel = analytics.configuration.getProperty(presenter.widgetName, "widgetLabel");
+            view.printWidgetHeader(widgetLabel, csvButtonLink);            
+            
+            view.print("<div class='body'>");
             
             var table = data[0];  // there is only one table in data
             
@@ -115,7 +119,6 @@ EntryViewPresenter.prototype.load = function() {
             }
             
             // print table
-            view.printCsvButton(csvButtonLink);
             view.printTable(table, false);
             view.loadTableHandlers();
             
@@ -136,6 +139,8 @@ EntryViewPresenter.prototype.load = function() {
                view.printBottomPageNavigator(pageCount, currentPageNumber, queryString, presenter.CURRENT_PAGE_QUERY_PARAMETER);
                view.loadPageNavigationHandlers("analytics.main.reloadWidgetOnPageNavigation");
             }
+            
+            view.print("</div>");
             
             // finish loading widget
             analytics.views.loader.needLoader = false;

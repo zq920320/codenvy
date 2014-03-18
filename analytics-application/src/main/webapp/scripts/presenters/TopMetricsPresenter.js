@@ -44,13 +44,18 @@ analytics.presenter.TopMetricsPresenter.prototype.load = function() {
     
     model.pushDoneFunction(function(data) {
         var csvButtonLink = presenter.getLinkForExportToCsvButton();
-        view.printCsvButton(csvButtonLink);
+        var widgetLabel = analytics.configuration.getProperty(presenter.widgetName, "widgetLabel");
+        view.printWidgetHeader(widgetLabel, csvButtonLink);            
+        
+        view.print("<div class='body'>");
         
         for (var table in data) {
             view.printTable(data[table], false);
         }
 
         view.loadTableHandlers();
+
+        view.print("</div>");
         
         // finish loading widget
         analytics.views.loader.needLoader = false;

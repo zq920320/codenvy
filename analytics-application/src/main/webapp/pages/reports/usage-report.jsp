@@ -47,7 +47,13 @@
                 </div>
             </div>
             <div class="hero-unit">
-                <div id="usageReport" class="single-column-gadget"></div>
+                <div class="single-column-gadget">
+                    <div class="view">
+                        <div class="tables">
+                            <div class="item" id="usageReport"></div>
+                        </div>
+                    </div>
+                </div>
             </div>    
         </div>
     </div>

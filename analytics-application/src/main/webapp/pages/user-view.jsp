@@ -42,7 +42,7 @@
             <div class="hero-unit">
                 <div id="userOverview"></div>
 
-                <div class="single-column-gadget full-width">
+                <div class="single-column-gadget">
                     <div class="view">
                         <div class="tables">
                             <div class="item" id="userData"></div>

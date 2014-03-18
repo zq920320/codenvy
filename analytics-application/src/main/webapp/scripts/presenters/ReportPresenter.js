@@ -33,14 +33,19 @@ analytics.presenter.ReportPresenter.prototype.load = function() {
     model.setParams(presenter.getModelParams(view.getParams()));
         
     model.pushDoneFunction(function(data) {
-        var csvButtonLink = presenter.getLinkForExportToCsvButton();
-        view.printCsvButton(csvButtonLink);
+        var csvButtonLink = presenter.getLinkForExportToCsvButton();       
+        var widgetLabel = analytics.configuration.getProperty(presenter.widgetName, "widgetLabel");
+        view.printWidgetHeader(widgetLabel, csvButtonLink);
+
+        view.print("<div class='body'>");
         
         for (var table in data) {
             view.printTable(data[table], true);
         }
         
         view.loadTableHandlers();   
+
+        view.print("</div>");
         
         // finish loading widget
         analytics.views.loader.needLoader = false;

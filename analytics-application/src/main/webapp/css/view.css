@@ -18,6 +18,11 @@
 	border-top-right-radius: 4px;
 }
 
+.view div.header a {
+    float: right;
+    color: white;
+}
+
 .view .overview .body .item {
    float: left;
    padding: 5px 10px;
@@ -39,3 +44,4 @@
 
 .view .tables .item .body {
 }
+
