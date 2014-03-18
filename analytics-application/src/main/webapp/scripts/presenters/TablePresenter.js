@@ -45,10 +45,12 @@ analytics.presenter.TablePresenter.prototype.load = function() {
         && analytics.configuration.getProperty(widgetName, "isSortable")) {
         modelParams.sort = analytics.configuration.getProperty(widgetName, "defaultSortParams");
     }
+    
+    var isPaginable = typeof analytics.configuration.getProperty(widgetName, "isPaginable") != "undefined"
+                      && analytics.configuration.getProperty(widgetName, "isPaginable");
 
     //process pagination
-    if (typeof analytics.configuration.getProperty(widgetName, "isPaginable") != "undefined"
-           && analytics.configuration.getProperty(widgetName, "isPaginable")) {
+    if (isPaginable) {
         delete modelParams[widgetName];
         
         var currentPageNumber = viewParams[widgetName];  // search on table page number in parameter "{modelViewName}={page_number}"            
@@ -63,6 +65,8 @@ analytics.presenter.TablePresenter.prototype.load = function() {
         model.setParams(modelParams);
         model.pushDoneFunction(function(data){
             model.popDoneFunction(data);
+            
+            var csvButtonLink = presenter.getLinkForExportToCsvButton();
 
             var table = data[0];  // there is only one table in data
             
@@ -74,17 +78,7 @@ analytics.presenter.TablePresenter.prototype.load = function() {
                 }                
             }       
             
-            view.printTable(table, false);
-            
-            delete modelParams.page;
-            presenter.printTableNavigation(
-                currentPageNumber,
-                onePageRowsCount,
-                modelParams
-            );
-            
-            delete modelParams.sort;
-            view.loadPageNavigationHandlers("analytics.main.reloadWidgetOnPageNavigation");
+            presenter.printTable(csvButtonLink, table, true, currentPageNumber, onePageRowsCount, modelParams);
             
             // finish loading widget
             analytics.views.loader.needLoader = false;
@@ -96,8 +90,8 @@ analytics.presenter.TablePresenter.prototype.load = function() {
         model.setParams(modelParams);
         
         model.pushDoneFunction(function(data) {
-            view.printTable(data[0], false);            
-            view.loadTableHandlers();
+            var csvButtonLink = presenter.getLinkForExportToCsvButton();
+            presenter.printTable(csvButtonLink, data[0], false);
             
             // finish loading widget
             analytics.views.loader.needLoader = false;
@@ -106,6 +100,36 @@ analytics.presenter.TablePresenter.prototype.load = function() {
         model.getAllResults(modelViewName);
     }
 };
+
+analytics.presenter.TablePresenter.prototype.printTable = function(csvButtonLink, table, isPaginable, currentPageNumber, onePageRowsCount, modelParams) {
+    var presenter = this; 
+    var view = presenter.view;
+    
+    var widgetLabel = analytics.configuration.getProperty(presenter.widgetName, "widgetLabel");
+    
+    view.printCsvButton(csvButtonLink);
+    
+    view.print("<div class='header'>" + widgetLabel + "</div>");
+    view.print("<div class='body'>");
+        
+    view.printTable(table, false);
+    
+    // display pagination
+    if (isPaginable) {
+        delete modelParams.page;
+        presenter.printTableNavigation(
+            currentPageNumber,
+            onePageRowsCount,
+            modelParams
+        );
+
+        view.loadPageNavigationHandlers("analytics.main.reloadWidgetOnPageNavigation");
+    } else {
+        view.loadTableHandlers();
+    }
+    
+    view.print("</div>");
+}
 
 analytics.presenter.TablePresenter.prototype.printTableNavigation = function(currentPageNumber, onePageRowsCount, modelParams) { 
     var presenter = this; 
@@ -122,8 +146,9 @@ analytics.presenter.TablePresenter.prototype.printTableNavigation = function(cur
 
             view.printBottomPageNavigator(pageCount, currentPageNumber, queryString, presenter.widgetName);
         }
+        
         view.loadTableHandlers();
     });
-
+    
     model.getMetricValue(modelMetricName);
 }

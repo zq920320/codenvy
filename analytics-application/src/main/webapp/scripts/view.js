@@ -32,7 +32,8 @@ function View() {
     var ABORT_LOADING_MESSAGE = "<i>Loading has been aborted.</i>";
 
 	
-    function printTable(table, isDisplaySpecificFirstCell) {	    
+    function printTable(table, isDisplaySpecificFirstCell) {
+        print("<div>");
 	    print('<table cellspacing="0" class="database-table" align="center">');
 	    print('<thead aria-hidden="false">');
 	    print('<tr>');
@@ -108,7 +109,16 @@ function View() {
 	    print('<tfoot aria-hidden="true" style="display: none;"></tfoot>');
 	    print('</tbody>');
 	    print('</table>');
+        print("</div>");
 	};
+	
+	function printCsvButton(csvButtonLink) {
+	    print("<div class='table-buttons'>");
+	    print("  <a href='" + csvButtonLink + "' target='_blank'>");
+	    print("    <button class='btn'> to CSV </button>");
+	    print("  </a>");
+	    print("</div>");
+	}
 	
 	function printTableVerticalRow(table) {	    
 	    print('<table cellspacing="0" class="database-table-vertical-row" align="center">');
@@ -299,6 +309,8 @@ function View() {
     	printTableVerticalRow: printTableVerticalRow,
     	makeTableColumnLinked: makeTableColumnLinked,
 
+    	// buttons
+    	printCsvButton: printCsvButton,
     	
     	// page navigation
     	printBottomPageNavigator: printBottomPageNavigator,

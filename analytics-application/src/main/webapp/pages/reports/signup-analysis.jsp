@@ -17,7 +17,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Analysis</title>
+    <title>Signup Analysis</title>
     <%@ include file="/inclusions/header.jsp"%>
 </head>
 <body>
@@ -40,15 +40,7 @@
             </div>
             <div class="hero-unit">
                 <div class="single-column-gadget">
-                    <div class="view">
-                        <div class="tables">
-                            <div class="item">
-                                <div class="header">Signup Analysis</div>
-                                <div class="body" id="analysis"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <div id="signupAnalysis" class="single-column-gadget"></div>
             </div>
         </div>
     </div>

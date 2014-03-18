@@ -1,3 +1,4 @@
+/* horizontal table */
 .database-table {
    border: 1px solid #ddd;
    border-radius: 4px; 
@@ -105,6 +106,8 @@
 	background: #eee;
 }
 
+
+/* vertical table */
 .database-table-vertical-row {
    border: 0px;   
    text-align: left;
@@ -146,3 +149,41 @@
 .database-table-vertical-row .mouseover-row {
    background: #eee;
 }
+
+/* top table buttons */
+.table-buttons {
+   text-align: right;
+   padding-bottom: 8px; 
+}
+.table-buttons .btn {
+	padding: 0px 4px;
+	color: #fff;
+	font-style: italic;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+    background-color: #7D8085;
+    *background-color: #7D8085;
+    background-image: -ms-linear-gradient(top, #C0C5CC, #7D8085);
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#C0C5CC,), to(#7D8085));
+    background-image: -webkit-linear-gradient(top, #C0C5CC, #7D8085);
+    background-image: -o-linear-gradient(top, #C0C5CC, #7D8085);
+    background-image: -moz-linear-gradient(top, #C0C5CC, #7D8085);
+    background-image: linear-gradient(top, #C0C5CC, #7D8085);
+    background-repeat: repeat-x;
+    border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+    filter: progid:dximagetransform.microsoft.gradient(startColorstr='#C0C5CC,', endColorstr='#7D8085', GradientType=0);
+    filter: progid:dximagetransform.microsoft.gradient(enabled=false);	
+	
+    background-image: -webkit-linear-gradient(top, #C0C5CC, #7D8085);
+}
+
+.table-buttons .btn.active,
+.table-buttons .btn:active
+{
+    color: rgba(255, 255, 255, 0.75);
+/*        background-color: #004099  \9; */
+}
+
+.table-buttons .btn.active,
+.table-buttons .btn:active
+{
+

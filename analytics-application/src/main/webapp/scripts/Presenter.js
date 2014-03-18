@@ -62,3 +62,20 @@ Presenter.prototype.getModelParams = function(viewParams) {
     
     return modelParams;
 }
+
+/**
+ * Return link to get view data in CSV format
+ */
+Presenter.prototype.getLinkForExportToCsvButton = function(viewParams) {
+    var lastModelParams = analytics.util.clone(this.model.getParams());
+    
+    // get all pages of view
+    delete lastModelParams["per_page"];
+    delete lastModelParams["page"];
+    
+    this.model.setParams(lastModelParams);
+    
+    var modelViewName = analytics.configuration.getProperty(this.widgetName, "modelViewName");
+    
+    return this.model.getLinkToExportToCsv(modelViewName);
+}

@@ -45,34 +45,14 @@
                 <div class="single-column-gadget full-width">
                     <div class="view">
                         <div class="tables">
-                            <div class="item">
-                                <div class="header">User Statistics</div>
-                                <div class="body" id="userData"></div>
-                            </div>
-
-                            <div class="item">
-                                <div class="header">Sessions</div>
-                                <div class="body" id="userSessions"></div>
-                            </div>
-
-                            <div class="item">
-                                <div class="header">Workspaces</div>
-                                <div class="body" id="userWorkspaceList"></div>
-                            </div>
-
-                            <div class="item">
-                                <div class="header">User Logs</div>
-                                <div class="body" id="userActivity"></div>
-                            </div>
-
-                            <div class="item">
-                                <div class="header">User Action</div>
-                                <div class="body" id="userEvents"></div>
-                            </div>
+                            <div class="item" id="userData"></div>
+                            <div class="item" id="userSessions"></div>
+                            <div class="item" id="userWorkspaceList"></div>
+                            <div class="item" id="userActivity"></div>
+                            <div class="item" id="userEvents"></div>
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>

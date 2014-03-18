@@ -69,6 +69,8 @@ EntryViewPresenter.prototype.load = function() {
 
         model.popDoneFunction();
         model.pushDoneFunction(function(data) {
+            var csvButtonLink = presenter.getLinkForExportToCsvButton();
+            
             var table = data[0];  // there is only one table in data
             
             // make table columns linked 
@@ -113,6 +115,7 @@ EntryViewPresenter.prototype.load = function() {
             }
             
             // print table
+            view.printCsvButton(csvButtonLink);
             view.printTable(table, false);
             view.loadTableHandlers();
             

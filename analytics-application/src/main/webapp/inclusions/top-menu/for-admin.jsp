@@ -44,7 +44,7 @@
                         <li><a href="/analytics/pages/reports/project-report.jsp" id="topmenu-reports-project_report">Project</a></li>
 					    <li><a href="/analytics/pages/reports/factory-statistics.jsp" id="topmenu-reports-factories">Factory</a></li>
 					    <li><a href="/analytics/pages/reports/top-metrics.jsp" id="topmenu-reports-top_metrics">Top Metrics</a></li>
-					    <li><a href="/analytics/pages/reports/analysis.jsp" id="topmenu-reports-analysis">Analysis</a></li>
+					    <li><a href="/analytics/pages/reports/signup-analysis.jsp" id="topmenu-reports-analysis">Analysis</a></li>
 				    </ul>
 				</div>
 		    </div>

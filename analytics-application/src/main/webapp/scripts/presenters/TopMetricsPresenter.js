@@ -43,6 +43,9 @@ analytics.presenter.TopMetricsPresenter.prototype.load = function() {
     model.setParams(modelParams);
     
     model.pushDoneFunction(function(data) {
+        var csvButtonLink = presenter.getLinkForExportToCsvButton();
+        view.printCsvButton(csvButtonLink);
+        
         for (var table in data) {
             view.printTable(data[table], false);
         }

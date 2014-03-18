@@ -45,20 +45,9 @@
                 <div class="single-column-gadget full-width">
                     <div class="view">
                         <div class="tables">
-                            <div class="item">
-                                <div class="header">Sessions</div>
-                                <div class="body" id="workspaceSessions"></div>
-                            </div>
-
-                            <div class="item">
-                                <div class="header">Users</div>
-                                <div class="body" id="workspaceUserList"></div>
-                            </div>
-
-                            <div class="item">
-                                <div class="header">Workspace Logs</div>
-                                <div class="body" id="workspaceActivity"></div>
-                            </div>
+                            <div class="item" id="workspaceSessions"></div>
+                            <div class="item" id="workspaceUserList"></div>
+                            <div class="item" id="workspaceActivity"></div>
                         </div>
                     </div>
                 </div>

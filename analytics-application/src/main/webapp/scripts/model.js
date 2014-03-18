@@ -148,10 +148,24 @@ function Model() {
     };
 
 
+    function getLinkToExportToCsv(modelName) {
+        var url = "/analytics/api/view/" + modelName + ".csv";
+        
+        if (!jQuery.isEmptyObject(params)) {
+            url = url + "?" + analytics.util.constructUrlParams(params);
+        }
+        
+        return url;
+    }
+    
     function setParams(newParams) {
         params = newParams;
     }
 
+    function getParams() {
+        return params;
+    }
+    
     function pushDoneFunction(newDoneFunction) {
         doneFunctionStack.push(newDoneFunction);
     }
@@ -187,6 +201,7 @@ function Model() {
         getAllResults: getAllResults,
         getMetricValue: getMetricValue,
         setParams: setParams,
+        getParams: getParams,
 
         pushDoneFunction: pushDoneFunction,
         popDoneFunction: popDoneFunction,
@@ -194,7 +209,8 @@ function Model() {
         doneFunction: doneFunction,
 
         pushFailFunction: pushFailFunction,
-        clearFailFunction: clearFailFunction
+        clearFailFunction: clearFailFunction,
 
+        getLinkToExportToCsv: getLinkToExportToCsv,
     }
 }

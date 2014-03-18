@@ -33,6 +33,9 @@ analytics.presenter.ReportPresenter.prototype.load = function() {
     model.setParams(presenter.getModelParams(view.getParams()));
         
     model.pushDoneFunction(function(data) {
+        var csvButtonLink = presenter.getLinkForExportToCsvButton();
+        view.printCsvButton(csvButtonLink);
+        
         for (var table in data) {
             view.printTable(data[table], true);
         }

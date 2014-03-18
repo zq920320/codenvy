@@ -21,7 +21,7 @@ analytics.configuration = new Configuration();
 function Configuration() {
     var widgetConfiguration = {
         /** Reports */
-        analysis: {
+        signupAnalysis: {
             presenterType: "ReportPresenter",
             modelViewName: "analysis",
 
@@ -157,12 +157,14 @@ function Configuration() {
         },
 
         userData: {
+            widgetLabel: "User Statistics",
             presenterType: "TablePresenter",
             modelViewName: "user_data",
             isNeedToSaveInHistory: true,
         },
 
         userSessions: {
+            widgetLabel: "Sessions",
             presenterType: "TablePresenter",
             modelViewName: "user_sessions",
             isNeedToSaveInHistory: true,
@@ -179,6 +181,7 @@ function Configuration() {
         },
 
         userWorkspaceList: {
+            widgetLabel: "Workspaces",
             presenterType: "TablePresenter",
             modelViewName: "user_workspace_list",
             isNeedToSaveInHistory: true,
@@ -190,6 +193,7 @@ function Configuration() {
         },
 
         userActivity: {
+            widgetLabel: "User Logs",
             presenterType: "TablePresenter",
             modelViewName: "user_activity",
             isNeedToSaveInHistory: true,
@@ -202,6 +206,7 @@ function Configuration() {
         },
 
         userEvents: {
+            widgetLabel: "User Action",
             presenterType: "TablePresenter",
             modelViewName: "users_events",
             isNeedToSaveInHistory: true,
@@ -233,6 +238,7 @@ function Configuration() {
         },
 
         userSessionActivity: {
+            widgetLabel: "Session Events",
             presenterType: "TablePresenter",
             modelViewName: "session_events",
             isNeedToSaveInHistory: false,
@@ -266,6 +272,7 @@ function Configuration() {
         },
 
         workspaceSessions: {
+            widgetLabel: "Sessions",
             presenterType: "TablePresenter",
             modelViewName: "workspace_sessions",
             isNeedToSaveInHistory: true,
@@ -283,6 +290,7 @@ function Configuration() {
         },
 
         workspaceUserList: {
+            widgetLabel: "Users",
             presenterType: "TablePresenter",
             modelViewName: "workspace_user_list",
             isNeedToSaveInHistory: true,
@@ -294,6 +302,7 @@ function Configuration() {
         },
 
         workspaceActivity: {
+            widgetLabel: "Workspace Logs",
             presenterType: "TablePresenter",
             modelViewName: "workspace_activity",
             isNeedToSaveInHistory: true,

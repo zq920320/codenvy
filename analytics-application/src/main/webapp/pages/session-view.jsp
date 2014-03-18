@@ -45,10 +45,7 @@
                 <div class="single-column-gadget full-width">
                     <div class="view">
                         <div class="tables">
-                            <div class="item">
-                                <div class="header">Session Events</div>
-                                <div class="body" id="userSessionActivity"></div>
-                            </div>
+                            <div class="item" id="userSessionActivity"></div>
                         </div>
                     </div>
                 </div>
