@@ -17,8 +17,14 @@
  */
 package com.codenvy.service.factory;
 
+import com.codenvy.api.organization.server.SubscriptionService;
+
 /**
  * @author Sergii Kabashniuk
  */
-public class TrackedFactoryService {
+public class TrackedFactoryService extends SubscriptionService {
+
+    public TrackedFactoryService() {
+        super("TrackedFactory", "Tracked Factory");
+   }
 }
