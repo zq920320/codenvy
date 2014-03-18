@@ -106,7 +106,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
 
     /**
      * @return the fields are interested in by given metric. In other words, they are valuable for given metric. It
-     *         might returns empty array to read all available fields
+     * might returns empty array to read all available fields
      */
     public abstract String[] getTrackedFields();
 
@@ -142,11 +142,11 @@ public abstract class ReadBasedMetric extends AbstractMetric {
                 || filter == MetricFilter.USER_LAST_NAME) {
 
                 values = getUsers(filter, clauses.get(filter));
-                match.put(MetricFilter.USER.getFieldName(), new BasicDBObject("$in", values));
+                match.put(MetricFilter.USER.name().toLowerCase(), new BasicDBObject("$in", values));
 
             } else if (filter == MetricFilter.DOMAIN) {
                 String[] domains = clauses.get(filter).split(SEPARATOR);
-                match.put(MetricFilter.USER.getFieldName(), getUsersInDomains(domains));
+                match.put(MetricFilter.USER.name().toLowerCase(), getUsersInDomains(domains));
 
             } else {
                 values = clauses.get(filter).split(SEPARATOR);

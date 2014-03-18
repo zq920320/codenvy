@@ -162,10 +162,6 @@ public enum Parameters {
         }
     }
 
-    public String getFieldName() {
-        return toString().toLowerCase();
-    }
-
     /** The date format is used in scripts. */
     public static final String PARAM_DATE_FORMAT = "yyyyMMdd";
 

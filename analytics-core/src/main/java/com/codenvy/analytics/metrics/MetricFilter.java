@@ -52,9 +52,5 @@ public enum MetricFilter {
     public boolean isNumericType() {
         return isNumeric;
     }
-
-    public String getFieldName() {
-        return toString().toLowerCase();
-    }
 }
 
