@@ -46,7 +46,7 @@
         </dependency>
         <dependency>
             <groupId>com.codenvy.service</groupId>
-            <artifactId>codenvy-service-hosted-platform-api</artifactId>
+            <artifactId>codenvy-infra-platform-api</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
