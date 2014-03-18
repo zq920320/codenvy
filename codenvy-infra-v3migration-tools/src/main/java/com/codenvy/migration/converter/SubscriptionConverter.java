@@ -1,4 +1,4 @@
-package com.codenvy.migration.convertor;
+package com.codenvy.migration.converter;
 
 import com.codenvy.api.organization.shared.dto.Subscription;
 import com.codenvy.dto.server.DtoFactory;
@@ -13,8 +13,8 @@ public class SubscriptionConverter implements ObjectConverter<Account, Subscript
     public static final String TRANSACTION_ID = "tariff_transactionid";
     public static final String NAME_TARIFF = "tariff_plan";
 
-    static final String FACTORY_TARIFF_ID = "Managed Factory";
-    static final String PREMIUM_TARIFF_ID = "Premium 1.0";
+    static final String FACTORY_TARIFF_ID = "TrackedFactory";
+    static final String PREMIUM_TARIFF_ID = "PremiumWorkspace";
 
     static final Map<String, String> tariffPlans = new HashMap<>();
 

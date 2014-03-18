@@ -4,11 +4,11 @@ import com.codenvy.api.organization.shared.dto.Subscription;
 import com.codenvy.api.user.shared.dto.Profile;
 import com.codenvy.dto.server.DtoFactory;
 import com.codenvy.migration.MemoryStorage;
-import com.codenvy.migration.convertor.AccountConverter;
-import com.codenvy.migration.convertor.ProfileConverter;
-import com.codenvy.migration.convertor.SubscriptionConverter;
-import com.codenvy.migration.convertor.UserConverter;
-import com.codenvy.migration.convertor.WorkspaceConverter;
+import com.codenvy.migration.converter.AccountConverter;
+import com.codenvy.migration.converter.ProfileConverter;
+import com.codenvy.migration.converter.SubscriptionConverter;
+import com.codenvy.migration.converter.UserConverter;
+import com.codenvy.migration.converter.WorkspaceConverter;
 import com.codenvy.organization.model.Account;
 import com.codenvy.organization.model.ItemReference;
 import com.codenvy.organization.model.Member;
@@ -28,7 +28,7 @@ import java.util.concurrent.Executors;
 
 /**
  * DaoExporter divides objects from {@link MemoryStorage} into independent objects, converts them using
- * {@link com.codenvy.migration.convertor.ObjectConverter} and transmits to the {@link DaoManager} for exporting
+ * {@link com.codenvy.migration.converter.ObjectConverter} and transmits to the {@link DaoManager} for exporting
  *
  * @author Sergiy Leschenko
  */

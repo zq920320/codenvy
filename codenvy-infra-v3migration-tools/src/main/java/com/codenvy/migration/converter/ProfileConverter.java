@@ -1,4 +1,4 @@
-package com.codenvy.migration.convertor;
+package com.codenvy.migration.converter;
 
 import com.codenvy.api.user.shared.dto.Attribute;
 import com.codenvy.dto.server.DtoFactory;

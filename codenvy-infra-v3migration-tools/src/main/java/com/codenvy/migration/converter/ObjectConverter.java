@@ -1,4 +1,4 @@
-package com.codenvy.migration.convertor;
+package com.codenvy.migration.converter;
 
 /**
  * Interface defines method that will be convert object from one type to another
