@@ -20,12 +20,18 @@ package com.codenvy.factory;
 import com.codenvy.api.factory.*;
 import com.codenvy.api.factory.dto.Factory;
 import com.codenvy.api.factory.dto.Restriction;
+import com.codenvy.api.organization.server.dao.OrganizationDao;
+import com.codenvy.api.organization.server.exception.OrganizationException;
+import com.codenvy.api.organization.shared.dto.Organization;
+import com.codenvy.api.organization.shared.dto.Subscription;
+import com.codenvy.api.user.server.dao.UserDao;
+import com.codenvy.api.user.server.dao.UserProfileDao;
+import com.codenvy.api.user.server.exception.UserException;
+import com.codenvy.api.user.server.exception.UserProfileException;
+import com.codenvy.api.user.shared.dto.Attribute;
+import com.codenvy.api.user.shared.dto.Profile;
+import com.codenvy.api.user.shared.dto.User;
 import com.codenvy.commons.lang.URLEncodedUtils;
-import com.codenvy.organization.client.AccountManager;
-import com.codenvy.organization.client.UserManager;
-import com.codenvy.organization.exception.OrganizationServiceException;
-import com.codenvy.organization.model.Account;
-import com.codenvy.organization.model.User;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -42,32 +48,43 @@ import java.util.regex.Pattern;
 public class FactoryUrlBaseValidator implements FactoryUrlValidator {
 
     private static final String PARAMETRIZED_ILLEGAL_ORGID_PARAMETER_MESSAGE =
-            "You have provided an invalid orgId %s. You could have provided the wrong code, your subscription has expired, or you do not have a valid subscription account. Please contact info@codenvy.com with any questions.";
+            "You have provided an invalid orgId %s. You could have provided the wrong code, " +
+            "your subscription has expired, or you do not have a valid subscription account. Please contact " +
+            "info@codenvy.com with any questions.";
 
     private static final String PARAMETRIZED_ILLEGAL_TRACKED_PARAMETER_MESSAGE =
-            "You have provided a Tracked Factory parameter %s, and you do not have a valid orgId %s. You could have provided the wrong code, your subscription has expired, or you do not have a valid subscription account. Please contact info@codenvy.com with any questions.";
+            "You have provided a Tracked Factory parameter %s, and you do not have a valid orgId %s. You could have " +
+            "provided the wrong code, your subscription has expired, or you do not have a valid subscription account." +
+            " Please contact info@codenvy.com with any questions.";
 
     private static final String ILLEGAL_HOSTNAME_MESSAGE =
-            "This Factory has its access restricted by certain hostname. Your client does not match the specified policy. Please contact the owner of this Factory for more information.";
+            "This Factory has its access restricted by certain hostname. Your client does not match the specified " +
+            "policy. Please contact the owner of this Factory for more information.";
 
     private static final String ILLEGAL_VALIDSINCE_MESSAGE =
-            "This Factory is not yet valid due to time restrictions applied by its owner.  Please, contact owner for more information.";
+            "This Factory is not yet valid due to time restrictions applied by its owner.  Please, " +
+            "contact owner for more information.";
 
     private static final String ILLEGAL_VALIDUNTIL_MESSAGE =
-            "This Factory has expired due to time restrictions applied by its owner.  Please, contact owner for more information.";
+            "This Factory has expired due to time restrictions applied by its owner.  Please, " +
+            "contact owner for more information.";
 
     private static final Pattern PROJECT_NAME_VALIDATOR = Pattern.compile("^[\\\\\\w\\\\\\d]+[\\\\\\w\\\\\\d_.-]*$");
 
-    private AccountManager accountManager;
+    private OrganizationDao organizationDao;
 
-    private UserManager userManager;
+    private UserDao userDao;
+
+    private UserProfileDao profileDao;
 
     private FactoryBuilder factoryBuilder;
 
     @Inject
-    public FactoryUrlBaseValidator(AccountManager accountManager, UserManager userManager, FactoryBuilder factoryBuilder) {
-        this.accountManager = accountManager;
-        this.userManager = userManager;
+    public FactoryUrlBaseValidator(OrganizationDao organizationDao, UserDao userDao, UserProfileDao profileDao,
+                                   FactoryBuilder factoryBuilder) {
+        this.organizationDao = organizationDao;
+        this.userDao = userDao;
+        this.profileDao = profileDao;
         this.factoryBuilder = factoryBuilder;
     }
 
@@ -79,7 +96,8 @@ public class FactoryUrlBaseValidator implements FactoryUrlValidator {
             if (params.get("id").size() != 1) {
                 throw new FactoryUrlException("Parameter 'id' has illegal value.");
             }
-            FactoryClient factoryClient = new HttpFactoryClient(factoryUrl.getScheme(), factoryUrl.getHost(), factoryUrl.getPort());
+            FactoryClient factoryClient =
+                    new HttpFactoryClient(factoryUrl.getScheme(), factoryUrl.getHost(), factoryUrl.getPort());
             Factory factory = factoryClient.getFactory(params.get("id").iterator().next());
             factory = factoryBuilder.convertToLatest(factory);
             this.validateObject(factoryBuilder.convertToLatest(factory), true, request);
@@ -121,30 +139,40 @@ public class FactoryUrlBaseValidator implements FactoryUrlValidator {
         String orgid = "".equals(factory.getOrgid()) ? null : factory.getOrgid();
         if (null != orgid) {
             try {
-                Account account = accountManager.getAccountById(orgid);
+                Organization account = organizationDao.getById(orgid);
 
                 if (factory.getUserid() != null) {
-                    User user = userManager.getUserById(factory.getUserid());
-                    if (user.isTemporary()) {
-                        throw new FactoryUrlException("Current user is not allowed for using this method.");
+                    User user = userDao.getById(factory.getUserid());
+                    Profile profile = profileDao.getById(factory.getUserid());
+                    for (Attribute attribute : profile.getAttributes()) {
+                        if (attribute.getName().equals("temporary") && Boolean.parseBoolean(attribute.getValue()))
+                            throw new FactoryUrlException("Current user is not allowed for using this method.");
                     }
-                    if (!account.getOwner().getId().equals(user.getId())) {
+                    if (!account.getOwner().equals(user.getId())) {
                         throw new FactoryUrlException("You are not authorized to use this orgid.");
                     }
                 }
 
-
-                String endTime;
-                if ("Managed Factory".equals(account.getAttribute("tariff_plan")) &&
-                    (endTime = account.getAttribute("tariff_end_time")) != null) {
-                    Date endTimeDate = new Date(Long.valueOf(endTime));
-                    if (!endTimeDate.after(new Date())) {
-                        throw new FactoryUrlException(String.format(PARAMETRIZED_ILLEGAL_ORGID_PARAMETER_MESSAGE, factory.getOrgid()));
-                    }
-                } else {
+                try {
+                    organizationDao.getById(factory.getOrgid());
+                    List<Subscription> subscriptions = organizationDao.getSubscriptions(factory.getOrgid());
+                    for (Subscription one : subscriptions) {
+                        String endTime;
+                        if ("TF".equals(one.getServiceId()) &&
+                            (endTime = one.getEndDate()) != null) {
+                            Date endTimeDate = new Date(Long.valueOf(endTime));
+                            if (!endTimeDate.after(new Date())) {
+                                throw new FactoryUrlException(String.format(PARAMETRIZED_ILLEGAL_ORGID_PARAMETER_MESSAGE, factory.getOrgid()));
+                            }
+                        } else {
                     throw new FactoryUrlException(String.format(PARAMETRIZED_ILLEGAL_ORGID_PARAMETER_MESSAGE, factory.getOrgid()));
                 }
-            } catch (OrganizationServiceException | NumberFormatException e) {
+                    }
+                } catch (OrganizationException | NumberFormatException e) {
+                    throw new FactoryUrlException(String.format(PARAMETRIZED_ILLEGAL_ORGID_PARAMETER_MESSAGE, factory.getOrgid()));
+                }
+
+            } catch (UserException | UserProfileException | OrganizationException e) {
                 throw new FactoryUrlException(String.format(PARAMETRIZED_ILLEGAL_ORGID_PARAMETER_MESSAGE, factory.getOrgid()));
             }
         }
