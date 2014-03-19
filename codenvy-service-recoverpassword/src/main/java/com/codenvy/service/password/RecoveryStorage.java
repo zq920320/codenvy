@@ -17,12 +17,16 @@
  */
 package com.codenvy.service.password;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.inject.Singleton;
 import java.util.*;
-import java.util.concurrent.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.TimeUnit;
 
 @Singleton
-public class RecoveryStorage {
+public class RecoveryStorage extends TimerTask {
     public static final long VALIDATION_MAX_AGE_IN_MILLISECONDS = TimeUnit.HOURS.toMillis(1);
 
     private final ConcurrentMap<String, Map<String, String>> storage;
@@ -30,19 +34,18 @@ public class RecoveryStorage {
 
     public RecoveryStorage() {
         this.storage = new ConcurrentHashMap<>();
-
         // Remove all invalid validation data once per hour;
-        timer = new Timer("recovery-storage-timer", true);
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                for (String uuid : storage.keySet()) {
-                    if (!isValid(uuid)) {
-                        storage.remove(uuid);
-                    }
-                }
+        this.timer = new Timer("recovery-storage-timer", true);
+
+    }
+
+    @Override
+    public void run() {
+        for (String uuid : storage.keySet()) {
+            if (!isValid(uuid)) {
+                storage.remove(uuid);
             }
-        }, 0, TimeUnit.HOURS.toMillis(1));
+        }
     }
 
     /**
@@ -111,11 +114,20 @@ public class RecoveryStorage {
         return storage.get(uuid);
     }
 
+
+    @PostConstruct
+    public void startTimer() {
+        // Remove all invalid validation data once per hour;
+        timer.schedule(this, 1000, TimeUnit.HOURS.toMillis(1));
+    }
+
     /**
      * Terminate storage and all stared threads.
      */
+    @PreDestroy
     public void suspend() {
         timer.cancel();
         storage.clear();
+
     }
 }
