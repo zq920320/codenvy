@@ -29,6 +29,16 @@
     <name>Codenvy Service :: Web filters</name>
     <dependencies>
         <dependency>
+            <groupId>com.codenvy.commons</groupId>
+            <artifactId>codenvy-commons-env</artifactId>
+            <version>${codenvy-commons.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.codenvy.service</groupId>
+            <artifactId>codenvy-infra-platform-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>javax.inject</groupId>
             <artifactId>javax.inject</artifactId>
             <version>${javax.inject.version}</version>
