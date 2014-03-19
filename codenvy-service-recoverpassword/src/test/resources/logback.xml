@@ -1,0 +1,61 @@
+<!--
+
+    CODENVY CONFIDENTIAL
+    __________________
+
+     [2012] - [2013] Codenvy, S.A.
+     All Rights Reserved.
+
+    NOTICE:  All information contained herein is, and remains
+    the property of Codenvy S.A. and its suppliers,
+    if any.  The intellectual and technical concepts contained
+    herein are proprietary to Codenvy S.A.
+    and its suppliers and may be covered by U.S. and Foreign Patents,
+    patents in process, and are protected by trade secret or copyright law.
+    Dissemination of this information or reproduction of this material
+    is strictly forbidden unless prior written permission is obtained
+    from Codenvy S.A..
+
+-->
+
+<configuration>
+
+    <timestamp key="date" datePattern="yyyy-MM-dd"/>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <!-- encoders are assigned the type
+           ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
+        <encoder>
+            <pattern>%d [%thread] %level %mdc %logger - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+
+    <appender name="SIFT" class="ch.qos.logback.classic.sift.SiftingAppender">
+        <discriminator>
+            <Key>currentTenant</Key>
+            <DefaultValue>default</DefaultValue>
+        </discriminator>
+        <sift>
+            <appender name="FILE-${currentTenant}" class="ch.qos.logback.core.FileAppender">
+                <File>target/logs/${currentTenant}/gatein.log</File>
+                <Append>true</Append>
+                <encoder>
+                    <pattern>%d [%thread] %level %mdc %logger - %msg%n</pattern>
+                </encoder>
+            </appender>
+        </sift>
+    </appender>
+
+    <logger name="org.exoplatform" level="INFO"/>
+
+    <logger name="exo" level="INFO"/>
+
+    <logger name="org.gatein" level="INFO"/>
+
+    <logger name="org.chromattic" level="INFO"/>
+
+    <root level="OFF">
+        <appender-ref ref="SIFT"/>
+        <appender-ref ref="STDOUT"/>
+    </root>
+</configuration>
