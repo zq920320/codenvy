@@ -15,7 +15,7 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.cloudide.password;
+package com.codenvy.service.password;
 
 import javax.inject.Singleton;
 import java.util.*;
