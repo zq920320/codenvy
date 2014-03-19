@@ -69,9 +69,8 @@ EntryViewPresenter.prototype.load = function() {
 
         model.popDoneFunction();
         model.pushDoneFunction(function(data) {
-            var csvButtonLink = presenter.getLinkForExportToCsvButton();
             var widgetLabel = analytics.configuration.getProperty(presenter.widgetName, "widgetLabel");
-            view.printWidgetHeader(widgetLabel, csvButtonLink);            
+            view.printWidgetHeader(widgetLabel);            
             
             view.print("<div class='body'>");
             

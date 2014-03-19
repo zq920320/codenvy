@@ -122,8 +122,12 @@ function View() {
 	
 	function printWidgetHeader(widgetLabel, csvButtonLink) {
         print("<div class='header'>");
-        print(widgetLabel);        
-        printCsvButton(csvButtonLink);        
+        print(widgetLabel);
+
+        if (typeof csvButtonLink != "undefined") {
+            printCsvButton(csvButtonLink);
+        }
+
         print("</div>");
 	}
 	

@@ -32,9 +32,7 @@ analytics.presenter.TopMetricsPresenter.prototype.load = function() {
 
     var modelParams = presenter.getModelParams(view.getParams())
 
-    var databaseTableMetricPrefix = modelParams.metric.toLowerCase();
-    var databaseTableTimeunitSuffix = modelParams.time_unit.toLowerCase();
-    var modelViewName = databaseTableMetricPrefix + "_by_" + databaseTableTimeunitSuffix;
+    presenter.modelViewName = presenter.getModelViewName(modelParams);
 
     // remove unnecessary params 
     delete modelParams.metric;
@@ -43,7 +41,7 @@ analytics.presenter.TopMetricsPresenter.prototype.load = function() {
     model.setParams(modelParams);
     
     model.pushDoneFunction(function(data) {
-        var csvButtonLink = presenter.getLinkForExportToCsvButton();
+        var csvButtonLink = presenter.getLinkForExportToCsvButton(presenter.modelViewName);
         var widgetLabel = analytics.configuration.getProperty(presenter.widgetName, "widgetLabel");
         view.printWidgetHeader(widgetLabel, csvButtonLink);            
         
@@ -61,5 +59,11 @@ analytics.presenter.TopMetricsPresenter.prototype.load = function() {
         analytics.views.loader.needLoader = false;
     });
 
-    model.getAllResults(modelViewName);
+    model.getAllResults(presenter.modelViewName);
 };
+
+analytics.presenter.TopMetricsPresenter.prototype.getModelViewName = function(modelParams) {
+    var databaseTableMetricPrefix = modelParams.metric.toLowerCase();
+    var databaseTableTimeunitSuffix = modelParams.time_unit.toLowerCase();
+    return databaseTableMetricPrefix + "_by_" + databaseTableTimeunitSuffix;
+}
