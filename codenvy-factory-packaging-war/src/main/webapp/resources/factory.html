@@ -387,14 +387,27 @@
     _uid = getQueryParam("uid");
 
     _factory_id = getQueryParam("factory");
+
     _style = getQueryParam("style");
+    if (_style) {
+        _style = decodeURIComponent(_style);
+    }
+
     _click_url = getQueryParam("url");
+    if (_click_url) {
+        _click_url = decodeURIComponent(_click_url);
+    }
+
     _logo_url = getQueryParam("logo");
+    if (_logo_url) {
+        _logo_url = decodeURIComponent(_logo_url);
+    }
 
     if (_factory_id) {
         var request = new XMLHttpRequest();
         request.onreadystatechange  = function() {
             if (request.readyState == 4 && request.status == 200) {
+
                 var json = JSON.parse(request.responseText);
                 if (!_style) {
                     _style = json.style;

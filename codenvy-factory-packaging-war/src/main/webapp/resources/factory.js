@@ -77,7 +77,6 @@ if (!window["codenvy-factories"]) {
 
             var _logo = script.getAttribute("logo");
 
-
             // Build query string
             var frameQuery = "";
 
@@ -172,11 +171,16 @@ if (!window["codenvy-factories"]) {
             }
         }
 
+        var scriptPrefix = "//" + window.location.host + "/factory/resources/factory.js";
+
         var scripts = document.getElementsByTagName('script');
         for (var i = 0; i < scripts.length; i++) {
             var script = scripts.item(i);
             try {
-                injectFrame(script);
+                var src = script.getAttribute("src");
+                if (src && src.indexOf(scriptPrefix) >= 0) {
+                    injectFrame(script);
+                }
             } catch (e) {
                 console.log(e.message);
             }
