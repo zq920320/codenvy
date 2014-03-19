@@ -30,9 +30,9 @@
     <name>Codenvy Service :: Tracked factory</name>
     <dependencies>
         <dependency>
-            <groupId>com.codenvy.organization</groupId>
-            <artifactId>codenvy-organization-backend</artifactId>
-            <version>${codenvy.organization.version}</version>
+            <groupId>com.codenvy.platform-api</groupId>
+            <artifactId>codenvy-api-organization</artifactId>
+            <version>${codenvy.platform-api.version}</version>
         </dependency>
     </dependencies>
 </project>
