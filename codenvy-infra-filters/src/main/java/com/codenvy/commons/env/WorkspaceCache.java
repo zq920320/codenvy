@@ -15,7 +15,7 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.cloudide;
+package com.codenvy.commons.env;
 
 import com.codenvy.api.workspace.shared.dto.Workspace;
 import com.codenvy.commons.lang.ExpirableCache;
