@@ -32,6 +32,7 @@
     <name>Codenvy Service :: Parent</name>
     <modules>
         <module>codenvy-service-invite</module>
+        <module>codenvy-infra-filters</module>
         <module>codenvy-infra-platform-api</module>
         <module>codenvy-service-premiumworkspace</module>
         <module>codenvy-service-recoverpassword</module>
