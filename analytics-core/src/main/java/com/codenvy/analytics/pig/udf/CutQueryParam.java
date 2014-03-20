@@ -18,8 +18,6 @@
 package com.codenvy.analytics.pig.udf;
 
 import org.apache.pig.EvalFunc;
-import org.apache.pig.PigWarning;
-import org.apache.pig.backend.executionengine.ExecException;
 import org.apache.pig.data.DataType;
 import org.apache.pig.data.Tuple;
 import org.apache.pig.impl.logicalLayer.schema.Schema;
@@ -29,28 +27,22 @@ import java.io.IOException;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class CutQueryParam extends EvalFunc<String> {
 
-    /** {@inheritDoc} */
     @Override
     public String exec(Tuple input) throws IOException {
         if (input == null || input.size() == 0) {
             return null;
         }
 
-        try {
-            String url = (String)input.get(0);
-            String paramName = (String)input.get(1);
+        String url = (String)input.get(0);
+        String paramName = (String)input.get(1);
 
-            if (url == null) {
-                return null;
-            } else if (paramName == null || paramName.isEmpty()) {
-                return url;
-            }
-
-            return doCut(url, "&" + paramName + "=");
-        } catch (ExecException e) {
-            warn("Error reading input: " + e.getMessage(), PigWarning.UDF_WARNING_1);
+        if (url == null) {
             return null;
+        } else if (paramName == null || paramName.isEmpty()) {
+            return url;
         }
+
+        return doCut(url, "&" + paramName + "=");
     }
 
     public static String doCut(String url, String paramName) {
@@ -61,7 +53,6 @@ public class CutQueryParam extends EvalFunc<String> {
                                         (nextIndexParam == -1 ? "" : url.substring(nextIndexParam, url.length()));
     }
 
-    /** {@inheritDoc} */
     @Override
     public Schema outputSchema(Schema input) {
         return new Schema(new Schema.FieldSchema(getSchemaName(this.getClass().getName().toLowerCase(), input),

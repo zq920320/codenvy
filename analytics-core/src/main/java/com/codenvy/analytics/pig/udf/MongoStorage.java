@@ -49,13 +49,11 @@ public class MongoStorage extends StoreFunc {
         this.password = password;
     }
 
-    /** {@inheritDoc) */
     @Override
     public OutputFormat getOutputFormat() throws IOException {
         return new MongoOutputFormat();
     }
 
-    /** {@inheritDoc) */
     @Override
     public void setStoreLocation(String location, Job job) throws IOException {
         String serverUrl;
@@ -78,13 +76,11 @@ public class MongoStorage extends StoreFunc {
         job.getConfiguration().set(SERVER_URL_PARAM, serverUrl);
     }
 
-    /** {@inheritDoc) */
     @Override
     public void prepareToWrite(RecordWriter writer) throws IOException {
         this.writer = writer;
     }
 
-    /** {@inheritDoc) */
     @Override
     public void putNext(Tuple t) throws IOException {
         try {

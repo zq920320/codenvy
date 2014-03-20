@@ -18,7 +18,6 @@
 package com.codenvy.analytics.pig.udf;
 
 import org.apache.pig.EvalFunc;
-import org.apache.pig.PigWarning;
 import org.apache.pig.data.DataType;
 import org.apache.pig.data.Tuple;
 import org.apache.pig.impl.logicalLayer.schema.Schema;
@@ -36,18 +35,13 @@ public class ExtractDomain extends EvalFunc<String> {
             return null;
         }
 
-        try {
-            String url = (String)input.get(0);
+        String url = (String)input.get(0);
 
-            try {
-                String host = new URI(url).getHost();
-                return host == null ? "" : host;
-            } catch (URISyntaxException e) {
-                return "";
-            }
-        } catch (Exception e) {
-            warn("Error reading input: " + e.getMessage(), PigWarning.UDF_WARNING_1);
-            return null;
+        try {
+            String host = new URI(url).getHost();
+            return host == null ? "" : host;
+        } catch (URISyntaxException e) {
+            return "";
         }
     }
 

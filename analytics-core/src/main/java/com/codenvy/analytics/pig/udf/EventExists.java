@@ -46,9 +46,7 @@ public class EventExists extends FilterFunc {
         if (!eventNames.equals("*")) {
             for (String event : eventNames.split(",")) {
                 if (!eventsHolder.isEventExists(event)) {
-                    String msg = "Unknown event " + event;
-                    LOG.error(msg);
-                    throw new IOException(msg);
+                    LOG.error("Unknown event " + event);
                 }
             }
         }

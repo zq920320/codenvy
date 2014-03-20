@@ -18,7 +18,6 @@
 package com.codenvy.analytics.pig.udf;
 
 import org.apache.pig.EvalFunc;
-import org.apache.pig.PigWarning;
 import org.apache.pig.data.DataType;
 import org.apache.pig.data.Tuple;
 import org.apache.pig.impl.logicalLayer.schema.Schema;
@@ -34,17 +33,12 @@ public class FixJobTitle extends EvalFunc<String> {
             return null;
         }
 
+        String job = (String)input.get(0);
         try {
-            String job = (String)input.get(0);
-            try {
-                Integer.parseInt(job);
-                return "Other";
-            } catch (NumberFormatException e) {
-                return job;
-            }
-        } catch (Exception e) {
-            warn("Error reading input: " + e.getMessage(), PigWarning.UDF_WARNING_1);
-            return null;
+            Integer.parseInt(job);
+            return "Other";
+        } catch (NumberFormatException e) {
+            return job;
         }
     }
 

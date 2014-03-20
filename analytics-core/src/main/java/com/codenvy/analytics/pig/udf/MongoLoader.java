@@ -61,7 +61,6 @@ public class MongoLoader extends LoadFunc implements LoadMetadata {
         this.password = password;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void setLocation(String location, Job job) throws IOException {
         String serverUrl;
@@ -84,19 +83,16 @@ public class MongoLoader extends LoadFunc implements LoadMetadata {
         job.getConfiguration().set(SERVER_URL_PARAM, serverUrl);
     }
 
-    /** {@inheritDoc} */
     @Override
     public InputFormat getInputFormat() throws IOException {
         return new MongoInputFormat();
     }
 
-    /** {@inheritDoc} */
     @Override
     public void prepareToRead(RecordReader reader, PigSplit split) throws IOException {
         this.reader = (MongoReader)reader;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Tuple getNext() throws IOException {
         try {

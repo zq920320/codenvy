@@ -242,7 +242,7 @@
         <description>The number of deploys</description>
         <parameter key="USER" value="REGISTERED"/>
         <parameter key="WS" value="PERSISTENT"/>
-        <parameter key="EVENT" value="project-deployed,application-created"/>
+        <parameter key="EVENT" value="project-deployed,application-created,artifact-deployed"/>
         <parameter key="STORAGE_TABLE" value="deploys"/>
     </script>
     <script name="events">
