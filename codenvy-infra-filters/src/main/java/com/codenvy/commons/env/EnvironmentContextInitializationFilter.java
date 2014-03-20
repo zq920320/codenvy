@@ -23,6 +23,7 @@ import com.codenvy.api.workspace.shared.dto.Attribute;
 import com.codenvy.api.workspace.shared.dto.Workspace;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -39,18 +40,21 @@ import java.util.regex.Pattern;
 @Singleton
 public class EnvironmentContextInitializationFilter implements Filter {
     public static final Pattern TENANT_URL_PATTERN = Pattern.compile("^(/ide/)(?!_sso)(rest/|websocket/)?(.+?)(/.*)?$");
+    
     private final File           vfsRootDir;
     private final File           tempVfsRootDir;
     private final File           vfsIndexDir;
     private       WorkspaceCache workspaceCache;
+    private       WorkspaceDao   workspaceDao;
 
     @Inject
-    private WorkspaceDao workspaceDao;
-
-    public EnvironmentContextInitializationFilter() {
-        this.vfsRootDir = new File(System.getProperty("tenant.data.dir"));
-        this.vfsIndexDir = new File(System.getProperty("java.io.tmpdir"));
-        this.tempVfsRootDir = new File(System.getProperty("java.io.tmpdir") + "/tempWorkspacesFS");
+    public EnvironmentContextInitializationFilter(@Named("vfs.local.fs_root_dir") String vfsRoot,
+                                                  @Named("vfs.local.fs_index_root_dir") String vfsIndexRoot,
+                                                  WorkspaceDao workspaceDao) {
+        this.vfsRootDir = new File(vfsRoot);
+        this.vfsIndexDir = new File(vfsIndexRoot);
+        this.tempVfsRootDir = new File(vfsRoot + "/tempWorkspacesFS");
+        this.workspaceDao = workspaceDao;
     }
 
     @Override
