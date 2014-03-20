@@ -34,11 +34,11 @@
             <artifactId>codenvy-api-organization</artifactId>
             <version>${codenvy.platform-api.version}</version>
         </dependency>
-        <dependency>
+        <!--dependency>
             <groupId>com.codenvy.platform-api</groupId>
             <artifactId>codenvy-api-vfs</artifactId>
             <version>${codenvy.platform-api.version}</version>
-        </dependency>
+        </dependency-->
         <dependency>
             <groupId>com.codenvy.service</groupId>
             <artifactId>codenvy-infra-platform-api</artifactId>
