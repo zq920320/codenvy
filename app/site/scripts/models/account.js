@@ -193,6 +193,33 @@
                     }
                 },
 
+            adminLogin : function(email, password, redirect_url, success, error){
+
+                if (isWebsocketEnabled()){
+                    var loginUrl = "/api/auth/login?" + window.location.search.substring(1);
+                    var selectWsUrl = "../site/private/select-tenant?cookiePresent&" + window.location.search.substring(1);
+                    var data = {username: email, password: password};
+                 $.ajax({
+                    url : loginUrl,
+                    type : "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify(data),
+                    success : function(){
+                        if (redirect_url) {
+                            success({url: redirect_url});
+                        } else {
+                            success({url: selectWsUrl});
+                        }
+                    },
+                    error : function(xhr/*, status , err*/){
+                        error([
+                            new AccountError(null,xhr.responseText)
+                        ]);
+                    }
+                });             
+                    }
+                },                
+
             loginWithGoogle : loginWithGoogle,
             loginWithGithub : loginWithGithub,
 

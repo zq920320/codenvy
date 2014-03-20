@@ -34,7 +34,8 @@ define(["jquery","config",
         "views/gc_banner",
         "views/ws_createform",
         "views/create_ws",
-        "views/join_ws"
+        "views/join_ws",
+        "views/adminform"
         ],
 
     function($,Config,
@@ -55,7 +56,8 @@ define(["jquery","config",
         GC_banner,
         WSCreateForm,
         CreatingWorkspace,
-        JoiningWorkspace){
+        JoiningWorkspace,
+        AdminForm){
 
         function modernize(){
             Modernizr.load({
@@ -93,7 +95,8 @@ define(["jquery","config",
                         gcBannerElement = $(".cta"),
                         wsCreateForm = $(".create-form"),
                         creatingWorkspace = $(".creating-ws"),
-                        joiningWorkspace = $(".invite");
+                        joiningWorkspace = $(".invite"),
+                        adminForm = $(".admin-form");
 
                     if(gcBannerElement.length !== 0){
                         (function(){
@@ -197,6 +200,23 @@ define(["jquery","config",
                             });
                         }());
                     }
+
+                    if(adminForm.length !== 0){
+                        (function(){
+                            var form = AdminForm.get(adminForm),
+                            errorReport = ErrorReport.get(errorContainer);
+                            if ($(".error-container").html()){
+                                $(".error-container").addClass("expanded");
+                            }
+                            form.on("success", function(d){
+                                window.location.href = d.url;
+                            });
+
+                            form.on("invalid", function(field,message){
+                                errorReport.show(message);
+                            });
+                        }());
+                    }                    
 
                     if(forgotPasswordForm.length !== 0){
                         (function(){

@@ -322,16 +322,16 @@ module.exports = function( grunt ) {
             // ------------------ STAGING
 
             // copy staging _config.yml to the temporary folder
-            //'shell:jekyll_stage_config',
+            'shell:jekyll_stage_config',
 
             // run jekyll build for staging
-            //'shell:jekyll',
+            'shell:jekyll',
 
             // run yeoman build on top of staging Jekyll build
-            //'shell:yeoman',
+            'shell:yeoman',
 
             // copy staging build output
-            //'copy:stage',
+            'copy:stage',
 
 
             // ------------------ PRODUCTION

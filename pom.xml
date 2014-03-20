@@ -76,6 +76,7 @@
                             </descriptors>
                         </configuration>
                     </execution>
+                -->
                     <execution>
                         <id>stage</id>
                         <phase>package</phase>
@@ -89,7 +90,7 @@
                             </descriptors>
                         </configuration>
                     </execution>
-                -->
+                
                     <execution>
                         <id>prod</id>
                         <phase>package</phase>
