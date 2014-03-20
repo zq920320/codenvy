@@ -74,7 +74,7 @@ public class TestViewApi extends BaseTest {
                                                           + TestViewApi.class.getSimpleName();
 
     private static final String VIEW_CONFIGURATION_FILE = TEST_RESOURCE_DIR + "/view.xml";
-    private static final String LOG_FILE                = TestViewApi.class.getSimpleName() + "/log.txt";
+    private static final String LOG_FILE                = TestViewApi.class.getSimpleName() + "/messages";
     private static final String EXPECTED_JSON_FILE      = TestViewApi.class.getSimpleName() + "/expected.json";
     private static final String EXPECTED_CSV_FILE       = TestViewApi.class.getSimpleName() + "/expected.csv";
 
