@@ -1,0 +1,25 @@
+<display>
+    <view time-unit="lifetime" name="usage_report" columns="15">
+        <section name="usage_time">
+            <row class="com.codenvy.analytics.services.view.DateRow">
+                <parameter key="section-name" value="Usage Time"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="product_usage_time_total"/>
+                <parameter key="description" value="Total"/>
+                <parameter key="time-field" value="true"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.EmptyRow"/>
+        </section>
+        
+        <section name="users_engagement">
+            <row class="com.codenvy.analytics.services.view.DateRow">
+                <parameter key="section-name" value="User Engagement (#)"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="active_users"/>
+                <parameter key="description" value="Total"/>
+            </row>
+        </section>
+    </view>
+</display>

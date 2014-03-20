@@ -144,7 +144,7 @@ public class View {
      * ...
      * ]
      */
-    private String transformToJson(ViewData data) {
+    protected String transformToJson(ViewData data) {
         List<LinkedHashSet<Object>> result = new ArrayList<>(data.size());
 
         for (Entry<String, SectionData> sectionEntry : data.entrySet()) {
@@ -178,17 +178,19 @@ public class View {
      * section1-row1-column0, section0-row1-column1, ...
      * ...
      */
-    private String transformToCsv(ViewData data) {
+    protected String transformToCsv(ViewData data) {
         StringBuilder result = new StringBuilder();
 
         for (Entry<String, SectionData> sectionEntry : data.entrySet()) {
             for (int i = 0; i < sectionEntry.getValue().size(); i++) {
                 List<ValueData> rowData = sectionEntry.getValue().get(i);
 
-                result.append(getCsvRow(rowData));
+                result.append(getCsvRow(rowData)).append("\n");
             }
         }
 
+        result.setLength(result.length() - 1);  // remove ended "\n"
+        
         return result.toString();
     }
 
@@ -205,7 +207,6 @@ public class View {
             builder.append(valueData.getAsString().replace("\"", "\"\""));
             builder.append('\"');
         }
-        builder.append('\n');
 
         return builder.toString();
     }

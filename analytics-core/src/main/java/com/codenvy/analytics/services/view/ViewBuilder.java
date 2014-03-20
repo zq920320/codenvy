@@ -107,7 +107,7 @@ public class ViewBuilder extends Feature {
         }
     }
 
-    protected void computeDisplayData(Context context) throws Exception {
+    public void computeDisplayData(Context context) throws Exception {
         List<RecursiveAction> tasks = new ArrayList<>();
 
         ForkJoinPool forkJoinPool = new ForkJoinPool();
@@ -161,7 +161,7 @@ public class ViewBuilder extends Feature {
         }
     }
 
-    protected void retainViewData(String viewId,
+    public void retainViewData(String viewId,
                                   ViewData viewData,
                                   Context context) throws SQLException, IOException {
         jdbcPersister.storeData(viewData);
