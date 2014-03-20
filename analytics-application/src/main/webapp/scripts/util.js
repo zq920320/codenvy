@@ -189,6 +189,19 @@ function Util() {
         return false;
     }
 	
+    /**
+     * Return index of column with certain name.
+     */
+    function getColumnIndexByColumnName(columns, columnName) {
+        for (var i in columns) {
+            if (columns[i] == columnName) {
+                return i;
+            }
+        }
+        
+        return null;
+    }
+    
     /** ****************** library API ********** */
     return {
     	constructUrlParams: constructUrlParams,
@@ -202,6 +215,7 @@ function Util() {
     	getSubset: getSubset,
     	removeParams: removeParams,
     	removeElementFromArray: removeElementFromArray,
+    	getColumnIndexByColumnName: getColumnIndexByColumnName,
     }
 
 }

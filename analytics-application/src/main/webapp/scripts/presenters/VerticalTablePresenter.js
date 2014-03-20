@@ -37,6 +37,16 @@ analytics.presenter.VerticalTablePresenter.prototype.load = function() {
     model.setParams(presenter.getModelParams(view.getParams()));
     
     model.pushDoneFunction(function(data) {
+        var table = data[0];  // there is only one table in data
+        
+        // make table columns linked 
+        var columnLinkPrefixList = analytics.configuration.getProperty(presenter.widgetName, "columnLinkPrefixList");
+        if (typeof columnLinkPrefixList != "undefined") {
+            for (var columnName in columnLinkPrefixList) {
+                table = view.makeTableColumnLinked(table, columnName, columnLinkPrefixList[columnName]);    
+            }          
+        }        
+        
         view.print("<div class='view'>");
         
         view.print("<div class='overview'>");

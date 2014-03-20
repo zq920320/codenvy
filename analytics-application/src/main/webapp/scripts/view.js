@@ -157,24 +157,29 @@ function View() {
 	}	
 	
 	/**
-	 * Make i-th columnIndex (starting from 0) of table as linked with link = "columnLinkPrefix + {columnValue}"
+	 * Make table cells of column with certain name as linked with link = "columnLinkPrefix + {columnValue}"
 	 */
-    function makeTableColumnLinked(table, columnIndex, columnLinkPrefix) {
-        for (var i = 0; i < table.rows.length; i++) {
-            var columnValue = table.rows[i][columnIndex];
-            
-            if (analytics.configuration.isSystemMessage(columnValue)) {
-               table.rows[i][columnIndex] = getSystemMessageLabel(columnValue);    
-            } else {
-               var href = columnLinkPrefix + "=" + columnValue;
-               table.rows[i][columnIndex] = "<a href='" + href + "'>" + columnValue + "</a>";
+    function makeTableColumnLinked(table, columnName, columnLinkPrefix) {
+        var columnIndex = analytics.util.getColumnIndexByColumnName(table.columns, columnName);
+        if (columnIndex != null) {        
+            for (var i = 0; i < table.rows.length; i++) {
+                var columnValue = table.rows[i][columnIndex];
+                
+                if (analytics.configuration.isSystemMessage(columnValue)) {
+                   table.rows[i][columnIndex] = getSystemMessageLabel(columnValue);    
+                } else {
+                   var href = columnLinkPrefix + "=" + columnValue;
+                   table.rows[i][columnIndex] = "<a href='" + href + "'>" + columnValue + "</a>";
+                }
             }
         }
     
         return table;
     }
 	
-	//load handlers of table events
+	/**
+	 * Load handlers of table events.
+	 */
 	function loadTableHandlers() {
 	    print("<script>");
 	    print("  jQuery(function() { ");
@@ -185,8 +190,8 @@ function View() {
 	}
 	
 	/**
-	 * currentPageNumber is 1-based
-	 * prints page navigator, meets the requirements: 1 ... 4 5 6 /7/ 9 10 11 ... 100
+	 * Prints page navigator, meets the requirements: 1 ... 4 5 6 /7/ 9 10 11 ... 100.
+	 * CurrentPageNumber is 1-based. 
 	 */
 	function printBottomPageNavigator(pageCount, currentPageNumber, queryString, pageQueryParameter) {
 	    if (typeof pageCount == "undefined" || pageCount <= 0) {

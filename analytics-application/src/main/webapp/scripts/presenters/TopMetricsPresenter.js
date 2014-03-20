@@ -47,8 +47,16 @@ analytics.presenter.TopMetricsPresenter.prototype.load = function() {
         
         view.print("<div class='body'>");
         
-        for (var table in data) {
-            view.printTable(data[table], false);
+        for (var tableIndex in data) {
+            var table = data[tableIndex];
+            // make table columns linked 
+            var columnLinkPrefixList = analytics.configuration.getProperty(presenter.widgetName, "columnLinkPrefixList");
+            if (typeof columnLinkPrefixList != "undefined") {
+                for (var columnName in columnLinkPrefixList) {
+                    table = view.makeTableColumnLinked(table, columnName, columnLinkPrefixList[columnName]);    
+                }          
+            }             
+            view.printTable(table, false);
         }
 
         view.loadTableHandlers();

@@ -73,9 +73,9 @@ analytics.presenter.TablePresenter.prototype.load = function() {
             // make table columns linked 
             var columnLinkPrefixList = analytics.configuration.getProperty(presenter.widgetName, "columnLinkPrefixList");
             if (typeof columnLinkPrefixList != "undefined") {
-                for (var i in columnLinkPrefixList) {
-                    table = view.makeTableColumnLinked(table, i, columnLinkPrefixList[i]);    
-                }                
+                for (var columnName in columnLinkPrefixList) {
+                    table = view.makeTableColumnLinked(table, columnName, columnLinkPrefixList[columnName]);    
+                }          
             }       
             
             presenter.printTable(csvButtonLink, table, true, currentPageNumber, onePageRowsCount, modelParams);

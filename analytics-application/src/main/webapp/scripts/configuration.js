@@ -149,6 +149,11 @@ function Configuration() {
             },
 
             isNeedToSaveInHistory: true,
+            
+            columnLinkPrefixList: {
+                "Email": "/analytics/pages/user-view.jsp?user",
+                "ID": "/analytics/pages/session-view.jsp?session_id",
+            }
         },
 
         /** for User View */
@@ -158,7 +163,10 @@ function Configuration() {
             modelViewName: "users",
             modelMetricName: "users_statistics",
             isNeedToSaveInHistory: true,
-            columnLinkPrefixList: ["/analytics/pages/user-view.jsp?user"],
+            columnLinkPrefixList: {
+                "Email": "/analytics/pages/user-view.jsp?user",
+                "ID": "/analytics/pages/session-view.jsp?session_id",
+            }
         },
 
         userOverview: {
@@ -187,9 +195,10 @@ function Configuration() {
             isSortable: true,
             defaultSortParams: "-date",
             
-            columnLinkPrefixList: [
-                "/analytics/pages/session-view.jsp?session_id",
-                "/analytics/pages/workspace-view.jsp?ws"],
+            columnLinkPrefixList: {
+                "ID": "/analytics/pages/session-view.jsp?session_id",
+                "Workspace": "/analytics/pages/workspace-view.jsp?ws"
+            }
         },
 
         userWorkspaceList: {
@@ -201,7 +210,9 @@ function Configuration() {
             isPaginable: true,
             modelMetricName: "usage_time_by_workspaces",
             
-            columnLinkPrefixList: ["/analytics/pages/workspace-view.jsp?ws"],
+            columnLinkPrefixList: {
+                "Name": "/analytics/pages/workspace-view.jsp?ws"
+            }
         },
 
         userActivity: {
@@ -232,11 +243,11 @@ function Configuration() {
             modelViewName: "session_overview",
             modelMetricName: "product_usage_sessions",
             isNeedToSaveInHistory: true,
-            columnLinkPrefixList: [
-                "/analytics/pages/session-view.jsp?session_id",
-                "/analytics/pages/user-view.jsp?user",
-                "/analytics/pages/workspace-view.jsp?ws"
-            ],
+            columnLinkPrefixList: {
+                "ID": "/analytics/pages/session-view.jsp?session_id",
+                "User": "/analytics/pages/user-view.jsp?user",
+                "Workspace": "/analytics/pages/workspace-view.jsp?ws"
+            },
         },        
         
         sessionOverview: {
@@ -247,6 +258,11 @@ function Configuration() {
             
             defaultModelParams: {
                 "session_id": "unexisted_session_id"
+            },
+            
+            columnLinkPrefixList: {
+                "User": "/analytics/pages/user-view.jsp?user",
+                "Workspace": "/analytics/pages/workspace-view.jsp?ws"
             },
         },
 
@@ -275,7 +291,9 @@ function Configuration() {
             modelViewName: "workspaces",
             modelMetricName: "workspaces_statistics",
             isNeedToSaveInHistory: true,
-            columnLinkPrefixList: ["/analytics/pages/workspace-view.jsp?ws"],
+            columnLinkPrefixList: {
+                "Workspace": "/analytics/pages/workspace-view.jsp?ws"
+            }
         },
 
         workspaceOverview: {
@@ -297,10 +315,10 @@ function Configuration() {
             isSortable: true,
             defaultSortParams: "-date",
             
-            columnLinkPrefixList: [
-                "/analytics/pages/session-view.jsp?session_id",
-                "/analytics/pages/user-view.jsp?user"
-            ],
+            columnLinkPrefixList: {
+                "ID": "/analytics/pages/session-view.jsp?session_id",
+                "User": "/analytics/pages/user-view.jsp?user"
+            },
         },
 
         workspaceUserList: {
@@ -312,7 +330,9 @@ function Configuration() {
             isPaginable: true,
             modelMetricName: "usage_time_by_users",
             
-            columnLinkPrefixList: ["/analytics/pages/user-view.jsp?user"],
+            columnLinkPrefixList: {
+                "Name": "/analytics/pages/user-view.jsp?user",
+            }
         },
 
         workspaceActivity: {
