@@ -480,15 +480,17 @@ function Configuration() {
         "to_date",           // user-view, workspace-view
         "event",             // session-view
         "ws",                // workspaces-view
+        "factory",           // factories-view
     ];
 
     /** url params which are passed from other pages */
     var crossPageParams = [
-        "user",        // users-view > user-view; workspace-view > user-view
+        "user",        // users-view > user-view; workspace-view > user-view; top metrics report > user-view
         "sort",        // users-view > users-view; workspaces-view > workspaces-view
         "page",        // user-view > user-view; users-view > users-view; workspaces-view > workspaces-view; workspace-view > workspace-view
-        "session_id",  // user-view > session-view; workspace-view > session-view
+        "session_id",  // user-view > session-view; workspace-view > session-view; top metrics report > session-view 
         "ws",          // workspaces-view > workspace-view; user-view > workspace-view
+        "factory",     // factories-view > factory-view; user-view > factory-view; workspace-view > factory-view; top metrics report > factory-view
     ];
 
     /** Global parameters stored in Browser Storage  */
