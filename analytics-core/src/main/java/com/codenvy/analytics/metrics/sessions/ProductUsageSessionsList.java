@@ -52,11 +52,10 @@ public class ProductUsageSessionsList extends AbstractListValueResulted {
     }
 
     @Override
-    protected ValueData postEvaluation(ValueData valueData, Context clauses) throws IOException {
-        List<ValueData> value = new ArrayList<>();
-        ListValueData list2Return = (ListValueData)valueData;
+    public ValueData postEvaluation(ValueData valueData, Context clauses) throws IOException {
+        List<ValueData> list2Return = new ArrayList<>();
 
-        for (ValueData items : list2Return.getAll()) {
+        for (ValueData items : ((ListValueData)valueData).getAll()) {
 
             MapValueData prevItems = (MapValueData)items;
             Map<String, ValueData> items2Return = new HashMap<>(prevItems.getAll());
@@ -71,10 +70,10 @@ public class ProductUsageSessionsList extends AbstractListValueResulted {
                 items2Return.put(SESSION_ID, StringValueData.valueOf(EMPTY_SESSION_MESSAGE));
             }
 
-            value.add(new MapValueData(items2Return));
+            list2Return.add(new MapValueData(items2Return));
         }
 
-        return new ListValueData(value);
+        return new ListValueData(list2Return);
     }
 
     @Override

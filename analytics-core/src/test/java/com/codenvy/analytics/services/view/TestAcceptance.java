@@ -21,7 +21,7 @@ import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.Configurator;
 import com.codenvy.analytics.Injector;
 import com.codenvy.analytics.Utils;
-import com.codenvy.analytics.datamodel.ListValueData;
+import com.codenvy.analytics.datamodel.CollectionValueData;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.StringValueData;
 import com.codenvy.analytics.datamodel.ValueData;
@@ -140,6 +140,9 @@ public class TestAcceptance extends BaseTest {
         assertNumberOfItems(MetricType.WORKSPACES_STATISTICS_LIST, MetricType.WORKSPACES_STATISTICS);
         assertNumberOfItems(MetricType.USERS_STATISTICS_LIST, MetricType.USERS_STATISTICS);
         assertNumberOfItems(MetricType.PRODUCT_USAGE_SESSIONS_LIST, MetricType.PRODUCT_USAGE_SESSIONS);
+        assertNumberOfItems(MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST, MetricType.PRODUCT_USAGE_FACTORY_SESSIONS);
+        assertNumberOfItems(MetricType.CREATED_FACTORIES_SET, MetricType.CREATED_UNIQUE_FACTORIES);
+        assertNumberOfItems(MetricType.CREATED_FACTORIES_LIST, MetricType.CREATED_FACTORIES);
     }
 
     private void assertNumberOfItems(MetricType listMetricType, MetricType countMetricType) throws IOException {
@@ -148,7 +151,7 @@ public class TestAcceptance extends BaseTest {
         Metric listMetric = MetricFactory.getMetric(listMetricType);
         Metric countMetric = MetricFactory.getMetric(countMetricType);
 
-        ListValueData listValueData = (ListValueData)listMetric.getValue(context);
+        CollectionValueData listValueData = (CollectionValueData)listMetric.getValue(context);
         LongValueData longValueData = (LongValueData)countMetric.getValue(context);
 
         assertEquals(listValueData.size(), longValueData.getAsLong());

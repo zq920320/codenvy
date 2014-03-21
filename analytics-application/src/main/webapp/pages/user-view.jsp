@@ -18,7 +18,7 @@
 <html lang="en">
 <head>
     <title>User View</title>
-    <%@ include file="/inclusions/header.jsp"%>
+    <%@ include file="/inclusions/header.jsp" %>
 </head>
 <body>
 
@@ -30,7 +30,7 @@
     <div class="row-fluid">
         <div>
             <div class="well topFilteringPanel">
-                <div id="date-range" targetWidgets="userData,userSessions,userWorkspaceList,userActivity">
+                <div id="date-range" targetWidgets="userData,userSessions,userWorkspaceList,userFactories,userActivity">
                    <span>
                        From: <input type="text" id="datepicker-from-date" name="from_date" class="date-box"/>
                        To: <input type="text" id="datepicker-to-date" name="to_date" class="date-box"/>
@@ -48,6 +48,7 @@
                             <div class="item" id="userData"></div>
                             <div class="item" id="userSessions"></div>
                             <div class="item" id="userWorkspaceList"></div>
+                            <div class="item" id="userFactories"></div>
                             <div class="item" id="userActivity"></div>
                             <div class="item" id="userEvents"></div>
                         </div>

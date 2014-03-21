@@ -17,10 +17,11 @@
  */
 package com.codenvy.analytics.metrics.sessions.factory;
 
-import com.codenvy.analytics.metrics.AbstractListValueResulted;
-import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.metrics.*;
 
 import javax.annotation.security.RolesAllowed;
+import java.io.IOException;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
@@ -31,11 +32,21 @@ public class ProductUsageFactorySessionsList extends AbstractListValueResulted {
 
     @Override
     public String[] getTrackedFields() {
-        return new String[]{TIME,
+        return new String[]{SESSION_ID,
+                            USER,
+                            WS,
+                            DATE,
+                            TIME,
                             REFERRER,
                             FACTORY,
                             AUTHENTICATED_SESSION,
                             CONVERTED_SESSION};
+    }
+
+    @Override
+    public ValueData postEvaluation(ValueData valueData, Context clauses) throws IOException {
+        ReadBasedMetric metric = (ReadBasedMetric)MetricFactory.getMetric(MetricType.PRODUCT_USAGE_SESSIONS_LIST);
+        return metric.postEvaluation(valueData, clauses);
     }
 
     @Override

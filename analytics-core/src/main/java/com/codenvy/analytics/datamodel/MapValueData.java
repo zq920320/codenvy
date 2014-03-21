@@ -29,7 +29,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class MapValueData extends AbstractValueData {
+public class MapValueData extends CollectionValueData {
 
     public static final MapValueData DEFAULT = new MapValueData(Collections.<String, ValueData>emptyMap());
 

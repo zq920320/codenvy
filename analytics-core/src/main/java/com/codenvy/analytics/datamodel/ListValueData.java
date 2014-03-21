@@ -28,7 +28,7 @@ import java.util.List;
 
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class ListValueData extends AbstractValueData {
+public class ListValueData extends CollectionValueData {
 
     private List<ValueData> value;
 

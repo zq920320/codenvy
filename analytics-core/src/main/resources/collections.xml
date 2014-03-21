@@ -331,11 +331,11 @@
             </index>
             <index name="org_id">
                 <field>date</field>
-                <field>orgdate</field>
+                <field>org_id</field>
             </index>
             <index name="affiliate_id">
                 <field>date</field>
-                <field>affiliatedate</field>
+                <field>affiliate_id</field>
             </index>
             <index name="referrer">
                 <field>date</field>
@@ -360,11 +360,11 @@
             </index>
             <index name="org_id">
                 <field>date</field>
-                <field>orgdate</field>
+                <field>org_id</field>
             </index>
             <index name="affiliate_id">
                 <field>date</field>
-                <field>affiliatedate</field>
+                <field>affiliate_id</field>
             </index>
             <index name="referrer">
                 <field>date</field>
@@ -389,11 +389,11 @@
             </index>
             <index name="org_id">
                 <field>date</field>
-                <field>orgdate</field>
+                <field>org_id</field>
             </index>
             <index name="affiliate_id">
                 <field>date</field>
-                <field>affiliatedate</field>
+                <field>affiliate_id</field>
             </index>
             <index name="referrer">
                 <field>date</field>
@@ -418,11 +418,11 @@
             </index>
             <index name="org_id">
                 <field>date</field>
-                <field>orgdate</field>
+                <field>org_id</field>
             </index>
             <index name="affiliate_id">
                 <field>date</field>
-                <field>affiliatedate</field>
+                <field>affiliate_id</field>
             </index>
             <index name="referrer">
                 <field>date</field>
@@ -447,11 +447,11 @@
             </index>
             <index name="org_id">
                 <field>date</field>
-                <field>orgdate</field>
+                <field>org_id</field>
             </index>
             <index name="affiliate_id">
                 <field>date</field>
-                <field>affiliatedate</field>
+                <field>affiliate_id</field>
             </index>
             <index name="referrer">
                 <field>date</field>

@@ -80,7 +80,7 @@ public class UsersActivityList extends AbstractListValueResulted {
      * {@link com.codenvy.analytics.pig.scripts.EventsHolder#IDE_CLOSED} events.
      */
     @Override
-    protected ValueData postEvaluation(ValueData valueData, Context clauses) throws IOException {
+    public ValueData postEvaluation(ValueData valueData, Context clauses) throws IOException {
         SessionData sessionData = SessionData.init(clauses);
 
         long prevActionDate = -1;

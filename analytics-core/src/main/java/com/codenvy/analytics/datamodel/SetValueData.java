@@ -29,7 +29,7 @@ import java.util.Set;
 
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class SetValueData extends AbstractValueData {
+public class SetValueData extends CollectionValueData {
 
     private Set<ValueData> value;
 

@@ -32,7 +32,7 @@ function Configuration() {
 
             isNeedToSaveInHistory: false,
         },
-        
+
         factoryStatistics: {
             widgetLabel: "Factory Statistics",
             presenterType: "ReportPresenter",
@@ -85,12 +85,12 @@ function Configuration() {
             widgetLabel: "Engagement Levels",
             presenterType: "ReportPresenter",
             modelViewName: "engagement_levels",
-            
+
             forbiddenModelParams: ["time_unit"],
-            
+
             isNeedToSaveInHistory: true,
         },
-        
+
         collaborationReport: {
             widgetLabel: "Collaboration Report",
             presenterType: "ReportPresenter",
@@ -101,8 +101,8 @@ function Configuration() {
             },
 
             isNeedToSaveInHistory: true,
-        },        
-        
+        },
+
         usageReport: {
             widgetLabel: "Usage Report",
             presenterType: "ReportPresenter",
@@ -114,7 +114,7 @@ function Configuration() {
 
             isNeedToSaveInHistory: true,
         },
-        
+
         sessionReport: {
             widgetLabel: "Session Report",
             presenterType: "ReportPresenter",
@@ -137,8 +137,8 @@ function Configuration() {
             },
 
             isNeedToSaveInHistory: true,
-        },        
-        
+        },
+
         topMetrics: {
             widgetLabel: "Top Metrics",
             presenterType: "TopMetricsPresenter",
@@ -149,7 +149,7 @@ function Configuration() {
             },
 
             isNeedToSaveInHistory: true,
-            
+
             columnLinkPrefixList: {
                 "Email": "/analytics/pages/user-view.jsp?user",
                 "ID": "/analytics/pages/session-view.jsp?session_id",
@@ -194,7 +194,7 @@ function Configuration() {
 
             isSortable: true,
             defaultSortParams: "-date",
-            
+
             columnLinkPrefixList: {
                 "ID": "/analytics/pages/session-view.jsp?session_id",
                 "Workspace": "/analytics/pages/workspace-view.jsp?ws"
@@ -209,9 +209,24 @@ function Configuration() {
 
             isPaginable: true,
             modelMetricName: "usage_time_by_workspaces",
-            
+
             columnLinkPrefixList: {
                 "Name": "/analytics/pages/workspace-view.jsp?ws"
+            }
+        },
+
+        userFactories: {
+            widgetLabel: "Factories",
+            presenterType: "TablePresenter",
+            modelViewName: "user_factories",
+            isNeedToSaveInHistory: true,
+
+            isPaginable: true,
+            modelMetricName: "created_factories",
+
+            columnLinkPrefixList: {
+                "Factory URL": "/analytics/pages/factory-view.jsp?factory",
+                "Workspace": "/analytics/pages/workspace-view.jsp?ws",
             }
         },
 
@@ -220,7 +235,7 @@ function Configuration() {
             presenterType: "TablePresenter",
             modelViewName: "user_activity",
             isNeedToSaveInHistory: true,
-            
+
             isPaginable: true,
             modelMetricName: "users_activity",
 
@@ -236,11 +251,11 @@ function Configuration() {
             modelViewName: "users_events",
             isNeedToSaveInHistory: true,
         },
-        
+
 
         /** for Session View */
         sessions: {
-            widgetLabel: "Sessions",            
+            widgetLabel: "Sessions",
             presenterType: "SessionsPresenter",
             modelViewName: "session_overview",
             modelMetricName: "product_usage_sessions",
@@ -250,18 +265,18 @@ function Configuration() {
                 "User": "/analytics/pages/user-view.jsp?user",
                 "Workspace": "/analytics/pages/workspace-view.jsp?ws"
             },
-        },        
-        
+        },
+
         sessionOverview: {
             widgetLabel: "Session Overview",
             presenterType: "VerticalTablePresenter",
             modelViewName: "session_overview",
             isNeedToSaveInHistory: false,
-            
+
             defaultModelParams: {
                 "session_id": "unexisted_session_id"
             },
-            
+
             columnLinkPrefixList: {
                 "User": "/analytics/pages/user-view.jsp?user",
                 "Workspace": "/analytics/pages/workspace-view.jsp?ws"
@@ -277,14 +292,14 @@ function Configuration() {
             defaultModelParams: {
                 "session_id": "unexisted_session_id",
             },
-            
+
             isPaginable: true,
             modelMetricName: "users_activity",
             onePageRowsCount: 30,
 
             isSortable: true,
             defaultSortParams: "+date",
-        },        
+        },
 
         /** for Workspace View */
         workspaces: {
@@ -316,7 +331,7 @@ function Configuration() {
 
             isSortable: true,
             defaultSortParams: "-date",
-            
+
             columnLinkPrefixList: {
                 "ID": "/analytics/pages/session-view.jsp?session_id",
                 "User": "/analytics/pages/user-view.jsp?user"
@@ -331,9 +346,24 @@ function Configuration() {
 
             isPaginable: true,
             modelMetricName: "usage_time_by_users",
-            
+
             columnLinkPrefixList: {
                 "Name": "/analytics/pages/user-view.jsp?user",
+            }
+        },
+
+        workspaceFactories: {
+            widgetLabel: "Factories",
+            presenterType: "TablePresenter",
+            modelViewName: "workspace_factories",
+            isNeedToSaveInHistory: true,
+
+            isPaginable: true,
+            modelMetricName: "created_factories",
+
+            columnLinkPrefixList: {
+                "Factory URL": "/analytics/pages/factory-view.jsp?factory",
+                "User": "/analytics/pages/user-view.jsp?user",
             }
         },
 
@@ -342,7 +372,7 @@ function Configuration() {
             presenterType: "TablePresenter",
             modelViewName: "workspace_activity",
             isNeedToSaveInHistory: true,
-            
+
             isPaginable: true,
             modelMetricName: "users_activity",
 
@@ -350,6 +380,25 @@ function Configuration() {
             defaultSortParams: "-date",
             
             doNotDisplayCSVButton: true,   // default value is "false"
+        },
+
+        factorySessions: {
+            widgetLabel: "Sessions",
+            presenterType: "TablePresenter",
+            modelViewName: "factory_sessions",
+            isNeedToSaveInHistory: true,
+
+            isPaginable: true,
+            modelMetricName: "product_usage_factory_sessions",
+
+            isSortable: true,
+            defaultSortParams: "-date",
+
+            columnLinkPrefixList: {
+                "ID": "/analytics/pages/session-view.jsp?session_id",
+                "User": "/analytics/pages/user-view.jsp?user",
+                "Workspace": "/analytics/pages/workspace-view.jsp?ws"
+            },
         },
     }
 
@@ -389,7 +438,7 @@ function Configuration() {
         "event",             // session-view
         "ws",                // workspaces-view
     ];
-    
+
     /** url params which are passed from other pages */
     var crossPageParams = [
         "user",        // users-view > user-view; workspace-view > user-view
@@ -398,17 +447,17 @@ function Configuration() {
         "session_id",  // user-view > session-view; workspace-view > session-view
         "ws",          // workspaces-view > workspace-view; user-view > workspace-view
     ];
-    
+
     /** Global parameters stored in Browser Storage  */
     var globalParams = [
         "ide",
     ];
-    
+
     /** List of system messages of Analytics  */
     var systemMessagesList = [
         "User Did Not Enter Workspace",
     ];
-    
+
     function getProperty(widgetName, property) {
         return widgetConfiguration[widgetName][property];
     }
@@ -448,7 +497,7 @@ function Configuration() {
                 return true;
             }
         }
-        
+
         return false;
     }
 
@@ -461,17 +510,17 @@ function Configuration() {
                 return true;
             }
         }
-        
+
         return false;
     }
-    
+
     /**
      * Return array with global param names
      */
     function getGlobalParamList() {
         return globalParams;
     }
-    
+
     /**
      * Return registered params with all values = null
      */
@@ -481,15 +530,15 @@ function Configuration() {
             var paramName = registeredViewParams[i];
             params[paramName] = null;
         }
-        
+
         return params;
     }
-    
+
     /**
      * Return modelParams which had been cleared from forbidden params defined in the configuration of widget with widgetName
      */
     function removeForbiddenModelParams(widgetName, modelParams) {
-        var forbiddenModelParams = widgetConfiguration[widgetName]["forbiddenModelParams"];  
+        var forbiddenModelParams = widgetConfiguration[widgetName]["forbiddenModelParams"];
 
         if (typeof forbiddenModelParams != "undefined") {
             for (var i in forbiddenModelParams) {
@@ -502,7 +551,7 @@ function Configuration() {
 
         return modelParams;
     }
-    
+
     function getCrossPageParamsList() {
         return crossPageParams;
     }
@@ -512,12 +561,12 @@ function Configuration() {
             if (systemMessagesList[i] == message) {
                 return true;
             }
-            
+
             return false;
         }
     }
-    
-    
+
+
     /** ****************** API ********** */
     return {
         getProperty: getProperty,

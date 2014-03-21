@@ -128,7 +128,7 @@ public class UsersStatisticsList extends AbstractListValueResulted {
 
     /** To add user profile data. */
     @Override
-    protected ValueData postEvaluation(ValueData valueData, Context clauses) throws IOException {
+    public ValueData postEvaluation(ValueData valueData, Context clauses) throws IOException {
         List<ValueData> value = new ArrayList<>();
         ListValueData listValueData = (ListValueData)valueData;
 

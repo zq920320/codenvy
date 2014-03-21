@@ -134,11 +134,14 @@ com.codenvy.analytics.metrics.sessions.factory.FactoriesBuilt
 com.codenvy.analytics.metrics.sessions.factory.FactoriesRun
 com.codenvy.analytics.metrics.sessions.factory.FactoriesImported
 com.codenvy.analytics.metrics.sessions.factory.CreatedFactoriesSet
+com.codenvy.analytics.metrics.sessions.factory.CreatedFactoriesList
 com.codenvy.analytics.metrics.sessions.factory.CreatedFactories
+com.codenvy.analytics.metrics.sessions.factory.CreatedUniqueFactories
 com.codenvy.analytics.metrics.sessions.factory.TotalFactories
 com.codenvy.analytics.metrics.sessions.factory.Factories
 com.codenvy.analytics.metrics.sessions.factory.TemporaryWorkspacesCreated
 com.codenvy.analytics.metrics.sessions.factory.ProductUsageFactorySessionsList
+com.codenvy.analytics.metrics.sessions.factory.ProductUsageFactorySessions
 com.codenvy.analytics.metrics.sessions.factory.FactorySessions
 com.codenvy.analytics.metrics.sessions.factory.ReferrersCountToSpecificFactory
 com.codenvy.analytics.metrics.sessions.factory.WorkspacesWhereUsersHaveSeveralFactorySessions
