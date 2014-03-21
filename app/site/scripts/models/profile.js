@@ -29,7 +29,7 @@
             return response;
             },
             
-			urlRoot : "/api/user",
+			urlRoot : "/api/profile",
 
             fetch : function(options){ // fetch is asynchronous function
             var dfd = $.Deferred();
