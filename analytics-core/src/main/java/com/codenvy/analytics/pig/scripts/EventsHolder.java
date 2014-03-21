@@ -22,6 +22,7 @@ import com.codenvy.analytics.services.configuration.XmlConfigurationManager;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.io.IOException;
+import java.util.Map;
 
 /** @author Anatoliy Bazko */
 @Singleton
@@ -33,23 +34,33 @@ public class EventsHolder {
     public static final String USER_SSO_LOGOUT_EVENT = "user-sso-logged-out";
     public static final String USER_IDLE_EVENT       = "idle";
 
-    private static final String CONFIGURATION = "events.xml";
+    private static final String CONFIGURATION        = "events.xml";
 
-    private final EventHolderConfiguration configuration;
+    private final EventHolderConfiguration        configuration;
+
+    private final Map<String, EventConfiguration> eventsMap;
 
     @Inject
     public EventsHolder(XmlConfigurationManager confManager) throws IOException {
         configuration = confManager.loadConfiguration(EventHolderConfiguration.class, CONFIGURATION);
+        eventsMap = configuration.getAsMap();
     }
 
     public boolean isEventExists(String eventName) {
-        for (EventConfiguration eventConfiguration : configuration.getEvents()) {
-            if (eventConfiguration.getName().equals(eventName)) {
-                return true;
-            }
+        return  eventsMap.containsKey(eventName);
+    }
+
+    /**
+     * @return EventConfiguration
+     * @throws IllegalArgumentException
+     *         if event doesn't exist into configuration
+     */
+    public EventConfiguration getDefinition(String eventName) throws IllegalArgumentException {
+        if (eventsMap.containsKey(eventName)) {
+            return  eventsMap.get(eventName);
         }
 
-        return false;
+        throw new IllegalArgumentException("There is no event with name " + eventName);
     }
 
     /**
@@ -58,10 +69,8 @@ public class EventsHolder {
      *         if event doesn't exist into configuration
      */
     public String getDescription(String eventName) throws IllegalArgumentException {
-        for (EventConfiguration eventConfiguration : configuration.getEvents()) {
-            if (eventConfiguration.getName().equals(eventName)) {
-                return eventConfiguration.getDescription();
-            }
+        if (eventsMap.containsKey(eventName)) {
+            return  eventsMap.get(eventName).getDescription();
         }
 
         throw new IllegalArgumentException("There is no event with name " + eventName);

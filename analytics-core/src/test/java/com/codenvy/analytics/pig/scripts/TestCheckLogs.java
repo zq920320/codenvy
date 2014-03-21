@@ -63,7 +63,5 @@ public class TestCheckLogs extends BaseTest {
             count++;
         }
         assertEquals(count, 3);
-
-        pigServer.execute(ScriptType.CHECK_LOGS_2, builder.build());
     }
 }

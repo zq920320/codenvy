@@ -3,7 +3,7 @@
  * CODENVY CONFIDENTIAL
  * ________________
  *
- * [2012] - [2013] Codenvy, S.A.
+ * [2012] - [2014] Codenvy, S.A.
  * All Rights Reserved.
  * NOTICE: All information contained herein is, and remains
  * the property of Codenvy S.A. and its suppliers,
@@ -15,11 +15,29 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
+package com.codenvy.analytics.pig.scripts;
 
-IMPORT 'macros.pig';
+import javax.xml.bind.annotation.*;
 
-l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
+/**
+ * @author Alexander Reshetnyak
+ */
+public class Parameter {
 
-result = FILTER l BY EventValidation(event, ws, user, message) != true;
+    private String name;
+    private boolean empty;
 
+    @XmlValue
+    public void setName(String name) {
+        this.name = name;
+    }
 
+    public String getName() { return name; }
+
+    @XmlAttribute(name = "allow-empty-value")
+    public void setAllowEmptyValue(boolean empty) {
+        this.empty = empty;
+    }
+
+    public boolean isAllowEmptyValue() { return empty; }
+}

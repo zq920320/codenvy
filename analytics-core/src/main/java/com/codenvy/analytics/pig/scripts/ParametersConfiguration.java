@@ -24,14 +24,14 @@ import java.util.List;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @XmlRootElement(name = "parameters")
 public class ParametersConfiguration {
-    private List<String> params;
+    private List<Parameter> params;
 
     @XmlElement(name = "param")
-    public void setParams(List<String> params) {
+    public void setParams(List<Parameter> params) {
         this.params = params;
     }
 
-    public List<String> getParams() {
+    public List<Parameter> getParams() {
         return params;
     }
 }

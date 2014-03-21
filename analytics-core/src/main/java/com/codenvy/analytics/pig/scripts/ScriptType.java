@@ -107,16 +107,6 @@ public enum ScriptType {
                                                    Parameters.FROM_DATE}));
         }
     },
-    CHECK_LOGS_2 {
-        @Override
-        public Set<Parameters> getParams() {
-            return new LinkedHashSet<>(
-                    Arrays.asList(new Parameters[]{Parameters.WS,
-                                                   Parameters.USER,
-                                                   Parameters.TO_DATE,
-                                                   Parameters.FROM_DATE}));
-        }
-    },
 
     /** Script for testing purpose. */
     TEST_MONGO_LOADER {

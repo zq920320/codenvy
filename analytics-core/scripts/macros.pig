@@ -97,7 +97,7 @@ DEFINE countByField(X, fieldNameParam) RETURNS Y {
 -- @param eventNamesParam - comma separated list of event names
 ---------------------------------------------------------------------------
 DEFINE filterByEvent(X, eventNamesParam) RETURNS Y {
-  $Y = FILTER $X BY EventExists(event) AND '$eventNamesParam' == '*' OR INDEXOF('$eventNamesParam', event, 0) >= 0;
+  $Y = FILTER $X BY '$eventNamesParam' == '*' OR INDEXOF('$eventNamesParam', event, 0) >= 0;
 };
 
 ---------------------------------------------------------------------------
@@ -105,7 +105,7 @@ DEFINE filterByEvent(X, eventNamesParam) RETURNS Y {
 -- @param eventsNameParam - comma separated list of event names
 ---------------------------------------------------------------------------
 DEFINE removeEvent(X, eventNamesParam) RETURNS Y {
-  $Y = FILTER $X BY EventExists(event) AND INDEXOF('$eventNamesParam', event, 0) < 0;
+  $Y = FILTER $X BY INDEXOF('$eventNamesParam', event, 0) < 0;
 };
 
 ---------------------------------------------------------------------------

@@ -291,14 +291,14 @@
     <event name="factory-created">
         <description>Factory created</description>
         <parameters>
-            <param>WS</param>
+            <param allow-empty-value="true">WS</param>
             <param>USER</param>
-            <param>PROJECT</param>
+            <param allow-empty-value="true">PROJECT</param>
             <param>TYPE</param>
             <param>REPO-URL</param>
             <param>FACTORY-URL</param>
-            <param>AFFILIATE-ID</param>
-            <param>ORG-ID</param>
+            <param allow-empty-value="true">AFFILIATE-ID</param>
+            <param allow-empty-value="true">ORG-ID</param>
         </parameters>
     </event>
     <event name="factory-project-imported">
@@ -330,11 +330,10 @@
         <description>Factory accepted</description>
         <parameters>
             <param>WS</param>
-            <param>USER</param>
-            <param>REFERRER</param>
+            <param allow-empty-value="true">REFERRER</param>
             <param>FACTORY-URL</param>
-            <param>AFFILIATE-ID</param>
-            <param>ORG-ID</param>
+            <param allow-empty-value="true">AFFILIATE-ID</param>
+            <param allow-empty-value="true">ORG-ID</param>
         </parameters>
     </event>
     <event name="jrebel-usage">
@@ -371,11 +370,11 @@
         <description>User update profile</description>
         <parameters>
             <param>USER</param>
-            <param>FIRSTNAME</param>
-            <param>LASTNAME</param>
-            <param>COMPANY</param>
-            <param>PHONE</param>
-            <param>JOBTITLE</param>
+            <param allow-empty-value="true">FIRSTNAME</param>
+            <param allow-empty-value="true">LASTNAME</param>
+            <param allow-empty-value="true">COMPANY</param>
+            <param allow-empty-value="true">PHONE</param>
+            <param allow-empty-value="true">JOBTITLE</param>
         </parameters>
     </event>
 </events>
