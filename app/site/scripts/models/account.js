@@ -29,7 +29,7 @@
             new AccountError("password","Your password is too short")
 
         */
-        var profile = profile || {}; // user Profile to store user's data from server
+        var userProfile = userProfile || {}; // user Profile to store user's data from server
 
         var showSupportLink = function(isPaid){
             if (isPaid){
@@ -79,19 +79,19 @@
         */
         function onReceiveUserProfileInfo(response)
         {
-                profile = response;
+                userProfile = response;
                 var profileAttributes = response.attributes;
-                var userProfile = {};
+                var attributes = {};
                 profileAttributes.forEach(
                     function(attribute){
-                        Object.defineProperty(userProfile, attribute.name,{value:attribute.value});
+                        Object.defineProperty(attributes, attribute.name,{value:attribute.value});
                 });
-                document.getElementById("account_value").innerHTML = userProfile.email || "";
-                document.getElementsByName("first_name")[0].value = userProfile.firstName || "";
-                document.getElementsByName("last_name")[0].value = userProfile.lastName || "";
-                document.getElementsByName("phone_work")[0].value = userProfile.phone || "";
-                document.getElementsByName("company")[0].value = userProfile.employer || "";
-                document.getElementsByName("title")[0].value = userProfile.jobtitle || "";
+                document.getElementById("account_value").innerHTML = attributes.email || "";
+                document.getElementsByName("first_name")[0].value = attributes.firstName || "";
+                document.getElementsByName("last_name")[0].value = attributes.lastName || "";
+                document.getElementsByName("phone_work")[0].value = attributes.phone || "";
+                document.getElementsByName("company")[0].value = attributes.employer || "";
+                document.getElementsByName("title")[0].value = attributes.jobtitle || "";
         }
 
 
@@ -389,8 +389,8 @@
             // update User`s profile in Profile page
             updateProfile : function(body,success,error){
                 
-                profile.attributes =body;//Updating profile attributes
-                Profile.updateUser(profile,success,function(msg){
+                userProfile.attributes =body;//Updating profile attributes
+                Profile.updateUser(userProfile,success,function(msg){
                     error([
                         new  AccountError(null,msg)
                     ]);
