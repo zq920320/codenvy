@@ -32,12 +32,14 @@ analytics.presenter.VerticalTablePresenter.prototype.load = function() {
     
     var widgetLabel = analytics.configuration.getProperty(presenter.widgetName, "widgetLabel") || "Overview";
     
-    view.print("<div class='view'>");
-
     model.setParams(presenter.getModelParams(view.getParams()));
     
     model.pushDoneFunction(function(data) {
-        var csvButtonLink = presenter.getLinkForExportToCsvButton(presenter.modelViewName);
+        var doNotDisplayCSVButton = analytics.configuration.getProperty(presenter.widgetName, "doNotDisplayCSVButton");
+        var csvButtonLink = (typeof doNotDisplayCSVButton == "undefined" || doNotDisplayCSVButton == false) 
+                            ? presenter.getLinkForExportToCsvButton()
+                            : undefined;
+                            
         var table = data[0];  // there is only one table in data
         
         // make table columns linked 
@@ -47,24 +49,23 @@ analytics.presenter.VerticalTablePresenter.prototype.load = function() {
                 table = view.makeTableColumnLinked(table, columnName, columnLinkPrefixList[columnName]);    
             }          
         }        
-        
+               
         view.print("<div class='view'>");
+        view.print("   <div class='overview'>");
+
+        view.printWidgetHeader(widgetLabel, csvButtonLink);
         
-        view.print("<div class='overview'>");
-        view.print("<div class='header'>" + widgetLabel + "</div>");
+        view.print("       <div class='body'>");
+        view.print("           <div class='item'>");
         
-        view.print("<div class='body'>");
-        
-        view.print("<div class='item'>");
         view.printTableVerticalRow(data[0]);
-        view.print("</div>");
         
-        view.print("</div>");
-        view.print("</div>");
+        view.print("           </div>");
+        view.print("       </div>");
+        view.print("    </div>");
         
         view.loadTableHandlers();
         
-        view.print("</div>");
         view.print("</div>");
         
         // finish loading widget

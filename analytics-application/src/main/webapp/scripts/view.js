@@ -115,19 +115,20 @@ function View() {
 	function printCsvButton(csvButtonLink) {
 	    var csvButtonLabel = "CSV";
 	    
+        print("<div class='small-links-block'>");
 	    print("  <a href='" + csvButtonLink + "' target='_blank'>");
 	    print(csvButtonLabel);
 	    print("  </a>");
+        print("</div>");
 	}
 	
 	function printWidgetHeader(widgetLabel, csvButtonLink) {
-        print("<div class='header'>");
-        print(widgetLabel);
-
-        if (typeof csvButtonLink != "undefined") {
+        if (typeof csvButtonLink != "undefined") {        
             printCsvButton(csvButtonLink);
         }
-
+	    
+	    print("<div class='header'>");
+        print(widgetLabel);
         print("</div>");
 	}
 	

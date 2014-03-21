@@ -20,7 +20,7 @@
     <view time-unit="day,week,month,lifetime" name="summary_report" columns="15">
         <section name="summary_report">
             <row class="com.codenvy.analytics.services.view.DateRow">
-                <parameter key="section-name" value="Summary Report"/>
+                <parameter key="section-name" value=""/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="total_workspaces"/>

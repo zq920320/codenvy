@@ -66,7 +66,10 @@ analytics.presenter.TablePresenter.prototype.load = function() {
         model.pushDoneFunction(function(data){
             model.popDoneFunction(data);
             
-            var csvButtonLink = presenter.getLinkForExportToCsvButton();
+            var doNotDisplayCSVButton = analytics.configuration.getProperty(presenter.widgetName, "doNotDisplayCSVButton");
+            var csvButtonLink = (typeof doNotDisplayCSVButton == "undefined" || doNotDisplayCSVButton == false) 
+                                ? presenter.getLinkForExportToCsvButton()
+                                : undefined;
 
             var table = data[0];  // there is only one table in data
             

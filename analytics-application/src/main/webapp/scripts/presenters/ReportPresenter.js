@@ -33,7 +33,10 @@ analytics.presenter.ReportPresenter.prototype.load = function() {
     model.setParams(presenter.getModelParams(view.getParams()));
         
     model.pushDoneFunction(function(data) {
-        var csvButtonLink = presenter.getLinkForExportToCsvButton();       
+        var doNotDisplayCSVButton = analytics.configuration.getProperty(presenter.widgetName, "doNotDisplayCSVButton");
+        var csvButtonLink = (typeof doNotDisplayCSVButton == "undefined" || doNotDisplayCSVButton == false) 
+                            ? presenter.getLinkForExportToCsvButton()
+                            : undefined;     
         var widgetLabel = analytics.configuration.getProperty(presenter.widgetName, "widgetLabel");
         view.printWidgetHeader(widgetLabel, csvButtonLink);
 

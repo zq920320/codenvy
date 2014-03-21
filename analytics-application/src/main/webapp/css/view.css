@@ -2,10 +2,7 @@
 }
 
 .view .overview {
-   margin-bottom: 30px;
-   background-color: #fcfcfc;
-   border: 1px solid #ddd;
-   border-radius: 4px;
+   margin-bottom: 20px;
    display: inline-block;
 }
 
@@ -24,8 +21,9 @@
 }
 
 .view .overview .body .item {
-   float: left;
-   padding: 5px 10px;
+	background-color: #fcfcfc;
+	border: 1px solid #ddd;
+    padding: 5px 10px;
 }
 
 .view .overview .body table {
@@ -41,7 +39,9 @@
    width: 100%;
 }
 
-
-.view .tables .item .body {
+.view .small-links-block {
+	text-align: right;
+	font-size: 80%;
+    font-weight: bold;
+    line-height: 135%;
 }
-
