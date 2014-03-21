@@ -153,6 +153,7 @@ function Configuration() {
             columnLinkPrefixList: {
                 "Email": "/analytics/pages/user-view.jsp?user",
                 "ID": "/analytics/pages/session-view.jsp?session_id",
+                "Factory": "/analytics/pages/factory-view.jsp?factory",
             }
         },
 

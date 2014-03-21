@@ -32,6 +32,7 @@ public abstract class AbstractTopSessions extends AbstractTopMetrics {
     @Override
     public String[] getTrackedFields() {
         return new String[]{TIME,
+                            SESSION_ID,
                             FACTORY,
                             REFERRER,
                             AUTHENTICATED_SESSION,
