@@ -107,13 +107,13 @@ public class FactoryStatisticsList extends AbstractListValueResulted {
             Map<String, ValueData> items2Return = new HashMap<>(prevItems.getAll());
 
             Map<String, ValueData> factoryData = getFactoryData(items2Return);
-            items2Return.put(DATE, getNotNullValue(factoryData.get(DATE)));
-            items2Return.put(USER, getNotDefaultValue(factoryData.get(USER)));
-            items2Return.put(WS, getNotDefaultValue(factoryData.get(WS)));
-            items2Return.put(REPOSITORY, getNotNullValue(factoryData.get(REPOSITORY)));
-            items2Return.put(PROJECT_TYPE, getNotNullValue(factoryData.get(PROJECT_TYPE)));
-            items2Return.put(ORG_ID, getNotNullValue(factoryData.get(ORG_ID)));
-            items2Return.put(AFFILIATE_ID, getNotNullValue(factoryData.get(AFFILIATE_ID)));
+            items2Return.put(DATE, getNotNullStringValue(factoryData.get(DATE)));
+            items2Return.put(USER, getNotDefaultStringValue(factoryData.get(USER)));
+            items2Return.put(WS, getNotDefaultStringValue(factoryData.get(WS)));
+            items2Return.put(REPOSITORY, getNotNullStringValue(factoryData.get(REPOSITORY)));
+            items2Return.put(PROJECT_TYPE, getNotNullStringValue(factoryData.get(PROJECT_TYPE)));
+            items2Return.put(ORG_ID, getNotNullStringValue(factoryData.get(ORG_ID)));
+            items2Return.put(AFFILIATE_ID, getNotNullStringValue(factoryData.get(AFFILIATE_ID)));
 
             list2Return.add(new MapValueData(items2Return));
         }
@@ -138,11 +138,11 @@ public class FactoryStatisticsList extends AbstractListValueResulted {
         }
     }
 
-    private ValueData getNotNullValue(ValueData valueData) {
+    private ValueData getNotNullStringValue(ValueData valueData) {
         return valueData == null ? StringValueData.DEFAULT : valueData;
     }
 
-    private ValueData getNotDefaultValue(ValueData valueData) {
+    private ValueData getNotDefaultStringValue(ValueData valueData) {
         return valueData == null || valueData.getAsString().equalsIgnoreCase("DEFAULT") ? StringValueData.DEFAULT
                                                                                         : valueData;
     }

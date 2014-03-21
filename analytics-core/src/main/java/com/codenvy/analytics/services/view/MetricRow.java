@@ -292,6 +292,10 @@ public class MetricRow extends AbstractRow {
     }
 
     private StringValueData formatDateValue(ValueData valueData, String format) {
+        if (valueData == null || valueData.getAsString().isEmpty()) {
+            return StringValueData.DEFAULT;
+        }
+
         Long value = Long.valueOf(valueData.getAsString());
         String formattedValue = new SimpleDateFormat(format).format(value);
 
