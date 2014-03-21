@@ -108,18 +108,22 @@ public class EnvironmentContextInitializationFilter implements Filter {
                 context.setWorkspaceId(workspace.getId());
                 context.setVariable("WORKSPACE_IS_TEMPORARY", workspace.isTemporary());
                 if (workspace.isTemporary()) {
-//                    if (workspace.getAttribute("is_private") != null) {
-//                        context.setVariable("WORKSPACE_IS_PRIVATE", Boolean.parseBoolean(workspace.getAttribute("is_private")));
-//                    } else {
-//                        workspace = workspaceManager.getWorkspaceById(workspace.getId());
-//                        workspaceCache.put(tenant, workspace);
-//                        context.setVariable("WORKSPACE_IS_PRIVATE", Boolean.parseBoolean(workspace.getAttribute("is_private", "true")));
-//                    }
-                    Iterator<Attribute> it = workspace.getAttributes().iterator();
-                    while (it.hasNext()) {
-                        Attribute attribute = it.next();
-                        if (attribute.getName().equals("is_private"))
-                            context.setVariable("WORKSPACE_IS_PRIVATE", Boolean.parseBoolean(attribute.getValue()));
+                    if (getWSAttribute("is_private", workspace) != null) {
+                        context.setVariable("WORKSPACE_IS_PRIVATE",
+                                            Boolean.parseBoolean(getWSAttribute("is_private", workspace)));
+                    } else {
+                        // Renewing cached ws
+                        try {
+                            workspace = workspaceDao.getById(workspace.getId());
+                        } catch (WorkspaceException e) {
+                            httpResponse.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                                                   "Workspace " + tenant + "is not found");
+                            return;
+                        }
+                        workspaceCache.put(tenant, workspace);
+                        context.setVariable("WORKSPACE_IS_PRIVATE",
+                                            getWSAttribute("is_private", workspace) == null ? true :
+                                            Boolean.parseBoolean(getWSAttribute("is_private", workspace)));
                     }
                 }
             }
@@ -127,6 +131,15 @@ public class EnvironmentContextInitializationFilter implements Filter {
         } finally {
             EnvironmentContext.reset();
         }
+    }
+
+    private String getWSAttribute(String attributeName, Workspace workspace) {
+        for (Attribute attribute : workspace.getAttributes()) {
+            if (attribute.getName().equals(attributeName) && attribute.getValue() != null) {
+                return attribute.getValue();
+            }
+        }
+        return null;
     }
 
     @Override
