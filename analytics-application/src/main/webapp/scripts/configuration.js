@@ -226,6 +226,8 @@ function Configuration() {
 
             isSortable: true,
             defaultSortParams: "-date",
+            
+            doNotDisplayCSVButton: true,   // default value is "false"
         },
 
         userEvents: {
@@ -346,6 +348,8 @@ function Configuration() {
 
             isSortable: true,
             defaultSortParams: "-date",
+            
+            doNotDisplayCSVButton: true,   // default value is "false"
         },
     }
 

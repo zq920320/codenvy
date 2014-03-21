@@ -37,6 +37,7 @@ analytics.presenter.VerticalTablePresenter.prototype.load = function() {
     model.setParams(presenter.getModelParams(view.getParams()));
     
     model.pushDoneFunction(function(data) {
+        var csvButtonLink = presenter.getLinkForExportToCsvButton(presenter.modelViewName);
         var table = data[0];  // there is only one table in data
         
         // make table columns linked 
