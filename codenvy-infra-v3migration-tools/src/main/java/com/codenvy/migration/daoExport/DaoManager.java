@@ -15,12 +15,12 @@ import com.codenvy.api.user.shared.dto.User;
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
 import com.codenvy.api.workspace.server.exception.WorkspaceException;
 import com.codenvy.api.workspace.shared.dto.Workspace;
-import com.codenvy.organization.dao.ldap.UserAttributesMapper;
-import com.codenvy.organization.dao.ldap.UserDaoImpl;
-import com.codenvy.organization.dao.mongo.OrganizationDaoImpl;
-import com.codenvy.organization.dao.mongo.MemberDaoImpl;
-import com.codenvy.organization.dao.mongo.UserProfileDaoImpl;
-import com.codenvy.organization.dao.mongo.WorkspaceDaoImpl;
+import com.codenvy.api.dao.ldap.UserAttributesMapper;
+import com.codenvy.api.dao.ldap.UserDaoImpl;
+import com.codenvy.api.dao.mongo.OrganizationDaoImpl;
+import com.codenvy.api.dao.mongo.MemberDaoImpl;
+import com.codenvy.api.dao.mongo.UserProfileDaoImpl;
+import com.codenvy.api.dao.mongo.WorkspaceDaoImpl;
 import com.mongodb.DB;
 import com.mongodb.MongoClient;
 
