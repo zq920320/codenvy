@@ -16,9 +16,9 @@
  * from Codenvy S.A..
  */
 
-package com.codenvy.organization.dao.util;
+package com.codenvy.api.dao.util;
 
-import com.codenvy.organization.dao.exception.ItemNamingException;
+import com.codenvy.api.dao.exception.ItemNamingException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

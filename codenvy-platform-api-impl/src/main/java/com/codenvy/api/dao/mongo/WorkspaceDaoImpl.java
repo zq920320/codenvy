@@ -15,7 +15,7 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.organization.dao.mongo;
+package com.codenvy.api.dao.mongo;
 
 import com.codenvy.api.user.server.dao.UserDao;
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
@@ -24,8 +24,8 @@ import com.codenvy.api.workspace.server.exception.WorkspaceNotFoundException;
 import com.codenvy.api.workspace.shared.dto.Attribute;
 import com.codenvy.api.workspace.shared.dto.Workspace;
 import com.codenvy.dto.server.DtoFactory;
-import com.codenvy.organization.dao.exception.ItemNamingException;
-import com.codenvy.organization.dao.util.NamingValidator;
+import com.codenvy.api.dao.exception.ItemNamingException;
+import com.codenvy.api.dao.util.NamingValidator;
 import com.mongodb.*;
 import com.mongodb.util.JSON;
 

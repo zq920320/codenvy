@@ -15,7 +15,7 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.organization.dao.mongo;
+package com.codenvy.api.dao.mongo;
 
 import com.codenvy.api.organization.server.dao.OrganizationDao;
 import com.codenvy.api.organization.server.exception.OrganizationException;

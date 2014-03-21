@@ -15,13 +15,13 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.organization.dao.mongo;
+package com.codenvy.api.dao.mongo;
 
 import com.codenvy.api.user.shared.dto.Member;
 import com.codenvy.api.user.shared.dto.User;
 import com.codenvy.api.workspace.shared.dto.Workspace;
 import com.codenvy.dto.server.DtoFactory;
-import com.codenvy.organization.dao.ldap.UserDaoImpl;
+import com.codenvy.api.dao.ldap.UserDaoImpl;
 import com.mongodb.BasicDBList;
 import com.mongodb.DBObject;
 
