@@ -162,8 +162,8 @@ public class ViewBuilder extends Feature {
     }
 
     public void retainViewData(String viewId,
-                                  ViewData viewData,
-                                  Context context) throws SQLException, IOException {
+                               ViewData viewData,
+                               Context context) throws SQLException, IOException {
         jdbcPersister.storeData(viewData);
         csvReportPersister.storeData(viewId, viewData, context);
     }
@@ -193,6 +193,9 @@ public class ViewBuilder extends Feature {
         }
 
         private ViewData doCompute() throws IOException {
+            LOG.info("ViewBuilder is started for " + viewConf.getName());
+            long start = System.currentTimeMillis();
+
             try {
                 ViewData viewData = new ViewData(viewConf.getSections().size());
 
@@ -215,6 +218,9 @@ public class ViewBuilder extends Feature {
             } catch (NoSuchMethodException | ClassCastException | ClassNotFoundException | InvocationTargetException |
                     IllegalAccessException | InstantiationException e) {
                 throw new IOException(e);
+            } finally {
+                LOG.info("ViewBuilder is finished in " + (System.currentTimeMillis() - start) / 1000 + " sec. for " +
+                         viewConf.getName() + " with context " + context);
             }
         }
     }

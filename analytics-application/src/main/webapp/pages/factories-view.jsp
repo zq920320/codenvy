@@ -17,7 +17,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Workspaces</title>
+    <title>Factories</title>
     <%@ include file="/inclusions/header.jsp" %>
 </head>
 <body>
@@ -30,18 +30,18 @@
     <div class="row-fluid">
         <div>
             <div class="well topFilteringPanel">
-                <%--<div id="filter-by" class="left" targetWidgets="_all">--%>
-                    <%--Filter by:--%>
-                    <%--<input type="text" id="filterByKeywordInput" name="keyword" class="text-box"/>--%>
-                    <%--<button class="btn command-btn" value="ws">Workspace</button>--%>
-                    <%--<button id="clearSelectionBtn" class="btn btn-small clear-btn">Clear</button>--%>
-                <%--</div>--%>
+                <div id="filter-by" class="left" targetWidgets="_all">
+                    Filter by:
+                    <input type="text" id="filterByKeywordInput" name="keyword" class="text-box"/>
+                    <button class="btn command-btn" value="factory">Factory</button>
+                    <button id="clearSelectionBtn" class="btn btn-small clear-btn">Clear</button>
+                </div>
             </div>
             <div class="hero-unit">
                 <div class="single-column-gadget">
                     <div class="view">
                         <div class="tables">
-                            <%--<div class="item" id="workspaces"></div>--%>
+                            <div class="item" id="factories"></div>
                         </div>
                     </div>
                 </div>
@@ -52,7 +52,7 @@
 
 <jsp:include page="/inclusions/footer.jsp">
     <jsp:param name="javaScriptToLoad" value="/analytics/scripts/presenters/EntryViewPresenter.js"/>
-    <jsp:param name="javaScriptToLoad" value="/analytics/scripts/presenters/WorkspacesPresenter.js"/>
+    <jsp:param name="javaScriptToLoad" value="/analytics/scripts/presenters/FactoriesPresenter.js"/>
 </jsp:include>
 
 </body>

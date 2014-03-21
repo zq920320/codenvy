@@ -143,6 +143,10 @@ com.codenvy.analytics.metrics.sessions.factory.TemporaryWorkspacesCreated
 com.codenvy.analytics.metrics.sessions.factory.ProductUsageFactorySessionsList
 com.codenvy.analytics.metrics.sessions.factory.ProductUsageFactorySessions
 com.codenvy.analytics.metrics.sessions.factory.FactorySessions
+com.codenvy.analytics.metrics.sessions.factory.FactoryUsersList
+com.codenvy.analytics.metrics.sessions.factory.FactoryUsers
+com.codenvy.analytics.metrics.sessions.factory.FactoryStatisticsList
+com.codenvy.analytics.metrics.sessions.factory.FactoryStatistics
 com.codenvy.analytics.metrics.sessions.factory.ReferrersCountToSpecificFactory
 com.codenvy.analytics.metrics.sessions.factory.WorkspacesWhereUsersHaveSeveralFactorySessions
 com.codenvy.analytics.metrics.sessions.factory.WorkspacesWithZeroFactorySessionsLength

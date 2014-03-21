@@ -26,10 +26,10 @@
             <div class="left">
                 <a class="nav" href="/analytics/pages/users-view.jsp?sort=%2Buser" id="topmenu-users">Users</a>
                 <a class="nav" href="/analytics/pages/sessions-view.jsp?sort=-date" id="topmenu-sessions">Sessions</a>
-                <a class="nav" href="/analytics/pages/workspaces-view.jsp?sort=%2Bws" id="topmenu-workspaces">Workspaces</a> 
+                <a class="nav" href="/analytics/pages/workspaces-view.jsp?sort=%2Bws" id="topmenu-workspaces">Workspaces</a>
+                <a class="nav" href="/analytics/pages/factories-view.jsp?sort=%2Bws_created" id="topmenu-factories">Factories</a>
                 <%--<a class="nav" href="#">Projects</a> --%>
-                <%--<a class="nav" href="#">Factories</a>--%>
-    
+
                 <div class="nav">
                     <div>
                         <button id="topmenu-reports">Reports</button>

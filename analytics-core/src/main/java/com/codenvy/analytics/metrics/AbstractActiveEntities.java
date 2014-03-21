@@ -64,6 +64,9 @@ public abstract class AbstractActiveEntities extends ReadBasedMetric {
 
     @Override
     public DBObject[] getSpecificDBOperations(Context clauses) {
+        DBObject match = new BasicDBObject();
+        match.put(valueField, new BasicDBObject("$ne", ""));
+
         DBObject group = new BasicDBObject();
         group.put(ID, "$" + valueField);
 
@@ -71,7 +74,8 @@ public abstract class AbstractActiveEntities extends ReadBasedMetric {
         count.put(ID, null);
         count.put(valueField, new BasicDBObject("$sum", 1));
 
-        return new DBObject[]{new BasicDBObject("$group", group),
+        return new DBObject[]{new BasicDBObject("$match", match),
+                              new BasicDBObject("$group", group),
                               new BasicDBObject("$group", count)};
     }
 

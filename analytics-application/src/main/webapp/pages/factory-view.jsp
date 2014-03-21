@@ -17,7 +17,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Workspace View</title>
+    <title>Factory View</title>
     <%@ include file="/inclusions/header.jsp" %>
 </head>
 <body>
@@ -40,13 +40,13 @@
                 </div>
             </div>
             <div class="hero-unit">
-                <%--<div id="factoryOverview"></div>--%>
+                <div id="factoryOverview"></div>
 
                 <div class="single-column-gadget">
                     <div class="view">
                         <div class="tables">
                             <div class="item" id="factorySessions"></div>
-                            <%--<div class="item" id="factoryUsers"></div>--%>
+                            <div class="item" id="factoryUsers"></div>
                         </div>
                     </div>
                 </div>
