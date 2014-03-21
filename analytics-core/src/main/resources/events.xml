@@ -295,7 +295,6 @@
             <param>USER</param>
             <param>PROJECT</param>
             <param>TYPE</param>
-            <param>REFERRER</param>
             <param>REPO-URL</param>
             <param>FACTORY-URL</param>
             <param>AFFILIATE-ID</param>

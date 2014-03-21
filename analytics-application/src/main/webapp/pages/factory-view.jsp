@@ -18,19 +18,19 @@
 <html lang="en">
 <head>
     <title>Workspace View</title>
-    <%@ include file="/inclusions/header.jsp"%>
+    <%@ include file="/inclusions/header.jsp" %>
 </head>
 <body>
 
 <jsp:include page="/inclusions/top-menu/top-menu.jsp">
-    <jsp:param name="selectedMenuItemId" value="topmenu-workspaces"/>
+    <jsp:param name="selectedMenuItemId" value="topmenu-factories"/>
 </jsp:include>
 
 <div class="container-fluid">
     <div class="row-fluid">
         <div>
             <div class="well topFilteringPanel">
-                <div id="date-range" targetWidgets="workspaceSessions,workspaceUserList,workspaceFactories,workspaceActivity,workspaceUserEvents">
+                <div id="date-range" targetWidgets="factorySessions,factoryUsers">
                    <span>
                        From: <input type="text" id="datepicker-from-date" name="from_date" class="date-box"/>
                        To: <input type="text" id="datepicker-to-date" name="to_date" class="date-box"/>
@@ -40,19 +40,16 @@
                 </div>
             </div>
             <div class="hero-unit">
-                <div id="workspaceOverview"></div>
+                <%--<div id="factoryOverview"></div>--%>
 
                 <div class="single-column-gadget">
                     <div class="view">
                         <div class="tables">
-                            <div class="item" id="workspaceSessions"></div>
-                            <div class="item" id="workspaceUserList"></div>
-                            <div class="item" id="workspaceFactories"></div>
-                            <div class="item" id="workspaceActivity"></div>
+                            <div class="item" id="factorySessions"></div>
+                            <%--<div class="item" id="factoryUsers"></div>--%>
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>

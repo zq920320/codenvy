@@ -170,7 +170,7 @@ public class MetricRow extends AbstractRow {
     }
 
     private boolean isMultipleColumnsMetric() {
-        return metric.getValueDataClass() == ListValueData.class;
+        return metric.getValueDataClass() == ListValueData.class || metric.getValueDataClass() == SetValueData.class;
     }
 
     private List<List<ValueData>> getSingleValue(Context initialContext,
@@ -269,6 +269,16 @@ public class MetricRow extends AbstractRow {
             for (ValueData item : ((ListValueData)valueData).getAll()) {
                 formatAndAddMultipleValues(item, multipleValues);
             }
+
+        } else if (clazz == SetValueData.class) {
+            for (final ValueData item : ((SetValueData)valueData).getAll()) {
+                Map<String, ValueData> map = new HashMap<String, ValueData>() {{
+                    put(fields[0], item);
+                }};
+
+                formatAndAddMultipleValues(new MapValueData(map), multipleValues);
+            }
+
         } else {
             throw new IOException("Unsupported class " + clazz);
         }

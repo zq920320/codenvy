@@ -93,7 +93,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
         }
     }
 
-    protected ValueData postEvaluation(ValueData valueData, Context clauses) throws IOException {
+    public ValueData postEvaluation(ValueData valueData, Context clauses) throws IOException {
         return valueData;
     }
 
