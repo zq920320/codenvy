@@ -24,7 +24,9 @@ import com.codenvy.api.user.server.exception.UserProfileException;
 import com.codenvy.api.user.shared.dto.Attribute;
 import com.codenvy.api.user.shared.dto.Profile;
 import com.codenvy.dto.server.DtoFactory;
+import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
+import com.mongodb.BasicDBObjectBuilder;
 import com.mongodb.DBObject;
 import com.mongodb.util.JSON;
 
@@ -34,7 +36,6 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
-import org.w3c.dom.Attr;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -71,17 +72,22 @@ public class UserProfileDaoTest extends BaseDaoTest {
 
     @Test
     public void mustSaveProfile() throws Exception {
+        Map<String, String> sprefs = new HashMap<>();
+        sprefs.put("first", "first_value");
+        sprefs.put("____firstASD", "other_first_value");
+        sprefs.put("second", "second_value");
+        sprefs.put("other", "other_value");
         Profile profile = DtoFactory.getInstance().createDto(Profile.class).withId(PROFILE_ID).withUserId(USER_ID)
-                                    .withAttributes(getAttributes());
+                                    .withAttributes(getAttributes());//.withPreferences(sprefs);
+
 
         // main invoke
         profileDao.create(profile);
 
         DBObject res = collection.findOne(new BasicDBObject("id", PROFILE_ID));
         assertNotNull(res, "Specified user profile does not exists.");
+        Profile result  = toProfile(res);
 
-        Profile result =
-                DtoFactory.getInstance().createDtoFromJson(res.toString(), Profile.class);
         assertEquals(profile.getLinks(), result.getLinks());
         assertEquals(profile, result);
     }
@@ -100,7 +106,7 @@ public class UserProfileDaoTest extends BaseDaoTest {
                                 .withAttributes(Collections.<Attribute>emptyList())
                                 .withPreferences(prefs);
 
-        collection.save((DBObject)JSON.parse(tmp.toString()));
+        collection.save(toDBObject(tmp));
 
         Profile profile = profileDao.getById(PROFILE_ID, ".*first.*");
         assertNotNull(profile);
@@ -150,5 +156,54 @@ public class UserProfileDaoTest extends BaseDaoTest {
         attributes.add(DtoFactory.getInstance().createDto(Attribute.class).withName("attr3").withValue("value3")
                                  .withDescription("description3"));
         return attributes;
+    }
+
+    private Profile toProfile(DBObject res) {
+        List<Attribute> attributes = new ArrayList<>();
+        BasicDBList atts = (BasicDBList)res.get("attributes");
+        for (Object obj : atts) {
+            attributes.add(DtoFactory.getInstance().createDtoFromJson(obj.toString(), Attribute.class));
+        }
+
+        Map<String, String> preferences = new HashMap<>();
+        BasicDBList prefs = (BasicDBList)res.get("preferences");
+        for (Object obj : prefs) {
+            BasicDBObject dbObject  = (BasicDBObject)obj;
+            preferences.put(dbObject.getString("name"), dbObject.getString("value"));
+        }
+
+        return DtoFactory.getInstance().createDto(Profile.class)
+                         .withId((String)res.get("id"))
+                         .withUserId((String)res.get("userId"))
+                         .withAttributes(attributes)
+                         .withPreferences(preferences);
+    }
+
+    private DBObject toDBObject(Profile obj) {
+        BasicDBList attributes = new BasicDBList();
+        if (obj.getAttributes() != null) {
+            for (Attribute one : obj.getAttributes()) {
+                Attribute attribute = DtoFactory.getInstance().createDto(Attribute.class)
+                                                .withName(one.getName())
+                                                .withValue(one.getValue())
+                                                .withDescription(one.getDescription());
+                attributes.add(JSON.parse(attribute.toString()));
+            }
+        }
+
+        BasicDBList preferences = new BasicDBList();
+        for (Map.Entry<String,String> entry : obj.getPreferences().entrySet()) {
+            BasicDBObjectBuilder pref = new BasicDBObjectBuilder();
+            pref.add("name", entry.getKey()).add("value", entry.getValue());
+            preferences.add(pref.get());
+        }
+        BasicDBObjectBuilder profileBUilder = new BasicDBObjectBuilder();
+        profileBUilder.add("id", obj.getId())
+                      .add("userId", obj.getUserId())
+                      .add("attributes", attributes)
+                      .add("preferences", preferences);
+
+        return profileBUilder.get();
+
     }
 }

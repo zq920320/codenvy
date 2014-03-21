@@ -24,11 +24,7 @@ import com.codenvy.api.user.server.exception.UserProfileException;
 import com.codenvy.api.user.shared.dto.Profile;
 import com.codenvy.api.user.shared.dto.Attribute;
 import com.codenvy.dto.server.DtoFactory;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.DBObject;
-import com.mongodb.MongoException;
+import com.mongodb.*;
 import com.mongodb.util.JSON;
 
 import javax.inject.Inject;
@@ -98,7 +94,7 @@ public class UserProfileDaoImpl implements UserProfileDao {
         } catch (MongoException me) {
             throw new UserProfileException(me.getMessage(), me);
         }
-        return res != null ? DtoFactory.getInstance().createDtoFromJson(res.toString(), Profile.class) : null;
+        return res != null ? toProfile(res) : null;
 
     }
 
@@ -120,27 +116,58 @@ public class UserProfileDaoImpl implements UserProfileDao {
 
     /**
      * Convert UserProfile object to Database ready-to-use object,
-     *
+     * Due to mongo restriction of keys (they cannot contain "." symbols),
+     * we cannot store preferences as plain map, so we store them as a list of name-value pairs.
      * @param obj
      *         object to convert
      * @return DBObject
      */
     private DBObject toDBObject(Profile obj) {
-        List<Attribute> attributes = new ArrayList<>();
+        BasicDBList attributes = new BasicDBList();
         if (obj.getAttributes() != null) {
             for (Attribute one : obj.getAttributes()) {
-                attributes.add(DtoFactory.getInstance().createDto(Attribute.class)
+                Attribute attribute = DtoFactory.getInstance().createDto(Attribute.class)
                                          .withName(one.getName())
                                          .withValue(one.getValue())
-                                         .withDescription(one.getDescription())
-                              );
+                                         .withDescription(one.getDescription());
+                attributes.add(JSON.parse(attribute.toString()));
             }
         }
-        Profile profile = DtoFactory.getInstance().createDto(Profile.class)
-                                    .withId(obj.getId())
-                                    .withUserId(obj.getUserId())
+
+        BasicDBList preferences = new BasicDBList();
+        for (Map.Entry<String,String> entry : obj.getPreferences().entrySet()) {
+            BasicDBObjectBuilder pref = new BasicDBObjectBuilder();
+            pref.add("name", entry.getKey()).add("value", entry.getValue());
+            preferences.add(pref.get());
+        }
+        BasicDBObjectBuilder profileBUilder = new BasicDBObjectBuilder();
+        profileBUilder.add("id", obj.getId())
+                       .add("userId", obj.getUserId())
+                       .add("attributes", attributes)
+                       .add("preferences", preferences);
+
+        return profileBUilder.get();
+
+    }
+
+    private Profile toProfile(DBObject res) {
+        List<Attribute> attributes = new ArrayList<>();
+        BasicDBList atts = (BasicDBList)res.get("attributes");
+        for (Object obj : atts) {
+            attributes.add(DtoFactory.getInstance().createDtoFromJson(obj.toString(), Attribute.class));
+        }
+
+        Map<String, String> preferences = new HashMap<>();
+        BasicDBList prefs = (BasicDBList)res.get("preferences");
+        for (Object obj : prefs) {
+            BasicDBObject dbObject  = (BasicDBObject)obj;
+            preferences.put(dbObject.getString("name"), dbObject.getString("value"));
+        }
+
+        return DtoFactory.getInstance().createDto(Profile.class)
+                                    .withId((String)res.get("id"))
+                                    .withUserId((String)res.get("userId"))
                                     .withAttributes(attributes)
-                                    .withPreferences(obj.getPreferences() == null ? new HashMap<String, String>() : obj.getPreferences());
-        return (DBObject)JSON.parse(profile.toString());
+                                    .withPreferences(preferences);
     }
 }
