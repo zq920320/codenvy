@@ -1,32 +1,42 @@
-.bottom-page-navigator { 
-	padding-top: 8px;
+.bottom-page-navigator {
+	padding-top: 12px;
 	word-break: break-all;
-   text-align: right;
+	text-align: right;
+    font-size: 20px;
 }
 
 .bottom-page-navigator a {
-   text-decoration: none;
+	text-decoration: none;
 }
 
-.bottom-page-navigator .page-link {
-	font-size: 1.5em;
-   margin-left: 7px;
-   color: #08c;
+.bottom-page-navigator a.page-link {
+    margin: 0px 4px;
+	color: #08c;
+	border: 1px solid #ddd;
+	padding: 0px 6px;
+}
+
+.bottom-page-navigator a.page-link:hover {
+    border: 1px solid #08c;
+    text-decoration: none;
 }
 
 .bottom-page-navigator .previous {
-/*   background-image: ...;*/
+	/*   background-image: ...;*/	
 }
 
 .bottom-page-navigator .next {
-/*   background-image: ...;*/
+	/*   background-image: ...;*/
 }
 
-.bottom-page-navigator .current {
+.bottom-page-navigator a.current {
 	font-weight: bold;
+    font-size: 1.2em;
+	border: 1px solid #08c;
+	background: #CFE4FE;
 }
 
 .bottom-page-navigator .empty {
-   width: 12px;
-   display: inline-block;
+	width: 12px;
+	display: inline-block;
 }
