@@ -79,8 +79,8 @@
         */
         function onReceiveUserProfileInfo(response)
         {
-                userProfile = response;
-                var profileAttributes = response.attributes;
+                userProfile = response.attributes;
+                var profileAttributes = userProfile.attributes;
                 var attributes = {};
                 profileAttributes.forEach(
                     function(attribute){
