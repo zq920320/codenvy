@@ -17,6 +17,35 @@
          from Codenvy S.A..
 -->
 <display>
+    <view name="factories" on-demand="true">
+        <section name="factories">
+            <row class="com.codenvy.analytics.services.view.TitleRow">
+                <parameter key="titles" value="Factory URL,Clicks,Sessions,Time"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="factory_statistics_list"/>
+                <parameter key="fields" value="factory,ws_created,sessions,time"/>
+                <parameter key="time-fields" value="time"/>
+            </row>
+        </section>
+    </view>
+
+    <view name="factory" on-demand="true">
+        <section name="factory">
+            <row class="com.codenvy.analytics.services.view.TitleRow">
+                <parameter key="titles"
+                           value="Factory,Creation Date,Created By,Workspace,Repository,Type,Organization ID,Affiliate ID,Number of Clicks,Number of Sessions,Number of Known,Number of Converted,Total Time,Number of Builds,Number of Runs,Number of Deploys"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="factory_statistics_list"/>
+                <parameter key="fields"
+                           value="factory,date,user,ws,repository,project_type,org_id,affiliate_id,ws_created,sessions,authenticated_factory_session,converted_factory_session,time,build,run,deploy"/>
+                <parameter key="time-fields" value="time"/>
+                <parameter key="date-fields" value="date"/>
+            </row>
+        </section>
+    </view>
+
     <view name="factory_sessions" on-demand="true">
         <section name="factory_sessions">
             <row class="com.codenvy.analytics.services.view.TitleRow">
@@ -27,6 +56,20 @@
                 <parameter key="fields" value="session_id,user,ws,date,end_time,time"/>
                 <parameter key="time-fields" value="time"/>
                 <parameter key="date-fields" value="date,end_time"/>
+            </row>
+        </section>
+    </view>
+
+    <view name="factory_users" on-demand="true">
+        <section name="factory_users">
+            <row class="com.codenvy.analytics.services.view.TitleRow">
+                <parameter key="titles" value="User,# Sessions,Duration,# Runs,# Builds,# Deploys"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="factory_users_list"/>
+                <parameter key="fields" value="user,sessions,time,run,build,deploy"/>
+                <parameter key="time-fields" value="time"/>
+                <parameter key="date-fields" value="date"/>
             </row>
         </section>
     </view>

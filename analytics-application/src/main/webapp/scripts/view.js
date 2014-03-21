@@ -169,7 +169,7 @@ function View() {
                 if (analytics.configuration.isSystemMessage(columnValue)) {
                    table.rows[i][columnIndex] = getSystemMessageLabel(columnValue);    
                 } else {
-                   var href = columnLinkPrefix + "=" + columnValue;
+                   var href = columnLinkPrefix + "=" + encodeURIComponent(columnValue);
                    table.rows[i][columnIndex] = "<a href='" + href + "'>" + columnValue + "</a>";
                 }
             }

@@ -143,6 +143,8 @@ public class TestAcceptance extends BaseTest {
         assertNumberOfItems(MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST, MetricType.PRODUCT_USAGE_FACTORY_SESSIONS);
         assertNumberOfItems(MetricType.CREATED_FACTORIES_SET, MetricType.CREATED_UNIQUE_FACTORIES);
         assertNumberOfItems(MetricType.CREATED_FACTORIES_LIST, MetricType.CREATED_FACTORIES);
+        assertNumberOfItems(MetricType.FACTORY_USERS_LIST, MetricType.FACTORY_USERS);
+        assertNumberOfItems(MetricType.FACTORY_STATISTICS_LIST, MetricType.FACTORY_STATISTICS);
     }
 
     private void assertNumberOfItems(MetricType listMetricType, MetricType countMetricType) throws IOException {

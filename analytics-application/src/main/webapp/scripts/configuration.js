@@ -241,7 +241,7 @@ function Configuration() {
 
             isSortable: true,
             defaultSortParams: "-date",
-            
+
             doNotDisplayCSVButton: true,   // default value is "false"
         },
 
@@ -378,8 +378,32 @@ function Configuration() {
 
             isSortable: true,
             defaultSortParams: "-date",
-            
+
             doNotDisplayCSVButton: true,   // default value is "false"
+        },
+
+        /** for Factory View */
+        factories: {
+            widgetLabel: "Factories",
+            presenterType: "FactoriesPresenter",
+            modelViewName: "factories",
+            modelMetricName: "factory_statistics",
+            isNeedToSaveInHistory: true,
+            columnLinkPrefixList: {
+                "Factory URL": "/analytics/pages/factory-view.jsp?factory"
+            }
+        },
+
+        factoryOverview: {
+            widgetLabel: "Factory Overview",
+            presenterType: "VerticalTablePresenter",
+            modelViewName: "factory",
+            isNeedToSaveInHistory: false,
+
+            columnLinkPrefixList: {
+                "User": "/analytics/pages/user-view.jsp?user",
+                "Workspace": "/analytics/pages/workspace-view.jsp?ws",
+            }
         },
 
         factorySessions: {
@@ -398,6 +422,23 @@ function Configuration() {
                 "ID": "/analytics/pages/session-view.jsp?session_id",
                 "User": "/analytics/pages/user-view.jsp?user",
                 "Workspace": "/analytics/pages/workspace-view.jsp?ws"
+            },
+        },
+
+        factoryUsers: {
+            widgetLabel: "Users",
+            presenterType: "TablePresenter",
+            modelViewName: "factory_users",
+            isNeedToSaveInHistory: true,
+
+            isPaginable: true,
+            modelMetricName: "factory_users",
+
+            isSortable: true,
+            defaultSortParams: "-time",
+
+            columnLinkPrefixList: {
+                "User": "/analytics/pages/user-view.jsp?user",
             },
         },
     }
@@ -420,6 +461,7 @@ function Configuration() {
         "to_date",
         "event",
         "ws",
+        "factory",
     ];
 
     /** see method analytics.main.getParamsFromButtons()    */
