@@ -93,7 +93,6 @@ public class LogChecker extends Feature {
         File reportFile = new File(configurator.getTmpDir(), "report.txt");
         try (BufferedWriter out = new BufferedWriter(new FileWriter(reportFile))) {
             writeReport(ScriptType.CHECK_LOGS_1, context, out);
-            writeReport(ScriptType.CHECK_LOGS_2, context, out);
         }
 
         return reportFile;

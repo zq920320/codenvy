@@ -19,7 +19,9 @@ package com.codenvy.analytics.pig.scripts;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /** @author <a href="mailto:areshetnyak@codenvy.com">Alexander Reshetnyak</a> */
 @XmlRootElement(name = "events")
@@ -34,5 +36,14 @@ public class EventHolderConfiguration {
     @XmlElement(name = "event")
     public void setEvents(List<EventConfiguration> events) {
         this.events = events;
+    }
+
+    public Map<String, EventConfiguration> getAsMap() {
+        Map<String, EventConfiguration> map = new LinkedHashMap<>();
+
+        for (EventConfiguration eventConfiguration : events) {
+            map.put(eventConfiguration.getName(), eventConfiguration);
+        }
+        return map;
     }
 }
