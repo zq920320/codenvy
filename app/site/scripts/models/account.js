@@ -29,7 +29,8 @@
             new AccountError("password","Your password is too short")
 
         */
-        var user = user || {}; // User to store user's data from server
+        var profile = profile || {}; // user Profile to store user's data from server
+
         var showSupportLink = function(isPaid){
             if (isPaid){
                 var uv = document.createElement('script'); uv.type = 'text/javascript'; uv.async = true;
@@ -78,10 +79,14 @@
         */
         function onReceiveUserProfileInfo(response)
         {
-                user = response.attributes; // store attributes
-                var userProfile = user.profile.attributes;
-                var email = user.aliases;
-                document.getElementById("account_value").innerHTML = email;
+                profile = response;
+                var profileAttributes = response.attributes;
+                var userProfile = {};
+                profileAttributes.forEach(
+                    function(attribute){
+                        Object.defineProperty(userProfile, attribute.name,{value:attribute.value});
+                });
+                document.getElementById("account_value").innerHTML = userProfile.email || "";
                 document.getElementsByName("first_name")[0].value = userProfile.firstName || "";
                 document.getElementsByName("last_name")[0].value = userProfile.lastName || "";
                 document.getElementsByName("phone_work")[0].value = userProfile.phone || "";
@@ -383,8 +388,9 @@
             },
             // update User`s profile in Profile page
             updateProfile : function(body,success,error){
-                user.profile.attributes = body; //Updating profile attributes
-                Profile.updateUser(user,success,function(msg){
+                
+                profile.attributes =body;//Updating profile attributes
+                Profile.updateUser(profile,success,function(msg){
                     error([
                         new  AccountError(null,msg)
                     ]);
