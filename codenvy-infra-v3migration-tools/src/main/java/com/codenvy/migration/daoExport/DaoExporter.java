@@ -35,6 +35,10 @@ import java.util.concurrent.Executors;
 public class DaoExporter {
     private static final Logger LOG = LoggerFactory.getLogger(DaoExporter.class);
 
+    // Constants for progress bar
+    private static final int PERCENTS_RANGE = 5;
+    private static final int NUMBER_PERCENT_EQUALS_ONE_DOT = 5;
+
     private MemoryStorage memoryStorage;
     private DaoManager    daoManager;
 
@@ -45,7 +49,7 @@ public class DaoExporter {
     private SubscriptionConverter subscriptionConvertor;
     private ExecutorService       executor;
     private CountDownLatch        doneExportObjectSignal;
-    private CountDownLatch        doneExportLink;
+    private CountDownLatch        doneExportLinkSignal;
 
     public DaoExporter(MemoryStorage memoryStorage, DaoManager daoManager) {
         this.memoryStorage = memoryStorage;
@@ -102,7 +106,7 @@ public class DaoExporter {
 
     /** Method selects members which linked with user and transfer them to {@link ExporterMembers} for export */
     private void exportLink() {
-        doneExportLink = new CountDownLatch(memoryStorage.getUsers().size());
+        doneExportLinkSignal = new CountDownLatch(memoryStorage.getUsers().size());
 
         for (User user : memoryStorage.getUsers().values()) {
             List<com.codenvy.api.user.shared.dto.Member> workspaceMembers = new ArrayList<>();
@@ -136,7 +140,7 @@ public class DaoExporter {
                     }
                 }
             }
-            executor.execute(new ExporterMembers(doneExportLink, daoManager, workspaceMembers, organizationMembers));
+            executor.execute(new ExporterMembers(doneExportLinkSignal, daoManager, workspaceMembers, organizationMembers));
         }
     }
 
@@ -146,7 +150,7 @@ public class DaoExporter {
             exportObject();
             LOG.info("Exporting objects...");
             try {
-                doneExportObjectSignal.await();
+                printProgress(PERCENTS_RANGE, memoryStorage.getUsers().size(), doneExportObjectSignal);
             } catch (InterruptedException e) {
                 LOG.error("Thread was interrupted", e);
             }
@@ -154,7 +158,7 @@ public class DaoExporter {
             exportLink();
             LOG.info("Exporting links...");
             try {
-                doneExportLink.await();
+                printProgress(PERCENTS_RANGE, memoryStorage.getUsers().size(), doneExportLinkSignal);
             } catch (InterruptedException e) {
                 LOG.error("Thread was interrupted", e);
             }
@@ -162,5 +166,29 @@ public class DaoExporter {
         } finally {
             executor.shutdown();
         }
+    }
+
+    private static void printProgress(int percentsRange, int countOfExportObjects, CountDownLatch threadCounter) throws InterruptedException {
+        LOG.info(getStatus(0));
+        double percentWeight = 100d / countOfExportObjects;
+        int percentsBarrier = percentsRange;
+        long countOfFinishedExports;
+        while ((countOfFinishedExports = threadCounter.getCount()) > 0 || percentsBarrier < 100) {
+            if (percentWeight * (countOfExportObjects - countOfFinishedExports) > percentsBarrier) {
+                LOG.info(getStatus(percentsBarrier));
+                percentsBarrier += percentsRange;
+            }
+            Thread.sleep(60*1000);
+        }
+        LOG.info(getStatus(100));
+    }
+
+    private static String getStatus(int percents) {
+        StringBuilder status = new StringBuilder();
+        for (int i = 0; i < percents / NUMBER_PERCENT_EQUALS_ONE_DOT; ++i) {
+            status.append(".");
+        }
+        status.append(percents).append("%");
+        return status.toString();
     }
 }
