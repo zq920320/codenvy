@@ -387,9 +387,26 @@
                 });
             },
             // update User`s profile in Profile page
-            updateProfile : function(body,success,error){
+            updateProfile : function(userAttributes,success,error){
                 
-                userProfile.attributes =body;//Updating profile attributes
+                // userProfile.attributes = body;//Updating profile attributes
+                Object.getOwnPropertyNames(userAttributes).forEach(function(prop){
+                    var newAttribute = true;
+                    userProfile.attributes.forEach(function(attribute){
+                        if (attribute.name === prop) {
+                            attribute.value = userAttributes[prop];
+                            newAttribute = false;
+                        }
+                    });
+                    if (newAttribute){
+                        var el = {};
+                        el["name"] = prop;
+                        el["value"] = userAttributes[prop];
+                        userProfile.attributes.push(el);
+                    }
+
+                });
+
                 Profile.updateUser(userProfile,success,function(msg){
                     error([
                         new  AccountError(null,msg)
