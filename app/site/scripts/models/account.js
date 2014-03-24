@@ -406,12 +406,21 @@
                     }
 
                 });
-
-                Profile.updateUser(userProfile,success,function(msg){
-                    error([
-                        new  AccountError(null,msg)
-                    ]);
+                var data = JSON.stringify(userProfile.attributes);
+                $.ajax({
+                    url : "/api/profile",
+                    type : "POST",
+                    data : data,
+                    success : function(){
+                        success();
+                    },
+                    error : function(xhr){
+                        error([
+                            new AccountError(null,xhr.responseText)
+                        ]);
+                    }
                 });
+
             },
 
             // get User`s profile in Profile page
