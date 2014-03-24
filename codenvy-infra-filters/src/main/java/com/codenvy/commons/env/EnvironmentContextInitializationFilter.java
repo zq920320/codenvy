@@ -40,7 +40,7 @@ import java.util.regex.Pattern;
 @Singleton
 public class EnvironmentContextInitializationFilter implements Filter {
     public static final Pattern TENANT_URL_PATTERN = Pattern.compile("^(/ide/)(?!_sso)(rest/|websocket/)?(.+?)(/.*)?$");
-    
+
     private final File           vfsRootDir;
     private final File           tempVfsRootDir;
     private final File           vfsIndexDir;
@@ -84,7 +84,7 @@ public class EnvironmentContextInitializationFilter implements Filter {
                     try {
                         workspace = workspaceDao.getByName(tenant);
                     } catch (WorkspaceException e) {
-                        httpResponse.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Workspace " + tenant + "is not found");
+                        httpResponse.sendError(HttpServletResponse.SC_NOT_FOUND, "Workspace " + tenant + "is not found");
                         return;
                     }
                     workspaceCache.put(workspace.getName(), workspace);
