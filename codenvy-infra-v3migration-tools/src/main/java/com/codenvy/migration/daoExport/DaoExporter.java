@@ -178,7 +178,7 @@ public class DaoExporter {
                 LOG.info(getStatus(percentsBarrier));
                 percentsBarrier += percentsRange;
             }
-            Thread.sleep(60*1000);
+            Thread.sleep(1000);
         }
         LOG.info(getStatus(100));
     }
