@@ -411,6 +411,7 @@
                     url : "/api/profile",
                     type : "POST",
                     data : data,
+                    contentType: "application/json; charset=utf-8",
                     success : function(){
                         success();
                     },
