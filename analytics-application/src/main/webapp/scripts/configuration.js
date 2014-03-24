@@ -30,7 +30,7 @@ function Configuration() {
                 "time_unit": "month"
             },
 
-            isNeedToSaveInHistory: false,
+            isNeedToSaveInHistory: false,   // default value = true
         },
 
         factoryStatistics: {
@@ -41,8 +41,6 @@ function Configuration() {
             defaultModelParams: {
                 "time_unit": "day"
             },
-
-            isNeedToSaveInHistory: true,
         },
 
         summaryReport: {
@@ -53,8 +51,6 @@ function Configuration() {
             defaultModelParams: {
                 "time_unit": "month"
             },
-
-            isNeedToSaveInHistory: true,
         },
 
         workspaceReport: {
@@ -65,8 +61,6 @@ function Configuration() {
             defaultModelParams: {
                 "time_unit": "month"
             },
-
-            isNeedToSaveInHistory: true,
         },
 
         userReport: {
@@ -77,8 +71,6 @@ function Configuration() {
             defaultModelParams: {
                 "time_unit": "month"
             },
-
-            isNeedToSaveInHistory: true,
         },
 
         engagementLevels: {
@@ -87,8 +79,6 @@ function Configuration() {
             modelViewName: "engagement_levels",
 
             forbiddenModelParams: ["time_unit"],
-
-            isNeedToSaveInHistory: true,
         },
 
         collaborationReport: {
@@ -99,8 +89,6 @@ function Configuration() {
             defaultModelParams: {
                 "time_unit": "month"
             },
-
-            isNeedToSaveInHistory: true,
         },
 
         usageReport: {
@@ -111,8 +99,6 @@ function Configuration() {
             defaultModelParams: {
                 "time_unit": "month"
             },
-
-            isNeedToSaveInHistory: true,
         },
 
         sessionReport: {
@@ -123,8 +109,6 @@ function Configuration() {
             defaultModelParams: {
                 "time_unit": "month"
             },
-
-            isNeedToSaveInHistory: true,
         },
 
         projectReport: {
@@ -135,8 +119,6 @@ function Configuration() {
             defaultModelParams: {
                 "time_unit": "month"
             },
-
-            isNeedToSaveInHistory: true,
         },
 
         topMetrics: {
@@ -147,8 +129,6 @@ function Configuration() {
                 "time_unit": "1day",
                 "metric": "top_factory_sessions"
             },
-
-            isNeedToSaveInHistory: true,
 
             columnLinkPrefixList: {
                 "Email": "/analytics/pages/user-view.jsp?user",
@@ -163,7 +143,7 @@ function Configuration() {
             presenterType: "UsersPresenter",
             modelViewName: "users",
             modelMetricName: "users_statistics",
-            isNeedToSaveInHistory: true,
+
             columnLinkPrefixList: {
                 "Email": "/analytics/pages/user-view.jsp?user",
                 "ID": "/analytics/pages/session-view.jsp?session_id",
@@ -174,26 +154,24 @@ function Configuration() {
             widgetLabel: "User Overview",
             presenterType: "VerticalTablePresenter",
             modelViewName: "user",
-            isNeedToSaveInHistory: false,
+            isNeedToSaveInHistory: false,     // default value = true
         },
 
         userData: {
             widgetLabel: "User Statistics",
             presenterType: "TablePresenter",
             modelViewName: "user_data",
-            isNeedToSaveInHistory: true,
         },
 
         userSessions: {
             widgetLabel: "Sessions",
             presenterType: "TablePresenter",
             modelViewName: "user_sessions",
-            isNeedToSaveInHistory: true,
 
-            isPaginable: true,
+            isPaginable: true,    // default value is "false"
             modelMetricName: "product_usage_sessions",
 
-            isSortable: true,
+            isSortable: true,   // default value is "false"
             defaultSortParams: "-date",
 
             columnLinkPrefixList: {
@@ -206,9 +184,8 @@ function Configuration() {
             widgetLabel: "Workspaces",
             presenterType: "TablePresenter",
             modelViewName: "user_workspace_list",
-            isNeedToSaveInHistory: true,
 
-            isPaginable: true,
+            isPaginable: true,    // default value is "false"
             modelMetricName: "usage_time_by_workspaces",
 
             columnLinkPrefixList: {
@@ -220,9 +197,8 @@ function Configuration() {
             widgetLabel: "Factories",
             presenterType: "TablePresenter",
             modelViewName: "user_factories",
-            isNeedToSaveInHistory: true,
 
-            isPaginable: true,
+            isPaginable: true,    // default value is "false"
             modelMetricName: "created_factories",
 
             columnLinkPrefixList: {
@@ -235,12 +211,11 @@ function Configuration() {
             widgetLabel: "User Logs",
             presenterType: "TablePresenter",
             modelViewName: "user_activity",
-            isNeedToSaveInHistory: true,
 
-            isPaginable: true,
+            isPaginable: true,    // default value is "false"
             modelMetricName: "users_activity",
 
-            isSortable: true,
+            isSortable: true,   // default value is "false"
             defaultSortParams: "-date",
 
             doNotDisplayCSVButton: true,   // default value is "false"
@@ -250,7 +225,6 @@ function Configuration() {
             widgetLabel: "User Action",
             presenterType: "TablePresenter",
             modelViewName: "users_events",
-            isNeedToSaveInHistory: true,
         },
 
 
@@ -260,7 +234,7 @@ function Configuration() {
             presenterType: "SessionsPresenter",
             modelViewName: "session_overview",
             modelMetricName: "product_usage_sessions",
-            isNeedToSaveInHistory: true,
+
             columnLinkPrefixList: {
                 "ID": "/analytics/pages/session-view.jsp?session_id",
                 "User": "/analytics/pages/user-view.jsp?user",
@@ -272,7 +246,7 @@ function Configuration() {
             widgetLabel: "Session Overview",
             presenterType: "VerticalTablePresenter",
             modelViewName: "session_overview",
-            isNeedToSaveInHistory: false,
+            isNeedToSaveInHistory: false,    // default value = true
 
             defaultModelParams: {
                 "session_id": "unexisted_session_id"
@@ -288,17 +262,17 @@ function Configuration() {
             widgetLabel: "Session Events",
             presenterType: "TablePresenter",
             modelViewName: "session_events",
-            isNeedToSaveInHistory: false,
+            isNeedToSaveInHistory: false,   // default value = true
 
             defaultModelParams: {
                 "session_id": "unexisted_session_id",
             },
 
-            isPaginable: true,
+            isPaginable: true,    // default value is "false"
             modelMetricName: "users_activity",
             onePageRowsCount: 30,
 
-            isSortable: true,
+            isSortable: true,   // default value is "false"
             defaultSortParams: "+date",
         },
 
@@ -308,7 +282,6 @@ function Configuration() {
             presenterType: "WorkspacesPresenter",
             modelViewName: "workspaces",
             modelMetricName: "workspaces_statistics",
-            isNeedToSaveInHistory: true,
             columnLinkPrefixList: {
                 "Workspace": "/analytics/pages/workspace-view.jsp?ws"
             }
@@ -318,19 +291,18 @@ function Configuration() {
             widgetLabel: "Workspace Overview",
             presenterType: "VerticalTablePresenter",
             modelViewName: "workspace_overview",
-            isNeedToSaveInHistory: false,
+            isNeedToSaveInHistory: false,   // default value = true
         },
 
         workspaceSessions: {
             widgetLabel: "Sessions",
             presenterType: "TablePresenter",
             modelViewName: "workspace_sessions",
-            isNeedToSaveInHistory: true,
 
-            isPaginable: true,
+            isPaginable: true,    // default value is "false"
             modelMetricName: "product_usage_sessions",
 
-            isSortable: true,
+            isSortable: true,   // default value is "false"
             defaultSortParams: "-date",
 
             columnLinkPrefixList: {
@@ -343,9 +315,8 @@ function Configuration() {
             widgetLabel: "Users",
             presenterType: "TablePresenter",
             modelViewName: "workspace_user_list",
-            isNeedToSaveInHistory: true,
 
-            isPaginable: true,
+            isPaginable: true,    // default value is "false"
             modelMetricName: "usage_time_by_users",
 
             columnLinkPrefixList: {
@@ -357,9 +328,8 @@ function Configuration() {
             widgetLabel: "Factories",
             presenterType: "TablePresenter",
             modelViewName: "workspace_factories",
-            isNeedToSaveInHistory: true,
 
-            isPaginable: true,
+            isPaginable: true,    // default value is "false"
             modelMetricName: "created_factories",
 
             columnLinkPrefixList: {
@@ -372,12 +342,11 @@ function Configuration() {
             widgetLabel: "Workspace Logs",
             presenterType: "TablePresenter",
             modelViewName: "workspace_activity",
-            isNeedToSaveInHistory: true,
 
-            isPaginable: true,
+            isPaginable: true,    // default value is "false"
             modelMetricName: "users_activity",
 
-            isSortable: true,
+            isSortable: true,   // default value is "false"
             defaultSortParams: "-date",
 
             doNotDisplayCSVButton: true,   // default value is "false"
@@ -389,7 +358,6 @@ function Configuration() {
             presenterType: "FactoriesPresenter",
             modelViewName: "factories",
             modelMetricName: "factory_statistics",
-            isNeedToSaveInHistory: true,
             columnLinkPrefixList: {
                 "Factory URL": "/analytics/pages/factory-view.jsp?factory"
             }
@@ -399,7 +367,7 @@ function Configuration() {
             widgetLabel: "Factory Overview",
             presenterType: "VerticalTablePresenter",
             modelViewName: "factory",
-            isNeedToSaveInHistory: false,
+            isNeedToSaveInHistory: false,   // default value = true
 
             columnLinkPrefixList: {
                 "User": "/analytics/pages/user-view.jsp?user",
@@ -411,12 +379,11 @@ function Configuration() {
             widgetLabel: "Sessions",
             presenterType: "TablePresenter",
             modelViewName: "factory_sessions",
-            isNeedToSaveInHistory: true,
 
-            isPaginable: true,
+            isPaginable: true,    // default value is "false"
             modelMetricName: "product_usage_factory_sessions",
 
-            isSortable: true,
+            isSortable: true,   // default value is "false"
             defaultSortParams: "-date",
 
             columnLinkPrefixList: {
@@ -430,12 +397,11 @@ function Configuration() {
             widgetLabel: "Users",
             presenterType: "TablePresenter",
             modelViewName: "factory_users",
-            isNeedToSaveInHistory: true,
 
-            isPaginable: true,
+            isPaginable: true,    // default value is "false"
             modelMetricName: "factory_users",
 
-            isSortable: true,
+            isSortable: true,   // default value is "false"
             defaultSortParams: "-time",
 
             columnLinkPrefixList: {
@@ -503,8 +469,12 @@ function Configuration() {
         "User Did Not Enter Workspace",
     ];
 
-    function getProperty(widgetName, property) {
-        return widgetConfiguration[widgetName][property];
+    function getProperty(widgetName, propertyName, defaultValue) {
+        var widgetProperty = widgetConfiguration[widgetName][propertyName];
+        if (typeof widgetProperty == "undefined") {
+            widgetProperty = defaultValue;
+        }
+        return widgetProperty;
     }
 
     function getWidgetNames() {

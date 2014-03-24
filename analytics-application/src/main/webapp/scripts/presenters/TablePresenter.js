@@ -36,18 +36,16 @@ analytics.presenter.TablePresenter.prototype.load = function() {
     var modelViewName = analytics.configuration.getProperty(widgetName, "modelViewName");
     var viewParams = view.getParams();
     
-    var onePageRowsCount = analytics.configuration.getProperty(widgetName, "onePageRowsCount") || presenter.DEFAULT_ONE_PAGE_ROWS_COUNT;
+    var onePageRowsCount = analytics.configuration.getProperty(widgetName, "onePageRowsCount", presenter.DEFAULT_ONE_PAGE_ROWS_COUNT);
     
     var modelParams = presenter.getModelParams(viewParams);
     
     // process sorting
-    if (typeof analytics.configuration.getProperty(widgetName, "isSortable") != "undefined"
-        && analytics.configuration.getProperty(widgetName, "isSortable")) {
+    if (analytics.configuration.getProperty(widgetName, "isSortable", false)) {   // default value is "false"
         modelParams.sort = analytics.configuration.getProperty(widgetName, "defaultSortParams");
     }
     
-    var isPaginable = typeof analytics.configuration.getProperty(widgetName, "isPaginable") != "undefined"
-                      && analytics.configuration.getProperty(widgetName, "isPaginable");
+    var isPaginable = analytics.configuration.getProperty(widgetName, "isPaginable", false);   // default value is "false"
 
     //process pagination
     if (isPaginable) {
@@ -65,12 +63,12 @@ analytics.presenter.TablePresenter.prototype.load = function() {
         model.setParams(modelParams);
         model.pushDoneFunction(function(data){
             model.popDoneFunction(data);
-            
-            var doNotDisplayCSVButton = analytics.configuration.getProperty(presenter.widgetName, "doNotDisplayCSVButton");
-            var csvButtonLink = (typeof doNotDisplayCSVButton == "undefined" || doNotDisplayCSVButton == false) 
-                                ? presenter.getLinkForExportToCsvButton()
-                                : undefined;
-
+   
+            // default value is "false"
+            var doNotDisplayCSVButton = analytics.configuration.getProperty(presenter.widgetName, "doNotDisplayCSVButton", false);
+            var csvButtonLink = (doNotDisplayCSVButton) 
+                                ? undefined
+                                : presenter.getLinkForExportToCsvButton();  
             var table = data[0];  // there is only one table in data
             
             // make table columns linked 
@@ -147,7 +145,8 @@ analytics.presenter.TablePresenter.prototype.printTableNavigation = function(cur
             view.printBottomPageNavigator(pageCount, currentPageNumber, queryString, presenter.widgetName);
         }
         
-        view.loadTableHandlers();
+        // don't display client side sorting for table with pagination
+        view.loadTableHandlers(false);
     });
     
     model.getMetricValue(modelMetricName);

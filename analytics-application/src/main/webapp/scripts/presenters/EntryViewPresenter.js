@@ -95,7 +95,7 @@ EntryViewPresenter.prototype.load = function() {
                var isAscending = presenter.isSortingOrderAscending(sortParamColumnName, sortingParameterValue);
                
                if (isAscending == null) {
-                  var headerClassOption = "";
+                  var headerClassOption = "class='unsorted'";
                   var newSortingParameterValue = presenter.DEFAULT_ORDER_PREFIX + sortParamColumnName;
                   
                } else if (isAscending) {
@@ -119,7 +119,9 @@ EntryViewPresenter.prototype.load = function() {
             
             // print table
             view.printTable(table, false);
-            view.loadTableHandlers();
+   
+            // don't display client side sorting for table with pagination
+            view.loadTableHandlers(false);
             
             // print bottom page navigation
             if (pageCount > 1) {

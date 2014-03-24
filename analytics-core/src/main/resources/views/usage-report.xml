@@ -47,7 +47,6 @@
                 <parameter key="description" value="&#0062; 60 Mins"/>
                 <parameter key="time-field" value="true"/>
             </row>
-            <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
         
         <section name="users_engagement">
@@ -74,7 +73,6 @@
                 <parameter key="name" value="product_usage_users_above_300_min"/>
                 <parameter key="description" value="&#0062; 300 Mins"/>
             </row>
-            <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
     </view>
 </display>

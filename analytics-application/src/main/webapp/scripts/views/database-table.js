@@ -29,7 +29,7 @@ function DatabaseTable() {
    var MOUSEOVER_ROW_STYLE = " mouseover-row";
    var CLICKED_ROW_STYLE = " clicked-row";
  
-   var setupRowHandlers = function() {
+   var setupHorizontalTableRowHandlers = function(displaySorting) {
       var tables = document.getElementsByClassName("database-table");
       if (tables != null) {      
          for(var i = 0; i < tables.length; i++) {
@@ -51,11 +51,15 @@ function DatabaseTable() {
                // add mouse mouseout event handler
                row.addEventListener("mouseout", onRowMouseout, true);
             }
+            
+            if (displaySorting) {
+                makeTableSortable(table);
+            }
          }
       }
    };
    
-   var setupVerticalRowHandlers = function() {
+   var setupVerticalTableRowHandlers = function() {
       var tables = document.getElementsByClassName("database-table-vertical-row");
       if (tables != null) {      
          for(var i = 0; i < tables.length; i++) {
@@ -111,10 +115,21 @@ function DatabaseTable() {
       }
    }
 
+   /**
+    * Make table sortable by using tablesorter
+    */
+   function makeTableSortable(table) {
+       jQuery(table).tablesorter({
+           "cssAsc": "ascending",
+           "cssDesc": "descending",
+           "cssHeader": "unsorted",
+       });
+   }
+   
 	
    /** ****************** API ********** */
 	return {
-		setupVerticalRowHandlers: setupVerticalRowHandlers,
-		setupRowHandlers: setupRowHandlers
+        setupHorizontalTableRowHandlers: setupHorizontalTableRowHandlers,
+		setupVerticalTableRowHandlers: setupVerticalTableRowHandlers,
 	}
 }

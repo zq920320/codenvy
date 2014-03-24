@@ -66,8 +66,7 @@
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="user_invite"/>
                 <parameter key="description" value="Invitations Sent"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.EmptyRow"/>            
+            </row>            
          </section>
     </view>
 </display>

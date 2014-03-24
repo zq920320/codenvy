@@ -25,7 +25,6 @@
 <style type="text/css">
     body {
         padding-top: 60px;
-        padding-bottom: 40px;
     }
 
     .sidebar-nav {
@@ -39,3 +38,5 @@
 <link rel="stylesheet" href="/analytics/scripts/third-party/jquery-ui-1.8.20/themes/base/minified/jquery-ui.min.css">
 <script type="text/javascript"
         src="/analytics/scripts/third-party/jquery-ui-1.8.20/ui/minified/jquery-ui.min.js"></script>
+        
+<script type="text/javascript" src="/analytics/scripts/third-party/jquery.tablesorter-2.0.5.min.js"></script>

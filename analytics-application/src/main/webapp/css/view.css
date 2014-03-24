@@ -28,15 +28,19 @@
 
 .view .overview .body table {
    display: inline;
-   padding-right: 40 px;
 }
 
 .view .tables .item {
-   margin-bottom: 20px;	
+   margin-bottom: 20px;
+}
+
+.view .tables .body {
+/*   border: 1px;*/
 }
 
 .view .tables .body table {
    width: 100%;
+   margin-bottom: 10px;
 }
 
 .view .small-links-block {

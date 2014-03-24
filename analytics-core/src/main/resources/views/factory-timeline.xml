@@ -42,7 +42,6 @@
                 <parameter key="name" value="workspaces_with_zero_factory_sessions_length"/>
                 <parameter key="description" value="# with empty sessions"/>
             </row>
-            <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
 
         <section name="authenticated_factory_sessions">
@@ -61,7 +60,6 @@
                 <parameter key="name" value="authenticated_factory_sessions"/>
                 <parameter key="description" value="Authenticated Sessions"/>
             </row>
-            <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
 
         <section name="converted_factory_sessions">
@@ -80,7 +78,6 @@
                 <parameter key="name" value="converted_factory_sessions"/>
                 <parameter key="description" value="Converted Sessions"/>
             </row>
-            <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
 
         <section name="factory_sessions_ide_usage_events">
@@ -106,7 +103,6 @@
                 <parameter key="numeric-format" value="%.0f%%"/>
                 <parameter key="description" value="% Deployed"/>
             </row>
-            <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
 
         <section name="factory_users_sessions">
@@ -125,7 +121,6 @@
                 <parameter key="name" value="factory_sessions_above_10_min"/>
                 <parameter key="description" value="&#0062; 10 Mins"/>
             </row>
-            <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
 
         <section name="factory_product_usage">
@@ -137,7 +132,6 @@
                 <parameter key="description" value="Product Usage Time"/>
                 <parameter key="time-field" value="true"/>
             </row>
-            <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
     </view>
 </display>

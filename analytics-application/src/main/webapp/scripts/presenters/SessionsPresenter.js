@@ -33,5 +33,4 @@ analytics.presenter.SessionsPresenter.prototype.mapColumnNameToSortValue = {
     "Workspace": "ws",
     "Start Time": "date",
     "Duration": "time",
-    
 };

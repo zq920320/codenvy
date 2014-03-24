@@ -34,7 +34,6 @@
                 <parameter key="name" value="total_projects"/>
                 <parameter key="description" value="Total"/>
             </row>
-            <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
 
         <section name="ide_usage">
@@ -61,7 +60,6 @@
                 <parameter key="name" value="debugs"/>
                 <parameter key="description" value="# Debugs"/>
             </row>
-            <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
 
         <section name="time_spent">
@@ -83,7 +81,6 @@
                 <parameter key="description" value="Debugs"/>
                 <parameter key="time-field" value="true"/>
             </row>
-            <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
 
         <section name="projects_types">
@@ -146,7 +143,6 @@
                 <parameter key="name" value="project_type_others"/>
                 <parameter key="description" value="Others"/>
             </row>
-            <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
 
         <section name="projects_paas">
@@ -197,7 +193,6 @@
                 <parameter key="name" value="project_no_paas_defined"/>
                 <parameter key="description" value="No PaaS Defined"/>
             </row>
-            <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
     </view>
 </display>

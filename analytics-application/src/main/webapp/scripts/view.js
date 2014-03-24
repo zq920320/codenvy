@@ -41,14 +41,14 @@ function View() {
 	    // print first cell of header
 	    if (table.columns.length > 0) {
 	        print('<th class="header">');
-	        print(table.columns[0]);
+	        print("<div>" + table.columns[0] + "</div>");
 	        print('</th>');
 	    }
 	
 	    // print other cells of header    
 	    for (var i = 1; i < table.columns.length; i++) {
 	        print('<th class="header">');
-	        print(table.columns[i]);
+            print("<div>" + table.columns[i] + "</div>");
 	        print('</th>');
 	    }
 	    print('</tr>');
@@ -180,12 +180,17 @@ function View() {
 	
 	/**
 	 * Load handlers of table events.
+	 * Default value of displaySorting is true
 	 */
-	function loadTableHandlers() {
+	function loadTableHandlers(displaySorting) {
+	    if (typeof displaySorting == "undefined") {
+	        displaySorting = true;
+	    }
+	    
 	    print("<script>");
 	    print("  jQuery(function() { ");
-	    print("       analytics.views.databaseTable.setupRowHandlers();");
-	    print("       analytics.views.databaseTable.setupVerticalRowHandlers();");
+	    print("       analytics.views.databaseTable.setupHorizontalTableRowHandlers(" + displaySorting + ");");
+	    print("       analytics.views.databaseTable.setupVerticalTableRowHandlers();");
 	    print("  });");
 	    print("</script>");
 	}

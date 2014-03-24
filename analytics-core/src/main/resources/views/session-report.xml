@@ -42,7 +42,6 @@
                 <parameter key="name" value="product_usage_sessions_above_60_min"/>
                 <parameter key="description" value="&#0062; 60 Mins"/>
             </row>
-            <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
         
         <section name="sessions_splits">
@@ -61,7 +60,6 @@
                 <parameter key="name" value="product_usage_sessions"/>
                 <parameter key="description" value="User Sessions"/>
             </row>            
-            <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
     </view>
 </display>

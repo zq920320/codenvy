@@ -74,7 +74,6 @@
                 <parameter key="name" value="ide_usage_file_new_yaml_file"/>
                 <parameter key="description" value="File->New->YAMLFile"/>
             </row>
-            <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
 
         <section name="ide_usage_file">
@@ -137,7 +136,6 @@
                 <parameter key="name" value="ide_usage_file_search"/>
                 <parameter key="description" value="File->Search"/>
             </row>
-            <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
 
         <section name="ide_usage_project">
@@ -204,7 +202,6 @@
                 <parameter key="name" value="ide_usage_project_build_publish"/>
                 <parameter key="description" value="Project->BuildPublish"/>
             </row>
-            <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
 
         <section name="ide_usage_edit">
@@ -291,7 +288,6 @@
                 <parameter key="name" value="ide_usage_edit_refactor_rename"/>
                 <parameter key="description" value="Edit->Refactor->Rename"/>
             </row>
-            <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
 
         <section name="ide_usage_view">
@@ -326,7 +322,6 @@
                 <parameter key="name" value="ide_usage_view_collaboration"/>
                 <parameter key="description" value="View->Collaboration"/>
             </row>
-            <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
 
         <section name="ide_usage_run">
@@ -349,7 +344,6 @@
                 <parameter key="name" value="ide_usage_run_show_logs"/>
                 <parameter key="description" value="Run->ShowLogs"/>
             </row>
-            <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
 
         <section name="ide_usage_git">
@@ -420,7 +414,6 @@
                 <parameter key="name" value="ide_usage_git_remote_remotes"/>
                 <parameter key="description" value="Git->Remote->Remotes"/>
             </row>
-            <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
 
         <section name="ide_usage_git">
@@ -523,7 +516,6 @@
                 <parameter key="name" value="ide_usage_paas_open_shift_switch_account"/>
                 <parameter key="description" value="PaaS->OpenShift->SwitchAccount"/>
             </row>
-            <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
 
         <section name="ide_usage_windows">
@@ -554,7 +546,6 @@
                 <parameter key="name" value="ide_usage_window_preferences"/>
                 <parameter key="description" value="Window->Preferences"/>
             </row>
-            <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
         
         <section name="ide_usage_share">
@@ -577,7 +568,6 @@
                 <parameter key="name" value="ide_usage_share_invite_github_collaboratos"/>
                 <parameter key="description" value="Share->InviteGitHubCollaboratos "/>
             </row>
-            <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
         
         <section name="ide_usage_help">
@@ -604,7 +594,6 @@
                 <parameter key="name" value="ide_usage_help_submit_feedback"/>
                 <parameter key="description" value="Help->SubmitFeedback"/>
             </row>
-            <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
 
         <section name="ide_usage_main">
@@ -623,7 +612,6 @@
                 <parameter key="name" value="ide_usage_logout"/>
                 <parameter key="description" value="Logout"/>
             </row>
-            <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
     </view>
 </display>

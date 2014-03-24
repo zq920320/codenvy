@@ -34,7 +34,6 @@
                 <parameter key="name" value="total_workspaces"/>
                 <parameter key="description" value="Total"/>
             </row>
-            <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
 
         <section name="workspace_usage">
@@ -58,7 +57,6 @@
                 <parameter key="description" value="Non-Active Workspaces"/>
                 <parameter key="hide-negative-values" value="true"/>
             </row>
-            <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
     </view>
 </display>

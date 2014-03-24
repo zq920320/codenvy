@@ -30,15 +30,16 @@ analytics.presenter.VerticalTablePresenter.prototype.load = function() {
     var view = presenter.view;
     var model = presenter.model;
     
-    var widgetLabel = analytics.configuration.getProperty(presenter.widgetName, "widgetLabel") || "Overview";
+    // default label is "Overview"
+    var widgetLabel = analytics.configuration.getProperty(presenter.widgetName, "widgetLabel", "Overview");
     
     model.setParams(presenter.getModelParams(view.getParams()));
     
     model.pushDoneFunction(function(data) {
-        var doNotDisplayCSVButton = analytics.configuration.getProperty(presenter.widgetName, "doNotDisplayCSVButton");
-        var csvButtonLink = (typeof doNotDisplayCSVButton == "undefined" || doNotDisplayCSVButton == false) 
-                            ? presenter.getLinkForExportToCsvButton()
-                            : undefined;
+        var doNotDisplayCSVButton = analytics.configuration.getProperty(presenter.widgetName, "doNotDisplayCSVButton", false);
+        var csvButtonLink = (doNotDisplayCSVButton) 
+                            ? undefined
+                            : presenter.getLinkForExportToCsvButton();  
                             
         var table = data[0];  // there is only one table in data
         
@@ -64,7 +65,7 @@ analytics.presenter.VerticalTablePresenter.prototype.load = function() {
         view.print("       </div>");
         view.print("    </div>");
         
-        view.loadTableHandlers();
+        view.loadTableHandlers(false);  // don't display sorting
         
         view.print("</div>");
         

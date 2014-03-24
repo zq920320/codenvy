@@ -43,7 +43,6 @@
                 <parameter key="name" value="factory_sessions"/>
                 <parameter key="description" value="Factory Sessions"/>
             </row>
-            <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
     </view>
 </display>

@@ -15,6 +15,7 @@ iframe {
 
 .hero-unit {
     padding: 0;
+    margin: 0 !important;
     float: left;
 /*    background: #ddd;*/
 }

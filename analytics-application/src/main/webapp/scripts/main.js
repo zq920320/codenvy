@@ -212,7 +212,8 @@ function Main() {
     function reloadWidget(widgetName, params) {
         loadWidget(widgetName, params, function(data) {
           // rewrite page location to make it possible to navigate new url through the browser's history
-          if (analytics.configuration.getProperty(widgetName, "isNeedToSaveInHistory")) {
+          
+          if (analytics.configuration.getProperty(widgetName, "isNeedToSaveInHistory", true)) {  // default value is "true"
              var pageUrl = window.location.href;
              if (pageUrl.indexOf('?')) {
                 var absUrl = pageUrl .split('?');
@@ -243,7 +244,7 @@ function Main() {
        for(var i in widgetNames) {
            var widgetName = widgetNames[i];
            if (jQuery("#" + widgetName).doesExist()) {
-/*             if (analytics.configuration.getProperty(widgetName, "isNeedToSaveInHistory")) {    // TODO fix browser history       
+/*             if (analytics.configuration.getProperty(widgetName, "isNeedToSaveInHistory", true)) {    // default value is "true"; TODO fix browser history       
                    // update div when navigating in history
                    var everPushedSomething = false;
                    var initialUrl = window.location.href;

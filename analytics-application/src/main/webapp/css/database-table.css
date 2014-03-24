@@ -37,24 +37,32 @@
    text-shadow: none;
 }
 
-.database-table .header a {
-   color: #08c;
+.database-table .header a.unsorted,
+.database-table .unsorted div {
    padding-left: 14px;
+   color: #08c;
+   cursor: pointer;
    background-image: url('../images/small_triangular_arrows.png');
    background-repeat: no-repeat;
    background-position: left center;
 }
 
-.database-table .header a.ascending{
+.database-table .header a.ascending,
+.database-table .ascending div {
    font-weight: bold;
+   color: #08c;
+   cursor: pointer;
    padding-left: 14px;
    background-image: url('../images/small_triangular_up_arrow.png');
    background-repeat: no-repeat;
    background-position: left center;
 }
 
-.database-table .header a.descending{
+.database-table .header a.descending,
+.database-table .descending div {
    font-weight: bold;
+   color: #08c;
+   cursor: pointer;
    padding-left: 14px;
    background-image: url('../images/small_triangular_down_arrow.png');
    background-repeat: no-repeat;

@@ -35,7 +35,6 @@
                 <parameter key="description" value="Non-Active Users"/>
                 <parameter key="hide-negative-values" value="true"/>
             </row>
-            <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
 
         <section name="active_users_usage">
@@ -54,7 +53,6 @@
                 <parameter key="name" value="returning_active_users"/>
                 <parameter key="description" value="Returning Active Users"/>
             </row>
-            <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
 
         <section name="users_engagement">
@@ -81,7 +79,6 @@
                 <parameter key="name" value="product_usage_users_above_300_min"/>
                 <parameter key="description" value="&#0062; 300 Mins"/>
             </row>
-            <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
         
         <section name="authentications">
@@ -103,7 +100,6 @@
                 <parameter key="numeric-format" value="%.0f%%"/>
                 <parameter key="description" value="Form Auth"/>
             </row>
-            <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>           
     </view>
     
@@ -127,7 +123,6 @@
                 <parameter key="name" value="timeline_product_usage_condition_above_300_min"/>
                 <parameter key="fields" value="by_1_day,by_7_days,by_30_days,by_60_days,by_90_days,by_365_days"/>
             </row>
-            <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
     </view>
 </display>
