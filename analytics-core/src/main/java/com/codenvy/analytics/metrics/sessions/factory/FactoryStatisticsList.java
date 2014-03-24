@@ -17,10 +17,7 @@
  */
 package com.codenvy.analytics.metrics.sessions.factory;
 
-import com.codenvy.analytics.datamodel.ListValueData;
-import com.codenvy.analytics.datamodel.MapValueData;
-import com.codenvy.analytics.datamodel.StringValueData;
-import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.datamodel.*;
 import com.codenvy.analytics.metrics.*;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
@@ -97,17 +94,17 @@ public class FactoryStatisticsList extends AbstractListValueResulted {
     @Override
     public ValueData postEvaluation(ValueData valueData, Context clauses) throws IOException {
         ListValueData items = (ListValueData)valueData;
-        if (items.size() > 1) {
+        if (!clauses.exists(MetricFilter.FACTORY)) {
             return items;
-        }
 
-        List<ValueData> list2Return = new ArrayList<>();
-        for (ValueData row : items.getAll()) {
-            MapValueData prevItems = (MapValueData)row;
+        } else {
+            List<ValueData> list2Return = new ArrayList<>();
+
+            MapValueData prevItems = items.size() == 0 ? getDefaultItems() : (MapValueData)items.getAll().get(0);
             Map<String, ValueData> items2Return = new HashMap<>(prevItems.getAll());
 
-            Map<String, ValueData> factoryData = getFactoryData(items2Return);
-            items2Return.put(DATE, getNotNullStringValue(factoryData.get(DATE)));
+            Map<String, ValueData> factoryData = getFactoryData(clauses);
+            items2Return.put(FACTORY, getNotDefaultStringValue(factoryData.get(FACTORY)));
             items2Return.put(USER, getNotDefaultStringValue(factoryData.get(USER)));
             items2Return.put(WS, getNotDefaultStringValue(factoryData.get(WS)));
             items2Return.put(REPOSITORY, getNotNullStringValue(factoryData.get(REPOSITORY)));
@@ -116,13 +113,29 @@ public class FactoryStatisticsList extends AbstractListValueResulted {
             items2Return.put(AFFILIATE_ID, getNotNullStringValue(factoryData.get(AFFILIATE_ID)));
 
             list2Return.add(new MapValueData(items2Return));
-        }
 
-        return new ListValueData(list2Return);
+            return new ListValueData(list2Return);
+        }
     }
 
-    private Map<String, ValueData> getFactoryData(Map<String, ValueData> items) throws IOException {
-        String factory = items.get(FACTORY).getAsString();
+    private MapValueData getDefaultItems() {
+        return new MapValueData(new HashMap<String, ValueData>() {{
+            put(TIME, LongValueData.DEFAULT);
+            put(RUN, LongValueData.DEFAULT);
+            put(DEPLOY, LongValueData.DEFAULT);
+            put(BUILD, LongValueData.DEFAULT);
+            put(SESSIONS, LongValueData.DEFAULT);
+            put(AUTHENTICATED_SESSION, LongValueData.DEFAULT);
+            put(CONVERTED_SESSION, LongValueData.DEFAULT);
+            put(WS_CREATED, LongValueData.DEFAULT);
+        }});
+    }
+
+    /**
+     * TODO
+     */
+    private Map<String, ValueData> getFactoryData(Context clauses) throws IOException {
+        String factory = clauses.get(MetricFilter.FACTORY);
         Metric metric = MetricFactory.getMetric(MetricType.CREATED_FACTORIES_LIST);
 
         Context.Builder builder = new Context.Builder();
@@ -131,11 +144,22 @@ public class FactoryStatisticsList extends AbstractListValueResulted {
 
         ListValueData value = (ListValueData)metric.getValue(context);
 
-        if (value.size() == 1) {
-            return ((MapValueData)value.getAll().get(0)).getAll();
-        } else {
-            return MapValueData.DEFAULT.getAll();
+        Map<String, ValueData> result = new HashMap<>();
+        for (ValueData row : value.getAll()) {
+            MapValueData items = (MapValueData)row;
+
+            for (Map.Entry<String, ValueData> entry : items.getAll().entrySet()) {
+                String key = entry.getKey();
+
+                if (!result.containsKey(key)) {
+                    result.put(key, entry.getValue());
+                } else if (!result.get(key).equals(entry.getValue())) {
+                    result.put(key, StringValueData.DEFAULT);
+                }
+            }
         }
+
+        return result;
     }
 
     private ValueData getNotNullStringValue(ValueData valueData) {
