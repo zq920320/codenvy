@@ -171,14 +171,14 @@ if (!window["codenvy-factories"]) {
             }
         }
 
-        var scriptPrefix = "//" + window.location.host + "/factory/resources/factory.js";
+        var scriptPart = "/factory/resources/factory.js";
 
         var scripts = document.getElementsByTagName('script');
         for (var i = 0; i < scripts.length; i++) {
             var script = scripts.item(i);
             try {
                 var src = script.getAttribute("src");
-                if (src && src.indexOf(scriptPrefix) >= 0) {
+                if (src && src.indexOf(scriptPart) >= 0) {
                     injectFrame(script);
                 }
             } catch (e) {
@@ -186,6 +186,6 @@ if (!window["codenvy-factories"]) {
             }
         }
 
-    }, 10);
+    }, 1000);
 
 }
