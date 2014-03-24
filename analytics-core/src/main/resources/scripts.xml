@@ -108,6 +108,15 @@
         <parameter key="EVENT" value="user-code-refactor"/>
         <parameter key="STORAGE_TABLE" value="code_refactorings"/>
     </script>
+
+    <script name="events">
+        <description>The number of collaborative sessions started</description>
+        <parameter key="USER" value="REGISTERED"/>
+        <parameter key="WS" value="ANY"/>
+        <parameter key="EVENT" value="collaborative-session-started"/>
+        <parameter key="STORAGE_TABLE" value="collaborative_sessions_started"/>
+    </script>
+
     <script name="events_by_type">
         <description>Project created by types</description>
         <parameter key="USER" value="REGISTERED"/>

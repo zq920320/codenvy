@@ -34,12 +34,12 @@
         <section name="factory">
             <row class="com.codenvy.analytics.services.view.TitleRow">
                 <parameter key="titles"
-                           value="Factory,Creation Date,Created By,Workspace,Repository,Type,Organization ID,Affiliate ID,Number of Clicks,Number of Sessions,Number of Known,Number of Converted,Total Time,Number of Builds,Number of Runs,Number of Deploys"/>
+                           value="Factory,Created By,Workspace,Repository,Type,Organization ID,Affiliate ID,Number of Clicks,Number of Sessions,Number of Known,Number of Converted,Total Time,Number of Builds,Number of Runs,Number of Deploys"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="factory_statistics_list"/>
                 <parameter key="fields"
-                           value="factory,date,user,ws,repository,project_type,org_id,affiliate_id,ws_created,sessions,authenticated_factory_session,converted_factory_session,time,build,run,deploy"/>
+                           value="factory,user,ws,repository,project_type,org_id,affiliate_id,ws_created,sessions,authenticated_factory_session,converted_factory_session,time,build,run,deploy"/>
                 <parameter key="time-fields" value="time"/>
                 <parameter key="date-fields" value="date"/>
             </row>

@@ -370,7 +370,7 @@ function Configuration() {
             isNeedToSaveInHistory: false,   // default value = true
 
             columnLinkPrefixList: {
-                "User": "/analytics/pages/user-view.jsp?user",
+                "Created By": "/analytics/pages/user-view.jsp?user",
                 "Workspace": "/analytics/pages/workspace-view.jsp?ws",
             }
         },

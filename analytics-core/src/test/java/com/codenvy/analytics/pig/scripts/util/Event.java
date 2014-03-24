@@ -358,6 +358,15 @@ public class Event {
             return builder;
         }
 
+        public static Builder collaborativeSessionStartedEvent(String ws, String userId, String sessionId) {
+            Builder builder = new Builder().withParam("EVENT", "collaborative-session-started")
+                                           .withParam("WS", ws)
+                                           .withParam("USER", userId)
+                                           .withParam("ID", sessionId);
+
+            return builder;
+        }
+
         public static Builder createShellLaunchedEvent(String user, String ws, String session) {
             return new Builder().withContext(user, ws, session).withParam("EVENT", "shell-launched");
         }
