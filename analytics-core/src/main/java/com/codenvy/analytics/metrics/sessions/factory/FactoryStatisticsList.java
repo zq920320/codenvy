@@ -131,9 +131,6 @@ public class FactoryStatisticsList extends AbstractListValueResulted {
         }});
     }
 
-    /**
-     * TODO
-     */
     private Map<String, ValueData> getFactoryData(Context clauses) throws IOException {
         String factory = clauses.get(MetricFilter.FACTORY);
         Metric metric = MetricFactory.getMetric(MetricType.CREATED_FACTORIES_LIST);
