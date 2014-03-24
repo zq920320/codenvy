@@ -17,7 +17,9 @@
  */
 package com.codenvy.factory;
 
-import com.codenvy.api.factory.*;
+import com.codenvy.api.factory.FactoryBuilder;
+import com.codenvy.api.factory.FactoryUrlException;
+import com.codenvy.api.factory.FactoryUrlValidator;
 import com.codenvy.api.factory.dto.Factory;
 import com.codenvy.api.factory.dto.Restriction;
 import com.codenvy.api.organization.server.dao.OrganizationDao;
@@ -28,14 +30,21 @@ import com.codenvy.api.user.server.dao.UserDao;
 import com.codenvy.api.user.server.dao.UserProfileDao;
 import com.codenvy.api.user.server.exception.UserException;
 import com.codenvy.api.user.server.exception.UserProfileException;
-import com.codenvy.api.user.shared.dto.*;
+import com.codenvy.api.user.shared.dto.Attribute;
+import com.codenvy.api.user.shared.dto.Profile;
+import com.codenvy.api.user.shared.dto.User;
 import com.codenvy.commons.lang.URLEncodedUtils;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
-import java.net.*;
-import java.util.*;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URLDecoder;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
@@ -96,9 +105,8 @@ public class FactoryUrlBaseValidator implements FactoryUrlValidator {
     }
 
     @Override
-    public void validateUrl(URI factoryUrl, HttpServletRequest request) throws FactoryUrlException {
+    public Factory validate(URI factoryUrl, HttpServletRequest request) throws FactoryUrlException {
         Map<String, Set<String>> params = URLEncodedUtils.parse(factoryUrl, "UTF-8");
-
         if (params.get("id") != null) {
             // if it's encoded factory it can't contain any other parameters
             if (params.size() != 1) {
@@ -115,15 +123,18 @@ public class FactoryUrlBaseValidator implements FactoryUrlValidator {
                 throw new FactoryUrlException("Factory with id " + params.get("id").iterator().next() + " is not found.");
             }
             factory = factoryBuilder.convertToLatest(factory);
-            this.validateObject(factoryBuilder.convertToLatest(factory), true, request);
+            validate(factoryBuilder.convertToLatest(factory), true, request);
+            return factory;
         } else {
             Factory factory = factoryBuilder.buildNonEncoded(factoryUrl);
-            this.validateObject(factoryBuilder.convertToLatest(factory), false, request);
+            validate(factoryBuilder.convertToLatest(factory), false, request);
+            return factory;
         }
+
     }
 
     @Override
-    public void validateObject(Factory factory, boolean encoded, HttpServletRequest request) throws FactoryUrlException {
+    public void validate(Factory factory, boolean encoded, HttpServletRequest request) throws FactoryUrlException {
         // check that vcs value is correct (only git is supported for now)
         if (!"git".equals(factory.getVcs())) {
             throw new FactoryUrlException("Parameter 'vcs' has illegal value. Only 'git' is supported for now.");
