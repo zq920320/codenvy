@@ -389,11 +389,39 @@
             // update User`s profile in Profile page
             updateProfile : function(userAttributes,success,error){
                 
-                Profile.updateUser(userAttributes,success,function(msg){
-                    error([
-                        new  AccountError(null,msg)
-                    ]);
+                // userProfile.attributes = body;//Updating profile attributes
+                Object.getOwnPropertyNames(userAttributes).forEach(function(prop){
+                    var newAttribute = true;
+                    userProfile.attributes.forEach(function(attribute){
+                        if (attribute.name === prop) {
+                            attribute.value = userAttributes[prop];
+                            newAttribute = false;
+                        }
+                    });
+                    if (newAttribute){
+                        var el = {};
+                        el["name"] = prop;
+                        el["value"] = userAttributes[prop];
+                        userProfile.attributes.push(el);
+                    }
+
                 });
+                var data = JSON.stringify(userProfile.attributes);
+                $.ajax({
+                    url : "/api/profile",
+                    type : "POST",
+                    data : data,
+                    contentType: "application/json; charset=utf-8",
+                    success : function(){
+                        success();
+                    },
+                    error : function(xhr){
+                        error([
+                            new AccountError(null,xhr.responseText)
+                        ]);
+                    }
+                });
+
             },
 
             // get User`s profile in Profile page
