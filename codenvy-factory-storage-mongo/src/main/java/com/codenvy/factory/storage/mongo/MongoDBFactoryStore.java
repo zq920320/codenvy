@@ -21,24 +21,39 @@ import com.codenvy.api.factory.*;
 import com.codenvy.api.factory.dto.Factory;
 import com.codenvy.commons.lang.NameGenerator;
 import com.codenvy.dto.server.DtoFactory;
-import com.codenvy.factory.MongoDbConfiguration;
 import com.mongodb.*;
 import com.mongodb.util.JSON;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.*;
 
 /** Implementation of the MongoDB factory storage. */
+
+@Singleton
 public class MongoDBFactoryStore implements FactoryStore {
     private static final Logger LOG = LoggerFactory.getLogger(MongoDBFactoryStore.class);
 
+    private static final String HOST       = "factory.mongo.host";
+    private static final String PORT       = "factory.mongo.port";
+    private static final String DATABASE   = "factory.mongo.database";
+    private static final String COLLECTION = "factory.mongo.collection";
+    private static final String USERNAME   = "factory.mongo.username";
+    private static final String PASSWORD   = "factory.mongo.password";
+
+
     DBCollection factories;
 
-    public MongoDBFactoryStore(String host, int port, String dbName, String collectionName, String username, String password) {
+    @Inject
+    public MongoDBFactoryStore(@Named(HOST) String host, @Named(PORT) int port, @Named(DATABASE) String dbName,
+                               @Named(COLLECTION) String collectionName, @Named(USERNAME) String username,
+                               @Named(PASSWORD) String password) {
         MongoClient mongoClient;
         DB db;
         if (dbName == null || dbName.isEmpty() || collectionName == null || collectionName.isEmpty()) {
@@ -60,12 +75,6 @@ public class MongoDBFactoryStore implements FactoryStore {
             throw new RuntimeException("Can't connect to MongoDB.");
         }
     }
-
-    public MongoDBFactoryStore(MongoDbConfiguration dbConf) {
-        this(dbConf.getHost(), dbConf.getPort(), dbConf.getDatabase(), dbConf.getCollectionname(), dbConf.getUsername(),
-             dbConf.getPassword());
-    }
-
 
     @Override
     public String saveFactory(Factory factoryUrl, Set<FactoryImage> images) throws FactoryUrlException {
