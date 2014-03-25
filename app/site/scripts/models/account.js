@@ -198,7 +198,7 @@
                 if (isWebsocketEnabled()){
                     var loginUrl = "/api/auth/login?" + window.location.search.substring(1);
                     var selectWsUrl = "../site/private/select-tenant?cookiePresent&" + window.location.search.substring(1);
-                    var data = {username: email, password: password};
+                    var data = {username: email, password: password, realm:"sysldap"};
                  $.ajax({
                     url : loginUrl,
                     type : "POST",

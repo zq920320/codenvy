@@ -31,11 +31,7 @@
                 __validationRules : function(){
                     var rule = {};
                     rule.password = {required: true};
-                    rule.email = {
-                            required: true,
-                            checkEmail : true,
-                            email: true
-                        };
+                    rule.email = {required: true};
                     
                     return rule;
                 },
