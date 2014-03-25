@@ -103,7 +103,7 @@ public class TestUsersSessions extends BaseTest {
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
         builder.put(Parameters.SORT, "+date");
-        builder.put(MetricFilter.USER, "ANONYMOUSUSER_user11");
+        builder.put(MetricFilter.USER, "anonymoususer_user11");
 
         Metric metric = new TestProductUsageSessionsList();
 

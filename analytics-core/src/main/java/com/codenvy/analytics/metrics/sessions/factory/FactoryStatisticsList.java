@@ -104,7 +104,7 @@ public class FactoryStatisticsList extends AbstractListValueResulted {
             Map<String, ValueData> items2Return = new HashMap<>(prevItems.getAll());
 
             Map<String, ValueData> factoryData = getFactoryData(clauses);
-            items2Return.put(FACTORY, getNotDefaultStringValue(factoryData.get(FACTORY)));
+            items2Return.put(FACTORY, StringValueData.valueOf(clauses.get(MetricFilter.FACTORY)));
             items2Return.put(USER, getNotDefaultStringValue(factoryData.get(USER)));
             items2Return.put(WS, getNotDefaultStringValue(factoryData.get(WS)));
             items2Return.put(REPOSITORY, getNotNullStringValue(factoryData.get(REPOSITORY)));

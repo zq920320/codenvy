@@ -36,21 +36,26 @@ import static org.testng.Assert.assertEquals;
 /**
  * @author Alexander Reshetnyak
  */
-public class TestCollaborativeSessionStarted  extends BaseTest {
+public class TestCollaborativeSessionStarted extends BaseTest {
 
     @BeforeClass
     public void init() throws Exception {
         List<Event> events = new ArrayList<>();
         events.add(
-                Event.Builder.collaborativeSessionStartedEvent("ws1", "user1", "session1").withDate("2013-02-10").withTime("10:00:00").build());
+                Event.Builder.collaborativeSessionStartedEvent("ws1", "user1", "session1").withDate("2013-02-10")
+                             .withTime("10:00:00").build());
         events.add(
-                Event.Builder.collaborativeSessionStartedEvent("ws2", "user2", "session2").withDate("2013-02-10").withTime("10:01:00").build());
+                Event.Builder.collaborativeSessionStartedEvent("ws2", "user2", "session2").withDate("2013-02-10")
+                             .withTime("10:01:00").build());
         events.add(
-                Event.Builder.collaborativeSessionStartedEvent("ws3", "user3", "session3").withDate("2013-02-10").withTime("10:02:00").build());
+                Event.Builder.collaborativeSessionStartedEvent("ws3", "user3", "session3").withDate("2013-02-10")
+                             .withTime("10:02:00").build());
         events.add(
-                Event.Builder.collaborativeSessionStartedEvent("ws4", "user4", "session4").withDate("2013-02-10").withTime("10:03:00").build());
+                Event.Builder.collaborativeSessionStartedEvent("ws4", "user4", "session4").withDate("2013-02-10")
+                             .withTime("10:03:00").build());
         events.add(
-                Event.Builder.collaborativeSessionStartedEvent("ws5", "user5", "session5").withDate("2013-02-11").withTime("10:04:00").build());
+                Event.Builder.collaborativeSessionStartedEvent("ws5", "user5", "session5").withDate("2013-02-11")
+                             .withTime("10:04:00").build());
 
         File log = LogGenerator.generateLog(events);
 

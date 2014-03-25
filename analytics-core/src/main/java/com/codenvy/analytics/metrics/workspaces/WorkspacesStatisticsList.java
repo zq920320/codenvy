@@ -77,7 +77,7 @@ public class WorkspacesStatisticsList extends AbstractListValueResulted {
         BasicDBObject match = (BasicDBObject)filter.get("$match");
 
         // filter temporary workspaces and "default" workspace
-        BasicDBObject wsMatch = (BasicDBObject)match.get(WS);
+        Object wsMatch = match.get(WS);
         if (wsMatch == null) {
             match.put(WS, NON_DEFAULT_WS);
         } else {

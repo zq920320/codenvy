@@ -40,7 +40,7 @@ i = FOREACH i3 GENERATE MIN(i2.dt) AS dt, group.tmpWs AS tmpWs, group.user AS us
 c1 = filterByEvent(l, 'user-changed-name');
 c2 = extractParam(c1, 'OLD-USER', oldUser);
 c3 = extractParam(c2, 'NEW-USER', newUser);
-c = FOREACH c3 GENERATE oldUser AS anomUser, newUser AS user;
+c = FOREACH c3 GENERATE LOWER(oldUser) AS anomUser, LOWER(newUser) AS user;
 
 -- associating anonymous names with 'factory-project-imported' events
 d1 = JOIN i BY user LEFT, c BY user;
@@ -52,7 +52,7 @@ d = DISTINCT d3;
 
 -- factory sessions themselves
 s1 = combineSmallSessions(l, 'session-factory-started', 'session-factory-stopped');
-s2 = FOREACH s1 GENERATE dt, id, ws AS tmpWs, user AS tmpUser, delta, (INDEXOF(UPPER(user), 'ANONYMOUSUSER_', 0) == 0 ? 0 : 1) AS auth, ide;
+s2 = FOREACH s1 GENERATE dt, id, ws AS tmpWs, user AS tmpUser, delta, (INDEXOF(user, 'anonymoususer_', 0) == 0 ? 0 : 1) AS auth, ide;
 
 -- founds out the corresponding referrer and factory
 s3 = JOIN s2 BY tmpWs LEFT, u BY tmpWs;
@@ -95,7 +95,7 @@ z2 = FOREACH z1 GENERATE (n::ws IS NULL ? w::dt : n::dt) AS dt,
     (n::ws IS NULL ? w::referrer : n::referrer) AS referrer,
     (n::ws IS NULL ? w::orgId : n::orgId) AS orgId,
     (n::ws IS NULL ? w::affiliateId : n::affiliateId) AS affiliateId,
-    (n::ws IS NULL ? (INDEXOF(UPPER(w::user), 'ANONYMOUSUSER_', 0) == 0 ? 0 : 1) : n::auth) AS auth,
+    (n::ws IS NULL ? (INDEXOF(w::user, 'anonymoususer_', 0) == 0 ? 0 : 1) : n::auth) AS auth,
     (n::ws IS NULL ? w::ws : n::ws) AS ws,
     (n::ws IS NULL ? w::user : n::user) AS user,
     (n::ws IS NULL ? 0 : n::conv) AS conv,
@@ -111,12 +111,12 @@ z5 = FOREACH z4 GENERATE ws, user, z2::dt AS dt, z2::delta AS delta, z2::factory
     z2::referrer AS referrer, z2::orgId AS orgId, z2::affiliateId AS affiliateId, z2::ide AS ide,
     z2::auth AS auth, z2::conv AS conv, z2::run AS run, z2::deploy AS deploy, z2::build AS build,
     (z2::dt == minDT ? z2::ws_created : 0) AS ws_created;
-z = FOREACH z5 GENERATE ws, LOWER(user) AS user, dt, delta, factory, referrer, orgId, affiliateId, auth, conv, run, deploy, build, ws_created, ide, id;
+z = FOREACH z5 GENERATE ws, user AS user, dt, delta, factory, referrer, orgId, affiliateId, auth, conv, run, deploy, build, ws_created, ide, id;
 
 -- add user created from factory indicator
 ls1 = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', 'ANY', 'ANY');
 ls2 = usersCreatedFromFactory(ls1);
-ls = FOREACH ls2 GENERATE dt, ws, user, factory, referrer, orgId, affiliateId, LOWER(tmpUser) AS tmpUser, ide;
+ls = FOREACH ls2 GENERATE dt, ws, user, factory, referrer, orgId, affiliateId, tmpUser AS tmpUser, ide;
 
 p1 = JOIN z BY (ws, user) FULL, ls BY (ws, tmpUser);
 p2 = FOREACH p1 GENERATE (z::ws IS NULL ? ls::dt : z::dt) AS dt,

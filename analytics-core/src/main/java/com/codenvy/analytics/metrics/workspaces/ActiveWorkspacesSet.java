@@ -17,9 +17,7 @@
  */
 package com.codenvy.analytics.metrics.workspaces;
 
-import com.codenvy.analytics.metrics.AbstractSetValueResulted;
-import com.codenvy.analytics.metrics.Context;
-import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.*;
 import com.mongodb.DBObject;
 
 import javax.annotation.security.RolesAllowed;
@@ -41,14 +39,15 @@ public class ActiveWorkspacesSet extends AbstractSetValueResulted {
 
     @Override
     public DBObject getFilter(Context clauses) throws ParseException, IOException {
-        DBObject filter = super.getFilter(clauses);
+        if (!clauses.exists(MetricFilter.WS)) {
+            Context.Builder builder = new Context.Builder(clauses);
+            builder.put(MetricFilter.WS, Parameters.WS_TYPES.PERSISTENT.name());
 
-        DBObject match = (DBObject)filter.get("$match");
-        if (match.get(WS) == null) {
-            match.put(WS, PERSISTENT_WS);
+            clauses = builder.build();
+
         }
 
-        return filter;
+        return super.getFilter(clauses);
     }
 
     @Override

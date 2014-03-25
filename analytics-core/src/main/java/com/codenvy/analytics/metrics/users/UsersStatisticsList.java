@@ -27,7 +27,6 @@ import com.mongodb.DBObject;
 
 import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -74,18 +73,6 @@ public class UsersStatisticsList extends AbstractListValueResulted {
                             RUN_TIME,
                             BUILD_TIME,
                             PAAS_DEPLOYS};
-    }
-
-    @Override
-    public DBObject getFilter(Context clauses) throws ParseException, IOException {
-        DBObject filter = super.getFilter(clauses);
-
-        DBObject match = (DBObject)filter.get("$match");
-        if (match.get(USER) == null) {
-            match.put(USER, REGISTERED_USER);
-        }
-
-        return filter;
     }
 
     @Override
@@ -175,6 +162,4 @@ public class UsersStatisticsList extends AbstractListValueResulted {
             return null;
         }
     }
-
-
 }

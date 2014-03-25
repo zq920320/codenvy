@@ -34,9 +34,7 @@ import org.mockito.stubbing.Answer;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -51,33 +49,10 @@ import static org.testng.AssertJUnit.assertEquals;
 /** @author <a href="mailto:areshetnyak@codenvy.com">Alexander Reshetnyak</a> */
 public class TestViewBuilder extends BaseTest {
 
-    private static final String           FILE          = BASE_DIR + "/resource";
-    private static final String           CONFIGURATION = "<display>\n" +
-                                                          "     <view time-unit=\"day,week,month," +
-                                                          "lifetime\" name=\"view\" columns=\"3\">\n" +
-                                                          "         <section name=\"workspaces\">\n" +
-                                                          "             <row class=\"com.codenvy.analytics.services" +
-                                                          ".view" +
-                                                          ".DateRow\">\n" +
-                                                          "                 <parameter key=\"section-name\" " +
-                                                          "value=\"desc\"/>\n" +
-                                                          "             </row>\n" +
-                                                          "             <row class=\"com.codenvy.analytics.services" +
-                                                          ".view" +
-                                                          ".TestViewBuilder$TestMetricRow\">\n" +
-                                                          "                 <parameter key=\"name\" " +
-                                                          "value=\"CREATED_WORKSPACES\"/>\n" +
-                                                          "                 <parameter key=\"description\" " +
-                                                          "value=\"Created " +
-                                                          "Workspaces\"/>\n" +
-                                                          "             </row>\n" +
-                                                          "             <row class=\"com.codenvy.analytics.services" +
-                                                          ".view" +
-                                                          ".EmptyRow\"/>\n" +
-                                                          "         </section>\n" +
-                                                          "     </view>" +
-                                                          "</display>";
-    private static final SimpleDateFormat dirFormat     =
+    private static final String RESOURCE_DIR = BASE_DIR + "/test-classes/" + TestViewBuilder.class.getSimpleName();
+    private static final String VIEW_CONF    = RESOURCE_DIR + "/view.xml";
+
+    private static final SimpleDateFormat dirFormat =
             new SimpleDateFormat("yyyy" + File.separator + "MM" + File.separator + "dd");
 
     private ViewBuilder viewBuilder;
@@ -88,17 +63,13 @@ public class TestViewBuilder extends BaseTest {
         when(configurationManager.loadConfiguration(any(Class.class), anyString())).thenAnswer(new Answer<Object>() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
-                try (BufferedWriter out = new BufferedWriter(new FileWriter(FILE))) {
-                    out.write(CONFIGURATION);
-                }
-
                 XmlConfigurationManager manager = new XmlConfigurationManager();
-                return manager.loadConfiguration(DisplayConfiguration.class, FILE);
+                return manager.loadConfiguration(DisplayConfiguration.class, VIEW_CONF);
             }
         });
 
         Configurator configurator = spy(Injector.getInstance(Configurator.class));
-        doReturn(new String[]{FILE}).when(configurator).getArray(anyString());
+        doReturn(new String[]{VIEW_CONF}).when(configurator).getArray(anyString());
 
         viewBuilder = spy(new ViewBuilder(Injector.getInstance(JdbcDataPersisterFactory.class),
                                           Injector.getInstance(CSVReportPersister.class),
@@ -252,9 +223,11 @@ public class TestViewBuilder extends BaseTest {
         assertEquals(StringValueData.DEFAULT, emptyRow.get(2));
     }
 
-    public static class TestMetricRow extends MetricRow {
+    // -------------------> Tested Metrics
 
-        public TestMetricRow(Map<String, String> parameters) {
+    public static class TestedMetricRow extends MetricRow {
+
+        public TestedMetricRow(Map<String, String> parameters) {
             super(parameters);
         }
 

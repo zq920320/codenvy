@@ -114,10 +114,11 @@ DEFINE removeEvent(X, eventNamesParam) RETURNS Y {
 ---------------------------------------------------------------------------
 DEFINE extractWs(X, wsType) RETURNS Y {
   x1 = FOREACH $X GENERATE *, FLATTEN(REGEX_EXTRACT_ALL(message, '.*\\[.*\\]\\[(.*)\\]\\[.*\\] - .*')) AS ws2, FLATTEN(REGEX_EXTRACT_ALL(message, '.*\\sWS#([^\\s#][^#]*|)#.*')) AS ws1;
-  x2 = FOREACH x1 GENERATE *, (ws1 IS NOT NULL AND ws1 != '' ? ws1 : (ws2 IS NOT NULL AND ws2 != '' ? ws2 : 'default')) AS ws;
-  $Y = FILTER x2 BY '$wsType' == 'ANY' OR  ws == 'default' OR
-            ('$wsType' == 'TEMPORARY' AND INDEXOF(UPPER(ws), 'TMP-', 0) == 0) OR 
-            ('$wsType' == 'PERSISTENT' AND INDEXOF(UPPER(ws), 'TMP-', 0) < 0);
+  x2 = FOREACH x1 GENERATE *, (ws1 IS NOT NULL AND ws1 != '' ? ws1 : (ws2 IS NOT NULL AND ws2 != '' ? ws2 : 'default')) AS ws3;
+  x3 = FILTER x2 BY '$wsType' == 'ANY' OR  ws3 == 'default' OR
+            ('$wsType' == 'TEMPORARY' AND INDEXOF(LOWER(ws3), 'tmp-', 0) == 0) OR
+            ('$wsType' == 'PERSISTENT' AND INDEXOF(LOWER(ws3), 'tmp-', 0) < 0);
+  $Y = FOREACH x3 GENERATE *, LOWER(ws3) AS ws;
 };
 
 ---------------------------------------------------------------------------
@@ -129,10 +130,11 @@ DEFINE extractUser(X, userType) RETURNS Y {
                   FLATTEN(REGEX_EXTRACT_ALL(message, '.*\\[(.*)\\]\\[.*\\]\\[.*\\] - .*')) AS user2,
                   FLATTEN(REGEX_EXTRACT_ALL(message, '.*ALIASES\\#[\\[]?([^\\#^\\[^\\]]*)[\\]]?\\#.*')) AS user3;
   x2 = FOREACH x1 GENERATE *, (user1 IS NOT NULL AND user1 != '' ? user1 : (user2 IS NOT NULL AND user2 != '' ? user2 : (user3 IS NOT NULL AND user3 != '' ? user3 : 'default'))) AS newUser;
-  x3 = FOREACH x2 GENERATE *, FLATTEN(TOKENIZE(newUser, ',')) AS user;
-  $Y = FILTER x3 BY '$userType' == 'ANY' OR user == 'default' OR
-            ('$userType' == 'ANTONYMOUS' AND INDEXOF(UPPER(user), 'ANONYMOUSUSER_', 0) == 0) OR
-            ('$userType' == 'REGISTERED' AND INDEXOF(UPPER(user), 'ANONYMOUSUSER_', 0) < 0);
+  x3 = FOREACH x2 GENERATE *, FLATTEN(TOKENIZE(newUser, ',')) AS user4;
+  x4 = FILTER x3 BY '$userType' == 'ANY' OR user4 == 'default' OR
+            ('$userType' == 'ANTONYMOUS' AND INDEXOF(LOWER(user4), 'anonymoususer_', 0) == 0) OR
+            ('$userType' == 'REGISTERED' AND INDEXOF(LOWER(user4), 'anonymoususer_', 0) < 0);
+  $Y = FOREACH x4 GENERATE *, LOWER(user4) AS user;
 };
 
 ---------------------------------------------------------------------------
@@ -298,19 +300,19 @@ DEFINE usersCreatedFromFactory(X) RETURNS Y {
 
     -- finds in which temporary workspaces anonymous users have worked
     x1 = filterByEvent($X, 'user-added-to-ws');
-    x2 = FOREACH x1 GENERATE dt, ws AS tmpWs, UPPER(user) AS tmpUser;
-    x = FILTER x2 BY INDEXOF(tmpUser, 'ANONYMOUSUSER_', 0) == 0 AND INDEXOF(UPPER(tmpWs), 'TMP-', 0) == 0;
+    x2 = FOREACH x1 GENERATE dt, ws AS tmpWs, user AS tmpUser;
+    x = FILTER x2 BY INDEXOF(tmpUser, 'anonymoususer_', 0) == 0 AND INDEXOF(tmpWs, 'tmp-', 0) == 0;
 
     -- finds all anonymous users have become registered (created their accounts or just logged in)
     t1 = filterByEvent($X, 'user-changed-name');
     t2 = extractParam(t1, 'OLD-USER', 'old');
     t3 = extractParam(t2, 'NEW-USER', 'new');
-    t4 = FILTER t3 BY INDEXOF(UPPER(old), 'ANONYMOUSUSER_', 0) == 0 AND INDEXOF(UPPER(new), 'ANONYMOUSUSER_', 0) < 0;
-    t = FOREACH t4 GENERATE dt, UPPER(old) AS tmpUser, new AS user;
+    t4 = FILTER t3 BY INDEXOF(LOWER(old), 'anonymoususer_', 0) == 0 AND INDEXOF(LOWER(new), 'anonymoususer_', 0) < 0;
+    t = FOREACH t4 GENERATE dt, LOWER(old) AS tmpUser, LOWER(new) AS user;
 
     -- finds created users
     k1 = filterByEvent($X, 'user-created');
-    k2 = FILTER k1 BY INDEXOF(UPPER(user), 'ANONYMOUSUSER_', 0) < 0;
+    k2 = FILTER k1 BY INDEXOF(user, 'anonymoususer_', 0) < 0;
     k = FOREACH k2 GENERATE dt, user, ide;
 
     -- finds which created users worked as anonymous

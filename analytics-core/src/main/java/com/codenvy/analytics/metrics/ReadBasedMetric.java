@@ -48,8 +48,12 @@ public abstract class ReadBasedMetric extends AbstractMetric {
 
     public static final Pattern REGISTERED_USER =
             Pattern.compile("^(?!(ANONYMOUSUSER_|DEFAULT)).*", Pattern.CASE_INSENSITIVE);
-    public static final Pattern NON_DEFAULT_WS  = Pattern.compile("^(?!DEFAULT).*", Pattern.CASE_INSENSITIVE);
-    public static final Pattern PERSISTENT_WS   = Pattern.compile("^(?!(TMP-|DEFAULT)).*", Pattern.CASE_INSENSITIVE);
+    public static final Pattern ANONYMOUS_USER  =
+            Pattern.compile("^(ANONYMOUSUSER_).*", Pattern.CASE_INSENSITIVE);
+
+    public static final Pattern NON_DEFAULT_WS = Pattern.compile("^(?!DEFAULT).*", Pattern.CASE_INSENSITIVE);
+    public static final Pattern PERSISTENT_WS  = Pattern.compile("^(?!(TMP-|DEFAULT)).*", Pattern.CASE_INSENSITIVE);
+    public static final Pattern TEMPORARY_WS   = Pattern.compile("^(TMP-).*", Pattern.CASE_INSENSITIVE);
 
     public static final String ASC_SORT_SIGN = "+";
 
@@ -135,21 +139,52 @@ public abstract class ReadBasedMetric extends AbstractMetric {
         setDateFilter(clauses, match);
 
         for (MetricFilter filter : clauses.getFilters()) {
-            String[] values;
+            String value = clauses.get(filter);
 
             if (filter == MetricFilter.USER_COMPANY
                 || filter == MetricFilter.USER_FIRST_NAME
                 || filter == MetricFilter.USER_LAST_NAME) {
 
-                values = getUsers(filter, clauses.get(filter));
+                String[] values = getUsers(filter, value);
                 match.put(MetricFilter.USER.name().toLowerCase(), new BasicDBObject("$in", values));
 
             } else if (filter == MetricFilter.DOMAIN) {
-                String[] domains = clauses.get(filter).split(SEPARATOR);
-                match.put(MetricFilter.USER.name().toLowerCase(), getUsersInDomains(domains));
+                Pattern usersInDomains = getUsersInDomains(value.split(SEPARATOR));
+                match.put(MetricFilter.USER.name().toLowerCase(), usersInDomains);
 
+            } else if (filter == MetricFilter.USER) {
+                Object users;
+
+                if (value.equalsIgnoreCase(Parameters.USER_TYPES.REGISTERED.name())) {
+                    users = REGISTERED_USER;
+                } else if (value.equalsIgnoreCase(Parameters.USER_TYPES.ANTONYMOUS.name())) {
+                    users = ANONYMOUS_USER;
+                } else if (value.equalsIgnoreCase(Parameters.USER_TYPES.ANY.name())) {
+                    continue;
+                } else {
+                    String[] values = value.split(SEPARATOR);
+                    users = processExclusiveValues(values, filter.isNumericType());
+                }
+
+                match.put(filter.name().toLowerCase(), users);
+
+            } else if (filter == MetricFilter.WS) {
+                Object ws;
+
+                if (value.equalsIgnoreCase(Parameters.WS_TYPES.PERSISTENT.name())) {
+                    ws = PERSISTENT_WS;
+                } else if (value.equalsIgnoreCase(Parameters.WS_TYPES.TEMPORARY.name())) {
+                    ws = TEMPORARY_WS;
+                } else if (value.equalsIgnoreCase(Parameters.WS_TYPES.ANY.name())) {
+                    continue;
+                } else {
+                    String[] values = value.split(SEPARATOR);
+                    ws = processExclusiveValues(values, filter.isNumericType());
+                }
+
+                match.put(filter.name().toLowerCase(), ws);
             } else {
-                values = clauses.get(filter).split(SEPARATOR);
+                String[] values = value.split(SEPARATOR);
                 match.put(filter.name().toLowerCase(), processExclusiveValues(values, filter.isNumericType()));
             }
         }
@@ -157,7 +192,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
         return new BasicDBObject("$match", match);
     }
 
-    private BasicDBObject processExclusiveValues(String[] values, boolean isNumericType)
+    private Object processExclusiveValues(String[] values, boolean isNumericType)
             throws IOException, ParseException {
 
         StringBuilder exclusiveValues = new StringBuilder();
@@ -180,7 +215,11 @@ public abstract class ReadBasedMetric extends AbstractMetric {
 
         if (inclusiveValues.length() != 0) {
             values = inclusiveValues.toString().split(SEPARATOR);
-            return new BasicDBObject("$in", isNumericType ? convertToNumericFormat(values) : values);
+            if (values.length == 1) {
+                return values[0];
+            } else {
+                return new BasicDBObject("$in", isNumericType ? convertToNumericFormat(values) : values);
+            }
         } else {
             values = exclusiveValues.toString().split(SEPARATOR);
             return new BasicDBObject("$nin", isNumericType ? convertToNumericFormat(values) : values);

@@ -17,9 +17,7 @@
  */
 package com.codenvy.analytics.metrics.users;
 
-import com.codenvy.analytics.metrics.AbstractSetValueResulted;
-import com.codenvy.analytics.metrics.Context;
-import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.*;
 import com.mongodb.DBObject;
 
 import javax.annotation.security.RolesAllowed;
@@ -41,14 +39,15 @@ public class ActiveUsersSet extends AbstractSetValueResulted {
 
     @Override
     public DBObject getFilter(Context clauses) throws ParseException, IOException {
-        DBObject filter = super.getFilter(clauses);
+        if (!clauses.exists(MetricFilter.USER)) {
+            Context.Builder builder = new Context.Builder(clauses);
+            builder.put(MetricFilter.USER, Parameters.USER_TYPES.REGISTERED.name());
 
-        DBObject match = (DBObject)filter.get("$match");
-        if (match.get(USER) == null) {
-            match.put(USER, REGISTERED_USER);
+            clauses = builder.build();
+
         }
 
-        return filter;
+        return super.getFilter(clauses);
     }
 
     @Override

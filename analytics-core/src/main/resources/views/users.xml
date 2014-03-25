@@ -29,6 +29,7 @@
                            value="user,user_first_name,user_last_name,user_company,user_phone,user_job,sessions,time,projects"/>
                 <parameter key="time-fields" value="time"/>
                 <parameter key="hide-negative-values" value="true"/>
+                <parameter key="filter" value="user=REGISTERED"/>
             </row>
         </section>
     </view>

@@ -67,11 +67,6 @@ public class AnalyticsPrivate {
                              @Context UriInfo uriInfo,
                              @Context SecurityContext securityContext) {
         try {
-            MetricInfoDTO metricInfoDTO = metricHandler.getInfo(metricName, uriInfo);
-            if (!Utils.isRolesAllowed(metricInfoDTO, securityContext)) {
-                return Response.status(Response.Status.UNAUTHORIZED).build();
-            }
-
             Map<String, String> context = Utils.extractParams(uriInfo,
                                                               page,
                                                               perPage,

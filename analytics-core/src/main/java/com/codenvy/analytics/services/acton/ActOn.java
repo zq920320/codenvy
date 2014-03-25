@@ -266,10 +266,12 @@ public class ActOn extends Feature {
     }
 
     private List<ValueData> getUsersStatistics(Context context) throws IOException, ParseException {
-        context = context.cloneAndPut(Parameters.FROM_DATE, Parameters.FROM_DATE.getDefaultValue());
+        Context.Builder builder = new Context.Builder(context);
+        builder.putDefaultValue(Parameters.FROM_DATE);
+        builder.put(MetricFilter.USER, Parameters.USER_TYPES.REGISTERED.name());
 
         Metric usersStatistics = MetricFactory.getMetric(MetricType.USERS_STATISTICS_LIST);
-        ListValueData valueData = (ListValueData)usersStatistics.getValue(context);
+        ListValueData valueData = (ListValueData)usersStatistics.getValue(builder.build());
 
         return valueData.getAll();
     }

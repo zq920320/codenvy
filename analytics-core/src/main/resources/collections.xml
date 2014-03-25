@@ -547,7 +547,7 @@
             </index>
         </indexes>
     </collection>
-    
+
     <collection name="users_events">
         <indexes>
             <index name="user">

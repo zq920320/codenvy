@@ -41,6 +41,7 @@ function Configuration() {
             defaultModelParams: {
                 "time_unit": "day"
             },
+
         },
 
         summaryReport: {
@@ -51,6 +52,7 @@ function Configuration() {
             defaultModelParams: {
                 "time_unit": "month"
             },
+
         },
 
         workspaceReport: {

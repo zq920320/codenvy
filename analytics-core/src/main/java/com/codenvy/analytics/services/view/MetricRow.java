@@ -53,6 +53,7 @@ public class MetricRow extends AbstractRow {
     private static final String BOOLEAN_FIELDS = "boolean-fields";
     private static final String DATE_FIELDS    = "date-fields";
     private static final String TIME_FIELDS    = "time-fields";
+    private static final String FILTER         = "filter";
     private static final String EVENT_FIELDS   = "event-fields";
 
     /**
@@ -80,6 +81,7 @@ public class MetricRow extends AbstractRow {
     private final List<String>        booleanFields;
     private final Map<String, String> dateFields;
     private final Map<String, String> timeFields;
+    private final Map<String, String> filters;
     private final List<String>        eventFields;
     private final boolean             isTimeField;
 
@@ -117,9 +119,11 @@ public class MetricRow extends AbstractRow {
 
         this.dateFields = new HashMap<>();
         this.timeFields = new HashMap<>();
+        this.filters = new HashMap<>();
 
         readFieldsParameters(parameters, DATE_FIELDS, dateFields, DEFAULT_DATE_FORMAT);
         readFieldsParameters(parameters, TIME_FIELDS, timeFields, DEFAULT_TIME_FORMAT);
+        readFieldsParameters(parameters, FILTER, filters, null);
 
         if (parameters.containsKey(TIME_FIELDS)) {
             for (String timeField : parameters.get(TIME_FIELDS).split(",")) {
@@ -142,7 +146,7 @@ public class MetricRow extends AbstractRow {
     private void readFieldsParameters(Map<String, String> parameters,
                                       String parameter,
                                       Map<String, String> fields,
-                                      String defaultFormat) {
+                                      String defaultValue) {
 
         if (parameters.containsKey(parameter)) {
             for (String dateField : parameters.get(parameter).split(",")) {
@@ -150,7 +154,7 @@ public class MetricRow extends AbstractRow {
                     String[] fieldAndFormat = dateField.split("=");
                     fields.put(fieldAndFormat[0], fieldAndFormat[1]);
                 } else {
-                    fields.put(dateField, defaultFormat);
+                    fields.put(dateField, defaultValue);
                 }
             }
         }
@@ -330,12 +334,17 @@ public class MetricRow extends AbstractRow {
     }
 
     protected ValueData getMetricValue(Context context) throws IOException {
+        Context.Builder builder = new Context.Builder(context);
+        for (Map.Entry<String, String> entry : filters.entrySet()) {
+            builder.put(MetricFilter.valueOf(entry.getKey().toUpperCase()), entry.getValue());
+        }
+
         if (parameters.containsKey(SET_FROM_DATE_TO_DEFAULT_VALUE)
             && Boolean.parseBoolean(parameters.get(SET_FROM_DATE_TO_DEFAULT_VALUE))) {
 
-            context = context.cloneAndPut(Parameters.FROM_DATE, Parameters.FROM_DATE.getDefaultValue());
+            builder.putDefaultValue(Parameters.FROM_DATE);
         }
 
-        return metric.getValue(context);
+        return metric.getValue(builder.build());
     }
 }

@@ -45,9 +45,9 @@ public class TestExtractUserAndWs extends BaseTest {
         events.add(new Event.Builder().withParam("EVENT", "fake").withParam("USER", "user1")
                                       .withParam("WS", "ws1").withDate("2013-01-01").build());
         events.add(new Event.Builder().withParam("EVENT", "fake").withParam("ALIASES", "[user2,user3]")
-                                      .withParam("WS", "tmp-2").withDate("2013-01-01").build());
+                                      .withParam("WS", "Tmp-2").withDate("2013-01-01").build());
         events.add(new Event.Builder().withParam("EVENT", "fake").withParam("ALIASES", "user4")
-                                      .withParam("WS", "tmp-1").withDate("2013-01-01").build());
+                                      .withParam("WS", "Tmp-1").withDate("2013-01-01").build());
 
         // param contains value ' WS' and workspace name contains ' '
         events.add(new Event.Builder().withParam("EVENT", "fake").withParam("USER", "AnonymousUser_1")
@@ -56,7 +56,7 @@ public class TestExtractUserAndWs extends BaseTest {
 
         // param contains value 'WS'
         events.add(new Event.Builder().withParam("EVENT", "fake").withParam("ALIASES", "AnonymousUser_2")
-                                      .withParam("WS", "tmp-3").withParam("COMPANY", "Mints.WS")
+                                      .withParam("WS", "Tmp-3").withParam("COMPANY", "Mints.WS")
                                       .withParam("PHONE", "123456").withDate("2013-01-01").build());
         events.add(new Event.Builder().withParam("EVENT", "fake").withDate("2013-01-01").build());
         events.add(Event.Builder.createUserAddedToWsEvent("default", "default", "default", "ws10", "user10", "website")
@@ -92,8 +92,8 @@ public class TestExtractUserAndWs extends BaseTest {
         expected.add("(user4)");
         expected.add("(user10)");
         expected.add("(default)");
-        expected.add("(AnonymousUser_1)");
-        expected.add("(AnonymousUser_2)");
+        expected.add("(anonymoususer_1)");
+        expected.add("(anonymoususer_2)");
 
         assertEquals(actual, expected);
     }
@@ -111,8 +111,8 @@ public class TestExtractUserAndWs extends BaseTest {
         }
 
         Set<String> expected = new HashSet<>();
-        expected.add("(AnonymousUser_1)");
-        expected.add("(AnonymousUser_2)");
+        expected.add("(anonymoususer_1)");
+        expected.add("(anonymoususer_2)");
         expected.add("(default)");
 
         assertEquals(actual, expected);
