@@ -94,9 +94,9 @@ function Main() {
             reloadWidgets($("#ide-version").attr("targetWidgets"));
         });
         
-        // Hide session events selector
-        $("#hide-session-events").click(function (event) {
-            reloadWidgets($("#hide-session-events").attr("targetWidgets"));
+        // Show session events selector
+        $("#show-session-events").click(function (event) {
+            reloadWidgets($("#show-session-events").attr("targetWidgets"));
         });
     };
     
@@ -147,11 +147,11 @@ function Main() {
            updateGlobalParamInStorage("ide", params["ide"]);  // params["ide"] = null if ideVersionButton.attr("value") is undefined 
         }
         
-        // process hide session events selector
-        var hideSesionEventsCheckbox = $("#hide-session-events");
-        if (hideSesionEventsCheckbox.doesExist() 
-               && hideSesionEventsCheckbox.prop("checked")) {
-                params.event = hideSesionEventsCheckbox.attr("value");
+        // process show session events selector
+        var showSesionEventsCheckbox = $("#show-session-events");
+        if (showSesionEventsCheckbox.doesExist() 
+               && ! showSesionEventsCheckbox.prop("checked")) {
+                params.event = showSesionEventsCheckbox.attr("inverseValue");
         }
         
         return params;
@@ -390,14 +390,14 @@ function Main() {
            setPrimaryButtonOnValue(ideVersionButtons, params["ide"]);
        }
        
-       // update hide session events selector
-       var hideSesionEventsCheckbox = jQuery("#hide-session-events"); 
-       if (hideSesionEventsCheckbox.doesExist()) {
+       // update show session events selector
+       var showSesionEventsCheckbox = jQuery("#show-session-events"); 
+       if (showSesionEventsCheckbox.doesExist()) {
            if (typeof params["event"] != undefined) {
-               if (params["event"] == hideSesionEventsCheckbox.attr("value")) {
-                   hideSesionEventsCheckbox.prop("checked", true);
+               if (params["event"] == showSesionEventsCheckbox.attr("inverseValue")) {
+                   showSesionEventsCheckbox.prop("checked", false);
                } else {
-                   hideSesionEventsCheckbox.prop("checked", false);
+                   showSesionEventsCheckbox.prop("checked", true);
                }
            }
        }

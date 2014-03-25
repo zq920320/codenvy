@@ -29,18 +29,19 @@
 <div class="container-fluid">
     <div class="row-fluid">
         <div>
-            <div class="hero-unit">
+            <div class="well topFilteringPanel">
+                <div id="filter-by" class="left">
+                    <label>
+                        <input type="checkbox" id="show-session-events" 
+                           inverseValue="~session-started,~session-finished"
+                           targetWidgets="userSessionActivity" />
+                        Micro Events
+                    </label>
+                </div>
+            </div>
+        
+            <div class="hero-unit">                
                 <div id="sessionOverview"></div>
-                
-	            <div class="well topFilteringPanel">
-	                <div id="filter-by" class="left">
-	                    <label><input type="checkbox" checked=true id="hide-session-events" 
-                               value="~session-started,~session-finished"
-                               targetWidgets="userSessionActivity" />
-	                       Hide micro events
-	                    </label>
-	                </div>
-	            </div>
 
                 <div class="single-column-gadget full-width">
                     <div class="view">
@@ -49,7 +50,6 @@
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>
