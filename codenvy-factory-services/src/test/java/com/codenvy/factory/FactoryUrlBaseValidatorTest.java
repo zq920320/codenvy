@@ -219,9 +219,12 @@ public class FactoryUrlBaseValidatorTest {
         // given
         url.setOrgid(ID);
         Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class)
-                                              .withServiceId("TF")
+                                              .withServiceId("TrackedFactory")
+                                              .withStartDate(Long.toString(datetimeFormatter.parse("2000-11-21 11:11:11").getTime()))
                                               .withEndDate(Long.toString(
                                                       datetimeFormatter.parse("2022-11-30 11:21:15").getTime()));
+
+        when(organizationDao.getById(ID)).thenReturn(organization);
         when(organizationDao.getSubscriptions(ID)).thenReturn(Arrays.asList(subscription));
 
         // when, then
@@ -240,7 +243,8 @@ public class FactoryUrlBaseValidatorTest {
         when(profileDao.getById(anyString())).thenReturn(DtoFactory.getInstance().createDto(Profile.class));
         when(organization.getOwner()).thenReturn("userid");
         Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class)
-                                              .withServiceId("TF")
+                                              .withServiceId("TrackedFactory")
+                                              .withStartDate(Long.toString(datetimeFormatter.parse("2000-11-21 11:11:11").getTime()))
                                               .withEndDate(Long.toString(
                                                       datetimeFormatter.parse("2020-11-21 11:11:11").getTime()));
         when(organizationDao.getSubscriptions(ID)).thenReturn(Arrays.asList(subscription));
@@ -253,7 +257,6 @@ public class FactoryUrlBaseValidatorTest {
     public void shouldNotValidateIfAccountDoesNotExist() throws OrganizationException, FactoryUrlException {
         // given
         url.setOrgid(ID);
-        doThrow(OrganizationNotFoundException.doesNotExistWithId(ID)).when(organizationDao).getById(ID);
 
         // when, then
         validator.validate(url, false, request);
@@ -276,11 +279,12 @@ public class FactoryUrlBaseValidatorTest {
     }
 
     @Test(expectedExceptions = FactoryUrlException.class)
-    public void shouldNotValidateIfAccountHasNoCertainProperty() throws OrganizationException, FactoryUrlException {
+    public void shouldNotValidateIfSubscriptionHasNoEndDateProperty() throws OrganizationException, FactoryUrlException, ParseException {
         // given
         url.setOrgid(ID);
         Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class)
-                                              .withServiceId("TF")
+                                              .withServiceId("TrackedFactory")
+                                              .withStartDate(Long.toString(datetimeFormatter.parse("2000-11-21 11:11:11").getTime()))
                                               .withEndDate(null);
         when(organizationDao.getSubscriptions(ID)).thenReturn(Arrays.asList(subscription));
         // when, then
@@ -288,11 +292,25 @@ public class FactoryUrlBaseValidatorTest {
     }
 
     @Test(expectedExceptions = FactoryUrlException.class)
-    public void shouldNotValidateIfAccountHasIllegalTariffPlan() throws OrganizationException, FactoryUrlException, ParseException {
+    public void shouldNotValidateIfSubscriptionHasNoStartDateProperty() throws OrganizationException, FactoryUrlException, ParseException {
+        // given
+        url.setOrgid(ID);
+        Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class)
+                                              .withServiceId("TrackedFactory")
+                                              .withStartDate(null)
+                                              .withEndDate(Long.toString(datetimeFormatter.parse("2020-11-21 11:11:11").getTime()));
+        when(organizationDao.getSubscriptions(ID)).thenReturn(Arrays.asList(subscription));
+        // when, then
+        validator.validate(url, false, request);
+    }
+
+    @Test(expectedExceptions = FactoryUrlException.class)
+    public void shouldNotValidateIfSubscriptionHasIllegalTariffPlan() throws OrganizationException, FactoryUrlException, ParseException {
         // given
         url.setOrgid(ID);
         Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class)
                                               .withServiceId("INVALID")
+                                              .withStartDate(Long.toString(datetimeFormatter.parse("2000-11-21 11:11:11").getTime()))
                                               .withEndDate(Long.toString(
                                                       datetimeFormatter.parse("2050-11-21 11:11:11").getTime()));
         when(organizationDao.getSubscriptions(ID)).thenReturn(Arrays.asList(subscription));
@@ -306,8 +324,25 @@ public class FactoryUrlBaseValidatorTest {
         // given
         url.setOrgid(ID);
         Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class)
-                                              .withServiceId("TF")
+                                              .withServiceId("TrackedFactory")
+                                              .withStartDate(Long.toString(datetimeFormatter.parse("2000-11-21 11:11:11").getTime()))
                                               .withEndDate("smth");
+        when(organizationDao.getSubscriptions(ID)).thenReturn(Arrays.asList(subscription));
+
+        // when, then
+        validator.validate(url, false, request);
+    }
+
+    @Test(expectedExceptions = FactoryUrlException.class)
+    public void shouldNotValidateIfTariffStartTimePropertyHasIllegalFormat()
+            throws OrganizationException, FactoryUrlException, ParseException {
+        // given
+        url.setOrgid(ID);
+        Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class)
+                                              .withServiceId("TrackedFactory")
+                                              .withStartDate("smth")
+                                              .withEndDate(Long.toString(
+                                                      datetimeFormatter.parse("2050-11-21 11:11:11").getTime()));
         when(organizationDao.getSubscriptions(ID)).thenReturn(Arrays.asList(subscription));
 
         // when, then
@@ -319,7 +354,8 @@ public class FactoryUrlBaseValidatorTest {
         // given
         url.setOrgid(ID);
         Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class)
-                                              .withServiceId("TF")
+                                              .withServiceId("TrackedFactory")
+                                              .withStartDate(Long.toString(datetimeFormatter.parse("2000-11-21 11:11:11").getTime()))
                                               .withEndDate(Long.toString(
                                                       datetimeFormatter.parse("2000-11-21 11:11:11").getTime()));
         when(organizationDao.getSubscriptions(ID)).thenReturn(Arrays.asList(subscription));
@@ -327,69 +363,16 @@ public class FactoryUrlBaseValidatorTest {
         validator.validate(url, false, request);
     }
 
-    @Test
-    public void shouldValidateIfCurrentDateIsAfterValidsince() throws OrganizationException, FactoryUrlException, ParseException {
-        // given
-        url.setOrgid(ID);
-        url.setRestriction(DtoFactory.getInstance().createDto(Restriction.class).withValidsince(new Date().getTime()));
-        Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class)
-                                              .withServiceId("TF")
-                                              .withEndDate(Long.toString(
-                                                      datetimeFormatter.parse("2022-11-30 11:21:15").getTime()));
-        when(organizationDao.getSubscriptions(ID)).thenReturn(Arrays.asList(subscription));
-
-        // when, then
-        validator.validate(url, false, request);
-    }
-
     @Test(expectedExceptions = FactoryUrlException.class)
-    public void shouldNotValidateIfCurrentDateIsBeforeValidsince()
-            throws OrganizationException, FactoryUrlException, ParseException {
+    public void shouldNotValidateIfOrgIdIsNotValidYet() throws OrganizationException, FactoryUrlException, ParseException {
         // given
         url.setOrgid(ID);
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(2015, 4, 1);
-        url.setRestriction(DtoFactory.getInstance().createDto(Restriction.class).withValidsince(calendar.getTimeInMillis()));
         Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class)
-                                              .withServiceId("TF")
+                                              .withServiceId("TrackedFactory")
+                                              .withStartDate(Long.toString(datetimeFormatter.parse("2049-11-21 11:11:11").getTime()))
                                               .withEndDate(Long.toString(
-                                                      datetimeFormatter.parse("2022-11-30 11:21:15").getTime()));
+                                                      datetimeFormatter.parse("2050-11-21 11:11:11").getTime()));
         when(organizationDao.getSubscriptions(ID)).thenReturn(Arrays.asList(subscription));
-
-        // when, then
-        validator.validate(url, false, request);
-    }
-
-    @Test
-    public void shouldValidateIfCurrentDateIsBeforeValidUntil() throws OrganizationException, FactoryUrlException, ParseException {
-        // given
-        url.setOrgid(ID);
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(2015, 4, 1);
-        url.setRestriction(DtoFactory.getInstance().createDto(Restriction.class).withValiduntil(calendar.getTimeInMillis()));
-        Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class)
-                                              .withServiceId("TF")
-                                              .withEndDate(Long.toString(
-                                                      datetimeFormatter.parse("2022-11-30 11:21:15").getTime()));
-        when(organizationDao.getSubscriptions(ID)).thenReturn(Arrays.asList(subscription));
-
-        // when, then
-        validator.validate(url, false, request);
-    }
-
-    @Test(expectedExceptions = FactoryUrlException.class)
-    public void shouldNotValidateIfCurrentDateIsAfterValidUntil() throws OrganizationException, FactoryUrlException, ParseException {
-        // given
-        url.setOrgid(ID);
-        url.setRestriction(DtoFactory.getInstance().createDto(Restriction.class).withValiduntil(new Date().getTime() - 1));
-        Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class)
-                                              .withServiceId("TF")
-                                              .withEndDate(Long.toString(
-                                                      datetimeFormatter.parse("2022-11-30 11:21:15").getTime()));
-        when(organizationDao.getSubscriptions(ID)).thenReturn(Arrays.asList(subscription));
-
         // when, then
         validator.validate(url, false, request);
     }
@@ -400,9 +383,12 @@ public class FactoryUrlBaseValidatorTest {
         url.setOrgid(ID);
         url.setRestriction(DtoFactory.getInstance().createDto(Restriction.class).withRefererhostname("notcodenvy.com"));
         Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class)
-                                              .withServiceId("TF")
+                                              .withServiceId("TrackedFactory")
+                                              .withStartDate(Long.toString(datetimeFormatter.parse("2000-11-21 11:11:11").getTime()))
                                               .withEndDate(Long.toString(
                                                       datetimeFormatter.parse("2022-11-30 11:21:15").getTime()));
+
+        when(organizationDao.getById(ID)).thenReturn(organization);
         when(organizationDao.getSubscriptions(ID)).thenReturn(Arrays.asList(subscription));
         when(request.getHeader("Referer")).thenReturn("http://notcodenvy.com/factories-examples");
 
@@ -417,9 +403,12 @@ public class FactoryUrlBaseValidatorTest {
         url.setOrgid(ID);
         url.setRestriction(DtoFactory.getInstance().createDto(Restriction.class).withRefererhostname("next.codenvy.com"));
         Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class)
-                                              .withServiceId("TF")
+                                              .withServiceId("TrackedFactory")
+                                              .withStartDate(Long.toString(datetimeFormatter.parse("2000-11-21 11:11:11").getTime()))
                                               .withEndDate(Long.toString(
                                                       datetimeFormatter.parse("2022-11-30 11:21:15").getTime()));
+
+        when(organizationDao.getById(ID)).thenReturn(organization);
         when(organizationDao.getSubscriptions(ID)).thenReturn(Arrays.asList(subscription));
         when(request.getHeader("Referer")).thenReturn("/factories-examples");
         when(request.getServerName()).thenReturn("next.codenvy.com");
@@ -435,9 +424,12 @@ public class FactoryUrlBaseValidatorTest {
         url.setOrgid(ID);
         url.setRestriction(DtoFactory.getInstance().createDto(Restriction.class).withRefererhostname("notcodenvy.com"));
         Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class)
-                                              .withServiceId("TF")
+                                              .withServiceId("TrackedFactory")
+                                              .withStartDate(Long.toString(datetimeFormatter.parse("2000-11-21 11:11:11").getTime()))
                                               .withEndDate(Long.toString(
                                                       datetimeFormatter.parse("2022-11-30 11:21:15").getTime()));
+
+        when(organizationDao.getById(ID)).thenReturn(organization);
         when(organizationDao.getSubscriptions(ID)).thenReturn(Arrays.asList(subscription));
         when(request.getHeader("Referer")).thenReturn(null);
 
@@ -452,9 +444,12 @@ public class FactoryUrlBaseValidatorTest {
         url.setOrgid(ID);
         url.setRestriction(DtoFactory.getInstance().createDto(Restriction.class).withRefererhostname("notcodenvy.com"));
         Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class)
-                                              .withServiceId("TF")
+                                              .withServiceId("TrackedFactory")
+                                              .withStartDate(Long.toString(datetimeFormatter.parse("2000-11-21 11:11:11").getTime()))
                                               .withEndDate(Long.toString(
                                                       datetimeFormatter.parse("2022-11-30 11:21:15").getTime()));
+
+        when(organizationDao.getById(ID)).thenReturn(organization);
         when(organizationDao.getSubscriptions(ID)).thenReturn(Arrays.asList(subscription));
         when(request.getHeader("Referer")).thenReturn("http://codenvy.com/factories-examples");
 
@@ -470,9 +465,12 @@ public class FactoryUrlBaseValidatorTest {
         url.setOrgid(ID);
         url.setRestriction(DtoFactory.getInstance().createDto(Restriction.class).withRefererhostname("notcodenvy.com"));
         Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class)
-                                              .withServiceId("TF")
+                                              .withServiceId("TrackedFactory")
+                                              .withStartDate(Long.toString(datetimeFormatter.parse("2000-11-21 11:11:11").getTime()))
                                               .withEndDate(Long.toString(
                                                       datetimeFormatter.parse("2022-11-30 11:21:15").getTime()));
+
+        when(organizationDao.getById(ID)).thenReturn(organization);
         when(organizationDao.getSubscriptions(ID)).thenReturn(Arrays.asList(subscription));
         when(request.getHeader("Referer")).thenReturn("/factories-examples");
 

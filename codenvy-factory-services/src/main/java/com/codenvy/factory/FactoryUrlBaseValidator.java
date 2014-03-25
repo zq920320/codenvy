@@ -17,9 +17,7 @@
  */
 package com.codenvy.factory;
 
-import com.codenvy.api.factory.FactoryBuilder;
-import com.codenvy.api.factory.FactoryUrlException;
-import com.codenvy.api.factory.FactoryUrlValidator;
+import com.codenvy.api.factory.*;
 import com.codenvy.api.factory.dto.Factory;
 import com.codenvy.api.factory.dto.Restriction;
 import com.codenvy.api.organization.server.dao.OrganizationDao;
@@ -30,21 +28,14 @@ import com.codenvy.api.user.server.dao.UserDao;
 import com.codenvy.api.user.server.dao.UserProfileDao;
 import com.codenvy.api.user.server.exception.UserException;
 import com.codenvy.api.user.server.exception.UserProfileException;
-import com.codenvy.api.user.shared.dto.Attribute;
-import com.codenvy.api.user.shared.dto.Profile;
-import com.codenvy.api.user.shared.dto.User;
+import com.codenvy.api.user.shared.dto.*;
 import com.codenvy.commons.lang.URLEncodedUtils;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URLDecoder;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.net.*;
+import java.util.*;
 import java.util.regex.Pattern;
 
 /**
@@ -166,6 +157,9 @@ public class FactoryUrlBaseValidator implements FactoryUrlValidator {
         if (null != orgid) {
             try {
                 Organization account = organizationDao.getById(orgid);
+                if (null == account) {
+                    throw new FactoryUrlException(String.format(PARAMETRIZED_ILLEGAL_ORGID_PARAMETER_MESSAGE, factory.getOrgid()));
+                }
 
                 if (factory.getUserid() != null) {
                     User user = userDao.getById(factory.getUserid());
@@ -179,27 +173,21 @@ public class FactoryUrlBaseValidator implements FactoryUrlValidator {
                     }
                 }
 
-                try {
-                    organizationDao.getById(factory.getOrgid());
-                    List<Subscription> subscriptions = organizationDao.getSubscriptions(factory.getOrgid());
-                    for (Subscription one : subscriptions) {
-                        String endTime;
-                        if ("TF".equals(one.getServiceId()) &&
-                            (endTime = one.getEndDate()) != null) {
-                            Date endTimeDate = new Date(Long.valueOf(endTime));
-                            if (!endTimeDate.after(new Date())) {
-                                throw new FactoryUrlException(
-                                        String.format(PARAMETRIZED_ILLEGAL_ORGID_PARAMETER_MESSAGE, factory.getOrgid()));
-                            }
-                        } else {
-                            throw new FactoryUrlException(String.format(PARAMETRIZED_ILLEGAL_ORGID_PARAMETER_MESSAGE, factory.getOrgid()));
+                List<Subscription> subscriptions = organizationDao.getSubscriptions(factory.getOrgid());
+                for (Subscription one : subscriptions) {
+                    if ("TrackedFactory".equals(one.getServiceId())) {
+                        Date startTimeDate = new Date(Long.valueOf(one.getStartDate()));
+                        Date endTimeDate = new Date(Long.valueOf(one.getEndDate()));
+                        Date currentDate = new Date();
+                        if (!startTimeDate.before(currentDate) || !endTimeDate.after(currentDate)) {
+                            throw new FactoryUrlException(
+                                    String.format(PARAMETRIZED_ILLEGAL_ORGID_PARAMETER_MESSAGE, factory.getOrgid()));
                         }
+                    } else {
+                        throw new FactoryUrlException(String.format(PARAMETRIZED_ILLEGAL_ORGID_PARAMETER_MESSAGE, factory.getOrgid()));
                     }
-                } catch (OrganizationException | NumberFormatException e) {
-                    throw new FactoryUrlException(String.format(PARAMETRIZED_ILLEGAL_ORGID_PARAMETER_MESSAGE, factory.getOrgid()));
                 }
-
-            } catch (UserException | UserProfileException | OrganizationException e) {
+            } catch (UserException | UserProfileException | OrganizationException | NumberFormatException e) {
                 throw new FactoryUrlException(String.format(PARAMETRIZED_ILLEGAL_ORGID_PARAMETER_MESSAGE, factory.getOrgid()));
             }
         }
