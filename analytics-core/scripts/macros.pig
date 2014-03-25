@@ -118,7 +118,7 @@ DEFINE extractWs(X, wsType) RETURNS Y {
   x3 = FILTER x2 BY '$wsType' == 'ANY' OR  ws3 == 'default' OR
             ('$wsType' == 'TEMPORARY' AND INDEXOF(LOWER(ws3), 'tmp-', 0) == 0) OR
             ('$wsType' == 'PERSISTENT' AND INDEXOF(LOWER(ws3), 'tmp-', 0) < 0);
-  $Y = FOREACH x3 GENERATE *, LOWER(ws3) AS ws;
+  $Y = FOREACH x3 GENERATE *, (INDEXOF(LOWER(ws3), 'tmp-', 0) == 0 ? LOWER(ws3) : ws3) AS ws;
 };
 
 ---------------------------------------------------------------------------
@@ -134,7 +134,7 @@ DEFINE extractUser(X, userType) RETURNS Y {
   x4 = FILTER x3 BY '$userType' == 'ANY' OR user4 == 'default' OR
             ('$userType' == 'ANTONYMOUS' AND INDEXOF(LOWER(user4), 'anonymoususer_', 0) == 0) OR
             ('$userType' == 'REGISTERED' AND INDEXOF(LOWER(user4), 'anonymoususer_', 0) < 0);
-  $Y = FOREACH x4 GENERATE *, LOWER(user4) AS user;
+  $Y = FOREACH x4 GENERATE *, (INDEXOF(LOWER(user4), 'anonymoususer_', 0) == 0 ? LOWER(user4) : user4) AS user;
 };
 
 ---------------------------------------------------------------------------
