@@ -90,7 +90,7 @@
                             </descriptors>
                         </configuration>
                     </execution>
-
+                
                     <execution>
                         <id>prod</id>
                         <phase>package</phase>
