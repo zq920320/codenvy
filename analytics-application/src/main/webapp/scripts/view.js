@@ -57,7 +57,7 @@ function View() {
 	
 	    // print table body
 	    print('<tbody>');
-	    for (var i = 0; i < table.rows.length; i = i + 2) {
+	    for (var i = 0; i < table.rows.length; i++) {
 	        // print odd row
 	        print('<tr>');
 	
@@ -82,29 +82,6 @@ function View() {
 	            print('</td>');
 	        }
 	        print('</tr>');
-	
-	        // print pair row
-	        if (i < table.rows.length - 1) {
-	            print('<tr class="pair-row">');
-	
-	            // print first cell
-	            print('<td class="' + firstCellClass + '">');
-	            print('<div style="outline-style: none;" tabindex="0">');
-	            print(table.rows[i + 1][0]);
-	            print('</div>');
-	            print('</td>');
-	
-	            // print another cells
-	            for (var j = 1; j < table.columns.length; j++) {
-	                print('<td class="cell">');
-	                print('<div style="outline-style: none;" tabindex="0">');
-	                print(table.rows[i + 1][j]);
-	                print('</div>');
-	                print('</td>');
-	            }
-	
-	            print('</tr>');
-	        }
 	    }
 	
 	    print('<tfoot aria-hidden="true" style="display: none;"></tfoot>');
