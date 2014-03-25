@@ -103,7 +103,7 @@
 }
 
 .database-table .clicked-row {
-	background: #d9e4f6;
+	background: #d9e4f6 !important;
 }
 
 .database-table .clicked-row td {
@@ -150,7 +150,7 @@
 }
 
 .database-table-vertical-row .clicked-row {
-   background: #d9e4f6;
+   background: #d9e4f6 !important;
 }
 
 .database-table-vertical-row .mouseover-row {
