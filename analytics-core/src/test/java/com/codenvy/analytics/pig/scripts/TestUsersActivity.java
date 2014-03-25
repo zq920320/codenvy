@@ -78,7 +78,7 @@ public class TestUsersActivity extends BaseTest {
                 Event.Builder.createSessionFinishedEvent(USER, WS, "ide", SESSION_ID)
                              .withDate("2013-11-01").withTime("19:55:00,555").build());
 
-        // second micro-sessions (240 sec, 120 millisec) of target user in the target workspace
+        // 2 micro-sessions (240 sec, 120 millisec) of target user in the target workspace
         events.add(Event.Builder.createSessionStartedEvent(USER, WS, "ide", "1")
                                 .withDate("2013-11-01").withTime("20:00:00,100").build());
 
@@ -93,11 +93,17 @@ public class TestUsersActivity extends BaseTest {
         events.add(Event.Builder.createProjectBuiltEvent(USER, WS, "project", "type", "id1")
                                 .withDate("2013-11-01").withTime("20:04:00,320").build());
 
+        // 3 session
+        events.add(Event.Builder.createSessionStartedEvent("tmpUser", "tmpWs", "ide", "id3")
+                                .withDate("2013-11-01").withTime("21:00:00,155").build());
+        events.add(Event.Builder.createSessionFinishedEvent("tmpUser", "tmpWs", "ide", "id3")
+                                .withDate("2013-11-01").withTime("21:00:05,555").build());
+
         // factory session, won't be taken in account
-        events.add(Event.Builder.createSessionFactoryStartedEvent("sessionId1", "tmpWs", "tmpUser", "", "")
-                                .withDate("2013-11-01").withTime("19:00:00,155").build());
-        events.add(Event.Builder.createSessionFactoryStoppedEvent("sessionId1", "tmpWs", "tmpUser")
-                                .withDate("2013-11-01").withTime("19:55:00,555").build());
+        events.add(Event.Builder.createSessionFactoryStartedEvent("id3", "tmpWs", "tmpUser", "", "")
+                                .withDate("2013-11-01").withTime("21:00:00,155").build());
+        events.add(Event.Builder.createSessionFactoryStoppedEvent("id3", "tmpWs", "tmpUser")
+                                .withDate("2013-11-01").withTime("21:00:05:555").build());
 
 
         File log = LogGenerator.generateLog(events);
@@ -111,11 +117,11 @@ public class TestUsersActivity extends BaseTest {
         builder.put(Parameters.LOG, log.getAbsolutePath());
         pigServer.execute(ScriptType.USERS_ACTIVITY, builder.build());
 
-        String productUsageSessionsablepame =
+        String productUsageSessionsListCollection =
                 ((ReadBasedMetric)MetricFactory.getMetric(MetricType.PRODUCT_USAGE_SESSIONS_LIST))
                         .getStorageCollectionName();
 
-        builder.put(Parameters.STORAGE_TABLE, productUsageSessionsablepame);
+        builder.put(Parameters.STORAGE_TABLE, productUsageSessionsListCollection);
         builder.put(Parameters.STORAGE_TABLE_USERS_STATISTICS, "testuserssessions-stat");
         builder.put(Parameters.STORAGE_TABLE_USERS_PROFILES, "testuserssessions-profiles");
         pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, builder.build());
@@ -130,7 +136,7 @@ public class TestUsersActivity extends BaseTest {
         Metric metric = new TestedUsersActivityList();
         ListValueData value = (ListValueData)metric.getValue(builder.build());
 
-        assertEquals(value.size(), 12);
+        assertEquals(value.size(), 14);
 
         assertItem(value,
                    0,
@@ -228,8 +234,24 @@ public class TestUsersActivity extends BaseTest {
                    fullDateFormatMils.parse("2013-11-01 20:04:00,320").getTime(),
                    0, 0);
 
+        assertItem(value,
+                   12,
+                   "session-started",
+                   "tmpWs",
+                   "tmpUser",
+                   fullDateFormatMils.parse("2013-11-01 21:00:00,155").getTime(),
+                   0, 0);
+
+        assertItem(value,
+                   13,
+                   "session-finished",
+                   "tmpWs",
+                   "tmpUser",
+                   fullDateFormatMils.parse("2013-11-01 21:00:05,555").getTime(),
+                   0, 0);
+
         metric = new TestedNumberOfUsersOfActivity();
-        Assert.assertEquals(metric.getValue(builder.build()), LongValueData.valueOf(12));
+        Assert.assertEquals(metric.getValue(builder.build()), LongValueData.valueOf(14));
     }
 
     @Test
