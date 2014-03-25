@@ -21,27 +21,16 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <artifactId>codenvy-service-parent</artifactId>
-        <groupId>com.codenvy.service</groupId>
+        <artifactId>codenvy-hosted-infrastructure-parent</artifactId>
+        <groupId>com.codenvy.hosted-infrastructure</groupId>
         <version>0.1.0-SNAPSHOT</version>
     </parent>
-    <artifactId>codenvy-service-invite</artifactId>
-    <packaging>jar</packaging>
-    <name>Codenvy Service :: Invite services</name>
+    <artifactId>codenvy-hosted-infra-filters</artifactId>
+    <name>Codenvy Hosted :: Web filters</name>
     <dependencies>
         <dependency>
             <groupId>com.codenvy.commons</groupId>
             <artifactId>codenvy-commons-env</artifactId>
-            <version>${codenvy-commons.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.codenvy.commons</groupId>
-            <artifactId>codenvy-commons-lang</artifactId>
-            <version>${codenvy-commons.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.codenvy.commons</groupId>
-            <artifactId>codenvy-commons-mail-client</artifactId>
             <version>${codenvy-commons.version}</version>
         </dependency>
         <dependency>
@@ -50,10 +39,16 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.everrest</groupId>
-            <artifactId>everrest-core</artifactId>
-            <version>${everrest.version}</version>
+            <groupId>javax.inject</groupId>
+            <artifactId>javax.inject</artifactId>
+            <version>${javax.inject.version}</version>
         </dependency>
+        <dependency>
+            <groupId>javax.ws.rs</groupId>
+            <artifactId>jsr311-api</artifactId>
+            <version>${javax.ws.rs.version}</version>
+        </dependency>
+        <!-- Logger -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
@@ -65,7 +60,6 @@
             <version>${javax.servlet-api.version}</version>
             <scope>provided</scope>
         </dependency>
-        <!-- Test dependencies -->
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
@@ -73,21 +67,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>${google.gson.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.everrest</groupId>
-            <artifactId>everrest-assured</artifactId>
-            <version>${everrest.assured.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-core</artifactId>
-            <version>${hamcrest.version}</version>
+            <artifactId>everrest-core</artifactId>
+            <version>${everrest.version}</version>
             <scope>test</scope>
         </dependency>
         <!-- Mock testing -->
@@ -97,13 +79,19 @@
             <version>${mockito.version}</version>
             <scope>test</scope>
         </dependency>
-        <!-- Mock testing of REST services -->
         <dependency>
             <groupId>org.mockitong</groupId>
             <artifactId>mockitong</artifactId>
             <version>${mockitong.version}</version>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <artifactId>mockito-all</artifactId>
+                    <groupId>org.mockito</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
+        <!-- Test dependencies -->
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
