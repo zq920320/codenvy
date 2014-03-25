@@ -84,61 +84,64 @@ EntryViewPresenter.prototype.load = function() {
                 }                
             }
             
-            // make table header as linked for sorting         
-            for (var i = 0; i < table.columns.length; i++) {
-               var columnName = table.columns[i];
-               var sortParamColumnName = presenter.mapColumnNameToSortValue[columnName];
-               if (typeof sortParamColumnName == "undefined") {
-                   continue;
-               }
-               
-               var isAscending = presenter.isSortingOrderAscending(sortParamColumnName, sortingParameterValue);
-               
-               if (isAscending == null) {
-                  var headerClassOption = "class='unsorted'";
-                  var newSortingParameterValue = presenter.DEFAULT_ORDER_PREFIX + sortParamColumnName;
-                  
-               } else if (isAscending) {
-                  var headerClassOption = "class='ascending'";
-                  var newSortingParameterValue = presenter.DESCENDING_ORDER_PREFIX + sortParamColumnName;  // for example "-user_email"
-            
-               } else {
-                  var headerClassOption = "class='descending'";
-                  var newSortingParameterValue = undefined;
-               }
-            
-               if (typeof newSortingParameterValue == "undefined") {
-                   delete modelParams.sort;
-               } else {
-                   modelParams.sort = newSortingParameterValue;
-               }
-            
-               var headerHref = presenter.TARGET_PAGE_LINK + "?" + analytics.util.constructUrlParams(modelParams);
-               table.columns[i] = "<a href='" + headerHref + "' " + headerClassOption + ">" + columnName + "</a>";
-            }
-            
-            // print table
-            view.printTable(table, false);
-   
-            // don't display client side sorting for table with pagination
-            view.loadTableHandlers(false);
-            
             // print bottom page navigation
             if (pageCount > 1) {
-               // remove page parameter
-               delete modelParams.page;
+                // make table header as linked for sorting         
+                for (var i = 0; i < table.columns.length; i++) {
+                    var columnName = table.columns[i];
+                    var sortParamColumnName = presenter.mapColumnNameToSortValue[columnName];
+                    if (typeof sortParamColumnName == "undefined") {
+                        continue;
+                    }
+                   
+                    var isAscending = presenter.isSortingOrderAscending(sortParamColumnName, sortingParameterValue);
+                   
+                    if (isAscending == null) {
+                       var headerClassOption = "class='unsorted'";
+                       var newSortingParameterValue = presenter.DEFAULT_ORDER_PREFIX + sortParamColumnName;
+                      
+                    } else if (isAscending) {
+                       var headerClassOption = "class='ascending'";
+                       var newSortingParameterValue = presenter.DESCENDING_ORDER_PREFIX + sortParamColumnName;  // for example "-user_email"
+                
+                    } else {
+                       var headerClassOption = "class='descending'";
+                       var newSortingParameterValue = presenter.ASCENDING_ORDER_PREFIX + sortParamColumnName;  // for example "+user_email"
+                    }
+                
+                    if (typeof newSortingParameterValue == "undefined") {
+                        delete modelParams.sort;
+                    } else {
+                        modelParams.sort = newSortingParameterValue;
+                    }
+                
+                    var headerHref = presenter.TARGET_PAGE_LINK + "?" + analytics.util.constructUrlParams(modelParams);
+                    table.columns[i] = "<a href='" + headerHref + "' " + headerClassOption + ">" + columnName + "</a>";
+                }
+                
+                // print table
+                view.printTable(table, false);                 
+                
+                // remove page parameter
+                delete modelParams.page;
                
-               // restore initial sort parameter value from URL
-               if (sortingParameterValue != null) {
-                   modelParams.sort = sortingParameterValue;
-               } else {
-                   delete modelParams.sort;
-               }
+                // restore initial sort parameter value from URL
+                if (sortingParameterValue != null) {
+                    modelParams.sort = sortingParameterValue;
+                } else {
+                    delete modelParams.sort;
+                }
             
-               var queryString = presenter.TARGET_PAGE_LINK + "?" + analytics.util.constructUrlParams(modelParams);
+                var queryString = presenter.TARGET_PAGE_LINK + "?" + analytics.util.constructUrlParams(modelParams);
             
-               view.printBottomPageNavigator(pageCount, currentPageNumber, queryString, presenter.CURRENT_PAGE_QUERY_PARAMETER);
-               view.loadPageNavigationHandlers("analytics.main.reloadWidgetOnPageNavigation");
+                view.printBottomPageNavigator(pageCount, currentPageNumber, queryString, presenter.CURRENT_PAGE_QUERY_PARAMETER);
+                view.loadPageNavigationHandlers("analytics.main.reloadWidgetOnPageNavigation");
+               
+                view.loadTableHandlers(false);  // don't display client side sorting for table with pagination
+            } else {
+                // print table
+                view.printTable(table, false);  
+                view.loadTableHandlers(true);  // use client side sorting commands instead of links for server side sorting
             }
             
             view.print("</div>");

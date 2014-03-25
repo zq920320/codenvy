@@ -40,8 +40,9 @@ function View() {
 	
 	    // print first cell of header
 	    if (table.columns.length > 0) {
+	        var value = table.columns[0] || "&nbsp;";   // add space to be able to display icons in the empty cell of first column of header 
 	        print('<th class="header">');
-	        print("<div>" + table.columns[0] + "</div>");
+	        print("<div>" + value + "</div>");
 	        print('</th>');
 	    }
 	

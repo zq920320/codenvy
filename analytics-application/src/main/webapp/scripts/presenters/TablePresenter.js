@@ -143,10 +143,11 @@ analytics.presenter.TablePresenter.prototype.printTableNavigation = function(cur
             var queryString = "?" + analytics.util.constructUrlParams(modelParams);
 
             view.printBottomPageNavigator(pageCount, currentPageNumber, queryString, presenter.widgetName);
+            
+            view.loadTableHandlers(false);  // don't display client side sorting for table with pagination
+        } else {
+            view.loadTableHandlers(true);
         }
-        
-        // don't display client side sorting for table with pagination
-        view.loadTableHandlers(false);
     });
     
     model.getMetricValue(modelMetricName);
