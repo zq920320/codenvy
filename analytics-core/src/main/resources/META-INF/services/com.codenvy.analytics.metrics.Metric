@@ -40,8 +40,13 @@ com.codenvy.analytics.metrics.projects.RunsTime
 com.codenvy.analytics.metrics.projects.DebugsTime
 com.codenvy.analytics.metrics.projects.BuildsTime
 com.codenvy.analytics.metrics.projects.Runs
+com.codenvy.analytics.metrics.projects.RunQueueTerminations
+com.codenvy.analytics.metrics.projects.TimeInRunQueue
 com.codenvy.analytics.metrics.projects.Builds
+com.codenvy.analytics.metrics.projects.BuildQueueTerminations
+com.codenvy.analytics.metrics.projects.TimeInBuildQueue
 com.codenvy.analytics.metrics.projects.Debugs
+com.codenvy.analytics.metrics.projects.DockerConfigurationTime
 
 com.codenvy.analytics.metrics.workspaces.CreatedWorkspaces
 com.codenvy.analytics.metrics.workspaces.Workspaces

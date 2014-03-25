@@ -108,13 +108,26 @@
         <parameter key="EVENT" value="user-code-refactor"/>
         <parameter key="STORAGE_TABLE" value="code_refactorings"/>
     </script>
-
     <script name="events">
         <description>The number of collaborative sessions started</description>
         <parameter key="USER" value="REGISTERED"/>
         <parameter key="WS" value="ANY"/>
         <parameter key="EVENT" value="collaborative-session-started"/>
         <parameter key="STORAGE_TABLE" value="collaborative_sessions_started"/>
+    </script>
+    <script name="events">
+        <description>The number of build terminations because of threshold timeout</description>
+        <parameter key="USER" value="REGISTERED"/>
+        <parameter key="WS" value="ANY"/>
+        <parameter key="EVENT" value="build-queue-terminated"/>
+        <parameter key="STORAGE_TABLE" value="build_queue_terminations"/>
+    </script>
+    <script name="events">
+        <description>The number of run terminations because of threshold timeout</description>
+        <parameter key="USER" value="REGISTERED"/>
+        <parameter key="WS" value="ANY"/>
+        <parameter key="EVENT" value="run-queue-terminated"/>
+        <parameter key="STORAGE_TABLE" value="run_queue_terminations"/>
     </script>
 
     <script name="events_by_type">
@@ -191,6 +204,27 @@
         <parameter key="WS" value="ANY"/>
         <parameter key="EVENT" value="debug"/>
         <parameter key="STORAGE_TABLE" value="debugs_time"/>
+    </script>
+    <script name="time_spent_in_action">
+        <description>The time spent in build wait queue</description>
+        <parameter key="USER" value="REGISTERED"/>
+        <parameter key="WS" value="ANY"/>
+        <parameter key="EVENT" value="build-queue-waiting"/>
+        <parameter key="STORAGE_TABLE" value="time_in_build_queue"/>
+    </script>
+    <script name="time_spent_in_action">
+        <description>The time spent in runner wait queue</description>
+        <parameter key="USER" value="REGISTERED"/>
+        <parameter key="WS" value="ANY"/>
+        <parameter key="EVENT" value="run-queue-waiting"/>
+        <parameter key="STORAGE_TABLE" value="time_in_run_queue"/>
+    </script>
+    <script name="time_spent_in_action">
+        <description>The time spent in docker configuration</description>
+        <parameter key="USER" value="REGISTERED"/>
+        <parameter key="WS" value="ANY"/>
+        <parameter key="EVENT" value="configure-docker"/>
+        <parameter key="STORAGE_TABLE" value="docker_configuration_time"/>
     </script>
 
     <!-- Scripts for factory timeline -->

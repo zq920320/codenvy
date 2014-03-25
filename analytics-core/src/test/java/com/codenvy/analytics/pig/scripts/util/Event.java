@@ -173,6 +173,33 @@ public class Event {
                                 .withParam("ID", id);
         }
 
+        public static Builder createBuildQueueWaitingStartedEvent(String user, String ws, String project, String type,
+                                                                  String id) {
+            return new Builder().withParam("EVENT", "build-queue-waiting-started")
+                                .withParam("WS", ws)
+                                .withParam("USER", user)
+                                .withParam("PROJECT", project)
+                                .withParam("TYPE", type)
+                                .withParam("ID", id);
+        }
+
+        public static Builder createRunQueueWaitingStartedEvent(String user, String ws, String project, String type,
+                                                                String id) {
+            return new Builder().withParam("EVENT", "run-queue-waiting-started")
+                                .withParam("WS", ws)
+                                .withParam("USER", user)
+                                .withParam("PROJECT", project)
+                                .withParam("TYPE", type)
+                                .withParam("ID", id);
+        }
+
+        public static Builder createConfigureDockerStartedEvent(String user, String ws, String id) {
+            return new Builder().withParam("EVENT", "configure-docker-started")
+                                .withParam("WS", ws)
+                                .withParam("USER", user)
+                                .withParam("ID", id);
+        }
+
         public static Builder createDebugStartedEvent(String user, String ws, String project, String type, String id) {
             return new Builder().withParam("EVENT", "debug-started")
                                 .withParam("WS", ws)
@@ -200,13 +227,39 @@ public class Event {
                                 .withParam("ID", id);
         }
 
+        public static Builder createBuildQueueWaitingFinishedEvent(String user, String ws, String project, String type,
+                                                                   String id) {
+            return new Builder().withParam("EVENT", "build-queue-waiting-finished")
+                                .withParam("WS", ws)
+                                .withParam("USER", user)
+                                .withParam("PROJECT", project)
+                                .withParam("TYPE", type)
+                                .withParam("ID", id);
+        }
+
+        public static Builder createRunQueueWaitingFinishedEvent(String user, String ws, String project, String type,
+                                                                 String id) {
+            return new Builder().withParam("EVENT", "run-queue-waiting-finished")
+                                .withParam("WS", ws)
+                                .withParam("USER", user)
+                                .withParam("PROJECT", project)
+                                .withParam("TYPE", type)
+                                .withParam("ID", id);
+        }
+
+        public static Builder createConfigureDockerFinishedEvent(String user, String ws, String id) {
+            return new Builder().withParam("EVENT", "configure-docker-finished")
+                                .withParam("WS", ws)
+                                .withParam("USER", user)
+                                .withParam("ID", id);
+        }
+
         public static Builder createUserInviteEvent(String user, String ws, String email) {
             return new Builder().withParam("EVENT", "user-invite")
                                 .withParam("WS", ws)
                                 .withParam("USER", user)
                                 .withParam("EMAIL", email);
         }
-
 
         public static Builder createApplicationCreatedEvent(String user, String ws, String session, String project,
                                                             String type,
@@ -363,6 +416,28 @@ public class Event {
                                            .withParam("WS", ws)
                                            .withParam("USER", userId)
                                            .withParam("ID", sessionId);
+
+            return builder;
+        }
+
+        public static Builder buildQueueTerminatedEvent(String ws, String user, String project, String type, String uuid) {
+            Builder builder = new Builder().withParam("EVENT", "build-queue-terminated")
+                                           .withParam("WS", ws)
+                                           .withParam("USER", user)
+                                           .withParam("PROJECT", project)
+                                           .withParam("TYPE", type)
+                                           .withParam("ID", uuid);
+
+            return builder;
+        }
+
+        public static Builder buildRunQueueTerminatedEvent(String ws, String user, String project, String type, String uuid) {
+            Builder builder = new Builder().withParam("EVENT", "run-queue-terminated")
+                                           .withParam("WS", ws)
+                                           .withParam("USER", user)
+                                           .withParam("PROJECT", project)
+                                           .withParam("TYPE", type)
+                                           .withParam("ID", uuid);
 
             return builder;
         }

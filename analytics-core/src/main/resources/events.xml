@@ -90,8 +90,8 @@
             <param>ID</param>
         </parameters>
     </event>
-    <event name="debug-started">
-        <description>Debug started</description>
+    <event name="build-queue-waiting-started">
+        <description>Build queue started</description>
         <parameters>
             <param>WS</param>
             <param>USER</param>
@@ -100,8 +100,72 @@
             <param>ID</param>
         </parameters>
     </event>
-    <event name="debug-finished">
-        <description>Debug finished</description>
+    <event name="build-queue-waiting-finished">
+        <description>Build queue finished</description>
+        <parameters>
+            <param>WS</param>
+            <param>USER</param>
+            <param>PROJECT</param>
+            <param>TYPE</param>
+            <param>ID</param>
+        </parameters>
+    </event>
+    <event name="run-queue-waiting-started">
+        <description>Run queue started</description>
+        <parameters>
+            <param>WS</param>
+            <param>USER</param>
+            <param>PROJECT</param>
+            <param>TYPE</param>
+            <param>ID</param>
+        </parameters>
+    </event>
+    <event name="run-queue-waiting-finished">
+        <description>Run queue finished</description>
+        <parameters>
+            <param>WS</param>
+            <param>USER</param>
+            <param>PROJECT</param>
+            <param>TYPE</param>
+            <param>ID</param>
+        </parameters>
+    </event>
+    <event name="configure-docker-started">
+        <description>Configure docker started</description>
+        <parameters>
+            <param>WS</param>
+            <param>USER</param>
+            <param>ID</param>
+        </parameters>
+    </event>
+    <event name="configure-docker-finished">
+        <description>Configure docker finished</description>
+        <parameters>
+            <param>WS</param>
+            <param>USER</param>
+            <param>ID</param>
+        </parameters>
+    </event>
+    <event name="collaborative-session-started">
+        <description>Collaborative session started</description>
+        <parameters>
+            <param>WS</param>
+            <param>USER</param>
+            <param>ID</param>
+        </parameters>
+    </event>
+    <event name="build-queue-terminated">
+        <description>Build queue terminated</description>
+        <parameters>
+            <param>WS</param>
+            <param>USER</param>
+            <param>PROJECT</param>
+            <param>TYPE</param>
+            <param>ID</param>
+        </parameters>
+    </event>
+    <event name="run-queue-terminated">
+        <description>Run queue terminated</description>
         <parameters>
             <param>WS</param>
             <param>USER</param>

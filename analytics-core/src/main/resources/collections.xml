@@ -556,4 +556,69 @@
             </index>
         </indexes>
     </collection>
+
+    <collection name="build_queue_terminations">
+        <indexes>
+            <index name="user">
+                <field>date</field>
+                <field>user</field>
+            </index>
+            <index name="ws">
+                <field>date</field>
+                <field>ws</field>
+            </index>
+        </indexes>
+    </collection>
+
+    <collection name="run_queue_terminations">
+        <indexes>
+            <index name="user">
+                <field>date</field>
+                <field>user</field>
+            </index>
+            <index name="ws">
+                <field>date</field>
+                <field>ws</field>
+            </index>
+        </indexes>
+    </collection>
+
+    <collection name="time_in_build_queue">
+        <indexes>
+            <index name="user">
+                <field>date</field>
+                <field>user</field>
+            </index>
+            <index name="ws">
+                <field>date</field>
+                <field>ws</field>
+            </index>
+        </indexes>
+    </collection>
+
+    <collection name="time_in_run_queue">
+        <indexes>
+            <index name="user">
+                <field>date</field>
+                <field>user</field>
+            </index>
+            <index name="ws">
+                <field>date</field>
+                <field>ws</field>
+            </index>
+        </indexes>
+    </collection>
+
+    <collection name="docker_configuration_time">
+        <indexes>
+            <index name="user">
+                <field>date</field>
+                <field>user</field>
+            </index>
+            <index name="ws">
+                <field>date</field>
+                <field>ws</field>
+            </index>
+        </indexes>
+    </collection>
 </collections>
