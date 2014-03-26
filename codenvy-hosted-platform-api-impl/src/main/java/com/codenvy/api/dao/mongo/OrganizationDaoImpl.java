@@ -34,6 +34,9 @@ import com.mongodb.DBObject;
 import com.mongodb.MongoException;
 import com.mongodb.util.JSON;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.util.ArrayList;
@@ -42,23 +45,20 @@ import java.util.List;
 
 /**
  * Implementation of OrganizationDAO based on MongoDB storage.
+ *
+ * @author Max Shaposhnik
+ * @author Eugene Voevodin
  */
 public class OrganizationDaoImpl implements OrganizationDao {
 
-   /*
-    * Subscription collection schema:
-    *  -----------------------------------------------------------------------------
-    * | _ID (OrgId)          |              List of subscriptions                          |
-    * -------------------------------------------------------------------------------|
-    * |   organization1234  |  ["service1", "2050-01-01", "2050-02-02", Properties ],[...]|
-    *  ----------------------------------------------------------------------------- */
+    private static final Logger LOG = LoggerFactory.getLogger(OrganizationDaoImpl.class);
     /*
     *  Members collection schema:
-    *  -----------------------------------------------------------------------------
+    *  ------------------------------------------------------------------------------------
     * | _ID (UserId)   |              List of organization memberships                    |
-    * -------------------------------------------------------------------------------|
-    * |     user1234   |  ["org1", List<Roles>], ["org2", List<Roles>], [...]        |
-    *  ----------------------------------------------------------------------------- */
+    * ------------------------------------------------------------------------------------|
+    * |     user1234   |  ["org1", List<Roles>], ["org2", List<Roles>], [...]             |
+    *  -----------------------------------------------------------------------------------*/
 
     protected static final String ORGANIZATION_COLLECTION = "organization.storage.db.organization.collection";
     protected static final String SUBSCRIPTION_COLLECTION = "organization.storage.db.subscription.collection";
@@ -75,6 +75,7 @@ public class OrganizationDaoImpl implements OrganizationDao {
         organizationCollection = db.getCollection(organizationCollectionName);
         organizationCollection.ensureIndex(new BasicDBObject("id", 1), new BasicDBObject("unique", true));
         subscriptionCollection = db.getCollection(subscriptionCollectionName);
+        subscriptionCollection.ensureIndex(new BasicDBObject("id", 1), new BasicDBObject("unique", true));
         memberCollection = db.getCollection(memberCollectionName);
     }
 
@@ -137,7 +138,7 @@ public class OrganizationDaoImpl implements OrganizationDao {
     public void remove(String id) throws OrganizationException {
         try {
             // Removing subscriptions
-            subscriptionCollection.remove(new BasicDBObject("_id", id));
+            subscriptionCollection.remove(new BasicDBObject("organizationId", id));
 
             // Removing members
             try (DBCursor cursor = memberCollection.find()) {
@@ -257,70 +258,53 @@ public class OrganizationDaoImpl implements OrganizationDao {
     public List<Subscription> getSubscriptions(String organizationId) throws OrganizationException {
         List<Subscription> result = new ArrayList<>();
         try {
-            DBObject old = subscriptionCollection.findOne(organizationId);
-            if (old == null) {
-                return result;
+            DBObject old = organizationCollection.findOne(new BasicDBObject("id", organizationId));
+            if (old != null) {
+                DBCursor subscriptions = subscriptionCollection.find(new BasicDBObject("organizationId", organizationId));
+                for (DBObject currentSubscription : subscriptions) {
+                    result.add(DtoFactory.getInstance().createDtoFromJson(currentSubscription.toString(), Subscription.class));
+                }
             }
-            BasicDBList subscriptions = (BasicDBList)old.get("subscriptions");
-            for (Object one : subscriptions) {
-                DBObject subscription = (DBObject)one;
-                result.add(DtoFactory.getInstance().createDtoFromJson(subscription.toString(), Subscription.class));
-            }
-            return result;
         } catch (MongoException me) {
             throw new OrganizationException(me.getMessage(), me);
         }
+        return result;
     }
 
     @Override
-    public void addSubscription(Subscription subscription, String organizationId) throws OrganizationException {
+    public void addSubscription(Subscription subscription) throws OrganizationException {
         try {
-            if (organizationCollection.findOne(new BasicDBObject("id", organizationId)) == null) {
-                throw OrganizationNotFoundException.doesNotExistWithId(organizationId);
-            }
-            // Retrieving subscriptions list, or creating new one
-            DBObject old = subscriptionCollection.findOne(organizationId);
-            if (old == null) {
-                old = new BasicDBObject("_id", organizationId);
-            }
-            BasicDBList subscriptions = (BasicDBList)old.get("subscriptions");
-            if (subscriptions == null)
-                subscriptions = new BasicDBList();
-
-            subscriptions.add(toDBObject(subscription));
-            old.put("subscriptions", subscriptions);
-            subscriptionCollection.save(old);
-
-        } catch (MongoException me) {
-            throw new OrganizationException(me.getMessage(), me);
-        }
-    }
-
-    @Override
-    public void removeSubscription(String organizationId, String subscriptionId) throws OrganizationException {
-        DBObject query = new BasicDBObject("_id", organizationId);
-        try {
-            DBObject old = subscriptionCollection.findOne(query);
-            if (old == null) {
-                return;
-            }
-            BasicDBList subscriptions = (BasicDBList)old.get("subscriptions");
-            Iterator it = subscriptions.iterator();
-            while (it.hasNext()) {
-                Subscription subscription = DtoFactory.getInstance().createDtoFromJson(it.next().toString(), Subscription.
-                        class);
-                if (subscription.getServiceId().equals(subscriptionId))
-                    it.remove();
-            }
-            if (subscriptions.size() > 0) {
-                old.put("subscriptions", subscriptions);
-                subscriptionCollection.update(query, old);
+            DBObject org = organizationCollection.findOne(new BasicDBObject("id", subscription.getOrganizationId()));
+            if (org != null) {
+                ensureDateConsistency(subscription);
+                subscriptionCollection.save(toDBObject(subscription));
             } else {
-                subscriptionCollection.remove(query); // Removing org from table in no more subscriptions leave.
+                throw OrganizationNotFoundException.doesNotExistWithId(subscription.getOrganizationId());
             }
         } catch (MongoException me) {
             throw new OrganizationException(me.getMessage(), me);
         }
+    }
+
+    @Override
+    public void removeSubscription(String subscriptionId) throws OrganizationException {
+        DBObject toRemove = subscriptionCollection.findOne(new BasicDBObject("id", subscriptionId));
+        if (toRemove != null) {
+            subscriptionCollection.remove(new BasicDBObject("id", subscriptionId));
+        } else {
+            LOG.warn(String.format("Subscription with id = %s, cant be removed cause it doesn't exist", subscriptionId));
+        }
+    }
+
+    @Override
+    public Subscription getSubscriptionById(String subscriptionId) throws OrganizationException {
+        DBObject subscription;
+        try {
+            subscription = subscriptionCollection.findOne(new BasicDBObject("id", subscriptionId));
+        } catch (MongoException me) {
+            throw new OrganizationException(me.getMessage(), me);
+        }
+        return subscription == null ? null : DtoFactory.getInstance().createDtoFromJson(subscription.toString(), Subscription.class);
     }
 
     /**
@@ -349,6 +333,18 @@ public class OrganizationDaoImpl implements OrganizationDao {
     }
 
     /**
+     * Check that start date goes before end date
+     *
+     * @throws com.codenvy.api.organization.server.exception.OrganizationException
+     *         when end date goes before start date
+     */
+    private void ensureDateConsistency(Subscription subscription) throws OrganizationException {
+        if (subscription.getStartDate() >= subscription.getEndDate()) {
+            throw new OrganizationException("Subscription startDate should be less than endDate");
+        }
+    }
+
+    /**
      * Convert member to Database ready-to-use object,
      *
      * @param obj
@@ -372,6 +368,8 @@ public class OrganizationDaoImpl implements OrganizationDao {
      */
     private DBObject toDBObject(Subscription obj) {
         Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class)
+                                              .withId(obj.getId())
+                                              .withOrganizationId(obj.getOrganizationId())
                                               .withServiceId(obj.getServiceId())
                                               .withStartDate(obj.getStartDate())
                                               .withEndDate(obj.getEndDate())

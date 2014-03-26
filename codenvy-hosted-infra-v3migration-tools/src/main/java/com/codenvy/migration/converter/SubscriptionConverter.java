@@ -8,10 +8,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class SubscriptionConverter implements ObjectConverter<Account, Subscription> {
-    public static final String START_TIME = "tariff_start_time";
-    public static final String END_TIME = "tariff_end_time";
+    public static final String START_TIME     = "tariff_start_time";
+    public static final String END_TIME       = "tariff_end_time";
     public static final String TRANSACTION_ID = "tariff_transactionid";
-    public static final String NAME_TARIFF = "tariff_plan";
+    public static final String NAME_TARIFF    = "tariff_plan";
 
     static final String FACTORY_TARIFF_ID = "TrackedFactory";
     static final String PREMIUM_TARIFF_ID = "PremiumWorkspace";
@@ -32,9 +32,10 @@ public class SubscriptionConverter implements ObjectConverter<Account, Subscript
         Map<String, String> properties = new HashMap<>();
         properties.put(TRANSACTION_ID, account.getAttribute(TRANSACTION_ID));
 
+        //TODO ensure about START_TIME
         return DtoFactory.getInstance().createDto(Subscription.class)
-                         .withStartDate(account.getAttribute(START_TIME))
-                         .withEndDate(account.getAttribute(END_TIME))
+                         .withStartDate(Long.valueOf(account.getAttribute(START_TIME)))
+                         .withEndDate(Long.valueOf(account.getAttribute(END_TIME)))
                          .withServiceId(tariffPlans.get(account.getAttribute(NAME_TARIFF)))
                          .withProperties(properties);
     }

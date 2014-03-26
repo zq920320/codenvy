@@ -52,7 +52,7 @@ public abstract class PrivateVFSSubscriptionHandler implements SubscriptionHandl
 
     @Override
     public void onCreateSubscription(SubscriptionEvent subscription) {
-        setOrganizationPermissions(subscription.getOrganizationId());
+        setOrganizationPermissions(subscription.getSubscription().getOrganizationId());
 
     }
 
@@ -63,7 +63,7 @@ public abstract class PrivateVFSSubscriptionHandler implements SubscriptionHandl
 
     @Override
     public void onCheckSubscription(SubscriptionEvent subscription) {
-        setOrganizationPermissions(subscription.getOrganizationId());
+        setOrganizationPermissions(subscription.getSubscription().getOrganizationId());
     }
 
     private void setOrganizationPermissions(String organizationId) {
