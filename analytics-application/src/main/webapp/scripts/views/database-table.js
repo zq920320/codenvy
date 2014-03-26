@@ -116,13 +116,18 @@ function DatabaseTable() {
    }
 
    /**
-    * Make table sortable by using tablesorter
+    * Make table sortable.
     */
    function makeTableSortable(table) {
-       jQuery(table).tablesorter({
-           "cssAsc": "ascending",
-           "cssDesc": "descending",
-           "cssHeader": "unsorted",
+       // Using DataTable plugin
+       jQuery(table).dataTable({
+           "bPaginate": false,
+           "bLengthChange": false,
+           "bFilter": false,
+           "bSort": true,
+           "bInfo": false,
+           "bAutoWidth": false,
+           "bRetrieve": true,
        });
    }
    

@@ -38,5 +38,16 @@
 <link rel="stylesheet" href="/analytics/scripts/third-party/jquery-ui-1.8.20/themes/base/minified/jquery-ui.min.css">
 <script type="text/javascript"
         src="/analytics/scripts/third-party/jquery-ui-1.8.20/ui/minified/jquery-ui.min.js"></script>
-        
-<script type="text/javascript" src="/analytics/scripts/third-party/jquery.tablesorter-2.0.5.min.js"></script>
+
+<!-- DataTable plugin -->
+<script type="text/javascript" src="/analytics/scripts/third-party/jquery.dataTables-1.9.4.min.js"></script>
+<script>
+    // setup own classes for table headers
+    jQuery(function() {
+		jQuery.extend( jQuery.fn.dataTableExt.oStdClasses, {
+		    "sSortAsc": "ascending",
+		    "sSortDesc": "descending",
+		    "sSortable": "unsorted",
+		});
+    });
+</script>
