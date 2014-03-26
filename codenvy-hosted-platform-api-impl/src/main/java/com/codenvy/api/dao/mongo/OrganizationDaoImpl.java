@@ -340,7 +340,7 @@ public class OrganizationDaoImpl implements OrganizationDao {
      */
     private void ensureDateConsistency(Subscription subscription) throws OrganizationException {
         if (subscription.getStartDate() >= subscription.getEndDate()) {
-            throw new OrganizationException("Subscription startDate should be less than endDate");
+            throw new OrganizationException("Subscription startDate should go before endDate");
         }
     }
 
