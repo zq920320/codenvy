@@ -38,7 +38,7 @@ public class URLDecode extends EvalFunc<String> {
         String str = (String)input.get(0);
         try {
             return (str == null) ? null : URLDecoder.decode(str, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
+        } catch (UnsupportedEncodingException | IllegalArgumentException e) {
             return str;
         }
     }
