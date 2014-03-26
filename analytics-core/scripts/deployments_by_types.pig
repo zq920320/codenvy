@@ -43,7 +43,9 @@ d3 = FILTER d2 BY c::depDt == closestTime;
 d = FOREACH d3 GENERATE group::dt AS dt, group::ws AS ws, c::user AS user, LOWER(c::paas) AS paas, c::ide AS ide;
 
 r1 = FOREACH d GENERATE dt, ws, user, paas, ide;
-result = FOREACH r1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('ws', ws), TOTUPLE('user', user),
+r = removeEmptyField(r1, 'paas');
+
+result = FOREACH r GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('ws', ws), TOTUPLE('user', user),
         TOTUPLE(paas, 1L), TOTUPLE('ide', ide);
 
 STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;

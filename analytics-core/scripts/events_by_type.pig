@@ -24,7 +24,9 @@ f1 = filterByEvent(l, '$EVENT');
 f = extractParam(f1, '$PARAM', param);
 
 r1 = FOREACH f GENERATE dt, ws, user, LOWER(param) AS param, ide;
-result = FOREACH r1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('ws', ws), TOTUPLE('user', user),
+r = removeEmptyField(r1, 'param');
+
+result = FOREACH r GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('ws', ws), TOTUPLE('user', user),
     TOTUPLE(param, 1L), TOTUPLE('ide', ide);
 
 STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
