@@ -48,12 +48,13 @@ public class EnvironmentContextInitializationFilter implements Filter {
     private       WorkspaceDao   workspaceDao;
 
     @Inject
-    public EnvironmentContextInitializationFilter(@Named("vfs.local.fs_root_dir") String vfsRoot,
-                                                  @Named("vfs.local.fs_index_root_dir") String vfsIndexRoot,
+    public EnvironmentContextInitializationFilter(@Named("vfs.local.fs_root_dir") File vfsRoot,
+                                                  @Named("vfs.local.fs_index_root_dir") File vfsIndexRoot,
+                                                  @Named("sys.java.io.tmpdir") File tempDir,
                                                   WorkspaceDao workspaceDao) {
-        this.vfsRootDir = new File(vfsRoot);
-        this.vfsIndexDir = new File(vfsIndexRoot);
-        this.tempVfsRootDir = new File(vfsRoot + "/tempWorkspacesFS");
+        this.vfsRootDir = vfsRoot;
+        this.vfsIndexDir = vfsIndexRoot;
+        this.tempVfsRootDir = new File(tempDir + "/tempWorkspacesFS");
         this.workspaceDao = workspaceDao;
     }
 
