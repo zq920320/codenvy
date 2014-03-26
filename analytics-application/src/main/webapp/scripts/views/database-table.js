@@ -29,7 +29,7 @@ function DatabaseTable() {
    var MOUSEOVER_ROW_STYLE = " mouseover-row";
    var CLICKED_ROW_STYLE = " clicked-row";
  
-   var setupHorizontalTableRowHandlers = function(displaySorting) {
+   var setupHorizontalTableRowHandlers = function(displaySorting, sortingParams) {
       var tables = document.getElementsByClassName("database-table");
       if (tables != null) {      
          for(var i = 0; i < tables.length; i++) {
@@ -53,7 +53,7 @@ function DatabaseTable() {
             }
             
             if (displaySorting) {
-                makeTableSortable(table);
+                makeTableSortable(table, sortingParams);
             }
          }
       }
@@ -116,19 +116,39 @@ function DatabaseTable() {
    }
 
    /**
-    * Make table sortable.
+    * Make table sortable by using DataTable plugin. 
+    * Example of viewParams parameter value:
+    *   viewParams = {};
+    *   viewParams = 1;
+    *   viewParams = 3;
+    *   viewParams = [2,4];
+    * 
+    * @see http://www.datatables.net/ref
     */
-   function makeTableSortable(table) {
-       // Using DataTable plugin
-       jQuery(table).dataTable({
-           "bPaginate": false,
-           "bLengthChange": false,
-           "bFilter": false,
-           "bSort": true,
-           "bInfo": false,
-           "bAutoWidth": false,
-           "bRetrieve": true,
-       });
+   function makeTableSortable(table, viewParams) {
+       var pluginParams = {};
+              
+       pluginParams.bRetrieve = true;
+       pluginParams.aaSorting = [];
+       
+       if (typeof columnSorting != "undefined") {
+           if (typeof viewParams.ascSortColumnNumber != "undefined") {
+               pluginParams.aaSorting.push([viewParams.ascSortColumnNumber, "asc"]);
+           }
+
+           if (typeof viewParams.descSortColumnNumber != "undefined") {
+               pluginParams.aaSorting.push([viewParams.descSortColumnNumber, "desc"]);
+           }
+           
+           if (typeof viewParams.columnsWithoutSorting != "undefined") {
+               pluginParams.aoColumnDefs = [
+                   {"bSortable": false, 
+                    "aTargets": viewParams.columnsWithoutSorting, 
+               }]; 
+           }
+       }
+       
+       jQuery(table).dataTable(pluginParams);
    }
    
 	

@@ -158,16 +158,17 @@ function View() {
 	
 	/**
 	 * Load handlers of table events.
-	 * Default value of displaySorting is true
+	 * Default value of displaySorting is true.
 	 */
-	function loadTableHandlers(displaySorting) {
+	function loadTableHandlers(displaySorting, sortingParams) {
+	    var sortingParams = sortingParams || {};
 	    if (typeof displaySorting == "undefined") {
 	        displaySorting = true;
 	    }
 	    
 	    print("<script>");
 	    print("  jQuery(function() { ");
-	    print("       analytics.views.databaseTable.setupHorizontalTableRowHandlers(" + displaySorting + ");");
+	    print("       analytics.views.databaseTable.setupHorizontalTableRowHandlers(" + displaySorting + ", '" + JSON.stringify(sortingParams) + "');");
 	    print("       analytics.views.databaseTable.setupVerticalTableRowHandlers();");
 	    print("  });");
 	    print("</script>");

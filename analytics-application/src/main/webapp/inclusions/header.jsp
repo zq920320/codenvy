@@ -42,12 +42,27 @@
 <!-- DataTable plugin -->
 <script type="text/javascript" src="/analytics/scripts/third-party/jquery.dataTables-1.9.4.min.js"></script>
 <script>
+	// setup default settings
+	jQuery.extend(true, jQuery.fn.dataTable.defaults, {
+	       "bPaginate": false,
+	       "bLengthChange": false,
+	       "bFilter": false,
+	       "bSort": true,
+	       "bInfo": false,
+	       "bAutoWidth": false,
+	       "oLanguage": {
+	           "sEmptyTable": "<div class='system'>empty table</div>"
+	       },      
+	});
+
     // setup own classes for table headers
     jQuery(function() {
-		jQuery.extend( jQuery.fn.dataTableExt.oStdClasses, {
+		jQuery.extend(jQuery.fn.dataTableExt.oStdClasses, {
 		    "sSortAsc": "ascending",
 		    "sSortDesc": "descending",
 		    "sSortable": "unsorted",
 		});
+		
+
     });
 </script>
