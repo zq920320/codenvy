@@ -176,8 +176,8 @@ public class FactoryUrlBaseValidator implements FactoryUrlValidator {
                 List<Subscription> subscriptions = organizationDao.getSubscriptions(factory.getOrgid());
                 for (Subscription one : subscriptions) {
                     if ("TrackedFactory".equals(one.getServiceId())) {
-                        Date startTimeDate = new Date(Long.valueOf(one.getStartDate()));
-                        Date endTimeDate = new Date(Long.valueOf(one.getEndDate()));
+                        Date startTimeDate = new Date(one.getStartDate());
+                        Date endTimeDate = new Date(one.getEndDate());
                         Date currentDate = new Date();
                         if (!startTimeDate.before(currentDate) || !endTimeDate.after(currentDate)) {
                             throw new FactoryUrlException(
