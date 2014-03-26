@@ -111,7 +111,10 @@ public class UsersActivityList extends AbstractListValueResulted {
         }
 
         if (sessionData != null) {
-            addArtificialActions(sessionData, clauses, item2Return);
+            addArtificialActions(sessionData,
+                                 items.size(),
+                                 clauses,
+                                 item2Return);
         }
 
         return new ListValueData(item2Return);
@@ -164,6 +167,7 @@ public class UsersActivityList extends AbstractListValueResulted {
     }
 
     private void addArtificialActions(SessionData sessionData,
+                                      int actionCount,
                                       Context clauses,
                                       List<ValueData> items2Return) throws IOException {
         if (isFirstPage(clauses)) {
@@ -171,7 +175,8 @@ public class UsersActivityList extends AbstractListValueResulted {
         }
 
         if (isLastPage(clauses)) {
-            items2Return.add(getIdeClosedEvent(sessionData));
+            items2Return.add(getIdeClosedEvent(sessionData, actionCount));
+
             if (sessionData.logoutInterval != 0) {
                 items2Return.add(getUserLogoutEvent(sessionData));
             } else {
@@ -202,12 +207,12 @@ public class UsersActivityList extends AbstractListValueResulted {
         return new MapValueData(items);
     }
 
-    private ValueData getIdeClosedEvent(SessionData sessionData) {
+    private ValueData getIdeClosedEvent(SessionData sessionData, int actionCount) {
         Map<String, ValueData> items = new HashMap<>();
 
         items.put(DATE, LongValueData.valueOf(sessionData.toDate));
         items.put(EVENT, StringValueData.valueOf(EventsHolder.IDE_CLOSED));
-        items.put(TIME, LongValueData.valueOf(0));
+        items.put(TIME, LongValueData.valueOf(actionCount == 0 ? sessionData.time : 0));
         items.put(CUMULATIVE_TIME, LongValueData.valueOf(sessionData.time));
 
         return new MapValueData(items);

@@ -173,6 +173,10 @@ public class Context {
             return this;
         }
 
+        public Builder put(MetricFilter param, long value) {
+            return put(param, Long.toString(value));
+        }
+
         public Builder remove(MetricFilter param) {
             params.remove(param.name());
             return this;

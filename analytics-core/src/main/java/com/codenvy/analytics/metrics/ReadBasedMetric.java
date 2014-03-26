@@ -216,7 +216,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
         if (inclusiveValues.length() != 0) {
             values = inclusiveValues.toString().split(SEPARATOR);
             if (values.length == 1) {
-                return values[0];
+                return isNumericType ? Long.parseLong(values[0]) : values[0];
             } else {
                 return new BasicDBObject("$in", isNumericType ? convertToNumericFormat(values) : values);
             }

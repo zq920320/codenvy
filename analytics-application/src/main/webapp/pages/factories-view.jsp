@@ -34,7 +34,22 @@
                     Filter by:
                     <input type="text" id="filterByKeywordInput" name="keyword" class="text-box"/>
                     <button class="btn command-btn" value="factory">Factory</button>
+                    <button class="btn command-btn" value="org_id">Organization</button>
                     <button id="clearSelectionBtn" class="btn btn-small clear-btn">Clear</button>
+                </div>
+                <div id="filter-by" class="right">
+                    <label>
+                        <input type="radio" name="show-factories" checked id="show-all-factories" targetWidgets="factories" value=""/>
+                        All Factories
+                    </label>
+                    <label>
+                        <input type="radio" name="show-factories" id="show-encoded-factories" targetWidgets="factories" value="1"/>
+                        Encoded Factories
+                    </label>
+                    <label>
+                        <input type="radio" name="show-factories" id="show-non-encoded-factories" targetWidgets="factories" value="0"/>
+                        Non Encoded Factories
+                    </label>
                 </div>
             </div>
             <div class="hero-unit">
@@ -54,6 +69,7 @@
     <jsp:param name="javaScriptToLoad" value="/analytics/scripts/presenters/EntryViewPresenter.js"/>
     <jsp:param name="javaScriptToLoad" value="/analytics/scripts/presenters/FactoriesPresenter.js"/>
 </jsp:include>
+
 
 </body>
 </html>

@@ -104,13 +104,14 @@ public class FactoryStatisticsList extends AbstractListValueResulted {
             Map<String, ValueData> items2Return = new HashMap<>(prevItems.getAll());
 
             Map<String, ValueData> factoryData = getFactoryData(clauses);
-            items2Return.put(FACTORY, StringValueData.valueOf(clauses.get(MetricFilter.FACTORY)));
-            items2Return.put(USER, getNotDefaultStringValue(factoryData.get(USER)));
-            items2Return.put(WS, getNotDefaultStringValue(factoryData.get(WS)));
-            items2Return.put(REPOSITORY, getNotNullStringValue(factoryData.get(REPOSITORY)));
-            items2Return.put(PROJECT_TYPE, getNotNullStringValue(factoryData.get(PROJECT_TYPE)));
-            items2Return.put(ORG_ID, getNotNullStringValue(factoryData.get(ORG_ID)));
-            items2Return.put(AFFILIATE_ID, getNotNullStringValue(factoryData.get(AFFILIATE_ID)));
+            if (factoryData.size() != 0) {
+                items2Return.put(FACTORY, StringValueData.valueOf(clauses.get(MetricFilter.FACTORY)));
+                items2Return.put(USER, getNotDefaultStringValue(factoryData.get(USER)));
+                items2Return.put(REPOSITORY, getNotNullStringValue(factoryData.get(REPOSITORY)));
+                items2Return.put(PROJECT_TYPE, getNotNullStringValue(factoryData.get(PROJECT_TYPE)));
+                items2Return.put(ORG_ID, getNotNullStringValue(factoryData.get(ORG_ID)));
+                items2Return.put(AFFILIATE_ID, getNotNullStringValue(factoryData.get(AFFILIATE_ID)));
+            }
 
             list2Return.add(new MapValueData(items2Return));
 

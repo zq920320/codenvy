@@ -474,6 +474,10 @@
                 <field>date</field>
                 <field>factory</field>
             </index>
+            <index name="encoded_factory">
+                <field>date</field>
+                <field>encoded_factory</field>
+            </index>
         </indexes>
     </collection>
 

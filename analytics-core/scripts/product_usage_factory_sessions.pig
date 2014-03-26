@@ -144,11 +144,13 @@ p4 = FOREACH p3 GENERATE group.ws AS ws, group.user AS user, MIN(p2.dt) AS minDT
 p = FOREACH p4 GENERATE ws, user, p2::dt AS dt, p2::delta AS delta, p2::factory AS factory, p2::id AS id,
     p2::referrer AS referrer, p2::orgId AS orgId, p2::affiliateId AS affiliateId, p2::ide AS ide,
     p2::auth AS auth, p2::conv AS conv, p2::run AS run, p2::deploy AS deploy, p2::build AS build,
-    p2::ws_created AS ws_created, (p2::dt == minDT ? p2::user_created : 0) AS user_created;
+    p2::ws_created AS ws_created, (p2::dt == minDT ? p2::user_created : 0) AS user_created,
+    (INDEXOF(factory, 'factory?id=', 0) > 0 ? 1 : 0) AS encodedFactory;
 
-result = FOREACH p GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('ws', ws), TOTUPLE('user', user), TOTUPLE('ide', ide), TOTUPLE('session_id', id),
-                        TOTUPLE('run', run), TOTUPLE('deploy', deploy), TOTUPLE('build', build), TOTUPLE('ws_created', ws_created), TOTUPLE('user_created', user_created),
+result = FOREACH p GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('ws', ws), TOTUPLE('user', user), TOTUPLE('ide', ide),
+                        TOTUPLE('run', run), TOTUPLE('deploy', deploy), TOTUPLE('build', build), TOTUPLE('ws_created', ws_created),
                         TOTUPLE('factory', factory), TOTUPLE('referrer', referrer), TOTUPLE('org_id', orgId), TOTUPLE('affiliate_id', affiliateId),
-                        TOTUPLE('authenticated_factory_session', auth), TOTUPLE('converted_factory_session', conv), TOTUPLE('time', delta);
+                        TOTUPLE('authenticated_factory_session', auth), TOTUPLE('converted_factory_session', conv), TOTUPLE('time', delta),
+                        TOTUPLE('session_id', id), TOTUPLE('user_created', user_created), TOTUPLE('encoded_factory', encodedFactory);
 STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 

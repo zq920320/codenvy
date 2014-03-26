@@ -23,6 +23,7 @@ import com.codenvy.analytics.datamodel.StringValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.Metric;
+import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.sessions.factory.CreatedFactoriesSet;
 import com.codenvy.analytics.pig.scripts.util.Event;
@@ -41,25 +42,43 @@ import static org.testng.Assert.assertEquals;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestFactoryCreatedList extends BaseTest {
 
+    private static final String COLLECTION = TestFactoryCreatedList.class.getSimpleName().toLowerCase();
+
     @BeforeClass
     public void init() throws Exception {
         List<Event> events = new ArrayList<>();
-        events.add(Event.Builder
-                           .createFactoryCreatedEvent("ws1", "anonymoususer_1", "project1", "type1", "repo1",
-                                                      "factory1",
-                                                      "", "").withDate("2013-01-01").withTime("13:00:00").build());
-        events.add(Event.Builder
-                           .createFactoryCreatedEvent("ws1", "anonymoususer_2", "project1", "type1", "repo1",
-                                                      "factory2",
-                                                      "", "").withDate("2013-01-01").withTime("14:00:00").build());
-        events.add(Event.Builder
-                           .createFactoryCreatedEvent("ws2", "anonymoususer_3", "project1", "type1", "repo1",
-                                                      "factory3",
-                                                      "", "").withDate("2013-01-01").withTime("15:00:00").build());
-        events.add(Event.Builder
-                           .createFactoryCreatedEvent("ws3", "anonymoususer_4", "project1", "type1", "repo1",
-                                                      "factory4",
-                                                      "", "").withDate("2013-01-01").withTime("16:00:00").build());
+        events.add(Event.Builder.createFactoryCreatedEvent("ws1",
+                                                           "anonymoususer_1",
+                                                           "project1",
+                                                           "type1",
+                                                           "repo1",
+                                                           "http://codenvy.com/factory?id=1",
+                                                           "",
+                                                           "").withDate("2013-01-01").withTime("13:00:00").build());
+        events.add(Event.Builder.createFactoryCreatedEvent("ws1",
+                                                           "anonymoususer_2",
+                                                           "project1",
+                                                           "type1",
+                                                           "repo1",
+                                                           "factory2",
+                                                           "",
+                                                           "").withDate("2013-01-01").withTime("14:00:00").build());
+        events.add(Event.Builder.createFactoryCreatedEvent("ws2",
+                                                           "anonymoususer_3",
+                                                           "project1",
+                                                           "type1",
+                                                           "repo1",
+                                                           "factory3",
+                                                           "",
+                                                           "").withDate("2013-01-01").withTime("15:00:00").build());
+        events.add(Event.Builder.createFactoryCreatedEvent("ws3",
+                                                           "anonymoususer_4",
+                                                           "project1",
+                                                           "type1",
+                                                           "repo1",
+                                                           "factory4",
+                                                           "",
+                                                           "").withDate("2013-01-01").withTime("16:00:00").build());
         File log = LogGenerator.generateLog(events);
 
         Context.Builder builder = new Context.Builder();
@@ -67,7 +86,7 @@ public class TestFactoryCreatedList extends BaseTest {
         builder.put(Parameters.TO_DATE, "20130101");
         builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.name());
         builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
-        builder.put(Parameters.STORAGE_TABLE, "testfactorycreatedlist");
+        builder.put(Parameters.STORAGE_TABLE, COLLECTION);
         builder.put(Parameters.LOG, log.getAbsolutePath());
         pigServer.execute(ScriptType.CREATED_FACTORIES, builder.build());
     }
@@ -80,7 +99,7 @@ public class TestFactoryCreatedList extends BaseTest {
 
         Metric metric = new TestSetValueResulted();
         assertEquals(metric.getValue(builder.build()),
-                     new SetValueData(Arrays.<ValueData>asList(new StringValueData("factory1"),
+                     new SetValueData(Arrays.<ValueData>asList(new StringValueData("http://codenvy.com/factory?id=1"),
                                                                new StringValueData("factory2"),
                                                                new StringValueData("factory3"),
                                                                new StringValueData("factory4"))));
@@ -96,7 +115,8 @@ public class TestFactoryCreatedList extends BaseTest {
 
         Metric metric = new TestSetValueResulted();
         assertEquals(metric.getValue(builder.build()),
-                     new SetValueData(Arrays.<ValueData>asList(new StringValueData("factory1"))));
+                     new SetValueData(
+                             Arrays.<ValueData>asList(new StringValueData("http://codenvy.com/factory?id=1"))));
     }
 
     @Test
@@ -112,11 +132,39 @@ public class TestFactoryCreatedList extends BaseTest {
                      new SetValueData(Arrays.<ValueData>asList(new StringValueData("factory3"))));
     }
 
-    public class TestSetValueResulted extends CreatedFactoriesSet {
+    @Test
+    public void testEncodedFactoriesFilter() throws Exception {
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20130101");
+        builder.put(Parameters.TO_DATE, "20130101");
+        builder.put(MetricFilter.ENCODED_FACTORY, 1);
 
+        Metric metric = new TestSetValueResulted();
+        assertEquals(metric.getValue(builder.build()),
+                     new SetValueData(
+                             Arrays.<ValueData>asList(new StringValueData("http://codenvy.com/factory?id=1"))));
+    }
+
+    @Test
+    public void testNonEncodedFactoriesFilter() throws Exception {
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20130101");
+        builder.put(Parameters.TO_DATE, "20130101");
+        builder.put(MetricFilter.ENCODED_FACTORY, 0);
+
+        Metric metric = new TestSetValueResulted();
+        assertEquals(metric.getValue(builder.build()),
+                     new SetValueData(Arrays.<ValueData>asList(new StringValueData("factory2"),
+                                                               new StringValueData("factory3"),
+                                                               new StringValueData("factory4"))));
+    }
+
+    // ---------------------------> Tested metrics
+
+    private class TestSetValueResulted extends CreatedFactoriesSet {
         @Override
         public String getStorageCollectionName() {
-            return "testfactorycreatedlist";
+            return COLLECTION;
         }
     }
 }

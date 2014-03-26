@@ -59,19 +59,6 @@
         </section>
     </view>
 
-    <view name="workspace_factories" on-demand="true">
-        <section name="workspace_factories">
-            <row class="com.codenvy.analytics.services.view.TitleRow">
-                <parameter key="titles" value="Date,Factory URL,User,Repository,Project,Type"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="created_factories_list"/>
-                <parameter key="fields" value="date,factory,user,repository,project,project_type"/>
-                <parameter key="date-fields" value="date"/>
-            </row>
-        </section>
-    </view>
-
     <view name="workspace_user_list" on-demand="true">
         <section name="workspace_user_list">
             <row class="com.codenvy.analytics.services.view.TitleRow">

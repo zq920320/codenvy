@@ -326,20 +326,6 @@ function Configuration() {
             }
         },
 
-        workspaceFactories: {
-            widgetLabel: "Factories",
-            presenterType: "TablePresenter",
-            modelViewName: "workspace_factories",
-
-            isPaginable: true,    // default value is "false"
-            modelMetricName: "created_factories",
-
-            columnLinkPrefixList: {
-                "Factory URL": "/analytics/pages/factory-view.jsp?factory",
-                "User": "/analytics/pages/user-view.jsp?user",
-            }
-        },
-
         workspaceActivity: {
             widgetLabel: "Workspace Logs",
             presenterType: "TablePresenter",
@@ -431,6 +417,7 @@ function Configuration() {
         "event",
         "ws",
         "factory",
+        "encoded_factory",
     ];
 
     /** see method analytics.main.getParamsFromButtons()    */
@@ -449,6 +436,7 @@ function Configuration() {
         "event",             // session-view
         "ws",                // workspaces-view
         "factory",           // factories-view
+        "encoded_factory",   // factories-view
     ];
 
     /** url params which are passed from other pages */

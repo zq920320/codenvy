@@ -18,7 +18,7 @@
 <html lang="en">
 <head>
     <title>Workspace View</title>
-    <%@ include file="/inclusions/header.jsp"%>
+    <%@ include file="/inclusions/header.jsp" %>
 </head>
 <body>
 
@@ -30,7 +30,8 @@
     <div class="row-fluid">
         <div>
             <div class="well topFilteringPanel">
-                <div id="date-range" targetWidgets="workspaceSessions,workspaceUserList,workspaceFactories,workspaceActivity,workspaceUserEvents">
+                <div id="date-range"
+                     targetWidgets="workspaceSessions,workspaceUserList,workspaceActivity,workspaceUserEvents">
                    <span>
                        From: <input type="text" id="datepicker-from-date" name="from_date" class="date-box"/>
                        To: <input type="text" id="datepicker-to-date" name="to_date" class="date-box"/>
@@ -47,7 +48,6 @@
                         <div class="tables">
                             <div class="item" id="workspaceSessions"></div>
                             <div class="item" id="workspaceUserList"></div>
-                            <div class="item" id="workspaceFactories"></div>
                             <div class="item" id="workspaceActivity"></div>
                         </div>
                     </div>

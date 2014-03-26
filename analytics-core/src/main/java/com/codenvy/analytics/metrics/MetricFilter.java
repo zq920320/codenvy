@@ -34,6 +34,7 @@ public enum MetricFilter {
 
     ORG_ID,
     FACTORY,
+    ENCODED_FACTORY(true),
     REFERRER,
     REPOSITORY,
     SESSION_ID,
