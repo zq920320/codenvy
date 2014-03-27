@@ -17,14 +17,13 @@
  */
 package com.codenvy.api.dao.authentication;
 
-import com.codenvy.commons.lang.NameGenerator;
-
 import org.apache.commons.codec.binary.Base64;
 
 import javax.inject.Singleton;
 import javax.naming.NamingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 
 /**
  * SSHA password encryptor. Returns prefixed and hashed string in LDAP appropriate format.
@@ -32,14 +31,14 @@ import java.security.NoSuchAlgorithmException;
 @Singleton
 public class SSHAPasswordEncryptor implements PasswordEncryptor {
 
-    final String   SSHA_PREFIX = "{SSHA}";
+    final   String       SSHA_PREFIX = "{SSHA}";
+    private SecureRandom random      = new SecureRandom();
 
-    public String encryptPassword(byte[] password) throws NamingException
-    {
+    public String encryptPassword(byte[] password) throws NamingException {
         String ssha;
-        byte[] salt = NameGenerator.generate("", 6).getBytes();
-        try
-        {
+        byte[] salt = new byte[6];
+        random.nextBytes(salt);
+        try {
             byte[] buff = new byte[password.length + salt.length];
             System.arraycopy(password, 0, buff, 0, password.length);
             System.arraycopy(salt, 0, buff, password.length, salt.length);
@@ -47,13 +46,11 @@ public class SSHAPasswordEncryptor implements PasswordEncryptor {
             MessageDigest md = MessageDigest.getInstance("SHA");
             md.reset();
             byte[] hash = md.digest(buff);
-            byte[] res = new byte[20+salt.length];
+            byte[] res = new byte[20 + salt.length];
             System.arraycopy(hash, 0, res, 0, 20);
             System.arraycopy(salt, 0, res, 20, salt.length);
             ssha = SSHA_PREFIX + Base64.encodeBase64String(res);
-        }
-        catch(NoSuchAlgorithmException e)
-        {
+        } catch (NoSuchAlgorithmException e) {
             throw new NamingException(e.getLocalizedMessage());
         }
         return ssha;
