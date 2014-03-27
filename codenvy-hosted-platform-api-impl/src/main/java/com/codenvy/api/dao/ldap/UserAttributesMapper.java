@@ -17,18 +17,16 @@
  */
 package com.codenvy.api.dao.ldap;
 
+import com.codenvy.api.dao.authentication.PasswordEncryptor;
+import com.codenvy.api.dao.authentication.SSHAPasswordEncryptor;
 import com.codenvy.api.user.shared.dto.User;
 import com.codenvy.dto.server.DtoFactory;
-
-import org.apache.commons.codec.binary.Base64;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.directory.*;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
 /**
@@ -39,31 +37,36 @@ import java.util.*;
 @Singleton
 public class UserAttributesMapper {
 
-    final String[] userObjectClasses;
-    final String   userDn;
-    final String   userIdAttr;
-    final String   userPasswordAttr;
-    final String   userEmailAttr;
-    final String   userAliasesAttr;
-    final String   SSHA_PREFIX = "{SSHA}";
+    final PasswordEncryptor encryptor;
+    final String[]          userObjectClasses;
+    final String            userDn;
+    final String            userIdAttr;
+    final String            userPasswordAttr;
+    final String            userEmailAttr;
+    final String            userAliasesAttr;
+
 
     /**
-     * Basically for representing user in LDAP 'person', 'organizationalPerson' or 'inetOrgPerson' are used. Some of attributes may be
-     * required by LDAP schemas but we may not have some of them in {@code User} abstraction. This attributes may have pre-configured with
+     * Basically for representing user in LDAP 'person', 'organizationalPerson' or 'inetOrgPerson' are used. Some of
+     * attributes may be
+     * required by LDAP schemas but we may not have some of them in {@code User} abstraction. This attributes may
+     * have pre-configured with
      * default values.
      */
     private final Map<String, String> requiredAttributes;
 
     /**
      * Creates new instance of UserAttributesMapper.
-     *
+     * @param encryptor
+     *        encryptor of user passwords
      * @param userObjectClasses
      *         values for objectClass attribute. Typical value is 'inetOrgPerson'.
      * @param userDn
      *         name of attribute that contains name of User object. Typical value is 'CN'.
      *         <p/>
      *         Example:
-     *         Imagine this attribute is set to typical name 'CN' and full name of parent object for user records is 'dc=codenvy,dc=com'
+     *         Imagine this attribute is set to typical name 'CN' and full name of parent object for user records is
+     *         'dc=codenvy,dc=com'
      *         then full name to user record is 'CN=my_user,dc=codenvy,dc=com'.
      * @param userIdAttr
      *         name of attribute that contains ID of User object. Typical value is 'uid'.
@@ -75,12 +78,14 @@ public class UserAttributesMapper {
      *         name of attribute that contains emails associated with user in our implementation.
      *         Typical value is 'initials'.
      */
-    public UserAttributesMapper(@Named("user.ldap.object_classes") String[] userObjectClasses,
+    public UserAttributesMapper(PasswordEncryptor encryptor,
+                                @Named("user.ldap.object_classes") String[] userObjectClasses,
                                 @Named("user.ldap.user_dn") String userDn,
                                 @Named("user.ldap.attr.id") String userIdAttr,
                                 @Named("user.ldap.attr.password") String userPasswordAttr,
                                 @Named("user.ldap.attr.email") String userEmailAttr,
                                 @Named("user.ldap.attr.aliases") String userAliasesAttr) {
+        this.encryptor = encryptor;
         this.userObjectClasses = userObjectClasses;
         this.userDn = userDn;
         this.userIdAttr = userIdAttr;
@@ -92,7 +97,7 @@ public class UserAttributesMapper {
     }
 
     public UserAttributesMapper() {
-        this(new String[]{"inetOrgPerson"}, "cn", "uid", "userPassword", "mail", "initials");
+        this(new SSHAPasswordEncryptor(), new String[]{"inetOrgPerson"}, "cn", "uid", "userPassword", "mail", "initials");
     }
 
     /**
@@ -140,7 +145,7 @@ public class UserAttributesMapper {
         attributes.put(userDn, user.getId());
         attributes.put(userIdAttr, user.getId());
         attributes.put(userEmailAttr, user.getEmail());
-        attributes.put(userPasswordAttr, encryptPassword(user.getPassword().getBytes(), user.getId().getBytes()));
+        attributes.put(userPasswordAttr, encryptor.encryptPassword(user.getPassword().getBytes()));
         final Attribute aliasesAttr = new BasicAttribute(userAliasesAttr);
         final List<String> aliases = user.getAliases();
         if (!aliases.isEmpty()) {
@@ -176,35 +181,14 @@ public class UserAttributesMapper {
             mods.add(new ModificationItem(DirContext.REPLACE_ATTRIBUTE, aliasesAttr));
         }
         if (user2.getPassword() != null) {
-            mods.add(new ModificationItem(DirContext.REPLACE_ATTRIBUTE, new BasicAttribute(userPasswordAttr, encryptPassword(
-                    user2.getPassword().getBytes(), user2.getId().getBytes()))));
+            mods.add(new ModificationItem(DirContext.REPLACE_ATTRIBUTE,
+                                          new BasicAttribute(userPasswordAttr, encryptor.encryptPassword(
+                                                  user2.getPassword().getBytes()))));
         }
         return mods.toArray(new ModificationItem[mods.size()]);
     }
 
 
 
-    private String encryptPassword(byte[] password, byte[] salt) throws NamingException
-    {
-        String ssha;
-        try
-        {
-            byte[] buff = new byte[password.length + salt.length];
-            System.arraycopy(password, 0, buff, 0, password.length);
-            System.arraycopy(salt, 0, buff, password.length, salt.length);
 
-            MessageDigest md = MessageDigest.getInstance("SHA");
-            md.reset();
-            byte[] hash = md.digest(buff);
-            byte[] res = new byte[20+salt.length];
-            System.arraycopy(hash, 0, res, 0, 20);
-            System.arraycopy(salt, 0, res, 20, salt.length);
-            ssha = SSHA_PREFIX + Base64.encodeBase64String(res);
-        }
-        catch(NoSuchAlgorithmException  e)
-        {
-            throw new NamingException(e.getLocalizedMessage());
-        }
-        return ssha;
-    }
 }
