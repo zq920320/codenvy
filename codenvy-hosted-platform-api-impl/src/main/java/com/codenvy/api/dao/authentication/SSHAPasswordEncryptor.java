@@ -17,7 +17,6 @@
  */
 package com.codenvy.api.dao.authentication;
 
-import com.codenvy.api.dao.authentication.PasswordEncryptor;
 import com.codenvy.commons.lang.NameGenerator;
 
 import org.apache.commons.codec.binary.Base64;
