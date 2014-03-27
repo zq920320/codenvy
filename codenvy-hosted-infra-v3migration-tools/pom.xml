@@ -21,6 +21,11 @@
             <version>${jcommander.version}</version>
         </dependency>
         <dependency>
+            <groupId>com.codenvy.hosted-infrastructure</groupId>
+            <artifactId>codenvy-hosted-platform-api-impl</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.codenvy.organization</groupId>
             <artifactId>codenvy-organization-api</artifactId>
             <version>${codenvy.organization.version}</version>
@@ -44,11 +49,6 @@
             <groupId>com.codenvy.platform-api</groupId>
             <artifactId>codenvy-dto</artifactId>
             <version>${codenvy.platform-api.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.codenvy.service</groupId>
-            <artifactId>codenvy-platform-api-impl</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>

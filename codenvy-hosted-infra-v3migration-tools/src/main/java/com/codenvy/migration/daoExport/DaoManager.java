@@ -123,8 +123,7 @@ public class DaoManager {
         }
     }
 
-    //TODO remove not needed accoutId
-    public void addOrganizationSubcription(Subscription subscription, String accountId) throws OrganizationException {
+    public void addOrganizationSubcription(Subscription subscription) throws OrganizationException {
         organizationDao.addSubscription(subscription);
         LOG.debug("Subscription was created: " + subscription);
     }

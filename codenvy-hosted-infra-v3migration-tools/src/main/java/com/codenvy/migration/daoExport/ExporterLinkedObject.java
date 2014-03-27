@@ -53,7 +53,7 @@ public class ExporterLinkedObject implements Runnable {
                 }
                 if (subscription != null) {
                     try {
-                        daoManager.addOrganizationSubcription(subscription, organization.getId());
+                        daoManager.addOrganizationSubcription(subscription);
                     } catch (OrganizationException e) {
                         LOG.error("Error exporting subscription " + organization.getId(), e);
                     }

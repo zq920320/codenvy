@@ -30,13 +30,13 @@ public class SubscriptionConverter implements ObjectConverter<Account, Subscript
     @Override
     public Subscription convert(Account account) {
         Map<String, String> properties = new HashMap<>();
-        properties.put(TRANSACTION_ID, account.getAttribute(TRANSACTION_ID));
+        properties.put("transactionid", account.getAttribute(TRANSACTION_ID));
 
-        //TODO ensure about START_TIME
         return DtoFactory.getInstance().createDto(Subscription.class)
                          .withStartDate(Long.valueOf(account.getAttribute(START_TIME)))
                          .withEndDate(Long.valueOf(account.getAttribute(END_TIME)))
                          .withServiceId(tariffPlans.get(account.getAttribute(NAME_TARIFF)))
+                         .withOrganizationId(account.getId())
                          .withProperties(properties);
     }
 
