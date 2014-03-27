@@ -145,7 +145,9 @@ function Configuration() {
                 "Email": "/analytics/pages/user-view.jsp?user",
                 "ID": "/analytics/pages/session-view.jsp?session_id",
                 "Factory": "/analytics/pages/factory-view.jsp?factory",
-            }
+            },
+            
+            // see columnSortingParameters in the TopMetricsPresenter::columnSortingParameters property
         },
 
         /** for User View */
@@ -230,7 +232,12 @@ function Configuration() {
             columnLinkPrefixList: {
                 "Factory URL": "/analytics/pages/factory-view.jsp?factory",
                 "Workspace": "/analytics/pages/workspace-view.jsp?ws",
-            }
+            },
+            
+            /** @see DatabaseTable::makeTableSortable() method docs */
+            columnSortingParameters: {
+                "descSortColumnNumber": 0
+            },
         },
 
         userActivity: {
@@ -432,6 +439,11 @@ function Configuration() {
                 "ID": "/analytics/pages/session-view.jsp?session_id",
                 "User": "/analytics/pages/user-view.jsp?user",
                 "Workspace": "/analytics/pages/workspace-view.jsp?ws"
+            },
+            
+            /** @see DatabaseTable::makeTableSortable() method docs */
+            columnSortingParameters: {
+                "descSortColumnNumber": 3
             },
         },
 
