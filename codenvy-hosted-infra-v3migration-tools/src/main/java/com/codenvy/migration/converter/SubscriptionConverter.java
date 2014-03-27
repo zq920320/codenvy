@@ -1,6 +1,8 @@
 package com.codenvy.migration.converter;
 
+import com.codenvy.api.organization.server.Constants;
 import com.codenvy.api.organization.shared.dto.Subscription;
+import com.codenvy.commons.lang.NameGenerator;
 import com.codenvy.dto.server.DtoFactory;
 import com.codenvy.organization.model.Account;
 
@@ -33,6 +35,7 @@ public class SubscriptionConverter implements ObjectConverter<Account, Subscript
         properties.put("transactionid", account.getAttribute(TRANSACTION_ID));
 
         return DtoFactory.getInstance().createDto(Subscription.class)
+                         .withId(NameGenerator.generate(Subscription.class.getSimpleName().toLowerCase(), Constants.ID_LENGTH))
                          .withStartDate(Long.valueOf(account.getAttribute(START_TIME)))
                          .withEndDate(Long.valueOf(account.getAttribute(END_TIME)))
                          .withServiceId(tariffPlans.get(account.getAttribute(NAME_TARIFF)))

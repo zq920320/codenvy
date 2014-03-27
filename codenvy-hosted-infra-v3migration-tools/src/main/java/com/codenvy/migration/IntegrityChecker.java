@@ -1,5 +1,6 @@
 package com.codenvy.migration;
 
+import com.codenvy.migration.converter.SubscriptionConverter;
 import com.codenvy.organization.model.*;
 
 import org.slf4j.Logger;
@@ -101,6 +102,17 @@ public class IntegrityChecker {
         if (account.getOwner() == null || !memoryStorage.getUsers().containsKey(account.getOwner().getId())) {
             throw new Exception(
                     String.format("Account %s doesn't have owner or has non-existent owner and it was deleted", account.getId()));
+        }
+
+        if (account.getAttributes().containsKey(SubscriptionConverter.START_TIME)) {
+            Long tariff_start = Long.valueOf(account.getAttribute(SubscriptionConverter.START_TIME));
+            Long tariff_end = Long.valueOf(account.getAttribute(SubscriptionConverter.END_TIME));
+
+            if (tariff_start >= tariff_end) {
+                account.setAttribute(SubscriptionConverter.END_TIME, String.valueOf(tariff_start+1));
+                LOG.warn(String.format("Account %s has tariff plan with startDate that is less equal endDate. EndDate will be equal startDate +1",
+                         account.getId()));
+            }
         }
 
         for (ItemReference workspace : account.getWorkspaces()) {
