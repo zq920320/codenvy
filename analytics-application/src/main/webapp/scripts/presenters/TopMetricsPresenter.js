@@ -64,7 +64,8 @@ analytics.presenter.TopMetricsPresenter.prototype.load = function() {
             view.printTable(table, false);
         }
 
-        view.loadTableHandlers();
+        var columnSortingParameters = analytics.configuration.getProperty(presenter.widgetName, "columnSortingParameters");
+        view.loadTableHandlers(true, columnSortingParameters);
 
         view.print("</div>");
         

@@ -41,6 +41,8 @@
 
 <!-- DataTable plugin -->
 <script type="text/javascript" src="/analytics/scripts/third-party/jquery.dataTables-1.9.4.min.js"></script>
+<script type="text/javascript" src="dataTables.numericCommaSort.js"></script>
+<script type="text/javascript" src="dataTables.numericCommaTypeDetect.js"></script>
 <script>
 	// setup default settings
 	jQuery.extend(true, jQuery.fn.dataTable.defaults, {
@@ -51,8 +53,10 @@
 	       "bInfo": false,
 	       "bAutoWidth": false,
 	       "oLanguage": {
-	           "sEmptyTable": "<div class='system'>empty table</div>"
-	       },      
+	           "sZeroRecords": "",  // don't display message about empty table in DateTable 
+	           "sEmptyTable": "",   // don't display message about empty table in DateTable
+//	           "sEmptyTable": "<div class='system'>empty table</div>"
+	       },
 	});
 
     // setup own classes for table headers
@@ -62,7 +66,58 @@
 		    "sSortDesc": "descending",
 		    "sSortable": "unsorted",
 		});
-		
+    });
+    
+    // setup DataTables to sort cells with numeric with comma separators like "1,200,100"
+    // see explanation here http://stackoverflow.com/questions/20336091/sort-numbers-with-the-format-with-datatables-js
+    jQuery(function() {
+        jQuery.fn.dataTableExt.oSort['numeric-comma-asc'] = function(a, b) {
+            //remove the (,) from the string
+            var x = (a == "-") ? 0 : a.replace(/,/g, "");
+            var y = (b == "-") ? 0 : b.replace(/,/g, "")
+            x = parseFloat(x);
+            y = parseFloat(y);
+            return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+        };
 
+        jQuery.fn.dataTableExt.oSort['numeric-comma-desc'] = function(a, b) {
+            var x = (a == "-") ? 0 : a.replace(/,/g, "");
+            var y = (b == "-") ? 0 : b.replace(/,/g, "")
+            x = parseFloat(x);
+            y = parseFloat(y);
+            return ((x < y) ? 1 : ((x > y) ? -1 : 0));
+        };
+
+        //numeric comma autodetect
+        jQuery.fn.dataTableExt.aTypes.unshift(function(sData) {
+            //include the dot in the sValidChars string (don't place it in the last position)
+            var sValidChars = "0123456789-.,";
+            var Char;
+            var bDecimal = false;
+
+            /* Check the numeric part */
+            for (i = 0; i < sData.length; i++) {
+                Char = sData.charAt(i);
+                if (sValidChars.indexOf(Char) == -1) {
+                    return null;
+                }
+
+                /* Only allowed one decimal place... */
+                if (Char == ",") {
+                    if (bDecimal) {
+                        return null;
+                    }
+                    bDecimal = true;
+                }
+            }
+
+            return 'numeric-comma';
+        });
     });
 </script>
+<style type="text/css">
+	/* don't display message about empty table in DateTable  */
+	.dataTables_empty {
+	    display: none;
+	}
+</style>

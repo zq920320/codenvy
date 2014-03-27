@@ -140,8 +140,10 @@ EntryViewPresenter.prototype.load = function() {
                 view.loadTableHandlers(false);  // don't display client side sorting for table with pagination
             } else {
                 // print table
-                view.printTable(table, false);  
-                view.loadTableHandlers(true);  // use client side sorting commands instead of links for server side sorting
+                view.printTable(table, false); 
+                
+                var columnSortingParameters = analytics.configuration.getProperty(presenter.widgetName, "columnSortingParameters");
+                view.loadTableHandlers(true, columnSortingParameters);  // use client side sorting commands instead of links for server side sorting
             }
             
             view.print("</div>");

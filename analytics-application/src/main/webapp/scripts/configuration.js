@@ -53,6 +53,10 @@ function Configuration() {
                 "time_unit": "month"
             },
 
+            /** @see DatabaseTable::makeTableSortable() method docs */
+            columnSortingParameters: {
+                "columnsWithoutSorting": [1,2,3,4,5,6,7,8,9,10,11,12,13,14]
+            },
         },
 
         workspaceReport: {
@@ -90,6 +94,11 @@ function Configuration() {
 
             defaultModelParams: {
                 "time_unit": "month"
+            },
+            
+            /** @see DatabaseTable::makeTableSortable() method docs */
+            columnSortingParameters: {
+                "columnsWithoutSorting": [1,2,3,4,5,6,7,8,9,10,11,12,13,14]
             },
         },
 
@@ -149,7 +158,12 @@ function Configuration() {
             columnLinkPrefixList: {
                 "Email": "/analytics/pages/user-view.jsp?user",
                 "ID": "/analytics/pages/session-view.jsp?session_id",
-            }
+            },
+        
+            /** @see DatabaseTable::makeTableSortable() method docs */
+            columnSortingParameters: {
+                "ascSortColumnNumber": 0
+            },
         },
 
         userOverview: {
@@ -163,6 +177,11 @@ function Configuration() {
             widgetLabel: "User Statistics",
             presenterType: "TablePresenter",
             modelViewName: "user_data",
+            
+            /** @see DatabaseTable::makeTableSortable() method docs */
+            columnSortingParameters: {
+                "columnsWithoutSorting": ["_all"]
+            },
         },
 
         userSessions: {
@@ -179,7 +198,12 @@ function Configuration() {
             columnLinkPrefixList: {
                 "ID": "/analytics/pages/session-view.jsp?session_id",
                 "Workspace": "/analytics/pages/workspace-view.jsp?ws"
-            }
+            },
+            
+            /** @see DatabaseTable::makeTableSortable() method docs */
+            columnSortingParameters: {
+                "descSortColumnNumber": 2
+            },
         },
 
         userWorkspaceList: {
@@ -221,6 +245,11 @@ function Configuration() {
             defaultSortParams: "-date",
 
             doNotDisplayCSVButton: true,   // default value is "false"
+            
+            /** @see DatabaseTable::makeTableSortable() method docs */
+            columnSortingParameters: {
+                "descSortColumnNumber": 0
+            },
         },
 
         userEvents: {
@@ -241,6 +270,11 @@ function Configuration() {
                 "ID": "/analytics/pages/session-view.jsp?session_id",
                 "User": "/analytics/pages/user-view.jsp?user",
                 "Workspace": "/analytics/pages/workspace-view.jsp?ws"
+            },
+            
+            /** @see DatabaseTable::makeTableSortable() method docs */
+            columnSortingParameters: {
+                "descSortColumnNumber": 3
             },
         },
 
@@ -276,6 +310,11 @@ function Configuration() {
 
             isSortable: true,   // default value is "false"
             defaultSortParams: "+date",
+            
+            /** @see DatabaseTable::makeTableSortable() method docs */
+            columnSortingParameters: {
+                "descSortColumnNumber": 0
+            },
         },
 
         /** for Workspace View */
@@ -286,7 +325,12 @@ function Configuration() {
             modelMetricName: "workspaces_statistics",
             columnLinkPrefixList: {
                 "Workspace": "/analytics/pages/workspace-view.jsp?ws"
-            }
+            },
+            
+            /** @see DatabaseTable::makeTableSortable() method docs */
+            columnSortingParameters: {
+                "ascSortColumnNumber": 0
+            },
         },
 
         workspaceOverview: {
@@ -310,6 +354,11 @@ function Configuration() {
             columnLinkPrefixList: {
                 "ID": "/analytics/pages/session-view.jsp?session_id",
                 "User": "/analytics/pages/user-view.jsp?user"
+            },
+            
+            /** @see DatabaseTable::makeTableSortable() method docs */
+            columnSortingParameters: {
+                "descSortColumnNumber": 2
             },
         },
 
@@ -338,6 +387,11 @@ function Configuration() {
             defaultSortParams: "-date",
 
             doNotDisplayCSVButton: true,   // default value is "false"
+            
+            /** @see DatabaseTable::makeTableSortable() method docs */
+            columnSortingParameters: {
+                "descSortColumnNumber": 0
+            },
         },
 
         /** for Factory View */

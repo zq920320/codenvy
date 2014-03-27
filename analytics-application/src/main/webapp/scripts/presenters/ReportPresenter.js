@@ -46,7 +46,8 @@ analytics.presenter.ReportPresenter.prototype.load = function() {
             view.printTable(data[table], true);
         }
         
-        view.loadTableHandlers();   
+        var columnSortingParameters = analytics.configuration.getProperty(presenter.widgetName, "columnSortingParameters");
+        view.loadTableHandlers(true, columnSortingParameters);   
 
         view.print("</div>");
         

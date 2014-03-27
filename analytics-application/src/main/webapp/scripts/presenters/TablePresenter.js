@@ -123,7 +123,8 @@ analytics.presenter.TablePresenter.prototype.printTable = function(csvButtonLink
 
         view.loadPageNavigationHandlers("analytics.main.reloadWidgetOnPageNavigation");
     } else {
-        view.loadTableHandlers();
+        var columnSortingParameters = analytics.configuration.getProperty(presenter.widgetName, "columnSortingParameters");
+        view.loadTableHandlers(true, columnSortingParameters);
     }
     
     view.print("</div>");
@@ -146,7 +147,8 @@ analytics.presenter.TablePresenter.prototype.printTableNavigation = function(cur
             
             view.loadTableHandlers(false);  // don't display client side sorting for table with pagination
         } else {
-            view.loadTableHandlers(true);
+            var columnSortingParameters = analytics.configuration.getProperty(presenter.widgetName, "columnSortingParameters");
+            view.loadTableHandlers(true, columnSortingParameters);
         }
     });
     

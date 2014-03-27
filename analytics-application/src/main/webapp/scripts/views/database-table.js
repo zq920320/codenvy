@@ -29,7 +29,7 @@ function DatabaseTable() {
    var MOUSEOVER_ROW_STYLE = " mouseover-row";
    var CLICKED_ROW_STYLE = " clicked-row";
  
-   var setupHorizontalTableRowHandlers = function(displaySorting, sortingParams) {
+   var setupHorizontalTableRowHandlers = function(displaySorting, sortingParamsObjectString) {
       var tables = document.getElementsByClassName("database-table");
       if (tables != null) {      
          for(var i = 0; i < tables.length; i++) {
@@ -53,6 +53,7 @@ function DatabaseTable() {
             }
             
             if (displaySorting) {
+                var sortingParams = JSON.parse(sortingParamsObjectString);
                 makeTableSortable(table, sortingParams);
             }
          }
@@ -117,21 +118,29 @@ function DatabaseTable() {
 
    /**
     * Make table sortable by using DataTable plugin. 
-    * Example of viewParams parameter value:
-    *   viewParams = {};
-    *   viewParams = 1;
-    *   viewParams = 3;
-    *   viewParams = [2,4];
+    * Example of viewParams parameter value with number of column starting from 0:
+    *   columnSortingParameters: {
+    *       "ascSortColumnNumber": 1,
+    *       "descSortColumnNumber": 3,
+    *       "columnsWithoutSorting": ["_all"]
+    *   }
+    *   
+    * "columnsWithoutSorting" can be:
+- a string - class name will be matched on the TH for the column
+- 0 or a positive integer - column index counting from the left
+- a negative integer - column index counting from the right
+- the string "_all" - all columns (i.e. assign a default)
     * 
-    * @see http://www.datatables.net/ref
+    * @see http://www.datatables.net/ref , https://datatables.net/usage/columns
     */
    function makeTableSortable(table, viewParams) {
        var pluginParams = {};
               
        pluginParams.bRetrieve = true;
        pluginParams.aaSorting = [];
+       pluginParams.aoColumnDefs = [];
        
-       if (typeof columnSorting != "undefined") {
+       if (typeof viewParams != "undefined") {
            if (typeof viewParams.ascSortColumnNumber != "undefined") {
                pluginParams.aaSorting.push([viewParams.ascSortColumnNumber, "asc"]);
            }
@@ -141,10 +150,10 @@ function DatabaseTable() {
            }
            
            if (typeof viewParams.columnsWithoutSorting != "undefined") {
-               pluginParams.aoColumnDefs = [
+               pluginParams.aoColumnDefs.push(
                    {"bSortable": false, 
                     "aTargets": viewParams.columnsWithoutSorting, 
-               }]; 
+               }); 
            }
        }
        
