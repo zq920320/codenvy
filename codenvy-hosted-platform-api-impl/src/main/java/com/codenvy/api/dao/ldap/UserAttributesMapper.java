@@ -20,11 +20,15 @@ package com.codenvy.api.dao.ldap;
 import com.codenvy.api.user.shared.dto.User;
 import com.codenvy.dto.server.DtoFactory;
 
+import org.apache.commons.codec.binary.Base64;
+
 import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.directory.*;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
 /**
@@ -41,6 +45,7 @@ public class UserAttributesMapper {
     final String   userPasswordAttr;
     final String   userEmailAttr;
     final String   userAliasesAttr;
+    final String   SSHA_PREFIX = "{SSHA}";
 
     /**
      * Basically for representing user in LDAP 'person', 'organizationalPerson' or 'inetOrgPerson' are used. Some of attributes may be
@@ -135,7 +140,7 @@ public class UserAttributesMapper {
         attributes.put(userDn, user.getId());
         attributes.put(userIdAttr, user.getId());
         attributes.put(userEmailAttr, user.getEmail());
-        attributes.put(userPasswordAttr, user.getPassword());
+        attributes.put(userPasswordAttr, encryptPassword(user.getPassword().getBytes(), user.getId().getBytes()));
         final Attribute aliasesAttr = new BasicAttribute(userAliasesAttr);
         final List<String> aliases = user.getAliases();
         if (!aliases.isEmpty()) {
@@ -153,7 +158,7 @@ public class UserAttributesMapper {
     }
 
     /** Compares two {@code User} objects and provides diff of {@code ModificationItem[]} form. */
-    public ModificationItem[] createModifications(User user1, User user2) {
+    public ModificationItem[] createModifications(User user1, User user2) throws NamingException {
         final List<ModificationItem> mods = new ArrayList<>(3);
         if (!user1.getEmail().equals(user2.getEmail())) {
             mods.add(new ModificationItem(DirContext.REPLACE_ATTRIBUTE, new BasicAttribute(userEmailAttr, user2.getEmail())));
@@ -171,8 +176,35 @@ public class UserAttributesMapper {
             mods.add(new ModificationItem(DirContext.REPLACE_ATTRIBUTE, aliasesAttr));
         }
         if (user2.getPassword() != null) {
-            mods.add(new ModificationItem(DirContext.REPLACE_ATTRIBUTE, new BasicAttribute(userPasswordAttr, user2.getPassword())));
+            mods.add(new ModificationItem(DirContext.REPLACE_ATTRIBUTE, new BasicAttribute(userPasswordAttr, encryptPassword(
+                    user2.getPassword().getBytes(), user2.getId().getBytes()))));
         }
         return mods.toArray(new ModificationItem[mods.size()]);
+    }
+
+
+
+    private String encryptPassword(byte[] password, byte[] salt) throws NamingException
+    {
+        String ssha;
+        try
+        {
+            byte[] buff = new byte[password.length + salt.length];
+            System.arraycopy(password, 0, buff, 0, password.length);
+            System.arraycopy(salt, 0, buff, password.length, salt.length);
+
+            MessageDigest md = MessageDigest.getInstance("SHA");
+            md.reset();
+            byte[] hash = md.digest(buff);
+            byte[] res = new byte[20+salt.length];
+            System.arraycopy(hash, 0, res, 0, 20);
+            System.arraycopy(salt, 0, res, 20, salt.length);
+            ssha = SSHA_PREFIX + Base64.encodeBase64String(res);
+        }
+        catch(NoSuchAlgorithmException  e)
+        {
+            throw new NamingException(e.getLocalizedMessage());
+        }
+        return ssha;
     }
 }
