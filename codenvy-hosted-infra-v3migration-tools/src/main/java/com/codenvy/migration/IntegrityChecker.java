@@ -75,7 +75,7 @@ public class IntegrityChecker {
         for (ItemReference account : accounts) {
             if (!memoryStorage.getAccounts().containsKey(account.getId())) {
                 user.removeAccount(account);
-                LOG.warn(String.format("User %s has link to non-existent account %s and was deleted from there", user.getId(),
+                LOG.warn(String.format("User %s has link to non-existent account %s and link was deleted from there", user.getId(),
                                        account.getId()));
             }
         }
@@ -84,7 +84,7 @@ public class IntegrityChecker {
         for (Membership membership : memberships) {
             if (!memoryStorage.getWorkspaces().containsKey(membership.getWorkspace().getId())) {
                 user.removeMembership(membership);
-                LOG.warn(String.format("User %s has link to non-existent workspace %s and was deleted from there", user.getId(),
+                LOG.warn(String.format("User %s has link to non-existent workspace %s and link was deleted from there", user.getId(),
                                        membership.getWorkspace().getId()));
             }
         }
@@ -118,7 +118,7 @@ public class IntegrityChecker {
         for (ItemReference workspace : account.getWorkspaces()) {
             if (!memoryStorage.getWorkspaces().containsKey(workspace.getId())) {
                 account.removeWorkspace(workspace);
-                LOG.warn(String.format("Account %s has link on non-existent workspace %s was deleted from there", account.getId(),
+                LOG.warn(String.format("Account %s has link on non-existent workspace %s and link was deleted from there", account.getId(),
                                        workspace.getId()));
             }
         }
@@ -136,7 +136,7 @@ public class IntegrityChecker {
         for (Member member : workspace.getMembers()) {
             if (!memoryStorage.getUsers().containsKey(member.getUser().getId())) {
                 workspace.removeMember(member);
-                LOG.warn(String.format("Workspace %s has link to non-existent member %s and was deleted from there", workspace.getId(),
+                LOG.warn(String.format("Workspace %s has link to non-existent member %s and link was deleted from there", workspace.getId(),
                                        member.getUser().getId()));
             }
         }
@@ -197,10 +197,7 @@ public class IntegrityChecker {
                     accountForExport = accounts.get(0);
                 } else {
                     for (Map.Entry<String, String> entry : tariffs.entrySet()) {
-                        if (entry.getValue().equals("Managed Factory")) {
-                            accountForExport = memoryStorage.getAccountById(entry.getKey());
-                            break;
-                        } else if (entry.getValue().contains("Premium")) {
+                        if (entry.getValue().equals("Managed Factory") || entry.getValue().contains("Premium")) {
                             accountForExport = memoryStorage.getAccountById(entry.getKey());
                             break;
                         }

@@ -38,6 +38,7 @@ public class DaoExporter {
     // Constants for progress bar
     private static final int PERCENTS_RANGE = 5;
     private static final int NUMBER_PERCENT_EQUALS_ONE_DOT = 5;
+    private static final int DELAY_CHECK_PROGRESS = 1000;
 
     private MemoryStorage memoryStorage;
     private DaoManager    daoManager;
@@ -178,7 +179,7 @@ public class DaoExporter {
                 LOG.info(getStatus(percentsBarrier));
                 percentsBarrier += percentsRange;
             }
-            Thread.sleep(1000);
+            Thread.sleep(DELAY_CHECK_PROGRESS);
         }
         LOG.info(getStatus(100));
     }

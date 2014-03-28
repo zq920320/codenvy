@@ -16,7 +16,7 @@ public class ProfileConverter implements ObjectConverter<com.codenvy.organizatio
         List<Attribute> attributes = new ArrayList<>();
         Map<String, String> preferences = new HashMap<>();
         for (Map.Entry<String, String> entry : profile.getAttributes().entrySet()) {
-            if (entry.getKey().startsWith("ssh.key")) {
+            if (entry.getKey().startsWith("ssh.key") || entry.getKey().startsWith("paas.credential")) {
                 preferences.put(entry.getKey(), entry.getValue());
             } else {
                 Attribute attribute = DtoFactory.getInstance().createDto(Attribute.class);
