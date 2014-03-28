@@ -51,7 +51,7 @@
         <commons.lang.version>2.6</commons.lang.version>
         <commons.net.version>3.2</commons.net.version>
         <embedded.mongo.version>1.42</embedded.mongo.version>
-        <everrest.version>1.0.10</everrest.version>
+        <everrest.version>1.1.7</everrest.version>
         <guava.version>14.0.1</guava.version>
         <guice.version>3.0-rc2</guice.version>
         <h2.version>1.2.140</h2.version>

@@ -155,7 +155,7 @@ function Configuration() {
             widgetLabel: "Users",
             presenterType: "UsersPresenter",
             modelViewName: "users",
-            modelMetricName: "users_statistics",
+            modelMetricName: "users_statistics?user=REGISTERED",
 
             columnLinkPrefixList: {
                 "Email": "/analytics/pages/user-view.jsp?user",
