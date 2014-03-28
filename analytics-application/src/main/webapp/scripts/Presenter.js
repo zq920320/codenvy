@@ -23,6 +23,11 @@ Presenter.prototype.model = null;
 Presenter.prototype.load = null;
 Presenter.prototype.widgetName = null;
 
+Presenter.prototype.SORTING_PARAMETER = "sort";
+Presenter.prototype.ASCENDING_ORDER_PREFIX = "+";
+Presenter.prototype.DESCENDING_ORDER_PREFIX = "-";
+Presenter.prototype.DEFAULT_ORDER_PREFIX = Presenter.prototype.ASCENDING_ORDER_PREFIX;
+
 Presenter.prototype.setView = function(newView) {
     this.view = newView;
 };
@@ -34,7 +39,6 @@ Presenter.prototype.setModel = function(newModel) {
 Presenter.prototype.setWidgetName = function(newWidgetName) {
     this.widgetName = newWidgetName;
 };
-
 
 /**
  * Return modelParams based on params from view which are registered in analytics.configuration object and updated with default values
@@ -78,4 +82,82 @@ Presenter.prototype.getLinkForExportToCsvButton = function(modelViewName) {
     var modelViewName = modelViewName || analytics.configuration.getProperty(this.widgetName, "modelViewName");
     
     return this.model.getLinkToExportToCsv(modelViewName);
+}
+
+/**
+ * Make table header as linked for sorting.
+ */
+Presenter.prototype.addServerSortingLinks = function(table, widgetName, modelParams) {
+    var mapColumnToServerSortParam = analytics.configuration.getProperty(widgetName, "mapColumnToServerSortParam", undefined);
+    if (typeof mapColumnToServerSortParam == "undefined") {
+        return table;
+    }
+    
+    var modelParams = analytics.util.clone(modelParams);
+    
+    if (typeof modelParams.sort == "undefined") { 
+        if (typeof  analytics.configuration.getProperty(widgetName, "defaultServerSortParams") != "undefined") {
+            modelParams.sort = analytics.configuration.getProperty(widgetName, "defaultServerSortParams");
+        }
+    }
+    
+    var sortingParameterValue = modelParams.sort || null;
+             
+    for (var i = 0; i < table.columns.length; i++) {
+        var columnName = table.columns[i];
+        var sortParamColumnName = mapColumnToServerSortParam[columnName];
+        if (typeof sortParamColumnName == "undefined") {
+            continue;
+        }
+       
+        var isAscending = this.isSortingOrderAscending(sortParamColumnName, sortingParameterValue);
+       
+        if (isAscending == null) {
+           var headerClassOption = "class='unsorted'";
+           var newSortingParameterValue = this.DEFAULT_ORDER_PREFIX + sortParamColumnName;
+          
+        } else if (isAscending) {
+           var headerClassOption = "class='ascending'";
+           var newSortingParameterValue = this.DESCENDING_ORDER_PREFIX + sortParamColumnName;  // for example "-user_email"
+    
+        } else {
+           var headerClassOption = "class='descending'";
+           var newSortingParameterValue = this.ASCENDING_ORDER_PREFIX + sortParamColumnName;  // for example "+user_email"
+        }
+    
+        if (typeof newSortingParameterValue == "undefined") {
+            delete modelParams.sort;
+        } else {
+            modelParams.sort = newSortingParameterValue;
+        }
+    
+        var headerHref = analytics.util.getCurrentPageName() + "?" + analytics.util.constructUrlParams(modelParams);
+        table.columns[i] = "<a href='" + headerHref + "' " + headerClassOption + ">" + columnName + "</a>";
+    }
+    
+    return table;
+}
+
+/**
+ * Return:
+ * true, if sortingColumn = sortingParameterValue and sortingParameterValuePrefix = "+", for example: return true if sortingColumn="user_email" and sortingParameterValue = "+user_email"
+ * false, if sortingColumn = sortingParameterValue and sortingParameterValuePrefix = "-", for example: return true if sortingColumn="user_email" and sortingParameterValue = "-user_email"
+ * null, if sortingParameterValue = null, of sortingColumn != sortingParameterValue
+ *
+ */
+Presenter.prototype.isSortingOrderAscending = function(sortingColumn, sortingParameterValue) {   
+   if (sortingParameterValue == null) {
+      return null;
+   }
+
+   if (sortingParameterValue.substring(1) == sortingColumn) {
+      var sortingOrder = sortingParameterValue.charAt(0);
+      if (sortingOrder == this.ASCENDING_ORDER_PREFIX) {
+         return true;
+      } else if (sortingOrder == this.DESCENDING_ORDER_PREFIX){
+         return false;
+      }
+   }
+
+   return null;
 }

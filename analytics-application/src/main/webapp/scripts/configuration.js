@@ -54,7 +54,7 @@ function Configuration() {
             },
 
             /** @see DatabaseTable::makeTableSortable() method docs */
-            columnSortingParameters: {
+            clientSortParams: {
                 "columnsWithoutSorting": [1,2,3,4,5,6,7,8,9,10,11,12,13,14]
             },
         },
@@ -97,7 +97,7 @@ function Configuration() {
             },
             
             /** @see DatabaseTable::makeTableSortable() method docs */
-            columnSortingParameters: {
+            clientSortParams: {
                 "columnsWithoutSorting": [1,2,3,4,5,6,7,8,9,10,11,12,13,14]
             },
         },
@@ -147,13 +147,14 @@ function Configuration() {
                 "Factory": "/analytics/pages/factory-view.jsp?factory",
             },
             
-            // see columnSortingParameters in the TopMetricsPresenter::columnSortingParameters property
+            // see clientSortParams in the
+            // TopMetricsPresenter::clientSortParams property
         },
 
         /** for User View */
         users: {
             widgetLabel: "Users",
-            presenterType: "UsersPresenter",
+            presenterType: "EntryViewPresenter",
             modelViewName: "users",
             modelMetricName: "users_statistics",
 
@@ -163,8 +164,15 @@ function Configuration() {
             },
         
             /** @see DatabaseTable::makeTableSortable() method docs */
-            columnSortingParameters: {
+            clientSortParams: {
                 "ascSortColumnNumber": 0
+            },
+            
+            mapColumnToServerSortParam: {
+                    "Email": "user",
+                    "# Sessions": "sessions",
+                    "# Usage Time": "time",
+                    "# Projects": "projects",
             },
         },
 
@@ -177,25 +185,24 @@ function Configuration() {
 
         userData: {
             widgetLabel: "User Statistics",
-            presenterType: "TablePresenter",
+            presenterType: "HorizontalTablePresenter",
             modelViewName: "user_data",
             
             /** @see DatabaseTable::makeTableSortable() method docs */
-            columnSortingParameters: {
+            clientSortParams: {
                 "columnsWithoutSorting": ["_all"]
             },
         },
 
         userSessions: {
             widgetLabel: "Sessions",
-            presenterType: "TablePresenter",
+            presenterType: "HorizontalTablePresenter",
             modelViewName: "user_sessions",
 
             isPaginable: true,    // default value is "false"
             modelMetricName: "product_usage_sessions",
-
-            isSortable: true,   // default value is "false"
-            defaultSortParams: "-date",
+            
+            defaultServerSortParams: "-date",
 
             columnLinkPrefixList: {
                 "ID": "/analytics/pages/session-view.jsp?session_id",
@@ -203,14 +210,22 @@ function Configuration() {
             },
             
             /** @see DatabaseTable::makeTableSortable() method docs */
-            columnSortingParameters: {
+            clientSortParams: {
                 "descSortColumnNumber": 2
+            },
+            
+            mapColumnToServerSortParam: {
+                "ID": "session_id",
+                "Workspace": "ws",
+                "Start Time": "date",
+                "End Time": "end_time",
+                "Duration": "time",
             },
         },
 
         userWorkspaceList: {
             widgetLabel: "Workspaces",
-            presenterType: "TablePresenter",
+            presenterType: "HorizontalTablePresenter",
             modelViewName: "user_workspace_list",
 
             isPaginable: true,    // default value is "false"
@@ -218,12 +233,18 @@ function Configuration() {
 
             columnLinkPrefixList: {
                 "Name": "/analytics/pages/workspace-view.jsp?ws"
-            }
+            },
+            
+            mapColumnToServerSortParam: {
+                "Name": "ws",
+                "Sessions": "sessions",
+                "Time": "time",
+            },
         },
 
         userFactories: {
             widgetLabel: "Factories",
-            presenterType: "TablePresenter",
+            presenterType: "HorizontalTablePresenter",
             modelViewName: "user_factories",
 
             isPaginable: true,    // default value is "false"
@@ -235,33 +256,46 @@ function Configuration() {
             },
             
             /** @see DatabaseTable::makeTableSortable() method docs */
-            columnSortingParameters: {
+            clientSortParams: {
                 "descSortColumnNumber": 0
             },
+            
+            mapColumnToServerSortParam: {
+                "Date": "date",
+                "Factory URL": "factory",
+                "Workspace": "ws",
+                "Repository": "repository",
+                "Project": "project",
+                "Type": "project_type",
+            }
         },
 
         userActivity: {
             widgetLabel: "User Logs",
-            presenterType: "TablePresenter",
+            presenterType: "HorizontalTablePresenter",
             modelViewName: "user_activity",
 
             isPaginable: true,    // default value is "false"
             modelMetricName: "users_activity",
 
-            isSortable: true,   // default value is "false"
-            defaultSortParams: "-date",
+            defaultServerSortParams: "-date",
 
             doNotDisplayCSVButton: true,   // default value is "false"
             
             /** @see DatabaseTable::makeTableSortable() method docs */
-            columnSortingParameters: {
+            clientSortParams: {
                 "descSortColumnNumber": 0
+            },
+            
+            mapColumnToServerSortParam: {
+                "Date": "date",
+                "Console Log": "message",
             },
         },
 
         userEvents: {
             widgetLabel: "User Action",
-            presenterType: "TablePresenter",
+            presenterType: "HorizontalTablePresenter",
             modelViewName: "users_events",
         },
 
@@ -269,7 +303,7 @@ function Configuration() {
         /** for Session View */
         sessions: {
             widgetLabel: "Sessions",
-            presenterType: "SessionsPresenter",
+            presenterType: "EntryViewPresenter",
             modelViewName: "session_overview",
             modelMetricName: "product_usage_sessions",
 
@@ -280,8 +314,16 @@ function Configuration() {
             },
             
             /** @see DatabaseTable::makeTableSortable() method docs */
-            columnSortingParameters: {
+            clientSortParams: {
                 "descSortColumnNumber": 3
+            },
+            
+            mapColumnToServerSortParam: {
+                "ID": "session_id",
+                "User": "user",
+                "Workspace": "ws",
+                "Start Time": "date",
+                "Duration": "time",
             },
         },
 
@@ -303,7 +345,7 @@ function Configuration() {
 
         userSessionActivity: {
             widgetLabel: "Session Events",
-            presenterType: "TablePresenter",
+            presenterType: "HorizontalTablePresenter",
             modelViewName: "session_events",
             isNeedToSaveInHistory: false,   // default value = true
 
@@ -315,11 +357,10 @@ function Configuration() {
             modelMetricName: "users_activity",
             onePageRowsCount: 30,
 
-            isSortable: true,   // default value is "false"
-            defaultSortParams: "+date",
+            defaultServerSortParams: "+date",
             
             /** @see DatabaseTable::makeTableSortable() method docs */
-            columnSortingParameters: {
+            clientSortParams: {
                 "descSortColumnNumber": 0
             },
         },
@@ -327,7 +368,7 @@ function Configuration() {
         /** for Workspace View */
         workspaces: {
             widgetLabel: "Workspaces",
-            presenterType: "WorkspacesPresenter",
+            presenterType: "EntryViewPresenter",
             modelViewName: "workspaces",
             modelMetricName: "workspaces_statistics",
             columnLinkPrefixList: {
@@ -335,8 +376,14 @@ function Configuration() {
             },
             
             /** @see DatabaseTable::makeTableSortable() method docs */
-            columnSortingParameters: {
+            clientSortParams: {
                 "ascSortColumnNumber": 0
+            },
+            
+            mapColumnToServerSortParam: {
+                "Workspace": "ws",
+                "Time": "time",
+                "Sessions": "sessions",
             },
         },
 
@@ -349,14 +396,13 @@ function Configuration() {
 
         workspaceSessions: {
             widgetLabel: "Sessions",
-            presenterType: "TablePresenter",
+            presenterType: "HorizontalTablePresenter",
             modelViewName: "workspace_sessions",
 
             isPaginable: true,    // default value is "false"
             modelMetricName: "product_usage_sessions",
 
-            isSortable: true,   // default value is "false"
-            defaultSortParams: "-date",
+            defaultServerSortParams: "-date",
 
             columnLinkPrefixList: {
                 "ID": "/analytics/pages/session-view.jsp?session_id",
@@ -364,14 +410,22 @@ function Configuration() {
             },
             
             /** @see DatabaseTable::makeTableSortable() method docs */
-            columnSortingParameters: {
+            clientSortParams: {
                 "descSortColumnNumber": 2
+            },
+            
+            mapColumnToServerSortParam: {
+                "ID": "session_id",
+                "User": "user",
+                "Start Time": "date",
+                "End Time": "end_time",
+                "Duration": "time",
             },
         },
 
         workspaceUserList: {
             widgetLabel: "Users",
-            presenterType: "TablePresenter",
+            presenterType: "HorizontalTablePresenter",
             modelViewName: "workspace_user_list",
 
             isPaginable: true,    // default value is "false"
@@ -379,37 +433,54 @@ function Configuration() {
 
             columnLinkPrefixList: {
                 "Name": "/analytics/pages/user-view.jsp?user",
-            }
+            },
+            
+            mapColumnToServerSortParam: {
+                "Name": "user",
+                "Sessions": "sessions",
+                "Time": "time",
+            },
         },
 
         workspaceActivity: {
             widgetLabel: "Workspace Logs",
-            presenterType: "TablePresenter",
+            presenterType: "HorizontalTablePresenter",
             modelViewName: "workspace_activity",
 
             isPaginable: true,    // default value is "false"
             modelMetricName: "users_activity",
 
-            isSortable: true,   // default value is "false"
-            defaultSortParams: "-date",
+            defaultServerSortParams: "-date",
 
             doNotDisplayCSVButton: true,   // default value is "false"
             
             /** @see DatabaseTable::makeTableSortable() method docs */
-            columnSortingParameters: {
+            clientSortParams: {
                 "descSortColumnNumber": 0
+            },
+            
+            mapColumnToServerSortParam: {
+                "Date": "date",
+                "Console Log": "message",
             },
         },
 
         /** for Factory View */
         factories: {
             widgetLabel: "Factories",
-            presenterType: "FactoriesPresenter",
+            presenterType: "EntryViewPresenter",
             modelViewName: "factories",
             modelMetricName: "factory_statistics",
             columnLinkPrefixList: {
                 "Factory URL": "/analytics/pages/factory-view.jsp?factory"
-            }
+            },
+            
+            mapColumnToServerSortParam: {
+                "Factory URL": "factory",
+                "Clicks": "ws_created",
+                "Sessions": "sessions",
+                "Time": "time",
+            },
         },
 
         factoryOverview: {
@@ -426,14 +497,13 @@ function Configuration() {
 
         factorySessions: {
             widgetLabel: "Sessions",
-            presenterType: "TablePresenter",
+            presenterType: "HorizontalTablePresenter",
             modelViewName: "factory_sessions",
 
             isPaginable: true,    // default value is "false"
             modelMetricName: "product_usage_factory_sessions",
 
-            isSortable: true,   // default value is "false"
-            defaultSortParams: "-date",
+            defaultServerSortParams: "-date",
 
             columnLinkPrefixList: {
                 "ID": "/analytics/pages/session-view.jsp?session_id",
@@ -442,24 +512,41 @@ function Configuration() {
             },
             
             /** @see DatabaseTable::makeTableSortable() method docs */
-            columnSortingParameters: {
+            clientSortParams: {
                 "descSortColumnNumber": 3
+            },
+            
+            mapColumnToServerSortParam: {
+                "ID": "session_id",
+                "User": "user",
+                "Workspace": "ws",
+                "Start Time": "date",
+                "End Time": "end_time",
+                "Duration": "time",
             },
         },
 
         factoryUsers: {
             widgetLabel: "Users",
-            presenterType: "TablePresenter",
+            presenterType: "HorizontalTablePresenter",
             modelViewName: "factory_users",
 
             isPaginable: true,    // default value is "false"
             modelMetricName: "factory_users",
 
-            isSortable: true,   // default value is "false"
-            defaultSortParams: "-time",
+            defaultServerSortParams: "-time",
 
             columnLinkPrefixList: {
                 "User": "/analytics/pages/user-view.jsp?user",
+            },
+            
+            mapColumnToServerSortParam: {
+                "User": "user",
+                "# Sessions": "sessions",
+                "Duration": "time",
+                "# Runs": "run",
+                "# Builds": "build",
+                "# Deploys": "deploy",
             },
         },
     }
@@ -486,7 +573,7 @@ function Configuration() {
         "encoded_factory",
     ];
 
-    /** see method analytics.main.getParamsFromButtons()    */
+    /** see method analytics.main.getParamsFromButtons() */
     var registeredViewParams = [
         "user",              // users-view, factory-statistics, *-reports
         "domain",            // *-reports
@@ -507,20 +594,28 @@ function Configuration() {
 
     /** url params which are passed from other pages */
     var crossPageParams = [
-        "user",        // users-view > user-view; workspace-view > user-view; top metrics report > user-view
-        "sort",        // users-view > users-view; workspaces-view > workspaces-view
-        "page",        // user-view > user-view; users-view > users-view; workspaces-view > workspaces-view; workspace-view > workspace-view
-        "session_id",  // user-view > session-view; workspace-view > session-view; top metrics report > session-view 
-        "ws",          // workspaces-view > workspace-view; user-view > workspace-view
-        "factory",     // factories-view > factory-view; user-view > factory-view; workspace-view > factory-view; top metrics report > factory-view
+        "user",        // users-view > user-view; workspace-view > user-view;
+                        // top metrics report > user-view
+        "sort",        // users-view > users-view; workspaces-view >
+                        // workspaces-view
+        "page",        // user-view > user-view; users-view > users-view;
+                        // workspaces-view > workspaces-view; workspace-view >
+                        // workspace-view
+        "session_id",  // user-view > session-view; workspace-view >
+                        // session-view; top metrics report > session-view
+        "ws",          // workspaces-view > workspace-view; user-view >
+                        // workspace-view
+        "factory",     // factories-view > factory-view; user-view >
+                        // factory-view; workspace-view > factory-view; top
+                        // metrics report > factory-view
     ];
 
-    /** Global parameters stored in Browser Storage  */
+    /** Global parameters stored in Browser Storage */
     var globalParams = [
         "ide",
     ];
 
-    /** List of system messages of Analytics  */
+    /** List of system messages of Analytics */
     var systemMessagesList = [
         "User Did Not Enter Workspace",
     ];
@@ -543,7 +638,8 @@ function Configuration() {
     }
 
     /**
-     * Add model params which are undefined in modelParams and defined in widgetConfiguration[widgetName]["defaultModelParams"] property
+     * Add model params which are undefined in modelParams and defined in
+     * widgetConfiguration[widgetName]["defaultModelParams"] property
      */
     function setupDefaultModelParams(widgetName, modelParams) {
         var defaultModelParams = widgetConfiguration[widgetName]["defaultModelParams"];
@@ -606,7 +702,8 @@ function Configuration() {
     }
 
     /**
-     * Return modelParams which had been cleared from forbidden params defined in the configuration of widget with widgetName
+     * Return modelParams which had been cleared from forbidden params defined
+     * in the configuration of widget with widgetName
      */
     function removeForbiddenModelParams(widgetName, modelParams) {
         var forbiddenModelParams = widgetConfiguration[widgetName]["forbiddenModelParams"];

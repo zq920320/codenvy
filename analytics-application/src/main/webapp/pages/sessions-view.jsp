@@ -63,7 +63,6 @@
 
 <jsp:include page="/inclusions/footer.jsp">
     <jsp:param name="javaScriptToLoad" value="/analytics/scripts/presenters/EntryViewPresenter.js"/>
-    <jsp:param name="javaScriptToLoad" value="/analytics/scripts/presenters/SessionsPresenter.js"/>
 </jsp:include>
 
 <!--  load calendar jquery plugin  -->

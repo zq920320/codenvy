@@ -67,7 +67,6 @@
 
 <jsp:include page="/inclusions/footer.jsp">
     <jsp:param name="javaScriptToLoad" value="/analytics/scripts/presenters/EntryViewPresenter.js"/>
-    <jsp:param name="javaScriptToLoad" value="/analytics/scripts/presenters/FactoriesPresenter.js"/>
 </jsp:include>
 
 

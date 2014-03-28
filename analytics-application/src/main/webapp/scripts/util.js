@@ -202,20 +202,61 @@ function Util() {
         return null;
     }
     
+    /**
+     * For example: 
+     * 1) return "user-view.jsp" from page with next urls:
+     * "http://localhost:9763/analytics/pages/user-view.jsp" or
+     * "http://localhost:9763/analytics/pages/user-view.jsp?user=123"
+     * 
+     * 2) return "" from page with next urls:
+     * "http://localhost:9763/analytics/pages/" or
+     * "http://localhost:9763/analytics/pages/?user=123" 
+     */
+    function getCurrentPageName() {
+        var currentPageName = "";
+        var currentPageHref = location.href;
+
+        if (currentPageHref.indexOf("?") >= 0) {   // check if there is query parameters
+            var matches = currentPageHref.match(/\/(\/*.*\/)(.*)[?]+/);
+            if (matches.length > 0) {
+                currentPageName = matches[matches.length - 1];
+            }
+            
+        } else {
+            var matches = currentPageHref.match(/(\/*.*\/)(.*)/);
+            if (matches.length > 0) {
+                currentPageName = matches[matches.length - 1];
+            }
+        }
+        
+        return currentPageName;
+    }
+    
     /** ****************** library API ********** */
     return {
+        // url manipulations
     	constructUrlParams: constructUrlParams,
     	extractUrlParams: extractUrlParams,
-    	clone: clone,
-    	isBrowserSupportWebStorage: isBrowserSupportWebStorage,
+    	getCurrentPageName: getCurrentPageName,
+        
+    	// set operations
     	diff: diff,
     	unionWithRewrite: unionWithRewrite,
+        getSubset: getSubset,
+    	
+        // operations with parameters
     	removeParamsWithNullValues: removeParamsWithNullValues,
-    	processUserLogOut: processUserLogOut,
-    	getSubset: getSubset,
     	removeParams: removeParams,
     	removeElementFromArray: removeElementFromArray,
+    	
+    	// other operations
     	getColumnIndexByColumnName: getColumnIndexByColumnName,
+    	
+        isBrowserSupportWebStorage: isBrowserSupportWebStorage,
+        
+        clone: clone,
+    	
+        processUserLogOut: processUserLogOut,
     }
 
 }

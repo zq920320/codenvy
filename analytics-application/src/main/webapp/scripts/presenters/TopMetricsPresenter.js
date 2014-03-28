@@ -25,7 +25,7 @@ analytics.presenter.TopMetricsPresenter = function TopMetricsPresenter() {};
 
 analytics.presenter.TopMetricsPresenter.prototype = new Presenter();
 
-analytics.presenter.TopMetricsPresenter.prototype.columnSortingParameters = {
+analytics.presenter.TopMetricsPresenter.prototype.clientSortParams = {
     "top_factory_sessions": {
         "descSortColumnNumber": 0
     },
@@ -111,8 +111,8 @@ analytics.presenter.TopMetricsPresenter.prototype.load = function() {
             view.printTable(table, false);
         }
 
-        var columnSortingParameters = presenter.getColumnSortingParameters(presenter.metric, presenter.time_unit);
-        view.loadTableHandlers(true, columnSortingParameters);
+        var clientSortParams = presenter.getColumnSortingParameters(presenter.metric, presenter.time_unit);
+        view.loadTableHandlers(true, clientSortParams);
 
         view.print("</div>");
         
@@ -133,5 +133,5 @@ analytics.presenter.TopMetricsPresenter.prototype.getModelViewName = function(mo
  * Try to find out parameters by metric, then by time_unit.
  */
 analytics.presenter.TopMetricsPresenter.prototype.getColumnSortingParameters = function(metric, time_unit) {
-    return this.columnSortingParameters[metric] || this.columnSortingParameters[time_unit] || {};
+    return this.clientSortParams[metric] || this.clientSortParams[time_unit] || {};
 }

@@ -15,22 +15,17 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-function EntryViewPresenter() {};
+// create object instance
+analytics.presenter = analytics.presenter || {};
+analytics.presenter.EntryViewPresenter = function EntryViewPresenter() {};
 
-EntryViewPresenter.prototype = Presenter.prototype;
+// define prototype methods and properties
+analytics.presenter.EntryViewPresenter.prototype = Presenter.prototype;
 
-EntryViewPresenter.prototype.CURRENT_PAGE_QUERY_PARAMETER = "page";
-EntryViewPresenter.prototype.ONE_PAGE_ROWS_COUNT = 20;
-EntryViewPresenter.prototype.SORTING_PARAMETER = "sort";
-EntryViewPresenter.prototype.ASCENDING_ORDER_PREFIX = "+";
-EntryViewPresenter.prototype.DESCENDING_ORDER_PREFIX = "-";
-EntryViewPresenter.prototype.DEFAULT_ORDER_PREFIX = EntryViewPresenter.prototype.ASCENDING_ORDER_PREFIX;
+analytics.presenter.EntryViewPresenter.prototype.CURRENT_PAGE_QUERY_PARAMETER = "page";
+analytics.presenter.EntryViewPresenter.prototype.ONE_PAGE_ROWS_COUNT = 20;
 
-EntryViewPresenter.prototype.TARGET_PAGE_LINK = null;
-
-EntryViewPresenter.prototype.mapColumnNameToSortValue = null;
-
-EntryViewPresenter.prototype.load = function() {
+analytics.presenter.EntryViewPresenter.prototype.load = function() {
     var presenter = this; 
     var view = presenter.view;
     var model = presenter.model;
@@ -41,9 +36,7 @@ EntryViewPresenter.prototype.load = function() {
     // remove redundant params
     delete modelParams.page;
     delete modelParams.sort;
-    delete modelParams.per_page;
-
-    var sortingParameterValue = modelParams.sort || null;    
+    delete modelParams.per_page; 
 
     model.setParams(modelParams);
     
@@ -52,8 +45,6 @@ EntryViewPresenter.prototype.load = function() {
         var viewParams = view.getParams();
         var modelParams = presenter.getModelParams(viewParams);
         
-        var sortingParameterValue = modelParams.sort || null;
-                
         var pageCount = Math.ceil(data / presenter.ONE_PAGE_ROWS_COUNT) ;
     
         // process pagination
@@ -84,55 +75,17 @@ EntryViewPresenter.prototype.load = function() {
                 }                
             }
             
-            // print bottom page navigation
             if (pageCount > 1) {
-                // make table header as linked for sorting         
-                for (var i = 0; i < table.columns.length; i++) {
-                    var columnName = table.columns[i];
-                    var sortParamColumnName = presenter.mapColumnNameToSortValue[columnName];
-                    if (typeof sortParamColumnName == "undefined") {
-                        continue;
-                    }
-                   
-                    var isAscending = presenter.isSortingOrderAscending(sortParamColumnName, sortingParameterValue);
-                   
-                    if (isAscending == null) {
-                       var headerClassOption = "class='unsorted'";
-                       var newSortingParameterValue = presenter.DEFAULT_ORDER_PREFIX + sortParamColumnName;
-                      
-                    } else if (isAscending) {
-                       var headerClassOption = "class='ascending'";
-                       var newSortingParameterValue = presenter.DESCENDING_ORDER_PREFIX + sortParamColumnName;  // for example "-user_email"
-                
-                    } else {
-                       var headerClassOption = "class='descending'";
-                       var newSortingParameterValue = presenter.ASCENDING_ORDER_PREFIX + sortParamColumnName;  // for example "+user_email"
-                    }
-                
-                    if (typeof newSortingParameterValue == "undefined") {
-                        delete modelParams.sort;
-                    } else {
-                        modelParams.sort = newSortingParameterValue;
-                    }
-                
-                    var headerHref = presenter.TARGET_PAGE_LINK + "?" + analytics.util.constructUrlParams(modelParams);
-                    table.columns[i] = "<a href='" + headerHref + "' " + headerClassOption + ">" + columnName + "</a>";
-                }
+                // make table header as linked for sorting
+                table = presenter.addServerSortingLinks(table, presenter.widgetName, modelParams);                
                 
                 // print table
                 view.printTable(table, false);                 
-                
-                // remove page parameter
-                delete modelParams.page;
-               
-                // restore initial sort parameter value from URL
-                if (sortingParameterValue != null) {
-                    modelParams.sort = sortingParameterValue;
-                } else {
-                    delete modelParams.sort;
-                }
             
-                var queryString = presenter.TARGET_PAGE_LINK + "?" + analytics.util.constructUrlParams(modelParams);
+                // print bottom page navigation
+                delete modelParams.page;    // remove page parameter
+
+                var queryString = analytics.util.getCurrentPageName() + "?" + analytics.util.constructUrlParams(modelParams);
             
                 view.printBottomPageNavigator(pageCount, currentPageNumber, queryString, presenter.CURRENT_PAGE_QUERY_PARAMETER);
                 view.loadPageNavigationHandlers("analytics.main.reloadWidgetOnPageNavigation");
@@ -142,8 +95,8 @@ EntryViewPresenter.prototype.load = function() {
                 // print table
                 view.printTable(table, false); 
                 
-                var columnSortingParameters = analytics.configuration.getProperty(presenter.widgetName, "columnSortingParameters");
-                view.loadTableHandlers(true, columnSortingParameters);  // use client side sorting commands instead of links for server side sorting
+                var clientSortParams = analytics.configuration.getProperty(presenter.widgetName, "clientSortParams");
+                view.loadTableHandlers(true, clientSortParams);  // use client side sorting commands instead of links for server side sorting
             }
             
             view.print("</div>");
@@ -160,30 +113,4 @@ EntryViewPresenter.prototype.load = function() {
     
     var modelMetricName = analytics.configuration.getProperty(presenter.widgetName, "modelMetricName");
     model.getMetricValue(modelMetricName);
-}
-    
-/**
- * Return:
- * true, if sortingColumn = sortingParameterValue and sortingParameterValuePrefix = "+", for example: return true if sortingColumn="user_email" and sortingParameterValue = "+user_email"
- * false, if sortingColumn = sortingParameterValue and sortingParameterValuePrefix = "-", for example: return true if sortingColumn="user_email" and sortingParameterValue = "-user_email"
- * null, if sortingParameterValue = null, of sortingColumn != sortingParameterValue
- *
- */
-EntryViewPresenter.prototype.isSortingOrderAscending = function(sortingColumn, sortingParameterValue) {
-   var presenter = this; 
-    
-   if (sortingParameterValue == null) {
-      return null;
-   }
-
-   if (sortingParameterValue.substring(1) == sortingColumn) {
-      var sortingOrder = sortingParameterValue.charAt(0);
-      if (sortingOrder == presenter.ASCENDING_ORDER_PREFIX) {
-         return true;
-      } else if (sortingOrder == presenter.DESCENDING_ORDER_PREFIX){
-         return false;
-      }
-   }
-
-   return null;
 }

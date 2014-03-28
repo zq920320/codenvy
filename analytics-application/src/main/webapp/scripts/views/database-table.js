@@ -119,7 +119,7 @@ function DatabaseTable() {
    /**
     * Make table sortable by using DataTable plugin. 
     * Example of viewParams parameter value with number of column starting from 0:
-    *   columnSortingParameters: {
+    *   clientSortParams: {
     *       "ascSortColumnNumber": 1,
     *       "descSortColumnNumber": 3,
     *       "columnsWithoutSorting": ["_all"]
