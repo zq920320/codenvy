@@ -396,13 +396,12 @@
             // change password in Profile page
             changePassword : function(password,success,error){
 
-                var changePasswordUrl = "/api/password/change",
-                    id = getQueryParameterByName("id");
+                var changePasswordUrl = "/api/user/password";
 
                 $.ajax({
                     url : changePasswordUrl,
                     type : "POST",
-                    data : { uuid : id, password : password },
+                    data : "password="+password,
                     success : function(){
                         success({url: "/"});
                     },
