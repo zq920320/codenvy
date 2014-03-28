@@ -14,9 +14,9 @@ public class WorkspaceConverter implements ObjectConverter<com.codenvy.organizat
     public Workspace convert(com.codenvy.organization.model.Workspace workspaceOld) {
         List<Attribute> attributes = new ArrayList<>();
         for (Map.Entry<String, String> entry : workspaceOld.getAttributes().entrySet()) {
-            Attribute attribute = DtoFactory.getInstance().createDto(Attribute.class);
-            attribute.setName(entry.getKey());
-            attribute.setValue(entry.getValue());
+            Attribute attribute = DtoFactory.getInstance().createDto(Attribute.class)
+                                            .withName(entry.getKey())
+                                            .withValue(entry.getValue());
             attributes.add(attribute);
         }
 

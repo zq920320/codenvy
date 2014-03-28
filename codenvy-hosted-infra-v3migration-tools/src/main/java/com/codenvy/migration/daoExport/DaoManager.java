@@ -1,5 +1,6 @@
 package com.codenvy.migration.daoExport;
 
+import com.codenvy.api.dao.authentication.PasswordEncryptor;
 import com.codenvy.api.organization.server.dao.OrganizationDao;
 import com.codenvy.api.organization.server.exception.OrganizationException;
 import com.codenvy.api.organization.shared.dto.Organization;
@@ -27,6 +28,7 @@ import com.mongodb.MongoClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.naming.NamingException;
 import java.net.UnknownHostException;
 import java.util.Properties;
 
@@ -76,7 +78,12 @@ public class DaoManager {
                                   ldapProperties.getProperty(LDAP_PREF_SIZE),
                                   ldapProperties.getProperty(LDAP_TIMEOUT),
                                   ldapProperties.getProperty(LDAP_USER_CONTAINER),
-                                  new UserAttributesMapper()
+                                  new UserAttributesMapper(new PasswordEncryptor() {
+                                      @Override
+                                      public String encryptPassword(byte[] password) throws NamingException {
+                                          return new String(password);
+                                      }
+                                  }, new String[]{"inetOrgPerson"}, "cn", "uid", "userPassword", "mail", "initials")
         );
 
         try {

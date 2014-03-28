@@ -19,9 +19,9 @@ public class ProfileConverter implements ObjectConverter<com.codenvy.organizatio
             if (entry.getKey().startsWith("ssh.key") || entry.getKey().startsWith("paas.credential")) {
                 preferences.put(entry.getKey(), entry.getValue());
             } else {
-                Attribute attribute = DtoFactory.getInstance().createDto(Attribute.class);
-                attribute.setName(entry.getKey());
-                attribute.setValue(entry.getValue());
+                Attribute attribute = DtoFactory.getInstance().createDto(Attribute.class)
+                                                .withName(entry.getKey())
+                                                .withValue(entry.getValue());
                 attributes.add(attribute);
             }
         }

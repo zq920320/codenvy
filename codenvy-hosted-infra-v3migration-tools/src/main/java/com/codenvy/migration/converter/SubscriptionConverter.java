@@ -31,7 +31,7 @@ public class SubscriptionConverter implements ObjectConverter<Account, Subscript
 
     @Override
     public Subscription convert(Account account) {
-        Map<String, String> properties = new HashMap<>();
+        Map<String, String> properties = new HashMap<>(1);
         properties.put("transactionid", account.getAttribute(TRANSACTION_ID));
 
         return DtoFactory.getInstance().createDto(Subscription.class)
