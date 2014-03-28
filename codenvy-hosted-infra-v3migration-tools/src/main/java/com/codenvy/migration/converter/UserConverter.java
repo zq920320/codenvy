@@ -32,13 +32,16 @@ public class UserConverter implements ObjectConverter<com.codenvy.organization.m
                                    user.getPassword()));
         }
 
-        Set<String> allAliases = user.getAliases();
-        Iterator<String> iteratorAlias = allAliases.iterator();
-        result.setEmail(iteratorAlias.next());
-        iteratorAlias.remove();
+        Iterator<String> iteratorAlias = user.getAliases().iterator();
+        String email = iteratorAlias.next();
+        result.setEmail(email);
 
-        if (!allAliases.isEmpty()) {
-            result.setAliases(new ArrayList<>(allAliases));
+        if (user.getAliases().size() > 1) {
+            user.removeAlias(email);
+            Set<String> allAliases = user.getAliases();
+            if (!allAliases.isEmpty()) {
+                result.setAliases(new ArrayList<>(allAliases));
+            }
         }
 
         return result;
