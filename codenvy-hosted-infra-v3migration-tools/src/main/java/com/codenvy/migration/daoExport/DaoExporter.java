@@ -36,18 +36,18 @@ public class DaoExporter {
     private static final Logger LOG = LoggerFactory.getLogger(DaoExporter.class);
 
     // Constants for progress bar
-    private static final int PERCENTS_RANGE = 5;
+    private static final int PERCENTS_RANGE                = 5;
     private static final int NUMBER_PERCENT_EQUALS_ONE_DOT = 5;
-    private static final int DELAY_CHECK_PROGRESS = 1000;
+    private static final int DELAY_CHECK_PROGRESS          = 1000;
 
     private MemoryStorage memoryStorage;
     private DaoManager    daoManager;
 
-    private UserConverter         userConvertor;
-    private ProfileConverter      profileConvertor;
-    private WorkspaceConverter    workspaceConvertor;
-    private AccountConverter      accountConvertor;
-    private SubscriptionConverter subscriptionConvertor;
+    private UserConverter         userConverter;
+    private ProfileConverter      profileConverter;
+    private WorkspaceConverter    workspaceConverter;
+    private AccountConverter      accountConverter;
+    private SubscriptionConverter subscriptionConverter;
     private ExecutorService       executor;
     private CountDownLatch        doneExportObjectSignal;
     private CountDownLatch        doneExportLinkSignal;
@@ -55,17 +55,17 @@ public class DaoExporter {
     public DaoExporter(MemoryStorage memoryStorage, DaoManager daoManager) {
         this.memoryStorage = memoryStorage;
         this.daoManager = daoManager;
-        userConvertor = new UserConverter();
-        profileConvertor = new ProfileConverter();
-        workspaceConvertor = new WorkspaceConverter();
-        accountConvertor = new AccountConverter();
-        subscriptionConvertor = new SubscriptionConverter();
+        userConverter = new UserConverter();
+        profileConverter = new ProfileConverter();
+        workspaceConverter = new WorkspaceConverter();
+        accountConverter = new AccountConverter();
+        subscriptionConverter = new SubscriptionConverter();
     }
 
     private List<com.codenvy.api.workspace.shared.dto.Workspace> convertListWorkspace(List<Workspace> workspaces) {
         List<com.codenvy.api.workspace.shared.dto.Workspace> resWorkspaces = new ArrayList<>();
         for (Workspace workspace : workspaces) {
-            resWorkspaces.add(workspaceConvertor.convert(workspace));
+            resWorkspaces.add(workspaceConverter.convert(workspace));
         }
         return resWorkspaces;
     }
@@ -86,8 +86,8 @@ public class DaoExporter {
                     workspaces.add(memoryStorage.getWorkspaceById(workspaceLink.getId()));
                 }
 
-                if (subscriptionConvertor.accountHasSubscription(account)) {
-                    subscription = subscriptionConvertor.convert(account);
+                if (subscriptionConverter.accountHasSubscription(account)) {
+                    subscription = subscriptionConverter.convert(account);
                     account.removeAttribute(SubscriptionConverter.START_TIME);
                     account.removeAttribute(SubscriptionConverter.END_TIME);
                     account.removeAttribute(SubscriptionConverter.TRANSACTION_ID);
@@ -96,10 +96,10 @@ public class DaoExporter {
 
             }
 
-            Profile profile = profileConvertor.convert(user.getProfile()).withUserId(user.getId()).withId(user.getId());
+            Profile profile = profileConverter.convert(user.getProfile()).withUserId(user.getId()).withId(user.getId());
 
-            executor.execute(new ExporterLinkedObject(doneExportObjectSignal, daoManager, userConvertor.convert(user), profile,
-                                                      account == null ? null : accountConvertor.convert(account),
+            executor.execute(new ExporterLinkedObject(doneExportObjectSignal, daoManager, userConverter.convert(user), profile,
+                                                      account == null ? null : accountConverter.convert(account),
                                                       subscription,
                                                       convertListWorkspace(workspaces)));
         }
@@ -125,17 +125,21 @@ public class DaoExporter {
 
                         com.codenvy.api.user.shared.dto.Member workspacesMember = DtoFactory.getInstance().createDto
                                 (com.codenvy.api.user.shared.dto.Member.class)
-                                                        .withUserId(member.getUser().getId())
-                                                        .withWorkspaceId(workspace.getId())
-                                                        .withRoles(roles);
+                                                                                            .withUserId(member.getUser().getId())
+                                                                                            .withWorkspaceId(workspace.getId())
+                                                                                            .withRoles(roles);
                         workspaceMembers.add(workspacesMember);
 
                         if (!user.getId().equals(member.getUser().getId())) {
                             com.codenvy.api.organization.shared.dto.Member organizationMember = DtoFactory.getInstance().createDto
                                     (com.codenvy.api.organization.shared.dto.Member.class)
-                                         .withUserId(member.getUser().getId())
-                                         .withOrganizationId(workspace.getOwner().getId())
-                                         .withRoles(Arrays.asList("organization/member"));
+                                                                                                          .withUserId(
+                                                                                                                  member.getUser().getId())
+                                                                                                          .withOrganizationId(
+                                                                                                                  workspace.getOwner()
+                                                                                                                           .getId())
+                                                                                                          .withRoles(Arrays.asList(
+                                                                                                                  "organization/member"));
                             organizationMembers.add(organizationMember);
                         }
                     }
@@ -169,7 +173,8 @@ public class DaoExporter {
         }
     }
 
-    private static void printProgress(int percentsRange, int countOfExportObjects, CountDownLatch threadCounter) throws InterruptedException {
+    private static void printProgress(int percentsRange, int countOfExportObjects, CountDownLatch threadCounter)
+            throws InterruptedException {
         LOG.info(getStatus(0));
         double percentWeight = 100d / countOfExportObjects;
         int percentsBarrier = percentsRange;
