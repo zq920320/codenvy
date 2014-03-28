@@ -20,12 +20,12 @@
     <collection name="created_workspaces">
         <indexes>
             <index name="user">
-                <field>date</field>
                 <field>user</field>
+                <field>date</field>
             </index>
             <index name="ws">
-                <field>date</field>
                 <field>ws</field>
+                <field>date</field>
             </index>
         </indexes>
     </collection>
@@ -33,12 +33,12 @@
     <collection name="destroyed_workspaces">
         <indexes>
             <index name="user">
-                <field>date</field>
                 <field>user</field>
+                <field>date</field>
             </index>
             <index name="ws">
-                <field>date</field>
                 <field>ws</field>
+                <field>date</field>
             </index>
         </indexes>
     </collection>
@@ -46,12 +46,12 @@
     <collection name="created_projects">
         <indexes>
             <index name="user">
-                <field>date</field>
                 <field>user</field>
+                <field>date</field>
             </index>
             <index name="ws">
-                <field>date</field>
                 <field>ws</field>
+                <field>date</field>
             </index>
         </indexes>
     </collection>
@@ -59,12 +59,12 @@
     <collection name="destroyed_projects">
         <indexes>
             <index name="user">
-                <field>date</field>
                 <field>user</field>
+                <field>date</field>
             </index>
             <index name="ws">
-                <field>date</field>
                 <field>ws</field>
+                <field>date</field>
             </index>
         </indexes>
     </collection>
@@ -72,12 +72,12 @@
     <collection name="created_users">
         <indexes>
             <index name="user">
-                <field>date</field>
                 <field>user</field>
+                <field>date</field>
             </index>
             <index name="ws">
-                <field>date</field>
                 <field>ws</field>
+                <field>date</field>
             </index>
         </indexes>
     </collection>
@@ -85,12 +85,12 @@
     <collection name="removed_users">
         <indexes>
             <index name="user">
-                <field>date</field>
                 <field>user</field>
+                <field>date</field>
             </index>
             <index name="ws">
-                <field>date</field>
                 <field>ws</field>
+                <field>date</field>
             </index>
         </indexes>
     </collection>
@@ -98,12 +98,12 @@
     <collection name="user_invite">
         <indexes>
             <index name="user">
-                <field>date</field>
                 <field>user</field>
+                <field>date</field>
             </index>
             <index name="ws">
-                <field>date</field>
                 <field>ws</field>
+                <field>date</field>
             </index>
         </indexes>
     </collection>
@@ -111,12 +111,12 @@
     <collection name="shell_launched">
         <indexes>
             <index name="user">
-                <field>date</field>
                 <field>user</field>
+                <field>date</field>
             </index>
             <index name="ws">
-                <field>date</field>
                 <field>ws</field>
+                <field>date</field>
             </index>
         </indexes>
     </collection>
@@ -124,12 +124,12 @@
     <collection name="deploys">
         <indexes>
             <index name="user">
-                <field>date</field>
                 <field>user</field>
+                <field>date</field>
             </index>
             <index name="ws">
-                <field>date</field>
                 <field>ws</field>
+                <field>date</field>
             </index>
         </indexes>
     </collection>
@@ -138,12 +138,12 @@
     <collection name="deploys_to_paas">
         <indexes>
             <index name="user">
-                <field>date</field>
                 <field>user</field>
+                <field>date</field>
             </index>
             <index name="ws">
-                <field>date</field>
                 <field>ws</field>
+                <field>date</field>
             </index>
         </indexes>
     </collection>
@@ -152,12 +152,12 @@
     <collection name="runs">
         <indexes>
             <index name="user">
-                <field>date</field>
                 <field>user</field>
+                <field>date</field>
             </index>
             <index name="ws">
-                <field>date</field>
                 <field>ws</field>
+                <field>date</field>
             </index>
         </indexes>
     </collection>
@@ -165,12 +165,12 @@
     <collection name="builds">
         <indexes>
             <index name="user">
-                <field>date</field>
                 <field>user</field>
+                <field>date</field>
             </index>
             <index name="ws">
-                <field>date</field>
                 <field>ws</field>
+                <field>date</field>
             </index>
         </indexes>
     </collection>
@@ -178,12 +178,12 @@
     <collection name="debugs">
         <indexes>
             <index name="user">
-                <field>date</field>
                 <field>user</field>
+                <field>date</field>
             </index>
             <index name="ws">
-                <field>date</field>
                 <field>ws</field>
+                <field>date</field>
             </index>
         </indexes>
     </collection>
@@ -191,12 +191,12 @@
     <collection name="code_completions">
         <indexes>
             <index name="user">
-                <field>date</field>
                 <field>user</field>
+                <field>date</field>
             </index>
             <index name="ws">
-                <field>date</field>
                 <field>ws</field>
+                <field>date</field>
             </index>
         </indexes>
     </collection>
@@ -204,12 +204,12 @@
     <collection name="code_refactorings">
         <indexes>
             <index name="user">
-                <field>date</field>
                 <field>user</field>
+                <field>date</field>
             </index>
             <index name="ws">
-                <field>date</field>
                 <field>ws</field>
+                <field>date</field>
             </index>
         </indexes>
     </collection>
@@ -217,12 +217,12 @@
     <collection name="collaborative_sessions_started">
         <indexes>
             <index name="user">
-                <field>date</field>
                 <field>user</field>
+                <field>date</field>
             </index>
             <index name="ws">
-                <field>date</field>
                 <field>ws</field>
+                <field>date</field>
             </index>
         </indexes>
     </collection>
@@ -230,12 +230,12 @@
     <collection name="project_types">
         <indexes>
             <index name="user">
-                <field>date</field>
                 <field>user</field>
+                <field>date</field>
             </index>
             <index name="ws">
-                <field>date</field>
                 <field>ws</field>
+                <field>date</field>
             </index>
         </indexes>
     </collection>
@@ -243,12 +243,12 @@
     <collection name="users_logged_in_types">
         <indexes>
             <index name="user">
-                <field>date</field>
                 <field>user</field>
+                <field>date</field>
             </index>
             <index name="ws">
-                <field>date</field>
                 <field>ws</field>
+                <field>date</field>
             </index>
         </indexes>
     </collection>
@@ -256,12 +256,12 @@
     <collection name="users_added_to_workspaces">
         <indexes>
             <index name="user">
-                <field>date</field>
                 <field>user</field>
+                <field>date</field>
             </index>
             <index name="ws">
-                <field>date</field>
                 <field>ws</field>
+                <field>date</field>
             </index>
         </indexes>
     </collection>
@@ -269,12 +269,12 @@
     <collection name="project_paases">
         <indexes>
             <index name="user">
-                <field>date</field>
                 <field>user</field>
+                <field>date</field>
             </index>
             <index name="ws">
-                <field>date</field>
                 <field>ws</field>
+                <field>date</field>
             </index>
         </indexes>
     </collection>
@@ -296,12 +296,12 @@
     <collection name="builds_time">
         <indexes>
             <index name="user">
-                <field>date</field>
                 <field>user</field>
+                <field>date</field>
             </index>
             <index name="ws">
-                <field>date</field>
                 <field>ws</field>
+                <field>date</field>
             </index>
         </indexes>
     </collection>
@@ -309,12 +309,12 @@
     <collection name="runs_time">
         <indexes>
             <index name="user">
-                <field>date</field>
                 <field>user</field>
+                <field>date</field>
             </index>
             <index name="ws">
-                <field>date</field>
                 <field>ws</field>
+                <field>date</field>
             </index>
         </indexes>
     </collection>
@@ -322,12 +322,12 @@
     <collection name="debugs_time">
         <indexes>
             <index name="user">
-                <field>date</field>
                 <field>user</field>
+                <field>date</field>
             </index>
             <index name="ws">
-                <field>date</field>
                 <field>ws</field>
+                <field>date</field>
             </index>
         </indexes>
     </collection>
@@ -335,12 +335,12 @@
     <collection name="accepted_factories_list">
         <indexes>
             <index name="user">
-                <field>date</field>
                 <field>user</field>
+                <field>date</field>
             </index>
             <index name="ws">
-                <field>date</field>
                 <field>ws</field>
+                <field>date</field>
             </index>
             <index name="org_id">
                 <field>date</field>
@@ -364,12 +364,12 @@
     <collection name="created_users_from_factory">
         <indexes>
             <index name="user">
-                <field>date</field>
                 <field>user</field>
+                <field>date</field>
             </index>
             <index name="ws">
-                <field>date</field>
                 <field>ws</field>
+                <field>date</field>
             </index>
             <index name="org_id">
                 <field>date</field>
@@ -393,12 +393,12 @@
     <collection name="created_factories_set">
         <indexes>
             <index name="user">
-                <field>date</field>
                 <field>user</field>
+                <field>date</field>
             </index>
             <index name="ws">
-                <field>date</field>
                 <field>ws</field>
+                <field>date</field>
             </index>
             <index name="org_id">
                 <field>date</field>
@@ -422,12 +422,12 @@
     <collection name="temporary_workspaces_created">
         <indexes>
             <index name="user">
-                <field>date</field>
                 <field>user</field>
+                <field>date</field>
             </index>
             <index name="ws">
-                <field>date</field>
                 <field>ws</field>
+                <field>date</field>
             </index>
             <index name="org_id">
                 <field>date</field>
@@ -451,12 +451,12 @@
     <collection name="product_usage_factory_sessions_list">
         <indexes>
             <index name="user">
-                <field>date</field>
                 <field>user</field>
+                <field>date</field>
             </index>
             <index name="ws">
-                <field>date</field>
                 <field>ws</field>
+                <field>date</field>
             </index>
             <index name="org_id">
                 <field>date</field>
@@ -498,12 +498,12 @@
     <collection name="users_statistics_list">
         <indexes>
             <index name="user">
-                <field>date</field>
                 <field>user</field>
+                <field>date</field>
             </index>
             <index name="ws">
-                <field>date</field>
                 <field>ws</field>
+                <field>date</field>
             </index>
             <index name="sessions">
                 <field>sessions</field>
@@ -520,8 +520,8 @@
     <collection name="users_activity_list">
         <indexes>
             <index name="user">
-                <field>date</field>
                 <field>user</field>
+                <field>date</field>
             </index>
         </indexes>
     </collection>
@@ -529,12 +529,12 @@
     <collection name="runner_total_time">
         <indexes>
             <index name="user">
-                <field>date</field>
                 <field>user</field>
+                <field>date</field>
             </index>
             <index name="ws">
-                <field>date</field>
                 <field>ws</field>
+                <field>date</field>
             </index>
         </indexes>
     </collection>
@@ -542,12 +542,12 @@
     <collection name="ide_usages">
         <indexes>
             <index name="user">
-                <field>date</field>
                 <field>user</field>
+                <field>date</field>
             </index>
             <index name="ws">
-                <field>date</field>
                 <field>ws</field>
+                <field>date</field>
             </index>
         </indexes>
     </collection>
@@ -555,8 +555,8 @@
     <collection name="users_events">
         <indexes>
             <index name="user">
-                <field>date</field>
                 <field>user</field>
+                <field>date</field>
             </index>
         </indexes>
     </collection>
@@ -564,12 +564,12 @@
     <collection name="build_queue_terminations">
         <indexes>
             <index name="user">
-                <field>date</field>
                 <field>user</field>
+                <field>date</field>
             </index>
             <index name="ws">
-                <field>date</field>
                 <field>ws</field>
+                <field>date</field>
             </index>
         </indexes>
     </collection>
@@ -577,12 +577,12 @@
     <collection name="run_queue_terminations">
         <indexes>
             <index name="user">
-                <field>date</field>
                 <field>user</field>
+                <field>date</field>
             </index>
             <index name="ws">
-                <field>date</field>
                 <field>ws</field>
+                <field>date</field>
             </index>
         </indexes>
     </collection>
@@ -590,12 +590,12 @@
     <collection name="time_in_build_queue">
         <indexes>
             <index name="user">
-                <field>date</field>
                 <field>user</field>
+                <field>date</field>
             </index>
             <index name="ws">
-                <field>date</field>
                 <field>ws</field>
+                <field>date</field>
             </index>
         </indexes>
     </collection>
@@ -603,12 +603,12 @@
     <collection name="time_in_run_queue">
         <indexes>
             <index name="user">
-                <field>date</field>
                 <field>user</field>
+                <field>date</field>
             </index>
             <index name="ws">
-                <field>date</field>
                 <field>ws</field>
+                <field>date</field>
             </index>
         </indexes>
     </collection>
@@ -616,12 +616,12 @@
     <collection name="docker_configuration_time">
         <indexes>
             <index name="user">
-                <field>date</field>
                 <field>user</field>
+                <field>date</field>
             </index>
             <index name="ws">
-                <field>date</field>
                 <field>ws</field>
+                <field>date</field>
             </index>
         </indexes>
     </collection>

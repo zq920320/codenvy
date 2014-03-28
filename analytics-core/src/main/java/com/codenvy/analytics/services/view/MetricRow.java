@@ -336,7 +336,11 @@ public class MetricRow extends AbstractRow {
     protected ValueData getMetricValue(Context context) throws IOException {
         Context.Builder builder = new Context.Builder(context);
         for (Map.Entry<String, String> entry : filters.entrySet()) {
-            builder.put(MetricFilter.valueOf(entry.getKey().toUpperCase()), entry.getValue());
+            MetricFilter filter = MetricFilter.valueOf(entry.getKey().toUpperCase());
+            
+            if (!builder.exists(filter)) {
+                builder.put(filter, entry.getValue());
+            }
         }
 
         if (parameters.containsKey(SET_FROM_DATE_TO_DEFAULT_VALUE)
