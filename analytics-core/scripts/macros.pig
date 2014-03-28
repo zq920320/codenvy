@@ -97,9 +97,9 @@ DEFINE countByField(X, fieldNameParam) RETURNS Y {
 -- @param eventNamesParam - comma separated list of event names
 ---------------------------------------------------------------------------
 DEFINE filterByEvent(X, eventNamesParam) RETURNS Y {
-  $Y = FILTER $X BY '$eventNamesParam' == '*' OR INDEXOF('$eventNamesParam', event, 0) >= 0;
-};
+  $Y = FILTER $X BY '$eventNamesParam' == '*' OR IsEventInSet(event, '$eventNamesParam');
 
+};
 ---------------------------------------------------------------------------
 -- Filters events by names. Keeps only events out of passed list.
 -- @param eventsNameParam - comma separated list of event names

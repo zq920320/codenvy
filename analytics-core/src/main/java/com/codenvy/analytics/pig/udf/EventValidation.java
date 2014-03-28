@@ -33,11 +33,11 @@ import java.util.regex.Pattern;
  */
 public class EventValidation extends FilterFunc {
 
-    private static final String NULL = "null";
-    private static final String DEFAULT = "default";
-    private static final String WS = "WS";
-    private static final String USER = "USER";
-    private static final String EMPTY = "";
+    private static final String NULL          = "null";
+    private static final String DEFAULT       = "default";
+    private static final String WS            = "WS";
+    private static final String USER          = "USER";
+    private static final String EMPTY         = "";
     private static final String VALUE_PATTERN = "#([^\\s#][^#]*|)";
 
     private final EventsHolder eventsHolder;
@@ -74,12 +74,9 @@ public class EventValidation extends FilterFunc {
     }
 
     private boolean validateValue(String value, Parameter param) {
-        if (value.equalsIgnoreCase(NULL) ||
-            (value.equalsIgnoreCase(DEFAULT) && !param.isAllowEmptyValue()) ||
-            (value.equals(EMPTY) && !param.isAllowEmptyValue())) {
-            return false;
-        }
-        return true;
+        return !(value.equalsIgnoreCase(NULL) ||
+                 (value.equalsIgnoreCase(DEFAULT) && !param.isAllowEmptyValue()) ||
+                 (value.equals(EMPTY) && !param.isAllowEmptyValue()));
     }
 
     private boolean isEmptyValue(String parameterName, String message) {
@@ -88,7 +85,7 @@ public class EventValidation extends FilterFunc {
 
         if (m.find()) {
             String value = m.group().replace(parameterName + "#", EMPTY);
-           return  value.equalsIgnoreCase(NULL) ? true : value.equals(EMPTY);
+            return value.equalsIgnoreCase(NULL) || value.equals(EMPTY);
         }
 
         return false;

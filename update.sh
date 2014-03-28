@@ -17,7 +17,8 @@
 
 #!/bin/bash
 filename=`ls analytics-tomcat-pkg/target | grep analytics-tomcat-pkg`
-SSH_KEY_NAME=cl-server-prod-20130219
+#SSH_KEY_NAME=cl-server-prod-20130219
+SSH_KEY_NAME=git_nopass.key
 SSH_AS_USER_NAME=logreader
 AS_IP=syslog.codenvycorp.com
 home=/home/logreader/analytics-tomcat
