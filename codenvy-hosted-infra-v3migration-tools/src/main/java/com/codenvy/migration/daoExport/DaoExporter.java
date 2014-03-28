@@ -124,18 +124,18 @@ public class DaoExporter {
                         }
 
                         com.codenvy.api.user.shared.dto.Member workspacesMember = DtoFactory.getInstance().createDto
-                                (com.codenvy.api.user.shared.dto.Member.class);
-                        workspacesMember.setUserId(member.getUser().getId());
-                        workspacesMember.setWorkspaceId(workspace.getId());
-                        workspacesMember.setRoles(roles);
+                                (com.codenvy.api.user.shared.dto.Member.class)
+                                                        .withUserId(member.getUser().getId())
+                                                        .withWorkspaceId(workspace.getId())
+                                                        .withRoles(roles);
                         workspaceMembers.add(workspacesMember);
 
                         if (!user.getId().equals(member.getUser().getId())) {
                             com.codenvy.api.organization.shared.dto.Member organizationMember = DtoFactory.getInstance().createDto
-                                    (com.codenvy.api.organization.shared.dto.Member.class);
-                            organizationMember.setUserId(member.getUser().getId());
-                            organizationMember.setOrganizationId(workspace.getOwner().getId());
-                            organizationMember.setRoles(Arrays.asList("organization/member"));
+                                    (com.codenvy.api.organization.shared.dto.Member.class)
+                                         .withUserId(member.getUser().getId())
+                                         .withOrganizationId(workspace.getOwner().getId())
+                                         .withRoles(Arrays.asList("organization/member"));
                             organizationMembers.add(organizationMember);
                         }
                     }

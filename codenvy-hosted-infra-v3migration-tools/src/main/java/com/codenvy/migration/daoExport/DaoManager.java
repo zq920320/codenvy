@@ -105,22 +105,26 @@ public class DaoManager {
 
     public void addUser(User user) throws UserException {
         userDao.create(user);
-        LOG.debug("User was created: " + user.toString());
+        if (LOG.isDebugEnabled())
+            LOG.debug("User was created: " + user.toString());
     }
 
     public void addProfile(Profile profile) throws UserProfileException {
         userProfileDao.create(profile);
-        LOG.debug("Profile was created: " + profile);
+        if (LOG.isDebugEnabled())
+            LOG.debug("Profile was created: " + profile);
     }
 
     public void addWorkspace(Workspace workspace) throws WorkspaceException {
         workspaceDao.create(workspace);
-        LOG.debug("Workspace was created: " + workspace);
+        if (LOG.isDebugEnabled())
+            LOG.debug("Workspace was created: " + workspace);
     }
 
     public void addOrganization(Organization organization) throws OrganizationException {
         organizationDao.create(organization);
-        LOG.debug("Organization was created: " + organization);
+        if (LOG.isDebugEnabled())
+            LOG.debug("Organization was created: " + organization);
     }
 
     public void addOrganizationMember(com.codenvy.api.organization.shared.dto.Member member) throws OrganizationException {
@@ -132,11 +136,13 @@ public class DaoManager {
 
     public void addOrganizationSubcription(Subscription subscription) throws OrganizationException {
         organizationDao.addSubscription(subscription);
-        LOG.debug("Subscription was created: " + subscription);
+        if (LOG.isDebugEnabled())
+            LOG.debug("Subscription was created: " + subscription);
     }
 
     public void addWorkspaceMember(com.codenvy.api.user.shared.dto.Member member) throws MembershipException {
         memberDao.create(member);
-        LOG.debug("Member was added to workspace: " + member);
+        if (LOG.isDebugEnabled())
+            LOG.debug("Member was added to workspace: " + member);
     }
 }
