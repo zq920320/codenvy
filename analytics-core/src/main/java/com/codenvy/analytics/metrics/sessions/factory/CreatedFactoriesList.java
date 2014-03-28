@@ -45,7 +45,6 @@ public class CreatedFactoriesList extends AbstractListValueResulted {
                             FACTORY,
                             WS,
                             USER,
-                            PROJECT,
                             PROJECT_TYPE,
                             REPOSITORY,
                             AFFILIATE_ID,
