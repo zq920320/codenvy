@@ -343,20 +343,20 @@
                 <field>date</field>
             </index>
             <index name="org_id">
-                <field>date</field>
                 <field>org_id</field>
+                <field>date</field>
             </index>
             <index name="affiliate_id">
-                <field>date</field>
                 <field>affiliate_id</field>
+                <field>date</field>
             </index>
             <index name="referrer">
-                <field>date</field>
                 <field>referrer</field>
+                <field>date</field>
             </index>
             <index name="factory">
-                <field>date</field>
                 <field>factory</field>
+                <field>date</field>
             </index>
         </indexes>
     </collection>
@@ -372,20 +372,20 @@
                 <field>date</field>
             </index>
             <index name="org_id">
-                <field>date</field>
                 <field>org_id</field>
+                <field>date</field>
             </index>
             <index name="affiliate_id">
-                <field>date</field>
                 <field>affiliate_id</field>
+                <field>date</field>
             </index>
             <index name="referrer">
-                <field>date</field>
                 <field>referrer</field>
+                <field>date</field>
             </index>
             <index name="factory">
-                <field>date</field>
                 <field>factory</field>
+                <field>date</field>
             </index>
         </indexes>
     </collection>
@@ -401,20 +401,20 @@
                 <field>date</field>
             </index>
             <index name="org_id">
-                <field>date</field>
                 <field>org_id</field>
+                <field>date</field>
             </index>
             <index name="affiliate_id">
-                <field>date</field>
                 <field>affiliate_id</field>
+                <field>date</field>
             </index>
             <index name="referrer">
-                <field>date</field>
                 <field>referrer</field>
+                <field>date</field>
             </index>
             <index name="factory">
-                <field>date</field>
                 <field>factory</field>
+                <field>date</field>
             </index>
         </indexes>
     </collection>
@@ -430,20 +430,20 @@
                 <field>date</field>
             </index>
             <index name="org_id">
-                <field>date</field>
                 <field>org_id</field>
+                <field>date</field>
             </index>
             <index name="affiliate_id">
-                <field>date</field>
                 <field>affiliate_id</field>
+                <field>date</field>
             </index>
             <index name="referrer">
-                <field>date</field>
                 <field>referrer</field>
+                <field>date</field>
             </index>
             <index name="factory">
-                <field>date</field>
                 <field>factory</field>
+                <field>date</field>
             </index>
         </indexes>
     </collection>
@@ -459,24 +459,24 @@
                 <field>date</field>
             </index>
             <index name="org_id">
-                <field>date</field>
                 <field>org_id</field>
+                <field>date</field>
             </index>
             <index name="affiliate_id">
-                <field>date</field>
                 <field>affiliate_id</field>
+                <field>date</field>
             </index>
             <index name="referrer">
-                <field>date</field>
                 <field>referrer</field>
+                <field>date</field>
             </index>
             <index name="factory">
-                <field>date</field>
                 <field>factory</field>
+                <field>date</field>
             </index>
             <index name="encoded_factory">
-                <field>date</field>
                 <field>encoded_factory</field>
+                <field>date</field>
             </index>
         </indexes>
     </collection>
