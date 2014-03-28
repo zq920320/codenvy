@@ -76,14 +76,6 @@ public class FactoryUrlBaseValidator implements FactoryUrlValidator {
             "The parameter %s has a value submitted %s with a value that is unexpected. For more information, " +
             "please visit: http://docs.codenvy.com/user/creating-factories/factory-parameter-reference/.";
 
-    private static final String INVALID_PARAMETER_MESSAGE =
-            "Passed in an invalid parameter.  You either provided a non-valid parameter, or that parameter is not " +
-            "accepted for this Factory version.  For more information, please visit " +
-            "http://docs.codenvy.com/user/creating-factories/factory-parameter-reference/.";
-
-    private static final String PARAMETRIZED_ILLEGAL_PARAMETER_VALUE_MESSAGE =
-            "The parameter %s has a value submitted %s with a value that is unexpected. For more information, " +
-            "please visit: http://docs.codenvy.com/user/creating-factories/factory-parameter-reference/.";
     private static final Pattern PROJECT_NAME_VALIDATOR = Pattern.compile("^[\\\\\\w\\\\\\d]+[\\\\\\w\\\\\\d_.-]*$");
 
     private OrganizationDao organizationDao;
