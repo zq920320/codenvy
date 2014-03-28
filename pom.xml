@@ -27,7 +27,7 @@
     </parent>
     <groupId>com.codenvy.hosted-infrastructure</groupId>
     <artifactId>codenvy-hosted-infrastructure-parent</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
+    <version>0.2.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Codenvy Hosted :: Parent</name>
     <modules>
@@ -47,9 +47,9 @@
     </scm>
     <properties>
         <apacheds.version>1.5.7</apacheds.version>
-        <codenvy-commons.version>0.18.0-SNAPSHOT</codenvy-commons.version>
+        <codenvy-commons.version>0.19.0-SNAPSHOT</codenvy-commons.version>
         <codenvy.organization.version>0.12.0</codenvy.organization.version>
-        <codenvy.platform-api.version>0.14.0-SNAPSHOT</codenvy.platform-api.version>
+        <codenvy.platform-api.version>0.15.0-SNAPSHOT</codenvy.platform-api.version>
         <commons-codec.version>1.6</commons-codec.version>
         <commons-io.version>2.1</commons-io.version>
         <commons-lang.version>2.3</commons-lang.version>
