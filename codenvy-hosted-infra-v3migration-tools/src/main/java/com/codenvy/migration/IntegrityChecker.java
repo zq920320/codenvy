@@ -1,8 +1,17 @@
 package com.codenvy.migration;
 
 import com.codenvy.migration.converter.SubscriptionConverter;
-import com.codenvy.organization.model.*;
+import com.codenvy.migration.converter.UserConverter;
+import com.codenvy.migration.utils.PasswordUtils;
+import com.codenvy.organization.model.Account;
+import com.codenvy.organization.model.ItemReference;
+import com.codenvy.organization.model.Member;
+import com.codenvy.organization.model.Membership;
+import com.codenvy.organization.model.Role;
+import com.codenvy.organization.model.User;
+import com.codenvy.organization.model.Workspace;
 
+import org.apache.commons.codec.binary.Hex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,7 +73,8 @@ public class IntegrityChecker {
         }
 
         if (user.getPassword() == null || user.getPassword().isEmpty()) {
-            LOG.warn(String.format("User %s has null or empty password", user.getId()));
+            user.setPassword(Hex.encodeHexString(PasswordUtils.generateAndMD5HashPassword()));
+            LOG.warn(String.format("User %s has null or empty password and it was generated automatically", user.getId()));
         }
 
         if (user.getAliases().isEmpty()) {
