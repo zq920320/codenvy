@@ -32,9 +32,15 @@ function View() {
     var ABORT_LOADING_MESSAGE = "<i>Loading has been aborted.</i>";
 
 	
-    function printTable(table, isDisplaySpecificFirstCell) {
+    function printTable(table, isDisplaySpecificFirstCell, tableId) {
         print("<div>");
-	    print('<table cellspacing="0" class="database-table" align="center">');
+        
+        if (typeof tableId == "undefined") {
+            print('<table cellspacing="0" class="database-table" align="center">');
+        } else {
+            print('<table cellspacing="0" class="database-table" align="center" id="' + tableId + '">');
+        }
+        
 	    print('<thead aria-hidden="false">');
 	    print('<tr>');
 	
@@ -156,7 +162,7 @@ function View() {
 	 * Load handlers of table events.
 	 * Default value of displaySorting is true.
 	 */
-	function loadTableHandlers(displaySorting, sortingParams) {
+	function loadTableHandlers(displaySorting, sortingParams, tableId) {
 	    var sortingParams = sortingParams || {};
 	    if (typeof displaySorting == "undefined") {
 	        displaySorting = true;
@@ -164,7 +170,10 @@ function View() {
 	    
 	    print("<script>");
 	    print("  jQuery(function() { ");
-	    print("       analytics.views.databaseTable.setupHorizontalTableRowHandlers(" + displaySorting + ", '" + JSON.stringify(sortingParams) + "');");
+        print("       analytics.views.databaseTable.setupHorizontalTableRowHandlers("
+                + displaySorting + ", '"
+                + JSON.stringify(sortingParams) + "', '"
+                + tableId + "');");
 	    print("       analytics.views.databaseTable.setupVerticalTableRowHandlers();");
 	    print("  });");
 	    print("</script>");

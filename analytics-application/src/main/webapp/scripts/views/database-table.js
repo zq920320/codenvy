@@ -29,36 +29,52 @@ function DatabaseTable() {
    var MOUSEOVER_ROW_STYLE = " mouseover-row";
    var CLICKED_ROW_STYLE = " clicked-row";
  
-   var setupHorizontalTableRowHandlers = function(displaySorting, sortingParamsObjectString) {
-      var tables = document.getElementsByClassName("database-table");
-      if (tables != null) {      
-         for(var i = 0; i < tables.length; i++) {
-            var table = tables[i];
-            var rows = table.rows;
-            
-            // don't take into account header rows
-            var rowCount = rows.length;       
-
-            for (var j = 1; j < rowCount; j++) {
-               var row = rows[j];
-               
-               // add click event handler
-               row.addEventListener("click", onRowClick, true);
-               
-               // add mouse mouseover event handler
-               row.addEventListener("mouseover", onRowMouseover, true);
-               
-               // add mouse mouseout event handler
-               row.addEventListener("mouseout", onRowMouseout, true);
-            }
-            
-            if (displaySorting) {
-                var sortingParams = JSON.parse(sortingParamsObjectString);
-                makeTableSortable(table, sortingParams);
-            }
-         }
+   /**
+    * If table is without preset id, then tableId will be 'undefined'.
+    */
+   var setupHorizontalTableRowHandlers = function(displaySorting, sortingParamsObjectString, tableId) {
+      if (tableId == "undefined") {
+          var tables = document.getElementsByClassName("database-table");
+          if (tables != null) {      
+             for(var i = 0; i < tables.length; i++) {
+                var table = tables[i];
+                setupHorizontalTable(table, displaySorting, sortingParamsObjectString);
+             }
+          }
+      } else {
+          var table = document.getElementById(tableId);
+          if (typeof table != "undefined") {
+              setupHorizontalTable(table, displaySorting, sortingParamsObjectString);
+          }
       }
    };
+
+   var setupHorizontalTable = function(table, displaySorting, sortingParamsObjectString) {
+       var rows = table.rows;
+       
+       // don't take into account header rows
+       if (typeof rows != "undefined") {
+           var rowCount = rows.length;       
+    
+           for (var j = 1; j < rowCount; j++) {
+              var row = rows[j];
+              
+              // add click event handler
+              row.addEventListener("click", onRowClick, true);
+              
+              // add mouse mouseover event handler
+              row.addEventListener("mouseover", onRowMouseover, true);
+              
+              // add mouse mouseout event handler
+              row.addEventListener("mouseout", onRowMouseout, true);
+           }
+       
+           if (displaySorting) {
+               var sortingParams = JSON.parse(sortingParamsObjectString);
+               makeTableSortable(table, sortingParams);
+           }
+       }
+   }
    
    var setupVerticalTableRowHandlers = function() {
       var tables = document.getElementsByClassName("database-table-vertical-row");
