@@ -39,7 +39,7 @@ import java.util.regex.Pattern;
 /** Initialize  EnvironmentContext variables; */
 @Singleton
 public class EnvironmentContextInitializationFilter implements Filter {
-    public static final Pattern TENANT_URL_PATTERN = Pattern.compile("^(/ide/)(?!_sso)(rest/|websocket/)?(.+?)(/.*)?$");
+    public static final Pattern TENANT_URL_PATTERN = Pattern.compile("^(/ide/)(?!_sso|metrics)(rest/|websocket/)?(.+?)(/.*)?$");
 
     private final File           vfsRootDir;
     private final File           tempVfsRootDir;

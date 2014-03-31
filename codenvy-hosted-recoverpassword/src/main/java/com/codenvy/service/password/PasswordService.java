@@ -140,67 +140,6 @@ public class PasswordService {
     }
 
     /**
-     * Changes users password.
-     * <p/>
-     * <table>
-     * <tr>
-     * <th>Status</th>
-     * <th>Error description</th>
-     * </tr>
-     * <tr>
-     * <td>403</td>
-     * <td>access denied, user tries to update not his password.</td>
-     * </tr>
-     * <tr>
-     * <td>500</td>
-     * <td>problem with user database.</td>
-     * </tr>
-     * </table>
-     *
-     * @param password
-     *         - new users password
-     * @param securityContext
-     *         - the SequrityContext
-     * @return - the Response with corresponded status (200)
-     */
-    @POST
-    @Path("change")
-    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    public Response changePassword(@FormParam("password") String password, @Context HttpServletRequest request,
-                                   @Context SecurityContext securityContext) {
-        try {
-            String newPassword = password;
-            //try to get password parameter from request in the case if some filter
-            //already consumed body and Everrest is not able to read FormParam.
-            if (newPassword == null || newPassword.isEmpty()) {
-                newPassword = request.getParameter("password");
-            }
-
-            if (newPassword == null || newPassword.isEmpty()) {
-                LOG.error("Password parameter not found or not set. Please contact with administrators.");
-                return Response.status(500)
-                               .entity("Password parameter not found or not set. Please contact with " + "administrators.").build();
-            }
-
-            Principal currentPrincipal = securityContext.getUserPrincipal();
-            if (currentPrincipal == null || currentPrincipal.getName() == null) {
-                return Response.status(403).entity("You are not authenticated for using this method").build();
-            }
-
-            String userName = currentPrincipal.getName();
-
-            User user = userDao.getByAlias(userName);
-            user.setPassword(newPassword);
-            userDao.update(user);
-        } catch (UserException e) {
-            LOG.error("Error during changing user's password", e);
-            return Response.status(500).entity("Unable to change password. Please contact with administrators.").build();
-        }
-
-        return Response.ok().build();
-    }
-
-    /**
      * Verify setup password confirmation token.
      * <p/>
      * <table>
