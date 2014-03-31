@@ -19,7 +19,6 @@ package com.codenvy.service.http;
 
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
 import com.codenvy.api.workspace.server.exception.WorkspaceException;
-import com.codenvy.api.workspace.server.exception.WorkspaceNotFoundException;
 import com.codenvy.api.workspace.shared.dto.Workspace;
 import com.codenvy.commons.env.EnvironmentContext;
 
@@ -56,16 +55,17 @@ public class WorkspaceNameEnvironmentInitializationFilter implements Filter {
             if (matcher.matches()) {
                 workspaceName = matcher.group(2);
                 Workspace workspace = workspaceDao.getByName(workspaceName);
+                if (null == workspace) {
+                    ((HttpServletResponse)response).sendError(HttpServletResponse.SC_NOT_FOUND,
+                                                              "Workspace with name " + workspaceName +
+                                                              " is not found");
+                    return;
+                }
                 final EnvironmentContext env = EnvironmentContext.getCurrent();
                 env.setWorkspaceName(workspace.getName());
                 env.setWorkspaceId(workspace.getId());
             }
             chain.doFilter(request, response);
-        } catch (WorkspaceNotFoundException  e) {
-            ((HttpServletResponse)response)
-                    .sendError(HttpServletResponse.SC_NOT_FOUND,
-                               "Workspace with name " + workspaceName + " is not found");
-            return;
         } catch (WorkspaceException e) {
             throw new ServletException(e.getLocalizedMessage(), e);
         } finally {

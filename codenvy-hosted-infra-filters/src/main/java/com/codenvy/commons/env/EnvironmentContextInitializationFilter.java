@@ -88,6 +88,10 @@ public class EnvironmentContextInitializationFilter implements Filter {
                         httpResponse.sendError(HttpServletResponse.SC_NOT_FOUND, "Workspace " + tenant + "is not found");
                         return;
                     }
+                    if (null == workspace) {
+                        httpResponse.sendError(HttpServletResponse.SC_NOT_FOUND, "Workspace " + tenant + "is not found");
+                        return;
+                    }
                     workspaceCache.put(workspace.getName(), workspace);
                 }
                 EnvironmentContext context = EnvironmentContext.getCurrent();

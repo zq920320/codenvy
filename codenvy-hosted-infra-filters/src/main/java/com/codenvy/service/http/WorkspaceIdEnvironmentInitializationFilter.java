@@ -53,16 +53,17 @@ public class WorkspaceIdEnvironmentInitializationFilter implements Filter {
 
         try {
             Workspace workspace = workspaceDao.getById(pathParts[3]);
+            if (null == workspace) {
+                ((HttpServletResponse)response).sendError(HttpServletResponse.SC_NOT_FOUND,
+                                                          "Workspace with id " + pathParts[3] + " is not found");
+                return;
+            }
             final EnvironmentContext env = EnvironmentContext.getCurrent();
             env.setWorkspaceName(workspace.getName());
             env.setWorkspaceId(workspace.getId());
             env.setAccountId(workspace.getOrganizationId());
 
             chain.doFilter(request, response);
-        } catch (WorkspaceNotFoundException e) {
-            ((HttpServletResponse)response).sendError(HttpServletResponse.SC_NOT_FOUND,
-                                                      "Workspace with id " + pathParts[3] + " is not found");
-            return;
         } catch (WorkspaceException e) {
             throw new ServletException(e.getLocalizedMessage(), e);
         } finally {
