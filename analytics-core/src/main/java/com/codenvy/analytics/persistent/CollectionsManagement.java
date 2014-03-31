@@ -203,7 +203,7 @@ public class CollectionsManagement {
 
             dbCollection.ensureIndex(index, name);
         } else {
-            LOG.error("Collection " + collectionName + " doesn't exist");
+            LOG.warn("Collection " + collectionName + " doesn't exist");
         }
     }
 

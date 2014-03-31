@@ -23,7 +23,7 @@
                 <parameter key="section-name" value="# User Sessions"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="product_usage_sessions_total"/>
+                <parameter key="name" value="product_usage_sessions"/>
                 <parameter key="description" value="Total"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
@@ -43,13 +43,13 @@
                 <parameter key="description" value="&#0062; 60 Mins"/>
             </row>
         </section>
-        
+
         <section name="sessions_splits">
             <row class="com.codenvy.analytics.services.view.DateRow">
                 <parameter key="section-name" value="Sessions Splits"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="product_usage_sessions_total"/>
+                <parameter key="name" value="product_usage_sessions"/>
                 <parameter key="description" value="Total"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
@@ -57,9 +57,9 @@
                 <parameter key="description" value="Factory Sessions"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="product_usage_sessions"/>
+                <parameter key="name" value="non_factories_product_usage_sessions"/>
                 <parameter key="description" value="User Sessions"/>
-            </row>            
+            </row>
         </section>
     </view>
 </display>

@@ -29,27 +29,20 @@ import java.io.IOException;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
-public class ProductUsageSessionsTotal extends CalculatedMetric {
+public class NonFactoriesProductUsageSessions extends CalculatedMetric {
 
-    public ProductUsageSessionsTotal() {
-        super(MetricType.PRODUCT_USAGE_SESSIONS_TOTAL,
-              new MetricType[]{MetricType.PRODUCT_USAGE_SESSIONS_BELOW_1_MIN,
-                               MetricType.PRODUCT_USAGE_SESSIONS_BETWEEN_1_AND_10_MIN,
-                               MetricType.PRODUCT_USAGE_SESSIONS_BETWEEN_10_AND_60_MIN,
-                               MetricType.PRODUCT_USAGE_SESSIONS_ABOVE_60_MIN});
+    public NonFactoriesProductUsageSessions() {
+        super(MetricType.NON_FACTORIES_PRODUCT_USAGE_SESSIONS,
+              new MetricType[]{MetricType.PRODUCT_USAGE_SESSIONS,
+                               MetricType.PRODUCT_USAGE_FACTORY_SESSIONS});
     }
 
     @Override
     public ValueData getValue(Context context) throws IOException {
-        LongValueData value1 = ValueDataUtil.getAsLong(basedMetric[0], context);
-        LongValueData value2 = ValueDataUtil.getAsLong(basedMetric[1], context);
-        LongValueData value3 = ValueDataUtil.getAsLong(basedMetric[2], context);
-        LongValueData value4 = ValueDataUtil.getAsLong(basedMetric[3], context);
+        LongValueData total = ValueDataUtil.getAsLong(basedMetric[0], context);
+        LongValueData factory = ValueDataUtil.getAsLong(basedMetric[1], context);
 
-        return new LongValueData(value1.getAsLong()
-                                 + value2.getAsLong()
-                                 + value3.getAsLong()
-                                 + value4.getAsLong());
+        return LongValueData.valueOf(total.getAsLong() - factory.getAsLong());
     }
 
     @Override
@@ -59,6 +52,6 @@ public class ProductUsageSessionsTotal extends CalculatedMetric {
 
     @Override
     public String getDescription() {
-        return "The number of all sessions in persistent workspaces";
+        return "The total number of users sessions";
     }
 }

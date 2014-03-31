@@ -109,7 +109,6 @@ com.codenvy.analytics.metrics.sessions.ProductUsageSessionsBelow1Min
 com.codenvy.analytics.metrics.sessions.ProductUsageSessionsBetween1And10Min
 com.codenvy.analytics.metrics.sessions.ProductUsageSessionsBetween10And60Min
 com.codenvy.analytics.metrics.sessions.ProductUsageSessionsAbove60Min
-com.codenvy.analytics.metrics.sessions.ProductUsageSessionsTotal
 com.codenvy.analytics.metrics.sessions.ProductUsageTimeBelow1Min
 com.codenvy.analytics.metrics.sessions.ProductUsageTimeBetween1And10Min
 com.codenvy.analytics.metrics.sessions.ProductUsageTimeBetween10And60Min
@@ -169,6 +168,8 @@ com.codenvy.analytics.metrics.sessions.factory.FactorySessionsWithDeployPercent
 com.codenvy.analytics.metrics.sessions.factory.FactorySessionsBelow10Min
 com.codenvy.analytics.metrics.sessions.factory.FactorySessionsAbove10Min
 com.codenvy.analytics.metrics.sessions.factory.FactorySessionsProductUsageTotal
+
+com.codenvy.analytics.metrics.sessions.NonFactoriesProductUsageSessions
 
 com.codenvy.analytics.metrics.top.TopFactorySessionsBy1Day
 com.codenvy.analytics.metrics.top.TopFactorySessionsBy7Day

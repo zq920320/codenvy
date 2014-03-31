@@ -39,7 +39,7 @@
                 <parameter key="description" value="Active Users"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="product_usage_sessions_total"/>
+                <parameter key="name" value="product_usage_sessions"/>
                 <parameter key="description" value="Sessions"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">

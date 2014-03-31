@@ -225,7 +225,7 @@
                 <parameter key="section-name" value="# User Sessions"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="product_usage_sessions_total"/>
+                <parameter key="name" value="product_usage_sessions"/>
                 <parameter key="description" value="Total"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
