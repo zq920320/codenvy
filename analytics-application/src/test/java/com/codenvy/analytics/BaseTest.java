@@ -18,28 +18,15 @@
 
 package com.codenvy.analytics;
 
-import de.flapdoodle.embed.mongo.MongodProcess;
-
 import com.codenvy.analytics.persistent.MongoDataStorage;
 import com.codenvy.analytics.pig.PigServer;
 import com.mongodb.DB;
 
-import org.apache.pig.data.TupleFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.testng.annotations.BeforeClass;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 
 /** @author Dmytro Nochevnov */
 public class BaseTest {
-    public static final    String BASE_DIR = "target";
-    protected static final Logger LOG      = LoggerFactory.getLogger(BaseTest.class);
-
-
-
-    private MongodProcess embeddedMongoProcess;
+    public static final String BASE_DIR = "target";
 
     protected final Configurator     configurator;
     protected final PigServer        pigServer;

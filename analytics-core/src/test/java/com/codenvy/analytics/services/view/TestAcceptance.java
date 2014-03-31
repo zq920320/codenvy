@@ -26,11 +26,9 @@ import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.StringValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.*;
-import com.codenvy.analytics.persistent.CollectionsManagement;
 import com.codenvy.analytics.persistent.JdbcDataPersisterFactory;
 import com.codenvy.analytics.services.configuration.XmlConfigurationManager;
 import com.codenvy.analytics.services.pig.PigRunner;
-import com.codenvy.analytics.services.pig.PigRunnerConfiguration;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.OutputSupplier;
 
@@ -68,7 +66,7 @@ public class TestAcceptance extends BaseTest {
             TestAcceptance.class.getSimpleName() + "/messages_2013-11-24";
 
     @BeforeClass
-    public void prepare() throws Exception {
+    public void init() throws Exception {
         pigRunner = getPigRunner();
         viewBuilder = getViewBuilder(TEST_VIEW_CONFIGURATION_FILE);
         runScript();
@@ -690,22 +688,6 @@ public class TestAcceptance extends BaseTest {
                                    Injector.getInstance(CSVReportPersister.class),
                                    viewConfigurationManager,
                                    viewConfigurator));
-    }
-
-    /** Creates pig runner with test configuration */
-    private PigRunner getPigRunner(final String scriptConfigurationPath) throws IOException {
-        XmlConfigurationManager pigRunnerConfigurationManager = mock(XmlConfigurationManager.class);
-
-        when(pigRunnerConfigurationManager.loadConfiguration(any(Class.class), anyString())).thenAnswer(
-                new Answer<Object>() {
-                    @Override
-                    public Object answer(InvocationOnMock invocation) throws Throwable {
-                        XmlConfigurationManager manager = new XmlConfigurationManager();
-                        return manager.loadConfiguration(PigRunnerConfiguration.class, scriptConfigurationPath);
-                    }
-                });
-
-        return spy(new PigRunner(Injector.getInstance(CollectionsManagement.class), pigRunnerConfigurationManager));
     }
 
     /** Get pig runner with default configuration */

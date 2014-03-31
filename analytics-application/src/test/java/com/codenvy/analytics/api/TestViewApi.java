@@ -17,37 +17,6 @@
  */
 package com.codenvy.analytics.api;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.testng.Assert.assertEquals;
-
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-
-import org.mockito.ArgumentCaptor;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.Configurator;
 import com.codenvy.analytics.Injector;
@@ -64,21 +33,37 @@ import com.codenvy.analytics.services.view.ViewData;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.OutputSupplier;
 
+import org.mockito.ArgumentCaptor;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
+
+import java.io.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.*;
+import static org.testng.Assert.assertEquals;
+
 /** @author Dmytro Nochevnov */
 public class TestViewApi extends BaseTest {
 
-    private ViewBuilder         viewBuilder;
-    private PigRunner           pigRunner;
+    private ViewBuilder viewBuilder;
+    private PigRunner   pigRunner;
 
-    private static final String TEST_RESOURCE_DIR       = BASE_DIR + "/test-classes/"
-                                                          + TestViewApi.class.getSimpleName();
+    private static final String TEST_RESOURCE_DIR = BASE_DIR + "/test-classes/"
+                                                    + TestViewApi.class.getSimpleName();
 
     private static final String VIEW_CONFIGURATION_FILE = TEST_RESOURCE_DIR + "/view.xml";
     private static final String LOG_FILE                = TestViewApi.class.getSimpleName() + "/messages";
     private static final String EXPECTED_JSON_FILE      = TestViewApi.class.getSimpleName() + "/expected.json";
     private static final String EXPECTED_CSV_FILE       = TestViewApi.class.getSimpleName() + "/expected.csv";
 
-    @BeforeMethod
+    @BeforeClass
     public void prepare() throws Exception {
         pigRunner = getPigRunner();
         viewBuilder = getViewBuilder(VIEW_CONFIGURATION_FILE);
@@ -156,9 +141,9 @@ public class TestViewApi extends BaseTest {
         Context context = Utils.initializeContext(Parameters.TimeUnit.DAY);
 
         context =
-                  context.cloneAndPut(Parameters.LOG,
-                                      getResourceAsBytes(LOG_FILE, "2013-11-24", getYesterday())
-                                                                                                .getAbsolutePath());
+                context.cloneAndPut(Parameters.LOG,
+                                    getResourceAsBytes(LOG_FILE, "2013-11-24", getYesterday())
+                                            .getAbsolutePath());
         pigRunner.forceExecute(context);
     }
 
