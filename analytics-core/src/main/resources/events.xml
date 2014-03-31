@@ -90,6 +90,26 @@
             <param>ID</param>
         </parameters>
     </event>
+    <event name="debug-started">
+        <description>Debug started</description>
+        <parameters>
+            <param>WS</param>
+            <param>USER</param>
+            <param>PROJECT</param>
+            <param>TYPE</param>
+            <param>ID</param>
+        </parameters>
+    </event>
+    <event name="debug-finished">
+        <description>Debug finished</description>
+        <parameters>
+            <param>WS</param>
+            <param>USER</param>
+            <param>PROJECT</param>
+            <param>TYPE</param>
+            <param>ID</param>
+        </parameters>
+    </event>
     <event name="build-queue-waiting-started">
         <description>Build queue started</description>
         <parameters>
