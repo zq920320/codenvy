@@ -24,23 +24,35 @@
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="total_workspaces"/>
-                <parameter key="description" value="Workspaces"/>
+                <parameter key="description" value="Workspaces - Cumulative"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="created_workspaces"/>
+                <parameter key="description" value="Workspaces - Added"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="active_workspaces"/>
-                <parameter key="description" value="Active Workspaces"/>
+                <parameter key="description" value="Workspaces - Active"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="total_users"/>
-                <parameter key="description" value="User Accounts"/>
-            </row>  
+                <parameter key="description" value="User - Cumulative"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="created_users"/>
+                <parameter key="description" value="User - Added"/>
+            </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="active_users"/>
-                <parameter key="description" value="Active Users"/>
+                <parameter key="description" value="Users - Active"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="product_usage_sessions"/>
-                <parameter key="description" value="Sessions"/>
+                <parameter key="description" value="Sessions - Cumulative"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="factory_sessions"/>
+                <parameter key="description" value="Sessions - From Factories"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="product_usage_time_total"/>
@@ -61,8 +73,12 @@
             </row>            
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="total_factories"/>
-                <parameter key="description" value="Factories Registered"/>
-            </row>            
+                <parameter key="description" value="Factories - Cumulative"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="created_factories"/>
+                <parameter key="description" value="Factories - Added"/>
+            </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="user_invite"/>
                 <parameter key="description" value="Invitations Sent"/>
