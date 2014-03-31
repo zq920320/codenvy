@@ -185,28 +185,4 @@ public class PasswordServiceTest {
         verifyZeroInteractions(recoveryStorage);
     }
 
-    @Test
-    public void shouldBeAbleToUpdatePass() throws Exception {
-        when(userDao.getByAlias(ADMIN_USER_NAME)).thenReturn(user);
-        Response response =
-                given().auth().basic(ADMIN_USER_NAME, ADMIN_USER_PASSWORD).formParam("password", "NEW " + ADMIN_USER_PASSWORD)
-                        .when().post(SECURE_PATH + SERVICE_PATH + "/change");
-
-        assertEquals(response.statusCode(), 200);
-
-        verify(userDao).update(any(User.class));
-    }
-
-    @Test
-    public void shouldRespond500OnChangingPassError() throws Exception {
-        when(userDao.getByAlias(ADMIN_USER_NAME)).thenReturn(user);
-        doThrow(new UserException("test")).when(userDao).update(any(User.class));
-
-        Response response =
-                given().auth().basic(ADMIN_USER_NAME, ADMIN_USER_PASSWORD).formParam("password", "NEW " + ADMIN_USER_PASSWORD)
-                        .when().post(SECURE_PATH + SERVICE_PATH + "/change");
-
-        assertEquals(response.statusCode(), 500);
-        assertEquals(response.body().asString(), "Unable to change password. Please contact with administrators.");
-    }
 }
