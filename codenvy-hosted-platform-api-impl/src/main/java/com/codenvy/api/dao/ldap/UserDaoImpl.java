@@ -21,7 +21,6 @@ import com.codenvy.api.user.server.dao.UserDao;
 import com.codenvy.api.user.server.exception.UserException;
 import com.codenvy.api.user.server.exception.UserNotFoundException;
 import com.codenvy.api.user.shared.dto.User;
-import com.codenvy.commons.lang.cache.SLRUCache;
 import com.codenvy.dto.server.DtoFactory;
 
 import org.slf4j.Logger;
@@ -31,14 +30,19 @@ import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
-import javax.naming.*;
-import javax.naming.directory.*;
+import javax.naming.AuthenticationException;
+import javax.naming.Context;
+import javax.naming.NameAlreadyBoundException;
+import javax.naming.NameNotFoundException;
+import javax.naming.NamingEnumeration;
+import javax.naming.NamingException;
+import javax.naming.directory.Attributes;
+import javax.naming.directory.DirContext;
+import javax.naming.directory.ModificationItem;
+import javax.naming.directory.SearchControls;
+import javax.naming.directory.SearchResult;
 import javax.naming.ldap.InitialLdapContext;
 import java.util.Hashtable;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * LDAP based implementation of {@code UserDao}.
@@ -62,11 +66,6 @@ public class UserDaoImpl implements UserDao {
 
     protected final UserAttributesMapper userAttributesMapper;
     private final   String               userObjectclassFilter;
-
-    private final SLRUCache<String, User>[] idToUserCache;
-    private final Lock[]                    cacheLock;
-    private final int                       partitionMask;
-    private final Map<String, String>       aliasToIdMap;
 
     /**
      * Creates new instance of {@code UserDaoImpl}.
@@ -133,34 +132,6 @@ public class UserDaoImpl implements UserDao {
             sb.append(')');
         }
         this.userObjectclassFilter = sb.toString();
-        final int cacheCapacity = 2000;
-        final int partitions = 16;
-        this.aliasToIdMap = new ConcurrentHashMap<>();
-        this.partitionMask = partitions - 1;
-        this.idToUserCache = new SLRUCache[partitions];
-        this.cacheLock = new Lock[partitions];
-        final int partitionSize = cacheCapacity / partitions;
-        final int partitionProbationSize = (int)Math.ceil(partitionSize * 0.25);
-        for (int i = 0; i < partitions; i++) {
-            this.idToUserCache[i] = new SLRUCache<String, User>(partitionSize, partitionProbationSize) {
-                @Override
-                public User put(String key, User value) {
-                    final User old = super.put(key, value);
-                    for (String alias : value.getAliases()) {
-                        aliasToIdMap.put(alias, key);
-                    }
-                    return old;
-                }
-
-                @Override
-                protected void evict(String key, User value) {
-                    for (String alias : value.getAliases()) {
-                        aliasToIdMap.remove(alias);
-                    }
-                }
-            };
-            this.cacheLock[i] = new ReentrantLock();
-        }
     }
 
     UserDaoImpl(@Named(Context.PROVIDER_URL) String providerUrl,
@@ -294,7 +265,6 @@ public class UserDaoImpl implements UserDao {
                 }
             } finally {
                 close(context);
-                removeCachedEntry(id);
             }
         } catch (NamingException e) {
             throw new UserException(String.format("Unable update user '%s'", user.getEmail()), e);
@@ -313,7 +283,6 @@ public class UserDaoImpl implements UserDao {
             throw new UserException(String.format("Unable remove user '%s'", id), e);
         } finally {
             close(context);
-            removeCachedEntry(id);
         }
     }
 
@@ -343,101 +312,34 @@ public class UserDaoImpl implements UserDao {
         }
     }
 
-    public void cleanCache() {
-        for (int i = 0; i < idToUserCache.length; i++) {
-            cacheLock[i].lock();
-            try {
-                idToUserCache[i].clear();
-            } finally {
-                cacheLock[i].unlock();
-            }
-        }
-    }
-
-    /*
-    void printCacheStats() {
-        for (int i = 0; i < idToUserCache.length; i++) {
-            cacheLock[i].lock();
-            try {
-                idToUserCache[i].printStats();
-            } finally {
-                cacheLock[i].unlock();
-            }
-        }
-    }
-    */
-
     private User doGetByAlias(String alias) throws NamingException {
-        String id = aliasToIdMap.get(alias);
-        if (id == null) {
-            User user = null;
-            InitialLdapContext context = null;
-            try {
-                context = getLdapContext();
-                final Attributes attributes = getUserAttributesByAlias(context, alias);
-                if (attributes != null) {
-                    user = userAttributesMapper.fromAttributes(attributes);
-                }
-            } finally {
-                close(context);
+        User user = null;
+        InitialLdapContext context = null;
+        try {
+            context = getLdapContext();
+            final Attributes attributes = getUserAttributesByAlias(context, alias);
+            if (attributes != null) {
+                user = userAttributesMapper.fromAttributes(attributes);
             }
-            if (user != null) {
-                cacheEntry(user);
-            }
-            return user;
-        }
-        return doGetById(id);
-    }
-
-    private User doGetById(String id) throws NamingException {
-        User user = getEntryIfCached(id);
-        if (user == null) {
-            InitialLdapContext context = null;
-            try {
-                context = getLdapContext();
-                final Attributes attributes = getUserAttributesById(context, id);
-                if (attributes != null) {
-                    user = userAttributesMapper.fromAttributes(attributes);
-                }
-            } finally {
-                close(context);
-            }
-            if (user != null) {
-                cacheEntry(user);
-            }
+        } finally {
+            close(context);
         }
         return user;
     }
 
-    private void cacheEntry(User user) {
-        final String id = user.getId();
-        final int idx = id.hashCode() & partitionMask;
-        cacheLock[idx].lock();
+    private User doGetById(String id) throws NamingException {
+        User user = null;
+        InitialLdapContext context = null;
         try {
-            idToUserCache[idx].put(id, user);
+            context = getLdapContext();
+            final Attributes attributes = getUserAttributesById(context, id);
+            if (attributes != null) {
+                user = userAttributesMapper.fromAttributes(attributes);
+            }
         } finally {
-            cacheLock[idx].unlock();
+            close(context);
         }
-    }
-
-    private User getEntryIfCached(String id) {
-        final int idx = id.hashCode() & partitionMask;
-        cacheLock[idx].lock();
-        try {
-            return idToUserCache[idx].get(id);
-        } finally {
-            cacheLock[idx].unlock();
-        }
-    }
-
-    private User removeCachedEntry(String id) {
-        final int idx = id.hashCode() & partitionMask;
-        cacheLock[idx].lock();
-        try {
-            return idToUserCache[idx].remove(id);
-        } finally {
-            cacheLock[idx].unlock();
-        }
+        return user;
     }
 
     protected String getUserDn(String userId) {
