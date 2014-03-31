@@ -183,7 +183,7 @@ function View() {
 	 * Prints page navigator, meets the requirements: 1 ... 4 5 6 /7/ 9 10 11 ... 100.
 	 * CurrentPageNumber is 1-based. 
 	 */
-	function printBottomPageNavigator(pageCount, currentPageNumber, queryString, pageQueryParameter) {
+	function printBottomPageNavigator(pageCount, currentPageNumber, queryString, pageQueryParameter, widgetName) {
 	    if (typeof pageCount == "undefined" || pageCount <= 0) {
 	        return;
 	    }
@@ -194,11 +194,14 @@ function View() {
 	    for (var i = 1; i < pageCount + 1; i++) {
 	        var href = getPageNavigationUrl(queryString, i, pageQueryParameter);
 	
+	        var onClickHandler = "analytics.main.reloadWidgetByUrl(\"" + href + "\",\"" + widgetName + "\"); return false;";
+	        
+	        
 	        if (i == currentPageNumber) {
-	            print("<a class='page-link current' href='" + href + "'>" + i + "</a>");
+	            print("<a class='page-link current' href='" + href + "' onclick='" + onClickHandler + "'>" + i + "</a>");
 	
 	        } else if (i == 1) {
-	            print("<a class='page-link' href='" + href + "'>" + i + "</a>");
+	            print("<a class='page-link' href='" + href + "' onclick='" + onClickHandler + "'>" + i + "</a>");
 	            if (currentPageNumber > 4            		
 	            		&& pageCount > 5) {   // don't display "..." if pageCount < (2 * 3)
 	                print(' ... ')
@@ -209,34 +212,13 @@ function View() {
 	            		&& pageCount > 5) {   // don't display "..." if pageCount < (2 * 3)
 	                print(' ... ')
 	            }
-	            print("<a class='page-link' href='" + href + "'>" + i + "</a>");
+	            print("<a class='page-link' href='" + href + "' onclick='" + onClickHandler + "'>" + i + "</a>");
 	
 	        } else if (i + 3 >= currentPageNumber && currentPageNumber >= i - 3) {
-	            print("<a class='page-link' href='" + href + "'>" + i + "</a>");
+	            print("<a class='page-link' href='" + href + "' onclick='" + onClickHandler + "'>" + i + "</a>");
 	        }
 	    }
 	    print("</div>");
-	}
-	
-	
-	// load page navigation handlers
-	function loadPageNavigationHandlers(pageNavigatorLinkClickHandlerName) {
-	    var pageNavigatorLinkClickHandler;
-		if (typeof pageNavigatorLinkClickHandlerName != "undefined") {
-			pageNavigatorLinkClickHandler = "function(pageNavigationLinkElement) {" 
-				   + pageNavigatorLinkClickHandlerName + "(pageNavigationLinkElement, '" + getWidgetId() + "'); " 
-		        + "}";
-		} else {
-			pageNavigatorLinkClickHandler = "function() {}";
-			
-		}
-
-	    print("<script src='/analytics/scripts/views/page-navigation.js'></script>");
-	    print("<script>");
-        print("  jQuery(function() { ");
-        print("       analytics.views.pageNavigation.setupHandlers(" + pageNavigatorLinkClickHandler + ");");
-        print("  });");
-        print("</script>");
 	}
 	
 	function getWidgetId() {
@@ -320,7 +302,6 @@ function View() {
     	
     	// page navigation
     	printBottomPageNavigator: printBottomPageNavigator,
-    	loadPageNavigationHandlers: loadPageNavigationHandlers,
     	
     	// server events
     	showAbortMessage: showAbortMessage,

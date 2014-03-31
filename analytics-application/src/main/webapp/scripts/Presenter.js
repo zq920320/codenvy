@@ -93,6 +93,11 @@ Presenter.prototype.addServerSortingLinks = function(table, widgetName, modelPar
         return table;
     }
     
+    // don't display sorting command if there is no rows or if there is only one row in the table
+    if (table.rows.length < 1) {
+        return table;
+    }
+    
     var modelParams = analytics.util.clone(modelParams);
     
     if (typeof modelParams.sort == "undefined") { 
@@ -132,7 +137,9 @@ Presenter.prototype.addServerSortingLinks = function(table, widgetName, modelPar
         }
     
         var headerHref = analytics.util.getCurrentPageName() + "?" + analytics.util.constructUrlParams(modelParams);
-        table.columns[i] = "<a href='" + headerHref + "' " + headerClassOption + ">" + columnName + "</a>";
+        var onClickHandler = "analytics.main.reloadWidgetByUrl(\"" + headerHref + "\",\"" + widgetName + "\"); return false;";
+        
+        table.columns[i] = "<a href='" + headerHref + "' " + headerClassOption + " onclick='" + onClickHandler + "'>" + columnName + "</a>";
     }
     
     return table;

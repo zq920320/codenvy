@@ -87,8 +87,7 @@ analytics.presenter.EntryViewPresenter.prototype.load = function() {
 
                 var queryString = analytics.util.getCurrentPageName() + "?" + analytics.util.constructUrlParams(modelParams);
             
-                view.printBottomPageNavigator(pageCount, currentPageNumber, queryString, presenter.CURRENT_PAGE_QUERY_PARAMETER);
-                view.loadPageNavigationHandlers("analytics.main.reloadWidgetOnPageNavigation");
+                view.printBottomPageNavigator(pageCount, currentPageNumber, queryString, presenter.CURRENT_PAGE_QUERY_PARAMETER, presenter.widgetName);
                
                 view.loadTableHandlers(false);  // don't display client side sorting for table with pagination
             } else {

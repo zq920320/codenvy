@@ -69,7 +69,8 @@ function DatabaseTable() {
               row.addEventListener("mouseout", onRowMouseout, true);
            }
        
-           if (displaySorting) {
+           if (rowCount > 2 && displaySorting) {  // don't display sorting command if there is no rows or 
+                                                  // if there is only one row in the table (don't take header row into account)
                var sortingParams = JSON.parse(sortingParamsObjectString);
                makeTableSortable(table, sortingParams);
            }

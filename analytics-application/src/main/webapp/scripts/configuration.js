@@ -187,11 +187,6 @@ function Configuration() {
             widgetLabel: "User Statistics",
             presenterType: "HorizontalTablePresenter",
             modelViewName: "user_data",
-            
-            /** @see DatabaseTable::makeTableSortable() method docs */
-            clientSortParams: {
-                "columnsWithoutSorting": ["_all"]
-            },
         },
 
         userSessions: {

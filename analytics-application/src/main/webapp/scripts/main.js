@@ -180,16 +180,13 @@ function Main() {
 
     /**
      * Reload div on clicking on page navigation links at the bottom of the tables
-     * @param pageNavigationLinkElement dom-element
-     * @param widgetName id of div to reload
      */
-    function reloadWidgetOnPageNavigation(pageNavigationLinkElement, widgetName) {
-        var jQueryPageLinkElement = jQuery(pageNavigationLinkElement);
-        var href = jQueryPageLinkElement.attr("href");
+    function reloadWidgetByUrl(url, widgetName) {
+        var urlParams = analytics.util.extractUrlParams(url);
 
-        var urlParams = analytics.util.extractUrlParams(href);
-
-        reloadWidget(widgetName, urlParams);
+        loadWidget(widgetName, urlParams, function() {
+            jQuery(document).scrollTop( jQuery("#" + widgetName).offset().top );
+        });
     }
 
     /**
@@ -224,33 +221,10 @@ function Main() {
                 loadAllWidgets(params);
             } else {
                 for (var i in widgetName) {
-                    reloadWidget(widgetName[i], params);
+                    loadWidget(widgetName[i], params);
                 }
             }
         }
-    }
-
-    function reloadWidget(widgetName, params) {
-        loadWidget(widgetName, params, function (data) {
-            // rewrite page location to make it possible to navigate new url through the browser's history
-
-            if (analytics.configuration.getProperty(widgetName, "isNeedToSaveInHistory", true)) {  // default value is "true"
-                var pageUrl = window.location.href;
-                if (pageUrl.indexOf('?')) {
-                    var absUrl = pageUrl.split('?');
-                    pageUrl = absUrl[0];
-                }
-
-                var newPageUrl = pageUrl;
-                var urlParams = analytics.util.constructUrlParams(params);
-                if (urlParams != null) {
-                    newPageUrl += "?" + urlParams;
-                }
-
-//              window.history.pushState({"widgetName": widgetName}, document.title, newPageUrl);  // TODO fix browser history
-            }
-        });
-
     }
 
     function loadAllWidgets(params) {
@@ -265,28 +239,6 @@ function Main() {
         for (var i in widgetNames) {
             var widgetName = widgetNames[i];
             if (jQuery("#" + widgetName).doesExist()) {
-                /*             if (analytics.configuration.getProperty(widgetName, "isNeedToSaveInHistory", true)) {    // default value is "true"; TODO fix browser history
-                 // update div when navigating in history
-                 var everPushedSomething = false;
-                 var initialUrl = window.location.href;
-                 window.addEventListener('popstate', function(event) {
-                 if (! everPushedSomething
-                 && window.location.href == initialUrl) {
-                 everPushedSomething = true;
-                 return;
-                 }
-
-                 if (event.state != null
-                 && typeof event.state.widgetName != "undefined") {
-                 // update parameter buttons selection
-                 var params = analytics.util.extractUrlParams(window.location.href);
-                 updateCommandButtonsState(params);
-
-                 loadWidget(event.state.widgetName, params);
-                 }
-                 });
-                 }*/
-
                 loadWidget(widgetName, params);
             }
         }
@@ -294,8 +246,7 @@ function Main() {
 
     function loadWidget(widgetName, params, callback) {
         var params = params || {};
-        var callback = callback || function () {
-        };
+        var callback = callback || function () {};
 
         var view = analytics.factory.getView(widgetName);
         view.setParams(params);
@@ -510,6 +461,6 @@ function Main() {
 
     /** ****************** library API ********** */
     return {
-        reloadWidgetOnPageNavigation: reloadWidgetOnPageNavigation
+        reloadWidgetByUrl: reloadWidgetByUrl
     }
 }
