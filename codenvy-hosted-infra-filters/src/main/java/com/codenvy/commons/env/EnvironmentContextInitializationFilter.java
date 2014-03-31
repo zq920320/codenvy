@@ -85,8 +85,7 @@ public class EnvironmentContextInitializationFilter implements Filter {
                     try {
                         workspace = workspaceDao.getByName(tenant);
                     } catch (WorkspaceException e) {
-                        httpResponse.sendError(HttpServletResponse.SC_NOT_FOUND, "Workspace " + tenant + " is not found");
-                        return;
+                        throw new ServletException(e.getLocalizedMessage(), e);
                     }
                     if (null == workspace) {
                         httpResponse.sendError(HttpServletResponse.SC_NOT_FOUND, "Workspace " + tenant + " is not found");
