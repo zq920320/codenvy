@@ -44,6 +44,7 @@ public class EnvironmentContextInitializationFilter implements Filter {
     private final File           vfsRootDir;
     private final File           tempVfsRootDir;
     private final File           vfsIndexDir;
+    private final String wsNotFoundRedirectUrl;
     private       WorkspaceCache workspaceCache;
     private       WorkspaceDao   workspaceDao;
 
@@ -51,19 +52,17 @@ public class EnvironmentContextInitializationFilter implements Filter {
     public EnvironmentContextInitializationFilter(@Named("vfs.local.fs_root_dir") File vfsRoot,
                                                   @Named("vfs.local.fs_index_root_dir") File vfsIndexRoot,
                                                   @Named("sys.java.io.tmpdir") File tempDir,
+                                                  @Named("error.page.workspace_not_found_redirect_url") String wsNotFoundRedirectUrl,
                                                   WorkspaceDao workspaceDao) {
         this.vfsRootDir = vfsRoot;
         this.vfsIndexDir = vfsIndexRoot;
         this.tempVfsRootDir = new File(tempDir + "/tempWorkspacesFS");
         this.workspaceDao = workspaceDao;
+        this.wsNotFoundRedirectUrl = wsNotFoundRedirectUrl;
     }
 
     @Override
     public void init(FilterConfig config) throws ServletException {
-        /*this.workspaceCache = (WorkspaceCache)getContainer().getComponentInstanceOfType(WorkspaceCache.class);
-        if (workspaceCache == null) {
-            throw new IllegalStateException("Workspace id cache is null");
-        }*/
         this.workspaceCache = new WorkspaceCache(TimeUnit.MINUTES.toMillis(1), 100);
     }
 
@@ -88,7 +87,7 @@ public class EnvironmentContextInitializationFilter implements Filter {
                         throw new ServletException(e.getLocalizedMessage(), e);
                     }
                     if (null == workspace) {
-                        httpResponse.sendError(HttpServletResponse.SC_NOT_FOUND, "Workspace " + tenant + " is not found");
+                        httpResponse.sendRedirect(wsNotFoundRedirectUrl);
                         return;
                     }
                     workspaceCache.put(workspace.getName(), workspace);

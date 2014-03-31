@@ -26,8 +26,7 @@ import com.codenvy.commons.env.EnvironmentContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import javax.inject.*;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -43,6 +42,10 @@ public class WorkspaceIdEnvironmentInitializationFilter implements Filter {
     @Inject
     private WorkspaceDao workspaceDao;
 
+    @Named("error.page.workspace_not_found_redirect_url")
+    @Inject
+    private String wsNotFoundRedirectUrl;
+
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
@@ -54,8 +57,7 @@ public class WorkspaceIdEnvironmentInitializationFilter implements Filter {
         try {
             Workspace workspace = workspaceDao.getById(pathParts[3]);
             if (null == workspace) {
-                ((HttpServletResponse)response).sendError(HttpServletResponse.SC_NOT_FOUND,
-                                                          "Workspace with id " + pathParts[3] + " is not found");
+                ((HttpServletResponse)response).sendRedirect(wsNotFoundRedirectUrl);
                 return;
             }
             final EnvironmentContext env = EnvironmentContext.getCurrent();
