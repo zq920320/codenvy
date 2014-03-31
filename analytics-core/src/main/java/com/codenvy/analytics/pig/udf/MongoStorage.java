@@ -117,7 +117,6 @@ public class MongoStorage extends StoreFunc {
             this.dbCollection = db.getCollection(uri.getCollection());
         }
 
-        /** {@inheritDoc) */
         @Override
         public void write(WritableComparable key, Tuple value) throws IOException, InterruptedException {
             DBObject dbObject = new BasicDBObject();
@@ -131,13 +130,17 @@ public class MongoStorage extends StoreFunc {
                 }
             }
 
-            dbCollection.update(new BasicDBObject("_id", value.get(0)),
-                                new BasicDBObject("$set", dbObject),
-                                true,
-                                false);
+            try {
+                dbCollection.update(new BasicDBObject("_id", value.get(0)),
+                                    new BasicDBObject("$set", dbObject),
+                                    true,
+                                    false);
+
+            } catch (Exception e) {
+                LOG.error(e.getMessage(), e);
+            }
         }
 
-        /** {@inheritDoc) */
         @Override
         public void close(TaskAttemptContext context) throws IOException, InterruptedException {
         }
@@ -146,19 +149,16 @@ public class MongoStorage extends StoreFunc {
     /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
     public static class MongoOutputFormat extends OutputFormat<WritableComparable, Tuple> {
 
-        /** {@inheritDoc} */
         @Override
         public RecordWriter<WritableComparable, Tuple> getRecordWriter(TaskAttemptContext context) throws IOException,
                                                                                                           InterruptedException {
             return new MongoWriter(context.getConfiguration());
         }
 
-        /** {@inheritDoc} */
         @Override
         public void checkOutputSpecs(JobContext context) throws IOException, InterruptedException {
         }
 
-        /** {@inheritDoc} */
         @Override
         public OutputCommitter getOutputCommitter(TaskAttemptContext context) throws IOException, InterruptedException {
             return new MongoCommitter();

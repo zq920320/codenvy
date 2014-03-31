@@ -67,8 +67,8 @@ public class TestAcceptance extends BaseTest {
 
     @BeforeClass
     public void init() throws Exception {
-        pigRunner = getPigRunner();
         viewBuilder = getViewBuilder(TEST_VIEW_CONFIGURATION_FILE);
+        pigRunner = Injector.getInstance(PigRunner.class);
         runScript();
     }
 
@@ -688,10 +688,5 @@ public class TestAcceptance extends BaseTest {
                                    Injector.getInstance(CSVReportPersister.class),
                                    viewConfigurationManager,
                                    viewConfigurator));
-    }
-
-    /** Get pig runner with default configuration */
-    private PigRunner getPigRunner() {
-        return Injector.getInstance(PigRunner.class);
     }
 }

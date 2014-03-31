@@ -35,9 +35,9 @@ public class BaseTest {
     public static final    String BASE_DIR = "target";
     protected static final Logger LOG      = LoggerFactory.getLogger(BaseTest.class);
 
-    protected final TupleFactory tupleFactory      = TupleFactory.getInstance();
-    protected final DateFormat   dateFormat        = new SimpleDateFormat("yyyyMMdd");
-    protected final DateFormat   shortDateFormat   = new SimpleDateFormat("HH:mm:ss");
+    protected final TupleFactory tupleFactory    = TupleFactory.getInstance();
+    protected final DateFormat   dateFormat      = new SimpleDateFormat("yyyyMMdd");
+    protected final DateFormat   shortDateFormat = new SimpleDateFormat("HH:mm:ss");
 
     protected final DateFormat fullDateFormat     = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     protected final DateFormat fullDateFormatMils = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,SSS");
