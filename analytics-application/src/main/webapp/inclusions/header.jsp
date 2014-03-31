@@ -41,8 +41,6 @@
 
 <!-- DataTable plugin -->
 <script type="text/javascript" src="/analytics/scripts/third-party/jquery.dataTables-1.9.4.min.js"></script>
-<script type="text/javascript" src="dataTables.numericCommaSort.js"></script>
-<script type="text/javascript" src="dataTables.numericCommaTypeDetect.js"></script>
 <script>
 	// setup default settings
 	jQuery.extend(true, jQuery.fn.dataTable.defaults, {
@@ -68,51 +66,97 @@
 		});
     });
     
-    // setup DataTables to sort cells with numeric with comma separators like "1,200,100"
-    // see explanation here http://stackoverflow.com/questions/20336091/sort-numbers-with-the-format-with-datatables-js
+    /** 
+     * Setup DataTables to sort cells with numbers with comma separators like "1,200,100", numbers enclosed in HTML, and persentages.
+     * @see http://stackoverflow.com/questions/20336091/sort-numbers-with-the-format-with-datatables-js
+     * http://datatables.net/plug-ins/sorting#numbers_html 
+    
+	* Patterns to detect and extruct numbers:
+	/^<[^>]*>(([0-9,.+\-]+)%?)<\/[^>]*>$/.test("<a href='test' class='link'>63</a>")    -> true
+	"<a href='test' class='link'>63</a>".match(/^<[^>]*>(([0-9,.+\-]+)%?)<\/[^>]*>$/)   -> 63
+	
+	/^<[^>]*>(([0-9,.+\-]+)%?)<\/[^>]*>$/.test("<a href='test' class='link'>63.01</a>")  -> true
+	"<a href='test' class='link'>63.01</a>".match(/^<[^>]*>(([0-9,.+\-]+)%?)<\/[^>]*>$/)   -> 63.01
+	
+	/^<[^>]*>(([0-9,.+\-]+)%?)<\/[^>]*>$/.test("<a href='test' class='link'>6,3</a>")  -> true
+	"<a href='test' class='link'>6,3</a>".match(/^<[^>]*>(([0-9,.+\-]+)%?)<\/[^>]*>$/)   -> 6,3
+	
+	/^<[^>]*>(([0-9,.+\-]+)%?)<\/[^>]*>$/.test("<a href='test' class='link'>63%</a>")  -> true
+	"<a href='test' class='link'>63%</a>".match(/^<[^>]*>(([0-9,.+\-]+)%?)<\/[^>]*>$/)   -> 63
+	
+	/^<[^>]*>(([0-9,.+\-]+)%?)<\/[^>]*>$/.test("<a href='test' class='link'>test01</a>")  -> false
+	"<a href='test' class='link'>test01</a>".match(/^<[^>]*>(([0-9,.+\-]+)%?)<\/[^>]*>$/)   -> null
+	
+	/^<[^>]*>(([0-9,.+\-]+)%?)<\/[^>]*>$/.test("<a href='test' class='link'>00:06</a>")  -> false
+	"<a href='test' class='link'>00:06</a>".match(/^<[^>]*>(([0-9,.+\-]+)%?)<\/[^>]*>$/)   -> null
+	
+	/^(([0-9,.+\-]+)%?)$/.test("63")      -> true
+	"63".match(/^(([0-9,.+\-]+)%?)$/)     -> 63
+	
+	/^(([0-9,.+\-]+)%?)$/.test("63.01")      -> true
+	"63.01".match(/^(([0-9,.+\-]+)%?)$/)     -> 63.01
+	
+	/^(([0-9,.+\-]+)%?)$/.test("6,3")      -> true
+	"6,3".match(/^(([0-9,.+\-]+)%?)$/)     -> 6.3
+	
+	/^(([0-9,.+\-]+)%?)$/.test("63%")      -> true
+	"63%".match(/^(([0-9,.+\-]+)%?)$/)     -> 63
+	
+	/^(([0-9,.+\-]+)%?)$/.test("63")      -> true
+	"63".match(/^(([0-9,.+\-]+)%?)$/)     -> 63
+	
+	/^(([0-9,.+\-]+)%?)$/.test("test01")      -> false
+	"test01".match(/^(([0-9,.+\-]+)%?)$/)     -> null
+	
+	/^(([0-9,.+\-]+)%?)$/.test("06:03")      -> false
+	"06:03".match(/^(([0-9,.+\-]+)%?)$/)     -> null
+	
+    */    
     jQuery(function() {
-        jQuery.fn.dataTableExt.oSort['numeric-comma-asc'] = function(a, b) {
-            //remove the (,) from the string
-            var x = (a == "-") ? 0 : a.replace(/,/g, "");
-            var y = (b == "-") ? 0 : b.replace(/,/g, "")
-            x = parseFloat(x);
-            y = parseFloat(y);
-            return ((x < y) ? -1 : ((x > y) ? 1 : 0));
-        };
+        // check on numbers with ","  and "%"
+        var numberPattern = /^(([0-9,.+\-]+)%?)$/;
+        
+        // check on numbers with ","  and "%" enclosed in the html tags
+        var numberWithinHtmlPattern = /^<[^>]*>(([0-9,.+\-]+)%?)<\/[^>]*>$/;
+        
+        /** Detect number.
+           @see original method of DataTable library v.1.9.4 here: 
+            http://datatables.net/download/build/jquery.dataTables.js : $.extend( DataTable.ext.aTypes, ...        
+        */
+        jQuery.fn.dataTableExt.aTypes.unshift(function(sData) {            
+            // check on valid number
+            if (numberPattern.test(sData)) {
+                return "numeric";   // return pre-defined data type of numbers
 
-        jQuery.fn.dataTableExt.oSort['numeric-comma-desc'] = function(a, b) {
-            var x = (a == "-") ? 0 : a.replace(/,/g, "");
-            var y = (b == "-") ? 0 : b.replace(/,/g, "")
-            x = parseFloat(x);
-            y = parseFloat(y);
-            return ((x < y) ? 1 : ((x > y) ? -1 : 0));
-        };
-
-        //numeric comma autodetect
-        jQuery.fn.dataTableExt.aTypes.unshift(function(sData) {
-            //include the dot in the sValidChars string (don't place it in the last position)
-            var sValidChars = "0123456789-.,";
-            var Char;
-            var bDecimal = false;
-
-            /* Check the numeric part */
-            for (i = 0; i < sData.length; i++) {
-                Char = sData.charAt(i);
-                if (sValidChars.indexOf(Char) == -1) {
-                    return null;
-                }
-
-                /* Only allowed one decimal place... */
-                if (Char == ",") {
-                    if (bDecimal) {
-                        return null;
-                    }
-                    bDecimal = true;
-                }
+            // check on valid number enclosed in HTML tags
+            } else if (numberWithinHtmlPattern.test(sData)) {
+                return "numeric";   // return pre-defined data type of numbers
             }
 
-            return 'numeric-comma';
-        });
+            return null;
+        });        
+        
+        /** Redefine method of DataTable library to extract and clear the number.
+            @see original method "numeric-pre" of DataTable library v.1.9.4 here: 
+             http://datatables.net/download/build/jquery.dataTables.js
+        */
+        jQuery.fn.dataTableExt.oSort['numeric-pre'] = function(a) {            
+            var x = String(a);
+            var matches = a.match(numberPattern);
+            if (matches != null && matches.length > 0) {
+                x = matches[matches.length - 1];
+                
+            } else {
+                matches = a.match(numberWithinHtmlPattern);
+                if (matches != null && matches.length > 0) {
+                    x = matches[matches.length - 1];
+                }
+            }
+            
+            x = x.replace(",", "");          // remove "," in numbers like "2,123"
+            
+            return (x=="-" || x==="") ? 0 : x*1;   // original code 
+        };
     });
 </script>
 <style type="text/css">
