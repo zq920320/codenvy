@@ -138,10 +138,10 @@ public class OrganizationDaoTest extends BaseDaoTest {
     public void shouldFindOrganizationByOwner() throws Exception {
         collection.insert(
                 new BasicDBObject("id", ORGANIZATION_ID).append("name", ORGANIZATION_NAME).append("owner", ORGANIZATION_OWNER));
-        Organization result = organizationDao.getByOwner(ORGANIZATION_OWNER);
-        assertNotNull(result);
-        assertEquals(result.getId(), ORGANIZATION_ID);
-        assertEquals(result.getName(), ORGANIZATION_NAME);
+        List<Organization> result = organizationDao.getByOwner(ORGANIZATION_OWNER);
+        assertEquals(result.size(), 1);
+        assertEquals(result.get(0).getId(), ORGANIZATION_ID);
+        assertEquals(result.get(0).getName(), ORGANIZATION_NAME);
     }
 
     @Test

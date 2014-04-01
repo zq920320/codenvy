@@ -111,14 +111,18 @@ public class OrganizationDaoImpl implements OrganizationDao {
     }
 
     @Override
-    public Organization getByOwner(String owner) throws OrganizationException {
-        DBObject res;
+    public List<Organization> getByOwner(String owner) throws OrganizationException {
+        final List<Organization> organizations = new ArrayList<>();
         try {
-            res = organizationCollection.findOne(new BasicDBObject("owner", owner));
+            DBCursor cursor = organizationCollection.find(new BasicDBObject("owner", owner));
+            for (DBObject object : cursor) {
+                Organization organization = DtoFactory.getInstance().createDtoFromJson(object.toString(), Organization.class);
+                organizations.add(organization);
+            }
         } catch (MongoException me) {
             throw new OrganizationException(me.getMessage(), me);
         }
-        return res != null ? DtoFactory.getInstance().createDtoFromJson(res.toString(), Organization.class) : null;
+        return organizations;
     }
 
     @Override
