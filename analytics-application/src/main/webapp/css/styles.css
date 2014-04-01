@@ -125,7 +125,7 @@ div#loader .full-window-container {
    z-index: 1;
 }
 
-div#loader .loader-container {
+div#loader .loader-outer-container {
    opacity: 0.1;
    filter: alpha(opacity = 10);
    position: absolute;
@@ -140,14 +140,19 @@ div#loader .loader-container {
    ZOOM: 1;
 }
 
-div#loader div#loader-img {
-   margin: 0 auto;
-   position: relative;
-}
-
-div#loader div#loader-img img {
+div#loader .loader-inner-container {
+	margin: 0 auto;
+	position: relative;
+	
 	border: 3px solid #B9B9B9;
 	padding: 10px;
 	background: white;
 	border-radius: 15px;
+	width: 100px;
+}
+
+div#loader .loader-text {
+    font-size: 17px;
+    color: #616161;
+    padding-top: 10px;
 }

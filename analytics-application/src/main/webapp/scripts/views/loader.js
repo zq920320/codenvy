@@ -24,19 +24,21 @@ analytics.views.loader = new Loader();
 
 function Loader() {
     /**
-	 * Loader
-	 */
-	var loader = jQuery("#loader");
-	if (! loader.doesExist()) {
-	   jQuery("body").append(
-	      '<div id="loader">'
-	      + '<div class="loader-container"></div>'
-	      + '<table class="full-window-container">'
-	      + '   <tr>'
-	      + '     <td align="center">'
-	      + '        <div id="loader-img">'
-	      + '           <img src="/analytics/images/loader.gif" />'
-	      + '         </div>'
+	 * Loader.
+	 * @see loader image generator here: http://preloaders.net/en/circular
+     */
+    var loader = jQuery("#loader");
+    if (! loader.doesExist()) {
+       jQuery("body").append(
+          '<div id="loader">'
+          + '<div class="loader-outer-container"></div>'
+          + '<table class="full-window-container">'
+          + '   <tr>'
+          + '     <td align="center">'
+          + '        <div class="loader-inner-container">'
+          + '           <img src="/analytics/images/loader.gif" />'
+          + '           <div class="loader-text">Calculating...</div>'
+	      + '        </div>'
 	      + '     </td>'
 	      + '   </tr>'
 	      + '</table>'
