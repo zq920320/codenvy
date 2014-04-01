@@ -84,7 +84,12 @@
                 var attributes = {};
                 profileAttributes.forEach(
                     function(attribute){
-                        Object.defineProperty(attributes, attribute.name,{value:attribute.value});
+                        // Get attributes only for Profile page
+                        var profilePageAttributes = ["firstName","lastName","phone","employer","jobtitle","email"];
+                        if (profilePageAttributes.indexOf(attribute.name)>=0){
+                            Object.defineProperty(attributes, attribute.name,{value:attribute.value});
+                        }
+
                 });
                 document.getElementById("account_value").innerHTML = attributes.email || "";
                 document.getElementsByName("first_name")[0].value = attributes.firstName || "";
