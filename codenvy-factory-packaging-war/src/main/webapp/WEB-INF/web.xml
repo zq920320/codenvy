@@ -36,4 +36,9 @@
         <url-pattern>/share/*</url-pattern>
     </servlet-mapping>
 
+    <error-page>
+        <exception-type>java.lang.Exception</exception-type>
+        <location>/resources/error-invalid-factory-url.jsp</location>
+    </error-page>
+
 </web-app>
