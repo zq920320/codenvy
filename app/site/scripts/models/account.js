@@ -66,12 +66,98 @@
             }
         };
 
-        /*
+        /*START paid support tab*/
+        /*global ActiveXObject: false */
+        // Verify subscriptions for Organization
+        function checkSubscriptionFor(orgId) {
+            var request;
+            var plansArray = ["PremiumWorkspace", "TrackedFactory"];
+            var url =  "/api/organization/" + orgId + "/subscriptions";
+            if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+                request = new XMLHttpRequest();
+            } else {// code for IE6, IE5
+                request = new ActiveXObject("Microsoft.XMLHTTP");
+            }
+            request.onreadystatechange = function () {
+                var response;
+                var paid = false;
+                if (request.readyState === 4 && request.status === 200) {
+                    try {
+                    response = JSON.parse(request.responseText);
+                    if (response.length) {
+                        if (response.some(function (sub) {
+                                return (plansArray.indexOf(sub.serviceId) >= 0);
 
-            Password Setup Id Provider is used to provide ids
-            for confirmSetupPassword and setupPassword functions
+                            })) {
+                            paid = true;
+                        }
 
-        */
+                    }
+                    showSupportLink(paid);
+                    } catch(err) {
+                        showSupportLink(false);
+                    }
+                }
+            };
+            request.open("GET", url, true);
+            request.send();
+        }
+
+        // get Organizations where user has owner role
+        function getOrganizations(user) {
+            var request;
+            //var url =  "/api/workspace";
+            var url =  "/api/organization";
+            if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+                request = new XMLHttpRequest();
+            } else {// code for IE6, IE5
+                request = new ActiveXObject("Microsoft.XMLHTTP");
+            }
+            request.onreadystatechange = function () {
+                var response;
+                if (request.readyState === 4 && request.status === 200) {
+                    try {
+                    response = JSON.parse(request.responseText);
+                    response.forEach(function (org) {
+                        if (org.owner === user) {
+                            checkSubscriptionFor(org.id);
+                        }
+                    });
+                    } catch(err) {
+                        showSupportLink(false);
+                    }
+                }
+            };
+            request.open("GET", url, true);
+            request.send();
+        }
+
+        // Sets Info for Premium User 
+        function setPremiumUserInfo() {
+            var request;
+            var url =  "/api/user";
+            if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+                request = new XMLHttpRequest();
+            } else {// code for IE6, IE5
+                request = new ActiveXObject("Microsoft.XMLHTTP");
+            }
+            request.onreadystatechange = function () {
+                var response;
+                if (request.readyState === 4 && request.status === 200) {
+                    try {
+                        response = JSON.parse(request.responseText);
+                        getOrganizations(response.id); //params: userId    
+                    } catch(err) {
+                        showSupportLink(false);
+                    }
+
+                }
+            };
+            request.open("GET", url, true);
+            request.send();
+        }
+
+        /*END paid support tab*/
 
         /*
 
@@ -533,27 +619,12 @@
 
             // Returns true if User has WS with tariff plan
             supportTab : function(){
-                var getAccountUrl = "/api/organization/subscriptions";
-                var paid = false;
-                $.ajax({
-                    url : getAccountUrl,
-                    type : "GET",
-                    async : false,
-                    success : function(subscriptions){
-                        if (typeof(subscriptions)==='object'){
-                            subscriptions.forEach(
-                                function(subscription){
-                                        if (subscription.serviceId){
-                                            paid = true;
-                                        }
-                            });
-                                
-                        }
-                    },
-                    error : function(){
-                    }
-                });
-            showSupportLink(paid);
+                if($.cookie("logged_in")){
+                    setPremiumUserInfo();
+                } else {
+                    showSupportLink(false);
+                }
+
             },
 
             // Changing login page behavior if authtype=ldap
