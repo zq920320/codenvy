@@ -78,11 +78,11 @@ public class ViewBuilder extends Feature {
     public ViewData getViewData(String name, Context context) throws IOException, ParseException {
         ViewConfiguration view = displayConfiguration.getView(name);
 
-        if (!view.isOnDemand() && context.isSimplified()) {
-            return queryViewData(view, context);
-        } else {
+        if (!context.isSimplified() || view.isOnDemand()) {
             ComputeViewDataAction computeViewDataAction = new ComputeViewDataAction(view, context);
             return computeViewDataAction.doCompute();
+        } else {
+            return loadViewData(view, context);
         }
     }
 
@@ -145,7 +145,7 @@ public class ViewBuilder extends Feature {
     }
 
     /** Query data for specific view. */
-    protected ViewData queryViewData(ViewConfiguration viewConf, Context context)
+    protected ViewData loadViewData(ViewConfiguration viewConf, Context context)
             throws IOException {
         try {
             ViewData viewData = new ViewData(viewConf.getSections().size());
@@ -228,19 +228,17 @@ public class ViewBuilder extends Feature {
     private Context initializeFirstInterval(Context context) throws ParseException {
         Context.Builder builder = new Context.Builder(context);
 
-        if (!context.exists(Parameters.TO_DATE)) {
-            builder.putDefaultValue(Parameters.TO_DATE);
-            builder.putDefaultValue(Parameters.FROM_DATE);
+        if (context.exists(Parameters.TO_DATE)) {
             builder.put(Parameters.REPORT_DATE, builder.getAsString(Parameters.TO_DATE));
         } else {
-            builder.put(Parameters.REPORT_DATE, context.getAsString(Parameters.TO_DATE));
+            builder.put(Parameters.REPORT_DATE, Parameters.TO_DATE.getDefaultValue());
         }
 
         if (context.exists(Parameters.TIME_UNIT)) {
             Parameters.TimeUnit timeUnit = builder.getTimeUnit();
             if (context.exists(Parameters.TIME_INTERVAL)) {
                 int timeShift = (int) -context.getAsLong(Parameters.TIME_INTERVAL);
-                return Utils.initDateInterval(builder.getAsDate(Parameters.TO_DATE), timeUnit, timeShift, builder);                
+                return Utils.initDateInterval(builder.getAsDate(Parameters.TO_DATE), timeUnit, timeShift, builder);
             } else {
                 return Utils.initDateInterval(builder.getAsDate(Parameters.TO_DATE), timeUnit, builder);
             }

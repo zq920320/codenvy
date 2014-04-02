@@ -56,6 +56,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
     public static final Pattern TEMPORARY_WS   = Pattern.compile("^(TMP-).*", Pattern.CASE_INSENSITIVE);
 
     public static final String ASC_SORT_SIGN = "+";
+    public static final String PRECOMPUTED   = "_precomputed";
 
 
     public final DataLoader dataLoader;
@@ -76,9 +77,13 @@ public abstract class ReadBasedMetric extends AbstractMetric {
         context = modifyContext(context);
         validateRestrictions(context);
 
-        ValueData valueData = dataLoader.loadValue(this, context);
-
-        return postEvaluation(valueData, context);
+        if (readPrecomputedData(context)) {
+            Metric metric = MetricFactory.getMetric(getName() + PRECOMPUTED);
+            return metric.getValue(context);
+        } else {
+            ValueData valueData = dataLoader.loadValue(this, context);
+            return postComputation(valueData, context);
+        }
     }
 
     /**
@@ -97,13 +102,33 @@ public abstract class ReadBasedMetric extends AbstractMetric {
         }
     }
 
-    public ValueData postEvaluation(ValueData valueData, Context clauses) throws IOException {
+    /**
+     * Provides ability to modify result by adding new fields or changing existed ones.
+     */
+    public ValueData postComputation(ValueData valueData, Context clauses) throws IOException {
         return valueData;
     }
 
     /** Allows modify context before evaluation if necessary. */
     protected Context modifyContext(Context context) throws IOException {
         return context;
+    }
+
+    /**
+     * Check precomputed metric support.
+     *
+     * @return true
+     * if support
+     */
+    protected boolean isPrecomputedDataExist() {
+        return false;
+    }
+
+    private boolean readPrecomputedData(Context context) {
+        return isPrecomputedDataExist()
+               && context.getFilters().isEmpty()
+               && !context.exists(Parameters.FROM_DATE)
+               && !context.exists(Parameters.TO_DATE);
     }
 
     // --------------------------------------------- storage related methods -------------
@@ -119,7 +144,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
     }
 
     public String getStorageCollectionName(MetricType metricType) {
-        return metricType.toString().toLowerCase();
+        return MetricFactory.getMetric(metricType).getName().toLowerCase();
     }
 
     public String getStorageCollectionName(String metricName) {
@@ -245,7 +270,6 @@ public abstract class ReadBasedMetric extends AbstractMetric {
     /** The date field contains the date of the event. */
     private void setDateFilter(Context clauses, BasicDBObject match) throws ParseException {
         DBObject dateFilter = new BasicDBObject();
-        match.put(DATE, dateFilter);
 
         String fromDate = clauses.getAsString(Parameters.FROM_DATE);
         if (fromDate != null) {
@@ -254,8 +278,6 @@ public abstract class ReadBasedMetric extends AbstractMetric {
             } else {
                 dateFilter.put("$gte", clauses.getAsLong(Parameters.FROM_DATE));
             }
-        } else {
-            dateFilter.put("$gte", 0);
         }
 
         String toDate = clauses.getAsString(Parameters.TO_DATE);
@@ -265,8 +287,10 @@ public abstract class ReadBasedMetric extends AbstractMetric {
             } else {
                 dateFilter.put("$lte", clauses.getAsLong(Parameters.TO_DATE));
             }
-        } else {
-            dateFilter.put("$lte", Long.MAX_VALUE);
+        }
+
+        if (dateFilter.keySet().size() > 0) {
+            match.put(DATE, dateFilter);
         }
     }
 

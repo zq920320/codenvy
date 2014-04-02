@@ -29,6 +29,7 @@ import com.codenvy.analytics.metrics.workspaces.UsageTimeByWorkspacesList;
 import com.codenvy.analytics.metrics.workspaces.WorkspacesStatisticsList;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
+import com.codenvy.analytics.services.DataComputationFeature;
 
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -137,6 +138,13 @@ public class TestUsersData extends BaseTest {
 
         builder.put(Parameters.STORAGE_TABLE, MetricType.USERS_PROFILES_LIST.toString().toLowerCase());
         pigServer.execute(ScriptType.USERS_UPDATE_PROFILES, builder.build());
+
+
+        Context.Builder builder2 = new Context.Builder();
+        builder2.put(Parameters.FROM_DATE, "20131101");
+        builder2.put(Parameters.TO_DATE, "20131101");
+        DataComputationFeature dataComputationFeature = new DataComputationFeature();
+        dataComputationFeature.forceExecute(builder2.build());
     }
 
     @Test

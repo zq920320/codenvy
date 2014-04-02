@@ -52,7 +52,7 @@ public class ProductUsageSessionsList extends AbstractListValueResulted {
     }
 
     @Override
-    public ValueData postEvaluation(ValueData valueData, Context clauses) throws IOException {
+    public ValueData postComputation(ValueData valueData, Context clauses) throws IOException {
         List<ValueData> list2Return = new ArrayList<>();
 
         for (ValueData items : ((ListValueData)valueData).getAll()) {

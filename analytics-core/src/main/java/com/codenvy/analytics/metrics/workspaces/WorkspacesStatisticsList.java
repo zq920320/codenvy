@@ -131,7 +131,7 @@ public class WorkspacesStatisticsList extends AbstractListValueResulted {
     }
 
 //    @Override
-//    protected ValueData postEvaluation(ValueData valueData, Map<String, String> clauses) throws IOException {
+//    protected ValueData postComputation(ValueData valueData, Map<String, String> clauses) throws IOException {
 //        String wsName = MetricFilter.WS.get(clauses);
 //        
 //        if (wsName != null) {

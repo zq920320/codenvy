@@ -55,6 +55,7 @@ public class Scheduler implements ServletContextListener {
     private org.quartz.Scheduler scheduler;
 
     private static final Class[] features = new Class[]{PigRunnerFeature.class,
+                                                        DataComputationFeature.class,
                                                         ViewBuilderFeature.class,
                                                         LogCheckerFeature.class,
                                                         ReportSenderFeature.class,
@@ -111,7 +112,7 @@ public class Scheduler implements ServletContextListener {
         try {
             String forceRunPeriod = configurator.getString(SCHEDULER_FORCE_RUN_PERIOD);
             Set<String> forceRunFeature =
-                    new HashSet<>(Arrays.asList(configurator.getString(SCHEDULER_FORCE_RUN_CLASS).split(",")));
+                    new HashSet<>(Arrays.asList(configurator.getArray(SCHEDULER_FORCE_RUN_CLASS)));
 
             for (Class jobClass : features) {
                 Feature job = (Feature)jobClass.getConstructor().newInstance();

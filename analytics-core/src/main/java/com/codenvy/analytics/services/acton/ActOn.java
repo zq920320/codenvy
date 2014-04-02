@@ -195,7 +195,7 @@ public class ActOn extends Feature {
     protected File prepareFile(Context context) throws IOException, ParseException {
         File file = new File(configurator.getTmpDir(), FILE_NAME);
 
-        int pageSize = configurator.getInt(PAGE_SIZE, 1000);
+        int pageSize = configurator.getInt(PAGE_SIZE, 10000);
 
         Map<ValueData, Map<String, ValueData>> usersProfiles = getUsersProfiles();
         Set<ValueData> activeUsers = getActiveUsersLastMonth(context);

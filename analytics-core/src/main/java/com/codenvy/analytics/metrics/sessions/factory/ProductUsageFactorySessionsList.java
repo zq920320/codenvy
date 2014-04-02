@@ -44,9 +44,9 @@ public class ProductUsageFactorySessionsList extends AbstractListValueResulted {
     }
 
     @Override
-    public ValueData postEvaluation(ValueData valueData, Context clauses) throws IOException {
+    public ValueData postComputation(ValueData valueData, Context clauses) throws IOException {
         ReadBasedMetric metric = (ReadBasedMetric)MetricFactory.getMetric(MetricType.PRODUCT_USAGE_SESSIONS_LIST);
-        return metric.postEvaluation(valueData, clauses);
+        return metric.postComputation(valueData, clauses);
     }
 
     @Override

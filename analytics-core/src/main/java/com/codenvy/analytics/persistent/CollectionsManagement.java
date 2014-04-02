@@ -58,7 +58,7 @@ public class CollectionsManagement {
     }
 
     /** @return true if collection exists in configuration */
-    public boolean isCollectionExists(String collectionName) throws IOException {
+    public boolean exists(String collectionName) throws IOException {
         for (CollectionConfiguration collectionConfiguration : configuration.getCollections()) {
             if (collectionConfiguration.getName().equals(collectionName)) {
                 return true;
@@ -94,6 +94,59 @@ public class CollectionsManagement {
     }
 
     /**
+     * Drop collection
+     *
+     * @throws IOException
+     */
+    public void drop(String collectionName) throws IOException {
+        LOG.info("Start dropping collection " + collectionName);
+
+        if (db.collectionExists(collectionName)) {
+            db.getCollection(collectionName).drop();
+        }
+    }
+
+    /**
+     * Get collection which configure
+     *
+     * @throws IOException
+     */
+    public DBCollection get(String collectionName) throws IOException {
+        if (exists(collectionName)) {
+            return db.getCollection(collectionName);
+        }
+
+        throw new IOException("Collection " + collectionName + " doesn't exist in " + CONFIGURATION);
+    }
+
+    /**
+     * Ensure all indexes for collection which configure
+     *
+     * @throws IOException
+     */
+    public void ensureIndexes(String collectionName) throws IOException {
+        CollectionConfiguration collectionConf = null;
+
+        for (CollectionConfiguration conf : configuration.getCollections()) {
+            if (collectionName.equals(conf.getName())) {
+                collectionConf = conf;
+                break;
+            }
+        }
+
+        if (collectionConf == null) {
+            throw new IOException("Collection " + collectionName + " doesn't exist in " + CONFIGURATION);
+        }
+
+        IndexesConfiguration indexesConfiguration = collectionConf.getIndexes();
+        List<IndexConfiguration> indexes = indexesConfiguration.getIndexes();
+
+        for (IndexConfiguration indexConfiguration : indexes) {
+            ensureIndex(collectionName, indexConfiguration);
+        }
+    }
+
+    /**
      * Ensure all indexes defined in collections configuration file
      *
      * @throws IOException
@@ -104,10 +157,10 @@ public class CollectionsManagement {
         LOG.info("Start ensuring indexes...");
 
         try {
-            for (CollectionConfiguration collectionConfiguration : configuration.getCollections()) {
-                String collectionName = collectionConfiguration.getName();
+            for (CollectionConfiguration collectionConf : configuration.getCollections()) {
+                String collectionName = collectionConf.getName();
 
-                IndexesConfiguration indexesConfiguration = collectionConfiguration.getIndexes();
+                IndexesConfiguration indexesConfiguration = collectionConf.getIndexes();
                 List<IndexConfiguration> indexes = indexesConfiguration.getIndexes();
 
                 for (IndexConfiguration indexConfiguration : indexes) {
@@ -212,7 +265,6 @@ public class CollectionsManagement {
         for (FieldConfiguration field : fields) {
             index.put(field.getField(), ASCENDING_INDEX_MARK);
         }
-
 
         return index;
     }

@@ -17,30 +17,20 @@
  */
 package com.codenvy.analytics.metrics.users;
 
-import com.codenvy.analytics.metrics.AbstractActiveEntities;
+import com.codenvy.analytics.metrics.AbstractCount;
 import com.codenvy.analytics.metrics.MetricType;
 
-import javax.annotation.security.RolesAllowed;
-
 /**
- * @author Anatoliy Bazko
+ * @author Alexander Reshetnyak
  */
-@RolesAllowed({"system/admin", "system/manager"})
-public class UsersStatistics extends AbstractActiveEntities {
+public class UsersStatisticsPrecomputed extends AbstractCount {
 
-    public UsersStatistics() {
-        super(MetricType.USERS_STATISTICS,
-              MetricType.USERS_STATISTICS_LIST,
-              USER);
+    public UsersStatisticsPrecomputed() {
+        super(MetricType.USERS_STATISTICS_PRECOMPUTED, MetricType.USERS_STATISTICS_LIST_PRECOMPUTED);
     }
 
     @Override
     public String getDescription() {
-        return "The number of users in statistics";
-    }
-
-    @Override
-    protected boolean isPrecomputedDataExist() {
-        return true;
+        return "The total number of users";
     }
 }

@@ -56,7 +56,9 @@ public class Context {
     }
 
     public boolean isSimplified() {
-        return !exists(Parameters.SORT) && !exists(Parameters.PAGE) && getFilters().isEmpty();
+        return !exists(Parameters.SORT) &&
+               !exists(Parameters.PAGE) &&
+               getFilters().isEmpty();
     }
 
     public Map<String, Object> getAll() {

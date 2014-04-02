@@ -92,7 +92,7 @@ public class FactoryStatisticsList extends AbstractListValueResulted {
     }
 
     @Override
-    public ValueData postEvaluation(ValueData valueData, Context clauses) throws IOException {
+    public ValueData postComputation(ValueData valueData, Context clauses) throws IOException {
         ListValueData items = (ListValueData)valueData;
         if (!clauses.exists(MetricFilter.FACTORY)) {
             return items;

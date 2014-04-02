@@ -55,7 +55,7 @@ public class Configurator {
 
     /** @return value of the property as the array of String */
     public String[] getArray(String key) {
-        return getString(key).split(",");
+        return exists(key) ? getString(key).split(",") : new String[0];
     }
 
     public boolean exists(String key) {
