@@ -31,15 +31,49 @@
         <div>
             <div class="well topFilteringPanel">
                 <div id="filter-by" class="left" targetWidgets="_all">
-                    Filter by:
-                    <input type="text" id="filterByKeywordInput" name="keyword" class="text-box" />
-                    <button class="btn command-btn" value="user">Email</button>
-                    <button class="btn command-btn" value="user_first_name">First Name</button>
-                    <button class="btn command-btn" value="user_last_name">Last Name</button>                
-                    <button class="btn command-btn" value="user_company">Company</button>
-                    <button id="clearSelectionBtn" class="btn btn-small clear-btn">Clear</button>
+                    <div class="collabsiblePanelTitle">Filter</div>
+                    <div class="collabsiblePanelBody">
+                        <table>
+                            <tr>
+                               <td><label for="input-user">Email:</label></td>
+                               <td><div class="filter-item">
+                                   <input type="text" id="input-user" name="user" class="text-box" />
+                               </div></td>
+                            </tr>
+                            <tr>
+                               <td><label for="input-user_first_name">First Name:</label></td>
+                               <td><div class="filter-item">
+                                   <input type="text" id="input-user_first_name" name="user_first_name" class="text-box" />
+                               </div></td>
+                            </tr>
+                            <tr>
+                               <td><label for="input-user_last_name">Last Name:</label></td>
+                               <td>
+                                   <div class="filter-item">
+                                       <input type="text" id="input-user_last_name" name="user_last_name" class="date-box"/>
+                                   </div>
+                               </td>
+                            </tr>
+                            <tr>
+                               <td><label for="input-user_company">Company:</label></td>
+                               <td>
+                                   <div class="filter-item">
+                                       <input type="text" id="input-user_company" name="user_company" class="date-box"/>
+                                   </div>
+                               </td>
+                            </tr>
+                            <tr>
+                               <td></td>
+                               <td><div class="filter-item">
+                                    <button class="btn command-btn btn-primary">Filter</button>                    
+                                    <button id="clearSelectionBtn" class="btn btn-small clear-btn">Clear</button>
+                               </div></td>
+                            </tr>
+                        </table>
+                    </div>
                 </div>
             </div>
+
             <div class="hero-unit">
                 <div class="single-column-gadget">
                     <div class="view">

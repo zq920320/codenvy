@@ -32,20 +32,46 @@
         <div>
             <div class="well topFilteringPanel">
                 <div id="filter-by" class="left" targetWidgets="_all">
-                     Filter by:
-                    <input type="text" id="filterByKeywordInput" name="keyword" class="text-box" />
-                    <button class="btn command-btn" value="user">Email</button>
-                    <button class="btn command-btn" value="domain">Domain</button>
-                    <button class="btn command-btn" value="user_company">Company</button>
-                    <button id="clearSelectionBtn" class="btn btn-small clear-btn">Clear</button>                   
+                    <div class="collabsiblePanelTitle">Filter</div>
+                    <div class="collabsiblePanelBody">
+                        <table>
+                            <tr>
+                               <td><label for="input-user">Email:</label></td>
+                               <td><div class="filter-item">
+                                   <input type="text" id="input-user" name="user" class="text-box" />
+                               </div></td>
+                            </tr>
+                            <tr>
+                               <td><label for="input-domain">Domain:</label></td>
+                               <td><div class="filter-item">
+                                   <input type="text" id="input-domain" name="domain" class="text-box" />
+                               </div></td>
+                            </tr>
+                            <tr>
+                               <td><label for="input-user_company">Company:</label></td>
+                               <td><div class="filter-item">
+                                   <input type="text" id="input-user_company" name="user_company" class="text-box" />
+                               </div></td>
+                            </tr>
+                            <tr>
+                               <td></td>
+                               <td><div class="filter-item">
+                                    <button class="btn command-btn btn-primary">Filter</button>                    
+                                    <button id="clearSelectionBtn" class="btn btn-small clear-btn">Clear</button>
+                               </div></td>
+                            </tr>
+                        </table>
+                    </div>
                 </div>
-	            <div id="timely-dd" class="btn-group timely-dd-btns right" targetWidgets="_all">
-	                <button class="btn command-btn" value="Day">Day</button>
-	                <button class="btn command-btn" value="Week">Week</button>
-	                <button class="btn command-btn" default value="Month">Month</button>
-	                <button class="btn command-btn" value="LifeTime">LifeTime</button>
-	            </div>
+
+                <div id="timely-dd" class="btn-group right" targetWidgets="_all">
+                    <button class="btn command-btn" value="Day">Day</button>
+                    <button class="btn command-btn" value="Week">Week</button>
+                    <button class="btn command-btn" default value="Month">Month</button>
+                    <button class="btn command-btn" value="LifeTime">LifeTime</button>
+                </div>
             </div>
+
             <div class="hero-unit">
                  <div class="single-column-gadget">
                     <div class="view">
@@ -54,7 +80,7 @@
                         </div>
                     </div>
                 </div>
-            </div>          
+            </div>
         </div>
     </div>
 </div>

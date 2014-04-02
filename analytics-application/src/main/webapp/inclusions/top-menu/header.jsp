@@ -37,7 +37,7 @@
 	}
 	
 	.ui-corner-all {
-	    border-radius: 0 !important;
+	    border-radius: 0;
 	}
 	
 	.analytics-label {

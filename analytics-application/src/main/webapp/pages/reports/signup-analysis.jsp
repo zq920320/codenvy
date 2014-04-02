@@ -31,7 +31,7 @@
     <div class="row-fluid">
         <div>
             <div class="well topFilteringPanel">
-                <div id="timely-dd" class="btn-group timely-dd-btns left" targetWidgets="_all">
+                <div id="timely-dd" class="btn-group left" targetWidgets="_all">
                     <button class="btn command-btn" value="Day">Day</button>
                     <button class="btn command-btn" value="Week">Week</button>
                     <button class="btn command-btn" default value="Month">Month</button>

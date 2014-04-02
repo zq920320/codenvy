@@ -31,20 +31,46 @@
         <div>
             <div class="well topFilteringPanel">
                 <div id="filter-by" class="left" targetWidgets="_all">
-                    Filter by:
-                    <input type="text" id="filterByKeywordInput" name="keyword" class="text-box" />
-                    <button class="btn command-btn" value="user">User</button>
-                    <button class="btn command-btn" value="ws">Workspace</button>                    
-                    <button id="clearSelectionBtn" class="btn btn-small clear-btn">Clear</button>
-                </div>
-                
-                <div id="date-range" class="right" targetWidgets="_all">
-                    <span>
-                        From: <input type="text" id="datepicker-from-date" name="from_date" class="date-box"/>
-                        To: <input type="text" id="datepicker-to-date" name="to_date" class="date-box"/>
-                    </span>
-                    <button class="btn command-btn">Filter</button>
-                    <button id="clearSelectionBtn" class="btn btn-small clear-btn">Clear</button>
+                    <div class="collabsiblePanelTitle">Filter</div>
+                    <div class="collabsiblePanelBody">
+	                    <table>
+	                        <tr>
+		                       <td><label for="input-user">User:</label></td>
+		                       <td><div class="filter-item">
+		                           <input type="text" id="input-user" name="user" class="text-box" />
+		                       </div></td>
+		                    </tr>
+	                        <tr>
+	                           <td><label for="input-ws">Workspace:</label></td>
+	                           <td><div class="filter-item">
+	                               <input type="text" id="input-ws" name="ws" class="text-box" />
+	                           </div></td>
+	                        </tr>
+	                        <tr>
+	                           <td><label for="datepicker-from-date">From Date:</label></td>
+	                           <td>
+	                               <div class="filter-item">
+	                                   <input type="text" id="datepicker-from-date" name="from_date" class="date-box"/>
+	                               </div>
+	                           </td>
+	                        </tr>
+	                        <tr>
+	                           <td><label for="datepicker-to-date">To Date:</label></td>
+	                           <td>
+	                               <div class="filter-item">
+	                                   <input type="text" id="datepicker-to-date" name="to_date" class="date-box"/>
+	                               </div> 
+	                           </td>
+	                        </tr>
+	                        <tr>
+	                           <td></td>
+	                           <td><div class="filter-item">
+			                        <button class="btn command-btn btn-primary">Filter</button>                    
+			                        <button id="clearSelectionBtn" class="btn btn-small clear-btn">Clear</button>
+			                   </div></td>
+	                        </tr>
+	                    </table>
+	                </div>
                 </div>
             </div>
             
@@ -64,14 +90,6 @@
 <jsp:include page="/inclusions/footer.jsp">
     <jsp:param name="javaScriptToLoad" value="/analytics/scripts/presenters/EntryViewPresenter.js"/>
 </jsp:include>
-
-<!--  load calendar jquery plugin  -->
-<script type="text/javascript">
-    $(function () {
-        $("#datepicker-from-date").datepicker({dateFormat: "yy-mm-dd"});
-        $("#datepicker-to-date").datepicker({dateFormat: "yy-mm-dd"});
-    });
-</script>
 
 </body>
 </html>

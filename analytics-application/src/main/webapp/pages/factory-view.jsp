@@ -30,13 +30,35 @@
     <div class="row-fluid">
         <div>
             <div class="well topFilteringPanel">
-                <div id="date-range" targetWidgets="factorySessions,factoryUsers">
-                   <span>
-                       From: <input type="text" id="datepicker-from-date" name="from_date" class="date-box"/>
-                       To: <input type="text" id="datepicker-to-date" name="to_date" class="date-box"/>
-                   </span>
-                    <button class="btn command-btn">Filter</button>
-                    <button id="clearSelectionBtn" class="btn btn-small clear-btn">Clear</button>
+                <div id="filter-by" targetWidgets="factorySessions,factoryUsers">
+                    <div class="collabsiblePanelTitle">Filter</div>
+                    <div class="collabsiblePanelBody">
+                        <table>
+                            <tr>
+                               <td><label for="datepicker-from-date">From Date:</label></td>
+                               <td>
+                                   <div class="filter-item">
+                                       <input type="text" id="datepicker-from-date" name="from_date" class="date-box"/>
+                                   </div>
+                               </td>
+                            </tr>
+                            <tr>
+                               <td><label for="datepicker-to-date">To Date:</label></td>
+                               <td>
+                                   <div class="filter-item">
+                                       <input type="text" id="datepicker-to-date" name="to_date" class="date-box"/>
+                                   </div> 
+                               </td>
+                            </tr>
+                            <tr>
+                               <td></td>
+                               <td><div class="filter-item">
+                                    <button class="btn command-btn btn-primary">Filter</button>                    
+                                    <button id="clearSelectionBtn" class="btn btn-small clear-btn">Clear</button>
+                               </div></td>
+                            </tr>
+                        </table>
+                    </div>
                 </div>
             </div>
             <div class="hero-unit">
@@ -59,14 +81,6 @@
     <jsp:param name="javaScriptToLoad" value="/analytics/scripts/presenters/VerticalTablePresenter.js"/>
     <jsp:param name="javaScriptToLoad" value="/analytics/scripts/presenters/HorizontalTablePresenter.js"/>
 </jsp:include>
-
-<!--  load calendar jquery plugin  -->
-<script type="text/javascript">
-    $(function () {
-        $("#datepicker-from-date").datepicker({dateFormat: "yy-mm-dd"});
-        $("#datepicker-to-date").datepicker({dateFormat: "yy-mm-dd"});
-    });
-</script>
 
 </body>
 </html>

@@ -18,7 +18,6 @@
 <link rel="stylesheet" type="text/css" href="/analytics/bootstrap/css/bootstrap.min.css"/>
 <link rel="stylesheet" type="text/css" href="/analytics/bootstrap/css/bootstrap-responsive.min.css"/>
 <link rel="stylesheet" type="text/css" href="/analytics/css/styles.css"/>
-<link rel="stylesheet" type="text/css" href="/analytics/css/single-column.css"/>
 <link rel="stylesheet" type="text/css" href="/analytics/css/view.css"/>
 <link rel="stylesheet" type="text/css" href="/analytics/css/database-table.css" />
 
@@ -32,15 +31,15 @@
     }
 </style>
 
-<script type="text/javascript" src="/analytics/scripts/third-party/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="/analytics/third-party/jquery-1.7.2.min.js"></script>
 <script type="text/javascript" src="/analytics/bootstrap/js/bootstrap.js"></script>
 
-<link rel="stylesheet" href="/analytics/scripts/third-party/jquery-ui-1.8.20/themes/base/minified/jquery-ui.min.css">
+<link rel="stylesheet" href="/analytics/third-party/jquery-ui-1.8.20/themes/base/minified/jquery-ui.min.css">
 <script type="text/javascript"
-        src="/analytics/scripts/third-party/jquery-ui-1.8.20/ui/minified/jquery-ui.min.js"></script>
+        src="/analytics/third-party/jquery-ui-1.8.20/ui/minified/jquery-ui.min.js"></script>
 
 <!-- DataTable plugin -->
-<script type="text/javascript" src="/analytics/scripts/third-party/jquery.dataTables-1.9.4.min.js"></script>
+<script type="text/javascript" src="/analytics/third-party/jquery.dataTables-1.9.4.min.js"></script>
 <script>
 	// setup default settings
 	jQuery.extend(true, jQuery.fn.dataTable.defaults, {
@@ -163,5 +162,36 @@
 	/* don't display message about empty table in DateTable  */
 	.dataTables_empty {
 	    display: none;
+	}
+</style>
+
+<style type="text/css">
+	/* redefine style of Accordion Widget of jQuery UI (@see http://api.jqueryui.com/accordion/#method-disable ) */
+	.ui-accordion {
+	    width: 400px;
+	}
+
+    .ui-accordion .ui-corner-all {
+        border-radius: 4px;
+    }
+		
+	.ui-accordion .ui-accordion-header {
+	    background:#dadada url('/analytics/third-party/jquery-ui-1.8.20/themes/base/minified/images/ui-bg_glass_75_dadada_1x400.png') 50% 50% repeat-x;
+	    border:1px solid #999 !important;
+	}
+
+	.ui-accordion .ui-state-hover {
+	    background-color: #08c;
+	    background-image: none;
+	    color: white;
+	}
+	
+	.ui-accordion .ui-accordion-header .ui-icon {
+        left: -17px !important;
+        background-image: url('/analytics/third-party/jquery-ui-1.8.20/themes/base/minified/images/ui-icons_454545_256x240.png') !important;
+    }
+		
+	.ui-accordion .ui-accordion-content {
+	    padding: 10px !important;
 	}
 </style>

@@ -31,12 +31,27 @@
         <div>
             <div class="well topFilteringPanel">
                 <div id="filter-by" class="left" targetWidgets="_all">
-                    Filter by:
-                    <input type="text" id="filterByKeywordInput" name="keyword" class="text-box" />
-                    <button class="btn command-btn" value="ws">Workspace</button>
-                    <button id="clearSelectionBtn" class="btn btn-small clear-btn">Clear</button>
+                    <div class="collabsiblePanelTitle">Filter</div>
+                    <div class="collabsiblePanelBody">
+                        <table>
+                            <tr>
+                               <td><label for="input-ws">Workspace:</label></td>
+                               <td><div class="filter-item">
+                                   <input type="text" id="input-ws" name="ws" class="text-box" />
+                               </div></td>
+                            </tr>
+                            <tr>
+                               <td></td>
+                               <td><div class="filter-item">
+                                    <button class="btn command-btn btn-primary">Filter</button>                    
+                                    <button id="clearSelectionBtn" class="btn btn-small clear-btn">Clear</button>
+                               </div></td>
+                            </tr>
+                        </table>
+                    </div>
                 </div>
             </div>
+
             <div class="hero-unit">
                 <div class="single-column-gadget">
                     <div class="view">

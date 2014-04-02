@@ -41,14 +41,17 @@ Presenter.prototype.setWidgetName = function(newWidgetName) {
 };
 
 /**
- * Return modelParams based on params from view which are registered in analytics.configuration object and updated with default values
+ * Return modelParams based on params from view which are registered in analytics.configuration object and updated with default values.
+ * Exclude model parameters with value = ""
  */
 Presenter.prototype.getModelParams = function(viewParams) {
     var modelParams = {};
 
-    for (var i in viewParams) {
-        if (analytics.configuration.isParamRegistered(i)) {
-            modelParams[i] = viewParams[i];
+    var viewParamNames = Object.keys(viewParams);
+    for (var i in viewParamNames) {
+        var viewParamName = viewParamNames[i]
+        if (analytics.configuration.isParamRegistered(viewParamName)) {
+            modelParams[viewParamName] = viewParams[viewParamName];
         }
     }
 
@@ -62,6 +65,15 @@ Presenter.prototype.getModelParams = function(viewParams) {
     }
     if (typeof modelParams["to_date"] != "undefined") {
         modelParams["to_date"] = modelParams["to_date"].replace(/-/g, "");
+    }
+    
+    // remove modelParams with value = ""
+    var modelParamNames = Object.keys(modelParams);
+    for (var i in modelParamNames) {
+        var modelParamName = modelParamNames[i];
+        if (modelParams[modelParamName] === "") {
+            delete modelParams[modelParamName];
+        }
     }
     
     return modelParams;

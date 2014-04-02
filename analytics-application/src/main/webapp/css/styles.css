@@ -40,30 +40,6 @@ iframe {
     color: #ddd;
 }
 
-.topFilteringPanel {
-    text-align: left;
-    overflow: hidden;
-}
-
-a.wso2 {
-    background: url("../images/wso2.png") no-repeat scroll 0 0 transparent;
-    display: block;
-    height: 17px;
-    width: 70px;
-}
-
-a.wso2:hover {
-    background-position: 0 -18px;
-}
-
-.wso2Logo_footer {
-    float: right;
-}
-
-.wso2copyRight_footer {
-    float: left;
-}
-
 .plain {
     margin: 0 !important;
 }
@@ -155,4 +131,36 @@ div#loader .loader-text {
     font-size: 17px;
     color: #616161;
     padding-top: 10px;
+}
+
+/* style of filter panel */
+.topFilteringPanel {
+    text-align: left;
+    overflow: hidden;
+    padding: 10px 19px !important;
+}
+
+.topFilteringPanel .filter-item {
+    padding: 4px 0px;
+}
+
+.topFilteringPanel .filter-item button {
+    margin-top: 7px;
+}
+
+.topFilteringPanel label {
+    padding-right: 10px;
+}
+
+.topFilteringPanel button,
+.topFilteringPanel input {
+    font-size: 13px !important;
+}
+
+.topFilteringPanel button.btn-small {
+    font-size: 11px !important;
+}
+
+.collabsiblePanelTitle {
+    padding: 5px 10px !important;
 }

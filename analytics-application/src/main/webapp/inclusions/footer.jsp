@@ -25,6 +25,7 @@
 
 <script type="text/javascript" src="/analytics/scripts/view.js"></script>
 <script type="text/javascript" src="/analytics/scripts/views/loader.js"></script>
+<script type="text/javascript" src="/analytics/scripts/views/accordion.js"></script>
 <script type="text/javascript" src='/analytics/scripts/views/database-table.js'></script>
 
 <script type="text/javascript" src="/analytics/scripts/model.js"></script>
@@ -39,3 +40,11 @@
            <script type="text/javascript" src="<%= javaScriptsToLoad[i] %>"></script>  
 <%     }
    }%>
+
+<!--  load calendar jquery plugin  -->
+<script type="text/javascript">
+    $(function () {
+        $("#datepicker-from-date").datepicker({dateFormat: "yy-mm-dd"});
+        $("#datepicker-to-date").datepicker({dateFormat: "yy-mm-dd"});
+    });
+</script>

@@ -40,42 +40,17 @@ function Main() {
         });
 
         // "Filter by" group
+        $("#filter-by input").keypress(function(event) {  // on "Enter" key pressed
+            if ( event.which == 13 ) {
+                event.preventDefault();
+                reloadWidgets($("#filter-by").attr("targetWidgets"));
+            }
+        });
         $("#filter-by button.command-btn").click(function () {
-            $("#filter-by button").removeClass('btn-primary');
-            if ($("#filter-by input[name='keyword']").val() != "") {  // select button only if there is some text in keyword input
-                $(this).addClass('btn-primary');
-
-                var filterParamNames = getFilterParamNames($("#filter-by button"));
-                filterParamNames = analytics.util.removeElementFromArray(filterParamNames, $(this).attr("value"));   // remove param with name = value of clicked button
-                reloadWidgets($("#filter-by").attr("targetWidgets"), filterParamNames);
-            }
+            reloadWidgets($("#filter-by").attr("targetWidgets"));
         });
-        $("#filter-by button.clear-btn").click(function () {    // clearing
-            $("#filter-by button").removeClass('btn-primary');
-            $("#filter-by input[name='keyword']").val("");
-
-            // remove from URL all params with names from buttons of this group
-            var filterParamNames = getFilterParamNames($("#filter-by button"));
-            reloadWidgets($("#filter-by").attr("targetWidgets"), filterParamNames);
-        });
-
-        // "Date range" group
-        $("#date-range button.command-btn").click(function () {
-            $("#date-range button").removeClass('btn-primary');
-            if ($("#date-range input[name='from_date']").val() != ""
-                || $("#date-range input[name='to_date']").val() != "") {  // select button only if there is date in one of date range input
-                $(this).addClass('btn-primary');
-                reloadWidgets($("#date-range").attr("targetWidgets"));
-            }
-        });
-        $("#date-range button.clear-btn").click(function () {    // clearing
-            $("#date-range button").removeClass('btn-primary');
-            $("#date-range input[name='from_date']").val("");
-            $("#date-range input[name='to_date']").val("");
-
-            // remove from URL all params with names from buttons of this group
-            var filterParamNames = getFilterParamNames($("#filter-by button"));
-            reloadWidgets($("#date-range").attr("targetWidgets"), filterParamNames);
+        $("#filter-by .clear-btn").click(function () {    // clearing
+            clearFilter();
         });
 
         // Metric selectors group
@@ -98,20 +73,12 @@ function Main() {
         $("#show-session-events").click(function (event) {
             reloadWidgets($("#show-session-events").attr("targetWidgets"));
         });
-
-        // Show encoded factories selector
-        $("#show-encoded-factories").click(function (event) {
-            reloadWidgets($("#show-encoded-factories").attr("targetWidgets"));
-        });
-
-        // Show non encoded factories selector
-        $("#show-non-encoded-factories").click(function (event) {
-            reloadWidgets($("#show-non-encoded-factories").attr("targetWidgets"));
-        });
-
-        // Show all factories selector
-        $("#show-all-factories").click(function (event) {
-            reloadWidgets($("#show-all-factories").attr("targetWidgets"));
+        
+        // Show factories selectors group
+        $("#show-factories button.command-btn").click(function () {
+            $("#show-factories button").removeClass('btn-primary');
+            $(this).addClass('btn-primary');
+            reloadWidgets($("#show-factories").attr("targetWidgets"));
         });
     };
 
@@ -121,30 +88,13 @@ function Main() {
     function getParamsFromButtons() {
         var params = {};
 
+        // process filter
+        params = getFilterParams($("#filter-by input"));
+        
         // process time selector
         var selectedTimeButton = $("#timely-dd button.btn-primary");
         if (selectedTimeButton.doesExist()) {
             params.time_unit = selectedTimeButton.val();
-        }
-
-        // process filter
-        var filterInput = $("#filter-by input[name='keyword']");
-        var selectedFilterButton = $("#filter-by button.btn-primary")
-        if (selectedFilterButton.doesExist()
-            && filterInput.val().length > 0) {
-            params[selectedFilterButton.val()] = filterInput.val();
-        }
-
-        // process date-range
-        var fromDateInput = $("#date-range input[name='from_date']");
-        if (fromDateInput.doesExist()
-            && fromDateInput.val() != "") {
-            params["from_date"] = fromDateInput.val();
-        }
-        var toDateInput = $("#date-range input[name='to_date']");
-        if (toDateInput.doesExist()
-            && toDateInput.val() != "") {
-            params["to_date"] = toDateInput.val();
         }
 
         // process metric selector
@@ -169,10 +119,10 @@ function Main() {
             params.event = showSessionEventsCheckbox.attr("inverseValue");
         }
 
-        // process show encoded factories selector
-        var showFactoriesRadioBox = jQuery("input[name=show-factories]:checked");
-        if (showFactoriesRadioBox.doesExist() && showFactoriesRadioBox.attr("value") != "") {
-            params.encoded_factory = showFactoriesRadioBox.attr("value");
+        // process show-factories selector
+        var selectedShowFactoriesButton = $("#show-factories button.btn-primary");
+        if (selectedShowFactoriesButton.doesExist() && selectedShowFactoriesButton.val() != "") {
+            params.encoded_factory = selectedShowFactoriesButton.val();
         }
 
         return params;
@@ -198,7 +148,7 @@ function Main() {
         var namesOfParamsToRemove = namesOfParamsToRemove || {};
 
         if (typeof widgetNames != "undefined") {
-            var widgetName = widgetNames.split(',');
+            var widgetNames = widgetNames.split(',');
 
             var urlParams = analytics.util.extractUrlParams(window.location.href);
             var buttonParams = getParamsFromButtons();
@@ -217,11 +167,11 @@ function Main() {
                 params["page"] = 1;
             }
 
-            if (widgetName == "_all") {
+            if (widgetNames == "_all") {
                 loadAllWidgets(params);
             } else {
-                for (var i in widgetName) {
-                    loadWidget(widgetName[i], params);
+                for (var i = 0; i < widgetNames.length; i++) {
+                    loadWidget(widgetNames[i], params);
                 }
             }
         }
@@ -232,11 +182,11 @@ function Main() {
         if (typeof params == "undefined") {
             params = analytics.util.extractUrlParams(window.location.href);
             updateGlobalParamsWithValuesFromStorage(params);
-            updateCommandButtonsState(params);
+            updateFilterState(params);
         }
 
         var widgetNames = analytics.configuration.getWidgetNames();
-        for (var i in widgetNames) {
+        for (var i = 0; i < widgetNames.length; i++) {
             var widgetName = widgetNames[i];
             if (jQuery("#" + widgetName).doesExist()) {
                 loadWidget(widgetName, params);
@@ -292,7 +242,7 @@ function Main() {
     }
 
 
-    function updateCommandButtonsState(params) {
+    function updateFilterState(params) {
         var params = params || {};
 
         // update time selection buttons
@@ -302,56 +252,8 @@ function Main() {
         }
 
         // update filter-by group
-        var filterButtons = jQuery("#filter-by button");
-        var filterInput = $("#filter-by input[name='keyword']");
-        if (filterButtons.doesExist() && filterInput.doesExist()) {
-            jQuery("#filter-by button").removeClass('btn-primary');
-            filterInput.val("");
-
-            // find out "filter by" param like "Email: test@test.com" which is linked with button with text "Email"
-            for (var i = 0; i < filterButtons.length; i++) {
-                var button = jQuery(filterButtons[i]);
-                var filterParamValue = params[button.attr("value")];
-                if (typeof filterParamValue != "undefined") {
-                    button.addClass('btn-primary');
-                    filterInput.val(filterParamValue);   // set keyword input = value from param
-                    break;
-                }
-            }
-        }
-
-        // update date-range group
-        var isDateParameterPresenceInQuery = false;
-        {
-            var input = $("#date-range input[name='from_date']");
-            var queryParam = params["from_date"];
-            if (input.doesExist()) {
-                if (typeof queryParam != "undefined") {
-                    input.val(queryParam);
-                    isDateParameterPresenceInQuery = true;
-                } else {
-                    input.val("");
-                }
-            }
-        }
-        {
-            var input = $("#date-range input[name='to_date']");
-            var queryParam = params["to_date"];
-            if (input.doesExist()) {
-                if (typeof queryParam != "undefined") {
-                    input.val(queryParam);
-                    isDateParameterPresenceInQuery = true;
-                } else {
-                    input.val("");
-                }
-            }
-        }
-        jQuery("#date-range button").removeClass('btn-primary');
-        var dateRangeButton = jQuery("#date-range button:contains('Filter')");
-        if (dateRangeButton.doesExist() && isDateParameterPresenceInQuery) {
-            jQuery("#date-range button").removeClass('btn-primary');
-            dateRangeButton.addClass('btn-primary');
-        }
+        var filterInputs = $("#filter-by input");
+        setFilterInputValues(filterInputs, params);
 
         // update metric selection buttons
         var metricButtons = jQuery("#metric button");
@@ -377,13 +279,10 @@ function Main() {
             }
         }
 
-        // update show encoded factories selector
-        var showFactoriesParam = params["encoded_factory"];
-        if (typeof showFactoriesParam != "undefined") {
-            var showFactoriesRadioBox = jQuery("input[name=show-factories][value='" + showFactoriesParam + "']");
-            if (showFactoriesRadioBox.doesExist()) {
-                showFactoriesRadioBox.prop("checked", true);
-            }
+        // update show encoded selection buttons
+        var showFactoriesButtons = jQuery("#show-factories button");
+        if (showFactoriesButtons.doesExist()) {
+            setPrimaryButtonOnValue(showFactoriesButtons, params["encoded_factory"]);
         }
     }
 
@@ -396,7 +295,7 @@ function Main() {
         }
 
         var globalParamList = analytics.configuration.getGlobalParamList();
-        for (var i in globalParamList) {
+        for (var i = 0; i < globalParamList.length; i++) {
             var globalParamName = globalParamList[i];
             var storedParam = localStorage.getItem(globalParamName);  // get param value from HTML5 Web Storage
             if (typeof params[globalParamName] == "undefined"
@@ -427,7 +326,7 @@ function Main() {
         buttonGroup.removeClass('btn-primary');
         if (typeof parameter != "undefined") {
             // set as primary the button with value = parameter
-            for (var i = 0; i < buttonGroup.size(); i++) {
+            for (var i = 0; i < buttonGroup.length; i++) {
                 var button = jQuery(buttonGroup[i]);
                 if (button.attr("value") == parameter) {
                     button.addClass("btn-primary");
@@ -436,7 +335,7 @@ function Main() {
             }
         } else {
             // restore default primary button
-            for (var i = 0; i < buttonGroup.size(); i++) {
+            for (var i = 0; i < buttonGroup.length; i++) {
                 var button = jQuery(buttonGroup[i]);
                 if (typeof button.attr("default") != "undefined") {
                     button.addClass("btn-primary");
@@ -446,19 +345,60 @@ function Main() {
         }
     }
 
-    function getFilterParamNames(filterButtons) {
+    /** Filter functions **/
+    
+    function getFilterParamNames(filterInputs) {
         var paramNames = [];
-        for (var i in Object.keys(filterButtons)) {
-            if (typeof filterButtons[i] != "undefined"
-                && typeof filterButtons[i].value != "undefined"
-                && filterButtons[i].value != "") {
-                paramNames.push(filterButtons[i].value);
+        for (var i = 0; i < filterInputs.length; i++) {
+            if (typeof filterInputs[i] != "undefined"
+                && typeof filterInputs[i].name != "undefined"
+                && filterInputs[i].name != "") {
+                paramNames.push(filterInputs[i].name);
             }
         }
 
         return paramNames;
     }
 
+    function getFilterParams(filterInputs) {
+        var params = {};
+        for (var i = 0; i < filterInputs.length; i++) {
+            var inputName = filterInputs[i].name;
+            var inputValue = filterInputs[i].value;
+            params[inputName] = inputValue;
+        }
+
+        return params;
+    }
+ 
+    function setFilterInputValues(filterInputs, params) {
+        var isParamExists = false;
+        for (var i = 0; i < filterInputs.length; i++) {
+            var filterInput = filterInputs[i];
+            filterInput.value = ""; 
+            
+            if (typeof params[filterInput.name] != "undefined") {
+                filterInput.value = params[filterInput.name];
+                isParamExists = true;
+            }
+        }
+        
+        // display filter panel as opened if there is at least one non-empty filter parameter
+        analytics.views.accordion.display("filter-by", isParamExists);
+    }
+    
+    function clearFilter() {
+        var filterInputs = $("#filter-by input");
+        for (var i = 0; i < filterInputs.length; i++) {
+            filterInputs[i].value = "";
+        }
+        
+        reloadWidgets($("#filter-by").attr("targetWidgets"));
+        
+        // close filter panel after the clearing
+        analytics.views.accordion.close("filter-by");
+    }
+    
     /** ****************** library API ********** */
     return {
         reloadWidgetByUrl: reloadWidgetByUrl

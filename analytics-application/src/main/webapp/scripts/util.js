@@ -145,11 +145,16 @@ function Util() {
         return map;
     }
 	
-    /** Return array without certain element  */
-    function removeElementFromArray(array, element) {
-        var index = array.indexOf(element);
-        if (index > -1) {
-            array.splice(index, 1);
+    /** Return array without certain elements  
+     *  @param elements - list of elements to remove.
+     * */
+    function removeElementsFromArray(array, elements) {
+        for (var i in elements) { 
+            var element = elements[i];
+            var index = array.indexOf(element);
+            if (index > -1) {
+                array.splice(index, 1);
+            }
         }
         
         return array;
@@ -247,7 +252,7 @@ function Util() {
         // operations with parameters
     	removeParamsWithNullValues: removeParamsWithNullValues,
     	removeParams: removeParams,
-    	removeElementFromArray: removeElementFromArray,
+    	removeElementsFromArray: removeElementsFromArray,
     	
     	// other operations
     	getColumnIndexByColumnName: getColumnIndexByColumnName,
