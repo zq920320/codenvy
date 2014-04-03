@@ -114,7 +114,7 @@ public class FactoryUrlBaseValidator implements FactoryUrlValidator {
                 throw new FactoryUrlException("Factory with id " + params.get("id").iterator().next() + " is not found.");
             }
             factory = factoryBuilder.convertToLatest(factory);
-            validate(factoryBuilder.convertToLatest(factory), true, request);
+            validate(factory, true, request);
             return factory;
         } else {
             Factory factory = factoryBuilder.buildNonEncoded(factoryUrl);
