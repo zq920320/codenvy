@@ -51,21 +51,20 @@ Presenter.prototype.getModelParams = function(viewParams) {
     for (var i in viewParamNames) {
         var viewParamName = viewParamNames[i]
         if (analytics.configuration.isParamRegistered(viewParamName)) {
-            modelParams[viewParamName] = viewParams[viewParamName];
+            var paramValue = viewParams[viewParamName];
+            
+            // translate date range value format: fix "yyyy-mm-dd" on "yyyymmdd"
+            if (analytics.configuration.isDateParam(viewParamName)) {
+                paramValue = analytics.util.encodeDate(paramValue);
+            }
+            
+            modelParams[viewParamName] = paramValue;
         }
     }
 
     analytics.configuration.setupDefaultModelParams(this.widgetName, modelParams);
     
     analytics.configuration.removeForbiddenModelParams(this.widgetName, modelParams);
-    
-    // fix date range value format: fix "yyyy-mm-dd" on "yyyymmdd"
-    if (typeof modelParams["from_date"] != "undefined") {
-        modelParams["from_date"] = modelParams["from_date"].replace(/-/g, "");
-    }
-    if (typeof modelParams["to_date"] != "undefined") {
-        modelParams["to_date"] = modelParams["to_date"].replace(/-/g, "");
-    }
     
     // remove modelParams with value = ""
     var modelParamNames = Object.keys(modelParams);

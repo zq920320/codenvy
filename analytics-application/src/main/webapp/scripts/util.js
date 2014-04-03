@@ -237,6 +237,21 @@ function Util() {
         return currentPageName;
     }
     
+    /**
+     * Translate dateString from "yyyy-mm-dd" to "yyyymmdd".
+     */
+    function encodeDate(dateString) {
+        return dateString.replace(/-/g, "");
+    }
+    
+    /**
+     * Translate dateString from "yyyymmdd" to "yyyy-mm-dd".
+     */
+    function decodeDate(dateString) {
+        return dateString.substring(0,4) + "-" + dateString.substring(4,6) + "-" + dateString.substring(6,8); 
+    }
+    
+    
     /** ****************** library API ********** */
     return {
         // url manipulations
@@ -262,6 +277,10 @@ function Util() {
         clone: clone,
     	
         processUserLogOut: processUserLogOut,
+        
+        // date coding
+        encodeDate: encodeDate,
+        decodeDate: decodeDate,
     }
 
 }

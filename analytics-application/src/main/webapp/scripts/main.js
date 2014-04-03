@@ -378,7 +378,14 @@ function Main() {
             filterInput.value = ""; 
             
             if (typeof params[filterInput.name] != "undefined") {
-                filterInput.value = params[filterInput.name];
+                var paramValue = params[filterInput.name];
+                
+                // translate date format from "yyyymmdd" to "yyyy-mm-dd"
+                if (analytics.configuration.isDateParam(filterInput.name)) {
+                    paramValue = analytics.util.decodeDate(paramValue);
+                }
+                
+                filterInput.value = paramValue;
                 isParamExists = true;
             }
         }

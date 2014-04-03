@@ -604,12 +604,18 @@ function Configuration() {
                         // factory-view; workspace-view > factory-view; top
                         // metrics report > factory-view
     ];
-
+    
     /** Global parameters stored in Browser Storage */
     var globalParams = [
         "ide",
     ];
 
+    /** Date params which should have "yyyymmdd" in model and "yyyy-mm-dd" format in view */
+    var dateParams = [
+        "from_date",
+        "to_date",
+    ];
+    
     /** List of system messages of Analytics */
     var systemMessagesList = [
         "User Did Not Enter Workspace",
@@ -719,6 +725,19 @@ function Configuration() {
         return crossPageParams;
     }
 
+    /**
+     * Return true only if paramName consists in dataParams list.
+     */
+    function isDateParam(paramName) {
+        for (var i = 0; i < dateParams.length; i++) {
+            if (dateParams[i] == paramName) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
     function isSystemMessage(message) {
         for (var i in systemMessagesList) {
             if (systemMessagesList[i] == message) {
@@ -741,6 +760,7 @@ function Configuration() {
         getViewParamsWithNullValues: getViewParamsWithNullValues,
         removeForbiddenModelParams: removeForbiddenModelParams,
         getCrossPageParamsList: getCrossPageParamsList,
+        isDateParam: isDateParam,
         isSystemMessage: isSystemMessage,
 
     }
