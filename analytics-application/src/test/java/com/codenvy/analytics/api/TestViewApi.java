@@ -159,10 +159,10 @@ public class TestViewApi extends BaseTest {
     }
 
     /**
-     * Get today in format "19 Mar"
+     * Get today in format "02 Mar"
      */
     private String getToday() {
-        DateFormat df = new SimpleDateFormat("d MMM");
+        DateFormat df = new SimpleDateFormat("dd MMM");
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DAY_OF_MONTH, -1);
 
