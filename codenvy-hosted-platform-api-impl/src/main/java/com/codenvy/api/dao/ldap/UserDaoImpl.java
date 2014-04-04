@@ -183,7 +183,7 @@ public class UserDaoImpl implements UserDao {
     @Override
     public boolean authenticate(String alias, String password) throws UserException {
         if (alias == null || alias.isEmpty() || password == null || password.isEmpty()) {
-            LOG.error("Empty username or password");
+            LOG.warn("Empty username or password");
             return false;
         }
         try {
@@ -207,7 +207,7 @@ public class UserDaoImpl implements UserDao {
                 authContext = new InitialLdapContext(env, null);
                 return true;
             } catch (AuthenticationException e) {
-                LOG.error(String.format("Invalid password for user %s", userDn));
+                LOG.warn(String.format("Invalid password for user %s", userDn));
                 return false;
             } catch (NamingException e) {
                 throw new UserException(String.format("Authentication failed for user '%s'", alias), e);
@@ -385,7 +385,7 @@ public class UserDaoImpl implements UserDao {
             try {
                 enumeration.close();
             } catch (NamingException e) {
-                LOG.error(e.getMessage(), e);
+                LOG.warn(e.getMessage(), e);
             }
         }
     }
