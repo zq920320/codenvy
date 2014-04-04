@@ -134,7 +134,7 @@ public class InviteService {
                 Attribute attribute =
                         DtoFactory.getInstance().createDto(Attribute.class).withName("temporary").withValue(
                                 "false");
-                profileDao.create(DtoFactory.getInstance().createDto(Profile.class).withId(userId)
+                profileDao.create(DtoFactory.getInstance().createDto(Profile.class).withId(userId).withUserId(userId)
                                             .withAttributes(Arrays.asList(attribute)));
             }
             memberDao.create(DtoFactory.getInstance().createDto(Member.class).withWorkspaceId(workspaceId)
