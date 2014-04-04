@@ -191,7 +191,8 @@
                _gaq.push(['_trackEvent', 'Regisration', 'Google registration', page]);
                 var url = "/api/oauth/authenticate?oauth_provider=google&mode=federated_login" +
                    "&scope=https://www.googleapis.com/auth/userinfo.profile&scope=https://www.googleapis.com/auth/userinfo.email"+
-                   "&redirect_after_login=" + encodeURIComponent("/api/oauth?" + window.location.search.substring(1) + "&oauth_provider=google");
+                   "&redirect_after_login=" + encodeURIComponent(window.location.protocol + "//" + window.location.host +
+                   "/api/oauth?" + window.location.search.substring(1) + "&oauth_provider=google");
 
                 if(typeof callback !== 'undefined'){
                     callback(url);
@@ -203,7 +204,8 @@
             if (isWebsocketEnabled()) {
                 _gaq.push(['_trackEvent', 'Regisration', 'GitHub registration', page]);
                 var url = "/api/oauth/authenticate?oauth_provider=github&mode=federated_login&scope=user&scope=repo" +
-                "&redirect_after_login=" + encodeURIComponent("/api/oauth?" + window.location.search.substring(1) + "&oauth_provider=github");
+                "&redirect_after_login=" + encodeURIComponent(window.location.protocol + "//" + window.location.host +
+                "/api/oauth?" + window.location.search.substring(1) + "&oauth_provider=github");
 
                 if(typeof callback !== 'undefined'){
                     callback(url);
