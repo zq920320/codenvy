@@ -403,14 +403,6 @@ public class Event {
                                 .withParam("AFFILIATE-ID", affiliateId);
         }
 
-        public static Builder createUserEvent(String user, String action) {
-            Builder builder = new Builder().withParam("EVENT", "users-events")
-                                           .withParam("ACTION", action)
-                                           .withParam("USER", user);
-
-            return builder;
-        }
-
         public static Builder collaborativeSessionStartedEvent(String ws, String userId, String sessionId) {
             Builder builder = new Builder().withParam("EVENT", "collaborative-session-started")
                                            .withParam("WS", ws)

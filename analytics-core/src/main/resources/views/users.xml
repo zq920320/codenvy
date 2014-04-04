@@ -113,16 +113,4 @@
             </row>
         </section>
     </view>
-
-    <view name="users_events" on-demand="true">
-        <section name="users_events">
-            <row class="com.codenvy.analytics.services.view.TitleRow">
-                <parameter key="titles" value="Action,Count"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="users_events"/>
-                <parameter key="fields" value="action,count"/>
-            </row>
-        </section>
-    </view>
 </display>
