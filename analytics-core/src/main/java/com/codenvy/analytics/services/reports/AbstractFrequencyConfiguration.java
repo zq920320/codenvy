@@ -56,7 +56,7 @@ public abstract class AbstractFrequencyConfiguration {
         Context.Builder builder = new Context.Builder(context);
         builder.put(getTimeUnit());
 
-        return Utils.initDateInterval(toDate, builder);
+        return Utils.initDateInterval(toDate, getTimeUnit(), builder);
     }
 
     abstract public boolean isAppropriateDateToSendReport(Context context) throws ParseException;

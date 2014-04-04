@@ -20,7 +20,9 @@
 package com.codenvy.analytics;
 
 import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Context.Builder;
 import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.metrics.Parameters.TimeUnit;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -59,25 +61,8 @@ public class Utils {
     }
 
     /** Initialize date interval accordingly to passed {@link Parameters#TIME_UNIT} */
-    public static Context initDateInterval(Calendar date, Context.Builder builder) throws ParseException {
-        Parameters.TimeUnit timeUnit = builder.getTimeUnit();
-
-        switch (timeUnit) {
-            case DAY:
-                initByDay(date, builder);
-                break;
-            case WEEK:
-                initByWeek(date, builder);
-                break;
-            case MONTH:
-                initByMonth(date, builder);
-                break;
-            case LIFETIME:
-                initByLifeTime(builder);
-                break;
-        }
-
-        return builder.build();
+    public static Context initDateInterval(Calendar toDate, Parameters.TimeUnit timeUnit, Context.Builder builder) throws ParseException {
+        return initDateInterval(toDate, timeUnit, 0, builder);
     }
 
     private static void initByLifeTime(Context.Builder builder) {
@@ -85,33 +70,37 @@ public class Utils {
         builder.putDefaultValue(Parameters.TO_DATE);
     }
 
-    private static void initByWeek(Calendar date, Context.Builder builder) {
-        Calendar fromDate = (Calendar)date.clone();
+    private static void initByWeek(Calendar toDate, int shift, Context.Builder builder) {
+        toDate.add(Calendar.WEEK_OF_MONTH, shift);
+        
+        Calendar fromDate = (Calendar)toDate.clone();
         fromDate.add(Calendar.DAY_OF_MONTH,
                      fromDate.getActualMinimum(Calendar.DAY_OF_WEEK) - fromDate.get(Calendar.DAY_OF_WEEK));
 
-        Calendar toDate = (Calendar)date.clone();
         toDate.add(Calendar.DAY_OF_MONTH,
                    toDate.getActualMaximum(Calendar.DAY_OF_WEEK) - toDate.get(Calendar.DAY_OF_WEEK));
-
+        
         builder.put(Parameters.FROM_DATE, fromDate);
         builder.put(Parameters.TO_DATE, toDate);
     }
 
-    private static void initByMonth(Calendar date, Context.Builder builder) {
-        Calendar fromDate = (Calendar)date.clone();
+    private static void initByMonth(Calendar toDate, int shift, Context.Builder builder) {
+        toDate.add(Calendar.MONTH, shift);
+        
+        Calendar fromDate = (Calendar)toDate.clone();
         fromDate.set(Calendar.DAY_OF_MONTH, 1);
-
-        Calendar toDate = (Calendar)date.clone();
+    
         toDate.set(Calendar.DAY_OF_MONTH, toDate.getActualMaximum(Calendar.DAY_OF_MONTH));
 
         builder.put(Parameters.FROM_DATE, fromDate);
         builder.put(Parameters.TO_DATE, toDate);
     }
 
-    private static void initByDay(Calendar date, Context.Builder builder) {
-        builder.put(Parameters.FROM_DATE, date);
-        builder.put(Parameters.TO_DATE, date);
+    private static void initByDay(Calendar toDate, int shift, Context.Builder builder) {
+        toDate.add(Calendar.DATE, shift);        
+        Calendar fromDate = (Calendar)toDate.clone();
+        builder.put(Parameters.FROM_DATE, fromDate);
+        builder.put(Parameters.TO_DATE, toDate);
     }
 
     /**
@@ -119,25 +108,10 @@ public class Utils {
      * be placed in context.
      */
     public static Context nextDateInterval(Context.Builder builder) throws ParseException {
-        Calendar fromDate = builder.getAsDate(Parameters.FROM_DATE);
         Calendar toDate = builder.getAsDate(Parameters.TO_DATE);
         Parameters.TimeUnit timeUnit = builder.getTimeUnit();
 
-        switch (timeUnit) {
-            case DAY:
-                nextDay(toDate, builder);
-                break;
-            case WEEK:
-                nextWeek(fromDate, toDate, builder);
-                break;
-            case MONTH:
-                nextMonth(toDate, builder);
-                break;
-            case LIFETIME:
-                break;
-        }
-
-        return builder.build();
+        return initDateInterval(toDate, timeUnit, 1, builder);
     }
 
     /**
@@ -145,76 +119,10 @@ public class Utils {
      * be placed in context.
      */
     public static Context prevDateInterval(Context.Builder builder) throws ParseException {
-        Calendar fromDate = builder.getAsDate(Parameters.FROM_DATE);
         Calendar toDate = builder.getAsDate(Parameters.TO_DATE);
         Parameters.TimeUnit timeUnit = builder.getTimeUnit();
 
-        switch (timeUnit) {
-            case DAY:
-                prevDay(toDate, builder);
-                break;
-            case WEEK:
-                prevWeek(fromDate, toDate, builder);
-                break;
-            case MONTH:
-                prevMonth(fromDate, builder);
-                break;
-            case LIFETIME:
-                break;
-        }
-
-        return builder.build();
-    }
-
-    private static void prevWeek(Calendar fromDate, Calendar toDate, Context.Builder builder) {
-        fromDate.add(Calendar.DAY_OF_MONTH, -7);
-        toDate.add(Calendar.DAY_OF_MONTH, -7);
-
-        builder.put(Parameters.FROM_DATE, fromDate);
-        builder.put(Parameters.TO_DATE, toDate);
-    }
-
-    private static void prevMonth(Calendar fromDate, Context.Builder builder) {
-        Calendar toDate = (Calendar)fromDate.clone();
-        toDate.add(Calendar.DAY_OF_MONTH, -1);
-
-        fromDate = (Calendar)toDate.clone();
-        fromDate.set(Calendar.DAY_OF_MONTH, 1);
-
-        builder.put(Parameters.FROM_DATE, fromDate);
-        builder.put(Parameters.TO_DATE, toDate);
-    }
-
-    private static void prevDay(Calendar toDate, Context.Builder builder) {
-        toDate.add(Calendar.DAY_OF_MONTH, -1);
-
-        builder.put(Parameters.FROM_DATE, toDate);
-        builder.put(Parameters.TO_DATE, toDate);
-    }
-
-    private static void nextMonth(Calendar toDate, Context.Builder builder) {
-        Calendar fromDate = (Calendar)toDate.clone();
-        fromDate.add(Calendar.DAY_OF_MONTH, 1);
-
-        toDate.add(Calendar.MONTH, 1);
-
-        builder.put(Parameters.FROM_DATE, fromDate);
-        builder.put(Parameters.TO_DATE, toDate);
-    }
-
-    private static void nextWeek(Calendar fromDate, Calendar toDate, Context.Builder builder) {
-        fromDate.add(Calendar.DAY_OF_MONTH, 7);
-        toDate.add(Calendar.DAY_OF_MONTH, 7);
-
-        builder.put(Parameters.FROM_DATE, fromDate);
-        builder.put(Parameters.TO_DATE, toDate);
-    }
-
-    private static void nextDay(Calendar toDate, Context.Builder builder) throws ParseException {
-        toDate.add(Calendar.DAY_OF_MONTH, 1);
-
-        builder.put(Parameters.FROM_DATE, toDate);
-        builder.put(Parameters.TO_DATE, toDate);
+        return initDateInterval(toDate, timeUnit, -1, builder);
     }
 
     public static Context initializeContext(Parameters.TimeUnit timeUnit) throws ParseException {
@@ -223,8 +131,33 @@ public class Utils {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.TIME_UNIT, timeUnit.name());
 
-        initDateInterval(cal, builder);
+        initDateInterval(cal, builder.getTimeUnit(), builder);
 
         return timeUnit == Parameters.TimeUnit.DAY ? Utils.prevDateInterval(builder) : builder.build();
+    }
+
+    /**
+     * Calculate FROM_DATE and TO_DATE parameters of context:
+     * FROM_DATE = (current_{date/week/month}_at_from_date + timeUnit * (timeShift - 1))
+     * TO_FATE =  (current_{date/week/month}_at_from_date + timeUnit * timeShift)
+     * @param timeShift = starting from 0 to represent current time period.  
+     */
+    public static Context initDateInterval(Calendar toDate, TimeUnit timeUnit, int timeShift, Builder builder) {
+        switch (timeUnit) {
+            case DAY:
+                initByDay(toDate, timeShift, builder);
+                break;
+            case WEEK:
+                initByWeek(toDate, timeShift, builder);
+                break;
+            case MONTH:
+                initByMonth(toDate, timeShift, builder);
+                break;
+            case LIFETIME:
+                initByLifeTime(builder);
+                break;
+        }
+
+        return builder.build();
     }
 }

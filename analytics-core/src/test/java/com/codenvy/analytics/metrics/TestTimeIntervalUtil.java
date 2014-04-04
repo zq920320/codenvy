@@ -20,15 +20,15 @@
 package com.codenvy.analytics.metrics;
 
 
-import com.codenvy.analytics.Utils;
-
-import org.testng.annotations.Test;
+import static org.testng.Assert.assertEquals;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-import static org.testng.Assert.assertEquals;
+import org.testng.annotations.Test;
+
+import com.codenvy.analytics.Utils;
 
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
@@ -44,11 +44,10 @@ public class TestTimeIntervalUtil {
         Calendar date = Calendar.getInstance();
         date.setTime(df.parse("20130410"));
 
-        Context context = Utils.initDateInterval(date, builder);
+        Context context = Utils.initDateInterval(date, builder.getTimeUnit(), builder);
 
         assertEquals(context.get(Parameters.FROM_DATE), "20130410");
         assertEquals(context.get(Parameters.TO_DATE), "20130410");
-
     }
 
     @Test
@@ -59,11 +58,10 @@ public class TestTimeIntervalUtil {
         Calendar date = Calendar.getInstance();
         date.setTime(df.parse("20130410"));
 
-        Context context = Utils.initDateInterval(date, builder);
+        Context context = Utils.initDateInterval(date, builder.getTimeUnit(), builder);
 
         assertEquals(context.get(Parameters.FROM_DATE), "20130407");
         assertEquals(context.get(Parameters.TO_DATE), "20130413");
-
     }
 
     @Test
@@ -74,13 +72,112 @@ public class TestTimeIntervalUtil {
         Calendar date = Calendar.getInstance();
         date.setTime(df.parse("20130410"));
 
-        Context context = Utils.initDateInterval(date, builder);
+        Context context = Utils.initDateInterval(date, builder.getTimeUnit(), builder);
 
         assertEquals(context.get(Parameters.FROM_DATE), "20130401");
         assertEquals(context.get(Parameters.TO_DATE), "20130430");
-
     }
 
+    @Test
+    public void testInitDateIntervalByLifeTime() throws Exception {
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.TIME_UNIT, Parameters.TimeUnit.LIFETIME.toString());
+
+        Calendar date = Calendar.getInstance();
+        date.setTime(df.parse("20130410"));
+        
+        Context context = Utils.initDateInterval(date, builder.getTimeUnit(), builder);
+
+        // calculate default value of TO_DATE parameter
+        // @see com.codenvy.analytics.metrics.Parameters.FROM_DATE.{...}.getDefaultValue()
+        String fromDateDefaultValue = "20130101";
+        
+        assertEquals(context.get(Parameters.FROM_DATE), fromDateDefaultValue);
+        
+        // calculate default value of TO_DATE parameter
+        // @see com.codenvy.analytics.metrics.Parameters.TO_DATE.{...}.getDefaultValue()
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_MONTH, -1);
+        String toDateDefaultValue = df.format(calendar.getTime());
+        
+        assertEquals(context.get(Parameters.TO_DATE), toDateDefaultValue);
+    }
+    
+    @Test
+    public void testInitDateIntervalByDayShifted() throws Exception {
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.TIME_UNIT, Parameters.TimeUnit.DAY.toString());
+
+        Calendar date = Calendar.getInstance();
+        date.setTime(df.parse("20130410"));
+
+        int timeInterval = 0;
+        
+        Context context = Utils.initDateInterval(date, builder.getTimeUnit(), timeInterval, builder);
+
+        assertEquals(context.get(Parameters.FROM_DATE), "20130410");
+        assertEquals(context.get(Parameters.TO_DATE), "20130410");
+    }
+
+    @Test
+    public void testInitDateIntervalByWeekShifted() throws Exception {
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.TIME_UNIT, Parameters.TimeUnit.WEEK.toString());
+
+        Calendar date = Calendar.getInstance();
+        date.setTime(df.parse("20130410"));
+
+        int timeInterval = -1;
+        
+        Context context = Utils.initDateInterval(date, builder.getTimeUnit(), timeInterval, builder);
+
+        assertEquals(context.get(Parameters.FROM_DATE), "20130331");
+        assertEquals(context.get(Parameters.TO_DATE), "20130406");
+    }
+
+    @Test
+    public void testInitDateIntervalByMonthShifted() throws Exception {
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.TIME_UNIT, Parameters.TimeUnit.MONTH.toString());
+
+        Calendar date = Calendar.getInstance();
+        date.setTime(df.parse("20130410"));
+
+        int timeInterval = -2;
+        
+        Context context = Utils.initDateInterval(date, builder.getTimeUnit(), timeInterval, builder);
+
+        assertEquals(context.get(Parameters.FROM_DATE), "20130201");
+        assertEquals(context.get(Parameters.TO_DATE), "20130228");
+    }
+
+    @Test
+    public void testInitDateIntervalByLifeTimeShifted() throws Exception {
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.TIME_UNIT, Parameters.TimeUnit.LIFETIME.toString());
+
+        Calendar date = Calendar.getInstance();
+        date.setTime(df.parse("20130410"));
+        
+        int timeInterval = -3;  // timeInterval should don't matter in case of LIFETIME time_unit 
+        
+        Context context = Utils.initDateInterval(date, builder.getTimeUnit(), timeInterval, builder);
+
+        // calculate default value of TO_DATE parameter
+        // @see com.codenvy.analytics.metrics.Parameters.FROM_DATE.{...}.getDefaultValue()
+        String fromDateDefaultValue = "20130101";
+        
+        assertEquals(context.get(Parameters.FROM_DATE), fromDateDefaultValue);
+        
+        // calculate default value of TO_DATE parameter
+        // @see com.codenvy.analytics.metrics.Parameters.TO_DATE.{...}.getDefaultValue()
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_MONTH, -1);
+        String toDateDefaultValue = df.format(calendar.getTime());
+        
+        assertEquals(context.get(Parameters.TO_DATE), toDateDefaultValue);
+    }
+    
     @Test
     public void testNextDay() throws Exception {
         Context.Builder builder = new Context.Builder();
@@ -103,8 +200,8 @@ public class TestTimeIntervalUtil {
 
         Context context = Utils.nextDateInterval(builder);
 
-        assertEquals(context.get(Parameters.FROM_DATE), "20130506");
-        assertEquals(context.get(Parameters.TO_DATE), "20130512");
+        assertEquals(context.get(Parameters.FROM_DATE), "20130512");   // starting week on Sunday
+        assertEquals(context.get(Parameters.TO_DATE), "20130518");     // ending week on Saturday
     }
 
     @Test
@@ -142,8 +239,8 @@ public class TestTimeIntervalUtil {
 
         Context context = Utils.prevDateInterval(builder);
 
-        assertEquals(context.get(Parameters.FROM_DATE), "20130422");
-        assertEquals(context.get(Parameters.TO_DATE), "20130428");
+        assertEquals(context.get(Parameters.FROM_DATE), "20130428");  // starting week on Sunday
+        assertEquals(context.get(Parameters.TO_DATE), "20130504");    // ending week on Saturday
     }
 
     @Test

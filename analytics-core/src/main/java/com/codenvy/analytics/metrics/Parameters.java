@@ -60,6 +60,9 @@ public enum Parameters {
             return TimeUnit.LIFETIME.name();
         }
     },
+    
+    TIME_INTERVAL,
+    
     FROM_DATE {
         @Override
         public String getDefaultValue() {
