@@ -70,6 +70,8 @@
                                        src="${project.build.directory}/dependency/odyssey-prod.zip"/>
                                 <copy file="${project.build.directory}/unzip/odyssey/site/war/factory/error/error-invalid-factory-url.html"
                                       tofile="${project.build.directory}/${project.artifactId}-${project.version}/resources/error-invalid-factory-url.jsp" />
+                                <copy file="${project.build.directory}/unzip/odyssey/site/war/factory/error/browser-not-supported.html"
+                                      tofile="${project.build.directory}/${project.artifactId}-${project.version}/resources/browser-not-supported.jsp" />
                             </tasks>
                         </configuration>
                     </execution>
