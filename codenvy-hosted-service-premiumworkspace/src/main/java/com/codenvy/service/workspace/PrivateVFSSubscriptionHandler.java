@@ -49,7 +49,7 @@ public abstract class PrivateVFSSubscriptionHandler implements SubscriptionHandl
         this.workspaceDao = workspaceDao;
     }
 
-
+    //TODO add codenvy_workspace_multiple_till=<date> attribute
     @Override
     public void onCreateSubscription(SubscriptionEvent subscription) {
         setOrganizationPermissions(subscription.getSubscription().getOrganizationId());

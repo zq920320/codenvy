@@ -22,6 +22,8 @@ import com.codenvy.api.organization.shared.dto.Organization;
 import com.codenvy.api.organization.shared.dto.Attribute;
 import com.codenvy.api.organization.shared.dto.Member;
 import com.codenvy.api.organization.shared.dto.Subscription;
+import com.codenvy.api.workspace.server.dao.WorkspaceDao;
+import com.codenvy.api.workspace.shared.dto.Workspace;
 import com.codenvy.dto.server.DtoFactory;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
@@ -29,15 +31,20 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 
+import org.mockito.Mock;
+import org.mockito.testng.MockitoTestNGListener;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
@@ -48,6 +55,7 @@ import static org.testng.Assert.assertNull;
  * @author Max Shaposhnik
  * @author Eugene Voevodin
  */
+@Listeners(value = {MockitoTestNGListener.class})
 public class OrganizationDaoTest extends BaseDaoTest {
 
     private static final String USER_ID = "user12837asjhda823981h";
@@ -71,6 +79,9 @@ public class OrganizationDaoTest extends BaseDaoTest {
     DBCollection        subscriptionCollection;
     DBCollection        membersCollection;
 
+    @Mock
+    WorkspaceDao workspaceDao;
+
     static {
         PROPS = new HashMap<>();
         PROPS.put("key1", "value1");
@@ -80,7 +91,7 @@ public class OrganizationDaoTest extends BaseDaoTest {
     @BeforeMethod
     public void setUp() throws Exception {
         super.setUp(ORG_COLL_NAME);
-        organizationDao = new OrganizationDaoImpl(db, ORG_COLL_NAME, SUBSCRIPTION_COLL_NAME, MEMBER_COLL_NAME);
+        organizationDao = new OrganizationDaoImpl(db, workspaceDao, ORG_COLL_NAME, SUBSCRIPTION_COLL_NAME, MEMBER_COLL_NAME);
         subscriptionCollection = db.getCollection(SUBSCRIPTION_COLL_NAME);
         membersCollection = db.getCollection(MEMBER_COLL_NAME);
     }
@@ -168,6 +179,7 @@ public class OrganizationDaoTest extends BaseDaoTest {
 
     @Test
     public void shouldRemoveOrganization() throws Exception {
+        when(workspaceDao.getByOrganization(ORGANIZATION_ID)).thenReturn(Collections.<Workspace>emptyList());
         collection.insert(
                 new BasicDBObject("id", ORGANIZATION_ID).append("name", ORGANIZATION_NAME).append("owner", ORGANIZATION_OWNER));
 
@@ -181,6 +193,24 @@ public class OrganizationDaoTest extends BaseDaoTest {
         organizationDao.remove(ORGANIZATION_ID);
         assertNull(collection.findOne(new BasicDBObject("id", ORGANIZATION_ID)));
         assertNull(membersCollection.findOne(new BasicDBObject("_id", USER_ID)));
+    }
+
+    @Test(expectedExceptions = OrganizationException.class,
+          expectedExceptionsMessageRegExp = "It is not possible to remove organization that has associated workspaces")
+    public void shouldNotBeAbleToRemoveOrganizationWithAssociatedWorkspace() throws Exception {
+        when(workspaceDao.getByOrganization(ORGANIZATION_ID))
+                .thenReturn(Arrays.asList(DtoFactory.getInstance().createDto(Workspace.class)));
+        collection.insert(
+                new BasicDBObject("id", ORGANIZATION_ID).append("name", ORGANIZATION_NAME).append("owner", ORGANIZATION_OWNER));
+
+        List<String> roles = Arrays.asList("organization/admin", "organization/developer");
+        Member member1 = DtoFactory.getInstance().createDto(Member.class)
+                                   .withUserId(USER_ID)
+                                   .withOrganizationId(ORGANIZATION_ID)
+                                   .withRoles(roles.subList(0, 1));
+        organizationDao.addMember(member1);
+
+        organizationDao.remove(ORGANIZATION_ID);
     }
 
     @Test

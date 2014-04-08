@@ -24,6 +24,8 @@ import com.codenvy.api.organization.shared.dto.Attribute;
 import com.codenvy.api.organization.shared.dto.Member;
 import com.codenvy.api.organization.shared.dto.Organization;
 import com.codenvy.api.organization.shared.dto.Subscription;
+import com.codenvy.api.workspace.server.dao.WorkspaceDao;
+import com.codenvy.api.workspace.server.exception.WorkspaceException;
 import com.codenvy.dto.server.DtoFactory;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
@@ -68,8 +70,12 @@ public class OrganizationDaoImpl implements OrganizationDao {
     DBCollection subscriptionCollection;
     DBCollection memberCollection;
 
+    WorkspaceDao workspaceDao;
+
     @Inject
-    public OrganizationDaoImpl(DB db, @Named(ORGANIZATION_COLLECTION) String organizationCollectionName,
+    public OrganizationDaoImpl(DB db,
+                               WorkspaceDao workspaceDao,
+                               @Named(ORGANIZATION_COLLECTION) String organizationCollectionName,
                                @Named(SUBSCRIPTION_COLLECTION) String subscriptionCollectionName,
                                @Named(MEMBER_COLLECTION) String memberCollectionName) {
         organizationCollection = db.getCollection(organizationCollectionName);
@@ -77,6 +83,7 @@ public class OrganizationDaoImpl implements OrganizationDao {
         subscriptionCollection = db.getCollection(subscriptionCollectionName);
         subscriptionCollection.ensureIndex(new BasicDBObject("id", 1), new BasicDBObject("unique", true));
         memberCollection = db.getCollection(memberCollectionName);
+        this.workspaceDao = workspaceDao;
     }
 
     @Override
@@ -141,6 +148,10 @@ public class OrganizationDaoImpl implements OrganizationDao {
     @Override
     public void remove(String id) throws OrganizationException {
         try {
+            //check organization hasn't associated workspaces
+            if (workspaceDao.getByOrganization(id).size() > 0) {
+                throw new OrganizationException("It is not possible to remove organization that has associated workspaces");
+            }
             // Removing subscriptions
             subscriptionCollection.remove(new BasicDBObject("organizationId", id));
 
@@ -153,8 +164,8 @@ public class OrganizationDaoImpl implements OrganizationDao {
             }
             // Removing organization itself
             organizationCollection.remove(new BasicDBObject("id", id));
-        } catch (MongoException ae) {
-            throw new OrganizationException(ae.getMessage(), ae);
+        } catch (MongoException | WorkspaceException ex) {
+            throw new OrganizationException(ex.getMessage(), ex);
         }
     }
 

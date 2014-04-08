@@ -98,7 +98,9 @@ public class DaoManager {
         userProfileDao = new UserProfileDaoImpl(userDao, db, mongoProperties.getProperty(COLLECTION_PROFILE));
         workspaceDao = new WorkspaceDaoImpl(userDao, db, mongoProperties.getProperty(COLLECTION_WORKSPACE));
         memberDao = new MemberDaoImpl(userDao, workspaceDao, db, mongoProperties.getProperty(COLLECTION_WS_MEMBER));
-        organizationDao = new OrganizationDaoImpl(db, mongoProperties.getProperty(COLLECTION_ORGANIZATION),
+        organizationDao = new OrganizationDaoImpl(db,
+                                                  workspaceDao,
+                                                  mongoProperties.getProperty(COLLECTION_ORGANIZATION),
                                                   mongoProperties.getProperty(COLLECTION_SUBSCRIPTION),
                                                   mongoProperties.getProperty(COLLECTION_ACC_MEMBER));
     }
