@@ -30,6 +30,7 @@ import com.mongodb.util.JSON;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Singleton;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -46,6 +47,7 @@ import java.util.List;
  * |   user1234     |  ["ws1", List<Roles>], ["ws2", List<Roles>]     |
  *  ------------------------------------------------------------------
  */
+@Singleton
 public class MemberDaoImpl implements MemberDao {
 
     protected static final String DB_COLLECTION = "organization.storage.db.ws.member.collection";

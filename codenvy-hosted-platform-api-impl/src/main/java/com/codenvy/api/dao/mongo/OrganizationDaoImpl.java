@@ -41,6 +41,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Singleton;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -51,6 +52,7 @@ import java.util.List;
  * @author Max Shaposhnik
  * @author Eugene Voevodin
  */
+@Singleton
 public class OrganizationDaoImpl implements OrganizationDao {
 
     private static final Logger LOG = LoggerFactory.getLogger(OrganizationDaoImpl.class);

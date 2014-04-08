@@ -31,12 +31,14 @@ import com.mongodb.util.JSON;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Singleton;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Workspace DAO implementation based on MongoDB storage.
  */
+@Singleton
 public class WorkspaceDaoImpl implements WorkspaceDao {
 
     protected static final String DB_COLLECTION = "organization.storage.db.workspace.collection";
