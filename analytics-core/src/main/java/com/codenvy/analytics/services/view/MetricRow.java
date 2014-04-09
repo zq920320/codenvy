@@ -337,7 +337,7 @@ public class MetricRow extends AbstractRow {
         Context.Builder builder = new Context.Builder(context);
         for (Map.Entry<String, String> entry : filters.entrySet()) {
             MetricFilter filter = MetricFilter.valueOf(entry.getKey().toUpperCase());
-            
+
             if (!builder.exists(filter)) {
                 builder.put(filter, entry.getValue());
             }

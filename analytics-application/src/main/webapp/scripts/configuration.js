@@ -265,29 +265,6 @@ function Configuration() {
             }
         },
 
-        userActivity: {
-            widgetLabel: "User Logs",
-            presenterType: "HorizontalTablePresenter",
-            modelViewName: "user_activity",
-
-            isPaginable: true,    // default value is "false"
-            modelMetricName: "users_activity",
-
-            defaultServerSortParams: "-date",
-
-            doNotDisplayCSVButton: true,   // default value is "false"
-            
-            /** @see DatabaseTable::makeTableSortable() method docs */
-            clientSortParams: {
-                "descSortColumnNumber": 0
-            },
-            
-            mapColumnToServerSortParam: {
-                "Date": "date",
-                "Console Log": "message",
-            },
-        },
-
         /** for Session View */
         sessions: {
             widgetLabel: "Sessions",
@@ -427,29 +404,6 @@ function Configuration() {
                 "Name": "user",
                 "Sessions": "sessions",
                 "Time": "time",
-            },
-        },
-
-        workspaceActivity: {
-            widgetLabel: "Workspace Logs",
-            presenterType: "HorizontalTablePresenter",
-            modelViewName: "workspace_activity",
-
-            isPaginable: true,    // default value is "false"
-            modelMetricName: "users_activity",
-
-            defaultServerSortParams: "-date",
-
-            doNotDisplayCSVButton: true,   // default value is "false"
-            
-            /** @see DatabaseTable::makeTableSortable() method docs */
-            clientSortParams: {
-                "descSortColumnNumber": 0
-            },
-            
-            mapColumnToServerSortParam: {
-                "Date": "date",
-                "Console Log": "message",
             },
         },
 

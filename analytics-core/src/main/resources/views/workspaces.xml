@@ -71,18 +71,4 @@
             </row>
         </section>
     </view>
-
-    <view name="workspace_activity" on-demand="true">
-        <section name="workspace_activity">
-            <row class="com.codenvy.analytics.services.view.TitleRow">
-                <parameter key="titles" value="Date,Console Log"/>
-
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="users_activity_list"/>
-                <parameter key="fields" value="date,message"/>
-                <parameter key="date-fields" value="date"/>
-            </row>
-        </section>
-    </view>
 </display>
