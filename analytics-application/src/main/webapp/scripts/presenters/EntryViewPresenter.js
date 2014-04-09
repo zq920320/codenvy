@@ -22,9 +22,6 @@ analytics.presenter.EntryViewPresenter = function EntryViewPresenter() {};
 // define prototype methods and properties
 analytics.presenter.EntryViewPresenter.prototype = Presenter.prototype;
 
-analytics.presenter.EntryViewPresenter.prototype.CURRENT_PAGE_QUERY_PARAMETER = "page";
-analytics.presenter.EntryViewPresenter.prototype.ONE_PAGE_ROWS_COUNT = 20;
-
 analytics.presenter.EntryViewPresenter.prototype.load = function() {
     var presenter = this; 
     var view = presenter.view;
@@ -45,7 +42,7 @@ analytics.presenter.EntryViewPresenter.prototype.load = function() {
         var viewParams = view.getParams();
         var modelParams = presenter.getModelParams(viewParams);
         
-        var pageCount = Math.ceil(data / presenter.ONE_PAGE_ROWS_COUNT) ;
+        var pageCount = Math.ceil(data / presenter.DEFAULT_ONE_PAGE_ROWS_COUNT) ;
     
         // process pagination
         var currentPageNumber = modelParams.page;
@@ -55,7 +52,7 @@ analytics.presenter.EntryViewPresenter.prototype.load = function() {
            currentPageNumber = new Number(currentPageNumber);
         }
         
-        modelParams.per_page = presenter.ONE_PAGE_ROWS_COUNT;
+        modelParams.per_page = presenter.DEFAULT_ONE_PAGE_ROWS_COUNT;
         modelParams.page = currentPageNumber;
 
         model.popDoneFunction();
@@ -107,7 +104,7 @@ analytics.presenter.EntryViewPresenter.prototype.load = function() {
         model.setParams(modelParams);
         
         var modelViewName = analytics.configuration.getProperty(presenter.widgetName, "modelViewName");
-        model.getAllResults(modelViewName);        
+        model.getModelViewData(modelViewName);        
     });        
     
     var modelMetricName = analytics.configuration.getProperty(presenter.widgetName, "modelMetricName");

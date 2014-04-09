@@ -23,10 +23,21 @@ Presenter.prototype.model = null;
 Presenter.prototype.load = null;
 Presenter.prototype.widgetName = null;
 
+/** Sorting parameters */
 Presenter.prototype.SORTING_PARAMETER = "sort";
 Presenter.prototype.ASCENDING_ORDER_PREFIX = "+";
 Presenter.prototype.DESCENDING_ORDER_PREFIX = "-";
 Presenter.prototype.DEFAULT_ORDER_PREFIX = Presenter.prototype.ASCENDING_ORDER_PREFIX;
+
+/** Pagination parameters */
+Presenter.prototype.CURRENT_PAGE_QUERY_PARAMETER = "page";
+Presenter.prototype.DEFAULT_ONE_PAGE_ROWS_COUNT = 20;
+
+/** Drill Down page parameters */
+Presenter.prototype.DRILL_DOWN_PAGE_ADDRESS = "/analytics/pages/drill-down.jsp";
+Presenter.prototype.METRIC_ORIGINAL_VALUE_VIEW_PARAMETER = "original_metric_value";
+Presenter.prototype.METRIC_ORIGINAL_NAME_VIEW_PARAMETER = "original_metric_name";
+Presenter.prototype.TIME_INTERVAL_PARAMETER = "time_interval";
 
 Presenter.prototype.setView = function(newView) {
     this.view = newView;
@@ -98,7 +109,11 @@ Presenter.prototype.getLinkForExportToCsvButton = function(modelViewName) {
 /**
  * Make table header as linked for sorting.
  */
-Presenter.prototype.addServerSortingLinks = function(table, widgetName, modelParams) {
+Presenter.prototype.addServerSortingLinks = function(table, widgetName, modelParams, doNotMap) {
+    if (typeof doNotMap == "undefined") {
+        doNotMap = false;
+    }
+        
     var mapColumnToServerSortParam = analytics.configuration.getProperty(widgetName, "mapColumnToServerSortParam", undefined);
     if (typeof mapColumnToServerSortParam == "undefined") {
         return table;
@@ -111,7 +126,7 @@ Presenter.prototype.addServerSortingLinks = function(table, widgetName, modelPar
     
     var modelParams = analytics.util.clone(modelParams);
     
-    if (typeof modelParams.sort == "undefined") { 
+    if (typeof modelParams.sort == "undefined" && !doNotMap) { 
         if (typeof  analytics.configuration.getProperty(widgetName, "defaultServerSortParams") != "undefined") {
             modelParams.sort = analytics.configuration.getProperty(widgetName, "defaultServerSortParams");
         }
@@ -121,7 +136,13 @@ Presenter.prototype.addServerSortingLinks = function(table, widgetName, modelPar
              
     for (var i = 0; i < table.columns.length; i++) {
         var columnName = table.columns[i];
-        var sortParamColumnName = mapColumnToServerSortParam[columnName];
+        
+        if (doNotMap) {
+            var sortParamColumnName = columnName;            
+        } else {
+            var sortParamColumnName = mapColumnToServerSortParam[columnName];
+        }
+        
         if (typeof sortParamColumnName == "undefined") {
             continue;
         }

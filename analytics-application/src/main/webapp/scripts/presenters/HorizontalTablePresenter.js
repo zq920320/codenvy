@@ -99,7 +99,7 @@ analytics.presenter.HorizontalTablePresenter.prototype.load = function() {
             })
             
             var modelViewName = analytics.configuration.getProperty(presenter.widgetName, "modelViewName");
-            model.getAllResults(modelViewName);
+            model.getModelViewData(modelViewName);
         });
         
         model.setParams(modelParams);
@@ -124,7 +124,7 @@ analytics.presenter.HorizontalTablePresenter.prototype.load = function() {
         });
 
         var modelViewName = analytics.configuration.getProperty(widgetName, "modelViewName");
-        model.getAllResults(modelViewName);
+        model.getModelViewData(modelViewName);
     }
 };
 

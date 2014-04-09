@@ -74,5 +74,5 @@ analytics.presenter.VerticalTablePresenter.prototype.load = function() {
     });
         
     var modelViewName = analytics.configuration.getProperty(presenter.widgetName, "modelViewName");
-    model.getAllResults(modelViewName);
+    model.getModelViewData(modelViewName);
 };

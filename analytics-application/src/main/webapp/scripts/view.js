@@ -141,7 +141,7 @@ function View() {
 	 * Make table cells of column with certain name as linked with link = "columnLinkPrefix + {columnValue}"
 	 */
     function makeTableColumnLinked(table, columnName, columnLinkPrefix) {
-        var columnIndex = analytics.util.getColumnIndexByColumnName(table.columns, columnName);
+        var columnIndex = analytics.util.getArrayValueIndex(table.columns, columnName);
         if (columnIndex != null) {        
             for (var i = 0; i < table.rows.length; i++) {
                 var columnValue = table.rows[i][columnIndex];

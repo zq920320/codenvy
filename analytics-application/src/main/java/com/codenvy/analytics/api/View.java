@@ -266,6 +266,9 @@ public class View {
             result.append(String.format(METRIC_ROW_PATTERN, metricType, metricLabel));
         }
 
+        // remove ended ","
+        result.deleteCharAt(result.length()-1);
+        
         result.append("}");
 
         return result.toString();

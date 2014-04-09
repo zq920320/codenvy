@@ -120,7 +120,7 @@ analytics.presenter.TopMetricsPresenter.prototype.load = function() {
         analytics.views.loader.needLoader = false;
     });
 
-    model.getAllResults(presenter.modelViewName);
+    model.getModelViewData(presenter.modelViewName);
 };
 
 analytics.presenter.TopMetricsPresenter.prototype.getModelViewName = function(modelParams) {

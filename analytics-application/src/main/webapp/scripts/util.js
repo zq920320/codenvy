@@ -195,12 +195,28 @@ function Util() {
     }
 	
     /**
-     * Return index of column with certain name.
+     * @returns index of value in array, or null.
      */
-    function getColumnIndexByColumnName(columns, columnName) {
-        for (var i in columns) {
-            if (columns[i] == columnName) {
+    function getArrayValueIndex(array, value) {
+        for (var i in array) {
+            if (array[i] == value) {
                 return i;
+            }
+        }
+        
+        return null;
+    }
+    
+    /**
+     * @returns key of map entry with value, or null 
+     */
+    function getKeyByValue(map, value) {
+        var keys = Object.keys(map);
+        for (var i in keys) {
+            var key = keys[i];
+            
+            if (map[key] == value) {
+                return key;
             }
         }
         
@@ -270,7 +286,8 @@ function Util() {
     	removeElementsFromArray: removeElementsFromArray,
     	
     	// other operations
-    	getColumnIndexByColumnName: getColumnIndexByColumnName,
+    	getArrayValueIndex: getArrayValueIndex,
+    	getKeyByValue: getKeyByValue,
     	
         isBrowserSupportWebStorage: isBrowserSupportWebStorage,
         

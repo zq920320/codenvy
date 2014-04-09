@@ -42,11 +42,11 @@ function Model() {
         }
     }
 
-    function getMetricValue(modelName, isAsync) {
+    function getMetricValue(modelMetricName, isAsync) {
         if (typeof isAsync == "undefined") {
             isAsync = true;
         }
-        var url = '/analytics/api/view/metric/' + modelName;
+        var url = '/analytics/api/view/metric/' + modelMetricName;
 
         var callback = function (data) {
             data = parseInt(data.value);
@@ -64,11 +64,33 @@ function Model() {
         }
     }
 
-    function getAllResults(modelName, isAsync) {
+    function getExpandedMetricValue(modelMetricName, isAsync) {
         if (typeof isAsync == "undefined") {
             isAsync = true;
         }
-        var url = "/analytics/api/view/" + modelName;
+        var url = '/analytics/api/view/metric/' + modelMetricName + "/expand";
+
+        var callback = function (data) {
+            data = convertJsonToTables(data);
+
+            doneFunction(data);
+        };
+
+        var request = get(url, "json", callback, isAsync);
+
+        if (!isAsync) {
+            data = jQuery.parseJSON(request.responseText);
+
+            data = parseInt(data.value);
+            return data;
+        }
+    }
+    
+    function getModelViewData(modelViewName, isAsync) {
+        if (typeof isAsync == "undefined") {
+            isAsync = true;
+        }
+        var url = "/analytics/api/view/" + modelViewName;
 
         var callback = function (data) {
             data = convertJsonToTables(data);
@@ -86,6 +108,24 @@ function Model() {
         }
     };
 
+    function getExpandableMetricList(modelViewName, isAsync) {
+        if (typeof isAsync == "undefined") {
+            isAsync = true;
+        }
+        var url = "/analytics/api/view/" + modelViewName + "/expandable-metric-list";
+
+        var callback = function (data) {
+            doneFunction(data);
+        }
+
+        var request = get(url, "json", callback, isAsync);
+
+        if (!isAsync) {
+            data = jQuery.parseJSON(request.responseText);
+            return data;
+        }
+    };
+    
     function get(url, responseType, doneCollback, isAsync) {
         var url = url || "";
         var responseType = responseType || "json";
@@ -198,8 +238,10 @@ function Model() {
 
     /** ****************** API ********** */
     return {
-        getAllResults: getAllResults,
+        getModelViewData: getModelViewData,
         getMetricValue: getMetricValue,
+        getExpandedMetricValue: getExpandedMetricValue,
+        getExpandableMetricList: getExpandableMetricList,
         setParams: setParams,
         getParams: getParams,
 

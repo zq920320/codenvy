@@ -29,33 +29,90 @@ analytics.presenter.ReportPresenter.prototype.load = function() {
     var presenter = this; 
     var view = presenter.view;
     var model = presenter.model;
-	
-    model.setParams(presenter.getModelParams(view.getParams()));
-        
+
+    // get list of expandable metrics of report
     model.pushDoneFunction(function(data) {
-        var doNotDisplayCSVButton = analytics.configuration.getProperty(presenter.widgetName, "doNotDisplayCSVButton", false);  // default value is "false" 
-        var csvButtonLink = (doNotDisplayCSVButton) 
-                            ? undefined
-                            : presenter.getLinkForExportToCsvButton();     
-        var widgetLabel = analytics.configuration.getProperty(presenter.widgetName, "widgetLabel");
-        view.printWidgetHeader(widgetLabel, csvButtonLink);
+        var viewParams = view.getParams();
+        var modelParams = presenter.getModelParams(viewParams);
+        model.setParams(modelParams);
 
-        view.print("<div class='body'>");
+        var mapExpandableMetricToLabel = data;
         
-        for (var table in data) {
-            view.printTable(data[table], true);
-        }
+        // get report data
+        model.popDoneFunction();
+        model.pushDoneFunction(function(data) {
+            var doNotDisplayCSVButton = analytics.configuration.getProperty(presenter.widgetName, "doNotDisplayCSVButton", false);  // default value is "false" 
+            var csvButtonLink = (doNotDisplayCSVButton) 
+                                ? undefined
+                                : presenter.getLinkForExportToCsvButton();     
+            var widgetLabel = analytics.configuration.getProperty(presenter.widgetName, "widgetLabel");
+            view.printWidgetHeader(widgetLabel, csvButtonLink);
+    
+            view.print("<div class='body'>");
+                
+            for (var i in data) {
+                var table = data[i];
+                
+                // add links to drill down page
+                table = presenter.linkMetricValueWithDrillDownPage(table, mapExpandableMetricToLabel, modelParams);            
+                
+                view.printTable(table, true);
+            }
+            
+            var clientSortParams = analytics.configuration.getProperty(presenter.widgetName, "clientSortParams");
+            view.loadTableHandlers(true, clientSortParams);   
+    
+            view.print("</div>");
+            
+            // finish loading widget
+            analytics.views.loader.needLoader = false;
+        });
+    
+        var modelViewName = analytics.configuration.getProperty(presenter.widgetName, "modelViewName");
         
-        var clientSortParams = analytics.configuration.getProperty(presenter.widgetName, "clientSortParams");
-        view.loadTableHandlers(true, clientSortParams);   
-
-        view.print("</div>");
-        
-        // finish loading widget
-        analytics.views.loader.needLoader = false;
+    	model.getModelViewData(modelViewName);
     });
 
     var modelViewName = analytics.configuration.getProperty(presenter.widgetName, "modelViewName");
-    
-	model.getAllResults(modelViewName);
+    model.getExpandableMetricList(modelViewName);
 };
+
+analytics.presenter.ReportPresenter.prototype.linkMetricValueWithDrillDownPage = function(table, mapExpandableMetricToLabel, modelParams) { 
+    for (var rowNumber = 0; rowNumber < table.rows.length; rowNumber++) {
+        var metricLabel = table.rows[rowNumber][0];
+        
+        // check if there is row in mapExpandableMetricToLabel
+        var metricName = analytics.util.getKeyByValue(mapExpandableMetricToLabel, metricLabel);
+        if (metricName != null) {            
+            for (var columnNumber = 1; columnNumber < table.rows[rowNumber].length; columnNumber++) {
+                var columnValue = table.rows[rowNumber][columnNumber];
+                
+                // don't display link to empty drill down page
+                if (! this.isEmptyValue(columnValue)) {
+                    var timeInterval = columnNumber - 1;
+                    var drillDownPageLink = this.getDrillDownPageLink(timeInterval, metricName, columnValue, modelParams);                
+                    
+                    table.rows[rowNumber][columnNumber] = "<a href='" + drillDownPageLink + "'>" + columnValue + "</a>";
+                }
+            }
+        }        
+    }
+    
+    return table;
+}
+
+analytics.presenter.ReportPresenter.prototype.getDrillDownPageLink = function(timeInterval, metricName, metricValue, modelParams) {
+    var drillDownPageLink = this.DRILL_DOWN_PAGE_ADDRESS + "?"+ analytics.util.constructUrlParams(modelParams);
+    drillDownPageLink += "&" + this.TIME_INTERVAL_PARAMETER + "=" + timeInterval;
+    drillDownPageLink += "&" + this.METRIC_ORIGINAL_VALUE_VIEW_PARAMETER + "=" + metricValue;
+    drillDownPageLink += "&" + this.METRIC_ORIGINAL_NAME_VIEW_PARAMETER + "=" + metricName;
+    
+    return drillDownPageLink;
+}
+
+/** 
+ * @returns true if value = "0".
+ * */
+analytics.presenter.ReportPresenter.prototype.isEmptyValue = function(value) {
+    return value == "0";
+}

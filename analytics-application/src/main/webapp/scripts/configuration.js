@@ -544,6 +544,18 @@ function Configuration() {
                 "# Deploys": "deploy",
             },
         },
+        
+        // drill-down page
+        drillDown: {
+            widgetLabel: "Drill Down Report",
+            presenterType: "DrillDownPresenter",
+            isPaginable: true,    // default value is "false"
+            
+            columnLinkPrefixList: {
+                "user": "/analytics/pages/user-view.jsp?user",
+                "ws": "/analytics/pages/workspace-view.jsp?ws"                
+            },
+        }
     }
 
     var registeredModelParams = [
@@ -566,6 +578,7 @@ function Configuration() {
         "ws",
         "factory",
         "encoded_factory",
+        "time_interval",
     ];
 
     /** see method analytics.main.getParamsFromButtons() */
@@ -585,6 +598,9 @@ function Configuration() {
         "ws",                // workspaces-view
         "factory",           // factories-view
         "encoded_factory",   // factories-view
+        "original_metric_value",  // drill down page
+        "original_metric_name",   // drill down page
+        "time_interval",   // drill down page
     ];
 
     /** url params which are passed from other pages */
