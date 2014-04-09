@@ -288,13 +288,6 @@ function Configuration() {
             },
         },
 
-        userEvents: {
-            widgetLabel: "User Action",
-            presenterType: "HorizontalTablePresenter",
-            modelViewName: "users_events",
-        },
-
-
         /** for Session View */
         sessions: {
             widgetLabel: "Sessions",

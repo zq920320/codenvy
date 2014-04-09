@@ -25,20 +25,17 @@ import org.apache.pig.FilterFunc;
 import org.apache.pig.data.Tuple;
 
 import java.io.IOException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Map;
 
 /**
  * @author Alexander Reshetnyak
  */
 public class EventValidation extends FilterFunc {
 
-    private static final String NULL          = "null";
-    private static final String DEFAULT       = "default";
-    private static final String WS            = "WS";
-    private static final String USER          = "USER";
-    private static final String EMPTY         = "";
-    private static final String VALUE_PATTERN = "#([^\\s#][^#]*|)";
+    private static final String NULL    = "null";
+    private static final String DEFAULT = "default";
+    private static final String WS      = "WS";
+    private static final String USER    = "USER";
 
     private final EventsHolder eventsHolder;
 
@@ -48,46 +45,42 @@ public class EventValidation extends FilterFunc {
 
     @Override
     public Boolean exec(Tuple input) throws IOException {
-
         String event = (String)input.get(0);
         String ws = (String)input.get(1);
         String user = (String)input.get(2);
         String message = (String)input.get(3);
 
-
         if (!eventsHolder.isEventExists(event)) {
             return false;
         }
 
-        for (Parameter param : eventsHolder.getDefinition(event).getParameters().getParams()) {
+        boolean validated = true;
+        Map<String, String> values = eventsHolder.getParametersValues(event, message);
 
-            if (WS.equals(param.getName()) && !validateValue(ws, param)) {
-                return false;
-            } else if (USER.equals(param.getName()) && !validateValue(user, param)) {
-                return false;
-            } else if (isEmptyValue(param.getName(), message) && !param.isAllowEmptyValue()) {
-                return false;
+        for (Parameter param : eventsHolder.getDefinition(event).getParameters().getParams()) {
+            String paramName = param.getName();
+
+            switch (paramName) {
+                case WS:
+                    validated &= !isEmptyOrDefaultValue(ws);
+                    break;
+                case USER:
+                    validated &= !isEmptyOrDefaultValue(user);
+                    break;
+                default:
+                    validated &= param.isAllowEmptyValue() || !isEmptyValue(values.get(paramName));
+                    break;
             }
         }
 
-        return true;
+        return validated;
     }
 
-    private boolean validateValue(String value, Parameter param) {
-        return !(value.equalsIgnoreCase(NULL) ||
-                 (value.equalsIgnoreCase(DEFAULT) && !param.isAllowEmptyValue()) ||
-                 (value.equals(EMPTY) && !param.isAllowEmptyValue()));
+    private boolean isEmptyOrDefaultValue(String value) {
+        return isEmptyValue(value) || value.equalsIgnoreCase(DEFAULT);
     }
 
-    private boolean isEmptyValue(String parameterName, String message) {
-        Pattern p = Pattern.compile(parameterName + VALUE_PATTERN);
-        Matcher m = p.matcher(message);
-
-        if (m.find()) {
-            String value = m.group().replace(parameterName + "#", EMPTY);
-            return value.equalsIgnoreCase(NULL) || value.equals(EMPTY);
-        }
-
-        return false;
+    private boolean isEmptyValue(String value) {
+        return value == null || value.equalsIgnoreCase(NULL) || value.isEmpty();
     }
 }

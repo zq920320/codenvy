@@ -32,6 +32,7 @@ public abstract class AbstractMetric implements Metric {
     public static final String DOMAIN                = "domain";
     public static final String TIME                  = "time";
     public static final String CUMULATIVE_TIME       = "cumulative_time";
+    public static final String STATE                 = "state";
     public static final String LOGOUT_INTERVAL       = "logout_interval";
     public static final String SESSIONS              = "sessions";
     public static final String END_TIME              = "end_time";

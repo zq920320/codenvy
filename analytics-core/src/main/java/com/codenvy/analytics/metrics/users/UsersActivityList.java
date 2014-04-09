@@ -17,6 +17,7 @@
  */
 package com.codenvy.analytics.metrics.users;
 
+import com.codenvy.analytics.Injector;
 import com.codenvy.analytics.datamodel.*;
 import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.pig.scripts.EventsHolder;
@@ -34,16 +35,18 @@ import java.util.Map;
 @RolesAllowed({"system/admin", "system/manager"})
 public class UsersActivityList extends AbstractListValueResulted {
 
-    private Metric totalActionsNumberMetric;
+    private       Metric       totalActionsNumberMetric;
+    private final EventsHolder eventsHolder;
 
     public UsersActivityList() {
-        super(MetricType.USERS_ACTIVITY_LIST);
+        this(null);
     }
 
     /** For testing purpose only. */
     public UsersActivityList(Metric totalActionsNumberMetric) {
         super(MetricType.USERS_ACTIVITY_LIST);
         this.totalActionsNumberMetric = totalActionsNumberMetric;
+        this.eventsHolder = Injector.getInstance(EventsHolder.class);
     }
 
     @Override
@@ -107,6 +110,10 @@ public class UsersActivityList extends AbstractListValueResulted {
                 row2Return.put(CUMULATIVE_TIME, LongValueData.DEFAULT);
             }
 
+            StringValueData event = (StringValueData)row.get(EVENT);
+            StringValueData message = (StringValueData)row.get(MESSAGE);
+            row2Return.put(STATE, getContext(event.getAsString(), message.getAsString()));
+
             item2Return.add(new MapValueData(row2Return));
         }
 
@@ -118,6 +125,17 @@ public class UsersActivityList extends AbstractListValueResulted {
         }
 
         return new ListValueData(item2Return);
+    }
+
+    /**
+     * Extracts all available params out of {@link #MESSAGE}.
+     */
+    private StringValueData getContext(String event, String message) {
+        Map<String, String> result = eventsHolder.getParametersValues(event, message);
+        result.remove("USER");
+        result.remove("WS");
+        result.remove("SESSION-ID");
+        return StringValueData.valueOf(result.toString());
     }
 
     /** Calculate duration of action, in millisec. */

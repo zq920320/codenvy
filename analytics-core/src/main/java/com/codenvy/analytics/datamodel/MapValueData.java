@@ -43,6 +43,10 @@ public class MapValueData extends CollectionValueData {
         this.value = new LinkedHashMap<>(value);
     }
 
+    public static MapValueData valueOf(Map<String, ValueData> value) {
+        return new MapValueData(value);
+    }
+
     /** @return unmodifiable {@link #value} */
     public Map<String, ValueData> getAll() {
         return Collections.unmodifiableMap(value);
