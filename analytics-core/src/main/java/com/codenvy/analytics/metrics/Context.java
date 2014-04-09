@@ -34,11 +34,12 @@ public class Context {
     private Map<String, Object> params;
 
     private Context(Map<String, Object> params) {
-        this.params = params;
+        this.params = Collections.unmodifiableMap(params);
     }
 
-    public static Context valueOf(Map<String, Object> params) {
-        Builder builder = new Builder(params);
+    public static Context valueOf(Map<String, String> params) {
+        Builder builder = new Builder();
+        builder.putAll(params);
         return builder.build();
     }
 
@@ -158,6 +159,13 @@ public class Context {
 
         public Builder putAll(Context context) {
             this.params.putAll(context.params);
+            return this;
+        }
+
+        public Builder putAll(Map<String, String> params) {
+            for (Map.Entry<String, String> entry : params.entrySet()) {
+                params.put(entry.getKey(), entry.getValue());
+            }
             return this;
         }
 
