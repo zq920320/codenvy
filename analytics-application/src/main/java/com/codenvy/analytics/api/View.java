@@ -17,29 +17,43 @@
  */
 package com.codenvy.analytics.api;
 
-import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.MetricNotFoundException;
-import com.codenvy.analytics.services.view.SectionData;
-import com.codenvy.analytics.services.view.ViewBuilder;
-import com.codenvy.analytics.services.view.ViewData;
-import com.codenvy.analytics.util.Utils;
-import com.codenvy.api.analytics.MetricHandler;
-import com.codenvy.api.analytics.dto.MetricValueDTO;
-import com.codenvy.dto.server.JsonArrayImpl;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.annotation.security.RolesAllowed;
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import javax.ws.rs.*;
-import javax.ws.rs.core.*;
+import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.annotation.security.RolesAllowed;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
+import javax.ws.rs.core.UriInfo;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.codenvy.analytics.datamodel.ListValueData;
+import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.metrics.MetricFactory;
+import com.codenvy.analytics.metrics.MetricNotFoundException;
+import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.services.view.SectionData;
+import com.codenvy.analytics.services.view.ViewBuilder;
+import com.codenvy.analytics.services.view.ViewData;
+import com.codenvy.analytics.util.Utils;
+import com.codenvy.api.analytics.dto.MetricValueDTO;
+import com.codenvy.dto.server.DtoFactory;
+import com.codenvy.dto.server.JsonArrayImpl;
 
 /**
  * @author Alexander Reshetnyak
@@ -52,10 +66,7 @@ public class View {
     private static final Logger LOG = LoggerFactory.getLogger(View.class);
 
     @Inject
-    private ViewBuilder viewBuilder;
-
-    @Inject
-    private MetricHandler metricHandler;
+    private ViewBuilder         viewBuilder;
 
     @GET
     @Path("metric/{name}")
@@ -73,8 +84,39 @@ public class View {
                                                               perPage,
                                                               securityContext);
 
-            MetricValueDTO value = metricHandler.getValue(metricName, context, uriInfo);
-            return Response.status(Response.Status.OK).entity(value).build();
+            ValueData value = getMetricValue(metricName, com.codenvy.analytics.metrics.Context.valueOf(context));
+            MetricValueDTO outputValue = getMetricValueDTO(metricName, value);
+            return Response.status(Response.Status.OK).entity(outputValue).build();
+        } catch (MetricNotFoundException e) {
+            LOG.error(e.getMessage(), e);
+            return Response.status(Response.Status.NOT_FOUND).build();
+        } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+        }
+    }
+
+    @GET
+    @Path("metric/{name}/expand")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"user", "system/admin", "system/manager"})
+    public Response getExpandedMetricValue(@PathParam("name") String metricName,
+                                           @QueryParam("page") String page,
+                                           @QueryParam("per_page") String perPage,
+                                           @Context UriInfo uriInfo,
+                                           @Context SecurityContext securityContext) {
+
+        try {
+            Map<String, String> context = Utils.extractParams(uriInfo,
+                                                              page,
+                                                              perPage,
+                                                              securityContext);
+
+            ListValueData value = getExpandedValue(metricName, com.codenvy.analytics.metrics.Context.valueOf(context));
+            ViewData result = viewBuilder.getViewData(value);
+            String json = transformToJson(result);
+
+            return Response.status(Response.Status.OK).entity(json).build();
         } catch (MetricNotFoundException e) {
             LOG.error(e.getMessage(), e);
             return Response.status(Response.Status.NOT_FOUND).build();
@@ -109,14 +151,14 @@ public class View {
     @Path("{name}.csv")
     @Produces({"text/csv"})
     @RolesAllowed({"user", "system/admin", "system/manager"})
-    public Response getViewDataAsCsv(@PathParam("name") String name,
+    public Response getViewDataAsCsv(@PathParam("name") String viewName,
                                      @Context UriInfo uriInfo,
                                      @Context SecurityContext securityContext) {
         try {
             Map<String, String> params = Utils.extractParams(uriInfo, securityContext);
             com.codenvy.analytics.metrics.Context context = com.codenvy.analytics.metrics.Context.valueOf(params);
 
-            ViewData result = viewBuilder.getViewData(name, context);
+            ViewData result = viewBuilder.getViewData(viewName, context);
             String csv = transformToCsv(result);
 
             return Response.status(Response.Status.OK).entity(csv).build();
@@ -126,23 +168,40 @@ public class View {
         }
     }
 
+    @GET
+    @Path("{name}/expandable-metric-list")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"user", "system/admin", "system/manager"})
+    public Response getViewExpandableViewMetricList(@PathParam("name") String viewName,
+                                                    @Context UriInfo uriInfo,
+                                                    @Context SecurityContext securityContext) {
+        try {
+            Map<MetricType, String> result = viewBuilder.getViewExpandableMetricMap(viewName);
+            String json = transformToJson(result);
+
+            return Response.status(Response.Status.OK).entity(json).build();
+        } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+        }
+    }
+
+    private ValueData getMetricValue(String metricName, com.codenvy.analytics.metrics.Context context) throws IOException {
+        return MetricFactory.getMetric(metricName).getValue(context);
+    }
+
+    private ListValueData getExpandedValue(String metricName, com.codenvy.analytics.metrics.Context context) throws IOException,
+                                                                                                            ParseException {
+        context = viewBuilder.initializeFirstInterval(context);
+        return MetricFactory.getMetric(metricName).getExpandedValue(context);
+    }
+
     /**
-     * Transforms view data into table in json format.
-     *
-     * @return the resulted format will be:
-     * [
-     * [
-     * ["section0-row0-column0", "section0-row0-column1", ...]
-     * ["section0-row1-column0", "section0-row1-column1", ...]
-     * ...
-     * ],
-     * [
-     * ["section1-row0-column0", "section0-row0-column1", ...]
-     * ["section1-row1-column0", "section0-row1-column1", ...]
-     * ...
-     * ],
-     * ...
-     * ]
+     * Transforms view data into table in to json format.
+     * 
+     * @return the resulted format will be: [ [ ["section0-row0-column0", "section0-row0-column1", ...]
+     *         ["section0-row1-column0", "section0-row1-column1", ...] ... ], [ ["section1-row0-column0",
+     *         "section0-row0-column1", ...] ["section1-row1-column0", "section0-row1-column1", ...] ... ], ... ]
      */
     protected String transformToJson(ViewData data) {
         List<LinkedHashSet<Object>> result = new ArrayList<>(data.size());
@@ -168,15 +227,11 @@ public class View {
     }
 
     /**
-     * Transforms view data into table in csv format.
-     *
-     * @return the resulted format will be:
-     * section0-row0-column0, section0-row0-column1, ...
-     * section0-row1-column0, section0-row1-column1, ...
-     * ...
-     * section1-row0-column0, section0-row0-column1, ...
-     * section1-row1-column0, section0-row1-column1, ...
-     * ...
+     * Transforms view data into table in to csv format.
+     * 
+     * @return the resulted format will be: section0-row0-column0, section0-row0-column1, ... section0-row1-column0,
+     *         section0-row1-column1, ... ... section1-row0-column0, section0-row0-column1, ... section1-row1-column0,
+     *         section0-row1-column1, ... ...
      */
     protected String transformToCsv(ViewData data) {
         StringBuilder result = new StringBuilder();
@@ -189,8 +244,30 @@ public class View {
             }
         }
 
-        result.setLength(result.length() - 1);  // remove ended "\n"
-        
+        result.setLength(result.length() - 1); // remove ended "\n"
+
+        return result.toString();
+    }
+
+    /**
+     * Transforms Map<MetricType, String> map into table in to json format.
+     * 
+     * @return the resulted format will be: {"total_factories": "Factories - Cumulative", "created_factories":
+     *         "Factories - Added", ... }
+     */
+    private String transformToJson(Map<MetricType, String> map) {
+        StringBuilder result = new StringBuilder("{");
+
+        final String METRIC_ROW_PATTERN = "\"%1$s\":\"%2$s\",";
+
+        for (Entry<MetricType, String> entry : map.entrySet()) {
+            String metricType = entry.getKey().toString().toLowerCase();
+            String metricLabel = entry.getValue();
+            result.append(String.format(METRIC_ROW_PATTERN, metricType, metricLabel));
+        }
+
+        result.append("}");
+
         return result.toString();
     }
 
@@ -209,5 +286,14 @@ public class View {
         }
 
         return builder.toString();
+    }
+
+    MetricValueDTO getMetricValueDTO(String metricName, ValueData metricValue) {
+        MetricValueDTO metricValueDTO = DtoFactory.getInstance().createDto(MetricValueDTO.class);
+        metricValueDTO.setName(metricName);
+        metricValueDTO.setType(metricValue.getType());
+        metricValueDTO.setValue(metricValue.getAsString());
+
+        return metricValueDTO;
     }
 }

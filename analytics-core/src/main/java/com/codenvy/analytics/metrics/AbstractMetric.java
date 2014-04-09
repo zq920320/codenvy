@@ -18,7 +18,11 @@
 
 package com.codenvy.analytics.metrics;
 
+import java.io.IOException;
+
 import com.codenvy.analytics.Injector;
+import com.codenvy.analytics.datamodel.ListValueData;
+import com.codenvy.analytics.datamodel.ValueDataFactory;
 import com.codenvy.analytics.persistent.OrganizationClient;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
@@ -76,4 +80,12 @@ public abstract class AbstractMetric implements Metric {
     public String getName() {
         return metricName;
     }
+    
+    public ListValueData getExpandedValue(Context context) throws IOException {
+        return ListValueData.DEFAULT;
+    };
+    
+    public boolean isExpandable() {
+        return false;
+    };
 }

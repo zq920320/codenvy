@@ -23,8 +23,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveAction;
 import java.util.concurrent.TimeUnit;
@@ -37,7 +39,14 @@ import org.slf4j.LoggerFactory;
 
 import com.codenvy.analytics.Configurator;
 import com.codenvy.analytics.Utils;
+import com.codenvy.analytics.datamodel.ListValueData;
+import com.codenvy.analytics.datamodel.MapValueData;
+import com.codenvy.analytics.datamodel.StringValueData;
+import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Metric;
+import com.codenvy.analytics.metrics.MetricFactory;
+import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.persistent.DataPersister;
 import com.codenvy.analytics.persistent.JdbcDataPersisterFactory;
@@ -87,6 +96,51 @@ public class ViewBuilder extends Feature {
         }
     }
 
+    public ViewData getViewData(ListValueData metricValue) {
+        ViewData viewData = new ViewData(); // include title row
+        
+        List<ValueData> allMetricValues = metricValue.getAll();
+        
+        // return empty view data if there is empty metricValue
+        if (allMetricValues.size() == 0) {
+            return viewData;
+        }
+        
+        SectionData sectionData = new SectionData();
+
+        // add title row
+        MapValueData firstRow = (MapValueData) allMetricValues.get(0);
+        List<ValueData> titleRow = getRowKeys(firstRow);
+        sectionData.add(titleRow);
+        
+        // transform MapValueData rows into the List<ValueData> rows
+        for (ValueData row: allMetricValues) {
+            sectionData.add(getRowValues((MapValueData) row));
+        }
+            
+        viewData.put(null, sectionData);
+        
+        return viewData;
+    }
+    
+    private List<ValueData> getRowKeys(MapValueData mapRow) {
+        List<ValueData> rowKeys = new ArrayList<>(mapRow.size());
+        for (String key: mapRow.getAll().keySet()) {
+            rowKeys.add(new StringValueData(key));
+        }
+        
+        return rowKeys;
+    }
+
+    private List<ValueData> getRowValues(MapValueData mapRow) {
+        List<ValueData> rowValues = new ArrayList<>(mapRow.size());
+        for (Entry<String, ValueData> entry: mapRow.getAll().entrySet()) {
+            rowValues.add(entry.getValue());
+        }
+        
+        return rowValues;
+    }
+    
     @Override
     public boolean isAvailable() {
         return true;
@@ -226,7 +280,7 @@ public class ViewBuilder extends Feature {
         }
     }
 
-    private Context initializeFirstInterval(Context context) throws ParseException {
+    public Context initializeFirstInterval(Context context) throws ParseException {
         Context.Builder builder = new Context.Builder(context);
 
         if (!context.exists(Parameters.TO_DATE)) {
@@ -265,5 +319,35 @@ public class ViewBuilder extends Feature {
         }
 
         return id;
+    }
+    
+    /**
+     * Returns list of view metrics which are expandable: 
+     * 1) reads view configuration
+     * 2) gets list of view metric rows and their configurations;
+     * makes sure the metrics have isExpandable() = true
+     * 3) extracts metric type and description from configuration 
+     * 5) add this info into the Map<metricType, description>
+     */
+    public Map<MetricType, String> getViewExpandableMetricMap(String viewName) {
+        Map<MetricType, String> metricMap = new LinkedHashMap<>();
+        ViewConfiguration viewConf = displayConfiguration.getView(viewName);
+        
+        for (SectionConfiguration sectionConf : viewConf.getSections()) {
+            for (RowConfiguration rowConf: sectionConf.getRows()) {
+                if (rowConf.getClazz().equals(MetricRow.class.getCanonicalName())) {  // check if this is metric row
+                    String metricName = rowConf.getParamsAsMap().get("name").toUpperCase();
+                    MetricType metricType = MetricType.valueOf(metricName);
+                    Metric metric = MetricFactory.getMetric(metricType);
+                    
+                    if (metric != null && metric.isExpandable()) {
+                        String metricDescription = rowConf.getParamsAsMap().get("description");
+                        metricMap.put(metricType, metricDescription);
+                    }
+                }
+            }
+        }
+        
+        return metricMap;
     }
 }

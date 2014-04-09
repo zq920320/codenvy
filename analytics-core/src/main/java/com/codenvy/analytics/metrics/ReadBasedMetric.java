@@ -87,7 +87,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
      * @param context
      *         the execution context
      */
-    private void validateRestrictions(Context context) {
+    protected void validateRestrictions(Context context) {
         if (getClass().isAnnotationPresent(FilterRequired.class)) {
             MetricFilter requiredFilter = getClass().getAnnotation(FilterRequired.class).value();
             if (!context.exists(requiredFilter)) {

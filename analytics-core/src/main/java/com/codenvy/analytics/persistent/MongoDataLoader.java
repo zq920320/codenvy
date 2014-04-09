@@ -17,17 +17,30 @@
  */
 package com.codenvy.analytics.persistent;
 
-import com.codenvy.analytics.datamodel.*;
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import com.codenvy.analytics.datamodel.DoubleValueData;
+import com.codenvy.analytics.datamodel.ListValueData;
+import com.codenvy.analytics.datamodel.LongValueData;
+import com.codenvy.analytics.datamodel.MapValueData;
+import com.codenvy.analytics.datamodel.SetValueData;
+import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.datamodel.ValueDataFactory;
 import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.ReadBasedMetric;
 import com.mongodb.AggregationOutput;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
-
-import java.io.IOException;
-import java.text.ParseException;
-import java.util.*;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class MongoDataLoader implements DataLoader {
@@ -54,7 +67,7 @@ public class MongoDataLoader implements DataLoader {
         }
     }
 
-    private ValueData createdValueData(ReadBasedMetric metric, Iterator<DBObject> iterator) {
+    public ValueData createdValueData(ReadBasedMetric metric, Iterator<DBObject> iterator) {
         Class<? extends ValueData> clazz = metric.getValueDataClass();
 
         if (clazz == LongValueData.class) {
@@ -227,5 +240,35 @@ public class MongoDataLoader implements DataLoader {
          * @return the {@link ValueData}
          */
         ValueData pull();
+    }
+
+    @Override
+    public ListValueData loadExpandedValue(ReadBasedMetric metric, Context context, List<DBObject> projection) throws IOException {
+        final String SUM_OPERATOR_PATTERN = "{ \"$sum\"";
+        
+        DBCollection dbCollection = db.getCollection(metric.getStorageCollectionName());
+
+        try {
+            DBObject filter = metric.getFilter(context);
+            DBObject[] dbOperations = metric.getDBOperations(context);
+
+            // remove "$group" and "$project" operators
+            List<DBObject> dbOperationsForExplanation = new ArrayList<>();
+            for (DBObject dbObject: Arrays.asList(dbOperations)) {
+                if (! (dbObject.containsField("$group")
+                        && dbObject.toString().contains(SUM_OPERATOR_PATTERN))) {
+                    dbOperationsForExplanation.add(dbObject);
+                }
+            }
+            
+            dbOperationsForExplanation.addAll(projection);
+
+            AggregationOutput aggregation = dbCollection.aggregate(filter, dbOperationsForExplanation.toArray(new DBObject[0]));
+
+            return (ListValueData) createListValueData(aggregation.results().iterator(), metric.getTrackedFields());
+        } catch (ParseException e) {
+            throw new IOException(e);
+        }
+        
     }
 }

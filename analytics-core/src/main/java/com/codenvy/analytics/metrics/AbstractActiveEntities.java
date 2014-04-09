@@ -17,6 +17,7 @@
  */
 package com.codenvy.analytics.metrics;
 
+import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.mongodb.BasicDBObject;
@@ -24,6 +25,8 @@ import com.mongodb.DBObject;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public abstract class AbstractActiveEntities extends ReadBasedMetric {
@@ -82,5 +85,25 @@ public abstract class AbstractActiveEntities extends ReadBasedMetric {
     @Override
     public Class<? extends ValueData> getValueDataClass() {
         return LongValueData.class;
+    }
+    
+    @Override
+    public boolean isExpandable() {
+        return true;
+    }
+    
+    @Override
+    /**
+     * TODO pull up to ReadBasedMetric class
+     */
+    public ListValueData getExpandedValue(Context context) throws IOException {
+        context = modifyContext(context);
+        validateRestrictions(context);
+
+        List<DBObject> projection = new ArrayList<>(1);
+        projection.add(new BasicDBObject("$project", 
+                                          new BasicDBObject(valueField, "$_id")));
+        
+        return dataLoader.loadExpandedValue(this, context, projection);
     }
 }

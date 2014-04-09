@@ -19,6 +19,7 @@ package com.codenvy.analytics.services.view;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.Utils;
+import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.StringValueData;
 import com.codenvy.analytics.datamodel.ValueData;
@@ -136,6 +137,16 @@ public class TestTimeFieldsMetricRow extends BaseTest {
         @Override
         public String getDescription() {
             return null;
+        }
+
+        @Override
+        public ListValueData getExpandedValue(Context context) throws IOException {
+            return null;
+        }
+
+        @Override
+        public boolean isExpandable() {
+            return false;
         }
     }
 }
