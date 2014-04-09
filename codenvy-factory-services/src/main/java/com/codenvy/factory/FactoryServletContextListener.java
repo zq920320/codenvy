@@ -18,29 +18,23 @@
 package com.codenvy.factory;
 
 import com.codenvy.api.factory.FactoryStore;
-import com.codenvy.factory.storage.InMemoryFactoryStore;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 /** Listener for using {@link InMemoryFactoryStore} as {@link FactoryStore} backend. */
+//TODO decide what to do with this listener in feature
 public class FactoryServletContextListener implements ServletContextListener {
     private static final Logger LOG = LoggerFactory.getLogger(FactoryServletContextListener.class);
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
-        ServletContext sctx = sce.getServletContext();
-        sctx.setAttribute(FactoryStore.class.getName(), new InMemoryFactoryStore());
-        LOG.info("InMemoryFactoryStore backend for factory storage loaded.");
     }
 
     @Override
     public void contextDestroyed(ServletContextEvent sce) {
-        ServletContext sctx = sce.getServletContext();
-        sctx.removeAttribute(FactoryStore.class.getName());
     }
 }
