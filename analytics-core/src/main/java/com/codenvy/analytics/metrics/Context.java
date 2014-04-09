@@ -164,7 +164,7 @@ public class Context {
 
         public Builder putAll(Map<String, String> params) {
             for (Map.Entry<String, String> entry : params.entrySet()) {
-                params.put(entry.getKey(), entry.getValue());
+                this.params.put(entry.getKey(), entry.getValue());
             }
             return this;
         }
