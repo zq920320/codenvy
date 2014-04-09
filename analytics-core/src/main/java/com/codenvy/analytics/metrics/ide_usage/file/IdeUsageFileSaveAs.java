@@ -19,7 +19,6 @@ package com.codenvy.analytics.metrics.ide_usage.file;
 
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
-import com.codenvy.analytics.metrics.ide_usage.IdeUsageTypes;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -28,7 +27,7 @@ import javax.annotation.security.RolesAllowed;
 public class IdeUsageFileSaveAs extends AbstractIdeUsage {
 
     public IdeUsageFileSaveAs() {
-        super(MetricType.IDE_USAGE_FILE_SAVE_AS, new String[]{IdeUsageTypes.FILE_SAVE_AS});
+        super(MetricType.IDE_USAGE_FILE_SAVE_AS, new String[]{AbstractIdeUsage.FILE_SAVE_AS});
     }
 
     @Override

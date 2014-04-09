@@ -46,8 +46,8 @@ public class TestTimeIntervalUtil {
 
         Context context = Utils.initDateInterval(date, builder.getTimeUnit(), builder);
 
-        assertEquals(context.get(Parameters.FROM_DATE), "20130410");
-        assertEquals(context.get(Parameters.TO_DATE), "20130410");
+        assertEquals(context.getAsString(Parameters.FROM_DATE), "20130410");
+        assertEquals(context.getAsString(Parameters.TO_DATE), "20130410");
     }
 
     @Test
@@ -60,8 +60,8 @@ public class TestTimeIntervalUtil {
 
         Context context = Utils.initDateInterval(date, builder.getTimeUnit(), builder);
 
-        assertEquals(context.get(Parameters.FROM_DATE), "20130407");
-        assertEquals(context.get(Parameters.TO_DATE), "20130413");
+        assertEquals(context.getAsString(Parameters.FROM_DATE), "20130407");
+        assertEquals(context.getAsString(Parameters.TO_DATE), "20130413");
     }
 
     @Test
@@ -74,8 +74,8 @@ public class TestTimeIntervalUtil {
 
         Context context = Utils.initDateInterval(date, builder.getTimeUnit(), builder);
 
-        assertEquals(context.get(Parameters.FROM_DATE), "20130401");
-        assertEquals(context.get(Parameters.TO_DATE), "20130430");
+        assertEquals(context.getAsString(Parameters.FROM_DATE), "20130401");
+        assertEquals(context.getAsString(Parameters.TO_DATE), "20130430");
     }
 
     @Test
@@ -92,7 +92,7 @@ public class TestTimeIntervalUtil {
         // @see com.codenvy.analytics.metrics.Parameters.FROM_DATE.{...}.getDefaultValue()
         String fromDateDefaultValue = "20130101";
         
-        assertEquals(context.get(Parameters.FROM_DATE), fromDateDefaultValue);
+        assertEquals(context.getAsString(Parameters.FROM_DATE), fromDateDefaultValue);
         
         // calculate default value of TO_DATE parameter
         // @see com.codenvy.analytics.metrics.Parameters.TO_DATE.{...}.getDefaultValue()
@@ -100,7 +100,7 @@ public class TestTimeIntervalUtil {
         calendar.add(Calendar.DAY_OF_MONTH, -1);
         String toDateDefaultValue = df.format(calendar.getTime());
         
-        assertEquals(context.get(Parameters.TO_DATE), toDateDefaultValue);
+        assertEquals(context.getAsString(Parameters.TO_DATE), toDateDefaultValue);
     }
     
     @Test
@@ -115,8 +115,8 @@ public class TestTimeIntervalUtil {
         
         Context context = Utils.initDateInterval(date, builder.getTimeUnit(), timeInterval, builder);
 
-        assertEquals(context.get(Parameters.FROM_DATE), "20130410");
-        assertEquals(context.get(Parameters.TO_DATE), "20130410");
+        assertEquals(context.getAsString(Parameters.FROM_DATE), "20130410");
+        assertEquals(context.getAsString(Parameters.TO_DATE), "20130410");
     }
 
     @Test
@@ -131,8 +131,8 @@ public class TestTimeIntervalUtil {
         
         Context context = Utils.initDateInterval(date, builder.getTimeUnit(), timeInterval, builder);
 
-        assertEquals(context.get(Parameters.FROM_DATE), "20130331");
-        assertEquals(context.get(Parameters.TO_DATE), "20130406");
+        assertEquals(context.getAsString(Parameters.FROM_DATE), "20130331");
+        assertEquals(context.getAsString(Parameters.TO_DATE), "20130406");
     }
 
     @Test
@@ -147,8 +147,8 @@ public class TestTimeIntervalUtil {
         
         Context context = Utils.initDateInterval(date, builder.getTimeUnit(), timeInterval, builder);
 
-        assertEquals(context.get(Parameters.FROM_DATE), "20130201");
-        assertEquals(context.get(Parameters.TO_DATE), "20130228");
+        assertEquals(context.getAsString(Parameters.FROM_DATE), "20130201");
+        assertEquals(context.getAsString(Parameters.TO_DATE), "20130228");
     }
 
     @Test
@@ -167,7 +167,7 @@ public class TestTimeIntervalUtil {
         // @see com.codenvy.analytics.metrics.Parameters.FROM_DATE.{...}.getDefaultValue()
         String fromDateDefaultValue = "20130101";
         
-        assertEquals(context.get(Parameters.FROM_DATE), fromDateDefaultValue);
+        assertEquals(context.getAsString(Parameters.FROM_DATE), fromDateDefaultValue);
         
         // calculate default value of TO_DATE parameter
         // @see com.codenvy.analytics.metrics.Parameters.TO_DATE.{...}.getDefaultValue()
@@ -175,7 +175,7 @@ public class TestTimeIntervalUtil {
         calendar.add(Calendar.DAY_OF_MONTH, -1);
         String toDateDefaultValue = df.format(calendar.getTime());
         
-        assertEquals(context.get(Parameters.TO_DATE), toDateDefaultValue);
+        assertEquals(context.getAsString(Parameters.TO_DATE), toDateDefaultValue);
     }
     
     @Test
@@ -187,8 +187,8 @@ public class TestTimeIntervalUtil {
 
         Context context = Utils.nextDateInterval(builder);
 
-        assertEquals(context.get(Parameters.FROM_DATE), "20130401");
-        assertEquals(context.get(Parameters.TO_DATE), "20130401");
+        assertEquals(context.getAsString(Parameters.FROM_DATE), "20130401");
+        assertEquals(context.getAsString(Parameters.TO_DATE), "20130401");
     }
 
     @Test
@@ -200,8 +200,8 @@ public class TestTimeIntervalUtil {
 
         Context context = Utils.nextDateInterval(builder);
 
-        assertEquals(context.get(Parameters.FROM_DATE), "20130512");   // starting week on Sunday
-        assertEquals(context.get(Parameters.TO_DATE), "20130518");     // ending week on Saturday
+        assertEquals(context.getAsString(Parameters.FROM_DATE), "20130512");   // starting week on Sunday
+        assertEquals(context.getAsString(Parameters.TO_DATE), "20130518");     // ending week on Saturday
     }
 
     @Test
@@ -213,8 +213,8 @@ public class TestTimeIntervalUtil {
 
         Context context = Utils.nextDateInterval(builder);
 
-        assertEquals(context.get(Parameters.FROM_DATE), "20130401");
-        assertEquals(context.get(Parameters.TO_DATE), "20130430");
+        assertEquals(context.getAsString(Parameters.FROM_DATE), "20130401");
+        assertEquals(context.getAsString(Parameters.TO_DATE), "20130430");
     }
 
     @Test
@@ -226,8 +226,8 @@ public class TestTimeIntervalUtil {
 
         Context context = Utils.prevDateInterval(builder);
 
-        assertEquals(context.get(Parameters.FROM_DATE), "20130330");
-        assertEquals(context.get(Parameters.TO_DATE), "20130330");
+        assertEquals(context.getAsString(Parameters.FROM_DATE), "20130330");
+        assertEquals(context.getAsString(Parameters.TO_DATE), "20130330");
     }
 
     @Test
@@ -239,8 +239,8 @@ public class TestTimeIntervalUtil {
 
         Context context = Utils.prevDateInterval(builder);
 
-        assertEquals(context.get(Parameters.FROM_DATE), "20130428");  // starting week on Sunday
-        assertEquals(context.get(Parameters.TO_DATE), "20130504");    // ending week on Saturday
+        assertEquals(context.getAsString(Parameters.FROM_DATE), "20130428");  // starting week on Sunday
+        assertEquals(context.getAsString(Parameters.TO_DATE), "20130504");    // ending week on Saturday
     }
 
     @Test
@@ -252,7 +252,7 @@ public class TestTimeIntervalUtil {
 
         Context context = Utils.prevDateInterval(builder);
 
-        assertEquals(context.get(Parameters.FROM_DATE), "20130201");
-        assertEquals(context.get(Parameters.TO_DATE), "20130228");
+        assertEquals(context.getAsString(Parameters.FROM_DATE), "20130201");
+        assertEquals(context.getAsString(Parameters.TO_DATE), "20130228");
     }
 }

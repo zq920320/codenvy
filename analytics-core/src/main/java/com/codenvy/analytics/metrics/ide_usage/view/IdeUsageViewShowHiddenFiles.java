@@ -19,7 +19,6 @@ package com.codenvy.analytics.metrics.ide_usage.view;
 
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
-import com.codenvy.analytics.metrics.ide_usage.IdeUsageTypes;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -28,7 +27,7 @@ import javax.annotation.security.RolesAllowed;
 public class IdeUsageViewShowHiddenFiles extends AbstractIdeUsage {
 
     public IdeUsageViewShowHiddenFiles() {
-        super(MetricType.IDE_USAGE_VIEW_SHOW_HIDDEN_FILES, new String[]{IdeUsageTypes.VIEW_SHOW_HIDDEN_FILES});
+        super(MetricType.IDE_USAGE_VIEW_SHOW_HIDDEN_FILES, new String[]{AbstractIdeUsage.VIEW_SHOW_HIDDEN_FILES});
     }
 
     @Override

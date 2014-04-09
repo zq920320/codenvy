@@ -19,7 +19,6 @@ package com.codenvy.analytics.metrics.ide_usage.project;
 
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
-import com.codenvy.analytics.metrics.ide_usage.IdeUsageTypes;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -29,7 +28,7 @@ public class IdeUsageProjectShowSyntaxErrorHighlighting extends AbstractIdeUsage
 
     public IdeUsageProjectShowSyntaxErrorHighlighting() {
         super(MetricType.IDE_USAGE_PROJECT_SHOW_SYNTAX_ERROR_HIGHLIGHTING,
-              new String[]{IdeUsageTypes.PROJECT_SHOW_SYNTAX_ERROR_HIGHLIGHTING});
+              new String[]{AbstractIdeUsage.PROJECT_SHOW_SYNTAX_ERROR_HIGHLIGHTING});
     }
 
     @Override

@@ -32,7 +32,6 @@ public class MetricFactory {
 
     static {
         try {
-
             for (Metric metric : ServiceLoader.load(Metric.class)) {
                 Metric existed = metrics.put(metric.getName(), metric);
                 if (existed != null) {

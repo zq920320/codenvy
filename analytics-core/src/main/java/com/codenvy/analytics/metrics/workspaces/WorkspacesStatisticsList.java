@@ -83,7 +83,7 @@ public class WorkspacesStatisticsList extends AbstractListValueResulted {
         } else {
             // create pattern like "(?=^(?!(TMP-|DEFAULT)).*)(?=targetWorkspace)"
             String persistentWsAndTargetWorkspace =
-                    String.format("(?=%1$s)(?=%2$s)", NON_DEFAULT_WS.pattern(), clauses.get(Parameters.WS));
+                    String.format("(?=%1$s)(?=%2$s)", NON_DEFAULT_WS.pattern(), clauses.getAsString(Parameters.WS));
             Pattern persistentWsAndTargetWorkspacePattern =
                     Pattern.compile(persistentWsAndTargetWorkspace, Pattern.CASE_INSENSITIVE);
             match.put(WS, persistentWsAndTargetWorkspacePattern);

@@ -19,7 +19,6 @@ package com.codenvy.analytics.metrics.ide_usage.window;
 
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
-import com.codenvy.analytics.metrics.ide_usage.IdeUsageTypes;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -29,7 +28,7 @@ public class IdeUsageWindowShowViewProjectExplore extends AbstractIdeUsage {
 
     public IdeUsageWindowShowViewProjectExplore() {
         super(MetricType.IDE_USAGE_WINDOW_SHOW_VIEW_PROJECT_EXPLORE,
-              new String[]{IdeUsageTypes.WINDOW_SHOW_VIEW_PROJECT_EXPLORE});
+              new String[]{AbstractIdeUsage.WINDOW_SHOW_VIEW_PROJECT_EXPLORE});
     }
 
     @Override

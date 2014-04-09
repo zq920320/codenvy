@@ -19,7 +19,6 @@ package com.codenvy.analytics.metrics.ide_usage.edit;
 
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
-import com.codenvy.analytics.metrics.ide_usage.IdeUsageTypes;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -28,7 +27,7 @@ import javax.annotation.security.RolesAllowed;
 public class IdeUsageEditRefactorRename extends AbstractIdeUsage {
 
     public IdeUsageEditRefactorRename() {
-        super(MetricType.IDE_USAGE_EDIT_REFACTOR_RENAME, new String[]{IdeUsageTypes.EDIT_REFACTOR_RENAME});
+        super(MetricType.IDE_USAGE_EDIT_REFACTOR_RENAME, new String[]{AbstractIdeUsage.EDIT_REFACTOR_RENAME});
     }
 
     @Override

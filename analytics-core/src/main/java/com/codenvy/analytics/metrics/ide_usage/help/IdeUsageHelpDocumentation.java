@@ -19,7 +19,6 @@ package com.codenvy.analytics.metrics.ide_usage.help;
 
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
-import com.codenvy.analytics.metrics.ide_usage.IdeUsageTypes;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -28,7 +27,7 @@ import javax.annotation.security.RolesAllowed;
 public class IdeUsageHelpDocumentation extends AbstractIdeUsage {
 
     public IdeUsageHelpDocumentation() {
-        super(MetricType.IDE_USAGE_HELP_DOCUMENTATION, new String[]{IdeUsageTypes.HELP_DOCUMENTATION});
+        super(MetricType.IDE_USAGE_HELP_DOCUMENTATION, new String[]{AbstractIdeUsage.HELP_DOCUMENTATION});
     }
 
     @Override

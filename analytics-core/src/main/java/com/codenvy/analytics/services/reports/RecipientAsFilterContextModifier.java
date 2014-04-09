@@ -26,6 +26,6 @@ public class RecipientAsFilterContextModifier implements ContextModifier {
 
     @Override
     public Context update(Context context) {
-        return context.cloneAndPut(MetricFilter.USER, context.get(Parameters.RECIPIENT));
+        return context.cloneAndPut(MetricFilter.USER, context.getAsString(Parameters.RECIPIENT));
     }
 }

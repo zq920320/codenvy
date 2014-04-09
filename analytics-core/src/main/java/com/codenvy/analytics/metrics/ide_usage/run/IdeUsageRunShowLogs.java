@@ -19,7 +19,6 @@ package com.codenvy.analytics.metrics.ide_usage.run;
 
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
-import com.codenvy.analytics.metrics.ide_usage.IdeUsageTypes;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -28,7 +27,7 @@ import javax.annotation.security.RolesAllowed;
 public class IdeUsageRunShowLogs extends AbstractIdeUsage {
 
     public IdeUsageRunShowLogs() {
-        super(MetricType.IDE_USAGE_RUN_SHOW_LOGS, new String[]{IdeUsageTypes.RUN_SHOW_LOGS});
+        super(MetricType.IDE_USAGE_RUN_SHOW_LOGS, new String[]{AbstractIdeUsage.RUN_SHOW_LOGS});
     }
 
     @Override

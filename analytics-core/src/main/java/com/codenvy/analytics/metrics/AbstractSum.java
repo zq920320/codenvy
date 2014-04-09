@@ -25,8 +25,6 @@ import com.mongodb.DBObject;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public abstract class AbstractSum extends ReadBasedMetric {
 
-    public static final String VALUE = "value";
-
     private final String basedMetricName;
     private final String field;
 

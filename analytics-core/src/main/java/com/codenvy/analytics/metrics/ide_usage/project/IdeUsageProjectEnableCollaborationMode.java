@@ -19,7 +19,6 @@ package com.codenvy.analytics.metrics.ide_usage.project;
 
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
-import com.codenvy.analytics.metrics.ide_usage.IdeUsageTypes;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -29,7 +28,7 @@ public class IdeUsageProjectEnableCollaborationMode extends AbstractIdeUsage {
 
     public IdeUsageProjectEnableCollaborationMode() {
         super(MetricType.IDE_USAGE_PROJECT_ENABLE_COLLABORATION_MODE,
-              new String[]{IdeUsageTypes.PROJECT_ENABLE_COLLABORATION_MODE});
+              new String[]{AbstractIdeUsage.PROJECT_ENABLE_COLLABORATION_MODE});
     }
 
     @Override

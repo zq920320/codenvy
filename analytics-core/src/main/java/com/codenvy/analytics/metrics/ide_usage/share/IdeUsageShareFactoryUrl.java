@@ -19,7 +19,6 @@ package com.codenvy.analytics.metrics.ide_usage.share;
 
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
-import com.codenvy.analytics.metrics.ide_usage.IdeUsageTypes;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -28,7 +27,7 @@ import javax.annotation.security.RolesAllowed;
 public class IdeUsageShareFactoryUrl extends AbstractIdeUsage {
 
     public IdeUsageShareFactoryUrl() {
-        super(MetricType.IDE_USAGE_SHARE_FACTORY_URL, new String[]{IdeUsageTypes.SHARE_FACTORY_URL});
+        super(MetricType.IDE_USAGE_SHARE_FACTORY_URL, new String[]{AbstractIdeUsage.SHARE_FACTORY_URL});
     }
 
     @Override

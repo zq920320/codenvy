@@ -404,7 +404,5 @@ public enum MetricType {
     IDE_USAGE_PROFILE,
     IDE_USAGE_LOGOUT,
 
-    USERS_EVENTS,
-
     ZERO
 }

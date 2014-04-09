@@ -19,7 +19,6 @@ package com.codenvy.analytics.metrics.ide_usage.file;
 
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
-import com.codenvy.analytics.metrics.ide_usage.IdeUsageTypes;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -29,7 +28,7 @@ public class IdeUsageFileDownloadZippedFolder extends AbstractIdeUsage {
 
     public IdeUsageFileDownloadZippedFolder() {
         super(MetricType.IDE_USAGE_FILE_DOWNLOAD_ZIPPED_FOLDER,
-              new String[]{IdeUsageTypes.FILE_DOWNLOAD_ZIPPED_FOLDER});
+              new String[]{AbstractIdeUsage.FILE_DOWNLOAD_ZIPPED_FOLDER});
     }
 
     @Override

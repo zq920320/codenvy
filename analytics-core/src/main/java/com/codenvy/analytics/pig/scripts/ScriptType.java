@@ -44,6 +44,7 @@ public enum ScriptType {
             return params;
         }
     },
+    IDE_USAGE_EVENTS,
     DEPLOYMENTS_BY_TYPES,
     CREATED_USERS_FROM_FACTORY,
     PRODUCT_USAGE_SESSIONS {

@@ -19,7 +19,6 @@ package com.codenvy.analytics.metrics.ide_usage.git;
 
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
-import com.codenvy.analytics.metrics.ide_usage.IdeUsageTypes;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -28,7 +27,7 @@ import javax.annotation.security.RolesAllowed;
 public class IdeUsageGitRemoteRemotes extends AbstractIdeUsage {
 
     public IdeUsageGitRemoteRemotes() {
-        super(MetricType.IDE_USAGE_GIT_REMOTE_REMOTES, new String[]{IdeUsageTypes.GIT_REMOTE_REMOTES});
+        super(MetricType.IDE_USAGE_GIT_REMOTE_REMOTES, new String[]{AbstractIdeUsage.GIT_REMOTE_REMOTES});
     }
 
     @Override

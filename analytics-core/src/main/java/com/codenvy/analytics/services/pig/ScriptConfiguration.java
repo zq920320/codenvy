@@ -62,8 +62,8 @@ public class ScriptConfiguration {
         return parameters;
     }
 
-    public Map<String, String> getParamsAsMap() {
-        Map<String, String> result = new HashMap<>(parameters.size());
+    public Map<String, Object> getParamsAsMap() {
+        Map<String, Object> result = new HashMap<>(parameters.size());
         for (ParameterConfiguration parameter : parameters) {
             result.put(parameter.getKey(), parameter.getValue());
         }

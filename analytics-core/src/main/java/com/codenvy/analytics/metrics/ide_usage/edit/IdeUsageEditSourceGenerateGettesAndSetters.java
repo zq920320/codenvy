@@ -19,7 +19,6 @@ package com.codenvy.analytics.metrics.ide_usage.edit;
 
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
-import com.codenvy.analytics.metrics.ide_usage.IdeUsageTypes;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -29,7 +28,7 @@ public class IdeUsageEditSourceGenerateGettesAndSetters extends AbstractIdeUsage
 
     public IdeUsageEditSourceGenerateGettesAndSetters() {
         super(MetricType.IDE_USAGE_EDIT_SOURCE_GENERATE_GETTES_AND_SETTERS,
-              new String[]{IdeUsageTypes.EDIT_SOURCE_GENERATE_GETTES_AND_SETTERS});
+              new String[]{AbstractIdeUsage.EDIT_SOURCE_GENERATE_GETTES_AND_SETTERS});
     }
 
     @Override

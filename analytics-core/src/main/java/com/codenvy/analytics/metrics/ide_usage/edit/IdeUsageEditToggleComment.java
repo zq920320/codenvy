@@ -19,7 +19,6 @@ package com.codenvy.analytics.metrics.ide_usage.edit;
 
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
-import com.codenvy.analytics.metrics.ide_usage.IdeUsageTypes;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -28,7 +27,7 @@ import javax.annotation.security.RolesAllowed;
 public class IdeUsageEditToggleComment extends AbstractIdeUsage {
 
     public IdeUsageEditToggleComment() {
-        super(MetricType.IDE_USAGE_EDIT_TOGGLE_COMMENT, new String[]{IdeUsageTypes.EDIT_TOGGLE_COMMENT});
+        super(MetricType.IDE_USAGE_EDIT_TOGGLE_COMMENT, new String[]{AbstractIdeUsage.EDIT_TOGGLE_COMMENT});
     }
 
     @Override

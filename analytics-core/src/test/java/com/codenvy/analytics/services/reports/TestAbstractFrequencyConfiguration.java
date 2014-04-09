@@ -43,8 +43,8 @@ public class TestAbstractFrequencyConfiguration extends BaseTest {
         assertTrue(conf.isAppropriateDateToSendReport(builder.build()));
 
         Context context = conf.initContext(builder.build());
-        assertEquals(context.get(Parameters.FROM_DATE), "20130929");
-        assertEquals(context.get(Parameters.TO_DATE), "20130929");
+        assertEquals(context.getAsString(Parameters.FROM_DATE), "20130929");
+        assertEquals(context.getAsString(Parameters.TO_DATE), "20130929");
     }
 
     @Test
@@ -65,8 +65,8 @@ public class TestAbstractFrequencyConfiguration extends BaseTest {
         assertTrue(conf.isAppropriateDateToSendReport(builder.build()));
 
         Context context = conf.initContext(builder.build());
-        assertEquals(context.get(Parameters.FROM_DATE), "20140105");
-        assertEquals(context.get(Parameters.TO_DATE), "20140111");
+        assertEquals(context.getAsString(Parameters.FROM_DATE), "20140105");
+        assertEquals(context.getAsString(Parameters.TO_DATE), "20140111");
     }
 
     @Test
@@ -87,7 +87,7 @@ public class TestAbstractFrequencyConfiguration extends BaseTest {
         assertTrue(conf.isAppropriateDateToSendReport(builder.build()));
 
         Context context = conf.initContext(builder.build());
-        assertEquals(context.get(Parameters.FROM_DATE), "20131201");
-        assertEquals(context.get(Parameters.TO_DATE), "20131231");
+        assertEquals(context.getAsString(Parameters.FROM_DATE), "20131201");
+        assertEquals(context.getAsString(Parameters.TO_DATE), "20131231");
     }
 }

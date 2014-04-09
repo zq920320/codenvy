@@ -19,7 +19,6 @@ package com.codenvy.analytics.metrics.ide_usage.window;
 
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
-import com.codenvy.analytics.metrics.ide_usage.IdeUsageTypes;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -29,7 +28,7 @@ public class IdeUsageWindowNavigationPreviousEditor extends AbstractIdeUsage {
 
     public IdeUsageWindowNavigationPreviousEditor() {
         super(MetricType.IDE_USAGE_WINDOW_NAVIGATION_PREVIOUS_EDITOR,
-              new String[]{IdeUsageTypes.WINDOW_NAVIGATION_PREVIOUS_EDITOR});
+              new String[]{AbstractIdeUsage.WINDOW_NAVIGATION_PREVIOUS_EDITOR});
     }
 
     @Override

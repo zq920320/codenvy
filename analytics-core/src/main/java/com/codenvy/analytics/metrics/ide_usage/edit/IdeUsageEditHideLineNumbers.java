@@ -19,7 +19,6 @@ package com.codenvy.analytics.metrics.ide_usage.edit;
 
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
-import com.codenvy.analytics.metrics.ide_usage.IdeUsageTypes;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -28,7 +27,7 @@ import javax.annotation.security.RolesAllowed;
 public class IdeUsageEditHideLineNumbers extends AbstractIdeUsage {
 
     public IdeUsageEditHideLineNumbers() {
-        super(MetricType.IDE_USAGE_EDIT_HIDE_LINE_NUMBERS, new String[]{IdeUsageTypes.EDIT_HIDE_LINE_NUMBERS});
+        super(MetricType.IDE_USAGE_EDIT_HIDE_LINE_NUMBERS, new String[]{AbstractIdeUsage.EDIT_HIDE_LINE_NUMBERS});
     }
 
     @Override

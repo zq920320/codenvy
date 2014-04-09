@@ -549,6 +549,14 @@
                 <field>ws</field>
                 <field>date</field>
             </index>
+            <index name="source">
+                <field>source</field>
+                <field>date</field>
+            </index>
+            <index name="action">
+                <field>action</field>
+                <field>date</field>
+            </index>
         </indexes>
     </collection>
 

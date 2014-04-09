@@ -26,7 +26,7 @@ import javax.annotation.security.RolesAllowed;
 public class IdeUsageShell extends AbstractIdeUsage {
 
     public IdeUsageShell() {
-        super(MetricType.IDE_USAGE_SHELL, new String[]{IdeUsageTypes.SHELL});
+        super(MetricType.IDE_USAGE_SHELL, new String[]{AbstractIdeUsage.SHELL});
     }
 
     @Override

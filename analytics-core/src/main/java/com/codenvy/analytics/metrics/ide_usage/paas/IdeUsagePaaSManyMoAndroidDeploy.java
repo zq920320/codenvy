@@ -19,7 +19,6 @@ package com.codenvy.analytics.metrics.ide_usage.paas;
 
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
-import com.codenvy.analytics.metrics.ide_usage.IdeUsageTypes;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -29,7 +28,7 @@ public class IdeUsagePaaSManyMoAndroidDeploy extends AbstractIdeUsage {
 
     public IdeUsagePaaSManyMoAndroidDeploy() {
         super(MetricType.IDE_USAGE_PAAS_MANY_MO_ANDROID_DEPLOY,
-              new String[]{IdeUsageTypes.PAAS_MANY_MO_ANDROID_DEPLOY});
+              new String[]{AbstractIdeUsage.PAAS_MANY_MO_ANDROID_DEPLOY});
     }
 
     @Override

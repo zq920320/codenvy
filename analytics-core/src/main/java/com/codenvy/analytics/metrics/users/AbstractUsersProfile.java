@@ -39,7 +39,7 @@ abstract public class AbstractUsersProfile extends ReadBasedMetric {
         BasicDBObject match = new BasicDBObject();
 
         for (MetricFilter filter : clauses.getFilters()) {
-            String[] values = clauses.get(filter).split(",");
+            String[] values = clauses.getAsString(filter).split(",");
 
             if (filter == MetricFilter.USER) {
                 match.put(ID, new BasicDBObject("$in", values));
@@ -49,7 +49,7 @@ abstract public class AbstractUsersProfile extends ReadBasedMetric {
                        || filter == MetricFilter.USER_LAST_NAME) {
                 StringBuilder builder = new StringBuilder();
 
-                for (String value : clauses.get(filter).split(",")) {
+                for (String value : clauses.getAsString(filter).split(",")) {
                     if (builder.length() > 0) {
                         builder.append("|");
                     }

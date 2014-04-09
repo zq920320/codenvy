@@ -19,7 +19,6 @@ package com.codenvy.analytics.metrics.ide_usage.edit;
 
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
-import com.codenvy.analytics.metrics.ide_usage.IdeUsageTypes;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -28,7 +27,7 @@ import javax.annotation.security.RolesAllowed;
 public class IdeUsageEditMoveLineUp extends AbstractIdeUsage {
 
     public IdeUsageEditMoveLineUp() {
-        super(MetricType.IDE_USAGE_EDIT_MOVE_LINE_UP, new String[]{IdeUsageTypes.EDIT_MOVE_LINE_UP});
+        super(MetricType.IDE_USAGE_EDIT_MOVE_LINE_UP, new String[]{AbstractIdeUsage.EDIT_MOVE_LINE_UP});
     }
 
     @Override

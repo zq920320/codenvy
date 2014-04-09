@@ -19,7 +19,6 @@ package com.codenvy.analytics.metrics.ide_usage.paas;
 
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
-import com.codenvy.analytics.metrics.ide_usage.IdeUsageTypes;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -29,7 +28,7 @@ public class IdeUsagePaaSCloudBeesCreateApplication extends AbstractIdeUsage {
 
     public IdeUsagePaaSCloudBeesCreateApplication() {
         super(MetricType.IDE_USAGE_PAAS_CLOUD_BEES_CREATE_APPLICATION,
-              new String[]{IdeUsageTypes.PAAS_CLOUD_BEES_CREATE_APPLICATION});
+              new String[]{AbstractIdeUsage.PAAS_CLOUD_BEES_CREATE_APPLICATION});
     }
 
     @Override

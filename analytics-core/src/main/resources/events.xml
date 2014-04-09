@@ -22,7 +22,11 @@
         <parameters>
             <param>WS</param>
             <param>USER</param>
-            <param>ACTION</param>
+            <param allow-empty-value="true">PROJECT</param>
+            <param allow-empty-value="true">TYPE</param>
+            <param allow-empty-value="true">SOURCE</param>
+            <param allow-empty-value="true">ACTION</param>
+            <param>PARAMETERS</param>
         </parameters>
     </event>
     <event name="user-code-refactor">

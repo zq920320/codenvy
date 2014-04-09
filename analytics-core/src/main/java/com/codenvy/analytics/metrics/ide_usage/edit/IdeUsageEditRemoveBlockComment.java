@@ -19,7 +19,6 @@ package com.codenvy.analytics.metrics.ide_usage.edit;
 
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
-import com.codenvy.analytics.metrics.ide_usage.IdeUsageTypes;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -28,7 +27,7 @@ import javax.annotation.security.RolesAllowed;
 public class IdeUsageEditRemoveBlockComment extends AbstractIdeUsage {
 
     public IdeUsageEditRemoveBlockComment() {
-        super(MetricType.IDE_USAGE_EDIT_REMOVE_BLOCK_COMMENT, new String[]{IdeUsageTypes.EDIT_REMOVE_BLOCK_COMMENT});
+        super(MetricType.IDE_USAGE_EDIT_REMOVE_BLOCK_COMMENT, new String[]{AbstractIdeUsage.EDIT_REMOVE_BLOCK_COMMENT});
     }
 
     @Override

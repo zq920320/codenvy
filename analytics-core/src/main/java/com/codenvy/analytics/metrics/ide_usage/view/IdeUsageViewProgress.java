@@ -19,7 +19,6 @@ package com.codenvy.analytics.metrics.ide_usage.view;
 
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
-import com.codenvy.analytics.metrics.ide_usage.IdeUsageTypes;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -28,7 +27,7 @@ import javax.annotation.security.RolesAllowed;
 public class IdeUsageViewProgress extends AbstractIdeUsage {
 
     public IdeUsageViewProgress() {
-        super(MetricType.IDE_USAGE_VIEW_PROGRESS, new String[]{IdeUsageTypes.VIEW_PROGRESS});
+        super(MetricType.IDE_USAGE_VIEW_PROGRESS, new String[]{AbstractIdeUsage.VIEW_PROGRESS});
     }
 
     @Override

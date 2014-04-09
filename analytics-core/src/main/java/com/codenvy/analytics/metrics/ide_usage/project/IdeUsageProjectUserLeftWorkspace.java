@@ -19,7 +19,6 @@ package com.codenvy.analytics.metrics.ide_usage.project;
 
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
-import com.codenvy.analytics.metrics.ide_usage.IdeUsageTypes;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -29,7 +28,7 @@ public class IdeUsageProjectUserLeftWorkspace extends AbstractIdeUsage {
 
     public IdeUsageProjectUserLeftWorkspace() {
         super(MetricType.IDE_USAGE_PROJECT_USER_LEFT_WORKSPACE,
-              new String[]{IdeUsageTypes.PROJECT_USER_LEFT_WORKSPACE});
+              new String[]{AbstractIdeUsage.PROJECT_USER_LEFT_WORKSPACE});
     }
 
     @Override

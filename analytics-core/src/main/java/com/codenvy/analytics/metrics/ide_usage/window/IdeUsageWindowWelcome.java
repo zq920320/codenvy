@@ -19,7 +19,6 @@ package com.codenvy.analytics.metrics.ide_usage.window;
 
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
-import com.codenvy.analytics.metrics.ide_usage.IdeUsageTypes;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -28,7 +27,7 @@ import javax.annotation.security.RolesAllowed;
 public class IdeUsageWindowWelcome extends AbstractIdeUsage {
 
     public IdeUsageWindowWelcome() {
-        super(MetricType.IDE_USAGE_WINDOW_WELCOME, new String[]{IdeUsageTypes.WINDOW_WELCOME});
+        super(MetricType.IDE_USAGE_WINDOW_WELCOME, new String[]{AbstractIdeUsage.WINDOW_WELCOME});
     }
 
     @Override

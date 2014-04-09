@@ -19,7 +19,6 @@ package com.codenvy.analytics.metrics.ide_usage.git;
 
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
-import com.codenvy.analytics.metrics.ide_usage.IdeUsageTypes;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -28,7 +27,7 @@ import javax.annotation.security.RolesAllowed;
 public class IdeUsageGitResetIndex extends AbstractIdeUsage {
 
     public IdeUsageGitResetIndex() {
-        super(MetricType.IDE_USAGE_GIT_RESET_INDEX, new String[]{IdeUsageTypes.GIT_RESET_INDEX});
+        super(MetricType.IDE_USAGE_GIT_RESET_INDEX, new String[]{AbstractIdeUsage.GIT_RESET_INDEX});
     }
 
     @Override

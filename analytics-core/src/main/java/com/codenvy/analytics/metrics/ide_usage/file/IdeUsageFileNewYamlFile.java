@@ -19,7 +19,6 @@ package com.codenvy.analytics.metrics.ide_usage.file;
 
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
-import com.codenvy.analytics.metrics.ide_usage.IdeUsageTypes;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -28,7 +27,7 @@ import javax.annotation.security.RolesAllowed;
 public class IdeUsageFileNewYamlFile extends AbstractIdeUsage {
 
     public IdeUsageFileNewYamlFile() {
-        super(MetricType.IDE_USAGE_FILE_NEW_YAML_FILE, new String[]{IdeUsageTypes.FILE_NEW_YAML_FILE});
+        super(MetricType.IDE_USAGE_FILE_NEW_YAML_FILE, new String[]{AbstractIdeUsage.FILE_NEW_YAML_FILE});
     }
 
     @Override

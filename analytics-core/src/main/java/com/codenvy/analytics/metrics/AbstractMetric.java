@@ -57,8 +57,6 @@ public abstract class AbstractMetric implements Metric {
     public static final String USER_COMPANY          = "user_company";
     public static final String USER_JOB              = "user_job";
     public static final String USER_PHONE            = "user_phone";
-    public static final String ACTION                = "action";
-    public static final String COUNT                 = "count";
 
     protected final String             metricName;
     protected final OrganizationClient organizationClient;

@@ -19,7 +19,6 @@ package com.codenvy.analytics.metrics.ide_usage.help;
 
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
-import com.codenvy.analytics.metrics.ide_usage.IdeUsageTypes;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -28,7 +27,7 @@ import javax.annotation.security.RolesAllowed;
 public class IdeUsageHelpSubmitFeedback extends AbstractIdeUsage {
 
     public IdeUsageHelpSubmitFeedback() {
-        super(MetricType.IDE_USAGE_HELP_SUBMIT_FEEDBACK, new String[]{IdeUsageTypes.HELP_SUBMIT_FEEDBACK});
+        super(MetricType.IDE_USAGE_HELP_SUBMIT_FEEDBACK, new String[]{AbstractIdeUsage.HELP_SUBMIT_FEEDBACK});
     }
 
     @Override

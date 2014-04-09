@@ -19,7 +19,6 @@ package com.codenvy.analytics.metrics.ide_usage.git;
 
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
-import com.codenvy.analytics.metrics.ide_usage.IdeUsageTypes;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -28,7 +27,7 @@ import javax.annotation.security.RolesAllowed;
 public class IdeUsageGitDeleteRepository extends AbstractIdeUsage {
 
     public IdeUsageGitDeleteRepository() {
-        super(MetricType.IDE_USAGE_GIT_DELETE_REPOSITORY, new String[]{IdeUsageTypes.GIT_DELETE_REPOSITORY});
+        super(MetricType.IDE_USAGE_GIT_DELETE_REPOSITORY, new String[]{AbstractIdeUsage.GIT_DELETE_REPOSITORY});
     }
 
     @Override

@@ -19,7 +19,6 @@ package com.codenvy.analytics.metrics.ide_usage.git;
 
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
-import com.codenvy.analytics.metrics.ide_usage.IdeUsageTypes;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -28,7 +27,7 @@ import javax.annotation.security.RolesAllowed;
 public class IdeUsageGitStatus extends AbstractIdeUsage {
 
     public IdeUsageGitStatus() {
-        super(MetricType.IDE_USAGE_GIT_STATUS, new String[]{IdeUsageTypes.GIT_STATUS});
+        super(MetricType.IDE_USAGE_GIT_STATUS, new String[]{AbstractIdeUsage.GIT_STATUS});
     }
 
     @Override

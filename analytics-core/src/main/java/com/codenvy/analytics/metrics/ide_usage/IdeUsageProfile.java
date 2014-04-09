@@ -26,7 +26,7 @@ import javax.annotation.security.RolesAllowed;
 public class IdeUsageProfile extends AbstractIdeUsage {
 
     public IdeUsageProfile() {
-        super(MetricType.IDE_USAGE_PROFILE, new String[]{IdeUsageTypes.PROFILE});
+        super(MetricType.IDE_USAGE_PROFILE, new String[]{AbstractIdeUsage.PROFILE});
     }
 
     @Override

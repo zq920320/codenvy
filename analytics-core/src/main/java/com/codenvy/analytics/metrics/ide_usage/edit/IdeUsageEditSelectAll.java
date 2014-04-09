@@ -19,7 +19,6 @@ package com.codenvy.analytics.metrics.ide_usage.edit;
 
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
-import com.codenvy.analytics.metrics.ide_usage.IdeUsageTypes;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -28,7 +27,7 @@ import javax.annotation.security.RolesAllowed;
 public class IdeUsageEditSelectAll extends AbstractIdeUsage {
 
     public IdeUsageEditSelectAll() {
-        super(MetricType.IDE_USAGE_EDIT_SELECT_ALL, new String[]{IdeUsageTypes.EDIT_SELECT_ALL});
+        super(MetricType.IDE_USAGE_EDIT_SELECT_ALL, new String[]{AbstractIdeUsage.EDIT_SELECT_ALL});
     }
 
     @Override

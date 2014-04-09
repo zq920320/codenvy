@@ -19,7 +19,6 @@ package com.codenvy.analytics.metrics.ide_usage.help;
 
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
-import com.codenvy.analytics.metrics.ide_usage.IdeUsageTypes;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -28,7 +27,7 @@ import javax.annotation.security.RolesAllowed;
 public class IdeUsageHelpContactSupport extends AbstractIdeUsage {
 
     public IdeUsageHelpContactSupport() {
-        super(MetricType.IDE_USAGE_HELP_CONTACT_SUPPORT, new String[]{IdeUsageTypes.HELP_CONTACT_SUPPORT});
+        super(MetricType.IDE_USAGE_HELP_CONTACT_SUPPORT, new String[]{AbstractIdeUsage.HELP_CONTACT_SUPPORT});
     }
 
     @Override

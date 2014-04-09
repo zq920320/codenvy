@@ -19,7 +19,6 @@ package com.codenvy.analytics.metrics.ide_usage.view;
 
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
-import com.codenvy.analytics.metrics.ide_usage.IdeUsageTypes;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -28,7 +27,7 @@ import javax.annotation.security.RolesAllowed;
 public class IdeUsageViewOutput extends AbstractIdeUsage {
 
     public IdeUsageViewOutput() {
-        super(MetricType.IDE_USAGE_VIEW_OUTPUT, new String[]{IdeUsageTypes.VIEW_OUTPUT});
+        super(MetricType.IDE_USAGE_VIEW_OUTPUT, new String[]{AbstractIdeUsage.VIEW_OUTPUT});
     }
 
     @Override

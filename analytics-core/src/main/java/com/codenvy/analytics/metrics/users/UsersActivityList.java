@@ -259,7 +259,7 @@ public class UsersActivityList extends AbstractListValueResulted {
     }
 
     private void excludeStartAndStopFactorySessionsEvents(Context.Builder builder) {
-        String eventFilter = builder.get(MetricFilter.EVENT);
+        String eventFilter = builder.getAsString(MetricFilter.EVENT);
 
         if (eventFilter != null) {
             builder.put(MetricFilter.EVENT, eventFilter + "," + EventsHolder.NOT_FACTORY_SESSIONS);
@@ -296,7 +296,7 @@ public class UsersActivityList extends AbstractListValueResulted {
         }
 
         private static SessionData init(Context clauses) throws IOException {
-            String sessionId = clauses.get(MetricFilter.SESSION_ID);
+            String sessionId = clauses.getAsString(MetricFilter.SESSION_ID);
             if (sessionId == null) {
                 return null;
             }

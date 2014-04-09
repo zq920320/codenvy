@@ -119,7 +119,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
     }
 
     public String getStorageCollectionName(MetricType metricType) {
-        return MetricFactory.getMetric(metricType).getName().toLowerCase();
+        return metricType.toString().toLowerCase();
     }
 
     public String getStorageCollectionName(String metricName) {
@@ -139,20 +139,22 @@ public abstract class ReadBasedMetric extends AbstractMetric {
         setDateFilter(clauses, match);
 
         for (MetricFilter filter : clauses.getFilters()) {
-            String value = clauses.get(filter);
 
             if (filter == MetricFilter.USER_COMPANY
                 || filter == MetricFilter.USER_FIRST_NAME
                 || filter == MetricFilter.USER_LAST_NAME) {
 
-                String[] values = getUsers(filter, value);
-                match.put(MetricFilter.USER.name().toLowerCase(), new BasicDBObject("$in", values));
+                String value = clauses.getAsString(filter);
+                String[] users = getUsers(filter, value);
+                match.put(MetricFilter.USER.name().toLowerCase(), new BasicDBObject("$in", users));
 
             } else if (filter == MetricFilter.DOMAIN) {
+                String value = clauses.getAsString(filter);
                 Pattern usersInDomains = getUsersInDomains(value.split(SEPARATOR));
                 match.put(MetricFilter.USER.name().toLowerCase(), usersInDomains);
 
             } else if (filter == MetricFilter.USER) {
+                String value = clauses.getAsString(filter);
                 Object users;
 
                 if (value.equalsIgnoreCase(Parameters.USER_TYPES.REGISTERED.name())) {
@@ -169,6 +171,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
                 match.put(filter.name().toLowerCase(), users);
 
             } else if (filter == MetricFilter.WS) {
+                String value = clauses.getAsString(filter);
                 Object ws;
 
                 if (value.equalsIgnoreCase(Parameters.WS_TYPES.PERSISTENT.name())) {
@@ -184,17 +187,23 @@ public abstract class ReadBasedMetric extends AbstractMetric {
 
                 match.put(filter.name().toLowerCase(), ws);
             } else {
-                String[] values = value.split(SEPARATOR);
-                match.put(filter.name().toLowerCase(), processExclusiveValues(values, filter.isNumericType()));
+                Object value = clauses.get(filter);
+
+                if (value instanceof String) {
+                    String[] values = ((String)value).split(SEPARATOR);
+                    match.put(filter.name().toLowerCase(), processExclusiveValues(values, filter.isNumericType()));
+                } else if (value.getClass().isArray()) {
+                    match.put(filter.name().toLowerCase(), new BasicDBObject("$in", value));
+                } else {
+                    throw new IllegalStateException("Unsupported filter value class " + value.getClass());
+                }
             }
         }
 
         return new BasicDBObject("$match", match);
     }
 
-    private Object processExclusiveValues(String[] values, boolean isNumericType)
-            throws IOException, ParseException {
-
+    private Object processExclusiveValues(String[] values, boolean isNumericType) throws IOException, ParseException {
         StringBuilder exclusiveValues = new StringBuilder();
         StringBuilder inclusiveValues = new StringBuilder();
 
@@ -240,7 +249,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
         DBObject dateFilter = new BasicDBObject();
         match.put(DATE, dateFilter);
 
-        String fromDate = clauses.get(Parameters.FROM_DATE);
+        String fromDate = clauses.getAsString(Parameters.FROM_DATE);
         if (fromDate != null) {
             if (Utils.isDateFormat(fromDate)) {
                 dateFilter.put("$gte", clauses.getAsDate(Parameters.FROM_DATE).getTimeInMillis());
@@ -251,7 +260,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
             dateFilter.put("$gte", 0);
         }
 
-        String toDate = clauses.get(Parameters.TO_DATE);
+        String toDate = clauses.getAsString(Parameters.TO_DATE);
         if (toDate != null) {
             if (Utils.isDateFormat(toDate)) {
                 dateFilter.put("$lt", clauses.getAsDate(Parameters.TO_DATE).getTimeInMillis() + DAY_IN_MILLISECONDS);
@@ -321,7 +330,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
         DBObject[] dbOp = new DBObject[(sortExists ? 1 : 0) + (pageExists ? 2 : 0)];
 
         if (sortExists) {
-            String sortCondition = clauses.get(Parameters.SORT);
+            String sortCondition = clauses.getAsString(Parameters.SORT);
 
             String field = sortCondition.substring(1);
             boolean asc = sortCondition.substring(0, 1).equals(ASC_SORT_SIGN);

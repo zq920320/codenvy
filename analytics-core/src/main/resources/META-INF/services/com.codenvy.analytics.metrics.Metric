@@ -75,7 +75,6 @@ com.codenvy.analytics.metrics.users.UsersActivity
 com.codenvy.analytics.metrics.users.UsersStatisticsList
 com.codenvy.analytics.metrics.users.UsersStatistics
 com.codenvy.analytics.metrics.users.CompletedProfiles
-com.codenvy.analytics.metrics.users.UsersEvents
 com.codenvy.analytics.metrics.users.CreatedUsers
 com.codenvy.analytics.metrics.users.CreatedUsersFromFactory
 com.codenvy.analytics.metrics.users.CreatedUsersFromAuth
@@ -221,7 +220,6 @@ com.codenvy.analytics.metrics.top.TopDomainsByLifetime
 
 com.codenvy.analytics.metrics.ide_usage.RunnerTotalTime
 
-com.codenvy.analytics.metrics.ide_usage.IdeUsageTypes
 com.codenvy.analytics.metrics.ide_usage.IdeUsageLogout
 com.codenvy.analytics.metrics.ide_usage.IdeUsageProfile
 com.codenvy.analytics.metrics.ide_usage.IdeUsageShell

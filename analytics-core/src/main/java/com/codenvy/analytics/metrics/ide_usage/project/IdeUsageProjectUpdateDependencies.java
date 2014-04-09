@@ -19,7 +19,6 @@ package com.codenvy.analytics.metrics.ide_usage.project;
 
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
-import com.codenvy.analytics.metrics.ide_usage.IdeUsageTypes;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -29,7 +28,7 @@ public class IdeUsageProjectUpdateDependencies extends AbstractIdeUsage {
 
     public IdeUsageProjectUpdateDependencies() {
         super(MetricType.IDE_USAGE_PROJECT_UPDATE_DEPENDENCIES,
-              new String[]{IdeUsageTypes.PROJECT_UPDATE_DEPENDENCIES});
+              new String[]{AbstractIdeUsage.PROJECT_UPDATE_DEPENDENCIES});
     }
 
     @Override

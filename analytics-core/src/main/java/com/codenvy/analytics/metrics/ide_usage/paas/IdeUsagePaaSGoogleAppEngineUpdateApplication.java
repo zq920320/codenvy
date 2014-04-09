@@ -19,7 +19,6 @@ package com.codenvy.analytics.metrics.ide_usage.paas;
 
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
-import com.codenvy.analytics.metrics.ide_usage.IdeUsageTypes;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -29,7 +28,7 @@ public class IdeUsagePaaSGoogleAppEngineUpdateApplication extends AbstractIdeUsa
 
     public IdeUsagePaaSGoogleAppEngineUpdateApplication() {
         super(MetricType.IDE_USAGE_PAAS_GOOGLE_APP_ENGINE_UPDATE_APPLICATION,
-              new String[]{IdeUsageTypes.PAAS_GOOGLE_APP_ENGINE_UPDATE_APPLICATION});
+              new String[]{AbstractIdeUsage.PAAS_GOOGLE_APP_ENGINE_UPDATE_APPLICATION});
     }
 
     @Override

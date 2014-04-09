@@ -19,7 +19,6 @@ package com.codenvy.analytics.metrics.ide_usage.file;
 
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
-import com.codenvy.analytics.metrics.ide_usage.IdeUsageTypes;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -28,7 +27,7 @@ import javax.annotation.security.RolesAllowed;
 public class IdeUsageFileOpenByUrl extends AbstractIdeUsage {
 
     public IdeUsageFileOpenByUrl() {
-        super(MetricType.IDE_USAGE_FILE_OPEN_BY_URL, new String[]{IdeUsageTypes.FILE_OPEN_BY_URL});
+        super(MetricType.IDE_USAGE_FILE_OPEN_BY_URL, new String[]{AbstractIdeUsage.FILE_OPEN_BY_URL});
     }
 
     @Override

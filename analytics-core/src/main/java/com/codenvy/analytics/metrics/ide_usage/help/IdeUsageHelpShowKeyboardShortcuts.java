@@ -19,7 +19,6 @@ package com.codenvy.analytics.metrics.ide_usage.help;
 
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
-import com.codenvy.analytics.metrics.ide_usage.IdeUsageTypes;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -28,7 +27,7 @@ import javax.annotation.security.RolesAllowed;
 public class IdeUsageHelpShowKeyboardShortcuts extends AbstractIdeUsage {
 
     public IdeUsageHelpShowKeyboardShortcuts() {
-        super(MetricType.IDE_USAGE_HELP_SHOW_KEYBOARD_SHORTCUTS, new String[]{IdeUsageTypes.HELP_SHOW_KEYBOARD_SHORTCUTS});
+        super(MetricType.IDE_USAGE_HELP_SHOW_KEYBOARD_SHORTCUTS, new String[]{AbstractIdeUsage.HELP_SHOW_KEYBOARD_SHORTCUTS});
     }
 
     @Override

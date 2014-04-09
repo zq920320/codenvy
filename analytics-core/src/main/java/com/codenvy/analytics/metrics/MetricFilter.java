@@ -32,6 +32,9 @@ public enum MetricFilter {
     USER_LAST_NAME,
     USER_FIRST_NAME,
 
+    ACTION,
+    SOURCE,
+
     ORG_ID,
     FACTORY,
     ENCODED_FACTORY(true),

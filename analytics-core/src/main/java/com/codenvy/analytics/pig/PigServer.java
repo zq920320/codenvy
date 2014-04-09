@@ -106,7 +106,7 @@ public class PigServer implements AutoCloseable {
 
         LOG.info("Script execution " + scriptType + " is started: " + getSecureContext(context).toString());
         try {
-            if (context.get(Parameters.LOG).isEmpty()) {
+            if (context.getAsString(Parameters.LOG).isEmpty()) {
                 return;
             }
 
@@ -114,7 +114,7 @@ public class PigServer implements AutoCloseable {
 
             try (InputStream scriptContent = new ByteArrayInputStream(script.getBytes())) {
                 server.setBatchOn();
-                server.registerScript(scriptContent, context.getAll());
+                server.registerScript(scriptContent, context.getAllAsString());
                 server.executeBatch();
                 server.discardBatch();
             } finally {
@@ -135,6 +135,7 @@ public class PigServer implements AutoCloseable {
 
         server.registerFunction("UUID", new FuncSpec("com.codenvy.analytics.pig.udf.UUID"));
         server.registerFunction("ExtractDomain", new FuncSpec("com.codenvy.analytics.pig.udf.ExtractDomain"));
+        server.registerFunction("NullToEmpty", new FuncSpec("com.codenvy.analytics.pig.udf.NullToEmpty"));
         server.registerFunction("URLDecode", new FuncSpec("com.codenvy.analytics.pig.udf.URLDecode"));
         server.registerFunction("GetQueryValue", new FuncSpec("com.codenvy.analytics.pig.udf.GetQueryValue"));
         server.registerFunction("CutQueryParam", new FuncSpec("com.codenvy.analytics.pig.udf.CutQueryParam"));
@@ -189,12 +190,12 @@ public class PigServer implements AutoCloseable {
 
         try (InputStream scriptContent = new ByteArrayInputStream(script.getBytes())) {
 
-            if (context.get(Parameters.LOG).isEmpty()) {
+            if (context.getAsString(Parameters.LOG).isEmpty()) {
                 return Collections.emptyIterator();
             }
 
             server.setBatchOn();
-            server.registerScript(scriptContent, context.getAll());
+            server.registerScript(scriptContent, context.getAllAsString());
             Iterator<Tuple> iterator = server.openIterator("result");
 
             List<Tuple> tuples = new ArrayList<>();
@@ -227,7 +228,7 @@ public class PigServer implements AutoCloseable {
                 throw new IOException("Key field " + param + " is absent in execution context");
             }
 
-            param.validate(context.get(param), context);
+            param.validate(context.getAsString(param), context);
         }
 
         return context;
@@ -262,8 +263,8 @@ public class PigServer implements AutoCloseable {
     private void setOptimizedPaths(Context.Builder builder) throws IOException {
         try {
             String path = LogLocationOptimizer.generatePaths(new File(logsDir).getAbsolutePath(),
-                                                             builder.get(Parameters.FROM_DATE),
-                                                             builder.get(Parameters.TO_DATE));
+                                                             builder.getAsString(Parameters.FROM_DATE),
+                                                             builder.getAsString(Parameters.TO_DATE));
             builder.put(Parameters.LOG, path);
         } catch (ParseException e) {
             throw new IOException(e);

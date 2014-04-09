@@ -19,7 +19,6 @@ package com.codenvy.analytics.metrics.ide_usage.edit;
 
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
-import com.codenvy.analytics.metrics.ide_usage.IdeUsageTypes;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -28,7 +27,7 @@ import javax.annotation.security.RolesAllowed;
 public class IdeUsageEditFindAndReplace extends AbstractIdeUsage {
 
     public IdeUsageEditFindAndReplace() {
-        super(MetricType.IDE_USAGE_EDIT_FIND_AND_REPLACE, new String[]{IdeUsageTypes.EDIT_FIND_AND_REPLACE});
+        super(MetricType.IDE_USAGE_EDIT_FIND_AND_REPLACE, new String[]{AbstractIdeUsage.EDIT_FIND_AND_REPLACE});
     }
 
     @Override

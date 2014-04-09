@@ -19,7 +19,6 @@ package com.codenvy.analytics.metrics.ide_usage.project;
 
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
-import com.codenvy.analytics.metrics.ide_usage.IdeUsageTypes;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -28,7 +27,7 @@ import javax.annotation.security.RolesAllowed;
 public class IdeUsageProjectImportFromGithub extends AbstractIdeUsage {
 
     public IdeUsageProjectImportFromGithub() {
-        super(MetricType.IDE_USAGE_PROJECT_IMPORT_FROM_GITHUB, new String[]{IdeUsageTypes.PROJECT_IMPORT_FROM_GITHUB});
+        super(MetricType.IDE_USAGE_PROJECT_IMPORT_FROM_GITHUB, new String[]{AbstractIdeUsage.PROJECT_IMPORT_FROM_GITHUB});
     }
 
     @Override

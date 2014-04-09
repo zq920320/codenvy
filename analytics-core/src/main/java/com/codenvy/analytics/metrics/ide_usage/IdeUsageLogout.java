@@ -26,7 +26,7 @@ import javax.annotation.security.RolesAllowed;
 public class IdeUsageLogout extends AbstractIdeUsage {
 
     public IdeUsageLogout() {
-        super(MetricType.IDE_USAGE_LOGOUT, new String[]{IdeUsageTypes.LOGOUT});
+        super(MetricType.IDE_USAGE_LOGOUT, new String[]{AbstractIdeUsage.LOGOUT});
     }
 
     @Override

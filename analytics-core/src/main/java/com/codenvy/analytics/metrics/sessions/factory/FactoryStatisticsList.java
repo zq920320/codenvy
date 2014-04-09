@@ -105,7 +105,7 @@ public class FactoryStatisticsList extends AbstractListValueResulted {
 
             Map<String, ValueData> factoryData = getFactoryData(clauses);
             if (factoryData.size() != 0) {
-                items2Return.put(FACTORY, StringValueData.valueOf(clauses.get(MetricFilter.FACTORY)));
+                items2Return.put(FACTORY, StringValueData.valueOf(clauses.getAsString(MetricFilter.FACTORY)));
                 items2Return.put(USER, getNotDefaultStringValue(factoryData.get(USER)));
                 items2Return.put(REPOSITORY, getNotNullStringValue(factoryData.get(REPOSITORY)));
                 items2Return.put(PROJECT_TYPE, getNotNullStringValue(factoryData.get(PROJECT_TYPE)));
@@ -133,7 +133,7 @@ public class FactoryStatisticsList extends AbstractListValueResulted {
     }
 
     private Map<String, ValueData> getFactoryData(Context clauses) throws IOException {
-        String factory = clauses.get(MetricFilter.FACTORY);
+        String factory = clauses.getAsString(MetricFilter.FACTORY);
         Metric metric = MetricFactory.getMetric(MetricType.CREATED_FACTORIES_LIST);
 
         Context.Builder builder = new Context.Builder();

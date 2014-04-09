@@ -19,7 +19,6 @@ package com.codenvy.analytics.metrics.ide_usage.paas;
 
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
-import com.codenvy.analytics.metrics.ide_usage.IdeUsageTypes;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -29,7 +28,7 @@ public class IdeUsagePaaSCloudBeesSwitchAccount extends AbstractIdeUsage {
 
     public IdeUsagePaaSCloudBeesSwitchAccount() {
         super(MetricType.IDE_USAGE_PAAS_CLOUD_BEES_SWITCH_ACCOUNT,
-              new String[]{IdeUsageTypes.PAAS_CLOUD_BEES_SWITCH_ACCOUNT});
+              new String[]{AbstractIdeUsage.PAAS_CLOUD_BEES_SWITCH_ACCOUNT});
     }
 
     @Override

@@ -19,7 +19,6 @@ package com.codenvy.analytics.metrics.ide_usage.paas;
 
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
-import com.codenvy.analytics.metrics.ide_usage.IdeUsageTypes;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -29,7 +28,7 @@ public class IdeUsagePaaSHerokuDeployPublicKey extends AbstractIdeUsage {
 
     public IdeUsagePaaSHerokuDeployPublicKey() {
         super(MetricType.IDE_USAGE_PAAS_HEROKU_DEPLOY_PUBLIC_KEY,
-              new String[]{IdeUsageTypes.PAAS_HEROKU_DEPLOY_PUBLIC_KEY});
+              new String[]{AbstractIdeUsage.PAAS_HEROKU_DEPLOY_PUBLIC_KEY});
     }
 
     @Override

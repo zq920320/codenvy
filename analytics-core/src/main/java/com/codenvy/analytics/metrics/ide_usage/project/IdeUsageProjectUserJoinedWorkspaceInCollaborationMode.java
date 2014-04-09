@@ -19,7 +19,6 @@ package com.codenvy.analytics.metrics.ide_usage.project;
 
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
-import com.codenvy.analytics.metrics.ide_usage.IdeUsageTypes;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -29,7 +28,7 @@ public class IdeUsageProjectUserJoinedWorkspaceInCollaborationMode extends Abstr
 
     public IdeUsageProjectUserJoinedWorkspaceInCollaborationMode() {
         super(MetricType.IDE_USAGE_PROJECT_USER_JOINED_WORKSPACE_IN_COLLABORATION_MODE,
-              new String[]{IdeUsageTypes.PROJECT_USER_JOINED_WORKSPACE_IN_COLLABORATION_MODE});
+              new String[]{AbstractIdeUsage.PROJECT_USER_JOINED_WORKSPACE_IN_COLLABORATION_MODE});
     }
 
     @Override

@@ -17,6 +17,20 @@
  */
 package com.codenvy.analytics.services.view;
 
+import com.codenvy.analytics.Configurator;
+import com.codenvy.analytics.Utils;
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.persistent.DataPersister;
+import com.codenvy.analytics.persistent.JdbcDataPersisterFactory;
+import com.codenvy.analytics.services.Feature;
+import com.codenvy.analytics.services.configuration.XmlConfigurationManager;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -28,21 +42,6 @@ import java.util.Map;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveAction;
 import java.util.concurrent.TimeUnit;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.codenvy.analytics.Configurator;
-import com.codenvy.analytics.Utils;
-import com.codenvy.analytics.metrics.Context;
-import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.persistent.DataPersister;
-import com.codenvy.analytics.persistent.JdbcDataPersisterFactory;
-import com.codenvy.analytics.services.Feature;
-import com.codenvy.analytics.services.configuration.XmlConfigurationManager;
 
 /**
  * @author Alexander Reshetnyak
@@ -232,9 +231,9 @@ public class ViewBuilder extends Feature {
         if (!context.exists(Parameters.TO_DATE)) {
             builder.putDefaultValue(Parameters.TO_DATE);
             builder.putDefaultValue(Parameters.FROM_DATE);
-            builder.put(Parameters.REPORT_DATE, builder.get(Parameters.TO_DATE));
+            builder.put(Parameters.REPORT_DATE, builder.getAsString(Parameters.TO_DATE));
         } else {
-            builder.put(Parameters.REPORT_DATE, context.get(Parameters.TO_DATE));
+            builder.put(Parameters.REPORT_DATE, context.getAsString(Parameters.TO_DATE));
         }
 
         if (context.exists(Parameters.TIME_UNIT)) {
@@ -261,7 +260,7 @@ public class ViewBuilder extends Feature {
     private String getId(String idFromConf, Context context) {
         String id = idFromConf;
         if (context.exists(Parameters.TIME_UNIT)) {
-            id += "_" + context.get(Parameters.TIME_UNIT).toLowerCase();
+            id += "_" + context.getAsString(Parameters.TIME_UNIT).toLowerCase();
         }
 
         return id;

@@ -19,7 +19,6 @@ package com.codenvy.analytics.metrics.ide_usage.edit;
 
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
-import com.codenvy.analytics.metrics.ide_usage.IdeUsageTypes;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -28,7 +27,7 @@ import javax.annotation.security.RolesAllowed;
 public class IdeUsageEditCutItem extends AbstractIdeUsage {
 
     public IdeUsageEditCutItem() {
-        super(MetricType.IDE_USAGE_EDIT_CUT_ITEM, new String[]{IdeUsageTypes.EDIT_CUT_ITEM});
+        super(MetricType.IDE_USAGE_EDIT_CUT_ITEM, new String[]{AbstractIdeUsage.EDIT_CUT_ITEM});
     }
 
     @Override

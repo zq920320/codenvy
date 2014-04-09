@@ -19,7 +19,6 @@ package com.codenvy.analytics.metrics.ide_usage.paas;
 
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
-import com.codenvy.analytics.metrics.ide_usage.IdeUsageTypes;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -28,7 +27,7 @@ import javax.annotation.security.RolesAllowed;
 public class IdeUsagePaaSHerokuApplications extends AbstractIdeUsage {
 
     public IdeUsagePaaSHerokuApplications() {
-        super(MetricType.IDE_USAGE_PAAS_HEROKU_APPLICATIONS, new String[]{IdeUsageTypes.PAAS_HEROKU_APPLICATIONS});
+        super(MetricType.IDE_USAGE_PAAS_HEROKU_APPLICATIONS, new String[]{AbstractIdeUsage.PAAS_HEROKU_APPLICATIONS});
     }
 
     @Override

@@ -31,6 +31,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class MongoStorage extends StoreFunc {
@@ -60,17 +62,8 @@ public class MongoStorage extends StoreFunc {
 
         if (user.isEmpty()) {
             serverUrl = location;
-
         } else {
-            StringBuilder builder = new StringBuilder();
-            builder.append("mongodb://");
-            builder.append(user);
-            builder.append(":");
-            builder.append(password);
-            builder.append("@");
-            builder.append(location.substring("mongodb://".length()));
-
-            serverUrl = builder.toString();
+            serverUrl = "mongodb://" + user + ":" + password + "@" + location.substring("mongodb://".length());
         }
 
         job.getConfiguration().set(SERVER_URL_PARAM, serverUrl);
@@ -118,15 +111,21 @@ public class MongoStorage extends StoreFunc {
         }
 
         @Override
-        public void write(WritableComparable key, Tuple value) throws IOException, InterruptedException {
+        public void write(WritableComparable writableComparable, Tuple value) throws IOException, InterruptedException {
             DBObject dbObject = new BasicDBObject();
 
             for (int i = 1; i < value.size(); i++) {
                 Tuple tuple = (Tuple)value.get(i);
 
+                String key = tuple.get(0).toString();
                 Object data = tuple.get(1);
+
                 if (data != null) {
-                    dbObject.put(tuple.get(0).toString(), data);
+                    if (isExtendedParameter(key)) {
+                        putParameters(dbObject, (String)data);
+                    } else {
+                        dbObject.put(key, data);
+                    }
                 }
             }
 
@@ -138,6 +137,30 @@ public class MongoStorage extends StoreFunc {
 
             } catch (Exception e) {
                 LOG.error(e.getMessage(), e);
+            }
+        }
+
+        /**
+         * There is special parameter named 'PARAMETERS' which contains other key-value pairs which must be stored
+         * separately.
+         *
+         * @return true if key equals to 'PARAMETERS' and false otherwise
+         */
+        private boolean isExtendedParameter(Object key) {
+            return key.equals("parameters");
+        }
+
+        /**
+         * Puts key-value encoded pairs.
+         */
+        private void putParameters(DBObject dbObject, String data) throws UnsupportedEncodingException {
+            for (String entry : data.split(",")) {
+                String[] pair = entry.split("=");
+
+                String key = URLDecoder.decode(pair[0], "UTF-8");
+                String value = URLDecoder.decode(pair[1], "UTF-8");
+
+                dbObject.put(key, value);
             }
         }
 

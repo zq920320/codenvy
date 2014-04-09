@@ -19,7 +19,6 @@ package com.codenvy.analytics.metrics.ide_usage.paas;
 
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
-import com.codenvy.analytics.metrics.ide_usage.IdeUsageTypes;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -29,7 +28,7 @@ public class IdeUsagePaaSOpenShiftUpdateSHHPublicKey extends AbstractIdeUsage {
 
     public IdeUsagePaaSOpenShiftUpdateSHHPublicKey() {
         super(MetricType.IDE_USAGE_PAAS_OPEN_SHIFT_UPDATE_SHH_PUBLIC_KEY,
-              new String[]{IdeUsageTypes.PAAS_OPEN_SHIFT_UPDATE_SHH_PUBLIC_KEY});
+              new String[]{AbstractIdeUsage.PAAS_OPEN_SHIFT_UPDATE_SHH_PUBLIC_KEY});
     }
 
     @Override

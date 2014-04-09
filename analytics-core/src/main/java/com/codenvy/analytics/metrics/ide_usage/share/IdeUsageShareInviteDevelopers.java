@@ -19,7 +19,6 @@ package com.codenvy.analytics.metrics.ide_usage.share;
 
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
-import com.codenvy.analytics.metrics.ide_usage.IdeUsageTypes;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -28,7 +27,7 @@ import javax.annotation.security.RolesAllowed;
 public class IdeUsageShareInviteDevelopers extends AbstractIdeUsage {
 
     public IdeUsageShareInviteDevelopers() {
-        super(MetricType.IDE_USAGE_SHARE_INVITE_DEVELOPERS, new String[]{IdeUsageTypes.SHARE_INVITE_DEVELOPERS});
+        super(MetricType.IDE_USAGE_SHARE_INVITE_DEVELOPERS, new String[]{AbstractIdeUsage.SHARE_INVITE_DEVELOPERS});
     }
 
     @Override

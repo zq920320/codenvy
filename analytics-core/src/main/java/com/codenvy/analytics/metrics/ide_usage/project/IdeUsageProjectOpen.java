@@ -19,7 +19,6 @@ package com.codenvy.analytics.metrics.ide_usage.project;
 
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
-import com.codenvy.analytics.metrics.ide_usage.IdeUsageTypes;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -28,7 +27,7 @@ import javax.annotation.security.RolesAllowed;
 public class IdeUsageProjectOpen extends AbstractIdeUsage {
 
     public IdeUsageProjectOpen() {
-        super(MetricType.IDE_USAGE_PROJECT_OPEN, new String[]{IdeUsageTypes.PROJECT_OPEN});
+        super(MetricType.IDE_USAGE_PROJECT_OPEN, new String[]{AbstractIdeUsage.PROJECT_OPEN});
     }
 
     @Override
