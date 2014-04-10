@@ -38,4 +38,9 @@ public class WorkspacesStatistics extends AbstractActiveEntities {
     public String getDescription() {
         return "The number of workspaces in statistics";
     }
+
+    @Override
+    protected boolean isPrecomputedDataExist() {
+        return true;
+    }
 }

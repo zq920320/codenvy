@@ -17,13 +17,15 @@
  */
 package com.codenvy.analytics.metrics.users;
 
-import com.codenvy.analytics.metrics.AbstractListValueResulted;
-import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.*;
+
+import javax.annotation.security.RolesAllowed;
 
 /**
  * @author Alexander Reshetnyak
  */
-public class UsersStatisticsListPrecomputed extends AbstractListValueResulted {
+@RolesAllowed({})
+public class UsersStatisticsListPrecomputed extends AbstractListValueResulted implements PrecomputedDataSupportable {
 
     public UsersStatisticsListPrecomputed() {
         super(MetricType.USERS_STATISTICS_LIST_PRECOMPUTED);
@@ -55,6 +57,14 @@ public class UsersStatisticsListPrecomputed extends AbstractListValueResulted {
                             USER_COMPANY,
                             USER_JOB
         };
+    }
 
+    @Override
+    public Context prepare() {
+        Context.Builder builder = new Context.Builder();
+        builder.put(MetricFilter.USER, Parameters.USER_TYPES.REGISTERED.name());
+        builder.put(Parameters.SORT, ReadBasedMetric.ASC_SORT_SIGN + AbstractMetric.USER);
+
+        return builder.build();
     }
 }

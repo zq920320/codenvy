@@ -77,7 +77,7 @@ analytics.acton.ftp_auth=TLS
 analytics.acton.ftp_maxEfforts=5
 
 # Data Computation configuration
-analytics.data-computation.metrics=users_statistics_list
+analytics.data-computation.metrics=users_statistics_list,workspaces_statistics_list,factory_statistics_list
 
 # security
 api.endpoint=https://codenyv.com/api

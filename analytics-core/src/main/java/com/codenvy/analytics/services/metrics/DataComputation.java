@@ -76,36 +76,46 @@ public class DataComputation extends Feature {
     protected void doExecute(Context context) throws IOException {
         for (String metricName : metrics) {
             ReadBasedMetric metric = (ReadBasedMetric)MetricFactory.getMetric(metricName);
-            String collectionName = metric.getStorageCollectionName() + ReadBasedMetric.PRECOMPUTED;
 
-            LOG.info("DataComputation is started for " + metric.getName());
-            long start = System.currentTimeMillis();
+            if (!MetricFactory.exists(metric.getName() +ReadBasedMetric.PRECOMPUTED)) {
+                LOG.error("The metric " + metric.getName() + ReadBasedMetric.PRECOMPUTED  + " dos not exists");
 
-            try {
-                collectionsManagement.drop(collectionName);
+            } else {
+                Metric precomputedMetric = MetricFactory.getMetric(metric.getName() +ReadBasedMetric.PRECOMPUTED);
+                String collectionName = metric.getName() + ReadBasedMetric.PRECOMPUTED;
 
-                Context.Builder builder = new Context.Builder();
-                builder.put(Parameters.FROM_DATE, Parameters.FROM_DATE.getDefaultValue());
-                builder.put(Parameters.TO_DATE, context.get(Parameters.TO_DATE));
-                builder.put(MetricFilter.USER, Parameters.USER_TYPES.REGISTERED.name());
-                builder.put(Parameters.PER_PAGE, PAGE_SIZE);
-                builder.put(Parameters.SORT, ReadBasedMetric.ASC_SORT_SIGN + AbstractMetric.USER);
+                LOG.info("DataComputation is started for " + metric.getName());
+                long start = System.currentTimeMillis();
 
-                ListValueData valueData;
-                int pageNumber = 0;
+                try {
+                    collectionsManagement.drop(collectionName);
 
-                do {
-                    builder.put(Parameters.PAGE, ++pageNumber);
+                    Context.Builder builder = new Context.Builder();
 
-                    valueData = ValueDataUtil.getAsList(metric, builder.build());
+                    if (precomputedMetric instanceof PrecomputedDataSupportable) {
+                        builder.putAll(((PrecomputedDataSupportable)precomputedMetric).prepare());
+                    }
 
-                    write(collectionsManagement.get(collectionName), valueData.getAll());
-                } while (valueData.getAll().size() == PAGE_SIZE);
+                    builder.put(Parameters.FROM_DATE, Parameters.FROM_DATE.getDefaultValue());
+                    builder.put(Parameters.TO_DATE, context.getAsString(Parameters.TO_DATE));
+                    builder.put(Parameters.PER_PAGE, PAGE_SIZE);
 
-                collectionsManagement.ensureIndexes(collectionName);
-            } finally {
-                LOG.info("DataComputation is finished in " + (System.currentTimeMillis() - start) / 1000 +
-                         " sec. for " + metric.getName());
+                    ListValueData valueData;
+                    int pageNumber = 0;
+
+                    do {
+                        builder.put(Parameters.PAGE, ++pageNumber);
+
+                        valueData = ValueDataUtil.getAsList(metric, builder.build());
+
+                        write(collectionsManagement.get(collectionName), valueData.getAll());
+                    } while (valueData.getAll().size() == PAGE_SIZE);
+
+                    collectionsManagement.ensureIndexes(collectionName);
+                } finally {
+                    LOG.info("DataComputation is finished in " + (System.currentTimeMillis() - start) / 1000 +
+                             " sec. for " + metric.getName());
+                }
             }
         }
     }

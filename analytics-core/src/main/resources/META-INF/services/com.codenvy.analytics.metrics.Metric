@@ -58,7 +58,9 @@ com.codenvy.analytics.metrics.workspaces.NonActiveWorkspaces
 com.codenvy.analytics.metrics.workspaces.NewActiveWorkspaces
 com.codenvy.analytics.metrics.workspaces.ReturningActiveWorkspaces
 com.codenvy.analytics.metrics.workspaces.WorkspacesStatisticsList
+com.codenvy.analytics.metrics.workspaces.WorkspacesStatisticsListPrecomputed
 com.codenvy.analytics.metrics.workspaces.WorkspacesStatistics
+com.codenvy.analytics.metrics.workspaces.WorkspacesStatisticsPrecomputed
 com.codenvy.analytics.metrics.workspaces.UsageTimeByWorkspacesList
 com.codenvy.analytics.metrics.workspaces.UsageTimeByWorkspaces
 
@@ -152,7 +154,9 @@ com.codenvy.analytics.metrics.sessions.factory.FactorySessions
 com.codenvy.analytics.metrics.sessions.factory.FactoryUsersList
 com.codenvy.analytics.metrics.sessions.factory.FactoryUsers
 com.codenvy.analytics.metrics.sessions.factory.FactoryStatisticsList
+com.codenvy.analytics.metrics.sessions.factory.FactoryStatisticsListPrecomputed
 com.codenvy.analytics.metrics.sessions.factory.FactoryStatistics
+com.codenvy.analytics.metrics.sessions.factory.FactoryStatisticsPrecomputed
 com.codenvy.analytics.metrics.sessions.factory.ReferrersCountToSpecificFactory
 com.codenvy.analytics.metrics.sessions.factory.WorkspacesWhereUsersHaveSeveralFactorySessions
 com.codenvy.analytics.metrics.sessions.factory.WorkspacesWithZeroFactorySessionsLength

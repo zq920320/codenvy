@@ -3,7 +3,7 @@
  * CODENVY CONFIDENTIAL
  * ________________
  *
- * [2012] - [2013] Codenvy, S.A.
+ * [2012] - [2014] Codenvy, S.A.
  * All Rights Reserved.
  * NOTICE: All information contained herein is, and remains
  * the property of Codenvy S.A. and its suppliers,
@@ -17,28 +17,36 @@
  */
 package com.codenvy.analytics.metrics.sessions.factory;
 
-import com.codenvy.analytics.metrics.AbstractActiveEntities;
+import com.codenvy.analytics.metrics.AbstractListValueResulted;
 import com.codenvy.analytics.metrics.MetricType;
 
 import javax.annotation.security.RolesAllowed;
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-@RolesAllowed({"system/admin", "system/manager"})
-public class FactoryStatistics extends AbstractActiveEntities {
+/**
+ * @author Alexander Reshetnyak
+ */
+@RolesAllowed({})
+public class FactoryStatisticsListPrecomputed extends AbstractListValueResulted {
 
-    public FactoryStatistics() {
-        super(MetricType.FACTORY_STATISTICS,
-              MetricType.FACTORY_STATISTICS_LIST,
-              FACTORY);
+    public FactoryStatisticsListPrecomputed() {
+        super(MetricType.FACTORY_STATISTICS_LIST_PRECOMPUTED);
     }
 
     @Override
     public String getDescription() {
-        return "The total number of factories";
+        return "The statistic of factory";
     }
 
     @Override
-    protected boolean isPrecomputedDataExist() {
-        return true;
+    public String[] getTrackedFields() {
+        return new String[]{FACTORY,
+                            TIME,
+                            RUN,
+                            DEPLOY,
+                            BUILD,
+                            SESSIONS,
+                            AUTHENTICATED_SESSION,
+                            CONVERTED_SESSION,
+                            WS_CREATED};
     }
 }

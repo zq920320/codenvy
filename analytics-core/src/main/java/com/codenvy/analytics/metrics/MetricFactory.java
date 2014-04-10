@@ -48,6 +48,10 @@ public class MetricFactory {
         return getMetric(metricType.toString());
     }
 
+    public static boolean exists(String name) {
+        return metrics.containsKey(name.toLowerCase());
+    }
+
     public static Metric getMetric(String name) {
         Metric metric = metrics.get(name.toLowerCase());
         if (metric == null) {

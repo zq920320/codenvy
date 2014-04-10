@@ -78,12 +78,20 @@ public class ViewBuilder extends Feature {
     public ViewData getViewData(String name, Context context) throws IOException, ParseException {
         ViewConfiguration view = displayConfiguration.getView(name);
 
-        if (!context.isSimplified() || view.isOnDemand()) {
+        if (!isSimplified(context) || view.isOnDemand()) {
             ComputeViewDataAction computeViewDataAction = new ComputeViewDataAction(view, context);
             return computeViewDataAction.doCompute();
         } else {
             return loadViewData(view, context);
         }
+    }
+
+    private boolean isSimplified(Context context) {
+        return !context.exists(Parameters.SORT) &&
+               !context.exists(Parameters.PAGE) &&
+               !context.exists(Parameters.FROM_DATE) &&
+               !context.exists(Parameters.TO_DATE) &&
+               context.getFilters().isEmpty();
     }
 
     @Override

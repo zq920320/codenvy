@@ -56,13 +56,17 @@ public class Utils {
     public static boolean isRolesAllowed(MetricInfoDTO metricInfoDTO, SecurityContext securityContext) {
         Principal principal = securityContext.getUserPrincipal();
 
-        if (principal != null && Utils.isSystemUser(principal.getName())) {
+        if (principal == null) {
+            return false;
+        }
+
+        if (Utils.isSystemUser(principal.getName())) {
             return true;
         }
 
         List<String> rolesAllowed = metricInfoDTO.getRolesAllowed();
         if (rolesAllowed.isEmpty()) {
-            return true;
+            return false;
         }
 
         for (String role : rolesAllowed) {

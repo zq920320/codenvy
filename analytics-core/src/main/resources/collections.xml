@@ -27,6 +27,9 @@
                 <field>ws</field>
                 <field>date</field>
             </index>
+            <index name="date">
+                <field>date</field>
+            </index>
         </indexes>
     </collection>
 
@@ -38,6 +41,9 @@
             </index>
             <index name="ws">
                 <field>ws</field>
+                <field>date</field>
+            </index>
+            <index name="date">
                 <field>date</field>
             </index>
         </indexes>
@@ -53,6 +59,9 @@
                 <field>ws</field>
                 <field>date</field>
             </index>
+            <index name="date">
+                <field>date</field>
+            </index>
         </indexes>
     </collection>
 
@@ -64,6 +73,9 @@
             </index>
             <index name="ws">
                 <field>ws</field>
+                <field>date</field>
+            </index>
+            <index name="date">
                 <field>date</field>
             </index>
         </indexes>
@@ -79,6 +91,9 @@
                 <field>ws</field>
                 <field>date</field>
             </index>
+            <index name="date">
+                <field>date</field>
+            </index>
         </indexes>
     </collection>
 
@@ -90,6 +105,9 @@
             </index>
             <index name="ws">
                 <field>ws</field>
+                <field>date</field>
+            </index>
+            <index name="date">
                 <field>date</field>
             </index>
         </indexes>
@@ -105,6 +123,9 @@
                 <field>ws</field>
                 <field>date</field>
             </index>
+            <index name="date">
+                <field>date</field>
+            </index>
         </indexes>
     </collection>
 
@@ -118,6 +139,9 @@
                 <field>ws</field>
                 <field>date</field>
             </index>
+            <index name="date">
+                <field>date</field>
+            </index>
         </indexes>
     </collection>
 
@@ -129,6 +153,9 @@
             </index>
             <index name="ws">
                 <field>ws</field>
+                <field>date</field>
+            </index>
+            <index name="date">
                 <field>date</field>
             </index>
         </indexes>
@@ -145,6 +172,9 @@
                 <field>ws</field>
                 <field>date</field>
             </index>
+            <index name="date">
+                <field>date</field>
+            </index>
         </indexes>
     </collection>
 
@@ -157,6 +187,9 @@
             </index>
             <index name="ws">
                 <field>ws</field>
+                <field>date</field>
+            </index>
+            <index name="date">
                 <field>date</field>
             </index>
         </indexes>
@@ -172,6 +205,9 @@
                 <field>ws</field>
                 <field>date</field>
             </index>
+            <index name="date">
+                <field>date</field>
+            </index>
         </indexes>
     </collection>
 
@@ -183,6 +219,9 @@
             </index>
             <index name="ws">
                 <field>ws</field>
+                <field>date</field>
+            </index>
+            <index name="date">
                 <field>date</field>
             </index>
         </indexes>
@@ -198,6 +237,9 @@
                 <field>ws</field>
                 <field>date</field>
             </index>
+            <index name="date">
+                <field>date</field>
+            </index>
         </indexes>
     </collection>
 
@@ -209,6 +251,9 @@
             </index>
             <index name="ws">
                 <field>ws</field>
+                <field>date</field>
+            </index>
+            <index name="date">
                 <field>date</field>
             </index>
         </indexes>
@@ -224,6 +269,9 @@
                 <field>ws</field>
                 <field>date</field>
             </index>
+            <index name="date">
+                <field>date</field>
+            </index>
         </indexes>
     </collection>
 
@@ -235,6 +283,9 @@
             </index>
             <index name="ws">
                 <field>ws</field>
+                <field>date</field>
+            </index>
+            <index name="date">
                 <field>date</field>
             </index>
         </indexes>
@@ -250,6 +301,9 @@
                 <field>ws</field>
                 <field>date</field>
             </index>
+            <index name="date">
+                <field>date</field>
+            </index>
         </indexes>
     </collection>
 
@@ -263,6 +317,9 @@
                 <field>ws</field>
                 <field>date</field>
             </index>
+            <index name="date">
+                <field>date</field>
+            </index>
         </indexes>
     </collection>
 
@@ -274,6 +331,9 @@
             </index>
             <index name="ws">
                 <field>ws</field>
+                <field>date</field>
+            </index>
+            <index name="date">
                 <field>date</field>
             </index>
         </indexes>
@@ -290,6 +350,15 @@
             <index name="session_id">
                 <field>session_id</field>
             </index>
+            <index name="date">
+                <field>date</field>
+            </index>
+            <index name="end_time">
+                <field>end_time</field>
+            </index>
+            <index name="time">
+                <field>time</field>
+            </index>
         </indexes>
     </collection>
 
@@ -301,6 +370,9 @@
             </index>
             <index name="ws">
                 <field>ws</field>
+                <field>date</field>
+            </index>
+            <index name="date">
                 <field>date</field>
             </index>
         </indexes>
@@ -316,6 +388,9 @@
                 <field>ws</field>
                 <field>date</field>
             </index>
+            <index name="date">
+                <field>date</field>
+            </index>
         </indexes>
     </collection>
 
@@ -327,6 +402,9 @@
             </index>
             <index name="ws">
                 <field>ws</field>
+                <field>date</field>
+            </index>
+            <index name="date">
                 <field>date</field>
             </index>
         </indexes>
@@ -358,6 +436,9 @@
                 <field>factory</field>
                 <field>date</field>
             </index>
+            <index name="date">
+                <field>date</field>
+            </index>
         </indexes>
     </collection>
 
@@ -385,6 +466,9 @@
             </index>
             <index name="factory">
                 <field>factory</field>
+                <field>date</field>
+            </index>
+            <index name="date">
                 <field>date</field>
             </index>
         </indexes>
@@ -416,6 +500,9 @@
                 <field>factory</field>
                 <field>date</field>
             </index>
+            <index name="date">
+                <field>date</field>
+            </index>
         </indexes>
     </collection>
 
@@ -443,6 +530,9 @@
             </index>
             <index name="factory">
                 <field>factory</field>
+                <field>date</field>
+            </index>
+            <index name="date">
                 <field>date</field>
             </index>
         </indexes>
@@ -476,6 +566,12 @@
             </index>
             <index name="encoded_factory">
                 <field>encoded_factory</field>
+                <field>date</field>
+            </index>
+            <index name="ws_created">
+                <field>ws_created</field>
+            </index>
+            <index name="date">
                 <field>date</field>
             </index>
         </indexes>
@@ -514,6 +610,9 @@
             <index name="projects">
                 <field>projects</field>
             </index>
+            <index name="date">
+                <field>date</field>
+            </index>
         </indexes>
     </collection>
 
@@ -521,6 +620,9 @@
         <indexes>
             <index name="user">
                 <field>user</field>
+                <field>date</field>
+            </index>
+            <index name="date">
                 <field>date</field>
             </index>
         </indexes>
@@ -534,6 +636,9 @@
             </index>
             <index name="ws">
                 <field>ws</field>
+                <field>date</field>
+            </index>
+            <index name="date">
                 <field>date</field>
             </index>
         </indexes>
@@ -557,6 +662,9 @@
                 <field>action</field>
                 <field>date</field>
             </index>
+            <index name="date">
+                <field>date</field>
+            </index>
         </indexes>
     </collection>
 
@@ -564,6 +672,9 @@
         <indexes>
             <index name="user">
                 <field>user</field>
+                <field>date</field>
+            </index>
+            <index name="date">
                 <field>date</field>
             </index>
         </indexes>
@@ -579,6 +690,9 @@
                 <field>ws</field>
                 <field>date</field>
             </index>
+            <index name="date">
+                <field>date</field>
+            </index>
         </indexes>
     </collection>
 
@@ -590,6 +704,9 @@
             </index>
             <index name="ws">
                 <field>ws</field>
+                <field>date</field>
+            </index>
+            <index name="date">
                 <field>date</field>
             </index>
         </indexes>
@@ -605,6 +722,9 @@
                 <field>ws</field>
                 <field>date</field>
             </index>
+            <index name="date">
+                <field>date</field>
+            </index>
         </indexes>
     </collection>
 
@@ -616,6 +736,9 @@
             </index>
             <index name="ws">
                 <field>ws</field>
+                <field>date</field>
+            </index>
+            <index name="date">
                 <field>date</field>
             </index>
         </indexes>
@@ -630,6 +753,93 @@
             <index name="ws">
                 <field>ws</field>
                 <field>date</field>
+            </index>
+            <index name="date">
+                <field>date</field>
+            </index>
+        </indexes>
+    </collection>
+
+    <collection name="users_statistics_list_precomputed">
+        <indexes>
+            <index name="user">
+                <field>user</field>
+            </index>
+            <index name="user_first_name">
+                <field>user_first_name</field>
+            </index>
+            <index name="user_last_name">
+                <field>user_last_name</field>
+            </index>
+            <index name="user_company">
+                <field>user_company</field>
+            </index>
+            <index name="user_job">
+                <field>user_job</field>
+            </index>
+            <index name="sessions">
+                <field>sessions</field>
+            </index>
+            <index name="time">
+                <field>time</field>
+            </index>
+            <index name="projects">
+                <field>projects</field>
+            </index>
+        </indexes>
+    </collection>
+
+    <collection name="workspaces_statistics_list_precomputed">
+        <indexes>
+            <index name="ws">
+                <field>ws</field>
+            </index>
+            <index name="time">
+                <field>time</field>
+            </index>
+            <index name="sessions">
+                <field>sessions</field>
+            </index>
+            <index name="projects">
+                <field>projects</field>
+            </index>
+            <index name="invites">
+                <field>invites</field>
+            </index>
+            <index name="joined_users">
+                <field>joined_users</field>
+            </index>
+        </indexes>
+    </collection>
+
+    <collection name="factory_statistics_list_precomputed">
+        <indexes>
+            <index name="factory">
+                <field>factory</field>
+            </index>
+            <index name="time">
+                <field>time</field>
+            </index>
+            <index name="run">
+                <field>run</field>
+            </index>
+            <index name="deploy">
+                <field>deploy</field>
+            </index>
+            <index name="build">
+                <field>build</field>
+            </index>
+            <index name="sessions">
+                <field>sessions</field>
+            </index>
+            <index name="authenticated_session">
+                <field>authenticated_session</field>
+            </index>
+            <index name="converted_session">
+                <field>converted_session</field>
+            </index>
+            <index name="ws_created ">
+                <field>ws_created</field>
             </index>
         </indexes>
     </collection>

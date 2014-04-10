@@ -15,25 +15,18 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.metrics.users;
-
-import com.codenvy.analytics.metrics.AbstractCount;
-import com.codenvy.analytics.metrics.MetricType;
-
-import javax.annotation.security.RolesAllowed;
+package com.codenvy.analytics.metrics;
 
 /**
  * @author Alexander Reshetnyak
  */
-@RolesAllowed({})
-public class UsersStatisticsPrecomputed extends AbstractCount {
+public interface PrecomputedDataSupportable {
 
-    public UsersStatisticsPrecomputed() {
-        super(MetricType.USERS_STATISTICS_PRECOMPUTED, MetricType.USERS_STATISTICS_LIST_PRECOMPUTED);
-    }
-
-    @Override
-    public String getDescription() {
-        return "The total number of users";
-    }
+    /**
+     * Prepare context for metric
+     *
+     * @return Context, the prepared context
+     *
+     */
+    Context prepare();
 }

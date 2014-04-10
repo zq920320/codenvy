@@ -170,8 +170,12 @@ function Configuration() {
             
             mapColumnToServerSortParam: {
                     "Email": "user",
+                    "First Name": "user_first_name",
+                    "Last Name": "user_last_name",
+                    "Company": "user_company",
+                    "Job": "user_job",
                     "# Sessions": "sessions",
-                    "# Usage Time": "time",
+                    "Usage Time": "time",
                     "# Projects": "projects",
             },
         },
@@ -288,6 +292,7 @@ function Configuration() {
                 "User": "user",
                 "Workspace": "ws",
                 "Start Time": "date",
+                "End Time": "end_time",
                 "Duration": "time",
             },
         },
@@ -349,6 +354,8 @@ function Configuration() {
                 "Workspace": "ws",
                 "Time": "time",
                 "Sessions": "sessions",
+                "Invites": "invites",
+                "Joined Users": "joined_users"
             },
         },
 

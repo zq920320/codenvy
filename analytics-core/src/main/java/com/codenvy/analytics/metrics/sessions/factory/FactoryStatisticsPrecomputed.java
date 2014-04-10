@@ -3,7 +3,7 @@
  * CODENVY CONFIDENTIAL
  * ________________
  *
- * [2012] - [2013] Codenvy, S.A.
+ * [2012] - [2014] Codenvy, S.A.
  * All Rights Reserved.
  * NOTICE: All information contained herein is, and remains
  * the property of Codenvy S.A. and its suppliers,
@@ -17,28 +17,25 @@
  */
 package com.codenvy.analytics.metrics.sessions.factory;
 
-import com.codenvy.analytics.metrics.AbstractActiveEntities;
+import com.codenvy.analytics.metrics.AbstractCount;
 import com.codenvy.analytics.metrics.MetricType;
 
 import javax.annotation.security.RolesAllowed;
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-@RolesAllowed({"system/admin", "system/manager"})
-public class FactoryStatistics extends AbstractActiveEntities {
+/**
+ * @author Alexander Reshetnyak
+ */
+@RolesAllowed({})
+public class FactoryStatisticsPrecomputed extends AbstractCount {
 
-    public FactoryStatistics() {
-        super(MetricType.FACTORY_STATISTICS,
-              MetricType.FACTORY_STATISTICS_LIST,
-              FACTORY);
+
+    public FactoryStatisticsPrecomputed() {
+        super(MetricType.FACTORY_STATISTICS_PRECOMPUTED,
+              MetricType.FACTORY_STATISTICS_LIST_PRECOMPUTED);
     }
 
     @Override
     public String getDescription() {
-        return "The total number of factories";
-    }
-
-    @Override
-    protected boolean isPrecomputedDataExist() {
-        return true;
+        return "The number of workspaces in statistics";
     }
 }

@@ -90,7 +90,8 @@ t = FOREACH t3 GENERATE dt, ws, user, id, delta, company, (domain IS NULL ? '' :
 
 result = FOREACH t GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('ws', ws), TOTUPLE('user', user),
             TOTUPLE('session_id', id), TOTUPLE('ide', ide), TOTUPLE('logout_interval', logout_interval),
-            TOTUPLE('time', delta), TOTUPLE('domain', domain), TOTUPLE('user_company', company);
+            TOTUPLE('end_time', ToMilliSeconds(dt) + delta), TOTUPLE('time', delta), TOTUPLE('domain', domain),
+            TOTUPLE('user_company', company);
 STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 
 ---------------------------------------

@@ -48,6 +48,7 @@ public class ProductUsageSessionsList extends AbstractListValueResulted {
                             TIME,
                             SESSION_ID,
                             DATE,
+                            END_TIME,
                             LOGOUT_INTERVAL};
     }
 
@@ -60,10 +61,7 @@ public class ProductUsageSessionsList extends AbstractListValueResulted {
             MapValueData prevItems = (MapValueData)items;
             Map<String, ValueData> items2Return = new HashMap<>(prevItems.getAll());
 
-            long date = ValueDataUtil.treatAsLong(items2Return.get(DATE));
             long delta = ValueDataUtil.treatAsLong(items2Return.get(TIME));
-
-            items2Return.put(END_TIME, LongValueData.valueOf(date + delta));
 
             // replace empty session_id field on explanation message
             if (items2Return.get(SESSION_ID).getAsString().isEmpty() && delta == 0) {

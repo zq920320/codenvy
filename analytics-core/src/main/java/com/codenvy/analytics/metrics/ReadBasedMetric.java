@@ -205,6 +205,10 @@ public abstract class ReadBasedMetric extends AbstractMetric {
                 }
 
                 match.put(filter.name().toLowerCase(), ws);
+            } else if (filter == MetricFilter.FACTORY) {
+                Object value = clauses.get(filter);
+                match.put(filter.name().toLowerCase(), value); //TODO SUPPORT ARRAY FILTER  -- WILL be improved
+
 
             } else if (filter == MetricFilter.PARAMETERS) {
                 match.putAll(Utils.fetchEncodedPairs(clauses.getAsString(filter)));
@@ -292,6 +296,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
         if (dateFilter.keySet().size() > 0) {
             match.put(DATE, dateFilter);
         }
+
     }
 
     private String[] getUsers(MetricFilter filter, String pattern) throws IOException {

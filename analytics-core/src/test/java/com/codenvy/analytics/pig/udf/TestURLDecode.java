@@ -3,7 +3,7 @@
  * CODENVY CONFIDENTIAL
  * ________________
  *
- * [2012] - [2013] Codenvy, S.A.
+ * [2012] - [2014] Codenvy, S.A.
  * All Rights Reserved.
  * NOTICE: All information contained herein is, and remains
  * the property of Codenvy S.A. and its suppliers,
@@ -26,53 +26,39 @@ import org.testng.annotations.Test;
 
 import static org.testng.AssertJUnit.assertEquals;
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class TestCutQueryParam extends BaseTest {
+/**
+ * @author Alexander Reshetnyak
+ */
+public class TestURLDecode extends BaseTest {
 
-    CutQueryParam cutQueryParam;
+    URLDecode urlDecode;
 
     @BeforeClass
     public void prepare() throws Exception {
-        cutQueryParam = new CutQueryParam();
+        urlDecode = new URLDecode();
     }
 
     @Test(dataProvider = "provider")
-    public void shouldCutPTypeParam(String url, String cutUrl) throws Exception {
-        Tuple tuple = makeTuple(url, "ptype");
-        assertEquals(cutQueryParam.exec(tuple), cutUrl);
+    public void testUrlDecode(String url, String decodeUrl) throws Exception {
+        Tuple tuple = makeTuple(url);
+        assertEquals(decodeUrl, urlDecode.exec(tuple));
 
     }
 
-    @Test(dataProvider = "provider2")
-    public void shouldCutPTypeParam2(String url, String cutUrl) throws Exception {
-        Tuple tuple = makeTuple(url, "openfile");
-        assertEquals(cutQueryParam.exec(tuple), cutUrl);
-
-    }
-
-    private Tuple makeTuple(String url, String param) {
+    private Tuple makeTuple(String url) {
         Tuple tuple = tupleFactory.newTuple();
         tuple.append(url);
-        tuple.append(param);
-
         return tuple;
     }
 
     @DataProvider(name = "provider")
     public Object[][] createData() {
         return new Object[][]{
-                {"aaa", "aaa"},
-                {"bbb&ptype=Type", "bbb"},
-                {"bbb&ptype=Type&ccc", "bbb&ccc"},
-        };
-    }
-
-    @DataProvider(name = "provider2")
-    public Object[][] createData2() {
-        return new Object[][]{
-                {"aaa", "aaa"},
-                {"bbb&openfile=index.php", "bbb"},
-                {"bbb&openfile=file&ccc", "bbb&ccc"},
+                {"http%3A%2F%2Fcodenvy", "http://codenvy"},
+                {"http://codenvy", "http://codenvy"},
+                {"Act-On%2BSoftware", "Act-On+Software"},
+                {"Act-On+Software", "Act-On+Software"},
+                {"fetch=+refs/changes/*", "fetch=+refs/changes/*"},
         };
     }
 }

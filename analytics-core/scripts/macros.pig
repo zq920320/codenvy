@@ -184,9 +184,11 @@ DEFINE extractOrgAndAffiliateId(X) RETURNS Y {
 ---------------------------------------------------------------------------
 DEFINE extractUrlParam(X, paramNameParam, paramFieldNameParam) RETURNS Y {
   $Y = FOREACH $X GENERATE *, ('$paramNameParam' == 'FACTORY-URL' ? REPLACE(CutQueryParam(
-                                                                            URLDecode(
-                                                                                URLDecode(
-                                                                                    REGEX_EXTRACT(message, '.*\\s$paramNameParam#([^\\s#][^#]*|)#.*', 1))), 'ptype'), '\\/factory\\/\\?', '\\/factory\\?')
+                                                                                CutQueryParam(
+                                                                                    URLDecode(
+                                                                                        URLDecode(
+                                                                                            REGEX_EXTRACT(message, '.*\\s$paramNameParam#([^\\s#][^#]*|)#.*', 1))),
+                                                                                             'ptype'), 'openfile'), '\\/factory\\/\\?', '\\/factory\\?')
                                                                   :  URLDecode(
                                                                         URLDecode(
                                                                             REGEX_EXTRACT(message, '.*\\s$paramNameParam#([^\\s#][^#]*|)#.*', 1))))

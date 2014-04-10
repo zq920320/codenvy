@@ -103,9 +103,10 @@ public class FactoryStatisticsList extends AbstractListValueResulted {
             MapValueData prevItems = items.size() == 0 ? getDefaultItems() : (MapValueData)items.getAll().get(0);
             Map<String, ValueData> items2Return = new HashMap<>(prevItems.getAll());
 
+            items2Return.put(FACTORY, StringValueData.valueOf(clauses.getAsString(MetricFilter.FACTORY)));
+
             Map<String, ValueData> factoryData = getFactoryData(clauses);
             if (factoryData.size() != 0) {
-                items2Return.put(FACTORY, StringValueData.valueOf(clauses.getAsString(MetricFilter.FACTORY)));
                 items2Return.put(USER, getNotDefaultStringValue(factoryData.get(USER)));
                 items2Return.put(REPOSITORY, getNotNullStringValue(factoryData.get(REPOSITORY)));
                 items2Return.put(PROJECT_TYPE, getNotNullStringValue(factoryData.get(PROJECT_TYPE)));
@@ -167,5 +168,10 @@ public class FactoryStatisticsList extends AbstractListValueResulted {
     private ValueData getNotDefaultStringValue(ValueData valueData) {
         return valueData == null || valueData.getAsString().equalsIgnoreCase("DEFAULT") ? StringValueData.DEFAULT
                                                                                         : valueData;
+    }
+
+    @Override
+    protected boolean isPrecomputedDataExist() {
+        return true;
     }
 }

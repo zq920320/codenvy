@@ -20,11 +20,11 @@
     <view name="workspaces" on-demand="true">
         <section name="workspaces">
             <row class="com.codenvy.analytics.services.view.TitleRow">
-                <parameter key="titles" value="Workspace,Time,Sessions"/>
+                <parameter key="titles" value="Workspace,Time,Sessions,Invites,Joined Users"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="workspaces_statistics_list"/>
-                <parameter key="fields" value="ws,time,sessions"/>
+                <parameter key="fields" value="ws,time,sessions,invites,joined_users"/>
                 <parameter key="time-fields" value="time"/>
             </row>
         </section>

@@ -130,6 +130,11 @@ public class WorkspacesStatisticsList extends AbstractListValueResulted {
                               new BasicDBObject("$project", project)};
     }
 
+    @Override
+    protected boolean isPrecomputedDataExist() {
+        return true;
+    }
+
 //    @Override
 //    protected ValueData postComputation(ValueData valueData, Map<String, String> clauses) throws IOException {
 //        String wsName = MetricFilter.WS.get(clauses);

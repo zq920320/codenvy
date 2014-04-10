@@ -108,7 +108,7 @@ t3 = FOREACH t2 GENERATE dt, ws, user, id, delta, company, REGEX_EXTRACT(user, '
 t = FOREACH t3 GENERATE dt, ws, user, id, delta, company, (domain IS NULL ? '' : domain) AS domain;
 
 result = FOREACH t GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('ws', ws), TOTUPLE('user', user),
-            TOTUPLE('session_id', id), TOTUPLE('ide', 2),
+            TOTUPLE('session_id', id), TOTUPLE('ide', 2), TOTUPLE('end_time', ToMilliSeconds(dt) + delta),
             TOTUPLE('time', delta), TOTUPLE('domain', domain), TOTUPLE('user_company', company);
 STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 
