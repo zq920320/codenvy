@@ -326,7 +326,7 @@ function Configuration() {
             
             /** @see DatabaseTable::makeTableSortable() method docs */
             clientSortParams: {
-                "descSortColumnNumber": 0
+                "ascSortColumnNumber": 0
             },
         },
 
