@@ -144,7 +144,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
     }
 
     public String getStorageCollectionName(MetricType metricType) {
-        return MetricFactory.getMetric(metricType).getName().toLowerCase();
+        return metricType.toString().toLowerCase();
     }
 
     public String getStorageCollectionName(String metricName) {
