@@ -58,13 +58,20 @@ analytics.presenter.DrillDownPresenter.prototype.load = function() {
         var pageCount = 1;
     }
 
-    model.pushDoneFunction(function(data) {
+    model.pushDoneFunction(function(data) {        
+        var table = data[0];  // there should be at most one table in data
+        
+        // check on empty answer from server
+        if (typeof table == "undefined") {
+            // finish loading widget
+            analytics.views.loader.needLoader = false;
+            return;
+        }
+        
         var widgetLabel = analytics.configuration.getProperty(presenter.widgetName, "widgetLabel");
         view.printWidgetHeader(widgetLabel);            
         
         view.print("<div class='body'>");
-        
-        var table = data[0];  // there is only one table in data
         
         // make table columns linked 
         var columnLinkPrefixList = analytics.configuration.getProperty(presenter.widgetName, "columnLinkPrefixList");

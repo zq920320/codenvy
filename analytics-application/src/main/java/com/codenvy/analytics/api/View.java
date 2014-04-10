@@ -176,7 +176,7 @@ public class View {
                                                     @Context UriInfo uriInfo,
                                                     @Context SecurityContext securityContext) {
         try {
-            Map<MetricType, String> result = viewBuilder.getViewExpandableMetricMap(viewName);
+            List<Map<Integer, MetricType>> result = viewBuilder.getViewExpandableMetricMap(viewName);
             String json = transformToJson(result);
 
             return Response.status(Response.Status.OK).entity(json).build();
@@ -250,30 +250,52 @@ public class View {
     }
 
     /**
-     * Transforms Map<MetricType, String> map into table in to json format.
+     * Transforms Map<sectionNumber, Map<rowNumber, metricType>> map into table in to json format.
      * 
-     * @return the resulted format will be: {"total_factories": "Factories - Cumulative", "created_factories":
-     *         "Factories - Added", ... }
+     * @return the resulted format will be: [
+     * {"1": "total_factories",   // first section
+     *  "2": "created_factories",
+     *  ...},
+     *  
+     * {},                        // second section
+     * 
+     * {"3": "active_workspaces", // third section
+     *  "5": "active_users",
+     *  ...},
+     *  
+     *  ...
+     *  ]
      */
-    private String transformToJson(Map<MetricType, String> map) {
-        if (map.size() == 0) {
-            return "{}";
+    private String transformToJson(List<Map<Integer, MetricType>> list) {
+        if (list.size() == 0) {
+            return "[]";
         }
-        
-        StringBuilder result = new StringBuilder("{");
 
         final String METRIC_ROW_PATTERN = "\"%1$s\":\"%2$s\",";
 
-        for (Entry<MetricType, String> entry : map.entrySet()) {
-            String metricType = entry.getKey().toString().toLowerCase();
-            String metricLabel = entry.getValue();
-            result.append(String.format(METRIC_ROW_PATTERN, metricType, metricLabel));
+        StringBuilder result = new StringBuilder("[");
+        
+        for (Map<Integer, MetricType> sectionMetrics: list) {
+            if (sectionMetrics.isEmpty()) {
+                result.append("{},");
+            } else {
+                result.append("{");
+                
+                for (Entry<Integer, MetricType> entry : sectionMetrics.entrySet()) {
+                    String rowNumber = entry.getKey().toString();
+                    String metricType = entry.getValue().toString().toLowerCase();
+                    result.append(String.format(METRIC_ROW_PATTERN, rowNumber, metricType));
+                }
+                
+                // remove ended ","
+                result.deleteCharAt(result.length()-1);
+                result.append("},");
+            }
         }
-
+    
         // remove ended ","
         result.deleteCharAt(result.length()-1);
-        
-        result.append("}");
+        result.append("]");
 
         return result.toString();
     }

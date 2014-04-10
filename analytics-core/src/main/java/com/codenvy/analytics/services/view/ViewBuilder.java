@@ -326,28 +326,35 @@ public class ViewBuilder extends Feature {
      * 1) reads view configuration
      * 2) gets list of view metric rows and their configurations;
      * makes sure the metrics have isExpandable() = true
-     * 3) extracts metric type and description from configuration 
-     * 5) add this info into the Map<metricType, description>
+     * 3) extracts metric type from configuration 
+     * 5) add this info into the List<Map<rowNumber, metricType>>
      */
-    public Map<MetricType, String> getViewExpandableMetricMap(String viewName) {
-        Map<MetricType, String> metricMap = new LinkedHashMap<>();
+    public List<Map<Integer, MetricType>> getViewExpandableMetricMap(String viewName) {
+        List<Map<Integer,MetricType>> sectionList = new ArrayList<>();
         ViewConfiguration viewConf = displayConfiguration.getView(viewName);
         
-        for (SectionConfiguration sectionConf : viewConf.getSections()) {
-            for (RowConfiguration rowConf: sectionConf.getRows()) {
+        List<SectionConfiguration> sectionConfigurations = viewConf.getSections();
+        for (int sectionNumber = 0; sectionNumber < sectionConfigurations.size(); sectionNumber++) {
+            SectionConfiguration sectionConf = sectionConfigurations.get(sectionNumber);
+            
+            sectionList.add(new LinkedHashMap<Integer, MetricType>());
+            List<RowConfiguration> rowConfigurations = sectionConf.getRows();
+            for (int rowNumber = 0; rowNumber < rowConfigurations.size(); rowNumber++) {
+                RowConfiguration rowConf = rowConfigurations.get(rowNumber);
+                
                 if (rowConf.getClazz().equals(MetricRow.class.getCanonicalName())) {  // check if this is metric row
                     String metricName = rowConf.getParamsAsMap().get("name").toUpperCase();
                     MetricType metricType = MetricType.valueOf(metricName);
                     Metric metric = MetricFactory.getMetric(metricType);
                     
                     if (metric != null && metric.isExpandable()) {
-                        String metricDescription = rowConf.getParamsAsMap().get("description");
-                        metricMap.put(metricType, metricDescription);
+                        // add info about metric in to the sectionList = List<Map<rowNumber, metricType>>
+                        sectionList.get(sectionNumber).put(rowNumber, metricType);
                     }
                 }
             }
         }
         
-        return metricMap;
+        return sectionList;
     }
 }

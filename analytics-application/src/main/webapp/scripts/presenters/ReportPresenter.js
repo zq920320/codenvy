@@ -36,7 +36,7 @@ analytics.presenter.ReportPresenter.prototype.load = function() {
         var modelParams = presenter.getModelParams(viewParams);
         model.setParams(modelParams);
 
-        var mapExpandableMetricToLabel = data;
+        var expandableMetricPerSection = data;
         
         // get report data
         model.popDoneFunction();
@@ -54,7 +54,7 @@ analytics.presenter.ReportPresenter.prototype.load = function() {
                 var table = data[i];
                 
                 // add links to drill down page
-                table = presenter.linkMetricValueWithDrillDownPage(table, mapExpandableMetricToLabel, modelParams);            
+                table = presenter.linkMetricValueWithDrillDownPage(table, i, expandableMetricPerSection, modelParams);            
                 
                 view.printTable(table, true);
             }
@@ -77,13 +77,27 @@ analytics.presenter.ReportPresenter.prototype.load = function() {
     model.getExpandableMetricList(modelViewName);
 };
 
-analytics.presenter.ReportPresenter.prototype.linkMetricValueWithDrillDownPage = function(table, mapExpandableMetricToLabel, modelParams) { 
+/**
+ * expandableMetricPerSection format: 
+ * [
+ * {"1": "total_factories",   // first section (first row with "0" key is title as usual in reports, and so is absent)
+ *  "2": "created_factories",
+ *  ...},
+ *  
+ * {},                        // second section (first row with "0" key is title as usual in reports, and so is absent)
+ * 
+ * {"2": "active_workspaces", // third section (first row with "0" key is title as usual in reports, and so is absent)
+ *  "5": "active_users",
+ *  ...},
+ *  
+ *  ...
+ *  ]
+ */
+analytics.presenter.ReportPresenter.prototype.linkMetricValueWithDrillDownPage = function(table, tableNumber, expandableMetricPerSection, modelParams) { 
     for (var rowNumber = 0; rowNumber < table.rows.length; rowNumber++) {
-        var metricLabel = table.rows[rowNumber][0];
-        
-        // check if there is row in mapExpandableMetricToLabel
-        var metricName = analytics.util.getKeyByValue(mapExpandableMetricToLabel, metricLabel);
-        if (metricName != null) {            
+        // check if there is expandable metric in row
+        var metricName = expandableMetricPerSection[tableNumber][rowNumber + 1];  // taking into account absent title row
+        if (typeof metricName != "undefined") {            
             for (var columnNumber = 1; columnNumber < table.rows[rowNumber].length; columnNumber++) {
                 var columnValue = table.rows[rowNumber][columnNumber];
                 
