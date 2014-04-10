@@ -49,39 +49,13 @@ public class URLDecode extends EvalFunc<String> {
                                                  DataType.CHARARRAY));
     }
 
-    /**
-     * Decode all characters in url, but except '+'.
-     *
-     * @param url
-     * @return
-     * @throws UnsupportedEncodingException
-     */
     private static String decodeURL(String url) throws UnsupportedEncodingException {
-        StringBuffer result = new StringBuffer(200);
         String decodedUrl = URLDecoder.decode(url, "UTF-8");
 
-        int i=0;
-        int j=0;
-
-        while(j<decodedUrl.length()) {
-            String srcChar = url.substring(i, i+1);
-            String destChar = decodedUrl.substring(j, j+1);
-
-            if (srcChar.startsWith("%")) {
-                srcChar = url.substring(i, i+3);
-                i+=2;
-                srcChar = URLDecoder.decode(srcChar, "UTF-8");
-            }
-
-            if (!destChar.equals(srcChar) && "+".equals(srcChar)) {
-                result.append(srcChar);
-            } else {
-                result.append(destChar);
-            }
-            i++;
-            j++;
+        if (url.replace("+", " ").equals(decodedUrl)) {
+            return url;
+        } else {
+            return decodedUrl;
         }
-
-        return result.toString();
     }
 }

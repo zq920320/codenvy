@@ -19,13 +19,15 @@ package com.codenvy.analytics.persistent;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /** @author <a href="mailto:dnochevnov@codenvy.com">Dmytro Nochevnov</a> */
 @XmlRootElement(name = "collections")
 public class CollectionsConfiguration {
     private List<CollectionConfiguration> collections;
-    
+
     public List<CollectionConfiguration> getCollections() {
         return collections;
     }
@@ -33,5 +35,14 @@ public class CollectionsConfiguration {
     @XmlElement(name = "collection")
     public void setCollections(List<CollectionConfiguration> collections) {
         this.collections = collections;
+    }
+
+    public Map<String, CollectionConfiguration> getAsMap() {
+        Map<String, CollectionConfiguration> result = new HashMap<>(collections.size());
+        for (CollectionConfiguration conf : collections) {
+            result.put(conf.getName(), conf);
+        }
+
+        return result;
     }
 }

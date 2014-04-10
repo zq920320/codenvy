@@ -77,7 +77,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
         context = modifyContext(context);
         validateRestrictions(context);
 
-        if (readPrecomputedData(context)) {
+        if (canReadPrecomputedData(context)) {
             Metric metric = MetricFactory.getMetric(getName() + PRECOMPUTED);
             return metric.getValue(context);
         } else {
@@ -103,7 +103,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
     }
 
     /**
-     * Provides ability to modify result by adding new fields or changing existed ones.
+     * Provides ability to modify the result by adding new fields or changing existed ones.
      */
     public ValueData postComputation(ValueData valueData, Context clauses) throws IOException {
         return valueData;
@@ -114,18 +114,8 @@ public abstract class ReadBasedMetric extends AbstractMetric {
         return context;
     }
 
-    /**
-     * Check precomputed metric support.
-     *
-     * @return true
-     * if support
-     */
-    protected boolean isPrecomputedDataExist() {
-        return false;
-    }
-
-    private boolean readPrecomputedData(Context context) {
-        return isPrecomputedDataExist()
+    private boolean canReadPrecomputedData(Context context) {
+        return this instanceof PrecomputedMetric
                && context.getFilters().isEmpty()
                && !context.exists(Parameters.FROM_DATE)
                && !context.exists(Parameters.TO_DATE);
@@ -207,8 +197,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
                 match.put(filter.name().toLowerCase(), ws);
             } else if (filter == MetricFilter.FACTORY) {
                 Object value = clauses.get(filter);
-                match.put(filter.name().toLowerCase(), value); //TODO SUPPORT ARRAY FILTER  -- WILL be improved
-
+                match.put(filter.name().toLowerCase(), value); //TODO SUPPORT ARRAY FILTER DASBH-429
 
             } else if (filter == MetricFilter.PARAMETERS) {
                 match.putAll(Utils.fetchEncodedPairs(clauses.getAsString(filter)));

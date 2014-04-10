@@ -245,7 +245,7 @@ public class ViewBuilder extends Feature {
         if (context.exists(Parameters.TIME_UNIT)) {
             Parameters.TimeUnit timeUnit = builder.getTimeUnit();
             if (context.exists(Parameters.TIME_INTERVAL)) {
-                int timeShift = (int) -context.getAsLong(Parameters.TIME_INTERVAL);
+                int timeShift = (int)-context.getAsLong(Parameters.TIME_INTERVAL);
                 return Utils.initDateInterval(builder.getAsDate(Parameters.TO_DATE), timeUnit, timeShift, builder);
             } else {
                 return Utils.initDateInterval(builder.getAsDate(Parameters.TO_DATE), timeUnit, builder);

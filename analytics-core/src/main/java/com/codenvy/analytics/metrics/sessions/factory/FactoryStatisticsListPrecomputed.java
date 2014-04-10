@@ -18,7 +18,9 @@
 package com.codenvy.analytics.metrics.sessions.factory;
 
 import com.codenvy.analytics.metrics.AbstractListValueResulted;
+import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.PrecomputedDataMetric;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -26,7 +28,7 @@ import javax.annotation.security.RolesAllowed;
  * @author Alexander Reshetnyak
  */
 @RolesAllowed({})
-public class FactoryStatisticsListPrecomputed extends AbstractListValueResulted {
+public class FactoryStatisticsListPrecomputed extends AbstractListValueResulted implements PrecomputedDataMetric {
 
     public FactoryStatisticsListPrecomputed() {
         super(MetricType.FACTORY_STATISTICS_LIST_PRECOMPUTED);
@@ -48,5 +50,15 @@ public class FactoryStatisticsListPrecomputed extends AbstractListValueResulted 
                             AUTHENTICATED_SESSION,
                             CONVERTED_SESSION,
                             WS_CREATED};
+    }
+
+    @Override
+    public Context getContextForBasedMetric() {
+        return Context.EMPTY;
+    }
+
+    @Override
+    public MetricType getBasedMetric() {
+        return MetricType.FACTORY_STATISTICS_LIST;
     }
 }

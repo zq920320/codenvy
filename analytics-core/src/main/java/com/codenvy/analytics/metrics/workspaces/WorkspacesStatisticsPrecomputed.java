@@ -19,6 +19,7 @@ package com.codenvy.analytics.metrics.workspaces;
 
 import com.codenvy.analytics.metrics.AbstractCount;
 import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.PrecomputedMetric;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -26,7 +27,7 @@ import javax.annotation.security.RolesAllowed;
  * @author Alexander Reshetnyak
  */
 @RolesAllowed({})
-public class WorkspacesStatisticsPrecomputed extends AbstractCount {
+public class WorkspacesStatisticsPrecomputed extends AbstractCount implements PrecomputedMetric {
 
 
     public WorkspacesStatisticsPrecomputed() {

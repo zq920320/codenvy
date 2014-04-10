@@ -158,9 +158,4 @@ public class UsersStatisticsList extends AbstractListValueResulted {
             return null;
         }
     }
-
-    @Override
-    protected boolean isPrecomputedDataExist() {
-        return true;
-    }
 }

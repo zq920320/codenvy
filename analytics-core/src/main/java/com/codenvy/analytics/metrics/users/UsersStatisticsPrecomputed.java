@@ -19,6 +19,7 @@ package com.codenvy.analytics.metrics.users;
 
 import com.codenvy.analytics.metrics.AbstractCount;
 import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.PrecomputedMetric;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -26,7 +27,7 @@ import javax.annotation.security.RolesAllowed;
  * @author Alexander Reshetnyak
  */
 @RolesAllowed({})
-public class UsersStatisticsPrecomputed extends AbstractCount {
+public class UsersStatisticsPrecomputed extends AbstractCount implements PrecomputedMetric {
 
     public UsersStatisticsPrecomputed() {
         super(MetricType.USERS_STATISTICS_PRECOMPUTED, MetricType.USERS_STATISTICS_LIST_PRECOMPUTED);

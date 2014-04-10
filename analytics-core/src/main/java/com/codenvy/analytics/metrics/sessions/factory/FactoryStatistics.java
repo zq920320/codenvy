@@ -36,9 +36,4 @@ public class FactoryStatistics extends AbstractActiveEntities {
     public String getDescription() {
         return "The total number of factories";
     }
-
-    @Override
-    protected boolean isPrecomputedDataExist() {
-        return true;
-    }
 }

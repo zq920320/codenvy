@@ -38,9 +38,4 @@ public class UsersStatistics extends AbstractActiveEntities {
     public String getDescription() {
         return "The number of users in statistics";
     }
-
-    @Override
-    protected boolean isPrecomputedDataExist() {
-        return true;
-    }
 }

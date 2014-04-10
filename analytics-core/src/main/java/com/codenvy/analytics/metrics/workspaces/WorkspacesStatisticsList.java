@@ -35,7 +35,6 @@ import static com.codenvy.analytics.metrics.users.UsersStatisticsList.*;
 @RolesAllowed({"system/admin", "system/manager"})
 public class WorkspacesStatisticsList extends AbstractListValueResulted {
 
-    public static final String USERS        = "users";
     public static final String JOINED_USERS = "joined_users";
 
     public WorkspacesStatisticsList() {
@@ -128,11 +127,6 @@ public class WorkspacesStatisticsList extends AbstractListValueResulted {
 
         return new DBObject[]{new BasicDBObject("$group", group),
                               new BasicDBObject("$project", project)};
-    }
-
-    @Override
-    protected boolean isPrecomputedDataExist() {
-        return true;
     }
 
 //    @Override

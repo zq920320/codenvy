@@ -169,9 +169,4 @@ public class FactoryStatisticsList extends AbstractListValueResulted {
         return valueData == null || valueData.getAsString().equalsIgnoreCase("DEFAULT") ? StringValueData.DEFAULT
                                                                                         : valueData;
     }
-
-    @Override
-    protected boolean isPrecomputedDataExist() {
-        return true;
-    }
 }

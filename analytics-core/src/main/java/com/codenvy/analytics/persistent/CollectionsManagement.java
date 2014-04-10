@@ -31,6 +31,7 @@ import javax.inject.Singleton;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Utility class to perform MongoDB index management operations like dropping or ensuring indexes based on
@@ -47,165 +48,127 @@ public class CollectionsManagement {
     private static final String BACKUP_SUFFIX        = "_backup";
     private final static int    ASCENDING_INDEX_MARK = 1;
 
-    private final DB                       db;
-    private final CollectionsConfiguration configuration;
+    private final DB                                   db;
+    private final Map<String, CollectionConfiguration> configuration;
 
     @Inject
-    public CollectionsManagement(MongoDataStorage mongoDataStorage, XmlConfigurationManager confManager)
-            throws IOException {
+    public CollectionsManagement(MongoDataStorage mongoDataStorage,
+                                 XmlConfigurationManager confManager) throws IOException {
+        CollectionsConfiguration conf = confManager.loadConfiguration(CollectionsConfiguration.class, CONFIGURATION);
+
         this.db = mongoDataStorage.getDb();
-        this.configuration = confManager.loadConfiguration(CollectionsConfiguration.class, CONFIGURATION);
-    }
-
-    /** @return true if collection exists in configuration */
-    public boolean exists(String collectionName) throws IOException {
-        for (CollectionConfiguration collectionConfiguration : configuration.getCollections()) {
-            if (collectionConfiguration.getName().equals(collectionName)) {
-                return true;
-            }
-        }
-
-        return false;
+        this.configuration = conf.getAsMap();
     }
 
     /**
-     * Drop all indexes defined in collections configuration file
-     *
-     * @throws IOException
+     * @return true if collection exists in configuration
      */
-    public void dropIndexes() throws IOException {
+    public boolean exists(String name) {
+        return configuration.containsKey(name);
+    }
+
+    /**
+     * Drops all indexes defined in collections configuration file
+     */
+    public void dropIndexes() {
         long start = System.currentTimeMillis();
         LOG.info("Start dropping indexing...");
 
         try {
-            for (CollectionConfiguration collectionConfiguration : configuration.getCollections()) {
-                String collectionName = collectionConfiguration.getName();
+            for (CollectionConfiguration collectionConf : configuration.values()) {
+                String name = collectionConf.getName();
 
-                IndexesConfiguration indexesConfiguration = collectionConfiguration.getIndexes();
-                List<IndexConfiguration> indexes = indexesConfiguration.getIndexes();
+                IndexesConfiguration indexesConf = collectionConf.getIndexes();
+                List<IndexConfiguration> indexes = indexesConf.getIndexes();
 
-                for (IndexConfiguration indexConfiguration : indexes) {
-                    dropIndex(collectionName, indexConfiguration);
+                for (IndexConfiguration indexConf : indexes) {
+                    dropIndex(name, indexConf);
                 }
             }
         } finally {
-            LOG.info("Finish dropping indexes in " + (System.currentTimeMillis() - start) / 1000 + " sec.");
+            LOG.info("Finished dropping indexes in " + (System.currentTimeMillis() - start) / 1000 + " sec.");
         }
     }
 
     /**
-     * Drop collection
-     *
-     * @throws IOException
+     * Drops collection.
      */
-    public void drop(String collectionName) throws IOException {
-        LOG.info("Start dropping collection " + collectionName);
-
-        if (db.collectionExists(collectionName)) {
-            db.getCollection(collectionName).drop();
-        }
+    public void drop(String collectionName) {
+        LOG.info("Dropping collection " + collectionName);
+        db.getCollection(collectionName).drop();
     }
 
     /**
-     * Get collection which configure
-     *
-     * @throws IOException
+     * Gets collection by name. Creates one if doesn't exist.
      */
-    public DBCollection get(String collectionName) throws IOException {
-        if (exists(collectionName)) {
-            return db.getCollection(collectionName);
-        }
-
-        throw new IOException("Collection " + collectionName + " doesn't exist in " + CONFIGURATION);
+    public DBCollection getOrCreate(String collectionName) {
+        return db.getCollection(collectionName);
     }
 
     /**
-     * Ensure all indexes for collection which configure
-     *
-     * @throws IOException
+     * Ensures all indexes.
      */
-    public void ensureIndexes(String collectionName) throws IOException {
-        CollectionConfiguration collectionConf = null;
+    public void ensureIndexes(String name) {
+        if (db.collectionExists(name)) {
+            CollectionConfiguration collectionConf = configuration.get(name);
 
-        for (CollectionConfiguration conf : configuration.getCollections()) {
-            if (collectionName.equals(conf.getName())) {
-                collectionConf = conf;
-                break;
+            IndexesConfiguration indexesConf = collectionConf.getIndexes();
+            List<IndexConfiguration> indexes = indexesConf.getIndexes();
+
+            for (IndexConfiguration indexConf : indexes) {
+                ensureIndex(name, indexConf);
             }
-        }
-
-        if (collectionConf == null) {
-            throw new IOException("Collection " + collectionName + " doesn't exist in " + CONFIGURATION);
-        }
-
-        IndexesConfiguration indexesConfiguration = collectionConf.getIndexes();
-        List<IndexConfiguration> indexes = indexesConfiguration.getIndexes();
-
-        for (IndexConfiguration indexConfiguration : indexes) {
-            ensureIndex(collectionName, indexConfiguration);
+        } else {
+            LOG.warn("Collection " + name + " doesn't exist in " + CONFIGURATION);
         }
     }
 
     /**
-     * Ensure all indexes defined in collections configuration file
-     *
-     * @throws IOException
+     * Ensure all indexes.
      */
     public void ensureIndexes() throws IOException {
         long start = System.currentTimeMillis();
-
         LOG.info("Start ensuring indexes...");
 
         try {
-            for (CollectionConfiguration collectionConf : configuration.getCollections()) {
-                String collectionName = collectionConf.getName();
-
-                IndexesConfiguration indexesConfiguration = collectionConf.getIndexes();
-                List<IndexConfiguration> indexes = indexesConfiguration.getIndexes();
-
-                for (IndexConfiguration indexConfiguration : indexes) {
-                    ensureIndex(collectionName, indexConfiguration);
-                }
-
+            for (String name : configuration.keySet()) {
+                ensureIndexes(name);
             }
         } finally {
-            LOG.info("Finish ensuring indexes in " + (System.currentTimeMillis() - start) / 1000 + " sec.");
+            LOG.info("Finished ensuring indexes in " + (System.currentTimeMillis() - start) / 1000 + " sec.");
         }
     }
 
     /**
      * Removes data from all collection satisfying given date interval. The date interval is represented by two
      * parameters: {@link Parameters#FROM_DATE} and {@link Parameters#TO_DATE}.
-     *
-     * @throws IOException
      */
-    public void removeData(Context context) throws IOException, ParseException {
+    public void removeData(Context context) throws ParseException {
         long start = System.currentTimeMillis();
-
         LOG.info("Start removing data...");
 
         try {
             DBObject dateFilter = getDateFilter(context);
 
-            for (CollectionConfiguration collectionConfiguration : configuration.getCollections()) {
-                String collectionName = collectionConfiguration.getName();
-                db.getCollection(collectionName).remove(dateFilter);
+            for (CollectionConfiguration collectionConf : configuration.values()) {
+                String name = collectionConf.getName();
+                db.getCollection(name).remove(dateFilter);
             }
         } finally {
-            LOG.info("Finish removing data in " + (System.currentTimeMillis() - start) / 1000 + " sec.");
+            LOG.info("Finished removing data in " + (System.currentTimeMillis() - start) / 1000 + " sec.");
         }
     }
 
     /**
-     * Copy data from collectionName to collectionName_backup.
+     * Backups data.
      *
-     * @param collectionName
+     * @param name
      *         the collection name to backup data from
      * @throws IOException
      */
-    public void backup(String collectionName) throws IOException {
-        DBCollection src = db.getCollection(collectionName);
-        DBCollection dst = db.getCollection(collectionName + BACKUP_SUFFIX);
+    public void backup(String name) throws IOException {
+        DBCollection src = db.getCollection(name);
+        DBCollection dst = db.getCollection(name + BACKUP_SUFFIX);
 
         try {
             dst.drop();
@@ -241,22 +204,22 @@ public class CollectionsManagement {
     }
 
     /**
-     * Ensures index in collection.
+     * Ensures index in the collection.
      *
-     * @param collectionName
+     * @param name
      *         the collection name to create index in
      * @param indexConfiguration
      *         the index configuration
      */
-    private void ensureIndex(String collectionName, IndexConfiguration indexConfiguration) {
-        if (db.collectionExists(collectionName)) {
-            DBCollection dbCollection = db.getCollection(collectionName);
-            String name = indexConfiguration.getName();
+    private void ensureIndex(String name, IndexConfiguration indexConfiguration) {
+        if (exists(name)) {
+            DBCollection dbCollection = getOrCreate(name);
+            String indexName = indexConfiguration.getName();
             DBObject index = createIndex(indexConfiguration.getFields());
 
-            dbCollection.ensureIndex(index, name);
+            dbCollection.ensureIndex(index, indexName);
         } else {
-            LOG.warn("Collection " + collectionName + " doesn't exist");
+            LOG.warn("Collection " + name + " doesn't exist");
         }
     }
 

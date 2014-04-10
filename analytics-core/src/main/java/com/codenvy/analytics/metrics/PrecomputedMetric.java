@@ -18,15 +18,10 @@
 package com.codenvy.analytics.metrics;
 
 /**
+ * Interface marker for all metrics that can have precomputed data.
+ *
  * @author Alexander Reshetnyak
+ * @author Anatoliy Bazko
  */
-public interface PrecomputedDataSupportable {
-
-    /**
-     * Prepare context for metric
-     *
-     * @return Context, the prepared context
-     *
-     */
-    Context prepare();
+public interface PrecomputedMetric {
 }

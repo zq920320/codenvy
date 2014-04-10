@@ -75,49 +75,46 @@ public class DataComputation extends Feature {
     @Override
     protected void doExecute(Context context) throws IOException {
         for (String metricName : metrics) {
-            ReadBasedMetric metric = (ReadBasedMetric)MetricFactory.getMetric(metricName);
+            Metric metric = MetricFactory.getMetric(metricName);
+            if (metric instanceof PrecomputedDataMetric) {
+                PrecomputedDataMetric precomputedMetric = (PrecomputedDataMetric)metric;
 
-            if (!MetricFactory.exists(metric.getName() +ReadBasedMetric.PRECOMPUTED)) {
-                LOG.error("The metric " + metric.getName() + ReadBasedMetric.PRECOMPUTED  + " dos not exists");
-
-            } else {
-                Metric precomputedMetric = MetricFactory.getMetric(metric.getName() +ReadBasedMetric.PRECOMPUTED);
-                String collectionName = metric.getName() + ReadBasedMetric.PRECOMPUTED;
+                Metric basedMetric = MetricFactory.getMetric(precomputedMetric.getBasedMetric());
+                String collectionName = ((ReadBasedMetric)precomputedMetric).getStorageCollectionName();
 
                 LOG.info("DataComputation is started for " + metric.getName());
                 long start = System.currentTimeMillis();
-
                 try {
-                    collectionsManagement.drop(collectionName);
-
-                    Context.Builder builder = new Context.Builder();
-
-                    if (precomputedMetric instanceof PrecomputedDataSupportable) {
-                        builder.putAll(((PrecomputedDataSupportable)precomputedMetric).prepare());
-                    }
-
-                    builder.put(Parameters.FROM_DATE, Parameters.FROM_DATE.getDefaultValue());
-                    builder.put(Parameters.TO_DATE, context.getAsString(Parameters.TO_DATE));
-                    builder.put(Parameters.PER_PAGE, PAGE_SIZE);
-
-                    ListValueData valueData;
-                    int pageNumber = 0;
-
-                    do {
-                        builder.put(Parameters.PAGE, ++pageNumber);
-
-                        valueData = ValueDataUtil.getAsList(metric, builder.build());
-
-                        write(collectionsManagement.get(collectionName), valueData.getAll());
-                    } while (valueData.getAll().size() == PAGE_SIZE);
-
-                    collectionsManagement.ensureIndexes(collectionName);
+                    doCompute(basedMetric, precomputedMetric, collectionName);
                 } finally {
                     LOG.info("DataComputation is finished in " + (System.currentTimeMillis() - start) / 1000 +
                              " sec. for " + metric.getName());
                 }
             }
         }
+    }
+
+    private void doCompute(Metric basedMetric,
+                           PrecomputedDataMetric precomputedMetric,
+                           String collectionName) throws IOException {
+
+        collectionsManagement.drop(collectionName);
+
+        Context.Builder builder = new Context.Builder(precomputedMetric.getContextForBasedMetric());
+        builder.put(Parameters.PER_PAGE, PAGE_SIZE);
+
+        for (int pageNumber = 0; ; pageNumber++) {
+            builder.put(Parameters.PAGE, ++pageNumber);
+
+            ListValueData valueData = ValueDataUtil.getAsList(basedMetric, builder.build());
+            write(collectionsManagement.getOrCreate(collectionName), valueData.getAll());
+
+            if (valueData.getAll().size() != PAGE_SIZE) {
+                break;
+            }
+        }
+
+        collectionsManagement.ensureIndexes(collectionName);
     }
 
     private void write(DBCollection dbCollection, List<ValueData> items) throws IOException {

@@ -25,7 +25,7 @@ import javax.annotation.security.RolesAllowed;
  * @author Alexander Reshetnyak
  */
 @RolesAllowed({})
-public class UsersStatisticsListPrecomputed extends AbstractListValueResulted implements PrecomputedDataSupportable {
+public class UsersStatisticsListPrecomputed extends AbstractListValueResulted implements PrecomputedDataMetric {
 
     public UsersStatisticsListPrecomputed() {
         super(MetricType.USERS_STATISTICS_LIST_PRECOMPUTED);
@@ -60,11 +60,15 @@ public class UsersStatisticsListPrecomputed extends AbstractListValueResulted im
     }
 
     @Override
-    public Context prepare() {
+    public Context getContextForBasedMetric() {
         Context.Builder builder = new Context.Builder();
         builder.put(MetricFilter.USER, Parameters.USER_TYPES.REGISTERED.name());
-        builder.put(Parameters.SORT, ReadBasedMetric.ASC_SORT_SIGN + AbstractMetric.USER);
 
         return builder.build();
+    }
+
+    @Override
+    public MetricType getBasedMetric() {
+        return MetricType.USERS_STATISTICS_LIST;
     }
 }

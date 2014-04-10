@@ -15,27 +15,21 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.metrics.sessions.factory;
-
-import com.codenvy.analytics.metrics.AbstractCount;
-import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.analytics.metrics.PrecomputedMetric;
-
-import javax.annotation.security.RolesAllowed;
+package com.codenvy.analytics.metrics;
 
 /**
  * @author Alexander Reshetnyak
+ * @author Anatoliy Bazko
  */
-@RolesAllowed({})
-public class FactoryStatisticsPrecomputed extends AbstractCount implements PrecomputedMetric {
+public interface PrecomputedDataMetric extends PrecomputedMetric {
 
-    public FactoryStatisticsPrecomputed() {
-        super(MetricType.FACTORY_STATISTICS_PRECOMPUTED,
-              MetricType.FACTORY_STATISTICS_LIST_PRECOMPUTED);
-    }
+    /**
+     * @return {@link com.codenvy.analytics.metrics.Context} to be passed into based metric to retrieve data from
+     */
+    Context getContextForBasedMetric();
 
-    @Override
-    public String getDescription() {
-        return "The number of workspaces in statistics";
-    }
+    /**
+     * @return {@link com.codenvy.analytics.metrics.MetricType} which will return data to store into collection
+     */
+    MetricType getBasedMetric();
 }

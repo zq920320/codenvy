@@ -28,7 +28,7 @@ import static com.codenvy.analytics.metrics.users.UsersStatisticsList.*;
  */
 @RolesAllowed({})
 public class WorkspacesStatisticsListPrecomputed extends AbstractListValueResulted implements
-                                                                                   PrecomputedDataSupportable {
+                                                                                   PrecomputedDataMetric {
 
     public WorkspacesStatisticsListPrecomputed() {
         super(MetricType.WORKSPACES_STATISTICS_LIST_PRECOMPUTED);
@@ -58,11 +58,15 @@ public class WorkspacesStatisticsListPrecomputed extends AbstractListValueResult
     }
 
     @Override
-    public Context prepare() {
+    public Context getContextForBasedMetric() {
         Context.Builder builder = new Context.Builder();
-        builder.put(MetricFilter.USER, Parameters.USER_TYPES.REGISTERED.name());
-        builder.put(Parameters.SORT, ReadBasedMetric.ASC_SORT_SIGN + AbstractMetric.USER);
+        builder.put(MetricFilter.WS, Parameters.WS_TYPES.PERSISTENT.name());
 
         return builder.build();
+    }
+
+    @Override
+    public MetricType getBasedMetric() {
+        return MetricType.WORKSPACES_STATISTICS_LIST;
     }
 }
