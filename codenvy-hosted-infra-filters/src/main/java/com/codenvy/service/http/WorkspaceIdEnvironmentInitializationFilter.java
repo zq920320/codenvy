@@ -63,7 +63,7 @@ public class WorkspaceIdEnvironmentInitializationFilter implements Filter {
             final EnvironmentContext env = EnvironmentContext.getCurrent();
             env.setWorkspaceName(workspace.getName());
             env.setWorkspaceId(workspace.getId());
-            env.setAccountId(workspace.getOrganizationId());
+            env.setAccountId(workspace.getAccountId());
 
             chain.doFilter(request, response);
         } catch (WorkspaceException e) {

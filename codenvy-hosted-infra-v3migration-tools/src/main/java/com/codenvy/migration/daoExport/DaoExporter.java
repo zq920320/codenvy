@@ -1,6 +1,6 @@
 package com.codenvy.migration.daoExport;
 
-import com.codenvy.api.organization.shared.dto.Subscription;
+import com.codenvy.api.account.shared.dto.Subscription;
 import com.codenvy.api.user.shared.dto.Profile;
 import com.codenvy.dto.server.DtoFactory;
 import com.codenvy.migration.MemoryStorage;
@@ -111,7 +111,7 @@ public class DaoExporter {
 
         for (User user : memoryStorage.getUsers().values()) {
             List<com.codenvy.api.user.shared.dto.Member> workspaceMembers = new ArrayList<>();
-            List<com.codenvy.api.organization.shared.dto.Member> organizationMembers = new ArrayList<>();
+            List<com.codenvy.api.account.shared.dto.Member> organizationMembers = new ArrayList<>();
             for (ItemReference linkAccount : user.getAccounts()) {
                 Account account = memoryStorage.getAccountById(linkAccount.getId());
                 for (ItemReference workspaceLink : account.getWorkspaces()) {
@@ -131,15 +131,13 @@ public class DaoExporter {
                         workspaceMembers.add(workspacesMember);
 
                         if (!user.getId().equals(member.getUser().getId())) {
-                            com.codenvy.api.organization.shared.dto.Member organizationMember = DtoFactory.getInstance().createDto
-                                    (com.codenvy.api.organization.shared.dto.Member.class)
-                                                                                                          .withUserId(
-                                                                                                                  member.getUser().getId())
-                                                                                                          .withOrganizationId(
-                                                                                                                  workspace.getOwner()
-                                                                                                                           .getId())
-                                                                                                          .withRoles(Arrays.asList(
-                                                                                                                  "organization/member"));
+                            com.codenvy.api.account.shared.dto.Member organizationMember = DtoFactory.getInstance().createDto
+                                    (com.codenvy.api.account.shared.dto.Member.class).withUserId(member.getUser().getId())
+                                                                                                     .withAccountId(
+                                                                                                             workspace.getOwner()
+                                                                                                                      .getId())
+                                                                                                     .withRoles(Arrays.asList(
+                                                                                                             "organization/member"));
                             organizationMembers.add(organizationMember);
                         }
                     }

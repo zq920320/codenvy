@@ -115,10 +115,10 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
     }
 
     @Override
-    public List<Workspace> getByOrganization(String organizationId) throws WorkspaceException {
+    public List<Workspace> getByAccount(String accountId) throws WorkspaceException {
         List<Workspace> result = new ArrayList<>();
         try {
-            DBCursor cursor = collection.find(new BasicDBObject("organizationId", organizationId));
+            DBCursor cursor = collection.find(new BasicDBObject("accountId", accountId));
             for (DBObject one : cursor) {
                 result.add(DtoFactory.getInstance().createDtoFromJson(one.toString(), Workspace.class));
             }
@@ -130,10 +130,12 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
 
     /**
      * Convert workspace to Database ready-to-use object,
-     * @param obj Workspace to convert
+     *
+     * @param obj
+     *         Workspace to convert
      * @return DBObject
      */
-    private  DBObject toDBObject(Workspace obj) {
+    private DBObject toDBObject(Workspace obj) {
         List<Attribute> attributes = new ArrayList<>();
         if (obj.getAttributes() != null) {
             for (Attribute one : obj.getAttributes()) {
@@ -146,7 +148,7 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
         Workspace workspace = DtoFactory.getInstance().createDto(Workspace.class)
                                         .withId(obj.getId())
                                         .withName(obj.getName())
-                                        .withOrganizationId(obj.getOrganizationId())
+                                        .withAccountId(obj.getAccountId())
                                         .withTemporary(obj.isTemporary())
                                         .withAttributes(attributes);
 
@@ -156,10 +158,12 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
 
     /**
      * Ensure that user given workspace name not already occupied.
-     * @param workspace  workspace to check
+     *
+     * @param workspace
+     *         workspace to check
      * @throws WorkspaceException
      */
-    private void validateWorkspaceNameAvailable(Workspace workspace) throws WorkspaceException{
+    private void validateWorkspaceNameAvailable(Workspace workspace) throws WorkspaceException {
         DBObject res = collection.findOne(new BasicDBObject("name", workspace.getName()));
         if (res != null) {
             throw new WorkspaceException(

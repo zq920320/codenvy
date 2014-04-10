@@ -1,8 +1,9 @@
 package com.codenvy.migration.daoExport;
 
+import com.codenvy.api.account.server.exception.AccountException;
+import com.codenvy.api.account.shared.dto.Account;
+import com.codenvy.api.account.shared.dto.Subscription;
 import com.codenvy.api.organization.server.exception.OrganizationException;
-import com.codenvy.api.organization.shared.dto.Organization;
-import com.codenvy.api.organization.shared.dto.Subscription;
 import com.codenvy.api.user.server.exception.UserException;
 import com.codenvy.api.user.server.exception.UserProfileException;
 import com.codenvy.api.user.shared.dto.Profile;
@@ -23,15 +24,15 @@ public class ExporterLinkedObject implements Runnable {
     private DaoManager      daoManager;
     private User            user;
     private Profile         profile;
-    private Organization    organization;
+    private Account         account;
     private Subscription    subscription;
     private List<Workspace> workspaces;
 
-    public ExporterLinkedObject(CountDownLatch doneSignal, DaoManager daoManager, User user, Profile profile, Organization organization,
+    public ExporterLinkedObject(CountDownLatch doneSignal, DaoManager daoManager, User user, Profile profile, Account account,
                                 Subscription subscription,
                                 List<Workspace> workspaces) {
         this.workspaces = workspaces;
-        this.organization = organization;
+        this.account = account;
         this.user = user;
         this.profile = profile;
         this.daoManager = daoManager;
@@ -45,17 +46,17 @@ public class ExporterLinkedObject implements Runnable {
             daoManager.addUser(user);
             daoManager.addProfile(profile);
 
-            if (organization != null) {
+            if (account != null) {
                 try {
-                    daoManager.addOrganization(organization);
-                } catch (OrganizationException e) {
-                    LOG.error("Error exporting organization " + organization.getId(), e);
+                    daoManager.addAccount(account);
+                } catch (AccountException e) {
+                    LOG.error("Error exporting organization " + account.getId(), e);
                 }
                 if (subscription != null) {
                     try {
-                        daoManager.addOrganizationSubcription(subscription);
-                    } catch (OrganizationException e) {
-                        LOG.error("Error exporting subscription " + organization.getId(), e);
+                        daoManager.addAccountSubscription(subscription);
+                    } catch (AccountException e) {
+                        LOG.error("Error exporting subscription " + account.getId(), e);
                     }
                 }
             }

@@ -22,7 +22,7 @@ public class WorkspaceConverter implements ObjectConverter<com.codenvy.organizat
 
         return DtoFactory.getInstance().createDto(Workspace.class)
                          .withId(workspaceOld.getId())
-                         .withOrganizationId(workspaceOld.getOwner().getId())
+                         .withAccountId(workspaceOld.getOwner().getId())
                          .withName(workspaceOld.getName())
                          .withAttributes(attributes);
     }

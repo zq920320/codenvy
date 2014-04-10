@@ -100,7 +100,7 @@ public class WorkspaceDaoTest extends BaseDaoTest {
         workspaceDao.update(workspace);
 
         DBObject res = collection.findOne(new BasicDBObject("id", WORKSPACE_ID));
-        assertNotNull(res,"Specified workspace does not exists.");
+        assertNotNull(res, "Specified workspace does not exists.");
 
         Workspace result =
                 DtoFactory.getInstance().createDtoFromJson(res.toString(), Workspace.class);
@@ -128,7 +128,7 @@ public class WorkspaceDaoTest extends BaseDaoTest {
     @Test
     public void mustFindWorkspaceById() throws Exception {
         collection.insert(new BasicDBObject("id", WORKSPACE_ID).append("name", WORKSPACE_NAME)
-                                                                .append("temporary", true));
+                                                               .append("temporary", true));
         Workspace result = workspaceDao.getById(WORKSPACE_ID);
         assertNotNull(result);
         assertEquals(result.getName(), WORKSPACE_NAME);
@@ -138,7 +138,7 @@ public class WorkspaceDaoTest extends BaseDaoTest {
     @Test
     public void mustFindWorkspaceByName() throws Exception {
         collection.insert(new BasicDBObject("id", WORKSPACE_ID).append("name", WORKSPACE_NAME)
-                                                                .append("temporary", true));
+                                                               .append("temporary", true));
         Workspace result = workspaceDao.getByName(WORKSPACE_NAME);
         assertNotNull(result);
         assertEquals(result.getId(), WORKSPACE_ID);
@@ -146,16 +146,16 @@ public class WorkspaceDaoTest extends BaseDaoTest {
     }
 
     @Test
-    public void mustFindWorkspacesByOrganization() throws Exception {
-        String orgId = "org123456";
+    public void mustFindWorkspacesByAccount() throws Exception {
+        String accId = "acc123456";
         collection.insert(new BasicDBObject("id", WORKSPACE_ID).append("name", WORKSPACE_NAME)
                                                                .append("temporary", true)
-                                                               .append("organizationId", orgId));
-        collection.insert(new BasicDBObject("id", WORKSPACE_ID + "2").append("name", WORKSPACE_NAME+"2")
-                                                               .append("temporary", false)
-                                                               .append("organizationId", orgId));
+                                                               .append("accountId", accId));
+        collection.insert(new BasicDBObject("id", WORKSPACE_ID + "2").append("name", WORKSPACE_NAME + "2")
+                                                                     .append("temporary", false)
+                                                                     .append("accountId", accId));
 
-        List<Workspace> result = workspaceDao.getByOrganization(orgId);
+        List<Workspace> result = workspaceDao.getByAccount(accId);
         assertNotNull(result);
         assertEquals(result.size(), 2);
     }

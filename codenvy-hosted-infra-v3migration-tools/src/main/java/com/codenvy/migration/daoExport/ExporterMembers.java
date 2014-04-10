@@ -1,5 +1,6 @@
 package com.codenvy.migration.daoExport;
 
+import com.codenvy.api.account.server.exception.AccountException;
 import com.codenvy.api.organization.server.exception.OrganizationException;
 import com.codenvy.api.user.server.exception.MembershipException;
 import com.codenvy.api.user.shared.dto.Member;
@@ -16,16 +17,16 @@ public class ExporterMembers implements Runnable {
 
     private CountDownLatch doneSignal;
     private DaoManager     daoManager;
-    private List<com.codenvy.api.user.shared.dto.Member>         workspaceMembers    = new ArrayList<>();
-    private List<com.codenvy.api.organization.shared.dto.Member> organizationMembers = new ArrayList<>();
+    private List<com.codenvy.api.user.shared.dto.Member>    workspaceMembers = new ArrayList<>();
+    private List<com.codenvy.api.account.shared.dto.Member> accountMembers   = new ArrayList<>();
 
     public ExporterMembers(CountDownLatch doneSignal, DaoManager daoManager,
                            List<Member> wsMembers,
-                           List<com.codenvy.api.organization.shared.dto.Member> accMembers) {
+                           List<com.codenvy.api.account.shared.dto.Member> accMembers) {
         this.doneSignal = doneSignal;
         this.daoManager = daoManager;
         this.workspaceMembers = wsMembers;
-        this.organizationMembers = accMembers;
+        this.accountMembers = accMembers;
     }
 
     @Override
@@ -39,12 +40,12 @@ public class ExporterMembers implements Runnable {
             }
         }
 
-        for (com.codenvy.api.organization.shared.dto.Member organizationMember : organizationMembers) {
+        for (com.codenvy.api.account.shared.dto.Member accountMember : accountMembers) {
             try {
-                daoManager.addOrganizationMember(organizationMember);
-            } catch (OrganizationException e) {
-                LOG.error(String.format("Error adding role user %s in organization %s", organizationMember.getUserId(),
-                                        organizationMember.getOrganizationId()), e);
+                daoManager.addAccountMember(accountMember);
+            } catch (AccountException e) {
+                LOG.error(String.format("Error adding role user %s in organization %s", accountMember.getUserId(),
+                                        accountMember.getAccountId()), e);
             }
         }
 

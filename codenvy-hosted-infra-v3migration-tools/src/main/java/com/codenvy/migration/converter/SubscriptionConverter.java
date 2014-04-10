@@ -1,7 +1,7 @@
 package com.codenvy.migration.converter;
 
-import com.codenvy.api.organization.server.Constants;
-import com.codenvy.api.organization.shared.dto.Subscription;
+import com.codenvy.api.account.server.Constants;
+import com.codenvy.api.account.shared.dto.Subscription;
 import com.codenvy.commons.lang.NameGenerator;
 import com.codenvy.dto.server.DtoFactory;
 import com.codenvy.organization.model.Account;
@@ -39,7 +39,7 @@ public class SubscriptionConverter implements ObjectConverter<Account, Subscript
                          .withStartDate(Long.valueOf(account.getAttribute(START_TIME)))
                          .withEndDate(Long.valueOf(account.getAttribute(END_TIME)))
                          .withServiceId(tariffPlans.get(account.getAttribute(NAME_TARIFF)))
-                         .withOrganizationId(account.getId())
+                         .withAccountId(account.getId())
                          .withProperties(properties);
     }
 

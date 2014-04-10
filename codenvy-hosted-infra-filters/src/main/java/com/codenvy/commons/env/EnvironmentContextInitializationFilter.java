@@ -44,7 +44,7 @@ public class EnvironmentContextInitializationFilter implements Filter {
     private final File           vfsRootDir;
     private final File           tempVfsRootDir;
     private final File           vfsIndexDir;
-    private final String wsNotFoundRedirectUrl;
+    private final String         wsNotFoundRedirectUrl;
     private       WorkspaceCache workspaceCache;
     private       WorkspaceDao   workspaceDao;
 
@@ -105,7 +105,7 @@ public class EnvironmentContextInitializationFilter implements Filter {
                 context.setVariable(EnvironmentContext.MASTERHOST_PORT, request.getServerPort());
                 context.setVariable(EnvironmentContext.MASTERHOST_URL, ub.build().toString());
                 context.setWorkspaceName(tenant);
-                context.setAccountId(workspace.getOrganizationId());
+                context.setAccountId(workspace.getAccountId());
                 context.setVariable(EnvironmentContext.WORKSPACE_URL, ub.replacePath("/ide/").path(tenant).build().toString());
                 context.setVariable(EnvironmentContext.GIT_SERVER, "git");
                 context.setWorkspaceId(workspace.getId());

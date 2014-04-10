@@ -52,40 +52,35 @@ public abstract class PrivateVFSSubscriptionHandler implements SubscriptionHandl
     //TODO add codenvy_workspace_multiple_till=<date> attribute
     @Override
     public void onCreateSubscription(SubscriptionEvent subscription) {
-        setOrganizationPermissions(subscription.getSubscription().getOrganizationId());
+        setAccountPermissions(subscription.getSubscription().getOrganizationId());
 
     }
 
     @Override
     public void onRemoveSubscription(SubscriptionEvent subscription) {
-
     }
 
     @Override
     public void onCheckSubscription(SubscriptionEvent subscription) {
-        setOrganizationPermissions(subscription.getSubscription().getOrganizationId());
+        setAccountPermissions(subscription.getSubscription().getOrganizationId());
     }
 
-    private void setOrganizationPermissions(String organizationId) {
-        String authToken = null;
+    private void setAccountPermissions(String accountId) {
+        String authToken;
         User user = EnvironmentContext.getCurrent().getUser();
         if (user != null && user.getToken() != null) {
             authToken = user.getToken();
-
-
             try {
-                List<Workspace> workspaces = workspaceDao.getByOrganization(organizationId);
+                List<Workspace> workspaces = workspaceDao.getByAccount(accountId);
                 for (Workspace workspace : workspaces) {
                     setWorkspacePermission(workspace.getId(), authToken);
                     LOG.error("Not implemented. Set private permissions in workspace {} for user with token {}");
-
                 }
             } catch (Exception e) {
                 LOG.error(e.getLocalizedMessage(), e);
             }
         }
     }
-
 
     protected abstract void setWorkspacePermission(String workspaceId, String authToken) throws IOException;
 }

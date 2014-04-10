@@ -17,11 +17,11 @@
  */
 package com.codenvy.api.dao.mongo;
 
-import com.codenvy.api.organization.server.exception.OrganizationException;
-import com.codenvy.api.organization.shared.dto.Organization;
-import com.codenvy.api.organization.shared.dto.Attribute;
-import com.codenvy.api.organization.shared.dto.Member;
-import com.codenvy.api.organization.shared.dto.Subscription;
+import com.codenvy.api.account.server.exception.AccountException;
+import com.codenvy.api.account.shared.dto.Account;
+import com.codenvy.api.account.shared.dto.Attribute;
+import com.codenvy.api.account.shared.dto.Member;
+import com.codenvy.api.account.shared.dto.Subscription;
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
 import com.codenvy.api.workspace.shared.dto.Workspace;
 import com.codenvy.dto.server.DtoFactory;
@@ -50,21 +50,21 @@ import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 
 /**
- * Tests for {@link com.codenvy.api.dao.mongo.OrganizationDaoImpl}
+ * Tests for {@link AccountDaoImpl}
  *
  * @author Max Shaposhnik
  * @author Eugene Voevodin
  */
 @Listeners(value = {MockitoTestNGListener.class})
-public class OrganizationDaoTest extends BaseDaoTest {
+public class AccountDaoTest extends BaseDaoTest {
 
     private static final String USER_ID = "user12837asjhda823981h";
 
-    private static final String ORGANIZATION_ID    = "org123abc456def";
-    private static final String ORGANIZATION_NAME  = "organization1";
-    private static final String ORGANIZATION_OWNER = "user123@codenvy.com";
+    private static final String ACCOUNT_ID    = "org123abc456def";
+    private static final String ACCOUNT_NAME  = "accoubnt";
+    private static final String ACCOUNT_OWNER = "user123@codenvy.com";
 
-    private static final String ORG_COLL_NAME          = "organizations";
+    private static final String ACC_COLL_NAME          = "accounts";
     private static final String SUBSCRIPTION_COLL_NAME = "subscriptions";
     private static final String MEMBER_COLL_NAME       = "members";
 
@@ -75,9 +75,9 @@ public class OrganizationDaoTest extends BaseDaoTest {
     private static final Map<String, String> PROPS;
 
 
-    OrganizationDaoImpl organizationDao;
-    DBCollection        subscriptionCollection;
-    DBCollection        membersCollection;
+    AccountDaoImpl accountDao;
+    DBCollection   subscriptionCollection;
+    DBCollection   membersCollection;
 
     @Mock
     WorkspaceDao workspaceDao;
@@ -90,190 +90,190 @@ public class OrganizationDaoTest extends BaseDaoTest {
 
     @BeforeMethod
     public void setUp() throws Exception {
-        super.setUp(ORG_COLL_NAME);
-        organizationDao = new OrganizationDaoImpl(db, workspaceDao, ORG_COLL_NAME, SUBSCRIPTION_COLL_NAME, MEMBER_COLL_NAME);
+        super.setUp(ACC_COLL_NAME);
+        accountDao = new AccountDaoImpl(db, workspaceDao, ACC_COLL_NAME, SUBSCRIPTION_COLL_NAME, MEMBER_COLL_NAME);
         subscriptionCollection = db.getCollection(SUBSCRIPTION_COLL_NAME);
         membersCollection = db.getCollection(MEMBER_COLL_NAME);
     }
 
     @Test
-    public void shouldCreateOrganization() throws Exception {
-        Organization organization =
-                DtoFactory.getInstance().createDto(Organization.class)
-                          .withId(ORGANIZATION_ID)
-                          .withName(ORGANIZATION_NAME)
-                          .withOwner(ORGANIZATION_OWNER)
+    public void shouldCreateAccount() throws Exception {
+        Account account =
+                DtoFactory.getInstance().createDto(Account.class)
+                          .withId(ACCOUNT_ID)
+                          .withName(ACCOUNT_NAME)
+                          .withOwner(ACCOUNT_OWNER)
                           .withAttributes(getAttributes());
 
-        organizationDao.create(organization);
+        accountDao.create(account);
 
-        DBObject res = collection.findOne(new BasicDBObject("id", ORGANIZATION_ID));
-        assertNotNull(res, "Specified user organization does not exists.");
+        DBObject res = collection.findOne(new BasicDBObject("id", ACCOUNT_ID));
+        assertNotNull(res, "Specified user account does not exists.");
 
-        Organization result =
-                DtoFactory.getInstance().createDtoFromJson(res.toString(), Organization.class);
-        assertEquals(organization.getLinks(), result.getLinks());
-        assertEquals(organization, result);
+        Account result =
+                DtoFactory.getInstance().createDtoFromJson(res.toString(), Account.class);
+        assertEquals(account.getLinks(), result.getLinks());
+        assertEquals(account, result);
     }
 
     @Test
-    public void shouldFindOrganizationById() throws Exception {
+    public void shouldFindAccountById() throws Exception {
         collection.insert(
-                new BasicDBObject("id", ORGANIZATION_ID).append("name", ORGANIZATION_NAME).append("owner", ORGANIZATION_OWNER));
-        Organization result = organizationDao.getById(ORGANIZATION_ID);
+                new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME).append("owner", ACCOUNT_OWNER));
+        Account result = accountDao.getById(ACCOUNT_ID);
         assertNotNull(result);
-        assertEquals(result.getName(), ORGANIZATION_NAME);
-        assertEquals(result.getOwner(), ORGANIZATION_OWNER);
+        assertEquals(result.getName(), ACCOUNT_NAME);
+        assertEquals(result.getOwner(), ACCOUNT_OWNER);
     }
 
     @Test
-    public void shouldFindOrganizationByName() throws Exception {
+    public void shouldFindAccountByName() throws Exception {
         collection.insert(
-                new BasicDBObject("id", ORGANIZATION_ID).append("name", ORGANIZATION_NAME).append("owner", ORGANIZATION_OWNER));
-        Organization result = organizationDao.getByName(ORGANIZATION_NAME);
+                new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME).append("owner", ACCOUNT_OWNER));
+        Account result = accountDao.getByName(ACCOUNT_NAME);
         assertNotNull(result);
-        assertEquals(result.getId(), ORGANIZATION_ID);
-        assertEquals(result.getOwner(), ORGANIZATION_OWNER);
+        assertEquals(result.getId(), ACCOUNT_ID);
+        assertEquals(result.getOwner(), ACCOUNT_OWNER);
     }
 
     @Test
-    public void shouldNotFindUnExistingOrganizationByName() throws Exception {
+    public void shouldNotFindUnExistingAccountByName() throws Exception {
         collection.insert(
-                new BasicDBObject("id", ORGANIZATION_ID).append("name", ORGANIZATION_NAME).append("owner", ORGANIZATION_OWNER));
-        Organization result = organizationDao.getByName("randomName");
+                new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME).append("owner", ACCOUNT_OWNER));
+        Account result = accountDao.getByName("randomName");
         assertNull(result);
     }
 
 
     @Test
-    public void shouldFindOrganizationByOwner() throws Exception {
+    public void shouldFindAccountByOwner() throws Exception {
         collection.insert(
-                new BasicDBObject("id", ORGANIZATION_ID).append("name", ORGANIZATION_NAME).append("owner", ORGANIZATION_OWNER));
-        List<Organization> result = organizationDao.getByOwner(ORGANIZATION_OWNER);
+                new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME).append("owner", ACCOUNT_OWNER));
+        List<Account> result = accountDao.getByOwner(ACCOUNT_OWNER);
         assertEquals(result.size(), 1);
-        assertEquals(result.get(0).getId(), ORGANIZATION_ID);
-        assertEquals(result.get(0).getName(), ORGANIZATION_NAME);
+        assertEquals(result.get(0).getId(), ACCOUNT_ID);
+        assertEquals(result.get(0).getName(), ACCOUNT_NAME);
     }
 
     @Test
-    public void shouldUpdateOrganization() throws Exception {
-        Organization organization = DtoFactory.getInstance().createDto(Organization.class)
-                                              .withId(ORGANIZATION_ID)
-                                              .withName(ORGANIZATION_NAME)
-                                              .withOwner(ORGANIZATION_OWNER)
-                                              .withAttributes(getAttributes());
+    public void shouldUpdateAccount() throws Exception {
+        Account account = DtoFactory.getInstance().createDto(Account.class)
+                                    .withId(ACCOUNT_ID)
+                                    .withName(ACCOUNT_NAME)
+                                    .withOwner(ACCOUNT_OWNER)
+                                    .withAttributes(getAttributes());
         // Put first object
         collection.insert(
-                new BasicDBObject("id", ORGANIZATION_ID).append("name", ORGANIZATION_NAME).append("owner", ORGANIZATION_OWNER));
+                new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME).append("owner", ACCOUNT_OWNER));
         // main invoke
-        organizationDao.update(organization);
+        accountDao.update(account);
 
-        DBObject res = collection.findOne(new BasicDBObject("id", ORGANIZATION_ID));
+        DBObject res = collection.findOne(new BasicDBObject("id", ACCOUNT_ID));
         assertNotNull(res, "Specified user profile does not exists.");
 
-        Organization result = DtoFactory.getInstance().createDtoFromJson(res.toString(), Organization.class);
+        Account result = DtoFactory.getInstance().createDtoFromJson(res.toString(), Account.class);
 
-        assertEquals(organization.getLinks(), result.getLinks());
-        assertEquals(organization, result);
+        assertEquals(account.getLinks(), result.getLinks());
+        assertEquals(account, result);
     }
 
     @Test
-    public void shouldRemoveOrganization() throws Exception {
-        when(workspaceDao.getByOrganization(ORGANIZATION_ID)).thenReturn(Collections.<Workspace>emptyList());
+    public void shouldRemoveAccount() throws Exception {
+        when(workspaceDao.getByAccount(ACCOUNT_ID)).thenReturn(Collections.<Workspace>emptyList());
         collection.insert(
-                new BasicDBObject("id", ORGANIZATION_ID).append("name", ORGANIZATION_NAME).append("owner", ORGANIZATION_OWNER));
+                new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME).append("owner", ACCOUNT_OWNER));
 
-        List<String> roles = Arrays.asList("organization/admin", "organization/developer");
+        List<String> roles = Arrays.asList("account/admin", "account/member");
         Member member1 = DtoFactory.getInstance().createDto(Member.class)
                                    .withUserId(USER_ID)
-                                   .withOrganizationId(ORGANIZATION_ID)
+                                   .withAccountId(ACCOUNT_ID)
                                    .withRoles(roles.subList(0, 1));
-        organizationDao.addMember(member1);
+        accountDao.addMember(member1);
 
-        organizationDao.remove(ORGANIZATION_ID);
-        assertNull(collection.findOne(new BasicDBObject("id", ORGANIZATION_ID)));
+        accountDao.remove(ACCOUNT_ID);
+        assertNull(collection.findOne(new BasicDBObject("id", ACCOUNT_ID)));
         assertNull(membersCollection.findOne(new BasicDBObject("_id", USER_ID)));
     }
 
-    @Test(expectedExceptions = OrganizationException.class,
-          expectedExceptionsMessageRegExp = "It is not possible to remove organization that has associated workspaces")
-    public void shouldNotBeAbleToRemoveOrganizationWithAssociatedWorkspace() throws Exception {
-        when(workspaceDao.getByOrganization(ORGANIZATION_ID))
+    @Test(expectedExceptions = AccountException.class,
+          expectedExceptionsMessageRegExp = "It is not possible to remove account that has associated workspaces")
+    public void shouldNotBeAbleToRemoveAccountWithAssociatedWorkspace() throws Exception {
+        when(workspaceDao.getByAccount(ACCOUNT_ID))
                 .thenReturn(Arrays.asList(DtoFactory.getInstance().createDto(Workspace.class)));
         collection.insert(
-                new BasicDBObject("id", ORGANIZATION_ID).append("name", ORGANIZATION_NAME).append("owner", ORGANIZATION_OWNER));
+                new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME).append("owner", ACCOUNT_OWNER));
 
-        List<String> roles = Arrays.asList("organization/admin", "organization/developer");
+        List<String> roles = Arrays.asList("account/admin", "account/developer");
         Member member1 = DtoFactory.getInstance().createDto(Member.class)
                                    .withUserId(USER_ID)
-                                   .withOrganizationId(ORGANIZATION_ID)
+                                   .withAccountId(ACCOUNT_ID)
                                    .withRoles(roles.subList(0, 1));
-        organizationDao.addMember(member1);
+        accountDao.addMember(member1);
 
-        organizationDao.remove(ORGANIZATION_ID);
+        accountDao.remove(ACCOUNT_ID);
     }
 
     @Test
     public void shouldAddMember() throws Exception {
-        List<String> roles = Arrays.asList("organization/admin", "organization/developer");
-        collection.insert(new BasicDBObject("id", ORGANIZATION_ID).append("name", ORGANIZATION_NAME)
-                                                                  .append("owner", ORGANIZATION_OWNER));
+        List<String> roles = Arrays.asList("account/admin", "account/developer");
+        collection.insert(new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME)
+                                                             .append("owner", ACCOUNT_OWNER));
         Member member = DtoFactory.getInstance().createDto(Member.class)
                                   .withUserId(USER_ID)
-                                  .withOrganizationId(ORGANIZATION_ID)
+                                  .withAccountId(ACCOUNT_ID)
                                   .withRoles(roles);
-        organizationDao.addMember(member);
+        accountDao.addMember(member);
 
         DBObject res = membersCollection.findOne(new BasicDBObject("_id", USER_ID));
         assertNotNull(res, "Specified user membership does not exists.");
 
         for (Object dbMembership : (BasicDBList)res.get("members")) {
             Member membership = DtoFactory.getInstance().createDtoFromJson(dbMembership.toString(), Member.class);
-            assertEquals(membership.getOrganizationId(), ORGANIZATION_ID);
+            assertEquals(membership.getAccountId(), ACCOUNT_ID);
             assertEquals(roles, membership.getRoles());
         }
     }
 
     @Test
     public void shouldFindMembers() throws Exception {
-        List<String> roles = Arrays.asList("organization/admin", "organization/developer");
-        collection.insert(new BasicDBObject("id", ORGANIZATION_ID).append("name", ORGANIZATION_NAME)
-                                                                  .append("owner", ORGANIZATION_OWNER));
+        List<String> roles = Arrays.asList("account/admin", "account/developer");
+        collection.insert(new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME)
+                                                             .append("owner", ACCOUNT_OWNER));
         Member member1 = DtoFactory.getInstance().createDto(Member.class)
                                    .withUserId(USER_ID)
-                                   .withOrganizationId(ORGANIZATION_ID)
+                                   .withAccountId(ACCOUNT_ID)
                                    .withRoles(roles.subList(0, 1));
         Member member2 = DtoFactory.getInstance().createDto(Member.class)
                                    .withUserId("anotherUserId")
-                                   .withOrganizationId(ORGANIZATION_ID)
+                                   .withAccountId(ACCOUNT_ID)
                                    .withRoles(roles);
 
-        organizationDao.addMember(member1);
-        organizationDao.addMember(member2);
+        accountDao.addMember(member1);
+        accountDao.addMember(member2);
 
-        List<Member> found = organizationDao.getMembers(ORGANIZATION_ID);
+        List<Member> found = accountDao.getMembers(ACCOUNT_ID);
         assertEquals(found.size(), 2);
     }
 
 
     @Test
     public void shouldRemoveMembers() throws Exception {
-        List<String> roles = Arrays.asList("organization/admin", "organization/developer");
-        collection.insert(new BasicDBObject("id", ORGANIZATION_ID).append("name", ORGANIZATION_NAME)
-                                                                  .append("owner", ORGANIZATION_OWNER));
+        List<String> roles = Arrays.asList("account/admin", "account/developer");
+        collection.insert(new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME)
+                                                             .append("owner", ACCOUNT_OWNER));
         Member member1 = DtoFactory.getInstance().createDto(Member.class)
                                    .withUserId(USER_ID)
-                                   .withOrganizationId(ORGANIZATION_ID)
+                                   .withAccountId(ACCOUNT_ID)
                                    .withRoles(roles.subList(0, 1));
         Member member2 = DtoFactory.getInstance().createDto(Member.class)
                                    .withUserId("user2")
-                                   .withOrganizationId(ORGANIZATION_ID)
+                                   .withAccountId(ACCOUNT_ID)
                                    .withRoles(roles);
 
-        organizationDao.addMember(member1);
-        organizationDao.addMember(member2);
+        accountDao.addMember(member1);
+        accountDao.addMember(member2);
 
-        organizationDao.removeMember(ORGANIZATION_ID, USER_ID);
+        accountDao.removeMember(ACCOUNT_ID, USER_ID);
 
         assertNull(membersCollection.findOne(new BasicDBObject("_id", USER_ID)));
         assertNotNull(membersCollection.findOne(new BasicDBObject("_id", "user2")));
@@ -281,113 +281,113 @@ public class OrganizationDaoTest extends BaseDaoTest {
 
     @Test
     public void shouldAddSubscription() throws Exception {
-        collection.insert(new BasicDBObject("id", ORGANIZATION_ID).append("name", ORGANIZATION_NAME).append("owner", ORGANIZATION_OWNER));
+        collection.insert(new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME).append("owner", ACCOUNT_OWNER));
 
         Subscription ss = DtoFactory.getInstance().createDto(Subscription.class)
                                     .withId(SUBSCRIPTION_ID)
-                                    .withOrganizationId(ORGANIZATION_ID)
+                                    .withAccountId(ACCOUNT_ID)
                                     .withServiceId(SERVICE_NAME)
                                     .withStartDate(START_DATE)
                                     .withEndDate(END_DATE)
                                     .withProperties(PROPS);
 
-        organizationDao.addSubscription(ss);
+        accountDao.addSubscription(ss);
 
-        DBObject res = subscriptionCollection.findOne(new BasicDBObject("organizationId", ORGANIZATION_ID));
+        DBObject res = subscriptionCollection.findOne(new BasicDBObject("accountId", ACCOUNT_ID));
         assertNotNull(res, "Specified subscription does not exists.");
 
         DBCursor dbSubscriptions = subscriptionCollection.find(new BasicDBObject("id", SUBSCRIPTION_ID));
         for (DBObject currentSubscription : dbSubscriptions) {
             Subscription subscription = DtoFactory.getInstance().createDtoFromJson(currentSubscription.toString(), Subscription.class);
             assertEquals(subscription.getServiceId(), SERVICE_NAME);
-            assertEquals(subscription.getOrganizationId(), ORGANIZATION_ID);
+            assertEquals(subscription.getAccountId(), ACCOUNT_ID);
             assertEquals(subscription.getStartDate(), START_DATE);
             assertEquals(subscription.getEndDate(), END_DATE);
             assertEquals(subscription.getProperties(), PROPS);
         }
     }
 
-    @Test(expectedExceptions = OrganizationException.class)
-    public void shouldThrowAnExceptionWhileAddingSubscriptionToNotExistedOrganization() throws OrganizationException {
-        collection.insert(new BasicDBObject("id", ORGANIZATION_ID).append("name", ORGANIZATION_NAME).append("owner", ORGANIZATION_OWNER));
+    @Test(expectedExceptions = AccountException.class)
+    public void shouldThrowAnExceptionWhileAddingSubscriptionToNotExistedAccount() throws AccountException {
+        collection.insert(new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME).append("owner", ACCOUNT_OWNER));
 
         Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class)
                                               .withId(SUBSCRIPTION_ID)
-                                              .withOrganizationId("DO_NOT_EXIST")
+                                              .withAccountId("DO_NOT_EXIST")
                                               .withServiceId(SERVICE_NAME)
                                               .withStartDate(START_DATE)
                                               .withEndDate(END_DATE)
                                               .withProperties(PROPS);
 
-        organizationDao.addSubscription(subscription);
+        accountDao.addSubscription(subscription);
     }
 
     @Test
     public void shouldFindSubscriptions() throws Exception {
-        collection.insert(new BasicDBObject("id", ORGANIZATION_ID).append("name", ORGANIZATION_NAME)
-                                                                  .append("owner", ORGANIZATION_OWNER));
+        collection.insert(new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME)
+                                                             .append("owner", ACCOUNT_OWNER));
 
         Subscription ss1 = DtoFactory.getInstance().createDto(Subscription.class)
-                                     .withOrganizationId(ORGANIZATION_ID)
+                                     .withAccountId(ACCOUNT_ID)
                                      .withServiceId(SERVICE_NAME)
                                      .withStartDate(START_DATE)
                                      .withEndDate(END_DATE)
                                      .withProperties(PROPS);
         Subscription ss2 = DtoFactory.getInstance().createDto(Subscription.class)
-                                     .withOrganizationId(ORGANIZATION_ID)
+                                     .withAccountId(ACCOUNT_ID)
                                      .withServiceId(SERVICE_NAME)
                                      .withStartDate(START_DATE)
                                      .withEndDate(END_DATE)
                                      .withProperties(PROPS);
 
-        organizationDao.addSubscription(ss1);
-        organizationDao.addSubscription(ss2);
+        accountDao.addSubscription(ss1);
+        accountDao.addSubscription(ss2);
 
-        List<Subscription> found = organizationDao.getSubscriptions(ORGANIZATION_ID);
+        List<Subscription> found = accountDao.getSubscriptions(ACCOUNT_ID);
         assertEquals(found.size(), 2);
     }
 
     @Test
     public void shouldRemoveSubscription() throws Exception {
-        collection.insert(new BasicDBObject("id", ORGANIZATION_ID).append("name", ORGANIZATION_NAME).append("owner", ORGANIZATION_OWNER));
-        collection.insert(new BasicDBObject("id", "another_organization").append("name", ORGANIZATION_NAME).append("owner",
-                                                                                                                   ORGANIZATION_OWNER));
+        collection.insert(new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME).append("owner", ACCOUNT_OWNER));
+        collection.insert(new BasicDBObject("id", "another_account").append("name", ACCOUNT_NAME).append("owner",
+                                                                                                              ACCOUNT_OWNER));
         Subscription ss = DtoFactory.getInstance().createDto(Subscription.class)
                                     .withId(SUBSCRIPTION_ID)
-                                    .withOrganizationId(ORGANIZATION_ID)
+                                    .withAccountId(ACCOUNT_ID)
                                     .withServiceId(SERVICE_NAME)
                                     .withStartDate(START_DATE)
                                     .withEndDate(END_DATE)
                                     .withProperties(PROPS);
 
-        organizationDao.addSubscription(ss);
+        accountDao.addSubscription(ss);
 
         final String anotherSubscriptionId = "Subscription0x00000000f";
         ss.setId(anotherSubscriptionId);
-        ss.setOrganizationId("another_organization");
+        ss.setAccountId("another_account");
 
-        organizationDao.addSubscription(ss);
+        accountDao.addSubscription(ss);
 
-        organizationDao.removeSubscription(SUBSCRIPTION_ID);
+        accountDao.removeSubscription(SUBSCRIPTION_ID);
 
         assertNull(subscriptionCollection.findOne(new BasicDBObject("id", SUBSCRIPTION_ID)));
         assertNotNull(subscriptionCollection.findOne(new BasicDBObject("id", anotherSubscriptionId)));
     }
 
     @Test
-    public void shouldGetSubscriptionById() throws OrganizationException {
-        collection.insert(new BasicDBObject("id", ORGANIZATION_ID).append("name", ORGANIZATION_NAME).append("owner", ORGANIZATION_OWNER));
+    public void shouldGetSubscriptionById() throws AccountException {
+        collection.insert(new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME).append("owner", ACCOUNT_OWNER));
         Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class)
                                               .withId(SUBSCRIPTION_ID)
-                                              .withOrganizationId(ORGANIZATION_ID)
+                                              .withAccountId(ACCOUNT_ID)
                                               .withServiceId(SERVICE_NAME)
                                               .withStartDate(START_DATE)
                                               .withEndDate(END_DATE)
                                               .withProperties(PROPS);
 
-        organizationDao.addSubscription(subscription);
+        accountDao.addSubscription(subscription);
 
-        Subscription actual = organizationDao.getSubscriptionById(SUBSCRIPTION_ID);
+        Subscription actual = accountDao.getSubscriptionById(SUBSCRIPTION_ID);
 
         assertNotNull(actual);
         assertEquals(actual, subscription);

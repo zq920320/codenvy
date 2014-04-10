@@ -1,10 +1,12 @@
 package com.codenvy.migration.daoExport;
 
+import com.codenvy.api.account.server.dao.AccountDao;
+import com.codenvy.api.account.server.exception.AccountException;
+import com.codenvy.api.account.shared.dto.Account;
+import com.codenvy.api.account.shared.dto.Member;
+import com.codenvy.api.account.shared.dto.Subscription;
 import com.codenvy.api.dao.authentication.PasswordEncryptor;
-import com.codenvy.api.organization.server.dao.OrganizationDao;
-import com.codenvy.api.organization.server.exception.OrganizationException;
-import com.codenvy.api.organization.shared.dto.Organization;
-import com.codenvy.api.organization.shared.dto.Subscription;
+import com.codenvy.api.dao.mongo.AccountDaoImpl;
 import com.codenvy.api.user.server.dao.MemberDao;
 import com.codenvy.api.user.server.dao.UserDao;
 import com.codenvy.api.user.server.dao.UserProfileDao;
@@ -18,7 +20,6 @@ import com.codenvy.api.workspace.server.exception.WorkspaceException;
 import com.codenvy.api.workspace.shared.dto.Workspace;
 import com.codenvy.api.dao.ldap.UserAttributesMapper;
 import com.codenvy.api.dao.ldap.UserDaoImpl;
-import com.codenvy.api.dao.mongo.OrganizationDaoImpl;
 import com.codenvy.api.dao.mongo.MemberDaoImpl;
 import com.codenvy.api.dao.mongo.UserProfileDaoImpl;
 import com.codenvy.api.dao.mongo.WorkspaceDaoImpl;
@@ -54,16 +55,16 @@ public class DaoManager {
     protected static final String DB_PASSWORD             = "organization.storage.db.password";
     protected static final String COLLECTION_PROFILE      = "organization.storage.db.profile.collection";
     protected static final String COLLECTION_WORKSPACE    = "organization.storage.db.workspace.collection";
-    protected static final String COLLECTION_ORGANIZATION = "organization.storage.db.organization.collection";
+    protected static final String COLLECTION_ACCOUNT      = "organization.storage.db.account.collection";
     protected static final String COLLECTION_WS_MEMBER    = "organization.storage.db.ws.member.collection";
     protected static final String COLLECTION_SUBSCRIPTION = "organization.storage.db.subscription.collection";
-    protected static final String COLLECTION_ACC_MEMBER   = "organization.storage.db.org.member.collection";
+    protected static final String COLLECTION_ACC_MEMBER   = "organization.storage.db.acc.member.collection";
 
-    private UserDao         userDao;
-    private UserProfileDao  userProfileDao;
-    private WorkspaceDao    workspaceDao;
-    private MemberDao       memberDao;
-    private OrganizationDao organizationDao;
+    private UserDao        userDao;
+    private UserProfileDao userProfileDao;
+    private WorkspaceDao   workspaceDao;
+    private MemberDao      memberDao;
+    private AccountDao     accountDao;
 
     private volatile DB db;
 
@@ -98,11 +99,11 @@ public class DaoManager {
         userProfileDao = new UserProfileDaoImpl(userDao, db, mongoProperties.getProperty(COLLECTION_PROFILE));
         workspaceDao = new WorkspaceDaoImpl(userDao, db, mongoProperties.getProperty(COLLECTION_WORKSPACE));
         memberDao = new MemberDaoImpl(userDao, workspaceDao, db, mongoProperties.getProperty(COLLECTION_WS_MEMBER));
-        organizationDao = new OrganizationDaoImpl(db,
-                                                  workspaceDao,
-                                                  mongoProperties.getProperty(COLLECTION_ORGANIZATION),
-                                                  mongoProperties.getProperty(COLLECTION_SUBSCRIPTION),
-                                                  mongoProperties.getProperty(COLLECTION_ACC_MEMBER));
+        accountDao = new AccountDaoImpl(db,
+                                        workspaceDao,
+                                        mongoProperties.getProperty(COLLECTION_ACCOUNT),
+                                        mongoProperties.getProperty(COLLECTION_SUBSCRIPTION),
+                                        mongoProperties.getProperty(COLLECTION_ACC_MEMBER));
     }
 
     public void addUser(User user) throws UserException {
@@ -123,21 +124,21 @@ public class DaoManager {
             LOG.debug("Workspace was created: " + workspace);
     }
 
-    public void addOrganization(Organization organization) throws OrganizationException {
-        organizationDao.create(organization);
+    public void addAccount(Account account) throws AccountException {
+        accountDao.create(account);
         if (LOG.isDebugEnabled())
-            LOG.debug("Organization was created: " + organization);
+            LOG.debug("Account was created: " + account);
     }
 
-    public void addOrganizationMember(com.codenvy.api.organization.shared.dto.Member member) throws OrganizationException {
-        if (!organizationDao.getMembers(member.getOrganizationId()).contains(member)) {
-            organizationDao.addMember(member);
-            LOG.debug("Member was added to organization: " + member);
+    public void addAccountMember(Member member) throws AccountException {
+        if (!accountDao.getMembers(member.getAccountId()).contains(member)) {
+            accountDao.addMember(member);
+            LOG.debug("Member was added to account: " + member);
         }
     }
 
-    public void addOrganizationSubcription(Subscription subscription) throws OrganizationException {
-        organizationDao.addSubscription(subscription);
+    public void addAccountSubscription(Subscription subscription) throws AccountException {
+        accountDao.addSubscription(subscription);
         if (LOG.isDebugEnabled())
             LOG.debug("Subscription was created: " + subscription);
     }
