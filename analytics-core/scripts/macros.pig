@@ -25,17 +25,29 @@
 ---------------------------------------------------------------------------
 DEFINE loadResources(resourceParam, from, to, userType, wsType) RETURNS Y {
   l1 = LOAD '$resourceParam' using PigStorage() as (message : chararray);
-  l2 = FOREACH l1 GENERATE REGEX_EXTRACT_ALL($0, '([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}) ([0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2},[0-9]{3}).*\\sEVENT#([^\\s#][^#]*|)#.*')
-                          AS pattern, message;
-  l3 = FILTER l2 BY pattern.$2 != '';
-  l4 = FOREACH l3 GENERATE pattern.$0 AS ip, ToDate(pattern.$1, 'yyyy-MM-dd HH:mm:ss,SSS') AS dt, pattern.$2 AS event,
-                (INDEXOF(message, '[ide3]', 0) >= 0 ? 3 : 2) AS ide,  message;
-  l5 = DISTINCT l4;
+  l2 = FILTER l1 BY INDEXOF(message, 'EVENT#', 0) > 0;
 
-  l6 = filterByDate(l5, '$from', '$to');
-  l7 = extractUser(l6, '$userType');
-  l8 = extractWs(l7, '$wsType');
-  $Y = FOREACH l8 GENERATE ip, dt, event, message, user, ws, ide;
+  l3 = extractUser(l2, '$userType');
+  l4 = extractWs(l3, '$wsType');
+  l5 = FOREACH l4 GENERATE user,
+                           ws,
+                           (INDEXOF(message, '[ide3]', 0) >= 0 ? 3 : 2) AS ide,
+                           message,
+                           REGEX_EXTRACT_ALL(message, '([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}) ([0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2},[0-9]{3}).*\\s-(\\s.*)') AS pattern;
+
+  l6 = FOREACH l5 GENERATE user,
+                           ws,
+                           ide,
+                           ToDate(pattern.$1, 'yyyy-MM-dd HH:mm:ss,SSS') AS dt,
+                           pattern.$2 AS message;
+
+  l7 = filterByDate(l6, '$from', '$to');
+  l8 = extractParam(l7, 'EVENT', 'event');
+  l9 = removeEmptyField(l8, 'event');
+
+  l10 = DISTINCT l9;
+
+  $Y = FOREACH l10 GENERATE dt, event, message, user, ws, ide;
 };
 ---------------------------------------------------------------------------
 -- Removes tuples with empty fields

@@ -24,10 +24,14 @@ import com.codenvy.analytics.metrics.Context.Builder;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.Parameters.TimeUnit;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
@@ -61,7 +65,8 @@ public class Utils {
     }
 
     /** Initialize date interval accordingly to passed {@link Parameters#TIME_UNIT} */
-    public static Context initDateInterval(Calendar toDate, Parameters.TimeUnit timeUnit, Context.Builder builder) throws ParseException {
+    public static Context initDateInterval(Calendar toDate, Parameters.TimeUnit timeUnit, Context.Builder builder)
+            throws ParseException {
         return initDateInterval(toDate, timeUnit, 0, builder);
     }
 
@@ -72,24 +77,24 @@ public class Utils {
 
     private static void initByWeek(Calendar toDate, int shift, Context.Builder builder) {
         toDate.add(Calendar.WEEK_OF_MONTH, shift);
-        
+
         Calendar fromDate = (Calendar)toDate.clone();
         fromDate.add(Calendar.DAY_OF_MONTH,
                      fromDate.getActualMinimum(Calendar.DAY_OF_WEEK) - fromDate.get(Calendar.DAY_OF_WEEK));
 
         toDate.add(Calendar.DAY_OF_MONTH,
                    toDate.getActualMaximum(Calendar.DAY_OF_WEEK) - toDate.get(Calendar.DAY_OF_WEEK));
-        
+
         builder.put(Parameters.FROM_DATE, fromDate);
         builder.put(Parameters.TO_DATE, toDate);
     }
 
     private static void initByMonth(Calendar toDate, int shift, Context.Builder builder) {
         toDate.add(Calendar.MONTH, shift);
-        
+
         Calendar fromDate = (Calendar)toDate.clone();
         fromDate.set(Calendar.DAY_OF_MONTH, 1);
-    
+
         toDate.set(Calendar.DAY_OF_MONTH, toDate.getActualMaximum(Calendar.DAY_OF_MONTH));
 
         builder.put(Parameters.FROM_DATE, fromDate);
@@ -97,7 +102,7 @@ public class Utils {
     }
 
     private static void initByDay(Calendar toDate, int shift, Context.Builder builder) {
-        toDate.add(Calendar.DATE, shift);        
+        toDate.add(Calendar.DATE, shift);
         Calendar fromDate = (Calendar)toDate.clone();
         builder.put(Parameters.FROM_DATE, fromDate);
         builder.put(Parameters.TO_DATE, toDate);
@@ -140,7 +145,9 @@ public class Utils {
      * Calculate FROM_DATE and TO_DATE parameters of context:
      * FROM_DATE = (current_{date/week/month}_at_from_date + timeUnit * (timeShift - 1))
      * TO_FATE =  (current_{date/week/month}_at_from_date + timeUnit * timeShift)
-     * @param timeShift = starting from 0 to represent current time period.  
+     *
+     * @param timeShift
+     *         = starting from 0 to represent current time period.
      */
     public static Context initDateInterval(Calendar toDate, TimeUnit timeUnit, int timeShift, Builder builder) {
         switch (timeUnit) {
@@ -159,5 +166,21 @@ public class Utils {
         }
 
         return builder.build();
+    }
+
+    public static Map<String, String> fetchEncodedPairs(String data) throws UnsupportedEncodingException {
+        String[] splitted = data.split(",");
+        Map<String, String> result = new HashMap<>(splitted.length);
+
+        for (String entry : splitted) {
+            String[] pair = entry.split("=");
+
+            String key = URLDecoder.decode(pair[0], "UTF-8");
+            String value = URLDecoder.decode(pair[1], "UTF-8");
+
+            result.put(key, value);
+        }
+
+        return result;
     }
 }

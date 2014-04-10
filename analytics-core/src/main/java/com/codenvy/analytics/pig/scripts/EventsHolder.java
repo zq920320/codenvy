@@ -56,6 +56,7 @@ public class EventsHolder {
 
     /**
      * Extracts all available params out of the message.
+     * USER and WS parameters will be skipped.
      */
     public Map<String, String> getParametersValues(String eventName, String message) throws IllegalArgumentException {
         Map<String, String> result = new LinkedHashMap<>();
@@ -69,6 +70,9 @@ public class EventsHolder {
                 result.put(paramName, paramValue);
             }
         }
+
+        result.remove("USER");
+        result.remove("WS");
 
         return result;
     }

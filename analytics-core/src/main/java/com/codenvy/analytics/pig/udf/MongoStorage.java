@@ -18,8 +18,10 @@
 package com.codenvy.analytics.pig.udf;
 
 import com.codenvy.analytics.Injector;
+import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.persistent.CollectionsManagement;
 import com.codenvy.analytics.persistent.MongoDataStorage;
+import com.codenvy.analytics.pig.scripts.EventsHolder;
 import com.mongodb.*;
 
 import org.apache.hadoop.conf.Configuration;
@@ -32,7 +34,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
+import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class MongoStorage extends StoreFunc {
@@ -89,7 +91,8 @@ public class MongoStorage extends StoreFunc {
     public static class MongoWriter extends RecordWriter<WritableComparable, Tuple> {
 
         /** Collection to write data in. */
-        protected DBCollection dbCollection;
+        private final DBCollection dbCollection;
+        private final EventsHolder eventsHolder;
 
         public MongoWriter(Configuration configuration) throws IOException {
             MongoClientURI uri = new MongoClientURI(configuration.get(SERVER_URL_PARAM));
@@ -108,6 +111,7 @@ public class MongoStorage extends StoreFunc {
             }
 
             this.dbCollection = db.getCollection(uri.getCollection());
+            this.eventsHolder = Injector.getInstance(EventsHolder.class);
         }
 
         @Override
@@ -121,10 +125,13 @@ public class MongoStorage extends StoreFunc {
                 Object data = tuple.get(1);
 
                 if (data != null) {
-                    if (isExtendedParameter(key)) {
-                        putParameters(dbObject, (String)data);
+                    if (isParameters(key)) {
+                        putKeyValuePairs(dbObject, (String)data);
                     } else {
                         dbObject.put(key, data);
+                        if (isMessage(key)) {
+                            putMessageParameters(dbObject, (String)data);
+                        }
                     }
                 }
             }
@@ -141,27 +148,49 @@ public class MongoStorage extends StoreFunc {
         }
 
         /**
-         * There is special parameter named 'PARAMETERS' which contains other key-value pairs which must be stored
-         * separately.
+         * The parameter 'message' contains raw log which means that every possible parameters have to be extracted out
+         * of message and stored.
          *
-         * @return true if key equals to 'PARAMETERS' and false otherwise
+         * @return true if key equals to 'message' and false otherwise
          */
-        private boolean isExtendedParameter(Object key) {
-            return key.equals("parameters");
+        private boolean isMessage(Object key) {
+            return key.equals("message");
         }
 
         /**
-         * Puts key-value encoded pairs.
+         * The parameter 'parameters' contains other key-value pairs which must be stored separately.
+         *
+         * @return true if key equals to 'parameters' and false otherwise
          */
-        private void putParameters(DBObject dbObject, String data) throws UnsupportedEncodingException {
-            for (String entry : data.split(",")) {
-                String[] pair = entry.split("=");
+        private boolean isParameters(Object key) {
+            return key.equals("parameters");
+        }
 
-                String key = URLDecoder.decode(pair[0], "UTF-8");
-                String value = URLDecoder.decode(pair[1], "UTF-8");
 
-                dbObject.put(key, value);
+        /**
+         * Extracts and puts all parameters out of the message.
+         */
+        private void putMessageParameters(DBObject dbObject, String message) throws UnsupportedEncodingException {
+            String event = (String)dbObject.get("event");
+            Map<String, String> values = eventsHolder.getParametersValues(event, message);
+
+            for (Map.Entry<String, String> entry : values.entrySet()) {
+                String key = entry.getKey().toLowerCase();
+                String data = entry.getValue();
+
+                if (isParameters(key)) {
+                    putKeyValuePairs(dbObject, data);
+                } else {
+                    dbObject.put(key, data);
+                }
             }
+        }
+
+        /**
+         * Puts key-value encoded pairs separated by ",".
+         */
+        private void putKeyValuePairs(DBObject dbObject, String data) throws UnsupportedEncodingException {
+            dbObject.putAll(Utils.fetchEncodedPairs(data));
         }
 
         @Override

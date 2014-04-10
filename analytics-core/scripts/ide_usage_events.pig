@@ -36,7 +36,7 @@ result = FOREACH a GENERATE UUID(),
                             TOTUPLE('source', source),
                             TOTUPLE('project', project),
                             TOTUPLE('type', type),
-                            TOTUPLE('parameters', parameters),
+                            TOTUPLE('parameters', parameters), -- every key-value pair will be stored separately instead of whole parameter
                             TOTUPLE('ide', ide);
 
 STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;

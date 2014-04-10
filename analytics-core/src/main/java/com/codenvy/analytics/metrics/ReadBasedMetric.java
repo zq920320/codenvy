@@ -139,7 +139,6 @@ public abstract class ReadBasedMetric extends AbstractMetric {
         setDateFilter(clauses, match);
 
         for (MetricFilter filter : clauses.getFilters()) {
-
             if (filter == MetricFilter.USER_COMPANY
                 || filter == MetricFilter.USER_FIRST_NAME
                 || filter == MetricFilter.USER_LAST_NAME) {
@@ -147,11 +146,6 @@ public abstract class ReadBasedMetric extends AbstractMetric {
                 String value = clauses.getAsString(filter);
                 String[] users = getUsers(filter, value);
                 match.put(MetricFilter.USER.name().toLowerCase(), new BasicDBObject("$in", users));
-
-            } else if (filter == MetricFilter.DOMAIN) {
-                String value = clauses.getAsString(filter);
-                Pattern usersInDomains = getUsersInDomains(value.split(SEPARATOR));
-                match.put(MetricFilter.USER.name().toLowerCase(), usersInDomains);
 
             } else if (filter == MetricFilter.USER) {
                 String value = clauses.getAsString(filter);
@@ -186,6 +180,10 @@ public abstract class ReadBasedMetric extends AbstractMetric {
                 }
 
                 match.put(filter.name().toLowerCase(), ws);
+
+            } else if (filter == MetricFilter.ENCODED_PAIRS) {
+                match.putAll(Utils.fetchEncodedPairs(clauses.getAsString(filter)));
+
             } else {
                 Object value = clauses.get(filter);
 
@@ -270,23 +268,6 @@ public abstract class ReadBasedMetric extends AbstractMetric {
         } else {
             dateFilter.put("$lte", Long.MAX_VALUE);
         }
-    }
-
-    private Pattern getUsersInDomains(String[] domains) {
-        StringBuilder builder = new StringBuilder();
-        for (String domain : domains) {
-            if (builder.length() != 0) {
-                builder.append("|");
-            }
-
-            builder.append(".*");
-            if (!domain.startsWith("@")) {
-                builder.append("@");
-            }
-            builder.append(domain);
-        }
-
-        return Pattern.compile(builder.toString(), Pattern.CASE_INSENSITIVE);
     }
 
     private String[] getUsers(MetricFilter filter, String pattern) throws IOException {
