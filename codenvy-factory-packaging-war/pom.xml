@@ -18,8 +18,7 @@
     from Codenvy S.A..
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <artifactId>codenvy-factory-parent</artifactId>
@@ -66,12 +65,9 @@
                         </goals>
                         <configuration>
                             <tasks>
-                                <unzip dest="${project.build.directory}/unzip/odyssey"
-                                       src="${project.build.directory}/dependency/odyssey-prod.zip"/>
-                                <copy file="${project.build.directory}/unzip/odyssey/site/war/factory/error/error-invalid-factory-url.html"
-                                      tofile="${project.build.directory}/${project.artifactId}-${project.version}/resources/error-invalid-factory-url.jsp" />
-                                <copy file="${project.build.directory}/unzip/odyssey/site/war/factory/error/browser-not-supported.html"
-                                      tofile="${project.build.directory}/${project.artifactId}-${project.version}/resources/browser-not-supported.jsp" />
+                                <unzip dest="${project.build.directory}/unzip/odyssey" src="${project.build.directory}/dependency/odyssey-prod.zip" />
+                                <copy file="${project.build.directory}/unzip/odyssey/site/war/factory/error/error-invalid-factory-url.html" tofile="${project.build.directory}/${project.artifactId}-${project.version}/resources/error-invalid-factory-url.jsp" />
+                                <copy file="${project.build.directory}/unzip/odyssey/site/war/factory/error/browser-not-supported.html" tofile="${project.build.directory}/${project.artifactId}-${project.version}/resources/browser-not-supported.jsp" />
                             </tasks>
                         </configuration>
                     </execution>

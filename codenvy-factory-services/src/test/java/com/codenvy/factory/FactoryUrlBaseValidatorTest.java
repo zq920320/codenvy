@@ -17,14 +17,16 @@
  */
 package com.codenvy.factory;
 
+import com.codenvy.api.account.server.dao.AccountDao;
+import com.codenvy.api.account.server.exception.AccountException;
+import com.codenvy.api.account.shared.dto.Account;
+import com.codenvy.api.account.shared.dto.Subscription;
 import com.codenvy.api.factory.FactoryBuilder;
 import com.codenvy.api.factory.FactoryUrlException;
 import com.codenvy.api.factory.dto.Factory;
-import com.codenvy.api.factory.dto.*;
-import com.codenvy.api.organization.server.dao.OrganizationDao;
-import com.codenvy.api.organization.server.exception.OrganizationException;
-import com.codenvy.api.organization.shared.dto.Organization;
-import com.codenvy.api.organization.shared.dto.Subscription;
+import com.codenvy.api.factory.dto.ProjectAttributes;
+import com.codenvy.api.factory.dto.Restriction;
+import com.codenvy.api.factory.dto.WelcomePage;
 import com.codenvy.api.user.server.dao.UserDao;
 import com.codenvy.api.user.server.dao.UserProfileDao;
 import com.codenvy.api.user.server.exception.UserException;
@@ -63,7 +65,7 @@ public class FactoryUrlBaseValidatorTest {
     private static final String ID = "id";
 
     @Mock
-    private OrganizationDao organizationDao;
+    private AccountDao accountDao;
 
 
     @Mock
@@ -73,7 +75,7 @@ public class FactoryUrlBaseValidatorTest {
     UserProfileDao profileDao;
 
     @Mock
-    private Organization organization;
+    private Account organization;
 
     @Mock
     private FactoryBuilder builder;
@@ -89,7 +91,7 @@ public class FactoryUrlBaseValidatorTest {
     private Factory url;
 
     @BeforeMethod
-    public void setUp() throws ParseException, OrganizationException, UserException, UserProfileException {
+    public void setUp() throws ParseException, AccountException, UserException, UserProfileException {
         Factory nonencoded = DtoFactory.getInstance().createDto(Factory.class);
         nonencoded.setV("1.2");
         nonencoded.setVcs("git");
@@ -106,8 +108,8 @@ public class FactoryUrlBaseValidatorTest {
                                               .withStartDate(datetimeFormatter.parse("2000-11-21 11:11:11").getTime())
                                               .withEndDate(datetimeFormatter.parse("2022-11-30 11:21:15").getTime());
 
-        when(organizationDao.getById(ID)).thenReturn(organization);
-        when(organizationDao.getSubscriptions(ID)).thenReturn(Arrays.asList(subscription));
+        when(accountDao.getById(ID)).thenReturn(organization);
+        when(accountDao.getSubscriptions(ID)).thenReturn(Arrays.asList(subscription));
         when(userDao.getById("userid")).thenReturn(user);
         when(profileDao.getById(anyString())).thenReturn(DtoFactory.getInstance().createDto(Profile.class));
         when(organization.getOwner()).thenReturn("userid");
@@ -228,27 +230,27 @@ public class FactoryUrlBaseValidatorTest {
     }
 
     @Test
-    public void shouldBeAbleToValidateIfOrgIdIsValid() throws OrganizationException, FactoryUrlException, ParseException {
+    public void shouldBeAbleToValidateIfOrgIdIsValid() throws AccountException, FactoryUrlException, ParseException {
         validator.validate(url, false, request);
     }
 
     @Test
     public void shouldBeAbleToValidateIfOrgIdAndOwnerAreValid()
-            throws OrganizationException, FactoryUrlException, ParseException, UserException, UserProfileException {
+            throws AccountException, FactoryUrlException, ParseException, UserException, UserProfileException {
         // when, then
         validator.validate(url, false, request);
     }
 
     @Test(expectedExceptions = FactoryUrlException.class)
-    public void shouldNotValidateIfAccountDoesNotExist() throws OrganizationException, FactoryUrlException {
-        when(organizationDao.getById(ID)).thenReturn(null);
+    public void shouldNotValidateIfAccountDoesNotExist() throws AccountException, FactoryUrlException {
+        when(accountDao.getById(ID)).thenReturn(null);
 
         validator.validate(url, false, request);
     }
 
     @Test(expectedExceptions = FactoryUrlException.class, expectedExceptionsMessageRegExp = "You are not authorized to use this orgid.")
     public void shouldNotValidateIfFactoryOwnerIsNotOrgidOwner()
-            throws OrganizationException, FactoryUrlException, ParseException, UserException, UserProfileException {
+            throws AccountException, FactoryUrlException, ParseException, UserException, UserProfileException {
         when(organization.getOwner()).thenReturn("anotheruserid");
 
         // when, then
@@ -256,43 +258,43 @@ public class FactoryUrlBaseValidatorTest {
     }
 
     @Test(expectedExceptions = FactoryUrlException.class)
-    public void shouldNotValidateIfSubscriptionHasIllegalTariffPlan() throws OrganizationException, FactoryUrlException, ParseException {
+    public void shouldNotValidateIfSubscriptionHasIllegalTariffPlan() throws AccountException, FactoryUrlException, ParseException {
         // given
         Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class)
                                               .withServiceId("INVALID")
                                               .withStartDate(datetimeFormatter.parse("2000-11-21 11:11:11").getTime())
                                               .withEndDate(datetimeFormatter.parse("2050-11-21 11:11:11").getTime());
-        when(organizationDao.getSubscriptions(ID)).thenReturn(Arrays.asList(subscription));
+        when(accountDao.getSubscriptions(ID)).thenReturn(Arrays.asList(subscription));
         // when, then
         validator.validate(url, false, request);
     }
 
     @Test(expectedExceptions = FactoryUrlException.class)
-    public void shouldNotValidateIfOrgIdIsExpired() throws OrganizationException, FactoryUrlException, ParseException {
+    public void shouldNotValidateIfOrgIdIsExpired() throws AccountException, FactoryUrlException, ParseException {
         // given
         Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class)
                                               .withServiceId("TrackedFactory")
                                               .withStartDate(datetimeFormatter.parse("2000-11-21 11:11:11").getTime())
                                               .withEndDate(datetimeFormatter.parse("2000-11-21 11:11:11").getTime());
-        when(organizationDao.getSubscriptions(ID)).thenReturn(Arrays.asList(subscription));
+        when(accountDao.getSubscriptions(ID)).thenReturn(Arrays.asList(subscription));
         // when, then
         validator.validate(url, false, request);
     }
 
     @Test(expectedExceptions = FactoryUrlException.class)
-    public void shouldNotValidateIfOrgIdIsNotValidYet() throws OrganizationException, FactoryUrlException, ParseException {
+    public void shouldNotValidateIfOrgIdIsNotValidYet() throws AccountException, FactoryUrlException, ParseException {
         // given
         Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class)
                                               .withServiceId("TrackedFactory")
                                               .withStartDate(datetimeFormatter.parse("2049-11-21 11:11:11").getTime())
                                               .withEndDate(datetimeFormatter.parse("2050-11-21 11:11:11").getTime());
-        when(organizationDao.getSubscriptions(ID)).thenReturn(Arrays.asList(subscription));
+        when(accountDao.getSubscriptions(ID)).thenReturn(Arrays.asList(subscription));
         // when, then
         validator.validate(url, false, request);
     }
 
     @Test
-    public void shouldValidateIfHostNameIsLegal() throws OrganizationException, FactoryUrlException, ParseException {
+    public void shouldValidateIfHostNameIsLegal() throws AccountException, FactoryUrlException, ParseException {
         // given
         url.setRestriction(DtoFactory.getInstance().createDto(Restriction.class).withRefererhostname("notcodenvy.com"));
 
@@ -304,7 +306,7 @@ public class FactoryUrlBaseValidatorTest {
 
     @Test
     public void shouldValidateIfRefererIsRelativeAndCurrentHostnameIsEqualToRequiredHostName()
-            throws OrganizationException, FactoryUrlException, ParseException {
+            throws AccountException, FactoryUrlException, ParseException {
         // given
         url.setRestriction(DtoFactory.getInstance().createDto(Restriction.class).withRefererhostname("next.codenvy.com"));
 
@@ -317,7 +319,7 @@ public class FactoryUrlBaseValidatorTest {
 
     @Test(expectedExceptions = FactoryUrlException.class,
           expectedExceptionsMessageRegExp = "This Factory has its access restricted by certain hostname. Your client does not match the specified policy. Please contact the owner of this Factory for more information.")
-    public void shouldNotValidateIfRefererIsEmpty() throws OrganizationException, FactoryUrlException, ParseException {
+    public void shouldNotValidateIfRefererIsEmpty() throws AccountException, FactoryUrlException, ParseException {
         // given
         url.setRestriction(DtoFactory.getInstance().createDto(Restriction.class).withRefererhostname("notcodenvy.com"));
 
@@ -329,7 +331,7 @@ public class FactoryUrlBaseValidatorTest {
 
     @Test(expectedExceptions = FactoryUrlException.class,
           expectedExceptionsMessageRegExp = "This Factory has its access restricted by certain hostname. Your client does not match the specified policy. Please contact the owner of this Factory for more information.")
-    public void shouldNotValidateIfRefererIsNotEqualToHostName() throws OrganizationException, FactoryUrlException, ParseException {
+    public void shouldNotValidateIfRefererIsNotEqualToHostName() throws AccountException, FactoryUrlException, ParseException {
         // given
         url.setRestriction(DtoFactory.getInstance().createDto(Restriction.class).withRefererhostname("notcodenvy.com"));
 
@@ -342,7 +344,7 @@ public class FactoryUrlBaseValidatorTest {
     @Test(expectedExceptions = FactoryUrlException.class,
           expectedExceptionsMessageRegExp = "This Factory has its access restricted by certain hostname. Your client does not match the specified policy. Please contact the owner of this Factory for more information.")
     public void shouldNotValidateIfRefererIsRelativeUrlAndCurrentHostnameIsNotEqualToRequired()
-            throws OrganizationException, FactoryUrlException, ParseException {
+            throws AccountException, FactoryUrlException, ParseException {
         // given
         url.setRestriction(DtoFactory.getInstance().createDto(Restriction.class).withRefererhostname("notcodenvy.com"));
 

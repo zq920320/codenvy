@@ -17,13 +17,13 @@
  */
 package com.codenvy.factory;
 
+import com.codenvy.api.account.server.dao.AccountDao;
+import com.codenvy.api.account.server.exception.AccountException;
+import com.codenvy.api.account.shared.dto.Account;
+import com.codenvy.api.account.shared.dto.Subscription;
 import com.codenvy.api.factory.*;
 import com.codenvy.api.factory.dto.Factory;
 import com.codenvy.api.factory.dto.Restriction;
-import com.codenvy.api.organization.server.dao.OrganizationDao;
-import com.codenvy.api.organization.server.exception.OrganizationException;
-import com.codenvy.api.organization.shared.dto.Organization;
-import com.codenvy.api.organization.shared.dto.Subscription;
 import com.codenvy.api.user.server.dao.UserDao;
 import com.codenvy.api.user.server.dao.UserProfileDao;
 import com.codenvy.api.user.server.exception.UserException;
@@ -34,8 +34,13 @@ import com.codenvy.commons.lang.URLEncodedUtils;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
-import java.net.*;
-import java.util.*;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URLDecoder;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
@@ -45,13 +50,13 @@ import java.util.regex.Pattern;
  */
 public class FactoryUrlBaseValidator implements FactoryUrlValidator {
 
-    private static final String PARAMETRIZED_ILLEGAL_ORGID_PARAMETER_MESSAGE =
-            "You have provided an invalid orgId %s. You could have provided the wrong code, " +
+    private static final String PARAMETRIZED_ILLEGAL_ACCID_PARAMETER_MESSAGE =
+            "You have provided an invalid accId %s. You could have provided the wrong code, " +
             "your subscription has expired, or you do not have a valid subscription account. Please contact " +
             "info@codenvy.com with any questions.";
 
     private static final String PARAMETRIZED_ILLEGAL_TRACKED_PARAMETER_MESSAGE =
-            "You have provided a Tracked Factory parameter %s, and you do not have a valid orgId %s. You could have " +
+            "You have provided a Tracked Factory parameter %s, and you do not have a valid accId %s. You could have " +
             "provided the wrong code, your subscription has expired, or you do not have a valid subscription account." +
             " Please contact info@codenvy.com with any questions.";
 
@@ -78,7 +83,7 @@ public class FactoryUrlBaseValidator implements FactoryUrlValidator {
 
     private static final Pattern PROJECT_NAME_VALIDATOR = Pattern.compile("^[\\\\\\w\\\\\\d]+[\\\\\\w\\\\\\d_.-]*$");
 
-    private OrganizationDao organizationDao;
+    private AccountDao accountDao;
 
     private UserDao userDao;
 
@@ -87,9 +92,9 @@ public class FactoryUrlBaseValidator implements FactoryUrlValidator {
     private FactoryBuilder factoryBuilder;
 
     @Inject
-    public FactoryUrlBaseValidator(OrganizationDao organizationDao, UserDao userDao, UserProfileDao profileDao,
+    public FactoryUrlBaseValidator(AccountDao accountDao, UserDao userDao, UserProfileDao profileDao,
                                    FactoryBuilder factoryBuilder) {
-        this.organizationDao = organizationDao;
+        this.accountDao = accountDao;
         this.userDao = userDao;
         this.profileDao = profileDao;
         this.factoryBuilder = factoryBuilder;
@@ -156,9 +161,9 @@ public class FactoryUrlBaseValidator implements FactoryUrlValidator {
         String orgid = "".equals(factory.getOrgid()) ? null : factory.getOrgid();
         if (null != orgid) {
             try {
-                Organization account = organizationDao.getById(orgid);
+                Account account = accountDao.getById(orgid);
                 if (null == account) {
-                    throw new FactoryUrlException(String.format(PARAMETRIZED_ILLEGAL_ORGID_PARAMETER_MESSAGE, factory.getOrgid()));
+                    throw new FactoryUrlException(String.format(PARAMETRIZED_ILLEGAL_ACCID_PARAMETER_MESSAGE, factory.getOrgid()));
                 }
 
                 if (factory.getUserid() != null) {
@@ -173,7 +178,7 @@ public class FactoryUrlBaseValidator implements FactoryUrlValidator {
                     }
                 }
 
-                List<Subscription> subscriptions = organizationDao.getSubscriptions(factory.getOrgid());
+                List<Subscription> subscriptions = accountDao.getSubscriptions(factory.getOrgid());
                 for (Subscription one : subscriptions) {
                     if ("TrackedFactory".equals(one.getServiceId())) {
                         Date startTimeDate = new Date(one.getStartDate());
@@ -181,14 +186,14 @@ public class FactoryUrlBaseValidator implements FactoryUrlValidator {
                         Date currentDate = new Date();
                         if (!startTimeDate.before(currentDate) || !endTimeDate.after(currentDate)) {
                             throw new FactoryUrlException(
-                                    String.format(PARAMETRIZED_ILLEGAL_ORGID_PARAMETER_MESSAGE, factory.getOrgid()));
+                                    String.format(PARAMETRIZED_ILLEGAL_ACCID_PARAMETER_MESSAGE, factory.getOrgid()));
                         }
                     } else {
-                        throw new FactoryUrlException(String.format(PARAMETRIZED_ILLEGAL_ORGID_PARAMETER_MESSAGE, factory.getOrgid()));
+                        throw new FactoryUrlException(String.format(PARAMETRIZED_ILLEGAL_ACCID_PARAMETER_MESSAGE, factory.getOrgid()));
                     }
                 }
-            } catch (UserException | UserProfileException | OrganizationException | NumberFormatException e) {
-                throw new FactoryUrlException(String.format(PARAMETRIZED_ILLEGAL_ORGID_PARAMETER_MESSAGE, factory.getOrgid()));
+            } catch (UserException | UserProfileException | AccountException | NumberFormatException e) {
+                throw new FactoryUrlException(String.format(PARAMETRIZED_ILLEGAL_ACCID_PARAMETER_MESSAGE, factory.getOrgid()));
             }
         }
 
