@@ -258,10 +258,10 @@ public class MongoDataLoader implements DataLoader {
                 if (! (dbObject.containsField("$group")
                         && dbObject.toString().contains(SUM_OPERATOR_PATTERN))) {
                     dbOperationsForExplanation.add(dbObject);
+                } else {
+                    dbOperationsForExplanation.addAll(projection);  // add projection in place of "$sum" operator                    
                 }
             }
-            
-            dbOperationsForExplanation.addAll(projection);
 
             AggregationOutput aggregation = dbCollection.aggregate(filter, dbOperationsForExplanation.toArray(new DBObject[0]));
 

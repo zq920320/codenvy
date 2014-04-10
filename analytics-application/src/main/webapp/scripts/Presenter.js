@@ -115,7 +115,7 @@ Presenter.prototype.addServerSortingLinks = function(table, widgetName, modelPar
     }
         
     var mapColumnToServerSortParam = analytics.configuration.getProperty(widgetName, "mapColumnToServerSortParam", undefined);
-    if (typeof mapColumnToServerSortParam == "undefined") {
+    if (typeof mapColumnToServerSortParam == "undefined" && !doNotMap) {
         return table;
     }
     
