@@ -114,5 +114,6 @@ analytics.presenter.ReportPresenter.prototype.getDrillDownPageLink = function(ti
  * @returns true if value = "0".
  * */
 analytics.presenter.ReportPresenter.prototype.isEmptyValue = function(value) {
-    return value == "0";
+    return value == "0"  // 0 numeric value
+           || value == "00:00:00";   // 0 time value
 }

@@ -256,6 +256,10 @@ public class View {
      *         "Factories - Added", ... }
      */
     private String transformToJson(Map<MetricType, String> map) {
+        if (map.size() == 0) {
+            return "{}";
+        }
+        
         StringBuilder result = new StringBuilder("{");
 
         final String METRIC_ROW_PATTERN = "\"%1$s\":\"%2$s\",";

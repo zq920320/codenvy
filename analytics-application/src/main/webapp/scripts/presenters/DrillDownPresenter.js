@@ -35,21 +35,28 @@ analytics.presenter.DrillDownPresenter.prototype.load = function() {
 
     model.setParams(modelParams);
     
-    // get page count from special parameter "origin_value"            
-    var onePageRowsCount = analytics.configuration.getProperty(presenter.widgetName, "onePageRowsCount", presenter.DEFAULT_ONE_PAGE_ROWS_COUNT);            
-    var rowCount = new Number(viewParams[presenter.METRIC_ORIGINAL_VALUE_VIEW_PARAMETER]);
-    var pageCount = Math.ceil(rowCount / presenter.DEFAULT_ONE_PAGE_ROWS_COUNT);
+    // get page count from special parameter "origin_value". It could be Not a Number (NaN)                       
+    var rowCountString = viewParams[presenter.METRIC_ORIGINAL_VALUE_VIEW_PARAMETER];
+    rowCountString = rowCountString.replace(/,/g, "");  // remove thousand delimiters in case of numbers like "5,120,954"
     
-    // process pagination
-    var currentPageNumber = modelParams.page;
-    if (typeof currentPageNumber == "undefined") {
-       currentPageNumber = 1;
+    var rowCount = new Number(rowCountString);
+    if (rowCount.toString() != "NaN") {
+        var onePageRowsCount = analytics.configuration.getProperty(presenter.widgetName, "onePageRowsCount", presenter.DEFAULT_ONE_PAGE_ROWS_COUNT);
+        var pageCount = Math.ceil(rowCount / onePageRowsCount);
+        
+        // process pagination
+        var currentPageNumber = modelParams.page;
+        if (typeof currentPageNumber == "undefined") {
+           currentPageNumber = 1;
+        } else {
+           currentPageNumber = new Number(currentPageNumber);
+        }
+        
+        modelParams.per_page = presenter.DEFAULT_ONE_PAGE_ROWS_COUNT;
+        modelParams.page = currentPageNumber;
     } else {
-       currentPageNumber = new Number(currentPageNumber);
+        var pageCount = 1;
     }
-    
-    modelParams.per_page = presenter.DEFAULT_ONE_PAGE_ROWS_COUNT;
-    modelParams.page = currentPageNumber;
 
     model.pushDoneFunction(function(data) {
         var widgetLabel = analytics.configuration.getProperty(presenter.widgetName, "widgetLabel");
