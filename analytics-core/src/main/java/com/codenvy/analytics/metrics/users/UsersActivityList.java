@@ -66,7 +66,6 @@ public class UsersActivityList extends AbstractListValueResulted {
     @Override
     public DBObject getFilter(Context clauses) throws ParseException, IOException {
         Context.Builder builder = new Context.Builder(clauses);
-        overrideSortOrder(builder);
         excludeStartAndStopFactorySessionsEvents(builder);
 
         if (clauses.exists(MetricFilter.SESSION_ID)) {
@@ -75,6 +74,11 @@ public class UsersActivityList extends AbstractListValueResulted {
         }
 
         return super.getFilter(builder.build());
+    }
+
+    @Override
+    protected Context modifyContext(Context context) throws IOException {
+        return context.cloneAndPut(Parameters.SORT, ASC_SORT_SIGN + DATE);
     }
 
     /**
@@ -132,9 +136,11 @@ public class UsersActivityList extends AbstractListValueResulted {
      */
     private StringValueData getContext(String event, String message) {
         Map<String, String> result = eventsHolder.getParametersValues(event, message);
-        result.remove("USER");
-        result.remove("WS");
+        result.remove("ID");
+        result.remove("USER-ID");
         result.remove("SESSION-ID");
+        result.remove("WORKSPACE-ID");
+
         return StringValueData.valueOf(result.toString());
     }
 
@@ -270,10 +276,6 @@ public class UsersActivityList extends AbstractListValueResulted {
             totalActionsNumberMetric = MetricFactory.getMetric(MetricType.USERS_ACTIVITY);
         }
         return ValueDataUtil.getAsLong(totalActionsNumberMetric, context).getAsLong();
-    }
-
-    private void overrideSortOrder(Context.Builder builder) {
-        builder.put(Parameters.SORT, ASC_SORT_SIGN + DATE);
     }
 
     private void excludeStartAndStopFactorySessionsEvents(Context.Builder builder) {
