@@ -175,10 +175,12 @@ public class Utils {
         for (String entry : splitted) {
             String[] pair = entry.split("=");
 
-            String key = URLDecoder.decode(pair[0], "UTF-8");
-            String value = URLDecoder.decode(pair[1], "UTF-8");
+            if (pair.length == 2) {
+                String key = URLDecoder.decode(pair[0], "UTF-8");
+                String value = URLDecoder.decode(pair[1], "UTF-8");
 
-            result.put(key, value);
+                result.put(key, value);
+            }
         }
 
         return result;

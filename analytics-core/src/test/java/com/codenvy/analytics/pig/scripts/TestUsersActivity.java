@@ -30,6 +30,7 @@ import com.mongodb.DBObject;
 
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import java.io.File;
@@ -68,7 +69,7 @@ public class TestUsersActivity extends BaseTest {
                                                      null,
                                                      "project2",
                                                      "type2",
-                                                     null).withDate("2013-01-01").build());
+                                                     "p2=v2").withDate("2013-01-01").build());
 
         File log = LogGenerator.generateLog(events);
 
@@ -109,24 +110,24 @@ public class TestUsersActivity extends BaseTest {
         assertNotNull(dbObject.get("message"));
     }
 
-    @Test
-    public void test1() throws Exception {
-        Metric metric = MetricFactory.getMetric(MetricType.USERS_ACTIVITY_LIST);
-
-        ListValueData list = ValueDataUtil.getAsList(metric, Context.EMPTY);
-
-        Assert.assertEquals(3, list.size());
-    }
-
-    @Test
-    public void test2() throws Exception {
+    @Test(dataProvider = "provider")
+    public void testParametersFilter(String parameters, Integer sizeOfResult) throws Exception {
         Metric metric = MetricFactory.getMetric(MetricType.USERS_ACTIVITY_LIST);
 
         Context.Builder builder = new Context.Builder();
-        builder.put(MetricFilter.ENCODED_PAIRS, "project=project2,type=type2");
+        builder.put(MetricFilter.PARAMETERS, parameters);
 
         ListValueData list = ValueDataUtil.getAsList(metric, builder.build());
 
-        Assert.assertEquals(2, list.size());
+        Assert.assertEquals(sizeOfResult.intValue(), list.size());
+    }
+
+
+    @DataProvider(name = "provider")
+    public Object[][] createData() {
+        return new Object[][]{{"project=project2,type=type2", 2},
+                              {"project=project2,type=type3", 0},
+                              {"p2=v2", 2},
+                              {"", 3}};
     }
 }

@@ -181,7 +181,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
 
                 match.put(filter.name().toLowerCase(), ws);
 
-            } else if (filter == MetricFilter.ENCODED_PAIRS) {
+            } else if (filter == MetricFilter.PARAMETERS) {
                 match.putAll(Utils.fetchEncodedPairs(clauses.getAsString(filter)));
 
             } else {
