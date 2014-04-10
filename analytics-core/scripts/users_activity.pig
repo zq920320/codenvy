@@ -21,11 +21,12 @@ IMPORT 'macros.pig';
 l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 r = FOREACH l GENERATE dt, user, ws, event, message, ide;
 
--- Every parameter in the message will be stored separately as well as whole message.
--- It depends on 'event', that's why message must be passed to storage function after event
+-- Every parameter in the message will be stored separately as well as a whole message.
+-- It depends on 'event', that's why message must be passed to the storage function after an event
 result = FOREACH r GENERATE UUID(),
                             TOTUPLE('date', ToMilliSeconds(dt)),
                             TOTUPLE('event', event),
+                            TOTUPLE('action', EventDescription(event)),
                             TOTUPLE('ws', ws),
                             TOTUPLE('user', user),
                             TOTUPLE('message', message),

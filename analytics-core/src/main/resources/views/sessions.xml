@@ -38,10 +38,9 @@
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="users_activity_list"/>
-                <parameter key="fields" value="date,event,time,cumulative_time,state"/>
+                <parameter key="fields" value="date,action,time,cumulative_time,state"/>
                 <parameter key="date-fields" value="date"/>
                 <parameter key="time-fields" value="time,cumulative_time"/>
-                <parameter key="event-fields" value="event"/>
             </row>
         </section>
     </view>

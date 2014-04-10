@@ -141,6 +141,7 @@ public class PigServer implements AutoCloseable {
         server.registerFunction("CutQueryParam", new FuncSpec("com.codenvy.analytics.pig.udf.CutQueryParam"));
         server.registerFunction("FixJobTitle", new FuncSpec("com.codenvy.analytics.pig.udf.FixJobTitle"));
         server.registerFunction("EventValidation", new FuncSpec("com.codenvy.analytics.pig.udf.EventValidation"));
+        server.registerFunction("EventDescription", new FuncSpec("com.codenvy.analytics.pig.udf.EventDescription"));
         server.registerFunction("IsEventInSet", new FuncSpec("com.codenvy.analytics.pig.udf.IsEventInSet"));
 
         server.registerFunction("MongoStorage",

@@ -54,6 +54,7 @@ public class UsersActivityList extends AbstractListValueResulted {
         return new String[]{DATE,
                             MESSAGE,
                             EVENT,
+                            ACTION,
                             WS,
                             USER};
     }
@@ -66,6 +67,7 @@ public class UsersActivityList extends AbstractListValueResulted {
     @Override
     public DBObject getFilter(Context clauses) throws ParseException, IOException {
         Context.Builder builder = new Context.Builder(clauses);
+
         excludeStartAndStopFactorySessionsEvents(builder);
 
         if (clauses.exists(MetricFilter.SESSION_ID)) {

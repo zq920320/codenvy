@@ -53,6 +53,7 @@ public abstract class AbstractMetric implements Metric {
     public static final String RUN                   = "run";
     public static final String MESSAGE               = "message";
     public static final String EVENT                 = "event";
+    public static final String ACTION                = "action";
     public static final String USER_FIRST_NAME       = "user_first_name";
     public static final String USER_LAST_NAME        = "user_last_name";
     public static final String USER_COMPANY          = "user_company";

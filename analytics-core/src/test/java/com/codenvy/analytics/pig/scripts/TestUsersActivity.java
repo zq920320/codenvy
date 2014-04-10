@@ -110,7 +110,7 @@ public class TestUsersActivity extends BaseTest {
         assertNotNull(dbObject.get("message"));
     }
 
-    @Test(dataProvider = "provider")
+    @Test(dataProvider = "parametersFilterProvider")
     public void testParametersFilter(String parameters, Integer sizeOfResult) throws Exception {
         Metric metric = MetricFactory.getMetric(MetricType.USERS_ACTIVITY_LIST);
 
@@ -122,12 +122,30 @@ public class TestUsersActivity extends BaseTest {
         Assert.assertEquals(sizeOfResult.intValue(), list.size());
     }
 
+    @Test(dataProvider = "actionFilterProvider")
+    public void testActionFilter(String action, Integer sizeOfResult) throws Exception {
+        Metric metric = MetricFactory.getMetric(MetricType.USERS_ACTIVITY_LIST);
 
-    @DataProvider(name = "provider")
-    public Object[][] createData() {
+        Context.Builder builder = new Context.Builder();
+        builder.put(MetricFilter.ACTION, action);
+
+        ListValueData list = ValueDataUtil.getAsList(metric, builder.build());
+
+        Assert.assertEquals(sizeOfResult.intValue(), list.size());
+    }
+
+
+    @DataProvider(name = "parametersFilterProvider")
+    public Object[][] parametersFilterProvider() {
         return new Object[][]{{"project=project2,type=type2", 2},
                               {"project=project2,type=type3", 0},
                               {"p2=v2", 2},
                               {"", 3}};
+    }
+
+    @DataProvider(name = "actionFilterProvider")
+    public Object[][] actionFilterProvider() {
+        return new Object[][]{{"action1", 1},
+                              {"IDE usage", 1}};
     }
 }
