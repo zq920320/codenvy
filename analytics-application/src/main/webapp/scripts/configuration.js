@@ -401,7 +401,7 @@ function Configuration() {
 
             columnLinkPrefixList: {
                 "ID": "/analytics/pages/session-view.jsp?session_id",
-                "User": "/analytics/pages/user-view.jsp?user"
+                "User": "/analytics/pages/user-view.jsserverConfigurationp?user"
             },
             
             /** @see DatabaseTable::makeTableSortable() method docs */
@@ -631,12 +631,20 @@ function Configuration() {
         "from_date",
         "to_date",
     ];
+
+    /** 
+     * Server configuration. Defined in the footer.jsp.
+     */
+    this.serverConfiguration = {};
     
     /** List of system messages of Analytics */
     var systemMessagesList = [
         "User Did Not Enter Workspace",
     ];
 
+    /**
+     * Returns property of widget.
+     */
     function getProperty(widgetName, propertyName, defaultValue) {
         var widgetProperty = widgetConfiguration[widgetName][propertyName];
         if (typeof widgetProperty == "undefined") {
@@ -706,6 +714,17 @@ function Configuration() {
     }
 
     /**
+     * Get server configuration.
+     */
+    function getServerProperty(propertyName, defaultValue) {
+        var serverProperty = this.serverConfiguration[propertyName];
+        if (typeof serverProperty == "undefined") {
+            serverProperty = defaultValue;
+        }
+        return serverProperty;
+    }
+    
+    /**
      * Return registered params with all values = null
      */
     function getViewParamsWithNullValues() {
@@ -773,6 +792,7 @@ function Configuration() {
         isParamRegistered: isParamRegistered,
         isParamGlobal: isParamGlobal,
         getGlobalParamList: getGlobalParamList,
+        getServerProperty: getServerProperty,
         getViewParamsWithNullValues: getViewParamsWithNullValues,
         removeForbiddenModelParams: removeForbiddenModelParams,
         getCrossPageParamsList: getCrossPageParamsList,

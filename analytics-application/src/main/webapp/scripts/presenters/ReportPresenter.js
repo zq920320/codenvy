@@ -94,6 +94,9 @@ analytics.presenter.ReportPresenter.prototype.load = function() {
  *  ]
  */
 analytics.presenter.ReportPresenter.prototype.linkMetricValueWithDrillDownPage = function(table, tableNumber, expandableMetricPerSection, modelParams) { 
+    // setup top date of expanded value due to date of generation of report
+    modelParams["to_date"] = modelParams["to_date"] || analytics.configuration.getServerProperty("reportGenerationDate");
+    
     for (var rowNumber = 0; rowNumber < table.rows.length; rowNumber++) {
         // check if there is expandable metric in row
         var metricName = expandableMetricPerSection[tableNumber][rowNumber + 1];  // taking into account absent title row

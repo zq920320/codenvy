@@ -34,6 +34,16 @@
 
 <script type="text/javascript" src="/analytics/scripts/configuration.js"></script>
 
+<script>
+/** Load server configuration */
+    jQuery(function() {
+        analytics.configuration.serverConfiguration = {
+            "reportGenerationDate": "<%=com.codenvy.analytics.metrics.Parameters.TO_DATE.getDefaultValue() %>",
+        };        
+    });
+</script>
+
+
 <% if (request.getParameterValues("javaScriptToLoad") != null) { 
        String[] javaScriptsToLoad = request.getParameterValues("javaScriptToLoad");
        for (int i = 0; i < javaScriptsToLoad.length; i++) { %>
