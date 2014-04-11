@@ -25,8 +25,8 @@ import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.metrics.projects.ProjectsList;
 import com.codenvy.analytics.metrics.projects.Projects;
+import com.codenvy.analytics.metrics.projects.ProjectsList;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
@@ -90,21 +90,21 @@ public class TestProjectsList extends BaseTest {
         assertEquals("jar", m.get("project_type").getAsString());
         assertEquals("ws1", m.get("ws").getAsString());
         assertEquals("user1@gmail.com", m.get("user").getAsString());
-        assertEquals("1357034400000", m.get("date").getAsString());
+        assertEquals(LongValueData.valueOf(fullDateFormat.parse("2013-01-01 10:00:00").getTime()), m.get("date"));
 
         m = ((MapValueData)items.get(1)).getAll();
         assertEquals("project2", m.get("project").getAsString());
         assertEquals("war", m.get("project_type").getAsString());
         assertEquals("ws2", m.get("ws").getAsString());
         assertEquals("user1@gmail.com", m.get("user").getAsString());
-        assertEquals("1357034401000", m.get("date").getAsString());
+        assertEquals(LongValueData.valueOf(fullDateFormat.parse("2013-01-01 10:00:01").getTime()), m.get("date"));
 
         m = ((MapValueData)items.get(2)).getAll();
         assertEquals("project3", m.get("project").getAsString());
         assertEquals("war", m.get("project_type").getAsString());
         assertEquals("ws3", m.get("ws").getAsString());
         assertEquals("user2@yahoo.com", m.get("user").getAsString());
-        assertEquals("1357034403000", m.get("date").getAsString());
+        assertEquals(LongValueData.valueOf(fullDateFormat.parse("2013-01-01 10:00:03").getTime()), m.get("date"));
     }
 
     @Test
@@ -124,14 +124,14 @@ public class TestProjectsList extends BaseTest {
         assertEquals("jar", m.get("project_type").getAsString());
         assertEquals("ws1", m.get("ws").getAsString());
         assertEquals("user1@gmail.com", m.get("user").getAsString());
-        assertEquals("1357034400000", m.get("date").getAsString());
+        assertEquals(LongValueData.valueOf(fullDateFormat.parse("2013-01-01 10:00:00").getTime()), m.get("date"));
 
         m = ((MapValueData)items.get(1)).getAll();
         assertEquals("project2", m.get("project").getAsString());
         assertEquals("war", m.get("project_type").getAsString());
         assertEquals("ws2", m.get("ws").getAsString());
         assertEquals("user1@gmail.com", m.get("user").getAsString());
-        assertEquals("1357034401000", m.get("date").getAsString());
+        assertEquals(LongValueData.valueOf(fullDateFormat.parse("2013-01-01 10:00:01").getTime()), m.get("date"));
     }
 
     @Test
