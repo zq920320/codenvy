@@ -71,9 +71,9 @@ public abstract class AbstractTopFactories extends AbstractTopMetrics {
                                           .append(USER_CREATED, new BasicDBObject("$sum", "$" + USER_CREATED))
                                           .append(FACTORY_COUNT, new BasicDBObject("$sum", 1))
                                           .append(TIME, new BasicDBObject("$sum", "$" + TIME))
-                                          .append(BUILD + "_count", new BasicDBObject("$sum", "$" + BUILD))
-                                          .append(RUN + "_count", new BasicDBObject("$sum", "$" + RUN))
-                                          .append(DEPLOY + "_count", new BasicDBObject("$sum", "$" + DEPLOY))
+                                          .append(BUILDS + "_count", new BasicDBObject("$sum", "$" + BUILDS))
+                                          .append(RUNS + "_count", new BasicDBObject("$sum", "$" + RUNS))
+                                          .append(DEPLOYS + "_count", new BasicDBObject("$sum", "$" + DEPLOYS))
                                           .append(AUTHENTICATED_SESSION + "_count",
                                                   new BasicDBObject("$sum", "$" + AUTHENTICATED_SESSION))
                                           .append(CONVERTED_SESSION + "_count",
@@ -87,9 +87,9 @@ public abstract class AbstractTopFactories extends AbstractTopMetrics {
                                 .append(USER_CREATED, 1)
                                 .append(FACTORY, "$_id")
                                 .append(TIME, 1)
-                                .append(BUILD_RATE, getRateOperation("$" + BUILD + "_count", "$" + FACTORY_COUNT))
-                                .append(RUN_RATE, getRateOperation("$" + RUN + "_count", "$" + FACTORY_COUNT))
-                                .append(DEPLOY_RATE, getRateOperation("$" + DEPLOY + "_count", "$" + FACTORY_COUNT))
+                                .append(BUILD_RATE, getRateOperation("$" + BUILDS + "_count", "$" + FACTORY_COUNT))
+                                .append(RUN_RATE, getRateOperation("$" + RUNS + "_count", "$" + FACTORY_COUNT))
+                                .append(DEPLOY_RATE, getRateOperation("$" + DEPLOYS + "_count", "$" + FACTORY_COUNT))
                                 .append(AUTHENTICATED_FACTORY_SESSION_RATE,
                                         getRateOperation("$" + AUTHENTICATED_SESSION + "_count",
                                                          "$" + FACTORY_COUNT))

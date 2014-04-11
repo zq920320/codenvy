@@ -63,7 +63,6 @@ public class UsersStatisticsListPrecomputed extends AbstractListValueResulted im
     public Context getContextForBasedMetric() {
         Context.Builder builder = new Context.Builder();
         builder.put(MetricFilter.USER, Parameters.USER_TYPES.REGISTERED.name());
-
         return builder.build();
     }
 

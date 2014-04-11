@@ -33,18 +33,6 @@ import java.util.Map;
 @RolesAllowed({"system/admin", "system/manager"})
 public class UsersStatisticsList extends AbstractListValueResulted {
 
-    public static final String PROJECTS     = "projects";
-    public static final String BUILDS       = "builds";
-    public static final String DEPLOYS      = "deploys";
-    public static final String RUNS         = "runs";
-    public static final String DEBUGS       = "debugs";
-    public static final String FACTORIES    = "factories";
-    public static final String INVITES      = "invites";
-    public static final String LOGINS       = "logins";
-    public static final String RUN_TIME     = "run_time";
-    public static final String BUILD_TIME   = "build_time";
-    public static final String PAAS_DEPLOYS = "paas_deploys";
-
     public UsersStatisticsList() {
         super(MetricType.USERS_STATISTICS_LIST);
     }

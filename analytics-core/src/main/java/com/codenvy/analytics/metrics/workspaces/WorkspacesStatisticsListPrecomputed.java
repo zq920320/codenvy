@@ -61,7 +61,6 @@ public class WorkspacesStatisticsListPrecomputed extends AbstractListValueResult
     public Context getContextForBasedMetric() {
         Context.Builder builder = new Context.Builder();
         builder.put(MetricFilter.WS, Parameters.WS_TYPES.PERSISTENT.name());
-
         return builder.build();
     }
 

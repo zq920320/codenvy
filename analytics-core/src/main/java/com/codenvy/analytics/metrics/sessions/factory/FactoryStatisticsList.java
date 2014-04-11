@@ -17,7 +17,10 @@
  */
 package com.codenvy.analytics.metrics.sessions.factory;
 
-import com.codenvy.analytics.datamodel.*;
+import com.codenvy.analytics.datamodel.ListValueData;
+import com.codenvy.analytics.datamodel.MapValueData;
+import com.codenvy.analytics.datamodel.StringValueData;
+import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.*;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
@@ -29,9 +32,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+/**
+ * author Anatoliy Bazko
+ */
 @RolesAllowed({"system/admin", "system/manager"})
 public class FactoryStatisticsList extends AbstractListValueResulted {
+
     public FactoryStatisticsList() {
         super(MetricType.FACTORY_STATISTICS_LIST);
     }
@@ -50,13 +56,14 @@ public class FactoryStatisticsList extends AbstractListValueResulted {
     public String[] getTrackedFields() {
         return new String[]{FACTORY,
                             TIME,
-                            RUN,
-                            DEPLOY,
-                            BUILD,
+                            RUNS,
+                            DEPLOYS,
+                            BUILDS,
                             SESSIONS,
                             AUTHENTICATED_SESSION,
                             CONVERTED_SESSION,
-                            WS_CREATED};
+                            WS_CREATED,
+                            ENCODED_FACTORY};
     }
 
     @Override
@@ -67,24 +74,26 @@ public class FactoryStatisticsList extends AbstractListValueResulted {
         DBObject group = new BasicDBObject();
         group.put(ID, "$" + FACTORY);
         group.put(TIME, new BasicDBObject("$sum", "$" + TIME));
-        group.put(RUN, new BasicDBObject("$sum", "$" + RUN));
-        group.put(DEPLOY, new BasicDBObject("$sum", "$" + DEPLOY));
-        group.put(BUILD, new BasicDBObject("$sum", "$" + BUILD));
+        group.put(RUNS, new BasicDBObject("$sum", "$" + RUNS));
+        group.put(DEPLOYS, new BasicDBObject("$sum", "$" + DEPLOYS));
+        group.put(BUILDS, new BasicDBObject("$sum", "$" + BUILDS));
         group.put(SESSIONS, new BasicDBObject("$sum", 1));
         group.put(AUTHENTICATED_SESSION, new BasicDBObject("$sum", "$" + AUTHENTICATED_SESSION));
         group.put(CONVERTED_SESSION, new BasicDBObject("$sum", "$" + CONVERTED_SESSION));
         group.put(WS_CREATED, new BasicDBObject("$sum", "$" + WS_CREATED));
+        group.put(ENCODED_FACTORY, new BasicDBObject("$avg", "$" + ENCODED_FACTORY));
 
         DBObject project = new BasicDBObject();
         project.put(FACTORY, "$_id");
         project.put(TIME, 1);
-        project.put(RUN, 1);
-        project.put(DEPLOY, 1);
-        project.put(BUILD, 1);
+        project.put(RUNS, 1);
+        project.put(DEPLOYS, 1);
+        project.put(BUILDS, 1);
         project.put(SESSIONS, 1);
         project.put(AUTHENTICATED_SESSION, 1);
         project.put(CONVERTED_SESSION, 1);
         project.put(WS_CREATED, 1);
+        project.put(ENCODED_FACTORY, 1);
 
         return new DBObject[]{new BasicDBObject("$match", match),
                               new BasicDBObject("$group", group),
@@ -93,20 +102,14 @@ public class FactoryStatisticsList extends AbstractListValueResulted {
 
     @Override
     public ValueData postComputation(ValueData valueData, Context clauses) throws IOException {
-        ListValueData items = (ListValueData)valueData;
-        if (!clauses.exists(MetricFilter.FACTORY)) {
-            return items;
+        List<ValueData> list2Return = new ArrayList<>();
 
-        } else {
-            List<ValueData> list2Return = new ArrayList<>();
-
-            MapValueData prevItems = items.size() == 0 ? getDefaultItems() : (MapValueData)items.getAll().get(0);
+        for (ValueData row : ((ListValueData)valueData).getAll()) {
+            MapValueData prevItems = (MapValueData)row;
             Map<String, ValueData> items2Return = new HashMap<>(prevItems.getAll());
 
-            items2Return.put(FACTORY, StringValueData.valueOf(clauses.getAsString(MetricFilter.FACTORY)));
-
-            Map<String, ValueData> factoryData = getFactoryData(clauses);
-            if (factoryData.size() != 0) {
+            Map<String, ValueData> factoryData = getFactoryData(items2Return.get(FACTORY).getAsString());
+            if (!factoryData.isEmpty()) {
                 items2Return.put(USER, getNotDefaultStringValue(factoryData.get(USER)));
                 items2Return.put(REPOSITORY, getNotNullStringValue(factoryData.get(REPOSITORY)));
                 items2Return.put(PROJECT_TYPE, getNotNullStringValue(factoryData.get(PROJECT_TYPE)));
@@ -115,26 +118,12 @@ public class FactoryStatisticsList extends AbstractListValueResulted {
             }
 
             list2Return.add(new MapValueData(items2Return));
-
-            return new ListValueData(list2Return);
         }
+
+        return new ListValueData(list2Return);
     }
 
-    private MapValueData getDefaultItems() {
-        return new MapValueData(new HashMap<String, ValueData>() {{
-            put(TIME, LongValueData.DEFAULT);
-            put(RUN, LongValueData.DEFAULT);
-            put(DEPLOY, LongValueData.DEFAULT);
-            put(BUILD, LongValueData.DEFAULT);
-            put(SESSIONS, LongValueData.DEFAULT);
-            put(AUTHENTICATED_SESSION, LongValueData.DEFAULT);
-            put(CONVERTED_SESSION, LongValueData.DEFAULT);
-            put(WS_CREATED, LongValueData.DEFAULT);
-        }});
-    }
-
-    private Map<String, ValueData> getFactoryData(Context clauses) throws IOException {
-        String factory = clauses.getAsString(MetricFilter.FACTORY);
+    private Map<String, ValueData> getFactoryData(String factory) throws IOException {
         Metric metric = MetricFactory.getMetric(MetricType.CREATED_FACTORIES_LIST);
 
         Context.Builder builder = new Context.Builder();
@@ -166,7 +155,8 @@ public class FactoryStatisticsList extends AbstractListValueResulted {
     }
 
     private ValueData getNotDefaultStringValue(ValueData valueData) {
-        return valueData == null || valueData.getAsString().equalsIgnoreCase("DEFAULT") ? StringValueData.DEFAULT
-                                                                                        : valueData;
+        return valueData == null || valueData.getAsString().equalsIgnoreCase("DEFAULT")
+               ? StringValueData.DEFAULT
+               : valueData;
     }
 }

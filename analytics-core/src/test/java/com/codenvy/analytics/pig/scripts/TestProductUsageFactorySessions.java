@@ -198,7 +198,7 @@ public class TestProductUsageFactorySessions extends BaseTest {
 
         @Override
         public String[] getTrackedFields() {
-            return new String[]{"run"};
+            return new String[]{"runs"};
         }
 
         @Override

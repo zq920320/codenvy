@@ -36,6 +36,6 @@ public class FactorySessionsWithDeploy extends AbstractFactorySessionsWithEvent 
 
     @Override
     public String[] getTrackedFields() {
-        return new String[]{DEPLOY};
+        return new String[]{DEPLOYS};
     }
 }

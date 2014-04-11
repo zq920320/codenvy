@@ -90,7 +90,7 @@ public class TestIdeUsageEvents extends BaseTest {
         assertEquals("action1", dbObject.get("action"));
         assertEquals("src1", dbObject.get("source"));
         assertEquals("project1", dbObject.get("project"));
-        assertEquals("type1", dbObject.get("type"));
+        assertEquals("type1", dbObject.get("project_type"));
         assertEquals("v1", dbObject.get("p1"));
         assertEquals("v2", dbObject.get("p2"));
         assertNotNull(dbObject.get("_id"));

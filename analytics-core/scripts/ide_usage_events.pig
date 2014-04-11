@@ -24,9 +24,9 @@ f = filterByEvent(l, 'ide-usage');
 a1 = extractParam(f, 'ACTION', 'action');
 a2 = extractParam(a1, 'SOURCE', 'source');
 a3 = extractParam(a2, 'PROJECT', 'project');
-a4 = extractParam(a3, 'TYPE', 'type');
+a4 = extractParam(a3, 'TYPE', 'projectType');
 a5 = extractParam(a4, 'PARAMETERS', 'parameters');
-a = FOREACH a5 GENERATE dt, ws, user, action, source, project, type, parameters, ide;
+a = FOREACH a5 GENERATE dt, ws, user, action, source, project, projectType, parameters, ide;
 
 result = FOREACH a GENERATE UUID(),
                             TOTUPLE('date', ToMilliSeconds(dt)),
@@ -35,7 +35,7 @@ result = FOREACH a GENERATE UUID(),
                             TOTUPLE('action', action),
                             TOTUPLE('source', source),
                             TOTUPLE('project', project),
-                            TOTUPLE('type', type),
+                            TOTUPLE('project_type', projectType),
                             TOTUPLE('parameters', parameters), -- every key-value pair will be stored separately instead of whole parameter
                             TOTUPLE('ide', ide);
 

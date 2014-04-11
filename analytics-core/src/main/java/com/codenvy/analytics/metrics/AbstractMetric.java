@@ -31,6 +31,9 @@ public abstract class AbstractMetric implements Metric {
     public static final String USER                  = "user";
     public static final String DOMAIN                = "domain";
     public static final String TIME                  = "time";
+    public static final String RUN_TIME              = "run_time";
+    public static final String BUILD_TIME            = "build_time";
+    public static final String PAAS_DEPLOYS          = "paas_deploys";
     public static final String CUMULATIVE_TIME       = "cumulative_time";
     public static final String STATE                 = "state";
     public static final String LOGOUT_INTERVAL       = "logout_interval";
@@ -40,6 +43,7 @@ public abstract class AbstractMetric implements Metric {
     public static final String ORG_ID                = "org_id";
     public static final String AFFILIATE_ID          = "affiliate_id";
     public static final String REPOSITORY            = "repository";
+    public static final String ENCODED_FACTORY       = "encoded_factory";
     public static final String FACTORY               = "factory";
     public static final String PROJECT               = "project";
     public static final String PROJECT_TYPE          = "project_type";
@@ -48,9 +52,14 @@ public abstract class AbstractMetric implements Metric {
     public static final String CONVERTED_SESSION     = "converted_factory_session";
     public static final String WS_CREATED            = "ws_created";
     public static final String USER_CREATED          = "user_created";
-    public static final String BUILD                 = "build";
-    public static final String DEPLOY                = "deploy";
-    public static final String RUN                   = "run";
+    public static final String PROJECTS              = "projects";
+    public static final String INVITES               = "invites";
+    public static final String LOGINS                = "logins";
+    public static final String FACTORIES             = "factories";
+    public static final String BUILDS                = "builds";
+    public static final String DEPLOYS               = "deploys";
+    public static final String RUNS                  = "runs";
+    public static final String DEBUGS                = "debugs";
     public static final String MESSAGE               = "message";
     public static final String EVENT                 = "event";
     public static final String ACTION                = "action";

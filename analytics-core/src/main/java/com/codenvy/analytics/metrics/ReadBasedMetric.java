@@ -115,8 +115,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
     }
 
     private boolean canReadPrecomputedData(Context context) {
-        return this instanceof PrecomputedMetric
-               && context.getFilters().isEmpty()
+        return MetricFactory.exists(getName() + PRECOMPUTED)
                && !context.exists(Parameters.FROM_DATE)
                && !context.exists(Parameters.TO_DATE);
     }

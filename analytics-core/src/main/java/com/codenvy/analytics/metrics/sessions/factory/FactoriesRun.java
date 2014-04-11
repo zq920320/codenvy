@@ -26,7 +26,7 @@ import javax.annotation.security.RolesAllowed;
 public class FactoriesRun extends AbstractFactoryAction {
 
     public FactoriesRun() {
-        super(MetricType.FACTORIES_RUN, RUN);
+        super(MetricType.FACTORIES_RUN, RUNS);
     }
 
     @Override

@@ -79,13 +79,10 @@ public class DataComputation extends Feature {
             if (metric instanceof PrecomputedDataMetric) {
                 PrecomputedDataMetric precomputedMetric = (PrecomputedDataMetric)metric;
 
-                Metric basedMetric = MetricFactory.getMetric(precomputedMetric.getBasedMetric());
-                String collectionName = ((ReadBasedMetric)precomputedMetric).getStorageCollectionName();
-
                 LOG.info("DataComputation is started for " + metric.getName());
                 long start = System.currentTimeMillis();
                 try {
-                    doCompute(basedMetric, precomputedMetric, collectionName);
+                    doCompute(precomputedMetric);
                 } finally {
                     LOG.info("DataComputation is finished in " + (System.currentTimeMillis() - start) / 1000 +
                              " sec. for " + metric.getName());
@@ -94,14 +91,16 @@ public class DataComputation extends Feature {
         }
     }
 
-    private void doCompute(Metric basedMetric,
-                           PrecomputedDataMetric precomputedMetric,
-                           String collectionName) throws IOException {
-
-        collectionsManagement.drop(collectionName);
+    private void doCompute(PrecomputedDataMetric precomputedMetric) throws IOException {
+        String collectionName = ((ReadBasedMetric)precomputedMetric).getStorageCollectionName();
+        Metric basedMetric = MetricFactory.getMetric(precomputedMetric.getBasedMetric());
 
         Context.Builder builder = new Context.Builder(precomputedMetric.getContextForBasedMetric());
+        builder.putDefaultValue(Parameters.FROM_DATE);
+        builder.putDefaultValue(Parameters.TO_DATE);
         builder.put(Parameters.PER_PAGE, PAGE_SIZE);
+
+        collectionsManagement.drop(collectionName);
 
         for (int pageNumber = 0; ; pageNumber++) {
             builder.put(Parameters.PAGE, ++pageNumber);

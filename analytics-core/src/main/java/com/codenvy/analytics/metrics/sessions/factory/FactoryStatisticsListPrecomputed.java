@@ -43,13 +43,15 @@ public class FactoryStatisticsListPrecomputed extends AbstractListValueResulted 
     public String[] getTrackedFields() {
         return new String[]{FACTORY,
                             TIME,
-                            RUN,
-                            DEPLOY,
-                            BUILD,
+                            RUNS,
+                            DEPLOYS,
+                            BUILDS,
                             SESSIONS,
                             AUTHENTICATED_SESSION,
                             CONVERTED_SESSION,
-                            WS_CREATED};
+                            WS_CREATED,
+                            ORG_ID,
+                            PROJECT_TYPE};
     }
 
     @Override

@@ -20,11 +20,11 @@
     <view name="factories" on-demand="true">
         <section name="factories">
             <row class="com.codenvy.analytics.services.view.TitleRow">
-                <parameter key="titles" value="Factory URL,Clicks,Sessions,Time"/>
+                <parameter key="titles" value="Factory URL,Project Type,Clicks,Sessions,Time,# Runs,# Deploys,# Builds,Organization"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="factory_statistics_list"/>
-                <parameter key="fields" value="factory,ws_created,sessions,time"/>
+                <parameter key="fields" value="factory,project_type,ws_created,sessions,time,runs,deploys,builds,org_id"/>
                 <parameter key="time-fields" value="time"/>
             </row>
         </section>
@@ -34,12 +34,12 @@
         <section name="factory">
             <row class="com.codenvy.analytics.services.view.TitleRow">
                 <parameter key="titles"
-                           value="Factory,Created By,Repository,Type,Organization ID,Affiliate ID,Number of Clicks,Number of Sessions,Number of Known,Number of Converted,Total Time,Number of Builds,Number of Runs,Number of Deploys"/>
+                           value="Factory,Created By,Repository,Project Type,Organization ID,Affiliate ID,Number of Clicks,Number of Sessions,Number of Known,Number of Converted,Total Time,Number of Builds,Number of Runs,Number of Deploys"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="factory_statistics_list"/>
                 <parameter key="fields"
-                           value="factory,user,repository,project_type,org_id,affiliate_id,ws_created,sessions,authenticated_factory_session,converted_factory_session,time,build,run,deploy"/>
+                           value="factory,user,repository,project_type,org_id,affiliate_id,ws_created,sessions,authenticated_factory_session,converted_factory_session,time,builds,runs,deploys"/>
                 <parameter key="time-fields" value="time"/>
                 <parameter key="date-fields" value="date"/>
             </row>
@@ -67,7 +67,7 @@
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="factory_users_list"/>
-                <parameter key="fields" value="user,sessions,time,run,build,deploy"/>
+                <parameter key="fields" value="user,sessions,time,runs,builds,deploys"/>
                 <parameter key="time-fields" value="time"/>
                 <parameter key="date-fields" value="date"/>
             </row>

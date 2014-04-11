@@ -148,7 +148,7 @@ p = FOREACH p4 GENERATE ws, user, p2::dt AS dt, p2::delta AS delta, p2::factory 
     (INDEXOF(factory, 'factory?id=', 0) > 0 ? 1 : 0) AS encodedFactory;
 
 result = FOREACH p GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('ws', ws), TOTUPLE('user', user), TOTUPLE('ide', ide),
-                        TOTUPLE('run', run), TOTUPLE('deploy', deploy), TOTUPLE('build', build), TOTUPLE('ws_created', ws_created),
+                        TOTUPLE('runs', run), TOTUPLE('deploys', deploy), TOTUPLE('builds', build), TOTUPLE('ws_created', ws_created),
                         TOTUPLE('factory', factory), TOTUPLE('referrer', referrer), TOTUPLE('org_id', orgId), TOTUPLE('affiliate_id', affiliateId),
                         TOTUPLE('authenticated_factory_session', auth), TOTUPLE('converted_factory_session', conv), TOTUPLE('time', delta),
                         TOTUPLE('session_id', id), TOTUPLE('user_created', user_created), TOTUPLE('encoded_factory', encodedFactory);
