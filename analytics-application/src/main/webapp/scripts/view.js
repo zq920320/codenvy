@@ -141,8 +141,10 @@ function View() {
 	 * Make table cells of column with certain name as linked with link = "columnLinkPrefix + {columnValue}"
 	 */
     function makeTableColumnLinked(table, columnName, columnLinkPrefix) {
+        var FACTORY_URL_COLUMN_NAME = "Factory URL";  // TODO move to the configuration
+        
         var columnIndex = analytics.util.getArrayValueIndex(table.columns, columnName);
-        if (columnIndex != null) {        
+        if (columnIndex != null) {
             for (var i = 0; i < table.rows.length; i++) {
                 var columnValue = table.rows[i][columnIndex];
                 
@@ -150,7 +152,14 @@ function View() {
                    table.rows[i][columnIndex] = getSystemMessageLabel(columnValue);    
                 } else {
                    var href = columnLinkPrefix + "=" + encodeURIComponent(columnValue);
-                   table.rows[i][columnIndex] = "<a href='" + href + "'>" + columnValue + "</a>";
+                   
+                   if (columnName.toLowerCase() == FACTORY_URL_COLUMN_NAME.toLowerCase()) {
+                       var title = columnValue;   // display initial url in title of link
+                       columnValue = analytics.util.getShortenFactoryUrl(columnValue);                       
+                       table.rows[i][columnIndex] = "<a href='" + href + "' title='" + title + "'>" + columnValue + "</a>";
+                   } else {
+                       table.rows[i][columnIndex] = "<a href='" + href + "'>" + columnValue + "</a>";
+                   }
                 }
             }
         }

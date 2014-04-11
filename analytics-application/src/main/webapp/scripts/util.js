@@ -109,7 +109,7 @@ function Util() {
 	    var subsetMap = {};
 	    for (var i in map) {
 	        
-	        for (var j in keyList) {
+	        for (var j in keyList) {getShortenFactoryUrl
 	            if (keyList[j] == i) {
 	                subsetMap[i] = map[i];
 	                break;
@@ -266,7 +266,33 @@ function Util() {
     function decodeDate(dateString) {
         return dateString.substring(0,4) + "-" + dateString.substring(4,6) + "-" + dateString.substring(6,8); 
     }
+
     
+    /**
+     * @returns shorten version of factory url, for example: 
+     * initial url: "https://codenvy.com/factory?v=1.0&pname=EspressoDemo&wname=EspressoLogic&action=openproject
+     *           &openfile=index.html&vcs=git&idcommit=none&vcsurl=https://github.com/EspressoLogicDemo/Demo_4xslT.git"
+     * shorten url: "1.0 | EspressoDemo | EspressoLogic | openproject | index.html | git | none | Demo_4xslT.git"
+     */
+    function getShortenFactoryUrl(factoryUrl) {
+        var shortenFactoryUrl = factoryUrl;
+        
+        shortenFactoryUrl = shortenFactoryUrl.replace(/^[\w\/.:]*[?]/, "");  // remove prefix "https://codenvy.com/factory?"
+        
+        // shortening url in parameter "vcsurl": 
+        // replace "vcsurl=https://github.com/EspressoLogicDemo/Demo_4xslT.git" on "vcsurl=Demo_4xslT.git"
+        var shortenVcsurl = shortenFactoryUrl.match(/vcsurl=[\w\/:.]*\/([\w]*)/);
+        if (shortenVcsurl != null) {
+            shortenVcsurl = shortenVcsurl[1];
+            shortenFactoryUrl = shortenFactoryUrl.replace(/vcsurl=[\w\/:.]*/, "vcsurl=" + shortenVcsurl);
+        }
+        
+        // replace all URL query parameter names on " | "
+        shortenFactoryUrl = shortenFactoryUrl.replace(/^[\w]+=/, "");  // replace first parameter name without starting "&"
+        shortenFactoryUrl = shortenFactoryUrl.replace(/&[\w]+=/g, " | ");
+            
+        return shortenFactoryUrl;
+    }
     
     /** ****************** library API ********** */
     return {
@@ -294,6 +320,8 @@ function Util() {
         clone: clone,
     	
         processUserLogOut: processUserLogOut,
+        
+        getShortenFactoryUrl: getShortenFactoryUrl,
         
         // date coding
         encodeDate: encodeDate,
