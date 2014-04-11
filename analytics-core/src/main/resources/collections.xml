@@ -49,22 +49,6 @@
         </indexes>
     </collection>
 
-    <collection name="created_projects">
-        <indexes>
-            <index name="user">
-                <field>user</field>
-                <field>date</field>
-            </index>
-            <index name="ws">
-                <field>ws</field>
-                <field>date</field>
-            </index>
-            <index name="date">
-                <field>date</field>
-            </index>
-        </indexes>
-    </collection>
-
     <collection name="destroyed_projects">
         <indexes>
             <index name="user">
@@ -840,6 +824,30 @@
             </index>
             <index name="ws_created ">
                 <field>ws_created</field>
+            </index>
+        </indexes>
+    </collection>
+
+    <collection name="projects_list">
+        <indexes>
+            <index name="user">
+                <field>user</field>
+                <field>date</field>
+            </index>
+            <index name="ws">
+                <field>ws</field>
+                <field>date</field>
+            </index>
+            <index name="project">
+                <field>project</field>
+                <field>date</field>
+            </index>
+            <index name="project_type">
+                <field>project_type</field>
+                <field>date</field>
+            </index>
+            <index name="date">
+                <field>date</field>
             </index>
         </indexes>
     </collection>

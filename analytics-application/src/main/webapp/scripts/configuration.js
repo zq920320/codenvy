@@ -269,6 +269,31 @@ function Configuration() {
             }
         },
 
+        userProjects: {
+            widgetLabel: "Projects",
+            presenterType: "HorizontalTablePresenter",
+            modelViewName: "user_projects",
+
+            isPaginable: true,    // default value is "false"
+            modelMetricName: "projects",
+
+            columnLinkPrefixList: {
+                "Workspace": "/analytics/pages/workspace-view.jsp?ws",
+            },
+
+            /** @see DatabaseTable::makeTableSortable() method docs */
+            clientSortParams: {
+                "ascSortColumnNumber": 0
+            },
+
+            mapColumnToServerSortParam: {
+                "Date": "date",
+                "Workspace": "ws",
+                "Project": "project",
+                "Type": "project_type",
+            }
+        },
+
         /** for Session View */
         sessions: {
             widgetLabel: "Sessions",
@@ -370,6 +395,31 @@ function Configuration() {
             isNeedToSaveInHistory: false,   // default value = true
         },
 
+        workspaceProjects: {
+            widgetLabel: "Projects",
+            presenterType: "HorizontalTablePresenter",
+            modelViewName: "workspace_projects",
+
+            isPaginable: true,    // default value is "false"
+            modelMetricName: "projects",
+
+            columnLinkPrefixList: {
+                "User": "/analytics/pages/user-view.jsp?user",
+            },
+
+            /** @see DatabaseTable::makeTableSortable() method docs */
+            clientSortParams: {
+                "ascSortColumnNumber": 0
+            },
+
+            mapColumnToServerSortParam: {
+                "Date": "date",
+                "User": "user",
+                "Project": "project",
+                "Type": "project_type",
+            }
+        },
+
         workspaceSessions: {
             widgetLabel: "Sessions",
             presenterType: "HorizontalTablePresenter",
@@ -415,6 +465,33 @@ function Configuration() {
                 "Name": "user",
                 "Sessions": "sessions",
                 "Time": "time",
+            },
+        },
+
+        /** for Project View */
+        projects: {
+            widgetLabel: "Projects",
+            presenterType: "EntryViewPresenter",
+            modelViewName: "projects",
+            modelMetricName: "projects",
+            columnLinkPrefixList: {
+                "Workspace": "/analytics/pages/workspace-view.jsp?ws",
+                "User": "/analytics/pages/user-view.jsp?user",
+            },
+
+            defaultServerSortParams: "-date",
+
+            /** @see DatabaseTable::makeTableSortable() method docs */
+            clientSortParams: {
+                "ascSortColumnNumber": 0
+            },
+
+            mapColumnToServerSortParam: {
+                "Date": "date",
+                "Project": "project",
+                "Type": "project_type",
+                "Workspace": "ws",
+                "User": "user",
             },
         },
 
@@ -529,6 +606,8 @@ function Configuration() {
         "ws",
         "factory",
         "encoded_factory",
+        "project",
+        "project_type",
     ];
 
     /** see method analytics.main.getParamsFromButtons() */
@@ -548,6 +627,8 @@ function Configuration() {
         "ws",                // workspaces-view
         "factory",           // factories-view
         "encoded_factory",   // factories-view
+        "project",           // projects-view
+        "project_type",      // projects-view
     ];
 
     /** url params which are passed from other pages */
@@ -566,6 +647,7 @@ function Configuration() {
         "factory",     // factories-view > factory-view; user-view >
         // factory-view; workspace-view > factory-view; top
         // metrics report > factory-view
+        "project",      // projects-view > project-view
     ];
 
     /** Global parameters stored in Browser Storage */

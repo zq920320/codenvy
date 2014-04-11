@@ -540,9 +540,8 @@ public class TestAnalysisView extends BaseTest {
 
         /** create collections "created_project" to calculate "users_who_created_project" metric */
         builder.put(Parameters.WS, Parameters.WS_TYPES.PERSISTENT.toString());
-        builder.put(Parameters.EVENT, "project-created");
-        builder.put(Parameters.STORAGE_TABLE, "created_projects");
-        pigServer.execute(ScriptType.EVENTS, builder.build());
+        builder.put(Parameters.STORAGE_TABLE, "projects_list");
+        pigServer.execute(ScriptType.PROJECTS, builder.build());
 
         /** create collections "builds" to calculate "users_who_built" metric */
         builder.put(Parameters.WS, Parameters.WS_TYPES.PERSISTENT.toString());

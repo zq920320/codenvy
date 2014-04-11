@@ -19,17 +19,17 @@
 
 package com.codenvy.analytics.metrics.projects;
 
-import com.codenvy.analytics.metrics.AbstractLongValueResulted;
+import com.codenvy.analytics.metrics.AbstractCount;
 import com.codenvy.analytics.metrics.MetricType;
 
 import javax.annotation.security.RolesAllowed;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
-public class CreatedProjects extends AbstractLongValueResulted {
+public class CreatedProjects extends AbstractCount {
 
     public CreatedProjects() {
-        super(MetricType.CREATED_PROJECTS);
+        super(MetricType.CREATED_PROJECTS, MetricType.PROJECTS_LIST);
     }
 
     @Override
