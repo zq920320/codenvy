@@ -17,22 +17,33 @@
  */
 package com.codenvy.analytics.metrics.projects;
 
-import com.codenvy.analytics.metrics.AbstractCount;
+import com.codenvy.analytics.metrics.AbstractListValueResulted;
 import com.codenvy.analytics.metrics.MetricType;
 
 import javax.annotation.security.RolesAllowed;
 
 /**
- * @author Anatoliy Bazko
+ * @author Alexander Reshetnyak
  */
-@RolesAllowed(value = {"user", "system/admin", "system/manager"})
-public class Projects  extends AbstractCount {
-    public Projects() {
-        super(MetricType.PROJECTS, MetricType.PROJECTS_LIST);
+@RolesAllowed(value = {"system/admin", "system/manager"})
+public class ProjectsList extends AbstractListValueResulted {
+
+    public ProjectsList() {
+        super(MetricType.PROJECTS_LIST);
     }
 
     @Override
     public String getDescription() {
-        return "The total number of projects";
+        return "Users' projects data";
+    }
+
+    @Override
+    public String[] getTrackedFields() {
+        return new String[]{DATE,
+                            USER,
+                            WS,
+                            PROJECT,
+                            PROJECT_TYPE
+        };
     }
 }

@@ -265,27 +265,29 @@ function Configuration() {
             }
         },
 
-        userActivity: {
-            widgetLabel: "User Logs",
+        userProjects: {
+            widgetLabel: "Projects",
             presenterType: "HorizontalTablePresenter",
-            modelViewName: "user_activity",
+            modelViewName: "user_projects",
 
             isPaginable: true,    // default value is "false"
-            modelMetricName: "users_activity",
+            modelMetricName: "projects",
 
-            defaultServerSortParams: "-date",
+            columnLinkPrefixList: {
+                "Workspace": "/analytics/pages/workspace-view.jsp?ws",
+            },
 
-            doNotDisplayCSVButton: true,   // default value is "false"
-            
             /** @see DatabaseTable::makeTableSortable() method docs */
             clientSortParams: {
-                "descSortColumnNumber": 0
+                "ascSortColumnNumber": 0
             },
-            
+
             mapColumnToServerSortParam: {
                 "Date": "date",
-                "Console Log": "message",
-            },
+                "Workspace": "ws",
+                "Project": "project",
+                "Type": "project_type",
+            }
         },
 
         /** for Session View */
@@ -382,6 +384,31 @@ function Configuration() {
             isNeedToSaveInHistory: false,   // default value = true
         },
 
+        workspaceProjects: {
+            widgetLabel: "Projects",
+            presenterType: "HorizontalTablePresenter",
+            modelViewName: "workspace_projects",
+
+            isPaginable: true,    // default value is "false"
+            modelMetricName: "projects",
+
+            columnLinkPrefixList: {
+                "User": "/analytics/pages/user-view.jsp?user",
+            },
+
+            /** @see DatabaseTable::makeTableSortable() method docs */
+            clientSortParams: {
+                "ascSortColumnNumber": 0
+            },
+
+            mapColumnToServerSortParam: {
+                "Date": "date",
+                "User": "user",
+                "Project": "project",
+                "Type": "project_type",
+            }
+        },
+
         workspaceSessions: {
             widgetLabel: "Sessions",
             presenterType: "HorizontalTablePresenter",
@@ -430,26 +457,30 @@ function Configuration() {
             },
         },
 
-        workspaceActivity: {
-            widgetLabel: "Workspace Logs",
-            presenterType: "HorizontalTablePresenter",
-            modelViewName: "workspace_activity",
-
-            isPaginable: true,    // default value is "false"
-            modelMetricName: "users_activity",
+        /** for Project View */
+        projects: {
+            widgetLabel: "Projects",
+            presenterType: "EntryViewPresenter",
+            modelViewName: "projects",
+            modelMetricName: "projects",
+            columnLinkPrefixList: {
+                "Workspace": "/analytics/pages/workspace-view.jsp?ws",
+                "User": "/analytics/pages/user-view.jsp?user",
+            },
 
             defaultServerSortParams: "-date",
 
-            doNotDisplayCSVButton: true,   // default value is "false"
-            
             /** @see DatabaseTable::makeTableSortable() method docs */
             clientSortParams: {
-                "descSortColumnNumber": 0
+                "ascSortColumnNumber": 0
             },
-            
+
             mapColumnToServerSortParam: {
                 "Date": "date",
-                "Console Log": "message",
+                "Project": "project",
+                "Type": "project_type",
+                "Workspace": "ws",
+                "User": "user",
             },
         },
 
@@ -573,6 +604,8 @@ function Configuration() {
         "encoded_factory",
         "time_interval",
         "expanded_metric_name",
+        "project",
+        "project_type",
     ];
 
     /** see method analytics.main.getParamsFromButtons() */
@@ -594,6 +627,8 @@ function Configuration() {
         "encoded_factory",   // factories-view
         "expanded_metric_name",    // all entry views 
         "time_interval",   // drill down page
+        "project",           // projects-view
+        "project_type",      // projects-view
     ];
 
     /** url params which are passed from other pages */
@@ -612,6 +647,7 @@ function Configuration() {
         "factory",     // factories-view > factory-view; user-view >
                         // factory-view; workspace-view > factory-view; top
                         // metrics report > factory-view
+        "project",      // projects-view > project-view
     ];
     
     /** Global parameters stored in Browser Storage */

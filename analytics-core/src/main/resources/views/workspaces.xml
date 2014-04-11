@@ -20,11 +20,11 @@
     <view name="workspaces" on-demand="true">
         <section name="workspaces">
             <row class="com.codenvy.analytics.services.view.TitleRow">
-                <parameter key="titles" value="Workspace,Time,Sessions"/>
+                <parameter key="titles" value="Workspace,Time,Sessions,# Runs,# Debugs,# Builds,# Deploys,Invites,Joined Users"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="workspaces_statistics_list"/>
-                <parameter key="fields" value="ws,time,sessions"/>
+                <parameter key="fields" value="ws,time,sessions,runs,debugs,builds,deploys,invites,joined_users"/>
                 <parameter key="time-fields" value="time"/>
             </row>
         </section>
@@ -72,15 +72,14 @@
         </section>
     </view>
 
-    <view name="workspace_activity" on-demand="true">
-        <section name="workspace_activity">
+    <view name="workspace_projects" on-demand="true">
+        <section name="workspace_projects">
             <row class="com.codenvy.analytics.services.view.TitleRow">
-                <parameter key="titles" value="Date,Console Log"/>
-
+                <parameter key="titles" value="Date,User,Project,Type"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="users_activity_list"/>
-                <parameter key="fields" value="date,message"/>
+                <parameter key="name" value="projects_list"/>
+                <parameter key="fields" value="date,user,project,project_type"/>
                 <parameter key="date-fields" value="date"/>
             </row>
         </section>

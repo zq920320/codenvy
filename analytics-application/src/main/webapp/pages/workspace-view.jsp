@@ -30,7 +30,7 @@
     <div class="row-fluid">
         <div>
             <div class="well topFilteringPanel">
-                <div id="filter-by" class="left" targetWidgets="workspaceSessions,workspaceUserList,workspaceActivity,workspaceUserEvents">
+                <div id="filter-by" class="left" targetWidgets="workspaceProjects,workspaceSessions,workspaceUserList">
                     <div class="collabsiblePanelTitle">Filter</div>
                     <div class="collabsiblePanelBody">
                         <table>
@@ -67,9 +67,9 @@
                 <div class="single-column-gadget">
                     <div class="view">
                         <div class="tables">
+                            <div class="item" id="workspaceProjects"></div>
                             <div class="item" id="workspaceSessions"></div>
                             <div class="item" id="workspaceUserList"></div>
-                            <div class="item" id="workspaceActivity"></div>
                         </div>
                     </div>
                 </div>

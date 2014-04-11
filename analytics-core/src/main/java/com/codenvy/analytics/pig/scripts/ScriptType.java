@@ -87,6 +87,7 @@ public enum ScriptType {
     USERS_UPDATE_PROFILES,
     USERS_STATISTICS,
     USERS_ACTIVITY,
+    PROJECTS,
     USERS_EVENTS {
         @Override
         public Set<Parameters> getParams() {
