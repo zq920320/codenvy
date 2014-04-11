@@ -51,7 +51,6 @@ public abstract class ReadBasedMetric extends AbstractMetric {
     public static final Pattern ANONYMOUS_USER  =
             Pattern.compile("^(ANONYMOUSUSER_).*", Pattern.CASE_INSENSITIVE);
 
-    public static final Pattern NON_DEFAULT_WS = Pattern.compile("^(?!DEFAULT).*", Pattern.CASE_INSENSITIVE);
     public static final Pattern PERSISTENT_WS  = Pattern.compile("^(?!(TMP-|DEFAULT)).*", Pattern.CASE_INSENSITIVE);
     public static final Pattern TEMPORARY_WS   = Pattern.compile("^(TMP-).*", Pattern.CASE_INSENSITIVE);
 
