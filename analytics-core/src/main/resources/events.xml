@@ -192,11 +192,24 @@
             <param>ID</param>
         </parameters>
     </event>
+    <event name="workspace-created">
+        <description>Workspace created</description>
+        <parameters>
+            <param>WS</param>
+            <param>USER</param>
+        </parameters>
+    </event>
     <event name="tenant-created">
         <description>Workspace created</description>
         <parameters>
             <param>WS</param>
             <param>USER</param>
+        </parameters>
+    </event>
+    <event name="workspace-started">
+        <description>Workspace started</description>
+        <parameters>
+            <param>WS</param>
         </parameters>
     </event>
     <event name="tenant-started">
@@ -205,8 +218,20 @@
             <param>WS</param>
         </parameters>
     </event>
+    <event name="workspace-stopped">
+        <description>Workspace stopped</description>
+        <parameters>
+            <param>WS</param>
+        </parameters>
+    </event>
     <event name="tenant-stopped">
         <description>Workspace stopped</description>
+        <parameters>
+            <param>WS</param>
+        </parameters>
+    </event>
+    <event name="workspace-destroyed">
+        <description>Workspace destroyed</description>
         <parameters>
             <param>WS</param>
         </parameters>
