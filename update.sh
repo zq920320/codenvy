@@ -40,7 +40,7 @@ deleteFileIfExists() {
 }
 
     echo "==== Step [1/7] =======================> [Uploading a new Tomcat]"
-    scp -i ~/.ssh/${SSH_KEY_NAME} analytics-tomcat-pkg/target/${filename} ${SSH_AS_USER_NAME}@${AS_IP}:${filename}
+    scp -o StrictHostKeyChecking=no -i ~/.ssh/${SSH_KEY_NAME} analytics-tomcat-pkg/target/${filename} ${SSH_AS_USER_NAME}@${AS_IP}:${filename}
     echo "==== Step [2/7] =======================> [Stoping Tomcat]"
     ssh -i ~/.ssh/${SSH_KEY_NAME} ${SSH_AS_USER_NAME}@${AS_IP} "cd ${home}/bin/;if [ -f catalina.sh ]; then ./catalina.sh stop; fi"
     echo "==== Step [3/7] =======================> [Server is stopped]"
@@ -56,7 +56,7 @@ deleteFileIfExists() {
     while [ "${AS_STATE}" != "Started" ]; do
 
         deleteFileIfExists ${testfile}
-        scp -i ~/.ssh/${SSH_KEY_NAME} ${SSH_AS_USER_NAME}@${AS_IP}:${home}/logs/catalina.out ${testfile}
+        scp -o StrictHostKeyChecking=no -i ~/.ssh/${SSH_KEY_NAME} ${SSH_AS_USER_NAME}@${AS_IP}:${home}/logs/catalina.out ${testfile}
 
         if grep -Fq "Server startup in" ${testfile}; then
             echo "==== Step [7/7] ======================> [Analytics is started]"
