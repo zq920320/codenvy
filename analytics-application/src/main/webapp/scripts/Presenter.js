@@ -28,6 +28,10 @@ Presenter.prototype.ASCENDING_ORDER_PREFIX = "+";
 Presenter.prototype.DESCENDING_ORDER_PREFIX = "-";
 Presenter.prototype.DEFAULT_ORDER_PREFIX = Presenter.prototype.ASCENDING_ORDER_PREFIX;
 
+Presenter.prototype.EVENT_PARAMETER_NAME_FIELD = "event_parameter_name";
+Presenter.prototype.EVENT_PARAMETER_VALUE_FIELD = "event_parameter_value";
+Presenter.prototype.EVENT_PARAMETER_FIELD = "parameters";
+
 Presenter.prototype.setView = function(newView) {
     this.view = newView;
 };
@@ -48,6 +52,14 @@ Presenter.prototype.getModelParams = function(viewParams) {
     var modelParams = {};
 
     var viewParamNames = Object.keys(viewParams);
+    
+    // construct event parameter
+    if (typeof viewParams[this.EVENT_PARAMETER_NAME_FIELD] != "undefined"
+        && typeof viewParams[this.EVENT_PARAMETER_VALUE_FIELD] != "undefined") {
+        modelParams[this.EVENT_PARAMETER_FIELD] = 
+            viewParams[this.EVENT_PARAMETER_NAME_FIELD] + "=" + viewParams[this.EVENT_PARAMETER_VALUE_FIELD];
+    }
+    
     for (var i in viewParamNames) {
         var viewParamName = viewParamNames[i]
         if (analytics.configuration.isParamRegistered(viewParamName)) {

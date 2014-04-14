@@ -30,13 +30,49 @@
     <div class="row-fluid">
         <div>
             <div class="well topFilteringPanel">
-                <div id="filter-by" class="left">
-                    <label>
-                        <input type="checkbox" checked="checked" id="show-session-events" 
-                           inverseValue="~session-started,~session-finished"
-                           targetWidgets="userSessionActivity" />
-                        Micro Events
-                    </label>
+                <label>
+                    <input type="checkbox" checked="checked" id="show-session-events" 
+                       inverseValue="~session-started,~session-finished"
+                       targetWidgets="userSessionActivity" />
+                    Micro Events
+                </label>
+                <div id="filter-by" class="left" targetWidgets="userSessionActivity">
+                    <div class="collabsiblePanelTitle">Filter</div>
+                    <div class="collabsiblePanelBody">
+                        <table>
+                            <tr>
+                               <td><label for="input-action">Event:</label></td>
+                               <td>
+                                   <div class="filter-item">
+                                       <input type="text" id="input-action" name="action" class="text-box"/>
+                                   </div>
+                               </td>
+                            </tr>
+                            <tr>
+                               <td><label for="input-event_parameter_name">Parameter Name:</label></td>
+                               <td>
+                                   <div class="event_parameter_name">
+                                       <input type="text" id="input-event_parameter_name" name="event_parameter_name" class="text-box"/>
+                                   </div>
+                               </td>
+                            </tr>
+                            <tr>
+                               <td><label for="input-event_parameter_value">Parameter Value:</label></td>
+                               <td>
+                                   <div class="filter-item">
+                                       <input type="text" id="input-event_parameter_value" name="event_parameter_value" class="text-box"/>
+                                   </div>
+                               </td>
+                            </tr>
+                            <tr>
+                               <td></td>
+                               <td><div class="filter-item">
+                                    <button class="btn command-btn btn-primary">Filter</button>                    
+                                    <button id="clearSelectionBtn" class="btn btn-small clear-btn">Clear</button>
+                               </div></td>
+                            </tr>
+                        </table>
+                    </div>
                 </div>
             </div>
         

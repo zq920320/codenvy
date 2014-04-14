@@ -608,6 +608,8 @@ function Configuration() {
         "encoded_factory",
         "project",
         "project_type",
+        "action",
+        "parameters",
     ];
 
     /** see method analytics.main.getParamsFromButtons() */
@@ -624,6 +626,9 @@ function Configuration() {
         "from_date",         // user-view, workspace-view
         "to_date",           // user-view, workspace-view
         "event",             // session-view
+        "action",            // session-view
+        "event_parameter_name",    // session-view
+        "event_parameter_value",   // session-view
         "ws",                // workspaces-view
         "factory",           // factories-view
         "encoded_factory",   // factories-view
