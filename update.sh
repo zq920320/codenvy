@@ -21,15 +21,16 @@ if [ -z "$1" ] || [ "$1" == "prod" ]; then
     SSH_KEY_NAME=cl-server-prod-20130219
     SSH_AS_USER_NAME=logreader
     AS_IP=syslog.codenvycorp.com
-    echo "Production will be updated"
+    echo "============[ Production will be updated ]=============="
 elif [ "$1" == "stg" ]; then
     SSH_KEY_NAME=as1-cldide_cl-server.skey
     SSH_AS_USER_NAME=codenvy
     AS_IP=syslog.codenvy-stg.com
-    echo "Stagin will be updated"
+    echo "============[ Stagin will be updated ]=============="
 else
     exit
 fi
+home=/home/${SSH_AS_USER_NAME}/analytics-tomcat
 
 deleteFileIfExists() {
     if [ -f $1 ]; then
@@ -43,7 +44,6 @@ deleteFileIfExists() {
     echo "==== Step [2/7] =======================> [Stoping Tomcat]"
     ssh -i ~/.ssh/${SSH_KEY_NAME} ${SSH_AS_USER_NAME}@${AS_IP} "cd ${home}/bin/;if [ -f catalina.sh ]; then ./catalina.sh stop; fi"
     echo "==== Step [3/7] =======================> [Server is stopped]"
-
     echo "==== Step [4/7] =======================> [Cleaning up]"
     ssh -i ~/.ssh/${SSH_KEY_NAME} ${SSH_AS_USER_NAME}@${AS_IP} "rm -rf ${home}"
     echo "==== Step [5/7] =======================> [Unpacking resources]"
@@ -55,16 +55,14 @@ deleteFileIfExists() {
     testfile=/tmp/catalina.log
     while [ "${AS_STATE}" != "Started" ]; do
 
-    deleteFileIfExists ${testfile}
+        deleteFileIfExists ${testfile}
+        scp -i ~/.ssh/${SSH_KEY_NAME} ${SSH_AS_USER_NAME}@${AS_IP}:${home}/logs/catalina.out ${testfile}
 
-    scp -i ~/.ssh/${SSH_KEY_NAME} ${SSH_AS_USER_NAME}@${AS_IP}:${home}/logs/catalina.out ${testfile}
-
-      if grep -Fq "Server startup in" ${testfile}
-        then
-         echo "==== Step [7/7] ======================> [Analytics is started]"
-         AS_STATE=Started
-      fi
-         sleep 5
+        if grep -Fq "Server startup in" ${testfile}; then
+            echo "==== Step [7/7] ======================> [Analytics is started]"
+            AS_STATE=Started
+        fi
+            sleep 5
     done
     echo ""
     echo ""
