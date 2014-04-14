@@ -39,7 +39,7 @@ import static org.testng.AssertJUnit.assertEquals;
 public class TestUtils extends BaseTest {
 
     private static final String SYSTEM_USER = "user@codenvy.com";
-    private static final String ANY_USER    = "user@gmail.com";
+    private static final String SOME_USER   = "user@gmail.com";
 
     private Principal       principal;
     private SecurityContext securityContext;
@@ -71,7 +71,7 @@ public class TestUtils extends BaseTest {
     @Test
     public void restrictAccessForUserIfRolesAreEmpty() throws Exception {
         when(securityContext.getUserPrincipal()).thenReturn(principal);
-        when(principal.getName()).thenReturn(ANY_USER);
+        when(principal.getName()).thenReturn(SOME_USER);
 
         assertEquals(false, Utils.isRolesAllowed(metricInfoDTO, securityContext));
     }
@@ -80,7 +80,7 @@ public class TestUtils extends BaseTest {
     public void allowAccessForSystemUserIfUserRoles() throws Exception {
         when(securityContext.getUserPrincipal()).thenReturn(principal);
         when(principal.getName()).thenReturn(SYSTEM_USER);
-        when(metricInfoDTO.getRolesAllowed()).thenReturn(Arrays.asList("user"));
+        when(metricInfoDTO.getRolesAllowed()).thenReturn(Arrays.asList(SOME_USER));
 
         assertEquals(true, Utils.isRolesAllowed(metricInfoDTO, securityContext));
     }
@@ -88,7 +88,7 @@ public class TestUtils extends BaseTest {
     @Test
     public void allowAccessForUserIfAnyRoles() throws Exception {
         when(securityContext.getUserPrincipal()).thenReturn(principal);
-        when(principal.getName()).thenReturn(ANY_USER);
+        when(principal.getName()).thenReturn(SOME_USER);
         when(metricInfoDTO.getRolesAllowed()).thenReturn(Arrays.asList("any"));
 
         assertEquals(true, Utils.isRolesAllowed(metricInfoDTO, securityContext));
@@ -98,7 +98,7 @@ public class TestUtils extends BaseTest {
     public void allowAccessIfRolesSuit() throws Exception {
         when(securityContext.getUserPrincipal()).thenReturn(principal);
         when(securityContext.isUserInRole("user")).thenReturn(true);
-        when(principal.getName()).thenReturn(ANY_USER);
+        when(principal.getName()).thenReturn(SOME_USER);
         when(metricInfoDTO.getRolesAllowed()).thenReturn(Arrays.asList("user"));
 
         assertEquals(true, Utils.isRolesAllowed(metricInfoDTO, securityContext));
@@ -108,7 +108,7 @@ public class TestUtils extends BaseTest {
     public void restrictAccessIfRolesNotSuit() throws Exception {
         when(securityContext.getUserPrincipal()).thenReturn(principal);
         when(securityContext.isUserInRole("user")).thenReturn(false);
-        when(principal.getName()).thenReturn(ANY_USER);
+        when(principal.getName()).thenReturn(SOME_USER);
         when(metricInfoDTO.getRolesAllowed()).thenReturn(Arrays.asList("user"));
 
         assertEquals(false, Utils.isRolesAllowed(metricInfoDTO, securityContext));
@@ -119,20 +119,10 @@ public class TestUtils extends BaseTest {
         assertEquals(validated, Utils.isSystemUser(login));
     }
 
-    @Test(dataProvider = "systemLoginProvider")
-    public void testIsSystemAdmin(String login, boolean validated) throws Exception {
-        when(securityContext.getUserPrincipal()).thenReturn(principal);
-        when(securityContext.isUserInRole("system/admin")).thenReturn(false);
-        when(securityContext.isUserInRole("system/manager")).thenReturn(false);
-        when(principal.getName()).thenReturn(ANY_USER);
-
-        assertEquals(validated, Utils.isSystemUser(login, securityContext));
-    }
-
     @DataProvider(name = "systemLoginProvider")
     public Object[][] systemLoginProvider() {
         return new Object[][]{{SYSTEM_USER, true},
-                              {ANY_USER, false},
+                              {SOME_USER, false},
                               {"codenvy.com", false}};
     }
 }
