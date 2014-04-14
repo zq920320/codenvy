@@ -17,10 +17,19 @@
 
 #!/bin/bash
 filename=`ls analytics-tomcat-pkg/target | grep analytics-tomcat-pkg`
-SSH_KEY_NAME=cl-server-prod-20130219
-SSH_AS_USER_NAME=logreader
-AS_IP=syslog.codenvycorp.com
-home=/home/logreader/analytics-tomcat
+if [ -z "$1" ] || [ "$1" == "prod" ]; then
+    SSH_KEY_NAME=cl-server-prod-20130219
+    SSH_AS_USER_NAME=logreader
+    AS_IP=syslog.codenvycorp.com
+    echo "Production will be updated"
+elif [ "$1" == "stg" ]; then
+    SSH_KEY_NAME=as1-cldide_cl-server.skey
+    SSH_AS_USER_NAME=codenvy
+    AS_IP=syslog.codenvy-stg.com
+    echo "Stagin will be updated"
+else
+    exit
+fi
 
 deleteFileIfExists() {
     if [ -f $1 ]; then
