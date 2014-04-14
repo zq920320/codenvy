@@ -17,7 +17,7 @@
  */
 package com.codenvy.service.factory;
 
-import com.codenvy.api.organization.server.SubscriptionService;
+import com.codenvy.api.account.server.SubscriptionService;
 
 /**
  * @author Sergii Kabashniuk
