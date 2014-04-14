@@ -21,6 +21,8 @@ import com.codenvy.api.auth.AuthenticationDao;
 import com.codenvy.api.auth.AuthenticationException;
 import com.codenvy.api.auth.UniquePrincipal;
 import com.codenvy.api.auth.shared.dto.Credentials;
+import com.codenvy.api.auth.shared.dto.Token;
+import com.codenvy.dto.server.DtoFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -128,7 +130,7 @@ public class AuthenticationDaoImpl implements AuthenticationDao {
         if (cookieBuilder != null) {
             cookieBuilder.setCookies(builder, token, secure);
         }
-        builder.entity(Collections.singletonMap("token", token));
+        builder.entity(DtoFactory.getInstance().createDto(Token.class).withValue(token));
         return builder.build();
     }
 

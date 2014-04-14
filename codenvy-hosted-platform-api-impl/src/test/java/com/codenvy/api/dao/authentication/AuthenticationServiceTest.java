@@ -22,7 +22,9 @@ import com.codenvy.api.auth.AuthenticationDao;
 import com.codenvy.api.auth.AuthenticationExceptionMapper;
 import com.codenvy.api.auth.AuthenticationService;
 import com.codenvy.api.auth.UniquePrincipal;
+import com.codenvy.api.auth.server.dto.DtoServerImpls;
 import com.codenvy.api.auth.shared.dto.Credentials;
+import com.codenvy.api.auth.shared.dto.Token;
 import com.codenvy.dto.server.DtoFactory;
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.mapper.ObjectMapper;
@@ -124,7 +126,7 @@ public class AuthenticationServiceTest {
 
 
         // when
-        TokenResponse response = given()
+        Token response = given()
                 .contentType(ContentType.JSON)
                 .body(
                         DtoFactory.getInstance().createDto(Credentials.class)
@@ -138,11 +140,11 @@ public class AuthenticationServiceTest {
                 .cookie("logged_in", "true")
 
                 .when()
-                .post("/auth/login").as(TokenResponse.class, ObjectMapper.GSON);
+                .post("/auth/login").as(DtoServerImpls.TokenImpl.class, ObjectMapper.GSON);
 
         ArgumentCaptor<AccessTicket> argument = ArgumentCaptor.forClass(AccessTicket.class);
         verify(ticketManager).putAccessTicket(argument.capture());
-        assertEquals(response.getToken(), token);
+        assertEquals(response.getValue(), token);
         assertEquals(argument.getValue().getAccessToken(), token);
     }
 
@@ -260,7 +262,7 @@ public class AuthenticationServiceTest {
 
 
         // when
-        TokenResponse response = given()
+        Token response = given()
                 .contentType(ContentType.JSON)
                 .cookie("session-access-key", tokenOld)
                 .body(
@@ -275,12 +277,12 @@ public class AuthenticationServiceTest {
                 .cookie("logged_in", "true")
 
                 .when()
-                .post("/auth/login").as(TokenResponse.class, ObjectMapper.GSON);
+                .post("/auth/login").as(DtoServerImpls.TokenImpl.class, ObjectMapper.GSON);
 
         ArgumentCaptor<AccessTicket> argument = ArgumentCaptor.forClass(AccessTicket.class);
         verify(ticketManager).removeTicket(eq(tokenOld));
         verify(ticketManager).putAccessTicket(argument.capture());
-        assertEquals(response.getToken(), token);
+        assertEquals(response.getValue(), token);
         assertEquals(argument.getValue().getAccessToken(), token);
 
     }
@@ -328,18 +330,5 @@ public class AuthenticationServiceTest {
                 .when()
                 .post("/auth/logout");
 
-    }
-
-
-    public static class TokenResponse {
-        private String token;
-
-        public String getToken() {
-            return token;
-        }
-
-        public void setToken(String token) {
-            this.token = token;
-        }
     }
 }

@@ -232,6 +232,7 @@ public class UserDaoImpl implements UserDao {
             }
             context = getLdapContext();
             newContext = context.createSubcontext(getUserDn(user.getId()), userAttributesMapper.toAttributes(user));
+            LOG.info("EVENT#user-created# ALIASES#{}# USER-ID#{}#", user.getAliases(), user.getId());
         } catch (NameAlreadyBoundException e) {
             throw new UserException(String.format("Unable create new user '%s'. User already exists.", user.getId()), e);
         } catch (NamingException e) {
@@ -273,10 +274,18 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public void remove(String id) throws UserException {
+        User user;
+        try {
+            user = getById(id);
+        } catch (UserException e) {
+            throw new UserNotFoundException(id);
+        }
+
         InitialLdapContext context = null;
         try {
             context = getLdapContext();
             context.destroySubcontext(getUserDn(id));
+            LOG.info("EVENT#user-removed# ALIASES#{}# USER-ID#{}#", user.getAliases(), user.getId());
         } catch (NameNotFoundException e) {
             throw new UserNotFoundException(id);
         } catch (NamingException e) {
