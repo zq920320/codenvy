@@ -1,7 +1,6 @@
 package com.codenvy.migration.daoExport;
 
 import com.codenvy.api.account.server.exception.AccountException;
-import com.codenvy.api.organization.server.exception.OrganizationException;
 import com.codenvy.api.user.server.exception.MembershipException;
 import com.codenvy.api.user.shared.dto.Member;
 

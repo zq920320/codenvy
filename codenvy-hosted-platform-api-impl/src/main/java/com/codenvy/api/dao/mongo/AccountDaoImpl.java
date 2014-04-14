@@ -172,14 +172,14 @@ public class AccountDaoImpl implements AccountDao {
     }
 
     @Override
-    public List<Member> getMembers(String orgId) throws AccountException {
+    public List<Member> getMembers(String accountId) throws AccountException {
         List<Member> result = new ArrayList<>();
         try (DBCursor cursor = memberCollection.find()) {
             for (DBObject one : cursor) {
                 BasicDBList members = (BasicDBList)one.get("members");
                 for (Object memberObj : members) {
                     Member member = DtoFactory.getInstance().createDtoFromJson(memberObj.toString(), Member.class);
-                    if (orgId.equals(member.getAccountId())) {
+                    if (accountId.equals(member.getAccountId())) {
                         result.add(member);
                     }
                 }

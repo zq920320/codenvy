@@ -3,7 +3,6 @@ package com.codenvy.migration.daoExport;
 import com.codenvy.api.account.server.exception.AccountException;
 import com.codenvy.api.account.shared.dto.Account;
 import com.codenvy.api.account.shared.dto.Subscription;
-import com.codenvy.api.organization.server.exception.OrganizationException;
 import com.codenvy.api.user.server.exception.UserException;
 import com.codenvy.api.user.server.exception.UserProfileException;
 import com.codenvy.api.user.shared.dto.Profile;

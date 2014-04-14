@@ -203,7 +203,7 @@ public class AccountDaoTest extends BaseDaoTest {
         collection.insert(
                 new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME).append("owner", ACCOUNT_OWNER));
 
-        List<String> roles = Arrays.asList("account/admin", "account/developer");
+        List<String> roles = Arrays.asList("account/admin", "account/manager");
         Member member1 = DtoFactory.getInstance().createDto(Member.class)
                                    .withUserId(USER_ID)
                                    .withAccountId(ACCOUNT_ID)
@@ -215,7 +215,7 @@ public class AccountDaoTest extends BaseDaoTest {
 
     @Test
     public void shouldAddMember() throws Exception {
-        List<String> roles = Arrays.asList("account/admin", "account/developer");
+        List<String> roles = Arrays.asList("account/admin", "account/manager");
         collection.insert(new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME)
                                                              .append("owner", ACCOUNT_OWNER));
         Member member = DtoFactory.getInstance().createDto(Member.class)
@@ -236,7 +236,7 @@ public class AccountDaoTest extends BaseDaoTest {
 
     @Test
     public void shouldFindMembers() throws Exception {
-        List<String> roles = Arrays.asList("account/admin", "account/developer");
+        List<String> roles = Arrays.asList("account/admin", "account/manager");
         collection.insert(new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME)
                                                              .append("owner", ACCOUNT_OWNER));
         Member member1 = DtoFactory.getInstance().createDto(Member.class)
@@ -258,7 +258,7 @@ public class AccountDaoTest extends BaseDaoTest {
 
     @Test
     public void shouldRemoveMembers() throws Exception {
-        List<String> roles = Arrays.asList("account/admin", "account/developer");
+        List<String> roles = Arrays.asList("account/admin", "account/manager");
         collection.insert(new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME)
                                                              .append("owner", ACCOUNT_OWNER));
         Member member1 = DtoFactory.getInstance().createDto(Member.class)
@@ -351,7 +351,7 @@ public class AccountDaoTest extends BaseDaoTest {
     public void shouldRemoveSubscription() throws Exception {
         collection.insert(new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME).append("owner", ACCOUNT_OWNER));
         collection.insert(new BasicDBObject("id", "another_account").append("name", ACCOUNT_NAME).append("owner",
-                                                                                                              ACCOUNT_OWNER));
+                                                                                                         ACCOUNT_OWNER));
         Subscription ss = DtoFactory.getInstance().createDto(Subscription.class)
                                     .withId(SUBSCRIPTION_ID)
                                     .withAccountId(ACCOUNT_ID)
