@@ -119,6 +119,16 @@ public class TestUtils extends BaseTest {
         assertEquals(validated, Utils.isSystemUser(login));
     }
 
+    @Test(dataProvider = "systemLoginProvider")
+    public void testIsSystemAdmin(String login, boolean validated) throws Exception {
+        when(securityContext.getUserPrincipal()).thenReturn(principal);
+        when(securityContext.isUserInRole("system/admin")).thenReturn(false);
+        when(securityContext.isUserInRole("system/manager")).thenReturn(false);
+        when(principal.getName()).thenReturn(ANY_USER);
+
+        assertEquals(validated, Utils.isSystemUser(login, securityContext));
+    }
+
     @DataProvider(name = "systemLoginProvider")
     public Object[][] systemLoginProvider() {
         return new Object[][]{{SYSTEM_USER, true},

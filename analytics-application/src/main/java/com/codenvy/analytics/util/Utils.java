@@ -61,7 +61,7 @@ public class Utils {
             return false;
         }
 
-        if (Utils.isSystemUser(principal.getName()) || rolesAllowed.contains("any")) {
+        if (Utils.isSystemUser(principal.getName(), securityContext) || rolesAllowed.contains("any")) {
             return true;
         }
 
@@ -79,11 +79,18 @@ public class Utils {
         return matcher.find();
     }
 
+    public static boolean isSystemUser(String email, SecurityContext securityContext) {
+        Matcher matcher = ADMIN_ROLE_EMAIL_PATTERN.matcher(email);
+        return matcher.find()
+               || securityContext.isUserInRole("system/admin")
+               || securityContext.isUserInRole("system/manager");
+    }
+
     private static void putNotSystemPrincipal(Map<String, String> context,
                                               SecurityContext securityContext) {
         if (securityContext != null && securityContext.getUserPrincipal() != null) {
             String user = securityContext.getUserPrincipal().getName();
-            if (!isSystemUser(user)) {
+            if (!isSystemUser(user, securityContext)) {
                 context.put("USER", user);
             }
         }
