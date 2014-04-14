@@ -70,6 +70,7 @@ public class FactoryStatisticsList extends AbstractListValueResulted {
     public DBObject[] getSpecificDBOperations(Context clauses) {
         DBObject match = new BasicDBObject();
         match.put(FACTORY, new BasicDBObject("$ne", ""));
+        match.put(FACTORY, new BasicDBObject("$ne", null));
 
         DBObject group = new BasicDBObject();
         group.put(ID, "$" + FACTORY);

@@ -57,12 +57,6 @@ public class DataComputation extends Feature {
         this.metrics = configurator.getArray(METRICS);
     }
 
-    public DataComputation(String[] metrics, CollectionsManagement collectionsManagement)
-            throws IOException {
-        this.collectionsManagement = collectionsManagement;
-        this.metrics = metrics;
-    }
-
     @Override
     public boolean isAvailable() {
         return true;
@@ -102,13 +96,13 @@ public class DataComputation extends Feature {
 
         collectionsManagement.drop(collectionName);
 
-        for (int pageNumber = 0; ; pageNumber++) {
-            builder.put(Parameters.PAGE, ++pageNumber);
+        for (int pageNumber = 1; ; pageNumber++) {
+            builder.put(Parameters.PAGE, pageNumber);
 
             ListValueData valueData = ValueDataUtil.getAsList(basedMetric, builder.build());
             write(collectionsManagement.getOrCreate(collectionName), valueData.getAll());
 
-            if (valueData.getAll().size() != PAGE_SIZE) {
+            if (valueData.size() != PAGE_SIZE) {
                 break;
             }
         }
