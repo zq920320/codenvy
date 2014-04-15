@@ -157,7 +157,76 @@ function View() {
     
         return table;
     }
-	
+
+    /**
+     * Make table cells of target column as linked with combined link "project-view.jsp?ws=...&project=.."
+     * @param columnCombinedLinkConf = {
+     *     targetColumn1: {
+     *         baseLink: <baseLink>,
+     *         mapColumnToParameter: {
+     *             columnName1: <parameterName1>,
+     *             columnName2: <parameterName2>,
+     *             ...
+     *         }
+     *     },
+     *     
+     *     targetColumn2: { ... },
+     *     
+     *     ...
+     * }
+     */
+    function makeTableColumnCombinedLinked(table, columnCombinedLinkConf) {
+        for (var targetColumnName in columnCombinedLinkConf) {
+            var targetColumnIndex = analytics.util.getColumnIndexByColumnName(table.columns, targetColumnName);
+            
+            var baseLink = columnCombinedLinkConf[targetColumnName].baseLink;
+            var mapColumnToParameter = columnCombinedLinkConf[targetColumnName].mapColumnToParameter;
+
+            // calculate source column indexes
+            var sourceColumnIndexes = [];
+            for (var sourceColumnName in mapColumnToParameter) {
+                var sourceColumnIndex = analytics.util.getColumnIndexByColumnName(table.columns, sourceColumnName);
+                sourceColumnIndexes.push(sourceColumnIndex);
+            }
+            
+            // make cells of target column as linked with combined link
+            for (var i = 0; i < table.rows.length; i++) {
+                var targetColumnValue = table.rows[i][targetColumnIndex];
+                
+                if (analytics.configuration.isSystemMessage(targetColumnValue)) {
+                   table.rows[i][targetColumnIndex] = getSystemMessageLabel(targetColumnValue);
+                   
+                } else {
+                   // calculation combined link like "project-view.jsp?ws=...&project=..."
+                   var href = baseLink + "?" + getUrlParams(table.rows[i], sourceColumnIndexes, mapColumnToParameter);
+                   table.rows[i][targetColumnIndex] = "<a href='" + href + "'>" + targetColumnValue + "</a>";
+                }
+            }            
+        }
+    
+        return table;
+    }
+
+    /**
+     * @returns query parameters like "ws=...&project=.."
+     */
+    function getUrlParams(row, sourceColumnIndexes, mapColumnToParameter) {
+        var params = {};
+        var sourceColumnNames = Object.keys(mapColumnToParameter);
+
+        for (var j = 0; j < sourceColumnIndexes.length; j++) {
+            var sourceColumnName = sourceColumnNames[j];
+            var parameterName = mapColumnToParameter[sourceColumnName];
+            
+            var sourceColumnIndex = sourceColumnIndexes[j];
+            var parameterValue = row[sourceColumnIndex];
+            
+            params[parameterName] = parameterValue;
+        }
+        
+        return analytics.util.constructUrlParams(params);
+    }
+    
 	/**
 	 * Load handlers of table events.
 	 * Default value of displaySorting is true.
@@ -301,6 +370,7 @@ function View() {
     	loadTableHandlers: loadTableHandlers,
     	printTableVerticalRow: printTableVerticalRow,
     	makeTableColumnLinked: makeTableColumnLinked,
+    	makeTableColumnCombinedLinked: makeTableColumnCombinedLinked,
 
     	// widget header
     	printWidgetHeader: printWidgetHeader,

@@ -67,12 +67,17 @@ analytics.presenter.EntryViewPresenter.prototype.load = function() {
             
             var table = data[0];  // there is only one table in data
             
-            // make table columns linked 
+            // make table columns linked
+            var columnCombinedLinkConf = analytics.configuration.getProperty(presenter.widgetName, "columnCombinedLinkConfiguration");
+            if (typeof columnCombinedLinkConf != "undefined") {
+                table = view.makeTableColumnCombinedLinked(table, columnCombinedLinkConf);    
+            }            
+            
             var columnLinkPrefixList = analytics.configuration.getProperty(presenter.widgetName, "columnLinkPrefixList");
             if (typeof columnLinkPrefixList != "undefined") {
                 for (var columnName in columnLinkPrefixList) {
                     table = view.makeTableColumnLinked(table, columnName, columnLinkPrefixList[columnName]);    
-                }                
+                }
             }
             
             if (pageCount > 1) {
