@@ -1,0 +1,17 @@
+---
+    layout : base
+    title: Codenvy
+---
+    <%@ page isErrorPage="true" %>
+    <div class="container light">
+        <h1>INVALID FACTORY URL</h1>
+
+        <hr class="subtitle-line">
+
+        <style>
+            #errorMessage a {
+                color: #60AFD9;
+            }
+        </style>
+        <p id="errorMessage" style="text-align: center;"><%= exception.getLocalizedMessage() %></p>
+    </div>

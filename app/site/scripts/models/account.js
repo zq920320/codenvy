@@ -66,12 +66,98 @@
             }
         };
 
-        /*
+        /*START paid support tab*/
+        /*global ActiveXObject: false */
+        // Verify subscriptions for Organization
+        function checkSubscriptionFor(orgId) {
+            var request;
+            var plansArray = ["PremiumWorkspace", "TrackedFactory"];
+            var url =  "/api/account/" + orgId + "/subscriptions";
+            if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+                request = new XMLHttpRequest();
+            } else {// code for IE6, IE5
+                request = new ActiveXObject("Microsoft.XMLHTTP");
+            }
+            request.onreadystatechange = function () {
+                var response;
+                var paid = false;
+                if (request.readyState === 4 && request.status === 200) {
+                    try {
+                    response = JSON.parse(request.responseText);
+                    if (response.length) {
+                        if (response.some(function (sub) {
+                                return (plansArray.indexOf(sub.serviceId) >= 0);
 
-            Password Setup Id Provider is used to provide ids
-            for confirmSetupPassword and setupPassword functions
+                            })) {
+                            paid = true;
+                        }
 
-        */
+                    }
+                    showSupportLink(paid);
+                    } catch(err) {
+                        showSupportLink(false);
+                    }
+                }
+            };
+            request.open("GET", url, true);
+            request.send();
+        }
+
+        // get Organizations where user has owner role
+        function getOrganizations(user) {
+            var request;
+            //var url =  "/api/workspace";
+            var url =  "/api/account";
+            if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+                request = new XMLHttpRequest();
+            } else {// code for IE6, IE5
+                request = new ActiveXObject("Microsoft.XMLHTTP");
+            }
+            request.onreadystatechange = function () {
+                var response;
+                if (request.readyState === 4 && request.status === 200) {
+                    try {
+                    response = JSON.parse(request.responseText);
+                    response.forEach(function (org) {
+                        if (org.owner === user) {
+                            checkSubscriptionFor(org.id);
+                        }
+                    });
+                    } catch(err) {
+                        showSupportLink(false);
+                    }
+                }
+            };
+            request.open("GET", url, true);
+            request.send();
+        }
+
+        // Sets Info for Premium User 
+        function setPremiumUserInfo() {
+            var request;
+            var url =  "/api/user";
+            if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+                request = new XMLHttpRequest();
+            } else {// code for IE6, IE5
+                request = new ActiveXObject("Microsoft.XMLHTTP");
+            }
+            request.onreadystatechange = function () {
+                var response;
+                if (request.readyState === 4 && request.status === 200) {
+                    try {
+                        response = JSON.parse(request.responseText);
+                        getOrganizations(response.id); //params: userId    
+                    } catch(err) {
+                        showSupportLink(false);
+                    }
+
+                }
+            };
+            request.open("GET", url, true);
+            request.send();
+        }
+
+        /*END paid support tab*/
 
         /*
 
@@ -84,7 +170,12 @@
                 var attributes = {};
                 profileAttributes.forEach(
                     function(attribute){
-                        Object.defineProperty(attributes, attribute.name,{value:attribute.value});
+                        // Get attributes only for Profile page
+                        var profilePageAttributes = ["firstName","lastName","phone","employer","jobtitle","email"];
+                        if (profilePageAttributes.indexOf(attribute.name)>=0){
+                            Object.defineProperty(attributes, attribute.name,{value:attribute.value});
+                        }
+
                 });
                 document.getElementById("account_value").innerHTML = attributes.email || "";
                 document.getElementsByName("first_name")[0].value = attributes.firstName || "";
@@ -100,7 +191,8 @@
                _gaq.push(['_trackEvent', 'Regisration', 'Google registration', page]);
                 var url = "/api/oauth/authenticate?oauth_provider=google&mode=federated_login" +
                    "&scope=https://www.googleapis.com/auth/userinfo.profile&scope=https://www.googleapis.com/auth/userinfo.email"+
-                   "&redirect_after_login=" + encodeURIComponent("/api/oauth?" + window.location.search.substring(1) + "&oauth_provider=google");
+                   "&redirect_after_login=" + encodeURIComponent(window.location.protocol + "//" + window.location.host +
+                   "/api/oauth?" + window.location.search.substring(1) + "&oauth_provider=google");
 
                 if(typeof callback !== 'undefined'){
                     callback(url);
@@ -112,7 +204,8 @@
             if (isWebsocketEnabled()) {
                 _gaq.push(['_trackEvent', 'Regisration', 'GitHub registration', page]);
                 var url = "/api/oauth/authenticate?oauth_provider=github&mode=federated_login&scope=user&scope=repo" +
-                "&redirect_after_login=" + encodeURIComponent("/api/oauth?" + window.location.search.substring(1) + "&oauth_provider=github");
+                "&redirect_after_login=" + encodeURIComponent(window.location.protocol + "//" + window.location.host +
+                "/api/oauth?" + window.location.search.substring(1) + "&oauth_provider=github");
 
                 if(typeof callback !== 'undefined'){
                     callback(url);
@@ -528,6 +621,7 @@
 
             // Returns true if User has WS with tariff plan
             supportTab : function(){
+<<<<<<< HEAD
                 var getAccountUrl = "/api/account/subscriptions";
                 var paid = false;
                 $.ajax({
@@ -549,6 +643,14 @@
                     }
                 });
             showSupportLink(paid);
+=======
+                if($.cookie("logged_in")){
+                    setPremiumUserInfo();
+                } else {
+                    showSupportLink(false);
+                }
+
+>>>>>>> b2ae6222f30a06a6231ea37e6deb37c1c3e84e46
             },
 
             // Changing login page behavior if authtype=ldap
