@@ -621,7 +621,6 @@
 
             // Returns true if User has WS with tariff plan
             supportTab : function(){
-<<<<<<< HEAD
                 var getAccountUrl = "/api/account/subscriptions";
                 var paid = false;
                 $.ajax({
@@ -642,15 +641,11 @@
                     error : function(){
                     }
                 });
-            showSupportLink(paid);
-=======
                 if($.cookie("logged_in")){
                     setPremiumUserInfo();
                 } else {
                     showSupportLink(false);
                 }
-
->>>>>>> b2ae6222f30a06a6231ea37e6deb37c1c3e84e46
             },
 
             // Changing login page behavior if authtype=ldap
