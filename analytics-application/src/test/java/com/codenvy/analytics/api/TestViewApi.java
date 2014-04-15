@@ -21,6 +21,7 @@ import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.Configurator;
 import com.codenvy.analytics.Injector;
 import com.codenvy.analytics.Utils;
+import com.codenvy.analytics.impl.FileBasedMetricHandler;
 import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.persistent.JdbcDataPersisterFactory;
@@ -84,7 +85,7 @@ public class TestViewApi extends BaseTest {
         ArgumentCaptor<Context> context = ArgumentCaptor.forClass(Context.class);
         verify(viewBuilder, atLeastOnce()).retainViewData(viewId.capture(), viewData.capture(), context.capture());
 
-        String response = new View().transformToJson(viewData.getValue());
+        String response = new View(viewBuilder, new FileBasedMetricHandler()).transformToJson(viewData.getValue());
         String expectedResponse = getResourse(EXPECTED_JSON_FILE, "18 Mar", getToday());
 
         assertEquals(response, expectedResponse);
@@ -105,7 +106,7 @@ public class TestViewApi extends BaseTest {
         ArgumentCaptor<Context> context = ArgumentCaptor.forClass(Context.class);
         verify(viewBuilder, atLeastOnce()).retainViewData(viewId.capture(), viewData.capture(), context.capture());
 
-        String response = new View().transformToCsv(viewData.getValue());
+        String response = new View(viewBuilder, new FileBasedMetricHandler()).transformToCsv(viewData.getValue());
         String expectedResponse = getResourse(EXPECTED_CSV_FILE, "18 Mar", getToday());
 
         assertEquals(response, expectedResponse);
