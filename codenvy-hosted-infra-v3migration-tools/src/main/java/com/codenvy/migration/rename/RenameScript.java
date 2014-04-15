@@ -78,14 +78,13 @@ public final class RenameScript {
         try {
             MongoClient mongoClient = new MongoClient(mongoProperties.getProperty(DB_URL));
             db = mongoClient.getDB(mongoProperties.getProperty(DB_NAME));
-//            if (!db.authenticate(mongoProperties.getProperty(DB_USERNAME), mongoProperties.getProperty(DB_PASSWORD).toCharArray()))
-//                throw new RuntimeException("Incorrect MongoDB credentials: authentication failed.");
+            if (!db.authenticate(mongoProperties.getProperty(DB_USERNAME), mongoProperties.getProperty(DB_PASSWORD).toCharArray()))
+                throw new RuntimeException("Incorrect MongoDB credentials: authentication failed.");
         } catch (UnknownHostException e) {
             throw new RuntimeException("Can't connect to MongoDB.");
         }
         //rename organization -> account
-        LOG.debug(String.format("Renaming %s to %s", mongoProperties.getProperty(ORGANIZATION_COLLECTION_NAME),
-                                mongoProperties.getProperty(ACCOUNT_COLLECTION_NAME)));
+        LOG.debug("Renaming: Organization[collection name -> account]");
         db.getCollection(mongoProperties.getProperty(ORGANIZATION_COLLECTION_NAME))
           .rename(mongoProperties.getProperty(ACCOUNT_COLLECTION_NAME));
 
@@ -119,6 +118,7 @@ public final class RenameScript {
         //rename members collection with new name
         members.rename(mongoProperties.getProperty(ACC_MEMBER_COLLECTION_NAME));
         //rename subscriptions attrs
+        LOG.debug("Renaming: Subscriptions[organizationId -> accountId]");
         DBCollection subscriptions = db.getCollection(mongoProperties.getProperty(SUBSCRIPTION_COLLECTION_NAME));
         renameAllAttributes(subscriptions, "organizationId", "accountId");
     }
