@@ -55,7 +55,6 @@ analytics.presenter.ReportPresenter.prototype.mapExpandedMetricToDrillDownPageTy
     "destroyed_projects": "PROJECTS",
     "code_completions": "PROJECTS",
     "build_queue_terminations": "PROJECTS",
-    "runner_total_time": "PROJECTS",
     "run_queue_terminations": "PROJECTS",
     "builds_time": "PROJECTS",
     "debugs_time": "PROJECTS",

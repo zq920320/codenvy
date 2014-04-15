@@ -469,6 +469,17 @@ function Configuration() {
                 "Project": "/analytics/pages/project-view.jsp?project",
             },
 
+            columnCombinedLinkConfiguration: {
+                "Project": {                   
+                    baseLink: "/analytics/pages/project-view.jsp",
+                    mapColumnToParameter: {
+                        "Project": "project",
+                        "Workspace": "ws",
+                        "User": "user",
+                    }
+                }
+            },
+            
             defaultServerSortParams: "-date",
 
             /** @see DatabaseTable::makeTableSortable() method docs */
