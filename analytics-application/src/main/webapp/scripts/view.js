@@ -30,8 +30,8 @@ function View() {
 	var params;
 
     var ABORT_LOADING_MESSAGE = "<i>Loading has been aborted.</i>";
+    var INTERRUPT_LOADING_MESSAGE = "<i>Loading has been interrupted.</i>";
 
-	
     function printTable(table, isDisplaySpecificFirstCell, tableId) {
         print("<div>");
         
@@ -268,6 +268,11 @@ function View() {
         viewHtml = ABORT_LOADING_MESSAGE;
         show();
     };
+
+    function showInterruptMessage() {
+        viewHtml = INTERRUPT_LOADING_MESSAGE;
+        show();
+    };
     
     function showErrorMessage(status, textStatus, errorThrown) {
         viewHtml = "<i>Error of loading data</i>: (" + status + ") '" + errorThrown + "'.";
@@ -303,8 +308,9 @@ function View() {
     	// page navigation
     	printBottomPageNavigator: printBottomPageNavigator,
     	
-    	// server events
+    	// server ajax error messages
     	showAbortMessage: showAbortMessage,
-    	showErrorMessage: showErrorMessage
+    	showInterruptMessage: showInterruptMessage,
+    	showErrorMessage: showErrorMessage,
 	}
 }

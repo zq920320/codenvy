@@ -222,15 +222,14 @@ function Main() {
 
         model.clearFailFunction();
         model.pushFailFunction(function (status, textStatus, errorThrown) {
+            analytics.views.loader.needLoader = false;
+            analytics.views.loader.hide();
+
             if (textStatus == "abort") {
-                analytics.views.loader.needLoader = false;
-                analytics.views.loader.hide();
-
                 view.showAbortMessage();
+            } else if (textStatus == "error" && status == 0){
+                view.showInterruptMessage();
             } else {
-                analytics.views.loader.needLoader = false;
-                analytics.views.loader.hide();
-
                 view.showErrorMessage(status, textStatus, errorThrown);
             }
         });
