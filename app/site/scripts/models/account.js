@@ -528,7 +528,7 @@
 
             // Returns true if User has WS with tariff plan
             supportTab : function(){
-                var getAccountUrl = "/api/organization/subscriptions";
+                var getAccountUrl = "/api/account/subscriptions";
                 var paid = false;
                 $.ajax({
                     url : getAccountUrl,
