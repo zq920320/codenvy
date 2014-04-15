@@ -1,4 +1,4 @@
-/*
+package com.codenvy.rename;/*
  * CODENVY CONFIDENTIAL
  * __________________
  *
@@ -15,7 +15,6 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.migration.rename;
 
 import com.codenvy.api.account.shared.dto.Member;
 import com.codenvy.dto.server.DtoFactory;
@@ -31,7 +30,10 @@ import com.mongodb.util.JSON;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.net.UnknownHostException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -145,5 +147,15 @@ public final class RenameScript {
         for (String expectedProperty : needed) {
             Objects.requireNonNull(properties.getProperty(expectedProperty), String.format("Property %s required", expectedProperty));
         }
+    }
+
+    public static void main(String[] args) throws IOException {
+        Properties mongoProps = new Properties();
+        if (args.length > 0) {
+            mongoProps.load(Files.newInputStream(Paths.get(args[0])));
+        } else {
+            mongoProps.load(RenameScript.class.getClassLoader().getResourceAsStream("mongo.properties"));
+        }
+        RenameScript.execute(mongoProps);
     }
 }
