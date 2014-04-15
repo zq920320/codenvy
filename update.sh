@@ -18,8 +18,7 @@
 #!/bin/bash
 filename=`ls analytics-tomcat-pkg/target | grep analytics-tomcat-pkg`
 if [ -z "$1" ] || [ "$1" == "prod" ]; then
-#    SSH_KEY_NAME=cl-server-prod-20130219
-    SSH_KEY_NAME=git_nopass.key
+    SSH_KEY_NAME=cl-server-prod-20130219
     SSH_AS_USER_NAME=logreader
     AS_IP=syslog.codenvycorp.com
     echo "============[ Production will be updated ]=============="
