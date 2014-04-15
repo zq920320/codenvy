@@ -29,6 +29,7 @@ import com.mongodb.MongoClient;
 import com.mongodb.util.JSON;
 
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -59,7 +60,7 @@ import java.util.Set;
  */
 public final class RenameScript {
 
-    private static final Logger LOG = org.slf4j.LoggerFactory.getLogger(RenameScript.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RenameScript.class);
 
     public static final String DB_URL                       = "organization.storage.db.url";
     public static final String DB_NAME                      = "organization.storage.db.name";
