@@ -26,12 +26,12 @@ import com.codenvy.analytics.util.Utils;
 import com.codenvy.api.analytics.MetricHandler;
 import com.codenvy.api.analytics.dto.MetricValueDTO;
 import com.codenvy.dto.server.JsonArrayImpl;
+import com.google.inject.Inject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.security.RolesAllowed;
-import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
@@ -51,11 +51,14 @@ public class View {
 
     private static final Logger LOG = LoggerFactory.getLogger(View.class);
 
-    @Inject
-    private ViewBuilder viewBuilder;
+    private final ViewBuilder   viewBuilder;
+    private final MetricHandler metricHandler;
 
     @Inject
-    private MetricHandler metricHandler;
+    public View(ViewBuilder viewBuilder, MetricHandler metricHandler) {
+        this.viewBuilder = viewBuilder;
+        this.metricHandler = metricHandler;
+    }
 
     @GET
     @Path("metric/{name}")
@@ -190,7 +193,7 @@ public class View {
         }
 
         result.setLength(result.length() - 1);  // remove ended "\n"
-        
+
         return result.toString();
     }
 

@@ -93,6 +93,7 @@ public class DataComputation extends Feature {
         builder.putDefaultValue(Parameters.FROM_DATE);
         builder.putDefaultValue(Parameters.TO_DATE);
         builder.put(Parameters.PER_PAGE, PAGE_SIZE);
+        builder.put(Parameters.DATA_COMPUTATION_PROCESS, "1");
 
         collectionsManagement.drop(collectionName);
 

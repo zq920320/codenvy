@@ -144,14 +144,22 @@ public class MongoDataStorage {
         RuntimeConfigBuilder runtimeConfigBuilder = new RuntimeConfigBuilder().defaults(Command.MongoD);
 
         MongodStarter starter = MongodStarter.getInstance(runtimeConfigBuilder.build());
-        MongodExecutable mongoExe = starter.prepare(mongodConfigBuilder.build());
+        final MongodExecutable mongoExe = starter.prepare(mongodConfigBuilder.build());
 
         try {
             mongoExe.start();
-            LOG.info("Embedded MongoDB has been started");
+            LOG.info("Embedded MongoDB is started");
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
+
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            @Override
+            public void run() {
+                mongoExe.stop();
+                LOG.info("Embedded MongoDB is stopped");
+            }
+        });
     }
 
     private String getDir(String dirName) {

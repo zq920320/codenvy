@@ -17,6 +17,7 @@
  */
 package com.codenvy.analytics.util;
 
+import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.api.analytics.dto.MetricInfoDTO;
 
 import javax.ws.rs.core.MultivaluedMap;
@@ -45,6 +46,8 @@ public class Utils {
         putQueryParameters(parameters, context);
         putPaginationParameters(page, perPage, context);
         putNotSystemPrincipal(context, securityContext);
+        putDefaultValueIfAbsent(context, Parameters.FROM_DATE);
+        putDefaultValueIfAbsent(context, Parameters.TO_DATE);
 
         return context;
     }
@@ -85,6 +88,13 @@ public class Utils {
                || securityContext.isUserInRole("system/admin")
                || securityContext.isUserInRole("system/manager");
     }
+
+    private static void putDefaultValueIfAbsent(Map<String, String> context, Parameters param) {
+        if (!context.containsKey(param.toString())) {
+            context.put(param.toString(), param.getDefaultValue());
+        }
+    }
+
 
     private static void putNotSystemPrincipal(Map<String, String> context,
                                               SecurityContext securityContext) {

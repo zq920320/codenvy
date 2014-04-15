@@ -235,12 +235,7 @@ public class ViewBuilder extends Feature {
 
     private Context initializeFirstInterval(Context context) throws ParseException {
         Context.Builder builder = new Context.Builder(context);
-
-        if (context.exists(Parameters.TO_DATE)) {
-            builder.put(Parameters.REPORT_DATE, builder.getAsString(Parameters.TO_DATE));
-        } else {
-            builder.put(Parameters.REPORT_DATE, Parameters.TO_DATE.getDefaultValue());
-        }
+        builder.put(Parameters.REPORT_DATE, builder.getAsString(Parameters.TO_DATE));
 
         if (context.exists(Parameters.TIME_UNIT)) {
             Parameters.TimeUnit timeUnit = builder.getTimeUnit();

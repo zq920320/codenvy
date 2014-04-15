@@ -140,11 +140,11 @@ public class TestUsersData extends BaseTest {
         pigServer.execute(ScriptType.USERS_UPDATE_PROFILES, builder.build());
 
 
-        Context.Builder builder2 = new Context.Builder();
-        builder2.put(Parameters.FROM_DATE, "20131101");
-        builder2.put(Parameters.TO_DATE, "20131101");
+        builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20131101");
+        builder.put(Parameters.TO_DATE, "20131101");
         DataComputationFeature dataComputationFeature = new DataComputationFeature();
-        dataComputationFeature.forceExecute(builder2.build());
+        dataComputationFeature.forceExecute(builder.build());
     }
 
     @Test

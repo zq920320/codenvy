@@ -51,8 +51,8 @@ public abstract class ReadBasedMetric extends AbstractMetric {
     public static final Pattern ANONYMOUS_USER  =
             Pattern.compile("^(ANONYMOUSUSER_).*", Pattern.CASE_INSENSITIVE);
 
-    public static final Pattern PERSISTENT_WS  = Pattern.compile("^(?!(TMP-|DEFAULT)).*", Pattern.CASE_INSENSITIVE);
-    public static final Pattern TEMPORARY_WS   = Pattern.compile("^(TMP-).*", Pattern.CASE_INSENSITIVE);
+    public static final Pattern PERSISTENT_WS = Pattern.compile("^(?!(TMP-|DEFAULT)).*", Pattern.CASE_INSENSITIVE);
+    public static final Pattern TEMPORARY_WS  = Pattern.compile("^(TMP-).*", Pattern.CASE_INSENSITIVE);
 
     public static final String ASC_SORT_SIGN = "+";
     public static final String PRECOMPUTED   = "_precomputed";
@@ -78,7 +78,12 @@ public abstract class ReadBasedMetric extends AbstractMetric {
 
         if (canReadPrecomputedData(context)) {
             Metric metric = MetricFactory.getMetric(getName() + PRECOMPUTED);
-            return metric.getValue(context);
+
+            // TODO
+            Context.Builder builder = new Context.Builder(context);
+            builder.remove(Parameters.FROM_DATE);
+            builder.remove(Parameters.TO_DATE);
+            return metric.getValue(builder.build());
         } else {
             ValueData valueData = dataLoader.loadValue(this, context);
             return postComputation(valueData, context);
@@ -114,9 +119,12 @@ public abstract class ReadBasedMetric extends AbstractMetric {
     }
 
     private boolean canReadPrecomputedData(Context context) {
-        return MetricFactory.exists(getName() + PRECOMPUTED)
-               && !context.exists(Parameters.FROM_DATE)
-               && !context.exists(Parameters.TO_DATE);
+        return !context.exists(Parameters.DATA_COMPUTATION_PROCESS)
+               && MetricFactory.exists(getName() + PRECOMPUTED)
+               && (!context.exists(Parameters.FROM_DATE) ||
+                   context.getAsString(Parameters.FROM_DATE).equals(Parameters.FROM_DATE.getDefaultValue()))
+               && (!context.exists(Parameters.TO_DATE) ||
+                   context.getAsString(Parameters.TO_DATE).equals(Parameters.TO_DATE.getDefaultValue()));
     }
 
     // --------------------------------------------- storage related methods -------------
