@@ -20,7 +20,10 @@ package com.codenvy.analytics.pig.scripts;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.metrics.*;
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Metric;
+import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
@@ -54,12 +57,15 @@ public class TestIdeUsageEvents extends BaseTest {
                              .withDate("2013-01-01").build());
         events.add(Event.Builder.createIDEUsageEvent("user2", null, null, null, null, null, null)
                                 .withDate("2013-01-01").build());
-        events.add(Event.Builder.createIDEUsageEvent("user3", null, AbstractIdeUsage.EDIT_DELETE, null, null, null, null)
-                                .withDate("2013-01-01").build());
-        events.add(Event.Builder.createIDEUsageEvent("user4", null, AbstractIdeUsage.EDIT_DELETE, null, null, null, null)
-                                .withDate("2013-01-01").build());
-        events.add(Event.Builder.createIDEUsageEvent("user5", null, AbstractIdeUsage.EDIT_FORMAT, null, null, null, null)
-                                .withDate("2013-01-01").build());
+        events.add(
+                Event.Builder.createIDEUsageEvent("user3", null, AbstractIdeUsage.FILE_DELETE, null, null, null, null)
+                             .withDate("2013-01-01").build());
+        events.add(
+                Event.Builder.createIDEUsageEvent("user4", null, AbstractIdeUsage.FILE_DELETE, null, null, null, null)
+                             .withDate("2013-01-01").build());
+        events.add(
+                Event.Builder.createIDEUsageEvent("user5", null, AbstractIdeUsage.FILE_DELETE, null, null, null, null)
+                             .withDate("2013-01-01").build());
 
         File log = LogGenerator.generateLog(events);
 
@@ -118,7 +124,21 @@ public class TestIdeUsageEvents extends BaseTest {
 
     @Test
     public void testSingleActions() throws Exception {
-        Metric metric = MetricFactory.getMetric(MetricType.IDE_USAGE_EDIT_DELETE);
-        Assert.assertEquals(LongValueData.valueOf(2), metric.getValue(Context.EMPTY));
+        Metric metric = new TestedIdeUsages(AbstractIdeUsage.FILE_DELETE, new String[]{AbstractIdeUsage.FILE_DELETE});
+        Assert.assertEquals(LongValueData.valueOf(3), metric.getValue(Context.EMPTY));
+    }
+
+
+    // -----------------------> Tested metrics
+
+    private class TestedIdeUsages extends AbstractIdeUsage {
+        protected TestedIdeUsages(String metricName, String[] actions) {
+            super(metricName, actions);
+        }
+
+        @Override
+        public String getDescription() {
+            return null;
+        }
     }
 }
