@@ -80,14 +80,18 @@ public class Context {
         return Parameters.TimeUnit.valueOf(getAsString(Parameters.TIME_UNIT).toUpperCase());
     }
 
+    public boolean isDefaultValue(Parameters key) {
+        return params.get(key.name()).equals(key.getDefaultValue());
+    }
+
     public String getAsString(Parameters key) {
         Object object = params.get(key.name());
-        return object == null ? null : object.toString();
+        return object == null ? null : (String)object;
     }
 
     public String getAsString(MetricFilter key) {
         Object object = params.get(key.name());
-        return object == null ? null : object.toString();
+        return object == null ? null : (String)object;
     }
 
     public Object get(MetricFilter key) {
@@ -144,6 +148,13 @@ public class Context {
 
         public Builder(Map<String, Object> params) {
             this.params.putAll(params);
+        }
+
+        public Builder putIfNotNull(Parameters param, String value) {
+            if (value != null) {
+                params.put(param.name(), value);
+            }
+            return this;
         }
 
         public Builder putIfAbsent(Parameters param, String value) {
@@ -222,12 +233,12 @@ public class Context {
 
         public String getAsString(MetricFilter param) {
             Object object = params.get(param.name());
-            return object == null ? null : object.toString();
+            return object == null ? null : (String)object;
         }
 
         public String getAsString(Parameters param) {
             Object object = params.get(param.name());
-            return object == null ? null : object.toString();
+            return object == null ? null : (String)object;
         }
 
         public Calendar getAsDate(Parameters key) throws ParseException {

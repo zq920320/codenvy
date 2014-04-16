@@ -49,15 +49,15 @@ public class TestUsersAddedToWorkspaces extends BaseTest {
     public void init() throws Exception {
         List<Event> events = new ArrayList<>();
         events.add(Event.Builder.createUserAddedToWsEvent("user1@gmail.com", "ws1", "", "", "", "website")
-                        .withDate("2013-01-02").withTime("10:00:00").build());
+                                .withDate("2013-01-02").withTime("10:00:00").build());
         events.add(Event.Builder.createUserAddedToWsEvent("user2@gmail.com", "ws", "", "", "", "website")
-                        .withDate("2013-01-02").withTime("10:00:01").build());
+                                .withDate("2013-01-02").withTime("10:00:01").build());
         events.add(Event.Builder.createUserAddedToWsEvent("user3@gmail.com", "ws", "", "", "", "invite")
-                        .withDate("2013-01-02").withTime("10:00:02").build());
+                                .withDate("2013-01-02").withTime("10:00:02").build());
         events.add(Event.Builder.createUserAddedToWsEvent("user4@gmail.com", "ws2", "", "", "", "invite")
-                        .withDate("2013-01-02").withTime("10:00:03").build());
+                                .withDate("2013-01-02").withTime("10:00:03").build());
         events.add(Event.Builder.createUserAddedToWsEvent("user5@gmail.com", "ws2", "", "", "", "invite")
-                        .withDate("2013-01-02").withTime("10:00:04").build());
+                                .withDate("2013-01-02").withTime("10:00:04").build());
 
         File log = LogGenerator.generateLog(events);
 
@@ -127,8 +127,8 @@ public class TestUsersAddedToWorkspaces extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20130102");
         builder.put(Parameters.TO_DATE, "20130102");
-        builder.put(Parameters.USER, "user1@gmail.com,user1@yahoo.com");
-        builder.put(Parameters.WS, "ws1,ws2");
+        builder.put(Parameters.USER, "user1@gmail.com OR user1@yahoo.com");
+        builder.put(Parameters.WS, "ws1 OR ws2");
 
         Metric metric = new TestedUsersAddedToWorkspaces();
         Map<String, ValueData> values = ((MapValueData)metric.getValue(builder.build())).getAll();
@@ -144,7 +144,7 @@ public class TestUsersAddedToWorkspaces extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20130102");
         builder.put(Parameters.TO_DATE, "20130102");
-        builder.put(Parameters.USER, "~user1@gmail.com,~user2@gmail.com");
+        builder.put(Parameters.USER, "~ user1@gmail.com OR user2@gmail.com");
 
         Metric metric = new TestedUsersAddedToWorkspaces();
         Map<String, ValueData> values = ((MapValueData)metric.getValue(builder.build())).getAll();
@@ -153,22 +153,6 @@ public class TestUsersAddedToWorkspaces extends BaseTest {
 
         metric = new TestedInviteAbstractUsersAddedToWorkspaces();
         assertEquals(metric.getValue(builder.build()), LongValueData.valueOf(3));
-    }
-
-    @Test
-    public void testComplexFilterWhenSomeParamHasTilda() throws Exception {
-        Context.Builder builder = new Context.Builder();
-        builder.put(Parameters.FROM_DATE, "20130102");
-        builder.put(Parameters.TO_DATE, "20130102");
-        builder.put(Parameters.USER, "user1@gmail.com,~user3@gmail.com");
-
-        Metric metric = new TestedUsersAddedToWorkspaces();
-        Map<String, ValueData> values = ((MapValueData)metric.getValue(builder.build())).getAll();
-        assertEquals(values.size(), 1);
-        assertEquals(values.get("website"), LongValueData.valueOf(1));
-
-        metric = new TestedWebsiteAbstractUsersAddedToWorkspaces();
-        assertEquals(metric.getValue(builder.build()), LongValueData.valueOf(1));
     }
 
     //------------------------- Tested classed

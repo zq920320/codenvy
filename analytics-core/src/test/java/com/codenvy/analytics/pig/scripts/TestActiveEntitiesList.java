@@ -141,7 +141,7 @@ public class TestActiveEntitiesList extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20130101");
         builder.put(Parameters.TO_DATE, "20130102");
-        builder.put(Parameters.USER, "user1@gmail.com,user2@gmail.com");
+        builder.put(Parameters.USER, "user1@gmail.com OR user2@gmail.com");
 
         Metric metric = new TestedSetValueResulted();
         assertEquals(metric.getValue(builder.build()),
@@ -158,7 +158,7 @@ public class TestActiveEntitiesList extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20130101");
         builder.put(Parameters.TO_DATE, "20130102");
-        builder.put(Parameters.USER, "user1@gmail.com,user2@gmail.com");
+        builder.put(Parameters.USER, "user1@gmail.com OR user2@gmail.com");
         builder.put(Parameters.WS, "ws2");
 
         Metric metric = new TestedSetValueResulted();

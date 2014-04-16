@@ -21,11 +21,9 @@ import com.codenvy.analytics.Injector;
 import com.codenvy.analytics.datamodel.*;
 import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.pig.scripts.EventsHolder;
-import com.mongodb.DBObject;
 
 import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -65,22 +63,18 @@ public class UsersActivityList extends AbstractListValueResulted {
     }
 
     @Override
-    public DBObject getFilter(Context clauses) throws ParseException, IOException {
-        Context.Builder builder = new Context.Builder(clauses);
+    public Context applySpecificFilter(Context context) throws IOException {
+        Context.Builder builder = new Context.Builder(context);
+        builder.put(Parameters.SORT, ASC_SORT_SIGN + DATE);
 
         excludeStartAndStopFactorySessionsEvents(builder);
 
-        if (clauses.exists(MetricFilter.SESSION_ID)) {
+        if (context.exists(MetricFilter.SESSION_ID)) {
             setUserWsAndDateFilters(builder);
             builder.remove(MetricFilter.SESSION_ID);
         }
 
-        return super.getFilter(builder.build());
-    }
-
-    @Override
-    protected Context modifyContext(Context context) throws IOException {
-        return context.cloneAndPut(Parameters.SORT, ASC_SORT_SIGN + DATE);
+        return builder.build();
     }
 
     /**
@@ -214,6 +208,8 @@ public class UsersActivityList extends AbstractListValueResulted {
     private ValueData getUserLogoutEvent(SessionData sessionData) {
         Map<String, ValueData> items = new HashMap<>();
 
+        String action = eventsHolder.getDescription(EventsHolder.USER_SSO_LOGOUT_EVENT);
+        items.put(ACTION, StringValueData.valueOf(action));
         items.put(DATE, LongValueData.valueOf(sessionData.toDate));
         items.put(EVENT, StringValueData.valueOf(EventsHolder.USER_SSO_LOGOUT_EVENT));
         items.put(TIME, LongValueData.valueOf(sessionData.logoutInterval));
@@ -225,6 +221,8 @@ public class UsersActivityList extends AbstractListValueResulted {
     private ValueData getUserIdleEvent(SessionData sessionData) {
         Map<String, ValueData> items = new HashMap<>();
 
+        String action = eventsHolder.getDescription(EventsHolder.USER_IDLE_EVENT);
+        items.put(ACTION, StringValueData.valueOf(action));
         items.put(DATE, LongValueData.valueOf(sessionData.toDate));
         items.put(EVENT, StringValueData.valueOf(EventsHolder.USER_IDLE_EVENT));
         items.put(TIME, LongValueData.valueOf(0));
@@ -236,6 +234,8 @@ public class UsersActivityList extends AbstractListValueResulted {
     private ValueData getIdeClosedEvent(SessionData sessionData, int actionCount) {
         Map<String, ValueData> items = new HashMap<>();
 
+        String action = eventsHolder.getDescription(EventsHolder.IDE_CLOSED);
+        items.put(ACTION, StringValueData.valueOf(action));
         items.put(DATE, LongValueData.valueOf(sessionData.toDate));
         items.put(EVENT, StringValueData.valueOf(EventsHolder.IDE_CLOSED));
         items.put(TIME, LongValueData.valueOf(actionCount == 0 ? sessionData.time : 0));
@@ -247,6 +247,8 @@ public class UsersActivityList extends AbstractListValueResulted {
     private ValueData getIdeOpenedEvent(SessionData sessionData) {
         Map<String, ValueData> items = new HashMap<>();
 
+        String action = eventsHolder.getDescription(EventsHolder.IDE_OPENED);
+        items.put(ACTION, StringValueData.valueOf(action));
         items.put(DATE, LongValueData.valueOf(sessionData.fromDate));
         items.put(EVENT, StringValueData.valueOf(EventsHolder.IDE_OPENED));
         items.put(TIME, LongValueData.valueOf(0));

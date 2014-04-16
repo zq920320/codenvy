@@ -124,7 +124,7 @@ public class TestFactoryCreatedList extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20130101");
         builder.put(Parameters.TO_DATE, "20130101");
-        builder.put(Parameters.USER, "anonymoususer_1,anonymoususer_2,anonymoususer_3");
+        builder.put(Parameters.USER, "anonymoususer_1 OR anonymoususer_2 OR anonymoususer_3");
         builder.put(Parameters.WS, "ws2");
 
         Metric metric = new TestSetValueResulted();

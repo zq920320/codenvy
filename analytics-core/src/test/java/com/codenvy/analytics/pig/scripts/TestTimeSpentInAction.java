@@ -121,7 +121,7 @@ public class TestTimeSpentInAction extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20130101");
         builder.put(Parameters.TO_DATE, "20130101");
-        builder.put(Parameters.USER, "user1@gmail.com,user2@gmail.com");
+        builder.put(Parameters.USER, "user1@gmail.com OR user2@gmail.com");
 
         Metric metric = new TestedAbstractTimeSpentInAction();
         Assert.assertEquals(metric.getValue(builder.build()), new LongValueData(540000));
@@ -132,7 +132,7 @@ public class TestTimeSpentInAction extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20130101");
         builder.put(Parameters.TO_DATE, "20130101");
-        builder.put(Parameters.USER, "user1@gmail.com,user2@gmail.com");
+        builder.put(Parameters.USER, "user1@gmail.com OR user2@gmail.com");
         builder.put(Parameters.WS, "ws2");
 
         Metric metric = new TestedAbstractTimeSpentInAction();

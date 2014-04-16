@@ -92,7 +92,7 @@ public class TestProductUsageTime extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
-        builder.put(Parameters.USER, "user@gmail.com,anonymoususer_user11");
+        builder.put(Parameters.USER, "user@gmail.com OR anonymoususer_user11");
 
         Metric metric = new TestAbstractProductUsageTime(240000, 300000, true, true);
         assertEquals(metric.getValue(builder.build()), new LongValueData(540000L));
@@ -109,7 +109,7 @@ public class TestProductUsageTime extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
-        builder.put(Parameters.USER, "user@gmail.com,anonymoususer_user11");
+        builder.put(Parameters.USER, "user@gmail.com OR anonymoususer_user11");
         builder.put(Parameters.WS, "ws1");
 
         Metric metric = new TestAbstractProductUsageTime(240000, 300000, true, true);

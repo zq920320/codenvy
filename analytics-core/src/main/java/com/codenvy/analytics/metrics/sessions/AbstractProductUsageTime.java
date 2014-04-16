@@ -20,13 +20,11 @@ package com.codenvy.analytics.metrics.sessions;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ReadBasedMetric;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
-
-import java.io.IOException;
-import java.text.ParseException;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public abstract class AbstractProductUsageTime extends ReadBasedMetric {
@@ -82,15 +80,14 @@ public abstract class AbstractProductUsageTime extends ReadBasedMetric {
     }
 
     @Override
-    public DBObject getFilter(Context clauses) throws ParseException, IOException {
-        DBObject dbObject = super.getFilter(clauses);
-        DBObject match = (DBObject)dbObject.get("$match");
+    public Context applySpecificFilter(Context clauses) {
+        Context.Builder builder = new Context.Builder(clauses);
 
         DBObject range = new BasicDBObject();
         range.put(includeMin ? "$gte" : "$gt", min);
         range.put(includeMax ? "$lte" : "$lt", max);
-        match.put(TIME, range);
 
-        return dbObject;
+        builder.put(MetricFilter.TIME, range);
+        return builder.build();
     }
 }

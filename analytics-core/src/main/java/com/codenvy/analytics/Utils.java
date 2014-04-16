@@ -134,7 +134,7 @@ public class Utils {
         Calendar cal = Calendar.getInstance();
 
         Context.Builder builder = new Context.Builder();
-        builder.put(Parameters.TIME_UNIT, timeUnit.name());
+        builder.put(Parameters.TIME_UNIT, timeUnit.toString());
 
         initDateInterval(cal, builder.getTimeUnit(), builder);
 
@@ -176,7 +176,7 @@ public class Utils {
             String[] pair = entry.split("=");
 
             if (pair.length == 2) {
-                String key = URLDecoder.decode(pair[0], "UTF-8");
+                String key = URLDecoder.decode(pair[0], "UTF-8").toLowerCase();
                 String value = URLDecoder.decode(pair[1], "UTF-8");
 
                 result.put(key, value);

@@ -87,13 +87,10 @@ public class ViewBuilder extends Feature {
     }
 
     private boolean isSimplified(Context context) {
-        // TODO test
         return !context.exists(Parameters.SORT)
                && !context.exists(Parameters.PAGE)
-               && (!context.exists(Parameters.FROM_DATE) ||
-                   context.getAsString(Parameters.FROM_DATE).equals(Parameters.FROM_DATE.getDefaultValue()))
-               && (!context.exists(Parameters.TO_DATE) ||
-                   context.getAsString(Parameters.TO_DATE).equals(Parameters.TO_DATE.getDefaultValue()))
+               && (!context.exists(Parameters.FROM_DATE) || context.isDefaultValue(Parameters.FROM_DATE))
+               && (!context.exists(Parameters.TO_DATE) || context.isDefaultValue(Parameters.TO_DATE))
                && context.getFilters().isEmpty();
     }
 

@@ -34,8 +34,8 @@ public class IsEventInSet extends FilterFunc {
     public Boolean exec(Tuple input) throws IOException {
         String event2Check = (String)input.get(0);
 
-        String slitted = (String)input.get(1);
-        Set<String> events = new HashSet<>(Arrays.asList(slitted.split(",")));
+        String value = (String)input.get(1);
+        Set<String> events = new HashSet<>(Arrays.asList(value.split(",")));
 
         return events.contains(event2Check);
     }

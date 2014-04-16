@@ -141,7 +141,7 @@ public class TestNumberOfEventsByTypes_ProjectTypes extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20130101");
         builder.put(Parameters.TO_DATE, "20130102");
-        builder.put(Parameters.USER, "user1@gmail.com,user1@yahoo.com");
+        builder.put(Parameters.USER, "user1@gmail.com OR user1@yahoo.com");
 
         Metric metric = new TestAbstractProjectType(new String[]{"jar"});
         assertEquals(metric.getValue(builder.build()), new LongValueData(2L));
@@ -152,8 +152,8 @@ public class TestNumberOfEventsByTypes_ProjectTypes extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20130101");
         builder.put(Parameters.TO_DATE, "20130102");
-        builder.put(Parameters.USER, "user1@gmail.com,user1@yahoo.com");
-        builder.put(Parameters.WS, "ws1,ws2");
+        builder.put(Parameters.USER, "user1@gmail.com OR user1@yahoo.com");
+        builder.put(Parameters.WS, "ws1 OR ws2");
 
         Metric metric = new TestAbstractProjectType(new String[]{"jar"});
         assertEquals(metric.getValue(builder.build()), new LongValueData(2L));
@@ -164,8 +164,8 @@ public class TestNumberOfEventsByTypes_ProjectTypes extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20130101");
         builder.put(Parameters.TO_DATE, "20130102");
-        builder.put(Parameters.USER, "user1@gmail.com,user1@yahoo.com");
-        builder.put(Parameters.WS, "ws1,ws2");
+        builder.put(Parameters.USER, "user1@gmail.com OR user1@yahoo.com");
+        builder.put(Parameters.WS, "ws1 OR ws2");
 
         Metric metric = new TestAbstractProjectType(new String[]{"jar", "war"});
         assertEquals(metric.getValue(builder.build()), new LongValueData(4L));

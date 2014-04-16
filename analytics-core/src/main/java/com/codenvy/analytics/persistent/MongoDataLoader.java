@@ -43,6 +43,8 @@ public class MongoDataLoader implements DataLoader {
         DBCollection dbCollection = db.getCollection(metric.getStorageCollectionName());
 
         try {
+            clauses = metric.applySpecificFilter(clauses);
+            
             DBObject filter = metric.getFilter(clauses);
             DBObject[] dbOperations = metric.getDBOperations(clauses);
             AggregationOutput aggregation = dbCollection.aggregate(filter, dbOperations);

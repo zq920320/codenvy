@@ -23,7 +23,6 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
 import java.io.IOException;
-import java.text.ParseException;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public abstract class AbstractActiveEntities extends ReadBasedMetric {
@@ -53,8 +52,8 @@ public abstract class AbstractActiveEntities extends ReadBasedMetric {
     }
 
     @Override
-    public DBObject getFilter(Context clauses) throws IOException, ParseException {
-        return basedMetric.getFilter(clauses);
+    public Context applySpecificFilter(Context clauses) throws IOException {
+        return basedMetric.applySpecificFilter(clauses);
     }
 
     @Override

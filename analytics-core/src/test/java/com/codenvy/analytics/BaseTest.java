@@ -18,6 +18,9 @@
 
 package com.codenvy.analytics;
 
+import com.codenvy.analytics.datamodel.ListValueData;
+import com.codenvy.analytics.datamodel.MapValueData;
+import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.persistent.MongoDataStorage;
 import com.codenvy.analytics.pig.PigServer;
 import com.mongodb.DB;
@@ -29,6 +32,8 @@ import org.testng.annotations.BeforeClass;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
+import java.util.Map;
 
 /** @author <a href="mailto:abazko@exoplatform.com">Anatoliy Bazko</a> */
 public class BaseTest {
@@ -65,4 +70,14 @@ public class BaseTest {
         this.mongoDb = mongoDataStorage.getDb();
     }
 
+    protected Map<String, Map<String, ValueData>> listToMap(ListValueData valueData, String key) {
+        Map<String, Map<String, ValueData>> result = new HashMap<>();
+
+        for (ValueData item : valueData.getAll()) {
+            MapValueData row = (MapValueData)item;
+            result.put(row.getAll().get(key).getAsString(), row.getAll());
+        }
+
+        return result;
+    }
 }

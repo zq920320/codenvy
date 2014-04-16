@@ -24,6 +24,7 @@ import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.datamodel.ValueDataUtil;
+import com.codenvy.analytics.metrics.users.AbstractUsersProfile;
 import com.codenvy.analytics.persistent.DataLoader;
 import com.codenvy.analytics.persistent.MongoDataStorage;
 import com.mongodb.BasicDBObject;
@@ -42,8 +43,8 @@ import java.util.regex.Pattern;
  */
 public abstract class ReadBasedMetric extends AbstractMetric {
 
-    public static final String EXCLUDE_SIGN        = "~";
-    public static final String SEPARATOR           = ",";
+    public static final String EXCLUDE_SIGN        = "~ ";
+    public static final String SEPARATOR           = " OR ";
     public static final long   DAY_IN_MILLISECONDS = 86400000L;
 
     public static final Pattern REGISTERED_USER =
@@ -73,13 +74,11 @@ public abstract class ReadBasedMetric extends AbstractMetric {
 
     @Override
     public ValueData getValue(Context context) throws IOException {
-        context = modifyContext(context);
         validateRestrictions(context);
 
         if (canReadPrecomputedData(context)) {
             Metric metric = MetricFactory.getMetric(getName() + PRECOMPUTED);
 
-            // TODO
             Context.Builder builder = new Context.Builder(context);
             builder.remove(Parameters.FROM_DATE);
             builder.remove(Parameters.TO_DATE);
@@ -114,17 +113,15 @@ public abstract class ReadBasedMetric extends AbstractMetric {
     }
 
     /** Allows modify context before evaluation if necessary. */
-    protected Context modifyContext(Context context) throws IOException {
+    public Context applySpecificFilter(Context context) throws IOException {
         return context;
     }
 
     private boolean canReadPrecomputedData(Context context) {
         return !context.exists(Parameters.DATA_COMPUTATION_PROCESS)
                && MetricFactory.exists(getName() + PRECOMPUTED)
-               && (!context.exists(Parameters.FROM_DATE) ||
-                   context.getAsString(Parameters.FROM_DATE).equals(Parameters.FROM_DATE.getDefaultValue()))
-               && (!context.exists(Parameters.TO_DATE) ||
-                   context.getAsString(Parameters.TO_DATE).equals(Parameters.TO_DATE.getDefaultValue()));
+               && (!context.exists(Parameters.FROM_DATE) || context.isDefaultValue(Parameters.FROM_DATE))
+               && (!context.exists(Parameters.TO_DATE) || context.isDefaultValue(Parameters.TO_DATE));
     }
 
     // --------------------------------------------- storage related methods -------------
@@ -155,105 +152,96 @@ public abstract class ReadBasedMetric extends AbstractMetric {
      *         the execution context
      * @return {@link DBObject}
      */
-    public DBObject getFilter(Context clauses) throws IOException, ParseException {
+    public final DBObject getFilter(Context clauses) throws IOException, ParseException {
         BasicDBObject match = new BasicDBObject();
         setDateFilter(clauses, match);
 
         for (MetricFilter filter : clauses.getFilters()) {
-            if (filter == MetricFilter.USER_COMPANY
-                || filter == MetricFilter.USER_FIRST_NAME
-                || filter == MetricFilter.USER_LAST_NAME) {
+            String field = filter.toString().toLowerCase();
+            Object value = clauses.get(filter);
+            if (isNullOrEmpty(value)) {
+                continue;
+            }
 
-                String value = clauses.getAsString(filter);
-                String[] users = getUsers(filter, value);
-                match.put(MetricFilter.USER.name().toLowerCase(), new BasicDBObject("$in", users));
+            if (!(this instanceof AbstractUsersProfile)
+                && (filter == MetricFilter.USER_COMPANY
+                    || filter == MetricFilter.USER_FIRST_NAME
+                    || filter == MetricFilter.USER_LAST_NAME)) {
 
-            } else if (filter == MetricFilter.USER) {
-                String value = clauses.getAsString(filter);
+                match.put(MetricFilter.USER.name().toLowerCase(), getUsers(filter, value));
+
+            } else if (!(this instanceof AbstractUsersProfile)
+                       && filter == MetricFilter.USER) {
                 Object users;
 
-                if (value.equalsIgnoreCase(Parameters.USER_TYPES.REGISTERED.name())) {
+                if (value.equals(Parameters.USER_TYPES.REGISTERED.name())) {
                     users = REGISTERED_USER;
-                } else if (value.equalsIgnoreCase(Parameters.USER_TYPES.ANTONYMOUS.name())) {
+                } else if (value.equals(Parameters.USER_TYPES.ANTONYMOUS.name())) {
                     users = ANONYMOUS_USER;
-                } else if (value.equalsIgnoreCase(Parameters.USER_TYPES.ANY.name())) {
+                } else if (value.equals(Parameters.USER_TYPES.ANY.name())) {
                     continue;
                 } else {
-                    String[] values = value.split(SEPARATOR);
-                    users = processExclusiveValues(values, filter.isNumericType());
+                    users = processValue(value, filter.isNumericType());
                 }
 
-                match.put(filter.name().toLowerCase(), users);
+                match.put(field, users);
 
             } else if (filter == MetricFilter.WS) {
-                String value = clauses.getAsString(filter);
                 Object ws;
 
-                if (value.equalsIgnoreCase(Parameters.WS_TYPES.PERSISTENT.name())) {
+                if (value.equals(Parameters.WS_TYPES.PERSISTENT.name())) {
                     ws = PERSISTENT_WS;
-                } else if (value.equalsIgnoreCase(Parameters.WS_TYPES.TEMPORARY.name())) {
+                } else if (value.equals(Parameters.WS_TYPES.TEMPORARY.name())) {
                     ws = TEMPORARY_WS;
-                } else if (value.equalsIgnoreCase(Parameters.WS_TYPES.ANY.name())) {
+                } else if (value.equals(Parameters.WS_TYPES.ANY.name())) {
                     continue;
                 } else {
-                    String[] values = value.split(SEPARATOR);
-                    ws = processExclusiveValues(values, filter.isNumericType());
+                    ws = processValue(value, filter.isNumericType());
                 }
 
-                match.put(filter.name().toLowerCase(), ws);
-            } else if (filter == MetricFilter.FACTORY) {
-                Object value = clauses.get(filter);
-                match.put(filter.name().toLowerCase(), value); //TODO SUPPORT ARRAY FILTER DASBH-429
-
+                match.put(field, ws);
             } else if (filter == MetricFilter.PARAMETERS) {
                 match.putAll(Utils.fetchEncodedPairs(clauses.getAsString(filter)));
 
             } else {
-                Object value = clauses.get(filter);
-
-                if (value instanceof String) {
-                    String[] values = ((String)value).split(SEPARATOR);
-                    match.put(filter.name().toLowerCase(), processExclusiveValues(values, filter.isNumericType()));
-                } else if (value.getClass().isArray()) {
-                    match.put(filter.name().toLowerCase(), new BasicDBObject("$in", value));
-                } else {
-                    throw new IllegalStateException("Unsupported filter value class " + value.getClass());
-                }
+                match.put(field, processValue(value, filter.isNumericType()));
             }
         }
 
         return new BasicDBObject("$match", match);
     }
 
-    private Object processExclusiveValues(String[] values, boolean isNumericType) throws IOException, ParseException {
-        StringBuilder exclusiveValues = new StringBuilder();
-        StringBuilder inclusiveValues = new StringBuilder();
+    private boolean isNullOrEmpty(Object value) {
+        return value == null || (value instanceof String && ((String)value).isEmpty());
+    }
 
-        for (String value : values) {
-            if (value.startsWith(EXCLUDE_SIGN)) {
-                if (exclusiveValues.length() != 0) {
-                    exclusiveValues.append(SEPARATOR);
-                }
-                exclusiveValues.append(value.substring(1));
+    protected Object processValue(Object value, boolean isNumericType) throws IOException {
+        if (value.getClass().isArray()) {
+            return new BasicDBObject("$in", value);
 
-            } else {
-                if (inclusiveValues.length() != 0) {
-                    inclusiveValues.append(SEPARATOR);
-                }
-                inclusiveValues.append(value);
-            }
+        } else if (value instanceof DBObject || value instanceof Pattern) {
+            return value;
+
+        } else {
+            return processStringValue((String)value, isNumericType);
+        }
+    }
+
+    protected Object processStringValue(String value, boolean isNumericType) {
+        boolean processExclusiveValues = value.startsWith(EXCLUDE_SIGN);
+        if (processExclusiveValues) {
+            value = value.substring(EXCLUDE_SIGN.length());
         }
 
-        if (inclusiveValues.length() != 0) {
-            values = inclusiveValues.toString().split(SEPARATOR);
+        String[] values = value.split(SEPARATOR);
+        if (processExclusiveValues) {
+            return new BasicDBObject("$nin", isNumericType ? convertToNumericFormat(values) : values);
+        } else {
             if (values.length == 1) {
                 return isNumericType ? Long.parseLong(values[0]) : values[0];
             } else {
                 return new BasicDBObject("$in", isNumericType ? convertToNumericFormat(values) : values);
             }
-        } else {
-            values = exclusiveValues.toString().split(SEPARATOR);
-            return new BasicDBObject("$nin", isNumericType ? convertToNumericFormat(values) : values);
         }
     }
 
@@ -294,9 +282,9 @@ public abstract class ReadBasedMetric extends AbstractMetric {
 
     }
 
-    private String[] getUsers(MetricFilter filter, String pattern) throws IOException {
+    private DBObject getUsers(MetricFilter filter, Object value) throws IOException {
         Context.Builder builder = new Context.Builder();
-        builder.put(filter, pattern);
+        builder.put(filter, value);
         Context context = builder.build();
 
         Metric metric = MetricFactory.getMetric(MetricType.USERS_PROFILES_LIST);
@@ -311,7 +299,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
             result[i] = profile.get(ID).getAsString();
         }
 
-        return result;
+        return new BasicDBObject("$in", result);
     }
 
     /**

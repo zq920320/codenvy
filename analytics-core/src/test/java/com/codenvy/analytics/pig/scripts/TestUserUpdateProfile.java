@@ -18,14 +18,8 @@
 package com.codenvy.analytics.pig.scripts;
 
 import com.codenvy.analytics.BaseTest;
-import com.codenvy.analytics.datamodel.ListValueData;
-import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.datamodel.MapValueData;
-import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.Context;
-import com.codenvy.analytics.metrics.Metric;
-import com.codenvy.analytics.metrics.MetricFilter;
-import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.datamodel.*;
+import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.metrics.users.CompletedProfiles;
 import com.codenvy.analytics.metrics.users.UsersProfiles;
 import com.codenvy.analytics.metrics.users.UsersProfilesList;
@@ -39,18 +33,20 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import static com.mongodb.util.MyAsserts.assertEquals;
-import static org.testng.AssertJUnit.fail;
+import static org.testng.Assert.assertTrue;
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+/**
+ * @author Anatoliy Bazko
+ */
 public class TestUserUpdateProfile extends BaseTest {
 
-    private static final String COLLECTION = TestUserUpdateProfile.class.getSimpleName().toLowerCase();
+    private static final String COLLECTION = MetricType.USERS_PROFILES_LIST.toString().toLowerCase();
 
     @BeforeClass
     public void prepare() throws Exception {
-
         List<Event> events = new ArrayList<>();
 
         events.add(Event.Builder.createUserUpdateProfile("user2@gmail.com", "f2", "l2", "company2", "11", "1")
@@ -83,231 +79,294 @@ public class TestUserUpdateProfile extends BaseTest {
     }
 
     @Test
-    public void testAllProfiles() throws Exception {
-        Context.Builder builder = new Context.Builder();
+    public void shouldReturnAllProfiles() throws Exception {
+        Metric metric = new UsersProfiles();
+        assertEquals(LongValueData.valueOf(4), metric.getValue(Context.EMPTY));
 
-        Metric metric = new TestedUsersProfilesList();
-
-        ListValueData value = (ListValueData)metric.getValue(builder.build());
+        metric = new UsersProfilesList();
+        ListValueData value = ValueDataUtil.getAsList(metric, Context.EMPTY);
         assertEquals(value.size(), 4);
 
-        for (ValueData object : value.getAll()) {
-            MapValueData item = (MapValueData)object;
-            Map<String, ValueData> all = item.getAll();
+        Map<String, Map<String, ValueData>> m = listToMap(value, "_id");
 
-            ValueData userEmail = all.get("_id");
+        assertEquals(m.size(), 4);
+        assertTrue(m.containsKey("user1@gmail.com"));
+        assertTrue(m.containsKey("user2@gmail.com"));
+        assertTrue(m.containsKey("user3@gmail.com"));
+        assertTrue(m.containsKey("user4@gmail.com"));
 
-            if (userEmail.getAsString().equals("user1@gmail.com")) {
-                assertEquals(all.get("user_last_name").getAsString(), "l3");
-                assertEquals(all.get("user_company").getAsString(), "company1");
-                assertEquals(all.get("user_phone").getAsString(), "22");
-                assertEquals(all.get("user_job").getAsString(), "Other");
+        assertProfile(m.get("user1@gmail.com"),
+                      "f3",
+                      "l3",
+                      "company1",
+                      "22",
+                      "Other");
+        assertProfile(m.get("user2@gmail.com"),
+                      "f2",
+                      "l2",
+                      "company2",
+                      "11",
+                      "Other");
+        assertProfile(m.get("user3@gmail.com"),
+                      "f4",
+                      "l4",
+                      "company3",
+                      "22",
+                      "Other");
+        assertProfile(m.get("user4@gmail.com"),
+                      "f4",
+                      "l4",
+                      "company4 :)",
+                      "22",
+                      "");
+    }
 
-            } else if (userEmail.getAsString().equals("user2@gmail.com")) {
-                assertEquals(all.get("user_first_name").getAsString(), "f2");
-                assertEquals(all.get("user_last_name").getAsString(), "l2");
-                assertEquals(all.get("user_company").getAsString(), "company2");
-                assertEquals(all.get("user_phone").getAsString(), "11");
-                assertEquals(all.get("user_job").getAsString(), "Other");
-
-            } else if (userEmail.getAsString().equals("user3@gmail.com")) {
-                assertEquals(all.get("user_first_name").getAsString(), "f4");
-                assertEquals(all.get("user_last_name").getAsString(), "l4");
-                assertEquals(all.get("user_company").getAsString(), "company3");
-                assertEquals(all.get("user_phone").getAsString(), "22");
-                assertEquals(all.get("user_job").getAsString(), "Other");
-
-            } else if (userEmail.getAsString().equals("user4@gmail.com")) {
-                assertEquals(all.get("user_first_name").getAsString(), "f4");
-                assertEquals(all.get("user_last_name").getAsString(), "l4");
-                assertEquals(all.get("user_company").getAsString(), "company4 :)");
-                assertEquals(all.get("user_phone").getAsString(), "22");
-                assertEquals(all.get("user_job").getAsString(), "");
-
-            } else {
-                fail("Unknown user" + userEmail);
-            }
-
-        }
-
-        metric = new TestedUsersProfiles();
-        assertEquals(metric.getValue(builder.build()).getAsString(), "4");
+    private void assertProfile(Map<String, ValueData> profile,
+                               String firstName,
+                               String lastName,
+                               String company,
+                               String phone,
+                               String job) {
+        assertEquals(StringValueData.valueOf(firstName), profile.get("user_first_name"));
+        assertEquals(StringValueData.valueOf(lastName), profile.get("user_last_name"));
+        assertEquals(StringValueData.valueOf(company), profile.get("user_company"));
+        assertEquals(StringValueData.valueOf(phone), profile.get("user_phone"));
+        assertEquals(StringValueData.valueOf(job), profile.get("user_job"));
     }
 
     @Test
-    public void testSingleProfile() throws Exception {
+    public void testFilterByUserAsString() throws Exception {
         Context.Builder builder = new Context.Builder();
         builder.put(MetricFilter.USER, "user1@gmail.com");
 
-        Metric metric = new TestedUsersProfilesList();
+        Metric metric = new UsersProfiles();
+        assertEquals(LongValueData.valueOf(1), metric.getValue(builder.build()));
 
-        ListValueData value = (ListValueData)metric.getValue(builder.build());
+        metric = new UsersProfilesList();
+        ListValueData value = ValueDataUtil.getAsList(metric, builder.build());
         assertEquals(value.size(), 1);
 
-        MapValueData item = (MapValueData)value.getAll().get(0);
-        Map<String, ValueData> all = item.getAll();
-
-        assertEquals(all.get("_id").getAsString(), "user1@gmail.com");
-        assertEquals(all.get("user_first_name").getAsString(), "f3");
-        assertEquals(all.get("user_last_name").getAsString(), "l3");
-        assertEquals(all.get("user_company").getAsString(), "company1");
-        assertEquals(all.get("user_phone").getAsString(), "22");
-        assertEquals(all.get("user_job").getAsString(), "Other");
+        Map<String, Map<String, ValueData>> m = listToMap(value, "_id");
+        assertEquals(m.size(), 1);
+        assertTrue(m.containsKey("user1@gmail.com"));
     }
 
     @Test
-    public void testSearchUsersByCompany() throws Exception {
+    public void testFilterByUserAsStringSeveralValues() throws Exception {
+        Context.Builder builder = new Context.Builder();
+        builder.put(MetricFilter.USER, "user1@gmail.com OR user2@gmail.com");
+
+        Metric metric = new UsersProfiles();
+        assertEquals(LongValueData.valueOf(2), metric.getValue(builder.build()));
+
+        metric = new UsersProfilesList();
+        ListValueData value = ValueDataUtil.getAsList(metric, builder.build());
+        assertEquals(value.size(), 2);
+
+        Map<String, Map<String, ValueData>> m = listToMap(value, "_id");
+        assertEquals(m.size(), 2);
+        assertTrue(m.containsKey("user1@gmail.com"));
+        assertTrue(m.containsKey("user2@gmail.com"));
+    }
+
+    @Test
+    public void testFilterByUserAsStringSeveralValuesWithExclusion() throws Exception {
+        Context.Builder builder = new Context.Builder();
+        builder.put(MetricFilter.USER, "~ user1@gmail.com OR user2@gmail.com");
+
+        Metric metric = new UsersProfiles();
+        assertEquals(LongValueData.valueOf(2), metric.getValue(builder.build()));
+
+        metric = new UsersProfilesList();
+        ListValueData value = ValueDataUtil.getAsList(metric, builder.build());
+        assertEquals(value.size(), 2);
+
+        Map<String, Map<String, ValueData>> m = listToMap(value, "_id");
+        assertEquals(m.size(), 2);
+        assertTrue(m.containsKey("user3@gmail.com"));
+        assertTrue(m.containsKey("user4@gmail.com"));
+    }
+
+    @Test
+    public void testFilterByUserAsStringArray() throws Exception {
+        Context.Builder builder = new Context.Builder();
+        builder.put(MetricFilter.USER, new String[]{"user1@gmail.com"});
+
+        Metric metric = new UsersProfiles();
+        assertEquals(LongValueData.valueOf(1), metric.getValue(builder.build()));
+
+        metric = new UsersProfilesList();
+        ListValueData value = ValueDataUtil.getAsList(metric, builder.build());
+        assertEquals(value.size(), 1);
+
+        Map<String, Map<String, ValueData>> m = listToMap(value, "_id");
+        assertEquals(m.size(), 1);
+        assertTrue(m.containsKey("user1@gmail.com"));
+    }
+
+    @Test
+    public void testFilterByUserAsPatternArray() throws Exception {
+        Context.Builder builder = new Context.Builder();
+        builder.put(MetricFilter.USER, new Pattern[]{Pattern.compile("user1@gmail.com")});
+
+        Metric metric = new UsersProfiles();
+        assertEquals(LongValueData.valueOf(1), metric.getValue(builder.build()));
+
+        metric = new UsersProfilesList();
+        ListValueData value = ValueDataUtil.getAsList(metric, builder.build());
+        assertEquals(value.size(), 1);
+
+        Map<String, Map<String, ValueData>> m = listToMap(value, "_id");
+        assertEquals(m.size(), 1);
+        assertTrue(m.containsKey("user1@gmail.com"));
+    }
+
+    @Test
+    public void testFilterByCompanyAsString() throws Exception {
         Context.Builder builder = new Context.Builder();
         builder.put(MetricFilter.USER_COMPANY, "company1");
 
-        Metric metric = new TestedUsersProfilesList();
+        Metric metric = new UsersProfiles();
+        assertEquals(LongValueData.valueOf(1), metric.getValue(builder.build()));
 
-        ListValueData value = (ListValueData)metric.getValue(builder.build());
+        metric = new UsersProfilesList();
+        ListValueData value = ValueDataUtil.getAsList(metric, builder.build());
         assertEquals(value.size(), 1);
     }
 
     @Test
-    public void testSearchUsersByCompanyUseCase1() throws Exception {
+    public void testFilterByCompanyAsStringSeveralValues() throws Exception {
+        Context.Builder builder = new Context.Builder();
+        builder.put(MetricFilter.USER_COMPANY, "company1 OR company2");
+
+        Metric metric = new UsersProfiles();
+        assertEquals(LongValueData.valueOf(2), metric.getValue(builder.build()));
+
+        metric = new UsersProfilesList();
+        ListValueData value = ValueDataUtil.getAsList(metric, builder.build());
+        assertEquals(value.size(), 2);
+    }
+
+    @Test
+    public void testFilterByCompanyAsStringSeveralValuesExclusion() throws Exception {
+        Context.Builder builder = new Context.Builder();
+        builder.put(MetricFilter.USER_COMPANY, "~ company1 OR company2");
+
+        Metric metric = new UsersProfiles();
+        assertEquals(LongValueData.valueOf(2), metric.getValue(builder.build()));
+
+        metric = new UsersProfilesList();
+        ListValueData value = ValueDataUtil.getAsList(metric, builder.build());
+        assertEquals(value.size(), 2);
+    }
+
+    @Test
+    public void testFilterByCompanyAsStringArray() throws Exception {
+        Context.Builder builder = new Context.Builder();
+        builder.put(MetricFilter.USER_COMPANY, new String[]{"company1"});
+
+        Metric metric = new UsersProfiles();
+        assertEquals(LongValueData.valueOf(1), metric.getValue(builder.build()));
+
+        metric = new UsersProfilesList();
+        ListValueData value = ValueDataUtil.getAsList(metric, builder.build());
+        assertEquals(value.size(), 1);
+    }
+
+    @Test
+    public void testFilterByCompanyAsPatternArray() throws Exception {
+        Context.Builder builder = new Context.Builder();
+        builder.put(MetricFilter.USER_COMPANY, new Pattern[]{Pattern.compile("company1")});
+
+        Metric metric = new UsersProfiles();
+        assertEquals(LongValueData.valueOf(1), metric.getValue(builder.build()));
+
+        metric = new UsersProfilesList();
+        ListValueData value = ValueDataUtil.getAsList(metric, builder.build());
+        assertEquals(value.size(), 1);
+    }
+
+    @Test
+    public void testFilterByCompanyPartName() throws Exception {
         Context.Builder builder = new Context.Builder();
         builder.put(MetricFilter.USER_COMPANY, "company");
 
-        Metric metric = new TestedUsersProfilesList();
+        Metric metric = new UsersProfiles();
+        assertEquals(LongValueData.valueOf(4), metric.getValue(builder.build()));
 
-        ListValueData value = (ListValueData)metric.getValue(builder.build());
+        metric = new UsersProfilesList();
+        ListValueData value = ValueDataUtil.getAsList(metric, builder.build());
         assertEquals(value.size(), 4);
     }
 
     @Test
-    public void testSearchUsersByCompanyUseCase2() throws Exception {
-        Context.Builder builder = new Context.Builder();
-        builder.put(MetricFilter.USER_COMPANY, "company1,company2");
-
-        Metric metric = new TestedUsersProfilesList();
-
-        ListValueData value = (ListValueData)metric.getValue(builder.build());
-        assertEquals(value.size(), 2);
-    }
-
-    @Test
-    public void testSearchUsersByCompanyUseCase3() throws Exception {
-        Context.Builder builder = new Context.Builder();
-        builder.put(MetricFilter.USER_COMPANY, "company1,company4");
-
-        Metric metric = new TestedUsersProfilesList();
-
-        ListValueData value = (ListValueData)metric.getValue(builder.build());
-        assertEquals(value.size(), 2);
-    }
-
-    @Test
-    public void testSearchUsersByCompanyUseCase4() throws Exception {
-        Context.Builder builder = new Context.Builder();
-        builder.put(MetricFilter.USER_COMPANY, "ompan");
-
-        Metric metric = new TestedUsersProfilesList();
-
-        ListValueData value = (ListValueData)metric.getValue(builder.build());
-        assertEquals(value.size(), 4);
-    }
-
-    @Test
-    public void testSearchUsersByCompanyUseCase5() throws Exception {
-        Context.Builder builder = new Context.Builder();
-        builder.put(MetricFilter.USER_COMPANY, "company4");
-
-        Metric metric = new TestedUsersProfilesList();
-
-        ListValueData value = (ListValueData)metric.getValue(builder.build());
-        assertEquals(value.size(), 1);
-    }
-
-    @Test
-    public void testSearchUsersByCompanyCaseInsensitive() throws Exception {
+    public void testInsensitiveFilterByCompany() throws Exception {
         Context.Builder builder = new Context.Builder();
         builder.put(MetricFilter.USER_COMPANY, "COMPANY2");
 
-        Metric metric = new TestedUsersProfilesList();
+        Metric metric = new UsersProfiles();
+        assertEquals(LongValueData.valueOf(1), metric.getValue(builder.build()));
 
-        ListValueData value = (ListValueData)metric.getValue(builder.build());
+        metric = new UsersProfilesList();
+        ListValueData value = ValueDataUtil.getAsList(metric, builder.build());
         assertEquals(value.size(), 1);
     }
 
-
     @Test
-    public void testSearchUsersByCompanyWithSpecialCharacters() throws Exception {
+    public void testFilterByCompanySpecialCharacters() throws Exception {
         Context.Builder builder = new Context.Builder();
         builder.put(MetricFilter.USER_COMPANY, "company4 :)");
 
-        Metric metric = new TestedUsersProfilesList();
+        Metric metric = new UsersProfiles();
+        assertEquals(LongValueData.valueOf(1), metric.getValue(builder.build()));
 
-        ListValueData value = (ListValueData)metric.getValue(builder.build());
+        metric = new UsersProfilesList();
+        ListValueData value = ValueDataUtil.getAsList(metric, builder.build());
         assertEquals(value.size(), 1);
     }
 
     @Test
-    public void testSearchUsersByFirstName() throws Exception {
+    public void testFilterByFirstName() throws Exception {
         Context.Builder builder = new Context.Builder();
         builder.put(MetricFilter.USER_FIRST_NAME, "f4");
 
-        Metric metric = new TestedUsersProfilesList();
+        Metric metric = new UsersProfiles();
+        assertEquals(LongValueData.valueOf(2), metric.getValue(builder.build()));
 
-        ListValueData value = (ListValueData)metric.getValue(builder.build());
+        metric = new UsersProfilesList();
+        ListValueData value = ValueDataUtil.getAsList(metric, builder.build());
         assertEquals(value.size(), 2);
 
-        List<ValueData> items = value.getAll();
-        MapValueData entry = (MapValueData)items.get(0);
-        assertEquals(entry.getAll().get(UsersProfilesList.ID).getAsString(), "user3@gmail.com");
-
-        entry = (MapValueData)items.get(1);
-        assertEquals(entry.getAll().get(UsersProfilesList.ID).getAsString(), "user4@gmail.com");
+        Map<String, Map<String, ValueData>> m = listToMap(value, "_id");
+        assertEquals(m.size(), 2);
+        assertTrue(m.containsKey("user3@gmail.com"));
+        assertTrue(m.containsKey("user4@gmail.com"));
     }
 
     @Test
-    public void testSearchUsersByLastName() throws Exception {
+    public void testFilterByLastName() throws Exception {
         Context.Builder builder = new Context.Builder();
         builder.put(MetricFilter.USER_LAST_NAME, "l4");
 
-        Metric metric = new TestedUsersProfilesList();
+        Metric metric = new UsersProfiles();
+        assertEquals(LongValueData.valueOf(2), metric.getValue(builder.build()));
 
-        ListValueData value = (ListValueData)metric.getValue(builder.build());
+
+        metric = new UsersProfilesList();
+        ListValueData value = ValueDataUtil.getAsList(metric, builder.build());
         assertEquals(value.size(), 2);
 
-        List<ValueData> items = value.getAll();
-        MapValueData entry = (MapValueData)items.get(0);
-        assertEquals(entry.getAll().get(UsersProfilesList.ID).getAsString(), "user3@gmail.com");
-
-        entry = (MapValueData)items.get(1);
-        assertEquals(entry.getAll().get(UsersProfilesList.ID).getAsString(), "user4@gmail.com");
+        Map<String, Map<String, ValueData>> m = listToMap(value, "_id");
+        assertEquals(m.size(), 2);
+        assertTrue(m.containsKey("user3@gmail.com"));
+        assertTrue(m.containsKey("user4@gmail.com"));
     }
 
     @Test
     public void testCompletedProfiles() throws Exception {
-        Metric metric = new TestedCompletedProfiles();
+        Metric metric = new CompletedProfiles();
 
-        ValueData value = metric.getValue(new Context.Builder().build());
+        ValueData value = metric.getValue(Context.EMPTY);
         assertEquals(value, LongValueData.valueOf(3));
-    }
-
-    // ----------------------> Tested metrics
-
-    private class TestedCompletedProfiles extends CompletedProfiles {
-        @Override
-        public String getStorageCollectionName() {
-            return COLLECTION;
-        }
-    }
-
-    private class TestedUsersProfiles extends UsersProfiles {
-        @Override
-        public String getStorageCollectionName() {
-            return COLLECTION;
-        }
-    }
-
-    private class TestedUsersProfilesList extends UsersProfilesList {
-        @Override
-        public String getStorageCollectionName() {
-            return COLLECTION;
-        }
     }
 }

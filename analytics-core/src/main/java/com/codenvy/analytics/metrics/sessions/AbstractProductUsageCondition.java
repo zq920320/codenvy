@@ -23,9 +23,6 @@ import com.codenvy.analytics.metrics.*;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
-import java.io.IOException;
-import java.text.ParseException;
-
 /** @author Anatoliy Bazko */
 public abstract class AbstractProductUsageCondition extends ReadBasedMetric {
 
@@ -100,16 +97,14 @@ public abstract class AbstractProductUsageCondition extends ReadBasedMetric {
     }
 
     @Override
-    public DBObject getFilter(Context clauses) throws ParseException, IOException {
+    public Context applySpecificFilter(Context clauses) {
         if (!clauses.exists(MetricFilter.USER)) {
             Context.Builder builder = new Context.Builder(clauses);
             builder.put(MetricFilter.USER, Parameters.USER_TYPES.REGISTERED.name());
-
-            clauses = builder.build();
-
+            return builder.build();
         }
 
-        return super.getFilter(clauses);
+        return clauses;
     }
 
     @Override

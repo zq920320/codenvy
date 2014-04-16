@@ -123,7 +123,7 @@ public class TestNumberOfUsersByTypes_UsersLoggedInTypes extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20130102");
         builder.put(Parameters.TO_DATE, "20130102");
-        builder.put(Parameters.USER, "user1@gmail.com,user1@yahoo.com");
+        builder.put(Parameters.USER, "user1@gmail.com OR user1@yahoo.com");
 
         Map<String, ValueData> values = ((MapValueData)metric.getValue(builder.build())).getAll();
         assertEquals(values.size(), 1);

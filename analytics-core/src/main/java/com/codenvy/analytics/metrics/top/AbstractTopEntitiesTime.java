@@ -65,9 +65,9 @@ public abstract class AbstractTopEntitiesTime extends CalculatedMetric {
 
         try {
             ListValueData top = getTopEntities(context, dayCount);
-            String filterValue = extractEntityNames(top);
+            String[] filterValue = extractEntityNames(top);
 
-            if (filterValue.isEmpty()) {
+            if (filterValue.length == 0) {
                 return combineResult(top,
                                      ListValueData.DEFAULT,
                                      ListValueData.DEFAULT,
@@ -148,22 +148,17 @@ public abstract class AbstractTopEntitiesTime extends CalculatedMetric {
         return LongValueData.DEFAULT;
     }
 
-    private String extractEntityNames(ListValueData top) {
-        StringBuilder filterValue = new StringBuilder();
+    private String[] extractEntityNames(ListValueData top) {
+        List<ValueData> items = top.getAll();
+        String[] result = new String[items.size()];
 
-        for (ValueData item : top.getAll()) {
-            MapValueData next = (MapValueData)item;
+        for (int i = 0; i < items.size(); i++) {
+            MapValueData next = (MapValueData)items.get(i);
             String entityParam = filterParameter.name().toLowerCase();
-            String entityName = next.getAll().get(entityParam).getAsString();
-
-            if (filterValue.length() != 0) {
-                filterValue.append(",");
-            }
-
-            filterValue.append(entityName);
+            result[i] = next.getAll().get(entityParam).getAsString();
         }
 
-        return filterValue.toString();
+        return result;
     }
 
     /** @return top entities for required period sorted by usage time */
@@ -176,7 +171,7 @@ public abstract class AbstractTopEntitiesTime extends CalculatedMetric {
         return ValueDataUtil.getAsList(basedMetric[0], builder.build());
     }
 
-    private ListValueData getEntities(Context context, int dayCount, String filterValue)
+    private ListValueData getEntities(Context context, int dayCount, String[] filterValue)
             throws ParseException, IOException {
 
         Context.Builder builder = initContextBuilder(context, dayCount);

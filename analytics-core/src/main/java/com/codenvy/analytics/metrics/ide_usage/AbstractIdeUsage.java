@@ -26,9 +26,6 @@ import com.codenvy.analytics.metrics.ReadBasedMetric;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
-import java.io.IOException;
-import java.text.ParseException;
-
 /**
  * @author Alexander Reshetnyak
  * @author Anatoliy Bazko
@@ -210,11 +207,10 @@ public abstract class AbstractIdeUsage extends ReadBasedMetric {
     }
 
     @Override
-    public DBObject getFilter(Context clauses) throws IOException, ParseException {
+    public Context applySpecificFilter(Context clauses) {
         Context.Builder builder = new Context.Builder(clauses);
         builder.put(MetricFilter.ACTION, actions);
-
-        return super.getFilter(builder.build());
+        return builder.build();
     }
 
     @Override

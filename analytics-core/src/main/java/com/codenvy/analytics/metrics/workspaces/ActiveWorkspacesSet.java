@@ -18,11 +18,8 @@
 package com.codenvy.analytics.metrics.workspaces;
 
 import com.codenvy.analytics.metrics.*;
-import com.mongodb.DBObject;
 
 import javax.annotation.security.RolesAllowed;
-import java.io.IOException;
-import java.text.ParseException;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
@@ -38,16 +35,14 @@ public class ActiveWorkspacesSet extends AbstractSetValueResulted {
     }
 
     @Override
-    public DBObject getFilter(Context clauses) throws ParseException, IOException {
+    public Context applySpecificFilter(Context clauses) {
         if (!clauses.exists(MetricFilter.WS)) {
             Context.Builder builder = new Context.Builder(clauses);
             builder.put(MetricFilter.WS, Parameters.WS_TYPES.PERSISTENT.name());
-
-            clauses = builder.build();
-
+            return builder.build();
         }
 
-        return super.getFilter(clauses);
+        return clauses;
     }
 
     @Override

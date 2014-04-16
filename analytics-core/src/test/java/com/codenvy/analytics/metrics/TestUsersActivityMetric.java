@@ -44,7 +44,7 @@ public class TestUsersActivityMetric extends BaseTest {
     private static final String SESSION_ID          = "8AA06F22-3755-4BDD-9242-8A6371BAB53A";
     private static final String COLLECTION          = TestUsersActivityMetric.class.getSimpleName().toLowerCase();
     private static final String NON_SESSIONS_EVENTS =
-            "~session-started,~session-finished,~session-factory-started,~session-factory-stopped";
+            "~ session-started OR session-finished OR session-factory-started OR session-factory-stopped";
 
     @BeforeClass
     public void prepare() throws Exception {

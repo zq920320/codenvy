@@ -155,7 +155,7 @@ public class TestNumberOfDeploymentsByTypes extends BaseTest {
         assertEquals(values.size(), 1);
         assertEquals(values.get("local"), new LongValueData(1));
 
-        builder.put(MetricFilter.USER, "user1@gmail.com,user2@gmail.com");
+        builder.put(MetricFilter.USER, "user1@gmail.com OR user2@gmail.com");
         values = ((MapValueData)metric.getValue(builder.build())).getAll();
         assertEquals(values.size(), 3);
         assertEquals(values.get("local"), new LongValueData(1));
@@ -172,7 +172,7 @@ public class TestNumberOfDeploymentsByTypes extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20130101");
         builder.put(Parameters.TO_DATE, "20130101");
-        builder.put(MetricFilter.USER, "user1@gmail.com,user2@gmail.com");
+        builder.put(MetricFilter.USER, "user1@gmail.com OR user2@gmail.com");
         builder.put(MetricFilter.WS, "ws3");
 
         Metric metric = new TestProjectPaases();
