@@ -48,7 +48,9 @@ public enum Parameters {
     REPORT_DATE,
     RECIPIENT,
     VIEW,
-
+    
+    EXPANDED_METRIC_NAME,
+    
     TIME_UNIT {
         @Override
         public void validate(String value, Context context) throws IllegalArgumentException {

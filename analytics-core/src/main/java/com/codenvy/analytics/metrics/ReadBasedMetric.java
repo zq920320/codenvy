@@ -19,8 +19,17 @@
 
 package com.codenvy.analytics.metrics;
 
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.regex.Pattern;
+
 import com.codenvy.analytics.Injector;
 import com.codenvy.analytics.Utils;
+import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.datamodel.ValueDataUtil;
@@ -28,12 +37,6 @@ import com.codenvy.analytics.persistent.DataLoader;
 import com.codenvy.analytics.persistent.MongoDataStorage;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
-
-import java.io.IOException;
-import java.text.ParseException;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Pattern;
 
 /**
  * It is supposed to load calculated value {@link com.codenvy.analytics.datamodel.ValueData} from the storage.
@@ -138,9 +141,32 @@ public abstract class ReadBasedMetric extends AbstractMetric {
         BasicDBObject match = new BasicDBObject();
         setDateFilter(clauses, match);
 
+        if (clauses.exists(Parameters.EXPANDED_METRIC_NAME)) {
+            String value = clauses.get(Parameters.EXPANDED_METRIC_NAME);
+            MetricType expandedMetricType = MetricType.valueOf(value.toUpperCase());
+            
+            switch (expandedMetricType) {
+                case ACTIVE_USERS:
+                case USERS_WHO_CREATED_PROJECT:
+                case USERS_WHO_BUILT:
+                case USERS_WHO_DEPLOYED:
+                case USERS_WHO_DEPLOYED_TO_PAAS:
+                case USERS_WHO_INVITED:
+                case USERS_WHO_LAUNCHED_SHELL:
+                    String[] users = getExpandedMetricValues(expandedMetricType, clauses);
+                    match.put(MetricFilter.USER.name().toLowerCase(), new BasicDBObject("$in", users));
+                    break;
+                
+                case ACTIVE_WORKSPACES:
+                    String[] workspaces = getExpandedMetricValues(expandedMetricType, clauses);
+                    match.put(MetricFilter.WS.name().toLowerCase(), new BasicDBObject("$in", workspaces));
+                    break;
+            }
+        }
+        
         for (MetricFilter filter : clauses.getFilters()) {
             String value = clauses.get(filter);
-
+                                
             if (filter == MetricFilter.USER_COMPANY
                 || filter == MetricFilter.USER_FIRST_NAME
                 || filter == MetricFilter.USER_LAST_NAME) {
@@ -306,19 +332,41 @@ public abstract class ReadBasedMetric extends AbstractMetric {
      *
      * @param clauses
      *         the execution context
+     * @param usePagination
      * @return {@link DBObject}
      */
-    public final DBObject[] getDBOperations(Context clauses) {
-        return unionDBOperations(getSpecificDBOperations(clauses),
-                                 getPaginationDBOperations(clauses));
+    public final DBObject[] getDBOperations(Context clauses, boolean usePagination) {
+        DBObject[] dbOps = getSpecificDBOperations(clauses);
+        dbOps = unionDBOperations(dbOps, getSortingDBOperations(clauses));  // sort before pagination
+        
+        if (usePagination) {
+            dbOps = unionDBOperations(dbOps, getPaginationDBOperations(clauses)); 
+        }
+        
+        return dbOps;
     }
 
-    /** Provides basic DB operations: sorting and pagination. */
+    /** Provides basic DB pagination operations. */
     private DBObject[] getPaginationDBOperations(Context clauses) {
-        boolean sortExists = clauses.exists(Parameters.SORT);
         boolean pageExists = clauses.exists(Parameters.PAGE);
 
-        DBObject[] dbOp = new DBObject[(sortExists ? 1 : 0) + (pageExists ? 2 : 0)];
+        DBObject[] dbOp = new DBObject[pageExists ? 2 : 0];
+        if (pageExists) {            
+            long page = clauses.getAsLong(Parameters.PAGE);
+            long perPage = clauses.getAsLong(Parameters.PER_PAGE);
+
+            dbOp[0] = new BasicDBObject("$skip", (page - 1) * perPage);
+            dbOp[1] = new BasicDBObject("$limit", perPage);
+        }
+
+        return dbOp;
+    }
+
+    /** Provides basic DB sorting operation. */
+    private DBObject[] getSortingDBOperations(Context clauses) {
+        boolean sortExists = clauses.exists(Parameters.SORT);
+
+        DBObject[] dbOp = new DBObject[sortExists ? 1 : 0];
 
         if (sortExists) {
             String sortCondition = clauses.get(Parameters.SORT);
@@ -328,18 +376,10 @@ public abstract class ReadBasedMetric extends AbstractMetric {
 
             dbOp[0] = new BasicDBObject("$sort", new BasicDBObject(field, asc ? 1 : -1));
         }
-
-        if (pageExists) {
-            long page = clauses.getAsLong(Parameters.PAGE);
-            long perPage = clauses.getAsLong(Parameters.PER_PAGE);
-
-            dbOp[sortExists ? 1 : 0] = new BasicDBObject("$skip", (page - 1) * perPage);
-            dbOp[sortExists ? 2 : 1] = new BasicDBObject("$limit", perPage);
-        }
-
+        
         return dbOp;
     }
-
+    
     protected DBObject[] unionDBOperations(DBObject[] dbOp1, DBObject[] dbOp2) {
         DBObject[] result = new DBObject[dbOp1.length + dbOp2.length];
 
@@ -352,5 +392,58 @@ public abstract class ReadBasedMetric extends AbstractMetric {
     /** @return DB operations specific for given metric */
     public abstract DBObject[] getSpecificDBOperations(Context clauses);
 
+    private String[] getExpandedMetricValues(MetricType metric, Context context) throws ParseException, IOException {
+        // unlink context from caller method
+        Context.Builder builder = new Context.Builder(context);
+        builder.remove(Parameters.EXPANDED_METRIC_NAME);
+        context = builder.build();
+
+        context = initializeFirstInterval(context);
+        ListValueData metricValue = MetricFactory.getMetric(metric).getExpandedValue(context);
+
+        List<ValueData> allMetricValues = metricValue.getAll();
+        
+        // return empty view data if there is empty metricValue
+        if (allMetricValues.size() == 0) {
+            return null;
+        }
+        
+        List<String> values = new ArrayList<>(allMetricValues.size());
+
+        for (ValueData rowValue: allMetricValues) {
+            MapValueData row = (MapValueData) rowValue;
+            List<ValueData> rowValues = new ArrayList<>(row.size());
+            for (Entry<String, ValueData> entry: row.getAll().entrySet()) {
+                values.add(entry.getValue().getAsString());
+            }
+        }
+        
+        return values.toArray(new String[0]);
+    }
+    
+    
+    private Context initializeFirstInterval(Context context) throws ParseException {
+        Context.Builder builder = new Context.Builder(context);
+
+        if (!context.exists(Parameters.TO_DATE)) {
+            builder.putDefaultValue(Parameters.TO_DATE);
+            builder.putDefaultValue(Parameters.FROM_DATE);
+            builder.put(Parameters.REPORT_DATE, builder.get(Parameters.TO_DATE));
+        } else {
+            builder.put(Parameters.REPORT_DATE, context.get(Parameters.TO_DATE));
+        }
+
+        if (context.exists(Parameters.TIME_UNIT)) {
+            Parameters.TimeUnit timeUnit = builder.getTimeUnit();
+            if (context.exists(Parameters.TIME_INTERVAL)) {
+                int timeShift = (int) -context.getAsLong(Parameters.TIME_INTERVAL);
+                return Utils.initDateInterval(builder.getAsDate(Parameters.TO_DATE), timeUnit, timeShift, builder);                
+            } else {
+                return Utils.initDateInterval(builder.getAsDate(Parameters.TO_DATE), timeUnit, builder);
+            }
+        } else {
+            return builder.build();
+        }
+    }
 }
 

@@ -579,6 +579,7 @@ function Configuration() {
         "factory",
         "encoded_factory",
         "time_interval",
+        "expanded_metric_name",
     ];
 
     /** see method analytics.main.getParamsFromButtons() */
@@ -598,8 +599,8 @@ function Configuration() {
         "ws",                // workspaces-view
         "factory",           // factories-view
         "encoded_factory",   // factories-view
-        "original_metric_value",  // drill down page
-        "original_metric_name",   // drill down page
+        "expanded_metric_name",    // all entry views 
+        "expanded_metric_value",   // all entry views
         "time_interval",   // drill down page
     ];
 

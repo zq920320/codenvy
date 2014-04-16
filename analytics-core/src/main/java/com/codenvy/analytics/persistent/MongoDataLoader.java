@@ -36,6 +36,8 @@ import com.codenvy.analytics.datamodel.SetValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.datamodel.ValueDataFactory;
 import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.MetricFilter;
+import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.ReadBasedMetric;
 import com.mongodb.AggregationOutput;
 import com.mongodb.DB;
@@ -57,7 +59,14 @@ public class MongoDataLoader implements DataLoader {
 
         try {
             DBObject filter = metric.getFilter(clauses);
-            DBObject[] dbOperations = metric.getDBOperations(clauses);
+            
+            DBObject[] dbOperations;
+            // don't use pagination in case of filtering by using expanded metric values
+            if (clauses.exists(Parameters.EXPANDED_METRIC_NAME)) {
+                dbOperations = metric.getDBOperations(clauses, false);
+            } else {
+                dbOperations = metric.getDBOperations(clauses, true);                
+            }
 
             AggregationOutput aggregation = dbCollection.aggregate(filter, dbOperations);
 
@@ -250,7 +259,7 @@ public class MongoDataLoader implements DataLoader {
 
         try {
             DBObject filter = metric.getFilter(context);
-            DBObject[] dbOperations = metric.getDBOperations(context);
+            DBObject[] dbOperations = metric.getDBOperations(context, true);
 
             // remove "$group" and "$project" operators
             List<DBObject> dbOperationsForExplanation = new ArrayList<>();

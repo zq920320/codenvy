@@ -74,6 +74,11 @@ public class WorkspacesStatisticsList extends AbstractListValueResulted {
     public DBObject getFilter(Context clauses) throws ParseException, IOException {
         DBObject filter = super.getFilter(clauses);
 
+        // don't rewrite WS filter if expanded metric is used to filter workspaces
+        if (clauses.exists(Parameters.EXPANDED_METRIC_NAME)) {
+            return filter;
+        }
+        
         BasicDBObject match = (BasicDBObject)filter.get("$match");
 
         // filter temporary workspaces and "default" workspace
