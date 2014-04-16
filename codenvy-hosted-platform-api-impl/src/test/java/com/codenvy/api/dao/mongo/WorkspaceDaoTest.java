@@ -87,6 +87,36 @@ public class WorkspaceDaoTest extends BaseDaoTest {
         assertEquals(workspace, result);
     }
 
+    @Test(expectedExceptions = WorkspaceException.class, expectedExceptionsMessageRegExp = "Workspace name required")
+    public void mustNotCreateWorkspaceWithNullName() throws WorkspaceException {
+        workspaceDao.create(DtoFactory.getInstance().createDto(Workspace.class).withName(null));
+    }
+
+    @Test(expectedExceptions = WorkspaceException.class, expectedExceptionsMessageRegExp = "Incorrect workspace name")
+    public void mustNotCreateWorkspaceThatNameLengthMoreThan20Characters() throws WorkspaceException {
+        workspaceDao.create(DtoFactory.getInstance().createDto(Workspace.class).withName("12345678901234567890x"));
+    }
+
+    @Test(expectedExceptions = WorkspaceException.class, expectedExceptionsMessageRegExp = "Incorrect workspace name")
+    public void mustNotCreateWorkspaceThatNameLengthLessThan3Characters() throws WorkspaceException {
+        workspaceDao.create(DtoFactory.getInstance().createDto(Workspace.class).withName("ws"));
+    }
+
+    @Test(expectedExceptions = WorkspaceException.class, expectedExceptionsMessageRegExp = "Incorrect workspace name")
+    public void mustNotCreateWorkspaceThatNameStartsNotWithLetterOrDigit() throws WorkspaceException {
+        workspaceDao.create(DtoFactory.getInstance().createDto(Workspace.class).withName(".ws"));
+    }
+
+    @Test(expectedExceptions = WorkspaceException.class, expectedExceptionsMessageRegExp = "Incorrect workspace name")
+    public void mustNotCreateWorkspaceThatNameEndsNotWithLetterOrDigit() throws WorkspaceException {
+        workspaceDao.create(DtoFactory.getInstance().createDto(Workspace.class).withName("ws-"));
+    }
+
+    @Test(expectedExceptions = WorkspaceException.class, expectedExceptionsMessageRegExp = "Incorrect workspace name")
+    public void mustNotCreateWorkspaceThatNameContainsIllegalCharacters() throws WorkspaceException {
+        workspaceDao.create(DtoFactory.getInstance().createDto(Workspace.class).withName("worksp@ce"));
+    }
+
     @Test
     public void mustUpdateWorkspace() throws Exception {
 
@@ -169,7 +199,6 @@ public class WorkspaceDaoTest extends BaseDaoTest {
         workspaceDao.remove(WORKSPACE_ID);
         assertNull(collection.findOne(new BasicDBObject("id", WORKSPACE_ID)));
     }
-
 
     private List<Attribute> getAttributes() {
         List<Attribute> attributes = new ArrayList<>();

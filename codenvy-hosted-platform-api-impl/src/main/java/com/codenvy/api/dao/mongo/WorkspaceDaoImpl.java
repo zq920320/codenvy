@@ -34,12 +34,16 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * Workspace DAO implementation based on MongoDB storage.
  */
 @Singleton
 public class WorkspaceDaoImpl implements WorkspaceDao {
+    /* should contain [3, 20] characters, first and last character is letter or digit, available characters {A-Za-z0-9.-_}*/
+    private static final String  ONE_CHAR = "[A-Za-z0-9]";
+    private static final Pattern WS_NAME  = Pattern.compile(String.format("%s(%s|\\.|-|_){1,18}%s", ONE_CHAR, ONE_CHAR, ONE_CHAR));
 
     protected static final String DB_COLLECTION = "organization.storage.db.workspace.collection";
 
@@ -57,11 +61,9 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
     @Override
     public void create(Workspace workspace) throws WorkspaceException {
         try {
-            NamingValidator.validate(workspace.getName());
-            validateWorkspaceNameAvailable(workspace);
+            validateWorkspaceName(workspace.getName());
+            ensureWorkspaceNameDoesNotExist(workspace.getName());
             collection.save(toDBObject(workspace));
-        } catch (ItemNamingException e) {
-            throw new WorkspaceException(e.getMessage());
         } catch (MongoException me) {
             throw new WorkspaceException(me.getMessage(), me);
         }
@@ -74,10 +76,8 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
             throw new WorkspaceNotFoundException(workspace.getId());
         }
         try {
-            NamingValidator.validate(workspace.getName());
+            validateWorkspaceName(workspace.getName());
             collection.update(query, toDBObject(workspace));
-        } catch (ItemNamingException e) {
-            throw new WorkspaceException(e.getMessage());
         } catch (MongoException me) {
             throw new WorkspaceException(me.getMessage(), me);
         }
@@ -155,20 +155,27 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
         return (DBObject)JSON.parse(workspace.toString());
     }
 
+    private void validateWorkspaceName(String workspaceName) throws WorkspaceException {
+        if (workspaceName == null) {
+            throw new WorkspaceException("Workspace name required");
+        }
+        if (!WS_NAME.matcher(workspaceName).matches()) {
+            throw new WorkspaceException("Incorrect workspace name");
+        }
+    }
 
     /**
-     * Ensure that user given workspace name not already occupied.
+     * Ensure that user given workspace name not already occupied and it is valid.
      *
-     * @param workspace
-     *         workspace to check
+     * @param workspaceName
+     *         workspace name to check
      * @throws WorkspaceException
      */
-    private void validateWorkspaceNameAvailable(Workspace workspace) throws WorkspaceException {
-        DBObject res = collection.findOne(new BasicDBObject("name", workspace.getName()));
+    private void ensureWorkspaceNameDoesNotExist(String workspaceName) throws WorkspaceException {
+        DBObject res = collection.findOne(new BasicDBObject("name", workspaceName));
         if (res != null) {
             throw new WorkspaceException(
-                    String.format("Unable to create workspace: name '%s' already exists.", workspace.getName()));
+                    String.format("Unable to create workspace: name '%s' already exists.", workspaceName));
         }
-
     }
 }
