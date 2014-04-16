@@ -89,8 +89,6 @@ analytics.presenter.DrillDownPresenter.prototype.load = function() {
             view.printTable(table, false);                 
         
             // print bottom page navigation
-            delete modelParams.page;    // remove page parameter
-
             var queryString = analytics.util.getCurrentPageName() + "?" + analytics.util.constructUrlParams(viewParams);
             view.printBottomPageNavigator(pageCount, currentPageNumber, queryString, presenter.CURRENT_PAGE_QUERY_PARAMETER, presenter.widgetName);
            

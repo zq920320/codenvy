@@ -34,9 +34,8 @@ Presenter.prototype.CURRENT_PAGE_QUERY_PARAMETER = "page";
 Presenter.prototype.DEFAULT_ONE_PAGE_ROWS_COUNT = 20;
 
 /** Drill Down page parameters */
-Presenter.prototype.DRILL_DOWN_PAGE_ADDRESS = "/analytics/pages/drill-down.jsp";
-Presenter.prototype.METRIC_ORIGINAL_VALUE_VIEW_PARAMETER = "original_metric_value";
-Presenter.prototype.METRIC_ORIGINAL_NAME_VIEW_PARAMETER = "original_metric_name";
+Presenter.prototype.METRIC_ORIGINAL_VALUE_VIEW_PARAMETER = "expanded_metric_value";
+Presenter.prototype.METRIC_ORIGINAL_NAME_VIEW_PARAMETER = "expanded_metric_name";
 Presenter.prototype.TIME_INTERVAL_PARAMETER = "time_interval";
 
 Presenter.prototype.setView = function(newView) {

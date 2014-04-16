@@ -642,7 +642,7 @@ function Configuration() {
     var systemMessagesList = [
         "User Did Not Enter Workspace",
     ];
-
+    
     /**
      * Returns property of widget.
      */

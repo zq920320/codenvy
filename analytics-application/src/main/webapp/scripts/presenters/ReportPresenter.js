@@ -25,6 +25,24 @@ analytics.presenter.ReportPresenter = function ReportPresenter() {};
 
 analytics.presenter.ReportPresenter.prototype = new Presenter();
 
+/** Drill Down page parameters */
+analytics.presenter.ReportPresenter.prototype.DEFAULT_DRILL_DOWN_PAGE_ADDRESS = "/analytics/pages/drill-down.jsp";
+analytics.presenter.ReportPresenter.prototype.mapExpandedMetricToDrillDownPageType = {
+    "active_users": "USERS",
+    "users_who_created_project": "USERS",
+    "users_who_built": "USERS",
+    "users_who_deployed": "USERS",
+    "users_who_deployed_to_paas": "USERS", 
+    "users_who_invited": "USERS",
+    "users_who_launched_shell": "USERS",
+    
+    "active_workspaces": "WORKSPACES",
+};
+analytics.presenter.ReportPresenter.prototype.mapDrillDownPageTypeToDrillDownPageAddress = {
+    "USERS": "/analytics/pages/users-view.jsp?sort=%2Buser",
+    "WORKSPACES": "/analytics/pages/workspaces-view.jsp?sort=%2Bws",
+}
+
 analytics.presenter.ReportPresenter.prototype.load = function() {
     var presenter = this; 
     var view = presenter.view;
@@ -42,7 +60,7 @@ analytics.presenter.ReportPresenter.prototype.load = function() {
         model.popDoneFunction();
         model.pushDoneFunction(function(data) {
             var doNotDisplayCSVButton = analytics.configuration.getProperty(presenter.widgetName, "doNotDisplayCSVButton", false);  // default value is "false" 
-            var csvButtonLink = (doNotDisplayCSVButton) 
+            var csvButtonLink = (doNotDisplayCSVButton)
                                 ? undefined
                                 : presenter.getLinkForExportToCsvButton();     
             var widgetLabel = analytics.configuration.getProperty(presenter.widgetName, "widgetLabel");
@@ -119,7 +137,7 @@ analytics.presenter.ReportPresenter.prototype.linkMetricValueWithDrillDownPage =
 }
 
 analytics.presenter.ReportPresenter.prototype.getDrillDownPageLink = function(timeInterval, metricName, metricValue, modelParams) {
-    var drillDownPageLink = this.DRILL_DOWN_PAGE_ADDRESS + "?"+ analytics.util.constructUrlParams(modelParams);
+    var drillDownPageLink = this.getDrillDownPageAddress(metricName) + "&" + analytics.util.constructUrlParams(modelParams);
     drillDownPageLink += "&" + this.TIME_INTERVAL_PARAMETER + "=" + timeInterval;
     drillDownPageLink += "&" + this.METRIC_ORIGINAL_VALUE_VIEW_PARAMETER + "=" + metricValue;
     drillDownPageLink += "&" + this.METRIC_ORIGINAL_NAME_VIEW_PARAMETER + "=" + metricName;
@@ -133,4 +151,14 @@ analytics.presenter.ReportPresenter.prototype.getDrillDownPageLink = function(ti
 analytics.presenter.ReportPresenter.prototype.isEmptyValue = function(value) {
     return value == "0"  // 0 numeric value
            || value == "00:00:00";   // 0 time value
+}
+
+analytics.presenter.ReportPresenter.prototype.getDrillDownPageAddress = function(metricName) {
+    var drillDownPageType = this.mapExpandedMetricToDrillDownPageType[metricName];
+
+    if (typeof drillDownPageType == "undefined") {
+        return this.DEFAULT_DRILL_DOWN_PAGE_ADDRESS;
+    }
+        
+    return this.mapDrillDownPageTypeToDrillDownPageAddress[drillDownPageType];
 }
