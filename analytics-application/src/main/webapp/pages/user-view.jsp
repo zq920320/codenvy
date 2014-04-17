@@ -72,7 +72,6 @@
                             <div class="item" id="userWorkspaceList"></div>
                             <div class="item" id="userFactories"></div>
                             <div class="item" id="userActivity"></div>
-                            <div class="item" id="userEvents"></div>
                         </div>
                     </div>
                 </div>

@@ -294,6 +294,33 @@ function Util() {
         return shortenFactoryUrl;
     }
     
+    
+    /**
+     * @returns object with first property only, for example:
+     * >>> if 
+     * object = {
+     *      property1: value1,
+     *      property2: value2,
+     *      ...
+     * } 
+     * >>> then this method returns 
+     * object = {
+     *      property1: value1
+     * }
+     */
+    function getObjectWithFirstPopertyOnly(object) {
+        if (typeof object != "undefined" 
+               && Object.keys(object).length > 0) {
+            var firstPropertyName = Object.keys(object)[0];
+            var firstPropertyValue = object[firstPropertyName];
+            object = {};
+            object[firstPropertyName] = firstPropertyValue;
+        }
+    
+        return object;
+    }
+    
+    
     /** ****************** library API ********** */
     return {
         // url manipulations
@@ -310,6 +337,9 @@ function Util() {
     	removeParamsWithNullValues: removeParamsWithNullValues,
     	removeParams: removeParams,
     	removeElementsFromArray: removeElementsFromArray,
+    	
+    	// operations with objects
+    	getObjectWithFirstPopertyOnly: getObjectWithFirstPopertyOnly,
     	
     	// other operations
     	getArrayValueIndex: getArrayValueIndex,

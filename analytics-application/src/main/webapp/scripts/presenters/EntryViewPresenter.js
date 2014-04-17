@@ -103,7 +103,12 @@ analytics.presenter.EntryViewPresenter.prototype.obtainViewData = function(model
             var viewParams = view.getParams();
             
             // make table header as linked for sorting
-            table = presenter.addServerSortingLinks(table, presenter.widgetName, viewParams);                
+            var mapColumnToServerSortParam = analytics.configuration.getProperty(presenter.widgetName, "mapColumnToServerSortParam", undefined);
+            // add sorting link only in the header of the first column of drill down page
+            if (presenter.isInDrillDownPageRole(viewParams)) {
+                mapColumnToServerSortParam = analytics.util.getObjectWithFirstPopertyOnly(mapColumnToServerSortParam);
+            }
+            table = presenter.addServerSortingLinks(table, presenter.widgetName, viewParams, mapColumnToServerSortParam);                
             
             // print table
             view.printTable(table, false);                 

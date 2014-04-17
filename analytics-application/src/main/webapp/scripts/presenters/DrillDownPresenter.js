@@ -83,7 +83,8 @@ analytics.presenter.DrillDownPresenter.prototype.load = function() {
         
         if (pageCount > 1) {
             // make table header as linked for sorting
-            table = presenter.addServerSortingLinks(table, presenter.widgetName, viewParams, true);                
+            var mapColumnToServerSortParam = analytics.configuration.getProperty(presenter.widgetName, "mapColumnToServerSortParam", undefined);
+            table = presenter.addServerSortingLinks(table, presenter.widgetName, viewParams, mapColumnToServerSortParam, true);                
             
             // print table
             view.printTable(table, false);                 

@@ -108,12 +108,11 @@ Presenter.prototype.getLinkForExportToCsvButton = function(modelViewName) {
 /**
  * Make table header as linked for sorting.
  */
-Presenter.prototype.addServerSortingLinks = function(table, widgetName, modelParams, doNotMap) {
+Presenter.prototype.addServerSortingLinks = function(table, widgetName, modelParams, mapColumnToServerSortParam, doNotMap) {
     if (typeof doNotMap == "undefined") {
         doNotMap = false;
     }
-        
-    var mapColumnToServerSortParam = analytics.configuration.getProperty(widgetName, "mapColumnToServerSortParam", undefined);
+
     if (typeof mapColumnToServerSortParam == "undefined" && !doNotMap) {
         return table;
     }

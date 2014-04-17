@@ -74,7 +74,8 @@ analytics.presenter.HorizontalTablePresenter.prototype.load = function() {
                 
                 if (pageCount > 1) {                   
                     // make table header as linked for sorting
-                    table = presenter.addServerSortingLinks(table, widgetName, modelParams);  
+                    var mapColumnToServerSortParam = analytics.configuration.getProperty(widgetName, "mapColumnToServerSortParam", undefined);
+                    table = presenter.addServerSortingLinks(table, widgetName, modelParams, mapColumnToServerSortParam);  
                     
                     // print table
                     presenter.printTable(csvButtonLink, table);
