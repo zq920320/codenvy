@@ -157,7 +157,7 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
         return (DBObject)JSON.parse(workspace.toString());
     }
 
-    private static void validateWorkspaceName(String workspaceName) throws WorkspaceException {
+    private void validateWorkspaceName(String workspaceName) throws WorkspaceException {
         if (workspaceName == null) {
             throw new WorkspaceException("Workspace name required");
         }
