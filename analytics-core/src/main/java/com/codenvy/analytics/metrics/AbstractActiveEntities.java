@@ -106,4 +106,8 @@ public abstract class AbstractActiveEntities extends ReadBasedMetric {
         
         return dataLoader.loadExpandedValue(this, context, projection);
     }
+    
+    public String getValueField() {
+        return this.valueField;
+    }
 }
