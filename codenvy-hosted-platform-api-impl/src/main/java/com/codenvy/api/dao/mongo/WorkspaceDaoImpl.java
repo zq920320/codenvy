@@ -24,9 +24,12 @@ import com.codenvy.api.workspace.server.exception.WorkspaceNotFoundException;
 import com.codenvy.api.workspace.shared.dto.Attribute;
 import com.codenvy.api.workspace.shared.dto.Workspace;
 import com.codenvy.dto.server.DtoFactory;
-import com.codenvy.api.dao.exception.ItemNamingException;
-import com.codenvy.api.dao.util.NamingValidator;
-import com.mongodb.*;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
+import com.mongodb.DBObject;
+import com.mongodb.MongoException;
 import com.mongodb.util.JSON;
 
 import javax.inject.Inject;
@@ -42,8 +45,7 @@ import java.util.regex.Pattern;
 @Singleton
 public class WorkspaceDaoImpl implements WorkspaceDao {
     /* should contain [3, 20] characters, first and last character is letter or digit, available characters {A-Za-z0-9.-_}*/
-    private static final String  ONE_CHAR = "[A-Za-z0-9]";
-    private static final Pattern WS_NAME  = Pattern.compile(String.format("%s(%s|\\.|-|_){1,18}%s", ONE_CHAR, ONE_CHAR, ONE_CHAR));
+    private static final Pattern WS_NAME = Pattern.compile("[\\w][\\w\\.\\-]{1,18}[\\w]");
 
     protected static final String DB_COLLECTION = "organization.storage.db.workspace.collection";
 
@@ -155,7 +157,7 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
         return (DBObject)JSON.parse(workspace.toString());
     }
 
-    private void validateWorkspaceName(String workspaceName) throws WorkspaceException {
+    private static void validateWorkspaceName(String workspaceName) throws WorkspaceException {
         if (workspaceName == null) {
             throw new WorkspaceException("Workspace name required");
         }
