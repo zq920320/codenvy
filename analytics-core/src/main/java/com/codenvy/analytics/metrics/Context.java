@@ -115,6 +115,10 @@ public class Context {
     public String toString() {
         return params.toString();
     }
+    
+    public boolean hasFilterByExpandedMetric() {
+        return this.exists(Parameters.EXPANDED_METRIC_NAME);
+    }
 
     public static class Builder {
         private Map<String, String> params = new LinkedHashMap<>();
@@ -211,6 +215,5 @@ public class Context {
         public Context build() {
             return new Context(params);
         }
-
     }
 }

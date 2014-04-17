@@ -36,8 +36,6 @@ import com.codenvy.analytics.datamodel.SetValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.datamodel.ValueDataFactory;
 import com.codenvy.analytics.metrics.Context;
-import com.codenvy.analytics.metrics.MetricFilter;
-import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.ReadBasedMetric;
 import com.mongodb.AggregationOutput;
 import com.mongodb.DB;
@@ -62,7 +60,7 @@ public class MongoDataLoader implements DataLoader {
             
             DBObject[] dbOperations;
             // don't use pagination in case of filtering by using expanded metric values
-            if (clauses.exists(Parameters.EXPANDED_METRIC_NAME)) {
+            if (clauses.hasFilterByExpandedMetric()) {
                 dbOperations = metric.getDBOperations(clauses, false);
             } else {
                 dbOperations = metric.getDBOperations(clauses, true);                

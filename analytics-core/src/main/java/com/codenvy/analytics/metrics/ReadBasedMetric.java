@@ -141,26 +141,17 @@ public abstract class ReadBasedMetric extends AbstractMetric {
         BasicDBObject match = new BasicDBObject();
         setDateFilter(clauses, match);
 
-        if (clauses.exists(Parameters.EXPANDED_METRIC_NAME)) {
+        if (clauses.hasFilterByExpandedMetric()) {
             String value = clauses.get(Parameters.EXPANDED_METRIC_NAME);
             MetricType expandedMetricType = MetricType.valueOf(value.toUpperCase());
             
-            switch (expandedMetricType) {
-                case ACTIVE_USERS:
-                case USERS_WHO_CREATED_PROJECT:
-                case USERS_WHO_BUILT:
-                case USERS_WHO_DEPLOYED:
-                case USERS_WHO_DEPLOYED_TO_PAAS:
-                case USERS_WHO_INVITED:
-                case USERS_WHO_LAUNCHED_SHELL:
-                    String[] users = getExpandedMetricValues(expandedMetricType, clauses);
-                    match.put(MetricFilter.USER.name().toLowerCase(), new BasicDBObject("$in", users));
-                    break;
-                
-                case ACTIVE_WORKSPACES:
-                    String[] workspaces = getExpandedMetricValues(expandedMetricType, clauses);
-                    match.put(MetricFilter.WS.name().toLowerCase(), new BasicDBObject("$in", workspaces));
-                    break;
+            Metric expandedMetric = MetricFactory.getMetric(expandedMetricType);
+            
+            if (expandedMetric.isExpandable()
+                 && expandedMetric instanceof AbstractActiveEntities) {
+                String[] filteringValues = getExpandedMetricValues(expandedMetricType, clauses);
+                String filteringField = ((AbstractActiveEntities) expandedMetric).getValueField();
+                match.put(filteringField, new BasicDBObject("$in", filteringValues));                
             }
         }
         
