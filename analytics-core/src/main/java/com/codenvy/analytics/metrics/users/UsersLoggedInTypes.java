@@ -12,9 +12,11 @@ import javax.annotation.security.RolesAllowed;
 @RolesAllowed({"system/admin", "system/manager"})
 public class UsersLoggedInTypes extends AbstractMapValueResulted {
 
-    public static final String GITHUB = "github";
-    public static final String JAAS   = "jaas";
-    public static final String GOOGLE = "google";
+    public static final String GITHUB  = "github";
+    public static final String JAAS    = "jaas";
+    public static final String GOOGLE  = "google";
+    public static final String ORG     = "org";
+    public static final String SYSLDAP = "sysldap";
 
     public UsersLoggedInTypes() {
         super(MetricType.USERS_LOGGED_IN_TYPES);
@@ -26,7 +28,11 @@ public class UsersLoggedInTypes extends AbstractMapValueResulted {
 
     @Override
     public String[] getTrackedFields() {
-        return new String[]{GITHUB, JAAS, GOOGLE};
+        return new String[]{GITHUB,
+                            JAAS,
+                            GOOGLE,
+                            ORG,
+                            SYSLDAP};
     }
 
     @Override

@@ -25,15 +25,14 @@ import javax.annotation.security.RolesAllowed;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
-public class UsersLoggedInWithForm extends AbstractLoggedInType {
+public class UsersLoggedInWithSysldap extends AbstractLoggedInType {
 
-    public UsersLoggedInWithForm() {
-        super(MetricType.USERS_LOGGED_IN_WITH_FORM, new String[]{UsersLoggedInTypes.JAAS,
-                                                                 UsersLoggedInTypes.ORG});
+    public UsersLoggedInWithSysldap() {
+        super(MetricType.USERS_LOGGED_IN_WITH_SYSLDAP, new String[]{UsersLoggedInTypes.SYSLDAP});
     }
 
     @Override
     public String getDescription() {
-        return "The number of Form authentication";
+        return "The number of authentication using system LDAP";
     }
 }

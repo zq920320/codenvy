@@ -104,10 +104,12 @@ com.codenvy.analytics.metrics.users.UsersLoggedInTypes
 com.codenvy.analytics.metrics.users.UsersLoggedInWithGitHub
 com.codenvy.analytics.metrics.users.UsersLoggedInWithGoogle
 com.codenvy.analytics.metrics.users.UsersLoggedInWithForm
+com.codenvy.analytics.metrics.users.UsersLoggedInWithSysldap
 com.codenvy.analytics.metrics.users.UsersLoggedInTotal
 com.codenvy.analytics.metrics.users.UsersLoggedInWithGitHubPercent
 com.codenvy.analytics.metrics.users.UsersLoggedInWithGooglePercent
 com.codenvy.analytics.metrics.users.UsersLoggedInWithFormPercent
+com.codenvy.analytics.metrics.users.UsersLoggedInWithSysldapPercent
 
 com.codenvy.analytics.metrics.sessions.ProductUsageSessionsBelow1Min
 com.codenvy.analytics.metrics.sessions.ProductUsageSessionsBetween1And10Min
