@@ -599,7 +599,6 @@ function Configuration() {
     var registeredModelParams = [
         "time_unit",
         "user",
-        "domain",
         "user_company",
         "org_id",
         "affiliate_id",
@@ -625,7 +624,6 @@ function Configuration() {
     /** see method analytics.main.getParamsFromButtons() */
     var registeredViewParams = [
         "user",              // users-view, factory-statistics, *-reports
-        "domain",            // *-reports
         "user_company",      // users-view, *-reports
         "org_id",            // factory-statistics
         "affiliate_id",      // factory-statistics

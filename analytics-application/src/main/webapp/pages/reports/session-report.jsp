@@ -42,12 +42,6 @@
                                </div></td>
                             </tr>
                             <tr>
-                               <td><label for="input-domain">Domain:</label></td>
-                               <td><div class="filter-item">
-                                   <input type="text" id="input-domain" name="domain" class="text-box" />
-                               </div></td>
-                            </tr>
-                            <tr>
                                <td></td>
                                <td><div class="filter-item">
                                     <button class="btn command-btn btn-primary">Filter</button>                    

@@ -42,12 +42,6 @@
                                </div></td>
                             </tr>
                             <tr>
-                               <td><label for="input-domain">Domain:</label></td>
-                               <td><div class="filter-item">
-                                   <input type="text" id="input-domain" name="domain" class="text-box" />
-                               </div></td>
-                            </tr>
-                            <tr>
                                <td><label for="input-user_company">Company:</label></td>
                                <td><div class="filter-item">
                                    <input type="text" id="input-user_company" name="user_company" class="text-box" />
