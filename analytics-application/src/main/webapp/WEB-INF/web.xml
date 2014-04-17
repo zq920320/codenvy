@@ -56,6 +56,11 @@
         </init-param>
     </filter>
 
+    <filter>
+        <filter-name>AnalyticsFilter</filter-name>
+        <filter-class>com.codenvy.analytics.filter.AnalyticsFilter</filter-class>
+    </filter>
+
     <filter-mapping>
         <filter-name>guiceFilter</filter-name>
         <url-pattern>/*</url-pattern>
@@ -64,6 +69,12 @@
     <filter-mapping>
         <filter-name>ReportsFilter</filter-name>
         <url-pattern>/reports/*</url-pattern>
+    </filter-mapping>
+
+
+    <filter-mapping>
+        <filter-name>AnalyticsFilter</filter-name>
+        <url-pattern>/*</url-pattern>
     </filter-mapping>
 
     <servlet>
@@ -84,9 +95,4 @@
         <servlet-name>listReports</servlet-name>
         <url-pattern>/reports/*</url-pattern>
     </servlet-mapping>
-
-    <login-config>
-        <auth-method>BASIC</auth-method>
-        <realm-name>Analytics</realm-name>
-    </login-config>
 </web-app>
