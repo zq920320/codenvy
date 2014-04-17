@@ -24,12 +24,7 @@
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="user_invite"/>
-                <parameter key="description" value="Sent"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="users_accepted_invites_percent"/>
-                <parameter key="numeric-format" value="%.0f%%"/>
-                <parameter key="description" value="Accepted"/>
+                <parameter key="description" value="Sent invites"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="total_factories"/>
