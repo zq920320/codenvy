@@ -34,9 +34,7 @@ public class EventsHolder {
 
     public static final String IDE_CLOSED            = "ide-closed";
     public static final String IDE_OPENED            = "ide-opened";
-    public static final String NOT_FACTORY_SESSIONS  =
-            ReadBasedMetric.EXCLUDE_SIGN
-            + "session-factory-stopped" + ReadBasedMetric.SEPARATOR + "session-factory-started";
+    public static final String NOT_FACTORY_SESSIONS  = "session-factory-stopped" + ReadBasedMetric.SEPARATOR + "session-factory-started";
     public static final String USER_SSO_LOGOUT_EVENT = "user-sso-logged-out";
     public static final String USER_IDLE_EVENT       = "idle";
 

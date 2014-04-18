@@ -286,9 +286,9 @@ public class UsersActivityList extends AbstractListValueResulted {
         String eventFilter = builder.getAsString(MetricFilter.EVENT);
 
         if (eventFilter != null) {
-            builder.put(MetricFilter.EVENT, eventFilter + "," + EventsHolder.NOT_FACTORY_SESSIONS);
+            builder.put(MetricFilter.EVENT, eventFilter + SEPARATOR + EventsHolder.NOT_FACTORY_SESSIONS);
         } else {
-            builder.put(MetricFilter.EVENT, EventsHolder.NOT_FACTORY_SESSIONS);
+            builder.put(MetricFilter.EVENT, EXCLUDE_SIGN + EventsHolder.NOT_FACTORY_SESSIONS);
         }
     }
 
