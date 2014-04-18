@@ -23,16 +23,13 @@ import com.codenvy.api.workspace.server.exception.WorkspaceException;
 import com.codenvy.api.workspace.shared.dto.Attribute;
 import com.codenvy.api.workspace.shared.dto.Workspace;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
+import javax.inject.*;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.UriBuilder;
 import java.io.File;
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -40,7 +37,7 @@ import java.util.regex.Pattern;
 /** Initialize  EnvironmentContext variables; */
 @Singleton
 public class EnvironmentContextInitializationFilter implements Filter {
-    public static final Pattern TENANT_URL_PATTERN = Pattern.compile("^(/ide/)(?!_sso|metrics)(rest/|websocket/)?(.+?)(/.*)?$");
+    public static final Pattern TENANT_URL_PATTERN = Pattern.compile("^/ide/(?:rest/|websocket/)?([^/]+?)(?:/.*)?$");
 
     private final File           vfsRootDir;
     private final File           tempVfsRootDir;
@@ -77,7 +74,7 @@ public class EnvironmentContextInitializationFilter implements Filter {
         Matcher matcher = TENANT_URL_PATTERN.matcher(requestUri);
         try {
             if (matcher.matches()) {
-                String tenant = matcher.group(3);
+                String tenant = matcher.group(1);
 
                 Workspace workspace = workspaceCache.get(tenant);
 
