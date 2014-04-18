@@ -329,7 +329,7 @@ public class TestTopMetrics extends BaseTest {
     private class TestFactoriesRun extends AbstractFactoryAction {
 
         public TestFactoriesRun() {
-            super(MetricType.FACTORIES_RUN, ProductUsageFactorySessionsList.RUN);
+            super(MetricType.FACTORIES_RUN, ProductUsageFactorySessionsList.RUNS);
         }
 
         @Override

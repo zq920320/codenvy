@@ -64,6 +64,7 @@ public enum Parameters {
     },
     
     TIME_INTERVAL,
+    DATA_COMPUTATION_PROCESS,
     
     FROM_DATE {
         @Override

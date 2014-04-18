@@ -17,6 +17,8 @@
  */
 package com.codenvy.analytics.services.reports;
 
+import com.codenvy.analytics.services.configuration.ParametersConfiguration;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -24,7 +26,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "context-modifier")
 public class ContextModifierConfiguration {
 
-    private String clazz;
+    private String                  clazz;
+    private ParametersConfiguration parametersConfiguration;
 
     @XmlElement(name = "class")
     public void setClazz(String contextInitializer) {
@@ -34,4 +37,14 @@ public class ContextModifierConfiguration {
     public String getClazz() {
         return clazz;
     }
+
+    public ParametersConfiguration getParametersConfiguration() {
+        return parametersConfiguration;
+    }
+
+    @XmlElement(name = "parameters")
+    public void setParametersConfiguration(ParametersConfiguration parametersConfiguration) {
+        this.parametersConfiguration = parametersConfiguration;
+    }
+
 }

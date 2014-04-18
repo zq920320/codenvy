@@ -17,10 +17,7 @@
  */
 package com.codenvy.analytics.metrics.users;
 
-import com.codenvy.analytics.datamodel.ListValueData;
-import com.codenvy.analytics.datamodel.MapValueData;
-import com.codenvy.analytics.datamodel.StringValueData;
-import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.datamodel.*;
 import com.codenvy.analytics.metrics.*;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
@@ -35,18 +32,6 @@ import java.util.Map;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
 public class UsersStatisticsList extends AbstractListValueResulted {
-
-    public static final String PROJECTS     = "projects";
-    public static final String BUILDS       = "builds";
-    public static final String DEPLOYS      = "deploys";
-    public static final String RUNS         = "runs";
-    public static final String DEBUGS       = "debugs";
-    public static final String FACTORIES    = "factories";
-    public static final String INVITES      = "invites";
-    public static final String LOGINS       = "logins";
-    public static final String RUN_TIME     = "run_time";
-    public static final String BUILD_TIME   = "build_time";
-    public static final String PAAS_DEPLOYS = "paas_deploys";
 
     public UsersStatisticsList() {
         super(MetricType.USERS_STATISTICS_LIST);
@@ -115,7 +100,7 @@ public class UsersStatisticsList extends AbstractListValueResulted {
 
     /** To add user profile data. */
     @Override
-    public ValueData postEvaluation(ValueData valueData, Context clauses) throws IOException {
+    public ValueData postComputation(ValueData valueData, Context clauses) throws IOException {
         List<ValueData> value = new ArrayList<>();
         ListValueData listValueData = (ListValueData)valueData;
 
@@ -124,7 +109,7 @@ public class UsersStatisticsList extends AbstractListValueResulted {
             Map<String, ValueData> newItems = new HashMap<>(prevItems.getAll());
 
             // add user profile data
-            Map<String, ValueData> profile = getUserProfile(newItems.get(USER).getAsString(), clauses);
+            Map<String, ValueData> profile = getUserProfile(newItems.get(USER).getAsString());
             if (profile != null) {
                 newItems.put(USER_FIRST_NAME, profile.get(USER_FIRST_NAME));
                 newItems.put(USER_LAST_NAME, profile.get(USER_LAST_NAME));
@@ -147,13 +132,12 @@ public class UsersStatisticsList extends AbstractListValueResulted {
      * Get user profile by using USERS_PROFILES_LIST metric.
      * Returns null if USERS_PROFILES_LIST metric returns empty list on certain user.
      */
-    private Map<String, ValueData> getUserProfile(String user, Context basedClauses) throws IOException {
-        Context.Builder builder = new Context.Builder(basedClauses);
+    private Map<String, ValueData> getUserProfile(String user) throws IOException {
+        Context.Builder builder = new Context.Builder();
         builder.put(Parameters.USER, user);
-        Context context = builder.build();
 
         Metric metric = MetricFactory.getMetric(MetricType.USERS_PROFILES_LIST);
-        List<ValueData> users = ((ListValueData)metric.getValue(context)).getAll();
+        List<ValueData> users = ValueDataUtil.getAsList(metric, builder.build()).getAll();
 
         if (users.size() > 0) {
             MapValueData userProfile = (MapValueData)users.get(0);

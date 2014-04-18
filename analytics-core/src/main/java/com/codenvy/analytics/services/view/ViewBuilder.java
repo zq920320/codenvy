@@ -89,12 +89,20 @@ public class ViewBuilder extends Feature {
     public ViewData getViewData(String name, Context context) throws IOException, ParseException {
         ViewConfiguration view = displayConfiguration.getView(name);
 
-        if (!view.isOnDemand() && context.isSimplified()) {
-            return queryViewData(view, context);
-        } else {
+        if (!isSimplified(context) || view.isOnDemand()) {
             ComputeViewDataAction computeViewDataAction = new ComputeViewDataAction(view, context);
             return computeViewDataAction.doCompute();
+        } else {
+            return loadViewData(view, context);
         }
+    }
+
+    private boolean isSimplified(Context context) {
+        return !context.exists(Parameters.SORT)
+               && !context.exists(Parameters.PAGE)
+               && (!context.exists(Parameters.FROM_DATE) || context.isDefaultValue(Parameters.FROM_DATE))
+               && (!context.exists(Parameters.TO_DATE) || context.isDefaultValue(Parameters.TO_DATE))
+               && context.getFilters().isEmpty();
     }
 
     public ViewData getViewData(ListValueData metricValue) {
@@ -201,7 +209,7 @@ public class ViewBuilder extends Feature {
     }
 
     /** Query data for specific view. */
-    protected ViewData queryViewData(ViewConfiguration viewConf, Context context)
+    protected ViewData loadViewData(ViewConfiguration viewConf, Context context)
             throws IOException {
         try {
             ViewData viewData = new ViewData(viewConf.getSections().size());
@@ -283,20 +291,13 @@ public class ViewBuilder extends Feature {
 
     public Context initializeFirstInterval(Context context) throws ParseException {
         Context.Builder builder = new Context.Builder(context);
-
-        if (!context.exists(Parameters.TO_DATE)) {
-            builder.putDefaultValue(Parameters.TO_DATE);
-            builder.putDefaultValue(Parameters.FROM_DATE);
-            builder.put(Parameters.REPORT_DATE, builder.get(Parameters.TO_DATE));
-        } else {
-            builder.put(Parameters.REPORT_DATE, context.get(Parameters.TO_DATE));
-        }
+        builder.put(Parameters.REPORT_DATE, builder.getAsString(Parameters.TO_DATE));
 
         if (context.exists(Parameters.TIME_UNIT)) {
             Parameters.TimeUnit timeUnit = builder.getTimeUnit();
             if (context.exists(Parameters.TIME_INTERVAL)) {
-                int timeShift = (int) -context.getAsLong(Parameters.TIME_INTERVAL);
-                return Utils.initDateInterval(builder.getAsDate(Parameters.TO_DATE), timeUnit, timeShift, builder);                
+                int timeShift = (int)-context.getAsLong(Parameters.TIME_INTERVAL);
+                return Utils.initDateInterval(builder.getAsDate(Parameters.TO_DATE), timeUnit, timeShift, builder);
             } else {
                 return Utils.initDateInterval(builder.getAsDate(Parameters.TO_DATE), timeUnit, builder);
             }
@@ -316,7 +317,7 @@ public class ViewBuilder extends Feature {
     private String getId(String idFromConf, Context context) {
         String id = idFromConf;
         if (context.exists(Parameters.TIME_UNIT)) {
-            id += "_" + context.get(Parameters.TIME_UNIT).toLowerCase();
+            id += "_" + context.getAsString(Parameters.TIME_UNIT).toLowerCase();
         }
 
         return id;

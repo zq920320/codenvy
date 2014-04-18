@@ -20,6 +20,8 @@ package com.codenvy.analytics.metrics;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public enum MetricFilter {
+    PARAMETERS,
+
     _ID,
     DATE(true),
 
@@ -32,9 +34,13 @@ public enum MetricFilter {
     USER_LAST_NAME,
     USER_FIRST_NAME,
 
+    ACTION,
+    SOURCE,
+
     ORG_ID,
     FACTORY,
     ENCODED_FACTORY(true),
+    TIME(true),
     REFERRER,
     REPOSITORY,
     SESSION_ID,

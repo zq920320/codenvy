@@ -48,7 +48,7 @@ public abstract class Feature implements Job {
      */
     public void forceExecute(Context context) throws JobExecutionException {
         try {
-            if (!context.get(Parameters.FROM_DATE).equals(context.get(Parameters.TO_DATE))) {
+            if (!context.getAsString(Parameters.FROM_DATE).equals(context.getAsString(Parameters.TO_DATE))) {
                 throw new IllegalStateException("Force execution is allowed only per day");
             }
 

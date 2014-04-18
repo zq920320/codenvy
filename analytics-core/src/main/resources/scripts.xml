@@ -28,14 +28,14 @@
         <description>The number of created persistent workspaces</description>
         <parameter key="USER" value="ANY"/>
         <parameter key="WS" value="PERSISTENT"/>
-        <parameter key="EVENT" value="tenant-created"/>
+        <parameter key="EVENT" value="tenant-created,workspace-created"/>
         <parameter key="STORAGE_TABLE" value="created_workspaces"/>
     </script>
     <script name="events">
         <description>The number of destroyed persistent workspaces</description>
         <parameter key="USER" value="ANY"/>
         <parameter key="WS" value="PERSISTENT"/>
-        <parameter key="EVENT" value="tenant-destroyed"/>
+        <parameter key="EVENT" value="tenant-destroyed,workspace-destroyed"/>
         <parameter key="STORAGE_TABLE" value="destroyed_workspaces"/>
     </script>
     <script name="events">
@@ -123,6 +123,13 @@
         <parameter key="STORAGE_TABLE" value="run_queue_terminations"/>
     </script>
 
+    <!-- script name="ide_usage_events">
+        <description>IDE usage</description>
+        <parameter key="USER" value="ANY"/>
+        <parameter key="WS" value="ANY"/>
+        <parameter key="STORAGE_TABLE" value="ide_usages"/>
+    </script-->
+
     <script name="events_by_type">
         <description>Project created by types</description>
         <parameter key="USER" value="REGISTERED"/>
@@ -130,14 +137,6 @@
         <parameter key="EVENT" value="project-created"/>
         <parameter key="PARAM" value="TYPE"/>
         <parameter key="STORAGE_TABLE" value="project_types"/>
-    </script>
-    <script name="events_by_type">
-        <description>IDE user usage</description>
-        <parameter key="USER" value="ANY"/>
-        <parameter key="WS" value="ANY"/>
-        <parameter key="EVENT" value="ide-usage"/>
-        <parameter key="PARAM" value="ACTION"/>
-        <parameter key="STORAGE_TABLE" value="ide_usages"/>
     </script>
     <script name="events_by_type">
         <description>User's authentication types</description>

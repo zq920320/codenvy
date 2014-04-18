@@ -17,14 +17,13 @@
  */
 package com.codenvy.analytics.metrics.users;
 
+import com.codenvy.analytics.Injector;
 import com.codenvy.analytics.datamodel.*;
 import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.pig.scripts.EventsHolder;
-import com.mongodb.DBObject;
 
 import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,16 +33,18 @@ import java.util.Map;
 @RolesAllowed({"system/admin", "system/manager"})
 public class UsersActivityList extends AbstractListValueResulted {
 
-    private Metric totalActionsNumberMetric;
+    private       Metric       totalActionsNumberMetric;
+    private final EventsHolder eventsHolder;
 
     public UsersActivityList() {
-        super(MetricType.USERS_ACTIVITY_LIST);
+        this(null);
     }
 
     /** For testing purpose only. */
     public UsersActivityList(Metric totalActionsNumberMetric) {
         super(MetricType.USERS_ACTIVITY_LIST);
         this.totalActionsNumberMetric = totalActionsNumberMetric;
+        this.eventsHolder = Injector.getInstance(EventsHolder.class);
     }
 
     @Override
@@ -51,6 +52,7 @@ public class UsersActivityList extends AbstractListValueResulted {
         return new String[]{DATE,
                             MESSAGE,
                             EVENT,
+                            ACTION,
                             WS,
                             USER};
     }
@@ -61,17 +63,18 @@ public class UsersActivityList extends AbstractListValueResulted {
     }
 
     @Override
-    public DBObject getFilter(Context clauses) throws ParseException, IOException {
-        Context.Builder builder = new Context.Builder(clauses);
-        overrideSortOrder(builder);
+    public Context applySpecificFilter(Context context) throws IOException {
+        Context.Builder builder = new Context.Builder(context);
+        builder.put(Parameters.SORT, ASC_SORT_SIGN + DATE);
+
         excludeStartAndStopFactorySessionsEvents(builder);
 
-        if (clauses.exists(MetricFilter.SESSION_ID)) {
+        if (context.exists(MetricFilter.SESSION_ID)) {
             setUserWsAndDateFilters(builder);
             builder.remove(MetricFilter.SESSION_ID);
         }
 
-        return super.getFilter(builder.build());
+        return builder.build();
     }
 
     /**
@@ -80,7 +83,7 @@ public class UsersActivityList extends AbstractListValueResulted {
      * {@link com.codenvy.analytics.pig.scripts.EventsHolder#IDE_CLOSED} events.
      */
     @Override
-    public ValueData postEvaluation(ValueData valueData, Context clauses) throws IOException {
+    public ValueData postComputation(ValueData valueData, Context clauses) throws IOException {
         SessionData sessionData = SessionData.init(clauses);
 
         long prevActionDate = -1;
@@ -107,6 +110,10 @@ public class UsersActivityList extends AbstractListValueResulted {
                 row2Return.put(CUMULATIVE_TIME, LongValueData.DEFAULT);
             }
 
+            StringValueData event = (StringValueData)row.get(EVENT);
+            StringValueData message = (StringValueData)row.get(MESSAGE);
+            row2Return.put(STATE, getContext(event.getAsString(), message.getAsString()));
+
             item2Return.add(new MapValueData(row2Return));
         }
 
@@ -118,6 +125,19 @@ public class UsersActivityList extends AbstractListValueResulted {
         }
 
         return new ListValueData(item2Return);
+    }
+
+    /**
+     * Extracts all available params out of {@link #MESSAGE}.
+     */
+    private StringValueData getContext(String event, String message) {
+        Map<String, String> result = eventsHolder.getParametersValues(event, message);
+        result.remove("ID");
+        result.remove("USER-ID");
+        result.remove("SESSION-ID");
+        result.remove("WORKSPACE-ID");
+
+        return StringValueData.valueOf(result.toString());
     }
 
     /** Calculate duration of action, in millisec. */
@@ -188,6 +208,8 @@ public class UsersActivityList extends AbstractListValueResulted {
     private ValueData getUserLogoutEvent(SessionData sessionData) {
         Map<String, ValueData> items = new HashMap<>();
 
+        String action = eventsHolder.getDescription(EventsHolder.USER_SSO_LOGOUT_EVENT);
+        items.put(ACTION, StringValueData.valueOf(action));
         items.put(DATE, LongValueData.valueOf(sessionData.toDate));
         items.put(EVENT, StringValueData.valueOf(EventsHolder.USER_SSO_LOGOUT_EVENT));
         items.put(TIME, LongValueData.valueOf(sessionData.logoutInterval));
@@ -199,6 +221,8 @@ public class UsersActivityList extends AbstractListValueResulted {
     private ValueData getUserIdleEvent(SessionData sessionData) {
         Map<String, ValueData> items = new HashMap<>();
 
+        String action = eventsHolder.getDescription(EventsHolder.USER_IDLE_EVENT);
+        items.put(ACTION, StringValueData.valueOf(action));
         items.put(DATE, LongValueData.valueOf(sessionData.toDate));
         items.put(EVENT, StringValueData.valueOf(EventsHolder.USER_IDLE_EVENT));
         items.put(TIME, LongValueData.valueOf(0));
@@ -210,6 +234,8 @@ public class UsersActivityList extends AbstractListValueResulted {
     private ValueData getIdeClosedEvent(SessionData sessionData, int actionCount) {
         Map<String, ValueData> items = new HashMap<>();
 
+        String action = eventsHolder.getDescription(EventsHolder.IDE_CLOSED);
+        items.put(ACTION, StringValueData.valueOf(action));
         items.put(DATE, LongValueData.valueOf(sessionData.toDate));
         items.put(EVENT, StringValueData.valueOf(EventsHolder.IDE_CLOSED));
         items.put(TIME, LongValueData.valueOf(actionCount == 0 ? sessionData.time : 0));
@@ -221,6 +247,8 @@ public class UsersActivityList extends AbstractListValueResulted {
     private ValueData getIdeOpenedEvent(SessionData sessionData) {
         Map<String, ValueData> items = new HashMap<>();
 
+        String action = eventsHolder.getDescription(EventsHolder.IDE_OPENED);
+        items.put(ACTION, StringValueData.valueOf(action));
         items.put(DATE, LongValueData.valueOf(sessionData.fromDate));
         items.put(EVENT, StringValueData.valueOf(EventsHolder.IDE_OPENED));
         items.put(TIME, LongValueData.valueOf(0));
@@ -254,12 +282,8 @@ public class UsersActivityList extends AbstractListValueResulted {
         return ValueDataUtil.getAsLong(totalActionsNumberMetric, context).getAsLong();
     }
 
-    private void overrideSortOrder(Context.Builder builder) {
-        builder.put(Parameters.SORT, ASC_SORT_SIGN + DATE);
-    }
-
     private void excludeStartAndStopFactorySessionsEvents(Context.Builder builder) {
-        String eventFilter = builder.get(MetricFilter.EVENT);
+        String eventFilter = builder.getAsString(MetricFilter.EVENT);
 
         if (eventFilter != null) {
             builder.put(MetricFilter.EVENT, eventFilter + "," + EventsHolder.NOT_FACTORY_SESSIONS);
@@ -296,7 +320,7 @@ public class UsersActivityList extends AbstractListValueResulted {
         }
 
         private static SessionData init(Context clauses) throws IOException {
-            String sessionId = clauses.get(MetricFilter.SESSION_ID);
+            String sessionId = clauses.getAsString(MetricFilter.SESSION_ID);
             if (sessionId == null) {
                 return null;
             }

@@ -20,14 +20,10 @@ package com.codenvy.analytics.metrics.workspaces;
 import com.codenvy.analytics.metrics.AbstractListValueResulted;
 import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.analytics.metrics.Parameters;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
 import javax.annotation.security.RolesAllowed;
-import java.io.IOException;
-import java.text.ParseException;
-import java.util.regex.Pattern;
 
 import static com.codenvy.analytics.metrics.users.UsersStatisticsList.*;
 
@@ -35,7 +31,6 @@ import static com.codenvy.analytics.metrics.users.UsersStatisticsList.*;
 @RolesAllowed({"system/admin", "system/manager"})
 public class WorkspacesStatisticsList extends AbstractListValueResulted {
 
-    public static final String USERS        = "users";
     public static final String JOINED_USERS = "joined_users";
 
     public WorkspacesStatisticsList() {
@@ -68,33 +63,6 @@ public class WorkspacesStatisticsList extends AbstractListValueResulted {
                             BUILD_TIME,
                             PAAS_DEPLOYS,
                             JOINED_USERS};
-    }
-
-    @Override
-    public DBObject getFilter(Context clauses) throws ParseException, IOException {
-        DBObject filter = super.getFilter(clauses);
-
-        // don't rewrite WS filter if expanded metric is used to filter workspaces
-        if (clauses.exists(Parameters.EXPANDED_METRIC_NAME)) {
-            return filter;
-        }
-        
-        BasicDBObject match = (BasicDBObject)filter.get("$match");
-
-        // filter temporary workspaces and "default" workspace
-        Object wsMatch = match.get(WS);
-        if (wsMatch == null) {
-            match.put(WS, NON_DEFAULT_WS);
-        } else {
-            // create pattern like "(?=^(?!(TMP-|DEFAULT)).*)(?=targetWorkspace)"
-            String persistentWsAndTargetWorkspace =
-                    String.format("(?=%1$s)(?=%2$s)", NON_DEFAULT_WS.pattern(), clauses.get(Parameters.WS));
-            Pattern persistentWsAndTargetWorkspacePattern =
-                    Pattern.compile(persistentWsAndTargetWorkspace, Pattern.CASE_INSENSITIVE);
-            match.put(WS, persistentWsAndTargetWorkspacePattern);
-        }
-
-        return filter;
     }
 
     @Override
@@ -136,7 +104,7 @@ public class WorkspacesStatisticsList extends AbstractListValueResulted {
     }
 
 //    @Override
-//    protected ValueData postEvaluation(ValueData valueData, Map<String, String> clauses) throws IOException {
+//    protected ValueData postComputation(ValueData valueData, Map<String, String> clauses) throws IOException {
 //        String wsName = MetricFilter.WS.get(clauses);
 //        
 //        if (wsName != null) {

@@ -17,11 +17,15 @@
  */
 package com.codenvy.analytics.metrics.sessions.factory;
 
-import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.datamodel.*;
 import com.codenvy.analytics.metrics.*;
 
 import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
@@ -44,9 +48,24 @@ public class ProductUsageFactorySessionsList extends AbstractListValueResulted {
     }
 
     @Override
-    public ValueData postEvaluation(ValueData valueData, Context clauses) throws IOException {
+    public ValueData postComputation(ValueData valueData, Context clauses) throws IOException {
         ReadBasedMetric metric = (ReadBasedMetric)MetricFactory.getMetric(MetricType.PRODUCT_USAGE_SESSIONS_LIST);
-        return metric.postEvaluation(valueData, clauses);
+        valueData = metric.postComputation(valueData, clauses);
+
+        List<ValueData> list2Return = new ArrayList<>();
+        for (ValueData items : ((ListValueData)valueData).getAll()) {
+            MapValueData prevItems = (MapValueData)items;
+            Map<String, ValueData> items2Return = new HashMap<>(prevItems.getAll());
+
+            long time = ValueDataUtil.treatAsLong(items2Return.get(TIME));
+            long date = ValueDataUtil.treatAsLong(items2Return.get(DATE));
+
+            items2Return.put(END_TIME, LongValueData.valueOf(time + date));
+
+            list2Return.add(new MapValueData(items2Return));
+        }
+
+        return new ListValueData(list2Return);
     }
 
     @Override

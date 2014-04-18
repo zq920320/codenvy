@@ -17,10 +17,16 @@
  */
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.Utils;
-
 import java.text.ParseException;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
+
+import com.codenvy.analytics.Utils;
 
 /**
  * Unmodifiable execution context.
@@ -28,18 +34,21 @@ import java.util.*;
  * @author Anatoliy Bazko
  */
 public class Context {
-    private Map<String, String> params;
 
-    private Context(Map<String, String> params) {
-        this.params = params;
+    public static final Context EMPTY = new Context(Collections.<String, Object>emptyMap());
+
+    private Map<String, Object> params;
+
+    private Context(Map<String, Object> params) {
+        this.params = Collections.unmodifiableMap(params);
     }
 
     public static Context valueOf(Map<String, String> params) {
-        Builder builder = new Builder(params);
+        Builder builder = new Builder();
+        builder.putAll(params);
         return builder.build();
     }
 
-    /** Returns all filters existed in context. */
     public Set<MetricFilter> getFilters() {
         Set<MetricFilter> result = new HashSet<>();
 
@@ -52,28 +61,46 @@ public class Context {
         return result;
     }
 
+    public Map<String, Object> getAll() {
+        return Collections.unmodifiableMap(params);
+    }
 
-    public boolean isSimplified() {
-        return !exists(Parameters.SORT) && !exists(Parameters.PAGE) && getFilters().isEmpty();
+    public Map<String, String> getAllAsString() {
+        Map<String, String> result = new HashMap<>(params.size());
+        for (Map.Entry<String, Object> entry : params.entrySet()) {
+            result.put(entry.getKey(), entry.getValue().toString());
+        }
+
+        return result;
     }
 
     public Calendar getAsDate(Parameters key) throws ParseException {
-        return Utils.parseDate(params.get(key.name()));
+        return Utils.parseDate(getAsString(key));
     }
 
     public long getAsLong(Parameters key) {
-        return Long.valueOf(params.get(key.name()));
+        return Long.valueOf(getAsString(key));
     }
 
     public Parameters.TimeUnit getTimeUnit() {
-        return Parameters.TimeUnit.valueOf(get(Parameters.TIME_UNIT).toUpperCase());
+        return Parameters.TimeUnit.valueOf(getAsString(Parameters.TIME_UNIT).toUpperCase());
     }
 
-    public String get(Parameters key) {
-        return params.get(key.name());
+    public boolean isDefaultValue(Parameters key) {
+        return params.get(key.name()).equals(key.getDefaultValue());
     }
 
-    public String get(MetricFilter key) {
+    public String getAsString(Parameters key) {
+        Object object = params.get(key.name());
+        return object == null ? null : (String)object;
+    }
+
+    public String getAsString(MetricFilter key) {
+        Object object = params.get(key.name());
+        return object == null ? null : (String)object;
+    }
+
+    public Object get(MetricFilter key) {
         return params.get(key.name());
     }
 
@@ -83,10 +110,6 @@ public class Context {
 
     public boolean exists(MetricFilter key) {
         return params.containsKey(key.name());
-    }
-
-    public Map<String, String> getAll() {
-        return Collections.unmodifiableMap(params);
     }
 
     public Context cloneAndPut(MetricFilter param, String value) {
@@ -120,8 +143,11 @@ public class Context {
         return this.exists(Parameters.EXPANDED_METRIC_NAME);
     }
 
+    /**
+     * Context builder.
+     */
     public static class Builder {
-        private Map<String, String> params = new LinkedHashMap<>();
+        private Map<String, Object> params = new LinkedHashMap<>();
 
         public Builder() {
         }
@@ -130,8 +156,15 @@ public class Context {
             this.params.putAll(context.params);
         }
 
-        public Builder(Map<String, String> params) {
+        public Builder(Map<String, Object> params) {
             this.params.putAll(params);
+        }
+
+        public Builder putIfNotNull(Parameters param, String value) {
+            if (value != null) {
+                params.put(param.name(), value);
+            }
+            return this;
         }
 
         public Builder putIfAbsent(Parameters param, String value) {
@@ -141,7 +174,34 @@ public class Context {
             return this;
         }
 
+        public Builder putAll(Context context) {
+            this.params.putAll(context.params);
+            return this;
+        }
+
+        public Builder putAll(Map<String, String> params) {
+            for (Map.Entry<String, String> entry : params.entrySet()) {
+                this.params.put(entry.getKey(), entry.getValue());
+            }
+            return this;
+        }
+
+        public Builder putDefaultValue(Parameters param) {
+            params.put(param.name(), param.getDefaultValue());
+            return this;
+        }
+
         public Builder put(Parameters param, String value) {
+            params.put(param.name(), value);
+            return this;
+        }
+
+        public Builder put(MetricFilter param, String value) {
+            params.put(param.name(), value);
+            return this;
+        }
+
+        public Builder put(MetricFilter param, Object value) {
             params.put(param.name(), value);
             return this;
         }
@@ -151,7 +211,23 @@ public class Context {
             return this;
         }
 
+        public Builder put(MetricFilter param, long value) {
+            return put(param, Long.toString(value));
+        }
+
+        public Builder put(Parameters param, long value) {
+            return put(param, Long.toString(value));
+        }
+
+        public Builder put(Parameters.TimeUnit timeUnit) {
+            return put(Parameters.TIME_UNIT, timeUnit.name());
+        }
+
         public boolean exists(Parameters param) {
+            return params.containsKey(param.name());
+        }
+
+        public boolean exists(MetricFilter param) {
             return params.containsKey(param.name());
         }
 
@@ -161,24 +237,7 @@ public class Context {
         }
 
         public String get(Parameters param) {
-            return params.get(param.name());
-        }
-
-        public Calendar getAsDate(Parameters key) throws ParseException {
-            return Utils.parseDate(params.get(key.name()));
-        }
-
-        public Parameters.TimeUnit getTimeUnit() {
-            return Parameters.TimeUnit.valueOf(get(Parameters.TIME_UNIT).toUpperCase());
-        }
-
-        public Builder put(MetricFilter param, String value) {
-            params.put(param.name(), value);
-            return this;
-        }
-
-        public Builder put(MetricFilter param, long value) {
-            return put(param, Long.toString(value));
+            return (String) params.get(param.name());
         }
 
         public Builder remove(MetricFilter param) {
@@ -186,30 +245,22 @@ public class Context {
             return this;
         }
 
-        public boolean exists(MetricFilter param) {
-            return params.containsKey(param.name());
+        public String getAsString(MetricFilter param) {
+            Object object = params.get(param.name());
+            return object == null ? null : (String)object;
         }
 
-        public String get(MetricFilter param) {
-            return params.get(param.name());
+        public String getAsString(Parameters param) {
+            Object object = params.get(param.name());
+            return object == null ? null : (String)object;
         }
 
-        public Builder put(Parameters param, long value) {
-            return put(param, Long.toString(value));
+        public Calendar getAsDate(Parameters key) throws ParseException {
+            return Utils.parseDate(getAsString(key));
         }
 
-        public Builder putDefaultValue(Parameters param) {
-            params.put(param.name(), param.getDefaultValue());
-            return this;
-        }
-
-        public Builder putAll(Context context) {
-            this.params.putAll(context.params);
-            return this;
-        }
-
-        public Builder put(Parameters.TimeUnit timeUnit) {
-            return put(Parameters.TIME_UNIT, timeUnit.name());
+        public Parameters.TimeUnit getTimeUnit() {
+            return Parameters.TimeUnit.valueOf(getAsString(Parameters.TIME_UNIT).toUpperCase());
         }
 
         public Context build() {

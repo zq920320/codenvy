@@ -43,8 +43,8 @@ public class TestAbstractFrequencyConfiguration extends BaseTest {
         assertTrue(conf.isAppropriateDateToSendReport(builder.build()));
 
         Context context = conf.initContext(builder.build());
-        assertEquals(context.get(Parameters.FROM_DATE), "20130929");
-        assertEquals(context.get(Parameters.TO_DATE), "20130929");
+        assertEquals(context.getAsString(Parameters.FROM_DATE), "20130930");
+        assertEquals(context.getAsString(Parameters.TO_DATE), "20130930");
     }
 
     @Test
@@ -54,19 +54,19 @@ public class TestAbstractFrequencyConfiguration extends BaseTest {
         assertEquals(conf.getTimeUnit(), Parameters.TimeUnit.WEEK);
 
         Context.Builder builder = new Context.Builder();
-        builder.put(Parameters.FROM_DATE, "20140111");
-        builder.put(Parameters.TO_DATE, "20140111");
+        builder.put(Parameters.FROM_DATE, "20140112");
+        builder.put(Parameters.TO_DATE, "20140112");
 
         assertFalse(conf.isAppropriateDateToSendReport(builder.build()));
 
-        builder.put(Parameters.FROM_DATE, "20140112");
-        builder.put(Parameters.TO_DATE, "20140112");
+        builder.put(Parameters.FROM_DATE, "20140111");
+        builder.put(Parameters.TO_DATE, "20140111");
 
         assertTrue(conf.isAppropriateDateToSendReport(builder.build()));
 
         Context context = conf.initContext(builder.build());
-        assertEquals(context.get(Parameters.FROM_DATE), "20140105");
-        assertEquals(context.get(Parameters.TO_DATE), "20140111");
+        assertEquals(context.getAsString(Parameters.FROM_DATE), "20140105");
+        assertEquals(context.getAsString(Parameters.TO_DATE), "20140111");
     }
 
     @Test
@@ -76,18 +76,18 @@ public class TestAbstractFrequencyConfiguration extends BaseTest {
         assertEquals(conf.getTimeUnit(), Parameters.TimeUnit.MONTH);
 
         Context.Builder builder = new Context.Builder();
-        builder.put(Parameters.FROM_DATE, "20140102");
-        builder.put(Parameters.TO_DATE, "20140102");
+        builder.put(Parameters.FROM_DATE, "20140101");
+        builder.put(Parameters.TO_DATE, "20140101");
 
         assertFalse(conf.isAppropriateDateToSendReport(builder.build()));
 
-        builder.put(Parameters.FROM_DATE, "20140101");
-        builder.put(Parameters.TO_DATE, "20140101");
+        builder.put(Parameters.FROM_DATE, "20140131");
+        builder.put(Parameters.TO_DATE, "20140131");
 
         assertTrue(conf.isAppropriateDateToSendReport(builder.build()));
 
         Context context = conf.initContext(builder.build());
-        assertEquals(context.get(Parameters.FROM_DATE), "20131201");
-        assertEquals(context.get(Parameters.TO_DATE), "20131231");
+        assertEquals(context.getAsString(Parameters.FROM_DATE), "20140101");
+        assertEquals(context.getAsString(Parameters.TO_DATE), "20140131");
     }
 }

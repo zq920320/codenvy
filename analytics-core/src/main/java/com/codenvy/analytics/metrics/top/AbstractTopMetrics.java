@@ -50,7 +50,7 @@ public abstract class AbstractTopMetrics extends ReadBasedMetric {
     }
 
     @Override
-    protected Context modifyContext(Context context) throws IOException {
+    public Context applySpecificFilter(Context context) throws IOException {
         Context.Builder builder = new Context.Builder();
         builder.putAll(context);
         builder.putDefaultValue(Parameters.TO_DATE);

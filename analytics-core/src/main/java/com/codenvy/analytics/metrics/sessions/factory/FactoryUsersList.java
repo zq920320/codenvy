@@ -45,9 +45,9 @@ public class FactoryUsersList extends AbstractListValueResulted {
     @Override
     public String[] getTrackedFields() {
         return new String[]{USER,
-                            RUN,
-                            DEPLOY,
-                            BUILD,
+                            RUNS,
+                            DEPLOYS,
+                            BUILDS,
                             SESSIONS,
                             TIME};
     }
@@ -57,17 +57,17 @@ public class FactoryUsersList extends AbstractListValueResulted {
         DBObject group = new BasicDBObject();
         group.put(ID, "$" + USER);
         group.put(TIME, new BasicDBObject("$sum", "$" + TIME));
-        group.put(RUN, new BasicDBObject("$sum", "$" + RUN));
-        group.put(DEPLOY, new BasicDBObject("$sum", "$" + DEPLOY));
-        group.put(BUILD, new BasicDBObject("$sum", "$" + BUILD));
+        group.put(RUNS, new BasicDBObject("$sum", "$" + RUNS));
+        group.put(DEPLOYS, new BasicDBObject("$sum", "$" + DEPLOYS));
+        group.put(BUILDS, new BasicDBObject("$sum", "$" + BUILDS));
         group.put(SESSIONS, new BasicDBObject("$sum", 1));
 
         DBObject project = new BasicDBObject();
         project.put(USER, "$_id");
         project.put(TIME, 1);
-        project.put(RUN, 1);
-        project.put(DEPLOY, 1);
-        project.put(BUILD, 1);
+        project.put(RUNS, 1);
+        project.put(DEPLOYS, 1);
+        project.put(BUILDS, 1);
         project.put(SESSIONS, 1);
 
         return new DBObject[]{new BasicDBObject("$group", group),

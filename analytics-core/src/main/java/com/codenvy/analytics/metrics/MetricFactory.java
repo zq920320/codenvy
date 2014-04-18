@@ -32,7 +32,6 @@ public class MetricFactory {
 
     static {
         try {
-
             for (Metric metric : ServiceLoader.load(Metric.class)) {
                 Metric existed = metrics.put(metric.getName(), metric);
                 if (existed != null) {
@@ -47,6 +46,10 @@ public class MetricFactory {
 
     public static Metric getMetric(MetricType metricType) {
         return getMetric(metricType.toString());
+    }
+
+    public static boolean exists(String name) {
+        return metrics.containsKey(name.toLowerCase());
     }
 
     public static Metric getMetric(String name) {

@@ -26,13 +26,4 @@
             </parameters>
         </initializer>
     </group>
-
-    <group name="active-subscribers-managed-factory">
-        <description>Active subscribers of Managed Factories</description>
-        <class>com.codenvy.analytics.services.reports.ActiveSubscribersRecipientGroup</class>
-        <parameters>
-            <parameter key="tariff_plan" value="Managed Factory"/>
-        </parameters>
-    </group>
 </recipients>
-

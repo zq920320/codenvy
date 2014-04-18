@@ -17,14 +17,11 @@
  */
 package com.codenvy.analytics.metrics.users;
 
-import com.codenvy.analytics.metrics.Context;
-import com.codenvy.analytics.metrics.MetricFilter;
-import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.analytics.metrics.ReadBasedMetric;
+import com.codenvy.analytics.metrics.*;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
-import java.text.ParseException;
+import java.io.IOException;
 import java.util.regex.Pattern;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
@@ -35,37 +32,64 @@ abstract public class AbstractUsersProfile extends ReadBasedMetric {
     }
 
     @Override
-    public DBObject getFilter(Context clauses) throws ParseException {
-        BasicDBObject match = new BasicDBObject();
+    public Context applySpecificFilter(Context clauses) throws IOException {
+        Context.Builder builder = new Context.Builder();
+        builder.putIfNotNull(Parameters.PER_PAGE, clauses.getAsString(Parameters.PER_PAGE));
+        builder.putIfNotNull(Parameters.PAGE, clauses.getAsString(Parameters.PAGE));
+        builder.putIfNotNull(Parameters.SORT, clauses.getAsString(Parameters.SORT));
 
         for (MetricFilter filter : clauses.getFilters()) {
-            String[] values = clauses.get(filter).split(",");
+            Object value = clauses.get(filter);
 
             if (filter == MetricFilter.USER) {
-                match.put(ID, new BasicDBObject("$in", values));
+                builder.put(MetricFilter._ID, processValue(value, filter.isNumericType()));
 
             } else if (filter == MetricFilter.USER_COMPANY
                        || filter == MetricFilter.USER_FIRST_NAME
                        || filter == MetricFilter.USER_LAST_NAME) {
-                StringBuilder builder = new StringBuilder();
 
-                for (String value : clauses.get(filter).split(",")) {
-                    if (builder.length() > 0) {
-                        builder.append("|");
-                    }
-
-                    builder.append(Pattern.quote(value));
-                }
-
-                Pattern pattern = Pattern.compile(builder.toString(), Pattern.CASE_INSENSITIVE);
-                match.put(filter.toString().toLowerCase(), pattern);
-
-            } else if (filter != MetricFilter.IDE) {
-                match.put(filter.toString().toLowerCase(), new BasicDBObject("$in", values));
+                builder.put(filter, convertToPattern(value));
             }
         }
 
-        return new BasicDBObject("$match", match);
+        return builder.build();
+    }
+
+    private Object convertToPattern(Object value) throws IOException {
+        if (value instanceof Pattern) {
+            return value;
+
+        } else if (value instanceof Pattern[]) {
+            return new BasicDBObject("$in", value);
+
+        } else if (value instanceof String) {
+            return processStringValue((String)value, false);
+
+        } else if (value instanceof String[]) {
+            return new BasicDBObject("$in", getPatterns((String[])value));
+
+        } else {
+            throw new IllegalArgumentException("Unsupported type " + value.getClass());
+        }
+    }
+
+    @Override
+    protected Object processStringValue(String value, boolean isNumericType) {
+        boolean processExclusiveValues = value.startsWith(EXCLUDE_SIGN);
+        if (processExclusiveValues) {
+            value = value.substring(EXCLUDE_SIGN.length());
+        }
+
+        Pattern[] patterns = getPatterns(value.split(SEPARATOR));
+        return new BasicDBObject(processExclusiveValues ? "$nin" : "$in", patterns);
+    }
+
+    private Pattern[] getPatterns(String[] values) {
+        Pattern[] patterns = new Pattern[values.length];
+        for (int i = 0; i < values.length; i++) {
+            patterns[i] = Pattern.compile(Pattern.quote(values[i]), Pattern.CASE_INSENSITIVE);
+        }
+        return patterns;
     }
 
     @Override

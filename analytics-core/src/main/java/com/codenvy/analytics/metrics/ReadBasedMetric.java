@@ -33,6 +33,7 @@ import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.datamodel.ValueDataUtil;
+import com.codenvy.analytics.metrics.users.AbstractUsersProfile;
 import com.codenvy.analytics.persistent.DataLoader;
 import com.codenvy.analytics.persistent.MongoDataStorage;
 import com.mongodb.BasicDBObject;
@@ -45,8 +46,8 @@ import com.mongodb.DBObject;
  */
 public abstract class ReadBasedMetric extends AbstractMetric {
 
-    public static final String EXCLUDE_SIGN        = "~";
-    public static final String SEPARATOR           = ",";
+    public static final String EXCLUDE_SIGN        = "~ ";
+    public static final String SEPARATOR           = " OR ";
     public static final long   DAY_IN_MILLISECONDS = 86400000L;
 
     public static final Pattern REGISTERED_USER =
@@ -54,11 +55,11 @@ public abstract class ReadBasedMetric extends AbstractMetric {
     public static final Pattern ANONYMOUS_USER  =
             Pattern.compile("^(ANONYMOUSUSER_).*", Pattern.CASE_INSENSITIVE);
 
-    public static final Pattern NON_DEFAULT_WS = Pattern.compile("^(?!DEFAULT).*", Pattern.CASE_INSENSITIVE);
-    public static final Pattern PERSISTENT_WS  = Pattern.compile("^(?!(TMP-|DEFAULT)).*", Pattern.CASE_INSENSITIVE);
-    public static final Pattern TEMPORARY_WS   = Pattern.compile("^(TMP-).*", Pattern.CASE_INSENSITIVE);
+    public static final Pattern PERSISTENT_WS = Pattern.compile("^(?!(TMP-|DEFAULT)).*", Pattern.CASE_INSENSITIVE);
+    public static final Pattern TEMPORARY_WS  = Pattern.compile("^(TMP-).*", Pattern.CASE_INSENSITIVE);
 
     public static final String ASC_SORT_SIGN = "+";
+    public static final String PRECOMPUTED   = "_precomputed";
 
 
     public final DataLoader dataLoader;
@@ -76,12 +77,19 @@ public abstract class ReadBasedMetric extends AbstractMetric {
 
     @Override
     public ValueData getValue(Context context) throws IOException {
-        context = modifyContext(context);
         validateRestrictions(context);
 
-        ValueData valueData = dataLoader.loadValue(this, context);
+        if (canReadPrecomputedData(context)) {
+            Metric metric = MetricFactory.getMetric(getName() + PRECOMPUTED);
 
-        return postEvaluation(valueData, context);
+            Context.Builder builder = new Context.Builder(context);
+            builder.remove(Parameters.FROM_DATE);
+            builder.remove(Parameters.TO_DATE);
+            return metric.getValue(builder.build());
+        } else {
+            ValueData valueData = dataLoader.loadValue(this, context);
+            return postComputation(valueData, context);
+        }
     }
 
     /**
@@ -94,7 +102,6 @@ public abstract class ReadBasedMetric extends AbstractMetric {
      *         if any errors are occurred 
      */
     public ListValueData getExpandedValue(Context context) throws IOException {
-        context = modifyContext(context);
         validateRestrictions(context);
 
         return dataLoader.loadExpandedValue(this, context);
@@ -106,7 +113,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
      * @param context
      *         the execution context
      */
-    protected void validateRestrictions(Context context) {
+    private void validateRestrictions(Context context) {
         if (getClass().isAnnotationPresent(FilterRequired.class)) {
             MetricFilter requiredFilter = getClass().getAnnotation(FilterRequired.class).value();
             if (!context.exists(requiredFilter)) {
@@ -116,13 +123,24 @@ public abstract class ReadBasedMetric extends AbstractMetric {
         }
     }
 
-    public ValueData postEvaluation(ValueData valueData, Context clauses) throws IOException {
+    /**
+     * Provides ability to modify the result by adding new fields or changing existed ones.
+     */
+    public ValueData postComputation(ValueData valueData, Context clauses) throws IOException {
         return valueData;
     }
 
     /** Allows modify context before evaluation if necessary. */
-    protected Context modifyContext(Context context) throws IOException {
+    public Context applySpecificFilter(Context context) throws IOException {
         return context;
+    }
+
+    private boolean canReadPrecomputedData(Context context) {
+        return false;
+//        return !context.exists(Parameters.DATA_COMPUTATION_PROCESS)
+//               && MetricFactory.exists(getName() + PRECOMPUTED)
+//               && (!context.exists(Parameters.FROM_DATE) || context.isDefaultValue(Parameters.FROM_DATE))
+//               && (!context.exists(Parameters.TO_DATE) || context.isDefaultValue(Parameters.TO_DATE));
     }
 
     // --------------------------------------------- storage related methods -------------
@@ -138,7 +156,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
     }
 
     public String getStorageCollectionName(MetricType metricType) {
-        return MetricFactory.getMetric(metricType).getName().toLowerCase();
+        return metricType.toString().toLowerCase();
     }
 
     public String getStorageCollectionName(String metricName) {
@@ -159,7 +177,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
 
         // check if we need to filter list valued metric by another expanded metric
         if (clauses.hasFilterByExpandedMetric()) {
-            String value = clauses.get(Parameters.EXPANDED_METRIC_NAME);
+            String value = clauses.getAsString(Parameters.EXPANDED_METRIC_NAME);
             MetricType expandedMetricType = MetricType.valueOf(value.toUpperCase());
             
             Metric expandedMetric = MetricFactory.getMetric(expandedMetricType);
@@ -171,91 +189,92 @@ public abstract class ReadBasedMetric extends AbstractMetric {
             }
         }
         
-        for (MetricFilter filter : clauses.getFilters()) {
-            String value = clauses.get(filter);
-                                
-            if (filter == MetricFilter.USER_COMPANY
-                || filter == MetricFilter.USER_FIRST_NAME
-                || filter == MetricFilter.USER_LAST_NAME) {
+for (MetricFilter filter : clauses.getFilters()) {
+            String field = filter.toString().toLowerCase();
+            Object value = clauses.get(filter);
+            if (isNullOrEmpty(value)) {
+                continue;
+            }
 
-                String[] values = getUsers(filter, value);
-                match.put(MetricFilter.USER.name().toLowerCase(), new BasicDBObject("$in", values));
+            if (!(this instanceof AbstractUsersProfile)
+                && (filter == MetricFilter.USER_COMPANY
+                    || filter == MetricFilter.USER_FIRST_NAME
+                    || filter == MetricFilter.USER_LAST_NAME)) {
 
-            } else if (filter == MetricFilter.DOMAIN) {
-                Pattern usersInDomains = getUsersInDomains(value.split(SEPARATOR));
-                match.put(MetricFilter.USER.name().toLowerCase(), usersInDomains);
+                match.put(MetricFilter.USER.name().toLowerCase(), getUsers(filter, value));
 
-            } else if (filter == MetricFilter.USER) {
+            } else if (!(this instanceof AbstractUsersProfile)
+                       && filter == MetricFilter.USER) {
                 Object users;
 
-                if (value.equalsIgnoreCase(Parameters.USER_TYPES.REGISTERED.name())) {
+                if (value.equals(Parameters.USER_TYPES.REGISTERED.name())) {
                     users = REGISTERED_USER;
-                } else if (value.equalsIgnoreCase(Parameters.USER_TYPES.ANTONYMOUS.name())) {
+                } else if (value.equals(Parameters.USER_TYPES.ANTONYMOUS.name())) {
                     users = ANONYMOUS_USER;
-                } else if (value.equalsIgnoreCase(Parameters.USER_TYPES.ANY.name())) {
+                } else if (value.equals(Parameters.USER_TYPES.ANY.name())) {
                     continue;
                 } else {
-                    String[] values = value.split(SEPARATOR);
-                    users = processExclusiveValues(values, filter.isNumericType());
+                    users = processValue(value, filter.isNumericType());
                 }
 
-                match.put(filter.name().toLowerCase(), users);
+                match.put(field, users);
 
             } else if (filter == MetricFilter.WS) {
                 Object ws;
 
-                if (value.equalsIgnoreCase(Parameters.WS_TYPES.PERSISTENT.name())) {
+                if (value.equals(Parameters.WS_TYPES.PERSISTENT.name())) {
                     ws = PERSISTENT_WS;
-                } else if (value.equalsIgnoreCase(Parameters.WS_TYPES.TEMPORARY.name())) {
+                } else if (value.equals(Parameters.WS_TYPES.TEMPORARY.name())) {
                     ws = TEMPORARY_WS;
-                } else if (value.equalsIgnoreCase(Parameters.WS_TYPES.ANY.name())) {
+                } else if (value.equals(Parameters.WS_TYPES.ANY.name())) {
                     continue;
                 } else {
-                    String[] values = value.split(SEPARATOR);
-                    ws = processExclusiveValues(values, filter.isNumericType());
+                    ws = processValue(value, filter.isNumericType());
                 }
 
-                match.put(filter.name().toLowerCase(), ws);
+                match.put(field, ws);
+            } else if (filter == MetricFilter.PARAMETERS) {
+                match.putAll(Utils.fetchEncodedPairs(clauses.getAsString(filter)));
+
             } else {
-                String[] values = value.split(SEPARATOR);
-                match.put(filter.name().toLowerCase(), processExclusiveValues(values, filter.isNumericType()));
+                match.put(field, processValue(value, filter.isNumericType()));
             }
         }
 
         return new BasicDBObject("$match", match);
     }
 
-    private Object processExclusiveValues(String[] values, boolean isNumericType)
-            throws IOException, ParseException {
+    private boolean isNullOrEmpty(Object value) {
+        return value == null || (value instanceof String && ((String)value).isEmpty());
+    }
 
-        StringBuilder exclusiveValues = new StringBuilder();
-        StringBuilder inclusiveValues = new StringBuilder();
+    protected Object processValue(Object value, boolean isNumericType) throws IOException {
+        if (value.getClass().isArray()) {
+            return new BasicDBObject("$in", value);
 
-        for (String value : values) {
-            if (value.startsWith(EXCLUDE_SIGN)) {
-                if (exclusiveValues.length() != 0) {
-                    exclusiveValues.append(SEPARATOR);
-                }
-                exclusiveValues.append(value.substring(1));
+        } else if (value instanceof DBObject || value instanceof Pattern) {
+            return value;
 
-            } else {
-                if (inclusiveValues.length() != 0) {
-                    inclusiveValues.append(SEPARATOR);
-                }
-                inclusiveValues.append(value);
-            }
+        } else {
+            return processStringValue((String)value, isNumericType);
+        }
+    }
+
+    protected Object processStringValue(String value, boolean isNumericType) {
+        boolean processExclusiveValues = value.startsWith(EXCLUDE_SIGN);
+        if (processExclusiveValues) {
+            value = value.substring(EXCLUDE_SIGN.length());
         }
 
-        if (inclusiveValues.length() != 0) {
-            values = inclusiveValues.toString().split(SEPARATOR);
+        String[] values = value.split(SEPARATOR);
+        if (processExclusiveValues) {
+            return new BasicDBObject("$nin", isNumericType ? convertToNumericFormat(values) : values);
+        } else {
             if (values.length == 1) {
                 return isNumericType ? Long.parseLong(values[0]) : values[0];
             } else {
                 return new BasicDBObject("$in", isNumericType ? convertToNumericFormat(values) : values);
             }
-        } else {
-            values = exclusiveValues.toString().split(SEPARATOR);
-            return new BasicDBObject("$nin", isNumericType ? convertToNumericFormat(values) : values);
         }
     }
 
@@ -271,51 +290,34 @@ public abstract class ReadBasedMetric extends AbstractMetric {
     /** The date field contains the date of the event. */
     private void setDateFilter(Context clauses, BasicDBObject match) throws ParseException {
         DBObject dateFilter = new BasicDBObject();
-        match.put(DATE, dateFilter);
 
-        String fromDate = clauses.get(Parameters.FROM_DATE);
+        String fromDate = clauses.getAsString(Parameters.FROM_DATE);
         if (fromDate != null) {
             if (Utils.isDateFormat(fromDate)) {
                 dateFilter.put("$gte", clauses.getAsDate(Parameters.FROM_DATE).getTimeInMillis());
             } else {
                 dateFilter.put("$gte", clauses.getAsLong(Parameters.FROM_DATE));
             }
-        } else {
-            dateFilter.put("$gte", 0);
         }
 
-        String toDate = clauses.get(Parameters.TO_DATE);
+        String toDate = clauses.getAsString(Parameters.TO_DATE);
         if (toDate != null) {
             if (Utils.isDateFormat(toDate)) {
                 dateFilter.put("$lt", clauses.getAsDate(Parameters.TO_DATE).getTimeInMillis() + DAY_IN_MILLISECONDS);
             } else {
                 dateFilter.put("$lte", clauses.getAsLong(Parameters.TO_DATE));
             }
-        } else {
-            dateFilter.put("$lte", Long.MAX_VALUE);
-        }
-    }
-
-    private Pattern getUsersInDomains(String[] domains) {
-        StringBuilder builder = new StringBuilder();
-        for (String domain : domains) {
-            if (builder.length() != 0) {
-                builder.append("|");
-            }
-
-            builder.append(".*");
-            if (!domain.startsWith("@")) {
-                builder.append("@");
-            }
-            builder.append(domain);
         }
 
-        return Pattern.compile(builder.toString(), Pattern.CASE_INSENSITIVE);
+        if (dateFilter.keySet().size() > 0) {
+            match.put(DATE, dateFilter);
+        }
+
     }
 
-    private String[] getUsers(MetricFilter filter, String pattern) throws IOException {
+    private DBObject getUsers(MetricFilter filter, Object value) throws IOException {
         Context.Builder builder = new Context.Builder();
-        builder.put(filter, pattern);
+        builder.put(filter, value);
         Context context = builder.build();
 
         Metric metric = MetricFactory.getMetric(MetricType.USERS_PROFILES_LIST);
@@ -330,7 +332,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
             result[i] = profile.get(ID).getAsString();
         }
 
-        return result;
+        return new BasicDBObject("$in", result);
     }
 
     /**
@@ -397,7 +399,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
         DBObject[] dbOp = new DBObject[sortExists ? 1 : 0];
 
         if (sortExists) {
-            String sortCondition = clauses.get(Parameters.SORT);
+            String sortCondition = clauses.getAsString(Parameters.SORT);
 
             String field = sortCondition.substring(1);
             boolean asc = sortCondition.substring(0, 1).equals(ASC_SORT_SIGN);
@@ -482,7 +484,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
             builder.putDefaultValue(Parameters.FROM_DATE);
             builder.put(Parameters.REPORT_DATE, builder.get(Parameters.TO_DATE));
         } else {
-            builder.put(Parameters.REPORT_DATE, context.get(Parameters.TO_DATE));
+            builder.put(Parameters.REPORT_DATE, context.getAsString(Parameters.TO_DATE));
         }
 
         if (context.exists(Parameters.TIME_UNIT)) {

@@ -22,6 +22,7 @@ import com.codenvy.analytics.MailService;
 import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.services.Feature;
+import com.codenvy.analytics.services.configuration.ParametersConfiguration;
 import com.codenvy.analytics.services.configuration.XmlConfigurationManager;
 import com.codenvy.analytics.services.view.CSVReportPersister;
 import com.codenvy.analytics.services.view.ViewBuilder;
@@ -34,9 +35,11 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Singleton
@@ -88,18 +91,17 @@ public class ReportSender extends Feature {
         LOG.info("ReportSender is started");
         long start = System.currentTimeMillis();
 
-        context = context.cloneAndPut(Parameters.REPORT_DATE, context.get(Parameters.TO_DATE));
+        context = context.cloneAndPut(Parameters.REPORT_DATE, context.getAsString(Parameters.TO_DATE));
 
         try {
             for (ReportConfiguration reportConfiguration : configuration.getReports()) {
                 for (FrequencyConfiguration frequencyConfiguration : reportConfiguration.getFrequencies()) {
                     for (AbstractFrequencyConfiguration frequency : frequencyConfiguration.frequencies()) {
-
                         if (frequency.isAppropriateDateToSendReport(context)) {
-                            context = frequency.initContext(context);
+                            Context newContext = frequency.initContext(context);
                             RecipientsConfiguration recipients = reportConfiguration.getRecipients();
 
-                            sendReport(context,
+                            sendReport(newContext,
                                        frequency,
                                        recipients);
                         }
@@ -154,7 +156,9 @@ public class ReportSender extends Feature {
 
         for (String view : viewsConfiguration.getViews()) {
             context = context.cloneAndPut(Parameters.RECIPIENT, recipient);
-            context = putSpecificParameters(context, frequency);
+
+            ContextModifier contextModifier = getContextModifier(frequency);
+            context = contextModifier.update(context);
 
             ViewData viewData = viewBuilder.getViewData(view, context);
             String viewId = recipient + File.separator + view;
@@ -166,17 +170,20 @@ public class ReportSender extends Feature {
         return reports;
     }
 
-    private Context putSpecificParameters(Context context, AbstractFrequencyConfiguration frequency)
+    protected ContextModifier getContextModifier(AbstractFrequencyConfiguration frequency)
             throws ClassNotFoundException,
+                   NoSuchMethodException,
                    InstantiationException,
                    IllegalAccessException,
-                   InvocationTargetException,
-                   NoSuchMethodException {
+                   InvocationTargetException {
 
-        String clazzName = frequency.getContextModifier().getClazz();
-        Class<?> clazz = Class.forName(clazzName);
-        ContextModifier contextModifier = (ContextModifier)clazz.getConstructor().newInstance();
+        ContextModifierConfiguration contextModifierConf = frequency.getContextModifier();
+        ParametersConfiguration paramsConf = contextModifierConf.getParametersConfiguration();
 
-        return contextModifier.update(context);
+
+        Class<?> clazz = Class.forName(contextModifierConf.getClazz());
+        Constructor<?> constructor = clazz.getConstructor(List.class);
+
+        return (ContextModifier)constructor.newInstance(paramsConf == null ? Collections.emptyList() : paramsConf.getParameters());
     }
 }

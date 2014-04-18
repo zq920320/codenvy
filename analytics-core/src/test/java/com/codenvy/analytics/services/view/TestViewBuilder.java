@@ -83,7 +83,7 @@ public class TestViewBuilder extends BaseTest {
 
         Context.Builder builder = new Context.Builder();
         builder.putDefaultValue(Parameters.TO_DATE);
-        builder.put(Parameters.FROM_DATE, builder.get(Parameters.TO_DATE));
+        builder.put(Parameters.FROM_DATE, builder.getAsString(Parameters.TO_DATE));
 
         viewBuilder.doExecute(builder.build());
     }
@@ -233,7 +233,7 @@ public class TestViewBuilder extends BaseTest {
 
         @Override
         protected ValueData getMetricValue(Context context) throws IOException {
-            if (context.get(Parameters.TO_DATE).equals(Parameters.TO_DATE.getDefaultValue())) {
+            if (context.getAsString(Parameters.TO_DATE).equals(Parameters.TO_DATE.getDefaultValue())) {
                 return new StringValueData("10");
             } else {
                 return new StringValueData("5");

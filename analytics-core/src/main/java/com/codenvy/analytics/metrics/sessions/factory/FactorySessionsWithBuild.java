@@ -36,6 +36,6 @@ public class FactorySessionsWithBuild extends AbstractFactorySessionsWithEvent {
 
     @Override
     public String[] getTrackedFields() {
-        return new String[]{BUILD};
+        return new String[]{BUILDS};
     }
 }

@@ -57,7 +57,7 @@ public abstract class CumulativeMetric extends AbstractMetric {
     public ValueData getValue(Context context) throws IOException {
         initialValueContainer.validateExistenceInitialValueBefore(context);
 
-        if (!context.isSimplified()) {
+        if (!isSimplified(context)) {
             return ValueDataFactory.createDefaultValue(getValueDataClass());
         }
 
@@ -71,6 +71,12 @@ public abstract class CumulativeMetric extends AbstractMetric {
         } catch (ParseException e) {
             throw new IOException(e);
         }
+    }
+
+    private boolean isSimplified(Context context) {
+        return !context.exists(Parameters.SORT) &&
+               !context.exists(Parameters.PAGE) &&
+               context.getFilters().isEmpty();
     }
 
     private ValueData doGetValue(Context context) throws IOException, ParseException {

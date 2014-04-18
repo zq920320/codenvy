@@ -22,7 +22,11 @@
         <parameters>
             <param>WS</param>
             <param>USER</param>
-            <param>ACTION</param>
+            <param allow-empty-value="true">PROJECT</param>
+            <param allow-empty-value="true">TYPE</param>
+            <param allow-empty-value="true">SOURCE</param>
+            <param allow-empty-value="true">ACTION</param>
+            <param>PARAMETERS</param>
         </parameters>
     </event>
     <event name="user-code-refactor">
@@ -188,11 +192,24 @@
             <param>ID</param>
         </parameters>
     </event>
+    <event name="workspace-created">
+        <description>Workspace created</description>
+        <parameters>
+            <param>WS</param>
+            <param>USER</param>
+        </parameters>
+    </event>
     <event name="tenant-created">
         <description>Workspace created</description>
         <parameters>
             <param>WS</param>
             <param>USER</param>
+        </parameters>
+    </event>
+    <event name="workspace-started">
+        <description>Workspace started</description>
+        <parameters>
+            <param>WS</param>
         </parameters>
     </event>
     <event name="tenant-started">
@@ -201,8 +218,20 @@
             <param>WS</param>
         </parameters>
     </event>
+    <event name="workspace-stopped">
+        <description>Workspace stopped</description>
+        <parameters>
+            <param>WS</param>
+        </parameters>
+    </event>
     <event name="tenant-stopped">
         <description>Workspace stopped</description>
+        <parameters>
+            <param>WS</param>
+        </parameters>
+    </event>
+    <event name="workspace-destroyed">
+        <description>Workspace destroyed</description>
         <parameters>
             <param>WS</param>
         </parameters>
@@ -313,7 +342,7 @@
         </parameters>
     </event>
     <event name="session-started">
-        <description>Ide focused</description>
+        <description>IDE focused</description>
         <parameters>
             <param>WS</param>
             <param>USER</param>
@@ -343,7 +372,7 @@
         </parameters>
     </event>
     <event name="session-finished">
-        <description>Ide defocused</description>
+        <description>IDE defocused</description>
         <parameters>
             <param>WS</param>
             <param>USER</param>
