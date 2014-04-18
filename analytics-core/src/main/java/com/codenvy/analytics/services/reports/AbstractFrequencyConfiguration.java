@@ -52,6 +52,7 @@ public abstract class AbstractFrequencyConfiguration {
     public Context initContext(Context context) throws ParseException {
         Calendar toDate = context.getAsDate(Parameters.TO_DATE);
         Context.Builder builder = new Context.Builder(context);
+        builder.put(getTimeUnit());
 
         return Utils.initDateInterval(toDate, getTimeUnit(), builder);
     }
