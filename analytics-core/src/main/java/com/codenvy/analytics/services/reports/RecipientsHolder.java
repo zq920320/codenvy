@@ -46,10 +46,6 @@ public class RecipientsHolder {
                                                       configurator.getString(CONFIGURATION));
     }
 
-    public Set<String> getEmails(String groupName) throws IOException {
-        return doGetEmails(groupName, new Context.Builder().build());
-    }
-
     public Set<String> getEmails(String groupName, Context context) throws IOException {
         return doGetEmails(groupName, context);
     }

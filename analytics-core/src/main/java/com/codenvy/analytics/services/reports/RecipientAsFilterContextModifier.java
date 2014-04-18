@@ -20,9 +20,18 @@ package com.codenvy.analytics.services.reports;
 import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.services.configuration.ParameterConfiguration;
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class RecipientAsFilterContextModifier implements ContextModifier {
+import java.util.List;
+
+/**
+ * @author Anatoliy Bazko
+ */
+public class RecipientAsFilterContextModifier extends AbstractContextModifier {
+
+    public RecipientAsFilterContextModifier(List<ParameterConfiguration> parameters) {
+        super(parameters);
+    }
 
     @Override
     public Context update(Context context) {

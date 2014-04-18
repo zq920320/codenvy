@@ -18,9 +18,6 @@
 
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.Injector;
-import com.codenvy.analytics.persistent.OrganizationClient;
-
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public abstract class AbstractMetric implements Metric {
 
@@ -69,12 +66,10 @@ public abstract class AbstractMetric implements Metric {
     public static final String USER_JOB              = "user_job";
     public static final String USER_PHONE            = "user_phone";
 
-    protected final String             metricName;
-    protected final OrganizationClient organizationClient;
+    protected final String metricName;
 
     public AbstractMetric(String metricName) {
         this.metricName = metricName.toLowerCase();
-        this.organizationClient = Injector.getInstance(OrganizationClient.class);
     }
 
     public AbstractMetric(MetricType metricType) {

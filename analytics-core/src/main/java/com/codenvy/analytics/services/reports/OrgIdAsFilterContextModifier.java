@@ -18,19 +18,32 @@
 package com.codenvy.analytics.services.reports;
 
 import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.services.configuration.ParameterConfiguration;
 
 import java.util.List;
+import java.util.Set;
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class DummyContextModifier extends AbstractContextModifier {
+/**
+ * @author Anatoliy Bazko
+ */
+public class OrgIdAsFilterContextModifier extends AbstractContextModifier {
 
-    public DummyContextModifier(List<ParameterConfiguration> parameters) {
+    private static final String ORG_ID = "org-id";
+
+    public OrgIdAsFilterContextModifier(List<ParameterConfiguration> parameters) {
         super(parameters);
     }
 
     @Override
     public Context update(Context context) {
-        return context;
+        Set<String> params = getParameters(ORG_ID);
+
+        String[] orgIds = new String[params.size()];
+        params.toArray(orgIds);
+
+        Context.Builder builder = new Context.Builder(context);
+        builder.put(MetricFilter.ORG_ID, orgIds);
+        return builder.build();
     }
 }

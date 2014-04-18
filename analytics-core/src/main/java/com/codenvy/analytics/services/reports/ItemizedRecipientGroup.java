@@ -20,6 +20,7 @@ package com.codenvy.analytics.services.reports;
 import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.services.configuration.ParameterConfiguration;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
@@ -37,7 +38,7 @@ public class ItemizedRecipientGroup extends AbstractRecipientGroup {
     }
 
     @Override
-    public Set<String> getEmails(Context context) {
+    public Set<String> getEmails(Context context) throws IOException {
         return getParameters(E_MAIL);
     }
 }

@@ -18,11 +18,14 @@
 package com.codenvy.analytics.services.reports;
 
 import com.codenvy.analytics.BaseTest;
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.services.configuration.XmlConfigurationManager;
 
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import java.io.BufferedWriter;
@@ -33,28 +36,28 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 
 
 /** @author <a href="mailto:areshetnyak@codenvy.com">Alexander Reshetnyak</a> */
-public class TestItemizedUsersGroup extends BaseTest {
+public class TestItemizedRecipientGroupPeriod extends BaseTest {
 
     private static final String FILE          = BASE_DIR + "/resource";
-    private static final String CONFIGURATION = "<recipients>\n" +
-                                                "    <group name=\"group\">\n" +
-                                                "        <description>the description</description>\n" +
-                                                "        <initializer>\n" +
-                                                "            <class>com.codenvy.analytics.services.reports" +
-                                                ".ItemizedRecipientGroup</class>\n" +
-                                                "            <parameters>\n" +
-                                                "                <parameter key=\"e-mail\" value=\"test1@codenvy" +
-                                                ".com\"/>\n" +
-                                                "                <parameter key=\"e-mail\" value=\"test2@codenvy" +
-                                                ".com\"/>\n" +
-                                                "            </parameters>\n" +
-                                                "        </initializer>\n" +
-                                                "    </group>\n" +
-                                                "</recipients>";
+    private static final String CONFIGURATION =
+            "<recipients>" +
+            "    <group name=\"group\">" +
+            "        <description>the description</description>" +
+            "        <initializer>" +
+            "            <class>com.codenvy.analytics.services.reports.ItemizedRecipientGroupPeriod</class>" +
+            "            <parameters>" +
+            "                <parameter key=\"e-mail\" value=\"test1@codenvy.com\"/>" +
+            "                <parameter key=\"start-date\" value=\"2014-01-01\"/>" +
+            "                <parameter key=\"end-date\" value=\"2014-01-31\"/>" +
+            "            </parameters>" +
+            "        </initializer>" +
+            "    </group>" +
+            "</recipients>";
 
     private RecipientsHolder recipientsHolder;
 
@@ -77,13 +80,22 @@ public class TestItemizedUsersGroup extends BaseTest {
     }
 
 
-    @Test
-    public void testInitializationItemizedUsersGroup() throws Exception {
-        Set<String> emails = recipientsHolder.getEmails("group");
+    @Test(dataProvider = "provider")
+    public void testNumberOfRecipients(String date, long count) throws Exception {
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.TO_DATE, date);
+
+        Set<String> emails = recipientsHolder.getEmails("group", builder.build());
 
         assertNotNull(emails);
-        assertEquals(2, emails.size());
-        assertTrue(emails.contains("test1@codenvy.com"));
-        assertTrue(emails.contains("test2@codenvy.com"));
+        assertEquals(count, emails.size());
+    }
+
+    @DataProvider(name = "contextDataProvider")
+    public Object[][] provider() {
+        return new Object[][]{{"20140101", 1},
+                              {"20140131", 1},
+                              {"20140201", 0},
+                              {"20131231", 0}};
     }
 }

@@ -18,6 +18,7 @@
 package com.codenvy.analytics.services.reports;
 
 import com.codenvy.analytics.BaseTest;
+import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.services.configuration.XmlConfigurationManager;
 
 import org.mockito.invocation.InvocationOnMock;
@@ -81,7 +82,7 @@ public class TestFileStoredUsersGroup extends BaseTest {
 
     @Test
     public void testInitializationItemizedUsersGroup() throws Exception {
-        Set<String> emails = recipientsHolder.getEmails("group");
+        Set<String> emails = recipientsHolder.getEmails("group", Context.EMPTY);
 
         assertNotNull(emails);
         assertEquals(2, emails.size());

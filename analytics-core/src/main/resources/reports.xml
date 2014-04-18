@@ -40,20 +40,4 @@
             </daily>
         </frequency>
     </report>
-
-    <report>
-        <recipients>
-            <recipient>active-subscribers-managed-factory</recipient>
-        </recipients>
-        <frequency>
-            <monthly>
-                <views>
-                    <view>factory-timeline</view>
-                </views>
-                <context-modifier>
-                    <class>com.codenvy.analytics.services.reports.RecipientAsFilterContextModifier</class>
-                </context-modifier>
-            </monthly>
-        </frequency>
-    </report>
 </reports>

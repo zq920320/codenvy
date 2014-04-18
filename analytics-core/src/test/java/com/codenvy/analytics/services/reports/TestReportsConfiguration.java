@@ -18,6 +18,8 @@
 package com.codenvy.analytics.services.reports;
 
 import com.codenvy.analytics.BaseTest;
+import com.codenvy.analytics.services.configuration.ParameterConfiguration;
+import com.codenvy.analytics.services.configuration.ParametersConfiguration;
 import com.codenvy.analytics.services.configuration.XmlConfigurationManager;
 
 import org.testng.annotations.BeforeClass;
@@ -50,6 +52,10 @@ public class TestReportsConfiguration extends BaseTest {
                                                 "                </views>\n" +
                                                 "                <context-modifier>\n" +
                                                 "                    <class>clazz</class>\n" +
+                                                "                    <parameters>" +
+                                                "                       <parameter key=\"param1\" value=\"value1\"/>" +
+                                                "                       <parameter key=\"param2\" value=\"value2\"/>" +
+                                                "                    </parameters>" +
                                                 "                </context-modifier>\n" +
                                                 "            </weekly>\n" +
                                                 "        </frequency>\n" +
@@ -102,6 +108,18 @@ public class TestReportsConfiguration extends BaseTest {
         assertEquals("factory-timeline", viewsConfiguration.getViews().get(1));
 
         assertNotNull(weeklyFrequencyConfiguration.getContextModifier());
-        assertEquals("clazz", weeklyFrequencyConfiguration.getContextModifier().getClazz());
+        ContextModifierConfiguration contextModifier = weeklyFrequencyConfiguration.getContextModifier();
+        assertEquals("clazz", contextModifier.getClazz());
+
+        ParametersConfiguration paramsConf = contextModifier.getParametersConfiguration();
+        assertNotNull(paramsConf);
+
+        List<ParameterConfiguration> parameters = paramsConf.getParameters();
+        assertEquals(2, parameters.size());
+        assertEquals("param1", parameters.get(0).getKey());
+        assertEquals("param2", parameters.get(1).getKey());
+        assertEquals("value1", parameters.get(0).getValue());
+        assertEquals("value2", parameters.get(1).getValue());
+
     }
 }

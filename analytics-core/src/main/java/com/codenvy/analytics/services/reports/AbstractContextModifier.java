@@ -3,7 +3,7 @@
  * CODENVY CONFIDENTIAL
  * ________________
  *
- * [2012] - [2013] Codenvy, S.A.
+ * [2012] - [2014] Codenvy, S.A.
  * All Rights Reserved.
  * NOTICE: All information contained herein is, and remains
  * the property of Codenvy S.A. and its suppliers,
@@ -19,22 +19,24 @@ package com.codenvy.analytics.services.reports;
 
 import com.codenvy.analytics.services.configuration.ParameterConfiguration;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public abstract class AbstractRecipientGroup implements RecipientGroup {
+/**
+ * @author Anatoliy Bazko
+ */
+public abstract class AbstractContextModifier implements ContextModifier {
 
     protected final List<ParameterConfiguration> parameters;
 
-    public AbstractRecipientGroup(List<ParameterConfiguration> parameters) {
+    public AbstractContextModifier(List<ParameterConfiguration> parameters) {
         this.parameters = parameters;
     }
 
     /** @return all parameters for specific key */
     protected Set<String> getParameters(String key) {
-        Set<String> items = new HashSet<>();
+        Set<String> items = new LinkedHashSet<>();
 
         for (ParameterConfiguration parameter : parameters) {
             if (parameter.getKey().equalsIgnoreCase(key)) {
