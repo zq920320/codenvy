@@ -17,9 +17,10 @@
  */
 package com.codenvy.api.dao.ldap;
 
+import com.codenvy.api.core.ConflictException;
+import com.codenvy.api.core.NotFoundException;
+import com.codenvy.api.core.ServerException;
 import com.codenvy.api.user.server.dao.UserDao;
-import com.codenvy.api.user.server.exception.UserException;
-import com.codenvy.api.user.server.exception.UserNotFoundException;
 import com.codenvy.api.user.shared.dto.User;
 import com.codenvy.dto.server.DtoFactory;
 
@@ -181,7 +182,7 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public boolean authenticate(String alias, String password) throws UserException {
+    public boolean authenticate(String alias, String password) throws NotFoundException, ServerException {
         if (alias == null || alias.isEmpty() || password == null || password.isEmpty()) {
             LOG.warn("Empty username or password");
             return false;
@@ -189,7 +190,7 @@ public class UserDaoImpl implements UserDao {
         try {
             final User user = doGetByAlias(alias);
             if (user == null) {
-                throw new UserNotFoundException(alias);
+                throw new NotFoundException("User not found "+alias);
             }
             final String id = user.getId();
             final String userDn = getUserDn(id);
@@ -210,23 +211,23 @@ public class UserDaoImpl implements UserDao {
                 LOG.warn(String.format("Invalid password for user %s", userDn));
                 return false;
             } catch (NamingException e) {
-                throw new UserException(String.format("Authentication failed for user '%s'", alias), e);
+                throw new ServerException(String.format("Authentication failed for user '%s'", alias), e);
             } finally {
                 close(authContext);
             }
         } catch (NamingException e) {
-            throw new UserException(String.format("Authentication failed for user '%s'", alias), e);
+            throw new ServerException(String.format("Authentication failed for user '%s'", alias), e);
         }
     }
 
     @Override
-    public void create(User user) throws UserException {
+    public void create(User user) throws ConflictException, ServerException {
         InitialLdapContext context = null;
         DirContext newContext = null;
         try {
             for (String alias : user.getAliases()) {
                 if (doGetByAlias(alias) != null) {
-                    throw new UserException(
+                    throw new ConflictException(
                             String.format("Unable create new user '%s'. User alias %s is already in use.", user.getEmail(), alias));
                 }
             }
@@ -235,9 +236,9 @@ public class UserDaoImpl implements UserDao {
 
             LOG.info("EVENT#user-created# ALIASES#{}# USER-ID#{}#", user.getEmail(), user.getId());
         } catch (NameAlreadyBoundException e) {
-            throw new UserException(String.format("Unable create new user '%s'. User already exists.", user.getId()), e);
+            throw new ConflictException(String.format("Unable create new user '%s'. User already exists.", user.getId()));
         } catch (NamingException e) {
-            throw new UserException(String.format("Unable create new user '%s'", user.getEmail()), e);
+            throw new ServerException(String.format("Unable create new user '%s'", user.getEmail()), e);
         } finally {
             close(newContext);
             close(context);
@@ -245,19 +246,23 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public void update(User user) throws UserException {
+    public void update(User user) throws NotFoundException, ServerException {
         final String id = user.getId();
         try {
+
             final User existed = doGetById(id);
             if (existed == null) {
-                throw new UserNotFoundException(id);
+                throw new NotFoundException("User not found "+id);
             }
+
             for (String alias : user.getAliases()) {
                 final User byAlias = doGetByAlias(alias);
                 if (!(byAlias == null || id.equals(byAlias.getId()))) {
-                    throw new UserException(String.format("Unable update user '%s'. User alias %s is already in use.", id, alias));
+                    throw new ServerException(String.format("Unable update user '%s'. User alias %s is already in use.", id, alias));
                 }
             }
+
+
             InitialLdapContext context = null;
             try {
                 final ModificationItem[] mods = userAttributesMapper.createModifications(existed, user);
@@ -265,22 +270,27 @@ public class UserDaoImpl implements UserDao {
                     context = getLdapContext();
                     context.modifyAttributes(getUserDn(id), mods);
                 }
-            } finally {
+            } catch (NamingException e) {
+
+                throw new ServerException(String.format("Unable update (user) '%s'", user.getEmail()), e);
+            }
+            finally {
                 close(context);
             }
         } catch (NamingException e) {
-            throw new UserException(String.format("Unable update user '%s'", user.getEmail()), e);
+
+            throw new ServerException(String.format("Unable update user '%s'", user.getEmail()), e);
         }
     }
 
     @Override
-    public void remove(String id) throws UserException {
+    public void remove(String id) throws NotFoundException, ServerException {
         User user;
-        try {
-            user = getById(id);
-        } catch (UserException e) {
-            throw new UserNotFoundException(id);
-        }
+ //       try {
+        user = getById(id);
+ //       } catch (UserException e) {
+ //           throw new NotFoundException("User not found "+id);
+ //       }
 
         InitialLdapContext context = null;
         try {
@@ -288,37 +298,39 @@ public class UserDaoImpl implements UserDao {
             context.destroySubcontext(getUserDn(id));
             LOG.info("EVENT#user-removed# ALIASES#{}# USER-ID#{}#", user.getEmail(), user.getId());
         } catch (NameNotFoundException e) {
-            throw new UserNotFoundException(id);
+            throw new NotFoundException("User not found "+id);
         } catch (NamingException e) {
-            throw new UserException(String.format("Unable remove user '%s'", id), e);
+            throw new ServerException(String.format("Unable remove user '%s'", id), e);
         } finally {
             close(context);
         }
     }
 
     @Override
-    public User getByAlias(String alias) throws UserException {
+    public User getByAlias(String alias) throws NotFoundException, ServerException {
         try {
+
             final User user = doGetByAlias(alias);
+
             if (user == null) {
-                return null;
+                throw new NotFoundException("User not found "+alias);
             }
             return DtoFactory.getInstance().clone(user);
         } catch (NamingException e) {
-            throw new UserException(String.format("Unable get user '%s'", alias), e);
+            throw new ServerException(String.format("Unable get user '%s'", alias), e);
         }
     }
 
     @Override
-    public User getById(String id) throws UserException {
+    public User getById(String id) throws NotFoundException, ServerException {
         try {
             final User user = doGetById(id);
             if (user == null) {
-                return null;
+                throw new NotFoundException("User not found "+id);
             }
             return DtoFactory.getInstance().clone(user);
         } catch (NamingException e) {
-            throw new UserException(String.format("Unable get user '%s'", id), e);
+            throw new ServerException(String.format("Unable get user '%s'", id), e);
         }
     }
 

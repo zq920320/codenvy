@@ -17,19 +17,16 @@
  */
 package com.codenvy.api.dao.mongo;
 
+import com.codenvy.api.core.ConflictException;
+import com.codenvy.api.core.NotFoundException;
+import com.codenvy.api.core.ServerException;
 import com.codenvy.api.user.server.dao.UserDao;
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
 import com.codenvy.api.workspace.server.exception.WorkspaceException;
-import com.codenvy.api.workspace.server.exception.WorkspaceNotFoundException;
 import com.codenvy.api.workspace.shared.dto.Attribute;
 import com.codenvy.api.workspace.shared.dto.Workspace;
 import com.codenvy.dto.server.DtoFactory;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.DBCursor;
-import com.mongodb.DBObject;
-import com.mongodb.MongoException;
+import com.mongodb.*;
 import com.mongodb.util.JSON;
 
 import javax.inject.Inject;
@@ -61,63 +58,67 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
     }
 
     @Override
-    public void create(Workspace workspace) throws WorkspaceException {
+    public void create(Workspace workspace) throws ConflictException, ServerException {
         try {
             validateWorkspaceName(workspace.getName());
             ensureWorkspaceNameDoesNotExist(workspace.getName());
             collection.save(toDBObject(workspace));
         } catch (MongoException me) {
-            throw new WorkspaceException(me.getMessage(), me);
+            throw new ServerException(me.getMessage(), me);
         }
     }
 
     @Override
-    public void update(Workspace workspace) throws WorkspaceException {
+    public void update(Workspace workspace) throws ConflictException, NotFoundException, ServerException {
         DBObject query = new BasicDBObject("id", workspace.getId());
         if (collection.findOne(query) == null) {
-            throw new WorkspaceNotFoundException(workspace.getId());
+            throw new NotFoundException("Workspace not found "+workspace.getId());
         }
         try {
             validateWorkspaceName(workspace.getName());
             collection.update(query, toDBObject(workspace));
         } catch (MongoException me) {
-            throw new WorkspaceException(me.getMessage(), me);
+            throw new ServerException(me.getMessage(), me);
         }
     }
 
     @Override
-    public void remove(String id) throws WorkspaceException {
+    public void remove(String id) throws ServerException {
         try {
             collection.remove(new BasicDBObject("id", id));
         } catch (MongoException me) {
-            throw new WorkspaceException(me.getMessage(), me);
+            throw new ServerException(me.getMessage(), me);
         }
     }
 
     @Override
-    public Workspace getById(String id) throws WorkspaceException {
+    public Workspace getById(String id) throws NotFoundException, ServerException {
         DBObject res;
         try {
             res = collection.findOne(new BasicDBObject("id", id));
         } catch (MongoException me) {
-            throw new WorkspaceException(me.getMessage(), me);
+            throw new ServerException(me.getMessage(), me);
         }
-        return res != null ? DtoFactory.getInstance().createDtoFromJson(res.toString(), Workspace.class) : null;
+        if(res == null)
+            throw new NotFoundException("Workspace not found "+id);
+        return DtoFactory.getInstance().createDtoFromJson(res.toString(), Workspace.class);
     }
 
     @Override
-    public Workspace getByName(String name) throws WorkspaceException {
+    public Workspace getByName(String name) throws NotFoundException, ServerException {
         DBObject res;
         try {
             res = collection.findOne(new BasicDBObject("name", name));
         } catch (MongoException me) {
-            throw new WorkspaceException(me.getMessage(), me);
+            throw new ServerException(me.getMessage(), me);
         }
-        return res != null ? DtoFactory.getInstance().createDtoFromJson(res.toString(), Workspace.class) : null;
+        if(res == null)
+            throw new NotFoundException("Workspace not found "+name);
+        return DtoFactory.getInstance().createDtoFromJson(res.toString(), Workspace.class);
     }
 
     @Override
-    public List<Workspace> getByAccount(String accountId) throws WorkspaceException {
+    public List<Workspace> getByAccount(String accountId) throws ServerException {
         List<Workspace> result = new ArrayList<>();
         try {
             DBCursor cursor = collection.find(new BasicDBObject("accountId", accountId));
@@ -125,7 +126,7 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
                 result.add(DtoFactory.getInstance().createDtoFromJson(one.toString(), Workspace.class));
             }
         } catch (MongoException me) {
-            throw new WorkspaceException(me.getMessage(), me);
+            throw new ServerException(me.getMessage(), me);
         }
         return result;
     }
@@ -157,12 +158,12 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
         return (DBObject)JSON.parse(workspace.toString());
     }
 
-    private void validateWorkspaceName(String workspaceName) throws WorkspaceException {
+    private void validateWorkspaceName(String workspaceName) throws ConflictException {
         if (workspaceName == null) {
-            throw new WorkspaceException("Workspace name required");
+            throw new ConflictException("Workspace name required");
         }
         if (!WS_NAME.matcher(workspaceName).matches()) {
-            throw new WorkspaceException("Incorrect workspace name");
+            throw new ConflictException("Incorrect workspace name");
         }
     }
 
@@ -173,10 +174,10 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
      *         workspace name to check
      * @throws WorkspaceException
      */
-    private void ensureWorkspaceNameDoesNotExist(String workspaceName) throws WorkspaceException {
+    private void ensureWorkspaceNameDoesNotExist(String workspaceName) throws ConflictException {
         DBObject res = collection.findOne(new BasicDBObject("name", workspaceName));
         if (res != null) {
-            throw new WorkspaceException(
+            throw new ConflictException(
                     String.format("Unable to create workspace: name '%s' already exists.", workspaceName));
         }
     }

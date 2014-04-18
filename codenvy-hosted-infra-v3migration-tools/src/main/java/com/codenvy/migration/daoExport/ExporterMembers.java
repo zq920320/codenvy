@@ -1,7 +1,6 @@
 package com.codenvy.migration.daoExport;
 
-import com.codenvy.api.account.server.exception.AccountException;
-import com.codenvy.api.user.server.exception.MembershipException;
+import com.codenvy.api.core.ApiException;
 import com.codenvy.api.user.shared.dto.Member;
 
 import org.slf4j.Logger;
@@ -33,7 +32,7 @@ public class ExporterMembers implements Runnable {
         for (com.codenvy.api.user.shared.dto.Member wsMember : workspaceMembers) {
             try {
                 daoManager.addWorkspaceMember(wsMember);
-            } catch (MembershipException e) {
+            } catch (ApiException e) {
                 LOG.error(String.format("Error adding role user %s in workspace %s", wsMember.getUserId(),
                                         wsMember.getWorkspaceId()), e);
             }
@@ -42,7 +41,7 @@ public class ExporterMembers implements Runnable {
         for (com.codenvy.api.account.shared.dto.Member accountMember : accountMembers) {
             try {
                 daoManager.addAccountMember(accountMember);
-            } catch (AccountException e) {
+            } catch (ApiException e) {
                 LOG.error(String.format("Error adding role user %s in organization %s", accountMember.getUserId(),
                                         accountMember.getAccountId()), e);
             }

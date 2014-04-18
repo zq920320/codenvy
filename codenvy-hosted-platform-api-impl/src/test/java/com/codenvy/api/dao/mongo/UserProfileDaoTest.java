@@ -17,10 +17,10 @@
  */
 package com.codenvy.api.dao.mongo;
 
+import com.codenvy.api.core.NotFoundException;
+import com.codenvy.api.core.ServerException;
 import com.codenvy.api.user.server.dao.UserDao;
 import com.codenvy.api.user.server.dao.UserProfileDao;
-import com.codenvy.api.user.server.exception.ProfileNotFoundException;
-import com.codenvy.api.user.server.exception.UserProfileException;
 import com.codenvy.api.user.shared.dto.Attribute;
 import com.codenvy.api.user.shared.dto.Profile;
 import com.codenvy.dto.server.DtoFactory;
@@ -93,7 +93,7 @@ public class UserProfileDaoTest extends BaseDaoTest {
     }
 
     @Test
-    public void mustGetProfileByIdWithPreferencesFilter() throws UserProfileException {
+    public void mustGetProfileByIdWithPreferencesFilter() throws ServerException, NotFoundException {
         Map<String, String> prefs = new HashMap<>();
         prefs.put("first", "first_value");
         prefs.put("____firstASD", "other_first_value");
@@ -130,7 +130,7 @@ public class UserProfileDaoTest extends BaseDaoTest {
         try {
             profileDao.update(profile);
             fail("Update of non-existing profile prohibited.");
-        } catch (ProfileNotFoundException e) {
+        } catch (NotFoundException e) {
             // OK
         }
     }

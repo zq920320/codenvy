@@ -17,6 +17,9 @@
  */
 package com.codenvy.api.dao.ldap;
 
+import com.codenvy.api.core.ConflictException;
+import com.codenvy.api.core.NotFoundException;
+import com.codenvy.api.core.ServerException;
 import com.codenvy.api.user.server.exception.UserException;
 import com.codenvy.api.user.server.exception.UserNotFoundException;
 import com.codenvy.api.user.shared.dto.User;
@@ -84,7 +87,7 @@ public class UserDaoTest {
         Assert.assertFalse(userDao.authenticate(users[0].getAliases().get(0), "invalid"));
     }
 
-    @Test(expectedExceptions = UserNotFoundException.class)
+    @Test(expectedExceptions = NotFoundException.class)
     public void testAuthenticateNotExistedUser() throws Exception {
         userDao.authenticate("no_found", "secret");
     }
@@ -98,9 +101,9 @@ public class UserDaoTest {
         Assert.assertEquals(userById.getAliases(), users[1].getAliases());
     }
 
-    @Test
+    @Test(expectedExceptions = NotFoundException.class)
     public void testGetNotExistedUserById() throws Exception {
-        Assert.assertNull(userDao.getById("invalid"));
+        userDao.getById("invalid");
     }
 
     @Test
@@ -112,9 +115,9 @@ public class UserDaoTest {
         Assert.assertEquals(userByAlias.getAliases(), users[2].getAliases());
     }
 
-    @Test
+    @Test(expectedExceptions = NotFoundException.class)
     public void testGetNotExistedUserByAlias() throws Exception {
-        Assert.assertNull(userDao.getByAlias("invalid"));
+        userDao.getByAlias("invalid");
     }
 
     @Test
@@ -141,7 +144,7 @@ public class UserDaoTest {
         try {
             userDao.update(copy);
             Assert.fail();
-        } catch (UserNotFoundException e) {
+        } catch (NotFoundException e) {
         }
         User updated = userDao.getById(users[0].getId());
         Assert.assertEquals(updated.getId(), users[0].getId());
@@ -161,7 +164,7 @@ public class UserDaoTest {
         try {
             userDao.update(copy);
             Assert.fail();
-        } catch (UserException e) {
+        } catch (ServerException e) {
             Assert.assertEquals(e.getMessage(),
                                 String.format("Unable update user '%s'. User alias %s is already in use.", copy.getId(), conflictAlias));
         }
@@ -177,8 +180,9 @@ public class UserDaoTest {
         User user = userDao.getById(users[0].getId());
         Assert.assertNotNull(user);
         userDao.remove(users[0].getId());
-        user = userDao.getById(users[0].getId());
-        Assert.assertNull(user);
+        try {
+            userDao.getById(users[0].getId());
+        } catch (NotFoundException e) {}
     }
 
     @Test
@@ -186,11 +190,11 @@ public class UserDaoTest {
         try {
             userDao.remove("invalid");
             Assert.fail();
-        } catch (UserNotFoundException e) {
+        } catch (NotFoundException e) {
         }
     }
 
-    @Test(expectedExceptions = UserException.class, expectedExceptionsMessageRegExp = ".*User already exists.*")
+    @Test(expectedExceptions = ConflictException.class, expectedExceptionsMessageRegExp = ".*User already exists.*")
     public void testCreateUserConflictId() throws Exception {
         User copy = DtoFactory.getInstance().clone(users[0]);
         copy.setEmail("example@mail.com");
@@ -199,7 +203,7 @@ public class UserDaoTest {
         userDao.create(copy);
     }
 
-    @Test(expectedExceptions = UserException.class, expectedExceptionsMessageRegExp = ".*User alias .* is already in use.*")
+    @Test(expectedExceptions = ConflictException.class, expectedExceptionsMessageRegExp = ".*User alias .* is already in use.*")
     public void testCreateUserConflictAlias() throws Exception {
         User copy = DtoFactory.getInstance().clone(users[0]);
         copy.setId("new_id");

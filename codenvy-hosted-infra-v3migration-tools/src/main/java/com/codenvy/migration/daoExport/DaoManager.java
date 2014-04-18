@@ -1,22 +1,21 @@
 package com.codenvy.migration.daoExport;
 
 import com.codenvy.api.account.server.dao.AccountDao;
-import com.codenvy.api.account.server.exception.AccountException;
 import com.codenvy.api.account.shared.dto.Account;
 import com.codenvy.api.account.shared.dto.Member;
 import com.codenvy.api.account.shared.dto.Subscription;
+import com.codenvy.api.core.ConflictException;
+import com.codenvy.api.core.NotFoundException;
+import com.codenvy.api.core.ServerException;
 import com.codenvy.api.dao.authentication.PasswordEncryptor;
 import com.codenvy.api.dao.mongo.AccountDaoImpl;
 import com.codenvy.api.user.server.dao.MemberDao;
 import com.codenvy.api.user.server.dao.UserDao;
 import com.codenvy.api.user.server.dao.UserProfileDao;
-import com.codenvy.api.user.server.exception.MembershipException;
-import com.codenvy.api.user.server.exception.UserException;
-import com.codenvy.api.user.server.exception.UserProfileException;
+
 import com.codenvy.api.user.shared.dto.Profile;
 import com.codenvy.api.user.shared.dto.User;
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
-import com.codenvy.api.workspace.server.exception.WorkspaceException;
 import com.codenvy.api.workspace.shared.dto.Workspace;
 import com.codenvy.api.dao.ldap.UserAttributesMapper;
 import com.codenvy.api.dao.ldap.UserDaoImpl;
@@ -106,44 +105,44 @@ public class DaoManager {
                                         mongoProperties.getProperty(COLLECTION_ACC_MEMBER));
     }
 
-    public void addUser(User user) throws UserException {
+    public void addUser(User user) throws ConflictException, ServerException {
         userDao.create(user);
         if (LOG.isDebugEnabled())
             LOG.debug("User was created: " + user.toString());
     }
 
-    public void addProfile(Profile profile) throws UserProfileException {
+    public void addProfile(Profile profile) throws ConflictException, ServerException {
         userProfileDao.create(profile);
         if (LOG.isDebugEnabled())
             LOG.debug("Profile was created: " + profile);
     }
 
-    public void addWorkspace(Workspace workspace) throws WorkspaceException {
+    public void addWorkspace(Workspace workspace) throws ConflictException, ServerException {
         workspaceDao.create(workspace);
         if (LOG.isDebugEnabled())
             LOG.debug("Workspace was created: " + workspace);
     }
 
-    public void addAccount(Account account) throws AccountException {
+    public void addAccount(Account account) throws ConflictException, ServerException {
         accountDao.create(account);
         if (LOG.isDebugEnabled())
             LOG.debug("Account was created: " + account);
     }
 
-    public void addAccountMember(Member member) throws AccountException {
+    public void addAccountMember(Member member) throws ConflictException, ServerException, NotFoundException {
         if (!accountDao.getMembers(member.getAccountId()).contains(member)) {
             accountDao.addMember(member);
             LOG.debug("Member was added to account: " + member);
         }
     }
 
-    public void addAccountSubscription(Subscription subscription) throws AccountException {
+    public void addAccountSubscription(Subscription subscription) throws ConflictException, ServerException, NotFoundException {
         accountDao.addSubscription(subscription);
         if (LOG.isDebugEnabled())
             LOG.debug("Subscription was created: " + subscription);
     }
 
-    public void addWorkspaceMember(com.codenvy.api.user.shared.dto.Member member) throws MembershipException {
+    public void addWorkspaceMember(com.codenvy.api.user.shared.dto.Member member) throws ConflictException, ServerException, NotFoundException {
         memberDao.create(member);
         if (LOG.isDebugEnabled())
             LOG.debug("Member was added to workspace: " + member);

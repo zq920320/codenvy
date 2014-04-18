@@ -1,13 +1,11 @@
 package com.codenvy.migration.daoExport;
 
-import com.codenvy.api.account.server.exception.AccountException;
+
 import com.codenvy.api.account.shared.dto.Account;
 import com.codenvy.api.account.shared.dto.Subscription;
-import com.codenvy.api.user.server.exception.UserException;
-import com.codenvy.api.user.server.exception.UserProfileException;
+import com.codenvy.api.core.ApiException;
 import com.codenvy.api.user.shared.dto.Profile;
 import com.codenvy.api.user.shared.dto.User;
-import com.codenvy.api.workspace.server.exception.WorkspaceException;
 import com.codenvy.api.workspace.shared.dto.Workspace;
 
 import org.slf4j.Logger;
@@ -48,13 +46,13 @@ public class ExporterLinkedObject implements Runnable {
             if (account != null) {
                 try {
                     daoManager.addAccount(account);
-                } catch (AccountException e) {
+                } catch (ApiException e) {
                     LOG.error("Error exporting organization " + account.getId(), e);
                 }
                 if (subscription != null) {
                     try {
                         daoManager.addAccountSubscription(subscription);
-                    } catch (AccountException e) {
+                    } catch (ApiException e) {
                         LOG.error("Error exporting subscription " + account.getId(), e);
                     }
                 }
@@ -63,14 +61,12 @@ public class ExporterLinkedObject implements Runnable {
             for (Workspace workspace : workspaces) {
                 try {
                     daoManager.addWorkspace(workspace);
-                } catch (WorkspaceException e) {
+                } catch (ApiException e) {
                     LOG.error("Error exporting workspace " + workspace.getId(), e);
                 }
             }
-        } catch (UserException e) {
+        } catch (ApiException e) {
             LOG.error("Error exporting user " + user.getId(), e);
-        } catch (UserProfileException e) {
-            LOG.error("Error exporting user's profile " + user.getId(), e);
         }
 
         doneSignal.countDown();

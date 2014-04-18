@@ -17,6 +17,7 @@
  */
 package com.codenvy.service.http;
 
+import com.codenvy.api.core.ApiException;
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
 import com.codenvy.api.workspace.server.exception.WorkspaceException;
 import com.codenvy.api.workspace.shared.dto.Workspace;
@@ -67,7 +68,7 @@ public class WorkspaceNameEnvironmentInitializationFilter implements Filter {
                 env.setWorkspaceId(workspace.getId());
             }
             chain.doFilter(request, response);
-        } catch (WorkspaceException e) {
+        } catch (ApiException e) {
             throw new ServletException(e.getLocalizedMessage(), e);
         } finally {
             EnvironmentContext.reset();
