@@ -347,7 +347,7 @@
             <param>WS</param>
             <param>USER</param>
             <param>SESSION-ID</param>
-            <param>WINDOW</param>
+            <param allow-empty-value="true">WINDOW</param>
         </parameters>
     </event>
     <event name="ide-opened">
@@ -377,7 +377,7 @@
             <param>WS</param>
             <param>USER</param>
             <param>SESSION-ID</param>
-            <param>WINDOW</param>
+            <param allow-empty-value="true">WINDOW</param>
         </parameters>
     </event>
     <event name="shell-launched">
