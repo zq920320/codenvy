@@ -44,6 +44,7 @@ import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.metrics.users.UserInvite;
 import com.codenvy.analytics.metrics.workspaces.ActiveWorkspaces;
 import com.codenvy.analytics.persistent.JdbcDataPersisterFactory;
 import com.codenvy.analytics.pig.scripts.ScriptType;
@@ -62,9 +63,12 @@ public class TestExpandedMetric extends BaseTest {
     private static final String WS                  = "ws1";
     private static final String USER                = "user1@gmail.com";
     private static final String SESSION_ID          = "8AA06F22-3755-4BDD-9242-8A6371BAB53A";
-    private static final String COLLECTION          = "users_activity_list";
+    private static final String USERS_ACTIVITY_LIST_COLLECTION = "users_activity_list";
+    private static final String USER_INVITE_COLLECTION = "user_invite";
     
     private ViewBuilder viewBuilder;
+    
+    private File log;
     
     private static final String ANALYSIS_VIEW_CONFIGURATION = BASE_DIR + "/classes/views/analysis.xml";
     
@@ -72,6 +76,12 @@ public class TestExpandedMetric extends BaseTest {
     public void prepareDatabase() throws IOException, ParseException {
         List<Event> events = new ArrayList<>();
 
+        // same user invites twice
+        events.add(Event.Builder.createUserInviteEvent(USER, WS, USER)
+                   .withDate("2013-11-01").withTime("15:00:00,155").build());
+        events.add(Event.Builder.createUserInviteEvent(USER, WS, USER)
+                   .withDate("2013-11-01").withTime("16:00:00,155").build());
+        
         // start main session
         events.add(
                 Event.Builder.createSessionStartedEvent(USER, WS, "ide", SESSION_ID)
@@ -100,17 +110,7 @@ public class TestExpandedMetric extends BaseTest {
                 Event.Builder.createSessionFinishedEvent(USER, WS, "ide", SESSION_ID)
                              .withDate("2013-11-01").withTime("19:55:00,555").build());
 
-
-        File log = LogGenerator.generateLog(events);
-
-        Context.Builder builder = new Context.Builder();
-        builder.put(Parameters.FROM_DATE, "20131101");
-        builder.put(Parameters.TO_DATE, "20131101");
-        builder.put(Parameters.USER, Parameters.USER_TYPES.REGISTERED.name());
-        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
-        builder.put(Parameters.STORAGE_TABLE, COLLECTION);
-        builder.put(Parameters.LOG, log.getAbsolutePath());
-        pigServer.execute(ScriptType.USERS_ACTIVITY, builder.build());
+        log = LogGenerator.generateLog(events);
     }
     
     @BeforeClass
@@ -135,8 +135,17 @@ public class TestExpandedMetric extends BaseTest {
     }
 
     @Test
-    public void testExpandedAbstractActiveEntities() throws Exception {
+    public void testExpandedAbstractActiveEntitiesMetrics() throws Exception {
         Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20131101");
+        builder.put(Parameters.TO_DATE, "20131101");
+        builder.put(Parameters.USER, Parameters.USER_TYPES.REGISTERED.name());
+        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
+        builder.put(Parameters.STORAGE_TABLE, USERS_ACTIVITY_LIST_COLLECTION);
+        builder.put(Parameters.LOG, log.getAbsolutePath());
+        pigServer.execute(ScriptType.USERS_ACTIVITY, builder.build());
+        
+        builder = new Context.Builder();
         builder.put(Parameters.TO_DATE, "20131101");
         builder.put(Parameters.USER, USER);
         
@@ -174,8 +183,47 @@ public class TestExpandedMetric extends BaseTest {
     }
     
     @Test
+    public void testExpandedAbstractLongValueResultedMetrics() throws Exception {
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20131101");
+        builder.put(Parameters.TO_DATE, "20131101");
+        builder.put(Parameters.USER, Parameters.USER_TYPES.REGISTERED.name());
+        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
+        builder.put(Parameters.STORAGE_TABLE, USER_INVITE_COLLECTION);
+        builder.put(Parameters.LOG, log.getAbsolutePath());
+        builder.put(Parameters.EVENT, "user-invite");
+        pigServer.execute(ScriptType.EVENTS, builder.build());
+        
+        builder = new Context.Builder();
+        builder.put(Parameters.TO_DATE, "20131101");
+        
+        AbstractLongValueResulted metric = new UserInvite();
+
+        LongValueData value = (LongValueData)metric.getValue(builder.build());
+        assertEquals(value.getAsLong(), 2);       
+        
+        // test expanded metric value
+        ListValueData expandedValue = metric.getExpandedValue(builder.build());
+        List<ValueData> all = expandedValue.getAll();
+        assertEquals(all.size(), 1);
+        
+        Map<String, ValueData> workspace1 = ((MapValueData) all.get(0)).getAll();
+        assertEquals(workspace1.size(), 1);
+        assertEquals(workspace1.get("user").toString(), USER);
+    }
+    
+    @Test
     public void testConversionExpandedValueDataIntoViewData() throws Exception {
         Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20131101");
+        builder.put(Parameters.TO_DATE, "20131101");
+        builder.put(Parameters.USER, Parameters.USER_TYPES.REGISTERED.name());
+        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
+        builder.put(Parameters.STORAGE_TABLE, USERS_ACTIVITY_LIST_COLLECTION);
+        builder.put(Parameters.LOG, log.getAbsolutePath());
+        pigServer.execute(ScriptType.USERS_ACTIVITY, builder.build());
+        
+        builder = new Context.Builder();
         builder.put(Parameters.TO_DATE, "20131101");
         builder.put(Parameters.USER, USER);
         

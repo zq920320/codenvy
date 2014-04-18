@@ -29,11 +29,16 @@ import javax.annotation.security.RolesAllowed;
 public class DestroyedWorkspaces extends AbstractLongValueResulted {
 
     public DestroyedWorkspaces() {
-        super(MetricType.DESTROYED_WORKSPACES);
+        super(MetricType.DESTROYED_WORKSPACES, WS);
     }
 
     @Override
     public String getDescription() {
         return "The number of destroyed persistent workspaces";
+    }
+    
+    @Override
+    public boolean isExpandable() {
+        return true;
     }
 }

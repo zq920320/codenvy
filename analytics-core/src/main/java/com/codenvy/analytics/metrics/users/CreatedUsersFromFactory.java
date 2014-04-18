@@ -27,11 +27,16 @@ import javax.annotation.security.RolesAllowed;
 public class CreatedUsersFromFactory extends AbstractLongValueResulted {
 
     public CreatedUsersFromFactory() {
-        super(MetricType.CREATED_USERS_FROM_FACTORY);
+        super(MetricType.CREATED_USERS_FROM_FACTORY, USER);
     }
 
     @Override
     public String getDescription() {
         return "The number of registered users from factories";
+    }
+    
+    @Override
+    public boolean isExpandable() {
+        return true;
     }
 }

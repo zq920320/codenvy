@@ -22,7 +22,6 @@ import java.io.IOException;
 
 import com.codenvy.analytics.Injector;
 import com.codenvy.analytics.datamodel.ListValueData;
-import com.codenvy.analytics.datamodel.ValueDataFactory;
 import com.codenvy.analytics.persistent.OrganizationClient;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */

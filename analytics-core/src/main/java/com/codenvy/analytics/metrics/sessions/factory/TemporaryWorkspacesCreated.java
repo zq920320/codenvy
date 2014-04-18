@@ -27,11 +27,16 @@ import javax.annotation.security.RolesAllowed;
 public class TemporaryWorkspacesCreated extends AbstractLongValueResulted {
 
     public TemporaryWorkspacesCreated() {
-        super(MetricType.TEMPORARY_WORKSPACES_CREATED);
+        super(MetricType.TEMPORARY_WORKSPACES_CREATED, WS);
     }
 
     @Override
     public String getDescription() {
         return "The number of created temporary workspaces";
+    }
+    
+    @Override
+    public boolean isExpandable() {
+        return true;
     }
 }

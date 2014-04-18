@@ -29,11 +29,17 @@ import javax.annotation.security.RolesAllowed;
 public class CreatedWorkspaces extends AbstractLongValueResulted {
 
     public CreatedWorkspaces() {
-        super(MetricType.CREATED_WORKSPACES);
+        super(MetricType.CREATED_WORKSPACES,
+              WS);
     }
 
     @Override
     public String getDescription() {
         return "The number of created persistent workspaces";
+    }
+    
+    @Override
+    public boolean isExpandable() {
+        return true;
     }
 }

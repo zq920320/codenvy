@@ -21,10 +21,8 @@ import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.ReadBasedMetric;
-import com.mongodb.DBObject;
 
 import java.io.IOException;
-import java.util.List;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public interface DataLoader {
@@ -32,6 +30,5 @@ public interface DataLoader {
     /** Loads value from the storage. */
     ValueData loadValue(ReadBasedMetric metric, Context clauses) throws IOException;
 
-    ListValueData loadExpandedValue(ReadBasedMetric metric, Context context,  List<DBObject> projection) throws IOException;
-
+    ListValueData loadExpandedValue(ReadBasedMetric metric, Context context) throws IOException;
 }

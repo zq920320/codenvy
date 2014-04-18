@@ -25,7 +25,7 @@ import com.mongodb.DBObject;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public abstract class AbstractLongValueResulted extends ReadBasedMetric {
 
-    public static final String VALUE = "value";
+    private String expandingField;
 
     protected AbstractLongValueResulted(String metricName) {
         super(metricName);
@@ -35,6 +35,11 @@ public abstract class AbstractLongValueResulted extends ReadBasedMetric {
         super(metricType);
     }
 
+    public AbstractLongValueResulted(MetricType metricType, String expandindField) {
+        super(metricType);
+        this.expandingField = expandindField;
+    }
+    
     @Override
     public String[] getTrackedFields() {
         return new String[]{VALUE};
@@ -49,11 +54,28 @@ public abstract class AbstractLongValueResulted extends ReadBasedMetric {
     public DBObject[] getSpecificDBOperations(Context clauses) {
         DBObject group = new BasicDBObject();
 
-        String field = getTrackedFields()[0];
+        String countingField = getTrackedFields()[0];
 
         group.put(ID, null);
-        group.put(field, new BasicDBObject("$sum", "$" + field));
+        group.put(countingField, new BasicDBObject("$sum", "$" + countingField));
 
         return new DBObject[]{new BasicDBObject("$group", group)};
     }
+    
+    @Override
+    public DBObject[] getSpecificExpandedDBOperations(Context clauses) {
+        DBObject group = new BasicDBObject();
+        group.put(ID, "$" + expandingField);
+
+        DBObject projection = new BasicDBObject(expandingField, "$_id");
+
+        return new DBObject[]{new BasicDBObject("$group", group),
+                              new BasicDBObject("$project", projection)};
+    }
+    
+    @Override
+    public String getExpandedValueField() {
+        return expandingField;
+    }
+
 }

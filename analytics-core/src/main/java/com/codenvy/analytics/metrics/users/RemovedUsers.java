@@ -27,11 +27,16 @@ import javax.annotation.security.RolesAllowed;
 public class RemovedUsers extends AbstractLongValueResulted {
 
     public RemovedUsers() {
-        super(MetricType.REMOVED_USERS);
+        super(MetricType.REMOVED_USERS, USER);
     }
 
     @Override
     public String getDescription() {
         return "The number of removed users";
+    }
+    
+    @Override
+    public boolean isExpandable() {
+        return true;
     }
 }

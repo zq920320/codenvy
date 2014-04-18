@@ -84,6 +84,14 @@ public abstract class ReadBasedMetric extends AbstractMetric {
         return postEvaluation(valueData, context);
     }
 
+    @Override
+    public ListValueData getExpandedValue(Context context) throws IOException {
+        context = modifyContext(context);
+        validateRestrictions(context);
+
+        return dataLoader.loadExpandedValue(this, context);
+    }
+    
     /**
      * Validates restriction before data loading.
      *
@@ -141,6 +149,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
         BasicDBObject match = new BasicDBObject();
         setDateFilter(clauses, match);
 
+        // check if we need to filter list valued metric by another expanded metric
         if (clauses.hasFilterByExpandedMetric()) {
             String value = clauses.get(Parameters.EXPANDED_METRIC_NAME);
             MetricType expandedMetricType = MetricType.valueOf(value.toUpperCase());
@@ -148,9 +157,9 @@ public abstract class ReadBasedMetric extends AbstractMetric {
             Metric expandedMetric = MetricFactory.getMetric(expandedMetricType);
             
             if (expandedMetric.isExpandable()
-                 && expandedMetric instanceof AbstractActiveEntities) {
+                 && expandedMetric instanceof ReadBasedMetric) {
                 String[] filteringValues = getExpandedMetricValues(expandedMetricType, clauses);
-                String filteringField = ((AbstractActiveEntities) expandedMetric).getValueField();
+                String filteringField = ((ReadBasedMetric) expandedMetric).getExpandedValueField();
                 match.put(filteringField, new BasicDBObject("$in", filteringValues));                
             }
         }
@@ -337,6 +346,29 @@ public abstract class ReadBasedMetric extends AbstractMetric {
         return dbOps;
     }
 
+    /**
+     * Returns the sequences of operations to get expanded metric value upon data have been retrieved out of storage.
+     *
+     * @param clauses
+     *         the execution context
+     * @return {@link DBObject}
+     */
+    public final DBObject[] getExpandedDBOperations(Context clauses) {
+        DBObject[] dbOps = getSpecificExpandedDBOperations(clauses);
+        
+        dbOps = unionDBOperations(dbOps, getSortingDBOperations(clauses));  // sort before pagination
+        dbOps = unionDBOperations(dbOps, getPaginationDBOperations(clauses)); 
+        
+        return dbOps;
+    }
+    
+    /**
+     * @return the field which consists of values of expanded metric.
+     */
+    public String getExpandedValueField() {
+        return null;
+    }
+    
     /** Provides basic DB pagination operations. */
     private DBObject[] getPaginationDBOperations(Context clauses) {
         boolean pageExists = clauses.exists(Parameters.PAGE);
@@ -383,6 +415,11 @@ public abstract class ReadBasedMetric extends AbstractMetric {
     /** @return DB operations specific for given metric */
     public abstract DBObject[] getSpecificDBOperations(Context clauses);
 
+    /** @return DB operations specific for given expanded metric */
+    public DBObject[] getSpecificExpandedDBOperations(Context clauses) {
+        return new DBObject[0];
+    }
+        
     private String[] getExpandedMetricValues(MetricType metric, Context context) throws ParseException, IOException {
         // unlink context from caller method
         Context.Builder builder = new Context.Builder(context);
@@ -403,7 +440,6 @@ public abstract class ReadBasedMetric extends AbstractMetric {
 
         for (ValueData rowValue: allMetricValues) {
             MapValueData row = (MapValueData) rowValue;
-            List<ValueData> rowValues = new ArrayList<>(row.size());
             for (Entry<String, ValueData> entry: row.getAll().entrySet()) {
                 values.add(entry.getValue().getAsString());
             }
@@ -437,4 +473,3 @@ public abstract class ReadBasedMetric extends AbstractMetric {
         }
     }
 }
-

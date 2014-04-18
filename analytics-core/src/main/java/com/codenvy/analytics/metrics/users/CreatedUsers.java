@@ -27,11 +27,16 @@ import javax.annotation.security.RolesAllowed;
 public class CreatedUsers extends AbstractLongValueResulted {
 
     public CreatedUsers() {
-        super(MetricType.CREATED_USERS);
+        super(MetricType.CREATED_USERS, USER);
     }
 
     @Override
     public String getDescription() {
         return "The number of registered users";
+    }
+    
+    @Override
+    public boolean isExpandable() {
+        return true;
     }
 }

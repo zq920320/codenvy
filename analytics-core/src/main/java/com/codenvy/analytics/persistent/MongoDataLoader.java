@@ -19,12 +19,10 @@ package com.codenvy.analytics.persistent;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -74,6 +72,23 @@ public class MongoDataLoader implements DataLoader {
         }
     }
 
+    public ListValueData loadExpandedValue(ReadBasedMetric metric, Context clauses) throws IOException {
+        DBCollection dbCollection = db.getCollection(metric.getStorageCollectionName());
+        
+        try {
+            DBObject filter = metric.getFilter(clauses);
+            
+            DBObject[] dbOperations = metric.getExpandedDBOperations(clauses);
+
+            AggregationOutput aggregation = dbCollection.aggregate(filter, dbOperations);
+
+            return (ListValueData) createListValueData(aggregation.results().iterator(),
+                                                      new String[]{metric.getExpandedValueField()});
+        } catch (ParseException e) {
+            throw new IOException(e);
+        }
+    }
+    
     public ValueData createdValueData(ReadBasedMetric metric, Iterator<DBObject> iterator) {
         Class<? extends ValueData> clazz = metric.getValueDataClass();
 
@@ -247,35 +262,5 @@ public class MongoDataLoader implements DataLoader {
          * @return the {@link ValueData}
          */
         ValueData pull();
-    }
-
-    @Override
-    public ListValueData loadExpandedValue(ReadBasedMetric metric, Context context, List<DBObject> projection) throws IOException {
-        final String SUM_OPERATOR_PATTERN = "{ \"$sum\"";
-        
-        DBCollection dbCollection = db.getCollection(metric.getStorageCollectionName());
-
-        try {
-            DBObject filter = metric.getFilter(context);
-            DBObject[] dbOperations = metric.getDBOperations(context, true);
-
-            // remove "$group" and "$project" operators
-            List<DBObject> dbOperationsForExplanation = new ArrayList<>();
-            for (DBObject dbObject: Arrays.asList(dbOperations)) {
-                if (! (dbObject.containsField("$group")
-                        && dbObject.toString().contains(SUM_OPERATOR_PATTERN))) {
-                    dbOperationsForExplanation.add(dbObject);
-                } else {
-                    dbOperationsForExplanation.addAll(projection);  // add projection in place of "$sum" operator                    
-                }
-            }
-
-            AggregationOutput aggregation = dbCollection.aggregate(filter, dbOperationsForExplanation.toArray(new DBObject[0]));
-
-            return (ListValueData) createListValueData(aggregation.results().iterator(), metric.getTrackedFields());
-        } catch (ParseException e) {
-            throw new IOException(e);
-        }
-        
     }
 }

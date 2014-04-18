@@ -35,9 +35,17 @@ analytics.presenter.ReportPresenter.prototype.mapExpandedMetricToDrillDownPageTy
     "users_who_deployed_to_paas": "USERS", 
     "users_who_invited": "USERS",
     "users_who_launched_shell": "USERS",
+    "created_users": "USERS",
+    "created_users_from_factory": "USERS",
+    "user_invite": "USERS",
+    "removed_users": "USERS",
     
     "active_workspaces": "WORKSPACES",
+    "created_workspaces": "WORKSPACES",
+    "temporary_workspaces_created": "WORKSPACES",
+    "destroyed_workspaces": "WORKSPACES",
 };
+
 analytics.presenter.ReportPresenter.prototype.mapDrillDownPageTypeToDrillDownPageAddress = {
     "USERS": "/analytics/pages/users-view.jsp?sort=%2Buser",
     "WORKSPACES": "/analytics/pages/workspaces-view.jsp?sort=%2Bws",
