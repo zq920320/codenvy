@@ -31,7 +31,7 @@ public class MonthlyFrequencyConfiguration extends AbstractFrequencyConfiguratio
     @Override
     public boolean isAppropriateDateToSendReport(Context context) throws ParseException {
         Calendar toDate = context.getAsDate(Parameters.TO_DATE);
-        return toDate.get(Calendar.DAY_OF_MONTH) == toDate.getActualMinimum(Calendar.DAY_OF_MONTH);
+        return toDate.get(Calendar.DAY_OF_MONTH) == toDate.getActualMaximum(Calendar.DAY_OF_MONTH);
     }
 
     @Override

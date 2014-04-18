@@ -31,7 +31,7 @@ public class WeeklyFrequencyConfiguration extends AbstractFrequencyConfiguration
     @Override
     public boolean isAppropriateDateToSendReport(Context context) throws ParseException {
         Calendar toDate = context.getAsDate(Parameters.TO_DATE);
-        return toDate.get(Calendar.DAY_OF_WEEK) == toDate.getActualMinimum(Calendar.DAY_OF_WEEK);
+        return toDate.get(Calendar.DAY_OF_WEEK) == toDate.getActualMaximum(Calendar.DAY_OF_WEEK);
     }
 
     @Override

@@ -97,12 +97,11 @@ public class ReportSender extends Feature {
             for (ReportConfiguration reportConfiguration : configuration.getReports()) {
                 for (FrequencyConfiguration frequencyConfiguration : reportConfiguration.getFrequencies()) {
                     for (AbstractFrequencyConfiguration frequency : frequencyConfiguration.frequencies()) {
-
                         if (frequency.isAppropriateDateToSendReport(context)) {
-                            context = frequency.initContext(context);
+                            Context newContext = frequency.initContext(context);
                             RecipientsConfiguration recipients = reportConfiguration.getRecipients();
 
-                            sendReport(context,
+                            sendReport(newContext,
                                        frequency,
                                        recipients);
                         }
