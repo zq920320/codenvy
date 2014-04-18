@@ -18,29 +18,23 @@
 package com.codenvy.factory;
 
 import com.codenvy.api.account.server.dao.AccountDao;
-import com.codenvy.api.account.server.exception.AccountException;
 import com.codenvy.api.account.shared.dto.Account;
 import com.codenvy.api.account.shared.dto.Subscription;
+import com.codenvy.api.core.NotFoundException;
+import com.codenvy.api.core.ServerException;
 import com.codenvy.api.factory.*;
 import com.codenvy.api.factory.dto.Factory;
 import com.codenvy.api.factory.dto.Restriction;
 import com.codenvy.api.user.server.dao.UserDao;
 import com.codenvy.api.user.server.dao.UserProfileDao;
-import com.codenvy.api.user.server.exception.UserException;
-import com.codenvy.api.user.server.exception.UserProfileException;
 import com.codenvy.api.user.shared.dto.*;
 import com.codenvy.commons.lang.URLEncodedUtils;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URLDecoder;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.net.*;
+import java.util.*;
 import java.util.regex.Pattern;
 
 /**
@@ -160,13 +154,15 @@ public class FactoryUrlBaseValidator implements FactoryUrlValidator {
         // validate orgid
         String orgid = "".equals(factory.getOrgid()) ? null : factory.getOrgid();
         if (null != orgid) {
+            Account account;
             try {
-                Account account = accountDao.getById(orgid);
-                if (null == account) {
-                    throw new FactoryUrlException(String.format(PARAMETRIZED_ILLEGAL_ACCID_PARAMETER_MESSAGE, factory.getOrgid()));
-                }
+                account = accountDao.getById(orgid);
+            } catch (NotFoundException | ServerException e) {
+                throw new FactoryUrlException(String.format(PARAMETRIZED_ILLEGAL_ACCID_PARAMETER_MESSAGE, factory.getOrgid()));
+            }
 
-                if (factory.getUserid() != null) {
+            if (factory.getUserid() != null) {
+                try {
                     User user = userDao.getById(factory.getUserid());
                     Profile profile = profileDao.getById(factory.getUserid());
                     for (Attribute attribute : profile.getAttributes()) {
@@ -176,8 +172,12 @@ public class FactoryUrlBaseValidator implements FactoryUrlValidator {
                     if (!account.getOwner().equals(user.getId())) {
                         throw new FactoryUrlException("You are not authorized to use this orgid.");
                     }
+                } catch (NotFoundException | ServerException e) {
+                    throw new FactoryUrlException("You are not authorized to use this orgid.");
                 }
+            }
 
+            try {
                 List<Subscription> subscriptions = accountDao.getSubscriptions(factory.getOrgid());
                 for (Subscription one : subscriptions) {
                     if ("TrackedFactory".equals(one.getServiceId())) {
@@ -192,7 +192,7 @@ public class FactoryUrlBaseValidator implements FactoryUrlValidator {
                         throw new FactoryUrlException(String.format(PARAMETRIZED_ILLEGAL_ACCID_PARAMETER_MESSAGE, factory.getOrgid()));
                     }
                 }
-            } catch (UserException | UserProfileException | AccountException | NumberFormatException e) {
+            } catch (ServerException | NumberFormatException e) {
                 throw new FactoryUrlException(String.format(PARAMETRIZED_ILLEGAL_ACCID_PARAMETER_MESSAGE, factory.getOrgid()));
             }
         }

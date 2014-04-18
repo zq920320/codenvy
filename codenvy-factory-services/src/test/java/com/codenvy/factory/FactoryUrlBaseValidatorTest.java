@@ -21,12 +21,12 @@ import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.server.exception.AccountException;
 import com.codenvy.api.account.shared.dto.Account;
 import com.codenvy.api.account.shared.dto.Subscription;
+import com.codenvy.api.core.NotFoundException;
+import com.codenvy.api.core.ServerException;
 import com.codenvy.api.factory.FactoryBuilder;
 import com.codenvy.api.factory.FactoryUrlException;
 import com.codenvy.api.factory.dto.Factory;
-import com.codenvy.api.factory.dto.ProjectAttributes;
-import com.codenvy.api.factory.dto.Restriction;
-import com.codenvy.api.factory.dto.WelcomePage;
+import com.codenvy.api.factory.dto.*;
 import com.codenvy.api.user.server.dao.UserDao;
 import com.codenvy.api.user.server.dao.UserProfileDao;
 import com.codenvy.api.user.server.exception.UserException;
@@ -91,7 +91,7 @@ public class FactoryUrlBaseValidatorTest {
     private Factory url;
 
     @BeforeMethod
-    public void setUp() throws ParseException, AccountException, UserException, UserProfileException {
+    public void setUp() throws ParseException, AccountException, UserException, UserProfileException, NotFoundException, ServerException {
         Factory nonencoded = DtoFactory.getInstance().createDto(Factory.class);
         nonencoded.setV("1.2");
         nonencoded.setVcs("git");
@@ -242,8 +242,8 @@ public class FactoryUrlBaseValidatorTest {
     }
 
     @Test(expectedExceptions = FactoryUrlException.class)
-    public void shouldNotValidateIfAccountDoesNotExist() throws AccountException, FactoryUrlException {
-        when(accountDao.getById(ID)).thenReturn(null);
+    public void shouldNotValidateIfAccountDoesNotExist() throws AccountException, FactoryUrlException, NotFoundException, ServerException {
+        when(accountDao.getById(ID)).thenThrow(NotFoundException.class);
 
         validator.validate(url, false, request);
     }
@@ -258,7 +258,8 @@ public class FactoryUrlBaseValidatorTest {
     }
 
     @Test(expectedExceptions = FactoryUrlException.class)
-    public void shouldNotValidateIfSubscriptionHasIllegalTariffPlan() throws AccountException, FactoryUrlException, ParseException {
+    public void shouldNotValidateIfSubscriptionHasIllegalTariffPlan()
+            throws AccountException, FactoryUrlException, ParseException, ServerException {
         // given
         Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class)
                                               .withServiceId("INVALID")
@@ -270,7 +271,7 @@ public class FactoryUrlBaseValidatorTest {
     }
 
     @Test(expectedExceptions = FactoryUrlException.class)
-    public void shouldNotValidateIfOrgIdIsExpired() throws AccountException, FactoryUrlException, ParseException {
+    public void shouldNotValidateIfOrgIdIsExpired() throws AccountException, FactoryUrlException, ParseException, ServerException {
         // given
         Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class)
                                               .withServiceId("TrackedFactory")
@@ -282,7 +283,7 @@ public class FactoryUrlBaseValidatorTest {
     }
 
     @Test(expectedExceptions = FactoryUrlException.class)
-    public void shouldNotValidateIfOrgIdIsNotValidYet() throws AccountException, FactoryUrlException, ParseException {
+    public void shouldNotValidateIfOrgIdIsNotValidYet() throws AccountException, FactoryUrlException, ParseException, ServerException {
         // given
         Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class)
                                               .withServiceId("TrackedFactory")
