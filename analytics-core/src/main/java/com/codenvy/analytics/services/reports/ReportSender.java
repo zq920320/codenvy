@@ -22,7 +22,7 @@ import com.codenvy.analytics.MailService;
 import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.services.Feature;
-import com.codenvy.analytics.services.configuration.ParameterConfiguration;
+import com.codenvy.analytics.services.configuration.ParametersConfiguration;
 import com.codenvy.analytics.services.configuration.XmlConfigurationManager;
 import com.codenvy.analytics.services.view.CSVReportPersister;
 import com.codenvy.analytics.services.view.ViewBuilder;
@@ -39,6 +39,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Singleton
@@ -178,11 +179,12 @@ public class ReportSender extends Feature {
                    InvocationTargetException {
 
         ContextModifierConfiguration contextModifierConf = frequency.getContextModifier();
-        List<ParameterConfiguration> parameters = contextModifierConf.getParametersConfiguration().getParameters();
+        ParametersConfiguration paramsConf = contextModifierConf.getParametersConfiguration();
+
 
         Class<?> clazz = Class.forName(contextModifierConf.getClazz());
         Constructor<?> constructor = clazz.getConstructor(List.class);
 
-        return (ContextModifier)constructor.newInstance(parameters);
+        return (ContextModifier)constructor.newInstance(paramsConf == null ? Collections.emptyList() : paramsConf.getParameters());
     }
 }

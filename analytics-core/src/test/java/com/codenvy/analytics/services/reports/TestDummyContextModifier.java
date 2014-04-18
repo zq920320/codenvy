@@ -19,7 +19,6 @@ package com.codenvy.analytics.services.reports;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.metrics.Context;
-import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.services.configuration.XmlConfigurationManager;
 import com.codenvy.analytics.services.view.CSVReportPersister;
 import com.codenvy.analytics.services.view.ViewBuilder;
@@ -42,7 +41,7 @@ import static org.testng.AssertJUnit.assertEquals;
 /**
  * @author Anatoliy Bazko
  */
-public class TestOrgIdAsFilterContextModifier extends BaseTest {
+public class TestDummyContextModifier extends BaseTest {
 
     private static final String FILE          = BASE_DIR + "/resource";
     private static final String CONFIGURATION =
@@ -57,11 +56,7 @@ public class TestOrgIdAsFilterContextModifier extends BaseTest {
             "                    <view>summary_report</view>\n" +
             "                </views>\n" +
             "                <context-modifier>\n" +
-            "                    <class>com.codenvy.analytics.services.reports.OrgIdAsFilterContextModifier</class>\n" +
-            "                    <parameters>" +
-            "                       <parameter key=\"org-id\" value=\"id1\"/>" +
-            "                       <parameter key=\"org-id\" value=\"id2\"/>" +
-            "                    </parameters>" +
+            "                    <class>com.codenvy.analytics.services.reports.DummyContextModifier</class>\n" +
             "                </context-modifier>\n" +
             "            </daily>\n" +
             "        </frequency>\n" +
@@ -95,7 +90,7 @@ public class TestOrgIdAsFilterContextModifier extends BaseTest {
 
 
     @Test
-    public void shouldReturnContextWihtOrgIds() throws Exception {
+    public void shouldReturnEmptyContext() throws Exception {
         XmlConfigurationManager confManager = new XmlConfigurationManager();
         ReportsConfiguration reportConf = confManager.loadConfiguration(ReportsConfiguration.class, FILE);
         DailyFrequencyConfiguration daily = reportConf.getReports().get(0).getFrequencies().get(0).getDaily();
@@ -103,10 +98,6 @@ public class TestOrgIdAsFilterContextModifier extends BaseTest {
         ContextModifier contextModifier = reportSender.getContextModifier(daily);
         Context context = contextModifier.update(Context.EMPTY);
 
-        String[] orgIds = (String[])context.get(MetricFilter.ORG_ID);
-
-        assertEquals(2, orgIds.length);
-        assertEquals("id1", orgIds[0]);
-        assertEquals("id2", orgIds[1]);
+        assertEquals(Context.EMPTY, context);
     }
 }
