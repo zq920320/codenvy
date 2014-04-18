@@ -593,7 +593,6 @@ function Configuration() {
         "factory",           // factories-view
         "encoded_factory",   // factories-view
         "expanded_metric_name",    // all entry views 
-        "expanded_metric_value",   // all entry views
         "time_interval",   // drill down page
     ];
 

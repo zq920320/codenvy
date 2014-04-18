@@ -57,12 +57,7 @@ public class MongoDataLoader implements DataLoader {
             DBObject filter = metric.getFilter(clauses);
             
             DBObject[] dbOperations;
-            // don't use pagination in case of filtering by using expanded metric values
-            if (clauses.hasFilterByExpandedMetric()) {
-                dbOperations = metric.getDBOperations(clauses, false);
-            } else {
-                dbOperations = metric.getDBOperations(clauses, true);                
-            }
+            dbOperations = metric.getDBOperations(clauses);
 
             AggregationOutput aggregation = dbCollection.aggregate(filter, dbOperations);
 

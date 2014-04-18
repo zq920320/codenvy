@@ -147,7 +147,6 @@ analytics.presenter.ReportPresenter.prototype.linkMetricValueWithDrillDownPage =
 analytics.presenter.ReportPresenter.prototype.getDrillDownPageLink = function(timeInterval, metricName, metricValue, modelParams) {
     var drillDownPageLink = this.getDrillDownPageAddress(metricName) + "&" + analytics.util.constructUrlParams(modelParams);
     drillDownPageLink += "&" + this.TIME_INTERVAL_PARAMETER + "=" + timeInterval;
-    drillDownPageLink += "&" + this.METRIC_ORIGINAL_VALUE_VIEW_PARAMETER + "=" + metricValue;
     drillDownPageLink += "&" + this.METRIC_ORIGINAL_NAME_VIEW_PARAMETER + "=" + metricName;
     
     return drillDownPageLink;

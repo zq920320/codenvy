@@ -334,13 +334,11 @@ public abstract class ReadBasedMetric extends AbstractMetric implements Expandab
      * @param usePagination
      * @return {@link DBObject}
      */
-    public final DBObject[] getDBOperations(Context clauses, boolean usePagination) {
+    public final DBObject[] getDBOperations(Context clauses) {
         DBObject[] dbOps = getSpecificDBOperations(clauses);
-        dbOps = unionDBOperations(dbOps, getSortingDBOperations(clauses));  // sort before pagination
         
-        if (usePagination) {
-            dbOps = unionDBOperations(dbOps, getPaginationDBOperations(clauses)); 
-        }
+        dbOps = unionDBOperations(dbOps, getSortingDBOperations(clauses));  // sort before pagination
+        dbOps = unionDBOperations(dbOps, getPaginationDBOperations(clauses)); 
         
         return dbOps;
     }
@@ -420,11 +418,21 @@ public abstract class ReadBasedMetric extends AbstractMetric implements Expandab
     public DBObject[] getSpecificExpandedDBOperations(Context clauses) {
         return new DBObject[0];
     }
-        
+    
+    /**
+     * @return expanded metric values array with size limited to 100000. 
+     * Array size limitation needs to avoid reaching of limit=16MB of BSON Document Size used for $in operator. 
+     * @see http://stackoverflow.com/questions/5331549/what-is-the-maximum-number-of-parameters-passed-to-in-query-in-mongodb
+     */
     public String[] getExpandedMetricValues(MetricType metric, Context context) throws ParseException, IOException {
         // unlink context from caller method
         Context.Builder builder = new Context.Builder(context);
         builder.remove(Parameters.EXPANDED_METRIC_NAME);
+        
+        // get all data
+        builder.remove(Parameters.PAGE);
+        builder.remove(Parameters.PER_PAGE);
+        
         context = builder.build();
 
         context = initializeFirstInterval(context);
@@ -440,10 +448,17 @@ public abstract class ReadBasedMetric extends AbstractMetric implements Expandab
         
         List<String> values = new ArrayList<>(allMetricValues.size());
 
+        outer:
         for (ValueData rowValue: allMetricValues) {
             MapValueData row = (MapValueData) rowValue;
             for (Entry<String, ValueData> entry: row.getAll().entrySet()) {
                 values.add(entry.getValue().getAsString());
+                
+                // limit values size to 100000  
+                // TODO make this code more readable 
+                if (values.size() > 100000) {
+                    break outer;
+                }
             }
         }
         

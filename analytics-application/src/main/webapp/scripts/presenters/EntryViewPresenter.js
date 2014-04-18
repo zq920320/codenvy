@@ -31,41 +31,24 @@ analytics.presenter.EntryViewPresenter.prototype.load = function() {
     var modelParams = presenter.getModelParams(viewParams);
 
     // obtain page count
-    if (this.isInDrillDownPageRole(viewParams)) {
-        // get page count from special parameter. It could be "Not a Number" (NaN)                       
-        var rowCountString = viewParams[presenter.METRIC_ORIGINAL_VALUE_VIEW_PARAMETER];
-        rowCountString = rowCountString.replace(/,/g, "");  // remove thousand delimiters in case of numbers like "5,120,954"
-        
-        var rowCount = new Number(rowCountString);
-        if (rowCount.toString() != "NaN") {
-            var onePageRowsCount = analytics.configuration.getProperty(presenter.widgetName, "onePageRowsCount", presenter.DEFAULT_ONE_PAGE_ROWS_COUNT);
-            var pageCount = Math.ceil(rowCount / onePageRowsCount);
-        } else {
-            var pageCount = 1; 
-        }
-        
-        presenter.obtainViewData(model, view, presenter, pageCount);
+    // remove redundant params
+    delete modelParams.page;
+    delete modelParams.sort;
+    delete modelParams.per_page; 
 
-    } else {
-        // remove redundant params
-        delete modelParams.page;
-        delete modelParams.sort;
-        delete modelParams.per_page; 
+    model.setParams(modelParams);
     
-        model.setParams(modelParams);
+    // get page count    
+    model.pushDoneFunction(function(data) {
+        model.popDoneFunction();
         
-        // get page count    
-        model.pushDoneFunction(function(data) {
-            model.popDoneFunction();
-            
-            var pageCount = Math.ceil(data / presenter.DEFAULT_ONE_PAGE_ROWS_COUNT) ;
-        
-            presenter.obtainViewData(model, view, presenter, pageCount);
-        });        
-        
-        var modelMetricName = analytics.configuration.getProperty(presenter.widgetName, "modelMetricName");
-        model.getMetricValue(modelMetricName);
-    }
+        var pageCount = Math.ceil(data / presenter.DEFAULT_ONE_PAGE_ROWS_COUNT) ;
+    
+        presenter.obtainViewData(model, view, presenter, pageCount);
+    });        
+    
+    var modelMetricName = analytics.configuration.getProperty(presenter.widgetName, "modelMetricName");
+    model.getMetricValue(modelMetricName);
 }
 
 analytics.presenter.EntryViewPresenter.prototype.obtainViewData = function(model, view, presenter, pageCount) {
@@ -104,10 +87,6 @@ analytics.presenter.EntryViewPresenter.prototype.obtainViewData = function(model
             
             // make table header as linked for sorting
             var mapColumnToServerSortParam = analytics.configuration.getProperty(presenter.widgetName, "mapColumnToServerSortParam", undefined);
-            // add sorting link only in the header of the first column of drill down page
-            if (presenter.isInDrillDownPageRole(viewParams)) {
-                mapColumnToServerSortParam = analytics.util.getObjectWithFirstPopertyOnly(mapColumnToServerSortParam);
-            }
             table = presenter.addServerSortingLinks(table, presenter.widgetName, viewParams, mapColumnToServerSortParam);                
             
             // print table
