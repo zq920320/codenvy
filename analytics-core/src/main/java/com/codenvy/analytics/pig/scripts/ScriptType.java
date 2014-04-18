@@ -88,6 +88,7 @@ public enum ScriptType {
     USERS_STATISTICS,
     USERS_ACTIVITY,
     PROJECTS,
+    PROJECTS_STATISTICS,
     USERS_EVENTS {
         @Override
         public Set<Parameters> getParams() {
@@ -123,6 +124,7 @@ public enum ScriptType {
     TEST_EXTRACT_ORG_AND_AFFILIATE_ID,
     TEST_COMBINE_SMALL_SESSIONS,
     TEST_COMBINE_CLOSEST_EVENTS,
+    TEST_CALCULATE_TIME,
     TEST_FIX_FACTORY_URL;
 
 

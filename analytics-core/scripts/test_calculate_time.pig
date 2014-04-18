@@ -3,7 +3,7 @@
  * CODENVY CONFIDENTIAL
  * ________________
  *
- * [2012] - [2013] Codenvy, S.A.
+ * [2012] - [2014] Codenvy, S.A.
  * All Rights Reserved.
  * NOTICE: All information contained herein is, and remains
  * the property of Codenvy S.A. and its suppliers,
@@ -20,9 +20,6 @@ IMPORT 'macros.pig';
 
 l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 
-r = calculateTime(l, '$EVENT-started', '$EVENT-finished');
+a = calculateTime(l, 'run-started', 'run-finished');
 
-result = FOREACH r GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('ws', ws), TOTUPLE('user', user),
-        TOTUPLE('time', delta), TOTUPLE('ide', ide);
-
-STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
+result = FOREACH a GENERATE user, delta;

@@ -5,6 +5,7 @@ com.codenvy.analytics.metrics.sessions.ProductUsageSessions
 com.codenvy.analytics.metrics.sessions.CollaborativeSessionsStarted
 
 com.codenvy.analytics.metrics.projects.ProjectsList
+com.codenvy.analytics.metrics.projects.ProjectsStatisticsList
 com.codenvy.analytics.metrics.projects.Projects
 com.codenvy.analytics.metrics.projects.CreatedProjects
 com.codenvy.analytics.metrics.projects.DestroyedProjects

@@ -311,6 +311,26 @@ public class Event {
                                 .withParam("ALIASES", aliases);
         }
 
+        public static Builder createIDEUsageEvent(String user,
+                                                  String ws,
+                                                  String action,
+                                                  String source,
+                                                  String project,
+                                                  String type,
+                                                  String parameters) {
+            Builder builder = new Builder().withParam("EVENT", "ide-usage");
+            builder = addIfNotNull(builder, "WS", ws);
+            builder = addIfNotNull(builder, "USER", user);
+            builder = addIfNotNull(builder, "ACTION", action);
+            builder = addIfNotNull(builder, "SOURCE", source);
+            builder = addIfNotNull(builder, "PROJECT", project);
+            builder = addIfNotNull(builder, "TYPE", type);
+            builder = addIfNotNull(builder, "PARAMETERS", parameters);
+
+            return builder;
+        }
+
+
         public static Builder createUserChangedNameEvent(String oldUser,
                                                          String newUser) {
             return new Builder().withParam("EVENT", "user-changed-name")
@@ -404,40 +424,61 @@ public class Event {
         }
 
         public static Builder collaborativeSessionStartedEvent(String ws, String userId, String sessionId) {
-            Builder builder = new Builder().withParam("EVENT", "collaborative-session-started")
+
+            return new Builder().withParam("EVENT", "collaborative-session-started")
                                            .withParam("WS", ws)
                                            .withParam("USER", userId)
                                            .withParam("ID", sessionId);
-
-            return builder;
         }
 
-        public static Builder buildQueueTerminatedEvent(String ws, String user, String project, String type, String uuid) {
-            Builder builder = new Builder().withParam("EVENT", "build-queue-terminated")
+        public static Builder buildQueueTerminatedEvent(String ws, String user, String project, String type,
+                                                        String uuid) {
+
+            return new Builder().withParam("EVENT", "build-queue-terminated")
                                            .withParam("WS", ws)
                                            .withParam("USER", user)
                                            .withParam("PROJECT", project)
                                            .withParam("TYPE", type)
                                            .withParam("ID", uuid);
-
-            return builder;
         }
 
-        public static Builder buildRunQueueTerminatedEvent(String ws, String user, String project, String type, String uuid) {
-            Builder builder = new Builder().withParam("EVENT", "run-queue-terminated")
+        public static Builder buildRunQueueTerminatedEvent(String ws, String user, String project, String type,
+                                                           String uuid) {
+
+            return new Builder().withParam("EVENT", "run-queue-terminated")
                                            .withParam("WS", ws)
                                            .withParam("USER", user)
                                            .withParam("PROJECT", project)
                                            .withParam("TYPE", type)
                                            .withParam("ID", uuid);
-
-            return builder;
         }
 
         public static Builder createShellLaunchedEvent(String user, String ws, String session) {
             return new Builder().withContext(user, ws, session).withParam("EVENT", "shell-launched");
         }
 
+        private static Builder addIfNotNull(Builder builder, String param, String value) {
+            if (value != null) {
+                return builder.withParam(param, value);
+            } else {
+                return builder;
+            }
+        }
+
+        public static Builder createProjectDestroyedEvent(String user, String ws, String session, String project,
+                                                          String type) {
+            return new Builder().withContext(user, ws, session).withParam("EVENT", "project-destroyed")
+                                .withParam("PROJECT", project).withParam("TYPE", type);
+        }
+
+        public static Builder createDebugFinishedEvent(String user, String ws, String project, String type, String id) {
+            return new Builder().withParam("EVENT", "debug-finished")
+                                .withParam("WS", ws)
+                                .withParam("USER", user)
+                                .withParam("PROJECT", project)
+                                .withParam("TYPE", type)
+                                .withParam("ID", id);
+        }
     }
 
     /** Event context contains 3 parameters. */

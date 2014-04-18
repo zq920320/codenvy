@@ -356,7 +356,7 @@ DEFINE combineClosestEvents(X, startEvent, finishEvent) RETURNS Y {
 -- @return {user : bytearray, ws: bytearray, dt: datetime, delta: long}
 ---------------------------------------------------------------------------------------------
 DEFINE combineClosestEventsByID(X, startEvent, finishEvent) RETURNS Y {
-    x1 = removeEmptyField(l, 'ws');
+    x1 = removeEmptyField($X, 'ws');
     x = removeEmptyField(x1, 'user');
 
     a1 = filterByEvent(x, '$startEvent');
@@ -365,7 +365,7 @@ DEFINE combineClosestEventsByID(X, startEvent, finishEvent) RETURNS Y {
     
     a = FOREACH a2 GENERATE ws, user, event, dt, id, event_id, ide;
 
-    b1 = filterByEvent(l, '$finishEvent');
+    b1 = filterByEvent(x, '$finishEvent');
     b2 = extractParam(b1, 'ID', event_id);
     b3 = removeEmptyField(b2, 'event_id');
     b = FOREACH b3 GENERATE ws, user, event, dt, id, event_id, ide;
@@ -380,6 +380,25 @@ DEFINE combineClosestEventsByID(X, startEvent, finishEvent) RETURNS Y {
     -- removes cases when second event is preceded by $startEvent (before $startEvent in time line)
     c4 = FILTER c3 BY delta > 0;
     $Y = FOREACH c4 GENERATE ws, user, dt, delta, id, ide;
+};
+
+---------------------------------------------------------------------------------------------
+-- Calculates time between pairs of $startEvent and $finishEvent
+-- @return {user : bytearray, ws: bytearray, dt: datetime, delta: long}
+---------------------------------------------------------------------------------------------
+DEFINE calculateTime(X, startEvent, finishEvent) RETURNS Y {
+    x1 = filterByEvent($X, '$startEvent,$finishEvent');
+    x2 = extractParam(x1, 'ID', id_null_possible);
+    x = FOREACH x2 GENERATE *, (id_null_possible IS NOT NULL ?  id_null_possible : '') AS id;
+
+    a = combineClosestEventsByID(x, '$startEvent', '$finishEvent');
+
+    b1 = removeNotEmptyField(x, 'id');
+    b = combineClosestEvents(b1, '$startEvent', '$finishEvent');
+
+    c = UNION a, b;
+
+    $Y = FOREACH c GENERATE dt, ws, user, delta, ide;
 };
 
 ---------------------------------------------------------------------------------------------
