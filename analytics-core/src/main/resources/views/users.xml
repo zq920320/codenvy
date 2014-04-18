@@ -78,11 +78,11 @@
     <view name="user_factories" on-demand="true">
         <section name="user_factories">
             <row class="com.codenvy.analytics.services.view.TitleRow">
-                <parameter key="titles" value="Date,Factory URL,Workspace,Repository,Type"/>
+                <parameter key="titles" value="Date,Factory URL,Repository,Type"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="created_factories_list"/>
-                <parameter key="fields" value="date,factory,ws,repository,project_type"/>
+                <parameter key="fields" value="date,factory,repository,project_type"/>
                 <parameter key="date-fields" value="date"/>
             </row>
         </section>
