@@ -17,16 +17,29 @@
  */
 package com.codenvy.analytics.metrics.projects;
 
+import com.codenvy.analytics.datamodel.ListValueData;
+import com.codenvy.analytics.datamodel.MapValueData;
+import com.codenvy.analytics.datamodel.StringValueData;
+import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.AbstractListValueResulted;
+import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricType;
 
 import javax.annotation.security.RolesAllowed;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Alexander Reshetnyak
  */
 @RolesAllowed(value = {"system/admin", "system/manager"})
 public class ProjectsList extends AbstractListValueResulted {
+
+    private static final String OTHER_NULL    = "null";
+    private static final String OTHER_DEFAULT = "default";
 
     public ProjectsList() {
         super(MetricType.PROJECTS_LIST);
@@ -45,5 +58,28 @@ public class ProjectsList extends AbstractListValueResulted {
                             PROJECT,
                             PROJECT_TYPE
         };
+    }
+
+    @Override
+    public ValueData postComputation(ValueData valueData, Context clauses) throws IOException {
+        List<ValueData> list2Return = new ArrayList<>();
+
+        for (ValueData row : ((ListValueData)valueData).getAll()) {
+            MapValueData prevItems = (MapValueData)row;
+            Map<String, ValueData> items2Return = new HashMap<>(prevItems.getAll());
+
+
+            for (Map.Entry<String, ValueData> entry : prevItems.getAll().entrySet()) {
+                String value = entry.getValue().getAsString();
+
+                if (value.equalsIgnoreCase(OTHER_DEFAULT)
+                    || value.equalsIgnoreCase(OTHER_NULL)) {
+                    items2Return.put(entry.getKey(), StringValueData.DEFAULT);
+                }
+            }
+            list2Return.add(new MapValueData(items2Return));
+        }
+
+        return new ListValueData(list2Return);
     }
 }

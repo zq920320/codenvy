@@ -29,4 +29,33 @@
             </row>
         </section>
     </view>
+
+    <view name="project" on-demand="true">
+        <section name="project">
+            <row class="com.codenvy.analytics.services.view.TitleRow">
+                <parameter key="titles" value="Created Date,Project,Type,Workspace,User,"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="projects_list"/>
+                <parameter key="fields" value="date,project,project_type,ws,user"/>
+                <parameter key="date-fields" value="date"/>
+            </row>
+        </section>
+    </view>
+
+    <view name="project_statistics" on-demand="true">
+        <section name="project_statistics">
+            <row class="com.codenvy.analytics.services.view.TitleRow">
+                <parameter key="titles"
+                           value="Number of Builds,Total Build Time,Number of Build Interrupts,Number of Runs,Total Run Time,Number of Debugs,Total Debug Time,Number of Project Creates,Number of Project Destroys,Number of Deploys,Number of Artifact Deploys,Number of PAAS Deploys,Number of Code Refactories,Number of Code Completes"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="projects_statistics_list"/>
+                <parameter key="fields"
+                           value="builds,build_time,build_interrupts,runs,run_time,debugs,debug_time,project_creates,project_destroys,deploys,artifact_deploys,paas_deploys,code_refactories,code_completes"/>
+                <parameter key="time-fields" value="build_time,run_time,debug_time"/>
+                <parameter key="hide-negative-values" value="true"/>
+            </row>
+        </section>
+    </view>
 </display>

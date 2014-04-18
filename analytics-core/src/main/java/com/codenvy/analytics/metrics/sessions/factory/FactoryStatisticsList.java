@@ -68,9 +68,11 @@ public class FactoryStatisticsList extends AbstractListValueResulted {
 
     @Override
     public DBObject[] getSpecificDBOperations(Context clauses) {
-        DBObject match = new BasicDBObject();
-        match.put(FACTORY, new BasicDBObject("$ne", ""));
-        match.put(FACTORY, new BasicDBObject("$ne", null));
+        DBObject matchEmpty = new BasicDBObject();
+        matchEmpty.put(FACTORY, new BasicDBObject("$ne", ""));
+
+        DBObject matchNull = new BasicDBObject();
+        matchNull.put(FACTORY, new BasicDBObject("$ne", null));
 
         DBObject group = new BasicDBObject();
         group.put(ID, "$" + FACTORY);
@@ -96,7 +98,8 @@ public class FactoryStatisticsList extends AbstractListValueResulted {
         project.put(WS_CREATED, 1);
         project.put(ENCODED_FACTORY, 1);
 
-        return new DBObject[]{new BasicDBObject("$match", match),
+        return new DBObject[]{new BasicDBObject("$match", matchEmpty),
+                              new BasicDBObject("$match", matchNull),
                               new BasicDBObject("$group", group),
                               new BasicDBObject("$project", project)};
     }

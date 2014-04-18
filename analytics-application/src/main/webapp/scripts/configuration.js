@@ -477,6 +477,7 @@ function Configuration() {
             columnLinkPrefixList: {
                 "Workspace": "/analytics/pages/workspace-view.jsp?ws",
                 "User": "/analytics/pages/user-view.jsp?user",
+                "Project": "/analytics/pages/project-view.jsp?project",
             },
 
             columnCombinedLinkConfiguration: {
@@ -503,6 +504,43 @@ function Configuration() {
                 "Workspace": "ws",
                 "User": "user",
             },
+        },
+
+        projectOverview: {
+            widgetLabel: "Project Overview",
+            presenterType: "HorizontalTablePresenter",
+            modelViewName: "project",
+            modelMetricName: "projects",
+            isNeedToSaveInHistory: false,   // default value = true
+
+            isPaginable: true,
+
+            defaultServerSortParams: "-date",
+
+            columnLinkPrefixList: {
+                "Workspace": "/analytics/pages/workspace-view.jsp?ws",
+                "User": "/analytics/pages/user-view.jsp?user",
+            },
+
+            /** @see DatabaseTable::makeTableSortable() method docs */
+            clientSortParams: {
+                "ascSortColumnNumber": 0
+            },
+
+            mapColumnToServerSortParam: {
+                "Created Date": "date",
+                "Project": "project",
+                "Type": "project_type",
+                "Workspace": "ws",
+                "User": "user",
+            },
+
+        },
+
+        projectStatistics: {
+            widgetLabel: "Project Statistics",
+            presenterType: "VerticalTablePresenter",
+            modelViewName: "project_statistics",
         },
 
         /** for Factory View */

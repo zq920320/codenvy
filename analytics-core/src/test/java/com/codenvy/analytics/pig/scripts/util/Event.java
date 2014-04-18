@@ -464,6 +464,21 @@ public class Event {
                 return builder;
             }
         }
+
+        public static Builder createProjectDestroyedEvent(String user, String ws, String session, String project,
+                                                          String type) {
+            return new Builder().withContext(user, ws, session).withParam("EVENT", "project-destroyed")
+                                .withParam("PROJECT", project).withParam("TYPE", type);
+        }
+
+        public static Builder createDebugFinishedEvent(String user, String ws, String project, String type, String id) {
+            return new Builder().withParam("EVENT", "debug-finished")
+                                .withParam("WS", ws)
+                                .withParam("USER", user)
+                                .withParam("PROJECT", project)
+                                .withParam("TYPE", type)
+                                .withParam("ID", id);
+        }
     }
 
     /** Event context contains 3 parameters. */
