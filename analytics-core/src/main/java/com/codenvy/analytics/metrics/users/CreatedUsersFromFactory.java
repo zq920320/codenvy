@@ -34,7 +34,7 @@ public class CreatedUsersFromFactory extends AbstractLongValueResulted {
     public String getDescription() {
         return "The number of registered users from factories";
     }
-    
+
     @Override
     public boolean isExpandable() {
         return true;

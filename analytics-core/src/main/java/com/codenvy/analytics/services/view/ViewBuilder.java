@@ -44,6 +44,7 @@ import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.StringValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Expandable;
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricFactory;
 import com.codenvy.analytics.metrics.MetricType;
@@ -325,7 +326,7 @@ public class ViewBuilder extends Feature {
      * Returns list of view metrics which are expandable: 
      * 1) reads view configuration
      * 2) gets list of view metric rows and their configurations;
-     * makes sure the metrics have isExpandable() = true
+     * makes sure the metric is expandable
      * 3) extracts metric type from configuration 
      * 5) add this info into the List<Map<rowNumber, metricType>>
      */
@@ -347,7 +348,10 @@ public class ViewBuilder extends Feature {
                     MetricType metricType = MetricType.valueOf(metricName);
                     Metric metric = MetricFactory.getMetric(metricType);
                     
-                    if (metric != null && metric.isExpandable()) {
+                    if (metric != null 
+                            && metric instanceof Expandable
+                            && metric.isExpandable()  // TODO remove this after making all possible numeric metric as expandable
+                        ) {
                         // add info about metric in to the sectionList = List<Map<rowNumber, metricType>>
                         sectionList.get(sectionNumber).put(rowNumber, metricType);
                     }

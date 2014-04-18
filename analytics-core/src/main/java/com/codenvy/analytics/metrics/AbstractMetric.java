@@ -80,10 +80,6 @@ public abstract class AbstractMetric implements Metric {
         return metricName;
     }
     
-    public ListValueData getExpandedValue(Context context) throws IOException {
-        return ListValueData.DEFAULT;
-    };
-    
     public boolean isExpandable() {
         return false;
     };

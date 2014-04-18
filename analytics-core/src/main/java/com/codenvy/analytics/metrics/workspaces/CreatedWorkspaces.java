@@ -37,7 +37,7 @@ public class CreatedWorkspaces extends AbstractLongValueResulted {
     public String getDescription() {
         return "The number of created persistent workspaces";
     }
-    
+
     @Override
     public boolean isExpandable() {
         return true;

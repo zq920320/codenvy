@@ -34,7 +34,7 @@ public class RemovedUsers extends AbstractLongValueResulted {
     public String getDescription() {
         return "The number of removed users";
     }
-    
+
     @Override
     public boolean isExpandable() {
         return true;

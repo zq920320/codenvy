@@ -43,7 +43,7 @@ import com.mongodb.DBObject;
  *
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public abstract class ReadBasedMetric extends AbstractMetric {
+public abstract class ReadBasedMetric extends AbstractMetric implements Expandable {
 
     public static final String EXCLUDE_SIGN        = "~";
     public static final String SEPARATOR           = ",";
@@ -156,8 +156,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
             
             Metric expandedMetric = MetricFactory.getMetric(expandedMetricType);
             
-            if (expandedMetric.isExpandable()
-                 && expandedMetric instanceof ReadBasedMetric) {
+            if (expandedMetric instanceof Expandable) {
                 String[] filteringValues = getExpandedMetricValues(expandedMetricType, clauses);
                 String filteringField = ((ReadBasedMetric) expandedMetric).getExpandedValueField();
                 match.put(filteringField, new BasicDBObject("$in", filteringValues));                
@@ -415,19 +414,22 @@ public abstract class ReadBasedMetric extends AbstractMetric {
     /** @return DB operations specific for given metric */
     public abstract DBObject[] getSpecificDBOperations(Context clauses);
 
-    /** @return DB operations specific for given expanded metric */
+    /** @return DB operations specific for given expanded metric 
+     * TODO make abstract
+     * */
     public DBObject[] getSpecificExpandedDBOperations(Context clauses) {
         return new DBObject[0];
     }
         
-    private String[] getExpandedMetricValues(MetricType metric, Context context) throws ParseException, IOException {
+    public String[] getExpandedMetricValues(MetricType metric, Context context) throws ParseException, IOException {
         // unlink context from caller method
         Context.Builder builder = new Context.Builder(context);
         builder.remove(Parameters.EXPANDED_METRIC_NAME);
         context = builder.build();
 
         context = initializeFirstInterval(context);
-        ListValueData metricValue = MetricFactory.getMetric(metric).getExpandedValue(context);
+        Expandable expandableMetric = (Expandable)MetricFactory.getMetric(metric);
+        ListValueData metricValue = expandableMetric.getExpandedValue(context);
 
         List<ValueData> allMetricValues = metricValue.getAll();
         
@@ -471,5 +473,9 @@ public abstract class ReadBasedMetric extends AbstractMetric {
         } else {
             return builder.build();
         }
+    }
+    
+    public boolean isExpandable() {
+        return false;
     }
 }

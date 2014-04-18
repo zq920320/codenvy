@@ -96,11 +96,6 @@ public class TestDateFieldsMetricRow extends BaseTest {
         }
 
         @Override
-        public ListValueData getExpandedValue(Context context) throws IOException {
-            return null;
-        }
-
-        @Override
         public boolean isExpandable() {
             return false;
         }
