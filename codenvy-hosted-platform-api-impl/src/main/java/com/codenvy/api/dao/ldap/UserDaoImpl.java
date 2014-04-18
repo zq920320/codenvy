@@ -20,6 +20,8 @@ package com.codenvy.api.dao.ldap;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
+import com.codenvy.api.core.notification.EventService;
+import com.codenvy.api.event.RemoveUserEvent;
 import com.codenvy.api.user.server.dao.UserDao;
 import com.codenvy.api.user.shared.dto.User;
 import com.codenvy.dto.server.DtoFactory;
@@ -68,6 +70,7 @@ public class UserDaoImpl implements UserDao {
     protected final UserAttributesMapper userAttributesMapper;
     private final   String               userObjectclassFilter;
 
+    private final EventService eventService;
     /**
      * Creates new instance of {@code UserDaoImpl}.
      *
@@ -114,7 +117,8 @@ public class UserDaoImpl implements UserDao {
                        @Nullable @Named("com.sun.jndi.ldap.connect.pool.prefsize") String prefPoolSize,
                        @Nullable @Named("com.sun.jndi.ldap.connect.pool.timeout") String poolTimeout,
                        @Named("user.ldap.user_container_dn") String userContainerDn,
-                       UserAttributesMapper userAttributesMapper) {
+                       UserAttributesMapper userAttributesMapper,
+                       EventService eventService) {
         this.providerUrl = providerUrl;
         this.systemDn = systemDn;
         this.systemPassword = systemPassword;
@@ -126,6 +130,7 @@ public class UserDaoImpl implements UserDao {
         this.poolTimeout = poolTimeout;
         this.userContainerDn = userContainerDn;
         this.userAttributesMapper = userAttributesMapper;
+        this.eventService = eventService;
         StringBuilder sb = new StringBuilder();
         for (String objectClass : userAttributesMapper.userObjectClasses) {
             sb.append("(objectClass=");
@@ -140,14 +145,16 @@ public class UserDaoImpl implements UserDao {
                 @Nullable @Named(Context.SECURITY_CREDENTIALS) String systemPassword,
                 @Nullable @Named(Context.SECURITY_AUTHENTICATION) String authType,
                 @Named("user.ldap.user_container_dn") String userContainerDn,
-                UserAttributesMapper userAttributesMapper) {
-        this(providerUrl, systemDn, systemPassword, authType, null, null, null, null, null, userContainerDn, userAttributesMapper);
+                UserAttributesMapper userAttributesMapper,
+                EventService eventService) {
+        this(providerUrl, systemDn, systemPassword, authType, null, null, null, null, null, userContainerDn, userAttributesMapper, eventService);
     }
 
     UserDaoImpl(@Named(Context.PROVIDER_URL) String providerUrl,
                 @Named("user.ldap.user_container_dn") String userContainerDn,
-                UserAttributesMapper userAttributesMapper) {
-        this(providerUrl, null, null, null, null, null, null, null, null, userContainerDn, userAttributesMapper);
+                UserAttributesMapper userAttributesMapper,
+                EventService eventService) {
+        this(providerUrl, null, null, null, null, null, null, null, null, userContainerDn, userAttributesMapper, eventService);
     }
 
     protected InitialLdapContext getLdapContext() throws NamingException {
@@ -297,6 +304,7 @@ public class UserDaoImpl implements UserDao {
             context = getLdapContext();
             context.destroySubcontext(getUserDn(id));
             LOG.info("EVENT#user-removed# ALIASES#{}# USER-ID#{}#", user.getEmail(), user.getId());
+            eventService.publish(new RemoveUserEvent(id));
         } catch (NameNotFoundException e) {
             throw new NotFoundException("User not found "+id);
         } catch (NamingException e) {

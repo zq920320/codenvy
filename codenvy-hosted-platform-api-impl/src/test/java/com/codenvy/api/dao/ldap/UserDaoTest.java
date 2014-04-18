@@ -20,6 +20,7 @@ package com.codenvy.api.dao.ldap;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
+import com.codenvy.api.core.notification.EventService;
 import com.codenvy.api.user.server.exception.UserException;
 import com.codenvy.api.user.server.exception.UserNotFoundException;
 import com.codenvy.api.user.shared.dto.User;
@@ -48,7 +49,7 @@ public class UserDaoTest {
         server = new File(target, "server");
         Assert.assertTrue(server.mkdirs(), "Unable create directory for temporary data");
         embeddedLdapServer = EmbeddedLdapServer.start(server);
-        userDao = new UserDaoImpl(embeddedLdapServer.getUrl(), "dc=codenvy;dc=com", new UserAttributesMapper());
+        userDao = new UserDaoImpl(embeddedLdapServer.getUrl(), "dc=codenvy;dc=com", new UserAttributesMapper(), new EventService());
         users = new User[]{
                 DtoFactory.getInstance().createDto(User.class)
                           .withId("1")
