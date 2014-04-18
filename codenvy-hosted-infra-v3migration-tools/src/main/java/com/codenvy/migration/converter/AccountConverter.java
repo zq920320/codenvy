@@ -21,7 +21,6 @@ public class AccountConverter implements ObjectConverter<Account, com.codenvy.ap
         return DtoFactory.getInstance().createDto(com.codenvy.api.account.shared.dto.Account.class)
                          .withId(accountOld.getId())
                          .withName(accountOld.getName())
-                         .withOwner(accountOld.getOwner().getId())
                          .withAttributes(attributes);
     }
 }

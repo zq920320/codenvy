@@ -19,6 +19,7 @@ package com.codenvy.api.dao.mongo;
 
 import com.codenvy.api.account.server.exception.AccountException;
 import com.codenvy.api.account.shared.dto.Account;
+import com.codenvy.api.account.shared.dto.AccountMembership;
 import com.codenvy.api.account.shared.dto.Attribute;
 import com.codenvy.api.account.shared.dto.Member;
 import com.codenvy.api.account.shared.dto.Subscription;
@@ -61,7 +62,7 @@ public class AccountDaoTest extends BaseDaoTest {
     private static final String USER_ID = "user12837asjhda823981h";
 
     private static final String ACCOUNT_ID    = "org123abc456def";
-    private static final String ACCOUNT_NAME  = "accoubnt";
+    private static final String ACCOUNT_NAME  = "account";
     private static final String ACCOUNT_OWNER = "user123@codenvy.com";
 
     private static final String ACC_COLL_NAME          = "accounts";
@@ -102,7 +103,6 @@ public class AccountDaoTest extends BaseDaoTest {
                 DtoFactory.getInstance().createDto(Account.class)
                           .withId(ACCOUNT_ID)
                           .withName(ACCOUNT_NAME)
-                          .withOwner(ACCOUNT_OWNER)
                           .withAttributes(getAttributes());
 
         accountDao.create(account);
@@ -123,7 +123,6 @@ public class AccountDaoTest extends BaseDaoTest {
         Account result = accountDao.getById(ACCOUNT_ID);
         assertNotNull(result);
         assertEquals(result.getName(), ACCOUNT_NAME);
-        assertEquals(result.getOwner(), ACCOUNT_OWNER);
     }
 
     @Test
@@ -133,7 +132,6 @@ public class AccountDaoTest extends BaseDaoTest {
         Account result = accountDao.getByName(ACCOUNT_NAME);
         assertNotNull(result);
         assertEquals(result.getId(), ACCOUNT_ID);
-        assertEquals(result.getOwner(), ACCOUNT_OWNER);
     }
 
     @Test
@@ -160,11 +158,9 @@ public class AccountDaoTest extends BaseDaoTest {
         Account account = DtoFactory.getInstance().createDto(Account.class)
                                     .withId(ACCOUNT_ID)
                                     .withName(ACCOUNT_NAME)
-                                    .withOwner(ACCOUNT_OWNER)
                                     .withAttributes(getAttributes());
         // Put first object
-        collection.insert(
-                new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME).append("owner", ACCOUNT_OWNER));
+        collection.insert(new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME).append("owner", ACCOUNT_OWNER));
         // main invoke
         accountDao.update(account);
 
@@ -277,6 +273,20 @@ public class AccountDaoTest extends BaseDaoTest {
 
         assertNull(membersCollection.findOne(new BasicDBObject("_id", USER_ID)));
         assertNotNull(membersCollection.findOne(new BasicDBObject("_id", "user2")));
+    }
+
+    @Test
+    public void shouldBeAbleToGetAccountMembershipsByMember() throws AccountException {
+        BasicDBList members = new BasicDBList();
+        members.add(DtoFactory.getInstance().createDto(Member.class)
+                              .withAccountId(ACCOUNT_ID)
+                              .withUserId(USER_ID)
+                              .withRoles(Arrays.asList("account/owner")).toString());
+        membersCollection.insert(new BasicDBObject("_id", USER_ID).append("members", members));
+        collection.insert(new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME));
+        List<AccountMembership> memberships = accountDao.getByMember(USER_ID);
+        assertEquals(memberships.size(), 1);
+        assertEquals(memberships.get(0).getRoles(), Arrays.asList("account/owner"));
     }
 
     @Test

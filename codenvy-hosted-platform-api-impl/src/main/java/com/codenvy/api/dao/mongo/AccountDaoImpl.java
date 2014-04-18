@@ -21,9 +21,10 @@ import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.server.exception.AccountException;
 import com.codenvy.api.account.server.exception.AccountNotFoundException;
 import com.codenvy.api.account.shared.dto.Account;
+import com.codenvy.api.account.shared.dto.AccountMembership;
 import com.codenvy.api.account.shared.dto.Attribute;
-import com.codenvy.api.account.shared.dto.Subscription;
 import com.codenvy.api.account.shared.dto.Member;
+import com.codenvy.api.account.shared.dto.Subscription;
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
 import com.codenvy.api.workspace.server.exception.WorkspaceException;
 import com.codenvy.dto.server.DtoFactory;
@@ -191,15 +192,21 @@ public class AccountDaoImpl implements AccountDao {
     }
 
     @Override
-    public List<Account> getByMember(String userId) throws AccountException {
-        List<Account> result = new ArrayList<>();
+    public List<AccountMembership> getByMember(String userId) throws AccountException {
+        List<AccountMembership> result = new ArrayList<>();
         try {
             DBObject line = memberCollection.findOne(userId);
             if (line != null) {
                 BasicDBList members = (BasicDBList)line.get("members");
                 for (Object memberObj : members) {
                     Member member = DtoFactory.getInstance().createDtoFromJson(memberObj.toString(), Member.class);
-                    result.add(getById(member.getAccountId()));
+                    Account account = getById(member.getAccountId());
+                    AccountMembership am = DtoFactory.getInstance().createDto(AccountMembership.class);
+                    am.setId(account.getId());
+                    am.setName(account.getName());
+                    am.setAttributes(account.getAttributes());
+                    am.setRoles(member.getRoles());
+                    result.add(am);
                 }
             }
         } catch (MongoException me) {
@@ -214,7 +221,6 @@ public class AccountDaoImpl implements AccountDao {
             if (accountCollection.findOne(new BasicDBObject("id", member.getAccountId())) == null) {
                 throw AccountNotFoundException.doesNotExistWithId(member.getAccountId());
             }
-
             // Retrieving his membership list, or creating new one
             DBObject old = memberCollection.findOne(member.getUserId());
             if (old == null) {
@@ -231,7 +237,8 @@ public class AccountDaoImpl implements AccountDao {
                     throw new AccountException(
                             String.format(
                                     "Membership of user %s in account %s already exists. Use update method instead.",
-                                    member.getUserId(), member.getAccountId()));
+                                    member.getUserId(), member.getAccountId())
+                    );
             }
 
             // Adding new membership
@@ -344,7 +351,6 @@ public class AccountDaoImpl implements AccountDao {
         Account account = DtoFactory.getInstance().createDto(Account.class)
                                     .withId(obj.getId())
                                     .withName(obj.getName())
-                                    .withOwner(obj.getOwner())
                                     .withAttributes(attributes);
         return (DBObject)JSON.parse(account.toString());
     }
