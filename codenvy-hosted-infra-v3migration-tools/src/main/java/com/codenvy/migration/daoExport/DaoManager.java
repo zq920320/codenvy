@@ -84,7 +84,8 @@ public class DaoManager {
                                       public String encryptPassword(byte[] password) throws NamingException {
                                           return new String(password);
                                       }
-                                  }, new String[]{"inetOrgPerson"}, "cn", "uid", "userPassword", "mail", "initials")
+                                  }, new String[]{"inetOrgPerson"}, "cn", "uid", "userPassword", "mail", "initials"),
+                                  null
         );
 
         try {

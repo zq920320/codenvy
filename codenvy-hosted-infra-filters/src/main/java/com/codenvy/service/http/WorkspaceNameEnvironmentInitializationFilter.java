@@ -36,7 +36,7 @@ import java.util.regex.Pattern;
 /** @author Alexander Garagatyi */
 @Singleton
 public class WorkspaceNameEnvironmentInitializationFilter implements Filter {
-    public static final  Pattern TENANT_URL_PATTERN = Pattern.compile("^(/ide/)(?!_sso)(.+?)(/.*)?$");
+    public static final  Pattern TENANT_URL_PATTERN = Pattern.compile("^/ide/(.+?)(?:/.*)?$");
     private static final Logger  LOG                =
             LoggerFactory.getLogger(WorkspaceNameEnvironmentInitializationFilter.class);
     @Inject
@@ -56,7 +56,7 @@ public class WorkspaceNameEnvironmentInitializationFilter implements Filter {
         try {
             Matcher matcher = TENANT_URL_PATTERN.matcher(requestUrl);
             if (matcher.matches()) {
-                workspaceName = matcher.group(2);
+                workspaceName = matcher.group(1);
                 Workspace workspace = workspaceDao.getByName(workspaceName);
                 if (null == workspace) {
                     ((HttpServletResponse)response).sendRedirect(wsNotFoundRedirectUrl);

@@ -17,6 +17,8 @@
  */
 package com.codenvy.api.dao.ldap;
 
+import com.codenvy.api.core.notification.EventService;
+import com.codenvy.api.event.RemoveUserEvent;
 import com.codenvy.api.user.server.dao.UserDao;
 import com.codenvy.api.user.server.exception.UserException;
 import com.codenvy.api.user.server.exception.UserNotFoundException;
@@ -27,20 +29,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
-import javax.naming.AuthenticationException;
-import javax.naming.Context;
-import javax.naming.NameAlreadyBoundException;
-import javax.naming.NameNotFoundException;
-import javax.naming.NamingEnumeration;
-import javax.naming.NamingException;
-import javax.naming.directory.Attributes;
-import javax.naming.directory.DirContext;
-import javax.naming.directory.ModificationItem;
-import javax.naming.directory.SearchControls;
-import javax.naming.directory.SearchResult;
+import javax.inject.*;
+import javax.naming.*;
+import javax.naming.directory.*;
 import javax.naming.ldap.InitialLdapContext;
 import java.util.Hashtable;
 
@@ -66,6 +57,8 @@ public class UserDaoImpl implements UserDao {
 
     protected final UserAttributesMapper userAttributesMapper;
     private final   String               userObjectclassFilter;
+
+    protected final EventService eventService;
 
     /**
      * Creates new instance of {@code UserDaoImpl}.
@@ -113,7 +106,8 @@ public class UserDaoImpl implements UserDao {
                        @Nullable @Named("com.sun.jndi.ldap.connect.pool.prefsize") String prefPoolSize,
                        @Nullable @Named("com.sun.jndi.ldap.connect.pool.timeout") String poolTimeout,
                        @Named("user.ldap.user_container_dn") String userContainerDn,
-                       UserAttributesMapper userAttributesMapper) {
+                       UserAttributesMapper userAttributesMapper,
+                       @Nullable EventService eventService) {
         this.providerUrl = providerUrl;
         this.systemDn = systemDn;
         this.systemPassword = systemPassword;
@@ -125,6 +119,7 @@ public class UserDaoImpl implements UserDao {
         this.poolTimeout = poolTimeout;
         this.userContainerDn = userContainerDn;
         this.userAttributesMapper = userAttributesMapper;
+        this.eventService = eventService;
         StringBuilder sb = new StringBuilder();
         for (String objectClass : userAttributesMapper.userObjectClasses) {
             sb.append("(objectClass=");
@@ -140,13 +135,13 @@ public class UserDaoImpl implements UserDao {
                 @Nullable @Named(Context.SECURITY_AUTHENTICATION) String authType,
                 @Named("user.ldap.user_container_dn") String userContainerDn,
                 UserAttributesMapper userAttributesMapper) {
-        this(providerUrl, systemDn, systemPassword, authType, null, null, null, null, null, userContainerDn, userAttributesMapper);
+        this(providerUrl, systemDn, systemPassword, authType, null, null, null, null, null, userContainerDn, userAttributesMapper, null);
     }
 
     UserDaoImpl(@Named(Context.PROVIDER_URL) String providerUrl,
                 @Named("user.ldap.user_container_dn") String userContainerDn,
                 UserAttributesMapper userAttributesMapper) {
-        this(providerUrl, null, null, null, null, null, null, null, null, userContainerDn, userAttributesMapper);
+        this(providerUrl, null, null, null, null, null, null, null, null, userContainerDn, userAttributesMapper, null);
     }
 
     protected InitialLdapContext getLdapContext() throws NamingException {
@@ -287,6 +282,10 @@ public class UserDaoImpl implements UserDao {
             context = getLdapContext();
             context.destroySubcontext(getUserDn(id));
             LOG.info("EVENT#user-removed# ALIASES#{}# USER-ID#{}#", user.getEmail(), user.getId());
+
+            if (null != eventService) {
+                eventService.publish(new RemoveUserEvent(id));
+            }
         } catch (NameNotFoundException e) {
             throw new UserNotFoundException(id);
         } catch (NamingException e) {
