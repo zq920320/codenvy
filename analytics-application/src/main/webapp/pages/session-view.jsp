@@ -32,7 +32,7 @@
             <div class="well topFilteringPanel">
                 <label>
                     <input type="checkbox" checked="checked" id="show-session-events" 
-                       inverseValue="~%20session-started%20OR%20session-finished"
+                       inverseValue="~ session-started OR session-finished"
                        targetWidgets="userSessionActivity" />
                     Micro Events
                 </label>
