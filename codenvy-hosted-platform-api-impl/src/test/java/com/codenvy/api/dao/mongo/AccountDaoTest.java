@@ -17,12 +17,14 @@
  */
 package com.codenvy.api.dao.mongo;
 
-import com.codenvy.api.account.server.exception.AccountException;
 import com.codenvy.api.account.shared.dto.Account;
 import com.codenvy.api.account.shared.dto.AccountMembership;
 import com.codenvy.api.account.shared.dto.Attribute;
 import com.codenvy.api.account.shared.dto.Member;
 import com.codenvy.api.account.shared.dto.Subscription;
+import com.codenvy.api.core.ConflictException;
+import com.codenvy.api.core.NotFoundException;
+import com.codenvy.api.core.ServerException;
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
 import com.codenvy.api.workspace.shared.dto.Workspace;
 import com.codenvy.dto.server.DtoFactory;
@@ -134,7 +136,7 @@ public class AccountDaoTest extends BaseDaoTest {
         assertEquals(result.getId(), ACCOUNT_ID);
     }
 
-    @Test
+    @Test(expectedExceptions = NotFoundException.class)
     public void shouldNotFindUnExistingAccountByName() throws Exception {
         collection.insert(
                 new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME).append("owner", ACCOUNT_OWNER));
@@ -191,7 +193,7 @@ public class AccountDaoTest extends BaseDaoTest {
         assertNull(membersCollection.findOne(new BasicDBObject("_id", USER_ID)));
     }
 
-    @Test(expectedExceptions = AccountException.class,
+    @Test(expectedExceptions = ConflictException.class,
           expectedExceptionsMessageRegExp = "It is not possible to remove account that has associated workspaces")
     public void shouldNotBeAbleToRemoveAccountWithAssociatedWorkspace() throws Exception {
         when(workspaceDao.getByAccount(ACCOUNT_ID))
@@ -276,7 +278,7 @@ public class AccountDaoTest extends BaseDaoTest {
     }
 
     @Test
-    public void shouldBeAbleToGetAccountMembershipsByMember() throws AccountException {
+    public void shouldBeAbleToGetAccountMembershipsByMember() throws NotFoundException, ServerException {
         BasicDBList members = new BasicDBList();
         members.add(DtoFactory.getInstance().createDto(Member.class)
                               .withAccountId(ACCOUNT_ID)
@@ -317,8 +319,9 @@ public class AccountDaoTest extends BaseDaoTest {
         }
     }
 
-    @Test(expectedExceptions = AccountException.class)
-    public void shouldThrowAnExceptionWhileAddingSubscriptionToNotExistedAccount() throws AccountException {
+    @Test(expectedExceptions = NotFoundException.class)
+    public void shouldThrowAnExceptionWhileAddingSubscriptionToNotExistedAccount() throws ServerException,
+                                                                                          ConflictException, NotFoundException {
         collection.insert(new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME).append("owner", ACCOUNT_OWNER));
 
         Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class)
@@ -385,7 +388,7 @@ public class AccountDaoTest extends BaseDaoTest {
     }
 
     @Test
-    public void shouldGetSubscriptionById() throws AccountException {
+    public void shouldGetSubscriptionById() throws ServerException, NotFoundException, ConflictException {
         collection.insert(new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME).append("owner", ACCOUNT_OWNER));
         Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class)
                                               .withId(SUBSCRIPTION_ID)

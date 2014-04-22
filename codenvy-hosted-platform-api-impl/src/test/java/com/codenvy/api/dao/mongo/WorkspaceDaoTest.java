@@ -18,6 +18,8 @@
 package com.codenvy.api.dao.mongo;
 
 
+import com.codenvy.api.core.ConflictException;
+import com.codenvy.api.core.ServerException;
 import com.codenvy.api.user.server.dao.UserDao;
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
 import com.codenvy.api.workspace.server.exception.WorkspaceException;
@@ -87,33 +89,33 @@ public class WorkspaceDaoTest extends BaseDaoTest {
         assertEquals(workspace, result);
     }
 
-    @Test(expectedExceptions = WorkspaceException.class, expectedExceptionsMessageRegExp = "Workspace name required")
-    public void mustNotCreateWorkspaceWithNullName() throws WorkspaceException {
+    @Test(expectedExceptions = ConflictException.class, expectedExceptionsMessageRegExp = "Workspace name required")
+    public void mustNotCreateWorkspaceWithNullName() throws ConflictException, ServerException {
         workspaceDao.create(DtoFactory.getInstance().createDto(Workspace.class).withName(null));
     }
 
-    @Test(expectedExceptions = WorkspaceException.class, expectedExceptionsMessageRegExp = "Incorrect workspace name")
-    public void mustNotCreateWorkspaceThatNameLengthMoreThan20Characters() throws WorkspaceException {
+    @Test(expectedExceptions = ConflictException.class, expectedExceptionsMessageRegExp = "Incorrect workspace name")
+    public void mustNotCreateWorkspaceThatNameLengthMoreThan20Characters() throws ConflictException, ServerException {
         workspaceDao.create(DtoFactory.getInstance().createDto(Workspace.class).withName("12345678901234567890x"));
     }
 
-    @Test(expectedExceptions = WorkspaceException.class, expectedExceptionsMessageRegExp = "Incorrect workspace name")
-    public void mustNotCreateWorkspaceThatNameLengthLessThan3Characters() throws WorkspaceException {
+    @Test(expectedExceptions = ConflictException.class, expectedExceptionsMessageRegExp = "Incorrect workspace name")
+    public void mustNotCreateWorkspaceThatNameLengthLessThan3Characters() throws ConflictException, ServerException {
         workspaceDao.create(DtoFactory.getInstance().createDto(Workspace.class).withName("ws"));
     }
 
-    @Test(expectedExceptions = WorkspaceException.class, expectedExceptionsMessageRegExp = "Incorrect workspace name")
-    public void mustNotCreateWorkspaceThatNameStartsNotWithLetterOrDigit() throws WorkspaceException {
+    @Test(expectedExceptions = ConflictException.class, expectedExceptionsMessageRegExp = "Incorrect workspace name")
+    public void mustNotCreateWorkspaceThatNameStartsNotWithLetterOrDigit() throws ConflictException, ServerException {
         workspaceDao.create(DtoFactory.getInstance().createDto(Workspace.class).withName(".ws"));
     }
 
-    @Test(expectedExceptions = WorkspaceException.class, expectedExceptionsMessageRegExp = "Incorrect workspace name")
-    public void mustNotCreateWorkspaceThatNameEndsNotWithLetterOrDigit() throws WorkspaceException {
+    @Test(expectedExceptions = ConflictException.class, expectedExceptionsMessageRegExp = "Incorrect workspace name")
+    public void mustNotCreateWorkspaceThatNameEndsNotWithLetterOrDigit() throws ConflictException, ServerException {
         workspaceDao.create(DtoFactory.getInstance().createDto(Workspace.class).withName("ws-"));
     }
 
-    @Test(expectedExceptions = WorkspaceException.class, expectedExceptionsMessageRegExp = "Incorrect workspace name")
-    public void mustNotCreateWorkspaceThatNameContainsIllegalCharacters() throws WorkspaceException {
+    @Test(expectedExceptions = ConflictException.class, expectedExceptionsMessageRegExp = "Incorrect workspace name")
+    public void mustNotCreateWorkspaceThatNameContainsIllegalCharacters() throws ConflictException, ServerException {
         workspaceDao.create(DtoFactory.getInstance().createDto(Workspace.class).withName("worksp@ce"));
     }
 
@@ -150,7 +152,7 @@ public class WorkspaceDaoTest extends BaseDaoTest {
         try {
             workspaceDao.create(workspace);
             fail("Workspace with same name exists, but another is created.");
-        } catch (WorkspaceException e) {
+        } catch (ConflictException e) {
             // OK
         }
     }

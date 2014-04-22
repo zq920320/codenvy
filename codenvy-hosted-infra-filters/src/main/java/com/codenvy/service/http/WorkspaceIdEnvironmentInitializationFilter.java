@@ -17,6 +17,8 @@
  */
 package com.codenvy.service.http;
 
+import com.codenvy.api.core.ApiException;
+import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
 import com.codenvy.api.workspace.server.exception.WorkspaceException;
 import com.codenvy.api.workspace.server.exception.WorkspaceNotFoundException;
@@ -55,18 +57,20 @@ public class WorkspaceIdEnvironmentInitializationFilter implements Filter {
         String[] pathParts = requestUrl.split("/", 5);
 
         try {
-            Workspace workspace = workspaceDao.getById(pathParts[3]);
-            if (null == workspace) {
+            try {
+                Workspace workspace = workspaceDao.getById(pathParts[3]);
+
+                final EnvironmentContext env = EnvironmentContext.getCurrent();
+                env.setWorkspaceName(workspace.getName());
+                env.setWorkspaceId(workspace.getId());
+                env.setAccountId(workspace.getAccountId());
+            } catch (NotFoundException e) {
                 ((HttpServletResponse)response).sendRedirect(wsNotFoundRedirectUrl);
                 return;
             }
-            final EnvironmentContext env = EnvironmentContext.getCurrent();
-            env.setWorkspaceName(workspace.getName());
-            env.setWorkspaceId(workspace.getId());
-            env.setAccountId(workspace.getAccountId());
 
             chain.doFilter(request, response);
-        } catch (WorkspaceException e) {
+        } catch (ApiException e) {
             throw new ServletException(e.getLocalizedMessage(), e);
         } finally {
             EnvironmentContext.reset();

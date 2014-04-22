@@ -17,20 +17,14 @@
  */
 package com.codenvy.api.dao.mongo;
 
+import com.codenvy.api.core.NotFoundException;
+import com.codenvy.api.core.ServerException;
 import com.codenvy.api.user.server.dao.UserDao;
 import com.codenvy.api.user.server.dao.UserProfileDao;
-import com.codenvy.api.user.server.exception.ProfileNotFoundException;
-import com.codenvy.api.user.server.exception.UserProfileException;
-import com.codenvy.api.user.shared.dto.Profile;
 import com.codenvy.api.user.shared.dto.Attribute;
+import com.codenvy.api.user.shared.dto.Profile;
 import com.codenvy.dto.server.DtoFactory;
-import com.mongodb.BasicDBList;
-import com.mongodb.BasicDBObject;
-import com.mongodb.BasicDBObjectBuilder;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.DBObject;
-import com.mongodb.MongoException;
+import com.mongodb.*;
 import com.mongodb.util.JSON;
 
 import javax.inject.Inject;
@@ -62,50 +56,50 @@ public class UserProfileDaoImpl implements UserProfileDao {
     }
 
     @Override
-    public void create(Profile profile) throws UserProfileException {
+    public void create(Profile profile) throws ServerException {
         try {
             collection.save(toDBObject(profile));
         } catch (MongoException me) {
-            throw new UserProfileException(me.getMessage(), me);
+            throw new ServerException(me.getMessage(), me);
         }
     }
 
     @Override
-    public void update(Profile profile) throws UserProfileException {
+    public void update(Profile profile) throws NotFoundException, ServerException {
         DBObject query = new BasicDBObject("id", profile.getId());
         try {
             if (collection.findOne(query) == null) {
-                throw new ProfileNotFoundException(profile.getId());
+                throw new NotFoundException("Profile not found "+profile.getId());
             }
             collection.update(query, toDBObject(profile));
         } catch (MongoException me) {
-            throw new UserProfileException(me.getMessage(), me);
+            throw new ServerException(me.getMessage(), me);
         }
     }
 
     @Override
-    public void remove(String id) throws UserProfileException {
+    public void remove(String id) throws NotFoundException, ServerException {
         try {
             collection.remove(new BasicDBObject("id", id));
         } catch (MongoException me) {
-            throw new UserProfileException(me.getMessage(), me);
+            throw new ServerException(me.getMessage(), me);
         }
     }
 
     @Override
-    public Profile getById(String id) throws UserProfileException {
+    public Profile getById(String id) throws NotFoundException, ServerException {
         DBObject res;
         try {
             res = collection.findOne(new BasicDBObject("id", id));
         } catch (MongoException me) {
-            throw new UserProfileException(me.getMessage(), me);
+            throw new ServerException(me.getMessage(), me);
         }
         return res != null ? toProfile(res) : null;
 
     }
 
     @Override
-    public Profile getById(String id, String filter) throws UserProfileException {
+    public Profile getById(String id, String filter) throws NotFoundException, ServerException {
         Profile profile = getById(id);
         if (profile != null && filter != null && !filter.isEmpty()) {
             Map<String, String> matchedPrefs = new HashMap<>();

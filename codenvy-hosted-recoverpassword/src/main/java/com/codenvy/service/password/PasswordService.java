@@ -17,9 +17,9 @@
  */
 package com.codenvy.service.password;
 
+import com.codenvy.api.core.NotFoundException;
+import com.codenvy.api.core.ServerException;
 import com.codenvy.api.user.server.dao.UserDao;
-import com.codenvy.api.user.server.exception.UserException;
-import com.codenvy.api.user.server.exception.UserNotFoundException;
 import com.codenvy.api.user.shared.dto.User;
 
 import org.codenvy.mail.MailSenderClient;
@@ -105,10 +105,13 @@ public class PasswordService {
      */
     @POST
     @Path("recover/{usermail}")
-    public Response recoverPassword(@PathParam("usermail") String userMail, @Context UriInfo uriInfo) {
+    public Response recoverPassword(@PathParam("usermail") String userMail, @Context UriInfo uriInfo)
+            throws ServerException, NotFoundException {
         try {
-            if (userDao.getByAlias(userMail) == null) {
-                return Response.status(404).entity("User " + userMail + " is not registered in the system.").build();
+            try {
+                userDao.getByAlias(userMail);
+            } catch (NotFoundException e) {
+                throw new NotFoundException("User " + userMail + " is not registered in the system.");
             }
 
             String uuid = recoveryStorage.setValidationData(userMail);
@@ -132,7 +135,7 @@ public class PasswordService {
                     .cacheControl(noCache).build();
         }
         // TODO review logic
-        catch (IOException | MessagingException | UserException e) {
+        catch (IOException | MessagingException  e) {
             LOG.error("Error during recovering users password", e);
             return Response.status(500)
                            .entity("Unable to recover password. Please contact with administrators or try " + "later.").build();
@@ -211,7 +214,8 @@ public class PasswordService {
     @POST
     @Path("setup")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    public Response setupPassword(@FormParam("uuid") String uuid, @FormParam("password") String newPassword) {
+    public Response setupPassword(@FormParam("uuid") String uuid, @FormParam("password") String newPassword)
+       throws NotFoundException, ServerException {
         // verify is confirmationId valid
         if (!recoveryStorage.isValid(uuid)) {
             LOG.warn("Setup password token is incorrect or has expired");
@@ -222,20 +226,22 @@ public class PasswordService {
             return Response.status(403).entity("Setup password token is incorrect or has expired").build();
         }
 
+
         // find user and setup his/her password
         String userName = recoveryStorage.get(uuid).get("user.name");
+
         try {
             User user = userDao.getByAlias(userName);
             user.setPassword(newPassword);
             userDao.update(user);
-        } catch (UserNotFoundException e) {
+        } catch (NotFoundException e) {
             // remove invalid validationData
             recoveryStorage.remove(uuid);
 
-            return Response.status(404).entity("User " + userName + " is not registered in the system").build();
-        } catch (UserException e) {
+            throw new NotFoundException("User " + userName + " is not registered in the system.");
+        }  catch (ServerException e) {
             LOG.error("Error during setting user's password", e);
-            return Response.status(500).entity("Unable to setup password. Please contact with administrators.").build();
+            throw new ServerException("Unable to setup password. Please contact with administrators.", e);
         }
 
         // remove validation data from validationStorage

@@ -17,13 +17,13 @@
  */
 package com.codenvy.api.dao.mongo;
 
+import com.codenvy.api.core.ConflictException;
+import com.codenvy.api.core.NotFoundException;
+import com.codenvy.api.core.ServerException;
 import com.codenvy.api.user.server.dao.MemberDao;
 import com.codenvy.api.user.server.dao.UserDao;
-import com.codenvy.api.user.server.exception.MembershipException;
-import com.codenvy.api.user.server.exception.UserException;
 import com.codenvy.api.user.shared.dto.Member;
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
-import com.codenvy.api.workspace.server.exception.WorkspaceException;
 import com.codenvy.dto.server.DtoFactory;
 import com.mongodb.*;
 import com.mongodb.util.JSON;
@@ -67,7 +67,7 @@ public class MemberDaoImpl implements MemberDao {
     }
 
     @Override
-    public void create(Member member) throws MembershipException {
+    public void create(Member member) throws ConflictException, ServerException, NotFoundException {
         validateSubjectsExists(member.getUserId(), member.getWorkspaceId());
         try {
             // Retrieving his membership list, or creating new one
@@ -84,7 +84,7 @@ public class MemberDaoImpl implements MemberDao {
                 Member one = DtoFactory.getInstance().createDtoFromJson(member1.toString(), Member.class);
                 if (one.getWorkspaceId().equals(member.getWorkspaceId()) &&
                     one.getUserId().equals(member.getUserId())) {
-                    throw new MembershipException(
+                    throw new ConflictException(
                             String.format(
                                     "Membership of user %s in workspace %s already exists. Use update method instead.",
                                     member.getUserId(), member.getWorkspaceId()));
@@ -97,24 +97,24 @@ public class MemberDaoImpl implements MemberDao {
             //Save
             collection.save(old);
         } catch (MongoException me) {
-            throw new MembershipException(me.getMessage(), me);
+            throw new ServerException(me.getMessage(), me);
         }
     }
 
     @Override
-    public void update(Member member) throws MembershipException {
+    public void update(Member member) throws ConflictException, NotFoundException, ServerException {
         validateSubjectsExists(member.getUserId(), member.getWorkspaceId());
         try {
             // Retrieving his membership list
             DBObject query = new BasicDBObject("_id", member.getUserId());
             DBObject old = collection.findOne(query);
             if (old == null)
-                throw new MembershipException(
+                throw new NotFoundException(
                         String.format("Unable to update membership: user %s does not exist.", member.getUserId()));
 
             BasicDBList members = (BasicDBList)old.get("members");
             if (members == null)
-                throw new MembershipException(String.format("Unable to update membership: user %s doesn't have any memberships.", member.getUserId()));
+                throw new NotFoundException(String.format("Unable to update membership: user %s doesn't have any memberships.", member.getUserId()));
 
             // Find membership in given WS and removing it
             boolean found = false;
@@ -127,7 +127,7 @@ public class MemberDaoImpl implements MemberDao {
                 }
             }
             if (!found)
-                throw new MembershipException(
+                throw new NotFoundException(
                         String.format("Unable to update membership: user %s doesn't have no memberships in the WS %s.",
                                       member.getUserId(), member.getWorkspaceId()));
 
@@ -136,12 +136,12 @@ public class MemberDaoImpl implements MemberDao {
             old.put("members", members);
             collection.update(query, old);
         } catch (MongoException me) {
-            throw new MembershipException(me.getMessage(), me);
+            throw new ServerException(me.getMessage(), me);
         }
     }
 
     @Override
-    public List<Member> getWorkspaceMembers(String wsId) throws MembershipException {
+    public List<Member> getWorkspaceMembers(String wsId) throws ServerException {
         List<Member> result = new ArrayList<>();
         try (DBCursor cursor = collection.find()) {
             for (DBObject one : cursor) {
@@ -154,13 +154,13 @@ public class MemberDaoImpl implements MemberDao {
                 }
             }
         } catch (MongoException me) {
-            throw new MembershipException(me.getMessage(), me);
+            throw new ServerException(me.getMessage(), me);
         }
         return result;
     }
 
     @Override
-    public List<Member> getUserRelationships(String userId) throws MembershipException {
+    public List<Member> getUserRelationships(String userId) throws ServerException {
         List<Member> result = new ArrayList<>();
         try {
             DBObject one = collection.findOne(userId);
@@ -173,13 +173,13 @@ public class MemberDaoImpl implements MemberDao {
                 result.add(member);
             }
         } catch (MongoException me) {
-            throw new MembershipException(me.getMessage(), me);
+            throw new ServerException(me.getMessage(), me);
         }
         return result;
     }
 
     @Override
-    public void remove(Member member) throws MembershipException {
+    public void remove(Member member) throws ServerException {
         DBObject query = new BasicDBObject("_id", member.getUserId());
         try {
             DBObject old = collection.findOne(query);
@@ -200,7 +200,7 @@ public class MemberDaoImpl implements MemberDao {
                 collection.remove(query); // Removing user from table if no memberships anymore.
             }
         } catch (MongoException me) {
-            throw new MembershipException(me.getMessage(), me);
+            throw new ServerException(me.getMessage(), me);
         }
     }
 
@@ -219,16 +219,17 @@ public class MemberDaoImpl implements MemberDao {
     }
 
 
-    void validateSubjectsExists(String userId, String workspaceId) throws MembershipException {
-        try {
+    void validateSubjectsExists(String userId, String workspaceId) throws ConflictException, ServerException,
+            NotFoundException {
+//        try {
             if (userDao.getById(userId) == null)
-                throw new MembershipException(
+                throw new ConflictException(
                         String.format("Unable to update membership: user %s does not exist.", userId));
             if (workspaceDao.getById(workspaceId) == null)
-                throw new MembershipException(
+                throw new ConflictException(
                         String.format("Unable to update membership: workspace %s does not exist.", workspaceId));
-        } catch (UserException | WorkspaceException e) {
-            throw new MembershipException(e.getMessage());
-        }
+//        } catch (UserException | WorkspaceException e) {
+//            throw new MembershipException(e.getMessage());
+//        }
     }
 }
