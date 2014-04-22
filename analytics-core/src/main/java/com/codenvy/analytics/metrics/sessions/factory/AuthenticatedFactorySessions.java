@@ -18,18 +18,22 @@
 package com.codenvy.analytics.metrics.sessions.factory;
 
 import com.codenvy.analytics.metrics.AbstractLongValueResulted;
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Expandable;
 import com.codenvy.analytics.metrics.MetricType;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
 
 import javax.annotation.security.RolesAllowed;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
-public class AuthenticatedFactorySessions extends AbstractLongValueResulted {
+public class AuthenticatedFactorySessions extends AbstractLongValueResulted implements Expandable {
 
     public AuthenticatedFactorySessions() {
-        super(MetricType.AUTHENTICATED_FACTORY_SESSIONS);
+        super(MetricType.AUTHENTICATED_FACTORY_SESSIONS, SESSION_ID);
     }
-
+    
     @Override
     public String getStorageCollectionName() {
         return getStorageCollectionName(MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST);
@@ -38,6 +42,20 @@ public class AuthenticatedFactorySessions extends AbstractLongValueResulted {
     @Override
     public String[] getTrackedFields() {
         return new String[]{AUTHENTICATED_SESSION};
+    }
+    
+    @Override
+    public DBObject[] getSpecificExpandedDBOperations(Context clauses) {
+        DBObject match = new BasicDBObject(AUTHENTICATED_SESSION, 1);
+        
+        DBObject group = new BasicDBObject();
+        group.put(ID, "$" + SESSION_ID);
+
+        DBObject projection = new BasicDBObject(SESSION_ID, "$_id");
+
+        return new DBObject[]{new BasicDBObject("$match", match),
+                              new BasicDBObject("$group", group),
+                              new BasicDBObject("$project", projection)};
     }
 
     @Override

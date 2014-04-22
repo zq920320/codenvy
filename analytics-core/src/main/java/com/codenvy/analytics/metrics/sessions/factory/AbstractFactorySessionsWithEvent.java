@@ -18,13 +18,14 @@
 package com.codenvy.analytics.metrics.sessions.factory;
 
 import com.codenvy.analytics.metrics.AbstractLongValueResulted;
+import com.codenvy.analytics.metrics.Expandable;
 import com.codenvy.analytics.metrics.MetricType;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public abstract class AbstractFactorySessionsWithEvent extends AbstractLongValueResulted {
+public abstract class AbstractFactorySessionsWithEvent extends AbstractLongValueResulted implements Expandable {
 
     public AbstractFactorySessionsWithEvent(MetricType metricType) {
-        super(metricType);
+        super(metricType, SESSION_ID);
     }
 
     public AbstractFactorySessionsWithEvent(String metricName) {

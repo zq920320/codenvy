@@ -18,16 +18,20 @@
 package com.codenvy.analytics.metrics.sessions.factory;
 
 import com.codenvy.analytics.metrics.AbstractLongValueResulted;
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Expandable;
 import com.codenvy.analytics.metrics.MetricType;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
 
 import javax.annotation.security.RolesAllowed;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
-public class ConvertedFactorySessions extends AbstractLongValueResulted {
+public class ConvertedFactorySessions extends AbstractLongValueResulted implements Expandable {
 
     public ConvertedFactorySessions() {
-        super(MetricType.CONVERTED_FACTORY_SESSIONS);
+        super(MetricType.CONVERTED_FACTORY_SESSIONS, SESSION_ID);
     }
 
     @Override
@@ -43,5 +47,19 @@ public class ConvertedFactorySessions extends AbstractLongValueResulted {
     @Override
     public String getDescription() {
         return "The number of converted sessions in temporary workspaces";
+    }
+    
+    @Override
+    public DBObject[] getSpecificExpandedDBOperations(Context clauses) {
+        DBObject match = new BasicDBObject(CONVERTED_SESSION, 1);
+        
+        DBObject group = new BasicDBObject();
+        group.put(ID, "$" + SESSION_ID);
+
+        DBObject projection = new BasicDBObject(SESSION_ID, "$_id");
+
+        return new DBObject[]{new BasicDBObject("$match", match),
+                              new BasicDBObject("$group", group),
+                              new BasicDBObject("$project", projection)};
     }
 }

@@ -17,6 +17,7 @@
  */
 package com.codenvy.analytics.metrics.projects;
 
+import com.codenvy.analytics.metrics.Expandable;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ide_usage.AbstractTimeSpentInAction;
 
@@ -26,10 +27,10 @@ import javax.annotation.security.RolesAllowed;
  * @author Alexander Reshetnyak
  */
 @RolesAllowed({"system/admin", "system/manager"})
-public class TimeInRunQueue extends AbstractTimeSpentInAction {
+public class TimeInRunQueue extends AbstractTimeSpentInAction implements Expandable {
 
     public TimeInRunQueue() {
-        super(MetricType.TIME_IN_RUN_QUEUE);
+        super(MetricType.TIME_IN_RUN_QUEUE, PROJECT);
     }
 
     @Override

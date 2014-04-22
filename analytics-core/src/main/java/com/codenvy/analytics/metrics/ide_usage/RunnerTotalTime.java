@@ -18,16 +18,17 @@
 package com.codenvy.analytics.metrics.ide_usage;
 
 import com.codenvy.analytics.metrics.AbstractLongValueResulted;
+import com.codenvy.analytics.metrics.Expandable;
 import com.codenvy.analytics.metrics.MetricType;
 
 import javax.annotation.security.RolesAllowed;
 
 /** @author Anatoliy Bazko */
 @RolesAllowed({"system/admin", "system/manager"})
-public class RunnerTotalTime extends AbstractLongValueResulted {
+public class RunnerTotalTime extends AbstractLongValueResulted implements Expandable {
 
     public RunnerTotalTime() {
-        super(MetricType.RUNNER_TOTAL_TIME);
+        super(MetricType.RUNNER_TOTAL_TIME, PROJECT);
     }
 
     @Override

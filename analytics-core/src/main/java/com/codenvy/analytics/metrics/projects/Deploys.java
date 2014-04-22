@@ -20,15 +20,16 @@
 package com.codenvy.analytics.metrics.projects;
 
 import com.codenvy.analytics.metrics.AbstractLongValueResulted;
+import com.codenvy.analytics.metrics.Expandable;
 import com.codenvy.analytics.metrics.MetricType;
 
 import javax.annotation.security.RolesAllowed;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed(value = {"user", "system/admin", "system/manager"})
-public class Deploys extends AbstractLongValueResulted {
+public class Deploys extends AbstractLongValueResulted implements Expandable {
     public Deploys() {
-        super(MetricType.DEPLOYS);
+        super(MetricType.DEPLOYS, PROJECT);
     }
 
     @Override

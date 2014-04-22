@@ -30,6 +30,10 @@ public abstract class AbstractTimeSpentInAction extends AbstractLongValueResulte
     public AbstractTimeSpentInAction(String metricName) {
         super(metricName);
     }
+    
+    public AbstractTimeSpentInAction(MetricType metricType, String expandindField) {
+        super(metricType, expandindField);
+    }
 
     @Override
     public String[] getTrackedFields() {

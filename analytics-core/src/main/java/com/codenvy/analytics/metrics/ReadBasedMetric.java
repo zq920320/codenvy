@@ -136,7 +136,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
     }
 
     private boolean canReadPrecomputedData(Context context) {
-        return false;
+        return false;  // TODO un-comment in time of merging into the master branch 
 //        return !context.exists(Parameters.DATA_COMPUTATION_PROCESS)
 //               && MetricFactory.exists(getName() + PRECOMPUTED)
 //               && (!context.exists(Parameters.FROM_DATE) || context.isDefaultValue(Parameters.FROM_DATE))
@@ -189,7 +189,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
             }
         }
         
-for (MetricFilter filter : clauses.getFilters()) {
+        for (MetricFilter filter : clauses.getFilters()) {
             String field = filter.toString().toLowerCase();
             Object value = clauses.get(filter);
             if (isNullOrEmpty(value)) {

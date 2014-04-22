@@ -20,15 +20,16 @@
 package com.codenvy.analytics.metrics.users;
 
 import com.codenvy.analytics.metrics.AbstractLongValueResulted;
+import com.codenvy.analytics.metrics.Expandable;
 import com.codenvy.analytics.metrics.MetricType;
 
 import javax.annotation.security.RolesAllowed;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
-public class ShellLaunched extends AbstractLongValueResulted {
+public class ShellLaunched extends AbstractLongValueResulted implements Expandable {
     public ShellLaunched() {
-        super(MetricType.SHELL_LAUNCHED);
+        super(MetricType.SHELL_LAUNCHED, WS);
     }
 
     @Override

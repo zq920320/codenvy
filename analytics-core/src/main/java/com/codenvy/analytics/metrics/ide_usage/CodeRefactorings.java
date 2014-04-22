@@ -18,16 +18,17 @@
 package com.codenvy.analytics.metrics.ide_usage;
 
 import com.codenvy.analytics.metrics.AbstractLongValueResulted;
+import com.codenvy.analytics.metrics.Expandable;
 import com.codenvy.analytics.metrics.MetricType;
 
 import javax.annotation.security.RolesAllowed;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
-public class CodeRefactorings extends AbstractLongValueResulted {
+public class CodeRefactorings extends AbstractLongValueResulted implements Expandable {
 
     public CodeRefactorings() {
-        super(MetricType.CODE_REFACTORINGS);
+        super(MetricType.CODE_REFACTORINGS, PROJECT);
     }
 
     @Override

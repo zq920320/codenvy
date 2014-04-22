@@ -17,6 +17,7 @@
  */
 package com.codenvy.analytics.metrics.projects;
 
+import com.codenvy.analytics.metrics.Expandable;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ide_usage.AbstractTimeSpentInAction;
 
@@ -24,10 +25,10 @@ import javax.annotation.security.RolesAllowed;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
-public class DebugsTime extends AbstractTimeSpentInAction {
+public class DebugsTime extends AbstractTimeSpentInAction implements Expandable {
 
     public DebugsTime() {
-        super(MetricType.DEBUGS_TIME);
+        super(MetricType.DEBUGS_TIME, PROJECT);
     }
 
     @Override

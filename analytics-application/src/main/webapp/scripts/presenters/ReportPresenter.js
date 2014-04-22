@@ -44,11 +44,39 @@ analytics.presenter.ReportPresenter.prototype.mapExpandedMetricToDrillDownPageTy
     "created_workspaces": "WORKSPACES",
     "temporary_workspaces_created": "WORKSPACES",
     "destroyed_workspaces": "WORKSPACES",
+    "shell_launched": "WORKSPACES",
+    "collaborative_sessions_started": "WORKSPACES",
+    
+    "builds": "PROJECTS",
+    "deploys": "PROJECTS",
+    "deploys_to_paas": "PROJECTS",
+    "runs": "PROJECTS",
+    "debugs": "PROJECTS",
+    "destroyed_projects": "PROJECTS",
+    "code_completions": "PROJECTS",
+    "build_queue_terminations": "PROJECTS",
+    "runner_total_time": "PROJECTS",
+    "run_queue_terminations": "PROJECTS",
+    "builds_time": "PROJECTS",
+    "debugs_time": "PROJECTS",
+    "runs_time": "PROJECTS",
+    "time_in_build_queue": "PROJECTS",
+    "time_in_run_queue": "PROJECTS",
+    
+    "factory_sessions_with_build": "SESSIONS",
+    "factory_sessions_with_deploy": "SESSIONS",
+    "factory_sessions_with_run": "SESSIONS",
+    "authenticated_factory_sessions": "SESSIONS",
+    "converted_factory_sessions": "SESSIONS",
+    
 };
 
 analytics.presenter.ReportPresenter.prototype.mapDrillDownPageTypeToDrillDownPageAddress = {
-    "USERS": "/analytics/pages/users-view.jsp?sort=%2Buser",
-    "WORKSPACES": "/analytics/pages/workspaces-view.jsp?sort=%2Bws",
+    "USERS": "/analytics/pages/users-view.jsp?sort=%2Buser&",
+    "WORKSPACES": "/analytics/pages/workspaces-view.jsp?sort=%2Bws&",
+    "FACTORIES": "/analytics/pages/factories-view.jsp?sort=%2Bws_created&",
+    "PROJECTS": "/analytics/pages/projects-view.jsp?",
+    "SESSIONS": "/analytics/pages/sessions-view.jsp?sort=-date&",
 }
 
 analytics.presenter.ReportPresenter.prototype.load = function() {
@@ -145,7 +173,7 @@ analytics.presenter.ReportPresenter.prototype.linkMetricValueWithDrillDownPage =
 }
 
 analytics.presenter.ReportPresenter.prototype.getDrillDownPageLink = function(timeInterval, metricName, metricValue, modelParams) {
-    var drillDownPageLink = this.getDrillDownPageAddress(metricName) + "&" + analytics.util.constructUrlParams(modelParams);
+    var drillDownPageLink = this.getDrillDownPageAddress(metricName) + analytics.util.constructUrlParams(modelParams);
     drillDownPageLink += "&" + this.TIME_INTERVAL_PARAMETER + "=" + timeInterval;
     drillDownPageLink += "&" + this.METRIC_ORIGINAL_NAME_VIEW_PARAMETER + "=" + metricName;
     

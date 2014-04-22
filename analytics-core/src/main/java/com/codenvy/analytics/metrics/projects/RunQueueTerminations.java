@@ -18,6 +18,7 @@
 package com.codenvy.analytics.metrics.projects;
 
 import com.codenvy.analytics.metrics.AbstractLongValueResulted;
+import com.codenvy.analytics.metrics.Expandable;
 import com.codenvy.analytics.metrics.MetricType;
 
 import javax.annotation.security.RolesAllowed;
@@ -26,10 +27,10 @@ import javax.annotation.security.RolesAllowed;
  * @author Alexander Reshetnyak
  */
 @RolesAllowed(value = {"system/admin", "system/manager"})
-public class RunQueueTerminations extends AbstractLongValueResulted {
+public class RunQueueTerminations extends AbstractLongValueResulted implements Expandable {
 
     public RunQueueTerminations() {
-        super(MetricType.RUN_QUEUE_TERMINATIONS);
+        super(MetricType.RUN_QUEUE_TERMINATIONS, PROJECT);
     }
 
     @Override

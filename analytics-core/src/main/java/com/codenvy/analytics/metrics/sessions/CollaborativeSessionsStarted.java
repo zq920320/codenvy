@@ -18,6 +18,7 @@
 package com.codenvy.analytics.metrics.sessions;
 
 import com.codenvy.analytics.metrics.AbstractLongValueResulted;
+import com.codenvy.analytics.metrics.Expandable;
 import com.codenvy.analytics.metrics.MetricType;
 
 import javax.annotation.security.RolesAllowed;
@@ -26,10 +27,10 @@ import javax.annotation.security.RolesAllowed;
  * @author Alexander Reshetnyak
  */
 @RolesAllowed(value = {"system/admin", "system/manager"})
-public class CollaborativeSessionsStarted extends AbstractLongValueResulted {
+public class CollaborativeSessionsStarted extends AbstractLongValueResulted implements Expandable {
 
     public CollaborativeSessionsStarted() {
-        super(MetricType.COLLABORATIVE_SESSIONS_STARTED);
+        super(MetricType.COLLABORATIVE_SESSIONS_STARTED, WS);
     }
 
     @Override

@@ -20,15 +20,16 @@
 package com.codenvy.analytics.metrics.projects;
 
 import com.codenvy.analytics.metrics.AbstractLongValueResulted;
+import com.codenvy.analytics.metrics.Expandable;
 import com.codenvy.analytics.metrics.MetricType;
 
 import javax.annotation.security.RolesAllowed;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
-public class DeploysToPaas extends AbstractLongValueResulted {
+public class DeploysToPaas extends AbstractLongValueResulted implements Expandable {
     public DeploysToPaas() {
-        super(MetricType.DEPLOYS_TO_PAAS);
+        super(MetricType.DEPLOYS_TO_PAAS, PROJECT);
     }
 
     @Override
