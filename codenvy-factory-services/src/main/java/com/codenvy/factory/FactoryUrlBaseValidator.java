@@ -25,7 +25,6 @@ import com.codenvy.api.core.ServerException;
 import com.codenvy.api.factory.*;
 import com.codenvy.api.factory.dto.Factory;
 import com.codenvy.api.factory.dto.Restriction;
-import com.codenvy.api.user.server.Constants;
 import com.codenvy.api.user.server.dao.UserDao;
 import com.codenvy.api.user.server.dao.UserProfileDao;
 import com.codenvy.api.user.shared.dto.*;
@@ -165,13 +164,16 @@ public class FactoryUrlBaseValidator implements FactoryUrlValidator {
                             throw new FactoryUrlException("Current user is not allowed for using this method.");
                     }
                     boolean isOwner = false;
+                    List<Member> members = accountDao.getMembers(orgid);
+                    if (members.isEmpty()) {
+                        throw new FactoryUrlException(String.format(PARAMETRIZED_ILLEGAL_ACCID_PARAMETER_MESSAGE, factory.getOrgid()));
+                    }
                     for (Member accountMember : accountDao.getMembers(orgid)) {
                         if (accountMember.getUserId().equals(user.getId()) && accountMember.getRoles().contains(
                                 "account/owner")) {
                             isOwner = true;
                             break;
                         }
-
                     }
                     if (!isOwner) {
                         throw new FactoryUrlException("You are not authorized to use this orgid.");
