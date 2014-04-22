@@ -118,6 +118,7 @@ public class TestActOn extends BaseTest {
         assertEquals("l", user1Data.get(HEADERS.get(AbstractMetric.USER_LAST_NAME)));
         assertEquals("phone", user1Data.get(HEADERS.get(AbstractMetric.USER_PHONE)));
         assertEquals("company", user1Data.get(HEADERS.get(AbstractMetric.USER_COMPANY)));
+        assertEquals("2013-11-01", user1Data.get(HEADERS.get(AbstractMetric.CREATION_DATE)));
         assertEquals("2", user1Data.get(HEADERS.get(UsersStatisticsList.PROJECTS)));
         assertEquals("0", user1Data.get(HEADERS.get(UsersStatisticsList.BUILDS)));
         assertEquals("0", user1Data.get(HEADERS.get(UsersStatisticsList.RUNS)));
@@ -142,6 +143,7 @@ public class TestActOn extends BaseTest {
         assertEquals("", user2Data.get(HEADERS.get(AbstractMetric.USER_LAST_NAME)));
         assertEquals("", user2Data.get(HEADERS.get(AbstractMetric.USER_PHONE)));
         assertEquals("", user2Data.get(HEADERS.get(AbstractMetric.USER_COMPANY)));
+        assertEquals("", user2Data.get(HEADERS.get(AbstractMetric.CREATION_DATE)));
         assertEquals("1", user2Data.get(HEADERS.get(UsersStatisticsList.PROJECTS)));
         assertEquals("7", user2Data.get(HEADERS.get(UsersStatisticsList.BUILDS)));
         assertEquals("1", user2Data.get(HEADERS.get(UsersStatisticsList.RUNS)));
@@ -166,6 +168,7 @@ public class TestActOn extends BaseTest {
         assertEquals("", user3Data.get(HEADERS.get(AbstractMetric.USER_LAST_NAME)));
         assertEquals("", user3Data.get(HEADERS.get(AbstractMetric.USER_PHONE)));
         assertEquals("", user3Data.get(HEADERS.get(AbstractMetric.USER_COMPANY)));
+        assertEquals("", user3Data.get(HEADERS.get(AbstractMetric.CREATION_DATE)));
         assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.PROJECTS)));
         assertEquals("1", user3Data.get(HEADERS.get(UsersStatisticsList.BUILDS)));
         assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.RUNS)));
@@ -213,6 +216,7 @@ public class TestActOn extends BaseTest {
         assertEquals("l", user1Data.get(HEADERS.get(AbstractMetric.USER_LAST_NAME)));
         assertEquals("phone", user1Data.get(HEADERS.get(AbstractMetric.USER_PHONE)));
         assertEquals("company", user1Data.get(HEADERS.get(AbstractMetric.USER_COMPANY)));
+        assertEquals("2013-11-01", user1Data.get(HEADERS.get(AbstractMetric.CREATION_DATE)));
         assertEquals("2", user1Data.get(HEADERS.get(UsersStatisticsList.PROJECTS)));
         assertEquals("0", user1Data.get(HEADERS.get(UsersStatisticsList.BUILDS)));
         assertEquals("0", user1Data.get(HEADERS.get(UsersStatisticsList.RUNS)));
@@ -237,6 +241,7 @@ public class TestActOn extends BaseTest {
         assertEquals("", user2Data.get(HEADERS.get(AbstractMetric.USER_LAST_NAME)));
         assertEquals("", user2Data.get(HEADERS.get(AbstractMetric.USER_PHONE)));
         assertEquals("", user2Data.get(HEADERS.get(AbstractMetric.USER_COMPANY)));
+        assertEquals("", user2Data.get(HEADERS.get(AbstractMetric.CREATION_DATE)));
         assertEquals("1", user2Data.get(HEADERS.get(UsersStatisticsList.PROJECTS)));
         assertEquals("1", user2Data.get(HEADERS.get(UsersStatisticsList.BUILDS)));
         assertEquals("1", user2Data.get(HEADERS.get(UsersStatisticsList.RUNS)));
@@ -261,6 +266,7 @@ public class TestActOn extends BaseTest {
         assertEquals("", user3Data.get(HEADERS.get(AbstractMetric.USER_LAST_NAME)));
         assertEquals("", user3Data.get(HEADERS.get(AbstractMetric.USER_PHONE)));
         assertEquals("", user3Data.get(HEADERS.get(AbstractMetric.USER_COMPANY)));
+        assertEquals("", user3Data.get(HEADERS.get(AbstractMetric.CREATION_DATE)));
         assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.PROJECTS)));
         assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.BUILDS)));
         assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.RUNS)));
@@ -311,6 +317,9 @@ public class TestActOn extends BaseTest {
 
     private File prepareLog() throws IOException {
         List<Event> events = new ArrayList<>();
+
+        events.add(Event.Builder.createUserCreatedEvent("id", "user1")
+                                .withDate("2013-11-01").withTime("10:00:00,000").build());
 
         events.add(Event.Builder.createUserSSOLoggedInEvent("user2", "google")
                                 .withDate("2013-11-01").build());

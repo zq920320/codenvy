@@ -268,7 +268,7 @@ public class TestAcceptance extends BaseTest {
         aggregateResult("User's profiles", new StringValueData("Company"), sectionData.get(0).get(3));
         aggregateResult("User's profiles", new StringValueData("Job"), sectionData.get(0).get(4));
 
-        aggregateResult("User's profiles", LongValueData.valueOf(46), LongValueData.valueOf(sectionData.size()));
+        aggregateResult("User's profiles", LongValueData.valueOf(47), LongValueData.valueOf(sectionData.size()));
     }
 
     private void assertFactoryProductUsageDay(SectionData sectionData) {

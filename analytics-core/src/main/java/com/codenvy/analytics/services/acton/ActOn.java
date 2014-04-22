@@ -37,7 +37,9 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.io.*;
 import java.net.SocketTimeoutException;
+import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
@@ -62,6 +64,8 @@ public class ActOn extends Feature {
     private static final String FTP_MAX_EFFORTS = "analytics.acton.ftp_maxEfforts";
     private static final String FTP_AUTH        = "analytics.acton.ftp_auth";
 
+    private static final DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+
     public static final String ACTIVE            = "active";
     public static final String PROFILE_COMPLETED = "profileCompleted";
     public static final String POINTS            = "points";
@@ -74,6 +78,7 @@ public class ActOn extends Feature {
         put(AbstractMetric.USER_LAST_NAME, "lastName");
         put(AbstractMetric.USER_PHONE, "phone");
         put(AbstractMetric.USER_COMPANY, "company");
+        put(AbstractMetric.CREATION_DATE, AbstractMetric.CREATION_DATE);
         put(UsersStatisticsList.PROJECTS, "projects");
         put(UsersStatisticsList.BUILDS, "builts");
         put(UsersStatisticsList.RUNS, "runs");
@@ -307,6 +312,15 @@ public class ActOn extends Feature {
         out.write(",");
 
         writeString(out, profile.get(AbstractUsersProfile.USER_COMPANY));
+        out.write(",");
+
+        LongValueData valueData = (LongValueData)profile.get(AbstractUsersProfile.CREATION_DATE);
+        if (valueData == null) {
+            writeString(out, StringValueData.DEFAULT);
+        } else {
+            String creationDate = df.format(new Date(valueData.getAsLong()));
+            writeString(out, StringValueData.valueOf(creationDate));
+        }
         out.write(",");
 
         writeInt(out, stat.get(UsersStatisticsList.PROJECTS));

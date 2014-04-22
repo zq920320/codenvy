@@ -49,6 +49,11 @@ public class TestUserUpdateProfile extends BaseTest {
     public void prepare() throws Exception {
         List<Event> events = new ArrayList<>();
 
+
+        events.add(Event.Builder.createUserCreatedEvent("id", "user1@gmail.com")
+                                .withDate("2013-01-01").withTime("10:00:00,000").build());
+        events.add(Event.Builder.createUserCreatedEvent("id", "user2@gmail.com")
+                                .withDate("2013-01-01").withTime("11:00:00,000").build());
         events.add(Event.Builder.createUserUpdateProfile("user2@gmail.com", "f2", "l2", "company2", "11", "1")
                                 .withDate("2013-01-01").build());
         events.add(Event.Builder.createUserUpdateProfile("user1@gmail.com", "f2", "l2", "company1", "11", "1")
@@ -64,6 +69,10 @@ public class TestUserUpdateProfile extends BaseTest {
         builder.put(Parameters.LOG, log.getAbsolutePath());
         pigServer.execute(ScriptType.USERS_UPDATE_PROFILES, builder.build());
 
+        events.add(Event.Builder.createUserCreatedEvent("id", "user3@gmail.com")
+                                .withDate("2013-01-02").withTime("12:00:00,000").build());
+        events.add(Event.Builder.createUserCreatedEvent("id", "user4@gmail.com")
+                                .withDate("2013-01-02").withTime("13:00:00,000").build());
         events.add(Event.Builder.createUserUpdateProfile("user1@gmail.com", "f3", "l3", "company1", "22", "2")
                                 .withDate("2013-01-02").build());
         events.add(Event.Builder.createUserUpdateProfile("user3@gmail.com", "f4", "l4", "company3", "22", "2")
@@ -100,25 +109,29 @@ public class TestUserUpdateProfile extends BaseTest {
                       "l3",
                       "company1",
                       "22",
-                      "Other");
+                      "Other",
+                      fullDateFormat.parse("2013-01-01 10:00:00").getTime());
         assertProfile(m.get("user2@gmail.com"),
                       "f2",
                       "l2",
                       "company2",
                       "11",
-                      "Other");
+                      "Other",
+                      fullDateFormat.parse("2013-01-01 11:00:00").getTime());
         assertProfile(m.get("user3@gmail.com"),
                       "f4",
                       "l4",
                       "company3",
                       "22",
-                      "Other");
+                      "Other",
+                      fullDateFormat.parse("2013-01-02 12:00:00").getTime());
         assertProfile(m.get("user4@gmail.com"),
                       "f4",
                       "l4",
                       "company4 :)",
                       "22",
-                      "");
+                      "",
+                      fullDateFormat.parse("2013-01-02 13:00:00").getTime());
     }
 
     private void assertProfile(Map<String, ValueData> profile,
@@ -126,12 +139,14 @@ public class TestUserUpdateProfile extends BaseTest {
                                String lastName,
                                String company,
                                String phone,
-                               String job) {
+                               String job,
+                               long creationDate) {
         assertEquals(StringValueData.valueOf(firstName), profile.get("user_first_name"));
         assertEquals(StringValueData.valueOf(lastName), profile.get("user_last_name"));
         assertEquals(StringValueData.valueOf(company), profile.get("user_company"));
         assertEquals(StringValueData.valueOf(phone), profile.get("user_phone"));
         assertEquals(StringValueData.valueOf(job), profile.get("user_job"));
+        assertEquals(LongValueData.valueOf(creationDate), profile.get("creation_date"));
     }
 
     @Test

@@ -36,7 +36,10 @@ public class NullToEmpty extends EvalFunc<String> {
         }
 
         String param = (String)input.get(0);
-        return param != null ? param : "";
+        if (param == null || param.equalsIgnoreCase("null")) {
+            return "";
+        }
+        return param;
     }
 
     @Override

@@ -43,7 +43,8 @@ public class UsersProfilesList extends AbstractUsersProfile {
                             USER_LAST_NAME,
                             USER_COMPANY,
                             USER_JOB,
-                            USER_PHONE};
+                            USER_PHONE,
+                            CREATION_DATE};
     }
 
     @Override
