@@ -19,7 +19,7 @@ package com.codenvy.factory;
 
 import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.server.exception.AccountException;
-import com.codenvy.api.account.shared.dto.Account;
+import com.codenvy.api.account.shared.dto.Member;
 import com.codenvy.api.account.shared.dto.Subscription;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
@@ -48,6 +48,7 @@ import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.TimeZone;
 
 import static org.mockito.Matchers.anyString;
@@ -75,9 +76,6 @@ public class FactoryUrlBaseValidatorTest {
     UserProfileDao profileDao;
 
     @Mock
-    private Account organization;
-
-    @Mock
     private FactoryBuilder builder;
 
     @Mock
@@ -87,6 +85,8 @@ public class FactoryUrlBaseValidatorTest {
     private FactoryUrlBaseValidator validator;
 
     private SimpleDateFormat datetimeFormatter;
+
+    private Member member;
 
     private Factory url;
 
@@ -107,12 +107,11 @@ public class FactoryUrlBaseValidatorTest {
                                               .withServiceId("TrackedFactory")
                                               .withStartDate(datetimeFormatter.parse("2000-11-21 11:11:11").getTime())
                                               .withEndDate(datetimeFormatter.parse("2022-11-30 11:21:15").getTime());
-
-        when(accountDao.getById(ID)).thenReturn(organization);
+        member = DtoFactory.getInstance().createDto(Member.class).withUserId("userid").withRoles(Arrays.asList("account/owner"));
         when(accountDao.getSubscriptions(ID)).thenReturn(Arrays.asList(subscription));
+        when(accountDao.getMembers(anyString())).thenReturn(Arrays.asList(member));
         when(userDao.getById("userid")).thenReturn(user);
         when(profileDao.getById(anyString())).thenReturn(DtoFactory.getInstance().createDto(Profile.class));
-        when(organization.getOwner()).thenReturn("userid");
         url.setOrgid(ID);
         url.setUserid("userid");
     }
@@ -243,15 +242,18 @@ public class FactoryUrlBaseValidatorTest {
 
     @Test(expectedExceptions = FactoryUrlException.class)
     public void shouldNotValidateIfAccountDoesNotExist() throws AccountException, FactoryUrlException, NotFoundException, ServerException {
-        when(accountDao.getById(ID)).thenThrow(NotFoundException.class);
+        when(accountDao.getMembers(anyString())).thenReturn(Collections.<Member>emptyList());
 
         validator.validate(url, false, request);
     }
 
     @Test(expectedExceptions = FactoryUrlException.class, expectedExceptionsMessageRegExp = "You are not authorized to use this orgid.")
     public void shouldNotValidateIfFactoryOwnerIsNotOrgidOwner()
-            throws AccountException, FactoryUrlException, ParseException, UserException, UserProfileException {
-        when(organization.getOwner()).thenReturn("anotheruserid");
+            throws AccountException, FactoryUrlException, ParseException, UserException, UserProfileException,
+                   ServerException {
+        Member wronMember  = member;
+        wronMember.setUserId("anotheruserid");
+        when(accountDao.getMembers(anyString())).thenReturn(Arrays.asList(wronMember));
 
         // when, then
         validator.validate(url, false, request);

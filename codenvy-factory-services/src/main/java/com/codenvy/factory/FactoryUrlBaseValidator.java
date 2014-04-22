@@ -18,16 +18,18 @@
 package com.codenvy.factory;
 
 import com.codenvy.api.account.server.dao.AccountDao;
-import com.codenvy.api.account.shared.dto.Account;
-import com.codenvy.api.account.shared.dto.Subscription;
+import com.codenvy.api.account.shared.dto.*;
+import com.codenvy.api.account.shared.dto.Member;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.api.factory.*;
 import com.codenvy.api.factory.dto.Factory;
 import com.codenvy.api.factory.dto.Restriction;
+import com.codenvy.api.user.server.Constants;
 import com.codenvy.api.user.server.dao.UserDao;
 import com.codenvy.api.user.server.dao.UserProfileDao;
 import com.codenvy.api.user.shared.dto.*;
+import com.codenvy.api.user.shared.dto.Attribute;
 import com.codenvy.commons.lang.URLEncodedUtils;
 
 import javax.inject.Inject;
@@ -154,13 +156,6 @@ public class FactoryUrlBaseValidator implements FactoryUrlValidator {
         // validate orgid
         String orgid = "".equals(factory.getOrgid()) ? null : factory.getOrgid();
         if (null != orgid) {
-            Account account;
-            try {
-                account = accountDao.getById(orgid);
-            } catch (NotFoundException | ServerException e) {
-                throw new FactoryUrlException(String.format(PARAMETRIZED_ILLEGAL_ACCID_PARAMETER_MESSAGE, factory.getOrgid()));
-            }
-
             if (factory.getUserid() != null) {
                 try {
                     User user = userDao.getById(factory.getUserid());
@@ -169,7 +164,16 @@ public class FactoryUrlBaseValidator implements FactoryUrlValidator {
                         if (attribute.getName().equals("temporary") && Boolean.parseBoolean(attribute.getValue()))
                             throw new FactoryUrlException("Current user is not allowed for using this method.");
                     }
-                    if (!account.getOwner().equals(user.getId())) {
+                    boolean isOwner = false;
+                    for (Member accountMember : accountDao.getMembers(orgid)) {
+                        if (accountMember.getUserId().equals(user.getId()) && accountMember.getRoles().contains(
+                                "account/owner")) {
+                            isOwner = true;
+                            break;
+                        }
+
+                    }
+                    if (!isOwner) {
                         throw new FactoryUrlException("You are not authorized to use this orgid.");
                     }
                 } catch (NotFoundException | ServerException e) {
