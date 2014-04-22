@@ -23,6 +23,7 @@ import com.codenvy.analytics.services.configuration.XmlConfigurationManager;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -53,6 +54,10 @@ public class EventsHolder {
 
     public boolean isEventExists(String eventName) {
         return eventsMap.containsKey(eventName);
+    }
+
+    public Collection<EventConfiguration> getAvailableEvents() {
+        return eventsMap.values();
     }
 
     /**

@@ -20,11 +20,23 @@ package com.codenvy.analytics.services.logchecker;
 import com.codenvy.analytics.Configurator;
 import com.codenvy.analytics.Injector;
 import com.codenvy.analytics.MailService;
+import com.codenvy.analytics.Utils;
+import com.codenvy.analytics.metrics.AbstractMetric;
 import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.metrics.projects.ProjectPaases;
+import com.codenvy.analytics.metrics.projects.ProjectTypes;
+import com.codenvy.analytics.persistent.CollectionsManagement;
 import com.codenvy.analytics.pig.PigServer;
+import com.codenvy.analytics.pig.scripts.EventConfiguration;
+import com.codenvy.analytics.pig.scripts.EventsHolder;
+import com.codenvy.analytics.pig.scripts.Parameter;
 import com.codenvy.analytics.pig.scripts.ScriptType;
+import com.codenvy.analytics.pig.udf.EventValidation;
 import com.codenvy.analytics.services.Feature;
+import com.mongodb.DBCollection;
+import com.mongodb.DBObject;
 
 import org.apache.pig.data.Tuple;
 import org.slf4j.Logger;
@@ -40,6 +52,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Iterator;
+import java.util.regex.Pattern;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @Singleton
@@ -52,11 +65,15 @@ public class LogChecker extends Feature {
     private static final String MAIL_SUBJECT = "analytics.log-checker.mail_subject";
     private static final String MAIL_TO      = "analytics.log-checker.mail_to";
 
-    private final Configurator configurator;
+    private final Configurator          configurator;
+    private final EventsHolder          eventsHolder;
+    private final CollectionsManagement collectionsManagement;
 
     @Inject
-    public LogChecker(Configurator configurator) {
+    public LogChecker(Configurator configurator, EventsHolder eventsHolder, CollectionsManagement collectionsManagement) {
         this.configurator = configurator;
+        this.eventsHolder = eventsHolder;
+        this.collectionsManagement = collectionsManagement;
     }
 
     @Override
@@ -65,14 +82,8 @@ public class LogChecker extends Feature {
     }
 
     @Override
-    protected void putParametersInContext(Context.Builder builder) {
-        builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.name());
-        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
-    }
-
-    @Override
-    protected void doExecute(Context context) throws IOException {
-        LOG.info("logchecker is started");
+    protected void doExecute(Context context) throws IOException, ParseException {
+        LOG.info("LogChecker is started");
         long start = System.currentTimeMillis();
 
         try {
@@ -82,36 +93,87 @@ public class LogChecker extends Feature {
             String date = new SimpleDateFormat("yyyy-MM-dd").format(toDate.getTime());
 
             sendReport(reportFile, date);
-        } catch (ParseException e) {
-            e.printStackTrace();
         } finally {
-            LOG.info("logchecker is finished in " + (System.currentTimeMillis() - start) / 1000 + " sec.");
+            LOG.info("LogChecker is finished in " + (System.currentTimeMillis() - start) / 1000 + " sec.");
         }
     }
 
-    private File getReport(Context context) throws IOException, ParseException {
+    protected File getReport(Context context) throws IOException, ParseException {
         File reportFile = new File(configurator.getTmpDir(), "report.txt");
         try (BufferedWriter out = new BufferedWriter(new FileWriter(reportFile))) {
-            writeReport(ScriptType.CHECK_LOGS_1, context, out);
+            doLogChecker(context, out);
+            doEventChecker(context, out);
         }
 
         return reportFile;
     }
 
-    private void writeReport(ScriptType scriptType,
-                             Context context,
-                             BufferedWriter out) throws IOException, ParseException {
+    public void doEventChecker(Context context, BufferedWriter out) throws IOException, ParseException {
+        DBCollection collection = collectionsManagement.getOrCreate(MetricType.USERS_ACTIVITY_LIST.toString().toLowerCase());
 
+        for (EventConfiguration eventConf : eventsHolder.getAvailableEvents()) {
+            String event = eventConf.getName();
+            if (!isEventExist(collection, context, event)) {
+                out.write("Event doesn't exist: " + event);
+                out.newLine();
+
+                continue;
+            }
+
+            for (Parameter param : eventConf.getParameters().getParams()) {
+                String name = param.getName();
+
+                if (param.getAllowedValues() != null) {
+                    doCheckEventWithParameters(collection, context, event, name, param.getAllowedValues().split(","), out);
+                } else if (name.equals(EventValidation.PAAS)) {
+                    doCheckEventWithParameters(collection, context, event, name, ProjectPaases.PAASES, out);
+                } else if (name.equals(EventValidation.TYPE)) {
+                    doCheckEventWithParameters(collection, context, event, name, ProjectTypes.TYPES, out);
+                }
+            }
+        }
+    }
+
+    private void doCheckEventWithParameters(DBCollection collection,
+                                            Context context,
+                                            String event,
+                                            String param,
+                                            String[] values,
+                                            BufferedWriter out) throws IOException, ParseException {
+        for (String value : values) {
+            if (!isEventExist(collection, context, event, param, value)) {
+                out.write(String.format("Event '%s' with parameter '%s' and value '%s' doesn't exist", event, param, value));
+                out.newLine();
+            }
+        }
+    }
+
+    private boolean isEventExist(DBCollection collection, Context context, String event) throws ParseException {
+        DBObject dbObject = Utils.setDateFilter(context);
+        dbObject.put(AbstractMetric.EVENT, event);
+
+        return collection.findOne(dbObject) != null;
+    }
+
+    private boolean isEventExist(DBCollection collection, Context context, String event, String param, String value) throws ParseException {
+        DBObject dbObject = Utils.setDateFilter(context);
+        dbObject.put(AbstractMetric.EVENT, event);
+        dbObject.put(param.toLowerCase(), Pattern.compile(value, Pattern.CASE_INSENSITIVE));
+
+        return collection.findOne(dbObject) != null;
+    }
+
+    protected void doLogChecker(Context context, BufferedWriter out) throws IOException, ParseException {
         PigServer pigServer = Injector.getInstance(PigServer.class);
         try {
-            Iterator<Tuple> iterator = pigServer.executeAndReturn(scriptType, context);
+            Iterator<Tuple> iterator = pigServer.executeAndReturn(ScriptType.LOG_CHECKER, context);
             while (iterator.hasNext()) {
                 out.write(iterator.next().toString());
                 out.newLine();
             }
         } finally {
             if (pigServer != null) {
-                pigServer.close();
+                pigServer.shutdown();
             }
         }
     }

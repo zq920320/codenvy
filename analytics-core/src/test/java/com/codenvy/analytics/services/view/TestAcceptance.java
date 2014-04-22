@@ -28,6 +28,7 @@ import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.persistent.JdbcDataPersisterFactory;
 import com.codenvy.analytics.services.configuration.XmlConfigurationManager;
+import com.codenvy.analytics.services.logchecker.LogChecker;
 import com.codenvy.analytics.services.pig.PigRunner;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.OutputSupplier;
@@ -49,7 +50,7 @@ import java.util.zip.ZipInputStream;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
-import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.*;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestAcceptance extends BaseTest {
@@ -58,12 +59,11 @@ public class TestAcceptance extends BaseTest {
     private ViewBuilder viewBuilder;
     private PigRunner   pigRunner;
 
-    private static final String BASE_TEST_RESOURCE_DIR =
-            BASE_DIR + "/test-classes/" + TestAcceptance.class.getSimpleName();
+    private static final String BASE_TEST_RESOURCE_DIR = BASE_DIR + "/test-classes/" + TestAcceptance.class.getSimpleName();
 
-    private static final String TEST_VIEW_CONFIGURATION_FILE = BASE_TEST_RESOURCE_DIR + "/view.xml";
-    private static final String TEST_STATISTICS_ARCHIVE      =
-            TestAcceptance.class.getSimpleName() + "/messages_2013-11-24";
+    private static final String TEST_VIEW_CONFIGURATION_FILE     = BASE_TEST_RESOURCE_DIR + "/view.xml";
+    private static final String TEST_EXPECTED_LOG_CHECKER_REPORT = BASE_TEST_RESOURCE_DIR + "/log-checker-report.txt";
+    private static final String TEST_STATISTICS_ARCHIVE          = TestAcceptance.class.getSimpleName() + "/messages_2013-11-24";
 
     @BeforeClass
     public void init() throws Exception {
@@ -86,7 +86,6 @@ public class TestAcceptance extends BaseTest {
 
     private File getResourceAsBytes(String originalDate, String newDate) throws Exception {
         String archive = getClass().getClassLoader().getResource(TEST_STATISTICS_ARCHIVE).getFile();
-
 
         try (ZipInputStream in = new ZipInputStream(new BufferedInputStream(new FileInputStream(archive)))) {
             ZipEntry zipEntry = in.getNextEntry();
@@ -131,7 +130,10 @@ public class TestAcceptance extends BaseTest {
         }
 
         assertEquals(builder.length(), 0, builder.toString());
+    }
 
+    @Test
+    public void testNumberOfItems() throws Exception {
         assertNumberOfItems(MetricType.USAGE_TIME_BY_WORKSPACES_LIST, MetricType.USAGE_TIME_BY_WORKSPACES);
         assertNumberOfItems(MetricType.USERS_ACTIVITY_LIST, MetricType.USERS_ACTIVITY);
         assertNumberOfItems(MetricType.USAGE_TIME_BY_USERS_LIST, MetricType.USAGE_TIME_BY_USERS);
@@ -143,6 +145,30 @@ public class TestAcceptance extends BaseTest {
         assertNumberOfItems(MetricType.CREATED_FACTORIES_LIST, MetricType.CREATED_FACTORIES);
         assertNumberOfItems(MetricType.FACTORY_USERS_LIST, MetricType.FACTORY_USERS);
         assertNumberOfItems(MetricType.FACTORY_STATISTICS_LIST, MetricType.FACTORY_STATISTICS);
+    }
+
+    @Test
+    public void testLogChecker() throws Exception {
+        File actualReport = new File(BASE_DIR, "report.txt");
+        File expectedReport = new File(TEST_EXPECTED_LOG_CHECKER_REPORT);
+
+        Context context = Utils.initializeContext(Parameters.TimeUnit.DAY);
+        LogChecker logChecker = Injector.getInstance(LogChecker.class);
+
+        try (BufferedWriter out = new BufferedWriter(new FileWriter(actualReport))) {
+            logChecker.doEventChecker(context, out);
+        }
+
+        try (BufferedReader in1 = new BufferedReader(new FileReader(actualReport));
+             BufferedReader in2 = new BufferedReader(new FileReader(expectedReport))) {
+
+            String strLine1, strLine2;
+            while ((strLine1 = in1.readLine()) != null && (strLine2 = in2.readLine()) != null) {
+                assertNotNull(strLine1);
+                assertNotNull(strLine2);
+                assertTrue(strLine1.equals(strLine2));
+            }
+        }
     }
 
     private void assertNumberOfItems(MetricType listMetricType, MetricType countMetricType) throws IOException {

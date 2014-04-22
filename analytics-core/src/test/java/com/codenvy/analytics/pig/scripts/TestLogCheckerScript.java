@@ -34,19 +34,17 @@ import java.util.List;
 
 import static org.testng.Assert.assertEquals;
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class TestCheckLogs extends BaseTest {
+/** @author Anatoliy Bazko */
+public class TestLogCheckerScript extends BaseTest {
 
     @Test
     public void testExecute() throws Exception {
         List<Event> events = new ArrayList<>();
 
-        events.add(Event.Builder.createApplicationCreatedEvent("user1", "ws1", "session", "project1", "type1", "null")
-                                .withDate("2013-01-01").build());
-        events.add(Event.Builder.createApplicationCreatedEvent("user1", "ws1", "session", "project2", "type1", "")
-                                .withDate("2013-01-01").build());
-        events.add(Event.Builder.createProjectCreatedEvent("", "", "", "project3", "type1")
-                                .withDate("2013-01-01").build());
+        events.add(
+                Event.Builder.createApplicationCreatedEvent("user1", "ws1", "session", "project1", "type1", "null").withDate("2013-01-01").build());
+        events.add(Event.Builder.createApplicationCreatedEvent("user1", "ws1", "session", "project2", "type1", "").withDate("2013-01-01").build());
+        events.add(Event.Builder.createProjectCreatedEvent("", "", "", "project3", "type1").withDate("2013-01-01").build());
 
         File log = LogGenerator.generateLog(events);
 
@@ -58,7 +56,7 @@ public class TestCheckLogs extends BaseTest {
         builder.put(Parameters.LOG, log.getAbsolutePath());
 
         int count = 0;
-        Iterator<Tuple> iterator = pigServer.executeAndReturn(ScriptType.CHECK_LOGS_1, builder.build());
+        Iterator<Tuple> iterator = pigServer.executeAndReturn(ScriptType.LOG_CHECKER, builder.build());
         for (; iterator.hasNext(); iterator.next()) {
             count++;
         }

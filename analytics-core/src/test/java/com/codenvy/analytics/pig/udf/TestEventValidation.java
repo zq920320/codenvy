@@ -25,9 +25,11 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertNull;
 
 /**
  * @author Alexander Reshetnyak
+ * @author Anatoliy Bazko
  */
 public class TestEventValidation extends BaseTest {
 
@@ -38,16 +40,54 @@ public class TestEventValidation extends BaseTest {
         eventValidation = new EventValidation();
     }
 
-    @Test(dataProvider = "providerTrue")
-    public void shoulTruedEventValidation(String event, String ws, String user, String message) throws Exception {
+    @Test(dataProvider = "correctMessagesProvider")
+    public void testCorrectMessages(String event, String ws, String user, String message) throws Exception {
         Tuple tuple = makeTuple(event, ws, user, message);
-        assertEquals(eventValidation.exec(tuple).booleanValue(), true);
+        assertNull(message, eventValidation.exec(tuple));
     }
 
-    @Test(dataProvider = "providerFalse")
-    public void shouldFalseEventValidation(String event, String ws, String user, String message) throws Exception {
+    @Test(dataProvider = "wrongWorkspacesNamesProvider")
+    public void testMessagesWithWrongWorkspaceName(String event, String ws, String user, String message) throws Exception {
         Tuple tuple = makeTuple(event, ws, user, message);
-        assertEquals(eventValidation.exec(tuple).booleanValue(), false);
+        assertEquals(message, EventValidation.WORKSPACE_IS_EMPTY, eventValidation.exec(tuple));
+    }
+
+
+    @Test(dataProvider = "wrongUsersNamesProvider")
+    public void testMessagesWithWrongUserName(String event, String ws, String user, String message) throws Exception {
+        Tuple tuple = makeTuple(event, ws, user, message);
+        assertEquals(message, EventValidation.USER_IS_EMPTY, eventValidation.exec(tuple));
+    }
+
+    @Test(dataProvider = "wrongProjectTypesProvider")
+    public void testMessagesWithWrongProjectType(String event, String ws, String user, String message, String type) throws Exception {
+        Tuple tuple = makeTuple(event, ws, user, message);
+        assertEquals(message,
+                     String.format(EventValidation.VALUE_IS_NOT_ALLOWED, type, "TYPE"),
+                     eventValidation.exec(tuple));
+    }
+
+
+    @Test(dataProvider = "wrongPaasProvider")
+    public void testMessagesWithWrongPaas(String event, String ws, String user, String message, String paas) throws Exception {
+        Tuple tuple = makeTuple(event, ws, user, message);
+        assertEquals(message,
+                     String.format(EventValidation.VALUE_IS_NOT_ALLOWED, paas, "PAAS"),
+                     eventValidation.exec(tuple));
+    }
+
+    @Test(dataProvider = "wrongUsingParameterProvider")
+    public void testMessagesWithWrongUsingParameter(String event, String ws, String user, String message, String value) throws Exception {
+        Tuple tuple = makeTuple(event, ws, user, message);
+        assertEquals(message,
+                     String.format(EventValidation.VALUE_IS_NOT_ALLOWED, value, "USING"),
+                     eventValidation.exec(tuple));
+    }
+
+    @Test(dataProvider = "correctUsingParameterProvider")
+    public void testMessagesWithCorrectUsingParameter(String event, String ws, String user, String message) throws Exception {
+        Tuple tuple = makeTuple(event, ws, user, message);
+        assertNull(eventValidation.exec(tuple));
     }
 
     private Tuple makeTuple(String event, String ws, String user, String message) {
@@ -60,35 +100,73 @@ public class TestEventValidation extends BaseTest {
         return tuple;
     }
 
-    @DataProvider(name = "providerTrue")
-    public Object[][] createDataTrue() {
+    @DataProvider(name = "correctMessagesProvider")
+    public Object[][] getCorrectMessages() {
         return new Object[][]{
-                {"project-created", "ws1", "user1", "127.0.0.1 2013-12-05 01:26:30,878[]  [] []    [][][] - EVENT#project-created# PROJECT#Sample-TwitterBootstrap# TYPE#JavaScript#"},
-                {"user-created", "ws2", "user2", "127.0.0.1 2013-12-05 01:09:31,323[]  [] []     [][][] - EVENT#user-created# USER-ID#usermwl9896s2we14h9n# ALIASES#anonymoususer_zz31bd#"},
-                {"user-update-profile", "ws9", "user_tt", "127.0.0.1 2013-12-05 00:12:28,875[]  [] []    [][][] - EVENT#user-update-profile# USER#user_tt# FIRSTNAME## LASTNAME#_l# COMPANY## PHONE## JOBTITLE##"},
-                {"project-built", "ws7", "user5", "127.0.0.1 2013-12-05 00:27:57,325[]  [] []  [][] - EVENT#project-built# PROJECT#Default# TYPE#Servlet/JSP#"},
-                {"project-built", "ws8", "user6", "127.0.0.1 2013-12-05 00:27:57,325[]  [] []  [][] - EVENT#project-built# PROJECT#PizzaHome-660# TYPE#Default#"},
+                {"project-created", "ws", "user", "PROJECT#Sample-TwitterBootstrap# TYPE#JavaScript#"},
+                {"user-created", "ws", "user", "USER-ID#usermwl9896s2we14h9n# ALIASES#anonymoususer_zz31bd#"},
+                {"user-update-profile", "ws", "user_tt", "USER#user_tt# FIRSTNAME## LASTNAME#_l# COMPANY## PHONE## JOBTITLE##"},
+                {"project-built", "ws", "user", "PROJECT#Default# TYPE#Servlet/JSP#"},
+                {"project-built", "ws", "user", "PROJECT#PizzaHome-660# TYPE#Default#"},
         };
     }
 
-    @DataProvider(name = "providerFalse")
-    public Object[][] createDataFalse() {
+    @DataProvider(name = "wrongWorkspacesNamesProvider")
+    public Object[][] getMessagesWithWrongWorkspaceName() {
         return new Object[][]{
-                {"project-created", "ws1", "user1", "127.0.0.1 2013-12-05 01:26:30,878[]  [] []    [][][] - EVENT#project-created# PROJECT#Sample-TwitterBootstrap# TYPE##"},
-                {"user-created", "ws2", "user2", "127.0.0.1 2013-12-05 01:09:31,323[]  [] []     [][][] - EVENT#user-created# USER-ID## ALIASES#anonymoususer_zz31bd#"},
-                {"project-created", "ws3", "", "127.0.0.1 2013-12-05 01:26:30,878[]  [] []    [][][] - EVENT#project-created# PROJECT#Sample-TwitterBootstrap# TYPE#JavaScript#"},
-                {"project-built", "", "user4", "127.0.0.1 2013-12-05 00:27:57,325[]  [] []  [][] - EVENT#project-built# PROJECT#PizzaHome-660# TYPE#Servlet/JSP#"},
-                {"project-built", "null", "user4", "127.0.0.1 2013-12-05 00:27:57,325[]  [] []  [][] - EVENT#project-built# PROJECT#PizzaHome-660# TYPE#Servlet/JSP#"},
-                {"project-built", "ws4", "null", "127.0.0.1 2013-12-05 00:27:57,325[]  [] []  [][] - EVENT#project-built# PROJECT#PizzaHome-660# TYPE#Servlet/JSP#"},
-                {"project-built", "Null", "user4", "127.0.0.1 2013-12-05 00:27:57,325[]  [] []  [][] - EVENT#project-built# PROJECT#PizzaHome-660# TYPE#Servlet/JSP#"},
-                {"project-built", "ws4", "NULL", "127.0.0.1 2013-12-05 00:27:57,325[]  [] []  [][] - EVENT#project-built# PROJECT#PizzaHome-660# TYPE#Servlet/JSP#"},
-                {"project-built", "ws5", "user5", "127.0.0.1 2013-12-05 00:27:57,325[]  [] []  [][] - EVENT#project-built# PROJECT#null# TYPE#Servlet/JSP#"},
-                {"project-built", "ws5", "user5", "127.0.0.1 2013-12-05 00:27:57,325[]  [] []  [][] - EVENT#project-built# PROJECT#Null# TYPE#Servlet/JSP#"},
-                {"project-built", "ws6", "user6", "127.0.0.1 2013-12-05 00:27:57,325[]  [] []  [][] - EVENT#project-built# PROJECT#PizzaHome-660# TYPE#NULL#"},
-                {"project-built", "default", "user5", "127.0.0.1 2013-12-05 00:27:57,325[]  [] []  [][] - EVENT#project-built# PROJECT#Null# TYPE#Servlet/JSP#"},
-                {"project-built", "ws6", "Default", "127.0.0.1 2013-12-05 00:27:57,325[]  [] []  [][] - EVENT#project-built# PROJECT#PizzaHome-660# TYPE#NULL#"},
-                {"user-update-profile", "ws9", "", "127.0.0.1 2013-12-05 00:12:28,875[]  [] []    [][][] - EVENT#user-update-profile# USER## FIRSTNAME## LASTNAME## COMPANY## PHONE## JOBTITLE##"}
+                {"project-built", "", "user", "PROJECT#PizzaHome-660# TYPE#Servlet/JSP#"},
+                {"project-built", "null", "user", "PROJECT#PizzaHome-660# TYPE#Servlet/JSP#"},
+                {"project-built", "default", "user", "PROJECT#PizzaHome-660# TYPE#Servlet/JSP#"},
+                {"project-built", null, "user", "PROJECT#PizzaHome-660# TYPE#Servlet/JSP#"},
+        };
+    }
 
+    @DataProvider(name = "wrongUsersNamesProvider")
+    public Object[][] getMessagesWithWrongUserName() {
+        return new Object[][]{
+                {"project-created", "ws", "", "PROJECT#Sample-TwitterBootstrap# TYPE#JavaScript#"},
+                {"project-created", "ws", "null", "PROJECT#Sample-TwitterBootstrap# TYPE#JavaScript#"},
+                {"project-created", "ws", "default", "PROJECT#Sample-TwitterBootstrap# TYPE#JavaScript#"},
+                {"project-created", "ws", null, "PROJECT#Sample-TwitterBootstrap# TYPE#JavaScript#"}
+        };
+    }
+
+    @DataProvider(name = "wrongProjectTypesProvider")
+    public Object[][] getMessagesWithWrongProjectType() {
+        return new Object[][]{
+                {"project-created", "ws", "user", "PROJECT#Sample-TwitterBootstrap# TYPE##", ""},
+                {"project-created", "ws", "user", "PROJECT#Sample-TwitterBootstrap#", "null"},
+                {"project-created", "ws", "user", "PROJECT#Sample-TwitterBootstrap# TYPE#unknown#", "unknown"},
+                {"project-created", "ws", "user", "PROJECT#Sample-TwitterBootstrap# TYPE#null#", "null"},
+        };
+    }
+
+    @DataProvider(name = "wrongPaasProvider")
+    public Object[][] getMessagesWithWrongPaas() {
+        return new Object[][]{
+                {"application-created", "ws", "user", "PROJECT#Sample# TYPE#JavaScript#", "null"},
+                {"application-created", "ws", "user", "PROJECT#Sample# TYPE#JavaScript# PAAS##", ""},
+                {"application-created", "ws", "user", "PROJECT#Sample# TYPE#JavaScript# PAAS#default#", "default"},
+                {"application-created", "ws", "user", "PROJECT#Sample# TYPE#JavaScript# PAAS#null#", "null"},
+                {"application-created", "ws", "user", "PROJECT#Sample# TYPE#JavaScript# PAAS#unknown#", "unknown"},
+                {"application-created", "ws", "user", "PROJECT#Sample# TYPE#JavaScript# PAAS#LOCAL#", "LOCAL"},
+        };
+    }
+
+    @DataProvider(name = "wrongUsingParameterProvider")
+    public Object[][] getMessagesWithWrongUsingParameter() {
+        return new Object[][]{
+                {"user-sso-logged-in", "default", "user", "USING#null#", "null"},
+                {"user-sso-logged-in", "default", "user", "USING##", ""},
+                {"user-sso-logged-in", "default", "user", "", "null"},
+        };
+    }
+
+    @DataProvider(name = "correctUsingParameterProvider")
+    public Object[][] getMessagesWithCorrectUsingParameter() {
+        return new Object[][]{
+                {"user-sso-logged-in", "default", "user", "USING#sysldap#"},
+                {"user-sso-logged-in", "default", "user", "USING#org#"},
         };
     }
 }

@@ -46,7 +46,7 @@ import java.util.regex.Pattern;
  *
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class PigServer implements AutoCloseable {
+public class PigServer {
 
     private static final String     LOGS_DIR    = "analytics.pig.logs_dir";
     private static final String     SCRIPTS_DIR = "analytics.pig.scripts_dir";
@@ -117,6 +117,9 @@ public class PigServer implements AutoCloseable {
                 server.registerScript(scriptContent, context.getAllAsString());
                 server.executeBatch();
                 server.discardBatch();
+            } catch (Exception e) {
+                LOG.error("Error script execution " + scriptType + " with " + getSecureContext(context).toString());
+                throw new IOException(e);
             } finally {
                 LOG.info("Execution " + scriptType + " is finished");
             }
@@ -164,7 +167,7 @@ public class PigServer implements AutoCloseable {
     }
 
     /** Cell shutdown on org.apache.pig.PigServer */
-    public void close() {
+    public void shutdown() {
         server.shutdown();
         server = null;
         LOG.info("Embedded PigServer is shutting down");

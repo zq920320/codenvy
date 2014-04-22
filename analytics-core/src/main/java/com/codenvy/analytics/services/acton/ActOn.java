@@ -104,10 +104,6 @@ public class ActOn extends Feature {
     }
 
     @Override
-    protected void putParametersInContext(Context.Builder builder) {
-    }
-
-    @Override
     protected void doExecute(Context context) throws IOException, ParseException {
         LOG.info("ActOn is started");
         long start = System.currentTimeMillis();

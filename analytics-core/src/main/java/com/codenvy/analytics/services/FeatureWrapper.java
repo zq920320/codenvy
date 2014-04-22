@@ -50,11 +50,6 @@ public abstract class FeatureWrapper extends Feature {
     }
 
     @Override
-    protected void putParametersInContext(Context.Builder builder) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     protected void doExecute(Context context) throws Exception {
         throw new UnsupportedOperationException();
     }

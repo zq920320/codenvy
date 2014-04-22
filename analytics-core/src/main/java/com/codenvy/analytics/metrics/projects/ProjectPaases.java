@@ -22,6 +22,8 @@ public class ProjectPaases extends AbstractMapValueResulted {
     public static final String APPFOG           = "appfog";
     public static final String CLOUDBEES        = "cloudbees";
 
+    public static final String[] PAASES = {GAE, AWS_BEANSTALK, CLOUDBEES, TIER3_WEB_FABRIC, MANYMO, OPENSHIFT, HEROKU, APPFOG, CLOUDBEES};
+
     public ProjectPaases() {
         super(MetricType.PROJECT_PAASES);
     }

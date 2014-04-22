@@ -23,6 +23,9 @@ import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.Context.Builder;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.Parameters.TimeUnit;
+import com.codenvy.analytics.metrics.ReadBasedMetric;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -34,7 +37,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+/**
+ * @author Anatoliy Bazko
+ */
 public class Utils {
 
     private Utils() {
@@ -184,5 +189,12 @@ public class Utils {
         }
 
         return result;
+    }
+
+    public static DBObject setDateFilter(Context context) throws ParseException {
+        DBObject dateFilter = new BasicDBObject();
+        dateFilter.put("$gte", context.getAsDate(Parameters.FROM_DATE).getTimeInMillis());
+        dateFilter.put("$lt", context.getAsDate(Parameters.TO_DATE).getTimeInMillis() + ReadBasedMetric.DAY_IN_MILLISECONDS);
+        return new BasicDBObject(ReadBasedMetric.DATE, dateFilter);
     }
 }

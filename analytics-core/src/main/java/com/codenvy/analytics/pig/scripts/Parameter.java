@@ -17,27 +17,42 @@
  */
 package com.codenvy.analytics.pig.scripts;
 
-import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlValue;
 
 /**
  * @author Alexander Reshetnyak
  */
 public class Parameter {
 
-    private String name;
-    private boolean empty;
+    private String  name;
+    private boolean allowEmptyValue;
+    private String  allowedValues;
 
     @XmlValue
     public void setName(String name) {
         this.name = name;
     }
 
-    public String getName() { return name; }
+    public String getName() {
+        return name;
+    }
 
     @XmlAttribute(name = "allow-empty-value")
     public void setAllowEmptyValue(boolean empty) {
-        this.empty = empty;
+        this.allowEmptyValue = empty;
     }
 
-    public boolean isAllowEmptyValue() { return empty; }
+    public boolean isAllowEmptyValue() {
+        return allowEmptyValue;
+    }
+
+    @XmlAttribute(name = "allowed-values")
+    public void setAllowedValues(String allowedValues) {
+        this.allowedValues = allowedValues;
+    }
+
+    public String getAllowedValues() {
+        return allowedValues;
+    }
 }

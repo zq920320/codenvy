@@ -17,9 +17,9 @@
  */
 package com.codenvy.analytics.persistent;
 
+import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.metrics.ReadBasedMetric;
 import com.codenvy.analytics.services.configuration.XmlConfigurationManager;
 import com.mongodb.*;
 
@@ -148,7 +148,7 @@ public class CollectionsManagement {
         LOG.info("Start removing data...");
 
         try {
-            DBObject dateFilter = getDateFilter(context);
+            DBObject dateFilter = Utils.setDateFilter(context);
 
             for (CollectionConfiguration collectionConf : configuration.values()) {
                 String name = collectionConf.getName();
@@ -188,19 +188,6 @@ public class CollectionsManagement {
             throw new IOException(
                     "Backup failed. Wrong records count between " + src.getName() + " and " + dst.getName());
         }
-    }
-
-    private DBObject getDateFilter(Context context) throws ParseException {
-        DBObject dateFilter = new BasicDBObject();
-        dateFilter.put("$gte", context.exists(Parameters.FROM_DATE)
-                               ? context.getAsDate(Parameters.FROM_DATE).getTimeInMillis()
-                               : 0);
-        dateFilter.put("$lt", context.exists(Parameters.TO_DATE)
-                              ? context.getAsDate(Parameters.TO_DATE).getTimeInMillis() +
-                                ReadBasedMetric.DAY_IN_MILLISECONDS
-                              : Long.MAX_VALUE);
-
-        return new BasicDBObject(ReadBasedMetric.DATE, dateFilter);
     }
 
     /**

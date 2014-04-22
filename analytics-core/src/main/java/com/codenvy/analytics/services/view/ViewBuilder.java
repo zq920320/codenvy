@@ -100,10 +100,6 @@ public class ViewBuilder extends Feature {
     }
 
     @Override
-    protected void putParametersInContext(Context.Builder builder) {
-    }
-
-    @Override
     protected void doExecute(Context context) throws Exception {
         LOG.info("ViewBuilder is started");
         long start = System.currentTimeMillis();

@@ -53,8 +53,6 @@ public abstract class Feature implements Job {
             }
 
             Context.Builder builder = new Context.Builder(context);
-            putParametersInContext(builder);
-
             doExecute(builder.build());
         } catch (Throwable e) {
             LOG.error(e.getMessage(), e);
@@ -66,8 +64,6 @@ public abstract class Feature implements Job {
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         try {
             Context.Builder builder = initializeContextBuilder();
-            putParametersInContext(builder);
-
             doExecute(builder.build());
         } catch (Throwable e) {
             LOG.error(e.getMessage(), e);
@@ -83,9 +79,6 @@ public abstract class Feature implements Job {
 
         return builder;
     }
-
-    /** If need to override context or put additional parameters to it, */
-    protected abstract void putParametersInContext(Context.Builder builder);
 
     /**
      * Execution.

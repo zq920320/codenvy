@@ -73,10 +73,6 @@ public class ReportSender extends Feature {
     }
 
     @Override
-    protected void putParametersInContext(Context.Builder builder) {
-    }
-
-    @Override
     public boolean isAvailable() {
         return configurator.getBoolean(AVAILABLE);
     }

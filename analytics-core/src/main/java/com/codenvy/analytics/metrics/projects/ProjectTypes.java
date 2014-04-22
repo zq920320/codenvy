@@ -46,6 +46,11 @@ public class ProjectTypes extends AbstractMapValueResulted {
     public static final String RAILS         = "rails";
     public static final String JAVA_SCRIPT   = "javascript";
 
+    public static final String[] TYPES =
+            {JAR, JSP, DJANGO, WAR, JAVA, MMP, SPRING, NODE_JS, PHP, PYTHON,
+             ANDROID, GOOGLE_MBS, OTHER_NULL, OTHER_DEFAULT, OTHER_SERV, OTHER_EXO,
+             RUBY, RAILS, JAVA_SCRIPT};
+
     public ProjectTypes(String metricName) {
         super(metricName);
     }

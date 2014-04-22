@@ -27,22 +27,24 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
 import static org.testng.AssertJUnit.assertEquals;
 
 
 /** @author <a href="mailto:areshetnyak@codenvy.com">Alexander Reshetnyak</a> */
 public class TestEventHolderConfiguration extends BaseTest {
 
-    private static final String FILE          = BASE_DIR + "/resource";
-    private static final String CONFIGURATION = "<events>\n" +
-                                                "    <event name=\"ide_usage\">\n" +
-                                                "        <description>desc</description>\n" +
-                                                "        <parameters>\n" +
-                                                "            <param>WS</param>\n" +
-                                                "            <param allow-empty-value=\"true\">USER</param>\n" +
-                                                "        </parameters>\n" +
-                                                "    </event>\n" +
-                                                "</events>";
+    private static final String FILE = BASE_DIR + "/resource";
+    private static final String CONFIGURATION
+                                     = "<events>\n" +
+                                       "    <event name=\"ide_usage\">\n" +
+                                       "        <description>desc</description>\n" +
+                                       "        <parameters>\n" +
+                                       "            <param allowed-values=\"default\">WS</param>\n" +
+                                       "            <param allow-empty-value=\"true\">USER</param>\n" +
+                                       "        </parameters>\n" +
+                                       "    </event>\n" +
+                                       "</events>";
 
     private XmlConfigurationManager configurationManager;
 
@@ -58,8 +60,7 @@ public class TestEventHolderConfiguration extends BaseTest {
 
     @Test
     public void testParsingConfig() throws Exception {
-        EventHolderConfiguration configuration =
-                configurationManager.loadConfiguration(EventHolderConfiguration.class, FILE);
+        EventHolderConfiguration configuration = configurationManager.loadConfiguration(EventHolderConfiguration.class, FILE);
 
         assertNotNull(configuration);
         assertEquals(1, configuration.getEvents().size());
@@ -70,8 +71,15 @@ public class TestEventHolderConfiguration extends BaseTest {
 
         ParametersConfiguration parameters = eventConfiguration.getParameters();
         assertEquals(2, parameters.getParams().size());
-        assertEquals("WS", parameters.getParams().get(0).getName());
-        assertEquals(false, parameters.getParams().get(0).isAllowEmptyValue());
-        assertEquals(true, parameters.getParams().get(1).isAllowEmptyValue());
+
+        Parameter parameter = parameters.getParams().get(0);
+        assertEquals("WS", parameter.getName());
+        assertEquals(false, parameter.isAllowEmptyValue());
+        assertEquals("default", parameter.getAllowedValues());
+
+        parameter = parameters.getParams().get(1);
+        assertEquals("USER", parameter.getName());
+        assertEquals(true, parameter.isAllowEmptyValue());
+        assertNull(parameter.getAllowedValues());
     }
 }

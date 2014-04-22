@@ -36,7 +36,7 @@
             <param>USER</param>
             <param>PROJECT</param>
             <param>TYPE</param>
-            <param>FEATURE</param>
+            <param allowed-values="rename">FEATURE</param>
         </parameters>
     </event>
     <event name="user-code-complete">
@@ -206,20 +206,8 @@
             <param>USER</param>
         </parameters>
     </event>
-    <event name="workspace-started">
-        <description>Workspace started</description>
-        <parameters>
-            <param>WS</param>
-        </parameters>
-    </event>
     <event name="tenant-started">
         <description>Workspace started</description>
-        <parameters>
-            <param>WS</param>
-        </parameters>
-    </event>
-    <event name="workspace-stopped">
-        <description>Workspace stopped</description>
         <parameters>
             <param>WS</param>
         </parameters>
@@ -267,7 +255,7 @@
             <param>USER</param>
             <param>PROJECT</param>
             <param>TYPE</param>
-            <param>PAAS</param>
+            <param allowed-values="LOCAL">PAAS</param>
         </parameters>
     </event>
     <event name="project-built">
@@ -296,7 +284,7 @@
             <param>USER</param>
             <param>PROJECT</param>
             <param>TYPE</param>
-            <param>PAAS</param>
+            <param allowed-values="LOCAL">PAAS</param>
         </parameters>
     </event>
     <event name="user-created">
@@ -331,8 +319,8 @@
     <event name="user-sso-logged-in">
         <description>User logged in</description>
         <parameters>
-            <param>USING</param>
             <param>USER</param>
+            <param allowed-values="github,org,sysldap,google">USING</param>
         </parameters>
     </event>
     <event name="user-sso-logged-out">
@@ -392,7 +380,7 @@
         <parameters>
             <param>WS</param>
             <param>USER</param>
-            <param>FROM</param>
+            <param allowed-values="website">FROM</param>
         </parameters>
     </event>
     <event name="factory-created">

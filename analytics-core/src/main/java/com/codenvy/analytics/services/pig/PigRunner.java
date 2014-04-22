@@ -57,10 +57,6 @@ public class PigRunner extends Feature {
     }
 
     @Override
-    protected void putParametersInContext(Context.Builder builder) {
-    }
-
-    @Override
     protected void doExecute(Context context) throws IOException, ParseException {
         LOG.info("PigRunner is started");
         long start = System.currentTimeMillis();
@@ -86,7 +82,7 @@ public class PigRunner extends Feature {
         } finally {
             LOG.info("PigRunner is finished in " + (System.currentTimeMillis() - start) / 1000 + " sec.");
             if (pigServer != null) {
-                pigServer.close();
+                pigServer.shutdown();
             }
         }
     }

@@ -63,10 +63,6 @@ public class DataComputation extends Feature {
     }
 
     @Override
-    protected void putParametersInContext(Context.Builder builder) {
-    }
-
-    @Override
     protected void doExecute(Context context) throws IOException {
         for (String metricName : metrics) {
             Metric metric = MetricFactory.getMetric(metricName);
