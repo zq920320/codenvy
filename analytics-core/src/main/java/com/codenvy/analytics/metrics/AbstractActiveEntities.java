@@ -26,7 +26,7 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public abstract class AbstractActiveEntities extends ReadBasedMetric {
+public abstract class AbstractActiveEntities extends ReadBasedMetric implements Expandable {
 
     private final ReadBasedMetric basedMetric;
     private final String          valueField;
@@ -97,11 +97,6 @@ public abstract class AbstractActiveEntities extends ReadBasedMetric {
     @Override
     public Class<? extends ValueData> getValueDataClass() {
         return LongValueData.class;
-    }
-    
-    @Override
-    public boolean isExpandable() {
-        return true;
     }
     
     @Override

@@ -20,13 +20,14 @@
 package com.codenvy.analytics.metrics.workspaces;
 
 import com.codenvy.analytics.metrics.AbstractLongValueResulted;
+import com.codenvy.analytics.metrics.Expandable;
 import com.codenvy.analytics.metrics.MetricType;
 
 import javax.annotation.security.RolesAllowed;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
-public class CreatedWorkspaces extends AbstractLongValueResulted {
+public class CreatedWorkspaces extends AbstractLongValueResulted implements Expandable {
 
     public CreatedWorkspaces() {
         super(MetricType.CREATED_WORKSPACES,
@@ -36,10 +37,5 @@ public class CreatedWorkspaces extends AbstractLongValueResulted {
     @Override
     public String getDescription() {
         return "The number of created persistent workspaces";
-    }
-
-    @Override
-    public boolean isExpandable() {
-        return true;
     }
 }

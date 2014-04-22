@@ -138,10 +138,5 @@ public class TestTimeFieldsMetricRow extends BaseTest {
         public String getDescription() {
             return null;
         }
-
-        @Override
-        public boolean isExpandable() {
-            return false;
-        }
     }
 }

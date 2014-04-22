@@ -18,13 +18,14 @@
 package com.codenvy.analytics.metrics.sessions.factory;
 
 import com.codenvy.analytics.metrics.AbstractLongValueResulted;
+import com.codenvy.analytics.metrics.Expandable;
 import com.codenvy.analytics.metrics.MetricType;
 
 import javax.annotation.security.RolesAllowed;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
-public class TemporaryWorkspacesCreated extends AbstractLongValueResulted {
+public class TemporaryWorkspacesCreated extends AbstractLongValueResulted implements Expandable {
 
     public TemporaryWorkspacesCreated() {
         super(MetricType.TEMPORARY_WORKSPACES_CREATED, WS);
@@ -33,10 +34,5 @@ public class TemporaryWorkspacesCreated extends AbstractLongValueResulted {
     @Override
     public String getDescription() {
         return "The number of created temporary workspaces";
-    }
-    
-    @Override
-    public boolean isExpandable() {
-        return true;
     }
 }

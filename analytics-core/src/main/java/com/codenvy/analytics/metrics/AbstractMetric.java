@@ -79,8 +79,4 @@ public abstract class AbstractMetric implements Metric {
     public String getName() {
         return metricName;
     }
-    
-    public boolean isExpandable() {
-        return false;
-    };
 }

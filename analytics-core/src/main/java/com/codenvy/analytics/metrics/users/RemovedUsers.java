@@ -18,13 +18,14 @@
 package com.codenvy.analytics.metrics.users;
 
 import com.codenvy.analytics.metrics.AbstractLongValueResulted;
+import com.codenvy.analytics.metrics.Expandable;
 import com.codenvy.analytics.metrics.MetricType;
 
 import javax.annotation.security.RolesAllowed;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
-public class RemovedUsers extends AbstractLongValueResulted {
+public class RemovedUsers extends AbstractLongValueResulted implements Expandable {
 
     public RemovedUsers() {
         super(MetricType.REMOVED_USERS, USER);
@@ -33,10 +34,5 @@ public class RemovedUsers extends AbstractLongValueResulted {
     @Override
     public String getDescription() {
         return "The number of removed users";
-    }
-
-    @Override
-    public boolean isExpandable() {
-        return true;
     }
 }

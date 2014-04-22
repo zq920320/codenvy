@@ -350,7 +350,6 @@ public class ViewBuilder extends Feature {
                     
                     if (metric != null 
                             && metric instanceof Expandable
-                            && metric.isExpandable()  // TODO remove this after making all possible numeric metric as expandable
                         ) {
                         // add info about metric in to the sectionList = List<Map<rowNumber, metricType>>
                         sectionList.get(sectionNumber).put(rowNumber, metricType);

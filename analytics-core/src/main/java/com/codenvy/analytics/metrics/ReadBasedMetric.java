@@ -43,7 +43,7 @@ import com.mongodb.DBObject;
  *
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public abstract class ReadBasedMetric extends AbstractMetric implements Expandable {
+public abstract class ReadBasedMetric extends AbstractMetric {
 
     public static final String EXCLUDE_SIGN        = "~";
     public static final String SEPARATOR           = ",";
@@ -84,7 +84,15 @@ public abstract class ReadBasedMetric extends AbstractMetric implements Expandab
         return postEvaluation(valueData, context);
     }
 
-    @Override
+    /**
+     * Returns an expanded list of documents used to calculate numeric value returned by getValue() method.
+     *
+     * @param context
+     *         the execution context, for the most cases it isn't needed to modify it. It is used as a parameter to get
+     *         value of other metrics
+     * @throws IOException
+     *         if any errors are occurred 
+     */
     public ListValueData getExpandedValue(Context context) throws IOException {
         context = modifyContext(context);
         validateRestrictions(context);
@@ -436,7 +444,7 @@ public abstract class ReadBasedMetric extends AbstractMetric implements Expandab
         context = builder.build();
 
         context = initializeFirstInterval(context);
-        Expandable expandableMetric = (Expandable)MetricFactory.getMetric(metric);
+        ReadBasedMetric expandableMetric = (ReadBasedMetric)MetricFactory.getMetric(metric);
         ListValueData metricValue = expandableMetric.getExpandedValue(context);
 
         List<ValueData> allMetricValues = metricValue.getAll();
@@ -488,9 +496,5 @@ public abstract class ReadBasedMetric extends AbstractMetric implements Expandab
         } else {
             return builder.build();
         }
-    }
-    
-    public boolean isExpandable() {
-        return false;
     }
 }
