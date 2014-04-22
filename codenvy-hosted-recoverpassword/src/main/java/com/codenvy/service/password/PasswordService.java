@@ -108,11 +108,10 @@ public class PasswordService {
     public Response recoverPassword(@PathParam("usermail") String userMail, @Context UriInfo uriInfo)
             throws ServerException, NotFoundException {
         try {
-
-            //userDao.getByAlias(userMail);
-            if (userDao.getByAlias(userMail) == null) {
+            try {
+                userDao.getByAlias(userMail);
+            } catch (NotFoundException e) {
                 throw new NotFoundException("User " + userMail + " is not registered in the system.");
-                //return Response.status(404).entity("User " + userMail + " is not registered in the system.").build();
             }
 
             String uuid = recoveryStorage.setValidationData(userMail);
@@ -239,13 +238,10 @@ public class PasswordService {
             // remove invalid validationData
             recoveryStorage.remove(uuid);
 
-            throw e;
-
-            //return Response.status(404).entity("User " + userName + " is not registered in the system").build();
+            throw new NotFoundException("User " + userName + " is not registered in the system.");
         }  catch (ServerException e) {
             LOG.error("Error during setting user's password", e);
             throw new ServerException("Unable to setup password. Please contact with administrators.", e);
-            //return Response.status(500).entity("Unable to setup password. Please contact with administrators.").build();
         }
 
         // remove validation data from validationStorage

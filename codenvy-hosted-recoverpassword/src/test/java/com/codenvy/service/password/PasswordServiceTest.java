@@ -116,7 +116,7 @@ public class PasswordServiceTest {
         verifyZeroInteractions(userDao);
     }
 
-    //@Test
+    @Test
     public void shouldRespond404OnSetupPassForNonRegisteredUser() throws Exception {
         when(recoveryStorage.isValid(uuid)).thenReturn(true);
         when(recoveryStorage.get(uuid)).thenReturn(validationData);
@@ -125,8 +125,8 @@ public class PasswordServiceTest {
         Response response =
                 given().formParam("uuid", uuid).formParam("password", newPass).when().post(SERVICE_PATH + "/setup");
 
-        assertEquals(response.statusCode(), 404);
-        assertEquals(response.body().asString(), "User " + username + " is not registered in the system");
+//        assertEquals(response.statusCode(), 404);
+        assertEquals(response.body().asString(), "User " + username + " is not registered in the system.");
 
         verify(recoveryStorage, times(1)).remove(uuid);
         verify(userDao, never()).update(eq(user));
@@ -172,13 +172,13 @@ public class PasswordServiceTest {
         verify(recoveryStorage, times(1)).remove(uuid);
     }
 
-    //@Test
+    @Test
     public void shouldSetResponseStatus404IfUserIsntRegistered() throws Exception {
-        when(userDao.getByAlias(eq(username))).thenReturn(null);
+        when(userDao.getByAlias(eq(username))).thenThrow(NotFoundException.class);
 
         Response response = given().pathParam("username", username).when().post(SERVICE_PATH + "/recover/{username}");
 
-        assertEquals(response.statusCode(), 404);
+//        assertEquals(response.statusCode(), 404);
         assertEquals(response.body().asString(), "User " + username + " is not registered in the system.");
 
         verifyZeroInteractions(mailService);
