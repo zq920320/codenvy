@@ -94,10 +94,5 @@ public class TestDateFieldsMetricRow extends BaseTest {
         public String getDescription() {
             return null;
         }
-
-        @Override
-        public boolean isExpandable() {
-            return false;
-        }
     }
 }

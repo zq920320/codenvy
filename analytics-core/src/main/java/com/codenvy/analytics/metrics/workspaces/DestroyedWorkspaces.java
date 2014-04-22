@@ -20,13 +20,14 @@
 package com.codenvy.analytics.metrics.workspaces;
 
 import com.codenvy.analytics.metrics.AbstractLongValueResulted;
+import com.codenvy.analytics.metrics.Expandable;
 import com.codenvy.analytics.metrics.MetricType;
 
 import javax.annotation.security.RolesAllowed;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
-public class DestroyedWorkspaces extends AbstractLongValueResulted {
+public class DestroyedWorkspaces extends AbstractLongValueResulted implements Expandable {
 
     public DestroyedWorkspaces() {
         super(MetricType.DESTROYED_WORKSPACES, WS);
@@ -35,10 +36,5 @@ public class DestroyedWorkspaces extends AbstractLongValueResulted {
     @Override
     public String getDescription() {
         return "The number of destroyed persistent workspaces";
-    }
-    
-    @Override
-    public boolean isExpandable() {
-        return true;
     }
 }

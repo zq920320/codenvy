@@ -49,12 +49,6 @@ public interface Metric {
      */
     Class<? extends ValueData> getValueDataClass();
     
-    /**
-     * @return true if only numeric metric can return list of documents used to calculate numeric value. 
-     * TODO remove this after making all possible numeric metric as expandable by implementing interface Expandable
-     */
-    boolean isExpandable();
-    
     /** @return the name of the metric */
     String getName();
 

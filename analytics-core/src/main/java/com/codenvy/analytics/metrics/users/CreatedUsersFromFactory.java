@@ -18,13 +18,14 @@
 package com.codenvy.analytics.metrics.users;
 
 import com.codenvy.analytics.metrics.AbstractLongValueResulted;
+import com.codenvy.analytics.metrics.Expandable;
 import com.codenvy.analytics.metrics.MetricType;
 
 import javax.annotation.security.RolesAllowed;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
-public class CreatedUsersFromFactory extends AbstractLongValueResulted {
+public class CreatedUsersFromFactory extends AbstractLongValueResulted implements Expandable {
 
     public CreatedUsersFromFactory() {
         super(MetricType.CREATED_USERS_FROM_FACTORY, USER);
@@ -33,10 +34,5 @@ public class CreatedUsersFromFactory extends AbstractLongValueResulted {
     @Override
     public String getDescription() {
         return "The number of registered users from factories";
-    }
-
-    @Override
-    public boolean isExpandable() {
-        return true;
     }
 }

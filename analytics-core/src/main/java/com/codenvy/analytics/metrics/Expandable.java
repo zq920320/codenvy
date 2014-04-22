@@ -17,9 +17,7 @@
  */
 package com.codenvy.analytics.metrics;
 
-import java.io.IOException;
-
-import com.codenvy.analytics.datamodel.ListValueData;
+import com.mongodb.DBObject;
 
 /** @author Dmytro Nochevnov */
 public interface Expandable {
@@ -27,15 +25,10 @@ public interface Expandable {
      * @return the field which consists of values of expanded metric.
      */
     String getExpandedValueField();
-    
+ 
     /**
-     * Returns an expanded list of documents used to calculate numeric value returned by getValue() method.
-     *
-     * @param context
-     *         the execution context, for the most cases it isn't needed to modify it. It is used as a parameter to get
-     *         value of other metrics
-     * @throws IOException
-     *         if any errors are occurred
+     * @returns list of specific DB operations to get list of documents used to calculate numeric value of metric.
+     * @see generic com.codenvy.analytics.metrics.ReadBasedMetric.getSpecificDBOperations(Context) method
      */
-    ListValueData getExpandedValue(Context context) throws IOException;    
+    DBObject[] getSpecificExpandedDBOperations(Context clauses);
 }
