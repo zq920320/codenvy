@@ -423,7 +423,7 @@
                     },
                     error : function(xhr){
                         error([
-                            new AccountError(null,xhr.responseText)
+                            new AccountError(null, JSON.parse(xhr.responseText).message)
                         ]);
                     }
                 });
