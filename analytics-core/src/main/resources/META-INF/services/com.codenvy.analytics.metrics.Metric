@@ -138,6 +138,8 @@ com.codenvy.analytics.metrics.sessions.TimelineProductUsageConditionBetween120An
 com.codenvy.analytics.metrics.sessions.TimelineProductUsageConditionAbove300Min
 
 com.codenvy.analytics.metrics.ide_usage.CodeRefactorings
+com.codenvy.analytics.metrics.ide_usage.CodeCompletionsBasedOnEvent
+com.codenvy.analytics.metrics.ide_usage.CodeCompletionsBasedOnIdeUsage
 com.codenvy.analytics.metrics.ide_usage.CodeCompletions
 
 com.codenvy.analytics.metrics.sessions.factory.FactoriesAcceptedList

@@ -133,11 +133,11 @@ public abstract class ReadBasedMetric extends AbstractMetric {
     public abstract String[] getTrackedFields();
 
     public String getStorageCollectionName() {
-        return getName().toLowerCase();
+        return getStorageCollectionName(getName());
     }
 
     public String getStorageCollectionName(MetricType metricType) {
-        return metricType.toString().toLowerCase();
+        return getStorageCollectionName(metricType.toString());
     }
 
     public String getStorageCollectionName(String metricName) {

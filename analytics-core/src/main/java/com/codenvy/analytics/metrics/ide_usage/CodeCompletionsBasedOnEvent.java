@@ -17,35 +17,22 @@
  */
 package com.codenvy.analytics.metrics.ide_usage;
 
-import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.datamodel.ValueDataUtil;
-import com.codenvy.analytics.metrics.CalculatedMetric;
-import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.AbstractLongValueResulted;
 import com.codenvy.analytics.metrics.MetricType;
 
 import javax.annotation.security.RolesAllowed;
-import java.io.IOException;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
-public class CodeCompletions extends CalculatedMetric {
+public class CodeCompletionsBasedOnEvent extends AbstractLongValueResulted {
 
-    public CodeCompletions() {
-        super(MetricType.CODE_COMPLETIONS, new MetricType[]{MetricType.CODE_COMPLETIONS_BASED_ON_EVENT,
-                                                            MetricType.CODE_COMPLETIONS_BASED_ON_IDE_USAGES});
+    public CodeCompletionsBasedOnEvent() {
+        super(MetricType.CODE_COMPLETIONS_BASED_ON_EVENT);
     }
 
     @Override
-    public ValueData getValue(Context context) throws IOException {
-        LongValueData value1 = ValueDataUtil.getAsLong(basedMetric[0], context);
-        LongValueData value2 = ValueDataUtil.getAsLong(basedMetric[1], context);
-        return LongValueData.valueOf(value1.getAsLong() + value2.getAsLong());
-    }
-
-    @Override
-    public Class<? extends ValueData> getValueDataClass() {
-        return LongValueData.class;
+    public String getStorageCollectionName() {
+        return getStorageCollectionName(MetricType.CODE_COMPLETIONS);
     }
 
     @Override
