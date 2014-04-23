@@ -90,6 +90,12 @@ public class TestEventValidation extends BaseTest {
         assertNull(eventValidation.exec(tuple));
     }
 
+    @Test(dataProvider = "correctPaasProvider")
+    public void testMessagesWithCorrectPaas(String event, String ws, String user, String message) throws Exception {
+        Tuple tuple = makeTuple(event, ws, user, message);
+        assertNull(eventValidation.exec(tuple));
+    }
+
     private Tuple makeTuple(String event, String ws, String user, String message) {
         Tuple tuple = tupleFactory.newTuple();
         tuple.append(event);
@@ -150,6 +156,15 @@ public class TestEventValidation extends BaseTest {
                 {"application-created", "ws", "user", "PROJECT#Sample# TYPE#JavaScript# PAAS#null#", "null"},
                 {"application-created", "ws", "user", "PROJECT#Sample# TYPE#JavaScript# PAAS#unknown#", "unknown"},
                 {"application-created", "ws", "user", "PROJECT#Sample# TYPE#JavaScript# PAAS#LOCAL#", "LOCAL"},
+        };
+    }
+
+    @DataProvider(name = "correctPaasProvider")
+    public Object[][] getMessagesWithCorrectPaas() {
+        return new Object[][]{
+                {"application-created", "ws", "user", "PROJECT#Sample# TYPE#JavaScript# PAAS#gae#"},
+                {"project-deployed", "ws", "user", "PROJECT#Sample# TYPE#JavaScript# PAAS#LOCAL#"},
+                {"artifact-deployed", "ws", "user", "PROJECT#Sample# TYPE#JavaScript# PAAS#LOCAL#"},
         };
     }
 

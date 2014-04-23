@@ -255,7 +255,7 @@
             <param>USER</param>
             <param>PROJECT</param>
             <param>TYPE</param>
-            <param allowed-values="LOCAL">PAAS</param>
+            <param allowed-values="local">PAAS</param>
         </parameters>
     </event>
     <event name="project-built">
@@ -284,7 +284,7 @@
             <param>USER</param>
             <param>PROJECT</param>
             <param>TYPE</param>
-            <param allowed-values="LOCAL">PAAS</param>
+            <param allowed-values="local">PAAS</param>
         </parameters>
     </event>
     <event name="user-created">
