@@ -29,7 +29,8 @@ public class UsersLoggedInWithForm extends AbstractLoggedInType {
 
     public UsersLoggedInWithForm() {
         super(MetricType.USERS_LOGGED_IN_WITH_FORM, new String[]{UsersLoggedInTypes.JAAS,
-                                                                 UsersLoggedInTypes.ORG});
+                                                                 UsersLoggedInTypes.ORG,
+                                                                 UsersLoggedInTypes.EMAIL});
     }
 
     @Override

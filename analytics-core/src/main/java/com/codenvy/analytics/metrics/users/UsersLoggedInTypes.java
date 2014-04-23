@@ -17,6 +17,7 @@ public class UsersLoggedInTypes extends AbstractMapValueResulted {
     public static final String GOOGLE  = "google";
     public static final String ORG     = "org";
     public static final String SYSLDAP = "sysldap";
+    public static final String EMAIL   = "email";
 
     public UsersLoggedInTypes() {
         super(MetricType.USERS_LOGGED_IN_TYPES);
@@ -32,7 +33,8 @@ public class UsersLoggedInTypes extends AbstractMapValueResulted {
                             JAAS,
                             GOOGLE,
                             ORG,
-                            SYSLDAP};
+                            SYSLDAP,
+                            EMAIL};
     }
 
     @Override

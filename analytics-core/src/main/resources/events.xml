@@ -320,7 +320,7 @@
         <description>User logged in</description>
         <parameters>
             <param>USER</param>
-            <param allowed-values="github,org,sysldap,google">USING</param>
+            <param allowed-values="github,org,sysldap,google,email">USING</param>
         </parameters>
     </event>
     <event name="user-sso-logged-out">

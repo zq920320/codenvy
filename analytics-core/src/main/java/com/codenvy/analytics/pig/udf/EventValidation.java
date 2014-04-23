@@ -79,20 +79,22 @@ public class EventValidation extends EvalFunc<String> {
 
             switch (name) {
                 case WS:
-                    if (isEmptyOrDefaultValue(ws)) {
+                    if (isEmptyOrDefaultValue(ws) && !param.isAllowEmptyValue()) {
                         append(validated, WORKSPACE_IS_EMPTY);
                     }
                     break;
 
                 case USER:
-                    if (isEmptyOrDefaultValue(user)) {
+                    if (isEmptyOrDefaultValue(user) && !param.isAllowEmptyValue()) {
                         append(validated, USER_IS_EMPTY);
                     }
                     break;
 
                 case PAAS:
-                    if (isEmptyValue(value) || !isAllowedValue(param.getAllowedValues(), value) || !isAllowedValue(ProjectPaases.PAASES, value)) {
+                    String allowedValues = param.getAllowedValues();
+                    if ((allowedValues != null && !isAllowedValue(param.getAllowedValues(), value)) || !isAllowedValue(ProjectPaases.PAASES, value)) {
                         append(validated, String.format(VALUE_IS_NOT_ALLOWED, value, PAAS));
+
                     }
                     break;
 
