@@ -166,7 +166,7 @@ public class FactoryUrlBaseValidator implements FactoryUrlValidator {
                     boolean isOwner = false;
                     List<Member> members = accountDao.getMembers(orgid);
                     if (members.isEmpty()) {
-                        throw new FactoryUrlException(String.format(PARAMETRIZED_ILLEGAL_ACCID_PARAMETER_MESSAGE, factory.getOrgid()));
+                        throw new FactoryUrlException(String.format(PARAMETRIZED_ILLEGAL_ORGID_PARAMETER_MESSAGE, factory.getOrgid()));
                     }
                     for (Member accountMember : accountDao.getMembers(orgid)) {
                         if (accountMember.getUserId().equals(user.getId()) && accountMember.getRoles().contains(
