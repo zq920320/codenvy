@@ -45,13 +45,13 @@ import java.util.regex.Pattern;
  */
 public class FactoryUrlBaseValidator implements FactoryUrlValidator {
 
-    private static final String PARAMETRIZED_ILLEGAL_ACCID_PARAMETER_MESSAGE =
-            "You have provided an invalid accId %s. You could have provided the wrong code, " +
+    private static final String PARAMETRIZED_ILLEGAL_ORGID_PARAMETER_MESSAGE =
+            "You have provided an invalid orgId %s. You could have provided the wrong code, " +
             "your subscription has expired, or you do not have a valid subscription account. Please contact " +
             "info@codenvy.com with any questions.";
 
     private static final String PARAMETRIZED_ILLEGAL_TRACKED_PARAMETER_MESSAGE =
-            "You have provided a Tracked Factory parameter %s, and you do not have a valid accId %s. You could have " +
+            "You have provided a Tracked Factory parameter %s, and you do not have a valid orgId %s. You could have " +
             "provided the wrong code, your subscription has expired, or you do not have a valid subscription account." +
             " Please contact info@codenvy.com with any questions.";
 
@@ -192,14 +192,14 @@ public class FactoryUrlBaseValidator implements FactoryUrlValidator {
                         Date currentDate = new Date();
                         if (!startTimeDate.before(currentDate) || !endTimeDate.after(currentDate)) {
                             throw new FactoryUrlException(
-                                    String.format(PARAMETRIZED_ILLEGAL_ACCID_PARAMETER_MESSAGE, factory.getOrgid()));
+                                    String.format(PARAMETRIZED_ILLEGAL_ORGID_PARAMETER_MESSAGE, factory.getOrgid()));
                         }
                     } else {
-                        throw new FactoryUrlException(String.format(PARAMETRIZED_ILLEGAL_ACCID_PARAMETER_MESSAGE, factory.getOrgid()));
+                        throw new FactoryUrlException(String.format(PARAMETRIZED_ILLEGAL_ORGID_PARAMETER_MESSAGE, factory.getOrgid()));
                     }
                 }
             } catch (ServerException | NumberFormatException e) {
-                throw new FactoryUrlException(String.format(PARAMETRIZED_ILLEGAL_ACCID_PARAMETER_MESSAGE, factory.getOrgid()));
+                throw new FactoryUrlException(String.format(PARAMETRIZED_ILLEGAL_ORGID_PARAMETER_MESSAGE, factory.getOrgid()));
             }
         }
 
