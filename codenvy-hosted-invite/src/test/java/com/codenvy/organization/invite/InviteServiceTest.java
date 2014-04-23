@@ -17,9 +17,6 @@
  */
 package com.codenvy.organization.invite;
 
-import com.codenvy.api.user.server.dao.UserDao;
-import com.codenvy.api.workspace.server.dao.WorkspaceDao;
-
 import org.codenvy.mail.MailSenderClient;
 import org.everrest.core.impl.RuntimeDelegateImpl;
 import org.mockito.InjectMocks;
@@ -39,10 +36,6 @@ import static org.testng.Assert.assertTrue;
 @Listeners(value = {MockitoTestNGListener.class})
 public class InviteServiceTest {
 
-    @Mock
-    UserDao          userDao;
-    @Mock
-    WorkspaceDao     workspaceDao;
     @Mock
     MailSenderClient mailSenderClient;
     @InjectMocks
