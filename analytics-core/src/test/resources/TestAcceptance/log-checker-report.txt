@@ -16,6 +16,8 @@ Event 'user-code-refactor' with parameter 'TYPE' and value 'exo' doesn't exist
 Event 'user-code-refactor' with parameter 'TYPE' and value 'ruby' doesn't exist
 Event 'user-code-refactor' with parameter 'TYPE' and value 'rails' doesn't exist
 Event 'user-code-refactor' with parameter 'TYPE' and value 'javascript' doesn't exist
+Event 'user-code-refactor' with parameter 'TYPE' and value 'angularjs' doesn't exist
+Event 'user-code-refactor' with parameter 'TYPE' and value 'html' doesn't exist
 Event 'user-code-complete' with parameter 'TYPE' and value 'django' doesn't exist
 Event 'user-code-complete' with parameter 'TYPE' and value 'war' doesn't exist
 Event 'user-code-complete' with parameter 'TYPE' and value 'maven multi-module' doesn't exist
@@ -28,6 +30,8 @@ Event 'user-code-complete' with parameter 'TYPE' and value 'null' doesn't exist
 Event 'user-code-complete' with parameter 'TYPE' and value 'default' doesn't exist
 Event 'user-code-complete' with parameter 'TYPE' and value 'exo' doesn't exist
 Event 'user-code-complete' with parameter 'TYPE' and value 'ruby' doesn't exist
+Event 'user-code-complete' with parameter 'TYPE' and value 'angularjs' doesn't exist
+Event 'user-code-complete' with parameter 'TYPE' and value 'html' doesn't exist
 Event 'build-started' with parameter 'TYPE' and value 'django' doesn't exist
 Event 'build-started' with parameter 'TYPE' and value 'java' doesn't exist
 Event 'build-started' with parameter 'TYPE' and value 'maven multi-module' doesn't exist
@@ -42,6 +46,8 @@ Event 'build-started' with parameter 'TYPE' and value 'exo' doesn't exist
 Event 'build-started' with parameter 'TYPE' and value 'ruby' doesn't exist
 Event 'build-started' with parameter 'TYPE' and value 'rails' doesn't exist
 Event 'build-started' with parameter 'TYPE' and value 'javascript' doesn't exist
+Event 'build-started' with parameter 'TYPE' and value 'angularjs' doesn't exist
+Event 'build-started' with parameter 'TYPE' and value 'html' doesn't exist
 Event 'build-finished' with parameter 'TYPE' and value 'django' doesn't exist
 Event 'build-finished' with parameter 'TYPE' and value 'java' doesn't exist
 Event 'build-finished' with parameter 'TYPE' and value 'maven multi-module' doesn't exist
@@ -56,6 +62,8 @@ Event 'build-finished' with parameter 'TYPE' and value 'exo' doesn't exist
 Event 'build-finished' with parameter 'TYPE' and value 'ruby' doesn't exist
 Event 'build-finished' with parameter 'TYPE' and value 'rails' doesn't exist
 Event 'build-finished' with parameter 'TYPE' and value 'javascript' doesn't exist
+Event 'build-finished' with parameter 'TYPE' and value 'angularjs' doesn't exist
+Event 'build-finished' with parameter 'TYPE' and value 'html' doesn't exist
 Event 'run-started' with parameter 'TYPE' and value 'jar' doesn't exist
 Event 'run-started' with parameter 'TYPE' and value 'servlet/jsp' doesn't exist
 Event 'run-started' with parameter 'TYPE' and value 'django' doesn't exist
@@ -71,6 +79,7 @@ Event 'run-started' with parameter 'TYPE' and value 'exo' doesn't exist
 Event 'run-started' with parameter 'TYPE' and value 'ruby' doesn't exist
 Event 'run-started' with parameter 'TYPE' and value 'rails' doesn't exist
 Event 'run-started' with parameter 'TYPE' and value 'javascript' doesn't exist
+Event 'run-started' with parameter 'TYPE' and value 'angularjs' doesn't exist
 Event 'run-finished' with parameter 'TYPE' and value 'jar' doesn't exist
 Event 'run-finished' with parameter 'TYPE' and value 'servlet/jsp' doesn't exist
 Event 'run-finished' with parameter 'TYPE' and value 'django' doesn't exist
@@ -86,6 +95,7 @@ Event 'run-finished' with parameter 'TYPE' and value 'exo' doesn't exist
 Event 'run-finished' with parameter 'TYPE' and value 'ruby' doesn't exist
 Event 'run-finished' with parameter 'TYPE' and value 'rails' doesn't exist
 Event 'run-finished' with parameter 'TYPE' and value 'javascript' doesn't exist
+Event 'run-finished' with parameter 'TYPE' and value 'angularjs' doesn't exist
 Event 'debug-started' with parameter 'TYPE' and value 'jar' doesn't exist
 Event 'debug-started' with parameter 'TYPE' and value 'servlet/jsp' doesn't exist
 Event 'debug-started' with parameter 'TYPE' and value 'django' doesn't exist
@@ -104,6 +114,8 @@ Event 'debug-started' with parameter 'TYPE' and value 'exo' doesn't exist
 Event 'debug-started' with parameter 'TYPE' and value 'ruby' doesn't exist
 Event 'debug-started' with parameter 'TYPE' and value 'rails' doesn't exist
 Event 'debug-started' with parameter 'TYPE' and value 'javascript' doesn't exist
+Event 'debug-started' with parameter 'TYPE' and value 'angularjs' doesn't exist
+Event 'debug-started' with parameter 'TYPE' and value 'html' doesn't exist
 Event 'debug-finished' with parameter 'TYPE' and value 'jar' doesn't exist
 Event 'debug-finished' with parameter 'TYPE' and value 'servlet/jsp' doesn't exist
 Event 'debug-finished' with parameter 'TYPE' and value 'django' doesn't exist
@@ -122,6 +134,8 @@ Event 'debug-finished' with parameter 'TYPE' and value 'exo' doesn't exist
 Event 'debug-finished' with parameter 'TYPE' and value 'ruby' doesn't exist
 Event 'debug-finished' with parameter 'TYPE' and value 'rails' doesn't exist
 Event 'debug-finished' with parameter 'TYPE' and value 'javascript' doesn't exist
+Event 'debug-finished' with parameter 'TYPE' and value 'angularjs' doesn't exist
+Event 'debug-finished' with parameter 'TYPE' and value 'html' doesn't exist
 Event doesn't exist: build-queue-waiting-started
 Event doesn't exist: build-queue-waiting-finished
 Event doesn't exist: run-queue-waiting-started
@@ -137,6 +151,8 @@ Event 'project-created' with parameter 'TYPE' and value 'google-mbs-client-andro
 Event 'project-created' with parameter 'TYPE' and value 'null' doesn't exist
 Event 'project-created' with parameter 'TYPE' and value 'exo' doesn't exist
 Event 'project-created' with parameter 'TYPE' and value 'ruby' doesn't exist
+Event 'project-created' with parameter 'TYPE' and value 'angularjs' doesn't exist
+Event 'project-created' with parameter 'TYPE' and value 'html' doesn't exist
 Event 'project-destroyed' with parameter 'TYPE' and value 'django' doesn't exist
 Event 'project-destroyed' with parameter 'TYPE' and value 'war' doesn't exist
 Event 'project-destroyed' with parameter 'TYPE' and value 'spring' doesn't exist
@@ -147,6 +163,8 @@ Event 'project-destroyed' with parameter 'TYPE' and value 'null' doesn't exist
 Event 'project-destroyed' with parameter 'TYPE' and value 'default' doesn't exist
 Event 'project-destroyed' with parameter 'TYPE' and value 'exo' doesn't exist
 Event 'project-destroyed' with parameter 'TYPE' and value 'ruby' doesn't exist
+Event 'project-destroyed' with parameter 'TYPE' and value 'angularjs' doesn't exist
+Event 'project-destroyed' with parameter 'TYPE' and value 'html' doesn't exist
 Event 'project-deployed' with parameter 'TYPE' and value 'servlet/jsp' doesn't exist
 Event 'project-deployed' with parameter 'TYPE' and value 'django' doesn't exist
 Event 'project-deployed' with parameter 'TYPE' and value 'java' doesn't exist
@@ -161,6 +179,8 @@ Event 'project-deployed' with parameter 'TYPE' and value 'exo' doesn't exist
 Event 'project-deployed' with parameter 'TYPE' and value 'ruby' doesn't exist
 Event 'project-deployed' with parameter 'TYPE' and value 'rails' doesn't exist
 Event 'project-deployed' with parameter 'TYPE' and value 'javascript' doesn't exist
+Event 'project-deployed' with parameter 'TYPE' and value 'angularjs' doesn't exist
+Event 'project-deployed' with parameter 'TYPE' and value 'html' doesn't exist
 Event 'project-built' with parameter 'TYPE' and value 'django' doesn't exist
 Event 'project-built' with parameter 'TYPE' and value 'java' doesn't exist
 Event 'project-built' with parameter 'TYPE' and value 'maven multi-module' doesn't exist
@@ -175,6 +195,8 @@ Event 'project-built' with parameter 'TYPE' and value 'exo' doesn't exist
 Event 'project-built' with parameter 'TYPE' and value 'ruby' doesn't exist
 Event 'project-built' with parameter 'TYPE' and value 'rails' doesn't exist
 Event 'project-built' with parameter 'TYPE' and value 'javascript' doesn't exist
+Event 'project-built' with parameter 'TYPE' and value 'angularjs' doesn't exist
+Event 'project-built' with parameter 'TYPE' and value 'html' doesn't exist
 Event 'application-created' with parameter 'TYPE' and value 'jar' doesn't exist
 Event 'application-created' with parameter 'TYPE' and value 'django' doesn't exist
 Event 'application-created' with parameter 'TYPE' and value 'war' doesn't exist
@@ -190,10 +212,13 @@ Event 'application-created' with parameter 'TYPE' and value 'exo' doesn't exist
 Event 'application-created' with parameter 'TYPE' and value 'ruby' doesn't exist
 Event 'application-created' with parameter 'TYPE' and value 'rails' doesn't exist
 Event 'application-created' with parameter 'TYPE' and value 'javascript' doesn't exist
+Event 'application-created' with parameter 'TYPE' and value 'angularjs' doesn't exist
+Event 'application-created' with parameter 'TYPE' and value 'html' doesn't exist
 Event doesn't exist: artifact-deployed
 Event doesn't exist: user-removed
 Event 'user-sso-logged-in' with parameter 'USING' and value 'org' doesn't exist
 Event 'user-sso-logged-in' with parameter 'USING' and value 'sysldap' doesn't exist
+Event 'user-sso-logged-in' with parameter 'USING' and value 'email' doesn't exist
 Event doesn't exist: ide-opened
 Event doesn't exist: ide-closed
 Event doesn't exist: idle
@@ -213,6 +238,8 @@ Event 'factory-created' with parameter 'TYPE' and value 'exo' doesn't exist
 Event 'factory-created' with parameter 'TYPE' and value 'ruby' doesn't exist
 Event 'factory-created' with parameter 'TYPE' and value 'rails' doesn't exist
 Event 'factory-created' with parameter 'TYPE' and value 'javascript' doesn't exist
+Event 'factory-created' with parameter 'TYPE' and value 'angularjs' doesn't exist
+Event 'factory-created' with parameter 'TYPE' and value 'html' doesn't exist
 Event 'factory-project-imported' with parameter 'TYPE' and value 'jar' doesn't exist
 Event 'factory-project-imported' with parameter 'TYPE' and value 'servlet/jsp' doesn't exist
 Event 'factory-project-imported' with parameter 'TYPE' and value 'django' doesn't exist
@@ -227,6 +254,8 @@ Event 'factory-project-imported' with parameter 'TYPE' and value 'serv' doesn't 
 Event 'factory-project-imported' with parameter 'TYPE' and value 'exo' doesn't exist
 Event 'factory-project-imported' with parameter 'TYPE' and value 'ruby' doesn't exist
 Event 'factory-project-imported' with parameter 'TYPE' and value 'rails' doesn't exist
+Event 'factory-project-imported' with parameter 'TYPE' and value 'angularjs' doesn't exist
+Event 'factory-project-imported' with parameter 'TYPE' and value 'html' doesn't exist
 Event 'jrebel-usage' with parameter 'TYPE' and value 'jar' doesn't exist
 Event 'jrebel-usage' with parameter 'TYPE' and value 'django' doesn't exist
 Event 'jrebel-usage' with parameter 'TYPE' and value 'war' doesn't exist
@@ -244,5 +273,7 @@ Event 'jrebel-usage' with parameter 'TYPE' and value 'exo' doesn't exist
 Event 'jrebel-usage' with parameter 'TYPE' and value 'ruby' doesn't exist
 Event 'jrebel-usage' with parameter 'TYPE' and value 'rails' doesn't exist
 Event 'jrebel-usage' with parameter 'TYPE' and value 'javascript' doesn't exist
+Event 'jrebel-usage' with parameter 'TYPE' and value 'angularjs' doesn't exist
+Event 'jrebel-usage' with parameter 'TYPE' and value 'html' doesn't exist
 Event doesn't exist: jrebel-user-profile-info
 Event doesn't exist: build-interrupted
