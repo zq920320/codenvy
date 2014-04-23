@@ -33,6 +33,7 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
+import com.mongodb.util.JSON;
 
 import org.mockito.Mock;
 import org.mockito.testng.MockitoTestNGListener;
@@ -115,7 +116,7 @@ public class AccountDaoTest extends BaseDaoTest {
         Account result =
                 DtoFactory.getInstance().createDtoFromJson(res.toString(), Account.class);
         assertEquals(account.getLinks(), result.getLinks());
-        assertEquals(account, result);
+        assertEquals(result, account);
     }
 
     @Test
@@ -129,8 +130,7 @@ public class AccountDaoTest extends BaseDaoTest {
 
     @Test
     public void shouldFindAccountByName() throws Exception {
-        collection.insert(
-                new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME).append("owner", ACCOUNT_OWNER));
+        collection.insert(new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME).append("owner", ACCOUNT_OWNER));
         Account result = accountDao.getByName(ACCOUNT_NAME);
         assertNotNull(result);
         assertEquals(result.getId(), ACCOUNT_ID);
@@ -138,18 +138,22 @@ public class AccountDaoTest extends BaseDaoTest {
 
     @Test(expectedExceptions = NotFoundException.class)
     public void shouldNotFindUnExistingAccountByName() throws Exception {
-        collection.insert(
-                new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME).append("owner", ACCOUNT_OWNER));
+        collection.insert(new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME).append("owner", ACCOUNT_OWNER));
         Account result = accountDao.getByName("randomName");
         assertNull(result);
     }
 
-
     @Test
     public void shouldFindAccountByOwner() throws Exception {
-        collection.insert(
-                new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME).append("owner", ACCOUNT_OWNER));
-        List<Account> result = accountDao.getByOwner(ACCOUNT_OWNER);
+        collection.insert(new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME));
+        collection.insert(new BasicDBObject("id", "fake").append("name", "fake"));
+        BasicDBList members = new BasicDBList();
+        members.add(JSON.parse(DtoFactory.getInstance().createDto(Member.class).withAccountId(ACCOUNT_ID)
+                                         .withRoles(Arrays.asList("account/owner")).withUserId(USER_ID).toString()));
+        members.add(JSON.parse(DtoFactory.getInstance().createDto(Member.class).withAccountId("fake")
+                                         .withRoles(Arrays.asList("account/member")).withUserId(USER_ID).toString()));
+        membersCollection.insert(new BasicDBObject("_id", USER_ID).append("members", members));
+        List<Account> result = accountDao.getByOwner(USER_ID);
         assertEquals(result.size(), 1);
         assertEquals(result.get(0).getId(), ACCOUNT_ID);
         assertEquals(result.get(0).getName(), ACCOUNT_NAME);

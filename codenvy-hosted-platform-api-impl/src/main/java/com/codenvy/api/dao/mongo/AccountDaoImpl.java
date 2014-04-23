@@ -121,13 +121,18 @@ public class AccountDaoImpl implements AccountDao {
     }
 
     @Override
-    public List<Account> getByOwner(String owner) throws ServerException {
+    public List<Account> getByOwner(String owner) throws ServerException, NotFoundException {
         final List<Account> accounts = new ArrayList<>();
         try {
-            DBCursor cursor = accountCollection.find(new BasicDBObject("owner", owner));
-            for (DBObject object : cursor) {
-                Account account = DtoFactory.getInstance().createDtoFromJson(object.toString(), Account.class);
-                accounts.add(account);
+            DBObject line = memberCollection.findOne(owner);
+            if (line != null) {
+                BasicDBList members = (BasicDBList)line.get("members");
+                for (Object memberObj : members) {
+                    Member member = DtoFactory.getInstance().createDtoFromJson(memberObj.toString(), Member.class);
+                    if (member.getRoles().contains("account/owner")) {
+                        accounts.add(getById(member.getAccountId()));
+                    }
+                }
             }
         } catch (MongoException me) {
             throw new ServerException(me.getMessage(), me);
