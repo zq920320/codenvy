@@ -25,7 +25,7 @@
             <param allow-empty-value="true">PROJECT</param>
             <param allow-empty-value="true">TYPE</param>
             <param allow-empty-value="true">SOURCE</param>
-            <param>ACTION</param>
+            <param allow-empty-value="true">ACTION</param>
             <param>PARAMETERS</param>
         </parameters>
     </event>
