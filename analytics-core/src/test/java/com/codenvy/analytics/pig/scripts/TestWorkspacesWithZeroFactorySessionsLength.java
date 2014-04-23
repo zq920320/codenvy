@@ -123,6 +123,8 @@ public class TestWorkspacesWithZeroFactorySessionsLength extends BaseTest {
 
         builder.put(Parameters.WS, Parameters.WS_TYPES.TEMPORARY.name());
         builder.put(Parameters.STORAGE_TABLE, "testworkspaceswithzerofactorysessionslength");
+        builder.put(Parameters.STORAGE_TABLE_PRODUCT_USAGE_SESSIONS, "testworkspaceswithzerofactorysessionslength_pus");
+        builder.put(Parameters.STORAGE_TABLE_USERS_STATISTICS, "testworkspaceswithzerofactorysessionslength_stat");
         pigServer.execute(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, builder.build());
     }
 

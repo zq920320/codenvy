@@ -141,16 +141,81 @@ p2 = FOREACH p1 GENERATE (z::ws IS NULL ? ls::dt : z::dt) AS dt,
 -- finds the first started sessions and keep indicator only there
 p3 = GROUP p2 BY (ws, user);
 p4 = FOREACH p3 GENERATE group.ws AS ws, group.user AS user, MIN(p2.dt) AS minDT, FLATTEN(p2);
-p = FOREACH p4 GENERATE ws, user, p2::dt AS dt, p2::delta AS delta, p2::factory AS factory, p2::id AS id,
+p = FOREACH p4 GENERATE ws, user, p2::dt AS dt, p2::delta AS delta, p2::factory AS factory, p2::id AS test_id,
     p2::referrer AS referrer, p2::orgId AS orgId, p2::affiliateId AS affiliateId, p2::ide AS ide,
     p2::auth AS auth, p2::conv AS conv, p2::run AS run, p2::deploy AS deploy, p2::build AS build,
     p2::ws_created AS ws_created, (p2::dt == minDT ? p2::user_created : 0) AS user_created,
     (INDEXOF(factory, 'factory?id=', 0) > 0 ? 1 : 0) AS encodedFactory;
 
-result = FOREACH p GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('ws', ws), TOTUPLE('user', user), TOTUPLE('ide', ide),
-                        TOTUPLE('runs', run), TOTUPLE('deploys', deploy), TOTUPLE('builds', build), TOTUPLE('ws_created', ws_created),
-                        TOTUPLE('factory', factory), TOTUPLE('referrer', referrer), TOTUPLE('org_id', orgId), TOTUPLE('affiliate_id', affiliateId),
-                        TOTUPLE('authenticated_factory_session', auth), TOTUPLE('converted_factory_session', conv), TOTUPLE('time', delta),
-                        TOTUPLE('session_id', id), TOTUPLE('user_created', user_created), TOTUPLE('encoded_factory', encodedFactory);
-STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
+-- Set session id if absent
+SPLIT p INTO r1 IF test_id != '', t1 OTHERWISE;
+
+r = FOREACH r1 GENERATE *, test_id AS id;
+t = FOREACH t1 GENERATE *, UPPER(UUID()) AS id;
+
+-- stores both relations
+result1 = FOREACH r GENERATE UUID(),
+                            TOTUPLE('date', ToMilliSeconds(dt)),
+                            TOTUPLE('ws', ws),
+                            TOTUPLE('user', user),
+                            TOTUPLE('ide', ide),
+                            TOTUPLE('runs', run),
+                            TOTUPLE('deploys', deploy),
+                            TOTUPLE('builds', build),
+                            TOTUPLE('ws_created', ws_created),
+                            TOTUPLE('factory', factory),
+                            TOTUPLE('referrer', referrer),
+                            TOTUPLE('org_id', orgId),
+                            TOTUPLE('affiliate_id', affiliateId),
+                            TOTUPLE('authenticated_factory_session', auth),
+                            TOTUPLE('converted_factory_session', conv),
+                            TOTUPLE('time', delta),
+                            TOTUPLE('session_id', id),
+                            TOTUPLE('user_created', user_created),
+                            TOTUPLE('encoded_factory', encodedFactory);
+result2 = FOREACH t GENERATE UUID(),
+                            TOTUPLE('date', ToMilliSeconds(dt)),
+                            TOTUPLE('ws', ws),
+                            TOTUPLE('user', user),
+                            TOTUPLE('ide', ide),
+                            TOTUPLE('runs', run),
+                            TOTUPLE('deploys', deploy),
+                            TOTUPLE('builds', build),
+                            TOTUPLE('ws_created', ws_created),
+                            TOTUPLE('factory', factory),
+                            TOTUPLE('referrer', referrer),
+                            TOTUPLE('org_id', orgId),
+                            TOTUPLE('affiliate_id', affiliateId),
+                            TOTUPLE('authenticated_factory_session', auth),
+                            TOTUPLE('converted_factory_session', conv),
+                            TOTUPLE('time', delta),
+                            TOTUPLE('session_id', id),
+                            TOTUPLE('user_created', user_created),
+                            TOTUPLE('encoded_factory', encodedFactory);
+
+STORE result1 INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
+STORE result2 INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
+
+-- newly generated sessions should be stored in '$STORAGE_TABLE_PRODUCT_USAGE_SESSIONS' collection too
+result3 = FOREACH t GENERATE UUID(),
+                            TOTUPLE('date', ToMilliSeconds(dt)),
+                            TOTUPLE('ws', ws),
+                            TOTUPLE('user', user),
+                            TOTUPLE('session_id', id),
+                            TOTUPLE('ide', ide),
+                            TOTUPLE('logout_interval', 0L),
+                            TOTUPLE('time', delta),
+                            TOTUPLE('end_time', ToMilliSeconds(dt) + delta),
+                            TOTUPLE('domain', NullToEmpty(REGEX_EXTRACT(user, '.*@(.*)', 1))),
+                            TOTUPLE('user_company', '');
+STORE result3 INTO '$STORAGE_URL.$STORAGE_TABLE_PRODUCT_USAGE_SESSIONS' USING MongoStorage;
+
+result4 = FOREACH t GENERATE UUID(),
+                             TOTUPLE('date', ToMilliSeconds(dt)),
+                             TOTUPLE('user', user),
+                             TOTUPLE('ws', ws),
+                             TOTUPLE('time', delta),
+                             TOTUPLE('sessions', 1),
+                             TOTUPLE('ide', ide);
+STORE result4 INTO '$STORAGE_URL.$STORAGE_TABLE_USERS_STATISTICS' USING MongoStorage;
 

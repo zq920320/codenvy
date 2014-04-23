@@ -157,6 +157,8 @@ public class TestWorkspacesWhereUsersHaveSeveralFactorySessions extends BaseTest
 
         builder.put(Parameters.WS, Parameters.WS_TYPES.TEMPORARY.name());
         builder.put(Parameters.STORAGE_TABLE, "testuserscountmoretwosessionsontmpws");
+        builder.put(Parameters.STORAGE_TABLE_PRODUCT_USAGE_SESSIONS, "testuserscountmoretwosessionsontmpws_pus");
+        builder.put(Parameters.STORAGE_TABLE_USERS_STATISTICS, "testuserscountmoretwosessionsontmpws_stat");
         pigServer.execute(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, builder.build());
     }
 

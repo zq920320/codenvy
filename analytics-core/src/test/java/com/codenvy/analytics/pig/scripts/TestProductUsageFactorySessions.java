@@ -96,6 +96,8 @@ public class TestProductUsageFactorySessions extends BaseTest {
 
         builder.put(Parameters.WS, Parameters.WS_TYPES.TEMPORARY.name());
         builder.put(Parameters.STORAGE_TABLE, "testproductusagefactorysessions");
+        builder.put(Parameters.STORAGE_TABLE_PRODUCT_USAGE_SESSIONS, "testproductusagefactorysessions_pus");
+        builder.put(Parameters.STORAGE_TABLE_USERS_STATISTICS, "testproductusagefactorysessions_stat");
         pigServer.execute(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, builder.build());
 
         builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
