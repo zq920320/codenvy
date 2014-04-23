@@ -37,9 +37,10 @@ import static org.testng.Assert.assertEquals;
 /** @author <a href="mailto:dnochevnov@codenvy.com">Dmytro Nochevnov</a> */
 public class TestBrokenFactoryUrl extends BaseTest {
 
-    private static final String COLLECTION          = TestBrokenFactoryUrl.class.getSimpleName().toLowerCase();
-    private static final String COLLECTION_ACCEPTED =
-            TestBrokenFactoryUrl.class.getSimpleName().toLowerCase() + "accepted";
+    private static final String COLLECTION                        = TestBrokenFactoryUrl.class.getSimpleName().toLowerCase();
+    private static final String COLLECTION_ACCEPTED               = COLLECTION + "accepted";
+    private static final String COLLECTION_PRODUCT_USAGE_SESSIONS = COLLECTION + "sessions";
+    private static final String COLLECTION_USERS_STATISTICS       = COLLECTION + "statistics";
 
     @BeforeClass
     public void init() throws Exception {
@@ -72,6 +73,8 @@ public class TestBrokenFactoryUrl extends BaseTest {
 
         builder.put(Parameters.WS, Parameters.WS_TYPES.TEMPORARY.name());
         builder.put(Parameters.STORAGE_TABLE, COLLECTION);
+        builder.put(Parameters.STORAGE_TABLE_PRODUCT_USAGE_SESSIONS, COLLECTION_PRODUCT_USAGE_SESSIONS);
+        builder.put(Parameters.STORAGE_TABLE_USERS_STATISTICS, COLLECTION_USERS_STATISTICS);
         pigServer.execute(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, builder.build());
     }
 

@@ -25,7 +25,9 @@ import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+/**
+ * @author Anatoliy Bazko
+ */
 public enum ScriptType {
     EVENTS {
         @Override
@@ -82,7 +84,15 @@ public enum ScriptType {
     },
     CREATED_FACTORIES,
     ACCEPTED_FACTORIES,
-    PRODUCT_USAGE_FACTORY_SESSIONS,
+    PRODUCT_USAGE_FACTORY_SESSIONS {
+        @Override
+        public Set<Parameters> getParams() {
+            Set<Parameters> params = super.getParams();
+            params.add(Parameters.STORAGE_TABLE_PRODUCT_USAGE_SESSIONS);
+            params.add(Parameters.STORAGE_TABLE_USERS_STATISTICS);
+            return params;
+        }
+    },
     CREATED_TEMPORARY_WORKSPACES,
     USERS_UPDATE_PROFILES,
     USERS_STATISTICS,
@@ -128,7 +138,7 @@ public enum ScriptType {
     TEST_FIX_FACTORY_URL;
 
 
-    /** @return list of mandatory parameters required to be passed to the script */
+    /** @return list of mandatory parameters required to be passed into the script */
     public Set<Parameters> getParams() {
         return new LinkedHashSet<>(
                 Arrays.asList(new Parameters[]{Parameters.WS,

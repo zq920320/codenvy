@@ -129,6 +129,8 @@ public class TestProductUsageFactoryReferrers extends BaseTest {
 
         builder.put(Parameters.WS, Parameters.WS_TYPES.TEMPORARY.name());
         builder.put(Parameters.STORAGE_TABLE, "testpoductusagefactoyreferers");
+        builder.put(Parameters.STORAGE_TABLE_PRODUCT_USAGE_SESSIONS, "testpoductusagefactoyreferers_pus");
+        builder.put(Parameters.STORAGE_TABLE_USERS_STATISTICS, "testpoductusagefactoyreferers_stat");
         pigServer.execute(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, builder.build());
     }
 

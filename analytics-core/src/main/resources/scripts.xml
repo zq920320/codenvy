@@ -241,6 +241,8 @@
         <parameter key="USER" value="ANY"/>
         <parameter key="WS" value="TEMPORARY"/>
         <parameter key="STORAGE_TABLE" value="product_usage_factory_sessions_list"/>
+        <parameter key="STORAGE_TABLE_PRODUCT_USAGE_SESSIONS" value="product_usage_sessions_list"/>
+        <parameter key="STORAGE_TABLE_USERS_STATISTICS" value="users_statistics_list"/>
     </script>
 
     <!-- Scripts for user's view -->

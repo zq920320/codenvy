@@ -39,9 +39,10 @@ import static org.testng.Assert.assertEquals;
 /** @author <a href="mailto:dnochevnov@codenvy.com">Dmytro Nochevnov</a> */
 public class TestEncodedFactoryUrl extends BaseTest {
 
-    private static final String COLLECTION          = TestEncodedFactoryUrl.class.getSimpleName().toLowerCase();
-    private static final String COLLECTION_ACCEPTED =
-            TestEncodedFactoryUrl.class.getSimpleName().toLowerCase() + "accepted";
+    private static final String COLLECTION                        = TestEncodedFactoryUrl.class.getSimpleName().toLowerCase();
+    private static final String COLLECTION_ACCEPTED               = COLLECTION + "accepted";
+    private static final String COLLECTION_PRODUCT_USAGE_SESSIONS = COLLECTION + "sessions";
+    private static final String COLLECTION_USERS_STATISTICS       = COLLECTION + "statistics";
 
     private static final String ENCODED_URL =
             "https%3A%2F%2Fcodenvy.com%2Ffactory%2F%3Fv%3D1" +
@@ -62,25 +63,26 @@ public class TestEncodedFactoryUrl extends BaseTest {
 
     // 'ptype=' param is removed
     // 'factory/?v=' replaced with 'factory?v='
-    private static final String DECODED_URL = "https://codenvy.com/factory?v=1.0&pname=Sample-Angul\n" +
-                                              "arJS&wname=codenvy-factories&vcs=git&vcsurl=http://codenvy" +
-                                              ".com/git/04/0f/7f/workspacegcpv6cdxy1q34n1i/Sample-AngularJS&idcommit=37a21ef422e7995cbab615431f0f63991a9b314a&welcome={\n" +
-                                              "\"authenticated\": {\n" +
-                                              "\"title\": \"TodoMVC - AngularJS Implementation\",\n" +
-                                              "\"iconurl\": \"https://dl.dropboxusercontent" +
-                                              ".com/u/2187905/Codenvy/SampleCustomizedWelcomeMessage/angularjs-icon" +
-                                              ".png\",\n" +
-                                              "\"contenturl\": \"https://dl.dropboxusercontent" +
-                                              ".com/u/2187905/Codenvy/SampleCustomizedWelcomeMessage/angular_welcome_message_authenticated.html\"\n" +
-                                              "},\n" +
-                                              "\"nonauthenticated\": {\n" +
-                                              "\"title\": \"TodoMVC - AngularJS Implementation\",\n" +
-                                              "\"iconurl\": \"https://dl.dropboxusercontent" +
-                                              ".com/u/2187905/Codenvy/SampleCustomizedWelcomeMessage/angularjs-icon" +
-                                              ".png\",\n" +
-                                              "\"contenturl\": \"https://dl.dropboxusercontent" +
-                                              ".com/u/2187905/Codenvy/SampleCustomizedWelcomeMessage/angular_welcome_message_not-authenticated.html\"\n" +
-                                              "}";
+    private static final String DECODED_URL
+            = "https://codenvy.com/factory?v=1.0&pname=Sample-Angul\n" +
+              "arJS&wname=codenvy-factories&vcs=git&vcsurl=http://codenvy" +
+              ".com/git/04/0f/7f/workspacegcpv6cdxy1q34n1i/Sample-AngularJS&idcommit=37a21ef422e7995cbab615431f0f63991a9b314a&welcome={\n" +
+              "\"authenticated\": {\n" +
+              "\"title\": \"TodoMVC - AngularJS Implementation\",\n" +
+              "\"iconurl\": \"https://dl.dropboxusercontent" +
+              ".com/u/2187905/Codenvy/SampleCustomizedWelcomeMessage/angularjs-icon" +
+              ".png\",\n" +
+              "\"contenturl\": \"https://dl.dropboxusercontent" +
+              ".com/u/2187905/Codenvy/SampleCustomizedWelcomeMessage/angular_welcome_message_authenticated.html\"\n" +
+              "},\n" +
+              "\"nonauthenticated\": {\n" +
+              "\"title\": \"TodoMVC - AngularJS Implementation\",\n" +
+              "\"iconurl\": \"https://dl.dropboxusercontent" +
+              ".com/u/2187905/Codenvy/SampleCustomizedWelcomeMessage/angularjs-icon" +
+              ".png\",\n" +
+              "\"contenturl\": \"https://dl.dropboxusercontent" +
+              ".com/u/2187905/Codenvy/SampleCustomizedWelcomeMessage/angular_welcome_message_not-authenticated.html\"\n" +
+              "}";
 
     @BeforeClass
     public void init() throws Exception {
@@ -113,6 +115,8 @@ public class TestEncodedFactoryUrl extends BaseTest {
 
         builder.put(Parameters.WS, Parameters.WS_TYPES.TEMPORARY.name());
         builder.put(Parameters.STORAGE_TABLE, COLLECTION);
+        builder.put(Parameters.STORAGE_TABLE_PRODUCT_USAGE_SESSIONS, COLLECTION_PRODUCT_USAGE_SESSIONS);
+        builder.put(Parameters.STORAGE_TABLE_USERS_STATISTICS, COLLECTION_USERS_STATISTICS);
         pigServer.execute(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, builder.build());
     }
 
