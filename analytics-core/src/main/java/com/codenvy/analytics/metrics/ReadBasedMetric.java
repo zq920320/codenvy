@@ -435,17 +435,19 @@ public abstract class ReadBasedMetric extends AbstractMetric {
      * @see http://stackoverflow.com/questions/5331549/what-is-the-maximum-number-of-parameters-passed-to-in-query-in-mongodb
      */
     public String[] getExpandedMetricValues(MetricType metric, Context context) throws ParseException, IOException {
-        // unlink context from caller method
-        Context.Builder builder = new Context.Builder(context);
+        Context.Builder builder = new Context.Builder(context);  // unlink context from caller method
         builder.remove(Parameters.EXPANDED_METRIC_NAME);
         
-        // get all data
+        // get all data without pagination
         builder.remove(Parameters.PAGE);
         builder.remove(Parameters.PER_PAGE);
+
+        // remove already useless time parameters
+        builder.remove(Parameters.TIME_INTERVAL);        
+        builder.remove(Parameters.TIME_UNIT);
         
         context = builder.build();
-
-        context = initializeFirstInterval(context);
+        
         ReadBasedMetric expandableMetric = (ReadBasedMetric)MetricFactory.getMetric(metric);
         ListValueData metricValue = expandableMetric.getExpandedValue(context);
 
@@ -453,7 +455,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
         
         // return empty view data if there is empty metricValue
         if (allMetricValues.size() == 0) {
-            return null;
+            return new String[0];  // return empty array
         }
         
         List<String> values = new ArrayList<>(allMetricValues.size());
