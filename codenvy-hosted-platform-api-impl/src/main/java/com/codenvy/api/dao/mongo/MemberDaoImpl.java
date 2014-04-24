@@ -25,7 +25,13 @@ import com.codenvy.api.user.server.dao.UserDao;
 import com.codenvy.api.user.shared.dto.Member;
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
 import com.codenvy.dto.server.DtoFactory;
-import com.mongodb.*;
+import com.mongodb.BasicDBList;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
+import com.mongodb.DBObject;
+import com.mongodb.MongoException;
 import com.mongodb.util.JSON;
 
 import javax.inject.Inject;
@@ -38,14 +44,14 @@ import java.util.List;
 
 /**
  * Implementation of MemberDAO based on MongoDB storage.
- *
+ * <p/>
  * Uses the following DB scheme:
- *
- *  ------------------------------------------------------------------
+ * <p/>
+ * ------------------------------------------------------------------
  * |  _ID (UserId)  |              List of members                    |
  * -------------------------------------------------------------------|
  * |   user1234     |  ["ws1", List<Roles>], ["ws2", List<Roles>]     |
- *  ------------------------------------------------------------------
+ * ------------------------------------------------------------------
  */
 @Singleton
 public class MemberDaoImpl implements MemberDao {
@@ -87,7 +93,8 @@ public class MemberDaoImpl implements MemberDao {
                     throw new ConflictException(
                             String.format(
                                     "Membership of user %s in workspace %s already exists. Use update method instead.",
-                                    member.getUserId(), member.getWorkspaceId()));
+                                    member.getUserId(), member.getWorkspaceId())
+                    );
                 }
             }
             // Adding new member
@@ -114,14 +121,15 @@ public class MemberDaoImpl implements MemberDao {
 
             BasicDBList members = (BasicDBList)old.get("members");
             if (members == null)
-                throw new NotFoundException(String.format("Unable to update membership: user %s doesn't have any memberships.", member.getUserId()));
+                throw new NotFoundException(
+                        String.format("Unable to update membership: user %s doesn't have any memberships.", member.getUserId()));
 
             // Find membership in given WS and removing it
             boolean found = false;
             Iterator it = members.iterator();
             while (it.hasNext()) {
                 Member one = DtoFactory.getInstance().createDtoFromJson(it.next().toString(), Member.class);
-                if (one.getWorkspaceId().equals(member.getWorkspaceId())){
+                if (one.getWorkspaceId().equals(member.getWorkspaceId())) {
                     it.remove();
                     found = true;
                 }
@@ -129,7 +137,8 @@ public class MemberDaoImpl implements MemberDao {
             if (!found)
                 throw new NotFoundException(
                         String.format("Unable to update membership: user %s doesn't have no memberships in the WS %s.",
-                                      member.getUserId(), member.getWorkspaceId()));
+                                      member.getUserId(), member.getWorkspaceId())
+                );
 
             // Save new
             members.add(toDBObject(member));
@@ -179,7 +188,24 @@ public class MemberDaoImpl implements MemberDao {
     }
 
     @Override
-    public void remove(Member member) throws ServerException {
+    public void remove(Member member) throws ServerException, NotFoundException, ConflictException {
+        validateSubjectsExists(member.getUserId(), member.getWorkspaceId());
+        List<Member> wsMembers = getWorkspaceMembers(member.getWorkspaceId());
+        //workspace should have at least 1 admin
+        if (member.getRoles().contains("workspace/admin") && wsMembers.size() > 1) {
+            boolean isOtherWsAdminPresent = false;
+            Iterator<Member> mIt = getWorkspaceMembers(member.getWorkspaceId()).iterator();
+            while (mIt.hasNext() && !isOtherWsAdminPresent) {
+                Member current = mIt.next();
+                isOtherWsAdminPresent = !current.getUserId().equals(member.getUserId())
+                                        && current.getRoles().contains("workspace/admin");
+            }
+            if (!isOtherWsAdminPresent) {
+                throw new ConflictException("Workspace should have at least 1 admin");
+            }
+            //java8 alternative:
+            //isOtherWsAdminPresent = wsMembers().stream().filter(m -> m.getRoles.contains("workspace/admin")).count() > 1)
+        }
         DBObject query = new BasicDBObject("_id", member.getUserId());
         try {
             DBObject old = collection.findOne(query);
@@ -207,10 +233,12 @@ public class MemberDaoImpl implements MemberDao {
 
     /**
      * Convert Member object to Database ready-to-use object,
-     * @param obj object to convert
+     *
+     * @param obj
+     *         object to convert
      * @return DBObject
      */
-    private  DBObject toDBObject(Member obj) {
+    private DBObject toDBObject(Member obj) {
         Member member = DtoFactory.getInstance().createDto(Member.class)
                                   .withUserId(obj.getUserId())
                                   .withWorkspaceId(obj.getWorkspaceId())
@@ -218,18 +246,20 @@ public class MemberDaoImpl implements MemberDao {
         return (DBObject)JSON.parse(member.toString());
     }
 
-
     void validateSubjectsExists(String userId, String workspaceId) throws ConflictException, ServerException,
-            NotFoundException {
-//        try {
+                                                                          NotFoundException {
+        try {
+            userDao.getById(userId);
+            workspaceDao.getById(workspaceId);
             if (userDao.getById(userId) == null)
                 throw new ConflictException(
                         String.format("Unable to update membership: user %s does not exist.", userId));
             if (workspaceDao.getById(workspaceId) == null)
                 throw new ConflictException(
                         String.format("Unable to update membership: workspace %s does not exist.", workspaceId));
-//        } catch (UserException | WorkspaceException e) {
-//            throw new MembershipException(e.getMessage());
-//        }
+
+        } catch (NotFoundException ex) {
+            throw new ConflictException("Unable to update membership: " + ex.getMessage());
+        }
     }
 }

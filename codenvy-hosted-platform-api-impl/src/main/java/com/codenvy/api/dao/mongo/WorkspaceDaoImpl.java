@@ -20,13 +20,19 @@ package com.codenvy.api.dao.mongo;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
+import com.codenvy.api.user.server.dao.MemberDao;
 import com.codenvy.api.user.server.dao.UserDao;
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
 import com.codenvy.api.workspace.server.exception.WorkspaceException;
 import com.codenvy.api.workspace.shared.dto.Attribute;
 import com.codenvy.api.workspace.shared.dto.Workspace;
 import com.codenvy.dto.server.DtoFactory;
-import com.mongodb.*;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
+import com.mongodb.DBObject;
+import com.mongodb.MongoException;
 import com.mongodb.util.JSON;
 
 import javax.inject.Inject;
@@ -47,13 +53,14 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
     protected static final String DB_COLLECTION = "organization.storage.db.workspace.collection";
 
     DBCollection collection;
-
-    UserDao userDao;
+    UserDao      userDao;
+    MemberDao    memberDao;
 
     @Inject
-    public WorkspaceDaoImpl(UserDao userDao, DB db, @Named(DB_COLLECTION) String collectionName) {
+    public WorkspaceDaoImpl(UserDao userDao, MemberDao memberDao, DB db, @Named(DB_COLLECTION) String collectionName) {
         collection = db.getCollection(collectionName);
         collection.ensureIndex(new BasicDBObject("id", 1), new BasicDBObject("unique", true));
+        this.memberDao = memberDao;
         this.userDao = userDao;
     }
 
@@ -72,7 +79,7 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
     public void update(Workspace workspace) throws ConflictException, NotFoundException, ServerException {
         DBObject query = new BasicDBObject("id", workspace.getId());
         if (collection.findOne(query) == null) {
-            throw new NotFoundException("Workspace not found "+workspace.getId());
+            throw new NotFoundException("Workspace not found " + workspace.getId());
         }
         try {
             validateWorkspaceName(workspace.getName());
@@ -83,7 +90,10 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
     }
 
     @Override
-    public void remove(String id) throws ServerException {
+    public void remove(String id) throws ServerException, NotFoundException, ConflictException {
+        if (memberDao.getWorkspaceMembers(id).size() > 0) {
+            throw new ConflictException("It is not possible to remove workspace with existing members");
+        }
         try {
             collection.remove(new BasicDBObject("id", id));
         } catch (MongoException me) {
@@ -99,8 +109,8 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
         } catch (MongoException me) {
             throw new ServerException(me.getMessage(), me);
         }
-        if(res == null)
-            throw new NotFoundException("Workspace not found "+id);
+        if (res == null)
+            throw new NotFoundException("Workspace not found " + id);
         return DtoFactory.getInstance().createDtoFromJson(res.toString(), Workspace.class);
     }
 
@@ -112,8 +122,8 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
         } catch (MongoException me) {
             throw new ServerException(me.getMessage(), me);
         }
-        if(res == null)
-            throw new NotFoundException("Workspace not found "+name);
+        if (res == null)
+            throw new NotFoundException("Workspace not found " + name);
         return DtoFactory.getInstance().createDtoFromJson(res.toString(), Workspace.class);
     }
 
