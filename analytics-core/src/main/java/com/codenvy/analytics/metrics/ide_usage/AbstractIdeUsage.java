@@ -77,6 +77,8 @@ public abstract class AbstractIdeUsage extends ReadBasedMetric {
     public static final String HELP_ABOUT         = "IDE: Show about application";
     public static final String HELP_TUTORIAL      = "IDE: Show tutorial";
 
+    public static final String AUTOCOMPLETING = "Autocompleting";
+
     private final String[] actions;
 
     protected AbstractIdeUsage(String metricName, String[] actions) {
