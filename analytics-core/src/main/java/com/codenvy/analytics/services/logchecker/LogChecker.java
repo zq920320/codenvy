@@ -21,10 +21,8 @@ import com.codenvy.analytics.Configurator;
 import com.codenvy.analytics.Injector;
 import com.codenvy.analytics.MailService;
 import com.codenvy.analytics.Utils;
-import com.codenvy.analytics.metrics.AbstractMetric;
-import com.codenvy.analytics.metrics.Context;
-import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.metrics.*;
+import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
 import com.codenvy.analytics.metrics.projects.ProjectPaases;
 import com.codenvy.analytics.metrics.projects.ProjectTypes;
 import com.codenvy.analytics.persistent.CollectionsManagement;
@@ -65,15 +63,15 @@ public class LogChecker extends Feature {
     private static final String MAIL_SUBJECT = "analytics.log-checker.mail_subject";
     private static final String MAIL_TO      = "analytics.log-checker.mail_to";
 
-    private final Configurator          configurator;
-    private final EventsHolder          eventsHolder;
-    private final CollectionsManagement collectionsManagement;
+    private final Configurator configurator;
+    private final EventsHolder eventsHolder;
+    private final DBCollection collection;
 
     @Inject
     public LogChecker(Configurator configurator, EventsHolder eventsHolder, CollectionsManagement collectionsManagement) {
         this.configurator = configurator;
         this.eventsHolder = eventsHolder;
-        this.collectionsManagement = collectionsManagement;
+        this.collection = collectionsManagement.getOrCreate(MetricType.USERS_ACTIVITY_LIST.toString().toLowerCase());
     }
 
     @Override
@@ -109,58 +107,90 @@ public class LogChecker extends Feature {
     }
 
     public void doEventChecker(Context context, BufferedWriter out) throws IOException, ParseException {
-        DBCollection collection = collectionsManagement.getOrCreate(MetricType.USERS_ACTIVITY_LIST.toString().toLowerCase());
-
         for (EventConfiguration eventConf : eventsHolder.getAvailableEvents()) {
             String event = eventConf.getName();
-            if (!isEventExist(collection, context, event)) {
-                out.write("Event doesn't exist: " + event);
-                out.newLine();
-
+            if (!isEventExist(context, event)) {
+                writeLine("Event doesn't exist: " + event, out);
                 continue;
+            } else if (event.equals("ide-usage")) {
+                if (!isEventExist(context, event, AbstractMetric.ACTION, AbstractIdeUsage.AUTOCOMPLETING)) {
+                    writeLine("Event 'ide-usage' doesn't exist for action: " + AbstractIdeUsage.AUTOCOMPLETING, out);
+                }
             }
 
             for (Parameter param : eventConf.getParameters().getParams()) {
                 String name = param.getName();
 
                 if (param.getAllowedValues() != null) {
-                    doCheckEventWithParameters(collection, context, event, name, param.getAllowedValues().split(","), out);
+                    doCheckEventWithParameters(context, event, name, param.getAllowedValues().split(","), out);
+
                 } else if (name.equals(EventValidation.PAAS)) {
-                    doCheckEventWithParameters(collection, context, event, name, ProjectPaases.PAASES, out);
+                    doCheckEventWithParameters(context, event, name, ProjectPaases.PAASES, out);
+
                 } else if (name.equals(EventValidation.TYPE)) {
-                    doCheckEventWithParameters(collection, context, event, name, ProjectTypes.TYPES, out);
+                    doCheckEventWithParameters(context, event, name, ProjectTypes.TYPES, out);
+
+                } else if (name.equalsIgnoreCase(AbstractMetric.WS)) {
+                    if (!isEventExist(context, event, AbstractMetric.WS, ReadBasedMetric.PERSISTENT_WS)) {
+                        writeLine("Event doesn't exist for persistent workspaces: " + event, out);
+                    }
+
+                    if (!isEventExist(context, event, AbstractMetric.WS, ReadBasedMetric.TEMPORARY_WS)) {
+                        writeLine("Event doesn't exist for temporary workspaces: " + event, out);
+                    }
+
+                } else if (name.equalsIgnoreCase(AbstractMetric.USER)) {
+                    if (!isEventExist(context, event, AbstractMetric.USER, ReadBasedMetric.REGISTERED_USER)) {
+                        writeLine("Event doesn't exist for registered users: " + event, out);
+                    }
+
+                    if (!isEventExist(context, event, AbstractMetric.USER, ReadBasedMetric.ANONYMOUS_USER)) {
+                        writeLine("Event doesn't exist for anonymous users: " + event, out);
+                    }
                 }
             }
         }
     }
 
-    private void doCheckEventWithParameters(DBCollection collection,
-                                            Context context,
+
+    private void doCheckEventWithParameters(Context context,
                                             String event,
                                             String param,
                                             String[] values,
                                             BufferedWriter out) throws IOException, ParseException {
         for (String value : values) {
-            if (!isEventExist(collection, context, event, param, value)) {
-                out.write(String.format("Event '%s' with parameter '%s' and value '%s' doesn't exist", event, param, value));
-                out.newLine();
+            if (!isEventExist(context, event, param, value)) {
+                writeLine(String.format("Event '%s' with parameter '%s' and value '%s' doesn't exist", event, param, value), out);
             }
         }
     }
 
-    private boolean isEventExist(DBCollection collection, Context context, String event) throws ParseException {
+    private boolean isEventExist(Context context, String event) throws ParseException {
         DBObject dbObject = Utils.setDateFilter(context);
         dbObject.put(AbstractMetric.EVENT, event);
 
         return collection.findOne(dbObject) != null;
     }
 
-    private boolean isEventExist(DBCollection collection, Context context, String event, String param, String value) throws ParseException {
+    private boolean isEventExist(Context context,
+                                 String event,
+                                 String param,
+                                 Object value) throws ParseException {
         DBObject dbObject = Utils.setDateFilter(context);
         dbObject.put(AbstractMetric.EVENT, event);
-        dbObject.put(param.toLowerCase(), Pattern.compile(value, Pattern.CASE_INSENSITIVE));
+
+        if (value instanceof String) {
+            dbObject.put(param.toLowerCase(), Pattern.compile((String)value, Pattern.CASE_INSENSITIVE));
+        } else {
+            dbObject.put(param.toLowerCase(), value);
+        }
 
         return collection.findOne(dbObject) != null;
+    }
+
+    private void writeLine(String line, BufferedWriter out) throws IOException {
+        out.write(line);
+        out.newLine();
     }
 
     protected void doLogChecker(Context context, BufferedWriter out) throws IOException, ParseException {
