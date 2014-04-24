@@ -23,10 +23,15 @@ import com.codenvy.api.core.ServerException;
 import com.codenvy.api.user.server.dao.MemberDao;
 import com.codenvy.api.user.server.dao.UserDao;
 import com.codenvy.api.user.shared.dto.Member;
+import com.codenvy.api.user.shared.dto.User;
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
+import com.codenvy.api.workspace.shared.dto.Workspace;
 import com.codenvy.dto.server.DtoFactory;
 import com.mongodb.*;
 import com.mongodb.util.JSON;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -49,6 +54,7 @@ import java.util.List;
  */
 @Singleton
 public class MemberDaoImpl implements MemberDao {
+    private static final Logger LOG = LoggerFactory.getLogger(MemberDaoImpl.class);
 
     protected static final String DB_COLLECTION = "organization.storage.db.ws.member.collection";
 
@@ -96,8 +102,21 @@ public class MemberDaoImpl implements MemberDao {
 
             //Save
             collection.save(old);
+
+            logUserAddedToWsEvent(member);
         } catch (MongoException me) {
             throw new ServerException(me.getMessage(), me);
+        }
+    }
+
+    private void logUserAddedToWsEvent(Member member) {
+        try {
+            User user = userDao.getById(member.getUserId());
+            Workspace workspace = workspaceDao.getById(member.getWorkspaceId());
+
+            LOG.info("EVENT#user-added-to-ws# USER#{}# WS#{}#", user.getEmail(), workspace.getName());
+        } catch (NotFoundException | ServerException e) {
+            LOG.error("Can't log Analytics event", e);
         }
     }
 
@@ -207,6 +226,7 @@ public class MemberDaoImpl implements MemberDao {
 
     /**
      * Convert Member object to Database ready-to-use object,
+     *
      * @param obj object to convert
      * @return DBObject
      */
