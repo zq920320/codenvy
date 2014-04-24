@@ -18,7 +18,7 @@
 	.ui-button, .ui-button a {
 	    color: white !important;
 	    font-weight: bold !important;
-	    font-size: 16px !important;
+	    font-size: 15px !important;
 	    margin-right: 0px;
 	}
 	
