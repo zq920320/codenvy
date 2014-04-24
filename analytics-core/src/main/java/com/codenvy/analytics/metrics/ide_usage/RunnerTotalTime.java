@@ -28,7 +28,7 @@ import javax.annotation.security.RolesAllowed;
 public class RunnerTotalTime extends AbstractLongValueResulted implements Expandable {
 
     public RunnerTotalTime() {
-        super(MetricType.RUNNER_TOTAL_TIME, PROJECT);
+        super(MetricType.RUNNER_TOTAL_TIME, PROJECT_ID);
     }
 
     @Override

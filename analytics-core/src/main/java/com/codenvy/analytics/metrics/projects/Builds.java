@@ -28,7 +28,7 @@ import javax.annotation.security.RolesAllowed;
 public class Builds extends AbstractLongValueResulted implements Expandable {
 
     public Builds() {
-        super(MetricType.BUILDS, PROJECT);
+        super(MetricType.BUILDS, PROJECT_ID);
     }
 
     @Override

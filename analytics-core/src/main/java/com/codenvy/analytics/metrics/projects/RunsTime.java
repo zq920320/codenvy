@@ -28,7 +28,7 @@ import javax.annotation.security.RolesAllowed;
 public class RunsTime extends AbstractTimeSpentInAction implements Expandable {
 
     public RunsTime() {
-        super(MetricType.RUNS_TIME, PROJECT);
+        super(MetricType.RUNS_TIME, PROJECT_ID);
     }
 
     @Override

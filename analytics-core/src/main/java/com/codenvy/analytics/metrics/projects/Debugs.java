@@ -28,7 +28,7 @@ import javax.annotation.security.RolesAllowed;
 public class Debugs extends AbstractLongValueResulted implements Expandable {
 
     public Debugs() {
-        super(MetricType.DEBUGS, PROJECTS);
+        super(MetricType.DEBUGS, PROJECT_ID);
     }
 
     @Override

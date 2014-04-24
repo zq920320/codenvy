@@ -30,7 +30,7 @@ import javax.annotation.security.RolesAllowed;
 public class BuildQueueTerminations extends AbstractLongValueResulted implements Expandable {
 
     public BuildQueueTerminations() {
-        super(MetricType.BUILD_QUEUE_TERMINATIONS, PROJECT);
+        super(MetricType.BUILD_QUEUE_TERMINATIONS, PROJECT_ID);
     }
 
     @Override

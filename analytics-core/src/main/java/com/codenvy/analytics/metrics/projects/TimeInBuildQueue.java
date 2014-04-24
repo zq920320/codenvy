@@ -30,7 +30,7 @@ import javax.annotation.security.RolesAllowed;
 public class TimeInBuildQueue extends AbstractTimeSpentInAction implements Expandable {
 
     public TimeInBuildQueue() {
-        super(MetricType.TIME_IN_BUILD_QUEUE, PROJECT); 
+        super(MetricType.TIME_IN_BUILD_QUEUE, PROJECT_ID); 
     }
 
     @Override

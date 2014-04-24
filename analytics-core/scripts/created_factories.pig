@@ -29,9 +29,17 @@ a6 = extractParam(a5, 'PROJECT', 'project');
 a = FOREACH a6 GENERATE dt, ws, user, factory, repository, project, projectType, ide, orgId, affiliateId,
                         (INDEXOF(factory, 'factory?id=', 0) > 0 ? 1 : 0) AS encodedFactory;
 
-result = FOREACH a GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('ws', ws), TOTUPLE('user', user),
-                    TOTUPLE('org_id', orgId), TOTUPLE('affiliate_id', affiliateId), TOTUPLE('ide', ide), TOTUPLE('project', project),
-                    TOTUPLE('repository', repository), TOTUPLE('project_type', projectType), TOTUPLE('factory', factory),
+result = FOREACH a GENERATE UUID(), 
+					TOTUPLE('date', ToMilliSeconds(dt)), 
+					TOTUPLE('ws', ws), 
+					TOTUPLE('user', user),
+                    TOTUPLE('org_id', orgId), 
+                    TOTUPLE('affiliate_id', affiliateId), 
+                    TOTUPLE('ide', ide), 
+                    TOTUPLE('project', project),
+                    TOTUPLE('repository', repository), 
+                    TOTUPLE('project_type', projectType), 
+                    TOTUPLE('project_id', CreateProjectId(user, ws, project)),
+                    TOTUPLE('factory', factory),
                     TOTUPLE('encoded_factory', encodedFactory);
 STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
-

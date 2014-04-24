@@ -56,8 +56,7 @@ public class MongoDataLoader implements DataLoader {
         try {
             DBObject filter = metric.getFilter(clauses);
             
-            DBObject[] dbOperations;
-            dbOperations = metric.getDBOperations(clauses);
+            DBObject[] dbOperations = metric.getDBOperations(clauses);
 
             AggregationOutput aggregation = dbCollection.aggregate(filter, dbOperations);
 

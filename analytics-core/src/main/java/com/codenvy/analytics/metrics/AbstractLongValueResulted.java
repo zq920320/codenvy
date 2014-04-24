@@ -64,12 +64,16 @@ public abstract class AbstractLongValueResulted extends ReadBasedMetric {
     
     @Override
     public DBObject[] getSpecificExpandedDBOperations(Context clauses) {
+        String countingField = getTrackedFields()[0];
+        DBObject match = new BasicDBObject(countingField, new BasicDBObject("$gt", 0));
+        
         DBObject group = new BasicDBObject();
         group.put(ID, "$" + expandingField);
 
         DBObject projection = new BasicDBObject(expandingField, "$_id");
 
-        return new DBObject[]{new BasicDBObject("$group", group),
+        return new DBObject[]{new BasicDBObject("$match", match),
+                              new BasicDBObject("$group", group),
                               new BasicDBObject("$project", projection)};
     }
     

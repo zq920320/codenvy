@@ -30,7 +30,7 @@ import javax.annotation.security.RolesAllowed;
 public class DestroyedProjects extends AbstractLongValueResulted implements Expandable {
 
     public DestroyedProjects() {
-        super(MetricType.DESTROYED_PROJECTS, PROJECT);
+        super(MetricType.DESTROYED_PROJECTS, PROJECT_ID);
     }
 
     @Override
