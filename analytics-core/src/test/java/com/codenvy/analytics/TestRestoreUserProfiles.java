@@ -57,6 +57,9 @@ public class TestRestoreUserProfiles extends BaseTest {
         while (cursor.hasNext()) {
             DBObject profile = cursor.next();
             String userId = (String)profile.get("userId");
+            if (userId == null) {
+                continue;
+            }
             BasicDBList list = (BasicDBList)profile.get("attributes");
 
             Profile userProfile = new Profile();
@@ -91,8 +94,10 @@ public class TestRestoreUserProfiles extends BaseTest {
             }
 
             userProfile.email = emails.get(userId);
-            if (emails.isEmpty()) {
-                LOG.info("There is no email for " + userId);
+            if (userProfile.email == null || userProfile.email.isEmpty()) {
+                LOG.warn("There is no email for " + userId);
+            } else if (userProfile.email.toUpperCase().startsWith("ANONYMOUSUSER")) {
+                continue;
             }
 
             write(userProfile);
