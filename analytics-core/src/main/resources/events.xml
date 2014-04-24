@@ -389,7 +389,7 @@
             <param allow-empty-value="true">WS</param>
             <param>USER</param>
             <param allow-empty-value="true">PROJECT</param>
-            <param>TYPE</param>
+            <param allow-empty-value="true">TYPE</param>
             <param>REPO-URL</param>
             <param>FACTORY-URL</param>
             <param allow-empty-value="true">AFFILIATE-ID</param>
