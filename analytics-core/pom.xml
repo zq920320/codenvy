@@ -211,6 +211,7 @@
                         <configuration>
                             <excludes>
                                 <exclude>com/codenvy/analytics/**/TestLogCollector.java</exclude>
+                                <exclude>com/codenvy/analytics/**/TestRestore*.java</exclude>
                                 <exclude>com/codenvy/analytics/**/LoadTestMongoIndexes.java</exclude>
                             </excludes>
                         </configuration>
