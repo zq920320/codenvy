@@ -25,13 +25,13 @@ import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * Specifies the {@link com.codenvy.analytics.metrics.MetricFilter} required to access a metric.
+ * Specifies the list of {@link MetricFilter} should be removed from the context before metric evaluation.
  *
  * @author Anatoliy Bazko
  */
 @Documented
 @Retention(RUNTIME)
 @Target({TYPE})
-public @interface FilterRequired {
-    MetricFilter value();
+public @interface OmittedFilters {
+    MetricFilter[] values();
 }

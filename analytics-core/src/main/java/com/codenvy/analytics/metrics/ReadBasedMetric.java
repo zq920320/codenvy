@@ -74,6 +74,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
 
     @Override
     public ValueData getValue(Context context) throws IOException {
+        context = omitFilters(context);
         validateRestrictions(context);
 
         if (canReadPrecomputedData(context)) {
@@ -89,6 +90,19 @@ public abstract class ReadBasedMetric extends AbstractMetric {
         }
     }
 
+    private Context omitFilters(Context context) {
+        if (getClass().isAnnotationPresent(OmittedFilters.class)) {
+            Context.Builder builder = new Context.Builder(context);
+            for (MetricFilter filter : getClass().getAnnotation(OmittedFilters.class).values()) {
+                builder.remove(filter);
+            }
+
+            return builder.build();
+        }
+
+        return context;
+    }
+
     /**
      * Validates restriction before data loading.
      *
@@ -96,8 +110,8 @@ public abstract class ReadBasedMetric extends AbstractMetric {
      *         the execution context
      */
     private void validateRestrictions(Context context) {
-        if (getClass().isAnnotationPresent(FilterRequired.class)) {
-            MetricFilter requiredFilter = getClass().getAnnotation(FilterRequired.class).value();
+        if (getClass().isAnnotationPresent(RequiredFilter.class)) {
+            MetricFilter requiredFilter = getClass().getAnnotation(RequiredFilter.class).value();
             if (!context.exists(requiredFilter)) {
                 throw new MetricRestrictionException(
                         "Parameter " + requiredFilter + " required to be passed to get the value of the metric");
