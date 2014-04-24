@@ -228,10 +228,10 @@ public class MemberDaoImpl implements MemberDao {
         DBObject query = new BasicDBObject("_id", member.getUserId());
         try {
             DBObject old = collection.findOne(query);
-            if (old == null) {
-                return;
-            }
             BasicDBList members = (BasicDBList)old.get("members");
+            if (old == null) {
+                throw new NotFoundException(String.format("Workspace member with id %s doesn't exist", member.getUserId()));
+            }
             Iterator it = members.iterator();
             while (it.hasNext()) {
                 Member one = DtoFactory.getInstance().createDtoFromJson(it.next().toString(), Member.class);

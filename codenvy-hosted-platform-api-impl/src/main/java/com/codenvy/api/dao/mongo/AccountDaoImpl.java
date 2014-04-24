@@ -258,20 +258,48 @@ public class AccountDaoImpl implements AccountDao {
     }
 
     @Override
-    public void removeMember(String accountId, String userId) throws NotFoundException, ServerException {
+    public void removeMember(String accountId, String userId) throws NotFoundException, ServerException, ConflictException {
+        //each account should have at least one owner
         DBObject query = new BasicDBObject("_id", userId);
         try {
             DBObject old = memberCollection.findOne(query);
             if (old == null) {
-                throw new NotFoundException("Member not found " + userId);
-                //return;
+                throw new NotFoundException(String.format("User with id %s hasn't any account membership", userId));
             }
+            //check account exists
+            if (accountCollection.findOne(new BasicDBObject("id", accountId)) == null) {
+                throw new NotFoundException(String.format("Account with id %s doesn't exist", accountId));
+            }
+            // -> each account should have at least one owner
+            // -> List<Member> accMembers = getMembers(accountId);
             BasicDBList members = (BasicDBList)old.get("members");
+            //search for needed membership
             Iterator it = members.iterator();
-            while (it.hasNext()) {
-                if (accountId.equals(DtoFactory.getInstance().createDtoFromJson(it.next().toString(), Member.class)
-                                               .getAccountId()))
-                    it.remove();
+            Member accMember = null;
+            while (it.hasNext() && accMember == null) {
+                accMember = DtoFactory.getInstance().createDtoFromJson(it.next().toString(), Member.class);
+            }
+            if (accMember != null) {
+                List<Member> accMembers = getMembers(accountId);
+                //account should have at least 1 owner
+                //if member that is being removed is account/owner and account has more than 1 member
+                //we should check about other account owners existence
+                if (accMember.getRoles().contains("account/owner") && accMembers.size() > 1) {
+                    boolean isOtherAccOwnerPresent = false;
+                    Iterator<Member> membersIt = getMembers(accountId).iterator();
+                    while (membersIt.hasNext() && !isOtherAccOwnerPresent) {
+                        Member current = membersIt.next();
+                        isOtherAccOwnerPresent = !current.getUserId().equals(userId)
+                                                 && current.getRoles().contains("account/owner");
+                    }
+                    if (!isOtherAccOwnerPresent) {
+                        throw new ConflictException("Account should have at least 1 owner");
+                    }
+                }
+                //remove membership
+                it.remove();
+            } else {
+                throw new NotFoundException(String.format("Account %s doesn't have user %s as member", accountId, userId));
             }
             if (members.size() > 0) {
                 old.put("members", members);
