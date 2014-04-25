@@ -28,7 +28,7 @@ is strictly forbidden unless prior written permission is obtained
     </parent>
     <groupId>com.codenvy.hosted-infrastructure</groupId>
     <artifactId>codenvy-hosted-infrastructure-parent</artifactId>
-    <version>0.2.0-SNAPSHOT</version>
+    <version>0.3.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Codenvy Hosted :: Parent</name>
     <modules>
