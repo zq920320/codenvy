@@ -27,7 +27,7 @@
     </parent>
     <groupId>com.codenvy.factory</groupId>
     <artifactId>codenvy-factory-parent</artifactId>
-    <version>0.9.0-SNAPSHOT</version>
+    <version>0.10.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Codenvy Factory :: Parent</name>
     <modules>
@@ -42,9 +42,9 @@
         <url>https://fisheye.codenvycorp.com/browse/factory</url>
     </scm>
     <properties>
-        <codenvy.commons.version>0.20.0-SNAPSHOT</codenvy.commons.version>
-        <codenvy.odyssey.version>0.16.0-SNAPSHOT</codenvy.odyssey.version>
-        <codenvy.platform-api.version>0.16.0-SNAPSHOT</codenvy.platform-api.version>
+        <codenvy.commons.version>0.21.0-SNAPSHOT</codenvy.commons.version>
+        <codenvy.odyssey.version>0.17.0-SNAPSHOT</codenvy.odyssey.version>
+        <codenvy.platform-api.version>0.17.0-SNAPSHOT</codenvy.platform-api.version>
         <commons.fileupload.version>1.0</commons.fileupload.version>
         <everrest.assured.version>0.17</everrest.assured.version>
         <everrest.version>1.1.11</everrest.version>
