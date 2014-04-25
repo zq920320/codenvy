@@ -31,7 +31,8 @@ public class ProjectTypeOthers extends AbstractProjectType {
         super(MetricType.PROJECT_TYPE_OTHERS, new String[]{ProjectTypes.OTHER_NULL,
                                                            ProjectTypes.OTHER_DEFAULT,
                                                            ProjectTypes.OTHER_SERV,
-                                                           ProjectTypes.OTHER_EXO});
+                                                           ProjectTypes.OTHER_EXO,
+                                                           ProjectTypes.OTHER_UNDEFINED});
     }
 
     @Override

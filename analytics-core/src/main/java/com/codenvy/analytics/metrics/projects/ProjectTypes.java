@@ -42,6 +42,7 @@ public class ProjectTypes extends AbstractMapValueResulted {
     public static final String OTHER_NULL          = "null";
     public static final String OTHER_DEFAULT       = "default";
     public static final String OTHER_SERV          = "serv";
+    public static final String OTHER_UNDEFINED     = "undefined";
     public static final String OTHER_EXO           = "exo";
     public static final String RUBY                = "ruby";
     public static final String RAILS               = "rails";
@@ -52,7 +53,7 @@ public class ProjectTypes extends AbstractMapValueResulted {
     public static final String[] TYPES =
             {JAR, JSP, DJANGO, WAR, JAVA, MMP1, MMP2, SPRING, NODE_JS, PHP, PYTHON,
              ANDROID, GOOGLE_MBS, OTHER_NULL, OTHER_DEFAULT, OTHER_SERV, OTHER_EXO,
-             RUBY, RAILS, JAVA_SCRIPT, ANGULAR_JAVA_SCRIPT, HTML};
+             RUBY, RAILS, JAVA_SCRIPT, ANGULAR_JAVA_SCRIPT, HTML, OTHER_UNDEFINED};
 
     public ProjectTypes(String metricName) {
         super(metricName);
@@ -81,6 +82,7 @@ public class ProjectTypes extends AbstractMapValueResulted {
                             OTHER_EXO,
                             OTHER_NULL,
                             OTHER_SERV,
+                            OTHER_UNDEFINED,
                             RUBY,
                             RAILS,
                             JAVA_SCRIPT,
