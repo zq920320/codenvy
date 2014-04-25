@@ -31,7 +31,8 @@ public class ProjectTypes extends AbstractMapValueResulted {
     public static final String DJANGO              = "django";
     public static final String WAR                 = "war";
     public static final String JAVA                = "java";
-    public static final String MMP                 = "maven multi-module";
+    public static final String MMP1                = "maven multi-module";
+    public static final String MMP2                = "maven_multi_module";
     public static final String SPRING              = "spring";
     public static final String NODE_JS             = "nodejs";
     public static final String PHP                 = "php";
@@ -49,7 +50,7 @@ public class ProjectTypes extends AbstractMapValueResulted {
     public static final String HTML                = "html";
 
     public static final String[] TYPES =
-            {JAR, JSP, DJANGO, WAR, JAVA, MMP, SPRING, NODE_JS, PHP, PYTHON,
+            {JAR, JSP, DJANGO, WAR, JAVA, MMP1, MMP2, SPRING, NODE_JS, PHP, PYTHON,
              ANDROID, GOOGLE_MBS, OTHER_NULL, OTHER_DEFAULT, OTHER_SERV, OTHER_EXO,
              RUBY, RAILS, JAVA_SCRIPT, ANGULAR_JAVA_SCRIPT, HTML};
 
@@ -68,7 +69,8 @@ public class ProjectTypes extends AbstractMapValueResulted {
                             DJANGO,
                             WAR,
                             JAVA,
-                            MMP,
+                            MMP1,
+                            MMP2,
                             SPRING,
                             NODE_JS,
                             PHP,
@@ -81,10 +83,11 @@ public class ProjectTypes extends AbstractMapValueResulted {
                             OTHER_SERV,
                             RUBY,
                             RAILS,
-                            JAVA_SCRIPT};
+                            JAVA_SCRIPT,
+                            ANGULAR_JAVA_SCRIPT,
+                            HTML};
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "Created projects by types";
