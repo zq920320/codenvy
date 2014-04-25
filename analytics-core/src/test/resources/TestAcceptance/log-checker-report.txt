@@ -5,6 +5,7 @@ Event 'user-code-refactor' with parameter 'TYPE' and value 'django' doesn't exis
 Event 'user-code-refactor' with parameter 'TYPE' and value 'war' doesn't exist
 Event 'user-code-refactor' with parameter 'TYPE' and value 'java' doesn't exist
 Event 'user-code-refactor' with parameter 'TYPE' and value 'maven multi-module' doesn't exist
+Event 'user-code-refactor' with parameter 'TYPE' and value 'maven_multi_module' doesn't exist
 Event 'user-code-refactor' with parameter 'TYPE' and value 'spring' doesn't exist
 Event 'user-code-refactor' with parameter 'TYPE' and value 'nodejs' doesn't exist
 Event 'user-code-refactor' with parameter 'TYPE' and value 'php' doesn't exist
@@ -19,10 +20,12 @@ Event 'user-code-refactor' with parameter 'TYPE' and value 'rails' doesn't exist
 Event 'user-code-refactor' with parameter 'TYPE' and value 'javascript' doesn't exist
 Event 'user-code-refactor' with parameter 'TYPE' and value 'angularjs' doesn't exist
 Event 'user-code-refactor' with parameter 'TYPE' and value 'html' doesn't exist
+Event 'user-code-refactor' with parameter 'TYPE' and value 'undefined' doesn't exist
 Event doesn't exist for anonymous users: user-code-complete
 Event 'user-code-complete' with parameter 'TYPE' and value 'django' doesn't exist
 Event 'user-code-complete' with parameter 'TYPE' and value 'war' doesn't exist
 Event 'user-code-complete' with parameter 'TYPE' and value 'maven multi-module' doesn't exist
+Event 'user-code-complete' with parameter 'TYPE' and value 'maven_multi_module' doesn't exist
 Event 'user-code-complete' with parameter 'TYPE' and value 'spring' doesn't exist
 Event 'user-code-complete' with parameter 'TYPE' and value 'nodejs' doesn't exist
 Event 'user-code-complete' with parameter 'TYPE' and value 'python' doesn't exist
@@ -34,11 +37,13 @@ Event 'user-code-complete' with parameter 'TYPE' and value 'exo' doesn't exist
 Event 'user-code-complete' with parameter 'TYPE' and value 'ruby' doesn't exist
 Event 'user-code-complete' with parameter 'TYPE' and value 'angularjs' doesn't exist
 Event 'user-code-complete' with parameter 'TYPE' and value 'html' doesn't exist
+Event 'user-code-complete' with parameter 'TYPE' and value 'undefined' doesn't exist
 Event doesn't exist for temporary workspaces: build-started
 Event doesn't exist for anonymous users: build-started
 Event 'build-started' with parameter 'TYPE' and value 'django' doesn't exist
 Event 'build-started' with parameter 'TYPE' and value 'java' doesn't exist
 Event 'build-started' with parameter 'TYPE' and value 'maven multi-module' doesn't exist
+Event 'build-started' with parameter 'TYPE' and value 'maven_multi_module' doesn't exist
 Event 'build-started' with parameter 'TYPE' and value 'spring' doesn't exist
 Event 'build-started' with parameter 'TYPE' and value 'nodejs' doesn't exist
 Event 'build-started' with parameter 'TYPE' and value 'php' doesn't exist
@@ -52,11 +57,13 @@ Event 'build-started' with parameter 'TYPE' and value 'rails' doesn't exist
 Event 'build-started' with parameter 'TYPE' and value 'javascript' doesn't exist
 Event 'build-started' with parameter 'TYPE' and value 'angularjs' doesn't exist
 Event 'build-started' with parameter 'TYPE' and value 'html' doesn't exist
+Event 'build-started' with parameter 'TYPE' and value 'undefined' doesn't exist
 Event doesn't exist for temporary workspaces: build-finished
 Event doesn't exist for anonymous users: build-finished
 Event 'build-finished' with parameter 'TYPE' and value 'django' doesn't exist
 Event 'build-finished' with parameter 'TYPE' and value 'java' doesn't exist
 Event 'build-finished' with parameter 'TYPE' and value 'maven multi-module' doesn't exist
+Event 'build-finished' with parameter 'TYPE' and value 'maven_multi_module' doesn't exist
 Event 'build-finished' with parameter 'TYPE' and value 'spring' doesn't exist
 Event 'build-finished' with parameter 'TYPE' and value 'nodejs' doesn't exist
 Event 'build-finished' with parameter 'TYPE' and value 'php' doesn't exist
@@ -70,12 +77,14 @@ Event 'build-finished' with parameter 'TYPE' and value 'rails' doesn't exist
 Event 'build-finished' with parameter 'TYPE' and value 'javascript' doesn't exist
 Event 'build-finished' with parameter 'TYPE' and value 'angularjs' doesn't exist
 Event 'build-finished' with parameter 'TYPE' and value 'html' doesn't exist
+Event 'build-finished' with parameter 'TYPE' and value 'undefined' doesn't exist
 Event doesn't exist for anonymous users: run-started
 Event 'run-started' with parameter 'TYPE' and value 'jar' doesn't exist
 Event 'run-started' with parameter 'TYPE' and value 'servlet/jsp' doesn't exist
 Event 'run-started' with parameter 'TYPE' and value 'django' doesn't exist
 Event 'run-started' with parameter 'TYPE' and value 'java' doesn't exist
 Event 'run-started' with parameter 'TYPE' and value 'maven multi-module' doesn't exist
+Event 'run-started' with parameter 'TYPE' and value 'maven_multi_module' doesn't exist
 Event 'run-started' with parameter 'TYPE' and value 'spring' doesn't exist
 Event 'run-started' with parameter 'TYPE' and value 'android' doesn't exist
 Event 'run-started' with parameter 'TYPE' and value 'google-mbs-client-android' doesn't exist
@@ -87,12 +96,14 @@ Event 'run-started' with parameter 'TYPE' and value 'ruby' doesn't exist
 Event 'run-started' with parameter 'TYPE' and value 'rails' doesn't exist
 Event 'run-started' with parameter 'TYPE' and value 'javascript' doesn't exist
 Event 'run-started' with parameter 'TYPE' and value 'angularjs' doesn't exist
+Event 'run-started' with parameter 'TYPE' and value 'undefined' doesn't exist
 Event doesn't exist for anonymous users: run-finished
 Event 'run-finished' with parameter 'TYPE' and value 'jar' doesn't exist
 Event 'run-finished' with parameter 'TYPE' and value 'servlet/jsp' doesn't exist
 Event 'run-finished' with parameter 'TYPE' and value 'django' doesn't exist
 Event 'run-finished' with parameter 'TYPE' and value 'java' doesn't exist
 Event 'run-finished' with parameter 'TYPE' and value 'maven multi-module' doesn't exist
+Event 'run-finished' with parameter 'TYPE' and value 'maven_multi_module' doesn't exist
 Event 'run-finished' with parameter 'TYPE' and value 'spring' doesn't exist
 Event 'run-finished' with parameter 'TYPE' and value 'android' doesn't exist
 Event 'run-finished' with parameter 'TYPE' and value 'google-mbs-client-android' doesn't exist
@@ -104,6 +115,7 @@ Event 'run-finished' with parameter 'TYPE' and value 'ruby' doesn't exist
 Event 'run-finished' with parameter 'TYPE' and value 'rails' doesn't exist
 Event 'run-finished' with parameter 'TYPE' and value 'javascript' doesn't exist
 Event 'run-finished' with parameter 'TYPE' and value 'angularjs' doesn't exist
+Event 'run-finished' with parameter 'TYPE' and value 'undefined' doesn't exist
 Event doesn't exist for temporary workspaces: debug-started
 Event doesn't exist for anonymous users: debug-started
 Event 'debug-started' with parameter 'TYPE' and value 'jar' doesn't exist
@@ -111,6 +123,7 @@ Event 'debug-started' with parameter 'TYPE' and value 'servlet/jsp' doesn't exis
 Event 'debug-started' with parameter 'TYPE' and value 'django' doesn't exist
 Event 'debug-started' with parameter 'TYPE' and value 'java' doesn't exist
 Event 'debug-started' with parameter 'TYPE' and value 'maven multi-module' doesn't exist
+Event 'debug-started' with parameter 'TYPE' and value 'maven_multi_module' doesn't exist
 Event 'debug-started' with parameter 'TYPE' and value 'spring' doesn't exist
 Event 'debug-started' with parameter 'TYPE' and value 'nodejs' doesn't exist
 Event 'debug-started' with parameter 'TYPE' and value 'php' doesn't exist
@@ -126,6 +139,7 @@ Event 'debug-started' with parameter 'TYPE' and value 'rails' doesn't exist
 Event 'debug-started' with parameter 'TYPE' and value 'javascript' doesn't exist
 Event 'debug-started' with parameter 'TYPE' and value 'angularjs' doesn't exist
 Event 'debug-started' with parameter 'TYPE' and value 'html' doesn't exist
+Event 'debug-started' with parameter 'TYPE' and value 'undefined' doesn't exist
 Event doesn't exist for temporary workspaces: debug-finished
 Event doesn't exist for anonymous users: debug-finished
 Event 'debug-finished' with parameter 'TYPE' and value 'jar' doesn't exist
@@ -133,6 +147,7 @@ Event 'debug-finished' with parameter 'TYPE' and value 'servlet/jsp' doesn't exi
 Event 'debug-finished' with parameter 'TYPE' and value 'django' doesn't exist
 Event 'debug-finished' with parameter 'TYPE' and value 'java' doesn't exist
 Event 'debug-finished' with parameter 'TYPE' and value 'maven multi-module' doesn't exist
+Event 'debug-finished' with parameter 'TYPE' and value 'maven_multi_module' doesn't exist
 Event 'debug-finished' with parameter 'TYPE' and value 'spring' doesn't exist
 Event 'debug-finished' with parameter 'TYPE' and value 'nodejs' doesn't exist
 Event 'debug-finished' with parameter 'TYPE' and value 'php' doesn't exist
@@ -148,6 +163,7 @@ Event 'debug-finished' with parameter 'TYPE' and value 'rails' doesn't exist
 Event 'debug-finished' with parameter 'TYPE' and value 'javascript' doesn't exist
 Event 'debug-finished' with parameter 'TYPE' and value 'angularjs' doesn't exist
 Event 'debug-finished' with parameter 'TYPE' and value 'html' doesn't exist
+Event 'debug-finished' with parameter 'TYPE' and value 'undefined' doesn't exist
 Event doesn't exist: build-queue-waiting-started
 Event doesn't exist: build-queue-waiting-finished
 Event doesn't exist: run-queue-waiting-started
@@ -162,15 +178,18 @@ Event doesn't exist for anonymous users: tenant-created
 Event doesn't exist for temporary workspaces: tenant-started
 Event doesn't exist: workspace-destroyed
 Event doesn't exist for anonymous users: project-created
+Event 'project-created' with parameter 'TYPE' and value 'maven_multi_module' doesn't exist
 Event 'project-created' with parameter 'TYPE' and value 'google-mbs-client-android' doesn't exist
 Event 'project-created' with parameter 'TYPE' and value 'null' doesn't exist
 Event 'project-created' with parameter 'TYPE' and value 'exo' doesn't exist
 Event 'project-created' with parameter 'TYPE' and value 'ruby' doesn't exist
 Event 'project-created' with parameter 'TYPE' and value 'angularjs' doesn't exist
 Event 'project-created' with parameter 'TYPE' and value 'html' doesn't exist
+Event 'project-created' with parameter 'TYPE' and value 'undefined' doesn't exist
 Event doesn't exist for anonymous users: project-destroyed
 Event 'project-destroyed' with parameter 'TYPE' and value 'django' doesn't exist
 Event 'project-destroyed' with parameter 'TYPE' and value 'war' doesn't exist
+Event 'project-destroyed' with parameter 'TYPE' and value 'maven_multi_module' doesn't exist
 Event 'project-destroyed' with parameter 'TYPE' and value 'spring' doesn't exist
 Event 'project-destroyed' with parameter 'TYPE' and value 'nodejs' doesn't exist
 Event 'project-destroyed' with parameter 'TYPE' and value 'python' doesn't exist
@@ -181,11 +200,13 @@ Event 'project-destroyed' with parameter 'TYPE' and value 'exo' doesn't exist
 Event 'project-destroyed' with parameter 'TYPE' and value 'ruby' doesn't exist
 Event 'project-destroyed' with parameter 'TYPE' and value 'angularjs' doesn't exist
 Event 'project-destroyed' with parameter 'TYPE' and value 'html' doesn't exist
+Event 'project-destroyed' with parameter 'TYPE' and value 'undefined' doesn't exist
 Event doesn't exist for anonymous users: project-deployed
 Event 'project-deployed' with parameter 'TYPE' and value 'servlet/jsp' doesn't exist
 Event 'project-deployed' with parameter 'TYPE' and value 'django' doesn't exist
 Event 'project-deployed' with parameter 'TYPE' and value 'java' doesn't exist
 Event 'project-deployed' with parameter 'TYPE' and value 'maven multi-module' doesn't exist
+Event 'project-deployed' with parameter 'TYPE' and value 'maven_multi_module' doesn't exist
 Event 'project-deployed' with parameter 'TYPE' and value 'spring' doesn't exist
 Event 'project-deployed' with parameter 'TYPE' and value 'android' doesn't exist
 Event 'project-deployed' with parameter 'TYPE' and value 'google-mbs-client-android' doesn't exist
@@ -198,11 +219,13 @@ Event 'project-deployed' with parameter 'TYPE' and value 'rails' doesn't exist
 Event 'project-deployed' with parameter 'TYPE' and value 'javascript' doesn't exist
 Event 'project-deployed' with parameter 'TYPE' and value 'angularjs' doesn't exist
 Event 'project-deployed' with parameter 'TYPE' and value 'html' doesn't exist
+Event 'project-deployed' with parameter 'TYPE' and value 'undefined' doesn't exist
 Event doesn't exist for temporary workspaces: project-built
 Event doesn't exist for anonymous users: project-built
 Event 'project-built' with parameter 'TYPE' and value 'django' doesn't exist
 Event 'project-built' with parameter 'TYPE' and value 'java' doesn't exist
 Event 'project-built' with parameter 'TYPE' and value 'maven multi-module' doesn't exist
+Event 'project-built' with parameter 'TYPE' and value 'maven_multi_module' doesn't exist
 Event 'project-built' with parameter 'TYPE' and value 'spring' doesn't exist
 Event 'project-built' with parameter 'TYPE' and value 'nodejs' doesn't exist
 Event 'project-built' with parameter 'TYPE' and value 'php' doesn't exist
@@ -216,6 +239,7 @@ Event 'project-built' with parameter 'TYPE' and value 'rails' doesn't exist
 Event 'project-built' with parameter 'TYPE' and value 'javascript' doesn't exist
 Event 'project-built' with parameter 'TYPE' and value 'angularjs' doesn't exist
 Event 'project-built' with parameter 'TYPE' and value 'html' doesn't exist
+Event 'project-built' with parameter 'TYPE' and value 'undefined' doesn't exist
 Event doesn't exist for temporary workspaces: application-created
 Event doesn't exist for anonymous users: application-created
 Event 'application-created' with parameter 'TYPE' and value 'jar' doesn't exist
@@ -223,6 +247,7 @@ Event 'application-created' with parameter 'TYPE' and value 'django' doesn't exi
 Event 'application-created' with parameter 'TYPE' and value 'war' doesn't exist
 Event 'application-created' with parameter 'TYPE' and value 'java' doesn't exist
 Event 'application-created' with parameter 'TYPE' and value 'maven multi-module' doesn't exist
+Event 'application-created' with parameter 'TYPE' and value 'maven_multi_module' doesn't exist
 Event 'application-created' with parameter 'TYPE' and value 'spring' doesn't exist
 Event 'application-created' with parameter 'TYPE' and value 'nodejs' doesn't exist
 Event 'application-created' with parameter 'TYPE' and value 'android' doesn't exist
@@ -235,6 +260,7 @@ Event 'application-created' with parameter 'TYPE' and value 'rails' doesn't exis
 Event 'application-created' with parameter 'TYPE' and value 'javascript' doesn't exist
 Event 'application-created' with parameter 'TYPE' and value 'angularjs' doesn't exist
 Event 'application-created' with parameter 'TYPE' and value 'html' doesn't exist
+Event 'application-created' with parameter 'TYPE' and value 'undefined' doesn't exist
 Event doesn't exist: artifact-deployed
 Event doesn't exist: user-removed
 Event doesn't exist for temporary workspaces: user-invite
@@ -259,6 +285,7 @@ Event 'factory-created' with parameter 'TYPE' and value 'django' doesn't exist
 Event 'factory-created' with parameter 'TYPE' and value 'war' doesn't exist
 Event 'factory-created' with parameter 'TYPE' and value 'java' doesn't exist
 Event 'factory-created' with parameter 'TYPE' and value 'maven multi-module' doesn't exist
+Event 'factory-created' with parameter 'TYPE' and value 'maven_multi_module' doesn't exist
 Event 'factory-created' with parameter 'TYPE' and value 'spring' doesn't exist
 Event 'factory-created' with parameter 'TYPE' and value 'nodejs' doesn't exist
 Event 'factory-created' with parameter 'TYPE' and value 'php' doesn't exist
@@ -272,6 +299,7 @@ Event 'factory-created' with parameter 'TYPE' and value 'rails' doesn't exist
 Event 'factory-created' with parameter 'TYPE' and value 'javascript' doesn't exist
 Event 'factory-created' with parameter 'TYPE' and value 'angularjs' doesn't exist
 Event 'factory-created' with parameter 'TYPE' and value 'html' doesn't exist
+Event 'factory-created' with parameter 'TYPE' and value 'undefined' doesn't exist
 Event doesn't exist for persistent workspaces: factory-project-imported
 Event doesn't exist for anonymous users: factory-project-imported
 Event 'factory-project-imported' with parameter 'TYPE' and value 'jar' doesn't exist
@@ -279,6 +307,7 @@ Event 'factory-project-imported' with parameter 'TYPE' and value 'servlet/jsp' d
 Event 'factory-project-imported' with parameter 'TYPE' and value 'django' doesn't exist
 Event 'factory-project-imported' with parameter 'TYPE' and value 'war' doesn't exist
 Event 'factory-project-imported' with parameter 'TYPE' and value 'maven multi-module' doesn't exist
+Event 'factory-project-imported' with parameter 'TYPE' and value 'maven_multi_module' doesn't exist
 Event 'factory-project-imported' with parameter 'TYPE' and value 'spring' doesn't exist
 Event 'factory-project-imported' with parameter 'TYPE' and value 'nodejs' doesn't exist
 Event 'factory-project-imported' with parameter 'TYPE' and value 'google-mbs-client-android' doesn't exist
@@ -290,6 +319,7 @@ Event 'factory-project-imported' with parameter 'TYPE' and value 'ruby' doesn't 
 Event 'factory-project-imported' with parameter 'TYPE' and value 'rails' doesn't exist
 Event 'factory-project-imported' with parameter 'TYPE' and value 'angularjs' doesn't exist
 Event 'factory-project-imported' with parameter 'TYPE' and value 'html' doesn't exist
+Event 'factory-project-imported' with parameter 'TYPE' and value 'undefined' doesn't exist
 Event doesn't exist for persistent workspaces: session-factory-started
 Event doesn't exist for anonymous users: session-factory-started
 Event doesn't exist for persistent workspaces: session-factory-stopped
@@ -301,6 +331,7 @@ Event 'jrebel-usage' with parameter 'TYPE' and value 'django' doesn't exist
 Event 'jrebel-usage' with parameter 'TYPE' and value 'war' doesn't exist
 Event 'jrebel-usage' with parameter 'TYPE' and value 'java' doesn't exist
 Event 'jrebel-usage' with parameter 'TYPE' and value 'maven multi-module' doesn't exist
+Event 'jrebel-usage' with parameter 'TYPE' and value 'maven_multi_module' doesn't exist
 Event 'jrebel-usage' with parameter 'TYPE' and value 'spring' doesn't exist
 Event 'jrebel-usage' with parameter 'TYPE' and value 'nodejs' doesn't exist
 Event 'jrebel-usage' with parameter 'TYPE' and value 'php' doesn't exist
@@ -315,6 +346,7 @@ Event 'jrebel-usage' with parameter 'TYPE' and value 'rails' doesn't exist
 Event 'jrebel-usage' with parameter 'TYPE' and value 'javascript' doesn't exist
 Event 'jrebel-usage' with parameter 'TYPE' and value 'angularjs' doesn't exist
 Event 'jrebel-usage' with parameter 'TYPE' and value 'html' doesn't exist
+Event 'jrebel-usage' with parameter 'TYPE' and value 'undefined' doesn't exist
 Event doesn't exist: jrebel-user-profile-info
 Event doesn't exist: build-interrupted
 Event doesn't exist for anonymous users: user-update-profile

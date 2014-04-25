@@ -79,7 +79,7 @@ public class TestAcceptance extends BaseTest {
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DAY_OF_MONTH, -1);
 
-        context = context.cloneAndPut(Parameters.LOG, getResourceAsBytes("2013-11-24", df.format(calendar.getTime()))
+        context = context.cloneAndPut(Parameters.LOG, getResourceAsBytes("2014-04-23", df.format(calendar.getTime()))
                 .getAbsolutePath());
         pigRunner.forceExecute(context);
     }
