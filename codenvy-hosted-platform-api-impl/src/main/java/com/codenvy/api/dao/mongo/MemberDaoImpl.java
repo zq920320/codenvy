@@ -65,9 +65,7 @@ public class MemberDaoImpl implements MemberDao {
     protected static final String DB_COLLECTION = "organization.storage.db.ws.member.collection";
 
     DBCollection collection;
-
-    UserDao userDao;
-
+    UserDao      userDao;
     WorkspaceDao workspaceDao;
 
     @Inject
@@ -209,22 +207,6 @@ public class MemberDaoImpl implements MemberDao {
     @Override
     public void remove(Member member) throws ServerException, NotFoundException, ConflictException {
         validateSubjectsExists(member.getUserId(), member.getWorkspaceId());
-        List<Member> wsMembers = getWorkspaceMembers(member.getWorkspaceId());
-        //workspace should have at least 1 admin
-        if (member.getRoles().contains("workspace/admin") && wsMembers.size() > 1) {
-            boolean isOtherWsAdminPresent = false;
-            Iterator<Member> mIt = getWorkspaceMembers(member.getWorkspaceId()).iterator();
-            while (mIt.hasNext() && !isOtherWsAdminPresent) {
-                Member current = mIt.next();
-                isOtherWsAdminPresent = !current.getUserId().equals(member.getUserId())
-                                        && current.getRoles().contains("workspace/admin");
-            }
-            if (!isOtherWsAdminPresent) {
-                throw new ConflictException("Workspace should have at least 1 admin");
-            }
-            //java8 alternative:
-            //isOtherWsAdminPresent = wsMembers().stream().filter(m -> m.getRoles.contains("workspace/admin")).count() > 1)
-        }
         DBObject query = new BasicDBObject("_id", member.getUserId());
         try {
             DBObject old = collection.findOne(query);

@@ -17,9 +17,6 @@
  */
 package com.codenvy.api.dao.mongo;
 
-import com.codenvy.api.core.ConflictException;
-import com.codenvy.api.core.NotFoundException;
-import com.codenvy.api.core.ServerException;
 import com.codenvy.api.dao.ldap.UserDaoImpl;
 import com.codenvy.api.user.shared.dto.Member;
 import com.codenvy.api.user.shared.dto.User;
@@ -144,38 +141,6 @@ public class MemberDaoTest extends BaseDaoTest {
         assertEquals(list.size(), 1);
     }
 
-    @Test(expectedExceptions = ConflictException.class,
-          expectedExceptionsMessageRegExp = "Workspace should have at least 1 admin")
-    public void shouldNotBeAbleToRemoveLastWorkspaceAdminIfOtherMembersExist()
-            throws ConflictException, NotFoundException, ServerException {
-        Member workspaceAdmin =
-                DtoFactory.getInstance().createDto(Member.class).withUserId(USER_ID).withWorkspaceId(WORKSPACE_ID)
-                          .withRoles(Arrays.asList("workspace/admin", "workspace/developer"));
-        Member workspaceDeveloper =
-                DtoFactory.getInstance().createDto(Member.class).withUserId("fake").withWorkspaceId(WORKSPACE_ID)
-                          .withRoles(Arrays.asList("workspace/developer"));
-
-        memberDao.create(workspaceAdmin);
-        memberDao.create(workspaceDeveloper);
-
-        memberDao.remove(workspaceAdmin);
-    }
-
-    @Test
-    public void shouldBeAbleToRemoveWorkspaceAdminIfOtherOneExists() throws ConflictException, NotFoundException, ServerException {
-        Member workspaceAdmin =
-                DtoFactory.getInstance().createDto(Member.class).withUserId(USER_ID).withWorkspaceId(WORKSPACE_ID)
-                          .withRoles(Arrays.asList("workspace/admin", "workspace/developer"));
-        Member workspaceAdmin2 =
-                DtoFactory.getInstance().createDto(Member.class).withUserId("fake").withWorkspaceId(WORKSPACE_ID)
-                          .withRoles(Arrays.asList("workspace/admin", "workspace/developer"));
-
-        memberDao.create(workspaceAdmin);
-        memberDao.create(workspaceAdmin2);
-
-        memberDao.remove(workspaceAdmin);
-    }
-
     @Test
     public void shouldFindUserRelationships() throws Exception {
         Member member1 =
@@ -190,6 +155,5 @@ public class MemberDaoTest extends BaseDaoTest {
 
         List<Member> found = memberDao.getUserRelationships(USER_ID);
         assertEquals(found.size(), 2);
-
     }
 }

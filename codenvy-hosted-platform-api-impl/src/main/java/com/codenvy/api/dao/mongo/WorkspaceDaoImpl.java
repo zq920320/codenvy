@@ -23,7 +23,6 @@ import com.codenvy.api.core.ServerException;
 import com.codenvy.api.user.server.dao.MemberDao;
 import com.codenvy.api.user.server.dao.UserDao;
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
-import com.codenvy.api.workspace.server.exception.WorkspaceException;
 import com.codenvy.api.workspace.shared.dto.Attribute;
 import com.codenvy.api.workspace.shared.dto.Workspace;
 import com.codenvy.dto.server.DtoFactory;
@@ -91,9 +90,6 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
 
     @Override
     public void remove(String id) throws ServerException, NotFoundException, ConflictException {
-        if (memberDao.getWorkspaceMembers(id).size() > 0) {
-            throw new ConflictException("It is not possible to remove workspace with existing members");
-        }
         try {
             collection.remove(new BasicDBObject("id", id));
         } catch (MongoException me) {
@@ -182,7 +178,7 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
      *
      * @param workspaceName
      *         workspace name to check
-     * @throws WorkspaceException
+     * @throws com.codenvy.api.core.ConflictException
      */
     private void ensureWorkspaceNameDoesNotExist(String workspaceName) throws ConflictException {
         DBObject res = collection.findOne(new BasicDBObject("name", workspaceName));

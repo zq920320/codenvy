@@ -19,7 +19,6 @@ package com.codenvy.api.dao.mongo;
 
 
 import com.codenvy.api.core.ConflictException;
-import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.api.user.server.dao.MemberDao;
 import com.codenvy.api.user.server.dao.UserDao;
@@ -39,7 +38,6 @@ import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -204,21 +202,8 @@ public class WorkspaceDaoTest extends BaseDaoTest {
     public void mustRemoveWorkspace() throws Exception {
         when(memberDao.getWorkspaceMembers(WORKSPACE_ID)).thenReturn(Collections.<Member>emptyList());
 
-        collection.insert(new BasicDBObject("id", WORKSPACE_ID).append("name", WORKSPACE_NAME));
-
-        // main invoke
         workspaceDao.remove(WORKSPACE_ID);
         assertNull(collection.findOne(new BasicDBObject("id", WORKSPACE_ID)));
-    }
-
-    @Test(expectedExceptions = ConflictException.class,
-          expectedExceptionsMessageRegExp = "It is not possible to remove workspace with existing members")
-    public void mustNotRemoveWorkspaceWithMembers() throws ServerException, NotFoundException, ConflictException {
-        when(memberDao.getWorkspaceMembers(WORKSPACE_ID)).thenReturn(Arrays.asList(DtoFactory.getInstance().createDto(Member.class)));
-
-        collection.insert(new BasicDBObject("id", WORKSPACE_ID).append("name", WORKSPACE_NAME));
-
-        workspaceDao.remove(WORKSPACE_ID);
     }
 
     private List<Attribute> getAttributes() {

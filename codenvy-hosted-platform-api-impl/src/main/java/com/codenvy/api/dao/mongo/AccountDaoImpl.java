@@ -28,7 +28,13 @@ import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
 import com.codenvy.dto.server.DtoFactory;
-import com.mongodb.*;
+import com.mongodb.BasicDBList;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
+import com.mongodb.DBObject;
+import com.mongodb.MongoException;
 import com.mongodb.util.JSON;
 
 import org.slf4j.Logger;
@@ -156,6 +162,9 @@ public class AccountDaoImpl implements AccountDao {
     @Override
     public void remove(String id) throws ConflictException, NotFoundException, ServerException {
         try {
+            if (accountCollection.findOne(new BasicDBObject("id", id)) == null) {
+                throw new NotFoundException(String.format("Account %s doesn't exist", id));
+            }
             //check account hasn't associated workspaces
             if (workspaceDao.getByAccount(id).size() > 0) {
                 throw new ConflictException("It is not possible to remove account that has associated workspaces");
@@ -163,12 +172,9 @@ public class AccountDaoImpl implements AccountDao {
             // Removing subscriptions
             subscriptionCollection.remove(new BasicDBObject("accountId", id));
 
-            // Removing members
-            try (DBCursor cursor = memberCollection.find()) {
-                for (DBObject one : cursor) {
-                    String userId = (String)one.get("_id");
-                    removeMember(id, userId);
-                }
+            //Removing members
+            for (Member member : getMembers(id)) {
+                removeMember(member);
             }
             // Removing account itself
             accountCollection.remove(new BasicDBObject("id", id));
@@ -258,48 +264,30 @@ public class AccountDaoImpl implements AccountDao {
     }
 
     @Override
-    public void removeMember(String accountId, String userId) throws NotFoundException, ServerException, ConflictException {
+    public void removeMember(Member member) throws NotFoundException, ServerException, ConflictException {
         //each account should have at least one owner
-        DBObject query = new BasicDBObject("_id", userId);
+        DBObject query = new BasicDBObject("_id", member.getUserId());
         try {
             DBObject old = memberCollection.findOne(query);
             if (old == null) {
-                throw new NotFoundException(String.format("User with id %s hasn't any account membership", userId));
+                throw new NotFoundException(String.format("User with id %s hasn't any account membership", member.getUserId()));
             }
             //check account exists
-            if (accountCollection.findOne(new BasicDBObject("id", accountId)) == null) {
-                throw new NotFoundException(String.format("Account with id %s doesn't exist", accountId));
+            if (accountCollection.findOne(new BasicDBObject("id", member.getAccountId())) == null) {
+                throw new NotFoundException(String.format("Account with id %s doesn't exist", member.getAccountId()));
             }
-            // -> each account should have at least one owner
-            // -> List<Member> accMembers = getMembers(accountId);
             BasicDBList members = (BasicDBList)old.get("members");
             //search for needed membership
             Iterator it = members.iterator();
-            Member accMember = null;
-            while (it.hasNext() && accMember == null) {
-                accMember = DtoFactory.getInstance().createDtoFromJson(it.next().toString(), Member.class);
+            Member toRemove = null;
+            while (it.hasNext() && toRemove == null) {
+                toRemove = DtoFactory.getInstance().createDtoFromJson(it.next().toString(), Member.class);
             }
-            if (accMember != null) {
-                List<Member> accMembers = getMembers(accountId);
-                //account should have at least 1 owner
-                //if member that is being removed is account/owner and account has more than 1 member
-                //we should check about other account owners existence
-                if (accMember.getRoles().contains("account/owner") && accMembers.size() > 1) {
-                    boolean isOtherAccOwnerPresent = false;
-                    Iterator<Member> membersIt = getMembers(accountId).iterator();
-                    while (membersIt.hasNext() && !isOtherAccOwnerPresent) {
-                        Member current = membersIt.next();
-                        isOtherAccOwnerPresent = !current.getUserId().equals(userId)
-                                                 && current.getRoles().contains("account/owner");
-                    }
-                    if (!isOtherAccOwnerPresent) {
-                        throw new ConflictException("Account should have at least 1 owner");
-                    }
-                }
-                //remove membership
+            if (toRemove != null) {
                 it.remove();
             } else {
-                throw new NotFoundException(String.format("Account %s doesn't have user %s as member", accountId, userId));
+                throw new NotFoundException(
+                        String.format("Account %s doesn't have user %s as member", member.getAccountId(), member.getUserId()));
             }
             if (members.size() > 0) {
                 old.put("members", members);

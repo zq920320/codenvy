@@ -17,12 +17,17 @@
  */
 package com.codenvy.api.dao.ldap;
 
+import com.codenvy.api.account.server.dao.AccountDao;
+import com.codenvy.api.account.shared.dto.Account;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.api.core.notification.EventService;
 import com.codenvy.api.event.RemoveUserEvent;
+import com.codenvy.api.user.server.dao.MemberDao;
 import com.codenvy.api.user.server.dao.UserDao;
+import com.codenvy.api.user.server.dao.UserProfileDao;
+import com.codenvy.api.user.shared.dto.Member;
 import com.codenvy.api.user.shared.dto.User;
 import com.codenvy.dto.server.DtoFactory;
 
@@ -70,7 +75,11 @@ public class UserDaoImpl implements UserDao {
     protected final UserAttributesMapper userAttributesMapper;
     private final   String               userObjectclassFilter;
 
-    private final EventService eventService;
+    private final EventService   eventService;
+    private final AccountDao     accountDao;
+    private final MemberDao      memberDao;
+    private final UserProfileDao profileDao;
+
     /**
      * Creates new instance of {@code UserDaoImpl}.
      *
@@ -107,7 +116,10 @@ public class UserDaoImpl implements UserDao {
      */
     @Inject
     @SuppressWarnings("unchecked")
-    public UserDaoImpl(@Named(Context.PROVIDER_URL) String providerUrl,
+    public UserDaoImpl(AccountDao accountDao,
+                       MemberDao memberDao,
+                       UserProfileDao profileDao,
+                       @Named(Context.PROVIDER_URL) String providerUrl,
                        @Nullable @Named(Context.SECURITY_PRINCIPAL) String systemDn,
                        @Nullable @Named(Context.SECURITY_CREDENTIALS) String systemPassword,
                        @Nullable @Named(Context.SECURITY_AUTHENTICATION) String authType,
@@ -131,6 +143,9 @@ public class UserDaoImpl implements UserDao {
         this.userContainerDn = userContainerDn;
         this.userAttributesMapper = userAttributesMapper;
         this.eventService = eventService;
+        this.accountDao = accountDao;
+        this.memberDao = memberDao;
+        this.profileDao = profileDao;
         StringBuilder sb = new StringBuilder();
         for (String objectClass : userAttributesMapper.userObjectClasses) {
             sb.append("(objectClass=");
@@ -140,21 +155,32 @@ public class UserDaoImpl implements UserDao {
         this.userObjectclassFilter = sb.toString();
     }
 
-    UserDaoImpl(@Named(Context.PROVIDER_URL) String providerUrl,
+    UserDaoImpl(AccountDao accountDao,
+                MemberDao memberDao,
+                UserProfileDao profileDao,
+                @Named(Context.PROVIDER_URL) String providerUrl,
                 @Nullable @Named(Context.SECURITY_PRINCIPAL) String systemDn,
                 @Nullable @Named(Context.SECURITY_CREDENTIALS) String systemPassword,
                 @Nullable @Named(Context.SECURITY_AUTHENTICATION) String authType,
                 @Named("user.ldap.user_container_dn") String userContainerDn,
                 UserAttributesMapper userAttributesMapper,
                 EventService eventService) {
-        this(providerUrl, systemDn, systemPassword, authType, null, null, null, null, null, userContainerDn, userAttributesMapper, eventService);
+        this(accountDao, memberDao, profileDao, providerUrl, systemDn, systemPassword, authType, null, null, null, null, null,
+             userContainerDn,
+             userAttributesMapper,
+             eventService);
     }
 
-    UserDaoImpl(@Named(Context.PROVIDER_URL) String providerUrl,
+    UserDaoImpl(AccountDao accountDao,
+                MemberDao memberDao,
+                UserProfileDao profileDao,
+                @Named(Context.PROVIDER_URL) String providerUrl,
                 @Named("user.ldap.user_container_dn") String userContainerDn,
                 UserAttributesMapper userAttributesMapper,
                 EventService eventService) {
-        this(providerUrl, null, null, null, null, null, null, null, null, userContainerDn, userAttributesMapper, eventService);
+        this(accountDao, memberDao, profileDao, providerUrl, null, null, null, null, null, null, null, null, userContainerDn,
+             userAttributesMapper,
+             eventService);
     }
 
     protected InitialLdapContext getLdapContext() throws NamingException {
@@ -197,7 +223,7 @@ public class UserDaoImpl implements UserDao {
         try {
             final User user = doGetByAlias(alias);
             if (user == null) {
-                throw new NotFoundException("User not found "+alias);
+                throw new NotFoundException("User not found " + alias);
             }
             final String id = user.getId();
             final String userDn = getUserDn(id);
@@ -259,7 +285,7 @@ public class UserDaoImpl implements UserDao {
 
             final User existed = doGetById(id);
             if (existed == null) {
-                throw new NotFoundException("User not found "+id);
+                throw new NotFoundException("User not found " + id);
             }
 
             for (String alias : user.getAliases()) {
@@ -280,8 +306,7 @@ public class UserDaoImpl implements UserDao {
             } catch (NamingException e) {
 
                 throw new ServerException(String.format("Unable update (user) '%s'", user.getEmail()), e);
-            }
-            finally {
+            } finally {
                 close(context);
             }
         } catch (NamingException e) {
@@ -291,14 +316,20 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public void remove(String id) throws NotFoundException, ServerException {
+    public void remove(String id) throws NotFoundException, ServerException, ConflictException {
         User user;
- //       try {
         user = getById(id);
- //       } catch (UserException e) {
- //           throw new NotFoundException("User not found "+id);
- //       }
-
+        //for now it is only one account available
+        for (Account account : accountDao.getByOwner(id)) {
+            accountDao.remove(account.getId());
+        }
+        //remove all workspace memberships
+        for (Member member : memberDao.getUserRelationships(id)) {
+            memberDao.remove(member);
+        }
+        //remove profile
+        profileDao.remove(id);
+        //remove user
         InitialLdapContext context = null;
         try {
             context = getLdapContext();
@@ -306,7 +337,7 @@ public class UserDaoImpl implements UserDao {
             LOG.info("EVENT#user-removed# ALIASES#{}# USER-ID#{}#", user.getEmail(), user.getId());
             eventService.publish(new RemoveUserEvent(id));
         } catch (NameNotFoundException e) {
-            throw new NotFoundException("User not found "+id);
+            throw new NotFoundException("User not found " + id);
         } catch (NamingException e) {
             throw new ServerException(String.format("Unable remove user '%s'", id), e);
         } finally {
@@ -321,7 +352,7 @@ public class UserDaoImpl implements UserDao {
             final User user = doGetByAlias(alias);
 
             if (user == null) {
-                throw new NotFoundException("User not found "+alias);
+                throw new NotFoundException("User not found " + alias);
             }
             return DtoFactory.getInstance().clone(user);
         } catch (NamingException e) {
@@ -334,7 +365,7 @@ public class UserDaoImpl implements UserDao {
         try {
             final User user = doGetById(id);
             if (user == null) {
-                throw new NotFoundException("User not found "+id);
+                throw new NotFoundException("User not found " + id);
             }
             return DtoFactory.getInstance().clone(user);
         } catch (NamingException e) {

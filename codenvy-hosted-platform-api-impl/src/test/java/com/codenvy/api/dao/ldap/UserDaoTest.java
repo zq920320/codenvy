@@ -17,30 +17,44 @@
  */
 package com.codenvy.api.dao.ldap;
 
+import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.api.core.notification.EventService;
-import com.codenvy.api.user.server.exception.UserException;
-import com.codenvy.api.user.server.exception.UserNotFoundException;
+import com.codenvy.api.user.server.dao.MemberDao;
+import com.codenvy.api.user.server.dao.UserProfileDao;
 import com.codenvy.api.user.shared.dto.User;
 import com.codenvy.commons.lang.IoUtil;
 import com.codenvy.dto.server.DtoFactory;
 
+import org.mockito.Mock;
+import org.mockito.testng.MockitoTestNGListener;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
 import java.io.File;
 import java.net.URL;
 import java.util.Arrays;
 
+@Listeners(value = {MockitoTestNGListener.class})
 public class UserDaoTest {
     UserDaoImpl        userDao;
     File               server;
     EmbeddedLdapServer embeddedLdapServer;
     User[]             users;
+
+    @Mock
+    UserProfileDao profileDao;
+
+    @Mock
+    AccountDao accountDao;
+
+    @Mock
+    MemberDao memberDao;
 
     @BeforeMethod
     public void setUp() throws Exception {
@@ -49,7 +63,8 @@ public class UserDaoTest {
         server = new File(target, "server");
         Assert.assertTrue(server.mkdirs(), "Unable create directory for temporary data");
         embeddedLdapServer = EmbeddedLdapServer.start(server);
-        userDao = new UserDaoImpl(embeddedLdapServer.getUrl(), "dc=codenvy;dc=com", new UserAttributesMapper(), new EventService());
+        userDao = new UserDaoImpl(accountDao, memberDao, profileDao, embeddedLdapServer.getUrl(), "dc=codenvy;dc=com",
+                                  new UserAttributesMapper(), new EventService());
         users = new User[]{
                 DtoFactory.getInstance().createDto(User.class)
                           .withId("1")
@@ -183,7 +198,8 @@ public class UserDaoTest {
         userDao.remove(users[0].getId());
         try {
             userDao.getById(users[0].getId());
-        } catch (NotFoundException e) {}
+        } catch (NotFoundException e) {
+        }
     }
 
     @Test

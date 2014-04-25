@@ -182,19 +182,20 @@ public class AccountDaoTest extends BaseDaoTest {
     @Test
     public void shouldRemoveAccount() throws Exception {
         when(workspaceDao.getByAccount(ACCOUNT_ID)).thenReturn(Collections.<Workspace>emptyList());
-        collection.insert(
-                new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME).append("owner", ACCOUNT_OWNER));
+        collection.insert(new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME).append("owner", ACCOUNT_OWNER));
 
         List<String> roles = Arrays.asList("account/admin", "account/member");
         Member member1 = DtoFactory.getInstance().createDto(Member.class)
                                    .withUserId(USER_ID)
                                    .withAccountId(ACCOUNT_ID)
                                    .withRoles(roles.subList(0, 1));
+        subscriptionCollection.insert(new BasicDBObject("accountId", ACCOUNT_ID));
         accountDao.addMember(member1);
 
         accountDao.remove(ACCOUNT_ID);
         assertNull(collection.findOne(new BasicDBObject("id", ACCOUNT_ID)));
         assertNull(membersCollection.findOne(new BasicDBObject("_id", USER_ID)));
+        assertNull(subscriptionCollection.findOne(new BasicDBObject("accountId", ACCOUNT_ID)));
     }
 
     @Test(expectedExceptions = ConflictException.class,
@@ -272,28 +273,10 @@ public class AccountDaoTest extends BaseDaoTest {
         accountDao.addMember(accountOwner);
         accountDao.addMember(accountMember);
 
-        accountDao.removeMember(accountMember.getAccountId(), accountMember.getUserId());
+        accountDao.removeMember(accountMember);
 
         assertNull(membersCollection.findOne(new BasicDBObject("_id", accountMember.getUserId())));
         assertNotNull(membersCollection.findOne(new BasicDBObject("_id", accountOwner.getUserId())));
-    }
-
-    @Test(expectedExceptions = ConflictException.class, expectedExceptionsMessageRegExp = "Account should have at least 1 owner")
-    public void shouldNotBeAbleToRemoveLastAccountOwnerIfOtherMembersExist() throws ConflictException, NotFoundException, ServerException {
-        collection.insert(new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME));
-        Member accountOwner = DtoFactory.getInstance().createDto(Member.class)
-                                        .withUserId(USER_ID)
-                                        .withAccountId(ACCOUNT_ID)
-                                        .withRoles(Arrays.asList("account/owner"));
-        Member accountMember = DtoFactory.getInstance().createDto(Member.class)
-                                         .withUserId("user2")
-                                         .withAccountId(ACCOUNT_ID)
-                                         .withRoles(Arrays.asList("account/member"));
-
-        accountDao.addMember(accountOwner);
-        accountDao.addMember(accountMember);
-
-        accountDao.removeMember(accountOwner.getAccountId(), accountOwner.getUserId());
     }
 
     @Test
@@ -311,7 +294,7 @@ public class AccountDaoTest extends BaseDaoTest {
         accountDao.addMember(accountOwner);
         accountDao.addMember(accountOwner2);
 
-        accountDao.removeMember(accountOwner.getAccountId(), accountOwner.getUserId());
+        accountDao.removeMember(accountOwner);
 
         assertNull(membersCollection.findOne(new BasicDBObject("_id", accountOwner.getUserId())));
         assertNotNull(membersCollection.findOne(new BasicDBObject("_id", accountOwner2.getUserId())));
