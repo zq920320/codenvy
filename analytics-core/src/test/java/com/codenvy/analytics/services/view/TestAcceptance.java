@@ -63,7 +63,7 @@ public class TestAcceptance extends BaseTest {
 
     private static final String TEST_VIEW_CONFIGURATION_FILE     = BASE_TEST_RESOURCE_DIR + "/view.xml";
     private static final String TEST_EXPECTED_LOG_CHECKER_REPORT = BASE_TEST_RESOURCE_DIR + "/log-checker-report.txt";
-    private static final String TEST_STATISTICS_ARCHIVE          = TestAcceptance.class.getSimpleName() + "/messages_2013-11-24";
+    private static final String TEST_STATISTICS_ARCHIVE          = TestAcceptance.class.getSimpleName() + "/messages_2014-04-03";
 
     @BeforeClass
     public void init() throws Exception {
