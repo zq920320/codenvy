@@ -290,21 +290,32 @@ public class ViewBuilder extends Feature {
     }
 
     public Context initializeFirstInterval(Context context) throws ParseException {
-        context = initializeTimeInterval(context);
-
         Context.Builder builder = new Context.Builder(context);
         builder.put(Parameters.REPORT_DATE, builder.getAsString(Parameters.TO_DATE));
-        return builder.build();
+
+        if (context.exists(Parameters.TIME_UNIT)) {
+            Parameters.TimeUnit timeUnit = builder.getTimeUnit();
+            if (context.exists(Parameters.TIME_INTERVAL)) {
+                int timeShift = (int)-context.getAsLong(Parameters.TIME_INTERVAL);
+                return Utils.initDateInterval(builder.getAsDate(Parameters.TO_DATE), timeUnit, timeShift, builder);
+            } else {
+                return Utils.initDateInterval(builder.getAsDate(Parameters.TO_DATE), timeUnit, builder);
+            }
+        } else {
+            return builder.build();
+        }
     }
 
     public Context initializeTimeInterval(Context context) throws ParseException {
+        Context.Builder builder = new Context.Builder(context);
+        
         if (context.exists(Parameters.TIME_UNIT)) {
-            Parameters.TimeUnit timeUnit = context.getTimeUnit();
+            Parameters.TimeUnit timeUnit = builder.getTimeUnit();
             if (context.exists(Parameters.TIME_INTERVAL)) {
                 int timeShift = (int)-context.getAsLong(Parameters.TIME_INTERVAL);
-                return Utils.initDateInterval(context.getAsDate(Parameters.TO_DATE), timeUnit, timeShift, new Context.Builder(context));
+                return Utils.initDateInterval(builder.getAsDate(Parameters.TO_DATE), timeUnit, timeShift, builder);
             } else {
-                return Utils.initDateInterval(context.getAsDate(Parameters.TO_DATE), timeUnit, new Context.Builder(context));
+                return Utils.initDateInterval(builder.getAsDate(Parameters.TO_DATE), timeUnit, builder);
             }
         } else {
             return context;
