@@ -22,6 +22,7 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -46,6 +47,11 @@ public class TestRestoreUserProfiles extends BaseTest {
     public void setUp() throws Exception {
         File fileOut = new File(BASE_DIR, "profiles.log");
         writer = new BufferedWriter(new FileWriter(fileOut));
+    }
+
+    @AfterMethod
+    public void tearDown() throws Exception {
+        writer.close();
     }
 
     @Test

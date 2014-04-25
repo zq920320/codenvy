@@ -293,7 +293,6 @@ public abstract class ReadBasedMetric extends AbstractMetric {
         if (dateFilter.keySet().size() > 0) {
             match.put(DATE, dateFilter);
         }
-
     }
 
     private DBObject getUsers(MetricFilter filter, Object value) throws IOException {
