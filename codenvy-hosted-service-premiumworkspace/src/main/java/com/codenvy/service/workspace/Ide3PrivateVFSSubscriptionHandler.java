@@ -17,66 +17,87 @@
  */
 package com.codenvy.service.workspace;
 
+import com.codenvy.api.core.ApiException;
+import com.codenvy.api.core.rest.HttpJsonHelper;
+import com.codenvy.api.core.util.Pair;
+import com.codenvy.api.vfs.server.VirtualFileSystem;
+import com.codenvy.api.vfs.server.VirtualFileSystemFactory;
+import com.codenvy.api.vfs.shared.dto.AccessControlEntry;
+import com.codenvy.api.vfs.shared.dto.Principal;
+import com.codenvy.api.vfs.shared.dto.VirtualFileSystemInfo;
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
+import com.codenvy.dto.server.DtoFactory;
+import com.codenvy.dto.server.JsonArrayImpl;
 
+import javax.inject.Inject;
 import javax.inject.Named;
+import javax.ws.rs.core.UriBuilder;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
+ * @author Sergii Leschenko
  * @author Sergii Kabashniuk
  */
 public class Ide3PrivateVFSSubscriptionHandler extends PrivateVFSSubscriptionHandler {
     private final String apiEndpoint;
 
+    @Inject
     public Ide3PrivateVFSSubscriptionHandler(WorkspaceDao workspaceDao,
                                              @Named("api.endpoint") String apiEndpoint) {
         super(workspaceDao);
         this.apiEndpoint = apiEndpoint;
     }
 
+    /**
+     * Set permission in virtual file system only for users with role "workspace/developer".
+     * This users will be have all permissions(read, write and update acl).
+     *
+     * @param workspaceId
+     *         id of workspace for updating access control list.
+     * @param authToken
+     *         token that will be used for send request to services
+     * @throws IOException
+     *         if any error sending request to service
+     */
     @Override
     protected void setWorkspacePermission(String workspaceId, String authToken) throws IOException {
+        // Getting id of vfs root for current workspace
+        UriBuilder ub = UriBuilder.fromUri(apiEndpoint)
+                                  .path(VirtualFileSystemFactory.class)
+                                  .path(VirtualFileSystemFactory.class, "getFileSystem");
 
+        VirtualFileSystemInfo virtualFileSystemInfo;
+        try {
+            virtualFileSystemInfo = HttpJsonHelper
+                    .get(VirtualFileSystemInfo.class, ub.build(workspaceId).toString(), new Pair<>("token", authToken));
+        } catch (ApiException e) {
+            throw new IOException("Can not get virtual file system info", e);
+        }
+
+        // Updating access control list
+        ub = UriBuilder.fromUri(apiEndpoint)
+                       .path(VirtualFileSystemFactory.class)
+                       .path(VirtualFileSystemFactory.class, "getFileSystem")
+                       .path(VirtualFileSystem.class, "updateACL")
+                       .path(virtualFileSystemInfo.getRoot().getId());
+        Principal principal = DtoFactory.getInstance().createDto(Principal.class)
+                                        .withType(Principal.Type.GROUP)
+                                        .withName("workspace/developer");
+        List<String> permissions = new ArrayList<>(Arrays.asList(VirtualFileSystemInfo.BasicPermissions.ALL.toString()));
+        AccessControlEntry accessControlEntry = DtoFactory.getInstance().createDto(AccessControlEntry.class)
+                                                          .withPermissions(permissions)
+                                                          .withPrincipal(principal);
+
+        List<AccessControlEntry> accessControlList = new ArrayList<>(Arrays.asList(accessControlEntry));
+        try {
+            // DTO interface set to null because we not want get json response
+            HttpJsonHelper.post(null, ub.build(workspaceId).toString(), new JsonArrayImpl<>(accessControlList),
+                                new Pair<>("token", authToken), new Pair<>("override", true));
+        } catch (ApiException e) {
+            throw new IOException("Can not update access control list", e);
+        }
     }
-//    public void setWorkspacePermission(String workspaceId, String authToken) throws IOException {
-//        HttpURLConnection connection = null;
-//
-//        try {
-//            UriBuilder ub = UriBuilder.fromUri(apiEndpoint + "/vfs/" + workspaceId + "/v2")
-//                                      .path(VirtualFileSystem.class, "updateACL")
-//                                      .path(getWorkspaceRootFolderId(workspaceId));
-//
-//            ub.queryParam("token", authToken);
-//
-//            URL url = ub.build().toURL();
-//            connection = (HttpURLConnection)url.openConnection();
-//            connection.setRequestProperty("Referer", apiEndpoint);
-//            connection.setAllowUserInteraction(false);
-//            connection.setRequestMethod("POST");
-//
-//            int code = connection.getResponseCode();
-//
-////                        Map<Principal, Set<VirtualFileSystemInfo.BasicPermissions>> acl = new HashMap<>();
-////                        acl.put(new DtoServerImpls.PrincipalImpl("workspace/developer", Principal.Type.GROUP), EnumSet.of(
-////                                VirtualFileSystemInfo.BasicPermissions.ALL));
-////                        return new AccessControlList(acl);
-//
-////                        vfs.importZip(folder.getId(), inputStream, true);
-////                        Project project = (Project)vfs.getItem(folder.getId(), false, PropertyFilter.ALL_FILTER);
-////                        LOG.info("EVENT#factory-project-imported# WS#" + tmpWorkspace + "# USER#" +
-////                                 ConversationState.getCurrent().getIdentity().getUserId() + "# PROJECT#" + project.getName() + "#
-// TYPE#" +
-////                                 project.getProjectType() + "#");
-////                        importedProjects.add(project);
-//        } finally {
-//            if (connection != null) {
-//                connection.disconnect();
-//            }
-//        }
-//    }
-//
-//    private String getWorkspaceRootFolderId(String workspaceId) {
-//        //vfs.get VirtualFileSystemInfo.getRoot().getId();
-//        return null;
-//    }
 }
