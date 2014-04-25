@@ -20,16 +20,19 @@ package com.codenvy.analytics.metrics.projects;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Expandable;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ReadBasedMetric;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public abstract class AbstractProjectType extends ReadBasedMetric {
+public abstract class AbstractProjectType extends ReadBasedMetric implements Expandable {
 
     private final String[] types;
 
+    private String expandingField = PROJECT_ID;
+    
     protected AbstractProjectType(String metricName, String[] types) {
         super(metricName);
 
@@ -45,12 +48,12 @@ public abstract class AbstractProjectType extends ReadBasedMetric {
 
     @Override
     public String getStorageCollectionName() {
-        return getStorageCollectionName(MetricType.PROJECT_TYPES);
+        return getStorageCollectionName(MetricType.PROJECTS_LIST);
     }
 
     @Override
     public String[] getTrackedFields() {
-        return types;
+        return new String[] {VALUE};
     }
 
     @Override
@@ -60,13 +63,32 @@ public abstract class AbstractProjectType extends ReadBasedMetric {
 
     @Override
     public DBObject[] getSpecificDBOperations(Context clauses) {
+        DBObject match = new BasicDBObject(PROJECT_TYPE, new BasicDBObject("$in", types));
+        
         DBObject group = new BasicDBObject();
-
         group.put(ID, null);
-        for (String type : types) {
-            group.put(type, new BasicDBObject("$sum", "$" + type));
-        }
+        group.put(VALUE, new BasicDBObject("$sum", 1));
 
-        return new DBObject[]{new BasicDBObject("$group", group)};
+        return new DBObject[]{new BasicDBObject("$match", match),
+                              new BasicDBObject("$group", group)};
+    }
+    
+    @Override
+    public DBObject[] getSpecificExpandedDBOperations(Context clauses) {
+        DBObject match = new BasicDBObject(PROJECT_TYPE, new BasicDBObject("$in", types));
+        
+        DBObject group = new BasicDBObject();
+        group.put(ID, "$" + expandingField);
+
+        DBObject projection = new BasicDBObject(expandingField, "$_id");
+
+        return new DBObject[]{new BasicDBObject("$match", match),
+                              new BasicDBObject("$group", group),
+                              new BasicDBObject("$project", projection)};
+    }
+    
+    @Override
+    public String getExpandedValueField() {
+        return expandingField;
     }
 }

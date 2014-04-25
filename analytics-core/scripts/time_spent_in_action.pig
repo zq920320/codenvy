@@ -32,7 +32,7 @@ result = FOREACH u GENERATE UUID(),
                             TOTUPLE('ws', r::ws), 
                             TOTUPLE('user', r::user),
                             TOTUPLE('project', f::project),
-                            TOTUPLE('project_type', f::project_type),
+                            TOTUPLE('project_type', LOWER(f::project_type)),
                             TOTUPLE('project_id', CreateProjectId(r::user, r::ws, f::project)),
                             TOTUPLE('time', r::delta), 
                             TOTUPLE('ide', r::ide);

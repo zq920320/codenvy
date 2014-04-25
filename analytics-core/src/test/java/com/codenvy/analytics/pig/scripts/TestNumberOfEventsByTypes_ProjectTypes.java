@@ -42,6 +42,10 @@ import static org.testng.Assert.assertEquals;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestNumberOfEventsByTypes_ProjectTypes extends BaseTest {
 
+    private static final String PROJECTS_LIST_COLLECTION = "projects_list";
+    
+    private static final String PROJECT_TYPES_COLLECTION = "project_types";
+    
     @BeforeClass
     public void init() throws Exception {
         List<Event> events = new ArrayList<>();
@@ -60,12 +64,18 @@ public class TestNumberOfEventsByTypes_ProjectTypes extends BaseTest {
         builder.put(Parameters.TO_DATE, "20130101");
         builder.put(Parameters.USER, Parameters.USER_TYPES.REGISTERED.name());
         builder.put(Parameters.WS, Parameters.WS_TYPES.PERSISTENT.name());
-        builder.put(Parameters.STORAGE_TABLE, "testnumberofeventsbytypes_projecttypes");
+        builder.put(Parameters.STORAGE_TABLE, PROJECTS_LIST_COLLECTION);
+        builder.put(Parameters.LOG, log.getAbsolutePath());
+        pigServer.execute(ScriptType.PROJECTS, builder.build());
+
+        /* is needed for testAllTypes() test only */
+        builder.put(Parameters.STORAGE_TABLE, PROJECT_TYPES_COLLECTION);
         builder.put(Parameters.LOG, log.getAbsolutePath());
         builder.put(Parameters.EVENT, "project-created");
         builder.put(Parameters.PARAM, "TYPE");
         pigServer.execute(ScriptType.EVENTS_BY_TYPE, builder.build());
 
+        
         events = new ArrayList<>();
         events.add(Event.Builder.createProjectCreatedEvent("user1@gmail.com", "ws1", "", "", "jar")
                                 .withDate("2013-01-02")
@@ -79,7 +89,12 @@ public class TestNumberOfEventsByTypes_ProjectTypes extends BaseTest {
 
         builder.put(Parameters.FROM_DATE, "20130102");
         builder.put(Parameters.TO_DATE, "20130102");
+        builder.put(Parameters.STORAGE_TABLE, PROJECTS_LIST_COLLECTION);        
         builder.put(Parameters.LOG, log.getAbsolutePath());
+        pigServer.execute(ScriptType.PROJECTS, builder.build());
+        
+        /* is needed for testAllTypes() test only */
+        builder.put(Parameters.STORAGE_TABLE, PROJECT_TYPES_COLLECTION);
         pigServer.execute(ScriptType.EVENTS_BY_TYPE, builder.build());
     }
 
@@ -172,7 +187,7 @@ public class TestNumberOfEventsByTypes_ProjectTypes extends BaseTest {
     }
 
     @Test
-    public void testAllPaases() throws Exception {
+    public void testAllTypes() throws Exception {       
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20130101");
         builder.put(Parameters.TO_DATE, "20130102");
@@ -180,7 +195,7 @@ public class TestNumberOfEventsByTypes_ProjectTypes extends BaseTest {
         Metric metric = new TestProjectTypes();
         Map<String, ValueData> items = ((MapValueData)metric.getValue(builder.build())).getAll();
 
-        assertEquals(2, items.size());
+        assertEquals(items.size(), 2);
         assertEquals(items.get("jar"), new LongValueData(2));
         assertEquals(items.get("war"), new LongValueData(2));
     }
@@ -188,7 +203,7 @@ public class TestNumberOfEventsByTypes_ProjectTypes extends BaseTest {
     private class TestProjectTypes extends ProjectTypes {
         @Override
         public String getStorageCollectionName() {
-            return "testnumberofeventsbytypes_projecttypes";
+            return PROJECT_TYPES_COLLECTION;
         }
     }
 
@@ -196,11 +211,6 @@ public class TestNumberOfEventsByTypes_ProjectTypes extends BaseTest {
 
         private TestAbstractProjectType(String[] types) {
             super("testnumberofeventsbytypes_projecttypes", types);
-        }
-
-        @Override
-        public String getStorageCollectionName() {
-            return "testnumberofeventsbytypes_projecttypes";
         }
 
         @Override

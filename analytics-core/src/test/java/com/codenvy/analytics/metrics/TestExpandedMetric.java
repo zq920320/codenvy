@@ -47,7 +47,9 @@ import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Parameters.TimeUnit;
+import com.codenvy.analytics.metrics.projects.AbstractProjectType;
 import com.codenvy.analytics.metrics.projects.CreatedProjects;
+import com.codenvy.analytics.metrics.projects.ProjectTypeWar;
 import com.codenvy.analytics.metrics.projects.ProjectsList;
 import com.codenvy.analytics.metrics.users.UserInvite;
 import com.codenvy.analytics.metrics.workspaces.ActiveWorkspaces;
@@ -95,30 +97,30 @@ public class TestExpandedMetric extends BaseTest {
                              .withDate("2013-11-01").withTime("19:00:00,155").build());
 
         // create test projects
-        events.add(Event.Builder.createProjectCreatedEvent(USER, WS, "id1", "project1", "type")
+        events.add(Event.Builder.createProjectCreatedEvent(USER, WS, "id1", "project1", "python")
                    .withDate("2013-11-01").withTime("18:08:00,600").build());
-        events.add(Event.Builder.createProjectCreatedEvent(USER, "ws2", "id2", "project2", "type")
+        events.add(Event.Builder.createProjectCreatedEvent(USER, "ws2", "id2", "project2", "war")
                    .withDate("2013-11-01").withTime("18:12:00").build());
-        events.add(Event.Builder.createProjectCreatedEvent("user2@gmail.com", "ws3", "id3", "project2", "type")
+        events.add(Event.Builder.createProjectCreatedEvent("user2@gmail.com", "ws3", "id3", "project2", "java")
                    .withDate("2013-11-01").withTime("18:20:00").build());
         
         
         // event of target user in the target workspace and in time of first session
-        events.add(Event.Builder.createRunStartedEvent(USER, WS, "project1", "type", "id1")
+        events.add(Event.Builder.createRunStartedEvent(USER, WS, "project1", "Python", "id1")
                                 .withDate("2013-11-01").withTime("19:08:00,600").build());
-        events.add(Event.Builder.createRunFinishedEvent(USER, WS, "project1", "type", "id1")
+        events.add(Event.Builder.createRunFinishedEvent(USER, WS, "project1", "Python", "id1")
                                 .withDate("2013-11-01").withTime("19:10:00,900").build());
 
         // event of target user in another workspace and in time of main session
-        events.add(Event.Builder.createBuildStartedEvent(USER, "ws2", "project2", "type", "id2")
+        events.add(Event.Builder.createBuildStartedEvent(USER, "ws2", "project2", "war", "id2")
                                 .withDate("2013-11-01").withTime("19:12:00").build());
-        events.add(Event.Builder.createBuildFinishedEvent(USER, "ws2", "project2", "type", "id2")
+        events.add(Event.Builder.createBuildFinishedEvent(USER, "ws2", "project2", "war", "id2")
                                 .withDate("2013-11-01").withTime("19:14:00").build());
 
         // event of another user in the another workspace and in time of main session
-        events.add(Event.Builder.createRunStartedEvent("user2@gmail.com", "ws3", "project2", "type", "id3")
+        events.add(Event.Builder.createRunStartedEvent("user2@gmail.com", "ws3", "project2", "java", "id3")
                                 .withDate("2013-11-01").withTime("19:08:00").build());
-        events.add(Event.Builder.createRunFinishedEvent("user2@gmail.com", "ws3", "project2", "type", "id3")
+        events.add(Event.Builder.createRunFinishedEvent("user2@gmail.com", "ws3", "project2", "java", "id3")
                                 .withDate("2013-11-01").withTime("19:10:00").build());
 
         // finish main session
@@ -255,6 +257,32 @@ public class TestExpandedMetric extends BaseTest {
 
         Map<String, ValueData> record3 = ((MapValueData) all.get(2)).getAll();
         assertEquals(record3.get("project_id").toString(), USER + "/" + WS + "/project1");
+    }
+    
+    @Test
+    public void testExpandedAbstractProjectTypeMetrics() throws Exception {
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20131101");
+        builder.put(Parameters.TO_DATE, "20131101");
+        
+        // calculate projects list
+        builder.put(Parameters.USER, Parameters.USER_TYPES.REGISTERED.name());
+        builder.put(Parameters.WS, Parameters.WS_TYPES.PERSISTENT.name());
+        builder.put(Parameters.STORAGE_TABLE, PROJECTS_LIST_COLLECTION);
+        builder.put(Parameters.LOG, log.getAbsolutePath());
+        pigServer.execute(ScriptType.PROJECTS, builder.build());
+        
+        // test expanded metric value
+        AbstractProjectType metric = new ProjectTypeWar();
+        ListValueData expandedValue = metric.getExpandedValue(builder.build());
+        List<ValueData> all = expandedValue.getAll();
+        assertEquals(all.size(), 2);
+        
+        Map<String, ValueData> record1 = ((MapValueData) all.get(0)).getAll();
+        assertEquals(record1.get("project_id").toString(), "user2@gmail.com/ws3/project2");
+
+        Map<String, ValueData> record2 = ((MapValueData) all.get(1)).getAll();
+        assertEquals(record2.get("project_id").toString(), USER + "/ws2/project2");
     }
     
     @Test

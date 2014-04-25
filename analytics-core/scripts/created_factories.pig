@@ -38,7 +38,7 @@ result = FOREACH a GENERATE UUID(),
                     TOTUPLE('ide', ide), 
                     TOTUPLE('project', project),
                     TOTUPLE('repository', repository), 
-                    TOTUPLE('project_type', projectType), 
+                    TOTUPLE('project_type', LOWER(projectType)), 
                     TOTUPLE('project_id', CreateProjectId(user, ws, project)),
                     TOTUPLE('factory', factory),
                     TOTUPLE('encoded_factory', encodedFactory);
