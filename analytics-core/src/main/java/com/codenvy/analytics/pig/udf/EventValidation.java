@@ -48,7 +48,7 @@ public class EventValidation extends EvalFunc<String> {
     public static final String PAAS = "PAAS";
     public static final String TYPE = "TYPE";
 
-    public static final String EVENTS_DOESN_T_EXIST = "Events doesn't exist";
+    public static final String EVENTS_DOESNT_EXIST  = "Events doesn't exist";
     public static final String WORKSPACE_IS_EMPTY   = "Workspace is empty";
     public static final String USER_IS_EMPTY        = "User is empty";
     public static final String VALUE_IS_NOT_ALLOWED = "Is not allowed value '%s' for '%s' parameter";
@@ -67,7 +67,7 @@ public class EventValidation extends EvalFunc<String> {
         String message = (String)input.get(3);
 
         if (!eventsHolder.isEventExists(event)) {
-            return EVENTS_DOESN_T_EXIST;
+            return EVENTS_DOESNT_EXIST;
         }
 
         StringBuilder validated = new StringBuilder();
@@ -122,7 +122,6 @@ public class EventValidation extends EvalFunc<String> {
         }
         validated.append(str);
     }
-
 
     @Override
     public Schema outputSchema(Schema input) {

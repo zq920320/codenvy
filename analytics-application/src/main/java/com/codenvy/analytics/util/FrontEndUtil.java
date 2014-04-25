@@ -44,7 +44,6 @@ public class FrontEndUtil {
      * time of reading data by metric).
      */
     public static String getFirstAndLastName(Principal userPrincipal) {
-        String firstAndLastName;
         String email = null;
         if (userPrincipal != null) {
             email = userPrincipal.getName();
@@ -64,25 +63,27 @@ public class FrontEndUtil {
             return email;
         }
 
-        String firstName = "";
-        String lastName = "";
+        ValueData firstName;
+        ValueData lastName;
 
         if (value.size() > 0) {
             Map<String, ValueData> userProfile = ((MapValueData)value.getAll().get(0)).getAll();
 
-            firstName = userProfile.get(UsersProfilesList.USER_FIRST_NAME).toString();
-            lastName = userProfile.get(UsersProfilesList.USER_LAST_NAME).toString();
-        }
+            firstName = userProfile.get(UsersProfilesList.USER_FIRST_NAME);
+            lastName = userProfile.get(UsersProfilesList.USER_LAST_NAME);
 
-        // return user email if there are empty both his/her first name and last name
-        if (firstName.isEmpty() && lastName.isEmpty()) {
-            firstAndLastName = email;
+            String firstAndLastName = "";
+            if (firstName != null && !firstName.getAsString().isEmpty()) {
+                firstAndLastName += firstName.getAsString();
+            }
 
-            // return "{user_first_name} {user_last_name}" String
+            if (lastName != null && !lastName.getAsString().isEmpty()) {
+                firstAndLastName += (firstAndLastName.isEmpty() ? "" : " ") + lastName.getAsString();
+            }
+
+            return firstAndLastName.isEmpty() ? email : firstAndLastName;
         } else {
-            firstAndLastName = firstName + " " + lastName;
+            return email;
         }
-
-        return firstAndLastName;
     }
 }
