@@ -92,14 +92,15 @@ public class EventValidation extends EvalFunc<String> {
 
                 case PAAS:
                     String allowedValues = param.getAllowedValues();
-                    if ((allowedValues != null && !isAllowedValue(param.getAllowedValues(), value)) ||
-                        (allowedValues == null && !isAllowedValue(ProjectPaases.PAASES, value))) {
+                    if ((allowedValues != null && !isAllowedValue(param.getAllowedValues(), value))
+                        || (allowedValues == null && !isAllowedValue(ProjectPaases.PAASES, value))) {
                         append(validated, String.format(VALUE_IS_NOT_ALLOWED, value, PAAS));
                     }
                     break;
 
                 case TYPE:
-                    if (isEmptyValue(value) || !isAllowedValue(param.getAllowedValues(), value) || !isAllowedValue(ProjectTypes.TYPES, value)) {
+                    if ((isEmptyValue(value) && !param.isAllowEmptyValue())
+                        || (!isEmptyValue(value) && !isAllowedValue(ProjectTypes.TYPES, value))) {
                         append(validated, String.format(VALUE_IS_NOT_ALLOWED, value, TYPE));
                     }
                     break;
