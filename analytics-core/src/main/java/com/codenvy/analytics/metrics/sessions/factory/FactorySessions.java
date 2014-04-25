@@ -27,7 +27,7 @@ import javax.annotation.security.RolesAllowed;
 public class FactorySessions extends AbstractCount {
 
     public FactorySessions() {
-        super(MetricType.FACTORY_SESSIONS, MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST);
+        super(MetricType.FACTORY_SESSIONS, MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST, SESSION_ID);
     }
 
     @Override

@@ -26,7 +26,7 @@ analytics.presenter.ReportPresenter = function ReportPresenter() {};
 analytics.presenter.ReportPresenter.prototype = new Presenter();
 
 /** Drill Down page parameters */
-analytics.presenter.ReportPresenter.prototype.DEFAULT_DRILL_DOWN_PAGE_ADDRESS = "/analytics/pages/drill-down.jsp";
+analytics.presenter.ReportPresenter.prototype.DEFAULT_DRILL_DOWN_PAGE_ADDRESS = "/analytics/pages/drill-down.jsp?";
 analytics.presenter.ReportPresenter.prototype.mapExpandedMetricToDrillDownPageType = {
     "active_users": "USERS",
     "users_who_created_project": "USERS",
@@ -39,6 +39,7 @@ analytics.presenter.ReportPresenter.prototype.mapExpandedMetricToDrillDownPageTy
     "created_users_from_factory": "USERS",
     "user_invite": "USERS",
     "removed_users": "USERS",
+    "users_activity": "USERS",
     
     "active_workspaces": "WORKSPACES",
     "created_workspaces": "WORKSPACES",
@@ -61,13 +62,20 @@ analytics.presenter.ReportPresenter.prototype.mapExpandedMetricToDrillDownPageTy
     "runs_time": "PROJECTS",
     "time_in_build_queue": "PROJECTS",
     "time_in_run_queue": "PROJECTS",
-    
+    "created_projects": "PROJECTS",
+    "projects": "PROJECTS",
+
     "factory_sessions_with_build": "SESSIONS",
     "factory_sessions_with_deploy": "SESSIONS",
     "factory_sessions_with_run": "SESSIONS",
     "authenticated_factory_sessions": "SESSIONS",
     "converted_factory_sessions": "SESSIONS",
+    "product_usage_sessions": "SESSIONS",
+    "factory_sessions": "SESSIONS",
+    "product_usage_factory_sessions": "SESSIONS",
     
+    "created_factories": "FACTORIES", 
+    "factory_used": "FACTORIES",
 };
 
 analytics.presenter.ReportPresenter.prototype.mapDrillDownPageTypeToDrillDownPageAddress = {

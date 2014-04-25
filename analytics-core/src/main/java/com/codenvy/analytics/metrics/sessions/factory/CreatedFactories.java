@@ -27,7 +27,7 @@ import javax.annotation.security.RolesAllowed;
 public class CreatedFactories extends AbstractCount {
 
     public CreatedFactories() {
-        super(MetricType.CREATED_FACTORIES, MetricType.CREATED_FACTORIES_SET);
+        super(MetricType.CREATED_FACTORIES, MetricType.CREATED_FACTORIES_SET, FACTORY);
     }
 
     @Override

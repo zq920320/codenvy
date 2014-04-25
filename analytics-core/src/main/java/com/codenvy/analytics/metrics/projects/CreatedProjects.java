@@ -29,7 +29,7 @@ import javax.annotation.security.RolesAllowed;
 public class CreatedProjects extends AbstractCount {
 
     public CreatedProjects() {
-        super(MetricType.CREATED_PROJECTS, MetricType.PROJECTS_LIST);
+        super(MetricType.CREATED_PROJECTS, MetricType.PROJECTS_LIST, PROJECT_ID);
     }
 
     @Override

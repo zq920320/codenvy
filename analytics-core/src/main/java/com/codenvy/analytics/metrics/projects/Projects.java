@@ -28,7 +28,7 @@ import javax.annotation.security.RolesAllowed;
 @RolesAllowed(value = {"user", "system/admin", "system/manager"})
 public class Projects  extends AbstractCount {
     public Projects() {
-        super(MetricType.PROJECTS, MetricType.PROJECTS_LIST);
+        super(MetricType.PROJECTS, MetricType.PROJECTS_LIST, PROJECT_ID);
     }
 
     @Override

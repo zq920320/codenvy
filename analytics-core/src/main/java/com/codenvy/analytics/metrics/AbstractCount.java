@@ -26,9 +26,11 @@ import java.io.IOException;
 import java.text.ParseException;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public abstract class AbstractCount extends ReadBasedMetric {
+public abstract class AbstractCount extends ReadBasedMetric implements Expandable {
 
     private final ReadBasedMetric basedMetric;
+
+    private String expandingField;
 
     public AbstractCount(String metricName, String basedMetricName) {
         super(metricName);
@@ -37,6 +39,11 @@ public abstract class AbstractCount extends ReadBasedMetric {
 
     public AbstractCount(MetricType metricType, MetricType basedMetric) {
         this(metricType.name(), basedMetric.name());
+    }
+
+    public AbstractCount(MetricType metricType, MetricType basedMetric, String expandindField) {
+        this(metricType.name(), basedMetric.name());
+        this.expandingField = expandindField;
     }
 
     public AbstractCount(String metricName, Metric basedMetric) {
@@ -69,7 +76,23 @@ public abstract class AbstractCount extends ReadBasedMetric {
     }
 
     @Override
+    public DBObject[] getSpecificExpandedDBOperations(Context clauses) {
+        DBObject group = new BasicDBObject();
+        group.put(ID, "$" + expandingField);
+
+        DBObject projection = new BasicDBObject(expandingField, "$_id");
+
+        return new DBObject[]{new BasicDBObject("$group", group),
+                              new BasicDBObject("$project", projection)};
+    }
+
+    @Override
     public Class<? extends ValueData> getValueDataClass() {
         return LongValueData.class;
+    }
+
+    @Override
+    public String getExpandedValueField() {
+        return expandingField;
     }
 }

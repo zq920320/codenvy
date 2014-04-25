@@ -35,28 +35,7 @@ analytics.presenter.DrillDownPresenter.prototype.load = function() {
 
     model.setParams(modelParams);
     
-    // get page count from special parameter "origin_value". It could be Not a Number (NaN)                       
-    var rowCountString = viewParams[presenter.METRIC_ORIGINAL_VALUE_VIEW_PARAMETER];
-    rowCountString = rowCountString.replace(/,/g, "");  // remove thousand delimiters in case of numbers like "5,120,954"
-    
-    var rowCount = new Number(rowCountString);
-    if (rowCount.toString() != "NaN") {
-        var onePageRowsCount = analytics.configuration.getProperty(presenter.widgetName, "onePageRowsCount", presenter.DEFAULT_ONE_PAGE_ROWS_COUNT);
-        var pageCount = Math.ceil(rowCount / onePageRowsCount);
-        
-        // process pagination
-        var currentPageNumber = modelParams.page;
-        if (typeof currentPageNumber == "undefined") {
-           currentPageNumber = 1;
-        } else {
-           currentPageNumber = new Number(currentPageNumber);
-        }
-        
-        modelParams.per_page = presenter.DEFAULT_ONE_PAGE_ROWS_COUNT;
-        modelParams.page = currentPageNumber;
-    } else {
-        var pageCount = 1;
-    }
+    var pageCount = 1;
 
     model.pushDoneFunction(function(data) {        
         var table = data[0];  // there should be at most one table in data
@@ -87,11 +66,7 @@ analytics.presenter.DrillDownPresenter.prototype.load = function() {
             table = presenter.addServerSortingLinks(table, presenter.widgetName, viewParams, mapColumnToServerSortParam, true);                
             
             // print table
-            view.printTable(table, false);                 
-        
-            // print bottom page navigation
-            var queryString = analytics.util.getCurrentPageName() + "?" + analytics.util.constructUrlParams(viewParams);
-            view.printBottomPageNavigator(pageCount, currentPageNumber, queryString, presenter.CURRENT_PAGE_QUERY_PARAMETER, presenter.widgetName);
+            view.printTable(table, false);
            
             view.loadTableHandlers(false);  // don't display client side sorting for table with pagination
         } else {

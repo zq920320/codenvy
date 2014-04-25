@@ -187,16 +187,15 @@ public class View {
         }
     }
 
-    private ValueData getMetricValue(String metricName, com.codenvy.analytics.metrics.Context context) throws IOException {
+    private ValueData getMetricValue(String metricName, com.codenvy.analytics.metrics.Context context) throws IOException, ParseException {
+        context = viewBuilder.initializeTimeInterval(context);
         return MetricFactory.getMetric(metricName).getValue(context);
     }
 
     private ListValueData getExpandedValue(String metricName, com.codenvy.analytics.metrics.Context context) throws IOException,
-                                                                                                            ParseException {
-        context = viewBuilder.initializeFirstInterval(context);
-        
+                                                                                                            ParseException {        
+        context = viewBuilder.initializeTimeInterval(context);       
         ReadBasedMetric expandableMetric = (ReadBasedMetric)MetricFactory.getMetric(metricName);
-        
         return expandableMetric.getExpandedValue(context);
     }
 

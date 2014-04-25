@@ -27,7 +27,7 @@ import javax.annotation.security.RolesAllowed;
 public class ProductUsageSessions extends AbstractCount {
 
     public ProductUsageSessions() {
-        super(MetricType.PRODUCT_USAGE_SESSIONS, MetricType.PRODUCT_USAGE_SESSIONS_LIST);
+        super(MetricType.PRODUCT_USAGE_SESSIONS, MetricType.PRODUCT_USAGE_SESSIONS_LIST, SESSION_ID);
     }
 
     @Override

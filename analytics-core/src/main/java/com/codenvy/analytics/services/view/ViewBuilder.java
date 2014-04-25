@@ -290,22 +290,27 @@ public class ViewBuilder extends Feature {
     }
 
     public Context initializeFirstInterval(Context context) throws ParseException {
+        context = initializeTimeInterval(context);
+
         Context.Builder builder = new Context.Builder(context);
         builder.put(Parameters.REPORT_DATE, builder.getAsString(Parameters.TO_DATE));
-
-        if (context.exists(Parameters.TIME_UNIT)) {
-            Parameters.TimeUnit timeUnit = builder.getTimeUnit();
-            if (context.exists(Parameters.TIME_INTERVAL)) {
-                int timeShift = (int)-context.getAsLong(Parameters.TIME_INTERVAL);
-                return Utils.initDateInterval(builder.getAsDate(Parameters.TO_DATE), timeUnit, timeShift, builder);
-            } else {
-                return Utils.initDateInterval(builder.getAsDate(Parameters.TO_DATE), timeUnit, builder);
-            }
-        } else {
-            return builder.build();
-        }
+        return builder.build();
     }
 
+    public Context initializeTimeInterval(Context context) throws ParseException {
+        if (context.exists(Parameters.TIME_UNIT)) {
+            Parameters.TimeUnit timeUnit = context.getTimeUnit();
+            if (context.exists(Parameters.TIME_INTERVAL)) {
+                int timeShift = (int)-context.getAsLong(Parameters.TIME_INTERVAL);
+                return Utils.initDateInterval(context.getAsDate(Parameters.TO_DATE), timeUnit, timeShift, new Context.Builder(context));
+            } else {
+                return Utils.initDateInterval(context.getAsDate(Parameters.TO_DATE), timeUnit, new Context.Builder(context));
+            }
+        } else {
+            return context;
+        }
+    }
+    
     private int getRowCount(int rowCountFromConf, Context context) {
         if (context.exists(Parameters.TIME_UNIT) && context.getTimeUnit() == Parameters.TimeUnit.LIFETIME) {
             return 2;

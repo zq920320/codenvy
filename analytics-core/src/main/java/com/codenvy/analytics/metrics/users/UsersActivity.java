@@ -27,7 +27,7 @@ import javax.annotation.security.RolesAllowed;
 public class UsersActivity extends AbstractCount {
 
     public UsersActivity() {
-        super(MetricType.USERS_ACTIVITY, MetricType.USERS_ACTIVITY_LIST);
+        super(MetricType.USERS_ACTIVITY, MetricType.USERS_ACTIVITY_LIST, USER);
     }
 
     @Override

@@ -34,7 +34,9 @@ import java.util.Map;
 
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
+import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.codenvy.analytics.BaseTest;
@@ -45,6 +47,7 @@ import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Parameters.TimeUnit;
+import com.codenvy.analytics.metrics.projects.CreatedProjects;
 import com.codenvy.analytics.metrics.projects.ProjectsList;
 import com.codenvy.analytics.metrics.users.UserInvite;
 import com.codenvy.analytics.metrics.workspaces.ActiveWorkspaces;
@@ -226,6 +229,35 @@ public class TestExpandedMetric extends BaseTest {
     }
 
     @Test
+    public void testExpandedAbstractCountMetrics() throws Exception {
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20131101");
+        builder.put(Parameters.TO_DATE, "20131101");
+        
+        // calculate projects list
+        builder.put(Parameters.USER, Parameters.USER_TYPES.REGISTERED.name());
+        builder.put(Parameters.WS, Parameters.WS_TYPES.PERSISTENT.name());
+        builder.put(Parameters.STORAGE_TABLE, PROJECTS_LIST_COLLECTION);
+        builder.put(Parameters.LOG, log.getAbsolutePath());
+        pigServer.execute(ScriptType.PROJECTS, builder.build());
+        
+        // test expanded metric value
+        AbstractCount metric = new CreatedProjects();
+        ListValueData expandedValue = metric.getExpandedValue(builder.build());
+        List<ValueData> all = expandedValue.getAll();
+        assertEquals(all.size(), 3);
+        
+        Map<String, ValueData> record1 = ((MapValueData) all.get(0)).getAll();
+        assertEquals(record1.get("project_id").toString(), "user2@gmail.com/ws3/project2");
+
+        Map<String, ValueData> record2 = ((MapValueData) all.get(1)).getAll();
+        assertEquals(record2.get("project_id").toString(), USER + "/ws2/project2");
+
+        Map<String, ValueData> record3 = ((MapValueData) all.get(2)).getAll();
+        assertEquals(record3.get("project_id").toString(), USER + "/" + WS + "/project1");
+    }
+    
+    @Test
     public void testProjectListFilteredByRunsMetric() throws Exception {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20131101");
@@ -309,5 +341,10 @@ public class TestExpandedMetric extends BaseTest {
         List<ValueData> valueRow2 = sectionData.get(2);
         assertEquals(valueRow2.size(), 1);
         assertEquals(valueRow2.get(0).getAsString(), WS);
+    }
+    
+    @BeforeMethod
+    public void clearDatabase() {
+        super.clearDatabase();
     }
 }
