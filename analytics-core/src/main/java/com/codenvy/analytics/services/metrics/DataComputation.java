@@ -120,7 +120,7 @@ public class DataComputation extends Feature {
                 } else if (value instanceof DoubleValueData) {
                     dbObject.put(entry.getKey(), ((DoubleValueData)value).getAsDouble());
                 } else {
-                    dbObject.put(entry.getKey(), value == null ? StringValueData.DEFAULT : value.getAsString());
+                    dbObject.put(entry.getKey(), value == null ? StringValueData.DEFAULT.getAsString() : value.getAsString());
                 }
             }
 
