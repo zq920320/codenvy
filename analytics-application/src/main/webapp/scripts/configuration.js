@@ -308,6 +308,7 @@ function Configuration() {
 
             columnLinkPrefixList: {
                 "Workspace": "/analytics/pages/workspace-view.jsp?ws",
+                "Project": "/analytics/pages/project-view.jsp?project",
             },
 
             /** @see DatabaseTable::makeTableSortable() method docs */
@@ -434,6 +435,7 @@ function Configuration() {
 
             columnLinkPrefixList: {
                 "User": "/analytics/pages/user-view.jsp?user",
+                "Project": "/analytics/pages/project-view.jsp?project",
             },
 
             /** @see DatabaseTable::makeTableSortable() method docs */
