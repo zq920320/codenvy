@@ -57,8 +57,9 @@ public class UserAttributesMapper {
 
     /**
      * Creates new instance of UserAttributesMapper.
+     *
      * @param encryptor
-     *        encryptor of user passwords
+     *         encryptor of user passwords
      * @param userObjectClasses
      *         values for objectClass attribute. Typical value is 'inetOrgPerson'.
      * @param userDn
@@ -183,12 +184,11 @@ public class UserAttributesMapper {
         if (user2.getPassword() != null) {
             mods.add(new ModificationItem(DirContext.REPLACE_ATTRIBUTE,
                                           new BasicAttribute(userPasswordAttr, encryptor.encryptPassword(
-                                                  user2.getPassword().getBytes()))));
+                                                  user2.getPassword().getBytes()))
+            ));
         }
         return mods.toArray(new ModificationItem[mods.size()]);
     }
-
-
 
 
 }

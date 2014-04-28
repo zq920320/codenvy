@@ -319,7 +319,7 @@ public class UserDaoImpl implements UserDao {
     public void remove(String id) throws NotFoundException, ServerException, ConflictException {
         User user;
         user = getById(id);
-        //for now it is only one account available
+        //remove account
         for (Account account : accountDao.getByOwner(id)) {
             accountDao.remove(account.getId());
         }

@@ -69,7 +69,7 @@ public class UserProfileDaoImpl implements UserProfileDao {
         DBObject query = new BasicDBObject("id", profile.getId());
         try {
             if (collection.findOne(query) == null) {
-                throw new NotFoundException("Profile not found "+profile.getId());
+                throw new NotFoundException("Profile not found " + profile.getId());
             }
             collection.update(query, toDBObject(profile));
         } catch (MongoException me) {
@@ -118,6 +118,7 @@ public class UserProfileDaoImpl implements UserProfileDao {
      * Convert UserProfile object to Database ready-to-use object,
      * Due to mongo restriction of keys (they cannot contain "." symbols),
      * we cannot store preferences as plain map, so we store them as a list of name-value pairs.
+     *
      * @param obj
      *         object to convert
      * @return DBObject
@@ -127,24 +128,24 @@ public class UserProfileDaoImpl implements UserProfileDao {
         if (obj.getAttributes() != null) {
             for (Attribute one : obj.getAttributes()) {
                 Attribute attribute = DtoFactory.getInstance().createDto(Attribute.class)
-                                         .withName(one.getName())
-                                         .withValue(one.getValue())
-                                         .withDescription(one.getDescription());
+                                                .withName(one.getName())
+                                                .withValue(one.getValue())
+                                                .withDescription(one.getDescription());
                 attributes.add(JSON.parse(attribute.toString()));
             }
         }
 
         BasicDBList preferences = new BasicDBList();
-        for (Map.Entry<String,String> entry : obj.getPreferences().entrySet()) {
+        for (Map.Entry<String, String> entry : obj.getPreferences().entrySet()) {
             BasicDBObjectBuilder pref = new BasicDBObjectBuilder();
             pref.add("name", entry.getKey()).add("value", entry.getValue());
             preferences.add(pref.get());
         }
         BasicDBObjectBuilder profileBUilder = new BasicDBObjectBuilder();
         profileBUilder.add("id", obj.getId())
-                       .add("userId", obj.getUserId())
-                       .add("attributes", attributes)
-                       .add("preferences", preferences);
+                      .add("userId", obj.getUserId())
+                      .add("attributes", attributes)
+                      .add("preferences", preferences);
 
         return profileBUilder.get();
 
@@ -160,14 +161,14 @@ public class UserProfileDaoImpl implements UserProfileDao {
         Map<String, String> preferences = new HashMap<>();
         BasicDBList prefs = (BasicDBList)res.get("preferences");
         for (Object obj : prefs) {
-            BasicDBObject dbObject  = (BasicDBObject)obj;
+            BasicDBObject dbObject = (BasicDBObject)obj;
             preferences.put(dbObject.getString("name"), dbObject.getString("value"));
         }
 
         return DtoFactory.getInstance().createDto(Profile.class)
-                                    .withId((String)res.get("id"))
-                                    .withUserId((String)res.get("userId"))
-                                    .withAttributes(attributes)
-                                    .withPreferences(preferences);
+                         .withId((String)res.get("id"))
+                         .withUserId((String)res.get("userId"))
+                         .withAttributes(attributes)
+                         .withPreferences(preferences);
     }
 }

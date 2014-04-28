@@ -28,11 +28,10 @@ import java.net.UnknownHostException;
 
 /**
  * Provides single instance of database to all consumers.
- *
  */
 
 @Singleton
-public class MongoDatabaseProvider implements Provider<DB>{
+public class MongoDatabaseProvider implements Provider<DB> {
 
     protected static final String DB_URL      = "organization.storage.db.url";
     protected static final String DB_NAME     = "organization.storage.db.name";

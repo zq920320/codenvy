@@ -39,6 +39,7 @@ import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
+
 @Listeners(value = {MockitoTestNGListener.class})
 public class MemberDaoTest extends BaseDaoTest {
 

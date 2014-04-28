@@ -18,12 +18,14 @@
 package com.codenvy.api.dao.ldap;
 
 import com.codenvy.api.account.server.dao.AccountDao;
+import com.codenvy.api.account.shared.dto.Account;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.api.core.notification.EventService;
 import com.codenvy.api.user.server.dao.MemberDao;
 import com.codenvy.api.user.server.dao.UserProfileDao;
+import com.codenvy.api.user.shared.dto.Member;
 import com.codenvy.api.user.shared.dto.User;
 import com.codenvy.commons.lang.IoUtil;
 import com.codenvy.dto.server.DtoFactory;
@@ -39,6 +41,12 @@ import org.testng.annotations.Test;
 import java.io.File;
 import java.net.URL;
 import java.util.Arrays;
+
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.fail;
 
 @Listeners(value = {MockitoTestNGListener.class})
 public class UserDaoTest {
@@ -159,7 +167,7 @@ public class UserDaoTest {
         copy.setAliases(Arrays.asList("example@mail.com"));
         try {
             userDao.update(copy);
-            Assert.fail();
+            fail();
         } catch (NotFoundException e) {
         }
         User updated = userDao.getById(users[0].getId());
@@ -179,7 +187,7 @@ public class UserDaoTest {
         copy.getAliases().add(conflictAlias); // try use alias that is already used by another user
         try {
             userDao.update(copy);
-            Assert.fail();
+            fail();
         } catch (ServerException e) {
             Assert.assertEquals(e.getMessage(),
                                 String.format("Unable update user '%s'. User alias %s is already in use.", copy.getId(), conflictAlias));
@@ -193,20 +201,33 @@ public class UserDaoTest {
 
     @Test
     public void testRemoveUser() throws Exception {
+        when(accountDao.getByOwner(users[0].getId()))
+                .thenReturn(Arrays.asList(DtoFactory.getInstance().createDto(Account.class).withId("account_id")));
+        Member member = DtoFactory.getInstance().createDto(Member.class)
+                                  .withUserId(users[0].getId())
+                                  .withWorkspaceId("no_matter")
+                                  .withRoles(Arrays.asList("workspace/developer"));
+        when(memberDao.getUserRelationships(users[0].getId())).thenReturn(Arrays.asList(member));
         User user = userDao.getById(users[0].getId());
-        Assert.assertNotNull(user);
+        assertNotNull(user);
+
         userDao.remove(users[0].getId());
+
         try {
             userDao.getById(users[0].getId());
-        } catch (NotFoundException e) {
+            fail();
+        } catch (NotFoundException ignored) {
         }
+        verify(accountDao, times(1)).remove("account_id");
+        verify(memberDao, times(1)).remove(member);
+        verify(profileDao, times(1)).remove(users[0].getId());
     }
 
     @Test
     public void testRemoveNotExistedUser() throws Exception {
         try {
             userDao.remove("invalid");
-            Assert.fail();
+            fail();
         } catch (NotFoundException e) {
         }
     }
