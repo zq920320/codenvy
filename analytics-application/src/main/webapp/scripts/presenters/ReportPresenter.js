@@ -28,6 +28,7 @@ analytics.presenter.ReportPresenter.prototype = new Presenter();
 /** Drill Down page parameters */
 analytics.presenter.ReportPresenter.prototype.DEFAULT_DRILL_DOWN_PAGE_ADDRESS = "/analytics/pages/drill-down.jsp?";
 analytics.presenter.ReportPresenter.prototype.mapExpandedMetricToDrillDownPageType = {
+    /** USERS */
     "active_users": "USERS",
     "users_who_created_project": "USERS",
     "users_who_built": "USERS",
@@ -42,6 +43,7 @@ analytics.presenter.ReportPresenter.prototype.mapExpandedMetricToDrillDownPageTy
     "users_activity": "USERS",
     "total_users": "USERS",
     
+    /** WORKSPACES */
     "active_workspaces": "WORKSPACES",
     "created_workspaces": "WORKSPACES",
     "temporary_workspaces_created": "WORKSPACES",
@@ -50,6 +52,7 @@ analytics.presenter.ReportPresenter.prototype.mapExpandedMetricToDrillDownPageTy
     "collaborative_sessions_started": "WORKSPACES",
     "total_workspaces": "WORKSPACES",
     
+    /** PROJECTS */
     "builds": "PROJECTS",
     "deploys": "PROJECTS",
     "deploys_to_paas": "PROJECTS",
@@ -92,7 +95,8 @@ analytics.presenter.ReportPresenter.prototype.mapExpandedMetricToDrillDownPageTy
     "project_paas_tier3": "PROJECTS",
     
     "total_projects": "PROJECTS",
-
+    
+    /** SESSIONS */
     "factory_sessions_with_build": "SESSIONS",
     "factory_sessions_with_deploy": "SESSIONS",
     "factory_sessions_with_run": "SESSIONS",
@@ -102,6 +106,11 @@ analytics.presenter.ReportPresenter.prototype.mapExpandedMetricToDrillDownPageTy
     "factory_sessions": "SESSIONS",
     "product_usage_factory_sessions": "SESSIONS",
     
+    "factory_sessions_with_build_percent": "SESSIONS",
+    "factory_sessions_with_deploy_percent": "SESSIONS",
+    "factory_sessions_with_run_percent": "SESSIONS",
+    
+    /** FACTORIES */
     "created_factories": "FACTORIES", 
     "factory_used": "FACTORIES",
     "total_factories": "FACTORIES",
@@ -221,7 +230,8 @@ analytics.presenter.ReportPresenter.prototype.getDrillDownPageLink = function(ti
  * */
 analytics.presenter.ReportPresenter.prototype.isEmptyValue = function(value) {
     return value == "0"  // 0 numeric value
-           || value == "00:00:00";   // 0 time value
+           || value == "00:00:00"   // 0 time value
+           || value == "0%";   // 0 time value
 }
 
 analytics.presenter.ReportPresenter.prototype.getDrillDownPageAddress = function(metricName) {

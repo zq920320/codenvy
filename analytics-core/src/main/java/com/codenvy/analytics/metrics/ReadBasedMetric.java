@@ -184,7 +184,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
             
             if (expandedMetric instanceof Expandable) {
                 String[] filteringValues = getExpandedMetricValues(expandedMetricType, clauses);
-                String filteringField = ((ReadBasedMetric) expandedMetric).getExpandedValueField();
+                String filteringField = ((Expandable) expandedMetric).getExpandedValueField();
                 match.put(filteringField, new BasicDBObject("$in", filteringValues));                
             }
         }
@@ -448,7 +448,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
         
         context = builder.build();
         
-        ReadBasedMetric expandableMetric = (ReadBasedMetric)MetricFactory.getMetric(metric);
+        Expandable expandableMetric = (Expandable)MetricFactory.getMetric(metric);
         ListValueData metricValue = expandableMetric.getExpandedValue(context);
 
         List<ValueData> allMetricValues = metricValue.getAll();

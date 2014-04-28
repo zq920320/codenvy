@@ -17,20 +17,24 @@
  */
 package com.codenvy.analytics.metrics.sessions.factory;
 
+import java.io.IOException;
+
+import javax.annotation.security.RolesAllowed;
+
 import com.codenvy.analytics.datamodel.DoubleValueData;
+import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.datamodel.ValueDataUtil;
 import com.codenvy.analytics.metrics.CalculatedMetric;
 import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Expandable;
 import com.codenvy.analytics.metrics.MetricType;
-
-import javax.annotation.security.RolesAllowed;
-import java.io.IOException;
+import com.mongodb.DBObject;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
-public class FactorySessionsWithBuildPercent extends CalculatedMetric {
+public class FactorySessionsWithBuildPercent extends CalculatedMetric implements Expandable {
 
     public FactorySessionsWithBuildPercent() {
         super(MetricType.FACTORY_SESSIONS_WITH_BUILD_PERCENT, new MetricType[]{MetricType.FACTORY_SESSIONS,
@@ -52,5 +56,20 @@ public class FactorySessionsWithBuildPercent extends CalculatedMetric {
     @Override
     public String getDescription() {
         return "The percent of sessions where user built an application";
+    }
+
+    @Override
+    public String getExpandedValueField() {
+        return SESSION_ID;
+    }
+
+    @Override
+    public DBObject[] getSpecificExpandedDBOperations(Context clauses) {
+        return ((Expandable) basedMetric[1]).getSpecificExpandedDBOperations(clauses);
+    }
+    
+    @Override
+    public ListValueData getExpandedValue(Context context) throws IOException {
+        return ((Expandable) basedMetric[1]).getExpandedValue(context);
     }
 }

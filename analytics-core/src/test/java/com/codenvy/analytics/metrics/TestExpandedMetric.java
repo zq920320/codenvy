@@ -34,7 +34,6 @@ import java.util.Map;
 
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -53,6 +52,8 @@ import com.codenvy.analytics.metrics.projects.CreatedProjects;
 import com.codenvy.analytics.metrics.projects.ProjectPaasGae;
 import com.codenvy.analytics.metrics.projects.ProjectTypeWar;
 import com.codenvy.analytics.metrics.projects.ProjectsList;
+import com.codenvy.analytics.metrics.sessions.factory.FactorySessionsWithBuildPercent;
+import com.codenvy.analytics.metrics.sessions.factory.ProductUsageFactorySessionsList;
 import com.codenvy.analytics.metrics.users.UserInvite;
 import com.codenvy.analytics.metrics.workspaces.ActiveWorkspaces;
 import com.codenvy.analytics.persistent.JdbcDataPersisterFactory;
@@ -72,11 +73,6 @@ public class TestExpandedMetric extends BaseTest {
     private static final String WS                  = "ws1";
     private static final String USER                = "user1@gmail.com";
     private static final String SESSION_ID          = "8AA06F22-3755-4BDD-9242-8A6371BAB53A";
-    private static final String USERS_ACTIVITY_LIST_COLLECTION = "users_activity_list";
-    private static final String USER_INVITE_COLLECTION = "user_invite";
-    private static final String RUNS_COLLECTION     = "runs";
-    private static final String PROJECTS_LIST_COLLECTION = "projects_list";
-    private static final String PROJECT_PAASES_COLLECTION = "project_paases";
     
     private ViewBuilder viewBuilder;
     
@@ -88,6 +84,42 @@ public class TestExpandedMetric extends BaseTest {
     public void prepareDatabase() throws IOException, ParseException {
         List<Event> events = new ArrayList<>();
 
+        // create factory session events
+        events.add(Event.Builder.createSessionFactoryStartedEvent("id1", "tmp-1", "user1", "true", "brType")
+                                 .withDate("2013-11-01").withTime("10:00:00").build());
+        events.add(Event.Builder.createSessionFactoryStoppedEvent("id1", "tmp-1", "user1")
+                                .withDate("2013-11-01").withTime("10:05:00").build());
+        
+        events.add(Event.Builder.createSessionFactoryStartedEvent("id2", "tmp-2", "user1", "true", "brType")
+                                .withDate("2013-11-01").withTime("10:20:00").build());
+        events.add(Event.Builder.createSessionFactoryStoppedEvent("id2", "tmp-2", "user1")
+                                .withDate("2013-11-01").withTime("10:30:00").build());
+        
+        events.add(Event.Builder.createSessionFactoryStartedEvent("id3", "tmp-3", "anonymoususer_1", "false", "brType")
+                                .withDate("2013-11-01").withTime("11:00:00").build());
+        events.add(Event.Builder.createSessionFactoryStoppedEvent("id3", "tmp-3", "anonymoususer_1")
+                                .withDate("2013-11-01").withTime("11:15:00").build());
+        
+        events.add(Event.Builder.createFactoryProjectImportedEvent("tmp-1", "user1", "project", "type")
+                                .withDate("2013-11-01").withTime("10:05:00").build());
+        
+        events.add(Event.Builder.createFactoryUrlAcceptedEvent("tmp-1", "factoryUrl1", "http://referrer1", "org1", "affiliate1")
+                                .withDate("2013-11-01").withTime("11:00:00").build());
+        events.add(Event.Builder.createFactoryUrlAcceptedEvent("tmp-2", "factoryUrl1", "http://referrer2", "org2", "affiliate1")
+                                .withDate("2013-11-01").withTime("11:00:01").build());
+        events.add(Event.Builder.createFactoryUrlAcceptedEvent("tmp-3", "factoryUrl1", "http://referrer3", "org3", "affiliate2")
+                                .withDate("2013-11-01").withTime("11:00:02").build());
+        
+        events.add(Event.Builder.createTenantCreatedEvent("tmp-1", "user1")
+                                .withDate("2013-11-01").withTime("12:00:00").build());
+        events.add(Event.Builder.createTenantCreatedEvent("tmp-2", "user1")
+                                .withDate("2013-11-01").withTime("12:01:00").build());
+        
+        // build event for session #1
+        events.add(Event.Builder.createBuildStartedEvent("user1", "tmp-1", "project", "type", "id1")
+                                .withDate("2013-11-01").withTime("10:03:00").build());
+        
+        
         // same user invites twice
         events.add(Event.Builder.createUserInviteEvent(USER, WS, USER)
                    .withDate("2013-11-01").withTime("15:00:00,155").build());
@@ -135,7 +167,7 @@ public class TestExpandedMetric extends BaseTest {
         // finish main session
         events.add(Event.Builder.createSessionFinishedEvent(USER, WS, "ide", SESSION_ID)
                                 .withDate("2013-11-01").withTime("19:55:00,555").build());
-
+        
         log = LogGenerator.generateLog(events);
     }
     
@@ -161,13 +193,91 @@ public class TestExpandedMetric extends BaseTest {
     }
 
     @Test
+    public void testCalculatedPercentMetric() throws Exception {
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20131101");
+        builder.put(Parameters.TO_DATE, "20131101");
+        builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.name());
+        builder.put(Parameters.WS, Parameters.WS_TYPES.TEMPORARY.name());
+        builder.put(Parameters.STORAGE_TABLE, MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST.toString().toLowerCase());
+        builder.put(Parameters.STORAGE_TABLE_PRODUCT_USAGE_SESSIONS, MetricType.PRODUCT_USAGE_SESSIONS_LIST.toString().toLowerCase());
+        builder.put(Parameters.STORAGE_TABLE_USERS_STATISTICS, MetricType.USERS_STATISTICS_LIST.name().toLowerCase());
+        builder.put(Parameters.LOG, log.getAbsolutePath());
+        pigServer.execute(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, builder.build());
+        
+        builder = new Context.Builder();
+        builder.put(Parameters.TO_DATE, "20131101");
+        
+        CalculatedMetric metric = new FactorySessionsWithBuildPercent();
+
+        // test expanded metric value
+        ListValueData expandedValue = ((Expandable) metric).getExpandedValue(builder.build());
+        List<ValueData> all = expandedValue.getAll();
+        assertEquals(all.size(), 1);
+        
+        Map<String, ValueData> workspace1 = ((MapValueData) all.get(0)).getAll();
+        assertEquals(workspace1.size(), 1);
+        assertEquals(workspace1.get("session_id").toString(), "id1");
+    }
+
+    @Test
+    public void testSessionsListFilteredByCalculatedMetric() throws Exception {
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20131101");
+        builder.put(Parameters.TO_DATE, "20131101");
+        builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.name());
+        builder.put(Parameters.WS, Parameters.WS_TYPES.TEMPORARY.name());
+        builder.put(Parameters.STORAGE_TABLE, MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST.toString().toLowerCase());
+        builder.put(Parameters.STORAGE_TABLE_PRODUCT_USAGE_SESSIONS, MetricType.PRODUCT_USAGE_SESSIONS_LIST.toString().toLowerCase());
+        builder.put(Parameters.STORAGE_TABLE_USERS_STATISTICS, MetricType.USERS_STATISTICS_LIST.name().toLowerCase());
+        builder.put(Parameters.LOG, log.getAbsolutePath());
+        pigServer.execute(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, builder.build());
+        
+        builder = new Context.Builder();
+        builder.put(Parameters.TO_DATE, "20131101");
+        
+        CalculatedMetric metric = new FactorySessionsWithBuildPercent();
+
+        // test expanded metric value
+        ListValueData expandedValue = ((Expandable) metric).getExpandedValue(builder.build());
+        List<ValueData> all = expandedValue.getAll();
+        assertEquals(all.size(), 1);
+        
+        Map<String, ValueData> workspace1 = ((MapValueData) all.get(0)).getAll();
+        assertEquals(workspace1.size(), 1);
+        assertEquals(workspace1.get("session_id").toString(), "id1");
+        
+        // filter factory sessions by "factory_sessions_with_build_percent" metric
+        builder = new Context.Builder();
+        builder.put(Parameters.TO_DATE, "20131102");
+        builder.put(Parameters.TIME_UNIT, TimeUnit.DAY.toString());
+        builder.put(Parameters.TIME_INTERVAL, "1");
+        
+        ProductUsageFactorySessionsList sessionsListMetric = new ProductUsageFactorySessionsList();
+
+        ListValueData value = (ListValueData)sessionsListMetric.getValue(builder.build());
+        all = value.getAll();
+        assertEquals(value.getAll().size(), 3);       
+        
+        // calculate build projects list
+        builder.put(Parameters.EXPANDED_METRIC_NAME, "factory_sessions_with_build_percent");
+        
+        ListValueData filteredValue = (ListValueData)sessionsListMetric.getValue(builder.build());
+        all = filteredValue.getAll();
+        assertEquals(all.size(), 1);
+        
+        Map<String, ValueData> record = ((MapValueData) all.get(0)).getAll();
+        assertEquals(record.get("session_id").toString(), "id1");
+    }
+    
+    @Test
     public void testExpandedAbstractActiveEntitiesMetrics() throws Exception {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
         builder.put(Parameters.USER, Parameters.USER_TYPES.REGISTERED.name());
         builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
-        builder.put(Parameters.STORAGE_TABLE, USERS_ACTIVITY_LIST_COLLECTION);
+        builder.put(Parameters.STORAGE_TABLE, MetricType.USERS_ACTIVITY_LIST.toString().toLowerCase());
         builder.put(Parameters.LOG, log.getAbsolutePath());
         pigServer.execute(ScriptType.USERS_ACTIVITY, builder.build());
         
@@ -215,7 +325,7 @@ public class TestExpandedMetric extends BaseTest {
         builder.put(Parameters.TO_DATE, "20131101");
         builder.put(Parameters.USER, Parameters.USER_TYPES.REGISTERED.name());
         builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
-        builder.put(Parameters.STORAGE_TABLE, USER_INVITE_COLLECTION);
+        builder.put(Parameters.STORAGE_TABLE, MetricType.USER_INVITE.toString().toLowerCase());
         builder.put(Parameters.LOG, log.getAbsolutePath());
         builder.put(Parameters.EVENT, "user-invite");
         pigServer.execute(ScriptType.EVENTS, builder.build());
@@ -247,7 +357,7 @@ public class TestExpandedMetric extends BaseTest {
         // calculate projects list
         builder.put(Parameters.USER, Parameters.USER_TYPES.REGISTERED.name());
         builder.put(Parameters.WS, Parameters.WS_TYPES.PERSISTENT.name());
-        builder.put(Parameters.STORAGE_TABLE, PROJECTS_LIST_COLLECTION);
+        builder.put(Parameters.STORAGE_TABLE, MetricType.PROJECTS_LIST.toString().toLowerCase());
         builder.put(Parameters.LOG, log.getAbsolutePath());
         pigServer.execute(ScriptType.PROJECTS, builder.build());
         
@@ -276,7 +386,7 @@ public class TestExpandedMetric extends BaseTest {
         // calculate projects list
         builder.put(Parameters.USER, Parameters.USER_TYPES.REGISTERED.name());
         builder.put(Parameters.WS, Parameters.WS_TYPES.PERSISTENT.name());
-        builder.put(Parameters.STORAGE_TABLE, PROJECTS_LIST_COLLECTION);
+        builder.put(Parameters.STORAGE_TABLE, MetricType.PROJECTS_LIST.toString().toLowerCase());
         builder.put(Parameters.LOG, log.getAbsolutePath());
         pigServer.execute(ScriptType.PROJECTS, builder.build());
         
@@ -302,7 +412,7 @@ public class TestExpandedMetric extends BaseTest {
         // calculate projects list
         builder.put(Parameters.USER, Parameters.USER_TYPES.REGISTERED.name());
         builder.put(Parameters.WS, Parameters.WS_TYPES.PERSISTENT.name());
-        builder.put(Parameters.STORAGE_TABLE, PROJECT_PAASES_COLLECTION);
+        builder.put(Parameters.STORAGE_TABLE, MetricType.PROJECT_PAASES.toString().toLowerCase());
         builder.put(Parameters.LOG, log.getAbsolutePath());
         pigServer.execute(ScriptType.DEPLOYMENTS_BY_TYPES, builder.build());
         
@@ -320,7 +430,7 @@ public class TestExpandedMetric extends BaseTest {
     }
     
     @Test
-    public void testProjectListFilteredByRunsMetric() throws Exception {
+    public void testProjectListFilteredByReadBasedMetric() throws Exception {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
@@ -328,14 +438,14 @@ public class TestExpandedMetric extends BaseTest {
         // calculate number of runs
         builder.put(Parameters.USER, Parameters.USER_TYPES.REGISTERED.name());
         builder.put(Parameters.WS, Parameters.WS_TYPES.PERSISTENT.name());
-        builder.put(Parameters.STORAGE_TABLE, RUNS_COLLECTION);
+        builder.put(Parameters.STORAGE_TABLE, MetricType.RUNS.toString().toLowerCase());
         builder.put(Parameters.LOG, log.getAbsolutePath());
         builder.put(Parameters.EVENT, "run-started");
         pigServer.execute(ScriptType.EVENTS, builder.build());
         
         // calculate projects list
         builder.remove(Parameters.EVENT);
-        builder.put(Parameters.STORAGE_TABLE, PROJECTS_LIST_COLLECTION);
+        builder.put(Parameters.STORAGE_TABLE, MetricType.PROJECTS_LIST.toString().toLowerCase());    
         pigServer.execute(ScriptType.PROJECTS, builder.build());
         
         // calculate all projects list
@@ -373,7 +483,7 @@ public class TestExpandedMetric extends BaseTest {
         builder.put(Parameters.TO_DATE, "20131101");
         builder.put(Parameters.USER, Parameters.USER_TYPES.REGISTERED.name());
         builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
-        builder.put(Parameters.STORAGE_TABLE, USERS_ACTIVITY_LIST_COLLECTION);
+        builder.put(Parameters.STORAGE_TABLE, MetricType.USERS_ACTIVITY_LIST.toString().toLowerCase());
         builder.put(Parameters.LOG, log.getAbsolutePath());
         pigServer.execute(ScriptType.USERS_ACTIVITY, builder.build());
         
