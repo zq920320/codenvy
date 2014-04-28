@@ -157,7 +157,7 @@ public class Scheduler implements ServletContextListener {
     }
 
     private void doExecute(Feature job, String fromDateParam, String toDateParam) throws Exception {
-        if (job.isAvailable()) {
+        if (!job.isAvailable()) {
             LOG.warn("Execution of " + job.getClass().getName() + " will be skipped. Job is not available");
             return;
         }
