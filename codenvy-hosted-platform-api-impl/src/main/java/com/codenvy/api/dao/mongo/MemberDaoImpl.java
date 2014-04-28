@@ -114,7 +114,7 @@ public class MemberDaoImpl implements MemberDao {
             User user = userDao.getById(member.getUserId());
             Workspace workspace = workspaceDao.getById(member.getWorkspaceId());
 
-            LOG.info("EVENT#user-added-to-ws# USER#{}# WS#{}#", user.getEmail(), workspace.getName());
+            LOG.info("EVENT#user-added-to-ws# USER#{}# WS#{}# FROM#website#", user.getEmail(), workspace.getName());
         } catch (NotFoundException | ServerException e) {
             LOG.error("Can't log Analytics event", e);
         }
