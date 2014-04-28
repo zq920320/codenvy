@@ -114,6 +114,13 @@ public class UsersActivityList extends AbstractListValueResulted {
             StringValueData message = (StringValueData)row.get(MESSAGE);
             row2Return.put(STATE, getContext(event.getAsString(), message.getAsString()));
 
+            if (row.containsKey(WS) && row.get(WS).getAsString().equals("default")) {
+                row2Return.put(WS, StringValueData.DEFAULT);
+            }
+            if (row.containsKey(USER) && row.get(USER).getAsString().equals("default")) {
+                row2Return.put(USER, StringValueData.DEFAULT);
+            }
+
             item2Return.add(new MapValueData(row2Return));
         }
 

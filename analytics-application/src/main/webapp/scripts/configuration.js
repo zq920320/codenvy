@@ -151,6 +151,35 @@ function Configuration() {
             // TopMetricsPresenter::clientSortParams property
         },
 
+        /** for Event View */
+        events: {
+            widgetLabel: "Events",
+            presenterType: "EntryViewPresenter",
+            modelViewName: "events",
+            modelMetricName: "users_activity",
+
+            columnLinkPrefixList: {
+                "User": "/analytics/pages/user-view.jsp?user",
+                "Workspace": "/analytics/pages/workspace-view.jsp?ws",
+            },
+
+            /** @see DatabaseTable::makeTableSortable() method docs */
+            clientSortParams: {
+                "ascSortColumnNumber": 0
+            },
+
+//            mapColumnToServerSortParam: {
+//                "Email": "user",
+//                "First Name": "user_first_name",
+//                "Last Name": "user_last_name",
+//                "Company": "user_company",
+//                "Job": "user_job",
+//                "# Sessions": "sessions",
+//                "Usage Time": "time",
+//                "# Projects": "projects",
+//            },
+        },
+
         /** for User View */
         users: {
             widgetLabel: "Users",

@@ -29,6 +29,7 @@
 				<a class="nav" href="/analytics/pages/workspaces-view.jsp?sort=%2Bws" id="topmenu-workspaces">Workspaces</a>
 				<a class="nav" href="/analytics/pages/factories-view.jsp?sort=%2Bws_created" id="topmenu-factories">Factories</a>
                 <a class="nav" href="/analytics/pages/projects-view.jsp" id="topmenu-projects">Projects</a>
+                <a class="nav" href="/analytics/pages/events-view.jsp?sort=-date" id="topmenu-events">Events</a>
 
 				<div class="nav">
 					<div>
