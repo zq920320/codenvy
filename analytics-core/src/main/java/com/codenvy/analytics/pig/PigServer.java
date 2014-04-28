@@ -120,8 +120,6 @@ public class PigServer {
             } catch (Exception e) {
                 LOG.error("Error script execution " + scriptType + " with " + getSecureContext(context).toString());
                 throw new IOException(e);
-            } finally {
-                LOG.info("Execution " + scriptType + " is finished");
             }
         } finally {
             LOG.info("Execution " + scriptType + " is finished");
@@ -220,6 +218,14 @@ public class PigServer {
     private Context validateAndAdjustContext(ScriptType scriptType, Context basedContext) throws IOException {
         Context.Builder builder = new Context.Builder(basedContext);
         mongoDataStorage.putStorageParameters(builder);
+
+        if (!builder.exists(Parameters.WS)) {
+            builder.putDefaultValue(Parameters.WS);
+        }
+
+        if (!builder.exists(Parameters.USER)) {
+            builder.putDefaultValue(Parameters.USER);
+        }
 
         if (!builder.exists(Parameters.LOG)) {
             setOptimizedPaths(builder);

@@ -61,10 +61,10 @@ public enum Parameters {
             return TimeUnit.LIFETIME.name();
         }
     },
-    
+
     TIME_INTERVAL,
     DATA_COMPUTATION_PROCESS,
-    
+
     FROM_DATE {
         @Override
         public String getDefaultValue() {
@@ -147,11 +147,21 @@ public enum Parameters {
         public void validate(String value, Context context) throws IllegalArgumentException {
             USER_TYPES.valueOf(value);
         }
+
+        @Override
+        public String getDefaultValue() {
+            return USER_TYPES.ANY.toString();
+        }
     },
     WS {
         @Override
         public void validate(String value, Context context) throws IllegalArgumentException {
             WS_TYPES.valueOf(value);
+        }
+
+        @Override
+        public String getDefaultValue() {
+            return WS_TYPES.ANY.toString();
         }
     };
 

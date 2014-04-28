@@ -32,6 +32,6 @@ public class Runs extends AbstractLongValueResulted {
 
     @Override
     public String getDescription() {
-        return "The number of times when user run projects";
+        return "The number of times when user run application";
     }
 }
