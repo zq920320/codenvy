@@ -20,7 +20,6 @@ package com.codenvy.service.http;
 import com.codenvy.api.core.ApiException;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
-import com.codenvy.api.workspace.server.exception.WorkspaceException;
 import com.codenvy.api.workspace.shared.dto.Workspace;
 import com.codenvy.commons.env.EnvironmentContext;
 
@@ -39,8 +38,8 @@ import java.util.regex.Pattern;
 @Singleton
 public class WorkspaceNameEnvironmentInitializationFilter implements Filter {
     public static final  Pattern TENANT_URL_PATTERN = Pattern.compile("^/ide/(.+?)(?:/.*)?$");
-    private static final Logger  LOG                =
-            LoggerFactory.getLogger(WorkspaceNameEnvironmentInitializationFilter.class);
+    private static final Logger  LOG                = LoggerFactory.getLogger(WorkspaceNameEnvironmentInitializationFilter.class);
+
     @Inject
     private WorkspaceDao workspaceDao;
 
@@ -54,7 +53,7 @@ public class WorkspaceNameEnvironmentInitializationFilter implements Filter {
         HttpServletRequest httpRequest = (HttpServletRequest)request;
         String requestUrl = httpRequest.getRequestURI();
 
-        String workspaceName = null;
+        String workspaceName;
         try {
             Matcher matcher = TENANT_URL_PATTERN.matcher(requestUrl);
             if (matcher.matches()) {
