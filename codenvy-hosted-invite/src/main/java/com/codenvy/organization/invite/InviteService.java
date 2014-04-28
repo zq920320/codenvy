@@ -163,7 +163,7 @@ public class InviteService {
                               readAndCloseQuietly(getResource("/codenvy-template-mail-invitation-registered-user.html")),
                               inviteMessageProperties);
 
-            LOG.info("EVENT#user-invite# EMAIL#" + mailRecipient + "#");
+            LOG.info("EVENT#user-invite# EMAIL#{}# USER#{}# WS#{}#", mailRecipient, sender, workspace.getName());
             return Response.ok().build();
         } catch (IOException | MessagingException| ApiException e) {
             throw new WebApplicationException(e);

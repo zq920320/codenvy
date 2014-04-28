@@ -28,7 +28,7 @@ is strictly forbidden unless prior written permission is obtained
     </parent>
     <groupId>com.codenvy.hosted-infrastructure</groupId>
     <artifactId>codenvy-hosted-infrastructure-parent</artifactId>
-    <version>0.2.0-SNAPSHOT</version>
+    <version>0.3.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Codenvy Hosted :: Parent</name>
     <modules>
@@ -48,15 +48,14 @@ is strictly forbidden unless prior written permission is obtained
     </scm>
     <properties>
         <apacheds.version>1.5.7</apacheds.version>
-        <codenvy-commons.version>0.20.0-SNAPSHOT</codenvy-commons.version>
-        <codenvy.organization.version>0.12.0</codenvy.organization.version>
-        <codenvy.platform-api.version>0.16.0-SNAPSHOT</codenvy.platform-api.version>
+        <codenvy-commons.version>0.21.0-SNAPSHOT</codenvy-commons.version>
+        <codenvy.platform-api.version>0.17.0-SNAPSHOT</codenvy.platform-api.version>
         <commons-codec.version>1.6</commons-codec.version>
         <commons-io.version>2.1</commons-io.version>
         <commons-lang.version>2.3</commons-lang.version>
         <commons.fileupload.version>1.0</commons.fileupload.version>
         <everrest.assured.version>0.17</everrest.assured.version>
-        <everrest.version>1.1.10</everrest.version>
+        <everrest.version>1.1.11</everrest.version>
         <google.gson.version>2.1</google.gson.version>
         <hamcrest.version>1.2.1</hamcrest.version>
         <javax.inject.version>1</javax.inject.version>
