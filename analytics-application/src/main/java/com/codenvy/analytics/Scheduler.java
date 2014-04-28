@@ -157,6 +157,11 @@ public class Scheduler implements ServletContextListener {
     }
 
     private void doExecute(Feature job, String fromDateParam, String toDateParam) throws Exception {
+        if (job.isAvailable()) {
+            LOG.warn("Execution of " + job.getClass().getName() + " will be skipped. Job is not available");
+            return;
+        }
+
         Context.Builder builder = new Context.Builder();
 
         Calendar fromDate = Utils.parseDate(fromDateParam);
