@@ -40,6 +40,7 @@ analytics.presenter.ReportPresenter.prototype.mapExpandedMetricToDrillDownPageTy
     "user_invite": "USERS",
     "removed_users": "USERS",
     "users_activity": "USERS",
+    "total_users": "USERS",
     
     "active_workspaces": "WORKSPACES",
     "created_workspaces": "WORKSPACES",
@@ -47,6 +48,7 @@ analytics.presenter.ReportPresenter.prototype.mapExpandedMetricToDrillDownPageTy
     "destroyed_workspaces": "WORKSPACES",
     "shell_launched": "WORKSPACES",
     "collaborative_sessions_started": "WORKSPACES",
+    "total_workspaces": "WORKSPACES",
     
     "builds": "PROJECTS",
     "deploys": "PROJECTS",
@@ -76,7 +78,8 @@ analytics.presenter.ReportPresenter.prototype.mapExpandedMetricToDrillDownPageTy
     "project_type_python": "PROJECTS",
     "project_type_ruby": "PROJECTS",
     "project_type_spring": "PROJECTS",
-    "project_type_war": "PROJECTS",    
+    "project_type_war": "PROJECTS",
+    "total_projects": "PROJECTS",
 
     "factory_sessions_with_build": "SESSIONS",
     "factory_sessions_with_deploy": "SESSIONS",
@@ -89,6 +92,7 @@ analytics.presenter.ReportPresenter.prototype.mapExpandedMetricToDrillDownPageTy
     
     "created_factories": "FACTORIES", 
     "factory_used": "FACTORIES",
+    "total_factories": "FACTORIES",
 };
 
 analytics.presenter.ReportPresenter.prototype.mapDrillDownPageTypeToDrillDownPageAddress = {

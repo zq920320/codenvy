@@ -44,6 +44,7 @@ import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.StringValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.CumulativeMetric;
 import com.codenvy.analytics.metrics.Expandable;
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricFactory;
@@ -366,7 +367,10 @@ public class ViewBuilder extends Feature {
                     Metric metric = MetricFactory.getMetric(metricType);
                     
                     if (metric != null 
-                            && metric instanceof Expandable
+                            && ( metric instanceof Expandable 
+                                 // expanded cumulative metrics have the same values as linked  
+                                 // users/factories/workspaces/projects views
+                                 || metric instanceof CumulativeMetric)
                         ) {
                         // add info about metric in to the sectionList = List<Map<rowNumber, metricType>>
                         sectionList.get(sectionNumber).put(rowNumber, metricType);
