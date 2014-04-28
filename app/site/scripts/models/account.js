@@ -32,14 +32,20 @@
         var userProfile = userProfile || {}; // user Profile to store user's data from server
 
         var showSupportLink = function(isPaid){
-            if (isPaid){
-                var uv = document.createElement('script'); uv.type = 'text/javascript'; uv.async = true;
-                uv.src = ('https:' === document.location.protocol ? 'https://' : 'http://') + 'widget.uservoice.com/wfZmoiHoOptcKkBgu238zw.js';
-                var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(uv, s);
-            }else {
-                var el = $("footer").find("ul");
-                el.append('<li><a class="footer-link" href="http://helpdesk.codenvy.com">Feedback & support<b></b></a></li>');
+            var freeLink = $('.footer-link')[2];
+            var paidLink = $('#uvTabLabel')[0];
+            if (!paidLink & !freeLink){
+                if (isPaid){
+                    var uv = document.createElement('script'); uv.type = 'text/javascript'; uv.async = true;
+                    uv.src = ('https:' === document.location.protocol ? 'https://' : 'http://') + 'widget.uservoice.com/wfZmoiHoOptcKkBgu238zw.js';
+                    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(uv, s);
+                }else {
+                    var el = $("footer").find("ul");
+                    el.append('<li><a class="footer-link" href="http://helpdesk.codenvy.com">Feedback & support<b></b></a></li>');
+                }
+            
             }
+            
         };
         var AccountError = function(fieldName, errorDescription){
             return {
@@ -103,10 +109,9 @@
             request.send();
         }
 
-        // get Organizations where user has owner role
-        function getOrganizations(user) {
+        // Sets Info for Premium User 
+        function setPremiumUserInfo() {
             var request;
-            //var url =  "/api/workspace";
             var url =  "/api/account";
             if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
                 request = new XMLHttpRequest();
@@ -115,47 +120,27 @@
             }
             request.onreadystatechange = function () {
                 var response;
+                /*var accountOwnerIndex=null;*/
                 if (request.readyState === 4 && request.status === 200) {
-                    try {
                     response = JSON.parse(request.responseText);
-                    response.forEach(function (org) {
-                        if (org.owner === user) {
-                            checkSubscriptionFor(org.id);
+                    if (response.length > 0){
+                        response.forEach(function(account,index){
+                            var isOwner = (account.roles.indexOf('account/owner') >= 0);
+                            if (isOwner){
+                                checkSubscriptionFor(response[index].id);
+                            }
                         }
-                    });
-                    } catch(err) {
+
+
+                    );
+                } else {
                         showSupportLink(false);
                     }
-                }
-            };
-            request.open("GET", url, true);
-            request.send();
-        }
-
-        // Sets Info for Premium User 
-        function setPremiumUserInfo() {
-            var request;
-            var url =  "/api/user";
-            if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
-                request = new XMLHttpRequest();
-            } else {// code for IE6, IE5
-                request = new ActiveXObject("Microsoft.XMLHTTP");
             }
-            request.onreadystatechange = function () {
-                var response;
-                if (request.readyState === 4 && request.status === 200) {
-                    try {
-                        response = JSON.parse(request.responseText);
-                        getOrganizations(response.id); //params: userId    
-                    } catch(err) {
-                        showSupportLink(false);
-                    }
-
-                }
-            };
+        };
             request.open("GET", url, true);
             request.send();
-        }
+    }
 
         /*END paid support tab*/
 
@@ -621,26 +606,6 @@
 
             // Returns true if User has WS with tariff plan
             supportTab : function(){
-                var getAccountUrl = "/api/account/subscriptions";
-                var paid = false;
-                $.ajax({
-                    url : getAccountUrl,
-                    type : "GET",
-                    async : false,
-                    success : function(subscriptions){
-                        if (typeof(subscriptions)==='object'){
-                            subscriptions.forEach(
-                                function(subscription){
-                                        if (subscription.serviceId){
-                                            paid = true;
-                                        }
-                            });
-                                
-                        }
-                    },
-                    error : function(){
-                    }
-                });
                 if($.cookie("logged_in")){
                     setPremiumUserInfo();
                 } else {
