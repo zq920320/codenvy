@@ -20,27 +20,28 @@ package com.codenvy.analytics.metrics.projects;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Expandable;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ReadBasedMetric;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
 /** @author <a href="mailto:areshetnyak@codenvy.com">Alexander Reshetnyak</a> */
-public abstract class AbstractProjectPaas extends ReadBasedMetric {
+public abstract class AbstractProjectPaas extends ReadBasedMetric implements Expandable {
 
-    private final String[] types;
+    private final String paas;
 
-    protected AbstractProjectPaas(String metricName, String[] types) {
+    private String expandingField = PROJECT_ID;
+
+    protected AbstractProjectPaas(String metricName, String paas) {
         super(metricName);
-
-        for (int i = 0; i < types.length; i++) {
-            types[i] = types[i].toLowerCase();
-        }
-        this.types = types;
+        
+        paas = paas.toLowerCase();
+        this.paas = paas;
     }
 
-    protected AbstractProjectPaas(MetricType metricType, String[] types) {
-        this(metricType.name(), types);
+    protected AbstractProjectPaas(MetricType metricType, String paas) {
+        this(metricType.name(), paas);
     }
 
     @Override
@@ -50,7 +51,7 @@ public abstract class AbstractProjectPaas extends ReadBasedMetric {
 
     @Override
     public String[] getTrackedFields() {
-        return types;
+        return new String[] {paas};
     }
 
     @Override
@@ -63,10 +64,29 @@ public abstract class AbstractProjectPaas extends ReadBasedMetric {
         DBObject group = new BasicDBObject();
 
         group.put(ID, null);
-        for (String type : types) {
-            group.put(type, new BasicDBObject("$sum", "$" + type));
-        }
+        group.put(paas, new BasicDBObject("$sum", "$" + paas));
 
         return new DBObject[]{new BasicDBObject("$group", group)};
     }
+
+    @Override
+    public DBObject[] getSpecificExpandedDBOperations(Context clauses) {
+        String countingField = paas;
+        DBObject match = new BasicDBObject(countingField, new BasicDBObject("$exists", true));
+        
+        DBObject group = new BasicDBObject();
+        group.put(ID, "$" + expandingField);
+
+        DBObject projection = new BasicDBObject(expandingField, "$_id");
+
+        return new DBObject[]{new BasicDBObject("$match", match),
+                              new BasicDBObject("$group", group),
+                              new BasicDBObject("$project", projection)};
+    }
+    
+    @Override
+    public String getExpandedValueField() {
+        return expandingField;
+    }
+
 }

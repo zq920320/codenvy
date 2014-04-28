@@ -344,6 +344,9 @@
             <index name="date">
                 <field>date</field>
             </index>
+            <index name="project_id">
+                <field>project_id</field>
+            </index>
         </indexes>
     </collection>
 

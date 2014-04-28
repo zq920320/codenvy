@@ -27,7 +27,7 @@ import javax.annotation.security.RolesAllowed;
 public class ProjectPaasTier3 extends AbstractProjectPaas {
 
     public ProjectPaasTier3() {
-        super(MetricType.PROJECT_PAAS_TIER3, new String[]{ProjectPaases.TIER3_WEB_FABRIC});
+        super(MetricType.PROJECT_PAAS_TIER3, ProjectPaases.TIER3_WEB_FABRIC);
     }
 
     @Override

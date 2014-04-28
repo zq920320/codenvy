@@ -25,26 +25,6 @@ f2 = extractParam(f1, 'PROJECT', project);
 f3 = extractParam(f2, 'TYPE', project_type);
 
 f = FOREACH f3 GENERATE dt, user, ws, event, project, project_type, ide;
-/*
--- find project-deployed events
-b1 = filterByEvent(l, 'project-deployed,application-created');
-b2 = extractParam(b1, 'PROJECT', project);
-b3 = extractParam(b2, 'PAAS', paas);
-b = FOREACH b3 GENERATE dt, ws, user, project, paas, ide;
-
--- try to guess which project deployment relates to which project creation
--- in a word, find the closest project-deployment event to project-created one
-c1 = JOIN a BY (ws, project), b BY (ws, project);
-c2 = FILTER c1 BY a::dt < b::dt;
-c = FOREACH c2 GENERATE a::dt AS dt, a::ws AS ws, a::user AS user, a::project AS project, b::paas AS paas, b::dt AS depDt, b::ide AS ide;
-
-d1 = GROUP c BY (dt, ws, project);
-d2 = FOREACH d1 GENERATE FLATTEN(group), FLATTEN(c), MIN(c.depDt) AS closestTime;
-d3 = FILTER d2 BY c::depDt == closestTime;
-d = FOREACH d3 GENERATE group::dt AS dt, group::ws AS ws, c::user AS user, LOWER(c::paas) AS paas, c::ide AS ide;
-
-r1 = FOREACH d GENERATE dt, ws, user, paas, ide;
-*/
 
 result = FOREACH f GENERATE UUID(),
                             TOTUPLE('date', ToMilliSeconds(dt)),

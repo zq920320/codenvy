@@ -181,7 +181,7 @@ public class TestNumberOfDeploymentsByTypes extends BaseTest {
         assertEquals(values.get("paas1"), new LongValueData(1));
         assertEquals(values.get("paas3"), new LongValueData(1));
 
-        metric = new TestAbstractProjectPaas(new String[]{"paas1"});
+        metric = new TestAbstractProjectPaas("paas1");
         assertEquals(metric.getValue(builder.build()), new LongValueData(1));
     }
 
@@ -200,8 +200,8 @@ public class TestNumberOfDeploymentsByTypes extends BaseTest {
 
     private class TestAbstractProjectPaas extends AbstractProjectPaas {
 
-        protected TestAbstractProjectPaas(String[] types) {
-            super("testnumberofdeploymentsbytypes", types);
+        protected TestAbstractProjectPaas(String type) {
+            super("testnumberofdeploymentsbytypes", type);
         }
 
         @Override

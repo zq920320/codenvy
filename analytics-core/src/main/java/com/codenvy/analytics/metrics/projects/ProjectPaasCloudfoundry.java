@@ -27,7 +27,7 @@ import javax.annotation.security.RolesAllowed;
 public class ProjectPaasCloudfoundry extends AbstractProjectPaas {
 
     public ProjectPaasCloudfoundry() {
-        super(MetricType.PROJECT_PAAS_CLOUDFOUNDRY, new String[]{ProjectPaases.CLOUDFOUNDRY});
+        super(MetricType.PROJECT_PAAS_CLOUDFOUNDRY, ProjectPaases.CLOUDFOUNDRY);
     }
 
     @Override

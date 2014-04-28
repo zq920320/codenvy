@@ -40,12 +40,17 @@ c = FOREACH c2 GENERATE a::dt AS dt, a::ws AS ws, a::user AS user, a::project AS
 d1 = GROUP c BY (dt, ws, project);
 d2 = FOREACH d1 GENERATE FLATTEN(group), FLATTEN(c), MIN(c.depDt) AS closestTime;
 d3 = FILTER d2 BY c::depDt == closestTime;
-d = FOREACH d3 GENERATE group::dt AS dt, group::ws AS ws, c::user AS user, LOWER(c::paas) AS paas, c::ide AS ide;
+d = FOREACH d3 GENERATE group::dt AS dt, group::ws AS ws, group::project AS project, c::user AS user, LOWER(c::paas) AS paas, c::ide AS ide;
 
-r1 = FOREACH d GENERATE dt, ws, user, paas, ide;
+r1 = FOREACH d GENERATE dt, ws, project, user, paas, ide;
 r = removeEmptyField(r1, 'paas');
 
-result = FOREACH r GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('ws', ws), TOTUPLE('user', user),
-        TOTUPLE(paas, 1L), TOTUPLE('ide', ide);
+result = FOREACH r GENERATE UUID(), 
+                            TOTUPLE('date', ToMilliSeconds(dt)), 
+                            TOTUPLE('ws', ws), 
+                            TOTUPLE('project_id', CreateProjectId(user, ws, project)),
+                            TOTUPLE('user', user),
+                            TOTUPLE(paas, 1L),  
+                            TOTUPLE('ide', ide);
 
 STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;

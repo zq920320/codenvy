@@ -26,7 +26,7 @@ import javax.annotation.security.RolesAllowed;
 public class ProjectPaasManymo extends AbstractProjectPaas {
 
     public ProjectPaasManymo() {
-        super(MetricType.PROJECT_PAAS_MANYMO, new String[]{ProjectPaases.MANYMO});
+        super(MetricType.PROJECT_PAAS_MANYMO, ProjectPaases.MANYMO);
     }
 
     @Override

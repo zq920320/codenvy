@@ -66,6 +66,7 @@ analytics.presenter.ReportPresenter.prototype.mapExpandedMetricToDrillDownPageTy
     "time_in_run_queue": "PROJECTS",
     "created_projects": "PROJECTS",
     "projects": "PROJECTS",
+    
     "project_type_android": "PROJECTS",
     "project_type_django": "PROJECTS",
     "project_type_jar": "PROJECTS",
@@ -79,6 +80,17 @@ analytics.presenter.ReportPresenter.prototype.mapExpandedMetricToDrillDownPageTy
     "project_type_ruby": "PROJECTS",
     "project_type_spring": "PROJECTS",
     "project_type_war": "PROJECTS",
+    
+    "project_paas_appfog": "PROJECTS",
+    "project_paas_aws": "PROJECTS",
+    "project_paas_cloudbees": "PROJECTS",
+    "project_paas_cloudfoundry": "PROJECTS",
+    "project_paas_gae": "PROJECTS",
+    "project_paas_heroku": "PROJECTS",
+    "project_paas_manymo": "PROJECTS",
+    "project_paas_openshift": "PROJECTS",
+    "project_paas_tier3": "PROJECTS",
+    
     "total_projects": "PROJECTS",
 
     "factory_sessions_with_build": "SESSIONS",
