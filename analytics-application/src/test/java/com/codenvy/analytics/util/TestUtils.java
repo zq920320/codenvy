@@ -19,7 +19,7 @@ package com.codenvy.analytics.util;
 
 
 import com.codenvy.analytics.BaseTest;
-import com.codenvy.api.analytics.dto.MetricInfoDTO;
+import com.codenvy.api.analytics.shared.dto.MetricInfoDTO;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
