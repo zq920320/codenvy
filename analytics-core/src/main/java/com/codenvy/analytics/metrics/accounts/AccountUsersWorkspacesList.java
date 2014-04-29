@@ -79,7 +79,7 @@ public class AccountUsersWorkspacesList extends AbstractAccountMetric {
                     Map<String, ValueData> map = new HashMap<>();
 
                     map.put(USER, new StringValueData(
-                            getUserEmail(member.getUserId(), httpMetricTransport)));
+                            getUserEmail(member.getUserId())));
                     map.put(WS, new StringValueData(
                             workspace.getId().equals(member.getWorkspaceId()) ? workspace.getName()
                                                                               : member.getWorkspaceId()));
@@ -93,7 +93,7 @@ public class AccountUsersWorkspacesList extends AbstractAccountMetric {
         return new ListValueData(list);
     }
 
-    private String getUserEmail(String userId, HTTPMetricTransport httpMetricTransport) throws IOException {
+    private String getUserEmail(String userId) throws IOException {
 
         String pathUserById = PATH_USER_BY_ID.replace(PARAM_USER_ID, userId);
         User user =

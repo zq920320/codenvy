@@ -17,6 +17,10 @@
  */
 package com.codenvy.analytics;
 
+import com.codenvy.analytics.metrics.accounts.DummyHTTPMetricTransport;
+import com.codenvy.analytics.metrics.accounts.HTTPMetricTransport;
+import com.codenvy.analytics.metrics.accounts.MetricTransport;
+import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 
 /** @author Anatoliy Bazko */
@@ -25,7 +29,18 @@ public class Injector {
     private static final com.google.inject.Injector injector;
 
     static {
-        injector = Guice.createInjector();
+        final com.google.inject.Injector parent = Guice.createInjector();
+        injector = parent.createChildInjector(new AbstractModule() {
+            @Override
+            protected void configure() {
+                    Configurator configurator = parent.getInstance(Configurator.class);
+                if (configurator.exists(HTTPMetricTransport.API_ENDPOINT)) {
+                    bind(MetricTransport.class).to(HTTPMetricTransport.class);
+                } else {
+                    bind(MetricTransport.class).to(DummyHTTPMetricTransport.class);
+                }
+            }
+        });
     }
 
     public static <T> T getInstance(Class<T> clazz) {

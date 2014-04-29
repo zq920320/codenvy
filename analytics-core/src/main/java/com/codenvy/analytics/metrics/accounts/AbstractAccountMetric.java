@@ -52,11 +52,11 @@ public abstract class AbstractAccountMetric extends AbstractMetric {
     public static final String PROFILE_ATTRIBUTE_LAST_NAME  = "lastName";
     public static final String PROFILE_ATTRIBUTE_EMAIL      = "email";
 
-    protected final HTTPMetricTransport httpMetricTransport;
+    protected final MetricTransport httpMetricTransport;
 
     public AbstractAccountMetric(MetricType metricType) {
         super(metricType);
-        this.httpMetricTransport = Injector.getInstance(HTTPMetricTransport.class);
+        this.httpMetricTransport = Injector.getInstance(MetricTransport.class);
     }
 
     protected void validateContext(Context context) throws IOException{

@@ -37,33 +37,35 @@ import java.util.List;
  * @author Alexander Reshetnyak
  */
 @Singleton
-public class HTTPMetricTransport {
+public class HTTPMetricTransport implements MetricTransport {
 
-    private static final String CODENVY_API_URL = "codenvy.api.url";
+    public static final String API_ENDPOINT = "api.endpoint";
 
     private String codenvyApiUrl;
 
     @Inject
     public HTTPMetricTransport(Configurator configurator) {
-        this.codenvyApiUrl = configurator.getString(CODENVY_API_URL);
+        this.codenvyApiUrl = configurator.getString(API_ENDPOINT);
         if (this.codenvyApiUrl == null) {
-            throw new IllegalArgumentException("Not defined mandatory property " + CODENVY_API_URL);
+            throw new IllegalArgumentException("Not defined mandatory property " + API_ENDPOINT);
         }
     }
 
-
+    @Override
     public <DTO> DTO getResource(Class<DTO> dtoInterface,
                                  String method,
                                  String path) throws IOException {
         return this.getResource(dtoInterface, method, path, null, new Pair[0]);
     }
 
+    @Override
     public <DTO> List<DTO> getResources(Class<DTO> dtoInterface,
                                         String method,
                                         String path) throws IOException {
         return this.getResources(dtoInterface, method, path, null, new Pair[0]);
     }
 
+    @Override
     public <DTO> DTO getResource(Class<DTO> dtoInterface,
                                  String method,
                                  String path,
@@ -82,6 +84,7 @@ public class HTTPMetricTransport {
                          p);
     }
 
+    @Override
     public <DTO> List<DTO> getResources(Class<DTO> dtoInterface,
                                         String method,
                                         String path,
