@@ -20,8 +20,8 @@ package com.codenvy.analytics.util;
 import com.codenvy.analytics.datamodel.ValueDataFactory;
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.api.analytics.AnalyticsService;
-import com.codenvy.api.analytics.dto.Constants;
-import com.codenvy.api.analytics.dto.MetricInfoDTO;
+import com.codenvy.api.analytics.Constants;
+import com.codenvy.api.analytics.shared.dto.MetricInfoDTO;
 import com.codenvy.api.core.rest.shared.dto.Link;
 import com.codenvy.dto.server.DtoFactory;
 
@@ -36,7 +36,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Utility class to create {@link com.codenvy.api.analytics.dto.MetricInfoDTO} instances and to update its values
+ * Utility class to create {@link com.codenvy.api.analytics.shared.dto.MetricInfoDTO} instances and to update its values
  *
  * @author Dmitry Kuleshov
  * @author Anatoliy Bazko

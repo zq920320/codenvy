@@ -18,7 +18,7 @@
 package com.codenvy.analytics.util;
 
 import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.api.analytics.dto.MetricInfoDTO;
+import com.codenvy.api.analytics.shared.dto.MetricInfoDTO;
 
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.SecurityContext;

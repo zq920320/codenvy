@@ -22,10 +22,10 @@ package com.codenvy.analytics.api;
 import com.codenvy.analytics.metrics.MetricNotFoundException;
 import com.codenvy.analytics.util.Utils;
 import com.codenvy.api.analytics.MetricHandler;
-import com.codenvy.api.analytics.dto.MetricInfoDTO;
-import com.codenvy.api.analytics.dto.MetricInfoListDTO;
-import com.codenvy.api.analytics.dto.MetricValueDTO;
-import com.codenvy.api.analytics.dto.MetricValueListDTO;
+import com.codenvy.api.analytics.shared.dto.MetricInfoDTO;
+import com.codenvy.api.analytics.shared.dto.MetricInfoListDTO;
+import com.codenvy.api.analytics.shared.dto.MetricValueDTO;
+import com.codenvy.api.analytics.shared.dto.MetricValueListDTO;
 import com.codenvy.api.core.rest.annotations.GenerateLink;
 
 import org.slf4j.Logger;

@@ -24,7 +24,7 @@ import com.codenvy.analytics.services.view.ViewBuilder;
 import com.codenvy.analytics.services.view.ViewData;
 import com.codenvy.analytics.util.Utils;
 import com.codenvy.api.analytics.MetricHandler;
-import com.codenvy.api.analytics.dto.MetricValueDTO;
+import com.codenvy.api.analytics.shared.dto.MetricValueDTO;
 import com.codenvy.dto.server.JsonArrayImpl;
 import com.google.inject.Inject;
 
