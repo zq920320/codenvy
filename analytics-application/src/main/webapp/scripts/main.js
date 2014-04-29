@@ -69,6 +69,14 @@ function Main() {
             reloadWidgets($("#ide-version").attr("targetWidgets"));
         });
 
+        // Data universe selectors group
+        $("#data-universe a.command-btn").click(function () {
+            $("#data-universe a").removeClass('btn-primary');
+            $(this).addClass('btn-primary');
+
+            reloadWidgets($("#data-universe").attr("targetWidgets"));
+        });
+        
         // Show session events selector
         $("#show-session-events").click(function (event) {
             reloadWidgets($("#show-session-events").attr("targetWidgets"));
@@ -109,7 +117,18 @@ function Main() {
             if (typeof ideVersionButton.attr("value") != "undefined") {
                 params.ide = ideVersionButton.attr("value");
             }
-            updateGlobalParamInStorage("ide", params["ide"]);  // params["ide"] = null if ideVersionButton.attr("value") is undefined
+            // params["ide"] = null if ideVersionButton.attr("value") is undefined
+            updateGlobalParamInStorage("ide", params["ide"]);
+        }
+        
+        // process data universe selector
+        var dataUniverseButton = $("#data-universe a.btn-primary");
+        if (dataUniverseButton.doesExist()) {
+            if (typeof dataUniverseButton.attr("value") != "undefined") {
+                params.data_universe = dataUniverseButton.attr("value");
+            }
+            // params["data_universe"] = null if dataUniverseButton.attr("value") is undefined
+            updateGlobalParamInStorage("data_universe", params["data_universe"]);
         }
 
         // process show session events selector
@@ -266,6 +285,12 @@ function Main() {
             setPrimaryButtonOnValue(ideVersionButtons, params["ide"]);
         }
 
+        // update data universe selection buttons
+        var dataUniverseButtons = jQuery("#data-universe a");
+        if (dataUniverseButtons.doesExist()) {
+            setPrimaryButtonOnValue(dataUniverseButtons, params["data_universe"]);
+        }
+        
         // update show session events selector
         var showSessionEventsCheckbox = jQuery("#show-session-events");
         if (showSessionEventsCheckbox.doesExist()) {
