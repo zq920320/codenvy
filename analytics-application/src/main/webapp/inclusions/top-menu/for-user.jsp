@@ -58,9 +58,10 @@
                     <button id="topmenu-user">&nbsp;</button>
                 </div>
                 <ul class="dropdown-menu">
-                    <li><a href="#" onClick = "analytics.util.processUserLogOut()">Logout</a></li>
+                    <li><a href="/analytics/pages/accounts-view.jsp">Organizations</a></li>
                     <li><a href="/">Main page</a></li>
                     <li><a href="/site/private/select-tenant">Workspace</a></li>
+                    <li><a href="#" onClick = "analytics.util.processUserLogOut()">Logout</a></li>
                 </ul>
             </div>
         </div>

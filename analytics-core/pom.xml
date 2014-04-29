@@ -38,8 +38,18 @@
         </dependency>
         <dependency>
             <groupId>com.codenvy.platform-api</groupId>
+            <artifactId>codenvy-api-account</artifactId>
+            <version>${com.codenvy.platform.api.account.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.codenvy.platform-api</groupId>
             <artifactId>codenvy-api-analytics</artifactId>
             <version>${com.codenvy.platform.api.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.codenvy.platform-api</groupId>
+            <artifactId>codenvy-api-workspace</artifactId>
+            <version>${com.codenvy.platform.api.workspace.version}</version>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>

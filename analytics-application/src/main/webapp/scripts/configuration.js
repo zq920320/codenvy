@@ -574,6 +574,60 @@ function Configuration() {
             modelViewName: "project_statistics",
         },
 
+        /** for Accounts View */
+        accounts: {
+            widgetLabel: "Accounts",
+            presenterType: "HorizontalTablePresenter",
+            modelViewName: "accounts",
+
+            columnLinkPrefixList: {
+                "Account ID": "/analytics/pages/account-view.jsp?account_id",
+                "Owner": "/analytics/pages/user-view.jsp?user",
+            },
+        },
+
+        /** for Account View */
+        accountOverview: {
+            widgetLabel: "Overview",
+            presenterType: "VerticalTablePresenter",
+            modelViewName: "account",
+
+            columnLinkPrefixList: {
+                "Owner": "/analytics/pages/user-view.jsp?user",
+            },
+        },
+
+        accountSubscriptions: {
+            widgetLabel: "Subscriptions",
+            presenterType: "HorizontalTablePresenter",
+            modelViewName: "account_subscriptions_list",
+        },
+
+        accountWorkspaces: {
+            widgetLabel: "Workspaces",
+            presenterType: "HorizontalTablePresenter",
+            modelViewName: "account_workspaces_list",
+            modelMetricName: "account_workspaces", // metric for paginate
+
+            isPaginable: true,
+
+            columnLinkPrefixList: {
+                "Workspace": "/analytics/pages/workspace-view.jsp?ws",
+            },
+        },
+
+        accountUsers: {
+            widgetLabel: "Users",
+            presenterType: "HorizontalTablePresenter",
+            modelViewName: "account_users_list",
+
+            columnLinkPrefixList: {
+                "User": "/analytics/pages/user-view.jsp?user",
+                "Workspace": "/analytics/pages/workspace-view.jsp?ws",
+            },
+        },
+
+
         /** for Factory View */
         factories: {
             widgetLabel: "Factories",
@@ -688,6 +742,7 @@ function Configuration() {
         "project_type",
         "action",
         "parameters",
+        "account_id",
     ];
 
     /** see method analytics.main.getParamsFromButtons() */
@@ -711,6 +766,7 @@ function Configuration() {
         "encoded_factory",   // factories-view
         "project",           // projects-view
         "project_type",      // projects-view
+        "account_id",        // account-view, accounts-view
     ];
 
     /** url params which are passed from other pages */

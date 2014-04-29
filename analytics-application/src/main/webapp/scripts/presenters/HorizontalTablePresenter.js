@@ -111,10 +111,22 @@ analytics.presenter.HorizontalTablePresenter.prototype.load = function() {
         model.setParams(modelParams);
         
         model.pushDoneFunction(function(data) {
-            // print table
             var csvButtonLink = presenter.getLinkForExportToCsvButton();
-            presenter.printTable(csvButtonLink, data[0], widgetName + "_table");
-            
+
+            // print table
+            var table = data[0];  // there is only one table in data
+
+            // make table columns linked
+            var columnLinkPrefixList = analytics.configuration.getProperty(widgetName, "columnLinkPrefixList");
+            if (typeof columnLinkPrefixList != "undefined") {
+                for (var columnName in columnLinkPrefixList) {
+                    table = view.makeTableColumnLinked(table, columnName, columnLinkPrefixList[columnName]);
+                }
+            }
+
+            presenter.printTable(csvButtonLink, table, widgetName + "_table");
+
+
             // display client sorting
             var clientSortParams = analytics.configuration.getProperty(widgetName, "clientSortParams");
             view.loadTableHandlers(true, clientSortParams, widgetName + "_table");
