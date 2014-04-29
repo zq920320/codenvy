@@ -17,8 +17,6 @@
  */
 package com.codenvy.analytics.metrics.accounts;
 
-import com.codenvy.api.core.util.Pair;
-
 import java.io.IOException;
 import java.util.List;
 
@@ -26,23 +24,7 @@ import java.util.List;
  * @author Alexander Reshetnyak
  */
 public interface MetricTransport {
-    public <DTO> DTO getResource(Class<DTO> dtoInterface,
-                                 String method,
-                                 String path) throws IOException;
+    public <DTO> DTO getResource(Class<DTO> dtoInterface, String method, String path) throws IOException;
 
-    public <DTO> List<DTO> getResources(Class<DTO> dtoInterface,
-                                        String method,
-                                        String path) throws IOException;
-
-    public <DTO> DTO getResource(Class<DTO> dtoInterface,
-                                 String method,
-                                 String path,
-                                 Object body,
-                                 Pair... parameters) throws IOException;
-
-    public <DTO> List<DTO> getResources(Class<DTO> dtoInterface,
-                                        String method,
-                                        String path,
-                                        Object body,
-                                        Pair... parameters) throws IOException;
+    public <DTO> List<DTO> getResources(Class<DTO> dtoInterface, String method, String path) throws IOException;
 }

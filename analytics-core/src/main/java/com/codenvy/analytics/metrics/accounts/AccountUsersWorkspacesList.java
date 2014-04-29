@@ -24,10 +24,9 @@ import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.RequiredFilter;
 import com.codenvy.api.account.shared.dto.AccountMembership;
-import com.codenvy.api.core.util.Pair;
 import com.codenvy.api.user.shared.dto.Member;
-import com.codenvy.api.user.shared.dto.User;
 import com.codenvy.api.workspace.shared.dto.Workspace;
 
 import javax.annotation.security.RolesAllowed;
@@ -41,11 +40,8 @@ import java.util.Map;
  * @author Alexander Reshetnyak
  */
 @RolesAllowed(value = {"system/admin", "system/manager"})
+@RequiredFilter(MetricFilter.ACCOUNT_ID)
 public class AccountUsersWorkspacesList extends AbstractAccountMetric {
-
-    public static final String PATH_USER_BY_ID = "/user/{userId}";
-    public static final String PARAM_USER_ID   = "{userId}";
-    public static final String ROLE            = "role";
 
     public AccountUsersWorkspacesList() {
         super(MetricType.ACCOUNT_USERS_WORKSPACES_LIST);
@@ -53,66 +49,26 @@ public class AccountUsersWorkspacesList extends AbstractAccountMetric {
 
     @Override
     public ValueData getValue(Context context) throws IOException {
-        validateContext(context);
-        String accountId = context.getAsString(MetricFilter.ACCOUNT_ID);
+        AccountMembership accountById = getAccountMembership(context);
 
-        AccountMembership accountById = getAccountMembership(accountId);
-        List<Workspace> workspaces = getWorkspaces(accountById.getId());
+        List<ValueData> list2Return = new ArrayList<>();
+        for (Workspace workspace : getWorkspaces(accountById.getId())) {
+            for (Member member : getMembers(workspace.getId())) {
 
-        List<ValueData> list = new ArrayList<>();
-
-        for (Workspace workspace : workspaces) {
-
-            String pathWorkspaceMembers = AccountWorkspacesList.PATH_WORKSPACES_MEMBERS
-                    .replace(AccountWorkspacesList.PARAM_WORKSPACE_ID, workspace.getId());
-
-            List<Member> members;
-            try {
-                members = getMembers(workspace.getId());
-            } catch (IOException e) {
-                // Members data isn't available. So, skip it.
-                continue;
-            }
-
-            for (Member member : members) {
+                String userEmail = getUserEmail(member.getUserId());
                 for (String role : member.getRoles()) {
-                    Map<String, ValueData> map = new HashMap<>();
+                    Map<String, ValueData> m = new HashMap<>();
+                    m.put(ROLES, StringValueData.valueOf(role));
+                    m.put(USER, StringValueData.valueOf(userEmail));
+                    m.put(WS, StringValueData.valueOf(workspace.getId().equals(member.getWorkspaceId()) ? workspace.getName()
+                                                                                                        : member.getWorkspaceId()));
 
-                    map.put(USER, new StringValueData(
-                            getUserEmail(member.getUserId())));
-                    map.put(WS, new StringValueData(
-                            workspace.getId().equals(member.getWorkspaceId()) ? workspace.getName()
-                                                                              : member.getWorkspaceId()));
-                    map.put(ROLE, new StringValueData(role));
-
-                    list.add(new MapValueData(map));
+                    list2Return.add(new MapValueData(m));
                 }
             }
         }
 
-        return new ListValueData(list);
-    }
-
-    private String getUserEmail(String userId) throws IOException {
-
-        String pathUserById = PATH_USER_BY_ID.replace(PARAM_USER_ID, userId);
-        User user =
-                httpMetricTransport.getResource(User.class,
-                                                "GET",
-                                                pathUserById,
-                                                null,
-                                                new Pair[0]);
-
-        if (user == null) {
-            throw new IOException("Can not get User by userId : " + userId);
-        }
-
-        return user.getEmail();
-    }
-
-    @Override
-    public Class<? extends ValueData> getValueDataClass() {
-        return ListValueData.class;
+        return new ListValueData(list2Return);
     }
 
     @Override

@@ -17,18 +17,14 @@
          from Codenvy S.A..
 -->
 <display>
-
     <view name="accounts" on-demand="true">
         <section name="accounts">
             <row class="com.codenvy.analytics.services.view.TitleRow">
-                <parameter key="titles"
-                           value="Account ID,Account Name,Owner,Roles"/>
+                <parameter key="titles" value="ID,Owner,Roles"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="accounts"/>
-                <parameter key="fields"
-                           value="account_id,account_name,account_profile_email,account_roles"/>
-                <parameter key="hide-negative-values" value="true"/>
+                <parameter key="name" value="accounts_list"/>
+                <parameter key="fields" value="account_id,account_profile_email,account_roles"/>
             </row>
         </section>
     </view>
@@ -36,14 +32,11 @@
     <view name="account" on-demand="true">
         <section name="account">
             <row class="com.codenvy.analytics.services.view.TitleRow">
-                <parameter key="titles"
-                           value="Owner Name,Owner,Account ID,Account Name,Account Roles,Attributes"/>
+                <parameter key="titles" value="ID,Name,Email,Roles,Attributes"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="account"/>
-                <parameter key="fields"
-                           value="account_profile_name,account_profile_email,account_id,account_name,account_roles,account_attributes"/>
-                <parameter key="hide-negative-values" value="true"/>
+                <parameter key="name" value="accounts_list"/>
+                <parameter key="fields" value="account_id,account_profile_name,account_profile_email,account_roles,account_attributes"/>
             </row>
         </section>
     </view>
@@ -51,14 +44,11 @@
     <view name="account_users_list" on-demand="true">
         <section name="account_users_list">
             <row class="com.codenvy.analytics.services.view.TitleRow">
-                <parameter key="titles"
-                           value="User,Role,Workspace"/>
+                <parameter key="titles" value="User,Roles,Workspace"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="account_users_workspaces_list"/>
-                <parameter key="fields"
-                           value="user,role,ws"/>
-                <parameter key="hide-negative-values" value="true"/>
+                <parameter key="fields" value="user,roles,ws"/>
             </row>
         </section>
     </view>
@@ -66,14 +56,11 @@
     <view name="account_workspaces_list" on-demand="true">
         <section name="account_workspaces_list">
             <row class="com.codenvy.analytics.services.view.TitleRow">
-                <parameter key="titles"
-                           value="Workspace,Temporary,Roles"/>
+                <parameter key="titles" value="Workspace,Temporary,Roles"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="account_workspaces_list"/>
-                <parameter key="fields"
-                           value="workspace_name,workspace_temporary,workspace_roles"/>
-                <parameter key="hide-negative-values" value="true"/>
+                <parameter key="fields" value="workspace_name,workspace_temporary,workspace_roles"/>
             </row>
         </section>
     </view>
@@ -81,15 +68,12 @@
     <view name="account_subscriptions_list" on-demand="true">
         <section name="account_subscriptions_list">
             <row class="com.codenvy.analytics.services.view.TitleRow">
-                <parameter key="titles"
-                           value="Subscription,Start Date,End Date,Properties"/>
+                <parameter key="titles" value="Subscription,Start Date,End Date,Properties"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="account_subscriptions_list"/>
-                <parameter key="fields"
-                           value="service_id,start_date,end_date,properties"/>
-                <parameter key="hide-negative-values" value="true"/>
-                <parameter key="date-fields" value="start_date,end_date"/>
+                <parameter key="fields" value="subscription_service_id,subscription_start_date,subscription_end_date,subscription_properties"/>
+                <parameter key="date-fields" value="subscription_start_date=yyyy-MM-dd,subscription_end_date=yyyy-MM-dd"/>
             </row>
         </section>
     </view>

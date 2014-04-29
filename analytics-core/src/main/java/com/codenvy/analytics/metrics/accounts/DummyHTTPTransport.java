@@ -17,44 +17,30 @@
  */
 package com.codenvy.analytics.metrics.accounts;
 
-import com.codenvy.api.core.util.Pair;
+import com.codenvy.dto.server.DtoFactory;
 
 import javax.inject.Singleton;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
  * @author Alexander Reshetnyak
  */
 @Singleton
-public class DummyHTTPMetricTransport implements  MetricTransport {
+public class DummyHTTPTransport implements MetricTransport {
+
     @Override
     public <DTO> DTO getResource(Class<DTO> dtoInterface, String method, String path) throws IOException {
-
-        return (DTO)dtoInterface.getInterfaces();
+        return getDto(dtoInterface);
     }
 
     @Override
     public <DTO> List<DTO> getResources(Class<DTO> dtoInterface, String method, String path) throws IOException {
-        List<DTO> list = new ArrayList<>();
-        list.add((DTO)dtoInterface.getInterfaces());
-
-        return list;
+        return Arrays.asList(getDto(dtoInterface));
     }
 
-    @Override
-    public <DTO> DTO getResource(Class<DTO> dtoInterface, String method, String path, Object body, Pair... parameters)
-            throws IOException {
-        return (DTO)dtoInterface.getInterfaces();
-    }
-
-    @Override
-    public <DTO> List<DTO> getResources(Class<DTO> dtoInterface, String method, String path, Object body,
-                                        Pair... parameters) throws IOException {
-        List<DTO> list = new ArrayList<>();
-        list.add((DTO)dtoInterface.getInterfaces());
-
-        return list;
+    private <DTO> DTO getDto(Class<DTO> dtoInterface) {
+        return DtoFactory.getInstance().createDto(dtoInterface);
     }
 }

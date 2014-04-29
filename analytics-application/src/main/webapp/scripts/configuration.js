@@ -581,7 +581,7 @@ function Configuration() {
             modelViewName: "accounts",
 
             columnLinkPrefixList: {
-                "Account ID": "/analytics/pages/account-view.jsp?account_id",
+                "ID": "/analytics/pages/account-view.jsp?account_id",
                 "Owner": "/analytics/pages/user-view.jsp?user",
             },
         },
@@ -593,7 +593,7 @@ function Configuration() {
             modelViewName: "account",
 
             columnLinkPrefixList: {
-                "Owner": "/analytics/pages/user-view.jsp?user",
+                "Email": "/analytics/pages/user-view.jsp?user",
             },
         },
 
@@ -607,9 +607,6 @@ function Configuration() {
             widgetLabel: "Workspaces",
             presenterType: "HorizontalTablePresenter",
             modelViewName: "account_workspaces_list",
-            modelMetricName: "account_workspaces", // metric for paginate
-
-            isPaginable: true,
 
             columnLinkPrefixList: {
                 "Workspace": "/analytics/pages/workspace-view.jsp?ws",

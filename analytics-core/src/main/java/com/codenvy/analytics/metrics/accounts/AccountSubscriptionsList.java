@@ -21,6 +21,7 @@ import com.codenvy.analytics.datamodel.*;
 import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.RequiredFilter;
 import com.codenvy.api.account.shared.dto.AccountMembership;
 import com.codenvy.api.account.shared.dto.Subscription;
 
@@ -35,15 +36,8 @@ import java.util.Map;
  * @author Alexander Reshetnyak
  */
 @RolesAllowed(value = {"system/admin", "system/manager"})
+@RequiredFilter(MetricFilter.ACCOUNT_ID)
 public class AccountSubscriptionsList extends AbstractAccountMetric {
-
-    public static final String PATH_ACCOUNT_SUBSCRIPTIONS = "/account/{id}/subscriptions";
-    public static final String PARAM_ID                   = "{id}";
-    public static final String SERVICE_ID                 = "service_id";
-    public static final String START_DATE                 = "start_date";
-    public static final String END_DATE                   = "end_date";
-    public static final String PROPERTIES                 = "properties";
-
 
     public AccountSubscriptionsList() {
         super(MetricType.ACCOUNT_SUBSCRIPTIONS_LIST);
@@ -56,39 +50,26 @@ public class AccountSubscriptionsList extends AbstractAccountMetric {
 
     @Override
     public ValueData getValue(Context context) throws IOException {
-        validateContext(context);
-        String accountId = context.getAsString(MetricFilter.ACCOUNT_ID);
+        AccountMembership accountMembership = getAccountMembership(context);
+        List<Subscription> subscriptions = getSubscriptions(accountMembership.getId());
 
-        AccountMembership accountById = getAccountMembership(accountId);
-        List<Subscription> subscriptions = getSubscriptions(accountById.getId());
-
-        List<ValueData> list = new ArrayList<>();
+        List<ValueData> list2Return = new ArrayList<>();
 
         for (Subscription subscription : subscriptions) {
+            Map<String, ValueData> m = new HashMap<>();
+            m.put(SUBSCRIPTION_SERVICE_ID, StringValueData.valueOf(subscription.getServiceId()));
+            m.put(SUBSCRIPTION_START_DATE, LongValueData.valueOf(subscription.getStartDate()));
+            m.put(SUBSCRIPTION_END_DATE, LongValueData.valueOf(subscription.getEndDate()));
+            m.put(SUBSCRIPTION_PROPERTIES, StringValueData.valueOf(subscription.getProperties().toString()));
 
-            Map<String, ValueData> map = new HashMap<>();
-
-            map.put(SERVICE_ID, new StringValueData(subscription.getServiceId()));
-            map.put(START_DATE, new LongValueData(subscription.getStartDate()));
-            map.put(END_DATE, new LongValueData(subscription.getEndDate()));
-            map.put(PROPERTIES, new StringValueData(subscription.getProperties().toString()));
-
-            list.add(new MapValueData(map));
+            list2Return.add(new MapValueData(m));
         }
 
-        return new ListValueData(list);
+        return new ListValueData(list2Return);
     }
 
     private List<Subscription> getSubscriptions(String accountId) throws IOException {
-        String pathAccountSubscriptions = PATH_ACCOUNT_SUBSCRIPTIONS.replace(PARAM_ID, accountId);
-
-        return httpMetricTransport.getResources(Subscription.class,
-                                                "GET",
-                                                pathAccountSubscriptions);
-    }
-
-    @Override
-    public Class<? extends ValueData> getValueDataClass() {
-        return ListValueData.class;
+        String path = PATH_ACCOUNT_SUBSCRIPTIONS.replace(PARAM_ID, accountId);
+        return httpMetricTransport.getResources(Subscription.class, "GET", path);
     }
 }

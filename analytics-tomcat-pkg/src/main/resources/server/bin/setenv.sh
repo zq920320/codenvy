@@ -19,7 +19,6 @@
 
 #Global JAVA options
 [ -z "${JAVA_OPTS}" ]  && JAVA_OPTS="-Xms256m -Xmx2G -XX:MaxPermSize=256m -XX:+UseCompressedOops"
-[ -z "${REMOTE_DEBUG}" ]  && REMOTE_DEBUG=""
 
 # Set path to organization service server
 [ -z "${ORGANIZATION_SERVICE_APPLICATION_SERVER_URL}" ] && ORGANIZATION_SERVICE_APPLICATION_SERVER_URL="http://localhost:8080/organization/"
@@ -31,6 +30,7 @@ ANALYTICS_OPTS="-Dcodenvy.local.conf.dir=${CODENVY_LOCAL_CONF_DIR} \
                 -Danalytics.logback.smtp-appender.configuration=${CODENVY_LOCAL_CONF_DIR}/logback-smtp-appender.xml \
                 -Dcom.codenvy.analytics.logpath=${CATALINA_HOME}/logs"
 QUARTZ_OPTS="-Dorg.terracotta.quartz.skipUpdateCheck=true"
+#REMOTE_DEBUG="-Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n"
 SECURITY_OPTS="-Djava.security.auth.login.config=${CATALINA_HOME}/conf/jaas.conf"
 
 export CATALINA_HOME

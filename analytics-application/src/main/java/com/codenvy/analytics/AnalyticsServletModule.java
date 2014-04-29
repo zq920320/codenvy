@@ -32,19 +32,13 @@ import com.google.inject.servlet.ServletModule;
 @DynaModule
 public class AnalyticsServletModule extends ServletModule {
 
-    private static final String AUTH_SKIP_SSO = "analytics.auth.skip_sso";
-
     @Override
     protected void configureServlets() {
-        Configurator configurator = Injector.getInstance(Configurator.class);
-
-        if (!configurator.getBoolean(AUTH_SKIP_SSO)) {
+        if (!Injector.isLocal()) {
             bindConstant().annotatedWith(Names.named("auth.sso.client_allow_anonymous")).to(false);
             bindConstant().annotatedWith(Names.named("auth.sso.login_page_url")).to("/site/login");
-            bindConstant().annotatedWith(Names.named("auth.sso.cookies_disabled_error_page_url"))
-                          .to("/site/error/error-cookies-disabled");
-            bindConstant().annotatedWith(Names.named("auth.sso.client_skip_filter_regexp"))
-                          .to(".*/analytics-private/public-metric/.*");
+            bindConstant().annotatedWith(Names.named("auth.sso.cookies_disabled_error_page_url")).to("/site/error/error-cookies-disabled");
+            bindConstant().annotatedWith(Names.named("auth.sso.client_skip_filter_regexp")).to(".*/analytics-private/public-metric/.*");
 
             bind(WebAppClientUrlExtractor.class);
             bind(EmptyContextResolver.class);

@@ -22,6 +22,7 @@ import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.StringValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.api.account.shared.dto.AccountMembership;
 import com.codenvy.api.user.shared.dto.Profile;
@@ -37,10 +38,10 @@ import java.util.Map;
  * @author Alexander Reshetnyak
  */
 @RolesAllowed(value = {"system/admin", "system/manager"})
-public class Accounts extends AbstractAccountMetric {
+public class AccountsList extends AbstractAccountMetric {
 
-    public Accounts() {
-        super(MetricType.ACCOUNTS);
+    public AccountsList() {
+        super(MetricType.ACCOUNTS_LIST);
     }
 
     @Override
@@ -50,24 +51,28 @@ public class Accounts extends AbstractAccountMetric {
 
     @Override
     public ValueData getValue(Context context) throws IOException {
-        List<AccountMembership> accountMemberships = getAccountMemberships();
         Profile profile = getProfile();
+        List<AccountMembership> accountMemberships = getAccountMemberships();
 
-        List<ValueData> list = new ArrayList<>();
+        List<ValueData> list2Return = new ArrayList<>();
+        String accountId = context.getAsString(MetricFilter.ACCOUNT_ID);
 
         for (AccountMembership accountMembership : accountMemberships) {
-            Map<String, ValueData> map = new HashMap<>();
+            if (!context.exists(MetricFilter.ACCOUNT_ID) || accountMembership.getId().equals(accountId)) {
 
-            map.put(Account.ACCOUNT_ID, new StringValueData(accountMembership.getId()));
-            map.put(Account.ACCOUNT_NAME, new StringValueData(accountMembership.getName()));
-            map.put(Account.ACCOUNT_ROLES, new StringValueData(accountMembership.getRoles().toString()));
+                Map<String, ValueData> m = new HashMap<>();
+                m.put(ACCOUNT_ID, StringValueData.valueOf(accountMembership.getId()));
+                m.put(ACCOUNT_NAME, StringValueData.valueOf(accountMembership.getName()));
+                m.put(ACCOUNT_ROLES, StringValueData.valueOf(accountMembership.getRoles().toString()));
+                m.put(ACCOUNT_ATTRIBUTES, StringValueData.valueOf(accountMembership.getAttributes().toString()));
+                m.put(ACCOUNT_PROFILE_EMAIL, getEmail(profile));
+                m.put(ACCOUNT_PROFILE_NAME, getFullName(profile));
 
-            map.put(Account.ACCOUNT_PROFILE_EMAIL, getEmail(profile));
-
-            list.add(new MapValueData(map));
+                list2Return.add(new MapValueData(m));
+            }
         }
 
-        return new ListValueData(list);
+        return new ListValueData(list2Return);
     }
 
     @Override
