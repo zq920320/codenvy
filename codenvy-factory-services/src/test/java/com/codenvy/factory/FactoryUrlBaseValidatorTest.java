@@ -18,7 +18,6 @@
 package com.codenvy.factory;
 
 import com.codenvy.api.account.server.dao.AccountDao;
-import com.codenvy.api.account.server.exception.AccountException;
 import com.codenvy.api.account.shared.dto.Member;
 import com.codenvy.api.account.shared.dto.Subscription;
 import com.codenvy.api.core.NotFoundException;
@@ -26,11 +25,11 @@ import com.codenvy.api.core.ServerException;
 import com.codenvy.api.factory.FactoryBuilder;
 import com.codenvy.api.factory.FactoryUrlException;
 import com.codenvy.api.factory.dto.Factory;
-import com.codenvy.api.factory.dto.*;
+import com.codenvy.api.factory.dto.ProjectAttributes;
+import com.codenvy.api.factory.dto.Restriction;
+import com.codenvy.api.factory.dto.WelcomePage;
 import com.codenvy.api.user.server.dao.UserDao;
 import com.codenvy.api.user.server.dao.UserProfileDao;
-import com.codenvy.api.user.server.exception.UserException;
-import com.codenvy.api.user.server.exception.UserProfileException;
 import com.codenvy.api.user.shared.dto.Profile;
 import com.codenvy.api.user.shared.dto.User;
 import com.codenvy.dto.server.DtoFactory;
@@ -38,7 +37,10 @@ import com.codenvy.dto.server.DtoFactory;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.testng.MockitoTestNGListener;
-import org.testng.annotations.*;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Listeners;
+import org.testng.annotations.Test;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -91,7 +93,7 @@ public class FactoryUrlBaseValidatorTest {
     private Factory url;
 
     @BeforeMethod
-    public void setUp() throws ParseException, AccountException, UserException, UserProfileException, NotFoundException, ServerException {
+    public void setUp() throws ParseException,   NotFoundException, ServerException {
         Factory nonencoded = DtoFactory.getInstance().createDto(Factory.class);
         nonencoded.setV("1.2");
         nonencoded.setVcs("git");
@@ -229,19 +231,19 @@ public class FactoryUrlBaseValidatorTest {
     }
 
     @Test
-    public void shouldBeAbleToValidateIfOrgIdIsValid() throws AccountException, FactoryUrlException, ParseException {
+    public void shouldBeAbleToValidateIfOrgIdIsValid() throws  FactoryUrlException, ParseException {
         validator.validate(url, false, request);
     }
 
     @Test
     public void shouldBeAbleToValidateIfOrgIdAndOwnerAreValid()
-            throws AccountException, FactoryUrlException, ParseException, UserException, UserProfileException {
+            throws  FactoryUrlException, ParseException {
         // when, then
         validator.validate(url, false, request);
     }
 
     @Test(expectedExceptions = FactoryUrlException.class)
-    public void shouldNotValidateIfAccountDoesNotExist() throws AccountException, FactoryUrlException, NotFoundException, ServerException {
+    public void shouldNotValidateIfAccountDoesNotExist() throws  FactoryUrlException, NotFoundException, ServerException {
         when(accountDao.getMembers(anyString())).thenReturn(Collections.<Member>emptyList());
 
         validator.validate(url, false, request);
@@ -249,7 +251,7 @@ public class FactoryUrlBaseValidatorTest {
 
     @Test(expectedExceptions = FactoryUrlException.class, expectedExceptionsMessageRegExp = "You are not authorized to use this orgid.")
     public void shouldNotValidateIfFactoryOwnerIsNotOrgidOwner()
-            throws AccountException, FactoryUrlException, ParseException, UserException, UserProfileException,
+            throws  FactoryUrlException, ParseException, 
                    ServerException {
         Member wronMember  = member;
         wronMember.setUserId("anotheruserid");
@@ -261,7 +263,7 @@ public class FactoryUrlBaseValidatorTest {
 
     @Test(expectedExceptions = FactoryUrlException.class)
     public void shouldNotValidateIfSubscriptionHasIllegalTariffPlan()
-            throws AccountException, FactoryUrlException, ParseException, ServerException {
+            throws  FactoryUrlException, ParseException, ServerException {
         // given
         Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class)
                                               .withServiceId("INVALID")
@@ -273,7 +275,7 @@ public class FactoryUrlBaseValidatorTest {
     }
 
     @Test(expectedExceptions = FactoryUrlException.class)
-    public void shouldNotValidateIfOrgIdIsExpired() throws AccountException, FactoryUrlException, ParseException, ServerException {
+    public void shouldNotValidateIfOrgIdIsExpired() throws  FactoryUrlException, ParseException, ServerException {
         // given
         Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class)
                                               .withServiceId("TrackedFactory")
@@ -285,7 +287,7 @@ public class FactoryUrlBaseValidatorTest {
     }
 
     @Test(expectedExceptions = FactoryUrlException.class)
-    public void shouldNotValidateIfOrgIdIsNotValidYet() throws AccountException, FactoryUrlException, ParseException, ServerException {
+    public void shouldNotValidateIfOrgIdIsNotValidYet() throws  FactoryUrlException, ParseException, ServerException {
         // given
         Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class)
                                               .withServiceId("TrackedFactory")
@@ -297,7 +299,7 @@ public class FactoryUrlBaseValidatorTest {
     }
 
     @Test
-    public void shouldValidateIfHostNameIsLegal() throws AccountException, FactoryUrlException, ParseException {
+    public void shouldValidateIfHostNameIsLegal() throws  FactoryUrlException, ParseException {
         // given
         url.setRestriction(DtoFactory.getInstance().createDto(Restriction.class).withRefererhostname("notcodenvy.com"));
 
@@ -309,7 +311,7 @@ public class FactoryUrlBaseValidatorTest {
 
     @Test
     public void shouldValidateIfRefererIsRelativeAndCurrentHostnameIsEqualToRequiredHostName()
-            throws AccountException, FactoryUrlException, ParseException {
+            throws  FactoryUrlException, ParseException {
         // given
         url.setRestriction(DtoFactory.getInstance().createDto(Restriction.class).withRefererhostname("next.codenvy.com"));
 
@@ -322,7 +324,7 @@ public class FactoryUrlBaseValidatorTest {
 
     @Test(expectedExceptions = FactoryUrlException.class,
           expectedExceptionsMessageRegExp = "This Factory has its access restricted by certain hostname. Your client does not match the specified policy. Please contact the owner of this Factory for more information.")
-    public void shouldNotValidateIfRefererIsEmpty() throws AccountException, FactoryUrlException, ParseException {
+    public void shouldNotValidateIfRefererIsEmpty() throws  FactoryUrlException, ParseException {
         // given
         url.setRestriction(DtoFactory.getInstance().createDto(Restriction.class).withRefererhostname("notcodenvy.com"));
 
@@ -334,7 +336,7 @@ public class FactoryUrlBaseValidatorTest {
 
     @Test(expectedExceptions = FactoryUrlException.class,
           expectedExceptionsMessageRegExp = "This Factory has its access restricted by certain hostname. Your client does not match the specified policy. Please contact the owner of this Factory for more information.")
-    public void shouldNotValidateIfRefererIsNotEqualToHostName() throws AccountException, FactoryUrlException, ParseException {
+    public void shouldNotValidateIfRefererIsNotEqualToHostName() throws  FactoryUrlException, ParseException {
         // given
         url.setRestriction(DtoFactory.getInstance().createDto(Restriction.class).withRefererhostname("notcodenvy.com"));
 
@@ -347,7 +349,7 @@ public class FactoryUrlBaseValidatorTest {
     @Test(expectedExceptions = FactoryUrlException.class,
           expectedExceptionsMessageRegExp = "This Factory has its access restricted by certain hostname. Your client does not match the specified policy. Please contact the owner of this Factory for more information.")
     public void shouldNotValidateIfRefererIsRelativeUrlAndCurrentHostnameIsNotEqualToRequired()
-            throws AccountException, FactoryUrlException, ParseException {
+            throws  FactoryUrlException, ParseException {
         // given
         url.setRestriction(DtoFactory.getInstance().createDto(Restriction.class).withRefererhostname("notcodenvy.com"));
 
