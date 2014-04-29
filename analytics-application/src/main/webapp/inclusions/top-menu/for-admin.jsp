@@ -54,10 +54,22 @@
                     <div>
                         <button id="topmenu-preferences">Preferences</button>
                     </div>
-                    <ul class="dropdown-menu" id="ide-version" targetWidgets="_all">
-	                    <li><a class="command-btn" default>IDE<i>2</i> & IDE<i>3</i></a></li>
-	                    <li><a class="command-btn" value="2">IDE<i>2</i> only</a></li>
-	                    <li><a class="command-btn" value="3">IDE<i>3</i> only</a></li>
+                    <ul class="dropdown-menu">
+                        <li><div class="menu-group-title">IDE Version:</div>
+		                    <ul id="ide-version" targetWidgets="_all">
+		                        <li><a class="command-btn" default>IDE<i>2</i> & IDE<i>3</i></a></li>
+		                        <li><a class="command-btn" value="2">IDE<i>2</i> only</a></li>
+		                        <li><a class="command-btn" value="3">IDE<i>3</i> only</a></li>
+			                </ul>
+			            </li>
+	                    <li><div class="menu-group-title">Data Universe:</div>
+		                    <ul id="data-universe" targetWidgets="_all">
+		                        <li><a class="command-btn" default>Any workspace where the current user is owner</a></li>
+		                        <li><a class="command-btn" value="2">Any workspace where the current user has workspace/admin rights</a></li>
+		                        <li><a class="command-btn" value="3">Any organization that this user is owner of</a></li>
+		                        <li><a class="command-btn" value="4">Any organization this user has admin rights to</a></li>
+		                    </ul>	                    
+	                    </li>
                     </ul>
                 </div>
 

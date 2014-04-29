@@ -655,6 +655,7 @@ function Configuration() {
         "expanded_metric_name",
         "project",
         "project_type",
+        "data_universe",
     ];
 
     /** see method analytics.main.getParamsFromButtons() */
@@ -667,6 +668,7 @@ function Configuration() {
         "user_first_name",   // users-view
         "user_last_name",    // users-view
         "ide",               // top-menu
+        "data_universe",     // top-menu
         "metric",            // top-metrics
         "from_date",         // user-view, workspace-view
         "to_date",           // user-view, workspace-view
@@ -702,6 +704,7 @@ function Configuration() {
     /** Global parameters stored in Browser Storage */
     var globalParams = [
         "ide",
+        "data_universe",
     ];
 
     /** Date params which should have "yyyymmdd" in model and "yyyy-mm-dd" format in view */

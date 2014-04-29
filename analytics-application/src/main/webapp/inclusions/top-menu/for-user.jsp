@@ -51,6 +51,22 @@
 
             <div class="right">
                 <div class="nav">
+                    <div>
+                        <button id="topmenu-preferences">Preferences</button>
+                    </div>
+                    <ul class="dropdown-menu">
+                        <li><div class="menu-group-title">Data Universe:</div>
+                            <ul id="data-universe" targetWidgets="_all">
+                                <li><a class="command-btn" default>Any workspace where the current user is owner</a></li>
+                                <li><a class="command-btn" value="2">Any workspace where the current user has workspace/admin rights</a></li>
+                                <li><a class="command-btn" value="3">Any organization that this user is owner of</a></li>
+                                <li><a class="command-btn" value="4">Any organization this user has admin rights to</a></li>
+                            </ul>                       
+                        </li>
+                    </ul>
+                </div>        
+            
+                <div class="nav">
                     <div class="label-container">
                         <div class="label"><%= FrontEndUtil.getFirstAndLastName(request.getUserPrincipal())%></div>
                     </div>
@@ -73,6 +89,8 @@
         analytics.views.topMenu.turnOnNavButtons();
         analytics.views.topMenu.turnOnDropdownButton("topmenu-reports", false);    // turn-on reports menu button
         analytics.views.topMenu.turnOnDropdownButton("topmenu-user", true);    // turn-on user menu button
+        
+        analytics.views.topMenu.turnOnDropdownButton("topmenu-preferences", false);    // turn-on preferences menu button
         
         // select menu items connected to page where top menu is displaying
     <%  if (request.getParameterValues("selectedMenuItemId") != null) { 
