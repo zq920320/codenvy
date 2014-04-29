@@ -26,6 +26,7 @@ import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.api.account.shared.dto.AccountMembership;
+import com.codenvy.api.account.shared.dto.Subscription;
 import com.codenvy.api.user.shared.dto.Attribute;
 import com.codenvy.api.user.shared.dto.Member;
 import com.codenvy.api.user.shared.dto.Profile;
@@ -162,5 +163,10 @@ public abstract class AbstractAccountMetric extends AbstractMetric {
         String pathUserById = AbstractAccountMetric.PATH_USER_BY_ID.replace(AbstractAccountMetric.PARAM_USER_ID, userId);
         User user = httpMetricTransport.getResource(User.class, "GET", pathUserById);
         return user == null ? "" : user.getEmail();
+    }
+
+    protected List<Subscription> getSubscriptions(String accountId) throws IOException {
+        String path = PATH_ACCOUNT_SUBSCRIPTIONS.replace(PARAM_ID, accountId);
+        return httpMetricTransport.getResources(Subscription.class, "GET", path);
     }
 }

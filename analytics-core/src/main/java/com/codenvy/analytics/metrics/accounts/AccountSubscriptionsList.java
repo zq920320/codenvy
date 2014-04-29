@@ -67,9 +67,4 @@ public class AccountSubscriptionsList extends AbstractAccountMetric {
 
         return new ListValueData(list2Return);
     }
-
-    private List<Subscription> getSubscriptions(String accountId) throws IOException {
-        String path = PATH_ACCOUNT_SUBSCRIPTIONS.replace(PARAM_ID, accountId);
-        return httpMetricTransport.getResources(Subscription.class, "GET", path);
-    }
 }

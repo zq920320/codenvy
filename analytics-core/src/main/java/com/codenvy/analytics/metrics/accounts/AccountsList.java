@@ -74,9 +74,4 @@ public class AccountsList extends AbstractAccountMetric {
 
         return new ListValueData(list2Return);
     }
-
-    @Override
-    public Class<? extends ValueData> getValueDataClass() {
-        return ListValueData.class;
-    }
 }
