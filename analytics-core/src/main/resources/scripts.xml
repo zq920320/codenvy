@@ -173,7 +173,7 @@
     <script name="accepted_factories">
         <description>Accepted factories</description>
         <parameter key="WS" value="TEMPORARY"/>
-        <parameter key="STORAGE_TABLE" value="accepted_factories_list"/>
+        <parameter key="STORAGE_TABLE" value="factories_accepted_list"/>
     </script>
     <script name="created_users_from_factory">
         <description>The number of created users from factory</description>

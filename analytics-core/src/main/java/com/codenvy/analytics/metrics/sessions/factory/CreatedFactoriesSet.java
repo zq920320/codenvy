@@ -18,12 +18,15 @@
 package com.codenvy.analytics.metrics.sessions.factory;
 
 import com.codenvy.analytics.metrics.AbstractSetValueResulted;
+import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.OmittedFilters;
 
 import javax.annotation.security.RolesAllowed;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
+@OmittedFilters({MetricFilter.WS})
 public class CreatedFactoriesSet extends AbstractSetValueResulted {
     public CreatedFactoriesSet() {
         super(MetricType.CREATED_FACTORIES_SET, FACTORY);

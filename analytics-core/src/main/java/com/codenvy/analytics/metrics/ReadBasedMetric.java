@@ -93,7 +93,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
     private Context omitFilters(Context context) {
         if (getClass().isAnnotationPresent(OmittedFilters.class)) {
             Context.Builder builder = new Context.Builder(context);
-            for (MetricFilter filter : getClass().getAnnotation(OmittedFilters.class).values()) {
+            for (MetricFilter filter : getClass().getAnnotation(OmittedFilters.class).value()) {
                 builder.remove(filter);
             }
 

@@ -100,15 +100,6 @@ public enum ScriptType {
     USERS_ACTIVITY,
     PROJECTS,
     PROJECTS_STATISTICS,
-    USERS_EVENTS {
-        @Override
-        public Set<Parameters> getParams() {
-            Set<Parameters> params = super.getParams();
-            params.add(Parameters.EVENT);
-            params.add(Parameters.PARAM);
-            return params;
-        }
-    },
 
     LOG_CHECKER {
         @Override

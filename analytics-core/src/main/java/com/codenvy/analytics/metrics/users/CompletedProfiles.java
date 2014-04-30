@@ -20,7 +20,9 @@ package com.codenvy.analytics.metrics.users;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.OmittedFilters;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
@@ -28,6 +30,7 @@ import javax.annotation.security.RolesAllowed;
 
 /** @author Anatoliy Bazko */
 @RolesAllowed({"system/admin", "system/manager"})
+@OmittedFilters({MetricFilter.WS})
 public class CompletedProfiles extends AbstractUsersProfile {
 
     private final String VALUE = "value";

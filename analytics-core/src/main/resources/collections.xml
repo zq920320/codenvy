@@ -394,7 +394,7 @@
         </indexes>
     </collection>
 
-    <collection name="accepted_factories_list">
+    <collection name="factories_accepted_list">
         <indexes>
             <index name="user">
                 <field>user</field>

@@ -17,16 +17,16 @@
  */
 package com.codenvy.analytics.metrics.sessions.factory;
 
-import com.codenvy.analytics.metrics.AbstractCount;
-import com.codenvy.analytics.metrics.RequiredFilter;
-import com.codenvy.analytics.metrics.MetricFilter;
-import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.*;
 
 import javax.annotation.security.RolesAllowed;
 
-/** @author Anatoliy Bazko */
+/**
+ * @author Anatoliy Bazko
+ */
 @RolesAllowed({"any"})
 @RequiredFilter(MetricFilter.FACTORY)
+@OmittedFilters({MetricFilter.USER})
 public class FactoryUsed extends AbstractCount {
 
     public FactoryUsed() {

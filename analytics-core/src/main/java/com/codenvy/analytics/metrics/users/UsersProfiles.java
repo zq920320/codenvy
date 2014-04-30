@@ -20,7 +20,9 @@ package com.codenvy.analytics.metrics.users;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.OmittedFilters;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
@@ -28,6 +30,7 @@ import javax.annotation.security.RolesAllowed;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
+@OmittedFilters({MetricFilter.WS})
 public class UsersProfiles extends AbstractUsersProfile {
 
     public UsersProfiles() {
@@ -36,7 +39,7 @@ public class UsersProfiles extends AbstractUsersProfile {
 
     @Override
     public String getStorageCollectionName() {
-        return MetricType.USERS_PROFILES_LIST.name().toLowerCase();
+        return getStorageCollectionName(MetricType.USERS_PROFILES_LIST);
     }
 
     @Override
