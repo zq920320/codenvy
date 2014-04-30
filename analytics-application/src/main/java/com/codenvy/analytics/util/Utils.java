@@ -31,10 +31,7 @@ import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
 import java.io.IOException;
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -53,7 +50,8 @@ public class Utils {
 
         putQueryParameters(parameters, context);
         putPaginationParameters(page, perPage, context);
-        putFiltersForNoneSystemUser(context, securityContext);
+        putCurrentUserAsFilter(context, securityContext);
+        putAvailableWorkspacesAsFilter(context, securityContext);
         putDefaultValueIfAbsent(context, Parameters.FROM_DATE);
         putDefaultValueIfAbsent(context, Parameters.TO_DATE);
 
@@ -72,7 +70,7 @@ public class Utils {
             return false;
         }
 
-        if (Utils.isSystemUser(principal.getName(), securityContext) || rolesAllowed.contains("any")) {
+        if (isSystemUser(securityContext) || rolesAllowed.contains("any")) {
             return true;
         }
 
@@ -90,8 +88,13 @@ public class Utils {
         return matcher.find();
     }
 
-    public static boolean isSystemUser(String email, SecurityContext securityContext) {
-        Matcher matcher = ADMIN_ROLE_EMAIL_PATTERN.matcher(email);
+    public static boolean isSystemUser(SecurityContext securityContext) {
+        Principal userPrincipal = securityContext.getUserPrincipal();
+        if (userPrincipal == null) {
+            return false;
+        }
+
+        Matcher matcher = ADMIN_ROLE_EMAIL_PATTERN.matcher(userPrincipal.getName());
         return matcher.find()
                || securityContext.isUserInRole("system/admin")
                || securityContext.isUserInRole("system/manager");
@@ -104,17 +107,39 @@ public class Utils {
     }
 
 
-    private static void putFiltersForNoneSystemUser(Map<String, String> context, SecurityContext securityContext) {
-        if (securityContext != null && securityContext.getUserPrincipal() != null) {
-            String user = securityContext.getUserPrincipal().getName();
-            if (!isSystemUser(user, securityContext)) {
-                context.put("USER", user);
-                context.put("WS", getAvailableWorkspacesForCurrentUser(context));
+    private static void putCurrentUserAsFilter(Map<String, String> context, SecurityContext securityContext) {
+        if (!isSystemUser(securityContext)) {
+            context.put("USER", securityContext.getUserPrincipal().getName());
+        }
+    }
+
+    private static void putAvailableWorkspacesAsFilter(Map<String, String> context, SecurityContext securityContext) {
+        if (!isSystemUser(securityContext)) {
+            Set<String> workspaces = getAvailableWorkspacesForCurrentUser(context);
+            if (context.containsKey("WS")) {
+                if (!workspaces.contains(context.get("WS"))) {
+                    throw new IllegalStateException("User hasn't access to workspace data");
+                }
+            } else {
+                context.put("WS", getFilterAsString(workspaces));
             }
         }
     }
 
-    private static String getAvailableWorkspacesForCurrentUser(Map<String, String> context) {
+    private static String getFilterAsString(Set<String> workspaces) {
+        StringBuilder result = new StringBuilder();
+        for (String workspace : workspaces) {
+            if (result.length() > 0) {
+                result.append(ReadBasedMetric.SEPARATOR);
+            }
+
+            result.append(workspace);
+        }
+
+        return result.toString();
+    }
+
+    private static Set<String> getAvailableWorkspacesForCurrentUser(Map<String, String> context) {
         try {
             String role = context.get(MetricFilter.DATA_UNIVERSE.toString());
 
@@ -132,8 +157,8 @@ public class Utils {
 
     }
 
-    private static String getWorkspacesByRole(String role, ListValueData accounts) throws IOException {
-        StringBuilder result = new StringBuilder();
+    private static Set<String> getWorkspacesByRole(String role, ListValueData accounts) throws IOException {
+        Set<String> result = new HashSet<>();
         Metric accountWorkspaces = MetricFactory.getMetric(MetricType.ACCOUNT_WORKSPACES_LIST);
 
         for (ValueData account : accounts.getAll()) {
@@ -143,26 +168,17 @@ public class Utils {
             builder.put(MetricFilter.ACCOUNT_ID, accountData.get(AccountWorkspacesList.ACCOUNT_ID).getAsString());
 
             ListValueData workspaces = ValueDataUtil.getAsList(accountWorkspaces, builder.build());
-
             if (isWorkspacesRoleExists(role)) {
                 workspaces = doWorkspaceFilterByWorkspaceRole(role, workspaces);
             }
 
-            accumulateWorkspaces(result, workspaces);
-        }
-
-        return result.toString();
-    }
-
-    private static void accumulateWorkspaces(StringBuilder result, ListValueData workspaces) {
-        for (ValueData workspace : workspaces.getAll()) {
-            Map<String, ValueData> workspaceData = ((MapValueData)workspace).getAll();
-
-            if (result.length() != 0) {
-                result.append(ReadBasedMetric.SEPARATOR);
+            for (ValueData workspace : workspaces.getAll()) {
+                Map<String, ValueData> workspaceData = ((MapValueData)workspace).getAll();
+                result.add(workspaceData.get(AccountWorkspacesList.WORKSPACE_NAME).getAsString());
             }
-            result.append(workspaceData.get(AccountWorkspacesList.WORKSPACE_NAME));
         }
+
+        return result;
     }
 
     private static boolean isWorkspacesRoleExists(String role) {
