@@ -38,6 +38,12 @@
                             window.location = url;
                         });
                     });
+
+                    $(".sign-in").click(function(){
+                        var url = "/site/login" + window.location.search;
+                        window.location = url;
+                    });
+
                 },
 
                 __validationRules : function(){
