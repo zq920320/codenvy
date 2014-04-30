@@ -42,6 +42,7 @@ analytics.presenter.ReportPresenter.prototype.mapExpandedMetricToDrillDownPageTy
     "removed_users": "USERS",
     "users_activity": "USERS",
     "total_users": "USERS",
+    "new_active_users": "USERS",
     
     /** WORKSPACES */
     "active_workspaces": "WORKSPACES",
@@ -51,6 +52,7 @@ analytics.presenter.ReportPresenter.prototype.mapExpandedMetricToDrillDownPageTy
     "shell_launched": "WORKSPACES",
     "collaborative_sessions_started": "WORKSPACES",
     "total_workspaces": "WORKSPACES",
+    "new_active_workspaces": "WORKSPACES",
     
     /** PROJECTS */
     "builds": "PROJECTS",

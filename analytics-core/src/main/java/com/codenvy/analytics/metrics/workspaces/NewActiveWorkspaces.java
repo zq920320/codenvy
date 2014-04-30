@@ -17,18 +17,22 @@
  */
 package com.codenvy.analytics.metrics.workspaces;
 
+import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.CalculatedMetric;
 import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Expandable;
 import com.codenvy.analytics.metrics.MetricType;
+import com.mongodb.DBObject;
 
 import javax.annotation.security.RolesAllowed;
+
 import java.io.IOException;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
-public class NewActiveWorkspaces extends CalculatedMetric {
+public class NewActiveWorkspaces extends CalculatedMetric implements Expandable{
 
     public NewActiveWorkspaces() {
         super(MetricType.NEW_ACTIVE_WORKSPACES, new MetricType[]{MetricType.CREATED_WORKSPACES});
@@ -47,5 +51,20 @@ public class NewActiveWorkspaces extends CalculatedMetric {
     @Override
     public String getDescription() {
         return "New active workspaces";
+    }
+    
+    @Override
+    public String getExpandedValueField() {
+        return WS;
+    }
+
+    @Override
+    public DBObject[] getSpecificExpandedDBOperations(Context clauses) {
+        return ((Expandable) basedMetric[0]).getSpecificExpandedDBOperations(clauses);
+    }
+    
+    @Override
+    public ListValueData getExpandedValue(Context context) throws IOException {
+        return ((Expandable) basedMetric[0]).getExpandedValue(context);
     }
 }
