@@ -51,6 +51,11 @@ public abstract class AbstractProductUsageSessionsList extends AbstractListValue
     }
 
     @Override
+    public String getStorageCollectionName() {
+        return getStorageCollectionName(MetricType.PRODUCT_USAGE_SESSIONS_LIST);
+    }
+
+    @Override
     public ValueData postComputation(ValueData valueData, Context clauses) throws IOException {
         List<ValueData> list2Return = new ArrayList<>();
 
