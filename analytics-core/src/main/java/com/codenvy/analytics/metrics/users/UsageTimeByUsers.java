@@ -18,12 +18,15 @@
 package com.codenvy.analytics.metrics.users;
 
 import com.codenvy.analytics.metrics.AbstractActiveEntities;
+import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.OmittedFilters;
 
 import javax.annotation.security.RolesAllowed;
 
 /** @author Dmytro Nochevnov */
 @RolesAllowed({"system/admin", "system/manager"})
+@OmittedFilters({MetricFilter.USER})
 public class UsageTimeByUsers extends AbstractActiveEntities {
 
     public UsageTimeByUsers() {
