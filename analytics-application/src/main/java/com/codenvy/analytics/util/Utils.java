@@ -140,7 +140,7 @@ public class Utils {
             Map<String, ValueData> accountData = ((MapValueData)account).getAll();
 
             Context.Builder builder = new Context.Builder();
-            builder.put(MetricFilter.ACCOUNT_ID, accountData.get(AccountWorkspacesList.ACCOUNT_ID));
+            builder.put(MetricFilter.ACCOUNT_ID, accountData.get(AccountWorkspacesList.ACCOUNT_ID).getAsString());
 
             ListValueData workspaces = ValueDataUtil.getAsList(accountWorkspaces, builder.build());
 

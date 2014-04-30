@@ -78,12 +78,6 @@ public class HTTPTransport implements MetricTransport {
         String resourceUrl = addAuthenticationToken(baseUrl + path);
         final HttpURLConnection conn = (HttpURLConnection)new URL(resourceUrl).openConnection();
 
-        //TODO remove
-        conn.setRequestProperty("Cookie",
-                                "session-access-key=TOrraXObKjTKS4Gr48SS40Pbr8eOPmLCK4zWGDOnDGXDm1iLXTfOaPfXvKiySWTWu90S0OfaDDLiKz50SeuD4ayGDDTyqmyLbO4P95rPTuHeDaH1bSy95HuivLT1WnuGTzaDKfePrOCTOyCO9DPDr8Of09C9ff1vuzby8aCeqyj1KLrmrWH14uXOznz8yii8rW94rOW1SSfKDeC0Gy549L0yzfjfyyuf49imuHvODniPWOWKLLqaXirD4C0ebPrD0zK5r1mXqnGOji5jbD9T8KaTyuOWjmzDjyLneyL8PrbS0GyLTGviTuaHDPOKXeT4WOerSeLu1y9H4Lnfy9OHernqC1LujGzHaiCKPyG9vG5jPfKOHfyb8DOqTmOmu9b8OXeO8qHu09Kb4SrnSGajf8yHqWK1vaCOPTDzvfDyKyLq4CKzbmmbz4XmCXGDPriDjzavWq0iDbaSvO8quiCinzbHrbPTjz4SbT5v8eziP1DTyzn9yjOOP1LH9fGWqeuO;");
-        //TODO ------
-
-
         conn.setConnectTimeout(30 * 1000);
         try {
             conn.setRequestMethod(method);
