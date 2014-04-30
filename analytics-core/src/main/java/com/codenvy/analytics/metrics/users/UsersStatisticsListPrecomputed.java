@@ -25,6 +25,7 @@ import javax.annotation.security.RolesAllowed;
  * @author Alexander Reshetnyak
  */
 @RolesAllowed({})
+@OmittedFilters({MetricFilter.WS})
 public class UsersStatisticsListPrecomputed extends AbstractListValueResulted implements PrecomputedDataMetric {
 
     public UsersStatisticsListPrecomputed() {
@@ -39,19 +40,19 @@ public class UsersStatisticsListPrecomputed extends AbstractListValueResulted im
     @Override
     public String[] getTrackedFields() {
         return new String[]{USER,
-                            UsersStatisticsList.PROJECTS,
-                            UsersStatisticsList.RUNS,
-                            UsersStatisticsList.DEBUGS,
-                            UsersStatisticsList.BUILDS,
-                            UsersStatisticsList.DEPLOYS,
-                            UsersStatisticsList.FACTORIES,
-                            UsersStatisticsList.TIME,
-                            UsersStatisticsList.SESSIONS,
-                            UsersStatisticsList.INVITES,
-                            UsersStatisticsList.LOGINS,
-                            UsersStatisticsList.RUN_TIME,
-                            UsersStatisticsList.BUILD_TIME,
-                            UsersStatisticsList.PAAS_DEPLOYS,
+                            PROJECTS,
+                            RUNS,
+                            DEBUGS,
+                            BUILDS,
+                            DEPLOYS,
+                            FACTORIES,
+                            TIME,
+                            SESSIONS,
+                            INVITES,
+                            LOGINS,
+                            RUN_TIME,
+                            BUILD_TIME,
+                            PAAS_DEPLOYS,
                             USER_FIRST_NAME,
                             USER_LAST_NAME,
                             USER_COMPANY,

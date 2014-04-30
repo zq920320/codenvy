@@ -17,10 +17,7 @@
  */
 package com.codenvy.analytics.metrics.sessions.factory;
 
-import com.codenvy.analytics.metrics.AbstractListValueResulted;
-import com.codenvy.analytics.metrics.Context;
-import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.analytics.metrics.PrecomputedDataMetric;
+import com.codenvy.analytics.metrics.*;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -28,6 +25,7 @@ import javax.annotation.security.RolesAllowed;
  * @author Alexander Reshetnyak
  */
 @RolesAllowed({})
+@OmittedFilters({MetricFilter.WS})
 public class FactoryStatisticsListPrecomputed extends AbstractListValueResulted implements PrecomputedDataMetric {
 
     public FactoryStatisticsListPrecomputed() {

@@ -31,6 +31,7 @@ import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
+@OmittedFilters({MetricFilter.WS})
 public class UsersStatisticsList extends AbstractListValueResulted {
 
     public UsersStatisticsList() {

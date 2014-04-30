@@ -21,12 +21,11 @@ import com.codenvy.analytics.metrics.*;
 
 import javax.annotation.security.RolesAllowed;
 
-import static com.codenvy.analytics.metrics.users.UsersStatisticsList.*;
-
 /**
  * @author Alexander Reshetnyak
  */
 @RolesAllowed({})
+@OmittedFilters({MetricFilter.USER})
 public class WorkspacesStatisticsListPrecomputed extends AbstractListValueResulted implements
                                                                                    PrecomputedDataMetric {
 
