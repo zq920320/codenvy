@@ -20,11 +20,11 @@
     <view name="projects" on-demand="true">
         <section name="projects">
             <row class="com.codenvy.analytics.services.view.TitleRow">
-                <parameter key="titles" value="Date,Project,Type,Workspace,User"/>
+                <parameter key="titles" value="Date,Workspace,User,Project,Type"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="projects_list"/>
-                <parameter key="fields" value="date,project,project_type,ws,user"/>
+                <parameter key="fields" value="date,ws,user,project,project_type"/>
                 <parameter key="date-fields" value="date"/>
             </row>
         </section>
@@ -33,7 +33,7 @@
     <view name="project" on-demand="true">
         <section name="project">
             <row class="com.codenvy.analytics.services.view.TitleRow">
-                <parameter key="titles" value="Created Date,Project,Type,Workspace,User,"/>
+                <parameter key="titles" value="Created Date,Project,Type,Workspace,User"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="projects_list"/>

@@ -23,11 +23,9 @@ import com.mongodb.DBObject;
 
 import javax.annotation.security.RolesAllowed;
 
-import static com.codenvy.analytics.metrics.users.UsersStatisticsList.*;
-
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
-@OmittedFilters({MetricFilter.WS})
+@OmittedFilters({MetricFilter.USER})
 public class WorkspacesStatisticsList extends AbstractListValueResulted {
 
     public static final String JOINED_USERS = "joined_users";

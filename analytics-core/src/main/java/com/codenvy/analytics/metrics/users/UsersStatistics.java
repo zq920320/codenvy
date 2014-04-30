@@ -26,6 +26,7 @@ import javax.annotation.security.RolesAllowed;
  * @author Anatoliy Bazko
  */
 @RolesAllowed({"system/admin", "system/manager"})
+// TODO
 public class UsersStatistics extends AbstractActiveEntities {
 
     public UsersStatistics() {
