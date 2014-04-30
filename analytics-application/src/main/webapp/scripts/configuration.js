@@ -216,12 +216,6 @@ function Configuration() {
             isNeedToSaveInHistory: false,     // default value = true
         },
 
-        userData: {
-            widgetLabel: "User Statistics",
-            presenterType: "HorizontalTablePresenter",
-            modelViewName: "user_data",
-        },
-
         userSessions: {
             widgetLabel: "Sessions",
             presenterType: "HorizontalTablePresenter",
