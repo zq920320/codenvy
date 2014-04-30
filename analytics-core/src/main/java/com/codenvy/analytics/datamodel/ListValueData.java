@@ -25,6 +25,7 @@ import java.io.ObjectOutput;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map.Entry;
 
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
@@ -57,6 +58,33 @@ public class ListValueData extends CollectionValueData {
         result.addAll(this.value);
         result.addAll(object.value);
 
+        return new ListValueData(result);
+    }
+    
+    /**
+     * @return <current list> - <subtrahend list>
+     */
+    public ListValueData doMinus(ListValueData subtrahendData) {
+        List<String> subtrahenValues = new ArrayList<>(subtrahendData.getAll().size());
+
+        for (ValueData item: subtrahendData.getAll()) {
+            subtrahenValues.add(item.getAsString());
+        }  
+
+        List<ValueData> result = new ArrayList<>(getAll().size());
+        for (ValueData item: getAll()) {
+            if (!subtrahenValues.contains(item.getAsString())) {
+                result.add(item);
+            }
+        }
+
+        return new ListValueData(result);
+    }
+    
+    public ListValueData subList(int fromIndex, int toIndex) {
+        List<ValueData> result = new ArrayList<>(getAll().size());
+        result = result.subList(fromIndex, toIndex);
+        
         return new ListValueData(result);
     }
 

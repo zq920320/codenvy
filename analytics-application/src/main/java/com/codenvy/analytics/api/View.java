@@ -44,10 +44,10 @@ import org.slf4j.LoggerFactory;
 
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.metrics.Expandable;
 import com.codenvy.analytics.metrics.MetricFactory;
 import com.codenvy.analytics.metrics.MetricNotFoundException;
 import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.analytics.metrics.ReadBasedMetric;
 import com.codenvy.analytics.services.view.SectionData;
 import com.codenvy.analytics.services.view.ViewBuilder;
 import com.codenvy.analytics.services.view.ViewData;
@@ -195,7 +195,7 @@ public class View {
     private ListValueData getExpandedValue(String metricName, com.codenvy.analytics.metrics.Context context) throws IOException,
                                                                                                             ParseException {        
         context = viewBuilder.initializeTimeInterval(context);       
-        ReadBasedMetric expandableMetric = (ReadBasedMetric)MetricFactory.getMetric(metricName);
+        Expandable expandableMetric = (Expandable) MetricFactory.getMetric(metricName);
         return expandableMetric.getExpandedValue(context);
     }
 

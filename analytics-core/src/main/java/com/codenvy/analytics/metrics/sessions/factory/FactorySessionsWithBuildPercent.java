@@ -62,11 +62,6 @@ public class FactorySessionsWithBuildPercent extends CalculatedMetric implements
     public String getExpandedValueField() {
         return SESSION_ID;
     }
-
-    @Override
-    public DBObject[] getSpecificExpandedDBOperations(Context clauses) {
-        return ((Expandable) basedMetric[1]).getSpecificExpandedDBOperations(clauses);
-    }
     
     @Override
     public ListValueData getExpandedValue(Context context) throws IOException {

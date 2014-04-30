@@ -30,12 +30,6 @@ public interface Expandable {
     String getExpandedValueField();
  
     /**
-     * @returns list of specific DB operations to get list of documents used to calculate numeric value of metric.
-     * @see generic com.codenvy.analytics.metrics.ReadBasedMetric.getSpecificDBOperations(Context) method
-     */
-    DBObject[] getSpecificExpandedDBOperations(Context clauses);
-
-    /**
      * Returns an expanded list of documents used to calculate numeric value returned by getValue() method.
      *
      * @param context

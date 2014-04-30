@@ -626,7 +626,10 @@ function Configuration() {
             
             columnLinkPrefixList: {
                 "user": "/analytics/pages/user-view.jsp?user",
-                "ws": "/analytics/pages/workspace-view.jsp?ws"                
+                "ws": "/analytics/pages/workspace-view.jsp?ws",        
+                "factory": "/analytics/pages/factory-view.jsp?factory",
+                "session_id": "/analytics/pages/session-view.jsp?session_id",
+                "project": "/analytics/pages/project-view.jsp?project",
             },
         }
     }

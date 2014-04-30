@@ -17,19 +17,23 @@
  */
 package com.codenvy.analytics.metrics.sessions.factory;
 
+import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.datamodel.ValueDataUtil;
 import com.codenvy.analytics.metrics.CalculatedMetric;
 import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Expandable;
 import com.codenvy.analytics.metrics.MetricType;
+import com.mongodb.DBObject;
 
 import javax.annotation.security.RolesAllowed;
+
 import java.io.IOException;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
-public class AbandonedFactorySessions extends CalculatedMetric {
+public class AbandonedFactorySessions extends CalculatedMetric implements Expandable {
 
     public AbandonedFactorySessions() {
         super(MetricType.ABANDONED_FACTORY_SESSIONS, new MetricType[]{MetricType.FACTORY_SESSIONS,
@@ -53,5 +57,25 @@ public class AbandonedFactorySessions extends CalculatedMetric {
     @Override
     public String getDescription() {
         return "The number of abandoned sessions in temporary workspaces";
+    }
+    
+    @Override
+    public String getExpandedValueField() {
+        return SESSION_ID;
+    }
+    
+    @Override
+    public ListValueData getExpandedValue(Context context) throws IOException {
+        ListValueData minuendList = ((Expandable) basedMetric[0]).getExpandedValue(context);
+        ListValueData subtrahendList = ((Expandable) basedMetric[1]).getExpandedValue(context);
+        
+        ListValueData result = minuendList.doMinus(subtrahendList);
+        
+        // limit values size to 100000   
+        if (result.size() > 100000) {
+            result = result.subList(0, 100000-1);
+        }
+        
+        return minuendList.doMinus(subtrahendList);
     }
 }

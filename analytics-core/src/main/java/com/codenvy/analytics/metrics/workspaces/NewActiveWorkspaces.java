@@ -57,11 +57,6 @@ public class NewActiveWorkspaces extends CalculatedMetric implements Expandable{
     public String getExpandedValueField() {
         return WS;
     }
-
-    @Override
-    public DBObject[] getSpecificExpandedDBOperations(Context clauses) {
-        return ((Expandable) basedMetric[0]).getSpecificExpandedDBOperations(clauses);
-    }
     
     @Override
     public ListValueData getExpandedValue(Context context) throws IOException {

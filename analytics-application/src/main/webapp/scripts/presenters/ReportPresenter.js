@@ -43,6 +43,7 @@ analytics.presenter.ReportPresenter.prototype.mapExpandedMetricToDrillDownPageTy
     "users_activity": "USERS",
     "total_users": "USERS",
     "new_active_users": "USERS",
+    "created_users_from_auth": "USERS",
     
     /** WORKSPACES */
     "active_workspaces": "WORKSPACES",
@@ -111,6 +112,8 @@ analytics.presenter.ReportPresenter.prototype.mapExpandedMetricToDrillDownPageTy
     "factory_sessions_with_build_percent": "SESSIONS",
     "factory_sessions_with_deploy_percent": "SESSIONS",
     "factory_sessions_with_run_percent": "SESSIONS",
+    
+    "abandoned_factory_sessions": "SESSIONS",
     
     /** FACTORIES */
     "created_factories": "FACTORIES", 

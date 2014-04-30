@@ -54,7 +54,10 @@ import com.codenvy.analytics.metrics.projects.ProjectTypeWar;
 import com.codenvy.analytics.metrics.projects.ProjectsList;
 import com.codenvy.analytics.metrics.sessions.factory.FactorySessionsWithBuildPercent;
 import com.codenvy.analytics.metrics.sessions.factory.ProductUsageFactorySessionsList;
+import com.codenvy.analytics.metrics.users.CreatedUsers;
+import com.codenvy.analytics.metrics.users.CreatedUsersFromAuth;
 import com.codenvy.analytics.metrics.users.UserInvite;
+import com.codenvy.analytics.metrics.users.UsersActivity;
 import com.codenvy.analytics.metrics.workspaces.ActiveWorkspaces;
 import com.codenvy.analytics.persistent.JdbcDataPersisterFactory;
 import com.codenvy.analytics.pig.scripts.ScriptType;
@@ -70,8 +73,8 @@ import com.codenvy.analytics.services.view.ViewData;
 /** @author <a href="mailto:dnochevnov@codenvy.com">Dmytro Nochevnov</a> */
 public class TestExpandedMetric extends BaseTest {
 
-    private static final String WS                  = "ws1";
-    private static final String USER                = "user1@gmail.com";
+    private static final String TEST_WS                  = "ws1";
+    private static final String TEST_USER                = "user1@gmail.com";
     private static final String SESSION_ID          = "8AA06F22-3755-4BDD-9242-8A6371BAB53A";
     
     private ViewBuilder viewBuilder;
@@ -84,6 +87,20 @@ public class TestExpandedMetric extends BaseTest {
     public void prepareDatabase() throws IOException, ParseException {
         List<Event> events = new ArrayList<>();
 
+        // create user from factory
+        events.add(Event.Builder.createFactoryUrlAcceptedEvent("tmp-4", "factoryUrl1", "referrer1", "org1", "affiliate1")
+                                .withDate("2013-11-01").withTime("09:01:00").build());
+        events.add(Event.Builder.createUserAddedToWsEvent("", "", "", "tmp-4", "anonymoususer_4", "website")
+                                .withDate("2013-11-01").withTime("09:02:00").build());
+        events.add(Event.Builder.createUserChangedNameEvent("anonymoususer_4", "user4@gmail.com")
+                                .withDate("2013-11-01").withTime("09:03:00").build());
+        events.add(Event.Builder.createUserCreatedEvent("user-id4", "user4@gmail.com")
+                                .withDate("2013-11-01").withTime("09:04:00").build());
+
+        // create user
+        events.add(Event.Builder.createUserCreatedEvent("user-id5", "user5")
+                                .withDate("2013-11-01").withTime("09:05:00").build());
+        
         // create factory session events
         events.add(Event.Builder.createSessionFactoryStartedEvent("id1", "tmp-1", "user1", "true", "brType")
                                  .withDate("2013-11-01").withTime("10:00:00").build());
@@ -96,7 +113,7 @@ public class TestExpandedMetric extends BaseTest {
                                 .withDate("2013-11-01").withTime("10:30:00").build());
         
         events.add(Event.Builder.createSessionFactoryStartedEvent("id3", "tmp-3", "anonymoususer_1", "false", "brType")
-                                .withDate("2013-11-01").withTime("11:00:00").build());
+                                .withDate("2013-11-01").withTime("11:00:00").build());        
         events.add(Event.Builder.createSessionFactoryStoppedEvent("id3", "tmp-3", "anonymoususer_1")
                                 .withDate("2013-11-01").withTime("11:15:00").build());
         
@@ -121,24 +138,24 @@ public class TestExpandedMetric extends BaseTest {
         
         
         // same user invites twice
-        events.add(Event.Builder.createUserInviteEvent(USER, WS, USER)
+        events.add(Event.Builder.createUserInviteEvent(TEST_USER, TEST_WS, TEST_USER)
                    .withDate("2013-11-01").withTime("15:00:00,155").build());
-        events.add(Event.Builder.createUserInviteEvent(USER, WS, USER)
+        events.add(Event.Builder.createUserInviteEvent(TEST_USER, TEST_WS, TEST_USER)
                    .withDate("2013-11-01").withTime("16:00:00,155").build());
         
         // start main session
-        events.add(Event.Builder.createSessionStartedEvent(USER, WS, "ide", SESSION_ID)
+        events.add(Event.Builder.createSessionStartedEvent(TEST_USER, TEST_WS, "ide", SESSION_ID)
                    .withDate("2013-11-01").withTime("19:00:00,155").build());
 
         // create test projects and deploy they into PaaS
-        events.add(Event.Builder.createProjectCreatedEvent(USER, WS, "id1", "project1", "python")
+        events.add(Event.Builder.createProjectCreatedEvent(TEST_USER, TEST_WS, "id1", "project1", "python")
                    .withDate("2013-11-01").withTime("18:08:00,600").build());
-        events.add(Event.Builder.createApplicationCreatedEvent(USER, WS, "id1", "project1", "python", "gae")
+        events.add(Event.Builder.createApplicationCreatedEvent(TEST_USER, TEST_WS, "id1", "project1", "python", "gae")
                    .withDate("2013-11-01").withTime("18:08:10").build());
 
-        events.add(Event.Builder.createProjectCreatedEvent(USER, "ws2", "id2", "project2", "war")
+        events.add(Event.Builder.createProjectCreatedEvent(TEST_USER, "ws2", "id2", "project2", "war")
                    .withDate("2013-11-01").withTime("18:12:00").build());
-        events.add(Event.Builder.createApplicationCreatedEvent(USER, "ws2", "id2", "project2", "war", "gae")
+        events.add(Event.Builder.createApplicationCreatedEvent(TEST_USER, "ws2", "id2", "project2", "war", "gae")
                    .withDate("2013-11-01").withTime("18:12:30").build());
         
         events.add(Event.Builder.createProjectCreatedEvent("user2@gmail.com", "ws3", "id3", "project2", "java")
@@ -147,15 +164,15 @@ public class TestExpandedMetric extends BaseTest {
                    .withDate("2013-11-01").withTime("18:21:30").build());        
         
         // event of target user in the target workspace and in time of first session
-        events.add(Event.Builder.createRunStartedEvent(USER, WS, "project1", "Python", "id1")
+        events.add(Event.Builder.createRunStartedEvent(TEST_USER, TEST_WS, "project1", "Python", "id1")
                                 .withDate("2013-11-01").withTime("19:08:00,600").build());
-        events.add(Event.Builder.createRunFinishedEvent(USER, WS, "project1", "Python", "id1")
+        events.add(Event.Builder.createRunFinishedEvent(TEST_USER, TEST_WS, "project1", "Python", "id1")
                                 .withDate("2013-11-01").withTime("19:10:00,900").build());
 
         // event of target user in another workspace and in time of main session
-        events.add(Event.Builder.createBuildStartedEvent(USER, "ws2", "project2", "war", "id2")
+        events.add(Event.Builder.createBuildStartedEvent(TEST_USER, "ws2", "project2", "war", "id2")
                                 .withDate("2013-11-01").withTime("19:12:00").build());
-        events.add(Event.Builder.createBuildFinishedEvent(USER, "ws2", "project2", "war", "id2")
+        events.add(Event.Builder.createBuildFinishedEvent(TEST_USER, "ws2", "project2", "war", "id2")
                                 .withDate("2013-11-01").withTime("19:14:00").build());
 
         // event of another user in the another workspace and in time of main session
@@ -165,7 +182,7 @@ public class TestExpandedMetric extends BaseTest {
                                 .withDate("2013-11-01").withTime("19:10:00").build());
 
         // finish main session
-        events.add(Event.Builder.createSessionFinishedEvent(USER, WS, "ide", SESSION_ID)
+        events.add(Event.Builder.createSessionFinishedEvent(TEST_USER, TEST_WS, "ide", SESSION_ID)
                                 .withDate("2013-11-01").withTime("19:55:00,555").build());
         
         log = LogGenerator.generateLog(events);
@@ -193,6 +210,44 @@ public class TestExpandedMetric extends BaseTest {
     }
 
     @Test
+    public void testCalculatedSubtractionMetric() throws Exception {
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20131101");
+        builder.put(Parameters.TO_DATE, "20131101");
+        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.toString());
+        builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.name());
+        builder.put(Parameters.EVENT, "user-created");
+        builder.put(Parameters.STORAGE_TABLE, MetricType.CREATED_USERS.toString().toLowerCase());
+        builder.put(Parameters.LOG, log.getAbsolutePath());
+        pigServer.execute(ScriptType.EVENTS, builder.build());
+
+        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
+        builder.put(Parameters.STORAGE_TABLE, MetricType.CREATED_USERS_FROM_FACTORY.toString().toLowerCase());
+        pigServer.execute(ScriptType.CREATED_USERS_FROM_FACTORY, builder.build());
+                
+        builder = new Context.Builder();
+        builder.put(Parameters.TO_DATE, "20131101");
+
+        AbstractLongValueResulted createdUsersMetric = new CreatedUsers();
+
+        // test expanded metric value
+        ListValueData expandedValue = createdUsersMetric.getExpandedValue(builder.build());
+        List<ValueData> all = expandedValue.getAll();
+        assertEquals(all.size(), 2);
+        
+        CalculatedMetric createdUsersFromAuthMetric = new CreatedUsersFromAuth();
+
+        // test expanded metric value
+        expandedValue = ((Expandable) createdUsersFromAuthMetric).getExpandedValue(builder.build());
+        all = expandedValue.getAll();
+        assertEquals(all.size(), 1);
+        
+        Map<String, ValueData> record = ((MapValueData) all.get(0)).getAll();
+        assertEquals(record.size(), 1);
+        assertEquals(record.get(createdUsersMetric.getExpandedValueField()).toString(), "user5");
+    }
+    
+    @Test
     public void testCalculatedPercentMetric() throws Exception {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20131101");
@@ -217,7 +272,7 @@ public class TestExpandedMetric extends BaseTest {
         
         Map<String, ValueData> workspace1 = ((MapValueData) all.get(0)).getAll();
         assertEquals(workspace1.size(), 1);
-        assertEquals(workspace1.get("session_id").toString(), "id1");
+        assertEquals(workspace1.get(((Expandable) metric).getExpandedValueField()).toString(), "id1");
     }
 
     @Test
@@ -257,7 +312,7 @@ public class TestExpandedMetric extends BaseTest {
 
         ListValueData value = (ListValueData)sessionsListMetric.getValue(builder.build());
         all = value.getAll();
-        assertEquals(value.getAll().size(), 3);       
+        assertEquals(value.getAll().size(), 4);       
         
         // calculate build projects list
         builder.put(Parameters.EXPANDED_METRIC_NAME, "factory_sessions_with_build_percent");
@@ -267,7 +322,7 @@ public class TestExpandedMetric extends BaseTest {
         assertEquals(all.size(), 1);
         
         Map<String, ValueData> record = ((MapValueData) all.get(0)).getAll();
-        assertEquals(record.get("session_id").toString(), "id1");
+        assertEquals(record.get(ProductUsageFactorySessionsList.SESSION_ID).toString(), "id1");
     }
     
     @Test
@@ -283,7 +338,7 @@ public class TestExpandedMetric extends BaseTest {
         
         builder = new Context.Builder();
         builder.put(Parameters.TO_DATE, "20131101");
-        builder.put(Parameters.USER, USER);
+        builder.put(Parameters.USER, TEST_USER);
         
         AbstractActiveEntities metric = new ActiveWorkspaces();
 
@@ -301,7 +356,7 @@ public class TestExpandedMetric extends BaseTest {
 
         Map<String, ValueData> workspace2 = ((MapValueData) all.get(1)).getAll();
         assertEquals(workspace2.size(), 1);
-        assertEquals(workspace2.get("ws").toString(), WS);
+        assertEquals(workspace2.get("ws").toString(), TEST_WS);
                 
         // test expanded metric value pagination 
         builder.put(Parameters.PAGE, 2);
@@ -315,7 +370,7 @@ public class TestExpandedMetric extends BaseTest {
         
         Map<String, ValueData> workspace = ((MapValueData) all.get(0)).getAll();
         assertEquals(workspace.size(), 1);
-        assertEquals(workspace.get("ws").toString(), WS);
+        assertEquals(workspace.get(metric.getExpandedValueField()).toString(), TEST_WS);
     }
     
     @Test
@@ -345,7 +400,7 @@ public class TestExpandedMetric extends BaseTest {
         
         Map<String, ValueData> workspace1 = ((MapValueData) all.get(0)).getAll();
         assertEquals(workspace1.size(), 1);
-        assertEquals(workspace1.get("user").toString(), USER);
+        assertEquals(workspace1.get(metric.getExpandedValueField()).toString(), TEST_USER);
     }
 
     @Test
@@ -368,13 +423,13 @@ public class TestExpandedMetric extends BaseTest {
         assertEquals(all.size(), 3);
         
         Map<String, ValueData> record1 = ((MapValueData) all.get(0)).getAll();
-        assertEquals(record1.get("project_id").toString(), "user2@gmail.com/ws3/project2");
+        assertEquals(record1.get(metric.getExpandedValueField()).toString(), "user2@gmail.com/ws3/project2");
 
         Map<String, ValueData> record2 = ((MapValueData) all.get(1)).getAll();
-        assertEquals(record2.get("project_id").toString(), USER + "/ws2/project2");
+        assertEquals(record2.get(metric.getExpandedValueField()).toString(), TEST_USER + "/ws2/project2");
 
         Map<String, ValueData> record3 = ((MapValueData) all.get(2)).getAll();
-        assertEquals(record3.get("project_id").toString(), USER + "/" + WS + "/project1");
+        assertEquals(record3.get(metric.getExpandedValueField()).toString(), TEST_USER + "/" + TEST_WS + "/project1");
     }
     
     @Test
@@ -397,10 +452,10 @@ public class TestExpandedMetric extends BaseTest {
         assertEquals(all.size(), 2);
         
         Map<String, ValueData> record1 = ((MapValueData) all.get(0)).getAll();
-        assertEquals(record1.get("project_id").toString(), "user2@gmail.com/ws3/project2");
+        assertEquals(record1.get(metric.getExpandedValueField()).toString(), "user2@gmail.com/ws3/project2");
 
         Map<String, ValueData> record2 = ((MapValueData) all.get(1)).getAll();
-        assertEquals(record2.get("project_id").toString(), USER + "/ws2/project2");
+        assertEquals(record2.get(metric.getExpandedValueField()).toString(), TEST_USER + "/ws2/project2");
     }
     
     @Test
@@ -423,10 +478,10 @@ public class TestExpandedMetric extends BaseTest {
         assertEquals(all.size(), 2);
 
         Map<String, ValueData> record = ((MapValueData) all.get(0)).getAll();
-        assertEquals(record.get("project_id").toString(), USER + "/ws2/project2");
+        assertEquals(record.get(metric.getExpandedValueField()).toString(), TEST_USER + "/ws2/project2");
         
         record = ((MapValueData) all.get(1)).getAll();
-        assertEquals(record.get("project_id").toString(), USER + "/" + WS + "/project1");
+        assertEquals(record.get(metric.getExpandedValueField()).toString(), TEST_USER + "/" + TEST_WS + "/project1");
     }
     
     @Test
@@ -468,12 +523,12 @@ public class TestExpandedMetric extends BaseTest {
         assertEquals(all.size(), 2);
         
         Map<String, ValueData> project1 = ((MapValueData) all.get(0)).getAll();
-        assertEquals(project1.get("project").toString(), "project1");
-        assertEquals(project1.get("ws").toString(), WS);
+        assertEquals(project1.get(projectsListMetric.PROJECT).toString(), "project1");
+        assertEquals(project1.get(projectsListMetric.WS).toString(), TEST_WS);
 
         Map<String, ValueData> project2 = ((MapValueData) all.get(1)).getAll();
-        assertEquals(project2.get("project").toString(), "project2");
-        assertEquals(project2.get("ws").toString(), "ws3");
+        assertEquals(project2.get(projectsListMetric.PROJECT).toString(), "project2");
+        assertEquals(project2.get(projectsListMetric.WS).toString(), "ws3");
     }
     
     @Test
@@ -489,7 +544,7 @@ public class TestExpandedMetric extends BaseTest {
         
         builder = new Context.Builder();
         builder.put(Parameters.TO_DATE, "20131101");
-        builder.put(Parameters.USER, USER);
+        builder.put(Parameters.USER, TEST_USER);
         
         AbstractActiveEntities metric = new ActiveWorkspaces();
 
@@ -512,7 +567,7 @@ public class TestExpandedMetric extends BaseTest {
         
         List<ValueData> valueRow2 = sectionData.get(2);
         assertEquals(valueRow2.size(), 1);
-        assertEquals(valueRow2.get(0).getAsString(), WS);
+        assertEquals(valueRow2.get(0).getAsString(), TEST_WS);
     }
     
     @BeforeMethod
