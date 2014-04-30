@@ -47,7 +47,8 @@ public enum MetricFilter {
     AFFILIATE_ID,
     PROJECT,
     PROJECT_TYPE,
-    ACCOUNT_ID;
+    ACCOUNT_ID,
+    DATA_UNIVERSE;
 
     private boolean isNumeric;
 

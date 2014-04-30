@@ -58,10 +58,11 @@
                     <ul class="dropdown-menu">
                         <li><div class="menu-group-title">Data Universe:</div>
                             <ul id="data-universe" targetWidgets="_all">
-                                <li><a class="command-btn" default>Any workspace where the current user is owner</a></li>
-                                <li><a class="command-btn" value="2">Any workspace where the current user has workspace/admin rights</a></li>
-                                <li><a class="command-btn" value="3">Any organization that this user is owner of</a></li>
-                                <li><a class="command-btn" value="4">Any organization this user has admin rights to</a></li>
+                                <li><a class="command-btn" default>Any workspaces</a></li>
+                                <li><a class="command-btn" value="workspace/developer">Any workspace where the current user has workspace/developer right</a></li>
+                                <li><a class="command-btn" value="workspace/admin">Any workspace where the current user has workspace/admin right</a></li>
+                                <li><a class="command-btn" value="account/member">Any organization this user has account/member rights to</a></li>
+                                <li><a class="command-btn" value="account/owner">Any organization this user has account/owner rights to</a></li>
                             </ul>                       
                         </li>
                     </ul>

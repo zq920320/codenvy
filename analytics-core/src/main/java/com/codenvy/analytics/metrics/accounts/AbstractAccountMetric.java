@@ -77,6 +77,12 @@ public abstract class AbstractAccountMetric extends AbstractMetric {
     public static final String WORKSPACE_TEMPORARY = "workspace_temporary";
     public static final String WORKSPACE_ROLES     = "workspace_roles";
 
+    public static final String WORKSPACE_ROLE_ADMIN     = "workspace/admin";
+    public static final String WORKSPACE_ROLE_DEVELOPER = "workspace/developer";
+    public static final String ACCOUNT_ROLE_OWNER       = "account/owner";
+    public static final String ACCOUNT_ROLE_MEMBER      = "account/member";
+
+
     protected final MetricTransport httpMetricTransport;
 
     public AbstractAccountMetric(MetricType metricType) {
@@ -107,7 +113,8 @@ public abstract class AbstractAccountMetric extends AbstractMetric {
     }
 
     protected List<Workspace> getWorkspaces(String accountId) throws IOException {
-        return httpMetricTransport.getResources(Workspace.class, "GET", PATH_ACCOUNT_WORKSPACES.replace(PARAM_ACCOUNT_ID, accountId));
+        return httpMetricTransport
+                .getResources(Workspace.class, "GET", PATH_ACCOUNT_WORKSPACES.replace(PARAM_ACCOUNT_ID, accountId));
     }
 
     protected List<Member> getMembers(String workspaceId) throws IOException {
@@ -160,7 +167,8 @@ public abstract class AbstractAccountMetric extends AbstractMetric {
     }
 
     protected String getUserEmail(String userId) throws IOException {
-        String pathUserById = AbstractAccountMetric.PATH_USER_BY_ID.replace(AbstractAccountMetric.PARAM_USER_ID, userId);
+        String pathUserById =
+                AbstractAccountMetric.PATH_USER_BY_ID.replace(AbstractAccountMetric.PARAM_USER_ID, userId);
         User user = httpMetricTransport.getResource(User.class, "GET", pathUserById);
         return user == null ? "" : user.getEmail();
     }
