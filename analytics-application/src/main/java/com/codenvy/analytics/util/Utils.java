@@ -118,7 +118,7 @@ public class Utils {
             Set<String> workspaces = getAvailableWorkspacesForCurrentUser(context);
             if (context.containsKey("WS")) {
                 if (!workspaces.contains(context.get("WS"))) {
-                    throw new IllegalStateException("User hasn't access to workspace data");
+                    throw new IllegalStateException("Security violation. Probably user hasn't access to data");
                 }
             } else {
                 context.put("WS", getFilterAsString(workspaces));

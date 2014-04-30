@@ -65,8 +65,8 @@
                 <div class="single-column-gadget">
                     <div class="view">
                         <div class="tables">
-                            <div class="item" id="projectOverview"></div>
                             <div class="item" id="projectStatistics"></div>
+                            <div class="item" id="projectOverview"></div>
                         </div>
                     </div>
                 </div>

@@ -81,29 +81,29 @@ public class Context {
     }
 
     public boolean isDefaultValue(Parameters key) {
-        return params.get(key.name()).equals(key.getDefaultValue());
+        return params.get(key.toString()).equals(key.getDefaultValue());
     }
 
     public String getAsString(Parameters key) {
-        Object object = params.get(key.name());
+        Object object = params.get(key.toString());
         return object == null ? null : (String)object;
     }
 
     public String getAsString(MetricFilter key) {
-        Object object = params.get(key.name());
+        Object object = params.get(key.toString());
         return object == null ? null : (String)object;
     }
 
     public Object get(MetricFilter key) {
-        return params.get(key.name());
+        return params.get(key.toString());
     }
 
     public boolean exists(Parameters key) {
-        return params.containsKey(key.name());
+        return params.containsKey(key.toString());
     }
 
     public boolean exists(MetricFilter key) {
-        return params.containsKey(key.name());
+        return params.containsKey(key.toString());
     }
 
     public Context cloneAndPut(MetricFilter param, String value) {
@@ -152,16 +152,25 @@ public class Context {
 
         public Builder putIfNotNull(Parameters param, String value) {
             if (value != null) {
-                params.put(param.name(), value);
+                params.put(param.toString(), value);
             }
             return this;
         }
 
         public Builder putIfAbsent(Parameters param, String value) {
             if (!exists(param)) {
-                params.put(param.name(), value);
+                params.put(param.toString(), value);
+                return this;
             }
-            return this;
+
+            for (String oldValue : getAsString(param).split(ReadBasedMetric.SEPARATOR)) {
+                if (oldValue.equals(value)) {
+                    params.put(param.toString(), value);
+                    return this;
+                }
+            }
+
+            throw new IllegalStateException("Security violation. Probably user hasn't access to data");
         }
 
         public Builder putAll(Context context) {
@@ -177,27 +186,27 @@ public class Context {
         }
 
         public Builder putDefaultValue(Parameters param) {
-            params.put(param.name(), param.getDefaultValue());
+            params.put(param.toString(), param.getDefaultValue());
             return this;
         }
 
         public Builder put(Parameters param, String value) {
-            params.put(param.name(), value);
+            params.put(param.toString(), value);
             return this;
         }
 
         public Builder put(MetricFilter param, String value) {
-            params.put(param.name(), value);
+            params.put(param.toString(), value);
             return this;
         }
 
         public Builder put(MetricFilter param, Object value) {
-            params.put(param.name(), value);
+            params.put(param.toString(), value);
             return this;
         }
 
         public Builder put(Parameters param, Calendar value) {
-            params.put(param.name(), Utils.formatDate(value));
+            params.put(param.toString(), Utils.formatDate(value));
             return this;
         }
 
@@ -210,34 +219,34 @@ public class Context {
         }
 
         public Builder put(Parameters.TimeUnit timeUnit) {
-            return put(Parameters.TIME_UNIT, timeUnit.name());
+            return put(Parameters.TIME_UNIT, timeUnit.toString());
         }
 
         public boolean exists(Parameters param) {
-            return params.containsKey(param.name());
+            return params.containsKey(param.toString());
         }
 
         public boolean exists(MetricFilter param) {
-            return params.containsKey(param.name());
+            return params.containsKey(param.toString());
         }
 
         public Builder remove(Parameters param) {
-            params.remove(param.name());
+            params.remove(param.toString());
             return this;
         }
 
         public Builder remove(MetricFilter param) {
-            params.remove(param.name());
+            params.remove(param.toString());
             return this;
         }
 
         public String getAsString(MetricFilter param) {
-            Object object = params.get(param.name());
+            Object object = params.get(param.toString());
             return object == null ? null : (String)object;
         }
 
         public String getAsString(Parameters param) {
-            Object object = params.get(param.name());
+            Object object = params.get(param.toString());
             return object == null ? null : (String)object;
         }
 

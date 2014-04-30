@@ -304,7 +304,7 @@ public class UsersActivityList extends AbstractListValueResulted {
 
         if (sessionData != null) {
             builder.putIfAbsent(Parameters.USER, sessionData.user);
-            builder.put(Parameters.WS, sessionData.ws);
+            builder.putIfAbsent(Parameters.WS, sessionData.ws);
             builder.put(Parameters.TO_DATE, sessionData.toDate);
             builder.put(Parameters.FROM_DATE, sessionData.fromDate);
         } else {
