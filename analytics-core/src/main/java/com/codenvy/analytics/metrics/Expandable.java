@@ -20,10 +20,14 @@ package com.codenvy.analytics.metrics;
 import java.io.IOException;
 
 import com.codenvy.analytics.datamodel.ListValueData;
-import com.mongodb.DBObject;
 
 /** @author Dmytro Nochevnov */
 public interface Expandable {
+    /**
+     * Max number of items which is returning getExpandedValue() method 
+     */
+    int LIMIT = 100000;
+    
     /**
      * @return the field which consists of values of expanded metric.
      */

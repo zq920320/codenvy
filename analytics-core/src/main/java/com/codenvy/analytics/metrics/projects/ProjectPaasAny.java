@@ -17,21 +17,25 @@
  */
 package com.codenvy.analytics.metrics.projects;
 
+import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.datamodel.ValueDataUtil;
 import com.codenvy.analytics.metrics.CalculatedMetric;
 import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Expandable;
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricType;
 
 import javax.annotation.security.RolesAllowed;
+
 import java.io.IOException;
+import java.util.ArrayList;
 
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
-public class ProjectPaasAny extends CalculatedMetric {
+public class ProjectPaasAny extends CalculatedMetric implements Expandable {
 
     public ProjectPaasAny() {
         super(MetricType.PROJECT_PAAS_ANY, new MetricType[]{MetricType.PROJECT_PAAS_APPFOG,
@@ -65,5 +69,26 @@ public class ProjectPaasAny extends CalculatedMetric {
     @Override
     public String getDescription() {
         return "The number of created project with some PaaS defined";
+    }
+    
+    @Override
+    public String getExpandedValueField() {
+        return PROJECT_ID;
+    }
+    
+    @Override
+    public ListValueData getExpandedValue(Context context) throws IOException {
+        ListValueData result = ListValueData.DEFAULT;
+        
+        for (Metric metric: basedMetric) {
+            ListValueData expandedValue = ((Expandable) metric).getExpandedValue(context);
+            result = (ListValueData) result.union(expandedValue);
+        }
+                
+        if (result.size() > LIMIT) {
+            result = result.subList(0, LIMIT);
+        }
+        
+        return result;
     }
 }

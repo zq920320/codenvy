@@ -466,9 +466,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
             for (Entry<String, ValueData> entry: row.getAll().entrySet()) {
                 values.add(entry.getValue().getAsString());
                 
-                // limit values size to 100000  
-                // TODO make this code more readable 
-                if (values.size() > 100000) {
+                if (values.size() > Expandable.LIMIT) {
                     break outer;
                 }
             }

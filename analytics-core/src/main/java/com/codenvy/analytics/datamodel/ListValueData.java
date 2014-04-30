@@ -53,7 +53,7 @@ public class ListValueData extends CollectionValueData {
     protected ValueData doUnion(ValueData valueData) {
         ListValueData object = (ListValueData)valueData;
 
-        List<ValueData> result = new ArrayList<>(this.value.size() + object.size());
+        List<ValueData> result = new ArrayList<>(this.size() + object.size());
         result.addAll(this.value);
         result.addAll(object.value);
 
@@ -64,14 +64,14 @@ public class ListValueData extends CollectionValueData {
      * @return <current list> - <subtrahend list>
      */
     public ListValueData doSubtract(ListValueData subtrahendData) {
-        List<String> subtrahenValues = new ArrayList<>(subtrahendData.getAll().size());
+        List<String> subtrahenValues = new ArrayList<>(subtrahendData.size());
 
-        for (ValueData item: subtrahendData.getAll()) {
+        for (ValueData item: subtrahendData.value) {
             subtrahenValues.add(item.getAsString());
         }  
 
-        List<ValueData> result = new ArrayList<>(getAll().size());
-        for (ValueData item: getAll()) {
+        List<ValueData> result = new ArrayList<>(this.size());
+        for (ValueData item: this.value) {
             if (!subtrahenValues.contains(item.getAsString())) {
                 result.add(item);
             }
@@ -81,8 +81,7 @@ public class ListValueData extends CollectionValueData {
     }
     
     public ListValueData subList(int fromIndex, int toIndex) {
-        List<ValueData> result = new ArrayList<>(getAll().size());
-        result = result.subList(fromIndex, toIndex);
+        List<ValueData> result = getAll().subList(fromIndex, toIndex);
         
         return new ListValueData(result);
     }

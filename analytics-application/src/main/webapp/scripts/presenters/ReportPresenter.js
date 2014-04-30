@@ -78,7 +78,7 @@ analytics.presenter.ReportPresenter.prototype.mapExpandedMetricToDrillDownPageTy
     "time_in_run_queue": "PROJECTS",
     "created_projects": "PROJECTS",
     "projects": "PROJECTS",
-    
+
     "project_type_android": "PROJECTS",
     "project_type_django": "PROJECTS",
     "project_type_jar": "PROJECTS",
@@ -104,6 +104,10 @@ analytics.presenter.ReportPresenter.prototype.mapExpandedMetricToDrillDownPageTy
     "project_paas_tier3": "PROJECTS",
     
     "total_projects": "PROJECTS",
+
+    "project_no_paas_defined": "PROJECTS",
+    "project_paas_any": "PROJECTS",
+    
     
     /** SESSIONS */
     "factory_sessions_with_build": "SESSIONS",
