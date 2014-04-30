@@ -22,7 +22,7 @@ import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.metrics.sessions.AbstractProductUsageSessions;
+import com.codenvy.analytics.metrics.sessions.AbstractProductUsage;
 import com.codenvy.analytics.metrics.sessions.AbstractProductUsageTime;
 import com.codenvy.analytics.metrics.sessions.AbstractProductUsageUsers;
 import com.codenvy.analytics.pig.scripts.util.Event;
@@ -255,7 +255,7 @@ public class TestProductUsageTime extends BaseTest {
         }
     }
 
-    private class TestAbstractProductUsageSessions extends AbstractProductUsageSessions {
+    private class TestAbstractProductUsageSessions extends AbstractProductUsage {
 
         public TestAbstractProductUsageSessions(long min, long max, boolean includeMin, boolean includeMax) {
             super("testproductusagesessions", min, max, includeMin, includeMax);

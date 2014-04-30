@@ -1,7 +1,11 @@
 com.codenvy.analytics.metrics.Zero
 
 com.codenvy.analytics.metrics.sessions.ProductUsageSessionsList
+com.codenvy.analytics.metrics.sessions.ProductUsageSessionsByUsersList
+com.codenvy.analytics.metrics.sessions.ProductUsageSessionsByWorkspacesList
 com.codenvy.analytics.metrics.sessions.ProductUsageSessions
+com.codenvy.analytics.metrics.sessions.ProductUsageSessionsByUsers
+com.codenvy.analytics.metrics.sessions.ProductUsageSessionsByWorkspaces
 com.codenvy.analytics.metrics.sessions.CollaborativeSessionsStarted
 
 com.codenvy.analytics.metrics.accounts.AccountUsersWorkspacesList

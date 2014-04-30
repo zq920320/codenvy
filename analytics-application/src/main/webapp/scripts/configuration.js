@@ -95,7 +95,7 @@ function Configuration() {
             defaultModelParams: {
                 "time_unit": "month"
             },
-            
+
             /** @see DatabaseTable::makeTableSortable() method docs */
             clientSortParams: {
                 "columnsWithoutSorting": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
@@ -146,7 +146,7 @@ function Configuration() {
                 "ID": "/analytics/pages/session-view.jsp?session_id",
                 "Factory": "/analytics/pages/factory-view.jsp?factory",
             },
-            
+
             // see clientSortParams in the
             // TopMetricsPresenter::clientSortParams property
         },
@@ -191,12 +191,12 @@ function Configuration() {
                 "Email": "/analytics/pages/user-view.jsp?user",
                 "ID": "/analytics/pages/session-view.jsp?session_id",
             },
-        
+
             /** @see DatabaseTable::makeTableSortable() method docs */
             clientSortParams: {
                 "ascSortColumnNumber": 0
             },
-            
+
             mapColumnToServerSortParam: {
                 "Email": "user",
                 "First Name": "user_first_name",
@@ -222,20 +222,20 @@ function Configuration() {
             modelViewName: "user_sessions",
 
             isPaginable: true,    // default value is "false"
-            modelMetricName: "product_usage_sessions",
-            
+            modelMetricName: "product_usage_sessions_by_workspaces",
+
             defaultServerSortParams: "-date",
 
             columnLinkPrefixList: {
                 "ID": "/analytics/pages/session-view.jsp?session_id",
                 "Workspace": "/analytics/pages/workspace-view.jsp?ws"
             },
-            
+
             /** @see DatabaseTable::makeTableSortable() method docs */
             clientSortParams: {
                 "descSortColumnNumber": 2
             },
-            
+
             mapColumnToServerSortParam: {
                 "ID": "session_id",
                 "Workspace": "ws",
@@ -256,7 +256,7 @@ function Configuration() {
             columnLinkPrefixList: {
                 "Name": "/analytics/pages/workspace-view.jsp?ws"
             },
-            
+
             mapColumnToServerSortParam: {
                 "Name": "ws",
                 "Sessions": "sessions",
@@ -276,12 +276,12 @@ function Configuration() {
                 "Factory URL": "/analytics/pages/factory-view.jsp?factory",
                 "Workspace": "/analytics/pages/workspace-view.jsp?ws",
             },
-            
+
             /** @see DatabaseTable::makeTableSortable() method docs */
             clientSortParams: {
                 "descSortColumnNumber": 0
             },
-            
+
             mapColumnToServerSortParam: {
                 "Date": "date",
                 "Factory URL": "factory",
@@ -330,12 +330,12 @@ function Configuration() {
                 "User": "/analytics/pages/user-view.jsp?user",
                 "Workspace": "/analytics/pages/workspace-view.jsp?ws"
             },
-            
+
             /** @see DatabaseTable::makeTableSortable() method docs */
             clientSortParams: {
                 "descSortColumnNumber": 3
             },
-            
+
             mapColumnToServerSortParam: {
                 "ID": "session_id",
                 "User": "user",
@@ -377,7 +377,7 @@ function Configuration() {
             onePageRowsCount: 30,
 
             defaultServerSortParams: "+date",
-            
+
             /** @see DatabaseTable::makeTableSortable() method docs */
             clientSortParams: {
                 "ascSortColumnNumber": 0
@@ -393,12 +393,12 @@ function Configuration() {
             columnLinkPrefixList: {
                 "Workspace": "/analytics/pages/workspace-view.jsp?ws"
             },
-            
+
             /** @see DatabaseTable::makeTableSortable() method docs */
             clientSortParams: {
                 "ascSortColumnNumber": 0
             },
-            
+
             mapColumnToServerSortParam: {
                 "Workspace": "ws",
                 "Time": "time",
@@ -451,7 +451,7 @@ function Configuration() {
             modelViewName: "workspace_sessions",
 
             isPaginable: true,    // default value is "false"
-            modelMetricName: "product_usage_sessions",
+            modelMetricName: "product_usage_sessions_by_users",
 
             defaultServerSortParams: "-date",
 
@@ -459,12 +459,12 @@ function Configuration() {
                 "ID": "/analytics/pages/session-view.jsp?session_id",
                 "User": "/analytics/pages/user-view.jsp?user"
             },
-            
+
             /** @see DatabaseTable::makeTableSortable() method docs */
             clientSortParams: {
                 "descSortColumnNumber": 2
             },
-            
+
             mapColumnToServerSortParam: {
                 "ID": "session_id",
                 "User": "user",
@@ -485,7 +485,7 @@ function Configuration() {
             columnLinkPrefixList: {
                 "Name": "/analytics/pages/user-view.jsp?user",
             },
-            
+
             mapColumnToServerSortParam: {
                 "Name": "user",
                 "Sessions": "sessions",
@@ -506,7 +506,7 @@ function Configuration() {
             },
 
             columnCombinedLinkConfiguration: {
-                "Project": {                   
+                "Project": {
                     baseLink: "/analytics/pages/project-view.jsp",
                     mapColumnToParameter: {
                         "Project": "project",
@@ -515,7 +515,7 @@ function Configuration() {
                     }
                 }
             },
-            
+
             defaultServerSortParams: "-date",
 
             /** @see DatabaseTable::makeTableSortable() method docs */
@@ -629,7 +629,7 @@ function Configuration() {
             columnLinkPrefixList: {
                 "Factory URL": "/analytics/pages/factory-view.jsp?factory"
             },
-            
+
             mapColumnToServerSortParam: {
                 "Factory URL": "factory",
                 "Project Type": "project_type",
@@ -670,12 +670,12 @@ function Configuration() {
                 "User": "/analytics/pages/user-view.jsp?user",
                 "Workspace": "/analytics/pages/workspace-view.jsp?ws"
             },
-            
+
             /** @see DatabaseTable::makeTableSortable() method docs */
             clientSortParams: {
                 "descSortColumnNumber": 3
             },
-            
+
             mapColumnToServerSortParam: {
                 "ID": "session_id",
                 "User": "user",
@@ -699,7 +699,7 @@ function Configuration() {
             columnLinkPrefixList: {
                 "User": "/analytics/pages/user-view.jsp?user",
             },
-            
+
             mapColumnToServerSortParam: {
                 "User": "user",
                 "# Sessions": "sessions",
@@ -709,16 +709,16 @@ function Configuration() {
                 "# Deploys": "deploy",
             },
         },
-        
+
         // drill-down page
         drillDown: {
             widgetLabel: "Drill Down Report",
             presenterType: "DrillDownPresenter",
             isPaginable: true,    // default value is "false"
-            
+
             columnLinkPrefixList: {
                 "user": "/analytics/pages/user-view.jsp?user",
-                "ws": "/analytics/pages/workspace-view.jsp?ws"                
+                "ws": "/analytics/pages/workspace-view.jsp?ws"
             },
         }
     }
@@ -784,22 +784,22 @@ function Configuration() {
     /** url params which are passed from other pages */
     var crossPageParams = [
         "user",        // users-view > user-view; workspace-view > user-view;
-                        // top metrics report > user-view
+        // top metrics report > user-view
         "sort",        // users-view > users-view; workspaces-view >
-                        // workspaces-view
+        // workspaces-view
         "page",        // user-view > user-view; users-view > users-view;
-                        // workspaces-view > workspaces-view; workspace-view >
-                        // workspace-view
+        // workspaces-view > workspaces-view; workspace-view >
+        // workspace-view
         "session_id",  // user-view > session-view; workspace-view >
-                        // session-view; top metrics report > session-view
+        // session-view; top metrics report > session-view
         "ws",          // workspaces-view > workspace-view; user-view >
-                        // workspace-view
+        // workspace-view
         "factory",     // factories-view > factory-view; user-view >
-                        // factory-view; workspace-view > factory-view; top
-                        // metrics report > factory-view
+        // factory-view; workspace-view > factory-view; top
+        // metrics report > factory-view
         "project",      // projects-view > project-view
     ];
-    
+
     /** Global parameters stored in Browser Storage */
     var globalParams = [
         "ide",
@@ -811,16 +811,16 @@ function Configuration() {
         "to_date",
     ];
 
-    /** 
+    /**
      * Server configuration. Defined in the footer.jsp.
      */
     this.serverConfiguration = {};
-    
+
     /** List of system messages of Analytics */
     var systemMessagesList = [
         "User Did Not Enter Workspace",
     ];
-    
+
     /**
      * Returns property of widget.
      */
@@ -902,7 +902,7 @@ function Configuration() {
         }
         return serverProperty;
     }
-    
+
     /**
      * Return registered params with all values = null
      */
@@ -948,10 +948,10 @@ function Configuration() {
                 return true;
             }
         }
-        
+
         return false;
     }
-    
+
     function isSystemMessage(message) {
         for (var i in systemMessagesList) {
             if (systemMessagesList[i] == message) {

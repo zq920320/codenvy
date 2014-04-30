@@ -17,15 +17,18 @@
  */
 package com.codenvy.analytics.metrics.sessions;
 
+import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.OmittedFilters;
 
 import javax.annotation.security.RolesAllowed;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
-public class ProductUsageSessions extends AbstractProductUsageSessions {
+@OmittedFilters({MetricFilter.WS})
+public class ProductUsageSessionsByWorkspaces extends AbstractProductUsageSessions {
 
-    public ProductUsageSessions() {
-        super(MetricType.PRODUCT_USAGE_SESSIONS);
+    public ProductUsageSessionsByWorkspaces() {
+        super(MetricType.PRODUCT_USAGE_SESSIONS_BY_WORKSPACES);
     }
 }

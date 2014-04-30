@@ -23,7 +23,7 @@ import javax.annotation.security.RolesAllowed;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
-public class ProductUsageSessionsBetween1And10Min extends AbstractProductUsageSessions {
+public class ProductUsageSessionsBetween1And10Min extends AbstractProductUsage {
 
     public ProductUsageSessionsBetween1And10Min() {
         super(MetricType.PRODUCT_USAGE_SESSIONS_BETWEEN_1_AND_10_MIN, 1 * 60 * 1000, 10 * 60 * 1000, false, false);
