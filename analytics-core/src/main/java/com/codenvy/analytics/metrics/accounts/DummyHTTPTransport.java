@@ -21,6 +21,8 @@ import com.codenvy.dto.server.DtoFactory;
 
 import javax.inject.Singleton;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 
@@ -40,7 +42,33 @@ public class DummyHTTPTransport implements MetricTransport {
         return Arrays.asList(getDto(dtoInterface));
     }
 
-    private <DTO> DTO getDto(Class<DTO> dtoInterface) {
-        return DtoFactory.getInstance().createDto(dtoInterface);
+    private <DTO> DTO getDto(Class<DTO> dtoInterface) throws IOException {
+        try {
+            return setEmptyValues(DtoFactory.getInstance().createDto(dtoInterface));
+        } catch (ClassNotFoundException
+                | InvocationTargetException
+                | IllegalAccessException e) {
+            throw new IOException(e.getMessage(), e);
+        }
     }
+
+    private <DTO> DTO setEmptyValues(DTO dtoObject)
+            throws ClassNotFoundException, IllegalAccessException, InvocationTargetException {
+
+        Class<?> dtoClass = Class.forName(dtoObject.getClass().getName());
+
+        for (Method method : dtoClass.getMethods()) {
+            if (method.getName().startsWith("set")) {
+                if (method.getParameterTypes().length == 1) {
+                    Class<?> paramClass = method.getParameterTypes()[0];
+
+                    if (String.class.getName().equals(paramClass.getName())) {
+                        method.invoke(dtoObject, "");
+                    }
+                }
+            }
+        }
+        return dtoObject;
+    }
+
 }
