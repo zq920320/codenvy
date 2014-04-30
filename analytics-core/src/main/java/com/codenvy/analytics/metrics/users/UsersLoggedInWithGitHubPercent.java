@@ -18,19 +18,22 @@
 package com.codenvy.analytics.metrics.users;
 
 import com.codenvy.analytics.datamodel.DoubleValueData;
+import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.datamodel.ValueDataUtil;
 import com.codenvy.analytics.metrics.CalculatedMetric;
 import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Expandable;
 import com.codenvy.analytics.metrics.MetricType;
 
 import javax.annotation.security.RolesAllowed;
+
 import java.io.IOException;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
-public class UsersLoggedInWithGitHubPercent extends CalculatedMetric {
+public class UsersLoggedInWithGitHubPercent extends CalculatedMetric implements Expandable {
 
     public UsersLoggedInWithGitHubPercent() {
         super(MetricType.USERS_LOGGED_IN_WITH_GITHUB_PERCENT, new MetricType[]{MetricType.USERS_LOGGED_IN_TOTAL,
@@ -53,5 +56,15 @@ public class UsersLoggedInWithGitHubPercent extends CalculatedMetric {
     @Override
     public String getDescription() {
         return "The percent of authentication with GitHub account";
+    }
+    
+    @Override
+    public String getExpandedValueField() {
+        return ((Expandable) basedMetric[1]).getExpandedValueField();
+    }
+    
+    @Override
+    public ListValueData getExpandedValue(Context context) throws IOException {
+        return ((Expandable) basedMetric[1]).getExpandedValue(context);
     }
 }

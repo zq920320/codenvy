@@ -418,7 +418,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
 
         return result;
     }
-
+    
     /** @return DB operations specific for given metric */
     public abstract DBObject[] getSpecificDBOperations(Context clauses);
 

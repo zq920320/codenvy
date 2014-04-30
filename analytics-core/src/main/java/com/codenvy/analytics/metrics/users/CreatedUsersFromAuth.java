@@ -67,13 +67,13 @@ public class CreatedUsersFromAuth extends CalculatedMetric implements Expandable
         ListValueData minuendList = ((Expandable) basedMetric[0]).getExpandedValue(context);
         ListValueData subtrahendList = ((Expandable) basedMetric[1]).getExpandedValue(context);
         
-        ListValueData result = minuendList.doMinus(subtrahendList);
+        ListValueData result = minuendList.doSubtract(subtrahendList);
         
         // limit values size to 100000   
         if (result.size() > 100000) {
             result = result.subList(0, 100000-1);
         }
         
-        return minuendList.doMinus(subtrahendList);
+        return minuendList.doSubtract(subtrahendList);
     }
 }

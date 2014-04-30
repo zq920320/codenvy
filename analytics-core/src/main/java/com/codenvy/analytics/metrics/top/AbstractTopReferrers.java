@@ -17,6 +17,7 @@
  */
 package com.codenvy.analytics.metrics.top;
 
+import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricType;
 import com.mongodb.BasicDBObject;
@@ -62,7 +63,7 @@ public abstract class AbstractTopReferrers extends AbstractTopMetrics {
 
         dbOperations.add(
                 new BasicDBObject(
-                        "$match", getAndOperation(new BasicDBObject(REFERRER, new BasicDBObject("$ne", "")))));
+                        "$match", Utils.getAndOperation(new BasicDBObject(REFERRER, new BasicDBObject("$ne", "")))));
 
         dbOperations.add(
                 new BasicDBObject(
@@ -111,9 +112,9 @@ public abstract class AbstractTopReferrers extends AbstractTopMetrics {
                                 .append(CONVERTED_FACTORY_SESSION_RATE, 1)
                                 .append(AUTHENTICATED_FACTORY_SESSION_RATE, 1)
                                 .append(ANONYMOUS_FACTORY_SESSION_RATE,
-                                        getSubtractOperation(100, "$" + AUTHENTICATED_FACTORY_SESSION_RATE))
+                                        Utils.getSubtractOperation(100, "$" + AUTHENTICATED_FACTORY_SESSION_RATE))
                                 .append(ABANDON_FACTORY_SESSION_RATE,
-                                        getSubtractOperation(100, "$" + CONVERTED_FACTORY_SESSION_RATE))
+                                        Utils.getSubtractOperation(100, "$" + CONVERTED_FACTORY_SESSION_RATE))
                 ));
 
         dbOperations.add(new BasicDBObject("$sort", new BasicDBObject(TIME, -1)));

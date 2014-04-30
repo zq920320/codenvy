@@ -44,6 +44,12 @@ analytics.presenter.ReportPresenter.prototype.mapExpandedMetricToDrillDownPageTy
     "total_users": "USERS",
     "new_active_users": "USERS",
     "created_users_from_auth": "USERS",
+    "users_logged_in_with_form": "USERS",
+    "users_logged_in_with_github": "USERS",
+    "users_logged_in_with_google": "USERS",
+    "users_logged_in_with_form_percent": "USERS",
+    "users_logged_in_with_github_percent": "USERS",
+    "users_logged_in_with_google_percent": "USERS",
     
     /** WORKSPACES */
     "active_workspaces": "WORKSPACES",

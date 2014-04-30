@@ -19,19 +19,22 @@
 
 package com.codenvy.analytics;
 
-import com.codenvy.analytics.metrics.Context;
-import com.codenvy.analytics.metrics.Context.Builder;
-import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.metrics.Parameters.TimeUnit;
-
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Context.Builder;
+import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.metrics.Parameters.TimeUnit;
+import com.mongodb.BasicDBList;
+import com.mongodb.BasicDBObject;
 
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
@@ -184,5 +187,30 @@ public class Utils {
         }
 
         return result;
+    }
+    
+    /** @return mongodb operation (arg1 - arg2Field) */
+    public static BasicDBObject getSubtractOperation(long arg1, String arg2Field) {
+        BasicDBList subtractArgs = new BasicDBList();
+        subtractArgs.add(arg1);
+        subtractArgs.add(arg2Field);
+
+        return new BasicDBObject("$subtract", subtractArgs);
+    }
+
+    public static BasicDBObject getAndOperation(BasicDBObject... predicates) {
+        BasicDBList andArgs = new BasicDBList();
+
+        Collections.addAll(andArgs, predicates);
+
+        return new BasicDBObject("$and", andArgs);
+    }
+    
+    public static BasicDBObject getOrOperation(BasicDBObject... predicates) {
+        BasicDBList orArgs = new BasicDBList();
+
+        Collections.addAll(orArgs, predicates);
+        
+        return new BasicDBObject("$or", predicates);
     }
 }

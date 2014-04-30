@@ -54,10 +54,11 @@ import com.codenvy.analytics.metrics.projects.ProjectTypeWar;
 import com.codenvy.analytics.metrics.projects.ProjectsList;
 import com.codenvy.analytics.metrics.sessions.factory.FactorySessionsWithBuildPercent;
 import com.codenvy.analytics.metrics.sessions.factory.ProductUsageFactorySessionsList;
+import com.codenvy.analytics.metrics.users.AbstractLoggedInType;
 import com.codenvy.analytics.metrics.users.CreatedUsers;
 import com.codenvy.analytics.metrics.users.CreatedUsersFromAuth;
 import com.codenvy.analytics.metrics.users.UserInvite;
-import com.codenvy.analytics.metrics.users.UsersActivity;
+import com.codenvy.analytics.metrics.users.UsersLoggedInWithForm;
 import com.codenvy.analytics.metrics.workspaces.ActiveWorkspaces;
 import com.codenvy.analytics.persistent.JdbcDataPersisterFactory;
 import com.codenvy.analytics.pig.scripts.ScriptType;
@@ -143,6 +144,12 @@ public class TestExpandedMetric extends BaseTest {
         events.add(Event.Builder.createUserInviteEvent(TEST_USER, TEST_WS, TEST_USER)
                    .withDate("2013-11-01").withTime("16:00:00,155").build());
         
+        // login users
+        events.add(Event.Builder.createUserSSOLoggedInEvent(TEST_USER, "jaas")
+                                .withDate("2013-11-01").withTime("18:55:00,155").build());        
+        events.add(Event.Builder.createUserSSOLoggedInEvent("user2@gmail.com", "google")
+                                .withDate("2013-11-01").withTime("19:55:00,155").build());         
+        
         // start main session
         events.add(Event.Builder.createSessionStartedEvent(TEST_USER, TEST_WS, "ide", SESSION_ID)
                    .withDate("2013-11-01").withTime("19:00:00,155").build());
@@ -209,6 +216,34 @@ public class TestExpandedMetric extends BaseTest {
                                           configurator));
     }
 
+    @Test
+    public void testAbstractLoggedInType() throws Exception {
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20131101");
+        builder.put(Parameters.TO_DATE, "20131101");
+        builder.put(Parameters.USER, Parameters.USER_TYPES.REGISTERED.name());
+        builder.put(Parameters.WS, Parameters.WS_TYPES.PERSISTENT.name());
+        builder.put(Parameters.STORAGE_TABLE, MetricType.USERS_LOGGED_IN_TYPES.toString().toLowerCase());
+        builder.put(Parameters.EVENT, "user-sso-logged-in");
+        builder.put(Parameters.PARAM, "USING");
+        builder.put(Parameters.LOG, log.getAbsolutePath());
+        pigServer.execute(ScriptType.EVENTS_BY_TYPE, builder.build());
+                
+        builder = new Context.Builder();
+        builder.put(Parameters.TO_DATE, "20131101");
+        
+        AbstractLoggedInType metric = new UsersLoggedInWithForm();
+
+        // test expanded metric value
+        ListValueData expandedValue = metric.getExpandedValue(builder.build());
+        List<ValueData> all = expandedValue.getAll();
+        assertEquals(all.size(), 1);
+        
+        Map<String, ValueData> record = ((MapValueData) all.get(0)).getAll();
+        assertEquals(record.size(), 1);
+        assertEquals(record.get(metric.getExpandedValueField()).toString(), TEST_USER);
+    }
+    
     @Test
     public void testCalculatedSubtractionMetric() throws Exception {
         Context.Builder builder = new Context.Builder();
@@ -523,12 +558,12 @@ public class TestExpandedMetric extends BaseTest {
         assertEquals(all.size(), 2);
         
         Map<String, ValueData> project1 = ((MapValueData) all.get(0)).getAll();
-        assertEquals(project1.get(projectsListMetric.PROJECT).toString(), "project1");
-        assertEquals(project1.get(projectsListMetric.WS).toString(), TEST_WS);
+        assertEquals(project1.get(ProjectsList.PROJECT).toString(), "project1");
+        assertEquals(project1.get(ProjectsList.WS).toString(), TEST_WS);
 
         Map<String, ValueData> project2 = ((MapValueData) all.get(1)).getAll();
-        assertEquals(project2.get(projectsListMetric.PROJECT).toString(), "project2");
-        assertEquals(project2.get(projectsListMetric.WS).toString(), "ws3");
+        assertEquals(project2.get(ProjectsList.PROJECT).toString(), "project2");
+        assertEquals(project2.get(ProjectsList.WS).toString(), "ws3");
     }
     
     @Test

@@ -25,7 +25,6 @@ import java.io.ObjectOutput;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map.Entry;
 
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
@@ -64,7 +63,7 @@ public class ListValueData extends CollectionValueData {
     /**
      * @return <current list> - <subtrahend list>
      */
-    public ListValueData doMinus(ListValueData subtrahendData) {
+    public ListValueData doSubtract(ListValueData subtrahendData) {
         List<String> subtrahenValues = new ArrayList<>(subtrahendData.getAll().size());
 
         for (ValueData item: subtrahendData.getAll()) {
