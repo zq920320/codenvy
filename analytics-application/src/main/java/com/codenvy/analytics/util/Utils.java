@@ -20,12 +20,10 @@ package com.codenvy.analytics.util;
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.Context;
-import com.codenvy.analytics.metrics.MetricFilter;
-import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.datamodel.ValueDataUtil;
+import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.metrics.accounts.AbstractAccountMetric;
 import com.codenvy.analytics.metrics.accounts.AccountWorkspacesList;
-import com.codenvy.analytics.metrics.accounts.AccountsList;
 import com.codenvy.api.analytics.shared.dto.MetricInfoDTO;
 
 import javax.ws.rs.core.MultivaluedMap;
@@ -55,7 +53,7 @@ public class Utils {
 
         putQueryParameters(parameters, context);
         putPaginationParameters(page, perPage, context);
-        putNotSystemPrincipal(context, securityContext);
+        putFiltersForNoneSystemUser(context, securityContext);
         putDefaultValueIfAbsent(context, Parameters.FROM_DATE);
         putDefaultValueIfAbsent(context, Parameters.TO_DATE);
 
@@ -106,96 +104,103 @@ public class Utils {
     }
 
 
-    private static void putNotSystemPrincipal(Map<String, String> context,
-                                              SecurityContext securityContext) {
+    private static void putFiltersForNoneSystemUser(Map<String, String> context, SecurityContext securityContext) {
         if (securityContext != null && securityContext.getUserPrincipal() != null) {
             String user = securityContext.getUserPrincipal().getName();
             if (!isSystemUser(user, securityContext)) {
                 context.put("USER", user);
-                context.put("WS", getWorkspaces(context));
+                context.put("WS", getAvailableWorkspacesForCurrentUser(context));
             }
         }
     }
 
-    private static String getWorkspaces(Map<String, String> context) {
+    private static String getAvailableWorkspacesForCurrentUser(Map<String, String> context) {
         try {
-            AccountsList accountsList = new AccountsList();
-            ListValueData accounts = doAccountFilter(context, (ListValueData)accountsList.getValue(Context.EMPTY));
+            String role = context.get(MetricFilter.DATA_UNIVERSE.toString());
 
-            StringBuilder sb = new StringBuilder();
-            for (ValueData accountValueData : accounts.getAll()) {
-                Map<String, ValueData> mapAccount = (Map<String, ValueData>)accountValueData;
+            Metric accountsMetric = MetricFactory.getMetric(MetricType.ACCOUNTS_LIST);
+            ListValueData accounts = ValueDataUtil.getAsList(accountsMetric, Context.EMPTY);
 
-                Context.Builder builder = new Context.Builder();
-                builder.put(MetricFilter.ACCOUNT_ID, mapAccount.get(AccountWorkspacesList.ACCOUNT_ID));
-
-                AccountWorkspacesList accountWorkspacesList = new AccountWorkspacesList();
-                ListValueData workspaces = doWorkspaceFilter(context,
-                                                             (ListValueData)accountWorkspacesList
-                                                                     .getValue(builder.build()));
-
-                for (ValueData workspaceValueData : workspaces.getAll()) {
-                    Map<String, ValueData> mapWorkspace = (Map<String, ValueData>)workspaceValueData;
-
-                    if (sb.toString().length() != 0) {
-                        sb.append(",");
-                    }
-                    sb.append(mapWorkspace.get(AccountWorkspacesList.WORKSPACE_NAME));
-                }
+            if (isAccountsRoleExists(role)) {
+                accounts = doFilterAccountsByRole(role, accounts);
             }
 
-            return sb.toString();
+            return getWorkspacesByRole(role, accounts);
         } catch (IOException e) {
             throw new RuntimeException("Can not get workspaces for current user", e);
         }
 
     }
 
-    private static ListValueData doWorkspaceFilter(Map<String, String> context, ListValueData value) {
-        if (context.containsKey(MetricFilter.DATA_UNIVERSE.toString().toLowerCase())) {
-            String dataUniverseFilter = context.get(MetricFilter.DATA_UNIVERSE.toString().toLowerCase());
+    private static String getWorkspacesByRole(String role, ListValueData accounts) throws IOException {
+        StringBuilder result = new StringBuilder();
+        Metric accountWorkspaces = MetricFactory.getMetric(MetricType.ACCOUNT_WORKSPACES_LIST);
 
-            if (AbstractAccountMetric.WORKSPACE_ROLE_DEVELOPER.equalsIgnoreCase(dataUniverseFilter) ||
-                AbstractAccountMetric.WORKSPACE_ROLE_ADMIN.equalsIgnoreCase(dataUniverseFilter)) {
+        for (ValueData account : accounts.getAll()) {
+            Map<String, ValueData> accountData = ((MapValueData)account).getAll();
 
-                List<ValueData> list2Return = new ArrayList<>();
-                for (ValueData valueData : value.getAll()) {
+            Context.Builder builder = new Context.Builder();
+            builder.put(MetricFilter.ACCOUNT_ID, accountData.get(AccountWorkspacesList.ACCOUNT_ID));
 
-                    Map<String, ValueData> map = ((MapValueData)valueData).getAll();
+            ListValueData workspaces = ValueDataUtil.getAsList(accountWorkspaces, builder.build());
 
-                    if (map.get(AbstractAccountMetric.WORKSPACE_ROLES).getAsString().contains(dataUniverseFilter)) {
-                        list2Return.add(valueData);
-                    }
-                }
-                return new ListValueData(list2Return);
+            if (isWorkspacesRoleExists(role)) {
+                workspaces = doWorkspaceFilterByWorkspaceRole(role, workspaces);
             }
+
+            accumulateWorkspaces(result, workspaces);
         }
 
-        return value;
+        return result.toString();
     }
 
-    private static ListValueData doAccountFilter(Map<String, String> context, ListValueData value) {
-        if (context.containsKey(MetricFilter.DATA_UNIVERSE.toString().toLowerCase())) {
-            String dataUniverseFilter = context.get(MetricFilter.DATA_UNIVERSE.toString().toLowerCase());
+    private static void accumulateWorkspaces(StringBuilder result, ListValueData workspaces) {
+        for (ValueData workspace : workspaces.getAll()) {
+            Map<String, ValueData> workspaceData = ((MapValueData)workspace).getAll();
 
-            if (AbstractAccountMetric.ACCOUNT_ROLE_MEMBER.equalsIgnoreCase(dataUniverseFilter) ||
-                AbstractAccountMetric.ACCOUNT_ROLE_OWNER.equalsIgnoreCase(dataUniverseFilter)) {
+            if (result.length() != 0) {
+                result.append(ReadBasedMetric.SEPARATOR);
+            }
+            result.append(workspaceData.get(AccountWorkspacesList.WORKSPACE_NAME));
+        }
+    }
 
-                List<ValueData> list2Return = new ArrayList<>();
-                for (ValueData valueData : value.getAll()) {
+    private static boolean isWorkspacesRoleExists(String role) {
+        return role != null && (role.equalsIgnoreCase(AbstractAccountMetric.ROLE_WORKSPACE_DEVELOPER)
+                                || role.equalsIgnoreCase(AbstractAccountMetric.ROLE_WORKSPACE_ADMIN));
+    }
 
-                    Map<String, ValueData> map = ((MapValueData)valueData).getAll();
+    private static boolean isAccountsRoleExists(String role) {
+        return role != null && (role.equalsIgnoreCase(AbstractAccountMetric.ROLE_ACCOUNT_MEMBER)
+                                || role.equalsIgnoreCase(AbstractAccountMetric.ROLE_ACCOUNT_OWNER));
+    }
 
-                    if (map.get(AbstractAccountMetric.ACCOUNT_ROLES).getAsString().contains(dataUniverseFilter)) {
-                        list2Return.add(valueData);
-                    }
-                }
-                return new ListValueData(list2Return);
+    private static ListValueData doWorkspaceFilterByWorkspaceRole(String role, ListValueData workspaces) {
+        List<ValueData> list2Return = new ArrayList<>();
+        for (ValueData workspace : workspaces.getAll()) {
+            Map<String, ValueData> map = ((MapValueData)workspace).getAll();
+
+            String roles = map.get(AbstractAccountMetric.WORKSPACE_ROLES).getAsString();
+            if (roles.contains(role)) {
+                list2Return.add(workspace);
             }
         }
-
-        return value;
+        return new ListValueData(list2Return);
     }
+
+    private static ListValueData doFilterAccountsByRole(String role, ListValueData accounts) {
+        List<ValueData> list2Return = new ArrayList<>();
+        for (ValueData account : accounts.getAll()) {
+            Map<String, ValueData> map = ((MapValueData)account).getAll();
+
+            String roles = map.get(AbstractAccountMetric.ACCOUNT_ROLES).getAsString();
+            if (roles.contains(role)) {
+                list2Return.add(account);
+            }
+        }
+        return new ListValueData(list2Return);
+    }
+
 
     private static void putQueryParameters(MultivaluedMap<String, String> parameters, Map<String, String> context) {
         for (String key : parameters.keySet()) {

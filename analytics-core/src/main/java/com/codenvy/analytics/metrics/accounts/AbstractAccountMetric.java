@@ -77,10 +77,10 @@ public abstract class AbstractAccountMetric extends AbstractMetric {
     public static final String WORKSPACE_TEMPORARY = "workspace_temporary";
     public static final String WORKSPACE_ROLES     = "workspace_roles";
 
-    public static final String WORKSPACE_ROLE_ADMIN     = "workspace/admin";
-    public static final String WORKSPACE_ROLE_DEVELOPER = "workspace/developer";
-    public static final String ACCOUNT_ROLE_OWNER       = "account/owner";
-    public static final String ACCOUNT_ROLE_MEMBER      = "account/member";
+    public static final String ROLE_WORKSPACE_ADMIN     = "workspace/admin";
+    public static final String ROLE_WORKSPACE_DEVELOPER = "workspace/developer";
+    public static final String ROLE_ACCOUNT_OWNER       = "account/owner";
+    public static final String ROLE_ACCOUNT_MEMBER      = "account/member";
 
 
     protected final MetricTransport httpMetricTransport;
