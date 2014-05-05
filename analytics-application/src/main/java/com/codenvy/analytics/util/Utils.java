@@ -171,8 +171,10 @@ public class Utils {
     private static void putAvailableWorkspacesAsFilter(Map<String, String> context, SecurityContext securityContext) {
         if (!isSystemUser(securityContext)) {
             Set<String> workspaces = getAvailableWorkspacesForCurrentUser(context);
-            if (context.containsKey("WS")) {
-                if (!workspaces.contains(context.get("WS"))) {
+            String workspace = context.get("WS");
+
+            if (workspace != null) {
+                if (!workspaces.contains(workspace) && !isTemporaryWorkspace(workspace)) {
                     throw new IllegalStateException("Security violation. Probably user hasn't access to data");
                 }
             } else {
