@@ -99,6 +99,14 @@ public class Utils {
                || securityContext.isUserInRole("system/manager");
     }
 
+    public static boolean isTemporaryWorkspace(String name) {
+        return name.toUpperCase().startsWith("TMP-");
+    }
+
+    public static boolean isAnonymousUser(String name) {
+        return name.toUpperCase().startsWith("ANONYMOUSUSER_");
+    }
+
     private static void putDefaultValueIfAbsent(Map<String, String> context, Parameters param) {
         if (!context.containsKey(param.toString())) {
             context.put(param.toString(), param.getDefaultValue());
@@ -109,8 +117,10 @@ public class Utils {
     private static void putPossibleUsersAsFilter(Map<String, String> context, SecurityContext securityContext) {
         if (!isSystemUser(securityContext)) {
             Set<String> users = getPossibleUsers();
-            if (context.containsKey("USER")) {
-                if (!users.contains(context.get("USER"))) {
+            String user = context.get("USER");
+
+            if (user != null) {
+                if (!users.contains(user) && !isAnonymousUser(user)) {
                     throw new IllegalStateException("Security violation. Probably user hasn't access to data");
                 }
             } else {
