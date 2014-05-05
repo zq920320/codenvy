@@ -50,6 +50,7 @@ analytics.presenter.ReportPresenter.prototype.mapExpandedMetricToDrillDownPageTy
     "users_logged_in_with_form_percent": "USERS",
     "users_logged_in_with_github_percent": "USERS",
     "users_logged_in_with_google_percent": "USERS",
+    "returning_active_users": "USERS",
     
     /** WORKSPACES */
     "active_workspaces": "WORKSPACES",
@@ -60,6 +61,7 @@ analytics.presenter.ReportPresenter.prototype.mapExpandedMetricToDrillDownPageTy
     "collaborative_sessions_started": "WORKSPACES",
     "total_workspaces": "WORKSPACES",
     "new_active_workspaces": "WORKSPACES",
+    "returning_active_workspaces": "WORKSPACES",
     
     /** PROJECTS */
     "builds": "PROJECTS",
@@ -124,6 +126,7 @@ analytics.presenter.ReportPresenter.prototype.mapExpandedMetricToDrillDownPageTy
     "factory_sessions_with_run_percent": "SESSIONS",
     
     "abandoned_factory_sessions": "SESSIONS",
+    "non_factories_product_usage_sessions": "SESSIONS",
     
     /** FACTORIES */
     "created_factories": "FACTORIES", 
