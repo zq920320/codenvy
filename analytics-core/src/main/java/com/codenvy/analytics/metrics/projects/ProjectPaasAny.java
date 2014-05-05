@@ -84,10 +84,6 @@ public class ProjectPaasAny extends CalculatedMetric implements Expandable {
             ListValueData expandedValue = ((Expandable) metric).getExpandedValue(context);
             result = (ListValueData) result.union(expandedValue);
         }
-                
-        if (result.size() > LIMIT) {
-            result = result.subList(0, LIMIT);
-        }
         
         return result;
     }

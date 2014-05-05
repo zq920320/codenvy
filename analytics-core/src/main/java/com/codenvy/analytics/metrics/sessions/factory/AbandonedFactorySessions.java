@@ -71,10 +71,6 @@ public class AbandonedFactorySessions extends CalculatedMetric implements Expand
         
         ListValueData result = minuendList.doSubtract(subtrahendList);
         
-        if (result.size() > LIMIT) {
-            result = result.subList(0, LIMIT);
-        }
-        
         return result;
     }
 }
