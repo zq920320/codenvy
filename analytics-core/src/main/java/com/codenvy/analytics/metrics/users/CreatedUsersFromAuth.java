@@ -32,7 +32,7 @@ import java.io.IOException;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
-public class CreatedUsersFromAuth extends CalculatedMetric implements Expandable{
+public class CreatedUsersFromAuth extends CalculatedMetric implements Expandable {
 
     public CreatedUsersFromAuth() {
         super(MetricType.CREATED_USERS_FROM_AUTH, new MetricType[]{MetricType.CREATED_USERS,

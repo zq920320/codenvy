@@ -57,6 +57,7 @@ analytics.presenter.ReportPresenter.prototype.mapExpandedMetricToDrillDownPageTy
     "users_logged_in_with_google_percent": "USERS",
     "returning_active_users": "USERS",
     "product_usage_users_below_10_min": "USERS",
+    "users_logged_in_total": "USERS",
     
     
     /** WORKSPACES */
@@ -77,6 +78,7 @@ analytics.presenter.ReportPresenter.prototype.mapExpandedMetricToDrillDownPageTy
     "runs": "PROJECTS",
     "debugs": "PROJECTS",
     "destroyed_projects": "PROJECTS",
+    "code_refactorings": "PROJECTS",
     "code_completions": "PROJECTS",
     "build_queue_terminations": "PROJECTS",
     "run_queue_terminations": "PROJECTS",
@@ -127,6 +129,7 @@ analytics.presenter.ReportPresenter.prototype.mapExpandedMetricToDrillDownPageTy
     "product_usage_sessions": "SESSIONS",
     "factory_sessions": "SESSIONS",
     "product_usage_factory_sessions": "SESSIONS",
+    "factory_product_usage_time_total": "SESSIONS",
     
     "factory_sessions_with_build_percent": "SESSIONS",
     "factory_sessions_with_deploy_percent": "SESSIONS",
@@ -145,6 +148,7 @@ analytics.presenter.ReportPresenter.prototype.mapExpandedMetricToDrillDownPageTy
     "non_factories_product_usage_sessions": "SESSIONS",
     "product_usage_time_below_1_min": "SESSIONS",
     "product_usage_time_total": "SESSIONS",
+    "anonymous_factory_sessions": "SESSIONS",
     
     /** FACTORIES */
     "created_factories": "FACTORIES", 

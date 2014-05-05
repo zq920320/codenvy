@@ -17,19 +17,23 @@
  */
 package com.codenvy.analytics.metrics.users;
 
+import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.datamodel.ValueDataUtil;
 import com.codenvy.analytics.metrics.CalculatedMetric;
 import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Expandable;
+import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricType;
 
 import javax.annotation.security.RolesAllowed;
+
 import java.io.IOException;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
-public class UsersLoggedInTotal extends CalculatedMetric {
+public class UsersLoggedInTotal extends CalculatedMetric implements Expandable {
 
     public UsersLoggedInTotal() {
         super(MetricType.USERS_LOGGED_IN_TOTAL, new MetricType[]{MetricType.USERS_LOGGED_IN_WITH_FORM,
@@ -54,5 +58,22 @@ public class UsersLoggedInTotal extends CalculatedMetric {
     @Override
     public String getDescription() {
         return "The total number of login";
+    }
+    
+    @Override
+    public String getExpandedValueField() {
+        return USER;
+    }
+    
+    @Override
+    public ListValueData getExpandedValue(Context context) throws IOException {
+        ListValueData result = ListValueData.DEFAULT;
+        
+        for (Metric metric: basedMetric) {
+            ListValueData expandedValue = ((Expandable) metric).getExpandedValue(context);
+            result = (ListValueData) result.union(expandedValue);
+        }
+        
+        return result;
     }
 }
