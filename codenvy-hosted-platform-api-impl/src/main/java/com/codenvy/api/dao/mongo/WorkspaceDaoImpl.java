@@ -59,6 +59,7 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
     public WorkspaceDaoImpl(UserDao userDao, MemberDao memberDao, DB db, @Named(DB_COLLECTION) String collectionName) {
         collection = db.getCollection(collectionName);
         collection.ensureIndex(new BasicDBObject("id", 1), new BasicDBObject("unique", true));
+        collection.ensureIndex(new BasicDBObject("accountId", 1));
         this.memberDao = memberDao;
         this.userDao = userDao;
     }

@@ -86,6 +86,7 @@ public class AccountDaoImpl implements AccountDao {
         subscriptionCollection = db.getCollection(subscriptionCollectionName);
         subscriptionCollection.ensureIndex(new BasicDBObject("id", 1), new BasicDBObject("unique", true));
         memberCollection = db.getCollection(memberCollectionName);
+        memberCollection.ensureIndex(new BasicDBObject("members.accountId", 1));
         this.workspaceDao = workspaceDao;
     }
 
@@ -186,7 +187,7 @@ public class AccountDaoImpl implements AccountDao {
     @Override
     public List<Member> getMembers(String accountId) throws ServerException {
         List<Member> result = new ArrayList<>();
-        try (DBCursor cursor = memberCollection.find()) {
+        try (DBCursor cursor = memberCollection.find(new BasicDBObject("members.accountId", accountId))) {
             for (DBObject one : cursor) {
                 BasicDBList members = (BasicDBList)one.get("members");
                 for (Object memberObj : members) {

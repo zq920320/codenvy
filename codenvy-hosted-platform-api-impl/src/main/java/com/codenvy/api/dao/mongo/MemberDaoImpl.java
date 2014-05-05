@@ -72,6 +72,7 @@ public class MemberDaoImpl implements MemberDao {
     public MemberDaoImpl(UserDao userDao, WorkspaceDao workspaceDao, DB db,
                          @Named(DB_COLLECTION) String collectionName) {
         collection = db.getCollection(collectionName);
+        collection.ensureIndex("members.workspaceId");
         this.userDao = userDao;
         this.workspaceDao = workspaceDao;
     }
@@ -169,7 +170,7 @@ public class MemberDaoImpl implements MemberDao {
     @Override
     public List<Member> getWorkspaceMembers(String wsId) throws ServerException {
         List<Member> result = new ArrayList<>();
-        try (DBCursor cursor = collection.find()) {
+        try (DBCursor cursor = collection.find(new BasicDBObject("members.workspaceId", wsId))) {
             for (DBObject one : cursor) {
                 BasicDBList members = (BasicDBList)one.get("members");
                 for (Object membershipObject : members) {
