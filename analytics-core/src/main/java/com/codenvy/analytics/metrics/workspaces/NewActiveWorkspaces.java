@@ -32,7 +32,7 @@ import java.io.IOException;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
-public class NewActiveWorkspaces extends CalculatedMetric implements Expandable{
+public class NewActiveWorkspaces extends CalculatedMetric implements Expandable {
 
     public NewActiveWorkspaces() {
         super(MetricType.NEW_ACTIVE_WORKSPACES, new MetricType[]{MetricType.CREATED_WORKSPACES});

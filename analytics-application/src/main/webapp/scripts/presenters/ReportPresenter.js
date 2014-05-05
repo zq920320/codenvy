@@ -125,8 +125,14 @@ analytics.presenter.ReportPresenter.prototype.mapExpandedMetricToDrillDownPageTy
     "factory_sessions_with_deploy_percent": "SESSIONS",
     "factory_sessions_with_run_percent": "SESSIONS",
     
+    "product_usage_sessions_above_60_min": "SESSIONS",
+    "product_usage_sessions_below_1_min": "SESSIONS",
+    "product_usage_sessions_between_10_and_60_min": "SESSIONS",
+    "product_usage_sessions_between_1_and_10_min": "SESSIONS",
+    
     "abandoned_factory_sessions": "SESSIONS",
     "non_factories_product_usage_sessions": "SESSIONS",
+    "product_usage_time_below_1_min": "SESSIONS",
     
     /** FACTORIES */
     "created_factories": "FACTORIES", 
