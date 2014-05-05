@@ -21,7 +21,6 @@ package com.codenvy.analytics.metrics;
 import com.codenvy.analytics.Injector;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.datamodel.ValueDataFactory;
 import com.codenvy.analytics.datamodel.ValueDataUtil;
 
 import java.io.IOException;
@@ -57,10 +56,6 @@ public abstract class CumulativeMetric extends AbstractMetric {
     public ValueData getValue(Context context) throws IOException {
         initialValueContainer.validateExistenceInitialValueBefore(context);
 
-        if (!isSimplified(context)) {
-            return ValueDataFactory.createDefaultValue(getValueDataClass());
-        }
-
         Calendar fromDate = (Calendar)initialValueContainer.getInitialValueDate().clone();
         fromDate.add(Calendar.DAY_OF_MONTH, 1);
 
@@ -82,7 +77,7 @@ public abstract class CumulativeMetric extends AbstractMetric {
     private ValueData doGetValue(Context context) throws IOException, ParseException {
         LongValueData addedEntity = ValueDataUtil.getAsLong(addedMetric, context);
         LongValueData removedEntity = ValueDataUtil.getAsLong(removedMetric, context);
-        LongValueData initialValue = initialValueContainer.getInitialValue(metricName);
+        LongValueData initialValue = isSimplified(context) ? initialValueContainer.getInitialValue(metricName) : LongValueData.DEFAULT;
 
         return new LongValueData(initialValue.getAsLong() + addedEntity.getAsLong() - removedEntity.getAsLong());
     }

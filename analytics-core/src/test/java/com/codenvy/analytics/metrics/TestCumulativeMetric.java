@@ -36,7 +36,7 @@ import static org.testng.Assert.assertEquals;
 public class TestCumulativeMetric extends BaseTest {
 
     @Test
-    public void testEvaluateValue() throws Exception {
+    public void shouldEvaluateAndAddInitialValueFromConfiguration() throws Exception {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20120105");
         builder.put(Parameters.TO_DATE, "20120105");
@@ -55,7 +55,7 @@ public class TestCumulativeMetric extends BaseTest {
     }
 
     @Test
-    public void testReturnDefaultValueIfFilterExists() throws Exception {
+    public void shouldEvaluate() throws Exception {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20120105");
         builder.put(Parameters.TO_DATE, "20120105");
@@ -72,7 +72,7 @@ public class TestCumulativeMetric extends BaseTest {
                                                      mockedAddedMetric,
                                                      mockedRemovedMetric);
 
-        assertEquals(testedMetric.getValue(builder.build()), LongValueData.DEFAULT);
+        assertEquals(testedMetric.getValue(builder.build()), LongValueData.valueOf(20));
     }
 
     class TestedMetric extends CumulativeMetric {
