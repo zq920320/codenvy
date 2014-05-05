@@ -94,8 +94,7 @@ public class Utils {
             return false;
         }
 
-        Matcher matcher = ADMIN_ROLE_EMAIL_PATTERN.matcher(userPrincipal.getName());
-        return matcher.find()
+        return isSystemUser(userPrincipal.getName())
                || securityContext.isUserInRole("system/admin")
                || securityContext.isUserInRole("system/manager");
     }
@@ -109,7 +108,14 @@ public class Utils {
 
     private static void putCurrentUserAsFilter(Map<String, String> context, SecurityContext securityContext) {
         if (!isSystemUser(securityContext)) {
-            context.put("USER", securityContext.getUserPrincipal().getName());
+            String user = securityContext.getUserPrincipal().getName();
+            if (context.containsKey("USER")) {
+                if (context.get("USER").equals(user)) {
+                    throw new IllegalStateException("Security violation. Probably user hasn't access to data");
+                }
+            } else {
+                context.put("USER", user);
+            }
         }
     }
 
