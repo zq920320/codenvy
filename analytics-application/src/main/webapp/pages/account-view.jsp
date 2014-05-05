@@ -34,7 +34,7 @@
                             <div class="item" id="accountOverview"></div>
                             <div class="item" id="accountSubscriptions"></div>
                             <div class="item" id="accountWorkspaces"></div>
-                            <%--<div class="item" id="accountUsers"></div>--%>
+                            <div class="item" id="accountUsers"></div>
                         </div>
                     </div>
                 </div>

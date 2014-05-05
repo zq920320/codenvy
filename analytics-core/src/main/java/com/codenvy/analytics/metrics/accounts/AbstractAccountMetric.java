@@ -126,6 +126,10 @@ public abstract class AbstractAccountMetric extends AbstractMetric {
         return httpMetricTransport.getResource(Profile.class, "GET", PATH_PROFILE);
     }
 
+    protected Profile getProfile(String id) throws IOException {
+        return httpMetricTransport.getResource(Profile.class, "GET", PATH_PROFILE + "/" + id);
+    }
+
     protected StringValueData getEmail(Profile profile) {
         for (Attribute attribute : profile.getAttributes()) {
             if (PROFILE_ATTRIBUTE_EMAIL.equalsIgnoreCase(attribute.getName())) {
@@ -155,22 +159,31 @@ public abstract class AbstractAccountMetric extends AbstractMetric {
     }
 
     protected String getUserRoleInWorkspace(String userId, String workspaceId) throws IOException {
-        List<Member> members = getMembers(workspaceId);
+        try {
+            List<Member> members = getMembers(workspaceId);
 
-        for (Member member : members) {
-            if (member.getUserId().equals(userId)) {
-                return member.getRoles().toString();
+            for (Member member : members) {
+                if (member.getUserId().equals(userId)) {
+                    return member.getRoles().toString();
+                }
             }
+        } catch (IOException e) {
+            //TODO MAY BE CHECK MESSAGE
+            return ROLE_WORKSPACE_DEVELOPER;
         }
 
         throw new IOException("There is no member " + userId + " in " + workspaceId);
     }
 
     protected String getUserEmail(String userId) throws IOException {
+        /* TODO uncomment after update staging
         String pathUserById =
                 AbstractAccountMetric.PATH_USER_BY_ID.replace(AbstractAccountMetric.PARAM_USER_ID, userId);
         User user = httpMetricTransport.getResource(User.class, "GET", pathUserById);
         return user == null ? "" : user.getEmail();
+        */
+
+        return getEmail(getProfile(userId)).getAsString();
     }
 
     protected List<Subscription> getSubscriptions(String accountId) throws IOException {

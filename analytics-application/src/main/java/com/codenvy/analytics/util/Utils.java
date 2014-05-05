@@ -108,16 +108,55 @@ public class Utils {
 
     private static void putCurrentUserAsFilter(Map<String, String> context, SecurityContext securityContext) {
         if (!isSystemUser(securityContext)) {
-            String user = securityContext.getUserPrincipal().getName();
+            Set<String> users = getUsers();
             if (context.containsKey("USER")) {
-                if (context.get("USER").equals(user)) {
+                if (!users.contains(context.get("USER"))) {
                     throw new IllegalStateException("Security violation. Probably user hasn't access to data");
                 }
             } else {
-                context.put("USER", user);
+                context.put("USER", getFilterAsString(users));
             }
         }
     }
+
+    private static Set<String> getUsers() {
+        try {
+            Set<String> users = new HashSet<>();
+
+            Metric accountsMetric = MetricFactory.getMetric(MetricType.ACCOUNTS_LIST);
+            ListValueData accounts = ValueDataUtil.getAsList(accountsMetric, Context.EMPTY);
+
+            for (ValueData account : accounts.getAll()) {
+                Map<String, ValueData> map = ((MapValueData)account).getAll();
+
+                String accountId = map.get(AbstractAccountMetric.ACCOUNT_ID).getAsString();
+
+                users.addAll(getUsers(accountId));
+            }
+
+            return users;
+        } catch (IOException e) {
+            throw new RuntimeException("Can not get users in workspaces of current user", e);
+        }
+    }
+
+    private static Set<String> getUsers(String accountId) throws IOException {
+        Set<String> users = new HashSet<>();
+
+        Context.Builder builder = new Context.Builder();
+        builder.put(MetricFilter.ACCOUNT_ID, accountId);
+
+        Metric usersMetric = MetricFactory.getMetric(MetricType.ACCOUNT_USERS_WORKSPACES_LIST);
+        ListValueData usersData = ValueDataUtil.getAsList(usersMetric, builder.build());
+
+        for (ValueData user : usersData.getAll()) {
+            Map<String, ValueData> userData = ((MapValueData)user).getAll();
+            users.add(userData.get(AbstractMetric.USER).getAsString());
+        }
+
+        return users;
+    }
+
 
     private static void putAvailableWorkspacesAsFilter(Map<String, String> context, SecurityContext securityContext) {
         if (!isSystemUser(securityContext)) {

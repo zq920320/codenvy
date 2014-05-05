@@ -27,6 +27,7 @@ import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.RequiredFilter;
 import com.codenvy.api.account.shared.dto.AccountMembership;
 import com.codenvy.api.user.shared.dto.Member;
+import com.codenvy.api.user.shared.dto.User;
 import com.codenvy.api.workspace.shared.dto.Workspace;
 
 import javax.annotation.security.RolesAllowed;
@@ -51,20 +52,37 @@ public class AccountUsersWorkspacesList extends AbstractAccountMetric {
     public ValueData getValue(Context context) throws IOException {
         AccountMembership accountById = getAccountMembership(context);
 
+        User currentUser = getCurrentUser();
+        String currentUserId = currentUser.getId();
+
         List<ValueData> list2Return = new ArrayList<>();
         for (Workspace workspace : getWorkspaces(accountById.getId())) {
-            for (Member member : getMembers(workspace.getId())) {
 
-                String userEmail = getUserEmail(member.getUserId());
-                for (String role : member.getRoles()) {
-                    Map<String, ValueData> m = new HashMap<>();
-                    m.put(ROLES, StringValueData.valueOf(role));
-                    m.put(USER, StringValueData.valueOf(userEmail));
-                    m.put(WS, StringValueData.valueOf(workspace.getId().equals(member.getWorkspaceId()) ? workspace.getName()
-                                                                                                        : member.getWorkspaceId()));
+            String rolesCurrentUserInWorkspace = getUserRoleInWorkspace(currentUserId, workspace.getId());
+            if (rolesCurrentUserInWorkspace.contains(ROLE_WORKSPACE_ADMIN.toLowerCase())) {
 
-                    list2Return.add(new MapValueData(m));
+                for (Member member : getMembers(workspace.getId())) {
+
+                    String userEmail = getUserEmail(member.getUserId());
+                    for (String role : member.getRoles()) {
+                        Map<String, ValueData> m = new HashMap<>();
+                        m.put(ROLES, StringValueData.valueOf(role));
+                        m.put(USER, StringValueData.valueOf(userEmail));
+                        m.put(WS, StringValueData
+                                .valueOf(workspace.getId().equals(member.getWorkspaceId()) ? workspace.getName()
+                                                                                           : member.getWorkspaceId()));
+
+                        list2Return.add(new MapValueData(m));
+                    }
                 }
+            } else {
+
+                Map<String, ValueData> m = new HashMap<>();
+                m.put(ROLES, StringValueData.valueOf(ROLE_WORKSPACE_DEVELOPER));
+                m.put(USER, StringValueData.valueOf(currentUser.getEmail()));
+                m.put(WS, StringValueData.valueOf(workspace.getName()));
+
+                list2Return.add(new MapValueData(m));
             }
         }
 
