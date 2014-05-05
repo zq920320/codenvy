@@ -42,6 +42,11 @@ analytics.presenter.ReportPresenter.prototype.mapExpandedMetricToDrillDownPageTy
     "removed_users": "USERS",
     "users_activity": "USERS",
     "total_users": "USERS",
+    
+    "product_usage_users_above_300_min": "USERS",
+    "product_usage_users_between_10_and_60_min": "USERS",
+    "product_usage_users_between_60_and_300_min": "USERS",
+    
     "new_active_users": "USERS",
     "created_users_from_auth": "USERS",
     "users_logged_in_with_form": "USERS",
@@ -51,6 +56,8 @@ analytics.presenter.ReportPresenter.prototype.mapExpandedMetricToDrillDownPageTy
     "users_logged_in_with_github_percent": "USERS",
     "users_logged_in_with_google_percent": "USERS",
     "returning_active_users": "USERS",
+    "product_usage_users_below_10_min": "USERS",
+    
     
     /** WORKSPACES */
     "active_workspaces": "WORKSPACES",

@@ -17,19 +17,22 @@
  */
 package com.codenvy.analytics.metrics.sessions;
 
+import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.datamodel.ValueDataUtil;
 import com.codenvy.analytics.metrics.CalculatedMetric;
 import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Expandable;
 import com.codenvy.analytics.metrics.MetricType;
 
 import javax.annotation.security.RolesAllowed;
+
 import java.io.IOException;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
-public class ProductUsageUsersBelow10Min extends CalculatedMetric {
+public class ProductUsageUsersBelow10Min extends CalculatedMetric implements Expandable {
 
     public ProductUsageUsersBelow10Min() {
         super(MetricType.PRODUCT_USAGE_USERS_BELOW_10_MIN,
@@ -60,5 +63,25 @@ public class ProductUsageUsersBelow10Min extends CalculatedMetric {
     @Override
     public String getDescription() {
         return "The number of registered users who spent in product less than 10 minutes";
+    }
+
+    @Override
+    public String getExpandedValueField() {
+        return USER;
+    }
+    
+    @Override
+    public ListValueData getExpandedValue(Context context) throws IOException {
+        ListValueData value1 = ((Expandable) basedMetric[0]).getExpandedValue(context);
+        ListValueData value2 = ((Expandable) basedMetric[1]).getExpandedValue(context);
+        ListValueData value3 = ((Expandable) basedMetric[2]).getExpandedValue(context);
+        ListValueData value4 = ((Expandable) basedMetric[3]).getExpandedValue(context);
+        
+        ListValueData result = value1;
+        result = result.doSubtract(value2);
+        result = result.doSubtract(value3);
+        result = result.doSubtract(value4);
+        
+        return result;
     }
 }

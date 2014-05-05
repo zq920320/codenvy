@@ -19,7 +19,12 @@ package com.codenvy.analytics.metrics.sessions;
 
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.*;
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Expandable;
+import com.codenvy.analytics.metrics.MetricFilter;
+import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.metrics.ReadBasedMetric;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
@@ -27,12 +32,14 @@ import java.io.IOException;
 import java.text.ParseException;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public abstract class AbstractProductUsageUsers extends ReadBasedMetric {
+public abstract class AbstractProductUsageUsers extends ReadBasedMetric implements Expandable {
 
     private final long    min;
     private final long    max;
     private final boolean includeMin;
     private final boolean includeMax;
+
+    private String expandingField = USER;
 
     protected AbstractProductUsageUsers(String metricName,
                                         long min,
@@ -99,5 +106,28 @@ public abstract class AbstractProductUsageUsers extends ReadBasedMetric {
         }
 
         return super.getFilter(clauses);
+    }
+
+    @Override
+    public DBObject[] getSpecificExpandedDBOperations(Context clauses) {       
+        DBObject group = new BasicDBObject();
+        group.put(ID, "$" + expandingField);
+        group.put("total", new BasicDBObject("$sum", "$" + TIME));
+
+        DBObject range = new BasicDBObject();
+        range.put(includeMin ? "$gte" : "$gt", min);
+        range.put(includeMax ? "$lte" : "$lt", max);
+
+        DBObject projection = new BasicDBObject(expandingField, "$_id");
+        
+        return new DBObject[]{new BasicDBObject("$group", group),
+                              new BasicDBObject("$match", new BasicDBObject("total", range)),
+                              new BasicDBObject("$project", projection),
+                              };
+    }
+    
+    @Override
+    public String getExpandedValueField() {
+        return expandingField;
     }
 }

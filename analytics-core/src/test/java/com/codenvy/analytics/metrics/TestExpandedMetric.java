@@ -52,6 +52,9 @@ import com.codenvy.analytics.metrics.projects.CreatedProjects;
 import com.codenvy.analytics.metrics.projects.ProjectPaasGae;
 import com.codenvy.analytics.metrics.projects.ProjectTypeWar;
 import com.codenvy.analytics.metrics.projects.ProjectsList;
+import com.codenvy.analytics.metrics.sessions.ProductUsageTimeBelow1Min;
+import com.codenvy.analytics.metrics.sessions.ProductUsageTimeTotal;
+import com.codenvy.analytics.metrics.sessions.ProductUsageUsersBelow10Min;
 import com.codenvy.analytics.metrics.sessions.factory.FactorySessionsWithBuildPercent;
 import com.codenvy.analytics.metrics.sessions.factory.ProductUsageFactorySessionsList;
 import com.codenvy.analytics.metrics.users.AbstractLoggedInType;
@@ -192,6 +195,14 @@ public class TestExpandedMetric extends BaseTest {
         events.add(Event.Builder.createSessionFinishedEvent(TEST_USER, TEST_WS, "ide", SESSION_ID)
                                 .withDate("2013-11-01").withTime("19:55:00,555").build());
         
+        // make micro-session with duration < than 1 min
+        events.add(Event.Builder.createSessionStartedEvent("user4@gmail.com", TEST_WS, "ide", SESSION_ID + "_micro")
+                                .withDate("2013-11-01").withTime("23:00:00,155").build());
+        // finish main session
+        events.add(Event.Builder.createSessionFinishedEvent("user4@gmail.com", TEST_WS, "ide", SESSION_ID + "_micro")
+                                .withDate("2013-11-01").withTime("23:00:30,555").build());
+
+        
         log = LogGenerator.generateLog(events);
     }
     
@@ -217,7 +228,116 @@ public class TestExpandedMetric extends BaseTest {
     }
 
     @Test
-    public void testAbstractLoggedInType() throws Exception {
+    public void testProductUsageUsersBelow10MinMetric() throws Exception {
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20131101");
+        builder.put(Parameters.TO_DATE, "20131101");
+        builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.name());
+        builder.put(Parameters.WS, Parameters.WS_TYPES.PERSISTENT.name());
+        builder.put(Parameters.STORAGE_TABLE, MetricType.PRODUCT_USAGE_SESSIONS_LIST.toString().toLowerCase());
+        builder.put(Parameters.STORAGE_TABLE_USERS_STATISTICS, MetricType.USERS_STATISTICS_LIST.toString().toLowerCase());
+        builder.put(Parameters.STORAGE_TABLE_USERS_PROFILES, MetricType.USERS_PROFILES_LIST.toString().toLowerCase());
+        builder.put(Parameters.LOG, log.getAbsolutePath());
+        pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, builder.build());
+
+        builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20131101");
+        builder.put(Parameters.TO_DATE, "20131101");
+        builder.put(Parameters.USER, Parameters.USER_TYPES.REGISTERED.name());
+        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
+        builder.put(Parameters.STORAGE_TABLE, MetricType.USERS_ACTIVITY_LIST.toString().toLowerCase());
+        builder.put(Parameters.LOG, log.getAbsolutePath());
+        pigServer.execute(ScriptType.USERS_ACTIVITY, builder.build());
+        
+        builder = new Context.Builder();
+        builder.put(Parameters.TO_DATE, "20131101");
+        
+        ProductUsageUsersBelow10Min metric = new ProductUsageUsersBelow10Min();
+
+        // test expanded metric value
+        ListValueData expandedValue = metric.getExpandedValue(builder.build());
+        List<ValueData> all = expandedValue.getAll();
+        assertEquals(all.size(), 4);
+        
+        Map<String, ValueData> record = ((MapValueData) all.get(0)).getAll();
+        assertEquals(record.size(), 1);
+        assertEquals(record.get(metric.getExpandedValueField()).toString(), "user2@gmail.com");
+        
+        record = ((MapValueData) all.get(1)).getAll();
+        assertEquals(record.size(), 1);
+        assertEquals(record.get(metric.getExpandedValueField()).toString(), "user1");
+        
+        record = ((MapValueData) all.get(2)).getAll();
+        assertEquals(record.size(), 1);
+        assertEquals(record.get(metric.getExpandedValueField()).toString(), "user5");
+        
+        record = ((MapValueData) all.get(3)).getAll();
+        assertEquals(record.size(), 1);
+        assertEquals(record.get(metric.getExpandedValueField()).toString(), "user4@gmail.com");
+    }
+    
+    @Test
+    public void testProductUsageTimeBelow1MinMetric() throws Exception {
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20131101");
+        builder.put(Parameters.TO_DATE, "20131101");
+        builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.name());
+        builder.put(Parameters.WS, Parameters.WS_TYPES.PERSISTENT.name());
+        builder.put(Parameters.STORAGE_TABLE, MetricType.PRODUCT_USAGE_SESSIONS_LIST.toString().toLowerCase());
+        builder.put(Parameters.STORAGE_TABLE_USERS_STATISTICS, MetricType.USERS_STATISTICS_LIST.toString().toLowerCase());
+        builder.put(Parameters.STORAGE_TABLE_USERS_PROFILES, MetricType.USERS_PROFILES_LIST.toString().toLowerCase());
+        builder.put(Parameters.LOG, log.getAbsolutePath());
+        pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, builder.build());
+                
+        builder = new Context.Builder();
+        builder.put(Parameters.TO_DATE, "20131101");
+        
+        ProductUsageTimeBelow1Min metric = new ProductUsageTimeBelow1Min();
+
+        // test expanded metric value
+        ListValueData expandedValue = metric.getExpandedValue(builder.build());
+        List<ValueData> all = expandedValue.getAll();
+        assertEquals(all.size(), 1);
+        
+        Map<String, ValueData> record = ((MapValueData) all.get(0)).getAll();
+        assertEquals(record.size(), 1);
+        assertEquals(record.get(metric.getExpandedValueField()).toString(), SESSION_ID + "_micro");
+    }
+
+    @Test
+    public void testProductUsageTimeTotalMetric() throws Exception {
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20131101");
+        builder.put(Parameters.TO_DATE, "20131101");
+        builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.name());
+        builder.put(Parameters.WS, Parameters.WS_TYPES.PERSISTENT.name());
+        builder.put(Parameters.STORAGE_TABLE, MetricType.PRODUCT_USAGE_SESSIONS_LIST.toString().toLowerCase());
+        builder.put(Parameters.STORAGE_TABLE_USERS_STATISTICS, MetricType.USERS_STATISTICS_LIST.toString().toLowerCase());
+        builder.put(Parameters.STORAGE_TABLE_USERS_PROFILES, MetricType.USERS_PROFILES_LIST.toString().toLowerCase());
+        builder.put(Parameters.LOG, log.getAbsolutePath());
+        pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, builder.build());
+                
+        builder = new Context.Builder();
+        builder.put(Parameters.TO_DATE, "20131101");
+        
+        ProductUsageTimeTotal metric = new ProductUsageTimeTotal();
+
+        // test expanded metric value
+        ListValueData expandedValue = metric.getExpandedValue(builder.build());
+        List<ValueData> all = expandedValue.getAll();
+        assertEquals(all.size(), 2);
+        
+        Map<String, ValueData> record = ((MapValueData) all.get(0)).getAll();
+        assertEquals(record.size(), 1);
+        assertEquals(record.get(metric.getExpandedValueField()).toString(), SESSION_ID + "_micro");
+        
+        record = ((MapValueData) all.get(1)).getAll();
+        assertEquals(record.size(), 1);
+        assertEquals(record.get(metric.getExpandedValueField()).toString(), SESSION_ID);
+    }
+    
+    @Test
+    public void testAbstractLoggedInTypeMetrics() throws Exception {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
@@ -245,7 +365,7 @@ public class TestExpandedMetric extends BaseTest {
     }
     
     @Test
-    public void testCalculatedSubtractionMetric() throws Exception {
+    public void testCalculatedSubtractionMetrics() throws Exception {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
