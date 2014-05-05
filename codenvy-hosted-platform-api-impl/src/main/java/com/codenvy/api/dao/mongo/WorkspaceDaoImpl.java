@@ -20,8 +20,11 @@ package com.codenvy.api.dao.mongo;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
+import com.codenvy.api.core.notification.EventService;
 import com.codenvy.api.user.server.dao.MemberDao;
 import com.codenvy.api.user.server.dao.UserDao;
+import com.codenvy.api.workspace.server.observation.CreateWorkspaceEvent;
+import com.codenvy.api.workspace.server.observation.DeleteWorkspaceEvent;
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
 import com.codenvy.api.workspace.shared.dto.Attribute;
 import com.codenvy.api.workspace.shared.dto.Workspace;
@@ -41,9 +44,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-/**
- * Workspace DAO implementation based on MongoDB storage.
- */
+/** Workspace DAO implementation based on MongoDB storage. */
 @Singleton
 public class WorkspaceDaoImpl implements WorkspaceDao {
     /* should contain [3, 20] characters, first and last character is letter or digit, available characters {A-Za-z0-9.-_}*/
@@ -55,13 +56,17 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
     UserDao      userDao;
     MemberDao    memberDao;
 
+    private final EventService eventService;
+
     @Inject
-    public WorkspaceDaoImpl(UserDao userDao, MemberDao memberDao, DB db, @Named(DB_COLLECTION) String collectionName) {
+    public WorkspaceDaoImpl(UserDao userDao, MemberDao memberDao, DB db, @Named(DB_COLLECTION) String collectionName,
+                            EventService eventService) {
         collection = db.getCollection(collectionName);
         collection.ensureIndex(new BasicDBObject("id", 1), new BasicDBObject("unique", true));
         collection.ensureIndex(new BasicDBObject("accountId", 1));
         this.memberDao = memberDao;
         this.userDao = userDao;
+        this.eventService = eventService;
     }
 
     @Override
@@ -70,6 +75,7 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
             validateWorkspaceName(workspace.getName());
             ensureWorkspaceNameDoesNotExist(workspace.getName());
             collection.save(toDBObject(workspace));
+            eventService.publish(new CreateWorkspaceEvent(workspace.getId()));
         } catch (MongoException me) {
             throw new ServerException(me.getMessage(), me);
         }
@@ -93,6 +99,7 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
     public void remove(String id) throws ServerException, NotFoundException, ConflictException {
         try {
             collection.remove(new BasicDBObject("id", id));
+            eventService.publish(new DeleteWorkspaceEvent(id));
         } catch (MongoException me) {
             throw new ServerException(me.getMessage(), me);
         }
@@ -180,6 +187,7 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
      * @param workspaceName
      *         workspace name to check
      * @throws com.codenvy.api.core.ConflictException
+     *
      */
     private void ensureWorkspaceNameDoesNotExist(String workspaceName) throws ConflictException {
         DBObject res = collection.findOne(new BasicDBObject("name", workspaceName));

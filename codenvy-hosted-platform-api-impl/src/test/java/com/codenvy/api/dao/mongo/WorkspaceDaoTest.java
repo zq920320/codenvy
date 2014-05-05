@@ -20,6 +20,7 @@ package com.codenvy.api.dao.mongo;
 
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.ServerException;
+import com.codenvy.api.core.notification.EventService;
 import com.codenvy.api.user.server.dao.MemberDao;
 import com.codenvy.api.user.server.dao.UserDao;
 import com.codenvy.api.user.shared.dto.Member;
@@ -60,6 +61,10 @@ public class WorkspaceDaoTest extends BaseDaoTest {
 
     @Mock
     private MemberDao memberDao;
+
+    @Mock
+    private EventService eventService;
+
     private static final String COLL_NAME = "workspaces";
     WorkspaceDao workspaceDao;
 
@@ -69,7 +74,7 @@ public class WorkspaceDaoTest extends BaseDaoTest {
     @BeforeMethod
     public void setUp() throws Exception {
         super.setUp(COLL_NAME);
-        workspaceDao = new WorkspaceDaoImpl(userDao, memberDao, db, COLL_NAME);
+        workspaceDao = new WorkspaceDaoImpl(userDao, memberDao, db, COLL_NAME, eventService);
     }
 
     @AfterMethod
