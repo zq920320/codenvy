@@ -17,6 +17,10 @@
  */
 package com.codenvy.analytics.metrics.projects;
 
+import java.io.IOException;
+
+import javax.annotation.security.RolesAllowed;
+
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
@@ -26,11 +30,6 @@ import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.Expandable;
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricType;
-
-import javax.annotation.security.RolesAllowed;
-
-import java.io.IOException;
-import java.util.ArrayList;
 
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */

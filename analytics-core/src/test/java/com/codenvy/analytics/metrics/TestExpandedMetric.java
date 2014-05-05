@@ -63,6 +63,7 @@ import com.codenvy.analytics.metrics.users.AbstractLoggedInType;
 import com.codenvy.analytics.metrics.users.CreatedUsers;
 import com.codenvy.analytics.metrics.users.CreatedUsersFromAuth;
 import com.codenvy.analytics.metrics.users.UserInvite;
+import com.codenvy.analytics.metrics.users.UsersAcceptedInvitesPercent;
 import com.codenvy.analytics.metrics.users.UsersLoggedInWithForm;
 import com.codenvy.analytics.metrics.workspaces.ActiveWorkspaces;
 import com.codenvy.analytics.persistent.JdbcDataPersisterFactory;
@@ -144,10 +145,14 @@ public class TestExpandedMetric extends BaseTest {
         
         
         // same user invites twice
-        events.add(Event.Builder.createUserInviteEvent(TEST_USER, TEST_WS, TEST_USER)
-                   .withDate("2013-11-01").withTime("15:00:00,155").build());
-        events.add(Event.Builder.createUserInviteEvent(TEST_USER, TEST_WS, TEST_USER)
-                   .withDate("2013-11-01").withTime("16:00:00,155").build());
+        events.add(Event.Builder.createUserInviteEvent(TEST_USER, TEST_WS, TEST_USER + "_invite")
+                                .withDate("2013-11-01").withTime("15:00:00,155").build());
+        events.add(Event.Builder.createUserInviteEvent(TEST_USER, TEST_WS, TEST_USER + "_invite")
+                                .withDate("2013-11-01").withTime("16:00:00,155").build());        
+        // add user to workspace by accepting invite
+        events.add(Event.Builder.createUserAddedToWsEvent(TEST_USER + "_invite", TEST_WS, "", "", "", "invite")
+                                .withDate("2013-11-01").withTime("16:01:03").build());
+        
         
         // login users
         events.add(Event.Builder.createUserSSOLoggedInEvent(TEST_USER, "jaas")
@@ -228,7 +233,35 @@ public class TestExpandedMetric extends BaseTest {
                                           configurationManager,
                                           configurator));
     }
-
+    
+    @Test
+    public void testUsersAcceptedInvitesPercentMetric() throws Exception {
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20131101");
+        builder.put(Parameters.TO_DATE, "20131101");
+        builder.put(Parameters.USER, Parameters.USER_TYPES.REGISTERED.name());
+        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
+        builder.put(Parameters.EVENT, "user-added-to-ws");
+        builder.put(Parameters.PARAM, "FROM");
+        builder.put(Parameters.STORAGE_TABLE, MetricType.USERS_ADDED_TO_WORKSPACES.name().toLowerCase());
+        builder.put(Parameters.LOG, log.getAbsolutePath());
+        pigServer.execute(ScriptType.EVENTS_BY_TYPE, builder.build());
+        
+        builder = new Context.Builder();
+        builder.put(Parameters.TO_DATE, "20131101");
+        
+        UsersAcceptedInvitesPercent metric = new UsersAcceptedInvitesPercent();
+        
+        // test expanded metric value
+        ListValueData expandedValue = metric.getExpandedValue(builder.build());
+        List<ValueData> all = expandedValue.getAll();
+        assertEquals(all.size(), 1);
+        
+        Map<String, ValueData> record = ((MapValueData) all.get(0)).getAll();
+        assertEquals(record.size(), 1);
+        assertEquals(record.get(metric.getExpandedValueField()).toString(), TEST_USER + "_invite");
+    }
+    
     @Test
     public void testAbstractFactorySessionsMetrics() throws Exception {
         Context.Builder builder = new Context.Builder();
@@ -287,21 +320,25 @@ public class TestExpandedMetric extends BaseTest {
         // test expanded metric value
         ListValueData expandedValue = metric.getExpandedValue(builder.build());
         List<ValueData> all = expandedValue.getAll();
-        assertEquals(all.size(), 4);
+        assertEquals(all.size(), 5);
         
         Map<String, ValueData> record = ((MapValueData) all.get(0)).getAll();
         assertEquals(record.size(), 1);
         assertEquals(record.get(metric.getExpandedValueField()).toString(), "user2@gmail.com");
-        
+
         record = ((MapValueData) all.get(1)).getAll();
         assertEquals(record.size(), 1);
-        assertEquals(record.get(metric.getExpandedValueField()).toString(), "user1");
+        assertEquals(record.get(metric.getExpandedValueField()).toString(), TEST_USER + "_invite");
         
         record = ((MapValueData) all.get(2)).getAll();
         assertEquals(record.size(), 1);
-        assertEquals(record.get(metric.getExpandedValueField()).toString(), "user5");
+        assertEquals(record.get(metric.getExpandedValueField()).toString(), "user1");
         
         record = ((MapValueData) all.get(3)).getAll();
+        assertEquals(record.size(), 1);
+        assertEquals(record.get(metric.getExpandedValueField()).toString(), "user5");
+        
+        record = ((MapValueData) all.get(4)).getAll();
         assertEquals(record.size(), 1);
         assertEquals(record.get(metric.getExpandedValueField()).toString(), "user4@gmail.com");
     }
@@ -457,7 +494,7 @@ public class TestExpandedMetric extends BaseTest {
         
         Map<String, ValueData> workspace1 = ((MapValueData) all.get(0)).getAll();
         assertEquals(workspace1.size(), 1);
-        assertEquals(workspace1.get(((Expandable) metric).getExpandedValueField()).toString(), "id1");
+        assertEquals(workspace1.get(((Expandable) metric).getExpandedValueField()).toString(), "factory-id1");
     }
 
     @Test
@@ -485,7 +522,7 @@ public class TestExpandedMetric extends BaseTest {
         
         Map<String, ValueData> workspace1 = ((MapValueData) all.get(0)).getAll();
         assertEquals(workspace1.size(), 1);
-        assertEquals(workspace1.get("session_id").toString(), "id1");
+        assertEquals(workspace1.get("session_id").toString(), "factory-id1");
         
         // filter factory sessions by "factory_sessions_with_build_percent" metric
         builder = new Context.Builder();
@@ -507,7 +544,7 @@ public class TestExpandedMetric extends BaseTest {
         assertEquals(all.size(), 1);
         
         Map<String, ValueData> record = ((MapValueData) all.get(0)).getAll();
-        assertEquals(record.get(ProductUsageFactorySessionsList.SESSION_ID).toString(), "id1");
+        assertEquals(record.get(ProductUsageFactorySessionsList.SESSION_ID).toString(), "factory-id1");
     }
     
     @Test
