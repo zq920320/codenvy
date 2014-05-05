@@ -55,6 +55,8 @@ import com.codenvy.analytics.metrics.projects.ProjectsList;
 import com.codenvy.analytics.metrics.sessions.ProductUsageTimeBelow1Min;
 import com.codenvy.analytics.metrics.sessions.ProductUsageTimeTotal;
 import com.codenvy.analytics.metrics.sessions.ProductUsageUsersBelow10Min;
+import com.codenvy.analytics.metrics.sessions.factory.AbstractFactorySessions;
+import com.codenvy.analytics.metrics.sessions.factory.FactorySessionsBelow10Min;
 import com.codenvy.analytics.metrics.sessions.factory.FactorySessionsWithBuildPercent;
 import com.codenvy.analytics.metrics.sessions.factory.ProductUsageFactorySessionsList;
 import com.codenvy.analytics.metrics.users.AbstractLoggedInType;
@@ -106,19 +108,19 @@ public class TestExpandedMetric extends BaseTest {
                                 .withDate("2013-11-01").withTime("09:05:00").build());
         
         // create factory session events
-        events.add(Event.Builder.createSessionFactoryStartedEvent("id1", "tmp-1", "user1", "true", "brType")
+        events.add(Event.Builder.createSessionFactoryStartedEvent("factory-id1", "tmp-1", "user1", "true", "brType")
                                  .withDate("2013-11-01").withTime("10:00:00").build());
-        events.add(Event.Builder.createSessionFactoryStoppedEvent("id1", "tmp-1", "user1")
+        events.add(Event.Builder.createSessionFactoryStoppedEvent("factory-id1", "tmp-1", "user1")
                                 .withDate("2013-11-01").withTime("10:05:00").build());
         
-        events.add(Event.Builder.createSessionFactoryStartedEvent("id2", "tmp-2", "user1", "true", "brType")
+        events.add(Event.Builder.createSessionFactoryStartedEvent("factory-id2", "tmp-2", "user1", "true", "brType")
                                 .withDate("2013-11-01").withTime("10:20:00").build());
-        events.add(Event.Builder.createSessionFactoryStoppedEvent("id2", "tmp-2", "user1")
+        events.add(Event.Builder.createSessionFactoryStoppedEvent("factory-id2", "tmp-2", "user1")
                                 .withDate("2013-11-01").withTime("10:30:00").build());
         
-        events.add(Event.Builder.createSessionFactoryStartedEvent("id3", "tmp-3", "anonymoususer_1", "false", "brType")
+        events.add(Event.Builder.createSessionFactoryStartedEvent("factory-id3", "tmp-3", "anonymoususer_1", "false", "brType")
                                 .withDate("2013-11-01").withTime("11:00:00").build());        
-        events.add(Event.Builder.createSessionFactoryStoppedEvent("id3", "tmp-3", "anonymoususer_1")
+        events.add(Event.Builder.createSessionFactoryStoppedEvent("factory-id3", "tmp-3", "anonymoususer_1")
                                 .withDate("2013-11-01").withTime("11:15:00").build());
         
         events.add(Event.Builder.createFactoryProjectImportedEvent("tmp-1", "user1", "project", "type")
@@ -225,6 +227,34 @@ public class TestExpandedMetric extends BaseTest {
                                           Injector.getInstance(CSVReportPersister.class),
                                           configurationManager,
                                           configurator));
+    }
+
+    @Test
+    public void testAbstractFactorySessionsMetrics() throws Exception {
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20131101");
+        builder.put(Parameters.TO_DATE, "20131101");
+        builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.name());
+        builder.put(Parameters.WS, Parameters.WS_TYPES.TEMPORARY.name());
+        builder.put(Parameters.STORAGE_TABLE, MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST.toString().toLowerCase());
+        builder.put(Parameters.STORAGE_TABLE_PRODUCT_USAGE_SESSIONS, MetricType.PRODUCT_USAGE_SESSIONS_LIST.toString().toLowerCase());
+        builder.put(Parameters.STORAGE_TABLE_USERS_STATISTICS, MetricType.USERS_STATISTICS_LIST.name().toLowerCase());
+        builder.put(Parameters.LOG, log.getAbsolutePath());
+        pigServer.execute(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, builder.build());
+                
+        builder = new Context.Builder();
+        builder.put(Parameters.TO_DATE, "20131101");
+        
+        AbstractFactorySessions metric = new FactorySessionsBelow10Min();
+
+        // test expanded metric value
+        ListValueData expandedValue = metric.getExpandedValue(builder.build());
+        List<ValueData> all = expandedValue.getAll();
+        assertEquals(all.size(), 2);
+        
+        Map<String, ValueData> record = ((MapValueData) all.get(1)).getAll();
+        assertEquals(record.size(), 1);
+        assertEquals(record.get(((Expandable) metric).getExpandedValueField()).toString(), "factory-id1");
     }
 
     @Test
