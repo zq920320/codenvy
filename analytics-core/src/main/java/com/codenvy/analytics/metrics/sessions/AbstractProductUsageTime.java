@@ -20,6 +20,7 @@ package com.codenvy.analytics.metrics.sessions;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Expandable;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ReadBasedMetric;
 import com.mongodb.BasicDBObject;
@@ -29,12 +30,14 @@ import java.io.IOException;
 import java.text.ParseException;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public abstract class AbstractProductUsageTime extends ReadBasedMetric {
+public abstract class AbstractProductUsageTime extends ReadBasedMetric implements Expandable {
 
     final private long    min;
     final private long    max;
     final private boolean includeMin;
     final private boolean includeMax;
+
+    private String expandingField = SESSION_ID;
 
     protected AbstractProductUsageTime(String metricName,
                                        long min,
@@ -92,5 +95,21 @@ public abstract class AbstractProductUsageTime extends ReadBasedMetric {
         match.put(TIME, range);
 
         return dbObject;
+    }
+    
+    @Override
+    public DBObject[] getSpecificExpandedDBOperations(Context clauses) {       
+        DBObject group = new BasicDBObject();
+        group.put(ID, "$" + expandingField);
+
+        DBObject projection = new BasicDBObject(expandingField, "$_id");
+
+        return new DBObject[]{new BasicDBObject("$group", group),
+                              new BasicDBObject("$project", projection)};
+    }
+    
+    @Override
+    public String getExpandedValueField() {
+        return expandingField;
     }
 }

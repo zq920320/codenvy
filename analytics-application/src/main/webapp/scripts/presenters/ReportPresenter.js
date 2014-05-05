@@ -130,9 +130,14 @@ analytics.presenter.ReportPresenter.prototype.mapExpandedMetricToDrillDownPageTy
     "product_usage_sessions_between_10_and_60_min": "SESSIONS",
     "product_usage_sessions_between_1_and_10_min": "SESSIONS",
     
+    "product_usage_time_above_60_min": "SESSIONS",
+    "product_usage_time_between_10_and_60_min": "SESSIONS",
+    "product_usage_time_between_1_and_10_min": "SESSIONS",
+    
     "abandoned_factory_sessions": "SESSIONS",
     "non_factories_product_usage_sessions": "SESSIONS",
     "product_usage_time_below_1_min": "SESSIONS",
+    "product_usage_time_total": "SESSIONS",
     
     /** FACTORIES */
     "created_factories": "FACTORIES", 
