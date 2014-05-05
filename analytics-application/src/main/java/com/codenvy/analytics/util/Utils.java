@@ -50,7 +50,7 @@ public class Utils {
 
         putQueryParameters(parameters, context);
         putPaginationParameters(page, perPage, context);
-        putCurrentUserAsFilter(context, securityContext);
+        putPossibleUsersAsFilter(context, securityContext);
         putAvailableWorkspacesAsFilter(context, securityContext);
         putDefaultValueIfAbsent(context, Parameters.FROM_DATE);
         putDefaultValueIfAbsent(context, Parameters.TO_DATE);
@@ -106,9 +106,9 @@ public class Utils {
     }
 
 
-    private static void putCurrentUserAsFilter(Map<String, String> context, SecurityContext securityContext) {
+    private static void putPossibleUsersAsFilter(Map<String, String> context, SecurityContext securityContext) {
         if (!isSystemUser(securityContext)) {
-            Set<String> users = getUsers();
+            Set<String> users = getPossibleUsers();
             if (context.containsKey("USER")) {
                 if (!users.contains(context.get("USER"))) {
                     throw new IllegalStateException("Security violation. Probably user hasn't access to data");
@@ -119,7 +119,7 @@ public class Utils {
         }
     }
 
-    private static Set<String> getUsers() {
+    private static Set<String> getPossibleUsers() {
         try {
             Set<String> users = new HashSet<>();
 

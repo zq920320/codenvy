@@ -68,15 +68,16 @@ public class AccountUsersWorkspacesList extends AbstractAccountMetric {
                         Map<String, ValueData> m = new HashMap<>();
                         m.put(ROLES, StringValueData.valueOf(role));
                         m.put(USER, StringValueData.valueOf(userEmail));
-                        m.put(WS, StringValueData
-                                .valueOf(workspace.getId().equals(member.getWorkspaceId()) ? workspace.getName()
-                                                                                           : member.getWorkspaceId()));
+                        m.put(WS,
+                              StringValueData.valueOf(
+                                      workspace.getId().equals(member.getWorkspaceId()) ? workspace.getName()
+                                                                                        : member.getWorkspaceId()));
 
                         list2Return.add(new MapValueData(m));
                     }
                 }
-            } else {
 
+            } else {
                 Map<String, ValueData> m = new HashMap<>();
                 m.put(ROLES, StringValueData.valueOf(ROLE_WORKSPACE_DEVELOPER));
                 m.put(USER, StringValueData.valueOf(currentUser.getEmail()));

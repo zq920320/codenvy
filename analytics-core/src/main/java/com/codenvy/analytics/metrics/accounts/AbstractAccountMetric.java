@@ -159,17 +159,12 @@ public abstract class AbstractAccountMetric extends AbstractMetric {
     }
 
     protected String getUserRoleInWorkspace(String userId, String workspaceId) throws IOException {
-        try {
-            List<Member> members = getMembers(workspaceId);
+        List<Member> members = getMembers(workspaceId);
 
-            for (Member member : members) {
-                if (member.getUserId().equals(userId)) {
-                    return member.getRoles().toString();
-                }
+        for (Member member : members) {
+            if (member.getUserId().equals(userId)) {
+                return member.getRoles().toString();
             }
-        } catch (IOException e) {
-            //TODO MAY BE CHECK MESSAGE
-            return ROLE_WORKSPACE_DEVELOPER;
         }
 
         throw new IOException("There is no member " + userId + " in " + workspaceId);
