@@ -139,10 +139,10 @@ DEFINE extractWs(X, wsType) RETURNS Y {
 ---------------------------------------------------------------------------
 DEFINE extractUser(X, userType) RETURNS Y {
   x1 = FOREACH $X GENERATE *, FLATTEN(REGEX_EXTRACT_ALL(message, '.*\\sUSER#([^\\s#][^#]*|)#.*')) AS user1,
-                  FLATTEN(REGEX_EXTRACT_ALL(message, '.*\\[(.*)\\]\\[.*\\]\\[.*\\] - .*')) AS user2,
-                  FLATTEN(REGEX_EXTRACT_ALL(message, '.*ALIASES\\#[\\[]?([^\\#^\\[^\\]]*)[\\]]?\\#.*')) AS user3;
-  x2 = FOREACH x1 GENERATE *, (user1 IS NOT NULL AND user1 != '' ? user1 : (user2 IS NOT NULL AND user2 != '' ? user2 : (user3 IS NOT NULL AND user3 != '' ? user3 : 'default'))) AS newUser;
-  x3 = FOREACH x2 GENERATE *, FLATTEN(TOKENIZE(newUser, ',')) AS user4;
+                  FLATTEN(REGEX_EXTRACT_ALL(message, '.*ALIASES\\#[\\[]?([^\\#^\\[^\\]]*)[\\]]?\\#.*')) AS user2,
+                  FLATTEN(REGEX_EXTRACT_ALL(message, '.*\\[(.*)\\]\\[.*\\]\\[.*\\] - .*')) AS user3;
+  x2 = FOREACH x1 GENERATE *, (user1 IS NOT NULL AND user1 != '' ? user1 : (user2 IS NOT NULL AND user2 != '' ? user2 : (user3 IS NOT NULL AND user3 != '' ? user3 : 'default'))) AS probUser;
+  x3 = FOREACH x2 GENERATE *, FLATTEN(TOKENIZE(probUser, ',')) AS user4;
   x4 = FILTER x3 BY '$userType' == 'ANY' OR user4 == 'default' OR
             ('$userType' == 'ANTONYMOUS' AND INDEXOF(LOWER(user4), 'anonymoususer_', 0) == 0) OR
             ('$userType' == 'REGISTERED' AND INDEXOF(LOWER(user4), 'anonymoususer_', 0) < 0);
