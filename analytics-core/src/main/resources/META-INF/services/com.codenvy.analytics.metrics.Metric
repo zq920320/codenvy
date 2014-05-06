@@ -60,6 +60,8 @@ com.codenvy.analytics.metrics.projects.Debugs
 com.codenvy.analytics.metrics.projects.DockerConfigurationTime
 
 com.codenvy.analytics.metrics.workspaces.CreatedWorkspaces
+com.codenvy.analytics.metrics.workspaces.CreatedWorkspacesSet
+com.codenvy.analytics.metrics.workspaces.CreatedUniqueWorkspaces
 com.codenvy.analytics.metrics.workspaces.Workspaces
 com.codenvy.analytics.metrics.workspaces.DestroyedWorkspaces
 com.codenvy.analytics.metrics.workspaces.TotalWorkspaces
