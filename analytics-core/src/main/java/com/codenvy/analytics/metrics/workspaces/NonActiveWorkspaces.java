@@ -23,6 +23,7 @@ import com.codenvy.analytics.datamodel.ValueDataUtil;
 import com.codenvy.analytics.metrics.CalculatedMetric;
 import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.Parameters;
 
 import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
@@ -38,7 +39,7 @@ public class NonActiveWorkspaces extends CalculatedMetric {
 
     @Override
     public ValueData getValue(Context context) throws IOException {
-        LongValueData total = ValueDataUtil.getAsLong(basedMetric[0], context);
+        LongValueData total = ValueDataUtil.getAsLong(basedMetric[0], context.cloneAndRemove(Parameters.FROM_DATE));
         LongValueData active = ValueDataUtil.getAsLong(basedMetric[1], context);
 
         return new LongValueData(total.getAsLong() - active.getAsLong());

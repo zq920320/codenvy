@@ -106,6 +106,13 @@ public class Context {
         return params.containsKey(key.toString());
     }
 
+    public Context cloneAndRemove(Parameters param) {
+        Builder builder = new Builder(params);
+        builder.remove(param);
+
+        return builder.build();
+    }
+
     public Context cloneAndPut(MetricFilter param, String value) {
         Builder builder = new Builder(params);
         builder.put(param, value);
