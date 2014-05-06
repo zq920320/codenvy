@@ -32,7 +32,7 @@ from Codenvy S.A..
         <dependency>
             <groupId>com.codenvy.commons</groupId>
             <artifactId>codenvy-commons-inject</artifactId>
-            <version>${codenvy-commons.version}</version>
+            <version>${codenvy.commons.version}</version>
         </dependency>
         <dependency>
             <groupId>com.codenvy.platform-api</groupId>
@@ -72,7 +72,7 @@ from Codenvy S.A..
         <dependency>
             <groupId>org.mongodb</groupId>
             <artifactId>mongo-java-driver</artifactId>
-            <version>${mongodb.version}</version>
+            <version>${org.mongodb.version}</version>
         </dependency>
         <dependency>
             <groupId>javax.ws.rs</groupId>
@@ -84,19 +84,19 @@ from Codenvy S.A..
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>${logback.version}</version>
+            <version>${ch.qos.logback.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>de.bwaldvogel</groupId>
             <artifactId>mongo-java-server</artifactId>
-            <version>${mongo-java-server.version}</version>
+            <version>${org.mongodb.mongo-java-server.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.directory.server</groupId>
             <artifactId>apacheds-all</artifactId>
-            <version>${apacheds.version}</version>
+            <version>${org.apache.apacheds.version}</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
@@ -108,27 +108,27 @@ from Codenvy S.A..
         <dependency>
             <groupId>org.everrest</groupId>
             <artifactId>everrest-assured</artifactId>
-            <version>${everrest.assured.version}</version>
+            <version>${org.everrest.assured.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-core</artifactId>
-            <version>${hamcrest.version}</version>
+            <version>${org.hamcrest.version}</version>
             <scope>test</scope>
         </dependency>
         <!-- Mock testing -->
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>${mockito.version}</version>
+            <version>${org.mockito.version}</version>
             <scope>test</scope>
         </dependency>
         <!-- Mock testing of REST services -->
         <dependency>
             <groupId>org.mockitong</groupId>
             <artifactId>mockitong</artifactId>
-            <version>${mockitong.version}</version>
+            <version>${org.mockitong.version}</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
@@ -140,7 +140,7 @@ from Codenvy S.A..
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
-            <version>${testng.version}</version>
+            <version>${org.testng.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
