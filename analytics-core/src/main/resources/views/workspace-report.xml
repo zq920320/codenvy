@@ -51,11 +51,11 @@
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="returning_active_workspaces"/>
                 <parameter key="description" value="Returning Active Workspaces"/>
+                <parameter key="hide-negative-values" value="true"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="non_active_workspaces"/>
                 <parameter key="description" value="Non-Active Workspaces"/>
-                <parameter key="hide-negative-values" value="true"/>
             </row>
         </section>
     </view>
