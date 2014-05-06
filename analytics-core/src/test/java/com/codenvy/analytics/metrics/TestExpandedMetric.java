@@ -45,7 +45,6 @@ import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.Parameters.TimeUnit;
 import com.codenvy.analytics.metrics.projects.AbstractProjectPaas;
 import com.codenvy.analytics.metrics.projects.AbstractProjectType;
 import com.codenvy.analytics.metrics.projects.CreatedProjects;
@@ -62,9 +61,11 @@ import com.codenvy.analytics.metrics.sessions.factory.ProductUsageFactorySession
 import com.codenvy.analytics.metrics.users.AbstractLoggedInType;
 import com.codenvy.analytics.metrics.users.CreatedUsers;
 import com.codenvy.analytics.metrics.users.CreatedUsersFromAuth;
+import com.codenvy.analytics.metrics.users.NonActiveUsers;
 import com.codenvy.analytics.metrics.users.UserInvite;
 import com.codenvy.analytics.metrics.users.UsersAcceptedInvitesPercent;
 import com.codenvy.analytics.metrics.users.UsersLoggedInWithForm;
+import com.codenvy.analytics.metrics.users.UsersStatisticsList;
 import com.codenvy.analytics.metrics.workspaces.ActiveWorkspaces;
 import com.codenvy.analytics.persistent.JdbcDataPersisterFactory;
 import com.codenvy.analytics.pig.scripts.ScriptType;
@@ -94,6 +95,11 @@ public class TestExpandedMetric extends BaseTest {
     public void prepareDatabase() throws IOException, ParseException {
         List<Event> events = new ArrayList<>();
 
+        // add user activity at previous day
+        events.add(Event.Builder.createUserAddedToWsEvent("user5@gmail.com", "user5", "", "", "", "website")
+                   .withDate("2013-10-31").withTime("10:00:00").build());
+
+        
         // create user from factory
         events.add(Event.Builder.createFactoryUrlAcceptedEvent("tmp-4", "factoryUrl1", "referrer1", "org1", "affiliate1")
                                 .withDate("2013-11-01").withTime("09:01:00").build());
@@ -208,7 +214,6 @@ public class TestExpandedMetric extends BaseTest {
         // finish main session
         events.add(Event.Builder.createSessionFinishedEvent("user4@gmail.com", TEST_WS, "ide", SESSION_ID + "_micro")
                                 .withDate("2013-11-01").withTime("23:00:30,555").build());
-
         
         log = LogGenerator.generateLog(events);
     }
@@ -232,6 +237,62 @@ public class TestExpandedMetric extends BaseTest {
                                           Injector.getInstance(CSVReportPersister.class),
                                           configurationManager,
                                           configurator));
+    }
+
+    @Test
+    public void testNonActiveUsersMetric() throws Exception {
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20131031");
+        builder.put(Parameters.TO_DATE, "20131031");
+        builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.name());
+        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
+        builder.put(Parameters.STORAGE_TABLE, MetricType.USERS_ACTIVITY_LIST.name().toLowerCase());
+        builder.put(Parameters.LOG, log.getAbsolutePath());
+        pigServer.execute(ScriptType.USERS_ACTIVITY, builder.build());  
+        
+        builder.put(Parameters.FROM_DATE, "20131101");
+        builder.put(Parameters.TO_DATE, "20131101");
+        pigServer.execute(ScriptType.USERS_ACTIVITY, builder.build());
+        
+        builder.put(Parameters.FROM_DATE, "20131031");
+        builder.put(Parameters.TO_DATE, "20131031");
+        builder.put(Parameters.STORAGE_TABLE, MetricType.USERS_STATISTICS_LIST.toString().toLowerCase());
+        pigServer.execute(ScriptType.USERS_STATISTICS, builder.build());
+
+        builder.put(Parameters.FROM_DATE, "20131101");
+        builder.put(Parameters.TO_DATE, "20131101");
+        pigServer.execute(ScriptType.USERS_STATISTICS, builder.build());
+        
+        NonActiveUsers metric = new NonActiveUsers();
+        
+        // test expanded metric value
+        ListValueData expandedValue = metric.getExpandedValue(builder.build());
+        List<ValueData> all = expandedValue.getAll();
+        assertEquals(all.size(), 1);
+        
+        Map<String, ValueData> record = ((MapValueData) all.get(0)).getAll();
+        assertEquals(record.size(), 1);
+        assertEquals(record.get(metric.getExpandedValueField()).toString(), "user5@gmail.com");
+        
+        // test filtering user list by "non_active_users" metric
+        builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20131101");
+        builder.put(Parameters.TO_DATE, "20131101");
+        
+        UsersStatisticsList usersStatisticsListMetric = new UsersStatisticsList();
+        ListValueData value = (ListValueData)usersStatisticsListMetric.getValue(builder.build());
+        all = value.getAll();
+        assertEquals(value.getAll().size(), 4);       
+        
+        // calculate non-active user list
+        builder.put(Parameters.EXPANDED_METRIC_NAME, "non_active_users");
+        
+        ListValueData filteredValue = (ListValueData)usersStatisticsListMetric.getValue(builder.build());
+        all = filteredValue.getAll();
+        assertEquals(all.size(), 1);
+        
+        Map<String, ValueData> users = ((MapValueData) all.get(0)).getAll();
+        assertEquals(users.get(UsersStatisticsList.USER).toString(), "user5@gmail.com");
     }
     
     @Test
@@ -385,6 +446,7 @@ public class TestExpandedMetric extends BaseTest {
         pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, builder.build());
                 
         builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
         
         ProductUsageTimeTotal metric = new ProductUsageTimeTotal();
@@ -527,8 +589,6 @@ public class TestExpandedMetric extends BaseTest {
         // filter factory sessions by "factory_sessions_with_build_percent" metric
         builder = new Context.Builder();
         builder.put(Parameters.TO_DATE, "20131102");
-        builder.put(Parameters.TIME_UNIT, TimeUnit.DAY.toString());
-        builder.put(Parameters.TIME_INTERVAL, "1");
         
         ProductUsageFactorySessionsList sessionsListMetric = new ProductUsageFactorySessionsList();
 
@@ -727,9 +787,8 @@ public class TestExpandedMetric extends BaseTest {
         
         // calculate all projects list
         builder = new Context.Builder();
-        builder.put(Parameters.TO_DATE, "20131102");
-        builder.put(Parameters.TIME_UNIT, TimeUnit.DAY.toString());
-        builder.put(Parameters.TIME_INTERVAL, "1");
+        builder.put(Parameters.FROM_DATE, "20131101");
+        builder.put(Parameters.TO_DATE, "20131101");
         
         ProjectsList projectsListMetric = new ProjectsList();
 

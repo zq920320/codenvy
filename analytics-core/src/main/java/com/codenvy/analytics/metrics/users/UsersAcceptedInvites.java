@@ -55,7 +55,7 @@ public class UsersAcceptedInvites extends CalculatedMetric implements Expandable
     
     @Override
     public String getExpandedValueField() {
-        return ((Expandable) basedMetric[0]).getExpandedValueField();
+        return USER;
     }
     
     @Override

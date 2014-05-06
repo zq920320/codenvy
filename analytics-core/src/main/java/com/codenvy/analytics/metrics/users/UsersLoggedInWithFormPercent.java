@@ -60,7 +60,7 @@ public class UsersLoggedInWithFormPercent extends CalculatedMetric implements Ex
 
     @Override
     public String getExpandedValueField() {
-        return ((Expandable) basedMetric[1]).getExpandedValueField();
+        return USER;
     }
     
     @Override

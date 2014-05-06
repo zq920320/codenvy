@@ -56,7 +56,7 @@ public class ProductUsageTimeBelow1Min extends CalculatedMetric implements Expan
 
     @Override
     public String getExpandedValueField() {
-        return ((Expandable) basedMetric[0]).getExpandedValueField();
+        return SESSION_ID;
     }
     
     @Override

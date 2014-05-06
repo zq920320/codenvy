@@ -60,7 +60,7 @@ public class UsersAcceptedInvitesPercent extends CalculatedMetric implements Exp
     
     @Override
     public String getExpandedValueField() {
-        return ((Expandable) basedMetric[1]).getExpandedValueField();
+        return USER;
     }
     
     @Override

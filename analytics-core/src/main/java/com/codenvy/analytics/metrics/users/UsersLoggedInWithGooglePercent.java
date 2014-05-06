@@ -60,7 +60,7 @@ public class UsersLoggedInWithGooglePercent extends CalculatedMetric implements 
 
     @Override
     public String getExpandedValueField() {
-        return ((Expandable) basedMetric[1]).getExpandedValueField();
+        return USER;
     }
     
     @Override

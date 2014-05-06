@@ -22,6 +22,7 @@ package com.codenvy.analytics.metrics;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -33,7 +34,10 @@ import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.datamodel.ValueDataUtil;
+import com.codenvy.analytics.metrics.Context.Builder;
 import com.codenvy.analytics.metrics.users.AbstractUsersProfile;
+import com.codenvy.analytics.metrics.users.NonActiveUsers;
+import com.codenvy.analytics.metrics.workspaces.NonActiveWorkspaces;
 import com.codenvy.analytics.persistent.DataLoader;
 import com.codenvy.analytics.persistent.MongoDataStorage;
 import com.mongodb.BasicDBObject;
@@ -173,9 +177,8 @@ public abstract class ReadBasedMetric extends AbstractMetric {
      */
     public DBObject getFilter(Context clauses) throws IOException, ParseException {
         BasicDBObject match = new BasicDBObject();
-        setDateFilter(clauses, match);
 
-        // check if we need to filter list valued metric by another expanded metric
+        // check if we need to filter list valued metric by another expanded metric 
         if (clauses.hasFilterByExpandedMetric()) {
             String value = clauses.getAsString(Parameters.EXPANDED_METRIC_NAME);
             MetricType expandedMetricType = MetricType.valueOf(value.toUpperCase());
@@ -185,9 +188,13 @@ public abstract class ReadBasedMetric extends AbstractMetric {
             if (expandedMetric instanceof Expandable) {
                 String[] filteringValues = getExpandedMetricValues(expandedMetricType, clauses);
                 String filteringField = ((Expandable) expandedMetric).getExpandedValueField();
-                match.put(filteringField, new BasicDBObject("$in", filteringValues));                
+                match.put(filteringField, new BasicDBObject("$in", filteringValues)); 
             }
+
+            clauses = fixDateParametersDueToExpandedMetric(clauses, expandedMetric);
         }
+
+        setDateFilter(clauses, match);
         
         for (MetricFilter filter : clauses.getFilters()) {
             String field = filter.toString().toLowerCase();
@@ -242,6 +249,31 @@ public abstract class ReadBasedMetric extends AbstractMetric {
         }
 
         return new BasicDBObject("$match", match);
+    }
+
+    /**
+     * Fix date parameters due to specific expanded metric filter
+     */
+    private Context fixDateParametersDueToExpandedMetric(Context clauses, Metric expandedMetric) throws ParseException {
+        // fix date clauses to display non-active users or workspaces
+        if (expandedMetric instanceof NonActiveUsers
+            || expandedMetric instanceof NonActiveWorkspaces) {
+            if (clauses.exists(Parameters.FROM_DATE)) {
+                Calendar fromDate = clauses.getAsDate(Parameters.FROM_DATE);
+                clauses = new Builder(clauses)
+                            .put(Parameters.TO_DATE, fromDate)  // set to_date = from_date
+                            .remove(Parameters.FROM_DATE)       // remove from_date
+                            .build();                        
+            }
+            
+        // remove from_date clause to display all documents to_date
+        } else if (expandedMetric instanceof CumulativeMetric) {
+            clauses = new Builder(clauses)
+                        .remove(Parameters.FROM_DATE)  // remove from_date
+                        .build();
+        }
+        
+        return clauses;
     }
 
     private boolean isNullOrEmpty(Object value) {

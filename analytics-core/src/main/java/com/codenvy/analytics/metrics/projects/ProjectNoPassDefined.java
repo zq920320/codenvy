@@ -59,7 +59,7 @@ public class ProjectNoPassDefined extends CalculatedMetric implements Expandable
     
     @Override
     public String getExpandedValueField() {
-        return ((Expandable) basedMetric[1]).getExpandedValueField();
+        return PROJECT_ID;
     }
     
     @Override
