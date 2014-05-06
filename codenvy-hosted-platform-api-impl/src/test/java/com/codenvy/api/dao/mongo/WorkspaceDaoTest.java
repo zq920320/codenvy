@@ -62,7 +62,6 @@ public class WorkspaceDaoTest extends BaseDaoTest {
     @Mock
     private MemberDao memberDao;
 
-    @Mock
     private EventService eventService;
 
     private static final String COLL_NAME = "workspaces";
@@ -74,6 +73,7 @@ public class WorkspaceDaoTest extends BaseDaoTest {
     @BeforeMethod
     public void setUp() throws Exception {
         super.setUp(COLL_NAME);
+        eventService = new EventService();
         workspaceDao = new WorkspaceDaoImpl(userDao, memberDao, db, COLL_NAME, eventService);
     }
 
