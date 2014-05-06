@@ -33,7 +33,6 @@
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="non_active_users"/>
                 <parameter key="description" value="Non-Active Users"/>
-                <parameter key="hide-negative-values" value="true"/>
             </row>
         </section>
 

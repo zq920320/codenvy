@@ -17,35 +17,37 @@
  */
 package com.codenvy.analytics.metrics.users;
 
-import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.CalculatedMetric;
-import com.codenvy.analytics.metrics.Context;
-import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.*;
 
 import javax.annotation.security.RolesAllowed;
-import java.io.IOException;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
-public class NewActiveUsers extends CalculatedMetric {
+@OmittedFilters({MetricFilter.WS})
+public class CreatedUsersSet extends AbstractSetValueResulted {
 
-    public NewActiveUsers() {
-        super(MetricType.NEW_ACTIVE_USERS, new MetricType[]{MetricType.CREATED_UNIQUE_USERS});
+    public CreatedUsersSet() {
+        super(MetricType.CREATED_USERS_SET, USER);
     }
 
     @Override
-    public ValueData getValue(Context context) throws IOException {
-        return basedMetric[0].getValue(context);
+    public String getStorageCollectionName() {
+        return getStorageCollectionName(MetricType.CREATED_USERS);
     }
 
     @Override
-    public Class<? extends ValueData> getValueDataClass() {
-        return LongValueData.class;
+    public Context applySpecificFilter(Context clauses) {
+        if (!clauses.exists(MetricFilter.USER)) {
+            Context.Builder builder = new Context.Builder(clauses);
+            builder.put(MetricFilter.USER, Parameters.WS_TYPES.PERSISTENT.name());
+            return builder.build();
+        }
+
+        return clauses;
     }
 
     @Override
     public String getDescription() {
-        return "Non-active users";
+        return "Created registered users";
     }
 }

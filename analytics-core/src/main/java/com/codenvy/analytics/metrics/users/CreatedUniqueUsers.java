@@ -17,35 +17,24 @@
  */
 package com.codenvy.analytics.metrics.users;
 
-import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.CalculatedMetric;
-import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.AbstractActiveEntities;
+import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.OmittedFilters;
 
 import javax.annotation.security.RolesAllowed;
-import java.io.IOException;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
-public class NewActiveUsers extends CalculatedMetric {
+@OmittedFilters({MetricFilter.WS})
+public class CreatedUniqueUsers extends AbstractActiveEntities {
 
-    public NewActiveUsers() {
-        super(MetricType.NEW_ACTIVE_USERS, new MetricType[]{MetricType.CREATED_UNIQUE_USERS});
-    }
-
-    @Override
-    public ValueData getValue(Context context) throws IOException {
-        return basedMetric[0].getValue(context);
-    }
-
-    @Override
-    public Class<? extends ValueData> getValueDataClass() {
-        return LongValueData.class;
+    public CreatedUniqueUsers() {
+        super(MetricType.CREATED_UNIQUE_USERS, MetricType.CREATED_USERS_SET, USER);
     }
 
     @Override
     public String getDescription() {
-        return "Non-active users";
+        return "The number of create unique users";
     }
 }

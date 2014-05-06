@@ -33,7 +33,7 @@ public class ReturningActiveUsers extends CalculatedMetric {
 
     public ReturningActiveUsers() {
         super(MetricType.RETURNING_ACTIVE_USERS, new MetricType[]{MetricType.ACTIVE_USERS,
-                                                                  MetricType.CREATED_USERS});
+                                                                  MetricType.CREATED_UNIQUE_USERS});
     }
 
     @Override

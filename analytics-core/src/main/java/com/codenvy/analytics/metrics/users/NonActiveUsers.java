@@ -33,13 +33,13 @@ public class NonActiveUsers extends CalculatedMetric {
 
     public NonActiveUsers() {
         super(MetricType.NON_ACTIVE_USERS, new MetricType[]{MetricType.ACTIVE_USERS,
-                                                            MetricType.TOTAL_USERS});
+                                                            MetricType.CREATED_UNIQUE_USERS});
     }
 
     @Override
     public ValueData getValue(Context context) throws IOException {
-        LongValueData active = ValueDataUtil.getAsLong(basedMetric[0], context);
-        LongValueData total = ValueDataUtil.getAsLong(basedMetric[1], context);
+        LongValueData total = ValueDataUtil.getAsLong(basedMetric[0], context);
+        LongValueData active = ValueDataUtil.getAsLong(basedMetric[1], context);
 
         return new LongValueData(total.getAsLong() - active.getAsLong());
     }
