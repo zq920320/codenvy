@@ -32,14 +32,14 @@ import java.io.IOException;
 public class NonActiveWorkspaces extends CalculatedMetric {
 
     public NonActiveWorkspaces() {
-        super(MetricType.NON_ACTIVE_WORKSPACES, new MetricType[]{MetricType.ACTIVE_WORKSPACES,
-                                                                 MetricType.TOTAL_WORKSPACES});
+        super(MetricType.NON_ACTIVE_WORKSPACES, new MetricType[]{MetricType.CREATED_UNIQUE_WORKSPACES,
+                                                                 MetricType.ACTIVE_WORKSPACES});
     }
 
     @Override
     public ValueData getValue(Context context) throws IOException {
-        LongValueData active = ValueDataUtil.getAsLong(basedMetric[0], context);
-        LongValueData total = ValueDataUtil.getAsLong(basedMetric[1], context);
+        LongValueData total = ValueDataUtil.getAsLong(basedMetric[0], context);
+        LongValueData active = ValueDataUtil.getAsLong(basedMetric[1], context);
 
         return new LongValueData(total.getAsLong() - active.getAsLong());
     }
