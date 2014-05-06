@@ -93,8 +93,8 @@ com.codenvy.analytics.metrics.users.UsersStatistics
 com.codenvy.analytics.metrics.users.UsersStatisticsPrecomputed
 com.codenvy.analytics.metrics.users.CompletedProfiles
 com.codenvy.analytics.metrics.users.CreatedUsers
-com.codenvy.analytics.metrics.users.CreatedUniqueUsers
 com.codenvy.analytics.metrics.users.CreatedUsersSet
+com.codenvy.analytics.metrics.users.CreatedUniqueUsers
 com.codenvy.analytics.metrics.users.CreatedUsersFromFactory
 com.codenvy.analytics.metrics.users.CreatedUsersFromAuth
 com.codenvy.analytics.metrics.users.RemovedUsers
