@@ -32,8 +32,8 @@ import java.io.IOException;
 public class NonActiveUsers extends CalculatedMetric {
 
     public NonActiveUsers() {
-        super(MetricType.NON_ACTIVE_USERS, new MetricType[]{MetricType.ACTIVE_USERS,
-                                                            MetricType.CREATED_UNIQUE_USERS});
+        super(MetricType.NON_ACTIVE_USERS, new MetricType[]{MetricType.CREATED_UNIQUE_USERS,
+                                                            MetricType.ACTIVE_USERS});
     }
 
     @Override
