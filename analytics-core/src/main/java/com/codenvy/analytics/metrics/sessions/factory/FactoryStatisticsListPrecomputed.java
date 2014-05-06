@@ -61,4 +61,10 @@ public class FactoryStatisticsListPrecomputed extends AbstractListValueResulted 
     public MetricType getBasedMetric() {
         return MetricType.FACTORY_STATISTICS_LIST;
     }
+
+
+    @Override
+    public boolean canReadPrecomputedData(Context context) {
+        return true;
+    }
 }

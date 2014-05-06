@@ -17,9 +17,7 @@
  */
 package com.codenvy.analytics.metrics.workspaces;
 
-import com.codenvy.analytics.metrics.AbstractCount;
-import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.analytics.metrics.PrecomputedMetric;
+import com.codenvy.analytics.metrics.*;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -38,5 +36,10 @@ public class WorkspacesStatisticsPrecomputed extends AbstractCount implements Pr
     @Override
     public String getDescription() {
         return "The number of workspaces in statistics";
+    }
+
+    @Override
+    public boolean canReadPrecomputedData(Context context) {
+        return ((PrecomputedMetric)MetricFactory.getMetric(MetricType.WORKSPACES_STATISTICS_LIST_PRECOMPUTED)).canReadPrecomputedData(context);
     }
 }

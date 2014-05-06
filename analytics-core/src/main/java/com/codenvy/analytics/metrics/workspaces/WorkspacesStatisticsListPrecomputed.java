@@ -21,6 +21,9 @@ import com.codenvy.analytics.metrics.*;
 
 import javax.annotation.security.RolesAllowed;
 
+import static com.codenvy.analytics.Utils.getFilterAsSet;
+import static com.codenvy.analytics.Utils.isAnonymousExist;
+
 /**
  * @author Alexander Reshetnyak
  */
@@ -66,5 +69,11 @@ public class WorkspacesStatisticsListPrecomputed extends AbstractListValueResult
     @Override
     public MetricType getBasedMetric() {
         return MetricType.WORKSPACES_STATISTICS_LIST;
+    }
+
+    @Override
+    public boolean canReadPrecomputedData(Context context) {
+        String value = context.getAsString(MetricFilter.WS);
+        return value == null || !isAnonymousExist(getFilterAsSet(value));
     }
 }

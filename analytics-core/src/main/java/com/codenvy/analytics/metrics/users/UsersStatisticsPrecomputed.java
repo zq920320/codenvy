@@ -17,9 +17,7 @@
  */
 package com.codenvy.analytics.metrics.users;
 
-import com.codenvy.analytics.metrics.AbstractCount;
-import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.analytics.metrics.PrecomputedMetric;
+import com.codenvy.analytics.metrics.*;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -36,5 +34,10 @@ public class UsersStatisticsPrecomputed extends AbstractCount implements Precomp
     @Override
     public String getDescription() {
         return "The total number of users";
+    }
+
+    @Override
+    public boolean canReadPrecomputedData(Context context) {
+        return ((PrecomputedMetric)MetricFactory.getMetric(MetricType.USERS_STATISTICS_LIST_PRECOMPUTED)).canReadPrecomputedData(context);
     }
 }

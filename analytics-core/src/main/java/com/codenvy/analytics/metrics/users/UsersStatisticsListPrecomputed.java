@@ -21,6 +21,9 @@ import com.codenvy.analytics.metrics.*;
 
 import javax.annotation.security.RolesAllowed;
 
+import static com.codenvy.analytics.Utils.getFilterAsSet;
+import static com.codenvy.analytics.Utils.isTemporaryExist;
+
 /**
  * @author Alexander Reshetnyak
  */
@@ -70,5 +73,11 @@ public class UsersStatisticsListPrecomputed extends AbstractListValueResulted im
     @Override
     public MetricType getBasedMetric() {
         return MetricType.USERS_STATISTICS_LIST;
+    }
+
+    @Override
+    public boolean canReadPrecomputedData(Context context) {
+        String value = context.getAsString(MetricFilter.USER);
+        return value == null || !isTemporaryExist(getFilterAsSet(value));
     }
 }

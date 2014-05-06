@@ -24,4 +24,6 @@ package com.codenvy.analytics.metrics;
  * @author Anatoliy Bazko
  */
 public interface PrecomputedMetric {
+
+    boolean canReadPrecomputedData(Context context);
 }

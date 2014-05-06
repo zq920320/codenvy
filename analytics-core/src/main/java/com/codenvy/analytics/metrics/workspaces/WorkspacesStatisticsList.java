@@ -99,41 +99,4 @@ public class WorkspacesStatisticsList extends AbstractListValueResulted {
         return new DBObject[]{new BasicDBObject("$group", group),
                               new BasicDBObject("$project", project)};
     }
-
-//    @Override
-//    protected ValueData postComputation(ValueData valueData, Map<String, String> clauses) throws IOException {
-//        String wsName = MetricFilter.WS.get(clauses);
-//        
-//        if (wsName != null) {
-//            int wsMemberCount = getWsUserCount(wsName);
-//            
-//            List<ValueData> value = new ArrayList<>();
-//            ListValueData listValueData = (ListValueData)valueData;
-//            
-//            for (ValueData items : listValueData.getAll()) {
-//                MapValueData prevItems = (MapValueData)items;
-//                Map<String, ValueData> newItems = new HashMap<>(prevItems.getAll());
-//
-//                // add workspace user number
-//                newItems.put(USERS, LongValueData.valueOf(wsMemberCount));
-//
-//                value.add(new MapValueData(newItems));
-//            }
-//
-//            return new ListValueData(value); 
-//            
-//        } else {
-//            return valueData;
-//        }
-//    }
-//
-//    
-//    private int getWsUserCount(String wsName) throws IOException {
-//        try {
-//            WorkspaceManager workspaceManager = organizationClient.getWorkspaceManager();
-//            return workspaceManager.getWorkspaceMembers(wsName).size();
-//        } catch (OrganizationServiceException e) {
-//            throw new IOException(e);
-//        }
-//    }
 }

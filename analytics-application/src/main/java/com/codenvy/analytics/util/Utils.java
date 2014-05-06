@@ -35,6 +35,10 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.codenvy.analytics.Utils.getFilterAsString;
+import static com.codenvy.analytics.Utils.isAnonymousUser;
+import static com.codenvy.analytics.Utils.isTemporaryWorkspace;
+
 /** @author Anatoliy Bazko */
 public class Utils {
 
@@ -51,7 +55,7 @@ public class Utils {
         putQueryParameters(parameters, context);
         putPaginationParameters(page, perPage, context);
         putPossibleUsersAsFilter(context, securityContext);
-        putAvailableWorkspacesAsFilter(context, securityContext);
+        putPossibleWorkspacesAsFilter(context, securityContext);
         putDefaultValueIfAbsent(context, Parameters.FROM_DATE);
         putDefaultValueIfAbsent(context, Parameters.TO_DATE);
 
@@ -97,14 +101,6 @@ public class Utils {
         return isSystemUser(userPrincipal.getName())
                || securityContext.isUserInRole("system/admin")
                || securityContext.isUserInRole("system/manager");
-    }
-
-    public static boolean isTemporaryWorkspace(String name) {
-        return name.toUpperCase().startsWith("TMP-");
-    }
-
-    public static boolean isAnonymousUser(String name) {
-        return name.toUpperCase().startsWith("ANONYMOUSUSER_");
     }
 
     private static void putDefaultValueIfAbsent(Map<String, String> context, Parameters param) {
@@ -167,8 +163,7 @@ public class Utils {
         return users;
     }
 
-
-    private static void putAvailableWorkspacesAsFilter(Map<String, String> context, SecurityContext securityContext) {
+    private static void putPossibleWorkspacesAsFilter(Map<String, String> context, SecurityContext securityContext) {
         if (!isSystemUser(securityContext)) {
             Set<String> workspaces = getAvailableWorkspacesForCurrentUser(context);
             String workspace = context.get("WS");
@@ -181,19 +176,6 @@ public class Utils {
                 context.put("WS", getFilterAsString(workspaces));
             }
         }
-    }
-
-    private static String getFilterAsString(Set<String> workspaces) {
-        StringBuilder result = new StringBuilder();
-        for (String workspace : workspaces) {
-            if (result.length() > 0) {
-                result.append(ReadBasedMetric.SEPARATOR);
-            }
-
-            result.append(workspace);
-        }
-
-        return result.toString();
     }
 
     private static Set<String> getAvailableWorkspacesForCurrentUser(Map<String, String> context) {

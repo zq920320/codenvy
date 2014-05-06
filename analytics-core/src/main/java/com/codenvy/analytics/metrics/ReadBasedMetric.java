@@ -126,14 +126,18 @@ public abstract class ReadBasedMetric extends AbstractMetric {
         return valueData;
     }
 
-    /** Allows modify context before evaluation if necessary. */
+    /**
+     * Allows to modify context before evaluation if necessary.
+     */
     public Context applySpecificFilter(Context context) throws IOException {
         return context;
     }
 
     private boolean canReadPrecomputedData(Context context) {
+        String precomputedMetricName = getName() + PRECOMPUTED;
         return !context.exists(Parameters.DATA_COMPUTATION_PROCESS)
-               && MetricFactory.exists(getName() + PRECOMPUTED)
+               && MetricFactory.exists(precomputedMetricName)
+               && ((PrecomputedMetric)MetricFactory.getMetric(precomputedMetricName)).canReadPrecomputedData(context)
                && (!context.exists(Parameters.FROM_DATE) || context.isDefaultValue(Parameters.FROM_DATE))
                && (!context.exists(Parameters.TO_DATE) || context.isDefaultValue(Parameters.TO_DATE));
     }

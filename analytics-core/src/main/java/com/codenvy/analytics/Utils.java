@@ -32,9 +32,7 @@ import java.net.URLDecoder;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -196,5 +194,50 @@ public class Utils {
         dateFilter.put("$gte", context.getAsDate(Parameters.FROM_DATE).getTimeInMillis());
         dateFilter.put("$lt", context.getAsDate(Parameters.TO_DATE).getTimeInMillis() + ReadBasedMetric.DAY_IN_MILLISECONDS);
         return new BasicDBObject(ReadBasedMetric.DATE, dateFilter);
+    }
+
+    public static String getFilterAsString(Set<String> values) {
+        StringBuilder result = new StringBuilder();
+        for (String value : values) {
+            if (result.length() > 0) {
+                result.append(ReadBasedMetric.SEPARATOR);
+            }
+
+            result.append(value);
+        }
+
+        return result.toString();
+    }
+
+    public static Set<String> getFilterAsSet(String value) {
+        return new HashSet<>(Arrays.asList(value.split(ReadBasedMetric.SEPARATOR)));
+    }
+
+    public static boolean isTemporaryWorkspace(String name) {
+        return name.toUpperCase().startsWith("TMP-");
+    }
+
+    public static boolean isAnonymousUser(String name) {
+        return name.toUpperCase().startsWith("ANONYMOUSUSER_");
+    }
+
+    public static boolean isTemporaryExist(Set<String> workspaces) {
+        for (String workspace : workspaces) {
+            if (isTemporaryWorkspace(workspace)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static boolean isAnonymousExist(Set<String> users) {
+        for (String user : users) {
+            if (isAnonymousUser(user)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
