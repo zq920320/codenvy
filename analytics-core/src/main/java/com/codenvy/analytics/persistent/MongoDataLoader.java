@@ -29,7 +29,9 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.*;
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+/**
+ * @author Anatoliy Bazko
+ */
 public class MongoDataLoader implements DataLoader {
 
     private final DB db;
@@ -44,7 +46,7 @@ public class MongoDataLoader implements DataLoader {
 
         try {
             clauses = metric.applySpecificFilter(clauses);
-            
+
             DBObject filter = metric.getFilter(clauses);
             DBObject[] dbOperations = metric.getDBOperations(clauses);
             AggregationOutput aggregation = dbCollection.aggregate(filter, dbOperations);

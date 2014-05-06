@@ -22,7 +22,7 @@ import com.codenvy.analytics.metrics.*;
 import javax.annotation.security.RolesAllowed;
 
 import static com.codenvy.analytics.Utils.getFilterAsSet;
-import static com.codenvy.analytics.Utils.isAnonymousExist;
+import static com.codenvy.analytics.Utils.isTemporaryExist;
 
 /**
  * @author Alexander Reshetnyak
@@ -74,6 +74,6 @@ public class WorkspacesStatisticsListPrecomputed extends AbstractListValueResult
     @Override
     public boolean canReadPrecomputedData(Context context) {
         String value = context.getAsString(MetricFilter.WS);
-        return value == null || !isAnonymousExist(getFilterAsSet(value));
+        return value == null || !isTemporaryExist(getFilterAsSet(value));
     }
 }
