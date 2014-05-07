@@ -20,7 +20,7 @@ package com.codenvy.analytics.metrics.users;
 import com.codenvy.analytics.metrics.AbstractActiveEntities;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.analytics.metrics.OmittedFilters;
+import com.codenvy.analytics.metrics.OmitFilters;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -28,7 +28,7 @@ import javax.annotation.security.RolesAllowed;
  * @author Anatoliy Bazko
  */
 @RolesAllowed({"system/admin", "system/manager"})
-@OmittedFilters({MetricFilter.WS})
+@OmitFilters({MetricFilter.WS})
 public class UsersStatistics extends AbstractActiveEntities {
 
     public UsersStatistics() {

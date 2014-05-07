@@ -28,7 +28,7 @@ import static com.codenvy.analytics.Utils.isAnonymousExist;
  * @author Alexander Reshetnyak
  */
 @RolesAllowed({})
-@OmittedFilters({MetricFilter.WS})
+@OmitFilters({MetricFilter.WS})
 public class UsersStatisticsListPrecomputed extends AbstractListValueResulted implements PrecomputedDataMetric {
 
     public UsersStatisticsListPrecomputed() {

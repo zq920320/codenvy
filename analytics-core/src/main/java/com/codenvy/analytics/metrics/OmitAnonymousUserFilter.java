@@ -15,26 +15,22 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.metrics.sessions.factory;
+package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.metrics.*;
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
-import javax.annotation.security.RolesAllowed;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
+ * Specifies the list of {@link MetricFilter} should be removed from the context before metric evaluation.
+ *
  * @author Anatoliy Bazko
  */
-@RolesAllowed({"any"})
-@RequiredFilter(MetricFilter.FACTORY)
-@OmitFilters({MetricFilter.USER})
-public class FactoryUsed extends AbstractCount {
-
-    public FactoryUsed() {
-        super(MetricType.FACTORY_USED, MetricType.FACTORIES_ACCEPTED_LIST);
-    }
-
-    @Override
-    public String getDescription() {
-        return "The number of factory usage";
-    }
+@Documented
+@Retention(RUNTIME)
+@Target({TYPE})
+public @interface OmitAnonymousUserFilter {
 }

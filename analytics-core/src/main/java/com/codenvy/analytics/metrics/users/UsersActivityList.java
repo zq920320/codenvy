@@ -29,6 +29,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.codenvy.analytics.Utils.isSuitableUser;
+import static com.codenvy.analytics.Utils.isSuitableWs;
+
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
 public class UsersActivityList extends AbstractListValueResulted {
@@ -303,8 +306,15 @@ public class UsersActivityList extends AbstractListValueResulted {
         SessionData sessionData = SessionData.init(builder.build());
 
         if (sessionData != null) {
-            builder.putIfAbsent(Parameters.USER, sessionData.user);
-            builder.putIfAbsent(Parameters.WS, sessionData.ws);
+            if (isSuitableUser(sessionData.user, builder.getAsString(MetricFilter.USER))
+                || isSuitableWs(sessionData.ws, builder.getAsString(MetricFilter.WS))) {
+
+                builder.put(Parameters.USER, sessionData.user);
+                builder.put(Parameters.WS, sessionData.ws);
+            } else {
+                throw new IllegalStateException("Security violation. User probably hasn't access to the data");
+            }
+
             builder.put(Parameters.TO_DATE, sessionData.toDate);
             builder.put(Parameters.FROM_DATE, sessionData.fromDate);
         } else {

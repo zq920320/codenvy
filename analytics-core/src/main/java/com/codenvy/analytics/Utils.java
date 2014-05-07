@@ -240,4 +240,14 @@ public class Utils {
 
         return false;
     }
+
+    public static boolean isSuitableUser(String user, String userFilter) {
+        Set<String> users = getFilterAsSet(userFilter);
+        return users.contains(user) || (isAnonymousUser(user) && users.contains(Parameters.USER_TYPES.ANONYMOUS.toString()));
+    }
+
+    public static boolean isSuitableWs(String ws, String wsFilter) {
+        Set<String> workspaces = getFilterAsSet(wsFilter);
+        return workspaces.contains(ws) || (isTemporaryWorkspace(ws) && workspaces.contains(Parameters.WS_TYPES.TEMPORARY.toString()));
+    }
 }

@@ -19,13 +19,13 @@ package com.codenvy.analytics.metrics.sessions;
 
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.analytics.metrics.OmittedFilters;
+import com.codenvy.analytics.metrics.OmitFilters;
 
 import javax.annotation.security.RolesAllowed;
 
 /** @author Anatoliy Bazko */
 @RolesAllowed({"system/admin", "system/manager"})
-@OmittedFilters({MetricFilter.USER})
+@OmitFilters({MetricFilter.USER})
 public class ProductUsageSessionsByUsersList extends AbstractProductUsageSessionsList {
 
     public ProductUsageSessionsByUsersList() {

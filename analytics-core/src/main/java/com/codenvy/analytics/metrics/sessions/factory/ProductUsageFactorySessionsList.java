@@ -29,7 +29,7 @@ import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
-@OmittedFilters({MetricFilter.WS})
+@OmitFilters({MetricFilter.WS})
 public class ProductUsageFactorySessionsList extends AbstractListValueResulted {
     public ProductUsageFactorySessionsList() {
         super(MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST);

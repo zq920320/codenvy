@@ -20,13 +20,13 @@ package com.codenvy.analytics.metrics.workspaces;
 import com.codenvy.analytics.metrics.AbstractActiveEntities;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.analytics.metrics.OmittedFilters;
+import com.codenvy.analytics.metrics.OmitFilters;
 
 import javax.annotation.security.RolesAllowed;
 
 /** @author Dmytro Nochevnov */
 @RolesAllowed({"system/admin", "system/manager"})
-@OmittedFilters({MetricFilter.WS})
+@OmitFilters({MetricFilter.WS})
 public class UsageTimeByWorkspaces extends AbstractActiveEntities {
 
     public UsageTimeByWorkspaces() {
