@@ -26,7 +26,6 @@ import com.codenvy.analytics.metrics.Parameters.TimeUnit;
 import com.codenvy.analytics.metrics.ReadBasedMetric;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
-import com.sun.istack.internal.Nullable;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -242,7 +241,7 @@ public class Utils {
         return false;
     }
 
-    public static boolean isAllowedEntity(@Nullable String testedEntity, String allowedEntitiesAsString) {
+    public static boolean isAllowedEntity(String testedEntity, String allowedEntitiesAsString) {
         if (allowedEntitiesAsString.equalsIgnoreCase("ANY")) {
             return true;
         } else if (testedEntity == null) {
