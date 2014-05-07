@@ -57,18 +57,7 @@ public class Utils {
         putDefaultValueIfAbsent(context, Parameters.FROM_DATE);
         putDefaultValueIfAbsent(context, Parameters.TO_DATE);
 
-        validate(context);
-
         return context;
-    }
-
-    private static void validate(Map<String, String> context) {
-        validateParameter(Parameters.FROM_DATE, context);
-        validateParameter(Parameters.TO_DATE, context);
-    }
-
-    private static void validateParameter(Parameters param, Map<String, String> context) {
-        param.validate(context.get(param.toString()), Context.valueOf(context));
     }
 
     public static Map<String, String> extractParams(UriInfo info, SecurityContext securityContext) {
