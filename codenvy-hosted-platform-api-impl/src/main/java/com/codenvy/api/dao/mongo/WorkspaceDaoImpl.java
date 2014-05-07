@@ -98,8 +98,9 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
     @Override
     public void remove(String id) throws ServerException, NotFoundException, ConflictException {
         try {
-            collection.remove(new BasicDBObject("id", id));
-            eventService.publish(new DeleteWorkspaceEvent(id));
+            DBObject workspace = collection.findAndRemove(new BasicDBObject("id", id));
+            Workspace removedWorkspace = DtoFactory.getInstance().createDtoFromJson(workspace.toString(), Workspace.class);
+            eventService.publish(new DeleteWorkspaceEvent(id, removedWorkspace.isTemporary()));
         } catch (MongoException me) {
             throw new ServerException(me.getMessage(), me);
         }
