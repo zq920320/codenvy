@@ -26,6 +26,7 @@ import com.codenvy.analytics.metrics.Parameters.TimeUnit;
 import com.codenvy.analytics.metrics.ReadBasedMetric;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
+import com.sun.istack.internal.Nullable;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -241,13 +242,14 @@ public class Utils {
         return false;
     }
 
-    public static boolean isSuitableUser(String user, String userFilter) {
-        Set<String> users = getFilterAsSet(userFilter);
-        return users.contains(user) || (isAnonymousUser(user) && users.contains(Parameters.USER_TYPES.ANONYMOUS.toString()));
-    }
-
-    public static boolean isSuitableWs(String ws, String wsFilter) {
-        Set<String> workspaces = getFilterAsSet(wsFilter);
-        return workspaces.contains(ws) || (isTemporaryWorkspace(ws) && workspaces.contains(Parameters.WS_TYPES.TEMPORARY.toString()));
+    public static boolean isAllowedEntity(@Nullable String testedEntity, String allowedEntitiesAsString) {
+        if (allowedEntitiesAsString.equalsIgnoreCase("ANY")) {
+            return true;
+        } else if (testedEntity == null) {
+            return false;
+        } else {
+            Set<String> allowedEntities = getFilterAsSet(allowedEntitiesAsString);
+            return allowedEntities.contains(testedEntity);
+        }
     }
 }

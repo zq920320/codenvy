@@ -163,7 +163,10 @@ public enum Parameters {
         public String getDefaultValue() {
             return WS_TYPES.ANY.toString();
         }
-    };
+
+    },
+    ORIGINAL_USER,
+    ORIGINAL_WS;
 
     /** @return the default value for given parameter. */
     public String getDefaultValue() {

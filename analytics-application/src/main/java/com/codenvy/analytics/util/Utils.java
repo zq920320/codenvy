@@ -35,7 +35,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.codenvy.analytics.Utils.*;
+import static com.codenvy.analytics.Utils.getFilterAsString;
 
 /** @author Anatoliy Bazko */
 public class Utils {
@@ -57,7 +57,18 @@ public class Utils {
         putDefaultValueIfAbsent(context, Parameters.FROM_DATE);
         putDefaultValueIfAbsent(context, Parameters.TO_DATE);
 
+        validate(context);
+
         return context;
+    }
+
+    private static void validate(Map<String, String> context) {
+        validateParameter(Parameters.FROM_DATE, context);
+        validateParameter(Parameters.TO_DATE, context);
+    }
+
+    private static void validateParameter(Parameters param, Map<String, String> context) {
+        param.validate(context.get(param.toString()), Context.valueOf(context));
     }
 
     public static Map<String, String> extractParams(UriInfo info, SecurityContext securityContext) {
@@ -107,20 +118,14 @@ public class Utils {
         }
     }
 
-
     private static void putPossibleUsersAsFilter(Map<String, String> context, SecurityContext securityContext) {
         if (!isSystemUser(securityContext)) {
             Set<String> users = getPossibleUsers();
-            String user = context.get("USER");
 
-            if (user != null) {
-                if (!users.contains(user) && !isAnonymousUser(user)) {
-                    throw new IllegalStateException("Security violation. Probably user hasn't access to data");
-                }
-            } else {
-                users.add(Parameters.USER_TYPES.ANONYMOUS.toString());
-                context.put("USER", getFilterAsString(users));
+            if (context.containsKey(MetricFilter.USER.toString())) {
+                context.put(MetricFilter.USER.toString(), getFilterAsString(users));
             }
+            context.put(Parameters.ORIGINAL_USER.toString(), getFilterAsString(users));
         }
     }
 
@@ -165,16 +170,11 @@ public class Utils {
     private static void putPossibleWorkspacesAsFilter(Map<String, String> context, SecurityContext securityContext) {
         if (!isSystemUser(securityContext)) {
             Set<String> workspaces = getAvailableWorkspacesForCurrentUser(context);
-            String workspace = context.get("WS");
 
-            if (workspace != null) {
-                if (!workspaces.contains(workspace) && !isTemporaryWorkspace(workspace)) {
-                    throw new IllegalStateException("Security violation. Probably user hasn't access to data");
-                }
-            } else {
-                workspaces.add(Parameters.WS_TYPES.TEMPORARY.toString());
-                context.put("WS", getFilterAsString(workspaces));
+            if (context.containsKey(MetricFilter.WS.toString())) {
+                context.put(MetricFilter.WS.toString(), getFilterAsString(workspaces));
             }
+            context.put(Parameters.ORIGINAL_WS.toString(), getFilterAsString(workspaces));
         }
     }
 
