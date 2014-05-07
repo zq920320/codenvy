@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import static com.codenvy.analytics.Utils.isAllowedEntity;
+import static com.codenvy.analytics.Utils.isAllowedEntities;
 
 /**
  * It is supposed to load calculated value {@link com.codenvy.analytics.datamodel.ValueData} from the storage.
@@ -114,18 +114,13 @@ public abstract class ReadBasedMetric extends AbstractMetric {
             }
         }
 
-        String allowedUsers = context.exists(Parameters.ORIGINAL_USER)
-                              ? context.getAsString(Parameters.ORIGINAL_USER)
-                              : Parameters.USER_TYPES.ANY.toString();
-
-        String allowedWorkspaces = context.exists(Parameters.ORIGINAL_WS)
-                                   ? context.getAsString(Parameters.ORIGINAL_WS)
-                                   : Parameters.WS_TYPES.ANY.toString();
+        String allowedUsers = context.getAsString(Parameters.ORIGINAL_USER);
+        String allowedWorkspaces = context.getAsString(Parameters.ORIGINAL_WS);
 
         String ws = context.getAsString(MetricFilter.WS);
         String user = context.getAsString(MetricFilter.USER);
 
-        if (!isAllowedEntity(user, allowedUsers) && !isAllowedEntity(ws, allowedWorkspaces)) {
+        if (!isAllowedEntities(user, allowedUsers) && !isAllowedEntities(ws, allowedWorkspaces)) {
             throw new MetricRestrictionException("Security violation. Probably user hasn't access to the data");
         }
     }

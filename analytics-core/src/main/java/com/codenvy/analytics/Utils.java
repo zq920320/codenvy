@@ -241,14 +241,13 @@ public class Utils {
         return false;
     }
 
-    public static boolean isAllowedEntity(String testedEntity, String allowedEntitiesAsString) {
-        if (allowedEntitiesAsString.equalsIgnoreCase("ANY")) {
+    public static boolean isAllowedEntities(String testedEntitiesAsString, String allowedEntitiesAsString) {
+        if (allowedEntitiesAsString == null || testedEntitiesAsString == null) {
             return true;
-        } else if (testedEntity == null) {
-            return false;
         } else {
             Set<String> allowedEntities = getFilterAsSet(allowedEntitiesAsString);
-            return allowedEntities.contains(testedEntity);
+            Set<String> testedEntities = getFilterAsSet(testedEntitiesAsString);
+            return allowedEntities.containsAll(testedEntities);
         }
     }
 }
