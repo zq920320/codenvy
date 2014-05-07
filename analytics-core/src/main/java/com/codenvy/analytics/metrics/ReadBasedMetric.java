@@ -43,21 +43,16 @@ import java.util.regex.Pattern;
  */
 public abstract class ReadBasedMetric extends AbstractMetric {
 
+    public static final String ASC_SORT_SIGN       = "+";
     public static final String EXCLUDE_SIGN        = "~ ";
     public static final String SEPARATOR           = " OR ";
+    public static final String PRECOMPUTED         = "_precomputed";
     public static final long   DAY_IN_MILLISECONDS = 86400000L;
 
-    public static final Pattern REGISTERED_USER =
-            Pattern.compile("^(?!(ANONYMOUSUSER_|DEFAULT)).*", Pattern.CASE_INSENSITIVE);
-    public static final Pattern ANONYMOUS_USER  =
-            Pattern.compile("^(ANONYMOUSUSER_).*", Pattern.CASE_INSENSITIVE);
-
-    public static final Pattern PERSISTENT_WS = Pattern.compile("^(?!(TMP-|DEFAULT)).*", Pattern.CASE_INSENSITIVE);
-    public static final Pattern TEMPORARY_WS  = Pattern.compile("^(TMP-).*", Pattern.CASE_INSENSITIVE);
-
-    public static final String ASC_SORT_SIGN = "+";
-    public static final String PRECOMPUTED   = "_precomputed";
-
+    public static final Pattern REGISTERED_USER = Pattern.compile("^(?!(ANONYMOUSUSER_|DEFAULT)).*", Pattern.CASE_INSENSITIVE);
+    public static final Pattern ANONYMOUS_USER  = Pattern.compile("^(ANONYMOUSUSER_).*", Pattern.CASE_INSENSITIVE);
+    public static final Pattern PERSISTENT_WS   = Pattern.compile("^(?!(TMP-|DEFAULT)).*", Pattern.CASE_INSENSITIVE);
+    public static final Pattern TEMPORARY_WS    = Pattern.compile("^(TMP-).*", Pattern.CASE_INSENSITIVE);
 
     public final DataLoader dataLoader;
 
@@ -113,8 +108,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
         if (getClass().isAnnotationPresent(RequiredFilter.class)) {
             MetricFilter requiredFilter = getClass().getAnnotation(RequiredFilter.class).value();
             if (!context.exists(requiredFilter)) {
-                throw new MetricRestrictionException(
-                        "Parameter " + requiredFilter + " required to be passed to get the value of the metric");
+                throw new MetricRestrictionException("Parameter " + requiredFilter + " required to be passed to get the value of the metric");
             }
         }
     }
@@ -188,21 +182,11 @@ public abstract class ReadBasedMetric extends AbstractMetric {
 
                 match.put(MetricFilter.USER.name().toLowerCase(), getUsers(filter, value));
 
-            } else if (!(this instanceof AbstractUsersProfile)
-                       && filter == MetricFilter.USER) {
-                Object users;
-
-                if (value.equals(Parameters.USER_TYPES.REGISTERED.name())) {
-                    users = REGISTERED_USER;
-                } else if (value.equals(Parameters.USER_TYPES.ANTONYMOUS.name())) {
-                    users = ANONYMOUS_USER;
-                } else if (value.equals(Parameters.USER_TYPES.ANY.name())) {
-                    continue;
-                } else {
-                    users = processValue(value, filter.isNumericType());
+            } else if (!(this instanceof AbstractUsersProfile) && filter == MetricFilter.USER) {
+                if (!value.equals(Parameters.USER_TYPES.ANY.name())) {
+                    Object users = processValue(value, filter.isNumericType());
+                    match.put(field, users);
                 }
-
-                match.put(field, users);
 
             } else if (filter == MetricFilter.WS) {
                 Object ws;
@@ -235,7 +219,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
 
     protected Object processValue(Object value, boolean isNumericType) throws IOException {
         if (value.getClass().isArray()) {
-            return new BasicDBObject("$in", value);
+            return new BasicDBObject("$in", processArray((Object[])value));
 
         } else if (value instanceof DBObject || value instanceof Pattern) {
             return value;
@@ -253,14 +237,36 @@ public abstract class ReadBasedMetric extends AbstractMetric {
 
         String[] values = value.split(SEPARATOR);
         if (processExclusiveValues) {
-            return new BasicDBObject("$nin", isNumericType ? convertToNumericFormat(values) : values);
+            return new BasicDBObject("$nin", isNumericType ? convertToNumericFormat(values) : processArray(values));
         } else {
             if (values.length == 1) {
-                return isNumericType ? Long.parseLong(values[0]) : values[0];
+                return isNumericType ? Long.parseLong(values[0]) : processArray(values)[0];
             } else {
-                return new BasicDBObject("$in", isNumericType ? convertToNumericFormat(values) : values);
+                return new BasicDBObject("$in", isNumericType ? convertToNumericFormat(values) : processArray(values));
             }
         }
+    }
+
+    private Object[] processArray(Object[] values) {
+        Object[] result = new Object[values.length];
+
+        for (int i = 0; i < result.length; i++) {
+            Object value = values[i];
+
+            if (value.equals(Parameters.WS_TYPES.TEMPORARY.toString())) {
+                result[i] = TEMPORARY_WS;
+            } else if (value.equals(Parameters.WS_TYPES.PERSISTENT.toString())) {
+                result[i] = PERSISTENT_WS;
+            } else if (value.equals(Parameters.USER_TYPES.ANONYMOUS.toString())) {
+                result[i] = ANONYMOUS_USER;
+            } else if (value.equals(Parameters.USER_TYPES.REGISTERED.toString())) {
+                result[i] = REGISTERED_USER;
+            } else {
+                result[i] = value;
+            }
+        }
+
+        return result;
     }
 
     private long[] convertToNumericFormat(String[] values) {

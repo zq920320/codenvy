@@ -35,9 +35,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.codenvy.analytics.Utils.getFilterAsString;
-import static com.codenvy.analytics.Utils.isAnonymousUser;
-import static com.codenvy.analytics.Utils.isTemporaryWorkspace;
+import static com.codenvy.analytics.Utils.*;
 
 /** @author Anatoliy Bazko */
 public class Utils {
@@ -120,6 +118,7 @@ public class Utils {
                     throw new IllegalStateException("Security violation. Probably user hasn't access to data");
                 }
             } else {
+                users.add(Parameters.USER_TYPES.ANONYMOUS.toString());
                 context.put("USER", getFilterAsString(users));
             }
         }
@@ -173,6 +172,7 @@ public class Utils {
                     throw new IllegalStateException("Security violation. Probably user hasn't access to data");
                 }
             } else {
+                workspaces.add(Parameters.WS_TYPES.TEMPORARY.toString());
                 context.put("WS", getFilterAsString(workspaces));
             }
         }

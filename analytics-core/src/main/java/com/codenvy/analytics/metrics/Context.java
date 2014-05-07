@@ -22,6 +22,8 @@ import com.codenvy.analytics.Utils;
 import java.text.ParseException;
 import java.util.*;
 
+import static com.codenvy.analytics.Utils.*;
+
 /**
  * Unmodifiable execution context.
  *
@@ -170,11 +172,12 @@ public class Context {
                 return this;
             }
 
-            for (String oldValue : getAsString(param).split(ReadBasedMetric.SEPARATOR)) {
-                if (oldValue.equals(value)) {
-                    params.put(param.toString(), value);
-                    return this;
-                }
+            Set<String> entities = getFilterAsSet(getAsString(param));
+            if (entities.contains(value)
+                || (isTemporaryWorkspace(value) && entities.contains(Parameters.WS_TYPES.TEMPORARY.toString()))
+                || (isAnonymousUser(value) && entities.contains(Parameters.USER_TYPES.ANONYMOUS.toString()))) {
+                params.put(param.toString(), value);
+                return this;
             }
 
             throw new IllegalStateException("Security violation. Probably user hasn't access to data");

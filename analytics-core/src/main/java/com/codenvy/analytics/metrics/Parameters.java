@@ -185,7 +185,7 @@ public enum Parameters {
     }
 
     public enum USER_TYPES {
-        ANY, REGISTERED, ANTONYMOUS
+        ANY, REGISTERED, ANONYMOUS
     }
 
     public static enum TimeUnit {

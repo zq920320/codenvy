@@ -100,7 +100,7 @@ public class TestExtractUserAndWs extends BaseTest {
 
     @Test
     public void testExtractAnonymousUsers() throws Exception {
-        builder.put(Parameters.USER, Parameters.USER_TYPES.ANTONYMOUS.name());
+        builder.put(Parameters.USER, Parameters.USER_TYPES.ANONYMOUS.name());
         builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
 
         Set<String> actual = new HashSet<>();

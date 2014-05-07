@@ -144,7 +144,7 @@ DEFINE extractUser(X, userType) RETURNS Y {
   x2 = FOREACH x1 GENERATE *, (user1 IS NOT NULL AND user1 != '' ? user1 : (user2 IS NOT NULL AND user2 != '' ? user2 : (user3 IS NOT NULL AND user3 != '' ? user3 : 'default'))) AS probUser;
   x3 = FOREACH x2 GENERATE *, FLATTEN(TOKENIZE(probUser, ',')) AS user4;
   x4 = FILTER x3 BY '$userType' == 'ANY' OR user4 == 'default' OR
-            ('$userType' == 'ANTONYMOUS' AND INDEXOF(LOWER(user4), 'anonymoususer_', 0) == 0) OR
+            ('$userType' == 'ANONYMOUS' AND INDEXOF(LOWER(user4), 'anonymoususer_', 0) == 0) OR
             ('$userType' == 'REGISTERED' AND INDEXOF(LOWER(user4), 'anonymoususer_', 0) < 0);
   $Y = FOREACH x4 GENERATE *, (INDEXOF(LOWER(user4), 'anonymoususer_', 0) == 0 ? LOWER(user4) : user4) AS user;
 };

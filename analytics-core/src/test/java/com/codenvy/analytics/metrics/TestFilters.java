@@ -27,13 +27,14 @@ import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.testng.Assert.assertEquals;
+import static org.testng.AssertJUnit.assertEquals;
 
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
@@ -66,95 +67,37 @@ public class TestFilters extends BaseTest {
         pigServer.execute(ScriptType.EVENTS, builder.build());
     }
 
-    @Test
-    public void testAllEvents() throws Exception {
-        Context.Builder builder = new Context.Builder();
+    @Test(dataProvider = "dataProvider")
+    public void test(Object wsFilter, Object userFilter, long result) throws Exception {
         Metric metric = new TestedMetric();
 
-        ValueData valueData = metric.getValue(builder.build());
+        Context.Builder builder = new Context.Builder();
+        if (wsFilter != null) {
+            builder.put(MetricFilter.WS, wsFilter);
+        }
+        if (userFilter != null) {
+            builder.put(MetricFilter.USER, userFilter);
+        }
 
-        assertEquals(valueData, LongValueData.valueOf(4));
+
+        ValueData valueData = metric.getValue(builder.build());
+        assertEquals(wsFilter + ":" + userFilter, valueData, LongValueData.valueOf(result));
     }
 
-    @Test
-    public void testAnyUsersWorkspacesEvents() throws Exception {
-        Context.Builder builder = new Context.Builder();
-        builder.put(MetricFilter.USER, Parameters.USER_TYPES.ANY.name());
-        builder.put(MetricFilter.WS, Parameters.WS_TYPES.ANY.name());
-        Metric metric = new TestedMetric();
-
-        ValueData valueData = metric.getValue(builder.build());
-
-        assertEquals(valueData, LongValueData.valueOf(4));
-    }
-
-    @Test
-    public void testRegisteredUsersPersistentWsEvents() throws Exception {
-        Context.Builder builder = new Context.Builder();
-        builder.put(MetricFilter.USER, Parameters.USER_TYPES.REGISTERED.name());
-        builder.put(MetricFilter.WS, Parameters.WS_TYPES.PERSISTENT.name());
-        Metric metric = new TestedMetric();
-
-        ValueData valueData = metric.getValue(builder.build());
-
-        assertEquals(valueData, LongValueData.valueOf(1));
-    }
-
-    @Test
-    public void testRegisteredUsersEvents() throws Exception {
-        Context.Builder builder = new Context.Builder();
-        builder.put(MetricFilter.USER, Parameters.USER_TYPES.REGISTERED.name());
-        Metric metric = new TestedMetric();
-
-        ValueData valueData = metric.getValue(builder.build());
-
-        assertEquals(valueData, LongValueData.valueOf(2));
-    }
-
-    @Test
-    public void testAnonymousUsersEvents() throws Exception {
-        Context.Builder builder = new Context.Builder();
-        builder.put(MetricFilter.USER, Parameters.USER_TYPES.ANTONYMOUS.name());
-        Metric metric = new TestedMetric();
-
-        ValueData valueData = metric.getValue(builder.build());
-
-        assertEquals(valueData, LongValueData.valueOf(2));
-    }
-
-
-    @Test
-    public void testPersistentWsEvents() throws Exception {
-        Context.Builder builder = new Context.Builder();
-        builder.put(MetricFilter.WS, Parameters.WS_TYPES.PERSISTENT.name());
-        Metric metric = new TestedMetric();
-
-        ValueData valueData = metric.getValue(builder.build());
-
-        assertEquals(valueData, LongValueData.valueOf(2));
-    }
-
-    @Test
-    public void testTemporaryWsEvents() throws Exception {
-        Context.Builder builder = new Context.Builder();
-        builder.put(MetricFilter.WS, Parameters.WS_TYPES.TEMPORARY.name());
-        Metric metric = new TestedMetric();
-
-        ValueData valueData = metric.getValue(builder.build());
-
-        assertEquals(valueData, LongValueData.valueOf(2));
-    }
-
-    @Test
-    public void testTemporaryWsAnonymousUserEvents() throws Exception {
-        Context.Builder builder = new Context.Builder();
-        builder.put(MetricFilter.WS, Parameters.WS_TYPES.TEMPORARY.name());
-        builder.put(MetricFilter.USER, Parameters.USER_TYPES.ANTONYMOUS.name());
-        Metric metric = new TestedMetric();
-
-        ValueData valueData = metric.getValue(builder.build());
-
-        assertEquals(valueData, LongValueData.valueOf(1));
+    @DataProvider(name = "dataProvider")
+    public Object[][] parametersFilterProvider() {
+        return new Object[][]{{"ws1 OR TEMPORARY", null, 3},
+                              {"tmp-22rct0cq0rh8vs OR PERSISTENT", null, 3},
+                              {null, "user1 OR ANONYMOUS", 3},
+                              {null, "anonymoususer_edjkx4 OR REGISTERED", 3},
+                              {Parameters.WS_TYPES.TEMPORARY.toString(), Parameters.USER_TYPES.ANONYMOUS.toString(), 1},
+                              {Parameters.WS_TYPES.PERSISTENT.toString(), Parameters.USER_TYPES.REGISTERED.toString(), 1},
+                              {Parameters.WS_TYPES.ANY.toString(), Parameters.USER_TYPES.ANY.toString(), 4},
+                              {null, null, 4},
+                              {null, Parameters.USER_TYPES.ANONYMOUS.toString(), 2},
+                              {null, Parameters.USER_TYPES.REGISTERED.toString(), 2},
+                              {Parameters.WS_TYPES.PERSISTENT.toString(), null, 2},
+                              {Parameters.WS_TYPES.TEMPORARY.toString(), null, 2}};
     }
 
 
