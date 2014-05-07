@@ -113,9 +113,8 @@ public class Utils {
 
             if (!context.containsKey(MetricFilter.USER.toString())) {
                 context.put(MetricFilter.USER.toString(), getFilterAsString(users));
-            } else {
-                context.put(Parameters.ORIGINAL_USER.toString(), getFilterAsString(users));
             }
+            context.put(Parameters.ORIGINAL_USER.toString(), getFilterAsString(users));
         }
     }
 
@@ -163,9 +162,8 @@ public class Utils {
 
             if (!context.containsKey(MetricFilter.WS.toString())) {
                 context.put(MetricFilter.WS.toString(), getFilterAsString(workspaces));
-            } else {
-                context.put(Parameters.ORIGINAL_WS.toString(), getFilterAsString(workspaces));
             }
+            context.put(Parameters.ORIGINAL_WS.toString(), getFilterAsString(workspaces));
         }
     }
 

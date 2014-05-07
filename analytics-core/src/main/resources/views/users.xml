@@ -52,7 +52,7 @@
                 <parameter key="titles" value="ID,Workspace,Start Time,End Time,Duration"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="product_usage_sessions_by_workspaces_list"/>
+                <parameter key="name" value="product_usage_sessions_list"/>
                 <parameter key="fields" value="session_id,ws,date,end_time,time"/>
                 <parameter key="time-fields" value="time"/>
                 <parameter key="date-fields" value="date,end_time"/>

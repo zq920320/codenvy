@@ -156,6 +156,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
         return !context.exists(Parameters.DATA_COMPUTATION_PROCESS)
                && MetricFactory.exists(precomputedMetricName)
                && ((PrecomputedMetric)MetricFactory.getMetric(precomputedMetricName)).canReadPrecomputedData(context)
+               && context.getFilters().isEmpty()
                && (!context.exists(Parameters.FROM_DATE) || context.isDefaultValue(Parameters.FROM_DATE))
                && (!context.exists(Parameters.TO_DATE) || context.isDefaultValue(Parameters.TO_DATE));
     }

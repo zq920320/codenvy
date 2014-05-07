@@ -222,7 +222,7 @@ function Configuration() {
             modelViewName: "user_sessions",
 
             isPaginable: true,    // default value is "false"
-            modelMetricName: "product_usage_sessions_by_workspaces",
+            modelMetricName: "product_usage_sessions",
 
             defaultServerSortParams: "-date",
 
@@ -451,7 +451,7 @@ function Configuration() {
             modelViewName: "workspace_sessions",
 
             isPaginable: true,    // default value is "false"
-            modelMetricName: "product_usage_sessions_by_users",
+            modelMetricName: "product_usage_sessions",
 
             defaultServerSortParams: "-date",
 
