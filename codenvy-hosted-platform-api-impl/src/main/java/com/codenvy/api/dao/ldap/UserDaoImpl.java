@@ -23,7 +23,7 @@ import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.api.core.notification.EventService;
-import com.codenvy.api.event.RemoveUserEvent;
+import com.codenvy.api.event.user.RemoveUserEvent;
 import com.codenvy.api.user.server.dao.MemberDao;
 import com.codenvy.api.user.server.dao.UserDao;
 import com.codenvy.api.user.server.dao.UserProfileDao;

@@ -2,7 +2,7 @@
  * CODENVY CONFIDENTIAL
  * __________________
  * 
- *  [2012] - [2013] Codenvy, S.A. 
+ *  [2012] - [2014] Codenvy, S.A. 
  *  All Rights Reserved.
  * 
  * NOTICE:  All information contained herein is, and remains
@@ -15,31 +15,17 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.api.event;
+package com.codenvy.api.event.workspace;
 
 import com.codenvy.api.core.notification.EventOrigin;
 
-/**
- * Inform that user with certain id was removed.
- *
- * @author Alexander Garagatyi
- */
-@EventOrigin("user")
-public class RemoveUserEvent {
-    private String userId;
-
-    public RemoveUserEvent() {
+/** @author Sergii Leschenko */
+@EventOrigin("workspace")
+public class CreateWorkspaceEvent extends WorkspaceEvent {
+    public CreateWorkspaceEvent(String workspaceId) {
+        super(workspaceId, ChangeType.CREATED);
     }
 
-    public RemoveUserEvent(String id) {
-        this.userId = id;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public CreateWorkspaceEvent() {
     }
 }
