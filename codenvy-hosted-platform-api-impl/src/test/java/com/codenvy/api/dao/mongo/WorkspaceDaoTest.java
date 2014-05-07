@@ -207,6 +207,10 @@ public class WorkspaceDaoTest extends BaseDaoTest {
     public void mustRemoveWorkspace() throws Exception {
         when(memberDao.getWorkspaceMembers(WORKSPACE_ID)).thenReturn(Collections.<Member>emptyList());
 
+        Workspace workspace = DtoFactory.getInstance().createDto(Workspace.class).withId(WORKSPACE_ID).withName(WORKSPACE_NAME)
+                                        .withAttributes(getAttributes()).withTemporary(true);
+        workspaceDao.create(workspace);
+
         workspaceDao.remove(WORKSPACE_ID);
         assertNull(collection.findOne(new BasicDBObject("id", WORKSPACE_ID)));
     }
