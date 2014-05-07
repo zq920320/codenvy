@@ -214,11 +214,11 @@ public class Utils {
     }
 
     public static boolean isTemporaryWorkspace(String name) {
-        return name.toUpperCase().startsWith("TMP-");
+        return name != null && name.toUpperCase().startsWith("TMP-");
     }
 
     public static boolean isAnonymousUser(String name) {
-        return name.toUpperCase().startsWith("ANONYMOUSUSER_");
+        return name != null && name.toUpperCase().startsWith("ANONYMOUSUSER_");
     }
 
     public static boolean isTemporaryExist(Set<String> workspaces) {
