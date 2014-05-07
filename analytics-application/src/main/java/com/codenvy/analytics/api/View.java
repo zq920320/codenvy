@@ -48,6 +48,7 @@ import com.codenvy.analytics.metrics.Expandable;
 import com.codenvy.analytics.metrics.MetricFactory;
 import com.codenvy.analytics.metrics.MetricNotFoundException;
 import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.sessions.AbstractTimelineProductUsageCondition;
 import com.codenvy.analytics.services.view.SectionData;
 import com.codenvy.analytics.services.view.ViewBuilder;
 import com.codenvy.analytics.services.view.ViewData;
@@ -188,14 +189,25 @@ public class View {
     }
 
     private ValueData getMetricValue(String metricName, com.codenvy.analytics.metrics.Context context) throws IOException, ParseException {
-        context = viewBuilder.initializeTimeInterval(context);
+        Expandable expandableMetric = context.getExpandedMetric();        
+        if (expandableMetric instanceof AbstractTimelineProductUsageCondition) {
+            context = ((AbstractTimelineProductUsageCondition)expandableMetric).initContextBasedOnTimeInterval(context);
+        } else {
+            context = viewBuilder.initializeTimeInterval(context);
+        }
+        
         return MetricFactory.getMetric(metricName).getValue(context);
     }
 
     private ListValueData getExpandedValue(String metricName, com.codenvy.analytics.metrics.Context context) throws IOException,
-                                                                                                            ParseException {        
-        context = viewBuilder.initializeTimeInterval(context);       
+                                                                                                            ParseException {              
         Expandable expandableMetric = (Expandable) MetricFactory.getMetric(metricName);
+        if (expandableMetric instanceof AbstractTimelineProductUsageCondition) {
+            context = ((AbstractTimelineProductUsageCondition)expandableMetric).initContextBasedOnTimeInterval(context);
+        } else {
+            context = viewBuilder.initializeTimeInterval(context);
+        }
+        
         return expandableMetric.getExpandedValue(context);
     }
 

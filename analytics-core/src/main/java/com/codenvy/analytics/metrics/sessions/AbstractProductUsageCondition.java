@@ -17,17 +17,22 @@
  */
 package com.codenvy.analytics.metrics.sessions;
 
-import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.*;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
-
 import java.io.IOException;
 import java.text.ParseException;
 
+import com.codenvy.analytics.datamodel.LongValueData;
+import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Expandable;
+import com.codenvy.analytics.metrics.MetricFilter;
+import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.metrics.ReadBasedMetric;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
+
 /** @author Anatoliy Bazko */
-public abstract class AbstractProductUsageCondition extends ReadBasedMetric {
+public abstract class AbstractProductUsageCondition extends ReadBasedMetric implements Expandable {
 
     final private long    minTime;
     final private long    maxTime;
@@ -115,5 +120,36 @@ public abstract class AbstractProductUsageCondition extends ReadBasedMetric {
     @Override
     public Class<? extends ValueData> getValueDataClass() {
         return LongValueData.class;
+    }
+    
+    @Override
+    public String getExpandedValueField() {
+        return USER;
+    }
+    
+    @Override
+    public DBObject[] getSpecificExpandedDBOperations(Context clauses) {
+        DBObject group = new BasicDBObject();
+        group.put(ID, "$" + USER);
+        group.put(TIME, new BasicDBObject("$sum", "$" + TIME));
+        group.put(SESSIONS, new BasicDBObject("$sum", 1));
+
+        DBObject sessionsRange = new BasicDBObject();
+        sessionsRange.put(includeMinSessions ? "$gte" : "$gt", minSessions);
+        sessionsRange.put(includeMaxSessions ? "$lte" : "$lt", maxSessions);
+
+        DBObject timeRange = new BasicDBObject();
+        timeRange.put(includeMinTime ? "$gte" : "$gt", minTime);
+        timeRange.put(includeMaxTime ? "$lte" : "$lt", maxTime);
+
+        DBObject match = new BasicDBObject();
+        match.put(operator, new DBObject[]{new BasicDBObject(SESSIONS, sessionsRange),
+                                           new BasicDBObject(TIME, timeRange)});
+
+        DBObject projection = new BasicDBObject(getExpandedValueField(), "$" + ID);
+
+        return new DBObject[]{new BasicDBObject("$group", group),
+                              new BasicDBObject("$match", match),
+                              new BasicDBObject("$project", projection)};
     }
 }

@@ -49,6 +49,10 @@ analytics.presenter.ReportPresenter.prototype.mapExpandedMetricToDrillDownPageTy
     "product_usage_users_between_10_and_60_min": "USERS",
     "product_usage_users_between_60_and_300_min": "USERS",
     
+    "product_usage_condition_above_300_min": "USERS",
+    "product_usage_condition_below_120_min": "USERS",
+    "product_usage_condition_between_120_and_300_min": "USERS",
+    
     "new_active_users": "USERS",
     "created_users_from_auth": "USERS",
     "users_logged_in_with_form": "USERS",
@@ -61,7 +65,10 @@ analytics.presenter.ReportPresenter.prototype.mapExpandedMetricToDrillDownPageTy
     "product_usage_users_below_10_min": "USERS",
     "users_logged_in_total": "USERS",
     "users_accepted_invites_percent": "USERS",
-    "users_accepted_invites": "USERS",    
+    "users_accepted_invites": "USERS",
+    "timeline_product_usage_condition_above_300_min": "USERS",
+    "timeline_product_usage_condition_below_120_min": "USERS",
+    "timeline_product_usage_condition_between_120_and_300_min": "USERS",
     
     /** WORKSPACES */
     "active_workspaces": "WORKSPACES",

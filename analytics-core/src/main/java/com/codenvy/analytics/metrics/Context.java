@@ -143,6 +143,22 @@ public class Context {
         return this.exists(Parameters.EXPANDED_METRIC_NAME);
     }
 
+    public Expandable getExpandedMetric() {
+        if (!exists(Parameters.EXPANDED_METRIC_NAME)) {
+            return null;
+        }
+        
+        String value = getAsString(Parameters.EXPANDED_METRIC_NAME);
+        MetricType expandedMetricType = MetricType.valueOf(value.toUpperCase());
+        
+        Metric expandedMetric =  MetricFactory.getMetric(expandedMetricType);
+        if (! (expandedMetric instanceof Expandable)) {
+            return null;
+        }
+        
+        return (Expandable) expandedMetric;
+    }
+    
     /**
      * Context builder.
      */
@@ -267,4 +283,5 @@ public class Context {
             return new Context(params);
         }
     }
+
 }

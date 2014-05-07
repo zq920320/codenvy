@@ -102,7 +102,7 @@ public abstract class AbstractProductUsageTime extends ReadBasedMetric implement
         DBObject group = new BasicDBObject();
         group.put(ID, "$" + expandingField);
 
-        DBObject projection = new BasicDBObject(expandingField, "$_id");
+        DBObject projection = new BasicDBObject(expandingField, "$" + ID);
 
         return new DBObject[]{new BasicDBObject("$group", group),
                               new BasicDBObject("$project", projection)};

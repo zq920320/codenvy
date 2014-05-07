@@ -51,9 +51,13 @@ import com.codenvy.analytics.metrics.projects.CreatedProjects;
 import com.codenvy.analytics.metrics.projects.ProjectPaasGae;
 import com.codenvy.analytics.metrics.projects.ProjectTypeWar;
 import com.codenvy.analytics.metrics.projects.ProjectsList;
+import com.codenvy.analytics.metrics.sessions.AbstractTimelineProductUsageCondition;
 import com.codenvy.analytics.metrics.sessions.ProductUsageTimeBelow1Min;
 import com.codenvy.analytics.metrics.sessions.ProductUsageTimeTotal;
 import com.codenvy.analytics.metrics.sessions.ProductUsageUsersBelow10Min;
+import com.codenvy.analytics.metrics.sessions.TimelineProductUsageConditionAbove300Min;
+import com.codenvy.analytics.metrics.sessions.TimelineProductUsageConditionBelow120Min;
+import com.codenvy.analytics.metrics.sessions.TimelineProductUsageConditionBetween120And300Min;
 import com.codenvy.analytics.metrics.sessions.factory.AbstractFactorySessions;
 import com.codenvy.analytics.metrics.sessions.factory.FactorySessionsBelow10Min;
 import com.codenvy.analytics.metrics.sessions.factory.FactorySessionsWithBuildPercent;
@@ -94,9 +98,9 @@ public class TestExpandedMetric extends BaseTest {
     @BeforeClass
     public void prepareDatabase() throws IOException, ParseException {
         List<Event> events = new ArrayList<>();
-
+        
         // add user activity at previous day
-        events.add(Event.Builder.createUserAddedToWsEvent("user5@gmail.com", "user5", "", "", "", "website")
+        events.add(Event.Builder.createUserAddedToWsEvent("user5@gmail.com", TEST_WS, "", "", "", "website")
                    .withDate("2013-10-31").withTime("10:00:00").build());
 
         
@@ -214,6 +218,70 @@ public class TestExpandedMetric extends BaseTest {
         // finish main session
         events.add(Event.Builder.createSessionFinishedEvent("user4@gmail.com", TEST_WS, "ide", SESSION_ID + "_micro")
                                 .withDate("2013-11-01").withTime("23:00:30,555").build());
+
+        // add user6@gmail.com activity (6 sessions && (120min < time < 300min)) for test
+        // testAbstractTimelineProductUsageConditionMetric
+        events.add(Event.Builder.createSessionStartedEvent("user6@gmail.com", TEST_WS, "ide", "user6@gmail.com1")
+                   .withDate("2013-11-20").withTime("01:00:00").build());        
+        events.add(Event.Builder.createSessionFinishedEvent("user6@gmail.com", TEST_WS, "ide", "user6@gmail.com1")
+                   .withDate("2013-11-20").withTime("03:01:00").build());
+        
+        events.add(Event.Builder.createSessionStartedEvent("user6@gmail.com", TEST_WS, "ide", "user6@gmail.com2")
+                   .withDate("2013-11-20").withTime("04:00:00").build());        
+        events.add(Event.Builder.createSessionFinishedEvent("user6@gmail.com", TEST_WS, "ide", "user6@gmail.com2")
+                   .withDate("2013-11-20").withTime("04:01:00").build());
+        
+        events.add(Event.Builder.createSessionStartedEvent("user6@gmail.com", TEST_WS, "ide", "user6@gmail.com3")
+                   .withDate("2013-11-20").withTime("05:00:00").build());        
+        events.add(Event.Builder.createSessionFinishedEvent("user6@gmail.com", TEST_WS, "ide", "user6@gmail.com3")
+                   .withDate("2013-11-20").withTime("05:01:00").build());
+        
+        events.add(Event.Builder.createSessionStartedEvent("user6@gmail.com", TEST_WS, "ide", "user6@gmail.com4")
+                   .withDate("2013-11-20").withTime("06:00:00").build());        
+        events.add(Event.Builder.createSessionFinishedEvent("user6@gmail.com", TEST_WS, "ide", "user6@gmail.com4")
+                   .withDate("2013-11-20").withTime("06:01:00").build());
+        
+        events.add(Event.Builder.createSessionStartedEvent("user6@gmail.com", TEST_WS, "ide", "user6@gmail.com5")
+                   .withDate("2013-11-20").withTime("07:00:00").build());        
+        events.add(Event.Builder.createSessionFinishedEvent("user6@gmail.com", TEST_WS, "ide", "user6@gmail.com5")
+                   .withDate("2013-11-20").withTime("07:01:00").build());
+        
+        events.add(Event.Builder.createSessionStartedEvent("user6@gmail.com", TEST_WS, "ide", "user6@gmail.com6")
+                   .withDate("2013-11-20").withTime("08:00:00").build());        
+        events.add(Event.Builder.createSessionFinishedEvent("user6@gmail.com", TEST_WS, "ide", "user6@gmail.com6")
+                   .withDate("2013-11-20").withTime("08:01:00").build());
+        
+        // add user7@gmail.com activity (6 sessions, time > 300 min) for test
+        // testAbstractTimelineProductUsageConditionMetric
+        events.add(Event.Builder.createSessionStartedEvent("user7@gmail.com", TEST_WS, "ide", "user7@gmail.com1")
+                   .withDate("2013-12-20").withTime("01:00:00").build());        
+        events.add(Event.Builder.createSessionFinishedEvent("user7@gmail.com", TEST_WS, "ide", "user7@gmail.com1")
+                   .withDate("2013-12-20").withTime("03:15:00").build());
+        
+        events.add(Event.Builder.createSessionStartedEvent("user7@gmail.com", TEST_WS, "ide", "user7@gmail.com2")
+                   .withDate("2013-12-20").withTime("04:00:00").build());        
+        events.add(Event.Builder.createSessionFinishedEvent("user7@gmail.com", TEST_WS, "ide", "user7@gmail.com2")
+                   .withDate("2013-12-20").withTime("06:15:00").build());
+        
+        events.add(Event.Builder.createSessionStartedEvent("user7@gmail.com", TEST_WS, "ide", "user7@gmail.com3")
+                   .withDate("2013-12-20").withTime("07:00:00").build());        
+        events.add(Event.Builder.createSessionFinishedEvent("user7@gmail.com", TEST_WS, "ide", "user7@gmail.com3")
+                   .withDate("2013-12-20").withTime("09:15:00").build());
+        
+        events.add(Event.Builder.createSessionStartedEvent("user7@gmail.com", TEST_WS, "ide", "user7@gmail.com4")
+                   .withDate("2013-12-20").withTime("10:00:00").build());        
+        events.add(Event.Builder.createSessionFinishedEvent("user7@gmail.com", TEST_WS, "ide", "user7@gmail.com4")
+                   .withDate("2013-12-20").withTime("13:15:00").build());
+        
+        events.add(Event.Builder.createSessionStartedEvent("user7@gmail.com", TEST_WS, "ide", "user7@gmail.com5")
+                   .withDate("2013-12-20").withTime("14:00:00").build());        
+        events.add(Event.Builder.createSessionFinishedEvent("user7@gmail.com", TEST_WS, "ide", "user7@gmail.com5")
+                   .withDate("2013-12-20").withTime("16:15:00").build());
+        
+        events.add(Event.Builder.createSessionStartedEvent("user7@gmail.com", TEST_WS, "ide", "user7@gmail.com6")
+                   .withDate("2013-12-20").withTime("17:00:00").build());        
+        events.add(Event.Builder.createSessionFinishedEvent("user7@gmail.com", TEST_WS, "ide", "user7@gmail.com6")
+                   .withDate("2013-12-20").withTime("19:15:00").build());
         
         log = LogGenerator.generateLog(events);
     }
@@ -240,6 +308,154 @@ public class TestExpandedMetric extends BaseTest {
     }
 
     @Test
+    public void testAbstractTimelineProductUsageConditionMetric() throws Exception {
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.name());
+        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());       
+        builder.put(Parameters.STORAGE_TABLE, MetricType.PRODUCT_USAGE_SESSIONS_LIST.toString().toLowerCase());
+        builder.put(Parameters.STORAGE_TABLE_USERS_STATISTICS, MetricType.USERS_STATISTICS_LIST.toString().toLowerCase());
+        builder.put(Parameters.STORAGE_TABLE_USERS_PROFILES, MetricType.USERS_PROFILES_LIST.toString().toLowerCase());
+        builder.put(Parameters.LOG, log.getAbsolutePath());
+        
+        builder.put(Parameters.FROM_DATE, "20131101");
+        builder.put(Parameters.TO_DATE, "20131101");        
+        pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, builder.build());
+
+        builder.put(Parameters.FROM_DATE, "20131120");
+        builder.put(Parameters.TO_DATE, "20131120");
+        pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, builder.build());
+        
+        builder.put(Parameters.FROM_DATE, "20131220");
+        builder.put(Parameters.TO_DATE, "20131220");
+        pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, builder.build());
+        
+        /** test TimelineProductUsageConditionBelow120Min */
+        builder = new Context.Builder();
+        builder.put(Parameters.TO_DATE, "20131220");
+        builder.put(Parameters.TIME_INTERVAL, "0");
+        AbstractTimelineProductUsageCondition metric = new TimelineProductUsageConditionBelow120Min();
+        Context context = metric.initContextBasedOnTimeInterval(builder.build());        
+        ListValueData expandedValue = metric.getExpandedValue(context);
+        List<ValueData> all = expandedValue.getAll();
+        assertEquals(all.size(), 3);
+
+        Map<String, ValueData> record = ((MapValueData) all.get(0)).getAll();
+        assertEquals(record.size(), 1);
+        assertEquals(record.get(metric.getExpandedValueField()).toString(), "user4@gmail.com");  
+        record = ((MapValueData) all.get(1)).getAll();
+        assertEquals(record.size(), 1);
+        assertEquals(record.get(metric.getExpandedValueField()).toString(), "user1@gmail.com");
+        record = ((MapValueData) all.get(2)).getAll();
+        assertEquals(record.size(), 1);
+        assertEquals(record.get(metric.getExpandedValueField()).toString(), "user1");
+        
+        builder = new Context.Builder();
+        builder.put(Parameters.TO_DATE, "20131220");        
+        builder.put(Parameters.TIME_INTERVAL, "1");
+        context = metric.initContextBasedOnTimeInterval(builder.build());
+        expandedValue = metric.getExpandedValue(context);
+        all = expandedValue.getAll();
+        assertEquals(all.size(), 3);
+
+        record = ((MapValueData) all.get(0)).getAll();
+        assertEquals(record.size(), 1);
+        assertEquals(record.get(metric.getExpandedValueField()).toString(), "user4@gmail.com");  
+        record = ((MapValueData) all.get(1)).getAll();
+        assertEquals(record.size(), 1);
+        assertEquals(record.get(metric.getExpandedValueField()).toString(), "user1@gmail.com");
+        record = ((MapValueData) all.get(2)).getAll();
+        assertEquals(record.size(), 1);
+        assertEquals(record.get(metric.getExpandedValueField()).toString(), "user1");
+
+        builder = new Context.Builder();
+        builder.put(Parameters.TO_DATE, "20131220");
+        builder.put(Parameters.TIME_INTERVAL, "2");
+        context = metric.initContextBasedOnTimeInterval(builder.build());
+        expandedValue = metric.getExpandedValue(context);
+        all = expandedValue.getAll();
+        assertEquals(all.size(), 3);
+
+        record = ((MapValueData) all.get(0)).getAll();
+        assertEquals(record.size(), 1);
+        assertEquals(record.get(metric.getExpandedValueField()).toString(), "user4@gmail.com");  
+        record = ((MapValueData) all.get(1)).getAll();
+        assertEquals(record.size(), 1);
+        assertEquals(record.get(metric.getExpandedValueField()).toString(), "user1@gmail.com");
+        record = ((MapValueData) all.get(2)).getAll();
+        assertEquals(record.size(), 1);
+        assertEquals(record.get(metric.getExpandedValueField()).toString(), "user1");
+        
+        /** test TimelineProductUsageConditionBetween120And300Min */
+        builder = new Context.Builder();
+        builder.put(Parameters.TO_DATE, "20131220");
+        builder.put(Parameters.TIME_INTERVAL, "0");
+        metric = new TimelineProductUsageConditionBetween120And300Min();
+        context = metric.initContextBasedOnTimeInterval(builder.build());
+        expandedValue = metric.getExpandedValue(context);
+        all = expandedValue.getAll();
+        assertEquals(all.size(), 1);
+
+        record = ((MapValueData) all.get(0)).getAll();
+        assertEquals(record.size(), 1);
+        assertEquals(record.get(metric.getExpandedValueField()).toString(), "user6@gmail.com");  
+
+        builder = new Context.Builder();
+        builder.put(Parameters.TO_DATE, "20131220");
+        builder.put(Parameters.TIME_INTERVAL, "1");
+        context = metric.initContextBasedOnTimeInterval(builder.build());
+        expandedValue = metric.getExpandedValue(context);
+        all = expandedValue.getAll();
+        assertEquals(all.size(), 1);
+
+        record = ((MapValueData) all.get(0)).getAll();
+        assertEquals(record.size(), 1);
+        assertEquals(record.get(metric.getExpandedValueField()).toString(), "user6@gmail.com");  
+        
+        builder = new Context.Builder();
+        builder.put(Parameters.TO_DATE, "20131220");
+        builder.put(Parameters.TIME_INTERVAL, "2");
+        context = metric.initContextBasedOnTimeInterval(builder.build());
+        expandedValue = metric.getExpandedValue(context);
+        all = expandedValue.getAll();
+        assertEquals(all.size(), 1);
+
+        record = ((MapValueData) all.get(0)).getAll();
+        assertEquals(record.size(), 1);
+        assertEquals(record.get(metric.getExpandedValueField()).toString(), "user6@gmail.com");  
+        
+        
+        /** test TimelineProductUsageConditionAbove300Min */
+        builder = new Context.Builder();
+        builder.put(Parameters.TO_DATE, "20131220");
+        builder.put(Parameters.TIME_INTERVAL, "0");
+        metric = new TimelineProductUsageConditionAbove300Min();
+        context = metric.initContextBasedOnTimeInterval(builder.build());
+        expandedValue = metric.getExpandedValue(context);
+        all = expandedValue.getAll();
+        assertEquals(all.size(), 1);
+
+        record = ((MapValueData) all.get(0)).getAll();
+        assertEquals(record.size(), 1);
+        assertEquals(record.get(metric.getExpandedValueField()).toString(), "user7@gmail.com");        
+        
+        builder = new Context.Builder();
+        builder.put(Parameters.TO_DATE, "20131220");
+        builder.put(Parameters.TIME_INTERVAL, "1");
+        context = metric.initContextBasedOnTimeInterval(builder.build());
+        expandedValue = metric.getExpandedValue(context);
+        all = expandedValue.getAll();
+        assertEquals(all.size(), 0);
+        
+        builder = new Context.Builder();
+        builder.put(Parameters.TO_DATE, "20131220");
+        builder.put(Parameters.TIME_INTERVAL, "2");
+        context = metric.initContextBasedOnTimeInterval(builder.build());
+        expandedValue = metric.getExpandedValue(context);
+        all = expandedValue.getAll();        
+        assertEquals(all.size(), 0);
+    }
+    
+    @Test
     public void testNonActiveUsersMetric() throws Exception {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20131031");
@@ -263,9 +479,12 @@ public class TestExpandedMetric extends BaseTest {
         builder.put(Parameters.TO_DATE, "20131101");
         pigServer.execute(ScriptType.USERS_STATISTICS, builder.build());
         
-        NonActiveUsers metric = new NonActiveUsers();
-        
         // test expanded metric value
+        builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20131101");
+        builder.put(Parameters.TO_DATE, "20131101");
+
+        NonActiveUsers metric = new NonActiveUsers();
         ListValueData expandedValue = metric.getExpandedValue(builder.build());
         List<ValueData> all = expandedValue.getAll();
         assertEquals(all.size(), 1);

@@ -50,6 +50,7 @@ import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricFactory;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.metrics.sessions.AbstractTimelineProductUsageCondition;
 import com.codenvy.analytics.persistent.DataPersister;
 import com.codenvy.analytics.persistent.JdbcDataPersisterFactory;
 import com.codenvy.analytics.services.Feature;
@@ -241,7 +242,13 @@ public class ViewBuilder extends Feature {
         private ComputeViewDataAction(ViewConfiguration viewConfiguration,
                                       Context context) throws ParseException {
             this.viewConf = viewConfiguration;
-            this.context = initializeFirstInterval(context);
+            
+            Expandable expandableMetric = context.getExpandedMetric(); 
+            if (expandableMetric instanceof AbstractTimelineProductUsageCondition) {
+                this.context = ((AbstractTimelineProductUsageCondition)expandableMetric).initContextBasedOnTimeInterval(context);
+            } else {
+                this.context = initializeFirstInterval(context);
+            }
         }
 
         @Override
