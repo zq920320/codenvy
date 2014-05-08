@@ -344,7 +344,12 @@ function View() {
     };
     
     function showErrorMessage(status, textStatus, errorThrown) {
-        viewHtml = "<i>Error of loading data</i>: (" + status + ") '" + errorThrown + "'.";
+        if (status == 500) {
+            viewHtml = "<div class='internalServerErrorMessage'>The data cannot be calculated.</div>";            
+        } else {
+            viewHtml = "<i>Error of loading data</i>: (" + status + ") '" + errorThrown + "'.";
+        }
+        
         show();
     };
 

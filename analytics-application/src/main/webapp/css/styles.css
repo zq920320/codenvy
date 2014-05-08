@@ -164,3 +164,12 @@ div#loader .loader-text {
 .collabsiblePanelTitle {
     padding: 5px 10px !important;
 }
+
+/* error message styles */
+.internalServerErrorMessage {
+	color: rgb(210, 0, 0);
+	border-radius: 4px;
+	padding: 2px 4px;
+	font-style: italic;
+	background-color: rgb(255, 235, 239);
+}
