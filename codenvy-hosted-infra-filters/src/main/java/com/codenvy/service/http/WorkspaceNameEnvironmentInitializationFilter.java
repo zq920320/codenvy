@@ -64,6 +64,7 @@ public class WorkspaceNameEnvironmentInitializationFilter implements Filter {
                     final EnvironmentContext env = EnvironmentContext.getCurrent();
                     env.setWorkspaceName(workspace.getName());
                     env.setWorkspaceId(workspace.getId());
+                    env.setWorkspaceTemporary(workspace.isTemporary());
                 } catch (NotFoundException e) {
                     ((HttpServletResponse)response).sendRedirect(wsNotFoundRedirectUrl);
                     return;

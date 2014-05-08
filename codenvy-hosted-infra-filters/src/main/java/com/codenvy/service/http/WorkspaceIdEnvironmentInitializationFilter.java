@@ -69,6 +69,7 @@ public class WorkspaceIdEnvironmentInitializationFilter implements Filter {
                 env.setWorkspaceName(workspace.getName());
                 env.setWorkspaceId(workspace.getId());
                 env.setAccountId(workspace.getAccountId());
+                env.setWorkspaceTemporary(workspace.isTemporary());
             } catch (NotFoundException e) {
                 ((HttpServletResponse)response).sendRedirect(wsNotFoundRedirectUrl);
                 return;
