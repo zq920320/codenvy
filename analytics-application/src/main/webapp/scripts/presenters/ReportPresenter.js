@@ -70,6 +70,7 @@ analytics.presenter.ReportPresenter.prototype.mapExpandedMetricToDrillDownPageTy
     "timeline_product_usage_condition_below_120_min": "USERS",
     "timeline_product_usage_condition_between_120_and_300_min": "USERS",
     
+    
     /** WORKSPACES */
     "active_workspaces": "WORKSPACES",
     "created_workspaces": "WORKSPACES",
@@ -77,10 +78,15 @@ analytics.presenter.ReportPresenter.prototype.mapExpandedMetricToDrillDownPageTy
     "destroyed_workspaces": "WORKSPACES",
     "shell_launched": "WORKSPACES",
     "collaborative_sessions_started": "WORKSPACES",
+    "workspaces_where_users_have_several_factory_sessions": "WORKSPACES",
+    "workspaces_with_zero_factory_sessions_length": "WORKSPACES",
+    
     "total_workspaces": "WORKSPACES",
+    
     "new_active_workspaces": "WORKSPACES",
     "returning_active_workspaces": "WORKSPACES",
     "non_active_workspaces": "WORKSPACES",
+    
     
     /** PROJECTS */
     "builds": "PROJECTS",
@@ -163,6 +169,7 @@ analytics.presenter.ReportPresenter.prototype.mapExpandedMetricToDrillDownPageTy
     "product_usage_time_below_1_min": "SESSIONS",
     "product_usage_time_total": "SESSIONS",
     "anonymous_factory_sessions": "SESSIONS",
+    
     
     /** FACTORIES */
     "created_factories": "FACTORIES", 
