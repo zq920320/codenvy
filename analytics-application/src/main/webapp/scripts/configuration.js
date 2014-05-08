@@ -297,8 +297,19 @@ function Configuration() {
             modelMetricName: "projects",
 
             columnLinkPrefixList: {
+                "User": "/analytics/pages/user-view.jsp?user",
                 "Workspace": "/analytics/pages/workspace-view.jsp?ws",
-                "Project": "/analytics/pages/project-view.jsp?project",
+            },
+            
+            columnCombinedLinkConfiguration: {
+                "Project": {
+                    baseLink: "/analytics/pages/project-view.jsp",
+                    mapColumnToParameter: {
+                        "Project": "project",
+                        "Workspace": "ws",
+                        "User": "user",
+                    }
+                }
             },
 
             /** @see DatabaseTable::makeTableSortable() method docs */
@@ -311,6 +322,7 @@ function Configuration() {
                 "Workspace": "ws",
                 "Project": "project",
                 "Type": "project_type",
+                "User": "user",                
             }
         },
 
@@ -425,9 +437,20 @@ function Configuration() {
 
             columnLinkPrefixList: {
                 "User": "/analytics/pages/user-view.jsp?user",
-                "Project": "/analytics/pages/project-view.jsp?project",
+                "Workspace": "/analytics/pages/workspace-view.jsp?ws",
             },
 
+            columnCombinedLinkConfiguration: {
+                "Project": {
+                    baseLink: "/analytics/pages/project-view.jsp",
+                    mapColumnToParameter: {
+                        "Project": "project",
+                        "Workspace": "ws",
+                        "User": "user",
+                    }
+                }
+            },
+            
             /** @see DatabaseTable::makeTableSortable() method docs */
             clientSortParams: {
                 "ascSortColumnNumber": 0
@@ -438,6 +461,7 @@ function Configuration() {
                 "User": "user",
                 "Project": "project",
                 "Type": "project_type",
+                "Workspace": "ws",
             }
         },
 
@@ -496,9 +520,8 @@ function Configuration() {
             modelViewName: "projects",
             modelMetricName: "projects",
             columnLinkPrefixList: {
-                "Workspace": "/analytics/pages/workspace-view.jsp?ws",
                 "User": "/analytics/pages/user-view.jsp?user",
-                "Project": "/analytics/pages/project-view.jsp?project",
+                "Workspace": "/analytics/pages/workspace-view.jsp?ws",
             },
 
             columnCombinedLinkConfiguration: {
@@ -544,6 +567,17 @@ function Configuration() {
                 "User": "/analytics/pages/user-view.jsp?user",
             },
 
+            columnCombinedLinkConfiguration: {
+                "Project": {
+                    baseLink: "/analytics/pages/project-view.jsp",
+                    mapColumnToParameter: {
+                        "Project": "project",
+                        "Workspace": "ws",
+                        "User": "user",
+                    }
+                }
+            },           
+            
             /** @see DatabaseTable::makeTableSortable() method docs */
             clientSortParams: {
                 "ascSortColumnNumber": 0

@@ -198,8 +198,11 @@ function View() {
                    
                 } else {
                    // calculation combined link like "project-view.jsp?ws=...&project=..."
-                   var href = baseLink + "?" + getUrlParams(table.rows[i], sourceColumnIndexes, mapColumnToParameter);
-                   table.rows[i][targetColumnIndex] = "<a href='" + href + "'>" + targetColumnValue + "</a>";
+                   var urlParams = getUrlParams(table.rows[i], sourceColumnIndexes, mapColumnToParameter);
+                   if (urlParams != null) {
+                       var href = baseLink + "?" + urlParams;
+                       table.rows[i][targetColumnIndex] = "<a href='" + href + "'>" + targetColumnValue + "</a>";
+                   }
                 }
             }            
         }
@@ -208,7 +211,8 @@ function View() {
     }
 
     /**
-     * @returns query parameters like "ws=...&project=.."
+     * @returns query parameters string like "ws=...&project=..",
+     * or <b>null</b> if at least one parameter is empty.
      */
     function getUrlParams(row, sourceColumnIndexes, mapColumnToParameter) {
         var params = {};
@@ -220,6 +224,11 @@ function View() {
             
             var sourceColumnIndex = sourceColumnIndexes[j];
             var parameterValue = row[sourceColumnIndex];
+            
+            // returns null if at least one parameter is empty
+            if (parameterValue == "") {
+                return null;
+            }
             
             params[parameterName] = parameterValue;
         }

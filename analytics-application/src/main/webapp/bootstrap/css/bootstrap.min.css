@@ -2132,6 +2132,7 @@ table .span24 {
     color: #FFFFFF;
     font-style: italic;
     font-weight: bold;
+    margin: 1px 0px;
 }
 
 .dropdown-menu.pull-right {
@@ -2449,6 +2450,11 @@ button.close {
 
 .dropdown-menu .btn-primary {
 	color: white;
+	cursor: pointer;
+}
+
+.dropdown-menu .command-btn {
+    cursor: pointer;
 }
 
 .btn-warning {
