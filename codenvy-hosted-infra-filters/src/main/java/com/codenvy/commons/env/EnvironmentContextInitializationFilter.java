@@ -109,6 +109,7 @@ public class EnvironmentContextInitializationFilter implements Filter {
                 context.setVariable(EnvironmentContext.MASTERHOST_PORT, request.getServerPort());
                 context.setVariable(EnvironmentContext.MASTERHOST_URL, ub.build().toString());
                 context.setWorkspaceName(tenant);
+                context.setWorkspaceTemporary(workspace.isTemporary());
                 context.setAccountId(workspace.getAccountId());
                 context.setVariable(EnvironmentContext.WORKSPACE_URL, ub.replacePath("/ide/").path(tenant).build().toString());
                 context.setVariable(EnvironmentContext.GIT_SERVER, "git");
