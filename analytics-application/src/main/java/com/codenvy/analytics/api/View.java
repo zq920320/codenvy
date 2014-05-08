@@ -114,7 +114,7 @@ public class View {
                                                               perPage,
                                                               securityContext);
 
-            ListValueData value = getExpandedValue(metricName, com.codenvy.analytics.metrics.Context.valueOf(context));
+            ListValueData value = getExpandedMetricValue(metricName, com.codenvy.analytics.metrics.Context.valueOf(context));
             ViewData result = viewBuilder.getViewData(value);
             String json = transformToJson(result);
 
@@ -189,26 +189,14 @@ public class View {
     }
 
     private ValueData getMetricValue(String metricName, com.codenvy.analytics.metrics.Context context) throws IOException, ParseException {
-        Expandable expandableMetric = context.getExpandedMetric();        
-        if (expandableMetric instanceof AbstractTimelineProductUsageCondition) {
-            context = ((AbstractTimelineProductUsageCondition)expandableMetric).initContextBasedOnTimeInterval(context);
-        } else {
-            context = viewBuilder.initializeTimeInterval(context);
-        }
-        
+        context = viewBuilder.initializeTimeInterval(context);
         return MetricFactory.getMetric(metricName).getValue(context);
     }
 
-    private ListValueData getExpandedValue(String metricName, com.codenvy.analytics.metrics.Context context) throws IOException,
+    private ListValueData getExpandedMetricValue(String metricName, com.codenvy.analytics.metrics.Context context) throws IOException,
                                                                                                             ParseException {              
-        Expandable expandableMetric = (Expandable) MetricFactory.getMetric(metricName);
-        if (expandableMetric instanceof AbstractTimelineProductUsageCondition) {
-            context = ((AbstractTimelineProductUsageCondition)expandableMetric).initContextBasedOnTimeInterval(context);
-        } else {
-            context = viewBuilder.initializeTimeInterval(context);
-        }
-        
-        return expandableMetric.getExpandedValue(context);
+        context = viewBuilder.initializeTimeInterval(context);
+        return ((Expandable) MetricFactory.getMetric(metricName)).getExpandedValue(context);
     }
 
     /**

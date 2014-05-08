@@ -241,14 +241,8 @@ public class ViewBuilder extends Feature {
 
         private ComputeViewDataAction(ViewConfiguration viewConfiguration,
                                       Context context) throws ParseException {
-            this.viewConf = viewConfiguration;
-            
-            Expandable expandableMetric = context.getExpandedMetric(); 
-            if (expandableMetric instanceof AbstractTimelineProductUsageCondition) {
-                this.context = ((AbstractTimelineProductUsageCondition)expandableMetric).initContextBasedOnTimeInterval(context);
-            } else {
-                this.context = initializeFirstInterval(context);
-            }
+            this.viewConf = viewConfiguration;            
+            this.context = initializeFirstInterval(context);
         }
 
         @Override
@@ -298,6 +292,11 @@ public class ViewBuilder extends Feature {
     }
 
     public Context initializeFirstInterval(Context context) throws ParseException {
+        Expandable expandableMetric = context.getExpandedMetric(); 
+        if (expandableMetric instanceof AbstractTimelineProductUsageCondition) {
+            return ((AbstractTimelineProductUsageCondition)expandableMetric).initContextBasedOnTimeInterval(context);
+        }
+        
         Context.Builder builder = new Context.Builder(context);
         builder.put(Parameters.REPORT_DATE, builder.getAsString(Parameters.TO_DATE));
 
@@ -315,6 +314,11 @@ public class ViewBuilder extends Feature {
     }
 
     public Context initializeTimeInterval(Context context) throws ParseException {
+        Expandable expandableMetric = context.getExpandedMetric();        
+        if (expandableMetric instanceof AbstractTimelineProductUsageCondition) {
+            return ((AbstractTimelineProductUsageCondition)expandableMetric).initContextBasedOnTimeInterval(context);
+        }
+        
         Context.Builder builder = new Context.Builder(context);
         
         if (context.exists(Parameters.TIME_UNIT)) {
