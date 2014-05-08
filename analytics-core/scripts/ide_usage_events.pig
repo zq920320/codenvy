@@ -35,7 +35,7 @@ result = FOREACH a GENERATE UUID(),
                             TOTUPLE('action', action),
                             TOTUPLE('source', source),
                             TOTUPLE('project', project),
-                            TOTUPLE('project_type', projectType),
+                            TOTUPLE('project_type', LOWER(projectType)),
                             TOTUPLE('parameters', parameters), -- every key-value pair will be stored separately instead of whole parameter
                             TOTUPLE('ide', ide);
 

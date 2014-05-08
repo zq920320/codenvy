@@ -48,7 +48,7 @@ result = FOREACH a GENERATE UUID(),
                             TOTUPLE('ide', ide),
                             TOTUPLE('project', project),
                             TOTUPLE('repository', repository),
-                            TOTUPLE('project_type', projectType),
+                            TOTUPLE('project_type', LOWER(projectType)),
                             TOTUPLE('encoded_factory', encodedFactory);
 STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 

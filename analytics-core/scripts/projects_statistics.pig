@@ -28,60 +28,60 @@ f5 = removeEmptyField(f4, 'user');
 f = removeEmptyField(f5, 'ws');
 
 b1 = filterByEvent(f, 'user-code-refactor');
-b = FOREACH b1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('code_refactories', 1), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('project', project), TOTUPLE('project_type', project_type), TOTUPLE('ide', ide);
+b = FOREACH b1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('code_refactories', 1), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('project', project), TOTUPLE('project_type', LOWER(project_type)), TOTUPLE('ide', ide);
 STORE b INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 
 c1 = filterByEvent(f, 'user-code-complete');
-c = FOREACH c1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('code_completes', 1), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('project', project), TOTUPLE('project_type', project_type), TOTUPLE('ide', ide);
+c = FOREACH c1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('code_completes', 1), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('project', project), TOTUPLE('project_type', LOWER(project_type)), TOTUPLE('ide', ide);
 STORE c INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 
 d1 = filterByEvent(f, 'project-built,project-deployed,application-created');
-d = FOREACH d1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('builds', 1), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('project', project), TOTUPLE('project_type', project_type), TOTUPLE('ide', ide);
+d = FOREACH d1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('builds', 1), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('project', project), TOTUPLE('project_type', LOWER(project_type)), TOTUPLE('ide', ide);
 STORE d INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 
 e1 = filterByEvent(f, 'run-started');
-e = FOREACH e1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('runs', 1), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('project', project), TOTUPLE('project_type', project_type), TOTUPLE('ide', ide);
+e = FOREACH e1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('runs', 1), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('project', project), TOTUPLE('project_type', LOWER(project_type)), TOTUPLE('ide', ide);
 STORE e INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 
 g1 = filterByEvent(f, 'debug-started');
-g = FOREACH g1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('debugs', 1), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('project', project), TOTUPLE('project_type', project_type), TOTUPLE('ide', ide);
+g = FOREACH g1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('debugs', 1), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('project', project), TOTUPLE('project_type', LOWER(project_type)), TOTUPLE('ide', ide);
 STORE g INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 
 h1 = filterByEvent(f, 'application-created,project-deployed');
-h = FOREACH h1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('deploys', 1), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('project', project), TOTUPLE('project_type', project_type), TOTUPLE('ide', ide);
+h = FOREACH h1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('deploys', 1), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('project', project), TOTUPLE('project_type', LOWER(project_type)), TOTUPLE('ide', ide);
 STORE h INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 
 l1 = filterByEvent(f, 'build-interrupted');
-l = FOREACH l1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('build_interrupts', 1), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('project', project), TOTUPLE('project_type', project_type), TOTUPLE('ide', ide);
+l = FOREACH l1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('build_interrupts', 1), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('project', project), TOTUPLE('project_type', LOWER(project_type)), TOTUPLE('ide', ide);
 STORE l INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 
 m1 = filterByEvent(f, 'artifact-deployed');
-m = FOREACH m1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('artifact_deploys', 1), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('project', project), TOTUPLE('project_type', project_type), TOTUPLE('ide', ide);
+m = FOREACH m1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('artifact_deploys', 1), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('project', project), TOTUPLE('project_type', LOWER(project_type)), TOTUPLE('ide', ide);
 STORE m INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 
 n1 = filterByEvent(f, 'project-created');
-n = FOREACH n1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('project_creates', 1), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('project', project), TOTUPLE('project_type', project_type), TOTUPLE('ide', ide);
+n = FOREACH n1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('project_creates', 1), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('project', project), TOTUPLE('project_type', LOWER(project_type)), TOTUPLE('ide', ide);
 STORE n INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 
 o1 = filterByEvent(f, 'project-destroyed');
-o = FOREACH o1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('project_destroys', 1), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('project', project), TOTUPLE('project_type', project_type), TOTUPLE('ide', ide);
+o = FOREACH o1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('project_destroys', 1), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('project', project), TOTUPLE('project_type', LOWER(project_type)), TOTUPLE('ide', ide);
 STORE o INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 
 y1 = filterByEvent(f, 'application-created');
-y = FOREACH y1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('paas_deploys', 1), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('project', project), TOTUPLE('project_type', project_type), TOTUPLE('ide', ide);
+y = FOREACH y1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('paas_deploys', 1), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('project', project), TOTUPLE('project_type', LOWER(project_type)), TOTUPLE('ide', ide);
 STORE y INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 
 s1 = calculateTime(f, 'run-started', 'run-finished');
 s2 = JOIN s1 BY (dt,user,ws), f BY (dt,user,ws);
-s = FOREACH s2 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(s1::dt)), TOTUPLE('run_time', s1::delta), TOTUPLE('user', s1::user), TOTUPLE('ws', s1::ws), TOTUPLE('project', f::project), TOTUPLE('project_type', f::project_type), TOTUPLE('ide', s1::ide);
+s = FOREACH s2 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(s1::dt)), TOTUPLE('run_time', s1::delta), TOTUPLE('user', s1::user), TOTUPLE('ws', s1::ws), TOTUPLE('project', f::project), TOTUPLE('project_type', LOWER(f::project_type)), TOTUPLE('ide', s1::ide);
 STORE s INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 
 t1 = calculateTime(f, 'build-started', 'build-finished');
 t2 = JOIN t1 BY (dt,user,ws), f BY (dt,user,ws);
-t = FOREACH t2 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(t1::dt)), TOTUPLE('build_time', t1::delta), TOTUPLE('user', t1::user), TOTUPLE('ws', t1::ws), TOTUPLE('project', f::project), TOTUPLE('project_type', f::project_type), TOTUPLE('ide', t1::ide);
+t = FOREACH t2 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(t1::dt)), TOTUPLE('build_time', t1::delta), TOTUPLE('user', t1::user), TOTUPLE('ws', t1::ws), TOTUPLE('project', f::project), TOTUPLE('project_type', LOWER(f::project_type)), TOTUPLE('ide', t1::ide);
 STORE t INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 
 u1 = calculateTime(f, 'debug-started', 'debug-finished');
 u2 = JOIN u1 BY (dt,user,ws), f BY (dt,user,ws);
-u = FOREACH u2 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(u1::dt)), TOTUPLE('debug_time', u1::delta), TOTUPLE('user', u1::user), TOTUPLE('ws', u1::ws), TOTUPLE('project', f::project), TOTUPLE('project_type', f::project_type), TOTUPLE('ide', u1::ide);
+u = FOREACH u2 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(u1::dt)), TOTUPLE('debug_time', u1::delta), TOTUPLE('user', u1::user), TOTUPLE('ws', u1::ws), TOTUPLE('project', f::project), TOTUPLE('project_type', LOWER(f::project_type)), TOTUPLE('ide', u1::ide);
 STORE u INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;

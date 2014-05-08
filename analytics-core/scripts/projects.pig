@@ -31,7 +31,7 @@ result = FOREACH f GENERATE UUID(),
                             TOTUPLE('user', user),
                             TOTUPLE('ws', ws),
                             TOTUPLE('project', project),
-                            TOTUPLE('project_type', project_type),
+                            TOTUPLE('project_type', LOWER(project_type)),
                             TOTUPLE('ide', ide);
 
 STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
