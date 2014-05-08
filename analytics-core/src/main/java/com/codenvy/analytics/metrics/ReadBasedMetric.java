@@ -118,7 +118,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
         String allowedWorkspaces = context.getAsString(Parameters.ORIGINAL_WS);
 
         String ws = context.getAsString(MetricFilter.WS);
-        String user = context.getAsString(MetricFilter.USER);
+        Object user = context.get(MetricFilter.USER);
 
         if (isAnonymousUser(user) && isTemporaryWorkspace(ws)) {
             throw new MetricRestrictionException("Security violation. Probably user hasn't access to the data");

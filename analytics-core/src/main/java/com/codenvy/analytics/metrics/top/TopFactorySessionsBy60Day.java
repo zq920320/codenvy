@@ -17,12 +17,15 @@
  */
 package com.codenvy.analytics.metrics.top;
 
+import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.OmitFilters;
 
 import javax.annotation.security.RolesAllowed;
 
 /** @author <a href="mailto:dnochevnov@codenvy.com">Dmytro Nochevnov</a> */
 @RolesAllowed({"system/admin", "system/manager"})
+@OmitFilters(MetricFilter.WS)
 public class TopFactorySessionsBy60Day extends AbstractTopSessions {
 
     public TopFactorySessionsBy60Day() {

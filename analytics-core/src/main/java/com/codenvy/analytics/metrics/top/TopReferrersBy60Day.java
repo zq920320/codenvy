@@ -17,12 +17,15 @@
  */
 package com.codenvy.analytics.metrics.top;
 
+import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.OmitFilters;
 
 import javax.annotation.security.RolesAllowed;
 
 /** @author Dmytro Nochevnov */
 @RolesAllowed({"system/admin", "system/manager"})
+@OmitFilters(MetricFilter.WS)
 public class TopReferrersBy60Day extends AbstractTopReferrers {
 
     public TopReferrersBy60Day() {

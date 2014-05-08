@@ -19,14 +19,13 @@
 package com.codenvy.analytics.metrics.sessions.factory;
 
 
-import com.codenvy.analytics.metrics.CumulativeMetric;
-import com.codenvy.analytics.metrics.MetricFactory;
-import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.*;
 
 import javax.annotation.security.RolesAllowed;
 
 /** @author Dmytro Nochevnov */
 @RolesAllowed({"system/admin", "system/manager"})
+@OmitFilters(MetricFilter.WS)
 public class TotalFactories extends CumulativeMetric {
 
     public TotalFactories() {

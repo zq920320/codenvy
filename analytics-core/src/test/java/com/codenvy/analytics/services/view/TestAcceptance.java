@@ -287,7 +287,7 @@ public class TestAcceptance extends BaseTest {
 
         // & Deployed to PAAS
         row = sectionData.get(6).get(0).getAsString();
-        aggregateResult(row, new StringValueData("15"), sectionData.get(6).get(1));
+        aggregateResult(row, new StringValueData("14"), sectionData.get(6).get(1));
 
         // sent invitations
         row = sectionData.get(7).get(0).getAsString();
@@ -399,7 +399,7 @@ public class TestAcceptance extends BaseTest {
     private void assertProjectsPaasDay(SectionData sectionData) {
         String row = sectionData.get(1).get(0).getAsString();
         aggregateResult(row, new StringValueData("Total"), sectionData.get(1).get(0));
-        aggregateResult(row, new StringValueData("178"), sectionData.get(1).get(1));
+        aggregateResult(row, new StringValueData("176"), sectionData.get(1).get(1));
 
         row = sectionData.get(2).get(0).getAsString();
         aggregateResult(row, new StringValueData("AWS"), sectionData.get(2).get(0));
@@ -439,13 +439,13 @@ public class TestAcceptance extends BaseTest {
 
         row = sectionData.get(11).get(0).getAsString();
         aggregateResult(row, new StringValueData("No PaaS Defined"), sectionData.get(11).get(0));
-        aggregateResult(row, new StringValueData("158"), sectionData.get(11).get(1));
+        aggregateResult(row, new StringValueData("156"), sectionData.get(11).get(1));
     }
 
     private void assertProjectsTypesDay(SectionData sectionData) {
         String row = sectionData.get(1).get(0).getAsString();
         aggregateResult(row, new StringValueData("Total"), sectionData.get(1).get(0));
-        aggregateResult(row, new StringValueData("178"), sectionData.get(1).get(1));
+        aggregateResult(row, new StringValueData("176"), sectionData.get(1).get(1));
 
         row = sectionData.get(2).get(0).getAsString();
         aggregateResult(row, new StringValueData("Java Jar"), sectionData.get(2).get(0));
@@ -465,7 +465,7 @@ public class TestAcceptance extends BaseTest {
 
         row = sectionData.get(6).get(0).getAsString();
         aggregateResult(row, new StringValueData("PHP"), sectionData.get(6).get(0));
-        aggregateResult(row, new StringValueData("53"), sectionData.get(6).get(1));
+        aggregateResult(row, new StringValueData("51"), sectionData.get(6).get(1));
 
         row = sectionData.get(7).get(0).getAsString();
         aggregateResult(row, new StringValueData("Python"), sectionData.get(7).get(0));
@@ -609,7 +609,7 @@ public class TestAcceptance extends BaseTest {
 
         row = sectionData.get(3).get(0).getAsString();
         aggregateResult(row, new StringValueData("# Builds"), sectionData.get(3).get(0));
-        aggregateResult(row, new StringValueData("231"), sectionData.get(3).get(1));
+        aggregateResult(row, new StringValueData("225"), sectionData.get(3).get(1));
 
         row = sectionData.get(4).get(0).getAsString();
         aggregateResult(row, new StringValueData("# Runs"), sectionData.get(4).get(0));
@@ -669,7 +669,7 @@ public class TestAcceptance extends BaseTest {
     private void assertProjectsDay(SectionData sectionData) {
         String row = sectionData.get(1).get(0).getAsString();
         aggregateResult(row, new StringValueData("Created"), sectionData.get(1).get(0));
-        aggregateResult(row, new StringValueData("178"), sectionData.get(1).get(1));
+        aggregateResult(row, new StringValueData("176"), sectionData.get(1).get(1));
 
         row = sectionData.get(2).get(0).getAsString();
         aggregateResult(row, new StringValueData("Destroyed"), sectionData.get(2).get(0));
@@ -677,7 +677,7 @@ public class TestAcceptance extends BaseTest {
 
         row = sectionData.get(3).get(0).getAsString();
         aggregateResult(row, new StringValueData("Total"), sectionData.get(3).get(0));
-        aggregateResult(row, new StringValueData("161"), sectionData.get(3).get(1));
+        aggregateResult(row, new StringValueData("159"), sectionData.get(3).get(1));
     }
 
     private void assertWorkspacesDay(SectionData sectionData) {

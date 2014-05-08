@@ -18,7 +18,9 @@
 package com.codenvy.analytics.metrics.sessions.factory;
 
 import com.codenvy.analytics.metrics.AbstractAlias;
+import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.OmitFilters;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -26,6 +28,7 @@ import javax.annotation.security.RolesAllowed;
  * @author Anatoliy Bazko
  */
 @RolesAllowed(value = {"user", "system/admin", "system/manager"})
+@OmitFilters(MetricFilter.WS)
 public class Factories extends AbstractAlias {
     public Factories() {
         super(MetricType.FACTORIES, MetricType.CREATED_FACTORIES);

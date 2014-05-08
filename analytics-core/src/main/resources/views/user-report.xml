@@ -33,6 +33,7 @@
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="non_active_users"/>
                 <parameter key="description" value="Non-Active Users"/>
+                <parameter key="hide-negative-values" value="true"/>
             </row>
         </section>
 
@@ -79,7 +80,7 @@
                 <parameter key="description" value="&#0062; 300 Mins"/>
             </row>
         </section>
-        
+
         <section name="authentications">
             <row class="com.codenvy.analytics.services.view.DateRow">
                 <parameter key="section-name" value="Authentication Type"/>
@@ -99,9 +100,9 @@
                 <parameter key="numeric-format" value="%.0f%%"/>
                 <parameter key="description" value="Form Auth"/>
             </row>
-        </section>           
+        </section>
     </view>
-    
+
     <view name="engagement_levels" columns="7">
         <section name="engagement_levels">
             <row class="com.codenvy.analytics.services.view.TitleRow">

@@ -24,14 +24,10 @@ import com.mongodb.DBObject;
 
 import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
-@OmitFilters({MetricFilter.WS})
 public class UsersStatisticsList extends AbstractListValueResulted {
 
     public UsersStatisticsList() {
@@ -111,22 +107,19 @@ public class UsersStatisticsList extends AbstractListValueResulted {
 
             // add user profile data
             Map<String, ValueData> profile = getUserProfile(newItems.get(USER).getAsString());
-            if (profile != null) {
-                newItems.put(USER_FIRST_NAME, profile.get(USER_FIRST_NAME));
-                newItems.put(USER_LAST_NAME, profile.get(USER_LAST_NAME));
-                newItems.put(USER_COMPANY, profile.get(USER_COMPANY));
-                newItems.put(USER_JOB, profile.get(USER_JOB));
-            } else {
-                newItems.put(USER_FIRST_NAME, StringValueData.DEFAULT);
-                newItems.put(USER_LAST_NAME, StringValueData.DEFAULT);
-                newItems.put(USER_COMPANY, StringValueData.DEFAULT);
-                newItems.put(USER_JOB, StringValueData.DEFAULT);
-            }
+            putNotNull(newItems, profile, USER_FIRST_NAME);
+            putNotNull(newItems, profile, USER_LAST_NAME);
+            putNotNull(newItems, profile, USER_COMPANY);
+            putNotNull(newItems, profile, USER_JOB);
 
             value.add(new MapValueData(newItems));
         }
 
         return new ListValueData(value);
+    }
+
+    private void putNotNull(Map<String, ValueData> newItems, Map<String, ValueData> profile, String key) {
+        newItems.put(key, profile.containsKey(key) ? profile.get(key) : StringValueData.DEFAULT);
     }
 
     /**
@@ -140,11 +133,11 @@ public class UsersStatisticsList extends AbstractListValueResulted {
         Metric metric = MetricFactory.getMetric(MetricType.USERS_PROFILES_LIST);
         List<ValueData> users = ValueDataUtil.getAsList(metric, builder.build()).getAll();
 
-        if (users.size() > 0) {
+        if (users.size() == 1) {
             MapValueData userProfile = (MapValueData)users.get(0);
             return userProfile.getAll();
         } else {
-            return null;
+            return Collections.emptyMap();
         }
     }
 }

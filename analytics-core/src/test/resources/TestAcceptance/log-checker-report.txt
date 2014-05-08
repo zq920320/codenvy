@@ -246,6 +246,12 @@ Event 'application-created' with parameter 'TYPE' and value 'javascript' doesn't
 Event 'application-created' with parameter 'TYPE' and value 'angularjs' doesn't exist
 Event 'application-created' with parameter 'TYPE' and value 'html' doesn't exist
 Event 'application-created' with parameter 'TYPE' and value 'undefined' doesn't exist
+Event 'application-created' with parameter 'PAAS' and value 'aws:beanstalk' doesn't exist
+Event 'application-created' with parameter 'PAAS' and value 'cloudbees' doesn't exist
+Event 'application-created' with parameter 'PAAS' and value 'tier3 web fabric' doesn't exist
+Event 'application-created' with parameter 'PAAS' and value 'manymo' doesn't exist
+Event 'application-created' with parameter 'PAAS' and value 'heroku' doesn't exist
+Event 'application-created' with parameter 'PAAS' and value 'cloudbees' doesn't exist
 Event doesn't exist: artifact-deployed
 Event doesn't exist for temporary workspaces: user-invite
 Event doesn't exist for anonymous users: user-invite

@@ -33,6 +33,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.regex.Pattern;
 
 
 /**
@@ -213,12 +214,12 @@ public class Utils {
         return new HashSet<>(Arrays.asList(value.split(ReadBasedMetric.SEPARATOR)));
     }
 
-    public static boolean isTemporaryWorkspace(String name) {
-        return name != null && name.toUpperCase().startsWith("TMP-");
+    public static boolean isTemporaryWorkspace(Object name) {
+        return "TMP-".equalsIgnoreCase(String.valueOf(name));
     }
 
-    public static boolean isAnonymousUser(String name) {
-        return name != null && name.toUpperCase().startsWith("ANONYMOUSUSER_");
+    public static boolean isAnonymousUser(Object name) {
+        return "ANONYMOUSUSER_".equalsIgnoreCase(String.valueOf(name));
     }
 
     public static boolean isTemporaryExist(Set<String> workspaces) {
@@ -241,13 +242,48 @@ public class Utils {
         return false;
     }
 
-    public static boolean isAllowedEntities(String testedEntitiesAsString, String allowedEntitiesAsString) {
-        if (allowedEntitiesAsString == null || testedEntitiesAsString == null) {
+    public static boolean isAllowedEntities(Object testedEntitiesAsString, Object allowedEntities) {
+        if (allowedEntities == null || testedEntitiesAsString == null) {
             return true;
         } else {
-            Set<String> allowedEntities = getFilterAsSet(allowedEntitiesAsString);
-            Set<String> testedEntities = getFilterAsSet(testedEntitiesAsString);
-            return allowedEntities.containsAll(testedEntities);
+            Set<String> testedEntities = getFilterAsSet((String)testedEntitiesAsString);
+
+            if (allowedEntities instanceof String) {
+                return getFilterAsSet((String)allowedEntities).containsAll(testedEntities);
+
+            } else if (allowedEntities instanceof String[]) {
+                return new HashSet<>(Arrays.asList(allowedEntities)).containsAll(testedEntities);
+
+            } else if (allowedEntities instanceof Pattern) {
+                Pattern pattern = (Pattern)allowedEntities;
+                for (String entity : testedEntities) {
+                    if (!pattern.matcher(entity).find()) {
+                        return false;
+                    }
+                }
+                return true;
+
+            } else if (allowedEntities instanceof Pattern[]) {
+                Pattern[] patterns = (Pattern[])allowedEntities;
+                for (String entity : testedEntities) {
+
+                    boolean matched = false;
+                    for (Pattern pattern : patterns) {
+                        if (pattern.matcher(entity).find()) {
+                            matched = true;
+                            break;
+                        }
+                    }
+
+                    if (!matched) {
+                        return false;
+                    }
+                }
+                return true;
+
+            } else {
+                throw new IllegalArgumentException("Unsupported type " + allowedEntities.getClass());
+            }
         }
     }
 }

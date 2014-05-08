@@ -26,7 +26,6 @@ import javax.annotation.security.RolesAllowed;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
-@OmitFilters({MetricFilter.WS})
 public class UsageTimeByWorkspacesList extends AbstractListValueResulted {
 
     public static final String SESSIONS = "sessions";

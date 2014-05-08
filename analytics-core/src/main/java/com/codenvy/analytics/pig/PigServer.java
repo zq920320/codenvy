@@ -249,15 +249,13 @@ public class PigServer {
         for (String dir : outdatedScriptDirectories) {
             Date date = DATE_FORMAT.parse(dir);
 
-            if (context.getAsDate(Parameters.TO_DATE).getTimeInMillis() < date.getTime()) {
+            if (context.getAsDate(Parameters.TO_DATE).getTimeInMillis() <= date.getTime()) {
                 File script = new File(scriptDir, dir + File.separator + scriptType.toString().toLowerCase() + ".pig");
 
                 if (script.exists()) {
                     LOG.info("Script " + scriptType + " will be used from " + dir + " directory");
                     return script;
                 }
-
-                break;
             }
         }
 

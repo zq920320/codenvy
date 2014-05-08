@@ -22,6 +22,8 @@ import com.codenvy.analytics.Utils;
 import java.text.ParseException;
 import java.util.*;
 
+import static com.codenvy.analytics.Utils.getFilterAsString;
+
 /**
  * Unmodifiable execution context.
  *
@@ -91,7 +93,13 @@ public class Context {
 
     public String getAsString(MetricFilter key) {
         Object object = params.get(key.toString());
-        return object == null ? null : (String)object;
+        if (object == null) {
+            return null;
+        } else if (object.getClass().isArray()) {
+            return getFilterAsString(new HashSet<>(Arrays.asList((String[])object)));
+        } else {
+            return (String)object;
+        }
     }
 
     public Object get(MetricFilter key) {

@@ -26,7 +26,7 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"any"})
 @RequiredFilter(MetricFilter.FACTORY)
-@OmitFilters({MetricFilter.USER})
+@OmitFilters({MetricFilter.USER, MetricFilter.WS})
 public class FactoryUsed extends AbstractCount {
 
     public FactoryUsed() {

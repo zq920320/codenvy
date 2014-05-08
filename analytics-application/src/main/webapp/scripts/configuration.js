@@ -168,16 +168,12 @@ function Configuration() {
                 "ascSortColumnNumber": 0
             },
 
-//            mapColumnToServerSortParam: {
-//                "Email": "user",
-//                "First Name": "user_first_name",
-//                "Last Name": "user_last_name",
-//                "Company": "user_company",
-//                "Job": "user_job",
-//                "# Sessions": "sessions",
-//                "Usage Time": "time",
-//                "# Projects": "projects",
-//            },
+            mapColumnToServerSortParam: {
+                "Started": "date",
+                "Event": "action",
+                "Workspace": "ws",
+                "User": "user",
+            },
         },
 
         /** for User View */

@@ -25,10 +25,6 @@ import java.io.IOException;
 /** @author Anatoliy Bazko */
 public class ValueDataUtil {
 
-    public static NumericValueData getAsNumeric(Metric metric, Context context) throws IOException {
-        return (NumericValueData)metric.getValue(context);
-    }
-
     public static LongValueData getAsLong(Metric metric, Context context) throws IOException {
         return (LongValueData)metric.getValue(context);
     }
@@ -39,5 +35,9 @@ public class ValueDataUtil {
 
     public static ListValueData getAsList(Metric metric, Context context) throws IOException {
         return (ListValueData)metric.getValue(context);
+    }
+
+    public static MapValueData getAsMap(Metric metric, Context context) throws IOException {
+        return (MapValueData)metric.getValue(context);
     }
 }
