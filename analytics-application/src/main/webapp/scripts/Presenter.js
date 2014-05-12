@@ -197,3 +197,49 @@ Presenter.prototype.isSortingOrderAscending = function(sortingColumn, sortingPar
 
    return null;
 }
+
+/** 
+ * @returns true if value = "0".
+ * */
+Presenter.prototype.isEmptyValue = function(value) {
+    return value == "0"  // 0 numeric value
+           || value == "00:00:00"   // 0 time value
+           || value == "0%";   // 0 time value
+}
+
+Presenter.prototype.getDrillDownPageLink = function(metricName, modelParams, timeInterval) {
+    var drillDownPageLink = analytics.configuration.getDrillDownPageAddress(metricName) + analytics.util.constructUrlParams(modelParams);
+    drillDownPageLink += "&" + this.METRIC_ORIGINAL_NAME_VIEW_PARAMETER + "=" + metricName;
+
+    if (typeof timeInterval != "undefined") {
+        drillDownPageLink += "&" + this.TIME_INTERVAL_PARAMETER + "=" + timeInterval;
+    }
+    
+    return drillDownPageLink;
+}
+
+Presenter.prototype.linkTableValuesWithDrillDownPage = function(widgetName, table, modelParams) {
+    var modelParams = analytics.util.clone(modelParams);
+    
+    delete modelParams.page;    // remove page parameter
+    delete modelParams.per_page;    // remove page parameter
+    
+    for (var columnIndex = 0; columnIndex < table.columns.length; columnIndex++) {
+        var columnName = table.columns[columnIndex];            
+        
+        var expandedMetricName = analytics.configuration.getExpandableMetricName(widgetName, columnName);
+        if (typeof expandedMetricName != "undefined") {
+            for (var i = 0; i < table.rows.length; i++) {
+                var columnValue = table.rows[i][columnIndex];
+                
+                if (! this.isEmptyValue(columnValue)) {
+                    var drillDownPageLink = this.getDrillDownPageLink(expandedMetricName, modelParams);                
+                    
+                    table.rows[i][columnIndex] = "<a href='" + drillDownPageLink + "'>" + columnValue + "</a>";
+                }
+            }
+        }
+    }          
+        
+    return table;
+}

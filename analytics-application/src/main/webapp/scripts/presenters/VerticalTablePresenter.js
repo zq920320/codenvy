@@ -32,8 +32,8 @@ analytics.presenter.VerticalTablePresenter.prototype.load = function() {
     
     // default label is "Overview"
     var widgetLabel = analytics.configuration.getProperty(presenter.widgetName, "widgetLabel", "Overview");
-    
-    model.setParams(presenter.getModelParams(view.getParams()));
+    var modelParams = presenter.getModelParams(view.getParams());
+    model.setParams(modelParams);
     
     model.pushDoneFunction(function(data) {
         var doNotDisplayCSVButton = analytics.configuration.getProperty(presenter.widgetName, "doNotDisplayCSVButton", false);
@@ -44,13 +44,14 @@ analytics.presenter.VerticalTablePresenter.prototype.load = function() {
         var table = data[0];  // there is only one table in data
         
         // make table columns linked 
-        var columnLinkPrefixList = analytics.configuration.getProperty(presenter.widgetName, "columnLinkPrefixList");
-        if (typeof columnLinkPrefixList != "undefined") {
-            for (var columnName in columnLinkPrefixList) {
-                table = view.makeTableColumnLinked(table, columnName, columnLinkPrefixList[columnName]);    
-            }          
+        var columnLinkPrefixList = analytics.configuration.getProperty(presenter.widgetName, "columnLinkPrefixList", {});
+        for (var columnName in columnLinkPrefixList) {
+            table = view.makeTableColumnLinked(table, columnName, columnLinkPrefixList[columnName]);    
         }        
-               
+        
+        // add links to drill down page
+        table = presenter.linkTableValuesWithDrillDownPage(presenter.widgetName, table, modelParams);    
+        
         view.print("<div class='view'>");
         view.print("   <div class='overview'>");
 

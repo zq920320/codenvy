@@ -68,6 +68,9 @@ analytics.presenter.HorizontalTablePresenter.prototype.load = function() {
                     }          
                 }       
                 
+                // add links to drill down page
+                table = presenter.linkTableValuesWithDrillDownPage(presenter.widgetName, table, modelParams);
+                
                 modelParams[widgetName] = modelParams.page;
                 delete modelParams.page;    // remove page parameter
                 delete modelParams.per_page;    // remove page parameter
@@ -112,6 +115,11 @@ analytics.presenter.HorizontalTablePresenter.prototype.load = function() {
         model.setParams(modelParams);
         
         model.pushDoneFunction(function(data) {
+            var table = data[0];  // there is only one table in data
+            
+            // add links to drill down page
+            table = presenter.linkTableValuesWithDrillDownPage(presenter.widgetName, table, modelParams);   
+            
             // print table
             var csvButtonLink = presenter.getLinkForExportToCsvButton();
             presenter.printTable(csvButtonLink, data[0], widgetName + "_table");

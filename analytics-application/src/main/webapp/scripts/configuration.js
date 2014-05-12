@@ -187,6 +187,18 @@ function Configuration() {
             widgetLabel: "User Statistics",
             presenterType: "HorizontalTablePresenter",
             modelViewName: "user_data",
+            
+            mapColumnNameToExpandableMetric: {
+                "Number of Sessions": "product_usage_sessions",
+                "Total Time": "product_usage_time_total",
+                "Total Build Time": "builds_time",
+                "Total Run Time": "runs_time",
+                "Number of Active Projects": "projects",
+                "Number of Builds": "builds",
+                "Number of Debugs": "debugs",
+                "Number of Deploys": "deploys",
+                "Number of Factories": "total_factories",
+            },
         },
 
         userSessions: {
@@ -382,6 +394,19 @@ function Configuration() {
             presenterType: "VerticalTablePresenter",
             modelViewName: "workspace_overview",
             isNeedToSaveInHistory: false,   // default value = true
+            
+            mapColumnNameToExpandableMetric: {
+                "Number of Sessions": "product_usage_sessions",
+                "Total Time": "product_usage_time_total",
+                "Total Build Time": "builds_time",
+                "Total Run Time": "runs_time",
+                "Number of Active Projects": "projects",
+                "Number of Builds": "builds",
+                "Number of Debugs": "debugs",
+                "Number of Deploys": "deploys",
+                "Number of Factories": "total_factories",
+                "Number of Users": "total_users",
+            },
         },
 
         workspaceProjects: {
@@ -421,7 +446,7 @@ function Configuration() {
 
             columnLinkPrefixList: {
                 "ID": "/analytics/pages/session-view.jsp?session_id",
-                "User": "/analytics/pages/user-view.jsserverConfigurationp?user"
+                "User": "/analytics/pages/user-view.jsp?user",
             },
             
             /** @see DatabaseTable::makeTableSortable() method docs */
@@ -454,6 +479,11 @@ function Configuration() {
                 "Name": "user",
                 "Sessions": "sessions",
                 "Time": "time",
+            },
+            
+            mapColumnNameToExpandableMetric: {
+                "Sessions": "product_usage_sessions",
+                "Time": "product_usage_time_total",
             },
         },
 
@@ -560,7 +590,14 @@ function Configuration() {
             columnLinkPrefixList: {
                 "Created By": "/analytics/pages/user-view.jsp?user",
                 "Workspace": "/analytics/pages/workspace-view.jsp?ws",
-            }
+            },
+            
+            mapColumnNameToExpandableMetric: {
+                "Number of Sessions": "product_usage_sessions",
+                "Number of Known": "authenticated_factory_sessions",
+                "Number of Converted": "converted_factory_sessions",
+                "Total Time": "product_usage_time_total",
+            },
         },
 
         factorySessions: {
@@ -726,6 +763,166 @@ function Configuration() {
         "User Did Not Enter Workspace",
     ];
     
+    
+    /** Drill Down page parameters */
+    var defaultDrillDownPageAddress = "/analytics/pages/drill-down.jsp?";
+    var mapExpandableMetricToDrillDownPageType = {
+        /** USERS */
+        "active_users": "USERS",
+        "users_who_created_project": "USERS",
+        "users_who_built": "USERS",
+        "users_who_deployed": "USERS",
+        "users_who_deployed_to_paas": "USERS", 
+        "users_who_invited": "USERS",
+        "users_who_launched_shell": "USERS",
+        "created_users": "USERS",
+        "created_users_from_factory": "USERS",
+        "user_invite": "USERS",
+        "removed_users": "USERS",
+        "users_activity": "USERS",
+        "total_users": "USERS",
+        "users_added_to_workspaces_using_invitation": "USERS",
+        "non_active_users": "USERS",
+        
+        "product_usage_users_above_300_min": "USERS",
+        "product_usage_users_between_10_and_60_min": "USERS",
+        "product_usage_users_between_60_and_300_min": "USERS",
+        
+        "product_usage_condition_above_300_min": "USERS",
+        "product_usage_condition_below_120_min": "USERS",
+        "product_usage_condition_between_120_and_300_min": "USERS",
+        
+        "new_active_users": "USERS",
+        "created_users_from_auth": "USERS",
+        "users_logged_in_with_form": "USERS",
+        "users_logged_in_with_github": "USERS",
+        "users_logged_in_with_google": "USERS",
+        "users_logged_in_with_form_percent": "USERS",
+        "users_logged_in_with_github_percent": "USERS",
+        "users_logged_in_with_google_percent": "USERS",
+        "returning_active_users": "USERS",
+        "product_usage_users_below_10_min": "USERS",
+        "users_logged_in_total": "USERS",
+        "users_accepted_invites_percent": "USERS",
+        "users_accepted_invites": "USERS",
+        "timeline_product_usage_condition_above_300_min": "USERS",
+        "timeline_product_usage_condition_below_120_min": "USERS",
+        "timeline_product_usage_condition_between_120_and_300_min": "USERS",
+        
+        
+        /** WORKSPACES */
+        "active_workspaces": "WORKSPACES",
+        "created_workspaces": "WORKSPACES",
+        "temporary_workspaces_created": "WORKSPACES",
+        "destroyed_workspaces": "WORKSPACES",
+        "shell_launched": "WORKSPACES",
+        "collaborative_sessions_started": "WORKSPACES",
+        "workspaces_where_users_have_several_factory_sessions": "WORKSPACES",
+        "workspaces_with_zero_factory_sessions_length": "WORKSPACES",
+        
+        "total_workspaces": "WORKSPACES",
+        
+        "new_active_workspaces": "WORKSPACES",
+        "returning_active_workspaces": "WORKSPACES",
+        "non_active_workspaces": "WORKSPACES",
+        
+        
+        /** PROJECTS */
+        "builds": "PROJECTS",
+        "deploys": "PROJECTS",
+        "deploys_to_paas": "PROJECTS",
+        "runs": "PROJECTS",
+        "debugs": "PROJECTS",
+        "destroyed_projects": "PROJECTS",
+        "code_refactorings": "PROJECTS",
+        "code_completions": "PROJECTS",
+        "build_queue_terminations": "PROJECTS",
+        "run_queue_terminations": "PROJECTS",
+        "builds_time": "PROJECTS",
+        "debugs_time": "PROJECTS",
+        "runs_time": "PROJECTS",
+        "time_in_build_queue": "PROJECTS",
+        "time_in_run_queue": "PROJECTS",
+        "created_projects": "PROJECTS",
+        "projects": "PROJECTS",
+
+        "project_type_android": "PROJECTS",
+        "project_type_django": "PROJECTS",
+        "project_type_jar": "PROJECTS",
+        "project_type_javascript": "PROJECTS",
+        "project_type_jsp": "PROJECTS",
+        "project_type_mmp": "PROJECTS",
+        "project_type_nodejs": "PROJECTS",
+        "project_type_others": "PROJECTS",
+        "project_type_php": "PROJECTS",
+        "project_type_python": "PROJECTS",
+        "project_type_ruby": "PROJECTS",
+        "project_type_spring": "PROJECTS",
+        "project_type_war": "PROJECTS",
+        
+        "project_paas_appfog": "PROJECTS",
+        "project_paas_aws": "PROJECTS",
+        "project_paas_cloudbees": "PROJECTS",
+        "project_paas_cloudfoundry": "PROJECTS",
+        "project_paas_gae": "PROJECTS",
+        "project_paas_heroku": "PROJECTS",
+        "project_paas_manymo": "PROJECTS",
+        "project_paas_openshift": "PROJECTS",
+        "project_paas_tier3": "PROJECTS",
+        
+        "total_projects": "PROJECTS",
+
+        "project_no_paas_defined": "PROJECTS",
+        "project_paas_any": "PROJECTS",
+        
+        
+        /** SESSIONS */
+        "factory_sessions_with_build": "SESSIONS",
+        "factory_sessions_with_deploy": "SESSIONS",
+        "factory_sessions_with_run": "SESSIONS",
+        "authenticated_factory_sessions": "SESSIONS",
+        "converted_factory_sessions": "SESSIONS",
+        "product_usage_sessions": "SESSIONS",
+        "factory_sessions": "SESSIONS",
+        "product_usage_factory_sessions": "SESSIONS",
+        "factory_product_usage_time_total": "SESSIONS",
+        
+        "factory_sessions_with_build_percent": "SESSIONS",
+        "factory_sessions_with_deploy_percent": "SESSIONS",
+        "factory_sessions_with_run_percent": "SESSIONS",
+        
+        "product_usage_sessions_above_60_min": "SESSIONS",
+        "product_usage_sessions_below_1_min": "SESSIONS",
+        "product_usage_sessions_between_10_and_60_min": "SESSIONS",
+        "product_usage_sessions_between_1_and_10_min": "SESSIONS",
+        
+        "product_usage_time_above_60_min": "SESSIONS",
+        "product_usage_time_between_10_and_60_min": "SESSIONS",
+        "product_usage_time_between_1_and_10_min": "SESSIONS",
+        
+        "factory_sessions_above_10_min": "SESSIONS",
+        "factory_sessions_below_10_min": "SESSIONS",
+        
+        "abandoned_factory_sessions": "SESSIONS",
+        "non_factories_product_usage_sessions": "SESSIONS",
+        "product_usage_time_below_1_min": "SESSIONS",
+        "product_usage_time_total": "SESSIONS",
+        "anonymous_factory_sessions": "SESSIONS",
+        
+        
+        /** FACTORIES */
+        "created_factories": "FACTORIES", 
+        "factory_used": "FACTORIES",
+        "total_factories": "FACTORIES",
+    };
+    var mapDrillDownPageTypeToAddress = {
+        "USERS": "/analytics/pages/users-view.jsp?sort=%2Buser&",
+        "WORKSPACES": "/analytics/pages/workspaces-view.jsp?sort=%2Bws&",
+        "FACTORIES": "/analytics/pages/factories-view.jsp?sort=%2Bws_created&",
+        "PROJECTS": "/analytics/pages/projects-view.jsp?",
+        "SESSIONS": "/analytics/pages/sessions-view.jsp?sort=-date&",
+    }
+    
     /**
      * Returns property of widget.
      */
@@ -867,7 +1064,22 @@ function Configuration() {
         }
     }
 
+    function getDrillDownPageAddress(metricName) {
+        var drillDownPageType = mapExpandableMetricToDrillDownPageType[metricName];
 
+        if (typeof drillDownPageType == "undefined") {
+            return defaultDrillDownPageAddress;
+        }
+            
+        return mapDrillDownPageTypeToAddress[drillDownPageType];
+    }
+    
+    function getExpandableMetricName(widgetName, columnName) {
+        var mapColumnNameToExpandableMetric = getProperty(widgetName, "mapColumnNameToExpandableMetric", {});
+        return mapColumnNameToExpandableMetric[columnName];
+    }
+
+    
     /** ****************** API ********** */
     return {
         getProperty: getProperty,
@@ -882,6 +1094,7 @@ function Configuration() {
         getCrossPageParamsList: getCrossPageParamsList,
         isDateParam: isDateParam,
         isSystemMessage: isSystemMessage,
-
+        getDrillDownPageAddress: getDrillDownPageAddress,
+        getExpandableMetricName: getExpandableMetricName,
     }
 }
