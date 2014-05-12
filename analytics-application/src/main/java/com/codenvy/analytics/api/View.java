@@ -30,6 +30,7 @@ import com.codenvy.api.analytics.shared.dto.MetricValueDTO;
 import com.codenvy.dto.server.JsonArrayImpl;
 import com.google.inject.Inject;
 
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +39,10 @@ import javax.inject.Singleton;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 /**
@@ -143,15 +147,9 @@ public class View {
     private StreamingOutput getStreamingOutput(final File csvFile) {
         return new StreamingOutput() {
             @Override
-            public void write(OutputStream os) throws IOException,
-                                                      WebApplicationException {
-
+            public void write(OutputStream os) throws IOException, WebApplicationException {
                 try (FileInputStream csvInputStream = new FileInputStream(csvFile)) {
-                    byte[] buffer = new byte[1024];
-                    int len;
-                    while ((len = csvInputStream.read(buffer)) > 0) {
-                        os.write(buffer, 0, len);
-                    }
+                    IOUtils.copy(csvInputStream, os);
                 } finally {
                     csvFile.delete();
                 }

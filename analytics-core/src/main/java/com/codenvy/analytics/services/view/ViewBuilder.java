@@ -91,7 +91,6 @@ public class ViewBuilder extends Feature {
     private boolean isSimplified(Context context) {
         return !context.exists(Parameters.SORT)
                && !context.exists(Parameters.PAGE)
-               && !context.exists(Parameters.CSV_ROWS)
                && (!context.exists(Parameters.FROM_DATE) || context.isDefaultValue(Parameters.FROM_DATE))
                && (!context.exists(Parameters.TO_DATE) || context.isDefaultValue(Parameters.TO_DATE))
                && context.getFilters().isEmpty();
@@ -230,15 +229,14 @@ public class ViewBuilder extends Feature {
             }
         }
 
-        private Row getRow(RowConfiguration rowConf)
-                throws NoSuchMethodException, ClassNotFoundException, InstantiationException, IllegalAccessException,
-                       InvocationTargetException {
+        private Row getRow(RowConfiguration rowConf) throws NoSuchMethodException,
+                                                            ClassNotFoundException,
+                                                            InstantiationException,
+                                                            IllegalAccessException,
+                                                            InvocationTargetException {
             String className = rowConf.getClazz();
-
-            if (context.exists(Parameters.CSV_ROWS)) {
-                if (DateRow.class.getName().equals(className)) {
-                    className = CVSDateRow.class.getName();
-                }
+            if (context.exists(Parameters.CSV_ROWS) && DateRow.class.getName().equals(className)) {
+                className = CVSDateRow.class.getName();
             }
 
             Constructor<?> constructor = Class.forName(className).getConstructor(Map.class);

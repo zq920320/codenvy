@@ -36,6 +36,8 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.codenvy.analytics.Utils.getFilterAsString;
+
 /** @author Anatoliy Bazko */
 public class Utils {
 
@@ -113,12 +115,10 @@ public class Utils {
             Calendar toDate = com.codenvy.analytics.Utils.parseDate(context.get(Parameters.TO_DATE.toString()));
 
             if (fromDate.after(toDate)) {
-                throw new RuntimeException(
-                        "The parameter " + Parameters.TO_DATE + " should be more " + Parameters.FROM_DATE + "!");
+                throw new RuntimeException("The parameter " + Parameters.TO_DATE + " must be greater than " + Parameters.FROM_DATE);
             }
         } catch (ParseException e) {
-            throw new RuntimeException(
-                    "Can not parse " + Parameters.FROM_DATE + " or " + Parameters.TO_DATE + " parameter");
+            throw new RuntimeException("Can not parse " + Parameters.FROM_DATE + " or " + Parameters.TO_DATE + " parameters");
         }
     }
 
@@ -131,9 +131,9 @@ public class Utils {
 //            Set<String> users = getFilterAsSet(allUsers);
 
             if (!context.containsKey(MetricFilter.USER.toString())) {
-                context.put(MetricFilter.USER.toString(), com.codenvy.analytics.Utils.getFilterAsString(users));
+                context.put(MetricFilter.USER.toString(), getFilterAsString(users));
             }
-            context.put(Parameters.ORIGINAL_USER.toString(), com.codenvy.analytics.Utils.getFilterAsString(users));
+            context.put(Parameters.ORIGINAL_USER.toString(), getFilterAsString(users));
         }
     }
 
@@ -181,9 +181,9 @@ public class Utils {
             Set<String> workspaces = getAvailableWorkspacesForCurrentUser(context);
 
             if (!context.containsKey(MetricFilter.WS.toString())) {
-                context.put(MetricFilter.WS.toString(), com.codenvy.analytics.Utils.getFilterAsString(workspaces));
+                context.put(MetricFilter.WS.toString(), getFilterAsString(workspaces));
             }
-            context.put(Parameters.ORIGINAL_WS.toString(), com.codenvy.analytics.Utils.getFilterAsString(workspaces));
+            context.put(Parameters.ORIGINAL_WS.toString(), getFilterAsString(workspaces));
         }
     }
 
