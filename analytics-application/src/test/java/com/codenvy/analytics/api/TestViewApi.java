@@ -27,10 +27,7 @@ import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.persistent.JdbcDataPersisterFactory;
 import com.codenvy.analytics.services.configuration.XmlConfigurationManager;
 import com.codenvy.analytics.services.pig.PigRunner;
-import com.codenvy.analytics.services.view.CSVReportPersister;
-import com.codenvy.analytics.services.view.DisplayConfiguration;
-import com.codenvy.analytics.services.view.ViewBuilder;
-import com.codenvy.analytics.services.view.ViewData;
+import com.codenvy.analytics.services.view.*;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.OutputSupplier;
 
@@ -85,8 +82,13 @@ public class TestViewApi extends BaseTest {
         ArgumentCaptor<Context> context = ArgumentCaptor.forClass(Context.class);
         verify(viewBuilder, atLeastOnce()).retainViewData(viewId.capture(), viewData.capture(), context.capture());
 
-        String response = new View(viewBuilder, new FileBasedMetricHandler()).transformToJson(viewData.getValue());
+        String response = new View(viewBuilder,
+                                   new FileBasedMetricHandler(),
+                                   new CSVFileCleaner(configurator))
+                .transformToJson(viewData.getValue());
         String expectedResponse = getResourse(EXPECTED_JSON_FILE, "18 Mar", getToday());
+
+        expectedResponse = expectedResponse.substring(0, expectedResponse.length() - 1); // remove ended "\n"
 
         assertEquals(response, expectedResponse);
     }
@@ -106,10 +108,13 @@ public class TestViewApi extends BaseTest {
         ArgumentCaptor<Context> context = ArgumentCaptor.forClass(Context.class);
         verify(viewBuilder, atLeastOnce()).retainViewData(viewId.capture(), viewData.capture(), context.capture());
 
-        String response = new View(viewBuilder, new FileBasedMetricHandler()).transformToCsv(viewData.getValue());
-        String expectedResponse = getResourse(EXPECTED_CSV_FILE, "18 Mar", getToday());
+        ByteArrayOutputStream response = new ByteArrayOutputStream();
+        new View(viewBuilder, new FileBasedMetricHandler(), new CSVFileCleaner(configurator))
+                .transformToCsv(viewData.getValue(), response);
 
-        assertEquals(response, expectedResponse);
+                String expectedResponse = getResourse(EXPECTED_CSV_FILE, "18 Mar", getToday());
+
+        assertEquals(new String(response.toByteArray()), expectedResponse);
     }
 
 
@@ -206,8 +211,6 @@ public class TestViewApi extends BaseTest {
             while ((line = br.readLine()) != null) {
                 fileContent += line + "\n";
             }
-
-            fileContent = fileContent.substring(0, fileContent.length() - 1); // remove ended "\n"
         }
 
         return fileContent;

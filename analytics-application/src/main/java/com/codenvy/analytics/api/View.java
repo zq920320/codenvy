@@ -19,6 +19,8 @@ package com.codenvy.analytics.api;
 
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.MetricNotFoundException;
+import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.services.view.CSVFileCleaner;
 import com.codenvy.analytics.services.view.SectionData;
 import com.codenvy.analytics.services.view.ViewBuilder;
 import com.codenvy.analytics.services.view.ViewData;
@@ -35,10 +37,8 @@ import javax.annotation.security.RolesAllowed;
 import javax.inject.Singleton;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
+import java.io.*;
+import java.util.*;
 import java.util.Map.Entry;
 
 /**
@@ -51,13 +51,17 @@ public class View {
 
     private static final Logger LOG = LoggerFactory.getLogger(View.class);
 
-    private final ViewBuilder   viewBuilder;
-    private final MetricHandler metricHandler;
+    private final ViewBuilder    viewBuilder;
+    private final MetricHandler  metricHandler;
+    private final CSVFileCleaner csvFileCleanerHolder;
 
     @Inject
-    public View(ViewBuilder viewBuilder, MetricHandler metricHandler) {
+    public View(ViewBuilder viewBuilder,
+                MetricHandler metricHandler,
+                CSVFileCleaner csvFileCleanerHolder) {
         this.viewBuilder = viewBuilder;
         this.metricHandler = metricHandler;
+        this.csvFileCleanerHolder = csvFileCleanerHolder;
     }
 
     @GET
@@ -119,14 +123,40 @@ public class View {
             Map<String, String> params = Utils.extractParams(uriInfo, securityContext);
             com.codenvy.analytics.metrics.Context context = com.codenvy.analytics.metrics.Context.valueOf(params);
 
-            ViewData result = viewBuilder.getViewData(name, context);
-            String csv = transformToCsv(result);
+            if (context.exists(Parameters.TIME_UNIT)) {
+                context = com.codenvy.analytics.Utils.initRowsCountForCSVReport(context);
+            }
 
-            return Response.status(Response.Status.OK).entity(csv).build();
+            ViewData result = viewBuilder.getViewData(name, context);
+            final File csvFile = csvFileCleanerHolder.createNewReportFile();
+            try (FileOutputStream csvOutputStream = new FileOutputStream(csvFile)) {
+                transformToCsv(result, csvOutputStream);
+            }
+
+            return Response.status(Response.Status.OK).entity(getStreamingOutput(csvFile)).build();
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
         }
+    }
+
+    private StreamingOutput getStreamingOutput(final File csvFile) {
+        return new StreamingOutput() {
+            @Override
+            public void write(OutputStream os) throws IOException,
+                                                      WebApplicationException {
+
+                try (FileInputStream csvInputStream = new FileInputStream(csvFile)) {
+                    byte[] buffer = new byte[1024];
+                    int len;
+                    while ((len = csvInputStream.read(buffer)) > 0) {
+                        os.write(buffer, 0, len);
+                    }
+                } finally {
+                    csvFile.delete();
+                }
+            }
+        };
     }
 
     /**
@@ -181,22 +211,37 @@ public class View {
      * section1-row1-column0, section0-row1-column1, ...
      * ...
      */
-    protected String transformToCsv(ViewData data) {
-        StringBuilder result = new StringBuilder();
+    protected void transformToCsv(ViewData data, OutputStream os) throws IOException {
+        /*Iterator<Entry<String, SectionData>> sectionIterator = data.entrySet().iterator();
+
+        while (sectionIterator.hasNext()) {
+            Entry<String, SectionData> sectionEntry = sectionIterator.next();
+
+            int sectionLastElementIndex = sectionEntry.getValue().size() - 1;
+
+            for (int i = 0; i <= sectionLastElementIndex; i++) {
+                List<ValueData> rowData = sectionEntry.getValue().get(i);
+
+                os.write((getCsvRow(rowData)).getBytes("UTF-8"));
+
+                if (i != sectionLastElementIndex) {
+                    os.write(("\n").getBytes("UTF-8"));
+                }
+            }
+
+            if (sectionIterator.hasNext()) {
+                os.write(("\n").getBytes("UTF-8"));
+            }
+        }*/
 
         for (Entry<String, SectionData> sectionEntry : data.entrySet()) {
             for (int i = 0; i < sectionEntry.getValue().size(); i++) {
                 List<ValueData> rowData = sectionEntry.getValue().get(i);
 
-                result.append(getCsvRow(rowData)).append("\n");
+                os.write((getCsvRow(rowData) + "\n").getBytes("UTF-8"));
             }
         }
-
-        result.setLength(result.length() - 1);  // remove ended "\n"
-
-        return result.toString();
     }
-
 
     public String getCsvRow(List<ValueData> data) {
         StringBuilder builder = new StringBuilder();

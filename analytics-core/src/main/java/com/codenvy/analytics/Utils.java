@@ -24,8 +24,14 @@ import com.codenvy.analytics.metrics.Context.Builder;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.Parameters.TimeUnit;
 import com.codenvy.analytics.metrics.ReadBasedMetric;
+import com.codenvy.analytics.services.view.ViewBuilder;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
+
+import org.joda.time.Days;
+import org.joda.time.LocalDate;
+import org.joda.time.Months;
+import org.joda.time.Weeks;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -193,8 +199,33 @@ public class Utils {
     public static DBObject setDateFilter(Context context) throws ParseException {
         DBObject dateFilter = new BasicDBObject();
         dateFilter.put("$gte", context.getAsDate(Parameters.FROM_DATE).getTimeInMillis());
-        dateFilter.put("$lt", context.getAsDate(Parameters.TO_DATE).getTimeInMillis() + ReadBasedMetric.DAY_IN_MILLISECONDS);
+        dateFilter.put("$lt",
+                       context.getAsDate(Parameters.TO_DATE).getTimeInMillis() + ReadBasedMetric.DAY_IN_MILLISECONDS);
         return new BasicDBObject(ReadBasedMetric.DATE, dateFilter);
+    }
+
+    public static Context initRowsCountForCSVReport(Context context) throws ParseException {
+        LocalDate fromDate = new LocalDate(context.getAsDate(Parameters.FROM_DATE));
+        LocalDate toDate = new LocalDate(context.getAsDate(Parameters.TO_DATE));
+
+        long rows = 0;
+
+        switch (context.getTimeUnit()) {
+            case DAY:
+                rows = Days.daysBetween(fromDate, toDate).getDays();
+                break;
+            case WEEK:
+                rows = Weeks.weeksBetween(fromDate, toDate).getWeeks() + 1; // add one for current week
+                break;
+            case MONTH:
+                rows = Months.monthsBetween(fromDate, toDate).getMonths() + 1; // add one for current month
+                break;
+            case LIFETIME:
+                rows = 2;
+                break;
+        }
+
+        return context.cloneAndPut(Parameters.CSV_ROWS, (rows > ViewBuilder.MAX_CSV_ROWS ? ViewBuilder.MAX_CSV_ROWS : rows));
     }
 
     public static String getFilterAsString(Set<String> values) {

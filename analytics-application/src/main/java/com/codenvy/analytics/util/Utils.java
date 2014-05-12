@@ -31,11 +31,10 @@ import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
 import java.io.IOException;
 import java.security.Principal;
+import java.text.ParseException;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static com.codenvy.analytics.Utils.getFilterAsString;
 
 /** @author Anatoliy Bazko */
 public class Utils {
@@ -56,6 +55,7 @@ public class Utils {
         putPossibleWorkspacesAsFilter(context, securityContext);
         putDefaultValueIfAbsent(context, Parameters.FROM_DATE);
         putDefaultValueIfAbsent(context, Parameters.TO_DATE);
+        validateFormDateToDate(context);
 
         return context;
     }
@@ -107,6 +107,21 @@ public class Utils {
         }
     }
 
+    private static void validateFormDateToDate(Map<String, String> context) {
+        try {
+            Calendar fromDate = com.codenvy.analytics.Utils.parseDate(context.get(Parameters.FROM_DATE.toString()));
+            Calendar toDate = com.codenvy.analytics.Utils.parseDate(context.get(Parameters.TO_DATE.toString()));
+
+            if (fromDate.after(toDate)) {
+                throw new RuntimeException(
+                        "The parameter " + Parameters.TO_DATE + " should be more " + Parameters.FROM_DATE + "!");
+            }
+        } catch (ParseException e) {
+            throw new RuntimeException(
+                    "Can not parse " + Parameters.FROM_DATE + " or " + Parameters.TO_DATE + " parameter");
+        }
+    }
+
     private static void putPossibleUsersAsFilter(Map<String, String> context, SecurityContext securityContext) {
         if (!isSystemUser(securityContext)) {
 //            String allUsers = "exoinvite4@gmail.com OR exoinvitesingle@gmail.com OR githubinvite3@gmail.com OR " +
@@ -116,9 +131,9 @@ public class Utils {
 //            Set<String> users = getFilterAsSet(allUsers);
 
             if (!context.containsKey(MetricFilter.USER.toString())) {
-                context.put(MetricFilter.USER.toString(), getFilterAsString(users));
+                context.put(MetricFilter.USER.toString(), com.codenvy.analytics.Utils.getFilterAsString(users));
             }
-            context.put(Parameters.ORIGINAL_USER.toString(), getFilterAsString(users));
+            context.put(Parameters.ORIGINAL_USER.toString(), com.codenvy.analytics.Utils.getFilterAsString(users));
         }
     }
 
@@ -166,9 +181,9 @@ public class Utils {
             Set<String> workspaces = getAvailableWorkspacesForCurrentUser(context);
 
             if (!context.containsKey(MetricFilter.WS.toString())) {
-                context.put(MetricFilter.WS.toString(), getFilterAsString(workspaces));
+                context.put(MetricFilter.WS.toString(), com.codenvy.analytics.Utils.getFilterAsString(workspaces));
             }
-            context.put(Parameters.ORIGINAL_WS.toString(), getFilterAsString(workspaces));
+            context.put(Parameters.ORIGINAL_WS.toString(), com.codenvy.analytics.Utils.getFilterAsString(workspaces));
         }
     }
 

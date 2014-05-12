@@ -50,6 +50,8 @@ import java.util.concurrent.TimeUnit;
 @Singleton
 public class ViewBuilder extends Feature {
 
+    public static final int MAX_CSV_ROWS = 365;
+
     private static final Logger LOG                 = LoggerFactory.getLogger(ViewBuilder.class);
     private static final String VIEWS_CONFIGURATION = "analytics.views";
 
@@ -89,6 +91,7 @@ public class ViewBuilder extends Feature {
     private boolean isSimplified(Context context) {
         return !context.exists(Parameters.SORT)
                && !context.exists(Parameters.PAGE)
+               && !context.exists(Parameters.CSV_ROWS)
                && (!context.exists(Parameters.FROM_DATE) || context.isDefaultValue(Parameters.FROM_DATE))
                && (!context.exists(Parameters.TO_DATE) || context.isDefaultValue(Parameters.TO_DATE))
                && context.getFilters().isEmpty();
@@ -207,8 +210,7 @@ public class ViewBuilder extends Feature {
                     SectionData sectionData = new SectionData(sectionConf.getRows().size());
 
                     for (RowConfiguration rowConf : sectionConf.getRows()) {
-                        Constructor<?> constructor = Class.forName(rowConf.getClazz()).getConstructor(Map.class);
-                        Row row = (Row)constructor.newInstance(rowConf.getParamsAsMap());
+                        Row row = getRow(rowConf);
 
                         int rowCount = getRowCount(viewConf.getColumns(), context);
                         sectionData.addAll(row.getData(context, rowCount));
@@ -226,6 +228,21 @@ public class ViewBuilder extends Feature {
                 LOG.info("ViewBuilder is finished in " + (System.currentTimeMillis() - start) / 1000 + " sec. for " +
                          viewConf.getName() + " with context " + context);
             }
+        }
+
+        private Row getRow(RowConfiguration rowConf)
+                throws NoSuchMethodException, ClassNotFoundException, InstantiationException, IllegalAccessException,
+                       InvocationTargetException {
+            String className = rowConf.getClazz();
+
+            if (context.exists(Parameters.CSV_ROWS)) {
+                if (DateRow.class.getName().equals(className)) {
+                    className = CVSDateRow.class.getName();
+                }
+            }
+
+            Constructor<?> constructor = Class.forName(className).getConstructor(Map.class);
+            return (Row)constructor.newInstance(rowConf.getParamsAsMap());
         }
     }
 
@@ -247,7 +264,9 @@ public class ViewBuilder extends Feature {
     }
 
     private int getRowCount(int rowCountFromConf, Context context) {
-        if (context.exists(Parameters.TIME_UNIT) && context.getTimeUnit() == Parameters.TimeUnit.LIFETIME) {
+        if (context.exists(Parameters.CSV_ROWS)) {
+            return (int)context.getAsLong(Parameters.CSV_ROWS);
+        } else if (context.exists(Parameters.TIME_UNIT) && context.getTimeUnit() == Parameters.TimeUnit.LIFETIME) {
             return 2;
         } else {
             return rowCountFromConf;

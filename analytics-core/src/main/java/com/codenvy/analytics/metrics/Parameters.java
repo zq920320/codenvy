@@ -49,6 +49,7 @@ public enum Parameters {
     REPORT_DATE,
     RECIPIENT,
     VIEW,
+    CSV_ROWS,
 
     TIME_UNIT {
         @Override

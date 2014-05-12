@@ -51,16 +51,24 @@ class DateRow extends AbstractRow {
         super(parameters);
         format.put(Parameters.TimeUnit.DAY,
                    parameters.containsKey(DAY_FORMAT_PARAM) ? parameters.get(DAY_FORMAT_PARAM)
-                                                            : DAY_FORMAT_DEFAULT);
+                                                            : getDayFormat());
         format.put(Parameters.TimeUnit.WEEK,
                    parameters.containsKey(WEEK_FORMAT_PARAM) ? parameters.get(WEEK_FORMAT_PARAM)
-                                                             : WEEK_FORMAT_DEFAULT);
+                                                             : getWeekFormat());
         format.put(Parameters.TimeUnit.MONTH,
                    parameters.containsKey(MONTH_FORMAT_PARAM) ? parameters.get(MONTH_FORMAT_PARAM)
                                                               : MONTH_FORMAT_DEFAULT);
         format.put(Parameters.TimeUnit.LIFETIME,
                    parameters.containsKey(LIFE_TIME_FORMAT_PARAM) ? parameters.get(LIFE_TIME_FORMAT_PARAM)
                                                                   : LIFE_TIME_FORMAT_DEFAULT);
+    }
+
+    public String getDayFormat() {
+        return DAY_FORMAT_DEFAULT;
+    }
+
+    public String getWeekFormat() {
+        return WEEK_FORMAT_DEFAULT;
     }
 
     @Override
