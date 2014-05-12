@@ -210,32 +210,9 @@ public class View {
      * ...
      */
     protected void transformToCsv(ViewData data, OutputStream os) throws IOException {
-        /*Iterator<Entry<String, SectionData>> sectionIterator = data.entrySet().iterator();
-
-        while (sectionIterator.hasNext()) {
-            Entry<String, SectionData> sectionEntry = sectionIterator.next();
-
-            int sectionLastElementIndex = sectionEntry.getValue().size() - 1;
-
-            for (int i = 0; i <= sectionLastElementIndex; i++) {
-                List<ValueData> rowData = sectionEntry.getValue().get(i);
-
-                os.write((getCsvRow(rowData)).getBytes("UTF-8"));
-
-                if (i != sectionLastElementIndex) {
-                    os.write(("\n").getBytes("UTF-8"));
-                }
-            }
-
-            if (sectionIterator.hasNext()) {
-                os.write(("\n").getBytes("UTF-8"));
-            }
-        }*/
-
         for (Entry<String, SectionData> sectionEntry : data.entrySet()) {
             for (int i = 0; i < sectionEntry.getValue().size(); i++) {
                 List<ValueData> rowData = sectionEntry.getValue().get(i);
-
                 os.write((getCsvRow(rowData) + "\n").getBytes("UTF-8"));
             }
         }
