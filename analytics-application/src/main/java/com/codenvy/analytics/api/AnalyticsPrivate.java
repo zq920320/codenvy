@@ -20,6 +20,7 @@ package com.codenvy.analytics.api;
 
 
 import com.codenvy.analytics.metrics.MetricNotFoundException;
+import com.codenvy.analytics.metrics.MetricRestrictionException;
 import com.codenvy.analytics.util.Utils;
 import com.codenvy.api.analytics.MetricHandler;
 import com.codenvy.api.analytics.shared.dto.MetricInfoDTO;
@@ -39,6 +40,8 @@ import javax.ws.rs.core.*;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import static com.codenvy.analytics.util.Utils.isRolesAllowed;
 
 
 /**
@@ -87,15 +90,24 @@ public class AnalyticsPrivate {
     @Path("public-metric/{name}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getPublicValue(@PathParam("name") String metricName,
-                                   @QueryParam("page") String page,
-                                   @QueryParam("per_page") String perPage,
                                    @Context UriInfo uriInfo,
                                    @Context SecurityContext securityContext) {
-        return getValue(metricName,
-                        page,
-                        perPage,
-                        uriInfo,
-                        securityContext);
+        try {
+            MetricInfoDTO metricInfoDTO = metricHandler.getInfo(metricName, uriInfo);
+            if (!isRolesAllowed(metricInfoDTO, securityContext)) {
+                throw new MetricRestrictionException("Security violation. User probably hasn't access to the metric");
+            }
+
+            Map<String, String> context = Utils.extractParams(uriInfo);
+            MetricValueDTO value = metricHandler.getValue(metricName, context, uriInfo);
+            return Response.status(Response.Status.OK).entity(value).build();
+        } catch (MetricNotFoundException e) {
+            LOG.error(e.getMessage(), e);
+            return Response.status(Response.Status.NOT_FOUND).build();
+        } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+        }
     }
 
     @GenerateLink(rel = "list of metric values")
@@ -149,7 +161,7 @@ public class AnalyticsPrivate {
 
             Iterator<MetricInfoDTO> iterator = metricInfoListDTO.getMetrics().iterator();
             while (iterator.hasNext()) {
-                if (!Utils.isRolesAllowed(iterator.next(), securityContext)) {
+                if (!isRolesAllowed(iterator.next(), securityContext)) {
                     iterator.remove();
                 }
             }

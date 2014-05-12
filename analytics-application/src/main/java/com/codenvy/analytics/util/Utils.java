@@ -52,9 +52,13 @@ public class Utils {
         Map<String, String> context = new HashMap<>(parameters.size());
 
         putQueryParameters(parameters, context);
-        putPaginationParameters(page, perPage, context);
-        putPossibleUsersAsFilter(context, securityContext);
-        putPossibleWorkspacesAsFilter(context, securityContext);
+        if (page != null && perPage != null) {
+            putPaginationParameters(page, perPage, context);
+        }
+        if (securityContext != null) {
+            putPossibleUsersAsFilter(context, securityContext);
+            putPossibleWorkspacesAsFilter(context, securityContext);
+        }
         putDefaultValueIfAbsent(context, Parameters.FROM_DATE);
         putDefaultValueIfAbsent(context, Parameters.TO_DATE);
         validateFormDateToDate(context);
@@ -64,6 +68,10 @@ public class Utils {
 
     public static Map<String, String> extractParams(UriInfo info, SecurityContext securityContext) {
         return extractParams(info, null, null, securityContext);
+    }
+
+    public static Map<String, String> extractParams(UriInfo info) {
+        return extractParams(info, null, null, null);
     }
 
     public static boolean isRolesAllowed(MetricInfoDTO metricInfoDTO, SecurityContext securityContext) {
@@ -273,9 +281,7 @@ public class Utils {
     }
 
     private static void putPaginationParameters(String page, String perPage, Map<String, String> context) {
-        if (page != null && perPage != null) {
-            context.put("PAGE", page);
-            context.put("PER_PAGE", perPage);
-        }
+        context.put("PAGE", page);
+        context.put("PER_PAGE", perPage);
     }
 }
