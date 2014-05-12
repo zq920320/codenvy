@@ -225,7 +225,7 @@ public class Utils {
                 break;
         }
 
-        return context.cloneAndPut(Parameters.CSV_ROWS, (rows > ViewBuilder.MAX_CSV_ROWS ? ViewBuilder.MAX_CSV_ROWS : rows));
+        return context.cloneAndPut(Parameters.REPORT_ROWS, (rows > ViewBuilder.MAX_CSV_ROWS ? ViewBuilder.MAX_CSV_ROWS : rows));
     }
 
     public static String getFilterAsString(Set<String> values) {

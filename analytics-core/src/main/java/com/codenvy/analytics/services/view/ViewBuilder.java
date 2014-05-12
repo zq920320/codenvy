@@ -91,6 +91,7 @@ public class ViewBuilder extends Feature {
     private boolean isSimplified(Context context) {
         return !context.exists(Parameters.SORT)
                && !context.exists(Parameters.PAGE)
+               && !context.exists(Parameters.REPORT_ROWS)
                && (!context.exists(Parameters.FROM_DATE) || context.isDefaultValue(Parameters.FROM_DATE))
                && (!context.exists(Parameters.TO_DATE) || context.isDefaultValue(Parameters.TO_DATE))
                && context.getFilters().isEmpty();
@@ -235,7 +236,7 @@ public class ViewBuilder extends Feature {
                                                             IllegalAccessException,
                                                             InvocationTargetException {
             String className = rowConf.getClazz();
-            if (context.exists(Parameters.CSV_ROWS) && DateRow.class.getName().equals(className)) {
+            if (context.exists(Parameters.REPORT_ROWS) && DateRow.class.getName().equals(className)) {
                 className = CVSDateRow.class.getName();
             }
 
@@ -262,8 +263,8 @@ public class ViewBuilder extends Feature {
     }
 
     private int getRowCount(int rowCountFromConf, Context context) {
-        if (context.exists(Parameters.CSV_ROWS)) {
-            return (int)context.getAsLong(Parameters.CSV_ROWS);
+        if (context.exists(Parameters.REPORT_ROWS)) {
+            return (int)context.getAsLong(Parameters.REPORT_ROWS);
         } else if (context.exists(Parameters.TIME_UNIT) && context.getTimeUnit() == Parameters.TimeUnit.LIFETIME) {
             return 2;
         } else {

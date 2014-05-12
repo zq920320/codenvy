@@ -38,7 +38,7 @@ public class TestInitRowsCountForCVSReport {
         builder.put(Parameters.TO_DATE, toDate);
         builder.put(Parameters.TIME_UNIT, timeUnit.toString());
 
-        Assert.assertEquals(Utils.initRowsCountForCSVReport(builder.build()).getAsLong(Parameters.CSV_ROWS), rowsCount);
+        Assert.assertEquals(Utils.initRowsCountForCSVReport(builder.build()).getAsLong(Parameters.REPORT_ROWS), rowsCount);
     }
 
     @DataProvider(name = "provider")
