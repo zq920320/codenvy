@@ -73,6 +73,9 @@ analytics.presenter.EntryViewPresenter.prototype.obtainViewData = function(model
         view.print("<div class='body'>");
         
         var table = data[0];  // there is only one table in data
+
+        // add links to drill down page
+        table = presenter.linkTableValuesWithDrillDownPage(presenter.widgetName, table, modelParams);
         
         // make table columns linked 
         var columnCombinedLinkConf = analytics.configuration.getProperty(presenter.widgetName, "columnCombinedLinkConfiguration");

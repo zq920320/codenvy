@@ -169,10 +169,22 @@ function Configuration() {
             },
             
             mapColumnToServerSortParam: {
-                    "Email": "user",
-                    "# Sessions": "sessions",
-                    "# Usage Time": "time",
+                "Email": "user",
+                "# Sessions": "sessions",
+                "# Usage Time": "time",
+                "# Projects": "projects",
+            },
+            
+            columnDrillDownPageLinkConfiguration: {
+                mapColumnNameToExpandableMetric: {
+                    "# Sessions": "product_usage_sessions",
+                    "Usage Time": "product_usage_time_total",
                     "# Projects": "projects",
+                },
+                
+                mapColumnToParameter: {
+                    "Email": "user",
+                },
             },
         },
 
@@ -400,6 +412,23 @@ function Configuration() {
                 "Time": "time",
                 "Sessions": "sessions",
             },
+            
+            columnDrillDownPageLinkConfiguration: {
+                mapColumnNameToExpandableMetric: {
+                    "Time": "product_usage_sessions",
+                    "Sessions": "product_usage_time_total",
+                    "# Runs": "runs",
+                    "# Debugs": "debugs",
+                    "# Builds": "builds",
+                    "# Deploys": "deploys",
+                    "Invites": "user_invite",
+                    "Joined Users": "total_users",
+                },
+                
+                mapColumnToParameter: {
+                    "Workspace": "ws",
+                },
+            },
         },
 
         workspaceOverview: {
@@ -599,6 +628,18 @@ function Configuration() {
                 "Clicks": "ws_created",
                 "Sessions": "sessions",
                 "Time": "time",
+            },
+            
+            columnDrillDownPageLinkConfiguration: {
+                mapColumnNameToExpandableMetric: {
+                    "Clicks": "total_workspaces",
+                    "Sessions": "product_usage_sessions",
+                    "Time": "product_usage_time_total",
+                },
+                
+                mapColumnToParameter: {
+                    "Factory URL": "factory",
+                },
             },
         },
 
