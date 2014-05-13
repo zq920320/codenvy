@@ -54,7 +54,7 @@ analytics.presenter.ReportPresenter.prototype.load = function() {
                 var table = data[i];
                 
                 // add links to drill down page
-                table = presenter.linkMetricValueWithDrillDownPage(table, i, expandableMetricPerSection, modelParams);            
+                table = presenter.linkTableValuesWithDrillDownPage(table, i, expandableMetricPerSection, modelParams);            
                 
                 view.printTable(table, true);
             }
@@ -93,7 +93,7 @@ analytics.presenter.ReportPresenter.prototype.load = function() {
  *  ...
  *  ]
  */
-analytics.presenter.ReportPresenter.prototype.linkMetricValueWithDrillDownPage = function(table, tableNumber, expandableMetricPerSection, modelParams) { 
+analytics.presenter.ReportPresenter.prototype.linkTableValuesWithDrillDownPage = function(table, tableNumber, expandableMetricPerSection, modelParams) { 
     // setup top date of expanded value due to date of generation of report
     modelParams["to_date"] = modelParams["to_date"] || analytics.configuration.getServerProperty("reportGenerationDate");
     

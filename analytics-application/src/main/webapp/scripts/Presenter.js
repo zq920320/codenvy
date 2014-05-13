@@ -224,6 +224,17 @@ Presenter.prototype.linkTableValuesWithDrillDownPage = function(widgetName, tabl
     delete modelParams.page;    // remove page parameter
     delete modelParams.per_page;    // remove page parameter
     
+    var mapColumnToParameter = analytics.configuration.getMapColumnToParameter(widgetName);
+
+    // calculate source column indexes for combine links
+    var sourceColumnIndexes = [];
+    for (var sourceColumnName in mapColumnToParameter) {
+        var sourceColumnIndex = analytics.util.getColumnIndexByColumnName(table.columns, sourceColumnName);
+        if (sourceColumnIndex != null) {
+            sourceColumnIndexes.push(sourceColumnIndex);
+        }
+    }
+       
     for (var columnIndex = 0; columnIndex < table.columns.length; columnIndex++) {
         var columnName = table.columns[columnIndex];            
         
@@ -235,6 +246,11 @@ Presenter.prototype.linkTableValuesWithDrillDownPage = function(widgetName, tabl
                 if (! this.isEmptyValue(columnValue)) {
                     var drillDownPageLink = this.getDrillDownPageLink(expandedMetricName, modelParams);                
                     
+                    // calculation combined link like "ws=...&project=..."
+                    if (sourceColumnIndexes.length > 0) {
+                        drillDownPageLink += "&" + this.getUrlParamsForCombineColumnLink(table.rows[i], sourceColumnIndexes, mapColumnToParameter);
+                    }
+                    
                     table.rows[i][columnIndex] = "<a href='" + drillDownPageLink + "'>" + columnValue + "</a>";
                 }
             }
@@ -242,4 +258,105 @@ Presenter.prototype.linkTableValuesWithDrillDownPage = function(widgetName, tabl
     }          
         
     return table;
+}
+
+/**
+ * Make table cells of column with certain name as linked with link = "columnLinkPrefix + {columnValue}"
+ */
+Presenter.prototype.makeTableColumnLinked = function(table, columnName, columnLinkPrefix) {
+    var FACTORY_URL_COLUMN_NAME = "Factory URL";  // TODO move to the configuration
+    
+    var columnIndex = analytics.util.getArrayValueIndex(table.columns, columnName);
+    if (columnIndex != null) {
+        for (var i = 0; i < table.rows.length; i++) {
+            var columnValue = table.rows[i][columnIndex];
+            
+            if (analytics.configuration.isSystemMessage(columnValue)) {
+               table.rows[i][columnIndex] = getSystemMessageLabel(columnValue);    
+            } else {
+               var href = columnLinkPrefix + "=" + encodeURIComponent(columnValue);
+               
+               if (columnName.toLowerCase() == FACTORY_URL_COLUMN_NAME.toLowerCase()) {
+                   var title = columnValue;   // display initial url in title of link
+                   columnValue = analytics.util.getShortenFactoryUrl(columnValue);                       
+                   table.rows[i][columnIndex] = "<a href='" + href + "' title='" + title + "'>" + columnValue + "</a>";
+               } else {
+                   table.rows[i][columnIndex] = "<a href='" + href + "'>" + columnValue + "</a>";
+               }
+            }
+        }
+    }
+
+    return table;
+}
+
+/**
+ * Make table cells of target column as linked with combined link "project-view.jsp?ws=...&project=.."
+ * @param columnCombinedLinkConf = {
+ *     targetColumn1: {
+ *         baseLink: <baseLink>,
+ *         mapColumnToParameter: {
+ *             columnName1: <parameterName1>,
+ *             columnName2: <parameterName2>,
+ *             ...
+ *         }
+ *     },
+ *     
+ *     targetColumn2: { ... },
+ *     
+ *     ...
+ * }
+ */
+Presenter.prototype.makeTableColumnCombinedLinked = function(table, columnCombinedLinkConf) {
+    for (var targetColumnName in columnCombinedLinkConf) {
+        var targetColumnIndex = analytics.util.getColumnIndexByColumnName(table.columns, targetColumnName);
+        
+        var baseLink = columnCombinedLinkConf[targetColumnName].baseLink;
+        var mapColumnToParameter = columnCombinedLinkConf[targetColumnName].mapColumnToParameter;
+
+        // calculate source column indexes
+        var sourceColumnIndexes = [];
+        for (var sourceColumnName in mapColumnToParameter) {
+            var sourceColumnIndex = analytics.util.getColumnIndexByColumnName(table.columns, sourceColumnName);
+            if (sourceColumnIndex != null) {
+                sourceColumnIndexes.push(sourceColumnIndex);
+            }
+        }
+        
+        // make cells of target column as linked with combined link
+        for (var i = 0; i < table.rows.length; i++) {
+            var targetColumnValue = table.rows[i][targetColumnIndex];
+            
+            if (analytics.configuration.isSystemMessage(targetColumnValue)) {
+               table.rows[i][targetColumnIndex] = getSystemMessageLabel(targetColumnValue);
+               
+            } else {
+               // calculation combined link like "project-view.jsp?ws=...&project=..."
+               var href = baseLink + "?" + this.getUrlParamsForCombineColumnLink(table.rows[i], sourceColumnIndexes, mapColumnToParameter);
+               table.rows[i][targetColumnIndex] = "<a href='" + href + "'>" + targetColumnValue + "</a>";
+            }
+        }            
+    }
+
+    return table;
+}
+
+/**
+ * @returns query parameters like "ws=<WS_source_column_value>&project=<PROJECT_source_column_value>"
+ */
+Presenter.prototype.getUrlParamsForCombineColumnLink = function(row, sourceColumnIndexes, mapColumnToParameter) {
+    var params = {};
+    var sourceColumnNames = Object.keys(mapColumnToParameter);
+
+    for (var j = 0; j < sourceColumnIndexes.length; j++) {
+        var sourceColumnName = sourceColumnNames[j];
+        var parameterName = mapColumnToParameter[sourceColumnName];
+        
+        var sourceColumnIndex = sourceColumnIndexes[j];
+        var parameterValue = row[sourceColumnIndex];
+        
+        params[parameterName] = parameterValue;
+    }
+    
+    return analytics.util.constructUrlParams(params);
 }

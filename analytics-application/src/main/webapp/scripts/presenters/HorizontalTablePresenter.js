@@ -60,16 +60,16 @@ analytics.presenter.HorizontalTablePresenter.prototype.load = function() {
                 
                 var table = data[0];  // there is only one table in data
 
+                // add links to drill down page
+                table = presenter.linkTableValuesWithDrillDownPage(presenter.widgetName, table, modelParams);
+                
                 // make table columns linked 
                 var columnLinkPrefixList = analytics.configuration.getProperty(widgetName, "columnLinkPrefixList");
                 if (typeof columnLinkPrefixList != "undefined") {
                     for (var columnName in columnLinkPrefixList) {
-                        table = view.makeTableColumnLinked(table, columnName, columnLinkPrefixList[columnName]);    
+                        table = presenter.makeTableColumnLinked(table, columnName, columnLinkPrefixList[columnName]);    
                     }          
-                }       
-                
-                // add links to drill down page
-                table = presenter.linkTableValuesWithDrillDownPage(presenter.widgetName, table, modelParams);
+                }
                 
                 modelParams[widgetName] = modelParams.page;
                 delete modelParams.page;    // remove page parameter

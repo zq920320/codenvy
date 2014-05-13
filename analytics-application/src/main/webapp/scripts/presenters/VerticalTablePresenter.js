@@ -42,15 +42,15 @@ analytics.presenter.VerticalTablePresenter.prototype.load = function() {
                             : presenter.getLinkForExportToCsvButton();  
                             
         var table = data[0];  // there is only one table in data
+
+        // add links to drill down page
+        table = presenter.linkTableValuesWithDrillDownPage(presenter.widgetName, table, modelParams);
         
         // make table columns linked 
         var columnLinkPrefixList = analytics.configuration.getProperty(presenter.widgetName, "columnLinkPrefixList", {});
         for (var columnName in columnLinkPrefixList) {
-            table = view.makeTableColumnLinked(table, columnName, columnLinkPrefixList[columnName]);    
-        }        
-        
-        // add links to drill down page
-        table = presenter.linkTableValuesWithDrillDownPage(presenter.widgetName, table, modelParams);    
+            table = presenter.makeTableColumnLinked(table, columnName, columnLinkPrefixList[columnName]);    
+        }
         
         view.print("<div class='view'>");
         view.print("   <div class='overview'>");

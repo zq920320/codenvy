@@ -188,16 +188,18 @@ function Configuration() {
             presenterType: "HorizontalTablePresenter",
             modelViewName: "user_data",
             
-            mapColumnNameToExpandableMetric: {
-                "Number of Sessions": "product_usage_sessions",
-                "Total Time": "product_usage_time_total",
-                "Total Build Time": "builds_time",
-                "Total Run Time": "runs_time",
-                "Number of Active Projects": "projects",
-                "Number of Builds": "builds",
-                "Number of Debugs": "debugs",
-                "Number of Deploys": "deploys",
-                "Number of Factories": "total_factories",
+            columnDrillDownPageLinkConfiguration: {
+                mapColumnNameToExpandableMetric: {
+                    "Number of Sessions": "product_usage_sessions",
+                    "Total Time": "product_usage_time_total",
+                    "Total Build Time": "builds_time",
+                    "Total Run Time": "runs_time",
+                    "Number of Active Projects": "projects",
+                    "Number of Builds": "builds",
+                    "Number of Debugs": "debugs",
+                    "Number of Deploys": "deploys",
+                    "Number of Factories": "total_factories",                    
+                },
             },
         },
 
@@ -246,6 +248,17 @@ function Configuration() {
                 "Name": "ws",
                 "Sessions": "sessions",
                 "Time": "time",
+            },
+            
+            columnDrillDownPageLinkConfiguration: {
+                mapColumnNameToExpandableMetric: {
+                    "Sessions": "product_usage_sessions",
+                    "Time": "product_usage_time_total",
+                },
+                
+                mapColumnToParameter: {
+                    "Name": "ws",
+                },
             },
         },
 
@@ -395,17 +408,19 @@ function Configuration() {
             modelViewName: "workspace_overview",
             isNeedToSaveInHistory: false,   // default value = true
             
-            mapColumnNameToExpandableMetric: {
-                "Number of Sessions": "product_usage_sessions",
-                "Total Time": "product_usage_time_total",
-                "Total Build Time": "builds_time",
-                "Total Run Time": "runs_time",
-                "Number of Active Projects": "projects",
-                "Number of Builds": "builds",
-                "Number of Debugs": "debugs",
-                "Number of Deploys": "deploys",
-                "Number of Factories": "total_factories",
-                "Number of Users": "total_users",
+            columnDrillDownPageLinkConfiguration: {
+                mapColumnNameToExpandableMetric: {
+                    "Number of Sessions": "product_usage_sessions",
+                    "Total Time": "product_usage_time_total",
+                    "Total Build Time": "builds_time",
+                    "Total Run Time": "runs_time",
+                    "Number of Active Projects": "projects",
+                    "Number of Builds": "builds",
+                    "Number of Debugs": "debugs",
+                    "Number of Deploys": "deploys",
+                    "Number of Factories": "total_factories",
+                    "Number of Users": "total_users",
+                },
             },
         },
 
@@ -481,9 +496,15 @@ function Configuration() {
                 "Time": "time",
             },
             
-            mapColumnNameToExpandableMetric: {
-                "Sessions": "product_usage_sessions",
-                "Time": "product_usage_time_total",
+            columnDrillDownPageLinkConfiguration: {
+                mapColumnNameToExpandableMetric: {
+                    "Sessions": "product_usage_sessions",
+                    "Time": "product_usage_time_total",
+                },
+                
+                mapColumnToParameter: {
+                    "Name": "user",
+                },
             },
         },
 
@@ -591,12 +612,14 @@ function Configuration() {
                 "Created By": "/analytics/pages/user-view.jsp?user",
                 "Workspace": "/analytics/pages/workspace-view.jsp?ws",
             },
-            
-            mapColumnNameToExpandableMetric: {
-                "Number of Sessions": "product_usage_sessions",
-                "Number of Known": "authenticated_factory_sessions",
-                "Number of Converted": "converted_factory_sessions",
-                "Total Time": "product_usage_time_total",
+
+            columnDrillDownPageLinkConfiguration: {
+                mapColumnNameToExpandableMetric: {
+                    "Number of Sessions": "product_usage_sessions",
+                    "Number of Known": "authenticated_factory_sessions",
+                    "Number of Converted": "converted_factory_sessions",
+                    "Total Time": "product_usage_time_total",
+                },
             },
         },
 
@@ -1075,10 +1098,19 @@ function Configuration() {
     }
     
     function getExpandableMetricName(widgetName, columnName) {
-        var mapColumnNameToExpandableMetric = getProperty(widgetName, "mapColumnNameToExpandableMetric", {});
+        var columnDrillDownPageLinkConfiguration = getProperty(widgetName, "columnDrillDownPageLinkConfiguration", {});
+        
+        var mapColumnNameToExpandableMetric = columnDrillDownPageLinkConfiguration["mapColumnNameToExpandableMetric"] || {};
+        
         return mapColumnNameToExpandableMetric[columnName];
     }
 
+    function getMapColumnToParameter(widgetName) {
+        var columnDrillDownPageLinkConfiguration = getProperty(widgetName, "columnDrillDownPageLinkConfiguration", {});
+        
+        return mapColumnToParameter = columnDrillDownPageLinkConfiguration["mapColumnToParameter"] || {};
+    }
+    
     
     /** ****************** API ********** */
     return {
@@ -1096,5 +1128,6 @@ function Configuration() {
         isSystemMessage: isSystemMessage,
         getDrillDownPageAddress: getDrillDownPageAddress,
         getExpandableMetricName: getExpandableMetricName,
+        getMapColumnToParameter: getMapColumnToParameter,
     }
 }
