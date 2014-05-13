@@ -50,6 +50,11 @@ public class AccountsList extends AbstractAccountMetric {
     }
 
     @Override
+    public Class<? extends ValueData> getValueDataClass() {
+        return ListValueData.class;
+    }
+
+    @Override
     public ValueData getValue(Context context) throws IOException {
         Profile profile = getProfile();
         List<AccountMembership> accountMemberships = getAccountMemberships();

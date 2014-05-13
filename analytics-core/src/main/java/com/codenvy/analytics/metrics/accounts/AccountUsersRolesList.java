@@ -42,10 +42,10 @@ import java.util.Map;
  */
 @RolesAllowed(value = {"system/admin", "system/manager"})
 @RequiredFilter(MetricFilter.ACCOUNT_ID)
-public class AccountUsersWorkspacesList extends AbstractAccountMetric {
+public class AccountUsersRolesList extends AbstractAccountMetric {
 
-    public AccountUsersWorkspacesList() {
-        super(MetricType.ACCOUNT_USERS_WORKSPACES_LIST);
+    public AccountUsersRolesList() {
+        super(MetricType.ACCOUNT_USERS_ROLES_LIST);
     }
 
     @Override
@@ -92,6 +92,11 @@ public class AccountUsersWorkspacesList extends AbstractAccountMetric {
 
     @Override
     public String getDescription() {
-        return "Users data by workspaces in account";
+        return "Users roles in workspaces";
+    }
+
+    @Override
+    public Class<? extends ValueData> getValueDataClass() {
+        return ListValueData.class;
     }
 }

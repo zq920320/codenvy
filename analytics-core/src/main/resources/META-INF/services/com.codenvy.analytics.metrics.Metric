@@ -4,7 +4,8 @@ com.codenvy.analytics.metrics.sessions.ProductUsageSessionsList
 com.codenvy.analytics.metrics.sessions.ProductUsageSessions
 com.codenvy.analytics.metrics.sessions.CollaborativeSessionsStarted
 
-com.codenvy.analytics.metrics.accounts.AccountUsersWorkspacesList
+com.codenvy.analytics.metrics.accounts.AccountUsersRolesList
+com.codenvy.analytics.metrics.accounts.AccountUsersRoles
 com.codenvy.analytics.metrics.accounts.AccountWorkspacesList
 com.codenvy.analytics.metrics.accounts.AccountSubscriptionsList
 com.codenvy.analytics.metrics.accounts.AccountsList

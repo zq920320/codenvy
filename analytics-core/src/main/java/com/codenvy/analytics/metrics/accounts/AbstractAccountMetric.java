@@ -18,9 +18,7 @@
 package com.codenvy.analytics.metrics.accounts;
 
 import com.codenvy.analytics.Injector;
-import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.StringValueData;
-import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.AbstractMetric;
 import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricFilter;
@@ -88,11 +86,6 @@ public abstract class AbstractAccountMetric extends AbstractMetric {
     public AbstractAccountMetric(MetricType metricType) {
         super(metricType);
         this.httpMetricTransport = Injector.getInstance(MetricTransport.class);
-    }
-
-    @Override
-    public Class<? extends ValueData> getValueDataClass() {
-        return ListValueData.class;
     }
 
     protected List<AccountMembership> getAccountMemberships() throws IOException {

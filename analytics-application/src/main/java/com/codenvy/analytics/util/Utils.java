@@ -176,7 +176,7 @@ public class Utils {
         Context.Builder builder = new Context.Builder();
         builder.put(MetricFilter.ACCOUNT_ID, accountId);
 
-        Metric usersMetric = MetricFactory.getMetric(MetricType.ACCOUNT_USERS_WORKSPACES_LIST);
+        Metric usersMetric = MetricFactory.getMetric(MetricType.ACCOUNT_USERS_ROLES_LIST);
         ListValueData usersData = ValueDataUtil.getAsList(usersMetric, builder.build());
 
         for (ValueData user : usersData.getAll()) {

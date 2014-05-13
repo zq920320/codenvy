@@ -49,6 +49,11 @@ public class AccountSubscriptionsList extends AbstractAccountMetric {
     }
 
     @Override
+    public Class<? extends ValueData> getValueDataClass() {
+        return ListValueData.class;
+    }
+
+    @Override
     public ValueData getValue(Context context) throws IOException {
         AccountMembership accountMembership = getAccountMembership(context);
         List<Subscription> subscriptions = getSubscriptions(accountMembership.getId());

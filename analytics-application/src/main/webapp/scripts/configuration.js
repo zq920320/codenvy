@@ -300,7 +300,7 @@ function Configuration() {
                 "User": "/analytics/pages/user-view.jsp?user",
                 "Workspace": "/analytics/pages/workspace-view.jsp?ws",
             },
-            
+
             columnCombinedLinkConfiguration: {
                 "Project": {
                     baseLink: "/analytics/pages/project-view.jsp",
@@ -322,7 +322,7 @@ function Configuration() {
                 "Workspace": "ws",
                 "Project": "project",
                 "Type": "project_type",
-                "User": "user",                
+                "User": "user",
             }
         },
 
@@ -450,7 +450,7 @@ function Configuration() {
                     }
                 }
             },
-            
+
             /** @see DatabaseTable::makeTableSortable() method docs */
             clientSortParams: {
                 "ascSortColumnNumber": 0
@@ -576,8 +576,8 @@ function Configuration() {
                         "User": "user",
                     }
                 }
-            },           
-            
+            },
+
             /** @see DatabaseTable::makeTableSortable() method docs */
             clientSortParams: {
                 "ascSortColumnNumber": 0
@@ -641,7 +641,10 @@ function Configuration() {
         accountUsers: {
             widgetLabel: "Users",
             presenterType: "HorizontalTablePresenter",
-            modelViewName: "account_users_list",
+            modelViewName: "account_users_roles",
+
+            isPaginable: true,    // default value is "false"
+            modelMetricName: "account_users_roles",
 
             columnLinkPrefixList: {
                 "User": "/analytics/pages/user-view.jsp?user",

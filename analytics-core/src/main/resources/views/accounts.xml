@@ -41,13 +41,13 @@
         </section>
     </view>
 
-    <view name="account_users_list" on-demand="true">
-        <section name="account_users_list">
+    <view name="account_users_roles" on-demand="true">
+        <section name="account_users_roles">
             <row class="com.codenvy.analytics.services.view.TitleRow">
                 <parameter key="titles" value="User,Roles,Workspace"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="account_users_workspaces_list"/>
+                <parameter key="name" value="account_users_roles_list"/>
                 <parameter key="fields" value="user,roles,ws"/>
             </row>
         </section>
