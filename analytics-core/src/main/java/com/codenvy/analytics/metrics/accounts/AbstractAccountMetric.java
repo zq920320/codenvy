@@ -19,10 +19,8 @@ package com.codenvy.analytics.metrics.accounts;
 
 import com.codenvy.analytics.Injector;
 import com.codenvy.analytics.datamodel.StringValueData;
-import com.codenvy.analytics.metrics.AbstractMetric;
-import com.codenvy.analytics.metrics.Context;
-import com.codenvy.analytics.metrics.MetricFilter;
-import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.metrics.*;
 import com.codenvy.api.account.shared.dto.AccountMembership;
 import com.codenvy.api.account.shared.dto.Subscription;
 import com.codenvy.api.user.shared.dto.Attribute;
@@ -177,5 +175,16 @@ public abstract class AbstractAccountMetric extends AbstractMetric {
     protected List<Subscription> getSubscriptions(String accountId) throws IOException {
         String path = PATH_ACCOUNT_SUBSCRIPTIONS.replace(PARAM_ID, accountId);
         return httpMetricTransport.getResources(Subscription.class, "GET", path);
+    }
+
+    protected List<ValueData> keepSpecificPage(List<ValueData> list, Context context) {
+        if (context.exists(Parameters.PAGE) && context.exists(Parameters.PER_PAGE)) {
+            int page = (int)context.getAsLong(Parameters.PAGE);
+            int perPage = (int)context.getAsLong(Parameters.PER_PAGE);
+
+            return list.subList((page - 1) * perPage, page * perPage);
+        } else {
+            return list;
+        }
     }
 }
