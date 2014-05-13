@@ -615,6 +615,7 @@ function Configuration() {
 
             columnDrillDownPageLinkConfiguration: {
                 mapColumnNameToExpandableMetric: {
+                    "Number of Clicks": "total_workspaces",
                     "Number of Sessions": "product_usage_sessions",
                     "Number of Known": "authenticated_factory_sessions",
                     "Number of Converted": "converted_factory_sessions",
@@ -675,6 +676,17 @@ function Configuration() {
                 "# Runs": "run",
                 "# Builds": "build",
                 "# Deploys": "deploy",
+            },
+            
+            columnDrillDownPageLinkConfiguration: {
+                mapColumnNameToExpandableMetric: {
+                    "# Sessions": "product_usage_sessions",
+                    "Duration": "product_usage_time_total",
+                },
+                
+                mapColumnToParameter: {
+                    "User": "user",
+                },
             },
         },
         

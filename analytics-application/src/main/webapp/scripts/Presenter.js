@@ -272,7 +272,7 @@ Presenter.prototype.makeTableColumnLinked = function(table, columnName, columnLi
             var columnValue = table.rows[i][columnIndex];
             
             if (analytics.configuration.isSystemMessage(columnValue)) {
-               table.rows[i][columnIndex] = getSystemMessageLabel(columnValue);    
+               table.rows[i][columnIndex] = this.view.getSystemMessageLabel(columnValue);    
             } else {
                var href = columnLinkPrefix + "=" + encodeURIComponent(columnValue);
                
@@ -328,7 +328,7 @@ Presenter.prototype.makeTableColumnCombinedLinked = function(table, columnCombin
             var targetColumnValue = table.rows[i][targetColumnIndex];
             
             if (analytics.configuration.isSystemMessage(targetColumnValue)) {
-               table.rows[i][targetColumnIndex] = getSystemMessageLabel(targetColumnValue);
+               table.rows[i][targetColumnIndex] = this.view.getSystemMessageLabel(targetColumnValue);
                
             } else {
                // calculation combined link like "project-view.jsp?ws=...&project=..."

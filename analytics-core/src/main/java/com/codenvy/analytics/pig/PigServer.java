@@ -161,6 +161,12 @@ public class PigServer implements AutoCloseable {
                                              new String[]{"$STORAGE_USER",
                                                           "$STORAGE_PASSWORD",
                                                           "value:Long"}));
+        
+        server.registerFunction("MongoLoaderProductUsageSessions",
+                                new FuncSpec("com.codenvy.analytics.pig.udf.MongoLoader",
+                                             new String[]{"$STORAGE_USER",
+                                                          "$STORAGE_PASSWORD",
+                                                          "id: chararray, session_id: chararray"}));
 
         return server;
     }

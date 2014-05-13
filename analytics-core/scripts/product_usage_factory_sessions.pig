@@ -207,7 +207,8 @@ result3 = FOREACH t GENERATE UUID(),
                             TOTUPLE('time', delta),
                             TOTUPLE('end_time', ToMilliSeconds(dt) + delta),
                             TOTUPLE('domain', NullToEmpty(REGEX_EXTRACT(user, '.*@(.*)', 1))),
-                            TOTUPLE('user_company', '');
+                            TOTUPLE('user_company', ''),
+                            TOTUPLE('factory', factory);
 STORE result3 INTO '$STORAGE_URL.$STORAGE_TABLE_PRODUCT_USAGE_SESSIONS' USING MongoStorage;
 
 result4 = FOREACH t GENERATE UUID(),
@@ -216,5 +217,11 @@ result4 = FOREACH t GENERATE UUID(),
                              TOTUPLE('ws', ws),
                              TOTUPLE('time', delta),
                              TOTUPLE('sessions', 1),
-                             TOTUPLE('ide', ide);
+                             TOTUPLE('ide', ide),
+                             TOTUPLE('factory', factory);
 STORE result4 INTO '$STORAGE_URL.$STORAGE_TABLE_USERS_STATISTICS' USING MongoStorage;
+
+x = LOAD '$STORAGE_URL.$STORAGE_TABLE_PRODUCT_USAGE_SESSIONS' USING MongoLoaderProductUsageSessions;
+x2 = JOIN x BY session_id LEFT, r BY id;
+result5 = FOREACH x2 GENERATE x::id, TOTUPLE('factory', r::factory);
+STORE result5 INTO '$STORAGE_URL.$STORAGE_TABLE_PRODUCT_USAGE_SESSIONS' USING MongoStorage;
