@@ -57,33 +57,20 @@ public class AccountUsersRolesList extends AbstractAccountMetric {
 
         List<ValueData> list2Return = new ArrayList<>();
         for (Workspace workspace : getWorkspaces(accountById.getId())) {
-
             String rolesCurrentUserInWorkspace = getUserRoleInWorkspace(currentUserId, workspace.getId());
-            if (rolesCurrentUserInWorkspace.contains(ROLE_WORKSPACE_ADMIN.toLowerCase())) {
+            boolean hasAdminRoles = rolesCurrentUserInWorkspace.contains(ROLE_WORKSPACE_ADMIN.toLowerCase());
 
-                for (Member member : getMembers(workspace.getId())) {
+            for (Member member : getMembers(workspace.getId())) {
+                String userEmail = getUserEmail(member.getUserId());
 
-                    String userEmail = getUserEmail(member.getUserId());
-                    for (String role : member.getRoles()) {
-                        Map<String, ValueData> m = new HashMap<>();
-                        m.put(ROLES, StringValueData.valueOf(role));
-                        m.put(USER, StringValueData.valueOf(userEmail));
-                        m.put(WS,
-                              StringValueData.valueOf(
-                                      workspace.getId().equals(member.getWorkspaceId()) ? workspace.getName()
-                                                                                        : member.getWorkspaceId()));
+                if (hasAdminRoles || userEmail.equals(currentUser.getEmail())) {
+                    Map<String, ValueData> m = new HashMap<>();
+                    m.put(ROLES, StringValueData.valueOf(member.getRoles().toString()));
+                    m.put(USER, StringValueData.valueOf(userEmail));
+                    m.put(WS, StringValueData.valueOf(workspace.getName()));
 
-                        list2Return.add(new MapValueData(m));
-                    }
+                    list2Return.add(new MapValueData(m));
                 }
-
-            } else {
-                Map<String, ValueData> m = new HashMap<>();
-                m.put(ROLES, StringValueData.valueOf(ROLE_WORKSPACE_DEVELOPER));
-                m.put(USER, StringValueData.valueOf(currentUser.getEmail()));
-                m.put(WS, StringValueData.valueOf(workspace.getName()));
-
-                list2Return.add(new MapValueData(m));
             }
         }
 
