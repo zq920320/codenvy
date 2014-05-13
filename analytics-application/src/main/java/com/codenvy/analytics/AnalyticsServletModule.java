@@ -17,13 +17,8 @@
  */
 package com.codenvy.analytics;
 
-import com.codenvy.auth.sso.client.EmptyContextResolver;
 import com.codenvy.auth.sso.client.LoginFilter;
 import com.codenvy.auth.sso.client.SSOLogoutServlet;
-import com.codenvy.auth.sso.client.WebAppClientUrlExtractor;
-import com.codenvy.auth.sso.client.filter.RegexpRequestFilter;
-import com.codenvy.auth.sso.client.filter.RequestFilter;
-import com.codenvy.auth.sso.client.token.ChainedTokenExtractor;
 import com.codenvy.inject.DynaModule;
 import com.google.inject.name.Names;
 import com.google.inject.servlet.ServletModule;
