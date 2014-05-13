@@ -16,12 +16,12 @@
          is strictly forbidden unless prior written permission is obtained
          from Codenvy S.A..
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <artifactId>maven-parent-pom</artifactId>
+        <artifactId>maven-depmgt-pom</artifactId>
         <groupId>com.codenvy</groupId>
-        <version>3.1.1</version>
+        <version>1.0.0-SNAPSHOT</version>
         <relativePath />
     </parent>
     <groupId>com.codenvy.analytics</groupId>
@@ -41,40 +41,8 @@
         <tag>2.0.0</tag>
     </scm>
     <properties>
-        <antlr.version>3.4</antlr.version>
-        <ch.qos.logback.version>1.0.9</ch.qos.logback.version>
-        <com.codenvy.commons.version>0.15.0</com.codenvy.commons.version>
-        <com.codenvy.organization.security>0.2.0</com.codenvy.organization.security>
-        <com.codenvy.organization.version>0.12.0</com.codenvy.organization.version>
-        <com.codenvy.platform.api.version>0.16.0</com.codenvy.platform.api.version>
-        <commons.io.version>2.4</commons.io.version>
-        <commons.lang.version>2.6</commons.lang.version>
-        <commons.net.version>3.2</commons.net.version>
-        <embedded.mongo.version>1.42</embedded.mongo.version>
-        <everrest.version>1.1.7</everrest.version>
-        <guava.version>14.0.1</guava.version>
-        <guice.version>3.0-rc2</guice.version>
-        <h2.version>1.2.140</h2.version>
-        <hadoop.version>0.20.2</hadoop.version>
-        <jackson.version>1.9.4</jackson.version>
-        <javax.mail.version>1.4.4</javax.mail.version>
-        <javax.ws.rs.version>1.0</javax.ws.rs.version>
-        <jaxb.version>2.2.11</jaxb.version>
-        <jline.version>0.9.94</jline.version>
-        <joda-time.version>2.2</joda-time.version>
-        <junit.version>4.10</junit.version>
-        <log4j.version>1.2.16</log4j.version>
-        <maven.releases.repo.url>https://maven.codenvycorp.com/content/repositories/codenvy-private-releases/
-        </maven.releases.repo.url>
-        <maven.snapshots.repo.url>https://maven.codenvycorp.com/content/repositories/codenvy-private-snapshots/
-        </maven.snapshots.repo.url>
-        <mockito.version>1.9.0</mockito.version>
-        <mongo.driver.version>2.11.4</mongo.driver.version>
-        <org.slf4j.version>1.6.2</org.slf4j.version>
-        <pig.version>0.12.0-codenvy-p1</pig.version>
-        <quartz.version>2.1.7</quartz.version>
-        <servlet-api.version>3.0.1</servlet-api.version>
-        <testng.version>6.3.1</testng.version>
-        <tomcat.version>7.0.50</tomcat.version>
+        <maven.releases.repo.url>https://maven.codenvycorp.com/content/repositories/codenvy-private-releases/</maven.releases.repo.url>
+        <maven.snapshots.repo.url>https://maven.codenvycorp.com/content/repositories/codenvy-private-snapshots/</maven.snapshots.repo.url>
+        <org.mongodb.mongo-java-server.version>2.11.4</org.mongodb.mongo-java-server.version>
     </properties>
 </project>
