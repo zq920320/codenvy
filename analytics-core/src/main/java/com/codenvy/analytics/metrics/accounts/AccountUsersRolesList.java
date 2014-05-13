@@ -74,6 +74,7 @@ public class AccountUsersRolesList extends AbstractAccountMetric {
             }
         }
 
+        list2Return = sort(list2Return, context);
         list2Return = keepSpecificPage(list2Return, context);
         return new ListValueData(list2Return);
     }

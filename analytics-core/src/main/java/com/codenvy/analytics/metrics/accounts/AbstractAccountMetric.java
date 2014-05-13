@@ -20,6 +20,7 @@ package com.codenvy.analytics.metrics.accounts;
 import com.codenvy.analytics.Injector;
 import com.codenvy.analytics.datamodel.StringValueData;
 import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.datamodel.ValueDataUtil;
 import com.codenvy.analytics.metrics.*;
 import com.codenvy.api.account.shared.dto.AccountMembership;
 import com.codenvy.api.account.shared.dto.Subscription;
@@ -30,7 +31,11 @@ import com.codenvy.api.user.shared.dto.User;
 import com.codenvy.api.workspace.shared.dto.Workspace;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+
+import static java.lang.Math.min;
 
 /**
  * @author Alexander Reshetnyak
@@ -179,12 +184,44 @@ public abstract class AbstractAccountMetric extends AbstractMetric {
 
     protected List<ValueData> keepSpecificPage(List<ValueData> list, Context context) {
         if (context.exists(Parameters.PAGE) && context.exists(Parameters.PER_PAGE)) {
-            int page = (int)context.getAsLong(Parameters.PAGE);
-            int perPage = (int)context.getAsLong(Parameters.PER_PAGE);
+            long page = context.getAsLong(Parameters.PAGE);
+            long perPage = context.getAsLong(Parameters.PER_PAGE);
 
-            return list.subList((page - 1) * perPage, page * perPage);
+            int fromIndex;
+            if (page <= 0 || perPage <= 0) {
+                return Collections.emptyList();
+            } else {
+                fromIndex = (int)((page - 1) * perPage);
+                if (fromIndex > list.size()) {
+                    return Collections.emptyList();
+                }
+            }
+
+            int toIndex = (int)min(page * perPage, list.size());
+            return list.subList(fromIndex, toIndex);
         } else {
             return list;
         }
+    }
+
+    protected List<ValueData> sort(List<ValueData> list, Context context) {
+        if (context.exists(Parameters.SORT)) {
+            String sortCondition = context.getAsString(Parameters.SORT);
+
+            final String field = sortCondition.substring(1);
+            final int order = sortCondition.substring(0, 1).equals(ReadBasedMetric.ASC_SORT_SIGN) ? 1 : -1;
+
+            Collections.sort(list, new Comparator<ValueData>() {
+                @Override
+                public int compare(ValueData o1, ValueData o2) {
+                    ValueData v1 = ValueDataUtil.treatAsMap(o1).get(field);
+                    ValueData v2 = ValueDataUtil.treatAsMap(o2).get(field);
+
+                    return v1 == null || v2 == null ? 0 : order * v1.getAsString().compareTo(v2.getAsString());
+                }
+            });
+        }
+
+        return list;
     }
 }

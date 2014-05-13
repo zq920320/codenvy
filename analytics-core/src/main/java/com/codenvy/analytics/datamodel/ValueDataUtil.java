@@ -21,6 +21,7 @@ import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.Metric;
 
 import java.io.IOException;
+import java.util.Map;
 
 /** @author Anatoliy Bazko */
 public class ValueDataUtil {
@@ -31,6 +32,10 @@ public class ValueDataUtil {
 
     public static long treatAsLong(ValueData valueData) {
         return ((LongValueData)valueData).getAsLong();
+    }
+
+    public static Map<String, ValueData> treatAsMap(ValueData valueData) {
+        return ((MapValueData)valueData).getAll();
     }
 
     public static ListValueData getAsList(Metric metric, Context context) throws IOException {

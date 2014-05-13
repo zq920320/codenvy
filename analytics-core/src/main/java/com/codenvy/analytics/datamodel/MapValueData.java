@@ -47,6 +47,16 @@ public class MapValueData extends CollectionValueData {
         return new MapValueData(value);
     }
 
+    public static MapValueData valueOf(String values) {
+        Map<String, ValueData> value = new HashMap<>();
+        for (String s : values.split(",")) {
+            String[] pair = s.split("=");
+            value.put(pair[0], StringValueData.valueOf(pair[1]));
+        }
+
+        return new MapValueData(value);
+    }
+
     /** @return unmodifiable {@link #value} */
     public Map<String, ValueData> getAll() {
         return Collections.unmodifiableMap(value);

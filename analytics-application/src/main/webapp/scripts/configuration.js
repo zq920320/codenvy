@@ -646,6 +646,11 @@ function Configuration() {
             isPaginable: true,    // default value is "false"
             modelMetricName: "account_users_roles",
 
+            mapColumnToServerSortParam: {
+                "User": "user",
+                "Workspace": "ws",
+            },
+
             columnLinkPrefixList: {
                 "User": "/analytics/pages/user-view.jsp?user",
                 "Workspace": "/analytics/pages/workspace-view.jsp?ws",
