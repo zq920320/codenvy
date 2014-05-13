@@ -32,7 +32,8 @@ public class ProjectTypeOthers extends AbstractProjectType {
                                                            ProjectTypes.OTHER_DEFAULT,
                                                            ProjectTypes.OTHER_SERV,
                                                            ProjectTypes.OTHER_EXO,
-                                                           ProjectTypes.OTHER_UNDEFINED});
+                                                           ProjectTypes.OTHER_UNDEFINED,
+                                                           ProjectTypes.OTHER_NAMELESS});
     }
 
     @Override
