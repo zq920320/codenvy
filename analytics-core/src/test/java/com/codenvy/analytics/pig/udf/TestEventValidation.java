@@ -109,7 +109,7 @@ public class TestEventValidation extends BaseTest {
     @DataProvider(name = "correctMessagesProvider")
     public Object[][] getCorrectMessages() {
         return new Object[][]{
-                {"project-created", "ws", "user", "PROJECT#Sample-TwitterBootstrap# TYPE#JavaScript#"},
+                {"project-created", "ws", "user", "PROJECT#Sample-TwitterBootstrap# TYPE#JavaScript# PAAS#null#"},
                 {"factory-created", "ws", "user", "PROJECT#project# TYPE## REPO-URL#repo# FACTORY-URL#factory# AFFILIATE-ID## ORG-ID##"},
                 {"user-created", "ws", "user", "USER-ID#usermwl9896s2we14h9n# ALIASES#anonymoususer_zz31bd#"},
                 {"user-update-profile", "ws", "user_tt", "USER#user_tt# FIRSTNAME## LASTNAME#_l# COMPANY## PHONE## JOBTITLE##"},
@@ -131,20 +131,20 @@ public class TestEventValidation extends BaseTest {
     @DataProvider(name = "wrongUsersNamesProvider")
     public Object[][] getMessagesWithWrongUserName() {
         return new Object[][]{
-                {"project-created", "ws", "", "PROJECT#Sample-TwitterBootstrap# TYPE#JavaScript#"},
-                {"project-created", "ws", "null", "PROJECT#Sample-TwitterBootstrap# TYPE#JavaScript#"},
-                {"project-created", "ws", "default", "PROJECT#Sample-TwitterBootstrap# TYPE#JavaScript#"},
-                {"project-created", "ws", null, "PROJECT#Sample-TwitterBootstrap# TYPE#JavaScript#"}
+                {"project-created", "ws", "", "PROJECT#Sample-TwitterBootstrap# TYPE#JavaScript# PAAS#null#"},
+                {"project-created", "ws", "null", "PROJECT#Sample-TwitterBootstrap# TYPE#JavaScript# PAAS#null#"},
+                {"project-created", "ws", "default", "PROJECT#Sample-TwitterBootstrap# TYPE#JavaScript# PAAS#null#"},
+                {"project-created", "ws", null, "PROJECT#Sample-TwitterBootstrap# TYPE#JavaScript# PAAS#null#"}
         };
     }
 
     @DataProvider(name = "wrongProjectTypesProvider")
     public Object[][] getMessagesWithWrongProjectType() {
         return new Object[][]{
-                {"project-created", "ws", "user", "PROJECT#Sample-TwitterBootstrap# TYPE##", ""},
-                {"project-created", "ws", "user", "PROJECT#Sample-TwitterBootstrap#", "null"},
-                {"project-created", "ws", "user", "PROJECT#Sample-TwitterBootstrap# TYPE#unknown#", "unknown"},
-                {"project-created", "ws", "user", "PROJECT#Sample-TwitterBootstrap# TYPE#null#", "null"},
+                {"project-created", "ws", "user", "PROJECT#Sample-TwitterBootstrap# TYPE## PAAS#null#", ""},
+                {"project-created", "ws", "user", "PROJECT#Sample-TwitterBootstrap# PAAS#null#", "null"},
+                {"project-created", "ws", "user", "PROJECT#Sample-TwitterBootstrap# TYPE#unknown# PAAS#null#", "unknown"},
+                {"project-created", "ws", "user", "PROJECT#Sample-TwitterBootstrap# TYPE#null# PAAS#null#", "null"},
         };
     }
 

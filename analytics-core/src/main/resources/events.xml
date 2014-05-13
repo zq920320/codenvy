@@ -237,7 +237,7 @@
             <param>USER</param>
             <param>PROJECT</param>
             <param>TYPE</param>
-            <param>PAAS</param>
+            <param allow-empty-value="true">PAAS</param>
         </parameters>
     </event>
     <event name="project-destroyed">
