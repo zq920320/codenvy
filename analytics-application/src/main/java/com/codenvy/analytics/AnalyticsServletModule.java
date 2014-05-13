@@ -40,10 +40,11 @@ public class AnalyticsServletModule extends ServletModule {
             bindConstant().annotatedWith(Names.named("auth.sso.cookies_disabled_error_page_url")).to("/site/error/error-cookies-disabled");
             bindConstant().annotatedWith(Names.named("auth.sso.client_skip_filter_regexp")).to(".*/analytics-private/public-metric/.*");
 
-            bind(WebAppClientUrlExtractor.class);
-            bind(EmptyContextResolver.class);
-            bind(ChainedTokenExtractor.class);
-            bind(RequestFilter.class).to(RegexpRequestFilter.class);
+            bind(com.codenvy.auth.sso.client.WebAppClientUrlExtractor.class);
+            bind(com.codenvy.auth.sso.client.EmptyContextResolver.class);
+            bind(com.codenvy.auth.sso.client.token.ChainedTokenExtractor.class);
+            bind(com.codenvy.auth.sso.client.filter.RequestFilter.class).to(com.codenvy.auth.sso.client.filter.RegexpRequestFilter.class);
+            bind(com.codenvy.auth.sso.client.InvalidTokenHandler.class).to(com.codenvy.auth.sso.client.RecoverableInvalidTokenHandler.class);
 
             filter("/*").through(LoginFilter.class);
             serve("/_sso/client/logout").with(SSOLogoutServlet.class);
