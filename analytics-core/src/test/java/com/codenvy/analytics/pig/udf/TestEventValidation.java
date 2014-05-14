@@ -164,6 +164,8 @@ public class TestEventValidation extends BaseTest {
     public Object[][] getMessagesWithCorrectPaas() {
         return new Object[][]{
                 {"application-created", "ws", "user", "PROJECT#Sample# TYPE#JavaScript# PAAS#gae#"},
+                {"application-created", "ws", "user", "PROJECT#Sample# TYPE#JavaScript# PAAS#CloudFoundry#"},
+                {"application-created", "ws", "user", "PROJECT#Sample# TYPE#JavaScript# PAAS#AWS#"},
                 {"project-deployed", "ws", "user", "PROJECT#Sample# TYPE#JavaScript# PAAS#LOCAL#"},
                 {"artifact-deployed", "ws", "user", "PROJECT#Sample# TYPE#JavaScript# PAAS#LOCAL#"},
         };

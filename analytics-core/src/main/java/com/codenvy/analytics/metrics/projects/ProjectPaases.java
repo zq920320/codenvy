@@ -13,6 +13,7 @@ import javax.annotation.security.RolesAllowed;
 public class ProjectPaases extends AbstractMapValueResulted {
 
     public static final String GAE              = "gae";
+    public static final String AWS              = "aws";
     public static final String AWS_BEANSTALK    = "aws:beanstalk";
     public static final String CLOUDFOUNDRY     = "cloudfoundry";
     public static final String TIER3_WEB_FABRIC = "tier3 web fabric";
@@ -22,7 +23,7 @@ public class ProjectPaases extends AbstractMapValueResulted {
     public static final String APPFOG           = "appfog";
     public static final String CLOUDBEES        = "cloudbees";
 
-    public static final String[] PAASES = {GAE, AWS_BEANSTALK, CLOUDBEES, TIER3_WEB_FABRIC, MANYMO, OPENSHIFT, HEROKU, APPFOG, CLOUDBEES};
+    public static final String[] PAASES = {GAE, AWS, AWS_BEANSTALK, CLOUDFOUNDRY, TIER3_WEB_FABRIC, MANYMO, OPENSHIFT, HEROKU, APPFOG, CLOUDBEES};
 
     public ProjectPaases() {
         super(MetricType.PROJECT_PAASES);
