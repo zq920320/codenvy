@@ -790,6 +790,7 @@ function Configuration() {
         "event",
         "ws",
         "factory",
+        "referrer",
         "encoded_factory",
         "time_interval",
         "expanded_metric_name",
@@ -838,6 +839,7 @@ function Configuration() {
         "factory",     // factories-view > factory-view; user-view >
                         // factory-view; workspace-view > factory-view; top
                         // metrics report > factory-view
+        "referrer",     // top metrics reports -> sessions-view, workspaces-view
         "project",      // projects-view > project-view
     ];
     
