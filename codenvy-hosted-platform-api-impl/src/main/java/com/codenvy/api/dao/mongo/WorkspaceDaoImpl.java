@@ -100,7 +100,7 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
         try {
             DBObject workspace = collection.findAndRemove(new BasicDBObject("id", id));
             Workspace removedWorkspace = DtoFactory.getInstance().createDtoFromJson(workspace.toString(), Workspace.class);
-            eventService.publish(new DeleteWorkspaceEvent(id, removedWorkspace.isTemporary()));
+            eventService.publish(new DeleteWorkspaceEvent(id, removedWorkspace.isTemporary(), removedWorkspace.getName()));
         } catch (MongoException me) {
             throw new ServerException(me.getMessage(), me);
         }

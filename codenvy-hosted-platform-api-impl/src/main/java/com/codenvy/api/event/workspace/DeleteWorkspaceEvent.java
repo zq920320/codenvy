@@ -22,12 +22,14 @@ import com.codenvy.api.core.notification.EventOrigin;
 /** @author Sergii Leschenko */
 @EventOrigin("workspace")
 public class DeleteWorkspaceEvent extends WorkspaceEvent {
-    public DeleteWorkspaceEvent(String workspaceId, boolean temporary) {
+    public DeleteWorkspaceEvent(String workspaceId, boolean temporary, String name) {
         super(workspaceId, ChangeType.DELETED);
         this.temporary = temporary;
+        this.name = name;
     }
 
     private boolean temporary;
+    private String  name;
 
     public DeleteWorkspaceEvent() {
     }
@@ -38,5 +40,13 @@ public class DeleteWorkspaceEvent extends WorkspaceEvent {
 
     public void setTemporary(boolean temporary) {
         this.temporary = temporary;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }
