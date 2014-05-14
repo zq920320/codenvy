@@ -129,8 +129,7 @@ function Model() {
     function get(url, responseType, doneCollback, isAsync) {
         var url = url || "";
         var responseType = responseType || "json";
-        var doneCollback = doneCollback || function () {
-        };
+        var doneCollback = doneCollback || function () {};
 
         if (!jQuery.isEmptyObject(params)) {
             url = url + "?" + analytics.util.constructUrlParams(params);

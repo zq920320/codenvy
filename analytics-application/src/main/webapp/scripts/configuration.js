@@ -149,6 +149,31 @@ function Configuration() {
             
             // see clientSortParams in the
             // TopMetricsPresenter::clientSortParams property
+            
+            columnDrillDownPageLinkConfiguration: {
+                mapColumnNameToExpandableMetric: {
+                    "Sessions": "product_usage_sessions",
+                    "# Sessions": "product_usage_sessions",
+                    "# Workspaces Created": "total_workspaces",
+                    "# Accounts Created": "total_users",
+                    "Aggregate Time": "product_usage_time_total",
+                    "% Anon": "anonymous_factory_sessions",
+                    "% Auth": "authenticated_factory_sessions",
+                    "% Abandon": "abandoned_factory_sessions",
+                    "% Convert": "converted_factory_sessions",
+                },
+                
+                mapColumnToParameter: {
+                    "Factory": "factory",
+                    "Referrer": "referrer",
+                    "Email": "user",
+                    "ID": "session_id",
+                },
+                
+                doNotLinkOnEmptyParameter: false,  // default value = true, 
+                                                   // true means that link should't be added if at least one parameter is empty;
+                                                   // false means that link should be added without empty parameters
+            },
         },
 
         /** for User View */
@@ -546,7 +571,6 @@ function Configuration() {
             columnLinkPrefixList: {
                 "Workspace": "/analytics/pages/workspace-view.jsp?ws",
                 "User": "/analytics/pages/user-view.jsp?user",
-                "Project": "/analytics/pages/project-view.jsp?project",
             },
 
             columnCombinedLinkConfiguration: {
@@ -841,7 +865,7 @@ function Configuration() {
     
     
     /** Drill Down page parameters */
-    var defaultDrillDownPageAddress = "/analytics/pages/drill-down.jsp?";
+    var defaultDrillDownPageAddress = "/analytics/pages/drill-down.jsp";
     var mapExpandableMetricToDrillDownPageType = {
         /** USERS */
         "active_users": "USERS",
@@ -992,11 +1016,11 @@ function Configuration() {
         "total_factories": "FACTORIES",
     };
     var mapDrillDownPageTypeToAddress = {
-        "USERS": "/analytics/pages/users-view.jsp?sort=%2Buser&",
-        "WORKSPACES": "/analytics/pages/workspaces-view.jsp?sort=%2Bws&",
-        "FACTORIES": "/analytics/pages/factories-view.jsp?sort=%2Bws_created&",
-        "PROJECTS": "/analytics/pages/projects-view.jsp?",
-        "SESSIONS": "/analytics/pages/sessions-view.jsp?sort=-date&",
+        "USERS": "/analytics/pages/users-view.jsp?sort=%2Buser",
+        "WORKSPACES": "/analytics/pages/workspaces-view.jsp?sort=%2Bws",
+        "FACTORIES": "/analytics/pages/factories-view.jsp?sort=%2Bws_created",
+        "PROJECTS": "/analytics/pages/projects-view.jsp",
+        "SESSIONS": "/analytics/pages/sessions-view.jsp?sort=-date",
     }
     
     var factoryUrlColumnNames = ["Factory URL", "Factory"];
@@ -1010,6 +1034,23 @@ function Configuration() {
             widgetProperty = defaultValue;
         }
         return widgetProperty;
+    }
+    
+    /**
+     * Returns sub-property of property of widget.
+     */
+    function getSubProperty(widgetName, propertyName, subPropertyName, defaultValue) {
+        var widgetProperty = widgetConfiguration[widgetName][propertyName];
+        if (typeof widgetProperty == "undefined") {
+            return defaultValue;
+        }
+        
+        var widgetSubProperty = widgetProperty[subPropertyName];
+        if (typeof widgetSubProperty == "undefined") {
+            return defaultValue;
+        }
+        
+        return widgetSubProperty;
     }
 
     function getWidgetNames() {
@@ -1159,12 +1200,6 @@ function Configuration() {
         
         return mapColumnNameToExpandableMetric[columnName];
     }
-
-    function getMapExpandableColumnToParameter(widgetName) {
-        var columnDrillDownPageLinkConfiguration = getProperty(widgetName, "columnDrillDownPageLinkConfiguration", {});
-        
-        return mapColumnToParameter = columnDrillDownPageLinkConfiguration["mapColumnToParameter"] || {};
-    }
     
     function isFactoryUrlColumnName(columnName) {        
         for (var i in factoryUrlColumnNames) {
@@ -1181,6 +1216,7 @@ function Configuration() {
     /** ****************** API ********** */
     return {
         getProperty: getProperty,
+        getSubProperty: getSubProperty,
         getWidgetNames: getWidgetNames,
         setupDefaultModelParams: setupDefaultModelParams,
         isParamRegistered: isParamRegistered,
@@ -1195,7 +1231,6 @@ function Configuration() {
 
         getDrillDownPageAddress: getDrillDownPageAddress,
         getExpandableMetricName: getExpandableMetricName,
-        getMapExpandableColumnToParameter: getMapExpandableColumnToParameter,
         
         isFactoryUrlColumnName: isFactoryUrlColumnName,
     }

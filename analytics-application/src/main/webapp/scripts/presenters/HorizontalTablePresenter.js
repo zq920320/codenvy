@@ -85,7 +85,10 @@ analytics.presenter.HorizontalTablePresenter.prototype.load = function() {
                     
                     // print bottom page navigation
                     delete modelParams[widgetName];  // remove old page number
-                    var queryString = "?" + analytics.util.constructUrlParams(modelParams);
+                    var queryString = "";
+                    if (!jQuery.isEmptyObject(modelParams)) {
+                        queryString += "?" + analytics.util.constructUrlParams(modelParams);
+                    }
                     view.printBottomPageNavigator(pageCount, currentPageNumber, queryString, widgetName, widgetName);
                     
                     view.loadTableHandlers(false);  // don't display client side sorting for table with pagination

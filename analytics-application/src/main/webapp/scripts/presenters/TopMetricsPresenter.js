@@ -101,6 +101,10 @@ analytics.presenter.TopMetricsPresenter.prototype.load = function() {
         
         for (var tableIndex in data) {
             var table = data[tableIndex];
+            
+            // add links to drill down page
+            table = presenter.linkTableValuesWithDrillDownPage(presenter.widgetName, table, modelParams);
+            
             // make table columns linked 
             var columnLinkPrefixList = analytics.configuration.getProperty(presenter.widgetName, "columnLinkPrefixList");
             if (typeof columnLinkPrefixList != "undefined") {

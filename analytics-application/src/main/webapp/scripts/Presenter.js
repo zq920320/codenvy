@@ -165,7 +165,10 @@ Presenter.prototype.addServerSortingLinks = function(table, widgetName, modelPar
             modelParams.sort = newSortingParameterValue;
         }
     
-        var headerHref = analytics.util.getCurrentPageName() + "?" + analytics.util.constructUrlParams(modelParams);
+        var headerHref = analytics.util.getCurrentPageName();
+        if (!jQuery.isEmptyObject(modelParams)) {
+            headerHref += "?" + analytics.util.constructUrlParams(modelParams);
+        }
         var onClickHandler = "analytics.main.reloadWidgetByUrl(\"" + headerHref + "\",\"" + widgetName + "\"); return false;";
         
         table.columns[i] = "<a href='" + headerHref + "' " + headerClassOption + " onclick='" + onClickHandler + "'>" + columnName + "</a>";
@@ -208,8 +211,14 @@ Presenter.prototype.isEmptyValue = function(value) {
 }
 
 Presenter.prototype.getDrillDownPageLink = function(metricName, modelParams, timeInterval) {
-    var drillDownPageLink = analytics.configuration.getDrillDownPageAddress(metricName) + analytics.util.constructUrlParams(modelParams);
-    drillDownPageLink += "&" + this.METRIC_ORIGINAL_NAME_VIEW_PARAMETER + "=" + metricName;
+    var drillDownPageAddress = analytics.configuration.getDrillDownPageAddress(metricName);
+    var drillDownPageLinkDelimeter = (drillDownPageAddress.indexOf("?") != -1) ? "&" : "?";
+    var drillDownPageLink = analytics.configuration.getDrillDownPageAddress(metricName) 
+                            + drillDownPageLinkDelimeter + this.METRIC_ORIGINAL_NAME_VIEW_PARAMETER + "=" + metricName;
+    
+    if (!jQuery.isEmptyObject(modelParams)) {
+        drillDownPageLink += "&" + analytics.util.constructUrlParams(modelParams);
+    }
 
     if (typeof timeInterval != "undefined") {
         drillDownPageLink += "&" + this.TIME_INTERVAL_PARAMETER + "=" + timeInterval;
@@ -223,16 +232,23 @@ Presenter.prototype.linkTableValuesWithDrillDownPage = function(widgetName, tabl
     
     delete modelParams.page;    // remove page parameter
     delete modelParams.per_page;    // remove page parameter
+    delete modelParams.sort;    // remove sort parameter
     
-    var mapColumnToParameter = analytics.configuration.getMapExpandableColumnToParameter(widgetName);
-
+    var mapColumnToParameter = analytics.configuration.getSubProperty(widgetName, 
+                                                                      "columnDrillDownPageLinkConfiguration", 
+                                                                      "mapColumnToParameter", 
+                                                                      {});
+    
+    var doNotLinkOnEmptyParameter = analytics.configuration.getSubProperty(widgetName, 
+                                                                           "columnDrillDownPageLinkConfiguration", 
+                                                                           "doNotLinkOnEmptyParameter", 
+                                                                           true);
+    
     // calculate source column indexes for combine links
     var sourceColumnIndexes = [];
     for (var sourceColumnName in mapColumnToParameter) {
         var sourceColumnIndex = analytics.util.getColumnIndexByColumnName(table.columns, sourceColumnName);
-        if (sourceColumnIndex != null) {
-            sourceColumnIndexes.push(sourceColumnIndex);
-        }
+        sourceColumnIndexes.push(sourceColumnIndex);
     }
        
     for (var columnIndex = 0; columnIndex < table.columns.length; columnIndex++) {
@@ -248,7 +264,10 @@ Presenter.prototype.linkTableValuesWithDrillDownPage = function(widgetName, tabl
                     
                     // calculation combined link like "ws=...&project=..."
                     if (sourceColumnIndexes.length > 0) {
-                        drillDownPageLink += "&" + this.getUrlParamsForCombineColumnLink(table.rows[i], sourceColumnIndexes, mapColumnToParameter);
+                        drillDownPageLink += "&" + this.getUrlParamsForCombineColumnLink(table.rows[i], 
+                                                                                         sourceColumnIndexes, 
+                                                                                         mapColumnToParameter, 
+                                                                                         doNotLinkOnEmptyParameter);
                     }
                     
                     table.rows[i][columnIndex] = "<a href='" + drillDownPageLink + "'>" + columnValue + "</a>";
@@ -306,6 +325,11 @@ Presenter.prototype.makeTableColumnLinked = function(table, columnName, columnLi
  * }
  */
 Presenter.prototype.makeTableColumnCombinedLinked = function(table, columnCombinedLinkConf) {
+    var doNotLinkOnEmptyParameter = columnCombinedLinkConf["doNotLinkOnEmptyParameter"];
+    if (typeof doNotLinkOnEmptyParameter == "undefined") {
+        doNotLinkOnEmptyParameter = true;
+    }
+
     for (var targetColumnName in columnCombinedLinkConf) {
         var targetColumnIndex = analytics.util.getColumnIndexByColumnName(table.columns, targetColumnName);
         
@@ -316,9 +340,7 @@ Presenter.prototype.makeTableColumnCombinedLinked = function(table, columnCombin
         var sourceColumnIndexes = [];
         for (var sourceColumnName in mapColumnToParameter) {
             var sourceColumnIndex = analytics.util.getColumnIndexByColumnName(table.columns, sourceColumnName);
-            if (sourceColumnIndex != null) {
-                sourceColumnIndexes.push(sourceColumnIndex);
-            }
+            sourceColumnIndexes.push(sourceColumnIndex);
         }
         
         // make cells of target column as linked with combined link
@@ -330,8 +352,11 @@ Presenter.prototype.makeTableColumnCombinedLinked = function(table, columnCombin
                
             } else {
                // calculation combined link like "project-view.jsp?ws=...&project=..."
-               var href = baseLink + "?" + this.getUrlParamsForCombineColumnLink(table.rows[i], sourceColumnIndexes, mapColumnToParameter);
-               table.rows[i][targetColumnIndex] = "<a href='" + href + "'>" + targetColumnValue + "</a>";
+               var urlParams = this.getUrlParamsForCombineColumnLink(table.rows[i], sourceColumnIndexes, mapColumnToParameter, doNotLinkOnEmptyParameter);
+               if (urlParams != "") {
+                   var href = baseLink + "?" + this.getUrlParamsForCombineColumnLink(table.rows[i], sourceColumnIndexes, mapColumnToParameter, doNotLinkOnEmptyParameter);
+                   table.rows[i][targetColumnIndex] = "<a href='" + href + "'>" + targetColumnValue + "</a>";
+               }
             }
         }            
     }
@@ -340,21 +365,34 @@ Presenter.prototype.makeTableColumnCombinedLinked = function(table, columnCombin
 }
 
 /**
+ * @param sourceColumnIndexes = indexes in row of source columns defined in mapColumnToParameter; 
+ * there is null value for absent column in row.
+ *  
  * @returns query parameters like "ws=<WS_source_column_value>&project=<PROJECT_source_column_value>"
  */
-Presenter.prototype.getUrlParamsForCombineColumnLink = function(row, sourceColumnIndexes, mapColumnToParameter) {
+Presenter.prototype.getUrlParamsForCombineColumnLink = function(row, sourceColumnIndexes, mapColumnToParameter, doNotLinkOnEmptyParameter) {
     var params = {};
-    var sourceColumnNames = Object.keys(mapColumnToParameter);
+    var sourceColumnNames = Object.keys(mapColumnToParameter);   
 
     for (var j = 0; j < sourceColumnIndexes.length; j++) {
-        var sourceColumnName = sourceColumnNames[j];
-        var parameterName = mapColumnToParameter[sourceColumnName];
-        
         var sourceColumnIndex = sourceColumnIndexes[j];
-        var parameterValue = row[sourceColumnIndex];
-        
-        params[parameterName] = parameterValue;
+        if (sourceColumnIndex != null) {   // there is null value for absent source column in row        
+            var sourceColumnName = sourceColumnNames[j];
+
+            var parameterName = mapColumnToParameter[sourceColumnName];
+            var parameterValue = row[sourceColumnIndex];
+            
+            if (parameterValue == "") {
+                if (doNotLinkOnEmptyParameter) {
+                    return "";
+                } else {
+                    continue;
+                }
+            }
+            
+            params[parameterName] = parameterValue;
+        }
     }
     
-    return analytics.util.constructUrlParams(params);
+    return analytics.util.constructUrlParams(params) || "";
 }
