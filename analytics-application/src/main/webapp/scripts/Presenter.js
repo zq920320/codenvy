@@ -224,7 +224,7 @@ Presenter.prototype.linkTableValuesWithDrillDownPage = function(widgetName, tabl
     delete modelParams.page;    // remove page parameter
     delete modelParams.per_page;    // remove page parameter
     
-    var mapColumnToParameter = analytics.configuration.getMapColumnToParameter(widgetName);
+    var mapColumnToParameter = analytics.configuration.getMapExpandableColumnToParameter(widgetName);
 
     // calculate source column indexes for combine links
     var sourceColumnIndexes = [];
@@ -263,9 +263,7 @@ Presenter.prototype.linkTableValuesWithDrillDownPage = function(widgetName, tabl
 /**
  * Make table cells of column with certain name as linked with link = "columnLinkPrefix + {columnValue}"
  */
-Presenter.prototype.makeTableColumnLinked = function(table, columnName, columnLinkPrefix) {
-    var FACTORY_URL_COLUMN_NAME = "Factory URL";  // TODO move to the configuration
-    
+Presenter.prototype.makeTableColumnLinked = function(table, columnName, columnLinkPrefix) {   
     var columnIndex = analytics.util.getArrayValueIndex(table.columns, columnName);
     if (columnIndex != null) {
         for (var i = 0; i < table.rows.length; i++) {
@@ -276,7 +274,7 @@ Presenter.prototype.makeTableColumnLinked = function(table, columnName, columnLi
             } else {
                var href = columnLinkPrefix + "=" + encodeURIComponent(columnValue);
                
-               if (columnName.toLowerCase() == FACTORY_URL_COLUMN_NAME.toLowerCase()) {
+               if (analytics.configuration.isFactoryUrlColumnName(columnName)) {
                    var title = columnValue;   // display initial url in title of link
                    columnValue = analytics.util.getShortenFactoryUrl(columnValue);                       
                    table.rows[i][columnIndex] = "<a href='" + href + "' title='" + title + "'>" + columnValue + "</a>";
