@@ -999,6 +999,8 @@ function Configuration() {
         "SESSIONS": "/analytics/pages/sessions-view.jsp?sort=-date&",
     }
     
+    var factoryUrlColumnNames = ["Factory URL", "Factory"];
+    
     /**
      * Returns property of widget.
      */
@@ -1158,10 +1160,21 @@ function Configuration() {
         return mapColumnNameToExpandableMetric[columnName];
     }
 
-    function getMapColumnToParameter(widgetName) {
+    function getMapExpandableColumnToParameter(widgetName) {
         var columnDrillDownPageLinkConfiguration = getProperty(widgetName, "columnDrillDownPageLinkConfiguration", {});
         
         return mapColumnToParameter = columnDrillDownPageLinkConfiguration["mapColumnToParameter"] || {};
+    }
+    
+    function isFactoryUrlColumnName(columnName) {        
+        for (var i in factoryUrlColumnNames) {
+            var factoryUrlColumnName = factoryUrlColumnNames[i];
+            if (columnName.toLowerCase() == factoryUrlColumnName.toLowerCase()) {
+                return true;
+            }
+        }
+        
+        return false;
     }
     
     
@@ -1179,8 +1192,11 @@ function Configuration() {
         getCrossPageParamsList: getCrossPageParamsList,
         isDateParam: isDateParam,
         isSystemMessage: isSystemMessage,
+
         getDrillDownPageAddress: getDrillDownPageAddress,
         getExpandableMetricName: getExpandableMetricName,
-        getMapColumnToParameter: getMapColumnToParameter,
+        getMapExpandableColumnToParameter: getMapExpandableColumnToParameter,
+        
+        isFactoryUrlColumnName: isFactoryUrlColumnName,
     }
 }
