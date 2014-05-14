@@ -30,6 +30,9 @@ import com.codenvy.analytics.persistent.MongoDataStorage;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.List;
@@ -44,6 +47,8 @@ import static com.codenvy.analytics.Utils.*;
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
 public abstract class ReadBasedMetric extends AbstractMetric {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ReadBasedMetric.class);
 
     public static final String ASC_SORT_SIGN       = "+";
     public static final String EXCLUDE_SIGN        = "~ ";
@@ -71,19 +76,31 @@ public abstract class ReadBasedMetric extends AbstractMetric {
 
     @Override
     public ValueData getValue(Context context) throws IOException {
-        context = omitFilters(context);
-        validateRestrictions(context);
+        long start = System.currentTimeMillis();
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Computation for " + getName() + " is started with context " + context);
+        }
 
-        if (canReadPrecomputedData(context)) {
-            Metric metric = MetricFactory.getMetric(getName() + PRECOMPUTED);
+        try {
+            context = omitFilters(context);
+            validateRestrictions(context);
 
-            Context.Builder builder = new Context.Builder(context);
-            builder.remove(Parameters.FROM_DATE);
-            builder.remove(Parameters.TO_DATE);
-            return metric.getValue(builder.build());
-        } else {
-            ValueData valueData = dataLoader.loadValue(this, context);
-            return postComputation(valueData, context);
+            if (canReadPrecomputedData(context)) {
+                Metric metric = MetricFactory.getMetric(getName() + PRECOMPUTED);
+
+                Context.Builder builder = new Context.Builder(context);
+                builder.remove(Parameters.FROM_DATE);
+                builder.remove(Parameters.TO_DATE);
+                return metric.getValue(builder.build());
+            } else {
+                ValueData valueData = dataLoader.loadValue(this, context);
+                return postComputation(valueData, context);
+            }
+        } finally {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Computation for " + getName() + " is finished with context " + context + " in " +
+                          ((System.currentTimeMillis() - start) / 1000) + " sec.");
+            }
         }
     }
 

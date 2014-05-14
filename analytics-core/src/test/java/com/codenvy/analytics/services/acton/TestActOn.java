@@ -72,6 +72,14 @@ public class TestActOn extends BaseTest {
         builder.put(Parameters.STORAGE_TABLE, MetricType.USERS_ACTIVITY_LIST.name().toLowerCase());
         pigServer.execute(ScriptType.USERS_ACTIVITY, builder.build());
 
+        builder.put(Parameters.STORAGE_TABLE, MetricType.ACTIVE_USERS_SET.name().toLowerCase());
+        builder.put(Parameters.PARAM, "user");
+        pigServer.execute(ScriptType.ACTIVE_ENTITIES, builder.build());
+
+        builder.put(Parameters.STORAGE_TABLE, MetricType.ACTIVE_WORKSPACES_SET.name().toLowerCase());
+        builder.put(Parameters.PARAM, "ws");
+        pigServer.execute(ScriptType.ACTIVE_ENTITIES, builder.build());
+
         builder.put(Parameters.FROM_DATE, "20131102");
         builder.put(Parameters.TO_DATE, "20131102");
 
@@ -86,6 +94,14 @@ public class TestActOn extends BaseTest {
 
         builder.put(Parameters.STORAGE_TABLE, MetricType.USERS_STATISTICS_LIST.name().toLowerCase());
         pigServer.execute(ScriptType.USERS_STATISTICS, builder.build());
+
+        builder.put(Parameters.STORAGE_TABLE, MetricType.ACTIVE_USERS_SET.name().toLowerCase());
+        builder.put(Parameters.PARAM, "user");
+        pigServer.execute(ScriptType.ACTIVE_ENTITIES, builder.build());
+
+        builder.put(Parameters.STORAGE_TABLE, MetricType.ACTIVE_WORKSPACES_SET.name().toLowerCase());
+        builder.put(Parameters.PARAM, "ws");
+        pigServer.execute(ScriptType.ACTIVE_ENTITIES, builder.build());
     }
 
     @Test

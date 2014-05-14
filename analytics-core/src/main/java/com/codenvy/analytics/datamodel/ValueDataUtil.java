@@ -45,4 +45,8 @@ public class ValueDataUtil {
     public static MapValueData getAsMap(Metric metric, Context context) throws IOException {
         return (MapValueData)metric.getValue(context);
     }
+
+    public static SetValueData getAsSet(Metric metric, Context context) throws IOException {
+        return (SetValueData)metric.getValue(context);
+    }
 }

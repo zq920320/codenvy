@@ -49,11 +49,9 @@ import static org.testng.AssertJUnit.assertEquals;
 /** @author <a href="mailto:areshetnyak@codenvy.com">Alexander Reshetnyak</a> */
 public class TestViewBuilder extends BaseTest {
 
-    private static final String RESOURCE_DIR = BASE_DIR + "/test-classes/" + TestViewBuilder.class.getSimpleName();
-    private static final String VIEW_CONF    = RESOURCE_DIR + "/view.xml";
-
-    private static final SimpleDateFormat dirFormat =
-            new SimpleDateFormat("yyyy" + File.separator + "MM" + File.separator + "dd");
+    private static final String           RESOURCE_DIR = BASE_DIR + "/test-classes/" + TestViewBuilder.class.getSimpleName();
+    private static final String           VIEW_CONF    = RESOURCE_DIR + "/view.xml";
+    private static final SimpleDateFormat DIR_FORMAT   = new SimpleDateFormat("yyyy" + File.separator + "MM" + File.separator + "dd");
 
     private ViewBuilder viewBuilder;
 
@@ -109,16 +107,16 @@ public class TestViewBuilder extends BaseTest {
 
         Calendar calendar = Utils.initializeContext(Parameters.TimeUnit.DAY).getAsDate(Parameters.TO_DATE);
 
-        File csvReport = new File("./target/reports/" + dirFormat.format(calendar.getTime()) + "/view_day.csv");
+        File csvReport = new File("./target/reports/" + DIR_FORMAT.format(calendar.getTime()) + "/view_day.csv");
         assertTrue(csvReport.exists());
 
-        csvReport = new File("./target/reports/" + dirFormat.format(calendar.getTime()) + "/view_week.csv");
+        csvReport = new File("./target/reports/" + DIR_FORMAT.format(calendar.getTime()) + "/view_week.csv");
         assertTrue(csvReport.exists());
 
-        csvReport = new File("./target/reports/" + dirFormat.format(calendar.getTime()) + "/view_month.csv");
+        csvReport = new File("./target/reports/" + DIR_FORMAT.format(calendar.getTime()) + "/view_month.csv");
         assertTrue(csvReport.exists());
 
-        csvReport = new File("./target/reports/" + dirFormat.format(calendar.getTime()) + "/view_lifetime.csv");
+        csvReport = new File("./target/reports/" + DIR_FORMAT.format(calendar.getTime()) + "/view_lifetime.csv");
         assertTrue(csvReport.exists());
 
         CSVReportPersister csvReportPersister = Injector.getInstance(CSVReportPersister.class);

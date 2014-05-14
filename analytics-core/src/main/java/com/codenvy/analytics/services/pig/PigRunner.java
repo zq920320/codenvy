@@ -23,7 +23,6 @@ import com.codenvy.analytics.persistent.CollectionsManagement;
 import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.ScriptType;
 import com.codenvy.analytics.services.Feature;
-import com.codenvy.analytics.services.configuration.XmlConfigurationManager;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +31,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.Map;
 
 /** @author <a href="mailto:areshetnyak@codenvy.com">Alexander Reshetnyak</a> */
 @Singleton
@@ -41,13 +39,12 @@ public class PigRunner extends Feature {
     private static final Logger LOG           = LoggerFactory.getLogger(PigRunner.class);
     private static final String CONFIGURATION = "scripts.xml";
 
-    private final PigRunnerConfiguration configuration;
-    private final CollectionsManagement  collectionsManagement;
+    private final ScriptsManager        scriptsManager;
+    private final CollectionsManagement collectionsManagement;
 
     @Inject
-    public PigRunner(CollectionsManagement collectionsManagement,
-                     XmlConfigurationManager confManger) throws IOException {
-        this.configuration = confManger.loadConfiguration(PigRunnerConfiguration.class, CONFIGURATION);
+    public PigRunner(CollectionsManagement collectionsManagement, ScriptsManager scriptsManager) throws IOException {
+        this.scriptsManager = scriptsManager;
         this.collectionsManagement = collectionsManagement;
     }
 
@@ -66,14 +63,13 @@ public class PigRunner extends Feature {
             collectionsManagement.removeData(context);
             collectionsManagement.dropIndexes();
 
-            for (ScriptConfiguration scriptConfiguration : configuration.getScripts()) {
+            for (ScriptConfiguration scriptConfiguration : scriptsManager.getAllScripts()) {
                 String scriptName = scriptConfiguration.getName();
-                Map<String, Object> parameters = scriptConfiguration.getParamsAsMap();
-
                 ScriptType scriptType = ScriptType.valueOf(scriptName.toUpperCase());
-                parameters.putAll(context.getAll());
 
-                Context.Builder builder = new Context.Builder(parameters);
+                Context.Builder builder = new Context.Builder(context);
+                builder.putAll(scriptConfiguration.getParamsAsMap());
+
                 pigServer.execute(scriptType, builder.build());
             }
 

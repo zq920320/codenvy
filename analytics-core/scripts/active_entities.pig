@@ -15,23 +15,18 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.metrics.workspaces;
 
-import com.codenvy.analytics.metrics.*;
+IMPORT 'macros.pig';
 
-import javax.annotation.security.RolesAllowed;
+l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-@RolesAllowed({"system/admin", "system/manager"})
-@OmitFilters({MetricFilter.USER})
-public class ActiveWorkspacesSet extends AbstractSetValueResulted {
+a1 = FOREACH l GENERATE $PARAM, ide;
+a2 = removeEmptyField(a1, '$PARAM');
+a = DISTINCT a2;
 
-    public ActiveWorkspacesSet() {
-        super(MetricType.ACTIVE_WORKSPACES_SET, WS);
-    }
+result = FOREACH a GENERATE UUID(),
+                            TOTUPLE('date', ToMilliSeconds(ToDate('$TO_DATE', 'yyyyMMdd'))),
+                            TOTUPLE('$PARAM', $PARAM),
+                            TOTUPLE('ide', ide);
 
-    @Override
-    public String getDescription() {
-        return "The list of active persistent workspaces";
-    }
-}
+STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;

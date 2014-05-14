@@ -17,33 +17,26 @@
  */
 package com.codenvy.analytics.metrics.users;
 
-import com.codenvy.analytics.metrics.*;
+import com.codenvy.analytics.metrics.AbstractActiveEntities;
+import com.codenvy.analytics.metrics.MetricFilter;
+import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.OmitFilters;
 
 import javax.annotation.security.RolesAllowed;
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+/**
+ * @author Anatoliy Bazko
+ */
 @RolesAllowed({"system/admin", "system/manager"})
+@OmitFilters({MetricFilter.WS})
 public class ActiveUsers extends AbstractActiveEntities {
 
     public ActiveUsers() {
-        super(MetricType.ACTIVE_USERS,
-              MetricType.USERS_ACTIVITY_LIST,
-              USER);
-    }
-
-    @Override
-    public Context applySpecificFilter(Context clauses) {
-        if (!clauses.exists(MetricFilter.USER)) {
-            Context.Builder builder = new Context.Builder(clauses);
-            builder.put(MetricFilter.USER, Parameters.USER_TYPES.REGISTERED.name());
-            return builder.build();
-        }
-
-        return clauses;
+        super(MetricType.ACTIVE_USERS, MetricType.ACTIVE_USERS_SET, USER);
     }
 
     @Override
     public String getDescription() {
-        return "Active users";
+        return "The number of active registered users";
     }
 }

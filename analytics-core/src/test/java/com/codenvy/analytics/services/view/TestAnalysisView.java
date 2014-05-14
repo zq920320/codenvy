@@ -22,6 +22,7 @@ import com.codenvy.analytics.Configurator;
 import com.codenvy.analytics.Injector;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.persistent.JdbcDataPersisterFactory;
 import com.codenvy.analytics.pig.scripts.ScriptType;
@@ -577,5 +578,13 @@ public class TestAnalysisView extends BaseTest {
         builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.toString());
         builder.put(Parameters.STORAGE_TABLE, "users_profiles_list");
         pigServer.execute(ScriptType.USERS_UPDATE_PROFILES, builder.build());
+
+        builder.put(Parameters.STORAGE_TABLE, MetricType.ACTIVE_USERS_SET.name().toLowerCase());
+        builder.put(Parameters.PARAM, "user");
+        pigServer.execute(ScriptType.ACTIVE_ENTITIES, builder.build());
+
+        builder.put(Parameters.STORAGE_TABLE, MetricType.ACTIVE_WORKSPACES_SET.name().toLowerCase());
+        builder.put(Parameters.PARAM, "ws");
+        pigServer.execute(ScriptType.ACTIVE_ENTITIES, builder.build());
     }
 }

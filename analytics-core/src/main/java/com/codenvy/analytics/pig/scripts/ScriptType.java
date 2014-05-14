@@ -70,7 +70,6 @@ public enum ScriptType {
         @Override
         public Set<Parameters> getParams() {
             Set<Parameters> params = super.getParams();
-            params.add(Parameters.EVENT);
             params.add(Parameters.PARAM);
             return params;
         }

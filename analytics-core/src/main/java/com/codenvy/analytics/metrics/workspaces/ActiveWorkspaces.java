@@ -18,12 +18,15 @@
 package com.codenvy.analytics.metrics.workspaces;
 
 import com.codenvy.analytics.metrics.AbstractActiveEntities;
+import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.OmitFilters;
 
 import javax.annotation.security.RolesAllowed;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
+@OmitFilters({MetricFilter.USER})
 public class ActiveWorkspaces extends AbstractActiveEntities {
 
     public ActiveWorkspaces() {
@@ -32,6 +35,6 @@ public class ActiveWorkspaces extends AbstractActiveEntities {
 
     @Override
     public String getDescription() {
-        return "The number of active workspaces";
+        return "The number of active persistent workspaces";
     }
 }

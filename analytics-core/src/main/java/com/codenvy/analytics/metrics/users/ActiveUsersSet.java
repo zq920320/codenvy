@@ -17,12 +17,16 @@
  */
 package com.codenvy.analytics.metrics.users;
 
-import com.codenvy.analytics.metrics.*;
+import com.codenvy.analytics.metrics.AbstractSetValueResulted;
+import com.codenvy.analytics.metrics.MetricFilter;
+import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.OmitFilters;
 
 import javax.annotation.security.RolesAllowed;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
+@OmitFilters({MetricFilter.WS})
 public class ActiveUsersSet extends AbstractSetValueResulted {
 
     public ActiveUsersSet() {
@@ -30,23 +34,7 @@ public class ActiveUsersSet extends AbstractSetValueResulted {
     }
 
     @Override
-    public String getStorageCollectionName() {
-        return getStorageCollectionName(MetricType.USERS_ACTIVITY_LIST);
-    }
-
-    @Override
-    public Context applySpecificFilter(Context clauses) {
-        if (!clauses.exists(MetricFilter.USER)) {
-            Context.Builder builder = new Context.Builder(clauses);
-            builder.put(MetricFilter.USER, Parameters.USER_TYPES.REGISTERED.name());
-            return builder.build();
-        }
-
-        return clauses;
-    }
-
-    @Override
     public String getDescription() {
-        return "Active users list";
+        return "The list of active registered users";
     }
 }

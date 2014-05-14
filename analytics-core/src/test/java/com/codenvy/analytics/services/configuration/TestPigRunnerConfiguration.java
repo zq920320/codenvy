@@ -58,8 +58,7 @@ public class TestPigRunnerConfiguration extends BaseTest {
 
     @Test
     public void testParsingConfig() throws Exception {
-        PigRunnerConfiguration configuration =
-                configurationManager.loadConfiguration(PigRunnerConfiguration.class, FILE);
+        PigRunnerConfiguration configuration = configurationManager.loadConfiguration(PigRunnerConfiguration.class, FILE);
 
         assertNotNull(configuration);
         assertEquals(1, configuration.getScripts().size());
@@ -68,7 +67,7 @@ public class TestPigRunnerConfiguration extends BaseTest {
         assertEquals("test1", scriptConfiguration.getName());
         assertEquals("desc", scriptConfiguration.getDescription());
 
-        Map<String, Object> parameters = scriptConfiguration.getParamsAsMap();
+        Map<String, String> parameters = scriptConfiguration.getParamsAsMap();
         assertEquals(2, parameters.size());
         assertEquals("REGISTERED", parameters.get("USER"));
         assertEquals("PERSISTENT", parameters.get("WS"));

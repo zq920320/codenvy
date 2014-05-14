@@ -23,6 +23,7 @@ import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.persistent.MongoDataStorage;
 import com.codenvy.analytics.pig.PigServer;
+import com.codenvy.analytics.services.pig.ScriptsManager;
 import com.mongodb.DB;
 
 import org.apache.pig.data.TupleFactory;
@@ -51,6 +52,7 @@ public class BaseTest {
     protected final PigServer        pigServer;
     protected final MongoDataStorage mongoDataStorage;
     protected final DB               mongoDb;
+    protected final ScriptsManager   scriptsManager;
 
     @BeforeClass
     public void clearDatabase() {
@@ -68,6 +70,7 @@ public class BaseTest {
         this.pigServer = Injector.getInstance(PigServer.class);
         this.mongoDataStorage = Injector.getInstance(MongoDataStorage.class);
         this.mongoDb = mongoDataStorage.getDb();
+        this.scriptsManager = Injector.getInstance(ScriptsManager.class);
     }
 
     protected Map<String, Map<String, ValueData>> listToMap(ListValueData valueData, String key) {
