@@ -29,8 +29,6 @@ import java.util.List;
 
 /** @author Dmytro Nochevnov */
 public abstract class AbstractTopFactories extends AbstractTopMetrics {
-
-    public static final String FACTORY_COUNT                      = "factory_count";
     public static final String BUILD_RATE                         = "build_rate";
     public static final String RUN_RATE                           = "run_rate";
     public static final String DEPLOY_RATE                        = "deploy_rate";
@@ -48,6 +46,7 @@ public abstract class AbstractTopFactories extends AbstractTopMetrics {
         return new String[]{FACTORY,
                             WS_CREATED,
                             USER_CREATED,
+                            SESSIONS,
                             TIME,
                             BUILD_RATE,
                             RUN_RATE,
@@ -70,7 +69,7 @@ public abstract class AbstractTopFactories extends AbstractTopMetrics {
                                   new BasicDBObject(ID, "$" + FACTORY)
                                           .append(WS_CREATED, new BasicDBObject("$sum", "$" + WS_CREATED))
                                           .append(USER_CREATED, new BasicDBObject("$sum", "$" + USER_CREATED))
-                                          .append(FACTORY_COUNT, new BasicDBObject("$sum", 1))
+                                          .append(SESSIONS, new BasicDBObject("$sum", 1))
                                           .append(TIME, new BasicDBObject("$sum", "$" + TIME))
                                           .append(BUILDS + "_count", new BasicDBObject("$sum", "$" + BUILDS))
                                           .append(RUNS + "_count", new BasicDBObject("$sum", "$" + RUNS))
@@ -87,16 +86,17 @@ public abstract class AbstractTopFactories extends AbstractTopMetrics {
                                 .append(WS_CREATED, 1)
                                 .append(USER_CREATED, 1)
                                 .append(FACTORY, "$_id")
+                                .append(SESSIONS, 1)
                                 .append(TIME, 1)
-                                .append(BUILD_RATE, getRateOperation("$" + BUILDS + "_count", "$" + FACTORY_COUNT))
-                                .append(RUN_RATE, getRateOperation("$" + RUNS + "_count", "$" + FACTORY_COUNT))
-                                .append(DEPLOY_RATE, getRateOperation("$" + DEPLOYS + "_count", "$" + FACTORY_COUNT))
+                                .append(BUILD_RATE, getRateOperation("$" + BUILDS + "_count", "$" + SESSIONS))
+                                .append(RUN_RATE, getRateOperation("$" + RUNS + "_count", "$" + SESSIONS))
+                                .append(DEPLOY_RATE, getRateOperation("$" + DEPLOYS + "_count", "$" + SESSIONS))
                                 .append(AUTHENTICATED_FACTORY_SESSION_RATE,
                                         getRateOperation("$" + AUTHENTICATED_SESSION + "_count",
-                                                         "$" + FACTORY_COUNT))
+                                                         "$" + SESSIONS))
                                 .append(CONVERTED_FACTORY_SESSION_RATE,
                                         getRateOperation("$" + CONVERTED_SESSION + "_count",
-                                                         "$" + FACTORY_COUNT))
+                                                         "$" + SESSIONS))
                 ));
 
         dbOperations.add(
@@ -105,6 +105,7 @@ public abstract class AbstractTopFactories extends AbstractTopMetrics {
                          new BasicDBObject(FACTORY, 1)
                                  .append(WS_CREATED, 1)
                                  .append(USER_CREATED, 1)
+                                 .append(SESSIONS, 1)
                                  .append(TIME, 1)
                                  .append(CONVERTED_FACTORY_SESSION_RATE, 1)
                                  .append(AUTHENTICATED_FACTORY_SESSION_RATE, 1)

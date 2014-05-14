@@ -153,7 +153,6 @@ function Configuration() {
             columnDrillDownPageLinkConfiguration: {
                 mapColumnNameToExpandableMetric: {
                     "Sessions": "product_usage_sessions",
-                    "# Sessions": "product_usage_sessions",
                     "# Workspaces Created": "total_workspaces",
                     "# Accounts Created": "total_users",
                     "Aggregate Time": "product_usage_time_total",
@@ -192,6 +191,8 @@ function Configuration() {
             clientSortParams: {
                 "ascSortColumnNumber": 0
             },
+
+            defaultServerSortParams: "+user",
             
             mapColumnToServerSortParam: {
                 "Email": "user",
@@ -370,6 +371,8 @@ function Configuration() {
                 "descSortColumnNumber": 3
             },
             
+            defaultServerSortParams: "-date",
+            
             mapColumnToServerSortParam: {
                 "ID": "session_id",
                 "User": "user",
@@ -410,11 +413,6 @@ function Configuration() {
             onePageRowsCount: 30,
 
             defaultServerSortParams: "+date",
-            
-            /** @see DatabaseTable::makeTableSortable() method docs */
-            clientSortParams: {
-                "descSortColumnNumber": 0
-            },
         },
 
         /** for Workspace View */
@@ -431,6 +429,8 @@ function Configuration() {
             clientSortParams: {
                 "ascSortColumnNumber": 0
             },
+
+            defaultServerSortParams: "+ws",
             
             mapColumnToServerSortParam: {
                 "Workspace": "ws",
@@ -653,6 +653,8 @@ function Configuration() {
                 "Sessions": "sessions",
                 "Time": "time",
             },
+
+            defaultServerSortParams: "+ws_created",
             
             columnDrillDownPageLinkConfiguration: {
                 mapColumnNameToExpandableMetric: {
@@ -1018,11 +1020,11 @@ function Configuration() {
         "total_factories": "FACTORIES",
     };
     var mapDrillDownPageTypeToAddress = {
-        "USERS": "/analytics/pages/users-view.jsp?sort=%2Buser",
-        "WORKSPACES": "/analytics/pages/workspaces-view.jsp?sort=%2Bws",
-        "FACTORIES": "/analytics/pages/factories-view.jsp?sort=%2Bws_created",
+        "USERS": "/analytics/pages/users-view.jsp",
+        "WORKSPACES": "/analytics/pages/workspaces-view.jsp",
+        "FACTORIES": "/analytics/pages/factories-view.jsp",
         "PROJECTS": "/analytics/pages/projects-view.jsp",
-        "SESSIONS": "/analytics/pages/sessions-view.jsp?sort=-date",
+        "SESSIONS": "/analytics/pages/sessions-view.jsp",
     }
     
     var factoryUrlColumnNames = ["Factory URL", "Factory"];
