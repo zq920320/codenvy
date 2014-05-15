@@ -167,6 +167,8 @@ function Configuration() {
                     "Referrer": "referrer",
                     "Email": "user",
                     "ID": "session_id",
+                    "Domain": "domain",
+                    "Company": "user_company",
                 },
                 
                 doNotLinkOnEmptyParameter: false,  // default value = true, 
@@ -841,7 +843,10 @@ function Configuration() {
         "factory",     // factories-view > factory-view; user-view >
                         // factory-view; workspace-view > factory-view; top
                         // metrics report > factory-view
+                        // top metrics reports -> sessions-view, workspaces-view
         "referrer",     // top metrics reports -> sessions-view, workspaces-view
+        "domain",       // top metrics reports -> sessions-view
+        "user_company", // top metrics reports -> sessions-view
         "project",      // projects-view > project-view
     ];
     
