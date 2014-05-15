@@ -18,24 +18,17 @@
 package com.codenvy.analytics.pig.scripts;
 
 import com.codenvy.analytics.BaseTest;
-import com.codenvy.analytics.datamodel.ListValueData;
-import com.codenvy.analytics.datamodel.MapValueData;
-import com.codenvy.analytics.datamodel.StringValueData;
-import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.datamodel.*;
 import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.metrics.sessions.ProductUsageSessionsList;
 import com.codenvy.analytics.metrics.users.UsersStatisticsList;
 import com.codenvy.analytics.metrics.workspaces.UsageTimeByWorkspacesList;
 import com.codenvy.analytics.metrics.workspaces.WorkspacesStatisticsList;
-import com.codenvy.analytics.pig.scripts.util.Event;
-import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 import com.codenvy.analytics.services.DataComputationFeature;
 
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -45,122 +38,60 @@ import static com.mongodb.util.MyAsserts.fail;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestUsersData extends BaseTest {
 
+    private static final String RESOURCE_DIR = BASE_DIR + "/test-classes/" + TestUsersData.class.getSimpleName();
+    private static final String MESSAGES     = RESOURCE_DIR + "/messages.log";
+
     @BeforeClass
     public void prepare() throws Exception {
-        List<Event> events = new ArrayList<>();
-
-        events.add(Event.Builder.createUserSSOLoggedInEvent("user2@gmail.com", "google")
-                                .withDate("2013-11-01")
-                                .build());
-
-        events.add(Event.Builder.createUserUpdateProfile("user1@gmail.com", "f1", "l1", "company1", "11", "1")
-                                .withDate("2013-11-01").build());
-        events.add(Event.Builder.createUserUpdateProfile("user2@gmail.com", "f2", "l2", "company1", "22", "2")
-                                .withDate("2013-11-01").build());
-
-        events.add(Event.Builder.createSessionStartedEvent("user1@gmail.com", "ws1", "ide", "1").withDate("2013-11-01")
-                                .withTime("20:00:00,155").build());
-        events.add(Event.Builder.createSessionFinishedEvent("user1@gmail.com", "ws1", "ide", "1").withDate("2013-11-01")
-                                .withTime("20:05:00,655").build());
-        events.add(Event.Builder.createSessionStartedEvent("user3@gmail.com", "ws2", "ide", "2").withDate("2013-11-01")
-                                .withTime("19:00:00").build());
-        events.add(Event.Builder.createSessionFinishedEvent("user3@gmail.com", "ws2", "ide", "2").withDate("2013-11-01")
-                                .withTime("19:02:00").build());
-
-        events.add(Event.Builder.createUserAddedToWsEvent("user2@gmail.com", "ws2", "id1", "", "", "")
-                                .withDate("2013-11-01")
-                                .withTime("19:07:00").build());
-        events.add(Event.Builder.createRunStartedEvent("user2@gmail.com", "ws2", "project", "type", "id1")
-                                .withDate("2013-11-01")
-                                .withTime("19:08:00,155").build());
-        events.add(Event.Builder.createRunFinishedEvent("user2@gmail.com", "ws2", "project", "type", "id1")
-                                .withDate("2013-11-01")
-                                .withTime("19:10:00,655").build());
-
-        events.add(Event.Builder.createBuildStartedEvent("user3@gmail.com", "ws2", "project", "type", "id2")
-                                .withDate("2013-11-01")
-                                .withTime("19:12:00,155").build());
-        events.add(Event.Builder.createBuildFinishedEvent("user3@gmail.com", "ws2", "project", "type", "id2")
-                                .withDate("2013-11-01")
-                                .withTime("19:14:00,655").build());
-
-        events.add(Event.Builder.createUserInviteEvent("user1@gmail.com", "ws2", "email")
-                                .withDate("2013-11-01").build());
-
-        events.add(Event.Builder.createProjectCreatedEvent("user1@gmail.com", "ws1", "s", "", "")
-                                .withDate("2013-11-01").withTime("20:01:00").build());
-        events.add(Event.Builder.createProjectDeployedEvent("user4@gmail.com", "ws1", "s", "", "", "")
-                                .withDate("2013-11-01").withTime("20:02:00").build());
-        events.add(Event.Builder.createFactoryCreatedEvent("ws1", "user1@gmail.com", "", "", "", "", "", "")
-                                .withDate("2013-11-01").withTime("20:03:00").build());
-        events.add(Event.Builder.createRunStartedEvent("user4@gmail.com", "ws1", "", "", "id3")
-                                .withDate("2013-11-01").withTime("20:04:00").build());
-        events.add(Event.Builder.createDebugStartedEvent("user4@gmail.com", "ws1", "", "", "id4")
-                                .withDate("2013-11-01").withTime("20:06:00").build());
-
-        events.add(Event.Builder.createSessionStartedEvent("user3@gmail.com", "ws2", "ide", "2").withDate("2013-11-01")
-                                .withTime("19:00:00").build());
-
-        events.add(Event.Builder.createUserUpdateProfile("user3@gmail.com", "", "", "", "", "")
-                                .withDate("2013-11-01").withTime("19:10:00,155").build());
-        events.add(Event.Builder.createUserUpdateProfile("user3@gmail.com", "f3", "l3", "company3", "33", "3")
-                                .withDate("2013-11-01").withTime("19:15:00,155").build());
-
-        // projects deployed
-        events.add(
-                Event.Builder.createApplicationCreatedEvent("user2@gmail.com", "ws2", "", "project1", "type1", "paas1")
-                             .withDate("2013-11-01")
-                             .withTime("20:10:00")
-                             .build());
-        events.add(
-                Event.Builder.createApplicationCreatedEvent("user3@gmail.com", "ws2", "", "project1", "type1", "paas2")
-                             .withDate("2013-11-01")
-                             .withTime("20:15:00")
-                             .build());
-
-        File log = LogGenerator.generateLog(events);
-
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
+        builder.put(Parameters.LOG, MESSAGES);
+
         builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.name());
         builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
         builder.put(Parameters.STORAGE_TABLE, MetricType.PRODUCT_USAGE_SESSIONS_LIST.toString().toLowerCase());
         builder.put(Parameters.STORAGE_TABLE_USERS_STATISTICS, MetricType.USERS_STATISTICS_LIST.name().toLowerCase());
         builder.put(Parameters.STORAGE_TABLE_USERS_PROFILES, MetricType.USERS_PROFILES_LIST.name().toLowerCase());
-        builder.put(Parameters.LOG, log.getAbsolutePath());
         pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, builder.build());
 
-        builder.put(Parameters.USER, Parameters.USER_TYPES.REGISTERED.name());
         builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
+        builder.put(Parameters.USER, Parameters.USER_TYPES.REGISTERED.name());
         builder.put(Parameters.STORAGE_TABLE, MetricType.USERS_STATISTICS_LIST.toString().toLowerCase());
         pigServer.execute(ScriptType.USERS_STATISTICS, builder.build());
 
+        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
+        builder.put(Parameters.USER, Parameters.USER_TYPES.REGISTERED.name());
         builder.put(Parameters.STORAGE_TABLE, MetricType.USERS_PROFILES_LIST.toString().toLowerCase());
         pigServer.execute(ScriptType.USERS_UPDATE_PROFILES, builder.build());
 
-
-        builder = new Context.Builder();
-        builder.put(Parameters.FROM_DATE, "20131101");
-        builder.put(Parameters.TO_DATE, "20131101");
         DataComputationFeature dataComputationFeature = new DataComputationFeature();
         dataComputationFeature.forceExecute(builder.build());
     }
 
     @Test
+    public void testUsersProfilesListExt() throws Exception {
+        Metric metric = MetricFactory.getMetric(MetricType.USERS_PROFILES_LIST_EXT);
+        ListValueData valueData = ValueDataUtil.getAsList(metric, Context.EMPTY);
+
+        assertUserData(valueData);
+    }
+
+    @Test
     public void testUserStatistics() throws Exception {
-        Context.Builder builder = new Context.Builder();
+        Metric metric = MetricFactory.getMetric(MetricType.USERS_STATISTICS_LIST);
+        ListValueData valueData = ValueDataUtil.getAsList(metric, Context.EMPTY);
 
-        Metric metric = new UsersStatisticsList();
-        ListValueData value = (ListValueData)metric.getValue(builder.build());
+        assertUserData(valueData);
+    }
 
+    private void assertUserData(ListValueData value) {
         assertEquals(value.size(), 4);
 
         for (ValueData object : value.getAll()) {
             MapValueData valueData = (MapValueData)object;
 
             Map<String, ValueData> all = valueData.getAll();
-            assertEquals(all.size(), 18);
 
             String user = all.get(UsersStatisticsList.USER).getAsString();
             switch (user) {

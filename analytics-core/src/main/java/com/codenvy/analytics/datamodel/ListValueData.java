@@ -41,6 +41,10 @@ public class ListValueData extends CollectionValueData {
         this.value = new ArrayList<>(value);
     }
 
+    public static ListValueData valueOf(List<ValueData> value) {
+        return new ListValueData(value);
+    }
+
     public List<ValueData> getAll() {
         return Collections.unmodifiableList(value);
     }

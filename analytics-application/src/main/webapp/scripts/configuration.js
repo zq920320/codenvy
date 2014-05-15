@@ -181,7 +181,9 @@ function Configuration() {
             widgetLabel: "Users",
             presenterType: "EntryViewPresenter",
             modelViewName: "users",
-            modelMetricName: "users_statistics",
+
+            isPaginable: true,    // default value is "false"
+            modelMetricName: "users_profiles",
 
             columnLinkPrefixList: {
                 "Email": "/analytics/pages/user-view.jsp?user",
@@ -195,13 +197,6 @@ function Configuration() {
 
             mapColumnToServerSortParam: {
                 "Email": "user",
-                "First Name": "user_first_name",
-                "Last Name": "user_last_name",
-                "Company": "user_company",
-                "Job": "user_job",
-                "# Sessions": "sessions",
-                "Usage Time": "time",
-                "# Projects": "projects",
             },
         },
 
