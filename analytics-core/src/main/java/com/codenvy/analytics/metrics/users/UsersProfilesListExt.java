@@ -18,10 +18,7 @@
 package com.codenvy.analytics.metrics.users;
 
 import com.codenvy.analytics.Utils;
-import com.codenvy.analytics.datamodel.ListValueData;
-import com.codenvy.analytics.datamodel.MapValueData;
-import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.datamodel.ValueDataUtil;
+import com.codenvy.analytics.datamodel.*;
 import com.codenvy.analytics.metrics.*;
 
 import javax.annotation.security.RolesAllowed;
@@ -107,12 +104,14 @@ public class UsersProfilesListExt extends AbstractUsersProfile {
 
         for (ValueData profile : valueData.getAll()) {
             Map<String, ValueData> data2Return = new HashMap<>(((MapValueData)profile).getAll());
+            String user = data2Return.get(ID).getAsString();
 
-            Map<String, ValueData> m = extendedData.get(data2Return.get(ID).getAsString());
+            Map<String, ValueData> m = extendedData.get(user);
             if (m != null) {
                 data2Return.putAll(m);
             }
 
+            data2Return.put(USER, StringValueData.valueOf(user));
             list2Return.add(MapValueData.valueOf(data2Return));
         }
 
