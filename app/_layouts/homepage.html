@@ -48,6 +48,11 @@
         <![endif]-->
 
         {% include application-script.html %}
-        {% include pingdom.html %}
+
+        {% if site.profile != "enterprise" %}
+            // Including Codenvy Trackers
+            {% include pingdom.html %}
+            {% include google-analytics.html %}
+        {% endif %}
 </body>
 </html>

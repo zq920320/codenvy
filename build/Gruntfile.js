@@ -18,7 +18,9 @@ module.exports = function( grunt ) {
         temp : "./temp",
         jekyllStageConfig : "_config.stage.yml",
         jekyllProdConfig : "_config.prod.yml",
-        jekyllGHConfig : "_config.gh.yml"
+        jekyllGHConfig : "_config.gh.yml",
+        jekyllEEConfig : "_config.enterprise.yml",
+        cloud : grunt.option('cloud')
     },
 
     jshint: {
@@ -115,6 +117,59 @@ module.exports = function( grunt ) {
                 // robots.txt
 
                 {expand: true, cwd: '../app/_site/', src: ['*.txt'], dest: '../target/dist/gh/'}
+            ]
+        },
+
+        enterprise: {
+            files: [
+                // scripts
+
+                {
+                    expand: true,
+                    cwd: '../dist/site/scripts/',
+                    src: ['vendor/modernizr*.js','*.amd-app.js'],
+                    dest: '../target/dist/enterprise/site/scripts/'
+                },
+
+                // styles
+
+                {
+                    expand: true,
+                    cwd: '../dist/site/styles/',
+                    src : '*.css',
+                    dest: '../target/dist/enterprise/site/styles/'
+                },
+
+                // images
+
+                {
+                    expand: true,
+                    cwd: '../dist/site/images/',
+                    src: ['**'],
+                    dest: '../target/dist/enterprise/site/images/'
+                },
+
+                // fonts
+
+                {
+                    expand: true,
+                    cwd: '../dist/site/fonts/',
+                    src: ['**'],
+                    dest: '../target/dist/enterprise/site/fonts/'
+                },
+
+                // pages
+
+                {
+                    expand: true,
+                    cwd: '../dist/_site/',
+                    src: ['*.html','**/*.html','*.xml'],
+                    dest: '../target/dist/enterprise/'
+                },
+                
+                // robots.txt
+
+                {expand: true, cwd: '../app/_site/', src: ['*.txt'], dest: '../target/dist/enterprise/'}
             ]
         },
 
@@ -239,6 +294,14 @@ module.exports = function( grunt ) {
             }
         },
 
+        jekyll_ee_config : {
+            command: 'cp <%= buildConfig.jekyllEEConfig %> <%= buildConfig.temp %>/_config.yml',
+            options: {
+                stdout: false,
+                failOnError: true
+            }
+        },
+
         jekyll : {
             command: 'jekyll',
             options: {
@@ -333,6 +396,21 @@ module.exports = function( grunt ) {
             // copy staging build output
             'copy:stage',
 
+            
+
+            // ------------------ ENTERPRISE
+
+            // copy staging _config.yml to the temporary folder
+            'shell:jekyll_ee_config',
+
+            // run jekyll build for production
+            'shell:jekyll',
+
+            // run yeoman build on top of production Jekyll build
+            'shell:yeoman',
+
+            // copy production goodness
+            'copy:enterprise',
 
             // ------------------ PRODUCTION
 

@@ -76,7 +76,7 @@
                             </descriptors>
                         </configuration>
                     </execution>
-                -->
+                    -->
                     <execution>
                         <id>stage</id>
                         <phase>package</phase>
@@ -101,6 +101,19 @@
                             <finalName>${project.artifactId}-${project.version}</finalName>
                             <descriptors>
                                 <descriptor>${basedir}/assembly/assembly-prod.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>enterprise</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <finalName>${project.artifactId}-${project.version}</finalName>
+                            <descriptors>
+                                <descriptor>${basedir}/assembly/assembly-enterprise.xml</descriptor>
                             </descriptors>
                         </configuration>
                     </execution>
