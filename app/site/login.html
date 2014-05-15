@@ -10,24 +10,30 @@
                 <div class="container dark login rounded shadow">
                     <div class="error-container"></div>
                     <h2 class="shiny center">Welcome back!</h2>
-                    <hr class="short-line">
+		    <div class="aternative-login">
+                        <div class="span4">Connect with</div>
+			<div class="span4"><a href="#" class="oauth-button google"></a></div>
+			<div class="span4"><a href="#" class="oauth-button github"></a></div>
+                    </div>
+		<div class="row content">
+			<div class="span2"></div>
+			<div class="span3"><hr></div>
+			<div class="span2 center">OR</span></div>
+			<div class="span3"><hr></div>
+			<div class="span2"></div>
+		</div>
                     <form class="login-form" method="post">
                         <div class="field">
-<input name="email" type="text" class="required email" placeholder="email" value = "" >
+<input name="email" type="text" class="required email" placeholder="Your Email" value = "" >
                         </div>
                         <div class="field">
-                            <input name="password" type="password" placeholder="password">
+                            <input name="password" type="password" placeholder="Your Password">
                         </div>
                         <div class="field">
                             <input type="submit" class="light-button button-400" value="Login">
                             <div class="working hidden">working...</div>
                         </div>
                     </form>
-
-                    <div class="aternative-login">
-                        <a href="#" class="oauth-button google"></a>
-                        <a href="#" class="oauth-button github"></a>
-                    </div>
                 </div>
             </div>
             <div class="span2"></div>

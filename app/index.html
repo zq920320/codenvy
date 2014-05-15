@@ -10,23 +10,25 @@
                 <div class="container dark login rounded shadow">
                     <div class="error-container"></div>
                     <h2 class="shiny center">Create your free account</h2>
-                    <hr class="short-line">
                 <form class="create-form">
                     <div class="field">
-                        <input name="email" type="text" class="required email" placeholder="Sign up with your email">
+                        <input name="email" type="text" class="required email" placeholder="Your Email">
                     </div>
                     <div class="field">
-                        <input name="domain" type="text" class="required domain-name" placeholder="Choose your workspace name" maxlength="20">
+                        <input name="domain" type="text" class="required domain-name" placeholder="Your workspace name" maxlength="20">
                     </div>
+		   <div class="field">
+                            <input name="password" type="password" placeholder="Your Password">
+                   </div>
                     <div class="field">
                         <input type="submit" class="signup-button blue-button" value="Sign up for free">
                         <div class="working hidden">working...</div>
                     </div>
                 </form>
-
-                    <div class="aternative-create">
-                        <a href="#" class="oauth-button google"></a>
-                        <a href="#" class="oauth-button github"></a>
+		<div class="aternative-create">
+                        <div class="span4">Signup with</div>
+			<div class="span4"><a href="#" class="oauth-button google"></a></div>
+			<div class="span4"><a href="#" class="oauth-button github"></a></div>
                     </div>
 
                 </div>
