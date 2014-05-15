@@ -223,7 +223,14 @@ result4 = FOREACH t GENERATE UUID(),
                              TOTUPLE('referrer', referrer);
 STORE result4 INTO '$STORAGE_URL.$STORAGE_TABLE_USERS_STATISTICS' USING MongoStorage;
 
-x = LOAD '$STORAGE_URL.$STORAGE_TABLE_PRODUCT_USAGE_SESSIONS' USING MongoLoaderProductUsageSessions;
+-- update exists document joined by session_id: add factory and referrer fields
+x = LOAD '$STORAGE_URL.$STORAGE_TABLE_PRODUCT_USAGE_SESSIONS' USING MongoLoaderCollectionWithSession;
 x2 = JOIN x BY session_id LEFT, r BY id;
 result5 = FOREACH x2 GENERATE x::id, TOTUPLE('factory', r::factory), TOTUPLE('referrer', r::referrer);
 STORE result5 INTO '$STORAGE_URL.$STORAGE_TABLE_PRODUCT_USAGE_SESSIONS' USING MongoStorage;
+
+-- update exists document joined by session_id: add factory and referrer fields
+y = LOAD '$STORAGE_URL.$STORAGE_TABLE_USERS_STATISTICS' USING MongoLoaderCollectionWithSession;
+y2 = JOIN y BY session_id LEFT, r BY id;
+result6 = FOREACH y2 GENERATE y::id, TOTUPLE('factory', r::factory), TOTUPLE('referrer', r::referrer);
+STORE result6 INTO '$STORAGE_URL.$STORAGE_TABLE_USERS_STATISTICS' USING MongoStorage;
