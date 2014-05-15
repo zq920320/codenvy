@@ -21,7 +21,6 @@ package com.codenvy.analytics.services.acton;
 
 import com.codenvy.analytics.Configurator;
 import com.codenvy.analytics.MailService;
-import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.*;
 import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.metrics.users.AbstractUsersProfile;
@@ -198,7 +197,6 @@ public class ActOn extends Feature {
 
         int pageSize = configurator.getInt(PAGE_SIZE, 10000);
 
-        Map<ValueData, Map<String, ValueData>> usersProfiles = getUsersProfiles();
         Set<ValueData> activeUsers = getActiveUsersLastMonth(context);
 
         context = context.cloneAndPut(Parameters.PER_PAGE, pageSize);
@@ -210,34 +208,20 @@ public class ActOn extends Feature {
                 context = context.cloneAndPut(Parameters.PAGE, currentPage++);
 
                 List<ValueData> usersStatistics = getUsersStatistics(context);
-                writeUsersWithStatistics(activeUsers, usersStatistics, usersProfiles, out);
+                writeUsersWithStatistics(activeUsers, usersStatistics, out);
 
                 if (usersStatistics.size() < pageSize) {
                     break;
                 }
             }
-
-            writeUsersWithoutStatistics(usersProfiles, out);
         }
 
         return file;
     }
 
 
-    private void writeUsersWithoutStatistics(Map<ValueData, Map<String, ValueData>> usersProfiles,
-                                             BufferedWriter out) throws IOException {
-
-        for (Map.Entry<ValueData, Map<String, ValueData>> entry : usersProfiles.entrySet()) {
-            writeStatistics(out,
-                            Collections.<String, ValueData>emptyMap(),
-                            entry.getValue(),
-                            false);
-        }
-    }
-
     private void writeUsersWithStatistics(Set<ValueData> activeUsers,
                                           List<ValueData> usersStatistics,
-                                          Map<ValueData, Map<String, ValueData>> usersProfiles,
                                           BufferedWriter out) throws IOException {
 
         for (ValueData object : usersStatistics) {
@@ -245,10 +229,16 @@ public class ActOn extends Feature {
             ValueData userEmail = stat.get(UsersStatisticsList.USER);
 
             boolean isActive = activeUsers.contains(userEmail);
-            Map<String, ValueData> profile = usersProfiles.remove(userEmail);
+
+            Context.Builder builder = new Context.Builder();
+            builder.put(MetricFilter.USER, userEmail.getAsString());
+
+            Metric metric = MetricFactory.getMetric(MetricType.USERS_PROFILES_LIST);
+            ListValueData list = ValueDataUtil.getAsList(metric, builder.build());
+            MapValueData profile = list.size() == 0 ? MapValueData.DEFAULT : (MapValueData)list.getAll().get(0);
 
             if (profile != null) {
-                writeStatistics(out, stat, profile, isActive);
+                writeStatistics(out, stat, profile.getAll(), isActive);
             }
         }
     }
@@ -276,23 +266,6 @@ public class ActOn extends Feature {
 
         return valueData.getAll();
     }
-
-    private Map<ValueData, Map<String, ValueData>> getUsersProfiles() throws IOException, ParseException {
-        Context context = Utils.initializeContext(Parameters.TimeUnit.LIFETIME);
-
-        Metric usersProfiles = MetricFactory.getMetric(MetricType.USERS_PROFILES_LIST);
-        ListValueData valueData = ValueDataUtil.getAsList(usersProfiles, context);
-
-        Map<ValueData, Map<String, ValueData>> result = new HashMap<>(valueData.size());
-
-        for (ValueData object : valueData.getAll()) {
-            Map<String, ValueData> profile = ((MapValueData)object).getAll();
-            result.put(profile.get(AbstractMetric.ID), profile);
-        }
-
-        return result;
-    }
-
 
     private void writeStatistics(BufferedWriter out,
                                  Map<String, ValueData> stat,
@@ -425,8 +398,7 @@ public class ActOn extends Feature {
     }
 
     /**
-     * Get total Marketing Qualified Leads (MQL) Score from Product due to example {@link
-     * http://jsfiddle.net/ecavazos/64g9b/}.
+     * Get total Marketing Qualified Leads (MQL) Score from Product due to example {@link http://jsfiddle.net/ecavazos/64g9b/}.
      *
      * @param profile
      * @param statistics

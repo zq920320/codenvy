@@ -65,11 +65,11 @@ public class UsersActivityList extends AbstractListValueResulted {
     @Override
     public Context applySpecificFilter(Context context) throws IOException {
         Context.Builder builder = new Context.Builder(context);
+        builder.put(Parameters.SORT, ASC_SORT_SIGN + DATE);
+        excludeStartAndStopFactorySessionsEvents(builder);
 
         if (context.exists(MetricFilter.SESSION_ID)) {
             setUserWsAndDateFilters(builder);
-            excludeStartAndStopFactorySessionsEvents(builder);
-            builder.put(Parameters.SORT, ASC_SORT_SIGN + DATE);
             builder.remove(MetricFilter.SESSION_ID);
         }
 

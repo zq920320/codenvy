@@ -21,8 +21,8 @@ import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.datamodel.*;
 import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.metrics.users.CompletedProfiles;
-import com.codenvy.analytics.metrics.users.UsersProfiles;
 import com.codenvy.analytics.metrics.users.UsersProfilesList;
+import com.codenvy.analytics.metrics.users.UsersProfiles;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 

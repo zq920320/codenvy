@@ -77,9 +77,6 @@ public abstract class ReadBasedMetric extends AbstractMetric {
     @Override
     public ValueData getValue(Context context) throws IOException {
         long start = System.currentTimeMillis();
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Computation for " + getName() + " is started with context " + context);
-        }
 
         try {
             context = omitFilters(context);
@@ -98,8 +95,8 @@ public abstract class ReadBasedMetric extends AbstractMetric {
             }
         } finally {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Computation for " + getName() + " is finished with context " + context + " in " +
-                          ((System.currentTimeMillis() - start) / 1000) + " sec.");
+                LOG.info("Metric computation " + getName() + " is finished with context " + context + " in " +
+                         ((System.currentTimeMillis() - start) / 1000) + " sec.");
             }
         }
     }

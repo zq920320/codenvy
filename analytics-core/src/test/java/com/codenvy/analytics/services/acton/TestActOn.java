@@ -215,7 +215,7 @@ public class TestActOn extends BaseTest {
 
         Map<String, Map<String, String>> content = read(jobFile);
 
-        assertEquals(content.size(), 4);
+        assertEquals(content.size(), 3);
 
         // verify head of FTP data
         Map<String, String> headData = content.get("_HEAD");
@@ -273,31 +273,6 @@ public class TestActOn extends BaseTest {
         assertEquals("false", user2Data.get(HEADERS.get(ActOn.PROFILE_COMPLETED)));
         assertEquals("0", user2Data.get(HEADERS.get(UsersStatisticsList.PAAS_DEPLOYS)));
         assertEquals("10", user2Data.get(HEADERS.get(ActOn.POINTS)));
-
-        // verify "user3" data
-        Map<String, String> user3Data = content.get("user3");
-        assertEquals(HEADERS.size(), user3Data.size());
-        assertEquals("user3", user3Data.get(HEADERS.get(AbstractMetric.ID)));
-        assertEquals("", user3Data.get(HEADERS.get(AbstractMetric.USER_FIRST_NAME)));
-        assertEquals("", user3Data.get(HEADERS.get(AbstractMetric.USER_LAST_NAME)));
-        assertEquals("", user3Data.get(HEADERS.get(AbstractMetric.USER_PHONE)));
-        assertEquals("", user3Data.get(HEADERS.get(AbstractMetric.USER_COMPANY)));
-        assertEquals("", user3Data.get(HEADERS.get(AbstractMetric.CREATION_DATE)));
-        assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.PROJECTS)));
-        assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.BUILDS)));
-        assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.RUNS)));
-        assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.DEPLOYS)));
-        assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.TIME)));
-        assertEquals("false", user3Data.get(HEADERS.get(ActOn.ACTIVE)));
-        assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.INVITES)));
-        assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.FACTORIES)));
-        assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.DEBUGS)));
-        assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.LOGINS)));
-        assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.BUILD_TIME)));
-        assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.RUN_TIME)));
-        assertEquals("false", user3Data.get(HEADERS.get(ActOn.PROFILE_COMPLETED)));
-        assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.PAAS_DEPLOYS)));
-        assertEquals("0", user3Data.get(HEADERS.get(ActOn.POINTS)));
     }
 
     private Map<String, Map<String, String>> read(File jobFile) throws IOException {

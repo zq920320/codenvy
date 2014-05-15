@@ -551,16 +551,6 @@
             <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
 
-        <section name="user_profile">
-            <row class="com.codenvy.analytics.services.view.TitleRow">
-                <parameter key="titles" value="Email,First Name,Last Name,Company,Job"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="users_profiles_list"/>
-                <parameter key="fields" value="_id,user_first_name,user_last_name,user_company,user_job"/>
-            </row>
-        </section>
-
         <section name="analysis">
             <row class="com.codenvy.analytics.services.view.DateRow">
                 <parameter key="section-name" value=""/>
