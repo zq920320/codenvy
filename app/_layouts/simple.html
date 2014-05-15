@@ -20,10 +20,15 @@
         <script src="{{'/site/scripts/vendor/modernizr.custom.29458.js' | resource}}"></script>
     </head>
     <body class="responsive simple">
-        {% include act-on.html %}
-        {% include pingdom.html %}
-        {% include google-analytics.html %}
         {% include application-script.html %}
+
+        {% if site.profile != "enterprise" %}
+                // Including Codenvy Trackers
+            {% include act-on.html %}
+            {% include pingdom.html %}
+            {% include google-analytics.html %}
+        {% endif %}
+
         {{ content }}
 
         <!--[if lt IE 7]>

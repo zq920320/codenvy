@@ -1,0 +1,5 @@
+# jekyll configuration used for the staging build
+
+server_port: 4000
+destination: ../../app/_site/
+profile: enterprise
