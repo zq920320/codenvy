@@ -44,7 +44,7 @@
 
     <include file="${analytics.logback.smtp-appender.configuration}"/>
 
-    <root level="INFO">
+    <root level="DEBUG">
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="FILE"/>
         <appender-ref ref="SMTP"/>
