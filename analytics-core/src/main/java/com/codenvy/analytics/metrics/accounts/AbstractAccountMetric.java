@@ -167,13 +167,6 @@ public abstract class AbstractAccountMetric extends AbstractMetric {
     }
 
     protected String getUserEmail(String userId) throws IOException {
-        /* TODO uncomment after update staging
-        String pathUserById =
-                AbstractAccountMetric.PATH_USER_BY_ID.replace(AbstractAccountMetric.PARAM_USER_ID, userId);
-        User user = httpMetricTransport.getResource(User.class, "GET", pathUserById);
-        return user == null ? "" : user.getEmail();
-        */
-
         return getEmail(getProfile(userId)).getAsString();
     }
 

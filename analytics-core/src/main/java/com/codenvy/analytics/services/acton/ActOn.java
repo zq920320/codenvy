@@ -204,10 +204,12 @@ public class ActOn extends Feature {
             writeHeader(out);
 
             for (int currentPage = 1; ; currentPage++) {
+                LOG.info("Proceeding page " + currentPage);
                 context = context.cloneAndPut(Parameters.PAGE, currentPage++);
 
                 List<ValueData> profiles = getUsersProfiles(context);
                 writeUsersWithStatistics(activeUsers, profiles, out);
+
 
                 if (profiles.size() < pageSize) {
                     break;
