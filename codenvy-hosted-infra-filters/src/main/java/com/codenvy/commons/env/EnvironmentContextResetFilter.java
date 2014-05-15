@@ -25,6 +25,7 @@ import java.io.IOException;
  * Reset the environment context.
  */
 @Singleton
+@Deprecated
 public class EnvironmentContextResetFilter implements Filter
 {
     @Override

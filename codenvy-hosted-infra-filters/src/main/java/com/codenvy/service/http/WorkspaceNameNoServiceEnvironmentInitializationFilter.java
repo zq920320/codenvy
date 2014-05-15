@@ -33,13 +33,13 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * Set information about workspace in request by following path:
  * <p/>
- * /{war}/{service}/{ws-name}
+ * /{war}/{ws-name}
  *
  * @author Alexander Garagatyi
  * @author Sergii Kabashniuk
  */
 @Singleton
-public class WorkspaceNameEnvironmentInitializationFilter extends WorkspaceEnvironmentInitializationFilter {
+public class WorkspaceNameNoServiceEnvironmentInitializationFilter extends WorkspaceEnvironmentInitializationFilter {
     private static final Logger LOG = LoggerFactory.getLogger(WorkspaceIdEnvironmentInitializationFilter.class);
 
     @Inject
@@ -52,7 +52,7 @@ public class WorkspaceNameEnvironmentInitializationFilter extends WorkspaceEnvir
         String requestUrl = httpRequest.getRequestURI();
         String[] pathParts = requestUrl.split("/", 5);
         try {
-            return cache.getByName(pathParts[3]);
+            return cache.getByName(pathParts[2]);
         } catch (NotFoundException e) {
             return null;
         } catch (ServerException e) {

@@ -17,77 +17,49 @@
  */
 package com.codenvy.service.http;
 
-import com.codenvy.api.core.ApiException;
 import com.codenvy.api.core.NotFoundException;
-import com.codenvy.api.workspace.server.dao.WorkspaceDao;
+import com.codenvy.api.core.ServerException;
 import com.codenvy.api.workspace.shared.dto.Workspace;
-import com.codenvy.commons.env.EnvironmentContext;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Singleton;
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 /**
+ * Set information about workspace in request by following path:
+ * <p/>
+ * /{war}/{service}/{ws-id}
+ *
  * @author Alexander Garagatyi
+ * @author Sergii Kabashniuk
  */
 @Singleton
-public class WorkspaceIdEnvironmentInitializationFilter implements Filter {
+public class WorkspaceIdEnvironmentInitializationFilter extends WorkspaceEnvironmentInitializationFilter {
     private static final Logger LOG = LoggerFactory.getLogger(WorkspaceIdEnvironmentInitializationFilter.class);
 
     @Inject
-    private WorkspaceDao workspaceDao;
+    private WorkspaceInfoCache cache;
 
-    @Named("error.page.workspace_not_found_redirect_url")
-    @Inject
-    private String wsNotFoundRedirectUrl;
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-            throws IOException, ServletException {
+    protected Workspace getWorkspaceFromRequest(ServletRequest request) throws ServletException {
         HttpServletRequest httpRequest = (HttpServletRequest)request;
         String requestUrl = httpRequest.getRequestURI();
-
         String[] pathParts = requestUrl.split("/", 5);
-
         try {
-            try {
-                Workspace workspace = workspaceDao.getById(pathParts[3]);
-
-                final EnvironmentContext env = EnvironmentContext.getCurrent();
-                env.setWorkspaceName(workspace.getName());
-                env.setWorkspaceId(workspace.getId());
-                env.setAccountId(workspace.getAccountId());
-                env.setWorkspaceTemporary(workspace.isTemporary());
-            } catch (NotFoundException e) {
-                ((HttpServletResponse)response).sendRedirect(wsNotFoundRedirectUrl);
-                return;
-            }
-
-            chain.doFilter(request, response);
-        } catch (ApiException e) {
+            return cache.getById(pathParts[3]);
+        } catch (NotFoundException e) {
+            return null;
+        } catch (ServerException e) {
+            LOG.warn(e.getLocalizedMessage(), e);
             throw new ServletException(e.getLocalizedMessage(), e);
-        } finally {
-            EnvironmentContext.reset();
         }
     }
 
-    @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
-    }
 
-    @Override
-    public void destroy() {
-    }
 }
