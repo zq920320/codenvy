@@ -193,9 +193,8 @@ public class ActOn extends Feature {
     }
 
     protected File prepareFile(Context context) throws IOException, ParseException {
-        File file = new File(configurator.getTmpDir(), FILE_NAME);
-
-        int pageSize = configurator.getInt(PAGE_SIZE, 10000);
+        final File file = new File(configurator.getTmpDir(), FILE_NAME);
+        final int pageSize = configurator.getInt(PAGE_SIZE, 10000);
 
         Set<ValueData> activeUsers = getActiveUsersLastMonth(context);
 
@@ -207,10 +206,10 @@ public class ActOn extends Feature {
             for (int currentPage = 1; ; currentPage++) {
                 context = context.cloneAndPut(Parameters.PAGE, currentPage++);
 
-                List<ValueData> usersStatistics = getUsersStatistics(context);
-                writeUsersWithStatistics(activeUsers, usersStatistics, out);
+                List<ValueData> profiles = getUsersProfiles(context);
+                writeUsersWithStatistics(activeUsers, profiles, out);
 
-                if (usersStatistics.size() < pageSize) {
+                if (profiles.size() < pageSize) {
                     break;
                 }
             }
@@ -221,24 +220,21 @@ public class ActOn extends Feature {
 
 
     private void writeUsersWithStatistics(Set<ValueData> activeUsers,
-                                          List<ValueData> usersStatistics,
-                                          BufferedWriter out) throws IOException {
+                                          List<ValueData> profiles,
+                                          BufferedWriter out) throws IOException, ParseException {
+        for (ValueData object : profiles) {
+            Map<String, ValueData> profile = ((MapValueData)object).getAll();
 
-        for (ValueData object : usersStatistics) {
-            Map<String, ValueData> stat = ((MapValueData)object).getAll();
-            ValueData userEmail = stat.get(UsersStatisticsList.USER);
+            ValueData user = profile.get(ReadBasedMetric.ID);
+            boolean isActive = activeUsers.contains(user);
 
-            boolean isActive = activeUsers.contains(userEmail);
-
-            Context.Builder builder = new Context.Builder();
-            builder.put(MetricFilter.USER, userEmail.getAsString());
-
-            Metric metric = MetricFactory.getMetric(MetricType.USERS_PROFILES_LIST);
-            ListValueData list = ValueDataUtil.getAsList(metric, builder.build());
-            MapValueData profile = list.size() == 0 ? MapValueData.DEFAULT : (MapValueData)list.getAll().get(0);
-
-            if (profile != null) {
-                writeStatistics(out, stat, profile.getAll(), isActive);
+            List<ValueData> stat = getUsersStatistics(user.getAsString());
+            if (stat.isEmpty()) {
+                MapValueData valueData = MapValueData.DEFAULT;
+                writeStatistics(out, valueData.getAll(), profile, isActive);
+            } else {
+                MapValueData valueData = (MapValueData)stat.get(0);
+                writeStatistics(out, valueData.getAll(), profile, isActive);
             }
         }
     }
@@ -256,10 +252,20 @@ public class ActOn extends Feature {
         return valueData.getAll();
     }
 
-    private List<ValueData> getUsersStatistics(Context context) throws IOException, ParseException {
+    private List<ValueData> getUsersProfiles(Context context) throws IOException, ParseException {
         Context.Builder builder = new Context.Builder(context);
-        builder.putDefaultValue(Parameters.FROM_DATE);
-        builder.put(MetricFilter.USER, Parameters.USER_TYPES.REGISTERED.name());
+        builder.remove(Parameters.FROM_DATE);
+        builder.remove(Parameters.TO_DATE);
+
+        Metric metric = MetricFactory.getMetric(MetricType.USERS_PROFILES_LIST);
+        ListValueData valueData = (ListValueData)metric.getValue(builder.build());
+
+        return valueData.getAll();
+    }
+
+    private List<ValueData> getUsersStatistics(String user) throws IOException, ParseException {
+        Context.Builder builder = new Context.Builder();
+        builder.put(MetricFilter.USER, user);
 
         Metric usersStatistics = MetricFactory.getMetric(MetricType.USERS_STATISTICS_LIST);
         ListValueData valueData = (ListValueData)usersStatistics.getValue(builder.build());
