@@ -107,7 +107,11 @@ public class UsersProfilesListExt extends AbstractUsersProfile {
 
         for (ValueData profile : valueData.getAll()) {
             Map<String, ValueData> data2Return = new HashMap<>(((MapValueData)profile).getAll());
-            data2Return.putAll(extendedData.get(data2Return.get(ID).getAsString()));
+
+            Map<String, ValueData> m = extendedData.get(data2Return.get(ID).getAsString());
+            if (m != null) {
+                data2Return.putAll(m);
+            }
 
             list2Return.add(MapValueData.valueOf(data2Return));
         }
