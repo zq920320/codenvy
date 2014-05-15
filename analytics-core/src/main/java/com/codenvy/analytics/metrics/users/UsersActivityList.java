@@ -65,12 +65,11 @@ public class UsersActivityList extends AbstractListValueResulted {
     @Override
     public Context applySpecificFilter(Context context) throws IOException {
         Context.Builder builder = new Context.Builder(context);
-        builder.put(Parameters.SORT, ASC_SORT_SIGN + DATE);
-
-        excludeStartAndStopFactorySessionsEvents(builder);
 
         if (context.exists(MetricFilter.SESSION_ID)) {
             setUserWsAndDateFilters(builder);
+            excludeStartAndStopFactorySessionsEvents(builder);
+            builder.put(Parameters.SORT, ASC_SORT_SIGN + DATE);
             builder.remove(MetricFilter.SESSION_ID);
         }
 
@@ -112,7 +111,7 @@ public class UsersActivityList extends AbstractListValueResulted {
 
             StringValueData event = (StringValueData)row.get(EVENT);
             StringValueData message = (StringValueData)row.get(MESSAGE);
-            row2Return.put(STATE, getContext(event.getAsString(), message.getAsString()));
+            row2Return.put(STATE, getState(event.getAsString(), message.getAsString()));
 
             if (row.containsKey(WS) && row.get(WS).getAsString().equals("default")) {
                 row2Return.put(WS, StringValueData.DEFAULT);
@@ -137,7 +136,7 @@ public class UsersActivityList extends AbstractListValueResulted {
     /**
      * Extracts all available params out of {@link #MESSAGE}.
      */
-    private StringValueData getContext(String event, String message) {
+    private StringValueData getState(String event, String message) {
         Map<String, String> result = eventsHolder.getParametersValues(event, message);
         result.remove("ID");
         result.remove("USER-ID");
