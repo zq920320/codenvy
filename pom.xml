@@ -23,7 +23,7 @@ is strictly forbidden unless prior written permission is obtained
     <parent>
         <artifactId>maven-depmgt-pom</artifactId>
         <groupId>com.codenvy</groupId>
-        <version>1.7.3-SNAPSHOT</version>
+        <version>1.7.5-SNAPSHOT</version>
     </parent>
     <groupId>com.codenvy.hosted-infrastructure</groupId>
     <artifactId>codenvy-hosted-infrastructure-parent</artifactId>
