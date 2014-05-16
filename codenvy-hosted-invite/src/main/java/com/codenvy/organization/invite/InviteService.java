@@ -28,7 +28,6 @@ import com.codenvy.api.user.shared.dto.Member;
 import com.codenvy.api.user.shared.dto.User;
 import com.codenvy.api.workspace.shared.dto.NewMembership;
 import com.codenvy.api.workspace.shared.dto.Workspace;
-import com.codenvy.auth.sso.server.handler.BearerTokenAuthenticationHandler;
 import com.codenvy.commons.env.EnvironmentContext;
 import com.codenvy.dto.server.DtoFactory;
 
@@ -63,15 +62,15 @@ public class InviteService {
     public static final  Pattern EMAIL_PATTERN = Pattern.compile("^(?:.*<)?(.+@.+?)(?:>)?$");
     private static final Logger  LOG           = LoggerFactory.getLogger(InviteService.class);
     protected final URI                              INVITE_ERROR_PAGE;
-    protected final BearerTokenAuthenticationHandler handler;
+    protected final BearerTokenProvider              provider;
     protected final MailSenderClient                 mailSenderClient;
 
     @Inject
     public InviteService(
-            BearerTokenAuthenticationHandler handler,
+            BearerTokenProvider provider,
             MailSenderClient mailSenderClient) throws URISyntaxException {
         this.mailSenderClient = mailSenderClient;
-        this.handler = handler;
+        this.provider = provider;
         this.INVITE_ERROR_PAGE = new URI("/site/error/error-send-invite");
     }
 
@@ -125,7 +124,7 @@ public class InviteService {
                                              .replacePath("api/user/find").build().toString());
                 user = HttpJsonHelper.request(User.class, getUserLink, Pair.of("email", mailRecipient));
             } catch (NotFoundException e) {
-                String token = handler.generateBearerToken(mailRecipient, null);
+                String token = provider.getBearerToken(mailRecipient);
                 Link createUserLink = DtoFactory.getInstance().createDto(Link.class).withMethod("POST")
                                                 .withHref(uriInfo.getBaseUriBuilder()
                                                 .replacePath("api/user/create").build().toString());
