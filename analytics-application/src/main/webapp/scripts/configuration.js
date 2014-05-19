@@ -205,6 +205,7 @@ function Configuration() {
         },
 
         /** for User View */
+        /** for User View */
         users: {
             widgetLabel: "Users",
             presenterType: "EntryViewPresenter",
@@ -225,166 +226,153 @@ function Configuration() {
 
             mapColumnToServerSortParam: {
                 "Email": "user",
-                defaultServerSortParams: "+user",
+            },
+                
+            defaultServerSortParams: "+user",
 
-                mapColumnToServerSortParam: {
-                    "Email": "user",
-                    "# Sessions": "sessions",
-                    "# Usage Time": "time",
+            columnDrillDownPageLinkConfiguration: {
+                mapColumnNameToExpandableMetric: {
+                    "# Sessions": "product_usage_sessions",
+                    "Usage Time": "product_usage_time_total",
                     "# Projects": "projects",
                 },
 
-                columnDrillDownPageLinkConfiguration: {
-                    mapColumnNameToExpandableMetric: {
-                        "# Sessions": "product_usage_sessions",
-                        "Usage Time": "product_usage_time_total",
-                        "# Projects": "projects",
-                    },
-
-                    mapColumnToParameter: {
-                        "Email": "user",
-                    },
+                mapColumnToParameter: {
+                    "Email": "user",
                 },
             },
+        },
 
-            userOverview: {
-                widgetLabel: "User Overview",
-                presenterType: "VerticalTablePresenter",
-                modelViewName: "user",
-                isNeedToSaveInHistory: false,     // default value = true
-            },
+        userOverview: {
+            widgetLabel: "User Overview",
+            presenterType: "VerticalTablePresenter",
+            modelViewName: "user",
 
-
-            userData: {
-                widgetLabel: "User Statistics",
-                presenterType: "HorizontalTablePresenter",
-                modelViewName: "user_data",
-
-                columnDrillDownPageLinkConfiguration: {
-                    mapColumnNameToExpandableMetric: {
-                        "Number of Sessions": "product_usage_sessions",
-                        "Total Time": "product_usage_time_total",
-                        "Total Build Time": "builds_time",
-                        "Total Run Time": "runs_time",
-                        "Number of Active Projects": "projects",
-                        "Number of Builds": "builds",
-                        "Number of Debugs": "debugs",
-                        "Number of Deploys": "deploys",
-                        "Number of Factories": "total_factories",
-                    },
+            columnDrillDownPageLinkConfiguration: {
+                mapColumnNameToExpandableMetric: {
+                    "Number of Sessions": "product_usage_sessions",
+                    "Total Time": "product_usage_time_total",
+                    "Total Build Time": "builds_time",
+                    "Total Run Time": "runs_time",
+                    "Number of Active Projects": "projects",
+                    "Number of Builds": "builds",
+                    "Number of Debugs": "debugs",
+                    "Number of Deploys": "deploys",
+                    "Number of Factories": "total_factories",
                 },
             },
+        },
+        
 
-            userSessions: {
-                widgetLabel: "Sessions",
-                presenterType: "HorizontalTablePresenter",
-                modelViewName: "user_sessions",
+        userSessions: {
+            widgetLabel: "Sessions",
+            presenterType: "HorizontalTablePresenter",
+            modelViewName: "user_sessions",
 
-                isPaginable: true,    // default value is "false"
-                modelMetricName: "product_usage_sessions",
+            isPaginable: true,    // default value is "false"
+            modelMetricName: "product_usage_sessions",
 
-                defaultServerSortParams: "-date",
+            defaultServerSortParams: "-date",
 
-                columnLinkPrefixList: {
-                    "ID": "/analytics/pages/session-view.jsp?session_id",
-                    "Workspace": "/analytics/pages/workspace-view.jsp?ws"
-                },
-
-                /** @see DatabaseTable::makeTableSortable() method docs */
-                clientSortParams: {
-                    "descSortColumnNumber": 2
-                },
-
-                mapColumnToServerSortParam: {
-                    "ID": "session_id",
-                    "Workspace": "ws",
-                    "Start Time": "date",
-                    "End Time": "end_time",
-                    "Duration": "time",
-                },
+            columnLinkPrefixList: {
+                "ID": "/analytics/pages/session-view.jsp?session_id",
+                "Workspace": "/analytics/pages/workspace-view.jsp?ws"
             },
 
-            userWorkspaceList: {
-                widgetLabel: "Workspaces",
-                presenterType: "HorizontalTablePresenter",
-                modelViewName: "user_workspace_list",
+            /** @see DatabaseTable::makeTableSortable() method docs */
+            clientSortParams: {
+                "descSortColumnNumber": 2
+            },
 
-                isPaginable: true,    // default value is "false"
-                modelMetricName: "usage_time_by_workspaces",
+            mapColumnToServerSortParam: {
+                "ID": "session_id",
+                "Workspace": "ws",
+                "Start Time": "date",
+                "End Time": "end_time",
+                "Duration": "time",
+            },
+        },
 
-                columnLinkPrefixList: {
-                    "Name": "/analytics/pages/workspace-view.jsp?ws"
+        userWorkspaceList: {
+            widgetLabel: "Workspaces",
+            presenterType: "HorizontalTablePresenter",
+            modelViewName: "user_workspace_list",
+
+            isPaginable: true,    // default value is "false"
+            modelMetricName: "usage_time_by_workspaces",
+
+            columnLinkPrefixList: {
+                "Name": "/analytics/pages/workspace-view.jsp?ws"
+            },
+
+            mapColumnToServerSortParam: {
+                "Name": "ws",
+                "Sessions": "sessions",
+                "Time": "time",
+            },
+
+            columnDrillDownPageLinkConfiguration: {
+                mapColumnNameToExpandableMetric: {
+                    "Sessions": "product_usage_sessions",
+                    "Time": "product_usage_time_total",
                 },
 
-                mapColumnToServerSortParam: {
+                mapColumnToParameter: {
                     "Name": "ws",
-                    "Sessions": "sessions",
-                    "Time": "time",
                 },
+            },
+        },
 
-                columnDrillDownPageLinkConfiguration: {
-                    mapColumnNameToExpandableMetric: {
-                        "Sessions": "product_usage_sessions",
-                        "Time": "product_usage_time_total",
-                    },
+        userFactories: {
+            widgetLabel: "Factories",
+            presenterType: "HorizontalTablePresenter",
+            modelViewName: "user_factories",
 
+            isPaginable: true,    // default value is "false"
+            modelMetricName: "created_factories",
+
+            columnLinkPrefixList: {
+                "Factory URL": "/analytics/pages/factory-view.jsp?factory",
+                "Workspace": "/analytics/pages/workspace-view.jsp?ws",
+            },
+
+            /** @see DatabaseTable::makeTableSortable() method docs */
+            clientSortParams: {
+                "descSortColumnNumber": 0
+            },
+
+            mapColumnToServerSortParam: {
+                "Date": "date",
+                "Factory URL": "factory",
+                "Workspace": "ws",
+                "Repository": "repository",
+                "Project": "project",
+                "Type": "project_type",
+            },
+        },
+
+        userProjects: {
+            widgetLabel: "Projects",
+            presenterType: "HorizontalTablePresenter",
+            modelViewName: "user_projects",
+
+            isPaginable: true,    // default value is "false"
+            modelMetricName: "projects",
+
+            columnLinkPrefixList: {
+                "User": "/analytics/pages/user-view.jsp?user",
+                "Workspace": "/analytics/pages/workspace-view.jsp?ws",
+            },
+
+            columnCombinedLinkConfiguration: {
+                "Project": {
+                    baseLink: "/analytics/pages/project-view.jsp",
                     mapColumnToParameter: {
-                        "Name": "ws",
-                    },
-                },
-            },
-
-            userFactories: {
-                widgetLabel: "Factories",
-                presenterType: "HorizontalTablePresenter",
-                modelViewName: "user_factories",
-
-                isPaginable: true,    // default value is "false"
-                modelMetricName: "created_factories",
-
-                columnLinkPrefixList: {
-                    "Factory URL": "/analytics/pages/factory-view.jsp?factory",
-                    "Workspace": "/analytics/pages/workspace-view.jsp?ws",
-                },
-
-                /** @see DatabaseTable::makeTableSortable() method docs */
-                clientSortParams: {
-                    "descSortColumnNumber": 0
-                },
-
-                mapColumnToServerSortParam: {
-                    "Date": "date",
-                    "Factory URL": "factory",
-                    "Workspace": "ws",
-                    "Repository": "repository",
-                    "Project": "project",
-                    "Type": "project_type",
-                }
-            },
-
-            userProjects: {
-                widgetLabel: "Projects",
-                presenterType: "HorizontalTablePresenter",
-                modelViewName: "user_projects",
-
-                isPaginable: true,    // default value is "false"
-                modelMetricName: "projects",
-
-                columnLinkPrefixList: {
-                    "User": "/analytics/pages/user-view.jsp?user",
-                    "Workspace": "/analytics/pages/workspace-view.jsp?ws",
-                },
-
-                columnCombinedLinkConfiguration: {
-                    "Project": {
-                        baseLink: "/analytics/pages/project-view.jsp",
-                        mapColumnToParameter: {
-                            "Project": "project",
-                            "Workspace": "ws",
-                            "User": "user",
-                        }
+                        "Project": "project",
+                        "Workspace": "ws",
+                        "User": "user",
                     }
-                },
+                }
             },
 
             /** @see DatabaseTable::makeTableSortable() method docs */
