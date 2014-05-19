@@ -24,7 +24,7 @@ import com.codenvy.analytics.metrics.MetricType;
 public abstract class AbstractProductUsageSessions extends AbstractCount {
 
     public AbstractProductUsageSessions(MetricType metricType) {
-        super(metricType, MetricType.PRODUCT_USAGE_SESSIONS_LIST);
+        super(metricType, MetricType.PRODUCT_USAGE_SESSIONS_LIST, SESSION_ID);
     }
 
     @Override

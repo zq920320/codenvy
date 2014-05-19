@@ -22,6 +22,7 @@ import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.datamodel.ValueDataUtil;
 import com.codenvy.analytics.metrics.CalculatedMetric;
 import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Expandable;
 import com.codenvy.analytics.metrics.MetricType;
 
 import javax.annotation.security.RolesAllowed;
@@ -29,7 +30,7 @@ import java.io.IOException;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
-public class ProductUsageTimeBelow1Min extends CalculatedMetric {
+public class ProductUsageTimeBelow1Min extends CalculatedMetric implements Expandable {
 
     public ProductUsageTimeBelow1Min() {
         super(MetricType.PRODUCT_USAGE_TIME_BELOW_1_MIN,
@@ -50,5 +51,10 @@ public class ProductUsageTimeBelow1Min extends CalculatedMetric {
     @Override
     public String getDescription() {
         return "The total time of all sessions in persistent workspaces with duration less or equals to 1 minute";
+    }
+
+    @Override
+    public ValueData getExpandedValue(Context context) throws IOException {
+        return ((Expandable)basedMetric[0]).getExpandedValue(context);
     }
 }

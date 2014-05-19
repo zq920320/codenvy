@@ -28,7 +28,7 @@ import javax.annotation.security.RolesAllowed;
 @RolesAllowed({"system/admin", "system/manager"})
 public class ShellLaunched extends AbstractLongValueResulted {
     public ShellLaunched() {
-        super(MetricType.SHELL_LAUNCHED);
+        super(MetricType.SHELL_LAUNCHED, WS);
     }
 
     @Override

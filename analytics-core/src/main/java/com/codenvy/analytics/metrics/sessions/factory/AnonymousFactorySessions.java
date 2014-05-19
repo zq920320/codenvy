@@ -28,8 +28,7 @@ import java.io.IOException;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
 @OmitFilters(MetricFilter.WS)
-public class AnonymousFactorySessions extends CalculatedMetric {
-
+public class AnonymousFactorySessions extends CalculatedMetric implements Expandable {
     public AnonymousFactorySessions() {
         super(MetricType.ANONYMOUS_FACTORY_SESSIONS, new MetricType[]{MetricType.FACTORY_SESSIONS,
                                                                       MetricType.AUTHENTICATED_FACTORY_SESSIONS});
@@ -38,9 +37,8 @@ public class AnonymousFactorySessions extends CalculatedMetric {
     @Override
     public ValueData getValue(Context context) throws IOException {
         LongValueData total = ValueDataUtil.getAsLong(basedMetric[0], context);
-        LongValueData auth = ValueDataUtil.getAsLong(basedMetric[1], context);
-
-        return new LongValueData(total.getAsLong() - auth.getAsLong());
+        LongValueData authenticated = ValueDataUtil.getAsLong(basedMetric[1], context);
+        return total.subtract(authenticated);
     }
 
     @Override
@@ -51,5 +49,12 @@ public class AnonymousFactorySessions extends CalculatedMetric {
     @Override
     public String getDescription() {
         return "The number sessions in temporary workspaces with anonymous user";
+    }
+
+    @Override
+    public ValueData getExpandedValue(Context context) throws IOException {
+        ValueData total = ((Expandable)basedMetric[0]).getExpandedValue(context);
+        ValueData authenticated = ((Expandable)basedMetric[1]).getExpandedValue(context);
+        return total.subtract(authenticated);
     }
 }

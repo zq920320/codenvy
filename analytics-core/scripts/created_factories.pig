@@ -39,16 +39,16 @@ a = FOREACH a6 GENERATE dt,
                         (INDEXOF(factory, 'factory?id=', 0) > 0 ? 1 : 0) AS encodedFactory;
 
 result = FOREACH a GENERATE UUID(),
-                            TOTUPLE('date', ToMilliSeconds(dt)),
-                            TOTUPLE('factory', factory),
-                            TOTUPLE('ws', ws),
-                            TOTUPLE('user', user),
-                            TOTUPLE('org_id', orgId),
-                            TOTUPLE('affiliate_id', affiliateId),
-                            TOTUPLE('ide', ide),
-                            TOTUPLE('project', project),
-                            TOTUPLE('repository', repository),
-                            TOTUPLE('project_type', LOWER(projectType)),
-                            TOTUPLE('encoded_factory', encodedFactory);
+					TOTUPLE('date', ToMilliSeconds(dt)), 
+					TOTUPLE('ws', ws), 
+					TOTUPLE('user', user),
+                    TOTUPLE('org_id', orgId), 
+                    TOTUPLE('affiliate_id', affiliateId), 
+                    TOTUPLE('ide', ide), 
+                    TOTUPLE('project', project),
+                    TOTUPLE('repository', repository), 
+                    TOTUPLE('project_type', LOWER(projectType)), 
+                    TOTUPLE('project_id', CreateProjectId(user, ws, project)),
+                    TOTUPLE('factory', factory),
+                    TOTUPLE('encoded_factory', encodedFactory);
 STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
-

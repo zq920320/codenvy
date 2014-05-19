@@ -20,11 +20,13 @@
     <view name="users" on-demand="true">
         <section name="users">
             <row class="com.codenvy.analytics.services.view.TitleRow">
-                <parameter key="titles" value="Email,First Name,Last Name,Company,Job,# Sessions,Usage Time"/>
+                <parameter key="titles"
+                           value="Email,First Name,Last Name,Company,Job,# Sessions,Usage Time,# Projects"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="users_profiles_list_ext"/>
-                <parameter key="fields" value="user,user_first_name,user_last_name,user_company,user_job,sessions,time"/>
+                <parameter key="name" value="users_statistics_list"/>
+                <parameter key="fields"
+                           value="user,user_first_name,user_last_name,user_company,user_job,sessions,time,projects"/>
                 <parameter key="time-fields" value="time"/>
                 <parameter key="hide-negative-values" value="true"/>
             </row>
@@ -89,11 +91,11 @@
     <view name="user_projects" on-demand="true">
         <section name="user_projects">
             <row class="com.codenvy.analytics.services.view.TitleRow">
-                <parameter key="titles" value="Date,Workspace,Project,Type,User"/>
+                <parameter key="titles" value="Date,Workspace,Project,Type"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="projects_list"/>
-                <parameter key="fields" value="date,ws,project,project_type,user"/>
+                <parameter key="fields" value="date,ws,project,project_type"/>
                 <parameter key="date-fields" value="date"/>
             </row>
         </section>

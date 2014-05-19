@@ -18,6 +18,7 @@
 package com.codenvy.analytics.metrics.users;
 
 import com.codenvy.analytics.metrics.*;
+import com.codenvy.analytics.persistent.MongoDataLoader;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
@@ -42,7 +43,7 @@ abstract public class AbstractUsersProfile extends ReadBasedMetric {
             Object value = clauses.get(filter);
 
             if (filter == MetricFilter.USER) {
-                builder.put(MetricFilter._ID, processValue(value, filter.isNumericType()));
+                builder.put(MetricFilter._ID, MongoDataLoader.processFilter(value, filter.isNumericType()));
 
             } else if (filter == MetricFilter.USER_COMPANY
                        || filter == MetricFilter.USER_FIRST_NAME
@@ -63,7 +64,7 @@ abstract public class AbstractUsersProfile extends ReadBasedMetric {
             return new BasicDBObject("$in", value);
 
         } else if (value instanceof String) {
-            return processStringValue((String)value, false);
+            return processStringFilter((String)value);
 
         } else if (value instanceof String[]) {
             return new BasicDBObject("$in", getPatterns((String[])value));
@@ -73,14 +74,13 @@ abstract public class AbstractUsersProfile extends ReadBasedMetric {
         }
     }
 
-    @Override
-    protected Object processStringValue(String value, boolean isNumericType) {
-        boolean processExclusiveValues = value.startsWith(EXCLUDE_SIGN);
+    protected Object processStringFilter(String value) {
+        boolean processExclusiveValues = value.startsWith(MongoDataLoader.EXCLUDE_SIGN);
         if (processExclusiveValues) {
-            value = value.substring(EXCLUDE_SIGN.length());
+            value = value.substring(MongoDataLoader.EXCLUDE_SIGN.length());
         }
 
-        Pattern[] patterns = getPatterns(value.split(SEPARATOR));
+        Pattern[] patterns = getPatterns(value.split(MongoDataLoader.SEPARATOR));
         return new BasicDBObject(processExclusiveValues ? "$nin" : "$in", patterns);
     }
 

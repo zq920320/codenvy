@@ -63,7 +63,7 @@
                                 <li><a class="command-btn" value="workspace/admin">Any workspace where the current user has workspace/admin right</a></li>
                                 <li><a class="command-btn" value="account/member">Any organization this user has account/member rights to</a></li>
                                 <li><a class="command-btn" value="account/owner">Any organization this user has account/owner rights to</a></li>
-                            </ul>                       
+                            </ul>
                         </li>
                     </ul>
                 </div>        

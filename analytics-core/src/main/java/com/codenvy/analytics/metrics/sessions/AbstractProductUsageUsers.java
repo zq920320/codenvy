@@ -24,7 +24,7 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public abstract class AbstractProductUsageUsers extends ReadBasedMetric {
+public abstract class AbstractProductUsageUsers extends ReadBasedMetric implements ReadBasedExpandable {
 
     private final long    min;
     private final long    max;
@@ -94,5 +94,27 @@ public abstract class AbstractProductUsageUsers extends ReadBasedMetric {
         }
 
         return clauses;
+    }
+
+    @Override
+    public DBObject[] getSpecificExpandedDBOperations(Context clauses) {
+        DBObject group = new BasicDBObject();
+        group.put(ID, "$" + getExpandedField());
+        group.put("total", new BasicDBObject("$sum", "$" + TIME));
+
+        DBObject range = new BasicDBObject();
+        range.put(includeMin ? "$gte" : "$gt", min);
+        range.put(includeMax ? "$lte" : "$lt", max);
+
+        DBObject projection = new BasicDBObject(getExpandedField(), "$_id");
+
+        return new DBObject[]{new BasicDBObject("$group", group),
+                              new BasicDBObject("$match", new BasicDBObject("total", range)),
+                              new BasicDBObject("$project", projection)};
+    }
+
+    @Override
+    public String getExpandedField() {
+        return USER;
     }
 }

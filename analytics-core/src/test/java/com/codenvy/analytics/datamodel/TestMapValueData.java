@@ -111,6 +111,6 @@ public class TestMapValueData extends BaseTest {
 
         MapValueData sumValueData = new MapValueData(value);
 
-        assertEquals(sumValueData, valueData.union(newValueData));
+        assertEquals(sumValueData, valueData.add(newValueData));
     }
 }

@@ -24,7 +24,7 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
 /** @author Anatoliy Bazko */
-public abstract class AbstractProductUsageCondition extends ReadBasedMetric {
+public abstract class AbstractProductUsageCondition extends ReadBasedMetric implements ReadBasedExpandable {
 
     final private long    minTime;
     final private long    maxTime;
@@ -110,5 +110,36 @@ public abstract class AbstractProductUsageCondition extends ReadBasedMetric {
     @Override
     public Class<? extends ValueData> getValueDataClass() {
         return LongValueData.class;
+    }
+
+    @Override
+    public String getExpandedField() {
+        return USER;
+    }
+
+    @Override
+    public DBObject[] getSpecificExpandedDBOperations(Context clauses) {
+        DBObject group = new BasicDBObject();
+        group.put(ID, "$" + USER);
+        group.put(TIME, new BasicDBObject("$sum", "$" + TIME));
+        group.put(SESSIONS, new BasicDBObject("$sum", 1));
+
+        DBObject sessionsRange = new BasicDBObject();
+        sessionsRange.put(includeMinSessions ? "$gte" : "$gt", minSessions);
+        sessionsRange.put(includeMaxSessions ? "$lte" : "$lt", maxSessions);
+
+        DBObject timeRange = new BasicDBObject();
+        timeRange.put(includeMinTime ? "$gte" : "$gt", minTime);
+        timeRange.put(includeMaxTime ? "$lte" : "$lt", maxTime);
+
+        DBObject match = new BasicDBObject();
+        match.put(operator, new DBObject[]{new BasicDBObject(SESSIONS, sessionsRange),
+                                           new BasicDBObject(TIME, timeRange)});
+
+        DBObject projection = new BasicDBObject(getExpandedField(), "$" + ID);
+
+        return new DBObject[]{new BasicDBObject("$group", group),
+                              new BasicDBObject("$match", match),
+                              new BasicDBObject("$project", projection)};
     }
 }

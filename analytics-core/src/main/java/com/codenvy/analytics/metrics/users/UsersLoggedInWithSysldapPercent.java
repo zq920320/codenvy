@@ -23,6 +23,7 @@ import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.datamodel.ValueDataUtil;
 import com.codenvy.analytics.metrics.CalculatedMetric;
 import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Expandable;
 import com.codenvy.analytics.metrics.MetricType;
 
 import javax.annotation.security.RolesAllowed;
@@ -30,7 +31,7 @@ import java.io.IOException;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
-public class UsersLoggedInWithSysldapPercent extends CalculatedMetric {
+public class UsersLoggedInWithSysldapPercent extends CalculatedMetric implements Expandable {
 
     public UsersLoggedInWithSysldapPercent() {
         super(MetricType.USERS_LOGGED_IN_WITH_SYSLDAP_PERCENT, new MetricType[]{
@@ -42,7 +43,6 @@ public class UsersLoggedInWithSysldapPercent extends CalculatedMetric {
     public ValueData getValue(Context context) throws IOException {
         LongValueData total = ValueDataUtil.getAsLong(basedMetric[0], context);
         LongValueData number = ValueDataUtil.getAsLong(basedMetric[1], context);
-
         return new DoubleValueData(100D * number.getAsLong() / total.getAsLong());
     }
 
@@ -56,4 +56,8 @@ public class UsersLoggedInWithSysldapPercent extends CalculatedMetric {
         return "The percent of authentication using system LDAP";
     }
 
+    @Override
+    public ValueData getExpandedValue(Context context) throws IOException {
+        return ((Expandable)basedMetric[1]).getExpandedValue(context);
+    }
 }

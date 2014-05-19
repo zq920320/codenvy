@@ -29,7 +29,7 @@ import javax.annotation.security.RolesAllowed;
 public class DestroyedProjects extends AbstractLongValueResulted {
 
     public DestroyedProjects() {
-        super(MetricType.DESTROYED_PROJECTS);
+        super(MetricType.DESTROYED_PROJECTS, PROJECT_ID);
     }
 
     @Override

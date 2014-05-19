@@ -17,7 +17,7 @@
  */
 package com.codenvy.analytics.pig.scripts;
 
-import com.codenvy.analytics.metrics.ReadBasedMetric;
+import com.codenvy.analytics.persistent.MongoDataLoader;
 import com.codenvy.analytics.services.configuration.XmlConfigurationManager;
 
 import javax.inject.Inject;
@@ -35,20 +35,18 @@ public class EventsHolder {
 
     public static final String IDE_CLOSED            = "ide-closed";
     public static final String IDE_OPENED            = "ide-opened";
-    public static final String NOT_FACTORY_SESSIONS  = "session-factory-stopped" + ReadBasedMetric.SEPARATOR + "session-factory-started";
+    public static final String NOT_FACTORY_SESSIONS  = "session-factory-stopped" + MongoDataLoader.SEPARATOR + "session-factory-started";
     public static final String USER_SSO_LOGOUT_EVENT = "user-sso-logged-out";
     public static final String USER_IDLE_EVENT       = "idle";
 
     private static final String CONFIGURATION = "events.xml";
     private static final String VALUE_PATTERN = "#([^\\s#][^#]*|)#";
 
-    private final EventHolderConfiguration configuration;
-
     private final Map<String, EventConfiguration> eventsMap;
 
     @Inject
     public EventsHolder(XmlConfigurationManager confManager) throws IOException {
-        configuration = confManager.loadConfiguration(EventHolderConfiguration.class, CONFIGURATION);
+        EventHolderConfiguration configuration = confManager.loadConfiguration(EventHolderConfiguration.class, CONFIGURATION);
         eventsMap = configuration.getAsMap();
     }
 

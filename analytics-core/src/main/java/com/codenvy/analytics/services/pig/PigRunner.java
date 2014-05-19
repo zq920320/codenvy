@@ -36,8 +36,7 @@ import java.text.ParseException;
 @Singleton
 public class PigRunner extends Feature {
 
-    private static final Logger LOG           = LoggerFactory.getLogger(PigRunner.class);
-    private static final String CONFIGURATION = "scripts.xml";
+    private static final Logger LOG = LoggerFactory.getLogger(PigRunner.class);
 
     private final ScriptsManager        scriptsManager;
     private final CollectionsManagement collectionsManagement;

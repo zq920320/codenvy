@@ -22,6 +22,7 @@ import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.datamodel.ValueDataUtil;
 import com.codenvy.analytics.metrics.CalculatedMetric;
 import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Expandable;
 import com.codenvy.analytics.metrics.MetricType;
 
 import javax.annotation.security.RolesAllowed;
@@ -29,7 +30,7 @@ import java.io.IOException;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
-public class ProjectNoPassDefined extends CalculatedMetric {
+public class ProjectNoPassDefined extends CalculatedMetric implements Expandable {
 
     public ProjectNoPassDefined() {
         super(MetricType.PROJECT_NO_PAAS_DEFINED, new MetricType[]{MetricType.CREATED_PROJECTS,
@@ -40,8 +41,7 @@ public class ProjectNoPassDefined extends CalculatedMetric {
     public ValueData getValue(Context context) throws IOException {
         LongValueData created = ValueDataUtil.getAsLong(basedMetric[0], context);
         LongValueData deployed = ValueDataUtil.getAsLong(basedMetric[1], context);
-
-        return new LongValueData(created.getAsLong() - deployed.getAsLong());
+        return created.subtract(deployed);
     }
 
     @Override
@@ -52,5 +52,12 @@ public class ProjectNoPassDefined extends CalculatedMetric {
     @Override
     public String getDescription() {
         return "The number of created projects without PaaS defined";
+    }
+
+    @Override
+    public ValueData getExpandedValue(Context context) throws IOException {
+        ValueData created = ((Expandable)basedMetric[0]).getExpandedValue(context);
+        ValueData deployed = ((Expandable)basedMetric[1]).getExpandedValue(context);
+        return created.subtract(deployed);
     }
 }

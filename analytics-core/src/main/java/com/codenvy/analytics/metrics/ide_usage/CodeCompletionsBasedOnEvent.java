@@ -27,7 +27,7 @@ import javax.annotation.security.RolesAllowed;
 public class CodeCompletionsBasedOnEvent extends AbstractLongValueResulted {
 
     public CodeCompletionsBasedOnEvent() {
-        super(MetricType.CODE_COMPLETIONS_BASED_ON_EVENT);
+        super(MetricType.CODE_COMPLETIONS_BASED_ON_EVENT, PROJECT_ID);
     }
 
     @Override

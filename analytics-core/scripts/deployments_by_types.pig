@@ -33,6 +33,7 @@ result = FOREACH a GENERATE UUID(),
                             TOTUPLE('user', user),
                             TOTUPLE('project', project),
                             TOTUPLE('project_type', LOWER(type)),
+                            TOTUPLE('project_id', CreateProjectId(user, ws, project)),
                             TOTUPLE(LOWER(paas), 1L),
                             TOTUPLE('ide', ide);
 

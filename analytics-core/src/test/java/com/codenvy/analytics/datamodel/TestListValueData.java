@@ -129,6 +129,6 @@ public class TestListValueData extends BaseTest {
         ListValueData sumValueData =
                 new ListValueData(Arrays.<ValueData>asList(rowValueData1, rowValueData2, rowValueData3));
 
-        assertEquals(sumValueData, valueData.union(newValueData));
+        assertEquals(sumValueData, valueData.add(newValueData));
     }
 }

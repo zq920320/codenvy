@@ -110,7 +110,7 @@
     <view name="top_users_by_lifetime">
         <section name="top_users_by_lifetime">
             <row class="com.codenvy.analytics.services.view.TitleRow">
-                <parameter key="titles" value="Domain,Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,1 Year,Lifetime"/>
+                <parameter key="titles" value="Email,Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,1 Year,Lifetime"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="top_users_by_lifetime"/>

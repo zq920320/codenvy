@@ -21,41 +21,100 @@ if (typeof analytics === "undefined") {
 
 analytics.presenter = analytics.presenter || {};
 
-analytics.presenter.ReportPresenter = function ReportPresenter() {};
+analytics.presenter.ReportPresenter = function ReportPresenter() {
+};
 
 analytics.presenter.ReportPresenter.prototype = new Presenter();
 
-analytics.presenter.ReportPresenter.prototype.load = function() {
-    var presenter = this; 
+analytics.presenter.ReportPresenter.prototype.load = function () {
+    var presenter = this;
     var view = presenter.view;
     var model = presenter.model;
-	
-    model.setParams(presenter.getModelParams(view.getParams()));
-        
-    model.pushDoneFunction(function(data) {
-        var doNotDisplayCSVButton = analytics.configuration.getProperty(presenter.widgetName, "doNotDisplayCSVButton", false);  // default value is "false" 
-        var csvButtonLink = (doNotDisplayCSVButton) 
-                            ? undefined
-                            : presenter.getLinkForExportToCsvButton();     
-        var widgetLabel = analytics.configuration.getProperty(presenter.widgetName, "widgetLabel");
-        view.printWidgetHeader(widgetLabel, csvButtonLink);
 
-        view.print("<div class='body'>");
-        
-        for (var table in data) {
-            view.printTable(data[table], true);
-        }
-        
-        var clientSortParams = analytics.configuration.getProperty(presenter.widgetName, "clientSortParams");
-        view.loadTableHandlers(true, clientSortParams);   
+    // get list of expandable metrics of report
+    model.pushDoneFunction(function (data) {
+        var viewParams = view.getParams();
+        var modelParams = presenter.getModelParams(viewParams);
+        model.setParams(modelParams);
 
-        view.print("</div>");
-        
-        // finish loading widget
-        analytics.views.loader.needLoader = false;
+        var expandableMetricPerSection = data;
+
+        // get report data
+        model.popDoneFunction();
+        model.pushDoneFunction(function (data) {
+            var doNotDisplayCSVButton = analytics.configuration.getProperty(presenter.widgetName, "doNotDisplayCSVButton", false);  // default value is "false" 
+            var csvButtonLink = (doNotDisplayCSVButton)
+                ? undefined
+                : presenter.getLinkForExportToCsvButton();
+            var widgetLabel = analytics.configuration.getProperty(presenter.widgetName, "widgetLabel");
+            view.printWidgetHeader(widgetLabel, csvButtonLink);
+
+            view.print("<div class='body'>");
+
+            for (var i in data) {
+                var table = data[i];
+
+                // add links to drill down page
+                table = presenter.linkTableValuesWithDrillDownPage(table, i, expandableMetricPerSection, modelParams);
+
+                view.printTable(table, true);
+            }
+
+            var clientSortParams = analytics.configuration.getProperty(presenter.widgetName, "clientSortParams");
+            view.loadTableHandlers(true, clientSortParams);
+
+            view.print("</div>");
+
+            // finish loading widget
+            analytics.views.loader.needLoader = false;
+        });
+
+        var modelViewName = analytics.configuration.getProperty(presenter.widgetName, "modelViewName");
+
+        model.getModelViewData(modelViewName);
     });
 
     var modelViewName = analytics.configuration.getProperty(presenter.widgetName, "modelViewName");
-    
-	model.getAllResults(modelViewName);
+    model.getExpandableMetricList(modelViewName);
 };
+
+/**
+ * expandableMetricPerSection format:
+ * [
+ * {"1": "total_factories",   // first section (first row with "0" key is title as usual in reports, and so is absent)
+ *  "2": "created_factories",
+ *  ...},
+ *
+ * {},                        // second section (first row with "0" key is title as usual in reports, and so is absent)
+ *
+ * {"2": "active_workspaces", // third section (first row with "0" key is title as usual in reports, and so is absent)
+ *  "5": "active_users",
+ *  ...},
+ *
+ *  ...
+ *  ]
+ */
+analytics.presenter.ReportPresenter.prototype.linkTableValuesWithDrillDownPage = function (table, tableNumber, expandableMetricPerSection, modelParams) {
+    // setup top date of expanded value due to date of generation of report
+    modelParams["to_date"] = modelParams["to_date"] || analytics.configuration.getServerProperty("reportGenerationDate");
+
+    for (var rowNumber = 0; rowNumber < table.rows.length; rowNumber++) {
+        // check if there is expandable metric in row
+        var metricName = expandableMetricPerSection[tableNumber][rowNumber + 1];  // taking into account absent title row
+        if (typeof metricName != "undefined") {
+            for (var columnNumber = 1; columnNumber < table.rows[rowNumber].length; columnNumber++) {
+                var columnValue = table.rows[rowNumber][columnNumber];
+
+                // don't display link to empty drill down page
+                if (!this.isEmptyValue(columnValue)) {
+                    var timeInterval = columnNumber - 1;
+                    var drillDownPageLink = this.getDrillDownPageLink(metricName, modelParams, timeInterval);
+
+                    table.rows[rowNumber][columnNumber] = "<a href='" + drillDownPageLink + "'>" + columnValue + "</a>";
+                }
+            }
+        }
+    }
+
+    return table;
+}

@@ -38,7 +38,7 @@ public abstract class CalculatedMetric extends AbstractMetric {
      *         the metric name, must be unique
      * @param basedMetricsNames
      *         the metrics names which is used to calculate the value of the metric. All metrics will be available
-     *         inside {@link #getValue(Context)} method throw array {@link #basedMetric} in the same order as were
+     *         inside {@link #getValue(Context)} method through array {@link #basedMetric} in the same order as were
      *         passed into constructor
      */
     public CalculatedMetric(String metricName, String[] basedMetricsNames) {

@@ -20,9 +20,22 @@ IMPORT 'macros.pig';
 
 l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 
+f1 = extractParam(l, 'PROJECT', project);
+f2 = extractParam(f1, 'TYPE', project_type);
+f = FOREACH f2 GENERATE dt, ws, project, project_type, user, ide;
+
 r = calculateTime(l, '$EVENT-started', '$EVENT-finished');
 
-result = FOREACH r GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('ws', ws), TOTUPLE('user', user),
-        TOTUPLE('time', delta), TOTUPLE('ide', ide);
+u = JOIN r BY (dt,user,ws,ide), f BY (dt,user,ws,ide);
+result = FOREACH u GENERATE UUID(),
+                            TOTUPLE('date', ToMilliSeconds(r::dt)),
+                            TOTUPLE('ws', r::ws),
+                            TOTUPLE('user', r::user),
+                            TOTUPLE('project', f::project),
+                            TOTUPLE('project_type', LOWER(f::project_type)),
+                            TOTUPLE('project_id', CreateProjectId(r::user, r::ws, f::project)),
+                            TOTUPLE('time', r::delta),
+                            TOTUPLE('ide', r::ide);
 
 STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
+

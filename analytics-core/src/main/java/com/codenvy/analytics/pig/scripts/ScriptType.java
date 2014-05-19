@@ -99,7 +99,15 @@ public enum ScriptType {
     USERS_ACTIVITY,
     PROJECTS,
     PROJECTS_STATISTICS,
-
+    USERS_EVENTS {
+        @Override
+        public Set<Parameters> getParams() {
+            Set<Parameters> params = super.getParams();
+            params.add(Parameters.STORAGE_TABLE_PRODUCT_USAGE_SESSIONS);
+            params.add(Parameters.STORAGE_TABLE_USERS_STATISTICS);
+            return params;
+        }
+    },
     LOG_CHECKER {
         @Override
         public Set<Parameters> getParams() {

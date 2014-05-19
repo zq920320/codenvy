@@ -46,5 +46,4 @@ public class ContextModifierConfiguration {
     public void setParametersConfiguration(ParametersConfiguration parametersConfiguration) {
         this.parametersConfiguration = parametersConfiguration;
     }
-
 }

@@ -30,7 +30,7 @@ import javax.annotation.security.RolesAllowed;
 public class AuthenticatedFactorySessions extends AbstractLongValueResulted {
 
     public AuthenticatedFactorySessions() {
-        super(MetricType.AUTHENTICATED_FACTORY_SESSIONS);
+        super(MetricType.AUTHENTICATED_FACTORY_SESSIONS, SESSION_ID);
     }
 
     @Override

@@ -26,6 +26,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsList;
+
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class ListValueData extends CollectionValueData {
@@ -54,13 +56,17 @@ public class ListValueData extends CollectionValueData {
     }
 
     @Override
-    protected ValueData doUnion(ValueData valueData) {
-        ListValueData object = (ListValueData)valueData;
+    protected ListValueData doAdd(ValueData valueData) {
+        List<ValueData> result = new ArrayList<>(value);
+        result.addAll(treatAsList(valueData));
+        return new ListValueData(result);
+    }
 
-        List<ValueData> result = new ArrayList<>(this.value.size() + object.size());
-        result.addAll(this.value);
-        result.addAll(object.value);
 
+    @Override
+    protected ValueData doSubtract(ValueData valueData) {
+        List<ValueData> result = new ArrayList<>(value);
+        result.removeAll(treatAsList(valueData));
         return new ListValueData(result);
     }
 

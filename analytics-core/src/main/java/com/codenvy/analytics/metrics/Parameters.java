@@ -50,7 +50,7 @@ public enum Parameters {
     RECIPIENT,
     VIEW,
     REPORT_ROWS,
-
+    EXPANDED_METRIC_NAME,
     TIME_UNIT {
         @Override
         public void validate(String value, Context context) throws IllegalArgumentException {
@@ -65,7 +65,6 @@ public enum Parameters {
 
     TIME_INTERVAL,
     DATA_COMPUTATION_PROCESS,
-
     FROM_DATE {
         @Override
         public String getDefaultValue() {

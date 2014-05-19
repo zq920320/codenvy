@@ -21,6 +21,7 @@ import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.CalculatedMetric;
 import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Expandable;
 import com.codenvy.analytics.metrics.MetricType;
 
 import javax.annotation.security.RolesAllowed;
@@ -28,8 +29,7 @@ import java.io.IOException;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
-public class UsersAcceptedInvites extends CalculatedMetric {
-
+public class UsersAcceptedInvites extends CalculatedMetric implements Expandable {
     public UsersAcceptedInvites() {
         super(MetricType.USERS_ACCEPTED_INVITES,
               new MetricType[]{MetricType.USERS_ADDED_TO_WORKSPACES_USING_INVITATION});
@@ -48,5 +48,10 @@ public class UsersAcceptedInvites extends CalculatedMetric {
     @Override
     public String getDescription() {
         return "The number of users who accepted invites";
+    }
+
+    @Override
+    public ValueData getExpandedValue(Context context) throws IOException {
+        return ((Expandable)basedMetric[0]).getExpandedValue(context);
     }
 }

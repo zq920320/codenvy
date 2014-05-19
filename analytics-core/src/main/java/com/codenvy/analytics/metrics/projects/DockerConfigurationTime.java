@@ -29,7 +29,7 @@ import javax.annotation.security.RolesAllowed;
 public class DockerConfigurationTime extends AbstractTimeSpentInAction {
 
     public DockerConfigurationTime() {
-        super(MetricType.DOCKER_CONFIGURATION_TIME);
+        super(MetricType.DOCKER_CONFIGURATION_TIME, PROJECT_ID);
     }
 
     @Override

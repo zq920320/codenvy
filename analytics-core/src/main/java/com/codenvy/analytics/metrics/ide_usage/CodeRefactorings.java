@@ -27,7 +27,7 @@ import javax.annotation.security.RolesAllowed;
 public class CodeRefactorings extends AbstractLongValueResulted {
 
     public CodeRefactorings() {
-        super(MetricType.CODE_REFACTORINGS);
+        super(MetricType.CODE_REFACTORINGS, PROJECT_ID);
     }
 
     @Override

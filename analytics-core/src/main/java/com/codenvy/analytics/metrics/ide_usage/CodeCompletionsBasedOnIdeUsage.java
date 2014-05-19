@@ -35,4 +35,9 @@ public class CodeCompletionsBasedOnIdeUsage extends AbstractIdeUsage {
     public String getDescription() {
         return "The number of code completion actions";
     }
+
+    @Override
+    public String getExpandedField() {
+        return PROJECT_ID;
+    }
 }

@@ -28,6 +28,9 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import static com.codenvy.analytics.datamodel.ValueDataUtil.isDefault;
+import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsMap;
+
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class MapValueData extends CollectionValueData {
 
@@ -97,15 +100,35 @@ public class MapValueData extends CollectionValueData {
     }
 
     @Override
-    protected ValueData doUnion(ValueData valueData) {
-        MapValueData object = (MapValueData)valueData;
-        Map<String, ValueData> result = new HashMap<>(this.value);
+    protected ValueData doSubtract(ValueData valueData) {
+        Map<String, ValueData> result = new HashMap<>(value);
 
-        for (Entry<String, ValueData> entry : object.value.entrySet()) {
+        for (Entry<String, ValueData> entry : treatAsMap(valueData).entrySet()) {
             String key = entry.getKey();
 
             if (result.containsKey(key)) {
-                result.put(key, result.get(key).union(entry.getValue()));
+                ValueData substracted = result.get(key).subtract(entry.getValue());
+
+                if (isDefault(substracted)) {
+                    result.remove(key);
+                } else {
+                    result.put(key, substracted);
+                }
+            }
+        }
+
+        return new MapValueData(result);
+    }
+
+    @Override
+    protected ValueData doAdd(ValueData valueData) {
+        Map<String, ValueData> result = new HashMap<>(value);
+
+        for (Entry<String, ValueData> entry : treatAsMap(valueData).entrySet()) {
+            String key = entry.getKey();
+
+            if (result.containsKey(key)) {
+                result.put(key, result.get(key).add(entry.getValue()));
             } else {
                 result.put(key, entry.getValue());
             }

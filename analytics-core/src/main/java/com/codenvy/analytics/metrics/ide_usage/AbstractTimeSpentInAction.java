@@ -23,12 +23,8 @@ import com.codenvy.analytics.metrics.MetricType;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public abstract class AbstractTimeSpentInAction extends AbstractLongValueResulted {
 
-    public AbstractTimeSpentInAction(MetricType metricType) {
-        super(metricType);
-    }
-
-    public AbstractTimeSpentInAction(String metricName) {
-        super(metricName);
+    public AbstractTimeSpentInAction(MetricType metricType, String expandingField) {
+        super(metricType, expandingField);
     }
 
     @Override

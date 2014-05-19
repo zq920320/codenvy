@@ -63,7 +63,17 @@ public class StringValueData extends AbstractValueData {
     }
 
     @Override
-    protected ValueData doUnion(ValueData valueData) {
+    protected ValueData doSubtract(ValueData valueData) {
+        if (value.endsWith("\n" + valueData.getAsString())) {
+            int endIndex = value.length() - valueData.getAsString().length() - 1;
+            return new StringValueData(value.substring(0, endIndex));
+        } else {
+            return new StringValueData(value);
+        }
+    }
+
+    @Override
+    protected ValueData doAdd(ValueData valueData) {
         return new StringValueData(value + "\n" + valueData.getAsString());
     }
 

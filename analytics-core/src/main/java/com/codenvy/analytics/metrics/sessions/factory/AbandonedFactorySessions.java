@@ -20,15 +20,20 @@ package com.codenvy.analytics.metrics.sessions.factory;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.datamodel.ValueDataUtil;
-import com.codenvy.analytics.metrics.*;
+import com.codenvy.analytics.metrics.CalculatedMetric;
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Expandable;
+import com.codenvy.analytics.metrics.MetricType;
 
 import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+/**
+ * @author Anatoliy Bazko
+ */
 @RolesAllowed({"system/admin", "system/manager"})
-@OmitFilters(MetricFilter.WS)
-public class AbandonedFactorySessions extends CalculatedMetric {
+public class AbandonedFactorySessions extends CalculatedMetric implements Expandable {
+
 
     public AbandonedFactorySessions() {
         super(MetricType.ABANDONED_FACTORY_SESSIONS, new MetricType[]{MetricType.FACTORY_SESSIONS,
@@ -38,9 +43,8 @@ public class AbandonedFactorySessions extends CalculatedMetric {
     @Override
     public ValueData getValue(Context context) throws IOException {
         LongValueData total = ValueDataUtil.getAsLong(basedMetric[0], context);
-        LongValueData conv = ValueDataUtil.getAsLong(basedMetric[1], context);
-
-        return new LongValueData(total.getAsLong() - conv.getAsLong());
+        LongValueData converted = ValueDataUtil.getAsLong(basedMetric[1], context);
+        return total.subtract(converted);
     }
 
     @Override
@@ -52,5 +56,12 @@ public class AbandonedFactorySessions extends CalculatedMetric {
     @Override
     public String getDescription() {
         return "The number of abandoned sessions in temporary workspaces";
+    }
+
+    @Override
+    public ValueData getExpandedValue(Context context) throws IOException {
+        ValueData total = ((Expandable)basedMetric[0]).getExpandedValue(context);
+        ValueData converted = ((Expandable)basedMetric[1]).getExpandedValue(context);
+        return total.subtract(converted);
     }
 }

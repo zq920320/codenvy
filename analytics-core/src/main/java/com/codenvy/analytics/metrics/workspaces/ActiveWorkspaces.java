@@ -24,7 +24,9 @@ import com.codenvy.analytics.metrics.OmitFilters;
 
 import javax.annotation.security.RolesAllowed;
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+/**
+ * @author Anatoliy Bazko
+ */
 @RolesAllowed({"system/admin", "system/manager"})
 @OmitFilters({MetricFilter.USER})
 public class ActiveWorkspaces extends AbstractActiveEntities {

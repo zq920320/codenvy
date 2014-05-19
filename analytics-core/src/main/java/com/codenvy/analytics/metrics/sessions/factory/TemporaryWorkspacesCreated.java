@@ -24,13 +24,15 @@ import com.codenvy.analytics.metrics.OmitFilters;
 
 import javax.annotation.security.RolesAllowed;
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+/**
+ * @author Anatoliy Bazko
+ */
 @RolesAllowed({"system/admin", "system/manager"})
 @OmitFilters(MetricFilter.WS)
 public class TemporaryWorkspacesCreated extends AbstractLongValueResulted {
 
     public TemporaryWorkspacesCreated() {
-        super(MetricType.TEMPORARY_WORKSPACES_CREATED);
+        super(MetricType.TEMPORARY_WORKSPACES_CREATED, WS);
     }
 
     @Override

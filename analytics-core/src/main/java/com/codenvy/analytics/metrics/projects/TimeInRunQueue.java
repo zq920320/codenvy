@@ -29,7 +29,7 @@ import javax.annotation.security.RolesAllowed;
 public class TimeInRunQueue extends AbstractTimeSpentInAction {
 
     public TimeInRunQueue() {
-        super(MetricType.TIME_IN_RUN_QUEUE);
+        super(MetricType.TIME_IN_RUN_QUEUE, PROJECT_ID);
     }
 
     @Override

@@ -68,6 +68,6 @@ public class TestLongValueData extends BaseTest {
 
     @Test
     public void testUnion() {
-        assertEquals(new LongValueData(20L), valueData.union(valueData));
+        assertEquals(new LongValueData(20L), valueData.add(valueData));
     }
 }

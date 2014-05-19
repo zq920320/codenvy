@@ -27,7 +27,7 @@ import javax.annotation.security.RolesAllowed;
 public class DebugsTime extends AbstractTimeSpentInAction {
 
     public DebugsTime() {
-        super(MetricType.DEBUGS_TIME);
+        super(MetricType.DEBUGS_TIME, PROJECT_ID);
     }
 
     @Override

@@ -26,11 +26,12 @@ import com.codenvy.analytics.metrics.*;
 import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+/**
+ * @author Anatoliy Bazko
+ */
 @RolesAllowed({"system/admin", "system/manager"})
 @OmitFilters(MetricFilter.WS)
-public class FactorySessionsWithBuildPercent extends CalculatedMetric {
-
+public class FactorySessionsWithBuildPercent extends CalculatedMetric implements Expandable {
     public FactorySessionsWithBuildPercent() {
         super(MetricType.FACTORY_SESSIONS_WITH_BUILD_PERCENT, new MetricType[]{MetricType.FACTORY_SESSIONS,
                                                                                MetricType.FACTORY_SESSIONS_WITH_BUILD});
@@ -51,5 +52,10 @@ public class FactorySessionsWithBuildPercent extends CalculatedMetric {
     @Override
     public String getDescription() {
         return "The percent of sessions where user built an application";
+    }
+
+    @Override
+    public ValueData getExpandedValue(Context context) throws IOException {
+        return ((Expandable)basedMetric[1]).getExpandedValue(context);
     }
 }

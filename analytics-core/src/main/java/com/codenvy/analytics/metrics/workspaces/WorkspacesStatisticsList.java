@@ -17,7 +17,9 @@
  */
 package com.codenvy.analytics.metrics.workspaces;
 
-import com.codenvy.analytics.metrics.*;
+import com.codenvy.analytics.metrics.AbstractListValueResulted;
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.MetricType;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
@@ -99,3 +101,4 @@ public class WorkspacesStatisticsList extends AbstractListValueResulted {
                               new BasicDBObject("$project", project)};
     }
 }
+

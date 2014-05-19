@@ -77,12 +77,11 @@ public abstract class CumulativeMetric extends AbstractMetric {
     private ValueData doGetValue(Context context) throws IOException, ParseException {
         LongValueData addedEntity = ValueDataUtil.getAsLong(addedMetric, context);
         LongValueData removedEntity = ValueDataUtil.getAsLong(removedMetric, context);
-        LongValueData initialValue = isSimplified(context) ? initialValueContainer.getInitialValue(metricName) : LongValueData.DEFAULT;
+        LongValueData initialValue = isSimplified(context) ? initialValueContainer.getInitialValue(getName()) : LongValueData.DEFAULT;
 
         return new LongValueData(initialValue.getAsLong() + addedEntity.getAsLong() - removedEntity.getAsLong());
     }
 
-    /** {@inheritDoc} */
     @Override
     public Class<? extends ValueData> getValueDataClass() {
         return LongValueData.class;

@@ -24,23 +24,18 @@ import com.mongodb.DBObject;
 
 import java.io.IOException;
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public abstract class AbstractCount extends ReadBasedMetric {
+/**
+ * @author Anatoliy Bazko
+ */
+public abstract class AbstractCount extends ReadBasedMetric implements ReadBasedExpandable {
 
     private final ReadBasedMetric basedMetric;
+    private final String          expandingField;
 
-    public AbstractCount(String metricName, String basedMetricName) {
-        super(metricName);
-        this.basedMetric = (ReadBasedMetric)MetricFactory.getMetric(basedMetricName);
-    }
-
-    public AbstractCount(MetricType metricType, MetricType basedMetric) {
-        this(metricType.name(), basedMetric.name());
-    }
-
-    public AbstractCount(String metricName, Metric basedMetric) {
-        super(metricName);
-        this.basedMetric = (ReadBasedMetric)basedMetric;
+    public AbstractCount(MetricType metricType, MetricType basedMetric, String expandingField) {
+        super(metricType);
+        this.basedMetric = (ReadBasedMetric)MetricFactory.getMetric(basedMetric);
+        this.expandingField = expandingField;
     }
 
     @Override
@@ -68,7 +63,23 @@ public abstract class AbstractCount extends ReadBasedMetric {
     }
 
     @Override
+    public DBObject[] getSpecificExpandedDBOperations(Context clauses) {
+        DBObject group = new BasicDBObject();
+        group.put(ID, "$" + getExpandedField());
+
+        DBObject projection = new BasicDBObject(getExpandedField(), "$_id");
+
+        return new DBObject[]{new BasicDBObject("$group", group),
+                              new BasicDBObject("$project", projection)};
+    }
+
+    @Override
     public Class<? extends ValueData> getValueDataClass() {
         return LongValueData.class;
+    }
+
+    @Override
+    public String getExpandedField() {
+        return expandingField;
     }
 }

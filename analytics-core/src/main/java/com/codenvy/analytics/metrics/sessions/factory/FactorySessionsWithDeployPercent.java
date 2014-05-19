@@ -29,8 +29,7 @@ import java.io.IOException;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
 @OmitFilters(MetricFilter.WS)
-public class FactorySessionsWithDeployPercent extends CalculatedMetric {
-
+public class FactorySessionsWithDeployPercent extends CalculatedMetric implements Expandable {
     public FactorySessionsWithDeployPercent() {
         super(MetricType.FACTORY_SESSIONS_WITH_DEPLOY_PERCENT,
               new MetricType[]{MetricType.FACTORY_SESSIONS,
@@ -52,5 +51,10 @@ public class FactorySessionsWithDeployPercent extends CalculatedMetric {
     @Override
     public String getDescription() {
         return "The percent of sessions where user deploy an application";
+    }
+
+    @Override
+    public ValueData getExpandedValue(Context context) throws IOException {
+        return ((Expandable)basedMetric[1]).getExpandedValue(context);
     }
 }

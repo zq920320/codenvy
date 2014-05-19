@@ -28,7 +28,7 @@ import javax.annotation.security.RolesAllowed;
 @RolesAllowed({"system/admin", "system/manager"})
 public class DeploysToPaas extends AbstractLongValueResulted {
     public DeploysToPaas() {
-        super(MetricType.DEPLOYS_TO_PAAS);
+        super(MetricType.DEPLOYS_TO_PAAS, PROJECT_ID);
     }
 
     @Override

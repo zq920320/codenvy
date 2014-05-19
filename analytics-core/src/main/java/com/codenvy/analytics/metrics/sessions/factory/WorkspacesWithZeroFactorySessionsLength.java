@@ -30,7 +30,7 @@ import java.util.List;
 /** @author Alexander Reshetnyak */
 @RolesAllowed({"system/admin", "system/manager"})
 @OmitFilters(MetricFilter.WS)
-public class WorkspacesWithZeroFactorySessionsLength extends ReadBasedMetric {
+public class WorkspacesWithZeroFactorySessionsLength extends ReadBasedMetric implements ReadBasedExpandable {
 
     public WorkspacesWithZeroFactorySessionsLength() {
         super(MetricType.WORKSPACES_WITH_ZERO_FACTORY_SESSIONS_LENGTH);
@@ -74,5 +74,28 @@ public class WorkspacesWithZeroFactorySessionsLength extends ReadBasedMetric {
     @Override
     public String getDescription() {
         return "The workspaces count with zero factory sessions length";
+    }
+
+    @Override
+    public String getExpandedField() {
+        return WS;
+    }
+
+    @Override
+    public DBObject[] getSpecificExpandedDBOperations(Context context) {
+        List<DBObject> dbOperations = new ArrayList<>();
+
+        DBObject match = new BasicDBObject();
+        match.put(TIME, new BasicDBObject("$lte", 0));
+        dbOperations.add(new BasicDBObject("$match", match));
+
+        DBObject group = new BasicDBObject();
+        group.put(ID, "$" + WS);
+        dbOperations.add(new BasicDBObject("$group", group));
+
+        DBObject projection = new BasicDBObject(getExpandedField(), "$" + ID);
+        dbOperations.add(new BasicDBObject("$project", projection));
+
+        return dbOperations.toArray(new DBObject[dbOperations.size()]);
     }
 }

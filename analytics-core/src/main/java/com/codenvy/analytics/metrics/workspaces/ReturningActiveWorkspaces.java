@@ -22,6 +22,7 @@ import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.datamodel.ValueDataUtil;
 import com.codenvy.analytics.metrics.CalculatedMetric;
 import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Expandable;
 import com.codenvy.analytics.metrics.MetricType;
 
 import javax.annotation.security.RolesAllowed;
@@ -29,7 +30,7 @@ import java.io.IOException;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
-public class ReturningActiveWorkspaces extends CalculatedMetric {
+public class ReturningActiveWorkspaces extends CalculatedMetric implements Expandable {
 
     public ReturningActiveWorkspaces() {
         super(MetricType.RETURNING_ACTIVE_WORKSPACES, new MetricType[]{MetricType.ACTIVE_WORKSPACES,
@@ -40,8 +41,7 @@ public class ReturningActiveWorkspaces extends CalculatedMetric {
     public ValueData getValue(Context context) throws IOException {
         LongValueData active = ValueDataUtil.getAsLong(basedMetric[0], context);
         LongValueData created = ValueDataUtil.getAsLong(basedMetric[1], context);
-
-        return new LongValueData(active.getAsLong() - created.getAsLong());
+        return active.subtract(created);
     }
 
     @Override
@@ -52,5 +52,12 @@ public class ReturningActiveWorkspaces extends CalculatedMetric {
     @Override
     public String getDescription() {
         return "Non-active workspaces";
+    }
+
+    @Override
+    public ValueData getExpandedValue(Context context) throws IOException {
+        ValueData active = ((Expandable)basedMetric[0]).getExpandedValue(context);
+        ValueData created = ((Expandable)basedMetric[1]).getExpandedValue(context);
+        return active.subtract(created);
     }
 }

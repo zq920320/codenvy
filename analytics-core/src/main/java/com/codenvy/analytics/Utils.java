@@ -24,7 +24,9 @@ import com.codenvy.analytics.metrics.Context.Builder;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.Parameters.TimeUnit;
 import com.codenvy.analytics.metrics.ReadBasedMetric;
+import com.codenvy.analytics.persistent.MongoDataLoader;
 import com.codenvy.analytics.services.view.ViewBuilder;
+import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
@@ -199,8 +201,7 @@ public class Utils {
     public static DBObject setDateFilter(Context context) throws ParseException {
         DBObject dateFilter = new BasicDBObject();
         dateFilter.put("$gte", context.getAsDate(Parameters.FROM_DATE).getTimeInMillis());
-        dateFilter.put("$lt",
-                       context.getAsDate(Parameters.TO_DATE).getTimeInMillis() + ReadBasedMetric.DAY_IN_MILLISECONDS);
+        dateFilter.put("$lt", context.getAsDate(Parameters.TO_DATE).getTimeInMillis() + MongoDataLoader.DAY_IN_MILLISECONDS);
         return new BasicDBObject(ReadBasedMetric.DATE, dateFilter);
     }
 
@@ -232,7 +233,7 @@ public class Utils {
         StringBuilder result = new StringBuilder();
         for (String value : values) {
             if (result.length() > 0) {
-                result.append(ReadBasedMetric.SEPARATOR);
+                result.append(MongoDataLoader.SEPARATOR);
             }
 
             result.append(value);
@@ -242,7 +243,7 @@ public class Utils {
     }
 
     public static Set<String> getFilterAsSet(String value) {
-        return new HashSet<>(Arrays.asList(value.split(ReadBasedMetric.SEPARATOR)));
+        return new HashSet<>(Arrays.asList(value.split(MongoDataLoader.SEPARATOR)));
     }
 
     public static boolean isTemporaryWorkspace(Object name) {
@@ -256,16 +257,6 @@ public class Utils {
     public static boolean isTemporaryExist(Set<String> workspaces) {
         for (String workspace : workspaces) {
             if (isTemporaryWorkspace(workspace)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public static boolean isAnonymousExist(Set<String> users) {
-        for (String user : users) {
-            if (isAnonymousUser(user)) {
                 return true;
             }
         }
@@ -316,5 +307,27 @@ public class Utils {
                 throw new IllegalArgumentException("Unsupported type " + allowedEntities.getClass());
             }
         }
+    }
+
+    /** @return mongodb operation (arg1 - arg2Field) */
+
+    public static BasicDBObject getSubtractOperation(long arg1, String arg2Field) {
+        BasicDBList subtractArgs = new BasicDBList();
+        subtractArgs.add(arg1);
+        subtractArgs.add(arg2Field);
+
+        return new BasicDBObject("$subtract", subtractArgs);
+    }
+
+    public static BasicDBObject getAndOperation(BasicDBObject... predicates) {
+        BasicDBList andArgs = new BasicDBList();
+        Collections.addAll(andArgs, predicates);
+        return new BasicDBObject("$and", andArgs);
+    }
+
+    public static BasicDBObject getOrOperation(BasicDBObject... predicates) {
+        BasicDBList orArgs = new BasicDBList();
+        Collections.addAll(orArgs, predicates);
+        return new BasicDBObject("$or", predicates);
     }
 }

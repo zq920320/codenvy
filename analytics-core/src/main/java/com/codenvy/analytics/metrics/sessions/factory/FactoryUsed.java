@@ -30,7 +30,7 @@ import javax.annotation.security.RolesAllowed;
 public class FactoryUsed extends AbstractCount {
 
     public FactoryUsed() {
-        super(MetricType.FACTORY_USED, MetricType.FACTORIES_ACCEPTED_LIST);
+        super(MetricType.FACTORY_USED, MetricType.FACTORIES_ACCEPTED_LIST, FACTORY);
     }
 
     @Override

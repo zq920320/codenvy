@@ -100,6 +100,7 @@ x = FOREACH t GENERATE UUID(),
                        TOTUPLE('user', user),
                        TOTUPLE('ws', ws),
                        TOTUPLE('time', delta),
+                       TOTUPLE('session_id', id),
                        TOTUPLE('sessions', 1),
                        TOTUPLE('ide', ide);
 STORE x INTO '$STORAGE_URL.$STORAGE_TABLE_USERS_STATISTICS' USING MongoStorage;

@@ -17,16 +17,20 @@
  */
 package com.codenvy.analytics.metrics.users;
 
+import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.ReadBasedExpandable;
 import com.codenvy.analytics.metrics.ReadBasedMetric;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
-/** @author <a href="mailto:areshetnyak@codenvy.com">Alexander Reshetnyak</a> */
-public abstract class AbstractUsersAddedToWorkspaces extends ReadBasedMetric {
+/**
+ * @author Alexander Reshetnyak
+ */
+public abstract class AbstractUsersAddedToWorkspaces extends ReadBasedMetric implements ReadBasedExpandable {
 
     private final String[] types;
 
@@ -68,5 +72,28 @@ public abstract class AbstractUsersAddedToWorkspaces extends ReadBasedMetric {
         }
 
         return new DBObject[]{new BasicDBObject("$group", group)};
+    }
+
+    @Override
+    public DBObject[] getSpecificExpandedDBOperations(Context clauses) {
+        BasicDBObject[] dbObjectsToOr = new BasicDBObject[types.length];
+        for (String type : types) {
+            dbObjectsToOr[dbObjectsToOr.length - 1] = new BasicDBObject(type, new BasicDBObject("$exists", true));
+        }
+        DBObject match = Utils.getOrOperation(dbObjectsToOr);
+
+        DBObject group = new BasicDBObject();
+        group.put(ID, "$" + getExpandedField());
+
+        DBObject projection = new BasicDBObject(getExpandedField(), "$_id");
+
+        return new DBObject[]{new BasicDBObject("$match", match),
+                              new BasicDBObject("$group", group),
+                              new BasicDBObject("$project", projection)};
+    }
+
+    @Override
+    public String getExpandedField() {
+        return USER;
     }
 }

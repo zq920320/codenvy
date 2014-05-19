@@ -27,7 +27,7 @@ import javax.annotation.security.RolesAllowed;
 public class RunsTime extends AbstractTimeSpentInAction {
 
     public RunsTime() {
-        super(MetricType.RUNS_TIME);
+        super(MetricType.RUNS_TIME, PROJECT_ID);
     }
 
     @Override

@@ -206,8 +206,20 @@
             <param>USER</param>
         </parameters>
     </event>
+    <event name="workspace-started">
+        <description>Workspace started</description>
+        <parameters>
+            <param>WS</param>
+        </parameters>
+    </event>
     <event name="tenant-started">
         <description>Workspace started</description>
+        <parameters>
+            <param>WS</param>
+        </parameters>
+    </event>
+    <event name="workspace-stopped">
+        <description>Workspace stopped</description>
         <parameters>
             <param>WS</param>
         </parameters>

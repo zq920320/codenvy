@@ -22,6 +22,7 @@ import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.datamodel.ValueDataUtil;
 import com.codenvy.analytics.metrics.CalculatedMetric;
 import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Expandable;
 import com.codenvy.analytics.metrics.MetricType;
 
 import javax.annotation.security.RolesAllowed;
@@ -29,7 +30,7 @@ import java.io.IOException;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
-public class NonFactoriesProductUsageSessions extends CalculatedMetric {
+public class NonFactoriesProductUsageSessions extends CalculatedMetric implements Expandable {
 
     public NonFactoriesProductUsageSessions() {
         super(MetricType.NON_FACTORIES_PRODUCT_USAGE_SESSIONS,
@@ -41,8 +42,7 @@ public class NonFactoriesProductUsageSessions extends CalculatedMetric {
     public ValueData getValue(Context context) throws IOException {
         LongValueData total = ValueDataUtil.getAsLong(basedMetric[0], context);
         LongValueData factory = ValueDataUtil.getAsLong(basedMetric[1], context);
-
-        return LongValueData.valueOf(total.getAsLong() - factory.getAsLong());
+        return total.subtract(factory);
     }
 
     @Override
@@ -53,5 +53,12 @@ public class NonFactoriesProductUsageSessions extends CalculatedMetric {
     @Override
     public String getDescription() {
         return "The total number of users sessions";
+    }
+
+    @Override
+    public ValueData getExpandedValue(Context context) throws IOException {
+        ValueData total = ((Expandable)basedMetric[0]).getExpandedValue(context);
+        ValueData factory = ((Expandable)basedMetric[1]).getExpandedValue(context);
+        return total.subtract(factory);
     }
 }

@@ -136,25 +136,25 @@ function View() {
 	    print('</tbody>');
 	    print('</table>');
 	}	
-	
+
 	/**
 	 * Make table cells of column with certain name as linked with link = "columnLinkPrefix + {columnValue}"
 	 */
     function makeTableColumnLinked(table, columnName, columnLinkPrefix) {
         var columnIndex = analytics.util.getColumnIndexByColumnName(table.columns, columnName);
-        if (columnIndex != null) {        
+        if (columnIndex != null) {
             for (var i = 0; i < table.rows.length; i++) {
                 var columnValue = table.rows[i][columnIndex];
-                
+
                 if (analytics.configuration.isSystemMessage(columnValue)) {
-                   table.rows[i][columnIndex] = getSystemMessageLabel(columnValue);    
+                   table.rows[i][columnIndex] = getSystemMessageLabel(columnValue);
                 } else {
                    var href = columnLinkPrefix + "=" + encodeURIComponent(columnValue);
                    table.rows[i][columnIndex] = "<a href='" + href + "'>" + columnValue + "</a>";
                 }
             }
         }
-    
+
         return table;
     }
 
@@ -169,16 +169,16 @@ function View() {
      *             ...
      *         }
      *     },
-     *     
+     *
      *     targetColumn2: { ... },
-     *     
+     *
      *     ...
      * }
      */
     function makeTableColumnCombinedLinked(table, columnCombinedLinkConf) {
         for (var targetColumnName in columnCombinedLinkConf) {
             var targetColumnIndex = analytics.util.getColumnIndexByColumnName(table.columns, targetColumnName);
-            
+
             var baseLink = columnCombinedLinkConf[targetColumnName].baseLink;
             var mapColumnToParameter = columnCombinedLinkConf[targetColumnName].mapColumnToParameter;
 
@@ -188,14 +188,14 @@ function View() {
                 var sourceColumnIndex = analytics.util.getColumnIndexByColumnName(table.columns, sourceColumnName);
                 sourceColumnIndexes.push(sourceColumnIndex);
             }
-            
+
             // make cells of target column as linked with combined link
             for (var i = 0; i < table.rows.length; i++) {
                 var targetColumnValue = table.rows[i][targetColumnIndex];
-                
+
                 if (analytics.configuration.isSystemMessage(targetColumnValue)) {
                    table.rows[i][targetColumnIndex] = getSystemMessageLabel(targetColumnValue);
-                   
+
                 } else {
                    // calculation combined link like "project-view.jsp?ws=...&project=..."
                    var urlParams = getUrlParams(table.rows[i], sourceColumnIndexes, mapColumnToParameter);
@@ -204,9 +204,9 @@ function View() {
                        table.rows[i][targetColumnIndex] = "<a href='" + href + "'>" + targetColumnValue + "</a>";
                    }
                 }
-            }            
+            }
         }
-    
+
         return table;
     }
 
@@ -221,21 +221,21 @@ function View() {
         for (var j = 0; j < sourceColumnIndexes.length; j++) {
             var sourceColumnName = sourceColumnNames[j];
             var parameterName = mapColumnToParameter[sourceColumnName];
-            
+
             var sourceColumnIndex = sourceColumnIndexes[j];
             var parameterValue = row[sourceColumnIndex];
-            
+
             // returns null if at least one parameter is empty
             if (parameterValue == "") {
                 return null;
             }
-            
+
             params[parameterName] = parameterValue;
         }
-        
+
         return analytics.util.constructUrlParams(params);
     }
-    
+
 	/**
 	 * Load handlers of table events.
 	 * Default value of displaySorting is true.

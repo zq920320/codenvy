@@ -111,7 +111,7 @@
 }
 
 .database-table .mouseover-row {
-	background: #eee;
+	background: #eee !important;
 }
 
 
@@ -154,5 +154,5 @@
 }
 
 .database-table-vertical-row .mouseover-row {
-   background: #eee;
+   background: #eee !important;
 }

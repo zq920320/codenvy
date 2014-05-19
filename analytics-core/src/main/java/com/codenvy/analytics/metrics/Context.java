@@ -114,6 +114,7 @@ public class Context {
         return params.containsKey(key.toString());
     }
 
+
     public Context cloneAndRemove(Parameters param) {
         Builder builder = new Builder(params);
         builder.remove(param);
@@ -146,6 +147,23 @@ public class Context {
     @Override
     public String toString() {
         return params.toString();
+    }
+
+    // TODO
+    public Expandable getExpandedMetric() {
+        if (!exists(Parameters.EXPANDED_METRIC_NAME)) {
+            return null;
+        }
+
+        String value = getAsString(Parameters.EXPANDED_METRIC_NAME);
+        MetricType expandedMetricType = MetricType.valueOf(value.toUpperCase());
+
+        Metric expandedMetric = MetricFactory.getMetric(expandedMetricType);
+        if (!(expandedMetric instanceof Expandable)) {
+            return null;
+        }
+
+        return (Expandable)expandedMetric;
     }
 
     /**
@@ -261,4 +279,5 @@ public class Context {
             return new Context(params);
         }
     }
+
 }

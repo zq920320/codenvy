@@ -30,7 +30,7 @@ import javax.annotation.security.RolesAllowed;
 public class ProductUsageFactorySessions extends AbstractCount {
 
     public ProductUsageFactorySessions() {
-        super(MetricType.PRODUCT_USAGE_FACTORY_SESSIONS, MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST);
+        super(MetricType.PRODUCT_USAGE_FACTORY_SESSIONS, MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST, SESSION_ID);
     }
 
     @Override

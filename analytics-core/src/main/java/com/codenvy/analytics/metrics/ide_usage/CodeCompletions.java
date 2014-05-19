@@ -22,6 +22,7 @@ import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.datamodel.ValueDataUtil;
 import com.codenvy.analytics.metrics.CalculatedMetric;
 import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Expandable;
 import com.codenvy.analytics.metrics.MetricType;
 
 import javax.annotation.security.RolesAllowed;
@@ -29,7 +30,7 @@ import java.io.IOException;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
-public class CodeCompletions extends CalculatedMetric {
+public class CodeCompletions extends CalculatedMetric implements Expandable {
 
     public CodeCompletions() {
         super(MetricType.CODE_COMPLETIONS, new MetricType[]{MetricType.CODE_COMPLETIONS_BASED_ON_EVENT,
@@ -40,7 +41,7 @@ public class CodeCompletions extends CalculatedMetric {
     public ValueData getValue(Context context) throws IOException {
         LongValueData value1 = ValueDataUtil.getAsLong(basedMetric[0], context);
         LongValueData value2 = ValueDataUtil.getAsLong(basedMetric[1], context);
-        return LongValueData.valueOf(value1.getAsLong() + value2.getAsLong());
+        return value1.add(value2);
     }
 
     @Override
@@ -52,4 +53,12 @@ public class CodeCompletions extends CalculatedMetric {
     public String getDescription() {
         return "The number of code completion actions";
     }
+
+    @Override
+    public ValueData getExpandedValue(Context context) throws IOException {
+        ValueData value1 = ((Expandable)basedMetric[0]).getExpandedValue(context);
+        ValueData value2 = ((Expandable)basedMetric[1]).getExpandedValue(context);
+        return value1.add(value2);
+    }
 }
+

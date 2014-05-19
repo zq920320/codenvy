@@ -29,7 +29,8 @@ public class FactoryStatisticsPrecomputed extends AbstractCount implements Preco
 
     public FactoryStatisticsPrecomputed() {
         super(MetricType.FACTORY_STATISTICS_PRECOMPUTED,
-              MetricType.FACTORY_STATISTICS_LIST_PRECOMPUTED);
+              MetricType.FACTORY_STATISTICS_LIST_PRECOMPUTED,
+              ID);
     }
 
     @Override

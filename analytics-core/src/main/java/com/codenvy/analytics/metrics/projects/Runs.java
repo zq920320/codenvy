@@ -27,7 +27,7 @@ import javax.annotation.security.RolesAllowed;
 public class Runs extends AbstractLongValueResulted {
 
     public Runs() {
-        super(MetricType.RUNS);
+        super(MetricType.RUNS, PROJECT_ID);
     }
 
     @Override

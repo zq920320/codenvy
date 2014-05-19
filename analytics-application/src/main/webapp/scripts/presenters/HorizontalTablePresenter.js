@@ -21,74 +21,77 @@ if (typeof analytics === "undefined") {
 
 analytics.presenter = analytics.presenter || {};
 
-analytics.presenter.HorizontalTablePresenter = function HorizontalTablePresenter() {};
+analytics.presenter.HorizontalTablePresenter = function HorizontalTablePresenter() {
+};
 
 analytics.presenter.HorizontalTablePresenter.prototype = new Presenter();
 
 analytics.presenter.HorizontalTablePresenter.prototype.DEFAULT_ONE_PAGE_ROWS_COUNT = 10;
 
-analytics.presenter.HorizontalTablePresenter.prototype.load = function() { 
-    var presenter = this; 
+analytics.presenter.HorizontalTablePresenter.prototype.load = function () {
+    var presenter = this;
     var model = presenter.model;
     var widgetName = presenter.widgetName;
-    
+
     var view = presenter.view;
-    var viewParams = view.getParams();       
+    var viewParams = view.getParams();
     var modelParams = presenter.getModelParams(viewParams);
-    
+
     var isPaginable = analytics.configuration.getProperty(widgetName, "isPaginable", false);   // default value is "false"
 
     //process pagination
     if (isPaginable) {
         // get page count
-        model.pushDoneFunction(function(data) {            
-            var onePageRowsCount = analytics.configuration.getProperty(widgetName, "onePageRowsCount", presenter.DEFAULT_ONE_PAGE_ROWS_COUNT);            
-            var pageCount = Math.ceil(data / onePageRowsCount) ;
-            
+        model.pushDoneFunction(function (data) {
+            var onePageRowsCount = analytics.configuration.getProperty(widgetName, "onePageRowsCount", presenter.DEFAULT_ONE_PAGE_ROWS_COUNT);
+            var pageCount = Math.ceil(data / onePageRowsCount);
+
             var currentPageNumber = viewParams[widgetName] || 1;  // search on table page number in parameter "{modelViewName}={page_number}"            
             modelParams.page = currentPageNumber;
             modelParams.per_page = onePageRowsCount;
-            
+
             model.setParams(modelParams);
             model.popDoneFunction();
-            model.pushDoneFunction(function(data) {   
+            model.pushDoneFunction(function (data) {
                 var modelParams = presenter.getModelParams(viewParams);  // restore initial model params
                 var doNotDisplayCSVButton = analytics.configuration.getProperty(widgetName, "doNotDisplayCSVButton", false);  // default value is "false"
-                var csvButtonLink = (doNotDisplayCSVButton) 
-                                    ? undefined
-                                    : presenter.getLinkForExportToCsvButton();
-                
+                var csvButtonLink = (doNotDisplayCSVButton)
+                    ? undefined
+                    : presenter.getLinkForExportToCsvButton();
+
                 var table = data[0];  // there is only one table in data
 
-                // make table columns linked
-                var columnCombinedLinkConf = analytics.configuration.getProperty(presenter.widgetName, "columnCombinedLinkConfiguration");
-                if (typeof columnCombinedLinkConf != "undefined") {
-                    table = view.makeTableColumnCombinedLinked(table, columnCombinedLinkConf);    
-                }
-                
+                // add links to drill down page
+                table = presenter.linkTableValuesWithDrillDownPage(presenter.widgetName, table, modelParams);
+
+                // make table columns linked 
                 var columnLinkPrefixList = analytics.configuration.getProperty(widgetName, "columnLinkPrefixList");
                 if (typeof columnLinkPrefixList != "undefined") {
                     for (var columnName in columnLinkPrefixList) {
-                        table = view.makeTableColumnLinked(table, columnName, columnLinkPrefixList[columnName]);    
-                    }          
-                }       
-                
+                        table = presenter.makeTableColumnLinked(table, columnName, columnLinkPrefixList[columnName]);
+                    }
+                }
+
                 modelParams[widgetName] = modelParams.page;
                 delete modelParams.page;    // remove page parameter
                 delete modelParams.per_page;    // remove page parameter
-                
-                if (pageCount > 1) {                   
+
+                if (pageCount > 1) {
                     // make table header as linked for sorting
-                    table = presenter.addServerSortingLinks(table, widgetName, modelParams);  
-                    
+                    var mapColumnToServerSortParam = analytics.configuration.getProperty(widgetName, "mapColumnToServerSortParam", undefined);
+                    table = presenter.addServerSortingLinks(table, widgetName, modelParams, mapColumnToServerSortParam);
+
                     // print table
                     presenter.printTable(csvButtonLink, table);
-                    
+
                     // print bottom page navigation
                     delete modelParams[widgetName];  // remove old page number
-                    var queryString = "?" + analytics.util.constructUrlParams(modelParams);
+                    var queryString = "";
+                    if (!jQuery.isEmptyObject(modelParams)) {
+                        queryString += "?" + analytics.util.constructUrlParams(modelParams);
+                    }
                     view.printBottomPageNavigator(pageCount, currentPageNumber, queryString, widgetName, widgetName);
-                    
+
                     view.loadTableHandlers(false);  // don't display client side sorting for table with pagination
                 } else {
                     // print table
@@ -98,24 +101,30 @@ analytics.presenter.HorizontalTablePresenter.prototype.load = function() {
                     var clientSortParams = analytics.configuration.getProperty(widgetName, "clientSortParams");
                     view.loadTableHandlers(true, clientSortParams, widgetName + "_table");
                 }
-                
+
                 // finish loading widget
                 analytics.views.loader.needLoader = false;
             })
-            
+
             var modelViewName = analytics.configuration.getProperty(presenter.widgetName, "modelViewName");
-            model.getAllResults(modelViewName);
+            model.getModelViewData(modelViewName);
         });
-        
+
         model.setParams(modelParams);
-        
+
         var modelMetricName = analytics.configuration.getProperty(widgetName, "modelMetricName");
         model.getMetricValue(modelMetricName);
 
     } else {
         model.setParams(modelParams);
-        
-        model.pushDoneFunction(function(data) {
+
+        model.pushDoneFunction(function (data) {
+            var table = data[0];  // there is only one table in data
+
+            // add links to drill down page
+            table = presenter.linkTableValuesWithDrillDownPage(presenter.widgetName, table, modelParams);
+
+            // print table
             var csvButtonLink = presenter.getLinkForExportToCsvButton();
 
             // print table
@@ -135,24 +144,24 @@ analytics.presenter.HorizontalTablePresenter.prototype.load = function() {
             // display client sorting
             var clientSortParams = analytics.configuration.getProperty(widgetName, "clientSortParams");
             view.loadTableHandlers(true, clientSortParams, widgetName + "_table");
-            
+
             // finish loading widget
             analytics.views.loader.needLoader = false;
         });
 
         var modelViewName = analytics.configuration.getProperty(widgetName, "modelViewName");
-        model.getAllResults(modelViewName);
+        model.getModelViewData(modelViewName);
     }
 };
 
-analytics.presenter.HorizontalTablePresenter.prototype.printTable = function(csvButtonLink, table, tableId) { 
+analytics.presenter.HorizontalTablePresenter.prototype.printTable = function (csvButtonLink, table, tableId) {
     var view = this.view;
-    
+
     var widgetLabel = analytics.configuration.getProperty(this.widgetName, "widgetLabel");
     view.printWidgetHeader(widgetLabel, csvButtonLink);
 
     view.print("<div class='body'>");
     view.printTable(table, false, tableId);
-        
+
     view.print("</div>");
 }

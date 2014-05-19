@@ -67,7 +67,7 @@ public class TestPigRunnerConfiguration extends BaseTest {
         assertEquals("test1", scriptConfiguration.getName());
         assertEquals("desc", scriptConfiguration.getDescription());
 
-        Map<String, String> parameters = scriptConfiguration.getParamsAsMap();
+        Map<String, Object> parameters = scriptConfiguration.getParamsAsMap();
         assertEquals(2, parameters.size());
         assertEquals("REGISTERED", parameters.get("USER"));
         assertEquals("PERSISTENT", parameters.get("WS"));

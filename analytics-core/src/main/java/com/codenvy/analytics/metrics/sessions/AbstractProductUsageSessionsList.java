@@ -31,7 +31,7 @@ import java.util.Map;
 /** @author Anatoliy Bazko */
 public abstract class AbstractProductUsageSessionsList extends AbstractListValueResulted {
 
-    private static final String EMPTY_SESSION_MESSAGE = "User Did Not Enter Workspace";
+    public static final String EMPTY_SESSION_MESSAGE = "User Did Not Enter Workspace";
 
     public AbstractProductUsageSessionsList(MetricType metricType) {
         super(metricType);

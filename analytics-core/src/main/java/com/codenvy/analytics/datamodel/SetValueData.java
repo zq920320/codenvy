@@ -27,6 +27,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsSet;
+
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class SetValueData extends CollectionValueData {
@@ -51,13 +53,16 @@ public class SetValueData extends CollectionValueData {
     }
 
     @Override
-    protected ValueData doUnion(ValueData valueData) {
-        SetValueData object = (SetValueData)valueData;
+    protected ValueData doSubtract(ValueData valueData) {
+        Set<ValueData> result = new HashSet<>(value);
+        result.removeAll(treatAsSet(valueData));
+        return new SetValueData(result);
+    }
 
-        Set<ValueData> result = new HashSet<>();
-        result.addAll(this.value);
-        result.addAll(object.value);
-
+    @Override
+    protected ValueData doAdd(ValueData valueData) {
+        Set<ValueData> result = new HashSet<>(value);
+        result.addAll(treatAsSet(valueData));
         return new SetValueData(result);
     }
 

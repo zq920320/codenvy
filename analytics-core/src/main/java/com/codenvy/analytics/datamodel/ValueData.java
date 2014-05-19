@@ -26,10 +26,16 @@ import java.io.Externalizable;
 public interface ValueData extends Externalizable {
 
     /**
-     * Unions two {@link com.codenvy.analytics.datamodel.ValueData} into one single. The passed and current {@link
-     * com.codenvy.analytics.datamodel.ValueData} will not be modified.
+     * Combines two {@link com.codenvy.analytics.datamodel.ValueData} into one single. The passed and the current
+     * {@link com.codenvy.analytics.datamodel.ValueData} won't be modified.
      */
-    ValueData union(ValueData valueData);
+    ValueData add(ValueData valueData);
+
+    /**
+     * Subtracts passed {@link com.codenvy.analytics.datamodel.ValueData} from the current one. The passed and the current
+     * {@link com.codenvy.analytics.datamodel.ValueData} won't be modified.
+     */
+    ValueData subtract(ValueData valueData);
 
     /** Represents {@link com.codenvy.analytics.datamodel.ValueData} as {@link String}. */
     String getAsString();

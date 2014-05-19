@@ -23,6 +23,7 @@ import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.datamodel.ValueDataUtil;
 import com.codenvy.analytics.metrics.CalculatedMetric;
 import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Expandable;
 import com.codenvy.analytics.metrics.MetricType;
 
 import javax.annotation.security.RolesAllowed;
@@ -30,7 +31,7 @@ import java.io.IOException;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
-public class UsersLoggedInWithGooglePercent extends CalculatedMetric {
+public class UsersLoggedInWithGooglePercent extends CalculatedMetric implements Expandable {
 
     public UsersLoggedInWithGooglePercent() {
         super(MetricType.USERS_LOGGED_IN_WITH_GOOGLE_PERCENT, new MetricType[]{MetricType.USERS_LOGGED_IN_TOTAL,
@@ -55,4 +56,8 @@ public class UsersLoggedInWithGooglePercent extends CalculatedMetric {
         return "The percent of authentication with Google account";
     }
 
+    @Override
+    public ValueData getExpandedValue(Context context) throws IOException {
+        return ((Expandable)basedMetric[1]).getExpandedValue(context);
+    }
 }

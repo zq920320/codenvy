@@ -101,11 +101,15 @@ analytics.presenter.TopMetricsPresenter.prototype.load = function() {
         
         for (var tableIndex in data) {
             var table = data[tableIndex];
+            
+            // add links to drill down page
+            table = presenter.linkTableValuesWithDrillDownPage(presenter.widgetName, table, modelParams);
+            
             // make table columns linked 
             var columnLinkPrefixList = analytics.configuration.getProperty(presenter.widgetName, "columnLinkPrefixList");
             if (typeof columnLinkPrefixList != "undefined") {
                 for (var columnName in columnLinkPrefixList) {
-                    table = view.makeTableColumnLinked(table, columnName, columnLinkPrefixList[columnName]);    
+                    table = presenter.makeTableColumnLinked(table, columnName, columnLinkPrefixList[columnName]);    
                 }          
             }             
             view.printTable(table, false);
@@ -120,7 +124,7 @@ analytics.presenter.TopMetricsPresenter.prototype.load = function() {
         analytics.views.loader.needLoader = false;
     });
 
-    model.getAllResults(presenter.modelViewName);
+    model.getModelViewData(presenter.modelViewName);
 };
 
 analytics.presenter.TopMetricsPresenter.prototype.getModelViewName = function(modelParams) {

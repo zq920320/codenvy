@@ -28,7 +28,7 @@ import javax.annotation.security.RolesAllowed;
 @RolesAllowed(value = {"user", "system/admin", "system/manager"})
 public class Deploys extends AbstractLongValueResulted {
     public Deploys() {
-        super(MetricType.DEPLOYS);
+        super(MetricType.DEPLOYS, PROJECT_ID);
     }
 
     @Override

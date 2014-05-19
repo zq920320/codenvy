@@ -40,6 +40,10 @@ import java.util.Map;
 
 import static org.testng.Assert.assertEquals;
 
+<<<<<<<HEAD
+        =======
+        >>>>>>>DASHB-368
+
 /**
  * @author Alexander Reshetnyak
  */
@@ -90,21 +94,33 @@ public class TestProjectsList extends BaseTest {
         assertEquals("jar", m.get("project_type").getAsString());
         assertEquals("ws1", m.get("ws").getAsString());
         assertEquals("user1@gmail.com", m.get("user").getAsString());
+<<<<<<< HEAD
         assertEquals(LongValueData.valueOf(fullDateFormat.parse("2013-01-01 10:00:00").getTime()), m.get("date"));
+=======
+        assertEquals("1357034400000", m.get("date").getAsString());
+>>>>>>> DASHB-368
 
         m = ((MapValueData)items.get(1)).getAll();
         assertEquals("project2", m.get("project").getAsString());
         assertEquals("war", m.get("project_type").getAsString());
         assertEquals("ws2", m.get("ws").getAsString());
         assertEquals("user1@gmail.com", m.get("user").getAsString());
+<<<<<<< HEAD
         assertEquals(LongValueData.valueOf(fullDateFormat.parse("2013-01-01 10:00:01").getTime()), m.get("date"));
+=======
+        assertEquals("1357034401000", m.get("date").getAsString());
+>>>>>>> DASHB-368
 
         m = ((MapValueData)items.get(2)).getAll();
         assertEquals("project3", m.get("project").getAsString());
         assertEquals("war", m.get("project_type").getAsString());
         assertEquals("ws3", m.get("ws").getAsString());
         assertEquals("user2@yahoo.com", m.get("user").getAsString());
+<<<<<<< HEAD
         assertEquals(LongValueData.valueOf(fullDateFormat.parse("2013-01-01 10:00:03").getTime()), m.get("date"));
+=======
+        assertEquals("1357034403000", m.get("date").getAsString());
+>>>>>>> DASHB-368
     }
 
     @Test
@@ -124,14 +140,22 @@ public class TestProjectsList extends BaseTest {
         assertEquals("jar", m.get("project_type").getAsString());
         assertEquals("ws1", m.get("ws").getAsString());
         assertEquals("user1@gmail.com", m.get("user").getAsString());
+<<<<<<< HEAD
         assertEquals(LongValueData.valueOf(fullDateFormat.parse("2013-01-01 10:00:00").getTime()), m.get("date"));
+=======
+        assertEquals("1357034400000", m.get("date").getAsString());
+>>>>>>> DASHB-368
 
         m = ((MapValueData)items.get(1)).getAll();
         assertEquals("project2", m.get("project").getAsString());
         assertEquals("war", m.get("project_type").getAsString());
         assertEquals("ws2", m.get("ws").getAsString());
         assertEquals("user1@gmail.com", m.get("user").getAsString());
+<<<<<<< HEAD
         assertEquals(LongValueData.valueOf(fullDateFormat.parse("2013-01-01 10:00:01").getTime()), m.get("date"));
+=======
+        assertEquals("1357034401000", m.get("date").getAsString());
+>>>>>>> DASHB-368
     }
 
     @Test

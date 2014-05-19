@@ -26,13 +26,23 @@ public abstract class AbstractValueData implements ValueData {
     private Integer hash;
 
     @Override
-    public ValueData union(ValueData valueData) {
+    public ValueData add(ValueData valueData) {
         if (getClass() != valueData.getClass()) {
-            throw new IllegalArgumentException("Can not union two different classes " + getClass().getName() + " and "
-                                               + valueData.getClass().getName());
+            throw new IllegalArgumentException(
+                    "Can not add two different classes " + getClass().getName() + " and " + valueData.getClass().getName());
         }
 
-        return doUnion(valueData);
+        return doAdd(valueData);
+    }
+
+    @Override
+    public ValueData subtract(ValueData valueData) {
+        if (getClass() != valueData.getClass()) {
+            throw new IllegalArgumentException(
+                    "Can not subtract two different classes " + getClass().getName() + " and " + valueData.getClass().getName());
+        }
+
+        return doSubtract(valueData);
     }
 
     @Override
@@ -62,6 +72,9 @@ public abstract class AbstractValueData implements ValueData {
     abstract protected int doHashCode();
 
     /** Combines two value data into one new single instance */
-    abstract protected ValueData doUnion(ValueData valueData);
+    abstract protected ValueData doAdd(ValueData valueData);
+
+    /** Subtract passed value data from the current one */
+    abstract protected ValueData doSubtract(ValueData valueData);
 
 }

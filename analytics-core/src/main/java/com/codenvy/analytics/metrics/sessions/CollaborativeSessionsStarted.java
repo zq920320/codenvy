@@ -29,7 +29,7 @@ import javax.annotation.security.RolesAllowed;
 public class CollaborativeSessionsStarted extends AbstractLongValueResulted {
 
     public CollaborativeSessionsStarted() {
-        super(MetricType.COLLABORATIVE_SESSIONS_STARTED);
+        super(MetricType.COLLABORATIVE_SESSIONS_STARTED, WS);
     }
 
     @Override

@@ -17,19 +17,19 @@
  */
 package com.codenvy.analytics.metrics.sessions;
 
+import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.datamodel.ValueDataUtil;
-import com.codenvy.analytics.metrics.CalculatedMetric;
-import com.codenvy.analytics.metrics.Context;
-import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.*;
 
 import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
 
+
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
-public class ProductUsageTimeTotal extends CalculatedMetric {
+public class ProductUsageTimeTotal extends CalculatedMetric implements Expandable {
 
     public ProductUsageTimeTotal() {
         super(MetricType.PRODUCT_USAGE_TIME_TOTAL,
@@ -60,5 +60,17 @@ public class ProductUsageTimeTotal extends CalculatedMetric {
     @Override
     public String getDescription() {
         return "The total time of all sessions in persistent workspaces";
+    }
+
+    @Override
+    public ValueData getExpandedValue(Context context) throws IOException {
+        ValueData result = ListValueData.DEFAULT;
+
+        for (Metric metric : basedMetric) {
+            ValueData expandedValue = ((Expandable)metric).getExpandedValue(context);
+            result = result.add(expandedValue);
+        }
+
+        return result;
     }
 }

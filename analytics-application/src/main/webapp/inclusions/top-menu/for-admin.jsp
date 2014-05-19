@@ -30,7 +30,6 @@
 				<a class="nav" href="/analytics/pages/factories-view.jsp?sort=%2Bws_created" id="topmenu-factories">Factories</a>
                 <a class="nav" href="/analytics/pages/projects-view.jsp" id="topmenu-projects">Projects</a>
                 <a class="nav" href="/analytics/pages/events-view.jsp?sort=-date" id="topmenu-events">Events</a>
-
 				<div class="nav">
 					<div>
 						<button id="topmenu-reports">Reports</button>
@@ -70,7 +69,7 @@
                                 <li><a class="command-btn" value="workspace/admin">Any workspace where the current user has workspace/admin right</a></li>
                                 <li><a class="command-btn" value="account/member">Any organization this user has account/member rights to</a></li>
                                 <li><a class="command-btn" value="account/owner">Any organization this user has account/owner rights to</a></li>
-		                    </ul>	                    
+		                    </ul>
 	                    </li>
                     </ul>
                 </div>

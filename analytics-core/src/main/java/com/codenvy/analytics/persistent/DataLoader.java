@@ -29,4 +29,5 @@ public interface DataLoader {
     /** Loads value from the storage. */
     ValueData loadValue(ReadBasedMetric metric, Context clauses) throws IOException;
 
+    ValueData loadExpandedValue(ReadBasedMetric metric, Context clauses) throws IOException;
 }

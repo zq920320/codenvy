@@ -28,4 +28,9 @@ public class ProductUsageSessions extends AbstractProductUsageSessions {
     public ProductUsageSessions() {
         super(MetricType.PRODUCT_USAGE_SESSIONS);
     }
+
+    @Override
+    public String getDescription() {
+        return "The total number of users sessions";
+    }
 }

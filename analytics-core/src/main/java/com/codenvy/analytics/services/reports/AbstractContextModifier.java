@@ -46,15 +46,4 @@ public abstract class AbstractContextModifier implements ContextModifier {
 
         return items;
     }
-
-    /** @return the first occurred parameter for specific key */
-    protected String getFirstParameter(String key) {
-        for (ParameterConfiguration parameter : parameters) {
-            if (parameter.getKey().equalsIgnoreCase(key)) {
-                return parameter.getValue();
-            }
-        }
-
-        return null;
-    }
 }

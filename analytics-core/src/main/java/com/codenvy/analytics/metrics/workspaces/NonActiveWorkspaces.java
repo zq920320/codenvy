@@ -20,17 +20,14 @@ package com.codenvy.analytics.metrics.workspaces;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.datamodel.ValueDataUtil;
-import com.codenvy.analytics.metrics.CalculatedMetric;
-import com.codenvy.analytics.metrics.Context;
-import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.metrics.*;
 
 import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
-public class NonActiveWorkspaces extends CalculatedMetric {
+public class NonActiveWorkspaces extends CalculatedMetric implements Expandable {
 
     public NonActiveWorkspaces() {
         super(MetricType.NON_ACTIVE_WORKSPACES, new MetricType[]{MetricType.CREATED_UNIQUE_WORKSPACES,
@@ -41,8 +38,7 @@ public class NonActiveWorkspaces extends CalculatedMetric {
     public ValueData getValue(Context context) throws IOException {
         LongValueData total = ValueDataUtil.getAsLong(basedMetric[0], context.cloneAndRemove(Parameters.FROM_DATE));
         LongValueData active = ValueDataUtil.getAsLong(basedMetric[1], context);
-
-        return new LongValueData(total.getAsLong() - active.getAsLong());
+        return total.subtract(active);
     }
 
     @Override
@@ -53,5 +49,13 @@ public class NonActiveWorkspaces extends CalculatedMetric {
     @Override
     public String getDescription() {
         return "Non-active workspaces";
+    }
+
+    @Override
+    public ValueData getExpandedValue(Context context) throws IOException {
+        // get all documents from start date of logging to date defined in context
+        ValueData total = ((Expandable)basedMetric[0]).getExpandedValue(context.cloneAndRemove(Parameters.FROM_DATE));
+        ValueData active = ((Expandable)basedMetric[1]).getExpandedValue(context);
+        return total.subtract(active);
     }
 }

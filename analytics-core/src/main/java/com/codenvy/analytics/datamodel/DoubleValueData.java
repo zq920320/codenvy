@@ -23,6 +23,8 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
+import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsDouble;
+
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class DoubleValueData extends NumericValueData {
 
@@ -59,8 +61,13 @@ public class DoubleValueData extends NumericValueData {
     }
 
     @Override
-    protected ValueData doUnion(ValueData valueData) {
-        return new DoubleValueData(value + ((DoubleValueData)valueData).value);
+    protected ValueData doAdd(ValueData valueData) {
+        return new DoubleValueData(value + treatAsDouble(valueData));
+    }
+
+    @Override
+    protected ValueData doSubtract(ValueData valueData) {
+        return new DoubleValueData(value - treatAsDouble(valueData));
     }
 
     @Override

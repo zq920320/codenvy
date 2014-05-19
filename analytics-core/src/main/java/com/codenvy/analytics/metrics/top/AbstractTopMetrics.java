@@ -29,9 +29,10 @@ import com.mongodb.BasicDBObject;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Calendar;
-import java.util.Collections;
 
-/** @author <a href="mailto:dnochevnov@codenvy.com">Dmytro Nochevnov</a> */
+/**
+ * @author Dmytro Nochevnov
+ */
 public abstract class AbstractTopMetrics extends ReadBasedMetric {
 
     public static final long MAX_DOCUMENT_COUNT = 100;
@@ -82,22 +83,5 @@ public abstract class AbstractTopMetrics extends ReadBasedMetric {
         multiplyArgs.add(new BasicDBObject("$divide", divideArgs));
 
         return new BasicDBObject("$multiply", multiplyArgs);
-    }
-
-    /** @return mongodb operation (arg1 - arg2Field) */
-    protected BasicDBObject getSubtractOperation(long arg1, String arg2Field) {
-        BasicDBList subtractArgs = new BasicDBList();
-        subtractArgs.add(arg1);
-        subtractArgs.add(arg2Field);
-
-        return new BasicDBObject("$subtract", subtractArgs);
-    }
-
-    protected BasicDBObject getAndOperation(BasicDBObject... predicates) {
-        BasicDBList andArgs = new BasicDBList();
-
-        Collections.addAll(andArgs, predicates);
-
-        return new BasicDBObject("$and", andArgs);
     }
 }

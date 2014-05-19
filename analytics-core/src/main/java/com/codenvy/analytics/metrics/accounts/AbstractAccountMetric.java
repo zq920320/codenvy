@@ -22,6 +22,7 @@ import com.codenvy.analytics.datamodel.StringValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.datamodel.ValueDataUtil;
 import com.codenvy.analytics.metrics.*;
+import com.codenvy.analytics.persistent.MongoDataLoader;
 import com.codenvy.api.account.shared.dto.AccountMembership;
 import com.codenvy.api.account.shared.dto.Subscription;
 import com.codenvy.api.user.shared.dto.Attribute;
@@ -53,9 +54,7 @@ public abstract class AbstractAccountMetric extends AbstractMetric {
     public static final String PATH_ACCOUNT_SUBSCRIPTIONS = "/account/{id}/subscriptions";
     public static final String PARAM_ID                   = "{id}";
 
-    public static final String PATH_USER       = "/user";
-    public static final String PATH_USER_BY_ID = "/user/{userId}";
-    public static final String PARAM_USER_ID   = "{userId}";
+    public static final String PATH_USER = "/user";
 
     public static final String ACCOUNT_ID            = "account_id";
     public static final String ACCOUNT_NAME          = "account_name";
@@ -202,7 +201,7 @@ public abstract class AbstractAccountMetric extends AbstractMetric {
             String sortCondition = context.getAsString(Parameters.SORT);
 
             final String field = sortCondition.substring(1);
-            final int order = sortCondition.substring(0, 1).equals(ReadBasedMetric.ASC_SORT_SIGN) ? 1 : -1;
+            final int order = sortCondition.substring(0, 1).equals(MongoDataLoader.ASC_SORT_SIGN) ? 1 : -1;
 
             Collections.sort(list, new Comparator<ValueData>() {
                 @Override

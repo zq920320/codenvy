@@ -19,8 +19,12 @@ package com.codenvy.analytics.services.view;
 
 import com.codenvy.analytics.Configurator;
 import com.codenvy.analytics.Utils;
-import com.codenvy.analytics.metrics.Context;
-import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.datamodel.ListValueData;
+import com.codenvy.analytics.datamodel.MapValueData;
+import com.codenvy.analytics.datamodel.StringValueData;
+import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.metrics.*;
+import com.codenvy.analytics.metrics.sessions.AbstractTimelineProductUsageCondition;
 import com.codenvy.analytics.persistent.DataPersister;
 import com.codenvy.analytics.persistent.JdbcDataPersisterFactory;
 import com.codenvy.analytics.services.Feature;
@@ -37,6 +41,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ForkJoinPool;
@@ -86,6 +91,42 @@ public class ViewBuilder extends Feature {
         } else {
             return loadViewData(view, context);
         }
+    }
+
+    public ViewData getViewData(ListValueData metricValue) {
+        ViewData viewData = new ViewData(); // include title row
+
+        List<ValueData> allMetricValues = metricValue.getAll();
+
+        // return empty view data if there is empty metricValue
+        if (allMetricValues.size() == 0) {
+            return viewData;
+        }
+
+        SectionData sectionData = new SectionData();
+
+        // add title row
+        MapValueData firstRow = (MapValueData)allMetricValues.get(0);
+        List<ValueData> titleRow = getRowKeys(firstRow);
+        sectionData.add(titleRow);
+
+        // transform MapValueData rows into the List<ValueData> rows
+        for (ValueData row : allMetricValues) {
+            sectionData.add(getRowKeys((MapValueData)row));
+        }
+
+        viewData.put(null, sectionData);
+
+        return viewData;
+    }
+
+    private List<ValueData> getRowKeys(MapValueData mapRow) {
+        List<ValueData> rowKeys = new ArrayList<>(mapRow.size());
+        for (String key : mapRow.getAll().keySet()) {
+            rowKeys.add(new StringValueData(key));
+        }
+
+        return rowKeys;
     }
 
     private boolean isSimplified(Context context) {
@@ -245,7 +286,12 @@ public class ViewBuilder extends Feature {
         }
     }
 
-    private Context initializeFirstInterval(Context context) throws ParseException {
+    public Context initializeFirstInterval(Context context) throws ParseException {
+        Expandable expandableMetric = context.getExpandedMetric();
+        if (expandableMetric instanceof AbstractTimelineProductUsageCondition) {
+            return ((AbstractTimelineProductUsageCondition)expandableMetric).initContextBasedOnTimeInterval(context);
+        }
+
         Context.Builder builder = new Context.Builder(context);
         builder.put(Parameters.REPORT_DATE, builder.getAsString(Parameters.TO_DATE));
 
@@ -259,6 +305,27 @@ public class ViewBuilder extends Feature {
             }
         } else {
             return builder.build();
+        }
+    }
+
+    public Context initializeTimeInterval(Context context) throws ParseException {
+        Expandable expandableMetric = context.getExpandedMetric();
+        if (expandableMetric instanceof AbstractTimelineProductUsageCondition) {
+            return ((AbstractTimelineProductUsageCondition)expandableMetric).initContextBasedOnTimeInterval(context);
+        }
+
+        Context.Builder builder = new Context.Builder(context);
+
+        if (context.exists(Parameters.TIME_UNIT)) {
+            Parameters.TimeUnit timeUnit = builder.getTimeUnit();
+            if (context.exists(Parameters.TIME_INTERVAL)) {
+                int timeShift = (int)-context.getAsLong(Parameters.TIME_INTERVAL);
+                return Utils.initDateInterval(builder.getAsDate(Parameters.TO_DATE), timeUnit, timeShift, builder);
+            } else {
+                return Utils.initDateInterval(builder.getAsDate(Parameters.TO_DATE), timeUnit, builder);
+            }
+        } else {
+            return context;
         }
     }
 
@@ -279,5 +346,47 @@ public class ViewBuilder extends Feature {
         }
 
         return id;
+    }
+
+    /**
+     * Returns list of view metrics which are expandable:
+     * 1) reads view configuration
+     * 2) gets list of view metric rows and their configurations;
+     * makes sure the metric is expandable
+     * 3) extracts metric type from configuration
+     * 5) add this info into the List<Map<rowNumber, metricType>>
+     */
+    public List<Map<Integer, MetricType>> getViewExpandableMetricMap(String viewName) {
+        List<Map<Integer, MetricType>> sectionList = new ArrayList<>();
+        ViewConfiguration viewConf = displayConfiguration.getView(viewName);
+
+        List<SectionConfiguration> sectionConfigurations = viewConf.getSections();
+        for (int sectionNumber = 0; sectionNumber < sectionConfigurations.size(); sectionNumber++) {
+            SectionConfiguration sectionConf = sectionConfigurations.get(sectionNumber);
+
+            sectionList.add(new LinkedHashMap<Integer, MetricType>());
+            List<RowConfiguration> rowConfigurations = sectionConf.getRows();
+            for (int rowNumber = 0; rowNumber < rowConfigurations.size(); rowNumber++) {
+                RowConfiguration rowConf = rowConfigurations.get(rowNumber);
+
+                if (rowConf.getClazz().equals(MetricRow.class.getCanonicalName())) {  // check if this is metric row
+                    String metricName = rowConf.getParamsAsMap().get("name").toUpperCase();
+                    MetricType metricType = MetricType.valueOf(metricName);
+                    Metric metric = MetricFactory.getMetric(metricType);
+
+                    if (metric != null
+                        && (metric instanceof Expandable
+                            // expanded cumulative metrics have the same values as linked
+                            // users/factories/workspaces/projects views
+                            || metric instanceof CumulativeMetric)
+                            ) {
+                        // add info about metric in to the sectionList = List<Map<rowNumber, metricType>>
+                        sectionList.get(sectionNumber).put(rowNumber, metricType);
+                    }
+                }
+            }
+        }
+
+        return sectionList;
     }
 }

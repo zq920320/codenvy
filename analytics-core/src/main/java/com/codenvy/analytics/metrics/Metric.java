@@ -21,9 +21,15 @@ package com.codenvy.analytics.metrics;
 import com.codenvy.analytics.datamodel.ValueData;
 
 import java.io.IOException;
+import java.util.regex.Pattern;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public interface Metric {
+
+    Pattern REGISTERED_USER = Pattern.compile("^(?!(ANONYMOUSUSER_|DEFAULT)).*", Pattern.CASE_INSENSITIVE);
+    Pattern ANONYMOUS_USER = Pattern.compile("^(ANONYMOUSUSER_).*", Pattern.CASE_INSENSITIVE);
+    Pattern PERSISTENT_WS  = Pattern.compile("^(?!(TMP-|DEFAULT)).*", Pattern.CASE_INSENSITIVE);
+    Pattern TEMPORARY_WS   = Pattern.compile("^(TMP-).*", Pattern.CASE_INSENSITIVE);
 
     /**
      * Returns the value of metric.
@@ -38,13 +44,13 @@ public interface Metric {
 
     /**
      * @return which type of {@link ValueData} the {@link #getValue(com.codenvy.analytics.metrics.Context)} method
-     *         returns. The possible variants are:
-     *         {@link com.codenvy.analytics.datamodel.StringValueData}
-     *         {@link com.codenvy.analytics.datamodel.LongValueData}
-     *         {@link com.codenvy.analytics.datamodel.DoubleValueData}
-     *         {@link com.codenvy.analytics.datamodel.SetValueData}
-     *         {@link com.codenvy.analytics.datamodel.ListValueData}
-     *         {@link com.codenvy.analytics.datamodel.MapValueData}
+     * returns. The possible variants are:
+     * {@link com.codenvy.analytics.datamodel.StringValueData}
+     * {@link com.codenvy.analytics.datamodel.LongValueData}
+     * {@link com.codenvy.analytics.datamodel.DoubleValueData}
+     * {@link com.codenvy.analytics.datamodel.SetValueData}
+     * {@link com.codenvy.analytics.datamodel.ListValueData}
+     * {@link com.codenvy.analytics.datamodel.MapValueData}
      */
     Class<? extends ValueData> getValueDataClass();
 

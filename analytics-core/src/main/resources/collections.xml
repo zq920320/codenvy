@@ -83,6 +83,10 @@
                 <field>ws</field>
                 <field>date</field>
             </index>
+            <index name="project_id">
+                <field>project_id</field>
+                <field>date</field>
+            </index>
             <index name="date">
                 <field>date</field>
             </index>
@@ -163,6 +167,10 @@
                 <field>ws</field>
                 <field>date</field>
             </index>
+            <index name="project_id">
+                <field>project_id</field>
+                <field>date</field>
+            </index>
             <index name="date">
                 <field>date</field>
             </index>
@@ -178,6 +186,10 @@
             </index>
             <index name="ws">
                 <field>ws</field>
+                <field>date</field>
+            </index>
+            <index name="project_id">
+                <field>project_id</field>
                 <field>date</field>
             </index>
             <index name="date">
@@ -197,6 +209,10 @@
                 <field>ws</field>
                 <field>date</field>
             </index>
+            <index name="project_id">
+                <field>project_id</field>
+                <field>date</field>
+            </index>
             <index name="date">
                 <field>date</field>
             </index>
@@ -211,6 +227,10 @@
             </index>
             <index name="ws">
                 <field>ws</field>
+                <field>date</field>
+            </index>
+            <index name="project_id">
+                <field>project_id</field>
                 <field>date</field>
             </index>
             <index name="date">
@@ -229,6 +249,10 @@
                 <field>ws</field>
                 <field>date</field>
             </index>
+            <index name="project_id">
+                <field>project_id</field>
+                <field>date</field>
+            </index>
             <index name="date">
                 <field>date</field>
             </index>
@@ -245,6 +269,10 @@
                 <field>ws</field>
                 <field>date</field>
             </index>
+            <index name="project_id">
+                <field>project_id</field>
+                <field>date</field>
+            </index>
             <index name="date">
                 <field>date</field>
             </index>
@@ -259,6 +287,10 @@
             </index>
             <index name="ws">
                 <field>ws</field>
+                <field>date</field>
+            </index>
+            <index name="project_id">
+                <field>project_id</field>
                 <field>date</field>
             </index>
             <index name="date">
@@ -344,6 +376,10 @@
             <index name="date">
                 <field>date</field>
             </index>
+            <index name="project_id">
+                <field>project_id</field>
+                <field>date</field>
+            </index>
         </indexes>
     </collection>
 
@@ -380,6 +416,10 @@
                 <field>ws</field>
                 <field>date</field>
             </index>
+            <index name="project_id">
+                <field>project_id</field>
+                <field>date</field>
+            </index>
             <index name="date">
                 <field>date</field>
             </index>
@@ -396,6 +436,10 @@
                 <field>ws</field>
                 <field>date</field>
             </index>
+            <index name="project_id">
+                <field>project_id</field>
+                <field>date</field>
+            </index>
             <index name="date">
                 <field>date</field>
             </index>
@@ -410,6 +454,10 @@
             </index>
             <index name="ws">
                 <field>ws</field>
+                <field>date</field>
+            </index>
+            <index name="project_id">
+                <field>project_id</field>
                 <field>date</field>
             </index>
             <index name="date">
@@ -646,6 +694,10 @@
                 <field>ws</field>
                 <field>date</field>
             </index>
+            <index name="project_id">
+                <field>project_id</field>
+                <field>date</field>
+            </index>
             <index name="date">
                 <field>date</field>
             </index>
@@ -698,6 +750,10 @@
                 <field>ws</field>
                 <field>date</field>
             </index>
+            <index name="project_id">
+                <field>project_id</field>
+                <field>date</field>
+            </index>
             <index name="date">
                 <field>date</field>
             </index>
@@ -712,6 +768,10 @@
             </index>
             <index name="ws">
                 <field>ws</field>
+                <field>date</field>
+            </index>
+            <index name="project_id">
+                <field>project_id</field>
                 <field>date</field>
             </index>
             <index name="date">
@@ -730,6 +790,10 @@
                 <field>ws</field>
                 <field>date</field>
             </index>
+            <index name="project_id">
+                <field>project_id</field>
+                <field>date</field>
+            </index>
             <index name="date">
                 <field>date</field>
             </index>
@@ -744,6 +808,10 @@
             </index>
             <index name="ws">
                 <field>ws</field>
+                <field>date</field>
+            </index>
+            <index name="project_id">
+                <field>project_id</field>
                 <field>date</field>
             </index>
             <index name="date">
@@ -764,6 +832,35 @@
             </index>
             <index name="date">
                 <field>date</field>
+            </index>
+        </indexes>
+    </collection>
+
+    <collection name="users_statistics_list_precomputed">
+        <indexes>
+            <index name="user">
+                <field>user</field>
+            </index>
+            <index name="user_first_name">
+                <field>user_first_name</field>
+            </index>
+            <index name="user_last_name">
+                <field>user_last_name</field>
+            </index>
+            <index name="user_company">
+                <field>user_company</field>
+            </index>
+            <index name="user_job">
+                <field>user_job</field>
+            </index>
+            <index name="sessions">
+                <field>sessions</field>
+            </index>
+            <index name="time">
+                <field>time</field>
+            </index>
+            <index name="projects">
+                <field>projects</field>
             </index>
         </indexes>
     </collection>
@@ -841,6 +938,10 @@
                 <field>project_type</field>
                 <field>date</field>
             </index>
+            <index name="project_id">
+                <field>project_id</field>
+                <field>date</field>
+            </index>
             <index name="date">
                 <field>date</field>
             </index>
@@ -863,6 +964,10 @@
             </index>
             <index name="project_type">
                 <field>project_type</field>
+                <field>date</field>
+            </index>
+            <index name="project_id">
+                <field>project_id</field>
                 <field>date</field>
             </index>
             <index name="date">

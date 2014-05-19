@@ -22,6 +22,7 @@ import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.datamodel.ValueDataUtil;
 import com.codenvy.analytics.metrics.CalculatedMetric;
 import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Expandable;
 import com.codenvy.analytics.metrics.MetricType;
 
 import javax.annotation.security.RolesAllowed;
@@ -29,7 +30,7 @@ import java.io.IOException;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
-public class CreatedUsersFromAuth extends CalculatedMetric {
+public class CreatedUsersFromAuth extends CalculatedMetric implements Expandable {
 
     public CreatedUsersFromAuth() {
         super(MetricType.CREATED_USERS_FROM_AUTH, new MetricType[]{MetricType.CREATED_USERS,
@@ -40,8 +41,7 @@ public class CreatedUsersFromAuth extends CalculatedMetric {
     public ValueData getValue(Context context) throws IOException {
         LongValueData created = ValueDataUtil.getAsLong(basedMetric[0], context);
         LongValueData createdFromFactory = ValueDataUtil.getAsLong(basedMetric[1], context);
-
-        return new LongValueData(created.getAsLong() - createdFromFactory.getAsLong());
+        return created.subtract(createdFromFactory);
     }
 
     @Override
@@ -52,5 +52,12 @@ public class CreatedUsersFromAuth extends CalculatedMetric {
     @Override
     public String getDescription() {
         return "The number of created users using authentication form or oAuth";
+    }
+
+    @Override
+    public ValueData getExpandedValue(Context context) throws IOException {
+        ValueData created = ((Expandable)basedMetric[0]).getExpandedValue(context);
+        ValueData createdFromFactory = ((Expandable)basedMetric[1]).getExpandedValue(context);
+        return created.subtract(createdFromFactory);
     }
 }

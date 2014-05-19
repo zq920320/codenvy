@@ -21,7 +21,9 @@ import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.Metric;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /** @author Anatoliy Bazko */
 public class ValueDataUtil {
@@ -34,8 +36,20 @@ public class ValueDataUtil {
         return ((LongValueData)valueData).getAsLong();
     }
 
+    public static double treatAsDouble(ValueData valueData) {
+        return ((DoubleValueData)valueData).getAsDouble();
+    }
+
     public static Map<String, ValueData> treatAsMap(ValueData valueData) {
         return ((MapValueData)valueData).getAll();
+    }
+
+    public static List<ValueData> treatAsList(ValueData valueData) {
+        return ((ListValueData)valueData).getAll();
+    }
+
+    public static Set<ValueData> treatAsSet(ValueData valueData) {
+        return ((SetValueData)valueData).getAll();
     }
 
     public static ListValueData getAsList(Metric metric, Context context) throws IOException {
@@ -48,5 +62,9 @@ public class ValueDataUtil {
 
     public static SetValueData getAsSet(Metric metric, Context context) throws IOException {
         return (SetValueData)metric.getValue(context);
+    }
+
+    public static boolean isDefault(ValueData valueData) {
+        return valueData.equals(ValueDataFactory.createDefaultValue(valueData.getClass()));
     }
 }

@@ -27,7 +27,7 @@ import javax.annotation.security.RolesAllowed;
 public class CreatedUsersFromFactory extends AbstractLongValueResulted {
 
     public CreatedUsersFromFactory() {
-        super(MetricType.CREATED_USERS_FROM_FACTORY);
+        super(MetricType.CREATED_USERS_FROM_FACTORY, USER);
     }
 
     @Override

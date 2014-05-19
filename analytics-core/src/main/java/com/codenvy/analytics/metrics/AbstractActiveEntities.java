@@ -24,8 +24,10 @@ import com.mongodb.DBObject;
 
 import java.io.IOException;
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public abstract class AbstractActiveEntities extends ReadBasedMetric {
+/**
+ * @author Anatoliy Bazko
+ */
+public abstract class AbstractActiveEntities extends ReadBasedMetric implements ReadBasedExpandable {
 
     private final ReadBasedMetric basedMetric;
     private final String          valueField;
@@ -79,7 +81,27 @@ public abstract class AbstractActiveEntities extends ReadBasedMetric {
     }
 
     @Override
+    public DBObject[] getSpecificExpandedDBOperations(Context clauses) {
+        DBObject match = new BasicDBObject();
+        match.put(getExpandedField(), new BasicDBObject("$ne", ""));
+
+        DBObject group = new BasicDBObject();
+        group.put(ID, "$" + getExpandedField());
+
+        DBObject projection = new BasicDBObject(getExpandedField(), "$_id");
+
+        return new DBObject[]{new BasicDBObject("$match", match),
+                              new BasicDBObject("$group", group),
+                              new BasicDBObject("$project", projection)};
+    }
+
+    @Override
     public Class<? extends ValueData> getValueDataClass() {
         return LongValueData.class;
+    }
+
+    @Override
+    public String getExpandedField() {
+        return valueField;
     }
 }

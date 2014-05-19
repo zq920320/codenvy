@@ -20,6 +20,7 @@ package com.codenvy.analytics.metrics.users;
 import com.codenvy.analytics.Injector;
 import com.codenvy.analytics.datamodel.*;
 import com.codenvy.analytics.metrics.*;
+import com.codenvy.analytics.persistent.MongoDataLoader;
 import com.codenvy.analytics.pig.scripts.EventsHolder;
 
 import javax.annotation.security.RolesAllowed;
@@ -65,7 +66,7 @@ public class UsersActivityList extends AbstractListValueResulted {
     @Override
     public Context applySpecificFilter(Context context) throws IOException {
         Context.Builder builder = new Context.Builder(context);
-        builder.put(Parameters.SORT, ASC_SORT_SIGN + DATE);
+        builder.put(Parameters.SORT, MongoDataLoader.ASC_SORT_SIGN + DATE);
         excludeStartAndStopFactorySessionsEvents(builder);
 
         if (context.exists(MetricFilter.SESSION_ID)) {
@@ -147,6 +148,7 @@ public class UsersActivityList extends AbstractListValueResulted {
     }
 
     /** Calculate duration of action, in millisec. */
+
     private long getTime(long actionDate,
                          long prevActionDate,
                          int actionNumber,
@@ -292,9 +294,9 @@ public class UsersActivityList extends AbstractListValueResulted {
         String eventFilter = builder.getAsString(MetricFilter.EVENT);
 
         if (eventFilter != null) {
-            builder.put(MetricFilter.EVENT, eventFilter + SEPARATOR + EventsHolder.NOT_FACTORY_SESSIONS);
+            builder.put(MetricFilter.EVENT, eventFilter + MongoDataLoader.SEPARATOR + EventsHolder.NOT_FACTORY_SESSIONS);
         } else {
-            builder.put(MetricFilter.EVENT, EXCLUDE_SIGN + EventsHolder.NOT_FACTORY_SESSIONS);
+            builder.put(MetricFilter.EVENT, MongoDataLoader.EXCLUDE_SIGN + EventsHolder.NOT_FACTORY_SESSIONS);
         }
     }
 

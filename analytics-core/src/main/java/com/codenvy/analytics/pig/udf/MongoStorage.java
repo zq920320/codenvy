@@ -116,7 +116,7 @@ public class MongoStorage extends StoreFunc {
 
         @Override
         public void write(WritableComparable writableComparable, Tuple value) throws IOException, InterruptedException {
-            DBObject dbObject = new BasicDBObject();
+            BasicDBObject dbObject = new BasicDBObject();
 
             for (int i = 1; i < value.size(); i++) {
                 Tuple tuple = (Tuple)value.get(i);
@@ -136,14 +136,16 @@ public class MongoStorage extends StoreFunc {
                 }
             }
 
-            try {
-                dbCollection.update(new BasicDBObject("_id", value.get(0)),
-                                    new BasicDBObject("$set", dbObject),
-                                    true,
-                                    false);
+            if (!dbObject.isEmpty()) {
+                try {
+                    dbCollection.update(new BasicDBObject("_id", value.get(0)),
+                                        new BasicDBObject("$set", dbObject),
+                                        true,
+                                        false);
 
-            } catch (Exception e) {
-                LOG.error(e.getMessage(), e);
+                } catch (Exception e) {
+                    LOG.error(e.getMessage(), e);
+                }
             }
         }
 

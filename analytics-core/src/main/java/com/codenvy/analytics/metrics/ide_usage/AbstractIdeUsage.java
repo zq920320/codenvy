@@ -19,10 +19,7 @@ package com.codenvy.analytics.metrics.ide_usage;
 
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.Context;
-import com.codenvy.analytics.metrics.MetricFilter;
-import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.analytics.metrics.ReadBasedMetric;
+import com.codenvy.analytics.metrics.*;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
@@ -30,7 +27,7 @@ import com.mongodb.DBObject;
  * @author Alexander Reshetnyak
  * @author Anatoliy Bazko
  */
-public abstract class AbstractIdeUsage extends ReadBasedMetric {
+public abstract class AbstractIdeUsage extends ReadBasedMetric implements ReadBasedExpandable {
     public static final String FILE_NEW_FILE    = "IDE: New file";
     public static final String FILE_UPLOAD_FILE = "IDE: Upload file";
     public static final String FILE_SAVE        = "IDE: Save file";
@@ -120,5 +117,17 @@ public abstract class AbstractIdeUsage extends ReadBasedMetric {
         group.put(VALUE, new BasicDBObject("$sum", 1));
 
         return new DBObject[]{new BasicDBObject("$group", group)};
+    }
+
+    // TODO
+    @Override
+    public DBObject[] getSpecificExpandedDBOperations(Context clauses) {
+        DBObject group = new BasicDBObject();
+        group.put(ID, "$" + getExpandedField());
+
+        DBObject projection = new BasicDBObject(getExpandedField(), "$_id");
+
+        return new DBObject[]{new BasicDBObject("$group", group),
+                              new BasicDBObject("$project", projection)};
     }
 }

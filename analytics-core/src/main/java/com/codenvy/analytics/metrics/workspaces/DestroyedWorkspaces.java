@@ -30,9 +30,8 @@ import javax.annotation.security.RolesAllowed;
 @RolesAllowed({"system/admin", "system/manager"})
 @OmitFilters({MetricFilter.USER})
 public class DestroyedWorkspaces extends AbstractLongValueResulted {
-
     public DestroyedWorkspaces() {
-        super(MetricType.DESTROYED_WORKSPACES);
+        super(MetricType.DESTROYED_WORKSPACES, WS);
     }
 
     @Override

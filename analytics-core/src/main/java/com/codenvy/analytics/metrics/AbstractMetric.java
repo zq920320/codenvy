@@ -21,6 +21,7 @@ package com.codenvy.analytics.metrics;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public abstract class AbstractMetric implements Metric {
 
+    public static final String CREATION_DATE         = "creation_date";
     public static final String ID                    = "_id";
     public static final String VALUE                 = "value";
     public static final String DATE                  = "date";
@@ -44,6 +45,7 @@ public abstract class AbstractMetric implements Metric {
     public static final String FACTORY               = "factory";
     public static final String PROJECT               = "project";
     public static final String PROJECT_TYPE          = "project_type";
+    public static final String PROJECT_ID            = "project_id";
     public static final String REFERRER              = "referrer";
     public static final String AUTHENTICATED_SESSION = "authenticated_factory_session";
     public static final String CONVERTED_SESSION     = "converted_factory_session";
@@ -65,7 +67,6 @@ public abstract class AbstractMetric implements Metric {
     public static final String USER_COMPANY          = "user_company";
     public static final String USER_JOB              = "user_job";
     public static final String USER_PHONE            = "user_phone";
-    public static final String CREATION_DATE         = "creation_date";
     public static final String PROJECT_CREATES       = "project_creates";
     public static final String PROJECT_DESTROYS      = "project_destroys";
     public static final String CODE_REFACTORIES      = "code_refactories";
@@ -74,7 +75,7 @@ public abstract class AbstractMetric implements Metric {
     public static final String ARTIFACT_DEPLOYS      = "artifact_deploys";
     public static final String DEBUG_TIME            = "debug_time";
 
-    protected final String metricName;
+    private final String metricName;
 
     public AbstractMetric(String metricName) {
         this.metricName = metricName.toLowerCase();

@@ -17,9 +17,16 @@
  */
 package com.codenvy.analytics.metrics.sessions;
 
+import com.codenvy.analytics.datamodel.*;
+import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricType;
 
 import javax.annotation.security.RolesAllowed;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /** @author Anatoliy Bazko */
 @RolesAllowed({"system/admin", "system/manager"})
@@ -27,5 +34,45 @@ public class ProductUsageSessionsList extends AbstractProductUsageSessionsList {
 
     public ProductUsageSessionsList() {
         super(MetricType.PRODUCT_USAGE_SESSIONS_LIST);
+    }
+
+    @Override
+    public String[] getTrackedFields() {
+        return new String[]{WS,
+                            USER,
+                            USER_COMPANY,
+                            DOMAIN,
+                            TIME,
+                            SESSION_ID,
+                            DATE,
+                            END_TIME,
+                            LOGOUT_INTERVAL};
+    }
+
+    @Override
+    public ValueData postComputation(ValueData valueData, Context clauses) throws IOException {
+        List<ValueData> list2Return = new ArrayList<>();
+
+        for (ValueData items : ((ListValueData)valueData).getAll()) {
+
+            MapValueData prevItems = (MapValueData)items;
+            Map<String, ValueData> items2Return = new HashMap<>(prevItems.getAll());
+
+            long delta = ValueDataUtil.treatAsLong(items2Return.get(TIME));
+
+            // replace empty session_id field on explanation message
+            if (items2Return.get(SESSION_ID).getAsString().isEmpty() && delta == 0) {
+                items2Return.put(SESSION_ID, StringValueData.valueOf(EMPTY_SESSION_MESSAGE));
+            }
+
+            list2Return.add(new MapValueData(items2Return));
+        }
+
+        return new ListValueData(list2Return);
+    }
+
+    @Override
+    public String getDescription() {
+        return "Users' sessions";
     }
 }

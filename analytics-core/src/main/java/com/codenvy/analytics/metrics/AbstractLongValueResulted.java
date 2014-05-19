@@ -22,15 +22,16 @@ import com.codenvy.analytics.datamodel.ValueData;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public abstract class AbstractLongValueResulted extends ReadBasedMetric {
+/**
+ * @author Anatoliy Bazko
+ */
+public abstract class AbstractLongValueResulted extends ReadBasedMetric implements ReadBasedExpandable {
 
-    protected AbstractLongValueResulted(String metricName) {
-        super(metricName);
-    }
+    private final String expandingField;
 
-    public AbstractLongValueResulted(MetricType metricType) {
+    public AbstractLongValueResulted(MetricType metricType, String expandingField) {
         super(metricType);
+        this.expandingField = expandingField;
     }
 
     @Override
@@ -47,11 +48,29 @@ public abstract class AbstractLongValueResulted extends ReadBasedMetric {
     public DBObject[] getSpecificDBOperations(Context clauses) {
         DBObject group = new BasicDBObject();
 
-        String field = getTrackedFields()[0];
-
         group.put(ID, null);
-        group.put(field, new BasicDBObject("$sum", "$" + field));
+        group.put(VALUE, new BasicDBObject("$sum", "$" + VALUE));
 
         return new DBObject[]{new BasicDBObject("$group", group)};
     }
+
+    @Override
+    public DBObject[] getSpecificExpandedDBOperations(Context clauses) {
+        DBObject match = new BasicDBObject(VALUE, new BasicDBObject("$gt", 0));
+
+        DBObject group = new BasicDBObject();
+        group.put(ID, "$" + getExpandedField());
+
+        DBObject projection = new BasicDBObject(getExpandedField(), "$_id");
+
+        return new DBObject[]{new BasicDBObject("$match", match),
+                              new BasicDBObject("$group", group),
+                              new BasicDBObject("$project", projection)};
+    }
+
+    @Override
+    public String getExpandedField() {
+        return expandingField;
+    }
+
 }

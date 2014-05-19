@@ -20,15 +20,13 @@ package com.codenvy.analytics.metrics.sessions.factory;
 import com.codenvy.analytics.metrics.AbstractLongValueResulted;
 import com.codenvy.analytics.metrics.MetricType;
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+/**
+ * @author Anatoliy Bazko
+ */
 public abstract class AbstractFactorySessionsWithEvent extends AbstractLongValueResulted {
 
     public AbstractFactorySessionsWithEvent(MetricType metricType) {
-        super(metricType);
-    }
-
-    public AbstractFactorySessionsWithEvent(String metricName) {
-        super(metricName);
+        super(metricType, SESSION_ID);
     }
 
     @Override

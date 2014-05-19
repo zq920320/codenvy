@@ -68,6 +68,6 @@ public class TestStringValueData extends BaseTest {
 
     @Test
     public void testUnion() {
-        assertEquals(new StringValueData("hello\nhello"), valueData.union(valueData));
+        assertEquals(new StringValueData("hello\nhello"), valueData.add(valueData));
     }
 }

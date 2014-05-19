@@ -28,9 +28,8 @@ import javax.annotation.security.RolesAllowed;
 @RolesAllowed({"system/admin", "system/manager"})
 @OmitFilters({MetricFilter.WS})
 public class RemovedUsers extends AbstractLongValueResulted {
-
     public RemovedUsers() {
-        super(MetricType.REMOVED_USERS);
+        super(MetricType.REMOVED_USERS, USER);
     }
 
     @Override

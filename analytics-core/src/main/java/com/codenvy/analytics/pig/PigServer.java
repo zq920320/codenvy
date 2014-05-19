@@ -144,6 +144,8 @@ public class PigServer {
         server.registerFunction("EventValidation", new FuncSpec("com.codenvy.analytics.pig.udf.EventValidation"));
         server.registerFunction("EventDescription", new FuncSpec("com.codenvy.analytics.pig.udf.EventDescription"));
         server.registerFunction("IsEventInSet", new FuncSpec("com.codenvy.analytics.pig.udf.IsEventInSet"));
+        server.registerFunction("NullToEmpty", new FuncSpec("com.codenvy.analytics.pig.udf.NullToEmpty"));
+        server.registerFunction("CreateProjectId", new FuncSpec("com.codenvy.analytics.pig.udf.CreateProjectId"));
 
         server.registerFunction("MongoStorage",
                                 new FuncSpec("com.codenvy.analytics.pig.udf.MongoStorage",
@@ -160,6 +162,12 @@ public class PigServer {
                                              new String[]{"$STORAGE_USER",
                                                           "$STORAGE_PASSWORD",
                                                           "value:Long"}));
+        
+        server.registerFunction("MongoLoaderCollectionWithSession",
+                                new FuncSpec("com.codenvy.analytics.pig.udf.MongoLoader",
+                                             new String[]{"$STORAGE_USER",
+                                                          "$STORAGE_PASSWORD",
+                                                          "id: chararray, session_id: chararray"}));
 
         return server;
     }

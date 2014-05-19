@@ -29,7 +29,7 @@ import javax.annotation.security.RolesAllowed;
 public class UserInvite extends AbstractLongValueResulted {
 
     public UserInvite() {
-        super(MetricType.USER_INVITE);
+        super(MetricType.USER_INVITE, USER);
     }
 
     @Override

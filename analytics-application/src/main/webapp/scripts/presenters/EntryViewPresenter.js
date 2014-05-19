@@ -17,104 +17,119 @@
  */
 // create object instance
 analytics.presenter = analytics.presenter || {};
-analytics.presenter.EntryViewPresenter = function EntryViewPresenter() {};
+analytics.presenter.EntryViewPresenter = function EntryViewPresenter() {
+};
 
 // define prototype methods and properties
 analytics.presenter.EntryViewPresenter.prototype = Presenter.prototype;
 
-analytics.presenter.EntryViewPresenter.prototype.CURRENT_PAGE_QUERY_PARAMETER = "page";
-analytics.presenter.EntryViewPresenter.prototype.ONE_PAGE_ROWS_COUNT = 20;
-
-analytics.presenter.EntryViewPresenter.prototype.load = function() {
-    var presenter = this; 
+analytics.presenter.EntryViewPresenter.prototype.load = function () {
+    var presenter = this;
     var view = presenter.view;
     var model = presenter.model;
 
     var viewParams = view.getParams();
     var modelParams = presenter.getModelParams(viewParams);
 
+    // obtain page count
     // remove redundant params
     delete modelParams.page;
     delete modelParams.sort;
-    delete modelParams.per_page; 
+    delete modelParams.per_page;
 
     model.setParams(modelParams);
-    
+
     // get page count    
-    model.pushDoneFunction(function(data) {
-        var viewParams = view.getParams();
-        var modelParams = presenter.getModelParams(viewParams);
-        
-        var pageCount = Math.ceil(data / presenter.ONE_PAGE_ROWS_COUNT) ;
-    
-        // process pagination
-        var currentPageNumber = modelParams.page;
-        if (typeof currentPageNumber == "undefined") {
-           currentPageNumber = 1;
-        } else {
-           currentPageNumber = new Number(currentPageNumber);
-        }
-        
-        modelParams.per_page = presenter.ONE_PAGE_ROWS_COUNT;
-        modelParams.page = currentPageNumber;
-
+    model.pushDoneFunction(function (data) {
         model.popDoneFunction();
-        model.pushDoneFunction(function(data) {
-            var widgetLabel = analytics.configuration.getProperty(presenter.widgetName, "widgetLabel");
-            view.printWidgetHeader(widgetLabel);            
-            
-            view.print("<div class='body'>");
-            
-            var table = data[0];  // there is only one table in data
-            
-            // make table columns linked
-            var columnCombinedLinkConf = analytics.configuration.getProperty(presenter.widgetName, "columnCombinedLinkConfiguration");
-            if (typeof columnCombinedLinkConf != "undefined") {
-                table = view.makeTableColumnCombinedLinked(table, columnCombinedLinkConf);    
-            }            
-            
-            var columnLinkPrefixList = analytics.configuration.getProperty(presenter.widgetName, "columnLinkPrefixList");
-            if (typeof columnLinkPrefixList != "undefined") {
-                for (var columnName in columnLinkPrefixList) {
-                    table = view.makeTableColumnLinked(table, columnName, columnLinkPrefixList[columnName]);    
-                }
-            }
-            
-            if (pageCount > 1) {
-                // make table header as linked for sorting
-                table = presenter.addServerSortingLinks(table, presenter.widgetName, modelParams);                
-                
-                // print table
-                view.printTable(table, false);                 
-            
-                // print bottom page navigation
-                delete modelParams.page;    // remove page parameter
 
-                var queryString = analytics.util.getCurrentPageName() + "?" + analytics.util.constructUrlParams(modelParams);
-            
-                view.printBottomPageNavigator(pageCount, currentPageNumber, queryString, presenter.CURRENT_PAGE_QUERY_PARAMETER, presenter.widgetName);
-               
-                view.loadTableHandlers(false);  // don't display client side sorting for table with pagination
-            } else {
-                // print table
-                view.printTable(table, false); 
-                
-                var clientSortParams = analytics.configuration.getProperty(presenter.widgetName, "clientSortParams");
-                view.loadTableHandlers(true, clientSortParams);  // use client side sorting commands instead of links for server side sorting
-            }
-            
-            view.print("</div>");
-            
-            // finish loading widget
-            analytics.views.loader.needLoader = false;
-        });
-        
-        model.setParams(modelParams);
-        
-        var modelViewName = analytics.configuration.getProperty(presenter.widgetName, "modelViewName");
-        model.getAllResults(modelViewName);        
-    });        
-    
+        var pageCount = Math.ceil(data / presenter.DEFAULT_ONE_PAGE_ROWS_COUNT);
+
+        presenter.obtainViewData(model, view, presenter, pageCount);
+    });
+
     var modelMetricName = analytics.configuration.getProperty(presenter.widgetName, "modelMetricName");
     model.getMetricValue(modelMetricName);
+}
+
+analytics.presenter.EntryViewPresenter.prototype.obtainViewData = function (model, view, presenter, pageCount) {
+    var viewParams = view.getParams();
+    var modelParams = presenter.getModelParams(viewParams);
+
+    // process pagination
+    var currentPageNumber = modelParams.page;
+    if (typeof currentPageNumber == "undefined") {
+        currentPageNumber = 1;
+    } else {
+        currentPageNumber = new Number(currentPageNumber);
+    }
+
+    modelParams.per_page = presenter.DEFAULT_ONE_PAGE_ROWS_COUNT;
+    modelParams.page = currentPageNumber;
+
+    model.pushDoneFunction(function (data) {
+        var widgetLabel = analytics.configuration.getProperty(presenter.widgetName, "widgetLabel");
+        view.printWidgetHeader(widgetLabel);
+
+        view.print("<div class='body'>");
+
+        var table = data[0];  // there is only one table in data
+
+        // add links to drill down page
+        table = presenter.linkTableValuesWithDrillDownPage(presenter.widgetName, table, modelParams);
+
+        // make table columns linked 
+        var columnCombinedLinkConf = analytics.configuration.getProperty(presenter.widgetName, "columnCombinedLinkConfiguration");
+        if (typeof columnCombinedLinkConf != "undefined") {
+            table = presenter.makeTableColumnCombinedLinked(table, columnCombinedLinkConf);
+        }
+
+        var columnLinkPrefixList = analytics.configuration.getProperty(presenter.widgetName, "columnLinkPrefixList");
+        if (typeof columnLinkPrefixList != "undefined") {
+            for (var columnName in columnLinkPrefixList) {
+                table = presenter.makeTableColumnLinked(table, columnName, columnLinkPrefixList[columnName]);
+            }
+        }
+
+        if (pageCount > 1) {
+            var viewParams = view.getParams();
+
+            // make table header as linked for sorting
+            var mapColumnToServerSortParam = analytics.configuration.getProperty(presenter.widgetName, "mapColumnToServerSortParam", undefined);
+            table = presenter.addServerSortingLinks(table, presenter.widgetName, viewParams, mapColumnToServerSortParam);
+
+            // print table
+            view.printTable(table, false);
+
+            // print bottom page navigation
+            var queryString = analytics.util.getCurrentPageName();
+            if (!jQuery.isEmptyObject(viewParams)) {
+                queryString += "?" + analytics.util.constructUrlParams(viewParams);
+            }
+
+            view.printBottomPageNavigator(pageCount, currentPageNumber, queryString, presenter.CURRENT_PAGE_QUERY_PARAMETER, presenter.widgetName);
+
+            view.loadTableHandlers(false);  // don't display client side sorting for table with pagination
+        } else {
+            // print table
+            view.printTable(table, false);
+
+            var clientSortParams = analytics.configuration.getProperty(presenter.widgetName, "clientSortParams");
+            view.loadTableHandlers(true, clientSortParams);  // use client side sorting commands instead of links for server side sorting
+        }
+
+        view.print("</div>");
+
+        // finish loading widget
+        analytics.views.loader.needLoader = false;
+    });
+
+    model.setParams(modelParams);
+
+    var modelViewName = analytics.configuration.getProperty(presenter.widgetName, "modelViewName");
+    model.getModelViewData(modelViewName);
+}
+
+analytics.presenter.EntryViewPresenter.prototype.isInDrillDownPageRole = function (viewParams) {
+    return typeof viewParams[this.METRIC_ORIGINAL_VALUE_VIEW_PARAMETER] != "undefined";
 }
