@@ -130,6 +130,8 @@ function Configuration() {
             defaultModelParams: {
                 "time_unit": "month"
             },
+            
+            displayLineChart: true,  // default is false
         },
 
         topMetrics: {
@@ -698,15 +700,20 @@ function Configuration() {
             },
         },
 
-        /** for Project View */
-        projects: {
-            widgetLabel: "Projects",
-            presenterType: "EntryViewPresenter",
-            modelViewName: "projects",
+       projectOverview: {
+            widgetLabel: "Project Overview",
+            presenterType: "HorizontalTablePresenter",
+            modelViewName: "project",
             modelMetricName: "projects",
+            isNeedToSaveInHistory: false,   // default value = true
+
+            isPaginable: true,
+
+            defaultServerSortParams: "-date",
+
             columnLinkPrefixList: {
-                "User": "/analytics/pages/user-view.jsp?user",
                 "Workspace": "/analytics/pages/workspace-view.jsp?ws",
+                "User": "/analytics/pages/user-view.jsp?user",
             },
 
             columnCombinedLinkConfiguration: {
@@ -720,107 +727,39 @@ function Configuration() {
                 }
             },
 
-            defaultServerSortParams: "-date",
-
-            projectOverview: {
-                widgetLabel: "Project Overview",
-                presenterType: "HorizontalTablePresenter",
-                modelViewName: "project",
-                modelMetricName: "projects",
-                isNeedToSaveInHistory: false,   // default value = true
-
-                isPaginable: true,
-
-                defaultServerSortParams: "-date",
-
-                columnLinkPrefixList: {
-                    "Workspace": "/analytics/pages/workspace-view.jsp?ws",
-                    "User": "/analytics/pages/user-view.jsp?user",
-                },
-
-                /** @see DatabaseTable::makeTableSortable() method docs */
-                clientSortParams: {
-                    "ascSortColumnNumber": 0
-                },
-
-                mapColumnToServerSortParam: {
-                    "Date": "date",
-                    "Project": "project",
-                    "Type": "project_type",
-                    "Workspace": "ws",
-                    "User": "user",
-                },
+            /** @see DatabaseTable::makeTableSortable() method docs */
+            clientSortParams: {
+                "ascSortColumnNumber": 0
             },
 
-            projectOverview: {
-                widgetLabel: "Project Overview",
-                presenterType: "HorizontalTablePresenter",
-                modelViewName: "project",
-                modelMetricName: "projects",
-                isNeedToSaveInHistory: false,   // default value = true
-
-                isPaginable: true,
-
-                defaultServerSortParams: "-date",
-
-                columnLinkPrefixList: {
-                    "Workspace": "/analytics/pages/workspace-view.jsp?ws",
-                    "User": "/analytics/pages/user-view.jsp?user",
-                },
-
-                columnCombinedLinkConfiguration: {
-                    "Project": {
-                        baseLink: "/analytics/pages/project-view.jsp",
-                        mapColumnToParameter: {
-                            "Project": "project",
-                            "Workspace": "ws",
-                            "User": "user",
-                        }
-                    }
-                },
-
-                /** @see DatabaseTable::makeTableSortable() method docs */
-                clientSortParams: {
-                    "ascSortColumnNumber": 0
-                },
-
-                mapColumnToServerSortParam: {
-                    "Created Date": "date",
-                    "Project": "project",
-                    "Type": "project_type",
-                    "Workspace": "ws",
-                    "User": "user",
-                },
+            mapColumnToServerSortParam: {
+                "Created Date": "date",
+                "Project": "project",
+                "Type": "project_type",
+                "Workspace": "ws",
+                "User": "user",
             },
+        },
 
-            projectStatistics: {
-                widgetLabel: "Project Statistics",
-                presenterType: "VerticalTablePresenter",
-                modelViewName: "project_statistics",
-            },
-
-            /** for Accounts View */
-            accounts: {
-                widgetLabel: "Accounts",
-                presenterType: "HorizontalTablePresenter",
-                modelViewName: "accounts",
-
-                columnLinkPrefixList: {
-                    "ID": "/analytics/pages/account-view.jsp?account_id",
-                    "Owner": "/analytics/pages/user-view.jsp?user",
-                },
-
-            },
-
-            projectStatistics: {
-                widgetLabel: "Project Statistics"
-            },
-
+        projectStatistics: {
+            widgetLabel: "Project Statistics",
             presenterType: "VerticalTablePresenter",
             modelViewName: "project_statistics",
         },
 
-        /** for Account View */
+        /** for Accounts View */
+        accounts: {
+            widgetLabel: "Accounts",
+            presenterType: "HorizontalTablePresenter",
+            modelViewName: "accounts",
+
+            columnLinkPrefixList: {
+                "ID": "/analytics/pages/account-view.jsp?account_id",
+                "Owner": "/analytics/pages/user-view.jsp?user",
+            },
+
+        },
+
         accountOverview: {
             widgetLabel: "Overview",
             presenterType: "VerticalTablePresenter",
@@ -998,7 +937,6 @@ function Configuration() {
             presenterType: "DrillDownPresenter",
             isPaginable: true,    // default value is "false"
 
-
             columnLinkPrefixList: {
                 "user": "/analytics/pages/user-view.jsp?user",
                 "ws": "/analytics/pages/workspace-view.jsp?ws",
@@ -1098,6 +1036,7 @@ function Configuration() {
     var globalParams = [
         "ide",
         "data_universe",
+        "ui_preferences",
     ];
 
     /** Date params which should have "yyyymmdd" in model and "yyyy-mm-dd" format in view */
@@ -1105,12 +1044,6 @@ function Configuration() {
         "from_date",
         "to_date",
     ];
-
-
-    /**
-     * Server configuration. Defined in the footer.jsp.
-     */
-    this.serverConfiguration = {};
 
     /**
      * Server configuration. Defined in the footer.jsp.
@@ -1230,7 +1163,6 @@ function Configuration() {
         "project_paas_tier3": "PROJECTS",
 
         "total_projects": "PROJECTS",
-
 
         "project_no_paas_defined": "PROJECTS",
         "project_paas_any": "PROJECTS",
@@ -1384,9 +1316,8 @@ function Configuration() {
         return serverProperty;
     }
 
-
     /**
-     *  Return registered params with all values = null
+     * Return registered params with all values = null
      */
     function getViewParamsWithNullValues() {
         var params = {};

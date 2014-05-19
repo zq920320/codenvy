@@ -23,17 +23,17 @@ analytics.view = new View();
 
 function View() {
 
-	var viewHtml;
+    var viewHtml;
 
-	var widget;
-	
-	var params;
+    var widget;
+    
+    var params;
 
     var ABORT_LOADING_MESSAGE = "<i>Loading has been aborted.</i>";
     var INTERRUPT_LOADING_MESSAGE = "<i>Loading has been interrupted.</i>";
 
     function printTable(table, isDisplaySpecificFirstCell, tableId) {
-        print("<div>");
+        print("<div class='table-container'>");
         
         if (typeof tableId == "undefined") {
             print('<table cellspacing="0" class="database-table" align="center">');
@@ -41,287 +41,218 @@ function View() {
             print('<table cellspacing="0" class="database-table" align="center" id="' + tableId + '">');
         }
         
-	    print('<thead aria-hidden="false">');
-	    print('<tr>');
-	
-	    // print first cell of header
-	    if (table.columns.length > 0) {
-	        var value = table.columns[0] || "&nbsp;";   // add space to be able to display icons in the empty cell of first column of header 
-	        print('<th class="header">');
-	        print("<div>" + value + "</div>");
-	        print('</th>');
-	    }
-	
-	    // print other cells of header    
-	    for (var i = 1; i < table.columns.length; i++) {
-	        print('<th class="header">');
+        print('<thead aria-hidden="false">');
+        print('<tr>');
+    
+        // print first cell of header
+        if (table.columns.length > 0) {
+            var value = table.columns[0] || "&nbsp;";   // add space to be able to display icons in the empty cell of first column of header 
+            print('<th class="header">');
+            print("<div>" + value + "</div>");
+            print('</th>');
+        }
+    
+        // print other cells of header    
+        for (var i = 1; i < table.columns.length; i++) {
+            print('<th class="header">');
             print("<div>" + table.columns[i] + "</div>");
-	        print('</th>');
-	    }
-	    print('</tr>');
-	    print('</thead>');
-	
-	    // print table body
-	    print('<tbody>');
-	    for (var i = 0; i < table.rows.length; i++) {
-	        // print odd row
-	        print('<tr>');
-	
-	        var firstCellClass = "cell";
-	        if (typeof isDisplaySpecificFirstCell != "undefined" && isDisplaySpecificFirstCell) {
-	            firstCellClass += " first-cell text-cursor";
-	        }
-	
-	        // print first cell
-	        print('<td class="' + firstCellClass + '">');
-	        print(table.rows[i][0]);
-	        print('</td>');
-	
-	        // print another cells
-	        for (var j = 1; j < table.columns.length; j++) {
-	            print('<td class="cell">');
-	            print(table.rows[i][j]);
-	            print('</td>');
-	        }
-	        print('</tr>');
-	    }
-	
-	    print('<tfoot aria-hidden="true" style="display: none;"></tfoot>');
-	    print('</tbody>');
-	    print('</table>');
+            print('</th>');
+        }
+        print('</tr>');
+        print('</thead>');
+    
+        // print table body
+        print('<tbody>');
+        for (var i = 0; i < table.rows.length; i++) {
+            // print odd row
+            print('<tr>');
+    
+            var firstCellClass = "cell";
+            if (typeof isDisplaySpecificFirstCell != "undefined" && isDisplaySpecificFirstCell) {
+                firstCellClass += " first-cell text-cursor";
+            }
+    
+            // print first cell
+            print('<td class="' + firstCellClass + '">');
+            print(table.rows[i][0]);
+            print('</td>');
+    
+            // print another cells
+            for (var j = 1; j < table.columns.length; j++) {
+                print('<td class="cell">');
+                print(table.rows[i][j]);
+                print('</td>');
+            }
+            print('</tr>');
+        }
+    
+        print('<tfoot aria-hidden="true" style="display: none;"></tfoot>');
+        print('</tbody>');
+        print('</table>');
         print("</div>");
-	};
-	
-	function printCsvButton(csvButtonLink) {
-	    var csvButtonLabel = "CSV";
-	    
+    };
+    
+    function printCsvButton(csvButtonLink) {
+        var csvButtonLabel = "CSV";
+        
         print("<div class='small-links-block'>");
-	    print("  <a href='" + csvButtonLink + "' target='_blank'>");
-	    print(csvButtonLabel);
-	    print("  </a>");
+        print("  <a href='" + csvButtonLink + "' target='_blank'>");
+        print(csvButtonLabel);
+        print("  </a>");
         print("</div>");
-	}
-	
-	function printWidgetHeader(widgetLabel, csvButtonLink) {
+    }
+    
+    function printWidgetHeader(widgetLabel, csvButtonLink) {
         if (typeof csvButtonLink != "undefined") {        
             printCsvButton(csvButtonLink);
         }
-	    
-	    print("<div class='header'>");
+        
+        print("<div class='header'>");
         print(widgetLabel);
         print("</div>");
-	}
-	
-	function printTableVerticalRow(table) {	    
-	    print('<table cellspacing="0" class="database-table-vertical-row" align="center">');
-	    print('<tbody>');
-	
-	    // print other cells name + cell
-	    for (var i = 0; i < table.columns.length; i++) {
-	        print("<tr>");
-	        print("<th class='cell-name'>");
-	        print(table.columns[i] + ":");
-	        print("</th>");
-	
-	        if (typeof table.rows != "undefined"
-	                && typeof table.rows[0] != "undefined"
-	                && typeof table.rows[0][i] != "undefined") {
-	            print("<td class='cell'>");
-	            print(table.rows[0][i]);
-	            print("</td>");
-	            print("</tr>");
-	        }
-	    }
-	
-	    print('</tbody>');
-	    print('</table>');
-	}	
-
-	/**
-	 * Make table cells of column with certain name as linked with link = "columnLinkPrefix + {columnValue}"
-	 */
-    function makeTableColumnLinked(table, columnName, columnLinkPrefix) {
-        var columnIndex = analytics.util.getColumnIndexByColumnName(table.columns, columnName);
-        if (columnIndex != null) {
-            for (var i = 0; i < table.rows.length; i++) {
-                var columnValue = table.rows[i][columnIndex];
-
-                if (analytics.configuration.isSystemMessage(columnValue)) {
-                   table.rows[i][columnIndex] = getSystemMessageLabel(columnValue);
-                } else {
-                   var href = columnLinkPrefix + "=" + encodeURIComponent(columnValue);
-                   table.rows[i][columnIndex] = "<a href='" + href + "'>" + columnValue + "</a>";
-                }
+    }
+    
+    function printTableVerticalRow(table) {     
+        print('<table cellspacing="0" class="database-table-vertical-row" align="center">');
+        print('<tbody>');
+    
+        // print other cells name + cell
+        for (var i = 0; i < table.columns.length; i++) {
+            print("<tr>");
+            print("<th class='cell-name'>");
+            print(table.columns[i] + ":");
+            print("</th>");
+    
+            if (typeof table.rows != "undefined"
+                    && typeof table.rows[0] != "undefined"
+                    && typeof table.rows[0][i] != "undefined") {
+                print("<td class='cell'>");
+                print(table.rows[0][i]);
+                print("</td>");
+                print("</tr>");
             }
         }
-
-        return table;
-    }
-
+    
+        print('</tbody>');
+        print('</table>');
+    }   
+        
     /**
-     * Make table cells of target column as linked with combined link "project-view.jsp?ws=...&project=.."
-     * @param columnCombinedLinkConf = {
-     *     targetColumn1: {
-     *         baseLink: <baseLink>,
-     *         mapColumnToParameter: {
-     *             columnName1: <parameterName1>,
-     *             columnName2: <parameterName2>,
-     *             ...
-     *         }
-     *     },
-     *
-     *     targetColumn2: { ... },
-     *
-     *     ...
-     * }
+     * Load handlers of table events.
+     * Default value of displaySorting is true.
      */
-    function makeTableColumnCombinedLinked(table, columnCombinedLinkConf) {
-        for (var targetColumnName in columnCombinedLinkConf) {
-            var targetColumnIndex = analytics.util.getColumnIndexByColumnName(table.columns, targetColumnName);
-
-            var baseLink = columnCombinedLinkConf[targetColumnName].baseLink;
-            var mapColumnToParameter = columnCombinedLinkConf[targetColumnName].mapColumnToParameter;
-
-            // calculate source column indexes
-            var sourceColumnIndexes = [];
-            for (var sourceColumnName in mapColumnToParameter) {
-                var sourceColumnIndex = analytics.util.getColumnIndexByColumnName(table.columns, sourceColumnName);
-                sourceColumnIndexes.push(sourceColumnIndex);
-            }
-
-            // make cells of target column as linked with combined link
-            for (var i = 0; i < table.rows.length; i++) {
-                var targetColumnValue = table.rows[i][targetColumnIndex];
-
-                if (analytics.configuration.isSystemMessage(targetColumnValue)) {
-                   table.rows[i][targetColumnIndex] = getSystemMessageLabel(targetColumnValue);
-
-                } else {
-                   // calculation combined link like "project-view.jsp?ws=...&project=..."
-                   var urlParams = getUrlParams(table.rows[i], sourceColumnIndexes, mapColumnToParameter);
-                   if (urlParams != null) {
-                       var href = baseLink + "?" + urlParams;
-                       table.rows[i][targetColumnIndex] = "<a href='" + href + "'>" + targetColumnValue + "</a>";
-                   }
-                }
-            }
+    function loadTableHandlers(displaySorting, sortingParams, tableId) {
+        var sortingParams = sortingParams || {};
+        if (typeof displaySorting == "undefined") {
+            displaySorting = true;
         }
-
-        return table;
-    }
-
-    /**
-     * @returns query parameters string like "ws=...&project=..",
-     * or <b>null</b> if at least one parameter is empty.
-     */
-    function getUrlParams(row, sourceColumnIndexes, mapColumnToParameter) {
-        var params = {};
-        var sourceColumnNames = Object.keys(mapColumnToParameter);
-
-        for (var j = 0; j < sourceColumnIndexes.length; j++) {
-            var sourceColumnName = sourceColumnNames[j];
-            var parameterName = mapColumnToParameter[sourceColumnName];
-
-            var sourceColumnIndex = sourceColumnIndexes[j];
-            var parameterValue = row[sourceColumnIndex];
-
-            // returns null if at least one parameter is empty
-            if (parameterValue == "") {
-                return null;
-            }
-
-            params[parameterName] = parameterValue;
-        }
-
-        return analytics.util.constructUrlParams(params);
-    }
-
-	/**
-	 * Load handlers of table events.
-	 * Default value of displaySorting is true.
-	 */
-	function loadTableHandlers(displaySorting, sortingParams, tableId) {
-	    var sortingParams = sortingParams || {};
-	    if (typeof displaySorting == "undefined") {
-	        displaySorting = true;
-	    }
-	    
-	    print("<script>");
-	    print("  jQuery(function() { ");
+        
+        print("<script>");
+        print("  jQuery(function() { ");
         print("       analytics.views.databaseTable.setupHorizontalTableRowHandlers("
                 + displaySorting + ", '"
                 + JSON.stringify(sortingParams) + "', '"
                 + tableId + "');");
-	    print("       analytics.views.databaseTable.setupVerticalTableRowHandlers();");
-	    print("  });");
-	    print("</script>");
-	}
-	
-	/**
-	 * Prints page navigator, meets the requirements: 1 ... 4 5 6 /7/ 9 10 11 ... 100.
-	 * CurrentPageNumber is 1-based. 
-	 */
-	function printBottomPageNavigator(pageCount, currentPageNumber, queryString, pageQueryParameter, widgetName) {
-	    if (typeof pageCount == "undefined" || pageCount <= 0) {
-	        return;
-	    }
-	
-	    print('<link href="/analytics/css/page-navigator.css" rel="stylesheet" type="text/css" />');
-	    print("<div class='bottom-page-navigator'>");
-	
-	    for (var i = 1; i < pageCount + 1; i++) {
-	        var href = getPageNavigationUrl(queryString, i, pageQueryParameter);
-	
-	        var onClickHandler = "analytics.main.reloadWidgetByUrl(\"" + href + "\",\"" + widgetName + "\"); return false;";
-	        
-	        
-	        if (i == currentPageNumber) {
-	            print("<a class='page-link current' href='" + href + "' onclick='" + onClickHandler + "'>" + i + "</a>");
-	
-	        } else if (i == 1) {
-	            print("<a class='page-link' href='" + href + "' onclick='" + onClickHandler + "'>" + i + "</a>");
-	            if (currentPageNumber > 4            		
-	            		&& pageCount > 5) {   // don't display "..." if pageCount < (2 * 3)
-	                print(' ... ')
-	            }
-	
-	        } else if (i == pageCount) {
-	            if (currentPageNumber < pageCount - 4 
-	            		&& pageCount > 5) {   // don't display "..." if pageCount < (2 * 3)
-	                print(' ... ')
-	            }
-	            print("<a class='page-link' href='" + href + "' onclick='" + onClickHandler + "'>" + i + "</a>");
-	
-	        } else if (i + 3 >= currentPageNumber && currentPageNumber >= i - 3) {
-	            print("<a class='page-link' href='" + href + "' onclick='" + onClickHandler + "'>" + i + "</a>");
-	        }
-	    }
-	    print("</div>");
-	}
-	
-	function getWidgetId() {
-	    return widget.attr("id");
-	}
-	
-	function getPageNavigationUrl(baseQueryString, pageNumber, pageQueryParameter) {
-	    var paramDelimeter = "&";
-	    if (baseQueryString.indexOf("?") < 0) {
-	        paramDelimeter = "?";
-	    }
-	
-	    var url = baseQueryString + paramDelimeter + pageQueryParameter + "=" + pageNumber;
-	
-	    return url;
-	}
-	
-	/**
-	 * Uses jQuery element widget linked with target container
-	 */
-	function print(html) {
-		viewHtml += html;
-	}
-	
-	function setWidget(newWidget) {
+        print("       analytics.views.databaseTable.setupVerticalTableRowHandlers();");
+        print("  });");
+        print("</script>");
+    }
+    
+    /**
+     * Prints page navigator, meets the requirements: 1 ... 4 5 6 /7/ 9 10 11 ... 100.
+     * CurrentPageNumber is 1-based. 
+     */
+    function printBottomPageNavigator(pageCount, currentPageNumber, queryString, pageQueryParameter, widgetName) {
+        if (typeof pageCount == "undefined" || pageCount <= 0) {
+            return;
+        }
+    
+        print('<link href="/analytics/css/page-navigator.css" rel="stylesheet" type="text/css" />');
+        print("<div class='bottom-page-navigator'>");
+    
+        for (var i = 1; i < pageCount + 1; i++) {
+            var href = getPageNavigationUrl(queryString, i, pageQueryParameter);
+    
+            var onClickHandler = "analytics.main.reloadWidgetByUrl(\"" + href + "\",\"" + widgetName + "\"); return false;";
+            
+            
+            if (i == currentPageNumber) {
+                print("<a class='page-link current' href='" + href + "' onclick='" + onClickHandler + "'>" + i + "</a>");
+    
+            } else if (i == 1) {
+                print("<a class='page-link' href='" + href + "' onclick='" + onClickHandler + "'>" + i + "</a>");
+                if (currentPageNumber > 4                   
+                        && pageCount > 5) {   // don't display "..." if pageCount < (2 * 3)
+                    print(' ... ')
+                }
+    
+            } else if (i == pageCount) {
+                if (currentPageNumber < pageCount - 4 
+                        && pageCount > 5) {   // don't display "..." if pageCount < (2 * 3)
+                    print(' ... ')
+                }
+                print("<a class='page-link' href='" + href + "' onclick='" + onClickHandler + "'>" + i + "</a>");
+    
+            } else if (i + 3 >= currentPageNumber && currentPageNumber >= i - 3) {
+                print("<a class='page-link' href='" + href + "' onclick='" + onClickHandler + "'>" + i + "</a>");
+            }
+        }
+        print("</div>");
+    }
+    
+    function getWidgetId() {
+        return widget.attr("id");
+    }
+    
+    function getPageNavigationUrl(baseQueryString, pageNumber, pageQueryParameter) {
+        var paramDelimeter = "&";
+        if (baseQueryString.indexOf("?") < 0) {
+            paramDelimeter = "?";
+        }
+    
+        var url = baseQueryString + paramDelimeter + pageQueryParameter + "=" + pageNumber;
+    
+        return url;
+    }
+
+    /**
+     * Print table and line chart in the separate tabs
+     */
+    function printTableAndChart(table, initialTable) {
+        var chartLabel = initialTable.columns[0];
+        var columnLabels = initialTable.columns.slice(1); // don't include label of first column
+        printLineChart(initialTable.rows, columnLabels, chartLabel);
+
+        printTable(table, true);
+    }
+    
+    function printLineChart(rows, columnLabels, chartLabel) {
+        var chartId = "line-chart-" + analytics.util.getRandomNumber();
+        print("<div class='chart-container'>");
+        print("<div class='chart-label'>" + chartLabel + "</div>");
+        print("<div class='line-chart' id='" + chartId + "'></div>");
+        print("</div>");
+        
+        // display chart after the loading container
+        print("<script>");
+        print("  jQuery(function() { ");
+        print("       analytics.views.lineChart.display('"
+                + JSON.stringify(rows) + "', '"
+                + JSON.stringify(columnLabels) + "', '"
+                + chartId + "');");
+        print("  });");
+        print("</script>");
+    }
+
+    
+    /**
+     * Uses jQuery element widget linked with target container
+     */
+    function print(html) {
+        viewHtml += html;
+    }
+    
+    function setWidget(newWidget) {
         widget = newWidget;
     };
     
@@ -334,14 +265,14 @@ function View() {
     };    
     
     function clear() {
-	    widget.empty();
-	    viewHtml = "";
-	};
-	
-	function show() {
+        widget.empty();
+        viewHtml = "";
+    };
+    
+    function show() {
         widget.html(viewHtml);
     };
-	
+    
     function showAbortMessage() {
         viewHtml = ABORT_LOADING_MESSAGE;
         show();
@@ -366,35 +297,93 @@ function View() {
         return "<div class='system'>(" + message + ")</div>";
     }
     
+    /**
+     * Update UI according tu user preferences
+     */
+    function updateUI() {
+        if (! $("#ui-preferences").doesExist()) {
+            return;
+        }
+        
+        var uiPreferences = analytics.util.getGlobalParamFromStorage('ui_preferences');
+        
+        switch (uiPreferences) {
+            case "table":
+                displayAllTables();
+                hideAllCharts()
+                break;
+            
+            case "chart":
+                hideAllTables();
+                displayAllCharts();
+                break;
+                
+            case "table&chart":
+                displayAllTables();
+                displayAllCharts();
+                break;
+        }
+    }
+    
+    function displayAllTables() {
+        var allTables = $(".table-container");        
+        for (var i = 0; i < allTables.length; i++) {
+            jQuery(allTables[i]).show();            
+        }
+    }
 
+    function hideAllTables() {
+        var allTables = $(".table-container");        
+        for (var i = 0; i < allTables.length; i++) {
+            jQuery(allTables[i]).hide();            
+        }
+    }
+    
+    function displayAllCharts() {
+        var allCharts = $(".chart-container");        
+        for (var i = 0; i < allCharts.length; i++) {
+            jQuery(allCharts[i]).show();            
+        }
+    }
+    
+    function hideAllCharts() {
+        var allCharts = $(".chart-container");        
+        for (var i = 0; i < allCharts.length; i++) {
+            jQuery(allCharts[i]).hide();            
+        }
+    }
     
     
     /** ****************** API ********** */
-	return {
-	    setWidget: setWidget,
-	    setParams: setParams,
-	    getParams: getParams,
-	    clear: clear,
-	    show: show,
-    	print: print,
+    return {
+        setWidget: setWidget,
+        setParams: setParams,
+        getParams: getParams,
+        clear: clear,
+        show: show,
+        print: print,
         getSystemMessageLabel: getSystemMessageLabel,
-    	
-    	// table
-    	printTable: printTable,
-    	loadTableHandlers: loadTableHandlers,
-    	printTableVerticalRow: printTableVerticalRow,
-    	makeTableColumnLinked: makeTableColumnLinked,
-    	makeTableColumnCombinedLinked: makeTableColumnCombinedLinked,
+        
+        // table
+        printTable: printTable,
+        loadTableHandlers: loadTableHandlers,
+        printTableVerticalRow: printTableVerticalRow,
 
-    	// widget header
-    	printWidgetHeader: printWidgetHeader,
-    	
-    	// page navigation
-    	printBottomPageNavigator: printBottomPageNavigator,
-    	
-    	// server ajax error messages
-    	showAbortMessage: showAbortMessage,
-    	showInterruptMessage: showInterruptMessage,
-    	showErrorMessage: showErrorMessage,
-	}
+        // widget header
+        printWidgetHeader: printWidgetHeader,
+        
+        // page navigation
+        printBottomPageNavigator: printBottomPageNavigator,
+
+        // line chart
+        printTableAndChart: printTableAndChart,
+        printLineChart: printLineChart,
+        
+        // server ajax error messages
+        showAbortMessage: showAbortMessage,
+        showInterruptMessage: showInterruptMessage,
+        showErrorMessage: showErrorMessage,
+
+        updateUI: updateUI,
+    }
 }

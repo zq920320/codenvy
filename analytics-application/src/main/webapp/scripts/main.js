@@ -77,6 +77,19 @@ function Main() {
             reloadWidgets($("#data-universe").attr("targetWidgets"));
         });
         
+        // UI preferences selectors group
+        $("#ui-preferences button.command-btn").click(function () {
+            $("#ui-preferences button").removeClass('btn-primary');
+            $(this).addClass('btn-primary');
+
+            var uiPreferences = $("#ui-preferences .btn-primary");
+            if (typeof uiPreferences.attr("value") != "undefined") {
+                analytics.util.updateGlobalParamInStorage("ui_preferences", uiPreferences.attr("value"));
+                analytics.view.updateUI();
+            }
+
+        });
+        
         // Show session events selector
         $("#show-session-events").click(function (event) {
             reloadWidgets($("#show-session-events").attr("targetWidgets"));
@@ -118,7 +131,7 @@ function Main() {
                 params.ide = ideVersionButton.attr("value");
             }
             // params["ide"] = null if ideVersionButton.attr("value") is undefined
-            updateGlobalParamInStorage("ide", params["ide"]);
+            analytics.util.updateGlobalParamInStorage("ide", params["ide"]);
         }
         
         // process data universe selector
@@ -128,7 +141,7 @@ function Main() {
                 params.data_universe = dataUniverseButton.attr("value");
             }
             // params["data_universe"] = null if dataUniverseButton.attr("value") is undefined
-            updateGlobalParamInStorage("data_universe", params["data_universe"]);
+            analytics.util.updateGlobalParamInStorage("data_universe", params["data_universe"]);
         }
 
         // process show session events selector
@@ -200,7 +213,7 @@ function Main() {
         // load all widgets at first time of loading the page
         if (typeof params == "undefined") {
             params = analytics.util.extractUrlParams(window.location.href);
-            updateGlobalParamsWithValuesFromStorage(params);
+            analytics.util.updateGlobalParamsWithValuesFromStorage(params);
             updateFilterState(params);
         }
 
@@ -236,6 +249,8 @@ function Main() {
                 view.show();
                 analytics.views.loader.hide();
                 callback();
+
+                analytics.view.updateUI();
             }
         });
 
@@ -291,6 +306,12 @@ function Main() {
             setPrimaryButtonOnValue(dataUniverseButtons, params["data_universe"]);
         }
         
+        // update ui preferences selection buttons
+        var uiPreferencesButtons = jQuery("#ui-preferences button");
+        if (uiPreferencesButtons.doesExist()) {
+            setPrimaryButtonOnValue(uiPreferencesButtons, params["ui_preferences"]);
+        }
+        
         // update show session events selector
         var showSessionEventsCheckbox = jQuery("#show-session-events");
         if (showSessionEventsCheckbox.doesExist()) {
@@ -307,42 +328,6 @@ function Main() {
         var showFactoriesButtons = jQuery("#show-factories button");
         if (showFactoriesButtons.doesExist()) {
             setPrimaryButtonOnValue(showFactoriesButtons, params["encoded_factory"]);
-        }
-    }
-
-    /**
-     * Update undefined global params with values from HTML5 Web Storage
-     */
-    function updateGlobalParamsWithValuesFromStorage(params) {
-        if (!analytics.util.isBrowserSupportWebStorage()) {
-            return;
-        }
-
-        var globalParamList = analytics.configuration.getGlobalParamList();
-        for (var i = 0; i < globalParamList.length; i++) {
-            var globalParamName = globalParamList[i];
-            var storedParam = localStorage.getItem(globalParamName);  // get param value from HTML5 Web Storage
-            if (typeof params[globalParamName] == "undefined"
-                && storedParam != null) {
-                params[globalParamName] = storedParam;
-            }
-        }
-    }
-
-    /**
-     * Save global param value in the HTML5 Web Storage
-     */
-    function updateGlobalParamInStorage(parameter, value) {
-        if (!analytics.util.isBrowserSupportWebStorage()) {
-            return;
-        }
-
-        if (analytics.configuration.isParamGlobal(parameter)) {
-            if (value != null) {
-                localStorage.setItem(parameter, value);    // save param value in the HTML5 Web Storage
-            } else {
-                localStorage.removeItem(parameter);    // remove param from HTML5 Web Storage
-            }
         }
     }
 

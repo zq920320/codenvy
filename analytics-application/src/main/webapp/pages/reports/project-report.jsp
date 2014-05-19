@@ -19,6 +19,11 @@
 <head>
     <title>Project Report</title>
     <%@ include file="/inclusions/header.jsp"%>
+    
+    <!-- load C3.js line chat plugin (http://c3js.org/) -->
+    <link rel="stylesheet" type="text/css" href="/analytics/third-party/c3/c3.css" />
+    <script type="text/javascript" src="/analytics/third-party/c3/d3.v3.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="/analytics/third-party/c3/c3.v0.1.41.min.js"></script>
 </head>
 <body>
 
@@ -58,6 +63,12 @@
                     </div>
                 </div>
 
+                <div id="ui-preferences" class="btn-group right">
+                    <button class="btn command-btn" default value="table">Table</button>
+                    <button class="btn command-btn" value="chart">Chart</button>
+                    <button class="btn command-btn" value="table&chart">Table & Chart</button>
+                </div>    
+
                 <div id="timely-dd" class="btn-group right" targetWidgets="_all">
                     <button class="btn command-btn" value="Day">Day</button>
                     <button class="btn command-btn" value="Week">Week</button>
@@ -82,6 +93,10 @@
 <jsp:include page="/inclusions/footer.jsp">
     <jsp:param name="javaScriptToLoad" value="/analytics/scripts/presenters/ReportPresenter.js"/>
 </jsp:include>
+
+<!-- load files to display line-chart -->
+<link rel="stylesheet" type="text/css" href="/analytics/css/line-chart.css" />
+<script type="text/javascript" src="/analytics/scripts/views/line-chart.js"></script>
 
 </body>
 </html>

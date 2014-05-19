@@ -20,6 +20,8 @@ analytics.util = new Util();
 
 function Util() {
         
+    var TIME_PATTERN = /^(\d+):(\d+):(\d+)$/;
+    
     /**
      * Construct url parameters String based on parameters from params object
      * @param params object like {time_unit: Month, Email="test@gmail.com"}
@@ -161,11 +163,15 @@ function Util() {
     }
     
     /**
-     * Shallow copy object
+     * Copy object
      * @see http://api.jquery.com/jQuery.extend/
      */
-    function clone(object) {
-        return jQuery.extend({}, object);
+    function clone(object, deep, target) {
+        if (deep) {
+            return jQuery.extend(true, target, object);
+        } else {
+            return jQuery.extend({}, object);
+        }
     }
     
     /**
@@ -333,6 +339,96 @@ function Util() {
         return object;
     }
     
+    function getRandomNumber() {
+        return (Math.random() + '').replace('.', '');
+    }
+    
+    function normalizeNumericValues(initialTable) {
+        var table = analytics.util.clone(initialTable, true, []);
+        for (var rowIndex in table) {
+            var row = table[rowIndex];
+            for (var cellIndex in row) {
+                var cell = row[cellIndex];
+                cell = cell.replace(/,/g, "");  // remove delimeters ','
+                
+                if (isTime(cell)) {
+                    cell = getSecondsFromTime(cell);
+                }
+                
+                row[cellIndex] = cell;
+            }
+        }
+        
+        return table;
+    }
+
+    /**
+     * @return true only if value has format "<digits>:<digits>:<digits>"  
+     */
+    function isTime(value) {
+        return TIME_PATTERN.test(value)     
+    }
+    
+    /**
+     * @return number of seconds from value in format "<hours>:<minutes>:<seconds>"
+     */
+    function getSecondsFromTime(time) {
+        var matches = time.match(TIME_PATTERN);
+        
+        if (matches.length != 4) {
+            return null;
+        }
+        
+        var hours = parseInt(matches[1]);
+        var minutes = parseInt(matches[2]);
+        var seconds = parseInt(matches[3]);
+        
+        return hours * 60 * 60 + minutes * 60 + seconds;
+    }
+    
+    /**
+     * Update undefined global params with values from HTML5 Web Storage
+     */
+    function updateGlobalParamsWithValuesFromStorage(params) {
+        if (!analytics.util.isBrowserSupportWebStorage()) {
+            return;
+        }
+
+        var globalParamList = analytics.configuration.getGlobalParamList();
+        for (var i = 0; i < globalParamList.length; i++) {
+            var globalParamName = globalParamList[i];
+            var storedParam = getGlobalParamFromStorage(globalParamName);
+            if (typeof params[globalParamName] == "undefined"
+                && storedParam != null) {
+                params[globalParamName] = storedParam;
+            }
+        }
+    }
+
+    /**
+     * Save global param value in the HTML5 Web Storage
+     */
+    function updateGlobalParamInStorage(parameter, value) {
+        if (!analytics.util.isBrowserSupportWebStorage()) {
+            return;
+        }
+
+        if (analytics.configuration.isParamGlobal(parameter)) {
+            if (value != null) {
+                localStorage.setItem(parameter, value);    // save param value in the HTML5 Web Storage
+            } else {
+                localStorage.removeItem(parameter);    // remove param from HTML5 Web Storage
+            }
+        }
+    }
+    
+    /**
+     * Get param value from HTML5 Web Storage
+     */
+    function getGlobalParamFromStorage(globalParamName) {
+        return localStorage.getItem(globalParamName);  
+    }
+    
     
     /** ****************** library API ********** */
     return {
@@ -351,6 +447,11 @@ function Util() {
         removeParams: removeParams,
         removeElementsFromArray: removeElementsFromArray,
         
+        // global parameters processing
+        updateGlobalParamsWithValuesFromStorage: updateGlobalParamsWithValuesFromStorage,
+        updateGlobalParamInStorage: updateGlobalParamInStorage,
+        getGlobalParamFromStorage: getGlobalParamFromStorage,
+        
         // operations with objects
         getObjectWithFirstPopertyOnly: getObjectWithFirstPopertyOnly,
         
@@ -366,6 +467,10 @@ function Util() {
         processUserLogOut: processUserLogOut,
         
         getShortenFactoryUrl: getShortenFactoryUrl,
+        
+        getRandomNumber: getRandomNumber,
+        
+        normalizeNumericValues: normalizeNumericValues,
         
         // date coding
         encodeDate: encodeDate,

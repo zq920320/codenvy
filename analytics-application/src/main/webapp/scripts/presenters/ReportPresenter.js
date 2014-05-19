@@ -50,14 +50,20 @@ analytics.presenter.ReportPresenter.prototype.load = function () {
             view.printWidgetHeader(widgetLabel, csvButtonLink);
 
             view.print("<div class='body'>");
-
+            
+            var displayLineChart = analytics.configuration.getProperty(presenter.widgetName, "displayLineChart", false);
+            
             for (var i in data) {
-                var table = data[i];
-
+                var table = analytics.util.clone(data[i], true, []);
+                
                 // add links to drill down page
-                table = presenter.linkTableValuesWithDrillDownPage(table, i, expandableMetricPerSection, modelParams);
-
-                view.printTable(table, true);
+                table = presenter.linkTableValuesWithDrillDownPage(table, i, expandableMetricPerSection, modelParams);            
+                
+                if (displayLineChart) {
+                    view.printTableAndChart(table, data[i]);
+                } else {
+                    view.printTable(table, true);
+                }
             }
 
             var clientSortParams = analytics.configuration.getProperty(presenter.widgetName, "clientSortParams");

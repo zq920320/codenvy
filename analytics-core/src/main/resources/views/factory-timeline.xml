@@ -85,10 +85,6 @@
                 <parameter key="section-name" value="IDE Events"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="factory_sessions"/>
-                <parameter key="description" value="Factory Sessions"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="factory_sessions_with_build_percent"/>
                 <parameter key="numeric-format" value="%.0f%%"/>
                 <parameter key="description" value="% Built"/>
