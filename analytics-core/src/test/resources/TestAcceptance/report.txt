@@ -183,7 +183,9 @@ Event doesn't exist: build-queue-terminated
 Event doesn't exist: run-queue-terminated
 Event doesn't exist: workspace-created
 Event doesn't exist for anonymous users: tenant-created
+Event doesn't exist: workspace-started
 Event doesn't exist for temporary workspaces: tenant-started
+Event doesn't exist: workspace-stopped
 Event doesn't exist: workspace-destroyed
 Event doesn't exist for anonymous users: project-created
 Event 'project-created' with parameter 'TYPE' and value 'maven_multi_module' doesn't exist
