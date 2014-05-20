@@ -145,7 +145,7 @@ public class TestTimeSpentInAction extends BaseTest {
     private class TestedAbstractTimeSpentInAction extends AbstractTimeSpentInAction {
 
         public TestedAbstractTimeSpentInAction() {
-            super(COLLECTION);
+            super(COLLECTION, SESSION_ID);
         }
 
         @Override

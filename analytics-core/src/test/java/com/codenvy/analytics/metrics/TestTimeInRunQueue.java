@@ -101,7 +101,7 @@ public class TestTimeInRunQueue extends BaseTest {
     private class TestedAbstractTimeSpentInAction extends AbstractTimeSpentInAction {
 
         public TestedAbstractTimeSpentInAction() {
-            super(COLLECTION);
+            super(COLLECTION, ReadBasedMetric.PROJECT_ID);
         }
 
         @Override

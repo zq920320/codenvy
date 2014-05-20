@@ -31,7 +31,7 @@ import javax.annotation.security.RolesAllowed;
 public class UsersLoggedInWithGoogle extends AbstractLoggedInType {
 
     public UsersLoggedInWithGoogle() {
-        super(MetricType.USERS_LOGGED_IN_WITH_GOOGLE, new String[]{UsersLoggedInTypes.GOOGLE});
+        super(MetricType.USERS_LOGGED_IN_WITH_GOOGLE, new String[]{GOOGLE});
     }
 
     @Override

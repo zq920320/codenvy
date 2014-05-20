@@ -119,7 +119,6 @@ public abstract class AbstractIdeUsage extends ReadBasedMetric implements ReadBa
         return new DBObject[]{new BasicDBObject("$group", group)};
     }
 
-    // TODO
     @Override
     public DBObject[] getSpecificExpandedDBOperations(Context clauses) {
         DBObject group = new BasicDBObject();

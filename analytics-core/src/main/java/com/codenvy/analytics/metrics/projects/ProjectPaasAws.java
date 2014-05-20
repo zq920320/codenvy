@@ -27,7 +27,7 @@ import javax.annotation.security.RolesAllowed;
 public class ProjectPaasAws extends AbstractProjectPaas {
 
     public ProjectPaasAws() {
-        super(MetricType.PROJECT_PAAS_AWS, new String[]{ProjectPaases.AWS, ProjectPaases.AWS_BEANSTALK});
+        super(MetricType.PROJECT_PAAS_AWS, new String[]{AWS, AWS_BEANSTALK});
     }
 
     @Override

@@ -18,13 +18,9 @@
 package com.codenvy.analytics.pig.scripts;
 
 import com.codenvy.analytics.BaseTest;
-import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.datamodel.MapValueData;
-import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.users.AbstractLoggedInType;
-import com.codenvy.analytics.metrics.users.UsersLoggedInTypes;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
@@ -34,19 +30,14 @@ import org.testng.annotations.Test;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static org.testng.Assert.assertEquals;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestNumberOfUsersByTypes_UsersLoggedInTypes extends BaseTest {
 
-    private TestUsersLoggedInTypes metric;
-
     @BeforeClass
     public void init() throws Exception {
-        metric = new TestUsersLoggedInTypes();
-
         List<Event> events = new ArrayList<>();
         events.add(Event.Builder.createUserSSOLoggedInEvent("user1@gmail.com", "google")
                                 .withDate("2013-01-02")
@@ -81,11 +72,6 @@ public class TestNumberOfUsersByTypes_UsersLoggedInTypes extends BaseTest {
         builder.put(Parameters.FROM_DATE, "20130102");
         builder.put(Parameters.TO_DATE, "20130102");
 
-        Map<String, ValueData> values = ((MapValueData)metric.getValue(builder.build())).getAll();
-        assertEquals(values.size(), 2);
-        assertEquals(values.get("google"), new LongValueData(2));
-        assertEquals(values.get("jaas"), new LongValueData(1));
-
         TestAbstractLoggedInType metric = new TestAbstractLoggedInType(new String[]{"google", "jaas"});
         assertEquals(metric.getValue(builder.build()).getAsString(), "3");
     }
@@ -97,10 +83,6 @@ public class TestNumberOfUsersByTypes_UsersLoggedInTypes extends BaseTest {
         builder.put(Parameters.TO_DATE, "20130102");
         builder.put(Parameters.USER, "user1@gmail.com");
 
-        Map<String, ValueData> values = ((MapValueData)metric.getValue(builder.build())).getAll();
-        assertEquals(values.size(), 1);
-        assertEquals(values.get("google"), new LongValueData(1));
-
         TestAbstractLoggedInType metric = new TestAbstractLoggedInType(new String[]{"google", "jaas"});
         assertEquals(metric.getValue(builder.build()).getAsString(), "1");
     }
@@ -110,9 +92,6 @@ public class TestNumberOfUsersByTypes_UsersLoggedInTypes extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20130101");
         builder.put(Parameters.TO_DATE, "20130101");
-
-        Map<String, ValueData> values = ((MapValueData)metric.getValue(builder.build())).getAll();
-        assertEquals(values.size(), 0);
 
         TestAbstractLoggedInType metric = new TestAbstractLoggedInType(new String[]{"google", "jaas"});
         assertEquals(metric.getValue(builder.build()).getAsString(), "0");
@@ -125,19 +104,8 @@ public class TestNumberOfUsersByTypes_UsersLoggedInTypes extends BaseTest {
         builder.put(Parameters.TO_DATE, "20130102");
         builder.put(Parameters.USER, "user1@gmail.com OR user1@yahoo.com");
 
-        Map<String, ValueData> values = ((MapValueData)metric.getValue(builder.build())).getAll();
-        assertEquals(values.size(), 1);
-        assertEquals(values.get("google"), new LongValueData(1));
-
         TestAbstractLoggedInType metric = new TestAbstractLoggedInType(new String[]{"google", "jaas"});
         assertEquals(metric.getValue(builder.build()).getAsString(), "1");
-    }
-
-    private class TestUsersLoggedInTypes extends UsersLoggedInTypes {
-        @Override
-        public String getStorageCollectionName() {
-            return "testnumberofusersbytypes_usersloggedintypes";
-        }
     }
 
     private class TestAbstractLoggedInType extends AbstractLoggedInType {

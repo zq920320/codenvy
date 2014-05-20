@@ -140,5 +140,10 @@ public class TestIdeUsageEvents extends BaseTest {
         public String getDescription() {
             return null;
         }
+
+        @Override
+        public String getExpandedField() {
+            return null;
+        }
     }
 }

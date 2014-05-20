@@ -28,7 +28,7 @@ import javax.annotation.security.RolesAllowed;
 public class ProjectTypeRuby extends AbstractProjectType {
 
     public ProjectTypeRuby() {
-        super(MetricType.PROJECT_TYPE_RUBY, new String[]{ProjectTypes.RAILS, ProjectTypes.RUBY});
+        super(MetricType.PROJECT_TYPE_RUBY, new String[]{RAILS, RUBY});
     }
 
     @Override

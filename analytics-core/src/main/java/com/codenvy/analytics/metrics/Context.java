@@ -149,10 +149,9 @@ public class Context {
         return params.toString();
     }
 
-    // TODO
-    public Expandable getExpandedMetric() {
+    public Metric getExpandedMetric() {
         if (!exists(Parameters.EXPANDED_METRIC_NAME)) {
-            return null;
+            throw new IllegalArgumentException("There is no parameter " + Parameters.EXPANDED_METRIC_NAME + " in the context");
         }
 
         String value = getAsString(Parameters.EXPANDED_METRIC_NAME);
@@ -160,10 +159,10 @@ public class Context {
 
         Metric expandedMetric = MetricFactory.getMetric(expandedMetricType);
         if (!(expandedMetric instanceof Expandable)) {
-            return null;
+            throw new IllegalArgumentException("Metric " + expandedMetric.getName() + " is not expandable");
         }
 
-        return (Expandable)expandedMetric;
+        return expandedMetric;
     }
 
     /**

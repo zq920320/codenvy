@@ -61,4 +61,9 @@ public class NonFactoriesProductUsageSessions extends CalculatedMetric implement
         ValueData factory = ((Expandable)basedMetric[1]).getExpandedValue(context);
         return total.subtract(factory);
     }
+
+    @Override
+    public String getExpandedField() {
+        return ((Expandable)basedMetric[0]).getExpandedField();
+    }
 }

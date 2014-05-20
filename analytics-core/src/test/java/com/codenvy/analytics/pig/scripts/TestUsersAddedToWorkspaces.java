@@ -19,14 +19,11 @@ package com.codenvy.analytics.pig.scripts;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.datamodel.MapValueData;
-import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.users.AbstractUsersAddedToWorkspaces;
-import com.codenvy.analytics.metrics.users.UsersAddedToWorkspaces;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
@@ -36,7 +33,6 @@ import org.testng.annotations.Test;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static org.testng.Assert.assertEquals;
 
@@ -79,13 +75,7 @@ public class TestUsersAddedToWorkspaces extends BaseTest {
         builder.put(Parameters.FROM_DATE, "20130102");
         builder.put(Parameters.TO_DATE, "20130102");
 
-        Metric metric = new TestedUsersAddedToWorkspaces();
-        Map<String, ValueData> values = ((MapValueData)metric.getValue(builder.build())).getAll();
-        assertEquals(values.size(), 2);
-        assertEquals(values.get("website"), LongValueData.valueOf(2));
-        assertEquals(values.get("invite"), LongValueData.valueOf(3));
-
-        metric = new TestedWebsiteAbstractUsersAddedToWorkspaces();
+        Metric metric = new TestedWebsiteAbstractUsersAddedToWorkspaces();
         assertEquals(metric.getValue(builder.build()), LongValueData.valueOf(2));
 
         metric = new TestedInviteAbstractUsersAddedToWorkspaces();
@@ -99,12 +89,7 @@ public class TestUsersAddedToWorkspaces extends BaseTest {
         builder.put(Parameters.TO_DATE, "20130102");
         builder.put(MetricFilter.USER, "user1@gmail.com");
 
-        Metric metric = new TestedUsersAddedToWorkspaces();
-        Map<String, ValueData> values = ((MapValueData)metric.getValue(builder.build())).getAll();
-        assertEquals(values.size(), 1);
-        assertEquals(values.get("website"), LongValueData.valueOf(1));
-
-        metric = new TestedWebsiteAbstractUsersAddedToWorkspaces();
+        Metric metric = new TestedWebsiteAbstractUsersAddedToWorkspaces();
         assertEquals(metric.getValue(builder.build()), LongValueData.valueOf(1));
     }
 
@@ -114,11 +99,7 @@ public class TestUsersAddedToWorkspaces extends BaseTest {
         builder.put(Parameters.FROM_DATE, "20130101");
         builder.put(Parameters.TO_DATE, "20130101");
 
-        Metric metric = new TestedUsersAddedToWorkspaces();
-        Map<String, ValueData> values = ((MapValueData)metric.getValue(builder.build())).getAll();
-        assertEquals(values.size(), 0);
-
-        metric = new TestedWebsiteAbstractUsersAddedToWorkspaces();
+        Metric metric = new TestedWebsiteAbstractUsersAddedToWorkspaces();
         assertEquals(metric.getValue(builder.build()), LongValueData.valueOf(0));
     }
 
@@ -130,12 +111,7 @@ public class TestUsersAddedToWorkspaces extends BaseTest {
         builder.put(Parameters.USER, "user1@gmail.com OR user1@yahoo.com");
         builder.put(Parameters.WS, "ws1 OR ws2");
 
-        Metric metric = new TestedUsersAddedToWorkspaces();
-        Map<String, ValueData> values = ((MapValueData)metric.getValue(builder.build())).getAll();
-        assertEquals(values.size(), 1);
-        assertEquals(values.get("website"), LongValueData.valueOf(1));
-
-        metric = new TestedWebsiteAbstractUsersAddedToWorkspaces();
+        Metric metric = new TestedWebsiteAbstractUsersAddedToWorkspaces();
         assertEquals(metric.getValue(builder.build()), LongValueData.valueOf(1));
     }
 
@@ -146,12 +122,7 @@ public class TestUsersAddedToWorkspaces extends BaseTest {
         builder.put(Parameters.TO_DATE, "20130102");
         builder.put(Parameters.USER, "~ user1@gmail.com OR user2@gmail.com");
 
-        Metric metric = new TestedUsersAddedToWorkspaces();
-        Map<String, ValueData> values = ((MapValueData)metric.getValue(builder.build())).getAll();
-        assertEquals(values.size(), 1);
-        assertEquals(values.get("invite"), LongValueData.valueOf(3));
-
-        metric = new TestedInviteAbstractUsersAddedToWorkspaces();
+        Metric metric = new TestedInviteAbstractUsersAddedToWorkspaces();
         assertEquals(metric.getValue(builder.build()), LongValueData.valueOf(3));
     }
 
@@ -191,10 +162,4 @@ public class TestUsersAddedToWorkspaces extends BaseTest {
         }
     }
 
-    private class TestedUsersAddedToWorkspaces extends UsersAddedToWorkspaces {
-        @Override
-        public String getStorageCollectionName() {
-            return COLLECTION;
-        }
-    }
 }

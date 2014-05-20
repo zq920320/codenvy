@@ -57,4 +57,9 @@ public class AnonymousFactorySessions extends CalculatedMetric implements Expand
         ValueData authenticated = ((Expandable)basedMetric[1]).getExpandedValue(context);
         return total.subtract(authenticated);
     }
+
+    @Override
+    public String getExpandedField() {
+        return ((Expandable)basedMetric[0]).getExpandedField();
+    }
 }

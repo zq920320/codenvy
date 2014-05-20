@@ -31,7 +31,7 @@ import javax.annotation.security.RolesAllowed;
 public class UsersLoggedInWithGitHub extends AbstractLoggedInType {
 
     public UsersLoggedInWithGitHub() {
-        super(MetricType.USERS_LOGGED_IN_WITH_GITHUB, new String[]{UsersLoggedInTypes.GITHUB});
+        super(MetricType.USERS_LOGGED_IN_WITH_GITHUB, new String[]{GITHUB});
     }
 
     @Override

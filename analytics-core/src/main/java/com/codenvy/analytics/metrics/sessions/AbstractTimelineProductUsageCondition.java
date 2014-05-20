@@ -83,7 +83,6 @@ public abstract class AbstractTimelineProductUsageCondition extends CalculatedMe
     /**
      * Return context with fixed
      */
-    // TODO
     public Context initContextBasedOnTimeInterval(Context context) throws ParseException {
         if (context.exists(Parameters.TIME_INTERVAL)) {
             int timeInterval = (int)context.getAsLong(Parameters.TIME_INTERVAL);
@@ -104,6 +103,11 @@ public abstract class AbstractTimelineProductUsageCondition extends CalculatedMe
     @Override
     public ValueData getExpandedValue(Context context) throws IOException {
         return ((Expandable)basedMetric[0]).getExpandedValue(context);
+    }
+
+    @Override
+    public String getExpandedField() {
+        return ((Expandable)basedMetric[0]).getExpandedField();
     }
 
     private enum DaysInterval {

@@ -32,6 +32,7 @@ import com.mongodb.DBObject;
  */
 public abstract class AbstractUsersAddedToWorkspaces extends ReadBasedMetric implements ReadBasedExpandable {
 
+    public static final String INVITE = "invite";
     private final String[] types;
 
     protected AbstractUsersAddedToWorkspaces(String metricName, String[] types) {

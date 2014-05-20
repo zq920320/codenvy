@@ -28,7 +28,7 @@ import javax.annotation.security.RolesAllowed;
 public class ProjectTypeJar extends AbstractProjectType {
 
     public ProjectTypeJar() {
-        super(MetricType.PROJECT_TYPE_JAR, new String[]{ProjectTypes.JAR});
+        super(MetricType.PROJECT_TYPE_JAR, new String[]{JAR});
     }
 
 

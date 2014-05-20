@@ -76,4 +76,9 @@ public class ProjectPaasAny extends CalculatedMetric implements Expandable {
 
         return result;
     }
+
+    @Override
+    public String getExpandedField() {
+        return ((Expandable)basedMetric[0]).getExpandedField();
+    }
 }

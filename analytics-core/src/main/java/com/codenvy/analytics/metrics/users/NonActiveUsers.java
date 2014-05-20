@@ -55,7 +55,12 @@ public class NonActiveUsers extends CalculatedMetric implements Expandable {
     public ValueData getExpandedValue(Context context) throws IOException {
         // get all documents from start date of logging to date defined in context
         ValueData total = ((Expandable)basedMetric[0]).getExpandedValue(context.cloneAndRemove(Parameters.FROM_DATE));
-        ValueData active = ((Expandable)basedMetric[0]).getExpandedValue(context);
+        ValueData active = ((Expandable)basedMetric[1]).getExpandedValue(context);
         return total.subtract(active);
+    }
+
+    @Override
+    public String getExpandedField() {
+        return ((Expandable)basedMetric[0]).getExpandedField();
     }
 }

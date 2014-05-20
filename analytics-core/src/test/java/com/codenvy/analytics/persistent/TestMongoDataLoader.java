@@ -86,7 +86,7 @@ public class TestMongoDataLoader extends BaseTest {
     private class TestLongValueResulted extends AbstractLongValueResulted {
 
         private TestLongValueResulted() {
-            super("test");
+            super("test", null);
         }
 
         @Override

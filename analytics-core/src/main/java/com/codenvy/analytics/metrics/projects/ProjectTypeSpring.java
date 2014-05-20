@@ -28,7 +28,7 @@ import javax.annotation.security.RolesAllowed;
 public class ProjectTypeSpring extends AbstractProjectType {
 
     public ProjectTypeSpring() {
-        super(MetricType.PROJECT_TYPE_SPRING, new String[]{ProjectTypes.SPRING});
+        super(MetricType.PROJECT_TYPE_SPRING, new String[]{SPRING});
     }
 
     @Override

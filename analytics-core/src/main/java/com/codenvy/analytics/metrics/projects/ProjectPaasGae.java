@@ -27,7 +27,7 @@ import javax.annotation.security.RolesAllowed;
 public class ProjectPaasGae extends AbstractProjectPaas {
 
     public ProjectPaasGae() {
-        super(MetricType.PROJECT_PAAS_GAE, new String[]{ProjectPaases.GAE});
+        super(MetricType.PROJECT_PAAS_GAE, new String[]{GAE});
     }
 
     @Override

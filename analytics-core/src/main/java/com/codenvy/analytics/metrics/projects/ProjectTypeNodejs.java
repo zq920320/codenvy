@@ -28,7 +28,7 @@ import javax.annotation.security.RolesAllowed;
 public class ProjectTypeNodejs extends AbstractProjectType {
 
     public ProjectTypeNodejs() {
-        super(MetricType.PROJECT_TYPE_NODEJS, new String[]{ProjectTypes.NODE_JS});
+        super(MetricType.PROJECT_TYPE_NODEJS, new String[]{NODE_JS});
     }
 
     @Override

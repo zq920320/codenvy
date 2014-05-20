@@ -60,5 +60,10 @@ public class CodeCompletions extends CalculatedMetric implements Expandable {
         ValueData value2 = ((Expandable)basedMetric[1]).getExpandedValue(context);
         return value1.add(value2);
     }
+
+    @Override
+    public String getExpandedField() {
+        return ((Expandable)basedMetric[0]).getExpandedField();
+    }
 }
 

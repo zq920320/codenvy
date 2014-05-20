@@ -31,9 +31,7 @@ import javax.annotation.security.RolesAllowed;
 public class UsersLoggedInWithForm extends AbstractLoggedInType {
 
     public UsersLoggedInWithForm() {
-        super(MetricType.USERS_LOGGED_IN_WITH_FORM, new String[]{UsersLoggedInTypes.JAAS,
-                                                                 UsersLoggedInTypes.ORG,
-                                                                 UsersLoggedInTypes.EMAIL});
+        super(MetricType.USERS_LOGGED_IN_WITH_FORM, new String[]{JAAS, ORG, EMAIL});
     }
 
     @Override

@@ -28,7 +28,7 @@ import javax.annotation.security.RolesAllowed;
 public class ProjectTypePython extends AbstractProjectType {
 
     public ProjectTypePython() {
-        super(MetricType.PROJECT_TYPE_PYTHON, new String[]{ProjectTypes.PYTHON});
+        super(MetricType.PROJECT_TYPE_PYTHON, new String[]{PYTHON});
     }
 
     @Override

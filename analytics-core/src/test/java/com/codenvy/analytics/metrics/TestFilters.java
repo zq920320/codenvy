@@ -104,7 +104,7 @@ public class TestFilters extends BaseTest {
     // --------------------> Tested Metrics
     private class TestedMetric extends AbstractLongValueResulted {
         private TestedMetric() {
-            super(COLLECTION);
+            super(COLLECTION, null);
         }
 
         @Override

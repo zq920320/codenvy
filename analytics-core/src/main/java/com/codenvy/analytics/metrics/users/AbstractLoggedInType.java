@@ -30,6 +30,12 @@ import static com.codenvy.analytics.Utils.getOrOperation;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public abstract class AbstractLoggedInType extends ReadBasedMetric implements ReadBasedExpandable {
+    public static final String GITHUB = "github";
+    public static final  String JAAS            = "jaas";
+    public static final  String GOOGLE          = "google";
+    public static final  String ORG             = "org";
+    public static final  String SYSLDAP         = "sysldap";
+    public static final  String EMAIL           = "email";
     private static final String EXPANDING_FIELD = USER;
 
     private final String[] types;

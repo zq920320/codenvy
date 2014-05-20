@@ -16,7 +16,6 @@ com.codenvy.analytics.metrics.projects.Projects
 com.codenvy.analytics.metrics.projects.CreatedProjects
 com.codenvy.analytics.metrics.projects.DestroyedProjects
 com.codenvy.analytics.metrics.projects.TotalProjects
-com.codenvy.analytics.metrics.projects.ProjectPaases
 com.codenvy.analytics.metrics.projects.ProjectPaasAppfog
 com.codenvy.analytics.metrics.projects.ProjectPaasAws
 com.codenvy.analytics.metrics.projects.ProjectPaasCloudbees
@@ -28,7 +27,6 @@ com.codenvy.analytics.metrics.projects.ProjectPaasOpenshift
 com.codenvy.analytics.metrics.projects.ProjectPaasTier3
 com.codenvy.analytics.metrics.projects.ProjectPaasAny
 com.codenvy.analytics.metrics.projects.ProjectNoPassDefined
-com.codenvy.analytics.metrics.projects.ProjectTypes
 com.codenvy.analytics.metrics.projects.ProjectTypeAndroid
 com.codenvy.analytics.metrics.projects.ProjectTypeDjango
 com.codenvy.analytics.metrics.projects.ProjectTypeJar
@@ -74,7 +72,6 @@ com.codenvy.analytics.metrics.workspaces.WorkspacesStatisticsPrecomputed
 com.codenvy.analytics.metrics.workspaces.UsageTimeByWorkspacesList
 com.codenvy.analytics.metrics.workspaces.UsageTimeByWorkspaces
 
-com.codenvy.analytics.metrics.users.UsersAddedToWorkspaces
 com.codenvy.analytics.metrics.users.UsersAddedToWorkspacesUsingInvitation
 com.codenvy.analytics.metrics.users.UserInvite
 com.codenvy.analytics.metrics.users.Users
@@ -110,7 +107,6 @@ com.codenvy.analytics.metrics.users.UsersWhoLaunchedShell
 com.codenvy.analytics.metrics.users.UsageTimeByUsersList
 com.codenvy.analytics.metrics.users.UsageTimeByUsers
 
-com.codenvy.analytics.metrics.users.UsersLoggedInTypes
 com.codenvy.analytics.metrics.users.UsersLoggedInWithGitHub
 com.codenvy.analytics.metrics.users.UsersLoggedInWithGoogle
 com.codenvy.analytics.metrics.users.UsersLoggedInWithForm

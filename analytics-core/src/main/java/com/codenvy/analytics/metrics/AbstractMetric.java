@@ -45,6 +45,7 @@ public abstract class AbstractMetric implements Metric {
     public static final String FACTORY               = "factory";
     public static final String PROJECT               = "project";
     public static final String PROJECT_TYPE          = "project_type";
+    public static final String PROJECT_PAAS          = "project_paas";
     public static final String PROJECT_ID            = "project_id";
     public static final String REFERRER              = "referrer";
     public static final String AUTHENTICATED_SESSION = "authenticated_factory_session";

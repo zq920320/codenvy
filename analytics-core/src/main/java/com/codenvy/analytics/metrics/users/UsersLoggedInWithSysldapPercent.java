@@ -60,4 +60,9 @@ public class UsersLoggedInWithSysldapPercent extends CalculatedMetric implements
     public ValueData getExpandedValue(Context context) throws IOException {
         return ((Expandable)basedMetric[1]).getExpandedValue(context);
     }
+
+    @Override
+    public String getExpandedField() {
+        return ((Expandable)basedMetric[1]).getExpandedField();
+    }
 }

@@ -18,8 +18,8 @@
 package com.codenvy.analytics.pig.udf;
 
 import com.codenvy.analytics.Injector;
-import com.codenvy.analytics.metrics.projects.ProjectPaases;
-import com.codenvy.analytics.metrics.projects.ProjectTypes;
+import com.codenvy.analytics.metrics.projects.AbstractProjectPaas;
+import com.codenvy.analytics.metrics.projects.AbstractProjectType;
 import com.codenvy.analytics.pig.scripts.EventsHolder;
 import com.codenvy.analytics.pig.scripts.Parameter;
 
@@ -92,7 +92,7 @@ public class EventValidation extends EvalFunc<String> {
 
                 case PAAS:
                 case TYPE:
-                    String[] predefinedValues = name.equals(PAAS) ? ProjectPaases.PAASES : ProjectTypes.TYPES;
+                    String[] predefinedValues = name.equals(PAAS) ? AbstractProjectPaas.PAASES : AbstractProjectType.TYPES;
                     String allowedValues = param.getAllowedValues();
 
                     if (isEmptyValue(value)) {

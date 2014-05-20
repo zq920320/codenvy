@@ -28,8 +28,8 @@ import javax.annotation.security.RolesAllowed;
 public class ProjectTypeMMP extends AbstractProjectType {
 
     public ProjectTypeMMP() {
-        super(MetricType.PROJECT_TYPE_MMP, new String[]{ProjectTypes.MMP1,
-                                                        ProjectTypes.MMP2});
+        super(MetricType.PROJECT_TYPE_MMP, new String[]{MMP1,
+                                                        MMP2});
     }
 
     @Override

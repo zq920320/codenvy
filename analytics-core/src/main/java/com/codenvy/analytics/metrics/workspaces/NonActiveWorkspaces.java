@@ -58,4 +58,9 @@ public class NonActiveWorkspaces extends CalculatedMetric implements Expandable 
         ValueData active = ((Expandable)basedMetric[1]).getExpandedValue(context);
         return total.subtract(active);
     }
+
+    @Override
+    public String getExpandedField() {
+        return ((Expandable)basedMetric[0]).getExpandedField();
+    }
 }

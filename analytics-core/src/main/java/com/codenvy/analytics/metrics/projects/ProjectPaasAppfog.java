@@ -27,7 +27,7 @@ import javax.annotation.security.RolesAllowed;
 public class ProjectPaasAppfog extends AbstractProjectPaas {
 
     public ProjectPaasAppfog() {
-        super(MetricType.PROJECT_PAAS_APPFOG, new String[]{ProjectPaases.APPFOG});
+        super(MetricType.PROJECT_PAAS_APPFOG, new String[]{APPFOG});
     }
 
     @Override

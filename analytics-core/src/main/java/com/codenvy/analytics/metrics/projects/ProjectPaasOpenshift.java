@@ -27,7 +27,7 @@ import javax.annotation.security.RolesAllowed;
 public class ProjectPaasOpenshift extends AbstractProjectPaas {
 
     public ProjectPaasOpenshift() {
-        super(MetricType.PROJECT_PAAS_OPENSHIFT, new String[]{ProjectPaases.OPENSHIFT});
+        super(MetricType.PROJECT_PAAS_OPENSHIFT, new String[]{OPENSHIFT});
     }
 
     @Override

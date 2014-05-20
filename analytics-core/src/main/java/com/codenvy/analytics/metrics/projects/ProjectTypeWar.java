@@ -28,8 +28,8 @@ import javax.annotation.security.RolesAllowed;
 public class ProjectTypeWar extends AbstractProjectType {
 
     public ProjectTypeWar() {
-        super(MetricType.PROJECT_TYPE_WAR, new String[]{ProjectTypes.WAR,
-                                                        ProjectTypes.JAVA});
+        super(MetricType.PROJECT_TYPE_WAR, new String[]{WAR,
+                                                        JAVA});
     }
 
     @Override

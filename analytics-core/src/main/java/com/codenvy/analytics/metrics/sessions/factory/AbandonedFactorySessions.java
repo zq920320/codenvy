@@ -64,4 +64,9 @@ public class AbandonedFactorySessions extends CalculatedMetric implements Expand
         ValueData converted = ((Expandable)basedMetric[1]).getExpandedValue(context);
         return total.subtract(converted);
     }
+
+    @Override
+    public String getExpandedField() {
+        return ((Expandable)basedMetric[0]).getExpandedField();
+    }
 }

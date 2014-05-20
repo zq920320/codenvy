@@ -57,4 +57,9 @@ public class ProductUsageTimeBelow1Min extends CalculatedMetric implements Expan
     public ValueData getExpandedValue(Context context) throws IOException {
         return ((Expandable)basedMetric[0]).getExpandedValue(context);
     }
+
+    @Override
+    public String getExpandedField() {
+        return ((Expandable)basedMetric[0]).getExpandedField();
+    }
 }

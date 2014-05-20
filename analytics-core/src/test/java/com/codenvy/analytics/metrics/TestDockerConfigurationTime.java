@@ -97,7 +97,7 @@ public class TestDockerConfigurationTime extends BaseTest {
     private class TestedAbstractTimeSpentInAction extends AbstractTimeSpentInAction {
 
         public TestedAbstractTimeSpentInAction() {
-            super(COLLECTION);
+            super(COLLECTION, PROJECT_ID);
         }
 
         @Override

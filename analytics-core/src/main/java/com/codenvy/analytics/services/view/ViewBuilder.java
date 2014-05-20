@@ -224,7 +224,7 @@ public class ViewBuilder extends Feature {
         private ComputeViewDataAction(ViewConfiguration viewConfiguration,
                                       Context context) throws ParseException {
             this.viewConf = viewConfiguration;
-            this.context = initializeFirstInterval(context);
+            this.context = initializeTimeInterval(context);
         }
 
         @Override
@@ -286,10 +286,12 @@ public class ViewBuilder extends Feature {
         }
     }
 
-    public Context initializeFirstInterval(Context context) throws ParseException {
-        Expandable expandableMetric = context.getExpandedMetric();
-        if (expandableMetric instanceof AbstractTimelineProductUsageCondition) {
-            return ((AbstractTimelineProductUsageCondition)expandableMetric).initContextBasedOnTimeInterval(context);
+    public Context initializeTimeInterval(Context context) throws ParseException {
+        if (context.exists(Parameters.EXPANDED_METRIC_NAME)) {
+            Metric expandableMetric = context.getExpandedMetric();
+            if (expandableMetric instanceof AbstractTimelineProductUsageCondition) {
+                return ((AbstractTimelineProductUsageCondition)expandableMetric).initContextBasedOnTimeInterval(context);
+            }
         }
 
         Context.Builder builder = new Context.Builder(context);
@@ -305,27 +307,6 @@ public class ViewBuilder extends Feature {
             }
         } else {
             return builder.build();
-        }
-    }
-
-    public Context initializeTimeInterval(Context context) throws ParseException {
-        Expandable expandableMetric = context.getExpandedMetric();
-        if (expandableMetric instanceof AbstractTimelineProductUsageCondition) {
-            return ((AbstractTimelineProductUsageCondition)expandableMetric).initContextBasedOnTimeInterval(context);
-        }
-
-        Context.Builder builder = new Context.Builder(context);
-
-        if (context.exists(Parameters.TIME_UNIT)) {
-            Parameters.TimeUnit timeUnit = builder.getTimeUnit();
-            if (context.exists(Parameters.TIME_INTERVAL)) {
-                int timeShift = (int)-context.getAsLong(Parameters.TIME_INTERVAL);
-                return Utils.initDateInterval(builder.getAsDate(Parameters.TO_DATE), timeUnit, timeShift, builder);
-            } else {
-                return Utils.initDateInterval(builder.getAsDate(Parameters.TO_DATE), timeUnit, builder);
-            }
-        } else {
-            return context;
         }
     }
 

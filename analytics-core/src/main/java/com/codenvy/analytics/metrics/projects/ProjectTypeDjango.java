@@ -28,7 +28,7 @@ import javax.annotation.security.RolesAllowed;
 public class ProjectTypeDjango extends AbstractProjectType {
 
     public ProjectTypeDjango() {
-        super(MetricType.PROJECT_TYPE_DJANGO, new String[]{ProjectTypes.DJANGO});
+        super(MetricType.PROJECT_TYPE_DJANGO, new String[]{DJANGO});
     }
 
     @Override

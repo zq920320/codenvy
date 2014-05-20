@@ -19,13 +19,10 @@ package com.codenvy.analytics.pig.scripts;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.datamodel.MapValueData;
-import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.projects.AbstractProjectType;
-import com.codenvy.analytics.metrics.projects.ProjectTypes;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
@@ -35,7 +32,6 @@ import org.testng.annotations.Test;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static org.testng.Assert.assertEquals;
 
@@ -43,9 +39,9 @@ import static org.testng.Assert.assertEquals;
 public class TestNumberOfEventsByTypes_ProjectTypes extends BaseTest {
 
     private static final String PROJECTS_LIST_COLLECTION = "projects_list";
-    
+
     private static final String PROJECT_TYPES_COLLECTION = "project_types";
-    
+
     @BeforeClass
     public void init() throws Exception {
         List<Event> events = new ArrayList<>();
@@ -75,7 +71,7 @@ public class TestNumberOfEventsByTypes_ProjectTypes extends BaseTest {
         builder.put(Parameters.PARAM, "TYPE");
         pigServer.execute(ScriptType.EVENTS_BY_TYPE, builder.build());
 
-        
+
         events = new ArrayList<>();
         events.add(Event.Builder.createProjectCreatedEvent("user1@gmail.com", "ws1", "", "", "jar")
                                 .withDate("2013-01-02")
@@ -89,7 +85,7 @@ public class TestNumberOfEventsByTypes_ProjectTypes extends BaseTest {
 
         builder.put(Parameters.FROM_DATE, "20130102");
         builder.put(Parameters.TO_DATE, "20130102");
-        builder.put(Parameters.STORAGE_TABLE, PROJECTS_LIST_COLLECTION);        
+        builder.put(Parameters.STORAGE_TABLE, PROJECTS_LIST_COLLECTION);
         builder.put(Parameters.LOG, log.getAbsolutePath());
         pigServer.execute(ScriptType.PROJECTS, builder.build());
         
@@ -184,27 +180,6 @@ public class TestNumberOfEventsByTypes_ProjectTypes extends BaseTest {
 
         Metric metric = new TestAbstractProjectType(new String[]{"jar", "war"});
         assertEquals(metric.getValue(builder.build()), new LongValueData(4L));
-    }
-
-    @Test
-    public void testAllTypes() throws Exception {       
-        Context.Builder builder = new Context.Builder();
-        builder.put(Parameters.FROM_DATE, "20130101");
-        builder.put(Parameters.TO_DATE, "20130102");
-
-        Metric metric = new TestProjectTypes();
-        Map<String, ValueData> items = ((MapValueData)metric.getValue(builder.build())).getAll();
-
-        assertEquals(items.size(), 2);
-        assertEquals(items.get("jar"), new LongValueData(2));
-        assertEquals(items.get("war"), new LongValueData(2));
-    }
-
-    private class TestProjectTypes extends ProjectTypes {
-        @Override
-        public String getStorageCollectionName() {
-            return PROJECT_TYPES_COLLECTION;
-        }
     }
 
     private class TestAbstractProjectType extends AbstractProjectType {

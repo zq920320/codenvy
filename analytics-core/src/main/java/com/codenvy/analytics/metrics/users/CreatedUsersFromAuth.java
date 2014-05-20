@@ -60,4 +60,9 @@ public class CreatedUsersFromAuth extends CalculatedMetric implements Expandable
         ValueData createdFromFactory = ((Expandable)basedMetric[1]).getExpandedValue(context);
         return created.subtract(createdFromFactory);
     }
+
+    @Override
+    public String getExpandedField() {
+        return ((Expandable)basedMetric[0]).getExpandedField();
+    }
 }

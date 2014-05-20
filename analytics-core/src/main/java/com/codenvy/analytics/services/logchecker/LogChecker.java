@@ -23,8 +23,8 @@ import com.codenvy.analytics.MailService;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
-import com.codenvy.analytics.metrics.projects.ProjectPaases;
-import com.codenvy.analytics.metrics.projects.ProjectTypes;
+import com.codenvy.analytics.metrics.projects.AbstractProjectPaas;
+import com.codenvy.analytics.metrics.projects.AbstractProjectType;
 import com.codenvy.analytics.persistent.CollectionsManagement;
 import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.EventConfiguration;
@@ -125,10 +125,10 @@ public class LogChecker extends Feature {
                     doCheckEventWithParameters(context, event, name, param.getAllowedValues().split(","), out);
 
                 } else if (name.equals(EventValidation.PAAS)) {
-                    doCheckEventWithParameters(context, event, name, ProjectPaases.PAASES, out);
+                    doCheckEventWithParameters(context, event, name, AbstractProjectPaas.PAASES, out);
 
                 } else if (name.equals(EventValidation.TYPE)) {
-                    doCheckEventWithParameters(context, event, name, ProjectTypes.TYPES, out);
+                    doCheckEventWithParameters(context, event, name, AbstractProjectType.TYPES, out);
 
                 } else if (name.equalsIgnoreCase(AbstractMetric.WS)) {
                     if (!isEventExist(context, event, AbstractMetric.WS, Metric.PERSISTENT_WS)) {

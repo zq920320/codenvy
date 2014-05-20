@@ -19,15 +19,12 @@ package com.codenvy.analytics.metrics.sessions;
 
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.Context;
-import com.codenvy.analytics.metrics.MetricFilter;
-import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.analytics.metrics.ReadBasedMetric;
+import com.codenvy.analytics.metrics.*;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public abstract class AbstractProductUsage extends ReadBasedMetric {
+public abstract class AbstractProductUsage extends ReadBasedMetric implements ReadBasedExpandable {
 
     final private long    min;
     final private long    max;
@@ -89,5 +86,19 @@ public abstract class AbstractProductUsage extends ReadBasedMetric {
 
         builder.put(MetricFilter.TIME, range);
         return builder.build();
+    }
+
+    @Override
+    public String getExpandedField() {
+        return SESSION_ID;
+    }
+
+    @Override
+    public DBObject[] getSpecificExpandedDBOperations(Context clauses) {
+        DBObject group = new BasicDBObject(ID, "$" + SESSION_ID);
+        DBObject project = new BasicDBObject(SESSION_ID, "$" + ID);
+
+        return new DBObject[]{new BasicDBObject("$group", group),
+                              new BasicDBObject("$project", project)};
     }
 }

@@ -150,11 +150,7 @@ public class TestTopMetrics extends BaseTest {
         checkTopSessionDataItem((MapValueData)all.get(2), "300000", "id1", "factoryUrl0", "referrer1", "1", "1");
     }
 
-<<<<<<< HEAD
-    //    @Test
-=======
     @Test
->>>>>>> DASHB-368
     public void testAbstractTopFactories() throws Exception {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20130210");

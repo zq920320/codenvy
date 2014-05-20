@@ -22,19 +22,19 @@ l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 
 a1 = filterByEvent(l, 'project-created');
 a2 = extractParam(a1, 'PROJECT', project);
-a3 = extractParam(a2, 'TYPE', type);
-a4 = extractParam(a3, 'PAAS', paas);
-a5 = removeEmptyField(a4, 'paas');
-a = FOREACH a5 GENERATE dt, ws, user, project, type, paas, ide;
+a3 = extractParam(a2, 'TYPE', project_type);
+a4 = extractParam(a3, 'PAAS', project_paas);
+a5 = removeEmptyField(a4, 'project_paas');
+a = FOREACH a5 GENERATE dt, ws, user, project, project_type, project_paas, ide;
 
 result = FOREACH a GENERATE UUID(),
                             TOTUPLE('date', ToMilliSeconds(dt)),
                             TOTUPLE('ws', ws),
                             TOTUPLE('user', user),
                             TOTUPLE('project', project),
-                            TOTUPLE('project_type', LOWER(type)),
+                            TOTUPLE('project_type', LOWER(project_type)),
+                            TOTUPLE('project_paas', LOWER(project_paas)),
                             TOTUPLE('project_id', CreateProjectId(user, ws, project)),
-                            TOTUPLE(LOWER(paas), 1L),
                             TOTUPLE('ide', ide);
 
 STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;

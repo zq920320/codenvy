@@ -26,7 +26,6 @@ import org.apache.pig.impl.logicalLayer.schema.Schema;
 /**
  * @author Dmytro Nochevnov
  */
-// TODO
 public class CreateProjectId extends EvalFunc<String> {
     private static final String DELIMETER = "/";
 

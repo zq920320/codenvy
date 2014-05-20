@@ -28,7 +28,7 @@ import javax.annotation.security.RolesAllowed;
 public class ProjectTypeJsp extends AbstractProjectType {
 
     public ProjectTypeJsp() {
-        super(MetricType.PROJECT_TYPE_JSP, new String[]{ProjectTypes.JSP});
+        super(MetricType.PROJECT_TYPE_JSP, new String[]{JSP});
     }
 
     @Override

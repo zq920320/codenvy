@@ -28,6 +28,19 @@ import com.mongodb.DBObject;
 
 /** @author <a href="mailto:areshetnyak@codenvy.com">Alexander Reshetnyak</a> */
 public abstract class AbstractProjectPaas extends ReadBasedMetric implements ReadBasedExpandable {
+    public static final String GAE              = "gae";
+    public static final String AWS              = "aws";
+    public static final String AWS_BEANSTALK    = "aws:beanstalk";
+    public static final String CLOUDFOUNDRY     = "cloudfoundry";
+    public static final String TIER3_WEB_FABRIC = "tier3 web fabric";
+    public static final String MANYMO           = "manymo";
+    public static final String OPENSHIFT        = "openshift";
+    public static final String HEROKU           = "heroku";
+    public static final String APPFOG           = "appfog";
+    public static final String CLOUDBEES        = "cloudbees";
+
+    public static final String[] PAASES = {GAE, AWS, AWS_BEANSTALK, CLOUDFOUNDRY, TIER3_WEB_FABRIC, MANYMO, OPENSHIFT, HEROKU, APPFOG, CLOUDBEES};
+
     private final String[] types;
 
     protected AbstractProjectPaas(MetricType metricType, String[] types) {
@@ -39,6 +52,16 @@ public abstract class AbstractProjectPaas extends ReadBasedMetric implements Rea
         this.types = types;
     }
 
+    protected AbstractProjectPaas(String metricName, String[] types) {
+        super(metricName);
+
+        for (int i = 0; i < types.length; i++) {
+            types[i] = types[i].toLowerCase();
+        }
+        this.types = types;
+    }
+
+
     @Override
     public Class<? extends ValueData> getValueDataClass() {
         return LongValueData.class;
@@ -46,7 +69,7 @@ public abstract class AbstractProjectPaas extends ReadBasedMetric implements Rea
 
     @Override
     public String[] getTrackedFields() {
-        return types;
+        return new String[]{VALUE};
     }
 
     @Override
@@ -56,7 +79,7 @@ public abstract class AbstractProjectPaas extends ReadBasedMetric implements Rea
 
     @Override
     public DBObject[] getSpecificDBOperations(Context clauses) {
-        DBObject match = new BasicDBObject(PROJECT_TYPE, new BasicDBObject("$in", types));
+        DBObject match = new BasicDBObject(PROJECT_PAAS, new BasicDBObject("$in", types));
 
         DBObject group = new BasicDBObject();
         group.put(ID, null);
@@ -68,7 +91,7 @@ public abstract class AbstractProjectPaas extends ReadBasedMetric implements Rea
 
     @Override
     public DBObject[] getSpecificExpandedDBOperations(Context clauses) {
-        DBObject match = new BasicDBObject(PROJECT_TYPE, new BasicDBObject("$in", types));
+        DBObject match = new BasicDBObject(PROJECT_PAAS, new BasicDBObject("$in", types));
 
         DBObject group = new BasicDBObject();
         group.put(ID, "$" + getExpandedField());

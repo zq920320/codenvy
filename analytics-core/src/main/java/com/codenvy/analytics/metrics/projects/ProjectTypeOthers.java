@@ -28,12 +28,12 @@ import javax.annotation.security.RolesAllowed;
 public class ProjectTypeOthers extends AbstractProjectType {
 
     public ProjectTypeOthers() {
-        super(MetricType.PROJECT_TYPE_OTHERS, new String[]{ProjectTypes.OTHER_NULL,
-                                                           ProjectTypes.OTHER_DEFAULT,
-                                                           ProjectTypes.OTHER_SERV,
-                                                           ProjectTypes.OTHER_EXO,
-                                                           ProjectTypes.OTHER_UNDEFINED,
-                                                           ProjectTypes.OTHER_NAMELESS});
+        super(MetricType.PROJECT_TYPE_OTHERS, new String[]{OTHER_NULL,
+                                                           OTHER_DEFAULT,
+                                                           OTHER_SERV,
+                                                           OTHER_EXO,
+                                                           OTHER_UNDEFINED,
+                                                           OTHER_NAMELESS});
     }
 
     @Override

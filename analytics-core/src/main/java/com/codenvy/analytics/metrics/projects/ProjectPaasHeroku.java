@@ -27,7 +27,7 @@ import javax.annotation.security.RolesAllowed;
 public class ProjectPaasHeroku extends AbstractProjectPaas {
 
     public ProjectPaasHeroku() {
-        super(MetricType.PROJECT_PAAS_HEROKU, new String[]{ProjectPaases.HEROKU});
+        super(MetricType.PROJECT_PAAS_HEROKU, new String[]{HEROKU});
     }
 
     @Override

@@ -25,11 +25,6 @@ import com.mongodb.DBObject;
 public interface ReadBasedExpandable extends Expandable {
 
     /**
-     * @return the field which consists the values for expanded metric.
-     */
-    String getExpandedField();
-
-    /**
      * @return DB operations specific for given expanded metric
      */
     DBObject[] getSpecificExpandedDBOperations(Context clauses);

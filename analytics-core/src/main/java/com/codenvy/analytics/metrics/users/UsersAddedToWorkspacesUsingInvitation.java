@@ -27,7 +27,7 @@ import javax.annotation.security.RolesAllowed;
 public class UsersAddedToWorkspacesUsingInvitation extends AbstractUsersAddedToWorkspaces {
 
     public UsersAddedToWorkspacesUsingInvitation() {
-        super(MetricType.USERS_ADDED_TO_WORKSPACES_USING_INVITATION, new String[]{UsersAddedToWorkspaces.INVITE});
+        super(MetricType.USERS_ADDED_TO_WORKSPACES_USING_INVITATION, new String[]{INVITE});
     }
 
     @Override

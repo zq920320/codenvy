@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * author Anatoliy Bazko
+ * @author Anatoliy Bazko
  */
 @RolesAllowed({"system/admin", "system/manager"})
 @OmitFilters({MetricFilter.WS})

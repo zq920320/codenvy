@@ -27,7 +27,7 @@ import javax.annotation.security.RolesAllowed;
 public class ProjectPaasCloudbees extends AbstractProjectPaas {
 
     public ProjectPaasCloudbees() {
-        super(MetricType.PROJECT_PAAS_CLOUDBEES, new String[]{ProjectPaases.CLOUDBEES});
+        super(MetricType.PROJECT_PAAS_CLOUDBEES, new String[]{CLOUDBEES});
     }
 
     @Override

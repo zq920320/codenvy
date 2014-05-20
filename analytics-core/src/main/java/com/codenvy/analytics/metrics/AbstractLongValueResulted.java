@@ -34,6 +34,11 @@ public abstract class AbstractLongValueResulted extends ReadBasedMetric implemen
         this.expandingField = expandingField;
     }
 
+    public AbstractLongValueResulted(String metricName, String expandingField) {
+        super(metricName);
+        this.expandingField = expandingField;
+    }
+
     @Override
     public String[] getTrackedFields() {
         return new String[]{VALUE};
@@ -46,17 +51,19 @@ public abstract class AbstractLongValueResulted extends ReadBasedMetric implemen
 
     @Override
     public DBObject[] getSpecificDBOperations(Context clauses) {
+        String field = getTrackedFields()[0];
         DBObject group = new BasicDBObject();
 
         group.put(ID, null);
-        group.put(VALUE, new BasicDBObject("$sum", "$" + VALUE));
+        group.put(field, new BasicDBObject("$sum", "$" + field));
 
         return new DBObject[]{new BasicDBObject("$group", group)};
     }
 
     @Override
     public DBObject[] getSpecificExpandedDBOperations(Context clauses) {
-        DBObject match = new BasicDBObject(VALUE, new BasicDBObject("$gt", 0));
+        String field = getTrackedFields()[0];
+        DBObject match = new BasicDBObject(field, new BasicDBObject("$gt", 0));
 
         DBObject group = new BasicDBObject();
         group.put(ID, "$" + getExpandedField());

@@ -31,7 +31,7 @@ import javax.annotation.security.RolesAllowed;
 public class UsersLoggedInWithSysldap extends AbstractLoggedInType {
 
     public UsersLoggedInWithSysldap() {
-        super(MetricType.USERS_LOGGED_IN_WITH_SYSLDAP, new String[]{UsersLoggedInTypes.SYSLDAP});
+        super(MetricType.USERS_LOGGED_IN_WITH_SYSLDAP, new String[]{SYSLDAP});
     }
 
     @Override

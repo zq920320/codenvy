@@ -60,4 +60,9 @@ public class ProjectNoPassDefined extends CalculatedMetric implements Expandable
         ValueData deployed = ((Expandable)basedMetric[1]).getExpandedValue(context);
         return created.subtract(deployed);
     }
+
+    @Override
+    public String getExpandedField() {
+        return ((Expandable)basedMetric[0]).getExpandedField();
+    }
 }

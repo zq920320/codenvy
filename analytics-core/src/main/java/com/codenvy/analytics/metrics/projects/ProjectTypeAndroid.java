@@ -28,7 +28,7 @@ import javax.annotation.security.RolesAllowed;
 public class ProjectTypeAndroid extends AbstractProjectType {
 
     public ProjectTypeAndroid() {
-        super(MetricType.PROJECT_TYPE_ANDROID, new String[]{ProjectTypes.ANDROID, ProjectTypes.GOOGLE_MBS});
+        super(MetricType.PROJECT_TYPE_ANDROID, new String[]{ANDROID, GOOGLE_MBS});
     }
 
     @Override

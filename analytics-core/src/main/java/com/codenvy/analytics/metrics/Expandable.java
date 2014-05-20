@@ -32,8 +32,12 @@ public interface Expandable {
     int LIMIT = 100000;
 
     /**
+     * @return the field which consists the values for expanded metric.
+     */
+    String getExpandedField();
+
+    /**
      * Returns an expanded list of documents used to calculate numeric value returned by getValue() method.
-     *
      *
      * @param context
      *         the execution context, for the most cases it isn't needed to modify it. It is used as a parameter to get

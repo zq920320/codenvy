@@ -178,21 +178,14 @@ public class MongoDataLoader implements DataLoader {
         BasicDBObject match = new BasicDBObject();
 
         // check if we need to filter list valued metric by another expanded metric
-        // TODO
         if (clauses.exists(Parameters.EXPANDED_METRIC_NAME)) {
+            Metric expandable = clauses.getExpandedMetric();
 
-            String value = clauses.getAsString(Parameters.EXPANDED_METRIC_NAME);
-            MetricType expandedMetricType = MetricType.valueOf(value.toUpperCase());
+            String[] filteringValues = getExpandedMetricValues(clauses, expandable);
+            String filteringField = ((Expandable)expandable).getExpandedField();
+            match.put(filteringField, new BasicDBObject("$in", filteringValues));
 
-            Metric expandedMetric = MetricFactory.getMetric(expandedMetricType);
-
-            if (expandedMetric instanceof Expandable) {
-                String[] filteringValues = getExpandedMetricValues(expandedMetricType, clauses);
-                String filteringField = ((ReadBasedExpandable)expandedMetric).getExpandedField();
-                match.put(filteringField, new BasicDBObject("$in", filteringValues));
-            }
-
-            clauses = fixDateParametersDueToExpandedMetric(clauses, expandedMetric);
+            clauses = fixDateParametersDueToExpandedMetric(clauses, expandable);
         }
 
         setDateFilter(clauses, match);
@@ -238,8 +231,7 @@ public class MongoDataLoader implements DataLoader {
      * @see http://stackoverflow.com/questions/5331549/what-is-the-maximum-number-of-parameters-passed-to-in-query-in-mongodb
      */
     @SuppressWarnings("JavadocReference")
-    // TODO check
-    public String[] getExpandedMetricValues(MetricType metric, Context context) throws ParseException, IOException {
+    public String[] getExpandedMetricValues(Context context, Metric expandable) throws ParseException, IOException {
         Context.Builder builder = new Context.Builder(context);  // unlink context from caller method
         builder.remove(Parameters.EXPANDED_METRIC_NAME);
 
@@ -253,8 +245,7 @@ public class MongoDataLoader implements DataLoader {
 
         context = builder.build();
 
-        Expandable expandableMetric = (Expandable)MetricFactory.getMetric(metric);
-        ValueData metricValue = expandableMetric.getExpandedValue(context);
+        ValueData metricValue = ((Expandable)expandable).getExpandedValue(context);
 
         List<ValueData> allMetricValues = treatAsList(metricValue);
 
@@ -283,11 +274,9 @@ public class MongoDataLoader implements DataLoader {
     /**
      * Fix date parameters due to specific expanded metric filter
      */
-    // TODO
     private Context fixDateParametersDueToExpandedMetric(Context clauses, Metric expandedMetric) throws ParseException {
         // fix date clauses to display non-active users or workspaces
-        if (expandedMetric instanceof NonActiveUsers
-            || expandedMetric instanceof NonActiveWorkspaces) {
+        if (expandedMetric instanceof NonActiveUsers || expandedMetric instanceof NonActiveWorkspaces) {
             if (clauses.exists(Parameters.FROM_DATE)) {
                 Calendar fromDate = clauses.getAsDate(Parameters.FROM_DATE);
                 clauses = new Context.Builder(clauses)
@@ -298,9 +287,7 @@ public class MongoDataLoader implements DataLoader {
 
             // remove from_date clause to display all documents to_date
         } else if (expandedMetric instanceof CumulativeMetric) {
-            clauses = new Context.Builder(clauses)
-                    .remove(Parameters.FROM_DATE)  // remove from_date
-                    .build();
+            clauses = clauses.cloneAndRemove(Parameters.FROM_DATE);
         }
 
         return clauses;
@@ -427,9 +414,6 @@ public class MongoDataLoader implements DataLoader {
         } else if (clazz == DoubleValueData.class) {
             return createDoubleValueData(iterator, metric.getTrackedFields());
 
-        } else if (clazz == MapValueData.class) {
-            return createMapValueData(iterator, metric.getTrackedFields());
-
         } else if (clazz == SetValueData.class) {
             return createSetValueData(iterator, metric.getTrackedFields());
 
@@ -473,26 +457,6 @@ public class MongoDataLoader implements DataLoader {
             public ValueData pull() {
                 try {
                     return new SetValueData(values);
-                } finally {
-                    values.clear();
-                }
-            }
-        });
-    }
-
-    private ValueData createMapValueData(Iterator<DBObject> iterator, String[] trackedFields) {
-        return doCreateValueData(iterator, trackedFields, MapValueData.class, new CreateValueAction() {
-            Map<String, ValueData> values = new HashMap<>();
-
-            @Override
-            public void accumulate(String key, Object value) {
-                this.values.put(key, ValueDataFactory.createValueData(value));
-            }
-
-            @Override
-            public ValueData pull() {
-                try {
-                    return new MapValueData(values);
                 } finally {
                     values.clear();
                 }

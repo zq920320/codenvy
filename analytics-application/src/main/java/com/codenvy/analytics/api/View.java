@@ -194,7 +194,6 @@ public class View {
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed({"user", "system/admin", "system/manager"})
     public Response getViewExpandableViewMetricList(@PathParam("name") String viewName) {
-        // TODO
         try {
             List<Map<Integer, MetricType>> result = viewBuilder.getViewExpandableMetricMap(viewName);
             String json = transformToJson(result);

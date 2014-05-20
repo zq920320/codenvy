@@ -17,9 +17,13 @@
  */
 package com.codenvy.analytics;
 
-import com.codenvy.analytics.metrics.*;
+import com.codenvy.analytics.metrics.AbstractMetric;
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.users.ActiveUsersSet;
 import com.codenvy.analytics.metrics.workspaces.ActiveWorkspacesSet;
+import com.codenvy.analytics.persistent.MongoDataLoader;
 import com.mongodb.*;
 
 import org.testng.annotations.BeforeClass;
@@ -226,7 +230,7 @@ public class TestRestoreUserActivities extends BaseTest {
         String toDate = clauses.getAsString(Parameters.TO_DATE);
         if (toDate != null) {
             if (Utils.isDateFormat(toDate)) {
-                dateFilter.put("$lt", clauses.getAsDate(Parameters.TO_DATE).getTimeInMillis() + ReadBasedMetric.DAY_IN_MILLISECONDS);
+                dateFilter.put("$lt", clauses.getAsDate(Parameters.TO_DATE).getTimeInMillis() + MongoDataLoader.DAY_IN_MILLISECONDS);
             } else {
                 dateFilter.put("$lte", clauses.getAsLong(Parameters.TO_DATE));
             }

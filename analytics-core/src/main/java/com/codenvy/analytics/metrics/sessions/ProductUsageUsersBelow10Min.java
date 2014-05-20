@@ -77,4 +77,9 @@ public class ProductUsageUsersBelow10Min extends CalculatedMetric implements Exp
 
         return result;
     }
+
+    @Override
+    public String getExpandedField() {
+        return ((Expandable)basedMetric[0]).getExpandedField();
+    }
 }

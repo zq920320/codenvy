@@ -73,4 +73,9 @@ public class ProductUsageTimeTotal extends CalculatedMetric implements Expandabl
 
         return result;
     }
+
+    @Override
+    public String getExpandedField() {
+        return ((Expandable)basedMetric[0]).getExpandedField();
+    }
 }
