@@ -181,10 +181,12 @@ public class MongoDataLoader implements DataLoader {
         if (clauses.exists(Parameters.EXPANDED_METRIC_NAME)) {
             Metric expandable = clauses.getExpandedMetric();
 
-            String[] filteringValues = getExpandedMetricValues(clauses, expandable);
-            String filteringField = ((Expandable)expandable).getExpandedField();
-            match.put(filteringField, new BasicDBObject("$in", filteringValues));
-
+            if (expandable != null) {
+                String[] filteringValues = getExpandedMetricValues(clauses, expandable);
+                String filteringField = ((Expandable)expandable).getExpandedField();
+                match.put(filteringField, new BasicDBObject("$in", filteringValues));
+            }
+            
             clauses = fixDateParametersDueToExpandedMetric(clauses, expandable);
         }
 

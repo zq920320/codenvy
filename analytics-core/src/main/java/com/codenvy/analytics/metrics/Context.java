@@ -159,7 +159,8 @@ public class Context {
 
         Metric expandedMetric = MetricFactory.getMetric(expandedMetricType);
         if (!(expandedMetric instanceof Expandable)) {
-            throw new IllegalArgumentException("Metric " + expandedMetric.getName() + " is not expandable");
+            return null;
+//            throw new IllegalArgumentException("Metric " + expandedMetric.getName() + " is not expandable");
         }
 
         return expandedMetric;
