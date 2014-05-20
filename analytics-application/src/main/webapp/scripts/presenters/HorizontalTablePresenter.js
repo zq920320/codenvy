@@ -64,7 +64,12 @@ analytics.presenter.HorizontalTablePresenter.prototype.load = function () {
                 // add links to drill down page
                 table = presenter.linkTableValuesWithDrillDownPage(presenter.widgetName, table, modelParams);
 
-                // make table columns linked 
+                // make table columns linked
+                var columnCombinedLinkConf = analytics.configuration.getProperty(presenter.widgetName, "columnCombinedLinkConfiguration");
+                if (typeof columnCombinedLinkConf != "undefined") {
+                    table = presenter.makeTableColumnCombinedLinked(table, columnCombinedLinkConf);    
+                }
+
                 var columnLinkPrefixList = analytics.configuration.getProperty(widgetName, "columnLinkPrefixList");
                 if (typeof columnLinkPrefixList != "undefined") {
                     for (var columnName in columnLinkPrefixList) {
@@ -119,18 +124,20 @@ analytics.presenter.HorizontalTablePresenter.prototype.load = function () {
         model.setParams(modelParams);
 
         model.pushDoneFunction(function (data) {
-            var table = data[0];  // there is only one table in data
-
-            // add links to drill down page
-            table = presenter.linkTableValuesWithDrillDownPage(presenter.widgetName, table, modelParams);
-
-            // print table
             var csvButtonLink = presenter.getLinkForExportToCsvButton();
 
             // print table
             var table = data[0];  // there is only one table in data
 
+            // add links to drill down page
+            table = presenter.linkTableValuesWithDrillDownPage(presenter.widgetName, table, modelParams);
+
             // make table columns linked
+            var columnCombinedLinkConf = analytics.configuration.getProperty(presenter.widgetName, "columnCombinedLinkConfiguration");
+            if (typeof columnCombinedLinkConf != "undefined") {
+                table = presenter.makeTableColumnCombinedLinked(table, columnCombinedLinkConf);    
+            }
+
             var columnLinkPrefixList = analytics.configuration.getProperty(widgetName, "columnLinkPrefixList");
             if (typeof columnLinkPrefixList != "undefined") {
                 for (var columnName in columnLinkPrefixList) {

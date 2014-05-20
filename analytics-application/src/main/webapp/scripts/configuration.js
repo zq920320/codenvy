@@ -205,7 +205,6 @@ function Configuration() {
         },
 
         /** for User View */
-        /** for User View */
         users: {
             widgetLabel: "Users",
             presenterType: "EntryViewPresenter",
@@ -262,7 +261,6 @@ function Configuration() {
                 },
             },
         },
-        
 
         userSessions: {
             widgetLabel: "Sessions",
@@ -386,7 +384,7 @@ function Configuration() {
                 "Project": "project",
                 "Type": "project_type",
                 "User": "user",
-            }
+            },
         },
 
         /** for Session View */
@@ -526,31 +524,6 @@ function Configuration() {
                     "Number of Users": "total_users",
                 },
             },
-        },
-
-        workspaceProjects: {
-            widgetLabel: "Projects",
-            presenterType: "HorizontalTablePresenter",
-            modelViewName: "workspace_projects",
-
-            isPaginable: true,    // default value is "false"
-            modelMetricName: "projects",
-
-            columnLinkPrefixList: {
-                "User": "/analytics/pages/user-view.jsp?user",
-            },
-
-            /** @see DatabaseTable::makeTableSortable() method docs */
-            clientSortParams: {
-                "ascSortColumnNumber": 0
-            },
-
-            mapColumnToServerSortParam: {
-                "Date": "date",
-                "User": "user",
-                "Project": "project",
-                "Type": "project_type",
-            }
         },
 
         workspaceProjects: {
