@@ -17,23 +17,8 @@
  */
 package com.codenvy.analytics.services.view;
 
-import com.codenvy.analytics.Configurator;
-import com.codenvy.analytics.Utils;
-import com.codenvy.analytics.datamodel.MapValueData;
-import com.codenvy.analytics.datamodel.StringValueData;
-import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.*;
-import com.codenvy.analytics.metrics.sessions.AbstractTimelineProductUsageCondition;
-import com.codenvy.analytics.persistent.DataPersister;
-import com.codenvy.analytics.persistent.JdbcDataPersisterFactory;
-import com.codenvy.analytics.services.Feature;
-import com.codenvy.analytics.services.configuration.XmlConfigurationManager;
+import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsList;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -43,11 +28,34 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveAction;
 import java.util.concurrent.TimeUnit;
 
-import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsList;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.codenvy.analytics.Configurator;
+import com.codenvy.analytics.Utils;
+import com.codenvy.analytics.datamodel.MapValueData;
+import com.codenvy.analytics.datamodel.StringValueData;
+import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.CumulativeMetric;
+import com.codenvy.analytics.metrics.Expandable;
+import com.codenvy.analytics.metrics.Metric;
+import com.codenvy.analytics.metrics.MetricFactory;
+import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.metrics.sessions.AbstractTimelineProductUsageCondition;
+import com.codenvy.analytics.persistent.DataPersister;
+import com.codenvy.analytics.persistent.JdbcDataPersisterFactory;
+import com.codenvy.analytics.services.Feature;
+import com.codenvy.analytics.services.configuration.XmlConfigurationManager;
 
 /**
  * @author Alexander Reshetnyak
@@ -96,20 +104,30 @@ public class ViewBuilder extends Feature {
 
     public ViewData getViewData(ValueData metricValue) {
         ViewData viewData = new ViewData(); // include title row
-
-        List<ValueData> all = treatAsList(metricValue);
-        if (all.size() == 0) {
+        
+        List<ValueData> allMetricValues = treatAsList(metricValue);
+        
+        // return empty view data if there is empty metricValue
+        if (allMetricValues.size() == 0) {
             return viewData;
         }
-
+        
         SectionData sectionData = new SectionData();
-        for (ValueData row : all) {
-            sectionData.add(getRowKeys((MapValueData)row));
-        }
 
+        // add title row
+        MapValueData firstRow = (MapValueData) allMetricValues.get(0);
+        List<ValueData> titleRow = getRowKeys(firstRow);
+        sectionData.add(titleRow);
+        
+        // transform MapValueData rows into the List<ValueData> rows
+        for (ValueData row: allMetricValues) {
+            sectionData.add(getRowValues((MapValueData) row));
+        }
+            
         viewData.put("section_expended", sectionData);
+        
         return viewData;
-    }
+    }    
 
     private List<ValueData> getRowKeys(MapValueData mapRow) {
         List<ValueData> rowKeys = new ArrayList<>(mapRow.size());
@@ -120,6 +138,15 @@ public class ViewBuilder extends Feature {
         return rowKeys;
     }
 
+    private List<ValueData> getRowValues(MapValueData mapRow) {
+        List<ValueData> rowValues = new ArrayList<>(mapRow.size());
+        for (Entry<String, ValueData> entry: mapRow.getAll().entrySet()) {
+            rowValues.add(entry.getValue());
+        }
+        
+        return rowValues;
+    }
+    
     private boolean isSimplified(Context context) {
         return !context.exists(Parameters.SORT)
                && !context.exists(Parameters.PAGE)
