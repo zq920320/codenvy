@@ -57,6 +57,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 /** @author <a href="mailto:dnochevnov@codenvy.com">Dmytro Nochevnov</a> */
 public class TestExpandedMetric extends BaseTest {
@@ -436,15 +437,16 @@ public class TestExpandedMetric extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20131031");
         builder.put(Parameters.TO_DATE, "20131031");
-        builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.name());
+        builder.put(Parameters.USER, Parameters.USER_TYPES.REGISTERED.name());
         builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
-        builder.put(Parameters.STORAGE_TABLE, MetricType.USERS_ACTIVITY_LIST.name().toLowerCase());
+        builder.put(Parameters.STORAGE_TABLE, MetricType.ACTIVE_USERS_SET.name().toLowerCase());
+        builder.put(Parameters.PARAM, "user");
         builder.put(Parameters.LOG, log.getAbsolutePath());
-        pigServer.execute(ScriptType.USERS_ACTIVITY, builder.build());
+        pigServer.execute(ScriptType.ACTIVE_ENTITIES, builder.build());
 
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
-        pigServer.execute(ScriptType.USERS_ACTIVITY, builder.build());
+        pigServer.execute(ScriptType.ACTIVE_ENTITIES, builder.build());
 
         builder.put(Parameters.FROM_DATE, "20131031");
         builder.put(Parameters.TO_DATE, "20131031");
@@ -455,19 +457,30 @@ public class TestExpandedMetric extends BaseTest {
         builder.put(Parameters.TO_DATE, "20131101");
         pigServer.execute(ScriptType.USERS_STATISTICS, builder.build());
 
+        builder.put(Parameters.FROM_DATE, "20131031");
+        builder.put(Parameters.TO_DATE, "20131031");
+        builder.put(Parameters.EVENT, "user-created");
+        builder.put(Parameters.STORAGE_TABLE, MetricType.CREATED_USERS.toString().toLowerCase());
+        pigServer.execute(ScriptType.EVENTS, builder.build());
+
+        builder.put(Parameters.FROM_DATE, "20131031");
+        builder.put(Parameters.TO_DATE, "20131031");
+        pigServer.execute(ScriptType.EVENTS, builder.build());
+
         // test expanded metric value
         builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
 
-        NonActiveUsers metric = new NonActiveUsers();
+        Expandable metric = new NonActiveUsers();
         ValueData expandedValue = metric.getExpandedValue(builder.build());
         List<ValueData> all = treatAsList(expandedValue);
-        assertEquals(all.size(), 1);
+        assertEquals(all.size(), 0);
 
-        Map<String, ValueData> record = ((MapValueData)all.get(0)).getAll();
-        assertEquals(record.size(), 1);
-        assertEquals(record.get("user").toString(), "user5@gmail.com");
+        metric = new CreatedUsers();
+        expandedValue = metric.getExpandedValue(builder.build());
+        all = treatAsList(expandedValue);
+        assertEquals(all.size(), 2);
 
         // test filtering user list by "non_active_users" metric
         builder = new Context.Builder();
@@ -477,7 +490,7 @@ public class TestExpandedMetric extends BaseTest {
         UsersStatisticsList usersStatisticsListMetric = new UsersStatisticsList();
         ListValueData value = (ListValueData)usersStatisticsListMetric.getValue(builder.build());
         all = value.getAll();
-        assertEquals(value.getAll().size(), 4);
+        assertEquals(all.size(), 4);
 
         // calculate non-active user list
         builder.put(Parameters.EXPANDED_METRIC_NAME, "non_active_users");
@@ -564,9 +577,10 @@ public class TestExpandedMetric extends BaseTest {
         builder.put(Parameters.TO_DATE, "20131101");
         builder.put(Parameters.USER, Parameters.USER_TYPES.REGISTERED.name());
         builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
-        builder.put(Parameters.STORAGE_TABLE, MetricType.USERS_ACTIVITY_LIST.toString().toLowerCase());
+        builder.put(Parameters.PARAM, "user");
+        builder.put(Parameters.STORAGE_TABLE, MetricType.ACTIVE_USERS_SET.toString().toLowerCase());
         builder.put(Parameters.LOG, log.getAbsolutePath());
-        pigServer.execute(ScriptType.USERS_ACTIVITY, builder.build());
+        pigServer.execute(ScriptType.ACTIVE_ENTITIES, builder.build());
 
         builder = new Context.Builder();
         builder.put(Parameters.TO_DATE, "20131101");
@@ -578,25 +592,11 @@ public class TestExpandedMetric extends BaseTest {
         List<ValueData> all = treatAsList(expandedValue);
         assertEquals(all.size(), 5);
 
-        Map<String, ValueData> record = ((MapValueData)all.get(0)).getAll();
-        assertEquals(record.size(), 1);
-        assertEquals(record.get("user").toString(), "user2@gmail.com");
-
-        record = ((MapValueData)all.get(1)).getAll();
-        assertEquals(record.size(), 1);
-        assertEquals(record.get("user").toString(), TEST_USER + "_invite");
-
-        record = ((MapValueData)all.get(2)).getAll();
-        assertEquals(record.size(), 1);
-        assertEquals(record.get("user").toString(), "user1");
-
-        record = ((MapValueData)all.get(3)).getAll();
-        assertEquals(record.size(), 1);
-        assertEquals(record.get("user").toString(), "user5");
-
-        record = ((MapValueData)all.get(4)).getAll();
-        assertEquals(record.size(), 1);
-        assertEquals(record.get("user").toString(), "user4@gmail.com");
+        assertTrue(all.contains(MapValueData.valueOf("user=user2@gmail.com")));
+        assertTrue(all.contains(MapValueData.valueOf("user=user1")));
+        assertTrue(all.contains(MapValueData.valueOf("user=user5")));
+        assertTrue(all.contains(MapValueData.valueOf("user=user5")));
+        assertTrue(all.contains(MapValueData.valueOf("user=" + TEST_USER + "_invite")));
     }
 
     @Test
@@ -807,11 +807,12 @@ public class TestExpandedMetric extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
-        builder.put(Parameters.USER, Parameters.USER_TYPES.REGISTERED.name());
-        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
-        builder.put(Parameters.STORAGE_TABLE, MetricType.USERS_ACTIVITY_LIST.toString().toLowerCase());
+        builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.name());
+        builder.put(Parameters.WS, Parameters.WS_TYPES.PERSISTENT.name());
+        builder.put(Parameters.STORAGE_TABLE, MetricType.ACTIVE_WORKSPACES_SET.toString().toLowerCase());
+        builder.put(Parameters.PARAM, "ws");
         builder.put(Parameters.LOG, log.getAbsolutePath());
-        pigServer.execute(ScriptType.USERS_ACTIVITY, builder.build());
+        pigServer.execute(ScriptType.ACTIVE_ENTITIES, builder.build());
 
         builder = new Context.Builder();
         builder.put(Parameters.TO_DATE, "20131101");
@@ -820,33 +821,26 @@ public class TestExpandedMetric extends BaseTest {
         AbstractActiveEntities metric = new ActiveWorkspaces();
 
         LongValueData value = (LongValueData)metric.getValue(builder.build());
-        assertEquals(value.getAsLong(), 2);
+        assertEquals(value.getAsLong(), 3);
 
         // test expanded metric value
         ValueData expandedValue = metric.getExpandedValue(builder.build());
         List<ValueData> all = treatAsList(expandedValue);
-        assertEquals(all.size(), 2);
+        assertEquals(all.size(), 3);
+        assertTrue(all.contains(MapValueData.valueOf("ws=ws1")));
+        assertTrue(all.contains(MapValueData.valueOf("ws=ws2")));
+        assertTrue(all.contains(MapValueData.valueOf("ws=ws3")));
 
-        Map<String, ValueData> workspace1 = ((MapValueData)all.get(0)).getAll();
-        assertEquals(workspace1.size(), 1);
-        assertEquals(workspace1.get("ws").toString(), "ws2");
-
-        Map<String, ValueData> workspace2 = ((MapValueData)all.get(1)).getAll();
-        assertEquals(workspace2.size(), 1);
-        assertEquals(workspace2.get("ws").toString(), TEST_WS);
-
-        // test expanded metric value pagination 
+        // test expanded metric value pagination
         builder.put(Parameters.PAGE, 2);
         builder.put(Parameters.PER_PAGE, 1);
+        builder.put(Parameters.SORT, "+ws");
 
         expandedValue = metric.getExpandedValue(builder.build());
 
         all = treatAsList(expandedValue);
         assertEquals(all.size(), 1);
-
-        Map<String, ValueData> workspace = ((MapValueData)all.get(0)).getAll();
-        assertEquals(workspace.size(), 1);
-        assertEquals(workspace.get(metric.getExpandedField()).toString(), TEST_WS);
+        assertTrue(all.contains(MapValueData.valueOf("ws=ws2")));
     }
 
     @Test
@@ -987,14 +981,13 @@ public class TestExpandedMetric extends BaseTest {
         ProjectsList projectsListMetric = new ProjectsList();
 
         ListValueData value = (ListValueData)projectsListMetric.getValue(builder.build());
-        List<ValueData> all = value.getAll();
         assertEquals(value.getAll().size(), 3);
 
         // calculate run projects list
         builder.put(Parameters.EXPANDED_METRIC_NAME, "runs");
 
         ListValueData filteredValue = (ListValueData)projectsListMetric.getValue(builder.build());
-        all = filteredValue.getAll();
+        List<ValueData> all = filteredValue.getAll();
         assertEquals(all.size(), 2);
 
         Map<String, ValueData> project1 = ((MapValueData)all.get(0)).getAll();
@@ -1027,23 +1020,17 @@ public class TestExpandedMetric extends BaseTest {
         ValueData expandedValue = metric.getExpandedValue(builder.build());
 
         // test view data builded on expanded metric value data
-        ViewData viewData = viewBuilder.getViewData((ListValueData)expandedValue);
+        ViewData viewData = viewBuilder.getViewData(expandedValue);
         assertEquals(viewData.size(), 1);
 
-        SectionData sectionData = viewData.get(null);
+        SectionData sectionData = viewData.get("section_expended");
         assertEquals(sectionData.size(), 3);
 
         List<ValueData> titleRow = sectionData.get(0);
-        assertEquals(titleRow.size(), 1);
-        assertEquals(titleRow.get(0).getAsString(), metric.getTrackedFields()[0]);
-
-        List<ValueData> valueRow1 = sectionData.get(1);
-        assertEquals(valueRow1.size(), 1);
-        assertEquals(valueRow1.get(0).getAsString(), "ws2");
-
-        List<ValueData> valueRow2 = sectionData.get(2);
-        assertEquals(valueRow2.size(), 1);
-        assertEquals(valueRow2.get(0).getAsString(), TEST_WS);
+        // TODO
+//        assertTrue(titleRow.contains(MapValueData.valueOf("ws=ws1")));
+//        assertTrue(titleRow.contains(MapValueData.valueOf("ws=ws2")));
+//        assertTrue(titleRow.contains(MapValueData.valueOf("ws=ws3")));
     }
 
     @BeforeMethod

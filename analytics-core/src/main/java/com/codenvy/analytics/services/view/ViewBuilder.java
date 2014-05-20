@@ -19,7 +19,6 @@ package com.codenvy.analytics.services.view;
 
 import com.codenvy.analytics.Configurator;
 import com.codenvy.analytics.Utils;
-import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.StringValueData;
 import com.codenvy.analytics.datamodel.ValueData;
@@ -47,6 +46,8 @@ import java.util.Map;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveAction;
 import java.util.concurrent.TimeUnit;
+
+import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsList;
 
 /**
  * @author Alexander Reshetnyak
@@ -93,30 +94,20 @@ public class ViewBuilder extends Feature {
         }
     }
 
-    public ViewData getViewData(ListValueData metricValue) {
+    public ViewData getViewData(ValueData metricValue) {
         ViewData viewData = new ViewData(); // include title row
 
-        List<ValueData> allMetricValues = metricValue.getAll();
-
-        // return empty view data if there is empty metricValue
-        if (allMetricValues.size() == 0) {
+        List<ValueData> all = treatAsList(metricValue);
+        if (all.size() == 0) {
             return viewData;
         }
 
         SectionData sectionData = new SectionData();
-
-        // add title row
-        MapValueData firstRow = (MapValueData)allMetricValues.get(0);
-        List<ValueData> titleRow = getRowKeys(firstRow);
-        sectionData.add(titleRow);
-
-        // transform MapValueData rows into the List<ValueData> rows
-        for (ValueData row : allMetricValues) {
+        for (ValueData row : all) {
             sectionData.add(getRowKeys((MapValueData)row));
         }
 
-        viewData.put(null, sectionData);
-
+        viewData.put("section_expended", sectionData);
         return viewData;
     }
 
@@ -193,8 +184,7 @@ public class ViewBuilder extends Feature {
     }
 
     /** Query data for specific view. */
-    protected ViewData loadViewData(ViewConfiguration viewConf, Context context)
-            throws IOException {
+    protected ViewData loadViewData(ViewConfiguration viewConf, Context context) throws IOException {
         try {
             ViewData viewData = new ViewData(viewConf.getSections().size());
 

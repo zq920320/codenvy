@@ -17,7 +17,6 @@
  */
 package com.codenvy.analytics.api;
 
-import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.services.view.CSVFileCleaner;
@@ -114,7 +113,7 @@ public class View {
                                                               securityContext);
 
             ValueData value = getExpandedMetricValue(metricName, valueOf(context));
-            ViewData result = viewBuilder.getViewData((ListValueData)value);
+            ViewData result = viewBuilder.getViewData(value);
             String json = transformToJson(result);
 
             return Response.status(Response.Status.OK).entity(json).build();
