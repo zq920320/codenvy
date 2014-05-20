@@ -99,6 +99,25 @@ public class WorkspaceInfoCache {
         }
     }
 
+    /**
+     * Remove workspace from cache by workspace id.
+     *
+     * @param id
+     *         - id of workspace to remove.
+     */
+    public void removeById(String id) {
+        workspaceCache.invalidate(new Key(id, true));
+    }
+
+    /**
+     * Remove workspace by workspace name.
+     *
+     * @param wsName - name workspace to remove
+     */
+    public void removeByName(String wsName) {
+        workspaceCache.invalidate(new Key(wsName, false));
+    }
+
     public abstract static class WorkspaceCacheLoader extends CacheLoader<Key, Workspace> {
 
     }

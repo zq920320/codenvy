@@ -37,6 +37,7 @@ is strictly forbidden unless prior written permission is obtained
         <module>codenvy-hosted-service-premiumworkspace</module>
         <module>codenvy-hosted-recoverpassword</module>
         <module>codenvy-hosted-service-trackedfactory</module>
+        <module>codenvy-hosted-workspace-close</module>
     </modules>
     <scm>
         <connection>scm:git:git@github.com:codenvy/hosted-infrastructure.git</connection>
