@@ -81,8 +81,9 @@ public abstract class AbstractLoggedInType extends ReadBasedMetric implements Re
     @Override
     public DBObject[] getSpecificExpandedDBOperations(Context clauses) {
         BasicDBObject[] dbObjectsToOr = new BasicDBObject[types.length];
+        int i = 0;
         for (String type : types) {
-            dbObjectsToOr[dbObjectsToOr.length - 1] = new BasicDBObject(type, new BasicDBObject("$exists", true));
+            dbObjectsToOr[i++] = new BasicDBObject(type, new BasicDBObject("$exists", true));
         }
         DBObject match = getOrOperation(dbObjectsToOr);
 
