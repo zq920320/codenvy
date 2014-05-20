@@ -58,10 +58,6 @@ import static org.mockito.Mockito.when;
 
 @Listeners(value = {MockitoTestNGListener.class})
 public class FactoryUrlBaseValidatorTest {
-    private static String TF_PARAMETER_WITHOUT_ORGID_MESSAGE =
-            "You have provided a Tracked Factory parameter %s, and you do not have a valid orgId %s. You could have " +
-            "provided the wrong code, your subscription has expired, or you do not have a valid subscription account." +
-            " Please contact info@codenvy.com with any questions.";
 
     private static String VALID_REPOSITORY_URL = "http://github.com/codenvy/cloudide";
 
@@ -120,7 +116,7 @@ public class FactoryUrlBaseValidatorTest {
 
     @Test
     public void shouldBeAbleToValidateFactoryUrlObject() throws FactoryUrlException {
-        validator.validate(url, false, request);
+        validator.validate(url, false);
     }
 
 
@@ -133,7 +129,7 @@ public class FactoryUrlBaseValidatorTest {
         url.setVcsurl("http://codenvy.com/git/04%2");
 
         // when, then
-        validator.validate(url, false, request);
+        validator.validate(url, false);
     }
 
     @Test
@@ -142,7 +138,7 @@ public class FactoryUrlBaseValidatorTest {
         url.setVcsurl("ssh://codenvy@review.gerrithub.io:29418/codenvy/exampleProject");
 
         // when, then
-        validator.validate(url, false, request);
+        validator.validate(url, false);
     }
 
     @Test
@@ -151,12 +147,12 @@ public class FactoryUrlBaseValidatorTest {
         url.setVcsurl("https://github.com/codenvy/example.git");
 
         // when, then
-        validator.validate(url, false, request);
+        validator.validate(url, false);
     }
 
     @Test(dataProvider = "badAdvancedFactoryUrlProvider", expectedExceptions = FactoryUrlException.class)
     public void shouldNotValidateIfVcsOrVcsUrlIsInvalid(Factory factoryUrl) throws FactoryUrlException {
-        validator.validate(factoryUrl, false, request);
+        validator.validate(factoryUrl, false);
     }
 
     @DataProvider(name = "badAdvancedFactoryUrlProvider")
@@ -190,7 +186,7 @@ public class FactoryUrlBaseValidatorTest {
         url.setProjectattributes(DtoFactory.getInstance().createDto(ProjectAttributes.class).withPname(projectName));
 
         // when, then
-        validator.validate(url, false, request);
+        validator.validate(url, false);
     }
 
     @Test(dataProvider = "validProjectNamesProvider")
@@ -199,7 +195,7 @@ public class FactoryUrlBaseValidatorTest {
         url.setProjectattributes(DtoFactory.getInstance().createDto(ProjectAttributes.class).withPname(projectName));
 
         // when, then
-        validator.validate(url, false, request);
+        validator.validate(url, false);
     }
 
     @DataProvider(name = "validProjectNamesProvider")
@@ -232,21 +228,21 @@ public class FactoryUrlBaseValidatorTest {
 
     @Test
     public void shouldBeAbleToValidateIfOrgIdIsValid() throws  FactoryUrlException, ParseException {
-        validator.validate(url, false, request);
+        validator.validate(url, false);
     }
 
     @Test
     public void shouldBeAbleToValidateIfOrgIdAndOwnerAreValid()
             throws  FactoryUrlException, ParseException {
         // when, then
-        validator.validate(url, false, request);
+        validator.validate(url, false);
     }
 
     @Test(expectedExceptions = FactoryUrlException.class)
     public void shouldNotValidateIfAccountDoesNotExist() throws  FactoryUrlException, NotFoundException, ServerException {
         when(accountDao.getMembers(anyString())).thenReturn(Collections.<Member>emptyList());
 
-        validator.validate(url, false, request);
+        validator.validate(url, false);
     }
 
     @Test(expectedExceptions = FactoryUrlException.class, expectedExceptionsMessageRegExp = "You are not authorized to use this orgid.")
@@ -258,7 +254,7 @@ public class FactoryUrlBaseValidatorTest {
         when(accountDao.getMembers(anyString())).thenReturn(Arrays.asList(wronMember));
 
         // when, then
-        validator.validate(url, false, request);
+        validator.validate(url, false);
     }
 
     @Test(expectedExceptions = FactoryUrlException.class)
@@ -271,7 +267,7 @@ public class FactoryUrlBaseValidatorTest {
                                               .withEndDate(datetimeFormatter.parse("2050-11-21 11:11:11").getTime());
         when(accountDao.getSubscriptions(ID)).thenReturn(Arrays.asList(subscription));
         // when, then
-        validator.validate(url, false, request);
+        validator.validate(url, false);
     }
 
     @Test(expectedExceptions = FactoryUrlException.class)
@@ -283,7 +279,7 @@ public class FactoryUrlBaseValidatorTest {
                                               .withEndDate(datetimeFormatter.parse("2000-11-21 11:11:11").getTime());
         when(accountDao.getSubscriptions(ID)).thenReturn(Arrays.asList(subscription));
         // when, then
-        validator.validate(url, false, request);
+        validator.validate(url, false);
     }
 
     @Test(expectedExceptions = FactoryUrlException.class)
@@ -295,7 +291,7 @@ public class FactoryUrlBaseValidatorTest {
                                               .withEndDate(datetimeFormatter.parse("2050-11-21 11:11:11").getTime());
         when(accountDao.getSubscriptions(ID)).thenReturn(Arrays.asList(subscription));
         // when, then
-        validator.validate(url, false, request);
+        validator.validate(url, false);
     }
 
     @Test
@@ -306,7 +302,7 @@ public class FactoryUrlBaseValidatorTest {
         when(request.getHeader("Referer")).thenReturn("http://notcodenvy.com/factories-examples");
 
         // when, then
-        validator.validate(url, false, request);
+        validator.validate(url, false);
     }
 
     @Test
@@ -319,44 +315,7 @@ public class FactoryUrlBaseValidatorTest {
         when(request.getServerName()).thenReturn("next.codenvy.com");
 
         // when, then
-        validator.validate(url, false, request);
-    }
-
-    @Test(expectedExceptions = FactoryUrlException.class,
-          expectedExceptionsMessageRegExp = "This Factory has its access restricted by certain hostname. Your client does not match the specified policy. Please contact the owner of this Factory for more information.")
-    public void shouldNotValidateIfRefererIsEmpty() throws  FactoryUrlException, ParseException {
-        // given
-        url.setRestriction(DtoFactory.getInstance().createDto(Restriction.class).withRefererhostname("notcodenvy.com"));
-
-        when(request.getHeader("Referer")).thenReturn(null);
-
-        // when, then
-        validator.validate(url, false, request);
-    }
-
-    @Test(expectedExceptions = FactoryUrlException.class,
-          expectedExceptionsMessageRegExp = "This Factory has its access restricted by certain hostname. Your client does not match the specified policy. Please contact the owner of this Factory for more information.")
-    public void shouldNotValidateIfRefererIsNotEqualToHostName() throws  FactoryUrlException, ParseException {
-        // given
-        url.setRestriction(DtoFactory.getInstance().createDto(Restriction.class).withRefererhostname("notcodenvy.com"));
-
-        when(request.getHeader("Referer")).thenReturn("http://codenvy.com/factories-examples");
-
-        // when, then
-        validator.validate(url, false, request);
-    }
-
-    @Test(expectedExceptions = FactoryUrlException.class,
-          expectedExceptionsMessageRegExp = "This Factory has its access restricted by certain hostname. Your client does not match the specified policy. Please contact the owner of this Factory for more information.")
-    public void shouldNotValidateIfRefererIsRelativeUrlAndCurrentHostnameIsNotEqualToRequired()
-            throws  FactoryUrlException, ParseException {
-        // given
-        url.setRestriction(DtoFactory.getInstance().createDto(Restriction.class).withRefererhostname("notcodenvy.com"));
-
-        when(request.getHeader("Referer")).thenReturn("/factories-examples");
-
-        // when, then
-        validator.validate(url, false, request);
+        validator.validate(url, false);
     }
 
     @Test(expectedExceptions = FactoryUrlException.class)
@@ -368,7 +327,7 @@ public class FactoryUrlBaseValidatorTest {
         url.setOrgid("");
 
         // when, then
-        validator.validate(url, true, request);
+        validator.validate(url, true);
     }
 
     @Test(dataProvider = "trackedFactoryParametersProvider", expectedExceptions = FactoryUrlException.class)
@@ -376,7 +335,8 @@ public class FactoryUrlBaseValidatorTest {
             throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, FactoryUrlException {
         factory.setOrgid(null);
 
-        validator.validate(factory, false, request);
+        validator.validate(factory, false
+                          );
     }
 
     @DataProvider(name = "trackedFactoryParametersProvider")

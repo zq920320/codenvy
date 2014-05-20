@@ -29,10 +29,8 @@ import com.codenvy.api.user.server.dao.UserDao;
 import com.codenvy.api.user.server.dao.UserProfileDao;
 import com.codenvy.api.user.shared.dto.*;
 import com.codenvy.api.user.shared.dto.Attribute;
-import com.codenvy.commons.lang.URLEncodedUtils;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.net.*;
 import java.util.*;
@@ -45,36 +43,7 @@ import java.util.regex.Pattern;
  */
 public class FactoryUrlBaseValidator implements FactoryUrlValidator {
 
-    private static final String PARAMETRIZED_ILLEGAL_ORGID_PARAMETER_MESSAGE =
-            "You have provided an invalid orgId %s. You could have provided the wrong code, " +
-            "your subscription has expired, or you do not have a valid subscription account. Please contact " +
-            "info@codenvy.com with any questions.";
 
-    private static final String PARAMETRIZED_ILLEGAL_TRACKED_PARAMETER_MESSAGE =
-            "You have provided a Tracked Factory parameter %s, and you do not have a valid orgId %s. You could have " +
-            "provided the wrong code, your subscription has expired, or you do not have a valid subscription account." +
-            " Please contact info@codenvy.com with any questions.";
-
-    private static final String ILLEGAL_HOSTNAME_MESSAGE =
-            "This Factory has its access restricted by certain hostname. Your client does not match the specified " +
-            "policy. Please contact the owner of this Factory for more information.";
-
-    private static final String ILLEGAL_VALIDSINCE_MESSAGE =
-            "This Factory is not yet valid due to time restrictions applied by its owner.  Please, " +
-            "contact owner for more information.";
-
-    private static final String ILLEGAL_VALIDUNTIL_MESSAGE =
-            "This Factory has expired due to time restrictions applied by its owner.  Please, " +
-            "contact owner for more information.";
-
-    private static final String INVALID_PARAMETER_MESSAGE =
-            "Passed in an invalid parameter.  You either provided a non-valid parameter, or that parameter is not " +
-            "accepted for this Factory version.  For more information, please visit " +
-            "http://docs.codenvy.com/user/creating-factories/factory-parameter-reference/.";
-
-    private static final String PARAMETRIZED_ILLEGAL_PARAMETER_VALUE_MESSAGE =
-            "The parameter %s has a value submitted %s with a value that is unexpected. For more information, " +
-            "please visit: http://docs.codenvy.com/user/creating-factories/factory-parameter-reference/.";
 
     private static final Pattern PROJECT_NAME_VALIDATOR = Pattern.compile("^[\\\\\\w\\\\\\d]+[\\\\\\w\\\\\\d_.-]*$");
 
@@ -84,59 +53,26 @@ public class FactoryUrlBaseValidator implements FactoryUrlValidator {
 
     private UserProfileDao profileDao;
 
-    private FactoryBuilder factoryBuilder;
-
     @Inject
-    public FactoryUrlBaseValidator(AccountDao accountDao, UserDao userDao, UserProfileDao profileDao,
-                                   FactoryBuilder factoryBuilder) {
+    public FactoryUrlBaseValidator(AccountDao accountDao, UserDao userDao, UserProfileDao profileDao) {
         this.accountDao = accountDao;
         this.userDao = userDao;
         this.profileDao = profileDao;
-        this.factoryBuilder = factoryBuilder;
     }
 
     @Override
-    public Factory validate(URI factoryUrl, HttpServletRequest request) throws FactoryUrlException {
-        Map<String, Set<String>> params = URLEncodedUtils.parse(factoryUrl, "UTF-8");
-        if (params.get("id") != null) {
-            // if it's encoded factory it can't contain any other parameters
-            if (params.size() != 1) {
-                throw new FactoryUrlException(INVALID_PARAMETER_MESSAGE);
-            }
-            if (params.get("id").size() != 1) {
-                throw new FactoryUrlException(
-                        String.format(PARAMETRIZED_ILLEGAL_PARAMETER_VALUE_MESSAGE, "id", params.get("id").toString()));
-            }
-            FactoryClient factoryClient =
-                    new HttpFactoryClient(factoryUrl.getScheme(), factoryUrl.getHost(), factoryUrl.getPort());
-            Factory factory = factoryClient.getFactory(params.get("id").iterator().next());
-            if (null == factory) {
-                throw new FactoryUrlException("Factory with id " + params.get("id").iterator().next() + " is not found.");
-            }
-            factory = factoryBuilder.convertToLatest(factory);
-            validate(factory, true, request);
-            return factory;
-        } else {
-            Factory factory = factoryBuilder.buildNonEncoded(factoryUrl);
-            validate(factoryBuilder.convertToLatest(factory), false, request);
-            return factory;
-        }
-
-    }
-
-    @Override
-    public void validate(Factory factory, boolean encoded, HttpServletRequest request) throws FactoryUrlException {
+    public void validate(Factory factory, boolean encoded) throws FactoryUrlException {
         // check that vcs value is correct (only git is supported for now)
         if (!"git".equals(factory.getVcs())) {
             throw new FactoryUrlException("Parameter 'vcs' has illegal value. Only 'git' is supported for now.");
         }
         if (factory.getVcsurl() == null || factory.getVcsurl().isEmpty()) {
-            throw new FactoryUrlException(String.format(PARAMETRIZED_ILLEGAL_PARAMETER_VALUE_MESSAGE, "vcsurl", factory.getVcsurl()));
+            throw new FactoryUrlException(String.format(FactoryConstants.PARAMETRIZED_ILLEGAL_PARAMETER_VALUE_MESSAGE, "vcsurl", factory.getVcsurl()));
         } else {
             try {
                 URLDecoder.decode(factory.getVcsurl(), "UTF-8");
             } catch (IllegalArgumentException | UnsupportedEncodingException e) {
-                throw new FactoryUrlException(String.format(PARAMETRIZED_ILLEGAL_PARAMETER_VALUE_MESSAGE, "vcsurl", factory.getVcsurl()));
+                throw new FactoryUrlException(String.format(FactoryConstants.PARAMETRIZED_ILLEGAL_PARAMETER_VALUE_MESSAGE, "vcsurl", factory.getVcsurl()));
             }
         }
 
@@ -166,9 +102,9 @@ public class FactoryUrlBaseValidator implements FactoryUrlValidator {
                     boolean isOwner = false;
                     List<Member> members = accountDao.getMembers(orgid);
                     if (members.isEmpty()) {
-                        throw new FactoryUrlException(String.format(PARAMETRIZED_ILLEGAL_ORGID_PARAMETER_MESSAGE, factory.getOrgid()));
+                        throw new FactoryUrlException(String.format(FactoryConstants.PARAMETRIZED_ILLEGAL_ORGID_PARAMETER_MESSAGE, factory.getOrgid()));
                     }
-                    for (Member accountMember : accountDao.getMembers(orgid)) {
+                    for (Member accountMember : members) {
                         if (accountMember.getUserId().equals(user.getId()) && accountMember.getRoles().contains(
                                 "account/owner")) {
                             isOwner = true;
@@ -185,6 +121,7 @@ public class FactoryUrlBaseValidator implements FactoryUrlValidator {
 
             try {
                 List<Subscription> subscriptions = accountDao.getSubscriptions(factory.getOrgid());
+                boolean isTracked = false;
                 for (Subscription one : subscriptions) {
                     if ("TrackedFactory".equals(one.getServiceId())) {
                         Date startTimeDate = new Date(one.getStartDate());
@@ -192,14 +129,16 @@ public class FactoryUrlBaseValidator implements FactoryUrlValidator {
                         Date currentDate = new Date();
                         if (!startTimeDate.before(currentDate) || !endTimeDate.after(currentDate)) {
                             throw new FactoryUrlException(
-                                    String.format(PARAMETRIZED_ILLEGAL_ORGID_PARAMETER_MESSAGE, factory.getOrgid()));
+                                    String.format(FactoryConstants.PARAMETRIZED_ILLEGAL_ORGID_PARAMETER_MESSAGE, factory.getOrgid()));
                         }
-                    } else {
-                        throw new FactoryUrlException(String.format(PARAMETRIZED_ILLEGAL_ORGID_PARAMETER_MESSAGE, factory.getOrgid()));
+                        isTracked = true;
+                        break;
                     }
                 }
+                if (!isTracked)
+                    throw new FactoryUrlException(String.format(FactoryConstants.PARAMETRIZED_ILLEGAL_ORGID_PARAMETER_MESSAGE, factory.getOrgid()));
             } catch (ServerException | NumberFormatException e) {
-                throw new FactoryUrlException(String.format(PARAMETRIZED_ILLEGAL_ORGID_PARAMETER_MESSAGE, factory.getOrgid()));
+                throw new FactoryUrlException(String.format(FactoryConstants.PARAMETRIZED_ILLEGAL_ORGID_PARAMETER_MESSAGE, factory.getOrgid()));
             }
         }
 
@@ -208,53 +147,30 @@ public class FactoryUrlBaseValidator implements FactoryUrlValidator {
         if (restriction != null) {
             if (0 != restriction.getValidsince()) {
                 if (null == orgid) {
-                    throw new FactoryUrlException(String.format(PARAMETRIZED_ILLEGAL_TRACKED_PARAMETER_MESSAGE, "validsince", null));
+                    throw new FactoryUrlException(String.format(FactoryConstants.PARAMETRIZED_ILLEGAL_TRACKED_PARAMETER_MESSAGE, "validsince", null));
                 }
 
                 if (new Date().before(new Date(restriction.getValidsince()))) {
-                    throw new FactoryUrlException(ILLEGAL_VALIDSINCE_MESSAGE);
+                    throw new FactoryUrlException(FactoryConstants.ILLEGAL_VALIDSINCE_MESSAGE);
                 }
             }
 
             if (0 != restriction.getValiduntil()) {
                 if (null == orgid) {
-                    throw new FactoryUrlException(String.format(PARAMETRIZED_ILLEGAL_TRACKED_PARAMETER_MESSAGE, "validuntil", null));
+                    throw new FactoryUrlException(String.format(FactoryConstants.PARAMETRIZED_ILLEGAL_TRACKED_PARAMETER_MESSAGE, "validuntil", null));
                 }
 
                 if (new Date().after(new Date(restriction.getValiduntil()))) {
-                    throw new FactoryUrlException(ILLEGAL_VALIDUNTIL_MESSAGE);
+                    throw new FactoryUrlException(FactoryConstants.ILLEGAL_VALIDUNTIL_MESSAGE);
                 }
             }
 
-            if (null != restriction.getRefererhostname()) {
-                if (null == orgid) {
-                    throw new FactoryUrlException(String.format(PARAMETRIZED_ILLEGAL_TRACKED_PARAMETER_MESSAGE, "refererhostname", null));
-                }
 
-                String host = null;
-                if (null != request.getHeader("Referer")) {
-                    try {
-                        URI referer = new URI(request.getHeader("Referer"));
-
-                        // relative url
-                        if (null == referer.getHost()) {
-                            host = request.getServerName();
-                        } else {
-                            host = referer.getHost();
-                        }
-                    } catch (URISyntaxException ignored) {
-                    }
-                }
-
-                if (!restriction.getRefererhostname().equals(host)) {
-                    throw new FactoryUrlException(ILLEGAL_HOSTNAME_MESSAGE);
-                }
-            }
 
             if (restriction.getRestrictbypassword()) {
                 if (null == orgid) {
                     throw new FactoryUrlException(
-                            String.format(PARAMETRIZED_ILLEGAL_TRACKED_PARAMETER_MESSAGE, "restrictbypassword", null));
+                            String.format(FactoryConstants.PARAMETRIZED_ILLEGAL_TRACKED_PARAMETER_MESSAGE, "restrictbypassword", null));
                 }
 
                 // TODO implement
@@ -262,7 +178,7 @@ public class FactoryUrlBaseValidator implements FactoryUrlValidator {
 
             if (null != restriction.getPassword()) {
                 if (null == orgid) {
-                    throw new FactoryUrlException(String.format(PARAMETRIZED_ILLEGAL_TRACKED_PARAMETER_MESSAGE, "password", null));
+                    throw new FactoryUrlException(String.format(FactoryConstants.PARAMETRIZED_ILLEGAL_TRACKED_PARAMETER_MESSAGE, "password", null));
                 }
 
                 // TODO implement
@@ -270,7 +186,7 @@ public class FactoryUrlBaseValidator implements FactoryUrlValidator {
 
             if (0 != restriction.getMaxsessioncount()) {
                 if (null == orgid) {
-                    throw new FactoryUrlException(String.format(PARAMETRIZED_ILLEGAL_TRACKED_PARAMETER_MESSAGE, "maxsessioncount", null));
+                    throw new FactoryUrlException(String.format(FactoryConstants.PARAMETRIZED_ILLEGAL_TRACKED_PARAMETER_MESSAGE, "maxsessioncount", null));
                 }
 
                 // TODO implement
@@ -279,7 +195,7 @@ public class FactoryUrlBaseValidator implements FactoryUrlValidator {
 
         if (null != factory.getWelcome()) {
             if (null == orgid) {
-                throw new FactoryUrlException(String.format(PARAMETRIZED_ILLEGAL_TRACKED_PARAMETER_MESSAGE, "welcome", null));
+                throw new FactoryUrlException(String.format(FactoryConstants.PARAMETRIZED_ILLEGAL_TRACKED_PARAMETER_MESSAGE, "welcome", null));
             }
         }
     }
