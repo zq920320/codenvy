@@ -463,8 +463,8 @@ public class TestExpandedMetric extends BaseTest {
         builder.put(Parameters.STORAGE_TABLE, MetricType.CREATED_USERS.toString().toLowerCase());
         pigServer.execute(ScriptType.EVENTS, builder.build());
 
-        builder.put(Parameters.FROM_DATE, "20131031");
-        builder.put(Parameters.TO_DATE, "20131031");
+        builder.put(Parameters.FROM_DATE, "20131101");
+        builder.put(Parameters.TO_DATE, "20131101");
         pigServer.execute(ScriptType.EVENTS, builder.build());
 
         // test expanded metric value
@@ -481,6 +481,8 @@ public class TestExpandedMetric extends BaseTest {
         expandedValue = metric.getExpandedValue(builder.build());
         all = treatAsList(expandedValue);
         assertEquals(all.size(), 2);
+        assertTrue(all.contains(MapValueData.valueOf("user=user4@gmail.com")));
+        assertTrue(all.contains(MapValueData.valueOf("user=user5")));
 
         // test filtering user list by "non_active_users" metric
         builder = new Context.Builder();
@@ -490,17 +492,14 @@ public class TestExpandedMetric extends BaseTest {
         UsersStatisticsList usersStatisticsListMetric = new UsersStatisticsList();
         ListValueData value = (ListValueData)usersStatisticsListMetric.getValue(builder.build());
         all = value.getAll();
-        assertEquals(all.size(), 4);
+        assertEquals(all.size(), 3);
 
         // calculate non-active user list
         builder.put(Parameters.EXPANDED_METRIC_NAME, "non_active_users");
 
         ListValueData filteredValue = (ListValueData)usersStatisticsListMetric.getValue(builder.build());
         all = filteredValue.getAll();
-        assertEquals(all.size(), 1);
-
-        Map<String, ValueData> users = ((MapValueData)all.get(0)).getAll();
-        assertEquals(users.get(UsersStatisticsList.USER).toString(), "user5@gmail.com");
+        assertEquals(all.size(), 0);
     }
 
     @Test
