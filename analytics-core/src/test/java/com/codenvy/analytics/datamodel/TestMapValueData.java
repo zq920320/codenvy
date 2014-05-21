@@ -97,7 +97,7 @@ public class TestMapValueData extends BaseTest {
     }
 
     @Test
-    public void testUnion() {
+    public void testAdd() {
         Map<String, ValueData> value = new HashMap<>();
         value.put("key3", new LongValueData(10));
         value.put("key2", new DoubleValueData(10.1));
@@ -112,5 +112,28 @@ public class TestMapValueData extends BaseTest {
         MapValueData sumValueData = new MapValueData(value);
 
         assertEquals(sumValueData, valueData.add(newValueData));
+    }
+
+    @Test
+    public void testSubtract() {
+        Map<String, ValueData> value = new HashMap<>();
+        value.put("key1", new StringValueData("value"));
+        value.put("key2", new DoubleValueData(20));
+        value.put("key3", new LongValueData(20));
+        MapValueData valueData1 = new MapValueData(value);
+
+
+        value = new HashMap<>();
+        value.put("key1", new StringValueData("value"));
+        value.put("key2", new DoubleValueData(10));
+        value.put("key3", new LongValueData(5));
+        MapValueData valueData2 = new MapValueData(value);
+
+        value = new HashMap<>();
+        value.put("key2", new DoubleValueData(10));
+        value.put("key3", new LongValueData(15));
+        MapValueData subtractValueData = new MapValueData(value);
+
+        assertEquals(subtractValueData, valueData1.subtract(valueData2));
     }
 }

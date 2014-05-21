@@ -20,10 +20,7 @@ package com.codenvy.analytics.metrics;
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.Configurator;
 import com.codenvy.analytics.Injector;
-import com.codenvy.analytics.datamodel.ListValueData;
-import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.datamodel.MapValueData;
-import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.datamodel.*;
 import com.codenvy.analytics.metrics.projects.*;
 import com.codenvy.analytics.metrics.sessions.*;
 import com.codenvy.analytics.metrics.sessions.factory.AbstractFactorySessions;
@@ -53,6 +50,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsList;
+import static java.util.Arrays.asList;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
@@ -788,7 +786,7 @@ public class TestExpandedMetric extends BaseTest {
 
         ListValueData value = (ListValueData)sessionsListMetric.getValue(builder.build());
         all = value.getAll();
-        assertEquals(value.getAll().size(), 4);
+        assertEquals(all.size(), 4);
 
         // calculate build projects list
         builder.put(Parameters.EXPANDED_METRIC_NAME, "factory_sessions_with_build_percent");
@@ -1023,13 +1021,12 @@ public class TestExpandedMetric extends BaseTest {
         assertEquals(viewData.size(), 1);
 
         SectionData sectionData = viewData.get("section_expended");
-        assertEquals(sectionData.size(), 3);
+        assertEquals(sectionData.size(), 4);
 
-        List<ValueData> titleRow = sectionData.get(0);
-        // TODO
-//        assertTrue(titleRow.contains(MapValueData.valueOf("ws=ws1")));
-//        assertTrue(titleRow.contains(MapValueData.valueOf("ws=ws2")));
-//        assertTrue(titleRow.contains(MapValueData.valueOf("ws=ws3")));
+        assertTrue(sectionData.contains(asList(StringValueData.valueOf("ws"))));
+        assertTrue(sectionData.contains(asList(StringValueData.valueOf("ws1"))));
+        assertTrue(sectionData.contains(asList(StringValueData.valueOf("ws2"))));
+        assertTrue(sectionData.contains(asList(StringValueData.valueOf("ws3"))));
     }
 
     @BeforeMethod

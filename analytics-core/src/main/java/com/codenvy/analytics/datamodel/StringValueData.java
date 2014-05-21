@@ -64,7 +64,9 @@ public class StringValueData extends AbstractValueData {
 
     @Override
     protected ValueData doSubtract(ValueData valueData) {
-        if (value.endsWith("\n" + valueData.getAsString())) {
+        if (value.equals(valueData.getAsString())) {
+            return DEFAULT;
+        } else if (value.endsWith("\n" + valueData.getAsString())) {
             int endIndex = value.length() - valueData.getAsString().length() - 1;
             return new StringValueData(value.substring(0, endIndex));
         } else {

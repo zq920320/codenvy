@@ -67,7 +67,12 @@ public class TestDoubleValueData extends BaseTest {
     }
 
     @Test
-    public void testUnion() {
+    public void testAdd() {
         assertEquals(new DoubleValueData(20.2), valueData.add(valueData));
+    }
+
+    @Test
+    public void testSubtract() {
+        assertEquals(DoubleValueData.DEFAULT, valueData.subtract(valueData));
     }
 }

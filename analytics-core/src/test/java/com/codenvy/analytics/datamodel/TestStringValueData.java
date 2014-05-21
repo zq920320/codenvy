@@ -67,7 +67,13 @@ public class TestStringValueData extends BaseTest {
     }
 
     @Test
-    public void testUnion() {
+    public void testAdd() {
         assertEquals(new StringValueData("hello\nhello"), valueData.add(valueData));
+    }
+
+    @Test
+    public void testSubtract() {
+        assertEquals(StringValueData.DEFAULT, valueData.subtract(valueData));
+        assertEquals(StringValueData.valueOf("hello"), StringValueData.valueOf("hello\nhello").subtract(StringValueData.valueOf("hello")));
     }
 }

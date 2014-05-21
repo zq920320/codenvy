@@ -107,28 +107,24 @@ public class TestListValueData extends BaseTest {
     }
 
     @Test
-    public void testUnion() {
-        Map<String, ValueData> value = new HashMap<>();
-        value.put("key1", new StringValueData("hello"));
-        MapValueData rowValueData1 = new MapValueData(value);
+    public void testAdd() {
+        ListValueData valueData1 = new ListValueData(Arrays.<ValueData>asList(StringValueData.valueOf("a")));
+        ListValueData valueData2 = new ListValueData(Arrays.<ValueData>asList(StringValueData.valueOf("a"),
+                                                                              StringValueData.valueOf("b")));
+        ListValueData sumValueData = new ListValueData(Arrays.<ValueData>asList(StringValueData.valueOf("a"),
+                                                                                StringValueData.valueOf("a"),
+                                                                                StringValueData.valueOf("b")));
 
-        ListValueData newValueData = new ListValueData(Arrays.<ValueData>asList(rowValueData1));
+        assertEquals(sumValueData, valueData1.add(valueData2));
+    }
 
-        value = new HashMap<>();
-        value.put("key1", new LongValueData(10));
-        rowValueData1 = new MapValueData(value);
-
-        value = new HashMap<>();
-        value.put("key1", new DoubleValueData(20));
-        MapValueData rowValueData2 = new MapValueData(value);
-
-        value = new HashMap<>();
-        value.put("key1", new StringValueData("hello"));
-        MapValueData rowValueData3 = new MapValueData(value);
-
-        ListValueData sumValueData =
-                new ListValueData(Arrays.<ValueData>asList(rowValueData1, rowValueData2, rowValueData3));
-
-        assertEquals(sumValueData, valueData.add(newValueData));
+    @Test
+    public void testSubtract() {
+        ListValueData valueData1 = new ListValueData(Arrays.<ValueData>asList(StringValueData.valueOf("a"),
+                                                                              StringValueData.valueOf("a"),
+                                                                              StringValueData.valueOf("b")));
+        ListValueData valueData2 = new ListValueData(Arrays.<ValueData>asList(StringValueData.valueOf("a"),
+                                                                              StringValueData.valueOf("b")));
+        assertEquals(ListValueData.DEFAULT, valueData1.subtract(valueData2));
     }
 }

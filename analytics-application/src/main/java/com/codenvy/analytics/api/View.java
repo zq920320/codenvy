@@ -62,8 +62,7 @@ public class View {
     private final CSVFileCleaner csvFileCleanerHolder;
 
     @Inject
-    public View(ViewBuilder viewBuilder,
-                CSVFileCleaner csvFileCleanerHolder) {
+    public View(ViewBuilder viewBuilder, CSVFileCleaner csvFileCleanerHolder) {
         this.viewBuilder = viewBuilder;
         this.csvFileCleanerHolder = csvFileCleanerHolder;
     }
