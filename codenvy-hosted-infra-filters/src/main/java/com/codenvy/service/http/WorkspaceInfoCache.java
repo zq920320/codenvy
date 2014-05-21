@@ -22,6 +22,7 @@ import com.codenvy.api.core.ServerException;
 import com.codenvy.api.core.rest.HttpJsonHelper;
 import com.codenvy.api.core.rest.shared.dto.Link;
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
+import com.codenvy.api.workspace.shared.dto.Attribute;
 import com.codenvy.api.workspace.shared.dto.Workspace;
 import com.codenvy.dto.server.DtoFactory;
 import com.google.common.cache.CacheBuilder;
@@ -68,7 +69,7 @@ public class WorkspaceInfoCache {
      */
     public Workspace getByName(String wsName) throws ServerException, NotFoundException {
         try {
-            return workspaceCache.get(new Key(wsName, false));
+            return doGet(new Key(wsName, false));
         } catch (ExecutionException e) {
             if (e.getCause() instanceof NotFoundException) {
                 throw ((NotFoundException)e.getCause());
@@ -88,7 +89,7 @@ public class WorkspaceInfoCache {
      */
     public Workspace getById(String id) throws ServerException, NotFoundException {
         try {
-            return workspaceCache.get(new Key(id, true));
+            return doGet(new Key(id, true));
         } catch (ExecutionException e) {
             if (e.getCause() instanceof NotFoundException) {
                 throw ((NotFoundException)e.getCause());
@@ -98,6 +99,7 @@ public class WorkspaceInfoCache {
             throw new RuntimeException(e.getLocalizedMessage(), e);
         }
     }
+
 
     /**
      * Remove workspace from cache by workspace id.
@@ -112,10 +114,28 @@ public class WorkspaceInfoCache {
     /**
      * Remove workspace by workspace name.
      *
-     * @param wsName - name workspace to remove
+     * @param wsName
+     *         - name workspace to remove
      */
     public void removeByName(String wsName) {
         workspaceCache.invalidate(new Key(wsName, false));
+    }
+
+    private Workspace doGet(Key key) throws ServerException, NotFoundException, ExecutionException {
+        Workspace workspace = workspaceCache.get(key);
+        if (workspace.isTemporary()) {
+            for (Attribute attribute : workspace.getAttributes()) {
+                if (attribute.getName().equals("tmp_workspace_cloned_from_private_repo")) {
+                    return workspace;
+                }
+            }
+            workspaceCache.invalidate(key);
+            workspaceCache
+                    .invalidate(key.isUuid ? new Key(workspace.getName(), false) : new Key(workspace.getId(), true));
+            workspace = workspaceCache.get(key);
+        }
+        return workspace;
+
     }
 
     public abstract static class WorkspaceCacheLoader extends CacheLoader<Key, Workspace> {
