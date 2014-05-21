@@ -938,34 +938,6 @@ function Configuration() {
         "data_universe",
     ];
 
-    /** see method analytics.main.getParamsFromButtons() */
-    var registeredViewParams = [
-        "user",              // users-view, factory-statistics, *-reports
-        "domain",            // *-reports
-        "user_company",      // users-view, *-reports
-        "org_id",            // factory-statistics
-        "affiliate_id",      // factory-statistics
-        "user_first_name",   // users-view
-        "user_last_name",    // users-view
-        "ide",               // top-menu
-        "data_universe",     // top-menu
-        "metric",            // top-metrics
-        "from_date",         // user-view, workspace-view
-        "to_date",           // user-view, workspace-view
-        "event",             // session-view
-        "action",            // session-view
-        "event_parameter_name",    // session-view
-        "event_parameter_value",   // session-view
-        "ws",                // workspaces-view
-        "factory",           // factories-view
-        "encoded_factory",   // factories-view
-        "time_interval",     // drill down page
-        "project",           // projects-view
-        "project_type",      // projects-view
-        "expanded_metric_name",    // drill down pages
-        "account_id",        // account-view, accounts-view
-    ];
-
     /** url params which are passed from other pages */
     var crossPageParams = [
         "user",        // users-view > user-view; workspace-view > user-view;
@@ -1271,19 +1243,6 @@ function Configuration() {
     }
 
     /**
-     * Return registered params with all values = null
-     */
-    function getViewParamsWithNullValues() {
-        var params = {};
-        for (var i in registeredViewParams) {
-            var paramName = registeredViewParams[i];
-            params[paramName] = null;
-        }
-
-        return params;
-    }
-
-    /**
      * Return modelParams which had been cleared from forbidden params defined
      * in the configuration of widget with widgetName
      */
@@ -1358,10 +1317,6 @@ function Configuration() {
         return false;
     }
 
-    function getViewParamList() {
-        return registeredViewParams;
-    }
-
     /** ****************** API ********** */
     return {
         getProperty: getProperty,
@@ -1370,10 +1325,8 @@ function Configuration() {
         setupDefaultModelParams: setupDefaultModelParams,
         isModelParamRegistered: isModelParamRegistered,
         isParamGlobal: isParamGlobal,
-        getViewParamList: getViewParamList,
         getGlobalParamList: getGlobalParamList,
         getServerProperty: getServerProperty,
-        getViewParamsWithNullValues: getViewParamsWithNullValues,
         removeForbiddenModelParams: removeForbiddenModelParams,
         getCrossPageParamsList: getCrossPageParamsList,
         isDateParam: isDateParam,

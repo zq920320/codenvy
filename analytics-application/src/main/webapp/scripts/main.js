@@ -213,13 +213,11 @@ function Main() {
         // load all widgets at first time of loading the page
         if (typeof params == "undefined") {
             params = analytics.util.extractUrlParams(window.location.href);
-            
+            params = analytics.util.getSubset(params, analytics.configuration.getCrossPageParamsList());
+
             analytics.util.updateGlobalParamsWithValuesFromStorage(params);
             updateFilterState(params);
         }
-
-        var namesOfParamsToFilter = analytics.configuration.getViewParamList();
-        params = analytics.util.filterParams(params, namesOfParamsToFilter);
         
         var widgetNames = analytics.configuration.getWidgetNames();
         for (var i = 0; i < widgetNames.length; i++) {
