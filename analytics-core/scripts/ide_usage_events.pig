@@ -36,6 +36,7 @@ result = FOREACH a GENERATE UUID(),
                             TOTUPLE('source', source),
                             TOTUPLE('project', project),
                             TOTUPLE('project_type', LOWER(projectType)),
+                            TOTUPLE('project_id', CreateProjectId(user, ws, project)),
                             TOTUPLE('parameters', parameters), -- every key-value pair will be stored separately instead of whole parameter
                             TOTUPLE('ide', ide);
 

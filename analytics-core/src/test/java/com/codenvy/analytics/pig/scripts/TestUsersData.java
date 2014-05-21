@@ -70,14 +70,6 @@ public class TestUsersData extends BaseTest {
     }
 
     @Test
-    public void testUsersProfilesListExt() throws Exception {
-        Metric metric = MetricFactory.getMetric(MetricType.USERS_PROFILES_LIST_EXT);
-        ListValueData valueData = ValueDataUtil.getAsList(metric, Context.EMPTY);
-
-        assertUserData(valueData);
-    }
-
-    @Test
     public void testUserStatistics() throws Exception {
         Metric metric = MetricFactory.getMetric(MetricType.USERS_STATISTICS_LIST);
         ListValueData valueData = ValueDataUtil.getAsList(metric, Context.EMPTY);

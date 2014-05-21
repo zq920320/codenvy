@@ -52,55 +52,48 @@ public class TestActOn extends BaseTest {
     @BeforeClass
     public void prepare() throws Exception {
         Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.LOG, prepareLog().getAbsolutePath());
+
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
-        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
-        builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.name());
-        builder.put(Parameters.LOG, prepareLog().getAbsolutePath());
-        builder.put(Parameters.STORAGE_TABLE_USERS_STATISTICS, MetricType.USERS_STATISTICS_LIST.name().toLowerCase());
-        builder.put(Parameters.STORAGE_TABLE_USERS_PROFILES, MetricType.USERS_PROFILES_LIST.name().toLowerCase());
 
-        builder.put(Parameters.STORAGE_TABLE, MetricType.USERS_PROFILES_LIST.name().toLowerCase());
+        builder.putAll(scriptsManager.getScript(ScriptType.USERS_UPDATE_PROFILES, MetricType.USERS_PROFILES_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.USERS_UPDATE_PROFILES, builder.build());
 
-        builder.put(Parameters.STORAGE_TABLE, MetricType.PRODUCT_USAGE_SESSIONS_LIST.name().toLowerCase());
+        builder.putAll(scriptsManager.getScript(ScriptType.PRODUCT_USAGE_SESSIONS, MetricType.PRODUCT_USAGE_SESSIONS_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, builder.build());
 
-        builder.put(Parameters.STORAGE_TABLE, MetricType.USERS_STATISTICS_LIST.name().toLowerCase());
+        builder.putAll(scriptsManager.getScript(ScriptType.USERS_STATISTICS, MetricType.USERS_STATISTICS_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.USERS_STATISTICS, builder.build());
 
-        builder.put(Parameters.STORAGE_TABLE, MetricType.USERS_ACTIVITY_LIST.name().toLowerCase());
+        builder.putAll(scriptsManager.getScript(ScriptType.USERS_ACTIVITY, MetricType.USERS_ACTIVITY_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.USERS_ACTIVITY, builder.build());
 
-        builder.put(Parameters.STORAGE_TABLE, MetricType.ACTIVE_USERS_SET.name().toLowerCase());
-        builder.put(Parameters.PARAM, "user");
+        builder.putAll(scriptsManager.getScript(ScriptType.ACTIVE_ENTITIES, MetricType.ACTIVE_USERS_SET).getParamsAsMap());
         pigServer.execute(ScriptType.ACTIVE_ENTITIES, builder.build());
 
-        builder.put(Parameters.STORAGE_TABLE, MetricType.ACTIVE_WORKSPACES_SET.name().toLowerCase());
-        builder.put(Parameters.PARAM, "ws");
+        builder.putAll(scriptsManager.getScript(ScriptType.ACTIVE_ENTITIES, MetricType.ACTIVE_WORKSPACES_SET).getParamsAsMap());
         pigServer.execute(ScriptType.ACTIVE_ENTITIES, builder.build());
 
         builder.put(Parameters.FROM_DATE, "20131102");
         builder.put(Parameters.TO_DATE, "20131102");
 
-        builder.put(Parameters.STORAGE_TABLE, MetricType.USERS_ACTIVITY_LIST.name().toLowerCase());
+        builder.putAll(scriptsManager.getScript(ScriptType.USERS_ACTIVITY, MetricType.USERS_ACTIVITY_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.USERS_ACTIVITY, builder.build());
 
-        builder.put(Parameters.STORAGE_TABLE, MetricType.USERS_PROFILES_LIST.name().toLowerCase());
+        builder.putAll(scriptsManager.getScript(ScriptType.USERS_UPDATE_PROFILES, MetricType.USERS_PROFILES_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.USERS_UPDATE_PROFILES, builder.build());
 
-        builder.put(Parameters.STORAGE_TABLE, MetricType.PRODUCT_USAGE_SESSIONS_LIST.name().toLowerCase());
+        builder.putAll(scriptsManager.getScript(ScriptType.PRODUCT_USAGE_SESSIONS, MetricType.PRODUCT_USAGE_SESSIONS_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, builder.build());
 
-        builder.put(Parameters.STORAGE_TABLE, MetricType.USERS_STATISTICS_LIST.name().toLowerCase());
+        builder.putAll(scriptsManager.getScript(ScriptType.USERS_STATISTICS, MetricType.USERS_STATISTICS_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.USERS_STATISTICS, builder.build());
 
-        builder.put(Parameters.STORAGE_TABLE, MetricType.ACTIVE_USERS_SET.name().toLowerCase());
-        builder.put(Parameters.PARAM, "user");
+        builder.putAll(scriptsManager.getScript(ScriptType.ACTIVE_ENTITIES, MetricType.ACTIVE_USERS_SET).getParamsAsMap());
         pigServer.execute(ScriptType.ACTIVE_ENTITIES, builder.build());
 
-        builder.put(Parameters.STORAGE_TABLE, MetricType.ACTIVE_WORKSPACES_SET.name().toLowerCase());
-        builder.put(Parameters.PARAM, "ws");
+        builder.putAll(scriptsManager.getScript(ScriptType.ACTIVE_ENTITIES, MetricType.ACTIVE_WORKSPACES_SET).getParamsAsMap());
         pigServer.execute(ScriptType.ACTIVE_ENTITIES, builder.build());
     }
 
