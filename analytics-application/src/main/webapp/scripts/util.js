@@ -146,6 +146,21 @@ function Util() {
         
         return map;
     }
+
+    /**
+     * Remove from map all params with names which are absent in namesOfParamsToFilter 
+     */
+    function filterParams(map, namesOfParamsToFilter) {
+        var filteredMap = clone(map);
+        
+        for (var paramName in map) {
+            if (namesOfParamsToFilter.indexOf(paramName) == -1) {
+                delete filteredMap[paramName];
+            }
+        }
+        
+        return filteredMap;
+    }
     
     /** Return array without certain elements  
      *  @param elements - list of elements to remove.
@@ -445,6 +460,7 @@ function Util() {
         // operations with parameters
         removeParamsWithNullValues: removeParamsWithNullValues,
         removeParams: removeParams,
+        filterParams: filterParams,
         removeElementsFromArray: removeElementsFromArray,
         
         // global parameters processing

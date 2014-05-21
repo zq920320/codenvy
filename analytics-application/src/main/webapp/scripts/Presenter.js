@@ -67,7 +67,7 @@ Presenter.prototype.getModelParams = function(viewParams) {
     
     for (var i in viewParamNames) {
         var viewParamName = viewParamNames[i]
-        if (analytics.configuration.isParamRegistered(viewParamName)) {
+        if (analytics.configuration.isModelParamRegistered(viewParamName)) {
             var paramValue = viewParams[viewParamName];
             
             // translate date range value format: fix "yyyy-mm-dd" on "yyyymmdd"
@@ -225,6 +225,8 @@ Presenter.prototype.getDrillDownPageLink = function(metricName, modelParams, tim
                             + drillDownPageLinkDelimeter + this.METRIC_ORIGINAL_NAME_VIEW_PARAMETER + "=" + metricName;
     
     if (!jQuery.isEmptyObject(modelParams)) {
+        var modelParams = analytics.util.clone(modelParams);
+        delete modelParams[this.METRIC_ORIGINAL_NAME_VIEW_PARAMETER];  // remove redundant expanded metric name
         drillDownPageLink += "&" + analytics.util.constructUrlParams(modelParams);
     }
 

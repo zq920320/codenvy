@@ -959,11 +959,10 @@ function Configuration() {
         "ws",                // workspaces-view
         "factory",           // factories-view
         "encoded_factory",   // factories-view
-        "expanded_metric_name",    // all entry views
-        "time_interval",   // drill down page
+        "time_interval",     // drill down page
         "project",           // projects-view
         "project_type",      // projects-view
-
+        "expanded_metric_name",    // drill down pages
         "account_id",        // account-view, accounts-view
     ];
 
@@ -1236,14 +1235,8 @@ function Configuration() {
     /**
      * Verify if modelParam is presence in registeredModelParams array
      */
-    function isParamRegistered(modelParam) {
-        for (var i in registeredModelParams) {
-            if (modelParam == registeredModelParams[i]) {
-                return true;
-            }
-        }
-
-        return false;
+    function isModelParamRegistered(modelParam) {
+        return registeredModelParams.indexOf(modelParam) > -1;
     }
 
     /**
@@ -1365,6 +1358,9 @@ function Configuration() {
         return false;
     }
 
+    function getViewParamList() {
+        return registeredViewParams;
+    }
 
     /** ****************** API ********** */
     return {
@@ -1372,8 +1368,9 @@ function Configuration() {
         getSubProperty: getSubProperty,
         getWidgetNames: getWidgetNames,
         setupDefaultModelParams: setupDefaultModelParams,
-        isParamRegistered: isParamRegistered,
+        isModelParamRegistered: isModelParamRegistered,
         isParamGlobal: isParamGlobal,
+        getViewParamList: getViewParamList,
         getGlobalParamList: getGlobalParamList,
         getServerProperty: getServerProperty,
         getViewParamsWithNullValues: getViewParamsWithNullValues,
