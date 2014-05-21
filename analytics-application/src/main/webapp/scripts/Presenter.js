@@ -37,6 +37,11 @@ Presenter.prototype.DEFAULT_ONE_PAGE_ROWS_COUNT = 20;
 Presenter.prototype.METRIC_ORIGINAL_NAME_VIEW_PARAMETER = "expanded_metric_name";
 Presenter.prototype.TIME_INTERVAL_PARAMETER = "time_interval";
 
+/** Event filtering parameters */
+Presenter.prototype.EVENT_PARAMETER_NAME_FIELD = "event_parameter_name";
+Presenter.prototype.EVENT_PARAMETER_VALUE_FIELD = "event_parameter_value";
+Presenter.prototype.EVENT_PARAMETER_FIELD = "parameters";
+
 Presenter.prototype.setView = function(newView) {
     this.view = newView;
 };

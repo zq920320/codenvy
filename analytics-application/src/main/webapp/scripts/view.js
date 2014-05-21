@@ -162,11 +162,20 @@ function View() {
      * Prints page navigator, meets the requirements: 1 ... 4 5 6 /7/ 9 10 11 ... 100.
      * CurrentPageNumber is 1-based. 
      */
-    function printBottomPageNavigator(pageCount, currentPageNumber, queryString, pageQueryParameter, widgetName) {
+    function printBottomPageNavigator(pageCount, currentPageNumber, params, pageQueryParameter, widgetName) {
         if (typeof pageCount == "undefined" || pageCount <= 0) {
             return;
         }
     
+        // remove old page number
+        var params = analytics.util.clone(params);
+        delete params[widgetName];  
+        delete params.page;
+        var queryString = "";
+        if (!jQuery.isEmptyObject(params)) {
+            queryString += "?" + analytics.util.constructUrlParams(params);
+        }
+        
         print('<link href="/analytics/css/page-navigator.css" rel="stylesheet" type="text/css" />');
         print("<div class='bottom-page-navigator'>");
     

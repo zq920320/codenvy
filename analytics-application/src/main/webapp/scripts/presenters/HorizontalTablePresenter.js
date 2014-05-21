@@ -90,12 +90,7 @@ analytics.presenter.HorizontalTablePresenter.prototype.load = function () {
                     presenter.printTable(csvButtonLink, table);
 
                     // print bottom page navigation
-                    delete modelParams[widgetName];  // remove old page number
-                    var queryString = "";
-                    if (!jQuery.isEmptyObject(modelParams)) {
-                        queryString += "?" + analytics.util.constructUrlParams(modelParams);
-                    }
-                    view.printBottomPageNavigator(pageCount, currentPageNumber, queryString, widgetName, widgetName);
+                    view.printBottomPageNavigator(pageCount, currentPageNumber, modelParams, widgetName, widgetName);
 
                     view.loadTableHandlers(false);  // don't display client side sorting for table with pagination
                 } else {

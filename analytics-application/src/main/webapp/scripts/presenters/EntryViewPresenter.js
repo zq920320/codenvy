@@ -96,18 +96,13 @@ analytics.presenter.EntryViewPresenter.prototype.obtainViewData = function (mode
 
             // make table header as linked for sorting
             var mapColumnToServerSortParam = analytics.configuration.getProperty(presenter.widgetName, "mapColumnToServerSortParam", undefined);
-            table = presenter.addServerSortingLinks(table, presenter.widgetName, viewParams, mapColumnToServerSortParam);
+            table = presenter.addServerSortingLinks(table, presenter.widgetName, modelParams, mapColumnToServerSortParam);
 
             // print table
             view.printTable(table, false);
 
             // print bottom page navigation
-            var queryString = analytics.util.getCurrentPageName();
-            if (!jQuery.isEmptyObject(viewParams)) {
-                queryString += "?" + analytics.util.constructUrlParams(viewParams);
-            }
-
-            view.printBottomPageNavigator(pageCount, currentPageNumber, queryString, presenter.CURRENT_PAGE_QUERY_PARAMETER, presenter.widgetName);
+            view.printBottomPageNavigator(pageCount, currentPageNumber, modelParams, presenter.CURRENT_PAGE_QUERY_PARAMETER, presenter.widgetName);
 
             view.loadTableHandlers(false);  // don't display client side sorting for table with pagination
         } else {

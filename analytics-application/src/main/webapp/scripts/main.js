@@ -185,9 +185,6 @@ function Main() {
             var urlParams = analytics.util.extractUrlParams(window.location.href);
             var buttonParams = getParamsFromButtons();
 
-            // remove unregistered url params
-            var urlParams = analytics.util.getSubset(urlParams, analytics.configuration.getCrossPageParamsList());
-
             // union url params with button params and choose button params values above url params values
             var params = analytics.util.unionWithRewrite(urlParams, buttonParams);
 
@@ -213,7 +210,6 @@ function Main() {
         // load all widgets at first time of loading the page
         if (typeof params == "undefined") {
             params = analytics.util.extractUrlParams(window.location.href);
-            params = analytics.util.getSubset(params, analytics.configuration.getCrossPageParamsList());
 
             analytics.util.updateGlobalParamsWithValuesFromStorage(params);
             updateFilterState(params);

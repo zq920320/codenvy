@@ -560,6 +560,7 @@ function Configuration() {
                 "User": "user",
                 "Project": "project",
                 "Type": "project_type",
+
                 "Workspace": "ws",
             }
         },
@@ -934,34 +935,9 @@ function Configuration() {
         "project",
         "project_type",
         "parameters",
+        "action",
         "account_id",
         "data_universe",
-    ];
-
-    /** url params which are passed from other pages */
-    var crossPageParams = [
-        "user",        // users-view > user-view; workspace-view > user-view;
-        // top metrics report > user-view
-        "sort",        // users-view > users-view; workspaces-view >
-        // workspaces-view
-        "page",        // user-view > user-view; users-view > users-view;
-        // workspaces-view > workspaces-view; workspace-view >
-        // workspace-view
-        "session_id",  // user-view > session-view; workspace-view >
-        // session-view; top metrics report > session-view
-        "ws",          // workspaces-view > workspace-view; user-view >
-        // workspace-view
-        "factory",     // factories-view > factory-view; user-view >
-
-        // factory-view; workspace-view > factory-view; top
-        // metrics report > factory-view
-        // factory-view; workspace-view > factory-view; top
-        // metrics report > factory-view
-        // top metrics reports -> sessions-view, workspaces-view
-        "referrer",     // top metrics reports -> sessions-view, workspaces-view
-        "domain",       // top metrics reports -> sessions-view
-        "user_company", // top metrics reports -> sessions-view
-        "project",      // projects-view > project-view
     ];
 
     /** Global parameters stored in Browser Storage */
@@ -1328,7 +1304,6 @@ function Configuration() {
         getGlobalParamList: getGlobalParamList,
         getServerProperty: getServerProperty,
         removeForbiddenModelParams: removeForbiddenModelParams,
-        getCrossPageParamsList: getCrossPageParamsList,
         isDateParam: isDateParam,
         isSystemMessage: isSystemMessage,
 
