@@ -20,6 +20,7 @@
 <link rel="stylesheet" type="text/css" href="/analytics/css/styles.css"/>
 <link rel="stylesheet" type="text/css" href="/analytics/css/view.css"/>
 <link rel="stylesheet" type="text/css" href="/analytics/css/database-table.css" />
+<link rel="stylesheet" type="text/css" href="/analytics/css/line-chart.css" />
 
 <style type="text/css">
     body {
@@ -195,3 +196,8 @@
 	    padding: 10px !important;
 	}
 </style>
+
+<!-- load C3.js line chat plugin (http://c3js.org/) -->
+<link rel="stylesheet" type="text/css" href="/analytics/third-party/c3/c3.css" />
+<script type="text/javascript" src="/analytics/third-party/c3/d3.v3.min.js" charset="utf-8"></script>
+<script type="text/javascript" src="/analytics/third-party/c3/c3.v0.1.41.min.js"></script>

@@ -365,6 +365,7 @@ function Util() {
             for (var cellIndex in row) {
                 var cell = row[cellIndex];
                 cell = cell.replace(/,/g, "");  // remove delimeters ','
+                cell = cell.replace(/%/, "");  // remove percent symbol '%'
                 
                 if (isTime(cell)) {
                     cell = getSecondsFromTime(cell);

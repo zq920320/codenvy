@@ -31,6 +31,11 @@
     <div class="row-fluid">
         <div>
             <div class="well topFilteringPanel">
+                <div id="ui-preferences" class="btn-group right">
+                    <button class="btn command-btn" selected value="display_table">Table</button>
+                    <button class="btn command-btn" value="display_chart">Chart</button>
+                </div>
+            
                 <div id="timely-dd" class="btn-group left" targetWidgets="_all">
                     <button class="btn command-btn" value="Day">Day</button>
                     <button class="btn command-btn" value="Week">Week</button>

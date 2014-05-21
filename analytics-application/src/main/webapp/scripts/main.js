@@ -77,17 +77,19 @@ function Main() {
             reloadWidgets($("#data-universe").attr("targetWidgets"));
         });
         
-        // UI preferences selectors group
+        // UI preferences selector group
         $("#ui-preferences button.command-btn").click(function () {
-            $("#ui-preferences button").removeClass('btn-primary');
-            $(this).addClass('btn-primary');
-
-            var uiPreferences = $("#ui-preferences .btn-primary");
-            if (typeof uiPreferences.attr("value") != "undefined") {
-                analytics.util.updateGlobalParamInStorage("ui_preferences", uiPreferences.attr("value"));
-                analytics.view.updateUI();
-            }
-
+            // trigger button state
+            var button = $(this);
+            if (button.hasClass("btn-primary")) {
+                button.removeClass('btn-primary');
+                analytics.util.updateGlobalParamInStorage(button.attr("value"), false);
+            } else {
+                button.addClass('btn-primary');
+                analytics.util.updateGlobalParamInStorage(button.attr("value"), true);
+            }            
+            
+            analytics.view.implementUIPreferences();
         });
         
         // Show session events selector
@@ -240,6 +242,7 @@ function Main() {
             }
         }, timeoutInMillisec);
 
+
         var model = analytics.factory.getModel(widgetName);
         model.clearDoneFunction();
         model.pushDoneFunction(function () {
@@ -248,7 +251,7 @@ function Main() {
                 analytics.views.loader.hide();
                 callback();
 
-                analytics.view.updateUI();
+                analytics.view.implementUIPreferences();
             }
         });
 
@@ -288,6 +291,7 @@ function Main() {
 
         // update metric selection buttons
         var metricButtons = jQuery("#metric button");
+
         if (metricButtons.doesExist()) {
             setPrimaryButtonOnValue(metricButtons, params["metric"]);
         }
@@ -305,9 +309,8 @@ function Main() {
         }
         
         // update ui preferences selection buttons
-        var uiPreferencesButtons = jQuery("#ui-preferences button");
-        if (uiPreferencesButtons.doesExist()) {
-            setPrimaryButtonOnValue(uiPreferencesButtons, params["ui_preferences"]);
+        if (jQuery("#ui-preferences").doesExist()) {
+            updateUIPreferencesButtonGroup(params);
         }
         
         // update show session events selector
@@ -351,9 +354,28 @@ function Main() {
             }
         }
     }
+    
+    function updateUIPreferencesButtonGroup(params) {
+        var uiPreferencesButtons = jQuery("#ui-preferences button");
+        for (var i = 0; i < uiPreferencesButtons.length; i++) {
+            var button = jQuery(uiPreferencesButtons[i]);
+            var uiPreferenceName = button.attr("value");
+            var uiPreference = params[uiPreferenceName];
+            
+            if (typeof uiPreference != "undefined") {
+                if (uiPreference == "true") {
+                    button.addClass('btn-primary');   
+                } else {
+                    button.removeClass('btn-primary');
+                }
+            } else if (typeof button.attr("selected") != "undefined") {
+                button.addClass('btn-primary');   // setup selected value by default
+                analytics.util.updateGlobalParamInStorage(uiPreferenceName, true);
+            }
+        }
+    }
 
     /** Filter functions **/
-    
     function getFilterParamNames(filterInputs) {
         var paramNames = [];
         for (var i = 0; i < filterInputs.length; i++) {
@@ -382,7 +404,7 @@ function Main() {
         var isParamExists = false;
         for (var i = 0; i < filterInputs.length; i++) {
             var filterInput = filterInputs[i];
-            filterInput.value = ""; 
+            filterInput.value = "";
             
             if (typeof params[filterInput.name] != "undefined") {
                 var paramValue = params[filterInput.name];

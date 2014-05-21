@@ -29,8 +29,8 @@ function Configuration() {
             defaultModelParams: {
                 "time_unit": "month"
             },
-
-            isNeedToSaveInHistory: false,   // default value = true
+            
+            displayLineChart: true,  // default is false
         },
 
         factoryStatistics: {
@@ -42,6 +42,7 @@ function Configuration() {
                 "time_unit": "day"
             },
 
+            displayLineChart: true,  // default is false
         },
 
         summaryReport: {
@@ -67,6 +68,8 @@ function Configuration() {
             defaultModelParams: {
                 "time_unit": "month"
             },
+            
+            displayLineChart: true,  // default is false
         },
 
         userReport: {
@@ -77,6 +80,8 @@ function Configuration() {
             defaultModelParams: {
                 "time_unit": "month"
             },
+            
+            displayLineChart: true,  // default is false
         },
 
         engagementLevels: {
@@ -85,6 +90,8 @@ function Configuration() {
             modelViewName: "engagement_levels",
 
             forbiddenModelParams: ["time_unit"],
+            
+            displayLineChart: true,  // default is false
         },
 
         collaborationReport: {
@@ -100,6 +107,8 @@ function Configuration() {
             clientSortParams: {
                 "columnsWithoutSorting": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
             },
+            
+            displayLineChart: true,  // default is false
         },
 
         usageReport: {
@@ -110,6 +119,8 @@ function Configuration() {
             defaultModelParams: {
                 "time_unit": "month"
             },
+            
+            displayLineChart: true,  // default is false
         },
 
         sessionReport: {
@@ -120,6 +131,8 @@ function Configuration() {
             defaultModelParams: {
                 "time_unit": "month"
             },
+            
+            displayLineChart: true,  // default is false
         },
 
         projectReport: {
@@ -421,7 +434,6 @@ function Configuration() {
             widgetLabel: "Session Overview",
             presenterType: "VerticalTablePresenter",
             modelViewName: "session_overview",
-            isNeedToSaveInHistory: false,    // default value = true
 
             defaultModelParams: {
                 "session_id": "unexisted_session_id"
@@ -437,7 +449,6 @@ function Configuration() {
             widgetLabel: "Session Events",
             presenterType: "HorizontalTablePresenter",
             modelViewName: "session_events",
-            isNeedToSaveInHistory: false,   // default value = true
 
             defaultModelParams: {
                 "session_id": "unexisted_session_id",
@@ -508,7 +519,6 @@ function Configuration() {
             widgetLabel: "Workspace Overview",
             presenterType: "VerticalTablePresenter",
             modelViewName: "workspace_overview",
-            isNeedToSaveInHistory: false,   // default value = true
 
             columnDrillDownPageLinkConfiguration: {
                 mapColumnNameToExpandableMetric: {
@@ -667,7 +677,6 @@ function Configuration() {
             presenterType: "HorizontalTablePresenter",
             modelViewName: "project",
             modelMetricName: "projects",
-            isNeedToSaveInHistory: false,   // default value = true
 
             isPaginable: true,
 
@@ -809,7 +818,6 @@ function Configuration() {
             widgetLabel: "Factory Overview",
             presenterType: "VerticalTablePresenter",
             modelViewName: "factory",
-            isNeedToSaveInHistory: false,   // default value = true
 
             columnLinkPrefixList: {
                 "Created By": "/analytics/pages/user-view.jsp?user",
@@ -944,7 +952,8 @@ function Configuration() {
     var globalParams = [
         "ide",
         "data_universe",
-        "ui_preferences",
+        "display_table",
+        "display_chart",
     ];
 
     /** Date params which should have "yyyymmdd" in model and "yyyy-mm-dd" format in view */
