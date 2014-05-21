@@ -46,9 +46,7 @@ public class Utils {
     public static Map<String, String> extractParams(UriInfo info,
                                                     String page,
                                                     String perPage,
-                                                    SecurityContext securityContext,
-                                                    Set<String> allowedUsers,
-                                                    Set<String> allowedWorkspaces) {
+                                                    SecurityContext securityContext) {
 
         MultivaluedMap<String, String> parameters = info.getQueryParameters();
         Map<String, String> context = new HashMap<>(parameters.size());
@@ -58,8 +56,8 @@ public class Utils {
             putPaginationParameters(page, perPage, context);
         }
         if (securityContext != null) {
-            putPossibleUsersAsFilter(context, securityContext, allowedUsers);
-            putPossibleWorkspacesAsFilter(context, securityContext, allowedWorkspaces);
+            putPossibleUsersAsFilter(context, securityContext);
+            putPossibleWorkspacesAsFilter(context, securityContext);
         }
         putDefaultValueIfAbsent(context, Parameters.FROM_DATE);
         putDefaultValueIfAbsent(context, Parameters.TO_DATE);
@@ -68,25 +66,18 @@ public class Utils {
         return context;
     }
 
-    public static Map<String, String> extractParams(UriInfo info,
-                                                    SecurityContext securityContext,
-                                                    Set<String> allowedUsers,
-                                                    Set<String> allowedWorkspaces) {
+    public static Map<String, String> extractParams(UriInfo info, SecurityContext securityContext) {
         return extractParams(info,
                              null,
                              null,
-                             securityContext,
-                             allowedUsers,
-                             allowedWorkspaces);
+                             securityContext);
     }
 
     public static Map<String, String> extractParams(UriInfo info) {
         return extractParams(info,
                              null,
                              null,
-                             null,
-                             Collections.<String>emptySet(),
-                             Collections.<String>emptySet());
+                             null);
     }
 
     public static boolean isRolesAllowed(MetricInfoDTO metricInfoDTO, SecurityContext securityContext) {
@@ -149,15 +140,13 @@ public class Utils {
         }
     }
 
-    private static void putPossibleUsersAsFilter(Map<String, String> context, SecurityContext securityContext, Set<String> allowedUsers) {
+    private static void putPossibleUsersAsFilter(Map<String, String> context, SecurityContext securityContext) {
         if (!isSystemUser(securityContext)) {
 //            String allUsers = "exoinvite4@gmail.com OR exoinvitesingle@gmail.com OR githubinvite3@gmail.com OR " +
 //                              "tratata@ss.ss OR githubinvite2@gmail.com OR additional.test.user@gmail.com OR " +
 //                              "exoinvitemain@gmail.com OR exoinvite1@gmail.com OR exoinvite2@gmail.com OR githubinvite4@gmail.com";
-            if (allowedUsers.isEmpty()) {
-                allowedUsers.addAll(getAllowedUsers());
-            }
 //            Set<String> users = getFilterAsSet(allUsers);
+            Set<String> allowedUsers = getAllowedUsers();
 
             if (!context.containsKey(MetricFilter.USER.toString())) {
                 context.put(MetricFilter.USER.toString(), getFilterAsString(allowedUsers));
@@ -204,12 +193,10 @@ public class Utils {
         return users;
     }
 
-    private static void putPossibleWorkspacesAsFilter(Map<String, String> context, SecurityContext securityContext, Set<String> allowedWorkspaces) {
+    private static void putPossibleWorkspacesAsFilter(Map<String, String> context, SecurityContext securityContext) {
         if (!isSystemUser(securityContext)) {
 //            Set<String> workspaces = new HashSet<>(Arrays.asList("exoinvitemain"));
-            if (allowedWorkspaces.isEmpty()) {
-                allowedWorkspaces.addAll(getAllowedWorkspacesForCurrentUser(context));
-            }
+            Set<String> allowedWorkspaces = getAllowedWorkspacesForCurrentUser(context);
 
             if (!context.containsKey(MetricFilter.WS.toString())) {
                 context.put(MetricFilter.WS.toString(), getFilterAsString(allowedWorkspaces));

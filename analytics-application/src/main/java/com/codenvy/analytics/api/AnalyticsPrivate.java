@@ -29,6 +29,7 @@ import com.codenvy.api.analytics.shared.dto.MetricValueDTO;
 import com.codenvy.api.analytics.shared.dto.MetricValueListDTO;
 import com.codenvy.api.core.rest.annotations.GenerateLink;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +37,9 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
-import java.util.*;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import static com.codenvy.analytics.util.Utils.isRolesAllowed;
 
@@ -48,21 +51,17 @@ import static com.codenvy.analytics.util.Utils.isRolesAllowed;
  * @author Anatoliy Bazko
  */
 @Path("analytics-private")
+@Singleton
 public class AnalyticsPrivate {
 
     private static final Logger LOG = LoggerFactory.getLogger(AnalyticsPrivate.class);
 
     private final MetricHandler metricHandler;
-    private final Set<String>   allowedWorkspaces;
-    private final Set<String>   allowedUsers;
 
     @Inject
     public AnalyticsPrivate(MetricHandler metricHandler) {
         this.metricHandler = metricHandler;
-        this.allowedUsers = new HashSet<>();
-        this.allowedWorkspaces = new HashSet<>();
     }
-
 
     @GenerateLink(rel = "metric value")
     @GET
@@ -78,9 +77,7 @@ public class AnalyticsPrivate {
             Map<String, String> context = Utils.extractParams(uriInfo,
                                                               page,
                                                               perPage,
-                                                              securityContext,
-                                                              allowedUsers,
-                                                              allowedWorkspaces);
+                                                              securityContext);
 
             MetricValueDTO value = metricHandler.getValue(metricName, context, uriInfo);
             return Response.status(Response.Status.OK).entity(value).build();
@@ -129,9 +126,7 @@ public class AnalyticsPrivate {
                                   @Context SecurityContext securityContext) {
         try {
             Map<String, String> context = Utils.extractParams(uriInfo,
-                                                              securityContext,
-                                                              allowedUsers,
-                                                              allowedWorkspaces);
+                                                              securityContext);
 
             MetricValueListDTO list = metricHandler.getUserValues(metricNames, context, uriInfo);
             return Response.status(Response.Status.OK).entity(list).build();

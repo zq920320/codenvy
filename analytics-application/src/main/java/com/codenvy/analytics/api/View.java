@@ -27,6 +27,7 @@ import com.codenvy.analytics.util.Utils;
 import com.codenvy.api.analytics.shared.dto.MetricValueDTO;
 import com.codenvy.dto.server.DtoFactory;
 import com.codenvy.dto.server.JsonArrayImpl;
+import com.google.inject.Singleton;
 
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -49,6 +50,7 @@ import static com.codenvy.analytics.metrics.Context.valueOf;
  * @author Anatoliy Bazko
  */
 @Path("view")
+@Singleton
 public class View {
 
     private static final Logger LOG = LoggerFactory.getLogger(View.class);
@@ -81,9 +83,7 @@ public class View {
             Map<String, String> context = Utils.extractParams(uriInfo,
                                                               page,
                                                               perPage,
-                                                              securityContext,
-                                                              allowedUsers,
-                                                              allowedWorkspaces);
+                                                              securityContext);
 
             ValueData value = getMetricValue(metricName, valueOf(context));
             MetricValueDTO outputValue = getMetricValueDTO(metricName, value);
@@ -111,9 +111,7 @@ public class View {
             Map<String, String> context = Utils.extractParams(uriInfo,
                                                               page,
                                                               perPage,
-                                                              securityContext,
-                                                              allowedUsers,
-                                                              allowedWorkspaces);
+                                                              securityContext);
 
             ValueData value = getExpandedMetricValue(metricName, valueOf(context));
             ViewData result = viewBuilder.getViewData(value);
@@ -138,9 +136,7 @@ public class View {
                                       @Context SecurityContext securityContext) {
         try {
             Map<String, String> params = Utils.extractParams(uriInfo,
-                                                             securityContext,
-                                                             allowedUsers,
-                                                             allowedWorkspaces);
+                                                             securityContext);
 
             com.codenvy.analytics.metrics.Context context = valueOf(params);
 
@@ -163,9 +159,7 @@ public class View {
                                      @Context SecurityContext securityContext) {
         try {
             Map<String, String> params = Utils.extractParams(uriInfo,
-                                                             securityContext,
-                                                             allowedUsers,
-                                                             allowedWorkspaces);
+                                                             securityContext);
 
             com.codenvy.analytics.metrics.Context context = valueOf(params);
 
