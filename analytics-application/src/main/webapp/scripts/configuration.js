@@ -211,7 +211,7 @@ function Configuration() {
             modelViewName: "users",
 
             isPaginable: true,    // default value is "false"
-            modelMetricName: "users_profiles",
+            modelMetricName: "users_statistics",
 
             columnLinkPrefixList: {
                 "Email": "/analytics/pages/user-view.jsp?user",

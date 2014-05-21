@@ -17,6 +17,8 @@
  */
 package com.codenvy.analytics.services.pig;
 
+import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.pig.scripts.ScriptType;
 import com.codenvy.analytics.services.configuration.XmlConfigurationManager;
 
@@ -24,6 +26,8 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Anatoliy Bazko
@@ -32,25 +36,67 @@ import java.util.Collection;
 public class ScriptsManager {
 
     private static final String CONFIGURATION = "scripts.xml";
-
-    private final PigRunnerConfiguration configuration;
+    private final Map<ScriptKey, ScriptConfiguration> scripts;
 
     @Inject
     public ScriptsManager(XmlConfigurationManager confManager) throws IOException {
-        this.configuration = confManager.loadConfiguration(PigRunnerConfiguration.class, CONFIGURATION);
+        PigRunnerConfiguration configuration = confManager.loadConfiguration(PigRunnerConfiguration.class, CONFIGURATION);
+
+        this.scripts = new HashMap<>();
+        for (ScriptConfiguration scriptConf : configuration.getScripts()) {
+            ScriptType scriptType = ScriptType.valueOf(scriptConf.getName().toUpperCase());
+            String storageTable = scriptConf.getParamsAsMap().get(Parameters.STORAGE_TABLE.toString());
+
+            ScriptConfiguration prevConf = scripts.put(new ScriptKey(scriptType, storageTable), scriptConf);
+
+            if (prevConf != null) {
+                throw new IllegalStateException("Script duplicated in the configuration " + CONFIGURATION);
+            }
+        }
     }
 
     public Collection<ScriptConfiguration> getAllScripts() {
-        return configuration.getScripts();
+        return scripts.values();
     }
 
-    public ScriptConfiguration getScript(ScriptType scriptType) {
-        for (ScriptConfiguration scriptConfiguration : configuration.getScripts()) {
-            if (scriptConfiguration.getName().equalsIgnoreCase(scriptType.toString())) {
-                return scriptConfiguration;
-            }
+    public ScriptConfiguration getScript(ScriptType scriptType, String storageTable) {
+        return scripts.get(new ScriptKey(scriptType, storageTable));
+    }
+
+    public ScriptConfiguration getScript(ScriptType scriptType, MetricType storageTable) {
+        return getScript(scriptType, storageTable.toString().toLowerCase());
+    }
+
+    /**
+     * Internal Key class.
+     */
+    private static class ScriptKey {
+        private final ScriptType scriptType;
+        private final String     storageTable;
+
+        private ScriptKey(ScriptType scriptType, String storageTable) {
+            this.scriptType = scriptType;
+            this.storageTable = storageTable;
         }
 
-        throw new IllegalArgumentException("Script " + scriptType + " not found in configuration");
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            ScriptKey scriptKey = (ScriptKey)o;
+
+            if (scriptType != scriptKey.scriptType) return false;
+            if (storageTable != null ? !storageTable.equals(scriptKey.storageTable) : scriptKey.storageTable != null) return false;
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = scriptType != null ? scriptType.hashCode() : 0;
+            result = 31 * result + (storageTable != null ? storageTable.hashCode() : 0);
+            return result;
+        }
     }
 }

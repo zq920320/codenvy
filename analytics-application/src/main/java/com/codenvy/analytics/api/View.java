@@ -34,16 +34,12 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
-import javax.inject.Singleton;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.*;
 import java.io.*;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
 import static com.codenvy.analytics.metrics.Context.valueOf;
@@ -53,7 +49,6 @@ import static com.codenvy.analytics.metrics.Context.valueOf;
  * @author Anatoliy Bazko
  */
 @Path("view")
-@Singleton
 public class View {
 
     private static final Logger LOG = LoggerFactory.getLogger(View.class);
@@ -61,10 +56,15 @@ public class View {
     private final ViewBuilder    viewBuilder;
     private final CSVFileCleaner csvFileCleanerHolder;
 
+    private final Set<String> allowedWorkspaces;
+    private final Set<String> allowedUsers;
+
     @Inject
     public View(ViewBuilder viewBuilder, CSVFileCleaner csvFileCleanerHolder) {
         this.viewBuilder = viewBuilder;
         this.csvFileCleanerHolder = csvFileCleanerHolder;
+        this.allowedUsers = new HashSet<>();
+        this.allowedWorkspaces = new HashSet<>();
     }
 
     @GET
@@ -81,7 +81,9 @@ public class View {
             Map<String, String> context = Utils.extractParams(uriInfo,
                                                               page,
                                                               perPage,
-                                                              securityContext);
+                                                              securityContext,
+                                                              allowedUsers,
+                                                              allowedWorkspaces);
 
             ValueData value = getMetricValue(metricName, valueOf(context));
             MetricValueDTO outputValue = getMetricValueDTO(metricName, value);
@@ -109,7 +111,9 @@ public class View {
             Map<String, String> context = Utils.extractParams(uriInfo,
                                                               page,
                                                               perPage,
-                                                              securityContext);
+                                                              securityContext,
+                                                              allowedUsers,
+                                                              allowedWorkspaces);
 
             ValueData value = getExpandedMetricValue(metricName, valueOf(context));
             ViewData result = viewBuilder.getViewData(value);
@@ -133,7 +137,11 @@ public class View {
                                       @Context UriInfo uriInfo,
                                       @Context SecurityContext securityContext) {
         try {
-            Map<String, String> params = Utils.extractParams(uriInfo, securityContext);
+            Map<String, String> params = Utils.extractParams(uriInfo,
+                                                             securityContext,
+                                                             allowedUsers,
+                                                             allowedWorkspaces);
+
             com.codenvy.analytics.metrics.Context context = valueOf(params);
 
             ViewData result = viewBuilder.getViewData(name, context);
@@ -154,7 +162,11 @@ public class View {
                                      @Context UriInfo uriInfo,
                                      @Context SecurityContext securityContext) {
         try {
-            Map<String, String> params = Utils.extractParams(uriInfo, securityContext);
+            Map<String, String> params = Utils.extractParams(uriInfo,
+                                                             securityContext,
+                                                             allowedUsers,
+                                                             allowedWorkspaces);
+
             com.codenvy.analytics.metrics.Context context = valueOf(params);
 
             if (context.exists(Parameters.TIME_UNIT)) {

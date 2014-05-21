@@ -78,7 +78,6 @@ com.codenvy.analytics.metrics.users.Users
 com.codenvy.analytics.metrics.users.UsersAcceptedInvites
 com.codenvy.analytics.metrics.users.UsersAcceptedInvitesPercent
 com.codenvy.analytics.metrics.users.UsersProfilesList
-com.codenvy.analytics.metrics.users.UsersProfilesListExt
 com.codenvy.analytics.metrics.users.UsersProfiles
 com.codenvy.analytics.metrics.users.UsersActivityList
 com.codenvy.analytics.metrics.users.UsersActivity
