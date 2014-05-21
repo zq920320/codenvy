@@ -1111,11 +1111,12 @@ function Configuration() {
 
 
         /** FACTORIES */
-        "created_factories": "FACTORIES",
+        "created_factories": "DEFAULT",  // there could be no created factory in 'product_usage_factory_sessions_list' collection
         "factory_used": "FACTORIES",
         "total_factories": "FACTORIES",
     };
     var mapDrillDownPageTypeToAddress = {
+        "DEFAULT": defaultDrillDownPageAddress,
         "USERS": "/analytics/pages/users-view.jsp",
         "WORKSPACES": "/analytics/pages/workspaces-view.jsp",
         "FACTORIES": "/analytics/pages/factories-view.jsp",
