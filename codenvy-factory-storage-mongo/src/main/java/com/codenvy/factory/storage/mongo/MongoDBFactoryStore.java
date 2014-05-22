@@ -17,6 +17,7 @@
  */
 package com.codenvy.factory.storage.mongo;
 
+import com.codenvy.api.core.util.Pair;
 import com.codenvy.api.factory.*;
 import com.codenvy.api.factory.dto.Factory;
 import com.codenvy.commons.lang.NameGenerator;
@@ -99,16 +100,12 @@ public class MongoDBFactoryStore implements FactoryStore {
 
     @Override
     public void removeFactory(String id) throws FactoryUrlException {
-        DBObject query = new BasicDBObject();
-        query.put("_id", id);
-        factories.remove(query);
+        factories.remove(new BasicDBObject("_id", id));
     }
 
     @Override
     public Factory getFactory(String id) throws FactoryUrlException {
-        DBObject query = new BasicDBObject();
-        query.put("_id", id);
-        DBObject res = factories.findOne(query);
+        DBObject res = factories.findOne(new BasicDBObject("_id", id));
         if (res == null) {
             return null;
         }
@@ -122,12 +119,26 @@ public class MongoDBFactoryStore implements FactoryStore {
     }
 
     @Override
+    public List<Factory> findByAttribute(Pair<String, String>... attributes) throws FactoryUrlException {
+        List<Factory> result = new ArrayList<>();
+        BasicDBObject query = new BasicDBObject();
+        for (Pair<String, String> one : attributes) {
+            query.append(String.format("factoryurl.%s", one.first), one.second);
+        }
+        DBCursor cursor = factories.find(query);
+        for (DBObject one :cursor) {
+            Factory factoryUrl = DtoFactory.getInstance().createDtoFromJson(one.get("factoryurl").toString(), Factory.class);
+            factoryUrl.setId((String)one.get("_id"));
+            result.add(factoryUrl);
+        }
+        return result;
+    }
+
+    @Override
     public Set<FactoryImage> getFactoryImages(String factoryId, String imageId) throws FactoryUrlException {
         Set<FactoryImage> images = new HashSet<>();
 
-        DBObject query = new BasicDBObject();
-        query.put("_id", factoryId);
-        DBObject res = factories.findOne(query);
+        DBObject res = factories.findOne(new BasicDBObject("_id", factoryId));
         if (res == null) {
             return Collections.EMPTY_SET;
         }

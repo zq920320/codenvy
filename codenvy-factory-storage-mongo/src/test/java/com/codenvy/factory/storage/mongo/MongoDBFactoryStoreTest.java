@@ -20,6 +20,7 @@ package com.codenvy.factory.storage.mongo;
 import de.bwaldvogel.mongo.MongoServer;
 import de.bwaldvogel.mongo.backend.memory.MemoryBackend;
 
+import com.codenvy.api.core.util.Pair;
 import com.codenvy.api.factory.*;
 import com.codenvy.api.factory.dto.Factory;
 import com.codenvy.api.factory.dto.*;
@@ -156,8 +157,7 @@ public class MongoDBFactoryStoreTest {
 
         String id = store.saveFactory(factoryUrl, images);
 
-        DBObject query = new BasicDBObject();
-        query.put("_id", id);
+        DBObject query = new BasicDBObject("_id", id);
         DBObject res = (DBObject)collection.findOne(query).get("factoryurl");
         Factory result = DtoFactory.getInstance().createDtoFromJson(res.toString(), Factory.class);
         result.setId(id);
@@ -219,5 +219,39 @@ public class MongoDBFactoryStoreTest {
         assertTrue(newImage.getName().endsWith(image.getName()));
         assertEquals(newImage.getMediaType(), image.getMediaType());
         assertEquals(newImage.getImageData(), image.getImageData());
+    }
+
+
+    @Test
+    public void testGetFactoryByAttributes() throws Exception {
+
+        Set<FactoryImage> images = new HashSet<>();
+
+        Factory factoryUrl1 = (Factory)DtoFactory.getInstance().createDto(Factory.class)
+                                                 .withProjectattributes(
+                                                         DtoFactory.getInstance().createDto(ProjectAttributes.class)
+                                                                   .withPname("pname").withPtype("ptype"))
+                                                 .withOrgid("org123456")
+                                                 .withOpenfile("openfile");
+
+        Factory factoryUrl2 = (Factory)DtoFactory.getInstance().createDto(Factory.class)
+                                                 .withProjectattributes(DtoFactory.getInstance().createDto(ProjectAttributes.class).withPname("pname2").withPtype("ptype2"))
+                                                 .withOrgid("org123456")
+                                                 .withOpenfile("closedfile");
+
+        Factory factoryUrl3 = (Factory)DtoFactory.getInstance().createDto(Factory.class)
+                                                 .withProjectattributes(DtoFactory.getInstance().createDto(ProjectAttributes.class).withPname("pname").withPtype("ptype"))
+                                                 .withOrgid("org123456789")
+                                                 .withOpenfile("openfile");
+
+        store.saveFactory(factoryUrl1, images);
+        store.saveFactory(factoryUrl2, images);
+        store.saveFactory(factoryUrl3, images);
+
+
+        assertEquals(2, store.findByAttribute(Pair.of("orgid", "org123456")).size());
+        assertEquals(2, store.findByAttribute(Pair.of("openfile", "openfile")).size());
+        assertEquals(1, store.findByAttribute(Pair.of("projectattributes.pname", "pname2")).size());
+        assertEquals(1, store.findByAttribute(Pair.of("orgid", "org123456"),Pair.of("openfile", "closedfile") ).size());
     }
 }
