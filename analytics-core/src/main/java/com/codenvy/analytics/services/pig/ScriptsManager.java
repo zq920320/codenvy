@@ -24,9 +24,11 @@ import com.codenvy.analytics.services.configuration.XmlConfigurationManager;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -42,7 +44,7 @@ public class ScriptsManager {
     public ScriptsManager(XmlConfigurationManager confManager) throws IOException {
         PigRunnerConfiguration configuration = confManager.loadConfiguration(PigRunnerConfiguration.class, CONFIGURATION);
 
-        this.scripts = new HashMap<>();
+        this.scripts = new LinkedHashMap<>();
         for (ScriptConfiguration scriptConf : configuration.getScripts()) {
             ScriptType scriptType = ScriptType.valueOf(scriptConf.getName().toUpperCase());
             String storageTable = scriptConf.getParamsAsMap().get(Parameters.STORAGE_TABLE.toString());
