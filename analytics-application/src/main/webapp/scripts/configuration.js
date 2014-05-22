@@ -952,8 +952,7 @@ function Configuration() {
     var globalParams = [
         "ide",
         "data_universe",
-        "display_table",
-        "display_chart",
+        "ui_preferences",
     ];
 
     /** Date params which should have "yyyymmdd" in model and "yyyy-mm-dd" format in view */

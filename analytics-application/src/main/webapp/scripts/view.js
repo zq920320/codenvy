@@ -310,24 +310,29 @@ function View() {
      * Update UI according to the user UI preferences
      */
     function implementUIPreferences() {
-        // verify if there is UI preferences button group at the current table
-        if (! $("#ui-preferences").doesExist()) {
-            return;
-        }
+        // verify if there is UI preferences button group at the current page
+        var uiPreferences = analytics.util.getGlobalParamFromStorage('ui_preferences');
         
-        var displayTable = analytics.util.getGlobalParamFromStorage("display_table");
-        if (displayTable == "true") {
-            displayAllTables();
-        } else {
-            hideAllTables();
-        }
-
-        
-        var displayChart = analytics.util.getGlobalParamFromStorage("display_chart");
-        if (displayChart == "true") {
-            displayAllCharts();
-        } else {
-            hideAllCharts();
+        switch (uiPreferences) {
+            case "table":
+                displayAllTables();
+                hideAllCharts()
+                break;
+            
+            case "chart":
+                hideAllTables();
+                displayAllCharts();
+                break;
+                
+            case "table&chart":
+                displayAllTables();
+                displayAllCharts();
+                break;
+            
+            default:
+                displayAllTables();
+                hideAllCharts()
+                break;
         }
     }
     

@@ -33,7 +33,7 @@ function Main() {
 
     var setupButtons = function () {
         // Time selectors group
-        $("#timely-dd button.command-btn").click(function () {
+        $("#timely-dd button").click(function () {
             $("#timely-dd button").removeClass('btn-primary');
             $(this).addClass('btn-primary');
             reloadWidgets($("#timely-dd").attr("targetWidgets"));
@@ -46,7 +46,7 @@ function Main() {
                 reloadWidgets($("#filter-by").attr("targetWidgets"));
             }
         });
-        $("#filter-by button.command-btn").click(function () {
+        $("#filter-by button").click(function () {
             reloadWidgets($("#filter-by").attr("targetWidgets"));
         });
         $("#filter-by .clear-btn").click(function () {    // clearing
@@ -54,7 +54,7 @@ function Main() {
         });
 
         // Metric selectors group
-        $("#metric button.command-btn").click(function () {
+        $("#metric button").click(function () {
             $("#metric button").removeClass('btn-primary');
             $(this).addClass('btn-primary');
 
@@ -78,17 +78,11 @@ function Main() {
         });
         
         // UI preferences selector group
-        $("#ui-preferences button.command-btn").click(function () {
-            // trigger button state
-            var button = $(this);
-            if (button.hasClass("btn-primary")) {
-                button.removeClass('btn-primary');
-                analytics.util.updateGlobalParamInStorage(button.attr("value"), false);
-            } else {
-                button.addClass('btn-primary');
-                analytics.util.updateGlobalParamInStorage(button.attr("value"), true);
-            }            
-            
+        $("#ui-preferences button").click(function () {
+            $("#ui-preferences button").removeClass('btn-primary');
+            $(this).addClass('btn-primary');
+
+            analytics.util.updateGlobalParamInStorage("ui_preferences", $(this).attr("value"));
             analytics.view.implementUIPreferences();
         });
         
@@ -98,7 +92,7 @@ function Main() {
         });
         
         // Show factories selectors group
-        $("#show-factories button.command-btn").click(function () {
+        $("#show-factories button").click(function () {
             $("#show-factories button").removeClass('btn-primary');
             $(this).addClass('btn-primary');
             reloadWidgets($("#show-factories").attr("targetWidgets"));
@@ -309,8 +303,9 @@ function Main() {
         }
         
         // update ui preferences selection buttons
-        if (jQuery("#ui-preferences").doesExist()) {
-            updateUIPreferencesButtonGroup(params);
+        var uiPreferencesButtons = jQuery("#ui-preferences button");
+        if (uiPreferencesButtons.doesExist()) {
+            setPrimaryButtonOnValue(uiPreferencesButtons, params["ui_preferences"]);
         }
         
         // update show session events selector
@@ -351,26 +346,6 @@ function Main() {
                     button.addClass("btn-primary");
                     break;
                 }
-            }
-        }
-    }
-    
-    function updateUIPreferencesButtonGroup(params) {
-        var uiPreferencesButtons = jQuery("#ui-preferences button");
-        for (var i = 0; i < uiPreferencesButtons.length; i++) {
-            var button = jQuery(uiPreferencesButtons[i]);
-            var uiPreferenceName = button.attr("value");
-            var uiPreference = params[uiPreferenceName];
-            
-            if (typeof uiPreference != "undefined") {
-                if (uiPreference == "true") {
-                    button.addClass('btn-primary');   
-                } else {
-                    button.removeClass('btn-primary');
-                }
-            } else if (typeof button.attr("selected") != "undefined") {
-                button.addClass('btn-primary');   // setup selected value by default
-                analytics.util.updateGlobalParamInStorage(uiPreferenceName, true);
             }
         }
     }

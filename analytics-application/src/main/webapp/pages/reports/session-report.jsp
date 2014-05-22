@@ -53,8 +53,9 @@
                 </div>
 
                 <div id="ui-preferences" class="btn-group right">
-                    <button class="btn command-btn" selected value="display_table">Table</button>
-                    <button class="btn command-btn" value="display_chart">Chart</button>
+                    <button class="btn command-btn" default value="table">Table</button>
+                    <button class="btn command-btn" value="chart">Chart</button>
+                    <button class="btn command-btn" value="table&chart">Table&Chart</button>
                 </div>
 
                 <div id="timely-dd" class="btn-group right" targetWidgets="_all">
