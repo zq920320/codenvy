@@ -127,6 +127,8 @@ public class TestExpandedMetric extends BaseTest {
         // build event for session #1
         events.add(Event.Builder.createBuildStartedEvent("user1", "tmp-1", "project", "type", "id1")
                                 .withDate("2013-11-01").withTime("10:03:00").build());
+        events.add(Event.Builder.createProjectBuiltEvent("user1", "tmp-1", "", "project", "type")
+                                .withDate("2013-11-01").withTime("10:03:00").build());
 
 
         // same user invites twice
@@ -488,7 +490,7 @@ public class TestExpandedMetric extends BaseTest {
         UsersStatisticsList usersStatisticsListMetric = new UsersStatisticsList();
         ListValueData value = (ListValueData)usersStatisticsListMetric.getValue(builder.build());
         all = value.getAll();
-        assertEquals(all.size(), 3);
+        assertEquals(all.size(), 5);
 
         // calculate non-active user list
         builder.put(Parameters.EXPANDED_METRIC_NAME, "non_active_users");
@@ -964,6 +966,24 @@ public class TestExpandedMetric extends BaseTest {
         assertTrue(sectionData.contains(asList(StringValueData.valueOf("ws1"))));
         assertTrue(sectionData.contains(asList(StringValueData.valueOf("ws2"))));
         assertTrue(sectionData.contains(asList(StringValueData.valueOf("ws3"))));
+    }
+
+    @Test
+    public void testTotalUsers() throws Exception {
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20131101");
+        builder.put(Parameters.TO_DATE, "20131101");
+        builder.put(Parameters.LOG, log.getAbsolutePath());
+        builder.putAll(scriptsManager.getScript(ScriptType.EVENTS, MetricType.CREATED_USERS).getParamsAsMap());
+        pigServer.execute(ScriptType.EVENTS, builder.build());
+
+        Expandable metric = (Expandable)MetricFactory.getMetric(MetricType.CREATED_USERS);
+        ValueData expandedValue = metric.getExpandedValue(Context.EMPTY);
+
+        List<ValueData> list = treatAsList(expandedValue);
+        assertEquals(list.size(), 2);
+        assertTrue(list.contains(MapValueData.valueOf("user=user5")));
+        assertTrue(list.contains(MapValueData.valueOf("user=user4@gmail.com")));
     }
 
     @BeforeMethod

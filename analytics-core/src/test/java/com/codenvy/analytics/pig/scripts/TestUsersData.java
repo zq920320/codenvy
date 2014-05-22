@@ -104,7 +104,7 @@ public class TestUsersData extends BaseTest {
                     assertEquals(all.get(UsersStatisticsList.RUNS).getAsString(), "1");
                     assertEquals(all.get(UsersStatisticsList.DEPLOYS).getAsString(), "1");
                     assertEquals(all.get(UsersStatisticsList.DEBUGS).getAsString(), "0");
-                    assertEquals(all.get(UsersStatisticsList.BUILDS).getAsString(), "1");
+                    assertEquals(all.get(UsersStatisticsList.BUILDS).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.FACTORIES).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.TIME).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.SESSIONS).getAsString(), "0");
@@ -124,7 +124,7 @@ public class TestUsersData extends BaseTest {
                     assertEquals(all.get(UsersStatisticsList.PROJECTS).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.TIME).getAsString(), "120000");
                     assertEquals(all.get(UsersStatisticsList.DEPLOYS).getAsString(), "1");
-                    assertEquals(all.get(UsersStatisticsList.BUILDS).getAsString(), "1");
+                    assertEquals(all.get(UsersStatisticsList.BUILDS).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.DEBUGS).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.RUNS).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.FACTORIES).getAsString(), "0");
@@ -142,7 +142,7 @@ public class TestUsersData extends BaseTest {
                 case "user4@gmail.com":
                     assertEquals(all.get(UsersStatisticsList.PROJECTS).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.DEPLOYS).getAsString(), "1");
-                    assertEquals(all.get(UsersStatisticsList.BUILDS).getAsString(), "1");
+                    assertEquals(all.get(UsersStatisticsList.BUILDS).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.DEBUGS).getAsString(), "1");
                     assertEquals(all.get(UsersStatisticsList.RUNS).getAsString(), "1");
                     assertEquals(all.get(UsersStatisticsList.FACTORIES).getAsString(), "0");
@@ -187,7 +187,7 @@ public class TestUsersData extends BaseTest {
                     assertEquals(all.get(UsersStatisticsList.SESSIONS).getAsString(), "1");
                     assertEquals(all.get(UsersStatisticsList.INVITES).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.DEPLOYS).getAsString(), "1");
-                    assertEquals(all.get(UsersStatisticsList.BUILDS).getAsString(), "1");
+                    assertEquals(all.get(UsersStatisticsList.BUILDS).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.WS).getAsString(), "ws1");
                     assertEquals(all.get(UsersStatisticsList.DEBUGS).getAsString(), "1");
                     assertEquals(all.get(UsersStatisticsList.FACTORIES).getAsString(), "1");
@@ -204,7 +204,7 @@ public class TestUsersData extends BaseTest {
                     assertEquals(all.get(UsersStatisticsList.SESSIONS).getAsString(), "1");
                     assertEquals(all.get(UsersStatisticsList.INVITES).getAsString(), "1");
                     assertEquals(all.get(UsersStatisticsList.DEPLOYS).getAsString(), "2");
-                    assertEquals(all.get(UsersStatisticsList.BUILDS).getAsString(), "2");
+                    assertEquals(all.get(UsersStatisticsList.BUILDS).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.WS).getAsString(), "ws2");
                     assertEquals(all.get(UsersStatisticsList.DEBUGS).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.FACTORIES).getAsString(), "0");

@@ -79,7 +79,7 @@ m = FOREACH m1 GENERATE t::k::dt AS dt, t::k::delta AS delta, t::k::factory AS f
                         t::k::orgId AS orgId, t::k::affiliateId AS affiliateId, t::k::auth AS auth, t::k::ws AS ws, t::k::id AS id,
                         t::k::user AS user, t::k::conv AS conv, t::k::run AS run, t::k::ide AS ide, t::deploy AS deploy;
 
-n1 = addEventIndicator(m, l,  'project-built,project-deployed,application-created,build-started', 'build', '$inactiveInterval');
+n1 = addEventIndicator(m, l,  'project-built', 'build', '$inactiveInterval');
 n = FOREACH n1 GENERATE t::m::dt AS dt, t::m::delta AS delta, t::m::factory AS factory, t::m::referrer AS referrer, t::m::id AS id,
                         t::m::orgId AS orgId, t::m::affiliateId AS affiliateId, t::m::auth AS auth, t::m::ws AS ws, t::m::ide AS ide,
                         t::m::user AS user, t::m::conv AS conv, t::m::run AS run, t::m::deploy AS deploy, t::build AS build;
@@ -173,6 +173,8 @@ result1 = FOREACH r GENERATE UUID(),
                             TOTUPLE('session_id', id),
                             TOTUPLE('user_created', user_created),
                             TOTUPLE('encoded_factory', encodedFactory);
+STORE result1 INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
+
 result2 = FOREACH t GENERATE UUID(),
                             TOTUPLE('date', ToMilliSeconds(dt)),
                             TOTUPLE('ws', ws),
@@ -189,11 +191,10 @@ result2 = FOREACH t GENERATE UUID(),
                             TOTUPLE('authenticated_factory_session', auth),
                             TOTUPLE('converted_factory_session', conv),
                             TOTUPLE('time', delta),
+                            TOTUPLE('session', 1),
                             TOTUPLE('session_id', id),
                             TOTUPLE('user_created', user_created),
                             TOTUPLE('encoded_factory', encodedFactory);
-
-STORE result1 INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 STORE result2 INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 
 -- newly generated sessions should be stored in '$STORAGE_TABLE_PRODUCT_USAGE_SESSIONS' collection too

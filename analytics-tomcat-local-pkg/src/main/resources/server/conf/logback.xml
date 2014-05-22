@@ -41,6 +41,7 @@
     </appender>
 
     <logger name="org.apache.catalina.loader.WebappClassLoader" level="OFF"/>
+    <logger name="com.codenvy.analytics.metrics.ReadBasedMetric" level="DEBUG"/>
 
     <root level="INFO">
         <appender-ref ref="STDOUT"/>

@@ -116,7 +116,7 @@ public class TestProjectsStatistics extends BaseTest {
         assertEquals(m.get("ws").getAsString(), "ws1");
         assertEquals(m.get("code_refactories").getAsString(),"0");
         assertEquals(m.get("code_completes").getAsString(),"0");
-        assertEquals(m.get("builds").getAsString(),"2");
+        assertEquals(m.get("builds").getAsString(),"0");
         assertEquals(m.get("runs").getAsString(),"1");
         assertEquals(m.get("debugs").getAsString(),"1");
         assertEquals(m.get("deploys").getAsString(),"2");

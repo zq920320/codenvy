@@ -85,5 +85,10 @@ public class TestCumulativeMetric extends BaseTest {
         public String getDescription() {
             return null;
         }
+
+        @Override
+        public String getExpandedField() {
+            return null;
+        }
     }
 }

@@ -150,7 +150,7 @@ public enum Parameters {
 
         @Override
         public String getDefaultValue() {
-            return USER_TYPES.REGISTERED.toString();
+            return USER_TYPES.ANY.toString();
         }
     },
     WS {

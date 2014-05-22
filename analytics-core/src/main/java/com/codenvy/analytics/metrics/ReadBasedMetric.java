@@ -37,7 +37,7 @@ import static com.codenvy.analytics.Utils.*;
  *
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public abstract class ReadBasedMetric extends AbstractMetric {
+public abstract class   ReadBasedMetric extends AbstractMetric {
 
     private static final Logger LOG         = LoggerFactory.getLogger(ReadBasedMetric.class);
     public static final  String PRECOMPUTED = "_precomputed";

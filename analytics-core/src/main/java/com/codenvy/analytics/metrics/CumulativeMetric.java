@@ -21,18 +21,19 @@ package com.codenvy.analytics.metrics;
 import com.codenvy.analytics.Injector;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.datamodel.ValueDataUtil;
 
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Calendar;
+
+import static com.codenvy.analytics.datamodel.ValueDataUtil.getAsLong;
 
 /**
  * The value of the metric will be calculated as: previous value + added value - removed value.
  *
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public abstract class CumulativeMetric extends AbstractMetric {
+public abstract class CumulativeMetric extends AbstractMetric implements Expandable {
 
     private final Metric                addedMetric;
     private final Metric                removedMetric;
@@ -75,15 +76,22 @@ public abstract class CumulativeMetric extends AbstractMetric {
     }
 
     private ValueData doGetValue(Context context) throws IOException, ParseException {
-        LongValueData addedEntity = ValueDataUtil.getAsLong(addedMetric, context);
-        LongValueData removedEntity = ValueDataUtil.getAsLong(removedMetric, context);
+        LongValueData added = getAsLong(addedMetric, context);
+        LongValueData removed = getAsLong(removedMetric, context);
         LongValueData initialValue = isSimplified(context) ? initialValueContainer.getInitialValue(getName()) : LongValueData.DEFAULT;
 
-        return new LongValueData(initialValue.getAsLong() + addedEntity.getAsLong() - removedEntity.getAsLong());
+        return new LongValueData(initialValue.getAsLong() + added.getAsLong() - removed.getAsLong());
     }
 
     @Override
     public Class<? extends ValueData> getValueDataClass() {
         return LongValueData.class;
+    }
+
+    @Override
+    public ValueData getExpandedValue(Context context) throws IOException {
+        ValueData added = ((Expandable)addedMetric).getExpandedValue(context.cloneAndRemove(Parameters.FROM_DATE));
+        ValueData removed = ((Expandable)removedMetric).getExpandedValue(context.cloneAndRemove(Parameters.FROM_DATE));
+        return added.subtract(removed);
     }
 }

@@ -279,7 +279,7 @@ public class TestAcceptance extends BaseTest {
 
         // & Built
         row = sectionData.get(4).get(0).getAsString();
-        aggregateResult(row, new StringValueData("38"), sectionData.get(4).get(1));
+        aggregateResult(row, new StringValueData("18"), sectionData.get(4).get(1));
 
         // & Run
         row = sectionData.get(5).get(0).getAsString();
@@ -335,7 +335,7 @@ public class TestAcceptance extends BaseTest {
 
         row = sectionData.get(2).get(0).getAsString();
         aggregateResult(row, new StringValueData("% Built"), sectionData.get(2).get(0));
-        aggregateResult(row, new StringValueData("8%"), sectionData.get(2).get(1));
+        aggregateResult(row, new StringValueData("2%"), sectionData.get(2).get(1));
 
         row = sectionData.get(3).get(0).getAsString();
         aggregateResult(row, new StringValueData("% Run"), sectionData.get(3).get(0));
@@ -609,7 +609,7 @@ public class TestAcceptance extends BaseTest {
 
         row = sectionData.get(3).get(0).getAsString();
         aggregateResult(row, new StringValueData("# Builds"), sectionData.get(3).get(0));
-        aggregateResult(row, new StringValueData("225"), sectionData.get(3).get(1));
+        aggregateResult(row, new StringValueData("66"), sectionData.get(3).get(1));
 
         row = sectionData.get(4).get(0).getAsString();
         aggregateResult(row, new StringValueData("# Runs"), sectionData.get(4).get(0));
@@ -697,11 +697,11 @@ public class TestAcceptance extends BaseTest {
     private void assertTimeSpentDay(SectionData sectionData) {
         String row = sectionData.get(1).get(0).getAsString();
         aggregateResult(row, new StringValueData("Builds"), sectionData.get(1).get(0));
-        aggregateResult(row, new StringValueData("00:14:37"), sectionData.get(1).get(1));
+        aggregateResult(row, new StringValueData("00:16:01"), sectionData.get(1).get(1));
 
         row = sectionData.get(2).get(0).getAsString();
         aggregateResult(row, new StringValueData("Runs"), sectionData.get(2).get(0));
-        aggregateResult(row, new StringValueData("03:39:12"), sectionData.get(2).get(1));
+        aggregateResult(row, new StringValueData("05:51:14"), sectionData.get(2).get(1));
 
         row = sectionData.get(3).get(0).getAsString();
         aggregateResult(row, new StringValueData("Debugs"), sectionData.get(3).get(0));

@@ -38,6 +38,7 @@ public abstract class AbstractMetric implements Metric {
     public static final String SESSIONS              = "sessions";
     public static final String END_TIME              = "end_time";
     public static final String SESSION_ID            = "session_id";
+    public static final String SESSION               = "session";
     public static final String ORG_ID                = "org_id";
     public static final String AFFILIATE_ID          = "affiliate_id";
     public static final String REPOSITORY            = "repository";

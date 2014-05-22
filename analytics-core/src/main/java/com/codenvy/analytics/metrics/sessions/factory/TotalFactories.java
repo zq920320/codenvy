@@ -38,4 +38,9 @@ public class TotalFactories extends CumulativeMetric {
     public String getDescription() {
         return "The total number of created factories";
     }
+
+    @Override
+    public String getExpandedField() {
+        return FACTORY;
+    }
 }

@@ -117,7 +117,6 @@ result = FOREACH t GENERATE UUID(),
                             TOTUPLE('time', delta),
                             TOTUPLE('domain', domain),
                             TOTUPLE('user_company', company);
-DUMP t;
 STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 
 ---------------------------------------

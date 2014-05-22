@@ -154,7 +154,7 @@ public class TestActOn extends BaseTest {
         assertEquals("", user2Data.get(HEADERS.get(AbstractMetric.USER_COMPANY)));
         assertEquals("", user2Data.get(HEADERS.get(AbstractMetric.CREATION_DATE)));
         assertEquals("1", user2Data.get(HEADERS.get(UsersStatisticsList.PROJECTS)));
-        assertEquals("7", user2Data.get(HEADERS.get(UsersStatisticsList.BUILDS)));
+        assertEquals("1", user2Data.get(HEADERS.get(UsersStatisticsList.BUILDS)));
         assertEquals("1", user2Data.get(HEADERS.get(UsersStatisticsList.RUNS)));
         assertEquals("6", user2Data.get(HEADERS.get(UsersStatisticsList.DEPLOYS)));
         assertEquals("10", user2Data.get(HEADERS.get(UsersStatisticsList.TIME)));
@@ -167,7 +167,7 @@ public class TestActOn extends BaseTest {
         assertEquals("120", user2Data.get(HEADERS.get(UsersStatisticsList.RUN_TIME)));
         assertEquals("false", user2Data.get(HEADERS.get(ActOn.PROFILE_COMPLETED)));
         assertEquals("6", user2Data.get(HEADERS.get(UsersStatisticsList.PAAS_DEPLOYS)));
-        assertEquals("104", user2Data.get(HEADERS.get(ActOn.POINTS)));
+        assertEquals("92", user2Data.get(HEADERS.get(ActOn.POINTS)));
 
         // verify "user3" data
         Map<String, String> user3Data = content.get("user3");
@@ -179,7 +179,7 @@ public class TestActOn extends BaseTest {
         assertEquals("", user3Data.get(HEADERS.get(AbstractMetric.USER_COMPANY)));
         assertEquals("", user3Data.get(HEADERS.get(AbstractMetric.CREATION_DATE)));
         assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.PROJECTS)));
-        assertEquals("1", user3Data.get(HEADERS.get(UsersStatisticsList.BUILDS)));
+        assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.BUILDS)));
         assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.RUNS)));
         assertEquals("1", user3Data.get(HEADERS.get(UsersStatisticsList.DEPLOYS)));
         assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.TIME)));
@@ -192,7 +192,7 @@ public class TestActOn extends BaseTest {
         assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.RUN_TIME)));
         assertEquals("false", user3Data.get(HEADERS.get(ActOn.PROFILE_COMPLETED)));
         assertEquals("1", user3Data.get(HEADERS.get(UsersStatisticsList.PAAS_DEPLOYS)));
-        assertEquals("14", user3Data.get(HEADERS.get(ActOn.POINTS)));
+        assertEquals("12", user3Data.get(HEADERS.get(ActOn.POINTS)));
     }
 
     private Map<String, Map<String, String>> read(File jobFile) throws IOException {

@@ -40,4 +40,9 @@ public class TotalProjects extends CumulativeMetric {
     public String getDescription() {
         return "The total number of projects";
     }
+
+    @Override
+    public String getExpandedField() {
+        return PROJECT_ID;
+    }
 }

@@ -40,4 +40,9 @@ public class TotalUsers extends CumulativeMetric {
     public String getDescription() {
         return "The total number of registered users";
     }
+
+    @Override
+    public String getExpandedField() {
+        return USER;
+    }
 }

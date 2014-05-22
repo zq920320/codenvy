@@ -40,4 +40,9 @@ public class TotalWorkspaces extends CumulativeMetric {
     public String getDescription() {
         return "The total number of persistent workspaces";
     }
+
+    @Override
+    public String getExpandedField() {
+        return WS;
+    }
 }

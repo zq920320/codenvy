@@ -28,7 +28,7 @@ b1 = filterByEvent(l, 'debug-started');
 b = FOREACH b1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('debugs', 1), TOTUPLE('ide', ide);
 STORE b INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 
-c1 = filterByEvent(l, 'project-built,application-created,project-deployed');
+c1 = filterByEvent(l, 'project-built');
 c = FOREACH c1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('builds', 1), TOTUPLE('ide', ide);
 STORE c INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 

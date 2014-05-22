@@ -162,7 +162,7 @@ public class PigServer {
                                              new String[]{"$STORAGE_USER",
                                                           "$STORAGE_PASSWORD",
                                                           "value:Long"}));
-        
+
         server.registerFunction("MongoLoaderCollectionWithSession",
                                 new FuncSpec("com.codenvy.analytics.pig.udf.MongoLoader",
                                              new String[]{"$STORAGE_USER",
@@ -226,14 +226,6 @@ public class PigServer {
     private Context validateAndAdjustContext(ScriptType scriptType, Context basedContext) throws IOException {
         Context.Builder builder = new Context.Builder(basedContext);
         mongoDataStorage.putStorageParameters(builder);
-
-        if (!builder.exists(Parameters.WS)) {
-            builder.putDefaultValue(Parameters.WS);
-        }
-
-        if (!builder.exists(Parameters.USER)) {
-            builder.putDefaultValue(Parameters.USER);
-        }
 
         if (!builder.exists(Parameters.LOG)) {
             setOptimizedPaths(builder);

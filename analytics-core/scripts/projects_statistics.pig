@@ -35,7 +35,7 @@ c1 = filterByEvent(f, 'user-code-complete');
 c = FOREACH c1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('code_completes', 1), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('project', project), TOTUPLE('project_type', LOWER(project_type)), TOTUPLE('project_id', CreateProjectId(user, ws, project)), TOTUPLE('ide', ide);
 STORE c INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 
-d1 = filterByEvent(f, 'project-built,project-deployed,application-created');
+d1 = filterByEvent(f, 'project-built');
 d = FOREACH d1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('builds', 1), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('project', project), TOTUPLE('project_type', LOWER(project_type)), TOTUPLE('project_id', CreateProjectId(user, ws, project)), TOTUPLE('ide', ide);
 STORE d INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 
