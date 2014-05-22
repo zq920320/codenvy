@@ -82,7 +82,9 @@ com.codenvy.analytics.metrics.users.UsersProfiles
 com.codenvy.analytics.metrics.users.UsersActivityList
 com.codenvy.analytics.metrics.users.UsersActivity
 com.codenvy.analytics.metrics.users.UsersStatisticsList
+com.codenvy.analytics.metrics.users.UsersStatisticsListPrecomputed
 com.codenvy.analytics.metrics.users.UsersStatistics
+com.codenvy.analytics.metrics.users.UsersStatisticsPrecomputed
 com.codenvy.analytics.metrics.users.CompletedProfiles
 com.codenvy.analytics.metrics.users.CreatedUsers
 com.codenvy.analytics.metrics.users.CreatedUsersSet

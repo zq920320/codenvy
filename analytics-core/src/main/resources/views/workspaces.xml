@@ -38,8 +38,7 @@
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="workspaces_statistics_list"/>
-                <parameter key="fields"
-                           value="ws,sessions,time,build_time,run_time,builds,debugs,deploys,joined_users"/>
+                <parameter key="fields" value="ws,sessions,time,build_time,run_time,builds,debugs,deploys,joined_users"/>
                 <parameter key="time-fields" value="time,build_time,run_time"/>
                 <parameter key="hide-negative-values" value="true"/>
             </row>
