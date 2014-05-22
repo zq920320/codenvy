@@ -20,6 +20,10 @@
   },
   "devDependencies": {
     "yeoman": "0.9.6",
-    "grunt": "~0.4.0"
+    "grunt": "~0.4.1",
+    "grunt-contrib-copy": "~0.4.1",
+    "grunt-contrib-jshint": "~0.7.1",
+    "grunt-shell": "~0.2.0",
+    "grunt-verbosity": "~0.2.2"
   }
 }
