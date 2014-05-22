@@ -21,8 +21,8 @@ import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.datamodel.*;
 import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.metrics.users.CompletedProfiles;
-import com.codenvy.analytics.metrics.users.UsersProfilesList;
 import com.codenvy.analytics.metrics.users.UsersProfiles;
+import com.codenvy.analytics.metrics.users.UsersProfilesList;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
@@ -43,8 +43,6 @@ import static org.testng.Assert.assertTrue;
  */
 public class TestUserUpdateProfile extends BaseTest {
 
-    private static final String COLLECTION = MetricType.USERS_PROFILES_LIST.toString().toLowerCase();
-
     @BeforeClass
     public void prepare() throws Exception {
         List<Event> events = new ArrayList<>();
@@ -63,10 +61,8 @@ public class TestUserUpdateProfile extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20130101");
         builder.put(Parameters.TO_DATE, "20130101");
-        builder.put(Parameters.USER, Parameters.USER_TYPES.REGISTERED.name());
-        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
-        builder.put(Parameters.STORAGE_TABLE, COLLECTION);
         builder.put(Parameters.LOG, log.getAbsolutePath());
+        builder.putAll(scriptsManager.getScript(ScriptType.USERS_UPDATE_PROFILES, MetricType.USERS_PROFILES_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.USERS_UPDATE_PROFILES, builder.build());
 
         events.add(Event.Builder.createUserCreatedEvent("id", "user3@gmail.com")

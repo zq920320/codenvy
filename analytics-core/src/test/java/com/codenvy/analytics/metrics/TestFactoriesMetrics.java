@@ -41,13 +41,10 @@ public class TestFactoriesMetrics extends BaseTest {
     @BeforeClass
     public void init() throws Exception {
         List<Event> events = new ArrayList<>();
-        events.add(Event.Builder
-                           .createFactoryCreatedEvent("ws1", "user1", "project1", "type1", "repo1", "factory1",
-                                                      "", "").withDate("2013-02-10").withTime("13:00:00").build());
-
-        events.add(Event.Builder
-                           .createFactoryCreatedEvent("ws1", "user1", "project2", "type1", "repo2", "factory2",
-                                                      "", "").withDate("2013-02-11").withTime("13:00:00").build());
+        events.add(Event.Builder.createFactoryCreatedEvent("ws1", "user1", "project1", "type1", "repo1", "factory1", "", "")
+                                .withDate("2013-02-10").withTime("13:00:00").build());
+        events.add(Event.Builder.createFactoryCreatedEvent("ws1", "user1", "project2", "type1", "repo2", "factory2", "", "")
+                                .withDate("2013-02-11").withTime("13:00:00").build());
 
 
         File log = LogGenerator.generateLog(events);
@@ -55,10 +52,8 @@ public class TestFactoriesMetrics extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20130210");
         builder.put(Parameters.TO_DATE, "20130210");
-        builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.name());
-        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
-        builder.put(Parameters.STORAGE_TABLE, "created_factories_set");
         builder.put(Parameters.LOG, log.getAbsolutePath());
+        builder.putAll(scriptsManager.getScript(ScriptType.CREATED_FACTORIES, MetricType.CREATED_FACTORIES_SET).getParamsAsMap());
         pigServer.execute(ScriptType.CREATED_FACTORIES, builder.build());
 
         builder.put(Parameters.FROM_DATE, "20130211");

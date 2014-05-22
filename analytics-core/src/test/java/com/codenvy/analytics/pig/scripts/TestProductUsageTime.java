@@ -21,6 +21,7 @@ import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.Metric;
+import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.sessions.AbstractProductUsage;
 import com.codenvy.analytics.metrics.sessions.AbstractProductUsageTime;
@@ -78,12 +79,8 @@ public class TestProductUsageTime extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
-        builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.name());
-        builder.put(Parameters.WS, Parameters.WS_TYPES.PERSISTENT.name());
-        builder.put(Parameters.STORAGE_TABLE, "testproductusagesessions");
-        builder.put(Parameters.STORAGE_TABLE_USERS_STATISTICS, "testproductusagesessions-stat");
-        builder.put(Parameters.STORAGE_TABLE_USERS_PROFILES, "testproductusagesessions-profiles");
         builder.put(Parameters.LOG, log.getAbsolutePath());
+        builder.putAll(scriptsManager.getScript(ScriptType.PRODUCT_USAGE_SESSIONS, MetricType.PRODUCT_USAGE_SESSIONS_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, builder.build());
     }
 
@@ -95,13 +92,13 @@ public class TestProductUsageTime extends BaseTest {
         builder.put(Parameters.USER, "user@gmail.com OR anonymoususer_user11");
 
         Metric metric = new TestAbstractProductUsageTime(240000, 300000, true, true);
-        assertEquals(metric.getValue(builder.build()), new LongValueData(540000L));
+        assertEquals(metric.getValue(builder.build()), new LongValueData(840000));
 
         metric = new TestAbstractProductUsageSessions(240000, 300000, true, true);
-        assertEquals(metric.getValue(builder.build()), new LongValueData(2L));
+        assertEquals(metric.getValue(builder.build()), new LongValueData(3L));
 
         metric = new TestProductUsageUsers(300000, 360000, true, true);
-        assertEquals(metric.getValue(builder.build()), new LongValueData(2L));
+        assertEquals(metric.getValue(builder.build()), new LongValueData(1L));
     }
 
     @Test
@@ -147,10 +144,10 @@ public class TestProductUsageTime extends BaseTest {
         builder.put(Parameters.TO_DATE, "20131101");
 
         Metric metric = new TestAbstractProductUsageTime(240000, 300000, true, true);
-        assertEquals(metric.getValue(builder.build()), new LongValueData(540000L));
+        assertEquals(metric.getValue(builder.build()), new LongValueData(840000));
 
         metric = new TestAbstractProductUsageSessions(240000, 300000, true, true);
-        assertEquals(metric.getValue(builder.build()), new LongValueData(2L));
+        assertEquals(metric.getValue(builder.build()), new LongValueData(3L));
 
         metric = new TestProductUsageUsers(300000, 360000, true, true);
         assertEquals(metric.getValue(builder.build()), new LongValueData(1L));
@@ -195,10 +192,10 @@ public class TestProductUsageTime extends BaseTest {
         builder.put(Parameters.TO_DATE, "20131101");
 
         Metric metric = new TestAbstractProductUsageTime(240000, 300000, false, true);
-        assertEquals(metric.getValue(builder.build()), new LongValueData(300000L));
+        assertEquals(metric.getValue(builder.build()), new LongValueData(600000L));
 
         metric = new TestAbstractProductUsageSessions(240000, 300000, false, true);
-        assertEquals(metric.getValue(builder.build()), new LongValueData(1L));
+        assertEquals(metric.getValue(builder.build()), new LongValueData(2L));
 
         metric = new TestProductUsageUsers(300000, 360000, false, true);
         assertEquals(metric.getValue(builder.build()), new LongValueData(0L));
@@ -223,12 +220,12 @@ public class TestProductUsageTime extends BaseTest {
     public class TestProductUsageUsers extends AbstractProductUsageUsers {
 
         public TestProductUsageUsers(long min, long max, boolean includeMin, boolean includeMax) {
-            super("testproductusagesessions", min, max, includeMin, includeMax);
+            super("fake", min, max, includeMin, includeMax);
         }
 
         @Override
         public String getStorageCollectionName() {
-            return "testproductusagesessions";
+            return MetricType.PRODUCT_USAGE_SESSIONS_LIST.toString().toLowerCase();
         }
 
         @Override
@@ -241,12 +238,12 @@ public class TestProductUsageTime extends BaseTest {
     public class TestAbstractProductUsageTime extends AbstractProductUsageTime {
 
         public TestAbstractProductUsageTime(long min, long max, boolean includeMin, boolean includeMax) {
-            super("testproductusagesessions", min, max, includeMin, includeMax);
+            super("fake", min, max, includeMin, includeMax);
         }
 
         @Override
         public String getStorageCollectionName() {
-            return "testproductusagesessions";
+            return MetricType.PRODUCT_USAGE_SESSIONS_LIST.toString().toLowerCase();
         }
 
         @Override
@@ -258,12 +255,12 @@ public class TestProductUsageTime extends BaseTest {
     private class TestAbstractProductUsageSessions extends AbstractProductUsage {
 
         public TestAbstractProductUsageSessions(long min, long max, boolean includeMin, boolean includeMax) {
-            super("testproductusagesessions", min, max, includeMin, includeMax);
+            super("fake", min, max, includeMin, includeMax);
         }
 
         @Override
         public String getStorageCollectionName() {
-            return "testproductusagesessions";
+            return MetricType.PRODUCT_USAGE_SESSIONS_LIST.toString().toLowerCase();
         }
 
         @Override

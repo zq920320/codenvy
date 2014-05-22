@@ -22,15 +22,9 @@ import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.Context;
-import com.codenvy.analytics.metrics.Metric;
-import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.metrics.sessions.AbstractProductTime;
+import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.metrics.sessions.AbstractProductUsageCondition;
 import com.codenvy.analytics.metrics.sessions.AbstractTimelineProductUsageCondition;
-import com.codenvy.analytics.metrics.sessions.ProductUsageSessionsList;
-import com.codenvy.analytics.metrics.top.AbstractTopUsers;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
@@ -74,12 +68,8 @@ public class TestProductUsersTime extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
-        builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.name());
-        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
-        builder.put(Parameters.STORAGE_TABLE, "testproductuserstime");
-        builder.put(Parameters.STORAGE_TABLE_USERS_STATISTICS, "testproductuserstime-stat");
-        builder.put(Parameters.STORAGE_TABLE_USERS_PROFILES, "testproductuserstime-profiles");
         builder.put(Parameters.LOG, log.getAbsolutePath());
+        builder.putAll(scriptsManager.getScript(ScriptType.PRODUCT_USAGE_SESSIONS, MetricType.PRODUCT_USAGE_SESSIONS_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, builder.build());
     }
 
@@ -90,7 +80,7 @@ public class TestProductUsersTime extends BaseTest {
         builder.put(Parameters.TO_DATE, "20131101");
         builder.put(Parameters.SORT, "-time");
 
-        Metric metric = new TestedProductUsersTime();
+        Metric metric = MetricFactory.getMetric(MetricType.PRODUCT_USERS_TIME);
         ListValueData value = (ListValueData)metric.getValue(builder.build());
 
         List<ValueData> all = value.getAll();
@@ -116,7 +106,7 @@ public class TestProductUsersTime extends BaseTest {
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
 
-        Metric metric = new TestedAbstractTopUsers();
+        Metric metric = MetricFactory.getMetric(MetricType.TOP_USERS_BY_1DAY);
         ListValueData value = (ListValueData)metric.getValue(builder.build());
 
         assertEquals(value.size(), 3);
@@ -189,6 +179,8 @@ public class TestProductUsersTime extends BaseTest {
         assertEquals(3, value.getAsLong());
     }
 
+    // --------------------> Tested classes
+
     private class TestedAbstractTimelineProductUsageCondition extends AbstractTimelineProductUsageCondition {
 
         protected TestedAbstractTimelineProductUsageCondition(long minTime, long maxTime,
@@ -230,43 +222,7 @@ public class TestProductUsersTime extends BaseTest {
 
         @Override
         public String getStorageCollectionName() {
-            return "testproductuserstime";
-        }
-    }
-
-    private class TestedProductUsersTime extends AbstractProductTime {
-
-        public TestedProductUsersTime() {
-            super(MetricType.PRODUCT_USERS_TIME);
-        }
-
-        @Override
-        public String[] getTrackedFields() {
-            return new String[]{ProductUsageSessionsList.USER,
-                                ProductUsageSessionsList.TIME,
-                                SESSIONS};
-        }
-
-        @Override
-        public String getStorageCollectionName() {
-            return "testproductuserstime";
-        }
-
-        @Override
-        public String getDescription() {
-            return null;
-        }
-    }
-
-    private class TestedAbstractTopUsers extends AbstractTopUsers {
-
-        public TestedAbstractTopUsers() {
-            super(MetricType.TOP_USERS_BY_1DAY, new TestedProductUsersTime(), 1);
-        }
-
-        @Override
-        public String getDescription() {
-            return null;
+            return MetricType.PRODUCT_USAGE_SESSIONS_LIST.toString().toLowerCase();
         }
     }
 }

@@ -19,11 +19,7 @@ package com.codenvy.analytics.pig.scripts;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.metrics.Context;
-import com.codenvy.analytics.metrics.Metric;
-import com.codenvy.analytics.metrics.MetricFilter;
-import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.metrics.sessions.factory.*;
+import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
@@ -88,20 +84,15 @@ public class TestProductUsageFactorySessions extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20130210");
         builder.put(Parameters.TO_DATE, "20130210");
-        builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.name());
-        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
-        builder.put(Parameters.STORAGE_TABLE, "testproductusagefactorysessions_acceptedfactories");
         builder.put(Parameters.LOG, log.getAbsolutePath());
+        builder.putAll(scriptsManager.getScript(ScriptType.ACCEPTED_FACTORIES, MetricType.FACTORIES_ACCEPTED_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.ACCEPTED_FACTORIES, builder.build());
 
-        builder.put(Parameters.WS, Parameters.WS_TYPES.TEMPORARY.name());
-        builder.put(Parameters.STORAGE_TABLE, "testproductusagefactorysessions");
-        builder.put(Parameters.STORAGE_TABLE_PRODUCT_USAGE_SESSIONS, "testproductusagefactorysessions_pus");
-        builder.put(Parameters.STORAGE_TABLE_USERS_STATISTICS, "testproductusagefactorysessions_stat");
+        builder.putAll(
+                scriptsManager.getScript(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, builder.build());
 
-        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
-        builder.put(Parameters.STORAGE_TABLE, "testproductusagefactorysessions-tmpws");
+        builder.putAll(scriptsManager.getScript(ScriptType.CREATED_TEMPORARY_WORKSPACES, MetricType.TEMPORARY_WORKSPACES_CREATED).getParamsAsMap());
         pigServer.execute(ScriptType.CREATED_TEMPORARY_WORKSPACES, builder.build());
     }
 
@@ -111,16 +102,16 @@ public class TestProductUsageFactorySessions extends BaseTest {
         builder.put(Parameters.FROM_DATE, "20130210");
         builder.put(Parameters.TO_DATE, "20130210");
 
-        Metric metric = new TestFactorySessionsProductUsageTotal();
+        Metric metric = MetricFactory.getMetric(MetricType.FACTORY_PRODUCT_USAGE_TIME_TOTAL);
         assertEquals(metric.getValue(builder.build()), new LongValueData(1800000L));
 
-        metric = new TestFactorySessions();
+        metric = MetricFactory.getMetric(MetricType.FACTORY_SESSIONS);
         assertEquals(metric.getValue(builder.build()), new LongValueData(3));
 
-        metric = new TestAuthenticatedFactorySessions();
+        metric = MetricFactory.getMetric(MetricType.AUTHENTICATED_FACTORY_SESSIONS);
         assertEquals(metric.getValue(builder.build()), new LongValueData(2));
 
-        metric = new TestConvertedFactorySessions();
+        metric = MetricFactory.getMetric(MetricType.CONVERTED_FACTORY_SESSIONS);
         assertEquals(metric.getValue(builder.build()), new LongValueData(1));
     }
 
@@ -131,7 +122,7 @@ public class TestProductUsageFactorySessions extends BaseTest {
         builder.put(Parameters.TO_DATE, "20130210");
         builder.put(MetricFilter.REFERRER, "referrer1");
 
-        Metric metric = new TestFactorySessionsProductUsageTotal();
+        Metric metric = MetricFactory.getMetric(MetricType.FACTORY_PRODUCT_USAGE_TIME_TOTAL);
         assertEquals(metric.getValue(builder.build()), new LongValueData(300000L));
     }
 
@@ -141,8 +132,8 @@ public class TestProductUsageFactorySessions extends BaseTest {
         builder.put(Parameters.FROM_DATE, "20130210");
         builder.put(Parameters.TO_DATE, "20130210");
 
-        Metric metric = new TestAbstractFactorySessions("testproductusagefactorysessions", 0, 600000, true, true);
-        assertEquals(metric.getValue(builder.build()), new LongValueData(2));
+        Metric metric = MetricFactory.getMetric(MetricType.FACTORY_SESSIONS_BELOW_10_MIN);
+        assertEquals(metric.getValue(builder.build()), new LongValueData(1));
     }
 
     @Test
@@ -151,7 +142,7 @@ public class TestProductUsageFactorySessions extends BaseTest {
         builder.put(Parameters.FROM_DATE, "20130210");
         builder.put(Parameters.TO_DATE, "20130210");
 
-        Metric metric = new TestAbstractFactorySessionsWithEvent();
+        Metric metric = MetricFactory.getMetric(MetricType.FACTORY_SESSIONS_WITH_RUN);
         assertEquals(metric.getValue(builder.build()), LongValueData.valueOf(1));
     }
 
@@ -161,7 +152,7 @@ public class TestProductUsageFactorySessions extends BaseTest {
         builder.put(Parameters.FROM_DATE, "20130210");
         builder.put(Parameters.TO_DATE, "20130210");
 
-        Metric metric = new TestTemporaryWorkspacesCreated();
+        Metric metric = MetricFactory.getMetric(MetricType.TEMPORARY_WORKSPACES_CREATED);
         assertEquals(metric.getValue(builder.build()), LongValueData.valueOf(2));
     }
 
@@ -172,7 +163,7 @@ public class TestProductUsageFactorySessions extends BaseTest {
         builder.put(Parameters.TO_DATE, "20130210");
         builder.put(MetricFilter.ORG_ID, "org1");
 
-        Metric metric = new TestTemporaryWorkspacesCreated();
+        Metric metric = MetricFactory.getMetric(MetricType.TEMPORARY_WORKSPACES_CREATED);
         assertEquals(metric.getValue(builder.build()), LongValueData.valueOf(1));
     }
 
@@ -183,84 +174,7 @@ public class TestProductUsageFactorySessions extends BaseTest {
         builder.put(Parameters.TO_DATE, "20130210");
         builder.put(MetricFilter.AFFILIATE_ID, "affiliate1");
 
-        Metric metric = new TestTemporaryWorkspacesCreated();
+        Metric metric = MetricFactory.getMetric(MetricType.TEMPORARY_WORKSPACES_CREATED);
         assertEquals(metric.getValue(builder.build()), LongValueData.valueOf(2));
-    }
-
-
-    private class TestAbstractFactorySessionsWithEvent extends AbstractFactorySessionsWithEvent {
-        public TestAbstractFactorySessionsWithEvent() {
-            super("testproductusagefactorysessions");
-        }
-
-        @Override
-        public String getStorageCollectionName() {
-            return "testproductusagefactorysessions";
-        }
-
-        @Override
-        public String[] getTrackedFields() {
-            return new String[]{"runs"};
-        }
-
-        @Override
-        public String getDescription() {
-            return null;
-        }
-    }
-
-    private class TestTemporaryWorkspacesCreated extends TemporaryWorkspacesCreated {
-        @Override
-        public String getStorageCollectionName() {
-            return "testproductusagefactorysessions-tmpws";
-        }
-    }
-
-    private class TestFactorySessions extends FactorySessions {
-        @Override
-        public String getStorageCollectionName() {
-            return "testproductusagefactorysessions";
-        }
-    }
-
-    private class TestFactorySessionsProductUsageTotal extends FactorySessionsProductUsageTotal {
-
-        @Override
-        public String getStorageCollectionName() {
-            return "testproductusagefactorysessions";
-        }
-    }
-
-    private class TestAuthenticatedFactorySessions extends AuthenticatedFactorySessions {
-        @Override
-        public String getStorageCollectionName() {
-            return "testproductusagefactorysessions";
-        }
-    }
-
-    private class TestConvertedFactorySessions extends ConvertedFactorySessions {
-        @Override
-        public String getStorageCollectionName() {
-            return "testproductusagefactorysessions";
-        }
-    }
-
-
-    private class TestAbstractFactorySessions extends AbstractFactorySessions {
-
-        protected TestAbstractFactorySessions(String metricName, long min, long max, boolean includeMin,
-                                              boolean includeMax) {
-            super(metricName, min, max, includeMin, includeMax);
-        }
-
-        @Override
-        public String getStorageCollectionName() {
-            return "testproductusagefactorysessions";
-        }
-
-        @Override
-        public String getDescription() {
-            return null;
-        }
     }
 }

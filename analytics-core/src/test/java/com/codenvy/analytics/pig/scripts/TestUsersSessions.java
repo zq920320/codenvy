@@ -22,12 +22,7 @@ import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.StringValueData;
-import com.codenvy.analytics.metrics.Context;
-import com.codenvy.analytics.metrics.Metric;
-import com.codenvy.analytics.metrics.MetricFilter;
-import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.metrics.sessions.ProductUsageSessions;
-import com.codenvy.analytics.metrics.sessions.ProductUsageSessionsList;
+import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
@@ -42,10 +37,6 @@ import static org.testng.Assert.assertEquals;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestUsersSessions extends BaseTest {
-
-    private static final String COLLECTION          = TestUsersSessions.class.getSimpleName().toLowerCase();
-    private static final String COLLECTION_PROFILES = TestUsersSessions.class.getSimpleName().toLowerCase() + "prof";
-    private static final String COLLECTION_STATS    = TestUsersSessions.class.getSimpleName().toLowerCase() + "stat";
 
     @BeforeClass
     public void prepare() throws Exception {
@@ -84,16 +75,11 @@ public class TestUsersSessions extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
-        builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.name());
-        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
-        builder.put(Parameters.STORAGE_TABLE, COLLECTION_PROFILES);
         builder.put(Parameters.LOG, log.getAbsolutePath());
+        builder.putAll(scriptsManager.getScript(ScriptType.USERS_UPDATE_PROFILES, MetricType.USERS_PROFILES_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.USERS_UPDATE_PROFILES, builder.build());
 
-        builder.put(Parameters.STORAGE_TABLE, COLLECTION);
-        builder.put(Parameters.STORAGE_TABLE_USERS_STATISTICS, COLLECTION_STATS);
-        builder.put(Parameters.STORAGE_TABLE_USERS_PROFILES, COLLECTION_PROFILES);
-        builder.put(Parameters.LOG, log.getAbsolutePath());
+        builder.putAll(scriptsManager.getScript(ScriptType.PRODUCT_USAGE_SESSIONS, MetricType.PRODUCT_USAGE_SESSIONS_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, builder.build());
     }
 
@@ -105,7 +91,7 @@ public class TestUsersSessions extends BaseTest {
         builder.put(Parameters.SORT, "+date");
         builder.put(MetricFilter.USER, "anonymoususer_user11");
 
-        Metric metric = new TestProductUsageSessionsList();
+        Metric metric = MetricFactory.getMetric(MetricType.PRODUCT_USAGE_SESSIONS_LIST);
 
         ListValueData valueData = (ListValueData)metric.getValue(builder.build());
         assertEquals(2, valueData.size());
@@ -134,7 +120,7 @@ public class TestUsersSessions extends BaseTest {
         assertEquals(items.getAll().get("user_company"), StringValueData.valueOf(""));
         assertEquals(items.getAll().get("logout_interval"), LongValueData.valueOf(0));
 
-        metric = new TestProductUsageSessions();
+        metric = MetricFactory.getMetric(MetricType.PRODUCT_USAGE_SESSIONS);
         assertEquals(metric.getValue(builder.build()), LongValueData.valueOf(2));
     }
 
@@ -145,7 +131,7 @@ public class TestUsersSessions extends BaseTest {
         builder.put(Parameters.TO_DATE, "20131101");
         builder.put(MetricFilter.USER, "user@gmail.com");
 
-        Metric metric = new TestProductUsageSessionsList();
+        Metric metric = MetricFactory.getMetric(MetricType.PRODUCT_USAGE_SESSIONS_LIST);
 
         ListValueData valueData = (ListValueData)metric.getValue(builder.build());
         assertEquals(1, valueData.size());
@@ -162,7 +148,7 @@ public class TestUsersSessions extends BaseTest {
         assertEquals(items.getAll().get("user_company"), StringValueData.valueOf("company"));
         assertEquals(items.getAll().get("logout_interval"), LongValueData.valueOf(60 * 1000));
 
-        metric = new TestProductUsageSessions();
+        metric = MetricFactory.getMetric(MetricType.PRODUCT_USAGE_SESSIONS);
         assertEquals(metric.getValue(builder.build()), LongValueData.valueOf(1));
     }
 
@@ -173,28 +159,12 @@ public class TestUsersSessions extends BaseTest {
         builder.put(Parameters.TO_DATE, "20131101");
         builder.put(MetricFilter.USER, "user@gmail");
 
-        Metric metric = new TestProductUsageSessionsList();
+        Metric metric = MetricFactory.getMetric(MetricType.PRODUCT_USAGE_SESSIONS_LIST);
 
         ListValueData valueData = (ListValueData)metric.getValue(builder.build());
         assertEquals(0, valueData.size());
 
-        metric = new TestProductUsageSessions();
+        metric = MetricFactory.getMetric(MetricType.PRODUCT_USAGE_SESSIONS);
         assertEquals(metric.getValue(builder.build()).getAsString(), "0");
-    }
-
-    //----------------- Tested Metrics
-
-    private class TestProductUsageSessions extends ProductUsageSessions {
-        @Override
-        public String getStorageCollectionName() {
-            return COLLECTION;
-        }
-    }
-
-    private class TestProductUsageSessionsList extends ProductUsageSessionsList {
-        @Override
-        public String getStorageCollectionName() {
-            return COLLECTION;
-        }
     }
 }

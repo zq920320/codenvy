@@ -21,10 +21,7 @@ package com.codenvy.analytics.pig.scripts;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.metrics.Context;
-import com.codenvy.analytics.metrics.Metric;
-import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.metrics.ide_usage.AbstractTimeSpentInAction;
+import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
@@ -38,8 +35,6 @@ import java.util.List;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestTimeSpentInAction extends BaseTest {
-
-    private static final String COLLECTION = TestTimeSpentInAction.class.getSimpleName().toLowerCase();
 
     @BeforeClass
     public void prepare() throws Exception {
@@ -76,11 +71,8 @@ public class TestTimeSpentInAction extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20130101");
         builder.put(Parameters.TO_DATE, "20130101");
-        builder.put(Parameters.USER, Parameters.USER_TYPES.REGISTERED.name());
-        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
-        builder.put(Parameters.STORAGE_TABLE, COLLECTION);
-        builder.put(Parameters.EVENT, "run");
         builder.put(Parameters.LOG, log.getAbsolutePath());
+        builder.putAll(scriptsManager.getScript(ScriptType.TIME_SPENT_IN_ACTION, MetricType.RUNS_TIME).getParamsAsMap());
         pigServer.execute(ScriptType.TIME_SPENT_IN_ACTION, builder.build());
     }
 
@@ -90,7 +82,7 @@ public class TestTimeSpentInAction extends BaseTest {
         builder.put(Parameters.FROM_DATE, "20130101");
         builder.put(Parameters.TO_DATE, "20130101");
 
-        Metric metric = new TestedAbstractTimeSpentInAction();
+        Metric metric = MetricFactory.getMetric(MetricType.RUNS_TIME);
         Assert.assertEquals(metric.getValue(builder.build()), new LongValueData(540000));
     }
 
@@ -100,7 +92,7 @@ public class TestTimeSpentInAction extends BaseTest {
         builder.put(Parameters.FROM_DATE, "20130102");
         builder.put(Parameters.TO_DATE, "20130102");
 
-        Metric metric = new TestedAbstractTimeSpentInAction();
+        Metric metric = MetricFactory.getMetric(MetricType.RUNS_TIME);
         Assert.assertEquals(metric.getValue(builder.build()), new LongValueData(0));
     }
 
@@ -112,7 +104,7 @@ public class TestTimeSpentInAction extends BaseTest {
         builder.put(Parameters.TO_DATE, "20130101");
         builder.put(Parameters.USER, "user1@gmail.com");
 
-        Metric metric = new TestedAbstractTimeSpentInAction();
+        Metric metric = MetricFactory.getMetric(MetricType.RUNS_TIME);
         Assert.assertEquals(metric.getValue(builder.build()), new LongValueData(420000));
     }
 
@@ -123,7 +115,7 @@ public class TestTimeSpentInAction extends BaseTest {
         builder.put(Parameters.TO_DATE, "20130101");
         builder.put(Parameters.USER, "user1@gmail.com OR user2@gmail.com");
 
-        Metric metric = new TestedAbstractTimeSpentInAction();
+        Metric metric = MetricFactory.getMetric(MetricType.RUNS_TIME);
         Assert.assertEquals(metric.getValue(builder.build()), new LongValueData(540000));
     }
 
@@ -135,28 +127,9 @@ public class TestTimeSpentInAction extends BaseTest {
         builder.put(Parameters.USER, "user1@gmail.com OR user2@gmail.com");
         builder.put(Parameters.WS, "ws2");
 
-        Metric metric = new TestedAbstractTimeSpentInAction();
+        Metric metric = MetricFactory.getMetric(MetricType.RUNS_TIME);
         Assert.assertEquals(metric.getValue(builder.build()), new LongValueData(120000));
 
-    }
-
-    //-------------------- Tested classes --------------------
-
-    private class TestedAbstractTimeSpentInAction extends AbstractTimeSpentInAction {
-
-        public TestedAbstractTimeSpentInAction() {
-            super(COLLECTION, SESSION_ID);
-        }
-
-        @Override
-        public String getStorageCollectionName() {
-            return COLLECTION;
-        }
-
-        @Override
-        public String getDescription() {
-            return null;
-        }
     }
 }
 

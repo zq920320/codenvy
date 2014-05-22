@@ -19,7 +19,6 @@ package com.codenvy.analytics.metrics;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.datamodel.*;
-import com.codenvy.analytics.metrics.users.UsersActivity;
 import com.codenvy.analytics.metrics.users.UsersActivityList;
 import com.codenvy.analytics.pig.scripts.ScriptType;
 import com.codenvy.analytics.pig.scripts.util.Event;
@@ -42,24 +41,18 @@ public class TestUsersActivityMetric extends BaseTest {
     private static final String WS                  = "ws1";
     private static final String USER                = "user1@gmail.com";
     private static final String SESSION_ID          = "8AA06F22-3755-4BDD-9242-8A6371BAB53A";
-    private static final String COLLECTION          = TestUsersActivityMetric.class.getSimpleName().toLowerCase();
-    private static final String NON_SESSIONS_EVENTS =
-            "~ session-started OR session-finished OR session-factory-started OR session-factory-stopped";
+    private static final String NON_SESSIONS_EVENTS = "~ session-started OR session-finished OR session-factory-started OR session-factory-stopped";
 
     @BeforeClass
     public void prepare() throws Exception {
         List<Event> events = new ArrayList<>();
 
         // start main session
-        events.add(
-                Event.Builder.createSessionStartedEvent(USER, WS, "ide", SESSION_ID)
-                             .withDate("2013-11-01").withTime("19:00:00,155").build());
+        events.add(Event.Builder.createSessionStartedEvent(USER, WS, "ide", SESSION_ID).withDate("2013-11-01").withTime("19:00:00,155").build());
 
         // event of target user in the target workspace and in time of first session
-        events.add(Event.Builder.createRunStartedEvent(USER, WS, "project", "type", "id1")
-                                .withDate("2013-11-01").withTime("19:08:00,600").build());
-        events.add(Event.Builder.createRunFinishedEvent(USER, WS, "project", "type", "id1")
-                                .withDate("2013-11-01").withTime("19:10:00,900").build());
+        events.add(Event.Builder.createRunStartedEvent(USER, WS, "project", "type", "id1").withDate("2013-11-01").withTime("19:08:00,600").build());
+        events.add(Event.Builder.createRunFinishedEvent(USER, WS, "project", "type", "id1").withDate("2013-11-01").withTime("19:10:00,900").build());
 
         // event of target user in another workspace and in time of main session
         events.add(Event.Builder.createBuildStartedEvent(USER, "ws2", "project", "type", "id2")
@@ -74,9 +67,8 @@ public class TestUsersActivityMetric extends BaseTest {
                                 .withDate("2013-11-01").withTime("19:10:00,000").build());
 
         // finish main session
-        events.add(
-                Event.Builder.createSessionFinishedEvent(USER, WS, "ide", SESSION_ID)
-                             .withDate("2013-11-01").withTime("19:55:00,555").build());
+        events.add(Event.Builder.createSessionFinishedEvent(USER, WS, "ide", SESSION_ID)
+                                .withDate("2013-11-01").withTime("19:55:00,555").build());
 
         // 2 micro-sessions (240 sec, 120 millisec) of target user in the target workspace
         events.add(Event.Builder.createSessionStartedEvent(USER, WS, "ide", "1")
@@ -111,19 +103,11 @@ public class TestUsersActivityMetric extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
-        builder.put(Parameters.USER, Parameters.USER_TYPES.REGISTERED.name());
-        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
-        builder.put(Parameters.STORAGE_TABLE, COLLECTION);
         builder.put(Parameters.LOG, log.getAbsolutePath());
+        builder.putAll(scriptsManager.getScript(ScriptType.USERS_ACTIVITY, MetricType.USERS_ACTIVITY_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.USERS_ACTIVITY, builder.build());
 
-        String productUsageSessionsListCollection =
-                ((ReadBasedMetric)MetricFactory.getMetric(MetricType.PRODUCT_USAGE_SESSIONS_LIST))
-                        .getStorageCollectionName();
-
-        builder.put(Parameters.STORAGE_TABLE, productUsageSessionsListCollection);
-        builder.put(Parameters.STORAGE_TABLE_USERS_STATISTICS, "testuserssessions-stat");
-        builder.put(Parameters.STORAGE_TABLE_USERS_PROFILES, "testuserssessions-profiles");
+        builder.putAll(scriptsManager.getScript(ScriptType.PRODUCT_USAGE_SESSIONS, MetricType.PRODUCT_USAGE_SESSIONS_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, builder.build());
     }
 
@@ -133,7 +117,7 @@ public class TestUsersActivityMetric extends BaseTest {
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
 
-        Metric metric = new TestedUsersActivityList();
+        Metric metric = MetricFactory.getMetric(MetricType.USERS_ACTIVITY_LIST);
         ListValueData value = (ListValueData)metric.getValue(builder.build());
 
         assertEquals(value.size(), 14);
@@ -250,7 +234,7 @@ public class TestUsersActivityMetric extends BaseTest {
                    fullDateFormatMils.parse("2013-11-01 21:00:05,555").getTime(),
                    0, 0);
 
-        metric = new TestedNumberOfUsersOfActivity();
+        metric = MetricFactory.getMetric(MetricType.USERS_ACTIVITY);
         Assert.assertEquals(metric.getValue(builder.build()), LongValueData.valueOf(14));
     }
 
@@ -260,7 +244,7 @@ public class TestUsersActivityMetric extends BaseTest {
         builder.put(MetricFilter.SESSION_ID, SESSION_ID);
         builder.put(Parameters.EVENT, NON_SESSIONS_EVENTS);
 
-        Metric metric = new TestedUsersActivityList();
+        Metric metric = MetricFactory.getMetric(MetricType.USERS_ACTIVITY_LIST);
         ListValueData value = (ListValueData)metric.getValue(builder.build());
 
         assertEquals(value.size(), 6);
@@ -323,7 +307,7 @@ public class TestUsersActivityMetric extends BaseTest {
                    0,
                    fullDateFormatMils.parse("2013-11-01 20:04:00,220").getTime() - startTime);
 
-        metric = new TestedNumberOfUsersOfActivity();
+        metric = MetricFactory.getMetric(MetricType.USERS_ACTIVITY);
         Assert.assertEquals(metric.getValue(builder.build()), LongValueData.valueOf(3));
     }
 
@@ -333,7 +317,7 @@ public class TestUsersActivityMetric extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(MetricFilter.SESSION_ID, SESSION_ID);
 
-        Metric metric = new TestedUsersActivityList();
+        Metric metric = MetricFactory.getMetric(MetricType.USERS_ACTIVITY_LIST);
         ListValueData value = (ListValueData)metric.getValue(builder.build());
 
         assertEquals(value.size(), 10);
@@ -437,13 +421,13 @@ public class TestUsersActivityMetric extends BaseTest {
                    fullDateFormatMils.parse("2013-11-01 20:04:00,220").getTime() - startTime);
 
 
-        metric = new TestedNumberOfUsersOfActivity();
+        metric = MetricFactory.getMetric(MetricType.USERS_ACTIVITY);
         Assert.assertEquals(metric.getValue(builder.build()), LongValueData.valueOf(7));
     }
 
     @Test
     public void testOneSessionActivityPagination() throws Exception {
-        Metric metric = new TestedUsersActivityList();
+        Metric metric = MetricFactory.getMetric(MetricType.USERS_ACTIVITY_LIST);
 
         Context.Builder builder = new Context.Builder();
         builder.put(MetricFilter.SESSION_ID, SESSION_ID);
@@ -578,25 +562,5 @@ public class TestUsersActivityMetric extends BaseTest {
         assertEquals(itemContent.get(ReadBasedMetric.DATE), LongValueData.valueOf(date));
         assertEquals(itemContent.get(UsersActivityList.CUMULATIVE_TIME), LongValueData.valueOf(cumulativeTime));
         assertEquals(itemContent.get(UsersActivityList.TIME), LongValueData.valueOf(time));
-    }
-
-    // ------------------------> Tested classes
-
-    private class TestedNumberOfUsersOfActivity extends UsersActivity {
-        @Override
-        public String getStorageCollectionName() {
-            return COLLECTION;
-        }
-    }
-
-    private class TestedUsersActivityList extends UsersActivityList {
-        private TestedUsersActivityList() {
-            super(new TestedNumberOfUsersOfActivity());
-        }
-
-        @Override
-        public String getStorageCollectionName() {
-            return COLLECTION;
-        }
     }
 }

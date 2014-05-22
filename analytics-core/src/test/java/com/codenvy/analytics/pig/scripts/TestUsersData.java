@@ -48,21 +48,13 @@ public class TestUsersData extends BaseTest {
         builder.put(Parameters.TO_DATE, "20131101");
         builder.put(Parameters.LOG, MESSAGES);
 
-        builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.name());
-        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
-        builder.put(Parameters.STORAGE_TABLE, MetricType.PRODUCT_USAGE_SESSIONS_LIST.toString().toLowerCase());
-        builder.put(Parameters.STORAGE_TABLE_USERS_STATISTICS, MetricType.USERS_STATISTICS_LIST.name().toLowerCase());
-        builder.put(Parameters.STORAGE_TABLE_USERS_PROFILES, MetricType.USERS_PROFILES_LIST.name().toLowerCase());
+        builder.putAll(scriptsManager.getScript(ScriptType.PRODUCT_USAGE_SESSIONS, MetricType.PRODUCT_USAGE_SESSIONS_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, builder.build());
 
-        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
-        builder.put(Parameters.USER, Parameters.USER_TYPES.REGISTERED.name());
-        builder.put(Parameters.STORAGE_TABLE, MetricType.USERS_STATISTICS_LIST.toString().toLowerCase());
+        builder.putAll(scriptsManager.getScript(ScriptType.USERS_STATISTICS, MetricType.USERS_STATISTICS_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.USERS_STATISTICS, builder.build());
 
-        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
-        builder.put(Parameters.USER, Parameters.USER_TYPES.REGISTERED.name());
-        builder.put(Parameters.STORAGE_TABLE, MetricType.USERS_PROFILES_LIST.toString().toLowerCase());
+        builder.putAll(scriptsManager.getScript(ScriptType.USERS_UPDATE_PROFILES, MetricType.USERS_PROFILES_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.USERS_UPDATE_PROFILES, builder.build());
 
         DataComputationFeature dataComputationFeature = new DataComputationFeature();

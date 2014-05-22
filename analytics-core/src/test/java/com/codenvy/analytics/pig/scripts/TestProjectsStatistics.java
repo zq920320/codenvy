@@ -21,11 +21,7 @@ import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.Context;
-import com.codenvy.analytics.metrics.Metric;
-import com.codenvy.analytics.metrics.MetricFilter;
-import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.metrics.projects.ProjectsStatisticsList;
+import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
@@ -98,13 +94,10 @@ public class TestProjectsStatistics extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20130101");
         builder.put(Parameters.TO_DATE, "20130101");
-        builder.put(Parameters.USER, Parameters.USER_TYPES.REGISTERED.name());
-        builder.put(Parameters.WS, Parameters.WS_TYPES.PERSISTENT.name());
-        builder.put(Parameters.STORAGE_TABLE, "testprojectsevents");
         builder.put(Parameters.LOG, log.getAbsolutePath());
+        builder.putAll(scriptsManager.getScript(ScriptType.PROJECTS_STATISTICS, MetricType.PROJECTS_STATISTICS_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.PROJECTS_STATISTICS, builder.build());
     }
-
 
     @Test
     public void testTestUsersProjectsListMetricFilterByUser() throws Exception {
@@ -113,7 +106,7 @@ public class TestProjectsStatistics extends BaseTest {
         builder.put(Parameters.TO_DATE, "20130101");
         builder.put(MetricFilter.PROJECT, "project1");
 
-        Metric metric = new TestProjectsEventsMetric();
+        Metric metric = MetricFactory.getMetric(MetricType.PROJECTS_STATISTICS_LIST);
         List<ValueData> items = ((ListValueData)metric.getValue(builder.build())).getAll();
 
         assertEquals(1, items.size());
@@ -137,11 +130,4 @@ public class TestProjectsStatistics extends BaseTest {
         assertEquals(m.get("debug_time").getAsString(),"60000");
     }
 
-    private class TestProjectsEventsMetric extends ProjectsStatisticsList {
-
-        @Override
-        public String getStorageCollectionName() {
-            return "testprojectsevents";
-        }
-    }
 }

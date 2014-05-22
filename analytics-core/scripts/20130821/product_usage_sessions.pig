@@ -107,9 +107,17 @@ t2 = FOREACH t1 GENERATE s::dt AS dt, s::ws AS ws, s::user AS user, s::id AS id,
 t3 = FOREACH t2 GENERATE dt, ws, user, id, delta, company, REGEX_EXTRACT(user, '.*@(.*)', 1) AS domain;
 t = FOREACH t3 GENERATE dt, ws, user, id, delta, company, (domain IS NULL ? '' : domain) AS domain;
 
-result = FOREACH t GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('ws', ws), TOTUPLE('user', user),
-            TOTUPLE('session_id', id), TOTUPLE('ide', 2), TOTUPLE('end_time', ToMilliSeconds(dt) + delta),
-            TOTUPLE('time', delta), TOTUPLE('domain', domain), TOTUPLE('user_company', company);
+result = FOREACH t GENERATE UUID(),
+                            TOTUPLE('date', ToMilliSeconds(dt)),
+                            TOTUPLE('ws', ws), TOTUPLE('user', user),
+                            TOTUPLE('session_id', id),
+                            TOTUPLE('ide', 2),
+                            TOTUPLE('end_time',
+                            ToMilliSeconds(dt) + delta),
+                            TOTUPLE('time', delta),
+                            TOTUPLE('domain', domain),
+                            TOTUPLE('user_company', company);
+DUMP t;
 STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 
 ---------------------------------------

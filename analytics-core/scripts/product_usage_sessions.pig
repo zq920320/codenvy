@@ -75,7 +75,7 @@ d = FOREACH d1 GENERATE ws, user;
 
 e1 = JOIN c BY ws LEFT, d BY ws;
 e2 = FILTER e1 BY d::ws IS NULL;
-e = FOREACH e2 GENERATE c::ws AS ws, c::user AS user, c::dt AS dt, 0 AS delta, '' AS id, c::ide AS ide, 0 AS logout_interval;
+e = FOREACH e2 GENERATE c::ws AS ws, c::user AS user, c::dt AS dt, 0 AS delta, UUID() AS id, c::ide AS ide, 0 AS logout_interval;
 
 -- combine all sessions together
 s = UNION s4, e;
@@ -88,14 +88,22 @@ t3 = FOREACH t2 GENERATE dt, ws, user, id, delta, company, REGEX_EXTRACT(user, '
 t = FOREACH t3 GENERATE dt, ws, user, id, delta, company, (domain IS NULL ? '' : domain) AS domain, ide, logout_interval;
 
 
-result = FOREACH t GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('ws', ws), TOTUPLE('user', user),
-            TOTUPLE('session_id', id), TOTUPLE('ide', ide), TOTUPLE('logout_interval', logout_interval),
-            TOTUPLE('end_time', ToMilliSeconds(dt) + delta), TOTUPLE('time', delta), TOTUPLE('domain', domain),
-            TOTUPLE('user_company', company);
+result = FOREACH t GENERATE UUID(),
+                            TOTUPLE('date', ToMilliSeconds(dt)),
+                            TOTUPLE('ws', ws),
+                            TOTUPLE('user', user),
+                            TOTUPLE('session_id', id),
+                            TOTUPLE('ide', ide),
+                            TOTUPLE('logout_interval', logout_interval),
+                            TOTUPLE('end_time', ToMilliSeconds(dt) + delta),
+                            TOTUPLE('time', delta),
+                            TOTUPLE('domain', domain),
+                            TOTUPLE('user_company', company);
 STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 
 -- store sessions fro users' statistics
-x = FOREACH t GENERATE UUID(),
+w1 = FILTER t BY INDEXOF(user, 'anonymoususer_', 0) < 0;
+w = FOREACH w1 GENERATE UUID(),
                        TOTUPLE('date', ToMilliSeconds(dt)),
                        TOTUPLE('user', user),
                        TOTUPLE('ws', ws),
@@ -103,4 +111,4 @@ x = FOREACH t GENERATE UUID(),
                        TOTUPLE('session_id', id),
                        TOTUPLE('sessions', 1),
                        TOTUPLE('ide', ide);
-STORE x INTO '$STORAGE_URL.$STORAGE_TABLE_USERS_STATISTICS' USING MongoStorage;
+STORE w INTO '$STORAGE_URL.$STORAGE_TABLE_USERS_STATISTICS' USING MongoStorage;

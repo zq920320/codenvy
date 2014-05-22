@@ -22,11 +22,7 @@ import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.Context;
-import com.codenvy.analytics.metrics.Metric;
-import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.metrics.projects.Projects;
-import com.codenvy.analytics.metrics.projects.ProjectsList;
+import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
@@ -67,9 +63,7 @@ public class TestProjectsList extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20130101");
         builder.put(Parameters.TO_DATE, "20130101");
-        builder.put(Parameters.USER, Parameters.USER_TYPES.REGISTERED.name());
-        builder.put(Parameters.WS, Parameters.WS_TYPES.PERSISTENT.name());
-        builder.put(Parameters.STORAGE_TABLE, "testprojectslist");
+        builder.putAll(scriptsManager.getScript(ScriptType.PROJECTS, MetricType.PROJECTS_LIST).getParamsAsMap());
         builder.put(Parameters.LOG, log.getAbsolutePath());
         pigServer.execute(ScriptType.PROJECTS, builder.build());
     }
@@ -80,7 +74,7 @@ public class TestProjectsList extends BaseTest {
         builder.put(Parameters.FROM_DATE, "20130101");
         builder.put(Parameters.TO_DATE, "20130101");
 
-        Metric metric = new TestProjectsListMetric();
+        Metric metric = MetricFactory.getMetric(MetricType.PROJECTS_LIST);
         List<ValueData> items = ((ListValueData)metric.getValue(builder.build())).getAll();
 
         assertEquals(3, items.size());
@@ -114,7 +108,7 @@ public class TestProjectsList extends BaseTest {
         builder.put(Parameters.TO_DATE, "20130101");
         builder.put(Parameters.USER, "user1@gmail.com");
 
-        Metric metric = new TestProjectsListMetric();
+        Metric metric = MetricFactory.getMetric(MetricType.PROJECTS_LIST);
         List<ValueData> items = ((ListValueData)metric.getValue(builder.build())).getAll();
 
         assertEquals(2, items.size());
@@ -140,7 +134,7 @@ public class TestProjectsList extends BaseTest {
         builder.put(Parameters.FROM_DATE, "20130101");
         builder.put(Parameters.TO_DATE, "20130101");
 
-        Metric metric = new TestProjectsMetric();
+        Metric metric = MetricFactory.getMetric(MetricType.PROJECTS);
         LongValueData valueData = (LongValueData)metric.getValue(builder.build());
 
         assertEquals(valueData.getAsLong(), 3);
@@ -153,25 +147,9 @@ public class TestProjectsList extends BaseTest {
         builder.put(Parameters.TO_DATE, "20130101");
         builder.put(Parameters.USER, "user1@gmail.com");
 
-        Metric metric = new TestProjectsMetric();
+        Metric metric = MetricFactory.getMetric(MetricType.PROJECTS);
         LongValueData valueData = (LongValueData)metric.getValue(builder.build());
 
         assertEquals(valueData.getAsLong(), 2);
-    }
-
-    private class TestProjectsListMetric extends ProjectsList {
-
-        @Override
-        public String getStorageCollectionName() {
-            return "testprojectslist";
-        }
-    }
-
-    private class TestProjectsMetric extends Projects {
-
-        @Override
-        public String getStorageCollectionName() {
-            return "testprojectslist";
-        }
     }
 }

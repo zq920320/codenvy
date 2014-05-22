@@ -43,8 +43,6 @@ import static org.testng.AssertJUnit.assertEquals;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestUsersActivity extends BaseTest {
 
-    private static final String COLLECTION = MetricType.USERS_ACTIVITY_LIST.toString().toLowerCase();
-
     @BeforeClass
     public void prepare() throws Exception {
         List<Event> events = new ArrayList<>();
@@ -76,11 +74,8 @@ public class TestUsersActivity extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20130101");
         builder.put(Parameters.TO_DATE, "20130101");
-        builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.name());
-        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
         builder.put(Parameters.LOG, log.getAbsolutePath());
-        builder.put(Parameters.STORAGE_TABLE, COLLECTION);
-
+        builder.putAll(scriptsManager.getScript(ScriptType.USERS_ACTIVITY, MetricType.USERS_ACTIVITY_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.USERS_ACTIVITY, builder.build());
     }
 
@@ -88,7 +83,7 @@ public class TestUsersActivity extends BaseTest {
     public void shouldStoreAllParametersFromMessage() throws Exception {
         DBObject filter = new BasicDBObject("user", "user1");
 
-        DBCollection collection = mongoDb.getCollection(COLLECTION);
+        DBCollection collection = mongoDb.getCollection(MetricType.USERS_ACTIVITY_LIST.toString().toLowerCase());
         DBCursor cursor = collection.find(filter);
 
         assertEquals(1, cursor.size());

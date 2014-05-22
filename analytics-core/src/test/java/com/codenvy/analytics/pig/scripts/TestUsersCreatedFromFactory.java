@@ -19,11 +19,7 @@ package com.codenvy.analytics.pig.scripts;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.metrics.Context;
-import com.codenvy.analytics.metrics.Metric;
-import com.codenvy.analytics.metrics.MetricFilter;
-import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.metrics.users.CreatedUsersFromFactory;
+import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
@@ -70,10 +66,8 @@ public class TestUsersCreatedFromFactory extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20130101");
         builder.put(Parameters.TO_DATE, "20130101");
-        builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.name());
-        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
-        builder.put(Parameters.STORAGE_TABLE, "testuserscreatedfromfactory");
         builder.put(Parameters.LOG, log.getAbsolutePath());
+        builder.putAll(scriptsManager.getScript(ScriptType.CREATED_USERS_FROM_FACTORY, MetricType.CREATED_USERS_FROM_FACTORY).getParamsAsMap());
         pigServer.execute(ScriptType.CREATED_USERS_FROM_FACTORY, builder.build());
     }
 
@@ -83,7 +77,7 @@ public class TestUsersCreatedFromFactory extends BaseTest {
         builder.put(Parameters.FROM_DATE, "20130101");
         builder.put(Parameters.TO_DATE, "20130101");
 
-        Metric metric = new TestedUsersCreatedFromFactory();
+        Metric metric = MetricFactory.getMetric(MetricType.CREATED_USERS_FROM_FACTORY);
         assertEquals(metric.getValue(builder.build()), LongValueData.valueOf(1));
     }
 
@@ -94,7 +88,7 @@ public class TestUsersCreatedFromFactory extends BaseTest {
         builder.put(Parameters.TO_DATE, "20130101");
         builder.put(MetricFilter.ORG_ID, "org1");
 
-        Metric metric = new TestedUsersCreatedFromFactory();
+        Metric metric = MetricFactory.getMetric(MetricType.CREATED_USERS_FROM_FACTORY);
         assertEquals(metric.getValue(builder.build()), LongValueData.valueOf(1));
     }
 
@@ -105,7 +99,7 @@ public class TestUsersCreatedFromFactory extends BaseTest {
         builder.put(Parameters.TO_DATE, "20130101");
         builder.put(MetricFilter.AFFILIATE_ID, "affiliate1");
 
-        Metric metric = new TestedUsersCreatedFromFactory();
+        Metric metric = MetricFactory.getMetric(MetricType.CREATED_USERS_FROM_FACTORY);
         assertEquals(metric.getValue(builder.build()), LongValueData.valueOf(1));
     }
 
@@ -116,14 +110,7 @@ public class TestUsersCreatedFromFactory extends BaseTest {
         builder.put(Parameters.TO_DATE, "20130101");
         builder.put(MetricFilter.AFFILIATE_ID, "affiliate2");
 
-        Metric metric = new TestedUsersCreatedFromFactory();
+        Metric metric = MetricFactory.getMetric(MetricType.CREATED_USERS_FROM_FACTORY);
         assertEquals(metric.getValue(builder.build()), LongValueData.valueOf(0));
-    }
-
-    private class TestedUsersCreatedFromFactory extends CreatedUsersFromFactory {
-        @Override
-        public String getStorageCollectionName() {
-            return "testuserscreatedfromfactory";
-        }
     }
 }
