@@ -308,14 +308,14 @@ table {
 .container.rounded {
     border-radius: 0px; }
 
-  .light-button {
+.signup-button, .light-button {
     background: none repeat scroll 0 0 #1E5278;
     border: 1px solid #1E5278;
     border-radius: 0px;
     color: #FFFFFF;
 }
 
-.light-button:hover {
+.signup-button:hover, .light-button:hover {
 	background: none repeat scroll 0 0 #1b4a6c;
 }
 
