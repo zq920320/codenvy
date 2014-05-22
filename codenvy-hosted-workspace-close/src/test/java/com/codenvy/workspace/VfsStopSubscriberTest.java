@@ -37,13 +37,13 @@ public class VfsStopSubscriberTest {
     private EventService eventService;
 
     @Mock
-    private VfsHelper vfsHelper;
+    private VfsCleanupPerformer vfsCleanupPerformer;
 
     @BeforeMethod
     public void setUp() throws Exception {
         eventService = new EventService();
 
-        subscriber = new VfsStopSubscriber(eventService, vfsHelper);
+        subscriber = new VfsStopSubscriber(eventService, vfsCleanupPerformer);
     }
 
     @Test
@@ -55,7 +55,7 @@ public class VfsStopSubscriberTest {
         eventService.publish(new StopWsEvent("id", true));
 
         // then
-        verify(vfsHelper, timeout(500)).unregisterProvider("id");
+        verify(vfsCleanupPerformer, timeout(500)).unregisterProvider("id");
     }
 
     @Test
@@ -67,7 +67,7 @@ public class VfsStopSubscriberTest {
         eventService.publish(new DeleteWorkspaceEvent("id", true, "name"));
 
         // then
-        verify(vfsHelper, timeout(500)).unregisterProvider("id");
-        verify(vfsHelper).removeFS("id", true);
+        verify(vfsCleanupPerformer, timeout(500)).unregisterProvider("id");
+        verify(vfsCleanupPerformer).removeFS("id", true);
     }
 }

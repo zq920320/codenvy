@@ -25,7 +25,7 @@ import java.io.IOException;
  *
  * @author Alexander Garagatyi
  */
-public interface VfsHelper {
+public interface VfsCleanupPerformer {
     void unregisterProvider(String wsId) throws IOException;
 
     void removeFS(String wsId, boolean isTemporary) throws IOException;

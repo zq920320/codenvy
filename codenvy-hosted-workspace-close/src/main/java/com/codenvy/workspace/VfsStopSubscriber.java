@@ -39,13 +39,13 @@ import java.io.IOException;
 @Singleton
 public class VfsStopSubscriber {
     private static final Logger LOG = LoggerFactory.getLogger(VfsStopSubscriber.class);
-    private final EventService eventService;
-    private final VfsHelper    vfsHelper;
+    private final EventService        eventService;
+    private final VfsCleanupPerformer vfsCleanupPerformer;
 
     @Inject
-    public VfsStopSubscriber(EventService eventService, VfsHelper vfsHelper) {
+    public VfsStopSubscriber(EventService eventService, VfsCleanupPerformer vfsCleanupPerformer) {
         this.eventService = eventService;
-        this.vfsHelper = vfsHelper;
+        this.vfsCleanupPerformer = vfsCleanupPerformer;
     }
 
     @PostConstruct
@@ -55,13 +55,13 @@ public class VfsStopSubscriber {
             public void onEvent(DeleteWorkspaceEvent event) {
                 String id = event.getWorkspaceId();
                 try {
-                    vfsHelper.unregisterProvider(id);
+                    vfsCleanupPerformer.unregisterProvider(id);
                 } catch (IOException e) {
                     LOG.error(e.getLocalizedMessage(), e);
                 }
 
                 try {
-                    vfsHelper.removeFS(id, event.isTemporary());
+                    vfsCleanupPerformer.removeFS(id, event.isTemporary());
                 } catch (IOException e) {
                     LOG.error(e.getLocalizedMessage(), e);
                 }
@@ -73,7 +73,7 @@ public class VfsStopSubscriber {
             public void onEvent(StopWsEvent event) {
                 String id = event.getWorkspaceId();
                 try {
-                    vfsHelper.unregisterProvider(id);
+                    vfsCleanupPerformer.unregisterProvider(id);
                 } catch (IOException e) {
                     LOG.error(e.getLocalizedMessage(), e);
                 }
