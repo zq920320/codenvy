@@ -28,8 +28,7 @@ import static com.codenvy.analytics.Utils.isTemporaryExist;
  * @author Alexander Reshetnyak
  */
 @RolesAllowed({})
-public class WorkspacesStatisticsListPrecomputed extends AbstractListValueResulted implements
-                                                                                   PrecomputedDataMetric {
+public class WorkspacesStatisticsListPrecomputed extends AbstractListValueResulted implements PrecomputedDataMetric {
 
     public WorkspacesStatisticsListPrecomputed() {
         super(MetricType.WORKSPACES_STATISTICS_LIST_PRECOMPUTED);
