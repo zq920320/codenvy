@@ -53,16 +53,10 @@ public class TestActiveEntities extends BaseTest {
         builder.put(Parameters.TO_DATE, "20130101");
         builder.put(Parameters.LOG, log.getAbsolutePath());
 
-        builder.put(Parameters.USER, Parameters.USER_TYPES.REGISTERED.toString());
-        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.toString());
-        builder.put(Parameters.PARAM, "user");
-        builder.put(Parameters.STORAGE_TABLE, MetricType.ACTIVE_USERS_SET.toString().toLowerCase());
+        builder.putAll(scriptsManager.getScript(ScriptType.ACTIVE_ENTITIES, MetricType.ACTIVE_USERS_SET).getParamsAsMap());
         pigServer.execute(ScriptType.ACTIVE_ENTITIES, builder.build());
 
-        builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.toString());
-        builder.put(Parameters.WS, Parameters.WS_TYPES.PERSISTENT.toString());
-        builder.put(Parameters.PARAM, "ws");
-        builder.put(Parameters.STORAGE_TABLE, MetricType.ACTIVE_WORKSPACES_SET.toString().toLowerCase());
+        builder.putAll(scriptsManager.getScript(ScriptType.ACTIVE_ENTITIES, MetricType.ACTIVE_WORKSPACES_SET).getParamsAsMap());
         pigServer.execute(ScriptType.ACTIVE_ENTITIES, builder.build());
     }
 

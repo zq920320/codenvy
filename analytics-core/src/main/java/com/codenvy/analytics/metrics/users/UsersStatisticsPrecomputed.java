@@ -15,7 +15,7 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.metrics.sessions.factory;
+package com.codenvy.analytics.metrics.users;
 
 import com.codenvy.analytics.metrics.*;
 
@@ -25,21 +25,22 @@ import javax.annotation.security.RolesAllowed;
  * @author Alexander Reshetnyak
  */
 @RolesAllowed({})
-public class FactoryStatisticsPrecomputed extends AbstractCount implements PrecomputedMetric {
+public class UsersStatisticsPrecomputed extends AbstractCount implements PrecomputedMetric {
 
-    public FactoryStatisticsPrecomputed() {
-        super(MetricType.FACTORY_STATISTICS_PRECOMPUTED,
-              MetricType.FACTORY_STATISTICS_LIST_PRECOMPUTED,
-              FACTORY);
+
+    public UsersStatisticsPrecomputed() {
+        super(MetricType.USERS_STATISTICS_PRECOMPUTED,
+              MetricType.USERS_STATISTICS_LIST_PRECOMPUTED,
+              USER);
     }
 
     @Override
     public String getDescription() {
-        return "The number of workspaces in statistics";
+        return "The number of users in statistics";
     }
 
     @Override
     public boolean canReadPrecomputedData(Context context) {
-        return ((PrecomputedMetric)MetricFactory.getMetric(MetricType.FACTORY_STATISTICS_LIST_PRECOMPUTED)).canReadPrecomputedData(context);
+        return ((PrecomputedMetric)MetricFactory.getMetric(MetricType.USERS_STATISTICS_LIST_PRECOMPUTED)).canReadPrecomputedData(context);
     }
 }

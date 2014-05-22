@@ -19,8 +19,7 @@ package com.codenvy.analytics.metrics;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.datamodel.ListValueData;
-import com.codenvy.analytics.metrics.top.AbstractTopFactories;
-import com.codenvy.analytics.metrics.top.AbstractTopMetrics;
+import com.codenvy.analytics.datamodel.ValueDataUtil;
 import com.codenvy.analytics.pig.scripts.ScriptType;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
@@ -37,23 +36,15 @@ import static org.testng.Assert.assertEquals;
 /** @author <a href="mailto:dnochevnov@codenvy.com">Dmytro Nochevnov</a> */
 public class TestBrokenFactoryUrl extends BaseTest {
 
-    private static final String COLLECTION                        = TestBrokenFactoryUrl.class.getSimpleName().toLowerCase();
-    private static final String COLLECTION_ACCEPTED               = COLLECTION + "accepted";
-    private static final String COLLECTION_PRODUCT_USAGE_SESSIONS = COLLECTION + "sessions";
-    private static final String COLLECTION_USERS_STATISTICS       = COLLECTION + "statistics";
-
     @BeforeClass
     public void init() throws Exception {
         List<Event> events = new ArrayList<>();
 
         // broken event, factory url contains new line character
-        events.add(
-                Event.Builder.createFactoryUrlAcceptedEvent("tmp-4", "factoryUrl1\n", "referrer2", "org3", "affiliate2")
-                             .withDate("2013-02-10").withTime("11:00:03").build());
-
+        events.add(Event.Builder.createFactoryUrlAcceptedEvent("tmp-4", "factoryUrl1\n", "referrer2", "org3", "affiliate2")
+                                .withDate("2013-02-10").withTime("11:00:03").build());
         events.add(Event.Builder.createTenantCreatedEvent("tmp-4", "anonymoususer_2")
                                 .withDate("2013-02-10").withTime("12:01:00").build());
-
         events.add(Event.Builder.createSessionFactoryStartedEvent("id4", "tmp-4", "anonymoususer_2", "false", "brType")
                                 .withDate("2013-02-10").withTime("11:00:00").build());
         events.add(Event.Builder.createSessionFactoryStoppedEvent("id4", "tmp-4", "anonymoususer_2")
@@ -65,16 +56,13 @@ public class TestBrokenFactoryUrl extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20130210");
         builder.put(Parameters.TO_DATE, "20130210");
-        builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.name());
-        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
-        builder.put(Parameters.STORAGE_TABLE, COLLECTION_ACCEPTED);
         builder.put(Parameters.LOG, log.getAbsolutePath());
+
+        builder.putAll(scriptsManager.getScript(ScriptType.ACCEPTED_FACTORIES, MetricType.FACTORIES_ACCEPTED_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.ACCEPTED_FACTORIES, builder.build());
 
-        builder.put(Parameters.WS, Parameters.WS_TYPES.TEMPORARY.name());
-        builder.put(Parameters.STORAGE_TABLE, COLLECTION);
-        builder.put(Parameters.STORAGE_TABLE_PRODUCT_USAGE_SESSIONS, COLLECTION_PRODUCT_USAGE_SESSIONS);
-        builder.put(Parameters.STORAGE_TABLE_USERS_STATISTICS, COLLECTION_USERS_STATISTICS);
+        builder.putAll(scriptsManager.getScript(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS,
+                                                MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, builder.build());
     }
 
@@ -84,31 +72,9 @@ public class TestBrokenFactoryUrl extends BaseTest {
         builder.put(Parameters.FROM_DATE, "20130210");
         builder.put(Parameters.TO_DATE, "20130210");
 
-        AbstractTopMetrics metric =
-                new TestAbstractTopFactories(MetricType.TOP_FACTORIES_BY_LIFETIME, AbstractTopMetrics.LIFE_TIME_PERIOD);
+        Metric metric = MetricFactory.getMetric(MetricType.TOP_FACTORIES_BY_LIFETIME);
+        ListValueData valueData = ValueDataUtil.getAsList(metric, builder.build());
 
-        ListValueData value = (ListValueData)metric.getValue(builder.build());
-
-        assertEquals(value.size(), 0);
-    }
-
-    // ------------------------> Tested Metrics
-
-    private class TestAbstractTopFactories extends AbstractTopFactories {
-
-        public TestAbstractTopFactories(MetricType metricType, int dayCount) {
-            super(metricType, dayCount);
-        }
-
-        @Override
-        public String getDescription() {
-            return null;
-        }
-
-
-        @Override
-        public String getStorageCollectionName() {
-            return COLLECTION;
-        }
+        assertEquals(valueData.size(), 0);
     }
 }

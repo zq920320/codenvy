@@ -19,7 +19,6 @@ package com.codenvy.analytics.metrics;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.metrics.sessions.CollaborativeSessionsStarted;
 import com.codenvy.analytics.pig.scripts.ScriptType;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
@@ -41,32 +40,24 @@ public class TestCollaborativeSessionStarted extends BaseTest {
     @BeforeClass
     public void init() throws Exception {
         List<Event> events = new ArrayList<>();
-        events.add(
-                Event.Builder.collaborativeSessionStartedEvent("ws1", "user1", "session1").withDate("2013-02-10")
-                             .withTime("10:00:00").build());
-        events.add(
-                Event.Builder.collaborativeSessionStartedEvent("ws2", "user2", "session2").withDate("2013-02-10")
-                             .withTime("10:01:00").build());
-        events.add(
-                Event.Builder.collaborativeSessionStartedEvent("ws3", "user3", "session3").withDate("2013-02-10")
-                             .withTime("10:02:00").build());
-        events.add(
-                Event.Builder.collaborativeSessionStartedEvent("ws4", "user4", "session4").withDate("2013-02-10")
-                             .withTime("10:03:00").build());
-        events.add(
-                Event.Builder.collaborativeSessionStartedEvent("ws5", "user5", "session5").withDate("2013-02-11")
-                             .withTime("10:04:00").build());
+        events.add(Event.Builder.collaborativeSessionStartedEvent("ws1", "user1", "session1")
+                                .withDate("2013-02-10").withTime("10:00:00").build());
+        events.add(Event.Builder.collaborativeSessionStartedEvent("ws2", "user2", "session2")
+                                .withDate("2013-02-10").withTime("10:01:00").build());
+        events.add(Event.Builder.collaborativeSessionStartedEvent("ws3", "user3", "session3")
+                                .withDate("2013-02-10").withTime("10:02:00").build());
+        events.add(Event.Builder.collaborativeSessionStartedEvent("ws4", "user4", "session4")
+                                .withDate("2013-02-10").withTime("10:03:00").build());
+        events.add(Event.Builder.collaborativeSessionStartedEvent("ws5", "user5", "session5")
+                                .withDate("2013-02-11").withTime("10:04:00").build());
 
         File log = LogGenerator.generateLog(events);
 
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20130210");
         builder.put(Parameters.TO_DATE, "20130210");
-        builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.name());
-        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
-        builder.put(Parameters.STORAGE_TABLE, "testcollaborativesessionstarted");
-        builder.put(Parameters.EVENT, "collaborative-session-started");
         builder.put(Parameters.LOG, log.getAbsolutePath());
+        builder.putAll(scriptsManager.getScript(ScriptType.EVENTS, MetricType.COLLABORATIVE_SESSIONS_STARTED).getParamsAsMap());
         pigServer.execute(ScriptType.EVENTS, builder.build());
     }
 
@@ -76,18 +67,10 @@ public class TestCollaborativeSessionStarted extends BaseTest {
         builder.put(Parameters.FROM_DATE, "20130210");
         builder.put(Parameters.TO_DATE, "20130210");
 
-        Metric metric = new TesterCollaborativeSessionStarted();
+        Metric metric = MetricFactory.getMetric(MetricType.COLLABORATIVE_SESSIONS_STARTED);
         LongValueData lvd = (LongValueData)metric.getValue(builder.build());
 
         assertEquals(lvd.getAsLong(), 4);
 
-    }
-
-
-    private class TesterCollaborativeSessionStarted extends CollaborativeSessionsStarted {
-        @Override
-        public String getStorageCollectionName() {
-            return getStorageCollectionName("testcollaborativesessionstarted");
-        }
     }
 }

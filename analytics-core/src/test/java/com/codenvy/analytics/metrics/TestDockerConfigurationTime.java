@@ -19,7 +19,6 @@ package com.codenvy.analytics.metrics;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.metrics.ide_usage.AbstractTimeSpentInAction;
 import com.codenvy.analytics.pig.scripts.ScriptType;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
@@ -36,8 +35,6 @@ import java.util.List;
  * @author Alexander Reshetnyak
  */
 public class TestDockerConfigurationTime extends BaseTest {
-
-    private static final String COLLECTION = TestDockerConfigurationTime.class.getSimpleName().toLowerCase();
 
     @BeforeClass
     public void prepare() throws Exception {
@@ -74,11 +71,8 @@ public class TestDockerConfigurationTime extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20130101");
         builder.put(Parameters.TO_DATE, "20130101");
-        builder.put(Parameters.USER, Parameters.USER_TYPES.REGISTERED.name());
-        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
-        builder.put(Parameters.STORAGE_TABLE, COLLECTION);
-        builder.put(Parameters.EVENT, "configure-docker");
         builder.put(Parameters.LOG, log.getAbsolutePath());
+        builder.putAll(scriptsManager.getScript(ScriptType.TIME_SPENT_IN_ACTION, MetricType.DOCKER_CONFIGURATION_TIME).getParamsAsMap());
         pigServer.execute(ScriptType.TIME_SPENT_IN_ACTION, builder.build());
     }
 
@@ -88,26 +82,7 @@ public class TestDockerConfigurationTime extends BaseTest {
         builder.put(Parameters.FROM_DATE, "20130101");
         builder.put(Parameters.TO_DATE, "20130101");
 
-        Metric metric = new TestedAbstractTimeSpentInAction();
+        Metric metric = MetricFactory.getMetric(MetricType.DOCKER_CONFIGURATION_TIME);
         Assert.assertEquals(metric.getValue(builder.build()), new LongValueData(540000));
-    }
-
-    //-------------------- Tested classes --------------------
-
-    private class TestedAbstractTimeSpentInAction extends AbstractTimeSpentInAction {
-
-        public TestedAbstractTimeSpentInAction() {
-            super(COLLECTION, PROJECT_ID);
-        }
-
-        @Override
-        public String getStorageCollectionName() {
-            return COLLECTION;
-        }
-
-        @Override
-        public String getDescription() {
-            return null;
-        }
     }
 }

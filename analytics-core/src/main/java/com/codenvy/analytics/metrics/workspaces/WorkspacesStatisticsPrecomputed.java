@@ -31,7 +31,7 @@ public class WorkspacesStatisticsPrecomputed extends AbstractCount implements Pr
     public WorkspacesStatisticsPrecomputed() {
         super(MetricType.WORKSPACES_STATISTICS_PRECOMPUTED,
               MetricType.WORKSPACES_STATISTICS_LIST_PRECOMPUTED,
-              ID);
+              WS);
     }
 
     @Override

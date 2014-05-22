@@ -39,11 +39,6 @@ import static org.testng.Assert.assertEquals;
 /** @author <a href="mailto:dnochevnov@codenvy.com">Dmytro Nochevnov</a> */
 public class TestEncodedFactoryUrl extends BaseTest {
 
-    private static final String COLLECTION                        = TestEncodedFactoryUrl.class.getSimpleName().toLowerCase();
-    private static final String COLLECTION_ACCEPTED               = COLLECTION + "accepted";
-    private static final String COLLECTION_PRODUCT_USAGE_SESSIONS = COLLECTION + "sessions";
-    private static final String COLLECTION_USERS_STATISTICS       = COLLECTION + "statistics";
-
     private static final String ENCODED_URL =
             "https%3A%2F%2Fcodenvy.com%2Ffactory%2F%3Fv%3D1" +
             ".0%26pname%3DSample-Angul%0AarJS%26wname%3Dcodenvy-factories%26vcs%3Dgit%26vcsurl%3Dhttp%3A%2F%2Fcodenvy" +
@@ -89,13 +84,10 @@ public class TestEncodedFactoryUrl extends BaseTest {
         List<Event> events = new ArrayList<>();
 
         // broken event, factory url contains new line character
-        events.add(
-                Event.Builder.createFactoryUrlAcceptedEvent("tmp-4", ENCODED_URL, "referrer2", "org3", "affiliate2")
-                             .withDate("2013-02-10").withTime("10:00:00").build());
-
+        events.add(Event.Builder.createFactoryUrlAcceptedEvent("tmp-4", ENCODED_URL, "referrer2", "org3", "affiliate2")
+                                .withDate("2013-02-10").withTime("10:00:00").build());
         events.add(Event.Builder.createTenantCreatedEvent("tmp-4", "anonymoususer_2")
                                 .withDate("2013-02-10").withTime("10:03:00").build());
-
         events.add(Event.Builder.createSessionFactoryStartedEvent("id4", "tmp-4", "anonymoususer_2", "false", "brType")
                                 .withDate("2013-02-10").withTime("11:00:00").build());
         events.add(Event.Builder.createSessionFactoryStoppedEvent("id4", "tmp-4", "anonymoususer_2")
@@ -107,16 +99,13 @@ public class TestEncodedFactoryUrl extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20130210");
         builder.put(Parameters.TO_DATE, "20130210");
-        builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.name());
-        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
-        builder.put(Parameters.STORAGE_TABLE, COLLECTION_ACCEPTED);
         builder.put(Parameters.LOG, log.getAbsolutePath());
+
+        builder.putAll(scriptsManager.getScript(ScriptType.ACCEPTED_FACTORIES, MetricType.FACTORIES_ACCEPTED_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.ACCEPTED_FACTORIES, builder.build());
 
-        builder.put(Parameters.WS, Parameters.WS_TYPES.TEMPORARY.name());
-        builder.put(Parameters.STORAGE_TABLE, COLLECTION);
-        builder.put(Parameters.STORAGE_TABLE_PRODUCT_USAGE_SESSIONS, COLLECTION_PRODUCT_USAGE_SESSIONS);
-        builder.put(Parameters.STORAGE_TABLE_USERS_STATISTICS, COLLECTION_USERS_STATISTICS);
+        builder.putAll(
+                scriptsManager.getScript(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, builder.build());
     }
 
@@ -188,12 +177,6 @@ public class TestEncodedFactoryUrl extends BaseTest {
         @Override
         public String getDescription() {
             return null;
-        }
-
-
-        @Override
-        public String getStorageCollectionName() {
-            return COLLECTION;
         }
     }
 }

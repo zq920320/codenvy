@@ -21,10 +21,7 @@ import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.Context;
-import com.codenvy.analytics.metrics.Metric;
-import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.metrics.users.UsersProfilesList;
+import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
@@ -59,10 +56,8 @@ public class TestPagination extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20130101");
         builder.put(Parameters.TO_DATE, "20130101");
-        builder.put(Parameters.USER, Parameters.USER_TYPES.REGISTERED.name());
-        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
-        builder.put(Parameters.STORAGE_TABLE, "testpagination");
         builder.put(Parameters.LOG, log.getAbsolutePath());
+        builder.putAll(scriptsManager.getScript(ScriptType.USERS_UPDATE_PROFILES, MetricType.USERS_PROFILES_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.USERS_UPDATE_PROFILES, builder.build());
     }
 
@@ -71,7 +66,7 @@ public class TestPagination extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.SORT, "+_id");
 
-        Metric metric = new TestUsersProfilesList();
+        Metric metric = MetricFactory.getMetric(MetricType.USERS_PROFILES_LIST);
 
         ListValueData value = (ListValueData)metric.getValue(builder.build());
         assertEquals(value.size(), 5);
@@ -99,7 +94,7 @@ public class TestPagination extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.SORT, "-_id");
 
-        Metric metric = new TestUsersProfilesList();
+        Metric metric = MetricFactory.getMetric(MetricType.USERS_PROFILES_LIST);
 
         ListValueData value = (ListValueData)metric.getValue(builder.build());
         assertEquals(value.size(), 5);
@@ -129,7 +124,7 @@ public class TestPagination extends BaseTest {
         builder.put(Parameters.PAGE, 1);
         builder.put(Parameters.PER_PAGE, 1);
 
-        Metric metric = new TestUsersProfilesList();
+        Metric metric = MetricFactory.getMetric(MetricType.USERS_PROFILES_LIST);
 
         ListValueData value = (ListValueData)metric.getValue(builder.build());
         assertEquals(value.size(), 1);
@@ -147,7 +142,7 @@ public class TestPagination extends BaseTest {
         builder.put(Parameters.PAGE, 3);
         builder.put(Parameters.PER_PAGE, 1);
 
-        Metric metric = new TestUsersProfilesList();
+        Metric metric = MetricFactory.getMetric(MetricType.USERS_PROFILES_LIST);
 
         ListValueData value = (ListValueData)metric.getValue(builder.build());
         assertEquals(value.size(), 1);
@@ -165,7 +160,7 @@ public class TestPagination extends BaseTest {
         builder.put(Parameters.PAGE, 5);
         builder.put(Parameters.PER_PAGE, 1);
 
-        Metric metric = new TestUsersProfilesList();
+        Metric metric = MetricFactory.getMetric(MetricType.USERS_PROFILES_LIST);
 
         ListValueData value = (ListValueData)metric.getValue(builder.build());
         assertEquals(value.size(), 1);
@@ -184,17 +179,9 @@ public class TestPagination extends BaseTest {
         builder.put(Parameters.PER_PAGE, 1);
 
 
-        Metric metric = new TestUsersProfilesList();
+        Metric metric = MetricFactory.getMetric(MetricType.USERS_PROFILES_LIST);
 
         ListValueData value = (ListValueData)metric.getValue(builder.build());
         assertEquals(value.size(), 0);
-    }
-
-    public class TestUsersProfilesList extends UsersProfilesList {
-
-        @Override
-        public String getStorageCollectionName() {
-            return "testpagination";
-        }
     }
 }

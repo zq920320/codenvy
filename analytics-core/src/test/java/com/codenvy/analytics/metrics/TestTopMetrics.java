@@ -21,12 +21,9 @@ import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.sessions.factory.AbstractFactoryAction;
 import com.codenvy.analytics.metrics.sessions.factory.ProductUsageFactorySessionsList;
 import com.codenvy.analytics.metrics.top.AbstractTopFactories;
-import com.codenvy.analytics.metrics.top.AbstractTopMetrics;
 import com.codenvy.analytics.metrics.top.AbstractTopReferrers;
-import com.codenvy.analytics.metrics.top.AbstractTopSessions;
 import com.codenvy.analytics.pig.scripts.ScriptType;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
@@ -42,11 +39,6 @@ import static org.testng.Assert.assertEquals;
 
 /** @author <a href="mailto:dnochevnov@codenvy.com">Dmytro Nochevnov</a> */
 public class TestTopMetrics extends BaseTest {
-
-    private static final String COLLECTION                        = TestTopMetrics.class.getSimpleName().toLowerCase();
-    private static final String COLLECTION_ACCEPTED               = COLLECTION + "accepted";
-    private static final String COLLECTION_PRODUCT_USAGE_SESSIONS = COLLECTION + "sessions";
-    private static final String COLLECTION_USERS_STATISTICS       = COLLECTION + "statistics";
 
     @BeforeClass
     public void init() throws Exception {
@@ -118,16 +110,12 @@ public class TestTopMetrics extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20130210");
         builder.put(Parameters.TO_DATE, "20130210");
-        builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.name());
-        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
-        builder.put(Parameters.STORAGE_TABLE, COLLECTION_ACCEPTED);
         builder.put(Parameters.LOG, log.getAbsolutePath());
+        builder.putAll(scriptsManager.getScript(ScriptType.ACCEPTED_FACTORIES, MetricType.FACTORIES_ACCEPTED_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.ACCEPTED_FACTORIES, builder.build());
 
-        builder.put(Parameters.WS, Parameters.WS_TYPES.TEMPORARY.name());
-        builder.put(Parameters.STORAGE_TABLE, COLLECTION);
-        builder.put(Parameters.STORAGE_TABLE_PRODUCT_USAGE_SESSIONS, COLLECTION_PRODUCT_USAGE_SESSIONS);
-        builder.put(Parameters.STORAGE_TABLE_USERS_STATISTICS, COLLECTION_USERS_STATISTICS);
+        builder.putAll(
+                scriptsManager.getScript(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, builder.build());
     }
 
@@ -137,8 +125,7 @@ public class TestTopMetrics extends BaseTest {
         builder.put(Parameters.FROM_DATE, "20130210");
         builder.put(Parameters.TO_DATE, "20130210");
 
-        AbstractTopSessions metric = new TestAbstractTopSessions(MetricType.TOP_FACTORY_SESSIONS_BY_LIFETIME,
-                                                                 AbstractTopMetrics.LIFE_TIME_PERIOD);
+        Metric metric = MetricFactory.getMetric(MetricType.TOP_FACTORY_SESSIONS_BY_LIFETIME);
 
         ListValueData value = (ListValueData)metric.getValue(builder.build());
 
@@ -156,8 +143,7 @@ public class TestTopMetrics extends BaseTest {
         builder.put(Parameters.FROM_DATE, "20130210");
         builder.put(Parameters.TO_DATE, "20130210");
 
-        AbstractTopMetrics metric =
-                new TestAbstractTopFactories(MetricType.TOP_FACTORIES_BY_LIFETIME, AbstractTopMetrics.LIFE_TIME_PERIOD);
+        Metric metric = MetricFactory.getMetric(MetricType.TOP_FACTORIES_BY_LIFETIME);
 
         ListValueData value = (ListValueData)metric.getValue(builder.build());
 
@@ -223,8 +209,7 @@ public class TestTopMetrics extends BaseTest {
         builder.put(Parameters.FROM_DATE, "20130210");
         builder.put(Parameters.TO_DATE, "20130210");
 
-        AbstractTopMetrics metric =
-                new TestAbstractTopReferrers(MetricType.TOP_REFERRERS_BY_LIFETIME, AbstractTopMetrics.LIFE_TIME_PERIOD);
+        Metric metric = MetricFactory.getMetric(MetricType.TOP_REFERRERS_BY_LIFETIME);
 
         ListValueData value = (ListValueData)metric.getValue(builder.build());
 
@@ -246,7 +231,7 @@ public class TestTopMetrics extends BaseTest {
         builder.put(Parameters.FROM_DATE, "20130210");
         builder.put(Parameters.TO_DATE, "20130210");
 
-        Metric metric = new TestFactoriesRun();
+        Metric metric = MetricFactory.getMetric(MetricType.FACTORY_SESSIONS_WITH_RUN);
         assertEquals(metric.getValue(builder.build()).getAsString(), "1");
     }
 
@@ -257,11 +242,11 @@ public class TestTopMetrics extends BaseTest {
         builder.put(Parameters.TO_DATE, "20130210");
         builder.put(MetricFilter.FACTORY, "factoryUrl0");
 
-        Metric metric = new TestFactoriesRun();
+        Metric metric = MetricFactory.getMetric(MetricType.FACTORY_SESSIONS_WITH_RUN);
         assertEquals(metric.getValue(builder.build()).getAsString(), "1");
 
         builder.put(MetricFilter.FACTORY, "factoryUrl1");
-        metric = new TestFactoriesRun();
+        metric = MetricFactory.getMetric(MetricType.FACTORY_SESSIONS_WITH_RUN);
         assertEquals(metric.getValue(builder.build()).getAsString(), "0");
     }
 
@@ -294,78 +279,5 @@ public class TestTopMetrics extends BaseTest {
                      abandonFactorySessionRate);
         assertEquals(item.getAll().get(AbstractTopReferrers.CONVERTED_FACTORY_SESSION_RATE).getAsString(),
                      convertedFactorySessionRate);
-    }
-
-    // ------------------------> Tested Metrics
-
-    private class TestAbstractTopSessions extends AbstractTopSessions {
-
-        public TestAbstractTopSessions(MetricType metricType, int dayCount) {
-            super(metricType, dayCount);
-        }
-
-        @Override
-        public String getDescription() {
-            return null;
-        }
-
-
-        @Override
-        public String getStorageCollectionName() {
-            return COLLECTION;
-        }
-    }
-
-    private class TestAbstractTopFactories extends AbstractTopFactories {
-
-        public TestAbstractTopFactories(MetricType metricType, int dayCount) {
-            super(metricType, dayCount);
-        }
-
-        @Override
-        public String getDescription() {
-            return null;
-        }
-
-
-        @Override
-        public String getStorageCollectionName() {
-            return COLLECTION;
-        }
-    }
-
-    private class TestFactoriesRun extends AbstractFactoryAction {
-
-        public TestFactoriesRun() {
-            super(MetricType.FACTORIES_RUN, ProductUsageFactorySessionsList.RUNS);
-        }
-
-        @Override
-        public String getStorageCollectionName() {
-            return COLLECTION;
-        }
-
-        @Override
-        public String getDescription() {
-            return null;
-        }
-    }
-
-    private class TestAbstractTopReferrers extends AbstractTopReferrers {
-
-        public TestAbstractTopReferrers(MetricType metricType, int dayCount) {
-            super(metricType, dayCount);
-        }
-
-        @Override
-        public String getDescription() {
-            return null;
-        }
-
-
-        @Override
-        public String getStorageCollectionName() {
-            return COLLECTION;
-        }
     }
 }

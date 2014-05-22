@@ -19,7 +19,6 @@ package com.codenvy.analytics.metrics;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.metrics.projects.BuildQueueTerminations;
 import com.codenvy.analytics.pig.scripts.ScriptType;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
@@ -42,24 +41,25 @@ public class TestBuildQueueTerminations extends BaseTest {
     public void init() throws Exception {
         List<Event> events = new ArrayList<>();
         events.add(
-                Event.Builder.buildQueueTerminatedEvent("ws1", "user1", "project1", "type1", "id1").withDate("2013-02-10").withTime("10:00:00").build());
+                Event.Builder.buildQueueTerminatedEvent("ws1", "user1", "project1", "type1", "id1").withDate("2013-02-10").withTime("10:00:00")
+                             .build());
         events.add(
-                Event.Builder.buildQueueTerminatedEvent("ws2", "user2", "project2", "type2", "id2").withDate("2013-02-10").withTime("10:01:00").build());
+                Event.Builder.buildQueueTerminatedEvent("ws2", "user2", "project2", "type2", "id2").withDate("2013-02-10").withTime("10:01:00")
+                             .build());
         events.add(
-                Event.Builder.buildQueueTerminatedEvent("ws3", "user3", "project3", "type3", "id3").withDate("2013-02-10").withTime("10:02:00").build());
+                Event.Builder.buildQueueTerminatedEvent("ws3", "user3", "project3", "type3", "id3").withDate("2013-02-10").withTime("10:02:00")
+                             .build());
         events.add(
-                Event.Builder.buildQueueTerminatedEvent("ws5", "user5", "project5", "type5", "id5").withDate("2013-02-11").withTime("10:04:00").build());
+                Event.Builder.buildQueueTerminatedEvent("ws5", "user5", "project5", "type5", "id5").withDate("2013-02-11").withTime("10:04:00")
+                             .build());
 
         File log = LogGenerator.generateLog(events);
 
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20130210");
         builder.put(Parameters.TO_DATE, "20130210");
-        builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.name());
-        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
-        builder.put(Parameters.STORAGE_TABLE, "testbuildqueueterminated");
-        builder.put(Parameters.EVENT, "build-queue-terminated");
         builder.put(Parameters.LOG, log.getAbsolutePath());
+        builder.putAll(scriptsManager.getScript(ScriptType.EVENTS, MetricType.BUILD_QUEUE_TERMINATIONS).getParamsAsMap());
         pigServer.execute(ScriptType.EVENTS, builder.build());
     }
 
@@ -69,17 +69,9 @@ public class TestBuildQueueTerminations extends BaseTest {
         builder.put(Parameters.FROM_DATE, "20130210");
         builder.put(Parameters.TO_DATE, "20130210");
 
-        Metric metric = new TesterBuildQueueTerminations();
+        Metric metric = MetricFactory.getMetric(MetricType.BUILD_QUEUE_TERMINATIONS);
         LongValueData lvd = (LongValueData)metric.getValue(builder.build());
 
         assertEquals(lvd.getAsLong(), 3);
-
-    }
-
-    private class TesterBuildQueueTerminations extends BuildQueueTerminations {
-        @Override
-        public String getStorageCollectionName() {
-            return getStorageCollectionName("testbuildqueueterminated");
-        }
     }
 }

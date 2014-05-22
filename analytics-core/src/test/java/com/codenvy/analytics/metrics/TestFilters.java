@@ -40,36 +40,29 @@ import static org.testng.AssertJUnit.assertEquals;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestFilters extends BaseTest {
 
-    private static final String COLLECTION = TestFilters.class.getSimpleName().toLowerCase();
-
     @BeforeClass
     public void init() throws Exception {
         List<Event> events = new ArrayList<>();
-        events.add(Event.Builder.createTenantCreatedEvent("ws1", "user1")
-                                .withDate("2013-02-10").build());
-        events.add(Event.Builder.createTenantCreatedEvent("ws2", "anonymoususer_edjkx4")
-                                .withDate("2013-02-10").build());
-        events.add(Event.Builder.createTenantCreatedEvent("tmp-22rct0cq0rh8vs", "user2")
-                                .withDate("2013-02-10").build());
-        events.add(Event.Builder.createTenantCreatedEvent("tmp-p42qbfzn6iz9gn", "AnonymousUser_lnmyzh")
-                                .withDate("2013-02-10").build());
+        events.add(Event.Builder.createTenantCreatedEvent("ws1", "user1").withDate("2013-02-10").build());
+        events.add(Event.Builder.createTenantCreatedEvent("ws2", "anonymoususer_edjkx4").withDate("2013-02-10").build());
+        events.add(Event.Builder.createTenantCreatedEvent("tmp-22rct0cq0rh8vs", "user2").withDate("2013-02-10").build());
+        events.add(Event.Builder.createTenantCreatedEvent("tmp-p42qbfzn6iz9gn", "AnonymousUser_lnmyzh").withDate("2013-02-10").build());
 
         File log = LogGenerator.generateLog(events);
 
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20130210");
         builder.put(Parameters.TO_DATE, "20130210");
-        builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.name());
-        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
-        builder.put(Parameters.STORAGE_TABLE, COLLECTION);
-        builder.put(Parameters.EVENT, "tenant-created");
+        builder.putAll(scriptsManager.getScript(ScriptType.EVENTS, MetricType.CREATED_WORKSPACES).getParamsAsMap());
+        builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.toString());
+        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.toString());
         builder.put(Parameters.LOG, log.getAbsolutePath());
         pigServer.execute(ScriptType.EVENTS, builder.build());
     }
 
     @Test(dataProvider = "dataProvider")
     public void test(Object wsFilter, Object userFilter, long result) throws Exception {
-        Metric metric = new TestedMetric();
+        Metric metric = MetricFactory.getMetric(MetricType.CREATED_WORKSPACES);
 
         Context.Builder builder = new Context.Builder();
         if (wsFilter != null) {
@@ -98,18 +91,5 @@ public class TestFilters extends BaseTest {
                               {null, Parameters.USER_TYPES.REGISTERED.toString(), 2},
                               {Parameters.WS_TYPES.PERSISTENT.toString(), null, 2},
                               {Parameters.WS_TYPES.TEMPORARY.toString(), null, 2}};
-    }
-
-
-    // --------------------> Tested Metrics
-    private class TestedMetric extends AbstractLongValueResulted {
-        private TestedMetric() {
-            super(COLLECTION, null);
-        }
-
-        @Override
-        public String getDescription() {
-            return null;
-        }
     }
 }

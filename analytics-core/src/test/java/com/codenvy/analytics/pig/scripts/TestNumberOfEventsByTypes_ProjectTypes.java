@@ -19,10 +19,7 @@ package com.codenvy.analytics.pig.scripts;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.metrics.Context;
-import com.codenvy.analytics.metrics.Metric;
-import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.metrics.projects.AbstractProjectType;
+import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
@@ -37,10 +34,6 @@ import static org.testng.Assert.assertEquals;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestNumberOfEventsByTypes_ProjectTypes extends BaseTest {
-
-    private static final String PROJECTS_LIST_COLLECTION = "projects_list";
-
-    private static final String PROJECT_TYPES_COLLECTION = "project_types";
 
     @BeforeClass
     public void init() throws Exception {
@@ -58,17 +51,12 @@ public class TestNumberOfEventsByTypes_ProjectTypes extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20130101");
         builder.put(Parameters.TO_DATE, "20130101");
-        builder.put(Parameters.USER, Parameters.USER_TYPES.REGISTERED.name());
-        builder.put(Parameters.WS, Parameters.WS_TYPES.PERSISTENT.name());
-        builder.put(Parameters.STORAGE_TABLE, PROJECTS_LIST_COLLECTION);
         builder.put(Parameters.LOG, log.getAbsolutePath());
+        builder.putAll(scriptsManager.getScript(ScriptType.PROJECTS, MetricType.PROJECTS_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.PROJECTS, builder.build());
 
         /* is needed for testAllTypes() test only */
-        builder.put(Parameters.STORAGE_TABLE, PROJECT_TYPES_COLLECTION);
-        builder.put(Parameters.LOG, log.getAbsolutePath());
-        builder.put(Parameters.EVENT, "project-created");
-        builder.put(Parameters.PARAM, "TYPE");
+        builder.putAll(scriptsManager.getScript(ScriptType.EVENTS_BY_TYPE, MetricType.PROJECT_TYPES).getParamsAsMap());
         pigServer.execute(ScriptType.EVENTS_BY_TYPE, builder.build());
 
 
@@ -85,12 +73,12 @@ public class TestNumberOfEventsByTypes_ProjectTypes extends BaseTest {
 
         builder.put(Parameters.FROM_DATE, "20130102");
         builder.put(Parameters.TO_DATE, "20130102");
-        builder.put(Parameters.STORAGE_TABLE, PROJECTS_LIST_COLLECTION);
         builder.put(Parameters.LOG, log.getAbsolutePath());
+        builder.putAll(scriptsManager.getScript(ScriptType.PROJECTS, MetricType.PROJECTS_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.PROJECTS, builder.build());
         
         /* is needed for testAllTypes() test only */
-        builder.put(Parameters.STORAGE_TABLE, PROJECT_TYPES_COLLECTION);
+        builder.putAll(scriptsManager.getScript(ScriptType.EVENTS_BY_TYPE, MetricType.PROJECT_TYPES).getParamsAsMap());
         pigServer.execute(ScriptType.EVENTS_BY_TYPE, builder.build());
     }
 
@@ -100,7 +88,7 @@ public class TestNumberOfEventsByTypes_ProjectTypes extends BaseTest {
         builder.put(Parameters.FROM_DATE, "20130102");
         builder.put(Parameters.TO_DATE, "20130102");
 
-        Metric metric = new TestAbstractProjectType(new String[]{"jar"});
+        Metric metric = MetricFactory.getMetric(MetricType.PROJECT_TYPE_JAR);
         assertEquals(metric.getValue(builder.build()), new LongValueData(1L));
     }
 
@@ -110,8 +98,8 @@ public class TestNumberOfEventsByTypes_ProjectTypes extends BaseTest {
         builder.put(Parameters.FROM_DATE, "20130102");
         builder.put(Parameters.TO_DATE, "20130102");
 
-        Metric metric = new TestAbstractProjectType(new String[]{"jar", "war"});
-        assertEquals(metric.getValue(builder.build()), new LongValueData(2L));
+        Metric metric = MetricFactory.getMetric(MetricType.PROJECT_TYPE_WAR);
+        assertEquals(metric.getValue(builder.build()), new LongValueData(1L));
     }
 
 
@@ -121,7 +109,7 @@ public class TestNumberOfEventsByTypes_ProjectTypes extends BaseTest {
         builder.put(Parameters.FROM_DATE, "20130101");
         builder.put(Parameters.TO_DATE, "20130102");
 
-        Metric metric = new TestAbstractProjectType(new String[]{"jar"});
+        Metric metric = MetricFactory.getMetric(MetricType.PROJECT_TYPE_JAR);
         assertEquals(metric.getValue(builder.build()), new LongValueData(2L));
     }
 
@@ -132,7 +120,7 @@ public class TestNumberOfEventsByTypes_ProjectTypes extends BaseTest {
         builder.put(Parameters.TO_DATE, "20130102");
         builder.put(Parameters.USER, "user1@gmail.com");
 
-        Metric metric = new TestAbstractProjectType(new String[]{"jar"});
+        Metric metric = MetricFactory.getMetric(MetricType.PROJECT_TYPE_JAR);
         assertEquals(metric.getValue(builder.build()), new LongValueData(2L));
     }
 
@@ -143,7 +131,7 @@ public class TestNumberOfEventsByTypes_ProjectTypes extends BaseTest {
         builder.put(Parameters.TO_DATE, "20130102");
         builder.put(Parameters.USER, "user2@gmail.com");
 
-        Metric metric = new TestAbstractProjectType(new String[]{"jar"});
+        Metric metric = MetricFactory.getMetric(MetricType.PROJECT_TYPE_JAR);
         assertEquals(metric.getValue(builder.build()), new LongValueData(0L));
     }
 
@@ -154,7 +142,7 @@ public class TestNumberOfEventsByTypes_ProjectTypes extends BaseTest {
         builder.put(Parameters.TO_DATE, "20130102");
         builder.put(Parameters.USER, "user1@gmail.com OR user1@yahoo.com");
 
-        Metric metric = new TestAbstractProjectType(new String[]{"jar"});
+        Metric metric = MetricFactory.getMetric(MetricType.PROJECT_TYPE_JAR);
         assertEquals(metric.getValue(builder.build()), new LongValueData(2L));
     }
 
@@ -166,31 +154,7 @@ public class TestNumberOfEventsByTypes_ProjectTypes extends BaseTest {
         builder.put(Parameters.USER, "user1@gmail.com OR user1@yahoo.com");
         builder.put(Parameters.WS, "ws1 OR ws2");
 
-        Metric metric = new TestAbstractProjectType(new String[]{"jar"});
+        Metric metric = MetricFactory.getMetric(MetricType.PROJECT_TYPE_JAR);
         assertEquals(metric.getValue(builder.build()), new LongValueData(2L));
-    }
-
-    @Test
-    public void testComplexFilterDoubleParam() throws Exception {
-        Context.Builder builder = new Context.Builder();
-        builder.put(Parameters.FROM_DATE, "20130101");
-        builder.put(Parameters.TO_DATE, "20130102");
-        builder.put(Parameters.USER, "user1@gmail.com OR user1@yahoo.com");
-        builder.put(Parameters.WS, "ws1 OR ws2");
-
-        Metric metric = new TestAbstractProjectType(new String[]{"jar", "war"});
-        assertEquals(metric.getValue(builder.build()), new LongValueData(4L));
-    }
-
-    private class TestAbstractProjectType extends AbstractProjectType {
-
-        private TestAbstractProjectType(String[] types) {
-            super("testnumberofeventsbytypes_projecttypes", types);
-        }
-
-        @Override
-        public String getDescription() {
-            return null;
-        }
     }
 }

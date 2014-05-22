@@ -264,6 +264,16 @@ public class Utils {
         return false;
     }
 
+    public static boolean isAnonymousExist(Set<String> users) {
+        for (String user : users) {
+            if (isAnonymousUser(user)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public static boolean isAllowedEntities(Object testedEntitiesAsString, Object allowedEntities) {
         if (allowedEntities == null || testedEntitiesAsString == null) {
             return true;

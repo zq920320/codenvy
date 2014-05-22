@@ -15,33 +15,33 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.metrics.workspaces;
+package com.codenvy.analytics.metrics.users;
 
 import com.codenvy.analytics.metrics.*;
 
 import javax.annotation.security.RolesAllowed;
 
 import static com.codenvy.analytics.Utils.getFilterAsSet;
-import static com.codenvy.analytics.Utils.isTemporaryExist;
+import static com.codenvy.analytics.Utils.isAnonymousUser;
 
 /**
  * @author Alexander Reshetnyak
  */
 @RolesAllowed({})
-public class WorkspacesStatisticsListPrecomputed extends AbstractListValueResulted implements PrecomputedDataMetric {
+public class UsersStatisticsListPrecomputed extends AbstractListValueResulted implements PrecomputedDataMetric {
 
-    public WorkspacesStatisticsListPrecomputed() {
-        super(MetricType.WORKSPACES_STATISTICS_LIST_PRECOMPUTED);
+    public UsersStatisticsListPrecomputed() {
+        super(MetricType.USERS_STATISTICS_LIST_PRECOMPUTED);
     }
 
     @Override
     public String getDescription() {
-        return "Workspaces' statistics data";
+        return "Users' statistics data";
     }
 
     @Override
     public String[] getTrackedFields() {
-        return new String[]{WS,
+        return new String[]{USER,
                             PROJECTS,
                             RUNS,
                             DEBUGS,
@@ -51,27 +51,32 @@ public class WorkspacesStatisticsListPrecomputed extends AbstractListValueResult
                             TIME,
                             SESSIONS,
                             INVITES,
+                            LOGINS,
                             RUN_TIME,
                             BUILD_TIME,
                             PAAS_DEPLOYS,
-                            WorkspacesStatisticsList.JOINED_USERS};
+                            USER_FIRST_NAME,
+                            USER_LAST_NAME,
+                            USER_COMPANY,
+                            USER_JOB
+        };
     }
 
     @Override
     public Context getContextForBasedMetric() {
         Context.Builder builder = new Context.Builder();
-        builder.put(MetricFilter.WS, Parameters.WS_TYPES.PERSISTENT.name());
+        builder.put(MetricFilter.USER, Parameters.USER_TYPES.REGISTERED.toString());
         return builder.build();
     }
 
     @Override
     public MetricType getBasedMetric() {
-        return MetricType.WORKSPACES_STATISTICS_LIST;
+        return MetricType.USERS_STATISTICS_LIST;
     }
 
     @Override
     public boolean canReadPrecomputedData(Context context) {
-        String value = context.getAsString(MetricFilter.WS);
-        return value == null || !isTemporaryExist(getFilterAsSet(value));
+        String value = context.getAsString(MetricFilter.USER);
+        return value == null || !isAnonymousUser(getFilterAsSet(value));
     }
 }

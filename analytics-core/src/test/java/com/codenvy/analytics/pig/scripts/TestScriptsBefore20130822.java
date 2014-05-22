@@ -107,12 +107,8 @@ public class TestScriptsBefore20130822 extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, date);
         builder.put(Parameters.TO_DATE, date);
-        builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.name());
-        builder.put(Parameters.WS, Parameters.WS_TYPES.PERSISTENT.name());
-        builder.put(Parameters.STORAGE_TABLE, COLLECTION_SESSIONS);
-        builder.put(Parameters.STORAGE_TABLE_USERS_STATISTICS, COLLECTION_STAT);
-        builder.put(Parameters.STORAGE_TABLE_USERS_PROFILES, COLLECTION_PROFILES);
         builder.put(Parameters.LOG, log.getAbsolutePath());
+        builder.putAll(scriptsManager.getScript(ScriptType.PRODUCT_USAGE_SESSIONS, MetricType.PRODUCT_USAGE_SESSIONS_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, builder.build());
     }
 }

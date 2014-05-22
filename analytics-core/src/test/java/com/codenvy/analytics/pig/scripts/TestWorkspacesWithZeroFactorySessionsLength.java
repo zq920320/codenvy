@@ -19,10 +19,7 @@ package com.codenvy.analytics.pig.scripts;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.metrics.Context;
-import com.codenvy.analytics.metrics.Metric;
-import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.metrics.sessions.factory.WorkspacesWithZeroFactorySessionsLength;
+import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
@@ -30,7 +27,6 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,7 +36,7 @@ import static org.testng.Assert.assertEquals;
 public class TestWorkspacesWithZeroFactorySessionsLength extends BaseTest {
 
     @BeforeClass
-    public void init() throws IOException, Exception {
+    public void init() throws Exception {
         List<Event> events = new ArrayList<>();
         events.add(Event.Builder.createSessionFactoryStartedEvent("id1", "tmp-1", "user1", "true", "brType")
                                 .withDate("2013-02-10").withTime("10:00:00").build());
@@ -114,17 +110,12 @@ public class TestWorkspacesWithZeroFactorySessionsLength extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20130210");
         builder.put(Parameters.TO_DATE, "20130210");
-        builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.name());
-        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
-        builder.put(Parameters.STORAGE_TABLE, "testworkspaceswithzerofactorysessionslength_acceptedfactories");
         builder.put(Parameters.LOG, log.getAbsolutePath());
+        builder.putAll(scriptsManager.getScript(ScriptType.ACCEPTED_FACTORIES, MetricType.FACTORIES_ACCEPTED_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.ACCEPTED_FACTORIES, builder.build());
 
 
-        builder.put(Parameters.WS, Parameters.WS_TYPES.TEMPORARY.name());
-        builder.put(Parameters.STORAGE_TABLE, "testworkspaceswithzerofactorysessionslength");
-        builder.put(Parameters.STORAGE_TABLE_PRODUCT_USAGE_SESSIONS, "testworkspaceswithzerofactorysessionslength_pus");
-        builder.put(Parameters.STORAGE_TABLE_USERS_STATISTICS, "testworkspaceswithzerofactorysessionslength_stat");
+        builder.putAll(scriptsManager.getScript(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, builder.build());
     }
 
@@ -134,18 +125,9 @@ public class TestWorkspacesWithZeroFactorySessionsLength extends BaseTest {
         builder.put(Parameters.FROM_DATE, "20130210");
         builder.put(Parameters.TO_DATE, "20130210");
 
-        Metric metric = new TestMetricWorkspacesWithZeroFactorySessionsLength();
+        Metric metric = MetricFactory.getMetric(MetricType.WORKSPACES_WITH_ZERO_FACTORY_SESSIONS_LENGTH);
         LongValueData lvd = (LongValueData)metric.getValue(builder.build());
 
         assertEquals(lvd.getAsLong(), 2);
-    }
-
-
-    private class TestMetricWorkspacesWithZeroFactorySessionsLength extends WorkspacesWithZeroFactorySessionsLength {
-
-        @Override
-        public String getStorageCollectionName() {
-            return getStorageCollectionName("testworkspaceswithzerofactorysessionslength");
-        }
     }
 }

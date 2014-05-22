@@ -29,7 +29,7 @@ function Configuration() {
             defaultModelParams: {
                 "time_unit": "month"
             },
-            
+
             displayLineChart: true,  // default is false
         },
 
@@ -68,7 +68,7 @@ function Configuration() {
             defaultModelParams: {
                 "time_unit": "month"
             },
-            
+
             displayLineChart: true,  // default is false
         },
 
@@ -80,7 +80,7 @@ function Configuration() {
             defaultModelParams: {
                 "time_unit": "month"
             },
-            
+
             displayLineChart: true,  // default is false
         },
 
@@ -90,7 +90,7 @@ function Configuration() {
             modelViewName: "engagement_levels",
 
             forbiddenModelParams: ["time_unit"],
-            
+
             displayLineChart: true,  // default is false
         },
 
@@ -107,7 +107,7 @@ function Configuration() {
             clientSortParams: {
                 "columnsWithoutSorting": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
             },
-            
+
             displayLineChart: true,  // default is false
         },
 
@@ -119,7 +119,7 @@ function Configuration() {
             defaultModelParams: {
                 "time_unit": "month"
             },
-            
+
             displayLineChart: true,  // default is false
         },
 
@@ -131,7 +131,7 @@ function Configuration() {
             defaultModelParams: {
                 "time_unit": "month"
             },
-            
+
             displayLineChart: true,  // default is false
         },
 
@@ -143,7 +143,7 @@ function Configuration() {
             defaultModelParams: {
                 "time_unit": "month"
             },
-            
+
             displayLineChart: true,  // default is false
         },
 
@@ -239,7 +239,7 @@ function Configuration() {
             mapColumnToServerSortParam: {
                 "Email": "user",
             },
-                
+
             defaultServerSortParams: "+user",
 
             columnDrillDownPageLinkConfiguration: {
@@ -672,7 +672,7 @@ function Configuration() {
             },
         },
 
-       projectOverview: {
+        projectOverview: {
             widgetLabel: "Project Overview",
             presenterType: "HorizontalTablePresenter",
             modelViewName: "project",
@@ -716,6 +716,29 @@ function Configuration() {
             widgetLabel: "Project Statistics",
             presenterType: "VerticalTablePresenter",
             modelViewName: "project_statistics",
+        },
+
+
+        projectEvents: {
+            widgetLabel: "Project Events",
+            presenterType: "HorizontalTablePresenter",
+            modelViewName: "project_events",
+
+            isPaginable: true,    // default value is "false"
+            modelMetricName: "users_activity",
+            onePageRowsCount: 30,
+
+            defaultServerSortParams: "+date",
+
+            /** @see DatabaseTable::makeTableSortable() method docs */
+            clientSortParams: {
+                "ascSortColumnNumber": 0
+            },
+
+            columnLinkPrefixList: {
+                "User": "/analytics/pages/user-view.jsp?user",
+                "Workspace": "/analytics/pages/workspace-view.jsp?ws",
+            },
         },
 
         /** for Accounts View */

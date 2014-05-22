@@ -62,7 +62,7 @@ public class TestExpandedMetric extends BaseTest {
 
     private static final String TEST_WS    = "ws1";
     private static final String TEST_USER  = "user1@gmail.com";
-    private static final String SESSION_ID = "8AA06F22-3755-4BDD-9242-8A6371BAB53A";
+    private static final String SESSION_ID = "session_id";
 
     private ViewBuilder viewBuilder;
 
@@ -285,23 +285,21 @@ public class TestExpandedMetric extends BaseTest {
     @Test
     public void testAbstractTimelineProductUsageConditionMetric() throws Exception {
         Context.Builder builder = new Context.Builder();
-        builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.name());
-        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
-        builder.put(Parameters.STORAGE_TABLE, MetricType.PRODUCT_USAGE_SESSIONS_LIST.toString().toLowerCase());
-        builder.put(Parameters.STORAGE_TABLE_USERS_STATISTICS, MetricType.USERS_STATISTICS_LIST.toString().toLowerCase());
-        builder.put(Parameters.STORAGE_TABLE_USERS_PROFILES, MetricType.USERS_PROFILES_LIST.toString().toLowerCase());
         builder.put(Parameters.LOG, log.getAbsolutePath());
 
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
+        builder.putAll(scriptsManager.getScript(ScriptType.PRODUCT_USAGE_SESSIONS, MetricType.PRODUCT_USAGE_SESSIONS_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, builder.build());
 
         builder.put(Parameters.FROM_DATE, "20131120");
         builder.put(Parameters.TO_DATE, "20131120");
+        builder.putAll(scriptsManager.getScript(ScriptType.PRODUCT_USAGE_SESSIONS, MetricType.PRODUCT_USAGE_SESSIONS_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, builder.build());
 
         builder.put(Parameters.FROM_DATE, "20131220");
         builder.put(Parameters.TO_DATE, "20131220");
+        builder.putAll(scriptsManager.getScript(ScriptType.PRODUCT_USAGE_SESSIONS, MetricType.PRODUCT_USAGE_SESSIONS_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, builder.build());
 
         /** test TimelineProductUsageConditionBelow120Min */
@@ -433,36 +431,36 @@ public class TestExpandedMetric extends BaseTest {
     @Test
     public void testNonActiveUsersMetric() throws Exception {
         Context.Builder builder = new Context.Builder();
-        builder.put(Parameters.FROM_DATE, "20131031");
-        builder.put(Parameters.TO_DATE, "20131031");
-        builder.put(Parameters.USER, Parameters.USER_TYPES.REGISTERED.name());
-        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
-        builder.put(Parameters.STORAGE_TABLE, MetricType.ACTIVE_USERS_SET.name().toLowerCase());
-        builder.put(Parameters.PARAM, "user");
         builder.put(Parameters.LOG, log.getAbsolutePath());
+
+        builder.put(Parameters.FROM_DATE, "20131031");
+        builder.put(Parameters.TO_DATE, "20131031");
+        builder.putAll(scriptsManager.getScript(ScriptType.ACTIVE_ENTITIES, MetricType.ACTIVE_USERS_SET).getParamsAsMap());
         pigServer.execute(ScriptType.ACTIVE_ENTITIES, builder.build());
 
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
+        builder.putAll(scriptsManager.getScript(ScriptType.ACTIVE_ENTITIES, MetricType.ACTIVE_USERS_SET).getParamsAsMap());
         pigServer.execute(ScriptType.ACTIVE_ENTITIES, builder.build());
 
         builder.put(Parameters.FROM_DATE, "20131031");
         builder.put(Parameters.TO_DATE, "20131031");
-        builder.put(Parameters.STORAGE_TABLE, MetricType.USERS_STATISTICS_LIST.toString().toLowerCase());
+        builder.putAll(scriptsManager.getScript(ScriptType.USERS_STATISTICS, MetricType.USERS_STATISTICS_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.USERS_STATISTICS, builder.build());
 
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
+        builder.putAll(scriptsManager.getScript(ScriptType.USERS_STATISTICS, MetricType.USERS_STATISTICS_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.USERS_STATISTICS, builder.build());
 
         builder.put(Parameters.FROM_DATE, "20131031");
         builder.put(Parameters.TO_DATE, "20131031");
-        builder.put(Parameters.EVENT, "user-created");
-        builder.put(Parameters.STORAGE_TABLE, MetricType.CREATED_USERS.toString().toLowerCase());
+        builder.putAll(scriptsManager.getScript(ScriptType.EVENTS, MetricType.CREATED_USERS).getParamsAsMap());
         pigServer.execute(ScriptType.EVENTS, builder.build());
 
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
+        builder.putAll(scriptsManager.getScript(ScriptType.EVENTS, MetricType.CREATED_USERS).getParamsAsMap());
         pigServer.execute(ScriptType.EVENTS, builder.build());
 
         // test expanded metric value
@@ -503,14 +501,10 @@ public class TestExpandedMetric extends BaseTest {
     @Test
     public void testUsersAcceptedInvitesPercentMetric() throws Exception {
         Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.LOG, log.getAbsolutePath());
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
-        builder.put(Parameters.USER, Parameters.USER_TYPES.REGISTERED.name());
-        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
-        builder.put(Parameters.EVENT, "user-added-to-ws");
-        builder.put(Parameters.PARAM, "FROM");
-        builder.put(Parameters.STORAGE_TABLE, MetricType.USERS_ADDED_TO_WORKSPACES.name().toLowerCase());
-        builder.put(Parameters.LOG, log.getAbsolutePath());
+        builder.putAll(scriptsManager.getScript(ScriptType.EVENTS_BY_TYPE, MetricType.USERS_ADDED_TO_WORKSPACES).getParamsAsMap());
         pigServer.execute(ScriptType.EVENTS_BY_TYPE, builder.build());
 
         builder = new Context.Builder();
@@ -533,12 +527,9 @@ public class TestExpandedMetric extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
-        builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.name());
-        builder.put(Parameters.WS, Parameters.WS_TYPES.TEMPORARY.name());
-        builder.put(Parameters.STORAGE_TABLE, MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST.toString().toLowerCase());
-        builder.put(Parameters.STORAGE_TABLE_PRODUCT_USAGE_SESSIONS, MetricType.PRODUCT_USAGE_SESSIONS_LIST.toString().toLowerCase());
-        builder.put(Parameters.STORAGE_TABLE_USERS_STATISTICS, MetricType.USERS_STATISTICS_LIST.name().toLowerCase());
         builder.put(Parameters.LOG, log.getAbsolutePath());
+        builder.putAll(
+                scriptsManager.getScript(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, builder.build());
 
         builder = new Context.Builder();
@@ -561,21 +552,14 @@ public class TestExpandedMetric extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
-        builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.name());
-        builder.put(Parameters.WS, Parameters.WS_TYPES.PERSISTENT.name());
-        builder.put(Parameters.STORAGE_TABLE, MetricType.PRODUCT_USAGE_SESSIONS_LIST.toString().toLowerCase());
-        builder.put(Parameters.STORAGE_TABLE_USERS_STATISTICS, MetricType.USERS_STATISTICS_LIST.toString().toLowerCase());
-        builder.put(Parameters.STORAGE_TABLE_USERS_PROFILES, MetricType.USERS_PROFILES_LIST.toString().toLowerCase());
         builder.put(Parameters.LOG, log.getAbsolutePath());
+        builder.putAll(scriptsManager.getScript(ScriptType.PRODUCT_USAGE_SESSIONS, MetricType.PRODUCT_USAGE_SESSIONS_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, builder.build());
 
         builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
-        builder.put(Parameters.USER, Parameters.USER_TYPES.REGISTERED.name());
-        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
-        builder.put(Parameters.PARAM, "user");
-        builder.put(Parameters.STORAGE_TABLE, MetricType.ACTIVE_USERS_SET.toString().toLowerCase());
+        builder.putAll(scriptsManager.getScript(ScriptType.ACTIVE_ENTITIES, MetricType.ACTIVE_USERS_SET).getParamsAsMap());
         builder.put(Parameters.LOG, log.getAbsolutePath());
         pigServer.execute(ScriptType.ACTIVE_ENTITIES, builder.build());
 
@@ -601,12 +585,8 @@ public class TestExpandedMetric extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
-        builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.name());
-        builder.put(Parameters.WS, Parameters.WS_TYPES.PERSISTENT.name());
-        builder.put(Parameters.STORAGE_TABLE, MetricType.PRODUCT_USAGE_SESSIONS_LIST.toString().toLowerCase());
-        builder.put(Parameters.STORAGE_TABLE_USERS_STATISTICS, MetricType.USERS_STATISTICS_LIST.toString().toLowerCase());
-        builder.put(Parameters.STORAGE_TABLE_USERS_PROFILES, MetricType.USERS_PROFILES_LIST.toString().toLowerCase());
         builder.put(Parameters.LOG, log.getAbsolutePath());
+        builder.putAll(scriptsManager.getScript(ScriptType.PRODUCT_USAGE_SESSIONS, MetricType.PRODUCT_USAGE_SESSIONS_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, builder.build());
 
         builder = new Context.Builder();
@@ -617,11 +597,8 @@ public class TestExpandedMetric extends BaseTest {
         // test expanded metric value
         ValueData expandedValue = metric.getExpandedValue(builder.build());
         List<ValueData> all = treatAsList(expandedValue);
-        assertEquals(all.size(), 1);
-
-        Map<String, ValueData> record = ((MapValueData)all.get(0)).getAll();
-        assertEquals(record.size(), 1);
-        assertEquals(record.get("session_id").toString(), SESSION_ID + "_micro");
+        assertEquals(all.size(), 5);
+        assertTrue(all.contains(MapValueData.valueOf("session_id=" + SESSION_ID + "_micro")));
     }
 
     @Test
@@ -629,12 +606,8 @@ public class TestExpandedMetric extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
-        builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.name());
-        builder.put(Parameters.WS, Parameters.WS_TYPES.PERSISTENT.name());
-        builder.put(Parameters.STORAGE_TABLE, MetricType.PRODUCT_USAGE_SESSIONS_LIST.toString().toLowerCase());
-        builder.put(Parameters.STORAGE_TABLE_USERS_STATISTICS, MetricType.USERS_STATISTICS_LIST.toString().toLowerCase());
-        builder.put(Parameters.STORAGE_TABLE_USERS_PROFILES, MetricType.USERS_PROFILES_LIST.toString().toLowerCase());
         builder.put(Parameters.LOG, log.getAbsolutePath());
+        builder.putAll(scriptsManager.getScript(ScriptType.PRODUCT_USAGE_SESSIONS, MetricType.PRODUCT_USAGE_SESSIONS_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, builder.build());
 
         builder = new Context.Builder();
@@ -646,15 +619,10 @@ public class TestExpandedMetric extends BaseTest {
         // test expanded metric value
         ValueData expandedValue = metric.getExpandedValue(builder.build());
         List<ValueData> all = treatAsList(expandedValue);
-        assertEquals(all.size(), 2);
+        assertEquals(all.size(), 6);
 
-        Map<String, ValueData> record = ((MapValueData)all.get(0)).getAll();
-        assertEquals(record.size(), 1);
-        assertEquals(record.get("session_id").toString(), SESSION_ID + "_micro");
-
-        record = ((MapValueData)all.get(1)).getAll();
-        assertEquals(record.size(), 1);
-        assertEquals(record.get("session_id").toString(), SESSION_ID);
+        assertTrue(all.contains(MapValueData.valueOf("session_id=" + SESSION_ID)));
+        assertTrue(all.contains(MapValueData.valueOf("session_id=" + SESSION_ID + "_micro")));
     }
 
     @Test
@@ -662,12 +630,8 @@ public class TestExpandedMetric extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
-        builder.put(Parameters.USER, Parameters.USER_TYPES.REGISTERED.name());
-        builder.put(Parameters.WS, Parameters.WS_TYPES.PERSISTENT.name());
-        builder.put(Parameters.STORAGE_TABLE, MetricType.USERS_LOGGED_IN_TYPES.toString().toLowerCase());
-        builder.put(Parameters.EVENT, "user-sso-logged-in");
-        builder.put(Parameters.PARAM, "USING");
         builder.put(Parameters.LOG, log.getAbsolutePath());
+        builder.putAll(scriptsManager.getScript(ScriptType.EVENTS_BY_TYPE, MetricType.USERS_LOGGED_IN_TYPES).getParamsAsMap());
         pigServer.execute(ScriptType.EVENTS_BY_TYPE, builder.build());
 
         builder = new Context.Builder();
@@ -690,15 +654,12 @@ public class TestExpandedMetric extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
-        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.toString());
-        builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.name());
-        builder.put(Parameters.EVENT, "user-created");
-        builder.put(Parameters.STORAGE_TABLE, MetricType.CREATED_USERS.toString().toLowerCase());
         builder.put(Parameters.LOG, log.getAbsolutePath());
+        builder.putAll(scriptsManager.getScript(ScriptType.EVENTS, MetricType.CREATED_USERS).getParamsAsMap());
         pigServer.execute(ScriptType.EVENTS, builder.build());
 
         builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
-        builder.put(Parameters.STORAGE_TABLE, MetricType.CREATED_USERS_FROM_FACTORY.toString().toLowerCase());
+        builder.putAll(scriptsManager.getScript(ScriptType.CREATED_USERS_FROM_FACTORY, MetricType.CREATED_USERS_FROM_FACTORY).getParamsAsMap());
         pigServer.execute(ScriptType.CREATED_USERS_FROM_FACTORY, builder.build());
 
         builder = new Context.Builder();
@@ -728,12 +689,9 @@ public class TestExpandedMetric extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
-        builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.name());
-        builder.put(Parameters.WS, Parameters.WS_TYPES.TEMPORARY.name());
-        builder.put(Parameters.STORAGE_TABLE, MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST.toString().toLowerCase());
-        builder.put(Parameters.STORAGE_TABLE_PRODUCT_USAGE_SESSIONS, MetricType.PRODUCT_USAGE_SESSIONS_LIST.toString().toLowerCase());
-        builder.put(Parameters.STORAGE_TABLE_USERS_STATISTICS, MetricType.USERS_STATISTICS_LIST.name().toLowerCase());
         builder.put(Parameters.LOG, log.getAbsolutePath());
+        builder.putAll(
+                scriptsManager.getScript(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, builder.build());
 
         builder = new Context.Builder();
@@ -756,12 +714,9 @@ public class TestExpandedMetric extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
-        builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.name());
-        builder.put(Parameters.WS, Parameters.WS_TYPES.TEMPORARY.name());
-        builder.put(Parameters.STORAGE_TABLE, MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST.toString().toLowerCase());
-        builder.put(Parameters.STORAGE_TABLE_PRODUCT_USAGE_SESSIONS, MetricType.PRODUCT_USAGE_SESSIONS_LIST.toString().toLowerCase());
-        builder.put(Parameters.STORAGE_TABLE_USERS_STATISTICS, MetricType.USERS_STATISTICS_LIST.name().toLowerCase());
         builder.put(Parameters.LOG, log.getAbsolutePath());
+        builder.putAll(
+                scriptsManager.getScript(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, builder.build());
 
         builder = new Context.Builder();
@@ -804,11 +759,8 @@ public class TestExpandedMetric extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
-        builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.name());
-        builder.put(Parameters.WS, Parameters.WS_TYPES.PERSISTENT.name());
-        builder.put(Parameters.STORAGE_TABLE, MetricType.ACTIVE_WORKSPACES_SET.toString().toLowerCase());
-        builder.put(Parameters.PARAM, "ws");
         builder.put(Parameters.LOG, log.getAbsolutePath());
+        builder.putAll(scriptsManager.getScript(ScriptType.ACTIVE_ENTITIES, MetricType.ACTIVE_WORKSPACES_SET).getParamsAsMap());
         pigServer.execute(ScriptType.ACTIVE_ENTITIES, builder.build());
 
         builder = new Context.Builder();
@@ -845,11 +797,8 @@ public class TestExpandedMetric extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
-        builder.put(Parameters.USER, Parameters.USER_TYPES.REGISTERED.name());
-        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
-        builder.put(Parameters.STORAGE_TABLE, MetricType.USER_INVITE.toString().toLowerCase());
         builder.put(Parameters.LOG, log.getAbsolutePath());
-        builder.put(Parameters.EVENT, "user-invite");
+        builder.putAll(scriptsManager.getScript(ScriptType.EVENTS, MetricType.USER_INVITE).getParamsAsMap());
         pigServer.execute(ScriptType.EVENTS, builder.build());
 
         builder = new Context.Builder();
@@ -875,12 +824,10 @@ public class TestExpandedMetric extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
+        builder.put(Parameters.LOG, log.getAbsolutePath());
 
         // calculate projects list
-        builder.put(Parameters.USER, Parameters.USER_TYPES.REGISTERED.name());
-        builder.put(Parameters.WS, Parameters.WS_TYPES.PERSISTENT.name());
-        builder.put(Parameters.STORAGE_TABLE, MetricType.PROJECTS_LIST.toString().toLowerCase());
-        builder.put(Parameters.LOG, log.getAbsolutePath());
+        builder.putAll(scriptsManager.getScript(ScriptType.PROJECTS, MetricType.PROJECTS_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.PROJECTS, builder.build());
 
         // test expanded metric value
@@ -906,10 +853,8 @@ public class TestExpandedMetric extends BaseTest {
         builder.put(Parameters.TO_DATE, "20131101");
 
         // calculate projects list
-        builder.put(Parameters.USER, Parameters.USER_TYPES.REGISTERED.name());
-        builder.put(Parameters.WS, Parameters.WS_TYPES.PERSISTENT.name());
-        builder.put(Parameters.STORAGE_TABLE, MetricType.PROJECTS_LIST.toString().toLowerCase());
         builder.put(Parameters.LOG, log.getAbsolutePath());
+        builder.putAll(scriptsManager.getScript(ScriptType.PROJECTS, MetricType.PROJECTS_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.PROJECTS, builder.build());
 
         // test expanded metric value
@@ -932,10 +877,8 @@ public class TestExpandedMetric extends BaseTest {
         builder.put(Parameters.TO_DATE, "20131101");
 
         // calculate projects list
-        builder.put(Parameters.USER, Parameters.USER_TYPES.REGISTERED.name());
-        builder.put(Parameters.WS, Parameters.WS_TYPES.PERSISTENT.name());
-        builder.put(Parameters.STORAGE_TABLE, MetricType.PROJECT_PAASES.toString().toLowerCase());
         builder.put(Parameters.LOG, log.getAbsolutePath());
+        builder.putAll(scriptsManager.getScript(ScriptType.DEPLOYMENTS_BY_TYPES, MetricType.PROJECT_PAASES).getParamsAsMap());
         pigServer.execute(ScriptType.DEPLOYMENTS_BY_TYPES, builder.build());
 
         // test expanded metric value
@@ -958,16 +901,13 @@ public class TestExpandedMetric extends BaseTest {
         builder.put(Parameters.TO_DATE, "20131101");
 
         // calculate number of runs
-        builder.put(Parameters.USER, Parameters.USER_TYPES.REGISTERED.name());
-        builder.put(Parameters.WS, Parameters.WS_TYPES.PERSISTENT.name());
-        builder.put(Parameters.STORAGE_TABLE, MetricType.RUNS.toString().toLowerCase());
         builder.put(Parameters.LOG, log.getAbsolutePath());
-        builder.put(Parameters.EVENT, "run-started");
+        builder.putAll(scriptsManager.getScript(ScriptType.EVENTS, MetricType.RUNS).getParamsAsMap());
         pigServer.execute(ScriptType.EVENTS, builder.build());
 
         // calculate projects list
-        builder.remove(Parameters.EVENT);
         builder.put(Parameters.STORAGE_TABLE, MetricType.PROJECTS_LIST.toString().toLowerCase());
+        builder.putAll(scriptsManager.getScript(ScriptType.PROJECTS, MetricType.PROJECTS_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.PROJECTS, builder.build());
 
         // calculate all projects list
@@ -1001,11 +941,8 @@ public class TestExpandedMetric extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
-        builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.name());
-        builder.put(Parameters.WS, Parameters.WS_TYPES.PERSISTENT.name());
-        builder.put(Parameters.STORAGE_TABLE, MetricType.ACTIVE_WORKSPACES_SET.toString().toLowerCase());
-        builder.put(Parameters.PARAM, "ws");
         builder.put(Parameters.LOG, log.getAbsolutePath());
+        builder.putAll(scriptsManager.getScript(ScriptType.ACTIVE_ENTITIES, MetricType.ACTIVE_WORKSPACES_SET).getParamsAsMap());
         pigServer.execute(ScriptType.ACTIVE_ENTITIES, builder.build());
 
         builder = new Context.Builder();

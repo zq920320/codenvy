@@ -18,9 +18,7 @@
 package com.codenvy.analytics.pig.scripts;
 
 import com.codenvy.analytics.BaseTest;
-import com.codenvy.analytics.metrics.Context;
-import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.metrics.users.AbstractLoggedInType;
+import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
@@ -57,11 +55,7 @@ public class TestNumberOfUsersByTypes_UsersLoggedInTypes extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20130102");
         builder.put(Parameters.TO_DATE, "20130102");
-        builder.put(Parameters.USER, Parameters.USER_TYPES.REGISTERED.name());
-        builder.put(Parameters.WS, Parameters.WS_TYPES.PERSISTENT.name());
-        builder.put(Parameters.STORAGE_TABLE, "testnumberofusersbytypes_usersloggedintypes");
-        builder.put(Parameters.EVENT, "user-sso-logged-in");
-        builder.put(Parameters.PARAM, "USING");
+        builder.putAll(scriptsManager.getScript(ScriptType.EVENTS_BY_TYPE, MetricType.USERS_LOGGED_IN_TYPES).getParamsAsMap());
         builder.put(Parameters.LOG, log.getAbsolutePath());
         pigServer.execute(ScriptType.EVENTS_BY_TYPE, builder.build());
     }
@@ -72,8 +66,8 @@ public class TestNumberOfUsersByTypes_UsersLoggedInTypes extends BaseTest {
         builder.put(Parameters.FROM_DATE, "20130102");
         builder.put(Parameters.TO_DATE, "20130102");
 
-        TestAbstractLoggedInType metric = new TestAbstractLoggedInType(new String[]{"google", "jaas"});
-        assertEquals(metric.getValue(builder.build()).getAsString(), "3");
+        Metric metric = MetricFactory.getMetric(MetricType.USERS_LOGGED_IN_WITH_GOOGLE);
+        assertEquals(metric.getValue(builder.build()).getAsString(), "2");
     }
 
     @Test
@@ -83,7 +77,7 @@ public class TestNumberOfUsersByTypes_UsersLoggedInTypes extends BaseTest {
         builder.put(Parameters.TO_DATE, "20130102");
         builder.put(Parameters.USER, "user1@gmail.com");
 
-        TestAbstractLoggedInType metric = new TestAbstractLoggedInType(new String[]{"google", "jaas"});
+        Metric metric = MetricFactory.getMetric(MetricType.USERS_LOGGED_IN_WITH_GOOGLE);
         assertEquals(metric.getValue(builder.build()).getAsString(), "1");
     }
 
@@ -93,7 +87,7 @@ public class TestNumberOfUsersByTypes_UsersLoggedInTypes extends BaseTest {
         builder.put(Parameters.FROM_DATE, "20130101");
         builder.put(Parameters.TO_DATE, "20130101");
 
-        TestAbstractLoggedInType metric = new TestAbstractLoggedInType(new String[]{"google", "jaas"});
+        Metric metric = MetricFactory.getMetric(MetricType.USERS_LOGGED_IN_WITH_GOOGLE);
         assertEquals(metric.getValue(builder.build()).getAsString(), "0");
     }
 
@@ -104,25 +98,7 @@ public class TestNumberOfUsersByTypes_UsersLoggedInTypes extends BaseTest {
         builder.put(Parameters.TO_DATE, "20130102");
         builder.put(Parameters.USER, "user1@gmail.com OR user1@yahoo.com");
 
-        TestAbstractLoggedInType metric = new TestAbstractLoggedInType(new String[]{"google", "jaas"});
+        Metric metric = MetricFactory.getMetric(MetricType.USERS_LOGGED_IN_WITH_GOOGLE);
         assertEquals(metric.getValue(builder.build()).getAsString(), "1");
-    }
-
-    private class TestAbstractLoggedInType extends AbstractLoggedInType {
-
-        public TestAbstractLoggedInType(String[] types) {
-            super("testnumberofusersbytypes_usersloggedintypes", types);
-        }
-
-
-        @Override
-        public String getStorageCollectionName() {
-            return "testnumberofusersbytypes_usersloggedintypes";
-        }
-
-        @Override
-        public String getDescription() {
-            return null;
-        }
     }
 }

@@ -21,11 +21,7 @@ import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.datamodel.SetValueData;
 import com.codenvy.analytics.datamodel.StringValueData;
 import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.Context;
-import com.codenvy.analytics.metrics.Metric;
-import com.codenvy.analytics.metrics.MetricFilter;
-import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.metrics.sessions.factory.CreatedFactoriesSet;
+import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
@@ -41,8 +37,6 @@ import static org.testng.Assert.assertEquals;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestFactoryCreatedList extends BaseTest {
-
-    private static final String COLLECTION = TestFactoryCreatedList.class.getSimpleName().toLowerCase();
 
     @BeforeClass
     public void init() throws Exception {
@@ -84,10 +78,8 @@ public class TestFactoryCreatedList extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20130101");
         builder.put(Parameters.TO_DATE, "20130101");
-        builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.name());
-        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
-        builder.put(Parameters.STORAGE_TABLE, COLLECTION);
         builder.put(Parameters.LOG, log.getAbsolutePath());
+        builder.putAll(scriptsManager.getScript(ScriptType.CREATED_FACTORIES, MetricType.CREATED_FACTORIES_SET).getParamsAsMap());
         pigServer.execute(ScriptType.CREATED_FACTORIES, builder.build());
     }
 
@@ -97,7 +89,7 @@ public class TestFactoryCreatedList extends BaseTest {
         builder.put(Parameters.FROM_DATE, "20130101");
         builder.put(Parameters.TO_DATE, "20130101");
 
-        Metric metric = new TestSetValueResulted();
+        Metric metric = MetricFactory.getMetric(MetricType.CREATED_FACTORIES_SET);
         assertEquals(metric.getValue(builder.build()),
                      new SetValueData(Arrays.<ValueData>asList(new StringValueData("http://codenvy.com/factory?id=1"),
                                                                new StringValueData("factory2"),
@@ -113,7 +105,7 @@ public class TestFactoryCreatedList extends BaseTest {
         builder.put(Parameters.TO_DATE, "20130101");
         builder.put(Parameters.USER, "anonymoususer_1");
 
-        Metric metric = new TestSetValueResulted();
+        Metric metric = MetricFactory.getMetric(MetricType.CREATED_FACTORIES_SET);
         assertEquals(metric.getValue(builder.build()),
                      new SetValueData(
                              Arrays.<ValueData>asList(new StringValueData("http://codenvy.com/factory?id=1"))));
@@ -125,11 +117,12 @@ public class TestFactoryCreatedList extends BaseTest {
         builder.put(Parameters.FROM_DATE, "20130101");
         builder.put(Parameters.TO_DATE, "20130101");
         builder.put(Parameters.USER, "anonymoususer_1 OR anonymoususer_2 OR anonymoususer_3");
-        builder.put(Parameters.WS, "ws2");
 
-        Metric metric = new TestSetValueResulted();
+        Metric metric = MetricFactory.getMetric(MetricType.CREATED_FACTORIES_SET);
         assertEquals(metric.getValue(builder.build()),
-                     new SetValueData(Arrays.<ValueData>asList(new StringValueData("factory3"))));
+                     new SetValueData(Arrays.<ValueData>asList(new StringValueData("http://codenvy.com/factory?id=1"),
+                                                               new StringValueData("factory2"),
+                                                               new StringValueData("factory3"))));
     }
 
     @Test
@@ -139,7 +132,7 @@ public class TestFactoryCreatedList extends BaseTest {
         builder.put(Parameters.TO_DATE, "20130101");
         builder.put(MetricFilter.ENCODED_FACTORY, 1);
 
-        Metric metric = new TestSetValueResulted();
+        Metric metric = MetricFactory.getMetric(MetricType.CREATED_FACTORIES_SET);
         assertEquals(metric.getValue(builder.build()),
                      new SetValueData(
                              Arrays.<ValueData>asList(new StringValueData("http://codenvy.com/factory?id=1"))));
@@ -152,19 +145,10 @@ public class TestFactoryCreatedList extends BaseTest {
         builder.put(Parameters.TO_DATE, "20130101");
         builder.put(MetricFilter.ENCODED_FACTORY, 0);
 
-        Metric metric = new TestSetValueResulted();
+        Metric metric = MetricFactory.getMetric(MetricType.CREATED_FACTORIES_SET);
         assertEquals(metric.getValue(builder.build()),
                      new SetValueData(Arrays.<ValueData>asList(new StringValueData("factory2"),
                                                                new StringValueData("factory3"),
                                                                new StringValueData("factory4"))));
-    }
-
-    // ---------------------------> Tested metrics
-
-    private class TestSetValueResulted extends CreatedFactoriesSet {
-        @Override
-        public String getStorageCollectionName() {
-            return COLLECTION;
-        }
     }
 }

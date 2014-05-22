@@ -19,10 +19,7 @@ package com.codenvy.analytics.pig.scripts;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.metrics.Context;
-import com.codenvy.analytics.metrics.Metric;
-import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.metrics.sessions.factory.WorkspacesWhereUsersHaveSeveralFactorySessions;
+import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
@@ -149,16 +146,12 @@ public class TestWorkspacesWhereUsersHaveSeveralFactorySessions extends BaseTest
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20130210");
         builder.put(Parameters.TO_DATE, "20130210");
-        builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.name());
-        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
-        builder.put(Parameters.STORAGE_TABLE, "testuserscountmoretwosessionsontmpws_acceptedfactories");
+        builder.putAll(scriptsManager.getScript(ScriptType.ACCEPTED_FACTORIES, MetricType.FACTORIES_ACCEPTED_LIST).getParamsAsMap());
         builder.put(Parameters.LOG, log.getAbsolutePath());
         pigServer.execute(ScriptType.ACCEPTED_FACTORIES, builder.build());
 
-        builder.put(Parameters.WS, Parameters.WS_TYPES.TEMPORARY.name());
-        builder.put(Parameters.STORAGE_TABLE, "testuserscountmoretwosessionsontmpws");
-        builder.put(Parameters.STORAGE_TABLE_PRODUCT_USAGE_SESSIONS, "testuserscountmoretwosessionsontmpws_pus");
-        builder.put(Parameters.STORAGE_TABLE_USERS_STATISTICS, "testuserscountmoretwosessionsontmpws_stat");
+        builder.putAll(
+                scriptsManager.getScript(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, builder.build());
     }
 
@@ -168,19 +161,9 @@ public class TestWorkspacesWhereUsersHaveSeveralFactorySessions extends BaseTest
         builder.put(Parameters.FROM_DATE, "20130210");
         builder.put(Parameters.TO_DATE, "20130210");
 
-        Metric metric = new TestMetricWorkspacesWhereUsersHaveSeveralFactorySessions();
+        Metric metric = MetricFactory.getMetric(MetricType.WORKSPACES_WHERE_USERS_HAVE_SEVERAL_FACTORY_SESSIONS);
         LongValueData lvd = (LongValueData)metric.getValue(builder.build());
 
         assertEquals(lvd.getAsLong(), 2);
-    }
-
-
-    private class TestMetricWorkspacesWhereUsersHaveSeveralFactorySessions
-            extends WorkspacesWhereUsersHaveSeveralFactorySessions {
-
-        @Override
-        public String getStorageCollectionName() {
-            return getStorageCollectionName("testuserscountmoretwosessionsontmpws");
-        }
     }
 }

@@ -20,10 +20,7 @@ package com.codenvy.analytics.pig.scripts;
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
-import com.codenvy.analytics.metrics.Context;
-import com.codenvy.analytics.metrics.Metric;
-import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.metrics.sessions.factory.ReferrersCountToSpecificFactory;
+import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
@@ -121,16 +118,12 @@ public class TestProductUsageFactoryReferrers extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20130210");
         builder.put(Parameters.TO_DATE, "20130210");
-        builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.name());
-        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
-        builder.put(Parameters.STORAGE_TABLE, "testpoductusagefactoyreferers_acceptedfactories");
         builder.put(Parameters.LOG, log.getAbsolutePath());
+        builder.putAll(scriptsManager.getScript(ScriptType.ACCEPTED_FACTORIES, MetricType.FACTORIES_ACCEPTED_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.ACCEPTED_FACTORIES, builder.build());
 
-        builder.put(Parameters.WS, Parameters.WS_TYPES.TEMPORARY.name());
-        builder.put(Parameters.STORAGE_TABLE, "testpoductusagefactoyreferers");
-        builder.put(Parameters.STORAGE_TABLE_PRODUCT_USAGE_SESSIONS, "testpoductusagefactoyreferers_pus");
-        builder.put(Parameters.STORAGE_TABLE_USERS_STATISTICS, "testpoductusagefactoyreferers_stat");
+        builder.putAll(
+                scriptsManager.getScript(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, builder.build());
     }
 
@@ -140,7 +133,7 @@ public class TestProductUsageFactoryReferrers extends BaseTest {
         builder.put(Parameters.FROM_DATE, "20130210");
         builder.put(Parameters.TO_DATE, "20130210");
 
-        Metric metric = new TestProductUsageFactorySessionRefers();
+        Metric metric = MetricFactory.getMetric(MetricType.REFERRERS_COUNT_TO_SPECIFIC_FACTORY);
         ListValueData lvd = (ListValueData)metric.getValue(builder.build());
 
         MapValueData vd = (MapValueData)lvd.getAll().get(0);
@@ -150,14 +143,5 @@ public class TestProductUsageFactoryReferrers extends BaseTest {
         vd = (MapValueData)lvd.getAll().get(1);
         assertEquals(vd.getAll().get("factory").getAsString(), "factoryUrl1");
         assertEquals(vd.getAll().get("unique_referrers_count").getAsString(), "1");
-    }
-
-
-    private class TestProductUsageFactorySessionRefers extends ReferrersCountToSpecificFactory {
-
-        @Override
-        public String getStorageCollectionName() {
-            return getStorageCollectionName("testpoductusagefactoyreferers");
-        }
     }
 }
