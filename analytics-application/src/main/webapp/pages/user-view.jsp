@@ -30,7 +30,7 @@
     <div class="row-fluid">
         <div>
             <div class="well topFilteringPanel">
-                <div id="filter-by" class="left" targetWidgets="userData,userSessions,userWorkspaceList,userProjects,userFactories">
+                <div id="filter-by" class="left" targetWidgets="userData,userSessions,userWorkspaceList,userProjects,userFactories,userEvents">
                     <div class="collabsiblePanelTitle">Filter</div>
                     <div class="collabsiblePanelBody">
                         <table>
@@ -72,6 +72,7 @@
                             <div class="item" id="userWorkspaceList"></div>
                             <div class="item" id="userProjects"></div>
                             <div class="item" id="userFactories"></div>
+                            <div class="item" id="userEvents"></div>
                         </div>
                     </div>
                 </div>

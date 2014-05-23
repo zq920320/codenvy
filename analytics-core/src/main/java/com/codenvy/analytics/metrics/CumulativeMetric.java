@@ -33,7 +33,7 @@ import static com.codenvy.analytics.datamodel.ValueDataUtil.getAsLong;
  *
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public abstract class CumulativeMetric extends AbstractMetric implements Expandable {
+public abstract class CumulativeMetric extends AbstractMetric implements Expandable, WithoutFromDateParam {
 
     private final Metric                addedMetric;
     private final Metric                removedMetric;

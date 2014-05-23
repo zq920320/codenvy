@@ -25,49 +25,34 @@
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="total_users"/>
                 <parameter key="description" value="Total Users"/>
-                <parameter key="set-from-date-to-default-value" value="true"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="active_users"/>
+                <parameter key="name" value="active_users_from_beginning"/>
                 <parameter key="description" value="Total Number of Users We Track"/>
-                <parameter key="set-from-date-to-default-value" value="true"/>
-                <parameter key="filter" value="user=REGISTERED"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="users_who_created_project"/>
                 <parameter key="description" value="Created Projects"/>
-                <parameter key="set-from-date-to-default-value" value="true"/>
-                <parameter key="filter" value="user=REGISTERED"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="users_who_built"/>
                 <parameter key="description" value="&amp; Built"/>
-                <parameter key="set-from-date-to-default-value" value="true"/>
-                <parameter key="filter" value="user=REGISTERED"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="users_who_deployed"/>
                 <parameter key="description" value="&amp; Run"/>
-                <parameter key="set-from-date-to-default-value" value="true"/>
-                <parameter key="filter" value="user=REGISTERED"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="users_who_deployed_to_paas"/>
                 <parameter key="description" value="&amp; Deployed to PAAS"/>
-                <parameter key="set-from-date-to-default-value" value="true"/>
-                <parameter key="filter" value="user=REGISTERED"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="users_who_invited"/>
                 <parameter key="description" value="Sent Invites"/>
-                <parameter key="set-from-date-to-default-value" value="true"/>
-                <parameter key="filter" value="user=REGISTERED"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="users_who_launched_shell"/>
                 <parameter key="description" value="Shell Launched"/>
-                <parameter key="set-from-date-to-default-value" value="true"/>
-                <parameter key="filter" value="user=REGISTERED"/>
             </row>
         </section>
     </view>

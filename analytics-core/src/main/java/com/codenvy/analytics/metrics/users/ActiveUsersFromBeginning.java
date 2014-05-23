@@ -17,20 +17,31 @@
  */
 package com.codenvy.analytics.metrics.users;
 
-import com.codenvy.analytics.metrics.AbstractAnalysisMetric;
-import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.*;
 
 import javax.annotation.security.RolesAllowed;
+import java.io.IOException;
 
-/** @author Dmytro Nochevnov */
+/**
+ * @author Anatoliy Bazko
+ */
 @RolesAllowed({"system/admin", "system/manager"})
-public class UsersWhoDeployedToPaas extends AbstractAnalysisMetric {
-    public UsersWhoDeployedToPaas() {
-        super(MetricType.USERS_WHO_DEPLOYED_TO_PAAS, MetricType.DEPLOYS_TO_PAAS, USER);
+@OmitFilters({MetricFilter.WS})
+public class ActiveUsersFromBeginning extends AbstractActiveEntities implements WithoutFromDateParam {
+
+    public ActiveUsersFromBeginning() {
+        super(MetricType.ACTIVE_USERS_FROM_BEGINNING, MetricType.ACTIVE_USERS_SET, USER);
     }
 
     @Override
     public String getDescription() {
-        return "The number of users who deployed to PaaS at least once.";
+        return "The number of active registered users";
+    }
+
+    @Override
+    public Context applySpecificFilter(Context clauses) throws IOException {
+        Context.Builder builder = new Context.Builder(clauses);
+        builder.putDefaultValue(Parameters.FROM_DATE);
+        return super.applySpecificFilter(builder.build());
     }
 }

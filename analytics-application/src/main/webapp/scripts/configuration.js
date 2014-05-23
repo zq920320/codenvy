@@ -168,8 +168,7 @@ function Configuration() {
             columnDrillDownPageLinkConfiguration: {
                 mapColumnNameToExpandableMetric: {
                     "Sessions": "product_usage_sessions",
-                    "# Workspaces Created": "total_workspaces",
-                    "# Accounts Created": "total_users",
+                    "# Workspaces Created": "temporary_workspaces_created",
                     "Aggregate Time": "product_usage_time_total",
                     "% Anon": "anonymous_factory_sessions",
                     "% Auth": "authenticated_factory_sessions",
@@ -359,6 +358,27 @@ function Configuration() {
                 "Repository": "repository",
                 "Project": "project",
                 "Type": "project_type",
+            },
+        },
+
+        userEvents: {
+            widgetLabel: "User Events",
+            presenterType: "HorizontalTablePresenter",
+            modelViewName: "user_events",
+
+            isPaginable: true,    // default value is "false"
+            modelMetricName: "users_activity",
+            onePageRowsCount: 30,
+
+            defaultServerSortParams: "+date",
+
+            /** @see DatabaseTable::makeTableSortable() method docs */
+            clientSortParams: {
+                "ascSortColumnNumber": 0
+            },
+
+            columnLinkPrefixList: {
+                "Workspace": "/analytics/pages/workspace-view.jsp?ws",
             },
         },
 
@@ -826,7 +846,7 @@ function Configuration() {
 
             columnDrillDownPageLinkConfiguration: {
                 mapColumnNameToExpandableMetric: {
-                    "Clicks": "total_workspaces",
+                    "Clicks": "temporary_workspaces_created",
                     "Sessions": "product_usage_sessions",
                     "Time": "product_usage_time_total",
                 },
@@ -1000,6 +1020,7 @@ function Configuration() {
     var mapExpandableMetricToDrillDownPageType = {
         /** USERS */
         "active_users": "USERS",
+        "active_users_from_beginning": "USERS",
         "users_who_created_project": "USERS",
         "users_who_built": "USERS",
         "users_who_deployed": "USERS",

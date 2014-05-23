@@ -17,14 +17,14 @@
  */
 package com.codenvy.analytics.metrics.users;
 
-import com.codenvy.analytics.metrics.AbstractActiveEntities;
+import com.codenvy.analytics.metrics.AbstractAnalysisMetric;
 import com.codenvy.analytics.metrics.MetricType;
 
 import javax.annotation.security.RolesAllowed;
 
 /** @author Dmytro Nochevnov */
 @RolesAllowed({"system/admin", "system/manager"})
-public class UsersWhoInvited extends AbstractActiveEntities {
+public class UsersWhoInvited extends AbstractAnalysisMetric {
     public UsersWhoInvited() {
         super(MetricType.USERS_WHO_INVITED, MetricType.USER_INVITE, USER);
     }

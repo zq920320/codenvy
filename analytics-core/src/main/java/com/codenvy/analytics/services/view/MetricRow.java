@@ -22,7 +22,10 @@ package com.codenvy.analytics.services.view;
 import com.codenvy.analytics.Injector;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.*;
-import com.codenvy.analytics.metrics.*;
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.InitialValueNotFoundException;
+import com.codenvy.analytics.metrics.Metric;
+import com.codenvy.analytics.metrics.MetricFactory;
 import com.codenvy.analytics.pig.scripts.EventsHolder;
 
 import java.io.IOException;
@@ -37,10 +40,9 @@ import java.util.*;
 public class MetricRow extends AbstractRow {
     private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("00");
 
-    private static final String DEFAULT_NUMERIC_FORMAT         = "%,.0f";
-    private static final String DEFAULT_DATE_FORMAT            = "yyyy-MM-dd HH:mm:ss";
-    private static final String DEFAULT_TIME_FORMAT            = "HH:mm:ss";
-    private static final String SET_FROM_DATE_TO_DEFAULT_VALUE = "set-from-date-to-default-value";
+    private static final String DEFAULT_NUMERIC_FORMAT = "%,.0f";
+    private static final String DEFAULT_DATE_FORMAT    = "yyyy-MM-dd HH:mm:ss";
+    private static final String DEFAULT_TIME_FORMAT    = "HH:mm:ss";
 
     /** The name of the metric. */
     private static final String NAME        = "name";
@@ -53,7 +55,6 @@ public class MetricRow extends AbstractRow {
     private static final String BOOLEAN_FIELDS = "boolean-fields";
     private static final String DATE_FIELDS    = "date-fields";
     private static final String TIME_FIELDS    = "time-fields";
-    private static final String FILTER         = "filter";
     private static final String EVENT_FIELDS   = "event-fields";
 
     /**
@@ -81,7 +82,6 @@ public class MetricRow extends AbstractRow {
     private final List<String>        booleanFields;
     private final Map<String, String> dateFields;
     private final Map<String, String> timeFields;
-    private final Map<String, String> filters;
     private final List<String>        eventFields;
     private final boolean             isTimeField;
 
@@ -119,11 +119,9 @@ public class MetricRow extends AbstractRow {
 
         this.dateFields = new HashMap<>();
         this.timeFields = new HashMap<>();
-        this.filters = new HashMap<>();
 
         readFieldsParameters(parameters, DATE_FIELDS, dateFields, DEFAULT_DATE_FORMAT);
         readFieldsParameters(parameters, TIME_FIELDS, timeFields, DEFAULT_TIME_FORMAT);
-        readFieldsParameters(parameters, FILTER, filters, null);
 
         if (parameters.containsKey(TIME_FIELDS)) {
             for (String timeField : parameters.get(TIME_FIELDS).split(",")) {
@@ -334,21 +332,6 @@ public class MetricRow extends AbstractRow {
     }
 
     protected ValueData getMetricValue(Context context) throws IOException {
-        Context.Builder builder = new Context.Builder(context);
-        for (Map.Entry<String, String> entry : filters.entrySet()) {
-            MetricFilter filter = MetricFilter.valueOf(entry.getKey().toUpperCase());
-
-            if (!builder.exists(filter)) {
-                builder.put(filter, entry.getValue());
-            }
-        }
-
-        if (parameters.containsKey(SET_FROM_DATE_TO_DEFAULT_VALUE)
-            && Boolean.parseBoolean(parameters.get(SET_FROM_DATE_TO_DEFAULT_VALUE))) {
-
-            builder.putDefaultValue(Parameters.FROM_DATE);
-        }
-
-        return metric.getValue(builder.build());
+        return metric.getValue(context);
     }
 }

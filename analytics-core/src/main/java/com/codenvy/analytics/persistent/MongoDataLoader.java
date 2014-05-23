@@ -186,7 +186,7 @@ public class MongoDataLoader implements DataLoader {
                 String filteringField = ((Expandable)expandable).getExpandedField();
                 match.put(filteringField, new BasicDBObject("$in", filteringValues));
             }
-            
+
             clauses = fixDateParametersDueToExpandedMetric(clauses, expandable);
         }
 
@@ -288,7 +288,7 @@ public class MongoDataLoader implements DataLoader {
             }
 
             // remove from_date clause to display all documents to_date
-        } else if (expandedMetric instanceof CumulativeMetric) {
+        } else if (expandedMetric instanceof WithoutFromDateParam) {
             clauses = clauses.cloneAndRemove(Parameters.FROM_DATE);
         }
 
