@@ -81,24 +81,31 @@ n = FOREACH n1 GENERATE t::m::dt AS dt, t::m::delta AS delta, t::m::factory AS f
                         t::m::orgId AS orgId, t::m::affiliateId AS affiliateId, t::m::auth AS auth, t::m::ws AS ws, t::m::ide AS ide,
                         t::m::user AS user, t::m::conv AS conv, t::m::run AS run, t::m::deploy AS deploy, t::build AS build;
 
+o1 = addEventIndicator(n, l,  'debug-started', 'debug', '$inactiveInterval');
+o = FOREACH o1 GENERATE t::n::dt AS dt, t::n::delta AS delta, t::n::factory AS factory, t::n::referrer AS referrer, t::n::id AS id,
+                        t::n::orgId AS orgId, t::n::affiliateId AS affiliateId, t::n::auth AS auth, t::n::ws AS ws, t::n::ide AS ide,
+                        t::n::user AS user, t::n::conv AS conv, t::n::run AS run, t::n::deploy AS deploy, t::n::build AS build, t::debug AS debug;
+
+
 -- add created temporary session indicator
 w = createdTemporaryWorkspaces(l);
-z1 = JOIN n BY (ws, user) FULL, w BY (ws, user);
-z2 = FOREACH z1 GENERATE (n::ws IS NULL ? w::dt : n::dt) AS dt,
-    (n::ws IS NULL ? w::ide : n::ide) AS ide,
-    (n::ws IS NULL ? '' : n::id) AS id,
-    (n::ws IS NULL ? 0 : n::delta) AS delta,
-    (n::ws IS NULL ? w::factory : n::factory) AS factory,
-    (n::ws IS NULL ? w::referrer : n::referrer) AS referrer,
-    (n::ws IS NULL ? w::orgId : n::orgId) AS orgId,
-    (n::ws IS NULL ? w::affiliateId : n::affiliateId) AS affiliateId,
-    (n::ws IS NULL ? (INDEXOF(w::user, 'anonymoususer_', 0) == 0 ? 0 : 1) : n::auth) AS auth,
-    (n::ws IS NULL ? w::ws : n::ws) AS ws,
-    (n::ws IS NULL ? w::user : n::user) AS user,
-    (n::ws IS NULL ? 0 : n::conv) AS conv,
-    (n::ws IS NULL ? 0 : n::run) AS run,
-    (n::ws IS NULL ? 0 : n::deploy) AS deploy,
-    (n::ws IS NULL ? 0 : n::build) AS build,
+z1 = JOIN o BY (ws, user) FULL, w BY (ws, user);
+z2 = FOREACH z1 GENERATE (o::ws IS NULL ? w::dt : o::dt) AS dt,
+    (o::ws IS NULL ? w::ide : o::ide) AS ide,
+    (o::ws IS NULL ? '' : o::id) AS id,
+    (o::ws IS NULL ? 0 : o::delta) AS delta,
+    (o::ws IS NULL ? w::factory : o::factory) AS factory,
+    (o::ws IS NULL ? w::referrer : o::referrer) AS referrer,
+    (o::ws IS NULL ? w::orgId : o::orgId) AS orgId,
+    (o::ws IS NULL ? w::affiliateId : o::affiliateId) AS affiliateId,
+    (o::ws IS NULL ? (INDEXOF(w::user, 'anonymoususer_', 0) == 0 ? 0 : 1) : o::auth) AS auth,
+    (o::ws IS NULL ? w::ws : o::ws) AS ws,
+    (o::ws IS NULL ? w::user : o::user) AS user,
+    (o::ws IS NULL ? 0 : o::conv) AS conv,
+    (o::ws IS NULL ? 0 : o::run) AS run,
+    (o::ws IS NULL ? 0 : o::deploy) AS deploy,
+    (o::ws IS NULL ? 0 : o::build) AS build,
+    (o::ws IS NULL ? 0 : o::debug) AS debug,
     (w::ws IS NULL ? 0 : 1) AS ws_created;
 
 -- finds the first started sessions and keep indicator only there
@@ -106,9 +113,9 @@ z3 = GROUP z2 BY (ws, user);
 z4 = FOREACH z3 GENERATE group.ws AS ws, group.user AS user, MIN(z2.dt) AS minDT, FLATTEN(z2);
 z5 = FOREACH z4 GENERATE ws, user, z2::dt AS dt, z2::delta AS delta, z2::factory AS factory, z2::id AS id,
     z2::referrer AS referrer, z2::orgId AS orgId, z2::affiliateId AS affiliateId, z2::ide AS ide,
-    z2::auth AS auth, z2::conv AS conv, z2::run AS run, z2::deploy AS deploy, z2::build AS build,
+    z2::auth AS auth, z2::conv AS conv, z2::run AS run, z2::deploy AS deploy, z2::build AS build, z2::debug AS debug,
     (z2::dt == minDT ? z2::ws_created : 0) AS ws_created;
-z = FOREACH z5 GENERATE ws, user AS user, dt, delta, factory, referrer, orgId, affiliateId, auth, conv, run, deploy, build, ws_created, ide, id;
+z = FOREACH z5 GENERATE ws, user AS user, dt, delta, factory, referrer, orgId, affiliateId, auth, conv, run, deploy, debug, build, ws_created, ide, id;
 
 -- add user created from factory indicator
 ls1 = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', 'ANY', 'ANY');
@@ -130,6 +137,7 @@ p2 = FOREACH p1 GENERATE (z::ws IS NULL ? ls::dt : z::dt) AS dt,
     (z::ws IS NULL ? 0 : z::conv) AS conv,
     (z::ws IS NULL ? 0 : z::run) AS run,
     (z::ws IS NULL ? 0 : z::deploy) AS deploy,
+    (z::ws IS NULL ? 0 : z::debug) AS debug,
     (z::ws IS NULL ? 0 : z::build) AS build,
     (z::ws IS NULL ? 0 : z::ws_created) AS ws_created,
     (ls::ws IS NULL ? 0 : 1) AS user_created;
@@ -138,11 +146,25 @@ p2 = FOREACH p1 GENERATE (z::ws IS NULL ? ls::dt : z::dt) AS dt,
 -- finds the first started sessions and keep indicator only there
 p3 = GROUP p2 BY (ws, user);
 p4 = FOREACH p3 GENERATE group.ws AS ws, group.user AS user, MIN(p2.dt) AS minDT, FLATTEN(p2);
-p = FOREACH p4 GENERATE ws, user, p2::dt AS dt, p2::delta AS delta, p2::factory AS factory, p2::id AS test_id,
-    p2::referrer AS referrer, p2::orgId AS orgId, p2::affiliateId AS affiliateId, p2::ide AS ide,
-    p2::auth AS auth, p2::conv AS conv, p2::run AS run, p2::deploy AS deploy, p2::build AS build,
-    p2::ws_created AS ws_created, (p2::dt == minDT ? p2::user_created : 0) AS user_created,
-    (INDEXOF(factory, 'factory?id=', 0) > 0 ? 1 : 0) AS encodedFactory;
+p = FOREACH p4 GENERATE ws,
+                        user,
+                        p2::dt AS dt,
+                        p2::delta AS delta,
+                        p2::factory AS factory,
+                        p2::id AS test_id,
+                        p2::referrer AS referrer,
+                        p2::orgId AS orgId,
+                        p2::affiliateId AS affiliateId,
+                        p2::ide AS ide,
+                        p2::auth AS auth,
+                        p2::conv AS conv,
+                        p2::run AS run,
+                        p2::deploy AS deploy,
+                        p2::build AS build,
+                        p2::debug AS debug,
+                        p2::ws_created AS ws_created,
+                        (p2::dt == minDT ? p2::user_created : 0) AS user_created,
+                        (INDEXOF(factory, 'factory?id=', 0) > 0 ? 1 : 0) AS encodedFactory;
 
 -- Set session id if absent
 SPLIT p INTO r1 IF test_id != '', t1 OTHERWISE;
@@ -159,6 +181,7 @@ result1 = FOREACH r GENERATE UUID(),
                             TOTUPLE('runs', run),
                             TOTUPLE('deploys', deploy),
                             TOTUPLE('builds', build),
+                            TOTUPLE('debugs', debug),
                             TOTUPLE('ws_created', ws_created),
                             TOTUPLE('factory', factory),
                             TOTUPLE('referrer', referrer),
@@ -180,6 +203,7 @@ result2 = FOREACH t GENERATE UUID(),
                             TOTUPLE('runs', run),
                             TOTUPLE('deploys', deploy),
                             TOTUPLE('builds', build),
+                            TOTUPLE('debugs', debug),
                             TOTUPLE('ws_created', ws_created),
                             TOTUPLE('factory', factory),
                             TOTUPLE('referrer', referrer),

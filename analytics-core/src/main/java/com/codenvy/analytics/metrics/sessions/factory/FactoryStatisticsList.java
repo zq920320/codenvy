@@ -60,6 +60,7 @@ public class FactoryStatisticsList extends AbstractListValueResulted {
                             RUNS,
                             DEPLOYS,
                             BUILDS,
+                            DEBUGS,
                             SESSIONS,
                             AUTHENTICATED_SESSION,
                             CONVERTED_SESSION,
@@ -81,6 +82,7 @@ public class FactoryStatisticsList extends AbstractListValueResulted {
         group.put(RUNS, new BasicDBObject("$sum", "$" + RUNS));
         group.put(DEPLOYS, new BasicDBObject("$sum", "$" + DEPLOYS));
         group.put(BUILDS, new BasicDBObject("$sum", "$" + BUILDS));
+        group.put(DEBUGS, new BasicDBObject("$sum", "$" + DEBUGS));
         group.put(SESSIONS, new BasicDBObject("$sum", "$" + SESSION));
         group.put(AUTHENTICATED_SESSION, new BasicDBObject("$sum", "$" + AUTHENTICATED_SESSION));
         group.put(CONVERTED_SESSION, new BasicDBObject("$sum", "$" + CONVERTED_SESSION));
@@ -93,6 +95,7 @@ public class FactoryStatisticsList extends AbstractListValueResulted {
         project.put(RUNS, 1);
         project.put(DEPLOYS, 1);
         project.put(BUILDS, 1);
+        project.put(DEBUGS, 1);
         project.put(SESSIONS, 1);
         project.put(AUTHENTICATED_SESSION, 1);
         project.put(CONVERTED_SESSION, 1);
