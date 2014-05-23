@@ -157,6 +157,13 @@ public class PigServer {
                                                           "$STORAGE_PASSWORD",
                                                           "id: chararray,user_company: chararray"}));
 
+        server.registerFunction("MongoLoaderAcceptedFactories",
+                                new FuncSpec("com.codenvy.analytics.pig.udf.MongoLoader",
+                                             new String[]{"$STORAGE_USER",
+                                                          "$STORAGE_PASSWORD",
+                                                          "ws: chararray,user: chararray,factory: chararray,referrer: chararray," +
+                                                          "org_id: chararray, affiliate_id: chararray"}));
+
         server.registerFunction("MongoLoaderTest",
                                 new FuncSpec("com.codenvy.analytics.pig.udf.MongoLoader",
                                              new String[]{"$STORAGE_USER",

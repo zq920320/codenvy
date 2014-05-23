@@ -23,11 +23,8 @@ IMPORT 'macros.pig';
 
 l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 
-u1 = filterByEvent(l, 'factory-url-accepted');
-u2 = extractUrlParam(u1, 'REFERRER', 'referrer');
-u3 = extractUrlParam(u2, 'FACTORY-URL', 'factory');
-u4 = extractOrgAndAffiliateId(u3);
-u = FOREACH u4 GENERATE ws AS tmpWs, ExtractDomain(referrer) AS referrer, factory, orgId, affiliateId;
+u1 = LOAD '$STORAGE_URL.$STORAGE_TABLE_ACCEPTED_FACTORIES' using MongoLoaderAcceptedFactories();
+u = FOREACH u1 GENERATE ws AS tmpWs, referrer, factory, org_id AS orgId, affiliate_id AS affiliateId;
 
 ---- finds out all imported projects
 i1 = filterByEvent(l, 'factory-project-imported');

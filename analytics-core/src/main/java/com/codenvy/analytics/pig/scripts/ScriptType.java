@@ -90,6 +90,7 @@ public enum ScriptType {
             Set<Parameters> params = super.getParams();
             params.add(Parameters.STORAGE_TABLE_PRODUCT_USAGE_SESSIONS);
             params.add(Parameters.STORAGE_TABLE_USERS_STATISTICS);
+            params.add(Parameters.STORAGE_TABLE_ACCEPTED_FACTORIES);
             return params;
         }
     },
