@@ -7,7 +7,7 @@
     <form action="/api/payment" method="POST" id="braintree-payment-form">
         <p>
             <label>Card Number</label>
-            <input type="text" size="20" autocomplete="off" data-encrypted-name="number" />
+            <input type="text" size="20" autocomplete="off" data-encrypted-name="cardNumber" />
         </p>
         <p>
             <label>CVV</label>
@@ -15,7 +15,7 @@
         </p>
         <p>
             <label>Expiration (MM/YYYY)</label>
-            <input type="text" size="2" name="month" /> / <input type="text" size="4" name="year" />
+            <input type="text" size="2" name="expirationMonth" /> / <input type="text" size="4" name="expirationYear" />
         </p>
         <input type="submit" id="submit" />
     </form>
