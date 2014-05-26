@@ -38,19 +38,12 @@ import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
-import javax.naming.AuthenticationException;
-import javax.naming.Context;
-import javax.naming.NameAlreadyBoundException;
-import javax.naming.NameNotFoundException;
-import javax.naming.NamingEnumeration;
-import javax.naming.NamingException;
-import javax.naming.directory.Attributes;
-import javax.naming.directory.DirContext;
-import javax.naming.directory.ModificationItem;
-import javax.naming.directory.SearchControls;
-import javax.naming.directory.SearchResult;
+import javax.naming.*;
+import javax.naming.directory.*;
 import javax.naming.ldap.InitialLdapContext;
+import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.Set;
 
 /**
  * LDAP based implementation of {@code UserDao}.
@@ -267,7 +260,7 @@ public class UserDaoImpl implements UserDao {
             context = getLdapContext();
             newContext = context.createSubcontext(getUserDn(user.getId()), userAttributesMapper.toAttributes(user));
 
-            LOG.info("EVENT#user-created# ALIASES#{}# USER-ID#{}#", user.getEmail(), user.getId());
+            logUserEvent("user-created", user);
         } catch (NameAlreadyBoundException e) {
             throw new ConflictException(String.format("Unable create new user '%s'. User already exists.", user.getId()));
         } catch (NamingException e) {
@@ -309,8 +302,9 @@ public class UserDaoImpl implements UserDao {
             } finally {
                 close(context);
             }
-        } catch (NamingException e) {
 
+            logUserEvent("user-updated", user);
+        } catch (NamingException e) {
             throw new ServerException(String.format("Unable update user '%s'", user.getEmail()), e);
         }
     }
@@ -449,5 +443,16 @@ public class UserDaoImpl implements UserDao {
                 LOG.warn(e.getMessage(), e);
             }
         }
+    }
+
+    private void logUserEvent(String event, User user) {
+        Set<String> emails = new HashSet<>(user.getAliases());
+        emails.add(user.getEmail());
+
+        LOG.info("EVENT#{}# USER#{}# USER-ID#{}# EMAILS#{}#",
+                 event,
+                 user.getEmail(),
+                 user.getId(),
+                 user.getAliases());
     }
 }
