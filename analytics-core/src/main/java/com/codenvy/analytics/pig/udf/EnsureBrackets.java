@@ -26,23 +26,20 @@ import org.apache.pig.impl.logicalLayer.schema.Schema;
 /**
  * @author Dmytro Nochevnov
  */
-public class RemoveBrackets extends EvalFunc<String> {
+public class EnsureBrackets extends EvalFunc<String> {
 
     @Override
     public String exec(Tuple input) throws ExecException {
         if (input == null || input.size() != 1) {
-            return null;
+            return "[]";
         }
 
         String item = (String)input.get(0);
         if (item == null) {
-            return null;
+            return "[]";
         }
 
-        int beginIndex = item.startsWith("[") ? 1 : 0;
-        int endIndex = item.endsWith("]") ? item.length() - 1 : item.length();
-
-        return item.substring(beginIndex, endIndex);
+        return (!item.startsWith("[") ? "[" : "") + item + (!item.endsWith("]") ? "]" : "");
     }
 
     @Override

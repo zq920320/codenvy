@@ -39,6 +39,8 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
+import static com.codenvy.analytics.Utils.toArray;
+
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class MongoStorage extends StoreFunc {
 
@@ -111,14 +113,26 @@ public class MongoStorage extends StoreFunc {
                 Object data = tuple.get(1);
 
                 if (data != null) {
-                    if (isParameters(key)) {
-                        putKeyValuePairs(dbObject, (String)data);
+                    if (data instanceof String) {
+                        String str = (String)data;
+
+                        if (isParameters(key)) {
+                            putKeyValuePairs(dbObject, str);
+
+                        } else if (isAliases(key)) {
+                            dbObject.put(key, toArray(str));
+
+                        } else {
+                            dbObject.put(key, data);
+                            if (isMessage(key)) {
+                                putMessageParameters(dbObject, str);
+                            }
+                        }
                     } else {
                         dbObject.put(key, data);
-                        if (isMessage(key)) {
-                            putMessageParameters(dbObject, (String)data);
-                        }
                     }
+
+
                 }
             }
 
@@ -141,7 +155,7 @@ public class MongoStorage extends StoreFunc {
          *
          * @return true if key equals to 'message' and false otherwise
          */
-        private boolean isMessage(Object key) {
+        private boolean isMessage(String key) {
             return key.equals("message");
         }
 
@@ -150,10 +164,18 @@ public class MongoStorage extends StoreFunc {
          *
          * @return true if key equals to 'parameters' and false otherwise
          */
-        private boolean isParameters(Object key) {
+        private boolean isParameters(String key) {
             return key.equals("parameters");
         }
 
+        /**
+         * The parameter 'aliases' contains arrays of strings.
+         *
+         * @return true if key equals to 'aliases' and false otherwise
+         */
+        private boolean isAliases(String key) {
+            return key.equals("aliases");
+        }
 
         /**
          * Extracts and puts all parameters out of the message.

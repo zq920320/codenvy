@@ -50,6 +50,9 @@ abstract public class AbstractUsersProfile extends ReadBasedMetric {
                        || filter == MetricFilter.USER_LAST_NAME) {
 
                 builder.put(filter, convertToPattern(value));
+
+            } else if (filter == MetricFilter.ALIASES) {
+                builder.put(MetricFilter.ALIASES, MongoDataLoader.processFilter(value, filter.isNumericType()));
             }
         }
 

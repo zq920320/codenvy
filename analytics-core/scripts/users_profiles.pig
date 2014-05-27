@@ -42,26 +42,8 @@ a = FOREACH a3 GENERATE dt,
 
 resultA = FOREACH a GENERATE userId,
                              TOTUPLE('date', ToMilliSeconds(dt)),
-                             TOTUPLE('aliases', RemoveBrackets(emails));
+                             TOTUPLE('aliases', EnsureBrackets(emails));
 STORE resultA INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
-
-
-----------------------------------------------------------------------------------
----------------------------- user updating processing ----------------------------
-----------------------------------------------------------------------------------
-b1 = filterByEvent(l, 'user-updated');
-b2 = extractParam(b1, 'USER-ID', 'userId');
-b3 = extractParam(b2, 'EMAILS', 'emails');
-b = FOREACH b3 GENERATE dt,
-                        userId,
-                        emails;
-
-c1 = lastUpdate(b);
-c = FOREACH c1 GENERATE b::userId AS userId, b::emails AS emails;
-
-resultC = FOREACH c GENERATE userId,
-                             TOTUPLE('aliases', RemoveBrackets(emails));
-STORE resultC INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 
 
 ----------------------------------------------------------------------------------
@@ -74,19 +56,15 @@ d4 = extractParam(d3, 'COMPANY', 'company');
 d5 = extractParam(d4, 'PHONE', 'phone');
 d6 = extractParam(d5, 'JOBTITLE', 'job');
 d7 = extractParam(d6, 'USER-ID', 'userId');
-d8 = extractParam(d7, 'EMAILS', 'emails');
-d = FOREACH d8 GENERATE dt,
+d = FOREACH d7 GENERATE dt,
                         userId,
-                        emails,
                         NullToEmpty(firstName) AS firstName,
                         NullToEmpty(lastName) AS lastName,
                         NullToEmpty(company) AS company,
                         NullToEmpty(phone) AS phone,
                         NullToEmpty(FixJobTitle(job)) AS job;
-
 e1 = lastUpdate(d);
 e = FOREACH e1 GENERATE d::userId AS userId,
-                        d::emails AS emails,
                         d::firstName AS firstName,
                         d::lastName AS lastName,
                         d::company AS company,
@@ -94,10 +72,26 @@ e = FOREACH e1 GENERATE d::userId AS userId,
                         d::job  AS job;
 
 resultE = FOREACH e GENERATE userId,
-                             TOTUPLE('aliases', emails),
                              TOTUPLE('user_first_name', firstName),
                              TOTUPLE('user_last_name', lastName),
                              TOTUPLE('user_company', company),
                              TOTUPLE('user_phone', phone),
                              TOTUPLE('user_job', job);
 STORE resultE INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
+
+----------------------------------------------------------------------------------
+---------------------------- user updating processing ----------------------------
+----------------------------------------------------------------------------------
+b1 = filterByEvent(l, 'user-updated,user-update-profile');
+b2 = extractParam(b1, 'USER-ID', 'userId');
+b3 = extractParam(b2, 'EMAILS', 'emails');
+b = FOREACH b3 GENERATE dt,
+                        userId,
+                        emails;
+
+c1 = lastUpdate(b);
+c = FOREACH c1 GENERATE b::userId AS userId, b::emails AS emails;
+
+resultC = FOREACH c GENERATE userId,
+                             TOTUPLE('aliases', EnsureBrackets(emails));
+STORE resultC INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;

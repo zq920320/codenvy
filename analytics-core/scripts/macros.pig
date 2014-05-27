@@ -46,19 +46,12 @@ DEFINE loadResources(storageUrlParam, storageTableUsersProfilesParam, resourcePa
   l9 = removeEmptyField(l8, 'event');
 
   l10 = DISTINCT l9;
-
-  ------------------ replace alias with id
-  al1 = LOAD '$storageUrlParam.$storageTableUsersProfilesParam' USING MongoLoaderUsersAliases;
-  al = FOREACH al1 GENERATE id AS userId, FLATTEN(TOKENIZE(aliases, ',')) AS user;
-
-  l11 = JOIN l10 BY user LEFT, al BY user;
-  $Y = FOREACH l11 GENERATE l10::dt AS dt,
-                            (al::userId IS NOT NULL ? al::userId : l10::user) AS user, -- keep id as email for anonymous users
-                            (al::user IS NOT NULL ? REGEX_EXTRACT(al::user, '.*@(.*)', 1) : '') AS domain,
-                            l10::event AS event,
-                            l10::message AS message,
-                            l10::ws AS ws,
-                            l10::ide AS ide;
+  $Y = FOREACH l10 GENERATE dt,
+                            ReplaceWithId(user) AS user,
+                            event,
+                            message,
+                            ws,
+                            ide;
 };
 ---------------------------------------------------------------------------
 -- Removes tuples with empty fields

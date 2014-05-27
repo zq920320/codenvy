@@ -40,6 +40,10 @@ public class DoubleValueData extends NumericValueData {
         this.value = value;
     }
 
+    public static ValueData valueOf(Double value) {
+        return new DoubleValueData(value);
+    }
+
     @Override
     public String getAsString() {
         return Double.toString(value);
@@ -83,4 +87,5 @@ public class DoubleValueData extends NumericValueData {
     public double getAsDouble() {
         return value;
     }
+
 }

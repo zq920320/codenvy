@@ -112,7 +112,7 @@ public class TestUserProfiles extends BaseTest {
                       "company1",
                       "22",
                       "Other",
-                      "user1@gmail.com",
+                      "[user1@gmail.com]",
                       fullDateFormat.parse("2013-01-01 10:00:00").getTime());
         assertProfile(m.get("id2"),
                       "f2",
@@ -120,7 +120,7 @@ public class TestUserProfiles extends BaseTest {
                       "company2",
                       "11",
                       "Other",
-                      "user2@ukr.net",
+                      "[user2@ukr.net]",
                       fullDateFormat.parse("2013-01-01 11:00:00").getTime());
         assertProfile(m.get("id3"),
                       "f4",
@@ -128,7 +128,7 @@ public class TestUserProfiles extends BaseTest {
                       "company3",
                       "22",
                       "Other",
-                      "user3@gmail.com",
+                      "[user3@gmail.com]",
                       fullDateFormat.parse("2013-01-02 12:00:00").getTime());
         assertProfile(m.get("id4"),
                       "f4",
@@ -136,7 +136,7 @@ public class TestUserProfiles extends BaseTest {
                       "company4 :)",
                       "22",
                       "",
-                      "user4@gmail.com",
+                      "[user4@gmail.com]",
                       fullDateFormat.parse("2013-01-02 13:00:00").getTime());
     }
 

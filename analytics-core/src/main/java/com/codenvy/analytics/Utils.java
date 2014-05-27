@@ -340,4 +340,10 @@ public class Utils {
         Collections.addAll(orArgs, predicates);
         return new BasicDBObject("$or", predicates);
     }
+
+    public static String[] toArray(String value) {
+        int startIndex = value.startsWith("[") ? 1 : 0;
+        int endIndex = value.endsWith("]") ? value.length() - 1 : value.length();
+        return value.substring(startIndex, endIndex).split(",");
+    }
 }

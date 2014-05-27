@@ -19,6 +19,10 @@
 
 package com.codenvy.analytics.datamodel;
 
+import com.mongodb.BasicDBList;
+
+import java.util.Arrays;
+
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class ValueDataFactory {
 
@@ -52,13 +56,16 @@ public class ValueDataFactory {
         Class<?> clazz = value.getClass();
 
         if (clazz == String.class) {
-            return new StringValueData((String)value);
+            return StringValueData.valueOf((String)value);
 
         } else if (clazz == Long.class || clazz == Integer.class || clazz == Byte.class) {
-            return new LongValueData(((Number)value).longValue());
+            return LongValueData.valueOf(((Number)value).longValue());
 
         } else if (clazz == Double.class) {
-            return new DoubleValueData((Double)value);
+            return DoubleValueData.valueOf((Double)value);
+
+        } else if (clazz == BasicDBList.class) {
+            return StringValueData.valueOf(Arrays.toString(((BasicDBList)value).toArray()));
         }
 
         throw new IllegalArgumentException("Unknown class " + clazz.getName());

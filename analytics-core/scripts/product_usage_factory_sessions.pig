@@ -228,7 +228,7 @@ result3 = FOREACH t GENERATE UUID(),
                             TOTUPLE('logout_interval', 0L),
                             TOTUPLE('time', delta),
                             TOTUPLE('end_time', ToMilliSeconds(dt) + delta),
-                            TOTUPLE('domain', NullToEmpty(REGEX_EXTRACT(user, '.*@(.*)', 1))),
+                            TOTUPLE('domain', GetDomainById(user)),
                             TOTUPLE('user_company', ''),
                             TOTUPLE('factory', factory),
                             TOTUPLE('referrer', referrer);
