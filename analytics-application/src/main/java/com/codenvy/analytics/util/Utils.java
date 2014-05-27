@@ -20,7 +20,6 @@ package com.codenvy.analytics.util;
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.datamodel.ValueDataUtil;
 import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.metrics.accounts.AbstractAccountMetric;
 import com.codenvy.analytics.metrics.accounts.AccountWorkspacesList;
@@ -37,6 +36,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.codenvy.analytics.Utils.getFilterAsString;
+import static com.codenvy.analytics.datamodel.ValueDataUtil.getAsList;
 
 /** @author Anatoliy Bazko */
 public class Utils {
@@ -160,7 +160,7 @@ public class Utils {
             Set<String> users = new HashSet<>();
 
             Metric accountsMetric = MetricFactory.getMetric(MetricType.ACCOUNTS_LIST);
-            ListValueData accounts = ValueDataUtil.getAsList(accountsMetric, Context.EMPTY);
+            ListValueData accounts = getAsList(accountsMetric, Context.EMPTY);
 
             for (ValueData account : accounts.getAll()) {
                 Map<String, ValueData> map = ((MapValueData)account).getAll();
@@ -183,7 +183,7 @@ public class Utils {
         builder.put(MetricFilter.ACCOUNT_ID, accountId);
 
         Metric usersMetric = MetricFactory.getMetric(MetricType.ACCOUNT_USERS_ROLES_LIST);
-        ListValueData usersData = ValueDataUtil.getAsList(usersMetric, builder.build());
+        ListValueData usersData = getAsList(usersMetric, builder.build());
 
         for (ValueData user : usersData.getAll()) {
             Map<String, ValueData> userData = ((MapValueData)user).getAll();
@@ -210,7 +210,7 @@ public class Utils {
             String role = context.get(MetricFilter.DATA_UNIVERSE.toString());
 
             Metric accountsMetric = MetricFactory.getMetric(MetricType.ACCOUNTS_LIST);
-            ListValueData accounts = ValueDataUtil.getAsList(accountsMetric, Context.EMPTY);
+            ListValueData accounts = getAsList(accountsMetric, Context.EMPTY);
 
             if (isAccountsRoleExists(role)) {
                 accounts = doFilterAccountsByRole(role, accounts);
@@ -233,7 +233,7 @@ public class Utils {
             Context.Builder builder = new Context.Builder();
             builder.put(MetricFilter.ACCOUNT_ID, accountData.get(AccountWorkspacesList.ACCOUNT_ID).getAsString());
 
-            ListValueData workspaces = ValueDataUtil.getAsList(accountWorkspaces, builder.build());
+            ListValueData workspaces = getAsList(accountWorkspaces, builder.build());
             if (isWorkspacesRoleExists(role)) {
                 workspaces = doWorkspaceFilterByWorkspaceRole(role, workspaces);
             }

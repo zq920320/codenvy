@@ -328,6 +328,7 @@ public class ActOn extends Feature {
         }
         out.write(",");
 
+
         writeNotNullStr(out, Boolean.toString(isActive));
         out.write(",");
 

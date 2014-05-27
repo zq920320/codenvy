@@ -61,12 +61,10 @@ public class AccountUsersRolesList extends AbstractAccountMetric {
             boolean hasAdminRoles = rolesCurrentUserInWorkspace.contains(ROLE_WORKSPACE_ADMIN.toLowerCase());
 
             for (Member member : getMembers(workspace.getId())) {
-                String userEmail = getUserEmail(member.getUserId());
-
-                if (hasAdminRoles || userEmail.equals(currentUser.getEmail())) {
+                if (hasAdminRoles || member.getUserId().equals(currentUserId)) {
                     Map<String, ValueData> m = new HashMap<>();
                     m.put(ROLES, StringValueData.valueOf(member.getRoles().toString()));
-                    m.put(USER, StringValueData.valueOf(userEmail));
+                    m.put(USER, StringValueData.valueOf(member.getUserId()));
                     m.put(WS, StringValueData.valueOf(workspace.getName()));
 
                     list2Return.add(new MapValueData(m));
