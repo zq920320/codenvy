@@ -284,6 +284,8 @@ Event 'application-created' with parameter 'PAAS' and value 'manymo' doesn't exi
 Event 'application-created' with parameter 'PAAS' and value 'heroku' doesn't exist
 Event 'application-created' with parameter 'PAAS' and value 'cloudbees' doesn't exist
 Event doesn't exist: artifact-deployed
+Event doesn't exist for anonymous users: user-created
+Event doesn't exist: user-updated
 Event doesn't exist: user-removed
 Event doesn't exist for temporary workspaces: user-invite
 Event doesn't exist for anonymous users: user-invite

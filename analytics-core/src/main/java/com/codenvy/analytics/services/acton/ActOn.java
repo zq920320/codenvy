@@ -41,6 +41,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static com.codenvy.analytics.Utils.toArray;
+
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @Singleton
 public class ActOn extends Feature {
@@ -228,7 +230,7 @@ public class ActOn extends Feature {
         for (ValueData object : profiles) {
             Map<String, ValueData> profile = ((MapValueData)object).getAll();
 
-            if (profile.containsKey(AbstractMetric.ALIASES)) {
+            if (toArray(profile.get(AbstractMetric.ALIASES)).length > 0) {
                 ValueData user = profile.get(ReadBasedMetric.ID);
                 boolean isActive = activeUsers.contains(user);
 
@@ -282,8 +284,7 @@ public class ActOn extends Feature {
                                  Map<String, ValueData> stat,
                                  Map<String, ValueData> profile,
                                  boolean isActive) throws IOException {
-
-        writeString(out, profile.get(AbstractMetric.ALIASES));
+        writeString(out, StringValueData.valueOf(toArray(profile.get(AbstractMetric.ALIASES))[0]));
         out.write(",");
 
         writeString(out, profile.get(AbstractMetric.USER_FIRST_NAME));

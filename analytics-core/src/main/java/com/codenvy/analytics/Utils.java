@@ -19,6 +19,7 @@
 
 package com.codenvy.analytics;
 
+import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.Context.Builder;
 import com.codenvy.analytics.metrics.Parameters;
@@ -342,8 +343,16 @@ public class Utils {
     }
 
     public static String[] toArray(String value) {
+        if (value == null) {
+            return new String[0];
+        }
+
         int startIndex = value.startsWith("[") ? 1 : 0;
         int endIndex = value.endsWith("]") ? value.length() - 1 : value.length();
         return value.substring(startIndex, endIndex).split(",");
+    }
+
+    public static String[] toArray(ValueData value) {
+        return toArray(value == null ? null : value.getAsString());
     }
 }
