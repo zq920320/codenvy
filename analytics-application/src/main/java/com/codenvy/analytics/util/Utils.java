@@ -142,10 +142,6 @@ public class Utils {
 
     private static void putPossibleUsersAsFilter(Map<String, String> context, SecurityContext securityContext) {
         if (!isSystemUser(securityContext)) {
-//            String allUsers = "exoinvite4@gmail.com OR exoinvitesingle@gmail.com OR githubinvite3@gmail.com OR " +
-//                              "tratata@ss.ss OR githubinvite2@gmail.com OR additional.test.user@gmail.com OR " +
-//                              "exoinvitemain@gmail.com OR exoinvite1@gmail.com OR exoinvite2@gmail.com OR githubinvite4@gmail.com";
-//            Set<String> users = getFilterAsSet(allUsers);
             Set<String> allowedUsers = getAllowedUsers();
 
             if (!context.containsKey(MetricFilter.USER.toString())) {
@@ -195,7 +191,6 @@ public class Utils {
 
     private static void putPossibleWorkspacesAsFilter(Map<String, String> context, SecurityContext securityContext) {
         if (!isSystemUser(securityContext)) {
-//            Set<String> workspaces = new HashSet<>(Arrays.asList("exoinvitemain"));
             Set<String> allowedWorkspaces = getAllowedWorkspacesForCurrentUser(context);
 
             if (!context.containsKey(MetricFilter.WS.toString())) {
