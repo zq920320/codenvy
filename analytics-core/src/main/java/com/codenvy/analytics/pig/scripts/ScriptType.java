@@ -150,8 +150,6 @@ public enum ScriptType {
                                                Parameters.TO_DATE,
                                                Parameters.FROM_DATE,
                                                Parameters.STORAGE_URL,
-                                               Parameters.STORAGE_USER,
-                                               Parameters.STORAGE_PASSWORD,
                                                Parameters.STORAGE_TABLE,
                                                Parameters.STORAGE_TABLE_USERS_PROFILES}));
     }

@@ -116,17 +116,7 @@ public class MongoDataStorage {
     }
 
     public void putStorageParameters(Context.Builder builder) {
-        if (uri.getUsername() == null) {
-            builder.put(Parameters.STORAGE_URL, uri.toString());
-            builder.put(Parameters.STORAGE_USER, "''");
-            builder.put(Parameters.STORAGE_PASSWORD, "''");
-        } else {
-            String password = new String(uri.getPassword());
-            String serverUrlNoPassword = uri.toString().replace(uri.getUsername() + ":" + password + "@", "");
-            builder.put(Parameters.STORAGE_URL, serverUrlNoPassword);
-            builder.put(Parameters.STORAGE_USER, uri.getUsername());
-            builder.put(Parameters.STORAGE_PASSWORD, password);
-        }
+        builder.put(Parameters.STORAGE_URL, uri.toString());
         builder.putDefaultValue(Parameters.STORAGE_TABLE_USERS_PROFILES);
     }
 

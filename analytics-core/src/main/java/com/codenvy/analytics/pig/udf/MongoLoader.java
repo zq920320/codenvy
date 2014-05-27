@@ -46,41 +46,19 @@ public class MongoLoader extends LoadFunc implements LoadMetadata {
 
     public static final String SERVER_URL_PARAM = "server.url";
 
-    private final String user;
-    private final String password;
-
     private final TupleFactory   tupleFactory;
     private final ResourceSchema schema;
 
     private MongoReader reader;
 
-    public MongoLoader(String user, String password, String schema) throws ParserException {
+    public MongoLoader(String schema) throws ParserException {
         this.tupleFactory = TupleFactory.getInstance();
         this.schema = new ResourceSchema(Utils.parseSchema(schema));
-        this.user = user;
-        this.password = password;
     }
 
     @Override
     public void setLocation(String location, Job job) throws IOException {
-        String serverUrl;
-
-        if (user.isEmpty()) {
-            serverUrl = location;
-
-        } else {
-            StringBuilder builder = new StringBuilder();
-            builder.append("mongodb://");
-            builder.append(user);
-            builder.append(":");
-            builder.append(password);
-            builder.append("@");
-            builder.append(location.substring(10));
-
-            serverUrl = builder.toString();
-        }
-
-        job.getConfiguration().set(SERVER_URL_PARAM, serverUrl);
+        job.getConfiguration().set(SERVER_URL_PARAM, location);
     }
 
     @Override

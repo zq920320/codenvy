@@ -22,7 +22,10 @@ import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.persistent.CollectionsManagement;
 import com.codenvy.analytics.persistent.MongoDataStorage;
 import com.codenvy.analytics.pig.scripts.EventsHolder;
-import com.mongodb.*;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBCollection;
+import com.mongodb.DBObject;
+import com.mongodb.MongoClientURI;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.WritableComparable;
@@ -42,15 +45,9 @@ public class MongoStorage extends StoreFunc {
     private static final Logger LOG              = LoggerFactory.getLogger(MongoStorage.class);
     private static final String SERVER_URL_PARAM = "server.url";
 
-    private final String user;
-    private final String password;
-
     private RecordWriter writer;
 
-    /** {@link MongoStorage} constructor. */
-    public MongoStorage(String user, String password) {
-        this.user = user;
-        this.password = password;
+    public MongoStorage() {
     }
 
     @Override
@@ -60,15 +57,7 @@ public class MongoStorage extends StoreFunc {
 
     @Override
     public void setStoreLocation(String location, Job job) throws IOException {
-        String serverUrl;
-
-        if (user.isEmpty()) {
-            serverUrl = location;
-        } else {
-            serverUrl = "mongodb://" + user + ":" + password + "@" + location.substring("mongodb://".length());
-        }
-
-        job.getConfiguration().set(SERVER_URL_PARAM, serverUrl);
+        job.getConfiguration().set(SERVER_URL_PARAM, location);
     }
 
     @Override
@@ -100,15 +89,14 @@ public class MongoStorage extends StoreFunc {
             MongoDataStorage mongoDataStorage = Injector.getInstance(MongoDataStorage.class);
             CollectionsManagement collectionsManagement = Injector.getInstance(CollectionsManagement.class);
 
-            DB db = mongoDataStorage.getDb();
-
-            if (!collectionsManagement.exists(uri.getCollection())) {
-                String msg = "Collection " + uri.getCollection() + " doesn't exist in configuration";
+            String name = uri.getCollection();
+            if (!name.startsWith("test") && !collectionsManagement.exists(name)) {
+                String msg = "Collection " + name + " doesn't exist in configuration";
                 LOG.error(msg);
                 throw new IOException(msg);
             }
 
-            this.dbCollection = db.getCollection(uri.getCollection());
+            this.dbCollection = mongoDataStorage.getDb().getCollection(name);
             this.eventsHolder = Injector.getInstance(EventsHolder.class);
         }
 

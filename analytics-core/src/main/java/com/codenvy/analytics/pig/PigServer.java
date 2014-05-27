@@ -86,10 +86,6 @@ public class PigServer {
         return result;
     }
 
-    private org.apache.pig.PigServer initEmbeddedServer() throws IOException {
-        return initializeServer();
-    }
-
     /**
      * Run the script.
      *
@@ -126,7 +122,7 @@ public class PigServer {
         }
     }
 
-    private org.apache.pig.PigServer initializeServer() throws IOException {
+    private org.apache.pig.PigServer initEmbeddedServer() throws IOException {
         org.apache.pig.PigServer server = new org.apache.pig.PigServer(ExecType.LOCAL);
 
         server.debugOff();
@@ -147,42 +143,28 @@ public class PigServer {
         server.registerFunction("NullToEmpty", new FuncSpec("com.codenvy.analytics.pig.udf.NullToEmpty"));
         server.registerFunction("CreateProjectId", new FuncSpec("com.codenvy.analytics.pig.udf.CreateProjectId"));
         server.registerFunction("RemoveBrackets", new FuncSpec("com.codenvy.analytics.pig.udf.RemoveBrackets"));
-
-        server.registerFunction("MongoStorage",
-                                new FuncSpec("com.codenvy.analytics.pig.udf.MongoStorage",
-                                             new String[]{"$STORAGE_USER",
-                                                          "$STORAGE_PASSWORD"}));
+        server.registerFunction("MongoStorage", new FuncSpec("com.codenvy.analytics.pig.udf.MongoStorage"));
 
         server.registerFunction("MongoLoaderUsersCompanies",
                                 new FuncSpec("com.codenvy.analytics.pig.udf.MongoLoader",
-                                             new String[]{"$STORAGE_USER",
-                                                          "$STORAGE_PASSWORD",
-                                                          "id: chararray,user_company: chararray"}));
+                                             new String[]{"id: chararray,user_company: chararray"}));
 
         server.registerFunction("MongoLoaderUsersAliases",
                                 new FuncSpec("com.codenvy.analytics.pig.udf.MongoLoader",
-                                             new String[]{"$STORAGE_USER",
-                                                          "$STORAGE_PASSWORD",
-                                                          "id: chararray,aliases: chararray"}));
+                                             new String[]{"id: chararray,aliases: chararray"}));
 
         server.registerFunction("MongoLoaderAcceptedFactories",
                                 new FuncSpec("com.codenvy.analytics.pig.udf.MongoLoader",
-                                             new String[]{"$STORAGE_USER",
-                                                          "$STORAGE_PASSWORD",
-                                                          "ws: chararray,user: chararray,factory: chararray,referrer: chararray," +
+                                             new String[]{"ws: chararray,user: chararray,factory: chararray,referrer: chararray," +
                                                           "org_id: chararray, affiliate_id: chararray"}));
 
         server.registerFunction("MongoLoaderTest",
                                 new FuncSpec("com.codenvy.analytics.pig.udf.MongoLoader",
-                                             new String[]{"$STORAGE_USER",
-                                                          "$STORAGE_PASSWORD",
-                                                          "value:Long"}));
+                                             new String[]{"value:Long"}));
 
         server.registerFunction("MongoLoaderCollectionWithSession",
                                 new FuncSpec("com.codenvy.analytics.pig.udf.MongoLoader",
-                                             new String[]{"$STORAGE_USER",
-                                                          "$STORAGE_PASSWORD",
-                                                          "id: chararray, session_id: chararray"}));
+                                             new String[]{"id: chararray, session_id: chararray"}));
 
         return server;
     }
