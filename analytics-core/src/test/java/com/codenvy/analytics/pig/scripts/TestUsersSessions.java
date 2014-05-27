@@ -129,7 +129,7 @@ public class TestUsersSessions extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
-        builder.put(MetricFilter.USER, "user@gmail.com");
+        builder.put(MetricFilter.USER, "id");
 
         Metric metric = MetricFactory.getMetric(MetricType.PRODUCT_USAGE_SESSIONS_LIST);
 

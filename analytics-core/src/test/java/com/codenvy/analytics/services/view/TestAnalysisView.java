@@ -222,7 +222,7 @@ public class TestAnalysisView extends BaseTest {
 
         // test data of column 4 with label "Oct 2013"
         Map<RowLabel, String> column4Data = getColumn(4, monthlyAnalysisReport, rowsLabels, true);
-        assertEquals(column4Data.get(RowLabel.TOTAL_USERS), "23");
+        assertEquals(column4Data.get(RowLabel.TOTAL_USERS), "20");
         assertEquals(column4Data.get(RowLabel.TOTAL_NUMBER_OF_USERS_WE_TRACK), "0");
         assertEquals(column4Data.get(RowLabel.CREATED_PROJECTS), "0");
         assertEquals(column4Data.get(RowLabel.AND_BUILT), "0");
@@ -233,7 +233,7 @@ public class TestAnalysisView extends BaseTest {
 
         // test data of column 3 with label "Nov 2013"
         Map<RowLabel, String> column3Data = getColumn(3, monthlyAnalysisReport, rowsLabels, true);
-        assertEquals(column3Data.get(RowLabel.TOTAL_USERS), "23");
+        assertEquals(column3Data.get(RowLabel.TOTAL_USERS), "22");
         assertEquals(column3Data.get(RowLabel.TOTAL_NUMBER_OF_USERS_WE_TRACK), "2");
         assertEquals(column3Data.get(RowLabel.CREATED_PROJECTS), "2");
         assertEquals(column3Data.get(RowLabel.AND_BUILT), "1");
@@ -299,7 +299,7 @@ public class TestAnalysisView extends BaseTest {
         // test data of column 6 with label "30 Nov"
         {
             Map<RowLabel, String> columnData = getColumn(6, weeklyAnalysisReport, rowsLabels, true);
-            assertEquals(columnData.get(RowLabel.TOTAL_USERS), "23");
+            assertEquals(columnData.get(RowLabel.TOTAL_USERS), "22");
             assertEquals(columnData.get(RowLabel.TOTAL_NUMBER_OF_USERS_WE_TRACK), "2");
             assertEquals(columnData.get(RowLabel.CREATED_PROJECTS), "2");
             assertEquals(columnData.get(RowLabel.AND_BUILT), "1");
@@ -312,7 +312,7 @@ public class TestAnalysisView extends BaseTest {
         // test data of column 11 with label "26 Oct"
         {
             Map<RowLabel, String> columnData = getColumn(11, weeklyAnalysisReport, rowsLabels, true);
-            assertEquals(columnData.get(RowLabel.TOTAL_USERS), "23");
+            assertEquals(columnData.get(RowLabel.TOTAL_USERS), "20");
             assertEquals(columnData.get(RowLabel.TOTAL_NUMBER_OF_USERS_WE_TRACK), "0");
             assertEquals(columnData.get(RowLabel.CREATED_PROJECTS), "0");
             assertEquals(columnData.get(RowLabel.AND_BUILT), "0");
@@ -557,6 +557,9 @@ public class TestAnalysisView extends BaseTest {
 
         /** create collections "shell_launched" to calculate "users_who_launched_shell" metric */
         builder.putAll(scriptsManager.getScript(ScriptType.EVENTS, MetricType.SHELL_LAUNCHED).getParamsAsMap());
+        pigServer.execute(ScriptType.EVENTS, builder.build());
+
+        builder.putAll(scriptsManager.getScript(ScriptType.EVENTS, MetricType.CREATED_USERS).getParamsAsMap());
         pigServer.execute(ScriptType.EVENTS, builder.build());
 
         builder.putAll(scriptsManager.getScript(ScriptType.ACTIVE_ENTITIES, MetricType.ACTIVE_USERS_SET).getParamsAsMap());

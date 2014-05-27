@@ -74,19 +74,19 @@ public class TestPagination extends BaseTest {
         List<ValueData> all = value.getAll();
 
         MapValueData item = (MapValueData)all.get(0);
-        assertEquals(item.getAll().get("_id").getAsString(), "user1@gmail.com");
+        assertEquals(item.getAll().get("_id").getAsString(), "id1");
 
         item = (MapValueData)all.get(1);
-        assertEquals(item.getAll().get("_id").getAsString(), "user2@gmail.com");
+        assertEquals(item.getAll().get("_id").getAsString(), "id2");
 
         item = (MapValueData)all.get(2);
-        assertEquals(item.getAll().get("_id").getAsString(), "user3@gmail.com");
+        assertEquals(item.getAll().get("_id").getAsString(), "id3");
 
         item = (MapValueData)all.get(3);
-        assertEquals(item.getAll().get("_id").getAsString(), "user4@gmail.com");
+        assertEquals(item.getAll().get("_id").getAsString(), "id4");
 
         item = (MapValueData)all.get(4);
-        assertEquals(item.getAll().get("_id").getAsString(), "user5@gmail.com");
+        assertEquals(item.getAll().get("_id").getAsString(), "id5");
     }
 
     @Test
@@ -102,19 +102,19 @@ public class TestPagination extends BaseTest {
         List<ValueData> all = value.getAll();
 
         MapValueData item = (MapValueData)all.get(0);
-        assertEquals(item.getAll().get("_id").getAsString(), "user5@gmail.com");
+        assertEquals(item.getAll().get("_id").getAsString(), "id5");
 
         item = (MapValueData)all.get(1);
-        assertEquals(item.getAll().get("_id").getAsString(), "user4@gmail.com");
+        assertEquals(item.getAll().get("_id").getAsString(), "id4");
 
         item = (MapValueData)all.get(2);
-        assertEquals(item.getAll().get("_id").getAsString(), "user3@gmail.com");
+        assertEquals(item.getAll().get("_id").getAsString(), "id3");
 
         item = (MapValueData)all.get(3);
-        assertEquals(item.getAll().get("_id").getAsString(), "user2@gmail.com");
+        assertEquals(item.getAll().get("_id").getAsString(), "id2");
 
         item = (MapValueData)all.get(4);
-        assertEquals(item.getAll().get("_id").getAsString(), "user1@gmail.com");
+        assertEquals(item.getAll().get("_id").getAsString(), "id1");
     }
 
     @Test
@@ -132,7 +132,7 @@ public class TestPagination extends BaseTest {
         List<ValueData> all = value.getAll();
 
         MapValueData item = (MapValueData)all.get(0);
-        assertEquals(item.getAll().get("_id").getAsString(), "user1@gmail.com");
+        assertEquals(item.getAll().get("_id").getAsString(), "id1");
     }
 
     @Test
@@ -150,7 +150,7 @@ public class TestPagination extends BaseTest {
         List<ValueData> all = value.getAll();
 
         MapValueData item = (MapValueData)all.get(0);
-        assertEquals(item.getAll().get("_id").getAsString(), "user3@gmail.com");
+        assertEquals(item.getAll().get("_id").getAsString(), "id3");
     }
 
     @Test
@@ -168,7 +168,7 @@ public class TestPagination extends BaseTest {
         List<ValueData> all = value.getAll();
 
         MapValueData item = (MapValueData)all.get(0);
-        assertEquals(item.getAll().get("_id").getAsString(), "user5@gmail.com");
+        assertEquals(item.getAll().get("_id").getAsString(), "id5");
     }
 
     @Test

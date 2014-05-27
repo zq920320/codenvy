@@ -48,14 +48,14 @@ public class TestUsersData extends BaseTest {
         builder.put(Parameters.TO_DATE, "20131101");
         builder.put(Parameters.LOG, MESSAGES);
 
+        builder.putAll(scriptsManager.getScript(ScriptType.USERS_PROFILES, MetricType.USERS_PROFILES_LIST).getParamsAsMap());
+        pigServer.execute(ScriptType.USERS_PROFILES, builder.build());
+
         builder.putAll(scriptsManager.getScript(ScriptType.PRODUCT_USAGE_SESSIONS, MetricType.PRODUCT_USAGE_SESSIONS_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, builder.build());
 
         builder.putAll(scriptsManager.getScript(ScriptType.USERS_STATISTICS, MetricType.USERS_STATISTICS_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.USERS_STATISTICS, builder.build());
-
-        builder.putAll(scriptsManager.getScript(ScriptType.USERS_PROFILES, MetricType.USERS_PROFILES_LIST).getParamsAsMap());
-        pigServer.execute(ScriptType.USERS_PROFILES, builder.build());
 
         DataComputationFeature dataComputationFeature = new DataComputationFeature();
         dataComputationFeature.forceExecute(builder.build());
@@ -79,7 +79,7 @@ public class TestUsersData extends BaseTest {
 
             String user = all.get(UsersStatisticsList.USER).getAsString();
             switch (user) {
-                case "user1@gmail.com":
+                case "id1":
                     assertEquals(all.get(UsersStatisticsList.PROJECTS).getAsString(), "1");
                     assertEquals(all.get(UsersStatisticsList.DEPLOYS).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.BUILDS).getAsString(), "0");
@@ -99,7 +99,7 @@ public class TestUsersData extends BaseTest {
                     assertEquals(all.get(UsersStatisticsList.USER_JOB).getAsString(), "Other");
                     break;
 
-                case "user2@gmail.com":
+                case "id2":
                     assertEquals(all.get(UsersStatisticsList.PROJECTS).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.RUNS).getAsString(), "1");
                     assertEquals(all.get(UsersStatisticsList.DEPLOYS).getAsString(), "1");
@@ -119,7 +119,7 @@ public class TestUsersData extends BaseTest {
                     assertEquals(all.get(UsersStatisticsList.USER_JOB).getAsString(), "Other");
                     break;
 
-                case "user3@gmail.com":
+                case "id3":
                     assertEquals(all.get(UsersStatisticsList.SESSIONS).getAsString(), "1");
                     assertEquals(all.get(UsersStatisticsList.PROJECTS).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.TIME).getAsString(), "120000");
@@ -139,7 +139,7 @@ public class TestUsersData extends BaseTest {
                     assertEquals(all.get(UsersStatisticsList.USER_JOB).getAsString(), "Other");
                     break;
 
-                case "user4@gmail.com":
+                case "id4":
                     assertEquals(all.get(UsersStatisticsList.PROJECTS).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.DEPLOYS).getAsString(), "1");
                     assertEquals(all.get(UsersStatisticsList.BUILDS).getAsString(), "0");
@@ -262,7 +262,7 @@ public class TestUsersData extends BaseTest {
     @Test
     public void testUsersTimeInWorkspacesWithFilter() throws Exception {
         Context.Builder builder = new Context.Builder();
-        builder.put(MetricFilter.USER, "user1@gmail.com");
+        builder.put(MetricFilter.USER, "id1");
 
         UsageTimeByWorkspacesList metric = new UsageTimeByWorkspacesList();
         ListValueData valueData = (ListValueData)metric.getValue(builder.build());

@@ -111,8 +111,8 @@ public class TestEventValidation extends BaseTest {
         return new Object[][]{
                 {"project-created", "ws", "user", "PROJECT#Sample-TwitterBootstrap# TYPE#JavaScript# PAAS#null#"},
                 {"factory-created", "ws", "user", "PROJECT#project# TYPE## REPO-URL#repo# FACTORY-URL#factory# AFFILIATE-ID## ORG-ID##"},
-                {"user-created", "ws", "user", "USER-ID#usermwl9896s2we14h9n# ALIASES#anonymoususer_zz31bd#"},
-                {"user-update-profile", "ws", "user_tt", "USER#user_tt# FIRSTNAME## LASTNAME#_l# COMPANY## PHONE## JOBTITLE##"},
+                {"user-created", "ws", "user", "USER-ID#usermwl9896s2we14h9n# EMAILS#anonymoususer_zz31bd#"},
+                {"user-update-profile", "ws", "user", "USER#user_tt# FIRSTNAME## LASTNAME#_l# COMPANY## PHONE## JOBTITLE## EMAILS#user# USER-ID#id#"},
                 {"project-built", "ws", "user", "PROJECT#Default# TYPE#Servlet/JSP#"},
                 {"project-built", "ws", "user", "PROJECT#PizzaHome-660# TYPE#Default#"},
         };

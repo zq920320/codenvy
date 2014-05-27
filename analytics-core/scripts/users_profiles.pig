@@ -36,7 +36,10 @@ l = loadResources('$STORAGE_URL', '$STORAGE_TABLE_USERS_PROFILES', '$LOG', '$FRO
 a1 = filterByEvent(l, 'user-created');
 a2 = extractParam(a1, 'USER-ID', 'userId');
 a3 = extractParam(a2, 'EMAILS', 'emails');
-a = FOREACH a3 GENERATE dt, userId, emails;
+a = FOREACH a3 GENERATE dt,
+                        userId,
+                        emails;
+
 resultA = FOREACH a GENERATE userId,
                              TOTUPLE('date', ToMilliSeconds(dt)),
                              TOTUPLE('aliases', RemoveBrackets(emails));
@@ -49,7 +52,9 @@ STORE resultA INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 b1 = filterByEvent(l, 'user-updated');
 b2 = extractParam(b1, 'USER-ID', 'userId');
 b3 = extractParam(b2, 'EMAILS', 'emails');
-b = FOREACH b3 GENERATE dt, userId, emails;
+b = FOREACH b3 GENERATE dt,
+                        userId,
+                        emails;
 
 c1 = lastUpdate(b);
 c = FOREACH c1 GENERATE b::userId AS userId, b::emails AS emails;
@@ -69,8 +74,10 @@ d4 = extractParam(d3, 'COMPANY', 'company');
 d5 = extractParam(d4, 'PHONE', 'phone');
 d6 = extractParam(d5, 'JOBTITLE', 'job');
 d7 = extractParam(d6, 'USER-ID', 'userId');
-d = FOREACH d7 GENERATE dt,
+d8 = extractParam(d7, 'EMAILS', 'emails');
+d = FOREACH d8 GENERATE dt,
                         userId,
+                        emails,
                         NullToEmpty(firstName) AS firstName,
                         NullToEmpty(lastName) AS lastName,
                         NullToEmpty(company) AS company,
@@ -79,6 +86,7 @@ d = FOREACH d7 GENERATE dt,
 
 e1 = lastUpdate(d);
 e = FOREACH e1 GENERATE d::userId AS userId,
+                        d::emails AS emails,
                         d::firstName AS firstName,
                         d::lastName AS lastName,
                         d::company AS company,
@@ -86,6 +94,7 @@ e = FOREACH e1 GENERATE d::userId AS userId,
                         d::job  AS job;
 
 resultE = FOREACH e GENERATE userId,
+                             TOTUPLE('aliases', emails),
                              TOTUPLE('user_first_name', firstName),
                              TOTUPLE('user_last_name', lastName),
                              TOTUPLE('user_company', company),

@@ -53,9 +53,10 @@ DEFINE loadResources(storageUrlParam, storageTableUsersProfilesParam, resourcePa
 
   l11 = JOIN l10 BY user LEFT, al BY user;
   $Y = FOREACH l11 GENERATE l10::dt AS dt,
+                            (al::userId IS NOT NULL ? al::userId : l10::user) AS user, -- keep id as email for anonymous users
+                            (al::user IS NOT NULL ? REGEX_EXTRACT(al::user, '.*@(.*)', 1) : '') AS domain,
                             l10::event AS event,
                             l10::message AS message,
-                            (al::user IS NOT NULL ? al::userId : l10::user) AS user, -- keep id as email for anonymous users
                             l10::ws AS ws,
                             l10::ide AS ide;
 };

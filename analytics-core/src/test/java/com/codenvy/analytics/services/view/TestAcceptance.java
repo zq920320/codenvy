@@ -266,7 +266,7 @@ public class TestAcceptance extends BaseTest {
     private void assertAnalysis(SectionData sectionData) {
         // Total users
         String row = sectionData.get(1).get(0).getAsString();
-        aggregateResult(row, new StringValueData("52"), sectionData.get(1).get(1));
+        aggregateResult(row, new StringValueData("51"), sectionData.get(1).get(1));
 
         // The total number of users we track
         row = sectionData.get(2).get(0).getAsString();
@@ -622,7 +622,7 @@ public class TestAcceptance extends BaseTest {
     private void assertUsersDay(SectionData sectionData) {
         String row = sectionData.get(1).get(0).getAsString();
         aggregateResult(row, new StringValueData("Total Created"), sectionData.get(1).get(0));
-        aggregateResult(row, new StringValueData("32"), sectionData.get(1).get(1));
+        aggregateResult(row, new StringValueData("31"), sectionData.get(1).get(1));
 
         row = sectionData.get(2).get(0).getAsString();
         aggregateResult(row, new StringValueData("Created From Factory"), sectionData.get(2).get(0));
@@ -630,17 +630,17 @@ public class TestAcceptance extends BaseTest {
 
         row = sectionData.get(3).get(0).getAsString();
         aggregateResult(row, new StringValueData("Created From Form / oAuth"), sectionData.get(3).get(0));
-        aggregateResult(row, new StringValueData("27"), sectionData.get(3).get(1));
+        aggregateResult(row, new StringValueData("26"), sectionData.get(3).get(1));
 
         row = sectionData.get(4).get(0).getAsString();
         aggregateResult(row, new StringValueData("Total"), sectionData.get(4).get(0));
-        aggregateResult(row, new StringValueData("52"), sectionData.get(4).get(1));
+        aggregateResult(row, new StringValueData("51"), sectionData.get(4).get(1));
     }
 
     private void assertUsersUsageDay(SectionData sectionData) {
         String row = sectionData.get(1).get(0).getAsString();
         aggregateResult(row, new StringValueData("Total"), sectionData.get(1).get(0));
-        aggregateResult(row, new StringValueData("52"), sectionData.get(1).get(1));
+        aggregateResult(row, new StringValueData("51"), sectionData.get(1).get(1));
 
         row = sectionData.get(2).get(0).getAsString();
         aggregateResult(row, new StringValueData("Active Users"), sectionData.get(2).get(0));
