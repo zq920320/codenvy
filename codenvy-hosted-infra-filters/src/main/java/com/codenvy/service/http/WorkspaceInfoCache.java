@@ -125,7 +125,7 @@ public class WorkspaceInfoCache {
         Workspace workspace = workspaceCache.get(key);
         if (workspace.isTemporary()) {
             for (Attribute attribute : workspace.getAttributes()) {
-                if (attribute.getName().equals("tmp_workspace_cloned_from_private_repo")) {
+                if (attribute.getName().equals("allowAnyoneAddMember")) {
                     return workspace;
                 }
             }
