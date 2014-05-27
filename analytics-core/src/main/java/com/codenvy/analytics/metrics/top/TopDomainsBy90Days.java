@@ -3,7 +3,7 @@
  * CODENVY CONFIDENTIAL
  * ________________
  *
- * [2012] - [2013] Codenvy, S.A.
+ * [2012] - [2014] Codenvy, S.A.
  * All Rights Reserved.
  * NOTICE: All information contained herein is, and remains
  * the property of Codenvy S.A. and its suppliers,
@@ -17,23 +17,22 @@
  */
 package com.codenvy.analytics.metrics.top;
 
-import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.analytics.metrics.OmitFilters;
+import com.codenvy.analytics.metrics.Parameters.PassedDaysCount;
+import com.codenvy.analytics.metrics.Parameters.TimeUnit;
 
 import javax.annotation.security.RolesAllowed;
 
-/** @author <a href="mailto:dnochevnov@codenvy.com">Dmytro Nochevnov</a> */
+/** @author Anatoliy Bazko */
 @RolesAllowed({"system/admin", "system/manager"})
-@OmitFilters(MetricFilter.WS)
-public class TopFactoriesBy30Day extends AbstractTopFactories {
+public class TopDomainsBy90Days extends AbstractDomainsTime {
 
-    public TopFactoriesBy30Day() {
-        super(MetricType.TOP_FACTORIES_BY_30DAY, 30);
+    public TopDomainsBy90Days() {
+        super(MetricType.TOP_DOMAINS_BY_90_DAYS, PassedDaysCount.BY_90_DAYS);
     }
 
     @Override
     public String getDescription() {
-        return "The top factories with the same url sorted by overall duration of session in period of time during 30 days before today";
+        return "Top 100 domains by time working in product during last 90 days";
     }
 }

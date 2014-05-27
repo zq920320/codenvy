@@ -19,14 +19,15 @@ package com.codenvy.analytics.metrics.top;
 
 import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.Parameters.PassedDaysCount;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
 
 /** @author <a href="mailto:dnochevnov@codenvy.com">Dmytro Nochevnov</a> */
 public abstract class AbstractTopSessions extends AbstractTopMetrics {
-    public AbstractTopSessions(MetricType factoryMetricType, int dayCount) {
-        super(factoryMetricType, dayCount);
+    public AbstractTopSessions(MetricType factoryMetricType, PassedDaysCount passedDaysCount) {
+        super(factoryMetricType, passedDaysCount);
     }
 
     @Override

@@ -18,19 +18,21 @@
 package com.codenvy.analytics.metrics.top;
 
 import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.Parameters.PassedDaysCount;
+import com.codenvy.analytics.metrics.Parameters.TimeUnit;
 
 import javax.annotation.security.RolesAllowed;
 
 /** @author Anatoliy Bazko */
 @RolesAllowed({"system/admin", "system/manager"})
-public class TopCompaniesBy30Day extends AbstractCompaniesTime {
+public class TopCompaniesBy90Days extends AbstractCompaniesTime {
 
-    public TopCompaniesBy30Day() {
-        super(MetricType.TOP_COMPANIES_BY_30DAY, 30);
+    public TopCompaniesBy90Days() {
+        super(MetricType.TOP_COMPANIES_BY_90_DAYS, PassedDaysCount.BY_90_DAYS);
     }
 
     @Override
     public String getDescription() {
-        return "Top 100 companies by time working in product during last 30 days";
+        return "Top 100 companies by time working in product during last 90 days";
     }
 }

@@ -3,7 +3,7 @@
  * CODENVY CONFIDENTIAL
  * ________________
  *
- * [2012] - [2014] Codenvy, S.A.
+ * [2012] - [2013] Codenvy, S.A.
  * All Rights Reserved.
  * NOTICE: All information contained herein is, and remains
  * the property of Codenvy S.A. and its suppliers,
@@ -17,20 +17,24 @@
  */
 package com.codenvy.analytics.metrics.top;
 
+import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.OmitFilters;
+import com.codenvy.analytics.metrics.Parameters.PassedDaysCount;
 
 import javax.annotation.security.RolesAllowed;
 
-/** @author Anatoliy Bazko */
+/** @author <a href="mailto:dnochevnov@codenvy.com">Dmytro Nochevnov</a> */
 @RolesAllowed({"system/admin", "system/manager"})
-public class TopUsersBy7Day extends AbstractTopUsers {
+@OmitFilters(MetricFilter.WS)
+public class TopFactorySessionsBy30Days extends AbstractTopSessions {
 
-    public TopUsersBy7Day() {
-        super(MetricType.TOP_USERS_BY_7DAY, 7);
+    public TopFactorySessionsBy30Days() {
+        super(MetricType.TOP_FACTORY_SESSIONS_BY_30_DAYS, PassedDaysCount.BY_30_DAYS);
     }
 
     @Override
     public String getDescription() {
-        return "Top 100 users by time working in product during last 7 days";
+        return "The top factory sessions sorted by duration of session in period of time during 30 days before today";
     }
 }

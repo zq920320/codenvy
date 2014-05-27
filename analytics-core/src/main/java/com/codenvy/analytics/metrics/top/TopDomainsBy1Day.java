@@ -18,6 +18,8 @@
 package com.codenvy.analytics.metrics.top;
 
 import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.Parameters.PassedDaysCount;
+import com.codenvy.analytics.metrics.Parameters.TimeUnit;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -26,7 +28,7 @@ import javax.annotation.security.RolesAllowed;
 public class TopDomainsBy1Day extends AbstractDomainsTime {
 
     public TopDomainsBy1Day() {
-        super(MetricType.TOP_DOMAINS_BY_1DAY, 1);
+        super(MetricType.TOP_DOMAINS_BY_1_DAY, PassedDaysCount.BY_1_DAY);
     }
 
     @Override

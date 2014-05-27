@@ -19,14 +19,16 @@ package com.codenvy.analytics.metrics.top;
 
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.metrics.Parameters.PassedDaysCount;
 
 /** @author Anatoliy Bazko */
 public abstract class AbstractCompaniesTime extends AbstractTopEntitiesTime {
 
-    public AbstractCompaniesTime(MetricType metricType, int dayCount) {
+    public AbstractCompaniesTime(MetricType metricType, PassedDaysCount passedDaysCount) {
         super(metricType,
               new MetricType[]{MetricType.PRODUCT_COMPANIES_TIME},
               MetricFilter.USER_COMPANY,
-              dayCount);
+              passedDaysCount);
     }
 }

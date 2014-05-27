@@ -152,7 +152,7 @@ function Configuration() {
             presenterType: "TopMetricsPresenter",
 
             defaultModelParams: {
-                "time_unit": "1day",
+                "time_unit": "by_1_day",
                 "metric": "top_factory_sessions"
             },
 

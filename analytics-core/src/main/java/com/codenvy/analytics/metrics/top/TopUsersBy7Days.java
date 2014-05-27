@@ -18,19 +18,21 @@
 package com.codenvy.analytics.metrics.top;
 
 import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.Parameters.PassedDaysCount;
+import com.codenvy.analytics.metrics.Parameters.TimeUnit;
 
 import javax.annotation.security.RolesAllowed;
 
 /** @author Anatoliy Bazko */
 @RolesAllowed({"system/admin", "system/manager"})
-public class TopDomainsBy60Day extends AbstractDomainsTime {
+public class TopUsersBy7Days extends AbstractTopUsers {
 
-    public TopDomainsBy60Day() {
-        super(MetricType.TOP_DOMAINS_BY_60DAY, 60);
+    public TopUsersBy7Days() {
+        super(MetricType.TOP_USERS_BY_7_DAYS, PassedDaysCount.BY_7_DAYS);
     }
 
     @Override
     public String getDescription() {
-        return "Top 100 domains by time working in product during last 60 days";
+        return "Top 100 users by time working in product during last 7 days";
     }
 }

@@ -20,6 +20,7 @@ package com.codenvy.analytics.metrics.top;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.OmitFilters;
+import com.codenvy.analytics.metrics.Parameters.PassedDaysCount;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -29,7 +30,7 @@ import javax.annotation.security.RolesAllowed;
 public class TopFactoriesByLifetime extends AbstractTopFactories {
 
     public TopFactoriesByLifetime() {
-        super(MetricType.TOP_FACTORIES_BY_LIFETIME, LIFE_TIME_PERIOD);
+        super(MetricType.TOP_FACTORIES_BY_LIFETIME, PassedDaysCount.BY_LIFETIME);
     }
 
     @Override

@@ -18,6 +18,8 @@
 package com.codenvy.analytics.metrics.top;
 
 import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.Parameters.PassedDaysCount;
+import com.codenvy.analytics.metrics.Parameters.TimeUnit;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -26,7 +28,7 @@ import javax.annotation.security.RolesAllowed;
 public class TopCompaniesBy1Day extends AbstractCompaniesTime {
 
     public TopCompaniesBy1Day() {
-        super(MetricType.TOP_COMPANIES_BY_1DAY, 1);
+        super(MetricType.TOP_COMPANIES_BY_1_DAY, PassedDaysCount.BY_1_DAY);
     }
 
     @Override

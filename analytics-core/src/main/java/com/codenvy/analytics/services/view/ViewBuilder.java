@@ -52,6 +52,7 @@ import com.codenvy.analytics.metrics.MetricFactory;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.sessions.AbstractTimelineProductUsageCondition;
+import com.codenvy.analytics.metrics.top.AbstractTopEntitiesTime;
 import com.codenvy.analytics.persistent.DataPersister;
 import com.codenvy.analytics.persistent.JdbcDataPersisterFactory;
 import com.codenvy.analytics.services.Feature;
@@ -308,6 +309,8 @@ public class ViewBuilder extends Feature {
             Metric expandableMetric = context.getExpandedMetric();
             if (expandableMetric instanceof AbstractTimelineProductUsageCondition) {
                 return ((AbstractTimelineProductUsageCondition)expandableMetric).initContextBasedOnTimeInterval(context);
+            } else if (expandableMetric instanceof AbstractTopEntitiesTime) {
+                return ((AbstractTopEntitiesTime)expandableMetric).initContextBasedOnTimeInterval(context);
             }
         }
 

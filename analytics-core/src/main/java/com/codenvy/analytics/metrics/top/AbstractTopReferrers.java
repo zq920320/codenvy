@@ -20,6 +20,7 @@ package com.codenvy.analytics.metrics.top;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.Parameters.PassedDaysCount;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
@@ -37,8 +38,8 @@ public abstract class AbstractTopReferrers extends AbstractTopMetrics {
     public static final String ABANDON_FACTORY_SESSION_RATE       = "abandon_factory_session_rate";
     public static final String CONVERTED_FACTORY_SESSION_RATE     = "converted_factory_session_rate";
 
-    public AbstractTopReferrers(MetricType factoryMetricType, int dayCount) {
-        super(factoryMetricType, dayCount);
+    public AbstractTopReferrers(MetricType factoryMetricType, PassedDaysCount passedDaysCount) {
+        super(factoryMetricType, passedDaysCount);
     }
 
     @Override

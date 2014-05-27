@@ -20,6 +20,7 @@ package com.codenvy.analytics.metrics;
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
+import com.codenvy.analytics.metrics.Parameters.PassedDaysCount;
 import com.codenvy.analytics.metrics.sessions.factory.ProductUsageFactorySessionsList;
 import com.codenvy.analytics.metrics.top.AbstractTopFactories;
 import com.codenvy.analytics.metrics.top.AbstractTopMetrics;
@@ -116,7 +117,7 @@ public class TestEncodedFactoryUrl extends BaseTest {
         builder.put(Parameters.TO_DATE, "20130210");
 
         AbstractTopMetrics metric =
-                new TestAbstractTopFactories(MetricType.TOP_FACTORIES_BY_LIFETIME, AbstractTopMetrics.LIFE_TIME_PERIOD);
+                new TestAbstractTopFactories(MetricType.TOP_FACTORIES_BY_LIFETIME, PassedDaysCount.BY_LIFETIME);
 
         ListValueData value = (ListValueData)metric.getValue(builder.build());
 
@@ -170,8 +171,8 @@ public class TestEncodedFactoryUrl extends BaseTest {
 
     private class TestAbstractTopFactories extends AbstractTopFactories {
 
-        public TestAbstractTopFactories(MetricType metricType, int dayCount) {
-            super(metricType, dayCount);
+        public TestAbstractTopFactories(MetricType metricType, PassedDaysCount passedDaysCount) {
+            super(metricType, passedDaysCount);
         }
 
         @Override

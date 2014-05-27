@@ -20,20 +20,21 @@ package com.codenvy.analytics.metrics.top;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.OmitFilters;
+import com.codenvy.analytics.metrics.Parameters.PassedDaysCount;
 
 import javax.annotation.security.RolesAllowed;
 
 /** @author <a href="mailto:dnochevnov@codenvy.com">Dmytro Nochevnov</a> */
 @RolesAllowed({"system/admin", "system/manager"})
 @OmitFilters(MetricFilter.WS)
-public class TopFactorySessionsBy60Day extends AbstractTopSessions {
+public class TopFactoriesBy365Days extends AbstractTopFactories {
 
-    public TopFactorySessionsBy60Day() {
-        super(MetricType.TOP_FACTORY_SESSIONS_BY_60DAY, 60);
+    public TopFactoriesBy365Days() {
+        super(MetricType.TOP_FACTORIES_BY_365_DAYS, PassedDaysCount.BY_365_DAYS);
     }
 
     @Override
     public String getDescription() {
-        return "The top factory sessions sorted by duration of session in period of time during 60 days before today";
+        return "The top factories with the same url sorted by overall duration of session in period of time during 365 days before today";
     }
 }

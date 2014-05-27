@@ -20,15 +20,16 @@ package com.codenvy.analytics.metrics.top;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.Parameters.PassedDaysCount;
 
 /** @author Anatoliy Bazko */
 public abstract class AbstractDomainsTime extends AbstractTopEntitiesTime {
 
-    public AbstractDomainsTime(MetricType metricType, int dayCount) {
+    public AbstractDomainsTime(MetricType metricType, PassedDaysCount passedDaysCount) {
         super(metricType,
               new MetricType[]{MetricType.PRODUCT_DOMAINS_TIME},
               MetricFilter.DOMAIN,
-              dayCount);
+              passedDaysCount);
     }
 
     @Override

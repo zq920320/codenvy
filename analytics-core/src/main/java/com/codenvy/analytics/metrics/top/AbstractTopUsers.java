@@ -21,23 +21,24 @@ import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.Parameters.PassedDaysCount;
 
 /** @author Anatoliy Bazko */
 public abstract class AbstractTopUsers extends AbstractTopEntitiesTime {
 
-    public AbstractTopUsers(MetricType metricType, int dayCount) {
+    public AbstractTopUsers(MetricType metricType, PassedDaysCount passedDaysCount) {
         super(metricType,
               new MetricType[]{MetricType.PRODUCT_USERS_TIME},
               MetricFilter.USER,
-              dayCount);
+              passedDaysCount);
     }
 
     // for testing purpose
-    protected AbstractTopUsers(MetricType metricType, Metric basedMetric, int dayCount) {
+    protected AbstractTopUsers(MetricType metricType, Metric basedMetric, PassedDaysCount passedDaysCount) {
         super(metricType,
               new Metric[]{basedMetric},
               MetricFilter.USER,
-              dayCount);
+              passedDaysCount);
     }
 
 

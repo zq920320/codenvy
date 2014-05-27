@@ -17,14 +17,14 @@
          from Codenvy S.A..
 -->
 <display>
-    <view name="top_factory_sessions_by_1day">
-        <section name="top_factory_sessions_by_1day">
+    <view name="top_factory_sessions_by_1_day">
+        <section name="top_factory_sessions_by_1_day">
             <row class="com.codenvy.analytics.services.view.TitleRow">
                 <parameter key="titles"
                            value="Aggregate Time,ID,Factory,Referrer,Is Authenticated Session,Is Converted Session"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="top_factory_sessions_by_1day"/>
+                <parameter key="name" value="top_factory_sessions_by_1_day"/>
                 <parameter key="fields"
                            value="time,session_id,factory,referrer,authenticated_factory_session,converted_factory_session"/>
                 <parameter key="boolean-fields" value="authenticated_factory_session,converted_factory_session"/>
@@ -33,14 +33,14 @@
         </section>
     </view>
 
-    <view name="top_factory_sessions_by_7day">
-        <section name="top_factory_sessions_by_7day">
+    <view name="top_factory_sessions_by_7_days">
+        <section name="top_factory_sessions_by_7_days">
             <row class="com.codenvy.analytics.services.view.TitleRow">
                 <parameter key="titles"
                            value="Aggregate Time,ID,Factory,Referrer,Is Authenticated Session,Is Converted Session"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="top_factory_sessions_by_7day"/>
+                <parameter key="name" value="top_factory_sessions_by_7_days"/>
                 <parameter key="fields"
                            value="time,session_id,factory,referrer,authenticated_factory_session,converted_factory_session"/>
                 <parameter key="boolean-fields" value="authenticated_factory_session,converted_factory_session"/>
@@ -49,14 +49,14 @@
         </section>
     </view>
 
-    <view name="top_factory_sessions_by_30day">
-        <section name="top_factory_sessions_by_30day">
+    <view name="top_factory_sessions_by_30_days">
+        <section name="top_factory_sessions_by_30_days">
             <row class="com.codenvy.analytics.services.view.TitleRow">
                 <parameter key="titles"
                            value="Aggregate Time,ID,Factory,Referrer,Is Authenticated Session,Is Converted Session"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="top_factory_sessions_by_30day"/>
+                <parameter key="name" value="top_factory_sessions_by_30_days"/>
                 <parameter key="fields"
                            value="time,session_id,factory,referrer,authenticated_factory_session,converted_factory_session"/>
                 <parameter key="boolean-fields" value="authenticated_factory_session,converted_factory_session"/>
@@ -64,30 +64,14 @@
             </row>
         </section>
     </view>
-    <view name="top_factory_sessions_by_60day">
-        <section name="top_factory_sessions_by_60day">
+    <view name="top_factory_sessions_by_60_days">
+        <section name="top_factory_sessions_by_60_days">
             <row class="com.codenvy.analytics.services.view.TitleRow">
                 <parameter key="titles"
                            value="Aggregate Time,ID,Factory,Referrer,Is Authenticated Session,Is Converted Session"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="top_factory_sessions_by_60day"/>
-                <parameter key="fields"
-                           value="time,session_id,factory,referrer,authenticated_factory_session,converted_factory_session"/>
-                <parameter key="boolean-fields" value="authenticated_factory_session,converted_factory_session"/>
-                <parameter key="time-fields" value="time"/>
-            </row>
-        </section>
-    </view>
-
-    <view name="top_factory_sessions_by_90day">
-        <section name="top_factory_sessions_by_90day">
-            <row class="com.codenvy.analytics.services.view.TitleRow">
-                <parameter key="titles"
-                           value="Aggregate Time,ID,Factory,Referrer,Is Authenticated Session,Is Converted Session"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="top_factory_sessions_by_90day"/>
+                <parameter key="name" value="top_factory_sessions_by_60_days"/>
                 <parameter key="fields"
                            value="time,session_id,factory,referrer,authenticated_factory_session,converted_factory_session"/>
                 <parameter key="boolean-fields" value="authenticated_factory_session,converted_factory_session"/>
@@ -96,14 +80,30 @@
         </section>
     </view>
 
-    <view name="top_factory_sessions_by_365day">
-        <section name="top_factory_sessions_by_365day">
+    <view name="top_factory_sessions_by_90_days">
+        <section name="top_factory_sessions_by_90_days">
             <row class="com.codenvy.analytics.services.view.TitleRow">
                 <parameter key="titles"
                            value="Aggregate Time,ID,Factory,Referrer,Is Authenticated Session,Is Converted Session"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="top_factory_sessions_by_365day"/>
+                <parameter key="name" value="top_factory_sessions_by_90_days"/>
+                <parameter key="fields"
+                           value="time,session_id,factory,referrer,authenticated_factory_session,converted_factory_session"/>
+                <parameter key="boolean-fields" value="authenticated_factory_session,converted_factory_session"/>
+                <parameter key="time-fields" value="time"/>
+            </row>
+        </section>
+    </view>
+
+    <view name="top_factory_sessions_by_365_days">
+        <section name="top_factory_sessions_by_365_days">
+            <row class="com.codenvy.analytics.services.view.TitleRow">
+                <parameter key="titles"
+                           value="Aggregate Time,ID,Factory,Referrer,Is Authenticated Session,Is Converted Session"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="top_factory_sessions_by_365_days"/>
                 <parameter key="fields"
                            value="time,session_id,factory,referrer,authenticated_factory_session,converted_factory_session"/>
                 <parameter key="boolean-fields" value="authenticated_factory_session,converted_factory_session"/>

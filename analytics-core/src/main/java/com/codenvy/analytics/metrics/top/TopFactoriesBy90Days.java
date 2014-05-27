@@ -20,16 +20,17 @@ package com.codenvy.analytics.metrics.top;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.OmitFilters;
+import com.codenvy.analytics.metrics.Parameters.PassedDaysCount;
 
 import javax.annotation.security.RolesAllowed;
 
 /** @author <a href="mailto:dnochevnov@codenvy.com">Dmytro Nochevnov</a> */
 @RolesAllowed({"system/admin", "system/manager"})
 @OmitFilters(MetricFilter.WS)
-public class TopFactoriesBy90Day extends AbstractTopFactories {
+public class TopFactoriesBy90Days extends AbstractTopFactories {
 
-    public TopFactoriesBy90Day() {
-        super(MetricType.TOP_FACTORIES_BY_90DAY, 90);
+    public TopFactoriesBy90Days() {
+        super(MetricType.TOP_FACTORIES_BY_90_DAYS, PassedDaysCount.BY_90_DAYS);
     }
 
     @Override

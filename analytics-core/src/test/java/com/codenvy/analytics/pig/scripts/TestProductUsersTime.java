@@ -106,7 +106,7 @@ public class TestProductUsersTime extends BaseTest {
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
 
-        Metric metric = MetricFactory.getMetric(MetricType.TOP_USERS_BY_1DAY);
+        Metric metric = MetricFactory.getMetric(MetricType.TOP_USERS_BY_1_DAY);
         ListValueData value = (ListValueData)metric.getValue(builder.build());
 
         assertEquals(value.size(), 3);

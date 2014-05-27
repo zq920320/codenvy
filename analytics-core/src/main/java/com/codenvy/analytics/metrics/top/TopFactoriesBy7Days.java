@@ -3,7 +3,7 @@
  * CODENVY CONFIDENTIAL
  * ________________
  *
- * [2012] - [2014] Codenvy, S.A.
+ * [2012] - [2013] Codenvy, S.A.
  * All Rights Reserved.
  * NOTICE: All information contained herein is, and remains
  * the property of Codenvy S.A. and its suppliers,
@@ -20,20 +20,21 @@ package com.codenvy.analytics.metrics.top;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.OmitFilters;
+import com.codenvy.analytics.metrics.Parameters.PassedDaysCount;
 
 import javax.annotation.security.RolesAllowed;
 
-/** @author Dmytro Nochevnov */
+/** @author <a href="mailto:dnochevnov@codenvy.com">Dmytro Nochevnov</a> */
 @RolesAllowed({"system/admin", "system/manager"})
 @OmitFilters(MetricFilter.WS)
-public class TopReferrersBy365Day extends AbstractTopReferrers {
+public class TopFactoriesBy7Days extends AbstractTopFactories {
 
-    public TopReferrersBy365Day() {
-        super(MetricType.TOP_REFERRERS_BY_365DAY, 365);
+    public TopFactoriesBy7Days() {
+        super(MetricType.TOP_FACTORIES_BY_7_DAYS, PassedDaysCount.BY_7_DAYS);
     }
 
     @Override
     public String getDescription() {
-        return "The top referrers sorted by overall duration of session in period of time during 365 days before today";
+        return "The top factories with the same url sorted by overall duration of session in period of time during 7 days before today";
     }
 }

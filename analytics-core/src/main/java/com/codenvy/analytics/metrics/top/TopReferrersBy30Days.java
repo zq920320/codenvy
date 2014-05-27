@@ -17,20 +17,24 @@
  */
 package com.codenvy.analytics.metrics.top;
 
+import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.OmitFilters;
+import com.codenvy.analytics.metrics.Parameters.PassedDaysCount;
 
 import javax.annotation.security.RolesAllowed;
 
-/** @author Anatoliy Bazko */
+/** @author Dmytro Nochevnov */
 @RolesAllowed({"system/admin", "system/manager"})
-public class TopDomainsBy90Day extends AbstractDomainsTime {
+@OmitFilters(MetricFilter.WS)
+public class TopReferrersBy30Days extends AbstractTopReferrers {
 
-    public TopDomainsBy90Day() {
-        super(MetricType.TOP_DOMAINS_BY_90DAY, 90);
+    public TopReferrersBy30Days() {
+        super(MetricType.TOP_REFERRERS_BY_30_DAYS, PassedDaysCount.BY_30_DAYS);
     }
 
     @Override
     public String getDescription() {
-        return "Top 100 domains by time working in product during last 90 days";
+        return "The top referrers sorted by overall duration of session in period of time during 30 days before today";
     }
 }

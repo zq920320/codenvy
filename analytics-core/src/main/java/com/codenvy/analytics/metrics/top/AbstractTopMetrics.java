@@ -22,6 +22,7 @@ import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.metrics.Parameters.PassedDaysCount;
 import com.codenvy.analytics.metrics.ReadBasedMetric;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
@@ -36,13 +37,12 @@ import java.util.Calendar;
 public abstract class AbstractTopMetrics extends ReadBasedMetric {
 
     public static final long MAX_DOCUMENT_COUNT = 100;
-    public static final int  LIFE_TIME_PERIOD   = -1;
 
-    private int dayCount;
+    private PassedDaysCount passedDaysCount;
 
-    public AbstractTopMetrics(MetricType metricType, int dayCount) {
+    public AbstractTopMetrics(MetricType metricType, PassedDaysCount passedDaysCount) {
         super(metricType);
-        this.dayCount = dayCount;
+        this.passedDaysCount = passedDaysCount;
     }
 
     @Override
@@ -56,12 +56,12 @@ public abstract class AbstractTopMetrics extends ReadBasedMetric {
         builder.putAll(context);
         builder.putDefaultValue(Parameters.TO_DATE);
 
-        if (this.dayCount == LIFE_TIME_PERIOD) {
+        if (this.passedDaysCount == PassedDaysCount.BY_LIFETIME) {
             builder.putDefaultValue(Parameters.FROM_DATE);
         } else {
             try {
                 Calendar date = context.getAsDate(Parameters.TO_DATE);
-                date.add(Calendar.DAY_OF_MONTH, 1 - dayCount);
+                date.add(Calendar.DAY_OF_MONTH, 1 - passedDaysCount.getDayCount());
 
                 builder.put(Parameters.FROM_DATE, date);
             } catch (ParseException e) {
