@@ -134,7 +134,7 @@ public class TestWorkspacesWhereUsersHaveSeveralFactorySessions extends BaseTest
         events.add(Event.Builder.createUserChangedNameEvent("anonymoususer_1", "user4@gmail.com").withDate("2013-02-10")
                                 .build());
 
-        events.add(Event.Builder.createUserCreatedEvent("user-id2", "user4@gmail.com").withDate("2013-02-10").build());
+        events.add(Event.Builder.createUserCreatedEvent("user-id2", "user4@gmail.com", "user4@gmail.com").withDate("2013-02-10").build());
 
 
         //___

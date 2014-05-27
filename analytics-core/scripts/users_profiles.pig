@@ -1,0 +1,94 @@
+/*
+ *
+ * CODENVY CONFIDENTIAL
+ * ________________
+ *
+ * [2012] - [2013] Codenvy, S.A.
+ * All Rights Reserved.
+ * NOTICE: All information contained herein is, and remains
+ * the property of Codenvy S.A. and its suppliers,
+ * if any. The intellectual and technical concepts contained
+ * herein are proprietary to Codenvy S.A.
+ * and its suppliers and may be covered by U.S. and Foreign Patents,
+ * patents in process, and are protected by trade secret or copyright law.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from Codenvy S.A..
+ */
+
+IMPORT 'macros.pig';
+
+-----------------------> START OF MACROS <-----------------------
+-- @return last update
+DEFINE lastUpdate(X) RETURNS Y {
+  y1 = GROUP $X BY userId;
+  y2 = FOREACH y1 GENERATE group AS userId, MAX($X.dt) AS maxDt, FLATTEN($X);
+  y3 = FILTER y2 BY dt == maxDt;
+  $Y = FOREACH y3 GENERATE *;
+};
+-----------------------> END OF MACROS <-----------------------
+
+l = loadResources('$STORAGE_URL', '$STORAGE_TABLE_USERS_PROFILES', '$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
+
+----------------------------------------------------------------------------------
+---------------------------- user creation processing ----------------------------
+----------------------------------------------------------------------------------
+a1 = filterByEvent(l, 'user-created');
+a2 = extractParam(a1, 'USER-ID', 'userId');
+a3 = extractParam(a2, 'EMAILS', 'emails');
+a = FOREACH a3 GENERATE dt, userId, emails;
+resultA = FOREACH a GENERATE userId,
+                             TOTUPLE('date', ToMilliSeconds(dt)),
+                             TOTUPLE('aliases', RemoveBrackets(emails));
+STORE resultA INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
+
+
+----------------------------------------------------------------------------------
+---------------------------- user updating processing ----------------------------
+----------------------------------------------------------------------------------
+b1 = filterByEvent(l, 'user-updated');
+b2 = extractParam(b1, 'USER-ID', 'userId');
+b3 = extractParam(b2, 'EMAILS', 'emails');
+b = FOREACH b3 GENERATE dt, userId, emails;
+
+c1 = lastUpdate(b);
+c = FOREACH c1 GENERATE b::userId AS userId, b::emails AS emails;
+
+resultC = FOREACH c GENERATE userId,
+                             TOTUPLE('aliases', RemoveBrackets(emails));
+STORE resultC INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
+
+
+----------------------------------------------------------------------------------
+---------------------------- user profile updating processing --------------------
+----------------------------------------------------------------------------------
+d1 = filterByEvent(l, 'user-update-profile');
+d2 = extractParam(d1, 'FIRSTNAME', 'firstName');
+d3 = extractParam(d2, 'LASTNAME', 'lastName');
+d4 = extractParam(d3, 'COMPANY', 'company');
+d5 = extractParam(d4, 'PHONE', 'phone');
+d6 = extractParam(d5, 'JOBTITLE', 'job');
+d7 = extractParam(d6, 'USER-ID', 'userId');
+d = FOREACH d7 GENERATE dt,
+                        userId,
+                        NullToEmpty(firstName) AS firstName,
+                        NullToEmpty(lastName) AS lastName,
+                        NullToEmpty(company) AS company,
+                        NullToEmpty(phone) AS phone,
+                        NullToEmpty(FixJobTitle(job)) AS job;
+
+e1 = lastUpdate(d);
+e = FOREACH e1 GENERATE d::userId AS userId,
+                        d::firstName AS firstName,
+                        d::lastName AS lastName,
+                        d::company AS company,
+                        d::phone AS phone,
+                        d::job  AS job;
+
+resultE = FOREACH e GENERATE userId,
+                             TOTUPLE('user_first_name', firstName),
+                             TOTUPLE('user_last_name', lastName),
+                             TOTUPLE('user_company', company),
+                             TOTUPLE('user_phone', phone),
+                             TOTUPLE('user_job', job);
+STORE resultE INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;

@@ -127,6 +127,7 @@ public class MongoDataStorage {
             builder.put(Parameters.STORAGE_USER, uri.getUsername());
             builder.put(Parameters.STORAGE_PASSWORD, password);
         }
+        builder.putDefaultValue(Parameters.STORAGE_TABLE_USERS_PROFILES);
     }
 
     private void initEmbeddedStorage() throws IOException {

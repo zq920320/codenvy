@@ -55,10 +55,10 @@ public class TestUsersCreatedFromFactory extends BaseTest {
         events.add(Event.Builder.createUserChangedNameEvent("Anonymoususer_2", "user5@gmail.com").withDate("2013-01-01")
                                 .build());
 
-        events.add(Event.Builder.createUserCreatedEvent("user-id1", "user3@gmail.com").withDate("2013-01-01").build());
-        events.add(Event.Builder.createUserCreatedEvent("user-id2", "user4@gmail.com").withDate("2013-01-01").build());
-        events.add(Event.Builder.createUserCreatedEvent("user-id3", "Anonymoususer_1").withDate("2013-01-01").build());
-        events.add(Event.Builder.createUserCreatedEvent("user-id4", "Anonymoususer_2").withDate("2013-01-01").build());
+        events.add(Event.Builder.createUserCreatedEvent("user-id1", "user3@gmail.com", "user3@gmail.com").withDate("2013-01-01").build());
+        events.add(Event.Builder.createUserCreatedEvent("user-id2", "user4@gmail.com", "user4@gmail.com").withDate("2013-01-01").build());
+        events.add(Event.Builder.createUserCreatedEvent("user-id3", "Anonymoususer_1", "Anonymoususer_1").withDate("2013-01-01").build());
+        events.add(Event.Builder.createUserCreatedEvent("user-id4", "Anonymoususer_2", "Anonymoususer_2").withDate("2013-01-01").build());
 
 
         File log = LogGenerator.generateLog(events);

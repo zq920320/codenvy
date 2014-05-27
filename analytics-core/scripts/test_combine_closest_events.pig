@@ -18,7 +18,7 @@
 
 IMPORT 'macros.pig';
 
-l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
+l = loadResources('$STORAGE_URL', '$STORAGE_TABLE_USERS_PROFILES', '$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 
 a1 = FOREACH l GENERATE *, '' AS id; -- it is required 'id' field to be in scheme
 a = combineClosestEvents(a1, 'run-started', 'run-finished');

@@ -67,6 +67,7 @@ public class ActOn extends Feature {
 
     public static final String ACTIVE            = "active";
     public static final String PROFILE_COMPLETED = "profileCompleted";
+    public static final String CREATION_DATE     = "creation_date";
     public static final String POINTS            = "points";
 
     /** Map users_statistics collection columns into the csv file headers. */
@@ -77,7 +78,7 @@ public class ActOn extends Feature {
         put(AbstractMetric.USER_LAST_NAME, "lastName");
         put(AbstractMetric.USER_PHONE, "phone");
         put(AbstractMetric.USER_COMPANY, "company");
-        put(AbstractMetric.CREATION_DATE, AbstractMetric.CREATION_DATE);
+        put(CREATION_DATE, "creation_date");
         put(UsersStatisticsList.PROJECTS, "projects");
         put(UsersStatisticsList.BUILDS, "builts");
         put(UsersStatisticsList.RUNS, "runs");
@@ -227,16 +228,18 @@ public class ActOn extends Feature {
         for (ValueData object : profiles) {
             Map<String, ValueData> profile = ((MapValueData)object).getAll();
 
-            ValueData user = profile.get(ReadBasedMetric.ID);
-            boolean isActive = activeUsers.contains(user);
+            if (profile.containsKey(AbstractMetric.ALIASES)) {
+                ValueData user = profile.get(ReadBasedMetric.ID);
+                boolean isActive = activeUsers.contains(user);
 
-            List<ValueData> stat = getUsersStatistics(user.getAsString());
-            if (stat.isEmpty()) {
-                MapValueData valueData = MapValueData.DEFAULT;
-                writeStatistics(out, valueData.getAll(), profile, isActive);
-            } else {
-                MapValueData valueData = (MapValueData)stat.get(0);
-                writeStatistics(out, valueData.getAll(), profile, isActive);
+                List<ValueData> stat = getUsersStatistics(user.getAsString());
+                if (stat.isEmpty()) {
+                    MapValueData valueData = MapValueData.DEFAULT;
+                    writeStatistics(out, valueData.getAll(), profile, isActive);
+                } else {
+                    MapValueData valueData = (MapValueData)stat.get(0);
+                    writeStatistics(out, valueData.getAll(), profile, isActive);
+                }
             }
         }
     }
@@ -280,22 +283,22 @@ public class ActOn extends Feature {
                                  Map<String, ValueData> profile,
                                  boolean isActive) throws IOException {
 
-        writeString(out, profile.get(AbstractMetric.ID));
+        writeString(out, profile.get(AbstractMetric.ALIASES));
         out.write(",");
 
-        writeString(out, profile.get(AbstractUsersProfile.USER_FIRST_NAME));
+        writeString(out, profile.get(AbstractMetric.USER_FIRST_NAME));
         out.write(",");
 
-        writeString(out, profile.get(AbstractUsersProfile.USER_LAST_NAME));
+        writeString(out, profile.get(AbstractMetric.USER_LAST_NAME));
         out.write(",");
 
-        writeString(out, profile.get(AbstractUsersProfile.USER_PHONE));
+        writeString(out, profile.get(AbstractMetric.USER_PHONE));
         out.write(",");
 
-        writeString(out, profile.get(AbstractUsersProfile.USER_COMPANY));
+        writeString(out, profile.get(AbstractMetric.USER_COMPANY));
         out.write(",");
 
-        LongValueData valueData = (LongValueData)profile.get(AbstractUsersProfile.CREATION_DATE);
+        LongValueData valueData = (LongValueData)profile.get(AbstractUsersProfile.DATE);
         if (valueData == null) {
             writeString(out, StringValueData.DEFAULT);
         } else {

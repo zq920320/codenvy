@@ -91,8 +91,8 @@ public class MongoDataLoader implements DataLoader {
             Iterator<DBObject> iterator = aggregation.results().iterator();
 
             return action.createdValueData(metric, iterator);
-        } catch (ParseException e) {
-            throw new IOException(e);
+        } catch (Exception e) {
+            throw new IOException("Metric computation error: " + metric.getName(), e);
         }
     }
 

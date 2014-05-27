@@ -103,7 +103,7 @@ public class TestWorkspacesWithZeroFactorySessionsLength extends BaseTest {
         events.add(Event.Builder.createUserChangedNameEvent("anonymoususer_1", "user4@gmail.com").withDate("2013-02-10")
                                 .build());
 
-        events.add(Event.Builder.createUserCreatedEvent("user-id2", "user4@gmail.com").withDate("2013-02-10").build());
+        events.add(Event.Builder.createUserCreatedEvent("user-id2", "user4@gmail.com", "user4@gmail.com").withDate("2013-02-10").build());
 
         File log = LogGenerator.generateLog(events);
 
@@ -115,7 +115,8 @@ public class TestWorkspacesWithZeroFactorySessionsLength extends BaseTest {
         pigServer.execute(ScriptType.ACCEPTED_FACTORIES, builder.build());
 
 
-        builder.putAll(scriptsManager.getScript(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST).getParamsAsMap());
+        builder.putAll(
+                scriptsManager.getScript(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, builder.build());
     }
 

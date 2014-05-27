@@ -146,16 +146,24 @@ public class PigServer {
         server.registerFunction("IsEventInSet", new FuncSpec("com.codenvy.analytics.pig.udf.IsEventInSet"));
         server.registerFunction("NullToEmpty", new FuncSpec("com.codenvy.analytics.pig.udf.NullToEmpty"));
         server.registerFunction("CreateProjectId", new FuncSpec("com.codenvy.analytics.pig.udf.CreateProjectId"));
+        server.registerFunction("RemoveBrackets", new FuncSpec("com.codenvy.analytics.pig.udf.RemoveBrackets"));
 
         server.registerFunction("MongoStorage",
                                 new FuncSpec("com.codenvy.analytics.pig.udf.MongoStorage",
-                                             new String[]{"$STORAGE_USER", "$STORAGE_PASSWORD"}));
+                                             new String[]{"$STORAGE_USER",
+                                                          "$STORAGE_PASSWORD"}));
 
-        server.registerFunction("MongoLoaderUsersProfiles",
+        server.registerFunction("MongoLoaderUsersCompanies",
                                 new FuncSpec("com.codenvy.analytics.pig.udf.MongoLoader",
                                              new String[]{"$STORAGE_USER",
                                                           "$STORAGE_PASSWORD",
                                                           "id: chararray,user_company: chararray"}));
+
+        server.registerFunction("MongoLoaderUsersAliases",
+                                new FuncSpec("com.codenvy.analytics.pig.udf.MongoLoader",
+                                             new String[]{"$STORAGE_USER",
+                                                          "$STORAGE_PASSWORD",
+                                                          "id: chararray,aliases: chararray"}));
 
         server.registerFunction("MongoLoaderAcceptedFactories",
                                 new FuncSpec("com.codenvy.analytics.pig.udf.MongoLoader",
@@ -287,8 +295,7 @@ public class PigServer {
     }
 
     /** Reads script from file. */
-    private String readScriptContent(ScriptType scriptType, Context context)
-            throws IOException, ParseException {
+    private String readScriptContent(ScriptType scriptType, Context context) throws IOException, ParseException {
         File scriptFile = getScriptFileName(scriptType, context);
         if (!scriptFile.exists()) {
             throw new IOException("Resource " + scriptFile.getAbsolutePath() + " not found");

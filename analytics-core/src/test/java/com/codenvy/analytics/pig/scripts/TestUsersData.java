@@ -54,8 +54,8 @@ public class TestUsersData extends BaseTest {
         builder.putAll(scriptsManager.getScript(ScriptType.USERS_STATISTICS, MetricType.USERS_STATISTICS_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.USERS_STATISTICS, builder.build());
 
-        builder.putAll(scriptsManager.getScript(ScriptType.USERS_UPDATE_PROFILES, MetricType.USERS_PROFILES_LIST).getParamsAsMap());
-        pigServer.execute(ScriptType.USERS_UPDATE_PROFILES, builder.build());
+        builder.putAll(scriptsManager.getScript(ScriptType.USERS_PROFILES, MetricType.USERS_PROFILES_LIST).getParamsAsMap());
+        pigServer.execute(ScriptType.USERS_PROFILES, builder.build());
 
         DataComputationFeature dataComputationFeature = new DataComputationFeature();
         dataComputationFeature.forceExecute(builder.build());

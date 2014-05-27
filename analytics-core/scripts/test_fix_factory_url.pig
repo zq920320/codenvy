@@ -18,7 +18,7 @@
 
 IMPORT 'macros.pig';
 
-a1 = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
+a1 = loadResources('$STORAGE_URL', '$STORAGE_TABLE_USERS_PROFILES', '$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 a = extractUrlParam(a1, 'FACTORY-URL', 'factoryUrl');
 
 result = FOREACH a GENERATE factoryUrl;

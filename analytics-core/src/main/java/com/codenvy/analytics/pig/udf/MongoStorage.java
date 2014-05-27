@@ -102,9 +102,7 @@ public class MongoStorage extends StoreFunc {
 
             DB db = mongoDataStorage.getDb();
 
-            if (!uri.getCollection().startsWith("test") &&
-                !collectionsManagement.exists(uri.getCollection())) {
-
+            if (!collectionsManagement.exists(uri.getCollection())) {
                 String msg = "Collection " + uri.getCollection() + " doesn't exist in configuration";
                 LOG.error(msg);
                 throw new IOException(msg);

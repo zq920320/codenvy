@@ -23,8 +23,8 @@
 --   field 'date' contains date in format 'YYYYMMDD'
 --   field 'time' contains seconds from midnight
 ---------------------------------------------------------------------------
-DEFINE loadResources(resourceParam, from, to, userType, wsType) RETURNS Y {
-  l1 = LOAD '$resourceParam' using PigStorage() as (message : chararray);
+DEFINE loadResources(storageUrlParam, storageTableUsersProfilesParam, resourceParam, from, to, userType, wsType) RETURNS Y {
+  l1 = LOAD '$resourceParam' USING PigStorage() as (message : chararray);
   l2 = FILTER l1 BY INDEXOF(message, 'EVENT#', 0) > 0;
 
   l3 = extractUser(l2, '$userType');
@@ -47,7 +47,17 @@ DEFINE loadResources(resourceParam, from, to, userType, wsType) RETURNS Y {
 
   l10 = DISTINCT l9;
 
-  $Y = FOREACH l10 GENERATE dt, event, message, user, ws, ide;
+  ------------------ replace alias with id
+  al1 = LOAD '$storageUrlParam.$storageTableUsersProfilesParam' USING MongoLoaderUsersAliases;
+  al = FOREACH al1 GENERATE id AS userId, FLATTEN(TOKENIZE(aliases, ',')) AS user;
+
+  l11 = JOIN l10 BY user LEFT, al BY user;
+  $Y = FOREACH l11 GENERATE l10::dt AS dt,
+                            l10::event AS event,
+                            l10::message AS message,
+                            (al::user IS NOT NULL ? al::userId : l10::user) AS user, -- keep id as email for anonymous users
+                            l10::ws AS ws,
+                            l10::ide AS ide;
 };
 ---------------------------------------------------------------------------
 -- Removes tuples with empty fields

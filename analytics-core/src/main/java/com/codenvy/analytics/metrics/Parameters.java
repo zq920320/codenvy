@@ -43,7 +43,12 @@ public enum Parameters {
     STORAGE_PASSWORD,
     STORAGE_TABLE,
     STORAGE_TABLE_USERS_STATISTICS,
-    STORAGE_TABLE_USERS_PROFILES,
+    STORAGE_TABLE_USERS_PROFILES {
+        @Override
+        public String getDefaultValue() {
+            return MetricType.USERS_PROFILES_LIST.toString().toLowerCase();
+        }
+    },
     STORAGE_TABLE_PRODUCT_USAGE_SESSIONS,
     STORAGE_TABLE_ACCEPTED_FACTORIES,
 

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+s<?xml version="1.0" encoding="UTF-8"?>
 <!--
 
          CODENVY CONFIDENTIAL
@@ -303,7 +303,16 @@
     <event name="user-created">
         <description>User created</description>
         <parameters>
-            <param>ALIASES</param>
+            <param>USER</param>
+            <param>EMAILS</param>
+            <param>USER-ID</param>
+        </parameters>
+    </event>
+    <event name="user-updated">
+        <description>User created</description>
+        <parameters>
+            <param>USER</param>
+            <param>EMAILS</param>
             <param>USER-ID</param>
         </parameters>
     </event>
@@ -478,6 +487,8 @@
         <description>User update profile</description>
         <parameters>
             <param>USER</param>
+            <param>EMAILS</param>
+            <param>USER-ID</param>
             <param allow-empty-value="true">FIRSTNAME</param>
             <param allow-empty-value="true">LASTNAME</param>
             <param allow-empty-value="true">COMPANY</param>

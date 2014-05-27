@@ -21,12 +21,12 @@ package com.codenvy.analytics.metrics;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public abstract class AbstractMetric implements Metric {
 
-    public static final String CREATION_DATE         = "creation_date";
     public static final String ID                    = "_id";
     public static final String VALUE                 = "value";
     public static final String DATE                  = "date";
     public static final String WS                    = "ws";
     public static final String USER                  = "user";
+    public static final String ALIASES               = "aliases";
     public static final String DOMAIN                = "domain";
     public static final String TIME                  = "time";
     public static final String RUN_TIME              = "run_time";

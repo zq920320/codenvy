@@ -37,7 +37,7 @@ import static com.codenvy.analytics.Utils.*;
  *
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public abstract class   ReadBasedMetric extends AbstractMetric {
+public abstract class ReadBasedMetric extends AbstractMetric {
 
     private static final Logger LOG         = LoggerFactory.getLogger(ReadBasedMetric.class);
     public static final  String PRECOMPUTED = "_precomputed";
@@ -84,7 +84,6 @@ public abstract class   ReadBasedMetric extends AbstractMetric {
 
     /**
      * Returns an expanded list of documents used to calculate numeric value returned by getValue() method.
-     *
      *
      * @param context
      *         the execution context, for the most cases it isn't needed to modify it. It is used as a parameter to get

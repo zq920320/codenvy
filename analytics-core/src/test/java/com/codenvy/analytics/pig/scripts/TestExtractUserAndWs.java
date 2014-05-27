@@ -20,6 +20,7 @@ package com.codenvy.analytics.pig.scripts;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
@@ -41,6 +42,8 @@ public class TestExtractUserAndWs extends BaseTest {
     @BeforeClass
     public void prepare() throws Exception {
         List<Event> events = new ArrayList<>();
+
+        events.add(Event.Builder.createUserCreatedEvent("id1", "user1", "user1").withDate("2013-01-01").build());
 
         events.add(new Event.Builder().withParam("EVENT", "fake").withParam("USER", "user1")
                                       .withParam("WS", "ws1").withDate("2013-01-01").build());
@@ -67,10 +70,14 @@ public class TestExtractUserAndWs extends BaseTest {
         builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20130101");
         builder.put(Parameters.TO_DATE, "20130101");
+        builder.put(Parameters.LOG, log.getAbsolutePath());
+        builder.putAll(scriptsManager.getScript(ScriptType.USERS_PROFILES, MetricType.USERS_PROFILES_LIST).getParamsAsMap());
+        pigServer.execute(ScriptType.USERS_PROFILES, builder.build());
+
+
         builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.name());
         builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
         builder.put(Parameters.STORAGE_TABLE, "fake");
-        builder.put(Parameters.LOG, log.getAbsolutePath());
     }
 
     @Test
@@ -86,7 +93,7 @@ public class TestExtractUserAndWs extends BaseTest {
         }
 
         Set<String> expected = new HashSet<>();
-        expected.add("(user1)");
+        expected.add("(id1)");
         expected.add("(user2)");
         expected.add("(user3)");
         expected.add("(user4)");
@@ -131,7 +138,7 @@ public class TestExtractUserAndWs extends BaseTest {
         }
 
         Set<String> expected = new HashSet<>();
-        expected.add("(user1)");
+        expected.add("(id1)");
         expected.add("(user2)");
         expected.add("(user3)");
         expected.add("(user4)");
@@ -234,7 +241,7 @@ public class TestExtractUserAndWs extends BaseTest {
         }
 
         expected = new HashSet<>();
-        expected.add("(user1)");
+        expected.add("(id1)");
         expected.add("(user10)");
         expected.add("(default)");
 

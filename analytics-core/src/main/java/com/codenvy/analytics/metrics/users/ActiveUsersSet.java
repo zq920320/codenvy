@@ -30,7 +30,7 @@ import javax.annotation.security.RolesAllowed;
 public class ActiveUsersSet extends AbstractSetValueResulted {
 
     public ActiveUsersSet() {
-        super(MetricType.ACTIVE_USERS_SET, UsersActivityList.USER);
+        super(MetricType.ACTIVE_USERS_SET, USER);
     }
 
     @Override

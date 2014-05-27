@@ -57,8 +57,8 @@ public class TestActOn extends BaseTest {
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
 
-        builder.putAll(scriptsManager.getScript(ScriptType.USERS_UPDATE_PROFILES, MetricType.USERS_PROFILES_LIST).getParamsAsMap());
-        pigServer.execute(ScriptType.USERS_UPDATE_PROFILES, builder.build());
+        builder.putAll(scriptsManager.getScript(ScriptType.USERS_PROFILES, MetricType.USERS_PROFILES_LIST).getParamsAsMap());
+        pigServer.execute(ScriptType.USERS_PROFILES, builder.build());
 
         builder.putAll(scriptsManager.getScript(ScriptType.PRODUCT_USAGE_SESSIONS, MetricType.PRODUCT_USAGE_SESSIONS_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, builder.build());
@@ -78,11 +78,11 @@ public class TestActOn extends BaseTest {
         builder.put(Parameters.FROM_DATE, "20131102");
         builder.put(Parameters.TO_DATE, "20131102");
 
+        builder.putAll(scriptsManager.getScript(ScriptType.USERS_PROFILES, MetricType.USERS_PROFILES_LIST).getParamsAsMap());
+        pigServer.execute(ScriptType.USERS_PROFILES, builder.build());
+
         builder.putAll(scriptsManager.getScript(ScriptType.USERS_ACTIVITY, MetricType.USERS_ACTIVITY_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.USERS_ACTIVITY, builder.build());
-
-        builder.putAll(scriptsManager.getScript(ScriptType.USERS_UPDATE_PROFILES, MetricType.USERS_PROFILES_LIST).getParamsAsMap());
-        pigServer.execute(ScriptType.USERS_UPDATE_PROFILES, builder.build());
 
         builder.putAll(scriptsManager.getScript(ScriptType.PRODUCT_USAGE_SESSIONS, MetricType.PRODUCT_USAGE_SESSIONS_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, builder.build());
@@ -127,7 +127,7 @@ public class TestActOn extends BaseTest {
         assertEquals("l", user1Data.get(HEADERS.get(AbstractMetric.USER_LAST_NAME)));
         assertEquals("phone", user1Data.get(HEADERS.get(AbstractMetric.USER_PHONE)));
         assertEquals("company", user1Data.get(HEADERS.get(AbstractMetric.USER_COMPANY)));
-        assertEquals("2013-11-01", user1Data.get(HEADERS.get(AbstractMetric.CREATION_DATE)));
+        assertEquals("2013-11-01", user1Data.get(HEADERS.get(ActOn.CREATION_DATE)));
         assertEquals("2", user1Data.get(HEADERS.get(UsersStatisticsList.PROJECTS)));
         assertEquals("0", user1Data.get(HEADERS.get(UsersStatisticsList.BUILDS)));
         assertEquals("0", user1Data.get(HEADERS.get(UsersStatisticsList.RUNS)));
@@ -152,7 +152,7 @@ public class TestActOn extends BaseTest {
         assertEquals("", user2Data.get(HEADERS.get(AbstractMetric.USER_LAST_NAME)));
         assertEquals("", user2Data.get(HEADERS.get(AbstractMetric.USER_PHONE)));
         assertEquals("", user2Data.get(HEADERS.get(AbstractMetric.USER_COMPANY)));
-        assertEquals("", user2Data.get(HEADERS.get(AbstractMetric.CREATION_DATE)));
+        assertEquals("2013-11-01", user2Data.get(HEADERS.get(ActOn.CREATION_DATE)));
         assertEquals("1", user2Data.get(HEADERS.get(UsersStatisticsList.PROJECTS)));
         assertEquals("1", user2Data.get(HEADERS.get(UsersStatisticsList.BUILDS)));
         assertEquals("1", user2Data.get(HEADERS.get(UsersStatisticsList.RUNS)));
@@ -177,7 +177,7 @@ public class TestActOn extends BaseTest {
         assertEquals("", user3Data.get(HEADERS.get(AbstractMetric.USER_LAST_NAME)));
         assertEquals("", user3Data.get(HEADERS.get(AbstractMetric.USER_PHONE)));
         assertEquals("", user3Data.get(HEADERS.get(AbstractMetric.USER_COMPANY)));
-        assertEquals("", user3Data.get(HEADERS.get(AbstractMetric.CREATION_DATE)));
+        assertEquals("2013-11-01", user3Data.get(HEADERS.get(ActOn.CREATION_DATE)));
         assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.PROJECTS)));
         assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.BUILDS)));
         assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.RUNS)));
@@ -229,17 +229,21 @@ public class TestActOn extends BaseTest {
     private File prepareLog() throws IOException {
         List<Event> events = new ArrayList<>();
 
-        events.add(Event.Builder.createUserCreatedEvent("id", "user1")
+        events.add(Event.Builder.createUserCreatedEvent("id1", "user1", "user1")
+                                .withDate("2013-11-01").withTime("10:00:00,000").build());
+        events.add(Event.Builder.createUserCreatedEvent("id2", "user2", "user2")
+                                .withDate("2013-11-01").withTime("10:00:00,000").build());
+        events.add(Event.Builder.createUserCreatedEvent("id3", "user3", "user3")
                                 .withDate("2013-11-01").withTime("10:00:00,000").build());
 
         events.add(Event.Builder.createUserSSOLoggedInEvent("user2", "google")
                                 .withDate("2013-11-01").build());
 
-        events.add(Event.Builder.createUserUpdateProfile("user1", "f", "l", "company", "phone", "jobtitle")
+        events.add(Event.Builder.createUserUpdateProfile("id1", "user1", "user1", "f", "l", "company", "phone", "jobtitle")
                                 .withDate("2013-11-01").build());
-        events.add(Event.Builder.createUserUpdateProfile("user2", "", "", "", "", "")
+        events.add(Event.Builder.createUserUpdateProfile("id2", "user2", "user2", "", "", "", "", "")
                                 .withDate("2013-11-01").build());
-        events.add(Event.Builder.createUserUpdateProfile("user3", "", "", "", "", "")
+        events.add(Event.Builder.createUserUpdateProfile("id3", "user3", "user3", "", "", "", "", "")
                                 .withDate("2013-11-01").build());
 
         // active users [user1, user2, user3]

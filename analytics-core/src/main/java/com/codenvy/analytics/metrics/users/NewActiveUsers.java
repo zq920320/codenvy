@@ -47,7 +47,7 @@ public class NewActiveUsers extends CalculatedMetric implements Expandable {
 
     @Override
     public String getDescription() {
-        return "Non-active users";
+        return "New active users";
     }
 
     @Override

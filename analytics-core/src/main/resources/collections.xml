@@ -99,24 +99,15 @@
                 <field>user</field>
                 <field>date</field>
             </index>
-            <index name="ws">
-                <field>ws</field>
-                <field>date</field>
-            </index>
             <index name="date">
                 <field>date</field>
             </index>
         </indexes>
     </collection>
-
     <collection name="removed_users">
         <indexes>
             <index name="user">
                 <field>user</field>
-                <field>date</field>
-            </index>
-            <index name="ws">
-                <field>ws</field>
                 <field>date</field>
             </index>
             <index name="date">

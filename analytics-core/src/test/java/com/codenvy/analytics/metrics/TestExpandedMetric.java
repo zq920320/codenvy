@@ -86,11 +86,11 @@ public class TestExpandedMetric extends BaseTest {
                                 .withDate("2013-11-01").withTime("09:02:00").build());
         events.add(Event.Builder.createUserChangedNameEvent("anonymoususer_4", "user4@gmail.com")
                                 .withDate("2013-11-01").withTime("09:03:00").build());
-        events.add(Event.Builder.createUserCreatedEvent("user-id4", "user4@gmail.com")
+        events.add(Event.Builder.createUserCreatedEvent("user-id4", "user4@gmail.com", "user4@gmail.com")
                                 .withDate("2013-11-01").withTime("09:04:00").build());
 
         // create user
-        events.add(Event.Builder.createUserCreatedEvent("user-id5", "user5")
+        events.add(Event.Builder.createUserCreatedEvent("user-id5", "user5", "user5")
                                 .withDate("2013-11-01").withTime("09:05:00").build());
 
         // create factory session events
@@ -667,7 +667,7 @@ public class TestExpandedMetric extends BaseTest {
         builder = new Context.Builder();
         builder.put(Parameters.TO_DATE, "20131101");
 
-        AbstractLongValueResulted createdUsersMetric = new CreatedUsers();
+        Expandable createdUsersMetric = new CreatedUsers();
 
         // test expanded metric value
         ValueData expandedValue = createdUsersMetric.getExpandedValue(builder.build());

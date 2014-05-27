@@ -42,12 +42,13 @@ public class UsersProfilesList extends AbstractUsersProfile {
     @Override
     public String[] getTrackedFields() {
         return new String[]{ID,
+                            DATE,
+                            ALIASES,
                             USER_FIRST_NAME,
                             USER_LAST_NAME,
                             USER_COMPANY,
                             USER_JOB,
-                            USER_PHONE,
-                            CREATION_DATE};
+                            USER_PHONE};
     }
 
     @Override

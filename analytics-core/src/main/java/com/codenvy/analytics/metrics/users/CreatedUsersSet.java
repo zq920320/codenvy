@@ -39,7 +39,7 @@ public class CreatedUsersSet extends AbstractSetValueResulted {
     public Context applySpecificFilter(Context clauses) {
         if (!clauses.exists(MetricFilter.USER)) {
             Context.Builder builder = new Context.Builder(clauses);
-            builder.put(MetricFilter.USER, Parameters.WS_TYPES.PERSISTENT.name());
+            builder.put(MetricFilter.USER, Parameters.USER_TYPES.REGISTERED.name());
             return builder.build();
         }
 

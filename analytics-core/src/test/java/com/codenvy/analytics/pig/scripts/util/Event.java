@@ -237,16 +237,6 @@ public class Event {
                                 .withParam("ID", id);
         }
 
-        public static Builder createRunQueueWaitingFinishedEvent(String user, String ws, String project, String type,
-                                                                 String id) {
-            return new Builder().withParam("EVENT", "run-queue-waiting-finished")
-                                .withParam("WS", ws)
-                                .withParam("USER", user)
-                                .withParam("PROJECT", project)
-                                .withParam("TYPE", type)
-                                .withParam("ID", id);
-        }
-
         public static Builder createConfigureDockerFinishedEvent(String user, String ws, String id) {
             return new Builder().withParam("EVENT", "configure-docker-finished")
                                 .withParam("WS", ws)
@@ -305,10 +295,21 @@ public class Event {
         }
 
         public static Builder createUserCreatedEvent(String userId,
+                                                     String user,
                                                      String aliases) {
             return new Builder().withParam("EVENT", "user-created")
+                                .withParam("USER", user)
                                 .withParam("USER-ID", userId)
-                                .withParam("ALIASES", aliases);
+                                .withParam("EMAILS", aliases);
+        }
+
+        public static Builder createUserUpdatedEvent(String userId,
+                                                     String user,
+                                                     String aliases) {
+            return new Builder().withParam("EVENT", "user-updated")
+                                .withParam("USER", user)
+                                .withParam("USER-ID", userId)
+                                .withParam("EMAILS", aliases);
         }
 
         public static Builder createIDEUsageEvent(String user,
@@ -339,14 +340,18 @@ public class Event {
         }
 
 
-        public static Builder createUserUpdateProfile(String user,
+        public static Builder createUserUpdateProfile(String userId,
+                                                      String aliases,
+                                                      String user,
                                                       String firstName,
                                                       String lastName,
                                                       String company,
                                                       String phone,
                                                       String jobTitle) {
             return new Builder().withParam("EVENT", "user-update-profile")
+                                .withParam("USER-ID", userId)
                                 .withParam("USER", user)
+                                .withParam("EMAILS", aliases)
                                 .withParam("FIRSTNAME", firstName)
                                 .withParam("LASTNAME", lastName)
                                 .withParam("COMPANY", company)
@@ -372,7 +377,6 @@ public class Event {
                                 .withParam("FACTORY-URL", factoryUrl)
                                 .withParam("ORG-ID", orgId)
                                 .withParam("AFFILIATE-ID", affiliateId);
-
         }
 
         public static Builder createSessionFactoryStartedEvent(String sessionId,
@@ -426,31 +430,31 @@ public class Event {
         public static Builder collaborativeSessionStartedEvent(String ws, String userId, String sessionId) {
 
             return new Builder().withParam("EVENT", "collaborative-session-started")
-                                           .withParam("WS", ws)
-                                           .withParam("USER", userId)
-                                           .withParam("ID", sessionId);
+                                .withParam("WS", ws)
+                                .withParam("USER", userId)
+                                .withParam("ID", sessionId);
         }
 
         public static Builder buildQueueTerminatedEvent(String ws, String user, String project, String type,
                                                         String uuid) {
 
             return new Builder().withParam("EVENT", "build-queue-terminated")
-                                           .withParam("WS", ws)
-                                           .withParam("USER", user)
-                                           .withParam("PROJECT", project)
-                                           .withParam("TYPE", type)
-                                           .withParam("ID", uuid);
+                                .withParam("WS", ws)
+                                .withParam("USER", user)
+                                .withParam("PROJECT", project)
+                                .withParam("TYPE", type)
+                                .withParam("ID", uuid);
         }
 
         public static Builder buildRunQueueTerminatedEvent(String ws, String user, String project, String type,
                                                            String uuid) {
 
             return new Builder().withParam("EVENT", "run-queue-terminated")
-                                           .withParam("WS", ws)
-                                           .withParam("USER", user)
-                                           .withParam("PROJECT", project)
-                                           .withParam("TYPE", type)
-                                           .withParam("ID", uuid);
+                                .withParam("WS", ws)
+                                .withParam("USER", user)
+                                .withParam("PROJECT", project)
+                                .withParam("TYPE", type)
+                                .withParam("ID", uuid);
         }
 
         public static Builder createShellLaunchedEvent(String user, String ws, String session) {

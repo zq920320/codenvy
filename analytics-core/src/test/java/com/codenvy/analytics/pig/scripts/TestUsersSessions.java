@@ -67,7 +67,7 @@ public class TestUsersSessions extends BaseTest {
         events.add(Event.Builder.createSessionFinishedEvent("user@gmail.com", "ws1", "ide", "2").withDate("2013-11-01")
                                 .withTime("20:25:00").build());
 
-        events.add(Event.Builder.createUserUpdateProfile("user@gmail.com", "", "", "company", "", "")
+        events.add(Event.Builder.createUserUpdateProfile("id", "user@gmail.com", "user@gmail.com", "", "", "company", "", "")
                                 .withDate("2013-11-01").build());
 
         File log = LogGenerator.generateLog(events);
@@ -76,8 +76,8 @@ public class TestUsersSessions extends BaseTest {
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
         builder.put(Parameters.LOG, log.getAbsolutePath());
-        builder.putAll(scriptsManager.getScript(ScriptType.USERS_UPDATE_PROFILES, MetricType.USERS_PROFILES_LIST).getParamsAsMap());
-        pigServer.execute(ScriptType.USERS_UPDATE_PROFILES, builder.build());
+        builder.putAll(scriptsManager.getScript(ScriptType.USERS_PROFILES, MetricType.USERS_PROFILES_LIST).getParamsAsMap());
+        pigServer.execute(ScriptType.USERS_PROFILES, builder.build());
 
         builder.putAll(scriptsManager.getScript(ScriptType.PRODUCT_USAGE_SESSIONS, MetricType.PRODUCT_USAGE_SESSIONS_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, builder.build());

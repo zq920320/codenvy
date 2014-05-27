@@ -54,7 +54,6 @@ public enum ScriptType {
         public Set<Parameters> getParams() {
             Set<Parameters> params = super.getParams();
             params.add(Parameters.STORAGE_TABLE_USERS_STATISTICS);
-            params.add(Parameters.STORAGE_TABLE_USERS_PROFILES);
             return params;
         }
     },
@@ -95,7 +94,14 @@ public enum ScriptType {
         }
     },
     CREATED_TEMPORARY_WORKSPACES,
-    USERS_UPDATE_PROFILES,
+    USERS_PROFILES {
+        @Override
+        public Set<Parameters> getParams() {
+            Set<Parameters> params = super.getParams();
+            params.add(Parameters.STORAGE_TABLE);
+            return params;
+        }
+    },
     USERS_STATISTICS,
     USERS_ACTIVITY,
     PROJECTS,
@@ -146,6 +152,7 @@ public enum ScriptType {
                                                Parameters.STORAGE_URL,
                                                Parameters.STORAGE_USER,
                                                Parameters.STORAGE_PASSWORD,
-                                               Parameters.STORAGE_TABLE}));
+                                               Parameters.STORAGE_TABLE,
+                                               Parameters.STORAGE_TABLE_USERS_PROFILES}));
     }
 }

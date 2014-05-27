@@ -41,46 +41,52 @@ import static org.testng.Assert.assertTrue;
 /**
  * @author Anatoliy Bazko
  */
-public class TestUserUpdateProfile extends BaseTest {
+public class TestUserProfiles extends BaseTest {
 
     @BeforeClass
     public void prepare() throws Exception {
         List<Event> events = new ArrayList<>();
 
-
-        events.add(Event.Builder.createUserCreatedEvent("id", "user1@gmail.com")
+        events.add(Event.Builder.createUserCreatedEvent("id1", "user1@gmail.com", "user1@gmail.com")
                                 .withDate("2013-01-01").withTime("10:00:00,000").build());
-        events.add(Event.Builder.createUserCreatedEvent("id", "user2@gmail.com")
+        events.add(Event.Builder.createUserUpdateProfile("id1", "user1@gmail.com", "user1@gmail.com", "f2", "l2", "company1", "11", "1")
+                                .withDate("2013-01-01").withTime("10:10:00,000").build());
+
+        events.add(Event.Builder.createUserCreatedEvent("id2", "user2@gmail.com", "user2@gmail.com")
                                 .withDate("2013-01-01").withTime("11:00:00,000").build());
-        events.add(Event.Builder.createUserUpdateProfile("user2@gmail.com", "f2", "l2", "company2", "11", "1")
-                                .withDate("2013-01-01").build());
-        events.add(Event.Builder.createUserUpdateProfile("user1@gmail.com", "f2", "l2", "company1", "11", "1")
-                                .withDate("2013-01-01").build());
+        events.add(Event.Builder.createUserUpdateProfile("id2", "user2@gmail.com", "user2@gmail.com", "f2", "l2", "company2", "11", "1")
+                                .withDate("2013-01-01").withTime("11:00:00,000").build());
+        events.add(Event.Builder.createUserUpdatedEvent("id2", "user2@yahoo.com", "user2@yahoo.com")
+                                .withDate("2013-01-01").withTime("12:00:00,000").build());
+        events.add(Event.Builder.createUserUpdatedEvent("id2", "user2@ukr.net", "user2@ukr.net")
+                                .withDate("2013-01-01").withTime("13:00:00,000").build());
         File log = LogGenerator.generateLog(events);
 
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20130101");
         builder.put(Parameters.TO_DATE, "20130101");
         builder.put(Parameters.LOG, log.getAbsolutePath());
-        builder.putAll(scriptsManager.getScript(ScriptType.USERS_UPDATE_PROFILES, MetricType.USERS_PROFILES_LIST).getParamsAsMap());
-        pigServer.execute(ScriptType.USERS_UPDATE_PROFILES, builder.build());
+        builder.putAll(scriptsManager.getScript(ScriptType.USERS_PROFILES, MetricType.USERS_PROFILES_LIST).getParamsAsMap());
+        pigServer.execute(ScriptType.USERS_PROFILES, builder.build());
 
-        events.add(Event.Builder.createUserCreatedEvent("id", "user3@gmail.com")
+        events.add(Event.Builder.createUserUpdateProfile("id1", "user1@gmail.com", "user1@gmail.com", "f3", "l3", "company1", "22", "2")
+                                .withDate("2013-01-02").build());
+
+        events.add(Event.Builder.createUserCreatedEvent("id3", "user3@gmail.com", "user3@gmail.com")
                                 .withDate("2013-01-02").withTime("12:00:00,000").build());
-        events.add(Event.Builder.createUserCreatedEvent("id", "user4@gmail.com")
+        events.add(Event.Builder.createUserUpdateProfile("id3", "user3@gmail.com", "user3@gmail.com", "f4", "l4", "company3", "22", "2")
+                                .withDate("2013-01-02").withTime("12:10:00,000").build());
+
+        events.add(Event.Builder.createUserCreatedEvent("id4", "user4@gmail.com", "user4@gmail.com")
                                 .withDate("2013-01-02").withTime("13:00:00,000").build());
-        events.add(Event.Builder.createUserUpdateProfile("user1@gmail.com", "f3", "l3", "company1", "22", "2")
-                                .withDate("2013-01-02").build());
-        events.add(Event.Builder.createUserUpdateProfile("user3@gmail.com", "f4", "l4", "company3", "22", "2")
-                                .withDate("2013-01-02").build());
-        events.add(Event.Builder.createUserUpdateProfile("user4@gmail.com", "f4", "l4", "company4 :)", "22", "")
-                                .withDate("2013-01-02").build());
+        events.add(Event.Builder.createUserUpdateProfile("id4", "user4@gmail.com", "user4@gmail.com", "f4", "l4", "company4 :)", "22", "")
+                                .withDate("2013-01-02").withTime("13:10:00,000").build());
         log = LogGenerator.generateLog(events);
 
         builder.put(Parameters.FROM_DATE, "20130102");
         builder.put(Parameters.TO_DATE, "20130102");
         builder.put(Parameters.LOG, log.getAbsolutePath());
-        pigServer.execute(ScriptType.USERS_UPDATE_PROFILES, builder.build());
+        pigServer.execute(ScriptType.USERS_PROFILES, builder.build());
     }
 
     @Test
@@ -95,38 +101,42 @@ public class TestUserUpdateProfile extends BaseTest {
         Map<String, Map<String, ValueData>> m = listToMap(value, "_id");
 
         assertEquals(m.size(), 4);
-        assertTrue(m.containsKey("user1@gmail.com"));
-        assertTrue(m.containsKey("user2@gmail.com"));
-        assertTrue(m.containsKey("user3@gmail.com"));
-        assertTrue(m.containsKey("user4@gmail.com"));
+        assertTrue(m.containsKey("id1"));
+        assertTrue(m.containsKey("id2"));
+        assertTrue(m.containsKey("id3"));
+        assertTrue(m.containsKey("id4"));
 
-        assertProfile(m.get("user1@gmail.com"),
+        assertProfile(m.get("id1"),
                       "f3",
                       "l3",
                       "company1",
                       "22",
                       "Other",
+                      "user1@gmail.com",
                       fullDateFormat.parse("2013-01-01 10:00:00").getTime());
-        assertProfile(m.get("user2@gmail.com"),
+        assertProfile(m.get("id2"),
                       "f2",
                       "l2",
                       "company2",
                       "11",
                       "Other",
+                      "user2@ukr.net",
                       fullDateFormat.parse("2013-01-01 11:00:00").getTime());
-        assertProfile(m.get("user3@gmail.com"),
+        assertProfile(m.get("id3"),
                       "f4",
                       "l4",
                       "company3",
                       "22",
                       "Other",
+                      "user3@gmail.com",
                       fullDateFormat.parse("2013-01-02 12:00:00").getTime());
-        assertProfile(m.get("user4@gmail.com"),
+        assertProfile(m.get("id4"),
                       "f4",
                       "l4",
                       "company4 :)",
                       "22",
                       "",
+                      "user4@gmail.com",
                       fullDateFormat.parse("2013-01-02 13:00:00").getTime());
     }
 
@@ -136,19 +146,21 @@ public class TestUserUpdateProfile extends BaseTest {
                                String company,
                                String phone,
                                String job,
+                               String aliases,
                                long creationDate) {
         assertEquals(StringValueData.valueOf(firstName), profile.get("user_first_name"));
         assertEquals(StringValueData.valueOf(lastName), profile.get("user_last_name"));
         assertEquals(StringValueData.valueOf(company), profile.get("user_company"));
         assertEquals(StringValueData.valueOf(phone), profile.get("user_phone"));
         assertEquals(StringValueData.valueOf(job), profile.get("user_job"));
-        assertEquals(LongValueData.valueOf(creationDate), profile.get("creation_date"));
+        assertEquals(StringValueData.valueOf(aliases), profile.get("aliases"));
+        assertEquals(LongValueData.valueOf(creationDate), profile.get("date"));
     }
 
     @Test
     public void testFilterByUserAsString() throws Exception {
         Context.Builder builder = new Context.Builder();
-        builder.put(MetricFilter.USER, "user1@gmail.com");
+        builder.put(MetricFilter.USER, "id1");
 
         Metric metric = new UsersProfiles();
         assertEquals(LongValueData.valueOf(1), metric.getValue(builder.build()));
@@ -159,13 +171,13 @@ public class TestUserUpdateProfile extends BaseTest {
 
         Map<String, Map<String, ValueData>> m = listToMap(value, "_id");
         assertEquals(m.size(), 1);
-        assertTrue(m.containsKey("user1@gmail.com"));
+        assertTrue(m.containsKey("id1"));
     }
 
     @Test
     public void testFilterByUserAsStringSeveralValues() throws Exception {
         Context.Builder builder = new Context.Builder();
-        builder.put(MetricFilter.USER, "user1@gmail.com OR user2@gmail.com");
+        builder.put(MetricFilter.USER, "id1 OR id2");
 
         Metric metric = new UsersProfiles();
         assertEquals(LongValueData.valueOf(2), metric.getValue(builder.build()));
@@ -176,14 +188,14 @@ public class TestUserUpdateProfile extends BaseTest {
 
         Map<String, Map<String, ValueData>> m = listToMap(value, "_id");
         assertEquals(m.size(), 2);
-        assertTrue(m.containsKey("user1@gmail.com"));
-        assertTrue(m.containsKey("user2@gmail.com"));
+        assertTrue(m.containsKey("id1"));
+        assertTrue(m.containsKey("id2"));
     }
 
     @Test
     public void testFilterByUserAsStringSeveralValuesWithExclusion() throws Exception {
         Context.Builder builder = new Context.Builder();
-        builder.put(MetricFilter.USER, "~ user1@gmail.com OR user2@gmail.com");
+        builder.put(MetricFilter.USER, "~ id1 OR id2");
 
         Metric metric = new UsersProfiles();
         assertEquals(LongValueData.valueOf(2), metric.getValue(builder.build()));
@@ -194,14 +206,14 @@ public class TestUserUpdateProfile extends BaseTest {
 
         Map<String, Map<String, ValueData>> m = listToMap(value, "_id");
         assertEquals(m.size(), 2);
-        assertTrue(m.containsKey("user3@gmail.com"));
-        assertTrue(m.containsKey("user4@gmail.com"));
+        assertTrue(m.containsKey("id3"));
+        assertTrue(m.containsKey("id4"));
     }
 
     @Test
     public void testFilterByUserAsStringArray() throws Exception {
         Context.Builder builder = new Context.Builder();
-        builder.put(MetricFilter.USER, new String[]{"user1@gmail.com"});
+        builder.put(MetricFilter.USER, new String[]{"id1"});
 
         Metric metric = new UsersProfiles();
         assertEquals(LongValueData.valueOf(1), metric.getValue(builder.build()));
@@ -212,13 +224,13 @@ public class TestUserUpdateProfile extends BaseTest {
 
         Map<String, Map<String, ValueData>> m = listToMap(value, "_id");
         assertEquals(m.size(), 1);
-        assertTrue(m.containsKey("user1@gmail.com"));
+        assertTrue(m.containsKey("id1"));
     }
 
     @Test
     public void testFilterByUserAsPatternArray() throws Exception {
         Context.Builder builder = new Context.Builder();
-        builder.put(MetricFilter.USER, new Pattern[]{Pattern.compile("user1@gmail.com")});
+        builder.put(MetricFilter.USER, new Pattern[]{Pattern.compile("id1")});
 
         Metric metric = new UsersProfiles();
         assertEquals(LongValueData.valueOf(1), metric.getValue(builder.build()));
@@ -229,7 +241,7 @@ public class TestUserUpdateProfile extends BaseTest {
 
         Map<String, Map<String, ValueData>> m = listToMap(value, "_id");
         assertEquals(m.size(), 1);
-        assertTrue(m.containsKey("user1@gmail.com"));
+        assertTrue(m.containsKey("id1"));
     }
 
     @Test
@@ -350,8 +362,8 @@ public class TestUserUpdateProfile extends BaseTest {
 
         Map<String, Map<String, ValueData>> m = listToMap(value, "_id");
         assertEquals(m.size(), 2);
-        assertTrue(m.containsKey("user3@gmail.com"));
-        assertTrue(m.containsKey("user4@gmail.com"));
+        assertTrue(m.containsKey("id3"));
+        assertTrue(m.containsKey("id4"));
     }
 
     @Test
@@ -369,8 +381,8 @@ public class TestUserUpdateProfile extends BaseTest {
 
         Map<String, Map<String, ValueData>> m = listToMap(value, "_id");
         assertEquals(m.size(), 2);
-        assertTrue(m.containsKey("user3@gmail.com"));
-        assertTrue(m.containsKey("user4@gmail.com"));
+        assertTrue(m.containsKey("id3"));
+        assertTrue(m.containsKey("id4"));
     }
 
     @Test

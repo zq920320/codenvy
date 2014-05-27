@@ -195,7 +195,7 @@ public class TestAnalysisView extends BaseTest {
         assertEquals(columnData.get(RowLabel.TOTAL_USERS), "23");
         assertEquals(columnData.get(RowLabel.TOTAL_NUMBER_OF_USERS_WE_TRACK), "3");
         assertEquals(columnData.get(RowLabel.CREATED_PROJECTS), "3");
-        assertEquals(columnData.get(RowLabel.AND_BUILT), "3");
+        assertEquals(columnData.get(RowLabel.AND_BUILT), "1");
         assertEquals(columnData.get(RowLabel.AND_RUN), "3");
         assertEquals(columnData.get(RowLabel.AND_DEPLOYED_TO_PAAS), "3");
         assertEquals(columnData.get(RowLabel.SENT_INVITES), "2");
@@ -222,7 +222,7 @@ public class TestAnalysisView extends BaseTest {
 
         // test data of column 4 with label "Oct 2013"
         Map<RowLabel, String> column4Data = getColumn(4, monthlyAnalysisReport, rowsLabels, true);
-        assertEquals(column4Data.get(RowLabel.TOTAL_USERS), "20");
+        assertEquals(column4Data.get(RowLabel.TOTAL_USERS), "23");
         assertEquals(column4Data.get(RowLabel.TOTAL_NUMBER_OF_USERS_WE_TRACK), "0");
         assertEquals(column4Data.get(RowLabel.CREATED_PROJECTS), "0");
         assertEquals(column4Data.get(RowLabel.AND_BUILT), "0");
@@ -233,10 +233,10 @@ public class TestAnalysisView extends BaseTest {
 
         // test data of column 3 with label "Nov 2013"
         Map<RowLabel, String> column3Data = getColumn(3, monthlyAnalysisReport, rowsLabels, true);
-        assertEquals(column3Data.get(RowLabel.TOTAL_USERS), "22");
+        assertEquals(column3Data.get(RowLabel.TOTAL_USERS), "23");
         assertEquals(column3Data.get(RowLabel.TOTAL_NUMBER_OF_USERS_WE_TRACK), "2");
         assertEquals(column3Data.get(RowLabel.CREATED_PROJECTS), "2");
-        assertEquals(column3Data.get(RowLabel.AND_BUILT), "2");
+        assertEquals(column3Data.get(RowLabel.AND_BUILT), "1");
         assertEquals(column3Data.get(RowLabel.AND_RUN), "2");
         assertEquals(column3Data.get(RowLabel.AND_DEPLOYED_TO_PAAS), "1");
         assertEquals(column3Data.get(RowLabel.SENT_INVITES), "1");
@@ -247,7 +247,7 @@ public class TestAnalysisView extends BaseTest {
         assertEquals(column2Data.get(RowLabel.TOTAL_USERS), "23");
         assertEquals(column2Data.get(RowLabel.TOTAL_NUMBER_OF_USERS_WE_TRACK), "3");
         assertEquals(column2Data.get(RowLabel.CREATED_PROJECTS), "3");
-        assertEquals(column2Data.get(RowLabel.AND_BUILT), "3");
+        assertEquals(column2Data.get(RowLabel.AND_BUILT), "1");
         assertEquals(column2Data.get(RowLabel.AND_RUN), "3");
         assertEquals(column2Data.get(RowLabel.AND_DEPLOYED_TO_PAAS), "3");
         assertEquals(column2Data.get(RowLabel.SENT_INVITES), "2");
@@ -258,7 +258,7 @@ public class TestAnalysisView extends BaseTest {
         assertEquals(column1Data.get(RowLabel.TOTAL_USERS), "23");
         assertEquals(column1Data.get(RowLabel.TOTAL_NUMBER_OF_USERS_WE_TRACK), "3");
         assertEquals(column1Data.get(RowLabel.CREATED_PROJECTS), "3");
-        assertEquals(column1Data.get(RowLabel.AND_BUILT), "3");
+        assertEquals(column1Data.get(RowLabel.AND_BUILT), "1");
         assertEquals(column1Data.get(RowLabel.AND_RUN), "3");
         assertEquals(column1Data.get(RowLabel.AND_DEPLOYED_TO_PAAS), "3");
         assertEquals(column1Data.get(RowLabel.SENT_INVITES), "2");
@@ -289,7 +289,7 @@ public class TestAnalysisView extends BaseTest {
             assertEquals(columnData.get(RowLabel.TOTAL_USERS), "23");
             assertEquals(columnData.get(RowLabel.TOTAL_NUMBER_OF_USERS_WE_TRACK), "3");
             assertEquals(columnData.get(RowLabel.CREATED_PROJECTS), "3");
-            assertEquals(columnData.get(RowLabel.AND_BUILT), "3");
+            assertEquals(columnData.get(RowLabel.AND_BUILT), "1");
             assertEquals(columnData.get(RowLabel.AND_RUN), "3");
             assertEquals(columnData.get(RowLabel.AND_DEPLOYED_TO_PAAS), "3");
             assertEquals(columnData.get(RowLabel.SENT_INVITES), "2");
@@ -299,10 +299,10 @@ public class TestAnalysisView extends BaseTest {
         // test data of column 6 with label "30 Nov"
         {
             Map<RowLabel, String> columnData = getColumn(6, weeklyAnalysisReport, rowsLabels, true);
-            assertEquals(columnData.get(RowLabel.TOTAL_USERS), "22");
+            assertEquals(columnData.get(RowLabel.TOTAL_USERS), "23");
             assertEquals(columnData.get(RowLabel.TOTAL_NUMBER_OF_USERS_WE_TRACK), "2");
             assertEquals(columnData.get(RowLabel.CREATED_PROJECTS), "2");
-            assertEquals(columnData.get(RowLabel.AND_BUILT), "2");
+            assertEquals(columnData.get(RowLabel.AND_BUILT), "1");
             assertEquals(columnData.get(RowLabel.AND_RUN), "2");
             assertEquals(columnData.get(RowLabel.AND_DEPLOYED_TO_PAAS), "1");
             assertEquals(columnData.get(RowLabel.SENT_INVITES), "1");
@@ -312,7 +312,7 @@ public class TestAnalysisView extends BaseTest {
         // test data of column 11 with label "26 Oct"
         {
             Map<RowLabel, String> columnData = getColumn(11, weeklyAnalysisReport, rowsLabels, true);
-            assertEquals(columnData.get(RowLabel.TOTAL_USERS), "20");
+            assertEquals(columnData.get(RowLabel.TOTAL_USERS), "23");
             assertEquals(columnData.get(RowLabel.TOTAL_NUMBER_OF_USERS_WE_TRACK), "0");
             assertEquals(columnData.get(RowLabel.CREATED_PROJECTS), "0");
             assertEquals(columnData.get(RowLabel.AND_BUILT), "0");
@@ -347,7 +347,7 @@ public class TestAnalysisView extends BaseTest {
             assertEquals(columnData.get(RowLabel.TOTAL_USERS), "23");
             assertEquals(columnData.get(RowLabel.TOTAL_NUMBER_OF_USERS_WE_TRACK), "3");
             assertEquals(columnData.get(RowLabel.CREATED_PROJECTS), "3");
-            assertEquals(columnData.get(RowLabel.AND_BUILT), "3");
+            assertEquals(columnData.get(RowLabel.AND_BUILT), "1");
             assertEquals(columnData.get(RowLabel.AND_RUN), "3");
             assertEquals(columnData.get(RowLabel.AND_DEPLOYED_TO_PAAS), "3");
             assertEquals(columnData.get(RowLabel.SENT_INVITES), "2");
@@ -360,7 +360,7 @@ public class TestAnalysisView extends BaseTest {
             assertEquals(columnData.get(RowLabel.TOTAL_USERS), "23");
             assertEquals(columnData.get(RowLabel.TOTAL_NUMBER_OF_USERS_WE_TRACK), "3");
             assertEquals(columnData.get(RowLabel.CREATED_PROJECTS), "3");
-            assertEquals(columnData.get(RowLabel.AND_BUILT), "3");
+            assertEquals(columnData.get(RowLabel.AND_BUILT), "1");
             assertEquals(columnData.get(RowLabel.AND_RUN), "3");
             assertEquals(columnData.get(RowLabel.AND_DEPLOYED_TO_PAAS), "3");
             assertEquals(columnData.get(RowLabel.SENT_INVITES), "2");
@@ -389,15 +389,15 @@ public class TestAnalysisView extends BaseTest {
 
         /** events at the DATE1 */
         // create users
-        events.add(Event.Builder.createUserCreatedEvent("user1-id", "user1")
+        events.add(Event.Builder.createUserCreatedEvent("user1-id", "user1", "user1")
                                 .withDate(DATE1).build());
-        events.add(Event.Builder.createUserCreatedEvent("user2-id", "user2")
+        events.add(Event.Builder.createUserCreatedEvent("user2-id", "user2", "user2")
                                 .withDate(DATE1).build());
 
         // update users' profiles
-        events.add(Event.Builder.createUserUpdateProfile("user1", "f1", "l1", "company1", "phone1", "jobtitle1")
+        events.add(Event.Builder.createUserUpdateProfile("user1-id", "user1", "user1", "f1", "l1", "company1", "phone1", "jobtitle1")
                                 .withDate(DATE1).build());
-        events.add(Event.Builder.createUserUpdateProfile("user2", "", "", "", "", "")
+        events.add(Event.Builder.createUserUpdateProfile("user2-id", "user2", "user2", "", "", "", "", "")
                                 .withDate(DATE1).build());
 
         // active users [user1, user2]
@@ -467,14 +467,14 @@ public class TestAnalysisView extends BaseTest {
 
         /** events at the DATE2 */
         // create user
-        events.add(Event.Builder.createUserCreatedEvent("user3-id", "user3")
+        events.add(Event.Builder.createUserCreatedEvent("user3-id", "user3", "user3")
                                 .withDate(DATE2).build());
 
         events.add(Event.Builder.createTenantCreatedEvent("ws3", "user3").withTime("09:00:00").withDate(DATE2)
                                 .build());
 
         // update user's profile
-        events.add(Event.Builder.createUserUpdateProfile("user3", "f3", "l3", "company3", "phone3", "jobtitle3")
+        events.add(Event.Builder.createUserUpdateProfile("user3-id", "user3", "user3", "f3", "l3", "company3", "phone3", "jobtitle3")
                                 .withDate(DATE2).build());
 
         // add shell launched events
@@ -525,66 +525,44 @@ public class TestAnalysisView extends BaseTest {
 
     private void extractDataFromLog(Context.Builder builder) throws IOException, ParseException {
         builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.toString());
-        builder.put(Parameters.EVENT, "user-created");
-        builder.put(Parameters.STORAGE_TABLE, "created_users");
-        pigServer.execute(ScriptType.EVENTS, builder.build());
+        builder.putAll(scriptsManager.getScript(ScriptType.USERS_PROFILES, MetricType.USERS_PROFILES_LIST).getParamsAsMap());
+        pigServer.execute(ScriptType.USERS_PROFILES, builder.build());
 
-        builder.put(Parameters.EVENT, "user-removed");
-        builder.put(Parameters.STORAGE_TABLE, "removed_users");
+        builder.putAll(scriptsManager.getScript(ScriptType.EVENTS, MetricType.REMOVED_USERS).getParamsAsMap());
         pigServer.execute(ScriptType.EVENTS, builder.build());
 
         /** create collections "active_users_set" to calculate "active_users" metric */
-        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.toString());
-        builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.toString());
-        builder.put(Parameters.STORAGE_TABLE, "users_activity_list");
+        builder.putAll(scriptsManager.getScript(ScriptType.USERS_ACTIVITY, MetricType.USERS_ACTIVITY_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.USERS_ACTIVITY, builder.build());
 
         /** create collections "created_project" to calculate "users_who_created_project" metric */
-        builder.put(Parameters.WS, Parameters.WS_TYPES.PERSISTENT.toString());
-        builder.put(Parameters.STORAGE_TABLE, "projects_list");
+        builder.putAll(scriptsManager.getScript(ScriptType.PROJECTS, MetricType.PROJECTS_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.PROJECTS, builder.build());
 
         /** create collections "builds" to calculate "users_who_built" metric */
-        builder.put(Parameters.WS, Parameters.WS_TYPES.PERSISTENT.toString());
-        builder.put(Parameters.EVENT, "project-built,project-deployed,application-created");
-        builder.put(Parameters.STORAGE_TABLE, "builds");
+        builder.putAll(scriptsManager.getScript(ScriptType.EVENTS, MetricType.BUILDS).getParamsAsMap());
         pigServer.execute(ScriptType.EVENTS, builder.build());
 
         /** create collections "deploys" to calculate "users_who_deployed" metric */
-        builder.put(Parameters.WS, Parameters.WS_TYPES.PERSISTENT.toString());
-        builder.put(Parameters.EVENT, "project-deployed,application-created");
-        builder.put(Parameters.STORAGE_TABLE, "deploys");
+        builder.putAll(scriptsManager.getScript(ScriptType.EVENTS, MetricType.DEPLOYS).getParamsAsMap());
         pigServer.execute(ScriptType.EVENTS, builder.build());
 
         /** create collections "deploys_to_paas" to calculate "users_who_deployed_to_paas" metric */
-        builder.put(Parameters.WS, Parameters.WS_TYPES.PERSISTENT.toString());
-        builder.put(Parameters.EVENT, "application-created");
-        builder.put(Parameters.STORAGE_TABLE, "deploys_to_paas");
+        builder.putAll(scriptsManager.getScript(ScriptType.EVENTS, MetricType.DEPLOYS_TO_PAAS).getParamsAsMap());
         pigServer.execute(ScriptType.EVENTS, builder.build());
 
         /** create collections "user_invite" to calculate "users_who_invited" metric */
-        builder.put(Parameters.WS, Parameters.WS_TYPES.PERSISTENT.toString());
-        builder.put(Parameters.EVENT, "user-invite");
-        builder.put(Parameters.STORAGE_TABLE, "user_invite");
+        builder.putAll(scriptsManager.getScript(ScriptType.EVENTS, MetricType.USER_INVITE).getParamsAsMap());
         pigServer.execute(ScriptType.EVENTS, builder.build());
 
         /** create collections "shell_launched" to calculate "users_who_launched_shell" metric */
-        builder.put(Parameters.WS, Parameters.WS_TYPES.PERSISTENT.toString());
-        builder.put(Parameters.EVENT, "shell-launched");
-        builder.put(Parameters.STORAGE_TABLE, "shell_launched");
+        builder.putAll(scriptsManager.getScript(ScriptType.EVENTS, MetricType.SHELL_LAUNCHED).getParamsAsMap());
         pigServer.execute(ScriptType.EVENTS, builder.build());
 
-        /** create collections "users_profiles_list" to calculate "completed_profiles" metric */
-        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.toString());
-        builder.put(Parameters.STORAGE_TABLE, "users_profiles_list");
-        pigServer.execute(ScriptType.USERS_UPDATE_PROFILES, builder.build());
-
-        builder.put(Parameters.STORAGE_TABLE, MetricType.ACTIVE_USERS_SET.name().toLowerCase());
-        builder.put(Parameters.PARAM, "user");
+        builder.putAll(scriptsManager.getScript(ScriptType.ACTIVE_ENTITIES, MetricType.ACTIVE_USERS_SET).getParamsAsMap());
         pigServer.execute(ScriptType.ACTIVE_ENTITIES, builder.build());
 
-        builder.put(Parameters.STORAGE_TABLE, MetricType.ACTIVE_WORKSPACES_SET.name().toLowerCase());
-        builder.put(Parameters.PARAM, "ws");
+        builder.putAll(scriptsManager.getScript(ScriptType.ACTIVE_ENTITIES, MetricType.ACTIVE_WORKSPACES_SET).getParamsAsMap());
         pigServer.execute(ScriptType.ACTIVE_ENTITIES, builder.build());
     }
 }

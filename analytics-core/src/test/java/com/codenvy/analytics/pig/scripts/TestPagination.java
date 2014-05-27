@@ -41,15 +41,15 @@ public class TestPagination extends BaseTest {
     public void prepare() throws Exception {
         List<Event> events = new ArrayList<>();
 
-        events.add(Event.Builder.createUserUpdateProfile("user1@gmail.com", "f2", "l2", "company", "11", "1")
+        events.add(Event.Builder.createUserUpdateProfile("id1", "user1@gmail.com", "user1@gmail.com", "f2", "l2", "company", "11", "1")
                                 .withDate("2013-01-01").build());
-        events.add(Event.Builder.createUserUpdateProfile("user2@gmail.com", "f2", "l2", "company", "11", "1")
+        events.add(Event.Builder.createUserUpdateProfile("id2", "user2@gmail.com", "user2@gmail.com", "f2", "l2", "company", "11", "1")
                                 .withDate("2013-01-01").build());
-        events.add(Event.Builder.createUserUpdateProfile("user3@gmail.com", "f2", "l2", "company", "11", "1")
+        events.add(Event.Builder.createUserUpdateProfile("id3", "user3@gmail.com", "user3@gmail.com", "f2", "l2", "company", "11", "1")
                                 .withDate("2013-01-01").build());
-        events.add(Event.Builder.createUserUpdateProfile("user4@gmail.com", "f2", "l2", "company", "11", "1")
+        events.add(Event.Builder.createUserUpdateProfile("id4", "user4@gmail.com", "user4@gmail.com", "f2", "l2", "company", "11", "1")
                                 .withDate("2013-01-01").build());
-        events.add(Event.Builder.createUserUpdateProfile("user5@gmail.com", "f2", "l2", "company", "11", "1")
+        events.add(Event.Builder.createUserUpdateProfile("id5", "user5@gmail.com", "user5@gmail.com", "f2", "l2", "company", "11", "1")
                                 .withDate("2013-01-01").build());
         File log = LogGenerator.generateLog(events);
 
@@ -57,8 +57,8 @@ public class TestPagination extends BaseTest {
         builder.put(Parameters.FROM_DATE, "20130101");
         builder.put(Parameters.TO_DATE, "20130101");
         builder.put(Parameters.LOG, log.getAbsolutePath());
-        builder.putAll(scriptsManager.getScript(ScriptType.USERS_UPDATE_PROFILES, MetricType.USERS_PROFILES_LIST).getParamsAsMap());
-        pigServer.execute(ScriptType.USERS_UPDATE_PROFILES, builder.build());
+        builder.putAll(scriptsManager.getScript(ScriptType.USERS_PROFILES, MetricType.USERS_PROFILES_LIST).getParamsAsMap());
+        pigServer.execute(ScriptType.USERS_PROFILES, builder.build());
     }
 
     @Test
