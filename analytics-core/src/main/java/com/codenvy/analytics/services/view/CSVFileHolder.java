@@ -33,9 +33,9 @@ import java.nio.file.attribute.FileTime;
  * @author Alexander Reshetnyak
  */
 @Singleton
-public class CSVFileCleaner {
+public class CSVFileHolder {
 
-    private static final Logger LOG = LoggerFactory.getLogger(com.codenvy.analytics.services.view.CSVFileCleaner.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CSVFileHolder.class);
 
     private static final String CSV_FILE_FOLDER_NAME = "csv";
     private static final String REPORT_PREFIX        = "report";
@@ -47,7 +47,7 @@ public class CSVFileCleaner {
     private final File csvReportFolder;
 
     @Inject
-    public CSVFileCleaner(Configurator configurator) {
+    public CSVFileHolder(Configurator configurator) {
         this.csvReportFolder = new File(configurator.getTmpDir() + File.separator + CSV_FILE_FOLDER_NAME);
 
         if (!csvReportFolder.exists()) {
@@ -64,7 +64,7 @@ public class CSVFileCleaner {
         cleaner.start();
     }
 
-    public File createNewReportFile() throws IOException {
+    public File createNewFile() throws IOException {
         return File.createTempFile(REPORT_PREFIX, REPORT_SUFFIX, csvReportFolder);
     }
 

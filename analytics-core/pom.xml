@@ -57,6 +57,11 @@
             <version>${com.google.code.guice.version}</version>
         </dependency>
         <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>${commons-codec.version}</version>
+        </dependency>
+        <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>${commons-io.version}</version>
@@ -105,6 +110,11 @@
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
             <version>${org.apache.log4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>marketo</groupId>
+            <artifactId>marketo-soap-sdk</artifactId>
+            <version>${marketo.soap.sdk.version}</version>
         </dependency>
         <dependency>
             <groupId>org.antlr</groupId>
@@ -226,5 +236,3 @@
         </profile>
     </profiles>
 </project>
-
-

@@ -19,82 +19,28 @@
 
 package com.codenvy.analytics.services.acton;
 
-import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.Injector;
 import com.codenvy.analytics.metrics.AbstractMetric;
 import com.codenvy.analytics.metrics.Context;
-import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.users.UsersStatisticsList;
-import com.codenvy.analytics.pig.scripts.ScriptType;
-import com.codenvy.analytics.pig.scripts.util.Event;
-import com.codenvy.analytics.pig.scripts.util.LogGenerator;
+import com.codenvy.analytics.services.AbstractUsersActivityTest;
 
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static org.testng.AssertJUnit.assertEquals;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class TestActOn extends BaseTest {
+public class TestActOn extends AbstractUsersActivityTest {
 
     private static final Map<String, String> HEADERS = ActOn.headers;
 
-    @BeforeClass
-    public void prepare() throws Exception {
-        Context.Builder builder = new Context.Builder();
-        builder.put(Parameters.LOG, prepareLog().getAbsolutePath());
-
-        builder.put(Parameters.FROM_DATE, "20131101");
-        builder.put(Parameters.TO_DATE, "20131101");
-
-        builder.putAll(scriptsManager.getScript(ScriptType.USERS_PROFILES, MetricType.USERS_PROFILES_LIST).getParamsAsMap());
-        pigServer.execute(ScriptType.USERS_PROFILES, builder.build());
-
-        builder.putAll(scriptsManager.getScript(ScriptType.PRODUCT_USAGE_SESSIONS, MetricType.PRODUCT_USAGE_SESSIONS_LIST).getParamsAsMap());
-        pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, builder.build());
-
-        builder.putAll(scriptsManager.getScript(ScriptType.USERS_STATISTICS, MetricType.USERS_STATISTICS_LIST).getParamsAsMap());
-        pigServer.execute(ScriptType.USERS_STATISTICS, builder.build());
-
-        builder.putAll(scriptsManager.getScript(ScriptType.USERS_ACTIVITY, MetricType.USERS_ACTIVITY_LIST).getParamsAsMap());
-        pigServer.execute(ScriptType.USERS_ACTIVITY, builder.build());
-
-        builder.putAll(scriptsManager.getScript(ScriptType.ACTIVE_ENTITIES, MetricType.ACTIVE_USERS_SET).getParamsAsMap());
-        pigServer.execute(ScriptType.ACTIVE_ENTITIES, builder.build());
-
-        builder.putAll(scriptsManager.getScript(ScriptType.ACTIVE_ENTITIES, MetricType.ACTIVE_WORKSPACES_SET).getParamsAsMap());
-        pigServer.execute(ScriptType.ACTIVE_ENTITIES, builder.build());
-
-        builder.put(Parameters.FROM_DATE, "20131102");
-        builder.put(Parameters.TO_DATE, "20131102");
-
-        builder.putAll(scriptsManager.getScript(ScriptType.USERS_PROFILES, MetricType.USERS_PROFILES_LIST).getParamsAsMap());
-        pigServer.execute(ScriptType.USERS_PROFILES, builder.build());
-
-        builder.putAll(scriptsManager.getScript(ScriptType.USERS_ACTIVITY, MetricType.USERS_ACTIVITY_LIST).getParamsAsMap());
-        pigServer.execute(ScriptType.USERS_ACTIVITY, builder.build());
-
-        builder.putAll(scriptsManager.getScript(ScriptType.PRODUCT_USAGE_SESSIONS, MetricType.PRODUCT_USAGE_SESSIONS_LIST).getParamsAsMap());
-        pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, builder.build());
-
-        builder.putAll(scriptsManager.getScript(ScriptType.USERS_STATISTICS, MetricType.USERS_STATISTICS_LIST).getParamsAsMap());
-        pigServer.execute(ScriptType.USERS_STATISTICS, builder.build());
-
-        builder.putAll(scriptsManager.getScript(ScriptType.ACTIVE_ENTITIES, MetricType.ACTIVE_USERS_SET).getParamsAsMap());
-        pigServer.execute(ScriptType.ACTIVE_ENTITIES, builder.build());
-
-        builder.putAll(scriptsManager.getScript(ScriptType.ACTIVE_ENTITIES, MetricType.ACTIVE_WORKSPACES_SET).getParamsAsMap());
-        pigServer.execute(ScriptType.ACTIVE_ENTITIES, builder.build());
+    @Override
+    protected Map<String, String> getHeaders() {
+        return ActOn.headers;
     }
 
     @Test
@@ -193,152 +139,5 @@ public class TestActOn extends BaseTest {
         assertEquals("false", user3Data.get(HEADERS.get(ActOn.PROFILE_COMPLETED)));
         assertEquals("1", user3Data.get(HEADERS.get(UsersStatisticsList.PAAS_DEPLOYS)));
         assertEquals("12", user3Data.get(HEADERS.get(ActOn.POINTS)));
-    }
-
-    private Map<String, Map<String, String>> read(File jobFile) throws IOException {
-        Map<String, Map<String, String>> results = new HashMap<>();
-
-        List<String> columns = new ArrayList<>();
-        for (String header : HEADERS.values()) {
-            columns.add(header);
-        }
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(jobFile))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                line = line.replace("\"", "");  // remove all '"'
-                String[] userDataArray = line.split(",");
-                // put line values into map
-                Map<String, String> userDataMap = new HashMap<>();
-                for (int i = 0; i < userDataArray.length; i++) {
-                    userDataMap.put(columns.get(i), userDataArray[i]);
-                }
-
-                if (userDataArray[0].equals("email")) {
-                    results.put("_HEAD", userDataMap);
-                } else {
-                    results.put(userDataArray[0], userDataMap);
-                }
-
-            }
-        }
-
-        return results;
-    }
-
-    private File prepareLog() throws IOException {
-        List<Event> events = new ArrayList<>();
-
-        events.add(Event.Builder.createUserCreatedEvent("id1", "user1", "user1")
-                                .withDate("2013-11-01").withTime("10:00:00,000").build());
-        events.add(Event.Builder.createUserCreatedEvent("id2", "user2", "user2")
-                                .withDate("2013-11-01").withTime("10:00:00,000").build());
-        events.add(Event.Builder.createUserCreatedEvent("id3", "user3", "user3")
-                                .withDate("2013-11-01").withTime("10:00:00,000").build());
-
-        events.add(Event.Builder.createUserSSOLoggedInEvent("user2", "google")
-                                .withDate("2013-11-01").build());
-
-        events.add(Event.Builder.createUserUpdateProfile("id1", "user1", "user1", "f", "l", "company", "phone", "jobtitle")
-                                .withDate("2013-11-01").build());
-        events.add(Event.Builder.createUserUpdateProfile("id2", "user2", "user2", "", "", "", "", "")
-                                .withDate("2013-11-01").build());
-        events.add(Event.Builder.createUserUpdateProfile("id3", "user3", "user3", "", "", "", "", "")
-                                .withDate("2013-11-01").build());
-
-        // active users [user1, user2, user3]
-        events.add(Event.Builder.createTenantCreatedEvent("ws1", "user1").withTime("09:00:00").withDate("2013-11-01")
-                                .build());
-        events.add(Event.Builder.createTenantCreatedEvent("ws2", "user2").withTime("09:00:00").withDate("2013-11-01")
-                                .build());
-        events.add(Event.Builder.createTenantCreatedEvent("ws3", "user3").withTime("09:00:00").withDate("2013-11-01")
-                                .build());
-
-        // projects created
-        events.add(
-                Event.Builder.createProjectCreatedEvent("user1", "ws1", "", "project1", "type1").withDate("2013-11-01")
-                             .withTime("10:00:00").build());
-        events.add(
-                Event.Builder.createProjectCreatedEvent("user1", "ws1", "", "project2", "type1").withDate("2013-11-01")
-                             .withTime("10:05:00").build());
-        events.add(
-                Event.Builder.createProjectCreatedEvent("user2", "ws2", "", "project1", "type1").withDate("2013-11-01")
-                             .withTime("10:03:00").build());
-
-        // projects built
-        events.add(Event.Builder.createProjectBuiltEvent("user2", "ws1", "", "project1", "type1").withTime("10:06:00")
-                                .withDate("2013-11-01").build());
-
-
-        // projects deployed
-        events.add(Event.Builder.createApplicationCreatedEvent("user2", "ws2", "", "project1", "type1", "paas1")
-                                .withTime("10:10:00,000")
-                                .withDate("2013-11-02").build());
-
-        events.add(Event.Builder.createApplicationCreatedEvent("user3", "ws2", "", "project1", "type1", "paas2")
-                                .withTime("10:00:00")
-                                .withDate("2013-11-02").build());
-
-        events.add(Event.Builder.createApplicationCreatedEvent("user2", "ws2", "", "project2", "type1", "paas1")
-                                .withTime("10:11:00,100")
-                                .withDate("2013-11-02").build());
-
-        events.add(Event.Builder.createApplicationCreatedEvent("user2", "ws2", "", "project3", "type1", "paas1")
-                                .withTime("10:12:00,200")
-                                .withDate("2013-11-02").build());
-
-        events.add(Event.Builder.createApplicationCreatedEvent("user2", "ws2", "", "project4", "type1", "paas1")
-                                .withTime("10:13:00,300")
-                                .withDate("2013-11-02").build());
-
-        events.add(Event.Builder.createApplicationCreatedEvent("user2", "ws2", "", "project5", "type1", "paas1")
-                                .withTime("10:14:00,400")
-                                .withDate("2013-11-02").build());
-
-        events.add(Event.Builder.createApplicationCreatedEvent("user2", "ws2", "", "project1", "type1", "paas1")
-                                .withTime("10:15:00,500")
-                                .withDate("2013-11-02").build());
-
-
-        events.add(Event.Builder.createSessionStartedEvent("user1", "ws1", "ide", "1")
-                                .withDate("2013-11-02")
-                                .withTime("19:00:00").build());
-        events.add(Event.Builder.createSessionFinishedEvent("user1", "ws1", "ide", "1")
-                                .withDate("2013-11-02")
-                                .withTime("19:05:00").build());
-
-        events.add(Event.Builder.createSessionStartedEvent("user2", "ws1", "ide", "3")
-                                .withDate("2013-11-02")
-                                .withTime("20:00:00").build());
-        events.add(Event.Builder.createSessionFinishedEvent("user2", "ws1", "ide", "3")
-                                .withDate("2013-11-02")
-                                .withTime("20:10:00").build());
-
-        events.add(Event.Builder.createFactoryCreatedEvent("ws1", "user1", "", "", "", "", "", "")
-                                .withDate("2013-11-01")
-                                .withTime("20:03:00").build());
-
-        events.add(Event.Builder.createDebugStartedEvent("user2", "ws1", "", "", "id1")
-                                .withDate("2013-11-01")
-                                .withTime("20:06:00").build());
-
-        events.add(Event.Builder.createUserInviteEvent("user1", "ws2", "email")
-                                .withDate("2013-11-01").build());
-
-        events.add(Event.Builder.createRunStartedEvent("user2", "ws2", "project", "type", "id1")
-                                .withDate("2013-11-01")
-                                .withTime("20:59:00").build());
-        events.add(Event.Builder.createRunFinishedEvent("user2", "ws2", "project", "type", "id1")
-                                .withDate("2013-11-01")
-                                .withTime("21:01:00").build());
-
-        events.add(Event.Builder.createBuildStartedEvent("user1", "ws1", "project", "type", "id2")
-                                .withDate("2013-11-01")
-                                .withTime("21:12:00").build());
-        events.add(Event.Builder.createBuildFinishedEvent("user1", "ws1", "project", "type", "id2")
-                                .withDate("2013-11-01")
-                                .withTime("21:14:00").build());
-
-        return LogGenerator.generateLog(events);
     }
 }

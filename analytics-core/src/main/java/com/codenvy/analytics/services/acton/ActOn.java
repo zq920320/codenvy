@@ -208,7 +208,7 @@ public class ActOn extends Feature {
 
             for (int currentPage = 1; ; currentPage++) {
                 LOG.info("Proceeding page " + currentPage);
-                context = context.cloneAndPut(Parameters.PAGE, currentPage++);
+                context = context.cloneAndPut(Parameters.PAGE, currentPage);
 
                 List<ValueData> profiles = getUsersProfiles(context);
                 writeUsersWithStatistics(activeUsers, profiles, out);
@@ -222,7 +222,6 @@ public class ActOn extends Feature {
 
         return file;
     }
-
 
     private void writeUsersWithStatistics(Set<ValueData> activeUsers,
                                           List<ValueData> profiles,
@@ -467,9 +466,9 @@ public class ActOn extends Feature {
         return profile.containsKey(AbstractMetric.ID)
                && profile.containsKey(AbstractMetric.USER_FIRST_NAME)
                && profile.containsKey(AbstractMetric.USER_LAST_NAME)
+               && profile.containsKey(AbstractMetric.USER_COMPANY)
                && profile.containsKey(AbstractMetric.USER_JOB)
                && profile.containsKey(AbstractMetric.USER_PHONE)
-               && profile.containsKey(AbstractMetric.ID)
                && !profile.get(AbstractMetric.ID).getAsString().isEmpty()
                && !profile.get(AbstractMetric.USER_FIRST_NAME).getAsString().isEmpty()
                && !profile.get(AbstractMetric.USER_LAST_NAME).getAsString().isEmpty()

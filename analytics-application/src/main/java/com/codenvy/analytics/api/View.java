@@ -19,7 +19,7 @@ package com.codenvy.analytics.api;
 
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.*;
-import com.codenvy.analytics.services.view.CSVFileCleaner;
+import com.codenvy.analytics.services.view.CSVFileHolder;
 import com.codenvy.analytics.services.view.SectionData;
 import com.codenvy.analytics.services.view.ViewBuilder;
 import com.codenvy.analytics.services.view.ViewData;
@@ -55,14 +55,14 @@ public class View {
 
     private static final Logger LOG = LoggerFactory.getLogger(View.class);
 
-    private final ViewBuilder    viewBuilder;
-    private final CSVFileCleaner csvFileCleanerHolder;
+    private final ViewBuilder   viewBuilder;
+    private final CSVFileHolder csvFileCleanerHolder;
 
     private final Set<String> allowedWorkspaces;
     private final Set<String> allowedUsers;
 
     @Inject
-    public View(ViewBuilder viewBuilder, CSVFileCleaner csvFileCleanerHolder) {
+    public View(ViewBuilder viewBuilder, CSVFileHolder csvFileCleanerHolder) {
         this.viewBuilder = viewBuilder;
         this.csvFileCleanerHolder = csvFileCleanerHolder;
         this.allowedUsers = new HashSet<>();
@@ -168,7 +168,7 @@ public class View {
             }
 
             ViewData result = viewBuilder.getViewData(viewName, context);
-            final File csvFile = csvFileCleanerHolder.createNewReportFile();
+            final File csvFile = csvFileCleanerHolder.createNewFile();
             try (FileOutputStream csvOutputStream = new FileOutputStream(csvFile)) {
                 transformToCsv(result, csvOutputStream);
             }

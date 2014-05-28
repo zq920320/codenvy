@@ -59,7 +59,9 @@ public class Scheduler implements ServletContextListener {
                                                         ViewBuilderFeature.class,
                                                         LogCheckerFeature.class,
                                                         ReportSenderFeature.class,
-                                                        ActOnFeature.class};
+                                                        ActOnFeature.class,
+                                                        MarketoInitializerFeature.class,
+                                                        MarketoUpdaterFeature.class};
 
 
     public Scheduler() {
