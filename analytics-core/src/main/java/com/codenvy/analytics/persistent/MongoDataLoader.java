@@ -51,15 +51,36 @@ public class MongoDataLoader implements DataLoader {
 
     @Override
     public ValueData loadValue(ReadBasedMetric metric, Context clauses) throws IOException {
-        return doLoadValue(metric, clauses, new LoadValueAction() {
-            @Override
-            public DBObject[] getDBOperations(ReadBasedMetric metric, Context clauses) {
-                return MongoDataLoader.this.getDBOperations(metric, clauses);
-            }
+        if (metric instanceof AbstractCount) {
+            return doLoadValue(metric, clauses, new LoadValueAction() {
+                @Override
+                public ValueData createdValueData(ReadBasedMetric metric, Iterator<DBObject> iterator) {
+                    return MongoDataLoader.this.createdValueData(metric, iterator);
+                }
 
+                @Override
+                public Iterator<DBObject> iterator(ReadBasedMetric metric, Context clauses, DBCollection dbCollection, DBObject filter) {
+                    int size = dbCollection.find((DBObject)filter.get("$match")).size();
+
+                    DBObject result = new BasicDBObject();
+                    result.put(metric.getTrackedFields()[0], size);
+
+                    return Arrays.asList(result).iterator();
+                }
+            });
+        }
+
+        return doLoadValue(metric, clauses, new LoadValueAction() {
             @Override
             public ValueData createdValueData(ReadBasedMetric metric, Iterator<DBObject> iterator) {
                 return MongoDataLoader.this.createdValueData(metric, iterator);
+            }
+
+            @Override
+            public Iterator<DBObject> iterator(ReadBasedMetric metric, Context clauses, DBCollection dbCollection, DBObject filter) {
+                DBObject[] dbOperations = MongoDataLoader.this.getDBOperations(metric, clauses);
+                AggregationOutput aggregation = dbCollection.aggregate(filter, dbOperations);
+                return aggregation.results().iterator();
             }
         });
     }
@@ -68,14 +89,17 @@ public class MongoDataLoader implements DataLoader {
     public ValueData loadExpandedValue(ReadBasedMetric metric, Context clauses) throws IOException {
         return doLoadValue(metric, clauses, new LoadValueAction() {
             @Override
-            public DBObject[] getDBOperations(ReadBasedMetric metric, Context clauses) {
-                return getExpandedDBOperations((ReadBasedExpandable)metric, clauses);
-            }
-
-            @Override
             public ValueData createdValueData(ReadBasedMetric metric, Iterator<DBObject> iterator) {
                 return createListValueData(iterator, new String[]{((ReadBasedExpandable)metric).getExpandedField()});
             }
+
+            @Override
+            public Iterator<DBObject> iterator(ReadBasedMetric metric, Context clauses, DBCollection dbCollection, DBObject filter) {
+                DBObject[] dbOperations = getExpandedDBOperations((ReadBasedExpandable)metric, clauses);
+                AggregationOutput aggregation = dbCollection.aggregate(filter, dbOperations);
+                return aggregation.results().iterator();
+            }
+
         });
     }
 
@@ -86,10 +110,7 @@ public class MongoDataLoader implements DataLoader {
             clauses = metric.applySpecificFilter(clauses);
             DBObject filter = getFilter(metric, clauses);
 
-            DBObject[] dbOperations = action.getDBOperations(metric, clauses);
-            AggregationOutput aggregation = dbCollection.aggregate(filter, dbOperations);
-            Iterator<DBObject> iterator = aggregation.results().iterator();
-
+            Iterator<DBObject> iterator = action.iterator(metric, clauses, dbCollection, filter);
             return action.createdValueData(metric, iterator);
         } catch (Exception e) {
             throw new IOException("Metric computation error: " + metric.getName(), e);
@@ -544,8 +565,8 @@ public class MongoDataLoader implements DataLoader {
      * Load value from storage action.
      */
     private interface LoadValueAction {
-        DBObject[] getDBOperations(ReadBasedMetric metric, Context clauses);
-
         ValueData createdValueData(ReadBasedMetric metric, Iterator<DBObject> iterator);
+
+        Iterator<DBObject> iterator(ReadBasedMetric metric, Context clauses, DBCollection dbCollection, DBObject filter);
     }
 }

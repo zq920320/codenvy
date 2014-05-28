@@ -44,7 +44,7 @@ public abstract class AbstractCount extends ReadBasedMetric implements ReadBased
     }
 
     @Override
-    public String[] getTrackedFields() {
+    public final String[] getTrackedFields() {
         return new String[]{VALUE};
     }
 
@@ -55,11 +55,7 @@ public abstract class AbstractCount extends ReadBasedMetric implements ReadBased
 
     @Override
     public DBObject[] getSpecificDBOperations(Context clauses) {
-        DBObject group = new BasicDBObject();
-        group.put(ID, null);
-        group.put(VALUE, new BasicDBObject("$sum", 1));
-
-        return new DBObject[]{new BasicDBObject("$group", group)};
+        throw new UnsupportedOperationException();
     }
 
     @Override
