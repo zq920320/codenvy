@@ -20,6 +20,8 @@ package com.codenvy.service.factory;
 import com.codenvy.api.account.server.SubscriptionService;
 
 /**
+ * Subscription of tracked factories
+ *
  * @author Sergii Kabashniuk
  */
 public class TrackedFactoryService extends SubscriptionService {
