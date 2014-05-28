@@ -19,6 +19,7 @@
     "backbone": "0.9.9"
   },
   "devDependencies": {
+    "yeoman": "0.9.6",
     "grunt": "~0.4.1"
   }
 }
