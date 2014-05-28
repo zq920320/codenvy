@@ -335,13 +335,7 @@ public class ViewBuilder extends Feature {
             }
             
         } else if (context.exists(Parameters.PASSED_DAYS_COUNT)) {
-            Parameters.PassedDaysCount passedDaysCount = builder.getPassedDaysCount();
-            if (context.exists(Parameters.TIME_INTERVAL)) {
-                int timeShift = (int)-context.getAsLong(Parameters.TIME_INTERVAL);
-                return Utils.initDateInterval(builder.getAsDate(Parameters.TO_DATE), passedDaysCount, timeShift, builder);
-            } else {
-                return Utils.initDateInterval(builder.getAsDate(Parameters.TO_DATE), passedDaysCount, 0, builder);
-            }
+            return Utils.initDateInterval(builder.getAsDate(Parameters.TO_DATE), builder.getPassedDaysCount(), builder);
             
         } else {
             return builder.build();

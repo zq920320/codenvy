@@ -268,6 +268,13 @@ function Configuration() {
             columnDrillDownPageLinkConfiguration: {
                 mapColumnNameToExpandableMetric: {
                     "Sessions": "product_usage_sessions",
+                    "1 Day": "product_usage_sessions",
+                    "7 Days": "product_usage_sessions",
+                    "30 Days": "product_usage_sessions",
+                    "60 Days": "product_usage_sessions",
+                    "90 Days": "product_usage_sessions",
+                    "1 Year": "product_usage_sessions",
+                    "Lifetime": "product_usage_sessions",
                 },
 
                 mapColumnToParameter: {
@@ -290,6 +297,13 @@ function Configuration() {
             columnDrillDownPageLinkConfiguration: {
                 mapColumnNameToExpandableMetric: {
                     "Sessions": "product_usage_sessions",
+                    "1 Day": "product_usage_sessions",
+                    "7 Days": "product_usage_sessions",
+                    "30 Days": "product_usage_sessions",
+                    "60 Days": "product_usage_sessions",
+                    "90 Days": "product_usage_sessions",
+                    "1 Year": "product_usage_sessions",
+                    "Lifetime": "product_usage_sessions",
                 },
 
                 mapColumnToParameter: {
@@ -312,10 +326,17 @@ function Configuration() {
             columnDrillDownPageLinkConfiguration: {
                 mapColumnNameToExpandableMetric: {
                     "Sessions": "product_usage_sessions",
+                    "1 Day": "product_usage_sessions",
+                    "7 Days": "product_usage_sessions",
+                    "30 Days": "product_usage_sessions",
+                    "60 Days": "product_usage_sessions",
+                    "90 Days": "product_usage_sessions",
+                    "1 Year": "product_usage_sessions",
+                    "Lifetime": "product_usage_sessions",
                 },
 
                 mapColumnToParameter: {
-                    "Company": "company",
+                    "Company": "user_company",
                 },
             },
         },

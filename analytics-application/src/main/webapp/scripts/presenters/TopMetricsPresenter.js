@@ -138,37 +138,71 @@ analytics.presenter.TopMetricsPresenter.prototype.linkTableValuesWithDrillDownPa
     }
        
     for (var columnIndex = 0; columnIndex < table.columns.length; columnIndex++) {
-        var columnName = table.columns[columnIndex];            
-        
+        var columnName = table.columns[columnIndex];
         var expandedMetricName = analytics.configuration.getExpandableMetricName(widgetName, columnName);
-        if (typeof expandedMetricName != "undefined") {
-            for (var i = 0; i < table.rows.length; i++) {
-                var columnValue = table.rows[i][columnIndex];
-                
-                if (! this.isEmptyValue(columnValue)) {
-                    var timeInterval;
-                    if (columnIndex > 1 
-                         && (modelViewName == "top_users" 
-                         || modelViewName == "top_domains"
-                         || modelViewName == "top_companies")) {
-                        timeInterval = columnIndex - 2;  // don't take into account first two columns
-                    }
-                    
-                    var drillDownPageLink = this.getDrillDownPageLink(expandedMetricName, modelParams, timeInterval);
-                    
-                    // calculation combined link like "ws=...&project=..."
-                    if (sourceColumnIndexes.length > 0) {
-                        drillDownPageLink += "&" + this.getUrlParamsForCombineColumnLink(table.rows[i], 
-                                                                                         sourceColumnIndexes, 
-                                                                                         mapColumnToParameter, 
-                                                                                         doNotLinkOnEmptyParameter);
-                    }
-                    
-                    table.rows[i][columnIndex] = "<a href='" + drillDownPageLink + "'>" + columnValue + "</a>";
-                }
-            }
+        if (typeof expandedMetricName != "undefined") {            
+            table = this.linkColumnValuesWithDrillDownPage(table, 
+                                      columnIndex, 
+                                      modelViewName, 
+                                      sourceColumnIndexes, 
+                                      mapColumnToParameter, 
+                                      doNotLinkOnEmptyParameter,
+                                      expandedMetricName,
+                                      modelParams);
         }
     }          
         
     return table;
+}
+
+/**
+ * Insert drill down page link in the rows of column.  
+ */
+analytics.presenter.TopMetricsPresenter.prototype.linkColumnValuesWithDrillDownPage = function(table, 
+                                                                          columnIndex, 
+                                                                          modelViewName, 
+                                                                          sourceColumnIndexes,
+                                                                          mapColumnToParameter, 
+                                                                          doNotLinkOnEmptyParameter,
+                                                                          expandedMetricName,
+                                                                          modelParams) {
+    for (var i = 0; i < table.rows.length; i++) {
+        var row = table.rows[i];
+        
+        var columnValue = row[columnIndex];
+        
+        if (! this.isEmptyValue(columnValue)) {
+            modelParams = this.updatePassedDaysCount(columnIndex, modelViewName, modelParams);
+            
+            var drillDownPageLink = this.getDrillDownPageLink(expandedMetricName, modelParams);
+            
+            // calculation combined link like "ws=...&project=..."
+            if (sourceColumnIndexes.length > 0) {
+                drillDownPageLink += "&" + this.getUrlParamsForCombineColumnLink(row, 
+                                                                                 sourceColumnIndexes, 
+                                                                                 mapColumnToParameter, 
+                                                                                 doNotLinkOnEmptyParameter);
+            }
+            
+            row[columnIndex] = "<a href='" + drillDownPageLink + "'>" + columnValue + "</a>";
+        }
+    }
+
+    return table;
+}
+
+/**
+ * Fix "passed_days_count" parameter in case of time columns of "Top Users", "Top Domains", "Top Companies" reports.
+ */
+analytics.presenter.TopMetricsPresenter.prototype.updatePassedDaysCount = function(columnIndex, modelViewName, modelParams) {
+    if (columnIndex > 1 
+            && (modelViewName == "top_users" 
+            || modelViewName == "top_domains"
+            || modelViewName == "top_companies")) {
+           
+           var passedDaysCountIndex = columnIndex - 2;  // don't take into account first two columns
+           modelParams.passed_days_count = Object.keys(this.mapPassedDaysCountToClientSortParams)[passedDaysCountIndex]; 
+    }
+    
+    return modelParams;
 }
