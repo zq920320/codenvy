@@ -32,6 +32,8 @@ analytics.scheduler.cron_timetable=0 0 1 ? * *
 # analytics.scheduler.force_run_class=com.codenvy.analytics.services.LogCheckerFeature
 # analytics.scheduler.force_run_class=com.codenvy.analytics.services.ReportSenderFeature
 # analytics.scheduler.force_run_class=com.codenvy.analytics.services.ActOnFeature
+# analytics.scheduler.force_run_class=com.codenvy.analytics.services.MarketoInitializerFeature
+# analytics.scheduler.force_run_class=com.codenvy.analytics.services.MarketoUpdaterFeature
 # analytics.scheduler.force_run_period=alltime|lastday|20131201,20131231
 # analytics.scheduler.force_run_asynchronous=false|true
 
@@ -81,4 +83,16 @@ analytics.data-computation.metrics=users_statistics_list_precomputed,workspaces_
 
 # security
 api.endpoint=https://codenyv.com/api
+
+# Marketo
+analytics.marketo.initializer_available=false
+analytics.marketo.updater_available=true
+analytics.marketo.page_size=1000
+analytics.marketo.service_url=http://www.marketo.com/mktows/
+analytics.marketo.service_name=MktMktowsApiService
+analytics.marketo.soap_end_point=
+analytics.marketo.user_id=
+analytics.marketo.secret_key=
+analytics.marketo.program_name=
+analytics.marketo.list_name=
 
