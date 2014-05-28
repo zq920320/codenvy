@@ -86,7 +86,7 @@ b1 = filterByEvent(l, 'user-updated,user-update-profile');
 b2 = extractParam(b1, 'USER-ID', 'userId');
 b3 = extractParam(b2, 'EMAILS', 'emails');
 b = FOREACH b3 GENERATE dt,
-                        userId,
+                        (userId IS NULL ? user : userId) AS userId,
                         emails;
 
 c1 = lastUpdate(b);
