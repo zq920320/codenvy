@@ -188,6 +188,7 @@ public class Utils {
      *
      * @param timeShift
      *         = starting from 0 to represent current time period.
+     * TODO implement time shift
      */
     public static Context initDateInterval(Calendar toDate, PassedDaysCount passedDaysCount, int timeShift, Builder builder) {
         switch (passedDaysCount) {

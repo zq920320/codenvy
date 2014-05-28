@@ -22,8 +22,8 @@ import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.sessions.factory.ProductUsageFactorySessionsList;
-import com.codenvy.analytics.metrics.top.AbstractTopFactories;
-import com.codenvy.analytics.metrics.top.AbstractTopReferrers;
+import com.codenvy.analytics.metrics.top.TopFactories;
+import com.codenvy.analytics.metrics.top.TopReferrers;
 import com.codenvy.analytics.pig.scripts.ScriptType;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
@@ -124,8 +124,9 @@ public class TestTopMetrics extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20130210");
         builder.put(Parameters.TO_DATE, "20130210");
-
-        Metric metric = MetricFactory.getMetric(MetricType.TOP_FACTORY_SESSIONS_BY_LIFETIME);
+        builder.put(Parameters.PASSED_DAYS_COUNT, Parameters.PassedDaysCount.BY_LIFETIME.toString());
+        
+        Metric metric = MetricFactory.getMetric(MetricType.TOP_FACTORY_SESSIONS);
 
         ListValueData value = (ListValueData)metric.getValue(builder.build());
 
@@ -142,8 +143,9 @@ public class TestTopMetrics extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20130210");
         builder.put(Parameters.TO_DATE, "20130210");
-
-        Metric metric = MetricFactory.getMetric(MetricType.TOP_FACTORIES_BY_LIFETIME);
+        builder.put(Parameters.PASSED_DAYS_COUNT, Parameters.PassedDaysCount.BY_LIFETIME.toString());
+        
+        Metric metric = MetricFactory.getMetric(MetricType.TOP_FACTORIES);
 
         ListValueData value = (ListValueData)metric.getValue(builder.build());
 
@@ -190,16 +192,16 @@ public class TestTopMetrics extends BaseTest {
         assertEquals(item.getAll().get(ProductUsageFactorySessionsList.USER_CREATED).getAsString(), userCreated);
         assertEquals(item.getAll().get(ProductUsageFactorySessionsList.SESSIONS).getAsString(), sessions);
         assertEquals(item.getAll().get(ProductUsageFactorySessionsList.TIME).getAsString(), time);
-        assertEquals(item.getAll().get(AbstractTopFactories.BUILD_RATE).getAsString(), buildRate);
-        assertEquals(item.getAll().get(AbstractTopFactories.RUN_RATE).getAsString(), runRate);
-        assertEquals(item.getAll().get(AbstractTopFactories.DEPLOY_RATE).getAsString(), deployRate);
-        assertEquals(item.getAll().get(AbstractTopFactories.ANONYMOUS_FACTORY_SESSION_RATE).getAsString(),
+        assertEquals(item.getAll().get(TopFactories.BUILD_RATE).getAsString(), buildRate);
+        assertEquals(item.getAll().get(TopFactories.RUN_RATE).getAsString(), runRate);
+        assertEquals(item.getAll().get(TopFactories.DEPLOY_RATE).getAsString(), deployRate);
+        assertEquals(item.getAll().get(TopFactories.ANONYMOUS_FACTORY_SESSION_RATE).getAsString(),
                      anonymousFactorySessionRate);
-        assertEquals(item.getAll().get(AbstractTopFactories.AUTHENTICATED_FACTORY_SESSION_RATE).getAsString(),
+        assertEquals(item.getAll().get(TopFactories.AUTHENTICATED_FACTORY_SESSION_RATE).getAsString(),
                      authenticatedFactorySessionRate);
-        assertEquals(item.getAll().get(AbstractTopFactories.ABANDON_FACTORY_SESSION_RATE).getAsString(),
+        assertEquals(item.getAll().get(TopFactories.ABANDON_FACTORY_SESSION_RATE).getAsString(),
                      abandonFactorySessionRate);
-        assertEquals(item.getAll().get(AbstractTopFactories.CONVERTED_FACTORY_SESSION_RATE).getAsString(),
+        assertEquals(item.getAll().get(TopFactories.CONVERTED_FACTORY_SESSION_RATE).getAsString(),
                      convertedFactorySessionRate);
     }
 
@@ -208,8 +210,9 @@ public class TestTopMetrics extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20130210");
         builder.put(Parameters.TO_DATE, "20130210");
+        builder.put(Parameters.PASSED_DAYS_COUNT, Parameters.PassedDaysCount.BY_LIFETIME.toString());
 
-        Metric metric = MetricFactory.getMetric(MetricType.TOP_REFERRERS_BY_LIFETIME);
+        Metric metric = MetricFactory.getMetric(MetricType.TOP_REFERRERS);
 
         ListValueData value = (ListValueData)metric.getValue(builder.build());
 
@@ -268,16 +271,16 @@ public class TestTopMetrics extends BaseTest {
         assertEquals(item.getAll().get(ProductUsageFactorySessionsList.USER_CREATED).getAsString(), userCreated);
         assertEquals(item.getAll().get(ProductUsageFactorySessionsList.SESSIONS).getAsString(), sessions);
         assertEquals(item.getAll().get(ProductUsageFactorySessionsList.TIME).getAsString(), time);
-        assertEquals(item.getAll().get(AbstractTopReferrers.BUILD_RATE).getAsString(), buildRate);
-        assertEquals(item.getAll().get(AbstractTopReferrers.RUN_RATE).getAsString(), runRate);
-        assertEquals(item.getAll().get(AbstractTopReferrers.DEPLOY_RATE).getAsString(), deployRate);
-        assertEquals(item.getAll().get(AbstractTopReferrers.ANONYMOUS_FACTORY_SESSION_RATE).getAsString(),
+        assertEquals(item.getAll().get(TopReferrers.BUILD_RATE).getAsString(), buildRate);
+        assertEquals(item.getAll().get(TopReferrers.RUN_RATE).getAsString(), runRate);
+        assertEquals(item.getAll().get(TopReferrers.DEPLOY_RATE).getAsString(), deployRate);
+        assertEquals(item.getAll().get(TopReferrers.ANONYMOUS_FACTORY_SESSION_RATE).getAsString(),
                      anonymousFactorySessionRate);
-        assertEquals(item.getAll().get(AbstractTopReferrers.AUTHENTICATED_FACTORY_SESSION_RATE).getAsString(),
+        assertEquals(item.getAll().get(TopReferrers.AUTHENTICATED_FACTORY_SESSION_RATE).getAsString(),
                      authenticatedFactorySessionRate);
-        assertEquals(item.getAll().get(AbstractTopReferrers.ABANDON_FACTORY_SESSION_RATE).getAsString(),
+        assertEquals(item.getAll().get(TopReferrers.ABANDON_FACTORY_SESSION_RATE).getAsString(),
                      abandonFactorySessionRate);
-        assertEquals(item.getAll().get(AbstractTopReferrers.CONVERTED_FACTORY_SESSION_RATE).getAsString(),
+        assertEquals(item.getAll().get(TopReferrers.CONVERTED_FACTORY_SESSION_RATE).getAsString(),
                      convertedFactorySessionRate);
     }
 }

@@ -160,6 +160,26 @@ public class TestViewBuilder extends BaseTest {
     }
 
     @Test
+    public void testSpecificPassedDaysCount() throws Exception {
+        ArgumentCaptor<String> viewId = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<ViewData> viewData = ArgumentCaptor.forClass(ViewData.class);
+        ArgumentCaptor<Context> context = ArgumentCaptor.forClass(Context.class);
+
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.TO_DATE, "20130930");
+        builder.put(Parameters.FROM_DATE, "20130930");
+
+        viewBuilder.computeDisplayData(builder.build());
+        verify(viewBuilder, atLeastOnce()).retainViewData(viewId.capture(), viewData.capture(), context.capture());
+
+        File csvReport = new File("./target/reports/2013/09/30/passed_days_view_by_1_day.csv");
+        assertTrue(csvReport.exists());
+
+        new File("./target/reports/2013/09/30/passed_days_view_by_lifetime.csv");
+        assertTrue(csvReport.exists());
+    }
+    
+    @Test
     public void testQueryViewData() throws Exception {
         Context context = Utils.initializeContext(Parameters.TimeUnit.DAY);
         viewBuilder.computeDisplayData(context);

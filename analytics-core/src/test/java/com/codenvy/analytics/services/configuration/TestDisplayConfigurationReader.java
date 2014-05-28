@@ -39,7 +39,7 @@ public class TestDisplayConfigurationReader extends BaseTest {
 
     private static final String FILE          = BASE_DIR + "/resource";
     private static final String CONFIGURATION = "<display>" +
-                                                "    <view time-unit=\"day,week\" columns=\"20\">" +
+                                                "    <view time-unit=\"day,week\" passed-days-count=\"by_1_day,by_lifetime\" columns=\"20\">" +
                                                 "        <section name=\"workspaces\">" +
                                                 "            <description>desc</description>" +
                                                 "            <row class=\"Date.class\">" +
@@ -70,6 +70,7 @@ public class TestDisplayConfigurationReader extends BaseTest {
         ViewConfiguration viewConfiguration = displayConfiguration.getViews().get(0);
 
         assertEquals("day,week", viewConfiguration.getTimeUnit());
+        assertEquals("by_1_day,by_lifetime", viewConfiguration.getPassedDaysCount());
         assertEquals(1, viewConfiguration.getSections().size());
         assertEquals(20, viewConfiguration.getColumns());
         assertFalse(viewConfiguration.isOnDemand());

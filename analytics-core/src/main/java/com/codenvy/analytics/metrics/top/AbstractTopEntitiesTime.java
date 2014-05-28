@@ -34,7 +34,6 @@ import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.datamodel.ValueDataUtil;
 import com.codenvy.analytics.metrics.CalculatedMetric;
 import com.codenvy.analytics.metrics.Context;
-import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.Parameters;
@@ -43,11 +42,10 @@ import com.codenvy.analytics.metrics.Parameters.PassedDaysCount;
 /** @author Anatoliy Bazko */
 public abstract class AbstractTopEntitiesTime extends CalculatedMetric {
 
-    public static final String ENTITY      = "entity";
+    public static final String ENTITY = "entity";
 
     public static final int MAX_DOCUMENT_COUNT = 100;
 
-    private final PassedDaysCount metricPassedDaysCount;
     private final MetricFilter filterParameter;
     
     private final static List<PassedDaysCount> DAY_INTERVALS = Arrays.asList(new PassedDaysCount[]{
@@ -60,21 +58,8 @@ public abstract class AbstractTopEntitiesTime extends CalculatedMetric {
       PassedDaysCount.BY_LIFETIME
     });
 
-    public AbstractTopEntitiesTime(MetricType metricType,
-                                   MetricType[] basedMetricTypes,
-                                   MetricFilter filterParameter,
-                                   PassedDaysCount passedDaysCount) {
-        super(metricType, basedMetricTypes);
-        this.metricPassedDaysCount = passedDaysCount;
-        this.filterParameter = filterParameter;
-    }
-
-    public AbstractTopEntitiesTime(MetricType metricType,
-                                   Metric[] basedMetric,
-                                   MetricFilter filterParameter,
-                                   PassedDaysCount passedDaysCount) {
+    public AbstractTopEntitiesTime(MetricType metricType, MetricType[] basedMetric, MetricFilter filterParameter) {
         super(metricType, basedMetric);
-        this.metricPassedDaysCount = passedDaysCount;
         this.filterParameter = filterParameter;
     }
 
@@ -82,7 +67,7 @@ public abstract class AbstractTopEntitiesTime extends CalculatedMetric {
     public ValueData getValue(Context context) throws IOException {
 
         try {
-            ListValueData top = getTopEntities(context, metricPassedDaysCount);
+            ListValueData top = getTopEntities(context);
             String[] filterValue = extractEntityNames(top);
 
             if (filterValue.length == 0) {
@@ -184,8 +169,10 @@ public abstract class AbstractTopEntitiesTime extends CalculatedMetric {
     }
 
     /** @return top entities for required period sorted by usage time */
-    private ListValueData getTopEntities(Context context, PassedDaysCount passedDaysCount) throws ParseException, IOException {
-        Context.Builder builder = initContextBuilder(context, passedDaysCount);
+    private ListValueData getTopEntities(Context context) throws ParseException, IOException {
+        Context.Builder builder = new Context.Builder();
+        builder.putAll(context);
+
         builder.put(Parameters.SORT, "-" + TIME);
         builder.put(Parameters.PAGE, 1);
         builder.put(Parameters.PER_PAGE, MAX_DOCUMENT_COUNT);
@@ -210,6 +197,7 @@ public abstract class AbstractTopEntitiesTime extends CalculatedMetric {
 
         if (passedDaysCount == PassedDaysCount.BY_LIFETIME) {
             builder.putDefaultValue(Parameters.FROM_DATE);
+            
         } else {
             Calendar fromDate = (Calendar)toDate.clone();
             fromDate.add(Calendar.DAY_OF_MONTH, 1 - passedDaysCount.getDayCount());

@@ -17,7 +17,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Top Metrics</title>
+    <title>Top Users</title>
     <%@ include file="/inclusions/header.jsp"%>
 </head>
 <body>
@@ -32,14 +32,14 @@
         <div>
             <div class="well topFilteringPanel">
                 <div id="metric" class="btn-group metric-btns left" targetWidgets="_all">
-                    <button class="btn command-btn" default value="top_factory_sessions">Top Factory Sessions</button>
-                    <button class="btn command-btn" value="top_factories">Top Factories</button>
-                    <button class="btn command-btn" value="top_referrers">Top Referrers</button>
-                    <button class="btn command-btn" value="top_users">Top Users</button>
-                    <button class="btn command-btn" value="top_domains">Top Domains</button>
-                    <button class="btn command-btn" value="top_companies">Top Companies</button>
+                    <button class="btn command-btn" value="top-factory-sessions.jsp">Top Factory Sessions</button>
+                    <button class="btn command-btn" value="top-factories.jsp">Top Factories</button>
+                    <button class="btn command-btn" value="top-referrers.jsp">Top Referrers</button>
+                    <button class="btn command-btn" value="top-users.jsp">Top Users</button>
+                    <button class="btn command-btn" value="top-domains.jsp">Top Domains</button>
+                    <button class="btn command-btn" default value="top-companies.jsp">Top Companies</button>
                 </div>            
-                <div id="timely-dd" class="btn-group right" targetWidgets="_all">
+                <div id="passed-days-count" class="btn-group right" targetWidgets="_all">
                     <button class="btn command-btn" default value="by_1_day">1 Day</button>
                     <button class="btn command-btn" value="by_7_days">7 Days</button>
                     <button class="btn command-btn" value="by_30_days">30 Days</button>
@@ -53,7 +53,7 @@
                 <div class="single-column-gadget">
                     <div class="view">
                         <div class="tables">
-                            <div class="item" id="topMetrics"></div>
+                            <div class="item" id="topCompanies"></div>
                         </div>
                     </div>
                 </div>

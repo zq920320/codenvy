@@ -24,12 +24,12 @@
 			</a>
 
             <div class="left">
-				<a class="nav" href="/analytics/pages/users-view.jsp?sort=%2Buser" id="topmenu-users">Users</a>
-                <a class="nav" href="/analytics/pages/sessions-view.jsp?sort=-date" id="topmenu-sessions">Sessions</a>
-				<a class="nav" href="/analytics/pages/workspaces-view.jsp?sort=%2Bws" id="topmenu-workspaces">Workspaces</a>
-				<a class="nav" href="/analytics/pages/factories-view.jsp?sort=%2Bws_created" id="topmenu-factories">Factories</a>
+				<a class="nav" href="/analytics/pages/users-view.jsp" id="topmenu-users">Users</a>
+                <a class="nav" href="/analytics/pages/sessions-view.jsp" id="topmenu-sessions">Sessions</a>
+				<a class="nav" href="/analytics/pages/workspaces-view.jsp" id="topmenu-workspaces">Workspaces</a>
+				<a class="nav" href="/analytics/pages/factories-view.jsp" id="topmenu-factories">Factories</a>
                 <a class="nav" href="/analytics/pages/projects-view.jsp" id="topmenu-projects">Projects</a>
-                <a class="nav" href="/analytics/pages/events-view.jsp?sort=-date" id="topmenu-events">Events</a>
+                <a class="nav" href="/analytics/pages/events-view.jsp" id="topmenu-events">Events</a>
 				<div class="nav">
 					<div>
 						<button id="topmenu-reports">Reports</button>
@@ -43,7 +43,7 @@
                         <li><a href="/analytics/pages/reports/session-report.jsp" id="topmenu-reports-session_report">Session</a></li>
                         <li><a href="/analytics/pages/reports/project-report.jsp" id="topmenu-reports-project_report">Project</a></li>
 					    <li><a href="/analytics/pages/reports/factory-statistics.jsp" id="topmenu-reports-factories">Factory</a></li>
-					    <li><a href="/analytics/pages/reports/top-metrics.jsp" id="topmenu-reports-top_metrics">Top Metrics</a></li>
+					    <li><a href="/analytics/pages/reports/top-factory-sessions.jsp" id="topmenu-reports-top_metrics">Top Metrics</a></li>
 					    <li><a href="/analytics/pages/reports/signup-analysis.jsp" id="topmenu-reports-analysis">Analysis</a></li>
 				    </ul>
 				</div>

@@ -17,22 +17,25 @@
  */
 package com.codenvy.analytics.metrics.top;
 
+import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.analytics.metrics.Parameters.PassedDaysCount;
-import com.codenvy.analytics.metrics.Parameters.TimeUnit;
-
-import javax.annotation.security.RolesAllowed;
 
 /** @author Anatoliy Bazko */
-@RolesAllowed({"system/admin", "system/manager"})
-public class TopDomainsBy365Days extends AbstractDomainsTime {
-
-    public TopDomainsBy365Days() {
-        super(MetricType.TOP_DOMAINS_BY_365_DAYS, PassedDaysCount.BY_365_DAYS);
+public class TopUsers extends AbstractTopEntitiesTime {
+    public TopUsers() {
+        super(MetricType.TOP_USERS,
+              new MetricType[]{MetricType.PRODUCT_USERS_TIME},
+              MetricFilter.USER);
     }
 
     @Override
+    public Class<? extends ValueData> getValueDataClass() {
+        return super.getValueDataClass();
+    }
+    
+    @Override
     public String getDescription() {
-        return "Top 100 domains by time working in product during last 365 days";
+        return "Top 100 users by time working in product during the last days";
     }
 }

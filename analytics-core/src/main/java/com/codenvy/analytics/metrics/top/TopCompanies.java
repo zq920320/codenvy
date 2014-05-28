@@ -17,22 +17,20 @@
  */
 package com.codenvy.analytics.metrics.top;
 
+import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.Parameters.PassedDaysCount;
-import com.codenvy.analytics.metrics.Parameters.TimeUnit;
-
-import javax.annotation.security.RolesAllowed;
 
 /** @author Anatoliy Bazko */
-@RolesAllowed({"system/admin", "system/manager"})
-public class TopUsersBy7Days extends AbstractTopUsers {
-
-    public TopUsersBy7Days() {
-        super(MetricType.TOP_USERS_BY_7_DAYS, PassedDaysCount.BY_7_DAYS);
+public class TopCompanies extends AbstractTopEntitiesTime {
+    public TopCompanies() {
+        super(MetricType.TOP_COMPANIES,
+              new MetricType[]{MetricType.PRODUCT_COMPANIES_TIME},
+              MetricFilter.USER_COMPANY);
     }
-
+    
     @Override
     public String getDescription() {
-        return "Top 100 users by time working in product during last 7 days";
+        return "Top 100 companies by time working in product during last days";
     }
 }

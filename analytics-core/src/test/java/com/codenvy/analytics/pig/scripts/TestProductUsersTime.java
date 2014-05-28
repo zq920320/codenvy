@@ -105,8 +105,9 @@ public class TestProductUsersTime extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
+        builder.put(Parameters.PASSED_DAYS_COUNT, "by_1_day");
 
-        Metric metric = MetricFactory.getMetric(MetricType.TOP_USERS_BY_1_DAY);
+        Metric metric = MetricFactory.getMetric(MetricType.TOP_USERS);
         ListValueData value = (ListValueData)metric.getValue(builder.build());
 
         assertEquals(value.size(), 3);

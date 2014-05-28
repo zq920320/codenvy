@@ -147,18 +147,55 @@ function Configuration() {
             displayLineChart: true,  // default is false
         },
 
-        topMetrics: {
-            widgetLabel: "Top Metrics",
+        topFactorySessions: {
+            widgetLabel: "Top Factory Sessions",
             presenterType: "TopMetricsPresenter",
+            modelViewName: "top_factory_sessions",
 
             defaultModelParams: {
-                "time_unit": "by_1_day",
-                "metric": "top_factory_sessions"
+                "passed_days_count": "by_1_day"
             },
 
+            /** @see DatabaseTable::makeTableSortable() method docs */
+            clientSortParams: {
+                "descSortColumnNumber": 0
+            },
+            
             columnLinkPrefixList: {
-                "Email": "/analytics/pages/user-view.jsp?user",
                 "ID": "/analytics/pages/session-view.jsp?session_id",
+                "Factory": "/analytics/pages/factory-view.jsp?factory",
+            },
+
+            columnDrillDownPageLinkConfiguration: {
+                mapColumnNameToExpandableMetric: {
+                    "Aggregate Time": "product_usage_time_total",
+                },
+
+                mapColumnToParameter: {
+                    "ID": "session_id",
+                },
+            },
+            
+            doNotLinkOnEmptyParameter: false,  // default value = true,
+            // true means that link should't be added if at least one parameter is empty;
+            // false means that link should be added without empty parameters
+        },
+        
+        topFactories: {
+            widgetLabel: "Top Factories",
+            presenterType: "TopMetricsPresenter",
+            modelViewName: "top_factories",
+
+            defaultModelParams: {
+                "passed_days_count": "by_1_day"
+            },
+
+            /** @see DatabaseTable::makeTableSortable() method docs */
+            clientSortParams: {
+                "descSortColumnNumber": 3
+            },
+            
+            columnLinkPrefixList: {
                 "Factory": "/analytics/pages/factory-view.jsp?factory",
             },
 
@@ -178,19 +215,111 @@ function Configuration() {
 
                 mapColumnToParameter: {
                     "Factory": "factory",
-                    "Referrer": "referrer",
-                    "Email": "user",
-                    "ID": "session_id",
-                    "Domain": "domain",
-                    "Company": "user_company",
                 },
-
-                doNotLinkOnEmptyParameter: false,  // default value = true,
-                // true means that link should't be added if at least one parameter is empty;
-                // false means that link should be added without empty parameters
             },
         },
 
+        topReferrers: {
+            widgetLabel: "Top Referrers",
+            presenterType: "TopMetricsPresenter",
+            modelViewName: "top_referrers",
+            
+            defaultModelParams: {
+                "passed_days_count": "by_1_day"
+            },
+
+            /** @see DatabaseTable::makeTableSortable() method docs */
+            clientSortParams: {
+                "descSortColumnNumber": 3
+            },
+
+            columnDrillDownPageLinkConfiguration: {
+                mapColumnNameToExpandableMetric: {
+                    "Sessions": "product_usage_sessions",
+                    "# Workspaces Created": "temporary_workspaces_created",
+                    "Aggregate Time": "product_usage_time_total",
+                    "% Anon": "anonymous_factory_sessions",
+                    "% Auth": "authenticated_factory_sessions",
+                    "% Abandon": "abandoned_factory_sessions",
+                    "% Convert": "converted_factory_sessions",
+                },
+
+                mapColumnToParameter: {
+                    "Referrer": "referrer",
+                },
+            },
+        },
+        
+        topUsers: {
+            widgetLabel: "Top Users",
+            presenterType: "TopMetricsPresenter",
+            modelViewName: "top_users",
+
+            defaultModelParams: {
+                "passed_days_count": "by_1_day"
+            },
+
+            columnLinkPrefixList: {
+                "Email": "/analytics/pages/user-view.jsp?user",
+            },
+
+            // see clientSortParams in the TopMetricsPresenter::clientSortParams property
+            
+            columnDrillDownPageLinkConfiguration: {
+                mapColumnNameToExpandableMetric: {
+                    "Sessions": "product_usage_sessions",
+                },
+
+                mapColumnToParameter: {
+                    "Email": "user",
+                },
+            },
+        },
+
+        topDomains: {
+            widgetLabel: "Top Domains",
+            presenterType: "TopMetricsPresenter",
+            modelViewName: "top_domains",
+
+            defaultModelParams: {
+                "passed_days_count": "by_1_day"
+            },
+
+            // see clientSortParams in the TopMetricsPresenter::clientSortParams property
+            
+            columnDrillDownPageLinkConfiguration: {
+                mapColumnNameToExpandableMetric: {
+                    "Sessions": "product_usage_sessions",
+                },
+
+                mapColumnToParameter: {
+                    "Domain": "domain",
+                },
+            },
+        },
+        
+        topCompanies: {
+            widgetLabel: "Top Companies",
+            presenterType: "TopMetricsPresenter",
+            modelViewName: "top_companies",
+
+            defaultModelParams: {
+                "passed_days_count": "by_1_day"
+            },
+
+            // see clientSortParams in the TopMetricsPresenter::clientSortParams property
+            
+            columnDrillDownPageLinkConfiguration: {
+                mapColumnNameToExpandableMetric: {
+                    "Sessions": "product_usage_sessions",
+                },
+
+                mapColumnToParameter: {
+                    "Company": "company",
+                },
+            },
+        },
+        
         /** for Event View */
         events: {
             widgetLabel: "Events",
@@ -198,6 +327,10 @@ function Configuration() {
             modelViewName: "events",
             modelMetricName: "users_activity",
 
+            defaultModelParams: {
+                "sort": "-date"
+            },
+            
             columnLinkPrefixList: {
                 "User": "/analytics/pages/user-view.jsp?user",
                 "Workspace": "/analytics/pages/workspace-view.jsp?ws",
@@ -239,7 +372,9 @@ function Configuration() {
                 "Email": "user",
             },
 
-            defaultServerSortParams: "+user",
+            defaultModelParams: {
+                "sort": "+user"
+            },
 
             columnDrillDownPageLinkConfiguration: {
                 mapColumnNameToExpandableMetric: {
@@ -282,7 +417,9 @@ function Configuration() {
             isPaginable: true,    // default value is "false"
             modelMetricName: "product_usage_sessions",
 
-            defaultServerSortParams: "-date",
+            defaultModelParams: {
+                "sort": "-date"
+            },
 
             columnLinkPrefixList: {
                 "ID": "/analytics/pages/session-view.jsp?session_id",
@@ -370,7 +507,9 @@ function Configuration() {
             modelMetricName: "users_activity",
             onePageRowsCount: 30,
 
-            defaultServerSortParams: "+date",
+            defaultModelParams: {
+                "sort": "+date"
+            },
 
             /** @see DatabaseTable::makeTableSortable() method docs */
             clientSortParams: {
@@ -438,7 +577,9 @@ function Configuration() {
                 "descSortColumnNumber": 3
             },
 
-            defaultServerSortParams: "-date",
+            defaultModelParams: {
+                "sort": "-date"
+            },
 
             mapColumnToServerSortParam: {
                 "ID": "session_id",
@@ -478,7 +619,9 @@ function Configuration() {
             modelMetricName: "users_activity",
             onePageRowsCount: 30,
 
-            defaultServerSortParams: "+date",
+            defaultModelParams: {
+                "sort": "+date"
+            },
 
 
             /** @see DatabaseTable::makeTableSortable() method docs */
@@ -502,8 +645,9 @@ function Configuration() {
                 "ascSortColumnNumber": 0
             },
 
-
-            defaultServerSortParams: "+ws",
+            defaultModelParams: {
+                "sort": "+ws"
+            },
 
             mapColumnToServerSortParam: {
                 "Workspace": "ws",
@@ -603,13 +747,15 @@ function Configuration() {
             isPaginable: true,    // default value is "false"
             modelMetricName: "product_usage_sessions",
 
-            defaultServerSortParams: "-date",
+            defaultModelParams: {
+                "sort": "-date"
+            },
 
             columnLinkPrefixList: {
                 "ID": "/analytics/pages/session-view.jsp?session_id",
                 "User": "/analytics/pages/user-view.jsp?user",
             },
-
+            
             /** @see DatabaseTable::makeTableSortable() method docs */
             clientSortParams: {
                 "descSortColumnNumber": 2
@@ -676,7 +822,9 @@ function Configuration() {
                 }
             },
 
-            defaultServerSortParams: "-date",
+            defaultModelParams: {
+                "sort": "-date"
+            },
 
             /** @see DatabaseTable::makeTableSortable() method docs */
             clientSortParams: {
@@ -700,7 +848,9 @@ function Configuration() {
 
             isPaginable: true,
 
-            defaultServerSortParams: "-date",
+            defaultModelParams: {
+                "sort": "-date"
+            },
 
             columnLinkPrefixList: {
                 "Workspace": "/analytics/pages/workspace-view.jsp?ws",
@@ -748,7 +898,9 @@ function Configuration() {
             modelMetricName: "users_activity",
             onePageRowsCount: 30,
 
-            defaultServerSortParams: "+date",
+            defaultModelParams: {
+                "sort": "+date"
+            },
 
             /** @see DatabaseTable::makeTableSortable() method docs */
             clientSortParams: {
@@ -842,7 +994,9 @@ function Configuration() {
                 "Organization": "org_id",
             },
 
-            defaultServerSortParams: "+ws_created",
+            defaultModelParams: {
+                "sort": "+ws_created"
+            },
 
             columnDrillDownPageLinkConfiguration: {
                 mapColumnNameToExpandableMetric: {
@@ -886,7 +1040,9 @@ function Configuration() {
             isPaginable: true,    // default value is "false"
             modelMetricName: "product_usage_factory_sessions",
 
-            defaultServerSortParams: "-date",
+            defaultModelParams: {
+                "sort": "-date"
+            },
 
             columnLinkPrefixList: {
                 "ID": "/analytics/pages/session-view.jsp?session_id",
@@ -917,7 +1073,9 @@ function Configuration() {
             isPaginable: true,    // default value is "false"
             modelMetricName: "factory_users",
 
-            defaultServerSortParams: "-time",
+            defaultModelParams: {
+                "sort": "-time"
+            },
 
             columnLinkPrefixList: {
                 "User": "/analytics/pages/user-view.jsp?user",
@@ -973,7 +1131,6 @@ function Configuration() {
         "page",
         "session_id",
         "ide",
-        "metric",
         "from_date",
         "to_date",
         "event",
@@ -989,6 +1146,7 @@ function Configuration() {
         "action",
         "account_id",
         "data_universe",
+        "passed_days_count",
     ];
 
     /** Global parameters stored in Browser Storage */

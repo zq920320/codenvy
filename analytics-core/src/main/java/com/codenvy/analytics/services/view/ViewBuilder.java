@@ -181,12 +181,7 @@ public class ViewBuilder extends Feature {
 
         for (ViewConfiguration viewConf : displayConfiguration.getViews()) {
             if (!viewConf.isOnDemand()) {
-                if (viewConf.getTimeUnit() == null) {
-                    ComputeViewDataAction task = new ComputeViewDataAction(viewConf, context);
-                    forkJoinPool.submit(task);
-
-                    tasks.add(task);
-                } else {
+                if (viewConf.getTimeUnit() != null) {
                     for (String timeUnitParam : viewConf.getTimeUnit().split(",")) {
                         Context newContext = context.cloneAndPut(Parameters.TIME_UNIT, timeUnitParam.toUpperCase());
                         ComputeViewDataAction task = new ComputeViewDataAction(viewConf, newContext);
@@ -194,6 +189,19 @@ public class ViewBuilder extends Feature {
 
                         tasks.add(task);
                     }
+                } else if (viewConf.getPassedDaysCount() != null) {
+                    for (String passedDaysCountParam : viewConf.getPassedDaysCount().split(",")) {
+                        Context newContext = context.cloneAndPut(Parameters.PASSED_DAYS_COUNT, passedDaysCountParam.toUpperCase());
+                        ComputeViewDataAction task = new ComputeViewDataAction(viewConf, newContext);
+                        forkJoinPool.submit(task);
+
+                        tasks.add(task);
+                    }
+                } else {
+                    ComputeViewDataAction task = new ComputeViewDataAction(viewConf, context);
+                    forkJoinPool.submit(task);
+
+                    tasks.add(task);
                 }
             }
         }
@@ -325,6 +333,16 @@ public class ViewBuilder extends Feature {
             } else {
                 return Utils.initDateInterval(builder.getAsDate(Parameters.TO_DATE), timeUnit, builder);
             }
+            
+        } else if (context.exists(Parameters.PASSED_DAYS_COUNT)) {
+            Parameters.PassedDaysCount passedDaysCount = builder.getPassedDaysCount();
+            if (context.exists(Parameters.TIME_INTERVAL)) {
+                int timeShift = (int)-context.getAsLong(Parameters.TIME_INTERVAL);
+                return Utils.initDateInterval(builder.getAsDate(Parameters.TO_DATE), passedDaysCount, timeShift, builder);
+            } else {
+                return Utils.initDateInterval(builder.getAsDate(Parameters.TO_DATE), passedDaysCount, 0, builder);
+            }
+            
         } else {
             return builder.build();
         }
@@ -344,7 +362,9 @@ public class ViewBuilder extends Feature {
         String id = idFromConf;
         if (context.exists(Parameters.TIME_UNIT)) {
             id += "_" + context.getAsString(Parameters.TIME_UNIT).toLowerCase();
-        }
+        } else if (context.exists(Parameters.PASSED_DAYS_COUNT)) {
+            id += "_" + context.getPassedDaysCount().getFieldName();
+        } 
 
         return id;
     }

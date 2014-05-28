@@ -71,8 +71,9 @@ public class TestBrokenFactoryUrl extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20130210");
         builder.put(Parameters.TO_DATE, "20130210");
-
-        Metric metric = MetricFactory.getMetric(MetricType.TOP_FACTORIES_BY_LIFETIME);
+        builder.put(Parameters.PASSED_DAYS_COUNT, Parameters.PassedDaysCount.BY_LIFETIME.toString());
+        
+        Metric metric = MetricFactory.getMetric(MetricType.TOP_FACTORIES);
         ListValueData valueData = ValueDataUtil.getAsList(metric, builder.build());
 
         assertEquals(valueData.size(), 0);

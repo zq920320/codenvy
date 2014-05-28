@@ -136,12 +136,6 @@ Presenter.prototype.addServerSortingLinks = function(table, widgetName, modelPar
     
     var modelParams = analytics.util.clone(modelParams);
     
-    if (typeof modelParams.sort == "undefined" && !doNotMap) { 
-        if (typeof  analytics.configuration.getProperty(widgetName, "defaultServerSortParams") != "undefined") {
-            modelParams.sort = analytics.configuration.getProperty(widgetName, "defaultServerSortParams");
-        }
-    }
-    
     var sortingParameterValue = modelParams.sort || null;
              
     for (var i = 0; i < table.columns.length; i++) {

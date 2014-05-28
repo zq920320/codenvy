@@ -82,6 +82,10 @@ public class Context {
         return Parameters.TimeUnit.valueOf(getAsString(Parameters.TIME_UNIT).toUpperCase());
     }
 
+    public Parameters.PassedDaysCount getPassedDaysCount() {
+        return Parameters.PassedDaysCount.valueOf(getAsString(Parameters.PASSED_DAYS_COUNT).toUpperCase());
+    }
+    
     public boolean isDefaultValue(Parameters key) {
         return params.get(key.toString()).equals(key.getDefaultValue());
     }
@@ -275,6 +279,10 @@ public class Context {
             return Parameters.TimeUnit.valueOf(getAsString(Parameters.TIME_UNIT).toUpperCase());
         }
 
+        public Parameters.PassedDaysCount getPassedDaysCount() {
+            return Parameters.PassedDaysCount.valueOf(getAsString(Parameters.PASSED_DAYS_COUNT).toUpperCase());
+        }
+        
         public Context build() {
             return new Context(params);
         }
