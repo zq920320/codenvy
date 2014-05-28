@@ -30,7 +30,6 @@
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>${com.codenvy.analytics.logpath}/%d{yyyy/MM/dd}/catalina-%i.log</fileNamePattern>
-            <Append>true</Append>
             <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
                 <maxFileSize>10MB</maxFileSize>
             </timeBasedFileNamingAndTriggeringPolicy>
@@ -43,8 +42,11 @@
     <logger name="org.apache.catalina.loader.WebappClassLoader" level="OFF"/>
     <logger name="com.codenvy.analytics.metrics.ReadBasedMetric" level="DEBUG"/>
 
-    <root level="INFO">
+    <include file="${analytics.logback.smtp-appender.configuration}"/>
+
+    <root level="DEBUG">
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="FILE"/>
+        <appender-ref ref="SMTP"/>
     </root>
 </configuration>

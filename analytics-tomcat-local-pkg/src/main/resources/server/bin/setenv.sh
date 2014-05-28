@@ -27,6 +27,7 @@
 
 ANALYTICS_OPTS="-Dcodenvy.local.conf.dir=${CODENVY_LOCAL_CONF_DIR} \
                 -Dorganization.application.server.url=${ORGANIZATION_SERVICE_APPLICATION_SERVER_URL} \
+                -Danalytics.logback.smtp-appender.configuration=${CODENVY_LOCAL_CONF_DIR}/logback-smtp-appender.xml \
                 -Dcom.codenvy.analytics.logpath=${CATALINA_HOME}/logs"
 QUARTZ_OPTS="-Dorg.terracotta.quartz.skipUpdateCheck=true"
 REMOTE_DEBUG="-Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n"

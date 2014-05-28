@@ -76,8 +76,10 @@ public abstract class ReadBasedMetric extends AbstractMetric {
             }
         } finally {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Metric computation " + getName() + " is finished with context " + context + " in " +
-                          ((System.currentTimeMillis() - start) / 1000) + " sec.");
+                long duration = (System.currentTimeMillis() - start) / 1000;
+                if (duration > 1) {
+                    LOG.debug("Metric computation " + getName() + " is finished with context " + context + " in " + duration + " sec.");
+                }
             }
         }
     }
