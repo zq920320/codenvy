@@ -27,7 +27,7 @@ import java.io.IOException;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
-@OmitFilters(MetricFilter.WS)
+@OmitFilters({MetricFilter.WS, MetricFilter.PERSISTENT_WS})
 public class AnonymousFactorySessions extends CalculatedMetric implements Expandable {
     public AnonymousFactorySessions() {
         super(MetricType.ANONYMOUS_FACTORY_SESSIONS, new MetricType[]{MetricType.FACTORY_SESSIONS,

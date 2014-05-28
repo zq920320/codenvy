@@ -99,7 +99,6 @@ public abstract class ReadBasedMetric extends AbstractMetric {
         }
 
         long start = System.currentTimeMillis();
-
         try {
             context = omitFilters(context);
             validateRestrictions(context);
@@ -107,8 +106,10 @@ public abstract class ReadBasedMetric extends AbstractMetric {
             return dataLoader.loadExpandedValue(this, context);
         } finally {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Expended metric computation " + getName() + " is finished with context " + context + " in " +
-                          ((System.currentTimeMillis() - start) / 1000) + " sec.");
+                long duration = (System.currentTimeMillis() - start) / 1000;
+                if (duration > 1) {
+                    LOG.debug("Expended metric computation " + getName() + " is finished with context " + context + " in " + duration + " sec.");
+                }
             }
         }
     }

@@ -35,9 +35,9 @@ i = FOREACH i3 GENERATE MIN(i2.dt) AS dt, group.tmpWs AS tmpWs, group.user AS us
 -- users could work anonymously and their factory sessions associated with those names
 -- so, lets find their name before 'user-changed-name' has been occurred
 c1 = filterByEvent(l, 'user-changed-name');
-c2 = extractParam(c1, 'OLD-USER', oldUser);
-c3 = extractParam(c2, 'NEW-USER', newUser);
-c = FOREACH c3 GENERATE LOWER(oldUser) AS anomUser, LOWER(newUser) AS user;
+c2 = extractParam(c1, 'OLD-USER', 'old');
+c3 = extractParam(c2, 'NEW-USER', 'new');
+c = FOREACH c3 GENERATE LOWER(ReplaceWithId(old)) AS anomUser, LOWER(ReplaceWithId(new)) AS user;
 
 -- associating anonymous names with 'factory-project-imported' events
 d1 = JOIN i BY user LEFT, c BY user;

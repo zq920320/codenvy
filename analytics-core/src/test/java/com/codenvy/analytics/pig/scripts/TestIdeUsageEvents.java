@@ -78,9 +78,11 @@ public class TestIdeUsageEvents extends BaseTest {
         assertEquals(1, cursor.size());
 
         DBObject dbObject = cursor.next();
-        assertEquals(12, dbObject.keySet().size());
+        assertEquals(14, dbObject.keySet().size());
         assertEquals("user1", dbObject.get("user"));
         assertEquals("ws1", dbObject.get("ws"));
+        assertEquals(1, dbObject.get("registered_user"));
+        assertEquals(1, dbObject.get("persistent_ws"));
         assertEquals("action1", dbObject.get("action"));
         assertEquals("src1", dbObject.get("source"));
         assertEquals("project1", dbObject.get("project"));
@@ -103,9 +105,11 @@ public class TestIdeUsageEvents extends BaseTest {
         assertEquals(1, cursor.size());
 
         DBObject dbObject = cursor.next();
-        assertEquals(5, dbObject.keySet().size());
+        assertEquals(7, dbObject.keySet().size());
         assertEquals("user2", dbObject.get("user"));
         assertEquals("default", dbObject.get("ws"));
+        assertEquals(1, dbObject.get("registered_user"));
+        assertEquals(0, dbObject.get("persistent_ws"));
         assertNotNull(dbObject.get("_id"));
         assertNotNull(dbObject.get("date"));
         assertNotNull(dbObject.get("ide"));

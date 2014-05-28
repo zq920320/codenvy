@@ -36,7 +36,7 @@ import java.util.Map;
  * @author Anatoliy Bazko
  */
 @RolesAllowed({"system/admin", "system/manager"})
-@OmitFilters({MetricFilter.WS})
+@OmitFilters({MetricFilter.WS, MetricFilter.PERSISTENT_WS})
 public class FactoryStatisticsList extends AbstractListValueResulted {
 
     public FactoryStatisticsList() {

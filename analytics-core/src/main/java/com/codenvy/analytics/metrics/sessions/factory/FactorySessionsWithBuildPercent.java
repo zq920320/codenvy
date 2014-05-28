@@ -30,7 +30,7 @@ import java.io.IOException;
  * @author Anatoliy Bazko
  */
 @RolesAllowed({"system/admin", "system/manager"})
-@OmitFilters(MetricFilter.WS)
+@OmitFilters({MetricFilter.WS, MetricFilter.PERSISTENT_WS})
 public class FactorySessionsWithBuildPercent extends CalculatedMetric implements Expandable {
     public FactorySessionsWithBuildPercent() {
         super(MetricType.FACTORY_SESSIONS_WITH_BUILD_PERCENT, new MetricType[]{MetricType.FACTORY_SESSIONS,

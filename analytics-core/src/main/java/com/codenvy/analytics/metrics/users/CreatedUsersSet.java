@@ -23,7 +23,7 @@ import javax.annotation.security.RolesAllowed;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
-@OmitFilters({MetricFilter.WS})
+@OmitFilters({MetricFilter.WS, MetricFilter.PERSISTENT_WS})
 public class CreatedUsersSet extends AbstractSetValueResulted {
 
     public CreatedUsersSet() {

@@ -102,7 +102,6 @@ Event 'run-started' with parameter 'TYPE' and value 'javascript' doesn't exist
 Event 'run-started' with parameter 'TYPE' and value 'angularjs' doesn't exist
 Event 'run-started' with parameter 'TYPE' and value 'undefined' doesn't exist
 Event 'run-started' with parameter 'TYPE' and value 'nameless' doesn't exist
-Event doesn't exist for anonymous users: run-finished
 Event 'run-finished' with parameter 'TYPE' and value 'jar' doesn't exist
 Event 'run-finished' with parameter 'TYPE' and value 'servlet/jsp' doesn't exist
 Event 'run-finished' with parameter 'TYPE' and value 'django' doesn't exist
@@ -187,7 +186,6 @@ Event doesn't exist: workspace-started
 Event doesn't exist for temporary workspaces: tenant-started
 Event doesn't exist: workspace-stopped
 Event doesn't exist: workspace-destroyed
-Event doesn't exist for anonymous users: project-created
 Event 'project-created' with parameter 'TYPE' and value 'maven_multi_module' doesn't exist
 Event 'project-created' with parameter 'TYPE' and value 'google-mbs-client-android' doesn't exist
 Event 'project-created' with parameter 'TYPE' and value 'null' doesn't exist

@@ -204,18 +204,26 @@ public class MongoDataLoader implements DataLoader {
                     || filter == MetricFilter.USER_FIRST_NAME
                     || filter == MetricFilter.USER_LAST_NAME)) {
 
-                match.put(MetricFilter.USER.name().toLowerCase(), getUsers(filter, value));
+                match.put(MetricFilter.USER.toString().toLowerCase(), getUsers(filter, value));
 
             } else if (!(metric instanceof AbstractUsersProfile) && filter == MetricFilter.USER) {
-                if (!value.equals(Parameters.USER_TYPES.ANY.name())) {
-                    Object users = processFilter(value, filter.isNumericType());
-                    match.put(field, users);
+                if (value.equals(Parameters.USER_TYPES.REGISTERED.name())) {
+                    match.put(MetricFilter.REGISTERED_USER.toString().toLowerCase(), 1);
+                } else if (value.equals(Parameters.USER_TYPES.ANONYMOUS.name())) {
+                    match.put(MetricFilter.REGISTERED_USER.toString().toLowerCase(), 0);
+                } else if (!value.equals(Parameters.USER_TYPES.ANY.name())) {
+                    match.put(MetricFilter.USER.toString().toLowerCase(), processFilter(value, filter.isNumericType()));
                 }
+
             } else if (filter == MetricFilter.WS) {
-                if (!value.equals(Parameters.WS_TYPES.ANY.name())) {
-                    Object users = processFilter(value, filter.isNumericType());
-                    match.put(field, users);
+                if (value.equals(Parameters.WS_TYPES.PERSISTENT.name())) {
+                    match.put(MetricFilter.PERSISTENT_WS.toString().toLowerCase(), 1);
+                } else if (value.equals(Parameters.WS_TYPES.TEMPORARY.name())) {
+                    match.put(MetricFilter.PERSISTENT_WS.toString().toLowerCase(), 0);
+                } else if (!value.equals(Parameters.WS_TYPES.ANY.name())) {
+                    match.put(MetricFilter.WS.toString().toLowerCase(), processFilter(value, filter.isNumericType()));
                 }
+
             } else if (filter == MetricFilter.PARAMETERS) {
                 match.putAll(Utils.fetchEncodedPairs(clauses.getAsString(filter)));
 
@@ -302,7 +310,7 @@ public class MongoDataLoader implements DataLoader {
 
     public static Object processFilter(Object value, boolean isNumericType) throws IOException {
         if (value.getClass().isArray()) {
-            return new BasicDBObject("$in", processArray((Object[])value));
+            return new BasicDBObject("$in", value);
         } else if (value instanceof DBObject || value instanceof Pattern) {
             return value;
         } else {
@@ -318,37 +326,15 @@ public class MongoDataLoader implements DataLoader {
 
         String[] values = value.split(SEPARATOR);
         if (processExclusiveValues) {
-            return new BasicDBObject("$nin", isNumericType ? convertToNumericFormat(values) : processArray(values));
+            return new BasicDBObject("$nin", isNumericType ? convertToNumericFormat(values) : values);
         } else {
             if (values.length == 1) {
-                return isNumericType ? Long.parseLong(values[0]) : processArray(values)[0];
+                return isNumericType ? Long.parseLong(values[0]) : values[0];
             } else {
-                return new BasicDBObject("$in", isNumericType ? convertToNumericFormat(values) : processArray(values));
+                return new BasicDBObject("$in", isNumericType ? convertToNumericFormat(values) : values);
             }
         }
     }
-
-    private static Object[] processArray(Object[] values) {
-        Object[] result = new Object[values.length];
-
-        for (int i = 0; i < result.length; i++) {
-            Object value = values[i];
-
-            if (value.equals(Parameters.WS_TYPES.TEMPORARY.toString())) {
-                result[i] = Metric.TEMPORARY_WS;
-            } else if (value.equals(Parameters.WS_TYPES.PERSISTENT.toString())) {
-                result[i] = Metric.PERSISTENT_WS;
-            } else if (value.equals(Parameters.USER_TYPES.ANONYMOUS.toString())) {
-                result[i] = Metric.ANONYMOUS_USER;
-            } else if (value.equals(Parameters.USER_TYPES.REGISTERED.toString())) {
-                result[i] = Metric.REGISTERED_USER;
-            } else {
-                result[i] = value;
-            }
-        }
-        return result;
-    }
-
 
     private static long[] convertToNumericFormat(String[] values) {
         long[] result = new long[values.length];

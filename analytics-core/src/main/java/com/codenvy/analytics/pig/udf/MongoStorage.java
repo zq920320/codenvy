@@ -19,6 +19,8 @@ package com.codenvy.analytics.pig.udf;
 
 import com.codenvy.analytics.Injector;
 import com.codenvy.analytics.Utils;
+import com.codenvy.analytics.metrics.MetricFilter;
+import com.codenvy.analytics.metrics.ReadBasedMetric;
 import com.codenvy.analytics.persistent.CollectionsManagement;
 import com.codenvy.analytics.persistent.MongoDataStorage;
 import com.codenvy.analytics.pig.scripts.EventsHolder;
@@ -39,7 +41,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
-import static com.codenvy.analytics.Utils.toArray;
+import static com.codenvy.analytics.Utils.*;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class MongoStorage extends StoreFunc {
@@ -131,13 +133,14 @@ public class MongoStorage extends StoreFunc {
                     } else {
                         dbObject.put(key, data);
                     }
-
-
                 }
             }
 
             if (!dbObject.isEmpty()) {
                 try {
+                    addRegisteredUserTag(dbObject);
+                    addPersistentWsTag(dbObject);
+
                     dbCollection.update(new BasicDBObject("_id", value.get(0)),
                                         new BasicDBObject("$set", dbObject),
                                         true,
@@ -146,6 +149,20 @@ public class MongoStorage extends StoreFunc {
                 } catch (Exception e) {
                     LOG.error(e.getMessage(), e);
                 }
+            }
+        }
+
+        private void addRegisteredUserTag(BasicDBObject dbObject) {
+            Object user = dbObject.get(ReadBasedMetric.USER);
+            if (user != null) {
+                dbObject.put(MetricFilter.REGISTERED_USER.toString().toLowerCase(), isAnonymousUser(user) ? 0 : 1);
+            }
+        }
+
+        private void addPersistentWsTag(BasicDBObject dbObject) {
+            Object ws = dbObject.get(ReadBasedMetric.WS);
+            if (ws != null) {
+                dbObject.put(MetricFilter.PERSISTENT_WS.toString().toLowerCase(), isTemporaryWorkspace(ws) ? 0 : 1);
             }
         }
 

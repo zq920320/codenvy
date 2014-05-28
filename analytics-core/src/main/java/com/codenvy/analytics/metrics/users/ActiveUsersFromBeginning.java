@@ -26,7 +26,7 @@ import java.io.IOException;
  * @author Anatoliy Bazko
  */
 @RolesAllowed({"system/admin", "system/manager"})
-@OmitFilters({MetricFilter.WS})
+@OmitFilters({MetricFilter.WS, MetricFilter.PERSISTENT_WS})
 public class ActiveUsersFromBeginning extends AbstractActiveEntities implements WithoutFromDateParam {
 
     public ActiveUsersFromBeginning() {

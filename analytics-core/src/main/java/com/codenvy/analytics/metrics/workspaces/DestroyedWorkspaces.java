@@ -28,7 +28,7 @@ import javax.annotation.security.RolesAllowed;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
-@OmitFilters({MetricFilter.USER})
+@OmitFilters({MetricFilter.USER, MetricFilter.REGISTERED_USER})
 public class DestroyedWorkspaces extends AbstractLongValueResulted {
     public DestroyedWorkspaces() {
         super(MetricType.DESTROYED_WORKSPACES, WS);

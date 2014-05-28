@@ -30,15 +30,11 @@ public class EnsureBrackets extends EvalFunc<String> {
 
     @Override
     public String exec(Tuple input) throws ExecException {
-        if (input == null || input.size() != 1) {
-            return "[]";
+        if (input == null || input.size() != 1 || input.get(0) == null) {
+            return null;
         }
 
         String item = (String)input.get(0);
-        if (item == null) {
-            return "[]";
-        }
-
         return (!item.startsWith("[") ? "[" : "") + item + (!item.endsWith("]") ? "]" : "");
     }
 

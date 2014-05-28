@@ -28,7 +28,7 @@ import java.io.IOException;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
-@OmitFilters(MetricFilter.WS)
+@OmitFilters({MetricFilter.WS, MetricFilter.PERSISTENT_WS})
 public class FactorySessionsWithRunPercent extends CalculatedMetric implements Expandable {
     public FactorySessionsWithRunPercent() {
         super(MetricType.FACTORY_SESSIONS_WITH_RUN_PERCENT,

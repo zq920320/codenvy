@@ -250,8 +250,9 @@ DEFINE usersCreatedFromFactory(X) RETURNS Y {
     t1 = filterByEvent($X, 'user-changed-name');
     t2 = extractParam(t1, 'OLD-USER', 'old');
     t3 = extractParam(t2, 'NEW-USER', 'new');
-    t4 = FILTER t3 BY INDEXOF(LOWER(old), 'anonymoususer_', 0) == 0 AND INDEXOF(LOWER(new), 'anonymoususer_', 0) < 0;
-    t = FOREACH t4 GENERATE dt, LOWER(old) AS tmpUser, LOWER(new) AS user;
+    t4 = FOREACH t3 GENERATE dt, ReplaceWithId(old) AS old, ReplaceWithId(new) AS new;
+    t5 = FILTER t4 BY INDEXOF(LOWER(old), 'anonymoususer_', 0) == 0 AND INDEXOF(LOWER(new), 'anonymoususer_', 0) < 0;
+    t = FOREACH t5 GENERATE dt, LOWER(old) AS tmpUser, LOWER(new) AS user;
 
     -- finds created users
     k1 = filterByEvent($X, 'user-created');

@@ -131,20 +131,20 @@ public class LogChecker extends Feature {
                     doCheckEventWithParameters(context, event, name, AbstractProjectType.TYPES, out);
 
                 } else if (name.equalsIgnoreCase(AbstractMetric.WS)) {
-                    if (!isEventExist(context, event, AbstractMetric.WS, Metric.PERSISTENT_WS)) {
+                    if (!isEventExist(context, event, MetricFilter.PERSISTENT_WS.toString().toLowerCase(), 1)) {
                         writeLine("Event doesn't exist for persistent workspaces: " + event, out);
                     }
 
-                    if (!isEventExist(context, event, AbstractMetric.WS, Metric.TEMPORARY_WS)) {
+                    if (!isEventExist(context, event, MetricFilter.PERSISTENT_WS.toString().toLowerCase(), 0)) {
                         writeLine("Event doesn't exist for temporary workspaces: " + event, out);
                     }
 
                 } else if (name.equalsIgnoreCase(AbstractMetric.USER)) {
-                    if (!isEventExist(context, event, AbstractMetric.USER, Metric.REGISTERED_USER)) {
+                    if (!isEventExist(context, event, MetricFilter.REGISTERED_USER.toString().toLowerCase(), 1)) {
                         writeLine("Event doesn't exist for registered users: " + event, out);
                     }
 
-                    if (!isEventExist(context, event, AbstractMetric.USER, Metric.ANONYMOUS_USER)) {
+                    if (!isEventExist(context, event, MetricFilter.REGISTERED_USER.toString().toLowerCase(), 0)) {
                         writeLine("Event doesn't exist for anonymous users: " + event, out);
                     }
                 }

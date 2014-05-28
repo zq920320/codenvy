@@ -25,7 +25,7 @@ import javax.annotation.security.RolesAllowed;
 
 /** @author <a href="mailto:dnochevnov@codenvy.com">Dmytro Nochevnov</a> */
 @RolesAllowed({"system/admin", "system/manager"})
-@OmitFilters(MetricFilter.WS)
+@OmitFilters({MetricFilter.WS, MetricFilter.PERSISTENT_WS})
 public class TopFactoriesBy1Day extends AbstractTopFactories {
 
     public TopFactoriesBy1Day() {

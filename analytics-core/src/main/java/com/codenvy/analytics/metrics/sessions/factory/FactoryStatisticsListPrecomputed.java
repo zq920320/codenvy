@@ -25,7 +25,7 @@ import javax.annotation.security.RolesAllowed;
  * @author Alexander Reshetnyak
  */
 @RolesAllowed({})
-@OmitFilters({MetricFilter.WS})
+@OmitFilters({MetricFilter.WS, MetricFilter.PERSISTENT_WS})
 public class FactoryStatisticsListPrecomputed extends AbstractListValueResulted implements PrecomputedDataMetric {
 
     public FactoryStatisticsListPrecomputed() {

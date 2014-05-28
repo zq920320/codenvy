@@ -28,7 +28,7 @@ import javax.annotation.security.RolesAllowed;
  * @author Anatoliy Bazko
  */
 @RolesAllowed({"system/admin", "system/manager"})
-@OmitFilters(MetricFilter.WS)
+@OmitFilters({MetricFilter.WS, MetricFilter.PERSISTENT_WS})
 public class TemporaryWorkspacesCreated extends AbstractLongValueResulted {
 
     public TemporaryWorkspacesCreated() {

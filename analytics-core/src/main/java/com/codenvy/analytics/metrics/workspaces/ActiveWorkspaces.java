@@ -28,7 +28,7 @@ import javax.annotation.security.RolesAllowed;
  * @author Anatoliy Bazko
  */
 @RolesAllowed({"system/admin", "system/manager"})
-@OmitFilters({MetricFilter.USER})
+@OmitFilters({MetricFilter.USER, MetricFilter.REGISTERED_USER})
 public class ActiveWorkspaces extends AbstractActiveEntities {
 
     public ActiveWorkspaces() {

@@ -34,7 +34,7 @@ public abstract class AbstractAnalysisMetric extends AbstractActiveEntities impl
         builder.remove(Parameters.FROM_DATE);
 
         if (!clauses.exists(MetricFilter.USER)) {
-            builder.put(MetricFilter.USER, Metric.REGISTERED_USER);
+            builder.put(MetricFilter.REGISTERED_USER, 1);
         }
 
         return super.applySpecificFilter(builder.build());

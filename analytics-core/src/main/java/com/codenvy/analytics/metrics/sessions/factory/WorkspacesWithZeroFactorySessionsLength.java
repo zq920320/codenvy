@@ -29,7 +29,7 @@ import java.util.List;
 
 /** @author Alexander Reshetnyak */
 @RolesAllowed({"system/admin", "system/manager"})
-@OmitFilters(MetricFilter.WS)
+@OmitFilters({MetricFilter.WS, MetricFilter.PERSISTENT_WS})
 public class WorkspacesWithZeroFactorySessionsLength extends ReadBasedMetric implements ReadBasedExpandable {
 
     public WorkspacesWithZeroFactorySessionsLength() {

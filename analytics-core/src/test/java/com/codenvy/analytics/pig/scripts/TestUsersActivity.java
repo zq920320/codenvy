@@ -89,10 +89,12 @@ public class TestUsersActivity extends BaseTest {
         assertEquals(1, cursor.size());
 
         DBObject dbObject = cursor.next();
-        assertEquals(13, dbObject.keySet().size());
+        assertEquals(15, dbObject.keySet().size());
         assertEquals("ide-usage", dbObject.get("event"));
         assertEquals("user1", dbObject.get("user"));
         assertEquals("ws1", dbObject.get("ws"));
+        assertEquals(1, dbObject.get("registered_user"));
+        assertEquals(1, dbObject.get("persistent_ws"));
         assertEquals("action1", dbObject.get("action"));
         assertEquals("src1", dbObject.get("source"));
         assertEquals("project1", dbObject.get("project"));

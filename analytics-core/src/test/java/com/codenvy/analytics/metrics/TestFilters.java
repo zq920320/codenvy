@@ -79,10 +79,10 @@ public class TestFilters extends BaseTest {
 
     @DataProvider(name = "dataProvider")
     public Object[][] parametersFilterProvider() {
-        return new Object[][]{{"ws1 OR TEMPORARY", null, 3},
-                              {"tmp-22rct0cq0rh8vs OR PERSISTENT", null, 3},
-                              {null, "user1 OR ANONYMOUS", 3},
-                              {null, "anonymoususer_edjkx4 OR REGISTERED", 3},
+        return new Object[][]{{"ws1", null, 1},
+                              {"tmp-22rct0cq0rh8vs", null, 1},
+                              {null, "user1", 1},
+                              {null, "anonymoususer_edjkx4", 1},
                               {Parameters.WS_TYPES.TEMPORARY.toString(), Parameters.USER_TYPES.ANONYMOUS.toString(), 1},
                               {Parameters.WS_TYPES.PERSISTENT.toString(), Parameters.USER_TYPES.REGISTERED.toString(), 1},
                               {Parameters.WS_TYPES.ANY.toString(), Parameters.USER_TYPES.ANY.toString(), 4},

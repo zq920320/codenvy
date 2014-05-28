@@ -25,7 +25,7 @@ import javax.annotation.security.RolesAllowed;
 
 /** @author Dmytro Nochevnov */
 @RolesAllowed({"system/admin", "system/manager"})
-@OmitFilters(MetricFilter.WS)
+@OmitFilters({MetricFilter.WS, MetricFilter.PERSISTENT_WS})
 public class TopReferrersBy365Day extends AbstractTopReferrers {
 
     public TopReferrersBy365Day() {

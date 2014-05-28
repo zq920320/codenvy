@@ -26,8 +26,10 @@ public enum MetricFilter {
     DATE(true),
 
     WS,
+    PERSISTENT_WS(true),
     IDE(true),
     USER,
+    REGISTERED_USER(true),
     ALIASES,
     EVENT,
     DOMAIN,

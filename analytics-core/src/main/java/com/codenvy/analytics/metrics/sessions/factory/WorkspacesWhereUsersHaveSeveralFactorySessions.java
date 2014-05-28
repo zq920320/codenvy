@@ -31,7 +31,7 @@ import java.util.Map;
 
 /** @author Alexander Reshetnyak */
 @RolesAllowed({"system/admin", "system/manager"})
-@OmitFilters(MetricFilter.WS)
+@OmitFilters({MetricFilter.WS, MetricFilter.PERSISTENT_WS})
 public class WorkspacesWhereUsersHaveSeveralFactorySessions extends ReadBasedMetric implements ReadBasedExpandable {
     public WorkspacesWhereUsersHaveSeveralFactorySessions() {
         super(MetricType.WORKSPACES_WHERE_USERS_HAVE_SEVERAL_FACTORY_SESSIONS);

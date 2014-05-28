@@ -36,9 +36,11 @@ l = loadResources('$STORAGE_URL', '$STORAGE_TABLE_USERS_PROFILES', '$LOG', '$FRO
 a1 = filterByEvent(l, 'user-created');
 a2 = extractParam(a1, 'USER-ID', 'userId');
 a3 = extractParam(a2, 'EMAILS', 'emails');
-a = FOREACH a3 GENERATE dt,
+a4 = extractParam(a3, 'ALIASES', 'aliases');
+a = FOREACH a4 GENERATE dt,
                         userId,
-                        emails;
+                        (emails IS NOT NULL ? emails
+                                            : (aliases IS NOT NULL ? aliases : '')) AS emails;
 
 resultA = FOREACH a GENERATE userId,
                              TOTUPLE('date', ToMilliSeconds(dt)),
