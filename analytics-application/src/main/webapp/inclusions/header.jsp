@@ -20,7 +20,6 @@
 <link rel="stylesheet" type="text/css" href="/analytics/css/styles.css"/>
 <link rel="stylesheet" type="text/css" href="/analytics/css/view.css"/>
 <link rel="stylesheet" type="text/css" href="/analytics/css/database-table.css" />
-<link rel="stylesheet" type="text/css" href="/analytics/css/line-chart.css" />
 
 <style type="text/css">
     body {

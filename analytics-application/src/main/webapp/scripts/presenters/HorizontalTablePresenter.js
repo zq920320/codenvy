@@ -136,7 +136,7 @@ analytics.presenter.HorizontalTablePresenter.prototype.load = function () {
             var columnLinkPrefixList = analytics.configuration.getProperty(widgetName, "columnLinkPrefixList");
             if (typeof columnLinkPrefixList != "undefined") {
                 for (var columnName in columnLinkPrefixList) {
-                    table = view.makeTableColumnLinked(table, columnName, columnLinkPrefixList[columnName]);
+                    table = presenter.makeTableColumnLinked(table, columnName, columnLinkPrefixList[columnName]);
                 }
             }
 
