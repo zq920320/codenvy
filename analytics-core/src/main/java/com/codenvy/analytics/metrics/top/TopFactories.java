@@ -28,7 +28,7 @@ import java.util.List;
 
 
 /** @author Dmytro Nochevnov */
-public abstract class AbstractTopReferrers extends AbstractTopMetrics {
+public class TopFactories extends AbstractTopMetrics {
     public static final String BUILD_RATE                         = "build_rate";
     public static final String RUN_RATE                           = "run_rate";
     public static final String DEPLOY_RATE                        = "deploy_rate";
@@ -37,13 +37,13 @@ public abstract class AbstractTopReferrers extends AbstractTopMetrics {
     public static final String ABANDON_FACTORY_SESSION_RATE       = "abandon_factory_session_rate";
     public static final String CONVERTED_FACTORY_SESSION_RATE     = "converted_factory_session_rate";
 
-    public AbstractTopReferrers(MetricType factoryMetricType, int dayCount) {
-        super(factoryMetricType, dayCount);
+    public TopFactories() {
+        super(MetricType.TOP_FACTORIES);
     }
-
+    
     @Override
     public String[] getTrackedFields() {
-        return new String[]{REFERRER,
+        return new String[]{FACTORY,
                             WS_CREATED,
                             USER_CREATED,
                             SESSIONS,
@@ -61,11 +61,10 @@ public abstract class AbstractTopReferrers extends AbstractTopMetrics {
     public DBObject[] getSpecificDBOperations(Context clauses) {
         List<DBObject> dbOperations = new ArrayList<>();
 
-        dbOperations.add(
-                new BasicDBObject(
-                        "$match", Utils.getAndOperation(new BasicDBObject(REFERRER, new BasicDBObject("$ne", "")))));
+        dbOperations.add(new BasicDBObject("$match", new BasicDBObject(FACTORY, new BasicDBObject("$ne", ""))));
+        dbOperations.add(new BasicDBObject("$match", new BasicDBObject(FACTORY, new BasicDBObject("$ne", null))));
 
-        dbOperations.add(new BasicDBObject("$group", new BasicDBObject(ID, "$" + REFERRER)
+        dbOperations.add(new BasicDBObject("$group", new BasicDBObject(ID, "$" + FACTORY)
                 .append(WS_CREATED, new BasicDBObject("$sum", "$" + WS_CREATED))
                 .append(USER_CREATED, new BasicDBObject("$sum", "$" + USER_CREATED))
                 .append(SESSIONS, new BasicDBObject("$sum", 1))
@@ -76,30 +75,29 @@ public abstract class AbstractTopReferrers extends AbstractTopMetrics {
                 .append(AUTHENTICATED_SESSION + "_count", new BasicDBObject("$sum", "$" + AUTHENTICATED_SESSION))
                 .append(CONVERTED_SESSION + "_count", new BasicDBObject("$sum", "$" + CONVERTED_SESSION))));
 
-        dbOperations.add(new BasicDBObject("$project", new BasicDBObject(TIME, 1)
+        dbOperations.add(new BasicDBObject("$project", new BasicDBObject(ID, 0)
                 .append(WS_CREATED, 1)
                 .append(USER_CREATED, 1)
+                .append(FACTORY, "$_id")
                 .append(SESSIONS, 1)
-                .append(REFERRER, "$_id")
-                .append(ID, 0)
+                .append(TIME, 1)
                 .append(BUILD_RATE, getRateOperation("$" + BUILDS + "_count", "$" + SESSIONS))
                 .append(RUN_RATE, getRateOperation("$" + RUNS + "_count", "$" + SESSIONS))
                 .append(DEPLOY_RATE, getRateOperation("$" + DEPLOYS + "_count", "$" + SESSIONS))
                 .append(AUTHENTICATED_FACTORY_SESSION_RATE, getRateOperation("$" + AUTHENTICATED_SESSION + "_count", "$" + SESSIONS))
                 .append(CONVERTED_FACTORY_SESSION_RATE, getRateOperation("$" + CONVERTED_SESSION + "_count", "$" + SESSIONS))
-
         ));
 
-        dbOperations.add(new BasicDBObject("$project", new BasicDBObject(REFERRER, 1)
+        dbOperations.add(new BasicDBObject("$project", new BasicDBObject(FACTORY, 1)
                 .append(WS_CREATED, 1)
                 .append(USER_CREATED, 1)
                 .append(SESSIONS, 1)
                 .append(TIME, 1)
+                .append(CONVERTED_FACTORY_SESSION_RATE, 1)
+                .append(AUTHENTICATED_FACTORY_SESSION_RATE, 1)
                 .append(BUILD_RATE, 1)
                 .append(RUN_RATE, 1)
                 .append(DEPLOY_RATE, 1)
-                .append(CONVERTED_FACTORY_SESSION_RATE, 1)
-                .append(AUTHENTICATED_FACTORY_SESSION_RATE, 1)
                 .append(ANONYMOUS_FACTORY_SESSION_RATE, Utils.getSubtractOperation(100, "$" + AUTHENTICATED_FACTORY_SESSION_RATE))
                 .append(ABANDON_FACTORY_SESSION_RATE, Utils.getSubtractOperation(100, "$" + CONVERTED_FACTORY_SESSION_RATE))
         ));
@@ -113,5 +111,10 @@ public abstract class AbstractTopReferrers extends AbstractTopMetrics {
     @Override
     public String getStorageCollectionName() {
         return getStorageCollectionName(MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST);
+    }
+    
+    @Override
+    public String getDescription() {
+        return "The top factories with the same url sorted by overall duration of session in period of time during last days";
     }
 }

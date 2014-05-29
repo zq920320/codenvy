@@ -23,6 +23,7 @@ import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.Context.Builder;
 import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.metrics.Parameters.PassedDaysCount;
 import com.codenvy.analytics.metrics.Parameters.TimeUnit;
 import com.codenvy.analytics.metrics.ReadBasedMetric;
 import com.codenvy.analytics.persistent.MongoDataLoader;
@@ -179,6 +180,35 @@ public class Utils {
         }
 
         return builder.build();
+    }
+
+    /**
+     * Calculate FROM_DATE and TO_DATE parameters of context:
+     * FROM_DATE will be = @param toDate - @param passedDaysCount)
+     * TO_DATE will be = @param toDate
+     *
+     * @param timeShift
+     *         = starting from 0 to represent current time period.
+     */
+    public static Context initDateInterval(Calendar toDate, PassedDaysCount passedDaysCount, Builder builder) {
+        switch (passedDaysCount) {
+            case BY_LIFETIME:
+                initByLifeTime(builder);
+                break;
+                
+            default:
+                initByPassedDays(toDate, builder, passedDaysCount.getDayCount());
+                break;
+        }
+
+        return builder.build();
+    }
+    
+    private static void initByPassedDays(Calendar toDate, Builder builder, int passedDaysCount) {
+        Calendar fromDate = (Calendar)toDate.clone();
+        fromDate.add(Calendar.DAY_OF_MONTH, 1 - passedDaysCount);
+        builder.put(Parameters.FROM_DATE, fromDate);
+        builder.put(Parameters.TO_DATE, toDate);
     }
 
     public static Map<String, String> fetchEncodedPairs(String data) throws UnsupportedEncodingException {

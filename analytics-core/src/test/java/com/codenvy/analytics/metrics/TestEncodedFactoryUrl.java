@@ -21,8 +21,8 @@ import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.metrics.sessions.factory.ProductUsageFactorySessionsList;
-import com.codenvy.analytics.metrics.top.AbstractTopFactories;
 import com.codenvy.analytics.metrics.top.AbstractTopMetrics;
+import com.codenvy.analytics.metrics.top.TopFactories;
 import com.codenvy.analytics.pig.scripts.ScriptType;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
@@ -114,9 +114,9 @@ public class TestEncodedFactoryUrl extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20130210");
         builder.put(Parameters.TO_DATE, "20130210");
-
-        AbstractTopMetrics metric =
-                new TestAbstractTopFactories(MetricType.TOP_FACTORIES_BY_LIFETIME, AbstractTopMetrics.LIFE_TIME_PERIOD);
+        builder.put(Parameters.PASSED_DAYS_COUNT, Parameters.PassedDaysCount.BY_LIFETIME.toString());
+        
+        AbstractTopMetrics metric = new TestTopFactories();
 
         ListValueData value = (ListValueData)metric.getValue(builder.build());
 
@@ -153,27 +153,22 @@ public class TestEncodedFactoryUrl extends BaseTest {
         assertEquals(item.getAll().get(ProductUsageFactorySessionsList.WS_CREATED).getAsString(), wsCreated);
         assertEquals(item.getAll().get(ProductUsageFactorySessionsList.USER_CREATED).getAsString(), userCreated);
         assertEquals(item.getAll().get(ProductUsageFactorySessionsList.TIME).getAsString(), time);
-        assertEquals(item.getAll().get(AbstractTopFactories.BUILD_RATE).getAsString(), buildRate);
-        assertEquals(item.getAll().get(AbstractTopFactories.RUN_RATE).getAsString(), runRate);
-        assertEquals(item.getAll().get(AbstractTopFactories.DEPLOY_RATE).getAsString(), deployRate);
-        assertEquals(item.getAll().get(AbstractTopFactories.ANONYMOUS_FACTORY_SESSION_RATE).getAsString(),
+        assertEquals(item.getAll().get(TopFactories.BUILD_RATE).getAsString(), buildRate);
+        assertEquals(item.getAll().get(TopFactories.RUN_RATE).getAsString(), runRate);
+        assertEquals(item.getAll().get(TopFactories.DEPLOY_RATE).getAsString(), deployRate);
+        assertEquals(item.getAll().get(TopFactories.ANONYMOUS_FACTORY_SESSION_RATE).getAsString(),
                      anonymousFactorySessionRate);
-        assertEquals(item.getAll().get(AbstractTopFactories.AUTHENTICATED_FACTORY_SESSION_RATE).getAsString(),
+        assertEquals(item.getAll().get(TopFactories.AUTHENTICATED_FACTORY_SESSION_RATE).getAsString(),
                      authenticatedFactorySessionRate);
-        assertEquals(item.getAll().get(AbstractTopFactories.ABANDON_FACTORY_SESSION_RATE).getAsString(),
+        assertEquals(item.getAll().get(TopFactories.ABANDON_FACTORY_SESSION_RATE).getAsString(),
                      abandonFactorySessionRate);
-        assertEquals(item.getAll().get(AbstractTopFactories.CONVERTED_FACTORY_SESSION_RATE).getAsString(),
+        assertEquals(item.getAll().get(TopFactories.CONVERTED_FACTORY_SESSION_RATE).getAsString(),
                      convertedFactorySessionRate);
     }
 
     // ------------------------> Tested Metrics
 
-    private class TestAbstractTopFactories extends AbstractTopFactories {
-
-        public TestAbstractTopFactories(MetricType metricType, int dayCount) {
-            super(metricType, dayCount);
-        }
-
+    private class TestTopFactories extends TopFactories {
         @Override
         public String getDescription() {
             return null;

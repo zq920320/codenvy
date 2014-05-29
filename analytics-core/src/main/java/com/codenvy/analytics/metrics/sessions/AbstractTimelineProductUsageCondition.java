@@ -22,6 +22,7 @@ import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.*;
+import com.codenvy.analytics.metrics.Parameters.PassedDaysCount;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -30,6 +31,15 @@ import java.util.*;
 /** @author Anatoliy Bazko */
 public abstract class AbstractTimelineProductUsageCondition extends CalculatedMetric implements Expandable {
 
+    private final static List<PassedDaysCount> DAY_INTERVALS = Arrays.asList(new PassedDaysCount[]{
+       PassedDaysCount.BY_1_DAY,
+       PassedDaysCount.BY_7_DAYS,
+       PassedDaysCount.BY_30_DAYS,
+       PassedDaysCount.BY_60_DAYS,
+       PassedDaysCount.BY_90_DAYS,
+       PassedDaysCount.BY_365_DAYS,
+     });    
+    
     protected AbstractTimelineProductUsageCondition(MetricType metricType, MetricType[] basedMetricTypes) {
         super(metricType, basedMetricTypes);
     }
@@ -41,9 +51,9 @@ public abstract class AbstractTimelineProductUsageCondition extends CalculatedMe
     @Override
     public ValueData getValue(Context context) throws IOException {
         try {
-            Map<String, ValueData> row = new HashMap<>(DaysInterval.values().length);
+            Map<String, ValueData> row = new HashMap<>(DAY_INTERVALS.size());
 
-            for (DaysInterval interval : DaysInterval.values()) {
+            for (PassedDaysCount interval : DAY_INTERVALS) {
                 LongValueData numberOfUsers = getNumberOfUsers(context, interval.getDayCount());
                 String fieldName = interval.getFieldName();
 
@@ -86,9 +96,8 @@ public abstract class AbstractTimelineProductUsageCondition extends CalculatedMe
     public Context initContextBasedOnTimeInterval(Context context) throws ParseException {
         if (context.exists(Parameters.TIME_INTERVAL)) {
             int timeInterval = (int)context.getAsLong(Parameters.TIME_INTERVAL);
-            if (timeInterval < DaysInterval.values().length) {
-                int dayCount = DaysInterval.values()[timeInterval].getDayCount();
-                context = initContext(context, dayCount);
+            if (timeInterval < DAY_INTERVALS.size()) {
+                context = initContext(context, DAY_INTERVALS.get(timeInterval).getDayCount());
             }
         }
 
@@ -108,30 +117,5 @@ public abstract class AbstractTimelineProductUsageCondition extends CalculatedMe
     @Override
     public String getExpandedField() {
         return ((Expandable)basedMetric[0]).getExpandedField();
-    }
-
-    private enum DaysInterval {
-        BY_1_DAY("by_1_day", 1),
-        BY_7_DAYS("by_7_days", 7),
-        BY_30_DAYS("by_30_days", 30),
-        BY_60_DAYS("by_60_days", 60),
-        BY_90_DAYS("by_90_days", 90),
-        BY_365_DAYS("by_365_days", 365);
-
-        String fieldName;
-        int    dayCount;
-
-        DaysInterval(String fieldName, int dayCount) {
-            this.fieldName = fieldName;
-            this.dayCount = dayCount;
-        }
-
-        public String getFieldName() {
-            return fieldName;
-        }
-
-        public int getDayCount() {
-            return dayCount;
-        }
     }
 }

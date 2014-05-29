@@ -19,6 +19,7 @@ package com.codenvy.analytics.metrics.top;
 
 import com.codenvy.analytics.datamodel.*;
 import com.codenvy.analytics.metrics.*;
+import com.codenvy.analytics.metrics.Parameters.PassedDaysCount;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -27,36 +28,24 @@ import java.util.*;
 /** @author Anatoliy Bazko */
 public abstract class AbstractTopEntitiesTime extends CalculatedMetric {
 
-    public static final String ENTITY      = "entity";
-    public static final String BY_1_DAY    = "by_1_day";
-    public static final String BY_7_DAY    = "by_7_days";
-    public static final String BY_30_DAY   = "by_30_days";
-    public static final String BY_60_DAY   = "by_60_days";
-    public static final String BY_90_DAY   = "by_90_days";
-    public static final String BY_365_DAY  = "by_365_days";
-    public static final String BY_LIFETIME = "by_lifetime";
+    public static final String ENTITY = "entity";
 
     public static final int MAX_DOCUMENT_COUNT = 100;
-    public static final int LIFE_TIME_PERIOD   = -1;
 
-    private final int          dayCount;
     private final MetricFilter filterParameter;
+    
+    private final static List<PassedDaysCount> DAY_INTERVALS = Arrays.asList(new PassedDaysCount[]{
+      PassedDaysCount.BY_1_DAY,
+      PassedDaysCount.BY_7_DAYS,
+      PassedDaysCount.BY_30_DAYS,
+      PassedDaysCount.BY_60_DAYS,
+      PassedDaysCount.BY_90_DAYS,
+      PassedDaysCount.BY_365_DAYS,
+      PassedDaysCount.BY_LIFETIME
+    });
 
-    public AbstractTopEntitiesTime(MetricType metricType,
-                                   MetricType[] basedMetricTypes,
-                                   MetricFilter filterParameter,
-                                   int dayCount) {
-        super(metricType, basedMetricTypes);
-        this.dayCount = dayCount;
-        this.filterParameter = filterParameter;
-    }
-
-    public AbstractTopEntitiesTime(MetricType metricType,
-                                   Metric[] basedMetric,
-                                   MetricFilter filterParameter,
-                                   int dayCount) {
+    public AbstractTopEntitiesTime(MetricType metricType, MetricType[] basedMetric, MetricFilter filterParameter) {
         super(metricType, basedMetric);
-        this.dayCount = dayCount;
         this.filterParameter = filterParameter;
     }
 
@@ -64,50 +53,20 @@ public abstract class AbstractTopEntitiesTime extends CalculatedMetric {
     public ValueData getValue(Context context) throws IOException {
 
         try {
-            ListValueData top = getTopEntities(context, dayCount);
+            ListValueData top = getTopEntities(context);
             String[] filterValue = extractEntityNames(top);
 
             if (filterValue.length == 0) {
-                return combineResult(top,
-                                     ListValueData.DEFAULT,
-                                     ListValueData.DEFAULT,
-                                     ListValueData.DEFAULT,
-                                     ListValueData.DEFAULT,
-                                     ListValueData.DEFAULT,
-                                     ListValueData.DEFAULT,
-                                     ListValueData.DEFAULT);
+                return combineDefaultResult(top);
             }
 
-            ListValueData by1Day = getEntities(context, 1, filterValue);
-            ListValueData by7Day = getEntities(context, 7, filterValue);
-            ListValueData by30Day = getEntities(context, 30, filterValue);
-            ListValueData by60Day = getEntities(context, 60, filterValue);
-            ListValueData by90Day = getEntities(context, 90, filterValue);
-            ListValueData by365Day = getEntities(context, 365, filterValue);
-            ListValueData byLifetime = getEntities(context, LIFE_TIME_PERIOD, filterValue);
-
-            return combineResult(top,
-                                 by1Day,
-                                 by7Day,
-                                 by30Day,
-                                 by60Day,
-                                 by90Day,
-                                 by365Day,
-                                 byLifetime);
+            return combineResult(top, filterValue, context);
         } catch (ParseException e) {
             throw new IOException(e);
         }
     }
 
-    @Override
-    public Class<? extends ValueData> getValueDataClass() {
-        return ListValueData.class;
-    }
-
-    private ValueData combineResult(ListValueData top, ListValueData by1Day, ListValueData by7Day,
-                                    ListValueData by30Day, ListValueData by60Day, ListValueData by90Day,
-                                    ListValueData by365Day, ListValueData byLifetime) {
-
+    private ValueData combineDefaultResult(ListValueData top) {
         List<ValueData> result = new ArrayList<>(top.size());
 
         for (ValueData item : top.getAll()) {
@@ -120,13 +79,47 @@ public abstract class AbstractTopEntitiesTime extends CalculatedMetric {
             Map<String, ValueData> row = new HashMap<>(9);
             row.put(ENTITY, StringValueData.valueOf(entityName));
             row.put(SESSIONS, entity.get(SESSIONS));
-            row.put(BY_1_DAY, getEntityTimeValue(by1Day, entityName, TIME));
-            row.put(BY_7_DAY, getEntityTimeValue(by7Day, entityName, TIME));
-            row.put(BY_30_DAY, getEntityTimeValue(by30Day, entityName, TIME));
-            row.put(BY_60_DAY, getEntityTimeValue(by60Day, entityName, TIME));
-            row.put(BY_90_DAY, getEntityTimeValue(by90Day, entityName, TIME));
-            row.put(BY_365_DAY, getEntityTimeValue(by365Day, entityName, TIME));
-            row.put(BY_LIFETIME, getEntityTimeValue(byLifetime, entityName, TIME));
+            
+            for (PassedDaysCount interval : DAY_INTERVALS) {
+                ListValueData entities = ListValueData.DEFAULT;
+                ValueData entityTimeValue = getEntityTimeValue(entities, entityName, TIME);
+                String fieldName = interval.getFieldName();
+
+                row.put(fieldName, entityTimeValue);
+            }
+
+            result.add(new MapValueData(row));
+        }
+
+        return new ListValueData(result);
+    }
+
+    @Override
+    public Class<? extends ValueData> getValueDataClass() {
+        return ListValueData.class;
+    }
+
+    private ValueData combineResult(ListValueData top, String[] filterValue, Context context) throws ParseException, IOException {
+        List<ValueData> result = new ArrayList<>(top.size());
+
+        for (ValueData item : top.getAll()) {
+            MapValueData next = (MapValueData)item;
+            String paramName = filterParameter.name().toLowerCase();
+
+            Map<String, ValueData> entity = next.getAll();
+            String entityName = entity.get(paramName).getAsString();
+
+            Map<String, ValueData> row = new HashMap<>(9);
+            row.put(ENTITY, StringValueData.valueOf(entityName));
+            row.put(SESSIONS, entity.get(SESSIONS));
+            
+            for (PassedDaysCount interval : DAY_INTERVALS) {
+                ListValueData entities = getEntities(context, interval, filterValue);
+                ValueData entityTimeValue = getEntityTimeValue(entities, entityName, TIME);
+                String fieldName = interval.getFieldName();
+
+                row.put(fieldName, entityTimeValue);
+            }
 
             result.add(new MapValueData(row));
         }
@@ -162,8 +155,10 @@ public abstract class AbstractTopEntitiesTime extends CalculatedMetric {
     }
 
     /** @return top entities for required period sorted by usage time */
-    private ListValueData getTopEntities(Context context, int dayCount) throws ParseException, IOException {
-        Context.Builder builder = initContextBuilder(context, dayCount);
+    private ListValueData getTopEntities(Context context) throws ParseException, IOException {
+        Context.Builder builder = new Context.Builder();
+        builder.putAll(context);
+
         builder.put(Parameters.SORT, "-" + TIME);
         builder.put(Parameters.PAGE, 1);
         builder.put(Parameters.PER_PAGE, MAX_DOCUMENT_COUNT);
@@ -171,29 +166,44 @@ public abstract class AbstractTopEntitiesTime extends CalculatedMetric {
         return ValueDataUtil.getAsList(basedMetric[0], builder.build());
     }
 
-    private ListValueData getEntities(Context context, int dayCount, String[] filterValue)
+    private ListValueData getEntities(Context context, PassedDaysCount passedDaysCount, String[] filterValue)
             throws ParseException, IOException {
 
-        Context.Builder builder = initContextBuilder(context, dayCount);
+        Context.Builder builder = initContextBuilder(context, passedDaysCount);
         builder.put(filterParameter, filterValue);
 
         return ValueDataUtil.getAsList(basedMetric[0], builder.build());
     }
 
-    private Context.Builder initContextBuilder(Context basedContext, int dayCount) throws ParseException {
+    private Context.Builder initContextBuilder(Context basedContext, PassedDaysCount passedDaysCount) throws ParseException {
         Calendar toDate = basedContext.getAsDate(Parameters.TO_DATE);
 
         Context.Builder builder = new Context.Builder();
         builder.putAll(basedContext);
 
-        if (dayCount == LIFE_TIME_PERIOD) {
+        if (passedDaysCount == PassedDaysCount.BY_LIFETIME) {
             builder.putDefaultValue(Parameters.FROM_DATE);
+            
         } else {
             Calendar fromDate = (Calendar)toDate.clone();
-            fromDate.add(Calendar.DAY_OF_MONTH, 1 - dayCount);
+            fromDate.add(Calendar.DAY_OF_MONTH, 1 - passedDaysCount.getDayCount());
             builder.put(Parameters.FROM_DATE, fromDate);
         }
 
         return builder;
+    }
+    
+    /**
+     * Return context with fixed time parameters
+     */
+    public Context initContextBasedOnTimeInterval(Context context) throws ParseException {
+        if (context.exists(Parameters.TIME_INTERVAL)) {
+            int timeInterval = (int)context.getAsLong(Parameters.TIME_INTERVAL);
+            if (timeInterval < DAY_INTERVALS.size()) {
+                context = initContextBuilder(context, DAY_INTERVALS.get(timeInterval)).build();
+            }
+        }
+
+        return context;
     }
 }

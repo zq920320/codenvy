@@ -24,11 +24,11 @@ import com.mongodb.DBObject;
 
 
 /** @author <a href="mailto:dnochevnov@codenvy.com">Dmytro Nochevnov</a> */
-public abstract class AbstractTopSessions extends AbstractTopMetrics {
-    public AbstractTopSessions(MetricType factoryMetricType, int dayCount) {
-        super(factoryMetricType, dayCount);
+public class TopFactorySessions extends AbstractTopMetrics {
+    public TopFactorySessions() {
+        super(MetricType.TOP_FACTORY_SESSIONS);
     }
-
+    
     @Override
     public String[] getTrackedFields() {
         return new String[]{TIME,
@@ -55,5 +55,11 @@ public abstract class AbstractTopSessions extends AbstractTopMetrics {
     @Override
     public String getStorageCollectionName() {
         return getStorageCollectionName(MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST);
+    }
+    
+
+    @Override
+    public String getDescription() {
+        return "The top factory sessions sorted by duration of session in period of time during last days";
     }
 }

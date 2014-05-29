@@ -25,45 +25,32 @@ analytics.presenter.TopMetricsPresenter = function TopMetricsPresenter() {};
 
 analytics.presenter.TopMetricsPresenter.prototype = new Presenter();
 
-analytics.presenter.TopMetricsPresenter.prototype.clientSortParams = {
-    "top_factory_sessions": {
-        "descSortColumnNumber": 0
-    },
-    
-    "top_factories": {
-        "descSortColumnNumber": 3
-    },
-    
-    "top_referrers": {
-        "descSortColumnNumber": 3
-    },
-    
-    // next parameters are dedicated to top_users, top_domains and top_companies reports only
-    "1day": {
+analytics.presenter.TopMetricsPresenter.prototype.mapPassedDaysCountToClientSortParams = {
+    "by_1_day": {
         "descSortColumnNumber": 2
     },
     
-    "7day": {
+    "by_7_days": {
         "descSortColumnNumber": 3               
     },   
     
-    "30day": {
+    "by_30_days": {
         "descSortColumnNumber": 4
     },   
     
-    "60day": {
+    "by_60_days": {
         "descSortColumnNumber": 5
     },   
     
-    "90day": {
+    "by_90_days": {
         "descSortColumnNumber": 6
     },
     
-    "365day": {
+    "by_365_days": {
         "descSortColumnNumber": 7
     },
     
-    "lifetime": {
+    "by_lifetime": {
         "descSortColumnNumber": 8
     },
 }
@@ -74,16 +61,6 @@ analytics.presenter.TopMetricsPresenter.prototype.load = function() {
     var model = presenter.model;
 
     var modelParams = presenter.getModelParams(view.getParams())
-
-    presenter.modelViewName = presenter.getModelViewName(modelParams);
-
-    // save metric and time_unit params for client side sorting
-    presenter.metric = modelParams.metric;
-    presenter.time_unit = modelParams.time_unit;
-    
-    // remove unnecessary params 
-    delete modelParams.metric;
-    delete modelParams.time_unit;
     
     model.setParams(modelParams);
     
@@ -103,7 +80,7 @@ analytics.presenter.TopMetricsPresenter.prototype.load = function() {
             var table = data[tableIndex];
             
             // add links to drill down page
-            table = presenter.linkTableValuesWithDrillDownPage(presenter.widgetName, table, modelParams);
+            table = presenter.linkTableValuesWithDrillDownPage(presenter.widgetName, table, modelParams, modelViewName);
             
             // make table columns linked 
             var columnLinkPrefixList = analytics.configuration.getProperty(presenter.widgetName, "columnLinkPrefixList");
@@ -115,7 +92,7 @@ analytics.presenter.TopMetricsPresenter.prototype.load = function() {
             view.printTable(table, false);
         }
 
-        var clientSortParams = presenter.getColumnSortingParameters(presenter.metric, presenter.time_unit);
+        var clientSortParams = presenter.getColumnSortingParameters(presenter.widgetName, modelParams.passed_days_count);
         view.loadTableHandlers(true, clientSortParams);
 
         view.print("</div>");
@@ -124,18 +101,108 @@ analytics.presenter.TopMetricsPresenter.prototype.load = function() {
         analytics.views.loader.needLoader = false;
     });
 
-    model.getModelViewData(presenter.modelViewName);
-};
-
-analytics.presenter.TopMetricsPresenter.prototype.getModelViewName = function(modelParams) {
-    var databaseTableMetricPrefix = modelParams.metric.toLowerCase();
-    var databaseTableTimeunitSuffix = modelParams.time_unit.toLowerCase();
-    return databaseTableMetricPrefix + "_by_" + databaseTableTimeunitSuffix;
+    var modelViewName = analytics.configuration.getProperty(presenter.widgetName, "modelViewName");
+    model.getModelViewData(modelViewName);
 }
 
 /**
- * Try to find out parameters by metric, then by time_unit.
+ * Get client sorting parameters from configuration of widget or mapPassedDaysCountToClientSortParams map.
  */
-analytics.presenter.TopMetricsPresenter.prototype.getColumnSortingParameters = function(metric, time_unit) {
-    return this.clientSortParams[metric] || this.clientSortParams[time_unit] || {};
+analytics.presenter.TopMetricsPresenter.prototype.getColumnSortingParameters = function(widgetName, passedDaysCount) {   
+    return analytics.configuration.getProperty(widgetName, "clientSortParams") 
+            || this.mapPassedDaysCountToClientSortParams[passedDaysCount]
+            || {};
+}
+
+analytics.presenter.TopMetricsPresenter.prototype.linkTableValuesWithDrillDownPage = function(widgetName, table, modelParams, modelViewName) {
+    var modelParams = analytics.util.clone(modelParams);
+        
+    // setup top date of expanded value due to date of generation of report
+    modelParams["to_date"] = modelParams["to_date"] || analytics.configuration.getServerProperty("reportGenerationDate");
+    
+    var mapColumnToParameter = analytics.configuration.getSubProperty(widgetName, 
+                                                                      "columnDrillDownPageLinkConfiguration", 
+                                                                      "mapColumnToParameter", 
+                                                                      {});
+    
+    var doNotLinkOnEmptyParameter = analytics.configuration.getSubProperty(widgetName, 
+                                                                           "columnDrillDownPageLinkConfiguration", 
+                                                                           "doNotLinkOnEmptyParameter", 
+                                                                           true);
+    
+    // calculate source column indexes for combine links
+    var sourceColumnIndexes = [];
+    for (var sourceColumnName in mapColumnToParameter) {
+        var sourceColumnIndex = analytics.util.getColumnIndexByColumnName(table.columns, sourceColumnName);
+        sourceColumnIndexes.push(sourceColumnIndex);
+    }
+       
+    for (var columnIndex = 0; columnIndex < table.columns.length; columnIndex++) {
+        var columnName = table.columns[columnIndex];
+        var expandedMetricName = analytics.configuration.getExpandableMetricName(widgetName, columnName);
+        if (typeof expandedMetricName != "undefined") {            
+            table = this.linkColumnValuesWithDrillDownPage(table, 
+                                      columnIndex, 
+                                      modelViewName, 
+                                      sourceColumnIndexes, 
+                                      mapColumnToParameter, 
+                                      doNotLinkOnEmptyParameter,
+                                      expandedMetricName,
+                                      modelParams);
+        }
+    }          
+        
+    return table;
+}
+
+/**
+ * Insert drill down page link in the rows of column.  
+ */
+analytics.presenter.TopMetricsPresenter.prototype.linkColumnValuesWithDrillDownPage = function(table, 
+                                                                          columnIndex, 
+                                                                          modelViewName, 
+                                                                          sourceColumnIndexes,
+                                                                          mapColumnToParameter, 
+                                                                          doNotLinkOnEmptyParameter,
+                                                                          expandedMetricName,
+                                                                          modelParams) {
+    for (var i = 0; i < table.rows.length; i++) {
+        var row = table.rows[i];
+        
+        var columnValue = row[columnIndex];
+        
+        if (! this.isEmptyValue(columnValue)) {
+            modelParams = this.updatePassedDaysCount(columnIndex, modelViewName, modelParams);
+            
+            var drillDownPageLink = this.getDrillDownPageLink(expandedMetricName, modelParams);
+            
+            // calculation combined link like "ws=...&project=..."
+            if (sourceColumnIndexes.length > 0) {
+                drillDownPageLink += "&" + this.getUrlParamsForCombineColumnLink(row, 
+                                                                                 sourceColumnIndexes, 
+                                                                                 mapColumnToParameter, 
+                                                                                 doNotLinkOnEmptyParameter);
+            }
+            
+            row[columnIndex] = "<a href='" + drillDownPageLink + "'>" + columnValue + "</a>";
+        }
+    }
+
+    return table;
+}
+
+/**
+ * Fix "passed_days_count" parameter in case of time columns of "Top Users", "Top Domains", "Top Companies" reports.
+ */
+analytics.presenter.TopMetricsPresenter.prototype.updatePassedDaysCount = function(columnIndex, modelViewName, modelParams) {
+    if (columnIndex > 1 
+            && (modelViewName == "top_users" 
+            || modelViewName == "top_domains"
+            || modelViewName == "top_companies")) {
+           
+           var passedDaysCountIndex = columnIndex - 2;  // don't take into account first two columns
+           modelParams.passed_days_count = Object.keys(this.mapPassedDaysCountToClientSortParams)[passedDaysCountIndex]; 
+    }
+    
+    return modelParams;
 }

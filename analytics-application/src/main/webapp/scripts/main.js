@@ -38,6 +38,13 @@ function Main() {
             $(this).addClass('btn-primary');
             reloadWidgets($("#timely-dd").attr("targetWidgets"));
         });
+        
+        // Passed days count selectors group
+        $("#passed-days-count button").click(function () {
+            $("#passed-days-count button").removeClass('btn-primary');
+            $(this).addClass('btn-primary');
+            reloadWidgets($("#passed-days-count").attr("targetWidgets"));
+        });
 
         // "Filter by" group
         $("#filter-by input").keypress(function(event) {  // on "Enter" key pressed
@@ -46,7 +53,7 @@ function Main() {
                 reloadWidgets($("#filter-by").attr("targetWidgets"));
             }
         });
-        $("#filter-by button").click(function () {
+        $("#filter-by button.command-btn").click(function () {
             reloadWidgets($("#filter-by").attr("targetWidgets"));
         });
         $("#filter-by .clear-btn").click(function () {    // clearing
@@ -55,10 +62,11 @@ function Main() {
 
         // Metric selectors group
         $("#metric button").click(function () {
-            $("#metric button").removeClass('btn-primary');
-            $(this).addClass('btn-primary');
-
-            reloadWidgets($("#metric").attr("targetWidgets"));
+            var currentButton = $(this);
+            if (! currentButton.hasClass("btn-primary")) {  // don't reload current page
+                var newAddress = currentButton.val();  // goto selected top metric page
+                window.location.href = newAddress;
+            }
         });
 
         // Ide version selectors group
@@ -113,6 +121,12 @@ function Main() {
         if (selectedTimeButton.doesExist()) {
             params.time_unit = selectedTimeButton.val();
         }
+
+        // process passed days count selector
+        var selectedPassedDaysCountButton = $("#passed-days-count button.btn-primary");
+        if (selectedPassedDaysCountButton.doesExist()) {
+            params.passed_days_count = selectedPassedDaysCountButton.val();
+        }        
 
         // process metric selector
         var selectedMetricButton = $("#metric button.btn-primary");
@@ -279,6 +293,11 @@ function Main() {
             setPrimaryButtonOnValue(timeUnitButtons, params["time_unit"]);
         }
 
+        var passedDaysCountButtons = jQuery("#passed-days-count button");
+        if (passedDaysCountButtons.doesExist()) {
+            setPrimaryButtonOnValue(passedDaysCountButtons, params["passed_days_count"]);
+        }
+        
         // update filter-by group
         var filterInputs = $("#filter-by input");
         setFilterInputValues(filterInputs, params);

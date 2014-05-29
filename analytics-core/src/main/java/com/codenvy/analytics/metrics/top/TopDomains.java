@@ -17,20 +17,25 @@
  */
 package com.codenvy.analytics.metrics.top;
 
+import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 
-import javax.annotation.security.RolesAllowed;
-
 /** @author Anatoliy Bazko */
-@RolesAllowed({"system/admin", "system/manager"})
-public class TopCompaniesBy60Day extends AbstractCompaniesTime {
-
-    public TopCompaniesBy60Day() {
-        super(MetricType.TOP_COMPANIES_BY_60DAY, 60);
+public class TopDomains extends AbstractTopEntitiesTime {
+    public TopDomains() {
+        super(MetricType.TOP_DOMAINS,
+              new MetricType[]{MetricType.PRODUCT_DOMAINS_TIME},
+              MetricFilter.DOMAIN);
     }
-
+    
+    @Override
+    public Class<? extends ValueData> getValueDataClass() {
+        return super.getValueDataClass();
+    }
+    
     @Override
     public String getDescription() {
-        return "Top 100 companies by time working in product during last 60 days";
+        return "Top 100 domains by time working in product during last days";
     }
 }

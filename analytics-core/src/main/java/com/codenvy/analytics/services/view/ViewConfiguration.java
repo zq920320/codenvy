@@ -28,6 +28,7 @@ public class ViewConfiguration {
 
     private String                     name;
     private String                     timeUnit;
+    private String                     passedDaysCount;
     private boolean                    onDemand;
     private int                        columns;
     private List<SectionConfiguration> sections;
@@ -75,5 +76,14 @@ public class ViewConfiguration {
 
     public String getTimeUnit() {
         return timeUnit;
+    }
+    
+    @XmlAttribute(name = "passed-days-count")
+    public void setPassedDaysCount(String passedDaysCount) {
+        this.passedDaysCount = passedDaysCount;
+    }
+    
+    public String getPassedDaysCount() {
+        return passedDaysCount;
     }
 }

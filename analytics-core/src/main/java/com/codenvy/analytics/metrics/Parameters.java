@@ -69,6 +69,20 @@ public enum Parameters {
         }
     },
 
+    PASSED_DAYS_COUNT {
+        @Override
+        public void validate(String value, Context context) throws IllegalArgumentException {
+            PassedDaysCount.valueOf(value.toUpperCase());
+        }
+
+        @Override
+        public String getDefaultValue() {
+            return PassedDaysCount.BY_LIFETIME.name();
+        }
+    },
+    
+    
+    
     TIME_INTERVAL,
     DATA_COMPUTATION_PROCESS,
     FROM_DATE {
@@ -201,6 +215,33 @@ public enum Parameters {
         DAY,
         WEEK,
         MONTH,
-        LIFETIME
+        LIFETIME,
+    }
+    
+    public static enum PassedDaysCount {    
+        /** for top metrics and engagement levels reports */ 
+        BY_1_DAY("by_1_day", 1),
+        BY_7_DAYS("by_7_days", 7),
+        BY_30_DAYS("by_30_days", 30),
+        BY_60_DAYS("by_60_days", 60),
+        BY_90_DAYS("by_90_days", 90),
+        BY_365_DAYS("by_365_days", 365),
+        BY_LIFETIME("by_lifetime", -1);
+
+        private String fieldName;
+        private int dayCount;
+
+        PassedDaysCount(String name, int dayCount) {
+            this.fieldName = name;
+            this.dayCount = dayCount;
+        }
+        
+        public int getDayCount() {
+            return dayCount;
+        }
+
+        public String getFieldName() {
+            return fieldName;
+        }
     }
 }

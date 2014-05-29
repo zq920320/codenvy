@@ -17,20 +17,19 @@
  */
 package com.codenvy.analytics.metrics.top;
 
+import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 
-import javax.annotation.security.RolesAllowed;
-
 /** @author Anatoliy Bazko */
-@RolesAllowed({"system/admin", "system/manager"})
-public class TopCompaniesByLifetime extends AbstractCompaniesTime {
-
-    public TopCompaniesByLifetime() {
-        super(MetricType.TOP_COMPANIES_BY_LIFETIME, LIFE_TIME_PERIOD);
+public class TopCompanies extends AbstractTopEntitiesTime {
+    public TopCompanies() {
+        super(MetricType.TOP_COMPANIES,
+              new MetricType[]{MetricType.PRODUCT_COMPANIES_TIME},
+              MetricFilter.USER_COMPANY);
     }
-
+    
     @Override
     public String getDescription() {
-        return "Top 100 companies by time working in product for whole period";
+        return "Top 100 companies by time working in product during last days";
     }
 }

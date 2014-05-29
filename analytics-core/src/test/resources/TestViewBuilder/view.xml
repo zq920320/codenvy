@@ -29,4 +29,18 @@
             <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
     </view>
+    
+    <view passed-days-count="by_1_day,by_lifetime" name="passed_days_view">
+        <section name="top_users">
+            <row class="com.codenvy.analytics.services.view.TitleRow">
+                <parameter key="titles" value="Email,Sessions,1 Day,7 Days,30 Days"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="top_users"/>
+                <parameter key="description" value="Top Users"/>
+                <parameter key="fields"
+                           value="entity,sessions,by_1_day,by_7_days,by_30_days"/>
+            </row>
+        </section>
+    </view>
 </display>

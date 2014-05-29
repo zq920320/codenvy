@@ -24,6 +24,7 @@ import com.codenvy.analytics.datamodel.StringValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.metrics.sessions.AbstractTimelineProductUsageCondition;
+import com.codenvy.analytics.metrics.top.AbstractTopEntitiesTime;
 import com.codenvy.analytics.persistent.DataPersister;
 import com.codenvy.analytics.persistent.JdbcDataPersisterFactory;
 import com.codenvy.analytics.services.Feature;
@@ -49,6 +50,7 @@ import java.util.concurrent.RecursiveAction;
 import java.util.concurrent.TimeUnit;
 
 import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsList;
+
 
 /**
  * @author Alexander Reshetnyak
@@ -173,12 +175,7 @@ public class ViewBuilder extends Feature {
 
         for (ViewConfiguration viewConf : displayConfiguration.getViews()) {
             if (!viewConf.isOnDemand()) {
-                if (viewConf.getTimeUnit() == null) {
-                    ComputeViewDataAction task = new ComputeViewDataAction(viewConf, context);
-                    forkJoinPool.submit(task);
-
-                    tasks.add(task);
-                } else {
+                if (viewConf.getTimeUnit() != null) {
                     for (String timeUnitParam : viewConf.getTimeUnit().split(",")) {
                         Context newContext = context.cloneAndPut(Parameters.TIME_UNIT, timeUnitParam.toUpperCase());
                         ComputeViewDataAction task = new ComputeViewDataAction(viewConf, newContext);
@@ -186,6 +183,19 @@ public class ViewBuilder extends Feature {
 
                         tasks.add(task);
                     }
+                } else if (viewConf.getPassedDaysCount() != null) {
+                    for (String passedDaysCountParam : viewConf.getPassedDaysCount().split(",")) {
+                        Context newContext = context.cloneAndPut(Parameters.PASSED_DAYS_COUNT, passedDaysCountParam.toUpperCase());
+                        ComputeViewDataAction task = new ComputeViewDataAction(viewConf, newContext);
+                        forkJoinPool.submit(task);
+
+                        tasks.add(task);
+                    }
+                } else {
+                    ComputeViewDataAction task = new ComputeViewDataAction(viewConf, context);
+                    forkJoinPool.submit(task);
+
+                    tasks.add(task);
                 }
             }
         }
@@ -280,6 +290,7 @@ public class ViewBuilder extends Feature {
                          viewConf.getName() + " with context " + context);
             }
         }
+
         private Row getRow(RowConfiguration rowConf) throws NoSuchMethodException,
                                                             ClassNotFoundException,
                                                             InstantiationException,
@@ -300,6 +311,8 @@ public class ViewBuilder extends Feature {
             Metric expandableMetric = context.getExpandedMetric();
             if (expandableMetric instanceof AbstractTimelineProductUsageCondition) {
                 return ((AbstractTimelineProductUsageCondition)expandableMetric).initContextBasedOnTimeInterval(context);
+            } else if (expandableMetric instanceof AbstractTopEntitiesTime) {
+                return ((AbstractTopEntitiesTime)expandableMetric).initContextBasedOnTimeInterval(context);
             }
         }
 
@@ -314,6 +327,10 @@ public class ViewBuilder extends Feature {
             } else {
                 return Utils.initDateInterval(builder.getAsDate(Parameters.TO_DATE), timeUnit, builder);
             }
+
+        } else if (context.exists(Parameters.PASSED_DAYS_COUNT)) {
+            return Utils.initDateInterval(builder.getAsDate(Parameters.TO_DATE), builder.getPassedDaysCount(), builder);
+
         } else {
             return builder.build();
         }
@@ -333,6 +350,8 @@ public class ViewBuilder extends Feature {
         String id = idFromConf;
         if (context.exists(Parameters.TIME_UNIT)) {
             id += "_" + context.getAsString(Parameters.TIME_UNIT).toLowerCase();
+        } else if (context.exists(Parameters.PASSED_DAYS_COUNT)) {
+            id += "_" + context.getPassedDaysCount().getFieldName();
         }
 
         return id;

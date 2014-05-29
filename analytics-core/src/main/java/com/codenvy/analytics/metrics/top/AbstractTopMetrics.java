@@ -27,8 +27,6 @@ import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 
 import java.io.IOException;
-import java.text.ParseException;
-import java.util.Calendar;
 
 /**
  * @author Dmytro Nochevnov
@@ -36,15 +34,11 @@ import java.util.Calendar;
 public abstract class AbstractTopMetrics extends ReadBasedMetric {
 
     public static final long MAX_DOCUMENT_COUNT = 100;
-    public static final int  LIFE_TIME_PERIOD   = -1;
 
-    private int dayCount;
-
-    public AbstractTopMetrics(MetricType metricType, int dayCount) {
+    public AbstractTopMetrics(MetricType metricType) {
         super(metricType);
-        this.dayCount = dayCount;
     }
-
+    
     @Override
     public Class<? extends ValueData> getValueDataClass() {
         return ListValueData.class;
@@ -55,19 +49,6 @@ public abstract class AbstractTopMetrics extends ReadBasedMetric {
         Context.Builder builder = new Context.Builder();
         builder.putAll(context);
         builder.putDefaultValue(Parameters.TO_DATE);
-
-        if (this.dayCount == LIFE_TIME_PERIOD) {
-            builder.putDefaultValue(Parameters.FROM_DATE);
-        } else {
-            try {
-                Calendar date = context.getAsDate(Parameters.TO_DATE);
-                date.add(Calendar.DAY_OF_MONTH, 1 - dayCount);
-
-                builder.put(Parameters.FROM_DATE, date);
-            } catch (ParseException e) {
-                throw new IOException(e);
-            }
-        }
 
         return builder.build();
     }
