@@ -23,10 +23,10 @@ l = loadResources('$STORAGE_URL', '$STORAGE_TABLE_USERS_PROFILES', '$LOG', '$FRO
 f1 = filterByEvent(l, '$EVENT');
 f = extractParam(f1, '$PARAM', param);
 
-r1 = FOREACH f GENERATE dt, ws, user, LOWER(param) AS param, ide;
+r1 = FOREACH f GENERATE dt, ws, user, LOWER(param) AS param;
 r = FILTER r1 BY param IS NOT NULL AND param != '';
 
 result = FOREACH r GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('ws', ws), TOTUPLE('user', user),
-    TOTUPLE(param, 1L), TOTUPLE('ide', ide);
+    TOTUPLE(param, 1L);
 
 STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;

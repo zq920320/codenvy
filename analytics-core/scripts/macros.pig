@@ -31,13 +31,11 @@ DEFINE loadResources(storageUrlParam, storageTableUsersProfilesParam, resourcePa
   l4 = extractWs(l3, '$wsType');
   l5 = FOREACH l4 GENERATE user,
                            ws,
-                           (INDEXOF(message, '[ide3]', 0) >= 0 ? 3 : 2) AS ide,
                            message,
                            REGEX_EXTRACT_ALL(message, '([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}) ([0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2},[0-9]{3}).*\\s-(\\s.*)') AS pattern;
 
   l6 = FOREACH l5 GENERATE user,
                            ws,
-                           ide,
                            ToDate(pattern.$1, 'yyyy-MM-dd HH:mm:ss,SSS') AS dt,
                            pattern.$2 AS message;
 
@@ -50,8 +48,7 @@ DEFINE loadResources(storageUrlParam, storageTableUsersProfilesParam, resourcePa
                             ReplaceWithId(user) AS user,
                             event,
                             message,
-                            ws,
-                            ide;
+                            ws;
 };
 ---------------------------------------------------------------------------
 -- Removes tuples with empty fields
@@ -207,7 +204,7 @@ DEFINE extractUrlParam(X, paramNameParam, paramFieldNameParam) RETURNS Y {
 DEFINE extractEventsWithSessionId(X, eventParam) RETURNS Y {
     x1 = filterByEvent($X, '$eventParam');
     x2 = extractParam(x1, 'SESSION-ID', id);
-    $Y = FOREACH x2 GENERATE user, ws, id, dt, ide;
+    $Y = FOREACH x2 GENERATE user, ws, id, dt;
 };
 
 ---------------------------------------------------------------------------------------------
@@ -223,11 +220,11 @@ DEFINE createdTemporaryWorkspaces(X) RETURNS Y {
 
     -- created temporary workspaces
     w1 = filterByEvent($X, 'tenant-created,workspace-created');
-    w = FOREACH w1 GENERATE dt, ws AS tmpWs, user, ide;
+    w = FOREACH w1 GENERATE dt, ws AS tmpWs, user;
 
     y1 = JOIN w BY tmpWs, x BY tmpWs;
     $Y = FOREACH y1 GENERATE w::dt AS dt, w::tmpWs AS ws, w::user AS user, x::referrer AS referrer, x::factory AS factory,
-                x::orgId AS orgId, x::affiliateId AS affiliateId, w::ide AS ide;
+                x::orgId AS orgId, x::affiliateId AS affiliateId;
 };
 
 ---------------------------------------------------------------------------------------------
@@ -257,20 +254,20 @@ DEFINE usersCreatedFromFactory(X) RETURNS Y {
     -- finds created users
     k1 = filterByEvent($X, 'user-created');
     k2 = FILTER k1 BY INDEXOF(user, 'anonymoususer_', 0) < 0;
-    k = FOREACH k2 GENERATE dt, user, ide;
+    k = FOREACH k2 GENERATE dt, user;
 
     -- finds which created users worked as anonymous
     y1 = JOIN k BY user, t BY user;
-    y = FOREACH y1 GENERATE k::dt AS dt, k::user AS user, t::tmpUser AS tmpUser, k::ide AS ide;
+    y = FOREACH y1 GENERATE k::dt AS dt, k::user AS user, t::tmpUser AS tmpUser;
 
     -- finds in which temporary workspaces registered users have worked
     z1 = JOIN y BY tmpUser, x BY tmpUser;
     z2 = FILTER z1 BY MilliSecondsBetween(y::dt, x::dt) >= 0;
-    z = FOREACH z2 GENERATE y::dt AS dt, y::user AS user, x::tmpWs AS tmpWs, y::tmpUser AS tmpUser, y::ide AS ide;
+    z = FOREACH z2 GENERATE y::dt AS dt, y::user AS user, x::tmpWs AS tmpWs, y::tmpUser AS tmpUser;
 
     r1 = JOIN z BY tmpWs, u BY tmpWs;
     $Y = FOREACH r1 GENERATE z::dt AS dt, z::user AS user, z::tmpWs AS ws, u::referrer AS referrer, u::factory AS factory,
-        u::orgId AS orgId, u::affiliateId AS affiliateId, z::tmpUser AS tmpUser, z::ide AS ide;
+        u::orgId AS orgId, u::affiliateId AS affiliateId, z::tmpUser AS tmpUser;
 };
 
 ---------------------------------------------------------------------------------------------
@@ -281,20 +278,20 @@ DEFINE combineSmallSessions(X, startEvent, finishEvent) RETURNS Y {
     a1 = extractEventsWithSessionId($X, '$startEvent');
 
     -- avoids cases when there are several $finishEvent with same id, let's take the first one
-    a2 = FOREACH a1 GENERATE ws, user, id, dt, ide;
+    a2 = FOREACH a1 GENERATE ws, user, id, dt;
     a3 = GROUP a2 BY id;
     a4 = FOREACH a3 GENERATE FLATTEN(group), MIN(a2.dt) AS minDt, FLATTEN(a2);
     a5 = FILTER a4 BY dt == minDt;
-    a = FOREACH a5 GENERATE a2::ws AS ws, a2::user AS user, id AS id, a2::dt AS dt, a2::ide AS ide;
+    a = FOREACH a5 GENERATE a2::ws AS ws, a2::user AS user, id AS id, a2::dt AS dt;
 
     b1 = extractEventsWithSessionId($X, '$finishEvent');
 
     -- avoids cases when there are several $finishEvent with same id, let's take the first one
-    b2 = FOREACH b1 GENERATE ws, user, id, dt, ide;
+    b2 = FOREACH b1 GENERATE ws, user, id, dt;
     b3 = GROUP b2 BY id;
     b4 = FOREACH b3 GENERATE FLATTEN(group), MIN(b2.dt) AS minDt, FLATTEN(b2);
     b5 = FILTER b4 BY dt == minDt;
-    b = FOREACH b5 GENERATE b2::ws AS ws, b2::user AS user, id AS id, b2::dt AS dt, b2::ide AS ide;
+    b = FOREACH b5 GENERATE b2::ws AS ws, b2::user AS user, id AS id, b2::dt AS dt;
 
     -- joins $startEvent and $finishEvent by same id, removes events without corresponding pair
     c1 = JOIN a BY id LEFT, b BY id;
@@ -306,34 +303,34 @@ DEFINE combineSmallSessions(X, startEvent, finishEvent) RETURNS Y {
     SPLIT d1 INTO d2 IF event == '$startEvent', d3 OTHERWISE;
 
     -- A: $startEvent
-    A = FOREACH d2 GENERATE a::ws AS ws, a::user AS user, a::dt AS dt, a::id AS id, a::ide AS ide;
+    A = FOREACH d2 GENERATE a::ws AS ws, a::user AS user, a::dt AS dt, a::id AS id;
 
     -- B: $finishEvent
-    B = FOREACH d3 GENERATE b::ws AS ws, b::user AS user, b::dt AS dt, b::id AS id, b::ide AS ide;
+    B = FOREACH d3 GENERATE b::ws AS ws, b::user AS user, b::dt AS dt, b::id AS id;
 
     -- joins $finishEvent and $startEvent, finds for every $finishEvent the closest
     -- $startEvent to decide whether the pause between them is less than $inactiveInterval
     e1 = JOIN B BY (ws, user) LEFT, A BY (ws, user);
     e2 = FILTER e1 BY A::ws IS NOT NULL;
-    e3 = FOREACH e2 GENERATE B::id AS finishId, B::ide AS ide, A::id AS startId, MilliSecondsBetween(A::dt, B::dt) AS interval;
+    e3 = FOREACH e2 GENERATE B::id AS finishId, A::id AS startId, MilliSecondsBetween(A::dt, B::dt) AS interval;
     e = FILTER e3 BY interval > 0 AND interval <= (long) 10 * 60 * 1000; -- $inactiveInterval = 10min
 
     -- removes $startEvents which are close to any $finishEvent
     d1 = JOIN A BY id LEFT, e BY startId;
     d2 = FILTER d1 BY e::startId IS NULL;
-    S = FOREACH d2 GENERATE A::ws AS ws, A::user AS user, A::dt AS dt, '$startEvent' AS event, A::id AS id, A::ide AS ide;
+    S = FOREACH d2 GENERATE A::ws AS ws, A::user AS user, A::dt AS dt, '$startEvent' AS event, A::id AS id;
 
     -- removes $finishEvent which are close to any $startEvent
     f1 = JOIN B BY id LEFT, e BY finishId;
     f2 = FILTER f1 BY e::finishId IS NULL;
-    F = FOREACH f2 GENERATE B::ws AS ws, B::user AS user, B::dt AS dt, '$finishEvent' AS event, B::id AS id, B::ide AS ide;
+    F = FOREACH f2 GENERATE B::ws AS ws, B::user AS user, B::dt AS dt, '$finishEvent' AS event, B::id AS id;
 
     -- finally, combines closest events to get completed sessions
     u1 = UNION S, F;
     u2 = combineClosestEvents(u1, '$startEvent', '$finishEvent');
 
     -- considering sessions less than 1 min as 1 min columns
-    $Y = FOREACH u2 GENERATE ws AS ws, user AS user, dt AS dt, (delta < 60 * 1000 ? 60 * 1000 : delta) AS delta, id AS id, ide AS ide;
+    $Y = FOREACH u2 GENERATE ws AS ws, user AS user, dt AS dt, (delta < 60 * 1000 ? 60 * 1000 : delta) AS delta, id AS id;
 };
 
 ---------------------------------------------------------------------------------------------
@@ -345,14 +342,14 @@ DEFINE combineClosestEvents(X, startEvent, finishEvent) RETURNS Y {
     x = removeEmptyField(x1, 'user');
 
     a1 = filterByEvent(x, '$startEvent');
-    a = FOREACH a1 GENERATE ws, user, event, dt, id, ide;
+    a = FOREACH a1 GENERATE ws, user, event, dt, id;
     
     b1 = filterByEvent(x, '$startEvent,$finishEvent');
-    b = FOREACH b1 GENERATE ws, user, event, dt, id, ide;
+    b = FOREACH b1 GENERATE ws, user, event, dt, id;
 
     -- joins $startEvent with all other events to figure out which event is mostly close to '$startEvent'
     c1 = JOIN a BY (ws, user), b BY (ws, user);
-    c2 = FOREACH c1 GENERATE a::ws AS ws, a::user AS user, a::event AS event, a::dt AS dt, b::event AS secondEvent, b::dt AS secondDt, a::id AS id, a::ide AS ide;
+    c2 = FOREACH c1 GENERATE a::ws AS ws, a::user AS user, a::event AS event, a::dt AS dt, b::event AS secondEvent, b::dt AS secondDt, a::id AS id;
 
     -- @param delta: milliseconds between $startEvent and second event
     c3 = FOREACH c2 GENERATE *, MilliSecondsBetween(secondDt, dt) AS delta;
@@ -360,14 +357,14 @@ DEFINE combineClosestEvents(X, startEvent, finishEvent) RETURNS Y {
     -- removes cases when second event is preceded by $startEvent (before $startEvent in time line)
     c = FILTER c3 BY delta > 0;
 
-    g1 = GROUP c BY (ws, user, event, dt, id, ide);
-    g2 = FOREACH g1 GENERATE group.ws AS ws, group.user AS user, group.dt AS dt, group.id AS id, group.ide AS ide, FLATTEN(c), MIN(c.delta) AS minDelta;
+    g1 = GROUP c BY (ws, user, event, dt, id);
+    g2 = FOREACH g1 GENERATE group.ws AS ws, group.user AS user, group.dt AS dt, group.id AS id, FLATTEN(c), MIN(c.delta) AS minDelta;
 
     -- the desired closest event have to be $finishEvent anyway
     g = FILTER g2 BY delta == minDelta AND c::secondEvent == '$finishEvent';
 
     -- converts time into seconds
-    $Y = FOREACH g GENERATE ws AS ws, user AS user, dt AS dt, delta AS delta, id AS id, ide AS ide;
+    $Y = FOREACH g GENERATE ws AS ws, user AS user, dt AS dt, delta AS delta, id AS id;
 };
 
 ---------------------------------------------------------------------------------------------
@@ -382,23 +379,23 @@ DEFINE combineClosestEventsByID(X, startEvent, finishEvent) RETURNS Y {
     a2 = extractParam(a1, 'ID', event_id);
     a3 = removeEmptyField(a2, 'event_id');
     
-    a = FOREACH a2 GENERATE ws, user, event, dt, id, event_id, ide;
+    a = FOREACH a2 GENERATE ws, user, event, dt, id, event_id;
 
     b1 = filterByEvent(x, '$finishEvent');
     b2 = extractParam(b1, 'ID', event_id);
     b3 = removeEmptyField(b2, 'event_id');
-    b = FOREACH b3 GENERATE ws, user, event, dt, id, event_id, ide;
+    b = FOREACH b3 GENERATE ws, user, event, dt, id, event_id;
     
     -- joins $startEvent with all other events to figure out which event is mostly close to '$startEvent'
     c1 = JOIN a BY (event_id), b BY (event_id);
-    c2 = FOREACH c1 GENERATE a::ws AS ws, a::user AS user, a::dt AS dt, b::dt AS secondDt, a::id AS id, a::ide AS ide;
+    c2 = FOREACH c1 GENERATE a::ws AS ws, a::user AS user, a::dt AS dt, b::dt AS secondDt, a::id AS id;
 
     -- @param delta: milliseconds between $startEvent and second event
     c3 = FOREACH c2 GENERATE *, MilliSecondsBetween(secondDt, dt) AS delta;
 
     -- removes cases when second event is preceded by $startEvent (before $startEvent in time line)
     c4 = FILTER c3 BY delta > 0;
-    $Y = FOREACH c4 GENERATE ws, user, dt, delta, id, ide;
+    $Y = FOREACH c4 GENERATE ws, user, dt, delta, id;
 };
 
 ---------------------------------------------------------------------------------------------
@@ -417,7 +414,7 @@ DEFINE calculateTime(X, startEvent, finishEvent) RETURNS Y {
 
     c = UNION a, b;
 
-    $Y = FOREACH c GENERATE dt, ws, user, delta, ide;
+    $Y = FOREACH c GENERATE dt, ws, user, delta;
 };
 
 ---------------------------------------------------------------------------------------------

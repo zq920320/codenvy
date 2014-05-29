@@ -22,11 +22,11 @@ l = loadResources('$STORAGE_URL', '$STORAGE_TABLE_USERS_PROFILES', '$LOG', '$FRO
 
 f1 = extractParam(l, 'PROJECT', project);
 f2 = extractParam(f1, 'TYPE', project_type);
-f = FOREACH f2 GENERATE dt, ws, project, project_type, user, ide;
+f = FOREACH f2 GENERATE dt, ws, project, project_type, user;
 
 r = calculateTime(l, '$EVENT-started', '$EVENT-finished');
 
-u = JOIN r BY (dt,user,ws,ide), f BY (dt,user,ws,ide);
+u = JOIN r BY (dt,user,ws), f BY (dt,user,ws);
 result = FOREACH u GENERATE UUID(),
                             TOTUPLE('date', ToMilliSeconds(r::dt)),
                             TOTUPLE('ws', r::ws),
@@ -34,8 +34,7 @@ result = FOREACH u GENERATE UUID(),
                             TOTUPLE('project', f::project),
                             TOTUPLE('project_type', LOWER(f::project_type)),
                             TOTUPLE('project_id', CreateProjectId(r::user, r::ws, f::project)),
-                            TOTUPLE('time', r::delta),
-                            TOTUPLE('ide', r::ide);
+                            TOTUPLE('time', r::delta);
 
 STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 

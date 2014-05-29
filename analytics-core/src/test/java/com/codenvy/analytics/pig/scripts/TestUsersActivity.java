@@ -103,7 +103,6 @@ public class TestUsersActivity extends BaseTest {
         assertEquals("v2", dbObject.get("p2"));
         assertNotNull(dbObject.get("_id"));
         assertNotNull(dbObject.get("date"));
-        assertNotNull(dbObject.get("ide"));
         assertNotNull(dbObject.get("message"));
     }
 

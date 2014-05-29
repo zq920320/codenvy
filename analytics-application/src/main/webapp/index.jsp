@@ -14,9 +14,4 @@
  is strictly forbidden unless prior written permission is obtained
  from Codenvy S.A.. 
 --%>
-<%@ page import="com.codenvy.analytics.util.Utils" %>
-<% if (Utils.isSystemUser(request.getUserPrincipal().getName())) { %>
-    <jsp:forward page="pages/reports/summary-report.jsp"/>
-<% } else { %>
-    <jsp:forward page="pages/user-view.jsp"/>
-<% } %>
+<jsp:forward page="pages/reports/summary-report.jsp"/>

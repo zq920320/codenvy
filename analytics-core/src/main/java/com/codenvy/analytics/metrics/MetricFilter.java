@@ -27,7 +27,6 @@ public enum MetricFilter {
 
     WS,
     PERSISTENT_WS(true),
-    IDE(true),
     USER,
     REGISTERED_USER(true),
     ALIASES,

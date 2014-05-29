@@ -19,7 +19,7 @@
 IMPORT 'macros.pig';
 
 l = loadResources('$STORAGE_URL', '$STORAGE_TABLE_USERS_PROFILES', '$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
-r = FOREACH l GENERATE dt, user, ws, event, message, ide;
+r = FOREACH l GENERATE dt, user, ws, event, message;
 
 -- Every parameter in the message will be stored separately as well as a whole message.
 -- It depends on 'event', that's why message must be passed to the storage function after an event
@@ -29,7 +29,6 @@ result = FOREACH r GENERATE UUID(),
                             TOTUPLE('action', EventDescription(event)),
                             TOTUPLE('ws', ws),
                             TOTUPLE('user', user),
-                            TOTUPLE('message', message),
-                            TOTUPLE('ide', ide);
+                            TOTUPLE('message', message);
 
 STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;

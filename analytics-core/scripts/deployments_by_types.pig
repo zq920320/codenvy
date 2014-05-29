@@ -25,7 +25,7 @@ a2 = extractParam(a1, 'PROJECT', project);
 a3 = extractParam(a2, 'TYPE', project_type);
 a4 = extractParam(a3, 'PAAS', project_paas);
 a5 = removeEmptyField(a4, 'project_paas');
-a = FOREACH a5 GENERATE dt, ws, user, project, project_type, project_paas, ide;
+a = FOREACH a5 GENERATE dt, ws, user, project, project_type, project_paas;
 
 result = FOREACH a GENERATE UUID(),
                             TOTUPLE('date', ToMilliSeconds(dt)),
@@ -34,7 +34,6 @@ result = FOREACH a GENERATE UUID(),
                             TOTUPLE('project', project),
                             TOTUPLE('project_type', LOWER(project_type)),
                             TOTUPLE('project_paas', LOWER(project_paas)),
-                            TOTUPLE('project_id', CreateProjectId(user, ws, project)),
-                            TOTUPLE('ide', ide);
+                            TOTUPLE('project_id', CreateProjectId(user, ws, project));
 
 STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;

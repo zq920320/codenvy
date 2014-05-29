@@ -24,6 +24,6 @@ r1 = usersCreatedFromFactory(l);
 r = FOREACH r1 GENERATE *, (INDEXOF(factory, 'factory?id=', 0) > 0 ? 1 : 0) AS encodedFactory;
 
 result = FOREACH r GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('ws', ws), TOTUPLE('user', user),
-            TOTUPLE('referrer', referrer), TOTUPLE('factory', factory), TOTUPLE('org_id', orgId), TOTUPLE('ide', ide),
+            TOTUPLE('referrer', referrer), TOTUPLE('factory', factory), TOTUPLE('org_id', orgId),
             TOTUPLE('affiliate_id', affiliateId), TOTUPLE('value', 1L), TOTUPLE('encoded_factory', encodedFactory);
 STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;

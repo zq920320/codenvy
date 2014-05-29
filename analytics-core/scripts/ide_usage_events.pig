@@ -26,7 +26,7 @@ a2 = extractParam(a1, 'SOURCE', 'source');
 a3 = extractParam(a2, 'PROJECT', 'project');
 a4 = extractParam(a3, 'TYPE', 'projectType');
 a5 = extractParam(a4, 'PARAMETERS', 'parameters');
-a = FOREACH a5 GENERATE dt, ws, user, action, source, project, projectType, parameters, ide;
+a = FOREACH a5 GENERATE dt, ws, user, action, source, project, projectType, parameters;
 
 result = FOREACH a GENERATE UUID(),
                             TOTUPLE('date', ToMilliSeconds(dt)),
@@ -37,7 +37,6 @@ result = FOREACH a GENERATE UUID(),
                             TOTUPLE('project', project),
                             TOTUPLE('project_type', LOWER(projectType)),
                             TOTUPLE('project_id', CreateProjectId(user, ws, project)),
-                            TOTUPLE('parameters', parameters), -- every key-value pair will be stored separately instead of whole parameter
-                            TOTUPLE('ide', ide);
+                            TOTUPLE('parameters', parameters); -- every key-value pair will be stored separately instead of whole parameter;
 
 STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;

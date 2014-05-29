@@ -24,14 +24,11 @@ import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
-import org.apache.pig.data.Tuple;
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
 
 import java.io.File;
-import java.util.*;
-
-import static org.testng.AssertJUnit.assertEquals;
+import java.util.ArrayList;
+import java.util.List;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestIde3Events extends BaseTest {
@@ -58,24 +55,5 @@ public class TestIde3Events extends BaseTest {
         builder.put(Parameters.STORAGE_TABLE, "fake");
         builder.put(Parameters.LOG, log.getAbsolutePath());
         context = builder.build();
-    }
-
-    @Test
-    public void testExtractAllUsers() throws Exception {
-        Set<String> actual = new HashSet<>();
-
-        Iterator<Tuple> iterator = pigServer.executeAndReturn(ScriptType.TEST_IDE3_EVENTS, context);
-        while (iterator.hasNext()) {
-            actual.add(iterator.next().toString());
-        }
-
-        Set<String> expected = new HashSet<>();
-        expected.add("(1,2)");
-        expected.add("(2,2)");
-        expected.add("(3,3)");
-        expected.add("(4,3)");
-        expected.add("(5,3)");
-
-        assertEquals(actual, expected);
     }
 }

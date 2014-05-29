@@ -29,7 +29,6 @@ a = FOREACH a4 GENERATE dt,
                         user,
                         ExtractDomain(referrer) AS referrer,
                         factory,
-                        ide,
                         orgId,
                         affiliateId,
                         (INDEXOF(factory, 'factory?id=', 0) > 0 ? 1 : 0) AS encodedFactory;
@@ -42,6 +41,5 @@ result = FOREACH a GENERATE UUID(),
                             TOTUPLE('affiliate_id', affiliateId),
                             TOTUPLE('referrer', referrer),
                             TOTUPLE('factory', factory),
-                            TOTUPLE('ide', ide),
                             TOTUPLE('encoded_factory', encodedFactory);
 STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;

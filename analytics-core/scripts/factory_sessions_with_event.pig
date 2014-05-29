@@ -27,12 +27,12 @@ b = combineSmallSessions(l, 'session-factory-started', 'session-factory-stopped'
 
 c1 = JOIN b BY (ws, user), a BY (ws, user);
 c2 = FILTER c1 BY MilliSecondsBetween(a::dt, b::dt) > 0 AND MilliSecondsBetween(a::dt, b::dt) <= delta;
-c3 = FOREACH c2 GENERATE b::dt AS dt, a::ws AS ws, a::user AS user, a::ide;
+c3 = FOREACH c2 GENERATE b::dt AS dt, a::ws AS ws, a::user AS user;
 c = DISTINCT c3;
 
-r1 = FOREACH c GENERATE dt, ws, user, ide;
+r1 = FOREACH c GENERATE dt, ws, user;
 result = FOREACH r1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('ws', ws), TOTUPLE('user', user),
-        TOTUPLE('value', 1), TOTUPLE('ide', ide);
+        TOTUPLE('value', 1);
 
 STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 

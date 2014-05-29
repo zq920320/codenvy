@@ -20,13 +20,12 @@ IMPORT 'macros.pig';
 
 l = loadResources('$STORAGE_URL', '$STORAGE_TABLE_USERS_PROFILES', '$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 
-a1 = FOREACH l GENERATE $PARAM, ide;
+a1 = FOREACH l GENERATE $PARAM;
 a2 = removeEmptyField(a1, '$PARAM');
 a = DISTINCT a2;
 
 result = FOREACH a GENERATE UUID(),
                             TOTUPLE('date', ToMilliSeconds(ToDate('$TO_DATE', 'yyyyMMdd'))),
-                            TOTUPLE('$PARAM', $PARAM),
-                            TOTUPLE('ide', ide);
+                            TOTUPLE('$PARAM', $PARAM);
 
 STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;

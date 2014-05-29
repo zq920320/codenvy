@@ -92,7 +92,6 @@ public class TestIdeUsageEvents extends BaseTest {
         assertEquals("v2", dbObject.get("p2"));
         assertNotNull(dbObject.get("_id"));
         assertNotNull(dbObject.get("date"));
-        assertNotNull(dbObject.get("ide"));
     }
 
     @Test
@@ -112,7 +111,6 @@ public class TestIdeUsageEvents extends BaseTest {
         assertEquals(0, dbObject.get("persistent_ws"));
         assertNotNull(dbObject.get("_id"));
         assertNotNull(dbObject.get("date"));
-        assertNotNull(dbObject.get("ide"));
     }
 
     @Test

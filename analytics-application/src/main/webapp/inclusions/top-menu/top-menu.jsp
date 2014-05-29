@@ -14,16 +14,9 @@
  is strictly forbidden unless prior written permission is obtained
  from Codenvy S.A.. 
 --%>
-<%@ page import="com.codenvy.analytics.util.Utils" %>
+<%@ include file="/inclusions/top-menu/header.jsp" %>
 
-<%@ include file="/inclusions/top-menu/header.jsp"%>
+<jsp:include page="/inclusions/top-menu/for-user.jsp">
+    <jsp:param name="selectedMenuItemId" value="<%=request.getParameter("selectedMenuItemId") %>"/>
+</jsp:include>
 
-<% if (Utils.isSystemUser(request.getUserPrincipal().getName())) { %>
-	<jsp:include page="/inclusions/top-menu/for-admin.jsp">
-	    <jsp:param name="selectedMenuItemId" value="<%=request.getParameter("selectedMenuItemId") %>"/>
-	</jsp:include>
-<% } else { %>
-	<jsp:include page="/inclusions/top-menu/for-user.jsp">
-	    <jsp:param name="selectedMenuItemId" value="<%=request.getParameter("selectedMenuItemId") %>"/>
-	</jsp:include>
-<% } %>
