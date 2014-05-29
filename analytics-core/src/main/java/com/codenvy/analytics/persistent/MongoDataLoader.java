@@ -185,6 +185,10 @@ public class MongoDataLoader implements DataLoader {
                 String[] filteringValues = getExpandedMetricValues(clauses, expandable);
                 String filteringField = ((Expandable)expandable).getExpandedField();
                 match.put(filteringField, new BasicDBObject("$in", filteringValues));
+                
+                // remove already used by expandable metric and so redundant parameters
+                clauses = clauses.cloneAndRemove(MetricFilter.FACTORY);
+                clauses = clauses.cloneAndRemove(MetricFilter.REFERRER);
             }
 
             clauses = fixDateParametersDueToExpandedMetric(clauses, expandable);

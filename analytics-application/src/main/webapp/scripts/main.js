@@ -53,7 +53,7 @@ function Main() {
                 reloadWidgets($("#filter-by").attr("targetWidgets"));
             }
         });
-        $("#filter-by button").click(function () {
+        $("#filter-by button.command-btn").click(function () {
             reloadWidgets($("#filter-by").attr("targetWidgets"));
         });
         $("#filter-by .clear-btn").click(function () {    // clearing

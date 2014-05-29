@@ -143,9 +143,8 @@ public class TestTopMetrics extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20130210");
         builder.put(Parameters.TO_DATE, "20130210");
-        builder.put(Parameters.PASSED_DAYS_COUNT, Parameters.PassedDaysCount.BY_LIFETIME.toString());
         
-        Metric metric = MetricFactory.getMetric(MetricType.TOP_FACTORIES);
+        Metric metric = MetricFactory.getMetric(MetricType.TOP_FACTORIES);  // passed days count should be lifetime by default
 
         ListValueData value = (ListValueData)metric.getValue(builder.build());
 

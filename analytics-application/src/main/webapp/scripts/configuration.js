@@ -206,6 +206,7 @@ function Configuration() {
                 mapColumnNameToExpandableMetric: {
                     "Sessions": "product_usage_sessions",
                     "# Workspaces Created": "temporary_workspaces_created",
+                    "# Accounts Created": "created_users_from_factory",
                     "Aggregate Time": "product_usage_time_total",
                     "% Anon": "anonymous_factory_sessions",
                     "% Auth": "authenticated_factory_sessions",
@@ -1342,9 +1343,12 @@ function Configuration() {
 
 
         /** FACTORIES */
-        "created_factories": "DEFAULT",  // there could be no created factory in 'product_usage_factory_sessions_list' collection
-        "factory_used": "FACTORIES",
+        "factory_used": "FACTORIES",     
         "total_factories": "FACTORIES",
+
+        
+        /** DEFAULT */
+        "created_factories": "DEFAULT",  // not 'FACTORIES' because there could be no created factory in 'product_usage_factory_sessions_list' collection
     };
     var mapDrillDownPageTypeToAddress = {
         "DEFAULT": defaultDrillDownPageAddress,
