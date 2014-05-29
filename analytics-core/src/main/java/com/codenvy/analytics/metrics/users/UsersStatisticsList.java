@@ -111,6 +111,7 @@ public class UsersStatisticsList extends AbstractListValueResulted {
             putNotNull(newItems, profile, USER_LAST_NAME);
             putNotNull(newItems, profile, USER_COMPANY);
             putNotNull(newItems, profile, USER_JOB);
+            putNotNull(newItems, profile, ALIASES);
 
             value.add(new MapValueData(newItems));
         }

@@ -55,6 +55,7 @@ public class UsersStatisticsListPrecomputed extends AbstractListValueResulted im
                             RUN_TIME,
                             BUILD_TIME,
                             PAAS_DEPLOYS,
+                            ALIASES,
                             USER_FIRST_NAME,
                             USER_LAST_NAME,
                             USER_COMPANY,
