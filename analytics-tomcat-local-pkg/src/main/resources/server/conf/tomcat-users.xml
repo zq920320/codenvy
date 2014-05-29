@@ -28,6 +28,6 @@
     -->
     <role rolename="user"/>
     <role rolename="system/admin"/>
-    <user username="admin@codenvy.com" password="admin" roles="system/admin"/>
+    <user username="admin@codenvy.com" password="admin" roles="user,system/admin"/>
     <user username="kwfvltbop@exzl.bfz" password="admin" roles="user"/>
 </tomcat-users>
