@@ -78,7 +78,7 @@ public class TestIdeUsageEvents extends BaseTest {
         assertEquals(1, cursor.size());
 
         DBObject dbObject = cursor.next();
-        assertEquals(14, dbObject.keySet().size());
+        assertEquals(13, dbObject.keySet().size());
         assertEquals("user1", dbObject.get("user"));
         assertEquals("ws1", dbObject.get("ws"));
         assertEquals(1, dbObject.get("registered_user"));
@@ -104,7 +104,7 @@ public class TestIdeUsageEvents extends BaseTest {
         assertEquals(1, cursor.size());
 
         DBObject dbObject = cursor.next();
-        assertEquals(7, dbObject.keySet().size());
+        assertEquals(6, dbObject.keySet().size());
         assertEquals("user2", dbObject.get("user"));
         assertEquals("default", dbObject.get("ws"));
         assertEquals(1, dbObject.get("registered_user"));

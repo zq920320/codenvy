@@ -14,7 +14,7 @@
  is strictly forbidden unless prior written permission is obtained
  from Codenvy S.A.. 
 --%>
-<%@page import="com.codenvy.analytics.util.FrontEndUtil" %>  
+<%@page import="com.codenvy.analytics.util.FrontEndUtil" %>
 
 <div class="navbar navbar-fixed-top">
     <div class="navbar-inner">
@@ -46,28 +46,28 @@
                         <li><a href="/analytics/pages/reports/factory-statistics.jsp" id="topmenu-reports-factories">Factory</a></li>
                         <li><a href="/analytics/pages/reports/top-metrics.jsp" id="topmenu-reports-top_metrics">Top Metrics</a></li>
                         <li><a href="/analytics/pages/reports/signup-analysis.jsp" id="topmenu-reports-analysis">Analysis</a></li>
-                    </ul>       
+                    </ul>
                 </div>
             </div>
 
             <div class="right">
                 <div class="nav">
                     <div>
-                        <button id="topmenu-preferences">Preferences</button>
+                        <button id="topmenu-preferences">Data Universe</button>
                     </div>
                     <ul class="dropdown-menu">
-                        <li><div class="menu-group-title">Data Universe:</div>
+                        <li>
                             <ul id="data-universe" targetWidgets="_all">
-                                <li><a class="command-btn" default>Any workspaces</a></li>
-                                <li><a class="command-btn" value="workspace/developer">Any workspace where the current user has workspace/developer right</a></li>
-                                <li><a class="command-btn" value="workspace/admin">Any workspace where the current user has workspace/admin right</a></li>
-                                <li><a class="command-btn" value="account/member">Any organization this user has account/member rights to</a></li>
-                                <li><a class="command-btn" value="account/owner">Any organization this user has account/owner rights to</a></li>
+                                <li><a class="command-btn" default>Display statistics by Any workspaces</a></li>
+                                <li><a class="command-btn" value="workspace/developer">Display statistics by workspaces where I have workspace/developer right</a></li>
+                                <li><a class="command-btn" value="workspace/admin">Display statistics by workspaces where I have workspace/admin right</a></li>
+                                <li><a class="command-btn" value="account/member">Display statistics by workspaces where I have account/member rights to</a></li>
+                                <li><a class="command-btn" value="account/owner">Display statistics by workspaces where I have account/owner rights to</a></li>
                             </ul>
                         </li>
                     </ul>
-                </div>        
-            
+                </div>
+
                 <div class="nav">
                     <div class="label-container">
                         <div class="label"><%= FrontEndUtil.getFirstAndLastName(request.getUserPrincipal())%></div>
@@ -75,9 +75,10 @@
                     <button id="topmenu-user">&nbsp;</button>
                 </div>
                 <ul class="dropdown-menu">
-                    <li><a href="/analytics/pages/accounts-view.jsp">Organizations</a></li>
-                    <li><a href="/">Main page</a></li>
-                    <li><a href="/site/private/select-tenant">Workspace</a></li>
+                    <li><a href="/analytics/pages/user-view.jsp?user=<%= FrontEndUtil.getUserId(request.getUserPrincipal())%>">My statistics</a></li>
+                    <li><a href="/site/private/select-tenant">My workspace</a></li>
+                    <li><a href="/analytics/pages/accounts-view.jsp">Organization</a></li>
+                    <li><a href="/">Codenvy main page</a></li>
                     <li><a href="#" onClick = "analytics.util.processUserLogOut()">Logout</a></li>
                 </ul>
             </div>
@@ -92,15 +93,15 @@
         analytics.views.topMenu.turnOnNavButtons();
         analytics.views.topMenu.turnOnDropdownButton("topmenu-reports", false);    // turn-on reports menu button
         analytics.views.topMenu.turnOnDropdownButton("topmenu-user", true);    // turn-on user menu button
-        
+
         analytics.views.topMenu.turnOnDropdownButton("topmenu-preferences", false);    // turn-on preferences menu button
-        
+
         // select menu items connected to page where top menu is displaying
-    <%  if (request.getParameterValues("selectedMenuItemId") != null) { 
+    <%  if (request.getParameterValues("selectedMenuItemId") != null) {
             String[] menuItemIds = request.getParameterValues("selectedMenuItemId");
-            for (int i = 0; i < menuItemIds.length; i++) { 
+            for (int i = 0; i < menuItemIds.length; i++) {
     %>
-        analytics.views.topMenu.selectMenuItem("<%= menuItemIds[i]%>");  
+        analytics.views.topMenu.selectMenuItem("<%= menuItemIds[i]%>");
     <%      }
         }
     %>

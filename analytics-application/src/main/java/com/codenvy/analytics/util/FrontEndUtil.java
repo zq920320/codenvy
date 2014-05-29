@@ -20,18 +20,31 @@ package com.codenvy.analytics.util;
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.Context;
-import com.codenvy.analytics.metrics.MetricFactory;
-import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.metrics.users.UsersProfilesList;
 
 import java.io.IOException;
 import java.security.Principal;
 import java.util.Map;
 
+import static com.codenvy.analytics.datamodel.ValueDataUtil.*;
+
 /** @author Dmytro Nochevnov */
 public class FrontEndUtil {
+
+    public static String getUserId(Principal userPrincipal) throws IOException {
+        Context.Builder builder = new Context.Builder();
+        builder.put(MetricFilter.ALIASES, userPrincipal.getName());
+
+        Metric metric = MetricFactory.getMetric(MetricType.USERS_PROFILES_LIST);
+        ListValueData valueData = getAsList(metric, builder.build());
+        if (valueData.size() == 0) {
+            return userPrincipal.getName();
+        } else {
+            Map<String, ValueData> profile = treatAsMap(treatAsList(valueData).get(0));
+            return profile.get(AbstractMetric.ID).getAsString();
+        }
+    }
 
     /**
      * Read name of logged user from userPrincipal and read his/him first and last names by using metric
@@ -51,7 +64,7 @@ public class FrontEndUtil {
 
         Context.Builder builder = new Context.Builder();
         if (email != null) {
-            builder.put(Parameters.USER, email);
+            builder.put(MetricFilter.ALIASES, email);
         }
         Context context = builder.build();
 

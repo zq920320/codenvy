@@ -280,7 +280,6 @@ public class ViewBuilder extends Feature {
                          viewConf.getName() + " with context " + context);
             }
         }
-
         private Row getRow(RowConfiguration rowConf) throws NoSuchMethodException,
                                                             ClassNotFoundException,
                                                             InstantiationException,
