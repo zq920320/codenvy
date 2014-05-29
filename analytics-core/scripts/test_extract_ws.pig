@@ -18,7 +18,7 @@
 
 IMPORT 'macros.pig';
 
-l = loadResources('$STORAGE_URL', '$STORAGE_TABLE_USERS_PROFILES', '$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
+l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 
 a = FOREACH l GENERATE ws;
 result = DISTINCT a;

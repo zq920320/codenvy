@@ -23,7 +23,7 @@
 --   field 'date' contains date in format 'YYYYMMDD'
 --   field 'time' contains seconds from midnight
 ---------------------------------------------------------------------------
-DEFINE loadResources(storageUrlParam, storageTableUsersProfilesParam, resourceParam, from, to, userType, wsType) RETURNS Y {
+DEFINE loadResources(resourceParam, from, to, userType, wsType) RETURNS Y {
   l1 = LOAD '$resourceParam' USING PigStorage() as (message : chararray);
   l2 = FILTER l1 BY INDEXOF(message, 'EVENT#', 0) > 0;
 

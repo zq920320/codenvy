@@ -21,7 +21,7 @@ IMPORT 'macros.pig';
 
 %DEFAULT inactiveInterval '10';
 
-l = loadResources('$STORAGE_URL', '$STORAGE_TABLE_USERS_PROFILES', '$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
+l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 
 u1 = LOAD '$STORAGE_URL.$STORAGE_TABLE_ACCEPTED_FACTORIES' using MongoLoaderAcceptedFactories();
 u = FOREACH u1 GENERATE ws AS tmpWs, referrer, factory, org_id AS orgId, affiliate_id AS affiliateId;
@@ -117,7 +117,7 @@ z5 = FOREACH z4 GENERATE ws, user, z2::dt AS dt, z2::delta AS delta, z2::factory
 z = FOREACH z5 GENERATE ws, user AS user, dt, delta, factory, referrer, orgId, affiliateId, auth, conv, run, deploy, debug, build, ws_created, id;
 
 -- add user created from factory indicator
-ls1 = loadResources('$STORAGE_URL', '$STORAGE_TABLE_USERS_PROFILES', '$LOG', '$FROM_DATE', '$TO_DATE', 'ANY', 'ANY');
+ls1 = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', 'ANY', 'ANY');
 ls2 = usersCreatedFromFactory(ls1);
 ls = FOREACH ls2 GENERATE dt, ws, user, factory, referrer, orgId, affiliateId, tmpUser AS tmpUser;
 

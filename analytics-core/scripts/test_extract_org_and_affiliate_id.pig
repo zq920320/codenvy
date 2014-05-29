@@ -18,7 +18,7 @@
 
 IMPORT 'macros.pig';
 
-l1 = loadResources('$STORAGE_URL', '$STORAGE_TABLE_USERS_PROFILES', '$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
+l1 = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 l = FOREACH l1 GENERATE event, message;
 
 a = extractOrgAndAffiliateId(l);

@@ -117,7 +117,6 @@ public class MongoDataStorage {
 
     public void putStorageParameters(Context.Builder builder) {
         builder.put(Parameters.STORAGE_URL, uri.toString());
-        builder.putDefaultValue(Parameters.STORAGE_TABLE_USERS_PROFILES);
     }
 
     private void initEmbeddedStorage() throws IOException {

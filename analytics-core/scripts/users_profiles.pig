@@ -28,7 +28,7 @@ DEFINE lastUpdate(X) RETURNS Y {
 };
 -----------------------> END OF MACROS <-----------------------
 
-l = loadResources('$STORAGE_URL', '$STORAGE_TABLE_USERS_PROFILES', '$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
+l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 
 ----------------------------------------------------------------------------------
 ---------------------------- user creation processing ----------------------------
@@ -40,7 +40,7 @@ a4 = extractParam(a3, 'ALIASES', 'aliases');
 a = FOREACH a4 GENERATE dt,
                         userId,
                         (emails IS NOT NULL ? emails
-                                            : (aliases IS NOT NULL ? aliases : '')) AS emails;
+                                            : (aliases IS NOT NULL ? aliases : user)) AS emails;
 
 resultA = FOREACH a GENERATE userId,
                              TOTUPLE('date', ToMilliSeconds(dt)),
@@ -59,7 +59,7 @@ d5 = extractParam(d4, 'PHONE', 'phone');
 d6 = extractParam(d5, 'JOBTITLE', 'job');
 d7 = extractParam(d6, 'USER-ID', 'userId');
 d = FOREACH d7 GENERATE dt,
-                        userId,
+                        (userId IS NULL ? user : userId) AS userId,
                         NullToEmpty(firstName) AS firstName,
                         NullToEmpty(lastName) AS lastName,
                         NullToEmpty(company) AS company,
@@ -89,7 +89,7 @@ b2 = extractParam(b1, 'USER-ID', 'userId');
 b3 = extractParam(b2, 'EMAILS', 'emails');
 b = FOREACH b3 GENERATE dt,
                         (userId IS NULL ? user : userId) AS userId,
-                        emails;
+                        (emails IS NOT NULL ? emails : user) AS emails;
 
 c1 = lastUpdate(b);
 c = FOREACH c1 GENERATE b::userId AS userId, b::emails AS emails;

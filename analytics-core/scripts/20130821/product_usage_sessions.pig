@@ -95,7 +95,7 @@ DEFINE productUsageTimeList(X, inactiveIntervalParam) RETURNS Y {
 };
 
 
-l = loadResources('$STORAGE_URL', '$STORAGE_TABLE_USERS_PROFILES', '$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
+l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 u = LOAD '$STORAGE_URL.$STORAGE_TABLE_USERS_PROFILES' USING MongoLoaderUsersCompanies;
 
 s1 = productUsageTimeList(l, '10');

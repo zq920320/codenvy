@@ -18,7 +18,7 @@
 
 IMPORT 'macros.pig';
 
-l = loadResources('$STORAGE_URL', '$STORAGE_TABLE_USERS_PROFILES', '$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
+l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 
 f1 = filterByEvent(l, '$EVENT');
 f = extractParam(f1, '$PARAM', param);

@@ -226,8 +226,7 @@ function Configuration() {
             modelMetricName: "users_statistics",
 
             columnLinkPrefixList: {
-                "Email": "/analytics/pages/user-view.jsp?user",
-                "ID": "/analytics/pages/session-view.jsp?session_id",
+                "ID": "/analytics/pages/user-view.jsp?user",
             },
 
             /** @see DatabaseTable::makeTableSortable() method docs */
@@ -236,7 +235,7 @@ function Configuration() {
             },
 
             mapColumnToServerSortParam: {
-                "Email": "user",
+                "ID": "user",
             },
 
             defaultServerSortParams: "+user",
@@ -249,7 +248,7 @@ function Configuration() {
                 },
 
                 mapColumnToParameter: {
-                    "Email": "user",
+                    "ID": "user",
                 },
             },
         },

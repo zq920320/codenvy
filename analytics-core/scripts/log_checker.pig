@@ -18,7 +18,7 @@
 
 IMPORT 'macros.pig';
 
-l = loadResources('$STORAGE_URL', '$STORAGE_TABLE_USERS_PROFILES', '$LOG', '$FROM_DATE', '$TO_DATE', 'ANY', 'ANY');
+l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', 'ANY', 'ANY');
 
 v = FOREACH l GENERATE EventValidation(event, ws, user, message) AS status, event, ws, user, message;
 result = FILTER v BY status IS NOT NULL;
