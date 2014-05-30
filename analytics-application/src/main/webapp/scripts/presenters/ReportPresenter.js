@@ -52,6 +52,9 @@ analytics.presenter.ReportPresenter.prototype.load = function () {
             view.print("<div class='body'>");
             
             var displayLineChart = analytics.configuration.getProperty(presenter.widgetName, "displayLineChart", false);
+            if (displayLineChart) {
+                analytics.views.lineChart.init();
+            }
             
             for (var i in data) {
                 var table = analytics.util.clone(data[i], true, []);

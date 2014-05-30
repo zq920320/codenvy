@@ -242,15 +242,12 @@ function View() {
         print("<div class='line-chart' id='" + chartId + "'></div>");
         print("</div>");
         
-        // display chart after the loading container
-        print("<script>");
-        print("  jQuery(function() { ");
-        print("       analytics.views.lineChart.display('"
-                + JSON.stringify(rows) + "', '"
-                + JSON.stringify(columnLabels) + "', '"
-                + chartId + "');");
-        print("  });");
-        print("</script>");
+        // display chart after the loading container        
+        analytics.views.lineChart.push({
+            columns: rows,
+            columnLabels: columnLabels, 
+            chartId: chartId
+        });
     }
 
     
@@ -351,6 +348,7 @@ function View() {
     }
     
     function displayAllCharts() {
+        analytics.views.lineChart.displayAll();
         var allCharts = $(".chart-container");        
         for (var i = 0; i < allCharts.length; i++) {
             jQuery(allCharts[i]).show();            

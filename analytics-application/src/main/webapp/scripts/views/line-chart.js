@@ -23,18 +23,19 @@ analytics.views = analytics.views || {};
 analytics.views.lineChart = new LineChart();
 
 function LineChart() {
+    
+    var charts = [];
+    var isChartDisplayed = false;
+    
     /**
 	 * Management of C3.js line chart
 	 * @see http://c3js.org/gettingstarted.html
      */
-    function display(columnsJson, columnLabelsJson, containerId) {
-        var columns = JSON.parse(columnsJson);
+    function display(columns, columnLabels, chartId) {
         var normalizedColumns = analytics.util.normalizeNumericValues(columns);
         
-        var columnLabels = JSON.parse(columnLabelsJson);
-        
         var chart = c3.generate({
-            bindto: '#' + containerId,
+            bindto: '#' + chartId,
             data: {
               columns: normalizedColumns
             },
@@ -49,12 +50,45 @@ function LineChart() {
                     categories: columnLabels
                 }
             }
-        });        
+        });
+        
+        // workaround to fix bug with displaying chart by c3js plugin
+        setTimeout(function() {
+            chart.hide();
+            chart.show();
+        }, 0);
     }
 
-	
+    function displayAll() {
+        if (isChartDisplayed == true) {
+            return;
+        }
+        
+        for (var chartIndex in charts) {
+            var chart = charts[chartIndex];
+            display(chart.columns,
+                    chart.columnLabels,
+                    chart.chartId);
+        }
+        
+        isChartDisplayed = true;
+    }
+    
+    /** Save data to display chart later */
+    function push(chart) {
+        charts.push(chart);
+    }
+    
+    function init() {
+        charts = [];
+        isChartDisplayed = false;
+    }
+    
+    
     /** ****************** API ********** */
     return {
-        display: display,
+        push: push,
+        displayAll: displayAll,
+        init: init,
     }
 }
