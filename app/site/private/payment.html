@@ -2,9 +2,9 @@
 <head>
 </head>
 <body>
-<h1>Braintree Credit Card Transaction Form</h1>
+<h1>Codenvy Credit Card Transaction Form</h1>
 <div>
-    <form action="/api/payment" method="POST" id="braintree-payment-form">
+    <form action="/api/payment" method="POST" id="codenvy-payment-form">
         <p>
             <label>Card Number</label>
             <input type="text" size="20" autocomplete="off" data-encrypted-name="cardNumber" />
@@ -23,8 +23,8 @@
             <input type="text" size="10" autocomplete="off" name="accountid" />
         </p>
         <p>
-            <label>Amount</label>
-            <input type="text" size="8" autocomplete="off" name="amount" />
+            <label>Subscription Id</label>
+            <input type="text" size="8" autocomplete="off" name="subscriptionid" />
         </p>
         <input type="submit" id="submit" />
     </form>
@@ -33,7 +33,7 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
 <script>
     var ajax_submit = function (e) {
-      form = $('#braintree-payment-form');
+      form = $('#codenvy-payment-form');
       e.preventDefault();
       $("#submit").attr("disabled", "disabled");
       $.post(form.attr('action'), form.serialize(), function (data) {
@@ -41,7 +41,7 @@
       });
     }
     var braintree = Braintree.create("MIIBCgKCAQEAu4DIBsO0K0mkhvCsCAQzwjQo71bLswM1LQS3xCz+81UTOXShVH2YjgjA/P/S1NUuKxZe5ppku8F4Y7NHMPniod8KmChoNuUAnq9EE91BAqrj9OKTlNpxKMuXG6OTnF4EfAzz5yDI4p8vSfVHKNU6WvqySB16uw0a+iC8sDjoib6rUeSeniWpQBn/FeR7iVFVGHShkgvRs1SX2BjLnZOalhlI94yrPu3vNJd2Gk1YPgQBtAHbjhUtIcvpPAcFqcUQVaEavVVkPeEMGCaIsaR6LJvJ0K+r6K4t8ZcPzD6cA7ylM89nFPzGND4gLhxftd6p/R3QBPGGMWP5IGJDo/ThzwIDAQAB");
-    braintree.onSubmitEncryptForm('braintree-payment-form', ajax_submit);
+    braintree.onSubmitEncryptForm('codenvy-payment-form', ajax_submit);
 </script>
 </body>
 </html>
