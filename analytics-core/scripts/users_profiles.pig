@@ -59,7 +59,7 @@ d5 = extractParam(d4, 'PHONE', 'phone');
 d6 = extractParam(d5, 'JOBTITLE', 'job');
 d7 = extractParam(d6, 'USER-ID', 'userId');
 d = FOREACH d7 GENERATE dt,
-                        (userId IS NULL ? user : userId) AS userId,
+                        (userId IS NULL ? ReplaceWithId(user) : userId) AS userId,
                         NullToEmpty(firstName) AS firstName,
                         NullToEmpty(lastName) AS lastName,
                         NullToEmpty(company) AS company,
@@ -88,7 +88,7 @@ b1 = filterByEvent(l, 'user-updated,user-update-profile');
 b2 = extractParam(b1, 'USER-ID', 'userId');
 b3 = extractParam(b2, 'EMAILS', 'emails');
 b = FOREACH b3 GENERATE dt,
-                        (userId IS NULL ? user : userId) AS userId,
+                        (userId IS NULL ? ReplaceWithId(user) : userId) AS userId,
                         (emails IS NOT NULL ? emails : user) AS emails;
 
 c1 = lastUpdate(b);
