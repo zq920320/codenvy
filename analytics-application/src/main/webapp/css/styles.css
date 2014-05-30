@@ -138,6 +138,7 @@ div#loader .loader-text {
     text-align: left;
     overflow: hidden;
     padding: 10px 19px !important;
+    min-width: 1300px;
 }
 
 .topFilteringPanel .filter-item {
@@ -218,6 +219,7 @@ div#loader .loader-text {
 .chart-container {
     margin-top: 30px;
     margin-bottom: 5px;
+    min-width: 1300px;
 }
 
 .chart-label {
