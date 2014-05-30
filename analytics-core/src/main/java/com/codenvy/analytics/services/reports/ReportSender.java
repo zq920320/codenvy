@@ -68,8 +68,7 @@ public class ReportSender extends Feature {
         this.configurator = configurator;
         this.recipientsHolder = recipientsHolder;
         this.viewBuilder = viewBuilder;
-        this.configuration =
-                confManager.loadConfiguration(ReportsConfiguration.class, configurator.getString(CONFIGURATION));
+        this.configuration = confManager.loadConfiguration(ReportsConfiguration.class, configurator.getString(CONFIGURATION));
     }
 
     @Override

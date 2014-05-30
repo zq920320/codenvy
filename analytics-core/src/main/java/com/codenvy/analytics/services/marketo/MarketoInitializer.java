@@ -64,14 +64,14 @@ public class MarketoInitializer extends Feature {
     private static final   String SERVICE_URL    = "analytics.marketo.service_url";
     private static final   String SERVICE_NAME   = "analytics.marketo.service_name";
 
-    private final String soapEndPoint;
-    private final String userId;
-    private final String secretKey;
-    private final String programName;
-    private final String serviceUrl;
-    private final String serviceName;
-    private final String listName;
-    private final int    pageSize;
+    private String soapEndPoint;
+    private String userId;
+    private String secretKey;
+    private String programName;
+    private String serviceUrl;
+    private String serviceName;
+    private String listName;
+    private int    pageSize;
 
     private final Configurator           configurator;
     private final MarketoReportGenerator reportGenerator;
@@ -85,16 +85,18 @@ public class MarketoInitializer extends Feature {
         this.reportGenerator = reportGenerator;
         this.reportHolder = cleaner;
 
-        validateConfiguration();
+        if (isAvailable()) {
+            validateConfiguration();
 
-        this.soapEndPoint = configurator.getString(SOAP_END_POINT);
-        this.userId = configurator.getString(USER_ID);
-        this.secretKey = configurator.getString(SECRET_KEY);
-        this.programName = configurator.getString(PROGRAM_NAME);
-        this.serviceUrl = configurator.getString(SERVICE_URL);
-        this.serviceName = configurator.getString(SERVICE_NAME);
-        this.listName = configurator.getString(LIST_NAME);
-        this.pageSize = configurator.getInt(PAGE_SIZE, 1000);
+            this.soapEndPoint = configurator.getString(SOAP_END_POINT);
+            this.userId = configurator.getString(USER_ID);
+            this.secretKey = configurator.getString(SECRET_KEY);
+            this.programName = configurator.getString(PROGRAM_NAME);
+            this.serviceUrl = configurator.getString(SERVICE_URL);
+            this.serviceName = configurator.getString(SERVICE_NAME);
+            this.listName = configurator.getString(LIST_NAME);
+            this.pageSize = configurator.getInt(PAGE_SIZE, 1000);
+        }
     }
 
     private void validateConfiguration() throws IllegalStateException {
@@ -105,7 +107,6 @@ public class MarketoInitializer extends Feature {
         checkProperty(SERVICE_URL);
         checkProperty(SERVICE_NAME);
         checkProperty(LIST_NAME);
-        checkProperty(availablePropertyName());
     }
 
 
@@ -117,7 +118,8 @@ public class MarketoInitializer extends Feature {
 
     @Override
     public boolean isAvailable() {
-        return configurator.getBoolean(availablePropertyName());
+        String name = availablePropertyName();
+        return configurator.exists(name) && configurator.getBoolean(name);
     }
 
     protected String availablePropertyName() {
