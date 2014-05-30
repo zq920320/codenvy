@@ -28,23 +28,25 @@ import java.io.FileWriter;
 import java.util.List;
 
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
 import static org.testng.AssertJUnit.assertEquals;
 
 /** @author <a href="mailto:dnochevnov@codenvy.com">Dmytro Nochevnov</a> */
 public class TestCollectionConfiguration extends BaseTest {
 
     private static final String FILE          = BASE_DIR + "/resource";
-    private static final String CONFIGURATION = "<collections>" +
-                                                "   <collection name=\"users_profiles_list\">" +
-                                                "      <indexes>" +
-                                                "         <index name=\"index name\">" +
-                                                "            <field>user_first_name</field>" +
-                                                "            <field>user_last_name</field>" +
-                                                "            <field>user_company</field>" +
-                                                "         </index>" +
-                                                "      </indexes>" +
-                                                "   </collection>" +
-                                                "</collections>";
+    private static final String CONFIGURATION =
+            "<collections>" +
+            "   <collection name=\"users_profiles_list\">" +
+            "      <indexes>" +
+            "         <index name=\"index name\" fixed=\"true\">" +
+            "            <field>user_first_name</field>" +
+            "            <field>user_last_name</field>" +
+            "            <field>user_company</field>" +
+            "         </index>" +
+            "      </indexes>" +
+            "   </collection>" +
+            "</collections>";
 
     private XmlConfigurationManager configurationManager;
 
@@ -75,6 +77,7 @@ public class TestCollectionConfiguration extends BaseTest {
 
         IndexConfiguration index = indexes.get(0);
         assertEquals("index name", index.getName());
+        assertTrue(index.isFixed());
 
         List<FieldConfiguration> fields = index.getFields();
         assertEquals(3, fields.size());

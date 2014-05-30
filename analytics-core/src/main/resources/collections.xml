@@ -626,7 +626,7 @@
 
     <collection name="users_profiles_list">
         <indexes>
-            <index name="aliases">
+            <index name="aliases" fixed="true">
                 <field>aliases</field>
             </index>
             <index name="user_first_name">

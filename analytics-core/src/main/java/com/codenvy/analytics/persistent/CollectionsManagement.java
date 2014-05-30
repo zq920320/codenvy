@@ -82,7 +82,9 @@ public class CollectionsManagement {
                 List<IndexConfiguration> indexes = indexesConf.getIndexes();
 
                 for (IndexConfiguration indexConf : indexes) {
-                    dropIndex(name, indexConf);
+                    if (!indexConf.isFixed()) {
+                        dropIndex(name, indexConf);
+                    }
                 }
             }
         } finally {

@@ -26,7 +26,8 @@ import java.util.List;
 /** @author <a href="mailto:dnochevnov@codenvy.com">Dmytro Nochevnov</a> */
 @XmlRootElement(name = "index")
 public class IndexConfiguration {
-    private String name;
+    private String  name;
+    private boolean fixed;
     private List<FieldConfiguration> fields = new ArrayList<>();
 
     @XmlAttribute(name = "name")
@@ -46,4 +47,15 @@ public class IndexConfiguration {
     public List<FieldConfiguration> getFields() {
         return this.fields;
     }
+
+    @XmlAttribute(name = "fixed")
+    public void setFixed(boolean fixed) {
+        this.fixed = fixed;
+    }
+
+    public boolean isFixed() {
+        return fixed;
+    }
+
+
 }
