@@ -62,7 +62,7 @@ public class TestRestoreUserProfiles extends BaseTest {
         DBCursor cursor = profiles.find();
         while (cursor.hasNext()) {
             DBObject profile = cursor.next();
-            String userId = (String)profile.get("userId");
+            String userId = (String)profile.get("id");
             if (userId == null) {
                 continue;
             }
@@ -99,7 +99,9 @@ public class TestRestoreUserProfiles extends BaseTest {
                 }
             }
 
+            userProfile.userId = userId;
             userProfile.email = emails.get(userId);
+            userProfile.aliases = userProfile.email;
             if (userProfile.email == null || userProfile.email.isEmpty()) {
                 LOG.warn("There is no email for " + userId);
             } else if (userProfile.email.toUpperCase().startsWith("ANONYMOUSUSER")) {
@@ -120,13 +122,17 @@ public class TestRestoreUserProfiles extends BaseTest {
                 if (line.startsWith("dn: ")) {
                     result.put(email.userId, email.email);
                     email = new Email();
-                } else if (line.startsWith("mail: ")) {
-                    email.email = line.substring(6);
+                } else if (line.startsWith("initials: ")) {
+                    if (!email.email.isEmpty()) {
+                        LOG.info(email.email);
+                    }
+                    email.email = line.substring(10);
                 } else if (line.startsWith("uid: ")) {
                     email.userId = line.substring(5);
                 }
             }
         }
+        result.put(email.userId, email.email);
 
         return result;
     }
@@ -134,7 +140,9 @@ public class TestRestoreUserProfiles extends BaseTest {
     private void write(Profile profile) throws IOException {
         writer.write("127.0.0.1 2013-02-01 00:00:01,000[l-4-thread-8211]  [INFO ] [Main 224]  [][][] - ");
         writer.write("EVENT#user-update-profile# " +
+                     "USER-ID#" + profile.userId + "# " +
                      "USER#" + profile.email + "# " +
+                     "EMAILS#" + profile.aliases + "# " +
                      "FIRSTNAME#" + profile.firstName + "# " +
                      "LASTNAME#" + profile.lastName + "# " +
                      "COMPANY#" + profile.company + "# " +
@@ -160,5 +168,7 @@ public class TestRestoreUserProfiles extends BaseTest {
         String jobtitle  = "";
         String email     = "";
         String phone     = "";
+        String userId    = "";
+        String aliases   = "";
     }
 }
