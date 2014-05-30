@@ -57,7 +57,7 @@ public class ReplaceWithId extends EvalFunc<String> {
 
         } else {
             Context.Builder builder = new Context.Builder();
-            builder.put(MetricFilter.ALIASES, user);
+            builder.put(MetricFilter.ALIASES, user.toLowerCase());
 
             ListValueData valueData = getAsList(metric, builder.build());
             if (valueData.size() == 0) {

@@ -626,6 +626,9 @@
 
     <collection name="users_profiles_list">
         <indexes>
+            <index name="aliases">
+                <field>aliases</field>
+            </index>
             <index name="user_first_name">
                 <field>user_first_name</field>
             </index>
