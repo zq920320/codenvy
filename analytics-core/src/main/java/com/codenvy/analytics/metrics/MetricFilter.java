@@ -25,11 +25,14 @@ public enum MetricFilter {
     _ID,
     DATE(true),
 
-    WS,
+    WS, // wsId
+    WS_NAME, // name of workspace
     PERSISTENT_WS(true),
-    USER,
+
+    USER, // userId
+    ALIASES, // user' emails
     REGISTERED_USER(true),
-    ALIASES,
+
     EVENT,
     DOMAIN,
     USER_COMPANY,

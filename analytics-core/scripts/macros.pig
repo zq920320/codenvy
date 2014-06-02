@@ -45,10 +45,11 @@ DEFINE loadResources(resourceParam, from, to, userType, wsType) RETURNS Y {
 
   l10 = DISTINCT l9;
   $Y = FOREACH l10 GENERATE dt,
-                            ReplaceWithId(user) AS user,
+                            ReplaceUserWithId(user) AS user,
                             event,
                             message,
-                            ws;
+                            ReplaceWsWithId(ws) AS ws,
+                            ws AS wsName;
 };
 ---------------------------------------------------------------------------
 -- Removes tuples with empty fields
@@ -160,6 +161,16 @@ DEFINE extractParam(X, paramNameParam, paramFieldNameParam) RETURNS Y {
   $Y = FOREACH $X GENERATE *, FLATTEN(REGEX_EXTRACT_ALL(message, '.*\\s$paramNameParam#([^\\s#][^#]*|)#.*')) AS $paramFieldNameParam;
 };
 
+---------------------------------------------------------------------------
+-- @return last update
+---------------------------------------------------------------------------
+DEFINE lastUpdate(X, idField) RETURNS Y {
+  y1 = GROUP $X BY $idField;
+  y2 = FOREACH y1 GENERATE group AS $idField, MAX($X.dt) AS maxDt, FLATTEN($X);
+  y3 = FILTER y2 BY dt == maxDt;
+  $Y = FOREACH y3 GENERATE *;
+};
+
 
 ---------------------------------------------------------------------------
 -- Extract orgId and affiliateId either from parameter or from factory url.
@@ -247,7 +258,7 @@ DEFINE usersCreatedFromFactory(X) RETURNS Y {
     t1 = filterByEvent($X, 'user-changed-name');
     t2 = extractParam(t1, 'OLD-USER', 'old');
     t3 = extractParam(t2, 'NEW-USER', 'new');
-    t4 = FOREACH t3 GENERATE dt, ReplaceWithId(old) AS old, ReplaceWithId(new) AS new;
+    t4 = FOREACH t3 GENERATE dt, ReplaceUserWithId(old) AS old, ReplaceUserWithId(new) AS new;
     t5 = FILTER t4 BY INDEXOF(LOWER(old), 'anonymoususer_', 0) == 0 AND INDEXOF(LOWER(new), 'anonymoususer_', 0) < 0;
     t = FOREACH t5 GENERATE dt, LOWER(old) AS tmpUser, LOWER(new) AS user;
 

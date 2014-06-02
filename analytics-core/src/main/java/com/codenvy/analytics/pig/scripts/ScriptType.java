@@ -94,14 +94,8 @@ public enum ScriptType {
         }
     },
     CREATED_TEMPORARY_WORKSPACES,
-    USERS_PROFILES {
-        @Override
-        public Set<Parameters> getParams() {
-            Set<Parameters> params = super.getParams();
-            params.add(Parameters.STORAGE_TABLE);
-            return params;
-        }
-    },
+    USERS_PROFILES,
+    WORKSPACES_PROFILES,
     USERS_STATISTICS,
     USERS_ACTIVITY,
     PROJECTS,

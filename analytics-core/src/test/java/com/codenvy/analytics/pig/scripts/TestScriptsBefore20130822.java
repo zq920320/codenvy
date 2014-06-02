@@ -35,10 +35,6 @@ import static org.testng.Assert.assertEquals;
 /** @author Anatoliy Bazko */
 public class TestScriptsBefore20130822 extends BaseTest {
 
-    private final String COLLECTION_STAT     = MetricType.USERS_STATISTICS_LIST.toString().toLowerCase();
-    private final String COLLECTION_SESSIONS = MetricType.PRODUCT_USAGE_SESSIONS_LIST.toString().toLowerCase();
-    private final String COLLECTION_PROFILES = MetricType.USERS_PROFILES_LIST.toString().toLowerCase();
-
     @Test
     public void testTotalUsageTimeBefore20130822() throws Exception {
         final String date = "20130821";

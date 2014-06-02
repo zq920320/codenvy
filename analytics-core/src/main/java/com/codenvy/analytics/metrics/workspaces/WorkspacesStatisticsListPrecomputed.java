@@ -40,6 +40,11 @@ public class WorkspacesStatisticsListPrecomputed extends AbstractListValueResult
     }
 
     @Override
+    public String getStorageCollectionName() {
+        return getStorageCollectionName(MetricType.WORKSPACES_STATISTICS_PRECOMPUTED);
+    }
+
+    @Override
     public String[] getTrackedFields() {
         return new String[]{WS,
                             PROJECTS,

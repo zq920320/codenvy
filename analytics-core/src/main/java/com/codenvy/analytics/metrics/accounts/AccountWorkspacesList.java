@@ -63,6 +63,7 @@ public class AccountWorkspacesList extends AbstractAccountMetric {
         for (Workspace workspace : getWorkspaces(accountById.getId())) {
             Map<String, ValueData> m = new HashMap<>();
             m.put(ACCOUNT_ID, new StringValueData(workspace.getAccountId()));
+            m.put(WORKSPACE_ID, new StringValueData(workspace.getId()));
             m.put(WORKSPACE_NAME, new StringValueData(workspace.getName()));
             m.put(WORKSPACE_TEMPORARY, new StringValueData(String.valueOf(workspace.isTemporary())));
 

@@ -17,17 +17,17 @@
  */
 package com.codenvy.analytics.services.pig;
 
+import com.codenvy.analytics.metrics.MetricFactory;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.metrics.ReadBasedMetric;
 import com.codenvy.analytics.pig.scripts.ScriptType;
 import com.codenvy.analytics.services.configuration.XmlConfigurationManager;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-
 import java.io.IOException;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -61,12 +61,17 @@ public class ScriptsManager {
         return scripts.values();
     }
 
-    public ScriptConfiguration getScript(ScriptType scriptType, String storageTable) {
-        return scripts.get(new ScriptKey(scriptType, storageTable));
+    public ScriptConfiguration getScript(ScriptType scriptType, String collection) {
+        return scripts.get(new ScriptKey(scriptType, collection));
     }
 
-    public ScriptConfiguration getScript(ScriptType scriptType, MetricType storageTable) {
-        return getScript(scriptType, storageTable.toString().toLowerCase());
+    public ScriptConfiguration getScript(ScriptType scriptType, MetricType collectionForMetric) {
+        if (MetricFactory.exists(collectionForMetric)) {
+            ReadBasedMetric metric = (ReadBasedMetric)MetricFactory.getMetric(collectionForMetric);
+            return getScript(scriptType, metric.getStorageCollectionName());
+        } else {
+            return getScript(scriptType, collectionForMetric.toString().toLowerCase());
+        }
     }
 
     /**

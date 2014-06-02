@@ -17,7 +17,9 @@
  */
 package com.codenvy.analytics.metrics.workspaces;
 
-import com.codenvy.analytics.metrics.*;
+import com.codenvy.analytics.metrics.AbstractListValueResulted;
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.MetricType;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
@@ -36,7 +38,7 @@ public class UsageTimeByWorkspacesList extends AbstractListValueResulted {
 
     @Override
     public String getStorageCollectionName() {
-        return getStorageCollectionName(MetricType.PRODUCT_USAGE_SESSIONS_LIST);
+        return getStorageCollectionName(MetricType.PRODUCT_USAGE_SESSIONS);
     }
 
     @Override

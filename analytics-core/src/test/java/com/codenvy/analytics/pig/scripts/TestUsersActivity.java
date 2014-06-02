@@ -83,7 +83,7 @@ public class TestUsersActivity extends BaseTest {
     public void shouldStoreAllParametersFromMessage() throws Exception {
         DBObject filter = new BasicDBObject("user", "user1");
 
-        DBCollection collection = mongoDb.getCollection(MetricType.USERS_ACTIVITY_LIST.toString().toLowerCase());
+        DBCollection collection = mongoDb.getCollection(MetricType.USERS_ACTIVITY.toString().toLowerCase());
         DBCursor cursor = collection.find(filter);
 
         assertEquals(1, cursor.size());

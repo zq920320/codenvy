@@ -29,17 +29,19 @@ import org.apache.pig.impl.logicalLayer.schema.Schema;
 import java.io.IOException;
 import java.util.Map;
 
-import static com.codenvy.analytics.Utils.isAnonymousUser;
+import static com.codenvy.analytics.Utils.isTemporaryWorkspace;
 import static com.codenvy.analytics.datamodel.ValueDataUtil.getAsList;
 import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsMap;
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class ReplaceWithId extends EvalFunc<String> {
+/**
+ * @author Anatoliy Bazko
+ */
+public class ReplaceWsWithId extends EvalFunc<String> {
 
     private final Metric metric;
 
-    public ReplaceWithId() {
-        metric = MetricFactory.getMetric(MetricType.USERS_PROFILES_LIST);
+    public ReplaceWsWithId() {
+        metric = MetricFactory.getMetric(MetricType.WORKSPACES_PROFILES_LIST);
     }
 
     @Override
@@ -48,20 +50,20 @@ public class ReplaceWithId extends EvalFunc<String> {
             return null;
         }
 
-        String user = (String)input.get(0);
-        if (user == null) {
+        String ws = (String)input.get(0);
+        if (ws == null) {
             return null;
 
-        } else if (isAnonymousUser(user)) {
-            return user;
+        } else if (isTemporaryWorkspace(ws)) {
+            return ws;
 
         } else {
             Context.Builder builder = new Context.Builder();
-            builder.put(MetricFilter.ALIASES, user.toLowerCase());
+            builder.put(MetricFilter.WS_NAME, ws.toLowerCase());
 
             ListValueData valueData = getAsList(metric, builder.build());
             if (valueData.size() == 0) {
-                return user;
+                return ws;
             } else {
                 Map<String, ValueData> profile = treatAsMap(valueData.getAll().get(0));
                 return profile.get(AbstractMetric.ID).getAsString();

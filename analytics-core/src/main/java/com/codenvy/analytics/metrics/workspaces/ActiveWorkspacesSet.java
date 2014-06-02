@@ -34,6 +34,11 @@ public class ActiveWorkspacesSet extends AbstractSetValueResulted {
     }
 
     @Override
+    public String getStorageCollectionName() {
+        return getStorageCollectionName(MetricType.ACTIVE_WORKSPACES);
+    }
+
+    @Override
     public String getDescription() {
         return "The list of active persistent workspaces";
     }

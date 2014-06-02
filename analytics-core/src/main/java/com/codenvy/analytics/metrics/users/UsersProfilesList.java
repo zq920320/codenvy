@@ -40,6 +40,11 @@ public class UsersProfilesList extends AbstractUsersProfile {
     }
 
     @Override
+    public String getStorageCollectionName() {
+        return getStorageCollectionName(MetricType.USERS_PROFILES);
+    }
+
+    @Override
     public String[] getTrackedFields() {
         return new String[]{ID,
                             DATE,

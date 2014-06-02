@@ -42,7 +42,7 @@ public class WorkspacesStatisticsList extends AbstractListValueResulted {
 
     @Override
     public String getStorageCollectionName() {
-        return getStorageCollectionName(MetricType.USERS_STATISTICS_LIST);
+        return getStorageCollectionName(MetricType.USERS_STATISTICS);
     }
 
     @Override

@@ -18,16 +18,6 @@
 
 IMPORT 'macros.pig';
 
------------------------> START OF MACROS <-----------------------
--- @return last update
-DEFINE lastUpdate(X) RETURNS Y {
-  y1 = GROUP $X BY userId;
-  y2 = FOREACH y1 GENERATE group AS userId, MAX($X.dt) AS maxDt, FLATTEN($X);
-  y3 = FILTER y2 BY dt == maxDt;
-  $Y = FOREACH y3 GENERATE *;
-};
------------------------> END OF MACROS <-----------------------
-
 l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 
 ----------------------------------------------------------------------------------
@@ -59,13 +49,13 @@ d5 = extractParam(d4, 'PHONE', 'phone');
 d6 = extractParam(d5, 'JOBTITLE', 'job');
 d7 = extractParam(d6, 'USER-ID', 'userId');
 d = FOREACH d7 GENERATE dt,
-                        (userId IS NULL ? ReplaceWithId(user) : userId) AS userId,
+                        (userId IS NULL ? ReplaceUserWithId(user) : userId) AS userId,
                         NullToEmpty(firstName) AS firstName,
                         NullToEmpty(lastName) AS lastName,
                         NullToEmpty(company) AS company,
                         NullToEmpty(phone) AS phone,
                         NullToEmpty(FixJobTitle(job)) AS job;
-e1 = lastUpdate(d);
+e1 = lastUpdate(d, 'userId');
 e = FOREACH e1 GENERATE d::userId AS userId,
                         d::firstName AS firstName,
                         d::lastName AS lastName,
@@ -88,10 +78,10 @@ b1 = filterByEvent(l, 'user-updated,user-update-profile');
 b2 = extractParam(b1, 'USER-ID', 'userId');
 b3 = extractParam(b2, 'EMAILS', 'emails');
 b = FOREACH b3 GENERATE dt,
-                        (userId IS NULL ? ReplaceWithId(user) : userId) AS userId,
+                        (userId IS NULL ? ReplaceUserWithId(user) : userId) AS userId,
                         (emails IS NOT NULL ? emails : user) AS emails;
 
-c1 = lastUpdate(b);
+c1 = lastUpdate(b, 'userId');
 c = FOREACH c1 GENERATE b::userId AS userId,
                         b::emails AS emails;
 

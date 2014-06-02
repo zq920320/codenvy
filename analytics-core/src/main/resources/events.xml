@@ -195,6 +195,7 @@
     <event name="workspace-created">
         <description>Workspace created</description>
         <parameters>
+            <param>WS-ID</param>
             <param>WS</param>
             <param>USER</param>
         </parameters>
@@ -234,6 +235,14 @@
         <description>Workspace destroyed</description>
         <parameters>
             <param>WS</param>
+            <param>WS-ID</param>
+        </parameters>
+    </event>
+    <event name="workspace-updated">
+        <description>Workspace destroyed</description>
+        <parameters>
+            <param>WS</param>
+            <param>WS-ID</param>
         </parameters>
     </event>
     <event name="tenant-destroyed">

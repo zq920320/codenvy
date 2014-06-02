@@ -40,6 +40,11 @@ public class UsersStatisticsListPrecomputed extends AbstractListValueResulted im
     }
 
     @Override
+    public String getStorageCollectionName() {
+        return getStorageCollectionName(MetricType.USERS_STATISTICS_PRECOMPUTED);
+    }
+
+    @Override
     public String[] getTrackedFields() {
         return new String[]{USER,
                             PROJECTS,

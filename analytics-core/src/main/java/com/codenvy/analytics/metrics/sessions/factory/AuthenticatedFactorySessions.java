@@ -35,7 +35,7 @@ public class AuthenticatedFactorySessions extends AbstractLongValueResulted {
 
     @Override
     public String getStorageCollectionName() {
-        return getStorageCollectionName(MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST);
+        return getStorageCollectionName(MetricType.PRODUCT_USAGE_FACTORY_SESSIONS);
     }
 
     @Override

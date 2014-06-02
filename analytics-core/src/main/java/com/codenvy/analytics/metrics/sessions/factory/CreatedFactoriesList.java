@@ -34,7 +34,7 @@ public class CreatedFactoriesList extends AbstractListValueResulted {
 
     @Override
     public String getStorageCollectionName() {
-        return getStorageCollectionName(MetricType.CREATED_FACTORIES_SET);
+        return getStorageCollectionName(MetricType.CREATED_FACTORIES);
     }
 
     @Override

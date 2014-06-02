@@ -46,7 +46,7 @@ public class CompletedProfiles extends AbstractUsersProfile {
 
     @Override
     public String getStorageCollectionName() {
-        return getStorageCollectionName(MetricType.USERS_PROFILES_LIST);
+        return getStorageCollectionName(MetricType.USERS_PROFILES);
     }
 
     @Override

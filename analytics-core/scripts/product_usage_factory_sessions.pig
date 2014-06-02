@@ -37,7 +37,7 @@ i = FOREACH i3 GENERATE MIN(i2.dt) AS dt, group.tmpWs AS tmpWs, group.user AS us
 c1 = filterByEvent(l, 'user-changed-name');
 c2 = extractParam(c1, 'OLD-USER', 'old');
 c3 = extractParam(c2, 'NEW-USER', 'new');
-c = FOREACH c3 GENERATE LOWER(ReplaceWithId(old)) AS anomUser, LOWER(ReplaceWithId(new)) AS user;
+c = FOREACH c3 GENERATE LOWER(ReplaceUserWithId(old)) AS anomUser, LOWER(ReplaceUserWithId(new)) AS user;
 
 -- associating anonymous names with 'factory-project-imported' events
 d1 = JOIN i BY user LEFT, c BY user;

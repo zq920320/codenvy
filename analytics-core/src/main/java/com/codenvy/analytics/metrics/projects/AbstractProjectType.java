@@ -75,7 +75,7 @@ public abstract class AbstractProjectType extends ReadBasedMetric implements Rea
 
     @Override
     public String getStorageCollectionName() {
-        return getStorageCollectionName(MetricType.PROJECTS_LIST);
+        return getStorageCollectionName(MetricType.PROJECTS);
     }
 
     @Override

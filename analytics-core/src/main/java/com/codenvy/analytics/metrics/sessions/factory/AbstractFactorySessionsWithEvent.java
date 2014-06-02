@@ -29,14 +29,9 @@ public abstract class AbstractFactorySessionsWithEvent extends AbstractLongValue
         super(metricType, SESSION_ID);
     }
 
-
-    public AbstractFactorySessionsWithEvent(String metricName) {
-        super(metricName, SESSION_ID);
-    }
-
     @Override
     public String getStorageCollectionName() {
-        return getStorageCollectionName(MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST);
+        return getStorageCollectionName(MetricType.PRODUCT_USAGE_FACTORY_SESSIONS);
     }
 
     @Override

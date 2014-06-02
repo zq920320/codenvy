@@ -223,7 +223,7 @@ public class TestProductUsersTime extends BaseTest {
 
         @Override
         public String getStorageCollectionName() {
-            return MetricType.PRODUCT_USAGE_SESSIONS_LIST.toString().toLowerCase();
+            return MetricType.PRODUCT_USAGE_SESSIONS.toString().toLowerCase();
         }
     }
 }

@@ -143,7 +143,8 @@ public class PigServer {
         server.registerFunction("NullToEmpty", new FuncSpec("com.codenvy.analytics.pig.udf.NullToEmpty"));
         server.registerFunction("CreateProjectId", new FuncSpec("com.codenvy.analytics.pig.udf.CreateProjectId"));
         server.registerFunction("EnsureBrackets", new FuncSpec("com.codenvy.analytics.pig.udf.EnsureBrackets"));
-        server.registerFunction("ReplaceWithId", new FuncSpec("com.codenvy.analytics.pig.udf.ReplaceWithId"));
+        server.registerFunction("ReplaceUserWithId", new FuncSpec("com.codenvy.analytics.pig.udf.ReplaceUserWithId"));
+        server.registerFunction("ReplaceWsWithId", new FuncSpec("com.codenvy.analytics.pig.udf.ReplaceWsWithId"));
         server.registerFunction("GetDomainById", new FuncSpec("com.codenvy.analytics.pig.udf.GetDomainById"));
         server.registerFunction("MongoStorage", new FuncSpec("com.codenvy.analytics.pig.udf.MongoStorage"));
 

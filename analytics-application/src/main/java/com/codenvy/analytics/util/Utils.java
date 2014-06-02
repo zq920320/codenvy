@@ -237,7 +237,7 @@ public class Utils {
 
             for (ValueData workspace : workspaces.getAll()) {
                 Map<String, ValueData> workspaceData = ((MapValueData)workspace).getAll();
-                result.add(workspaceData.get(AccountWorkspacesList.WORKSPACE_NAME).getAsString());
+                result.add(workspaceData.get(AccountWorkspacesList.WORKSPACE_ID).getAsString());
             }
         }
 

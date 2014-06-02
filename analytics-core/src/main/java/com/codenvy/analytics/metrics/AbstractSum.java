@@ -25,22 +25,18 @@ import com.mongodb.DBObject;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public abstract class AbstractSum extends ReadBasedMetric {
 
-    private final String basedMetricName;
-    private final String field;
-
-    protected AbstractSum(String metricName, String basedMetricName, String field) {
-        super(metricName);
-        this.basedMetricName = basedMetricName;
-        this.field = field;
-    }
+    private final MetricType basedMetric;
+    private final String     field;
 
     public AbstractSum(MetricType metricType, MetricType basedMetric, String field) {
-        this(metricType.name(), basedMetric.name(), field);
+        super(metricType);
+        this.basedMetric = basedMetric;
+        this.field = field;
     }
 
     @Override
     public String getStorageCollectionName() {
-        return getStorageCollectionName(basedMetricName);
+        return ((ReadBasedMetric)MetricFactory.getMetric(basedMetric)).getStorageCollectionName();
     }
 
     @Override

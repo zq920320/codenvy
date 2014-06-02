@@ -49,6 +49,11 @@ public class UsersActivityList extends AbstractListValueResulted {
     }
 
     @Override
+    public String getStorageCollectionName() {
+        return getStorageCollectionName(MetricType.USERS_ACTIVITY);
+    }
+
+    @Override
     public String[] getTrackedFields() {
         return new String[]{DATE,
                             MESSAGE,

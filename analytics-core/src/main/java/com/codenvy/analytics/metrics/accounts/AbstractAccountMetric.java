@@ -73,6 +73,7 @@ public abstract class AbstractAccountMetric extends AbstractMetric {
     public static final String SUBSCRIPTION_PROPERTIES = "subscription_properties";
     public static final String SUBSCRIPTION_SERVICE_ID = "subscription_service_id";
 
+    public static final String WORKSPACE_ID        = "workspace_id";
     public static final String WORKSPACE_NAME      = "workspace_name";
     public static final String WORKSPACE_TEMPORARY = "workspace_temporary";
     public static final String WORKSPACE_ROLES     = "workspace_roles";

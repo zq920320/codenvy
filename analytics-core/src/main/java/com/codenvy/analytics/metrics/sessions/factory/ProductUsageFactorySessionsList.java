@@ -49,6 +49,11 @@ public class ProductUsageFactorySessionsList extends AbstractListValueResulted {
     }
 
     @Override
+    public String getStorageCollectionName() {
+        return getStorageCollectionName(MetricType.PRODUCT_USAGE_FACTORY_SESSIONS);
+    }
+
+    @Override
     public ValueData postComputation(ValueData valueData, Context clauses) throws IOException {
         ReadBasedMetric metric = (ReadBasedMetric)MetricFactory.getMetric(MetricType.PRODUCT_USAGE_SESSIONS_LIST);
         valueData = metric.postComputation(valueData, clauses);

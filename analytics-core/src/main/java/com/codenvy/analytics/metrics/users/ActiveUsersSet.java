@@ -34,6 +34,11 @@ public class ActiveUsersSet extends AbstractSetValueResulted {
     }
 
     @Override
+    public String getStorageCollectionName() {
+        return getStorageCollectionName(MetricType.ACTIVE_USERS);
+    }
+
+    @Override
     public String getDescription() {
         return "The list of active registered users";
     }

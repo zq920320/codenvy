@@ -34,7 +34,6 @@ import java.util.Map;
 public class ProjectsStatisticsList extends AbstractListValueResulted {
 
 
-
     public ProjectsStatisticsList() {
         super(MetricType.PROJECTS_STATISTICS_LIST);
     }
@@ -42,6 +41,11 @@ public class ProjectsStatisticsList extends AbstractListValueResulted {
     @Override
     public String getDescription() {
         return "Users' projects statistics data";
+    }
+
+    @Override
+    public String getStorageCollectionName() {
+        return getStorageCollectionName(MetricType.PROJECTS_STATISTICS);
     }
 
     @Override

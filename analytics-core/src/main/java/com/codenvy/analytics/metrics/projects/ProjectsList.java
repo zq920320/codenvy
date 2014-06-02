@@ -51,6 +51,11 @@ public class ProjectsList extends AbstractListValueResulted {
     }
 
     @Override
+    public String getStorageCollectionName() {
+        return getStorageCollectionName(MetricType.PROJECTS);
+    }
+
+    @Override
     public String[] getTrackedFields() {
         return new String[]{DATE,
                             USER,

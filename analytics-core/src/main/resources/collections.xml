@@ -17,7 +17,7 @@
          from Codenvy S.A..
 -->
 <collections>
-    <collection name="active_users_set">
+    <collection name="active_users">
         <indexes>
             <index name="user">
                 <field>user</field>
@@ -29,7 +29,7 @@
         </indexes>
     </collection>
 
-    <collection name="active_workspaces_set">
+    <collection name="active_workspaces">
         <indexes>
             <index name="ws">
                 <field>ws</field>
@@ -374,7 +374,7 @@
         </indexes>
     </collection>
 
-    <collection name="product_usage_sessions_list">
+    <collection name="product_usage_sessions">
         <indexes>
             <index name="user">
                 <field>user</field>
@@ -457,7 +457,7 @@
         </indexes>
     </collection>
 
-    <collection name="factories_accepted_list">
+    <collection name="factories_accepted">
         <indexes>
             <index name="user">
                 <field>user</field>
@@ -521,7 +521,7 @@
         </indexes>
     </collection>
 
-    <collection name="created_factories_set">
+    <collection name="created_factories">
         <indexes>
             <index name="user">
                 <field>user</field>
@@ -585,7 +585,7 @@
         </indexes>
     </collection>
 
-    <collection name="product_usage_factory_sessions_list">
+    <collection name="product_usage_factory_sessions">
         <indexes>
             <index name="user">
                 <field>user</field>
@@ -624,7 +624,7 @@
         </indexes>
     </collection>
 
-    <collection name="users_profiles_list">
+    <collection name="users_profiles">
         <indexes>
             <index name="aliases" fixed="true">
                 <field>aliases</field>
@@ -641,7 +641,15 @@
         </indexes>
     </collection>
 
-    <collection name="users_statistics_list">
+    <collection name="workspaces_profiles">
+        <indexes>
+            <index name="ws" fixed="true">
+                <field>ws</field>
+            </index>
+        </indexes>
+    </collection>
+
+    <collection name="users_statistics">
         <indexes>
             <index name="user">
                 <field>user</field>
@@ -666,7 +674,7 @@
         </indexes>
     </collection>
 
-    <collection name="users_activity_list">
+    <collection name="users_activity">
         <indexes>
             <index name="user">
                 <field>user</field>
@@ -830,7 +838,7 @@
         </indexes>
     </collection>
 
-    <collection name="users_statistics_list_precomputed">
+    <collection name="users_statistics_precomputed">
         <indexes>
             <index name="user">
                 <field>user</field>
@@ -859,7 +867,7 @@
         </indexes>
     </collection>
 
-    <collection name="workspaces_statistics_list_precomputed">
+    <collection name="workspaces_statistics_precomputed">
         <indexes>
             <index name="ws">
                 <field>ws</field>
@@ -882,7 +890,7 @@
         </indexes>
     </collection>
 
-    <collection name="factory_statistics_list_precomputed">
+    <collection name="factory_statistics_precomputed">
         <indexes>
             <index name="factory">
                 <field>factory</field>
@@ -914,7 +922,7 @@
         </indexes>
     </collection>
 
-    <collection name="projects_list">
+    <collection name="projects">
         <indexes>
             <index name="user">
                 <field>user</field>
@@ -942,7 +950,7 @@
         </indexes>
     </collection>
 
-    <collection name="projects_statistics_list">
+    <collection name="projects_statistics">
         <indexes>
             <index name="user">
                 <field>user</field>

@@ -21,7 +21,13 @@
         <description>Users' profiles</description>
         <parameter key="WS" value="ANY"/>
         <parameter key="USER" value="REGISTERED"/>
-        <parameter key="STORAGE_TABLE" value="users_profiles_list"/>
+        <parameter key="STORAGE_TABLE" value="users_profiles"/>
+    </script>
+    <script name="workspaces_profiles">
+        <description>Users' profiles</description>
+        <parameter key="WS" value="PERSISTENT"/>
+        <parameter key="USER" value="ANY"/>
+        <parameter key="STORAGE_TABLE" value="workspaces_profiles"/>
     </script>
     <script name="events">
         <description>The number of created persistent workspaces</description>
@@ -163,9 +169,9 @@
         <description>The product usage sessions</description>
         <parameter key="WS" value="ANY"/>
         <parameter key="USER" value="ANY"/>
-        <parameter key="STORAGE_TABLE" value="product_usage_sessions_list"/>
-        <parameter key="STORAGE_TABLE_USERS_STATISTICS" value="users_statistics_list"/>
-        <parameter key="STORAGE_TABLE_USERS_PROFILES" value="users_profiles_list"/>
+        <parameter key="STORAGE_TABLE" value="product_usage_sessions"/>
+        <parameter key="STORAGE_TABLE_USERS_STATISTICS" value="users_statistics"/>
+        <parameter key="STORAGE_TABLE_USERS_PROFILES" value="users_profiles"/>
     </script>
     <script name="time_spent_in_action">
         <description>Time of all builds</description>
@@ -215,7 +221,7 @@
         <description>Accepted factories</description>
         <parameter key="WS" value="ANY"/>
         <parameter key="USER" value="ANY"/>
-        <parameter key="STORAGE_TABLE" value="factories_accepted_list"/>
+        <parameter key="STORAGE_TABLE" value="factories_accepted"/>
     </script>
     <script name="created_users_from_factory">
         <description>The number of created users from factory</description>
@@ -227,7 +233,7 @@
         <description>Created factories</description>
         <parameter key="WS" value="ANY"/>
         <parameter key="USER" value="ANY"/>
-        <parameter key="STORAGE_TABLE" value="created_factories_set"/>
+        <parameter key="STORAGE_TABLE" value="created_factories"/>
     </script>
     <script name="created_temporary_workspaces">
         <description>The number of created temporary workspaces</description>
@@ -239,10 +245,10 @@
         <description>Factory sessions</description>
         <parameter key="WS" value="TEMPORARY"/>
         <parameter key="USER" value="ANY"/>
-        <parameter key="STORAGE_TABLE" value="product_usage_factory_sessions_list"/>
-        <parameter key="STORAGE_TABLE_PRODUCT_USAGE_SESSIONS" value="product_usage_sessions_list"/>
-        <parameter key="STORAGE_TABLE_USERS_STATISTICS" value="users_statistics_list"/>
-        <parameter key="STORAGE_TABLE_ACCEPTED_FACTORIES" value="factories_accepted_list"/>
+        <parameter key="STORAGE_TABLE" value="product_usage_factory_sessions"/>
+        <parameter key="STORAGE_TABLE_PRODUCT_USAGE_SESSIONS" value="product_usage_sessions"/>
+        <parameter key="STORAGE_TABLE_USERS_STATISTICS" value="users_statistics"/>
+        <parameter key="STORAGE_TABLE_ACCEPTED_FACTORIES" value="factories_accepted"/>
     </script>
 
     <!-- Scripts for user's view -->
@@ -251,40 +257,40 @@
         <parameter key="WS" value="ANY"/>
         <parameter key="USER" value="REGISTERED"/>
         <parameter key="PARAM" value="user"/>
-        <parameter key="STORAGE_TABLE" value="active_users_set"/>
+        <parameter key="STORAGE_TABLE" value="active_users"/>
     </script>
     <script name="active_entities">
         <description>Finds out active persistent workspaces</description>
         <parameter key="WS" value="PERSISTENT"/>
         <parameter key="USER" value="ANY"/>
         <parameter key="PARAM" value="ws"/>
-        <parameter key="STORAGE_TABLE" value="active_workspaces_set"/>
+        <parameter key="STORAGE_TABLE" value="active_workspaces"/>
     </script>
     <script name="users_statistics">
         <description>Users' statistics</description>
         <parameter key="WS" value="ANY"/>
         <parameter key="USER" value="ANY"/>
-        <parameter key="STORAGE_TABLE" value="users_statistics_list"/>
+        <parameter key="STORAGE_TABLE" value="users_statistics"/>
     </script>
     <script name="users_activity">
         <description>Users' raw log</description>
         <parameter key="WS" value="ANY"/>
         <parameter key="USER" value="REGISTERED"/>
-        <parameter key="STORAGE_TABLE" value="users_activity_list"/>
+        <parameter key="STORAGE_TABLE" value="users_activity"/>
     </script>
 
     <script name="projects">
         <description>Users' created projects</description>
         <parameter key="WS" value="ANY"/>
         <parameter key="USER" value="ANY"/>
-        <parameter key="STORAGE_TABLE" value="projects_list"/>
+        <parameter key="STORAGE_TABLE" value="projects"/>
     </script>
 
     <script name="projects_statistics">
         <description>Projects' statistics</description>
         <parameter key="WS" value="ANY"/>
         <parameter key="USER" value="ANY"/>
-        <parameter key="STORAGE_TABLE" value="projects_statistics_list"/>
+        <parameter key="STORAGE_TABLE" value="projects_statistics"/>
     </script>
 
     <!-- Scripts for analysis's view -->

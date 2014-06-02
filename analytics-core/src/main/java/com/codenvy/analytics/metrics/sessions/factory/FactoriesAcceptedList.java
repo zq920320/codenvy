@@ -34,6 +34,11 @@ public class FactoriesAcceptedList extends AbstractListValueResulted {
     }
 
     @Override
+    public String getStorageCollectionName() {
+        return getStorageCollectionName(MetricType.FACTORIES_ACCEPTED);
+    }
+
+    @Override
     public String[] getTrackedFields() {
         return new String[]{WS,
                             FACTORY,

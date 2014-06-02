@@ -58,6 +58,8 @@ com.codenvy.analytics.metrics.workspaces.CreatedWorkspaces
 com.codenvy.analytics.metrics.workspaces.CreatedWorkspacesSet
 com.codenvy.analytics.metrics.workspaces.CreatedUniqueWorkspaces
 com.codenvy.analytics.metrics.workspaces.Workspaces
+com.codenvy.analytics.metrics.workspaces.WorkspacesProfilesList
+com.codenvy.analytics.metrics.workspaces.WorkspacesProfiles
 com.codenvy.analytics.metrics.workspaces.DestroyedWorkspaces
 com.codenvy.analytics.metrics.workspaces.TotalWorkspaces
 com.codenvy.analytics.metrics.workspaces.ActiveWorkspacesSet

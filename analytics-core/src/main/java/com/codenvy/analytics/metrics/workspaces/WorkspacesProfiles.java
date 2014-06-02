@@ -15,36 +15,51 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.metrics.sessions.factory;
+package com.codenvy.analytics.metrics.workspaces;
 
-import com.codenvy.analytics.metrics.AbstractLongValueResulted;
+import com.codenvy.analytics.datamodel.LongValueData;
+import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.OmitFilters;
+import com.codenvy.analytics.metrics.users.AbstractUsersProfile;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
 
 import javax.annotation.security.RolesAllowed;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
-@OmitFilters({MetricFilter.WS, MetricFilter.PERSISTENT_WS})
-public class ConvertedFactorySessions extends AbstractLongValueResulted {
+@OmitFilters({MetricFilter.USER, MetricFilter.REGISTERED_USER})
+public class WorkspacesProfiles extends AbstractUsersProfile {
 
-    public ConvertedFactorySessions() {
-        super(MetricType.CONVERTED_FACTORY_SESSIONS, SESSION_ID);
+    public WorkspacesProfiles() {
+        super(MetricType.WORKSPACES_PROFILES);
     }
 
     @Override
-    public String getStorageCollectionName() {
-        return getStorageCollectionName(MetricType.PRODUCT_USAGE_FACTORY_SESSIONS);
+    public DBObject[] getSpecificDBOperations(Context clauses) {
+        DBObject group = new BasicDBObject();
+        group.put(ID, null);
+        group.put(VALUE, new BasicDBObject("$sum", 1));
+        BasicDBObject opCount = new BasicDBObject("$group", group);
+
+        return new DBObject[]{opCount};
+    }
+
+    @Override
+    public Class<? extends ValueData> getValueDataClass() {
+        return LongValueData.class;
     }
 
     @Override
     public String[] getTrackedFields() {
-        return new String[]{CONVERTED_SESSION};
+        return new String[]{VALUE};
     }
 
     @Override
     public String getDescription() {
-        return "The number of converted sessions in temporary workspaces";
+        return "The number of workspaces";
     }
 }

@@ -38,15 +38,10 @@ public class UsersProfiles extends AbstractUsersProfile {
     }
 
     @Override
-    public String getStorageCollectionName() {
-        return getStorageCollectionName(MetricType.USERS_PROFILES_LIST);
-    }
-
-    @Override
     public DBObject[] getSpecificDBOperations(Context clauses) {
         DBObject group = new BasicDBObject();
         group.put(ID, null);
-        group.put("value", new BasicDBObject("$sum", 1));
+        group.put(VALUE, new BasicDBObject("$sum", 1));
         BasicDBObject opCount = new BasicDBObject("$group", group);
 
         return new DBObject[]{opCount};
@@ -64,6 +59,6 @@ public class UsersProfiles extends AbstractUsersProfile {
 
     @Override
     public String getDescription() {
-        return "The number of profiles";
+        return "The number of users";
     }
 }

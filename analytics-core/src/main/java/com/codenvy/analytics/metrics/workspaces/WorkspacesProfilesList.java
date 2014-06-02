@@ -3,7 +3,7 @@
  * CODENVY CONFIDENTIAL
  * ________________
  *
- * [2012] - [2013] Codenvy, S.A.
+ * [2012] - [2014] Codenvy, S.A.
  * All Rights Reserved.
  * NOTICE: All information contained herein is, and remains
  * the property of Codenvy S.A. and its suppliers,
@@ -15,36 +15,41 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.metrics.sessions.factory;
+package com.codenvy.analytics.metrics.workspaces;
 
-import com.codenvy.analytics.metrics.AbstractLongValueResulted;
+import com.codenvy.analytics.datamodel.ListValueData;
+import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.OmitFilters;
 
-import javax.annotation.security.RolesAllowed;
+/**
+ * @author Anatoliy Bazko
+ */
+@OmitFilters({MetricFilter.USER, MetricFilter.REGISTERED_USER})
+public class WorkspacesProfilesList extends AbstractWorkspacesProfile {
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-@RolesAllowed({"system/admin", "system/manager"})
-@OmitFilters({MetricFilter.WS, MetricFilter.PERSISTENT_WS})
-public class ConvertedFactorySessions extends AbstractLongValueResulted {
-
-    public ConvertedFactorySessions() {
-        super(MetricType.CONVERTED_FACTORY_SESSIONS, SESSION_ID);
+    public WorkspacesProfilesList() {
+        super(MetricType.WORKSPACES_PROFILES_LIST);
     }
 
     @Override
     public String getStorageCollectionName() {
-        return getStorageCollectionName(MetricType.PRODUCT_USAGE_FACTORY_SESSIONS);
+        return getStorageCollectionName(MetricType.WORKSPACES_PROFILES);
     }
 
     @Override
     public String[] getTrackedFields() {
-        return new String[]{CONVERTED_SESSION};
+        return new String[]{ID, WS_NAME};
+    }
+
+    @Override
+    public Class<? extends ValueData> getValueDataClass() {
+        return ListValueData.class;
     }
 
     @Override
     public String getDescription() {
-        return "The number of converted sessions in temporary workspaces";
+        return "The profiles of the workspaces";
     }
 }

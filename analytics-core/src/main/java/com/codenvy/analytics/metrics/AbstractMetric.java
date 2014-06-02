@@ -25,6 +25,7 @@ public abstract class AbstractMetric implements Metric {
     public static final String VALUE                 = "value";
     public static final String DATE                  = "date";
     public static final String WS                    = "ws";
+    public static final String WS_NAME               = "ws_name";
     public static final String USER                  = "user";
     public static final String ALIASES               = "aliases";
     public static final String DOMAIN                = "domain";

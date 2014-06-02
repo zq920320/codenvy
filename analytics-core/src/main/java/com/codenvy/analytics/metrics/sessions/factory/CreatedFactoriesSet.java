@@ -33,6 +33,11 @@ public class CreatedFactoriesSet extends AbstractSetValueResulted {
     }
 
     @Override
+    public String getStorageCollectionName() {
+        return getStorageCollectionName(MetricType.CREATED_FACTORIES);
+    }
+
+    @Override
     public String getDescription() {
         return "The list of created factories.";
     }

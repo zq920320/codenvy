@@ -38,6 +38,11 @@ public class FactoryStatisticsListPrecomputed extends AbstractListValueResulted 
     }
 
     @Override
+    public String getStorageCollectionName() {
+        return getStorageCollectionName(MetricType.FACTORY_STATISTICS_PRECOMPUTED);
+    }
+
+    @Override
     public String[] getTrackedFields() {
         return new String[]{FACTORY,
                             TIME,

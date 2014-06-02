@@ -225,7 +225,7 @@ public class TestProductUsageTime extends BaseTest {
 
         @Override
         public String getStorageCollectionName() {
-            return MetricType.PRODUCT_USAGE_SESSIONS_LIST.toString().toLowerCase();
+            return MetricType.PRODUCT_USAGE_SESSIONS.toString().toLowerCase();
         }
 
         @Override
@@ -243,7 +243,7 @@ public class TestProductUsageTime extends BaseTest {
 
         @Override
         public String getStorageCollectionName() {
-            return MetricType.PRODUCT_USAGE_SESSIONS_LIST.toString().toLowerCase();
+            return MetricType.PRODUCT_USAGE_SESSIONS.toString().toLowerCase();
         }
 
         @Override
@@ -260,7 +260,7 @@ public class TestProductUsageTime extends BaseTest {
 
         @Override
         public String getStorageCollectionName() {
-            return MetricType.PRODUCT_USAGE_SESSIONS_LIST.toString().toLowerCase();
+            return MetricType.PRODUCT_USAGE_SESSIONS.toString().toLowerCase();
         }
 
         @Override
