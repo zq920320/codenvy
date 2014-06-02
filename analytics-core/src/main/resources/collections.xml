@@ -643,8 +643,8 @@
 
     <collection name="workspaces_profiles">
         <indexes>
-            <index name="ws" fixed="true">
-                <field>ws</field>
+            <index name="ws_name" fixed="true">
+                <field>ws_name</field>
             </index>
         </indexes>
     </collection>
