@@ -196,3 +196,7 @@ com.codenvy.analytics.metrics.top.TopReferrers
 com.codenvy.analytics.metrics.top.TopUsers
 com.codenvy.analytics.metrics.top.TopCompanies
 com.codenvy.analytics.metrics.top.TopDomains
+
+com.codenvy.analytics.metrics.top.TimeTrackingUsers
+com.codenvy.analytics.metrics.top.TimeTrackingSessions
+com.codenvy.analytics.metrics.top.TimeTrackingWorkspaces
