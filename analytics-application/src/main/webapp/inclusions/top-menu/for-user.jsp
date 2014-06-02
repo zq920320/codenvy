@@ -46,6 +46,7 @@
                         <li><a href="/analytics/pages/reports/factory-statistics.jsp" id="topmenu-reports-factories">Factory</a></li>
                         <li><a href="/analytics/pages/reports/top-factory-sessions.jsp" id="topmenu-reports-top_metrics">Top Metrics</a></li>
                         <li><a href="/analytics/pages/reports/signup-analysis.jsp" id="topmenu-reports-analysis">Analysis</a></li>
+                        <li><a href="/analytics/pages/reports/time-tracking-workspaces.jsp" id="topmenu-reports-time_tracking">Time Tracking</a></li>
                     </ul>
                 </div>
             </div>

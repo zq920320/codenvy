@@ -341,7 +341,94 @@ function Configuration() {
                 },
             },
         },
-        
+
+        timeTrackingWorkspaces: {
+            widgetLabel: " Time Tracking Workspaces",
+            presenterType: "TopMetricsPresenter",
+            modelViewName: "time_tracking_workspaces",
+
+            defaultModelParams: {
+                "passed_days_count": "by_1_day"
+            },
+
+            clientSortParams: {
+                "descSortColumnNumber": 1
+            },
+
+            columnLinkPrefixList: {
+                "Workspace": "/analytics/pages/workspace-view.jsp?ws",
+            },
+
+            columnDrillDownPageLinkConfiguration: {
+                mapColumnNameToExpandableMetric: {
+                    "Time": "product_usage_sessions",
+                },
+
+                mapColumnToParameter: {
+                    "Workspace": "ws",
+                },
+            },
+
+        },
+
+        timeTrackingUsers: {
+            widgetLabel: " Time Tracking Users",
+            presenterType: "TopMetricsPresenter",
+            modelViewName: "time_tracking_users",
+
+            defaultModelParams: {
+                "passed_days_count": "by_1_day"
+            },
+
+            clientSortParams: {
+                "descSortColumnNumber": 1
+            },
+
+            columnLinkPrefixList: {
+                "User": "/analytics/pages/user-view.jsp?user",
+            },
+
+            columnDrillDownPageLinkConfiguration: {
+                mapColumnNameToExpandableMetric: {
+                    "Time": "product_usage_sessions",
+                },
+
+                mapColumnToParameter: {
+                    "User": "user",
+                },
+            },
+        },
+
+        timeTrackingSessions: {
+            widgetLabel: " Time Tracking Sessions",
+            presenterType: "TopMetricsPresenter",
+            modelViewName: "time_tracking_sessions",
+
+            defaultModelParams: {
+                "passed_days_count": "by_1_day"
+            },
+
+            clientSortParams: {
+                "descSortColumnNumber": 3
+            },
+
+            columnLinkPrefixList: {
+                "ID": "/analytics/pages/session-view.jsp?session_id",
+                "User": "/analytics/pages/user-view.jsp?user",
+                "Workspace": "/analytics/pages/workspace-view.jsp?ws",
+            },
+
+            columnDrillDownPageLinkConfiguration: {
+                mapColumnNameToExpandableMetric: {
+                    "Time": "product_usage_sessions",
+                },
+
+                mapColumnToParameter: {
+                    "ID": "session_id",
+                },
+            },
+        },
+
         /** for Event View */
         events: {
             widgetLabel: "Events",
