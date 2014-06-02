@@ -197,7 +197,6 @@
         <parameters>
             <param>WS-ID</param>
             <param>WS</param>
-            <param>USER</param>
         </parameters>
     </event>
     <event name="tenant-created">

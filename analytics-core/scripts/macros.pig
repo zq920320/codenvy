@@ -18,7 +18,7 @@
 
 ---------------------------------------------------------------------------
 -- Loads resources.
--- @return {ip : bytearray, dt : datetime,  event : bytearray, message : chararray, user : bytearray, ws : bytearray} 
+-- @return {dt : datetime,  event : bytearray, message : chararray, user : bytearray, ws : bytearray}
 -- In details:
 --   field 'date' contains date in format 'YYYYMMDD'
 --   field 'time' contains seconds from midnight

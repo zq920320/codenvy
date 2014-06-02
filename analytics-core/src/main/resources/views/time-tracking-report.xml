@@ -17,7 +17,7 @@
          from Codenvy S.A..
 -->
 <display>
-    <view name="time_tracking_workspaces" on-demand="true" passed-days-count="by_1_day,by_7_days,by_30_days,by_lifetime">
+    <view name="time_tracking_workspaces" passed-days-count="by_1_day,by_7_days,by_30_days,by_lifetime">
         <section name="time_tracking_workspaces">
             <row class="com.codenvy.analytics.services.view.TitleRow">
                 <parameter key="titles" value="Workspace,Time"/>
@@ -30,7 +30,7 @@
         </section>
     </view>
 
-    <view name="time_tracking_users" on-demand="true" passed-days-count="by_1_day,by_7_days,by_30_days,by_lifetime">
+    <view name="time_tracking_users" passed-days-count="by_1_day,by_7_days,by_30_days,by_lifetime">
         <section name="time_tracking_users">
             <row class="com.codenvy.analytics.services.view.TitleRow">
                 <parameter key="titles" value="User,Time"/>
@@ -43,7 +43,7 @@
         </section>
     </view>
 
-    <view name="time_tracking_sessions" on-demand="true" passed-days-count="by_1_day,by_7_days,by_30_days,by_lifetime">
+    <view name="time_tracking_sessions" passed-days-count="by_1_day,by_7_days,by_30_days,by_lifetime">
         <section name="time_tracking_sessions">
             <row class="com.codenvy.analytics.services.view.TitleRow">
                 <parameter key="titles" value="ID,User,Workspace,Time"/>

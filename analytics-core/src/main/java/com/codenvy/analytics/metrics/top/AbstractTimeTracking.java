@@ -56,6 +56,6 @@ public abstract class AbstractTimeTracking extends ReadBasedMetric {
 
     @Override
     public String getStorageCollectionName() {
-        return getStorageCollectionName(MetricType.PRODUCT_USAGE_SESSIONS_LIST);
+        return getStorageCollectionName(MetricType.PRODUCT_USAGE_SESSIONS);
     }
 }

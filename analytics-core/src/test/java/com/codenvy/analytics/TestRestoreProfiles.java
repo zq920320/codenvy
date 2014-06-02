@@ -22,9 +22,7 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.io.*;
@@ -38,24 +36,14 @@ import java.util.Map;
  *
  * @author Anatoliy Bazko
  */
-public class TestRestoreUserProfiles extends BaseTest {
+public class TestRestoreProfiles extends BaseTest {
     private static final String LDAP_DUMP = "/home/tolusha/ldap.diff";
 
-    private BufferedWriter writer;
-
-    @BeforeMethod
-    public void setUp() throws Exception {
-        File fileOut = new File(BASE_DIR, "profiles.log");
-        writer = new BufferedWriter(new FileWriter(fileOut));
-    }
-
-    @AfterMethod
-    public void tearDown() throws Exception {
-        writer.close();
-    }
-
     @Test
-    public void restore() throws Exception {
+    public void restoreUserProfiles() throws Exception {
+        File fileOut = new File(BASE_DIR, "users.log");
+        BufferedWriter writer = new BufferedWriter(new FileWriter(fileOut));
+
         Map<String, String> emails = readUsersEmails();
         DBCollection profiles = mongoDb.getCollection("profiles");
 
@@ -108,8 +96,31 @@ public class TestRestoreUserProfiles extends BaseTest {
                 continue;
             }
 
-            write(userProfile);
+            write(userProfile, writer);
         }
+
+        writer.close();
+    }
+
+    @Test
+    public void restoreWsProfiles() throws Exception {
+        File fileOut = new File(BASE_DIR, "workspaces.log");
+        BufferedWriter writer = new BufferedWriter(new FileWriter(fileOut));
+
+        DBCollection workspaces = mongoDb.getCollection("workspaces");
+        DBCursor cursor = workspaces.find();
+
+        while (cursor.hasNext()) {
+            DBObject ws = cursor.next();
+            String id = (String)ws.get("id");
+            String name = (String)ws.get("name");
+
+            writer.write("127.0.0.1 2013-02-01 00:00:01,000[l-4-thread-8211]  [INFO ] [Main 224]  [][][] - ");
+            writer.write("EVENT#user-update-profile# WS-ID#" + id + "# " + "WS#" + name + "#");
+            writer.newLine();
+        }
+
+        writer.close();
     }
 
     private Map<String, String> readUsersEmails() throws IOException {
@@ -137,7 +148,7 @@ public class TestRestoreUserProfiles extends BaseTest {
         return result;
     }
 
-    private void write(Profile profile) throws IOException {
+    private void write(Profile profile, BufferedWriter writer) throws IOException {
         writer.write("127.0.0.1 2013-02-01 00:00:01,000[l-4-thread-8211]  [INFO ] [Main 224]  [][][] - ");
         writer.write("EVENT#user-update-profile# " +
                      "USER-ID#" + profile.userId + "# " +
