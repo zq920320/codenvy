@@ -31,7 +31,7 @@ a = FOREACH a2 GENERATE dt,
 
 resultA = FOREACH a GENERATE LOWER(wsId),
                              TOTUPLE('date', ToMilliSeconds(dt)),
-                             TOTUPLE('wsName', wsName);
+                             TOTUPLE('ws_name', wsName);
 STORE resultA INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 
 ----------------------------------------------------------------------------------
