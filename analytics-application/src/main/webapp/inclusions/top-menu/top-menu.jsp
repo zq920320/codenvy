@@ -22,7 +22,7 @@
     <div class="navbar-inner">
         <div class="container-fluid" id="topmenu">
             <a class="brand" href="/analytics/">
-                 Codenvy <span class="analytics-label">Analytics</span>
+                <img src="/analytics/images/logo2.png" alt="Codenvy | Header logo">
             </a>
 
             <div class="left">
@@ -73,7 +73,8 @@
 
                 <div class="nav">
                     <div class="label-container">
-                        <div class="label"><%= FrontEndUtil.getFirstAndLastName(request.getUserPrincipal())%></div>
+                        <img src="/analytics/images/user.png" />
+                        <%= FrontEndUtil.getFirstAndLastName(request.getUserPrincipal())%>
                     </div>
                     <button id="topmenu-user">&nbsp;</button>
                 </div>

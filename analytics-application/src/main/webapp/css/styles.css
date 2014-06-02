@@ -2,11 +2,24 @@ iframe {
     height: 100%;
 }
 
+body {
+	font-family: HelveticaNeue-Light, "Helvetica Neue Light",
+		"Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+	line-height: 1.42857143;
+	color: #3c3c3c;
+	background-color: #f9f9f9
+}
+
+footer {
+	text-align: center;
+	margin-bottom: 10px;
+	height: 60px;
+}
+
 .gadget-small {
     height: 360px;
     width: 100%;
     padding: 0;
-
 }
 
 .row-fluid .span4 {
@@ -17,7 +30,7 @@ iframe {
     padding: 0;
     margin: 0 !important;
     float: left;
-/*    background: #ddd;*/
+    padding: 0 15px 15px;
 }
 
 .full-width {
@@ -27,9 +40,11 @@ iframe {
 .single-column-gadget {
     width: 100%;
 /*    min-height: 420px;*/
-    border: none;
-    margin: 0px;
-    display: block;    
+    display: block;
+    background-color: white;
+	border: 1px solid transparent;
+	-webkit-box-shadow: 0 1px 1px rgba(0,0,0,.05);
+	box-shadow: 0 1px 1px rgba(0,0,0,.05);
 }
 
 .hero-unit .jqplot-table-legend {

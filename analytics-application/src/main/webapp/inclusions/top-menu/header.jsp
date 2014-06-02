@@ -17,9 +17,7 @@
 <style>
 	.ui-button, .ui-button a {
 	    color: white !important;
-	    font-weight: bold !important;
-	    font-size: 15px !important;
-	    margin-right: 0px;
+	    font-size: 14px !important;
 	}
 	
 	.ui-state-default {
@@ -27,41 +25,44 @@
 	    border: 0 none !important;
 	}
 	
-	.selected {
-	    background-color: #0076B1;
-        color: white !important;
-	}
-	
-	.ui-state-hover {
-	    background-color: #08c;
+	.selected .ui-button-text,
+	.ui-state-hover .ui-button-text {
+		border-bottom: 2px solid #54aee0;
+		padding: 2px 3px;
+        color: white;
 	}
 	
 	.ui-corner-all {
 	    border-radius: 0;
 	}
-	
-	.analytics-label {
-        color: #0076B1;
-    }
 
     /* button set */    
-    .button-set .ui-state-hover {
-        background-color: red;
-    }
+    .button-set .ui-state-hover {}
     
-    .button-set .selected {
-        background-color: purple;
-    }
-
     .button-set .ui-button {
-        font-size: 14px !important;
+        font-size: 14px;
     }
     
+    .ui-button-text-only .ui-button-text {
+        padding: 2px 3px;
+        margin: 10px 15px;
+    }
     
     /* use white "ui-icon-triangle-1-s" icon in user menu button */
     .ui-state-hover .ui-icon, 
     .ui-state-focus .ui-icon,
-    .ui-state-default .ui-icon {
-        background-image: url(/analytics/images/ui-icons_ffffff_256x240.png); 
+    .ui-state-default .ui-icon,
+    .ui-state-default .ui-icon,
+    .ui-state-default .ui-icon .selected  {
+        background-image: url(/analytics/images/ui-icons_ffffff_256x240.png);
+    }
+    
+    #topmenu-user span.ui-button-text {
+        border: 0px;
+        padding: 40% 0;
+    }
+    
+    #data-universe li {
+        padding: 3px 0px;
     }
 </style>
