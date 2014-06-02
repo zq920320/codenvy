@@ -32,7 +32,7 @@ a = FOREACH a4 GENERATE dt,
                         (emails IS NOT NULL ? emails
                                             : (aliases IS NOT NULL ? aliases : user)) AS emails;
 
-resultA = FOREACH a GENERATE userId,
+resultA = FOREACH a GENERATE LOWER(userId),
                              TOTUPLE('date', ToMilliSeconds(dt)),
                              TOTUPLE('aliases', EnsureBrackets(LOWER(emails)));
 STORE resultA INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
@@ -63,7 +63,7 @@ e = FOREACH e1 GENERATE d::userId AS userId,
                         d::phone AS phone,
                         d::job  AS job;
 
-resultE = FOREACH e GENERATE userId,
+resultE = FOREACH e GENERATE LOWER(userId),
                              TOTUPLE('user_first_name', firstName),
                              TOTUPLE('user_last_name', lastName),
                              TOTUPLE('user_company', company),
@@ -85,6 +85,6 @@ c1 = lastUpdate(b, 'userId');
 c = FOREACH c1 GENERATE b::userId AS userId,
                         b::emails AS emails;
 
-resultC = FOREACH c GENERATE userId,
+resultC = FOREACH c GENERATE LOWER(userId),
                              TOTUPLE('aliases', EnsureBrackets(LOWER(emails)));
 STORE resultC INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;

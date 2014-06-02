@@ -29,7 +29,7 @@ a = FOREACH a2 GENERATE dt,
                         (wsId IS NOT NULL ? wsId : ReplaceWsWithId(wsName)) AS wsId,
                         wsName;
 
-resultA = FOREACH a GENERATE wsId,
+resultA = FOREACH a GENERATE LOWER(wsId),
                              TOTUPLE('date', ToMilliSeconds(dt)),
                              TOTUPLE('wsName', wsName);
 STORE resultA INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
@@ -45,5 +45,6 @@ c1 = lastUpdate(b, 'wsId');
 c = FOREACH c1 GENERATE b::wsId AS wsId,
                         b::wsName AS wsName;
 
-resultC = FOREACH c GENERATE wsId, TOTUPLE('ws_name', wsName);
+resultC = FOREACH c GENERATE LOWER(wsId),
+                             TOTUPLE('ws_name', wsName);
 STORE resultC INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
