@@ -160,7 +160,7 @@ function Configuration() {
             clientSortParams: {
                 "descSortColumnNumber": 0
             },
-            
+
             columnLinkPrefixList: {
                 "ID": "/analytics/pages/session-view.jsp?session_id",
                 "Factory": "/analytics/pages/factory-view.jsp?factory",
@@ -175,12 +175,12 @@ function Configuration() {
                     "ID": "session_id",
                 },
             },
-            
+
             doNotLinkOnEmptyParameter: false,  // default value = true,
             // true means that link should't be added if at least one parameter is empty;
             // false means that link should be added without empty parameters
         },
-        
+
         topFactories: {
             widgetLabel: "Top Factories",
             presenterType: "TopMetricsPresenter",
@@ -194,7 +194,7 @@ function Configuration() {
             clientSortParams: {
                 "descSortColumnNumber": 3
             },
-            
+
             columnLinkPrefixList: {
                 "Factory": "/analytics/pages/factory-view.jsp?factory",
             },
@@ -224,7 +224,7 @@ function Configuration() {
             widgetLabel: "Top Referrers",
             presenterType: "TopMetricsPresenter",
             modelViewName: "top_referrers",
-            
+
             defaultModelParams: {
                 "passed_days_count": "by_1_day"
             },
@@ -250,7 +250,7 @@ function Configuration() {
                 },
             },
         },
-        
+
         topUsers: {
             widgetLabel: "Top Users",
             presenterType: "TopMetricsPresenter",
@@ -265,7 +265,7 @@ function Configuration() {
             },
 
             // see clientSortParams in the TopMetricsPresenter::clientSortParams property
-            
+
             columnDrillDownPageLinkConfiguration: {
                 mapColumnNameToExpandableMetric: {
                     "Sessions": "product_usage_sessions",
@@ -294,7 +294,7 @@ function Configuration() {
             },
 
             // see clientSortParams in the TopMetricsPresenter::clientSortParams property
-            
+
             columnDrillDownPageLinkConfiguration: {
                 mapColumnNameToExpandableMetric: {
                     "Sessions": "product_usage_sessions",
@@ -312,7 +312,7 @@ function Configuration() {
                 },
             },
         },
-        
+
         topCompanies: {
             widgetLabel: "Top Companies",
             presenterType: "TopMetricsPresenter",
@@ -323,7 +323,7 @@ function Configuration() {
             },
 
             // see clientSortParams in the TopMetricsPresenter::clientSortParams property
-            
+
             columnDrillDownPageLinkConfiguration: {
                 mapColumnNameToExpandableMetric: {
                     "Sessions": "product_usage_sessions",
@@ -439,7 +439,7 @@ function Configuration() {
             defaultModelParams: {
                 "sort": "-date"
             },
-            
+
             columnLinkPrefixList: {
                 "User": "/analytics/pages/user-view.jsp?user",
                 "Workspace": "/analytics/pages/workspace-view.jsp?ws",
@@ -453,8 +453,6 @@ function Configuration() {
             mapColumnToServerSortParam: {
                 "Started": "date",
                 "Event": "action",
-                "Workspace": "ws",
-                "User": "user",
             },
         },
 
@@ -468,7 +466,7 @@ function Configuration() {
             modelMetricName: "users_statistics",
 
             columnLinkPrefixList: {
-                "ID": "/analytics/pages/user-view.jsp?user",
+                "User": "/analytics/pages/user-view.jsp?user",
             },
 
             /** @see DatabaseTable::makeTableSortable() method docs */
@@ -476,13 +474,6 @@ function Configuration() {
                 "ascSortColumnNumber": 0
             },
 
-            mapColumnToServerSortParam: {
-                "ID": "user",
-            },
-
-            defaultModelParams: {
-                "sort": "+user"
-            },
 
             columnDrillDownPageLinkConfiguration: {
                 mapColumnNameToExpandableMetric: {
@@ -492,7 +483,7 @@ function Configuration() {
                 },
 
                 mapColumnToParameter: {
-                    "ID": "user",
+                    "User": "user",
                 },
             },
         },
@@ -541,7 +532,6 @@ function Configuration() {
 
             mapColumnToServerSortParam: {
                 "ID": "session_id",
-                "Workspace": "ws",
                 "Start Time": "date",
                 "End Time": "end_time",
                 "Duration": "time",
@@ -557,11 +547,10 @@ function Configuration() {
             modelMetricName: "usage_time_by_workspaces",
 
             columnLinkPrefixList: {
-                "Name": "/analytics/pages/workspace-view.jsp?ws"
+                "Workspace": "/analytics/pages/workspace-view.jsp?ws"
             },
 
             mapColumnToServerSortParam: {
-                "Name": "ws",
                 "Sessions": "sessions",
                 "Time": "time",
             },
@@ -573,7 +562,7 @@ function Configuration() {
                 },
 
                 mapColumnToParameter: {
-                    "Name": "ws",
+                    "Workspace": "ws",
                 },
             },
         },
@@ -599,7 +588,6 @@ function Configuration() {
             mapColumnToServerSortParam: {
                 "Date": "date",
                 "Factory URL": "factory",
-                "Workspace": "ws",
                 "Repository": "repository",
                 "Project": "project",
                 "Type": "project_type",
@@ -660,10 +648,8 @@ function Configuration() {
 
             mapColumnToServerSortParam: {
                 "Date": "date",
-                "Workspace": "ws",
                 "Project": "project",
                 "Type": "project_type",
-                "User": "user",
             },
         },
 
@@ -691,8 +677,6 @@ function Configuration() {
 
             mapColumnToServerSortParam: {
                 "ID": "session_id",
-                "User": "user",
-                "Workspace": "ws",
                 "Start Time": "date",
                 "End Time": "end_time",
                 "Duration": "time",
@@ -758,7 +742,6 @@ function Configuration() {
             },
 
             mapColumnToServerSortParam: {
-                "Workspace": "ws",
                 "Time": "time",
                 "Sessions": "sessions",
                 "# Runs": "runs",
@@ -766,7 +749,6 @@ function Configuration() {
                 "# Builds": "builds",
                 "# Deploys": "deploys",
                 "Invites": "invites",
-                "Joined Users": "joined_users",
             },
 
             columnDrillDownPageLinkConfiguration: {
@@ -839,11 +821,8 @@ function Configuration() {
 
             mapColumnToServerSortParam: {
                 "Date": "date",
-                "User": "user",
                 "Project": "project",
                 "Type": "project_type",
-
-                "Workspace": "ws",
             }
         },
 
@@ -863,7 +842,7 @@ function Configuration() {
                 "ID": "/analytics/pages/session-view.jsp?session_id",
                 "User": "/analytics/pages/user-view.jsp?user",
             },
-            
+
             /** @see DatabaseTable::makeTableSortable() method docs */
             clientSortParams: {
                 "descSortColumnNumber": 2
@@ -871,7 +850,6 @@ function Configuration() {
 
             mapColumnToServerSortParam: {
                 "ID": "session_id",
-                "User": "user",
                 "Start Time": "date",
                 "End Time": "end_time",
                 "Duration": "time",
@@ -887,11 +865,10 @@ function Configuration() {
             modelMetricName: "usage_time_by_users",
 
             columnLinkPrefixList: {
-                "Name": "/analytics/pages/user-view.jsp?user",
+                "User": "/analytics/pages/user-view.jsp?user",
             },
 
             mapColumnToServerSortParam: {
-                "Name": "user",
                 "Sessions": "sessions",
                 "Time": "time",
             },
@@ -903,7 +880,7 @@ function Configuration() {
                 },
 
                 mapColumnToParameter: {
-                    "Name": "user",
+                    "User": "user",
                 },
             },
         },
@@ -943,8 +920,6 @@ function Configuration() {
                 "Date": "date",
                 "Project": "project",
                 "Type": "project_type",
-                "Workspace": "ws",
-                "User": "user",
             },
         },
 
@@ -985,8 +960,6 @@ function Configuration() {
                 "Created Date": "date",
                 "Project": "project",
                 "Type": "project_type",
-                "Workspace": "ws",
-                "User": "user",
             },
         },
 
@@ -1067,11 +1040,6 @@ function Configuration() {
 
             isPaginable: true,    // default value is "false"
             modelMetricName: "account_users_roles",
-
-            mapColumnToServerSortParam: {
-                "User": "user",
-                "Workspace": "ws",
-            },
 
             columnLinkPrefixList: {
                 "User": "/analytics/pages/user-view.jsp?user",
@@ -1165,8 +1133,6 @@ function Configuration() {
 
             mapColumnToServerSortParam: {
                 "ID": "session_id",
-                "User": "user",
-                "Workspace": "ws",
                 "Start Time": "date",
                 "End Time": "end_time",
                 "Duration": "time",
@@ -1190,7 +1156,6 @@ function Configuration() {
             },
 
             mapColumnToServerSortParam: {
-                "User": "user",
                 "# Sessions": "sessions",
                 "Duration": "time",
                 "# Runs": "run",
@@ -1429,10 +1394,10 @@ function Configuration() {
 
 
         /** FACTORIES */
-        "factory_used": "FACTORIES",     
+        "factory_used": "FACTORIES",
         "total_factories": "FACTORIES",
 
-        
+
         /** DEFAULT */
         "created_factories": "DEFAULT",  // not 'FACTORIES' because there could be no created factory in 'product_usage_factory_sessions_list' collection
     };
@@ -1446,6 +1411,8 @@ function Configuration() {
     }
 
     var factoryUrlColumnNames = ["Factory URL", "Factory"];
+    var workspaceColumnNames = ["Workspace"];
+    var userColumnNames = ["User", "Created By"];
 
     /**
      * Returns property of widget.
@@ -1604,10 +1571,22 @@ function Configuration() {
         return mapColumnNameToExpandableMetric[columnName];
     }
 
+
+    function isWorkspaceColumnName(columnName) {
+        return isSpecificColumnName(columnName, workspaceColumnNames);
+    }
+
+    function isUserColumnName(columnName) {
+        return isSpecificColumnName(columnName, userColumnNames);
+    }
+
     function isFactoryUrlColumnName(columnName) {
-        for (var i in factoryUrlColumnNames) {
-            var factoryUrlColumnName = factoryUrlColumnNames[i];
-            if (columnName.toLowerCase() == factoryUrlColumnName.toLowerCase()) {
+        return isSpecificColumnName(columnName, factoryUrlColumnNames);
+    }
+
+    function isSpecificColumnName(name, probNames) {
+        for (var i in probNames) {
+            if (name.toLowerCase() == probNames[i].toLowerCase()) {
                 return true;
             }
         }
@@ -1633,5 +1612,7 @@ function Configuration() {
         getExpandableMetricName: getExpandableMetricName,
 
         isFactoryUrlColumnName: isFactoryUrlColumnName,
+        isWorkspaceColumnName: isWorkspaceColumnName,
+        isUserColumnName: isUserColumnName,
     }
 }

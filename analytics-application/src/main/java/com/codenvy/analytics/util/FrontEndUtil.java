@@ -29,7 +29,9 @@ import java.util.Map;
 
 import static com.codenvy.analytics.datamodel.ValueDataUtil.*;
 
-/** @author Dmytro Nochevnov */
+/**
+ * @author Dmytro Nochevnov
+ */
 public class FrontEndUtil {
 
     public static String getUserId(Principal userPrincipal) throws IOException {

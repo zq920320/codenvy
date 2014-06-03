@@ -195,7 +195,7 @@ public class Utils {
             case BY_LIFETIME:
                 initByLifeTime(builder);
                 break;
-                
+
             default:
                 initByPassedDays(toDate, builder, passedDaysCount.getDayCount());
                 break;
@@ -203,7 +203,7 @@ public class Utils {
 
         return builder.build();
     }
-    
+
     private static void initByPassedDays(Calendar toDate, Builder builder, int passedDaysCount) {
         Calendar fromDate = (Calendar)toDate.clone();
         fromDate.add(Calendar.DAY_OF_MONTH, 1 - passedDaysCount);

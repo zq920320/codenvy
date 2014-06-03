@@ -66,7 +66,7 @@
     <view passed-days-count="by_1_day,by_7_days,by_30_days,by_60_days,by_90_days,by_365_days,by_lifetime" name="top_users">
         <section name="top_users">
             <row class="com.codenvy.analytics.services.view.TitleRow">
-                <parameter key="titles" value="Email,Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,1 Year,Lifetime"/>
+                <parameter key="titles" value="User,Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,1 Year,Lifetime"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="top_users"/>

@@ -85,7 +85,7 @@ function Model() {
             return data;
         }
     }
-    
+
     function getModelViewData(modelViewName, isAsync) {
         if (typeof isAsync == "undefined") {
             isAsync = true;
@@ -125,11 +125,46 @@ function Model() {
             return data;
         }
     };
-    
+
+    function getWsNameById(wsId, isAsync) {
+        return getEntityNameById("ws", wsId, isAsync);
+    };
+
+    function getUserNameById(userId, isAsync) {
+        return getEntityNameById("user", userId, isAsync);
+    };
+
+    /* for user's id it returns its aliases and for workspace's id it returns its name */
+    function getEntityNameById(entity, id, isAsync) {
+        if (!id || id.length == 0) {
+            var data = {};
+            data[entity.toUpperCase()] = id;
+
+            return data;
+        }
+
+        if (typeof isAsync == "undefined") {
+            isAsync = false;
+        }
+        var url = "/analytics/api/view/" + entity + "name/" + id;
+
+        var callback = function (data) {
+            doneFunction(data);
+        }
+
+        var request = get(url, "json", callback, isAsync);
+
+        if (!isAsync) {
+            var data = jQuery.parseJSON(request.responseText);
+            return data;
+        }
+    };
+
     function get(url, responseType, doneCollback, isAsync) {
         var url = url || "";
         var responseType = responseType || "json";
-        var doneCollback = doneCollback || function () {};
+        var doneCollback = doneCollback || function () {
+        };
 
         if (!jQuery.isEmptyObject(params)) {
             url = url + "?" + analytics.util.constructUrlParams(params);
@@ -164,7 +199,7 @@ function Model() {
         for (var t in data) {
             var rows = [];
             var columns = [];
-            
+
             for (var r in data[t]) {
                 if (r == 0) {
                     // create header row
@@ -189,14 +224,14 @@ function Model() {
 
     function getLinkToExportToCsv(modelName) {
         var url = "/analytics/api/view/" + modelName + ".csv";
-        
+
         if (!jQuery.isEmptyObject(params)) {
             url = url + "?" + analytics.util.constructUrlParams(params);
         }
-        
+
         return url;
     }
-    
+
     function setParams(newParams) {
         params = newParams;
     }
@@ -204,7 +239,7 @@ function Model() {
     function getParams() {
         return params;
     }
-    
+
     function pushDoneFunction(newDoneFunction) {
         doneFunctionStack.push(newDoneFunction);
     }
@@ -241,6 +276,8 @@ function Model() {
         getMetricValue: getMetricValue,
         getExpandedMetricValue: getExpandedMetricValue,
         getExpandableMetricList: getExpandableMetricList,
+        getWsNameById: getWsNameById,
+        getUserNameById: getUserNameById,
         setParams: setParams,
         getParams: getParams,
 

@@ -73,7 +73,7 @@
 
                 <div class="nav">
                     <div class="label-container">
-                        <div class="label"><%= FrontEndUtil.getFirstAndLastName(request.getUserPrincipal())%></div>
+                        <div class="label"><%=  FrontEndUtil.getFirstAndLastName(request.getUserPrincipal())%></div>
                     </div>
                     <button id="topmenu-user">&nbsp;</button>
                 </div>

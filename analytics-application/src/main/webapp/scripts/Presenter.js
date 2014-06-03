@@ -15,7 +15,6 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-
 function Presenter() {}
 
 Presenter.prototype.view = null;
@@ -62,32 +61,32 @@ Presenter.prototype.getModelParams = function(viewParams) {
     var modelParams = {};
 
     var viewParamNames = Object.keys(viewParams);
-    
+
     // construct event parameter
     if (typeof viewParams[this.EVENT_PARAMETER_NAME_FIELD] != "undefined"
         && typeof viewParams[this.EVENT_PARAMETER_VALUE_FIELD] != "undefined") {
-        modelParams[this.EVENT_PARAMETER_FIELD] = 
+        modelParams[this.EVENT_PARAMETER_FIELD] =
             viewParams[this.EVENT_PARAMETER_NAME_FIELD] + "=" + viewParams[this.EVENT_PARAMETER_VALUE_FIELD];
     }
-    
+
     for (var i in viewParamNames) {
         var viewParamName = viewParamNames[i]
         if (analytics.configuration.isModelParamRegistered(viewParamName)) {
             var paramValue = viewParams[viewParamName];
-            
+
             // translate date range value format: fix "yyyy-mm-dd" on "yyyymmdd"
             if (analytics.configuration.isDateParam(viewParamName)) {
                 paramValue = analytics.util.encodeDate(paramValue);
             }
-            
+
             modelParams[viewParamName] = paramValue;
         }
     }
 
     analytics.configuration.setupDefaultModelParams(this.widgetName, modelParams);
-    
+
     analytics.configuration.removeForbiddenModelParams(this.widgetName, modelParams);
-    
+
     // remove modelParams with value = ""
     var modelParamNames = Object.keys(modelParams);
     for (var i in modelParamNames) {
@@ -96,24 +95,24 @@ Presenter.prototype.getModelParams = function(viewParams) {
             delete modelParams[modelParamName];
         }
     }
-    
+
     return modelParams;
 }
 
 /**
  * Return link to get view data in CSV format
  */
-Presenter.prototype.getLinkForExportToCsvButton = function(modelViewName) {    
+Presenter.prototype.getLinkForExportToCsvButton = function(modelViewName) {
     var lastModelParams = analytics.util.clone(this.model.getParams());
-    
+
     // get all pages of view
     delete lastModelParams["per_page"];
     delete lastModelParams["page"];
-    
+
     this.model.setParams(lastModelParams);
-    
+
     var modelViewName = modelViewName || analytics.configuration.getProperty(this.widgetName, "modelViewName");
-    
+
     return this.model.getLinkToExportToCsv(modelViewName);
 }
 
@@ -128,59 +127,59 @@ Presenter.prototype.addServerSortingLinks = function(table, widgetName, modelPar
     if (typeof mapColumnToServerSortParam == "undefined" && !doNotMap) {
         return table;
     }
-    
+
     // don't display sorting command if there is no rows or if there is only one row in the table
     if (table.rows.length < 1) {
         return table;
     }
-    
+
     var modelParams = analytics.util.clone(modelParams);
-    
+
     var sortingParameterValue = modelParams.sort || null;
-             
+
     for (var i = 0; i < table.columns.length; i++) {
         var columnName = table.columns[i];
-        
+
         if (doNotMap) {
-            var sortParamColumnName = columnName;            
+            var sortParamColumnName = columnName;
         } else {
             var sortParamColumnName = mapColumnToServerSortParam[columnName];
         }
-        
+
         if (typeof sortParamColumnName == "undefined") {
             continue;
         }
-       
+
         var isAscending = this.isSortingOrderAscending(sortParamColumnName, sortingParameterValue);
-       
+
         if (isAscending == null) {
            var headerClassOption = "class='unsorted'";
            var newSortingParameterValue = this.DEFAULT_ORDER_PREFIX + sortParamColumnName;
-          
+
         } else if (isAscending) {
            var headerClassOption = "class='ascending'";
            var newSortingParameterValue = this.DESCENDING_ORDER_PREFIX + sortParamColumnName;  // for example "-user_email"
-    
+
         } else {
            var headerClassOption = "class='descending'";
            var newSortingParameterValue = this.ASCENDING_ORDER_PREFIX + sortParamColumnName;  // for example "+user_email"
         }
-    
+
         if (typeof newSortingParameterValue == "undefined") {
             delete modelParams.sort;
         } else {
             modelParams.sort = newSortingParameterValue;
         }
-    
+
         var headerHref = analytics.util.getCurrentPageName();
         if (!jQuery.isEmptyObject(modelParams)) {
             headerHref += "?" + analytics.util.constructUrlParams(modelParams);
         }
         var onClickHandler = "analytics.main.reloadWidgetByUrl(\"" + headerHref + "\",\"" + widgetName + "\"); return false;";
-        
+
         table.columns[i] = "<a href='" + headerHref + "' " + headerClassOption + " onclick='" + onClickHandler + "'>" + columnName + "</a>";
     }
-    
+
     return table;
 }
 
@@ -191,7 +190,7 @@ Presenter.prototype.addServerSortingLinks = function(table, widgetName, modelPar
  * null, if sortingParameterValue = null, of sortingColumn != sortingParameterValue
  *
  */
-Presenter.prototype.isSortingOrderAscending = function(sortingColumn, sortingParameterValue) {   
+Presenter.prototype.isSortingOrderAscending = function(sortingColumn, sortingParameterValue) {
    if (sortingParameterValue == null) {
       return null;
    }
@@ -208,7 +207,7 @@ Presenter.prototype.isSortingOrderAscending = function(sortingColumn, sortingPar
    return null;
 }
 
-/** 
+/**
  * @returns true if value = "0".
  * */
 Presenter.prototype.isEmptyValue = function(value) {
@@ -220,9 +219,9 @@ Presenter.prototype.isEmptyValue = function(value) {
 Presenter.prototype.getDrillDownPageLink = function(metricName, modelParams, timeInterval) {
     var drillDownPageAddress = analytics.configuration.getDrillDownPageAddress(metricName);
     var drillDownPageLinkDelimeter = (drillDownPageAddress.indexOf("?") != -1) ? "&" : "?";
-    var drillDownPageLink = analytics.configuration.getDrillDownPageAddress(metricName) 
+    var drillDownPageLink = analytics.configuration.getDrillDownPageAddress(metricName)
                             + drillDownPageLinkDelimeter + this.METRIC_ORIGINAL_NAME_VIEW_PARAMETER + "=" + metricName;
-    
+
     if (!jQuery.isEmptyObject(modelParams)) {
         var modelParams = analytics.util.clone(modelParams);
         delete modelParams[this.METRIC_ORIGINAL_NAME_VIEW_PARAMETER];  // remove redundant expanded metric name
@@ -232,80 +231,87 @@ Presenter.prototype.getDrillDownPageLink = function(metricName, modelParams, tim
     if (typeof timeInterval != "undefined") {
         drillDownPageLink += "&" + this.TIME_INTERVAL_PARAMETER + "=" + timeInterval;
     }
-    
+
     return drillDownPageLink;
 }
 
 Presenter.prototype.linkTableValuesWithDrillDownPage = function(widgetName, table, modelParams) {
     var modelParams = analytics.util.clone(modelParams);
-    
+
     delete modelParams.page;    // remove page parameter
     delete modelParams.per_page;    // remove page parameter
     delete modelParams.sort;    // remove sort parameter
-    
-    var mapColumnToParameter = analytics.configuration.getSubProperty(widgetName, 
-                                                                      "columnDrillDownPageLinkConfiguration", 
-                                                                      "mapColumnToParameter", 
+
+    var mapColumnToParameter = analytics.configuration.getSubProperty(widgetName,
+                                                                      "columnDrillDownPageLinkConfiguration",
+                                                                      "mapColumnToParameter",
                                                                       {});
-    
-    var doNotLinkOnEmptyParameter = analytics.configuration.getSubProperty(widgetName, 
-                                                                           "columnDrillDownPageLinkConfiguration", 
-                                                                           "doNotLinkOnEmptyParameter", 
+
+    var doNotLinkOnEmptyParameter = analytics.configuration.getSubProperty(widgetName,
+                                                                           "columnDrillDownPageLinkConfiguration",
+                                                                           "doNotLinkOnEmptyParameter",
                                                                            true);
-    
+
     // calculate source column indexes for combine links
     var sourceColumnIndexes = [];
     for (var sourceColumnName in mapColumnToParameter) {
         var sourceColumnIndex = analytics.util.getColumnIndexByColumnName(table.columns, sourceColumnName);
         sourceColumnIndexes.push(sourceColumnIndex);
     }
-       
+
     for (var columnIndex = 0; columnIndex < table.columns.length; columnIndex++) {
-        var columnName = table.columns[columnIndex];            
-        
+        var columnName = table.columns[columnIndex];
+
         var expandedMetricName = analytics.configuration.getExpandableMetricName(widgetName, columnName);
         if (typeof expandedMetricName != "undefined") {
             for (var i = 0; i < table.rows.length; i++) {
                 var columnValue = table.rows[i][columnIndex];
-                
+
                 if (! this.isEmptyValue(columnValue)) {
-                    var drillDownPageLink = this.getDrillDownPageLink(expandedMetricName, modelParams);                
-                    
+                    var drillDownPageLink = this.getDrillDownPageLink(expandedMetricName, modelParams);
+
                     // calculation combined link like "ws=...&project=..."
                     if (sourceColumnIndexes.length > 0) {
-                        drillDownPageLink += "&" + this.getUrlParamsForCombineColumnLink(table.rows[i], 
-                                                                                         sourceColumnIndexes, 
-                                                                                         mapColumnToParameter, 
+                        drillDownPageLink += "&" + this.getUrlParamsForCombineColumnLink(table.rows[i],
+                                                                                         sourceColumnIndexes,
+                                                                                         mapColumnToParameter,
                                                                                          doNotLinkOnEmptyParameter);
                     }
-                    
+
                     table.rows[i][columnIndex] = "<a href='" + drillDownPageLink + "'>" + columnValue + "</a>";
                 }
             }
         }
-    }          
-        
+    }
+
     return table;
 }
 
 /**
  * Make table cells of column with certain name as linked with link = "columnLinkPrefix + {columnValue}"
  */
-Presenter.prototype.makeTableColumnLinked = function(table, columnName, columnLinkPrefix) {   
+Presenter.prototype.makeTableColumnLinked = function(table, columnName, columnLinkPrefix) {
     var columnIndex = analytics.util.getArrayValueIndex(table.columns, columnName);
     if (columnIndex != null) {
         for (var i = 0; i < table.rows.length; i++) {
             var columnValue = table.rows[i][columnIndex];
-            
+
             if (analytics.configuration.isSystemMessage(columnValue)) {
-               table.rows[i][columnIndex] = this.view.getSystemMessageLabel(columnValue);    
+               table.rows[i][columnIndex] = this.view.getSystemMessageLabel(columnValue);
             } else {
                var href = columnLinkPrefix + "=" + encodeURIComponent(columnValue);
-               
+
                if (analytics.configuration.isFactoryUrlColumnName(columnName)) {
                    var title = columnValue;   // display initial url in title of link
-                   columnValue = analytics.util.getShortenFactoryUrl(columnValue);                       
+                   columnValue = analytics.util.getShortenFactoryUrl(columnValue);
                    table.rows[i][columnIndex] = "<a href='" + href + "' title='" + title + "'>" + columnValue + "</a>";
+
+               } else if (analytics.configuration.isWorkspaceColumnName(columnName)) {
+                   table.rows[i][columnIndex] = "<a href='" + href + "'>" +  analytics.model.getWsNameById(columnValue)["WS"] + "</a>";
+
+               } else if (analytics.configuration.isUserColumnName(columnName)) {
+                   table.rows[i][columnIndex] = "<a href='" + href + "'>" +  analytics.model.getUserNameById(columnValue)["USER"] + "</a>";
+
                } else {
                    table.rows[i][columnIndex] = "<a href='" + href + "'>" + columnValue + "</a>";
                }
@@ -341,7 +347,7 @@ Presenter.prototype.makeTableColumnCombinedLinked = function(table, columnCombin
 
     for (var targetColumnName in columnCombinedLinkConf) {
         var targetColumnIndex = analytics.util.getColumnIndexByColumnName(table.columns, targetColumnName);
-        
+
         var baseLink = columnCombinedLinkConf[targetColumnName].baseLink;
         var mapColumnToParameter = columnCombinedLinkConf[targetColumnName].mapColumnToParameter;
 
@@ -351,14 +357,14 @@ Presenter.prototype.makeTableColumnCombinedLinked = function(table, columnCombin
             var sourceColumnIndex = analytics.util.getColumnIndexByColumnName(table.columns, sourceColumnName);
             sourceColumnIndexes.push(sourceColumnIndex);
         }
-        
+
         // make cells of target column as linked with combined link
         for (var i = 0; i < table.rows.length; i++) {
             var targetColumnValue = table.rows[i][targetColumnIndex];
-            
+
             if (analytics.configuration.isSystemMessage(targetColumnValue)) {
                table.rows[i][targetColumnIndex] = this.view.getSystemMessageLabel(targetColumnValue);
-               
+
             } else {
                // calculation combined link like "project-view.jsp?ws=...&project=..."
                var urlParams = this.getUrlParamsForCombineColumnLink(table.rows[i], sourceColumnIndexes, mapColumnToParameter, doNotLinkOnEmptyParameter);
@@ -367,21 +373,21 @@ Presenter.prototype.makeTableColumnCombinedLinked = function(table, columnCombin
                    table.rows[i][targetColumnIndex] = "<a href='" + href + "'>" + targetColumnValue + "</a>";
                }
             }
-        }            
+        }
     }
 
     return table;
 }
 
 /**
- * @param sourceColumnIndexes = indexes in row of source columns defined in mapColumnToParameter; 
+ * @param sourceColumnIndexes = indexes in row of source columns defined in mapColumnToParameter;
  * there is null value for absent column in row.
- *  
+ *
  * @returns query parameters like "ws=<WS_source_column_value>&project=<PROJECT_source_column_value>"
  */
 Presenter.prototype.getUrlParamsForCombineColumnLink = function(row, sourceColumnIndexes, mapColumnToParameter, doNotLinkOnEmptyParameter) {
     var params = {};
-    var sourceColumnNames = Object.keys(mapColumnToParameter);   
+    var sourceColumnNames = Object.keys(mapColumnToParameter);
 
     for (var j = 0; j < sourceColumnIndexes.length; j++) {
         var sourceColumnIndex = sourceColumnIndexes[j];
@@ -390,7 +396,7 @@ Presenter.prototype.getUrlParamsForCombineColumnLink = function(row, sourceColum
 
             var parameterName = mapColumnToParameter[sourceColumnName];
             var parameterValue = row[sourceColumnIndex];
-            
+
             if (parameterValue == "") {
                 if (doNotLinkOnEmptyParameter) {
                     return "";
@@ -398,10 +404,10 @@ Presenter.prototype.getUrlParamsForCombineColumnLink = function(row, sourceColum
                     continue;
                 }
             }
-            
+
             params[parameterName] = parameterValue;
         }
     }
-    
+
     return analytics.util.constructUrlParams(params) || "";
 }

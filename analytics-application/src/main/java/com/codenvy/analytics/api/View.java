@@ -17,16 +17,17 @@
  */
 package com.codenvy.analytics.api;
 
+import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.services.view.CSVFileHolder;
 import com.codenvy.analytics.services.view.SectionData;
 import com.codenvy.analytics.services.view.ViewBuilder;
 import com.codenvy.analytics.services.view.ViewData;
-import com.codenvy.analytics.util.Utils;
 import com.codenvy.api.analytics.shared.dto.MetricValueDTO;
 import com.codenvy.dto.server.DtoFactory;
 import com.codenvy.dto.server.JsonArrayImpl;
+import com.codenvy.dto.server.JsonStringMapImpl;
 import com.google.inject.Singleton;
 
 import org.apache.commons.io.IOUtils;
@@ -43,7 +44,10 @@ import java.text.ParseException;
 import java.util.*;
 import java.util.Map.Entry;
 
+import static com.codenvy.analytics.Utils.toArray;
+import static com.codenvy.analytics.datamodel.ValueDataUtil.*;
 import static com.codenvy.analytics.metrics.Context.valueOf;
+import static com.codenvy.analytics.util.Utils.extractParams;
 
 /**
  * @author Alexander Reshetnyak
@@ -58,15 +62,88 @@ public class View {
     private final ViewBuilder   viewBuilder;
     private final CSVFileHolder csvFileCleanerHolder;
 
-    private final Set<String> allowedWorkspaces;
-    private final Set<String> allowedUsers;
-
     @Inject
     public View(ViewBuilder viewBuilder, CSVFileHolder csvFileCleanerHolder) {
         this.viewBuilder = viewBuilder;
         this.csvFileCleanerHolder = csvFileCleanerHolder;
-        this.allowedUsers = new HashSet<>();
-        this.allowedWorkspaces = new HashSet<>();
+    }
+
+    @GET
+    @Path("username/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"user", "system/admin", "system/manager"})
+    public Response getUserNameById(@PathParam("id") String userId,
+                                    @Context UriInfo uriInfo,
+                                    @Context SecurityContext securityContext) throws IOException {
+
+        try {
+            Map<String, String> params = extractParams(uriInfo, securityContext);
+
+            com.codenvy.analytics.metrics.Context context = com.codenvy.analytics.metrics.Context.valueOf(params);
+            context = context.cloneAndPut(MetricFilter.USER, userId);
+
+            Metric metric = MetricFactory.getMetric(MetricType.USERS_PROFILES_LIST);
+            ListValueData valueData = getAsList(metric, context);
+
+            String userName;
+            if (valueData.size() != 0) {
+                Map<String, ValueData> profile = treatAsMap(treatAsList(valueData).get(0));
+                String[] aliases = toArray(profile.get(AbstractMetric.ALIASES));
+
+                if (aliases.length == 0) {
+                    userName = userId;
+                } else {
+                    userName = aliases[0];
+                }
+            } else {
+                userName = userId;
+            }
+
+            Map<String, String> m = new HashMap<>(1);
+            m.put(MetricFilter.USER.toString(), userName);
+
+            return Response.status(Response.Status.OK).entity(new JsonStringMapImpl<>(m).toJson()).build();
+        } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+        }
+    }
+
+    @GET
+    @Path("wsname/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"user", "system/admin", "system/manager"})
+    public Response getWsNameById(@PathParam("id") String wsId,
+                                  @Context UriInfo uriInfo,
+                                  @Context SecurityContext securityContext) throws IOException {
+
+        try {
+            Map<String, String> params = extractParams(uriInfo, securityContext);
+
+            com.codenvy.analytics.metrics.Context context = com.codenvy.analytics.metrics.Context.valueOf(params);
+            context = context.cloneAndPut(MetricFilter.WS, wsId);
+
+            Metric metric = MetricFactory.getMetric(MetricType.WORKSPACES_PROFILES_LIST);
+            ListValueData valueData = getAsList(metric, context);
+
+            String wsName;
+            if (valueData.size() != 0) {
+                Map<String, ValueData> profile = treatAsMap(treatAsList(valueData).get(0));
+                ValueData name = profile.get(AbstractMetric.WS_NAME);
+
+                wsName = name == null ? wsId : name.getAsString();
+            } else {
+                wsName = wsId;
+            }
+
+            Map<String, String> m = new HashMap<>(1);
+            m.put(MetricFilter.WS.toString(), wsName);
+
+            return Response.status(Response.Status.OK).entity(new JsonStringMapImpl<>(m).toJson()).build();
+        } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+        }
     }
 
     @GET
@@ -80,10 +157,10 @@ public class View {
                                    @Context SecurityContext securityContext) {
 
         try {
-            Map<String, String> context = Utils.extractParams(uriInfo,
-                                                              page,
-                                                              perPage,
-                                                              securityContext);
+            Map<String, String> context = extractParams(uriInfo,
+                                                        page,
+                                                        perPage,
+                                                        securityContext);
 
             ValueData value = getMetricValue(metricName, valueOf(context));
             MetricValueDTO outputValue = getMetricValueDTO(metricName, value);
@@ -108,10 +185,10 @@ public class View {
                                            @Context SecurityContext securityContext) {
 
         try {
-            Map<String, String> context = Utils.extractParams(uriInfo,
-                                                              page,
-                                                              perPage,
-                                                              securityContext);
+            Map<String, String> context = extractParams(uriInfo,
+                                                        page,
+                                                        perPage,
+                                                        securityContext);
 
             ValueData value = getExpandedMetricValue(metricName, valueOf(context));
             ViewData result = viewBuilder.getViewData(value);
@@ -135,8 +212,8 @@ public class View {
                                       @Context UriInfo uriInfo,
                                       @Context SecurityContext securityContext) {
         try {
-            Map<String, String> params = Utils.extractParams(uriInfo,
-                                                             securityContext);
+            Map<String, String> params = extractParams(uriInfo,
+                                                       securityContext);
 
             com.codenvy.analytics.metrics.Context context = valueOf(params);
 
@@ -158,8 +235,8 @@ public class View {
                                      @Context UriInfo uriInfo,
                                      @Context SecurityContext securityContext) {
         try {
-            Map<String, String> params = Utils.extractParams(uriInfo,
-                                                             securityContext);
+            Map<String, String> params = extractParams(uriInfo,
+                                                       securityContext);
 
             com.codenvy.analytics.metrics.Context context = valueOf(params);
 
