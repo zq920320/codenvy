@@ -342,6 +342,41 @@ public class AccountDaoTest extends BaseDaoTest {
         }
     }
 
+    @Test
+    public void shouldBeAbleToUpdateSubscription() throws Exception {
+        collection.insert(new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME).append("owner", ACCOUNT_OWNER));
+
+        Subscription ss = DtoFactory.getInstance().createDto(Subscription.class)
+                                    .withId(SUBSCRIPTION_ID)
+                                    .withAccountId(ACCOUNT_ID)
+                                    .withServiceId(SERVICE_NAME)
+                                    .withStartDate(START_DATE)
+                                    .withEndDate(END_DATE);
+
+        subscriptionCollection
+                .insert(new BasicDBObject("id", SUBSCRIPTION_ID).append("accountId", ACCOUNT_ID).append("serviceId", SERVICE_NAME)
+                                                                .append("startDate", START_DATE).append("endDate", END_DATE));
+        ss.setStartDate(START_DATE + 1);
+        ss.setEndDate(END_DATE - 1);
+
+        accountDao.updateSubscription(ss);
+
+        DBCursor newDbSubscription = subscriptionCollection.find(new BasicDBObject("id", SUBSCRIPTION_ID));
+        assertEquals(DtoFactory.getInstance().createDtoFromJson(newDbSubscription.next().toString(), Subscription.class), ss);
+    }
+
+    @Test(expectedExceptions = NotFoundException.class)
+    public void shouldThrowNotFoundExceptionIfSubscriptionToUpdateDoesNotExist() throws Exception {
+        Subscription ss = DtoFactory.getInstance().createDto(Subscription.class)
+                                    .withId(SUBSCRIPTION_ID)
+                                    .withAccountId(ACCOUNT_ID)
+                                    .withServiceId(SERVICE_NAME)
+                                    .withStartDate(START_DATE)
+                                    .withEndDate(END_DATE);
+
+        accountDao.updateSubscription(ss);
+    }
+
     @Test(expectedExceptions = NotFoundException.class)
     public void shouldThrowAnExceptionWhileAddingSubscriptionToNotExistedAccount() throws ServerException,
                                                                                           ConflictException, NotFoundException {

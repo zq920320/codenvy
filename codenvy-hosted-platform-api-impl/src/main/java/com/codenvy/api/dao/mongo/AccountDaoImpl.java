@@ -319,6 +319,19 @@ public class AccountDaoImpl implements AccountDao {
     }
 
     @Override
+    public void updateSubscription(Subscription subscription) throws NotFoundException, ServerException {
+        DBObject query = new BasicDBObject("id", subscription.getId());
+        try {
+            if (subscriptionCollection.findOne(query) == null) {
+                throw new NotFoundException("Subscription not found " + subscription.getId());
+            }
+            subscriptionCollection.update(query, toDBObject(subscription));
+        } catch (MongoException me) {
+            throw new ServerException(me.getMessage(), me);
+        }
+    }
+
+    @Override
     public void addSubscription(Subscription subscription) throws NotFoundException, ConflictException, ServerException {
         try {
             DBObject org = accountCollection.findOne(new BasicDBObject("id", subscription.getAccountId()));
@@ -352,8 +365,9 @@ public class AccountDaoImpl implements AccountDao {
         } catch (MongoException me) {
             throw new ServerException(me.getMessage(), me);
         }
-        if (subscription == null)
+        if (subscription == null) {
             throw new NotFoundException("Subscription not found " + subscriptionId);
+        }
         return DtoFactory.getInstance().createDtoFromJson(subscription.toString(), Subscription.class);
     }
 
