@@ -396,7 +396,7 @@ public class AccountDaoImpl implements AccountDao {
     }
 
     /**
-     * Check that start date goes before end date
+     * Check that subscription object has legal state
      *
      * @throws com.codenvy.api.core.ConflictException
      *         when end date goes before start date
@@ -404,6 +404,9 @@ public class AccountDaoImpl implements AccountDao {
     private void ensureDateConsistency(Subscription subscription) throws ConflictException {
         if (subscription.getStartDate() >= subscription.getEndDate()) {
             throw new ConflictException("Subscription startDate should go before endDate");
+        }
+        if (null == subscription.getState()) {
+            throw new ConflictException("Subscription state is missing");
         }
     }
 
@@ -436,7 +439,8 @@ public class AccountDaoImpl implements AccountDao {
                                               .withServiceId(obj.getServiceId())
                                               .withStartDate(obj.getStartDate())
                                               .withEndDate(obj.getEndDate())
-                                              .withProperties(obj.getProperties());
+                                              .withProperties(obj.getProperties())
+                                              .withState(obj.getState());
         return (DBObject)JSON.parse(subscription.toString());
     }
 }

@@ -19,6 +19,7 @@ package com.codenvy.service.workspace;
 
 import com.codenvy.api.account.server.SubscriptionEvent;
 import com.codenvy.api.account.server.SubscriptionHandler;
+import com.codenvy.api.account.shared.dto.Subscription;
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
 import com.codenvy.api.workspace.shared.dto.Workspace;
 import com.codenvy.commons.env.EnvironmentContext;
@@ -52,8 +53,9 @@ public abstract class PrivateVFSSubscriptionHandler implements SubscriptionHandl
     //TODO add codenvy_workspace_multiple_till=<date> attribute
     @Override
     public void onCreateSubscription(SubscriptionEvent subscription) {
-        setAccountPermissions(subscription.getSubscription().getAccountId());
-
+        if (Subscription.State.ACTIVE.equals(subscription.getSubscription().getState())) {
+            setAccountPermissions(subscription.getSubscription().getAccountId());
+        }
     }
 
     @Override

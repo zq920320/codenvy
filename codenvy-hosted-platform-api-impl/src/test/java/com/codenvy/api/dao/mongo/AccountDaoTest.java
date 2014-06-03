@@ -315,7 +315,7 @@ public class AccountDaoTest extends BaseDaoTest {
     }
 
     @Test
-    public void shouldAddSubscription() throws Exception {
+    public void shouldBeAbleToAddSubscription() throws Exception {
         collection.insert(new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME).append("owner", ACCOUNT_OWNER));
 
         Subscription ss = DtoFactory.getInstance().createDto(Subscription.class)
@@ -324,7 +324,8 @@ public class AccountDaoTest extends BaseDaoTest {
                                     .withServiceId(SERVICE_NAME)
                                     .withStartDate(START_DATE)
                                     .withEndDate(END_DATE)
-                                    .withProperties(PROPS);
+                                    .withProperties(PROPS)
+                                    .withState(Subscription.State.ACTIVE);
 
         accountDao.addSubscription(ss);
 
@@ -393,8 +394,24 @@ public class AccountDaoTest extends BaseDaoTest {
         accountDao.addSubscription(subscription);
     }
 
+    @Test(expectedExceptions = ConflictException.class)
+    public void shouldThrowConflictExceptionOnAddSubscriptionWithoutState() throws ServerException,
+                                                                                          ConflictException, NotFoundException {
+        collection.insert(new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME).append("owner", ACCOUNT_OWNER));
+
+        Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class)
+                                              .withId(SUBSCRIPTION_ID)
+                                              .withAccountId(ACCOUNT_ID)
+                                              .withServiceId(SERVICE_NAME)
+                                              .withStartDate(START_DATE)
+                                              .withEndDate(END_DATE)
+                                              .withProperties(PROPS);
+
+        accountDao.addSubscription(subscription);
+    }
+
     @Test
-    public void shouldFindSubscriptions() throws Exception {
+    public void shouldBeAbleToFindSubscriptions() throws Exception {
         collection.insert(new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME)
                                                              .append("owner", ACCOUNT_OWNER));
 
@@ -403,13 +420,15 @@ public class AccountDaoTest extends BaseDaoTest {
                                      .withServiceId(SERVICE_NAME)
                                      .withStartDate(START_DATE)
                                      .withEndDate(END_DATE)
-                                     .withProperties(PROPS);
+                                     .withProperties(PROPS)
+                                     .withState(Subscription.State.ACTIVE);
         Subscription ss2 = DtoFactory.getInstance().createDto(Subscription.class)
                                      .withAccountId(ACCOUNT_ID)
                                      .withServiceId(SERVICE_NAME)
                                      .withStartDate(START_DATE)
                                      .withEndDate(END_DATE)
-                                     .withProperties(PROPS);
+                                     .withProperties(PROPS)
+                                     .withState(Subscription.State.ACTIVE);
 
         accountDao.addSubscription(ss1);
         accountDao.addSubscription(ss2);
@@ -419,7 +438,7 @@ public class AccountDaoTest extends BaseDaoTest {
     }
 
     @Test
-    public void shouldRemoveSubscription() throws Exception {
+    public void shouldBeAbleToRemoveSubscription() throws Exception {
         collection.insert(new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME).append("owner", ACCOUNT_OWNER));
         collection.insert(new BasicDBObject("id", "another_account").append("name", ACCOUNT_NAME).append("owner",
                                                                                                          ACCOUNT_OWNER));
@@ -429,7 +448,8 @@ public class AccountDaoTest extends BaseDaoTest {
                                     .withServiceId(SERVICE_NAME)
                                     .withStartDate(START_DATE)
                                     .withEndDate(END_DATE)
-                                    .withProperties(PROPS);
+                                    .withProperties(PROPS)
+                                    .withState(Subscription.State.ACTIVE);
 
         accountDao.addSubscription(ss);
 
@@ -446,7 +466,7 @@ public class AccountDaoTest extends BaseDaoTest {
     }
 
     @Test
-    public void shouldGetSubscriptionById() throws ServerException, NotFoundException, ConflictException {
+    public void shouldBeAbleToGetSubscriptionById() throws ServerException, NotFoundException, ConflictException {
         collection.insert(new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME).append("owner", ACCOUNT_OWNER));
         Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class)
                                               .withId(SUBSCRIPTION_ID)
@@ -454,7 +474,8 @@ public class AccountDaoTest extends BaseDaoTest {
                                               .withServiceId(SERVICE_NAME)
                                               .withStartDate(START_DATE)
                                               .withEndDate(END_DATE)
-                                              .withProperties(PROPS);
+                                              .withProperties(PROPS)
+                                              .withState(Subscription.State.ACTIVE);
 
         accountDao.addSubscription(subscription);
 
