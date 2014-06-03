@@ -27,7 +27,7 @@
 	
 	.selected .ui-button-text,
 	.ui-state-hover .ui-button-text {
-		border-bottom: 2px solid #54aee0;
+		border-bottom: 2px solid #54aee0 !important;
 		padding: 2px 3px;
         color: white;
 	}
@@ -46,23 +46,11 @@
     .ui-button-text-only .ui-button-text {
         padding: 2px 3px;
         margin: 10px 15px;
+        border-bottom: 2px solid #373737;
     }
     
-    /* use white "ui-icon-triangle-1-s" icon in user menu button */
-    .ui-state-hover .ui-icon, 
-    .ui-state-focus .ui-icon,
-    .ui-state-default .ui-icon,
-    .ui-state-default .ui-icon,
-    .ui-state-default .ui-icon .selected  {
-        background-image: url(/analytics/images/ui-icons_ffffff_256x240.png);
-    }
-    
-    #topmenu-user span.ui-button-text {
-        border: 0px;
-        padding: 40% 0;
-    }
-    
-    #data-universe li {
-        padding: 3px 0px;
+    #topmenu img {
+        margin: 11px;
+        padding: 0px;
     }
 </style>

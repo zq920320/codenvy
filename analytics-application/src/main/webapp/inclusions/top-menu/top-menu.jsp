@@ -22,7 +22,7 @@
     <div class="navbar-inner">
         <div class="container-fluid" id="topmenu">
             <a class="brand" href="/analytics/">
-                <img src="/analytics/images/logo2.png" alt="Codenvy | Header logo">
+                <img src="/analytics/images/logo2.png" alt="Codenvy | Header logo" height="20px">
             </a>
 
             <div class="left">
@@ -54,6 +54,29 @@
             </div>
 
             <div class="right">
+               <div class="nav">
+                   <div>             
+                       <a href="#" onClick = "analytics.util.processUserLogOut()" class="logout"></a>
+                   </div>
+               </div>
+            </div>
+           
+            <div class="right">
+                <div class="nav">                    
+                    <div>
+                        <button id="topmenu-user"><%= FrontEndUtil.getFirstAndLastName(request.getUserPrincipal())%></button>
+                    </div>
+	                <ul class="dropdown-menu">
+	                    <li><a href="/analytics/pages/user-view.jsp?user=<%= FrontEndUtil.getUserId(request.getUserPrincipal())%>">My statistics</a></li>
+	                    <li><a href="/site/private/select-tenant">My workspace</a></li>
+	                    <li><a href="/analytics/pages/accounts-view.jsp">Organization</a></li>
+	                    <li><a href="/">Codenvy main page</a></li>
+	                    <li><a href="#" onclick="analytics.util.processUserLogOut()">Logout</a></li>
+	                </ul>	                
+	           </div>
+		    </div>
+		    
+            <div class="right">
                 <div class="nav">
                     <div>
                         <button id="topmenu-preferences">Data Universe</button>
@@ -71,20 +94,7 @@
                     </ul>
                 </div>
 
-                <div class="nav">
-                    <div class="label-container">
-                        <img src="/analytics/images/user.png" />
-                        <%= FrontEndUtil.getFirstAndLastName(request.getUserPrincipal())%>
-                    </div>
-                    <button id="topmenu-user">&nbsp;</button>
-                </div>
-                <ul class="dropdown-menu">
-                    <li><a href="/analytics/pages/user-view.jsp?user=<%= FrontEndUtil.getUserId(request.getUserPrincipal())%>">My statistics</a></li>
-                    <li><a href="/site/private/select-tenant">My workspace</a></li>
-                    <li><a href="/analytics/pages/accounts-view.jsp">Organization</a></li>
-                    <li><a href="/">Codenvy main page</a></li>
-                    <li><a href="#" onClick = "analytics.util.processUserLogOut()">Logout</a></li>
-                </ul>
+                <img src="/analytics/images/user.png" height="24px" />
             </div>
         </div>
     </div>
@@ -96,7 +106,7 @@
     $(function() {
         analytics.views.topMenu.turnOnNavButtons();
         analytics.views.topMenu.turnOnDropdownButton("topmenu-reports", false);    // turn-on reports menu button
-        analytics.views.topMenu.turnOnDropdownButton("topmenu-user", true);    // turn-on user menu button
+        analytics.views.topMenu.turnOnDropdownButton("topmenu-user", false);    // turn-on user menu button
 
         analytics.views.topMenu.turnOnDropdownButton("topmenu-preferences", false);    // turn-on preferences menu button
 
