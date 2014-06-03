@@ -54,7 +54,7 @@ import static org.testng.AssertJUnit.fail;
  */
 
 @Listeners(value = {MockitoTestNGListener.class})
-public class WorkspaceDaoTest extends BaseDaoTest {
+public class WorkspaceDaoImplTest extends BaseDaoTest {
 
     @Mock
     private UserDao userDao;

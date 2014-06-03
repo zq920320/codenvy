@@ -60,7 +60,7 @@ import static org.testng.Assert.assertNull;
  * @author Eugene Voevodin
  */
 @Listeners(value = {MockitoTestNGListener.class})
-public class AccountDaoTest extends BaseDaoTest {
+public class AccountDaoImplTest extends BaseDaoTest {
 
     private static final String USER_ID = "user12837asjhda823981h";
 

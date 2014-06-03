@@ -41,7 +41,7 @@ import static org.testng.Assert.assertNotNull;
 
 
 @Listeners(value = {MockitoTestNGListener.class})
-public class MemberDaoTest extends BaseDaoTest {
+public class MemberDaoImplTest extends BaseDaoTest {
 
     @Mock
     private UserDaoImpl userDao;

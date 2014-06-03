@@ -49,7 +49,7 @@ import static org.testng.Assert.*;
  *
  */
 @Listeners(value = {MockitoTestNGListener.class})
-public class UserProfileDaoTest extends BaseDaoTest {
+public class UserProfileDaoImplTest extends BaseDaoTest {
     @Mock
     private UserDao userDao;
     private static final String COLL_NAME = "profile";
