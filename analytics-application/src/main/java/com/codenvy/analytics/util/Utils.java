@@ -63,7 +63,7 @@ public class Utils {
         putDefaultValueIfAbsent(context, Parameters.TO_DATE);
         validateFormDateToDate(context);
 
-        context.remove(MetricFilter.DATA_UNIVERSE.toString().toLowerCase());
+        context.remove(MetricFilter.DATA_UNIVERSE.toString());
 
         return context;
     }
