@@ -171,19 +171,34 @@
 	    width: 400px;
 	}
 
-    .ui-accordion .ui-corner-all {
-        border-radius: 4px;
-    }
+	.ui-corner-all, 
+	.ui-corner-bottom, 
+	.ui-corner-right,
+	.ui-corner-left, 
+	.ui-corner-top	{
+	    border-radius: 0px !important;
+	}
 		
 	.ui-accordion .ui-accordion-header {
-	    background:#dadada url('/analytics/third-party/jquery-ui-1.8.20/themes/base/minified/images/ui-bg_glass_75_dadada_1x400.png') 50% 50% repeat-x;
-	    border:1px solid #999 !important;
+        border: 1px solid #ddd !important;
+	    background-color: #afafaf;
+	    background-image: -ms-linear-gradient(top, #fff, #AFAFAF);
+	    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#fff), to(#AFAFAF));
+	    background-image: -webkit-linear-gradient(top, #fff, #AFAFAF);
+	    background-image: -o-linear-gradient(top, #fff, #AFAFAF);
+	    background-image: linear-gradient(top, #fff, #AFAFAF);
+	    background-image: -moz-linear-gradient(top, #fff, #AFAFAF);
+	    outline: none;
+
+        color: #363636;
+        text-transform: uppercase;
+        font-size: 13px;
 	}
 
 	.ui-accordion .ui-state-hover {
-	    background-color: #08c;
-	    background-image: none;
-	    color: white;
+	    outline: 0;
+	    -webkit-box-shadow: inset 0 3px 5px rgba(0,0,0,.125);
+	    box-shadow: inset 0 3px 5px rgba(0,0,0,.125);
 	}
 	
 	.ui-accordion .ui-accordion-header .ui-icon {
@@ -194,6 +209,10 @@
 	.ui-accordion .ui-accordion-content {
 	    padding: 10px !important;
 	}
+	
+	.ui-widget-content {
+        border: 1px solid #ddd !important;
+    }
 </style>
 
 <!-- load C3.js line chat plugin (http://c3js.org/) -->
