@@ -12,7 +12,7 @@
 	font-weight: 700;
     padding: 6px 15px;
 	color: white;
-	font-size: 15px;
+	font-size: 13px;
 	text-transform: uppercase;
 }
 
@@ -22,19 +22,14 @@
 }
 
 .view .overview .body .item {
-	background-color: #fcfcfc;
-	border: 1px solid #ddd;
+	background-color: white;
 }
 
-.view .overview .body table {
-   display: inline;
-}
+.view .overview .body table {}
 
 .view .tables .item {}
 
-.view .tables .body {
-    padding: 15px;
-}
+.view .tables .body {}
 
 .view .tables .body table {
    width: 100%;

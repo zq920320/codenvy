@@ -41,10 +41,6 @@ footer {
     width: 100%;
 /*    min-height: 420px;*/
     display: block;
-    background-color: white;
-    border: 1px solid transparent;
-    -webkit-box-shadow: 0 1px 1px rgba(0,0,0,.05);
-    box-shadow: 0 1px 1px rgba(0,0,0,.05);
 }
 
 .hero-unit .jqplot-table-legend {
@@ -147,7 +143,7 @@ div#loader .loader-text {
 .topFilteringPanel {
     text-align: left;
     overflow: hidden;
-    padding: 10px 19px !important;
+    padding: 15px !important;
     min-width: 1300px;
 }
 
@@ -227,15 +223,16 @@ div#loader .loader-text {
 /* styles of center column  */
 .table-container {
     margin-bottom: 10px;
+    background-color: white;
 }
 
 .chart-container {
-    margin-top: 30px;
-    margin-bottom: 5px;
     min-width: 1300px;
+    background-color: white;
 }
 
 .chart-label {
+	padding-top: 15px;
     text-decoration: underline;
     font-weight: bold;
     width: 100%;

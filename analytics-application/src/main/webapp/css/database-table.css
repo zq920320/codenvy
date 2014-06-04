@@ -1,92 +1,89 @@
 /* horizontal table */
 .database-table {
-   border: 1px solid #ddd;
-   border-radius: 4px; 
-   margin: 0px;
+   border: 1px solid #bebebe;
 }
 
 .database-table td {
    font-size: 11px;
-   border: 1px solid #ddd;
    min-width: 55px;
+   border-top: 1px solid #dcdcdc;
+   text-align: center;
 }
 
 .database-table th {
-   font-size: 13px;
-   font-family: Times New Roman;
-   line-height: 1;
-   min-width: 55px;
+    color: #363636;
+    font-size: 10px;
+    font-weight: normal;
+    text-transform: uppercase;
+    min-width: 55px;
+    text-align: center;
 }
 
+
 .database-table .header {
-   height: 22px;
-   overflow: hidden;
-   background:
-      url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAAWCAYAAAABxvaqAAAAQ0lEQVR42oXEQQpFEQBA0bv/jSJKIhG6b/Ln/wwO7z259/4658jeW9ZaMueUMYb03qW1JrVWKaVIzllSShJjlBDCnz47ZlOwXDOZyQAAAABJRU5ErkJggg==")
-      -0px -0px repeat-x;
-   background-position: bottom;
-   border-top: none;
-   border-left: none;
-   border-right: 1px solid #c8cccf;
-   border-bottom: 1px solid #bac2cd;
-   padding: 0 10px;
-   text-align: left;
-   color: #000;
-   font-weight: normal;
-   height: 23px;
-   text-shadow: none;
+    vertical-align: middle;
+	background: #dbdbdb;
+    border-bottom: 1px solid #bebebe;
+}
+
+.database-table .header div {
+    margin: 7px 0px;
 }
 
 .database-table .header a.unsorted,
 .database-table .unsorted div {
-   padding-left: 14px;
-   color: #08c;
-   cursor: pointer;
-   background-image: url('../images/small_triangular_arrows.png');
-   background-repeat: no-repeat;
-   background-position: left center;
+	color: #248bc4;
+	cursor: pointer;
+    padding-left: 6px;
+    padding-right: 12px;
+	background-image: url('../images/small_triangular_arrows.png');
+	background-repeat: no-repeat;
+	background-position: 99% 30%;
+	display: block;
 }
 
 .database-table .header a.ascending,
 .database-table .ascending div {
-   font-weight: bold;
-   color: #08c;
-   cursor: pointer;
-   padding-left: 14px;
-   background-image: url('../images/small_triangular_up_arrow.png');
-   background-repeat: no-repeat;
-   background-position: left center;
+    font-weight: bold;
+    color: #248bc4;
+    cursor: pointer;
+    padding-left: 6px;
+    padding-right: 12px;
+    background-image: url('../images/small_triangular_up_arrow.png');
+    background-repeat: no-repeat;
+    background-position: 99% 2px;
+    display: block;
 }
 
 .database-table .header a.descending,
 .database-table .descending div {
-   font-weight: bold;
-   color: #08c;
-   cursor: pointer;
-   padding-left: 14px;
-   background-image: url('../images/small_triangular_down_arrow.png');
-   background-repeat: no-repeat;
-   background-position: left center;
+    font-weight: bold;
+    color: #248bc4;
+    cursor: pointer;
+	padding-left: 6px;
+	padding-right: 12px;
+    background-image: url('../images/small_triangular_down_arrow.png');
+    background-repeat: no-repeat;
+    background-position: 99% 2px;
+    display: block;
 }
 
 .database-table .first-cell {
-   background: #d9e4f6 !important;
+   background: #E5E5E5 !important;
    min-width: 205px;
-   /* border-bottom: 1px solid #ededed;*/ 
-   border: none;
    word-break: break-all;   
+   border: 0;
+   text-align: left;
 }
 
 .database-table .cell {
    overflow: hidden;
-   padding: 3px 10px;
-   height: 23px;
-   font-family: Arial, Verdana, sans-serif;  
+   padding: 8px;
    word-break: break-all; 
 }
 
 .database-table .cell a {
-   color: #08c;
+   color: #248bc4;
 }
 
 .database-table .system {
@@ -99,46 +96,48 @@
 }
 
 .database-table tr:nth-child(even) {
-   background: #f5f5f5;
+   background: #fcfcfc;
 }
 
 .database-table .clicked-row {
-	background: #d9e4f6 !important;
+	background: #f5f5f5 !important;
 }
 
-.database-table .clicked-row td {
-	border-color: #d9e4f6;
-}
+.database-table .clicked-row td {}
 
 .database-table .mouseover-row {
-	background: #eee !important;
+	background: #f5f5f5 !important;
 }
 
 
 /* vertical table */
 .database-table-vertical-row {
-   border: 0px;   
+   border: 1px solid #bebebe;   
    text-align: left;
+   font-size: 11px;
 }
 
+.database-table-vertical-row tr {}
+
 .database-table-vertical-row th, .database-table-vertical-row td {
-   padding: 3px 10px;
-   border: none;
+   padding: 8px;
 }
 
 .database-table-vertical-row .cell-name {
    font-weight: normal;
    min-width: 180px;
+   text-transform: uppercase;
+   background: #E5E5E5;
+   text-align: right;
 }
 
 .database-table-vertical-row .cell {
-   font-family: Arial, Verdana, sans-serif;
-   font-weight: bold; 
-   min-width: 180px;  
+   min-width: 180px;
+   border-top: 1px solid #dcdcdc;  
 }
 
 .database-table-vertical-row .cell a {
-   color: #08c;
+   color: #248bc4;
 }
 
 .text-cursor {
@@ -146,13 +145,13 @@
 }
 
 .database-table-vertical-row tr:nth-child(even) {
-   background: #f5f5f5;
+   background: #fcfcfc;
 }
 
 .database-table-vertical-row .clicked-row {
-   background: #d9e4f6 !important;
+   background: #f5f5f5 !important;
 }
 
 .database-table-vertical-row .mouseover-row {
-   background: #eee !important;
+   background: #f5f5f5 !important;
 }
