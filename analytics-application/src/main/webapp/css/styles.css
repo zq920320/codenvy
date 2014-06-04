@@ -2,11 +2,24 @@ iframe {
     height: 100%;
 }
 
+body {
+    font-family: HelveticaNeue-Light, "Helvetica Neue Light",
+        "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+    line-height: 1.42857143;
+    color: #3c3c3c;
+    background-color: #f9f9f9
+}
+
+footer {
+    text-align: center;
+    margin-bottom: 10px;
+    height: 60px;
+}
+
 .gadget-small {
     height: 360px;
     width: 100%;
     padding: 0;
-
 }
 
 .row-fluid .span4 {
@@ -17,7 +30,7 @@ iframe {
     padding: 0;
     margin: 0 !important;
     float: left;
-/*    background: #ddd;*/
+    padding: 0 15px 15px;
 }
 
 .full-width {
@@ -27,9 +40,7 @@ iframe {
 .single-column-gadget {
     width: 100%;
 /*    min-height: 420px;*/
-    border: none;
-    margin: 0px;
-    display: block;    
+    display: block;
 }
 
 .hero-unit .jqplot-table-legend {
@@ -78,11 +89,6 @@ div.jqplot-table-legend-swatch-outline {
 
 .span3 select {
     max-width: 180px;
-}
-
-input.text-box, input.date-box {
-  padding: 2px;
-  margin: 0px;
 }
 
 /* Loader */
@@ -137,12 +143,12 @@ div#loader .loader-text {
 .topFilteringPanel {
     text-align: left;
     overflow: hidden;
-    padding: 10px 19px !important;
+    padding: 12px !important;
     min-width: 1300px;
 }
 
 .topFilteringPanel .filter-item {
-    padding: 4px 0px;
+    padding: 8px 0px;
 }
 
 .topFilteringPanel .filter-item button {
@@ -151,11 +157,15 @@ div#loader .loader-text {
 
 .topFilteringPanel label {
     padding-right: 10px;
+    color: #8b8b8b;
+    font-size: 12px;
+    text-transform: none;
+    font-weight: 400;
 }
 
 .topFilteringPanel button,
 .topFilteringPanel input {
-    font-size: 13px !important;
+    font-size: 12px !important;
 }
 
 .topFilteringPanel button.btn-small {
@@ -182,7 +192,6 @@ div#loader .loader-text {
 #ui-preferences .btn {
     font-style: italic;
     margin-left: 0px;
-    border-radius: 4px;
     border-color: #ccc;
     background-color: #AFAFAF;
     background-image: -ms-linear-gradient(top, #fff, #AFAFAF);
@@ -214,15 +223,16 @@ div#loader .loader-text {
 /* styles of center column  */
 .table-container {
     margin-bottom: 10px;
+    background-color: white;
 }
 
 .chart-container {
-    margin-top: 30px;
-    margin-bottom: 5px;
     min-width: 1300px;
+    background-color: white;
 }
 
 .chart-label {
+	padding-top: 15px;
     text-decoration: underline;
     font-weight: bold;
     width: 100%;

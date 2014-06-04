@@ -11,13 +11,13 @@
 
 .bottom-page-navigator a.page-link {
     margin: 0px 4px;
-	color: #08c;
-	border: 1px solid #ddd;
+	color: #248bc4;
+	border: 1px solid #bebebe;
 	padding: 0px 6px;
 }
 
 .bottom-page-navigator a.page-link:hover {
-    border: 1px solid #08c;
+    border: 1px solid #248bc4;
     text-decoration: none;
 }
 
@@ -32,7 +32,7 @@
 .bottom-page-navigator a.current {
 	font-weight: bold;
     font-size: 1.2em;
-	border: 1px solid #08c;
+	border: 1px solid #248bc4;
 	background: #CFE4FE;
 }
 

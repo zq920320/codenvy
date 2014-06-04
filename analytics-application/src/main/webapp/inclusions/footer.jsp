@@ -13,7 +13,11 @@
  Dissemination of this information or reproduction of this material
  is strictly forbidden unless prior written permission is obtained
  from Codenvy S.A.. 
---%>  
+--%>
+
+<!-- footer>
+    <img src="/analytics/images/footerlogo.png" alt="Codenvy | Footer logo">
+</footer -->
 
 <!-- Prototypes -->
 <script type="text/javascript" src="/analytics/scripts/Presenter.js"></script>

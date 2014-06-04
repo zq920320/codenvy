@@ -7,12 +7,13 @@
 }
 
 .view div.header {
-	background-color: #0076B1;
-	font-weight: bold;
-	padding: 3px 11px;
+	background-color: #54aee0;
+	border-color: #54aee0;
+	font-weight: 700;
+    padding: 6px 15px;
 	color: white;
-	border-top-left-radius: 4px;
-	border-top-right-radius: 4px;
+	font-size: 13px;
+	text-transform: uppercase;
 }
 
 .view div.header a {
@@ -21,21 +22,14 @@
 }
 
 .view .overview .body .item {
-	background-color: #fcfcfc;
-	border: 1px solid #ddd;
+	background-color: white;
 }
 
-.view .overview .body table {
-   display: inline;
-}
+.view .overview .body table {}
 
-.view .tables .item {
-   margin-bottom: 20px;
-}
+.view .tables .item {}
 
-.view .tables .body {
-/*   border: 1px;*/
-}
+.view .tables .body {}
 
 .view .tables .body table {
    width: 100%;
