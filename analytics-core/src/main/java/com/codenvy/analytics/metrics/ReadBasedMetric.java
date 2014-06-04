@@ -84,6 +84,27 @@ public abstract class ReadBasedMetric extends AbstractMetric {
         }
     }
 
+    public ValueData getSummaryValue(Context context) throws IOException {
+        if (!(this instanceof Summaraziable)) {
+            throw new IllegalStateException(getName() + " is expected to be summaraziable");
+        }
+
+        long start = System.currentTimeMillis();
+        try {
+            context = omitFilters(context);
+            validateRestrictions(context);
+
+            return dataLoader.loadSummarizedValue(this, context);
+        } finally {
+            if (LOG.isDebugEnabled()) {
+                long duration = (System.currentTimeMillis() - start) / 1000;
+                if (duration > 1) {
+                    LOG.debug("Expended metric computation " + getName() + " is finished with context " + context + " in " + duration + " sec.");
+                }
+            }
+        }
+    }
+
     /**
      * Returns an expanded list of documents used to calculate numeric value returned by getValue() method.
      *

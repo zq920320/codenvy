@@ -20,6 +20,7 @@ package com.codenvy.analytics.metrics.projects;
 import com.codenvy.analytics.metrics.AbstractListValueResulted;
 import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.ReadBasedSummariziable;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
@@ -31,7 +32,7 @@ import java.util.Map;
  * @author Alexander Reshetnyak
  */
 @RolesAllowed(value = {"system/admin", "system/manager"})
-public class ProjectsStatisticsList extends AbstractListValueResulted {
+public class ProjectsStatisticsList extends AbstractListValueResulted implements ReadBasedSummariziable {
 
 
     public ProjectsStatisticsList() {
@@ -115,6 +116,16 @@ public class ProjectsStatisticsList extends AbstractListValueResulted {
 
         return new DBObject[]{new BasicDBObject("$group", group),
                               new BasicDBObject("$project", project)};
+    }
+
+    @Override
+    public DBObject[] getSpecificSummarizedDBOperations(Context clauses) {
+        DBObject[] dbOperations = getSpecificDBOperations(clauses);
+        ((DBObject)(dbOperations[0].get("$group"))).put(ID, null);
+        ((DBObject)(dbOperations[1].get("$project"))).removeField(WS);
+        ((DBObject)(dbOperations[1].get("$project"))).removeField(PROJECT);
+
+        return dbOperations;
     }
 }
 

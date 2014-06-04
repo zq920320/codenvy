@@ -20,6 +20,7 @@ package com.codenvy.analytics.metrics.workspaces;
 import com.codenvy.analytics.metrics.AbstractListValueResulted;
 import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.ReadBasedSummariziable;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
@@ -27,7 +28,7 @@ import javax.annotation.security.RolesAllowed;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
-public class WorkspacesStatisticsList extends AbstractListValueResulted {
+public class WorkspacesStatisticsList extends AbstractListValueResulted implements ReadBasedSummariziable {
 
     public static final String JOINED_USERS = "joined_users";
 
@@ -99,6 +100,15 @@ public class WorkspacesStatisticsList extends AbstractListValueResulted {
 
         return new DBObject[]{new BasicDBObject("$group", group),
                               new BasicDBObject("$project", project)};
+    }
+
+    @Override
+    public DBObject[] getSpecificSummarizedDBOperations(Context clauses) {
+        DBObject[] dbOperations = getSpecificDBOperations(clauses);
+        ((DBObject)(dbOperations[0].get("$group"))).put(ID, null);
+        ((DBObject)(dbOperations[1].get("$project"))).removeField(WS);
+
+        return dbOperations;
     }
 }
 

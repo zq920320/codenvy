@@ -37,7 +37,7 @@ import java.util.Map;
  */
 @RolesAllowed({"system/admin", "system/manager"})
 @OmitFilters({MetricFilter.WS, MetricFilter.PERSISTENT_WS})
-public class FactoryStatisticsList extends AbstractListValueResulted {
+public class FactoryStatisticsList extends AbstractListValueResulted implements ReadBasedSummariziable {
 
     public FactoryStatisticsList() {
         super(MetricType.FACTORY_STATISTICS_LIST);
@@ -83,11 +83,11 @@ public class FactoryStatisticsList extends AbstractListValueResulted {
         group.put(DEPLOYS, new BasicDBObject("$sum", "$" + DEPLOYS));
         group.put(BUILDS, new BasicDBObject("$sum", "$" + BUILDS));
         group.put(DEBUGS, new BasicDBObject("$sum", "$" + DEBUGS));
-        group.put(SESSIONS, new BasicDBObject("$sum", "$" + SESSION));
+        group.put(SESSIONS, new BasicDBObject("$sum", 1));
         group.put(AUTHENTICATED_SESSION, new BasicDBObject("$sum", "$" + AUTHENTICATED_SESSION));
         group.put(CONVERTED_SESSION, new BasicDBObject("$sum", "$" + CONVERTED_SESSION));
         group.put(WS_CREATED, new BasicDBObject("$sum", "$" + WS_CREATED));
-        group.put(ENCODED_FACTORY, new BasicDBObject("$avg", "$" + ENCODED_FACTORY));
+        group.put(ENCODED_FACTORY, new BasicDBObject("$sum", "$" + ENCODED_FACTORY));
 
         DBObject project = new BasicDBObject();
         project.put(FACTORY, "$_id");
@@ -106,6 +106,15 @@ public class FactoryStatisticsList extends AbstractListValueResulted {
                               new BasicDBObject("$match", matchNull),
                               new BasicDBObject("$group", group),
                               new BasicDBObject("$project", project)};
+    }
+
+    @Override
+    public DBObject[] getSpecificSummarizedDBOperations(Context clauses) {
+        DBObject[] dbOperations = getSpecificDBOperations(clauses);
+        ((DBObject)(dbOperations[2].get("$group"))).put(ID, null);
+        ((DBObject)(dbOperations[3].get("$project"))).removeField(FACTORY);
+
+        return dbOperations;
     }
 
     @Override

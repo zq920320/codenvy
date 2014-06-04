@@ -24,6 +24,7 @@ import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
+import com.mongodb.util.MyAsserts;
 
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -114,20 +115,38 @@ public class TestProjectsStatistics extends BaseTest {
         Map<String, ValueData> m = ((MapValueData)items.get(0)).getAll();
         assertEquals(m.get("project").getAsString(), "project1");
         assertEquals(m.get("ws").getAsString(), "ws1");
-        assertEquals(m.get("code_refactories").getAsString(),"0");
-        assertEquals(m.get("code_completes").getAsString(),"0");
-        assertEquals(m.get("builds").getAsString(),"0");
-        assertEquals(m.get("runs").getAsString(),"1");
-        assertEquals(m.get("debugs").getAsString(),"1");
-        assertEquals(m.get("deploys").getAsString(),"2");
-        assertEquals(m.get("build_interrupts").getAsString(),"0");
-        assertEquals(m.get("artifact_deploys").getAsString(),"0");
-        assertEquals(m.get("project_creates").getAsString(),"1");
-        assertEquals(m.get("project_destroys").getAsString(),"1");
-        assertEquals(m.get("paas_deploys").getAsString(),"1");
-        assertEquals(m.get("run_time").getAsString(),"60000");
-        assertEquals(m.get("build_time").getAsString(),"60000");
-        assertEquals(m.get("debug_time").getAsString(),"60000");
+        assertEquals(m.get("code_refactories").getAsString(), "0");
+        assertEquals(m.get("code_completes").getAsString(), "0");
+        assertEquals(m.get("builds").getAsString(), "0");
+        assertEquals(m.get("runs").getAsString(), "1");
+        assertEquals(m.get("debugs").getAsString(), "1");
+        assertEquals(m.get("deploys").getAsString(), "2");
+        assertEquals(m.get("build_interrupts").getAsString(), "0");
+        assertEquals(m.get("artifact_deploys").getAsString(), "0");
+        assertEquals(m.get("project_creates").getAsString(), "1");
+        assertEquals(m.get("project_destroys").getAsString(), "1");
+        assertEquals(m.get("paas_deploys").getAsString(), "1");
+        assertEquals(m.get("run_time").getAsString(), "60000");
+        assertEquals(m.get("build_time").getAsString(), "60000");
+        assertEquals(m.get("debug_time").getAsString(), "60000");
+
+        ListValueData summaryValue = (ListValueData)((Summaraziable)metric).getSummaryValue(Context.EMPTY);
+        MyAsserts.assertEquals(summaryValue.size(), 1);
+        m = ((MapValueData)summaryValue.getAll().get(0)).getAll();
+        assertEquals(m.get("code_refactories").getAsString(), "0");
+        assertEquals(m.get("code_completes").getAsString(), "0");
+        assertEquals(m.get("builds").getAsString(), "0");
+        assertEquals(m.get("runs").getAsString(), "1");
+        assertEquals(m.get("debugs").getAsString(), "1");
+        assertEquals(m.get("deploys").getAsString(), "2");
+        assertEquals(m.get("build_interrupts").getAsString(), "0");
+        assertEquals(m.get("artifact_deploys").getAsString(), "0");
+        assertEquals(m.get("project_creates").getAsString(), "1");
+        assertEquals(m.get("project_destroys").getAsString(), "1");
+        assertEquals(m.get("paas_deploys").getAsString(), "1");
+        assertEquals(m.get("run_time").getAsString(), "60000");
+        assertEquals(m.get("build_time").getAsString(), "60000");
+        assertEquals(m.get("debug_time").getAsString(), "60000");
     }
 
 }

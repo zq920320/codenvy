@@ -18,8 +18,12 @@
 package com.codenvy.analytics.pig.scripts;
 
 import com.codenvy.analytics.BaseTest;
+import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.LongValueData;
+import com.codenvy.analytics.datamodel.MapValueData;
+import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.*;
+import com.codenvy.analytics.metrics.users.UsersStatisticsList;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
@@ -29,6 +33,7 @@ import org.testng.annotations.Test;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static org.testng.Assert.assertEquals;
 
@@ -176,5 +181,37 @@ public class TestProductUsageFactorySessions extends BaseTest {
 
         Metric metric = MetricFactory.getMetric(MetricType.TEMPORARY_WORKSPACES_CREATED);
         assertEquals(metric.getValue(builder.build()), LongValueData.valueOf(2));
+    }
+
+    @Test
+    public void testSummarizedFactorySessions() throws Exception {
+        Summaraziable metric = (Summaraziable)MetricFactory.getMetric(MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST);
+        ListValueData summaryValue = (ListValueData)metric.getSummaryValue(Context.EMPTY);
+
+        assertEquals(summaryValue.size(), 1);
+        Map<String, ValueData> summary = ((MapValueData)summaryValue.getAll().get(0)).getAll();
+        assertEquals(summary.get(UsersStatisticsList.SESSIONS).getAsString(), "3");
+        assertEquals(summary.get(UsersStatisticsList.TIME).getAsString(), "1800000");
+        assertEquals(summary.get(UsersStatisticsList.AUTHENTICATED_SESSION).getAsString(), "2");
+        assertEquals(summary.get(UsersStatisticsList.CONVERTED_SESSION).getAsString(), "1");
+    }
+
+    @Test
+    public void testSummarizedFactoryStatistics() throws Exception {
+        Summaraziable metric = (Summaraziable)MetricFactory.getMetric(MetricType.FACTORY_STATISTICS_LIST);
+        ListValueData summaryValue = (ListValueData)metric.getSummaryValue(Context.EMPTY);
+
+        assertEquals(summaryValue.size(), 1);
+        Map<String, ValueData> summary = ((MapValueData)summaryValue.getAll().get(0)).getAll();
+        assertEquals(summary.get(UsersStatisticsList.SESSIONS).getAsString(), "3");
+        assertEquals(summary.get(UsersStatisticsList.TIME).getAsString(), "1800000");
+        assertEquals(summary.get(UsersStatisticsList.AUTHENTICATED_SESSION).getAsString(), "2");
+        assertEquals(summary.get(UsersStatisticsList.CONVERTED_SESSION).getAsString(), "1");
+        assertEquals(summary.get(UsersStatisticsList.RUNS).getAsString(), "1");
+        assertEquals(summary.get(UsersStatisticsList.BUILDS).getAsString(), "0");
+        assertEquals(summary.get(UsersStatisticsList.DEBUGS).getAsString(), "0");
+        assertEquals(summary.get(UsersStatisticsList.DEPLOYS).getAsString(), "0");
+        assertEquals(summary.get(UsersStatisticsList.WS_CREATED).getAsString(), "2");
+        assertEquals(summary.get(UsersStatisticsList.ENCODED_FACTORY).getAsString(), "0");
     }
 }

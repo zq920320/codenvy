@@ -120,6 +120,13 @@ public class TestUsersSessions extends BaseTest {
         assertEquals(items.getAll().get("user_company"), StringValueData.valueOf(""));
         assertEquals(items.getAll().get("logout_interval"), LongValueData.valueOf(0));
 
+        ListValueData summary = (ListValueData)((Summaraziable)metric).getSummaryValue(builder.build());
+        assertEquals(summary.size(), 1);
+        items = (MapValueData)summary.getAll().get(0);
+
+        assertEquals(items.getAll().get("sessions"), LongValueData.valueOf(2));
+        assertEquals(items.getAll().get("time"), LongValueData.valueOf(6 * 60 * 1000));
+
         metric = MetricFactory.getMetric(MetricType.PRODUCT_USAGE_SESSIONS);
         assertEquals(metric.getValue(builder.build()), LongValueData.valueOf(2));
     }
@@ -148,6 +155,13 @@ public class TestUsersSessions extends BaseTest {
         assertEquals(items.getAll().get("user_company"), StringValueData.valueOf("company"));
         assertEquals(items.getAll().get("logout_interval"), LongValueData.valueOf(60 * 1000));
 
+        ListValueData summary = (ListValueData)((Summaraziable)metric).getSummaryValue(builder.build());
+        assertEquals(summary.size(), 1);
+        items = (MapValueData)summary.getAll().get(0);
+
+        assertEquals(items.getAll().get("sessions"), LongValueData.valueOf(1));
+        assertEquals(items.getAll().get("time"), LongValueData.valueOf(360000));
+
         metric = MetricFactory.getMetric(MetricType.PRODUCT_USAGE_SESSIONS);
         assertEquals(metric.getValue(builder.build()), LongValueData.valueOf(1));
     }
@@ -163,6 +177,9 @@ public class TestUsersSessions extends BaseTest {
 
         ListValueData valueData = (ListValueData)metric.getValue(builder.build());
         assertEquals(0, valueData.size());
+
+        ListValueData summary = (ListValueData)((Summaraziable)metric).getSummaryValue(builder.build());
+        assertEquals(summary.size(), 0);
 
         metric = MetricFactory.getMetric(MetricType.PRODUCT_USAGE_SESSIONS);
         assertEquals(metric.getValue(builder.build()).getAsString(), "0");

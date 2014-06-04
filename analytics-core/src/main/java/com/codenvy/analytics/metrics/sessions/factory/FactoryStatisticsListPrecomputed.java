@@ -18,6 +18,7 @@
 package com.codenvy.analytics.metrics.sessions.factory;
 
 import com.codenvy.analytics.metrics.*;
+import com.mongodb.DBObject;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -26,7 +27,7 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({})
 @OmitFilters({MetricFilter.WS, MetricFilter.PERSISTENT_WS})
-public class FactoryStatisticsListPrecomputed extends AbstractListValueResulted implements PrecomputedDataMetric {
+public class FactoryStatisticsListPrecomputed extends AbstractListValueResulted implements PrecomputedDataMetric, ReadBasedSummariziable {
 
     public FactoryStatisticsListPrecomputed() {
         super(MetricType.FACTORY_STATISTICS_LIST_PRECOMPUTED);
@@ -55,6 +56,12 @@ public class FactoryStatisticsListPrecomputed extends AbstractListValueResulted 
                             WS_CREATED,
                             ORG_ID,
                             PROJECT_TYPE};
+    }
+
+    @Override
+    public DBObject[] getSpecificSummarizedDBOperations(Context clauses) {
+        ReadBasedSummariziable summariziable = (ReadBasedSummariziable)MetricFactory.getMetric(getBasedMetric());
+        return summariziable.getSpecificSummarizedDBOperations(clauses);
     }
 
     @Override

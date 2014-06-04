@@ -465,6 +465,8 @@ function Configuration() {
             isPaginable: true,    // default value is "false"
             modelMetricName: "users_statistics",
 
+            modelSummarizedMetricName: "users_statistics_list",
+
             columnLinkPrefixList: {
                 "User": "/analytics/pages/user-view.jsp?user",
             },
@@ -660,6 +662,8 @@ function Configuration() {
             modelViewName: "session_overview",
             modelMetricName: "product_usage_sessions",
 
+            modelSummarizedMetricName: "product_usage_sessions_list",
+
             columnLinkPrefixList: {
                 "ID": "/analytics/pages/session-view.jsp?session_id",
                 "User": "/analytics/pages/user-view.jsp?user",
@@ -731,6 +735,8 @@ function Configuration() {
             columnLinkPrefixList: {
                 "Workspace": "/analytics/pages/workspace-view.jsp?ws"
             },
+
+            modelSummarizedMetricName: "workspaces_statistics_list",
 
             /** @see DatabaseTable::makeTableSortable() method docs */
             clientSortParams: {
@@ -896,6 +902,8 @@ function Configuration() {
                 "User": "/analytics/pages/user-view.jsp?user",
             },
 
+            modelSummarizedMetricName: "projects_statistics_list",
+
             columnCombinedLinkConfiguration: {
                 "Project": {
                     baseLink: "/analytics/pages/project-view.jsp",
@@ -1057,6 +1065,8 @@ function Configuration() {
             columnLinkPrefixList: {
                 "Factory URL": "/analytics/pages/factory-view.jsp?factory"
             },
+
+            modelSummarizedMetricName: "factory_statistics_list",
 
             mapColumnToServerSortParam: {
                 "Factory URL": "factory",

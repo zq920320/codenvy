@@ -18,6 +18,7 @@
 package com.codenvy.analytics.metrics.users;
 
 import com.codenvy.analytics.metrics.*;
+import com.mongodb.DBObject;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -28,7 +29,7 @@ import static com.codenvy.analytics.Utils.isAnonymousUser;
  * @author Alexander Reshetnyak
  */
 @RolesAllowed({})
-public class UsersStatisticsListPrecomputed extends AbstractListValueResulted implements PrecomputedDataMetric {
+public class UsersStatisticsListPrecomputed extends AbstractListValueResulted implements PrecomputedDataMetric, ReadBasedSummariziable {
 
     public UsersStatisticsListPrecomputed() {
         super(MetricType.USERS_STATISTICS_LIST_PRECOMPUTED);
@@ -66,6 +67,12 @@ public class UsersStatisticsListPrecomputed extends AbstractListValueResulted im
                             USER_COMPANY,
                             USER_JOB
         };
+    }
+
+    @Override
+    public DBObject[] getSpecificSummarizedDBOperations(Context clauses) {
+        ReadBasedSummariziable summariziable = (ReadBasedSummariziable)MetricFactory.getMetric(getBasedMetric());
+        return summariziable.getSpecificSummarizedDBOperations(clauses);
     }
 
     @Override

@@ -28,7 +28,7 @@ import java.util.*;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
-public class UsersStatisticsList extends AbstractListValueResulted {
+public class UsersStatisticsList extends AbstractListValueResulted implements ReadBasedSummariziable {
 
     public UsersStatisticsList() {
         super(MetricType.USERS_STATISTICS_LIST);
@@ -98,6 +98,15 @@ public class UsersStatisticsList extends AbstractListValueResulted {
 
         return new DBObject[]{new BasicDBObject("$group", group),
                               new BasicDBObject("$project", project)};
+    }
+
+    @Override
+    public DBObject[] getSpecificSummarizedDBOperations(Context clauses) {
+        DBObject[] dbOperations = getSpecificDBOperations(clauses);
+        ((DBObject)(dbOperations[0].get("$group"))).put(ID, null);
+        ((DBObject)(dbOperations[1].get("$project"))).removeField(USER);
+
+        return dbOperations;
     }
 
     /** To add user profile data. */

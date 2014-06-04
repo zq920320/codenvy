@@ -20,6 +20,9 @@ package com.codenvy.analytics.metrics.sessions;
 import com.codenvy.analytics.datamodel.*;
 import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.ReadBasedSummariziable;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
 
 import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
@@ -30,7 +33,7 @@ import java.util.Map;
 
 /** @author Anatoliy Bazko */
 @RolesAllowed({"system/admin", "system/manager"})
-public class ProductUsageSessionsList extends AbstractProductUsageSessionsList {
+public class ProductUsageSessionsList extends AbstractProductUsageSessionsList implements ReadBasedSummariziable {
 
     public ProductUsageSessionsList() {
         super(MetricType.PRODUCT_USAGE_SESSIONS_LIST);
@@ -43,6 +46,7 @@ public class ProductUsageSessionsList extends AbstractProductUsageSessionsList {
                             USER_COMPANY,
                             DOMAIN,
                             TIME,
+                            SESSIONS,
                             SESSION_ID,
                             DATE,
                             END_TIME,
@@ -70,6 +74,22 @@ public class ProductUsageSessionsList extends AbstractProductUsageSessionsList {
 
         return new ListValueData(list2Return);
     }
+
+    @Override
+    public DBObject[] getSpecificSummarizedDBOperations(Context clauses) {
+        DBObject group = new BasicDBObject();
+        group.put(ID, null);
+        group.put(TIME, new BasicDBObject("$sum", "$" + TIME));
+        group.put(SESSIONS, new BasicDBObject("$sum", 1));
+
+        DBObject project = new BasicDBObject();
+        project.put(TIME, 1);
+        project.put(SESSIONS, 1);
+
+        return new DBObject[]{new BasicDBObject("$group", group),
+                              new BasicDBObject("$project", project)};
+    }
+
 
     @Override
     public String getDescription() {

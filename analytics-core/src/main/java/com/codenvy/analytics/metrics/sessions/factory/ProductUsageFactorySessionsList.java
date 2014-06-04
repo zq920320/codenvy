@@ -19,6 +19,8 @@ package com.codenvy.analytics.metrics.sessions.factory;
 
 import com.codenvy.analytics.datamodel.*;
 import com.codenvy.analytics.metrics.*;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
 
 import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
@@ -30,7 +32,8 @@ import java.util.Map;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
 @OmitFilters({MetricFilter.WS, MetricFilter.PERSISTENT_WS})
-public class ProductUsageFactorySessionsList extends AbstractListValueResulted {
+public class ProductUsageFactorySessionsList extends AbstractListValueResulted implements ReadBasedSummariziable {
+
     public ProductUsageFactorySessionsList() {
         super(MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST);
     }
@@ -42,6 +45,7 @@ public class ProductUsageFactorySessionsList extends AbstractListValueResulted {
                             WS,
                             DATE,
                             TIME,
+                            SESSIONS,
                             REFERRER,
                             FACTORY,
                             AUTHENTICATED_SESSION,
@@ -72,6 +76,26 @@ public class ProductUsageFactorySessionsList extends AbstractListValueResulted {
         }
 
         return new ListValueData(list2Return);
+    }
+
+
+    @Override
+    public DBObject[] getSpecificSummarizedDBOperations(Context clauses) {
+        DBObject group = new BasicDBObject();
+        group.put(ID, null);
+        group.put(TIME, new BasicDBObject("$sum", "$" + TIME));
+        group.put(SESSIONS, new BasicDBObject("$sum", 1));
+        group.put(AUTHENTICATED_SESSION, new BasicDBObject("$sum", "$" + AUTHENTICATED_SESSION));
+        group.put(CONVERTED_SESSION, new BasicDBObject("$sum", "$" + CONVERTED_SESSION));
+
+        DBObject project = new BasicDBObject();
+        project.put(TIME, 1);
+        project.put(SESSIONS, 1);
+        project.put(AUTHENTICATED_SESSION, 1);
+        project.put(CONVERTED_SESSION, 1);
+
+        return new DBObject[]{new BasicDBObject("$group", group),
+                              new BasicDBObject("$project", project)};
     }
 
     @Override

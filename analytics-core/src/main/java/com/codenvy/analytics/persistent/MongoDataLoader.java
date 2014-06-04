@@ -103,6 +103,24 @@ public class MongoDataLoader implements DataLoader {
         });
     }
 
+    @Override
+    public ValueData loadSummarizedValue(ReadBasedMetric metric, Context clauses) throws IOException {
+        return doLoadValue(metric, clauses, new LoadValueAction() {
+            @Override
+            public ValueData createdValueData(ReadBasedMetric metric, Iterator<DBObject> iterator) {
+                return MongoDataLoader.this.createdValueData(metric, iterator);
+            }
+
+            @Override
+            public Iterator<DBObject> iterator(ReadBasedMetric metric, Context clauses, DBCollection dbCollection, DBObject filter) {
+                DBObject[] dbOperations = ((ReadBasedSummariziable)metric).getSpecificSummarizedDBOperations(clauses);
+                AggregationOutput aggregation = dbCollection.aggregate(filter, dbOperations);
+                return aggregation.results().iterator();
+            }
+
+        });
+    }
+
     protected ValueData doLoadValue(ReadBasedMetric metric, Context clauses, LoadValueAction action) throws IOException {
         DBCollection dbCollection = db.getCollection(metric.getStorageCollectionName());
 
@@ -206,7 +224,7 @@ public class MongoDataLoader implements DataLoader {
                 String[] filteringValues = getExpandedMetricValues(clauses, expandable);
                 String filteringField = ((Expandable)expandable).getExpandedField();
                 match.put(filteringField, new BasicDBObject("$in", filteringValues));
-                
+
                 // remove already used by expandable metric and so redundant parameters
                 clauses = clauses.cloneAndRemove(MetricFilter.FACTORY);
                 clauses = clauses.cloneAndRemove(MetricFilter.REFERRER);

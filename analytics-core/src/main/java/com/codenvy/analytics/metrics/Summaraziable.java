@@ -3,7 +3,7 @@
  * CODENVY CONFIDENTIAL
  * ________________
  *
- * [2012] - [2013] Codenvy, S.A.
+ * [2012] - [2014] Codenvy, S.A.
  * All Rights Reserved.
  * NOTICE: All information contained herein is, and remains
  * the property of Codenvy S.A. and its suppliers,
@@ -15,21 +15,25 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.persistent;
+package com.codenvy.analytics.metrics;
 
 import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.Context;
-import com.codenvy.analytics.metrics.ReadBasedMetric;
 
 import java.io.IOException;
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public interface DataLoader {
+/**
+ * @author Anatoliy Bazko
+ */
+public interface Summaraziable {
 
-    /** Loads value from the storage. */
-    ValueData loadValue(ReadBasedMetric metric, Context clauses) throws IOException;
-
-    ValueData loadExpandedValue(ReadBasedMetric metric, Context clauses) throws IOException;
-
-    ValueData loadSummarizedValue(ReadBasedMetric metric, Context clauses) throws IOException;
+    /**
+     * Returns the summary value for metric.
+     *
+     * @param context
+     *         the execution context, for the most cases it isn't needed to modify it. It is used as a parameter to get
+     *         value of other metrics
+     * @throws java.io.IOException
+     *         if any errors are occurred
+     */
+    ValueData getSummaryValue(Context context) throws IOException;
 }

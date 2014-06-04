@@ -43,32 +43,26 @@ function Model() {
     }
 
     function getMetricValue(modelMetricName, isAsync) {
-        if (typeof isAsync == "undefined") {
-            isAsync = true;
-        }
-        var url = '/analytics/api/view/metric/' + modelMetricName;
+        return doGetMetricValue(modelMetricName, "", isAsync);
+    }
 
-        var callback = function (data) {
-            data = parseInt(data.value);
-
-            doneFunction(data);
-        };
-
-        var request = get(url, "json", callback, isAsync);
-
-        if (!isAsync) {
-            data = jQuery.parseJSON(request.responseText);
-
-            data = parseInt(data.value);
-            return data;
-        }
+    function getSummarizedMetricValue(modelMetricName, isAsync) {
+        return doGetMetricValue(modelMetricName, "summary", isAsync);
     }
 
     function getExpandedMetricValue(modelMetricName, isAsync) {
+        return doGetMetricValue(modelMetricName, "expand", isAsync);
+    }
+
+    /**
+     * Returns a metric value depending on specific operation: expand, summary.
+     * If the name of the operation is empty it will just return the metric value then.
+     */
+    function doGetMetricValue(modelMetricName, specificOperations, isAsync) {
         if (typeof isAsync == "undefined") {
             isAsync = true;
         }
-        var url = '/analytics/api/view/metric/' + modelMetricName + "/expand";
+        var url = '/analytics/api/view/metric/' + modelMetricName + "/" + specificOperations;
 
         var callback = function (data) {
             data = convertJsonToTables(data);
@@ -80,7 +74,6 @@ function Model() {
 
         if (!isAsync) {
             data = jQuery.parseJSON(request.responseText);
-
             data = parseInt(data.value);
             return data;
         }
@@ -106,7 +99,7 @@ function Model() {
             data = convertJsonToTables(data);
             return data;
         }
-    };
+    }
 
     function getExpandableMetricList(modelViewName, isAsync) {
         if (typeof isAsync == "undefined") {
@@ -124,15 +117,15 @@ function Model() {
             data = jQuery.parseJSON(request.responseText);
             return data;
         }
-    };
+    }
 
     function getWsNameById(wsId, isAsync) {
         return getEntityNameById("ws", wsId, isAsync);
-    };
+    }
 
     function getUserNameById(userId, isAsync) {
         return getEntityNameById("user", userId, isAsync);
-    };
+    }
 
     /* for user's id it returns its aliases and for workspace's id it returns its name */
     function getEntityNameById(entity, id, isAsync) {
@@ -158,7 +151,7 @@ function Model() {
             var data = jQuery.parseJSON(request.responseText);
             return data;
         }
-    };
+    }
 
     function get(url, responseType, doneCollback, isAsync) {
         var url = url || "";
@@ -274,6 +267,7 @@ function Model() {
     return {
         getModelViewData: getModelViewData,
         getMetricValue: getMetricValue,
+        getSummarizedMetricValue: getSummarizedMetricValue,
         getExpandedMetricValue: getExpandedMetricValue,
         getExpandableMetricList: getExpandableMetricList,
         getWsNameById: getWsNameById,

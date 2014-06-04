@@ -18,6 +18,7 @@
 package com.codenvy.analytics.api;
 
 import com.codenvy.analytics.datamodel.ListValueData;
+import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.services.view.CSVFileHolder;
@@ -175,6 +176,41 @@ public class View {
     }
 
     @GET
+    @Path("metric/{name}/summary")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"user", "system/admin", "system/manager"})
+    public Response getSummarizedMetricValue(@PathParam("name") String metricName,
+                                             @Context UriInfo uriInfo,
+                                             @Context SecurityContext securityContext) {
+
+        try {
+            Map<String, String> params = extractParams(uriInfo, securityContext);
+            ListValueData value = getSummarizedMetricValue(metricName, valueOf(params));
+
+            Map<String, String> m;
+            if (value.size() == 0) {
+                m = Collections.emptyMap();
+            } else {
+                Map<String, ValueData> items = ((MapValueData)value.getAll().get(0)).getAll();
+                m = new HashMap<>(items.size());
+
+                for (Entry<String, ValueData> entry : items.entrySet()) {
+                    m.put(entry.getKey(), entry.getValue().getAsString());
+                }
+            }
+
+            return Response.status(Response.Status.OK).entity(new JsonStringMapImpl<>(m).toJson()).build();
+
+        } catch (MetricNotFoundException e) {
+            LOG.error(e.getMessage(), e);
+            return Response.status(Response.Status.NOT_FOUND).build();
+        } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+        }
+    }
+
+    @GET
     @Path("metric/{name}/expand")
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed({"user", "system/admin", "system/manager"})
@@ -295,6 +331,12 @@ public class View {
                                                                                                                       ParseException {
         context = viewBuilder.initializeTimeInterval(context);
         return ((Expandable)MetricFactory.getMetric(metricName)).getExpandedValue(context);
+    }
+
+    private ListValueData getSummarizedMetricValue(String metricName, com.codenvy.analytics.metrics.Context context) throws IOException,
+                                                                                                                            ParseException {
+        context = viewBuilder.initializeTimeInterval(context);
+        return (ListValueData)((Summaraziable)MetricFactory.getMetric(metricName)).getSummaryValue(context);
     }
 
     /**

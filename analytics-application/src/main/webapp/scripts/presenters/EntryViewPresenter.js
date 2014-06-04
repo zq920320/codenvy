@@ -68,6 +68,7 @@ analytics.presenter.EntryViewPresenter.prototype.obtainViewData = function (mode
     modelParams.page = currentPageNumber;
 
     model.pushDoneFunction(function (data) {
+        // TODO print summary table
         var widgetLabel = analytics.configuration.getProperty(presenter.widgetName, "widgetLabel");
         view.printWidgetHeader(widgetLabel);
 

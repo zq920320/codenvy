@@ -18,6 +18,7 @@
 package com.codenvy.analytics.metrics.workspaces;
 
 import com.codenvy.analytics.metrics.*;
+import com.mongodb.DBObject;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -28,7 +29,7 @@ import static com.codenvy.analytics.Utils.isTemporaryExist;
  * @author Alexander Reshetnyak
  */
 @RolesAllowed({})
-public class WorkspacesStatisticsListPrecomputed extends AbstractListValueResulted implements PrecomputedDataMetric {
+public class WorkspacesStatisticsListPrecomputed extends AbstractListValueResulted implements PrecomputedDataMetric, ReadBasedSummariziable {
 
     public WorkspacesStatisticsListPrecomputed() {
         super(MetricType.WORKSPACES_STATISTICS_LIST_PRECOMPUTED);
@@ -60,6 +61,12 @@ public class WorkspacesStatisticsListPrecomputed extends AbstractListValueResult
                             BUILD_TIME,
                             PAAS_DEPLOYS,
                             WorkspacesStatisticsList.JOINED_USERS};
+    }
+
+    @Override
+    public DBObject[] getSpecificSummarizedDBOperations(Context clauses) {
+        ReadBasedSummariziable summariziable = (ReadBasedSummariziable)MetricFactory.getMetric(getBasedMetric());
+        return summariziable.getSpecificSummarizedDBOperations(clauses);
     }
 
     @Override
