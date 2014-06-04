@@ -33,10 +33,16 @@
 	Landing page
 
 */
+.logo {
+  margin:0 auto;
+  width:201px;
+}
 
 .logo {
-    h1{
-        margin: 0; padding: 0; height: 78px;
+    a {
+        display:block;
+        width:201px; 
+        height: 78px;
         @include image_logo;
         span { display: none; }
     }
