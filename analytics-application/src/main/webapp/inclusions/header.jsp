@@ -219,3 +219,20 @@
 <link rel="stylesheet" type="text/css" href="/analytics/third-party/c3/c3.css" />
 <script type="text/javascript" src="/analytics/third-party/c3/d3.v3.min.js" charset="utf-8"></script>
 <script type="text/javascript" src="/analytics/third-party/c3/c3.v0.1.41.min.js"></script>
+<style type="text/css">
+	.c3 text {
+	    font-size: 12px;
+	    fill: #888888;
+	}
+	
+	.c3-axis-x path,
+	.c3-axis-x line,
+	.c3-axis-y path,
+	.c3-axis-y line {
+	    stroke: #888888;
+	}
+	
+	.c3-axis-x {
+	    text-transform: uppercase;
+	}
+</style>

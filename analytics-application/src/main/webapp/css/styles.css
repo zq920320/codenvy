@@ -144,7 +144,7 @@ div#loader .loader-text {
     text-align: left;
     overflow: hidden;
     padding: 12px !important;
-    min-width: 1300px;
+    min-width: 1100px;
 }
 
 .topFilteringPanel .filter-item {
@@ -227,14 +227,18 @@ div#loader .loader-text {
 }
 
 .chart-container {
-    min-width: 1300px;
+    min-width: 1100px;
     background-color: white;
+    padding-bottom: 5px;
 }
 
 .chart-label {
-	padding-top: 15px;
-    text-decoration: underline;
+	padding-top: 20px;
+	padding-bottom: 15px;
     font-weight: bold;
+    color: #363636;
+    font-size: 10px;
     width: 100%;
     text-align: center;
+    text-transform: uppercase;
 }
