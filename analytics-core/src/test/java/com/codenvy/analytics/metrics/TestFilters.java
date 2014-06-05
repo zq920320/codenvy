@@ -43,26 +43,25 @@ public class TestFilters extends BaseTest {
     @BeforeClass
     public void init() throws Exception {
         List<Event> events = new ArrayList<>();
-        events.add(Event.Builder.createTenantCreatedEvent("ws1", "user1").withDate("2013-02-10").build());
-        events.add(Event.Builder.createTenantCreatedEvent("ws2", "anonymoususer_edjkx4").withDate("2013-02-10").build());
-        events.add(Event.Builder.createTenantCreatedEvent("tmp-22rct0cq0rh8vs", "user2").withDate("2013-02-10").build());
-        events.add(Event.Builder.createTenantCreatedEvent("tmp-p42qbfzn6iz9gn", "AnonymousUser_lnmyzh").withDate("2013-02-10").build());
+        events.add(Event.Builder.createProjectCreatedEvent("user1", "ws1", "", "p", "t").withDate("2013-02-10").build());
+        events.add(Event.Builder.createProjectCreatedEvent("anonymoususer_edjkx4", "ws2", "", "p", "t").withDate("2013-02-10").build());
+        events.add(Event.Builder.createProjectCreatedEvent("user2", "tmp-22rct0cq0rh8vs", "", "p", "t").withDate("2013-02-10").build());
+        events.add(
+                Event.Builder.createProjectCreatedEvent("AnonymousUser_lnmyzh", "tmp-p42qbfzn6iz9gn", "", "p", "t").withDate("2013-02-10").build());
 
         File log = LogGenerator.generateLog(events);
 
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20130210");
         builder.put(Parameters.TO_DATE, "20130210");
-        builder.putAll(scriptsManager.getScript(ScriptType.EVENTS, MetricType.CREATED_WORKSPACES).getParamsAsMap());
-        builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.toString());
-        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.toString());
+        builder.putAll(scriptsManager.getScript(ScriptType.PROJECTS, MetricType.PROJECTS).getParamsAsMap());
         builder.put(Parameters.LOG, log.getAbsolutePath());
-        pigServer.execute(ScriptType.EVENTS, builder.build());
+        pigServer.execute(ScriptType.PROJECTS, builder.build());
     }
 
     @Test(dataProvider = "dataProvider")
     public void test(Object wsFilter, Object userFilter, long result) throws Exception {
-        Metric metric = MetricFactory.getMetric(MetricType.CREATED_WORKSPACES);
+        Metric metric = MetricFactory.getMetric(MetricType.CREATED_PROJECTS);
 
         Context.Builder builder = new Context.Builder();
         if (wsFilter != null) {
