@@ -112,7 +112,7 @@ try {
     
     _title = json.get("projectattributes").getAsJsonObject().get("pname").getAsString() + " - Codenvy";
     
-    _description = json.get("description").getAsString();
+    _description = json.get("description").isJsonNull() ? null : json.get("description").getAsString();
     if (_description == null || _description.trim().isEmpty()) {
     	_description = "Code, Build, Test and Deploy instantly using Codenvy.";
     }
