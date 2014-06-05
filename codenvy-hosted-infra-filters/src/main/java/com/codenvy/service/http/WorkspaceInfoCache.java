@@ -152,7 +152,7 @@ public class WorkspaceInfoCache {
 
         @Override
         public Workspace load(Key key) throws Exception {
-            LOG.info("Load {} from dao ", key.key);
+            LOG.debug("Load {} from dao ", key.key);
             try {
                 return key.isUuid ? dao.getById(key.key) : dao.getByName(key.key);
             } catch (Exception e) {
@@ -173,7 +173,7 @@ public class WorkspaceInfoCache {
 
         @Override
         public Workspace load(Key key) throws Exception {
-            LOG.info("Load {} from dao ", key.key);
+            LOG.debug("Load {} from dao ", key.key);
             try {
                 Link getWorkspaceLink = null;
                 if (key.isUuid) {
