@@ -80,9 +80,9 @@ public enum Parameters {
             return PassedDaysCount.BY_LIFETIME.name();
         }
     },
-    
-    
-    
+
+
+
     TIME_INTERVAL,
     DATA_COMPUTATION_PROCESS,
     FROM_DATE {
@@ -217,9 +217,9 @@ public enum Parameters {
         MONTH,
         LIFETIME,
     }
-    
-    public static enum PassedDaysCount {    
-        /** for top metrics and engagement levels reports */ 
+
+    public static enum PassedDaysCount {
+        /** for top metrics and engagement levels reports */
         BY_1_DAY("by_1_day", 1),
         BY_7_DAYS("by_7_days", 7),
         BY_30_DAYS("by_30_days", 30),
@@ -235,7 +235,7 @@ public enum Parameters {
             this.fieldName = name;
             this.dayCount = dayCount;
         }
-        
+
         public int getDayCount() {
             return dayCount;
         }
