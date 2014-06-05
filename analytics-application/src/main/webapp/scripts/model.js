@@ -43,22 +43,37 @@ function Model() {
     }
 
     function getMetricValue(modelMetricName, isAsync) {
-        return doGetMetricValue(modelMetricName, "", isAsync);
+        if (typeof isAsync == "undefined") {
+            isAsync = true;
+        }
+        var url = '/analytics/api/view/metric/' + modelMetricName;
+
+        var callback = function (data) {
+            data = parseInt(data.value);
+            doneFunction(data);
+        };
+
+        var request = get(url, "json", callback, isAsync);
+
+        if (!isAsync) {
+            data = jQuery.parseJSON(request.responseText);
+            data = parseInt(data.value);
+            return data;
+        }
     }
 
     function getSummarizedMetricValue(modelMetricName, isAsync) {
-        return doGetMetricValue(modelMetricName, "summary", isAsync);
+        return doGetSpecificMetricValue(modelMetricName, "summary", isAsync);
     }
 
     function getExpandedMetricValue(modelMetricName, isAsync) {
-        return doGetMetricValue(modelMetricName, "expand", isAsync);
+        return doGetSpecificMetricValue(modelMetricName, "expand", isAsync);
     }
 
     /**
      * Returns a metric value depending on specific operation: expand, summary.
-     * If the name of the operation is empty it will just return the metric value then.
      */
-    function doGetMetricValue(modelMetricName, specificOperations, isAsync) {
+    function doGetSpecificMetricValue(modelMetricName, specificOperations, isAsync) {
         if (typeof isAsync == "undefined") {
             isAsync = true;
         }
@@ -66,7 +81,6 @@ function Model() {
 
         var callback = function (data) {
             data = convertJsonToTables(data);
-
             doneFunction(data);
         };
 
