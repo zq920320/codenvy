@@ -308,6 +308,10 @@ function View() {
      */
     function implementUIPreferences() {
         // verify if there is UI preferences button group at the current page
+        if (! $("#ui-preferences").doesExist()) {
+            return;
+        }
+        
         var uiPreferences = analytics.util.getGlobalParamFromStorage('ui_preferences');
         
         switch (uiPreferences) {

@@ -117,6 +117,13 @@
         
         // check on numbers with ","  and "%" enclosed in the html tags
         var numberWithinHtmlPattern = /^<[^>]*>(([0-9,.+\-]+)%?)<\/[^>]*>$/;
+       
+        // check on time number with ":" delimeters in format "NN{2,}:NN{2}:NN{2}";
+        var timePattern = /^[0-9]{2,}:[0-9]{2}:[0-9]{2}$/;
+
+        // check on time in the html tags
+        var timeWithinHtmlPattern = /^<[^>]*>([0-9]{2,}:[0-9]{2}:[0-9]{2})<\/[^>]*>$/;
+        
         
         /** Detect number.
            @see original method of DataTable library v.1.9.4 here: 
@@ -130,8 +137,16 @@
             // check on valid number enclosed in HTML tags
             } else if (numberWithinHtmlPattern.test(sData)) {
                 return "numeric";   // return pre-defined data type of numbers
-            }
+            
+            // check on valid time
+            } else if (timePattern.test(sData)) {
+                return "numeric";   // return pre-defined data type of numbers
 
+            // check on time enclosed in HTML tags
+            } else if (timeWithinHtmlPattern.test(sData)) {
+                return "numeric";   // return pre-defined data type of numbers
+            }
+            
             return null;
         });        
         
@@ -149,10 +164,19 @@
                 matches = a.match(numberWithinHtmlPattern);
                 if (matches != null && matches.length > 0) {
                     x = matches[matches.length - 1];
+                    
+                } else {
+                    matches = a.match(timeWithinHtmlPattern);
+                    if (matches != null && matches.length > 0) {
+                        x = matches[matches.length - 1];
+                    }
                 }
             }
             
             x = x.replace(",", "");          // remove "," in numbers like "2,123"
+
+            x = x.replace(/:/g,"")      // remove ":"
+                 .replace(/^0+/g,"");   // remove starting 0s in time string like "000343:45:56"
             
             return (x=="-" || x==="") ? 0 : x*1;   // original code 
         };

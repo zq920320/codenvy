@@ -8,6 +8,11 @@
    min-width: 55px;
    border-top: 1px solid #dcdcdc;
    text-align: center;
+   border-left: 1px solid #e5e5e5;
+}
+
+.database-table td:first-child {
+   border-left: 0;
 }
 
 .database-table th {
@@ -133,7 +138,7 @@
 
 .database-table-vertical-row .cell {
    min-width: 180px;
-   border-top: 1px solid #dcdcdc;  
+   border-top: 1px solid #dcdcdc;
 }
 
 .database-table-vertical-row .cell a {

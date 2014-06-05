@@ -261,7 +261,7 @@ function Configuration() {
             },
 
             columnLinkPrefixList: {
-                "Email": "/analytics/pages/user-view.jsp?user",
+                "User": "/analytics/pages/user-view.jsp?user",
             },
 
             // see clientSortParams in the TopMetricsPresenter::clientSortParams property
@@ -279,7 +279,7 @@ function Configuration() {
                 },
 
                 mapColumnToParameter: {
-                    "Email": "user",
+                    "User": "user",
                 },
             },
         },
