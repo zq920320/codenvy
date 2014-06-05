@@ -20,12 +20,15 @@
 package com.codenvy.analytics.metrics.workspaces;
 
 import com.codenvy.analytics.metrics.AbstractLongValueResulted;
+import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.OmitFilters;
 
 import javax.annotation.security.RolesAllowed;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
+@OmitFilters({MetricFilter.USER, MetricFilter.REGISTERED_USER})
 public class CreatedWorkspaces extends AbstractLongValueResulted {
 
     public CreatedWorkspaces() {
