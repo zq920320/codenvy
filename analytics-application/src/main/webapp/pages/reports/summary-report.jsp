@@ -31,32 +31,6 @@
     <div class="row-fluid">
         <div>
             <div class="well topFilteringPanel">
-                <div id="filter-by" class="left" targetWidgets="_all">
-                    <div class="collabsiblePanelTitle">Filter</div>
-                    <div class="collabsiblePanelBody">
-                        <table>
-                            <tr>
-                               <td><label for="input-user">Email:</label></td>
-                               <td><div class="filter-item">
-                                   <input type="text" id="input-user" name="user" class="text-box" />
-                               </div></td>
-                            </tr>
-                            <tr>
-                               <td><label for="input-user_company">Company:</label></td>
-                               <td><div class="filter-item">
-                                   <input type="text" id="input-user_company" name="user_company" class="text-box" />
-                               </div></td>
-                            </tr>
-                            <tr>
-                               <td></td>
-                               <td><div class="filter-item">
-                                    <button class="btn command-btn btn-primary">Filter</button>                    
-                                    <button id="clearSelectionBtn" class="btn btn-small clear-btn">Clear</button>
-                               </div></td>
-                            </tr>
-                        </table>
-                    </div>
-                </div>
                 <div id="timely-dd" class="btn-group right" targetWidgets="_all">
                     <button class="btn command-btn" value="Day">Day</button>
                     <button class="btn command-btn" value="Week">Week</button>

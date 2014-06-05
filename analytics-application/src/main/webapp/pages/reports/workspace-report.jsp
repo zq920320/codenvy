@@ -36,15 +36,9 @@
                     <div class="collabsiblePanelBody">
                         <table>
                             <tr>
-                               <td><label for="input-user">Email:</label></td>
+                               <td><label for="input-ws">Workspace:</label></td>
                                <td><div class="filter-item">
-                                   <input type="text" id="input-user" name="user" class="text-box" />
-                               </div></td>
-                            </tr>
-                            <tr>
-                               <td><label for="input-user_company">Company:</label></td>
-                               <td><div class="filter-item">
-                                   <input type="text" id="input-user_company" name="user_company" class="text-box" />
+                                   <input type="text" id="input-ws" name="ws" class="text-box" />
                                </div></td>
                             </tr>
                             <tr>
