@@ -30,7 +30,7 @@ a4 = extractParam(a3, 'ALIASES', 'aliases');
 a = FOREACH a4 GENERATE dt,
                         userId,
                         (emails IS NOT NULL ? emails
-                                            : (aliases IS NOT NULL ? aliases : user)) AS emails;
+                                            : (aliases IS NOT NULL ? aliases : userName)) AS emails;
 
 resultA = FOREACH a GENERATE LOWER(userId),
                              TOTUPLE('date', ToMilliSeconds(dt)),
@@ -79,7 +79,7 @@ b2 = extractParam(b1, 'USER-ID', 'userId');
 b3 = extractParam(b2, 'EMAILS', 'emails');
 b = FOREACH b3 GENERATE dt,
                         (userId IS NULL ? ReplaceUserWithId(user) : userId) AS userId,
-                        (emails IS NOT NULL ? emails : user) AS emails;
+                        (emails IS NOT NULL ? emails : userName) AS emails;
 
 c1 = lastUpdate(b, 'userId');
 c = FOREACH c1 GENERATE b::userId AS userId,

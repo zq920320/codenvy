@@ -46,6 +46,7 @@ DEFINE loadResources(resourceParam, from, to, userType, wsType) RETURNS Y {
   l10 = DISTINCT l9;
   $Y = FOREACH l10 GENERATE dt,
                             ReplaceUserWithId(user) AS user,
+                            user AS userName,
                             event,
                             message,
                             ReplaceWsWithId(ws) AS ws,
