@@ -71,7 +71,7 @@ public class LogChecker extends Feature {
     public LogChecker(Configurator configurator, EventsHolder eventsHolder, CollectionsManagement collectionsManagement) {
         this.configurator = configurator;
         this.eventsHolder = eventsHolder;
-        this.collection = collectionsManagement.getOrCreate(MetricType.USERS_ACTIVITY_LIST.toString().toLowerCase());
+        this.collection = collectionsManagement.getOrCreate(MetricType.USERS_ACTIVITY.toString().toLowerCase());
     }
 
     @Override
