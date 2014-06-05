@@ -84,7 +84,6 @@
 .database-table .cell {
    overflow: hidden;
    padding: 8px;
-   word-break: break-all; 
 }
 
 .database-table .cell a {
