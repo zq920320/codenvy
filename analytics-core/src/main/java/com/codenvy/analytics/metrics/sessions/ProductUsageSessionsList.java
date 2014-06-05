@@ -50,7 +50,8 @@ public class ProductUsageSessionsList extends AbstractProductUsageSessionsList i
                             SESSION_ID,
                             DATE,
                             END_TIME,
-                            LOGOUT_INTERVAL};
+                            LOGOUT_INTERVAL,
+                            REFERRER};
     }
 
     @Override

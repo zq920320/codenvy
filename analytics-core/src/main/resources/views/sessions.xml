@@ -20,11 +20,11 @@
     <view name="session_overview" on-demand="true">
         <section name="session_overview">
             <row class="com.codenvy.analytics.services.view.TitleRow">
-                <parameter key="titles" value="ID,User,Workspace,Start Time,End Time,Duration"/>
+                <parameter key="titles" value="ID,User,Workspace,Start Time,End Time,Duration,Referrer"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="product_usage_sessions_list"/>
-                <parameter key="fields" value="session_id,user,ws,date,end_time,time"/>
+                <parameter key="fields" value="session_id,user,ws,date,end_time,time,referrer"/>
                 <parameter key="time-fields" value="time"/>
                 <parameter key="date-fields" value="date,end_time"/>
             </row>

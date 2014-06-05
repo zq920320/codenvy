@@ -537,6 +537,7 @@ function Configuration() {
                 "Start Time": "date",
                 "End Time": "end_time",
                 "Duration": "time",
+                "Referrer": "referrer",
             },
         },
 
@@ -684,6 +685,7 @@ function Configuration() {
                 "Start Time": "date",
                 "End Time": "end_time",
                 "Duration": "time",
+                "Referrer": "referrer",
             },
         },
 
@@ -1146,6 +1148,7 @@ function Configuration() {
                 "Start Time": "date",
                 "End Time": "end_time",
                 "Duration": "time",
+                "Referrer": "referrer",
             },
         },
 
