@@ -37,7 +37,7 @@
         form.parent().replaceWith(data);
       });*/
     
-    var subscriptionid = $("input[name=subscriptionid]")[0];
+    var subscriptionid = $("input[name=subscriptionid]")[0].value;
     var purchaseUrl = "/api/account/subscriptions/"+ subscriptionid + "/purchase";
     var data = {
         cardNumber:$('input[name=cardNumber]')[0].value,
