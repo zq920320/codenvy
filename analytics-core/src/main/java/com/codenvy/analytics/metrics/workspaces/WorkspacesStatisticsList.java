@@ -17,14 +17,14 @@
  */
 package com.codenvy.analytics.metrics.workspaces;
 
-import com.codenvy.analytics.metrics.AbstractListValueResulted;
-import com.codenvy.analytics.metrics.Context;
-import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.analytics.metrics.ReadBasedSummariziable;
+import com.codenvy.analytics.datamodel.*;
+import com.codenvy.analytics.metrics.*;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
 import javax.annotation.security.RolesAllowed;
+import java.io.IOException;
+import java.util.*;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
@@ -100,6 +100,45 @@ public class WorkspacesStatisticsList extends AbstractListValueResulted implemen
 
         return new DBObject[]{new BasicDBObject("$group", group),
                               new BasicDBObject("$project", project)};
+    }
+
+    /** To add user profile data. */
+    @Override
+    public ValueData postComputation(ValueData valueData, Context clauses) throws IOException {
+        List<ValueData> value = new ArrayList<>();
+        ListValueData listValueData = (ListValueData)valueData;
+
+        for (ValueData items : listValueData.getAll()) {
+            MapValueData prevItems = (MapValueData)items;
+            Map<String, ValueData> newItems = new HashMap<>(prevItems.getAll());
+
+            // add user profile data
+            Map<String, ValueData> profile = getWorkspaceProfile(newItems.get(WS).getAsString());
+            putNotNull(newItems, profile, WS_NAME);
+
+            value.add(new MapValueData(newItems));
+        }
+
+        return new ListValueData(value);
+    }
+
+    private void putNotNull(Map<String, ValueData> newItems, Map<String, ValueData> profile, String key) {
+        newItems.put(key, profile.containsKey(key) ? profile.get(key) : StringValueData.DEFAULT);
+    }
+
+    private Map<String, ValueData> getWorkspaceProfile(String wsName) throws IOException {
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.WS, wsName);
+
+        Metric metric = MetricFactory.getMetric(MetricType.WORKSPACES_PROFILES_LIST);
+        List<ValueData> workspaces = ValueDataUtil.getAsList(metric, builder.build()).getAll();
+
+        if (workspaces.size() == 1) {
+            MapValueData profile = (MapValueData)workspaces.get(0);
+            return profile.getAll();
+        } else {
+            return Collections.emptyMap();
+        }
     }
 
     @Override
