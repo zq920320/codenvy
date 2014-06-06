@@ -60,10 +60,10 @@ public class MongoDataLoader implements DataLoader {
 
                 @Override
                 public Iterator<DBObject> iterator(ReadBasedMetric metric, Context clauses, DBCollection dbCollection, DBObject filter) {
-                    int size = dbCollection.find((DBObject)filter.get("$match")).size();
+                    long count = dbCollection.count((DBObject)filter.get("$match"));
 
                     DBObject result = new BasicDBObject();
-                    result.put(metric.getTrackedFields()[0], size);
+                    result.put(metric.getTrackedFields()[0], count);
 
                     return Arrays.asList(result).iterator();
                 }
