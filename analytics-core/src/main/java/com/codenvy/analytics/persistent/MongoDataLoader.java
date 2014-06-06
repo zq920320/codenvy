@@ -51,6 +51,13 @@ public class MongoDataLoader implements DataLoader {
 
     @Override
     public ValueData loadValue(ReadBasedMetric metric, Context clauses) throws IOException {
+        if (clauses.exists(Parameters.FROM_DATE) && clauses.isDefaultValue(Parameters.FROM_DATE)) {
+            clauses = clauses.cloneAndRemove(Parameters.FROM_DATE);
+        }
+        if (clauses.exists(Parameters.TO_DATE) && clauses.isDefaultValue(Parameters.TO_DATE)) {
+            clauses = clauses.cloneAndRemove(Parameters.TO_DATE);
+        }
+
         if (metric instanceof AbstractCount) {
             return doLoadValue(metric, clauses, new LoadValueAction() {
                 @Override
