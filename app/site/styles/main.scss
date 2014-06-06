@@ -359,26 +359,10 @@ input[type="text"], select, input[type="password"], select option {
     border: 1px solid #E5E5E5;
     
 }
-.aternative-login, .aternative-create {
-  background-image: none;
-  background:#1e5278;
-  margin: 0;
-  padding:20px 0;
-}
 
 a:active,
 a:hover {
   font-weight:bold; }
-
-.oauth-button.google {
-    background-image: url("../images/google.png");
-    background-position:0% 0%;
-}
-
-.oauth-button.github {
-    background-image: url("../images/github.png");
-    background-position:0% 0%;
-}
 
 .footer-link {
     color: #ffffff;

@@ -22,15 +22,15 @@
 .oauth-button {
 
   display: block;
-	height:46px;
-	opacity: 0.7;
+	height:55px;
+	opacity: 1;
 
 	&:hover{
-		opacity: 0.9;
+		opacity: 0.7;
 	};
 
 	&:active{
-		opacity: 0.7;
+		opacity: 1;
 	};
 }
 
