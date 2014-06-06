@@ -102,8 +102,8 @@ public class TestListValueData extends BaseTest {
     @Test
     public void testGetAsString() {
         String asString = valueData.getAsString();
-        assertTrue(asString.contains("[key1=10]"));
-        assertTrue(asString.contains("[key1=20.0]"));
+        assertTrue(asString.contains("{\"key1\":\"10\"}"));
+        assertTrue(asString.contains("{\"key1\":\"20.0\"}"));
     }
 
     @Test

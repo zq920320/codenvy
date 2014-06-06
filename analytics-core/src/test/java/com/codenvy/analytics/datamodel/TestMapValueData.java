@@ -91,9 +91,9 @@ public class TestMapValueData extends BaseTest {
     @Test
     public void testGetAsString() {
         String asString = valueData.getAsString();
-        assertTrue(asString.contains("key1=value"));
-        assertTrue(asString.contains("key2=10.1"));
-        assertTrue(asString.contains("key3=10"));
+        assertTrue(asString.contains("\"key1\":\"value\""));
+        assertTrue(asString.contains("\"key2\":\"10.1\""));
+        assertTrue(asString.contains("\"key3\":\"10\""));
     }
 
     @Test
