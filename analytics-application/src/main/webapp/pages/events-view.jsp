@@ -41,13 +41,13 @@
                     <div class="collabsiblePanelBody">
                         <table>
                             <tr>
-                                <td><label for="input-user">Workspace:</label></td>
+                                <td><label for="input-user">Workspace ID:</label></td>
                                 <td><div class="filter-item">
                                     <input type="text" id="input-ws" name="ws" class="text-box" />
                                 </div></td>
                             </tr>
                             <tr>
-                               <td><label for="input-user">User:</label></td>
+                               <td><label for="input-user">User ID:</label></td>
                                <td><div class="filter-item">
                                    <input type="text" id="input-user" name="user" class="text-box" />
                                </div></td>

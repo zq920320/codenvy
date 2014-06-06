@@ -35,7 +35,7 @@
                     <div class="collabsiblePanelBody">
                         <table>
                             <tr>
-                               <td><label for="input-user">Email:</label></td>
+                               <td><label for="input-user">User ID:</label></td>
                                <td><div class="filter-item">
                                    <input type="text" id="input-user" name="user" class="text-box" />
                                </div></td>

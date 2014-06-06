@@ -47,13 +47,13 @@
                                 </div></td>
                             </tr>
                             <tr>
-                                <td><label for="input-ws">Workspace:</label></td>
+                                <td><label for="input-ws">Workspace ID:</label></td>
                                 <td><div class="filter-item">
                                     <input type="text" id="input-ws" name="ws" class="text-box" />
                                 </div></td>
                             </tr>
                             <tr>
-                                <td><label for="input-user">User:</label></td>
+                                <td><label for="input-user">User ID:</label></td>
                                 <td><div class="filter-item">
                                     <input type="text" id="input-user" name="user" class="text-box" />
                                 </div></td>
