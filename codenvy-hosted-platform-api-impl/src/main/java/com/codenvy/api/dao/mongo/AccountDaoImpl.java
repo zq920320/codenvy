@@ -85,6 +85,7 @@ public class AccountDaoImpl implements AccountDao {
         accountCollection.ensureIndex(new BasicDBObject("id", 1), new BasicDBObject("unique", true));
         subscriptionCollection = db.getCollection(subscriptionCollectionName);
         subscriptionCollection.ensureIndex(new BasicDBObject("id", 1), new BasicDBObject("unique", true));
+        subscriptionCollection.ensureIndex(new BasicDBObject("accountId", 1));
         memberCollection = db.getCollection(memberCollectionName);
         memberCollection.ensureIndex(new BasicDBObject("members.accountId", 1));
         this.workspaceDao = workspaceDao;
