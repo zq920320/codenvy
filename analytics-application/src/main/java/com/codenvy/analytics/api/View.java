@@ -154,7 +154,7 @@ public class View {
 
             ValueData value = getExpandedMetricValue(metricName, valueOf(context));
             ViewData result = viewBuilder.getViewData(value);
-            result = replaceUserWsIdByNames(result);
+            result = supplyUserWsIdWithNames(result);
             String json = transformToJson(result);
 
             return Response.status(Response.Status.OK).entity(json).build();
@@ -181,7 +181,7 @@ public class View {
             com.codenvy.analytics.metrics.Context context = valueOf(params);
 
             ViewData result = viewBuilder.getViewData(name, context);
-            result = replaceUserWsIdByNames(result);
+            result = supplyUserWsIdWithNames(result);
             String json = transformToJson(result);
 
             return Response.status(Response.Status.OK).entity(json).build();
@@ -334,10 +334,12 @@ public class View {
 
                 for (int j = 0; j < row.size(); j++) {
                     if (j == userColumn) {
-                        String userName = getUserNameById(row.get(j).getAsString());
+                        String id = row.get(j).getAsString();
+                        String userName = getUserNameById(id);
                         newRow.add(StringValueData.valueOf(userName));
                     } else if (j == wsColumn) {
-                        String wsName = getWsNameById(row.get(j).getAsString());
+                        String id = row.get(j).getAsString();
+                        String wsName = getWsNameById(id);
                         newRow.add(StringValueData.valueOf(wsName));
                     } else {
                         newRow.add(row.get(j));
@@ -350,7 +352,70 @@ public class View {
 
         return viewData;
     }
+    
+    /**
+     * Replace user and ws values with JSON string in format of:
+     *   {"id": @param id,
+     *    "name": @param name}
+     */
+    private ViewData supplyUserWsIdWithNames(ViewData viewData) throws IOException {
+        for (SectionData sectionData : viewData.values()) {
+            int userColumn = -1;
+            int wsColumn = -1;
 
+            List<ValueData> row = sectionData.get(0);
+            for (int i = 0; i < row.size(); i++) {
+                if (userColumnNames.contains(row.get(i).getAsString())) {
+                    userColumn = i;
+                } else if (workspaceColumnNames.contains(row.get(i).getAsString())) {
+                    wsColumn = i;
+                }
+            }
+
+            for (int i = 1; i < sectionData.size(); i++) {
+                row = sectionData.get(i);
+                List<ValueData> newRow = new ArrayList<>(row.size());
+
+                for (int j = 0; j < row.size(); j++) {
+                    if (j == userColumn) {
+                        String id = row.get(j).getAsString();
+                        String userName = getUserNameById(id);
+                        newRow.add(getNamedValue(id, userName));
+                    } else if (j == wsColumn) {
+                        String id = row.get(j).getAsString();
+                        String wsName = getWsNameById(id);
+                        newRow.add(getNamedValue(id, wsName));
+                    } else {
+                        newRow.add(row.get(j));
+                    }
+                }
+
+                sectionData.set(i, newRow);
+            }
+        }
+
+        return viewData;
+    }
+
+    /**
+     * @return map value in format of:
+     * {"id": @param id,
+     * "name": @param name}
+     */
+    private MapValueData getNamedValue(String id, String name) {
+        Map<String, ValueData> map = new HashMap<>();
+        
+        StringValueData idValue = StringValueData.valueOf(id);
+        map.put("id", idValue);
+        
+        StringValueData nameValue = StringValueData.valueOf(name);
+        map.put("name", nameValue);
+        
+        MapValueData mapValue = new MapValueData(map);
+        
+        return mapValue;
+    }
+    
     private String getUserNameById(String userId) throws IOException {
         com.codenvy.analytics.metrics.Context.Builder builder = new com.codenvy.analytics.metrics.Context.Builder();
         builder = builder.put(MetricFilter.USER, userId);

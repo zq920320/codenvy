@@ -495,6 +495,10 @@ function Configuration() {
             presenterType: "VerticalTablePresenter",
             modelViewName: "user",
 
+            columnLinkPrefixList: {
+                "ID": "/analytics/pages/user-view.jsp?user",
+            },
+            
             columnDrillDownPageLinkConfiguration: {
                 mapColumnNameToExpandableMetric: {
                     "Number of Sessions": "product_usage_sessions",
@@ -782,6 +786,10 @@ function Configuration() {
             presenterType: "VerticalTablePresenter",
             modelViewName: "workspace_overview",
 
+            columnLinkPrefixList: {
+                "Workspace": "/analytics/pages/workspace-view.jsp?ws"
+            },
+            
             columnDrillDownPageLinkConfiguration: {
                 mapColumnNameToExpandableMetric: {
                     "Number of Sessions": "product_usage_sessions",

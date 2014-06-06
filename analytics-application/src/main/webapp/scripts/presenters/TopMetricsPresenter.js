@@ -169,9 +169,9 @@ analytics.presenter.TopMetricsPresenter.prototype.linkColumnValuesWithDrillDownP
     for (var i = 0; i < table.rows.length; i++) {
         var row = table.rows[i];
         
-        var columnValue = row[columnIndex];
+        var columnNameValue = this.getColumnNameValue(row[columnIndex]);
         
-        if (! this.isEmptyValue(columnValue)) {
+        if (! this.isEmptyValue(columnNameValue)) {
             modelParams = this.updatePassedDaysCount(columnIndex, modelViewName, modelParams);
             
             var drillDownPageLink = this.getDrillDownPageLink(expandedMetricName, modelParams);
@@ -184,7 +184,7 @@ analytics.presenter.TopMetricsPresenter.prototype.linkColumnValuesWithDrillDownP
                                                                                  doNotLinkOnEmptyParameter);
             }
             
-            row[columnIndex] = "<a href='" + drillDownPageLink + "'>" + columnValue + "</a>";
+            row[columnIndex] = "<a href='" + drillDownPageLink + "'>" + columnNameValue + "</a>";
         }
     }
 

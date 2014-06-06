@@ -265,9 +265,9 @@ Presenter.prototype.linkTableValuesWithDrillDownPage = function(widgetName, tabl
         var expandedMetricName = analytics.configuration.getExpandableMetricName(widgetName, columnName);
         if (typeof expandedMetricName != "undefined") {
             for (var i = 0; i < table.rows.length; i++) {
-                var columnValue = table.rows[i][columnIndex];
+                var columnNameValue = this.getColumnNameValue(table.rows[i][columnIndex]);
 
-                if (! this.isEmptyValue(columnValue)) {
+                if (! this.isEmptyValue(columnNameValue)) {
                     var drillDownPageLink = this.getDrillDownPageLink(expandedMetricName, modelParams);
 
                     // calculation combined link like "ws=...&project=..."
@@ -278,7 +278,7 @@ Presenter.prototype.linkTableValuesWithDrillDownPage = function(widgetName, tabl
                                                                                          doNotLinkOnEmptyParameter);
                     }
 
-                    table.rows[i][columnIndex] = "<a href='" + drillDownPageLink + "'>" + columnValue + "</a>";
+                    table.rows[i][columnIndex] = "<a href='" + drillDownPageLink + "'>" + columnNameValue + "</a>";
                 }
             }
         }
@@ -288,32 +288,28 @@ Presenter.prototype.linkTableValuesWithDrillDownPage = function(widgetName, tabl
 }
 
 /**
- * Make table cells of column with certain name as linked with link = "columnLinkPrefix + {columnValue}"
+ * Make table cells of column with certain name as linked with link = "columnLinkPrefix + {columnIdValue}"
  */
 Presenter.prototype.makeTableColumnLinked = function(table, columnName, columnLinkPrefix) {
     var columnIndex = analytics.util.getArrayValueIndex(table.columns, columnName);
     if (columnIndex != null) {
         for (var i = 0; i < table.rows.length; i++) {
-            var columnValue = table.rows[i][columnIndex];
+            var columnNameValue = this.getColumnNameValue(table.rows[i][columnIndex]);
 
-            if (analytics.configuration.isSystemMessage(columnValue)) {
-               table.rows[i][columnIndex] = this.view.getSystemMessageLabel(columnValue);
+            if (analytics.configuration.isSystemMessage(columnNameValue)) {
+               table.rows[i][columnIndex] = this.view.getSystemMessageLabel(columnNameValue);
+               
             } else {
-               var href = columnLinkPrefix + "=" + encodeURIComponent(columnValue);
+               var columnIdValue = this.getColumnIdValue(table.rows[i][columnIndex]);
+               var href = columnLinkPrefix + "=" + encodeURIComponent(columnIdValue);
 
                if (analytics.configuration.isFactoryUrlColumnName(columnName)) {
-                   var title = columnValue;   // display initial url in title of link
-                   columnValue = analytics.util.getShortenFactoryUrl(columnValue);
-                   table.rows[i][columnIndex] = "<a href='" + href + "' title='" + title + "'>" + columnValue + "</a>";
+                   var title = columnNameValue;   // display initial url in title of link
+                   columnNameValue = analytics.util.getShortenFactoryUrl(columnNameValue);
+                   table.rows[i][columnIndex] = "<a href='" + href + "' title='" + title + "'>" + columnNameValue + "</a>";
 
-//               } else if (analytics.configuration.isWorkspaceColumnName(columnName)) {
-//                   table.rows[i][columnIndex] = "<a href='" + href + "'>" +  analytics.model.getWsNameById(columnValue)["WS"] + "</a>";
-//
-//               } else if (analytics.configuration.isUserColumnName(columnName)) {
-//                   table.rows[i][columnIndex] = "<a href='" + href + "'>" +  analytics.model.getUserNameById(columnValue)["USER"] + "</a>";
-//
                } else {
-                   table.rows[i][columnIndex] = "<a href='" + href + "'>" + columnValue + "</a>";
+                   table.rows[i][columnIndex] = "<a href='" + href + "'>" + columnNameValue + "</a>";
                }
             }
         }
@@ -360,7 +356,7 @@ Presenter.prototype.makeTableColumnCombinedLinked = function(table, columnCombin
 
         // make cells of target column as linked with combined link
         for (var i = 0; i < table.rows.length; i++) {
-            var targetColumnValue = table.rows[i][targetColumnIndex];
+            var targetColumnValue = this.getColumnNameValue(table.rows[i][targetColumnIndex]);
 
             if (analytics.configuration.isSystemMessage(targetColumnValue)) {
                table.rows[i][targetColumnIndex] = this.view.getSystemMessageLabel(targetColumnValue);
@@ -369,7 +365,7 @@ Presenter.prototype.makeTableColumnCombinedLinked = function(table, columnCombin
                // calculation combined link like "project-view.jsp?ws=...&project=..."
                var urlParams = this.getUrlParamsForCombineColumnLink(table.rows[i], sourceColumnIndexes, mapColumnToParameter, doNotLinkOnEmptyParameter);
                if (urlParams != "") {
-                   var href = baseLink + "?" + this.getUrlParamsForCombineColumnLink(table.rows[i], sourceColumnIndexes, mapColumnToParameter, doNotLinkOnEmptyParameter);
+                   var href = baseLink + "?" + urlParams;
                    table.rows[i][targetColumnIndex] = "<a href='" + href + "'>" + targetColumnValue + "</a>";
                }
             }
@@ -395,7 +391,7 @@ Presenter.prototype.getUrlParamsForCombineColumnLink = function(row, sourceColum
             var sourceColumnName = sourceColumnNames[j];
 
             var parameterName = mapColumnToParameter[sourceColumnName];
-            var parameterValue = row[sourceColumnIndex];
+            var parameterValue = this.getColumnIdValue(row[sourceColumnIndex]);
 
             if (parameterValue == "") {
                 if (doNotLinkOnEmptyParameter) {
@@ -410,4 +406,44 @@ Presenter.prototype.getUrlParamsForCombineColumnLink = function(row, sourceColum
     }
 
     return analytics.util.constructUrlParams(params) || "";
+}
+
+/**
+ * Return id name, if columnValue is in format 
+ *   {"id": id,
+ *    "name": name}
+ * or columnValue otherwise
+ */
+Presenter.prototype.getColumnIdValue = function(columnValue) {
+    try { 
+        columnValueMap = JSON.parse(columnValue);
+        var id = columnValueMap["id"];
+        if (typeof id != "undefined") {
+            return id;
+        }
+     } catch(e) {
+         // handle situation when there is empty or non-JSON value in column 
+         return columnValue;
+     }
+     
+     return columnValue;
+}
+
+/** Return name value, if columnValue is in format 
+ *    {"id": id,
+ *     "name": name}
+ * or columnValue otherwise
+*/
+Presenter.prototype.getColumnNameValue = function(columnValue) {
+    try { 
+        columnValueMap = JSON.parse(columnValue);
+        var name = columnValueMap["name"];
+        if (typeof name != "undefined") {
+            return name;
+        }
+     } catch(e) { 
+         return columnValue;
+     }
+     
+     return columnValue;    
 }

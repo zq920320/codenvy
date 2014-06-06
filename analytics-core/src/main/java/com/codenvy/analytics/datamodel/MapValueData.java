@@ -70,6 +70,9 @@ public class MapValueData extends CollectionValueData {
     }
 
     @Override
+    /**
+     * @return map in json format like '{"id":"5624124","name":"wkvbjix@tkfbwrx.tkq"}'
+     */
     public String getAsString() {
         StringBuilder builder = new StringBuilder();
 
@@ -78,17 +81,22 @@ public class MapValueData extends CollectionValueData {
                 builder.append(',');
             }
 
-            builder.append(' ');
+            builder.append('"');
             builder.append(entry.getKey());
-            builder.append('=');
+            builder.append('"');
+            
+            builder.append(':');
+            
+            builder.append('"');
             builder.append(entry.getValue().getAsString());
+            builder.append('"');
         }
 
         if (builder.length() != 0) {
-            builder.setCharAt(0, '[');
-            builder.append(']');
+            builder.insert(0, '{');
+            builder.append('}');
         } else {
-            builder.append("[]");
+            builder.append("{}");
         }
 
         return builder.toString();

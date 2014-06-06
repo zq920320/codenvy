@@ -112,14 +112,14 @@ analytics.presenter.ReportPresenter.prototype.linkTableValuesWithDrillDownPage =
         var metricName = expandableMetricPerSection[tableNumber][rowNumber + 1];  // taking into account absent title row
         if (typeof metricName != "undefined") {
             for (var columnNumber = 1; columnNumber < table.rows[rowNumber].length; columnNumber++) {
-                var columnValue = table.rows[rowNumber][columnNumber];
+                var columnNameValue = this.getColumnNameValue(table.rows[rowNumber][columnNumber]);
 
                 // don't display link to empty drill down page
-                if (!this.isEmptyValue(columnValue)) {
+                if (!this.isEmptyValue(columnNameValue)) {
                     var timeInterval = columnNumber - 1;
                     var drillDownPageLink = this.getDrillDownPageLink(metricName, modelParams, timeInterval);
 
-                    table.rows[rowNumber][columnNumber] = "<a href='" + drillDownPageLink + "'>" + columnValue + "</a>";
+                    table.rows[rowNumber][columnNumber] = "<a href='" + drillDownPageLink + "'>" + columnNameValue + "</a>";
                 }
             }
         }
