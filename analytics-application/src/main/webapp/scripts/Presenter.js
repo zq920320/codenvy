@@ -306,12 +306,12 @@ Presenter.prototype.makeTableColumnLinked = function(table, columnName, columnLi
                    columnValue = analytics.util.getShortenFactoryUrl(columnValue);
                    table.rows[i][columnIndex] = "<a href='" + href + "' title='" + title + "'>" + columnValue + "</a>";
 
-               } else if (analytics.configuration.isWorkspaceColumnName(columnName)) {
-                   table.rows[i][columnIndex] = "<a href='" + href + "'>" +  analytics.model.getWsNameById(columnValue)["WS"] + "</a>";
-
-               } else if (analytics.configuration.isUserColumnName(columnName)) {
-                   table.rows[i][columnIndex] = "<a href='" + href + "'>" +  analytics.model.getUserNameById(columnValue)["USER"] + "</a>";
-
+//               } else if (analytics.configuration.isWorkspaceColumnName(columnName)) {
+//                   table.rows[i][columnIndex] = "<a href='" + href + "'>" +  analytics.model.getWsNameById(columnValue)["WS"] + "</a>";
+//
+//               } else if (analytics.configuration.isUserColumnName(columnName)) {
+//                   table.rows[i][columnIndex] = "<a href='" + href + "'>" +  analytics.model.getUserNameById(columnValue)["USER"] + "</a>";
+//
                } else {
                    table.rows[i][columnIndex] = "<a href='" + href + "'>" + columnValue + "</a>";
                }

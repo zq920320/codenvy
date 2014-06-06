@@ -19,6 +19,7 @@ package com.codenvy.analytics.api;
 
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
+import com.codenvy.analytics.datamodel.StringValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.services.view.CSVFileHolder;
@@ -63,88 +64,13 @@ public class View {
     private final ViewBuilder   viewBuilder;
     private final CSVFileHolder csvFileCleanerHolder;
 
+    private final Set<String> workspaceColumnNames = new HashSet<>(Arrays.asList("Workspace"));
+    private final Set<String> userColumnNames      = new HashSet<>(Arrays.asList("User", "Created By"));
+
     @Inject
     public View(ViewBuilder viewBuilder, CSVFileHolder csvFileCleanerHolder) {
         this.viewBuilder = viewBuilder;
         this.csvFileCleanerHolder = csvFileCleanerHolder;
-    }
-
-    @GET
-    @Path("username/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
-    @RolesAllowed({"user", "system/admin", "system/manager"})
-    public Response getUserNameById(@PathParam("id") String userId,
-                                    @Context UriInfo uriInfo,
-                                    @Context SecurityContext securityContext) throws IOException {
-
-        try {
-            Map<String, String> params = extractParams(uriInfo, securityContext);
-
-            com.codenvy.analytics.metrics.Context context = com.codenvy.analytics.metrics.Context.valueOf(params);
-            context = context.cloneAndPut(MetricFilter.USER, userId);
-
-            Metric metric = MetricFactory.getMetric(MetricType.USERS_PROFILES_LIST);
-            ListValueData valueData = getAsList(metric, context);
-
-            String userName;
-            if (valueData.size() != 0) {
-                Map<String, ValueData> profile = treatAsMap(treatAsList(valueData).get(0));
-                String[] aliases = toArray(profile.get(AbstractMetric.ALIASES));
-
-                if (aliases.length == 0) {
-                    userName = userId;
-                } else {
-                    userName = aliases[0];
-                }
-            } else {
-                userName = userId;
-            }
-
-            Map<String, String> m = new HashMap<>(1);
-            m.put(MetricFilter.USER.toString(), userName);
-
-            return Response.status(Response.Status.OK).entity(new JsonStringMapImpl<>(m).toJson()).build();
-        } catch (Exception e) {
-            LOG.error(e.getMessage(), e);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
-        }
-    }
-
-    @GET
-    @Path("wsname/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
-    @RolesAllowed({"user", "system/admin", "system/manager"})
-    public Response getWsNameById(@PathParam("id") String wsId,
-                                  @Context UriInfo uriInfo,
-                                  @Context SecurityContext securityContext) throws IOException {
-
-        try {
-            Map<String, String> params = extractParams(uriInfo, securityContext);
-
-            com.codenvy.analytics.metrics.Context context = com.codenvy.analytics.metrics.Context.valueOf(params);
-            context = context.cloneAndPut(MetricFilter.WS, wsId);
-
-            Metric metric = MetricFactory.getMetric(MetricType.WORKSPACES_PROFILES_LIST);
-            ListValueData valueData = getAsList(metric, context);
-
-            String wsName;
-            if (valueData.size() != 0) {
-                Map<String, ValueData> profile = treatAsMap(treatAsList(valueData).get(0));
-                ValueData name = profile.get(AbstractMetric.WS_NAME);
-
-                wsName = name == null ? wsId : name.getAsString();
-            } else {
-                wsName = wsId;
-            }
-
-            Map<String, String> m = new HashMap<>(1);
-            m.put(MetricFilter.WS.toString(), wsName);
-
-            return Response.status(Response.Status.OK).entity(new JsonStringMapImpl<>(m).toJson()).build();
-        } catch (Exception e) {
-            LOG.error(e.getMessage(), e);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
-        }
     }
 
     @GET
@@ -228,6 +154,7 @@ public class View {
 
             ValueData value = getExpandedMetricValue(metricName, valueOf(context));
             ViewData result = viewBuilder.getViewData(value);
+            result = replaceUserWsIdByNames(result);
             String json = transformToJson(result);
 
             return Response.status(Response.Status.OK).entity(json).build();
@@ -254,6 +181,7 @@ public class View {
             com.codenvy.analytics.metrics.Context context = valueOf(params);
 
             ViewData result = viewBuilder.getViewData(name, context);
+            result = replaceUserWsIdByNames(result);
             String json = transformToJson(result);
 
             return Response.status(Response.Status.OK).entity(json).build();
@@ -281,6 +209,7 @@ public class View {
             }
 
             ViewData result = viewBuilder.getViewData(viewName, context);
+            result = replaceUserWsIdByNames(result);
             final File csvFile = csvFileCleanerHolder.createNewFile();
             try (FileOutputStream csvOutputStream = new FileOutputStream(csvFile)) {
                 transformToCsv(result, csvOutputStream);
@@ -382,6 +311,80 @@ public class View {
                 List<ValueData> rowData = sectionEntry.getValue().get(i);
                 os.write((getCsvRow(rowData) + "\n").getBytes("UTF-8"));
             }
+        }
+    }
+
+    private ViewData replaceUserWsIdByNames(ViewData viewData) throws IOException {
+        for (SectionData sectionData : viewData.values()) {
+            int userColumn = -1;
+            int wsColumn = -1;
+
+            List<ValueData> row = sectionData.get(0);
+            for (int i = 0; i < row.size(); i++) {
+                if (userColumnNames.contains(row.get(i).getAsString())) {
+                    userColumn = i;
+                } else if (workspaceColumnNames.contains(row.get(i).getAsString())) {
+                    wsColumn = i;
+                }
+            }
+
+            for (int i = 1; i < sectionData.size(); i++) {
+                row = sectionData.get(i);
+                List<ValueData> newRow = new ArrayList<>(row.size());
+
+                for (int j = 0; j < row.size(); j++) {
+                    if (j == userColumn) {
+                        String userName = getUserNameById(row.get(j).getAsString());
+                        newRow.add(StringValueData.valueOf(userName));
+                    } else if (j == wsColumn) {
+                        String wsName = getWsNameById(row.get(j).getAsString());
+                        newRow.add(StringValueData.valueOf(wsName));
+                    } else {
+                        newRow.add(row.get(j));
+                    }
+                }
+
+                sectionData.set(i, newRow);
+            }
+        }
+
+        return viewData;
+    }
+
+    private String getUserNameById(String userId) throws IOException {
+        com.codenvy.analytics.metrics.Context.Builder builder = new com.codenvy.analytics.metrics.Context.Builder();
+        builder = builder.put(MetricFilter.USER, userId);
+
+        Metric metric = MetricFactory.getMetric(MetricType.USERS_PROFILES_LIST);
+        ListValueData valueData = getAsList(metric, builder.build());
+
+        if (valueData.size() != 0) {
+            Map<String, ValueData> profile = treatAsMap(treatAsList(valueData).get(0));
+            String[] aliases = toArray(profile.get(AbstractMetric.ALIASES));
+
+            if (aliases.length == 0) {
+                return userId;
+            } else {
+                return aliases[0];
+            }
+        } else {
+            return userId;
+        }
+    }
+
+    private String getWsNameById(String wsId) throws IOException {
+        com.codenvy.analytics.metrics.Context.Builder builder = new com.codenvy.analytics.metrics.Context.Builder();
+        builder = builder.put(MetricFilter.WS, wsId);
+
+        Metric metric = MetricFactory.getMetric(MetricType.WORKSPACES_PROFILES_LIST);
+        ListValueData valueData = getAsList(metric, builder.build());
+
+        if (valueData.size() != 0) {
+            Map<String, ValueData> profile = treatAsMap(treatAsList(valueData).get(0));
+            ValueData name = profile.get(AbstractMetric.WS_NAME);
+            return name == null ? wsId : name.getAsString();
+        } else {
+            return wsId;
         }
     }
 
