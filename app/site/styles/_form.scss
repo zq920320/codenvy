@@ -163,11 +163,21 @@ form .field {
     position: relative;
 }
 
+
+/**
+ * Create form
+*/    
+.create-form {
+  .field {
+    padding:0;
+    margin-bottom:10px;
+  } 
+}
+
 /**
  * Profile form
 */    
 .profile-form .field {
-    padding: 10px;
     position: relative;
     font-size: 14px;
 }
@@ -178,7 +188,7 @@ form .field {
     margin: 0px;
     font-size: 14px;
     font-weight: bold;
-    }
+}
 .profile-form input[type='text'],
 .profile-form  select,
 .profile-form  input[type='password'],

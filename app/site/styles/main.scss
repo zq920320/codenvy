@@ -111,6 +111,7 @@ body {
     background-color: $background-color;
     color:$text-color;
     letter-spacing: $letter-spacing;
+    overflow-x:hidden;
 }
 
 html, body {
@@ -313,8 +314,30 @@ table {
     height:56px;
     line-height:56px;
   };
+  .hr {
+    text-align:center;
+    font: {
+      size: 1em;
+      weight:500;
+    }
+    color: #6b7379;  
+    height:44px;
+    line-height:44px;
+    @include image_sep;
+  }
+  .action {
+    margin-top: 18px; 
+  }
+  .action .blue-button {
+    font-size:1em;
+    padding:0;
+    margin:0;
+    width:206px;
+    height:2.5625em;
+    line-height:2.5625em;
+    text-shadow: 0px 1px 1px rgba(0,0,0,0.25);
+  }
 }
-
 .signup-button, .light-button {
     background: none repeat scroll 0 0 #1E5278;
     border: 1px solid #1E5278;
@@ -327,22 +350,22 @@ table {
 }
 
 ::-webkit-input-placeholder {
-  color: #6B757D;
+  color: #6b757d;
   text-align:center;
   }
 
 :-moz-placeholder {
-  color: #6B757D;
+  color: #6b757d;
   text-align:center;
   }
 
 ::-moz-placeholder {
-  color: #6B757D;
+  color: #6b757d;
   text-align:center;
   }
 
 :-ms-input-placeholder {
-  color: #6B757D;
+  color: #6b757d;
   text-align:center;
   }
   
@@ -350,13 +373,14 @@ table {
  color:#6b7379;
 }  
 input[type="text"], select, input[type="password"], select option {
+    box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.2) inset;    
     background-color: #F5F5F5;
+    border: 1px solid #dadada;
     color: #6B757D;
-    font-size: 1.2em;
+    font-size: 1em;
     font-weight: 200;
-    height: 2em;
+    height: 2.5625em;
     padding-left: 10px;
-    border: 1px solid #E5E5E5;
     
 }
 

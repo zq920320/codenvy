@@ -22,7 +22,7 @@
 .oauth-button {
 
   display: block;
-	height:55px;
+	height:54px;
 	opacity: 1;
 
 	&:hover{
@@ -63,7 +63,6 @@
 
 .blue-button {
     font-size: 1em;
-    text-shadow: 0px 1px 3px #98CEED;
     padding: 10px;
     margin: 1px;
     @include button();

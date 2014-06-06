@@ -405,6 +405,13 @@
     }
 }
 
+@mixin image_sep{
+    background: {
+        image:url('../images/sep.png');
+        repeat:no-repeat;
+        position: center center;
+    }
+}
 
 
 
