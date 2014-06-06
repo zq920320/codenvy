@@ -32,7 +32,7 @@
     <view name="account" on-demand="true">
         <section name="account">
             <row class="com.codenvy.analytics.services.view.TitleRow">
-                <parameter key="titles" value="ID,Name,Email,Roles,Attributes"/>
+                <parameter key="titles" value="ID,Name,User,Roles,Attributes"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="accounts_list"/>

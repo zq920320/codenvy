@@ -51,6 +51,13 @@ public class MongoDataLoader implements DataLoader {
 
     @Override
     public ValueData loadValue(ReadBasedMetric metric, Context clauses) throws IOException {
+        if (clauses.exists(Parameters.FROM_DATE) && clauses.isDefaultValue(Parameters.FROM_DATE)) {
+            clauses = clauses.cloneAndRemove(Parameters.FROM_DATE);
+        }
+        if (clauses.exists(Parameters.TO_DATE) && clauses.isDefaultValue(Parameters.TO_DATE)) {
+            clauses = clauses.cloneAndRemove(Parameters.TO_DATE);
+        }
+
         if (metric instanceof AbstractCount) {
             return doLoadValue(metric, clauses, new LoadValueAction() {
                 @Override
@@ -60,10 +67,10 @@ public class MongoDataLoader implements DataLoader {
 
                 @Override
                 public Iterator<DBObject> iterator(ReadBasedMetric metric, Context clauses, DBCollection dbCollection, DBObject filter) {
-                    int size = dbCollection.find((DBObject)filter.get("$match")).size();
+                    long count = dbCollection.count((DBObject)filter.get("$match"));
 
                     DBObject result = new BasicDBObject();
-                    result.put(metric.getTrackedFields()[0], size);
+                    result.put(metric.getTrackedFields()[0], count);
 
                     return Arrays.asList(result).iterator();
                 }
