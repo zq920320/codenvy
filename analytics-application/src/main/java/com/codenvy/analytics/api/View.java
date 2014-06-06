@@ -352,6 +352,10 @@ public class View {
     }
 
     private String getUserNameById(String userId) throws IOException {
+        if (userId.isEmpty()) {
+            return userId;
+        }
+
         com.codenvy.analytics.metrics.Context.Builder builder = new com.codenvy.analytics.metrics.Context.Builder();
         builder = builder.put(MetricFilter.USER, userId);
 
@@ -373,6 +377,10 @@ public class View {
     }
 
     private String getWsNameById(String wsId) throws IOException {
+        if (wsId.isEmpty()) {
+            return wsId;
+        }
+
         com.codenvy.analytics.metrics.Context.Builder builder = new com.codenvy.analytics.metrics.Context.Builder();
         builder = builder.put(MetricFilter.WS, wsId);
 
