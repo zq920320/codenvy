@@ -449,11 +449,6 @@ function Configuration() {
             clientSortParams: {
                 "ascSortColumnNumber": 0
             },
-
-            mapColumnToServerSortParam: {
-                "Started": "date",
-                "Event": "action",
-            },
         },
 
         /** for User View */
