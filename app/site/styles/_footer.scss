@@ -33,9 +33,8 @@ footer {
     @include transition(0.2s,ease-in,color);
 
 	color: $footer-link-color;
-    font-size: 0.9em;
+    font-size: 0.6875em;
     font-weight: 300;
-
     &:hover{
         color: $footer-link-hover-color;
     };
