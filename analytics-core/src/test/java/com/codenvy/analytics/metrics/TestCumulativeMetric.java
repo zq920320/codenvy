@@ -51,7 +51,7 @@ public class TestCumulativeMetric extends BaseTest {
                                                      mockedAddedMetric,
                                                      mockedRemovedMetric);
 
-        assertEquals(testedMetric.getValue(builder.build()), new LongValueData(30L));
+        assertEquals(testedMetric.getValue(builder.build()), new LongValueData(1020L));
     }
 
     @Test

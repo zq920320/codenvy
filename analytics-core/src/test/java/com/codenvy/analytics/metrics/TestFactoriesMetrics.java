@@ -36,7 +36,7 @@ import static org.testng.Assert.assertEquals;
 /** @author <a href="mailto:dnochevnov@codenvy.com">Dmytro Nochevnov</a> */
 public class TestFactoriesMetrics extends BaseTest {
 
-    private static final long INITIAL_VALUE_OF_TOTAL_FACTORIES = 40;
+    private static final long INITIAL_VALUE_OF_TOTAL_FACTORIES = 4000;
 
     @BeforeClass
     public void init() throws Exception {

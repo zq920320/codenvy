@@ -44,9 +44,9 @@ public class TestInitialValueContainer extends BaseTest {
 
     @Test
     public void testInitialValue() throws Exception {
-        assertEquals(new LongValueData(10), initialValueContainer.getInitialValue("total_workspaces"));
-        assertEquals(new LongValueData(20), initialValueContainer.getInitialValue("total_users"));
-        assertEquals(new LongValueData(30), initialValueContainer.getInitialValue("total_projects"));
+        assertEquals(new LongValueData(1000), initialValueContainer.getInitialValue("total_workspaces"));
+        assertEquals(new LongValueData(2000), initialValueContainer.getInitialValue("total_users"));
+        assertEquals(new LongValueData(3000), initialValueContainer.getInitialValue("total_projects"));
     }
 
     @Test
