@@ -17,7 +17,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Users</title>
+    <title>Events</title>
     <%@ include file="/inclusions/header.jsp"%>
 </head>
 <body>
