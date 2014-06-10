@@ -38,6 +38,7 @@
         <module>codenvy-hosted-recoverpassword</module>
         <module>codenvy-hosted-service-trackedfactory</module>
         <module>codenvy-hosted-workspace-close</module>
+        <module>codenvy-hosted-ide3-migration-tool</module>
     </modules>
     <scm>
         <connection>scm:git:git@github.com:codenvy/hosted-infrastructure.git</connection>
