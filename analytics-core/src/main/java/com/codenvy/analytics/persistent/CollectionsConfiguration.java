@@ -19,7 +19,7 @@ package com.codenvy.analytics.persistent;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -38,7 +38,7 @@ public class CollectionsConfiguration {
     }
 
     public Map<String, CollectionConfiguration> getAsMap() {
-        Map<String, CollectionConfiguration> result = new HashMap<>(collections.size());
+        Map<String, CollectionConfiguration> result = new LinkedHashMap<>(collections.size());
         for (CollectionConfiguration conf : collections) {
             result.put(conf.getName(), conf);
         }

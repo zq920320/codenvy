@@ -38,10 +38,7 @@ import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsMap;
  */
 public class ReplaceWsWithId extends EvalFunc<String> {
 
-    private final Metric metric;
-
     public ReplaceWsWithId() {
-        metric = MetricFactory.getMetric(MetricType.WORKSPACES_PROFILES_LIST);
     }
 
     @Override
@@ -50,7 +47,11 @@ public class ReplaceWsWithId extends EvalFunc<String> {
             return null;
         }
 
-        String ws = (String)input.get(0);
+        return exec((String)input.get(0));
+    }
+
+    public static String exec(String ws) throws IOException {
+        Metric metric = MetricFactory.getMetric(MetricType.WORKSPACES_PROFILES_LIST);
         if (ws == null) {
             return null;
 

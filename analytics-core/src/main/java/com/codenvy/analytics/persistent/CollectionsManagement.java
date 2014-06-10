@@ -30,6 +30,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -65,6 +66,10 @@ public class CollectionsManagement {
      */
     public boolean exists(String name) {
         return configuration.containsKey(name);
+    }
+
+    public Collection<String> getNames() {
+        return configuration.keySet();
     }
 
     /**

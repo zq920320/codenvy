@@ -21,6 +21,7 @@ package com.codenvy.analytics;
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.persistent.CollectionsManagement;
 import com.codenvy.analytics.persistent.MongoDataStorage;
 import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.services.pig.ScriptsManager;
@@ -48,11 +49,12 @@ public class BaseTest {
     protected final DateFormat fullDateFormat     = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     protected final DateFormat fullDateFormatMils = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,SSS");
 
-    protected final Configurator     configurator;
-    protected final PigServer        pigServer;
-    protected final MongoDataStorage mongoDataStorage;
-    protected final DB               mongoDb;
-    protected final ScriptsManager   scriptsManager;
+    protected final Configurator          configurator;
+    protected final PigServer             pigServer;
+    protected final MongoDataStorage      mongoDataStorage;
+    protected final DB                    mongoDb;
+    protected final ScriptsManager        scriptsManager;
+    protected final CollectionsManagement collectionsManagement;
 
     @BeforeClass
     public void clearDatabase() {
@@ -71,6 +73,7 @@ public class BaseTest {
         this.mongoDataStorage = Injector.getInstance(MongoDataStorage.class);
         this.mongoDb = mongoDataStorage.getDb();
         this.scriptsManager = Injector.getInstance(ScriptsManager.class);
+        this.collectionsManagement = Injector.getInstance(CollectionsManagement.class);
     }
 
     protected Map<String, Map<String, ValueData>> listToMap(ListValueData valueData, String key) {

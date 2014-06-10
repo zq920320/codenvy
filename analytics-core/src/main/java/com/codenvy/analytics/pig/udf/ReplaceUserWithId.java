@@ -36,10 +36,7 @@ import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsMap;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class ReplaceUserWithId extends EvalFunc<String> {
 
-    private final Metric metric;
-
     public ReplaceUserWithId() {
-        metric = MetricFactory.getMetric(MetricType.USERS_PROFILES_LIST);
     }
 
     @Override
@@ -48,7 +45,11 @@ public class ReplaceUserWithId extends EvalFunc<String> {
             return null;
         }
 
-        String user = (String)input.get(0);
+        return exec((String)input.get(0));
+    }
+
+    public static String exec(String user) throws IOException {
+        Metric metric = MetricFactory.getMetric(MetricType.USERS_PROFILES_LIST);
         if (user == null) {
             return null;
 

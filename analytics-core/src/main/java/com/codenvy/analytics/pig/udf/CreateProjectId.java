@@ -39,6 +39,10 @@ public class CreateProjectId extends EvalFunc<String> {
         String ws = (String)input.get(1);
         String project = (String)input.get(2);
 
+        return exec(user, ws, project);
+    }
+
+    public static String exec(String user, String ws, String project) {
         if (user == null || ws == null || project == null) {
             return null;
         }
