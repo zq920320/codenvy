@@ -509,7 +509,7 @@ public class TestAcceptance extends BaseTest {
         aggregateResult(row, new StringValueData("51"), sectionData.get(2).get(1));
 
         row = sectionData.get(3).get(0).getAsString();
-        aggregateResult(row, new StringValueData(">= 10 And < 60MetricType.TOTAL_WORKSPACES Mins"), sectionData.get(3).get(0));
+        aggregateResult(row, new StringValueData(">= 10 And < 60 Mins"), sectionData.get(3).get(0));
         aggregateResult(row, new StringValueData("32"), sectionData.get(3).get(1));
 
         row = sectionData.get(4).get(0).getAsString();
