@@ -34,12 +34,22 @@
 	};
 }
 
-.oauth-button.github{
-	@include image_button_github;
-}
-
-.oauth-button.google{
-	@include image_button_google;
+.oauth-button {
+  color: #fff;
+  font: {
+    size: 12px;
+    family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  }
+  line-height: 53px;
+  text-transform: uppercase;
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.27);
+  & img {
+    height: 40px;
+    width: 40px;
+    display: inline-block;
+    margin-top: 7px;
+    vertical-align: top;
+  }
 }
 
 @mixin button() {

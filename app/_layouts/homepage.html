@@ -3,46 +3,43 @@
 <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
 <!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
 <!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <title>{{ page.title }}</title>
-        <meta name="author" content="Codenvy">
-        <meta name="description" content="Industrial-strength cloud IDE for developers and enterprise teams. Java IDE with support for PHP, Python, Ruby, JavaScript, Android, and more.">
-        <meta name="keywords" content="Codenvy, Cloud IDE, Java IDE, online IDE, web IDE, development environment, IDE, cloud, JavaScript, Java, Spring, Groovy, Ruby, PHP, code, deploy">
-        <meta name="viewport" content="initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,width=device-width,user-scalable=no" />
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>{{ page.title }}</title>
+  <meta name="author" content="Codenvy">
+  <meta name="description" content="Industrial-strength cloud IDE for developers and enterprise teams. Java IDE with support for PHP, Python, Ruby, JavaScript, Android, and more.">
+  <meta name="keywords" content="Codenvy, Cloud IDE, Java IDE, online IDE, web IDE, development environment, IDE, cloud, JavaScript, Java, Spring, Groovy, Ruby, PHP, code, deploy">
+  <meta name="viewport" content="initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,width=device-width,user-scalable=no" />
 
-        <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+  <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->  
+  <link href='https://fonts.googleapis.com/css?family=Roboto:400,300,500' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="{{'/site/styles/main.css' | resource}}">
+  <link rel="stylesheet" href="{{ '/site/styles/component.css' | resource }}">
+  <link rel="stylesheet" href="{{ '/site/styles/animations.css' | resource }}">
+  <link rel="shortcut icon" href="{{'/site/images/favicon.ico' | resource}}" />
+  <script src="{{'/site/scripts/vendor/modernizr.custom.29458.js' | resource}}"></script>
+</head>
+<body>
+  <header>
+    <h1 class = "logo">
+      <a href="/"><img src="/site/images/codenvy-logo.svg" alt="Codenvy"></a>
+    </h1>
+  </header>
+  <div class="content">
+      {{ content }}
+  </div>
 
-        <link href='https://fonts.googleapis.com/css?family=Roboto:400,300,500' rel='stylesheet' type='text/css'>
-        <link rel="stylesheet" href="{{'/site/styles/main.css' | resource}}">
-		<link rel="stylesheet" href="{{ '/site/styles/component.css' | resource }}">
-		<link rel="stylesheet" href="{{ '/site/styles/animations.css' | resource }}">
-        <link rel="shortcut icon" href="{{'/site/images/favicon.ico' | resource}}" />
-        <script src="{{'/site/scripts/vendor/modernizr.custom.29458.js' | resource}}"></script>
-    </head>
-    <body>
+  <!--[if lt IE 7]>
+      <p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
+  <![endif]-->
 
-        <header>
-          <h1 class = "logo">
-            <a href="/"><span>Codenvy</span></a>
-          </h1>
-        </header>
+  {% include application-script.html %}
 
-        <div class="content">
-            {{ content }}
-        </div>
-
-        <!--[if lt IE 7]>
-            <p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
-        <![endif]-->
-
-        {% include application-script.html %}
-
-        {% if site.profile != "enterprise" %}
-            <!-- Including Codenvy Trackers -->
-            {% include pingdom.html %}
-            {% include google-analytics.html %}
-        {% endif %}
+  {% if site.profile != "enterprise" %}
+      <!-- Including Codenvy Trackers -->
+      {% include pingdom.html %}
+      {% include google-analytics.html %}
+  {% endif %}
 </body>
 </html>

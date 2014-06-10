@@ -340,8 +340,9 @@ table {
   .terms {
     margin:0;
     text-align:center;
-    padding:8px 12px;
-    font-size:12px;
+    padding: 0 12px 8px 12px;
+    font-size: 11px;
+    letter-spacing: 0;
     color:#979797; 
     a {
        font-weight: normal; 
@@ -383,61 +384,57 @@ table {
   }
 }
 .signup-button, .light-button {
-    background: none repeat scroll 0 0 #1E5278;
-    border: 1px solid #1E5278;
-    border-radius: 0px;
-    color: #FFFFFF;
+  background: none repeat scroll 0 0 #1E5278;
+  border: 1px solid #1E5278;
+  border-radius: 0px;
+  color: #FFFFFF;
 }
-
 .signup-button:hover, .light-button:hover {
 	background: none repeat scroll 0 0 #1b4a6c;
 }
-
 ::-webkit-input-placeholder {
   color: #6b757d;
   text-align:center;
-  }
-
+}
 :-moz-placeholder {
   color: #6b757d;
   text-align:center;
-  }
-
+}
 ::-moz-placeholder {
   color: #6b757d;
   text-align:center;
-  }
-
+}
 :-ms-input-placeholder {
   color: #6b757d;
   text-align:center;
-  }
-  
+}
 .login .content {
  color:#6b7379;
 }  
 input[type="text"], select, input[type="password"], select option {
-    box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.2) inset;    
-    background-color: #F5F5F5;
-    border: 1px solid #dadada;
-    color: #6B757D;
-    font-size: 1em;
-    font-weight: 200;
-    height: 2.5625em;
-    padding-left: 10px;
-    
+  box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.2) inset;    
+  background-color: #F5F5F5;
+  border: 1px solid #dadada;
+  color: #6B757D;
+  font: {
+    size: 1em;
+    family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    weight: 200;
+  }
+  height: 43px; /* 2.5625em */
+  padding-left: 10px;    
 }
-
 a:active,
 a:hover {
-  font-weight:bold; }
-
-.footer-link {
-    color: #ffffff;
-    font-size: 0.9em;
-    font-weight: 300;
+  font-weight:bold;
 }
-
+.footer-link {
+  color: #ffffff;
+  font: {
+    size: 0.9em;
+    weight: 300;
+  }
+}
 .footer-link:hover {
     color: #ffffff;
 }

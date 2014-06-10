@@ -15,41 +15,34 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
- 
-footer {
-    @include transition(0.2s,ease-in,opacity);
 
-	padding: 20px;
-	margin-top: 20px;
+footer{
+  @include transition(0.2s,ease-in,opacity);
+  padding: 20px;
+  & > nav > ul {
 
-    opacity:0.6;
-
-    &:hover{
-        opacity:1.0;
-    };
-}
-
-.footer-link {
-    @include transition(0.2s,ease-in,color);
-
-	color: $footer-link-color;
-    font-size: 0.6875em;
-    font-weight: 300;
-    &:hover{
-        color: $footer-link-hover-color;
-    };
-}
-
-footer > nav > ul {
-
-	@include inline-block-list-container();
+    @include inline-block-list-container();
     display: inline-block;
-
-	padding: 0; margin: 0; margin-left: -20px;
-	text-align: center;
-
-	li {
-		@include inline-block-list-item();
-		margin-left: 20px;
-	}
+    padding: 0;
+    margin: 0;
+    margin-left: -20px;
+    text-align: center;
+  
+    & li {
+      @include inline-block-list-item();
+      margin-left: 20px;
+      color: #fff;
+      font: {
+        size: 11px;
+        family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      }
+    }
+    & a{
+      @include transition(0.2s,ease-in,color);
+      color: $footer-link-color;
+        &:hover{
+            color: $footer-link-hover-color;
+        };    
+    }
+  }
 }
