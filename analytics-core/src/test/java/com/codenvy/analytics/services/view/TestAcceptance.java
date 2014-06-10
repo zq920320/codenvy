@@ -558,7 +558,7 @@ public class TestAcceptance extends BaseTest {
     }
 
     private void assertWorkspaceUsageDay(SectionData sectionData) {
-        String row = sectionData.get(1).get(0).getAsString();MetricType.TOTAL_WORKSPACES
+        String row = sectionData.get(1).get(0).getAsString();
         aggregateResult(row, new StringValueData("Total"), sectionData.get(1).get(0));
         aggregateResult(row, new StringValueData("1,030"), sectionData.get(1).get(1));
 
