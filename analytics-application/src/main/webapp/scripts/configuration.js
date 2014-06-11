@@ -1015,7 +1015,7 @@ function Configuration() {
 
             columnLinkPrefixList: {
                 "ID": "/analytics/pages/account-view.jsp?account_id",
-                "Owner": "/analytics/pages/user-view.jsp?user",
+                "User": "/analytics/pages/user-view.jsp?user",
             },
 
         },
@@ -1024,10 +1024,6 @@ function Configuration() {
             widgetLabel: "Overview",
             presenterType: "VerticalTablePresenter",
             modelViewName: "account",
-
-            columnLinkPrefixList: {
-                "Email": "/analytics/pages/user-view.jsp?user",
-            },
         },
 
         accountSubscriptions: {
