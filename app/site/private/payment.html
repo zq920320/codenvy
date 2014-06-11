@@ -105,11 +105,11 @@
         accountId:$('input[name=accountId]')[0].value,
         startDate:$('input[name=startDate]')[0].value,
         endDate:$('input[name=endDate]')[0].value,
-        properties:[
-            "Package":$('input[name=Package]')[0].value,
-            "RAM":$('input[name=RAM]')[0].value,
-            "TariffPlan":$('input[name=TariffPlan]')[0].value,
-        ]
+        properties:{
+            Package:$('input[name=Package]')[0].value,
+            RAM:$('input[name=RAM]')[0].value,
+            TariffPlan:$('input[name=TariffPlan]')[0].value,
+            }
         };
      $.ajax({
         url : addSubscriptionUrl,
