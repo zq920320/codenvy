@@ -270,6 +270,7 @@ $used-by-logos : "../images/landing/logos/amazon.png"
     Create WS
 
 */
+
 .aternative-create {
     @include alternative_bg;
     @include transition(0.6s);
@@ -308,7 +309,14 @@ $used-by-logos : "../images/landing/logos/amazon.png"
       border-left: 1px solid #27628d;
     }
 }
-
+.new-password .aternative-create {
+  text-align: center;
+  font-size: 16px;
+  line-height: 53px;
+  & > div {
+    float: none;
+  }
+}
 .aternative-create .pulled-up {
     @include transform(translate(0,-147px));
 }

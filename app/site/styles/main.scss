@@ -298,7 +298,11 @@ table {
     border-collapse: collapse;
     border-spacing: 0;
 }
-
+.authentication .login-wrap{
+  h2 {
+    margin-bottom: 3px;
+  }
+}
 /* end Normalize */
 .authentication {
   margin:0 auto;
@@ -314,6 +318,9 @@ table {
     height:56px;
     line-height:56px;
   };
+  .forgot-password h2{
+    margin-bottom: 14px;
+  }
   .hr {
     text-align:center;
     font: {
@@ -328,14 +335,27 @@ table {
   .action {
     margin-top: 18px; 
   }
+  .forgot-password .action {
+    margin-top: 23px;
+    margin-bottom: 18px;
+  }
+  form.login-form {
+    padding-top: 10px;
+    padding-bottom: 13px;
+    .field.action {
+      margin-top: 26px;
+      
+    }
+  }
   .action .blue-button {
     font-size:1em;
-    padding:0;
+    padding:0 29px 0 31px;
     margin:0;
-    width:206px;
+    width: auto;
     height:2.5625em;
     line-height:2.5625em;
     text-shadow: 0px 1px 1px rgba(0,0,0,0.25);
+    box-shadow: none;
   }
   .terms {
     margin:0;
@@ -423,18 +443,4 @@ input[type="text"], select, input[type="password"], select option {
   }
   height: 43px; /* 2.5625em */
   padding-left: 10px;    
-}
-a:active,
-a:hover {
-  font-weight:bold;
-}
-.footer-link {
-  color: #ffffff;
-  font: {
-    size: 0.9em;
-    weight: 300;
-  }
-}
-.footer-link:hover {
-    color: #ffffff;
 }
