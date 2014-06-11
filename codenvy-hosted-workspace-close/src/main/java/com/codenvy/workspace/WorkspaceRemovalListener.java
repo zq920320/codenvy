@@ -73,8 +73,6 @@ public class WorkspaceRemovalListener implements RemovalListener<String, Boolean
                 }
                 workspaceDao.remove(wsId);
 
-                LOG.info("EVENT#workspace-destroyed# WS#{}#", workspace.getName());
-
                 for (Member member : members) {
                     Profile userProfile = userProfileDao.getById(member.getUserId());
                     for (Attribute attr : userProfile.getAttributes()) {

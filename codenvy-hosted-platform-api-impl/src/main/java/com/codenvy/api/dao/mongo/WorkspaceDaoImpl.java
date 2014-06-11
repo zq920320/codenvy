@@ -37,6 +37,9 @@ import com.mongodb.DBObject;
 import com.mongodb.MongoException;
 import com.mongodb.util.JSON;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -47,6 +50,7 @@ import java.util.regex.Pattern;
 /** Workspace DAO implementation based on MongoDB storage. */
 @Singleton
 public class WorkspaceDaoImpl implements WorkspaceDao {
+    private static final Logger  LOG     = LoggerFactory.getLogger(WorkspaceDaoImpl.class);
     /* should contain [3, 20] characters, first and last character is letter or digit, available characters {A-Za-z0-9.-_}*/
     private static final Pattern WS_NAME = Pattern.compile("[\\w][\\w\\.\\-]{1,18}[\\w]");
 
@@ -100,6 +104,7 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
         try {
             DBObject workspace = collection.findAndRemove(new BasicDBObject("id", id));
             Workspace removedWorkspace = DtoFactory.getInstance().createDtoFromJson(workspace.toString(), Workspace.class);
+            LOG.info("EVENT#workspace-destroyed# WS#{}# WS-ID#{}#", removedWorkspace.getName(), removedWorkspace.getId());
             eventService.publish(new DeleteWorkspaceEvent(id, removedWorkspace.isTemporary(), removedWorkspace.getName()));
         } catch (MongoException me) {
             throw new ServerException(me.getMessage(), me);
@@ -188,7 +193,6 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
      * @param workspaceName
      *         workspace name to check
      * @throws com.codenvy.api.core.ConflictException
-     *
      */
     private void ensureWorkspaceNameDoesNotExist(String workspaceName) throws ConflictException {
         DBObject res = collection.findOne(new BasicDBObject("name", workspaceName));
