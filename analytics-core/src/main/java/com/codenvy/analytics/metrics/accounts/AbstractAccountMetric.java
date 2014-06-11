@@ -60,6 +60,7 @@ public abstract class AbstractAccountMetric extends AbstractMetric {
     public static final String ACCOUNT_NAME          = "account_name";
     public static final String ACCOUNT_ROLES         = "account_roles";
     public static final String ACCOUNT_ATTRIBUTES    = "account_attributes";
+    public static final String ACCOUNT_USER_ID       = "account_user_id";
     public static final String ACCOUNT_PROFILE_NAME  = "account_profile_name";
     public static final String ACCOUNT_PROFILE_EMAIL = "account_profile_email";
 
