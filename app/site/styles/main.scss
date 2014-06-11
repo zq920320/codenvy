@@ -298,11 +298,6 @@ table {
     border-collapse: collapse;
     border-spacing: 0;
 }
-.authentication .login-wrap{
-  h2 {
-    margin-bottom: 3px;
-  }
-}
 /* end Normalize */
 .authentication {
   margin:0 auto;
@@ -340,12 +335,7 @@ table {
     margin-bottom: 18px;
   }
   form.login-form {
-    padding-top: 10px;
     padding-bottom: 13px;
-    .field.action {
-      margin-top: 26px;
-      
-    }
   }
   .action .blue-button {
     font-size:1em;
