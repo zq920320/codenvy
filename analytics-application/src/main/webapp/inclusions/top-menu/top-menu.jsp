@@ -67,7 +67,7 @@
                         <button id="topmenu-user"><%= FrontEndUtil.getFirstAndLastName(request.getUserPrincipal())%></button>
                     </div>
                     <ul class="dropdown-menu">
-                        <li><a href="/analytics/pages/user-view.jsp?user=<%= FrontEndUtil.getUserId(request.getUserPrincipal())%>">My statistics</a></li>
+                        <li><a href="/analytics/pages/user-view.jsp?user=<%= FrontEndUtil.getCurrentUserId()%>">My statistics</a></li>
                         <li><a href="/site/private/select-tenant">My workspace</a></li>
                         <li><a href="/analytics/pages/accounts-view.jsp">Organization</a></li>
                         <li><a href="/">Codenvy main page</a></li>

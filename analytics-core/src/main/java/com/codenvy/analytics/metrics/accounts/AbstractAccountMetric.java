@@ -84,12 +84,14 @@ public abstract class AbstractAccountMetric extends AbstractMetric {
     public static final String ROLE_ACCOUNT_OWNER       = "account/owner";
     public static final String ROLE_ACCOUNT_MEMBER      = "account/member";
 
+    private static final MetricTransport httpMetricTransport;
 
-    protected final MetricTransport httpMetricTransport;
+    static {
+        httpMetricTransport = Injector.getInstance(MetricTransport.class);
+    }
 
     public AbstractAccountMetric(MetricType metricType) {
         super(metricType);
-        this.httpMetricTransport = Injector.getInstance(MetricTransport.class);
     }
 
     protected List<AccountMembership> getAccountMemberships() throws IOException {
@@ -110,8 +112,7 @@ public abstract class AbstractAccountMetric extends AbstractMetric {
     }
 
     protected List<Workspace> getWorkspaces(String accountId) throws IOException {
-        return httpMetricTransport
-                .getResources(Workspace.class, "GET", PATH_ACCOUNT_WORKSPACES.replace(PARAM_ACCOUNT_ID, accountId));
+        return httpMetricTransport.getResources(Workspace.class, "GET", PATH_ACCOUNT_WORKSPACES.replace(PARAM_ACCOUNT_ID, accountId));
     }
 
     protected List<Member> getMembers(String workspaceId) throws IOException {
@@ -121,10 +122,6 @@ public abstract class AbstractAccountMetric extends AbstractMetric {
 
     protected Profile getProfile() throws IOException {
         return httpMetricTransport.getResource(Profile.class, "GET", PATH_PROFILE);
-    }
-
-    protected Profile getProfile(String id) throws IOException {
-        return httpMetricTransport.getResource(Profile.class, "GET", PATH_PROFILE + "/" + id);
     }
 
     protected StringValueData getEmail(Profile profile) {
@@ -151,7 +148,7 @@ public abstract class AbstractAccountMetric extends AbstractMetric {
         return new StringValueData(firsName + " " + lastName);
     }
 
-    protected User getCurrentUser() throws IOException {
+    public static User getCurrentUser() throws IOException {
         return httpMetricTransport.getResource(User.class, "GET", AbstractAccountMetric.PATH_USER);
     }
 
@@ -165,10 +162,6 @@ public abstract class AbstractAccountMetric extends AbstractMetric {
         }
 
         throw new IOException("There is no member " + userId + " in " + workspaceId);
-    }
-
-    protected String getUserEmail(String userId) throws IOException {
-        return getEmail(getProfile(userId)).getAsString();
     }
 
     protected List<Subscription> getSubscriptions(String accountId) throws IOException {

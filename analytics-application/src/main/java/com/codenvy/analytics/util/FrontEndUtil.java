@@ -20,32 +20,24 @@ package com.codenvy.analytics.util;
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.*;
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.MetricFactory;
+import com.codenvy.analytics.metrics.MetricFilter;
+import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.accounts.AbstractAccountMetric;
 import com.codenvy.analytics.metrics.users.UsersProfilesList;
 
 import java.io.IOException;
 import java.security.Principal;
 import java.util.Map;
 
-import static com.codenvy.analytics.datamodel.ValueDataUtil.*;
-
 /**
  * @author Dmytro Nochevnov
  */
 public class FrontEndUtil {
 
-    public static String getUserId(Principal userPrincipal) throws IOException {
-        Context.Builder builder = new Context.Builder();
-        builder.put(MetricFilter.ALIASES, userPrincipal.getName());
-
-        Metric metric = MetricFactory.getMetric(MetricType.USERS_PROFILES_LIST);
-        ListValueData valueData = getAsList(metric, builder.build());
-        if (valueData.size() == 0) {
-            return userPrincipal.getName();
-        } else {
-            Map<String, ValueData> profile = treatAsMap(treatAsList(valueData).get(0));
-            return profile.get(AbstractMetric.ID).getAsString();
-        }
+    public static String getCurrentUserId() throws IOException {
+        return AbstractAccountMetric.getCurrentUser().getId();
     }
 
     /**
