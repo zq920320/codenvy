@@ -327,7 +327,8 @@
     <event name="user-removed">
         <description>User removed</description>
         <parameters>
-            <param>ALIASES</param>
+            <param>USER</param>
+            <param>EMAILS</param>
             <param>USER-ID</param>
         </parameters>
     </event>
