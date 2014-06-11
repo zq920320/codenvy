@@ -328,7 +328,7 @@ public class UserDaoImpl implements UserDao {
         try {
             context = getLdapContext();
             context.destroySubcontext(getUserDn(id));
-            LOG.info("EVENT#user-removed# ALIASES#{}# USER-ID#{}#", user.getEmail(), user.getId());
+            logUserEvent("user-removed", user);
             eventService.publish(new RemoveUserEvent(id));
         } catch (NameNotFoundException e) {
             throw new NotFoundException("User not found " + id);
