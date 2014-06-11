@@ -306,6 +306,10 @@ table {
     background:#fff;
     color: #f3f3f3; 
   };
+  &.result p {
+    padding: 0 9px 20px;
+  }
+
   h2 {
     font-size:1.125em; /*18px*/
     font-weight:500;
@@ -369,8 +373,15 @@ table {
     background-color: rgba(255,0,0,1);    
     border-radius: 0;
   }
+  .short-line {
+    width: 55px;
+    border: 0 none;
+    border-bottom :1px solid #b4b4b4;
+  }
 }
-
+.authentication.profile-form {
+  width: 800px;
+}
 .footer {
   text-align:center;
   font-size:12px;
@@ -434,3 +445,17 @@ input[type="text"], select, input[type="password"], select option {
   height: 43px; /* 2.5625em */
   padding-left: 10px;    
 }
+.cloud-ide-profile select option {
+  background-color: #fff;
+  box-shadow: none;
+  border: 0 none;
+}
+.profile-wrap {
+  padding-bottom: 30px;
+}
+.forgotpassword-result {
+  font-size: 16px;
+  color: #6b757d;
+  text-align: center;
+}
+

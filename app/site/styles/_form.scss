@@ -169,7 +169,8 @@ form .field {
 */    
 .create-form,
 .login-form,
-.forgotpassword-form {
+.forgotpassword-form,
+.profile-wrap {
   .field {
     padding:0;
     margin-bottom:10px;
@@ -221,25 +222,21 @@ form .field {
     @include input-textbox-padding();
     
 }
-
 .profile-email p {
-    color: $white-text;
-    text-align: center;
-    font-size: 0.875em;
-    font-weight: normal;
-    padding: 0px 0px 6px 0px;
-    margin: 0px;
+  text-align: center;
+  font: {
+    size: 0.875em;
+    weight: normal;
+  }
+  padding: 0px 0px 6px 0px;
+  margin: 0px;
 }
-
-#account_value {
-    color: $white-text;
-    font-weight: bold;
-}
-
 .profile-form  input[type='submit'] {
-    color: $black-text;
-    font-size: 0.875em;
-    font-weight: normal;
+  color: $black-text;
+  font: {
+    size: 0.875em;
+    weight: normal;
+  }
 }
 
 @mixin placeholder($color){
@@ -280,19 +277,19 @@ select option{
 
 
 .error-container {
-    opacity: 0;
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    height: auto;
-    text-align: center;
-    background-color: rgba(255,0,0,0.4);
-    border-radius: 5px;
-    padding-top: 10px;
-    margin: 10px;
-    z-index: 1;
-    padding-bottom: 10px;
+  opacity: 0;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: auto;
+  text-align: center;
+  background-color: rgba(255,0,0,0.4);
+  border-radius: 5px;
+  padding-top: 10px;
+  margin: 10px;
+  z-index: 1;
+  padding-bottom: 10px;
 }
 
 .error-container.ok-message {

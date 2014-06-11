@@ -229,13 +229,10 @@ $used-by-logos : "../images/landing/logos/amazon.png"
     Forgot password form
 
 */
-
-.result-message.hidden{
-    opacity: 0;
-}
-
-.data.hidden{
-    opacity: 0;
+.forgot-password {
+  .hide{
+    display: none;
+  }
 }
 
 /*

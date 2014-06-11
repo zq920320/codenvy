@@ -47,8 +47,8 @@ define(["underscore","views/accountformbase","models/account"],
             },
 
             __showResultMessage : function(){
-				this.$("fieldset.data").attr("style","display:none");
-				this.$("fieldset.result-message").removeClass("hidden");
+				this.$(".forgotpassword-form").addClass("hide");
+				this.$(".forgotpassword-result").removeClass("hide");
             }
         });
 
