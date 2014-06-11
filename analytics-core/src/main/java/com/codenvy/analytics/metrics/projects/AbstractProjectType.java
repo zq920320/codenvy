@@ -36,6 +36,7 @@ public abstract class AbstractProjectType extends ReadBasedMetric implements Rea
     public static final String JAVA = "java";
     public static final String MMP1 = "maven multi-module";
     public static final String MMP2 = "maven_multi_module";
+    public static final String MMP3 = "maven";
     public static final String SPRING = "spring";
     public static final String NODE_JS = "nodejs";
     public static final String PHP = "php";
@@ -54,7 +55,7 @@ public abstract class AbstractProjectType extends ReadBasedMetric implements Rea
     public static final String ANGULAR_JAVA_SCRIPT = "angularjs";
     public static final String HTML = "html";
     public static final String[] TYPES =
-            {JAR, JSP, DJANGO, WAR, JAVA, MMP1, MMP2, SPRING, NODE_JS, PHP, PYTHON,
+            {JAR, JSP, DJANGO, WAR, JAVA, MMP1, MMP2, MMP3, SPRING, NODE_JS, PHP, PYTHON,
              ANDROID, GOOGLE_MBS, OTHER_NULL, OTHER_DEFAULT, OTHER_SERV, OTHER_EXO,
              RUBY, RAILS, JAVA_SCRIPT, ANGULAR_JAVA_SCRIPT, HTML, OTHER_UNDEFINED,
              OTHER_NAMELESS};
