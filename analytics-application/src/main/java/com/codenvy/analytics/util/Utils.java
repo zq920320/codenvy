@@ -114,13 +114,11 @@ public class Utils {
 
     public static boolean isSystemUser(SecurityContext securityContext) {
         Principal userPrincipal = securityContext.getUserPrincipal();
-        if (userPrincipal == null) {
-            return false;
-        }
+        return userPrincipal != null &&
+               (isSystemUser(userPrincipal.getName())
+                || securityContext.isUserInRole("system/admin")
+                || securityContext.isUserInRole("system/manager"));
 
-        return isSystemUser(userPrincipal.getName())
-               || securityContext.isUserInRole("system/admin")
-               || securityContext.isUserInRole("system/manager");
     }
 
     private static void putDefaultValueIfAbsent(Map<String, String> context, Parameters param) {
