@@ -168,7 +168,7 @@ function Configuration() {
 
             columnDrillDownPageLinkConfiguration: {
                 mapColumnNameToExpandableMetric: {
-                    "Aggregate Time": "product_usage_time_total",
+                    "Aggregate Time": "#SESSIONS",
                 },
 
                 mapColumnToParameter: {
@@ -204,10 +204,10 @@ function Configuration() {
 
             columnDrillDownPageLinkConfiguration: {
                 mapColumnNameToExpandableMetric: {
-                    "Sessions": "product_usage_sessions",
+                    "Sessions": "#SESSIONS",
                     "# Workspaces Created": "temporary_workspaces_created",
                     "# Accounts Created": "created_users_from_factory",
-                    "Aggregate Time": "product_usage_time_total",
+                    "Aggregate Time": "#SESSIONS",
                     "% Anon": "anonymous_factory_sessions",
                     "% Auth": "authenticated_factory_sessions",
                     "% Abandon": "abandoned_factory_sessions",
@@ -236,9 +236,9 @@ function Configuration() {
 
             columnDrillDownPageLinkConfiguration: {
                 mapColumnNameToExpandableMetric: {
-                    "Sessions": "product_usage_sessions",
+                    "Sessions": "#SESSIONS",
                     "# Workspaces Created": "temporary_workspaces_created",
-                    "Aggregate Time": "product_usage_time_total",
+                    "Aggregate Time": "#SESSIONS",
                     "% Anon": "anonymous_factory_sessions",
                     "% Auth": "authenticated_factory_sessions",
                     "% Abandon": "abandoned_factory_sessions",
@@ -268,14 +268,14 @@ function Configuration() {
 
             columnDrillDownPageLinkConfiguration: {
                 mapColumnNameToExpandableMetric: {
-                    "Sessions": "product_usage_sessions",
-                    "1 Day": "product_usage_sessions",
-                    "7 Days": "product_usage_sessions",
-                    "30 Days": "product_usage_sessions",
-                    "60 Days": "product_usage_sessions",
-                    "90 Days": "product_usage_sessions",
-                    "1 Year": "product_usage_sessions",
-                    "Lifetime": "product_usage_sessions",
+                    "Sessions": "#SESSIONS",
+                    "1 Day": "#SESSIONS",
+                    "7 Days": "#SESSIONS",
+                    "30 Days": "#SESSIONS",
+                    "60 Days": "#SESSIONS",
+                    "90 Days": "#SESSIONS",
+                    "1 Year": "#SESSIONS",
+                    "Lifetime": "#SESSIONS",
                 },
 
                 mapColumnToParameter: {
@@ -297,14 +297,14 @@ function Configuration() {
 
             columnDrillDownPageLinkConfiguration: {
                 mapColumnNameToExpandableMetric: {
-                    "Sessions": "product_usage_sessions",
-                    "1 Day": "product_usage_sessions",
-                    "7 Days": "product_usage_sessions",
-                    "30 Days": "product_usage_sessions",
-                    "60 Days": "product_usage_sessions",
-                    "90 Days": "product_usage_sessions",
-                    "1 Year": "product_usage_sessions",
-                    "Lifetime": "product_usage_sessions",
+                    "Sessions": "#SESSIONS",
+                    "1 Day": "#SESSIONS",
+                    "7 Days": "#SESSIONS",
+                    "30 Days": "#SESSIONS",
+                    "60 Days": "#SESSIONS",
+                    "90 Days": "#SESSIONS",
+                    "1 Year": "#SESSIONS",
+                    "Lifetime": "#SESSIONS",
                 },
 
                 mapColumnToParameter: {
@@ -325,15 +325,15 @@ function Configuration() {
             // see clientSortParams in the TopMetricsPresenter::clientSortParams property
 
             columnDrillDownPageLinkConfiguration: {
-                mapColumnNameToExpandableMetric: {
-                    "Sessions": "product_usage_sessions",
-                    "1 Day": "product_usage_sessions",
-                    "7 Days": "product_usage_sessions",
-                    "30 Days": "product_usage_sessions",
-                    "60 Days": "product_usage_sessions",
-                    "90 Days": "product_usage_sessions",
-                    "1 Year": "product_usage_sessions",
-                    "Lifetime": "product_usage_sessions",
+                __USERS__: {
+                    "Sessions": "#SESSIONS",
+                    "1 Day": "#SESSIONS",
+                    "7 Days": "#SESSIONS",
+                    "30 Days": "#SESSIONS",
+                    "60 Days": "#SESSIONS",
+                    "90 Days": "#SESSIONS",
+                    "1 Year": "#SESSIONS",
+                    "Lifetime": "#SESSIONS",
                 },
 
                 mapColumnToParameter: {
@@ -361,7 +361,7 @@ function Configuration() {
 
             columnDrillDownPageLinkConfiguration: {
                 mapColumnNameToExpandableMetric: {
-                    "Time": "product_usage_sessions",
+                    "Time": "#SESSIONS",
                 },
 
                 mapColumnToParameter: {
@@ -390,7 +390,7 @@ function Configuration() {
 
             columnDrillDownPageLinkConfiguration: {
                 mapColumnNameToExpandableMetric: {
-                    "Time": "product_usage_sessions",
+                    "Time": "#SESSIONS",
                 },
 
                 mapColumnToParameter: {
@@ -420,7 +420,7 @@ function Configuration() {
 
             columnDrillDownPageLinkConfiguration: {
                 mapColumnNameToExpandableMetric: {
-                    "Time": "product_usage_sessions",
+                    "Time": "#SESSIONS",
                 },
 
                 mapColumnToParameter: {
@@ -474,9 +474,9 @@ function Configuration() {
 
             columnDrillDownPageLinkConfiguration: {
                 mapColumnNameToExpandableMetric: {
-                    "# Sessions": "product_usage_sessions",
-                    "Usage Time": "product_usage_time_total",
-                    "# Projects": "projects",
+                    "# Sessions": "#SESSIONS",
+                    "Usage Time": "#SESSIONS",
+                    "# Projects": "#PROJECTS",
                 },
 
                 mapColumnToParameter: {
@@ -496,15 +496,15 @@ function Configuration() {
             
             columnDrillDownPageLinkConfiguration: {
                 mapColumnNameToExpandableMetric: {
-                    "Number of Sessions": "product_usage_sessions",
-                    "Total Time": "product_usage_time_total",
+                    "Number of Sessions": "#SESSIONS",
+                    "Total Time": "#SESSIONS",
                     "Total Build Time": "builds_time",
                     "Total Run Time": "runs_time",
-                    "Number of Active Projects": "projects",
+                    "Number of Active Projects": "#PROJECTS",
                     "Number of Builds": "builds",
                     "Number of Debugs": "debugs",
                     "Number of Deploys": "deploys",
-                    "Number of Factories": "total_factories",
+                    "Number of Factories": "#FACTORIES",
                 },
             },
         },
@@ -559,8 +559,8 @@ function Configuration() {
 
             columnDrillDownPageLinkConfiguration: {
                 mapColumnNameToExpandableMetric: {
-                    "Sessions": "product_usage_sessions",
-                    "Time": "product_usage_time_total",
+                    "Sessions": "#SESSIONS",
+                    "Time": "#SESSIONS",
                 },
 
                 mapColumnToParameter: {
@@ -625,7 +625,7 @@ function Configuration() {
             modelViewName: "user_projects",
 
             isPaginable: true,    // default value is "false"
-            modelMetricName: "projects",
+            modelMetricName: "#PROJECTS",
 
             columnLinkPrefixList: {
                 "User": "/analytics/pages/user-view.jsp?user",
@@ -760,14 +760,14 @@ function Configuration() {
 
             columnDrillDownPageLinkConfiguration: {
                 mapColumnNameToExpandableMetric: {
-                    "Time": "product_usage_sessions",
-                    "Sessions": "product_usage_time_total",
+                    "Time": "#SESSIONS",
+                    "Sessions": "#SESSIONS",
                     "# Runs": "runs",
                     "# Debugs": "debugs",
                     "# Builds": "builds",
                     "# Deploys": "deploys",
                     "Invites": "user_invite",
-                    "Joined Users": "total_users",
+                    "Joined Users": "#USERS",
                 },
 
                 mapColumnToParameter: {
@@ -787,16 +787,16 @@ function Configuration() {
             
             columnDrillDownPageLinkConfiguration: {
                 mapColumnNameToExpandableMetric: {
-                    "Number of Sessions": "product_usage_sessions",
-                    "Total Time": "product_usage_time_total",
+                    "Number of Sessions": "#SESSIONS",
+                    "Total Time": "#SESSIONS",
                     "Total Build Time": "builds_time",
                     "Total Run Time": "runs_time",
-                    "Number of Active Projects": "projects",
+                    "Number of Active Projects": "#PROJECTS",
                     "Number of Builds": "builds",
                     "Number of Debugs": "debugs",
                     "Number of Deploys": "deploys",
-                    "Number of Factories": "total_factories",
-                    "Number of Users": "total_users",
+                    "Number of Factories": "#FACTORIES",
+                    "Number of Users": "#USERS",
                 },
             },
         },
@@ -886,8 +886,8 @@ function Configuration() {
 
             columnDrillDownPageLinkConfiguration: {
                 mapColumnNameToExpandableMetric: {
-                    "Sessions": "product_usage_sessions",
-                    "Time": "product_usage_time_total",
+                    "Sessions": "#SESSIONS",
+                    "Time": "#SESSIONS",
                 },
 
                 mapColumnToParameter: {
@@ -1088,8 +1088,8 @@ function Configuration() {
             columnDrillDownPageLinkConfiguration: {
                 mapColumnNameToExpandableMetric: {
                     "Clicks": "temporary_workspaces_created",
-                    "Sessions": "product_usage_sessions",
-                    "Time": "product_usage_time_total",
+                    "Sessions": "#SESSIONS",
+                    "Time": "#SESSIONS",
                 },
 
                 mapColumnToParameter: {
@@ -1111,10 +1111,10 @@ function Configuration() {
             columnDrillDownPageLinkConfiguration: {
                 mapColumnNameToExpandableMetric: {
                     "Number of Clicks": "temporary_workspaces_created",
-                    "Number of Sessions": "product_usage_sessions",
+                    "Number of Sessions": "#SESSIONS",
                     "Number of Known": "authenticated_factory_sessions",
                     "Number of Converted": "converted_factory_sessions",
-                    "Total Time": "product_usage_time_total",
+                    "Total Time": "#SESSIONS",
                 },
             },
         },
@@ -1177,8 +1177,8 @@ function Configuration() {
 
             columnDrillDownPageLinkConfiguration: {
                 mapColumnNameToExpandableMetric: {
-                    "# Sessions": "product_usage_sessions",
-                    "Duration": "product_usage_time_total",
+                    "# Sessions": "#SESSIONS",
+                    "Duration": "#SESSIONS",
                 },
 
                 mapColumnToParameter: {
@@ -1262,164 +1262,164 @@ function Configuration() {
     var defaultDrillDownPageAddress = "/analytics/pages/drill-down.jsp";
     var mapExpandableMetricToDrillDownPageType = {
         /** USERS */
-        "active_users": "USERS",
-        "active_users_from_beginning": "USERS",
-        "users_who_created_project": "USERS",
-        "users_who_built": "USERS",
-        "users_who_deployed": "USERS",
-        "users_who_deployed_to_paas": "USERS",
-        "users_who_invited": "USERS",
-        "users_who_launched_shell": "USERS",
-        "created_users": "USERS",
-        "created_users_from_factory": "USERS",
-        "user_invite": "USERS",
-        "removed_users": "USERS",
-        "users_activity": "USERS",
-        "total_users": "USERS",
-        "users_added_to_workspaces_using_invitation": "USERS",
-        "non_active_users": "USERS",
+        "active_users": "#USERS",
+        "active_users_from_beginning": "#USERS",
+        "users_who_created_project": "#USERS",
+        "users_who_built": "#USERS",
+        "users_who_deployed": "#USERS",
+        "users_who_deployed_to_paas": "#USERS",
+        "users_who_invited": "#USERS",
+        "users_who_launched_shell": "#USERS",
+        "created_users": "#USERS",
+        "created_users_from_factory": "#USERS",
+        "user_invite": "#USERS",
+        "removed_users": "#USERS",
+        "users_activity": "#USERS",
+        "total_users": "#USERS",
+        "users_added_to_workspaces_using_invitation": "#USERS",
+        "non_active_users": "#USERS",
 
-        "product_usage_users_above_300_min": "USERS",
-        "product_usage_users_between_10_and_60_min": "USERS",
-        "product_usage_users_between_60_and_300_min": "USERS",
+        "product_usage_users_above_300_min": "#USERS",
+        "product_usage_users_between_10_and_60_min": "#USERS",
+        "product_usage_users_between_60_and_300_min": "#USERS",
 
-        "product_usage_condition_above_300_min": "USERS",
-        "product_usage_condition_below_120_min": "USERS",
-        "product_usage_condition_between_120_and_300_min": "USERS",
+        "product_usage_condition_above_300_min": "#USERS",
+        "product_usage_condition_below_120_min": "#USERS",
+        "product_usage_condition_between_120_and_300_min": "#USERS",
 
-        "new_active_users": "USERS",
-        "created_users_from_auth": "USERS",
-        "users_logged_in_with_form": "USERS",
-        "users_logged_in_with_github": "USERS",
-        "users_logged_in_with_google": "USERS",
-        "users_logged_in_with_form_percent": "USERS",
-        "users_logged_in_with_github_percent": "USERS",
-        "users_logged_in_with_google_percent": "USERS",
-        "returning_active_users": "USERS",
-        "product_usage_users_below_10_min": "USERS",
-        "users_logged_in_total": "USERS",
-        "users_accepted_invites_percent": "USERS",
-        "users_accepted_invites": "USERS",
-        "timeline_product_usage_condition_above_300_min": "USERS",
-        "timeline_product_usage_condition_below_120_min": "USERS",
-        "timeline_product_usage_condition_between_120_and_300_min": "USERS",
+        "new_active_users": "#USERS",
+        "created_users_from_auth": "#USERS",
+        "users_logged_in_with_form": "#USERS",
+        "users_logged_in_with_github": "#USERS",
+        "users_logged_in_with_google": "#USERS",
+        "users_logged_in_with_form_percent": "#USERS",
+        "users_logged_in_with_github_percent": "#USERS",
+        "users_logged_in_with_google_percent": "#USERS",
+        "returning_active_users": "#USERS",
+        "product_usage_users_below_10_min": "#USERS",
+        "users_logged_in_total": "#USERS",
+        "users_accepted_invites_percent": "#USERS",
+        "users_accepted_invites": "#USERS",
+        "timeline_product_usage_condition_above_300_min": "#USERS",
+        "timeline_product_usage_condition_below_120_min": "#USERS",
+        "timeline_product_usage_condition_between_120_and_300_min": "#USERS",
 
 
         /** WORKSPACES */
-        "active_workspaces": "WORKSPACES",
-        "created_workspaces": "WORKSPACES",
-        "temporary_workspaces_created": "WORKSPACES",
-        "destroyed_workspaces": "WORKSPACES",
-        "shell_launched": "WORKSPACES",
-        "collaborative_sessions_started": "WORKSPACES",
-        "workspaces_where_users_have_several_factory_sessions": "WORKSPACES",
-        "workspaces_with_zero_factory_sessions_length": "WORKSPACES",
+        "active_workspaces": "#WORKSPACES",
+        "created_workspaces": "#WORKSPACES",
+        "temporary_workspaces_created": "#WORKSPACES",
+        "destroyed_workspaces": "#WORKSPACES",
+        "shell_launched": "#WORKSPACES",
+        "collaborative_sessions_started": "#WORKSPACES",
+        "workspaces_where_users_have_several_factory_sessions": "#WORKSPACES",
+        "workspaces_with_zero_factory_sessions_length": "#WORKSPACES",
 
-        "total_workspaces": "WORKSPACES",
+        "total_workspaces": "#WORKSPACES",
 
-        "new_active_workspaces": "WORKSPACES",
-        "returning_active_workspaces": "WORKSPACES",
-        "non_active_workspaces": "WORKSPACES",
+        "new_active_workspaces": "#WORKSPACES",
+        "returning_active_workspaces": "#WORKSPACES",
+        "non_active_workspaces": "#WORKSPACES",
 
 
         /** PROJECTS */
-        "builds": "PROJECTS",
-        "deploys": "PROJECTS",
-        "deploys_to_paas": "PROJECTS",
-        "runs": "PROJECTS",
-        "debugs": "PROJECTS",
-        "destroyed_projects": "PROJECTS",
-        "code_refactorings": "PROJECTS",
-        "code_completions": "PROJECTS",
-        "build_queue_terminations": "PROJECTS",
-        "run_queue_terminations": "PROJECTS",
-        "builds_time": "PROJECTS",
-        "debugs_time": "PROJECTS",
-        "runs_time": "PROJECTS",
-        "time_in_build_queue": "PROJECTS",
-        "time_in_run_queue": "PROJECTS",
-        "created_projects": "PROJECTS",
-        "projects": "PROJECTS",
+        "builds": "#PROJECTS",
+        "deploys": "#PROJECTS",
+        "deploys_to_paas": "#PROJECTS",
+        "runs": "#PROJECTS",
+        "debugs": "#PROJECTS",
+        "destroyed_projects": "#PROJECTS",
+        "code_refactorings": "#PROJECTS",
+        "code_completions": "#PROJECTS",
+        "build_queue_terminations": "#PROJECTS",
+        "run_queue_terminations": "#PROJECTS",
+        "builds_time": "#PROJECTS",
+        "debugs_time": "#PROJECTS",
+        "runs_time": "#PROJECTS",
+        "time_in_build_queue": "#PROJECTS",
+        "time_in_run_queue": "#PROJECTS",
+        "created_projects": "#PROJECTS",
+        "projects": "#PROJECTS",
 
-        "project_type_android": "PROJECTS",
-        "project_type_django": "PROJECTS",
-        "project_type_jar": "PROJECTS",
-        "project_type_javascript": "PROJECTS",
-        "project_type_jsp": "PROJECTS",
-        "project_type_mmp": "PROJECTS",
-        "project_type_nodejs": "PROJECTS",
-        "project_type_others": "PROJECTS",
-        "project_type_php": "PROJECTS",
-        "project_type_python": "PROJECTS",
-        "project_type_ruby": "PROJECTS",
-        "project_type_spring": "PROJECTS",
-        "project_type_war": "PROJECTS",
+        "project_type_android": "#PROJECTS",
+        "project_type_django": "#PROJECTS",
+        "project_type_jar": "#PROJECTS",
+        "project_type_javascript": "#PROJECTS",
+        "project_type_jsp": "#PROJECTS",
+        "project_type_mmp": "#PROJECTS",
+        "project_type_nodejs": "#PROJECTS",
+        "project_type_others": "#PROJECTS",
+        "project_type_php": "#PROJECTS",
+        "project_type_python": "#PROJECTS",
+        "project_type_ruby": "#PROJECTS",
+        "project_type_spring": "#PROJECTS",
+        "project_type_war": "#PROJECTS",
 
-        "project_paas_appfog": "PROJECTS",
-        "project_paas_aws": "PROJECTS",
-        "project_paas_cloudbees": "PROJECTS",
-        "project_paas_cloudfoundry": "PROJECTS",
-        "project_paas_gae": "PROJECTS",
-        "project_paas_heroku": "PROJECTS",
-        "project_paas_manymo": "PROJECTS",
-        "project_paas_openshift": "PROJECTS",
-        "project_paas_tier3": "PROJECTS",
+        "project_paas_appfog": "#PROJECTS",
+        "project_paas_aws": "#PROJECTS",
+        "project_paas_cloudbees": "#PROJECTS",
+        "project_paas_cloudfoundry": "#PROJECTS",
+        "project_paas_gae": "#PROJECTS",
+        "project_paas_heroku": "#PROJECTS",
+        "project_paas_manymo": "#PROJECTS",
+        "project_paas_openshift": "#PROJECTS",
+        "project_paas_tier3": "#PROJECTS",
 
-        "total_projects": "PROJECTS",
+        "total_projects": "#PROJECTS",
 
-        "project_no_paas_defined": "PROJECTS",
-        "project_paas_any": "PROJECTS",
+        "project_no_paas_defined": "#PROJECTS",
+        "project_paas_any": "#PROJECTS",
 
 
         /** SESSIONS */
-        "factory_sessions_with_build": "SESSIONS",
-        "factory_sessions_with_deploy": "SESSIONS",
-        "factory_sessions_with_run": "SESSIONS",
-        "authenticated_factory_sessions": "SESSIONS",
-        "converted_factory_sessions": "SESSIONS",
-        "product_usage_sessions": "SESSIONS",
-        "factory_sessions": "SESSIONS",
-        "product_usage_factory_sessions": "SESSIONS",
-        "factory_product_usage_time_total": "SESSIONS",
+        "factory_sessions_with_build": "#SESSIONS",
+        "factory_sessions_with_deploy": "#SESSIONS",
+        "factory_sessions_with_run": "#SESSIONS",
+        "authenticated_factory_sessions": "#SESSIONS",
+        "converted_factory_sessions": "#SESSIONS",
+        "product_usage_sessions": "#SESSIONS",
+        "factory_sessions": "#SESSIONS",
+        "product_usage_factory_sessions": "#SESSIONS",
+        "factory_product_usage_time_total": "#SESSIONS",
 
-        "factory_sessions_with_build_percent": "SESSIONS",
-        "factory_sessions_with_deploy_percent": "SESSIONS",
-        "factory_sessions_with_run_percent": "SESSIONS",
+        "factory_sessions_with_build_percent": "#SESSIONS",
+        "factory_sessions_with_deploy_percent": "#SESSIONS",
+        "factory_sessions_with_run_percent": "#SESSIONS",
 
-        "product_usage_sessions_above_60_min": "SESSIONS",
-        "product_usage_sessions_below_1_min": "SESSIONS",
-        "product_usage_sessions_between_10_and_60_min": "SESSIONS",
-        "product_usage_sessions_between_1_and_10_min": "SESSIONS",
+        "product_usage_sessions_above_60_min": "#SESSIONS",
+        "product_usage_sessions_below_1_min": "#SESSIONS",
+        "product_usage_sessions_between_10_and_60_min": "#SESSIONS",
+        "product_usage_sessions_between_1_and_10_min": "#SESSIONS",
 
-        "product_usage_time_above_60_min": "SESSIONS",
-        "product_usage_time_between_10_and_60_min": "SESSIONS",
-        "product_usage_time_between_1_and_10_min": "SESSIONS",
+        "product_usage_time_above_60_min": "#SESSIONS",
+        "product_usage_time_between_10_and_60_min": "#SESSIONS",
+        "product_usage_time_between_1_and_10_min": "#SESSIONS",
 
-        "factory_sessions_above_10_min": "SESSIONS",
-        "factory_sessions_below_10_min": "SESSIONS",
+        "factory_sessions_above_10_min": "#SESSIONS",
+        "factory_sessions_below_10_min": "#SESSIONS",
 
-        "abandoned_factory_sessions": "SESSIONS",
-        "non_factories_product_usage_sessions": "SESSIONS",
-        "product_usage_time_below_1_min": "SESSIONS",
-        "product_usage_time_total": "SESSIONS",
-        "anonymous_factory_sessions": "SESSIONS",
+        "abandoned_factory_sessions": "#SESSIONS",
+        "non_factories_product_usage_sessions": "#SESSIONS",
+        "product_usage_time_below_1_min": "#SESSIONS",
+        "product_usage_time_total": "#SESSIONS",
+        "anonymous_factory_sessions": "#SESSIONS",
 
 
         /** FACTORIES */
-        "factory_used": "FACTORIES",
-        "total_factories": "FACTORIES",
+        "factory_used": "#FACTORIES",
+        "total_factories": "#FACTORIES",
 
 
         /** DEFAULT */
-        "created_factories": "DEFAULT",  // not 'FACTORIES' because there could be no created factory in 'product_usage_factory_sessions_list' collection
+        "created_factories": "#DEFAULT",  // not 'FACTORIES' because there could be no created factory in 'product_usage_factory_sessions_list' collection
     };
     var mapDrillDownPageTypeToAddress = {
-        "DEFAULT": defaultDrillDownPageAddress,
-        "USERS": "/analytics/pages/users-view.jsp",
-        "WORKSPACES": "/analytics/pages/workspaces-view.jsp",
-        "FACTORIES": "/analytics/pages/factories-view.jsp",
-        "PROJECTS": "/analytics/pages/projects-view.jsp",
-        "SESSIONS": "/analytics/pages/sessions-view.jsp",
+        "#DEFAULT": defaultDrillDownPageAddress,
+        "#USERS": "/analytics/pages/users-view.jsp",
+        "#WORKSPACES": "/analytics/pages/workspaces-view.jsp",
+        "#FACTORIES": "/analytics/pages/factories-view.jsp",
+        "#PROJECTS": "/analytics/pages/projects-view.jsp",
+        "#SESSIONS": "/analytics/pages/sessions-view.jsp",
     }
 
     var factoryUrlColumnNames = ["Factory URL", "Factory"];
@@ -1583,6 +1583,14 @@ function Configuration() {
         return mapColumnNameToExpandableMetric[columnName];
     }
 
+    function isDrillDownPageType(pageType) {
+        return typeof mapDrillDownPageTypeToAddress[pageType] != "undefined";
+    }
+    
+    function getDrillDownPageAddressOnPageType(pageType) {
+        return mapDrillDownPageTypeToAddress[pageType];
+    }
+    
 
     function isWorkspaceColumnName(columnName) {
         return isSpecificColumnName(columnName, workspaceColumnNames);
@@ -1622,6 +1630,8 @@ function Configuration() {
 
         getDrillDownPageAddress: getDrillDownPageAddress,
         getExpandableMetricName: getExpandableMetricName,
+        isDrillDownPageType: isDrillDownPageType,
+        getDrillDownPageAddressOnPageType: getDrillDownPageAddressOnPageType,
 
         isFactoryUrlColumnName: isFactoryUrlColumnName,
         isWorkspaceColumnName: isWorkspaceColumnName,

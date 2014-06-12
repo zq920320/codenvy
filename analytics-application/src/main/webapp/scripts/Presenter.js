@@ -217,19 +217,24 @@ Presenter.prototype.isEmptyValue = function(value) {
 }
 
 Presenter.prototype.getDrillDownPageLink = function(metricName, modelParams, timeInterval) {
-    var drillDownPageAddress = analytics.configuration.getDrillDownPageAddress(metricName);
-    var drillDownPageLinkDelimeter = (drillDownPageAddress.indexOf("?") != -1) ? "&" : "?";
-    var drillDownPageLink = analytics.configuration.getDrillDownPageAddress(metricName)
-                            + drillDownPageLinkDelimeter + this.METRIC_ORIGINAL_NAME_VIEW_PARAMETER + "=" + metricName;
-
+    if (analytics.configuration.isDrillDownPageType(metricName)) {
+        var drillDownPageLink = analytics.configuration.getDrillDownPageAddressOnPageType(metricName);
+    } else {
+        var drillDownPageAddress = analytics.configuration.getDrillDownPageAddress(metricName);
+        var drillDownPageLink = drillDownPageAddress + "?" + this.METRIC_ORIGINAL_NAME_VIEW_PARAMETER + "=" + metricName;        
+    }
+    
     if (!jQuery.isEmptyObject(modelParams)) {
         var modelParams = analytics.util.clone(modelParams);
         delete modelParams[this.METRIC_ORIGINAL_NAME_VIEW_PARAMETER];  // remove redundant expanded metric name
-        drillDownPageLink += "&" + analytics.util.constructUrlParams(modelParams);
+        
+        var drillDownPageLinkDelimeter = (drillDownPageLink.indexOf("?") != -1) ? "&" : "?";
+        drillDownPageLink += drillDownPageLinkDelimeter + analytics.util.constructUrlParams(modelParams);
     }
 
     if (typeof timeInterval != "undefined") {
-        drillDownPageLink += "&" + this.TIME_INTERVAL_PARAMETER + "=" + timeInterval;
+        var drillDownPageLinkDelimeter = (drillDownPageLink.indexOf("?") != -1) ? "&" : "?";
+        drillDownPageLink += drillDownPageLinkDelimeter + this.TIME_INTERVAL_PARAMETER + "=" + timeInterval;
     }
 
     return drillDownPageLink;
@@ -272,7 +277,8 @@ Presenter.prototype.linkTableValuesWithDrillDownPage = function(widgetName, tabl
 
                     // calculation combined link like "ws=...&project=..."
                     if (sourceColumnIndexes.length > 0) {
-                        drillDownPageLink += "&" + this.getUrlParamsForCombineColumnLink(table.rows[i],
+                        var drillDownPageLinkDelimeter = (drillDownPageLink.indexOf("?") != -1) ? "&" : "?";
+                        drillDownPageLink += drillDownPageLinkDelimeter + this.getUrlParamsForCombineColumnLink(table.rows[i],
                                                                                          sourceColumnIndexes,
                                                                                          mapColumnToParameter,
                                                                                          doNotLinkOnEmptyParameter);

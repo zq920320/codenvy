@@ -178,7 +178,8 @@ analytics.presenter.TopMetricsPresenter.prototype.linkColumnValuesWithDrillDownP
             
             // calculation combined link like "ws=...&project=..."
             if (sourceColumnIndexes.length > 0) {
-                drillDownPageLink += "&" + this.getUrlParamsForCombineColumnLink(row, 
+                var drillDownPageLinkDelimeter = (drillDownPageLink.indexOf("?") != -1) ? "&" : "?";
+                drillDownPageLink += drillDownPageLinkDelimeter + this.getUrlParamsForCombineColumnLink(row, 
                                                                                  sourceColumnIndexes, 
                                                                                  mapColumnToParameter, 
                                                                                  doNotLinkOnEmptyParameter);
