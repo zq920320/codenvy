@@ -381,7 +381,13 @@ public class Utils {
 
         int startIndex = value.startsWith("[") ? 1 : 0;
         int endIndex = value.endsWith("]") ? value.length() - 1 : value.length();
-        return value.substring(startIndex, endIndex).split(",");
+
+        String bareValue = value.substring(startIndex, endIndex);
+        if (bareValue.trim().isEmpty()) {
+            return new String[0];
+        } else {
+            return bareValue.split(",");
+        }
     }
 
     public static String[] toArray(ValueData value) {

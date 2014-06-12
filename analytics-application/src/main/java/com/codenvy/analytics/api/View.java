@@ -380,11 +380,11 @@ public class View {
                     if (j == userColumn) {
                         String id = row.get(j).getAsString();
                         String userName = getUserNameById(id);
-                        newRow.add(getNamedValue(id, userName != null ? userName : id));
+                        newRow.add(getNamedValue(id, userName));
                     } else if (j == wsColumn) {
                         String id = row.get(j).getAsString();
                         String wsName = getWsNameById(id);
-                        newRow.add(getNamedValue(id, wsName != null ? wsName : id));
+                        newRow.add(getNamedValue(id, wsName));
                     } else {
                         newRow.add(row.get(j));
                     }
