@@ -60,7 +60,7 @@ public class PigRunner extends Feature {
         PigServer pigServer = Injector.getInstance(PigServer.class);
         try {
             collectionsManagement.removeData(context);
-            collectionsManagement.dropIndexes();
+//            collectionsManagement.dropIndexes();
 
             for (ScriptConfiguration scriptConfiguration : scriptsManager.getAllScripts()) {
                 String scriptName = scriptConfiguration.getName();
@@ -72,7 +72,7 @@ public class PigRunner extends Feature {
                 pigServer.execute(scriptType, builder.build());
             }
 
-            collectionsManagement.ensureIndexes();
+//            collectionsManagement.ensureIndexes();
 
         } finally {
             LOG.info("PigRunner is finished in " + (System.currentTimeMillis() - start) / 1000 + " sec.");
