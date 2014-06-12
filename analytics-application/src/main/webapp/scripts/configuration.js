@@ -325,7 +325,7 @@ function Configuration() {
             // see clientSortParams in the TopMetricsPresenter::clientSortParams property
 
             columnDrillDownPageLinkConfiguration: {
-                __USERS__: {
+                mapColumnNameToExpandableMetric: {
                     "Sessions": "#SESSIONS",
                     "1 Day": "#SESSIONS",
                     "7 Days": "#SESSIONS",
