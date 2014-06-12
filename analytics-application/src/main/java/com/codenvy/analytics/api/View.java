@@ -352,11 +352,11 @@ public class View {
 
         return viewData;
     }
-    
+
     /**
      * Replace user and ws values with JSON string in format of:
-     *   {"id": @param id,
-     *    "name": @param name}
+     * {"id": @param id,
+     * "name": @param name}
      */
     private ViewData supplyUserWsIdWithNames(ViewData viewData) throws IOException {
         for (SectionData sectionData : viewData.values()) {
@@ -380,11 +380,11 @@ public class View {
                     if (j == userColumn) {
                         String id = row.get(j).getAsString();
                         String userName = getUserNameById(id);
-                        newRow.add(getNamedValue(id, userName));
+                        newRow.add(getNamedValue(id, userName != null ? userName : id));
                     } else if (j == wsColumn) {
                         String id = row.get(j).getAsString();
                         String wsName = getWsNameById(id);
-                        newRow.add(getNamedValue(id, wsName));
+                        newRow.add(getNamedValue(id, wsName != null ? wsName : id));
                     } else {
                         newRow.add(row.get(j));
                     }
@@ -404,18 +404,18 @@ public class View {
      */
     private MapValueData getNamedValue(String id, String name) {
         Map<String, ValueData> map = new HashMap<>();
-        
+
         StringValueData idValue = StringValueData.valueOf(id);
         map.put("id", idValue);
-        
+
         StringValueData nameValue = StringValueData.valueOf(name);
         map.put("name", nameValue);
-        
+
         MapValueData mapValue = new MapValueData(map);
-        
+
         return mapValue;
     }
-    
+
     private String getUserNameById(String userId) throws IOException {
         if (userId.isEmpty()) {
             return userId;
