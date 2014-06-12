@@ -341,7 +341,7 @@ table {
   form.login-form {
     padding-bottom: 13px;
   }
-  .action .blue-button {
+  .blue-button {
     font-size:1em;
     padding:0 29px 0 31px;
     margin:0;
@@ -458,4 +458,7 @@ input[type="text"], select, input[type="password"], select option {
   color: #6b757d;
   text-align: center;
 }
-
+.shadow {
+  box-shadow: 1px 2px 34px rgba(0, 0, 0, 0.56);
+  -webkit-box-shadow: 1px 2px 34px rgba(0, 0, 0, 0.56);
+}

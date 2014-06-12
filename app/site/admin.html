@@ -2,29 +2,21 @@
     layout : focused
     title: Codenvy - Login
 ---
-
-    <div class="container">
-        <div class="row">
-            <div class="span2"></div>
-            <div class="span8">
-                <div class="container dark login rounded shadow">
-                    <div class="error-container"></div>
-                    <h2 class="shiny">Welcome back!</h2>
-                    <hr class="short-line">
-                    <form class="admin-form" method="post">
-                        <div class="field">
-<input name="email" type="text" class="required" placeholder="login" value = "" >
-                        </div>
-                        <div class="field">
-                            <input name="password" type="password" placeholder="password">
-                        </div>
-                        <div class="field">
-                            <input type="submit" class="light-button button-400" value="Login">
-                            <div class="working hidden">working...</div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-            <div class="span2"></div>
-        </div>
-</div>
+<div class="authentication result">
+  <div class="dark shadow login">
+    <div class="error-container"></div>
+    <h2 class="center">Welcome back!</h2>
+    <form class="admin-form" method="post">
+      <div class="field">
+        <input name="email" type="text" class="required" placeholder="Login">
+      </div><!-- .field -->
+      <div class="field">
+        <input name="password" type="password" placeholder="Password">
+      </div><!-- .field -->
+      <div class="field action">
+        <input type="submit" class="light-button blue-button" value="Login">
+        <div class="working hidden">working...</div>
+      </div><!-- .field -->
+    </form>
+  </div><!-- .shadow -->
+</div><!-- authentication -->
