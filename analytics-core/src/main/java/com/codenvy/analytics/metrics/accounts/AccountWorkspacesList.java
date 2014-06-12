@@ -39,7 +39,7 @@ import java.util.Map;
 /**
  * @author Alexander Reshetnyak
  */
-@RolesAllowed(value = {"user", "system/admin", "system/manager"})
+@RolesAllowed(value = {"system/admin", "system/manager"})
 @RequiredFilter(MetricFilter.ACCOUNT_ID)
 public class AccountWorkspacesList extends AbstractAccountMetric {
 
