@@ -6,6 +6,7 @@ Event 'user-code-refactor' with parameter 'TYPE' and value 'war' doesn't exist
 Event 'user-code-refactor' with parameter 'TYPE' and value 'java' doesn't exist
 Event 'user-code-refactor' with parameter 'TYPE' and value 'maven multi-module' doesn't exist
 Event 'user-code-refactor' with parameter 'TYPE' and value 'maven_multi_module' doesn't exist
+Event 'user-code-refactor' with parameter 'TYPE' and value 'maven' doesn't exist
 Event 'user-code-refactor' with parameter 'TYPE' and value 'spring' doesn't exist
 Event 'user-code-refactor' with parameter 'TYPE' and value 'nodejs' doesn't exist
 Event 'user-code-refactor' with parameter 'TYPE' and value 'php' doesn't exist
@@ -27,6 +28,7 @@ Event 'user-code-complete' with parameter 'TYPE' and value 'django' doesn't exis
 Event 'user-code-complete' with parameter 'TYPE' and value 'war' doesn't exist
 Event 'user-code-complete' with parameter 'TYPE' and value 'maven multi-module' doesn't exist
 Event 'user-code-complete' with parameter 'TYPE' and value 'maven_multi_module' doesn't exist
+Event 'user-code-complete' with parameter 'TYPE' and value 'maven' doesn't exist
 Event 'user-code-complete' with parameter 'TYPE' and value 'spring' doesn't exist
 Event 'user-code-complete' with parameter 'TYPE' and value 'nodejs' doesn't exist
 Event 'user-code-complete' with parameter 'TYPE' and value 'python' doesn't exist
@@ -46,6 +48,7 @@ Event 'build-started' with parameter 'TYPE' and value 'django' doesn't exist
 Event 'build-started' with parameter 'TYPE' and value 'java' doesn't exist
 Event 'build-started' with parameter 'TYPE' and value 'maven multi-module' doesn't exist
 Event 'build-started' with parameter 'TYPE' and value 'maven_multi_module' doesn't exist
+Event 'build-started' with parameter 'TYPE' and value 'maven' doesn't exist
 Event 'build-started' with parameter 'TYPE' and value 'spring' doesn't exist
 Event 'build-started' with parameter 'TYPE' and value 'nodejs' doesn't exist
 Event 'build-started' with parameter 'TYPE' and value 'php' doesn't exist
@@ -67,6 +70,7 @@ Event 'build-finished' with parameter 'TYPE' and value 'django' doesn't exist
 Event 'build-finished' with parameter 'TYPE' and value 'java' doesn't exist
 Event 'build-finished' with parameter 'TYPE' and value 'maven multi-module' doesn't exist
 Event 'build-finished' with parameter 'TYPE' and value 'maven_multi_module' doesn't exist
+Event 'build-finished' with parameter 'TYPE' and value 'maven' doesn't exist
 Event 'build-finished' with parameter 'TYPE' and value 'spring' doesn't exist
 Event 'build-finished' with parameter 'TYPE' and value 'nodejs' doesn't exist
 Event 'build-finished' with parameter 'TYPE' and value 'php' doesn't exist
@@ -89,6 +93,7 @@ Event 'run-started' with parameter 'TYPE' and value 'django' doesn't exist
 Event 'run-started' with parameter 'TYPE' and value 'java' doesn't exist
 Event 'run-started' with parameter 'TYPE' and value 'maven multi-module' doesn't exist
 Event 'run-started' with parameter 'TYPE' and value 'maven_multi_module' doesn't exist
+Event 'run-started' with parameter 'TYPE' and value 'maven' doesn't exist
 Event 'run-started' with parameter 'TYPE' and value 'spring' doesn't exist
 Event 'run-started' with parameter 'TYPE' and value 'android' doesn't exist
 Event 'run-started' with parameter 'TYPE' and value 'google-mbs-client-android' doesn't exist
@@ -108,6 +113,7 @@ Event 'run-finished' with parameter 'TYPE' and value 'django' doesn't exist
 Event 'run-finished' with parameter 'TYPE' and value 'java' doesn't exist
 Event 'run-finished' with parameter 'TYPE' and value 'maven multi-module' doesn't exist
 Event 'run-finished' with parameter 'TYPE' and value 'maven_multi_module' doesn't exist
+Event 'run-finished' with parameter 'TYPE' and value 'maven' doesn't exist
 Event 'run-finished' with parameter 'TYPE' and value 'spring' doesn't exist
 Event 'run-finished' with parameter 'TYPE' and value 'android' doesn't exist
 Event 'run-finished' with parameter 'TYPE' and value 'google-mbs-client-android' doesn't exist
@@ -129,6 +135,7 @@ Event 'debug-started' with parameter 'TYPE' and value 'django' doesn't exist
 Event 'debug-started' with parameter 'TYPE' and value 'java' doesn't exist
 Event 'debug-started' with parameter 'TYPE' and value 'maven multi-module' doesn't exist
 Event 'debug-started' with parameter 'TYPE' and value 'maven_multi_module' doesn't exist
+Event 'debug-started' with parameter 'TYPE' and value 'maven' doesn't exist
 Event 'debug-started' with parameter 'TYPE' and value 'spring' doesn't exist
 Event 'debug-started' with parameter 'TYPE' and value 'nodejs' doesn't exist
 Event 'debug-started' with parameter 'TYPE' and value 'php' doesn't exist
@@ -154,6 +161,7 @@ Event 'debug-finished' with parameter 'TYPE' and value 'django' doesn't exist
 Event 'debug-finished' with parameter 'TYPE' and value 'java' doesn't exist
 Event 'debug-finished' with parameter 'TYPE' and value 'maven multi-module' doesn't exist
 Event 'debug-finished' with parameter 'TYPE' and value 'maven_multi_module' doesn't exist
+Event 'debug-finished' with parameter 'TYPE' and value 'maven' doesn't exist
 Event 'debug-finished' with parameter 'TYPE' and value 'spring' doesn't exist
 Event 'debug-finished' with parameter 'TYPE' and value 'nodejs' doesn't exist
 Event 'debug-finished' with parameter 'TYPE' and value 'php' doesn't exist
@@ -218,6 +226,7 @@ Event 'project-deployed' with parameter 'TYPE' and value 'django' doesn't exist
 Event 'project-deployed' with parameter 'TYPE' and value 'java' doesn't exist
 Event 'project-deployed' with parameter 'TYPE' and value 'maven multi-module' doesn't exist
 Event 'project-deployed' with parameter 'TYPE' and value 'maven_multi_module' doesn't exist
+Event 'project-deployed' with parameter 'TYPE' and value 'maven' doesn't exist
 Event 'project-deployed' with parameter 'TYPE' and value 'spring' doesn't exist
 Event 'project-deployed' with parameter 'TYPE' and value 'android' doesn't exist
 Event 'project-deployed' with parameter 'TYPE' and value 'google-mbs-client-android' doesn't exist
@@ -238,6 +247,7 @@ Event 'project-built' with parameter 'TYPE' and value 'django' doesn't exist
 Event 'project-built' with parameter 'TYPE' and value 'java' doesn't exist
 Event 'project-built' with parameter 'TYPE' and value 'maven multi-module' doesn't exist
 Event 'project-built' with parameter 'TYPE' and value 'maven_multi_module' doesn't exist
+Event 'project-built' with parameter 'TYPE' and value 'maven' doesn't exist
 Event 'project-built' with parameter 'TYPE' and value 'spring' doesn't exist
 Event 'project-built' with parameter 'TYPE' and value 'nodejs' doesn't exist
 Event 'project-built' with parameter 'TYPE' and value 'php' doesn't exist
@@ -261,6 +271,7 @@ Event 'application-created' with parameter 'TYPE' and value 'war' doesn't exist
 Event 'application-created' with parameter 'TYPE' and value 'java' doesn't exist
 Event 'application-created' with parameter 'TYPE' and value 'maven multi-module' doesn't exist
 Event 'application-created' with parameter 'TYPE' and value 'maven_multi_module' doesn't exist
+Event 'application-created' with parameter 'TYPE' and value 'maven' doesn't exist
 Event 'application-created' with parameter 'TYPE' and value 'spring' doesn't exist
 Event 'application-created' with parameter 'TYPE' and value 'nodejs' doesn't exist
 Event 'application-created' with parameter 'TYPE' and value 'android' doesn't exist
@@ -309,6 +320,7 @@ Event 'factory-created' with parameter 'TYPE' and value 'war' doesn't exist
 Event 'factory-created' with parameter 'TYPE' and value 'java' doesn't exist
 Event 'factory-created' with parameter 'TYPE' and value 'maven multi-module' doesn't exist
 Event 'factory-created' with parameter 'TYPE' and value 'maven_multi_module' doesn't exist
+Event 'factory-created' with parameter 'TYPE' and value 'maven' doesn't exist
 Event 'factory-created' with parameter 'TYPE' and value 'spring' doesn't exist
 Event 'factory-created' with parameter 'TYPE' and value 'nodejs' doesn't exist
 Event 'factory-created' with parameter 'TYPE' and value 'php' doesn't exist
@@ -332,6 +344,7 @@ Event 'factory-project-imported' with parameter 'TYPE' and value 'django' doesn'
 Event 'factory-project-imported' with parameter 'TYPE' and value 'war' doesn't exist
 Event 'factory-project-imported' with parameter 'TYPE' and value 'maven multi-module' doesn't exist
 Event 'factory-project-imported' with parameter 'TYPE' and value 'maven_multi_module' doesn't exist
+Event 'factory-project-imported' with parameter 'TYPE' and value 'maven' doesn't exist
 Event 'factory-project-imported' with parameter 'TYPE' and value 'spring' doesn't exist
 Event 'factory-project-imported' with parameter 'TYPE' and value 'nodejs' doesn't exist
 Event 'factory-project-imported' with parameter 'TYPE' and value 'google-mbs-client-android' doesn't exist
@@ -357,6 +370,7 @@ Event 'jrebel-usage' with parameter 'TYPE' and value 'war' doesn't exist
 Event 'jrebel-usage' with parameter 'TYPE' and value 'java' doesn't exist
 Event 'jrebel-usage' with parameter 'TYPE' and value 'maven multi-module' doesn't exist
 Event 'jrebel-usage' with parameter 'TYPE' and value 'maven_multi_module' doesn't exist
+Event 'jrebel-usage' with parameter 'TYPE' and value 'maven' doesn't exist
 Event 'jrebel-usage' with parameter 'TYPE' and value 'spring' doesn't exist
 Event 'jrebel-usage' with parameter 'TYPE' and value 'nodejs' doesn't exist
 Event 'jrebel-usage' with parameter 'TYPE' and value 'php' doesn't exist
