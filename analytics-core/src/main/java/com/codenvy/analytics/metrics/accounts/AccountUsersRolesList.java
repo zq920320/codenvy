@@ -65,7 +65,7 @@ public class AccountUsersRolesList extends AbstractAccountMetric {
                     Map<String, ValueData> m = new HashMap<>();
                     m.put(ROLES, StringValueData.valueOf(member.getRoles().toString()));
                     m.put(USER, StringValueData.valueOf(member.getUserId()));
-                    m.put(WS, StringValueData.valueOf(workspace.getName()));
+                    m.put(WS, StringValueData.valueOf(workspace.getId()));
 
                     list2Return.add(new MapValueData(m));
                 }
