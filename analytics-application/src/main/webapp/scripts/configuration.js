@@ -625,7 +625,7 @@ function Configuration() {
             modelViewName: "user_projects",
 
             isPaginable: true,    // default value is "false"
-            modelMetricName: "#PROJECTS",
+            modelMetricName: "projects",
 
             columnLinkPrefixList: {
                 "User": "/analytics/pages/user-view.jsp?user",
