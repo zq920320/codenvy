@@ -26,7 +26,7 @@
     </parent>
     <groupId>com.codenvy.analytics</groupId>
     <artifactId>analytics-parent</artifactId>
-    <version>2.7.0</version>
+    <version>2.7.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Codenvy :: Analytics :: Parent</name>
     <modules>
@@ -38,7 +38,7 @@
     <scm>
         <connection>scm:git:git@github.com:codenvy/analytics.git</connection>
         <developerConnection>scm:git:git@github.com:codenvy/analytics.git</developerConnection>
-        <tag>2.7.0</tag>
+        <tag>2.0.0</tag>
     </scm>
     <properties>
         <maven.releases.repo.url>https://maven.codenvycorp.com/content/repositories/codenvy-private-releases/</maven.releases.repo.url>
