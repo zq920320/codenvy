@@ -41,8 +41,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import static com.codenvy.analytics.util.Utils.isRolesAllowed;
-
 
 /**
  * Service is responsible for processing REST requests for analytics data.
@@ -57,10 +55,12 @@ public class AnalyticsPrivate {
     private static final Logger LOG = LoggerFactory.getLogger(AnalyticsPrivate.class);
 
     private final MetricHandler metricHandler;
+    private final Utils         utils;
 
     @Inject
-    public AnalyticsPrivate(MetricHandler metricHandler) {
+    public AnalyticsPrivate(MetricHandler metricHandler, Utils utils) {
         this.metricHandler = metricHandler;
+        this.utils = utils;
     }
 
     @GenerateLink(rel = "metric value")
@@ -74,7 +74,7 @@ public class AnalyticsPrivate {
                              @Context UriInfo uriInfo,
                              @Context SecurityContext securityContext) {
         try {
-            Map<String, String> context = Utils.extractParams(uriInfo,
+            Map<String, String> context = utils.extractParams(uriInfo,
                                                               page,
                                                               perPage,
                                                               securityContext);
@@ -99,11 +99,11 @@ public class AnalyticsPrivate {
                                    @Context SecurityContext securityContext) {
         try {
             MetricInfoDTO metricInfoDTO = metricHandler.getInfo(metricName, uriInfo);
-            if (!isRolesAllowed(metricInfoDTO, securityContext)) {
+            if (!utils.isRolesAllowed(metricInfoDTO, securityContext)) {
                 throw new MetricRestrictionException("Security violation. User probably hasn't access to the metric");
             }
 
-            Map<String, String> context = Utils.extractParams(uriInfo);
+            Map<String, String> context = utils.extractParams(uriInfo);
             MetricValueDTO value = metricHandler.getValue(metricName, context, uriInfo);
             return Response.status(Response.Status.OK).entity(value).build();
         } catch (MetricNotFoundException e) {
@@ -125,7 +125,7 @@ public class AnalyticsPrivate {
                                   @Context UriInfo uriInfo,
                                   @Context SecurityContext securityContext) {
         try {
-            Map<String, String> context = Utils.extractParams(uriInfo,
+            Map<String, String> context = utils.extractParams(uriInfo,
                                                               securityContext);
 
             MetricValueListDTO list = metricHandler.getUserValues(metricNames, context, uriInfo);
@@ -168,7 +168,7 @@ public class AnalyticsPrivate {
 
             Iterator<MetricInfoDTO> iterator = metricInfoListDTO.getMetrics().iterator();
             while (iterator.hasNext()) {
-                if (!isRolesAllowed(iterator.next(), securityContext)) {
+                if (!utils.isRolesAllowed(iterator.next(), securityContext)) {
                     iterator.remove();
                 }
             }

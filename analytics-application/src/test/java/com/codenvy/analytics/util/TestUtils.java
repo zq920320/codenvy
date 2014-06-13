@@ -57,7 +57,7 @@ public class TestUtils extends BaseTest {
         when(securityContext.getUserPrincipal()).thenReturn(null);
         when(metricInfoDTO.getRolesAllowed()).thenReturn(Arrays.asList("user"));
 
-        assertEquals(false, Utils.isRolesAllowed(metricInfoDTO, securityContext));
+        assertEquals(false, utils.isRolesAllowed(metricInfoDTO, securityContext));
     }
 
     @Test
@@ -65,7 +65,7 @@ public class TestUtils extends BaseTest {
         when(securityContext.getUserPrincipal()).thenReturn(principal);
         when(principal.getName()).thenReturn(SYSTEM_USER);
 
-        assertEquals(false, Utils.isRolesAllowed(metricInfoDTO, securityContext));
+        assertEquals(false, utils.isRolesAllowed(metricInfoDTO, securityContext));
     }
 
     @Test
@@ -73,7 +73,7 @@ public class TestUtils extends BaseTest {
         when(securityContext.getUserPrincipal()).thenReturn(principal);
         when(principal.getName()).thenReturn(SOME_USER);
 
-        assertEquals(false, Utils.isRolesAllowed(metricInfoDTO, securityContext));
+        assertEquals(false, utils.isRolesAllowed(metricInfoDTO, securityContext));
     }
 
     @Test
@@ -82,7 +82,7 @@ public class TestUtils extends BaseTest {
         when(principal.getName()).thenReturn(SYSTEM_USER);
         when(metricInfoDTO.getRolesAllowed()).thenReturn(Arrays.asList(SOME_USER));
 
-        assertEquals(true, Utils.isRolesAllowed(metricInfoDTO, securityContext));
+        assertEquals(true, utils.isRolesAllowed(metricInfoDTO, securityContext));
     }
 
     @Test
@@ -91,7 +91,7 @@ public class TestUtils extends BaseTest {
         when(principal.getName()).thenReturn(SOME_USER);
         when(metricInfoDTO.getRolesAllowed()).thenReturn(Arrays.asList("any"));
 
-        assertEquals(true, Utils.isRolesAllowed(metricInfoDTO, securityContext));
+        assertEquals(true, utils.isRolesAllowed(metricInfoDTO, securityContext));
     }
 
     @Test
@@ -101,7 +101,7 @@ public class TestUtils extends BaseTest {
         when(principal.getName()).thenReturn(SOME_USER);
         when(metricInfoDTO.getRolesAllowed()).thenReturn(Arrays.asList("user"));
 
-        assertEquals(true, Utils.isRolesAllowed(metricInfoDTO, securityContext));
+        assertEquals(true, utils.isRolesAllowed(metricInfoDTO, securityContext));
     }
 
     @Test
@@ -111,12 +111,12 @@ public class TestUtils extends BaseTest {
         when(principal.getName()).thenReturn(SOME_USER);
         when(metricInfoDTO.getRolesAllowed()).thenReturn(Arrays.asList("user"));
 
-        assertEquals(false, Utils.isRolesAllowed(metricInfoDTO, securityContext));
+        assertEquals(false, utils.isRolesAllowed(metricInfoDTO, securityContext));
     }
 
     @Test(dataProvider = "systemLoginProvider")
     public void testIsSystemUser(String login, boolean validated) throws Exception {
-        assertEquals(validated, Utils.isSystemUser(login));
+        assertEquals(validated, utils.isSystemUser(login));
     }
 
     @DataProvider(name = "systemLoginProvider")

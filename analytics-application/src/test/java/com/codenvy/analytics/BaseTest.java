@@ -20,6 +20,7 @@ package com.codenvy.analytics;
 
 import com.codenvy.analytics.persistent.MongoDataStorage;
 import com.codenvy.analytics.pig.PigServer;
+import com.codenvy.analytics.util.UserPrincipalCache;
 import com.mongodb.DB;
 
 import org.testng.annotations.BeforeClass;
@@ -28,10 +29,12 @@ import org.testng.annotations.BeforeClass;
 public class BaseTest {
     public static final String BASE_DIR = "target";
 
-    protected final Configurator     configurator;
-    protected final PigServer        pigServer;
-    protected final MongoDataStorage mongoDataStorage;
-    protected final DB               mongoDb;
+    protected final Configurator                     configurator;
+    protected final PigServer                        pigServer;
+    protected final MongoDataStorage                 mongoDataStorage;
+    protected final DB                               mongoDb;
+    protected final com.codenvy.analytics.util.Utils utils;
+    protected final UserPrincipalCache               cache;
 
     @BeforeClass
     public void clearDatabase() {
@@ -49,6 +52,7 @@ public class BaseTest {
         this.pigServer = Injector.getInstance(PigServer.class);
         this.mongoDataStorage = Injector.getInstance(MongoDataStorage.class);
         this.mongoDb = mongoDataStorage.getDb();
+        this.utils = Injector.getInstance(com.codenvy.analytics.util.Utils.class);
+        this.cache = Injector.getInstance(UserPrincipalCache.class);
     }
-
 }

@@ -24,6 +24,8 @@ import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.metrics.accounts.AbstractAccountMetric;
 import com.codenvy.analytics.metrics.accounts.AccountWorkspacesList;
 import com.codenvy.api.analytics.shared.dto.MetricInfoDTO;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.SecurityContext;
@@ -35,18 +37,27 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.codenvy.analytics.Utils.getFilterAsSet;
 import static com.codenvy.analytics.Utils.getFilterAsString;
 import static com.codenvy.analytics.datamodel.ValueDataUtil.getAsList;
 
 /** @author Anatoliy Bazko */
+@Singleton
 public class Utils {
 
     private static final Pattern ADMIN_ROLE_EMAIL_PATTERN = Pattern.compile("@codenvy[.]com$");
 
-    public static Map<String, String> extractParams(UriInfo info,
-                                                    String page,
-                                                    String perPage,
-                                                    SecurityContext securityContext) {
+    private final UserPrincipalCache cache;
+
+    @Inject
+    public Utils(UserPrincipalCache userPrincipalCache) {
+        this.cache = userPrincipalCache;
+    }
+
+    public Map<String, String> extractParams(UriInfo info,
+                                             String page,
+                                             String perPage,
+                                             SecurityContext securityContext) {
 
         MultivaluedMap<String, String> parameters = info.getQueryParameters();
         Map<String, String> context = new HashMap<>(parameters.size());
@@ -55,9 +66,20 @@ public class Utils {
         if (page != null && perPage != null) {
             putPaginationParameters(page, perPage, context);
         }
-        if (securityContext != null) {
+        if (securityContext != null && !isSystemUser(securityContext)) {
             putPossibleUsersAsFilter(context, securityContext);
             putPossibleWorkspacesAsFilter(context, securityContext);
+
+            Principal principal = securityContext.getUserPrincipal();
+            if (cache.exist(principal)) {
+                cache.updateAccessTime(principal);
+            } else {
+                Set<String> allowedUsers = getFilterAsSet(context.get(Parameters.ORIGINAL_USER.toString()));
+                Set<String> allowedWorkspaces = getFilterAsSet(context.get(Parameters.ORIGINAL_WS.toString()));
+
+                UserPrincipalCache.UserContext userContext = new UserPrincipalCache.UserContext(allowedUsers, allowedWorkspaces);
+                cache.put(principal, userContext);
+            }
         }
         putDefaultValueIfAbsent(context, Parameters.FROM_DATE);
         putDefaultValueIfAbsent(context, Parameters.TO_DATE);
@@ -68,21 +90,21 @@ public class Utils {
         return context;
     }
 
-    public static Map<String, String> extractParams(UriInfo info, SecurityContext securityContext) {
+    public Map<String, String> extractParams(UriInfo info, SecurityContext securityContext) {
         return extractParams(info,
                              null,
                              null,
                              securityContext);
     }
 
-    public static Map<String, String> extractParams(UriInfo info) {
+    public Map<String, String> extractParams(UriInfo info) {
         return extractParams(info,
                              null,
                              null,
                              null);
     }
 
-    public static boolean isRolesAllowed(MetricInfoDTO metricInfoDTO, SecurityContext securityContext) {
+    public boolean isRolesAllowed(MetricInfoDTO metricInfoDTO, SecurityContext securityContext) {
         Principal principal = securityContext.getUserPrincipal();
         List<String> rolesAllowed = metricInfoDTO.getRolesAllowed();
 
@@ -107,12 +129,12 @@ public class Utils {
         return false;
     }
 
-    public static boolean isSystemUser(String email) {
+    public boolean isSystemUser(String email) {
         Matcher matcher = ADMIN_ROLE_EMAIL_PATTERN.matcher(email);
         return matcher.find();
     }
 
-    public static boolean isSystemUser(SecurityContext securityContext) {
+    public boolean isSystemUser(SecurityContext securityContext) {
         Principal userPrincipal = securityContext.getUserPrincipal();
         return userPrincipal != null &&
                (isSystemUser(userPrincipal.getName())
@@ -121,13 +143,13 @@ public class Utils {
 
     }
 
-    private static void putDefaultValueIfAbsent(Map<String, String> context, Parameters param) {
+    private void putDefaultValueIfAbsent(Map<String, String> context, Parameters param) {
         if (!context.containsKey(param.toString())) {
             context.put(param.toString(), param.getDefaultValue());
         }
     }
 
-    private static void validateFormDateToDate(Map<String, String> context) {
+    private void validateFormDateToDate(Map<String, String> context) {
         try {
             Calendar fromDate = com.codenvy.analytics.Utils.parseDate(context.get(Parameters.FROM_DATE.toString()));
             Calendar toDate = com.codenvy.analytics.Utils.parseDate(context.get(Parameters.TO_DATE.toString()));
@@ -140,18 +162,23 @@ public class Utils {
         }
     }
 
-    private static void putPossibleUsersAsFilter(Map<String, String> context, SecurityContext securityContext) {
-        if (!isSystemUser(securityContext)) {
-            Set<String> allowedUsers = getAllowedUsers();
+    private void putPossibleUsersAsFilter(Map<String, String> context, SecurityContext securityContext) {
+        Set<String> allowedUsers;
 
-            if (!context.containsKey(MetricFilter.USER.toString())) {
-                context.put(MetricFilter.USER.toString(), getFilterAsString(allowedUsers));
-            }
-            context.put(Parameters.ORIGINAL_USER.toString(), getFilterAsString(allowedUsers));
+        UserPrincipalCache.UserContext userContext = cache.get(securityContext.getUserPrincipal());
+        if (userContext != null) {
+            allowedUsers = userContext.getAllowedUsers();
+        } else {
+            allowedUsers = getAllowedUsers();
         }
+
+        if (!context.containsKey(MetricFilter.USER.toString())) {
+            context.put(MetricFilter.USER.toString(), getFilterAsString(allowedUsers));
+        }
+        context.put(Parameters.ORIGINAL_USER.toString(), getFilterAsString(allowedUsers));
     }
 
-    private static Set<String> getAllowedUsers() {
+    private Set<String> getAllowedUsers() {
         try {
             Set<String> users = new HashSet<>();
 
@@ -172,7 +199,7 @@ public class Utils {
         }
     }
 
-    private static Set<String> getUsers(String accountId) throws IOException {
+    private Set<String> getUsers(String accountId) throws IOException {
         Set<String> users = new HashSet<>();
 
         Context.Builder builder = new Context.Builder();
@@ -189,18 +216,23 @@ public class Utils {
         return users;
     }
 
-    private static void putPossibleWorkspacesAsFilter(Map<String, String> context, SecurityContext securityContext) {
-        if (!isSystemUser(securityContext)) {
-            Set<String> allowedWorkspaces = getAllowedWorkspacesForCurrentUser(context);
+    private void putPossibleWorkspacesAsFilter(Map<String, String> context, SecurityContext securityContext) {
+        Set<String> allowedWorkspaces;
 
-            if (!context.containsKey(MetricFilter.WS.toString())) {
-                context.put(MetricFilter.WS.toString(), getFilterAsString(allowedWorkspaces));
-            }
-            context.put(Parameters.ORIGINAL_WS.toString(), getFilterAsString(allowedWorkspaces));
+        UserPrincipalCache.UserContext userContext = cache.get(securityContext.getUserPrincipal());
+        if (userContext != null) {
+            allowedWorkspaces = userContext.getAllowedWorkspaces();
+        } else {
+            allowedWorkspaces = getAllowedWorkspacesForCurrentUser(context);
         }
+
+        if (!context.containsKey(MetricFilter.WS.toString())) {
+            context.put(MetricFilter.WS.toString(), getFilterAsString(allowedWorkspaces));
+        }
+        context.put(Parameters.ORIGINAL_WS.toString(), getFilterAsString(allowedWorkspaces));
     }
 
-    private static Set<String> getAllowedWorkspacesForCurrentUser(Map<String, String> context) {
+    private Set<String> getAllowedWorkspacesForCurrentUser(Map<String, String> context) {
         try {
             String role = context.get(MetricFilter.DATA_UNIVERSE.toString());
 
@@ -218,7 +250,7 @@ public class Utils {
 
     }
 
-    private static Set<String> getWorkspacesByRole(String role, ListValueData accounts) throws IOException {
+    private Set<String> getWorkspacesByRole(String role, ListValueData accounts) throws IOException {
         Set<String> result = new HashSet<>();
         Metric accountWorkspaces = MetricFactory.getMetric(MetricType.ACCOUNT_WORKSPACES_LIST);
 
@@ -242,17 +274,17 @@ public class Utils {
         return result;
     }
 
-    private static boolean isWorkspacesRoleExists(String role) {
+    private boolean isWorkspacesRoleExists(String role) {
         return role != null && (role.equalsIgnoreCase(AbstractAccountMetric.ROLE_WORKSPACE_DEVELOPER)
                                 || role.equalsIgnoreCase(AbstractAccountMetric.ROLE_WORKSPACE_ADMIN));
     }
 
-    private static boolean isAccountsRoleExists(String role) {
+    private boolean isAccountsRoleExists(String role) {
         return role != null && (role.equalsIgnoreCase(AbstractAccountMetric.ROLE_ACCOUNT_MEMBER)
                                 || role.equalsIgnoreCase(AbstractAccountMetric.ROLE_ACCOUNT_OWNER));
     }
 
-    private static ListValueData doWorkspaceFilterByWorkspaceRole(String role, ListValueData workspaces) {
+    private ListValueData doWorkspaceFilterByWorkspaceRole(String role, ListValueData workspaces) {
         List<ValueData> list2Return = new ArrayList<>();
         for (ValueData workspace : workspaces.getAll()) {
             Map<String, ValueData> map = ((MapValueData)workspace).getAll();
@@ -265,7 +297,7 @@ public class Utils {
         return new ListValueData(list2Return);
     }
 
-    private static ListValueData doFilterAccountsByRole(String role, ListValueData accounts) {
+    private ListValueData doFilterAccountsByRole(String role, ListValueData accounts) {
         List<ValueData> list2Return = new ArrayList<>();
         for (ValueData account : accounts.getAll()) {
             Map<String, ValueData> map = ((MapValueData)account).getAll();
@@ -279,13 +311,13 @@ public class Utils {
     }
 
 
-    private static void putQueryParameters(MultivaluedMap<String, String> parameters, Map<String, String> context) {
+    private void putQueryParameters(MultivaluedMap<String, String> parameters, Map<String, String> context) {
         for (String key : parameters.keySet()) {
             context.put(key.toUpperCase(), parameters.getFirst(key));
         }
     }
 
-    private static void putPaginationParameters(String page, String perPage, Map<String, String> context) {
+    private void putPaginationParameters(String page, String perPage, Map<String, String> context) {
         context.put("PAGE", page);
         context.put("PER_PAGE", perPage);
     }

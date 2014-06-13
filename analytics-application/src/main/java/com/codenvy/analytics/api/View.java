@@ -26,6 +26,7 @@ import com.codenvy.analytics.services.view.CSVFileHolder;
 import com.codenvy.analytics.services.view.SectionData;
 import com.codenvy.analytics.services.view.ViewBuilder;
 import com.codenvy.analytics.services.view.ViewData;
+import com.codenvy.analytics.util.Utils;
 import com.codenvy.api.analytics.shared.dto.MetricValueDTO;
 import com.codenvy.dto.server.DtoFactory;
 import com.codenvy.dto.server.JsonArrayImpl;
@@ -49,7 +50,6 @@ import java.util.Map.Entry;
 import static com.codenvy.analytics.Utils.toArray;
 import static com.codenvy.analytics.datamodel.ValueDataUtil.*;
 import static com.codenvy.analytics.metrics.Context.valueOf;
-import static com.codenvy.analytics.util.Utils.extractParams;
 
 /**
  * @author Alexander Reshetnyak
@@ -63,14 +63,16 @@ public class View {
 
     private final ViewBuilder   viewBuilder;
     private final CSVFileHolder csvFileCleanerHolder;
+    private final Utils         utils;
 
     private final Set<String> workspaceColumnNames = new HashSet<>(Arrays.asList("Workspace"));
     private final Set<String> userColumnNames      = new HashSet<>(Arrays.asList("User", "Created By", "Email"));
 
     @Inject
-    public View(ViewBuilder viewBuilder, CSVFileHolder csvFileCleanerHolder) {
+    public View(ViewBuilder viewBuilder, CSVFileHolder csvFileCleanerHolder, Utils utils) {
         this.viewBuilder = viewBuilder;
         this.csvFileCleanerHolder = csvFileCleanerHolder;
+        this.utils = utils;
     }
 
     @GET
@@ -84,10 +86,10 @@ public class View {
                                    @Context SecurityContext securityContext) {
 
         try {
-            Map<String, String> context = extractParams(uriInfo,
-                                                        page,
-                                                        perPage,
-                                                        securityContext);
+            Map<String, String> context = utils.extractParams(uriInfo,
+                                                              page,
+                                                              perPage,
+                                                              securityContext);
 
             ValueData value = getMetricValue(metricName, valueOf(context));
             MetricValueDTO outputValue = getMetricValueDTO(metricName, value);
@@ -110,7 +112,7 @@ public class View {
                                              @Context SecurityContext securityContext) {
 
         try {
-            Map<String, String> params = extractParams(uriInfo, securityContext);
+            Map<String, String> params = utils.extractParams(uriInfo, securityContext);
             ListValueData value = getSummarizedMetricValue(metricName, valueOf(params));
 
             Map<String, String> m;
@@ -147,10 +149,10 @@ public class View {
                                            @Context SecurityContext securityContext) {
 
         try {
-            Map<String, String> context = extractParams(uriInfo,
-                                                        page,
-                                                        perPage,
-                                                        securityContext);
+            Map<String, String> context = utils.extractParams(uriInfo,
+                                                              page,
+                                                              perPage,
+                                                              securityContext);
 
             ValueData value = getExpandedMetricValue(metricName, valueOf(context));
             ViewData result = viewBuilder.getViewData(value);
@@ -175,8 +177,8 @@ public class View {
                                       @Context UriInfo uriInfo,
                                       @Context SecurityContext securityContext) {
         try {
-            Map<String, String> params = extractParams(uriInfo,
-                                                       securityContext);
+            Map<String, String> params = utils.extractParams(uriInfo,
+                                                             securityContext);
 
             com.codenvy.analytics.metrics.Context context = valueOf(params);
 
@@ -199,8 +201,8 @@ public class View {
                                      @Context UriInfo uriInfo,
                                      @Context SecurityContext securityContext) {
         try {
-            Map<String, String> params = extractParams(uriInfo,
-                                                       securityContext);
+            Map<String, String> params = utils.extractParams(uriInfo,
+                                                             securityContext);
 
             com.codenvy.analytics.metrics.Context context = valueOf(params);
 

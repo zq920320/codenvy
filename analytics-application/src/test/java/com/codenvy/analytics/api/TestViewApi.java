@@ -82,7 +82,7 @@ public class TestViewApi extends BaseTest {
         ArgumentCaptor<Context> context = ArgumentCaptor.forClass(Context.class);
         verify(viewBuilder, atLeastOnce()).retainViewData(viewId.capture(), viewData.capture(), context.capture());
 
-        String response = new View(viewBuilder, new CSVFileHolder(configurator))
+        String response = new View(viewBuilder, new CSVFileHolder(configurator), utils)
                 .transformToJson(viewData.getValue());
         String expectedResponse = getResourse(EXPECTED_JSON_FILE, "18 Mar", getToday());
 
@@ -107,8 +107,7 @@ public class TestViewApi extends BaseTest {
         verify(viewBuilder, atLeastOnce()).retainViewData(viewId.capture(), viewData.capture(), context.capture());
 
         ByteArrayOutputStream response = new ByteArrayOutputStream();
-        new View(viewBuilder, new CSVFileHolder(configurator))
-                .transformToCsv(viewData.getValue(), response);
+        new View(viewBuilder, new CSVFileHolder(configurator), utils).transformToCsv(viewData.getValue(), response);
 
         String expectedResponse = getResourse(EXPECTED_CSV_FILE, "18 Mar", getToday());
 

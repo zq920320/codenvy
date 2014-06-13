@@ -274,6 +274,10 @@ public class Utils {
     }
 
     public static Set<String> getFilterAsSet(String value) {
+        if (value.trim().isEmpty()) {
+            return Collections.emptySet();
+        }
+
         return new HashSet<>(Arrays.asList(value.split(MongoDataLoader.SEPARATOR)));
     }
 
