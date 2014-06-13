@@ -31,7 +31,7 @@ public class MigrationService {
 
 
     @GET
-//    @RolesAllowed("system/admin")
+    @RolesAllowed("system/admin")
     @Produces("text/html")
     public Response convert(@PathParam("ws-id") String workspaceId, @QueryParam("project") String projectName) {
 
