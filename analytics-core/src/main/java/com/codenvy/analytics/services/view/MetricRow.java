@@ -319,6 +319,16 @@ public class MetricRow extends AbstractRow {
     private StringValueData formatTimeValue(ValueData valueData, String format) {
         long milliseconds = valueData.equals(StringValueData.DEFAULT) ? 0 : Long.parseLong(valueData.getAsString());
 
+        format = convertToTimeString(milliseconds, format);
+
+        return StringValueData.valueOf(format);
+    }
+
+    public static String convertToTimeString(long milliseconds, String format) {
+        if (format == null) {
+            format = DEFAULT_TIME_FORMAT;
+        }
+        
         int secs = (int)((milliseconds / 1000) % 60);
         int minutes = (int)((milliseconds / (1000 * 60)) % 60);
         int hours = (int)(milliseconds / (1000 * 60 * 60));
@@ -327,8 +337,7 @@ public class MetricRow extends AbstractRow {
         format = format.replace("mm", DECIMAL_FORMAT.format(minutes));
         format = format.replace("HH", DECIMAL_FORMAT.format(hours));
         format = format.replace("\'", "");
-
-        return StringValueData.valueOf(format);
+        return format;
     }
 
     protected ValueData getMetricValue(Context context) throws IOException {

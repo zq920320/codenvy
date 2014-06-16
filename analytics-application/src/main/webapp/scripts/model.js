@@ -63,13 +63,28 @@ function Model() {
     }
 
     function getSummarizedMetricValue(modelMetricName, isAsync) {
-        return doGetSpecificMetricValue(modelMetricName, "summary", isAsync);
+        if (typeof isAsync == "undefined") {
+            isAsync = true;
+        }
+        var url = '/analytics/api/view/metric/' + modelMetricName + "/summary";
+
+        var callback = function(data) {
+            data = convertJsonToOneRowTable(data);
+            doneFunction(data);
+        };
+
+        var request = get(url, "json", callback, isAsync);
+
+        if (!isAsync) {
+            var data = convertJsonToOneRowTable(request.responseText);
+            return data;
+        }        
     }
 
     function getExpandedMetricValue(modelMetricName, isAsync) {
         return doGetSpecificMetricValue(modelMetricName, "expand", isAsync);
     }
-
+    
     /**
      * Returns a metric value depending on specific operation: expand, summary.
      */
@@ -80,7 +95,7 @@ function Model() {
         var url = '/analytics/api/view/metric/' + modelMetricName + "/" + specificOperations;
 
         var callback = function (data) {
-            data = convertJsonToTables(data);
+            data = convertArrayJsonToTables(data);
             doneFunction(data);
         };
 
@@ -100,7 +115,7 @@ function Model() {
         var url = "/analytics/api/view/" + modelViewName;
 
         var callback = function (data) {
-            data = convertJsonToTables(data);
+            data = convertArrayJsonToTables(data);
 
             doneFunction(data);
         }
@@ -110,7 +125,7 @@ function Model() {
         if (!isAsync) {
             data = jQuery.parseJSON(request.responseText);
 
-            data = convertJsonToTables(data);
+            data = convertArrayJsonToTables(data);
             return data;
         }
     }
@@ -200,7 +215,11 @@ function Model() {
         }
     }
 
-    function convertJsonToTables(data) {
+    /**
+     * Convert an array JSON in format '[ [ ["section0-row0-column0", "section0-row0-column1", ...], ["section0-row1-column0",..] ... ], ...]'
+     * into array of tables: [{columns, rows}, {columns, rows}, ...].
+     */
+    function convertArrayJsonToTables(data) {
         var result = {};
 
         for (var t in data) {
@@ -228,6 +247,29 @@ function Model() {
         return result;
     };
 
+    /**
+     * Convert @param data - JSON in format '{"projects":"34","paas_deploys":"11",...}'
+     * into table = {["projects", "paas deploys", ..], ["34", "11", ...]} with fixed column names without "_" signs replaced by spaces. 
+     * Returns empty table on empty data.
+     */
+    function convertJsonToOneRowTable(data) {
+        // return empty table on empty data
+        if (Object.keys(data).length == 0) {
+            return {rows: [], columns: []};
+        }
+        
+        var columns = [];
+        var row = [];
+        
+        for (var key in data) {
+            var keyWithoutUnderscores = key.replace(/_/g, " ");
+            columns.push(keyWithoutUnderscores);
+            
+            row.push(data[key]);
+        }
+
+        return {rows: [row], columns: columns};
+    };
 
     function getLinkToExportToCsv(modelName) {
         var url = "/analytics/api/view/" + modelName + ".csv";

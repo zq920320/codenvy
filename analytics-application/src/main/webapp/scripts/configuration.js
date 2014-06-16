@@ -485,6 +485,11 @@ function Configuration() {
             },
         },
 
+        usersOverview: {
+            presenterType: "SummaryTablePresenter",
+            modelMetricName: "users_statistics_list",
+        },
+        
         userOverview: {
             widgetLabel: "User Overview",
             presenterType: "VerticalTablePresenter",
@@ -688,6 +693,11 @@ function Configuration() {
             },
         },
 
+        sessionsOverview: {
+            presenterType: "SummaryTablePresenter",
+            modelMetricName: "product_usage_sessions_list",
+        },
+        
         sessionOverview: {
             widgetLabel: "Session Overview",
             presenterType: "VerticalTablePresenter",
@@ -776,6 +786,11 @@ function Configuration() {
             },
         },
 
+        workspacesOverview: {
+            presenterType: "SummaryTablePresenter",
+            modelMetricName: "workspaces_statistics_list",
+        },
+        
         workspaceOverview: {
             widgetLabel: "Workspace Overview",
             presenterType: "VerticalTablePresenter",
@@ -936,6 +951,11 @@ function Configuration() {
             },
         },
 
+        projectsOverview: {
+            presenterType: "SummaryTablePresenter",
+            modelMetricName: "projects_statistics_list",
+        },
+        
         projectOverview: {
             widgetLabel: "Project Overview",
             presenterType: "HorizontalTablePresenter",
@@ -1098,6 +1118,11 @@ function Configuration() {
             },
         },
 
+        factoriesOverview: {
+            presenterType: "SummaryTablePresenter",
+            modelMetricName: "factory_statistics_list",
+        },
+        
         factoryOverview: {
             widgetLabel: "Factory Overview",
             presenterType: "VerticalTablePresenter",

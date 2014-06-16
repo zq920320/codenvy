@@ -64,10 +64,11 @@
                 </div>
             </div>
             
-            <div class="hero-unit">
+            <div class="hero-unit">                
                 <div class="single-column-gadget">
                     <div class="view">
                         <div class="tables">
+                            <div class="item" id="factoriesOverview"></div>
                             <div class="item" id="factories"></div>
                         </div>
                     </div>
@@ -78,6 +79,7 @@
 </div>
 
 <jsp:include page="/inclusions/footer.jsp">
+    <jsp:param name="javaScriptToLoad" value="/analytics/scripts/presenters/SummaryTablePresenter.js"/>
     <jsp:param name="javaScriptToLoad" value="/analytics/scripts/presenters/EntryViewPresenter.js"/>
 </jsp:include>
 

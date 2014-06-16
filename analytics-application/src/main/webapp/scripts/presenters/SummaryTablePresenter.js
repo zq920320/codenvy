@@ -21,28 +21,21 @@ if (typeof analytics === "undefined") {
 
 analytics.presenter = analytics.presenter || {};
 
-analytics.presenter.VerticalTablePresenter = function VerticalTablePresenter() {};
+analytics.presenter.SummaryTablePresenter = function SummaryTablePresenter() {};
 
-analytics.presenter.VerticalTablePresenter.prototype = new Presenter();
+analytics.presenter.SummaryTablePresenter.prototype = new Presenter();
 
-analytics.presenter.VerticalTablePresenter.prototype.load = function() {
+analytics.presenter.SummaryTablePresenter.prototype.load = function() {
     var presenter = this; 
     var view = presenter.view;
     var model = presenter.model;
     
-    // default label is "Overview"
-    var widgetLabel = analytics.configuration.getProperty(presenter.widgetName, "widgetLabel", "Overview");
+    // default label is "Summary"
+    var widgetLabel = analytics.configuration.getProperty(presenter.widgetName, "widgetLabel", "Summary");
     var modelParams = presenter.getModelParams(view.getParams());
     model.setParams(modelParams);
     
-    model.pushDoneFunction(function(data) {
-        var doNotDisplayCSVButton = analytics.configuration.getProperty(presenter.widgetName, "doNotDisplayCSVButton", false);
-        var csvButtonLink = (doNotDisplayCSVButton) 
-                            ? undefined
-                            : presenter.getLinkForExportToCsvButton();  
-                            
-        var table = data[0];  // there is only one table in data
-
+    model.pushDoneFunction(function(table) {
         // add links to drill down page
         table = presenter.linkTableValuesWithDrillDownPage(presenter.widgetName, table, modelParams);
         
@@ -52,28 +45,20 @@ analytics.presenter.VerticalTablePresenter.prototype.load = function() {
             table = presenter.makeTableColumnLinked(table, columnName, columnLinkPrefixList[columnName]);    
         }
         
-        view.print("<div class='view'>");
-        view.print("   <div class='overview'>");
+        view.printWidgetHeader(widgetLabel);
 
-        view.printWidgetHeader(widgetLabel, csvButtonLink);
+        var tabelId = presenter.widgetName + "_table";
         
-        view.print("       <div class='body'>");
-        view.print("           <div class='item'>");
-        
-        view.printTableVerticalRow(table);
-        
-        view.print("           </div>");
-        view.print("       </div>");
-        view.print("    </div>");
-        
-        view.loadTableHandlers(false);  // don't display sorting
-        
+        view.print("<div class='body'>");
+        view.printTable(table, false, tabelId);
         view.print("</div>");
+        
+        view.loadTableHandlers(false, {}, tabelId);
         
         // finish loading widget
         analytics.views.loader.needLoader = false;
     });
-        
-    var modelViewName = analytics.configuration.getProperty(presenter.widgetName, "modelViewName");
-    model.getModelViewData(modelViewName);
+
+    var modelMetricName = analytics.configuration.getProperty(presenter.widgetName, "modelMetricName");
+    model.getSummarizedMetricValue(modelMetricName);
 };
