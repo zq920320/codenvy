@@ -42,3 +42,5 @@ ${CATALINA_HOME}/lib/slf4j-api.jar:${CATALINA_HOME}/lib/logback-classic.jar:${CA
 ${CATALINA_HOME}/lib/mail.jar"
 
 echo "Using LOCAL_CONF_DIR:  $CODENVY_LOCAL_CONF_DIR"
+
+export CATALINA_PID="$CATALINA_HOME/bin/catalina_pid.txt"
