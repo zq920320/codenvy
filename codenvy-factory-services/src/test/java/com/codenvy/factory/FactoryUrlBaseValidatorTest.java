@@ -116,7 +116,10 @@ public class FactoryUrlBaseValidatorTest {
 
     @Test
     public void shouldBeAbleToValidateFactoryUrlObject() throws FactoryUrlException {
-        validator.validate(url, false);
+        validator.validateVcs(url);
+        validator.validateProjectName(url);
+        validator.validateOrgid(url);
+        validator.validateTrackedFactoryAndParams(url);
     }
 
 
@@ -129,7 +132,7 @@ public class FactoryUrlBaseValidatorTest {
         url.setVcsurl("http://codenvy.com/git/04%2");
 
         // when, then
-        validator.validate(url, false);
+        validator.validateVcs(url);
     }
 
     @Test
@@ -138,7 +141,7 @@ public class FactoryUrlBaseValidatorTest {
         url.setVcsurl("ssh://codenvy@review.gerrithub.io:29418/codenvy/exampleProject");
 
         // when, then
-        validator.validate(url, false);
+        validator.validateVcs(url);
     }
 
     @Test
@@ -147,12 +150,12 @@ public class FactoryUrlBaseValidatorTest {
         url.setVcsurl("https://github.com/codenvy/example.git");
 
         // when, then
-        validator.validate(url, false);
+        validator.validateVcs(url);
     }
 
     @Test(dataProvider = "badAdvancedFactoryUrlProvider", expectedExceptions = FactoryUrlException.class)
     public void shouldNotValidateIfVcsOrVcsUrlIsInvalid(Factory factoryUrl) throws FactoryUrlException {
-        validator.validate(factoryUrl, false);
+        validator.validateVcs(factoryUrl);
     }
 
     @DataProvider(name = "badAdvancedFactoryUrlProvider")
@@ -186,7 +189,7 @@ public class FactoryUrlBaseValidatorTest {
         url.setProjectattributes(DtoFactory.getInstance().createDto(ProjectAttributes.class).withPname(projectName));
 
         // when, then
-        validator.validate(url, false);
+        validator.validateProjectName(url);
     }
 
     @Test(dataProvider = "validProjectNamesProvider")
@@ -195,7 +198,7 @@ public class FactoryUrlBaseValidatorTest {
         url.setProjectattributes(DtoFactory.getInstance().createDto(ProjectAttributes.class).withPname(projectName));
 
         // when, then
-        validator.validate(url, false);
+        validator.validateProjectName(url);
     }
 
     @DataProvider(name = "validProjectNamesProvider")
@@ -228,21 +231,21 @@ public class FactoryUrlBaseValidatorTest {
 
     @Test
     public void shouldBeAbleToValidateIfOrgIdIsValid() throws  FactoryUrlException, ParseException {
-        validator.validate(url, false);
+        validator.validateOrgid(url);
     }
 
     @Test
     public void shouldBeAbleToValidateIfOrgIdAndOwnerAreValid()
             throws  FactoryUrlException, ParseException {
         // when, then
-        validator.validate(url, false);
+        validator.validateOrgid(url);
     }
 
     @Test(expectedExceptions = FactoryUrlException.class)
     public void shouldNotValidateIfAccountDoesNotExist() throws  FactoryUrlException, NotFoundException, ServerException {
         when(accountDao.getMembers(anyString())).thenReturn(Collections.<Member>emptyList());
 
-        validator.validate(url, false);
+        validator.validateOrgid(url);
     }
 
     @Test(expectedExceptions = FactoryUrlException.class, expectedExceptionsMessageRegExp = "You are not authorized to use this orgid.")
@@ -254,7 +257,7 @@ public class FactoryUrlBaseValidatorTest {
         when(accountDao.getMembers(anyString())).thenReturn(Arrays.asList(wronMember));
 
         // when, then
-        validator.validate(url, false);
+        validator.validateOrgid(url);
     }
 
     @Test(expectedExceptions = FactoryUrlException.class)
@@ -267,7 +270,7 @@ public class FactoryUrlBaseValidatorTest {
                                               .withEndDate(datetimeFormatter.parse("2050-11-21 11:11:11").getTime());
         when(accountDao.getSubscriptions(ID)).thenReturn(Arrays.asList(subscription));
         // when, then
-        validator.validate(url, false);
+        validator.validateTrackedFactoryAndParams(url);
     }
 
     @Test(expectedExceptions = FactoryUrlException.class)
@@ -279,7 +282,7 @@ public class FactoryUrlBaseValidatorTest {
                                               .withEndDate(datetimeFormatter.parse("2000-11-21 11:11:11").getTime());
         when(accountDao.getSubscriptions(ID)).thenReturn(Arrays.asList(subscription));
         // when, then
-        validator.validate(url, false);
+        validator.validateTrackedFactoryAndParams(url);
     }
 
     @Test(expectedExceptions = FactoryUrlException.class)
@@ -291,7 +294,7 @@ public class FactoryUrlBaseValidatorTest {
                                               .withEndDate(datetimeFormatter.parse("2050-11-21 11:11:11").getTime());
         when(accountDao.getSubscriptions(ID)).thenReturn(Arrays.asList(subscription));
         // when, then
-        validator.validate(url, false);
+        validator.validateTrackedFactoryAndParams(url);
     }
 
     @Test
@@ -302,7 +305,7 @@ public class FactoryUrlBaseValidatorTest {
         when(request.getHeader("Referer")).thenReturn("http://notcodenvy.com/factories-examples");
 
         // when, then
-        validator.validate(url, false);
+        validator.validateTrackedFactoryAndParams(url);
     }
 
     @Test
@@ -315,7 +318,7 @@ public class FactoryUrlBaseValidatorTest {
         when(request.getServerName()).thenReturn("next.codenvy.com");
 
         // when, then
-        validator.validate(url, false);
+        validator.validateTrackedFactoryAndParams(url);
     }
 
     @Test(expectedExceptions = FactoryUrlException.class)
@@ -327,16 +330,14 @@ public class FactoryUrlBaseValidatorTest {
         url.setOrgid("");
 
         // when, then
-        validator.validate(url, true);
+        validator.validateTrackedFactoryAndParams(url);
     }
 
     @Test(dataProvider = "trackedFactoryParametersProvider", expectedExceptions = FactoryUrlException.class)
     public void shouldNotValidateIfThereIsTrackedOnlyParameterAndOrgidIsNull(Factory factory)
             throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, FactoryUrlException {
         factory.setOrgid(null);
-
-        validator.validate(factory, false
-                          );
+        validator.validateTrackedFactoryAndParams(factory);
     }
 
     @DataProvider(name = "trackedFactoryParametersProvider")

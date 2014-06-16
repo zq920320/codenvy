@@ -30,7 +30,6 @@ import com.codenvy.api.user.server.dao.UserProfileDao;
 import com.codenvy.api.user.shared.dto.*;
 import com.codenvy.api.user.shared.dto.Attribute;
 
-import javax.inject.Inject;
 import java.io.UnsupportedEncodingException;
 import java.net.*;
 import java.util.*;
@@ -41,7 +40,7 @@ import java.util.regex.Pattern;
  *
  * @author Alexander Garagatyi
  */
-public class FactoryUrlBaseValidator implements FactoryUrlValidator {
+public class FactoryUrlBaseValidator {
 
 
 
@@ -53,15 +52,14 @@ public class FactoryUrlBaseValidator implements FactoryUrlValidator {
 
     private UserProfileDao profileDao;
 
-    @Inject
     public FactoryUrlBaseValidator(AccountDao accountDao, UserDao userDao, UserProfileDao profileDao) {
         this.accountDao = accountDao;
         this.userDao = userDao;
         this.profileDao = profileDao;
     }
 
-    @Override
-    public void validate(Factory factory, boolean encoded) throws FactoryUrlException {
+
+    protected void validateVcs(Factory factory) throws FactoryUrlException{
         // check that vcs value is correct (only git is supported for now)
         if (!"git".equals(factory.getVcs())) {
             throw new FactoryUrlException("Parameter 'vcs' has illegal value. Only 'git' is supported for now.");
@@ -75,7 +73,10 @@ public class FactoryUrlBaseValidator implements FactoryUrlValidator {
                 throw new FactoryUrlException(String.format(FactoryConstants.PARAMETRIZED_ILLEGAL_PARAMETER_VALUE_MESSAGE, "vcsurl", factory.getVcsurl()));
             }
         }
+    }
 
+
+    protected void validateProjectName(Factory factory) throws FactoryUrlException {
         // validate project name
         String pname = null;
         if (factory.getV().equals("1.0")) {
@@ -87,7 +88,10 @@ public class FactoryUrlBaseValidator implements FactoryUrlValidator {
             throw new FactoryUrlException(
                     "Project name must contain only Latin letters, digits or these following special characters -._.");
         }
+    }
 
+
+    protected void  validateOrgid(Factory factory) throws FactoryUrlException {
         // validate orgid
         String orgid = "".equals(factory.getOrgid()) ? null : factory.getOrgid();
         if (null != orgid) {
@@ -118,32 +122,40 @@ public class FactoryUrlBaseValidator implements FactoryUrlValidator {
                     throw new FactoryUrlException("You are not authorized to use this orgid.");
                 }
             }
-
-            try {
-                List<Subscription> subscriptions = accountDao.getSubscriptions(factory.getOrgid());
-                boolean isTracked = false;
-                for (Subscription one : subscriptions) {
-                    if ("TrackedFactory".equals(one.getServiceId())) {
-                        Date startTimeDate = new Date(one.getStartDate());
-                        Date endTimeDate = new Date(one.getEndDate());
-                        Date currentDate = new Date();
-                        if (!startTimeDate.before(currentDate) || !endTimeDate.after(currentDate)) {
-                            throw new FactoryUrlException(
-                                    String.format(FactoryConstants.PARAMETRIZED_ILLEGAL_ORGID_PARAMETER_MESSAGE, factory.getOrgid()));
-                        }
-                        isTracked = true;
-                        break;
-                    }
-                }
-                if (!isTracked)
-                    throw new FactoryUrlException(String.format(FactoryConstants.PARAMETRIZED_ILLEGAL_ORGID_PARAMETER_MESSAGE, factory.getOrgid()));
-            } catch (ServerException | NumberFormatException e) {
-                throw new FactoryUrlException(String.format(FactoryConstants.PARAMETRIZED_ILLEGAL_ORGID_PARAMETER_MESSAGE, factory.getOrgid()));
-            }
         }
 
+    }
+
+
+    protected void validateTrackedFactoryAndParams(Factory factory) throws FactoryUrlException {
         // validate tracked parameters
         Restriction restriction = factory.getRestriction();
+        String orgid = "".equals(factory.getOrgid()) ? null : factory.getOrgid();
+
+        try {
+            List<Subscription> subscriptions = accountDao.getSubscriptions(factory.getOrgid());
+            boolean isTracked = false;
+            for (Subscription one : subscriptions) {
+                if ("TrackedFactory".equals(one.getServiceId())) {
+                    Date startTimeDate = new Date(one.getStartDate());
+                    Date endTimeDate = new Date(one.getEndDate());
+                    Date currentDate = new Date();
+                    if (!startTimeDate.before(currentDate) || !endTimeDate.after(currentDate)) {
+                        throw new FactoryUrlException(
+                                String.format(FactoryConstants.PARAMETRIZED_ILLEGAL_ORGID_PARAMETER_MESSAGE, factory.getOrgid()));
+                    }
+                    isTracked = true;
+                    break;
+                }
+            }
+            if (!isTracked)
+                throw new FactoryUrlException(String.format(FactoryConstants.PARAMETRIZED_ILLEGAL_ORGID_PARAMETER_MESSAGE, factory.getOrgid()));
+        } catch (ServerException | NumberFormatException e) {
+            throw new FactoryUrlException(String.format(FactoryConstants.PARAMETRIZED_ILLEGAL_ORGID_PARAMETER_MESSAGE, factory.getOrgid()));
+        }
+
+
+
         if (restriction != null) {
             if (0 != restriction.getValidsince()) {
                 if (null == orgid) {
@@ -199,4 +211,5 @@ public class FactoryUrlBaseValidator implements FactoryUrlValidator {
             }
         }
     }
+
 }
