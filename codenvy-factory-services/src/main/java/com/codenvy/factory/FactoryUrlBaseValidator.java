@@ -131,29 +131,31 @@ public class FactoryUrlBaseValidator {
         // validate tracked parameters
         Restriction restriction = factory.getRestriction();
         String orgid = "".equals(factory.getOrgid()) ? null : factory.getOrgid();
-
-        try {
-            List<Subscription> subscriptions = accountDao.getSubscriptions(factory.getOrgid());
-            boolean isTracked = false;
-            for (Subscription one : subscriptions) {
-                if ("TrackedFactory".equals(one.getServiceId())) {
-                    Date startTimeDate = new Date(one.getStartDate());
-                    Date endTimeDate = new Date(one.getEndDate());
-                    Date currentDate = new Date();
-                    if (!startTimeDate.before(currentDate) || !endTimeDate.after(currentDate)) {
-                        throw new FactoryUrlException(
-                                String.format(FactoryConstants.PARAMETRIZED_ILLEGAL_ORGID_PARAMETER_MESSAGE, factory.getOrgid()));
+        if (orgid != null) {
+            try {
+                List<Subscription> subscriptions = accountDao.getSubscriptions(orgid);
+                boolean isTracked = false;
+                for (Subscription one : subscriptions) {
+                    if ("TrackedFactory".equals(one.getServiceId())) {
+                        Date startTimeDate = new Date(one.getStartDate());
+                        Date endTimeDate = new Date(one.getEndDate());
+                        Date currentDate = new Date();
+                        if (!startTimeDate.before(currentDate) || !endTimeDate.after(currentDate)) {
+                            throw new FactoryUrlException(
+                                    String.format(FactoryConstants.PARAMETRIZED_ILLEGAL_ORGID_PARAMETER_MESSAGE,orgid));
+                        }
+                        isTracked = true;
+                        break;
                     }
-                    isTracked = true;
-                    break;
                 }
+                if (!isTracked)
+                    throw new FactoryUrlException(
+                            String.format(FactoryConstants.PARAMETRIZED_ILLEGAL_ORGID_PARAMETER_MESSAGE, orgid));
+            } catch (ServerException | NumberFormatException e) {
+                throw new FactoryUrlException(
+                        String.format(FactoryConstants.PARAMETRIZED_ILLEGAL_ORGID_PARAMETER_MESSAGE,orgid));
             }
-            if (!isTracked)
-                throw new FactoryUrlException(String.format(FactoryConstants.PARAMETRIZED_ILLEGAL_ORGID_PARAMETER_MESSAGE, factory.getOrgid()));
-        } catch (ServerException | NumberFormatException e) {
-            throw new FactoryUrlException(String.format(FactoryConstants.PARAMETRIZED_ILLEGAL_ORGID_PARAMETER_MESSAGE, factory.getOrgid()));
         }
-
 
 
         if (restriction != null) {
