@@ -35,7 +35,8 @@ public class FactoryConstants {
             "You do not have a valid orgID. Your Factory configuration has a parameter that can only " +
             "be used with a Tracked Factory subscription. You could have provided the wrong value, " +
             "your subscription has expired, or you do not have a valid subscription account.  Please contact " +
-            "info@codenvy.com with any questions.";
+            "info@codenvy.com with any questions.\n  orgID Submitted: %s \n" +
+            "Invalid Parameter Name: Restriction ";
 
     public static final String PARAMETRIZED_ILLEGAL_TRACKED_PARAMETER_MESSAGE =
             "You have provided a Tracked Factory parameter %s, and you do not have a valid orgId %s. You could have " +
