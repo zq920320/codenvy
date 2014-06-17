@@ -204,7 +204,8 @@ public abstract class ReadBasedMetric extends AbstractMetric {
                && ((PrecomputedMetric)MetricFactory.getMetric(precomputedMetricName)).canReadPrecomputedData(context)
                && context.getFilters().isEmpty()
                && (!context.exists(Parameters.FROM_DATE) || context.isDefaultValue(Parameters.FROM_DATE))
-               && (!context.exists(Parameters.TO_DATE) || context.isDefaultValue(Parameters.TO_DATE));
+               && (!context.exists(Parameters.TO_DATE) || context.isDefaultValue(Parameters.TO_DATE))
+               && !context.exists(Parameters.EXPANDED_METRIC_NAME);
     }
 
     public String getStorageCollectionName() {
