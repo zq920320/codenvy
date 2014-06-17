@@ -118,7 +118,16 @@ define(["jquery","config",
 
                     if(paymentForm.length !== 0){
                         (function(){
-                            new PaymentForm();
+                            var form = PaymentForm.get(paymentForm),
+                            errorReport = ErrorReport.get(errorContainer),
+                            successReport = SuccessReport.get(errorContainer);
+                            form.on("success", function(){
+                                successReport.show("CONGRATULATIONS YOUR PAYMENT IS SUCCESSFUL");
+                            });
+
+                            form.on("invalid", function(field,message){
+                                errorReport.show(message);
+                            });
                         }());
                     }
 
