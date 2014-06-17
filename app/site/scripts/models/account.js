@@ -621,7 +621,7 @@
                     type : "GET",
                     success : function(data){
                         //Get accountId
-                        sendSubscriptionRequest(data[0].id);
+                        sendSubscriptionRequest(data[0].id, success, error);
                     },
                     error : function(response){
                         //Show error

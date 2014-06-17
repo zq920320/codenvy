@@ -26,7 +26,22 @@
                 initialize : function(){
                     /*global Braintree*/
                     braintree = Braintree.create("MIIBCgKCAQEAu4DIBsO0K0mkhvCsCAQzwjQo71bLswM1LQS3xCz+81UTOXShVH2YjgjA/P/S1NUuKxZe5ppku8F4Y7NHMPniod8KmChoNuUAnq9EE91BAqrj9OKTlNpxKMuXG6OTnF4EfAzz5yDI4p8vSfVHKNU6WvqySB16uw0a+iC8sDjoib6rUeSeniWpQBn/FeR7iVFVGHShkgvRs1SX2BjLnZOalhlI94yrPu3vNJd2Gk1YPgQBtAHbjhUtIcvpPAcFqcUQVaEavVVkPeEMGCaIsaR6LJvJ0K+r6K4t8ZcPzD6cA7ylM89nFPzGND4gLhxftd6p/R3QBPGGMWP5IGJDo/ThzwIDAQAB");
-                    Account.sendSubscriptionRequest();
+                    Account.addSubscription(
+                            _.bind(function(d){
+                                this.trigger("success",d);
+                            },this),
+                            _.bind(function(errors){
+                                if(errors.length !== 0){
+                                    /*$(this.el).find("input[name='password']").val("");
+                                    $(this.el).find("input[name='password']").focus();*/
+                                    this.trigger(
+                                        "invalid",
+                                        errors[0].getFieldName(),
+                                        errors[0].getErrorDescription()
+                                    );
+                                }
+                            },this)
+                        );
                 },
 
                 __validationRules : function(){
