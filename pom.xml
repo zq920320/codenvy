@@ -4,7 +4,7 @@
     CODENVY CONFIDENTIAL
     __________________
 
-     [2012] - [2013] Codenvy, S.A.
+     [2012] - [2014] Codenvy, S.A.
      All Rights Reserved.
 
     NOTICE:  All information contained herein is, and remains
@@ -23,11 +23,11 @@
     <parent>
         <artifactId>maven-depmgt-pom</artifactId>
         <groupId>com.codenvy</groupId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.8.1-SNAPSHOT</version>
     </parent>
     <groupId>com.codenvy</groupId>
     <artifactId>odyssey</artifactId>
-    <version>loginPages-0.17.0-SNAPSHOT</version>
+    <version>payment-0.18.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Codenvy :: Website</name>
     <scm>
@@ -39,6 +39,7 @@
     <properties>
         <maven.releases.repo.url>https://maven.codenvycorp.com/content/repositories/codenvy-private-releases/</maven.releases.repo.url>
         <maven.snapshots.repo.url>https://maven.codenvycorp.com/content/repositories/codenvy-private-snapshots/</maven.snapshots.repo.url>
+        <version.license-header>codenvy-codenvy-license-resource-bundle</version.license-header>
     </properties>
     <build>
         <plugins>

@@ -1,0 +1,138 @@
+---
+    layout : payment
+    title: Codenvy - Add Subscription Form
+---
+
+<!-- <div>
+    <form action="/" method="POST" id="codenvy-add-subscription-form">
+        <p>
+            <label>serviceId</label>
+            <input type="text" size="20" autocomplete="on" name="serviceId" />
+        </p>
+        <p>
+            <label>accountId</label>
+            <input type="text" size="20" autocomplete="on" name="accountId" />
+        </p>
+        <p>
+            <label>startDate</label>
+            <input type="text" size="20" autocomplete="on" name="startDate" />
+        </p>
+        <p>
+            <label>endDate</label>
+            <input type="text" size="20" autocomplete="on" name="endDate" />
+        </p>
+        <p>
+            <label>Package</label>
+            <input type="text" size="20" autocomplete="on" name="Package" />
+        </p>
+        <p>
+            <label>RAM</label>
+            <input type="text" size="20" autocomplete="on" name="RAM" />
+        </p>
+        <p>
+            <label>TariffPlan</label>
+            <input type="text" size="20" autocomplete="on" name="TariffPlan" />
+        </p>
+        <input type="submit" id="submit1" />
+    </form>
+</div> -->
+<h1>Codenvy Credit Card Transaction Form</h1>
+<div>
+    <div class="error-container"></div>
+    <form action="/" method="POST" id="codenvy-payment-form" class="hidden">
+        <p>
+            <label>Card Number</label>
+            <input type="text" size="20" autocomplete="on" data-encrypted-name="cardNumber" />
+        </p>
+        <p>
+            <label>CVV</label>
+            <input type="text" size="4" autocomplete="on" data-encrypted-name="cvv" />
+        </p>
+        <p>
+            <label>Expiration (MM/YYYY)</label>
+            <input type="text" size="2" autocomplete="on" name="expirationMonth" /> /
+            <input type="text" size="4" autocomplete="on" name="expirationYear" />
+        </p>
+        <p>
+            <label>Subscription Id</label>
+            <input type="text" size="20" autocomplete="off" name="subscriptionid" />
+        </p>
+        <input type="submit" id="submit" />
+    </form>
+</div>
+<!-- <script src="https://js.braintreegateway.com/v1/braintree.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script> -->
+<!-- 
+<script>
+    var ajax_submit = function (e) {
+      form = $('#codenvy-payment-form');
+      e.preventDefault();
+      /*$("#submit").attr("disabled", "disabled");
+      $.post(form.attr('action'), form.serialize(), function (data) {
+        form.parent().replaceWith(data);
+      });*/
+    var subscriptionid = $("input[name=subscriptionid]")[0].value;
+    var purchaseUrl = "/api/account/subscriptions/"+ subscriptionid + "/purchase";
+    var data = {
+        cardNumber:$('input[name=cardNumber]')[0].value,
+        cvv:$('input[name=cvv]')[0].value,
+        expirationMonth:$('input[name=expirationMonth]')[0].value,
+        expirationYear:$('input[name=expirationYear]')[0].value,
+        };
+     $.ajax({
+        url : purchaseUrl,
+        type : "POST",
+        contentType: "application/json",
+        data: JSON.stringify(data),
+        success : function(){
+            //alert("Success");
+        },
+        error : function(){
+            //alert("Error");
+        }
+    }); 
+    }
+    var braintree = Braintree.create("MIIBCgKCAQEAu4DIBsO0K0mkhvCsCAQzwjQo71bLswM1LQS3xCz+81UTOXShVH2YjgjA/P/S1NUuKxZe5ppku8F4Y7NHMPniod8KmChoNuUAnq9EE91BAqrj9OKTlNpxKMuXG6OTnF4EfAzz5yDI4p8vSfVHKNU6WvqySB16uw0a+iC8sDjoib6rUeSeniWpQBn/FeR7iVFVGHShkgvRs1SX2BjLnZOalhlI94yrPu3vNJd2Gk1YPgQBtAHbjhUtIcvpPAcFqcUQVaEavVVkPeEMGCaIsaR6LJvJ0K+r6K4t8ZcPzD6cA7ylM89nFPzGND4gLhxftd6p/R3QBPGGMWP5IGJDo/ThzwIDAQAB");
+    braintree.onSubmitEncryptForm('codenvy-payment-form', ajax_submit);
+</script>
+ -->
+<!-- 
+<script>
+    var ajax_add_subscription_submit = function (e) {
+      form = $('#codenvy-add-subscription-form');
+      e.preventDefault();
+
+    var addSubscriptionUrl = "/api/account/subscriptions/";
+    var data = {
+        serviceId:$('input[name=serviceId]')[0].value,
+        accountId:$('input[name=accountId]')[0].value,
+        startDate:$('input[name=startDate]')[0].value,
+        endDate:$('input[name=endDate]')[0].value,
+        properties:{
+            Package:$('input[name=Package]')[0].value,
+            RAM:$('input[name=RAM]')[0].value,
+            TariffPlan:$('input[name=TariffPlan]')[0].value,
+            }
+        };
+     $.ajax({
+        url : addSubscriptionUrl,
+        type : "POST",
+        contentType: "application/json",
+        data: JSON.stringify(data),
+        success : function(data){
+            alert("Success");
+        },
+        error : function(response){
+            if (response.status === 402) {
+                var subscription = JSON.parse(response.responseText);
+                $("input[name='subscriptionid']").val(subscription.id);
+            } else {
+            alert("Error");
+            }
+        }
+    });
+    }
+    var braintree = Braintree.create("MIIBCgKCAQEAu4DIBsO0K0mkhvCsCAQzwjQo71bLswM1LQS3xCz+81UTOXShVH2YjgjA/P/S1NUuKxZe5ppku8F4Y7NHMPniod8KmChoNuUAnq9EE91BAqrj9OKTlNpxKMuXG6OTnF4EfAzz5yDI4p8vSfVHKNU6WvqySB16uw0a+iC8sDjoib6rUeSeniWpQBn/FeR7iVFVGHShkgvRs1SX2BjLnZOalhlI94yrPu3vNJd2Gk1YPgQBtAHbjhUtIcvpPAcFqcUQVaEavVVkPeEMGCaIsaR6LJvJ0K+r6K4t8ZcPzD6cA7ylM89nFPzGND4gLhxftd6p/R3QBPGGMWP5IGJDo/ThzwIDAQAB");
+    braintree.onSubmitEncryptForm('codenvy-add-subscription-form', ajax_add_subscription_submit);
+</script>
+ -->
