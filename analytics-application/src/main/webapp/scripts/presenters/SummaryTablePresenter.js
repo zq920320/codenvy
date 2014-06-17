@@ -31,18 +31,41 @@ analytics.presenter.SummaryTablePresenter.prototype.load = function() {
     var model = presenter.model;
     
     // default label is "Summary"
-    var widgetLabel = analytics.configuration.getProperty(presenter.widgetName, "widgetLabel", "Summary");
     var modelParams = presenter.getModelParams(view.getParams());
     model.setParams(modelParams);
     
+    // get Number of entries
+    model.pushDoneFunction(function (data) {
+        model.popDoneFunction();
+
+        var numberOfEntries = data;
+        
+        presenter.obtainSummaryData(model, view, presenter, numberOfEntries);
+    });
+
+    var modelMetricName = analytics.configuration.getProperty(presenter.widgetName, "modelMetricName");
+    model.getMetricValue(modelMetricName);
+};
+
+analytics.presenter.SummaryTablePresenter.prototype.obtainSummaryData = function (model, view, presenter, numberOfEntries) {
+    var viewParams = view.getParams();
+    var modelParams = presenter.getModelParams(viewParams);
+    
     model.pushDoneFunction(function(table) {
+        // add number of entries into the table
+        if (table.rows.length != 0) {
+            table.columns.unshift("NUMBER OF ENTRIES");
+            table.rows[0].unshift("<div class='bold'>" + numberOfEntries + "</div>");
+        }
+        
         if (typeof modelParams[presenter.EXPANDED_METRIC_NAME_PARAMETER] == "undefined") {  // don't expand summary metric secondary
             // add links to drill down page
             table = presenter.linkTableValuesWithDrillDownPage(presenter.widgetName, table, modelParams);
         }
         
+        var widgetLabel = analytics.configuration.getProperty(presenter.widgetName, "widgetLabel", "Summary");
         view.printWidgetHeader(widgetLabel);
-
+    
         var tabelId = presenter.widgetName + "_table";
         
         view.print("<div class='body'>");
@@ -54,7 +77,9 @@ analytics.presenter.SummaryTablePresenter.prototype.load = function() {
         // finish loading widget
         analytics.views.loader.needLoader = false;
     });
+    
+    model.setParams(modelParams);
 
-    var modelMetricName = analytics.configuration.getProperty(presenter.widgetName, "modelMetricName");
-    model.getSummarizedMetricValue(modelMetricName);
-};
+    var modelViewName = analytics.configuration.getProperty(presenter.widgetName, "modelViewName");
+    model.getSummarizedMetricValue(modelViewName);
+}

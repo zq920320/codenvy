@@ -487,7 +487,8 @@ function Configuration() {
 
         usersOverview: {
             presenterType: "SummaryTablePresenter",
-            modelMetricName: "users_statistics_list",
+            modelViewName: "users_statistics_list",
+            modelMetricName: "users_statistics",
             
             columnDrillDownPageLinkConfiguration: {
                 mapColumnNameToExpandableMetric: {
@@ -653,6 +654,7 @@ function Configuration() {
             columnLinkPrefixList: {
                 "User": "/analytics/pages/user-view.jsp?user",
                 "Workspace": "/analytics/pages/workspace-view.jsp?ws",
+                "Type": "/analytics/pages/projects-view.jsp?project_type",
             },
 
             columnCombinedLinkConfiguration: {
@@ -713,7 +715,8 @@ function Configuration() {
 
         sessionsOverview: {
             presenterType: "SummaryTablePresenter",
-            modelMetricName: "product_usage_sessions_list",
+            modelViewName: "product_usage_sessions_list",
+            modelMetricName: "product_usage_sessions",
         },
         
         sessionOverview: {
@@ -806,7 +809,8 @@ function Configuration() {
 
         workspacesOverview: {
             presenterType: "SummaryTablePresenter",
-            modelMetricName: "workspaces_statistics_list",
+            modelViewName: "workspaces_statistics_list",
+            modelMetricName: "workspaces_statistics",
             
             columnDrillDownPageLinkConfiguration: {
                 mapColumnNameToExpandableMetric: {
@@ -863,6 +867,7 @@ function Configuration() {
             columnLinkPrefixList: {
                 "User": "/analytics/pages/user-view.jsp?user",
                 "Workspace": "/analytics/pages/workspace-view.jsp?ws",
+                "Type": "/analytics/pages/projects-view.jsp?project_type",
             },
 
             columnCombinedLinkConfiguration: {
@@ -956,6 +961,7 @@ function Configuration() {
             columnLinkPrefixList: {
                 "Workspace": "/analytics/pages/workspace-view.jsp?ws",
                 "User": "/analytics/pages/user-view.jsp?user",
+                "Type": "/analytics/pages/projects-view.jsp?project_type",
             },
 
             modelSummarizedMetricName: "projects_statistics_list",
@@ -989,7 +995,8 @@ function Configuration() {
 
         projectsOverview: {
             presenterType: "SummaryTablePresenter",
-            modelMetricName: "projects_statistics_list",
+            modelViewName: "projects_statistics_list",
+            modelMetricName: "projects",
             
             columnDrillDownPageLinkConfiguration: {
                 mapColumnNameToExpandableMetric: {
@@ -1174,7 +1181,8 @@ function Configuration() {
 
         factoriesOverview: {
             presenterType: "SummaryTablePresenter",
-            modelMetricName: "factory_statistics_list",
+            modelViewName: "factory_statistics_list",
+            modelMetricName: "factory_statistics",
             
             columnDrillDownPageLinkConfiguration: {
                 mapColumnNameToExpandableMetric: {
