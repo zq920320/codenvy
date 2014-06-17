@@ -81,11 +81,11 @@ public class ProductUsageSessionsList extends AbstractProductUsageSessionsList i
         DBObject group = new BasicDBObject();
         group.put(ID, null);
         group.put(TIME, new BasicDBObject("$sum", "$" + TIME));
-//        group.put(SESSIONS, new BasicDBObject("$sum", 1));  // commented to do not duplicate 'number of entries' and 'sessions' values in summary box in Front End
+        group.put(SESSIONS, new BasicDBObject("$sum", 1));
 
         DBObject project = new BasicDBObject();
         project.put(TIME, 1);
-//        project.put(SESSIONS, 1);
+        project.put(SESSIONS, 1);
 
         return new DBObject[]{new BasicDBObject("$group", group),
                               new BasicDBObject("$project", project)};
