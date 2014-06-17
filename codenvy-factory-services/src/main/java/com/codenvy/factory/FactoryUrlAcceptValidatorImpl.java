@@ -41,7 +41,6 @@ public class FactoryUrlAcceptValidatorImpl extends FactoryUrlBaseValidator imple
         if (!encoded) {
             validateVcs(factory);
             validateProjectName(factory);
-            validateOrgid(factory);
         }
         validateTrackedFactoryAndParams(factory);
     }

@@ -83,7 +83,6 @@ public class FactoryValidatorImplsTest {
         spy.validateOnAccept(factoryUrl, false);
 
         verify(spy, atLeastOnce()).validateVcs(any(Factory.class));
-        verify(spy, atLeastOnce()).validateOrgid(any(Factory.class));
         verify(spy, atLeastOnce()).validateTrackedFactoryAndParams(any(Factory.class));
         verify(spy, atLeastOnce()).validateProjectName(any(Factory.class));
     }
