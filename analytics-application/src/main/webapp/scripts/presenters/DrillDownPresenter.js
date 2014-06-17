@@ -85,6 +85,6 @@ analytics.presenter.DrillDownPresenter.prototype.load = function() {
     
     model.setParams(modelParams);
     
-    var modelExpandedMetricName = viewParams[presenter.METRIC_ORIGINAL_NAME_VIEW_PARAMETER];
+    var modelExpandedMetricName = viewParams[presenter.EXPANDED_METRIC_NAME_PARAMETER];
     model.getExpandedMetricValue(modelExpandedMetricName);        
 }

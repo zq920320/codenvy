@@ -33,7 +33,7 @@ Presenter.prototype.CURRENT_PAGE_QUERY_PARAMETER = "page";
 Presenter.prototype.DEFAULT_ONE_PAGE_ROWS_COUNT = 20;
 
 /** Drill Down page parameters */
-Presenter.prototype.METRIC_ORIGINAL_NAME_VIEW_PARAMETER = "expanded_metric_name";
+Presenter.prototype.EXPANDED_METRIC_NAME_PARAMETER = "expanded_metric_name";
 Presenter.prototype.TIME_INTERVAL_PARAMETER = "time_interval";
 
 /** Event filtering parameters */
@@ -221,12 +221,13 @@ Presenter.prototype.getDrillDownPageLink = function(metricName, modelParams, tim
         var drillDownPageLink = analytics.configuration.getDrillDownPageAddressOnPageType(metricName);
     } else {
         var drillDownPageAddress = analytics.configuration.getDrillDownPageAddress(metricName);
-        var drillDownPageLink = drillDownPageAddress + "?" + this.METRIC_ORIGINAL_NAME_VIEW_PARAMETER + "=" + metricName;        
+        var drillDownPageLink = drillDownPageAddress + "?" + this.EXPANDED_METRIC_NAME_PARAMETER + "=" + metricName;        
     }
+    
+    delete modelParams[this.EXPANDED_METRIC_NAME_PARAMETER];  // remove redundant expanded metric name
     
     if (!jQuery.isEmptyObject(modelParams)) {
         var modelParams = analytics.util.clone(modelParams);
-        delete modelParams[this.METRIC_ORIGINAL_NAME_VIEW_PARAMETER];  // remove redundant expanded metric name
         
         var drillDownPageLinkDelimeter = (drillDownPageLink.indexOf("?") != -1) ? "&" : "?";
         drillDownPageLink += drillDownPageLinkDelimeter + analytics.util.constructUrlParams(modelParams);

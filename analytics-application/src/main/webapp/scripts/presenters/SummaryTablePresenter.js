@@ -36,13 +36,9 @@ analytics.presenter.SummaryTablePresenter.prototype.load = function() {
     model.setParams(modelParams);
     
     model.pushDoneFunction(function(table) {
-        // add links to drill down page
-        table = presenter.linkTableValuesWithDrillDownPage(presenter.widgetName, table, modelParams);
-        
-        // make table columns linked 
-        var columnLinkPrefixList = analytics.configuration.getProperty(presenter.widgetName, "columnLinkPrefixList", {});
-        for (var columnName in columnLinkPrefixList) {
-            table = presenter.makeTableColumnLinked(table, columnName, columnLinkPrefixList[columnName]);    
+        if (typeof modelParams[presenter.EXPANDED_METRIC_NAME_PARAMETER] == "undefined") {  // don't expand summary metric secondary
+            // add links to drill down page
+            table = presenter.linkTableValuesWithDrillDownPage(presenter.widgetName, table, modelParams);
         }
         
         view.printWidgetHeader(widgetLabel);

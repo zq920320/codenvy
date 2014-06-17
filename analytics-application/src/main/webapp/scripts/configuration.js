@@ -488,6 +488,24 @@ function Configuration() {
         usersOverview: {
             presenterType: "SummaryTablePresenter",
             modelMetricName: "users_statistics_list",
+            
+            columnDrillDownPageLinkConfiguration: {
+                mapColumnNameToExpandableMetric: {
+                    "projects": "#PROJECTS",
+                    "paas deploys": "deploys_to_paas",
+                    "time": "non_factories_product_usage_sessions",
+                    "invites": "user_invite",
+                    "sessions": "non_factories_product_usage_sessions",
+                    "deploys": "deploys",
+                    "builds": "builds",
+                    "build time": "builds_time",
+                    "runs": "runs",
+                    "factories": "created_factories",
+                    "debugs": "debugs",
+                    "logins": "users_logged_in_total",
+                    "run time": "runs_time",
+                },
+            },
         },
         
         userOverview: {
@@ -789,6 +807,24 @@ function Configuration() {
         workspacesOverview: {
             presenterType: "SummaryTablePresenter",
             modelMetricName: "workspaces_statistics_list",
+            
+            columnDrillDownPageLinkConfiguration: {
+                mapColumnNameToExpandableMetric: {
+                    "projects": "#PROJECTS",
+                    "paas deploys": "deploys_to_paas",
+                    "time": "non_factories_product_usage_sessions",
+                    "invites": "user_invite",
+                    "sessions": "non_factories_product_usage_sessions",
+                    "joined users": "created_users",
+                    "deploys": "deploys",
+                    "builds": "builds",
+                    "build time": "builds_time",
+                    "runs": "runs",
+                    "factories": "created_factories",
+                    "debugs": "debugs",
+                    "run time": "runs_time",
+                },
+            },
         },
         
         workspaceOverview: {
@@ -954,6 +990,24 @@ function Configuration() {
         projectsOverview: {
             presenterType: "SummaryTablePresenter",
             modelMetricName: "projects_statistics_list",
+            
+            columnDrillDownPageLinkConfiguration: {
+                mapColumnNameToExpandableMetric: {
+                    "debug time": "debugs_time",
+                    "project creates": "created_projects",
+                    "paas deploys": "deploys_to_paas",
+                    "deploys": "deploys",
+                    "builds": "builds",
+                    "code completes": "code_completions",
+                    "project destroys": "destroyed_projects",
+                    "build interrupts": "build_queue_terminations",
+                    "runs": "runs",
+                    "build time": "builds_time",
+                    "debugs": "debugs",
+                    "code refactories": "code_refactorings",
+                    "run time": "runs_time",
+                },
+            },
         },
         
         projectOverview: {
@@ -1121,6 +1175,16 @@ function Configuration() {
         factoriesOverview: {
             presenterType: "SummaryTablePresenter",
             modelMetricName: "factory_statistics_list",
+            
+            columnDrillDownPageLinkConfiguration: {
+                mapColumnNameToExpandableMetric: {
+                    "time": "factory_sessions",
+                    "sessions": "factory_sessions",
+                    "converted factory session": "converted_factory_sessions",
+                    "ws created": "temporary_workspaces_created",
+                    "authenticated factory session": "authenticated_factory_sessions",
+                },
+            },
         },
         
         factoryOverview: {
@@ -1257,7 +1321,7 @@ function Configuration() {
         "account_id",
         "data_universe",
         "passed_days_count",
-    ];
+     ];
 
     /** Global parameters stored in Browser Storage */
     var globalParams = [
