@@ -1,9 +1,9 @@
-<html>
-<head>
-</head>
-<body>
-<h1>Codenvy Add Subscription Form</h1>
-<div>
+---
+    layout : payment
+    title: Codenvy - Add Subscription Form
+---
+
+<!-- <div>
     <form action="/" method="POST" id="codenvy-add-subscription-form">
         <p>
             <label>serviceId</label>
@@ -35,10 +35,10 @@
         </p>
         <input type="submit" id="submit1" />
     </form>
-</div>
+</div> -->
 <h1>Codenvy Credit Card Transaction Form</h1>
 <div>
-    <form action="/" method="POST" id="codenvy-payment-form">
+    <form action="/" method="POST" id="codenvy-payment-form" class="hidden">
         <p>
             <label>Card Number</label>
             <input type="text" size="20" autocomplete="on" data-encrypted-name="cardNumber" />
@@ -59,8 +59,9 @@
         <input type="submit" id="submit" />
     </form>
 </div>
-<script src="https://js.braintreegateway.com/v1/braintree.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<!-- <script src="https://js.braintreegateway.com/v1/braintree.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script> -->
+<!-- 
 <script>
     var ajax_submit = function (e) {
       form = $('#codenvy-payment-form');
@@ -93,7 +94,8 @@
     var braintree = Braintree.create("MIIBCgKCAQEAu4DIBsO0K0mkhvCsCAQzwjQo71bLswM1LQS3xCz+81UTOXShVH2YjgjA/P/S1NUuKxZe5ppku8F4Y7NHMPniod8KmChoNuUAnq9EE91BAqrj9OKTlNpxKMuXG6OTnF4EfAzz5yDI4p8vSfVHKNU6WvqySB16uw0a+iC8sDjoib6rUeSeniWpQBn/FeR7iVFVGHShkgvRs1SX2BjLnZOalhlI94yrPu3vNJd2Gk1YPgQBtAHbjhUtIcvpPAcFqcUQVaEavVVkPeEMGCaIsaR6LJvJ0K+r6K4t8ZcPzD6cA7ylM89nFPzGND4gLhxftd6p/R3QBPGGMWP5IGJDo/ThzwIDAQAB");
     braintree.onSubmitEncryptForm('codenvy-payment-form', ajax_submit);
 </script>
-
+ -->
+<!-- 
 <script>
     var ajax_add_subscription_submit = function (e) {
       form = $('#codenvy-add-subscription-form');
@@ -132,5 +134,4 @@
     var braintree = Braintree.create("MIIBCgKCAQEAu4DIBsO0K0mkhvCsCAQzwjQo71bLswM1LQS3xCz+81UTOXShVH2YjgjA/P/S1NUuKxZe5ppku8F4Y7NHMPniod8KmChoNuUAnq9EE91BAqrj9OKTlNpxKMuXG6OTnF4EfAzz5yDI4p8vSfVHKNU6WvqySB16uw0a+iC8sDjoib6rUeSeniWpQBn/FeR7iVFVGHShkgvRs1SX2BjLnZOalhlI94yrPu3vNJd2Gk1YPgQBtAHbjhUtIcvpPAcFqcUQVaEavVVkPeEMGCaIsaR6LJvJ0K+r6K4t8ZcPzD6cA7ylM89nFPzGND4gLhxftd6p/R3QBPGGMWP5IGJDo/ThzwIDAQAB");
     braintree.onSubmitEncryptForm('codenvy-add-subscription-form', ajax_add_subscription_submit);
 </script>
-</body>
-</html>
+ -->

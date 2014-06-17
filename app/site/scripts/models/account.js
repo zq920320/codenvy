@@ -613,6 +613,129 @@
                 }
             },
 
+            addSubscription : function(success,error){
+                // Get accountId for current User
+                var url = "/api/account";
+                $.ajax({
+                    url : url,
+                    type : "GET",
+                    success : function(data){
+                        //Get accountId
+                        sendSubscriptionRequest(data[0].id);
+                    },
+                    error : function(response){
+                        //Show error
+                    error([
+                        new AccountError(
+                            null,
+                            "Authentication Error" + response.message
+                        )
+
+                    ]);                        
+                    }
+
+                });
+                /*form = $('#codenvy-add-subscription-form');
+                e.preventDefault();*/
+
+                var sendSubscriptionRequest = function(accountId,success,error){
+                    var addSubscriptionUrl = "/api/account/subscriptions/";
+                    var data ={};
+                    if (getQueryParameterByName("serviceId")){ //If serviceId not exists in query params - throw error
+                        data.serviceId = getQueryParameterByName("serviceId");
+                        data.accountId = accountId;
+                    if (getQueryParameterByName("startDate")){
+                        data.startDate = getQueryParameterByName("startDate");
+                    }
+                    if (getQueryParameterByName("endDate")){
+                        data.endDate = getQueryParameterByName("endDate");
+                    }
+                    if (getQueryParameterByName("Package")){
+                        data.properties.getQueryParameterByName("Package");
+                    }
+                    if (getQueryParameterByName("RAM")){
+                        data.properties.RAM = getQueryParameterByName("RAM");
+                    }
+                    if (getQueryParameterByName("TariffPlan")){
+                        data.properties.TariffPlan = getQueryParameterByName("TariffPlan");
+                    }
+                        /*(var serviceId = getQueryParameterByName("serviceId")) ? data.serviceId = serviceId : null;
+                        data.accountId = accountId;
+                        (var startDate = getQueryParameterByName("startDate")) ? data.startDate = startDate : null;
+                        (var endDate = getQueryParameterByName("endDate")) ? data.endDate = endDate : null;
+                        (var Package = getQueryParameterByName("Package")) ? data.properties.Package = Package : null;
+                        (var RAM = getQueryParameterByName("RAM")) ? data.properties.RAM = RAM : null;
+                        (var TariffPlan = getQueryParameterByName("TariffPlan")) ? data.properties.TariffPlan = TariffPlan : null;*/
+                         $.ajax({
+                            url : addSubscriptionUrl,
+                            type : "POST",
+                            contentType: "application/json",
+                            data: JSON.stringify(data),
+                            success : function(){
+                                //alert("Success");
+                            },
+                            error : function(response){
+                                if (response.status === 402) {
+                                    //Show payment form
+                                    var subscription = JSON.parse(response.responseText);
+                                    $("input[name='subscriptionid']").val(subscription.id);
+                                    this.el.removeClass('hidden');
+                                } else {
+                                    //alert("Error");
+                                    error([
+                                        new AccountError(
+                                            null,
+                                            "Subscription addition Error" + response.message
+                                            )
+                                    ]);
+                                }
+                            }
+                        });
+
+                    } else {
+                        error([
+                            new AccountError(
+                                null,
+                                "Not found serviceId parameter. Error"
+                            )
+
+                        ]); 
+
+                    }
+
+                };
+            },
+
+            paymentFormSubmit : function(success,error){
+            var subscriptionid = $("input[name=subscriptionid]")[0].value;
+            var purchaseUrl = "/api/account/subscriptions/"+ subscriptionid + "/purchase";
+            var data = {
+                cardNumber:$('input[name=cardNumber]')[0].value,
+                cvv:$('input[name=cvv]')[0].value,
+                expirationMonth:$('input[name=expirationMonth]')[0].value,
+                expirationYear:$('input[name=expirationYear]')[0].value
+                };
+             $.ajax({
+                url : purchaseUrl,
+                type : "POST",
+                contentType: "application/json",
+                data: JSON.stringify(data),
+                success : function(){
+                    //alert("Payment Success");
+                },
+                error : function(){
+                    //alert("Payment Error");
+                    error([
+                        new AccountError(
+                            null,
+                            "Payment Error"
+                        )
+
+                    ]);
+                }
+            }); 
+            },
+
             // Changing login page behavior if authtype=ldap
             isAuthtypeLdap : function() {
                 var type = getQueryParameterByName("authtype");
