@@ -27,8 +27,9 @@
                     /*global Braintree*/
                     braintree = Braintree.create("MIIBCgKCAQEAu4DIBsO0K0mkhvCsCAQzwjQo71bLswM1LQS3xCz+81UTOXShVH2YjgjA/P/S1NUuKxZe5ppku8F4Y7NHMPniod8KmChoNuUAnq9EE91BAqrj9OKTlNpxKMuXG6OTnF4EfAzz5yDI4p8vSfVHKNU6WvqySB16uw0a+iC8sDjoib6rUeSeniWpQBn/FeR7iVFVGHShkgvRs1SX2BjLnZOalhlI94yrPu3vNJd2Gk1YPgQBtAHbjhUtIcvpPAcFqcUQVaEavVVkPeEMGCaIsaR6LJvJ0K+r6K4t8ZcPzD6cA7ylM89nFPzGND4gLhxftd6p/R3QBPGGMWP5IGJDo/ThzwIDAQAB");
                     Account.addSubscription(
-                            _.bind(function(d){
-                                this.trigger("success",d);
+                            this.el,
+                            _.bind(function(message){
+                                this.trigger("success",message); //FIX message
                             },this),
                             _.bind(function(errors){
                                 if(errors.length !== 0){
@@ -56,8 +57,8 @@
                     $("#submit").attr("disabled", "disabled");
                     braintree.encryptForm('codenvy-payment-form');
                     Account.paymentFormSubmit(
-                            _.bind(function(d){
-                                this.trigger("success",d);
+                            _.bind(function(message){
+                                this.trigger("success",message);
                             },this),
                             _.bind(function(errors){
                                 if(errors.length !== 0){

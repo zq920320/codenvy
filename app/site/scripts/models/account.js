@@ -613,7 +613,7 @@
                 }
             },
 
-            addSubscription : function(success,error){
+            addSubscription : function(form,success,error){
                 // Get accountId for current User
                 var url = "/api/account";
                 $.ajax({
@@ -621,7 +621,7 @@
                     type : "GET",
                     success : function(data){
                         //Get accountId
-                        sendSubscriptionRequest(data[0].id, success, error);
+                        sendSubscriptionRequest(data[0].id, form, success, error);
                     },
                     error : function(response){
                         //Show error
@@ -638,48 +638,45 @@
                 /*form = $('#codenvy-add-subscription-form');
                 e.preventDefault();*/
 
-                var sendSubscriptionRequest = function(accountId,success,error){
+                var sendSubscriptionRequest = function(accountId,form,success,error){
                     var addSubscriptionUrl = "/api/account/subscriptions/";
                     var data ={};
-                    if (getQueryParameterByName("serviceId")){ //If serviceId not exists in query params - throw error
-                        data.serviceId = getQueryParameterByName("serviceId");
+                    var serviceId = getQueryParameterByName("serviceId"),
+                        startDate = getQueryParameterByName("startDate"),
+                        endDate = getQueryParameterByName("endDate"),
+                        Package = getQueryParameterByName("Package"),
+                        RAM = getQueryParameterByName("RAM"),
+                        TariffPlan = getQueryParameterByName("TariffPlan");
+                    if (serviceId){ //If serviceId not exists in query params - throw error
+                        data.serviceId = serviceId;
                         data.accountId = accountId;
-                    if (getQueryParameterByName("startDate")){
-                        data.startDate = getQueryParameterByName("startDate");
-                    }
-                    if (getQueryParameterByName("endDate")){
-                        data.endDate = getQueryParameterByName("endDate");
-                    }
-                    if (getQueryParameterByName("Package")){
-                        data.properties.Package = getQueryParameterByName("Package");
-                    }
-                    if (getQueryParameterByName("RAM")){
-                        data.properties.RAM = getQueryParameterByName("RAM");
-                    }
-                    if (getQueryParameterByName("TariffPlan")){
-                        data.properties.TariffPlan = getQueryParameterByName("TariffPlan");
-                    }
-                        /*(var serviceId = getQueryParameterByName("serviceId")) ? data.serviceId = serviceId : null;
-                        data.accountId = accountId;
-                        (var startDate = getQueryParameterByName("startDate")) ? data.startDate = startDate : null;
-                        (var endDate = getQueryParameterByName("endDate")) ? data.endDate = endDate : null;
-                        (var Package = getQueryParameterByName("Package")) ? data.properties.Package = Package : null;
-                        (var RAM = getQueryParameterByName("RAM")) ? data.properties.RAM = RAM : null;
-                        (var TariffPlan = getQueryParameterByName("TariffPlan")) ? data.properties.TariffPlan = TariffPlan : null;*/
+                        if (startDate)
+                            {data.startDate = startDate;}
+                        if (endDate)
+                            {data.endDate = endDate;}
+                        if (Package || RAM || TariffPlan)
+                            {data.properties = {};
+                                if (Package)
+                                    {data.properties.Package = Package;}
+                                if (RAM)
+                                    {data.properties.RAM = RAM;}
+                                if (TariffPlan)
+                                    {data.properties.TariffPlan = TariffPlan;}
+                            }
                          $.ajax({
                             url : addSubscriptionUrl,
                             type : "POST",
                             contentType: "application/json",
                             data: JSON.stringify(data),
                             success : function(){
-                                //alert("Success");
+                                success('Subscription added succesfully');
                             },
                             error : function(response){
                                 if (response.status === 402) {
                                     //Show payment form
                                     var subscription = JSON.parse(response.responseText);
                                     $("input[name='subscriptionid']").val(subscription.id);
-                                    this.el.removeClass('hidden');
+                                    $(form).removeClass('hidden');
                                 } else {
                                     //alert("Error");
                                     error([
@@ -721,7 +718,7 @@
                 contentType: "application/json",
                 data: JSON.stringify(data),
                 success : function(){
-                    //alert("Payment Success");
+                    success("Subscription added succesfully.");
                 },
                 error : function(){
                     //alert("Payment Error");
