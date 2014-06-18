@@ -651,7 +651,7 @@
                         data.endDate = getQueryParameterByName("endDate");
                     }
                     if (getQueryParameterByName("Package")){
-                        data.properties.getQueryParameterByName("Package");
+                        data.properties.Package = getQueryParameterByName("Package");
                     }
                     if (getQueryParameterByName("RAM")){
                         data.properties.RAM = getQueryParameterByName("RAM");
@@ -685,7 +685,7 @@
                                     error([
                                         new AccountError(
                                             null,
-                                            "Subscription addition Error" + response.message
+                                            "Add Subscription - An Error Has Occurred: " + response.responseText
                                             )
                                     ]);
                                 }
