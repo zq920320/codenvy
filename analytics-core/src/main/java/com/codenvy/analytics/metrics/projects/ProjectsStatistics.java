@@ -3,7 +3,7 @@
  * CODENVY CONFIDENTIAL
  * ________________
  *
- * [2012] - [2014] Codenvy, S.A.
+ * [2012] - [2013] Codenvy, S.A.
  * All Rights Reserved.
  * NOTICE: All information contained herein is, and remains
  * the property of Codenvy S.A. and its suppliers,
@@ -17,22 +17,23 @@
  */
 package com.codenvy.analytics.metrics.projects;
 
-import com.codenvy.analytics.metrics.AbstractCount;
-import com.codenvy.analytics.metrics.MetricType;
-
 import javax.annotation.security.RolesAllowed;
 
-/**
- * @author Anatoliy Bazko
- */
-@RolesAllowed(value = {"user", "system/admin", "system/manager"})
-public class Projects  extends AbstractCount {
-    public Projects() {
-        super(MetricType.PROJECTS, MetricType.PROJECTS_LIST, PROJECT_ID);
+import com.codenvy.analytics.metrics.AbstractActiveEntities;
+import com.codenvy.analytics.metrics.MetricType;
+
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+@RolesAllowed({"system/admin", "system/manager"})
+public class ProjectsStatistics extends AbstractActiveEntities {
+
+    public ProjectsStatistics() {
+        super(MetricType.PROJECTS_STATISTICS,
+              MetricType.PROJECTS_STATISTICS_LIST,
+              PROJECT_ID);
     }
 
     @Override
     public String getDescription() {
-        return "The total number of created projects";
+        return "The total number of projects";
     }
 }

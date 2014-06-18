@@ -12,6 +12,7 @@ com.codenvy.analytics.metrics.accounts.AccountsList
 
 com.codenvy.analytics.metrics.projects.ProjectsList
 com.codenvy.analytics.metrics.projects.ProjectsStatisticsList
+com.codenvy.analytics.metrics.projects.ProjectsStatistics
 com.codenvy.analytics.metrics.projects.Projects
 com.codenvy.analytics.metrics.projects.CreatedProjects
 com.codenvy.analytics.metrics.projects.DestroyedProjects

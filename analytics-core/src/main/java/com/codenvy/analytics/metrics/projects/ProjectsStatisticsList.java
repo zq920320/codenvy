@@ -67,18 +67,17 @@ public class ProjectsStatisticsList extends AbstractListValueResulted implements
                             RUN_TIME,
                             BUILD_TIME,
                             DEBUG_TIME,
+                            PROJECT_TYPE,
+                            DATE,
+                            USER
         };
     }
 
     @Override
     public DBObject[] getSpecificDBOperations(Context clauses) {
         DBObject group = new BasicDBObject();
-
-        Map<Object, Object> groupBy = new HashMap<>();
-        groupBy.put(WS, "$" + WS);
-        groupBy.put(PROJECT, "$" + PROJECT);
-
-        group.put(ID, groupBy);
+    
+        group.put(ID, new BasicDBObject("PROJECT_ID", "$" + PROJECT_ID));
         group.put(CODE_REFACTORIES, new BasicDBObject("$sum", "$" + CODE_REFACTORIES));
         group.put(CODE_COMPLETES, new BasicDBObject("$sum", "$" + CODE_COMPLETES));
         group.put(BUILDS, new BasicDBObject("$sum", "$" + BUILDS));
@@ -94,10 +93,13 @@ public class ProjectsStatisticsList extends AbstractListValueResulted implements
         group.put(RUN_TIME, new BasicDBObject("$sum", "$" + RUN_TIME));
         group.put(BUILD_TIME, new BasicDBObject("$sum", "$" + BUILD_TIME));
         group.put(DEBUG_TIME, new BasicDBObject("$sum", "$" + DEBUG_TIME));
-
+        group.put(PROJECT, new BasicDBObject("$first", "$" + PROJECT));
+        group.put(WS, new BasicDBObject("$first", "$" + WS));
+        group.put(USER, new BasicDBObject("$first", "$" + USER));
+        group.put(DATE, new BasicDBObject("$first", "$" + DATE));
+        group.put(PROJECT_TYPE, new BasicDBObject("$first", "$" + PROJECT_TYPE));
+    
         DBObject project = new BasicDBObject();
-        project.put(PROJECT, "$" + ID + "." + PROJECT);
-        project.put(WS, "$" + ID + "." + WS);
         project.put(CODE_REFACTORIES, "$" + CODE_REFACTORIES);
         project.put(CODE_COMPLETES, "$" + CODE_COMPLETES);
         project.put(BUILDS, "$" + BUILDS);
@@ -113,7 +115,13 @@ public class ProjectsStatisticsList extends AbstractListValueResulted implements
         project.put(RUN_TIME, "$" + RUN_TIME);
         project.put(BUILD_TIME, "$" + BUILD_TIME);
         project.put(DEBUG_TIME, "$" + DEBUG_TIME);
-
+        project.put(PROJECT, "$" + PROJECT);
+        project.put(WS, "$" + WS);
+        project.put(USER, "$" + USER);
+        project.put(DATE, "$" + DATE);
+        project.put(PROJECT_TYPE, "$" + PROJECT_TYPE);
+    
+    
         return new DBObject[]{new BasicDBObject("$group", group),
                               new BasicDBObject("$project", project)};
     }
@@ -124,6 +132,9 @@ public class ProjectsStatisticsList extends AbstractListValueResulted implements
         ((DBObject)(dbOperations[0].get("$group"))).put(ID, null);
         ((DBObject)(dbOperations[1].get("$project"))).removeField(WS);
         ((DBObject)(dbOperations[1].get("$project"))).removeField(PROJECT);
+        ((DBObject)(dbOperations[1].get("$project"))).removeField(PROJECT_TYPE);
+        ((DBObject)(dbOperations[1].get("$project"))).removeField(USER);
+        ((DBObject)(dbOperations[1].get("$project"))).removeField(DATE);
 
         return dbOperations;
     }

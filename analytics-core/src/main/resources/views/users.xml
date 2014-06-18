@@ -91,7 +91,7 @@
                 <parameter key="titles" value="Date,Workspace,Project,Type,User"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="projects_list"/>
+                <parameter key="name" value="projects_statistics_list"/>
                 <parameter key="fields" value="date,ws,project,project_type,user"/>
                 <parameter key="date-fields" value="date"/>
             </row>

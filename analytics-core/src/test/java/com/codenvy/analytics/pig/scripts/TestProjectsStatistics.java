@@ -129,6 +129,10 @@ public class TestProjectsStatistics extends BaseTest {
         assertEquals(m.get("run_time").getAsString(), "60000");
         assertEquals(m.get("build_time").getAsString(), "60000");
         assertEquals(m.get("debug_time").getAsString(), "60000");
+        assertEquals(m.get("project_type").getAsString(), "jar");
+        assertEquals(m.get("date").getAsString(), "1357027200000");
+        assertEquals(m.get("user").getAsString(), "user1@gmail.com");
+        
 
         ListValueData summaryValue = (ListValueData)((Summaraziable)metric).getSummaryValue(Context.EMPTY);
         MyAsserts.assertEquals(summaryValue.size(), 1);
@@ -147,6 +151,9 @@ public class TestProjectsStatistics extends BaseTest {
         assertEquals(m.get("run_time").getAsString(), "60000");
         assertEquals(m.get("build_time").getAsString(), "60000");
         assertEquals(m.get("debug_time").getAsString(), "60000");
+        assertEquals(m.get("project_type"), null);
+        assertEquals(m.get("date"), null);
+        assertEquals(m.get("user"), null);
     }
 
 }

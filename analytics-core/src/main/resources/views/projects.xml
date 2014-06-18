@@ -20,12 +20,13 @@
     <view name="projects" on-demand="true">
         <section name="projects">
             <row class="com.codenvy.analytics.services.view.TitleRow">
-                <parameter key="titles" value="Date,Project,Type,Workspace,User"/>
+                <parameter key="titles" value="Date,Project,Type,Workspace,User,# Builds,# Build Interrupts,# Runs,# Debugs,# Deploys,# Artifact Deploys,# PAAS Deploys,# Code Refactories,# Code Completes"/>                
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="projects_list"/>
-                <parameter key="fields" value="date,project,project_type,ws,user"/>
+                <parameter key="name" value="projects_statistics_list"/>
+                <parameter key="fields" value="date,project,project_type,ws,user,builds,build_interrupts,runs,debugs,deploys,artifact_deploys,paas_deploys,code_refactories,code_completes"/>
                 <parameter key="date-fields" value="date"/>
+                <parameter key="hide-negative-values" value="true"/>
             </row>
         </section>
     </view>
@@ -33,10 +34,10 @@
     <view name="project" on-demand="true">
         <section name="project">
             <row class="com.codenvy.analytics.services.view.TitleRow">
-                <parameter key="titles" value="Created Date,Project,Type,Workspace,User"/>
+                <parameter key="titles" value="Date,Project,Type,Workspace,User"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="projects_list"/>
+                <parameter key="name" value="projects_statistics_list"/>
                 <parameter key="fields" value="date,project,project_type,ws,user"/>
                 <parameter key="date-fields" value="date"/>
             </row>
