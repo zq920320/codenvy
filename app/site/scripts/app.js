@@ -121,8 +121,8 @@ define(["jquery","config",
                             var form = PaymentForm.get(paymentForm),
                             errorReport = ErrorReport.get(errorContainer),
                             successReport = SuccessReport.get(errorContainer);
-                            form.on("success", function(response){
-                                successReport.show(response.text);//FIXIT message
+                            form.on("success", function(message){
+                                successReport.show(message);
                             });
 
                             form.on("invalid", function(field,message){
