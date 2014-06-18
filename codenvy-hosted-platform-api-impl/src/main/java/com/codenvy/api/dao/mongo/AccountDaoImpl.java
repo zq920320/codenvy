@@ -83,6 +83,7 @@ public class AccountDaoImpl implements AccountDao {
                           @Named(MEMBER_COLLECTION) String memberCollectionName) {
         accountCollection = db.getCollection(accountCollectionName);
         accountCollection.ensureIndex(new BasicDBObject("id", 1), new BasicDBObject("unique", true));
+        accountCollection.ensureIndex(new BasicDBObject("name", 1));
         subscriptionCollection = db.getCollection(subscriptionCollectionName);
         subscriptionCollection.ensureIndex(new BasicDBObject("id", 1), new BasicDBObject("unique", true));
         subscriptionCollection.ensureIndex(new BasicDBObject("accountId", 1));
