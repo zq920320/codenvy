@@ -16,46 +16,34 @@
  * from Codenvy S.A..
  */
  
-(function(){
-    define(["jquery", "underscore", "views/accountformbase", "models/account","validation"],
+define(["jquery","underscore","views/accountformbase","models/account"], 
 
-        function($,_,AccountFormBase,Account){
-            var braintree;
-            var PaymentForm = AccountFormBase.extend({
+    function($,_,AccountFormBase,Account){
+        var braintree;
+        var PaymentForm = AccountFormBase.extend({
 
-                initialize : function(){
-                    /*global Braintree*/
-                    braintree = Braintree.create("MIIBCgKCAQEAu4DIBsO0K0mkhvCsCAQzwjQo71bLswM1LQS3xCz+81UTOXShVH2YjgjA/P/S1NUuKxZe5ppku8F4Y7NHMPniod8KmChoNuUAnq9EE91BAqrj9OKTlNpxKMuXG6OTnF4EfAzz5yDI4p8vSfVHKNU6WvqySB16uw0a+iC8sDjoib6rUeSeniWpQBn/FeR7iVFVGHShkgvRs1SX2BjLnZOalhlI94yrPu3vNJd2Gk1YPgQBtAHbjhUtIcvpPAcFqcUQVaEavVVkPeEMGCaIsaR6LJvJ0K+r6K4t8ZcPzD6cA7ylM89nFPzGND4gLhxftd6p/R3QBPGGMWP5IGJDo/ThzwIDAQAB");
-                    Account.addSubscription(
-                            this.el,
-                            _.bind(function(message){
-                                this.trigger("success",message); //FIX message
-                            },this),
-                            _.bind(function(errors){
-                                if(errors.length !== 0){
-                                    /*$(this.el).find("input[name='password']").val("");
-                                    $(this.el).find("input[name='password']").focus();*/
-                                    this.trigger(
-                                        "invalid",
-                                        errors[0].getFieldName(),
-                                        errors[0].getErrorDescription()
-                                    );
-                                }
-                            },this)
-                        );
+                 __validationRules : function(){
+                    var rule = {};
+                    rule.expirationMonth = {required: true};
+                    rule.expirationYear = {required: true};
+                    
+                    return rule;
                 },
 
-                __validationRules : function(){
-/*                    var rule = {};
-                    rule.password = {required: true};
-                    rule.email = {required: true};
-                    
-                    return rule;*/
+                __validationMessages : function(){
+                    return {
+                        expirationMonth: {
+                            required: 'Expiration month required'
+                        },
+                        expirationYear: {
+                            required: 'ExpirationYear required'
+                        }
+                    };
                 },
 
                 __submit : function(){
-                    $("#submit").attr("disabled", "disabled");
-                    braintree.encryptForm('codenvy-payment-form');
+                    this.trigger("submitting");
+                    braintree.encryptForm('payment-form');
                     Account.paymentFormSubmit(
                             _.bind(function(message){
                                 this.trigger("success",message);
@@ -72,6 +60,26 @@
                                 }
                             },this)
                         );
+                },
+
+                addSubscription : function(){
+                    /*global Braintree*/
+                    braintree = Braintree.create("MIIBCgKCAQEAu4DIBsO0K0mkhvCsCAQzwjQo71bLswM1LQS3xCz+81UTOXShVH2YjgjA/P/S1NUuKxZe5ppku8F4Y7NHMPniod8KmChoNuUAnq9EE91BAqrj9OKTlNpxKMuXG6OTnF4EfAzz5yDI4p8vSfVHKNU6WvqySB16uw0a+iC8sDjoib6rUeSeniWpQBn/FeR7iVFVGHShkgvRs1SX2BjLnZOalhlI94yrPu3vNJd2Gk1YPgQBtAHbjhUtIcvpPAcFqcUQVaEavVVkPeEMGCaIsaR6LJvJ0K+r6K4t8ZcPzD6cA7ylM89nFPzGND4gLhxftd6p/R3QBPGGMWP5IGJDo/ThzwIDAQAB");
+                    Account.addSubscription(
+                            this.el,
+                            _.bind(function(message){
+                                this.trigger("success",message);
+                            },this),
+                            _.bind(function(errors){
+                                if(errors.length !== 0){
+                                    this.trigger(
+                                        "invalid",
+                                        errors[0].getFieldName(),
+                                        errors[0].getErrorDescription()
+                                    );
+                                }
+                            },this)
+                        );                    
                 }
 
             });
@@ -88,7 +96,6 @@
                 },
 
                 PaymentForm : PaymentForm
-            };
-        }
-    );
-}());
+        };
+    }
+);
