@@ -676,12 +676,18 @@
                                     var subscription = JSON.parse(response.responseText);
                                     showPaymentForm(subscription.id);
                                 } else {
-
+                                    var paymentError, message;
+                                    paymentError = JSON.parse(response.responseText);
+                                    if (paymentError.message){
+                                        message = paymentError.message;
+                                    } else {
+                                        message = "Payment error cccurred. Please contact support.";
+                                    }
                                     error([
                                         new AccountError(
                                             null,
-                                            "Add Subscription - An Error Has Occurred: " + response.responseText
-                                            )
+                                            message
+                                        )
                                     ]);
                                 }
                             }
