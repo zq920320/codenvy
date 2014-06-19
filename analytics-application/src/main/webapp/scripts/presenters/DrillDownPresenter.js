@@ -33,6 +33,9 @@ analytics.presenter.DrillDownPresenter.prototype.load = function() {
     var viewParams = view.getParams();
     var modelParams = presenter.getModelParams(viewParams);
 
+    // remove useless expanded metric name parameter
+    delete modelParams[presenter.EXPANDED_METRIC_NAME_PARAMETER];
+    
     model.setParams(modelParams);
     
     var pageCount = 1;

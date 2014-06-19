@@ -649,7 +649,7 @@ function Configuration() {
             modelViewName: "user_projects",
 
             isPaginable: true,    // default value is "false"
-            modelMetricName: "projects",
+            modelMetricName: "projects_statistics",
 
             columnLinkPrefixList: {
                 "User": "/analytics/pages/user-view.jsp?user",
@@ -862,7 +862,7 @@ function Configuration() {
             modelViewName: "workspace_projects",
 
             isPaginable: true,    // default value is "false"
-            modelMetricName: "projects",
+            modelMetricName: "projects_statistics",
 
             columnLinkPrefixList: {
                 "User": "/analytics/pages/user-view.jsp?user",
@@ -957,7 +957,7 @@ function Configuration() {
             widgetLabel: "Projects",
             presenterType: "EntryViewPresenter",
             modelViewName: "projects",
-            modelMetricName: "projects",
+            modelMetricName: "projects_statistics",
             columnLinkPrefixList: {
                 "Workspace": "/analytics/pages/workspace-view.jsp?ws",
                 "User": "/analytics/pages/user-view.jsp?user",
@@ -990,13 +990,22 @@ function Configuration() {
                 "Date": "date",
                 "Project": "project",
                 "Type": "project_type",
+                "# Builds": "builds",
+                "# Build Interrupts": "build_interrupts",
+                "# Runs": "runs",
+                "# Debugs": "debugs",
+                "# Deploys": "deploys",
+                "# Artifact Deploys": "artifact_deploys",
+                "# PAAS Deploys": "paas_deploys",
+                "# Code Refactories": "code_refactories",
+                "# Code Completes": "code_completes",
             },
         },
 
         projectsOverview: {
             presenterType: "SummaryTablePresenter",
             modelViewName: "projects_statistics_list",
-            modelMetricName: "projects",
+            modelMetricName: "projects_statistics",
             
             columnDrillDownPageLinkConfiguration: {
                 mapColumnNameToExpandableMetric: {
@@ -1021,7 +1030,7 @@ function Configuration() {
             widgetLabel: "Project Overview",
             presenterType: "HorizontalTablePresenter",
             modelViewName: "project",
-            modelMetricName: "projects",
+            modelMetricName: "projects_statistics",
 
             isPaginable: true,
 
@@ -1032,6 +1041,7 @@ function Configuration() {
             columnLinkPrefixList: {
                 "Workspace": "/analytics/pages/workspace-view.jsp?ws",
                 "User": "/analytics/pages/user-view.jsp?user",
+                "Type": "/analytics/pages/projects-view.jsp?project_type",
             },
 
             columnCombinedLinkConfiguration: {

@@ -57,7 +57,6 @@ import com.codenvy.analytics.metrics.projects.ProjectPaasGae;
 import com.codenvy.analytics.metrics.projects.ProjectTypeWar;
 import com.codenvy.analytics.metrics.projects.ProjectsList;
 import com.codenvy.analytics.metrics.sessions.AbstractTimelineProductUsageCondition;
-import com.codenvy.analytics.metrics.sessions.ProductUsageSessionsList;
 import com.codenvy.analytics.metrics.sessions.ProductUsageTimeBelow1Min;
 import com.codenvy.analytics.metrics.sessions.ProductUsageTimeTotal;
 import com.codenvy.analytics.metrics.sessions.ProductUsageUsersBelow10Min;
@@ -77,7 +76,6 @@ import com.codenvy.analytics.metrics.users.UsersAcceptedInvitesPercent;
 import com.codenvy.analytics.metrics.users.UsersLoggedInWithForm;
 import com.codenvy.analytics.metrics.users.UsersStatisticsList;
 import com.codenvy.analytics.metrics.workspaces.ActiveWorkspaces;
-import com.codenvy.analytics.metrics.workspaces.WorkspacesStatisticsList;
 import com.codenvy.analytics.persistent.JdbcDataPersisterFactory;
 import com.codenvy.analytics.pig.scripts.ScriptType;
 import com.codenvy.analytics.pig.scripts.util.Event;
@@ -373,7 +371,7 @@ public class TestExpandedMetric extends BaseTest {
         builder.put(Parameters.PASSED_DAYS_COUNT, Parameters.PassedDaysCount.BY_7_DAYS.toString());
         Context context = Utils.initDateInterval(builder.getAsDate(Parameters.TO_DATE), builder.getPassedDaysCount(), builder);        
         
-        WorkspacesStatisticsList metric = new WorkspacesStatisticsList();
+        Metric metric = MetricFactory.getMetric(MetricType.WORKSPACES_STATISTICS_LIST);
 
         // test drill down page values
         ValueData value = metric.getValue(context);
@@ -420,7 +418,7 @@ public class TestExpandedMetric extends BaseTest {
         builder.put(Parameters.PASSED_DAYS_COUNT, Parameters.PassedDaysCount.BY_1_DAY.toString());
         Context context = Utils.initDateInterval(builder.getAsDate(Parameters.TO_DATE), builder.getPassedDaysCount(), builder);
         
-        ProductUsageSessionsList metric = new ProductUsageSessionsList();
+        Metric metric = MetricFactory.getMetric(MetricType.PRODUCT_USAGE_SESSIONS_LIST);
 
         // test drill down page values
         ValueData value = metric.getValue(context);
@@ -1090,7 +1088,7 @@ public class TestExpandedMetric extends BaseTest {
         builder.put(Parameters.TO_DATE, "20131101");
         builder.put(Parameters.USER, TEST_USER);
 
-        AbstractActiveEntities metric = new ActiveWorkspaces();
+        Expandable metric = (Expandable)MetricFactory.getMetric(MetricType.ACTIVE_WORKSPACES);
 
         ValueData expandedValue = metric.getExpandedValue(builder.build());
 
