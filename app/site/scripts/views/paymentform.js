@@ -42,17 +42,17 @@ define(["jquery","underscore","views/accountformbase","models/account"],
                 },
 
                 __submit : function(){
+                    this.__showProgress();
                     this.trigger("submitting");
                     braintree.encryptForm('payment-form');
                     Account.paymentFormSubmit(
+                            this.accountId,
                             _.bind(function(message){
                                 this.trigger("success",message);
                             },this),
                             _.bind(function(errors){
                                 if(errors.length !== 0){
-                                    /*$(this.el).find("input[name='password']").val("");
-                                    $(this.el).find("input[name='password']").focus();*/
-                                    this.trigger(
+                                     this.trigger(
                                         "invalid",
                                         errors[0].getFieldName(),
                                         errors[0].getErrorDescription()
@@ -67,6 +67,10 @@ define(["jquery","underscore","views/accountformbase","models/account"],
                     braintree = Braintree.create("MIIBCgKCAQEAu4DIBsO0K0mkhvCsCAQzwjQo71bLswM1LQS3xCz+81UTOXShVH2YjgjA/P/S1NUuKxZe5ppku8F4Y7NHMPniod8KmChoNuUAnq9EE91BAqrj9OKTlNpxKMuXG6OTnF4EfAzz5yDI4p8vSfVHKNU6WvqySB16uw0a+iC8sDjoib6rUeSeniWpQBn/FeR7iVFVGHShkgvRs1SX2BjLnZOalhlI94yrPu3vNJd2Gk1YPgQBtAHbjhUtIcvpPAcFqcUQVaEavVVkPeEMGCaIsaR6LJvJ0K+r6K4t8ZcPzD6cA7ylM89nFPzGND4gLhxftd6p/R3QBPGGMWP5IGJDo/ThzwIDAQAB");
                     Account.addSubscription(
                             this.el,
+                            _.bind(function(accountId){
+                                this.accountId = accountId;
+                                $(this.el).removeClass('hidden');
+                            },this),
                             _.bind(function(message){
                                 this.trigger("success",message);
                             },this),

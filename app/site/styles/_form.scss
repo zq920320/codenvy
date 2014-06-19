@@ -163,6 +163,21 @@ form .field {
     position: relative;
 }
 
+/**
+* Payment form
+*/
+
+form .payment-field {
+    padding: 10px;
+    position: relative;
+    color: black;
+}
+
+.payment-exp input{
+  padding: 10px;
+  width: 60px;
+  position: relative;
+}
 
 /**
  * Create form

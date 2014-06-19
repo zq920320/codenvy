@@ -613,7 +613,7 @@
                 }
             },
 
-            addSubscription : function(form,success,error){
+            addSubscription : function(form,showPaymentForm,success,error){
                 // Get accountId for current User
                 var url = "/api/account";
                 $.ajax({
@@ -621,7 +621,7 @@
                     type : "GET",
                     success : function(data){
                         //Get accountId
-                        sendSubscriptionRequest(data[0].id, form, success, error);
+                        sendSubscriptionRequest(data[0].id, form, showPaymentForm, success, error);
                     },
                     error : function(response){
                         //Show error
@@ -638,7 +638,7 @@
                 /*form = $('#codenvy-add-subscription-form');
                 e.preventDefault();*/
 
-                var sendSubscriptionRequest = function(accountId,form,success,error){
+                var sendSubscriptionRequest = function(accountId,form,showPaymentForm,success,error){
                     var addSubscriptionUrl = "/api/account/subscriptions/";
                     var data ={};
                     var serviceId = getQueryParameterByName("serviceId"),
@@ -673,12 +673,10 @@
                             },
                             error : function(response){
                                 if (response.status === 402) {
-                                    //Show payment form
                                     var subscription = JSON.parse(response.responseText);
-                                    $("input[name='subscriptionid']").val(subscription.id);
-                                    $(form).removeClass('hidden');
+                                    showPaymentForm(subscription.id);
                                 } else {
-                                    //alert("Error");
+
                                     error([
                                         new AccountError(
                                             null,
@@ -703,12 +701,13 @@
                 };
             },
 
-            paymentFormSubmit : function(success,error){
-            var subscriptionid = $("input[name=subscriptionid]")[0].value;
+            paymentFormSubmit : function(subscriptionid,success,error){
+            //var subscriptionid = $("input[name=subscriptionid]")[0].value;
             var purchaseUrl = "/api/account/subscriptions/"+ subscriptionid + "/purchase";
             var data = {
                 cardholderName:$('input[name=cardholderName]')[0].value,
-                subscriptionid:$('input[name=subscriptionid]')[0].value,
+                //subscriptionid:$('input[name=subscriptionid]')[0].value,
+                subscriptionid:subscriptionid,
                 cardNumber:$('input[name=cardNumber]')[0].value,
                 cvv:$('input[name=cvv]')[0].value,
                 expirationMonth:$('input[name=expirationMonth]')[0].value,
@@ -722,12 +721,18 @@
                 success : function(){
                     success("Subscription added succesfully.");
                 },
-                error : function(){
-                    //alert("Payment Error");
+                error : function(response){
+                    var paymentError, message;
+                    paymentError = JSON.parse(response.responseText);
+                    if (paymentError.message){
+                        message = paymentError.message;
+                    } else {
+                        message = "Payment error cccurred. Please contact support.";
+                    }
                     error([
                         new AccountError(
                             null,
-                            "Payment Error"
+                            message
                         )
 
                     ]);

@@ -9,29 +9,25 @@
         <h1 class="center">Codenvy Credit Card Transaction Form</h1>
         <div>
             <div class="error-container"></div>
-            <form class="codenvy-payment-form hidden" id="payment-form">>
-                <div class="field">
+            <form class="codenvy-payment-form hidden" id="payment-form">
+                <div class="payment-field">
                 <label>Cardholder Name</label>
-                <input type="text" size="20" autocomplete="on" name="cardholderName " />
+                <input type="text" size="20" autocomplete="on" name="cardholderName" />
                 </div>
-                <div class="field">
+                <div class="payment-field">
                 <label>Card Number</label>
                 <input type="text" size="20" autocomplete="on" data-encrypted-name="cardNumber" />
                 </div>
-                <div class="field">
+                <div class="payment-field">
                 <label>CVV</label>
                 <input type="text" size="4" autocomplete="on" data-encrypted-name="cvv" />
                 </div>
-                <div class="field">
+                <div class="payment-field">
                 <label>Expiration (MM/YYYY)</label>
-                <input type="text" size="2" autocomplete="on" name="expirationMonth" />
-                <input type="text" size="4" autocomplete="on" name="expirationYear" />
+                <span class="payment-exp"><input type="text" size="2" autocomplete="on" name="expirationMonth" /> /</span>
+                <span class="payment-exp"><input type="text" size="4" autocomplete="on" name="expirationYear" /></span>
                 </div>
-                <div class="field">
-                <label>Subscription Id</label>
-                <input type="text" size="20" autocomplete="off" name="subscriptionid" />
-                </div>
-                <div class="field action">
+                <div class="payment-field action">
                     <input type="submit" class="light-button blue-button" value="Send"/>
                 </div>
             </form>

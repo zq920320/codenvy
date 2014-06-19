@@ -100,7 +100,7 @@ define(["jquery","config",
                         creatingWorkspace = $(".creating-ws"),
                         joiningWorkspace = $(".invite"),
                         adminForm = $(".admin-form"),
-                        paymentForm = $('#codenvy-payment-form');
+                        paymentForm = $('.codenvy-payment-form');
 
                     if(gcBannerElement.length !== 0){
                         (function(){
@@ -124,8 +124,11 @@ define(["jquery","config",
                             form.on("success", function(message){
                                 successReport.show(message);
                             });
-
+                            form.on("submitting", function(){
+                                errorReport.hide();
+                            });
                             form.on("invalid", function(field,message){
+                                form.__restoreForm();
                                 errorReport.show(message);
                             });
                             form.addSubscription();
