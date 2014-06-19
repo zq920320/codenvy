@@ -4,7 +4,7 @@
 ---
 
 <div class="profile-wrap">
-  <div class="authentication">
+  <div class="braintree">
     <div class="dark login shadow" style="color:black">
         <h1 class="center">Codenvy Credit Card Transaction Form</h1>
         <div>
@@ -12,20 +12,20 @@
             <form class="codenvy-payment-form hidden" id="payment-form">
                 <div class="payment-field">
                 <label>Cardholder Name</label>
-                <input type="text" size="20" autocomplete="on" name="cardholderName" />
+                <input type="text" size="20" name="cardholderName" />
                 </div>
                 <div class="payment-field">
                 <label>Card Number</label>
-                <input type="text" size="20" autocomplete="on" data-encrypted-name="cardNumber" />
+                <input type="text" size="20" data-encrypted-name="cardNumber" />
                 </div>
                 <div class="payment-field">
                 <label>CVV</label>
-                <input type="text" size="4" autocomplete="on" data-encrypted-name="cvv" />
+                <input type="text" size="4" data-encrypted-name="cvv" />
                 </div>
                 <div class="payment-field">
                 <label>Expiration (MM/YYYY)</label>
-                <span class="payment-exp"><input type="text" size="2" autocomplete="on" name="expirationMonth" /> /</span>
-                <span class="payment-exp"><input type="text" size="4" autocomplete="on" name="expirationYear" /></span>
+                <span class="payment-exp"><input type="text" size="2" name="expirationMonth" /> /</span>
+                <span class="payment-exp"><input type="text" size="4" name="expirationYear" /></span>
                 </div>
                 <div class="payment-field action">
                     <input type="submit" class="light-button blue-button" value="Send"/>
