@@ -299,6 +299,24 @@ table {
     border-spacing: 0;
 }
 /* end Normalize */
+
+.braintree {
+  margin:0 auto;
+  width:384px;  
+  .dark {
+    background:#fff;
+    color: black; 
+  }
+}
+
+.braintree .error-container {
+    background-color:red;
+}
+
+.braintree .ok-message {
+    background-color:green;
+}
+
 .authentication {
   margin:0 auto;
   width:384px;  
