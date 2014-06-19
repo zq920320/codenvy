@@ -68,6 +68,14 @@ footer {
     float: left;
 }
 
+.text-aligned-center {
+    text-align: center;
+}
+
+.text-aligned-right {
+    text-align: right;	
+}
+
 .timelySwitch {
 }
 

@@ -7,7 +7,6 @@
    font-size: 11px;
    min-width: 55px;
    border-top: 1px solid #dcdcdc;
-   text-align: center;
    border-left: 1px solid #e5e5e5;
 }
 
@@ -84,6 +83,10 @@
 .database-table .cell {
    overflow: hidden;
    padding: 8px;
+}
+
+.database-table .text {
+    text-align: left;
 }
 
 .database-table .cell a {

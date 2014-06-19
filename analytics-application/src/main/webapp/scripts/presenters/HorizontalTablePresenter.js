@@ -60,6 +60,7 @@ analytics.presenter.HorizontalTablePresenter.prototype.load = function () {
                     : presenter.getLinkForExportToCsvButton();
 
                 var table = data[0];  // there is only one table in data
+                table.columns_original = analytics.util.clone(table.columns); 
 
                 // add links to drill down page
                 table = presenter.linkTableValuesWithDrillDownPage(presenter.widgetName, table, modelParams);

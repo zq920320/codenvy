@@ -69,7 +69,7 @@ analytics.presenter.SummaryTablePresenter.prototype.obtainSummaryData = function
         var tabelId = presenter.widgetName + "_table";
         
         view.print("<div class='body'>");
-        view.printTable(table, false, tabelId);
+        view.printTable(table, false, tabelId, "text-aligned-center");
         view.print("</div>");
         
         view.loadTableHandlers(false, {}, tabelId);

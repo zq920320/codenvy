@@ -1155,7 +1155,8 @@ function Configuration() {
             modelViewName: "factories",
             modelMetricName: "factory_statistics",
             columnLinkPrefixList: {
-                "Factory URL": "/analytics/pages/factory-view.jsp?factory"
+                "Factory URL": "/analytics/pages/factory-view.jsp?factory",
+                "Project Type": "/analytics/pages/projects-view.jsp?project_type",
             },
 
             modelSummarizedMetricName: "factory_statistics_list",
@@ -1532,6 +1533,29 @@ function Configuration() {
     var factoryUrlColumnNames = ["Factory URL", "Factory"];
     var workspaceColumnNames = ["Workspace"];
     var userColumnNames = ["User", "Created By"];
+    var textColumnNames = [
+        "Factory URL", 
+        "Factory", 
+        "User", 
+        "First Name",
+        "Last Name", 
+        "Company", 
+        "Job", 
+        "ID", 
+        "Workspace", 
+        "Referrer",
+        "Organization", 
+        "Project", 
+        "Repository", 
+        "State", 
+        "Domain",
+        "Type",
+        "Project Type",
+        "Event",
+        "Is Authenticated Session",
+        "Is Converted Session",
+    ];
+ 
 
     /**
      * Returns property of widget.
@@ -1710,6 +1734,10 @@ function Configuration() {
     function isFactoryUrlColumnName(columnName) {
         return isSpecificColumnName(columnName, factoryUrlColumnNames);
     }
+    
+    function isTextColumnName(columnName) {
+        return isSpecificColumnName(columnName, textColumnNames);
+    }
 
     function isSpecificColumnName(name, probNames) {
         for (var i in probNames) {
@@ -1743,5 +1771,6 @@ function Configuration() {
         isFactoryUrlColumnName: isFactoryUrlColumnName,
         isWorkspaceColumnName: isWorkspaceColumnName,
         isUserColumnName: isUserColumnName,
+        isTextColumnName: isTextColumnName,
     }
 }

@@ -32,13 +32,16 @@ function View() {
     var ABORT_LOADING_MESSAGE = "<i>Loading has been aborted.</i>";
     var INTERRUPT_LOADING_MESSAGE = "<i>Loading has been interrupted.</i>";
 
-    function printTable(table, isDisplaySpecificFirstCell, tableId) {
+    function printTable(table, isDisplaySpecificFirstCell, tableId, additionalTableCssClass) {
         print("<div class='table-container'>");
         
+        // set text align = right in cells by default
+        var additionalTableCssClass = additionalTableCssClass || "text-aligned-right";
+        
         if (typeof tableId == "undefined") {
-            print('<table cellspacing="0" class="database-table" align="center">');
+            print('<table cellspacing="0" class="database-table ' + additionalTableCssClass + '" align="center">');
         } else {
-            print('<table cellspacing="0" class="database-table" align="center" id="' + tableId + '">');
+            print('<table cellspacing="0" class="database-table ' + additionalTableCssClass + '" align="center" id="' + tableId + '">');
         }
         
         print('<thead aria-hidden="false">');
@@ -72,6 +75,11 @@ function View() {
                 firstCellClass += " first-cell text-cursor";
             }
     
+            if (typeof table.columns_original != "undefined"
+                && analytics.configuration.isTextColumnName(table.columns_original[0])) {
+                firstCellClass += " text";
+            }
+            
             // print first cell
             print('<td class="' + firstCellClass + '">');
             print(table.rows[i][0]);
@@ -79,7 +87,12 @@ function View() {
     
             // print another cells
             for (var j = 1; j < table.columns.length; j++) {
-                print('<td class="cell">');
+                var cellCssClass = "cell";
+                if (typeof table.columns_original != "undefined"
+                    && analytics.configuration.isTextColumnName(table.columns_original[j])) {
+                    cellCssClass += " text";
+                }
+                print('<td class="' + cellCssClass + '">');
                 print(table.rows[i][j]);
                 print('</td>');
             }
