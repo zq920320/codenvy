@@ -707,6 +707,8 @@
             var subscriptionid = $("input[name=subscriptionid]")[0].value;
             var purchaseUrl = "/api/account/subscriptions/"+ subscriptionid + "/purchase";
             var data = {
+                cardholderName:$('input[name=cardholderName]')[0].value,
+                subscriptionid:$('input[name=subscriptionid]')[0].value,
                 cardNumber:$('input[name=cardNumber]')[0].value,
                 cvv:$('input[name=cvv]')[0].value,
                 expirationMonth:$('input[name=expirationMonth]')[0].value,

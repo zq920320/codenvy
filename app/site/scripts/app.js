@@ -128,6 +128,7 @@ define(["jquery","config",
                             form.on("invalid", function(field,message){
                                 errorReport.show(message);
                             });
+                            form.addSubscription();
                         }());
                     }
 
