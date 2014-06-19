@@ -29,6 +29,13 @@ function TopMenu() {
         jQuery("#topmenu").hover(function() {
             hidePopupMenu();
         });
+
+        // hide popup menu if mouse left browser's window through the top of menu button
+        jQuery(".ui-button").mouseleave(function(event) {
+            if (event.pageY < 0) {
+               hidePopupMenu();   
+            }
+        });
         
         jQuery(document).click(function() {
             hidePopupMenu();
@@ -82,7 +89,7 @@ function TopMenu() {
             jQuery(buttons[i])
             .button()
             .click(function() {
-                console.log(this.name) + ":" + console.log(this.value);
+//                console.log(this.name) + ":" + console.log(this.value);
             });
         }        
     }
