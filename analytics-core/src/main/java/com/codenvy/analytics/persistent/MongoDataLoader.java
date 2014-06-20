@@ -17,21 +17,51 @@
  */
 package com.codenvy.analytics.persistent;
 
-import com.codenvy.analytics.Utils;
-import com.codenvy.analytics.datamodel.*;
-import com.codenvy.analytics.metrics.*;
-import com.codenvy.analytics.metrics.users.AbstractUsersProfile;
-import com.codenvy.analytics.metrics.users.NonActiveUsers;
-import com.codenvy.analytics.metrics.workspaces.NonActiveWorkspaces;
-import com.mongodb.*;
+import static com.codenvy.analytics.datamodel.ValueDataUtil.getAsList;
+import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsList;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
-import static com.codenvy.analytics.datamodel.ValueDataUtil.getAsList;
-import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsList;
+import com.codenvy.analytics.Utils;
+import com.codenvy.analytics.datamodel.DoubleValueData;
+import com.codenvy.analytics.datamodel.ListValueData;
+import com.codenvy.analytics.datamodel.LongValueData;
+import com.codenvy.analytics.datamodel.MapValueData;
+import com.codenvy.analytics.datamodel.SetValueData;
+import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.datamodel.ValueDataFactory;
+import com.codenvy.analytics.metrics.AbstractCount;
+import com.codenvy.analytics.metrics.AbstractMetric;
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Expandable;
+import com.codenvy.analytics.metrics.Metric;
+import com.codenvy.analytics.metrics.MetricFactory;
+import com.codenvy.analytics.metrics.MetricFilter;
+import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.metrics.ReadBasedExpandable;
+import com.codenvy.analytics.metrics.ReadBasedMetric;
+import com.codenvy.analytics.metrics.ReadBasedSummariziable;
+import com.codenvy.analytics.metrics.WithoutFromDateParam;
+import com.codenvy.analytics.metrics.users.AbstractUsersProfile;
+import com.codenvy.analytics.metrics.users.NonActiveUsers;
+import com.codenvy.analytics.metrics.workspaces.NonActiveWorkspaces;
+import com.mongodb.AggregationOutput;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.DBObject;
 
 /**
  * @author Anatoliy Bazko
@@ -223,13 +253,16 @@ public class MongoDataLoader implements DataLoader {
     private DBObject getFilter(Metric metric, Context clauses) throws IOException, ParseException {
         BasicDBObject match = new BasicDBObject();
 
+        String[] filteringValues = null;
+        String filteringField = null;
+        
         // check if we need to filter list valued metric by another expanded metric
         if (clauses.exists(Parameters.EXPANDED_METRIC_NAME)) {
             Metric expandable = clauses.getExpandedMetric();
 
             if (expandable != null) {
-                String[] filteringValues = getExpandedMetricValues(clauses, expandable);
-                String filteringField = ((Expandable)expandable).getExpandedField();
+                filteringValues = getExpandedMetricValues(clauses, expandable);
+                filteringField = ((Expandable)expandable).getExpandedField();
                 match.put(filteringField, new BasicDBObject("$in", filteringValues));
 
                 // remove already used by expandable metric and so redundant parameters
@@ -252,11 +285,17 @@ public class MongoDataLoader implements DataLoader {
             if (!(metric instanceof AbstractUsersProfile)
                 && (filter == MetricFilter.USER_COMPANY
                     || filter == MetricFilter.USER_FIRST_NAME
-                    || filter == MetricFilter.USER_LAST_NAME)) {
+                    || filter == MetricFilter.USER_LAST_NAME)) { 
+                
+                String userFieldName = MetricFilter.USER.toString().toLowerCase();
+                DBObject usersToFilter = (userFieldName.equals(filteringField))
+                                         ? getUsers(filter, value, filteringValues) 
+                                         : getUsers(filter, value, null);
+                
+                match.put(userFieldName, usersToFilter);
 
-                match.put(MetricFilter.USER.toString().toLowerCase(), getUsers(filter, value));
-
-            } else if (!(metric instanceof AbstractUsersProfile) && filter == MetricFilter.USER) {
+            } else if (!(metric instanceof AbstractUsersProfile) 
+                && filter == MetricFilter.USER) {
                 if (value.equals(Parameters.USER_TYPES.REGISTERED.name())) {
                     match.put(MetricFilter.REGISTERED_USER.toString().toLowerCase(), 1);
                 } else if (value.equals(Parameters.USER_TYPES.ANONYMOUS.name())) {
@@ -395,7 +434,11 @@ public class MongoDataLoader implements DataLoader {
         return result;
     }
 
-    private DBObject getUsers(MetricFilter filter, Object value) throws IOException {
+    /** 
+     * @return if usersToFilter != null: (usersToFilter INTERSECT usersFromFilter)
+     *                        otherwise: usersFromFilter
+     */
+    private DBObject getUsers(MetricFilter filter, Object value, String[] usersToFilter) throws IOException {
         Context.Builder builder = new Context.Builder();
         builder.put(filter, value);
         Context context = builder.build();
@@ -404,7 +447,7 @@ public class MongoDataLoader implements DataLoader {
         List<ValueData> users = getAsList(metric, context).getAll();
 
         String[] result = new String[users.size()];
-
+        
         for (int i = 0; i < users.size(); i++) {
             MapValueData user = (MapValueData)users.get(i);
             Map<String, ValueData> profile = user.getAll();
@@ -412,6 +455,10 @@ public class MongoDataLoader implements DataLoader {
             result[i] = profile.get(AbstractMetric.ID).getAsString();
         }
 
+        if (usersToFilter != null) {
+            result = Utils.arrayIntersect(result, usersToFilter);
+        }
+        
         return new BasicDBObject("$in", result);
     }
 

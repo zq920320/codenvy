@@ -397,4 +397,21 @@ public class Utils {
     public static String[] toArray(ValueData value) {
         return toArray(value == null ? null : value.getAsString());
     }
+    
+    /**
+     * @return c = a INTERSECT b
+     */
+    public static String[] arrayIntersect(String[] a, String[] b) {
+        List<String> a_list = Arrays.asList(a);
+        List<String> b_list = Arrays.asList(b);
+        
+        int intersectListSize = a_list.size() > b_list.size() ? a_list.size() : b_list.size();
+        List<String> c_list = new ArrayList<> (intersectListSize);
+        
+        c_list.addAll(a_list);
+        
+        c_list.retainAll(b_list);
+        
+        return c_list.toArray(new String[0]);
+    }
 }
