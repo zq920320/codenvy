@@ -29,9 +29,16 @@ analytics.presenter.SummaryTablePresenter.prototype.load = function() {
     var presenter = this; 
     var view = presenter.view;
     var model = presenter.model;
+
+    var viewParams = view.getParams();
+
+    // don't filter by expanded values of total metrics to avoid limit of database 
+    if (analytics.configuration.isTotalMetric(viewParams[presenter.EXPANDED_METRIC_NAME_PARAMETER])) {
+        delete viewParams[presenter.EXPANDED_METRIC_NAME_PARAMETER];
+    }    
     
-    // default label is "Summary"
-    var modelParams = presenter.getModelParams(view.getParams());
+    var modelParams = presenter.getModelParams(viewParams);
+    
     model.setParams(modelParams);
     
     // get Number of entries
@@ -63,6 +70,7 @@ analytics.presenter.SummaryTablePresenter.prototype.obtainSummaryData = function
             table = presenter.linkTableValuesWithDrillDownPage(presenter.widgetName, table, modelParams);
         }
         
+        // default label is "Summary"
         var widgetLabel = analytics.configuration.getProperty(presenter.widgetName, "widgetLabel", "Summary");
         view.printWidgetHeader(widgetLabel);
     

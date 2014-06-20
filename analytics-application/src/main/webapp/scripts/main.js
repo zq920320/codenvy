@@ -210,7 +210,7 @@ function Main() {
                 loadAllWidgets(params);
             } else {
                 for (var i = 0; i < widgetNames.length; i++) {
-                    loadWidget(widgetNames[i], params);
+                    loadWidget(widgetNames[i], analytics.util.clone(params));
                 }
             }
         }
@@ -229,7 +229,7 @@ function Main() {
         for (var i = 0; i < widgetNames.length; i++) {
             var widgetName = widgetNames[i];
             if (jQuery("#" + widgetName).doesExist()) {
-                loadWidget(widgetName, params);
+                loadWidget(widgetName, analytics.util.clone(params));
             }
         }
     }

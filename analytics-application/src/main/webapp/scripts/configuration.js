@@ -1555,7 +1555,13 @@ function Configuration() {
         "Is Authenticated Session",
         "Is Converted Session",
     ];
- 
+    var totalMetricNames = [
+        "total_factories",
+        "total_projects",
+        "total_users",
+        "total_workspaces",
+        "product_usage_sessions",
+    ];
 
     /**
      * Returns property of widget.
@@ -1722,31 +1728,38 @@ function Configuration() {
         return mapDrillDownPageTypeToAddress[pageType];
     }
     
-
-    function isWorkspaceColumnName(columnName) {
-        return isSpecificColumnName(columnName, workspaceColumnNames);
-    }
-
-    function isUserColumnName(columnName) {
-        return isSpecificColumnName(columnName, userColumnNames);
-    }
-
-    function isFactoryUrlColumnName(columnName) {
-        return isSpecificColumnName(columnName, factoryUrlColumnNames);
-    }
-    
-    function isTextColumnName(columnName) {
-        return isSpecificColumnName(columnName, textColumnNames);
-    }
-
-    function isSpecificColumnName(name, probNames) {
-        for (var i in probNames) {
-            if (name.toLowerCase() == probNames[i].toLowerCase()) {
+    function isSpecificName(name, nameList) {
+        if (typeof name != "string") {
+            return false;
+        }
+        
+        for (var i in nameList) {
+            if (name.toLowerCase() == nameList[i].toLowerCase()) {
                 return true;
             }
         }
 
         return false;
+    }
+    
+    function isWorkspaceColumnName(columnName) {
+        return isSpecificName(columnName, workspaceColumnNames);
+    }
+
+    function isUserColumnName(columnName) {
+        return isSpecificName(columnName, userColumnNames);
+    }
+
+    function isFactoryUrlColumnName(columnName) {
+        return isSpecificName(columnName, factoryUrlColumnNames);
+    }
+    
+    function isTextColumnName(columnName) {
+        return isSpecificName(columnName, textColumnNames);
+    }
+    
+    function isTotalMetric(metricName) {
+        return isSpecificName(metricName, totalMetricNames);
     }
 
     /** ****************** API ********** */
@@ -1772,5 +1785,6 @@ function Configuration() {
         isWorkspaceColumnName: isWorkspaceColumnName,
         isUserColumnName: isUserColumnName,
         isTextColumnName: isTextColumnName,
+        isTotalMetric: isTotalMetric,
     }
 }
