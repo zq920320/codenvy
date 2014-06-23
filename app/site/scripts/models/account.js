@@ -41,7 +41,7 @@
                     var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(uv, s);
                 }else {
                     var el = $("footer").find("ul");
-                    el.append('<li><a class="footer-link" href="http://helpdesk.codenvy.com">Feedback & support<b></b></a></li>');
+                    el.append('<li><a class="footer-link" href="http://helpdesk.codenvy.com">Feedback & support</a></li>');
                 }
             
             }
