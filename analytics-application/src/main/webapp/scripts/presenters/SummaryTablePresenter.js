@@ -29,8 +29,6 @@ analytics.presenter.SummaryTablePresenter.prototype.load = function() {
     var presenter = this; 
     var view = presenter.view;
     var model = presenter.model;
-
-    presenter.displayEmptyWidget("Summary");
     
     var viewParams = view.getParams();
 
@@ -39,9 +37,10 @@ analytics.presenter.SummaryTablePresenter.prototype.load = function() {
         delete viewParams[presenter.EXPANDED_METRIC_NAME_PARAMETER];
     }    
     
-    var modelParams = presenter.getModelParams(viewParams);
-    
+    var modelParams = presenter.getModelParams(viewParams);    
     model.setParams(modelParams);
+    
+    presenter.displayEmptyWidget("Summary");
     
     // get Number of entries
     model.pushDoneFunction(function (data) {
@@ -81,7 +80,7 @@ analytics.presenter.SummaryTablePresenter.prototype.obtainSummaryData = function
         view.loadTableHandlers(false, {}, tabelId);
         
         // finish loading widget
-        analytics.views.loader.needLoader = false;
+        presenter.needLoader = false;
     });
     
     model.setParams(modelParams);

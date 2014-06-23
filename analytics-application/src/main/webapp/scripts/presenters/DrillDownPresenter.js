@@ -38,20 +38,20 @@ analytics.presenter.DrillDownPresenter.prototype.load = function() {
     
     model.setParams(modelParams);
     
+    presenter.displayEmptyWidget();
+    
     var pageCount = 1;
 
     model.pushDoneFunction(function(data) {        
         var table = data[0];  // there should be at most one table in data
+        table.columns_original = analytics.util.clone(table.columns); 
         
         // check on empty answer from server
         if (typeof table == "undefined") {
             // finish loading widget
-            analytics.views.loader.needLoader = false;
+            presenter.needLoader = false;
             return;
-        }
-        
-        var widgetLabel = analytics.configuration.getProperty(presenter.widgetName, "widgetLabel");
-        view.printWidgetHeader(widgetLabel);            
+        }        
         
         view.print("<div class='body'>");
         
@@ -83,7 +83,7 @@ analytics.presenter.DrillDownPresenter.prototype.load = function() {
         view.print("</div>");
         
         // finish loading widget
-        analytics.views.loader.needLoader = false;
+        presenter.needLoader = false;
     });
     
     model.setParams(modelParams);

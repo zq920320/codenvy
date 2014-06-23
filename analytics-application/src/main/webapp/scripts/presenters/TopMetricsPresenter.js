@@ -57,15 +57,13 @@ analytics.presenter.TopMetricsPresenter.prototype.mapPassedDaysCountToClientSort
 
 analytics.presenter.TopMetricsPresenter.prototype.load = function() {
     var presenter = this;
-    
-    presenter.displayEmptyWidget();
-    
     var view = presenter.view;
     var model = presenter.model;
 
-    var modelParams = presenter.getModelParams(view.getParams())
-    
+    var modelParams = presenter.getModelParams(view.getParams())    
     model.setParams(modelParams);
+    
+    presenter.displayEmptyWidget();
     
     model.pushDoneFunction(function(data) {
         view.print("<div class='body'>");
@@ -93,7 +91,7 @@ analytics.presenter.TopMetricsPresenter.prototype.load = function() {
         view.print("</div>");
         
         // finish loading widget
-        analytics.views.loader.needLoader = false;
+        presenter.needLoader = false;
     });
 
     var modelViewName = analytics.configuration.getProperty(presenter.widgetName, "modelViewName");

@@ -20,7 +20,11 @@ function Presenter() {}
 Presenter.prototype.view = null;
 Presenter.prototype.model = null;
 Presenter.prototype.load = null;
+
 Presenter.prototype.widgetName = null;
+
+Presenter.prototype.needLoader = false;
+Presenter.prototype.loader = null;
 
 /** Sorting parameters */
 Presenter.prototype.SORTING_PARAMETER = "sort";
@@ -464,4 +468,17 @@ Presenter.prototype.displayEmptyWidget = function(defaultWidgetLabel) {
     var widgetLabel = analytics.configuration.getProperty(this.widgetName, "widgetLabel", defaultWidgetLabel);
     this.view.printWidgetHeader(widgetLabel, csvButtonLink);
     this.view.show();
+}
+
+Presenter.prototype.displayLoader = function() {
+    this.loader = new Loader();
+    this.loader.show(this.widgetName);
+}
+
+Presenter.prototype.hideLoader = function() {
+    if (this.loader != null) {
+        this.loader.hide();
+    }
+    
+    this.loader = null;
 }

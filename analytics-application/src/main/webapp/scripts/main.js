@@ -235,28 +235,30 @@ function Main() {
     }
 
     function loadWidget(widgetName, params, callback) {
+        var model = analytics.factory.getModel(widgetName);
+        var view = analytics.factory.getView(widgetName);
+        var presenter = analytics.factory.getPresenter(widgetName, view, model);
+        
         var params = params || {};
         var callback = callback || function () {};
 
-        var view = analytics.factory.getView(widgetName);
         view.setParams(params);
 
-        // display loader after the 2 seconds of timeout
-        analytics.views.loader.needLoader = true;
-        var timeoutInMillisec = 2000;
+        // display loader after timeout
+        presenter.needLoader = true;
+        var timeoutInMillisec = 200;
         setTimeout(function () {
-            if (analytics.views.loader.needLoader) {
-                analytics.views.loader.show();
+            if (presenter.needLoader == true) {
+                presenter.displayLoader();
             }
         }, timeoutInMillisec);
 
 
-        var model = analytics.factory.getModel(widgetName);
         model.clearDoneFunction();
         model.pushDoneFunction(function () {
-            if (!analytics.views.loader.needLoader) {  // verify if creating of widget is finished entirely
+            if (presenter.needLoader == false) {  // verify if creating of widget is finished entirely
+                presenter.hideLoader();
                 view.show();
-                analytics.views.loader.hide();
                 callback();
 
                 analytics.view.implementUIPreferences();
@@ -265,8 +267,8 @@ function Main() {
 
         model.clearFailFunction();
         model.pushFailFunction(function (status, textStatus, errorThrown) {
-            analytics.views.loader.needLoader = false;
-            analytics.views.loader.hide();
+            presenter.needLoader = false;
+            presenter.hideLoader();
 
             if (textStatus == "abort") {
                 view.showAbortMessage();
@@ -276,8 +278,6 @@ function Main() {
                 view.showErrorMessage(status, textStatus, errorThrown);
             }
         });
-
-        var presenter = analytics.factory.getPresenter(widgetName, view, model);
 
         view.clear();
         presenter.load();

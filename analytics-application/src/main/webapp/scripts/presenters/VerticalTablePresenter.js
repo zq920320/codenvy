@@ -30,11 +30,10 @@ analytics.presenter.VerticalTablePresenter.prototype.load = function() {
     var view = presenter.view;
     var model = presenter.model;
     
-    presenter.displayEmptyWidget("Overview");
-    
     var modelParams = presenter.getModelParams(view.getParams());
-    
     model.setParams(modelParams);
+    
+    presenter.displayEmptyWidget("Overview");
     
     model.pushDoneFunction(function(data) {                            
         var table = data[0];  // there is only one table in data
@@ -59,7 +58,7 @@ analytics.presenter.VerticalTablePresenter.prototype.load = function() {
         view.loadTableHandlers(false);  // don't display sorting
         
         // finish loading widget
-        analytics.views.loader.needLoader = false;
+        presenter.needLoader = false;
     });
         
     var modelViewName = analytics.configuration.getProperty(presenter.widgetName, "modelViewName");

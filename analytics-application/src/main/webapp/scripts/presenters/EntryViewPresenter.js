@@ -27,8 +27,6 @@ analytics.presenter.EntryViewPresenter.prototype.load = function () {
     var presenter = this;
     var view = presenter.view;
     var model = presenter.model;
-
-    presenter.displayEmptyWidget();
     
     var viewParams = view.getParams();
     
@@ -46,6 +44,8 @@ analytics.presenter.EntryViewPresenter.prototype.load = function () {
     delete modelParams.per_page;
 
     model.setParams(modelParams);
+
+    presenter.displayEmptyWidget();
     
     // get page count    
     model.pushDoneFunction(function (data) {
@@ -122,7 +122,7 @@ analytics.presenter.EntryViewPresenter.prototype.obtainViewData = function (mode
         view.print("</div>");
 
         // finish loading widget
-        analytics.views.loader.needLoader = false;
+        presenter.needLoader = false;
     });
 
     model.setParams(modelParams);

@@ -32,12 +32,13 @@ analytics.presenter.HorizontalTablePresenter.prototype.load = function () {
     var presenter = this;
     var model = presenter.model;
     var widgetName = presenter.widgetName;
-
-    presenter.displayEmptyWidget();
     
     var view = presenter.view;
     var viewParams = view.getParams();
     var modelParams = presenter.getModelParams(viewParams);
+    model.setParams(modelParams);
+    
+    presenter.displayEmptyWidget();
     
     var isPaginable = analytics.configuration.getProperty(widgetName, "isPaginable", false);   // default value is "false"
 
@@ -102,7 +103,7 @@ analytics.presenter.HorizontalTablePresenter.prototype.load = function () {
                 }
 
                 // finish loading widget
-                analytics.views.loader.needLoader = false;
+                presenter.needLoader = false;
             })
 
             var modelViewName = analytics.configuration.getProperty(presenter.widgetName, "modelViewName");
@@ -144,7 +145,7 @@ analytics.presenter.HorizontalTablePresenter.prototype.load = function () {
             view.loadTableHandlers(true, clientSortParams, widgetName + "_table");
 
             // finish loading widget
-            analytics.views.loader.needLoader = false;
+            presenter.needLoader = false;
         });
 
         var modelViewName = analytics.configuration.getProperty(widgetName, "modelViewName");

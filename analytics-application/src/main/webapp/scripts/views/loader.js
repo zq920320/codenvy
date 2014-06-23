@@ -15,53 +15,30 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-if (typeof analytics === "undefined") {
-    analytics = {};
-}
-
-analytics.views = analytics.views || {};
-analytics.views.loader = new Loader();
-
 function Loader() {
     /**
 	 * Loader.
-	 * @see loader image generator here: http://preloaders.net/en/circular
+	 * @see loader image generator here: http://preloaders.net
      */
-    var loader = jQuery("#loader");
-    if (! loader.doesExist()) {
-       jQuery("body").append(
-          '<div id="loader">'
-          + '<div class="loader-outer-container"></div>'
-          + '<table class="full-window-container">'
-          + '   <tr>'
-          + '     <td align="center">'
-          + '        <div class="loader-inner-container">'
-          + '           <img src="/analytics/images/loader.gif" />'
-          + '           <div class="loader-text">Calculating...</div>'
-	      + '        </div>'
-	      + '     </td>'
-	      + '   </tr>'
-	      + '</table>'
-	      + '</div>');
-	   
-	   loader = jQuery("#loader");
-	   
-	   // add handler of pressing "Esc" button
-	   jQuery(document).keydown(function(event) {
-	      var escKeyCode = 27;
-	      if (event.which == escKeyCode) {
-	         hide();
-	      }
-	   });
-	}
+    var loaderElement = null;
 	
-	
-	function show() {
-	   loader.show();
+	function show(loaderContainerId) {
+	    var loaderId = loaderContainerId + "_loader";
+	    if (loaderElement == null 
+	        && jQuery("#" + loaderId).doesExist() == false) {
+	       jQuery("#" + loaderContainerId).append(
+	          '<div id="' + loaderId + '" class="loader-container">'
+              + '    <div class="loader-text">Calculating...</div>'
+	          + '    <div class="loader-image"><img src="/analytics/images/horizontal_loader.gif" /></div>'
+	          + '</div>');
+	       
+	       loaderElement = jQuery("#" + loaderId);
+	    }
 	}
 	
 	function hide() {
-	   loader.hide();
+	   loaderElement.remove();
+	   loaderElement = null;
 	}
 	
     /** ****************** API ********** */

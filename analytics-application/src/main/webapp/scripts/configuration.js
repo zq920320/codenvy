@@ -1535,7 +1535,7 @@ function Configuration() {
     var userColumnNames = ["User", "Created By"];
     var textColumnNames = [
         "Factory URL", 
-        "Factory", 
+        "Factory",
         "User", 
         "First Name",
         "Last Name", 
@@ -1543,6 +1543,7 @@ function Configuration() {
         "Job", 
         "ID", 
         "Workspace", 
+        "ws",
         "Referrer",
         "Organization", 
         "Project", 

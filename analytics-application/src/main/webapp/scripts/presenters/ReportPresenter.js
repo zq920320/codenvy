@@ -31,6 +31,10 @@ analytics.presenter.ReportPresenter.prototype.load = function () {
     var view = presenter.view;
     var model = presenter.model;
 
+    var viewParams = view.getParams();
+    var modelParams = presenter.getModelParams(viewParams);
+    model.setParams(modelParams);
+    
     presenter.displayEmptyWidget();
     
     // get list of expandable metrics of report
@@ -70,7 +74,7 @@ analytics.presenter.ReportPresenter.prototype.load = function () {
             view.print("</div>");
 
             // finish loading widget
-            analytics.views.loader.needLoader = false;
+            presenter.needLoader = false;
         });
 
         var modelViewName = analytics.configuration.getProperty(presenter.widgetName, "modelViewName");
