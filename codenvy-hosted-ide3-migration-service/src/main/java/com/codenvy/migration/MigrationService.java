@@ -61,7 +61,7 @@ public class MigrationService {
                                                   : new File[]{new File(propsFolder, projectName + "_props")};
 
         StringBuilder out = new StringBuilder();
-        Map<String, String[]> inputProps = new HashMap<>();
+        Map<String, String[]> inputProps;
 
         for (File projectFile : projectsList) {
             // In case manually set project
@@ -76,9 +76,14 @@ public class MigrationService {
                                .entity(String.format("IO Exception for project %s", projectFile.getName())).build();
             }
 
+            if (inputProps == null || inputProps.isEmpty())
+                return Response.status(400)
+                        .entity(String.format("Cannot find properties for project %s", projectFile.getName())).build();
+
             String projectType;
             String currentName = projectFile.getName().substring(0, projectFile.getName().lastIndexOf("_props"));
             List<Property> outputProps = new ArrayList<>();
+            String runnerTemplate = null;
 
 
             switch (inputProps.get("vfs:projectType")[0]) {
@@ -95,6 +100,42 @@ public class MigrationService {
                     outputProps.add(new Property("runner.name", new String[]{"JavaWeb"}));
                     break;
                 }
+                case "PHP": {
+                    projectType = ProjectTypes.UNKNOWN.toString();
+                    //runnerTemplate = TEMPLATE_PHP;//example
+                    break;
+                }
+                case "JavaScript": {
+                    projectType = ProjectTypes.UNKNOWN.toString();
+                    //runnerTemplate = TEMPLATE_JS;//example
+                    break;
+                }
+                case "Spring": {
+                    projectType = ProjectTypes.UNKNOWN.toString();
+                    //runnerTemplate = TEMPLATE_SPRING;//example
+                    break;
+                }
+                case "Rails": {
+                    projectType = ProjectTypes.UNKNOWN.toString();
+                    //runnerTemplate = TEMPLATE_ROR;//example
+                    break;
+                }
+                case "Python": {
+                    projectType = ProjectTypes.UNKNOWN.toString();
+                    //runnerTemplate = TEMPLATE_PY;//example
+                    break;
+                }
+                case "Android": {
+                    projectType = ProjectTypes.UNKNOWN.toString();
+                    outputProps.add(new Property("runner.name", new String[]{"Android"}));// Will work ?
+                    //runnerTemplate = TEMPLATE_ANDROID;//example
+                    break;
+                }
+                case "nodejs": {
+                    projectType = ProjectTypes.UNKNOWN.toString();
+                    //runnerTemplate = TEMPLATE_NJS;//example
+                    break;
+                }
                 default: {
                     projectType = ProjectTypes.UNKNOWN.toString();
                 }
@@ -108,8 +149,12 @@ public class MigrationService {
 
             // Writing collected data to a file
             File codenvyFolder = new File(wsFolder, currentName + "/.codenvy");
-            if (!codenvyFolder.exists())
-                codenvyFolder.mkdir();
+            if (!codenvyFolder.exists()) {
+                if (!codenvyFolder.mkdir())
+                    return Response.status(400)
+                                   .entity(String.format("Cannot create .codenvy folder for project %s",
+                                                         projectFile.getName())).build();
+            }
 
 
             File descriptionFile = new File(codenvyFolder, "project");
@@ -128,6 +173,14 @@ public class MigrationService {
                     metadataSerializer.write(dos, properties);
                     if (dos != null)
                         dos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            if (runnerTemplate != null) {
+                try (Writer writer = new BufferedWriter(new FileWriter(new File(wsFolder, currentName+"/run.dc5y")))) {
+                    writer.write(runnerTemplate);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
