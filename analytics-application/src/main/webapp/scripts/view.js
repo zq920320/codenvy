@@ -135,15 +135,17 @@ function View() {
             print("<th class='cell-name'>");
             print(table.columns[i] + ":");
             print("</th>");
-    
+
+            print("<td class='cell'>");
             if (typeof table.rows != "undefined"
                     && typeof table.rows[0] != "undefined"
                     && typeof table.rows[0][i] != "undefined") {
-                print("<td class='cell'>");
+
                 print(table.rows[0][i]);
-                print("</td>");
-                print("</tr>");
+
             }
+            print("</td>");
+            print("</tr>");
         }
     
         print('</tbody>');

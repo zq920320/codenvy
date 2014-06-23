@@ -63,9 +63,14 @@
             </div>
             <div class="hero-unit">
                 <div class="single-column-gadget">
+	                <div class='view'>
+	                    <div class='overview'>
+                            <div id="projectStatistics"></div>
+	                    </div>
+	                </div>
+                
                     <div class="view">
                         <div class="tables">
-                            <div class="item" id="projectStatistics"></div>
                             <div class="item" id="projectOverview"></div>
                             <div class="item" id="projectEvents"></div>
                         </div>
