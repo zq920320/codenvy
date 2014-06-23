@@ -128,6 +128,7 @@ public class MigrationService {
                 case "Android": {
                     projectType = ProjectTypes.UNKNOWN.toString();
                     outputProps.add(new Property("runner.name", new String[]{"Android"}));// Will work ?
+                    outputProps.add(new Property("builder.name", new String[]{"maven"}));
                     //runnerTemplate = TEMPLATE_ANDROID;//example
                     break;
                 }
@@ -177,7 +178,7 @@ public class MigrationService {
                     e.printStackTrace();
                 }
             }
-
+            // writing run.dc5y if need
             if (runnerTemplate != null) {
                 try (Writer writer = new BufferedWriter(new FileWriter(new File(wsFolder, currentName+"/run.dc5y")))) {
                     writer.write(runnerTemplate);
