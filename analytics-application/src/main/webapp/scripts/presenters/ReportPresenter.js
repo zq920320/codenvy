@@ -31,6 +31,8 @@ analytics.presenter.ReportPresenter.prototype.load = function () {
     var view = presenter.view;
     var model = presenter.model;
 
+    presenter.displayEmptyWidget();
+    
     // get list of expandable metrics of report
     model.pushDoneFunction(function (data) {
         var viewParams = view.getParams();
@@ -42,13 +44,6 @@ analytics.presenter.ReportPresenter.prototype.load = function () {
         // get report data
         model.popDoneFunction();
         model.pushDoneFunction(function (data) {
-            var doNotDisplayCSVButton = analytics.configuration.getProperty(presenter.widgetName, "doNotDisplayCSVButton", false);  // default value is "false" 
-            var csvButtonLink = (doNotDisplayCSVButton)
-                ? undefined
-                : presenter.getLinkForExportToCsvButton();
-            var widgetLabel = analytics.configuration.getProperty(presenter.widgetName, "widgetLabel");
-            view.printWidgetHeader(widgetLabel, csvButtonLink);
-
             view.print("<div class='body'>");
             
             var displayLineChart = analytics.configuration.getProperty(presenter.widgetName, "displayLineChart", false);

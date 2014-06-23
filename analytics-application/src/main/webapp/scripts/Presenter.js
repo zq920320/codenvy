@@ -454,3 +454,14 @@ Presenter.prototype.getColumnNameValue = function(columnValue) {
      
      return columnValue;    
 }
+
+Presenter.prototype.displayEmptyWidget = function(defaultWidgetLabel) {    
+    var doNotDisplayCSVButton = analytics.configuration.getProperty(this.widgetName, "doNotDisplayCSVButton", false);  // default value is "false"
+    var csvButtonLink = (doNotDisplayCSVButton)
+        ? undefined
+        : this.getLinkForExportToCsvButton();
+    
+    var widgetLabel = analytics.configuration.getProperty(this.widgetName, "widgetLabel", defaultWidgetLabel);
+    this.view.printWidgetHeader(widgetLabel, csvButtonLink);
+    this.view.show();
+}

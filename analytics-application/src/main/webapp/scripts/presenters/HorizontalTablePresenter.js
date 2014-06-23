@@ -33,10 +33,12 @@ analytics.presenter.HorizontalTablePresenter.prototype.load = function () {
     var model = presenter.model;
     var widgetName = presenter.widgetName;
 
+    presenter.displayEmptyWidget();
+    
     var view = presenter.view;
     var viewParams = view.getParams();
     var modelParams = presenter.getModelParams(viewParams);
-
+    
     var isPaginable = analytics.configuration.getProperty(widgetName, "isPaginable", false);   // default value is "false"
 
     //process pagination
@@ -54,10 +56,6 @@ analytics.presenter.HorizontalTablePresenter.prototype.load = function () {
             model.popDoneFunction();
             model.pushDoneFunction(function (data) {
                 var modelParams = presenter.getModelParams(viewParams);  // restore initial model params
-                var doNotDisplayCSVButton = analytics.configuration.getProperty(widgetName, "doNotDisplayCSVButton", false);  // default value is "false"
-                var csvButtonLink = (doNotDisplayCSVButton)
-                    ? undefined
-                    : presenter.getLinkForExportToCsvButton();
 
                 var table = data[0];  // there is only one table in data
                 table.columns_original = analytics.util.clone(table.columns); 
@@ -88,7 +86,7 @@ analytics.presenter.HorizontalTablePresenter.prototype.load = function () {
                     table = presenter.addServerSortingLinks(table, widgetName, modelParams, mapColumnToServerSortParam);
 
                     // print table
-                    presenter.printTable(csvButtonLink, table);
+                    presenter.printTable(table);
 
                     // print bottom page navigation
                     view.printBottomPageNavigator(pageCount, currentPageNumber, modelParams, widgetName, widgetName);
@@ -96,7 +94,7 @@ analytics.presenter.HorizontalTablePresenter.prototype.load = function () {
                     view.loadTableHandlers(false);  // don't display client side sorting for table with pagination
                 } else {
                     // print table
-                    presenter.printTable(csvButtonLink, table, widgetName + "_table");
+                    presenter.printTable(table, widgetName + "_table");
 
                     // display client sorting
                     var clientSortParams = analytics.configuration.getProperty(widgetName, "clientSortParams");
@@ -120,8 +118,6 @@ analytics.presenter.HorizontalTablePresenter.prototype.load = function () {
         model.setParams(modelParams);
 
         model.pushDoneFunction(function (data) {
-            var csvButtonLink = presenter.getLinkForExportToCsvButton();
-
             // print table
             var table = data[0];  // there is only one table in data
 
@@ -141,8 +137,7 @@ analytics.presenter.HorizontalTablePresenter.prototype.load = function () {
                 }
             }
 
-            presenter.printTable(csvButtonLink, table, widgetName + "_table");
-
+            presenter.printTable(table, widgetName + "_table");
 
             // display client sorting
             var clientSortParams = analytics.configuration.getProperty(widgetName, "clientSortParams");
@@ -157,11 +152,8 @@ analytics.presenter.HorizontalTablePresenter.prototype.load = function () {
     }
 };
 
-analytics.presenter.HorizontalTablePresenter.prototype.printTable = function (csvButtonLink, table, tableId) {
+analytics.presenter.HorizontalTablePresenter.prototype.printTable = function (table, tableId) {
     var view = this.view;
-
-    var widgetLabel = analytics.configuration.getProperty(this.widgetName, "widgetLabel");
-    view.printWidgetHeader(widgetLabel, csvButtonLink);
 
     view.print("<div class='body'>");
     view.printTable(table, false, tableId);

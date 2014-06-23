@@ -293,20 +293,20 @@ function View() {
     };
     
     function showAbortMessage() {
-        viewHtml = ABORT_LOADING_MESSAGE;
+        print(ABORT_LOADING_MESSAGE);
         show();
     };
 
     function showInterruptMessage() {
-        viewHtml = INTERRUPT_LOADING_MESSAGE;
+        print(INTERRUPT_LOADING_MESSAGE);
         show();
     };
     
     function showErrorMessage(status, textStatus, errorThrown) {
         if (status == 500) {
-            viewHtml = "<div class='internalServerErrorMessage'>The data cannot be calculated.</div>";            
+            print("<div class='internalServerErrorMessage'>The data cannot be calculated.</div>");            
         } else {
-            viewHtml = "<i>Error of loading data</i>: (" + status + ") '" + errorThrown + "'.";
+            print("<i>Error of loading data</i>: (" + status + ") '" + errorThrown + "'.");
         }
         
         show();

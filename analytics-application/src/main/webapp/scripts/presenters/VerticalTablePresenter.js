@@ -30,17 +30,13 @@ analytics.presenter.VerticalTablePresenter.prototype.load = function() {
     var view = presenter.view;
     var model = presenter.model;
     
-    // default label is "Overview"
-    var widgetLabel = analytics.configuration.getProperty(presenter.widgetName, "widgetLabel", "Overview");
+    presenter.displayEmptyWidget("Overview");
+    
     var modelParams = presenter.getModelParams(view.getParams());
+    
     model.setParams(modelParams);
     
-    model.pushDoneFunction(function(data) {
-        var doNotDisplayCSVButton = analytics.configuration.getProperty(presenter.widgetName, "doNotDisplayCSVButton", false);
-        var csvButtonLink = (doNotDisplayCSVButton) 
-                            ? undefined
-                            : presenter.getLinkForExportToCsvButton();  
-                            
+    model.pushDoneFunction(function(data) {                            
         var table = data[0];  // there is only one table in data
 
         // add links to drill down page
@@ -52,23 +48,15 @@ analytics.presenter.VerticalTablePresenter.prototype.load = function() {
             table = presenter.makeTableColumnLinked(table, columnName, columnLinkPrefixList[columnName]);    
         }
         
-        view.print("<div class='view'>");
-        view.print("   <div class='overview'>");
-
-        view.printWidgetHeader(widgetLabel, csvButtonLink);
-        
-        view.print("       <div class='body'>");
-        view.print("           <div class='item'>");
+        view.print("<div class='body'>");
+        view.print("    <div class='item'>");
         
         view.printTableVerticalRow(table);
         
-        view.print("           </div>");
-        view.print("       </div>");
         view.print("    </div>");
+        view.print("</div>");
         
         view.loadTableHandlers(false);  // don't display sorting
-        
-        view.print("</div>");
         
         // finish loading widget
         analytics.views.loader.needLoader = false;

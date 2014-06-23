@@ -30,6 +30,8 @@ analytics.presenter.SummaryTablePresenter.prototype.load = function() {
     var view = presenter.view;
     var model = presenter.model;
 
+    presenter.displayEmptyWidget("Summary");
+    
     var viewParams = view.getParams();
 
     // don't filter by expanded values of total metrics to avoid limit of database 
@@ -69,10 +71,6 @@ analytics.presenter.SummaryTablePresenter.prototype.obtainSummaryData = function
             // add links to drill down page
             table = presenter.linkTableValuesWithDrillDownPage(presenter.widgetName, table, modelParams);
         }
-        
-        // default label is "Summary"
-        var widgetLabel = analytics.configuration.getProperty(presenter.widgetName, "widgetLabel", "Summary");
-        view.printWidgetHeader(widgetLabel);
     
         var tabelId = presenter.widgetName + "_table";
         

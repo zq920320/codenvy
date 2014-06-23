@@ -28,6 +28,8 @@ analytics.presenter.EntryViewPresenter.prototype.load = function () {
     var view = presenter.view;
     var model = presenter.model;
 
+    presenter.displayEmptyWidget();
+    
     var viewParams = view.getParams();
     
     // don't filter by expanded values of total metrics to avoid limit of database 
@@ -36,7 +38,7 @@ analytics.presenter.EntryViewPresenter.prototype.load = function () {
     }
     
     var modelParams = presenter.getModelParams(viewParams);
-
+    
     // obtain page count
     // remove redundant params
     delete modelParams.page;
@@ -74,10 +76,6 @@ analytics.presenter.EntryViewPresenter.prototype.obtainViewData = function (mode
     modelParams.page = currentPageNumber;
 
     model.pushDoneFunction(function (data) {
-        // TODO print summary table
-        var widgetLabel = analytics.configuration.getProperty(presenter.widgetName, "widgetLabel");
-        view.printWidgetHeader(widgetLabel);
-
         view.print("<div class='body'>");
 
         var table = data[0];  // there is only one table in data

@@ -56,7 +56,10 @@ analytics.presenter.TopMetricsPresenter.prototype.mapPassedDaysCountToClientSort
 }
 
 analytics.presenter.TopMetricsPresenter.prototype.load = function() {
-    var presenter = this; 
+    var presenter = this;
+    
+    presenter.displayEmptyWidget();
+    
     var view = presenter.view;
     var model = presenter.model;
 
@@ -65,15 +68,6 @@ analytics.presenter.TopMetricsPresenter.prototype.load = function() {
     model.setParams(modelParams);
     
     model.pushDoneFunction(function(data) {
-        // default value is "false"
-        var doNotDisplayCSVButton = analytics.configuration.getProperty(presenter.widgetName, "doNotDisplayCSVButton", false);
-        var csvButtonLink = (doNotDisplayCSVButton) 
-                            ? undefined
-                            : presenter.getLinkForExportToCsvButton(presenter.modelViewName);  
-        
-        var widgetLabel = analytics.configuration.getProperty(presenter.widgetName, "widgetLabel");
-        view.printWidgetHeader(widgetLabel, csvButtonLink);            
-        
         view.print("<div class='body'>");
         
         for (var tableIndex in data) {

@@ -76,8 +76,12 @@
                 </div>
             </div>
         
-            <div class="hero-unit">                
-                <div id="sessionOverview"></div>
+            <div class="hero-unit">
+                <div class='view'>
+                    <div class='overview'>
+                       <div id="sessionOverview"></div>
+                    </div>
+                </div>
 
                 <div class="single-column-gadget full-width">
                     <div class="view">

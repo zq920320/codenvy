@@ -63,7 +63,11 @@
                 </div>
             </div>
             <div class="hero-unit">
-                <div id="userOverview"></div>
+                <div class='view'>
+                    <div class='overview'>
+                        <div id="userOverview"></div>                
+                    </div>
+                </div>
 
                 <div class="single-column-gadget">
                     <div class="view">

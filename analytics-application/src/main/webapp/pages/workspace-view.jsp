@@ -62,7 +62,11 @@
                 </div>
             </div>
             <div class="hero-unit">
-                <div id="workspaceOverview"></div>
+                <div class='view'>
+                    <div class='overview'>
+                        <div id="workspaceOverview"></div>
+                    </div>
+                </div>
 
                 <div class="single-column-gadget">
                     <div class="view">
