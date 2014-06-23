@@ -77,7 +77,7 @@ public class MigrationService {
             }
 
             String projectType;
-            String currentName = projectFile.getName().substring(0, projectName.lastIndexOf("_props"));
+            String currentName = projectFile.getName().substring(0, projectFile.getName().lastIndexOf("_props"));
             List<Property> outputProps = new ArrayList<>();
 
 
