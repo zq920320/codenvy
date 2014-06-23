@@ -30,7 +30,7 @@
     <div class="row-fluid">
         <div>
             <div class="well topFilteringPanel">
-                <div id="filter-by" targetWidgets="factorySessions,factoryUsers">
+                <div id="filter-by" targetWidgets="factoryStatistics,factorySessions,factoryUsers">
                     <div class="collabsiblePanelTitle">Filter</div>
                     <div class="collabsiblePanelBody">
                         <table>
@@ -64,13 +64,14 @@
             <div class="hero-unit">
                 <div class='view'>
                     <div class='overview'>
-                        <div id="factoryOverview"></div>                
+                        <div id="factoryStatistics"></div>
                     </div>
                 </div>
 
                 <div class="single-column-gadget">
                     <div class="view">
                         <div class="tables">
+                            <div class="item" id="factoryOverview"></div>
                             <div class="item" id="factorySessions"></div>
                             <div class="item" id="factoryUsers"></div>
                         </div>

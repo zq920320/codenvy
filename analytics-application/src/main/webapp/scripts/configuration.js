@@ -508,15 +508,11 @@ function Configuration() {
                 },
             },
         },
-        
-        userOverview: {
-            widgetLabel: "User Overview",
-            presenterType: "VerticalTablePresenter",
-            modelViewName: "user",
 
-            columnLinkPrefixList: {
-                "ID": "/analytics/pages/user-view.jsp?user",
-            },
+        userStatistics: {
+            widgetLabel: "User Statistics",
+            presenterType: "VerticalTablePresenter",
+            modelViewName: "user_statistics",
             
             columnDrillDownPageLinkConfiguration: {
                 mapColumnNameToExpandableMetric: {
@@ -530,6 +526,16 @@ function Configuration() {
                     "Number of Deploys": "deploys",
                     "Number of Factories": "#FACTORIES",
                 },
+            },
+        },
+        
+        userOverview: {
+            widgetLabel: "User Overview",
+            presenterType: "HorizontalTablePresenter",
+            modelViewName: "user_overview",
+
+            columnLinkPrefixList: {
+                "ID": "/analytics/pages/user-view.jsp?user",
             },
         },
 
@@ -729,6 +735,7 @@ function Configuration() {
             },
 
             columnLinkPrefixList: {
+                "ID": "/analytics/pages/session-view.jsp?session_id",                
                 "User": "/analytics/pages/user-view.jsp?user",
                 "Workspace": "/analytics/pages/workspace-view.jsp?ws"
             },
@@ -830,15 +837,11 @@ function Configuration() {
                 },
             },
         },
-        
-        workspaceOverview: {
-            widgetLabel: "Workspace Overview",
-            presenterType: "VerticalTablePresenter",
-            modelViewName: "workspace_overview",
 
-            columnLinkPrefixList: {
-                "Workspace": "/analytics/pages/workspace-view.jsp?ws"
-            },
+        workspaceStatistics: {
+            widgetLabel: "Workspace Statistics",
+            presenterType: "VerticalTablePresenter",
+            modelViewName: "workspace_statistics",
             
             columnDrillDownPageLinkConfiguration: {
                 mapColumnNameToExpandableMetric: {
@@ -853,6 +856,16 @@ function Configuration() {
                     "Number of Factories": "#FACTORIES",
                     "Number of Users": "#USERS",
                 },
+            },
+        },
+        
+        workspaceOverview: {
+            widgetLabel: "Workspace Overview",
+            presenterType: "HorizontalTablePresenter",
+            modelViewName: "workspace_overview",
+
+            columnLinkPrefixList: {
+                "ID": "/analytics/pages/workspace-view.jsp?ws"
             },
         },
 
@@ -1029,7 +1042,7 @@ function Configuration() {
         projectOverview: {
             widgetLabel: "Project Overview",
             presenterType: "HorizontalTablePresenter",
-            modelViewName: "project",
+            modelViewName: "project_overview",
             modelMetricName: "projects_statistics",
 
             isPaginable: true,
@@ -1205,16 +1218,11 @@ function Configuration() {
                 },
             },
         },
-        
-        factoryOverview: {
-            widgetLabel: "Factory Overview",
-            presenterType: "VerticalTablePresenter",
-            modelViewName: "factory",
 
-            columnLinkPrefixList: {
-                "Created By": "/analytics/pages/user-view.jsp?user",
-                "Workspace": "/analytics/pages/workspace-view.jsp?ws",
-            },
+        factoryStatistics: {
+            widgetLabel: "Factory Statistics",
+            presenterType: "VerticalTablePresenter",
+            modelViewName: "factory_statistics",
 
             columnDrillDownPageLinkConfiguration: {
                 mapColumnNameToExpandableMetric: {
@@ -1224,6 +1232,18 @@ function Configuration() {
                     "Number of Converted": "converted_factory_sessions",
                     "Total Time": "#SESSIONS",
                 },
+            },
+        },
+        
+        factoryOverview: {
+            widgetLabel: "Factory Overview",
+            presenterType: "HorizontalTablePresenter",
+            modelViewName: "factory_overview",
+
+            columnLinkPrefixList: {
+                "Factory": "/analytics/pages/factory-view.jsp?factory",
+                "Created By": "/analytics/pages/user-view.jsp?user",
+                "Project Type": "/analytics/pages/projects-view.jsp?project_type",
             },
         },
 
@@ -1553,6 +1573,10 @@ function Configuration() {
         "Type",
         "Project Type",
         "Event",
+        "Date",
+        "Start Time",
+        "End Time",
+        "Started",
         "Is Authenticated Session",
         "Is Converted Session",
     ];

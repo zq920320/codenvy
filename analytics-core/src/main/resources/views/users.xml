@@ -30,17 +30,31 @@
         </section>
     </view>
 
-    <view name="user" on-demand="true">
+    <view name="user_statistics" on-demand="true">
         <section name="user">
             <row class="com.codenvy.analytics.services.view.TitleRow">
                 <parameter key="titles"
-                           value="ID,Aliases,First Name,Last Name,Company,Phone,Job,Number of Sessions,Total Time,Total Build Time,Total Run Time,Number of Builds,Number of Debugs,Number of Deploys"/>
+                           value="Number of Sessions,Total Time,Total Build Time,Total Run Time,Number of Builds,Number of Debugs,Number of Deploys"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="users_statistics_list"/>
                 <parameter key="fields"
-                           value="user,aliases,user_first_name,user_last_name,user_company,user_phone,user_job,sessions,time,build_time,run_time,builds,debugs,deploys"/>
+                           value="sessions,time,build_time,run_time,builds,debugs,deploys"/>
                 <parameter key="time-fields" value="time,build_time,run_time"/>
+            </row>
+        </section>
+    </view>
+
+    <view name="user_overview" on-demand="true">
+        <section name="user">
+            <row class="com.codenvy.analytics.services.view.TitleRow">
+                <parameter key="titles"
+                           value="ID,Aliases,First Name,Last Name,Company,Phone,Job"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="users_statistics_list"/>
+                <parameter key="fields"
+                           value="user,aliases,user_first_name,user_last_name,user_company,user_phone,user_job"/>
             </row>
         </section>
     </view>

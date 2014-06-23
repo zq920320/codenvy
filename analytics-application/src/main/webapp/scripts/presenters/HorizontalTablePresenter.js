@@ -45,9 +45,9 @@ analytics.presenter.HorizontalTablePresenter.prototype.load = function () {
     //process pagination
     if (isPaginable) {
         // get page count
-        model.pushDoneFunction(function (data) {
+        model.pushDoneFunction(function (documentCount) {
             var onePageRowsCount = analytics.configuration.getProperty(widgetName, "onePageRowsCount", presenter.DEFAULT_ONE_PAGE_ROWS_COUNT);
-            var pageCount = Math.ceil(data / onePageRowsCount);
+            var pageCount = Math.ceil(documentCount / onePageRowsCount);
 
             var currentPageNumber = viewParams[widgetName] || 1;  // search on table page number in parameter "{modelViewName}={page_number}"            
             modelParams.page = currentPageNumber;
@@ -55,10 +55,10 @@ analytics.presenter.HorizontalTablePresenter.prototype.load = function () {
 
             model.setParams(modelParams);
             model.popDoneFunction();
-            model.pushDoneFunction(function (data) {
+            model.pushDoneFunction(function (tables) {
                 var modelParams = presenter.getModelParams(viewParams);  // restore initial model params
 
-                var table = data[0];  // there is only one table in data
+                var table = tables[0];  // there is only one table in tables
                 table.columns_original = analytics.util.clone(table.columns); 
 
                 // add links to drill down page
@@ -94,7 +94,6 @@ analytics.presenter.HorizontalTablePresenter.prototype.load = function () {
 
                     view.loadTableHandlers(false);  // don't display client side sorting for table with pagination
                 } else {
-                    // print table
                     presenter.printTable(table, widgetName + "_table");
 
                     // display client sorting
@@ -118,9 +117,9 @@ analytics.presenter.HorizontalTablePresenter.prototype.load = function () {
     } else {
         model.setParams(modelParams);
 
-        model.pushDoneFunction(function (data) {
+        model.pushDoneFunction(function (tables) {
             // print table
-            var table = data[0];  // there is only one table in data
+            var table = tables[0];  // there is only one table in tables
 
             // add links to drill down page
             table = presenter.linkTableValuesWithDrillDownPage(presenter.widgetName, table, modelParams);
@@ -157,7 +156,13 @@ analytics.presenter.HorizontalTablePresenter.prototype.printTable = function (ta
     var view = this.view;
 
     view.print("<div class='body'>");
-    view.printTable(table, false, tableId);
+    
+    // print table
+    if (table.rows.length == 1) {
+        view.printTable(table, false, tableId, "text-aligned-center"); // align text by center if there is 1 row in table
+    } else {
+        view.printTable(table, false, tableId);
+    }
 
     view.print("</div>");
 }

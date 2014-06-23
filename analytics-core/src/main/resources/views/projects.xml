@@ -31,7 +31,7 @@
         </section>
     </view>
 
-    <view name="project" on-demand="true">
+    <view name="project_overview" on-demand="true">
         <section name="project">
             <row class="com.codenvy.analytics.services.view.TitleRow">
                 <parameter key="titles" value="Date,Project,Type,Workspace,User"/>
