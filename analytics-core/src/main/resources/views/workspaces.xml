@@ -34,7 +34,7 @@
         <section name="workspace_overview">
             <row class="com.codenvy.analytics.services.view.TitleRow">
                 <parameter key="titles"
-                           value="Number of Sessions,Total Time,Total Build Time,Total Run Time,Number of Builds,Number of Debugs,Number of Deploys,Number of Users"/>
+                           value="# Sessions,Total Time,Total Build Time,Total Run Time,# Builds,# Debugs,# Deploys,# Users"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="workspaces_statistics_list"/>

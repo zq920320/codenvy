@@ -70,7 +70,7 @@
                 <div class="single-column-gadget">
                     <div class="view">
                         <div class="tables">
-                            <div class="item" id="workspaceReport"></div>
+                            <div id="workspaceReport"></div>
                         </div>
                     </div>
                 </div>

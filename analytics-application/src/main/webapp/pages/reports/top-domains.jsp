@@ -53,7 +53,7 @@
                 <div class="single-column-gadget">
                     <div class="view">
                         <div class="tables">
-                            <div class="item" id="topDomains"></div>
+                            <div id="topDomains"></div>
                         </div>
                     </div>
                 </div>

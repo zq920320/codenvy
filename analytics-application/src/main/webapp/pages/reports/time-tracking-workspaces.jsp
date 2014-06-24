@@ -47,7 +47,7 @@
                 <div class="single-column-gadget">
                     <div class="view">
                         <div class="tables">
-                            <div class="item" id="timeTrackingWorkspaces"></div>
+                            <div id="timeTrackingWorkspaces"></div>
                         </div>
                     </div>
                 </div>

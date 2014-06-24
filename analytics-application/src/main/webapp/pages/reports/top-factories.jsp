@@ -53,7 +53,7 @@
                 <div class="single-column-gadget">
                     <div class="view">
                         <div class="tables">
-                            <div class="item" id="topFactories"></div>
+                            <div id="topFactories"></div>
                         </div>
                     </div>
                 </div>

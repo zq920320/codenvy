@@ -76,7 +76,7 @@
                 <div class="single-column-gadget">
                     <div class="view">
                         <div class="tables">
-                            <div class="item" id="usageReport"></div>
+                            <div id="usageReport"></div>
                         </div>
                     </div>
                 </div>

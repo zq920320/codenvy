@@ -64,16 +64,16 @@
             <div class="hero-unit">
                 <div class='view'>
                     <div class='overview'>
-                        <div id="factoryStatistics"></div>
+                        <div id="factoryOverview"></div>
                     </div>
                 </div>
 
                 <div class="single-column-gadget">
                     <div class="view">
                         <div class="tables">
-                            <div class="item" id="factoryOverview"></div>
-                            <div class="item" id="factorySessions"></div>
-                            <div class="item" id="factoryUsers"></div>
+                            <div id="factoryStatistics"></div>
+                            <div id="factorySessions"></div>
+                            <div id="factoryUsers"></div>
                         </div>
                     </div>
                 </div>

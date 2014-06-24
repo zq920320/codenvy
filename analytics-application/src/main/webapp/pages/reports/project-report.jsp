@@ -76,7 +76,7 @@
                 <div class="single-column-gadget">
                     <div class="view">
                         <div class="tables">
-                            <div class="item" id="projectReport"></div>
+                            <div id="projectReport"></div>
                         </div>
                     </div>
                 </div>

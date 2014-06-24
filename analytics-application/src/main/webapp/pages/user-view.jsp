@@ -65,19 +65,19 @@
             <div class="hero-unit">
                 <div class='view'>
                     <div class='overview'>
-                        <div id="userStatistics"></div>                
+                        <div id="userOverview"></div>                
                     </div>
                 </div>
 
                 <div class="single-column-gadget">
                     <div class="view">
                         <div class="tables">
-                            <div class="item" id="userOverview"></div>
-                            <div class="item" id="userSessions"></div>
-                            <div class="item" id="userWorkspaceList"></div>
-                            <div class="item" id="userProjects"></div>
-                            <div class="item" id="userFactories"></div>
-                            <div class="item" id="userEvents"></div>
+                            <div id="userStatistics"></div>
+                            <div id="userSessions"></div>
+                            <div id="userWorkspaceList"></div>
+                            <div id="userProjects"></div>
+                            <div id="userFactories"></div>
+                            <div id="userEvents"></div>
                         </div>
                     </div>
                 </div>

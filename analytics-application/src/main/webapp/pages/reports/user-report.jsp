@@ -75,8 +75,8 @@
                  <div class="single-column-gadget">
                     <div class="view">
                         <div class="tables">
-                            <div class="item" id="userReport"></div>
-                            <div class="item" id="engagementLevels"></div>
+                            <div id="userReport"></div>
+                            <div id="engagementLevels"></div>
                         </div>
                     </div>
                 </div>

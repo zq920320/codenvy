@@ -65,14 +65,14 @@
                 <div class="single-column-gadget">
 	                <div class='view'>
 	                    <div class='overview'>
-                            <div id="projectStatistics"></div>
+                            <div id="projectOverview"></div>
 	                    </div>
 	                </div>
                 
                     <div class="view">
                         <div class="tables">
-                            <div class="item" id="projectOverview"></div>
-                            <div class="item" id="projectEvents"></div>
+                            <div id="projectStatistics"></div>
+                            <div id="projectEvents"></div>
                         </div>
                     </div>
                 </div>

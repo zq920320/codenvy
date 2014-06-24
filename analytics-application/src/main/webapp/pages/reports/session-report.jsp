@@ -69,7 +69,7 @@
                 <div class="single-column-gadget">
                     <div class="view">
                         <div class="tables">
-                            <div class="item" id="sessionReport"></div>
+                            <div id="sessionReport"></div>
                         </div>
                     </div>
                 </div>

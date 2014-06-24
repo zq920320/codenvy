@@ -34,7 +34,7 @@
         <section name="factory">
             <row class="com.codenvy.analytics.services.view.TitleRow">
                 <parameter key="titles"
-                           value="Number of Clicks,Number of Sessions,Number of Known,Number of Converted,Total Time,Number of Builds,Number of Runs,Number of Deploys"/>
+                           value="# Clicks,# Sessions,# Known,# Converted,Total Time,# Builds,# Runs,# Deploys"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="factory_statistics_list"/>

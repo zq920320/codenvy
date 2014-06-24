@@ -1,6 +1,3 @@
-.view {
-}
-
 .view .overview {
    margin-bottom: 20px;
    display: inline-block;
@@ -20,16 +17,6 @@
     float: right;
     color: white;
 }
-
-.view .overview .body .item {
-	background-color: white;
-}
-
-.view .overview .body table {}
-
-.view .tables .item {}
-
-.view .tables .body {}
 
 .view .tables .body table {
    width: 100%;

@@ -48,7 +48,7 @@
         <section name="project_statistics">
             <row class="com.codenvy.analytics.services.view.TitleRow">
                 <parameter key="titles"
-                           value="Number of Builds,Total Build Time,Number of Build Interrupts,Number of Runs,Total Run Time,Number of Debugs,Total Debug Time,Number of Project Creates,Number of Project Destroys,Number of Deploys,Number of Artifact Deploys,Number of PAAS Deploys,Number of Code Refactories,Number of Code Completes"/>
+                           value="# Builds,Total Build Time,# Build Interrupts,# Runs,Total Run Time,# Debugs,Total Debug Time,# Project Creates,# Project Destroys,# Deploys,# Artifact Deploys,# PAAS Deploys,# Code Refactories,# Code Completes"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="projects_statistics_list"/>

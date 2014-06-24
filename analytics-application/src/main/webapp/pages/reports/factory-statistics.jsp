@@ -82,7 +82,7 @@
                 <div class="single-column-gadget">
                     <div class="view">
                         <div class="tables">
-                            <div class="item" id="factoryStatistics"></div>
+                            <div id="factoryStatistics"></div>
                         </div>
                     </div>
                 </div>

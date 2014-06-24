@@ -64,17 +64,17 @@
             <div class="hero-unit">
                 <div class='view'>
                     <div class='overview'>
-                        <div class="item" id="workspaceStatistics"></div>
+                        <div id="workspaceOverview"></div>
                     </div>
                 </div>
 
                 <div class="single-column-gadget">
                     <div class="view">
                         <div class="tables">
-                            <div class="item" id="workspaceOverview"></div>
-                            <div class="item" id="workspaceProjects"></div>
-                            <div class="item" id="workspaceSessions"></div>
-                            <div class="item" id="workspaceUserList"></div>
+                            <div id="workspaceStatistics"></div>
+                            <div id="workspaceProjects"></div>
+                            <div id="workspaceSessions"></div>
+                            <div id="workspaceUserList"></div>
                         </div>
                     </div>
                 </div>
