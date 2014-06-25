@@ -18,12 +18,13 @@
 package com.codenvy.analytics.metrics.sessions;
 
 import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.WithoutFromDateParam;
 
 import javax.annotation.security.RolesAllowed;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
-public class ProductUsageSessions extends AbstractProductUsageSessions {
+public class ProductUsageSessions extends AbstractProductUsageSessions implements WithoutFromDateParam {
 
     public ProductUsageSessions() {
         super(MetricType.PRODUCT_USAGE_SESSIONS);

@@ -1580,13 +1580,6 @@ function Configuration() {
         "Is Authenticated Session",
         "Is Converted Session",
     ];
-    var totalMetricNames = [
-        "total_factories",
-        "total_projects",
-        "total_users",
-        "total_workspaces",
-        "product_usage_sessions",
-    ];
 
     /**
      * Returns property of widget.
@@ -1783,9 +1776,6 @@ function Configuration() {
         return isSpecificName(columnName, textColumnNames);
     }
     
-    function isTotalMetric(metricName) {
-        return isSpecificName(metricName, totalMetricNames);
-    }
 
     /** ****************** API ********** */
     return {
@@ -1810,6 +1800,5 @@ function Configuration() {
         isWorkspaceColumnName: isWorkspaceColumnName,
         isUserColumnName: isUserColumnName,
         isTextColumnName: isTextColumnName,
-        isTotalMetric: isTotalMetric,
     }
 }

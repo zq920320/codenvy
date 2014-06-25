@@ -44,6 +44,7 @@ import com.codenvy.analytics.datamodel.ValueDataFactory;
 import com.codenvy.analytics.metrics.AbstractCount;
 import com.codenvy.analytics.metrics.AbstractMetric;
 import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.CumulativeMetric;
 import com.codenvy.analytics.metrics.Expandable;
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricFactory;
@@ -54,6 +55,7 @@ import com.codenvy.analytics.metrics.ReadBasedExpandable;
 import com.codenvy.analytics.metrics.ReadBasedMetric;
 import com.codenvy.analytics.metrics.ReadBasedSummariziable;
 import com.codenvy.analytics.metrics.WithoutFromDateParam;
+import com.codenvy.analytics.metrics.sessions.ProductUsageSessions;
 import com.codenvy.analytics.metrics.users.AbstractUsersProfile;
 import com.codenvy.analytics.metrics.users.NonActiveUsers;
 import com.codenvy.analytics.metrics.workspaces.NonActiveWorkspaces;
@@ -260,14 +262,15 @@ public class MongoDataLoader implements DataLoader {
         if (clauses.exists(Parameters.EXPANDED_METRIC_NAME)) {
             Metric expandable = clauses.getExpandedMetric();
 
-            if (expandable != null) {
+            if (expandable != null
+                && ! isCumulativeMetric(expandable)) {
                 filteringValues = getExpandedMetricValues(clauses, expandable);
                 filteringField = ((Expandable)expandable).getExpandedField();
                 match.put(filteringField, new BasicDBObject("$in", filteringValues));
 
                 // remove already used by expandable metric and so redundant parameters
                 clauses = clauses.cloneAndRemove(MetricFilter.FACTORY);
-                clauses = clauses.cloneAndRemove(MetricFilter.REFERRER);
+                clauses = clauses.cloneAndRemove(MetricFilter.REFERRER);        
             }
 
             clauses = fixDateParametersDueToExpandedMetric(clauses, expandable);
@@ -373,7 +376,7 @@ public class MongoDataLoader implements DataLoader {
     /**
      * Fix date parameters due to specific expanded metric filter
      */
-    private Context fixDateParametersDueToExpandedMetric(Context clauses, Metric expandedMetric) throws ParseException {
+    private Context fixDateParametersDueToExpandedMetric(Context clauses, Metric expandedMetric) throws ParseException {               
         // fix date clauses to display non-active users or workspaces
         if (expandedMetric instanceof NonActiveUsers || expandedMetric instanceof NonActiveWorkspaces) {
             if (clauses.exists(Parameters.FROM_DATE)) {
@@ -384,11 +387,12 @@ public class MongoDataLoader implements DataLoader {
                         .build();
             }
 
-            // remove from_date clause to display all documents to_date
-        } else if (expandedMetric instanceof WithoutFromDateParam) {
+        // remove from_date clause to display all documents to_date
+        } else if (expandedMetric instanceof WithoutFromDateParam
+                   && ! clauses.exists(Parameters.PASSED_DAYS_COUNT)) {
             clauses = clauses.cloneAndRemove(Parameters.FROM_DATE);
         }
-
+        
         return clauses;
     }
 
@@ -490,6 +494,13 @@ public class MongoDataLoader implements DataLoader {
         }
     }
 
+    
+    private boolean isCumulativeMetric(Metric expandable) {
+        return expandable instanceof CumulativeMetric 
+               || expandable instanceof ProductUsageSessions;
+    }    
+
+    
     private ValueData createdValueData(ReadBasedMetric metric, Iterator<DBObject> iterator) {
         Class<? extends ValueData> clazz = metric.getValueDataClass();
 

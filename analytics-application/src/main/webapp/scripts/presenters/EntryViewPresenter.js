@@ -30,11 +30,6 @@ analytics.presenter.EntryViewPresenter.prototype.load = function () {
     
     var viewParams = view.getParams();
     
-    // don't filter by expanded values of total metrics to avoid limit of database 
-    if (analytics.configuration.isTotalMetric(viewParams[presenter.EXPANDED_METRIC_NAME_PARAMETER])) {
-        delete viewParams[presenter.EXPANDED_METRIC_NAME_PARAMETER];
-    }
-    
     var modelParams = presenter.getModelParams(viewParams);
     
     // obtain page count

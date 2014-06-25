@@ -354,6 +354,36 @@ public class TestExpandedMetric extends BaseTest {
                                           configurator));
     }
 
+    @Test
+    public void testFilteringUsersStatisticsListByTotalUsersAndTimeUnit() throws Exception {
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20131101");
+        builder.put(Parameters.TO_DATE, "20131101");
+        builder.put(Parameters.LOG, log.getAbsolutePath());
+        
+        builder.putAll(scriptsManager.getScript(ScriptType.USERS_STATISTICS, MetricType.USERS_STATISTICS_LIST).getParamsAsMap());
+        pigServer.execute(ScriptType.USERS_STATISTICS, builder.build());
+        
+        builder.put(Parameters.FROM_DATE, "20131220");
+        builder.put(Parameters.TO_DATE, "20131220");
+        pigServer.execute(ScriptType.USERS_STATISTICS, builder.build());
+        
+        // test filtering user list by "total_users" metric
+        builder = new Context.Builder();
+        builder.put(Parameters.TO_DATE, "20131120");
+        builder.put(Parameters.TIME_UNIT, Parameters.TimeUnit.WEEK.toString());
+        builder.put(Parameters.TIME_INTERVAL, 0);  // interval from 20131208 to 20131214  
+        builder.put(Parameters.EXPANDED_METRIC_NAME, MetricType.TOTAL_USERS.toString());
+
+        Metric usersStatisticsListMetric = MetricFactory.getMetric(MetricType.USERS_STATISTICS_LIST);
+        
+        Context context = builder.build();
+        context = viewBuilder.initializeTimeInterval(context);
+        
+        ListValueData filteredValue = (ListValueData)usersStatisticsListMetric.getValue(context);
+        List<ValueData> all = filteredValue.getAll();        
+        assertEquals(all.size(), 5);
+    }    
     
     @Test
     public void testFilteringOfDrillDownPage() throws Exception {
