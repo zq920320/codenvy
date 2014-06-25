@@ -161,7 +161,7 @@ public class FactoryUrlBaseValidator {
         if (restriction != null) {
             if (0 != restriction.getValidsince()) {
                 if (null == orgid) {
-                    throw new FactoryUrlException(String.format(FactoryConstants.PARAMETRIZED_ILLEGAL_TRACKED_PARAMETER_MESSAGE, "validsince", null));
+                    throw new FactoryUrlException(String.format(FactoryConstants.PARAMETRIZED_ILLEGAL_TRACKED_PARAMETER_MESSAGE, null, "validsince"));
                 }
 
                 if (new Date().before(new Date(restriction.getValidsince()))) {
@@ -171,7 +171,7 @@ public class FactoryUrlBaseValidator {
 
             if (0 != restriction.getValiduntil()) {
                 if (null == orgid) {
-                    throw new FactoryUrlException(String.format(FactoryConstants.PARAMETRIZED_ILLEGAL_TRACKED_PARAMETER_MESSAGE, "validuntil", null));
+                    throw new FactoryUrlException(String.format(FactoryConstants.PARAMETRIZED_ILLEGAL_TRACKED_PARAMETER_MESSAGE, null, "validuntil"));
                 }
 
                 if (new Date().after(new Date(restriction.getValiduntil()))) {
@@ -184,7 +184,7 @@ public class FactoryUrlBaseValidator {
             if (restriction.getRestrictbypassword()) {
                 if (null == orgid) {
                     throw new FactoryUrlException(
-                            String.format(FactoryConstants.PARAMETRIZED_ILLEGAL_TRACKED_PARAMETER_MESSAGE, "restrictbypassword", null));
+                            String.format(FactoryConstants.PARAMETRIZED_ILLEGAL_TRACKED_PARAMETER_MESSAGE, null, "restrictbypassword"));
                 }
 
                 // TODO implement
@@ -192,7 +192,7 @@ public class FactoryUrlBaseValidator {
 
             if (null != restriction.getPassword()) {
                 if (null == orgid) {
-                    throw new FactoryUrlException(String.format(FactoryConstants.PARAMETRIZED_ILLEGAL_TRACKED_PARAMETER_MESSAGE, "password", null));
+                    throw new FactoryUrlException(String.format(FactoryConstants.PARAMETRIZED_ILLEGAL_TRACKED_PARAMETER_MESSAGE, null, "password"));
                 }
 
                 // TODO implement
@@ -200,7 +200,7 @@ public class FactoryUrlBaseValidator {
 
             if (0 != restriction.getMaxsessioncount()) {
                 if (null == orgid) {
-                    throw new FactoryUrlException(String.format(FactoryConstants.PARAMETRIZED_ILLEGAL_TRACKED_PARAMETER_MESSAGE, "maxsessioncount", null));
+                    throw new FactoryUrlException(String.format(FactoryConstants.PARAMETRIZED_ILLEGAL_TRACKED_PARAMETER_MESSAGE, null, "maxsessioncount"));
                 }
 
                 // TODO implement
@@ -209,7 +209,7 @@ public class FactoryUrlBaseValidator {
 
         if (null != factory.getWelcome()) {
             if (null == orgid) {
-                throw new FactoryUrlException(String.format(FactoryConstants.PARAMETRIZED_ILLEGAL_TRACKED_PARAMETER_MESSAGE, "welcome", null));
+                throw new FactoryUrlException(String.format(FactoryConstants.PARAMETRIZED_ILLEGAL_TRACKED_PARAMETER_MESSAGE, null, "welcome"));
             }
         }
     }
