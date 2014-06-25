@@ -16,9 +16,9 @@
  * from Codenvy S.A..
  */
  
-define(["underscore","views/accountformbase","models/account"],
+define(["jquery","underscore","views/accountformbase","models/account"],
 
-    function(_,AccountFormBase,Account){
+    function($,_,AccountFormBase,Account){
 
         var ForgotPasswordForm = AccountFormBase.extend({
             __submit : function(){
