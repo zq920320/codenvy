@@ -28,6 +28,7 @@ analytics.initial_values.metric_total_projects=0
 analytics.scheduler.cron_timetable=0 0 1 ? * *
 # analytics.scheduler.force_run_class=com.codenvy.analytics.services.PigRunnerFeature
 # analytics.scheduler.force_run_class=com.codenvy.analytics.services.DataComputationFeature
+# analytics.scheduler.force_run_class=com.codenvy.analytics.services.CreatedUsersCollectionUpdaterFeature
 # analytics.scheduler.force_run_class=com.codenvy.analytics.services.ViewBuilderFeature
 # analytics.scheduler.force_run_class=com.codenvy.analytics.services.LogCheckerFeature
 # analytics.scheduler.force_run_class=com.codenvy.analytics.services.ReportSenderFeature

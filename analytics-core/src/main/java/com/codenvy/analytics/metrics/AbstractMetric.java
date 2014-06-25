@@ -77,6 +77,9 @@ public abstract class AbstractMetric implements Metric {
     public static final String BUILD_INTERRUPTS      = "build_interrupts";
     public static final String ARTIFACT_DEPLOYS      = "artifact_deploys";
     public static final String DEBUG_TIME            = "debug_time";
+    public static final String REGISTERED_USER       = "registered_user";
+    public static final String PERSISTENT_WS         = "persistent_ws";
+    public static final String DEFAULT_VALUE         = "default";
 
     private final String metricName;
 

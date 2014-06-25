@@ -56,6 +56,7 @@ public class Scheduler implements ServletContextListener {
 
     private static final Class[] features = new Class[]{PigRunnerFeature.class,
                                                         DataComputationFeature.class,
+                                                        CreatedUsersCollectionUpdaterFeature.class,
                                                         ViewBuilderFeature.class,
                                                         LogCheckerFeature.class,
                                                         ReportSenderFeature.class,
