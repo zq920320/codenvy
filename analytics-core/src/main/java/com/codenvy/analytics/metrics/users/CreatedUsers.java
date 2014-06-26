@@ -37,4 +37,6 @@ public class CreatedUsers extends AbstractLongValueResulted {
     public String getDescription() {
         return "The number of registered users";
     }
+
+
 }

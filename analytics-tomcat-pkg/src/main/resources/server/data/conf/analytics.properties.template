@@ -28,7 +28,7 @@ analytics.initial_values.metric_total_projects=0
 analytics.scheduler.cron_timetable=0 0 1 ? * *
 # analytics.scheduler.force_run_class=com.codenvy.analytics.services.PigRunnerFeature
 # analytics.scheduler.force_run_class=com.codenvy.analytics.services.DataComputationFeature
-# analytics.scheduler.force_run_class=com.codenvy.analytics.services.CreatedUsersCollectionUpdaterFeature
+# analytics.scheduler.force_run_class=com.codenvy.analytics.services.DataIntegrityFeature
 # analytics.scheduler.force_run_class=com.codenvy.analytics.services.ViewBuilderFeature
 # analytics.scheduler.force_run_class=com.codenvy.analytics.services.LogCheckerFeature
 # analytics.scheduler.force_run_class=com.codenvy.analytics.services.ReportSenderFeature
@@ -78,6 +78,9 @@ analytics.acton.ftp_password=
 analytics.acton.ftp_timeout=5000
 analytics.acton.ftp_auth=TLS
 analytics.acton.ftp_maxEfforts=5
+
+#Data Integrity configuration
+analytics.data-integrity.collections=created_users
 
 # Data Computation configuration
 analytics.data-computation.metrics=users_statistics_list_precomputed,workspaces_statistics_list_precomputed,factory_statistics_list_precomputed

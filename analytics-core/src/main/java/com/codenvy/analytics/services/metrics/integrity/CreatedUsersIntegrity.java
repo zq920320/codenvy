@@ -15,7 +15,7 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.services.metrics;
+package com.codenvy.analytics.services.metrics.integrity;
 
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
@@ -23,7 +23,6 @@ import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.datamodel.ValueDataUtil;
 import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.persistent.CollectionsManagement;
-import com.codenvy.analytics.services.Feature;
 import com.mongodb.AggregationOutput;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
@@ -33,46 +32,24 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 import java.io.IOException;
 import java.util.*;
 
 /**
- * CreatedUsersCollectionUpdater will update created_users collection.
- * For users without event "user-created" will be added (if possible) records in created_users collection.
- *
  * @author Alexander Reshetnyak
  */
-@Singleton
-public class CreatedUsersCollectionUpdater extends Feature {
-    private static final Logger LOG       = LoggerFactory.getLogger(CreatedUsersCollectionUpdater.class);
-    private static final int    PAGE_SIZE = 10000;
-
+public class CreatedUsersIntegrity implements CollectionDataIntegrity {
+    private static final Logger LOG = LoggerFactory.getLogger(CreatedUsersIntegrity.class);
     private final CollectionsManagement collectionsManagement;
+    private static final int PAGE_SIZE = 10000;
 
     @Inject
-    public CreatedUsersCollectionUpdater(CollectionsManagement collectionsManagement)
-            throws IOException {
+    public CreatedUsersIntegrity(CollectionsManagement collectionsManagement) throws IOException {
         this.collectionsManagement = collectionsManagement;
     }
 
     @Override
-    public boolean isAvailable() {
-        return true;
-    }
-
-    @Override
-    public void doExecute(Context context) throws IOException {
-        LOG.info("CreatedUsersCollectionUpdater is started...");
-        long start = System.currentTimeMillis();
-        try {
-            doCompute();
-        } finally {
-            LOG.info("CreatedUsersCollectionUpdater is finished in " + (System.currentTimeMillis() - start) / 1000 + " sec.");
-        }
-    }
-
-    private void doCompute() throws IOException {
+    public void doCompute() throws IOException {
         // get users' profiles
         List<ValueData> usersProfiles = getUsersProfiles();
 
@@ -125,14 +102,15 @@ public class CreatedUsersCollectionUpdater extends Feature {
             long resultSize = 0;
             while (iterator.hasNext()) {
                 DBObject record = iterator.next();
-                if (usersCreatedEventsMap.containsKey(record.get("user"))) {
+                if (usersCreatedEventsMap.containsKey(record.get(AbstractMetric.USER))) {
                     if (LOG.isDebugEnabled()) {
-                        LOG.warn("exists :" + record.get("user") + ", "
-                                 + usersCreatedEventsMap.get(record.get("user")));
-                        LOG.warn("new    :" + record.get("user") + ", " + record.get("date"));
+                        LOG.warn("exists :" + record.get(AbstractMetric.USER) + ", "
+                                 + usersCreatedEventsMap.get(record.get(AbstractMetric.USER)));
+                        LOG.warn("new    :" + record.get(AbstractMetric.USER) + ", " + record.get(AbstractMetric.DATE));
                     }
                 } else {
-                    usersCreatedEventsMap.put((String)record.get("user"), (Long)record.get("date"));
+                    usersCreatedEventsMap
+                            .put((String)record.get(AbstractMetric.USER), (Long)record.get(AbstractMetric.DATE));
                 }
                 resultSize++;
             }
@@ -155,7 +133,7 @@ public class CreatedUsersCollectionUpdater extends Feature {
 
         for (ValueData valueData : usersProfiles) {
             Map<String, ValueData> valueDataMap = ((MapValueData)valueData).getAll();
-            String userId = valueDataMap.get(ReadBasedMetric.ID).getAsString();
+            String userId = valueDataMap.get(AbstractMetric.ID).getAsString();
 
             if (!usersCreatedMap.containsKey(userId)) {
                 notExistUserCreatedEventMap
@@ -166,7 +144,7 @@ public class CreatedUsersCollectionUpdater extends Feature {
     }
 
     private DBObject getFirstEvent(String userId, DBCollection usersStatisticsCollection) {
-        return usersStatisticsCollection.findOne(new BasicDBObject("user", userId));
+        return usersStatisticsCollection.findOne(new BasicDBObject(AbstractMetric.USER, userId));
     }
 
 

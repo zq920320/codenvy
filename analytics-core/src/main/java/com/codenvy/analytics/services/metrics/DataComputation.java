@@ -44,8 +44,8 @@ public class DataComputation extends Feature {
 
     private static final Logger LOG = LoggerFactory.getLogger(DataComputation.class);
 
-    public static final  String METRICS   = "analytics.data-computation.metrics";
-    private static final int    PAGE_SIZE = 10000;
+    public static final String METRICS   = "analytics.data-computation.metrics";
+    public static final int    PAGE_SIZE = 10000;
 
     private final CollectionsManagement collectionsManagement;
     private final String[]              metrics;

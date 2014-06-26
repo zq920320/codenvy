@@ -22,7 +22,7 @@ import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.pig.scripts.ScriptType;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
-import com.codenvy.analytics.services.metrics.CreatedUsersCollectionUpdater;
+import com.codenvy.analytics.services.metrics.integrity.CreatedUsersIntegrity;
 
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -53,7 +53,7 @@ public class TestTotalUserWithCompanyFilter extends BaseTest {
         events.add(Event.Builder.createUserUpdateProfile("id2", "user2@gmail.com", "user2@gmail.com", "f2", "l2", "eXo", "11", "1")
                                 .withDate("2013-01-01").withTime("10:10:00,000").build());
 
-        // add user activity at previous day
+        // add user2 activity
         events.add(Event.Builder.createUserAddedToWsEvent("id2", "TEST_WS", "", "", "", "website")
                                 .withDate("2013-01-01").withTime("10:20:00").build());
 
@@ -65,9 +65,9 @@ public class TestTotalUserWithCompanyFilter extends BaseTest {
         File log = LogGenerator.generateLog(events);
         computeStatistics(log, "20130101");
 
-        CreatedUsersCollectionUpdater
-                createdUsersUpdater = new CreatedUsersCollectionUpdater(collectionsManagement);
-        createdUsersUpdater.doExecute(Context.EMPTY);
+        CreatedUsersIntegrity
+                createdUsersUpdater = new CreatedUsersIntegrity(collectionsManagement);
+        createdUsersUpdater.doCompute();
     }
 
     private void computeStatistics(File log, String date) throws IOException, ParseException {

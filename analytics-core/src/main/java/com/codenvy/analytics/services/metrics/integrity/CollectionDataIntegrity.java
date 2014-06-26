@@ -15,16 +15,13 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.services;
+package com.codenvy.analytics.services.metrics.integrity;
 
-import com.codenvy.analytics.services.metrics.CreatedUsersCollectionUpdater;
+import java.io.IOException;
 
 /**
  * @author Alexander Reshetnyak
  */
-public class CreatedUsersCollectionUpdaterFeature extends FeatureWrapper {
-
-    public CreatedUsersCollectionUpdaterFeature() {
-        super(CreatedUsersCollectionUpdater.class);
-    }
+public interface CollectionDataIntegrity {
+    void doCompute() throws IOException;
 }
