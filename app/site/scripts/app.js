@@ -131,7 +131,7 @@ define(["jquery","config",
                                 form.__restoreForm();
                                 errorReport.show(message);
                             });
-                            form.addSubscription();
+                            form.selectWorkspace();
                         }());
                     }
 
