@@ -31,7 +31,7 @@
     </view>
 
     <view name="user_statistics" on-demand="true">
-        <section name="user">
+        <section name="user_statistics">
             <row class="com.codenvy.analytics.services.view.TitleRow">
                 <parameter key="titles"
                            value="# Sessions,Total Time,Total Build Time,Total Run Time,# Builds,# Debugs,# Deploys"/>
@@ -46,7 +46,7 @@
     </view>
 
     <view name="user_overview" on-demand="true">
-        <section name="user">
+        <section name="user_overview">
             <row class="com.codenvy.analytics.services.view.TitleRow">
                 <parameter key="titles"
                            value="ID,Aliases,First Name,Last Name,Company,Phone,Job"/>

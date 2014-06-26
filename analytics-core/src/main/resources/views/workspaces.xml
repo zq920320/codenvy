@@ -31,7 +31,7 @@
     </view>
 
     <view name="workspace_statistics" on-demand="true">
-        <section name="workspace_overview">
+        <section name="workspace_statistics">
             <row class="com.codenvy.analytics.services.view.TitleRow">
                 <parameter key="titles"
                            value="# Sessions,Total Time,Total Build Time,Total Run Time,# Builds,# Debugs,# Deploys,# Users"/>
