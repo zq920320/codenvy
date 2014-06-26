@@ -1225,7 +1225,6 @@ function Configuration() {
             modelViewName: "factory_overview",
 
             columnLinkPrefixList: {
-                "Factory": "/analytics/pages/factory-view.jsp?factory",
                 "Created By": "/analytics/pages/user-view.jsp?user",
                 "Project Type": "/analytics/pages/projects-view.jsp?project_type",
             },
