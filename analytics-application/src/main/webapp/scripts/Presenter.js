@@ -53,6 +53,11 @@ Presenter.prototype.setModel = function(newModel) {
     this.model = newModel;
 };
 
+Presenter.prototype.getModel = function() {
+    return this.model;
+};
+
+
 Presenter.prototype.setWidgetName = function(newWidgetName) {
     this.widgetName = newWidgetName;
 };
@@ -171,7 +176,7 @@ Presenter.prototype.addServerSortingLinks = function(table, widgetName, modelPar
 
         if (typeof newSortingParameterValue == "undefined") {
             delete modelParams.sort;
-        } else {
+        } else {preventDisplaing:
             modelParams.sort = newSortingParameterValue;
         }
 
@@ -467,7 +472,7 @@ Presenter.prototype.displayEmptyWidget = function(defaultWidgetLabel) {
     
     var widgetLabel = analytics.configuration.getProperty(this.widgetName, "widgetLabel", defaultWidgetLabel);
     this.view.printWidgetHeader(widgetLabel, csvButtonLink);
-    this.view.show();
+    this.show();
 }
 
 Presenter.prototype.displayLoader = function() {
@@ -481,4 +486,28 @@ Presenter.prototype.hideLoader = function() {
     }
     
     this.loader = null;
+}
+
+Presenter.prototype.show = function() {
+    this.view.show();
+};
+
+Presenter.prototype.implementUIPreferences = function() {
+    this.view.implementUIPreferences();
+}
+
+Presenter.prototype.showAbortMessage = function() {
+    this.view.showAbortMessage();
+}
+
+Presenter.prototype.showInterruptMessage = function() {
+    this.view.showInterruptMessage();
+}
+
+Presenter.prototype.showErrorMessage = function(status, textStatus, errorThrown) {
+    this.view.showErrorMessage(status, textStatus, errorThrown);
+}
+
+Presenter.prototype.clear = function() {
+    this.view.clear();
 }

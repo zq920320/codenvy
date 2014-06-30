@@ -235,51 +235,53 @@ function Main() {
     }
 
     function loadWidget(widgetName, params, callback) {
-        var model = analytics.factory.getModel(widgetName);
-        var view = analytics.factory.getView(widgetName);
-        var presenter = analytics.factory.getPresenter(widgetName, view, model);
-        
         var params = params || {};
         var callback = callback || function () {};
+        
+        analytics.factory.createPresenter(widgetName, params);
 
-        view.setParams(params);
-
+        var presenter = analytics.factory.getPresenter(widgetName);
+        
         // display loader after timeout
         presenter.needLoader = true;
         var timeoutInMillisec = 200;
         setTimeout(function () {
+            var presenter = analytics.factory.getPresenter(widgetName);
             if (presenter.needLoader == true) {
                 presenter.displayLoader();
             }
         }, timeoutInMillisec);
 
 
+        var model = presenter.getModel();
         model.clearDoneFunction();
         model.pushDoneFunction(function () {
+            var presenter = analytics.factory.getPresenter(widgetName);
             if (presenter.needLoader == false) {  // verify if creating of widget is finished entirely
                 presenter.hideLoader();
-                view.show();
+                presenter.show();
                 callback();
 
-                analytics.view.implementUIPreferences();
+                presenter.implementUIPreferences();
             }
         });
 
         model.clearFailFunction();
         model.pushFailFunction(function (status, textStatus, errorThrown) {
+            var presenter = analytics.factory.getPresenter(widgetName);
             presenter.needLoader = false;
             presenter.hideLoader();
 
             if (textStatus == "abort") {
-                view.showAbortMessage();
+                presenter.showAbortMessage();
             } else if (textStatus == "error" && status == 0){
-                view.showInterruptMessage();
+                presenter.showInterruptMessage();
             } else {
-                view.showErrorMessage(status, textStatus, errorThrown);
+                presenter.showErrorMessage(status, textStatus, errorThrown);
             }
         });
-
-        view.clear();
+        
+        presenter.clear();
         presenter.load();
     }
 

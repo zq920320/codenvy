@@ -20,56 +20,55 @@ analytics.factory = new Factory();
 
 function Factory() {   
     var widgetComponents = {};
-		
-    function getModel(widgetName) {
-        if (typeof widgetComponents[widgetName] == "undefined") {
-            widgetComponents[widgetName] = {}; 
-        }
-        
-        if (typeof widgetComponents[widgetName].model == "undefined") {
-            widgetComponents[widgetName].model = new Model();
-        }        
-        
-        return widgetComponents[widgetName].model;
+    
+    function getModel() {
+        return new Model();
     }
 
     function getView(widgetName, params) {
-        if (typeof widgetComponents[widgetName] == "undefined") {
-            widgetComponents[widgetName] = {};
-        }
+        var view = new View();
         
-        if (typeof widgetComponents[widgetName].view == "undefined") {
-            widgetComponents[widgetName].view = new View();
-            var widgetElement = jQuery("#" + widgetName);
-            widgetComponents[widgetName].view.setWidget(widgetElement);
-        }
+        var widgetElement = jQuery("#" + widgetName);
+        view.setWidget(widgetElement);
         
-        widgetComponents[widgetName].view.setParams(params);
+        view.setParams(params);
         
-        return widgetComponents[widgetName].view;
+        return view;
     }
 
-    function getPresenter(widgetName, view, model) {
+    function getPresenter(widgetName) {
         if (typeof widgetComponents[widgetName] == "undefined") {
             widgetComponents[widgetName] = {};
         }
-        
+
         if (typeof widgetComponents[widgetName].presenter == "undefined") {
-            var presenterType = analytics.configuration.getProperty(widgetName, "presenterType");
-            widgetComponents[widgetName].presenter = new analytics.presenter[presenterType]();
+            createPresenter(widgetName);
         }
-        
-        widgetComponents[widgetName].presenter.setView(view);
-        widgetComponents[widgetName].presenter.setModel(model);
-        widgetComponents[widgetName].presenter.setWidgetName(widgetName);
-        
+
         return widgetComponents[widgetName].presenter;
+    }
+
+    function createPresenter(widgetName, params) {
+        var model = getModel();
+        var view = getView(widgetName, params);
+        
+        if (typeof widgetComponents[widgetName] == "undefined") {
+            widgetComponents[widgetName] = {};
+        }
+
+        var presenterType = analytics.configuration.getProperty(widgetName, "presenterType");
+        
+        var presenter = new analytics.presenter[presenterType]();        
+        presenter.setView(view);
+        presenter.setModel(model);
+        presenter.setWidgetName(widgetName);
+        
+        widgetComponents[widgetName].presenter = presenter;
     }
     
     /** ****************** API ********** */
     return {
-        getModel : getModel,
-        getView: getView,
-        getPresenter: getPresenter
+        getPresenter: getPresenter,
+        createPresenter: createPresenter,
     }
 }

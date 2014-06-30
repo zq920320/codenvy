@@ -37,8 +37,10 @@ function Loader() {
 	}
 	
 	function hide() {
-	   loaderElement.remove();
-	   loaderElement = null;
+	   if (loaderElement != null) {
+           loaderElement.remove();
+           loaderElement = null;
+	   }
 	}
 	
     /** ****************** API ********** */
