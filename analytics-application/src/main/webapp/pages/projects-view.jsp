@@ -52,11 +52,12 @@
                                     <input type="text" id="input-ws" name="ws" class="text-box" />
                                 </div></td>
                             </tr>
+
                             <tr>
-                                <td><label for="input-user">User ID:</label></td>
-                                <td><div class="filter-item">
-                                    <input type="text" id="input-user" name="user" class="text-box" />
-                                </div></td>
+                               <td><label for="input-aliases">User:</label></td>
+                               <td><div class="filter-item">
+                                   <input type="text" id="input-aliases" name="aliases" class="text-box" />
+                               </div></td>
                             </tr>
                             <tr>
                                 <td></td>
