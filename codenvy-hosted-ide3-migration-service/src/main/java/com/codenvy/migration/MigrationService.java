@@ -17,10 +17,9 @@
  */
 package com.codenvy.migration;
 
+import com.codenvy.api.project.server.ProjectProperties;
 import com.codenvy.commons.json.JsonHelper;
-import com.codenvy.migration.model.ProjectDescription;
-import com.codenvy.migration.model.Property;
-import com.codenvy.migration.model.ProjectTypes;
+import com.codenvy.ide.factory.server.migration.ProjectTypeHelper;
 
 
 import javax.annotation.security.RolesAllowed;
@@ -40,7 +39,6 @@ public class MigrationService {
     @Inject
     @Named("vfs.local.fs_root_dir")
     private String fsRoot;
-
 
     @GET
     @RolesAllowed("system/admin")
@@ -80,72 +78,10 @@ public class MigrationService {
                 return Response.status(400)
                         .entity(String.format("Cannot find properties for project %s", projectFile.getName())).build();
 
-            String projectType;
             String currentName = projectFile.getName().substring(0, projectFile.getName().lastIndexOf("_props"));
-            List<Property> outputProps = new ArrayList<>();
-            String runnerTemplate = null;
+            String runnerTemplate = ProjectTypeHelper.getRunnerTemplate(inputProps.get("vfs:projectType")[0]);
+            ProjectProperties projectDescription = ProjectTypeHelper.projectTypeToDescription(inputProps.get("vfs:projectType")[0]);
 
-
-            switch (inputProps.get("vfs:projectType")[0]) {
-
-                case "Jar": {
-                    projectType = ProjectTypes.MAVEN.toString();
-                    outputProps.add(new Property("builder.name", new String[]{"maven"}));
-                    outputProps.add(new Property("runner.name", new String[]{"JavaStandalone"}));
-                    break;
-                }
-                case "Servlet/JSP": {
-                    projectType = ProjectTypes.MAVEN.toString();
-                    outputProps.add(new Property("builder.name", new String[]{"maven"}));
-                    outputProps.add(new Property("runner.name", new String[]{"JavaWeb"}));
-                    break;
-                }
-                case "PHP": {
-                    projectType = ProjectTypes.UNKNOWN.toString();
-                    //runnerTemplate = TEMPLATE_PHP;//example
-                    break;
-                }
-                case "JavaScript": {
-                    projectType = ProjectTypes.UNKNOWN.toString();
-                    //runnerTemplate = TEMPLATE_JS;//example
-                    break;
-                }
-                case "Spring": {
-                    projectType = ProjectTypes.UNKNOWN.toString();
-                    //runnerTemplate = TEMPLATE_SPRING;//example
-                    break;
-                }
-                case "Rails": {
-                    projectType = ProjectTypes.UNKNOWN.toString();
-                    //runnerTemplate = TEMPLATE_ROR;//example
-                    break;
-                }
-                case "Python": {
-                    projectType = ProjectTypes.UNKNOWN.toString();
-                    //runnerTemplate = TEMPLATE_PY;//example
-                    break;
-                }
-                case "Android": {
-                    projectType = ProjectTypes.UNKNOWN.toString();
-                    outputProps.add(new Property("runner.name", new String[]{"Android"}));// Will work ?
-                    outputProps.add(new Property("builder.name", new String[]{"maven"}));
-                    //runnerTemplate = TEMPLATE_ANDROID;//example
-                    break;
-                }
-                case "nodejs": {
-                    projectType = ProjectTypes.UNKNOWN.toString();
-                    //runnerTemplate = TEMPLATE_NJS;//example
-                    break;
-                }
-                default: {
-                    projectType = ProjectTypes.UNKNOWN.toString();
-                }
-            }
-
-
-            ProjectDescription projectDescription = new ProjectDescription();
-            projectDescription.setType(projectType);
-            projectDescription.setProperties(outputProps.toArray(new Property[outputProps.size()]));
 
 
             // Writing collected data to a file
@@ -158,7 +94,7 @@ public class MigrationService {
             }
 
 
-            File descriptionFile = new File(codenvyFolder, "project");
+            File descriptionFile = new File(codenvyFolder, "project.json");
             if (!descriptionFile.exists()) {
                 try (Writer writer = new BufferedWriter(new FileWriter(descriptionFile))) {
                     out.append(String.format("Converting project: %s, type: %s <br/> ", projectFile.getName(),
