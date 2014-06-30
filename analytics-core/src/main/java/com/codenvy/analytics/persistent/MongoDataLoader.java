@@ -58,6 +58,7 @@ import com.codenvy.analytics.metrics.WithoutFromDateParam;
 import com.codenvy.analytics.metrics.sessions.ProductUsageSessions;
 import com.codenvy.analytics.metrics.users.AbstractUsersProfile;
 import com.codenvy.analytics.metrics.users.NonActiveUsers;
+import com.codenvy.analytics.metrics.users.UsersProfiles;
 import com.codenvy.analytics.metrics.workspaces.NonActiveWorkspaces;
 import com.mongodb.AggregationOutput;
 import com.mongodb.BasicDBObject;
@@ -306,6 +307,13 @@ public class MongoDataLoader implements DataLoader {
                 } else if (!value.equals(Parameters.USER_TYPES.ANY.name())) {
                     match.put(MetricFilter.USER.toString().toLowerCase(), processFilter(value, filter.isNumericType()));
                 }
+                
+            } else if (!(metric instanceof AbstractUsersProfile) 
+                && filter == MetricFilter.ALIASES) {
+                String userId = getUserIdByAliases(value);
+                if (userId != null) {
+                    match.put(MetricFilter.USER.toString().toLowerCase(), userId);
+                }
 
             } else if (filter == MetricFilter.WS) {
                 if (value.equals(Parameters.WS_TYPES.PERSISTENT.name())) {
@@ -500,6 +508,31 @@ public class MongoDataLoader implements DataLoader {
                || expandable instanceof ProductUsageSessions;
     }    
 
+    public String getUserIdByAliases(Object aliases) throws IOException {
+        Metric metric = MetricFactory.getMetric(MetricType.USERS_PROFILES_LIST);
+
+        // try to filter by alias as userId in case if they aren't email
+        if (! aliases.toString().contains("@")) {
+            return aliases.toString();
+        }
+        
+        Context.Builder builder = new Context.Builder();
+        builder.put(MetricFilter.ALIASES, aliases);
+        Context context = builder.build();
+
+        ListValueData value = (ListValueData)metric.getValue(context);
+
+        String userId = null;
+        
+        List<ValueData> rows = treatAsList(value);
+        
+        if (rows.size() > 0) {
+            userId = ((MapValueData) rows.get(0)).getAll().get(AbstractMetric.ID).getAsString();
+        }
+
+        return userId;
+    }
+    
     
     private ValueData createdValueData(ReadBasedMetric metric, Iterator<DBObject> iterator) {
         Class<? extends ValueData> clazz = metric.getValueDataClass();

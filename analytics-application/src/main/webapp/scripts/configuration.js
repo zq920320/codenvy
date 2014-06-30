@@ -33,8 +33,8 @@ function Configuration() {
             displayLineChart: true,  // default is false
         },
 
-        factoryStatistics: {
-            widgetLabel: "Factory Statistics",
+        factoryReport: {
+            widgetLabel: "Factory Report",
             presenterType: "ReportPresenter",
             modelViewName: "factory-timeline",
 
@@ -1333,6 +1333,7 @@ function Configuration() {
     var registeredModelParams = [
         "time_unit",
         "user",
+        "aliases",
         "domain",
         "user_company",
         "org_id",

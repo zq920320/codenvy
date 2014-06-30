@@ -17,14 +17,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Factory Statistics</title>
+    <title>Factory Report</title>
     <%@ include file="/inclusions/header.jsp"%>
 </head>
 <body>
 
 <jsp:include page="/inclusions/top-menu/top-menu.jsp">
     <jsp:param name="selectedMenuItemId" value="topmenu-reports"/>
-    <jsp:param name="selectedMenuItemId" value="topmenu-reports-factories"/>
+    <jsp:param name="selectedMenuItemId" value="topmenu-reports-factory_report"/>
 </jsp:include>
 
 <div class="container-fluid">
@@ -36,9 +36,9 @@
                     <div class="collabsiblePanelBody">
                         <table>
                             <tr>
-                               <td><label for="input-user">User ID:</label></td>
+                               <td><label for="input-aliases">User:</label></td>
                                <td><div class="filter-item">
-                                   <input type="text" id="input-user" name="user" class="text-box" />
+                                   <input type="text" id="input-aliases" name="aliases" class="text-box" />
                                </div></td>
                             </tr>
                             <tr>
@@ -82,7 +82,7 @@
                 <div class="single-column-gadget">
                     <div class="view">
                         <div class="tables">
-                            <div id="factoryStatistics"></div>
+                            <div id="factoryReport"></div>
                         </div>
                     </div>
                 </div>
