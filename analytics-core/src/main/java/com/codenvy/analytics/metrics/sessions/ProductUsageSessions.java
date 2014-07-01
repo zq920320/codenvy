@@ -24,7 +24,7 @@ import javax.annotation.security.RolesAllowed;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
-public class ProductUsageSessions extends AbstractProductUsageSessions implements WithoutFromDateParam {
+public class ProductUsageSessions extends AbstractProductUsageSessions {
 
     public ProductUsageSessions() {
         super(MetricType.PRODUCT_USAGE_SESSIONS);

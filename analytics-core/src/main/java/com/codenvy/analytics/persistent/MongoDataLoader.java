@@ -55,10 +55,8 @@ import com.codenvy.analytics.metrics.ReadBasedExpandable;
 import com.codenvy.analytics.metrics.ReadBasedMetric;
 import com.codenvy.analytics.metrics.ReadBasedSummariziable;
 import com.codenvy.analytics.metrics.WithoutFromDateParam;
-import com.codenvy.analytics.metrics.sessions.ProductUsageSessions;
 import com.codenvy.analytics.metrics.users.AbstractUsersProfile;
 import com.codenvy.analytics.metrics.users.NonActiveUsers;
-import com.codenvy.analytics.metrics.users.UsersProfiles;
 import com.codenvy.analytics.metrics.workspaces.NonActiveWorkspaces;
 import com.mongodb.AggregationOutput;
 import com.mongodb.BasicDBObject;
@@ -264,7 +262,7 @@ public class MongoDataLoader implements DataLoader {
             Metric expandable = clauses.getExpandedMetric();
 
             if (expandable != null
-                && ! isCumulativeMetric(expandable)) {
+                && ! (expandable instanceof CumulativeMetric)) {
                 filteringValues = getExpandedMetricValues(clauses, expandable);
                 filteringField = ((Expandable)expandable).getExpandedField();
                 match.put(filteringField, new BasicDBObject("$in", filteringValues));
@@ -396,8 +394,7 @@ public class MongoDataLoader implements DataLoader {
             }
 
         // remove from_date clause to display all documents to_date
-        } else if (expandedMetric instanceof WithoutFromDateParam
-                   && ! clauses.exists(Parameters.PASSED_DAYS_COUNT)) {
+        } else if (expandedMetric instanceof WithoutFromDateParam) {
             clauses = clauses.cloneAndRemove(Parameters.FROM_DATE);
         }
         
@@ -501,12 +498,6 @@ public class MongoDataLoader implements DataLoader {
             match.put(AbstractMetric.DATE, dateFilter);
         }
     }
-
-    
-    private boolean isCumulativeMetric(Metric expandable) {
-        return expandable instanceof CumulativeMetric 
-               || expandable instanceof ProductUsageSessions;
-    }    
 
     public String getUserIdByAliases(Object aliases) throws IOException {
         Metric metric = MetricFactory.getMetric(MetricType.USERS_PROFILES_LIST);

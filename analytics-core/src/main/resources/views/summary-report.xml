@@ -48,7 +48,7 @@
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="product_usage_sessions"/>
-                <parameter key="description" value="Sessions - Cumulative"/>
+                <parameter key="description" value="Sessions"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="factory_sessions"/>
