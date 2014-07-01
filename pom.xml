@@ -41,7 +41,8 @@
         <tag>2.0.0</tag>
     </scm>
     <properties>
-        <ch.qos.logback.version>1.0.1</ch.qos.logback.version>
+        <ch.qos.logback.version>1.0.9</ch.qos.logback.version>
+        <javax.mail.version>1.4.2</javax.mail.version>
         <maven.releases.repo.url>https://maven.codenvycorp.com/content/repositories/codenvy-private-releases/</maven.releases.repo.url>
         <maven.snapshots.repo.url>https://maven.codenvycorp.com/content/repositories/codenvy-private-snapshots/</maven.snapshots.repo.url>
         <!-- Required by Apache Pig -->
