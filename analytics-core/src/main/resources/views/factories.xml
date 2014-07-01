@@ -53,7 +53,7 @@
                            value="Factory,Created By,Repository,Project Type,Organization ID,Affiliate ID"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="created_factories_list"/>
+                <parameter key="name" value="factory_statistics_list"/>
                 <parameter key="fields"
                            value="factory,user,repository,project_type,org_id,affiliate_id"/>
             </row>
