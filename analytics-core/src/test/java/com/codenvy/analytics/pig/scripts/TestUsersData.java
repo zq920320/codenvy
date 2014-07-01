@@ -32,6 +32,7 @@ import org.testng.annotations.Test;
 import java.util.List;
 import java.util.Map;
 
+import static com.codenvy.analytics.datamodel.ValueDataUtil.getAsList;
 import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsList;
 import static com.mongodb.util.MyAsserts.assertEquals;
 import static com.mongodb.util.MyAsserts.fail;
@@ -325,40 +326,46 @@ public class TestUsersData extends BaseTest {
 
         assertEquals(valueData.size(), 2);
     }
-    
+
     @Test
     public void testUserStatisticsFilteredByAliases() throws Exception {
         Metric metric = MetricFactory.getMetric(MetricType.USERS_STATISTICS_LIST);
 
-        {
-            Context.Builder builder = new Context.Builder();
-            builder.put(MetricFilter.ALIASES, "user1@gmail.com");
-            
-            ListValueData valueData = (ListValueData)metric.getValue(builder.build());
-            List<ValueData> rows = treatAsList(valueData);        
-            assertEquals(rows.size(), 1);
-            
-            String userId = ((MapValueData) rows.get(0)).getAll().get(AbstractMetric.USER).getAsString();
-            assertEquals(userId, "id1");
-            
-            String aliases = ((MapValueData) rows.get(0)).getAll().get(AbstractMetric.ALIASES).getAsString();
-            assertEquals(aliases, "[user1@gmail.com]");        
-        }
-    
-        // test treating UserId as "aliases" filter
-        {
-            Context.Builder builder = new Context.Builder();
-            builder.put(MetricFilter.ALIASES, "id1");
-            
-            ListValueData valueData = (ListValueData)metric.getValue(builder.build());
-            List<ValueData> rows = treatAsList(valueData);        
-            assertEquals(rows.size(), 1);
-            
-            String userId = ((MapValueData) rows.get(0)).getAll().get(AbstractMetric.USER).getAsString();
-            assertEquals(userId, "id1");
-            
-            String aliases = ((MapValueData) rows.get(0)).getAll().get(AbstractMetric.ALIASES).getAsString();
-            assertEquals(aliases, "[user1@gmail.com]");
-        }
+        Context.Builder builder = new Context.Builder();
+        builder.put(MetricFilter.ALIASES, "user1@gmail.com");
+
+        ListValueData valueData = (ListValueData)metric.getValue(builder.build());
+        List<ValueData> rows = treatAsList(valueData);
+        assertEquals(rows.size(), 1);
+
+        String userId = ((MapValueData)rows.get(0)).getAll().get(AbstractMetric.USER).getAsString();
+        assertEquals(userId, "id1");
+
+        String aliases = ((MapValueData)rows.get(0)).getAll().get(AbstractMetric.ALIASES).getAsString();
+        assertEquals(aliases, "[user1@gmail.com]");
+    }
+
+    @Test
+    public void testUserStatisticsFilteredByWrongAliases() throws Exception {
+        Metric metric = MetricFactory.getMetric(MetricType.USERS_STATISTICS_LIST);
+
+        Context.Builder builder = new Context.Builder();
+        builder.put(MetricFilter.ALIASES, "id1");
+
+        ListValueData valueData = getAsList(metric, builder.build());
+        List<ValueData> rows = treatAsList(valueData);
+        assertEquals(rows.size(), 0);
+    }
+
+    @Test
+    public void testUserStatisticsFilteredBySeveralAliases() throws Exception {
+        Metric metric = MetricFactory.getMetric(MetricType.USERS_STATISTICS_LIST);
+
+        Context.Builder builder = new Context.Builder();
+        builder.put(MetricFilter.ALIASES, "user1@gmail.com OR user2@gmail.com");
+
+        ListValueData valueData = getAsList(metric, builder.build());
+        List<ValueData> rows = treatAsList(valueData);
+        assertEquals(rows.size(), 2);
     }
 }

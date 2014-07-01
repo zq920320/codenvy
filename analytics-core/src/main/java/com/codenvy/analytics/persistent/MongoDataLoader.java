@@ -17,52 +17,20 @@
  */
 package com.codenvy.analytics.persistent;
 
-import static com.codenvy.analytics.datamodel.ValueDataUtil.getAsList;
-import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsList;
-
-import java.io.IOException;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.Pattern;
-
 import com.codenvy.analytics.Utils;
-import com.codenvy.analytics.datamodel.DoubleValueData;
-import com.codenvy.analytics.datamodel.ListValueData;
-import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.datamodel.MapValueData;
-import com.codenvy.analytics.datamodel.SetValueData;
-import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.datamodel.ValueDataFactory;
-import com.codenvy.analytics.metrics.AbstractCount;
-import com.codenvy.analytics.metrics.AbstractMetric;
-import com.codenvy.analytics.metrics.Context;
-import com.codenvy.analytics.metrics.CumulativeMetric;
-import com.codenvy.analytics.metrics.Expandable;
-import com.codenvy.analytics.metrics.Metric;
-import com.codenvy.analytics.metrics.MetricFactory;
-import com.codenvy.analytics.metrics.MetricFilter;
-import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.metrics.ReadBasedExpandable;
-import com.codenvy.analytics.metrics.ReadBasedMetric;
-import com.codenvy.analytics.metrics.ReadBasedSummariziable;
-import com.codenvy.analytics.metrics.WithoutFromDateParam;
+import com.codenvy.analytics.datamodel.*;
+import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.metrics.users.AbstractUsersProfile;
 import com.codenvy.analytics.metrics.users.NonActiveUsers;
 import com.codenvy.analytics.metrics.workspaces.NonActiveWorkspaces;
-import com.mongodb.AggregationOutput;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.DBObject;
+import com.mongodb.*;
+
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.*;
+import java.util.regex.Pattern;
+
+import static com.codenvy.analytics.datamodel.ValueDataUtil.*;
 
 /**
  * @author Anatoliy Bazko
@@ -256,20 +224,20 @@ public class MongoDataLoader implements DataLoader {
 
         String[] filteringValues = null;
         String filteringField = null;
-        
+
         // check if we need to filter list valued metric by another expanded metric
         if (clauses.exists(Parameters.EXPANDED_METRIC_NAME)) {
             Metric expandable = clauses.getExpandedMetric();
 
             if (expandable != null
-                && ! (expandable instanceof CumulativeMetric)) {
+                && !(expandable instanceof CumulativeMetric)) {
                 filteringValues = getExpandedMetricValues(clauses, expandable);
                 filteringField = ((Expandable)expandable).getExpandedField();
                 match.put(filteringField, new BasicDBObject("$in", filteringValues));
 
                 // remove already used by expandable metric and so redundant parameters
                 clauses = clauses.cloneAndRemove(MetricFilter.FACTORY);
-                clauses = clauses.cloneAndRemove(MetricFilter.REFERRER);        
+                clauses = clauses.cloneAndRemove(MetricFilter.REFERRER);
             }
 
             clauses = fixDateParametersDueToExpandedMetric(clauses, expandable);
@@ -287,17 +255,17 @@ public class MongoDataLoader implements DataLoader {
             if (!(metric instanceof AbstractUsersProfile)
                 && (filter == MetricFilter.USER_COMPANY
                     || filter == MetricFilter.USER_FIRST_NAME
-                    || filter == MetricFilter.USER_LAST_NAME)) { 
-                
+                    || filter == MetricFilter.USER_LAST_NAME)) {
+
                 String userFieldName = MetricFilter.USER.toString().toLowerCase();
                 DBObject usersToFilter = (userFieldName.equals(filteringField))
-                                         ? getUsers(filter, value, filteringValues) 
+                                         ? getUsers(filter, value, filteringValues)
                                          : getUsers(filter, value, null);
-                
+
                 match.put(userFieldName, usersToFilter);
 
-            } else if (!(metric instanceof AbstractUsersProfile) 
-                && filter == MetricFilter.USER) {
+            } else if (!(metric instanceof AbstractUsersProfile)
+                       && filter == MetricFilter.USER) {
                 if (value.equals(Parameters.USER_TYPES.REGISTERED.name())) {
                     match.put(MetricFilter.REGISTERED_USER.toString().toLowerCase(), 1);
                 } else if (value.equals(Parameters.USER_TYPES.ANONYMOUS.name())) {
@@ -305,13 +273,10 @@ public class MongoDataLoader implements DataLoader {
                 } else if (!value.equals(Parameters.USER_TYPES.ANY.name())) {
                     match.put(MetricFilter.USER.toString().toLowerCase(), processFilter(value, filter.isNumericType()));
                 }
-                
-            } else if (!(metric instanceof AbstractUsersProfile) 
-                && filter == MetricFilter.ALIASES) {
-                String userId = getUserIdByAliases(value);
-                if (userId != null) {
-                    match.put(MetricFilter.USER.toString().toLowerCase(), userId);
-                }
+
+            } else if (!(metric instanceof AbstractUsersProfile) && filter == MetricFilter.ALIASES) {
+                String[] userIds = getUserIdByAliases(value);
+                match.put(MetricFilter.USER.toString().toLowerCase(), processFilter(userIds, filter.isNumericType()));
 
             } else if (filter == MetricFilter.WS) {
                 if (value.equals(Parameters.WS_TYPES.PERSISTENT.name())) {
@@ -382,7 +347,7 @@ public class MongoDataLoader implements DataLoader {
     /**
      * Fix date parameters due to specific expanded metric filter
      */
-    private Context fixDateParametersDueToExpandedMetric(Context clauses, Metric expandedMetric) throws ParseException {               
+    private Context fixDateParametersDueToExpandedMetric(Context clauses, Metric expandedMetric) throws ParseException {
         // fix date clauses to display non-active users or workspaces
         if (expandedMetric instanceof NonActiveUsers || expandedMetric instanceof NonActiveWorkspaces) {
             if (clauses.exists(Parameters.FROM_DATE)) {
@@ -393,11 +358,11 @@ public class MongoDataLoader implements DataLoader {
                         .build();
             }
 
-        // remove from_date clause to display all documents to_date
+            // remove from_date clause to display all documents to_date
         } else if (expandedMetric instanceof WithoutFromDateParam) {
             clauses = clauses.cloneAndRemove(Parameters.FROM_DATE);
         }
-        
+
         return clauses;
     }
 
@@ -443,9 +408,9 @@ public class MongoDataLoader implements DataLoader {
         return result;
     }
 
-    /** 
+    /**
      * @return if usersToFilter != null: (usersToFilter INTERSECT usersFromFilter)
-     *                        otherwise: usersFromFilter
+     * otherwise: usersFromFilter
      */
     private DBObject getUsers(MetricFilter filter, Object value, String[] usersToFilter) throws IOException {
         Context.Builder builder = new Context.Builder();
@@ -456,7 +421,7 @@ public class MongoDataLoader implements DataLoader {
         List<ValueData> users = getAsList(metric, context).getAll();
 
         String[] result = new String[users.size()];
-        
+
         for (int i = 0; i < users.size(); i++) {
             MapValueData user = (MapValueData)users.get(i);
             Map<String, ValueData> profile = user.getAll();
@@ -467,7 +432,7 @@ public class MongoDataLoader implements DataLoader {
         if (usersToFilter != null) {
             result = Utils.arrayIntersect(result, usersToFilter);
         }
-        
+
         return new BasicDBObject("$in", result);
     }
 
@@ -499,32 +464,25 @@ public class MongoDataLoader implements DataLoader {
         }
     }
 
-    public String getUserIdByAliases(Object aliases) throws IOException {
+    public String[] getUserIdByAliases(Object aliases) throws IOException {
         Metric metric = MetricFactory.getMetric(MetricType.USERS_PROFILES_LIST);
 
-        // try to filter by alias as userId in case if they aren't email
-        if (! aliases.toString().contains("@")) {
-            return aliases.toString();
-        }
-        
         Context.Builder builder = new Context.Builder();
         builder.put(MetricFilter.ALIASES, aliases);
         Context context = builder.build();
 
-        ListValueData value = (ListValueData)metric.getValue(context);
-
-        String userId = null;
-        
+        ListValueData value = getAsList(metric, context);
         List<ValueData> rows = treatAsList(value);
-        
-        if (rows.size() > 0) {
-            userId = ((MapValueData) rows.get(0)).getAll().get(AbstractMetric.ID).getAsString();
+
+        String[] userId = new String[rows.size()];
+        for (int i = 0; i < rows.size(); i++) {
+            userId[i] = treatAsMap(rows.get(i)).get(AbstractMetric.ID).getAsString();
         }
 
         return userId;
     }
-    
-    
+
+
     private ValueData createdValueData(ReadBasedMetric metric, Iterator<DBObject> iterator) {
         Class<? extends ValueData> clazz = metric.getValueDataClass();
 
