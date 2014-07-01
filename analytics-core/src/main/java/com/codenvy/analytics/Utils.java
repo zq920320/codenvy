@@ -232,7 +232,8 @@ public class Utils {
     public static DBObject setDateFilter(Context context) throws ParseException {
         DBObject dateFilter = new BasicDBObject();
         dateFilter.put("$gte", context.getAsDate(Parameters.FROM_DATE).getTimeInMillis());
-        dateFilter.put("$lt", context.getAsDate(Parameters.TO_DATE).getTimeInMillis() + MongoDataLoader.DAY_IN_MILLISECONDS);
+        dateFilter.put("$lt",
+                       context.getAsDate(Parameters.TO_DATE).getTimeInMillis() + MongoDataLoader.DAY_IN_MILLISECONDS);
         return new BasicDBObject(ReadBasedMetric.DATE, dateFilter);
     }
 
@@ -257,7 +258,8 @@ public class Utils {
                 break;
         }
 
-        return context.cloneAndPut(Parameters.REPORT_ROWS, (rows > ViewBuilder.MAX_CSV_ROWS ? ViewBuilder.MAX_CSV_ROWS : rows));
+        return context.cloneAndPut(Parameters.REPORT_ROWS,
+                                   (rows > ViewBuilder.MAX_CSV_ROWS ? ViewBuilder.MAX_CSV_ROWS : rows));
     }
 
     public static String getFilterAsString(Set<String> values) {
@@ -315,7 +317,12 @@ public class Utils {
         if (allowedEntities == null || testedEntitiesAsString == null) {
             return true;
         } else {
-            Set<String> testedEntities = getFilterAsSet((String)testedEntitiesAsString);
+            Set<String> testedEntities;
+            if (testedEntitiesAsString.getClass().isArray()) {
+                testedEntities = new HashSet<>(Arrays.asList((String[])testedEntitiesAsString));
+            } else {
+                testedEntities = getFilterAsSet((String)testedEntitiesAsString);
+            }
 
             if (allowedEntities instanceof String) {
                 return getFilterAsSet((String)allowedEntities).containsAll(testedEntities);
@@ -397,21 +404,21 @@ public class Utils {
     public static String[] toArray(ValueData value) {
         return toArray(value == null ? null : value.getAsString());
     }
-    
+
     /**
      * @return c = a INTERSECT b
      */
     public static String[] arrayIntersect(String[] a, String[] b) {
         List<String> a_list = Arrays.asList(a);
         List<String> b_list = Arrays.asList(b);
-        
+
         int intersectListSize = a_list.size() > b_list.size() ? a_list.size() : b_list.size();
-        List<String> c_list = new ArrayList<> (intersectListSize);
-        
+        List<String> c_list = new ArrayList<>(intersectListSize);
+
         c_list.addAll(a_list);
-        
+
         c_list.retainAll(b_list);
-        
+
         return c_list.toArray(new String[0]);
     }
 }
