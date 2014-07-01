@@ -24,6 +24,7 @@ import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.metrics.accounts.AbstractAccountMetric;
 import com.codenvy.analytics.metrics.users.UsersProfilesList;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.Map;
@@ -35,14 +36,18 @@ import static com.codenvy.analytics.datamodel.ValueDataUtil.*;
  */
 public class FrontEndUtil {
 
-    public static String getCurrentUserId(Principal userPrincipal) throws IOException {
+    public static String getCurrentUserId(HttpServletRequest request) throws IOException {
         Context.Builder builder = new Context.Builder();
-        builder.put(MetricFilter.ALIASES, userPrincipal.getName());
+        builder.put(MetricFilter.ALIASES, request.getUserPrincipal().getName());
 
         Metric metric = MetricFactory.getMetric(MetricType.USERS_PROFILES_LIST);
         ListValueData valueData = getAsList(metric, builder.build());
         if (valueData.size() == 0) {
-            return AbstractAccountMetric.getCurrentUser().getId();
+            if (request.isUserInRole("user")) {
+                return AbstractAccountMetric.getCurrentUser().getId();
+            } else {
+                return request.getUserPrincipal().getName();
+            }
         } else {
             Map<String, ValueData> profile = treatAsMap(treatAsList(valueData).get(0));
             return profile.get(AbstractMetric.ID).getAsString();
