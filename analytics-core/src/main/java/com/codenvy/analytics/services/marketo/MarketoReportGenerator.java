@@ -110,7 +110,9 @@ public class MarketoReportGenerator {
 
             ValueData user = profile.get(ID);
 
-            if (activeUsers.contains(user)) {
+            // Skip users without email which stored in a field ALIASES.
+            if (activeUsers.contains(user)
+                && toArray(profile.get(AbstractMetric.ALIASES)).length != 0) {
                 writeUserWithStatistics(out, profile, user);
             }
         }
@@ -175,7 +177,6 @@ public class MarketoReportGenerator {
     private void writeStatistics(BufferedWriter out,
                                  Map<String, ValueData> stat,
                                  Map<String, ValueData> profile) throws IOException {
-
         writeString(out, StringValueData.valueOf(toArray(profile.get(AbstractMetric.ALIASES))[0]));
         out.write(",");
 
