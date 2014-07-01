@@ -415,7 +415,7 @@ public class ActOn extends Feature {
      * @param profile
      * @param statistics
      */
-    private ValueData getPoints(Map<String, ValueData> statistics, Map<String, ValueData> profile) {
+    public static ValueData getPoints(Map<String, ValueData> statistics, Map<String, ValueData> profile) {
         long total = 0;
 
         if (statistics.size() > 0) {
@@ -458,11 +458,11 @@ public class ActOn extends Feature {
         return ValueDataFactory.createValueData(total);
     }
 
-    private long getTimeInHours(Map<String, ValueData> statistics, String fieldName) {
+    private static long getTimeInHours(Map<String, ValueData> statistics, String fieldName) {
         return Math.round(new Long(statistics.get(fieldName).toString()) / (360 * 1000));
     }
 
-    private boolean isProfileCompleted(Map<String, ValueData> profile) {
+    public static boolean isProfileCompleted(Map<String, ValueData> profile) {
         return profile.containsKey(AbstractMetric.ID)
                && profile.containsKey(AbstractMetric.USER_FIRST_NAME)
                && profile.containsKey(AbstractMetric.USER_LAST_NAME)

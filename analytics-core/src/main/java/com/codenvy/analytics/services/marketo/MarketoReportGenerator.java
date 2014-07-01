@@ -17,25 +17,49 @@
  */
 package com.codenvy.analytics.services.marketo;
 
-import com.codenvy.analytics.Configurator;
-import com.codenvy.analytics.datamodel.*;
-import com.codenvy.analytics.metrics.*;
-import com.codenvy.analytics.metrics.users.UsersStatisticsList;
+import static com.codenvy.analytics.Utils.toArray;
+import static com.codenvy.analytics.metrics.AbstractMetric.BUILDS;
+import static com.codenvy.analytics.metrics.AbstractMetric.DEPLOYS;
+import static com.codenvy.analytics.metrics.AbstractMetric.ID;
+import static com.codenvy.analytics.metrics.AbstractMetric.LOGINS;
+import static com.codenvy.analytics.metrics.AbstractMetric.PROJECTS;
+import static com.codenvy.analytics.metrics.AbstractMetric.RUNS;
+import static com.codenvy.analytics.metrics.AbstractMetric.TIME;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import static com.codenvy.analytics.Utils.toArray;
-import static com.codenvy.analytics.metrics.AbstractMetric.*;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.codenvy.analytics.Configurator;
+import com.codenvy.analytics.datamodel.ListValueData;
+import com.codenvy.analytics.datamodel.LongValueData;
+import com.codenvy.analytics.datamodel.MapValueData;
+import com.codenvy.analytics.datamodel.SetValueData;
+import com.codenvy.analytics.datamodel.StringValueData;
+import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.metrics.AbstractMetric;
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Metric;
+import com.codenvy.analytics.metrics.MetricFactory;
+import com.codenvy.analytics.metrics.MetricFilter;
+import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.metrics.users.UsersStatisticsList;
+import com.codenvy.analytics.services.acton.ActOn;
 
 /**
  * @author Alexander Reshetnyak
@@ -46,6 +70,7 @@ public class MarketoReportGenerator {
     private static final Logger LOG = LoggerFactory.getLogger(MarketoReportGenerator.class);
 
     public static final String PROFILE_COMPLETED = "Profile Complete";
+    public static final String POINTS            = "Product Score";
 
     private final Configurator configurator;
 
@@ -60,6 +85,7 @@ public class MarketoReportGenerator {
         put(RUNS, "Runs");
         put(TIME, "Time in Product");
         put(LOGINS, "Logins");
+        put(POINTS, POINTS);
     }};
 
     @Inject
@@ -80,7 +106,7 @@ public class MarketoReportGenerator {
                                                                     return true;
                                                                 }
                                                             };
-
+                                                            
         final int pageSize = configurator.getInt(MarketoInitializer.PAGE_SIZE, 10000);
         context = context.cloneAndPut(Parameters.PER_PAGE, pageSize);
 
@@ -186,7 +212,7 @@ public class MarketoReportGenerator {
         writeInt(out, stat.get(DEPLOYS));
         out.write(",");
 
-        boolean profileCompleted = isProfileCompleted(profile);
+        boolean profileCompleted = ActOn.isProfileCompleted(profile);
         writeNotNullStr(out, Boolean.toString(profileCompleted));
         out.write(",");
 
@@ -205,7 +231,10 @@ public class MarketoReportGenerator {
         out.write(",");
 
         writeInt(out, stat.get(UsersStatisticsList.LOGINS));
-
+        out.write(",");
+        
+        writeInt(out, ActOn.getPoints(stat, profile));
+        
         out.newLine();
     }
 
@@ -232,18 +261,4 @@ public class MarketoReportGenerator {
         out.write("\"");
     }
 
-    private boolean isProfileCompleted(Map<String, ValueData> profile) {
-        return profile.containsKey(ID)
-               && profile.containsKey(AbstractMetric.USER_FIRST_NAME)
-               && profile.containsKey(AbstractMetric.USER_LAST_NAME)
-               && profile.containsKey(AbstractMetric.USER_COMPANY)
-               && profile.containsKey(AbstractMetric.USER_JOB)
-               && profile.containsKey(AbstractMetric.USER_PHONE)
-               && !profile.get(ID).getAsString().isEmpty()
-               && !profile.get(AbstractMetric.USER_FIRST_NAME).getAsString().isEmpty()
-               && !profile.get(AbstractMetric.USER_LAST_NAME).getAsString().isEmpty()
-               && !profile.get(AbstractMetric.USER_COMPANY).getAsString().isEmpty()
-               && !profile.get(AbstractMetric.USER_JOB).getAsString().isEmpty()
-               && !profile.get(AbstractMetric.USER_PHONE).getAsString().isEmpty();
-    }
 }

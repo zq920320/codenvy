@@ -59,7 +59,7 @@ public class TestMarketoReportGenerator extends AbstractUsersActivityTest {
 
         Map<String, Map<String, String>> content = read(jobFile);
 
-        assertEquals(content.size(), 4);
+        assertEquals(4, content.size());
 
         // verify
         Map<String, String> headData = content.get("_HEAD");
@@ -79,6 +79,7 @@ public class TestMarketoReportGenerator extends AbstractUsersActivityTest {
         assertEquals("0", user1Data.get(HEADERS.get(UsersStatisticsList.RUNS)));
         assertEquals("5", user1Data.get(HEADERS.get(UsersStatisticsList.TIME)));
         assertEquals("0", user1Data.get(HEADERS.get(UsersStatisticsList.LOGINS)));
+        assertEquals("29", user1Data.get(HEADERS.get(MarketoReportGenerator.POINTS)));
 
         // verify "user2" data
         Map<String, String> user2Data = content.get("user2");
@@ -91,6 +92,7 @@ public class TestMarketoReportGenerator extends AbstractUsersActivityTest {
         assertEquals("1", user2Data.get(HEADERS.get(UsersStatisticsList.RUNS)));
         assertEquals("10", user2Data.get(HEADERS.get(UsersStatisticsList.TIME)));
         assertEquals("1", user2Data.get(HEADERS.get(UsersStatisticsList.LOGINS)));
+        assertEquals("92", user2Data.get(HEADERS.get(MarketoReportGenerator.POINTS)));
 
         // verify "user3" data
         Map<String, String> user3Data = content.get("user3");
@@ -103,6 +105,7 @@ public class TestMarketoReportGenerator extends AbstractUsersActivityTest {
         assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.RUNS)));
         assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.TIME)));
         assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.LOGINS)));
+        assertEquals("12", user3Data.get(HEADERS.get(MarketoReportGenerator.POINTS)));
     }
 
     @Test(priority=2)
@@ -126,7 +129,7 @@ public class TestMarketoReportGenerator extends AbstractUsersActivityTest {
 
         Map<String, Map<String, String>> content = read(jobFile);
 
-        assertEquals(content.size(), 2);
+        assertEquals(2, content.size());
 
         // verify
         Map<String, String> headData = content.get("_HEAD");
@@ -146,5 +149,6 @@ public class TestMarketoReportGenerator extends AbstractUsersActivityTest {
         assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.RUNS)));
         assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.TIME)));
         assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.LOGINS)));
+        assertEquals("24", user3Data.get(HEADERS.get(MarketoReportGenerator.POINTS)));
     }
 }
