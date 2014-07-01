@@ -1228,6 +1228,9 @@ function Configuration() {
                 "Created By": "/analytics/pages/user-view.jsp?user",
                 "Project Type": "/analytics/pages/projects-view.jsp?project_type",
             },
+            
+            // replace empty column value on url parameter value with the same name
+            urlParameterColumn: "Factory",
         },
         
         factoryStatistics: {

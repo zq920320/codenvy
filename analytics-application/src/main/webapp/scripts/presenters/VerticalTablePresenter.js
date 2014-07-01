@@ -38,6 +38,12 @@ analytics.presenter.VerticalTablePresenter.prototype.load = function() {
     model.pushDoneFunction(function(data) {                            
         var table = data[0];  // there is only one table in data
 
+        // replace empty column on url parameter
+        var urlParameterColumn = analytics.configuration.getProperty(presenter.widgetName, "urlParameterColumn");
+        if (typeof urlParameterColumn != "undefined") {
+            table = presenter.replaceEmptyColumnOnUrlParameter(table, urlParameterColumn, modelParams);
+        }
+        
         // add links to drill down page
         table = presenter.linkTableValuesWithDrillDownPage(presenter.widgetName, table, modelParams);
         
@@ -64,3 +70,30 @@ analytics.presenter.VerticalTablePresenter.prototype.load = function() {
     var modelViewName = analytics.configuration.getProperty(presenter.widgetName, "modelViewName");
     model.getModelViewData(modelViewName);
 };
+
+/**
+ * Replace empty value of column with name 'urlParameterColumn' in first row of table on value
+ * of parameter with name 'urlParameterColumn' from modelParams.
+ * 
+ * If there is empty table, insert new row with value of column with name 'urlParameterColumn' = value of parameter 
+ * with name 'urlParameterColumn' from modelParams.
+ */
+analytics.presenter.VerticalTablePresenter.prototype.replaceEmptyColumnOnUrlParameter = function(table, urlParameterColumn, modelParams) {
+    var urlParameterName = urlParameterColumn.toLowerCase();
+    var urlParameterColumnIndex = analytics.util.getArrayValueIndex(table.columns, urlParameterColumn);
+    
+    if (typeof modelParams[urlParameterName] != "undefined"
+        && urlParameterColumnIndex != null) {
+        
+        if (table.rows.length == 0) {
+            var row = new Array(table.columns.length);
+            row[urlParameterColumnIndex] = modelParams[urlParameterName];
+            table.rows.push(row);
+            
+        } else if (table.rows[0][urlParameterColumnIndex] == "") {
+            table.rows[0][urlParameterColumnIndex] = modelParams[urlParameterName];
+        }
+    }
+    
+    return table;
+}

@@ -312,21 +312,23 @@ Presenter.prototype.makeTableColumnLinked = function(table, columnName, columnLi
         for (var i = 0; i < table.rows.length; i++) {
             var columnNameValue = this.getColumnNameValue(table.rows[i][columnIndex]);
 
-            if (analytics.configuration.isSystemMessage(columnNameValue)) {
-               table.rows[i][columnIndex] = this.view.getSystemMessageLabel(columnNameValue);
-               
-            } else {
-               var columnIdValue = this.getColumnIdValue(table.rows[i][columnIndex]);
-               var href = columnLinkPrefix + "=" + encodeURIComponent(columnIdValue);
-
-               if (analytics.configuration.isFactoryUrlColumnName(columnName)) {
-                   var title = columnNameValue;   // display initial url in title of link
-                   columnNameValue = analytics.util.getShortenFactoryUrl(columnNameValue);
-                   table.rows[i][columnIndex] = "<a href='" + href + "' title='" + title + "'>" + columnNameValue + "</a>";
-
-               } else {
-                   table.rows[i][columnIndex] = "<a href='" + href + "'>" + columnNameValue + "</a>";
-               }
+            if (typeof columnNameValue != "undefined") {
+                if (analytics.configuration.isSystemMessage(columnNameValue)) {
+                   table.rows[i][columnIndex] = this.view.getSystemMessageLabel(columnNameValue);
+                   
+                } else {
+                   var columnIdValue = this.getColumnIdValue(table.rows[i][columnIndex]);
+                   var href = columnLinkPrefix + "=" + encodeURIComponent(columnIdValue);
+    
+                   if (analytics.configuration.isFactoryUrlColumnName(columnName)) {
+                       var title = columnNameValue;   // display initial url in title of link
+                       columnNameValue = analytics.util.getShortenFactoryUrl(columnNameValue);
+                       table.rows[i][columnIndex] = "<a href='" + href + "' title='" + title + "'>" + columnNameValue + "</a>";
+    
+                   } else {
+                       table.rows[i][columnIndex] = "<a href='" + href + "'>" + columnNameValue + "</a>";
+                   }
+                }
             }
         }
     }
