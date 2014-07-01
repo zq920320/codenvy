@@ -430,9 +430,9 @@ public class ActOn extends Feature {
             int invitations = new Integer(statistics.get(UsersStatisticsList.INVITES).toString());
 
             boolean profileCompleted = isProfileCompleted(profile);
-            int time = getTimeInHours(statistics, UsersStatisticsList.TIME);
-            int buildTime = getTimeInHours(statistics, UsersStatisticsList.BUILD_TIME);
-            int runTime = getTimeInHours(statistics, UsersStatisticsList.RUN_TIME);
+            long time = getTimeInHours(statistics, UsersStatisticsList.TIME);
+            long buildTime = getTimeInHours(statistics, UsersStatisticsList.BUILD_TIME);
+            long runTime = getTimeInHours(statistics, UsersStatisticsList.RUN_TIME);
 
             /** compute MQL Score from Product **/
             total += logins * 2;
@@ -458,8 +458,8 @@ public class ActOn extends Feature {
         return ValueDataFactory.createValueData(total);
     }
 
-    private int getTimeInHours(Map<String, ValueData> statistics, String fieldName) {
-        return Math.round(new Integer(statistics.get(fieldName).toString()) / (360 * 1000));
+    private long getTimeInHours(Map<String, ValueData> statistics, String fieldName) {
+        return Math.round(new Long(statistics.get(fieldName).toString()) / (360 * 1000));
     }
 
     private boolean isProfileCompleted(Map<String, ValueData> profile) {
