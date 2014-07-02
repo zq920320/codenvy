@@ -38,8 +38,10 @@ public abstract class AbstractProjectPaas extends ReadBasedMetric implements Rea
     public static final String HEROKU           = "heroku";
     public static final String APPFOG           = "appfog";
     public static final String CLOUDBEES        = "cloudbees";
+    public static final String NONE             = "none";
 
-    public static final String[] PAASES = {GAE, AWS, AWS_BEANSTALK, CLOUDFOUNDRY, TIER3_WEB_FABRIC, MANYMO, OPENSHIFT, HEROKU, APPFOG, CLOUDBEES};
+    public static final String[] PAASES =
+            {GAE, AWS, AWS_BEANSTALK, CLOUDFOUNDRY, TIER3_WEB_FABRIC, MANYMO, OPENSHIFT, HEROKU, APPFOG, CLOUDBEES, NONE};
 
     private final String[] types;
 
