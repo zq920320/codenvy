@@ -382,6 +382,12 @@
             <index name="ws">
                 <field>ws</field>
             </index>
+            <index name="domain">
+                <field>domain</field>
+            </index>
+            <index name="user_company">
+                <field>user_company</field>
+            </index>
             <index name="session_id">
                 <field>session_id</field>
             </index>
