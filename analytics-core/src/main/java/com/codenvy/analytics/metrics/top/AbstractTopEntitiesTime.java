@@ -25,6 +25,9 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.*;
 
+import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsList;
+import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsMap;
+
 /** @author Anatoliy Bazko */
 public abstract class AbstractTopEntitiesTime extends CalculatedMetric {
 
@@ -33,15 +36,15 @@ public abstract class AbstractTopEntitiesTime extends CalculatedMetric {
     public static final int MAX_DOCUMENT_COUNT = 100;
 
     private final MetricFilter filterParameter;
-    
+
     private final static List<PassedDaysCount> DAY_INTERVALS = Arrays.asList(new PassedDaysCount[]{
-      PassedDaysCount.BY_1_DAY,
-      PassedDaysCount.BY_7_DAYS,
-      PassedDaysCount.BY_30_DAYS,
-      PassedDaysCount.BY_60_DAYS,
-      PassedDaysCount.BY_90_DAYS,
-      PassedDaysCount.BY_365_DAYS,
-      PassedDaysCount.BY_LIFETIME
+            PassedDaysCount.BY_1_DAY,
+            PassedDaysCount.BY_7_DAYS,
+            PassedDaysCount.BY_30_DAYS,
+            PassedDaysCount.BY_60_DAYS,
+            PassedDaysCount.BY_90_DAYS,
+            PassedDaysCount.BY_365_DAYS,
+            PassedDaysCount.BY_LIFETIME
     });
 
     public AbstractTopEntitiesTime(MetricType metricType, MetricType[] basedMetric, MetricFilter filterParameter) {
@@ -60,7 +63,7 @@ public abstract class AbstractTopEntitiesTime extends CalculatedMetric {
                 return combineDefaultResult(top);
             }
 
-            return combineResult(top, filterValue, context);
+            return combineResult(top, context);
         } catch (ParseException e) {
             throw new IOException(e);
         }
@@ -79,13 +82,9 @@ public abstract class AbstractTopEntitiesTime extends CalculatedMetric {
             Map<String, ValueData> row = new HashMap<>(9);
             row.put(ENTITY, StringValueData.valueOf(entityName));
             row.put(SESSIONS, entity.get(SESSIONS));
-            
-            for (PassedDaysCount interval : DAY_INTERVALS) {
-                ListValueData entities = ListValueData.DEFAULT;
-                ValueData entityTimeValue = getEntityTimeValue(entities, entityName, TIME);
-                String fieldName = interval.getFieldName();
 
-                row.put(fieldName, entityTimeValue);
+            for (PassedDaysCount interval : DAY_INTERVALS) {
+                row.put(interval.getFieldName(), LongValueData.DEFAULT);
             }
 
             result.add(new MapValueData(row));
@@ -99,7 +98,7 @@ public abstract class AbstractTopEntitiesTime extends CalculatedMetric {
         return ListValueData.class;
     }
 
-    private ValueData combineResult(ListValueData top, String[] filterValue, Context context) throws ParseException, IOException {
+    private ValueData combineResult(ListValueData top, Context context) throws ParseException, IOException {
         List<ValueData> result = new ArrayList<>(top.size());
 
         for (ValueData item : top.getAll()) {
@@ -112,33 +111,22 @@ public abstract class AbstractTopEntitiesTime extends CalculatedMetric {
             Map<String, ValueData> row = new HashMap<>(9);
             row.put(ENTITY, StringValueData.valueOf(entityName));
             row.put(SESSIONS, entity.get(SESSIONS));
-            
-            for (PassedDaysCount interval : DAY_INTERVALS) {
-                ListValueData entities = getEntities(context, interval, filterValue);
-                ValueData entityTimeValue = getEntityTimeValue(entities, entityName, TIME);
-                String fieldName = interval.getFieldName();
 
-                row.put(fieldName, entityTimeValue);
+            for (PassedDaysCount interval : DAY_INTERVALS) {
+                ListValueData timeValue = getTimeValue(context, interval, entityName);
+
+                String fieldName = interval.getFieldName();
+                if (timeValue.size() == 0) {
+                    row.put(fieldName, LongValueData.DEFAULT);
+                } else {
+                    row.put(fieldName, treatAsMap(treatAsList(timeValue).get(0)).get(TIME));
+                }
             }
 
             result.add(new MapValueData(row));
         }
 
         return new ListValueData(result);
-    }
-
-    private ValueData getEntityTimeValue(ListValueData valueData, String entityName, String valueParam) {
-        for (ValueData item : valueData.getAll()) {
-            MapValueData next = (MapValueData)item;
-            String entityParam = filterParameter.name().toLowerCase();
-
-            Map<String, ValueData> entity = next.getAll();
-            if (entityName.equals(entity.get(entityParam).getAsString())) {
-                return entity.get(valueParam);
-            }
-        }
-
-        return LongValueData.DEFAULT;
     }
 
     private String[] extractEntityNames(ListValueData top) {
@@ -166,7 +154,7 @@ public abstract class AbstractTopEntitiesTime extends CalculatedMetric {
         return ValueDataUtil.getAsList(basedMetric[0], builder.build());
     }
 
-    private ListValueData getEntities(Context context, PassedDaysCount passedDaysCount, String[] filterValue)
+    private ListValueData getTimeValue(Context context, PassedDaysCount passedDaysCount, String filterValue)
             throws ParseException, IOException {
 
         Context.Builder builder = initContextBuilder(context, passedDaysCount);
@@ -183,7 +171,7 @@ public abstract class AbstractTopEntitiesTime extends CalculatedMetric {
 
         if (passedDaysCount == PassedDaysCount.BY_LIFETIME) {
             builder.putDefaultValue(Parameters.FROM_DATE);
-            
+
         } else {
             Calendar fromDate = (Calendar)toDate.clone();
             fromDate.add(Calendar.DAY_OF_MONTH, 1 - passedDaysCount.getDayCount());
@@ -192,7 +180,7 @@ public abstract class AbstractTopEntitiesTime extends CalculatedMetric {
 
         return builder;
     }
-    
+
     /**
      * Return context with fixed time parameters
      */

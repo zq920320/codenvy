@@ -17,31 +17,25 @@
  */
 package com.codenvy.analytics.pig.scripts;
 
-import static org.testng.Assert.assertEquals;
+import com.codenvy.analytics.BaseTest;
+import com.codenvy.analytics.datamodel.ListValueData;
+import com.codenvy.analytics.datamodel.LongValueData;
+import com.codenvy.analytics.datamodel.MapValueData;
+import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.metrics.*;
+import com.codenvy.analytics.pig.scripts.util.Event;
+import com.codenvy.analytics.pig.scripts.util.LogGenerator;
+import com.mongodb.util.MyAsserts;
+
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
-
-import com.codenvy.analytics.BaseTest;
-import com.codenvy.analytics.datamodel.ListValueData;
-import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.datamodel.MapValueData;
-import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.Context;
-import com.codenvy.analytics.metrics.Metric;
-import com.codenvy.analytics.metrics.MetricFactory;
-import com.codenvy.analytics.metrics.MetricFilter;
-import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.metrics.Summaraziable;
-import com.codenvy.analytics.pig.scripts.util.Event;
-import com.codenvy.analytics.pig.scripts.util.LogGenerator;
-import com.mongodb.util.MyAsserts;
+import static org.testng.Assert.assertEquals;
 
 /**
  * @author Alexander Reshetnyak
@@ -153,7 +147,7 @@ public class TestProjectsStatistics extends BaseTest {
         assertEquals(m.get("project").getAsString(), "project2");
         assertEquals(m.get("ws").getAsString(), "ws1");
         assertEquals(m.get("project_type").getAsString(), "spring");
-        assertEquals(m.get("date").getAsString(), "1357027980000");
+        assertEquals(m.get("date"), LongValueData.valueOf(fullDateFormat.parse("2013-01-01 10:13:00").getTime()));
         assertEquals(m.get("user").getAsString(), "user1@gmail.com");
         
         assertEquals(m.get("code_refactories").getAsString(), "0");
@@ -176,7 +170,7 @@ public class TestProjectsStatistics extends BaseTest {
         assertEquals(m.get("project").getAsString(), "project1");
         assertEquals(m.get("ws").getAsString(), "ws1");
         assertEquals(m.get("project_type").getAsString(), "jar");
-        assertEquals(m.get("date").getAsString(), "1357027200000");
+        assertEquals(m.get("date"), LongValueData.valueOf(fullDateFormat.parse("2013-01-01 10:00:00").getTime()));
         assertEquals(m.get("user").getAsString(), "user1@gmail.com");
         
         assertEquals(m.get("code_refactories").getAsString(), "0");
@@ -211,7 +205,7 @@ public class TestProjectsStatistics extends BaseTest {
         assertEquals(m.get("project").getAsString(), "project1");
         assertEquals(m.get("ws").getAsString(), "ws1");
         assertEquals(m.get("project_type").getAsString(), "jar");
-        assertEquals(m.get("date").getAsString(), "1357027200000");
+        assertEquals(m.get("date"), LongValueData.valueOf(fullDateFormat.parse("2013-01-01 10:00:00").getTime()));
         assertEquals(m.get("user").getAsString(), "user1@gmail.com");
 
         assertEquals(m.get("code_refactories").getAsString(), "0");
