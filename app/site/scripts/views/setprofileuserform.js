@@ -16,7 +16,9 @@
  * from Codenvy S.A..
  */
  
-define(["jquery","underscore","views/accountformbase","models/account"], function($,_,AccountFormBase,Account){
+define(["jquery","underscore","views/accountformbase","models/account"], 
+
+    function($,_,AccountFormBase,Account){
 
         jQuery.validator.addMethod("phone", function(phone_number, element) {
             phone_number = phone_number.replace(/\s+/g, ""); 

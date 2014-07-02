@@ -15,39 +15,25 @@
         <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
 
         <link href='https://fonts.googleapis.com/css?family=Roboto:400,300,500' rel='stylesheet' type='text/css'>
-        <link rel="stylesheet" href="{{'/site/styles/main.css' | resource }}">
-        <link rel="shortcut icon" href="{{'/site/images/favicon.ico' | resource }}" />
-        <script src="{{'/site/scripts/vendor/modernizr.custom.29458.js' | resource }}"></script>
-    		<link rel="stylesheet" href="{{ '/site/styles/component.css' | resource }}">
-    		<link rel="stylesheet" href="{{ '/site/styles/animations.css' | resource }}">
+        <link rel="stylesheet" href="{{'/site/styles/main.css' | resource}}">
+        <link rel="shortcut icon" href="{{'/site/images/favicon.ico' | resource}}" />
         <script src="{{'/site/scripts/vendor/modernizr.custom.29458.js' | resource}}"></script>
     </head>
-    <body>
-
-        <header>
-          <h1 class = "logo">
-            <a href="/"><img src="{{'/site/images/codenvy-logo.svg' | resource }}" alt="Codenvy"></a>
-          </h1>
-<!--        
-          <div class="focused-logo">
-            <a href="/"><img src="{{'/site/images/logoCodenvy2x.png' | resource }}"></a>
-          </div>
--->        </header>
+    <body class="responsive simple">
+        {% include application-script.html %}
+        {% include braintree.html %}
+        {% if site.profile != "enterprise" %}
+                <!-- Including Codenvy Trackers -->
+            {% include act-on.html %}
+            {% include pingdom.html %}
+            {% include google-analytics.html %}
+        {% endif %}
 
         {{ content }}
-
 
         <!--[if lt IE 7]>
             <p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
         <![endif]-->
-        {% include application-script.html %}
-
-        {% if site.profile != "enterprise" %}
-            <!-- Including Codenvy Trackers -->
-            {% include pingdom.html %}
-            {% include google-analytics.html %}
-            {% include act-on.html %}
-        {% endif %}
 
 </body>
 </html>

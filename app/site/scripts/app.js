@@ -35,7 +35,8 @@ define(["jquery","config",
         "views/ws_createform",
         "views/create_ws",
         "views/join_ws",
-        "views/adminform"
+        "views/adminform",
+        "views/paymentform"
         ],
 
     function($,Config,
@@ -57,7 +58,8 @@ define(["jquery","config",
         WSCreateForm,
         CreatingWorkspace,
         JoiningWorkspace,
-        AdminForm){
+        AdminForm,
+        PaymentForm){
 
         function modernize(){
             Modernizr.load({
@@ -78,6 +80,7 @@ define(["jquery","config",
 
                     modernize();
                     var uvOptions = {}; //UserVoice object
+                    
                     if (uvOptions){}
                     var signupForm = $(".signup-form"),
                         signinForm = $(".login-form"),
@@ -96,7 +99,8 @@ define(["jquery","config",
                         wsCreateForm = $(".create-form"),
                         creatingWorkspace = $(".creating-ws"),
                         joiningWorkspace = $(".invite"),
-                        adminForm = $(".admin-form");
+                        adminForm = $(".admin-form"),
+                        paymentForm = $('.codenvy-payment-form');
 
                     if(gcBannerElement.length !== 0){
                         (function(){
@@ -109,6 +113,25 @@ define(["jquery","config",
                         (function(){
                             // <!--  CTA Banner Rotation   -->
                             new GC_banner();
+                        }());
+                    }
+
+                    if(paymentForm.length !== 0){
+                        (function(){
+                            var form = PaymentForm.get(paymentForm),
+                            errorReport = ErrorReport.get(errorContainer),
+                            successReport = SuccessReport.get(errorContainer);
+                            form.on("success", function(message){
+                                successReport.show(message);
+                            });
+                            form.on("submitting", function(){
+                                errorReport.hide();
+                            });
+                            form.on("invalid", function(field,message){
+                                form.__restoreForm();
+                                errorReport.show(message);
+                            });
+                            form.selectWorkspace();
                         }());
                     }
 

@@ -2,43 +2,40 @@
     layout : focused
     title: Codenvy - Login
 ---
-
-    <div class="container">
-        <div class="row cws">
-            <div class="span2"></div>
-            <div class="span8">
-                <div class="container dark login rounded shadow">
-                    <div class="error-container"></div>
-                    <h2 class="shiny center">Create your free account</h2>
-                    <hr class="short-line">
-                <form class="create-form">
-                    <div class="field">
-                        <input name="email" type="text" class="required email" placeholder="Sign up with your email">
-                    </div>
-                    <div class="field">
-                        <input name="domain" type="text" class="required domain-name" placeholder="Choose your workspace name" maxlength="20">
-                    </div>
-                    <div class="field">
-                        <input type="submit" class="signup-button blue-button" value="Sign up for free">
-                        <div class="working hidden">working...</div>
-                    </div>
-                </form>
-
-                    <div class="aternative-create">
-                        <a href="#" class="oauth-button google"></a>
-                        <a href="#" class="oauth-button github"></a>
-                    </div>
-                    <p class="create-terms">By signing up, you agree to the <a href="{{ 'tos.html' | url }}">Terms of Service</a> and the <a href="{{ 'privacy.html' | url }}">Privacy Policy</a>.</p>
-                </div>
-            </div>
-            <div class="span2"></div>
+<div id="pt-main" class="pt-perspective">
+	<div class="pt-page-moveFromRight pt-page-delay200 pt-page-ontop">
+    <div class="authentication">
+      <div class="dark login shadow">
+        <div class="error-container"></div>
+        <h2 class="center">Create Your Free Account</h2>
+  
+        <div class="aternative-create">
+          <div class="label">Sign Up With</div>
+          <div class="oauth-google oauth"><a href="#" class="oauth-button google"><img src="/site/images/buttonGoogle.svg" alt="Signup with Google">Google</a></div>
+          <div class="oauth-github oauth"><a href="#" class="oauth-button github"><img src="/site/images/buttonGithub.svg" alt="Signup with Github">Github</a></div>
         </div>
+        <div class = "hr">OR</div>
+        <form class="create-form">
+          <div class="field">
+            <input name="email" type="text" class="required email" placeholder="Your Email">
+          </div>
+          <div class="field">
+            <input name="domain" type="text" class="required domain-name" placeholder="Your workspace name" maxlength="20">
+          </div>
+          <div class="field action">
+            <input type="submit" class="signup-button blue-button" value="Create Free Account">
+            <div class="working hidden">working...</div>
+          </div>
+        </form>
+        <p class = "terms">By signing up, you agree to the <a href = "{{ 'tos.html' | url }}" title = "Terms of Service" >Terms of Service</a> and the <a href = "{{ 'privacy.html' | url }}" title = "Privacy Policy">Privacy Policy</a>.</p>
+      </div>
+    </div>
+  </div>
 </div>
-
-<footer >
-    <nav>
-        <ul>
-            <li><a class="footer-link sign-in" href="#">Already have an account? Sign in.</a></li>
-        </ul>
-    </nav>
+<footer>
+  <nav>
+    <ul>
+      <li>Already have an account? <a href = "{{'site/login.html' | url}}" >Sign in here&hellip;</a></li>
+    </ul>
+  </nav>
 </footer>

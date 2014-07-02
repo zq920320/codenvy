@@ -111,6 +111,7 @@ body {
     background-color: $background-color;
     color:$text-color;
     letter-spacing: $letter-spacing;
+    overflow-x:hidden;
 }
 
 html, body {
@@ -297,5 +298,185 @@ table {
     border-collapse: collapse;
     border-spacing: 0;
 }
-
 /* end Normalize */
+
+.braintree {
+  margin:0 auto;
+  width:384px;  
+  .dark {
+    background:#fff;
+    color: black; 
+  }
+}
+
+.braintree .error-container {
+    background-color:red;
+}
+
+.braintree .ok-message {
+    background-color:green;
+}
+
+.authentication {
+  margin:0 auto;
+  width:384px;  
+  .dark {
+    background:#fff;
+    color: #f3f3f3; 
+  };
+  &.result p {
+    padding: 0 9px 20px;
+  }
+
+  h2 {
+    font-size:1.125em; /*18px*/
+    font-weight:500;
+    color: #256c9f;
+    height:56px;
+    line-height:56px;
+  };
+  .forgot-password h2{
+    margin-bottom: 14px;
+  }
+  .hr {
+    text-align:center;
+    font: {
+      size: 1em;
+      weight:500;
+    }
+    color: #6b7379;  
+    height:44px;
+    line-height:44px;
+    @include image_sep;
+  }
+  .action {
+    margin-top: 18px; 
+  }
+  .forgot-password .action {
+    margin-top: 23px;
+    margin-bottom: 18px;
+  }
+  form.login-form {
+    padding-bottom: 13px;
+  }
+  .blue-button {
+    font-size:1em;
+    padding:0 29px 0 31px;
+    margin:0;
+    width: auto;
+    height:2.5625em;
+    line-height:2.5625em;
+    text-shadow: 0px 1px 1px rgba(0,0,0,0.25);
+    box-shadow: none;
+  }
+  .terms {
+    margin:0;
+    text-align:center;
+    padding: 0 12px 8px 12px;
+    font-size: 11px;
+    letter-spacing: 0;
+    color:#979797; 
+    a {
+       font-weight: normal; 
+      color: #256c9f;
+      &:hover {
+        font-weight: normal;
+        text-decoration:underline;
+      }
+    }
+  }
+
+  .error-container {
+    margin:7px;
+    background-color: rgba(255,0,0,1);    
+    border-radius: 0;
+  }
+  .short-line {
+    width: 55px;
+    border: 0 none;
+    border-bottom :1px solid #b4b4b4;
+  }
+}
+.authentication.profile-form {
+  width: 800px;
+}
+.footer {
+  text-align:center;
+  font-size:12px;
+  color:#fff; 
+  a {
+    color:inherit; 
+    font-weight: normal; 
+    &:hover {
+      color:inherit; 
+      font-weight: normal;
+      text-decoration:underline;
+    }
+  }
+}
+
+.login-form {
+  .action {
+    .blue-button {
+      width: 134px; 
+    }
+  }
+}
+.signup-button, .light-button {
+  background: none repeat scroll 0 0 #1E5278;
+  border: 1px solid #1E5278;
+  border-radius: 0px;
+  color: #FFFFFF;
+}
+.signup-button:hover, .light-button:hover {
+	background: none repeat scroll 0 0 #1b4a6c;
+}
+::-webkit-input-placeholder {
+  color: #6b757d;
+  text-align:center;
+}
+:-moz-placeholder {
+  color: #6b757d;
+  text-align:center;
+}
+::-moz-placeholder {
+  color: #6b757d;
+  text-align:center;
+}
+:-ms-input-placeholder {
+  color: #6b757d;
+  text-align:center;
+}
+.login .content {
+ color:#6b7379;
+}  
+input[type="text"], select, input[type="password"], select option {
+  box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.2) inset;    
+  background-color: #F5F5F5;
+  border: 1px solid #dadada;
+  color: #6B757D;
+  font: {
+    size: 1em;
+    family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    weight: 200;
+  }
+  height: 43px; /* 2.5625em */
+  padding-left: 10px;    
+}
+.cloud-ide-profile select option {
+  background-color: #fff;
+  box-shadow: none;
+  border: 0 none;
+}
+.profile-wrap {
+  padding-bottom: 30px;
+}
+.forgotpassword-result {
+  font-size: 16px;
+  color: #6b757d;
+  text-align: center;
+}
+.shadow {
+  box-shadow: 1px 2px 34px rgba(0, 0, 0, 0.56);
+  -webkit-box-shadow: 1px 2px 34px rgba(0, 0, 0, 0.56);
+}

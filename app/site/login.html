@@ -2,43 +2,40 @@
     layout : focused
     title: Codenvy - Login
 ---
-
-    <div class="container">
-        <div class="row">
-            <div class="span2"></div>
-            <div class="span8">
-                <div class="container dark login rounded shadow">
-                    <div class="error-container"></div>
-                    <h2 class="shiny center">Welcome back!</h2>
-                    <hr class="short-line">
-                    <form class="login-form" method="post">
-                        <div class="field">
-<input name="email" type="text" class="required email" placeholder="email" value = "" >
-                        </div>
-                        <div class="field">
-                            <input name="password" type="password" placeholder="password">
-                        </div>
-                        <div class="field">
-                            <input type="submit" class="light-button button-400" value="Login">
-                            <div class="working hidden">working...</div>
-                        </div>
-                    </form>
-
-                    <div class="aternative-login">
-                        <a href="#" class="oauth-button google"></a>
-                        <a href="#" class="oauth-button github"></a>
-                    </div>
-                </div>
-            </div>
-            <div class="span2"></div>
+<div id="pt-main" class="pt-perspective">
+  <div class="pt-page-moveFromRight pt-page-delay200 pt-page-ontop">
+    <div class="authentication">
+      <div class="dark login-wrap login shadow">
+        <div class="error-container"></div>
+        <h2 class="center">Welcome Back!</h2>
+  
+        <div class="aternative-create">
+          <div class="label">Sign In With</div>
+          <div class="oauth-google oauth"><a href="#" class="oauth-button google"><img src="images/buttonGoogle.svg" alt="Signup with Google">Google</a></div>
+          <div class="oauth-github oauth"><a href="#" class="oauth-button github"><img src="images/buttonGithub.svg" alt="Signup with Github">Github</a></div>
         </div>
+        <div class = "hr">OR</div>
+        <form class="login-form" method="post">
+          <div class="field">
+            <input name="email" type="text" class="required email" placeholder="Your Email" value = "" >
+          </div>
+          <div class="field">
+            <input name="password" type="password" placeholder="Your Password">
+          </div>
+          <div class="field action">
+            <input type="submit" class="signup-button blue-button" value="Login">
+            <div class="working hidden">working...</div>
+          </div>
+        </form>
+      </div>  
+    </div>  
+  </div>
 </div>
-
-<footer >
-    <nav>
-        <ul>
-            <li><a class="footer-link" href="{{'site/recover-password.html' | url}}">Forgot your password?<b></a></li>
-            <li><a class="footer-link" href="/">Don't have an account? Sign up.</a></li>
-        </ul>
-    </nav>
+<footer>
+  <nav>
+    <ul>
+      <li><a href="{{'site/recover-password.html' | url}}">Forgot your password?</a></li>
+      <li>Don't have an account? <a href="/">Sign up.</a></li>
+    </ul>
+  </nav>
 </footer>

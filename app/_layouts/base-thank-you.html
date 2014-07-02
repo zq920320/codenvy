@@ -3,76 +3,77 @@
 <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
 <!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
 <!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <title>{{ page.title }}</title>
-        <meta name="author" content="Codenvy">
-        <meta name="description" content="Industrial-strength cloud IDE for developers and enterprise teams. Java IDE with support for PHP, Python, Ruby, JavaScript, Android, and more.">
-        <meta name="keywords" content="Codenvy, Cloud IDE, Java IDE, online IDE, web IDE, development environment, IDE, cloud, JavaScript, Java, Spring, Groovy, Ruby, PHP, code, deploy">
-        <meta name="viewport" content="initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,width=device-width,user-scalable=no" />
-        <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>{{ page.title }}</title>
+  <meta name="author" content="Codenvy">
+  <meta name="description" content="Industrial-strength cloud IDE for developers and enterprise teams. Java IDE with support for PHP, Python, Ruby, JavaScript, Android, and more.">
+  <meta name="keywords" content="Codenvy, Cloud IDE, Java IDE, online IDE, web IDE, development environment, IDE, cloud, JavaScript, Java, Spring, Groovy, Ruby, PHP, code, deploy">
+  <meta name="viewport" content="initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,width=device-width,user-scalable=no" />
+  <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
 
-        <link href='https://fonts.googleapis.com/css?family=Roboto:400,300,500' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Roboto:400,300,500' rel='stylesheet' type='text/css'>
 
-        <link rel="stylesheet" href="{{ '/site/styles/main.css' | resource }}">
-        <link rel="shortcut icon" href="{{'/site/images/favicon.ico' | resource}}" />
-        <script src="{{'/site/scripts/vendor/modernizr.custom.29458.js' | resource}}"></script>
-    </head>
-    <body class="responsive">
+  <link rel="stylesheet" href="{{ '/site/styles/main.css' | resource }}">
+  <link rel="shortcut icon" href="{{'/site/images/favicon.ico' | resource}}" />
+  <script src="{{'/site/scripts/vendor/modernizr.custom.29458.js' | resource}}"></script>
+</head>
+<body class="responsive">
+  <header>
+    <h1 class = "logo">
+      <a href="/"><img src="/site/images/codenvy-logo.svg" alt="Codenvy"></a>
+    </h1>
+        
+  <!--
+  <div class="span3 logo-wrapper">
+    <a class="logo" href="/">
+        <h1>
+            <span>Codenvy</span>
+        </h1>
+    </a>
+  </div>
+  -->
+  <!--
+  <div class="span6">
+    <nav>
+        <ul class="main-menu">
+            <li><a href="{{'features.html' | url}}">Features</a></li>
+            <li><a href="{{'success-stories.html' | url}}">Stories</a></li>
+            <li><a href="{{'pricing.html' | url}}">Pricing</a></li>
+            <li><a href="{{'enterprise.html' | url}}">Enterprise</a></li>
+            <li><a href="{{'ISV.html' | url}}">ISV</a></li>
+        </ul>
+    </nav>
+  </div> -->
+  <!-- <div class="span4 sign-in-button-wrapper right show-on-tablet-desktop">
+    <a class="sign-up-button button-100 header-signup-button" href="/">Sign up</a>
+    <a class="light-button button-100" href="{{'site/login.html' | url}}">Login</a>
+  </div> -->
+  </header>
+  <div class="content">
+      {{ content }}
+  </div>
 
-        <header>
-            <div class="container" style="overflow:visible;">
-                <div class="row">
-                    <div class="span2 logo-wrapper">
-                        <a class="logo" href="/">
-                            <h1>
-                                <span>Codenvy</span>
-                            </h1>
-                        </a>
-                    </div>
-                   <!--  <div class="span6">
-                        <nav>
-                            <ul class="main-menu">
-                                <li><a href="{{'features.html' | url}}">Features</a></li>
-                                <li><a href="{{'success-stories.html' | url}}">Stories</a></li>
-                                <li><a href="{{'pricing.html' | url}}">Pricing</a></li>
-                                <li><a href="{{'enterprise.html' | url}}">Enterprise</a></li>
-                                <li><a href="{{'ISV.html' | url}}">ISV</a></li>
-                            </ul>
-                        </nav>
-                    </div> -->
-                    <!-- <div class="span4 sign-in-button-wrapper right show-on-tablet-desktop">
-                        <a class="sign-up-button button-100 header-signup-button" href="/">Sign up</a>
-                        <a class="light-button button-100" href="{{'site/login.html' | url}}">Login</a>
-                    </div> -->
-                </div>
-            </div>
-        </header>
-
-        <div class="content">
-            {{ content }}
-        </div>
-
-        <!-- <footer>
-            <nav>
-                <ul>
-                    <li><a class="footer-link" href="{{'features.html' | url}}">Features</a></li>
-                    <li><a class="footer-link" href="{{'success-stories.html' | url}}">Stories</a></li>
-                    <li><a class="footer-link" href="{{'pricing.html' | url}}">Pricing</a></li>
-                    <li><a class="footer-link" href="{{'enterprise.html' | url}}">Enterprise</a></li>
-                    <li><a class="footer-link" href="{{'ISV.html' | url}}">ISV</a></li>
-                    <li><a class="footer-link" href="http://docs.codenvy.com">Documentation</a></li>
-                    <li><a class="footer-link" href="{{'about.html' | url}}">About</a></li>
-                    <li><a class="footer-link" href="{{'jobs.html' | url}}">Jobs</a></li>
-                    <li><a class="footer-link" href="#" onclick="UserVoice.showPopupWidget();">Contact</a></li>
-                    <li><a class="footer-link" href="http://blog.codenvy.com" target="_blank">Blog</a></li>
-                    <li><a class="footer-link" href="http://facebook.com/codenvy" target="_blank">Facebook</a></li>
-                    <li><a class="footer-link" href="http://twitter.com/codenvyhq" target="_blank">Twitter</a></li>
-                    <li><a class="footer-link" href="https://plus.google.com/107609748911740614195" target="_blank" rel="publisher">Google+</a></li>
-                </ul>
-            </nav>
-        </footer> -->
+  <!-- <footer>
+    <nav>
+      <ul>
+        <li><a class="footer-link" href="{{'features.html' | url}}">Features</a></li>
+        <li><a class="footer-link" href="{{'success-stories.html' | url}}">Stories</a></li>
+        <li><a class="footer-link" href="{{'pricing.html' | url}}">Pricing</a></li>
+        <li><a class="footer-link" href="{{'enterprise.html' | url}}">Enterprise</a></li>
+        <li><a class="footer-link" href="{{'ISV.html' | url}}">ISV</a></li>
+        <li><a class="footer-link" href="http://docs.codenvy.com">Documentation</a></li>
+        <li><a class="footer-link" href="{{'about.html' | url}}">About</a></li>
+        <li><a class="footer-link" href="{{'jobs.html' | url}}">Jobs</a></li>
+        <li><a class="footer-link" href="#" onclick="UserVoice.showPopupWidget();">Contact</a></li>
+        <li><a class="footer-link" href="http://blog.codenvy.com" target="_blank">Blog</a></li>
+        <li><a class="footer-link" href="http://facebook.com/codenvy" target="_blank">Facebook</a></li>
+        <li><a class="footer-link" href="http://twitter.com/codenvyhq" target="_blank">Twitter</a></li>
+        <li><a class="footer-link" href="https://plus.google.com/107609748911740614195" target="_blank" rel="publisher">Google+</a></li>
+      </ul>
+    </nav>
+  </footer> -->
 
 
         <!--[if lt IE 7]>
@@ -83,6 +84,7 @@
         {% if site.profile != "enterprise" %}
             <!-- Including Codenvy Trackers -->
             {% include pingdom.html %}
+            {% include uservoice.html %}
             {% include google-analytics.html %}
             {% include act-on.html %}
             {% include google-for-dev.html %}

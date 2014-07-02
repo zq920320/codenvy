@@ -20,7 +20,7 @@
 
     var _gaq = _gaq || [];
 
-    define(["jquery","json", "models/tenant","models/profile","cookies"],function($,JSON,Tenant,Profile){
+    define(["jquery","json", "models/tenant", "models/useraccounts", "models/profile","models/workspaces","cookies"],function($,JSON,Tenant,Accounts,Profile,Workspaces){
 
         /*
             AccountError is used to report errors through error callback function
@@ -41,7 +41,7 @@
                     var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(uv, s);
                 }else {
                     var el = $("footer").find("ul");
-                    el.append('<li><a class="footer-link" href="http://helpdesk.codenvy.com">Feedback & support<b></b></a></li>');
+                    el.append('<li><a class="footer-link" href="http://helpdesk.codenvy.com">Feedback & support</a></li>');
                 }
             
             }
@@ -603,7 +603,36 @@
                     ]);
                 });
             },
+            // Braintree payment: select account for payment 
+            getAccounts : function(payment,success,error,redirect){
+                $.when(Accounts.getAccounts()).done(function(accounts){
+                    switch (accounts.length) {
+                        case 0: redirect({url:"/site/error/no-valid-workspaces"});
+                            break;
+                        default: 
+                            $.each(accounts, function(index, account){
+                                $.when(Workspaces.getWorkspaces(account.id)).done(function(workspaces){
+                                    switch (workspaces.length) {
+                                        case 0: redirect({url:"/site/error/no-valid-workspaces"});
+                                            break;
+                                        /*case 1: success(workspaces);
+                                            break;*/
+                                        default: success(workspaces,payment);
 
+                                    }
+                                    }).fail(function(msg){
+                                        error([
+                                            new  AccountError(null,msg)
+                                        ]);
+                                    });
+                            });
+                }
+                }).fail(function(msg){
+                    error([
+                        new  AccountError(null,msg)
+                    ]);
+                });
+            },
             // Returns true if User has WS with tariff plan
             supportTab : function(){
                 if($.cookie("logged_in")){
@@ -611,6 +640,130 @@
                 } else {
                     showSupportLink(false);
                 }
+            },
+
+            addSubscription : function(form,workspaceId,showPaymentForm,success,error){
+                // Get accountId for current User
+                var url = "/api/account";
+                $.ajax({
+                    url : url,
+                    type : "GET",
+                    success : function(data){
+                        //Get accountId
+                        sendSubscriptionRequest(data[0].id, workspaceId, form, showPaymentForm, success, error);
+                    },
+                    error : function(response){
+                        //Show error
+                    error([
+                        new AccountError(
+                            null,
+                            "Authentication Error" + response.message
+                        )
+
+                    ]);                        
+                    }
+
+                });
+                /*form = $('#codenvy-add-subscription-form');
+                e.preventDefault();*/
+
+                var sendSubscriptionRequest = function(accountId,workspaceId,form,showPaymentForm,success,error){
+                    var addSubscriptionUrl = "/api/account/subscriptions/";
+                    var data ={};
+                    var serviceId = getQueryParameterByName("serviceId"),
+                        startDate = getQueryParameterByName("startDate"),
+                        endDate = getQueryParameterByName("endDate"),
+                        Package = getQueryParameterByName("Package"),
+                        RAM = getQueryParameterByName("RAM"),
+                        TariffPlan = getQueryParameterByName("TariffPlan");
+                    if (serviceId){ //If serviceId not exists in query params - throw error
+                        data.serviceId = serviceId;
+                        data.accountId = accountId;
+                        if (startDate)
+                            {data.startDate = startDate;}
+                        if (endDate)
+                            {data.endDate = endDate;}
+                        data.properties={"codenvy:workspace_id":workspaceId};
+                        if (Package)
+                            {data.properties.Package = Package;}
+                        if (RAM)
+                            {data.properties.RAM = RAM;}
+                        if (TariffPlan)
+                            {data.properties.TariffPlan = TariffPlan;}
+                         $.ajax({
+                            url : addSubscriptionUrl,
+                            type : "POST",
+                            contentType: "application/json",
+                            data: JSON.stringify(data),
+                            success : function(){
+                                success('Subscription added succesfully');
+                            },
+                            error : function(response){
+                                if (response.status === 402) {
+                                    var subscription = JSON.parse(response.responseText);
+                                    showPaymentForm(subscription.id);
+                                } else {
+                                     error([
+                                        new AccountError(
+                                            null,
+                                            response.responseText
+                                        )
+                                    ]);
+                                }
+                            }
+                        });
+
+                    } else {
+                        error([
+                            new AccountError(
+                                null,
+                                "Not found serviceId parameter. Error"
+                            )
+
+                        ]); 
+
+                    }
+
+                };
+            },
+
+            paymentFormSubmit : function(subscriptionid,success,error){
+            //var subscriptionid = $("input[name=subscriptionid]")[0].value;
+            var purchaseUrl = "/api/account/subscriptions/"+ subscriptionid + "/purchase";
+            var data = {
+                cardholderName:$('input[name=cardholderName]')[0].value,
+                //subscriptionid:$('input[name=subscriptionid]')[0].value,
+                subscriptionid:subscriptionid,
+                cardNumber:$('input[name=cardNumber]')[0].value,
+                cvv:$('input[name=cvv]')[0].value,
+                expirationMonth:$('input[name=expirationMonth]')[0].value,
+                expirationYear:$('input[name=expirationYear]')[0].value
+                };
+             $.ajax({
+                url : purchaseUrl,
+                type : "POST",
+                contentType: "application/json",
+                data: JSON.stringify(data),
+                success : function(){
+                    success("Subscription added succesfully.");
+                },
+                error : function(response){
+                    var paymentError, message;
+                    paymentError = JSON.parse(response.responseText);
+                    if (paymentError.message){
+                        message = paymentError.message;
+                    } else {
+                        message = "Payment error cccurred. Please contact support.";
+                    }
+                    error([
+                        new AccountError(
+                            null,
+                            message
+                        )
+
+                    ]);
+                }
+            }); 
             },
 
             // Changing login page behavior if authtype=ldap

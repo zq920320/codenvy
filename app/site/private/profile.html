@@ -1,85 +1,59 @@
 ---
     layout : focused
     title: Codenvy - Profile
----
-
+--- 
 
 <!-- load Change Password collapsible panel -->
-
-<div class="container">
-
-    <div class="row">
-        <div class="span2"></div>
-        <div class="span8">
-          <div class="container dark rounded profile-form">
-
-
-         <form class="change-password-form">
-
+    <div class="profile-wrap">
+      <div class="authentication">
+        <div class="dark login shadow" style="color:black">
+          <h2 class="center">Your Personal Information</h2>
+          <form class="change-password-form">
             <div class="field">
-              <p>New password:</p>
-               <input type="password" name="change_password"/>
+              <input type="password" name="change_password" placeholder="New password">
             </div>
-
             <div class="field">
-              <p>Confirm password:</p>
-               <input type="password" name="confirm_password"/>
+              <input type="password" name="confirm_password" placeholder="Confirm password">
             </div>
-
-            <div class="field">
-                  <input type="submit" class="light-button"/>
-               </div>
-
-         </form>
-         <hr class="long-line">
-         <div id="profileServiceErrorMessage" class="error-container"></div>
-         <form class="cloud-ide-profile">
-
-                <div class="profile-email">
-                  <p><span>Your email address is currently : </span><span id="account_value"><span></p>
-                </div>
-                <div class="field">
-                  <p>First name:</p>
-                  <input type="text" name="first_name" maxlength="255"/>
-                </div>
-
-                <div class="field">
-                  <p>Last name:</p>
-                  <input type="text" name="last_name" maxlength="255"/>
-                </div>
-
-                <div class="field">
-                  <p>Phone:</p>
-                  <input type="text" name="phone_work" maxlength="255"/>
+            <div class="field action">
+              <input type="submit" class="light-button blue-button" value="Change Password">
             </div>
-
+          </form>
+          <div class="hr">OR</div>
+          <div id="profileServiceErrorMessage" class="error-container"></div>
+          <form class="cloud-ide-profile">
+            <div class="profile-email">
+              <p><span>Your email address is currently : </span><span id="account_value"><span></p>
+            </div>
             <div class="field">
-              <p>Company:</p>
-               <input type="text" name="company" maxlength="255"/>
-                </div>
-
-                <div class="field">
-                  <p>Job title:</p>
-                   <select type="selectbox" name="title" size="1">
-                        <option value="">Please select role...</option>
-
-                        <option value="Developer">Developer</option>
-                        <option value="Architect">Architect</option>
-                        <option value="PM">Product Manager</option>
-                        <option value="Project">Project Manager</option>
-                        <option value="CEO/CTO">CEO/CTO</option>
-                        <option value="Student">Student</option>
-                        <option value="Other">Other</option>
-                   </select>
-                </div>
-
-               <div class="field">
-                  <input type="submit" class="light-button" value="Update profile"/>
-                </div>
-
-              </form>
-          </div>
+              <input type="text" name="first_name"placeholder="First name">
+            </div>
+            <div class="field">
+              <input type="text" name="last_name" placeholder="Last name">
+            </div>
+            <div class="field">
+              <input type="text" name="phone_work" placeholder="Phone">
+            </div>
+            <div class="field">
+              <input type="text" name="company" placeholder="Company">
+            </div>
+            <div class="field">
+              <select type="selectbox" name="title" size="1">
+                <option value="">Please select role...</option>
+                <option value="Developer">Developer</option>
+                <option value="Architect">Architect</option>
+                <option value="PM">Product Manager</option>
+                <option value="Project">Project Manager</option>
+                <option value="CEO/CTO">CEO/CTO</option>
+                <option value="Student">Student</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div class="field action">
+              <input type="submit" class="light-button blue-button" value="Update profile">
+            </div>
+          </form>
         </div>
-        <div class="span2"></div>
+      </div>
     </div>
-</div>
+

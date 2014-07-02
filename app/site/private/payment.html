@@ -1,0 +1,38 @@
+---
+    layout : payment
+    title: Codenvy - Add Subscription Form
+---
+
+<div class="profile-wrap">
+  <div class="braintree">
+    <div class="dark login shadow">
+        <h1 class="center">Codenvy Credit Card Transaction Form</h1>
+        <div>
+            <div class="workspace-list hidden">Please choose your workspace:</div>
+            <div class="error-container"></div>
+            <form class="codenvy-payment-form hidden" id="payment-form">
+                <div class="payment-field">
+                <label>Cardholder Name</label>
+                <input type="text" size="20" name="cardholderName" />
+                </div>
+                <div class="payment-field">
+                <label>Card Number</label>
+                <input type="text" size="20" data-encrypted-name="cardNumber" />
+                </div>
+                <div class="payment-field">
+                <label>CVV</label>
+                <input type="text" size="4" data-encrypted-name="cvv" />
+                </div>
+                <div class="payment-field">
+                <label>Expiration (MM/YYYY)</label>
+                <span class="payment-exp"><input type="text" size="2" name="expirationMonth" /> /</span>
+                <span class="payment-exp"><input type="text" size="4" name="expirationYear" /></span>
+                </div>
+                <div class="payment-field action">
+                    <input type="submit" class="light-button blue-button" value="Send"/>
+                </div>
+            </form>
+        </div>
+    </div>
+  </div>
+</div>

@@ -23,11 +23,7 @@
 @import "compass/css3/images";
 
 header {
-  padding: 20px;
-  min-height: 67px;
-  .row {
-    overflow: visible;
-  }
+  padding: 70px 0 23px 0;
 }
 
 nav {
@@ -97,8 +93,7 @@ nav {
 
 
 .focused-logo {
-    margin: 30px auto 0 auto;
-    height: 30px;
+    margin: 0 auto;
     width: 205px;
 }
 

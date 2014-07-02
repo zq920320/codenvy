@@ -37,7 +37,7 @@
 		image:url('../images/logoCodenvy.png');
 		repeat:no-repeat;
         position: 50% 50%;
-        size:130px 19px;
+        size:201px 78px;
 	}
 
     @include retina(){
@@ -88,29 +88,29 @@
 
 @mixin image_button_github {
     background:{
-        image:url('../images/buttonGithub.png');
+        image:url('../images/github.png');
         repeat:no-repeat;
-        position: 50% 100%;
-        background-size: 289px 40px;
+        position: center center;
+/*      background-size: 289px 40px;*/ /*wrong syntax*/
     }
 
-    @include retina(){
-        image:url('../images/buttonGithub@2X.png');
+/*    @include retina(){ outdated techniques
+        image:url('../images/github@2X.png');
     }
-}
+*/}
 
 @mixin image_button_google {
     background:{
-        image:url('../images/buttonGoogle.png');
+        image:url('../images/google.png');
         repeat:no-repeat;
-        position: 50% 100%;
-        background-size: 289px 40px;
+        position: center center;
+/*        background-size: 289px 40px;*/ /*wrong syntax*/
     }
 
-    @include retina(){
+/*    @include retina(){ thinking about using svg here. outdated techniques
         image:url('../images/buttonGoogle@2X.png');
     }
-}
+*/}
 
 @mixin image_line_full {
     background:{
@@ -125,6 +125,16 @@
         image:url('../images/lineSmall.png');
         repeat:no-repeat;
         position: 50% 0;
+    }
+}
+
+@mixin alternative_bg {
+    background:{
+        color: #1e5278;
+    }
+    border: {
+      top:1px solid #000;
+      bottom:1px solid #000;  
     }
 }
 
@@ -395,6 +405,13 @@
     }
 }
 
+@mixin image_sep{
+    background: {
+        image:url('../images/sep.png');
+        repeat:no-repeat;
+        position: center center;
+    }
+}
 
 
 

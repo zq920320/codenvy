@@ -16,34 +16,22 @@
  * from Codenvy S.A..
  */
  
-(function(window){
+(function(){
 
     define(["jquery","underscore","backbone"], function($,_,Backbone){
 
-        // implementation based on :
-        // https://github.com/codenvy/cloud-ide/blob/8fe1e50cc6434899dfdfd7b2e85c82008a39a880/cloud-ide-war/src/main/webapp/js/select-tenant.js
-
-        var Tenant = Backbone.Model.extend({
-
-            initialize : function(){
-                this.set("url",this.__buildTenantUrl());
-            },
-
-            __buildTenantUrl : function(){
-                return window.location.protocol +
-                    "//" + window.location.host + "/ide/" + this.get("name") + location.search.substr(0);
-            }
+        var Account = Backbone.Model.extend({
 
         });
 
-        var Tenants = Backbone.Collection.extend({
-            url : "/api/workspace",
-            model : Tenant,
+        var Accounts = Backbone.Collection.extend({
+            url : "/api/account",
+            model : Account,
             parse : function(response){
                 return _.map(_.filter(response, function(r){
-                    return r.temporary===false;
+                    return r.roles.indexOf("account/owner")>=0;
                 }), function(r){
-                    return { name : r.name, owner : r.owner.id, id : r.id };
+                    return { name : r.name, id : r.id };
                 });
             },
             fetch : function(options){
@@ -60,14 +48,14 @@
         });
 
         return {
-            getTenants : function(){
-                return new Tenants().fetch();
+            getAccounts : function(){
+                return new Accounts().fetch();
             },
 
-            Tenant : Tenant,
-            Tenants : Tenants
+            Account : Account,
+            Accounts : Accounts
         };
 
     });
 
-}(window));
+}());

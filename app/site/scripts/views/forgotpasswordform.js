@@ -16,9 +16,9 @@
  * from Codenvy S.A..
  */
  
-define(["underscore","views/accountformbase","models/account"],
+define(["jquery","underscore","views/accountformbase","models/account"],
 
-    function(_,AccountFormBase,Account){
+    function($,_,AccountFormBase,Account){
 
         var ForgotPasswordForm = AccountFormBase.extend({
             __submit : function(){
@@ -47,8 +47,8 @@ define(["underscore","views/accountformbase","models/account"],
             },
 
             __showResultMessage : function(){
-				this.$("fieldset.data").attr("style","display:none");
-				this.$("fieldset.result-message").removeClass("hidden");
+				$(".forgotpassword-form").addClass("hide");
+				$(".forgotpassword-result").removeClass("hide");
             }
         });
 
