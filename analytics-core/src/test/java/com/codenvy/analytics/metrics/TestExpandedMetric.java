@@ -1,13 +1,13 @@
 /*
- *
  * CODENVY CONFIDENTIAL
- * ________________
+ * __________________
  *
- * [2012] - [2013] Codenvy, S.A.
- * All Rights Reserved.
- * NOTICE: All information contained herein is, and remains
+ *  [2012] - [2014] Codenvy, S.A.
+ *  All Rights Reserved.
+ *
+ * NOTICE:  All information contained herein is, and remains
  * the property of Codenvy S.A. and its suppliers,
- * if any. The intellectual and technical concepts contained
+ * if any.  The intellectual and technical concepts contained
  * herein are proprietary to Codenvy S.A.
  * and its suppliers and may be covered by U.S. and Foreign Patents,
  * patents in process, and are protected by trade secret or copyright law.
@@ -17,16 +17,31 @@
  */
 package com.codenvy.analytics.metrics;
 
-import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsList;
-import static java.util.Arrays.asList;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
+import com.codenvy.analytics.BaseTest;
+import com.codenvy.analytics.Configurator;
+import com.codenvy.analytics.Injector;
+import com.codenvy.analytics.Utils;
+import com.codenvy.analytics.datamodel.*;
+import com.codenvy.analytics.metrics.projects.*;
+import com.codenvy.analytics.metrics.sessions.*;
+import com.codenvy.analytics.metrics.sessions.factory.AbstractFactorySessions;
+import com.codenvy.analytics.metrics.sessions.factory.FactorySessionsBelow10Min;
+import com.codenvy.analytics.metrics.sessions.factory.FactorySessionsWithBuildPercent;
+import com.codenvy.analytics.metrics.sessions.factory.ProductUsageFactorySessionsList;
+import com.codenvy.analytics.metrics.users.*;
+import com.codenvy.analytics.metrics.workspaces.ActiveWorkspaces;
+import com.codenvy.analytics.persistent.JdbcDataPersisterFactory;
+import com.codenvy.analytics.pig.scripts.ScriptType;
+import com.codenvy.analytics.pig.scripts.util.Event;
+import com.codenvy.analytics.pig.scripts.util.LogGenerator;
+import com.codenvy.analytics.services.configuration.XmlConfigurationManager;
+import com.codenvy.analytics.services.view.*;
+
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,57 +50,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
-import com.codenvy.analytics.BaseTest;
-import com.codenvy.analytics.Configurator;
-import com.codenvy.analytics.Injector;
-import com.codenvy.analytics.Utils;
-import com.codenvy.analytics.datamodel.ListValueData;
-import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.datamodel.MapValueData;
-import com.codenvy.analytics.datamodel.StringValueData;
-import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.projects.AbstractProjectPaas;
-import com.codenvy.analytics.metrics.projects.AbstractProjectType;
-import com.codenvy.analytics.metrics.projects.CreatedProjects;
-import com.codenvy.analytics.metrics.projects.ProjectPaasGae;
-import com.codenvy.analytics.metrics.projects.ProjectTypeWar;
-import com.codenvy.analytics.metrics.projects.ProjectsList;
-import com.codenvy.analytics.metrics.sessions.AbstractTimelineProductUsageCondition;
-import com.codenvy.analytics.metrics.sessions.ProductUsageTimeBelow1Min;
-import com.codenvy.analytics.metrics.sessions.ProductUsageTimeTotal;
-import com.codenvy.analytics.metrics.sessions.ProductUsageUsersBelow10Min;
-import com.codenvy.analytics.metrics.sessions.TimelineProductUsageConditionAbove300Min;
-import com.codenvy.analytics.metrics.sessions.TimelineProductUsageConditionBelow120Min;
-import com.codenvy.analytics.metrics.sessions.TimelineProductUsageConditionBetween120And300Min;
-import com.codenvy.analytics.metrics.sessions.factory.AbstractFactorySessions;
-import com.codenvy.analytics.metrics.sessions.factory.FactorySessionsBelow10Min;
-import com.codenvy.analytics.metrics.sessions.factory.FactorySessionsWithBuildPercent;
-import com.codenvy.analytics.metrics.sessions.factory.ProductUsageFactorySessionsList;
-import com.codenvy.analytics.metrics.users.AbstractLoggedInType;
-import com.codenvy.analytics.metrics.users.CreatedUsers;
-import com.codenvy.analytics.metrics.users.CreatedUsersFromAuth;
-import com.codenvy.analytics.metrics.users.NonActiveUsers;
-import com.codenvy.analytics.metrics.users.UserInvite;
-import com.codenvy.analytics.metrics.users.UsersAcceptedInvitesPercent;
-import com.codenvy.analytics.metrics.users.UsersLoggedInWithForm;
-import com.codenvy.analytics.metrics.users.UsersStatisticsList;
-import com.codenvy.analytics.metrics.workspaces.ActiveWorkspaces;
-import com.codenvy.analytics.persistent.JdbcDataPersisterFactory;
-import com.codenvy.analytics.pig.scripts.ScriptType;
-import com.codenvy.analytics.pig.scripts.util.Event;
-import com.codenvy.analytics.pig.scripts.util.LogGenerator;
-import com.codenvy.analytics.services.configuration.XmlConfigurationManager;
-import com.codenvy.analytics.services.view.CSVReportPersister;
-import com.codenvy.analytics.services.view.DisplayConfiguration;
-import com.codenvy.analytics.services.view.SectionData;
-import com.codenvy.analytics.services.view.ViewBuilder;
-import com.codenvy.analytics.services.view.ViewData;
+import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsList;
+import static java.util.Arrays.asList;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 /** @author <a href="mailto:dnochevnov@codenvy.com">Dmytro Nochevnov</a> */
 public class TestExpandedMetric extends BaseTest {

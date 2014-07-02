@@ -1,13 +1,13 @@
 /*
- *
  * CODENVY CONFIDENTIAL
- * ________________
+ * __________________
  *
- * [2012] - [2014] Codenvy, S.A.
- * All Rights Reserved.
- * NOTICE: All information contained herein is, and remains
+ *  [2012] - [2014] Codenvy, S.A.
+ *  All Rights Reserved.
+ *
+ * NOTICE:  All information contained herein is, and remains
  * the property of Codenvy S.A. and its suppliers,
- * if any. The intellectual and technical concepts contained
+ * if any.  The intellectual and technical concepts contained
  * herein are proprietary to Codenvy S.A.
  * and its suppliers and may be covered by U.S. and Foreign Patents,
  * patents in process, and are protected by trade secret or copyright law.
@@ -18,9 +18,7 @@
 package com.codenvy.analytics.metrics.users;
 
 import com.codenvy.analytics.metrics.AbstractActiveEntities;
-import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.analytics.metrics.OmitFilters;
 
 import javax.annotation.security.RolesAllowed;
 

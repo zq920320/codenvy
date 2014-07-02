@@ -1,17 +1,19 @@
-/*!
- * jQuery JavaScript Library v1.7.2
- * http://jquery.com/
+/*
+ * CODENVY CONFIDENTIAL
+ * __________________
  *
- * Copyright 2011, John Resig
- * Dual licensed under the MIT or GPL Version 2 licenses.
- * http://jquery.org/license
+ *  [2012] - [2014] Codenvy, S.A.
+ *  All Rights Reserved.
  *
- * Includes Sizzle.js
- * http://sizzlejs.com/
- * Copyright 2011, The Dojo Foundation
- * Released under the MIT, BSD, and GPL Licenses.
- *
- * Date: Wed Mar 21 12:46:34 2012 -0700
+ * NOTICE:  All information contained herein is, and remains
+ * the property of Codenvy S.A. and its suppliers,
+ * if any.  The intellectual and technical concepts contained
+ * herein are proprietary to Codenvy S.A.
+ * and its suppliers and may be covered by U.S. and Foreign Patents,
+ * patents in process, and are protected by trade secret or copyright law.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from Codenvy S.A..
  */
 (function( window, undefined ) {
 

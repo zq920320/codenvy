@@ -1,13 +1,13 @@
 /*
- *
  * CODENVY CONFIDENTIAL
- * ________________
+ * __________________
  *
- * [2012] - [2014] Codenvy, S.A.
- * All Rights Reserved.
- * NOTICE: All information contained herein is, and remains
+ *  [2012] - [2014] Codenvy, S.A.
+ *  All Rights Reserved.
+ *
+ * NOTICE:  All information contained herein is, and remains
  * the property of Codenvy S.A. and its suppliers,
- * if any. The intellectual and technical concepts contained
+ * if any.  The intellectual and technical concepts contained
  * herein are proprietary to Codenvy S.A.
  * and its suppliers and may be covered by U.S. and Foreign Patents,
  * patents in process, and are protected by trade secret or copyright law.
@@ -17,49 +17,26 @@
  */
 package com.codenvy.analytics.services.marketo;
 
-import static com.codenvy.analytics.Utils.toArray;
-import static com.codenvy.analytics.metrics.AbstractMetric.BUILDS;
-import static com.codenvy.analytics.metrics.AbstractMetric.DEPLOYS;
-import static com.codenvy.analytics.metrics.AbstractMetric.ID;
-import static com.codenvy.analytics.metrics.AbstractMetric.LOGINS;
-import static com.codenvy.analytics.metrics.AbstractMetric.PROJECTS;
-import static com.codenvy.analytics.metrics.AbstractMetric.RUNS;
-import static com.codenvy.analytics.metrics.AbstractMetric.TIME;
+import com.codenvy.analytics.Configurator;
+import com.codenvy.analytics.datamodel.*;
+import com.codenvy.analytics.metrics.*;
+import com.codenvy.analytics.metrics.users.UsersStatisticsList;
+import com.codenvy.analytics.services.acton.ActOn;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.codenvy.analytics.Configurator;
-import com.codenvy.analytics.datamodel.ListValueData;
-import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.datamodel.MapValueData;
-import com.codenvy.analytics.datamodel.SetValueData;
-import com.codenvy.analytics.datamodel.StringValueData;
-import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.AbstractMetric;
-import com.codenvy.analytics.metrics.Context;
-import com.codenvy.analytics.metrics.Metric;
-import com.codenvy.analytics.metrics.MetricFactory;
-import com.codenvy.analytics.metrics.MetricFilter;
-import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.metrics.users.UsersStatisticsList;
-import com.codenvy.analytics.services.acton.ActOn;
+import static com.codenvy.analytics.Utils.toArray;
+import static com.codenvy.analytics.metrics.AbstractMetric.*;
 
 /**
  * @author Alexander Reshetnyak

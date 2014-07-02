@@ -1,16 +1,20 @@
 /*
- * Metadata - jQuery plugin for parsing metadata from elements
+ * CODENVY CONFIDENTIAL
+ * __________________
  *
- * Copyright (c) 2006 John Resig, Yehuda Katz, J�örn Zaefferer, Paul McLanahan
+ *  [2012] - [2014] Codenvy, S.A.
+ *  All Rights Reserved.
  *
- * Dual licensed under the MIT and GPL licenses:
- *   http://www.opensource.org/licenses/mit-license.php
- *   http://www.gnu.org/licenses/gpl.html
- *
- * Revision: $Id: jquery.metadata.js 4187 2007-12-16 17:15:27Z joern.zaefferer $
- *
+ * NOTICE:  All information contained herein is, and remains
+ * the property of Codenvy S.A. and its suppliers,
+ * if any.  The intellectual and technical concepts contained
+ * herein are proprietary to Codenvy S.A.
+ * and its suppliers and may be covered by U.S. and Foreign Patents,
+ * patents in process, and are protected by trade secret or copyright law.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from Codenvy S.A..
  */
-
 /**
  * Sets the type of metadata to use. Metadata is encoded in JSON, and each property
  * in the JSON will become a property of the element itself.
