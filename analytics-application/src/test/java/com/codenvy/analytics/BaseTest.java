@@ -53,5 +53,6 @@ public class BaseTest {
         this.mongoDb = mongoDataStorage.getDb();
         this.utils = Injector.getInstance(com.codenvy.analytics.util.Utils.class);
         this.cache = Injector.getInstance(UserPrincipalCache.class);
+        this.cache.init();
     }
 }
