@@ -43,7 +43,6 @@ public class UserPrincipalCache {
         this.cache = new ConcurrentHashMap<>();
         cacheCleaner = new CacheCleaner();
         cacheCleaner.setDaemon(true);
-        cacheCleaner.start();
 
         LOG.info("UserPrincipalCache is initialized");
     }
