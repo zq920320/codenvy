@@ -22,6 +22,8 @@ import com.google.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import java.security.Principal;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -35,14 +37,25 @@ public class UserPrincipalCache {
     public static final  long   MAX_ENTRIES         = 1000;
 
     private final Map<String, UserContext> cache;
+    private final CacheCleaner             cacheCleaner;
 
     public UserPrincipalCache() {
         this.cache = new ConcurrentHashMap<>();
-        CacheCleaner cacheCleaner = new CacheCleaner();
+        cacheCleaner = new CacheCleaner();
         cacheCleaner.setDaemon(true);
         cacheCleaner.start();
 
         LOG.info("UserPrincipalCache is initialized");
+    }
+
+    @PostConstruct
+    public void init() {
+        cacheCleaner.start();
+    }
+
+    @PreDestroy
+    public void destroy() {
+        cacheCleaner.interrupt();
     }
 
     public UserContext get(Principal principal) {
@@ -112,7 +125,7 @@ public class UserPrincipalCache {
             while (!isInterrupted()) {
                 for (Map.Entry<String, UserContext> entry : cache.entrySet()) {
                     if (entry.getValue().isExpired()) {
-                        cache.remove(entry.getValue());
+                        cache.remove(entry.getKey());
                     }
                 }
 
