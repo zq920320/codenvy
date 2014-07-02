@@ -46,7 +46,7 @@
                 __validationRules : function(){
                     var rule = {};
                     rule.password = {required: true};
-                    if (Account.isAuthtypeLdap){
+                    if (Account.isAuthtypeLdap()){
                         rule.email = {required: true};
                     } else {
                         rule.email = {
