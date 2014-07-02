@@ -149,7 +149,7 @@ public class UserPrincipalCache {
                 }
 
                 try {
-                    sleep(60 * 1000);
+                    sleep(10 * 60 * 1000);
                 } catch (InterruptedException e) {
                     break;
                 }
