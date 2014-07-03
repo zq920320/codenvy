@@ -23,6 +23,7 @@ import com.codenvy.analytics.util.UserPrincipalCache;
 import com.mongodb.DB;
 
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeSuite;
 
 /** @author Dmytro Nochevnov */
 public class BaseTest {
@@ -53,6 +54,10 @@ public class BaseTest {
         this.mongoDb = mongoDataStorage.getDb();
         this.utils = Injector.getInstance(com.codenvy.analytics.util.Utils.class);
         this.cache = Injector.getInstance(UserPrincipalCache.class);
+    }
+
+    @BeforeSuite
+    public void initCache() {
         this.cache.init();
     }
 }

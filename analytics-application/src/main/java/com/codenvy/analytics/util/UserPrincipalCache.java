@@ -149,12 +149,10 @@ public class UserPrincipalCache {
                 }
 
                 try {
-                    sleep(10 * 60 * 1000);
+                    sleep(60 * 1000);
                 } catch (InterruptedException e) {
                     break;
                 }
-
-                LOG.info("UserPrincipalCache size is " + cache.size());
             }
 
             LOG.warn("CacheCleaner thread is stopped");
