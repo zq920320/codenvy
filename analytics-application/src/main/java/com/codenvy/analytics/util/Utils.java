@@ -81,10 +81,7 @@ public class Utils {
                 cache.put(principal, userContext);
             }
         }
-        putDefaultValueIfAbsent(context, Parameters.FROM_DATE);
-        putDefaultValueIfAbsent(context, Parameters.TO_DATE);
         validateFormDateToDate(context);
-
         context.remove(MetricFilter.DATA_UNIVERSE.toString());
 
         return context;
@@ -143,16 +140,15 @@ public class Utils {
 
     }
 
-    private void putDefaultValueIfAbsent(Map<String, String> context, Parameters param) {
-        if (!context.containsKey(param.toString())) {
-            context.put(param.toString(), param.getDefaultValue());
-        }
-    }
-
     private void validateFormDateToDate(Map<String, String> context) {
         try {
-            Calendar fromDate = com.codenvy.analytics.Utils.parseDate(context.get(Parameters.FROM_DATE.toString()));
-            Calendar toDate = com.codenvy.analytics.Utils.parseDate(context.get(Parameters.TO_DATE.toString()));
+            String fromDateKey = Parameters.FROM_DATE.toString();
+            Calendar fromDate = com.codenvy.analytics.Utils
+                    .parseDate(context.containsKey(fromDateKey) ? context.get(fromDateKey) : Parameters.FROM_DATE.getDefaultValue());
+
+            String toDateKey = Parameters.TO_DATE.toString();
+            Calendar toDate = com.codenvy.analytics.Utils
+                    .parseDate(context.containsKey(toDateKey) ? context.get(toDateKey) : Parameters.TO_DATE.getDefaultValue());
 
             if (fromDate.after(toDate)) {
                 throw new RuntimeException("The parameter " + Parameters.TO_DATE + " must be greater than " + Parameters.FROM_DATE);
