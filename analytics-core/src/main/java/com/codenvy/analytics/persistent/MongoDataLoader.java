@@ -288,7 +288,7 @@ public class MongoDataLoader implements DataLoader {
                 }
 
             } else if (filter == MetricFilter.PARAMETERS) {
-                match.putAll(Utils.fetchEncodedPairs(clauses.getAsString(filter)));
+                match.putAll(Utils.fetchEncodedPairs(clauses.getAsString(filter), true));
 
             } else {
                 match.put(field, processFilter(value, filter.isNumericType()));

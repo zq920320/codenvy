@@ -109,6 +109,7 @@ public class TestEventValidation extends BaseTest {
     @DataProvider(name = "correctMessagesProvider")
     public Object[][] getCorrectMessages() {
         return new Object[][]{
+                {"session-started", "ws", "user", "PARAMETERS#SESSION-ID=9F8D988D-78DC-412D-BD34-C3470450A21D#"},
                 {"project-created", "ws", "user", "PROJECT#Sample-TwitterBootstrap# TYPE#JavaScript# PAAS#null#"},
                 {"factory-created", "ws", "user", "PROJECT#project# TYPE## REPO-URL#repo# FACTORY-URL#factory# AFFILIATE-ID## ORG-ID##"},
                 {"user-created", "ws", "user", "USER-ID#usermwl9896s2we14h9n# EMAILS#anonymoususer_zz31bd#"},
