@@ -20,7 +20,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Top Users</title>
+    <title>Top Referrers</title>
     <%@ include file="/inclusions/header.jsp"%>
 </head>
 <body>
