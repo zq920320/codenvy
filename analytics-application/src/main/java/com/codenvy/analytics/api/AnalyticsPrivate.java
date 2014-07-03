@@ -67,18 +67,18 @@ public class AnalyticsPrivate {
     @Path("metric/{name}")
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed({"user", "system/admin", "system/manager"})
-    public Response getValueByQueryParams(@PathParam("name") String metricName,
-                                          @QueryParam("page") String page,
-                                          @QueryParam("per_page") String perPage,
-                                          @Context UriInfo uriInfo,
-                                          @Context SecurityContext securityContext) {
+    public Response getValue(@PathParam("name") String metricName,
+                             @QueryParam("page") String page,
+                             @QueryParam("per_page") String perPage,
+                             @Context UriInfo uriInfo,
+                             @Context SecurityContext securityContext) {
         try {
             Map<String, String> context = utils.extractParams(uriInfo,
                                                               page,
                                                               perPage,
                                                               securityContext);
 
-            MetricValueDTO value = metricHandler.getValueByQueryParams(metricName, context, uriInfo);
+            MetricValueDTO value = metricHandler.getValue(metricName, context, uriInfo);
             return Response.status(Response.Status.OK).entity(value).build();
         } catch (MetricNotFoundException e) {
             LOG.error(e.getMessage(), e);
@@ -132,7 +132,7 @@ public class AnalyticsPrivate {
             }
 
             Map<String, String> context = utils.extractParams(uriInfo);
-            MetricValueDTO value = metricHandler.getValueByQueryParams(metricName, context, uriInfo);
+            MetricValueDTO value = metricHandler.getValue(metricName, context, uriInfo);
             return Response.status(Response.Status.OK).entity(value).build();
         } catch (MetricNotFoundException e) {
             LOG.error(e.getMessage(), e);

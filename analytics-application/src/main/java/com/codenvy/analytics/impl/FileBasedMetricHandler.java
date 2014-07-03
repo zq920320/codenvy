@@ -44,9 +44,9 @@ import java.util.Map;
 public class FileBasedMetricHandler implements MetricHandler {
 
     @Override
-    public MetricValueDTO getValueByQueryParams(String metricName,
-                                                Map<String, String> context,
-                                                UriInfo uriInfo) throws MetricNotFoundException, MetricRestrictionException {
+    public MetricValueDTO getValue(String metricName,
+                                   Map<String, String> context,
+                                   UriInfo uriInfo) throws MetricNotFoundException, MetricRestrictionException {
         MetricValueDTO metricValueDTO = DtoFactory.getInstance().createDto(MetricValueDTO.class);
         metricValueDTO.setName(metricName);
         try {
@@ -75,14 +75,14 @@ public class FileBasedMetricHandler implements MetricHandler {
             }
         }
 
-        return getValueByQueryParams(metricName, context, uriInfo);
+        return getValue(metricName, context, uriInfo);
     }
 
     public MetricValueDTO getPublicValue(String metricName,
                                          Map<String, String> context,
                                          UriInfo uriInfo) throws MetricNotFoundException, MetricRestrictionException {
 
-        return getValueByQueryParams(metricName, context, uriInfo);
+        return getValue(metricName, context, uriInfo);
     }
 
     @Override
@@ -93,7 +93,7 @@ public class FileBasedMetricHandler implements MetricHandler {
         MetricValueListDTO metricValueListDTO = DtoFactory.getInstance().createDto(MetricValueListDTO.class);
         List<MetricValueDTO> metricValues = new ArrayList<>();
         for (String metricName : metricNames) {
-            metricValues.add(getValueByQueryParams(metricName, context, uriInfo));
+            metricValues.add(getValue(metricName, context, uriInfo));
         }
         metricValueListDTO.setMetrics(metricValues);
         return metricValueListDTO;
