@@ -380,9 +380,11 @@
         <indexes>
             <index name="user">
                 <field>user</field>
+                <field>date</field>
             </index>
             <index name="ws">
                 <field>ws</field>
+                <field>date</field>
             </index>
             <index name="domain">
                 <field>domain</field>
@@ -392,6 +394,7 @@
             </index>
             <index name="session_id">
                 <field>session_id</field>
+                <field>date</field>
             </index>
             <index name="date">
                 <field>date</field>
