@@ -689,19 +689,24 @@
         <indexes>
             <index name="user">
                 <field>user</field>
-                <field>date</field>
+                <field desc="true">date</field>
             </index>
             <index name="ws">
                 <field>ws</field>
-                <field>date</field>
+                <field desc="true">date</field>
+            </index>
+            <index name="event">
+                <field>event</field>
+                <field desc="true">date</field>
             </index>
             <index name="date">
-                <field>date</field>
+                <field desc="true">date</field>
             </index>
             <index name="project">
                 <field>user</field>
                 <field>ws</field>
                 <field>project</field>
+                <field desc="true">date</field>
             </index>
         </indexes>
     </collection>
