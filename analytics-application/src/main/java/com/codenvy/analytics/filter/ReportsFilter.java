@@ -17,45 +17,42 @@
  */
 package com.codenvy.analytics.filter;
 
+import com.codenvy.analytics.util.Utils;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.Principal;
-import java.util.regex.Pattern;
 
 /** @author Alexander Reshetnyak */
+@Singleton
 public class ReportsFilter implements Filter {
+    private final Utils utils;
 
-    private final static String ALLOWED_PRINCIPALS_PATTERN = "allowed-principals";
-    private final static String ALLOWED_ALL                = ".*";
-
-    private Pattern allowedPrincipalsPattern;
+    @Inject
+    public ReportsFilter(Utils utils) {
+        this.utils = utils;
+    }
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-            throws IOException, ServletException {
-
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest httpRequest = (HttpServletRequest)request;
         HttpServletResponse httpResponse = (HttpServletResponse)response;
 
         Principal userPrincipal = httpRequest.getUserPrincipal();
 
-        if (userPrincipal != null && isAccessPermitted(userPrincipal.getName())) {
+        if (userPrincipal != null && utils.isSystemUser(userPrincipal.getName())) {
             chain.doFilter(request, response);
         } else {
             httpResponse.sendRedirect(httpRequest.getContextPath());
         }
     }
 
-    private boolean isAccessPermitted(String user) {
-        return allowedPrincipalsPattern.matcher(user).matches();
-    }
-
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        String pattern = filterConfig.getInitParameter(ALLOWED_PRINCIPALS_PATTERN);
-        allowedPrincipalsPattern = pattern != null ? Pattern.compile(pattern) : Pattern.compile(ALLOWED_ALL);
     }
 
     @Override

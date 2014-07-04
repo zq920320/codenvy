@@ -17,6 +17,8 @@
  */
 package com.codenvy.analytics;
 
+import com.codenvy.analytics.filter.AnalyticsFilter;
+import com.codenvy.analytics.filter.ReportsFilter;
 import com.codenvy.auth.sso.client.LoginFilter;
 import com.codenvy.auth.sso.client.SSOLogoutServlet;
 import com.codenvy.inject.DynaModule;
@@ -35,6 +37,7 @@ public class AnalyticsServletModule extends ServletModule {
             bindConstant().annotatedWith(Names.named("auth.sso.cookies_disabled_error_page_url")).to("/site/error/error-cookies-disabled");
             bindConstant().annotatedWith(Names.named("auth.sso.client_skip_filter_regexp")).to(".*/analytics-private/public-metric/.*");
 
+            bind(com.codenvy.analytics.filter.AnalyticsFilter.class);
             bind(com.codenvy.auth.sso.client.WebAppClientUrlExtractor.class);
             bind(com.codenvy.auth.sso.client.EmptyContextResolver.class);
             bind(com.codenvy.auth.sso.client.token.ChainedTokenExtractor.class);
@@ -42,7 +45,11 @@ public class AnalyticsServletModule extends ServletModule {
             bind(com.codenvy.auth.sso.client.InvalidTokenHandler.class).to(com.codenvy.auth.sso.client.RecoverableInvalidTokenHandler.class);
 
             filter("/*").through(LoginFilter.class);
+            filter("/*").through(AnalyticsFilter.class);
             serve("/_sso/client/logout").with(SSOLogoutServlet.class);
         }
+        
+        bind(com.codenvy.analytics.filter.ReportsFilter.class);
+        filter("/reports/*").through(ReportsFilter.class);
     }
 }

@@ -17,6 +17,7 @@
  */
 package com.codenvy.analytics.util;
 
+import com.codenvy.analytics.Configurator;
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
@@ -34,7 +35,6 @@ import java.io.IOException;
 import java.security.Principal;
 import java.text.ParseException;
 import java.util.*;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.codenvy.analytics.Utils.getFilterAsSet;
@@ -44,14 +44,21 @@ import static com.codenvy.analytics.datamodel.ValueDataUtil.getAsList;
 /** @author Anatoliy Bazko */
 @Singleton
 public class Utils {
-
-    private static final Pattern ADMIN_ROLE_EMAIL_PATTERN = Pattern.compile("@codenvy[.]com$");
+    private final static String RESTRICT_EVERYONE = "";
+    private final Pattern allowedPrincipalsPattern;
 
     private final UserPrincipalCache cache;
 
     @Inject
-    public Utils(UserPrincipalCache userPrincipalCache) {
+    public Utils(UserPrincipalCache userPrincipalCache, Configurator configurator) {
         this.cache = userPrincipalCache;
+
+        String adminLoginRegexp = configurator.getString("analytics.admin_login_regexp");
+        if (adminLoginRegexp == null) {
+            allowedPrincipalsPattern = Pattern.compile(RESTRICT_EVERYONE);
+        } else {
+            allowedPrincipalsPattern = Pattern.compile(adminLoginRegexp);
+        }
     }
 
     public Map<String, String> extractParams(UriInfo info,
@@ -127,8 +134,7 @@ public class Utils {
     }
 
     public boolean isSystemUser(String email) {
-        Matcher matcher = ADMIN_ROLE_EMAIL_PATTERN.matcher(email);
-        return matcher.find();
+        return allowedPrincipalsPattern.matcher(email).matches();
     }
 
     public boolean isSystemUser(SecurityContext securityContext) {
