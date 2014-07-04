@@ -23,12 +23,12 @@ import com.codenvy.api.core.rest.shared.dto.Link;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
-import com.codenvy.api.core.util.Pair;
 import com.codenvy.api.user.shared.dto.Member;
 import com.codenvy.api.user.shared.dto.User;
 import com.codenvy.api.workspace.shared.dto.NewMembership;
 import com.codenvy.api.workspace.shared.dto.Workspace;
 import com.codenvy.commons.env.EnvironmentContext;
+import com.codenvy.commons.lang.Pair;
 import com.codenvy.dto.server.DtoFactory;
 
 import org.codenvy.mail.MailSenderClient;

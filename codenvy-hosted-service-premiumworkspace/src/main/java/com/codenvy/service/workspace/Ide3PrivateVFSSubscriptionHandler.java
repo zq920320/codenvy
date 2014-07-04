@@ -19,13 +19,13 @@ package com.codenvy.service.workspace;
 
 import com.codenvy.api.core.ApiException;
 import com.codenvy.api.core.rest.HttpJsonHelper;
-import com.codenvy.api.core.util.Pair;
 import com.codenvy.api.vfs.server.VirtualFileSystem;
 import com.codenvy.api.vfs.server.VirtualFileSystemFactory;
 import com.codenvy.api.vfs.shared.dto.AccessControlEntry;
 import com.codenvy.api.vfs.shared.dto.Principal;
 import com.codenvy.api.vfs.shared.dto.VirtualFileSystemInfo;
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
+import com.codenvy.commons.lang.Pair;
 import com.codenvy.dto.server.DtoFactory;
 import com.codenvy.dto.server.JsonArrayImpl;
 
