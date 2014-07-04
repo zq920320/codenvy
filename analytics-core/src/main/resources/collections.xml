@@ -691,6 +691,11 @@
             <index name="date">
                 <field>date</field>
             </index>
+            <index name="project">
+                <field>user</field>
+                <field>ws</field>
+                <field>project</field>
+            </index>
         </indexes>
     </collection>
 
