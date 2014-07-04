@@ -17,10 +17,11 @@
  */
 package com.codenvy.factory.storage.mongo;
 
-import com.codenvy.api.core.util.Pair;
+
 import com.codenvy.api.factory.*;
 import com.codenvy.api.factory.dto.Factory;
 import com.codenvy.commons.lang.NameGenerator;
+import com.codenvy.commons.lang.Pair;
 import com.codenvy.dto.server.DtoFactory;
 import com.mongodb.*;
 import com.mongodb.util.JSON;
