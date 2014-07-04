@@ -508,15 +508,15 @@ function Configuration() {
             
             columnDrillDownPageLinkConfiguration: {
                 mapColumnNameToExpandableMetric: {
-                    "Number of Sessions": "#SESSIONS",
+                    "# Sessions": "#SESSIONS",
                     "Total Time": "#SESSIONS",
                     "Total Build Time": "builds_time",
                     "Total Run Time": "runs_time",
-                    "Number of Active Projects": "#PROJECTS",
-                    "Number of Builds": "builds",
-                    "Number of Debugs": "debugs",
-                    "Number of Deploys": "deploys",
-                    "Number of Factories": "#FACTORIES",
+                    "# Active Projects": "#PROJECTS",
+                    "# Builds": "builds",
+                    "# Debugs": "debugs",
+                    "# Deploys": "deploys",
+                    "# Factories": "#FACTORIES",
                 },
             },
         },
@@ -819,16 +819,16 @@ function Configuration() {
             
             columnDrillDownPageLinkConfiguration: {
                 mapColumnNameToExpandableMetric: {
-                    "Number of Sessions": "#SESSIONS",
+                    "# Sessions": "#SESSIONS",
                     "Total Time": "#SESSIONS",
                     "Total Build Time": "builds_time",
                     "Total Run Time": "runs_time",
-                    "Number of Active Projects": "#PROJECTS",
-                    "Number of Builds": "builds",
-                    "Number of Debugs": "debugs",
-                    "Number of Deploys": "deploys",
-                    "Number of Factories": "#FACTORIES",
-                    "Number of Users": "#USERS",
+                    "# Active Projects": "#PROJECTS",
+                    "# Builds": "builds",
+                    "# Debugs": "debugs",
+                    "# Deploys": "deploys",
+                    "# Factories": "#FACTORIES",
+                    "# Users": "#USERS",
                 },
             },
         },
@@ -1176,10 +1176,10 @@ function Configuration() {
 
             columnDrillDownPageLinkConfiguration: {
                 mapColumnNameToExpandableMetric: {
-                    "Number of Clicks": "temporary_workspaces_created",
-                    "Number of Sessions": "#SESSIONS",
-                    "Number of Known": "authenticated_factory_sessions",
-                    "Number of Converted": "converted_factory_sessions",
+                    "# Clicks": "temporary_workspaces_created",
+                    "# Sessions": "#SESSIONS",
+                    "# Known": "authenticated_factory_sessions",
+                    "# Converted": "converted_factory_sessions",
                     "Total Time": "#SESSIONS",
                 },
             },
