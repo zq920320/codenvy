@@ -413,6 +413,13 @@
     }
 }
 
+@mixin image_cont{
+    background: {
+        image:url('../images/sep_continuous.png');
+        repeat:repeat no-repeat;
+        position: center center;
+    }
+}
 
 
 

@@ -30,6 +30,11 @@ img {
     display: block;
     max-width: 100%;
 }
+.imgcenter {
+    display: block;
+    margin: 0 auto;
+    max-width: 100%;
+}
 
 .container {
     @include clearfix();

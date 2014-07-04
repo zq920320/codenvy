@@ -349,6 +349,18 @@ table {
     line-height:44px;
     @include image_sep;
   }
+  .hline{
+    text-align:center;
+    font: {
+      size: 1em;
+      weight:500;
+    }
+    color: #6b7379;
+    height:44px;
+    line-height:44px;
+    margin: 0px 0px;
+    @include image_cont;
+  }
   .action {
     margin-top: 18px; 
   }
