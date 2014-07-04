@@ -688,6 +688,10 @@
                 <field>user</field>
                 <field>date</field>
             </index>
+            <index name="ws">
+                <field>ws</field>
+                <field>date</field>
+            </index>
             <index name="date">
                 <field>date</field>
             </index>
@@ -975,7 +979,6 @@
             </index>
             <index name="project">
                 <field>project</field>
-                <field>date</field>
             </index>
             <index name="project_type">
                 <field>project_type</field>
