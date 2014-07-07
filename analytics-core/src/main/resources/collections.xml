@@ -673,6 +673,12 @@
             <index name="sessions">
                 <field>sessions</field>
             </index>
+            <index name="referrer">
+                <field>referrer</field>
+            </index>
+            <index name="factory">
+                <field>factory</field>
+            </index>
             <index name="time">
                 <field>time</field>
             </index>
@@ -940,6 +946,9 @@
             </index>
             <index name="converted_session">
                 <field>converted_session</field>
+            </index>
+            <index name="encoded_factory">
+                <field>encoded_factory</field>
             </index>
             <index name="ws_created ">
                 <field>ws_created</field>
