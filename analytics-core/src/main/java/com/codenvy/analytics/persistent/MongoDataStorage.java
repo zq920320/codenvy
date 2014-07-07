@@ -29,10 +29,7 @@ import de.flapdoodle.embed.mongo.distribution.Version;
 import com.codenvy.analytics.Configurator;
 import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.Parameters;
-import com.mongodb.DB;
-import com.mongodb.MongoClient;
-import com.mongodb.MongoClientURI;
-import com.mongodb.WriteConcern;
+import com.mongodb.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,6 +75,7 @@ public class MongoDataStorage {
         MongoClient client = initializeClient();
         this.mongoDb = client.getDB(uri.getDatabase());
         this.mongoDb.setWriteConcern(WriteConcern.ACKNOWLEDGED);
+        this.mongoDb.setReadPreference(ReadPreference.primaryPreferred());
     }
 
     /**
