@@ -4,7 +4,7 @@
     CODENVY CONFIDENTIAL
     __________________
 
-     [2012] - [2013] Codenvy, S.A.
+     [2012] - [2014] Codenvy, S.A.
      All Rights Reserved.
 
     NOTICE:  All information contained herein is, and remains
@@ -23,11 +23,11 @@
     <parent>
         <artifactId>maven-depmgt-pom</artifactId>
         <groupId>com.codenvy</groupId>
-        <version>1.7.5-SNAPSHOT</version>
+        <version>1.8.3-SNAPSHOT</version>
     </parent>
     <groupId>com.codenvy</groupId>
     <artifactId>odyssey</artifactId>
-    <version>0.17.0-SNAPSHOT</version>
+    <version>0.19.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Codenvy :: Website</name>
     <scm>
@@ -39,6 +39,7 @@
     <properties>
         <maven.releases.repo.url>https://maven.codenvycorp.com/content/repositories/codenvy-private-releases/</maven.releases.repo.url>
         <maven.snapshots.repo.url>https://maven.codenvycorp.com/content/repositories/codenvy-private-snapshots/</maven.snapshots.repo.url>
+        <version.license-header>codenvy-codenvy-license-resource-bundle</version.license-header>
     </properties>
     <build>
         <plugins>
@@ -52,6 +53,14 @@
                         </goals>
                         <configuration>
                             <target>
+                            <!-- Download NPM dependencies -->
+                                <exec dir="${basedir}" executable="npm" failonerror="true">
+                                    <arg value="install" />
+                                </exec>
+			    <!-- Download NPM dependencies -->
+                                <exec dir="${basedir}/build" executable="npm" failonerror="true">
+                                    <arg value="install" />
+                                </exec>
                                 <exec dir="${basedir}/build" executable="grunt" failonerror="true">
                                     <arg value="build" />
                                 </exec>
@@ -59,6 +68,26 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+             <plugin>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>2.5</version>
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <directory>${basedir}/app/_site</directory>
+                            <followSymlinks>false</followSymlinks>
+                        </fileset>
+                        <fileset>
+                            <directory>${basedir}/build/node_modules</directory>
+                            <followSymlinks>false</followSymlinks>
+                        </fileset>
+                        <fileset>
+                            <directory>${basedir}/node_modules</directory>
+                            <followSymlinks>false</followSymlinks>
+                        </fileset>
+                    </filesets>
+                </configuration>
             </plugin>
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
@@ -90,7 +119,6 @@
                             </descriptors>
                         </configuration>
                     </execution>
-                
                     <execution>
                         <id>prod</id>
                         <phase>package</phase>
