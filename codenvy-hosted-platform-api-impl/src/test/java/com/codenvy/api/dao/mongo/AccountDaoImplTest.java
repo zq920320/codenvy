@@ -22,6 +22,8 @@ import com.codenvy.api.account.shared.dto.AccountMembership;
 import com.codenvy.api.account.shared.dto.Attribute;
 import com.codenvy.api.account.shared.dto.Member;
 import com.codenvy.api.account.shared.dto.Subscription;
+import com.codenvy.api.account.shared.dto.SubscriptionHistoryEvent;
+import com.codenvy.api.account.shared.dto.SubscriptionPayment;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
@@ -33,11 +35,14 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
+import com.mongodb.MongoException;
 import com.mongodb.util.JSON;
 
 import org.mockito.Mock;
 import org.mockito.testng.MockitoTestNGListener;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
@@ -48,10 +53,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.codenvy.api.account.shared.dto.Subscription.State.ACTIVE;
+import static com.codenvy.api.account.shared.dto.SubscriptionHistoryEvent.Type.CREATE;
+import static com.codenvy.api.account.shared.dto.SubscriptionHistoryEvent.Type.UPDATE;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
 
 /**
  * Tests for {@link AccountDaoImpl}
@@ -68,23 +80,26 @@ public class AccountDaoImplTest extends BaseDaoTest {
     private static final String ACCOUNT_NAME  = "account";
     private static final String ACCOUNT_OWNER = "user123@codenvy.com";
 
-    private static final String ACC_COLL_NAME          = "accounts";
-    private static final String SUBSCRIPTION_COLL_NAME = "subscriptions";
-    private static final String MEMBER_COLL_NAME       = "members";
+    private static final String ACC_COLL_NAME                  = "accounts";
+    private static final String SUBSCRIPTION_COLL_NAME         = "subscriptions";
+    private static final String MEMBER_COLL_NAME               = "members";
+    private static final String SUBSCRIPTION_HISTORY_COLL_NAME = "history";
 
-    private static final String SUBSCRIPTION_ID = "Subscription0xfffffff";
-    private static final String SERVICE_NAME    = "builder";
-    private static final long   START_DATE      = System.currentTimeMillis();
-    private static final long   END_DATE        = START_DATE + /* 1 day ms */ 86_400_000;
+    private static final String SUBSCRIPTION_ID               = "Subscription0xfffffff";
+    private static final String SERVICE_NAME                  = "builder";
+    private static final long   START_DATE                    = System.currentTimeMillis();
+    private static final long   END_DATE                      = START_DATE + /* 1 day ms */ 86_400_000;
+    private static final String SUBSCRIPTION_HISTORY_EVENT_ID = "event0xfffffff";
     private static final Map<String, String> PROPS;
 
 
-    AccountDaoImpl accountDao;
-    DBCollection   subscriptionCollection;
-    DBCollection   membersCollection;
+    private AccountDaoImpl accountDao;
+    private DBCollection   subscriptionCollection;
+    private DBCollection   membersCollection;
+    private DBCollection   subscriptionHistoryCollection;
 
     @Mock
-    WorkspaceDao workspaceDao;
+    private WorkspaceDao workspaceDao;
 
     static {
         PROPS = new HashMap<>();
@@ -95,9 +110,23 @@ public class AccountDaoImplTest extends BaseDaoTest {
     @BeforeMethod
     public void setUp() throws Exception {
         super.setUp(ACC_COLL_NAME);
-        accountDao = new AccountDaoImpl(db, workspaceDao, ACC_COLL_NAME, SUBSCRIPTION_COLL_NAME, MEMBER_COLL_NAME);
-        subscriptionCollection = db.getCollection(SUBSCRIPTION_COLL_NAME);
-        membersCollection = db.getCollection(MEMBER_COLL_NAME);
+        db = spy(db);
+        collection = spy(db.getCollection(ACC_COLL_NAME));
+        subscriptionCollection = spy(db.getCollection(SUBSCRIPTION_COLL_NAME));
+        membersCollection = spy(db.getCollection(MEMBER_COLL_NAME));
+        subscriptionHistoryCollection = spy(db.getCollection(SUBSCRIPTION_HISTORY_COLL_NAME));
+        when(db.getCollection(ACC_COLL_NAME)).thenReturn(collection);
+        when(db.getCollection(SUBSCRIPTION_COLL_NAME)).thenReturn(subscriptionCollection);
+        when(db.getCollection(MEMBER_COLL_NAME)).thenReturn(membersCollection);
+        when(db.getCollection(SUBSCRIPTION_HISTORY_COLL_NAME)).thenReturn(subscriptionHistoryCollection);
+        accountDao = new AccountDaoImpl(db, workspaceDao, ACC_COLL_NAME, SUBSCRIPTION_COLL_NAME, MEMBER_COLL_NAME,
+                                        SUBSCRIPTION_HISTORY_COLL_NAME);
+    }
+
+    @Override
+    @AfterMethod
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     @Test
@@ -325,7 +354,7 @@ public class AccountDaoImplTest extends BaseDaoTest {
                                     .withStartDate(START_DATE)
                                     .withEndDate(END_DATE)
                                     .withProperties(PROPS)
-                                    .withState(Subscription.State.ACTIVE);
+                                    .withState(ACTIVE);
 
         accountDao.addSubscription(ss);
 
@@ -378,6 +407,36 @@ public class AccountDaoImplTest extends BaseDaoTest {
         accountDao.updateSubscription(ss);
     }
 
+    @Test(expectedExceptions = ServerException.class)
+    public void shouldThrowServerExceptionOnUpdateSubscriptionsIfMongoExceptionOccurs()
+            throws ServerException, NotFoundException, ConflictException {
+        Subscription ss = DtoFactory.getInstance().createDto(Subscription.class)
+                                    .withId(SUBSCRIPTION_ID)
+                                    .withAccountId(ACCOUNT_ID)
+                                    .withServiceId(SERVICE_NAME)
+                                    .withStartDate(START_DATE)
+                                    .withEndDate(END_DATE);
+
+        doThrow(new MongoException("")).when(subscriptionCollection).findOne(new BasicDBObject("id", SUBSCRIPTION_ID));
+        accountDao.updateSubscription(ss);
+    }
+
+    @Test(expectedExceptions = ServerException.class)
+    public void shouldThrowServerExceptionOnUpdateSubscriptionsIfMongoExceptionOccurs2()
+            throws ServerException, NotFoundException, ConflictException {
+        subscriptionCollection
+                .insert(new BasicDBObject("id", SUBSCRIPTION_ID).append("accountId", ACCOUNT_ID).append("serviceId", SERVICE_NAME)
+                                                                .append("startDate", START_DATE).append("endDate", END_DATE));
+        Subscription ss = DtoFactory.getInstance().createDto(Subscription.class)
+                                    .withId(SUBSCRIPTION_ID)
+                                    .withAccountId(ACCOUNT_ID)
+                                    .withServiceId(SERVICE_NAME)
+                                    .withStartDate(START_DATE)
+                                    .withEndDate(END_DATE);
+        doThrow(new MongoException("")).when(subscriptionCollection).update(any(DBObject.class), any(DBObject.class));
+        accountDao.updateSubscription(ss);
+    }
+
     @Test(expectedExceptions = NotFoundException.class)
     public void shouldThrowAnExceptionWhileAddingSubscriptionToNotExistedAccount() throws ServerException,
                                                                                           ConflictException, NotFoundException {
@@ -394,9 +453,9 @@ public class AccountDaoImplTest extends BaseDaoTest {
         accountDao.addSubscription(subscription);
     }
 
-    @Test(expectedExceptions = ConflictException.class)
+    @Test(expectedExceptions = ConflictException.class, expectedExceptionsMessageRegExp = "Subscription state is missing")
     public void shouldThrowConflictExceptionOnAddSubscriptionWithoutState() throws ServerException,
-                                                                                          ConflictException, NotFoundException {
+                                                                                   ConflictException, NotFoundException {
         collection.insert(new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME).append("owner", ACCOUNT_OWNER));
 
         Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class)
@@ -410,8 +469,58 @@ public class AccountDaoImplTest extends BaseDaoTest {
         accountDao.addSubscription(subscription);
     }
 
+    @Test(expectedExceptions = ConflictException.class, expectedExceptionsMessageRegExp = "Subscription startDate should go before endDate")
+    public void shouldThrowConflictExceptionOnAddSubscriptionIfEndDateIsSmallerThanStartSate() throws ServerException,
+                                                                                                      ConflictException, NotFoundException {
+        collection.insert(new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME).append("owner", ACCOUNT_OWNER));
+
+        Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class)
+                                              .withId(SUBSCRIPTION_ID)
+                                              .withAccountId(ACCOUNT_ID)
+                                              .withServiceId(SERVICE_NAME)
+                                              .withStartDate(START_DATE)
+                                              .withEndDate(START_DATE - 1)
+                                              .withState(ACTIVE)
+                                              .withProperties(PROPS);
+
+        accountDao.addSubscription(subscription);
+    }
+
+    @Test(expectedExceptions = ServerException.class)
+    public void shouldThrowServerExceptionOnAddSubscriptionsIfMongoExceptionOccurs()
+            throws ServerException, NotFoundException, ConflictException {
+        doThrow(new MongoException("")).when(collection).findOne(new BasicDBObject("id", ACCOUNT_ID));
+        Subscription ss = DtoFactory.getInstance().createDto(Subscription.class)
+                                    .withId(SUBSCRIPTION_ID)
+                                    .withAccountId(ACCOUNT_ID)
+                                    .withServiceId(SERVICE_NAME)
+                                    .withStartDate(START_DATE)
+                                    .withEndDate(END_DATE)
+                                    .withProperties(PROPS)
+                                    .withState(ACTIVE);
+        accountDao.addSubscription(ss);
+    }
+
+    @Test(expectedExceptions = ServerException.class)
+    public void shouldThrowServerExceptionOnAddSubscriptionsIfMongoExceptionOccurs2()
+            throws ServerException, NotFoundException, ConflictException {
+        Subscription ss = DtoFactory.getInstance().createDto(Subscription.class)
+                                    .withId(SUBSCRIPTION_ID)
+                                    .withAccountId(ACCOUNT_ID)
+                                    .withServiceId(SERVICE_NAME)
+                                    .withStartDate(START_DATE)
+                                    .withEndDate(END_DATE)
+                                    .withProperties(PROPS)
+                                    .withState(ACTIVE);
+        collection.insert(new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME)
+                                                             .append("owner", ACCOUNT_OWNER));
+
+        doThrow(new MongoException("")).when(subscriptionCollection).save(toDBObject(ss));
+        accountDao.addSubscription(ss);
+    }
+
     @Test
-    public void shouldBeAbleToFindSubscriptions() throws Exception {
+    public void shouldBeAbleToGetSubscriptions() throws Exception {
         collection.insert(new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME)
                                                              .append("owner", ACCOUNT_OWNER));
 
@@ -421,27 +530,55 @@ public class AccountDaoImplTest extends BaseDaoTest {
                                      .withStartDate(START_DATE)
                                      .withEndDate(END_DATE)
                                      .withProperties(PROPS)
-                                     .withState(Subscription.State.ACTIVE);
+                                     .withState(ACTIVE);
         Subscription ss2 = DtoFactory.getInstance().createDto(Subscription.class)
                                      .withAccountId(ACCOUNT_ID)
                                      .withServiceId(SERVICE_NAME)
                                      .withStartDate(START_DATE)
                                      .withEndDate(END_DATE)
                                      .withProperties(PROPS)
-                                     .withState(Subscription.State.ACTIVE);
+                                     .withState(ACTIVE);
 
-        accountDao.addSubscription(ss1);
-        accountDao.addSubscription(ss2);
+        subscriptionCollection.save(toDBObject(ss1));
+        subscriptionCollection.save(toDBObject(ss2));
 
         List<Subscription> found = accountDao.getSubscriptions(ACCOUNT_ID);
         assertEquals(found.size(), 2);
     }
 
     @Test
+    public void shouldReturnEmptyListIfThereIsNoSubscriptionsOnGetSubscriptions() throws Exception {
+        collection.insert(new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME)
+                                                             .append("owner", ACCOUNT_OWNER));
+
+        List<Subscription> found = accountDao.getSubscriptions(ACCOUNT_ID);
+        assertEquals(found.size(), 0);
+    }
+
+    @Test(expectedExceptions = NotFoundException.class)
+    public void shouldThrowNotFoundExceptionOnGetSubscriptionsWithInvalidAccountId() throws ServerException, NotFoundException {
+        accountDao.getSubscriptions(ACCOUNT_ID);
+    }
+
+    @Test(expectedExceptions = ServerException.class)
+    public void shouldThrowServerExceptionOnGetSubscriptionsIfMongoExceptionOccurs()
+            throws ServerException, NotFoundException, ConflictException {
+        collection.insert(new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME)
+                                                             .append("owner", ACCOUNT_OWNER));
+
+        doThrow(new MongoException("")).when(subscriptionCollection).find(new BasicDBObject("accountId", ACCOUNT_ID));
+        accountDao.getSubscriptions(ACCOUNT_ID);
+    }
+
+    @Test(expectedExceptions = ServerException.class)
+    public void shouldThrowServerExceptionOnGetSubscriptionsIfMongoExceptionOccurs2()
+            throws ServerException, NotFoundException, ConflictException {
+        doThrow(new MongoException("")).when(collection).findOne(new BasicDBObject("id", ACCOUNT_ID));
+        accountDao.getSubscriptions(ACCOUNT_ID);
+    }
+
+    @Test
     public void shouldBeAbleToRemoveSubscription() throws Exception {
-        collection.insert(new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME).append("owner", ACCOUNT_OWNER));
-        collection.insert(new BasicDBObject("id", "another_account").append("name", ACCOUNT_NAME).append("owner",
-                                                                                                         ACCOUNT_OWNER));
         Subscription ss = DtoFactory.getInstance().createDto(Subscription.class)
                                     .withId(SUBSCRIPTION_ID)
                                     .withAccountId(ACCOUNT_ID)
@@ -449,20 +586,51 @@ public class AccountDaoImplTest extends BaseDaoTest {
                                     .withStartDate(START_DATE)
                                     .withEndDate(END_DATE)
                                     .withProperties(PROPS)
-                                    .withState(Subscription.State.ACTIVE);
+                                    .withState(ACTIVE);
 
-        accountDao.addSubscription(ss);
+        subscriptionCollection.save(toDBObject(ss));
 
         final String anotherSubscriptionId = "Subscription0x00000000f";
         ss.setId(anotherSubscriptionId);
         ss.setAccountId("another_account");
 
-        accountDao.addSubscription(ss);
+        subscriptionCollection.save(toDBObject(ss));
 
         accountDao.removeSubscription(SUBSCRIPTION_ID);
 
         assertNull(subscriptionCollection.findOne(new BasicDBObject("id", SUBSCRIPTION_ID)));
         assertNotNull(subscriptionCollection.findOne(new BasicDBObject("id", anotherSubscriptionId)));
+    }
+
+    @Test(expectedExceptions = NotFoundException.class, expectedExceptionsMessageRegExp = "Subscription not found " + SUBSCRIPTION_ID)
+    public void shouldThrowNotFoundExceptionOnRemoveSubscriptionsWithInvalidSubscriptionId() throws ServerException, NotFoundException {
+        accountDao.removeSubscription(SUBSCRIPTION_ID);
+    }
+
+    @Test(expectedExceptions = ServerException.class)
+    public void shouldThrowServerExceptionOnRemoveSubscriptionsIfMongoExceptionOccurs()
+            throws ServerException, NotFoundException, ConflictException {
+        doThrow(new MongoException("")).when(subscriptionCollection).findOne(new BasicDBObject("id", SUBSCRIPTION_ID));
+        accountDao.removeSubscription(SUBSCRIPTION_ID);
+    }
+
+    @Test(expectedExceptions = ServerException.class)
+    public void shouldThrowServerExceptionOnRemoveSubscriptionsIfMongoExceptionOccurs2()
+            throws ServerException, NotFoundException, ConflictException {
+        Subscription ss = DtoFactory.getInstance().createDto(Subscription.class)
+                                    .withId(SUBSCRIPTION_ID)
+                                    .withAccountId(ACCOUNT_ID)
+                                    .withServiceId(SERVICE_NAME)
+                                    .withStartDate(START_DATE)
+                                    .withEndDate(END_DATE)
+                                    .withProperties(PROPS)
+                                    .withState(ACTIVE);
+
+        subscriptionCollection.save(toDBObject(ss));
+
+        doThrow(new MongoException("")).when(subscriptionCollection).remove(new BasicDBObject("id", SUBSCRIPTION_ID));
+
+        accountDao.removeSubscription(SUBSCRIPTION_ID);
     }
 
     @Test
@@ -475,14 +643,117 @@ public class AccountDaoImplTest extends BaseDaoTest {
                                               .withStartDate(START_DATE)
                                               .withEndDate(END_DATE)
                                               .withProperties(PROPS)
-                                              .withState(Subscription.State.ACTIVE);
+                                              .withState(ACTIVE);
 
-        accountDao.addSubscription(subscription);
+        subscriptionCollection.save(toDBObject(subscription));
 
         Subscription actual = accountDao.getSubscriptionById(SUBSCRIPTION_ID);
 
         assertNotNull(actual);
         assertEquals(actual, subscription);
+    }
+
+    @Test(expectedExceptions = NotFoundException.class, expectedExceptionsMessageRegExp = "Subscription not found " + SUBSCRIPTION_ID)
+    public void shouldThrowNotFoundExceptionOnGetSubscriptionsByIdWithInvalidSubscriptionId() throws ServerException, NotFoundException {
+        accountDao.getSubscriptionById(SUBSCRIPTION_ID);
+    }
+
+    @Test(expectedExceptions = ServerException.class)
+    public void shouldThrowServerExceptionOnGetSubscriptionsByIdIfMongoExceptionOccurs()
+            throws ServerException, NotFoundException, ConflictException {
+        doThrow(new MongoException("")).when(subscriptionCollection).findOne(new BasicDBObject("id", SUBSCRIPTION_ID));
+        accountDao.getSubscriptionById(SUBSCRIPTION_ID);
+    }
+
+    @Test
+    public void shouldBeAbleToAddSubscriptionHistoryEvent() throws ServerException, ConflictException {
+        Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class);
+        final SubscriptionPayment subscriptionPayment =
+                DtoFactory.getInstance().createDto(SubscriptionPayment.class).withAmount(12D).withTransactionId("transaction_id");
+
+        SubscriptionHistoryEvent event =
+                DtoFactory.getInstance().createDto(SubscriptionHistoryEvent.class).withId("id").withTime(System.currentTimeMillis())
+                          .withUserId(
+                                  "userID").withType(CREATE).withSubscriptionPayment(subscriptionPayment).withSubscription(subscription);
+        accountDao.addSubscriptionHistoryEvent(event);
+    }
+
+    @Test(expectedExceptions = ServerException.class)
+    public void shouldThrowServerExceptionOnAddSubscriptionHistoryEventIfMongoExceptionOccurs() throws ServerException, ConflictException {
+        Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class);
+        final SubscriptionPayment subscriptionPayment =
+                DtoFactory.getInstance().createDto(SubscriptionPayment.class).withAmount(12D).withTransactionId("transaction_id");
+
+        SubscriptionHistoryEvent event =
+                DtoFactory.getInstance().createDto(SubscriptionHistoryEvent.class).withId("id").withTime(System.currentTimeMillis())
+                          .withUserId(
+                                  "userID").withType(CREATE).withSubscriptionPayment(subscriptionPayment).withSubscription(subscription);
+
+        doThrow(new MongoException("")).when(subscriptionHistoryCollection).save(any(DBObject.class));
+        accountDao.addSubscriptionHistoryEvent(event);
+    }
+
+    @Test(expectedExceptions = ConflictException.class, dataProvider = "badSubscriptionHistoryEventProvider")
+    public void shouldThrowConflictExceptionOnAddSubscriptionHistoryEventIfMongoExceptionOccurs(SubscriptionHistoryEvent event)
+            throws ServerException, ConflictException {
+        accountDao.addSubscriptionHistoryEvent(event);
+    }
+
+    @DataProvider(name = "badSubscriptionHistoryEventProvider")
+    public Object[][] badSubscriptionHistoryEventProvider() {
+        Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class);
+        final SubscriptionPayment subscriptionPayment =
+                DtoFactory.getInstance().createDto(SubscriptionPayment.class).withAmount(12D).withTransactionId("transaction_id");
+
+        SubscriptionHistoryEvent event =
+                DtoFactory.getInstance().createDto(SubscriptionHistoryEvent.class).withId("id").withTime(System.currentTimeMillis())
+                          .withUserId(
+                                  "userID").withType(CREATE).withSubscriptionPayment(subscriptionPayment).withSubscription(subscription);
+        return new Object[][]{{DtoFactory.getInstance().clone(event).withUserId(null)}, {DtoFactory.getInstance().clone(event).withTime(0)},
+                              {DtoFactory.getInstance().clone(event).withId(null)}, {DtoFactory.getInstance().clone(event).withType(null)}};
+    }
+
+    @Test
+    public void shouldBeAbleToGetSubscriptionHistoryEventsByAccount() throws ServerException, ConflictException {
+        List<SubscriptionHistoryEvent> expected = new ArrayList<>();
+        Subscription subscription =
+                DtoFactory.getInstance().createDto(Subscription.class).withAccountId(ACCOUNT_ID).withId(SUBSCRIPTION_ID);
+        final SubscriptionPayment subscriptionPayment =
+                DtoFactory.getInstance().createDto(SubscriptionPayment.class).withAmount(12D).withTransactionId("transaction_id");
+
+        SubscriptionHistoryEvent event =
+                DtoFactory.getInstance().createDto(SubscriptionHistoryEvent.class).withId("id").withTime(System.currentTimeMillis())
+                          .withUserId(
+                                  "userID").withType(CREATE).withSubscriptionPayment(subscriptionPayment).withSubscription(subscription);
+
+        expected.add(event);
+        expected.add(DtoFactory.getInstance().clone(event).withType(UPDATE));
+        for (SubscriptionHistoryEvent event1 : expected) {
+            subscriptionHistoryCollection.save(toDBObject(event1));
+        }
+
+        List<SubscriptionHistoryEvent> actual = accountDao.getSubscriptionHistoryEventsByAccount(ACCOUNT_ID);
+
+        assertEquals(actual, expected);
+    }
+
+    @Test
+    public void shouldReturnEmptyListOnGetSubscriptionHistoryEventsByAccountIfThereIsNoSuchEvents()
+            throws ServerException, ConflictException {
+        List<SubscriptionHistoryEvent> actual = accountDao.getSubscriptionHistoryEventsByAccount(ACCOUNT_ID);
+
+        assertTrue(actual.isEmpty());
+    }
+
+    @Test(expectedExceptions = ServerException.class)
+    public void shouldThrowServerExceptionOnGetSubscriptionHistoryEventsByAccountIfMongoExceptionIsThrown()
+            throws ServerException, ConflictException {
+        doThrow(new MongoException("")).when(subscriptionHistoryCollection).find(new BasicDBObject("subscription.accountId", ACCOUNT_ID));
+        accountDao.getSubscriptionHistoryEventsByAccount(ACCOUNT_ID);
+    }
+
+    private DBObject toDBObject(SubscriptionHistoryEvent event) {
+        return (DBObject)JSON.parse(event.toString());
     }
 
     private List<Attribute> getAttributes() {
@@ -494,5 +765,17 @@ public class AccountDaoImplTest extends BaseDaoTest {
         attributes.add(DtoFactory.getInstance().createDto(Attribute.class).withName("attr3").withValue("value3")
                                  .withDescription("description3"));
         return attributes;
+    }
+
+    private DBObject toDBObject(Subscription obj) {
+        Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class)
+                                              .withId(obj.getId())
+                                              .withAccountId(obj.getAccountId())
+                                              .withServiceId(obj.getServiceId())
+                                              .withStartDate(obj.getStartDate())
+                                              .withEndDate(obj.getEndDate())
+                                              .withProperties(obj.getProperties())
+                                              .withState(obj.getState());
+        return (DBObject)JSON.parse(subscription.toString());
     }
 }

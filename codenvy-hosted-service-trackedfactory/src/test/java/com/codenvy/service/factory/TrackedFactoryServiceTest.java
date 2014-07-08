@@ -17,8 +17,63 @@
  */
 package com.codenvy.service.factory;
 
+import com.codenvy.api.account.server.SubscriptionService;
+import com.codenvy.api.account.server.dao.AccountDao;
+import com.codenvy.api.account.shared.dto.Subscription;
+import com.codenvy.api.core.ApiException;
+import com.codenvy.api.core.ServerException;
+import com.codenvy.dto.server.DtoFactory;
+
+import org.mockito.Mock;
+import org.mockito.testng.MockitoTestNGListener;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Listeners;
+import org.testng.annotations.Test;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.mockito.Mockito.when;
+
 /**
+ * Tests for {@link com.codenvy.service.factory.TrackedFactoryService}
+ *
  * @author Sergii Kabashniuk
+ * @author Eugene Voevodin
  */
+@Listeners(value = {MockitoTestNGListener.class})
 public class TrackedFactoryServiceTest {
+
+    private SubscriptionService service;
+    @Mock
+    private AccountDao          accountDao;
+
+    @BeforeClass
+    public void initialize() {
+        service = new TrackedFactoryService(accountDao);
+    }
+
+    @Test(expectedExceptions = ServerException.class,
+          expectedExceptionsMessageRegExp = "TrackedFactory subscription already exists")
+    public void beforeCreateSubscriptionWhenOneAlreadyExists() throws ApiException {
+        final String accountId = "acc1";
+        final List<Subscription> existedSubscriptions = new ArrayList<>(1);
+        existedSubscriptions.add(DtoFactory.getInstance().createDto(Subscription.class)
+                                           .withServiceId(service.getServiceId()));
+        when(accountDao.getSubscriptions(accountId)).thenReturn(existedSubscriptions);
+
+        final Subscription newSubscription = DtoFactory.getInstance().createDto(Subscription.class)
+                                                       .withServiceId(service.getServiceId())
+                                                       .withAccountId(accountId);
+        service.beforeCreateSubscription(newSubscription);
+    }
+
+    @Test
+    public void beforeCreateSubscription() throws ApiException {
+        final String accountId = "acc1";
+        final Subscription newSubscription = DtoFactory.getInstance().createDto(Subscription.class)
+                                                       .withServiceId(service.getServiceId())
+                                                       .withAccountId(accountId);
+        service.beforeCreateSubscription(newSubscription);
+    }
 }
