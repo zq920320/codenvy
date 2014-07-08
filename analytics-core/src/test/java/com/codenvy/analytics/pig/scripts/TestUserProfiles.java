@@ -160,6 +160,18 @@ public class TestUserProfiles extends BaseTest {
     @Test
     public void testFilterByUserAsString() throws Exception {
         Context.Builder builder = new Context.Builder();
+        builder.put(MetricFilter.USER, "id1 OR id2 OR id3 OR id4");
+
+        Metric metric = new UsersProfiles();
+        assertEquals(LongValueData.valueOf(4), metric.getValue(builder.build()));
+
+        builder.put(MetricFilter.USER_FIRST_NAME, "f3");
+        assertEquals(LongValueData.valueOf(1), metric.getValue(builder.build()));
+    }
+
+    @Test
+    public void testFilterByUserAndFirstName() throws Exception {
+        Context.Builder builder = new Context.Builder();
         builder.put(MetricFilter.USER, "id1");
 
         Metric metric = new UsersProfiles();

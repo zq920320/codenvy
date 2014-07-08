@@ -368,4 +368,19 @@ public class TestUsersData extends BaseTest {
         List<ValueData> rows = treatAsList(valueData);
         assertEquals(rows.size(), 2);
     }
+
+    @Test
+    public void testUsersStatisticsByCombinedFilter() throws Exception {
+        Context.Builder builder = new Context.Builder();
+        builder.put(MetricFilter.USER, "id1 OR id2 OR id3 OR id4");
+
+        UsersStatisticsList metric = new UsersStatisticsList();
+        assertEquals(getAsList(metric, builder.build()).size(), 4);
+
+        builder.put(MetricFilter.USER_FIRST_NAME, "f1 OR f2");
+        assertEquals(getAsList(metric, builder.build()).size(), 2);
+
+        builder.put(MetricFilter.ALIASES, "user1@gmail.com");
+        assertEquals(getAsList(metric, builder.build()).size(), 1);
+    }
 }

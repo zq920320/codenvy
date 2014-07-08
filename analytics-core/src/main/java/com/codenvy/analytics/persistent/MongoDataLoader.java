@@ -252,31 +252,32 @@ public class MongoDataLoader implements DataLoader {
                 continue;
             }
 
-            if (!(metric instanceof AbstractUsersProfile)
-                && (filter == MetricFilter.USER_COMPANY
-                    || filter == MetricFilter.USER_FIRST_NAME
-                    || filter == MetricFilter.USER_LAST_NAME)) {
+            if (!(metric instanceof AbstractUsersProfile) && (filter == MetricFilter.USER_COMPANY
+                                                              || filter == MetricFilter.USER_FIRST_NAME
+                                                              || filter == MetricFilter.USER_LAST_NAME)) {
 
                 String userFieldName = MetricFilter.USER.toString().toLowerCase();
                 DBObject usersToFilter = (userFieldName.equals(filteringField))
                                          ? getUsers(filter, value, filteringValues)
                                          : getUsers(filter, value, null);
 
-                match.put(userFieldName, usersToFilter);
+                mergeFilter(usersToFilter, match.get(userFieldName), match, userFieldName);
 
-            } else if (!(metric instanceof AbstractUsersProfile)
-                       && filter == MetricFilter.USER) {
+            } else if (!(metric instanceof AbstractUsersProfile) && filter == MetricFilter.USER) {
                 if (value.equals(Parameters.USER_TYPES.REGISTERED.name())) {
                     match.put(MetricFilter.REGISTERED_USER.toString().toLowerCase(), 1);
                 } else if (value.equals(Parameters.USER_TYPES.ANONYMOUS.name())) {
                     match.put(MetricFilter.REGISTERED_USER.toString().toLowerCase(), 0);
                 } else if (!value.equals(Parameters.USER_TYPES.ANY.name())) {
-                    match.put(MetricFilter.USER.toString().toLowerCase(), processFilter(value, filter.isNumericType()));
+                    String userFieldName = MetricFilter.USER.toString().toLowerCase();
+                    mergeFilter(processFilter(value, filter.isNumericType()), match.get(userFieldName), match, userFieldName);
                 }
 
             } else if (!(metric instanceof AbstractUsersProfile) && filter == MetricFilter.ALIASES) {
+                String userFieldName = MetricFilter.USER.toString().toLowerCase();
                 String[] userIds = getUserIdByAliases(value);
-                match.put(MetricFilter.USER.toString().toLowerCase(), processFilter(userIds, filter.isNumericType()));
+
+                mergeFilter(processFilter(userIds, filter.isNumericType()), match.get(userFieldName), match, userFieldName);
 
             } else if (filter == MetricFilter.WS) {
                 if (value.equals(Parameters.WS_TYPES.PERSISTENT.name())) {
@@ -296,6 +297,17 @@ public class MongoDataLoader implements DataLoader {
         }
 
         return new BasicDBObject("$match", match);
+    }
+
+    private void mergeFilter(Object value1, Object value2, BasicDBObject match, String fieldName) {
+        if (value2 == null) {
+            match.put(fieldName, value1);
+        } else {
+            match.put("$and", new Object[]{
+                    new BasicDBObject(fieldName, value1),
+                    new BasicDBObject(fieldName, value2),
+            });
+        }
     }
 
     /**
@@ -391,11 +403,7 @@ public class MongoDataLoader implements DataLoader {
         if (processExclusiveValues) {
             return new BasicDBObject("$nin", isNumericType ? convertToNumericFormat(values) : values);
         } else {
-            if (values.length == 1) {
-                return isNumericType ? Long.parseLong(values[0]) : values[0];
-            } else {
-                return new BasicDBObject("$in", isNumericType ? convertToNumericFormat(values) : values);
-            }
+            return new BasicDBObject("$in", isNumericType ? convertToNumericFormat(values) : values);
         }
     }
 
