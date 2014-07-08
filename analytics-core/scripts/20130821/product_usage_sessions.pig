@@ -118,9 +118,11 @@ result = FOREACH t GENERATE UUID(),
                             TOTUPLE('user_company', company);
 STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 
----------------------------------------
--- REGISTERED USERS: The total time of the sessions
----------------------------------------
-x = FOREACH t GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('time', delta),
-    TOTUPLE('sessions', 1);
+-- store sessions for users' statistics
+x = FOREACH t GENERATE UUID(),
+                       TOTUPLE('date', ToMilliSeconds(dt)),
+                       TOTUPLE('user', user),
+                       TOTUPLE('ws', ws),
+                       TOTUPLE('time', delta),
+                       TOTUPLE('sessions', 1);
 STORE x INTO '$STORAGE_URL.$STORAGE_TABLE_USERS_STATISTICS' USING MongoStorage;

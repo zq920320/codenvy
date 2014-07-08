@@ -80,9 +80,8 @@ result = FOREACH t GENERATE UUID(),
                             TOTUPLE('user_company', company);
 STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 
--- store sessions fro users' statistics
-w1 = FILTER t BY INDEXOF(user, 'anonymoususer_', 0) < 0;
-w = FOREACH w1 GENERATE UUID(),
+-- store sessions for users' statistics
+w = FOREACH t GENERATE UUID(),
                        TOTUPLE('date', ToMilliSeconds(dt)),
                        TOTUPLE('user', user),
                        TOTUPLE('ws', ws),
