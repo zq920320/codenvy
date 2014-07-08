@@ -65,7 +65,8 @@ public class FactoryStatisticsList extends AbstractListValueResulted implements 
                             AUTHENTICATED_SESSION,
                             CONVERTED_SESSION,
                             WS_CREATED,
-                            ENCODED_FACTORY};
+                            ENCODED_FACTORY,
+                            ORG_ID};
     }
 
     @Override
@@ -78,6 +79,7 @@ public class FactoryStatisticsList extends AbstractListValueResulted implements 
 
         DBObject group = new BasicDBObject();
         group.put(ID, "$" + FACTORY);
+        group.put(ORG_ID, new BasicDBObject("$last", "$" + ORG_ID));
         group.put(TIME, new BasicDBObject("$sum", "$" + TIME));
         group.put(RUNS, new BasicDBObject("$sum", "$" + RUNS));
         group.put(DEPLOYS, new BasicDBObject("$sum", "$" + DEPLOYS));
@@ -91,6 +93,7 @@ public class FactoryStatisticsList extends AbstractListValueResulted implements 
 
         DBObject project = new BasicDBObject();
         project.put(FACTORY, "$_id");
+        project.put(ORG_ID, 1);
         project.put(TIME, 1);
         project.put(RUNS, 1);
         project.put(DEPLOYS, 1);
@@ -130,7 +133,7 @@ public class FactoryStatisticsList extends AbstractListValueResulted implements 
                 items2Return.put(USER, getNotDefaultStringValue(factoryData.get(USER)));
                 items2Return.put(REPOSITORY, getNotNullStringValue(factoryData.get(REPOSITORY)));
                 items2Return.put(PROJECT_TYPE, getNotNullStringValue(factoryData.get(PROJECT_TYPE)));
-                items2Return.put(ORG_ID, getNotNullStringValue(factoryData.get(ORG_ID)));
+//                items2Return.put(ORG_ID, getNotNullStringValue(factoryData.get(ORG_ID)));
                 items2Return.put(AFFILIATE_ID, getNotNullStringValue(factoryData.get(AFFILIATE_ID)));
             }
 
