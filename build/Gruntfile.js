@@ -62,7 +62,6 @@ module.exports = function( grunt ) {
           options: {
             unused : false,
             expr : true,
-            es5 : true,
             globals: {
                 jQuery: true,
                 define: true,
@@ -113,7 +112,7 @@ module.exports = function( grunt ) {
                 // templates
 
                 {expand: true, cwd: '../app/site/templates/', src: ['*.html'], dest: '../target/dist/gh/site/templates/'},
-                
+
                 // robots.txt
 
                 {expand: true, cwd: '../app/_site/', src: ['*.txt'], dest: '../target/dist/gh/'}
@@ -166,7 +165,7 @@ module.exports = function( grunt ) {
                     src: ['*.html','**/*.html','*.xml'],
                     dest: '../target/dist/enterprise/'
                 },
-                
+
                 // robots.txt
 
                 {expand: true, cwd: '../app/_site/', src: ['*.txt'], dest: '../target/dist/enterprise/'}
@@ -198,7 +197,7 @@ module.exports = function( grunt ) {
                 // templates
 
                 {expand: true, cwd: '../app/site/templates/', src: ['*.html'], dest: '../target/dist/stage/site/templates/'},
-                
+
                 // robots.txt
 
                 {expand: true, cwd: '../app/_site/', src: ['*.txt'], dest: '../target/dist/stage/'}
@@ -252,7 +251,7 @@ module.exports = function( grunt ) {
                     src: ['*.html','**/*.html','*.xml'],
                     dest: '../target/dist/prod/'
                 },
-                
+
                 // robots.txt
 
                 {expand: true, cwd: '../app/_site/', src: ['*.txt'], dest: '../target/dist/prod/'}
@@ -396,7 +395,7 @@ module.exports = function( grunt ) {
             // copy staging build output
             'copy:stage',
 
-            
+
 
             // ------------------ ENTERPRISE
 

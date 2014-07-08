@@ -29,3 +29,7 @@ test-output/
 ######################
 *~
 .DS_Store
+
+# Dependencies #
+######################
+node_modules/

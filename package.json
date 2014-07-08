@@ -20,6 +20,6 @@
   },
   "devDependencies": {
     "yeoman": "0.9.6",
-    "grunt": "~0.4.0"
+    "grunt": "~0.4.1"
   }
 }
