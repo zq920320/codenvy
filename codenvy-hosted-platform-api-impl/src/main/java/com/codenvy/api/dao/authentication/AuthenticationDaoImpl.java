@@ -19,9 +19,9 @@ package com.codenvy.api.dao.authentication;
 
 import com.codenvy.api.auth.AuthenticationDao;
 import com.codenvy.api.auth.AuthenticationException;
-import com.codenvy.api.auth.UniquePrincipal;
 import com.codenvy.api.auth.shared.dto.Credentials;
 import com.codenvy.api.auth.shared.dto.Token;
+import com.codenvy.commons.user.User;
 import com.codenvy.dto.server.DtoFactory;
 
 import org.slf4j.Logger;
@@ -33,7 +33,6 @@ import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.security.Principal;
-import java.util.Collections;
 
 /**
  * Authenticate user by username and password.
@@ -96,7 +95,7 @@ public class AuthenticationDaoImpl implements AuthenticationDao {
             }
         }
 
-        UniquePrincipal principal = handler.authenticate(credentials.getUsername(), credentials.getPassword());
+        User principal = handler.authenticate(credentials.getUsername(), credentials.getPassword());
         if (principal == null) {
             throw new AuthenticationException("Provided user and password is not valid");
         }
@@ -154,7 +153,7 @@ public class AuthenticationDaoImpl implements AuthenticationDao {
             response = Response.ok();
             AccessTicket accessTicket = ticketManager.removeTicket(accessToken);
             if (accessTicket != null) {
-                Principal userPrincipal = accessTicket.getPrincipal();
+                User userPrincipal = accessTicket.getPrincipal();
                 // DO NOT REMOVE! This log will be used in statistic analyzing
                 LOG.info("EVENT#user-sso-logged-out# USER#{}#", userPrincipal.getName());
             } else {

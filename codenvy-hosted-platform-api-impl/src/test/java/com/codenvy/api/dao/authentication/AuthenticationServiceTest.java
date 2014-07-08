@@ -21,10 +21,11 @@ package com.codenvy.api.dao.authentication;
 import com.codenvy.api.auth.AuthenticationDao;
 import com.codenvy.api.auth.AuthenticationExceptionMapper;
 import com.codenvy.api.auth.AuthenticationService;
-import com.codenvy.api.auth.UniquePrincipal;
 import com.codenvy.api.auth.server.dto.DtoServerImpls;
 import com.codenvy.api.auth.shared.dto.Credentials;
 import com.codenvy.api.auth.shared.dto.Token;
+import com.codenvy.commons.user.User;
+import com.codenvy.commons.user.UserImpl;
 import com.codenvy.dto.server.DtoFactory;
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.mapper.ObjectMapper;
@@ -43,6 +44,7 @@ import org.testng.annotations.Test;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
+import java.util.Collections;
 
 import static com.jayway.restassured.RestAssured.given;
 import static org.mockito.Matchers.any;
@@ -66,9 +68,9 @@ public class AuthenticationServiceTest {
     @Mock
     protected AuthenticationHandlerProvider handlerProvider;
     @Mock
-    protected UniquePrincipal               principal;
+    protected User                          principal;
     @Mock
-    protected UniquePrincipal               oldPrincipal;
+    protected User                          oldPrincipal;
     @Mock
     protected TicketManager                 ticketManager;
     @Mock
@@ -78,7 +80,7 @@ public class AuthenticationServiceTest {
     @InjectMocks
     protected AuthenticationDaoImpl         dao;
 
-    protected AuthenticationService         service;
+    protected AuthenticationService service;
 
     protected AuthenticationService authenticationService;
     protected String                token;
@@ -105,7 +107,8 @@ public class AuthenticationServiceTest {
         //given
 
 
-        when(handler.authenticate(eq("user@site.com"), eq("secret"))).thenReturn(new UniquePrincipal("user@site.com", "14433"));
+        when(handler.authenticate(eq("user@site.com"), eq("secret")))
+                .thenReturn(new UserImpl("user@site.com", "14433", "t11", Collections.<String>emptyList(), false));
 
         doAnswer(new Answer<Object>() {
             @Override
@@ -241,7 +244,8 @@ public class AuthenticationServiceTest {
     @Test
     public void shouldLogoutFirstIfUserAlreadyLoggedIn() throws Exception {
         //given
-        when(handler.authenticate(eq("user@site.com"), eq("secret"))).thenReturn(new UniquePrincipal("user@site.com", "14433"));
+        when(handler.authenticate(eq("user@site.com"), eq("secret")))
+                .thenReturn(new UserImpl("user@site.com", "14433", "t111", Collections.<String>emptyList(), false));
         when(oldPrincipal.getName()).thenReturn("old@site.com");
         doAnswer(new Answer<Object>() {
             @Override

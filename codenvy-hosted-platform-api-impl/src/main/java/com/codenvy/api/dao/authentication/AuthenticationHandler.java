@@ -18,7 +18,7 @@
 package com.codenvy.api.dao.authentication;
 
 import com.codenvy.api.auth.AuthenticationException;
-import com.codenvy.api.auth.UniquePrincipal;
+import com.codenvy.commons.user.User;
 
 /**
  * Authentication using username and password.
@@ -33,7 +33,7 @@ public interface AuthenticationHandler {
      * otherwise.
      * @throws AuthenticationException
      */
-    UniquePrincipal authenticate(final String login, final String password) throws AuthenticationException;
+    User authenticate(final String login, final String password) throws AuthenticationException;
 
     /** @return - type of authentication handler */
     String getType();

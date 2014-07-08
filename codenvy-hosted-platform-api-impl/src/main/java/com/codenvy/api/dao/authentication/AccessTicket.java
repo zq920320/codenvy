@@ -18,7 +18,7 @@
 package com.codenvy.api.dao.authentication;
 
 
-import com.codenvy.api.auth.UniquePrincipal;
+import com.codenvy.commons.user.User;
 
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -32,20 +32,20 @@ import java.util.Set;
  * @author Sergey Kabashniuk
  */
 public final class AccessTicket {
-    private final Set<String>     registeredClients;
-    private final UniquePrincipal principal;
-    private final String          authHandlerType;
+    private final Set<String> registeredClients;
+    private final User        principal;
+    private final String      authHandlerType;
     /** Time of ticket creation in milliseconds. */
-    private       long            creationTime;
+    private       long        creationTime;
     /** Value of access cookie associated with this access key. */
-    private       String          accessToken;
+    private       String      accessToken;
 
-    public AccessTicket(String accessToken, UniquePrincipal principal, String authHandlerType) {
+    public AccessTicket(String accessToken, User principal, String authHandlerType) {
         this(accessToken, principal, authHandlerType, System.currentTimeMillis());
     }
 
 
-    public AccessTicket(String accessToken, UniquePrincipal principal, String authHandlerType, long creationTime) {
+    public AccessTicket(String accessToken, User principal, String authHandlerType, long creationTime) {
 
         if (accessToken == null) {
             throw new IllegalArgumentException("Invalid access token: " + accessToken);
@@ -71,8 +71,33 @@ public final class AccessTicket {
         return accessToken;
     }
 
-    public UniquePrincipal getPrincipal() {
-        return principal;
+    public User getPrincipal() {
+        return new User() {
+            @Override
+            public String getName() {
+                return principal.getName();
+            }
+
+            @Override
+            public boolean isMemberOf(String role) {
+                return principal.isMemberOf(role);
+            }
+
+            @Override
+            public String getToken() {
+                return accessToken;
+            }
+
+            @Override
+            public String getId() {
+                return principal.getId();
+            }
+
+            @Override
+            public boolean isTemporary() {
+                return principal.isTemporary();
+            }
+        };
     }
 
     /**
