@@ -245,6 +245,8 @@ public class MongoDataLoader implements DataLoader {
 
         setDateFilter(clauses, match);
 
+        List<Object> userFilters = new ArrayList<>();
+
         for (MetricFilter filter : clauses.getFilters()) {
             String field = filter.toString().toLowerCase();
             Object value = clauses.get(filter);
@@ -260,8 +262,7 @@ public class MongoDataLoader implements DataLoader {
                 DBObject usersToFilter = (userFieldName.equals(filteringField))
                                          ? getUsers(filter, value, filteringValues)
                                          : getUsers(filter, value, null);
-
-                mergeFilter(usersToFilter, match.get(userFieldName), match, userFieldName);
+                userFilters.add(usersToFilter);
 
             } else if (!(metric instanceof AbstractUsersProfile) && filter == MetricFilter.USER) {
                 if (value.equals(Parameters.USER_TYPES.REGISTERED.name())) {
@@ -269,15 +270,12 @@ public class MongoDataLoader implements DataLoader {
                 } else if (value.equals(Parameters.USER_TYPES.ANONYMOUS.name())) {
                     match.put(MetricFilter.REGISTERED_USER.toString().toLowerCase(), 0);
                 } else if (!value.equals(Parameters.USER_TYPES.ANY.name())) {
-                    String userFieldName = MetricFilter.USER.toString().toLowerCase();
-                    mergeFilter(processFilter(value, filter.isNumericType()), match.get(userFieldName), match, userFieldName);
+                    userFilters.add(processFilter(value, filter.isNumericType()));
                 }
 
             } else if (!(metric instanceof AbstractUsersProfile) && filter == MetricFilter.ALIASES) {
-                String userFieldName = MetricFilter.USER.toString().toLowerCase();
                 String[] userIds = getUserIdByAliases(value);
-
-                mergeFilter(processFilter(userIds, filter.isNumericType()), match.get(userFieldName), match, userFieldName);
+                userFilters.add(processFilter(userIds, filter.isNumericType()));
 
             } else if (filter == MetricFilter.WS) {
                 if (value.equals(Parameters.WS_TYPES.PERSISTENT.name())) {
@@ -296,17 +294,23 @@ public class MongoDataLoader implements DataLoader {
             }
         }
 
+        mergerFilter(userFilters, match, MetricFilter.USER.toString().toLowerCase());
+
         return new BasicDBObject("$match", match);
     }
 
-    private void mergeFilter(Object value1, Object value2, BasicDBObject match, String fieldName) {
-        if (value2 == null) {
-            match.put(fieldName, value1);
-        } else {
-            match.put("$and", new Object[]{
-                    new BasicDBObject(fieldName, value1),
-                    new BasicDBObject(fieldName, value2),
-            });
+    /**
+     * Add either {key: value} or {$and: [{key:value1, key:value2, ...}]}
+     */
+    private void mergerFilter(List<Object> values, BasicDBObject match, String fieldName) {
+        if (values.size() == 1) {
+            match.put(fieldName, values.get(0));
+        } else if (values.size() > 1) {
+            Object[] objects = new Object[values.size()];
+            for (int i = 0; i < values.size(); i++) {
+                objects[i] = new BasicDBObject(fieldName, values.get(i));
+            }
+            match.put("$and", objects);
         }
     }
 
