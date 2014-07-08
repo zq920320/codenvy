@@ -151,7 +151,7 @@ public class FactoryUrlBaseValidator {
                 if (!isTracked)
                     throw new FactoryUrlException(
                             String.format(FactoryConstants.PARAMETRIZED_ILLEGAL_ORGID_PARAMETER_MESSAGE, orgid));
-            } catch (ServerException | NumberFormatException e) {
+            } catch (NotFoundException | ServerException | NumberFormatException e) {
                 throw new FactoryUrlException(
                         String.format(FactoryConstants.PARAMETRIZED_ILLEGAL_ORGID_PARAMETER_MESSAGE,orgid));
             }

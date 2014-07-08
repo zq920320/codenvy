@@ -262,7 +262,7 @@ public class FactoryUrlBaseValidatorTest {
 
     @Test(expectedExceptions = FactoryUrlException.class)
     public void shouldNotValidateIfSubscriptionHasIllegalTariffPlan()
-            throws  FactoryUrlException, ParseException, ServerException {
+            throws FactoryUrlException, ParseException, ServerException, NotFoundException {
         // given
         Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class)
                                               .withServiceId("INVALID")
@@ -274,7 +274,7 @@ public class FactoryUrlBaseValidatorTest {
     }
 
     @Test(expectedExceptions = FactoryUrlException.class)
-    public void shouldNotValidateIfOrgIdIsExpired() throws  FactoryUrlException, ParseException, ServerException {
+    public void shouldNotValidateIfOrgIdIsExpired() throws FactoryUrlException, ParseException, ServerException, NotFoundException {
         // given
         Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class)
                                               .withServiceId("TrackedFactory")
@@ -286,7 +286,7 @@ public class FactoryUrlBaseValidatorTest {
     }
 
     @Test(expectedExceptions = FactoryUrlException.class)
-    public void shouldNotValidateIfOrgIdIsNotValidYet() throws  FactoryUrlException, ParseException, ServerException {
+    public void shouldNotValidateIfOrgIdIsNotValidYet() throws FactoryUrlException, ParseException, ServerException, NotFoundException {
         // given
         Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class)
                                               .withServiceId("TrackedFactory")
