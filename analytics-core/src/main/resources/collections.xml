@@ -404,6 +404,7 @@
             </index>
             <index name="time">
                 <field>time</field>
+                <field>date</field>
             </index>
         </indexes>
     </collection>
