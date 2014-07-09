@@ -189,6 +189,7 @@ public class WorkspaceInfoCache {
 
                 return HttpJsonHelper.request(Workspace.class, getWorkspaceLink);
             } catch (Exception e) {
+                LOG.warn("Not able to get information for {} - {}", key.key, key.isUuid);
                 LOG.debug(e.getLocalizedMessage(), e);
                 throw e;
             }
