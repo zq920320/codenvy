@@ -66,7 +66,7 @@ public class HostedWorkspaceServiceTest {
 
     @BeforeClass
     public void initialize() {
-        service = new HostedWorkspaceService(workspaceDao, accountDao, API_ENDPOINT);
+        service = new HostedWorkspaceService(workspaceDao, accountDao);
     }
 
     @Test(expectedExceptions = ConflictException.class,

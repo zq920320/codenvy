@@ -133,14 +133,12 @@ public class HostedWorkspaceService extends SubscriptionService {
 
     private final WorkspaceDao workspaceDao;
     private final AccountDao   accountDao;
-    private final String       apiEndpoint;
 
     @Inject
-    public HostedWorkspaceService(WorkspaceDao workspaceDao, AccountDao accountDao, @Named("api.endpoint") String apiEndpoint) {
+    public HostedWorkspaceService(WorkspaceDao workspaceDao, AccountDao accountDao) {
         super("HostedWorkspace", "Hosted Workspace");
         this.workspaceDao = workspaceDao;
         this.accountDao = accountDao;
-        this.apiEndpoint = apiEndpoint;
     }
 
     /**
@@ -216,7 +214,7 @@ public class HostedWorkspaceService extends SubscriptionService {
 
     @Override
     public void onCheckSubscription(Subscription subscription) throws ServerException {
-        setAccountPermissions(subscription.getAccountId());
+
     }
 
     @Override
@@ -227,7 +225,6 @@ public class HostedWorkspaceService extends SubscriptionService {
         } else {
             removeWorkspaceAttributes(newSubscription);
         }
-        setAccountPermissions(newSubscription.getAccountId());
     }
 
     @Override
@@ -325,71 +322,6 @@ public class HostedWorkspaceService extends SubscriptionService {
         wsAttributes.remove("codenvy:runner_lifetime");
         workspace.setAttributes(new ArrayList<>(wsAttributes.values()));
         workspaceDao.update(workspace);
-    }
-
-    private void setAccountPermissions(String accountId) throws ServerException {
-        String authToken;
-        User user = EnvironmentContext.getCurrent().getUser();
-        if (user != null && user.getToken() != null) {
-            authToken = user.getToken();
-            try {
-                List<Workspace> workspaces = workspaceDao.getByAccount(accountId);
-                for (Workspace workspace : workspaces) {
-                    setWorkspacePermission(workspace.getId(), authToken);
-                }
-            } catch (Exception e) {
-                throw new ServerException(e.getMessage(), e);
-            }
-        }
-    }
-
-    /**
-     * Set permission in virtual file system only for users with role "workspace/developer".
-     * This users will be have all permissions(read, write and update acl).
-     *
-     * @param workspaceId
-     *         id of workspace for updating access control list.
-     * @param authToken
-     *         token that will be used for send request to services
-     * @throws java.io.IOException
-     *         if any error sending request to service
-     */
-    private void setWorkspacePermission(String workspaceId, String authToken) throws IOException {
-        // Getting id of vfs root for current workspace
-        UriBuilder ub = UriBuilder.fromUri(apiEndpoint)
-                                  .path(VirtualFileSystemFactory.class)
-                                  .path(VirtualFileSystemFactory.class, "getFileSystem");
-
-        final VirtualFileSystemInfo virtualFileSystemInfo;
-        try {
-            virtualFileSystemInfo = HttpJsonHelper
-                    .get(VirtualFileSystemInfo.class, ub.build(workspaceId).toString(), Pair.of("token", authToken));
-        } catch (ApiException e) {
-            throw new IOException("Can not get virtual file system info", e);
-        }
-
-        // Updating access control list
-        ub = UriBuilder.fromUri(apiEndpoint)
-                       .path(VirtualFileSystemFactory.class)
-                       .path(VirtualFileSystemFactory.class, "getFileSystem")
-                       .path(VirtualFileSystem.class, "updateACL")
-                       .path(virtualFileSystemInfo.getRoot().getId());
-        final Principal principal = DtoFactory.getInstance().createDto(Principal.class)
-                                              .withType(Principal.Type.GROUP)
-                                              .withName("workspace/developer");
-        final List<String> permissions = new ArrayList<>(Arrays.asList(VirtualFileSystemInfo.BasicPermissions.ALL.toString()));
-        final AccessControlEntry accessControlEntry = DtoFactory.getInstance().createDto(AccessControlEntry.class)
-                                                                .withPermissions(permissions)
-                                                                .withPrincipal(principal);
-
-        final List<AccessControlEntry> entries = new ArrayList<>(Arrays.asList(accessControlEntry));
-        try {
-            // DTO interface set to null because we not want get json response
-            HttpJsonHelper.post(null, ub.build(workspaceId).toString(), new JsonArrayImpl<>(entries),
-                                Pair.of("token", authToken), Pair.of("override", true));
-        } catch (ApiException e) {
-            throw new IOException("Can not update access control list", e);
-        }
     }
 
     /**
