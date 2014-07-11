@@ -96,7 +96,6 @@ public class WorkspaceDaoImplTest extends BaseDaoTest {
 
         Workspace result =
                 DtoFactory.getInstance().createDtoFromJson(res.toString(), Workspace.class);
-        assertEquals(workspace.getLinks(), result.getLinks());
         assertEquals(workspace, result);
     }
 
@@ -148,7 +147,6 @@ public class WorkspaceDaoImplTest extends BaseDaoTest {
         Workspace result =
                 DtoFactory.getInstance().createDtoFromJson(res.toString(), Workspace.class);
 
-        assertEquals(workspace.getLinks(), result.getLinks());
         assertEquals(result, workspace);
     }
 
