@@ -56,8 +56,6 @@ import static org.testng.Assert.assertTrue;
 @Listeners(value = {MockitoTestNGListener.class})
 public class HostedWorkspaceServiceTest {
 
-    private static final String API_ENDPOINT = "fake";
-
     private SubscriptionService service;
     @Mock
     private WorkspaceDao        workspaceDao;
@@ -340,6 +338,6 @@ public class HostedWorkspaceServiceTest {
                                                        .withProperties(Collections.singletonMap("codenvy:workspace_id", workspaceId));
         service.beforeCreateSubscription(newSubscription);
 
-        assertEquals(newSubscription.getStartDate(), endDate + 24 * 60 * 60 * 1000);
+        assertEquals(newSubscription.getStartDate(), endDate);
     }
 }

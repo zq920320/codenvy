@@ -185,7 +185,6 @@ public class HostedWorkspaceService extends SubscriptionService {
                 if (active != null) {
                     final Calendar calendar = Calendar.getInstance();
                     calendar.setTimeInMillis(active.getEndDate());
-                    calendar.add(Calendar.DATE, 1);
                     subscription.setStartDate(calendar.getTimeInMillis());
                     if ("yearly".equalsIgnoreCase(subscription.getProperties().get("TariffPlan"))) {
                         calendar.add(Calendar.YEAR, 1);
@@ -330,8 +329,8 @@ public class HostedWorkspaceService extends SubscriptionService {
      * "1GB" -> 1024
      *
      * @param RAM
-     *         - string RAM in GB
-     * @return RAM - int RAM in MB
+     *         string RAM in GB
+     * @return int RAM in MB
      */
     private int convert(String RAM) throws ConflictException {
         try {
