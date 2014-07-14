@@ -1,3 +1,5 @@
+127.0.0.1 2013-11-01 10:10:10,000[main] [INFO] [HelloWorld 1010] [][][] - EVENT#workspace-created# WS#ws1# WS-ID#wsid1#
+127.0.0.1 2013-11-01 10:10:10,000[main] [INFO] [HelloWorld 1010] [][][] - EVENT#workspace-created# WS#ws2# WS-ID#wsid2#
 127.0.0.1 2013-11-01 10:10:10,000[main] [INFO] [HelloWorld 1010]  - EVENT#user-sso-logged-in# USING#google# USER#user2@gmail.com#
 
 127.0.0.1 2013-11-01 10:10:10,000[main] [INFO] [HelloWorld 1010]  - EVENT#user-update-profile# USER-ID#id1# USER#user1@gmail.com# EMAILS#user1@gmail.com# FIRSTNAME#f1# LASTNAME#l1# COMPANY#company1# PHONE#11# JOBTITLE#1#
