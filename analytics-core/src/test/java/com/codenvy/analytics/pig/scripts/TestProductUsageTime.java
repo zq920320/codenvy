@@ -45,6 +45,11 @@ public class TestProductUsageTime extends BaseTest {
     public void prepare() throws Exception {
         List<Event> events = new ArrayList<>();
 
+        events.add(Event.Builder.createUserCreatedEvent("user-id1", "user@gmail.com", "user@gmail.com")
+                                .withDate("2013-11-01").withTime("17:00:00").build());
+        events.add(Event.Builder.createWorkspaceCreatedEvent("ws1", "wsid1", "user@gmail.com")
+                                .withDate("2013-11-01").withTime("17:01:00").build());
+
         // sessions #1 - 240s
         events.add(Event.Builder.createSessionStartedEvent("ANONYMOUSUSER_user11", "ws1", "ide", "1")
                                 .withDate("2013-11-01").withTime("19:00:00").build());
@@ -80,6 +85,16 @@ public class TestProductUsageTime extends BaseTest {
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
         builder.put(Parameters.LOG, log.getAbsolutePath());
+
+        builder.putAll(
+                scriptsManager.getScript(ScriptType.USERS_PROFILES, MetricType.USERS_PROFILES_LIST).getParamsAsMap());
+        pigServer.execute(ScriptType.USERS_PROFILES, builder.build());
+
+        builder.put(Parameters.LOG, log.getAbsolutePath());
+        builder.putAll(scriptsManager.getScript(ScriptType.WORKSPACES_PROFILES, MetricType.WORKSPACES_PROFILES_LIST)
+                                     .getParamsAsMap());
+        pigServer.execute(ScriptType.WORKSPACES_PROFILES, builder.build());
+
         builder.putAll(scriptsManager.getScript(ScriptType.PRODUCT_USAGE_SESSIONS, MetricType.PRODUCT_USAGE_SESSIONS_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, builder.build());
     }
@@ -89,7 +104,7 @@ public class TestProductUsageTime extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
-        builder.put(Parameters.USER, "user@gmail.com OR anonymoususer_user11");
+        builder.put(Parameters.USER, "user-id1 OR anonymoususer_user11");
 
         Metric metric = new TestAbstractProductUsageTime(240000, 300000, true, true);
         assertEquals(metric.getValue(builder.build()), new LongValueData(840000));
@@ -106,8 +121,8 @@ public class TestProductUsageTime extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
-        builder.put(Parameters.USER, "user@gmail.com OR anonymoususer_user11");
-        builder.put(Parameters.WS, "ws1");
+        builder.put(Parameters.USER, "user-id1 OR anonymoususer_user11");
+        builder.put(Parameters.WS, "wsid1");
 
         Metric metric = new TestAbstractProductUsageTime(240000, 300000, true, true);
         assertEquals(metric.getValue(builder.build()), new LongValueData(540000L));
@@ -124,7 +139,7 @@ public class TestProductUsageTime extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
-        builder.put(Parameters.USER, "user@gmail.com");
+        builder.put(Parameters.USER, "user-id1");
 
         Metric metric = new TestAbstractProductUsageTime(240000, 300000, true, true);
         assertEquals(metric.getValue(builder.build()), new LongValueData(300000L));

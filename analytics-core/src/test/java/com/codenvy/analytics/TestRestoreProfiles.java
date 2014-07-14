@@ -114,7 +114,7 @@ public class TestRestoreProfiles extends BaseTest {
             DBObject ws = cursor.next();
             String id = (String)ws.get("id");
             String name = (String)ws.get("name");
-            if (!Utils.isTemporaryWorkspace(name)) {
+            if (!Utils.isTemporaryWorkspaceByAlias(name)) {
                 writer.write("127.0.0.1 2013-02-01 00:00:01,000[l-4-thread-8211]  [INFO ] [Main 224]  [][][] - ");
                 writer.write("EVENT#workspace-created# WS-ID#" + id + "# " + "WS#" + name + "#");
                 writer.newLine();

@@ -47,6 +47,28 @@ public class TestUsersActivity extends BaseTest {
     public void prepare() throws Exception {
         List<Event> events = new ArrayList<>();
 
+        events.add(Event.Builder.createUserCreatedEvent("uid1", "user1","[user1]").withDate("2013-01-01").build());
+        events.add(Event.Builder.createUserCreatedEvent("uid2", "user2","[user2]").withDate("2013-01-01").build());
+        events.add(Event.Builder.createUserCreatedEvent("uid3", "user3","[user3]").withDate("2013-01-01").build());
+
+        events.add(Event.Builder.createWorkspaceCreatedEvent("ws1", "wsid1", "user1").withDate("2013-01-01").build());
+        events.add(Event.Builder.createWorkspaceCreatedEvent("ws2", "wsid2", "user2").withDate("2013-01-01").build());
+
+        File log = LogGenerator.generateLog(events);
+
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20130101");
+        builder.put(Parameters.TO_DATE, "20130101");
+        builder.put(Parameters.LOG, log.getAbsolutePath());
+
+        builder.putAll(scriptsManager.getScript(ScriptType.USERS_PROFILES, MetricType.USERS_PROFILES_LIST).getParamsAsMap());
+        pigServer.execute(ScriptType.USERS_PROFILES, builder.build());
+
+        builder.putAll(scriptsManager.getScript(ScriptType.WORKSPACES_PROFILES, MetricType.WORKSPACES_PROFILES_LIST).getParamsAsMap());
+        pigServer.execute(ScriptType.WORKSPACES_PROFILES, builder.build());
+
+
+        events = new ArrayList<>();
         events.add(Event.Builder.createIDEUsageEvent("user1",
                                                      "ws1",
                                                      "action1",
@@ -69,9 +91,9 @@ public class TestUsersActivity extends BaseTest {
                                                      "type2",
                                                      "p2=v2").withDate("2013-01-01").build());
 
-        File log = LogGenerator.generateLog(events);
+        log = LogGenerator.generateLog(events);
 
-        Context.Builder builder = new Context.Builder();
+        builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20130101");
         builder.put(Parameters.TO_DATE, "20130101");
         builder.put(Parameters.LOG, log.getAbsolutePath());
@@ -81,7 +103,7 @@ public class TestUsersActivity extends BaseTest {
 
     @Test
     public void shouldStoreAllParametersFromMessage() throws Exception {
-        DBObject filter = new BasicDBObject("user", "user1");
+        DBObject filter = new BasicDBObject("user", "uid1");
 
         DBCollection collection = mongoDb.getCollection(MetricType.USERS_ACTIVITY.toString().toLowerCase());
         DBCursor cursor = collection.find(filter);
@@ -91,8 +113,8 @@ public class TestUsersActivity extends BaseTest {
         DBObject dbObject = cursor.next();
         assertEquals(14, dbObject.keySet().size());
         assertEquals("ide-usage", dbObject.get("event"));
-        assertEquals("user1", dbObject.get("user"));
-        assertEquals("ws1", dbObject.get("ws"));
+        assertEquals("uid1", dbObject.get("user"));
+        assertEquals("wsid1", dbObject.get("ws"));
         assertEquals(1, dbObject.get("registered_user"));
         assertEquals(1, dbObject.get("persistent_ws"));
         assertEquals("action1", dbObject.get("action"));

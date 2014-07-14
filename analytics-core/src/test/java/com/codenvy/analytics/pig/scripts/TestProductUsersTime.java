@@ -43,6 +43,11 @@ public class TestProductUsersTime extends BaseTest {
     @BeforeClass
     public void init() throws Exception {
         List<Event> events = new ArrayList<>();
+        events.add(Event.Builder.createUserCreatedEvent("uid1", "user1@gmail.com","[user1@gmail.com]").withDate("2013-11-01").build());
+        events.add(Event.Builder.createUserCreatedEvent("uid2", "user2@gmail.com","[user2@gmail.com]").withDate("2013-11-01").build());
+        events.add(Event.Builder.createUserCreatedEvent("uid3", "user3@gmail.com","[user3@gmail.com]").withDate("2013-11-01").build());
+        events.add(Event.Builder.createWorkspaceCreatedEvent("ws1", "wsid1", "user1").withDate("2013-11-01").build());
+
         events.add(Event.Builder.createSessionStartedEvent("user1@gmail.com", "ws1", "ide", "1").withDate("2013-11-01")
                                 .withTime("20:00:00").build());
         events.add(Event.Builder.createSessionFinishedEvent("user1@gmail.com", "ws1", "ide", "1").withDate("2013-11-01")
@@ -69,6 +74,13 @@ public class TestProductUsersTime extends BaseTest {
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
         builder.put(Parameters.LOG, log.getAbsolutePath());
+
+        builder.putAll(scriptsManager.getScript(ScriptType.USERS_PROFILES, MetricType.USERS_PROFILES_LIST).getParamsAsMap());
+        pigServer.execute(ScriptType.USERS_PROFILES, builder.build());
+
+        builder.putAll(scriptsManager.getScript(ScriptType.WORKSPACES_PROFILES, MetricType.WORKSPACES_PROFILES_LIST).getParamsAsMap());
+        pigServer.execute(ScriptType.WORKSPACES_PROFILES, builder.build());
+
         builder.putAll(scriptsManager.getScript(ScriptType.PRODUCT_USAGE_SESSIONS, MetricType.PRODUCT_USAGE_SESSIONS_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, builder.build());
     }
@@ -85,17 +97,17 @@ public class TestProductUsersTime extends BaseTest {
 
         List<ValueData> all = value.getAll();
         MapValueData valueData = (MapValueData)all.get(0);
-        assertEquals(valueData.getAll().get("user").getAsString(), "user1@gmail.com");
+        assertEquals(valueData.getAll().get("user").getAsString(), "uid1");
         assertEquals(valueData.getAll().get("time").getAsString(), "480000");
         assertEquals(valueData.getAll().get("sessions").getAsString(), "2");
 
         valueData = (MapValueData)all.get(1);
-        assertEquals(valueData.getAll().get("user").getAsString(), "user3@gmail.com");
+        assertEquals(valueData.getAll().get("user").getAsString(), "uid3");
         assertEquals(valueData.getAll().get("time").getAsString(), "420000");
         assertEquals(valueData.getAll().get("sessions").getAsString(), "1");
 
         valueData = (MapValueData)all.get(2);
-        assertEquals(valueData.getAll().get("user").getAsString(), "user2@gmail.com");
+        assertEquals(valueData.getAll().get("user").getAsString(), "uid2");
         assertEquals(valueData.getAll().get("time").getAsString(), "60000");
         assertEquals(valueData.getAll().get("sessions").getAsString(), "1");
     }
@@ -112,19 +124,19 @@ public class TestProductUsersTime extends BaseTest {
 
         assertEquals(value.size(), 3);
         MapValueData item = (MapValueData)value.getAll().get(0);
-        assertEquals(item.getAll().get("entity").getAsString(), "user1@gmail.com");
+        assertEquals(item.getAll().get("entity").getAsString(), "uid1");
         assertEquals(item.getAll().get("sessions").getAsString(), "2");
         assertEquals(item.getAll().get("by_1_day").getAsString(), "480000");
         assertEquals(item.getAll().get("by_lifetime").getAsString(), "480000");
 
         item = (MapValueData)value.getAll().get(1);
-        assertEquals(item.getAll().get("entity").getAsString(), "user3@gmail.com");
+        assertEquals(item.getAll().get("entity").getAsString(), "uid3");
         assertEquals(item.getAll().get("sessions").getAsString(), "1");
         assertEquals(item.getAll().get("by_1_day").getAsString(), "420000");
         assertEquals(item.getAll().get("by_lifetime").getAsString(), "420000");
 
         item = (MapValueData)value.getAll().get(2);
-        assertEquals(item.getAll().get("entity").getAsString(), "user2@gmail.com");
+        assertEquals(item.getAll().get("entity").getAsString(), "uid2");
         assertEquals(item.getAll().get("sessions").getAsString(), "1");
         assertEquals(item.getAll().get("by_1_day").getAsString(), "60000");
         assertEquals(item.getAll().get("by_lifetime").getAsString(), "60000");

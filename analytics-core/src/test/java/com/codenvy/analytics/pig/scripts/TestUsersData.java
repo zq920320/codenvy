@@ -53,6 +53,9 @@ public class TestUsersData extends BaseTest {
         builder.putAll(scriptsManager.getScript(ScriptType.USERS_PROFILES, MetricType.USERS_PROFILES_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.USERS_PROFILES, builder.build());
 
+        builder.putAll(scriptsManager.getScript(ScriptType.WORKSPACES_PROFILES, MetricType.WORKSPACES_PROFILES_LIST).getParamsAsMap());
+        pigServer.execute(ScriptType.WORKSPACES_PROFILES, builder.build());
+
         builder.putAll(scriptsManager.getScript(ScriptType.PRODUCT_USAGE_SESSIONS, MetricType.PRODUCT_USAGE_SESSIONS_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, builder.build());
 
@@ -202,13 +205,13 @@ public class TestUsersData extends BaseTest {
 
             String ws = all.get(UsersStatisticsList.WS).getAsString();
             switch (ws) {
-                case "ws1":
+                case "wsid1":
                     assertEquals(all.get(UsersStatisticsList.PAAS_DEPLOYS).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.SESSIONS).getAsString(), "1");
                     assertEquals(all.get(UsersStatisticsList.INVITES).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.DEPLOYS).getAsString(), "1");
                     assertEquals(all.get(UsersStatisticsList.BUILDS).getAsString(), "0");
-                    assertEquals(all.get(UsersStatisticsList.WS).getAsString(), "ws1");
+                    assertEquals(all.get(UsersStatisticsList.WS).getAsString(), "wsid1");
                     assertEquals(all.get(UsersStatisticsList.DEBUGS).getAsString(), "1");
                     assertEquals(all.get(UsersStatisticsList.FACTORIES).getAsString(), "1");
                     assertEquals(all.get(UsersStatisticsList.PROJECTS).getAsString(), "1");
@@ -219,13 +222,13 @@ public class TestUsersData extends BaseTest {
                     assertEquals(all.get(UsersStatisticsList.RUN_TIME).getAsString(), "0");
                     break;
 
-                case "ws2":
+                case "wsid2":
                     assertEquals(all.get(UsersStatisticsList.PAAS_DEPLOYS).getAsString(), "2");
                     assertEquals(all.get(UsersStatisticsList.SESSIONS).getAsString(), "1");
                     assertEquals(all.get(UsersStatisticsList.INVITES).getAsString(), "1");
                     assertEquals(all.get(UsersStatisticsList.DEPLOYS).getAsString(), "2");
                     assertEquals(all.get(UsersStatisticsList.BUILDS).getAsString(), "0");
-                    assertEquals(all.get(UsersStatisticsList.WS).getAsString(), "ws2");
+                    assertEquals(all.get(UsersStatisticsList.WS).getAsString(), "wsid2");
                     assertEquals(all.get(UsersStatisticsList.DEBUGS).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.FACTORIES).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.PROJECTS).getAsString(), "0");
@@ -277,13 +280,13 @@ public class TestUsersData extends BaseTest {
             String ws = all.get(ProductUsageSessionsList.WS).getAsString();
 
             switch (ws) {
-                case "ws1":
+                case "wsid1":
                     assertEquals(all.size(), 3);
                     assertEquals(all.get(UsersStatisticsList.SESSIONS).getAsString(), "1");
                     assertEquals(all.get(UsersStatisticsList.TIME).getAsString(), "300500");
                     break;
 
-                case "ws2":
+                case "wsid2":
                     assertEquals(all.size(), 3);
                     assertEquals(all.get(UsersStatisticsList.SESSIONS).getAsString(), "1");
                     assertEquals(all.get(UsersStatisticsList.TIME).getAsString(), "120000");
@@ -312,7 +315,7 @@ public class TestUsersData extends BaseTest {
 
         assertEquals(entry.getAll().get(UsageTimeByWorkspacesList.SESSIONS).getAsString(), "1");
         assertEquals(entry.getAll().get(ProductUsageSessionsList.TIME).getAsString(), "300500");
-        assertEquals(entry.getAll().get(ProductUsageSessionsList.WS).getAsString(), "ws1");
+        assertEquals(entry.getAll().get(ProductUsageSessionsList.WS).getAsString(), "wsid1");
 
     }
 
