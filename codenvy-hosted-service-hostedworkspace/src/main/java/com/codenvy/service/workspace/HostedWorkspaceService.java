@@ -212,8 +212,10 @@ public class HostedWorkspaceService extends SubscriptionService {
     }
 
     @Override
-    public void onCheckSubscription(Subscription subscription) throws ServerException {
-
+    public void onCheckSubscription(Subscription subscription) throws ServerException, NotFoundException, ConflictException {
+        if (System.currentTimeMillis() >= subscription.getStartDate() && subscription.getState() == Subscription.State.ACTIVE) {
+            addWorkspaceAttributes(subscription);
+        }
     }
 
     @Override

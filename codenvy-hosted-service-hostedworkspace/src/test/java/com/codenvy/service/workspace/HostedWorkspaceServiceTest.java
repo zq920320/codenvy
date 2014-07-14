@@ -145,6 +145,56 @@ public class HostedWorkspaceServiceTest {
     }
 
     @Test
+    public void testWorkspaceAttributesAddedWhenOnCheckInvoked() throws ApiException {
+        final String workspaceId = "ws1";
+        final Workspace workspace = DtoFactory.getInstance().createDto(Workspace.class)
+                                              .withId(workspaceId)
+                                              .withAttributes(new ArrayList<Attribute>(2));
+        when(workspaceDao.getById(workspaceId)).thenReturn(workspace);
+        final Map<String, String> properties = new HashMap<>(3);
+        properties.put("codenvy:workspace_id", workspaceId);
+        properties.put("Package", "developer");
+        properties.put("RAM", "1GB");
+        final Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class)
+                                                    .withState(Subscription.State.ACTIVE)
+                                                    .withProperties(properties)
+                                                    .withStartDate(System.currentTimeMillis());
+
+        service.onCheckSubscription(subscription);
+
+        assertEquals(workspace.getAttributes().size(), 2);
+        final Attribute runnerRAM = DtoFactory.getInstance().createDto(Attribute.class)
+                                              .withName("codenvy:runner_ram")
+                                              .withValue("1024");
+        final Attribute runnerLifetime = DtoFactory.getInstance().createDto(Attribute.class)
+                                                   .withName("codenvy:runner_lifetime")
+                                                   .withValue(String.valueOf(TimeUnit.HOURS.toSeconds(1)));
+        assertTrue(workspace.getAttributes().contains(runnerRAM));
+        assertTrue(workspace.getAttributes().contains(runnerLifetime));
+    }
+
+    @Test
+    public void testWorkspaceAttributesNotAddedWhenOnCheckInvoked() throws ApiException {
+        final String workspaceId = "ws1";
+        final Workspace workspace = DtoFactory.getInstance().createDto(Workspace.class)
+                                              .withId(workspaceId)
+                                              .withAttributes(new ArrayList<Attribute>(2));
+        when(workspaceDao.getById(workspaceId)).thenReturn(workspace);
+        final Map<String, String> properties = new HashMap<>(3);
+        properties.put("codenvy:workspace_id", workspaceId);
+        properties.put("Package", "developer");
+        properties.put("RAM", "1GB");
+        final Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class)
+                                                    .withState(Subscription.State.ACTIVE)
+                                                    .withProperties(properties)
+                                                    .withStartDate(System.currentTimeMillis() * 2);
+
+        service.onCheckSubscription(subscription);
+
+        assertEquals(workspace.getAttributes().size(), 0);
+    }
+
+    @Test
     public void testWorkspaceAttributesReplacedOrAddedWhenOnUpdateWithActiveSubscriptionInvoked() throws ApiException {
         final String workspaceId = "ws1";
         final Workspace workspace = DtoFactory.getInstance().createDto(Workspace.class)
