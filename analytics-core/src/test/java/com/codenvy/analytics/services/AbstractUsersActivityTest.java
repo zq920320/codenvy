@@ -51,6 +51,7 @@ public abstract class AbstractUsersActivityTest extends BaseTest {
 
     protected void computeStatistics(String date) throws IOException, ParseException {
         executeScript(ScriptType.USERS_PROFILES, MetricType.USERS_PROFILES_LIST, date);
+        executeScript(ScriptType.WORKSPACES_PROFILES, MetricType.WORKSPACES_PROFILES_LIST, date);
         executeScript(ScriptType.PRODUCT_USAGE_SESSIONS, MetricType.PRODUCT_USAGE_SESSIONS_LIST, date);
         executeScript(ScriptType.USERS_STATISTICS, MetricType.USERS_STATISTICS_LIST, date);
         executeScript(ScriptType.USERS_ACTIVITY, MetricType.USERS_ACTIVITY_LIST, date);
