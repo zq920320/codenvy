@@ -19,8 +19,7 @@ package com.codenvy.analytics.pig.udf;
 
 import com.codenvy.analytics.Injector;
 import com.codenvy.analytics.Utils;
-import com.codenvy.analytics.metrics.MetricFilter;
-import com.codenvy.analytics.metrics.ReadBasedMetric;
+import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.persistent.CollectionsManagement;
 import com.codenvy.analytics.persistent.MongoDataStorage;
 import com.codenvy.analytics.pig.scripts.EventsHolder;
@@ -41,7 +40,10 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
-import static com.codenvy.analytics.Utils.*;
+import static com.codenvy.analytics.Utils.toArray;
+import static com.codenvy.analytics.Utils.isAnonymousUser;
+import static com.codenvy.analytics.Utils.isTemporaryWorkspace;
+
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class MongoStorage extends StoreFunc {
