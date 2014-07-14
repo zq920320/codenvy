@@ -42,19 +42,38 @@ public class TestFilters extends BaseTest {
     @BeforeClass
     public void init() throws Exception {
         List<Event> events = new ArrayList<>();
-        events.add(Event.Builder.createProjectCreatedEvent("user1", "ws1", "", "p", "t").withDate("2013-02-10").build());
-        events.add(Event.Builder.createProjectCreatedEvent("anonymoususer_edjkx4", "ws2", "", "p", "t").withDate("2013-02-10").build());
-        events.add(Event.Builder.createProjectCreatedEvent("user2", "tmp-22rct0cq0rh8vs", "", "p", "t").withDate("2013-02-10").build());
+        events.add(Event.Builder.createUserCreatedEvent("uid1", "user1","[user1]").withDate("2013-02-10").build());
+        events.add(Event.Builder.createWorkspaceCreatedEvent("ws1", "wsid1", "user1").withDate("2013-02-10").build());
+
+        events.add(Event.Builder.createUserCreatedEvent("uid2", "user2","[user2]").withDate("2013-02-10").build());
+        events.add(Event.Builder.createWorkspaceCreatedEvent("tmp-22rct0cq0rh8vs", "wsid2", "user2").withDate("2013-02-10").build());
+
+        events.add(Event.Builder.createUserCreatedEvent("uid3", "anonymoususer_edjkx4","[]").withDate("2013-02-10").build());
+        events.add(Event.Builder.createWorkspaceCreatedEvent("ws2", "wsid3", "anonymoususer_edjkx4").withDate("2013-02-10").build());
+
+        events.add(Event.Builder.createUserCreatedEvent("uid4", "AnonymousUser_lnmyzh","[]").withDate("2013-02-10").build());
+        events.add(Event.Builder.createWorkspaceCreatedEvent("tmp-p42qbfzn6iz9gn", "wsid4", "AnonymousUser_lnmyzh").withDate("2013-02-10").build());
+        
+        events.add(Event.Builder.createProjectCreatedEvent("uid1", "wsid1", "", "p", "t").withDate("2013-02-10").build());
+        events.add(Event.Builder.createProjectCreatedEvent("uid3", "wsid3", "", "p", "t").withDate("2013-02-10").build());
+        events.add(Event.Builder.createProjectCreatedEvent("uid2", "wsid2", "", "p", "t").withDate("2013-02-10").build());
         events.add(
-                Event.Builder.createProjectCreatedEvent("AnonymousUser_lnmyzh", "tmp-p42qbfzn6iz9gn", "", "p", "t").withDate("2013-02-10").build());
+                Event.Builder.createProjectCreatedEvent("uid4", "wsid4", "", "p", "t").withDate("2013-02-10").build());
 
         File log = LogGenerator.generateLog(events);
 
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20130210");
         builder.put(Parameters.TO_DATE, "20130210");
-        builder.putAll(scriptsManager.getScript(ScriptType.PROJECTS, MetricType.PROJECTS).getParamsAsMap());
         builder.put(Parameters.LOG, log.getAbsolutePath());
+
+        builder.putAll(scriptsManager.getScript(ScriptType.USERS_PROFILES, MetricType.USERS_PROFILES_LIST).getParamsAsMap());
+        pigServer.execute(ScriptType.USERS_PROFILES, builder.build());
+
+        builder.putAll(scriptsManager.getScript(ScriptType.WORKSPACES_PROFILES, MetricType.WORKSPACES_PROFILES_LIST).getParamsAsMap());
+        pigServer.execute(ScriptType.WORKSPACES_PROFILES, builder.build());
+
+        builder.putAll(scriptsManager.getScript(ScriptType.PROJECTS, MetricType.PROJECTS).getParamsAsMap());
         pigServer.execute(ScriptType.PROJECTS, builder.build());
     }
 
@@ -77,10 +96,10 @@ public class TestFilters extends BaseTest {
 
     @DataProvider(name = "dataProvider")
     public Object[][] parametersFilterProvider() {
-        return new Object[][]{{"ws1", null, 1},
-                              {"tmp-22rct0cq0rh8vs", null, 1},
-                              {null, "user1", 1},
-                              {null, "anonymoususer_edjkx4", 1},
+        return new Object[][]{{"wsid1", null, 1},
+                              {"wsid2", null, 1},
+                              {null, "uid1", 1},
+                              {null, "uid3", 1},
                               {Parameters.WS_TYPES.TEMPORARY.toString(), Parameters.USER_TYPES.ANONYMOUS.toString(), 1},
                               {Parameters.WS_TYPES.PERSISTENT.toString(), Parameters.USER_TYPES.REGISTERED.toString(), 1},
                               {Parameters.WS_TYPES.ANY.toString(), Parameters.USER_TYPES.ANY.toString(), 4},

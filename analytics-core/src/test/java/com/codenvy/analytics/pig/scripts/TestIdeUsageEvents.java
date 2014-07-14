@@ -46,6 +46,14 @@ public class TestIdeUsageEvents extends BaseTest {
     public void prepare() throws Exception {
         List<Event> events = new ArrayList<>();
 
+        events.add(Event.Builder.createUserCreatedEvent("uid1", "user1","[user1]").withDate("2013-01-01").build());
+        events.add(Event.Builder.createUserCreatedEvent("uid2", "user2","[user2]").withDate("2013-01-01").build());
+        events.add(Event.Builder.createUserCreatedEvent("uid3", "user3","[user3]").withDate("2013-01-01").build());
+        events.add(Event.Builder.createUserCreatedEvent("uid4", "user4","[user4]").withDate("2013-01-01").build());
+        events.add(Event.Builder.createUserCreatedEvent("uid5", "user5","[user5]").withDate("2013-01-01").build());
+
+        events.add(Event.Builder.createWorkspaceCreatedEvent("ws1", "wsid1", "user1").withDate("2013-01-01").build());
+
         events.add(Event.Builder.createIDEUsageEvent("user1", "ws1", "action1", "src1", "project1", "type1", "p1=v1,p2=v2")
                                 .withDate("2013-01-01").build());
         events.add(Event.Builder.createIDEUsageEvent("user2", null, null, null, null, null, null)
@@ -63,13 +71,20 @@ public class TestIdeUsageEvents extends BaseTest {
         builder.put(Parameters.FROM_DATE, "20130101");
         builder.put(Parameters.TO_DATE, "20130101");
         builder.put(Parameters.LOG, log.getAbsolutePath());
+
+        builder.putAll(scriptsManager.getScript(ScriptType.USERS_PROFILES, MetricType.USERS_PROFILES_LIST).getParamsAsMap());
+        pigServer.execute(ScriptType.USERS_PROFILES, builder.build());
+
+        builder.putAll(scriptsManager.getScript(ScriptType.WORKSPACES_PROFILES, MetricType.WORKSPACES_PROFILES_LIST).getParamsAsMap());
+        pigServer.execute(ScriptType.WORKSPACES_PROFILES, builder.build());
+
         builder.putAll(scriptsManager.getScript(ScriptType.IDE_USAGE_EVENTS, MetricType.IDE_USAGES).getParamsAsMap());
         pigServer.execute(ScriptType.IDE_USAGE_EVENTS, builder.build());
     }
 
     @Test
     public void scriptShouldStoreNotNullParameters() throws Exception {
-        DBObject filter = new BasicDBObject("user", "user1");
+        DBObject filter = new BasicDBObject("user", "uid1");
 
         DBCollection collection = mongoDb.getCollection(MetricType.IDE_USAGES.toString().toLowerCase());
         DBCursor cursor = collection.find(filter);
@@ -78,14 +93,14 @@ public class TestIdeUsageEvents extends BaseTest {
 
         DBObject dbObject = cursor.next();
         assertEquals(13, dbObject.keySet().size());
-        assertEquals("user1", dbObject.get("user"));
-        assertEquals("ws1", dbObject.get("ws"));
+        assertEquals("uid1", dbObject.get("user"));
+        assertEquals("wsid1", dbObject.get("ws"));
         assertEquals(1, dbObject.get("registered_user"));
         assertEquals(1, dbObject.get("persistent_ws"));
         assertEquals("action1", dbObject.get("action"));
         assertEquals("src1", dbObject.get("source"));
         assertEquals("project1", dbObject.get("project"));
-        assertEquals("user1/ws1/project1", dbObject.get("project_id"));
+        assertEquals("uid1/wsid1/project1", dbObject.get("project_id"));
         assertEquals("type1", dbObject.get("project_type"));
         assertEquals("v1", dbObject.get("p1"));
         assertEquals("v2", dbObject.get("p2"));
@@ -95,7 +110,7 @@ public class TestIdeUsageEvents extends BaseTest {
 
     @Test
     public void scriptShouldNotStoreNullParameters() throws Exception {
-        DBObject filter = new BasicDBObject("user", "user2");
+        DBObject filter = new BasicDBObject("user", "uid2");
 
         DBCollection collection = mongoDb.getCollection(MetricType.IDE_USAGES.toString().toLowerCase());
         DBCursor cursor = collection.find(filter);
@@ -104,7 +119,7 @@ public class TestIdeUsageEvents extends BaseTest {
 
         DBObject dbObject = cursor.next();
         assertEquals(6, dbObject.keySet().size());
-        assertEquals("user2", dbObject.get("user"));
+        assertEquals("uid2", dbObject.get("user"));
         assertEquals("default", dbObject.get("ws"));
         assertEquals(1, dbObject.get("registered_user"));
         assertEquals(0, dbObject.get("persistent_ws"));
