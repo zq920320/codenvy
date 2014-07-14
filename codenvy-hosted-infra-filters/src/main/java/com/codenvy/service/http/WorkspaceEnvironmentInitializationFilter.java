@@ -17,7 +17,7 @@
  */
 package com.codenvy.service.http;
 
-import com.codenvy.api.workspace.shared.dto.Workspace;
+import com.codenvy.api.workspace.shared.dto.WorkspaceDescriptor;
 import com.codenvy.commons.env.EnvironmentContext;
 
 import javax.inject.Inject;
@@ -45,7 +45,7 @@ public abstract class WorkspaceEnvironmentInitializationFilter implements Filter
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         try {
-            Workspace workspace = getWorkspaceFromRequest(request);
+            WorkspaceDescriptor workspace = getWorkspaceFromRequest(request);
             if (workspace == null) {
                 ((HttpServletResponse)response).sendRedirect(wsNotFoundRedirectUrl);
                 return;
@@ -61,7 +61,7 @@ public abstract class WorkspaceEnvironmentInitializationFilter implements Filter
         }
     }
 
-    protected abstract Workspace getWorkspaceFromRequest(ServletRequest request) throws ServletException;
+    protected abstract WorkspaceDescriptor getWorkspaceFromRequest(ServletRequest request) throws ServletException;
 
     @Override
     public void destroy() {

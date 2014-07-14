@@ -26,7 +26,7 @@ import com.codenvy.api.core.ServerException;
 import com.codenvy.api.user.shared.dto.Member;
 import com.codenvy.api.user.shared.dto.User;
 import com.codenvy.api.workspace.shared.dto.NewMembership;
-import com.codenvy.api.workspace.shared.dto.Workspace;
+import com.codenvy.api.workspace.shared.dto.WorkspaceDescriptor;
 import com.codenvy.commons.env.EnvironmentContext;
 import com.codenvy.commons.lang.Pair;
 import com.codenvy.dto.server.DtoFactory;
@@ -116,7 +116,7 @@ public class InviteService {
             Link getWorkspaceLink = DtoFactory.getInstance().createDto(Link.class).withMethod("GET")
                                               .withHref(uriInfo.getBaseUriBuilder()
                                               .replacePath("api/workspace/" + workspaceId).build().toString());
-            Workspace workspace = HttpJsonHelper.request(Workspace.class, getWorkspaceLink);
+            WorkspaceDescriptor workspace = HttpJsonHelper.request(WorkspaceDescriptor.class, getWorkspaceLink);
             User user;
             try {
                 Link getUserLink = DtoFactory.getInstance().createDto(Link.class).withMethod("GET")

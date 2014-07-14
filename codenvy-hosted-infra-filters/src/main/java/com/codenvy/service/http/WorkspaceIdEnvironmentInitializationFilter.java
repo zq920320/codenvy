@@ -19,7 +19,7 @@ package com.codenvy.service.http;
 
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
-import com.codenvy.api.workspace.shared.dto.Workspace;
+import com.codenvy.api.workspace.shared.dto.WorkspaceDescriptor;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,7 +48,7 @@ public class WorkspaceIdEnvironmentInitializationFilter extends WorkspaceEnviron
 
 
     @Override
-    protected Workspace getWorkspaceFromRequest(ServletRequest request) throws ServletException {
+    protected WorkspaceDescriptor getWorkspaceFromRequest(ServletRequest request) throws ServletException {
         HttpServletRequest httpRequest = (HttpServletRequest)request;
         String requestUrl = httpRequest.getRequestURI();
         String[] pathParts = requestUrl.split("/", 5);
