@@ -29,7 +29,7 @@ import org.apache.pig.impl.logicalLayer.schema.Schema;
 import java.io.IOException;
 import java.util.Map;
 
-import static com.codenvy.analytics.Utils.isAnonymousUser;
+import static com.codenvy.analytics.Utils.isAnonymousUserName;
 import static com.codenvy.analytics.datamodel.ValueDataUtil.getAsList;
 import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsMap;
 
@@ -48,12 +48,13 @@ public class ReplaceUserWithId extends EvalFunc<String> {
         return exec((String)input.get(0));
     }
 
+    // TODO log id for anonymous user
     public static String exec(String user) throws IOException {
         Metric metric = MetricFactory.getMetric(MetricType.USERS_PROFILES_LIST);
         if (user == null) {
             return null;
 
-        } else if (isAnonymousUser(user)) {
+        } else if (isAnonymousUserName(user)) {
             return user;
 
         } else {

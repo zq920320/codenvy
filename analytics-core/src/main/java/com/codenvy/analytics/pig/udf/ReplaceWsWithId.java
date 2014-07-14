@@ -29,7 +29,7 @@ import org.apache.pig.impl.logicalLayer.schema.Schema;
 import java.io.IOException;
 import java.util.Map;
 
-import static com.codenvy.analytics.Utils.isTemporaryWorkspace;
+import static com.codenvy.analytics.Utils.isTemporaryWorkspaceByAlias;
 import static com.codenvy.analytics.datamodel.ValueDataUtil.getAsList;
 import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsMap;
 
@@ -50,12 +50,13 @@ public class ReplaceWsWithId extends EvalFunc<String> {
         return exec((String)input.get(0));
     }
 
+    // TODO log id for temporary workspaces
     public static String exec(String ws) throws IOException {
         Metric metric = MetricFactory.getMetric(MetricType.WORKSPACES_PROFILES_LIST);
         if (ws == null) {
             return null;
 
-        } else if (isTemporaryWorkspace(ws)) {
+        } else if (isTemporaryWorkspaceByAlias(ws)) {
             return ws;
 
         } else {
