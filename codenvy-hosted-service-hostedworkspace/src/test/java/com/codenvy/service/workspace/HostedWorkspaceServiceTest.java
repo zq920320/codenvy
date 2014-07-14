@@ -144,6 +144,7 @@ public class HostedWorkspaceServiceTest {
         assertTrue(workspace.getAttributes().contains(runnerLifetime));
     }
 
+    //if checked subscription has start date before current, workspace attributes should be added
     @Test
     public void testWorkspaceAttributesAddedWhenOnCheckInvoked() throws ApiException {
         final String workspaceId = "ws1";
@@ -173,6 +174,7 @@ public class HostedWorkspaceServiceTest {
         assertTrue(workspace.getAttributes().contains(runnerLifetime));
     }
 
+    //if checked subscription has start date after current date, workspace attributes should not be added
     @Test
     public void testWorkspaceAttributesNotAddedWhenOnCheckInvoked() throws ApiException {
         final String workspaceId = "ws1";
