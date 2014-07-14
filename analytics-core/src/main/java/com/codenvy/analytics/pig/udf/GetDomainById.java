@@ -30,7 +30,7 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import static com.codenvy.analytics.Utils.isAnonymousUser;
+import static com.codenvy.analytics.Utils.isAnonymousUserName;
 import static com.codenvy.analytics.Utils.toArray;
 import static com.codenvy.analytics.datamodel.ValueDataUtil.getAsList;
 import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsMap;
@@ -56,7 +56,7 @@ public class GetDomainById extends EvalFunc<String> {
         if (user == null) {
             return "";
 
-        } else if (isAnonymousUser(user)) {
+        } else if (isAnonymousUserName(user)) {
             return "";
 
         } else if (user.contains("@")) {

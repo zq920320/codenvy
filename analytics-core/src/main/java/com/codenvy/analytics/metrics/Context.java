@@ -186,6 +186,10 @@ public class Context {
         public Builder() {
         }
 
+        public Builder(MetricFilter param, Object value) {
+            put(param, value);
+        }
+
         public Builder(Context context) {
             this.params.putAll(context.params);
         }

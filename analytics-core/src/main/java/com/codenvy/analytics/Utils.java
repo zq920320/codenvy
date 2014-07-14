@@ -19,12 +19,10 @@
 package com.codenvy.analytics;
 
 import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.metrics.Context.Builder;
-import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.Parameters.PassedDaysCount;
 import com.codenvy.analytics.metrics.Parameters.TimeUnit;
-import com.codenvy.analytics.metrics.ReadBasedMetric;
 import com.codenvy.analytics.persistent.MongoDataLoader;
 import com.codenvy.analytics.services.view.ViewBuilder;
 import com.mongodb.BasicDBList;
@@ -36,6 +34,7 @@ import org.joda.time.LocalDate;
 import org.joda.time.Months;
 import org.joda.time.Weeks;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.text.DateFormat;
@@ -44,11 +43,16 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Pattern;
 
+import static com.codenvy.analytics.datamodel.ValueDataUtil.getAsList;
+
 
 /**
  * @author Anatoliy Bazko
  */
 public class Utils {
+
+    private static Pattern VALID_EMAIL_ADDRESS_RFC822 =
+            Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
 
     private Utils() {
     }
@@ -282,14 +286,51 @@ public class Utils {
         return new HashSet<>(Arrays.asList(value.split(MongoDataLoader.SEPARATOR)));
     }
 
-    public static boolean isTemporaryWorkspace(Object name) {
+
+    public static boolean isRegisteredUserName(Object userName) {
+        return VALID_EMAIL_ADDRESS_RFC822.matcher(userName.toString()).matches();
+    }
+
+    public static boolean isAnonymousUserName(Object userName) {
+        String s = String.valueOf(userName).toUpperCase();
+        return s.startsWith("ANONYMOUSUSER_") || s.equals("DEFAULT");
+    }
+
+    public static boolean isAnonymousUser(Object user) {
+        try {
+            if (isAnonymousUserName(user)) {
+                return true;
+            } else if (isRegisteredUserName(user)) {
+                return false;
+            }
+
+            Context.Builder builder = new Context.Builder(MetricFilter.USER, user);
+
+            Metric metric = MetricFactory.getMetric(MetricType.USERS_PROFILES_LIST);
+            return getAsList(metric, builder.build()).size() == 0;
+        } catch (IOException e) {
+            throw new IllegalStateException("Can not check user " + user, e);
+        }
+    }
+
+    public static boolean isTemporaryWorkspaceName(Object name) {
         String s = String.valueOf(name).toUpperCase();
         return s.startsWith("TMP-") || s.equals("DEFAULT");
     }
 
-    public static boolean isAnonymousUser(Object name) {
-        String s = String.valueOf(name).toUpperCase();
-        return s.startsWith("ANONYMOUSUSER_") || s.equals("DEFAULT");
+    public static boolean isTemporaryWorkspace(Object workspace) {
+        try {
+            if (isTemporaryWorkspaceName(workspace)) {
+                return true;
+            }
+
+            Context.Builder builder = new Context.Builder(MetricFilter.WS, workspace);
+
+            Metric metric = MetricFactory.getMetric(MetricType.WORKSPACES_PROFILES_LIST);
+            return getAsList(metric, builder.build()).size() == 0;
+        } catch (IOException e) {
+            throw new IllegalStateException("Can not check workspace " + workspace, e);
+        }
     }
 
     public static boolean isTemporaryExist(Set<String> workspaces) {
@@ -302,8 +343,8 @@ public class Utils {
         return false;
     }
 
-    public static boolean isAnonymousExist(Set<String> users) {
-        for (String user : users) {
+    public static boolean isAnonymousUserExist(Set<String> users) {
+        for (Object user : users) {
             if (isAnonymousUser(user)) {
                 return true;
             }

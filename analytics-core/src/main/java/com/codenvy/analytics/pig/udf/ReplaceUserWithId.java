@@ -48,13 +48,12 @@ public class ReplaceUserWithId extends EvalFunc<String> {
         return exec((String)input.get(0));
     }
 
-    // TODO log id for anonymous user
     public static String exec(String user) throws IOException {
         Metric metric = MetricFactory.getMetric(MetricType.USERS_PROFILES_LIST);
         if (user == null) {
             return null;
 
-        } else if (isAnonymousUserName(user)) {
+        } else if (isAnonymousUserName(user)) { // TODO remove, log id for anonymous user
             return user;
 
         } else {

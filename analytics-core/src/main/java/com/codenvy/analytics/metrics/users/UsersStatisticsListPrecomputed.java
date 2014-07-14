@@ -23,7 +23,7 @@ import com.mongodb.DBObject;
 import javax.annotation.security.RolesAllowed;
 
 import static com.codenvy.analytics.Utils.getFilterAsSet;
-import static com.codenvy.analytics.Utils.isAnonymousUser;
+import static com.codenvy.analytics.Utils.isAnonymousUserExist;
 
 /**
  * @author Alexander Reshetnyak
@@ -90,6 +90,6 @@ public class UsersStatisticsListPrecomputed extends AbstractListValueResulted im
     @Override
     public boolean canReadPrecomputedData(Context context) {
         String value = context.getAsString(MetricFilter.USER);
-        return value == null || !isAnonymousUser(getFilterAsSet(value));
+        return value == null || !isAnonymousUserExist(getFilterAsSet(value));
     }
 }

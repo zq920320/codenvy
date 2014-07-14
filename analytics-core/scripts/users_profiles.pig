@@ -29,7 +29,7 @@ a3 = extractParam(a2, 'EMAILS', 'emails');
 a4 = extractParam(a3, 'ALIASES', 'aliases');
 a = FOREACH a4 GENERATE dt,
                         userId,
-                        (emails IS NOT NULL ? emails
+                        (emails IS NOT NULL ? (emails == '[]' OR emails == '' ? userName : emails )
                                             : (aliases IS NOT NULL ? aliases : userName)) AS emails;
 
 resultA = FOREACH a GENERATE LOWER(userId),
