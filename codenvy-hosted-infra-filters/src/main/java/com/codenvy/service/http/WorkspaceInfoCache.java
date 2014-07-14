@@ -163,7 +163,7 @@ public class WorkspaceInfoCache {
                 }
                 return DtoFactory.getInstance().createDto(WorkspaceDescriptor.class)
                                  .withId(ws.getId()).withName(ws.getName()).withAccountId(ws.getAccountId())
-                                 .withAttributes(ws.getAttributes());
+                                 .withAttributes(ws.getAttributes()).withTemporary(ws.isTemporary());
 
             } catch (Exception e) {
                 LOG.debug(e.getLocalizedMessage(), e);
