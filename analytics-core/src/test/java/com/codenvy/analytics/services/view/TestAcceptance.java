@@ -63,7 +63,7 @@ public class TestAcceptance extends BaseTest {
 
     private static final String TEST_VIEW_CONFIGURATION_FILE     = BASE_TEST_RESOURCE_DIR + "/view.xml";
     private static final String TEST_EXPECTED_LOG_CHECKER_REPORT = BASE_TEST_RESOURCE_DIR + "/report.txt";
-    private static final String TEST_STATISTICS_ARCHIVE          = TestAcceptance.class.getSimpleName() + "/messages_2014-04-23";
+    private static final String TEST_STATISTICS_ARCHIVE          = TestAcceptance.class.getSimpleName() + "/messages_";
 
     @BeforeClass
     public void init() throws Exception {
@@ -73,10 +73,18 @@ public class TestAcceptance extends BaseTest {
     }
 
     private void runScript() throws Exception {
-        Context context = Utils.initializeContext(Parameters.TimeUnit.DAY);
-
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+
+        Context context = Utils.prevDateInterval(new Context.Builder(Utils.initializeContext(Parameters.TimeUnit.DAY).getAll()));
         Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_MONTH, -2);
+
+        context = context.cloneAndPut(Parameters.LOG, getResourceAsBytes("2014-04-22", df.format(calendar.getTime())).getAbsolutePath());
+        pigRunner.forceExecute(context);
+
+
+        context = Utils.initializeContext(Parameters.TimeUnit.DAY);
+        calendar = Calendar.getInstance();
         calendar.add(Calendar.DAY_OF_MONTH, -1);
 
         context = context.cloneAndPut(Parameters.LOG, getResourceAsBytes("2014-04-23", df.format(calendar.getTime())).getAbsolutePath());
@@ -84,7 +92,7 @@ public class TestAcceptance extends BaseTest {
     }
 
     private File getResourceAsBytes(String originalDate, String newDate) throws Exception {
-        String archive = getClass().getClassLoader().getResource(TEST_STATISTICS_ARCHIVE).getFile();
+        String archive = getClass().getClassLoader().getResource(TEST_STATISTICS_ARCHIVE + originalDate).getFile();
 
         try (ZipInputStream in = new ZipInputStream(new BufferedInputStream(new FileInputStream(archive)))) {
             ZipEntry zipEntry = in.getNextEntry();
@@ -266,7 +274,7 @@ public class TestAcceptance extends BaseTest {
     private void assertAnalysis(SectionData sectionData) {
         // Total users
         String row = sectionData.get(1).get(0).getAsString();
-        aggregateResult(row, new StringValueData("2,031"), sectionData.get(1).get(1));
+        aggregateResult(row, new StringValueData("2,081"), sectionData.get(1).get(1));
 
         // The total number of users we track
         row = sectionData.get(2).get(0).getAsString();
@@ -560,7 +568,7 @@ public class TestAcceptance extends BaseTest {
     private void assertWorkspaceUsageDay(SectionData sectionData) {
         String row = sectionData.get(1).get(0).getAsString();
         aggregateResult(row, new StringValueData("Total"), sectionData.get(1).get(0));
-        aggregateResult(row, new StringValueData("1,030"), sectionData.get(1).get(1));
+        aggregateResult(row, new StringValueData("1,231"), sectionData.get(1).get(1));
 
         row = sectionData.get(2).get(0).getAsString();
         aggregateResult(row, new StringValueData("New Active Workspaces"), sectionData.get(2).get(0));
@@ -572,7 +580,7 @@ public class TestAcceptance extends BaseTest {
 
         row = sectionData.get(4).get(0).getAsString();
         aggregateResult(row, new StringValueData("Non-Active Workspaces"), sectionData.get(4).get(0));
-        aggregateResult(row, new StringValueData("804"), sectionData.get(4).get(1));
+        aggregateResult(row, new StringValueData("1,005"), sectionData.get(4).get(1));
     }
 
     private void assertUsageTimeDay(SectionData sectionData) {
@@ -634,13 +642,13 @@ public class TestAcceptance extends BaseTest {
 
         row = sectionData.get(4).get(0).getAsString();
         aggregateResult(row, new StringValueData("Total"), sectionData.get(4).get(0));
-        aggregateResult(row, new StringValueData("2,031"), sectionData.get(4).get(1));
+        aggregateResult(row, new StringValueData("2,081"), sectionData.get(4).get(1));
     }
 
     private void assertUsersUsageDay(SectionData sectionData) {
         String row = sectionData.get(1).get(0).getAsString();
         aggregateResult(row, new StringValueData("Total"), sectionData.get(1).get(0));
-        aggregateResult(row, new StringValueData("2,031"), sectionData.get(1).get(1));
+        aggregateResult(row, new StringValueData("2,081"), sectionData.get(1).get(1));
 
         row = sectionData.get(2).get(0).getAsString();
         aggregateResult(row, new StringValueData("Active Users"), sectionData.get(2).get(0));
@@ -648,7 +656,7 @@ public class TestAcceptance extends BaseTest {
 
         row = sectionData.get(3).get(0).getAsString();
         aggregateResult(row, new StringValueData("Non-Active Users"), sectionData.get(3).get(0));
-        aggregateResult(row, new StringValueData("1,935"), sectionData.get(3).get(1));
+        aggregateResult(row, new StringValueData("1,985"), sectionData.get(3).get(1));
     }
 
     private void assertActiveUsersUsageDay(SectionData sectionData) {
@@ -690,7 +698,7 @@ public class TestAcceptance extends BaseTest {
 
         row = sectionData.get(3).get(0).getAsString();
         aggregateResult(row, new StringValueData("Total"), sectionData.get(3).get(0));
-        aggregateResult(row, new StringValueData("1,030"), sectionData.get(3).get(1));
+        aggregateResult(row, new StringValueData("1,231"), sectionData.get(3).get(1));
     }
 
     private void assertTimeSpentDay(SectionData sectionData) {

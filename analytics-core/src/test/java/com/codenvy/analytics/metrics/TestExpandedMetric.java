@@ -17,63 +17,49 @@
  */
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.BaseTest;
-import com.codenvy.analytics.Configurator;
-import com.codenvy.analytics.Injector;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.*;
 import com.codenvy.analytics.metrics.projects.*;
-import com.codenvy.analytics.metrics.sessions.*;
+import com.codenvy.analytics.metrics.sessions.ProductUsageTimeBelow1Min;
+import com.codenvy.analytics.metrics.sessions.ProductUsageTimeTotal;
 import com.codenvy.analytics.metrics.sessions.factory.AbstractFactorySessions;
 import com.codenvy.analytics.metrics.sessions.factory.FactorySessionsBelow10Min;
 import com.codenvy.analytics.metrics.sessions.factory.FactorySessionsWithBuildPercent;
 import com.codenvy.analytics.metrics.sessions.factory.ProductUsageFactorySessionsList;
 import com.codenvy.analytics.metrics.users.*;
 import com.codenvy.analytics.metrics.workspaces.ActiveWorkspaces;
-import com.codenvy.analytics.persistent.JdbcDataPersisterFactory;
 import com.codenvy.analytics.pig.scripts.ScriptType;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
-import com.codenvy.analytics.services.configuration.XmlConfigurationManager;
-import com.codenvy.analytics.services.view.*;
+import com.codenvy.analytics.services.view.SectionData;
+import com.codenvy.analytics.services.view.ViewData;
 
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.io.File;
-import java.io.IOException;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsList;
 import static java.util.Arrays.asList;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.*;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 /** @author <a href="mailto:dnochevnov@codenvy.com">Dmytro Nochevnov</a> */
-public class TestExpandedMetric extends BaseTest {
+public class TestExpandedMetric extends AbstractTestExpandedMetric {
 
     private static final String TEST_WS    = "ws1";
     private static final String TEST_USER  = "user1@gmail.com";
     private static final String SESSION_ID = "session_id";
     private static final String TEST_COMPANY = "comp";    
 
-    private ViewBuilder viewBuilder;
-
     private File log;
 
-    private static final String ANALYSIS_VIEW_CONFIGURATION = BASE_DIR + "/classes/views/analysis.xml";
-
     @BeforeClass
-    public void prepareDatabase() throws IOException, ParseException {
+    public void prepareDatabase() throws Exception {
         List<Event> events = new ArrayList<>();
 
         // add user activity at previous day
@@ -230,99 +216,13 @@ public class TestExpandedMetric extends BaseTest {
         events.add(Event.Builder.createSessionFinishedEvent("user4@gmail.com", TEST_WS, "ide", SESSION_ID + "_micro")
                                 .withDate("2013-11-01").withTime("23:00:30,555").build());
 
-        // add user6@gmail.com activity (6 sessions && (120min < time < 300min)) for test
-        // testAbstractTimelineProductUsageConditionMetric
-        events.add(Event.Builder.createSessionStartedEvent("user6@gmail.com", TEST_WS, "ide", "user6@gmail.com1")
-                                .withDate("2013-11-20").withTime("01:00:00").build());
-        events.add(Event.Builder.createSessionFinishedEvent("user6@gmail.com", TEST_WS, "ide", "user6@gmail.com1")
-                                .withDate("2013-11-20").withTime("03:01:00").build());
-
-        events.add(Event.Builder.createSessionStartedEvent("user6@gmail.com", TEST_WS, "ide", "user6@gmail.com2")
-                                .withDate("2013-11-20").withTime("04:00:00").build());
-        events.add(Event.Builder.createSessionFinishedEvent("user6@gmail.com", TEST_WS, "ide", "user6@gmail.com2")
-                                .withDate("2013-11-20").withTime("04:01:00").build());
-
-        events.add(Event.Builder.createSessionStartedEvent("user6@gmail.com", TEST_WS, "ide", "user6@gmail.com3")
-                                .withDate("2013-11-20").withTime("05:00:00").build());
-        events.add(Event.Builder.createSessionFinishedEvent("user6@gmail.com", TEST_WS, "ide", "user6@gmail.com3")
-                                .withDate("2013-11-20").withTime("05:01:00").build());
-
-        events.add(Event.Builder.createSessionStartedEvent("user6@gmail.com", TEST_WS, "ide", "user6@gmail.com4")
-                                .withDate("2013-11-20").withTime("06:00:00").build());
-        events.add(Event.Builder.createSessionFinishedEvent("user6@gmail.com", TEST_WS, "ide", "user6@gmail.com4")
-                                .withDate("2013-11-20").withTime("06:01:00").build());
-
-        events.add(Event.Builder.createSessionStartedEvent("user6@gmail.com", TEST_WS, "ide", "user6@gmail.com5")
-                                .withDate("2013-11-20").withTime("07:00:00").build());
-        events.add(Event.Builder.createSessionFinishedEvent("user6@gmail.com", TEST_WS, "ide", "user6@gmail.com5")
-                                .withDate("2013-11-20").withTime("07:01:00").build());
-
-        events.add(Event.Builder.createSessionStartedEvent("user6@gmail.com", TEST_WS, "ide", "user6@gmail.com6")
-                                .withDate("2013-11-20").withTime("08:00:00").build());
-        events.add(Event.Builder.createSessionFinishedEvent("user6@gmail.com", TEST_WS, "ide", "user6@gmail.com6")
-                                .withDate("2013-11-20").withTime("08:01:00").build());
-
-        // add user7@gmail.com activity (6 sessions, time > 300 min) for test
-        // testAbstractTimelineProductUsageConditionMetric
-        events.add(Event.Builder.createSessionStartedEvent("user7@gmail.com", TEST_WS, "ide", "user7@gmail.com1")
-                                .withDate("2013-12-20").withTime("01:00:00").build());
-        events.add(Event.Builder.createSessionFinishedEvent("user7@gmail.com", TEST_WS, "ide", "user7@gmail.com1")
-                                .withDate("2013-12-20").withTime("03:15:00").build());
-
-        events.add(Event.Builder.createSessionStartedEvent("user7@gmail.com", TEST_WS, "ide", "user7@gmail.com2")
-                                .withDate("2013-12-20").withTime("04:00:00").build());
-        events.add(Event.Builder.createSessionFinishedEvent("user7@gmail.com", TEST_WS, "ide", "user7@gmail.com2")
-                                .withDate("2013-12-20").withTime("06:15:00").build());
-
-        events.add(Event.Builder.createSessionStartedEvent("user7@gmail.com", TEST_WS, "ide", "user7@gmail.com3")
-                                .withDate("2013-12-20").withTime("07:00:00").build());
-        events.add(Event.Builder.createSessionFinishedEvent("user7@gmail.com", TEST_WS, "ide", "user7@gmail.com3")
-                                .withDate("2013-12-20").withTime("09:15:00").build());
-
-        events.add(Event.Builder.createSessionStartedEvent("user7@gmail.com", TEST_WS, "ide", "user7@gmail.com4")
-                                .withDate("2013-12-20").withTime("10:00:00").build());
-        events.add(Event.Builder.createSessionFinishedEvent("user7@gmail.com", TEST_WS, "ide", "user7@gmail.com4")
-                                .withDate("2013-12-20").withTime("13:15:00").build());
-
-        events.add(Event.Builder.createSessionStartedEvent("user7@gmail.com", TEST_WS, "ide", "user7@gmail.com5")
-                                .withDate("2013-12-20").withTime("14:00:00").build());
-        events.add(Event.Builder.createSessionFinishedEvent("user7@gmail.com", TEST_WS, "ide", "user7@gmail.com5")
-                                .withDate("2013-12-20").withTime("16:15:00").build());
-
-        events.add(Event.Builder.createSessionStartedEvent("user7@gmail.com", TEST_WS, "ide", "user7@gmail.com6")
-                                .withDate("2013-12-20").withTime("17:00:00").build());
-        events.add(Event.Builder.createSessionFinishedEvent("user7@gmail.com", TEST_WS, "ide", "user7@gmail.com6")
-                                .withDate("2013-12-20").withTime("19:15:00").build());
-
         // add event of accepting factory url for the testDrillDownTopFactoriesMetric test
         events.add(Event.Builder.createFactoryUrlAcceptedEvent("tmp-5", "factoryUrl1", "http://referrer3", "org3", "affiliate2")
                    .withDate("2013-12-20").withTime("11:00:02").build());
         events.add(Event.Builder.createTenantCreatedEvent("tmp-5", "factory_user5")
                    .withDate("2013-12-20").withTime("12:01:00").build());  
         
-        
         log = LogGenerator.generateLog(events);
-    }
-
-    @BeforeClass
-    public void prepareViewBuilder() throws IOException {
-        XmlConfigurationManager configurationManager = mock(XmlConfigurationManager.class);
-
-        when(configurationManager.loadConfiguration(any(Class.class), anyString())).thenAnswer(new Answer<Object>() {
-            @Override
-            public Object answer(InvocationOnMock invocation) throws Throwable {
-                XmlConfigurationManager manager = new XmlConfigurationManager();
-                return manager.loadConfiguration(DisplayConfiguration.class, ANALYSIS_VIEW_CONFIGURATION);
-            }
-        });
-
-        Configurator configurator = spy(Injector.getInstance(Configurator.class));
-        doReturn(new String[]{ANALYSIS_VIEW_CONFIGURATION}).when(configurator).getArray(anyString());
-
-        viewBuilder = spy(new ViewBuilder(Injector.getInstance(JdbcDataPersisterFactory.class),
-                                          Injector.getInstance(CSVReportPersister.class),
-                                          configurationManager,
-                                          configurator));
     }
 
     @Test
@@ -507,140 +407,6 @@ public class TestExpandedMetric extends BaseTest {
     }
     
     @Test
-    public void testAbstractTimelineProductUsageConditionMetric() throws Exception {
-        Context.Builder builder = new Context.Builder();
-        builder.put(Parameters.LOG, log.getAbsolutePath());
-
-        builder.put(Parameters.FROM_DATE, "20131101");
-        builder.put(Parameters.TO_DATE, "20131101");
-        builder.putAll(scriptsManager.getScript(ScriptType.PRODUCT_USAGE_SESSIONS, MetricType.PRODUCT_USAGE_SESSIONS_LIST).getParamsAsMap());
-        pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, builder.build());
-
-        builder.put(Parameters.FROM_DATE, "20131120");
-        builder.put(Parameters.TO_DATE, "20131120");
-        builder.putAll(scriptsManager.getScript(ScriptType.PRODUCT_USAGE_SESSIONS, MetricType.PRODUCT_USAGE_SESSIONS_LIST).getParamsAsMap());
-        pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, builder.build());
-
-        builder.put(Parameters.FROM_DATE, "20131220");
-        builder.put(Parameters.TO_DATE, "20131220");
-        builder.putAll(scriptsManager.getScript(ScriptType.PRODUCT_USAGE_SESSIONS, MetricType.PRODUCT_USAGE_SESSIONS_LIST).getParamsAsMap());
-        pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, builder.build());
-
-        /** test TimelineProductUsageConditionBelow120Min */
-        builder = new Context.Builder();
-        builder.put(Parameters.TO_DATE, "20131220");
-        builder.put(Parameters.TIME_INTERVAL, "0");
-        AbstractTimelineProductUsageCondition metric = new TimelineProductUsageConditionBelow120Min();
-        Context context = metric.initContextBasedOnTimeInterval(builder.build());
-        ValueData expandedValue = metric.getExpandedValue(context);
-        List<ValueData> all = treatAsList(expandedValue);
-        assertEquals(all.size(), 4);
-
-        Map<String, ValueData> record = ((MapValueData)all.get(0)).getAll();
-        assertEquals(record.size(), 1);
-        assertEquals(record.get("user").toString(), "factory_user5");
-        
-        record = ((MapValueData)all.get(1)).getAll();
-        assertEquals(record.size(), 1);
-        assertEquals(record.get("user").toString(), "user4@gmail.com");
-        
-        record = ((MapValueData)all.get(2)).getAll();
-        assertEquals(record.size(), 1);
-        assertEquals(record.get("user").toString(), "user1@gmail.com");
-        
-        record = ((MapValueData)all.get(3)).getAll();
-        assertEquals(record.size(), 1);
-        assertEquals(record.get("user").toString(), "user1");
-
-        builder = new Context.Builder();
-        builder.put(Parameters.TO_DATE, "20131220");
-        builder.put(Parameters.TIME_INTERVAL, "2");
-        context = metric.initContextBasedOnTimeInterval(builder.build());
-        expandedValue = metric.getExpandedValue(context);
-        all = treatAsList(expandedValue);
-        assertEquals(all.size(), 3);
-
-        record = ((MapValueData)all.get(0)).getAll();
-        assertEquals(record.size(), 1);
-        assertEquals(record.get("user").toString(), "user4@gmail.com");
-        record = ((MapValueData)all.get(1)).getAll();
-        assertEquals(record.size(), 1);
-        assertEquals(record.get("user").toString(), "user1@gmail.com");
-        record = ((MapValueData)all.get(2)).getAll();
-        assertEquals(record.size(), 1);
-        assertEquals(record.get("user").toString(), "user1");
-
-        /** test TimelineProductUsageConditionBetween120And300Min */
-        builder = new Context.Builder();
-        builder.put(Parameters.TO_DATE, "20131220");
-        builder.put(Parameters.TIME_INTERVAL, "0");
-        metric = new TimelineProductUsageConditionBetween120And300Min();
-        context = metric.initContextBasedOnTimeInterval(builder.build());
-        expandedValue = metric.getExpandedValue(context);
-        all = treatAsList(expandedValue);
-        assertEquals(all.size(), 1);
-
-        record = ((MapValueData)all.get(0)).getAll();
-        assertEquals(record.size(), 1);
-        assertEquals(record.get("user").toString(), "user6@gmail.com");
-
-        builder = new Context.Builder();
-        builder.put(Parameters.TO_DATE, "20131220");
-        builder.put(Parameters.TIME_INTERVAL, "1");
-        context = metric.initContextBasedOnTimeInterval(builder.build());
-        expandedValue = metric.getExpandedValue(context);
-        all = treatAsList(expandedValue);
-        assertEquals(all.size(), 1);
-
-        record = ((MapValueData)all.get(0)).getAll();
-        assertEquals(record.size(), 1);
-        assertEquals(record.get("user").toString(), "user6@gmail.com");
-
-        builder = new Context.Builder();
-        builder.put(Parameters.TO_DATE, "20131220");
-        builder.put(Parameters.TIME_INTERVAL, "2");
-        context = metric.initContextBasedOnTimeInterval(builder.build());
-        expandedValue = metric.getExpandedValue(context);
-        all = treatAsList(expandedValue);
-        assertEquals(all.size(), 1);
-
-        record = ((MapValueData)all.get(0)).getAll();
-        assertEquals(record.size(), 1);
-        assertEquals(record.get("user").toString(), "user6@gmail.com");
-
-
-        /** test TimelineProductUsageConditionAbove300Min */
-        builder = new Context.Builder();
-        builder.put(Parameters.TO_DATE, "20131220");
-        builder.put(Parameters.TIME_INTERVAL, "0");
-        metric = new TimelineProductUsageConditionAbove300Min();
-        context = metric.initContextBasedOnTimeInterval(builder.build());
-        expandedValue = metric.getExpandedValue(context);
-        all = treatAsList(expandedValue);
-        assertEquals(all.size(), 1);
-
-        record = ((MapValueData)all.get(0)).getAll();
-        assertEquals(record.size(), 1);
-        assertEquals(record.get("user").toString(), "user7@gmail.com");
-
-        builder = new Context.Builder();
-        builder.put(Parameters.TO_DATE, "20131220");
-        builder.put(Parameters.TIME_INTERVAL, "1");
-        context = metric.initContextBasedOnTimeInterval(builder.build());
-        expandedValue = metric.getExpandedValue(context);
-        all = treatAsList(expandedValue);
-        assertEquals(all.size(), 0);
-
-        builder = new Context.Builder();
-        builder.put(Parameters.TO_DATE, "20131220");
-        builder.put(Parameters.TIME_INTERVAL, "2");
-        context = metric.initContextBasedOnTimeInterval(builder.build());
-        expandedValue = metric.getExpandedValue(context);
-        all = treatAsList(expandedValue);
-        assertEquals(all.size(), 0);
-    }
-
-    @Test
     public void testNonActiveUsersMetric() throws Exception {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.LOG, log.getAbsolutePath());
@@ -756,40 +522,7 @@ public class TestExpandedMetric extends BaseTest {
         assertEquals(record.get("session_id").toString(), "factory-id1");
     }
 
-    @Test
-    public void testProductUsageUsersBelow10MinMetric() throws Exception {
-        Context.Builder builder = new Context.Builder();
-        builder.put(Parameters.FROM_DATE, "20131101");
-        builder.put(Parameters.TO_DATE, "20131101");
-        builder.put(Parameters.LOG, log.getAbsolutePath());
-        builder.putAll(scriptsManager.getScript(ScriptType.PRODUCT_USAGE_SESSIONS, MetricType.PRODUCT_USAGE_SESSIONS_LIST).getParamsAsMap());
-        pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, builder.build());
-
-        builder = new Context.Builder();
-        builder.put(Parameters.FROM_DATE, "20131101");
-        builder.put(Parameters.TO_DATE, "20131101");
-        builder.putAll(scriptsManager.getScript(ScriptType.ACTIVE_ENTITIES, MetricType.ACTIVE_USERS_SET).getParamsAsMap());
-        builder.put(Parameters.LOG, log.getAbsolutePath());
-        pigServer.execute(ScriptType.ACTIVE_ENTITIES, builder.build());
-
-        builder = new Context.Builder();
-        builder.put(Parameters.TO_DATE, "20131101");
-
-        ProductUsageUsersBelow10Min metric = new ProductUsageUsersBelow10Min();
-
-        // test expanded metric value
-        ValueData expandedValue = metric.getExpandedValue(builder.build());
-        List<ValueData> all = treatAsList(expandedValue);
-        assertEquals(all.size(), 5);
-
-        assertTrue(all.contains(MapValueData.valueOf("user=user2@gmail.com")));
-        assertTrue(all.contains(MapValueData.valueOf("user=user1")));
-        assertTrue(all.contains(MapValueData.valueOf("user=user5")));
-        assertTrue(all.contains(MapValueData.valueOf("user=user5")));
-        assertTrue(all.contains(MapValueData.valueOf("user=" + TEST_USER + "_invite")));
-    }
-
-    @Test
+   @Test
     public void testProductUsageTimeBelow1MinMetric() throws Exception {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20131101");
