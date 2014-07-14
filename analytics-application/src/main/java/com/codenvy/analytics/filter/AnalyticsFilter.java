@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.Principal;
 
-import static com.codenvy.analytics.Utils.isAnonymousUser;
+import static com.codenvy.analytics.Utils.isAnonymousUserName;
 
 /**
  * The purpose is in redirection anonymous users to an account creation page.
@@ -44,7 +44,7 @@ public class AnalyticsFilter implements Filter {
         HttpServletResponse httpResponse = (HttpServletResponse)response;
 
         Principal userPrincipal = httpRequest.getUserPrincipal();
-        if (userPrincipal == null || isAnonymousUser(userPrincipal.getName())) {
+        if (userPrincipal == null || isAnonymousUserName(userPrincipal.getName())) {
             String url = httpRequest.getRequestURL().toString();
             String baseUrl = url.substring(0, url.length() - httpRequest.getRequestURI().length());
 

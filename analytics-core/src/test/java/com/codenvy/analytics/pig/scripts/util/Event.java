@@ -302,6 +302,15 @@ public class Event {
                                 .withParam("EMAILS", aliases);
         }
 
+        public static Builder createWorkspaceCreatedEvent(String ws,
+                                                          String wsId,
+                                                          String user) {
+            return new Builder().withParam("EVENT", "workspace-created")
+                                .withParam("WS", ws)
+                                .withParam("WS-ID", wsId)
+                                .withParam("USER", user);
+        }
+
         public static Builder createUserUpdatedEvent(String userId,
                                                      String user,
                                                      String aliases) {
