@@ -110,7 +110,9 @@ public class TestEventValidation extends BaseTest {
     public Object[][] getCorrectMessages() {
         return new Object[][]{
                 {"session-started", "ws", "user", "PARAMETERS#SESSION-ID=9F8D988D-78DC-412D-BD34-C3470450A21D#"},
-                {"project-created", "ws", "user", "PROJECT#Sample-TwitterBootstrap# TYPE#JavaScript# PAAS#null#"},
+                {"application-created", "ws", "user", "PROJECT#Sample# TYPE#JavaScript# PAAS#default#"},
+                {"project-created", "ws", "user", "PROJECT#Sample-TwitterBootstrap# TYPE#null# PAAS#null#"},
+                {"project-created", "ws", "user", "PROJECT#Sample-TwitterBootstrap# TYPE#unknown# PAAS#default#"},
                 {"factory-created", "ws", "user", "PROJECT#project# TYPE## REPO-URL#repo# FACTORY-URL#factory# AFFILIATE-ID## ORG-ID##"},
                 {"user-created", "ws", "user", "USER-ID#usermwl9896s2we14h9n# EMAILS#anonymoususer_zz31bd#"},
                 {"user-update-profile", "ws", "user", "USER#user_tt# FIRSTNAME## LASTNAME#_l# COMPANY## PHONE## JOBTITLE## EMAILS#user# USER-ID#id#"},
@@ -144,8 +146,6 @@ public class TestEventValidation extends BaseTest {
         return new Object[][]{
                 {"project-created", "ws", "user", "PROJECT#Sample-TwitterBootstrap# TYPE## PAAS#null#", ""},
                 {"project-created", "ws", "user", "PROJECT#Sample-TwitterBootstrap# PAAS#null#", "null"},
-                {"project-created", "ws", "user", "PROJECT#Sample-TwitterBootstrap# TYPE#unknown# PAAS#null#", "unknown"},
-                {"project-created", "ws", "user", "PROJECT#Sample-TwitterBootstrap# TYPE#null# PAAS#null#", "null"},
         };
     }
 
@@ -154,7 +154,6 @@ public class TestEventValidation extends BaseTest {
         return new Object[][]{
                 {"application-created", "ws", "user", "PROJECT#Sample# TYPE#JavaScript#", "null"},
                 {"application-created", "ws", "user", "PROJECT#Sample# TYPE#JavaScript# PAAS##", ""},
-                {"application-created", "ws", "user", "PROJECT#Sample# TYPE#JavaScript# PAAS#default#", "default"},
                 {"application-created", "ws", "user", "PROJECT#Sample# TYPE#JavaScript# PAAS#null#", "null"},
                 {"application-created", "ws", "user", "PROJECT#Sample# TYPE#JavaScript# PAAS#unknown#", "unknown"},
                 {"application-created", "ws", "user", "PROJECT#Sample# TYPE#JavaScript# PAAS#LOCAL#", "LOCAL"},
