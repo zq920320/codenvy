@@ -24,6 +24,8 @@ import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.shared.dto.Subscription;
 import com.codenvy.api.account.shared.dto.SubscriptionHistoryEvent;
 import com.codenvy.api.core.ApiException;
+import com.codenvy.api.core.ConflictException;
+import com.codenvy.api.core.ServerException;
 import com.codenvy.commons.lang.NameGenerator;
 import com.codenvy.dto.server.DtoFactory;
 
@@ -33,46 +35,35 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 
 import static com.codenvy.api.account.shared.dto.SubscriptionHistoryEvent.Type.DELETE;
+import static com.codenvy.scheduler.SubscriptionScheduler.EVENTS_INITIATOR_SCHEDULER;
 
 /**
- * Checks subscriptions using their service. Also removes expired subscription.
+ * Removes expired subscriptions
  *
  * @author Alexander Garagatyi
  */
-public class DefaultSubscriptionSchedulerHandler extends SubscriptionSchedulerHandler {
-    private static final Logger LOG = LoggerFactory.getLogger(DefaultSubscriptionSchedulerHandler.class);
+public class RemoveExpiredSubscriptionSchedulerHandler implements SubscriptionSchedulerHandler {
+    private static final Logger LOG = LoggerFactory.getLogger(RemoveExpiredSubscriptionSchedulerHandler.class);
     private final AccountDao                  accountDao;
     private final SubscriptionServiceRegistry registry;
 
     @Inject
-    public DefaultSubscriptionSchedulerHandler(AccountDao accountDao, SubscriptionServiceRegistry registry) {
-        super();
+    public RemoveExpiredSubscriptionSchedulerHandler(AccountDao accountDao, SubscriptionServiceRegistry registry) {
         this.accountDao = accountDao;
         this.registry = registry;
     }
 
-    /**
-     * Has priority 100
-     *
-     * @see SubscriptionSchedulerHandler#getPriority()
-     */
     @Override
-    protected int getPriority() {
-        return 100;
-    }
-
-    @Override
-    public SubscriptionScheduler.CheckState checkSubscription(Subscription subscription) throws ApiException {
+    public void checkSubscription(Subscription subscription) throws ApiException {
         SubscriptionService service = registry.get(subscription.getServiceId());
         if (service == null) {
-            LOG.error("Subscription service not found {}", subscription.getServiceId());
-            return SubscriptionScheduler.CheckState.ABORT_CHECK;
+            throw new ConflictException("Subscription service not found " + subscription.getServiceId());
         }
 
         if (subscription.getEndDate() < System.currentTimeMillis()) {
-            accountDao.removeSubscription(subscription.getId());
-
             try {
+                accountDao.removeSubscription(subscription.getId());
+
                 service.onRemoveSubscription(subscription);
 
                 SubscriptionHistoryEvent event = DtoFactory.getInstance().createDto(SubscriptionHistoryEvent.class);
@@ -84,14 +75,9 @@ public class DefaultSubscriptionSchedulerHandler extends SubscriptionSchedulerHa
 
                 accountDao.addSubscriptionHistoryEvent(event);
             } catch (ApiException e) {
-                LOG.error("Error on removing subscription " + subscription.getId() + ". Message: " + e.getLocalizedMessage(), e);
-            } finally {
-                return SubscriptionScheduler.CheckState.ABORT_CHECK;
+                throw new ServerException(
+                        "Error on removing subscription " + subscription.getId() + ". Message: " + e.getLocalizedMessage(), e);
             }
-        } else {
-            service.onCheckSubscription(subscription);
         }
-
-        return SubscriptionScheduler.CheckState.CONTINUE_CHECK;
     }
 }

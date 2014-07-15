@@ -25,28 +25,12 @@ import com.codenvy.api.core.ApiException;
  *
  * @author Alexander Garagatyi
  */
-public abstract class SubscriptionSchedulerHandler implements Comparable<SubscriptionSchedulerHandler> {
-    public static final String EVENTS_INITIATOR_SCHEDULER = "scheduler";
-
-    /** Get priority of a handler. Finally all handlers are used in ascending order of priority. Less value of priority means earlier
-     *  usage it in cycle of check. */
-    protected abstract int getPriority();
-
+public interface SubscriptionSchedulerHandler {
     /**
-     * Checks subscription and indicates whether there can be other checks are made.
+     * Checks subscription
      *
      * @param subscription
      *         subscription to check
-     * @return {@link SubscriptionScheduler.CheckState#CONTINUE_CHECK} if another checks can be performed,
-     * {@link SubscriptionScheduler.CheckState#ABORT_CHECK} otherwise
      */
-    public abstract SubscriptionScheduler.CheckState checkSubscription(Subscription subscription) throws ApiException;
-
-    @Override
-    public int compareTo(SubscriptionSchedulerHandler o) {
-        final int priority = getPriority();
-        final int anotherPriority = o.getPriority();
-
-        return (priority < anotherPriority) ? -1 : ((priority == anotherPriority) ? 0 : 1);
-    }
+    void checkSubscription(Subscription subscription) throws ApiException;
 }

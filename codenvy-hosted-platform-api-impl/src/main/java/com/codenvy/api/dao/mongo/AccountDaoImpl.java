@@ -405,7 +405,7 @@ public class AccountDaoImpl implements AccountDao {
     }
 
     @Override
-    public List<Subscription> getAllSubscriptions() throws ServerException {
+    public List<Subscription> getSubscriptions() throws ServerException {
         try (DBCursor subscriptions = subscriptionCollection.find()) {
             ArrayList<Subscription> result = new ArrayList<>(subscriptions.size());
             for (DBObject currentSubscription : subscriptions) {

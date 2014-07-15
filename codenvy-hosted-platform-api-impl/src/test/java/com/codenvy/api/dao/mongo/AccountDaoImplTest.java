@@ -772,21 +772,21 @@ public class AccountDaoImplTest extends BaseDaoTest {
         subscriptionCollection.save(toDBObject(ss1));
         subscriptionCollection.save(toDBObject(ss2));
 
-        List<Subscription> actual = accountDao.getAllSubscriptions();
+        List<Subscription> actual = accountDao.getSubscriptions();
 
         assertEquals(actual, Arrays.asList(ss1, ss2));
     }
 
     @Test
     public void shouldReturnEmptyCollectionIfThereIsNoSubscriptionsOnGetAllSubscriptions() throws ServerException {
-        assertTrue(accountDao.getAllSubscriptions().isEmpty());
+        assertTrue(accountDao.getSubscriptions().isEmpty());
     }
 
     @Test(expectedExceptions = ServerException.class, expectedExceptionsMessageRegExp = "mongo exception")
     public void shouldThrowServerExceptionIfMongoExceptionIsThrownOnGetAllSubscriptions() throws ServerException {
         when(subscriptionCollection.find()).thenThrow(new MongoException("mongo exception"));
 
-        accountDao.getAllSubscriptions();
+        accountDao.getSubscriptions();
     }
 
     private DBObject toDBObject(SubscriptionHistoryEvent event) {

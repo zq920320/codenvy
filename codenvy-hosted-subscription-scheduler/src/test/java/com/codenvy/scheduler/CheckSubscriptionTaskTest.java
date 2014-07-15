@@ -40,10 +40,10 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import static com.codenvy.scheduler.SubscriptionScheduler.CheckState.ABORT_CHECK;
-import static com.codenvy.scheduler.SubscriptionScheduler.CheckState.CONTINUE_CHECK;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -77,9 +77,6 @@ public class CheckSubscriptionTaskTest {
     @BeforeMethod
     public void setUp() throws Exception {
         Set<SubscriptionSchedulerHandler> handlers = new HashSet<>(Arrays.asList(handler1, handler2));
-        // should be used first
-        when(handler1.getPriority()).thenReturn(0);
-        when(handler2.getPriority()).thenReturn(1);
 
         subscriptionScheduler = new SubscriptionScheduler(handlers, accountDao);
 
@@ -93,9 +90,7 @@ public class CheckSubscriptionTaskTest {
 
     @Test
     public void shouldBeAbleToCallAllHandlers() throws ApiException {
-        when(accountDao.getAllSubscriptions()).thenReturn(Arrays.asList(subscription1, subscription2));
-        when(handler1.checkSubscription(any(Subscription.class))).thenReturn(CONTINUE_CHECK);
-        when(handler2.checkSubscription(any(Subscription.class))).thenReturn(CONTINUE_CHECK);
+        when(accountDao.getSubscriptions()).thenReturn(Arrays.asList(subscription1, subscription2));
 
         task.run();
 
@@ -107,9 +102,7 @@ public class CheckSubscriptionTaskTest {
 
     @Test
     public void shouldNotCallHandlersIfExceptionOccursOnGetAllSubscriptions() throws ApiException {
-        when(accountDao.getAllSubscriptions()).thenThrow(new ServerException(""));
-        when(handler1.checkSubscription(any(Subscription.class))).thenReturn(CONTINUE_CHECK);
-        when(handler2.checkSubscription(any(Subscription.class))).thenReturn(CONTINUE_CHECK);
+        when(accountDao.getSubscriptions()).thenThrow(new ServerException(""));
 
         task.run();
 
@@ -119,9 +112,7 @@ public class CheckSubscriptionTaskTest {
 
     @Test
     public void shouldNotCallHandlersIfThereIsNoSubscriptionsOnGetAllSubscriptions() throws ApiException {
-        when(accountDao.getAllSubscriptions()).thenReturn(Collections.<Subscription>emptyList());
-        when(handler1.checkSubscription(any(Subscription.class))).thenReturn(CONTINUE_CHECK);
-        when(handler2.checkSubscription(any(Subscription.class))).thenReturn(CONTINUE_CHECK);
+        when(accountDao.getSubscriptions()).thenReturn(Collections.<Subscription>emptyList());
 
         task.run();
 
@@ -131,7 +122,7 @@ public class CheckSubscriptionTaskTest {
 
     @Test
     public void shouldNotCallHandlersIfThreadIsInterruptedBeforeChecksOnGetAllSubscriptions() throws ApiException, InterruptedException {
-        when(accountDao.getAllSubscriptions()).thenAnswer(new Answer<Object>() {
+        when(accountDao.getSubscriptions()).thenAnswer(new Answer<Object>() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
                 Thread.currentThread().interrupt();
@@ -139,8 +130,6 @@ public class CheckSubscriptionTaskTest {
                 return Arrays.asList(subscription1, subscription2).iterator();
             }
         });
-        when(handler1.checkSubscription(any(Subscription.class))).thenReturn(CONTINUE_CHECK);
-        when(handler2.checkSubscription(any(Subscription.class))).thenReturn(CONTINUE_CHECK);
 
         task = subscriptionScheduler.new CheckSubscriptionsTask();
         Thread separateThread = new Thread(task);
@@ -156,18 +145,15 @@ public class CheckSubscriptionTaskTest {
     @Test
     public void shouldNotCallHandlersForSecondSubscriptionIfThreadIsInterruptedOnCheckFirstSubscription()
             throws ApiException, InterruptedException {
-        when(accountDao.getAllSubscriptions()).thenReturn(Arrays.asList(subscription1, subscription2));
-        when(handler1.checkSubscription(eq(subscription1))).thenAnswer(new Answer<Object>() {
+        when(accountDao.getSubscriptions()).thenReturn(Arrays.asList(subscription1, subscription2));
+        doAnswer(new Answer<Object>() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
                 Thread.currentThread().interrupt();
                 continueTest = true;
-                return CONTINUE_CHECK;
+                return null;
             }
-        });
-        when(handler2.checkSubscription(eq(subscription1))).thenReturn(CONTINUE_CHECK);
-        when(handler1.checkSubscription(eq(subscription2))).thenReturn(CONTINUE_CHECK);
-        when(handler2.checkSubscription(eq(subscription2))).thenReturn(CONTINUE_CHECK);
+        }).when(handler1).checkSubscription(eq(subscription1));
 
         task = subscriptionScheduler.new CheckSubscriptionsTask();
         Thread separateThread = new Thread(task);
@@ -184,29 +170,13 @@ public class CheckSubscriptionTaskTest {
 
     @Test(dataProvider = "apiExceptionProvider")
     public void shouldContinueChecksIfApiExceptionThrownOnCheck(ApiException e) throws ApiException {
-        when(accountDao.getAllSubscriptions()).thenReturn(Arrays.asList(subscription1, subscription2));
-        when(handler1.checkSubscription(any(Subscription.class))).thenThrow(e);
-        when(handler2.checkSubscription(any(Subscription.class))).thenReturn(CONTINUE_CHECK);
+        when(accountDao.getSubscriptions()).thenReturn(Arrays.asList(subscription1, subscription2));
+        doThrow(e).when(handler1).checkSubscription(any(Subscription.class));
 
         task.run();
 
         verify(handler1).checkSubscription(subscription1);
         verify(handler2).checkSubscription(subscription1);
-        verify(handler1).checkSubscription(subscription2);
-        verify(handler2).checkSubscription(subscription2);
-    }
-
-    @Test
-    public void shouldNotCheckWithNextHandlerIfHandlerReturnAbort() throws ApiException {
-        when(accountDao.getAllSubscriptions()).thenReturn(Arrays.asList(subscription1, subscription2));
-        when(handler1.checkSubscription(eq(subscription1))).thenReturn(ABORT_CHECK);
-        when(handler1.checkSubscription(eq(subscription2))).thenReturn(CONTINUE_CHECK);
-        when(handler2.checkSubscription(any(Subscription.class))).thenReturn(CONTINUE_CHECK);
-
-        task.run();
-
-        verify(handler1).checkSubscription(subscription1);
-        verify(handler2, never()).checkSubscription(subscription1);
         verify(handler1).checkSubscription(subscription2);
         verify(handler2).checkSubscription(subscription2);
     }

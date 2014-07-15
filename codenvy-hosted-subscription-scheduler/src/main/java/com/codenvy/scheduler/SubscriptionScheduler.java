@@ -19,7 +19,6 @@ package com.codenvy.scheduler;
 
 import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.shared.dto.Subscription;
-import com.codenvy.api.core.ApiException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.commons.lang.NamedThreadFactory;
 
@@ -32,13 +31,9 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import static com.codenvy.scheduler.SubscriptionScheduler.CheckState.ABORT_CHECK;
 
 /**
  * Periodically checks all stored subscriptions with list of defined {@link SubscriptionSchedulerHandler}
@@ -47,51 +42,40 @@ import static com.codenvy.scheduler.SubscriptionScheduler.CheckState.ABORT_CHECK
  */
 @Singleton
 public class SubscriptionScheduler {
-    private static final Logger LOG = LoggerFactory.getLogger(SubscriptionScheduler.class);
-
-    public enum CheckState {
-        CONTINUE_CHECK, ABORT_CHECK
-    }
+    private static final Logger LOG                        = LoggerFactory.getLogger(SubscriptionScheduler.class);
+    public static final  String EVENTS_INITIATOR_SCHEDULER = "scheduler";
 
     /** Period for subscription scheduling. In minutes */
     private static final int SCHEDULE_PERIOD = 60;
-    private final AtomicBoolean                     started;
     private final Set<SubscriptionSchedulerHandler> handlers;
     private final AccountDao                        accountDao;
     private       ScheduledExecutorService          scheduler;
 
     @Inject
     public SubscriptionScheduler(Set<SubscriptionSchedulerHandler> handlers, AccountDao accountDao) {
-        this.started = new AtomicBoolean(false);
-        this.handlers = new TreeSet<>(handlers);
+        this.handlers = handlers;
         this.accountDao = accountDao;
     }
 
     @PostConstruct
     protected void start() {
-        if (started.compareAndSet(false, true)) {
-            // this thread SHOULD NOT be a daemon
-            scheduler = Executors.newSingleThreadScheduledExecutor(new NamedThreadFactory("SubscriptionScheduler", false));
-            scheduler.scheduleAtFixedRate(new CheckSubscriptionsTask(), 5, SCHEDULE_PERIOD, TimeUnit.MINUTES);
-        } else {
-            throw new IllegalStateException("Already started");
-        }
+        // this thread SHOULD NOT be a daemon
+        scheduler = Executors.newSingleThreadScheduledExecutor(new NamedThreadFactory("SubscriptionScheduler", false));
+        scheduler.scheduleAtFixedRate(new CheckSubscriptionsTask(), 5, SCHEDULE_PERIOD, TimeUnit.MINUTES);
     }
 
     class CheckSubscriptionsTask implements Runnable {
         @Override
         public void run() {
             try {
-                Iterator<Subscription> allSubscriptionsIterator = accountDao.getAllSubscriptions().iterator();
+                Iterator<Subscription> allSubscriptionsIterator = accountDao.getSubscriptions().iterator();
                 while (!Thread.currentThread().isInterrupted() && allSubscriptionsIterator.hasNext()) {
                     Subscription subscription = allSubscriptionsIterator.next();
 
                     for (SubscriptionSchedulerHandler handler : handlers) {
                         try {
-                            if (ABORT_CHECK == handler.checkSubscription(subscription)) {
-                                break;
-                            }
-                        } catch (ApiException e) {
+                            handler.checkSubscription(subscription);
+                        } catch (Exception e) {
                             LOG.error(e.getLocalizedMessage(), e);
                         }
                     }
@@ -104,17 +88,13 @@ public class SubscriptionScheduler {
 
     @PreDestroy
     protected void cleanup() {
-        if (started.compareAndSet(true, false)) {
-            scheduler.shutdownNow();
-            try {
-                if (!scheduler.awaitTermination(2, TimeUnit.SECONDS)) {
-                    LOG.warn("Unable terminate scheduler");
-                }
-            } catch (InterruptedException e) {
-                LOG.error(e.getLocalizedMessage(), e);
+        scheduler.shutdownNow();
+        try {
+            if (!scheduler.awaitTermination(2, TimeUnit.SECONDS)) {
+                LOG.warn("Unable terminate scheduler");
             }
-        } else {
-            throw new IllegalStateException("Is not started yet.");
+        } catch (InterruptedException e) {
+            LOG.error(e.getLocalizedMessage(), e);
         }
     }
 }

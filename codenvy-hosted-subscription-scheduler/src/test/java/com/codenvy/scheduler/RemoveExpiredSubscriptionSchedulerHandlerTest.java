@@ -23,6 +23,7 @@ import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.shared.dto.Subscription;
 import com.codenvy.api.account.shared.dto.SubscriptionHistoryEvent;
 import com.codenvy.api.core.ApiException;
+import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.dto.server.DtoFactory;
 
@@ -36,22 +37,21 @@ import org.testng.annotations.Test;
 
 import java.util.concurrent.TimeUnit;
 
+import static com.codenvy.scheduler.SubscriptionScheduler.EVENTS_INITIATOR_SCHEDULER;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
-import static org.testng.Assert.assertEquals;
 
 /**
- * Tests for {@link SubscriptionScheduler}
+ * Tests for {@link RemoveExpiredSubscriptionSchedulerHandler}
  *
  * @author Alexander Garagatyi
  */
 @Listeners(value = {MockitoTestNGListener.class})
-public class DefaultSubscriptionSchedulerHandlerTest {
+public class RemoveExpiredSubscriptionSchedulerHandlerTest {
     public static final String SERVICE_ID = "service id";
     public static final String ID         = "id";
 
@@ -65,21 +65,19 @@ public class DefaultSubscriptionSchedulerHandlerTest {
     private SubscriptionService subscriptionService;
 
     @InjectMocks
-    private DefaultSubscriptionSchedulerHandler handler;
+    private RemoveExpiredSubscriptionSchedulerHandler handler;
 
     @BeforeMethod
     public void setUp() throws Exception {
     }
 
     @Test
-    public void shouldCallOnCheckSubscriptionIfSubscriptionIsNotExpired() throws ApiException {
+    public void shouldNotDoAnythingOnCheckSubscriptionIfSubscriptionIsNotExpired() throws ApiException {
         when(registry.get(SERVICE_ID)).thenReturn(subscriptionService);
         final Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class).withId(ID).withServiceId(
                 SERVICE_ID).withEndDate(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(1));
 
-        assertEquals(handler.checkSubscription(subscription), SubscriptionScheduler.CheckState.CONTINUE_CHECK);
-
-        verify(subscriptionService).onCheckSubscription(eq(subscription));
+        handler.checkSubscription(subscription);
     }
 
     @Test
@@ -88,7 +86,7 @@ public class DefaultSubscriptionSchedulerHandlerTest {
         final Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class).withId(ID).withServiceId(
                 SERVICE_ID).withEndDate(System.currentTimeMillis() - 1);
 
-        assertEquals(handler.checkSubscription(subscription), SubscriptionScheduler.CheckState.ABORT_CHECK);
+        handler.checkSubscription(subscription);
 
         verify(accountDao).removeSubscription(ID);
         verify(subscriptionService).onRemoveSubscription(eq(subscription));
@@ -96,9 +94,8 @@ public class DefaultSubscriptionSchedulerHandlerTest {
             @Override
             public boolean matches(Object argument) {
                 SubscriptionHistoryEvent event = (SubscriptionHistoryEvent)argument;
-
                 if (event.getType() == SubscriptionHistoryEvent.Type.DELETE && event.getSubscription().equals(subscription) &&
-                    event.getUserId().equals(SubscriptionSchedulerHandler.EVENTS_INITIATOR_SCHEDULER)) {
+                    event.getUserId().equals(EVENTS_INITIATOR_SCHEDULER)) {
                     return true;
                 }
                 return false;
@@ -106,50 +103,54 @@ public class DefaultSubscriptionSchedulerHandlerTest {
         }));
     }
 
-    @Test
-    public void shouldReturnAbortCheckIfServiceIdIsUnknown() throws ApiException {
+    @Test(expectedExceptions = ConflictException.class, expectedExceptionsMessageRegExp = "Subscription service not found " + SERVICE_ID)
+    public void shouldThrowConflictExceptionIfServiceIdIsUnknown() throws ApiException {
         when(registry.get(SERVICE_ID)).thenReturn(null);
         final Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class).withId(ID).withServiceId(
                 SERVICE_ID).withEndDate(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(1));
 
-        assertEquals(handler.checkSubscription(subscription), SubscriptionScheduler.CheckState.ABORT_CHECK);
-
-        verifyZeroInteractions(accountDao, subscriptionService);
+        handler.checkSubscription(subscription);
     }
 
-    @Test
-    public void shouldReturnAbortCheckIfApiExceptionIsThrownOnOnCheckSubscriptionAfterSubscriptionRemoval()
+    @Test(expectedExceptionsMessageRegExp = "Error on removing subscription " + ID + ". Message: exception",
+          expectedExceptions = ServerException.class)
+    public void shouldThrowServerExceptionIfApiExceptionIsThrownInOnRemoveSubscription()
             throws ApiException {
         when(registry.get(SERVICE_ID)).thenReturn(subscriptionService);
         doThrow(new ServerException("exception")).when(subscriptionService).onRemoveSubscription(any(Subscription.class));
         final Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class).withId(ID).withServiceId(
                 SERVICE_ID).withEndDate(System.currentTimeMillis() - 1);
 
-        assertEquals(handler.checkSubscription(subscription), SubscriptionScheduler.CheckState.ABORT_CHECK);
+        handler.checkSubscription(subscription);
 
         verify(accountDao).removeSubscription(ID);
     }
 
-    @Test
-    public void shouldReturnAbortCheckIfApiExceptionIsThrownOnHistoryEventAdditionAfterSubscriptionRemoval()
+    @Test(expectedExceptionsMessageRegExp = "Error on removing subscription " + ID + ". Message: exception",
+          expectedExceptions = ServerException.class)
+    public void shouldThrowServerExceptionIfApiExceptionIsThrownInOnHistoryEventAddition()
             throws ApiException {
         when(registry.get(SERVICE_ID)).thenReturn(subscriptionService);
         doThrow(new ServerException("exception")).when(accountDao).addSubscriptionHistoryEvent(any(SubscriptionHistoryEvent.class));
         final Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class).withId(ID).withServiceId(
                 SERVICE_ID).withEndDate(System.currentTimeMillis() - 1);
 
-        assertEquals(handler.checkSubscription(subscription), SubscriptionScheduler.CheckState.ABORT_CHECK);
+        handler.checkSubscription(subscription);
 
         verify(accountDao).removeSubscription(ID);
     }
 
-    @Test(expectedExceptionsMessageRegExp = "exception", expectedExceptions = ServerException.class)
-    public void shouldThrowApiExceptionIfItOccursOnRemoveSubscription() throws ApiException {
+    @Test(expectedExceptionsMessageRegExp = "Error on removing subscription " + ID + ". Message: exception",
+          expectedExceptions = ServerException.class)
+    public void shouldThrowServerExceptionIfApiExceptionIsThrownOnRemoveSubscription()
+            throws ApiException {
         when(registry.get(SERVICE_ID)).thenReturn(subscriptionService);
         doThrow(new ServerException("exception")).when(accountDao).removeSubscription(ID);
         final Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class).withId(ID).withServiceId(
                 SERVICE_ID).withEndDate(System.currentTimeMillis() - 1);
 
         handler.checkSubscription(subscription);
+
+        verify(accountDao).removeSubscription(ID);
     }
 }
