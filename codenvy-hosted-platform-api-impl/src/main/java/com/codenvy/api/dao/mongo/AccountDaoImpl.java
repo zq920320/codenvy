@@ -405,13 +405,13 @@ public class AccountDaoImpl implements AccountDao {
     }
 
     @Override
-    public Iterator<Subscription> getAllSubscriptions() throws ServerException {
+    public List<Subscription> getAllSubscriptions() throws ServerException {
         try (DBCursor subscriptions = subscriptionCollection.find()) {
             ArrayList<Subscription> result = new ArrayList<>(subscriptions.size());
             for (DBObject currentSubscription : subscriptions) {
                 result.add(DtoFactory.getInstance().createDtoFromJson(currentSubscription.toString(), Subscription.class));
             }
-            return result.iterator();
+            return result;
         } catch (MongoException me) {
             throw new ServerException(me.getMessage(), me);
         }

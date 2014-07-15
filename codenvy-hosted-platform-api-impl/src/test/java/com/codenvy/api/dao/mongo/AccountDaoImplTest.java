@@ -50,7 +50,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -62,7 +61,6 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
@@ -774,20 +772,14 @@ public class AccountDaoImplTest extends BaseDaoTest {
         subscriptionCollection.save(toDBObject(ss1));
         subscriptionCollection.save(toDBObject(ss2));
 
-        Iterator<Subscription> actual = accountDao.getAllSubscriptions();
+        List<Subscription> actual = accountDao.getAllSubscriptions();
 
-        ArrayList<Subscription> actualList = new ArrayList<>();
-        while (actual.hasNext()) {
-            actualList.add(actual.next());
-        }
-        assertEquals(actualList, Arrays.asList(ss1, ss2));
+        assertEquals(actual, Arrays.asList(ss1, ss2));
     }
 
     @Test
     public void shouldReturnEmptyCollectionIfThereIsNoSubscriptionsOnGetAllSubscriptions() throws ServerException {
-        Iterator<Subscription> actual = accountDao.getAllSubscriptions();
-
-        assertFalse(actual.hasNext());
+        assertTrue(accountDao.getAllSubscriptions().isEmpty());
     }
 
     @Test(expectedExceptions = ServerException.class, expectedExceptionsMessageRegExp = "mongo exception")

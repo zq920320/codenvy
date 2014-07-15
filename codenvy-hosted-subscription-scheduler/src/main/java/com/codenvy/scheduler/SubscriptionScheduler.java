@@ -82,7 +82,7 @@ public class SubscriptionScheduler {
         @Override
         public void run() {
             try {
-                Iterator<Subscription> allSubscriptionsIterator = accountDao.getAllSubscriptions();
+                Iterator<Subscription> allSubscriptionsIterator = accountDao.getAllSubscriptions().iterator();
                 while (!Thread.currentThread().isInterrupted() && allSubscriptionsIterator.hasNext()) {
                     Subscription subscription = allSubscriptionsIterator.next();
 
