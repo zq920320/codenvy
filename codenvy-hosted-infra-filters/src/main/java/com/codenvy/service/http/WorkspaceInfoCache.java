@@ -25,6 +25,7 @@ import com.codenvy.api.core.rest.shared.dto.Link;
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
 import com.codenvy.api.workspace.shared.dto.Attribute;
 import com.codenvy.api.workspace.shared.dto.Workspace;
+import com.codenvy.api.workspace.shared.dto.WorkspaceDescriptor;
 import com.codenvy.dto.server.DtoFactory;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -48,7 +49,7 @@ import java.util.concurrent.TimeUnit;
 public class WorkspaceInfoCache {
     private static final Logger LOG = LoggerFactory.getLogger(WorkspaceInfoCache.class);
 
-    private final LoadingCache<Key, Workspace> workspaceCache;
+    private final LoadingCache<Key, WorkspaceDescriptor> workspaceCache;
 
 
     @Inject
@@ -68,7 +69,7 @@ public class WorkspaceInfoCache {
      * @throws ServerException
      * @throws NotFoundException
      */
-    public Workspace getByName(String wsName) throws ServerException, NotFoundException {
+    public WorkspaceDescriptor getByName(String wsName) throws ServerException, NotFoundException {
         try {
             return doGet(new Key(wsName, false));
         } catch (ExecutionException e) {
@@ -88,7 +89,7 @@ public class WorkspaceInfoCache {
      * @throws ServerException
      * @throws NotFoundException
      */
-    public Workspace getById(String id) throws ServerException, NotFoundException {
+    public WorkspaceDescriptor getById(String id) throws ServerException, NotFoundException {
         try {
             return doGet(new Key(id, true));
         } catch (ExecutionException e) {
@@ -122,8 +123,8 @@ public class WorkspaceInfoCache {
         workspaceCache.invalidate(new Key(wsName, false));
     }
 
-    private Workspace doGet(Key key) throws ServerException, NotFoundException, ExecutionException {
-        Workspace workspace = workspaceCache.get(key);
+    private WorkspaceDescriptor doGet(Key key) throws ServerException, NotFoundException, ExecutionException {
+        WorkspaceDescriptor workspace = workspaceCache.get(key);
         if (workspace.isTemporary()) {
             for (Attribute attribute : workspace.getAttributes()) {
                 if (attribute.getName().equals("allowAnyoneAddMember")) {
@@ -139,22 +140,31 @@ public class WorkspaceInfoCache {
 
     }
 
-    public abstract static class WorkspaceCacheLoader extends CacheLoader<Key, Workspace> {
+    public abstract static class WorkspaceCacheLoader extends CacheLoader<Key, WorkspaceDescriptor> {
 
     }
 
     /**
-     * Cachloader that gets Workspace from DAO
+     * Cacheloader that gets Workspace from DAO
      */
     public static class DaoWorkspaceCacheLoader extends WorkspaceCacheLoader {
         @Inject
         WorkspaceDao dao;
 
         @Override
-        public Workspace load(Key key) throws Exception {
+        public WorkspaceDescriptor load(Key key) throws Exception {
             LOG.debug("Load {} from dao ", key.key);
             try {
-                return key.isUuid ? dao.getById(key.key) : dao.getByName(key.key);
+                Workspace ws;
+                if (key.isUuid) {
+                   ws =  dao.getById(key.key);
+                } else {
+                   ws = dao.getByName(key.key);
+                }
+                return DtoFactory.getInstance().createDto(WorkspaceDescriptor.class)
+                                 .withId(ws.getId()).withName(ws.getName()).withAccountId(ws.getAccountId())
+                                 .withAttributes(ws.getAttributes()).withTemporary(ws.isTemporary());
+
             } catch (Exception e) {
                 LOG.debug(e.getLocalizedMessage(), e);
                 throw e;
@@ -163,7 +173,7 @@ public class WorkspaceInfoCache {
     }
 
     /**
-     * Cachloader that gets Workspace from API
+     * Cacheloader that gets Workspace from API
      */
     public static class HttpWorkspaceCacheLoader extends WorkspaceCacheLoader {
 
@@ -172,7 +182,7 @@ public class WorkspaceInfoCache {
         String apiEndpoint;
 
         @Override
-        public Workspace load(Key key) throws Exception {
+        public WorkspaceDescriptor load(Key key) throws Exception {
             LOG.debug("Load {} from dao ", key.key);
             try {
                 Link getWorkspaceLink = null;
@@ -187,7 +197,7 @@ public class WorkspaceInfoCache {
                                       .withHref(apiEndpoint + "/workspace?name=" + key.key);
                 }
 
-                return HttpJsonHelper.request(Workspace.class, getWorkspaceLink);
+                return HttpJsonHelper.request(WorkspaceDescriptor.class, getWorkspaceLink);
             } catch (Exception e) {
                 LOG.warn("Not able to get information for {} - {}", key.key, key.isUuid);
                 LOG.debug(e.getLocalizedMessage(), e);
