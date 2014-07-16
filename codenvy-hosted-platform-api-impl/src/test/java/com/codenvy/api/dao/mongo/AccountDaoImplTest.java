@@ -144,7 +144,6 @@ public class AccountDaoImplTest extends BaseDaoTest {
 
         Account result =
                 DtoFactory.getInstance().createDtoFromJson(res.toString(), Account.class);
-        assertEquals(account.getLinks(), result.getLinks());
         assertEquals(result, account);
     }
 
@@ -204,7 +203,6 @@ public class AccountDaoImplTest extends BaseDaoTest {
 
         Account result = DtoFactory.getInstance().createDtoFromJson(res.toString(), Account.class);
 
-        assertEquals(account.getLinks(), result.getLinks());
         assertEquals(account, result);
     }
 
@@ -750,6 +748,43 @@ public class AccountDaoImplTest extends BaseDaoTest {
             throws ServerException, ConflictException {
         doThrow(new MongoException("")).when(subscriptionHistoryCollection).find(new BasicDBObject("subscription.accountId", ACCOUNT_ID));
         accountDao.getSubscriptionHistoryEventsByAccount(ACCOUNT_ID);
+    }
+
+    @Test
+    public void shouldBeAbleToGetAllSubscriptions() throws ServerException {
+        Subscription ss1 = DtoFactory.getInstance().createDto(Subscription.class)
+                                     .withAccountId(ACCOUNT_ID)
+                                     .withServiceId(SERVICE_NAME)
+                                     .withStartDate(START_DATE)
+                                     .withEndDate(END_DATE)
+                                     .withProperties(PROPS)
+                                     .withState(ACTIVE);
+        Subscription ss2 = DtoFactory.getInstance().createDto(Subscription.class)
+                                     .withAccountId("ANOTHER" + ACCOUNT_ID)
+                                     .withServiceId("ANOTHER" + SERVICE_NAME)
+                                     .withStartDate(1000 + START_DATE)
+                                     .withEndDate(1000 + END_DATE)
+                                     .withProperties(PROPS)
+                                     .withState(ACTIVE);
+
+        subscriptionCollection.save(toDBObject(ss1));
+        subscriptionCollection.save(toDBObject(ss2));
+
+        List<Subscription> actual = accountDao.getSubscriptions();
+
+        assertEquals(actual, Arrays.asList(ss1, ss2));
+    }
+
+    @Test
+    public void shouldReturnEmptyCollectionIfThereIsNoSubscriptionsOnGetAllSubscriptions() throws ServerException {
+        assertTrue(accountDao.getSubscriptions().isEmpty());
+    }
+
+    @Test(expectedExceptions = ServerException.class, expectedExceptionsMessageRegExp = "mongo exception")
+    public void shouldThrowServerExceptionIfMongoExceptionIsThrownOnGetAllSubscriptions() throws ServerException {
+        when(subscriptionCollection.find()).thenThrow(new MongoException("mongo exception"));
+
+        accountDao.getSubscriptions();
     }
 
     private DBObject toDBObject(SubscriptionHistoryEvent event) {

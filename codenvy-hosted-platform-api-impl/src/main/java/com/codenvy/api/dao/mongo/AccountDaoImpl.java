@@ -44,7 +44,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -318,9 +317,10 @@ public class AccountDaoImpl implements AccountDao {
             if (null == accountCollection.findOne(new BasicDBObject("id", accountId))) {
                 throw new NotFoundException("Account not found " + accountId);
             }
-            DBCursor subscriptions = subscriptionCollection.find(new BasicDBObject("accountId", accountId));
-            for (DBObject currentSubscription : subscriptions) {
-                result.add(DtoFactory.getInstance().createDtoFromJson(currentSubscription.toString(), Subscription.class));
+            try (DBCursor subscriptions = subscriptionCollection.find(new BasicDBObject("accountId", accountId))) {
+                for (DBObject currentSubscription : subscriptions) {
+                    result.add(DtoFactory.getInstance().createDtoFromJson(currentSubscription.toString(), Subscription.class));
+                }
             }
         } catch (MongoException me) {
             throw new ServerException(me.getMessage(), me);
@@ -401,6 +401,19 @@ public class AccountDaoImpl implements AccountDao {
             return result;
         } catch (MongoException e) {
             throw new ServerException(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public List<Subscription> getSubscriptions() throws ServerException {
+        try (DBCursor subscriptions = subscriptionCollection.find()) {
+            ArrayList<Subscription> result = new ArrayList<>(subscriptions.size());
+            for (DBObject currentSubscription : subscriptions) {
+                result.add(DtoFactory.getInstance().createDtoFromJson(currentSubscription.toString(), Subscription.class));
+            }
+            return result;
+        } catch (MongoException me) {
+            throw new ServerException(me.getMessage(), me);
         }
     }
 
