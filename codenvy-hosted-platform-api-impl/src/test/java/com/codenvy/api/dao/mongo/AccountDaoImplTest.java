@@ -144,7 +144,6 @@ public class AccountDaoImplTest extends BaseDaoTest {
 
         Account result =
                 DtoFactory.getInstance().createDtoFromJson(res.toString(), Account.class);
-        assertEquals(account.getLinks(), result.getLinks());
         assertEquals(result, account);
     }
 
@@ -204,7 +203,6 @@ public class AccountDaoImplTest extends BaseDaoTest {
 
         Account result = DtoFactory.getInstance().createDtoFromJson(res.toString(), Account.class);
 
-        assertEquals(account.getLinks(), result.getLinks());
         assertEquals(account, result);
     }
 
