@@ -162,6 +162,12 @@ public class HostedWorkspaceService extends SubscriptionService {
         if (subscription.getProperties() == null) {
             throw new ConflictException("Subscription properties required");
         }
+        final Double price = PRICES.get(TariffEntry.of(ensureExistsAndGet("Package", subscription),
+                                                       ensureExistsAndGet("RAM", subscription),
+                                                       ensureExistsAndGet("TariffPlan", subscription)));
+        if (price == null) {
+            throw new NotFoundException("Tariff plan not found");
+        }
         final String wsId = ensureExistsAndGet("codenvy:workspace_id", subscription);
         final List<Subscription> allSubscriptions = accountDao.getSubscriptions(subscription.getAccountId());
         final List<Subscription> wsSubscriptions = new LinkedList<>();
