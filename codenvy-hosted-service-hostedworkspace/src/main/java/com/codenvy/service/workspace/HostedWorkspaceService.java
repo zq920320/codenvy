@@ -162,9 +162,9 @@ public class HostedWorkspaceService extends SubscriptionService {
         if (subscription.getProperties() == null) {
             throw new ConflictException("Subscription properties required");
         }
-        final Double price = PRICES.get(TariffEntry.of(ensureExistsAndGet("Package", subscription),
-                                                       ensureExistsAndGet("RAM", subscription),
-                                                       ensureExistsAndGet("TariffPlan", subscription)));
+        final Double price = PRICES.get(TariffEntry.of(ensureExistsAndGet("Package", subscription).toLowerCase(),
+                                                       ensureExistsAndGet("RAM", subscription).toLowerCase(),
+                                                       ensureExistsAndGet("TariffPlan", subscription).toLowerCase()));
         if (price == null) {
             throw new NotFoundException("Tariff plan not found");
         }
