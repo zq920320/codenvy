@@ -219,7 +219,7 @@ public class MongoStorage extends StoreFunc {
          * Puts key-value encoded pairs separated by ",".
          */
         private void putKeyValuePairs(DBObject dbObject, String data) throws UnsupportedEncodingException {
-            dbObject.putAll(Utils.fetchEncodedPairs(data));
+            dbObject.putAll(Utils.fetchEncodedPairs(data, true));
         }
 
         @Override

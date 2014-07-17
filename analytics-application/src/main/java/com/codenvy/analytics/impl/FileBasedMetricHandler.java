@@ -31,6 +31,7 @@ import javax.inject.Singleton;
 import javax.ws.rs.core.UriInfo;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -44,9 +45,9 @@ import java.util.Map;
 public class FileBasedMetricHandler implements MetricHandler {
 
     @Override
-    public MetricValueDTO getValueByQueryParams(String metricName,
-                                                Map<String, String> context,
-                                                UriInfo uriInfo) throws MetricNotFoundException, MetricRestrictionException {
+    public MetricValueDTO getValue(String metricName,
+                                   Map<String, String> context,
+                                   UriInfo uriInfo) throws MetricNotFoundException, MetricRestrictionException {
         MetricValueDTO metricValueDTO = DtoFactory.getInstance().createDto(MetricValueDTO.class);
         metricValueDTO.setName(metricName);
         try {
@@ -62,27 +63,41 @@ public class FileBasedMetricHandler implements MetricHandler {
     }
 
     @Override
+    public MetricValueListDTO getListValues(String metricName,
+                                            List<Map<String, String>> parameters,
+                                            Map<String, String> context,
+                                            UriInfo uriInfo) throws Exception {
+        MetricValueListDTO metricValueListDTO = DtoFactory.getInstance().createDto(MetricValueListDTO.class);
+        List<MetricValueDTO> metricValues = new ArrayList<>();
+
+        if (parameters != null) {
+            for (int i = 0; i < parameters.size(); i++) {
+                Map<String, String> mergedContext = merge(parameters.get(i), context);
+                metricValues.add(getValue(metricName, mergedContext, uriInfo));
+            }
+        }
+
+        metricValueListDTO.setMetrics(metricValues);
+        return metricValueListDTO;
+    }
+
+    @Override
     public MetricValueDTO getValueByJson(String metricName,
                                          Map<String, String> parameters,
                                          Map<String, String> context,
                                          UriInfo uriInfo) throws Exception {
         if (parameters != null) {
-            for (Map.Entry<String, String> entry : parameters.entrySet()) {
-                String key = entry.getKey().toUpperCase();
-                if (!context.containsKey(key)) {
-                    context.put(key, entry.getValue());
-                }
-            }
+            context = merge(parameters, context);
         }
 
-        return getValueByQueryParams(metricName, context, uriInfo);
+        return getValue(metricName, context, uriInfo);
     }
 
     public MetricValueDTO getPublicValue(String metricName,
                                          Map<String, String> context,
                                          UriInfo uriInfo) throws MetricNotFoundException, MetricRestrictionException {
 
-        return getValueByQueryParams(metricName, context, uriInfo);
+        return getValue(metricName, context, uriInfo);
     }
 
     @Override
@@ -93,7 +108,7 @@ public class FileBasedMetricHandler implements MetricHandler {
         MetricValueListDTO metricValueListDTO = DtoFactory.getInstance().createDto(MetricValueListDTO.class);
         List<MetricValueDTO> metricValues = new ArrayList<>();
         for (String metricName : metricNames) {
-            metricValues.add(getValueByQueryParams(metricName, context, uriInfo));
+            metricValues.add(getValue(metricName, context, uriInfo));
         }
         metricValueListDTO.setMetrics(metricValues);
         return metricValueListDTO;
@@ -124,5 +139,17 @@ public class FileBasedMetricHandler implements MetricHandler {
 
     protected ValueData getMetricValue(String metricName, Context context) throws IOException {
         return MetricFactory.getMetric(metricName).getValue(context);
+    }
+
+    protected Map<String, String> merge(Map<String, String> parameters, Map<String, String> context) {
+        Map<String, String> mergedContext = new HashMap<>(context);
+
+        for (Map.Entry<String, String> entry : parameters.entrySet()) {
+            String key = entry.getKey().toUpperCase();
+            if (!mergedContext.containsKey(key)) {
+                mergedContext.put(key, entry.getValue());
+            }
+        }
+        return mergedContext;
     }
 }

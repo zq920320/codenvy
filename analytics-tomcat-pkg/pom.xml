@@ -57,6 +57,25 @@
             <type>zip</type>
         </dependency>
         <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-catalina-jmx-remote</artifactId>
+            <version>${org.apache.tomcat.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>tomcat-coyote</artifactId>
+                    <groupId>org.apache.tomcat</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>tomcat-catalina</artifactId>
+                    <groupId>org.apache.tomcat</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>tomcat-juli</artifactId>
+                    <groupId>org.apache.tomcat</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>jul-to-slf4j</artifactId>
             <version>${org.slf4j.version}</version>
@@ -146,6 +165,7 @@
                                         <copy overwrite="true" todir="${project.build.directory}/analytics-tomcat/pig/scripts">
                                             <fileset dir="${basedir}/../analytics-core/scripts/" />
                                         </copy>
+                                        <copy file="${project.build.directory}/packager-conf/jar/tomcat-catalina-jmx-remote-${org.apache.tomcat.version}.jar" tofile="${project.build.directory}/analytics-tomcat/lib/tomcat-catalina-jmx-remote.jar" />
                                         <move file="${project.build.directory}/packager-conf/war/analytics-application.war" tofile="${project.build.directory}/analytics-tomcat/webapps/analytics.war" />
                                         <copy file="${project.build.directory}/packager-conf/jar/logback-classic-${ch.qos.logback.version}.jar" tofile="${project.build.directory}/analytics-tomcat/lib/logback-classic.jar" />
                                         <copy file="${project.build.directory}/packager-conf/jar/logback-core-${ch.qos.logback.version}.jar" tofile="${project.build.directory}/analytics-tomcat/lib/logback-core.jar" />

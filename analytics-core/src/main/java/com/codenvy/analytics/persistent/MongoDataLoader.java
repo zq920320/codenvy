@@ -245,6 +245,8 @@ public class MongoDataLoader implements DataLoader {
 
         setDateFilter(clauses, match);
 
+        List<Object> userFilters = new ArrayList<>();
+
         for (MetricFilter filter : clauses.getFilters()) {
             String field = filter.toString().toLowerCase();
             Object value = clauses.get(filter);
@@ -252,31 +254,28 @@ public class MongoDataLoader implements DataLoader {
                 continue;
             }
 
-            if (!(metric instanceof AbstractUsersProfile)
-                && (filter == MetricFilter.USER_COMPANY
-                    || filter == MetricFilter.USER_FIRST_NAME
-                    || filter == MetricFilter.USER_LAST_NAME)) {
+            if (!(metric instanceof AbstractUsersProfile) && (filter == MetricFilter.USER_COMPANY
+                                                              || filter == MetricFilter.USER_FIRST_NAME
+                                                              || filter == MetricFilter.USER_LAST_NAME)) {
 
                 String userFieldName = MetricFilter.USER.toString().toLowerCase();
                 DBObject usersToFilter = (userFieldName.equals(filteringField))
                                          ? getUsers(filter, value, filteringValues)
                                          : getUsers(filter, value, null);
+                userFilters.add(usersToFilter);
 
-                match.put(userFieldName, usersToFilter);
-
-            } else if (!(metric instanceof AbstractUsersProfile)
-                       && filter == MetricFilter.USER) {
+            } else if (!(metric instanceof AbstractUsersProfile) && filter == MetricFilter.USER) {
                 if (value.equals(Parameters.USER_TYPES.REGISTERED.name())) {
                     match.put(MetricFilter.REGISTERED_USER.toString().toLowerCase(), 1);
                 } else if (value.equals(Parameters.USER_TYPES.ANONYMOUS.name())) {
                     match.put(MetricFilter.REGISTERED_USER.toString().toLowerCase(), 0);
                 } else if (!value.equals(Parameters.USER_TYPES.ANY.name())) {
-                    match.put(MetricFilter.USER.toString().toLowerCase(), processFilter(value, filter.isNumericType()));
+                    userFilters.add(processFilter(value, filter.isNumericType()));
                 }
 
             } else if (!(metric instanceof AbstractUsersProfile) && filter == MetricFilter.ALIASES) {
                 String[] userIds = getUserIdByAliases(value);
-                match.put(MetricFilter.USER.toString().toLowerCase(), processFilter(userIds, filter.isNumericType()));
+                userFilters.add(processFilter(userIds, filter.isNumericType()));
 
             } else if (filter == MetricFilter.WS) {
                 if (value.equals(Parameters.WS_TYPES.PERSISTENT.name())) {
@@ -288,14 +287,31 @@ public class MongoDataLoader implements DataLoader {
                 }
 
             } else if (filter == MetricFilter.PARAMETERS) {
-                match.putAll(Utils.fetchEncodedPairs(clauses.getAsString(filter)));
+                match.putAll(Utils.fetchEncodedPairs(clauses.getAsString(filter), true));
 
             } else {
                 match.put(field, processFilter(value, filter.isNumericType()));
             }
         }
 
+        mergerFilter(userFilters, match, MetricFilter.USER.toString().toLowerCase());
+
         return new BasicDBObject("$match", match);
+    }
+
+    /**
+     * Add either {key: value} or {$and: [{key:value1, key:value2, ...}]}
+     */
+    private void mergerFilter(List<Object> values, BasicDBObject match, String fieldName) {
+        if (values.size() == 1) {
+            match.put(fieldName, values.get(0));
+        } else if (values.size() > 1) {
+            Object[] objects = new Object[values.size()];
+            for (int i = 0; i < values.size(); i++) {
+                objects[i] = new BasicDBObject(fieldName, values.get(i));
+            }
+            match.put("$and", objects);
+        }
     }
 
     /**
@@ -391,11 +407,7 @@ public class MongoDataLoader implements DataLoader {
         if (processExclusiveValues) {
             return new BasicDBObject("$nin", isNumericType ? convertToNumericFormat(values) : values);
         } else {
-            if (values.length == 1) {
-                return isNumericType ? Long.parseLong(values[0]) : values[0];
-            } else {
-                return new BasicDBObject("$in", isNumericType ? convertToNumericFormat(values) : values);
-            }
+            return new BasicDBObject("$in", isNumericType ? convertToNumericFormat(values) : values);
         }
     }
 

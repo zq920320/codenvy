@@ -92,15 +92,14 @@ public class EventValidation extends EvalFunc<String> {
 
                 case PAAS:
                 case TYPE:
-                    String[] predefinedValues = name.equals(PAAS) ? AbstractProjectPaas.PAASES : AbstractProjectType.TYPES;
-                    String allowedValues = param.getAllowedValues();
-
+                    String[] allowedValues = param.getAllowedValues() != null ? param.getAllowedValues().split(",")
+                                                                              : name.equals(PAAS) ? AbstractProjectPaas.PAASES
+                                                                                                  : AbstractProjectType.TYPES;
                     if (isEmptyValue(value)) {
-                        if (!param.isAllowEmptyValue()) {
+                        if (!isAllowedValue(allowedValues, value) && !param.isAllowEmptyValue()) {
                             append(validated, String.format(VALUE_IS_NOT_ALLOWED, value, name));
                         }
-                    } else if ((allowedValues != null && !isAllowedValue(allowedValues, value))
-                               || (allowedValues == null && !isAllowedValue(predefinedValues, value))) {
+                    } else if (!isAllowedValue(allowedValues, value)) {
                         append(validated, String.format(VALUE_IS_NOT_ALLOWED, value, name));
                     }
                     break;
@@ -143,6 +142,10 @@ public class EventValidation extends EvalFunc<String> {
     }
 
     private boolean isEmptyValue(String value) {
-        return value == null || value.equalsIgnoreCase(NULL) || value.isEmpty();
+        return isNullValue(value) || value.isEmpty();
+    }
+
+    private boolean isNullValue(String value) {
+        return value == null || value.equalsIgnoreCase(NULL);
     }
 }

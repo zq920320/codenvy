@@ -17,6 +17,8 @@
  */
 package com.codenvy.analytics.filter;
 
+import com.google.inject.Singleton;
+
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -30,6 +32,7 @@ import static com.codenvy.analytics.Utils.isAnonymousUserName;
  *
  * @author Anatoliy Bazko
  */
+@Singleton
 public class AnalyticsFilter implements Filter {
 
     @Override
@@ -37,9 +40,7 @@ public class AnalyticsFilter implements Filter {
     }
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-            throws IOException, ServletException {
-
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest httpRequest = (HttpServletRequest)request;
         HttpServletResponse httpResponse = (HttpServletResponse)response;
 

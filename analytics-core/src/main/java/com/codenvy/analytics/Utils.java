@@ -214,7 +214,7 @@ public class Utils {
         builder.put(Parameters.TO_DATE, toDate);
     }
 
-    public static Map<String, String> fetchEncodedPairs(String data) throws UnsupportedEncodingException {
+    public static Map<String, String> fetchEncodedPairs(String data, boolean keyToLowerCase) throws UnsupportedEncodingException {
         String[] splitted = data.split(",");
         Map<String, String> result = new HashMap<>(splitted.length);
 
@@ -222,7 +222,10 @@ public class Utils {
             String[] pair = entry.split("=");
 
             if (pair.length == 2) {
-                String key = URLDecoder.decode(pair[0], "UTF-8").toLowerCase();
+                String key = URLDecoder.decode(pair[0], "UTF-8");
+                if (keyToLowerCase) {
+                    key = key.toLowerCase();
+                }
                 String value = URLDecoder.decode(pair[1], "UTF-8");
 
                 result.put(key, value);

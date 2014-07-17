@@ -27,8 +27,7 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.List;
 
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.*;
 import static org.testng.AssertJUnit.assertEquals;
 
 /** @author <a href="mailto:dnochevnov@codenvy.com">Dmytro Nochevnov</a> */
@@ -42,7 +41,7 @@ public class TestCollectionConfiguration extends BaseTest {
             "         <index name=\"index name\" fixed=\"true\">" +
             "            <field>user_first_name</field>" +
             "            <field>user_last_name</field>" +
-            "            <field>user_company</field>" +
+            "            <field desc=\"true\">user_company</field>" +
             "         </index>" +
             "      </indexes>" +
             "   </collection>" +
@@ -61,8 +60,7 @@ public class TestCollectionConfiguration extends BaseTest {
 
     @Test
     public void testParsingConfiguration() throws Exception {
-        CollectionsConfiguration configuration =
-                configurationManager.loadConfiguration(CollectionsConfiguration.class, FILE);
+        CollectionsConfiguration configuration = configurationManager.loadConfiguration(CollectionsConfiguration.class, FILE);
 
         assertNotNull(configuration);
         assertEquals(1, configuration.getCollections().size());
@@ -82,7 +80,10 @@ public class TestCollectionConfiguration extends BaseTest {
         List<FieldConfiguration> fields = index.getFields();
         assertEquals(3, fields.size());
         assertEquals("user_first_name", fields.get(0).getField());
+        assertFalse(fields.get(0).isDescending());
         assertEquals("user_last_name", fields.get(1).getField());
+        assertFalse(fields.get(1).isDescending());
         assertEquals("user_company", fields.get(2).getField());
+        assertTrue(fields.get(2).isDescending());
     }
 }

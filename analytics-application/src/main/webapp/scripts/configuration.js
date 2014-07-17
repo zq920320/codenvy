@@ -489,24 +489,6 @@ function Configuration() {
             presenterType: "SummaryTablePresenter",
             modelViewName: "users_statistics_list",
             modelMetricName: "users_statistics",
-            
-            columnDrillDownPageLinkConfiguration: {
-                mapColumnNameToExpandableMetric: {
-                    "projects": "#PROJECTS",
-                    "paas deploys": "deploys_to_paas",
-                    "time": "non_factories_product_usage_sessions",
-                    "invites": "user_invite",
-                    "sessions": "non_factories_product_usage_sessions",
-                    "deploys": "deploys",
-                    "builds": "builds",
-                    "build time": "builds_time",
-                    "runs": "runs",
-                    "factories": "created_factories",
-                    "debugs": "debugs",
-                    "logins": "users_logged_in_total",
-                    "run time": "runs_time",
-                },
-            },
         },
 
         userOverview: {
@@ -526,15 +508,15 @@ function Configuration() {
             
             columnDrillDownPageLinkConfiguration: {
                 mapColumnNameToExpandableMetric: {
-                    "Number of Sessions": "#SESSIONS",
+                    "# Sessions": "#SESSIONS",
                     "Total Time": "#SESSIONS",
                     "Total Build Time": "builds_time",
                     "Total Run Time": "runs_time",
-                    "Number of Active Projects": "#PROJECTS",
-                    "Number of Builds": "builds",
-                    "Number of Debugs": "debugs",
-                    "Number of Deploys": "deploys",
-                    "Number of Factories": "#FACTORIES",
+                    "# Active Projects": "#PROJECTS",
+                    "# Builds": "builds",
+                    "# Debugs": "debugs",
+                    "# Deploys": "deploys",
+                    "# Factories": "#FACTORIES",
                 },
             },
         },
@@ -818,24 +800,6 @@ function Configuration() {
             presenterType: "SummaryTablePresenter",
             modelViewName: "workspaces_statistics_list",
             modelMetricName: "workspaces_statistics",
-            
-            columnDrillDownPageLinkConfiguration: {
-                mapColumnNameToExpandableMetric: {
-                    "projects": "#PROJECTS",
-                    "paas deploys": "deploys_to_paas",
-                    "time": "non_factories_product_usage_sessions",
-                    "invites": "user_invite",
-                    "sessions": "non_factories_product_usage_sessions",
-                    "joined users": "created_users",
-                    "deploys": "deploys",
-                    "builds": "builds",
-                    "build time": "builds_time",
-                    "runs": "runs",
-                    "factories": "created_factories",
-                    "debugs": "debugs",
-                    "run time": "runs_time",
-                },
-            },
         },
         
         workspaceOverview: {
@@ -855,16 +819,16 @@ function Configuration() {
             
             columnDrillDownPageLinkConfiguration: {
                 mapColumnNameToExpandableMetric: {
-                    "Number of Sessions": "#SESSIONS",
+                    "# Sessions": "#SESSIONS",
                     "Total Time": "#SESSIONS",
                     "Total Build Time": "builds_time",
                     "Total Run Time": "runs_time",
-                    "Number of Active Projects": "#PROJECTS",
-                    "Number of Builds": "builds",
-                    "Number of Debugs": "debugs",
-                    "Number of Deploys": "deploys",
-                    "Number of Factories": "#FACTORIES",
-                    "Number of Users": "#USERS",
+                    "# Active Projects": "#PROJECTS",
+                    "# Builds": "builds",
+                    "# Debugs": "debugs",
+                    "# Deploys": "deploys",
+                    "# Factories": "#FACTORIES",
+                    "# Users": "#USERS",
                 },
             },
         },
@@ -1019,24 +983,6 @@ function Configuration() {
             presenterType: "SummaryTablePresenter",
             modelViewName: "projects_statistics_list",
             modelMetricName: "projects_statistics",
-            
-            columnDrillDownPageLinkConfiguration: {
-                mapColumnNameToExpandableMetric: {
-                    "debug time": "debugs_time",
-                    "project creates": "created_projects",
-                    "paas deploys": "deploys_to_paas",
-                    "deploys": "deploys",
-                    "builds": "builds",
-                    "code completes": "code_completions",
-                    "project destroys": "destroyed_projects",
-                    "build interrupts": "build_queue_terminations",
-                    "runs": "runs",
-                    "build time": "builds_time",
-                    "debugs": "debugs",
-                    "code refactories": "code_refactorings",
-                    "run time": "runs_time",
-                },
-            },
         },
         
         projectOverview: {
@@ -1207,16 +1153,6 @@ function Configuration() {
             presenterType: "SummaryTablePresenter",
             modelViewName: "factory_statistics_list",
             modelMetricName: "factory_statistics",
-            
-            columnDrillDownPageLinkConfiguration: {
-                mapColumnNameToExpandableMetric: {
-                    "time": "factory_sessions",
-                    "sessions": "factory_sessions",
-                    "converted factory session": "converted_factory_sessions",
-                    "ws created": "temporary_workspaces_created",
-                    "authenticated factory session": "authenticated_factory_sessions",
-                },
-            },
         },
 
         factoryOverview: {
@@ -1240,10 +1176,10 @@ function Configuration() {
 
             columnDrillDownPageLinkConfiguration: {
                 mapColumnNameToExpandableMetric: {
-                    "Number of Clicks": "temporary_workspaces_created",
-                    "Number of Sessions": "#SESSIONS",
-                    "Number of Known": "authenticated_factory_sessions",
-                    "Number of Converted": "converted_factory_sessions",
+                    "# Clicks": "temporary_workspaces_created",
+                    "# Sessions": "#SESSIONS",
+                    "# Known": "authenticated_factory_sessions",
+                    "# Converted": "converted_factory_sessions",
                     "Total Time": "#SESSIONS",
                 },
             },

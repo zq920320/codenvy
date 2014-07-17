@@ -78,7 +78,7 @@ public class MetricDTOFactory {
         statusLink.setHref(servicePathBuilder
                                    .clone()
                                    .path("analytics-private")
-                                   .path(getMethod("getValueByQueryParams"))
+                                   .path(getMethod("getValue"))
                                    .build(metricName, "name")
                                    .toString());
         statusLink.setMethod("GET");

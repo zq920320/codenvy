@@ -27,8 +27,8 @@ result = FOREACH r GENERATE UUID(),
                             TOTUPLE('date', ToMilliSeconds(dt)),
                             TOTUPLE('event', event),
                             TOTUPLE('action', EventDescription(event)),
-                            TOTUPLE('ws', ws),
-                            TOTUPLE('user', user),
+                            TOTUPLE('ws', NullToEmpty(ws)),
+                            TOTUPLE('user', NullToEmpty(user)),
                             TOTUPLE('message', message);
 
 STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;

@@ -317,6 +317,9 @@ public class ViewBuilder extends Feature {
         }
 
         Context.Builder builder = new Context.Builder(context);
+        if (!builder.exists(Parameters.TO_DATE)) {
+            builder.putDefaultValue(Parameters.TO_DATE);
+        }
         builder.put(Parameters.REPORT_DATE, builder.getAsString(Parameters.TO_DATE));
 
         if (context.exists(Parameters.TIME_UNIT)) {

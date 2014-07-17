@@ -85,7 +85,7 @@ public class Context {
     public Parameters.PassedDaysCount getPassedDaysCount() {
         return Parameters.PassedDaysCount.valueOf(getAsString(Parameters.PASSED_DAYS_COUNT).toUpperCase());
     }
-    
+
     public boolean isDefaultValue(Parameters key) {
         return params.get(key.toString()).equals(key.getDefaultValue());
     }
@@ -132,7 +132,7 @@ public class Context {
 
         return builder.build();
     }
-    
+
     public Context cloneAndPut(MetricFilter param, String value) {
         Builder builder = new Builder(params);
         builder.put(param, value);
@@ -157,7 +157,31 @@ public class Context {
 
     @Override
     public String toString() {
-        return params.toString();
+        Iterator<Map.Entry<String, Object>> i = params.entrySet().iterator();
+        if (!i.hasNext()) {
+            return "{}";
+        }
+
+        StringBuilder sb = new StringBuilder();
+        sb.append('{');
+        for (; ; ) {
+            Map.Entry<String, Object> e = i.next();
+            String key = e.getKey();
+            Object value = e.getValue();
+
+            sb.append(key);
+            sb.append('=');
+            if (value.getClass().isArray()) {
+                sb.append(Arrays.toString((Object[])value));
+            } else {
+                sb.append(value);
+            }
+
+            if (!i.hasNext()) {
+                return sb.append('}').toString();
+            }
+            sb.append(',').append(' ');
+        }
     }
 
     public Metric getExpandedMetric() {
@@ -171,7 +195,6 @@ public class Context {
         Metric expandedMetric = MetricFactory.getMetric(expandedMetricType);
         if (!(expandedMetric instanceof Expandable)) {
             return null;
-//            throw new IllegalArgumentException("Metric " + expandedMetric.getName() + " is not expandable");
         }
 
         return expandedMetric;
@@ -293,7 +316,7 @@ public class Context {
         public Parameters.PassedDaysCount getPassedDaysCount() {
             return Parameters.PassedDaysCount.valueOf(getAsString(Parameters.PASSED_DAYS_COUNT).toUpperCase());
         }
-        
+
         public Context build() {
             return new Context(params);
         }

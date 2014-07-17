@@ -49,15 +49,6 @@
     </filter>
 
     <filter>
-        <filter-name>ReportsFilter</filter-name>
-        <filter-class>com.codenvy.analytics.filter.ReportsFilter</filter-class>
-        <init-param>
-            <param-name>allowed-principals</param-name>
-            <param-value>.+@codenvy.com</param-value>
-        </init-param>
-    </filter>
-
-    <filter>
         <filter-name>AnalyticsFilter</filter-name>
         <filter-class>com.codenvy.analytics.filter.AnalyticsFilter</filter-class>
     </filter>
@@ -66,12 +57,6 @@
         <filter-name>guiceFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
-
-    <filter-mapping>
-        <filter-name>ReportsFilter</filter-name>
-        <url-pattern>/reports/*</url-pattern>
-    </filter-mapping>
-
 
     <filter-mapping>
         <filter-name>AnalyticsFilter</filter-name>

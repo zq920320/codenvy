@@ -23,11 +23,14 @@ import com.codenvy.analytics.services.configuration.XmlConfigurationManager;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static com.codenvy.analytics.Utils.fetchEncodedPairs;
 
 /** @author Anatoliy Bazko */
 @Singleton
@@ -73,6 +76,15 @@ public class EventsHolder {
             if (paramValue != null) {
                 result.put(paramName, paramValue);
             }
+        }
+
+        String paramValue = getParameterValue("PARAMETERS", message);
+        try {
+            if (paramValue != null) {
+                result.putAll(fetchEncodedPairs(paramValue, false));
+            }
+        } catch (UnsupportedEncodingException e) {
+            throw new IllegalArgumentException(e);
         }
 
         result.remove("USER");

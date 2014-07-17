@@ -277,7 +277,7 @@
     <script name="users_activity">
         <description>Users' raw log</description>
         <parameter key="WS" value="ANY"/>
-        <parameter key="USER" value="REGISTERED"/>
+        <parameter key="USER" value="ANY"/>
         <parameter key="STORAGE_TABLE" value="users_activity"/>
     </script>
 

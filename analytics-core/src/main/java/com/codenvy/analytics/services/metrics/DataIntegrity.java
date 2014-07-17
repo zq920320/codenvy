@@ -48,7 +48,7 @@ public class DataIntegrity extends Feature {
 
     @Override
     public boolean isAvailable() {
-        return true;
+        return false;
     }
 
     @Override

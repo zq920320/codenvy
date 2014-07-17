@@ -17,11 +17,13 @@
  */
 package com.codenvy.analytics.persistent;
 
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlValue;
 
 /** @author <a href="mailto:dnochevnov@codenvy.com">Dmytro Nochevnov</a> */
 public class FieldConfiguration {
     private String field;
+    private boolean descending;
 
     @XmlValue
     public void setField(String field) {
@@ -30,5 +32,14 @@ public class FieldConfiguration {
 
     public String getField() {
         return this.field;
+    }
+
+    public boolean isDescending() {
+        return descending;
+    }
+
+    @XmlAttribute(name = "desc")
+    public void setDescending(boolean descending) {
+        this.descending = descending;
     }
 }

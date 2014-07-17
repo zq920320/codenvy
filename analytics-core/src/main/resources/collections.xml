@@ -380,9 +380,11 @@
         <indexes>
             <index name="user">
                 <field>user</field>
+                <field>date</field>
             </index>
             <index name="ws">
                 <field>ws</field>
+                <field>date</field>
             </index>
             <index name="domain">
                 <field>domain</field>
@@ -392,6 +394,7 @@
             </index>
             <index name="session_id">
                 <field>session_id</field>
+                <field>date</field>
             </index>
             <index name="date">
                 <field>date</field>
@@ -401,6 +404,7 @@
             </index>
             <index name="time">
                 <field>time</field>
+                <field>date</field>
             </index>
         </indexes>
     </collection>
@@ -670,6 +674,12 @@
             <index name="sessions">
                 <field>sessions</field>
             </index>
+            <index name="referrer">
+                <field>referrer</field>
+            </index>
+            <index name="factory">
+                <field>factory</field>
+            </index>
             <index name="time">
                 <field>time</field>
             </index>
@@ -686,10 +696,24 @@
         <indexes>
             <index name="user">
                 <field>user</field>
-                <field>date</field>
+                <field desc="true">date</field>
+            </index>
+            <index name="ws">
+                <field>ws</field>
+                <field desc="true">date</field>
+            </index>
+            <index name="event">
+                <field>event</field>
+                <field desc="true">date</field>
             </index>
             <index name="date">
-                <field>date</field>
+                <field desc="true">date</field>
+            </index>
+            <index name="project">
+                <field>user</field>
+                <field>ws</field>
+                <field>project</field>
+                <field desc="true">date</field>
             </index>
         </indexes>
     </collection>
@@ -924,6 +948,9 @@
             <index name="converted_session">
                 <field>converted_session</field>
             </index>
+            <index name="encoded_factory">
+                <field>encoded_factory</field>
+            </index>
             <index name="ws_created ">
                 <field>ws_created</field>
             </index>
@@ -970,7 +997,6 @@
             </index>
             <index name="project">
                 <field>project</field>
-                <field>date</field>
             </index>
             <index name="project_type">
                 <field>project_type</field>

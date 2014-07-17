@@ -23,15 +23,12 @@ import com.codenvy.analytics.MailService;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
-import com.codenvy.analytics.metrics.projects.AbstractProjectPaas;
-import com.codenvy.analytics.metrics.projects.AbstractProjectType;
 import com.codenvy.analytics.persistent.CollectionsManagement;
 import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.EventConfiguration;
 import com.codenvy.analytics.pig.scripts.EventsHolder;
 import com.codenvy.analytics.pig.scripts.Parameter;
 import com.codenvy.analytics.pig.scripts.ScriptType;
-import com.codenvy.analytics.pig.udf.EventValidation;
 import com.codenvy.analytics.services.Feature;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
@@ -124,11 +121,11 @@ public class LogChecker extends Feature {
                 if (param.getAllowedValues() != null) {
                     doCheckEventWithParameters(context, event, name, param.getAllowedValues().split(","), out);
 
-                } else if (name.equals(EventValidation.PAAS)) {
-                    doCheckEventWithParameters(context, event, name, AbstractProjectPaas.PAASES, out);
-
-                } else if (name.equals(EventValidation.TYPE)) {
-                    doCheckEventWithParameters(context, event, name, AbstractProjectType.TYPES, out);
+//                } else if (name.equals(EventValidation.PAAS)) {
+//                    doCheckEventWithParameters(context, event, name, AbstractProjectPaas.PAASES, out);
+//
+//                } else if (name.equals(EventValidation.TYPE)) {
+//                    doCheckEventWithParameters(context, event, name, AbstractProjectType.TYPES, out);
 
                 } else if (name.equalsIgnoreCase(AbstractMetric.WS)) {
                     if (!isEventExist(context, event, MetricFilter.PERSISTENT_WS.toString().toLowerCase(), 1)) {

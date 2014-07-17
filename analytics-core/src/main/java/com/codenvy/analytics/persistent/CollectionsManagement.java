@@ -45,9 +45,10 @@ public class CollectionsManagement {
 
     private static final Logger LOG = LoggerFactory.getLogger(CollectionsManagement.class);
 
-    private final static String CONFIGURATION        = "collections.xml";
-    private static final String BACKUP_SUFFIX        = "_backup";
-    private final static int    ASCENDING_INDEX_MARK = 1;
+    private final static String CONFIGURATION         = "collections.xml";
+    private static final String BACKUP_SUFFIX         = "_backup";
+    private final static int    ASCENDING_INDEX_MARK  = 1;
+    private final static int    DESCENDING_INDEX_MARK = -1;
 
     private final DB                                   db;
     private final Map<String, CollectionConfiguration> configuration;
@@ -220,7 +221,7 @@ public class CollectionsManagement {
     private DBObject createIndex(List<FieldConfiguration> fields) {
         BasicDBObject index = new BasicDBObject();
         for (FieldConfiguration field : fields) {
-            index.put(field.getField(), ASCENDING_INDEX_MARK);
+            index.put(field.getField(), field.isDescending() ? DESCENDING_INDEX_MARK : ASCENDING_INDEX_MARK);
         }
 
         return index;
