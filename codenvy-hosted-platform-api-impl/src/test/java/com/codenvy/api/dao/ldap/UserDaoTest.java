@@ -23,10 +23,10 @@ import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.api.core.notification.EventService;
-import com.codenvy.api.user.server.dao.MemberDao;
 import com.codenvy.api.user.server.dao.UserProfileDao;
-import com.codenvy.api.user.shared.dto.Member;
 import com.codenvy.api.user.shared.dto.User;
+import com.codenvy.api.workspace.server.dao.Member;
+import com.codenvy.api.workspace.server.dao.MemberDao;
 import com.codenvy.commons.lang.IoUtil;
 import com.codenvy.dto.server.DtoFactory;
 
@@ -67,6 +67,7 @@ public class UserDaoTest {
     @BeforeMethod
     public void setUp() throws Exception {
         URL u = Thread.currentThread().getContextClassLoader().getResource(".");
+        assertNotNull(u);
         File target = new File(u.toURI()).getParentFile();
         server = new File(target, "server");
         Assert.assertTrue(server.mkdirs(), "Unable create directory for temporary data");
@@ -203,10 +204,9 @@ public class UserDaoTest {
     public void testRemoveUser() throws Exception {
         when(accountDao.getByOwner(users[0].getId()))
                 .thenReturn(Arrays.asList(DtoFactory.getInstance().createDto(Account.class).withId("account_id")));
-        Member member = DtoFactory.getInstance().createDto(Member.class)
-                                  .withUserId(users[0].getId())
-                                  .withWorkspaceId("no_matter")
-                                  .withRoles(Arrays.asList("workspace/developer"));
+        Member member = new Member().withUserId(users[0].getId())
+                                    .withWorkspaceId("no_matter")
+                                    .withRoles(Arrays.asList("workspace/developer"));
         when(memberDao.getUserRelationships(users[0].getId())).thenReturn(Arrays.asList(member));
         User user = userDao.getById(users[0].getId());
         assertNotNull(user);
@@ -228,7 +228,7 @@ public class UserDaoTest {
         try {
             userDao.remove("invalid");
             fail();
-        } catch (NotFoundException e) {
+        } catch (NotFoundException ignored) {
         }
     }
 

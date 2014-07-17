@@ -25,8 +25,8 @@ import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
-import com.codenvy.api.workspace.shared.dto.Attribute;
-import com.codenvy.api.workspace.shared.dto.Workspace;
+import com.codenvy.api.workspace.server.dao.Attribute;
+import com.codenvy.api.workspace.server.dao.Workspace;
 import com.codenvy.dto.server.DtoFactory;
 
 import org.mockito.Mock;
@@ -78,9 +78,8 @@ public class HostedWorkspaceServiceTest {
     @Test(expectedExceptions = ConflictException.class, expectedExceptionsMessageRegExp = "Bad RAM value")
     public void testOnCreateSubscriptionWithBadSubscriptionRAM() throws ApiException {
         final String workspaceId = "ws1";
-        final Workspace workspace = DtoFactory.getInstance().createDto(Workspace.class)
-                                              .withId(workspaceId)
-                                              .withAttributes(new ArrayList<Attribute>(2));
+        final Workspace workspace = new Workspace().withId(workspaceId)
+                                                   .withAttributes(new ArrayList<Attribute>(2));
         when(workspaceDao.getById(workspaceId)).thenReturn(workspace);
         final Map<String, String> properties = new HashMap<>(3);
         properties.put("codenvy:workspace_id", workspaceId);
@@ -119,9 +118,8 @@ public class HostedWorkspaceServiceTest {
     @Test
     public void testWorkspaceAttributesAddedWhenOnCreateInvoked() throws ApiException {
         final String workspaceId = "ws1";
-        final Workspace workspace = DtoFactory.getInstance().createDto(Workspace.class)
-                                              .withId(workspaceId)
-                                              .withAttributes(new ArrayList<Attribute>(2));
+        final Workspace workspace = new Workspace().withId(workspaceId)
+                                                   .withAttributes(new ArrayList<Attribute>(2));
         when(workspaceDao.getById(workspaceId)).thenReturn(workspace);
         final Map<String, String> properties = new HashMap<>(3);
         properties.put("codenvy:workspace_id", workspaceId);
@@ -134,12 +132,10 @@ public class HostedWorkspaceServiceTest {
         service.afterCreateSubscription(subscription);
 
         assertEquals(workspace.getAttributes().size(), 2);
-        final Attribute runnerRAM = DtoFactory.getInstance().createDto(Attribute.class)
-                                              .withName("codenvy:runner_ram")
-                                              .withValue("1024");
-        final Attribute runnerLifetime = DtoFactory.getInstance().createDto(Attribute.class)
-                                                   .withName("codenvy:runner_lifetime")
-                                                   .withValue(String.valueOf(TimeUnit.HOURS.toSeconds(1)));
+        final Attribute runnerRAM = new Attribute().withName("codenvy:runner_ram")
+                                                   .withValue("1024");
+        final Attribute runnerLifetime = new Attribute().withName("codenvy:runner_lifetime")
+                                                        .withValue(String.valueOf(TimeUnit.HOURS.toSeconds(1)));
         assertTrue(workspace.getAttributes().contains(runnerRAM));
         assertTrue(workspace.getAttributes().contains(runnerLifetime));
     }
@@ -148,9 +144,8 @@ public class HostedWorkspaceServiceTest {
     @Test
     public void testWorkspaceAttributesAddedWhenOnCheckInvoked() throws ApiException {
         final String workspaceId = "ws1";
-        final Workspace workspace = DtoFactory.getInstance().createDto(Workspace.class)
-                                              .withId(workspaceId)
-                                              .withAttributes(new ArrayList<Attribute>(2));
+        final Workspace workspace = new Workspace().withId(workspaceId)
+                                                   .withAttributes(new ArrayList<Attribute>(2));
         when(workspaceDao.getById(workspaceId)).thenReturn(workspace);
         final Map<String, String> properties = new HashMap<>(3);
         properties.put("codenvy:workspace_id", workspaceId);
@@ -164,12 +159,10 @@ public class HostedWorkspaceServiceTest {
         service.onCheckSubscription(subscription);
 
         assertEquals(workspace.getAttributes().size(), 2);
-        final Attribute runnerRAM = DtoFactory.getInstance().createDto(Attribute.class)
-                                              .withName("codenvy:runner_ram")
-                                              .withValue("1024");
-        final Attribute runnerLifetime = DtoFactory.getInstance().createDto(Attribute.class)
-                                                   .withName("codenvy:runner_lifetime")
-                                                   .withValue(String.valueOf(TimeUnit.HOURS.toSeconds(1)));
+        final Attribute runnerRAM = new Attribute().withName("codenvy:runner_ram")
+                                                   .withValue("1024");
+        final Attribute runnerLifetime = new Attribute().withName("codenvy:runner_lifetime")
+                                                        .withValue(String.valueOf(TimeUnit.HOURS.toSeconds(1)));
         assertTrue(workspace.getAttributes().contains(runnerRAM));
         assertTrue(workspace.getAttributes().contains(runnerLifetime));
     }
@@ -178,9 +171,8 @@ public class HostedWorkspaceServiceTest {
     @Test
     public void testWorkspaceAttributesNotAddedWhenOnCheckInvoked() throws ApiException {
         final String workspaceId = "ws1";
-        final Workspace workspace = DtoFactory.getInstance().createDto(Workspace.class)
-                                              .withId(workspaceId)
-                                              .withAttributes(new ArrayList<Attribute>(2));
+        final Workspace workspace = new Workspace().withId(workspaceId)
+                                                   .withAttributes(new ArrayList<Attribute>(2));
         when(workspaceDao.getById(workspaceId)).thenReturn(workspace);
         final Map<String, String> properties = new HashMap<>(3);
         properties.put("codenvy:workspace_id", workspaceId);
@@ -199,9 +191,8 @@ public class HostedWorkspaceServiceTest {
     @Test
     public void testWorkspaceAttributesReplacedOrAddedWhenOnUpdateWithActiveSubscriptionInvoked() throws ApiException {
         final String workspaceId = "ws1";
-        final Workspace workspace = DtoFactory.getInstance().createDto(Workspace.class)
-                                              .withId(workspaceId)
-                                              .withAttributes(new ArrayList<Attribute>(2));
+        final Workspace workspace = new Workspace().withId(workspaceId)
+                                                   .withAttributes(new ArrayList<Attribute>(2));
         when(workspaceDao.getById(workspaceId)).thenReturn(workspace);
         final Map<String, String> properties = new HashMap<>(3);
         properties.put("codenvy:workspace_id", workspaceId);
@@ -214,12 +205,10 @@ public class HostedWorkspaceServiceTest {
         service.onUpdateSubscription(subscription, subscription);
 
         assertEquals(workspace.getAttributes().size(), 2);
-        final Attribute runnerRAM = DtoFactory.getInstance().createDto(Attribute.class)
-                                              .withName("codenvy:runner_ram")
-                                              .withValue("1024");
-        final Attribute runnerLifeTime = DtoFactory.getInstance().createDto(Attribute.class)
-                                                   .withName("codenvy:runner_lifetime")
-                                                   .withValue(String.valueOf(TimeUnit.HOURS.toSeconds(1)));
+        final Attribute runnerRAM = new Attribute().withName("codenvy:runner_ram")
+                                                   .withValue("1024");
+        final Attribute runnerLifeTime = new Attribute().withName("codenvy:runner_lifetime")
+                                                        .withValue(String.valueOf(TimeUnit.HOURS.toSeconds(1)));
         assertTrue(workspace.getAttributes().contains(runnerRAM));
         assertTrue(workspace.getAttributes().contains(runnerLifeTime));
     }
@@ -227,13 +216,10 @@ public class HostedWorkspaceServiceTest {
     @Test
     public void testWorkspaceAttributesRemovedWhenOnUpdateWithNotActiveSubscriptionInvoked() throws ApiException {
         final String workspaceId = "ws1";
-        final Attribute runnerRAM = DtoFactory.getInstance().createDto(Attribute.class)
-                                              .withName("codenvy:runner_ram");
-        final Attribute runnerLifeTime = DtoFactory.getInstance().createDto(Attribute.class)
-                                                   .withName("codenvy:runner_lifetime");
-        final Workspace workspace = DtoFactory.getInstance().createDto(Workspace.class)
-                                              .withId(workspaceId)
-                                              .withAttributes(Arrays.asList(runnerLifeTime, runnerRAM));
+        final Attribute runnerRAM = new Attribute().withName("codenvy:runner_ram");
+        final Attribute runnerLifeTime = new Attribute().withName("codenvy:runner_lifetime");
+        final Workspace workspace = new Workspace().withId(workspaceId)
+                                                   .withAttributes(Arrays.asList(runnerLifeTime, runnerRAM));
         final Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class)
                                                     .withState(Subscription.State.WAIT_FOR_PAYMENT)
                                                     .withProperties(Collections.singletonMap("codenvy:workspace_id", workspaceId));
@@ -247,13 +233,10 @@ public class HostedWorkspaceServiceTest {
     @Test
     public void testRemoveWorkspaceAttributesWhenOnRemoveInvoked() throws ApiException {
         final String workspaceId = "ws1";
-        final Attribute runnerRAM = DtoFactory.getInstance().createDto(Attribute.class)
-                                              .withName("codenvy:runner_ram");
-        final Attribute runnerLifeTime = DtoFactory.getInstance().createDto(Attribute.class)
-                                                   .withName("codenvy:runner_lifetime");
-        final Workspace workspace = DtoFactory.getInstance().createDto(Workspace.class)
-                                              .withId(workspaceId)
-                                              .withAttributes(Arrays.asList(runnerLifeTime, runnerRAM));
+        final Attribute runnerRAM = new Attribute().withName("codenvy:runner_ram");
+        final Attribute runnerLifeTime = new Attribute().withName("codenvy:runner_lifetime");
+        final Workspace workspace = new Workspace().withId(workspaceId)
+                                                   .withAttributes(Arrays.asList(runnerLifeTime, runnerRAM));
         final Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class)
                                                     .withProperties(Collections.singletonMap("codenvy:workspace_id", workspaceId));
         when(workspaceDao.getById(workspaceId)).thenReturn(workspace);
@@ -267,9 +250,8 @@ public class HostedWorkspaceServiceTest {
           expectedExceptionsMessageRegExp = "Tariff not found")
     public void testTarifficateWithNotExistingTariffPlan() throws ApiException {
         final String workspaceId = "ws1";
-        final Workspace workspace = DtoFactory.getInstance().createDto(Workspace.class)
-                                              .withId(workspaceId)
-                                              .withAttributes(new ArrayList<Attribute>(2));
+        final Workspace workspace = new Workspace().withId(workspaceId)
+                                                   .withAttributes(new ArrayList<Attribute>(2));
         when(workspaceDao.getById(workspaceId)).thenReturn(workspace);
         final Map<String, String> properties = new HashMap<>(4);
         properties.put("codenvy:workspace_id", workspaceId);

@@ -24,28 +24,13 @@ import com.codenvy.api.core.ApiException;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
-import com.codenvy.api.core.rest.HttpJsonHelper;
-import com.codenvy.api.vfs.server.VirtualFileSystem;
-import com.codenvy.api.vfs.server.VirtualFileSystemFactory;
-import com.codenvy.api.vfs.shared.dto.AccessControlEntry;
-import com.codenvy.api.vfs.shared.dto.Principal;
-import com.codenvy.api.vfs.shared.dto.VirtualFileSystemInfo;
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
-import com.codenvy.api.workspace.shared.dto.Attribute;
-import com.codenvy.api.workspace.shared.dto.Workspace;
-import com.codenvy.commons.env.EnvironmentContext;
-import com.codenvy.commons.lang.Pair;
-import com.codenvy.commons.user.User;
-import com.codenvy.dto.server.DtoFactory;
-import com.codenvy.dto.server.JsonArrayImpl;
+import com.codenvy.api.workspace.server.dao.Attribute;
+import com.codenvy.api.workspace.server.dao.Workspace;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Singleton;
-import javax.ws.rs.core.UriBuilder;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -262,12 +247,9 @@ public class HostedWorkspaceService extends SubscriptionService {
         for (Attribute attribute : workspace.getAttributes()) {
             wsAttributes.put(attribute.getName(), attribute);
         }
-        final Attribute runnerRAM = DtoFactory.getInstance().createDto(Attribute.class)
-                                              .withName("codenvy:runner_ram")
-                                              .withValue(String.valueOf(convert(ensureExistsAndGet("RAM", subscription))));
-
-        final Attribute runnerLifetime = DtoFactory.getInstance().createDto(Attribute.class)
-                                                   .withName("codenvy:runner_lifetime");
+        final Attribute runnerRAM = new Attribute().withName("codenvy:runner_ram")
+                                                   .withValue(String.valueOf(convert(ensureExistsAndGet("RAM", subscription))));
+        final Attribute runnerLifetime = new Attribute().withName("codenvy:runner_lifetime");
         switch (tariffPackage.toLowerCase()) {
             case "developer":
             case "team":

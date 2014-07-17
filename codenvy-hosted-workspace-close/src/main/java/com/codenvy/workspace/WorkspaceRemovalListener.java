@@ -17,12 +17,18 @@
  */
 package com.codenvy.workspace;
 
-import com.codenvy.api.core.*;
+import com.codenvy.api.core.ConflictException;
+import com.codenvy.api.core.NotFoundException;
+import com.codenvy.api.core.ServerException;
 import com.codenvy.api.core.notification.EventService;
-import com.codenvy.api.user.server.dao.*;
-import com.codenvy.api.user.shared.dto.*;
+import com.codenvy.api.user.server.dao.UserDao;
+import com.codenvy.api.user.server.dao.UserProfileDao;
+import com.codenvy.api.user.shared.dto.Attribute;
+import com.codenvy.api.user.shared.dto.Profile;
+import com.codenvy.api.workspace.server.dao.Member;
+import com.codenvy.api.workspace.server.dao.MemberDao;
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
-import com.codenvy.api.workspace.shared.dto.Workspace;
+import com.codenvy.api.workspace.server.dao.Workspace;
 import com.codenvy.workspace.event.StopWsEvent;
 import com.google.common.cache.RemovalListener;
 import com.google.common.cache.RemovalNotification;

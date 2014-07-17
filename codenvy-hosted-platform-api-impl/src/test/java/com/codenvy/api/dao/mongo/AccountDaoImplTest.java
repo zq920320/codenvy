@@ -28,7 +28,7 @@ import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
-import com.codenvy.api.workspace.shared.dto.Workspace;
+import com.codenvy.api.workspace.server.dao.Workspace;
 import com.codenvy.dto.server.DtoFactory;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
@@ -85,13 +85,11 @@ public class AccountDaoImplTest extends BaseDaoTest {
     private static final String MEMBER_COLL_NAME               = "members";
     private static final String SUBSCRIPTION_HISTORY_COLL_NAME = "history";
 
-    private static final String SUBSCRIPTION_ID               = "Subscription0xfffffff";
-    private static final String SERVICE_NAME                  = "builder";
-    private static final long   START_DATE                    = System.currentTimeMillis();
-    private static final long   END_DATE                      = START_DATE + /* 1 day ms */ 86_400_000;
-    private static final String SUBSCRIPTION_HISTORY_EVENT_ID = "event0xfffffff";
+    private static final String SUBSCRIPTION_ID = "Subscription0xfffffff";
+    private static final String SERVICE_NAME    = "builder";
+    private static final long   START_DATE      = System.currentTimeMillis();
+    private static final long   END_DATE        = START_DATE + /* 1 day ms */ 86_400_000;
     private static final Map<String, String> PROPS;
-
 
     private AccountDaoImpl accountDao;
     private DBCollection   subscriptionCollection;
@@ -142,15 +140,13 @@ public class AccountDaoImplTest extends BaseDaoTest {
         DBObject res = collection.findOne(new BasicDBObject("id", ACCOUNT_ID));
         assertNotNull(res, "Specified user account does not exists.");
 
-        Account result =
-                DtoFactory.getInstance().createDtoFromJson(res.toString(), Account.class);
+        Account result = DtoFactory.getInstance().createDtoFromJson(res.toString(), Account.class);
         assertEquals(result, account);
     }
 
     @Test
     public void shouldFindAccountById() throws Exception {
-        collection.insert(
-                new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME).append("owner", ACCOUNT_OWNER));
+        collection.insert(new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME).append("owner", ACCOUNT_OWNER));
         Account result = accountDao.getById(ACCOUNT_ID);
         assertNotNull(result);
         assertEquals(result.getName(), ACCOUNT_NAME);
@@ -228,8 +224,7 @@ public class AccountDaoImplTest extends BaseDaoTest {
     @Test(expectedExceptions = ConflictException.class,
           expectedExceptionsMessageRegExp = "It is not possible to remove account that has associated workspaces")
     public void shouldNotBeAbleToRemoveAccountWithAssociatedWorkspace() throws Exception {
-        when(workspaceDao.getByAccount(ACCOUNT_ID))
-                .thenReturn(Arrays.asList(DtoFactory.getInstance().createDto(Workspace.class)));
+        when(workspaceDao.getByAccount(ACCOUNT_ID)).thenReturn(Arrays.asList(new Workspace()));
         collection.insert(
                 new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME).append("owner", ACCOUNT_OWNER));
 

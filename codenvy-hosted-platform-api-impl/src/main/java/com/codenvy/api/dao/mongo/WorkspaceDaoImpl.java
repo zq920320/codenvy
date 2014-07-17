@@ -23,12 +23,9 @@ import com.codenvy.api.core.ServerException;
 import com.codenvy.api.core.notification.EventService;
 import com.codenvy.api.event.workspace.CreateWorkspaceEvent;
 import com.codenvy.api.event.workspace.DeleteWorkspaceEvent;
-import com.codenvy.api.user.server.dao.MemberDao;
-import com.codenvy.api.user.server.dao.UserDao;
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
-import com.codenvy.api.workspace.shared.dto.Attribute;
-import com.codenvy.api.workspace.shared.dto.Workspace;
-import com.codenvy.dto.server.DtoFactory;
+import com.codenvy.api.workspace.server.dao.Workspace;
+import com.google.gson.Gson;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
@@ -47,30 +44,33 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-/** Workspace DAO implementation based on MongoDB storage. */
+/**
+ * Implementation of {@link com.codenvy.api.dao.mongo.WorkspaceDaoImpl} based on MongoDB storage.
+ *
+ * @author Max Shaposhnik
+ * @author Eugene Voevodin
+ */
 @Singleton
 public class WorkspaceDaoImpl implements WorkspaceDao {
-    private static final Logger  LOG     = LoggerFactory.getLogger(WorkspaceDaoImpl.class);
+    private static final Logger  LOG           = LoggerFactory.getLogger(WorkspaceDaoImpl.class);
     /* should contain [3, 20] characters, first and last character is letter or digit, available characters {A-Za-z0-9.-_}*/
-    private static final Pattern WS_NAME = Pattern.compile("[\\w][\\w\\.\\-]{1,18}[\\w]");
+    private static final Pattern WS_NAME       = Pattern.compile("[\\w][\\w\\.\\-]{1,18}[\\w]");
+    private static final String  DB_COLLECTION = "organization.storage.db.workspace.collection";
 
-    protected static final String DB_COLLECTION = "organization.storage.db.workspace.collection";
-
-    DBCollection collection;
-    UserDao      userDao;
-    MemberDao    memberDao;
-
+    private final DBCollection collection;
+    private final Gson         gson;
     private final EventService eventService;
 
     @Inject
-    public WorkspaceDaoImpl(UserDao userDao, MemberDao memberDao, DB db, @Named(DB_COLLECTION) String collectionName,
-                            EventService eventService) {
+    public WorkspaceDaoImpl(Gson gson,
+                            DB db,
+                            EventService eventService,
+                            @Named(DB_COLLECTION) String collectionName) {
         collection = db.getCollection(collectionName);
         collection.ensureIndex(new BasicDBObject("id", 1), new BasicDBObject("unique", true));
         collection.ensureIndex(new BasicDBObject("accountId", 1));
         collection.ensureIndex(new BasicDBObject("name", 1));
-        this.memberDao = memberDao;
-        this.userDao = userDao;
+        this.gson = gson;
         this.eventService = eventService;
     }
 
@@ -88,7 +88,7 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
 
     @Override
     public void update(Workspace workspace) throws ConflictException, NotFoundException, ServerException {
-        DBObject query = new BasicDBObject("id", workspace.getId());
+        final DBObject query = new BasicDBObject("id", workspace.getId());
         if (collection.findOne(query) == null) {
             throw new NotFoundException("Workspace not found " + workspace.getId());
         }
@@ -103,8 +103,8 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
     @Override
     public void remove(String id) throws ServerException, NotFoundException, ConflictException {
         try {
-            DBObject workspace = collection.findAndRemove(new BasicDBObject("id", id));
-            Workspace removedWorkspace = DtoFactory.getInstance().createDtoFromJson(workspace.toString(), Workspace.class);
+            final DBObject workspace = collection.findAndRemove(new BasicDBObject("id", id));
+            final Workspace removedWorkspace = fromDBObject(workspace);
             LOG.info("EVENT#workspace-destroyed# WS#{}# WS-ID#{}#", removedWorkspace.getName(), removedWorkspace.getId());
             eventService.publish(new DeleteWorkspaceEvent(id, removedWorkspace.isTemporary(), removedWorkspace.getName()));
         } catch (MongoException me) {
@@ -114,37 +114,39 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
 
     @Override
     public Workspace getById(String id) throws NotFoundException, ServerException {
-        DBObject res;
+        final DBObject res;
         try {
             res = collection.findOne(new BasicDBObject("id", id));
         } catch (MongoException me) {
             throw new ServerException(me.getMessage(), me);
         }
-        if (res == null)
+        if (res == null) {
             throw new NotFoundException("Workspace not found " + id);
-        return DtoFactory.getInstance().createDtoFromJson(res.toString(), Workspace.class);
+        }
+        return fromDBObject(res);
     }
 
     @Override
     public Workspace getByName(String name) throws NotFoundException, ServerException {
-        DBObject res;
+        final DBObject res;
         try {
             res = collection.findOne(new BasicDBObject("name", name));
         } catch (MongoException me) {
             throw new ServerException(me.getMessage(), me);
         }
-        if (res == null)
+        if (res == null) {
             throw new NotFoundException("Workspace not found " + name);
-        return DtoFactory.getInstance().createDtoFromJson(res.toString(), Workspace.class);
+        }
+        return fromDBObject(res);
     }
 
     @Override
     public List<Workspace> getByAccount(String accountId) throws ServerException {
-        List<Workspace> result = new ArrayList<>();
-        try {
-            DBCursor cursor = collection.find(new BasicDBObject("accountId", accountId));
-            for (DBObject one : cursor) {
-                result.add(DtoFactory.getInstance().createDtoFromJson(one.toString(), Workspace.class));
+        final List<Workspace> result;
+        try (DBCursor cursor = collection.find(new BasicDBObject("accountId", accountId))) {
+            result = new ArrayList<>(cursor.size());
+            for (DBObject wsObj : cursor) {
+                result.add(fromDBObject(wsObj));
             }
         } catch (MongoException me) {
             throw new ServerException(me.getMessage(), me);
@@ -152,31 +154,20 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
         return result;
     }
 
+    //should be package-private (used in tests)
+    Workspace fromDBObject(DBObject wsObj) {
+        return gson.fromJson(wsObj.toString(), Workspace.class);
+    }
+
     /**
      * Convert workspace to Database ready-to-use object,
      *
-     * @param obj
+     * @param workspace
      *         Workspace to convert
      * @return DBObject
      */
-    private DBObject toDBObject(Workspace obj) {
-        List<Attribute> attributes = new ArrayList<>();
-        if (obj.getAttributes() != null) {
-            for (Attribute one : obj.getAttributes()) {
-                attributes.add(DtoFactory.getInstance().createDto(Attribute.class)
-                                         .withName(one.getName())
-                                         .withValue(one.getValue())
-                                         .withDescription(one.getDescription()));
-            }
-        }
-        Workspace workspace = DtoFactory.getInstance().createDto(Workspace.class)
-                                        .withId(obj.getId())
-                                        .withName(obj.getName())
-                                        .withAccountId(obj.getAccountId())
-                                        .withTemporary(obj.isTemporary())
-                                        .withAttributes(attributes);
-
-        return (DBObject)JSON.parse(workspace.toString());
+    private DBObject toDBObject(Workspace workspace) {
+        return (DBObject)JSON.parse(gson.toJson(workspace));
     }
 
     private void validateWorkspaceName(String workspaceName) throws ConflictException {
@@ -196,10 +187,9 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
      * @throws com.codenvy.api.core.ConflictException
      */
     private void ensureWorkspaceNameDoesNotExist(String workspaceName) throws ConflictException {
-        DBObject res = collection.findOne(new BasicDBObject("name", workspaceName));
+        final DBObject res = collection.findOne(new BasicDBObject("name", workspaceName));
         if (res != null) {
-            throw new ConflictException(
-                    String.format("Unable to create workspace: name '%s' already exists.", workspaceName));
+            throw new ConflictException(String.format("Unable to create workspace: name '%s' already exists.", workspaceName));
         }
     }
 }

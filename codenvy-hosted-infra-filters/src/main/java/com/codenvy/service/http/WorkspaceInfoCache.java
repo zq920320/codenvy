@@ -23,8 +23,8 @@ import com.codenvy.api.core.ServerException;
 import com.codenvy.api.core.rest.HttpJsonHelper;
 import com.codenvy.api.core.rest.shared.dto.Link;
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
+import com.codenvy.api.workspace.server.dao.Workspace;
 import com.codenvy.api.workspace.shared.dto.Attribute;
-import com.codenvy.api.workspace.shared.dto.Workspace;
 import com.codenvy.api.workspace.shared.dto.WorkspaceDescriptor;
 import com.codenvy.dto.server.DtoFactory;
 import com.google.common.cache.CacheBuilder;
@@ -37,6 +37,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
@@ -157,14 +159,23 @@ public class WorkspaceInfoCache {
             try {
                 Workspace ws;
                 if (key.isUuid) {
-                   ws =  dao.getById(key.key);
+                    ws = dao.getById(key.key);
                 } else {
-                   ws = dao.getByName(key.key);
+                    ws = dao.getByName(key.key);
+                }
+                final List<Attribute> attributes = new ArrayList<>(ws.getAttributes().size());
+                for (com.codenvy.api.workspace.server.dao.Attribute attribute : ws.getAttributes()) {
+                    attributes.add(DtoFactory.getInstance().createDto(Attribute.class)
+                                             .withName(attribute.getName())
+                                             .withValue(attribute.getValue())
+                                             .withDescription(attribute.getDescription()));
                 }
                 return DtoFactory.getInstance().createDto(WorkspaceDescriptor.class)
-                                 .withId(ws.getId()).withName(ws.getName()).withAccountId(ws.getAccountId())
-                                 .withAttributes(ws.getAttributes()).withTemporary(ws.isTemporary());
-
+                                 .withId(ws.getId())
+                                 .withName(ws.getName())
+                                 .withAccountId(ws.getAccountId())
+                                 .withTemporary(ws.isTemporary())
+                                 .withAttributes(attributes);
             } catch (Exception e) {
                 LOG.debug(e.getLocalizedMessage(), e);
                 throw e;

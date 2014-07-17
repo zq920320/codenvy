@@ -23,7 +23,6 @@ import com.codenvy.api.core.rest.shared.dto.Link;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
-import com.codenvy.api.user.shared.dto.Member;
 import com.codenvy.api.user.shared.dto.User;
 import com.codenvy.api.workspace.shared.dto.NewMembership;
 import com.codenvy.api.workspace.shared.dto.WorkspaceDescriptor;
@@ -40,7 +39,11 @@ import javax.inject.Inject;
 import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
@@ -48,7 +51,9 @@ import javax.ws.rs.core.UriInfo;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -140,7 +145,7 @@ public class InviteService {
             NewMembership membership = DtoFactory.getInstance().createDto(NewMembership.class).withUserId(user.getId())
                                                  .withRoles(Arrays.asList("workspace/developer"));
 
-            HttpJsonHelper.request(Member.class, createMembershipLink, membership);
+            HttpJsonHelper.request(null, createMembershipLink, membership);
 
             Map<String, String> inviteMessageProperties = new HashMap<>();
             inviteMessageProperties.put("com.codenvy.masterhost.url", uriInfo.getBaseUriBuilder().replacePath(null).build().toString());
