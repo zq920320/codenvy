@@ -27,7 +27,7 @@ import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
-import com.codenvy.dto.server.DtoFactory;
+import com.google.gson.Gson;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
@@ -69,17 +69,19 @@ public class AccountDaoImpl implements AccountDao {
     protected static final String ACCOUNT_COLLECTION              = "organization.storage.db.account.collection";
     protected static final String SUBSCRIPTION_COLLECTION         = "organization.storage.db.subscription.collection";
     protected static final String MEMBER_COLLECTION               = "organization.storage.db.acc.member.collection";
-    protected static final String SUBSCRIPTION_HISTORY_COLLECTION = "organization.storage.db.subscription.history.collection";
+    protected static final String SUBSCRIPTION_HISTORY_COLLECTION =
+            "organization.storage.db.subscription.history.collection";
 
-    private DBCollection accountCollection;
-    private DBCollection subscriptionCollection;
-    private DBCollection memberCollection;
-    private DBCollection subscriptionHistoryCollection;
+    private final Gson         gson;
+    private       DBCollection accountCollection;
+    private       DBCollection subscriptionCollection;
+    private       DBCollection memberCollection;
+    private       DBCollection subscriptionHistoryCollection;
 
     private WorkspaceDao workspaceDao;
 
     @Inject
-    public AccountDaoImpl(DB db,
+    public AccountDaoImpl(Gson gson, DB db,
                           WorkspaceDao workspaceDao,
                           @Named(ACCOUNT_COLLECTION) String accountCollectionName,
                           @Named(SUBSCRIPTION_COLLECTION) String subscriptionCollectionName,
@@ -97,6 +99,7 @@ public class AccountDaoImpl implements AccountDao {
         subscriptionHistoryCollection.ensureIndex(new BasicDBObject("id", 1), new BasicDBObject("unique", true));
         subscriptionHistoryCollection.ensureIndex(new BasicDBObject("subscription.accountId", 1));
         this.workspaceDao = workspaceDao;
+        this.gson = gson;
     }
 
     @Override
@@ -119,7 +122,7 @@ public class AccountDaoImpl implements AccountDao {
         if (res == null) {
             throw new NotFoundException("Account not found " + id);
         }
-        return DtoFactory.getInstance().createDtoFromJson(res.toString(), Account.class);
+        return fromDBObject(res, Account.class);
     }
 
     @Override
@@ -133,7 +136,7 @@ public class AccountDaoImpl implements AccountDao {
         if (res == null) {
             throw new NotFoundException("Account not found " + name);
         }
-        return DtoFactory.getInstance().createDtoFromJson(res.toString(), Account.class);
+        return fromDBObject(res, Account.class);
     }
 
     @Override
@@ -144,7 +147,7 @@ public class AccountDaoImpl implements AccountDao {
             if (line != null) {
                 BasicDBList members = (BasicDBList)line.get("members");
                 for (Object memberObj : members) {
-                    Member member = DtoFactory.getInstance().createDtoFromJson(memberObj.toString(), Member.class);
+                    Member member = fromDBObject( (DBObject)memberObj, Member.class);
                     if (member.getRoles().contains("account/owner")) {
                         accounts.add(getById(member.getAccountId()));
                     }
@@ -200,7 +203,7 @@ public class AccountDaoImpl implements AccountDao {
             for (DBObject one : cursor) {
                 BasicDBList members = (BasicDBList)one.get("members");
                 for (Object memberObj : members) {
-                    Member member = DtoFactory.getInstance().createDtoFromJson(memberObj.toString(), Member.class);
+                    Member member = fromDBObject( (DBObject)memberObj, Member.class);
                     if (accountId.equals(member.getAccountId())) {
                         result.add(member);
                     }
@@ -220,13 +223,13 @@ public class AccountDaoImpl implements AccountDao {
             if (line != null) {
                 BasicDBList members = (BasicDBList)line.get("members");
                 for (Object memberObj : members) {
-                    Member member = DtoFactory.getInstance().createDtoFromJson(memberObj.toString(), Member.class);
+                    Member member = fromDBObject( (DBObject)memberObj, Member.class);
                     Account account = getById(member.getAccountId());
-                    AccountMembership am = DtoFactory.getInstance().createDto(AccountMembership.class);
-                    am.setId(account.getId());
-                    am.setName(account.getName());
-                    am.setAttributes(account.getAttributes());
-                    am.setRoles(member.getRoles());
+                    AccountMembership am = new AccountMembership()
+                           .withId(account.getId())
+                           .withName(account.getName())
+                           .withAttributes(account.getAttributes())
+                           .withRoles(member.getRoles());
                     result.add(am);
                 }
             }
@@ -253,7 +256,7 @@ public class AccountDaoImpl implements AccountDao {
 
             // Ensure such member not exists yet
             for (Object member1 : members) {
-                Member one = DtoFactory.getInstance().createDtoFromJson(member1.toString(), Member.class);
+                Member one = fromDBObject((DBObject)member1, Member.class);
                 if (one.getUserId().equals(member.getUserId()) && one.getAccountId().equals(member.getAccountId()))
                     throw new ConflictException(
                             String.format(
@@ -291,7 +294,7 @@ public class AccountDaoImpl implements AccountDao {
             Iterator it = members.iterator();
             Member toRemove = null;
             while (it.hasNext() && toRemove == null) {
-                toRemove = DtoFactory.getInstance().createDtoFromJson(it.next().toString(), Member.class);
+                toRemove = fromDBObject((DBObject)it.next(), Member.class);
             }
             if (toRemove != null) {
                 it.remove();
@@ -319,7 +322,7 @@ public class AccountDaoImpl implements AccountDao {
             }
             try (DBCursor subscriptions = subscriptionCollection.find(new BasicDBObject("accountId", accountId))) {
                 for (DBObject currentSubscription : subscriptions) {
-                    result.add(DtoFactory.getInstance().createDtoFromJson(currentSubscription.toString(), Subscription.class));
+                    result.add(fromDBObject(currentSubscription, Subscription.class));
                 }
             }
         } catch (MongoException me) {
@@ -374,7 +377,7 @@ public class AccountDaoImpl implements AccountDao {
             if (null == subscription) {
                 throw new NotFoundException("Subscription not found " + subscriptionId);
             }
-            return DtoFactory.getInstance().createDtoFromJson(subscription.toString(), Subscription.class);
+            return fromDBObject(subscription, Subscription.class);
         } catch (MongoException me) {
             throw new ServerException(me.getMessage(), me);
         }
@@ -396,7 +399,7 @@ public class AccountDaoImpl implements AccountDao {
             List<SubscriptionHistoryEvent> result = new ArrayList<>();
             DBCursor events = subscriptionHistoryCollection.find(new BasicDBObject("subscription.accountId", accountId));
             for (DBObject event : events) {
-                result.add(DtoFactory.getInstance().createDtoFromJson(event.toString(), SubscriptionHistoryEvent.class));
+                result.add(fromDBObject(event, SubscriptionHistoryEvent.class));
             }
             return result;
         } catch (MongoException e) {
@@ -409,7 +412,7 @@ public class AccountDaoImpl implements AccountDao {
         try (DBCursor subscriptions = subscriptionCollection.find()) {
             ArrayList<Subscription> result = new ArrayList<>(subscriptions.size());
             for (DBObject currentSubscription : subscriptions) {
-                result.add(DtoFactory.getInstance().createDtoFromJson(currentSubscription.toString(), Subscription.class));
+                result.add(fromDBObject(currentSubscription, Subscription.class));
             }
             return result;
         } catch (MongoException me) {
@@ -430,17 +433,6 @@ public class AccountDaoImpl implements AccountDao {
         if (null == subscription.getState()) {
             throw new ConflictException("Subscription state is missing");
         }
-    }
-
-    /**
-     * Convert account to Database ready-to-use object,
-     *
-     * @param obj
-     *         account to convert
-     * @return DBObject
-     */
-    private DBObject toDBObject(Account obj) {
-        return (DBObject)JSON.parse(DtoFactory.getInstance().clone(obj).toString());
     }
 
     /**
@@ -465,28 +457,44 @@ public class AccountDaoImpl implements AccountDao {
     }
 
     /**
+     * Convert account to Database ready-to-use object,
+     *
+     * @param obj
+     *         account to convert
+     * @return DBObject
+     */
+    private DBObject toDBObject(Account obj) {
+        return (DBObject)JSON.parse(gson.toJson(obj));
+    }
+
+    /**
      * Convert member to Database ready-to-use object,
      *
      * @param obj
      *         member to convert
      * @return DBObject
      */
-    private DBObject toDBObject(Member obj) {
-        return (DBObject)JSON.parse(DtoFactory.getInstance().clone(obj).toString());
+    private DBObject toDBObject(Object obj) {
+        return (DBObject)JSON.parse(gson.toJson(obj));
     }
 
-    /**
-     * Convert subscription to Database ready-to-use object,
-     *
-     * @param obj
-     *         subscription to convert
-     * @return DBObject
-     */
-    private DBObject toDBObject(Subscription obj) {
-        return (DBObject)JSON.parse(DtoFactory.getInstance().clone(obj).toString());
-    }
+//    /**
+//     * Convert subscription to Database ready-to-use object,
+//     *
+//     * @param obj
+//     *         subscription to convert
+//     * @return DBObject
+//     */
+//    private DBObject toDBObject(Subscription obj) {
+//        return (DBObject)JSON.parse(gson.toJson(obj));
+//    }
+//
+//    private DBObject toDBObject(SubscriptionHistoryEvent obj) {
+//        return (DBObject)JSON.parse(gson.toJson(obj));
+//    }
 
-    private DBObject toDBObject(SubscriptionHistoryEvent obj) {
-        return (DBObject)JSON.parse(DtoFactory.getInstance().clone(obj).toString());
+    //should be package-private (used in tests)
+    protected <T> T fromDBObject(DBObject wsObj, Class<T> classOfT) {
+        return gson.fromJson(wsObj.toString(), classOfT);
     }
 }
