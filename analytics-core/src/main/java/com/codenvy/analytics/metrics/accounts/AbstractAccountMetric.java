@@ -24,12 +24,12 @@ import com.codenvy.analytics.datamodel.ValueDataUtil;
 import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.persistent.MongoDataLoader;
 import com.codenvy.api.account.shared.dto.AccountMembership;
+import com.codenvy.api.account.shared.dto.Member;
 import com.codenvy.api.account.shared.dto.Subscription;
 import com.codenvy.api.user.shared.dto.Attribute;
-import com.codenvy.api.user.shared.dto.Member;
 import com.codenvy.api.user.shared.dto.Profile;
 import com.codenvy.api.user.shared.dto.User;
-import com.codenvy.api.workspace.shared.dto.Workspace;
+import com.codenvy.api.workspace.server.dao.Workspace;
 
 import java.io.IOException;
 import java.util.Collections;
