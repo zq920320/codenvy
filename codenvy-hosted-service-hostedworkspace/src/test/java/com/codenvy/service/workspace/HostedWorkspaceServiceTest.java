@@ -154,7 +154,8 @@ public class HostedWorkspaceServiceTest {
         final Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class)
                                                     .withState(Subscription.State.ACTIVE)
                                                     .withProperties(properties)
-                                                    .withStartDate(System.currentTimeMillis());
+                                                    .withStartDate(System.currentTimeMillis())
+                                                    .withEndDate(System.currentTimeMillis() + 60_000);
 
         service.onCheckSubscription(subscription);
 
