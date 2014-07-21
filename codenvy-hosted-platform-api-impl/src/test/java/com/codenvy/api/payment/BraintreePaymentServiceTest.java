@@ -27,9 +27,9 @@ import com.codenvy.api.account.server.SubscriptionService;
 import com.codenvy.api.account.server.SubscriptionServiceRegistry;
 import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.shared.dto.Payment;
-import com.codenvy.api.account.shared.dto.Subscription;
-import com.codenvy.api.account.shared.dto.SubscriptionHistoryEvent;
-import com.codenvy.api.account.shared.dto.SubscriptionPayment;
+import com.codenvy.api.account.server.dao.Subscription;
+import com.codenvy.api.account.server.dao.SubscriptionHistoryEvent;
+import com.codenvy.api.account.server.dao.SubscriptionPayment;
 import com.codenvy.api.core.ApiException;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.ForbiddenException;
@@ -51,9 +51,9 @@ import org.testng.annotations.Test;
 
 import java.math.BigDecimal;
 
-import static com.codenvy.api.account.shared.dto.Subscription.State.ACTIVE;
-import static com.codenvy.api.account.shared.dto.Subscription.State.WAIT_FOR_PAYMENT;
-import static com.codenvy.api.account.shared.dto.SubscriptionHistoryEvent.Type.UPDATE;
+import static com.codenvy.api.account.server.dao.Subscription.State.ACTIVE;
+import static com.codenvy.api.account.server.dao.Subscription.State.WAIT_FOR_PAYMENT;
+import static com.codenvy.api.account.server.dao.SubscriptionHistoryEvent.Type.UPDATE;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
@@ -97,16 +97,15 @@ public class BraintreePaymentServiceTest {
 
     @BeforeMethod
     public void setUp() throws Exception {
-        subscription = DtoFactory.getInstance().createDto(Subscription.class).withId(SUBSCRIPTION_ID).withServiceId(SERVICE_ID)
+        subscription = new Subscription().withId(SUBSCRIPTION_ID).withServiceId(SERVICE_ID)
                                  .withAccountId("ACCOUNT_ID").withState(WAIT_FOR_PAYMENT);
 
         SubscriptionPayment subscriptionPayment =
-                DtoFactory.getInstance().createDto(SubscriptionPayment.class).withTransactionId("TRANSACTION_ID").withAmount(AMOUNT);
+                new SubscriptionPayment().withTransactionId("TRANSACTION_ID").withAmount(AMOUNT);
 
-        expectedEvent = DtoFactory.getInstance().createDto(SubscriptionHistoryEvent.class).withUserId(User.ANONYMOUS.getId())
-                                  .withType(
-                                          UPDATE).withSubscription(
-                        DtoFactory.getInstance().clone(subscription).withState(ACTIVE)).withSubscriptionPayment(subscriptionPayment);
+        expectedEvent = new SubscriptionHistoryEvent().withUserId(User.ANONYMOUS.getId())
+                                                      .withType(UPDATE).withSubscription(subscription.withState(ACTIVE))
+                                                      .withSubscriptionPayment(subscriptionPayment);
 
         payment = DtoFactory.getInstance().createDto(Payment.class).withSubscriptionId(SUBSCRIPTION_ID).withCardNumber(CARD_NUMBER)
                             .withCvv(CVV).withCardholderName(CARDHOLDER).withExpirationMonth(EXPIRATION_MONTH)
@@ -251,7 +250,7 @@ public class BraintreePaymentServiceTest {
         when(result.isSuccess()).thenReturn(true);
         when(result.getTarget()).thenReturn(transaction);
         when(transaction.getId()).thenReturn("TRANSACTION_ID");
-        doThrow(exception).when(accountDao).updateSubscription(eq(DtoFactory.getInstance().clone(subscription).withState(ACTIVE)));
+        doThrow(exception).when(accountDao).updateSubscription(eq(subscription.withState(ACTIVE)));
 
         service.purchase(payment);
     }

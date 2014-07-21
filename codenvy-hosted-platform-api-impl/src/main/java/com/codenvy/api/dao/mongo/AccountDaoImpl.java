@@ -18,11 +18,10 @@
 package com.codenvy.api.dao.mongo;
 
 import com.codenvy.api.account.server.dao.AccountDao;
-import com.codenvy.api.account.shared.dto.Account;
-import com.codenvy.api.account.shared.dto.AccountMembership;
-import com.codenvy.api.account.shared.dto.Member;
-import com.codenvy.api.account.shared.dto.Subscription;
-import com.codenvy.api.account.shared.dto.SubscriptionHistoryEvent;
+import com.codenvy.api.account.server.dao.Account;
+import com.codenvy.api.account.server.dao.Member;
+import com.codenvy.api.account.server.dao.Subscription;
+import com.codenvy.api.account.server.dao.SubscriptionHistoryEvent;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
@@ -216,21 +215,15 @@ public class AccountDaoImpl implements AccountDao {
     }
 
     @Override
-    public List<AccountMembership> getByMember(String userId) throws NotFoundException, ServerException {
-        List<AccountMembership> result = new ArrayList<>();
+    public List<Member> getByMember(String userId) throws NotFoundException, ServerException {
+        List<Member> result = new ArrayList<>();
         try {
             DBObject line = memberCollection.findOne(userId);
             if (line != null) {
                 BasicDBList members = (BasicDBList)line.get("members");
                 for (Object memberObj : members) {
                     Member member = fromDBObject( (DBObject)memberObj, Member.class);
-                    Account account = getById(member.getAccountId());
-                    AccountMembership am = new AccountMembership()
-                           .withId(account.getId())
-                           .withName(account.getName())
-                           .withAttributes(account.getAttributes())
-                           .withRoles(member.getRoles());
-                    result.add(am);
+                    result.add(member);
                 }
             }
         } catch (MongoException me) {

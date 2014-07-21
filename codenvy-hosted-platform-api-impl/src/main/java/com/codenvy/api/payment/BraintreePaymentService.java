@@ -28,9 +28,9 @@ import com.codenvy.api.account.server.SubscriptionService;
 import com.codenvy.api.account.server.SubscriptionServiceRegistry;
 import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.shared.dto.Payment;
-import com.codenvy.api.account.shared.dto.Subscription;
-import com.codenvy.api.account.shared.dto.SubscriptionHistoryEvent;
-import com.codenvy.api.account.shared.dto.SubscriptionPayment;
+import com.codenvy.api.account.server.dao.Subscription;
+import com.codenvy.api.account.server.dao.SubscriptionHistoryEvent;
+import com.codenvy.api.account.server.dao.SubscriptionPayment;
 import com.codenvy.api.core.ApiException;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.NotFoundException;
@@ -45,8 +45,8 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import java.math.BigDecimal;
 
-import static com.codenvy.api.account.shared.dto.Subscription.State.ACTIVE;
-import static com.codenvy.api.account.shared.dto.SubscriptionHistoryEvent.Type.UPDATE;
+import static com.codenvy.api.account.server.dao.Subscription.State.ACTIVE;
+import static com.codenvy.api.account.server.dao.SubscriptionHistoryEvent.Type.UPDATE;
 
 /**
  * Send payment requests to Braintree and activate subscription.
@@ -140,7 +140,7 @@ public class BraintreePaymentService implements PaymentService {
 
     private void addSubscriptionHistoryEvent(double amount, Result<Transaction> result, Subscription subscription)
             throws ServerException, ConflictException {
-        SubscriptionPayment payment = DtoFactory.getInstance().createDto(SubscriptionPayment.class);
+        SubscriptionPayment payment = new SubscriptionPayment();
         payment.setAmount(amount);
         payment.setTransactionId(result.getTarget().getId());
 

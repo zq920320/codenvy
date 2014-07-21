@@ -18,7 +18,7 @@
 package com.codenvy.api.dao.ldap;
 
 import com.codenvy.api.account.server.dao.AccountDao;
-import com.codenvy.api.account.shared.dto.Account;
+import com.codenvy.api.account.server.dao.Account;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
