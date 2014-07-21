@@ -326,10 +326,10 @@ public class AccountDaoImplTest extends BaseDaoTest {
     @Test
     public void shouldBeAbleToGetAccountMembershipsByMember() throws NotFoundException, ServerException {
         BasicDBList members = new BasicDBList();
-        members.add(new Member()
+        members.add(JSON.parse(gson.toJson(new Member()
                             .withAccountId(ACCOUNT_ID)
                             .withUserId(USER_ID)
-                            .withRoles(Arrays.asList("account/owner")).toString());
+                            .withRoles(Arrays.asList("account/owner")))));
         membersCollection.insert(new BasicDBObject("_id", USER_ID).append("members", members));
         collection.insert(new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME));
         List<Member> memberships = accountDao.getByMember(USER_ID);
