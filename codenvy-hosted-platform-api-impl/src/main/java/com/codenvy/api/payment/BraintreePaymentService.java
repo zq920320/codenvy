@@ -37,7 +37,6 @@ import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.commons.env.EnvironmentContext;
 import com.codenvy.commons.lang.NameGenerator;
-import com.codenvy.dto.server.DtoFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -116,7 +115,15 @@ public class BraintreePaymentService implements PaymentService {
             if (result.isSuccess()) {
                 LOG.info("PAYMENTS# state#{}# payment-reason-id#{}# transaction-id#{}#", "Successful", payment.getSubscriptionId(),
                          result.getTarget().getId());
-                Subscription newSubscription = DtoFactory.getInstance().clone(subscription).withState(ACTIVE);
+                Subscription newSubscription = new Subscription()
+                                              .withId(subscription.getId())
+                                              .withAccountId(subscription.getAccountId())
+                                              .withServiceId(subscription.getServiceId())
+                                              .withStartDate(subscription.getStartDate())
+                                              .withEndDate(subscription.getEndDate())
+                                              .withProperties(subscription.getProperties())
+                                              .withState(ACTIVE);
+
                 accountDao.updateSubscription(newSubscription);
 
                 addSubscriptionHistoryEvent(amount, result, newSubscription);
@@ -144,7 +151,7 @@ public class BraintreePaymentService implements PaymentService {
         payment.setAmount(amount);
         payment.setTransactionId(result.getTarget().getId());
 
-        SubscriptionHistoryEvent event = DtoFactory.getInstance().createDto(SubscriptionHistoryEvent.class);
+        SubscriptionHistoryEvent event = new SubscriptionHistoryEvent();
         event.setId(NameGenerator.generate(SubscriptionHistoryEvent.class.getSimpleName().toLowerCase(), Constants.ID_LENGTH));
         event.setType(UPDATE);
         event.setUserId(EnvironmentContext.getCurrent().getUser().getId());

@@ -89,6 +89,7 @@ public class BraintreePaymentServiceTest {
     @Mock
     private Transaction              transaction;
     private Subscription             subscription;
+    private Subscription             activeSubscription;
     private Payment                  payment;
     private SubscriptionHistoryEvent expectedEvent;
 
@@ -100,11 +101,14 @@ public class BraintreePaymentServiceTest {
         subscription = new Subscription().withId(SUBSCRIPTION_ID).withServiceId(SERVICE_ID)
                                  .withAccountId("ACCOUNT_ID").withState(WAIT_FOR_PAYMENT);
 
+        activeSubscription = new Subscription().withId(SUBSCRIPTION_ID).withServiceId(SERVICE_ID)
+                                         .withAccountId("ACCOUNT_ID").withState(ACTIVE);
+
         SubscriptionPayment subscriptionPayment =
                 new SubscriptionPayment().withTransactionId("TRANSACTION_ID").withAmount(AMOUNT);
 
         expectedEvent = new SubscriptionHistoryEvent().withUserId(User.ANONYMOUS.getId())
-                                                      .withType(UPDATE).withSubscription(subscription.withState(ACTIVE))
+                                                      .withType(UPDATE).withSubscription(activeSubscription)
                                                       .withSubscriptionPayment(subscriptionPayment);
 
         payment = DtoFactory.getInstance().createDto(Payment.class).withSubscriptionId(SUBSCRIPTION_ID).withCardNumber(CARD_NUMBER)
@@ -150,7 +154,8 @@ public class BraintreePaymentServiceTest {
             @Override
             public boolean matches(Object argument) {
                 Subscription actualSubscription = (Subscription)argument;
-                return DtoFactory.getInstance().clone(subscription).withState(ACTIVE).equals(actualSubscription);
+                return new Subscription().withId(SUBSCRIPTION_ID).withServiceId(SERVICE_ID)
+                                         .withAccountId("ACCOUNT_ID").withState(ACTIVE).equals(actualSubscription);
             }
         }));
         verify(accountDao).addSubscriptionHistoryEvent(argThat(new ArgumentMatcher<SubscriptionHistoryEvent>() {
@@ -160,7 +165,7 @@ public class BraintreePaymentServiceTest {
                 return expectedEvent.equals(actualSubscriptionEvent.withId(null).withTime(0));
             }
         }));
-        verify(subscriptionService).onUpdateSubscription(subscription, DtoFactory.getInstance().clone(subscription).withState(ACTIVE));
+        verify(subscriptionService).onUpdateSubscription(subscription, activeSubscription);
     }
 
     @Test(expectedExceptions = ConflictException.class, expectedExceptionsMessageRegExp = "BraintreeMessage")
@@ -232,8 +237,7 @@ public class BraintreePaymentServiceTest {
 
     @Test(expectedExceptions = ConflictException.class, expectedExceptionsMessageRegExp = "Payment not required")
     public void shouldThrowConflictExceptionIfSubscriptionIsActive() throws Exception {
-        Subscription subscription = DtoFactory.getInstance().clone(this.subscription).withState(ACTIVE);
-        when(accountDao.getSubscriptionById(SUBSCRIPTION_ID)).thenReturn(subscription);
+        when(accountDao.getSubscriptionById(SUBSCRIPTION_ID)).thenReturn(activeSubscription);
         when(registry.get(SERVICE_ID)).thenReturn(subscriptionService);
         when(subscriptionService.tarifficate(any(Subscription.class))).thenReturn(1000D);
 
@@ -250,7 +254,7 @@ public class BraintreePaymentServiceTest {
         when(result.isSuccess()).thenReturn(true);
         when(result.getTarget()).thenReturn(transaction);
         when(transaction.getId()).thenReturn("TRANSACTION_ID");
-        doThrow(exception).when(accountDao).updateSubscription(eq(subscription.withState(ACTIVE)));
+        doThrow(exception).when(accountDao).updateSubscription(eq(activeSubscription));
 
         service.purchase(payment);
     }
