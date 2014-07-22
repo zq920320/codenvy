@@ -18,7 +18,7 @@
 package com.codenvy.scheduler;
 
 import com.codenvy.api.account.server.dao.AccountDao;
-import com.codenvy.api.account.shared.dto.Subscription;
+import com.codenvy.api.account.server.dao.Subscription;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.commons.lang.NamedThreadFactory;
 

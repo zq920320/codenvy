@@ -18,13 +18,12 @@
 package com.codenvy.scheduler;
 
 import com.codenvy.api.account.server.dao.AccountDao;
-import com.codenvy.api.account.shared.dto.Subscription;
+import com.codenvy.api.account.server.dao.Subscription;
 import com.codenvy.api.core.ApiException;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.ForbiddenException;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
-import com.codenvy.dto.server.DtoFactory;
 
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
@@ -84,8 +83,8 @@ public class CheckSubscriptionTaskTest {
 
         continueTest = false;
 
-        subscription1 = DtoFactory.getInstance().createDto(Subscription.class).withId("id1");
-        subscription2 = DtoFactory.getInstance().createDto(Subscription.class).withId("id2");
+        subscription1 = new Subscription().withId("id1");
+        subscription2 = new Subscription().withId("id2");
     }
 
     @Test

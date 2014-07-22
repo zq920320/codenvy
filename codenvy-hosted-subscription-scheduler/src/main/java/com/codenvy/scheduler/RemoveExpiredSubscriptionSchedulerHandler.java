@@ -21,20 +21,19 @@ import com.codenvy.api.account.server.Constants;
 import com.codenvy.api.account.server.SubscriptionService;
 import com.codenvy.api.account.server.SubscriptionServiceRegistry;
 import com.codenvy.api.account.server.dao.AccountDao;
-import com.codenvy.api.account.shared.dto.Subscription;
-import com.codenvy.api.account.shared.dto.SubscriptionHistoryEvent;
+import com.codenvy.api.account.server.dao.Subscription;
+import com.codenvy.api.account.server.dao.SubscriptionHistoryEvent;
 import com.codenvy.api.core.ApiException;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.commons.lang.NameGenerator;
-import com.codenvy.dto.server.DtoFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 
-import static com.codenvy.api.account.shared.dto.SubscriptionHistoryEvent.Type.DELETE;
+import static com.codenvy.api.account.server.dao.SubscriptionHistoryEvent.Type.DELETE;
 import static com.codenvy.scheduler.SubscriptionScheduler.EVENTS_INITIATOR_SCHEDULER;
 
 /**
@@ -66,7 +65,7 @@ public class RemoveExpiredSubscriptionSchedulerHandler implements SubscriptionSc
 
                 service.onRemoveSubscription(subscription);
 
-                SubscriptionHistoryEvent event = DtoFactory.getInstance().createDto(SubscriptionHistoryEvent.class);
+                SubscriptionHistoryEvent event = new SubscriptionHistoryEvent();
                 event.setId(NameGenerator.generate(SubscriptionHistoryEvent.class.getSimpleName().toLowerCase(), Constants.ID_LENGTH));
                 event.setType(DELETE);
                 event.setUserId(EVENTS_INITIATOR_SCHEDULER);

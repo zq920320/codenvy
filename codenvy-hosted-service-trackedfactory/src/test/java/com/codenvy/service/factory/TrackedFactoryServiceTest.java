@@ -19,7 +19,7 @@ package com.codenvy.service.factory;
 
 import com.codenvy.api.account.server.SubscriptionService;
 import com.codenvy.api.account.server.dao.AccountDao;
-import com.codenvy.api.account.shared.dto.Subscription;
+import com.codenvy.api.account.server.dao.Subscription;
 import com.codenvy.api.core.ApiException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.dto.server.DtoFactory;
@@ -58,22 +58,19 @@ public class TrackedFactoryServiceTest {
     public void beforeCreateSubscriptionWhenOneAlreadyExists() throws ApiException {
         final String accountId = "acc1";
         final List<Subscription> existedSubscriptions = new ArrayList<>(1);
-        existedSubscriptions.add(DtoFactory.getInstance().createDto(Subscription.class)
-                                           .withServiceId(service.getServiceId()));
+        existedSubscriptions.add(new Subscription().withServiceId(service.getServiceId()));
         when(accountDao.getSubscriptions(accountId)).thenReturn(existedSubscriptions);
 
-        final Subscription newSubscription = DtoFactory.getInstance().createDto(Subscription.class)
-                                                       .withServiceId(service.getServiceId())
-                                                       .withAccountId(accountId);
+        final Subscription newSubscription = new Subscription().withServiceId(service.getServiceId())
+                                                               .withAccountId(accountId);
         service.beforeCreateSubscription(newSubscription);
     }
 
     @Test
     public void beforeCreateSubscription() throws ApiException {
         final String accountId = "acc1";
-        final Subscription newSubscription = DtoFactory.getInstance().createDto(Subscription.class)
-                                                       .withServiceId(service.getServiceId())
-                                                       .withAccountId(accountId);
+        final Subscription newSubscription = new Subscription().withServiceId(service.getServiceId())
+                                                               .withAccountId(accountId);
         service.beforeCreateSubscription(newSubscription);
     }
 }
