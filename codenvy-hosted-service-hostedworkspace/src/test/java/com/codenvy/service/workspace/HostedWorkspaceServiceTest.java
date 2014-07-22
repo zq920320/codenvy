@@ -19,7 +19,7 @@ package com.codenvy.service.workspace;
 
 import com.codenvy.api.account.server.SubscriptionService;
 import com.codenvy.api.account.server.dao.AccountDao;
-import com.codenvy.api.account.shared.dto.Subscription;
+import com.codenvy.api.account.server.dao.Subscription;
 import com.codenvy.api.core.ApiException;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.NotFoundException;
@@ -70,8 +70,7 @@ public class HostedWorkspaceServiceTest {
     @Test(expectedExceptions = ConflictException.class,
           expectedExceptionsMessageRegExp = "Subscription property codenvy:workspace_id required")
     public void testOnCreateSubscriptionWithoutWorkspaceIdProperty() throws ApiException {
-        final Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class)
-                                                    .withState(Subscription.State.ACTIVE);
+        final Subscription subscription = new Subscription().withState(Subscription.State.ACTIVE);
         service.afterCreateSubscription(subscription);
     }
 
@@ -85,9 +84,8 @@ public class HostedWorkspaceServiceTest {
         properties.put("codenvy:workspace_id", workspaceId);
         properties.put("RAM", "0xAGB");
         properties.put("Package", "developer");
-        final Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class)
-                                                    .withState(Subscription.State.ACTIVE)
-                                                    .withProperties(properties);
+        final Subscription subscription = new Subscription().withState(Subscription.State.ACTIVE)
+                                                            .withProperties(properties);
 
         service.afterCreateSubscription(subscription);
     }
@@ -95,23 +93,21 @@ public class HostedWorkspaceServiceTest {
     @Test(expectedExceptions = ConflictException.class,
           expectedExceptionsMessageRegExp = "Subscription property codenvy:workspace_id required")
     public void testOnUpdateSubscriptionWithoutWorkspaceIdProperty() throws ApiException {
-        final Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class)
-                                                    .withState(Subscription.State.ACTIVE);
+        final Subscription subscription = new Subscription().withState(Subscription.State.ACTIVE);
         service.onUpdateSubscription(subscription, subscription);
     }
 
     @Test(expectedExceptions = ConflictException.class,
           expectedExceptionsMessageRegExp = "Subscription property codenvy:workspace_id required")
     public void testTarifficateSubscriptionWithoutWorkspaceIdProperty() throws ApiException {
-        final Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class)
-                                                    .withState(Subscription.State.ACTIVE);
+        final Subscription subscription = new Subscription().withState(Subscription.State.ACTIVE);
         service.afterCreateSubscription(subscription);
     }
 
     @Test(expectedExceptions = ConflictException.class,
           expectedExceptionsMessageRegExp = "Subscription property codenvy:workspace_id required")
     public void testRemoveSubscriptionWithoutWorkspaceIdProperty() throws ApiException {
-        final Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class);
+        final Subscription subscription = new Subscription();
         service.onRemoveSubscription(subscription);
     }
 
@@ -125,9 +121,8 @@ public class HostedWorkspaceServiceTest {
         properties.put("codenvy:workspace_id", workspaceId);
         properties.put("Package", "developer");
         properties.put("RAM", "1GB");
-        final Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class)
-                                                    .withState(Subscription.State.ACTIVE)
-                                                    .withProperties(properties);
+        final Subscription subscription = new Subscription().withState(Subscription.State.ACTIVE)
+                                                            .withProperties(properties);
 
         service.afterCreateSubscription(subscription);
 
@@ -151,12 +146,10 @@ public class HostedWorkspaceServiceTest {
         properties.put("codenvy:workspace_id", workspaceId);
         properties.put("Package", "developer");
         properties.put("RAM", "1GB");
-        final Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class)
-                                                    .withState(Subscription.State.ACTIVE)
-                                                    .withProperties(properties)
-                                                    .withStartDate(System.currentTimeMillis())
-                                                    .withEndDate(System.currentTimeMillis() + 60_000);
-
+        final Subscription subscription = new Subscription().withState(Subscription.State.ACTIVE)
+                                                            .withProperties(properties)
+                                                            .withStartDate(System.currentTimeMillis())
+                                                            .withEndDate(System.currentTimeMillis() + 60_000);
         service.onCheckSubscription(subscription);
 
         assertEquals(workspace.getAttributes().size(), 2);
@@ -179,10 +172,9 @@ public class HostedWorkspaceServiceTest {
         properties.put("codenvy:workspace_id", workspaceId);
         properties.put("Package", "developer");
         properties.put("RAM", "1GB");
-        final Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class)
-                                                    .withState(Subscription.State.ACTIVE)
-                                                    .withProperties(properties)
-                                                    .withStartDate(System.currentTimeMillis() * 2);
+        final Subscription subscription = new Subscription().withState(Subscription.State.ACTIVE)
+                                                            .withProperties(properties)
+                                                            .withStartDate(System.currentTimeMillis() + 60_000);
 
         service.onCheckSubscription(subscription);
 
@@ -199,9 +191,8 @@ public class HostedWorkspaceServiceTest {
         properties.put("codenvy:workspace_id", workspaceId);
         properties.put("Package", "developer");
         properties.put("RAM", "1GB");
-        final Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class)
-                                                    .withState(Subscription.State.ACTIVE)
-                                                    .withProperties(properties);
+        final Subscription subscription = new Subscription().withState(Subscription.State.ACTIVE)
+                                                            .withProperties(properties);
 
         service.onUpdateSubscription(subscription, subscription);
 
@@ -221,9 +212,8 @@ public class HostedWorkspaceServiceTest {
         final Attribute runnerLifeTime = new Attribute().withName("codenvy:runner_lifetime");
         final Workspace workspace = new Workspace().withId(workspaceId)
                                                    .withAttributes(Arrays.asList(runnerLifeTime, runnerRAM));
-        final Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class)
-                                                    .withState(Subscription.State.WAIT_FOR_PAYMENT)
-                                                    .withProperties(Collections.singletonMap("codenvy:workspace_id", workspaceId));
+        final Subscription subscription = new Subscription().withState(Subscription.State.WAIT_FOR_PAYMENT)
+                                                            .withProperties(Collections.singletonMap("codenvy:workspace_id", workspaceId));
         when(workspaceDao.getById(workspaceId)).thenReturn(workspace);
 
         service.onUpdateSubscription(subscription, subscription);
@@ -238,8 +228,7 @@ public class HostedWorkspaceServiceTest {
         final Attribute runnerLifeTime = new Attribute().withName("codenvy:runner_lifetime");
         final Workspace workspace = new Workspace().withId(workspaceId)
                                                    .withAttributes(Arrays.asList(runnerLifeTime, runnerRAM));
-        final Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class)
-                                                    .withProperties(Collections.singletonMap("codenvy:workspace_id", workspaceId));
+        final Subscription subscription = new Subscription().withProperties(Collections.singletonMap("codenvy:workspace_id", workspaceId));
         when(workspaceDao.getById(workspaceId)).thenReturn(workspace);
 
         service.onRemoveSubscription(subscription);
@@ -259,9 +248,8 @@ public class HostedWorkspaceServiceTest {
         properties.put("Package", "custom");
         properties.put("TariffPlan", "custom");
         properties.put("RAM", "1GB");
-        final Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class)
-                                                    .withState(Subscription.State.ACTIVE)
-                                                    .withProperties(properties);
+        final Subscription subscription = new Subscription().withState(Subscription.State.ACTIVE)
+                                                            .withProperties(properties);
 
         service.tarifficate(subscription);
     }
@@ -276,10 +264,9 @@ public class HostedWorkspaceServiceTest {
         properties.put("Package", "team");
         properties.put("TariffPlan", "monthly");
         properties.put("RAM", "2GB");
-        final Subscription newSubscription = DtoFactory.getInstance().createDto(Subscription.class)
-                                                       .withAccountId(accountId)
-                                                       .withState(Subscription.State.WAIT_FOR_PAYMENT)
-                                                       .withProperties(properties);
+        final Subscription newSubscription = new Subscription().withAccountId(accountId)
+                                                               .withState(Subscription.State.WAIT_FOR_PAYMENT)
+                                                               .withProperties(properties);
         service.beforeCreateSubscription(newSubscription);
     }
 
@@ -293,10 +280,9 @@ public class HostedWorkspaceServiceTest {
         properties.put("Package", "team");
         properties.put("TariffPlan", "monthly");
         properties.put("RAM", "2GB");
-        final Subscription newSubscription = DtoFactory.getInstance().createDto(Subscription.class)
-                                                       .withAccountId(accountId)
-                                                       .withState(Subscription.State.ACTIVE)
-                                                       .withProperties(properties);
+        final Subscription newSubscription = new Subscription().withAccountId(accountId)
+                                                               .withState(Subscription.State.ACTIVE)
+                                                               .withProperties(properties);
 
         service.beforeCreateSubscription(newSubscription);
     }
@@ -306,20 +292,18 @@ public class HostedWorkspaceServiceTest {
         final String workspaceId = "ws1";
         final String accountId = "acc1";
         final List<Subscription> existedSubscriptions = new ArrayList<>(1);
-        existedSubscriptions.add(DtoFactory.getInstance().createDto(Subscription.class)
-                                           .withServiceId(service.getServiceId())
-                                           .withState(Subscription.State.WAIT_FOR_PAYMENT)
-                                           .withProperties(Collections.singletonMap("codenvy:workspace_id", workspaceId)));
+        existedSubscriptions.add(new Subscription().withServiceId(service.getServiceId())
+                                                   .withState(Subscription.State.WAIT_FOR_PAYMENT)
+                                                   .withProperties(Collections.singletonMap("codenvy:workspace_id", workspaceId)));
         when(accountDao.getSubscriptions(accountId)).thenReturn(existedSubscriptions);
         final Map<String, String> properties = new HashMap<>(4);
         properties.put("codenvy:workspace_id", workspaceId);
         properties.put("Package", "team");
         properties.put("TariffPlan", "monthly");
         properties.put("RAM", "2GB");
-        final Subscription newSubscription = DtoFactory.getInstance().createDto(Subscription.class)
-                                                       .withAccountId(accountId)
-                                                       .withState(Subscription.State.ACTIVE)
-                                                       .withProperties(properties);
+        final Subscription newSubscription = new Subscription().withAccountId(accountId)
+                                                               .withState(Subscription.State.ACTIVE)
+                                                               .withProperties(properties);
         service.beforeCreateSubscription(newSubscription);
     }
 
@@ -329,20 +313,18 @@ public class HostedWorkspaceServiceTest {
         final String workspaceId = "ws1";
         final String accountId = "acc1";
         final List<Subscription> existedSubscriptions = new ArrayList<>(1);
-        existedSubscriptions.add(DtoFactory.getInstance().createDto(Subscription.class)
-                                           .withServiceId(service.getServiceId())
-                                           .withState(Subscription.State.WAIT_FOR_PAYMENT)
-                                           .withProperties(Collections.singletonMap("codenvy:workspace_id", workspaceId)));
+        existedSubscriptions.add(new Subscription().withServiceId(service.getServiceId())
+                                                   .withState(Subscription.State.WAIT_FOR_PAYMENT)
+                                                   .withProperties(Collections.singletonMap("codenvy:workspace_id", workspaceId)));
         when(accountDao.getSubscriptions(accountId)).thenReturn(existedSubscriptions);
         final Map<String, String> properties = new HashMap<>(4);
         properties.put("codenvy:workspace_id", workspaceId);
         properties.put("Package", "team");
         properties.put("TariffPlan", "monthly");
         properties.put("RAM", "2GB");
-        final Subscription newSubscription = DtoFactory.getInstance().createDto(Subscription.class)
-                                                       .withAccountId(accountId)
-                                                       .withState(Subscription.State.WAIT_FOR_PAYMENT)
-                                                       .withProperties(properties);
+        final Subscription newSubscription = new Subscription().withAccountId(accountId)
+                                                               .withState(Subscription.State.WAIT_FOR_PAYMENT)
+                                                               .withProperties(properties);
         service.beforeCreateSubscription(newSubscription);
     }
 
@@ -352,22 +334,19 @@ public class HostedWorkspaceServiceTest {
         final String workspaceId = "ws1";
         final String accountId = "acc1";
         final List<Subscription> existedSubscriptions = new ArrayList<>(2);
-        existedSubscriptions.add(DtoFactory.getInstance().createDto(Subscription.class)
-                                           .withServiceId(service.getServiceId())
-                                           .withProperties(Collections.singletonMap("codenvy:workspace_id", workspaceId)));
-        existedSubscriptions.add(DtoFactory.getInstance().createDto(Subscription.class)
-                                           .withServiceId(service.getServiceId())
-                                           .withProperties(Collections.singletonMap("codenvy:workspace_id", workspaceId)));
+        existedSubscriptions.add(new Subscription().withServiceId(service.getServiceId())
+                                                   .withProperties(Collections.singletonMap("codenvy:workspace_id", workspaceId)));
+        existedSubscriptions.add(new Subscription().withServiceId(service.getServiceId())
+                                                   .withProperties(Collections.singletonMap("codenvy:workspace_id", workspaceId)));
         when(accountDao.getSubscriptions(accountId)).thenReturn(existedSubscriptions);
         final Map<String, String> properties = new HashMap<>(4);
         properties.put("codenvy:workspace_id", workspaceId);
         properties.put("Package", "team");
         properties.put("TariffPlan", "monthly");
         properties.put("RAM", "2GB");
-        final Subscription newSubscription = DtoFactory.getInstance().createDto(Subscription.class)
-                                                       .withAccountId(accountId)
-                                                       .withState(Subscription.State.WAIT_FOR_PAYMENT)
-                                                       .withProperties(properties);
+        final Subscription newSubscription = new Subscription().withAccountId(accountId)
+                                                               .withState(Subscription.State.WAIT_FOR_PAYMENT)
+                                                               .withProperties(properties);
         service.beforeCreateSubscription(newSubscription);
     }
 
@@ -380,22 +359,20 @@ public class HostedWorkspaceServiceTest {
         final long startDate = calendar.getTimeInMillis();
         calendar.add(Calendar.MONTH, 1);
         final long endDate = calendar.getTimeInMillis();
-        existedSubscriptions.add(DtoFactory.getInstance().createDto(Subscription.class)
-                                           .withState(Subscription.State.ACTIVE)
-                                           .withServiceId(service.getServiceId())
-                                           .withStartDate(startDate)
-                                           .withEndDate(endDate)
-                                           .withProperties(Collections.singletonMap("codenvy:workspace_id", workspaceId)));
+        existedSubscriptions.add(new Subscription().withState(Subscription.State.ACTIVE)
+                                                   .withServiceId(service.getServiceId())
+                                                   .withStartDate(startDate)
+                                                   .withEndDate(endDate)
+                                                   .withProperties(Collections.singletonMap("codenvy:workspace_id", workspaceId)));
         when(accountDao.getSubscriptions(accountId)).thenReturn(existedSubscriptions);
         final Map<String, String> properties = new HashMap<>(4);
         properties.put("codenvy:workspace_id", workspaceId);
         properties.put("Package", "team");
         properties.put("TariffPlan", "monthly");
         properties.put("RAM", "2GB");
-        final Subscription newSubscription = DtoFactory.getInstance().createDto(Subscription.class)
-                                                       .withAccountId(accountId)
-                                                       .withState(Subscription.State.ACTIVE)
-                                                       .withProperties(properties);
+        final Subscription newSubscription = new Subscription().withAccountId(accountId)
+                                                               .withState(Subscription.State.ACTIVE)
+                                                               .withProperties(properties);
         service.beforeCreateSubscription(newSubscription);
 
         assertEquals(newSubscription.getStartDate(), endDate);

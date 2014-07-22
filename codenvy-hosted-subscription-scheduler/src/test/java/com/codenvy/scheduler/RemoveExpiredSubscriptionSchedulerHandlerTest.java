@@ -20,12 +20,11 @@ package com.codenvy.scheduler;
 import com.codenvy.api.account.server.SubscriptionService;
 import com.codenvy.api.account.server.SubscriptionServiceRegistry;
 import com.codenvy.api.account.server.dao.AccountDao;
-import com.codenvy.api.account.shared.dto.Subscription;
-import com.codenvy.api.account.shared.dto.SubscriptionHistoryEvent;
+import com.codenvy.api.account.server.dao.Subscription;
+import com.codenvy.api.account.server.dao.SubscriptionHistoryEvent;
 import com.codenvy.api.core.ApiException;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.ServerException;
-import com.codenvy.dto.server.DtoFactory;
 
 import org.mockito.ArgumentMatcher;
 import org.mockito.InjectMocks;
@@ -74,8 +73,9 @@ public class RemoveExpiredSubscriptionSchedulerHandlerTest {
     @Test
     public void shouldNotDoAnythingOnCheckSubscriptionIfSubscriptionIsNotExpired() throws ApiException {
         when(registry.get(SERVICE_ID)).thenReturn(subscriptionService);
-        final Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class).withId(ID).withServiceId(
-                SERVICE_ID).withEndDate(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(1));
+        final Subscription subscription = new Subscription().withId(ID)
+                                                            .withServiceId(SERVICE_ID)
+                                                            .withEndDate(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(1));
 
         handler.checkSubscription(subscription);
     }
@@ -83,8 +83,9 @@ public class RemoveExpiredSubscriptionSchedulerHandlerTest {
     @Test
     public void shouldRemoveSubscriptionIfItIsExpired() throws ApiException {
         when(registry.get(SERVICE_ID)).thenReturn(subscriptionService);
-        final Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class).withId(ID).withServiceId(
-                SERVICE_ID).withEndDate(System.currentTimeMillis() - 1);
+        final Subscription subscription = new Subscription().withId(ID)
+                                                            .withServiceId(SERVICE_ID)
+                                                            .withEndDate(System.currentTimeMillis() - 1);
 
         handler.checkSubscription(subscription);
 
@@ -106,8 +107,9 @@ public class RemoveExpiredSubscriptionSchedulerHandlerTest {
     @Test(expectedExceptions = ConflictException.class, expectedExceptionsMessageRegExp = "Subscription service not found " + SERVICE_ID)
     public void shouldThrowConflictExceptionIfServiceIdIsUnknown() throws ApiException {
         when(registry.get(SERVICE_ID)).thenReturn(null);
-        final Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class).withId(ID).withServiceId(
-                SERVICE_ID).withEndDate(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(1));
+        final Subscription subscription = new Subscription().withId(ID)
+                                                            .withServiceId(SERVICE_ID)
+                                                            .withEndDate(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(1));
 
         handler.checkSubscription(subscription);
     }
@@ -118,8 +120,9 @@ public class RemoveExpiredSubscriptionSchedulerHandlerTest {
             throws ApiException {
         when(registry.get(SERVICE_ID)).thenReturn(subscriptionService);
         doThrow(new ServerException("exception")).when(subscriptionService).onRemoveSubscription(any(Subscription.class));
-        final Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class).withId(ID).withServiceId(
-                SERVICE_ID).withEndDate(System.currentTimeMillis() - 1);
+        final Subscription subscription = new Subscription().withId(ID)
+                                                            .withServiceId(SERVICE_ID)
+                                                            .withEndDate(System.currentTimeMillis() - 1);
 
         handler.checkSubscription(subscription);
 
@@ -132,8 +135,9 @@ public class RemoveExpiredSubscriptionSchedulerHandlerTest {
             throws ApiException {
         when(registry.get(SERVICE_ID)).thenReturn(subscriptionService);
         doThrow(new ServerException("exception")).when(accountDao).addSubscriptionHistoryEvent(any(SubscriptionHistoryEvent.class));
-        final Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class).withId(ID).withServiceId(
-                SERVICE_ID).withEndDate(System.currentTimeMillis() - 1);
+        final Subscription subscription = new Subscription().withId(ID)
+                                                            .withServiceId(SERVICE_ID)
+                                                            .withEndDate(System.currentTimeMillis() - 1);
 
         handler.checkSubscription(subscription);
 
@@ -146,8 +150,9 @@ public class RemoveExpiredSubscriptionSchedulerHandlerTest {
             throws ApiException {
         when(registry.get(SERVICE_ID)).thenReturn(subscriptionService);
         doThrow(new ServerException("exception")).when(accountDao).removeSubscription(ID);
-        final Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class).withId(ID).withServiceId(
-                SERVICE_ID).withEndDate(System.currentTimeMillis() - 1);
+        final Subscription subscription = new Subscription().withId(ID)
+                                                            .withServiceId(SERVICE_ID)
+                                                            .withEndDate(System.currentTimeMillis() - 1);
 
         handler.checkSubscription(subscription);
 

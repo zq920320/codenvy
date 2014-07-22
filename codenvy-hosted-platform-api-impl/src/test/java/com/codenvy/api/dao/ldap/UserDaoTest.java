@@ -18,7 +18,7 @@
 package com.codenvy.api.dao.ldap;
 
 import com.codenvy.api.account.server.dao.AccountDao;
-import com.codenvy.api.account.shared.dto.Account;
+import com.codenvy.api.account.server.dao.Account;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
@@ -203,7 +203,7 @@ public class UserDaoTest {
     @Test
     public void testRemoveUser() throws Exception {
         when(accountDao.getByOwner(users[0].getId()))
-                .thenReturn(Arrays.asList(DtoFactory.getInstance().createDto(Account.class).withId("account_id")));
+                .thenReturn(Arrays.asList(new Account().withId("account_id")));
         Member member = new Member().withUserId(users[0].getId())
                                     .withWorkspaceId("no_matter")
                                     .withRoles(Arrays.asList("workspace/developer"));

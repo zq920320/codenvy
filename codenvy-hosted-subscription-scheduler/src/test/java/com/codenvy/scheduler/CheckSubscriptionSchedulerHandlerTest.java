@@ -20,10 +20,9 @@ package com.codenvy.scheduler;
 import com.codenvy.api.account.server.SubscriptionService;
 import com.codenvy.api.account.server.SubscriptionServiceRegistry;
 import com.codenvy.api.account.server.dao.AccountDao;
-import com.codenvy.api.account.shared.dto.Subscription;
+import com.codenvy.api.account.server.dao.Subscription;
 import com.codenvy.api.core.ApiException;
 import com.codenvy.api.core.ConflictException;
-import com.codenvy.dto.server.DtoFactory;
 
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -62,8 +61,9 @@ public class CheckSubscriptionSchedulerHandlerTest {
     @Test
     public void shouldCallOnCheckSubscriptionIfSubscriptionIsNotExpired() throws ApiException {
         when(registry.get(SERVICE_ID)).thenReturn(subscriptionService);
-        final Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class).withId(ID).withServiceId(
-                SERVICE_ID).withEndDate(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(1));
+        final Subscription subscription = new Subscription().withId(ID)
+                                                            .withServiceId(SERVICE_ID)
+                                                            .withEndDate(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(1));
 
         handler.checkSubscription(subscription);
 
@@ -73,8 +73,9 @@ public class CheckSubscriptionSchedulerHandlerTest {
     @Test(expectedExceptions = ConflictException.class, expectedExceptionsMessageRegExp = "Subscription service not found " + SERVICE_ID)
     public void shouldThrowConflictExceptionIfServiceIdIsUnknown() throws ApiException {
         when(registry.get(SERVICE_ID)).thenReturn(null);
-        final Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class).withId(ID).withServiceId(
-                SERVICE_ID).withEndDate(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(1));
+        final Subscription subscription = new Subscription().withId(ID)
+                                                            .withServiceId(SERVICE_ID)
+                                                            .withEndDate(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(1));
 
         handler.checkSubscription(subscription);
     }

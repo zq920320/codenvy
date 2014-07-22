@@ -28,16 +28,15 @@ import com.codenvy.api.account.server.SubscriptionService;
 import com.codenvy.api.account.server.SubscriptionServiceRegistry;
 import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.shared.dto.Payment;
-import com.codenvy.api.account.shared.dto.Subscription;
-import com.codenvy.api.account.shared.dto.SubscriptionHistoryEvent;
-import com.codenvy.api.account.shared.dto.SubscriptionPayment;
+import com.codenvy.api.account.server.dao.Subscription;
+import com.codenvy.api.account.server.dao.SubscriptionHistoryEvent;
+import com.codenvy.api.account.server.dao.SubscriptionPayment;
 import com.codenvy.api.core.ApiException;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.commons.env.EnvironmentContext;
 import com.codenvy.commons.lang.NameGenerator;
-import com.codenvy.dto.server.DtoFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,8 +44,8 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import java.math.BigDecimal;
 
-import static com.codenvy.api.account.shared.dto.Subscription.State.ACTIVE;
-import static com.codenvy.api.account.shared.dto.SubscriptionHistoryEvent.Type.UPDATE;
+import static com.codenvy.api.account.server.dao.Subscription.State.ACTIVE;
+import static com.codenvy.api.account.server.dao.SubscriptionHistoryEvent.Type.UPDATE;
 
 /**
  * Send payment requests to Braintree and activate subscription.
@@ -116,7 +115,15 @@ public class BraintreePaymentService implements PaymentService {
             if (result.isSuccess()) {
                 LOG.info("PAYMENTS# state#{}# payment-reason-id#{}# transaction-id#{}#", "Successful", payment.getSubscriptionId(),
                          result.getTarget().getId());
-                Subscription newSubscription = DtoFactory.getInstance().clone(subscription).withState(ACTIVE);
+                Subscription newSubscription = new Subscription()
+                                              .withId(subscription.getId())
+                                              .withAccountId(subscription.getAccountId())
+                                              .withServiceId(subscription.getServiceId())
+                                              .withStartDate(subscription.getStartDate())
+                                              .withEndDate(subscription.getEndDate())
+                                              .withProperties(subscription.getProperties())
+                                              .withState(ACTIVE);
+
                 accountDao.updateSubscription(newSubscription);
 
                 addSubscriptionHistoryEvent(amount, result, newSubscription);
@@ -140,11 +147,11 @@ public class BraintreePaymentService implements PaymentService {
 
     private void addSubscriptionHistoryEvent(double amount, Result<Transaction> result, Subscription subscription)
             throws ServerException, ConflictException {
-        SubscriptionPayment payment = DtoFactory.getInstance().createDto(SubscriptionPayment.class);
+        SubscriptionPayment payment = new SubscriptionPayment();
         payment.setAmount(amount);
         payment.setTransactionId(result.getTarget().getId());
 
-        SubscriptionHistoryEvent event = DtoFactory.getInstance().createDto(SubscriptionHistoryEvent.class);
+        SubscriptionHistoryEvent event = new SubscriptionHistoryEvent();
         event.setId(NameGenerator.generate(SubscriptionHistoryEvent.class.getSimpleName().toLowerCase(), Constants.ID_LENGTH));
         event.setType(UPDATE);
         event.setUserId(EnvironmentContext.getCurrent().getUser().getId());

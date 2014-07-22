@@ -27,9 +27,9 @@ import com.codenvy.api.account.server.SubscriptionService;
 import com.codenvy.api.account.server.SubscriptionServiceRegistry;
 import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.shared.dto.Payment;
-import com.codenvy.api.account.shared.dto.Subscription;
-import com.codenvy.api.account.shared.dto.SubscriptionHistoryEvent;
-import com.codenvy.api.account.shared.dto.SubscriptionPayment;
+import com.codenvy.api.account.server.dao.Subscription;
+import com.codenvy.api.account.server.dao.SubscriptionHistoryEvent;
+import com.codenvy.api.account.server.dao.SubscriptionPayment;
 import com.codenvy.api.core.ApiException;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.ForbiddenException;
@@ -51,9 +51,9 @@ import org.testng.annotations.Test;
 
 import java.math.BigDecimal;
 
-import static com.codenvy.api.account.shared.dto.Subscription.State.ACTIVE;
-import static com.codenvy.api.account.shared.dto.Subscription.State.WAIT_FOR_PAYMENT;
-import static com.codenvy.api.account.shared.dto.SubscriptionHistoryEvent.Type.UPDATE;
+import static com.codenvy.api.account.server.dao.Subscription.State.ACTIVE;
+import static com.codenvy.api.account.server.dao.Subscription.State.WAIT_FOR_PAYMENT;
+import static com.codenvy.api.account.server.dao.SubscriptionHistoryEvent.Type.UPDATE;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
@@ -89,6 +89,7 @@ public class BraintreePaymentServiceTest {
     @Mock
     private Transaction              transaction;
     private Subscription             subscription;
+    private Subscription             activeSubscription;
     private Payment                  payment;
     private SubscriptionHistoryEvent expectedEvent;
 
@@ -97,16 +98,18 @@ public class BraintreePaymentServiceTest {
 
     @BeforeMethod
     public void setUp() throws Exception {
-        subscription = DtoFactory.getInstance().createDto(Subscription.class).withId(SUBSCRIPTION_ID).withServiceId(SERVICE_ID)
+        subscription = new Subscription().withId(SUBSCRIPTION_ID).withServiceId(SERVICE_ID)
                                  .withAccountId("ACCOUNT_ID").withState(WAIT_FOR_PAYMENT);
 
-        SubscriptionPayment subscriptionPayment =
-                DtoFactory.getInstance().createDto(SubscriptionPayment.class).withTransactionId("TRANSACTION_ID").withAmount(AMOUNT);
+        activeSubscription = new Subscription().withId(SUBSCRIPTION_ID).withServiceId(SERVICE_ID)
+                                         .withAccountId("ACCOUNT_ID").withState(ACTIVE);
 
-        expectedEvent = DtoFactory.getInstance().createDto(SubscriptionHistoryEvent.class).withUserId(User.ANONYMOUS.getId())
-                                  .withType(
-                                          UPDATE).withSubscription(
-                        DtoFactory.getInstance().clone(subscription).withState(ACTIVE)).withSubscriptionPayment(subscriptionPayment);
+        SubscriptionPayment subscriptionPayment =
+                new SubscriptionPayment().withTransactionId("TRANSACTION_ID").withAmount(AMOUNT);
+
+        expectedEvent = new SubscriptionHistoryEvent().withUserId(User.ANONYMOUS.getId())
+                                                      .withType(UPDATE).withSubscription(activeSubscription)
+                                                      .withSubscriptionPayment(subscriptionPayment);
 
         payment = DtoFactory.getInstance().createDto(Payment.class).withSubscriptionId(SUBSCRIPTION_ID).withCardNumber(CARD_NUMBER)
                             .withCvv(CVV).withCardholderName(CARDHOLDER).withExpirationMonth(EXPIRATION_MONTH)
@@ -151,7 +154,8 @@ public class BraintreePaymentServiceTest {
             @Override
             public boolean matches(Object argument) {
                 Subscription actualSubscription = (Subscription)argument;
-                return DtoFactory.getInstance().clone(subscription).withState(ACTIVE).equals(actualSubscription);
+                return new Subscription().withId(SUBSCRIPTION_ID).withServiceId(SERVICE_ID)
+                                         .withAccountId("ACCOUNT_ID").withState(ACTIVE).equals(actualSubscription);
             }
         }));
         verify(accountDao).addSubscriptionHistoryEvent(argThat(new ArgumentMatcher<SubscriptionHistoryEvent>() {
@@ -161,7 +165,7 @@ public class BraintreePaymentServiceTest {
                 return expectedEvent.equals(actualSubscriptionEvent.withId(null).withTime(0));
             }
         }));
-        verify(subscriptionService).onUpdateSubscription(subscription, DtoFactory.getInstance().clone(subscription).withState(ACTIVE));
+        verify(subscriptionService).onUpdateSubscription(subscription, activeSubscription);
     }
 
     @Test(expectedExceptions = ConflictException.class, expectedExceptionsMessageRegExp = "BraintreeMessage")
@@ -233,8 +237,7 @@ public class BraintreePaymentServiceTest {
 
     @Test(expectedExceptions = ConflictException.class, expectedExceptionsMessageRegExp = "Payment not required")
     public void shouldThrowConflictExceptionIfSubscriptionIsActive() throws Exception {
-        Subscription subscription = DtoFactory.getInstance().clone(this.subscription).withState(ACTIVE);
-        when(accountDao.getSubscriptionById(SUBSCRIPTION_ID)).thenReturn(subscription);
+        when(accountDao.getSubscriptionById(SUBSCRIPTION_ID)).thenReturn(activeSubscription);
         when(registry.get(SERVICE_ID)).thenReturn(subscriptionService);
         when(subscriptionService.tarifficate(any(Subscription.class))).thenReturn(1000D);
 
@@ -251,7 +254,7 @@ public class BraintreePaymentServiceTest {
         when(result.isSuccess()).thenReturn(true);
         when(result.getTarget()).thenReturn(transaction);
         when(transaction.getId()).thenReturn("TRANSACTION_ID");
-        doThrow(exception).when(accountDao).updateSubscription(eq(DtoFactory.getInstance().clone(subscription).withState(ACTIVE)));
+        doThrow(exception).when(accountDao).updateSubscription(eq(activeSubscription));
 
         service.purchase(payment);
     }
