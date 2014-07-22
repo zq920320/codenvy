@@ -21,7 +21,6 @@ package com.codenvy.api.dao.mongo;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.api.core.notification.EventService;
-import com.codenvy.api.workspace.server.dao.Attribute;
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
 import com.codenvy.api.workspace.server.dao.Workspace;
 import com.google.gson.Gson;
@@ -33,7 +32,9 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
@@ -189,17 +190,11 @@ public class WorkspaceDaoImplTest extends BaseDaoTest {
         assertNull(collection.findOne(new BasicDBObject("id", WORKSPACE_ID)));
     }
 
-    private List<Attribute> getAttributes() {
-        List<Attribute> attributes = new ArrayList<>(3);
-        attributes.add(new Attribute().withName("attr1")
-                                      .withValue("value1")
-                                      .withDescription("description1"));
-        attributes.add(new Attribute().withName("attr2")
-                                      .withValue("value2")
-                                      .withDescription("description2"));
-        attributes.add(new Attribute().withName("attr3")
-                                      .withValue("value3")
-                                      .withDescription("description3"));
+    private Map<String, String> getAttributes() {
+        final Map<String, String> attributes = new HashMap<>(3);
+        attributes.put("attr1", "value1");
+        attributes.put("attr2", "value2");
+        attributes.put("attr3", "value3");
         return attributes;
     }
 

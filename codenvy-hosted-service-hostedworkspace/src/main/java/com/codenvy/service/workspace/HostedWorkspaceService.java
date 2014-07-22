@@ -25,12 +25,10 @@ import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
-import com.codenvy.api.workspace.server.dao.Attribute;
 import com.codenvy.api.workspace.server.dao.Workspace;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -246,30 +244,22 @@ public class HostedWorkspaceService extends SubscriptionService {
         final String wsId = ensureExistsAndGet("codenvy:workspace_id", subscription);
         final String tariffPackage = ensureExistsAndGet("Package", subscription);
         final Workspace workspace = workspaceDao.getById(wsId);
-        final Map<String, Attribute> wsAttributes = new HashMap<>(workspace.getAttributes().size());
-        for (Attribute attribute : workspace.getAttributes()) {
-            wsAttributes.put(attribute.getName(), attribute);
-        }
-        final Attribute runnerRAM = new Attribute().withName("codenvy:runner_ram")
-                                                   .withValue(String.valueOf(convert(ensureExistsAndGet("RAM", subscription))));
-        final Attribute runnerLifetime = new Attribute().withName("codenvy:runner_lifetime");
+        final Map<String, String> wsAttributes = workspace.getAttributes();
         switch (tariffPackage.toLowerCase()) {
             case "developer":
             case "team":
                 //1 hour
-                runnerLifetime.setValue(String.valueOf(TimeUnit.HOURS.toSeconds(1)));
+                wsAttributes.put("codenvy:runner_lifetime", String.valueOf(TimeUnit.HOURS.toSeconds(1)));
                 break;
             case "project":
             case "enterprise":
                 //unlimited
-                runnerLifetime.setValue("-1");
+                wsAttributes.put("codenvy:runner_lifetime", "-1");
                 break;
             default:
                 throw new NotFoundException(String.format("Package %s not found", tariffPackage));
         }
-        wsAttributes.put("codenvy:runner_ram", runnerRAM);
-        wsAttributes.put("codenvy:runner_lifetime", runnerLifetime);
-        workspace.setAttributes(new ArrayList<>(wsAttributes.values()));
+        wsAttributes.put("codenvy:runner_ram", String.valueOf(convert(ensureExistsAndGet("RAM", subscription))));
         workspaceDao.update(workspace);
     }
 
@@ -306,13 +296,9 @@ public class HostedWorkspaceService extends SubscriptionService {
         }
         final String wsId = ensureExistsAndGet("codenvy:workspace_id", subscription);
         final Workspace workspace = workspaceDao.getById(wsId);
-        final Map<String, Attribute> wsAttributes = new HashMap<>(workspace.getAttributes().size());
-        for (Attribute attribute : workspace.getAttributes()) {
-            wsAttributes.put(attribute.getName(), attribute);
-        }
+        final Map<String, String> wsAttributes = workspace.getAttributes();
         wsAttributes.remove("codenvy:runner_ram");
         wsAttributes.remove("codenvy:runner_lifetime");
-        workspace.setAttributes(new ArrayList<>(wsAttributes.values()));
         workspaceDao.update(workspace);
     }
 
@@ -345,12 +331,9 @@ public class HostedWorkspaceService extends SubscriptionService {
         final String plan;
 
         TariffEntry(String pack, String ram, String plan) {
-            Objects.requireNonNull(pack);
-            Objects.requireNonNull(ram);
-            Objects.requireNonNull(plan);
-            this.pack = pack;
-            this.ram = ram;
-            this.plan = plan;
+            this.pack = Objects.requireNonNull(pack);
+            this.ram = Objects.requireNonNull(ram);
+            this.plan = Objects.requireNonNull(plan);
         }
 
         @Override
