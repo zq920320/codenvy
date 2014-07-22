@@ -18,8 +18,8 @@
 package com.codenvy.factory;
 
 import com.codenvy.api.account.server.dao.AccountDao;
-import com.codenvy.api.account.shared.dto.Member;
-import com.codenvy.api.account.shared.dto.Subscription;
+import com.codenvy.api.account.server.dao.Member;
+import com.codenvy.api.account.server.dao.Subscription;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.api.factory.FactoryBuilder;
@@ -101,11 +101,11 @@ public class FactoryUrlBaseValidatorTest {
 
         User user = DtoFactory.getInstance().createDto(User.class).withId("userid");
 
-        Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class)
-                                              .withServiceId("TrackedFactory")
-                                              .withStartDate(datetimeFormatter.parse("2000-11-21 11:11:11").getTime())
-                                              .withEndDate(datetimeFormatter.parse("2022-11-30 11:21:15").getTime());
-        member = DtoFactory.getInstance().createDto(Member.class).withUserId("userid").withRoles(Arrays.asList("account/owner"));
+        Subscription subscription = new Subscription()
+                                         .withServiceId("TrackedFactory")
+                                         .withStartDate(datetimeFormatter.parse("2000-11-21 11:11:11").getTime())
+                                         .withEndDate(datetimeFormatter.parse("2022-11-30 11:21:15").getTime());
+        member = new Member().withUserId("userid").withRoles(Arrays.asList("account/owner"));
         when(accountDao.getSubscriptions(ID)).thenReturn(Arrays.asList(subscription));
         when(accountDao.getMembers(anyString())).thenReturn(Arrays.asList(member));
         when(userDao.getById("userid")).thenReturn(user);
@@ -264,7 +264,7 @@ public class FactoryUrlBaseValidatorTest {
     public void shouldNotValidateIfSubscriptionHasIllegalTariffPlan()
             throws FactoryUrlException, ParseException, ServerException, NotFoundException {
         // given
-        Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class)
+        Subscription subscription = new Subscription()
                                               .withServiceId("INVALID")
                                               .withStartDate(datetimeFormatter.parse("2000-11-21 11:11:11").getTime())
                                               .withEndDate(datetimeFormatter.parse("2050-11-21 11:11:11").getTime());
@@ -276,7 +276,7 @@ public class FactoryUrlBaseValidatorTest {
     @Test(expectedExceptions = FactoryUrlException.class)
     public void shouldNotValidateIfOrgIdIsExpired() throws FactoryUrlException, ParseException, ServerException, NotFoundException {
         // given
-        Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class)
+        Subscription subscription = new Subscription()
                                               .withServiceId("TrackedFactory")
                                               .withStartDate(datetimeFormatter.parse("2000-11-21 11:11:11").getTime())
                                               .withEndDate(datetimeFormatter.parse("2000-11-21 11:11:11").getTime());
@@ -288,7 +288,7 @@ public class FactoryUrlBaseValidatorTest {
     @Test(expectedExceptions = FactoryUrlException.class)
     public void shouldNotValidateIfOrgIdIsNotValidYet() throws FactoryUrlException, ParseException, ServerException, NotFoundException {
         // given
-        Subscription subscription = DtoFactory.getInstance().createDto(Subscription.class)
+        Subscription subscription = new Subscription()
                                               .withServiceId("TrackedFactory")
                                               .withStartDate(datetimeFormatter.parse("2049-11-21 11:11:11").getTime())
                                               .withEndDate(datetimeFormatter.parse("2050-11-21 11:11:11").getTime());

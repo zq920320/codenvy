@@ -18,8 +18,7 @@
 package com.codenvy.factory;
 
 import com.codenvy.api.account.server.dao.AccountDao;
-import com.codenvy.api.account.shared.dto.*;
-import com.codenvy.api.account.shared.dto.Member;
+import com.codenvy.api.account.server.dao.*;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.api.factory.*;
