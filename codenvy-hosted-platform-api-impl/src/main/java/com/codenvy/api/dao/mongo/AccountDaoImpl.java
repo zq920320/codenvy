@@ -17,8 +17,8 @@
  */
 package com.codenvy.api.dao.mongo;
 
-import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.server.dao.Account;
+import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.server.dao.Member;
 import com.codenvy.api.account.server.dao.Subscription;
 import com.codenvy.api.account.server.dao.SubscriptionHistoryEvent;
@@ -45,6 +45,7 @@ import javax.inject.Singleton;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Implementation of {@link com.codenvy.api.account.server.dao.AccountDao} based on MongoDB storage.
@@ -96,7 +97,11 @@ public class AccountDaoImpl implements AccountDao {
         memberCollection.ensureIndex(new BasicDBObject("members.accountId", 1));
         subscriptionHistoryCollection = db.getCollection(subscriptionHistoryCollectionName);
         subscriptionHistoryCollection.ensureIndex(new BasicDBObject("id", 1), new BasicDBObject("unique", true));
+        subscriptionHistoryCollection.ensureIndex(new BasicDBObject("userId", 1));
+        subscriptionHistoryCollection.ensureIndex(new BasicDBObject("type", 1));
         subscriptionHistoryCollection.ensureIndex(new BasicDBObject("subscription.accountId", 1));
+        subscriptionHistoryCollection.ensureIndex(new BasicDBObject("subscription.serviceId", 1));
+        subscriptionHistoryCollection.ensureIndex(new BasicDBObject("subscription.properties.codenvy:trial", 1));
         this.workspaceDao = workspaceDao;
         this.gson = gson;
     }
@@ -387,10 +392,10 @@ public class AccountDaoImpl implements AccountDao {
     }
 
     @Override
-    public List<SubscriptionHistoryEvent> getSubscriptionHistoryEventsByAccount(String accountId) throws ServerException {
-        try {
-            List<SubscriptionHistoryEvent> result = new ArrayList<>();
-            DBCursor events = subscriptionHistoryCollection.find(new BasicDBObject("subscription.accountId", accountId));
+    public List<SubscriptionHistoryEvent> getSubscriptionHistoryEvents(SubscriptionHistoryEvent searchEvent) throws ServerException {
+        DBObject query = getSearchQueryForHistoryEvent(searchEvent);
+        List<SubscriptionHistoryEvent> result = new ArrayList<>();
+        try (DBCursor events = subscriptionHistoryCollection.find(query)) {
             for (DBObject event : events) {
                 result.add(fromDBObject(event, SubscriptionHistoryEvent.class));
             }
@@ -411,6 +416,47 @@ public class AccountDaoImpl implements AccountDao {
         } catch (MongoException me) {
             throw new ServerException(me.getMessage(), me);
         }
+    }
+
+    private DBObject getSearchQueryForHistoryEvent(SubscriptionHistoryEvent searchEvent) {
+        final BasicDBObject query = new BasicDBObject();
+        if (searchEvent.getId() != null) {
+            query.put("id", searchEvent.getId());
+        }
+        if (searchEvent.getUserId() != null) {
+            query.put("userId", searchEvent.getUserId());
+        }
+        if (searchEvent.getType() != null) {
+            query.put("type", searchEvent.getType().toString());
+        }
+        if (searchEvent.getTransactionId() != null) {
+            query.put("transactionId", searchEvent.getTransactionId());
+        }
+        if (searchEvent.getSubscription() != null) {
+            String subscriptionPrefix = "subscription.";
+            Subscription subscription = searchEvent.getSubscription();
+            if (subscription.getId() != null) {
+                query.put(subscriptionPrefix + "id", subscription.getId());
+            }
+            if (subscription.getAccountId() != null) {
+                query.put(subscriptionPrefix + "accountId", subscription.getAccountId());
+            }
+            if (subscription.getServiceId() != null) {
+                query.put(subscriptionPrefix + "serviceId", subscription.getServiceId());
+            }
+            if (subscription.getState() != null) {
+                query.put(subscriptionPrefix + "state", subscription.getState().toString());
+            }
+            final Map<String, String> properties = subscription.getProperties();
+            if (properties != null && !properties.isEmpty()) {
+                String propertiesPrefix = "properties.";
+                for (Map.Entry<String, String> entry : properties.entrySet()) {
+                    query.put(subscriptionPrefix + propertiesPrefix + entry.getKey(), entry.getValue());
+                }
+            }
+        }
+
+        return query;
     }
 
     /**

@@ -28,9 +28,6 @@ import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.commons.lang.NameGenerator;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javax.inject.Inject;
 
 import static com.codenvy.api.account.server.dao.SubscriptionHistoryEvent.Type.DELETE;
@@ -42,7 +39,6 @@ import static com.codenvy.scheduler.SubscriptionScheduler.EVENTS_INITIATOR_SCHED
  * @author Alexander Garagatyi
  */
 public class RemoveExpiredSubscriptionSchedulerHandler implements SubscriptionSchedulerHandler {
-    private static final Logger LOG = LoggerFactory.getLogger(RemoveExpiredSubscriptionSchedulerHandler.class);
     private final AccountDao                  accountDao;
     private final SubscriptionServiceRegistry registry;
 
@@ -54,6 +50,10 @@ public class RemoveExpiredSubscriptionSchedulerHandler implements SubscriptionSc
 
     @Override
     public void checkSubscription(Subscription subscription) throws ApiException {
+        if ("true".equals(subscription.getProperties().get("codenvy:trial"))) {
+            return;
+        }
+
         SubscriptionService service = registry.get(subscription.getServiceId());
         if (service == null) {
             throw new ConflictException("Subscription service not found " + subscription.getServiceId());

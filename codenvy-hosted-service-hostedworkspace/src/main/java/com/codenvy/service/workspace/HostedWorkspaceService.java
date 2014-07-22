@@ -24,8 +24,8 @@ import com.codenvy.api.core.ApiException;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
-import com.codenvy.api.workspace.server.dao.WorkspaceDao;
 import com.codenvy.api.workspace.server.dao.Workspace;
+import com.codenvy.api.workspace.server.dao.WorkspaceDao;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;

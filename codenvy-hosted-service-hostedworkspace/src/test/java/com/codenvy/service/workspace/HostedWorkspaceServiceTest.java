@@ -24,9 +24,8 @@ import com.codenvy.api.core.ApiException;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
-import com.codenvy.api.workspace.server.dao.WorkspaceDao;
 import com.codenvy.api.workspace.server.dao.Workspace;
-import com.codenvy.dto.server.DtoFactory;
+import com.codenvy.api.workspace.server.dao.WorkspaceDao;
 
 import org.mockito.Mock;
 import org.mockito.testng.MockitoTestNGListener;
@@ -35,18 +34,15 @@ import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
 
 /**
  * Tests for {@link com.codenvy.service.workspace.HostedWorkspaceService}

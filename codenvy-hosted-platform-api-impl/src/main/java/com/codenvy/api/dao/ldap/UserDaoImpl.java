@@ -17,18 +17,18 @@
  */
 package com.codenvy.api.dao.ldap;
 
-import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.server.dao.Account;
+import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.api.core.notification.EventService;
 import com.codenvy.api.event.user.RemoveUserEvent;
-import com.codenvy.api.workspace.server.dao.MemberDao;
-import com.codenvy.api.workspace.server.dao.Member;
 import com.codenvy.api.user.server.dao.UserDao;
 import com.codenvy.api.user.server.dao.UserProfileDao;
 import com.codenvy.api.user.shared.dto.User;
+import com.codenvy.api.workspace.server.dao.Member;
+import com.codenvy.api.workspace.server.dao.MemberDao;
 import com.codenvy.dto.server.DtoFactory;
 
 import org.slf4j.Logger;
@@ -38,8 +38,17 @@ import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
-import javax.naming.*;
-import javax.naming.directory.*;
+import javax.naming.AuthenticationException;
+import javax.naming.Context;
+import javax.naming.NameAlreadyBoundException;
+import javax.naming.NameNotFoundException;
+import javax.naming.NamingEnumeration;
+import javax.naming.NamingException;
+import javax.naming.directory.Attributes;
+import javax.naming.directory.DirContext;
+import javax.naming.directory.ModificationItem;
+import javax.naming.directory.SearchControls;
+import javax.naming.directory.SearchResult;
 import javax.naming.ldap.InitialLdapContext;
 import java.util.HashSet;
 import java.util.Hashtable;

@@ -30,7 +30,6 @@ import org.mockito.ArgumentMatcher;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.testng.MockitoTestNGListener;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
@@ -65,10 +64,6 @@ public class RemoveExpiredSubscriptionSchedulerHandlerTest {
 
     @InjectMocks
     private RemoveExpiredSubscriptionSchedulerHandler handler;
-
-    @BeforeMethod
-    public void setUp() throws Exception {
-    }
 
     @Test
     public void shouldNotDoAnythingOnCheckSubscriptionIfSubscriptionIsNotExpired() throws ApiException {
