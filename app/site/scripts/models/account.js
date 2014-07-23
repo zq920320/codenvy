@@ -77,7 +77,7 @@
         // Verify subscriptions for Organization
         function checkSubscriptionFor(orgId) {
             var request;
-            var plansArray = ["PremiumWorkspace", "TrackedFactory"];
+            var plansArray = ["Saas", "Factory"];
             var url =  "/api/account/" + orgId + "/subscriptions";
             if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
                 request = new XMLHttpRequest();
@@ -127,7 +127,7 @@
                         response.forEach(function(account,index){
                             var isOwner = (account.roles.indexOf('account/owner') >= 0);
                             if (isOwner){
-                                checkSubscriptionFor(response[index].id);
+                                checkSubscriptionFor(response[index].accountReference.id);
                             }
                         }
 
