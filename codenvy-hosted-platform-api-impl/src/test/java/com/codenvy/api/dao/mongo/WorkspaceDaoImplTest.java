@@ -21,9 +21,8 @@ package com.codenvy.api.dao.mongo;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.api.core.notification.EventService;
-import com.codenvy.api.workspace.server.dao.WorkspaceDao;
 import com.codenvy.api.workspace.server.dao.Workspace;
-import com.google.gson.Gson;
+import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
@@ -31,7 +30,6 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,7 +57,7 @@ public class WorkspaceDaoImplTest extends BaseDaoTest {
     @BeforeMethod
     public void setUp() throws Exception {
         super.setUp(COLL_NAME);
-        workspaceDao = new WorkspaceDaoImpl(new Gson(), db, new EventService(), COLL_NAME);
+        workspaceDao = new WorkspaceDaoImpl(db, new EventService(), COLL_NAME);
     }
 
     @AfterMethod
@@ -78,7 +76,7 @@ public class WorkspaceDaoImplTest extends BaseDaoTest {
 
         DBObject res = collection.findOne(new BasicDBObject("id", WORKSPACE_ID));
         assertNotNull(res, "Specified user profile does not exists.");
-        assertEquals(workspace, workspaceDao.fromDBObject(res));
+        assertEquals(workspace, workspaceDao.toWorkspace(res));
     }
 
     @Test(expectedExceptions = ConflictException.class, expectedExceptionsMessageRegExp = "Workspace name required")
@@ -124,14 +122,14 @@ public class WorkspaceDaoImplTest extends BaseDaoTest {
 
         DBObject res = collection.findOne(new BasicDBObject("id", WORKSPACE_ID));
         assertNotNull(res, "Specified workspace does not exists.");
-        assertEquals(workspaceDao.fromDBObject(res), workspace);
+        assertEquals(workspaceDao.toWorkspace(res), workspace);
     }
 
     @Test
     public void mustNotSaveWorkspaceIfSameNameExist() throws Exception {
         // Put first object
-        collection.insert(new BasicDBObject("id", WORKSPACE_ID).append("name", WORKSPACE_NAME));
-
+        collection.insert(new BasicDBObject().append("id", WORKSPACE_ID)
+                                             .append("name", WORKSPACE_NAME));
         Workspace workspace = new Workspace().withId(WORKSPACE_ID)
                                              .withName(WORKSPACE_NAME)
                                              .withTemporary(true);
@@ -145,8 +143,10 @@ public class WorkspaceDaoImplTest extends BaseDaoTest {
 
     @Test
     public void mustFindWorkspaceById() throws Exception {
-        collection.insert(new BasicDBObject("id", WORKSPACE_ID).append("name", WORKSPACE_NAME)
-                                                               .append("temporary", true));
+        collection.insert(new BasicDBObject().append("id", WORKSPACE_ID)
+                                             .append("name", WORKSPACE_NAME)
+                                             .append("temporary", true)
+                                             .append("attributes", new BasicDBList()));
         Workspace result = workspaceDao.getById(WORKSPACE_ID);
         assertNotNull(result);
         assertEquals(result.getName(), WORKSPACE_NAME);
@@ -155,8 +155,10 @@ public class WorkspaceDaoImplTest extends BaseDaoTest {
 
     @Test
     public void mustFindWorkspaceByName() throws Exception {
-        collection.insert(new BasicDBObject("id", WORKSPACE_ID).append("name", WORKSPACE_NAME)
-                                                               .append("temporary", true));
+        collection.insert(new BasicDBObject().append("id", WORKSPACE_ID)
+                                             .append("name", WORKSPACE_NAME)
+                                             .append("temporary", true)
+                                             .append("attributes", new BasicDBList()));
         Workspace result = workspaceDao.getByName(WORKSPACE_NAME);
         assertNotNull(result);
         assertEquals(result.getId(), WORKSPACE_ID);
@@ -166,13 +168,16 @@ public class WorkspaceDaoImplTest extends BaseDaoTest {
     @Test
     public void mustFindWorkspacesByAccount() throws Exception {
         String accId = "acc123456";
-        collection.insert(new BasicDBObject("id", WORKSPACE_ID).append("name", WORKSPACE_NAME)
-                                                               .append("temporary", true)
-                                                               .append("accountId", accId));
-        collection.insert(new BasicDBObject("id", WORKSPACE_ID + "2").append("name", WORKSPACE_NAME + "2")
-                                                                     .append("temporary", false)
-                                                                     .append("accountId", accId));
-
+        collection.insert(new BasicDBObject().append("id", WORKSPACE_ID)
+                                             .append("name", WORKSPACE_NAME)
+                                             .append("temporary", true)
+                                             .append("accountId", accId)
+                                             .append("attributes", new BasicDBList()));
+        collection.insert(new BasicDBObject().append("id", WORKSPACE_ID + "2")
+                                             .append("name", WORKSPACE_NAME + "2")
+                                             .append("temporary", false)
+                                             .append("accountId", accId)
+                                             .append("attributes", new BasicDBList()));
         List<Workspace> result = workspaceDao.getByAccount(accId);
         assertNotNull(result);
         assertEquals(result.size(), 2);
@@ -192,7 +197,7 @@ public class WorkspaceDaoImplTest extends BaseDaoTest {
 
     private Map<String, String> getAttributes() {
         final Map<String, String> attributes = new HashMap<>(3);
-        attributes.put("attr1", "value1");
+        attributes.put("attr.with.dots", "value1");
         attributes.put("attr2", "value2");
         attributes.put("attr3", "value3");
         return attributes;

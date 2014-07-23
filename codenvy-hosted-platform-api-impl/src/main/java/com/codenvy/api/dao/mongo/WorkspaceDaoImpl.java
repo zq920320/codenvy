@@ -25,14 +25,13 @@ import com.codenvy.api.event.workspace.CreateWorkspaceEvent;
 import com.codenvy.api.event.workspace.DeleteWorkspaceEvent;
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
 import com.codenvy.api.workspace.server.dao.Workspace;
-import com.google.gson.Gson;
+import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoException;
-import com.mongodb.util.JSON;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +40,9 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
@@ -58,19 +59,16 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
     private static final String  DB_COLLECTION = "organization.storage.db.workspace.collection";
 
     private final DBCollection collection;
-    private final Gson         gson;
     private final EventService eventService;
 
     @Inject
-    public WorkspaceDaoImpl(Gson gson,
-                            DB db,
+    public WorkspaceDaoImpl(DB db,
                             EventService eventService,
                             @Named(DB_COLLECTION) String collectionName) {
         collection = db.getCollection(collectionName);
         collection.ensureIndex(new BasicDBObject("id", 1), new BasicDBObject("unique", true));
         collection.ensureIndex(new BasicDBObject("accountId", 1));
         collection.ensureIndex(new BasicDBObject("name", 1));
-        this.gson = gson;
         this.eventService = eventService;
     }
 
@@ -104,7 +102,7 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
     public void remove(String id) throws ServerException, NotFoundException, ConflictException {
         try {
             final DBObject workspace = collection.findAndRemove(new BasicDBObject("id", id));
-            final Workspace removedWorkspace = fromDBObject(workspace);
+            final Workspace removedWorkspace = toWorkspace(workspace);
             LOG.info("EVENT#workspace-destroyed# WS#{}# WS-ID#{}#", removedWorkspace.getName(), removedWorkspace.getId());
             eventService.publish(new DeleteWorkspaceEvent(id, removedWorkspace.isTemporary(), removedWorkspace.getName()));
         } catch (MongoException me) {
@@ -123,7 +121,7 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
         if (res == null) {
             throw new NotFoundException("Workspace not found " + id);
         }
-        return fromDBObject(res);
+        return toWorkspace(res);
     }
 
     @Override
@@ -137,7 +135,7 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
         if (res == null) {
             throw new NotFoundException("Workspace not found " + name);
         }
-        return fromDBObject(res);
+        return toWorkspace(res);
     }
 
     @Override
@@ -146,7 +144,7 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
         try (DBCursor cursor = collection.find(new BasicDBObject("accountId", accountId))) {
             result = new ArrayList<>(cursor.size());
             for (DBObject wsObj : cursor) {
-                result.add(fromDBObject(wsObj));
+                result.add(toWorkspace(wsObj));
             }
         } catch (MongoException me) {
             throw new ServerException(me.getMessage(), me);
@@ -154,20 +152,58 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
         return result;
     }
 
-    //should be package-private (used in tests)
-    Workspace fromDBObject(DBObject wsObj) {
-        return gson.fromJson(wsObj.toString(), Workspace.class);
+    /**
+     * Converts database object to workspace ready-to-use object
+     */
+    Workspace toWorkspace(DBObject wsObj) {
+        final BasicDBObject basicWsObj = (BasicDBObject)wsObj;
+        return new Workspace().withId(basicWsObj.getString("id"))
+                              .withName(basicWsObj.getString("name"))
+                              .withAccountId(basicWsObj.getString("accountId"))
+                              .withTemporary(basicWsObj.getBoolean("temporary"))
+                              .withAttributes(toAttributes((BasicDBList)basicWsObj.get("attributes")));
     }
 
     /**
-     * Convert workspace to Database ready-to-use object,
+     * Converts workspace to database ready-to-use object.
+     * Each workspace attribute may have name with "dot", but mongo doesn't support
+     * keys with "dot" so we need to save attributes not as "one object", but as list of Objects with
+     * structure:
+     * <pre>
+     *     {
+     *        "name" : "attributeName",
+     *        "value" : "attributeValue"
+     *     }
+     * </pre>
      *
      * @param workspace
      *         Workspace to convert
      * @return DBObject
      */
     private DBObject toDBObject(Workspace workspace) {
-        return (DBObject)JSON.parse(gson.toJson(workspace));
+        return new BasicDBObject().append("id", workspace.getId())
+                                  .append("name", workspace.getName())
+                                  .append("accountId", workspace.getAccountId())
+                                  .append("temporary", workspace.isTemporary())
+                                  .append("attributes", toDBList(workspace.getAttributes()));
+    }
+
+    private Map<String, String> toAttributes(BasicDBList list) {
+        final Map<String, String> attributes = new HashMap<>(list.size());
+        for (Object obj : list) {
+            final BasicDBObject attribute = (BasicDBObject)obj;
+            attributes.put(attribute.getString("name"), attribute.getString("value"));
+        }
+        return attributes;
+    }
+
+    private BasicDBList toDBList(Map<String, String> attributes) {
+        final BasicDBList list = new BasicDBList();
+        for (Map.Entry<String, String> entry : attributes.entrySet()) {
+            list.add(new BasicDBObject().append("name", entry.getKey())
+                                        .append("value", entry.getValue()));
+        }
+        return list;
     }
 
     private void validateWorkspaceName(String workspaceName) throws ConflictException {
