@@ -22,7 +22,6 @@ import com.codenvy.api.user.shared.dto.User;
 import com.codenvy.api.workspace.server.dao.Member;
 import com.codenvy.api.workspace.server.dao.Workspace;
 import com.codenvy.dto.server.DtoFactory;
-import com.google.gson.Gson;
 import com.mongodb.BasicDBList;
 import com.mongodb.DBObject;
 
@@ -64,7 +63,7 @@ public class MemberDaoImplTest extends BaseDaoTest {
     @BeforeMethod
     public void setUp() throws Exception {
         super.setUp(COLL_NAME);
-        memberDao = new MemberDaoImpl(new Gson(), userDao, workspaceDao, db, COLL_NAME);
+        memberDao = new MemberDaoImpl(userDao, workspaceDao, db, COLL_NAME);
         when(userDao.getById(anyString())).thenReturn(DtoFactory.getInstance().createDto(User.class));
         when(workspaceDao.getById(anyString())).thenReturn(new Workspace());
     }

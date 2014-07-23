@@ -26,7 +26,6 @@ import com.codenvy.api.workspace.server.dao.Member;
 import com.codenvy.api.workspace.server.dao.MemberDao;
 import com.codenvy.api.workspace.server.dao.Workspace;
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
-import com.google.gson.Gson;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
@@ -34,7 +33,6 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoException;
-import com.mongodb.util.JSON;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,18 +65,15 @@ public class MemberDaoImpl implements MemberDao {
     private final DBCollection collection;
     private final UserDao      userDao;
     private final WorkspaceDao workspaceDao;
-    private final Gson         gson;
 
     @Inject
-    public MemberDaoImpl(Gson gson,
-                         UserDao userDao,
+    public MemberDaoImpl(UserDao userDao,
                          WorkspaceDao workspaceDao,
                          DB db,
                          @Named(DB_COLLECTION) String collectionName) {
         collection = db.getCollection(collectionName);
         collection.ensureIndex("members.workspaceId");
         this.userDao = userDao;
-        this.gson = gson;
         this.workspaceDao = workspaceDao;
     }
 
