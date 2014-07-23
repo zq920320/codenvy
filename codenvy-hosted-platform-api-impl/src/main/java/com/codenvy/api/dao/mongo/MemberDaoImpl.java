@@ -235,7 +235,15 @@ public class MemberDaoImpl implements MemberDao {
     }
 
     Member fromDBObject(DBObject memberObj) {
-        return gson.fromJson(memberObj.toString(), Member.class);
+        final BasicDBObject basicMemberObj = (BasicDBObject)memberObj;
+        final BasicDBList basicRoles = (BasicDBList)basicMemberObj.get("roles");
+        final List<String> roles = new ArrayList<>(basicRoles.size());
+        for (Object role : basicRoles) {
+            roles.add(role.toString());
+        }
+        return new Member().withWorkspaceId(basicMemberObj.getString("workspaceId"))
+                           .withUserId(basicMemberObj.getString("userId"))
+                           .withRoles(roles);
     }
 
     /**
@@ -246,7 +254,11 @@ public class MemberDaoImpl implements MemberDao {
      * @return DBObject
      */
     private DBObject toDBObject(Member member) {
-        return (DBObject)JSON.parse(gson.toJson(member));
+        final BasicDBList dbRoles = new BasicDBList();
+        dbRoles.addAll(member.getRoles());
+        return new BasicDBObject().append("userId", member.getUserId())
+                                  .append("workspaceId", member.getWorkspaceId())
+                                  .append("roles", dbRoles);
     }
 
     private void validateSubjectsExists(String userId, String workspaceId) throws ConflictException, ServerException, NotFoundException {
