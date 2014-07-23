@@ -20,6 +20,7 @@ package com.codenvy.factory.storage.mongo;
 import de.bwaldvogel.mongo.MongoServer;
 import de.bwaldvogel.mongo.backend.memory.MemoryBackend;
 
+import com.codenvy.api.core.ApiException;
 import com.codenvy.api.factory.*;
 import com.codenvy.api.factory.dto.Factory;
 import com.codenvy.api.factory.dto.*;
@@ -70,7 +71,7 @@ public class MongoDBFactoryStoreTest {
     }
 
     @Test(enabled = false)
-    public void shouldBeAbleToValidateProductionData() throws UnknownHostException, FactoryUrlException {
+    public void shouldBeAbleToValidateProductionData() throws UnknownHostException, ApiException {
         // mongo server configuration
         String username = "Mongo username";
         String password = "Mongo password";
@@ -91,7 +92,7 @@ public class MongoDBFactoryStoreTest {
                 Factory toCheck = (Factory)DtoFactory.getInstance().clone(factory).withUserid(null).withCreated(0);
                 try {
                     factoryBuilder.checkValid(toCheck, FactoryFormat.ENCODED);
-                } catch (FactoryUrlException e) {
+                } catch (ApiException e) {
                     System.err.println(factory.toString());
                     fail();
                 }

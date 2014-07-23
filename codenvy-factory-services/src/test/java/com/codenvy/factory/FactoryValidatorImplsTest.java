@@ -18,7 +18,7 @@
 package com.codenvy.factory;
 
 import com.codenvy.api.account.server.dao.AccountDao;
-import com.codenvy.api.factory.FactoryUrlException;
+import com.codenvy.api.core.ApiException;
 import com.codenvy.api.factory.dto.Factory;
 import com.codenvy.api.user.server.dao.UserDao;
 import com.codenvy.api.user.server.dao.UserProfileDao;
@@ -53,7 +53,7 @@ public class FactoryValidatorImplsTest {
 
 
     @Test
-    public void shouldCallAllMethodsOnSave() throws FactoryUrlException {
+    public void shouldCallAllMethodsOnSave() throws ApiException {
 
         FactoryUrlCreateValidatorImpl spy = spy(createValidator);
         doNothing().when(spy).validateVcs(any(Factory.class));
@@ -71,7 +71,7 @@ public class FactoryValidatorImplsTest {
     }
 
     @Test
-    public void shouldCallAllMethodsOnAcceptNonEncoded() throws FactoryUrlException {
+    public void shouldCallAllMethodsOnAcceptNonEncoded() throws ApiException {
 
         FactoryUrlAcceptValidatorImpl spy = spy(acceptValidator);
         doNothing().when(spy).validateVcs(any(Factory.class));
@@ -88,7 +88,7 @@ public class FactoryValidatorImplsTest {
     }
 
     @Test
-    public void shouldCallGivenMethodOnAcceptEncoded() throws FactoryUrlException {
+    public void shouldCallGivenMethodOnAcceptEncoded() throws ApiException {
 
         FactoryUrlAcceptValidatorImpl spy = spy(acceptValidator);
         doThrow(RuntimeException.class).when(spy).validateVcs(any(Factory.class));

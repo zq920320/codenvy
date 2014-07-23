@@ -18,6 +18,7 @@
 package com.codenvy.factory.storage.mongo;
 
 
+import com.codenvy.api.core.ApiException;
 import com.codenvy.api.factory.*;
 import com.codenvy.api.factory.dto.Factory;
 import com.codenvy.commons.lang.NameGenerator;
@@ -79,7 +80,7 @@ public class MongoDBFactoryStore implements FactoryStore {
     }
 
     @Override
-    public String saveFactory(Factory factoryUrl, Set<FactoryImage> images) throws FactoryUrlException {
+    public String saveFactory(Factory factoryUrl, Set<FactoryImage> images) throws ApiException {
 
         factoryUrl.setId(NameGenerator.generate("", 16));
 
@@ -100,12 +101,12 @@ public class MongoDBFactoryStore implements FactoryStore {
     }
 
     @Override
-    public void removeFactory(String id) throws FactoryUrlException {
+    public void removeFactory(String id) throws ApiException {
         factories.remove(new BasicDBObject("_id", id));
     }
 
     @Override
-    public Factory getFactory(String id) throws FactoryUrlException {
+    public Factory getFactory(String id) throws ApiException {
         DBObject res = factories.findOne(new BasicDBObject("_id", id));
         if (res == null) {
             return null;
@@ -120,7 +121,7 @@ public class MongoDBFactoryStore implements FactoryStore {
     }
 
     @Override
-    public List<Factory> findByAttribute(Pair<String, String>... attributes) throws FactoryUrlException {
+    public List<Factory> findByAttribute(Pair<String, String>... attributes) throws ApiException {
         List<Factory> result = new ArrayList<>();
         BasicDBObject query = new BasicDBObject();
         for (Pair<String, String> one : attributes) {
@@ -136,7 +137,7 @@ public class MongoDBFactoryStore implements FactoryStore {
     }
 
     @Override
-    public Set<FactoryImage> getFactoryImages(String factoryId, String imageId) throws FactoryUrlException {
+    public Set<FactoryImage> getFactoryImages(String factoryId, String imageId) throws ApiException {
         Set<FactoryImage> images = new HashSet<>();
 
         DBObject res = factories.findOne(new BasicDBObject("_id", factoryId));

@@ -18,12 +18,12 @@
 package com.codenvy.factory;
 
 import com.codenvy.api.account.server.dao.AccountDao;
+import com.codenvy.api.core.ApiException;
 import com.codenvy.api.account.server.dao.Member;
 import com.codenvy.api.account.server.dao.Subscription;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.api.factory.FactoryBuilder;
-import com.codenvy.api.factory.FactoryUrlException;
 import com.codenvy.api.factory.dto.Factory;
 import com.codenvy.api.factory.dto.ProjectAttributes;
 import com.codenvy.api.factory.dto.Restriction;
@@ -89,7 +89,7 @@ public class FactoryUrlBaseValidatorTest {
     private Factory url;
 
     @BeforeMethod
-    public void setUp() throws ParseException,   NotFoundException, ServerException {
+    public void setUp() throws ParseException, NotFoundException, ServerException {
         Factory nonencoded = DtoFactory.getInstance().createDto(Factory.class);
         nonencoded.setV("1.2");
         nonencoded.setVcs("git");
@@ -102,9 +102,9 @@ public class FactoryUrlBaseValidatorTest {
         User user = DtoFactory.getInstance().createDto(User.class).withId("userid");
 
         Subscription subscription = new Subscription()
-                                         .withServiceId("TrackedFactory")
-                                         .withStartDate(datetimeFormatter.parse("2000-11-21 11:11:11").getTime())
-                                         .withEndDate(datetimeFormatter.parse("2022-11-30 11:21:15").getTime());
+                .withServiceId("TrackedFactory")
+                .withStartDate(datetimeFormatter.parse("2000-11-21 11:11:11").getTime())
+                .withEndDate(datetimeFormatter.parse("2022-11-30 11:21:15").getTime());
         member = new Member().withUserId("userid").withRoles(Arrays.asList("account/owner"));
         when(accountDao.getSubscriptions(ID)).thenReturn(Arrays.asList(subscription));
         when(accountDao.getMembers(anyString())).thenReturn(Arrays.asList(member));
@@ -115,7 +115,7 @@ public class FactoryUrlBaseValidatorTest {
     }
 
     @Test
-    public void shouldBeAbleToValidateFactoryUrlObject() throws FactoryUrlException {
+    public void shouldBeAbleToValidateFactoryUrlObject() throws ApiException {
         validator.validateVcs(url);
         validator.validateProjectName(url);
         validator.validateOrgid(url);
@@ -123,11 +123,11 @@ public class FactoryUrlBaseValidatorTest {
     }
 
 
-    @Test(expectedExceptions = FactoryUrlException.class,
+    @Test(expectedExceptions = ApiException.class,
           expectedExceptionsMessageRegExp =
                   "The parameter vcsurl has a value submitted http://codenvy.com/git/04%2 with a value that is unexpected. " +
                   "For more information, please visit: http://docs.codenvy.com/user/creating-factories/factory-parameter-reference/.")
-    public void shouldNotValidateIfVcsurlContainIncorrectEncodedSymbol() throws FactoryUrlException {
+    public void shouldNotValidateIfVcsurlContainIncorrectEncodedSymbol() throws ApiException {
         // given
         url.setVcsurl("http://codenvy.com/git/04%2");
 
@@ -136,7 +136,7 @@ public class FactoryUrlBaseValidatorTest {
     }
 
     @Test
-    public void shouldValidateIfVcsurlIsCorrectSsh() throws FactoryUrlException {
+    public void shouldValidateIfVcsurlIsCorrectSsh() throws ApiException {
         // given
         url.setVcsurl("ssh://codenvy@review.gerrithub.io:29418/codenvy/exampleProject");
 
@@ -145,7 +145,7 @@ public class FactoryUrlBaseValidatorTest {
     }
 
     @Test
-    public void shouldValidateIfVcsurlIsCorrectHttps() throws FactoryUrlException {
+    public void shouldValidateIfVcsurlIsCorrectHttps() throws ApiException {
         // given
         url.setVcsurl("https://github.com/codenvy/example.git");
 
@@ -153,8 +153,8 @@ public class FactoryUrlBaseValidatorTest {
         validator.validateVcs(url);
     }
 
-    @Test(dataProvider = "badAdvancedFactoryUrlProvider", expectedExceptions = FactoryUrlException.class)
-    public void shouldNotValidateIfVcsOrVcsUrlIsInvalid(Factory factoryUrl) throws FactoryUrlException {
+    @Test(dataProvider = "badAdvancedFactoryUrlProvider", expectedExceptions = ApiException.class)
+    public void shouldNotValidateIfVcsOrVcsUrlIsInvalid(Factory factoryUrl) throws ApiException {
         validator.validateVcs(factoryUrl);
     }
 
@@ -182,7 +182,7 @@ public class FactoryUrlBaseValidatorTest {
         };
     }
 
-    @Test(dataProvider = "invalidProjectNamesProvider", expectedExceptions = FactoryUrlException.class,
+    @Test(dataProvider = "invalidProjectNamesProvider", expectedExceptions = ApiException.class,
           expectedExceptionsMessageRegExp = "Project name must contain only Latin letters, digits or these following special characters -._.")
     public void shouldThrowFactoryUrlExceptionIfProjectNameInvalid(String projectName) throws Exception {
         // given
@@ -230,27 +230,27 @@ public class FactoryUrlBaseValidatorTest {
     }
 
     @Test
-    public void shouldBeAbleToValidateIfOrgIdIsValid() throws  FactoryUrlException, ParseException {
+    public void shouldBeAbleToValidateIfOrgIdIsValid() throws  ApiException, ParseException {
         validator.validateOrgid(url);
     }
 
     @Test
     public void shouldBeAbleToValidateIfOrgIdAndOwnerAreValid()
-            throws  FactoryUrlException, ParseException {
+            throws  ApiException, ParseException {
         // when, then
         validator.validateOrgid(url);
     }
 
-    @Test(expectedExceptions = FactoryUrlException.class)
-    public void shouldNotValidateIfAccountDoesNotExist() throws  FactoryUrlException, NotFoundException, ServerException {
+    @Test(expectedExceptions = ApiException.class)
+    public void shouldNotValidateIfAccountDoesNotExist() throws  ApiException, NotFoundException, ServerException {
         when(accountDao.getMembers(anyString())).thenReturn(Collections.<Member>emptyList());
 
         validator.validateOrgid(url);
     }
 
-    @Test(expectedExceptions = FactoryUrlException.class, expectedExceptionsMessageRegExp = "You are not authorized to use this orgid.")
+    @Test(expectedExceptions = ApiException.class, expectedExceptionsMessageRegExp = "You are not authorized to use this orgid.")
     public void shouldNotValidateIfFactoryOwnerIsNotOrgidOwner()
-            throws  FactoryUrlException, ParseException, 
+            throws  ApiException, ParseException,
                    ServerException {
         Member wronMember  = member;
         wronMember.setUserId("anotheruserid");
@@ -260,9 +260,9 @@ public class FactoryUrlBaseValidatorTest {
         validator.validateOrgid(url);
     }
 
-    @Test(expectedExceptions = FactoryUrlException.class)
+    @Test(expectedExceptions = ApiException.class)
     public void shouldNotValidateIfSubscriptionHasIllegalTariffPlan()
-            throws FactoryUrlException, ParseException, ServerException, NotFoundException {
+            throws ApiException, ParseException, ServerException, NotFoundException {
         // given
         Subscription subscription = new Subscription()
                                               .withServiceId("INVALID")
@@ -273,8 +273,8 @@ public class FactoryUrlBaseValidatorTest {
         validator.validateTrackedFactoryAndParams(url);
     }
 
-    @Test(expectedExceptions = FactoryUrlException.class)
-    public void shouldNotValidateIfOrgIdIsExpired() throws FactoryUrlException, ParseException, ServerException, NotFoundException {
+    @Test(expectedExceptions = ApiException.class)
+    public void shouldNotValidateIfOrgIdIsExpired() throws ApiException, ParseException, ServerException, NotFoundException {
         // given
         Subscription subscription = new Subscription()
                                               .withServiceId("TrackedFactory")
@@ -285,8 +285,8 @@ public class FactoryUrlBaseValidatorTest {
         validator.validateTrackedFactoryAndParams(url);
     }
 
-    @Test(expectedExceptions = FactoryUrlException.class)
-    public void shouldNotValidateIfOrgIdIsNotValidYet() throws FactoryUrlException, ParseException, ServerException, NotFoundException {
+    @Test(expectedExceptions = ApiException.class)
+    public void shouldNotValidateIfOrgIdIsNotValidYet() throws ApiException, ParseException, ServerException, NotFoundException {
         // given
         Subscription subscription = new Subscription()
                                               .withServiceId("TrackedFactory")
@@ -298,7 +298,7 @@ public class FactoryUrlBaseValidatorTest {
     }
 
     @Test
-    public void shouldValidateIfHostNameIsLegal() throws  FactoryUrlException, ParseException {
+    public void shouldValidateIfHostNameIsLegal() throws  ApiException, ParseException {
         // given
         url.setRestriction(DtoFactory.getInstance().createDto(Restriction.class).withRefererhostname("notcodenvy.com"));
 
@@ -310,7 +310,7 @@ public class FactoryUrlBaseValidatorTest {
 
     @Test
     public void shouldValidateIfRefererIsRelativeAndCurrentHostnameIsEqualToRequiredHostName()
-            throws  FactoryUrlException, ParseException {
+            throws  ApiException, ParseException {
         // given
         url.setRestriction(DtoFactory.getInstance().createDto(Restriction.class).withRefererhostname("next.codenvy.com"));
 
@@ -321,8 +321,8 @@ public class FactoryUrlBaseValidatorTest {
         validator.validateTrackedFactoryAndParams(url);
     }
 
-    @Test(expectedExceptions = FactoryUrlException.class)
-    public void shouldNotValidateEncodedFactoryWithWelcomePageIfOrgIdIsEmpty() throws FactoryUrlException {
+    @Test(expectedExceptions = ApiException.class)
+    public void shouldNotValidateEncodedFactoryWithWelcomePageIfOrgIdIsEmpty() throws ApiException {
         // given
         WelcomePage welcome = DtoFactory.getInstance().createDto(WelcomePage.class);
 
@@ -333,9 +333,9 @@ public class FactoryUrlBaseValidatorTest {
         validator.validateTrackedFactoryAndParams(url);
     }
 
-    @Test(dataProvider = "trackedFactoryParametersProvider", expectedExceptions = FactoryUrlException.class)
+    @Test(dataProvider = "trackedFactoryParametersProvider", expectedExceptions = ApiException.class)
     public void shouldNotValidateIfThereIsTrackedOnlyParameterAndOrgidIsNull(Factory factory)
-            throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, FactoryUrlException {
+            throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, ApiException {
         factory.setOrgid(null);
         validator.validateTrackedFactoryAndParams(factory);
     }

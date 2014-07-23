@@ -17,18 +17,17 @@
  */
 package com.codenvy.factory;
 
-import com.codenvy.api.factory.FactoryUrlException;
+import com.codenvy.api.core.ApiException;
+import com.codenvy.api.core.ConflictException;
+import com.codenvy.api.core.rest.HttpJsonHelper;
+import com.codenvy.api.core.rest.shared.dto.Link;
 import com.codenvy.api.factory.dto.Factory;
-import com.codenvy.commons.lang.IoUtil;
 import com.codenvy.dto.server.DtoFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 
 /** Retrieve factory parameters over http connection. */
 public class HttpFactoryClient implements FactoryClient {
@@ -45,38 +44,17 @@ public class HttpFactoryClient implements FactoryClient {
     }
 
     @Override
-    public Factory getFactory(String factoryId) throws FactoryUrlException {
-        HttpURLConnection conn = null;
+    public Factory getFactory(String factoryId) throws ApiException {
         try {
+            Link link = DtoFactory.getInstance().createDto(Link.class)
+                                  .withHref(protocol + host + port + "/api/factory/" + factoryId)
+                                  .withMethod("GET");
 
-            conn = (HttpURLConnection)new URL(protocol, host, port, "/api/factory/" + factoryId).openConnection();
-            conn.setRequestMethod("GET");
-            conn.setDoOutput(true);
-            conn.setConnectTimeout(5000);
-            conn.setReadTimeout(5000);
-            conn.setInstanceFollowRedirects(false);
-
-            int responseCode = conn.getResponseCode();
-            if (responseCode / 100 != 2) {
-                InputStream errorStream = conn.getErrorStream();
-                String message = errorStream != null ? IoUtil.readAndCloseQuietly(errorStream) : "";
-
-                if (String.format("Factory URL with id %s is not found.", factoryId).equals(message)) {
-                    return null;
-                }
-
-                throw new FactoryUrlException(responseCode, message);
-            }
-
-            return DtoFactory.getInstance().createDtoFromJson(conn.getInputStream(), Factory.class);
+            return HttpJsonHelper.request(Factory.class, link);
 
         } catch (IOException e) {
             LOG.error(e.getLocalizedMessage(), e);
-            throw new FactoryUrlException(e.getLocalizedMessage(), e);
-        } finally {
-            if (conn != null) {
-                conn.disconnect();
-            }
+            throw new ConflictException(e.getLocalizedMessage());
         }
     }
 }

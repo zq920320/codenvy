@@ -18,8 +18,8 @@
 package com.codenvy.factory;
 
 import com.codenvy.api.account.server.dao.AccountDao;
+import com.codenvy.api.core.ApiException;
 import com.codenvy.api.factory.FactoryUrlAcceptValidator;
-import com.codenvy.api.factory.FactoryUrlException;
 import com.codenvy.api.factory.dto.Factory;
 import com.codenvy.api.user.server.dao.UserDao;
 import com.codenvy.api.user.server.dao.UserProfileDao;
@@ -37,7 +37,7 @@ public class FactoryUrlAcceptValidatorImpl extends FactoryUrlBaseValidator imple
     }
 
     @Override
-    public void validateOnAccept(Factory factory, boolean encoded) throws FactoryUrlException {
+    public void validateOnAccept(Factory factory, boolean encoded) throws ApiException {
         if (!encoded) {
             validateVcs(factory);
             validateProjectName(factory);
