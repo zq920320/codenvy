@@ -63,7 +63,8 @@ public class CheckSubscriptionSchedulerHandlerTest {
         when(registry.get(SERVICE_ID)).thenReturn(subscriptionService);
         final Subscription subscription = new Subscription().withId(ID)
                                                             .withServiceId(SERVICE_ID)
-                                                            .withEndDate(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(1));
+                                                            .withStartDate(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(1))
+                                                            .withEndDate(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(30));
 
         handler.checkSubscription(subscription);
 
@@ -75,7 +76,8 @@ public class CheckSubscriptionSchedulerHandlerTest {
         when(registry.get(SERVICE_ID)).thenReturn(null);
         final Subscription subscription = new Subscription().withId(ID)
                                                             .withServiceId(SERVICE_ID)
-                                                            .withEndDate(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(1));
+                                                            .withStartDate(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(1))
+                                                            .withEndDate(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(30));
 
         handler.checkSubscription(subscription);
     }

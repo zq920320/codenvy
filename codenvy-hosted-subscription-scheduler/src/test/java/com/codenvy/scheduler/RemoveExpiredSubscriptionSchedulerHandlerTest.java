@@ -70,7 +70,8 @@ public class RemoveExpiredSubscriptionSchedulerHandlerTest {
         when(registry.get(SERVICE_ID)).thenReturn(subscriptionService);
         final Subscription subscription = new Subscription().withId(ID)
                                                             .withServiceId(SERVICE_ID)
-                                                            .withEndDate(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(1));
+                                                            .withStartDate(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(1))
+                                                            .withEndDate(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(30));
 
         handler.checkSubscription(subscription);
     }
@@ -80,7 +81,8 @@ public class RemoveExpiredSubscriptionSchedulerHandlerTest {
         when(registry.get(SERVICE_ID)).thenReturn(subscriptionService);
         final Subscription subscription = new Subscription().withId(ID)
                                                             .withServiceId(SERVICE_ID)
-                                                            .withEndDate(System.currentTimeMillis() - 1);
+                                                            .withStartDate(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(30))
+                                                            .withEndDate(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(1));
 
         handler.checkSubscription(subscription);
 
@@ -104,7 +106,8 @@ public class RemoveExpiredSubscriptionSchedulerHandlerTest {
         when(registry.get(SERVICE_ID)).thenReturn(null);
         final Subscription subscription = new Subscription().withId(ID)
                                                             .withServiceId(SERVICE_ID)
-                                                            .withEndDate(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(1));
+                                                            .withStartDate(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(1))
+                                                            .withEndDate(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(30));
 
         handler.checkSubscription(subscription);
     }
@@ -117,7 +120,8 @@ public class RemoveExpiredSubscriptionSchedulerHandlerTest {
         doThrow(new ServerException("exception")).when(subscriptionService).onRemoveSubscription(any(Subscription.class));
         final Subscription subscription = new Subscription().withId(ID)
                                                             .withServiceId(SERVICE_ID)
-                                                            .withEndDate(System.currentTimeMillis() - 1);
+                                                            .withStartDate(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(30))
+                                                            .withEndDate(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(1));
 
         handler.checkSubscription(subscription);
 
@@ -132,7 +136,8 @@ public class RemoveExpiredSubscriptionSchedulerHandlerTest {
         doThrow(new ServerException("exception")).when(accountDao).addSubscriptionHistoryEvent(any(SubscriptionHistoryEvent.class));
         final Subscription subscription = new Subscription().withId(ID)
                                                             .withServiceId(SERVICE_ID)
-                                                            .withEndDate(System.currentTimeMillis() - 1);
+                                                            .withStartDate(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(30))
+                                                            .withEndDate(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(1));
 
         handler.checkSubscription(subscription);
 
@@ -147,7 +152,8 @@ public class RemoveExpiredSubscriptionSchedulerHandlerTest {
         doThrow(new ServerException("exception")).when(accountDao).removeSubscription(ID);
         final Subscription subscription = new Subscription().withId(ID)
                                                             .withServiceId(SERVICE_ID)
-                                                            .withEndDate(System.currentTimeMillis() - 1);
+                                                            .withStartDate(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(30))
+                                                            .withEndDate(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(1));
 
         handler.checkSubscription(subscription);
 

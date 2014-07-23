@@ -38,6 +38,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import static com.codenvy.api.account.server.dao.Subscription.State.ACTIVE;
 import static com.codenvy.api.account.server.dao.Subscription.State.WAIT_FOR_PAYMENT;
@@ -79,7 +80,7 @@ public class TrialSubscriptionSchedulerHandlerTest {
         handler = new TrialSubscriptionSchedulerHandler(registry, paymentService, accountDao);
     }
 
-//    @Test
+    @Test
     public void shouldBeAbleToPurchaseASubscriptionOnCheckSubscriptionIfTrialIsExpired() throws ApiException {
         final SubscriptionHistoryEvent event = new SubscriptionHistoryEvent().withType(
                 CREATE).withSubscription(new Subscription().withId(ID)).withUserId("user id");
@@ -89,8 +90,9 @@ public class TrialSubscriptionSchedulerHandlerTest {
         properties.put("TariffPlan", "yearly");
 
         final Subscription subscription = new Subscription().withId(ID).withServiceId(
-                SERVICE_ID).withState(ACTIVE).withProperties(properties).withStartDate(System.currentTimeMillis()).withEndDate(
-                System.currentTimeMillis());
+                SERVICE_ID).withState(ACTIVE).withProperties(properties).withStartDate(
+                System.currentTimeMillis() - TimeUnit.DAYS.toMillis(30))
+                                                            .withEndDate(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(1));
 
         when(registry.get(SERVICE_ID)).thenReturn(subscriptionService);
         when(accountDao.getSubscriptionHistoryEvents(any(SubscriptionHistoryEvent.class))).thenReturn(Arrays.asList(event));
@@ -129,7 +131,21 @@ public class TrialSubscriptionSchedulerHandlerTest {
     public void shouldNotDoAnythingOnCheckSubscriptionIfSubscriptionIsNotTrial() throws ApiException {
         final Subscription subscription = new Subscription().withId(ID).withServiceId(
                 SERVICE_ID).withState(ACTIVE).withStartDate(System.currentTimeMillis())
-                                                            .withEndDate(System.currentTimeMillis());
+                                                            .withStartDate(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(30))
+                                                            .withEndDate(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(1));
+
+        handler.checkSubscription(subscription);
+
+        verifyZeroInteractions(paymentService, accountDao, registry);
+        verifyZeroInteractions(accountDao, paymentService);
+    }
+
+    @Test
+    public void shouldNotDoAnythingOnCheckSubscriptionIfSubscriptionIsNotExpired() throws ApiException {
+        final Subscription subscription = new Subscription().withId(ID).withServiceId(
+                SERVICE_ID).withState(ACTIVE).withStartDate(System.currentTimeMillis())
+                                                            .withStartDate(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(1))
+                                                            .withEndDate(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(30));
 
         handler.checkSubscription(subscription);
 
@@ -142,8 +158,8 @@ public class TrialSubscriptionSchedulerHandlerTest {
         when(registry.get(SERVICE_ID)).thenReturn(null);
         final Subscription subscription = new Subscription().withId(ID).withServiceId(
                 SERVICE_ID).withState(ACTIVE).withProperties(Collections.singletonMap("codenvy:trial", "true"))
-                                                            .withStartDate(System.currentTimeMillis())
-                                                            .withEndDate(System.currentTimeMillis());
+                                                            .withStartDate(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(30))
+                                                            .withEndDate(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(1));
 
         handler.checkSubscription(subscription);
         verifyZeroInteractions(accountDao, paymentService);
@@ -156,8 +172,9 @@ public class TrialSubscriptionSchedulerHandlerTest {
         properties.put("TariffPlan", "yearly");
 
         final Subscription subscription = new Subscription().withId(ID).withServiceId(
-                SERVICE_ID).withState(ACTIVE).withProperties(properties).withStartDate(System.currentTimeMillis() - 2).withEndDate(
-                System.currentTimeMillis() - 1);
+                SERVICE_ID).withState(ACTIVE).withProperties(properties).withStartDate(
+                System.currentTimeMillis() - TimeUnit.DAYS.toMillis(30))
+                                                            .withEndDate(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(1));
 
         when(registry.get(SERVICE_ID)).thenReturn(subscriptionService);
         when(accountDao.getSubscriptionHistoryEvents(any(SubscriptionHistoryEvent.class))).thenReturn(
@@ -174,8 +191,8 @@ public class TrialSubscriptionSchedulerHandlerTest {
         properties.put("TariffPlan", "yearly");
 
         final Subscription subscription = new Subscription().withId(ID).withServiceId(
-                SERVICE_ID).withState(ACTIVE).withProperties(properties).withStartDate(System.currentTimeMillis() - 2).withEndDate(
-                System.currentTimeMillis() - 1);
+                SERVICE_ID).withState(ACTIVE).withProperties(properties).withStartDate(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(30))
+                                                            .withEndDate(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(1));
 
         when(registry.get(SERVICE_ID)).thenReturn(subscriptionService);
         when(accountDao.getSubscriptionHistoryEvents(any(SubscriptionHistoryEvent.class)))
@@ -195,8 +212,8 @@ public class TrialSubscriptionSchedulerHandlerTest {
         properties.put("TariffPlan", "yearly");
 
         final Subscription subscription = new Subscription().withId(ID).withServiceId(
-                SERVICE_ID).withState(ACTIVE).withProperties(properties).withStartDate(System.currentTimeMillis()).withEndDate(
-                System.currentTimeMillis());
+                SERVICE_ID).withState(ACTIVE).withProperties(properties).withStartDate(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(30))
+                                                            .withEndDate(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(1));
 
         when(registry.get(SERVICE_ID)).thenReturn(subscriptionService);
         when(accountDao.getSubscriptionHistoryEvents(any(SubscriptionHistoryEvent.class))).thenReturn(Arrays.asList(event));
