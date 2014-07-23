@@ -151,26 +151,24 @@ public class SaasService extends SubscriptionService {
         if (price == null) {
             throw new NotFoundException("Tariff plan not found");
         }
-        final String wsId = ensureExistsAndGet("codenvy:workspace_id", subscription);
         final List<Subscription> allSubscriptions = accountDao.getSubscriptions(subscription.getAccountId());
-        final List<Subscription> wsSubscriptions = new LinkedList<>();
+        final List<Subscription> serviceSubscriptions = new LinkedList<>();
         for (Subscription current : allSubscriptions) {
-            final Map<String, String> properties = current.getProperties();
-            if (getServiceId().equals(current.getServiceId()) && wsId.equals(properties.get("codenvy:workspace_id"))) {
-                wsSubscriptions.add(current);
+            if (getServiceId().equals(current.getServiceId())) {
+                serviceSubscriptions.add(current);
             }
         }
-        if (wsSubscriptions.size() == 2) {
+        if (serviceSubscriptions.size() > 1) {
             throw new ServerException("Subscriptions limit exhausted");
         }
         switch (subscription.getState()) {
             case WAIT_FOR_PAYMENT:
-                if (search(wsSubscriptions, Subscription.State.WAIT_FOR_PAYMENT) != null) {
+                if (search(serviceSubscriptions, Subscription.State.WAIT_FOR_PAYMENT) != null) {
                     throw new ConflictException("Subscription with WAIT_FOR_PAYMENT state already exists");
                 }
                 break;
             case ACTIVE:
-                final Subscription active = search(wsSubscriptions, Subscription.State.ACTIVE);
+                final Subscription active = search(serviceSubscriptions, Subscription.State.ACTIVE);
                 if (active != null) {
                     final Calendar calendar = Calendar.getInstance();
                     calendar.setTimeInMillis(active.getEndDate());
@@ -306,6 +304,7 @@ public class SaasService extends SubscriptionService {
                 final Map<String, String> wsAttributes = workspace.getAttributes();
                 wsAttributes.remove("codenvy:runner_ram");
                 wsAttributes.remove("codenvy:runner_lifetime");
+                wsAttributes.remove("codenvy:builder_execution_time");
                 workspaceDao.update(workspace);
             }
         } else {
