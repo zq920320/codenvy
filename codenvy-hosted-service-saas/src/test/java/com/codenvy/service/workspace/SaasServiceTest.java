@@ -58,12 +58,27 @@ public class SaasServiceTest {
         service = new SaasService(workspaceDao, accountDao);
     }
 
-//    @Test(expectedExceptions = ConflictException.class,
-//          expectedExceptionsMessageRegExp = "Subscription property codenvy:workspace_id required")
-//    public void testOnCreateSubscriptionWithoutWorkspaceIdProperty() throws ApiException {
-//        final Subscription subscription = new Subscription().withState(Subscription.State.ACTIVE);
-//        service.afterCreateSubscription(subscription);
-//    }
+    @Test(expectedExceptions = ConflictException.class,
+          expectedExceptionsMessageRegExp = "Given account don't have any workspaces.")
+    public void testOnCreateSubscriptionWithoutAccountId() throws ApiException {
+        final Subscription subscription = new Subscription().withState(Subscription.State.ACTIVE);
+        service.afterCreateSubscription(subscription);
+    }
+
+    @Test(expectedExceptions = ConflictException.class,
+          expectedExceptionsMessageRegExp = "Given account don't have any workspaces.")
+    public void testRemoveSubscriptionWithoutAccountIdProperty() throws ApiException {
+        final Subscription subscription = new Subscription();
+        service.onRemoveSubscription(subscription);
+    }
+
+    @Test(expectedExceptions = ConflictException.class,
+          expectedExceptionsMessageRegExp = "Given account don't have any workspaces.")
+    public void testUpdateSubscriptionWithoutAccountIdProperty() throws ApiException {
+        final Subscription subscription = new Subscription();
+        service.onUpdateSubscription(subscription, subscription);
+    }
+
 
     @Test(expectedExceptions = ConflictException.class, expectedExceptionsMessageRegExp = "Bad RAM value")
     public void testOnCreateSubscriptionWithBadSubscriptionRAM() throws ApiException {
@@ -83,27 +98,6 @@ public class SaasServiceTest {
         service.afterCreateSubscription(subscription);
     }
 
-//    @Test(expectedExceptions = ConflictException.class,
-//          expectedExceptionsMessageRegExp = "Subscription property codenvy:workspace_id required")
-//    public void testOnUpdateSubscriptionWithoutWorkspaceIdProperty() throws ApiException {
-//        final Subscription subscription = new Subscription().withState(Subscription.State.ACTIVE);
-//        service.onUpdateSubscription(subscription, subscription);
-//    }
-
-//    @Test(expectedExceptions = ConflictException.class,
-//          expectedExceptionsMessageRegExp = "Subscription property codenvy:workspace_id required")
-//    public void testTarifficateSubscriptionWithoutWorkspaceIdProperty() throws ApiException {
-//        final Subscription subscription = new Subscription().withState(Subscription.State.ACTIVE);
-//        service.afterCreateSubscription(subscription);
-//    }
-
-//    @Test(expectedExceptions = ConflictException.class,
-//          expectedExceptionsMessageRegExp = "Subscription property codenvy:workspace_id required")
-//    public void testRemoveSubscriptionWithoutWorkspaceIdProperty() throws ApiException {
-//        final Subscription subscription = new Subscription();
-//        service.onRemoveSubscription(subscription);
-//    }
-
     @Test
     public void testWorkspaceAttributesAddedWhenOnCreateInvoked() throws ApiException {
         final String workspaceId = "ws1";
@@ -119,9 +113,11 @@ public class SaasServiceTest {
 
         service.afterCreateSubscription(subscription);
 
-        assertEquals(workspace.getAttributes().size(), 2);
+        assertEquals(workspace.getAttributes().size(), 3);
         assertEquals(workspace.getAttributes().get("codenvy:runner_ram"), "1024");
         assertEquals(workspace.getAttributes().get("codenvy:runner_lifetime"), String.valueOf(TimeUnit.HOURS.toSeconds(1)));
+        assertEquals(workspace.getAttributes().get("codenvy:builder_execution_time"),
+                     String.valueOf(TimeUnit.MINUTES.toSeconds(10)));
     }
 
     //if checked subscription has start date before current, workspace attributes should be added
@@ -141,9 +137,11 @@ public class SaasServiceTest {
                                                             .withEndDate(System.currentTimeMillis() + 60_000);
         service.onCheckSubscription(subscription);
 
-        assertEquals(workspace.getAttributes().size(), 2);
+        assertEquals(workspace.getAttributes().size(), 3);
         assertEquals(workspace.getAttributes().get("codenvy:runner_ram"), "1024");
         assertEquals(workspace.getAttributes().get("codenvy:runner_lifetime"), String.valueOf(TimeUnit.HOURS.toSeconds(1)));
+        assertEquals(workspace.getAttributes().get("codenvy:builder_execution_time"),
+                     String.valueOf(TimeUnit.MINUTES.toSeconds(10)));
     }
 
     //if checked subscription has start date after current date, workspace attributes should not be added
@@ -181,9 +179,11 @@ public class SaasServiceTest {
 
         service.onUpdateSubscription(subscription, subscription);
 
-        assertEquals(workspace.getAttributes().size(), 2);
+        assertEquals(workspace.getAttributes().size(), 3);
         assertEquals(workspace.getAttributes().get("codenvy:runner_ram"), "1024");
         assertEquals(workspace.getAttributes().get("codenvy:runner_lifetime"), String.valueOf(TimeUnit.HOURS.toSeconds(1)));
+        assertEquals(workspace.getAttributes().get("codenvy:builder_execution_time"),
+                     String.valueOf(TimeUnit.MINUTES.toSeconds(10)));
     }
 
     @Test
