@@ -17,12 +17,11 @@
  */
 package com.codenvy.api.dao.mongo;
 
-import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.server.dao.Account;
+import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.server.dao.Member;
 import com.codenvy.api.account.server.dao.Subscription;
 import com.codenvy.api.account.server.dao.SubscriptionHistoryEvent;
-import com.codenvy.api.account.server.dao.SubscriptionPayment;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
@@ -95,7 +94,11 @@ public class AccountDaoImpl implements AccountDao {
         memberCollection.ensureIndex(new BasicDBObject("members.accountId", 1));
         subscriptionHistoryCollection = db.getCollection(subscriptionHistoryCollectionName);
         subscriptionHistoryCollection.ensureIndex(new BasicDBObject("id", 1), new BasicDBObject("unique", true));
+        subscriptionHistoryCollection.ensureIndex(new BasicDBObject("userId", 1));
+        subscriptionHistoryCollection.ensureIndex(new BasicDBObject("type", 1));
         subscriptionHistoryCollection.ensureIndex(new BasicDBObject("subscription.accountId", 1));
+        subscriptionHistoryCollection.ensureIndex(new BasicDBObject("subscription.serviceId", 1));
+        subscriptionHistoryCollection.ensureIndex(new BasicDBObject("subscription.properties.codenvy:trial", 1));
         this.workspaceDao = workspaceDao;
     }
 
@@ -380,11 +383,12 @@ public class AccountDaoImpl implements AccountDao {
     }
 
     @Override
-    public List<SubscriptionHistoryEvent> getSubscriptionHistoryEventsByAccount(String accountId) throws ServerException {
-        try (DBCursor events = subscriptionHistoryCollection.find(new BasicDBObject("subscription.accountId", accountId))) {
-            final List<SubscriptionHistoryEvent> result = new ArrayList<>(events.size());
-            for (DBObject eventObj : events) {
-                result.add(toSubscriptionHistoryEvent(eventObj));
+    public List<SubscriptionHistoryEvent> getSubscriptionHistoryEvents(SubscriptionHistoryEvent searchEvent) throws ServerException {
+        DBObject query = getSearchQueryForHistoryEvent(searchEvent);
+        List<SubscriptionHistoryEvent> result = new ArrayList<>();
+        try (DBCursor events = subscriptionHistoryCollection.find(query)) {
+            for (DBObject event : events) {
+                result.add(toSubscriptionHistoryEvent(event));
             }
             return result;
         } catch (MongoException e) {
@@ -403,6 +407,47 @@ public class AccountDaoImpl implements AccountDao {
         } catch (MongoException me) {
             throw new ServerException(me.getMessage(), me);
         }
+    }
+
+    private DBObject getSearchQueryForHistoryEvent(SubscriptionHistoryEvent searchEvent) {
+        final BasicDBObject query = new BasicDBObject();
+        if (searchEvent.getId() != null) {
+            query.put("id", searchEvent.getId());
+        }
+        if (searchEvent.getUserId() != null) {
+            query.put("userId", searchEvent.getUserId());
+        }
+        if (searchEvent.getType() != null) {
+            query.put("type", searchEvent.getType().toString());
+        }
+        if (searchEvent.getTransactionId() != null) {
+            query.put("transactionId", searchEvent.getTransactionId());
+        }
+        if (searchEvent.getSubscription() != null) {
+            String subscriptionPrefix = "subscription.";
+            Subscription subscription = searchEvent.getSubscription();
+            if (subscription.getId() != null) {
+                query.put(subscriptionPrefix + "id", subscription.getId());
+            }
+            if (subscription.getAccountId() != null) {
+                query.put(subscriptionPrefix + "accountId", subscription.getAccountId());
+            }
+            if (subscription.getServiceId() != null) {
+                query.put(subscriptionPrefix + "serviceId", subscription.getServiceId());
+            }
+            if (subscription.getState() != null) {
+                query.put(subscriptionPrefix + "state", subscription.getState().toString());
+            }
+            final Map<String, String> properties = subscription.getProperties();
+            if (properties != null && !properties.isEmpty()) {
+                String propertiesPrefix = "properties.";
+                for (Map.Entry<String, String> entry : properties.entrySet()) {
+                    query.put(subscriptionPrefix + propertiesPrefix + entry.getKey(), entry.getValue());
+                }
+            }
+        }
+
+        return query;
     }
 
     /**
@@ -474,9 +519,10 @@ public class AccountDaoImpl implements AccountDao {
         return new BasicDBObject().append("id", event.getId())
                                   .append("userId", event.getUserId())
                                   .append("time", event.getTime())
+                                  .append("amount", event.getAmount())
                                   .append("type", event.getType().toString())
-                                  .append("subscription", toDBObject(event.getSubscription()))
-                                  .append("subscriptionPayment", toDBObject(event.getSubscriptionPayment()));
+                                  .append("transactionId", event.getTransactionId())
+                                  .append("subscription", toDBObject(event.getSubscription()));
     }
 
     /**
@@ -521,33 +567,26 @@ public class AccountDaoImpl implements AccountDao {
     }
 
     /**
+     * Converts database object to subscription history event ready-to-use object
+     */
+    SubscriptionHistoryEvent toSubscriptionHistoryEvent(Object eventObj) {
+        final BasicDBObject basicEventObj = (BasicDBObject)eventObj;
+        return new SubscriptionHistoryEvent().withId(basicEventObj.getString("id"))
+                                             .withUserId(basicEventObj.getString("userId"))
+                                             .withTime(basicEventObj.getLong("time"))
+                                             .withAmount(basicEventObj.getDouble("amount"))
+                                             .withTransactionId(basicEventObj.getString("transactionId"))
+                                             .withType(SubscriptionHistoryEvent.Type.valueOf(basicEventObj.getString("type")))
+                                             .withSubscription(toSubscription(basicEventObj.get("subscription")));
+    }
+
+    /**
      * Converts account to database ready-to-use object
      */
     private DBObject toDBObject(Account account) {
         return new BasicDBObject().append("id", account.getId())
                                   .append("name", account.getName())
                                   .append("attributes", toDBList(account.getAttributes()));
-    }
-
-    /**
-     * Converts database object to subscription history event ready-to-use object
-     */
-    private SubscriptionHistoryEvent toSubscriptionHistoryEvent(Object eventObj) {
-        final BasicDBObject basicEventObj = (BasicDBObject)eventObj;
-        return new SubscriptionHistoryEvent().withId(basicEventObj.getString("id"))
-                                             .withUserId(basicEventObj.getString("userId"))
-                                             .withTime(basicEventObj.getLong("time"))
-                                             .withType(SubscriptionHistoryEvent.Type.valueOf(basicEventObj.getString("type")))
-                                             .withSubscription(toSubscription(basicEventObj.get("subscription")))
-                                             .withSubscriptionPayment(toSubscriptionPayment(basicEventObj.get("subscriptionPayment")));
-    }
-
-    /**
-     * Converts subscription payment to database read-to-use object
-     */
-    private DBObject toDBObject(SubscriptionPayment payment) {
-        return new BasicDBObject().append("amount", payment.getAmount())
-                                  .append("transactionId", payment.getTransactionId());
     }
 
     /**
@@ -560,15 +599,6 @@ public class AccountDaoImpl implements AccountDao {
             attributes.put(attribute.getString("name"), attribute.getString("value"));
         }
         return attributes;
-    }
-
-    /**
-     * Converts database object to subscription payment ready-to-use object
-     */
-    private SubscriptionPayment toSubscriptionPayment(Object paymentObj) {
-        final BasicDBObject basicPaymentObj = (BasicDBObject)paymentObj;
-        return new SubscriptionPayment().withAmount(basicPaymentObj.getDouble("amount"))
-                                        .withTransactionId(basicPaymentObj.getString("transactionId"));
     }
 
     /**

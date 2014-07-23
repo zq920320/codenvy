@@ -126,7 +126,7 @@ public class CheckSubscriptionTaskTest {
             public Object answer(InvocationOnMock invocation) throws Throwable {
                 Thread.currentThread().interrupt();
                 continueTest = true;
-                return Arrays.asList(subscription1, subscription2).iterator();
+                return Arrays.asList(subscription1, subscription2);
             }
         });
 

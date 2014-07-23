@@ -21,7 +21,6 @@ import com.codenvy.api.account.server.dao.Account;
 import com.codenvy.api.account.server.dao.Member;
 import com.codenvy.api.account.server.dao.Subscription;
 import com.codenvy.api.account.server.dao.SubscriptionHistoryEvent;
-import com.codenvy.api.account.server.dao.SubscriptionPayment;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
@@ -53,6 +52,7 @@ import static com.codenvy.api.account.server.dao.Subscription.State.ACTIVE;
 import static com.codenvy.api.account.server.dao.SubscriptionHistoryEvent.Type.CREATE;
 import static com.codenvy.api.account.server.dao.SubscriptionHistoryEvent.Type.UPDATE;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -82,7 +82,8 @@ public class AccountDaoImplTest extends BaseDaoTest {
     private static final String SERVICE_NAME                   = "builder";
     private static final long   START_DATE                     = System.currentTimeMillis();
     private static final long   END_DATE                       = START_DATE + /* 1 day ms */ 86_400_000;
-
+    private static final String SUBSCRIPTION_HISTORY_EVENT_ID  = "event0xfffffff";
+    private static final String TRANSACTION_ID                 = "transaction_id";
     private static final Subscription        defaultSubscription;
     private static final Map<String, String> PROPS;
 
@@ -672,27 +673,38 @@ public class AccountDaoImplTest extends BaseDaoTest {
 
     @Test
     public void shouldBeAbleToAddSubscriptionHistoryEvent() throws ServerException, ConflictException {
-        final SubscriptionPayment subscriptionPayment = new SubscriptionPayment().withAmount(12D)
-                                                                                 .withTransactionId("transaction_id");
-        SubscriptionHistoryEvent event = new SubscriptionHistoryEvent().withId("id")
-                                                                       .withTime(System.currentTimeMillis())
-                                                                       .withUserId("userID")
+        final long time = System.currentTimeMillis();
+        SubscriptionHistoryEvent event = new SubscriptionHistoryEvent().withId(SUBSCRIPTION_HISTORY_EVENT_ID)
+                                                                       .withTime(time)
+                                                                       .withUserId(USER_ID)
                                                                        .withType(CREATE)
-                                                                       .withSubscriptionPayment(subscriptionPayment)
+                                                                       .withAmount(12D)
+                                                                       .withTransactionId("transaction_id")
                                                                        .withSubscription(defaultSubscription);
 
         accountDao.addSubscriptionHistoryEvent(event);
+
+        DBObject res = subscriptionHistoryCollection.findOne(new BasicDBObject("id", SUBSCRIPTION_HISTORY_EVENT_ID));
+        assertNotNull(res);
+
+        SubscriptionHistoryEvent actual = accountDao.toSubscriptionHistoryEvent(res);
+        assertEquals(actual.getAmount(), 12D);
+        assertEquals(actual.getId(), SUBSCRIPTION_HISTORY_EVENT_ID);
+        assertEquals(actual.getTransactionId(), TRANSACTION_ID);
+        assertEquals(actual.getType(), CREATE);
+        assertEquals(actual.getUserId(), USER_ID);
+        assertEquals(actual.getTime(), time);
+        assertEquals(actual.getSubscription(), defaultSubscription);
     }
 
     @Test(expectedExceptions = ServerException.class)
     public void shouldThrowServerExceptionOnAddSubscriptionHistoryEventIfMongoExceptionOccurs() throws ServerException, ConflictException {
-        final SubscriptionPayment subscriptionPayment = new SubscriptionPayment().withAmount(12D)
-                                                                                 .withTransactionId("transaction_id");
         SubscriptionHistoryEvent event = new SubscriptionHistoryEvent().withId("id")
                                                                        .withTime(System.currentTimeMillis())
                                                                        .withUserId("userID")
                                                                        .withType(CREATE)
-                                                                       .withSubscriptionPayment(subscriptionPayment)
+                                                                       .withAmount(12D)
+                                                                       .withTransactionId(TRANSACTION_ID)
                                                                        .withSubscription(defaultSubscription);
 
         doThrow(new MongoException("")).when(subscriptionHistoryCollection).save(any(DBObject.class));
@@ -707,56 +719,107 @@ public class AccountDaoImplTest extends BaseDaoTest {
 
     @DataProvider(name = "badSubscriptionHistoryEventProvider")
     public Object[][] badSubscriptionHistoryEventProvider() {
-        Subscription subscription = new Subscription();
-        final SubscriptionPayment subscriptionPayment =
-                new SubscriptionPayment().withAmount(12D).withTransactionId("transaction_id");
-
-        SubscriptionHistoryEvent event = new SubscriptionHistoryEvent().withId("id")
+        SubscriptionHistoryEvent event = new SubscriptionHistoryEvent().withId(SUBSCRIPTION_HISTORY_EVENT_ID)
                                                                        .withTime(System.currentTimeMillis())
-                                                                       .withUserId("userID")
+                                                                       .withUserId(USER_ID)
                                                                        .withType(CREATE)
-                                                                       .withSubscriptionPayment(subscriptionPayment)
-                                                                       .withSubscription(subscription);
-        return new Object[][]{{new SubscriptionHistoryEvent().withUserId(null)}, {new SubscriptionHistoryEvent().withTime(0)},
-                              {new SubscriptionHistoryEvent().withId(null)}, {new SubscriptionHistoryEvent().withType(null)}};
+                                                                       .withAmount(12D)
+                                                                       .withTransactionId(TRANSACTION_ID)
+                                                                       .withSubscription(defaultSubscription);
+        return new Object[][]{{new SubscriptionHistoryEvent(event).withUserId(null)}, {new SubscriptionHistoryEvent(event).withTime(0)},
+                              {new SubscriptionHistoryEvent(event).withId(null)}, {new SubscriptionHistoryEvent(event).withType(null)}};
     }
 
     @Test
-    public void shouldBeAbleToGetSubscriptionHistoryEventsByAccount() throws ServerException, ConflictException {
+    public void shouldReturnAllEventsOnGetSubscriptionHistoryEventsWithOutFilledParameters() throws ServerException, ConflictException {
         List<SubscriptionHistoryEvent> expected = new ArrayList<>();
-        final SubscriptionPayment subscriptionPayment = new SubscriptionPayment().withAmount(12D)
-                                                                                 .withTransactionId("transaction_id");
-
         SubscriptionHistoryEvent event = new SubscriptionHistoryEvent().withId("id")
                                                                        .withTime(System.currentTimeMillis())
-                                                                       .withUserId("userID")
-                                                                       .withType(CREATE)
-                                                                       .withSubscriptionPayment(subscriptionPayment)
+                                                                       .withUserId("userID").withType(CREATE)
+                                                                       .withAmount(12D)
+                                                                       .withTransactionId(TRANSACTION_ID)
                                                                        .withSubscription(defaultSubscription);
+
         expected.add(event);
-        expected.add(event.withType(UPDATE));
+        expected.add(new SubscriptionHistoryEvent(event).withType(UPDATE));
         for (SubscriptionHistoryEvent event1 : expected) {
             subscriptionHistoryCollection.save(accountDao.toDBObject(event1));
         }
 
-        List<SubscriptionHistoryEvent> actual = accountDao.getSubscriptionHistoryEventsByAccount(ACCOUNT_ID);
+        List<SubscriptionHistoryEvent> actual =
+                accountDao.getSubscriptionHistoryEvents(new SubscriptionHistoryEvent());
 
         assertEquals(actual, expected);
     }
 
     @Test
-    public void shouldReturnEmptyListOnGetSubscriptionHistoryEventsByAccountIfThereIsNoSuchEvents()
+    public void shouldReturnMatchedEventOnGetSubscriptionHistoryEventsWithFilledId() throws ServerException, ConflictException {
+        SubscriptionHistoryEvent event = new SubscriptionHistoryEvent().withId(SUBSCRIPTION_HISTORY_EVENT_ID)
+                                                                       .withTime(System.currentTimeMillis())
+                                                                       .withUserId(USER_ID)
+                                                                       .withType(CREATE)
+                                                                       .withAmount(12D)
+                                                                       .withTransactionId(TRANSACTION_ID)
+                                                                       .withSubscription(defaultSubscription);
+
+        subscriptionHistoryCollection.save(accountDao.toDBObject(event));
+
+        subscriptionHistoryCollection.save(accountDao.toDBObject(new SubscriptionHistoryEvent(event)
+                                                                         .withId("another id")));
+
+        List<SubscriptionHistoryEvent> actual =
+                accountDao.getSubscriptionHistoryEvents(
+                        new SubscriptionHistoryEvent().withId("another id"));
+
+        assertEquals(actual, Collections.singletonList(new SubscriptionHistoryEvent(event).withId("another id")));
+    }
+
+    @Test
+    public void shouldReturnMatchedEventOnGetSubscriptionHistoryEventsWithFilledFields() throws ServerException, ConflictException {
+        SubscriptionHistoryEvent event =
+                new SubscriptionHistoryEvent().withId(SUBSCRIPTION_HISTORY_EVENT_ID)
+                                              .withTime(System.currentTimeMillis())
+                                              .withUserId(
+                                                      USER_ID).withType(CREATE).withAmount(12D).withTransactionId(TRANSACTION_ID)
+                                              .withSubscription(defaultSubscription);
+
+        subscriptionHistoryCollection.save(accountDao.toDBObject(event));
+
+        subscriptionHistoryCollection
+                .save(accountDao.toDBObject(new SubscriptionHistoryEvent(event).withId("sub_his_eve_id1").withUserId("another user id")));
+
+        subscriptionHistoryCollection.save(accountDao.toDBObject(
+                new SubscriptionHistoryEvent(event).withId("sub_his_eve_id2").withType(UPDATE)));
+
+        subscriptionHistoryCollection
+                .save(accountDao.toDBObject(
+                        new SubscriptionHistoryEvent(event).withId("sub_his_eve_id3").withTransactionId(TRANSACTION_ID + "1")));
+
+        subscriptionHistoryCollection.save(accountDao.toDBObject(
+                new SubscriptionHistoryEvent(event).withId("sub_his_eve_id4").withSubscription(
+                        new Subscription(defaultSubscription).withAccountId(ACCOUNT_ID + "1"))));
+
+        List<SubscriptionHistoryEvent> actual =
+                accountDao.getSubscriptionHistoryEvents(new SubscriptionHistoryEvent(event).withType(CREATE));
+
+        assertEquals(actual, Collections.singletonList(new SubscriptionHistoryEvent(event)));
+    }
+
+    @Test
+    public void shouldReturnEmptyListOnGetSubscriptionHistoryEventsIfThereIsNoSuchEvents()
             throws ServerException, ConflictException {
-        List<SubscriptionHistoryEvent> actual = accountDao.getSubscriptionHistoryEventsByAccount(ACCOUNT_ID);
+        List<SubscriptionHistoryEvent> actual = accountDao.getSubscriptionHistoryEvents(new SubscriptionHistoryEvent());
 
         assertTrue(actual.isEmpty());
     }
 
-    @Test(expectedExceptions = ServerException.class)
-    public void shouldThrowServerExceptionOnGetSubscriptionHistoryEventsByAccountIfMongoExceptionIsThrown()
+    @Test(expectedExceptions = ServerException.class, expectedExceptionsMessageRegExp = "test message")
+    public void shouldThrowServerExceptionOnGetSubscriptionHistoryEventsIfMongoExceptionIsThrown()
             throws ServerException, ConflictException {
-        doThrow(new MongoException("")).when(subscriptionHistoryCollection).find(new BasicDBObject("subscription.accountId", ACCOUNT_ID));
-        accountDao.getSubscriptionHistoryEventsByAccount(ACCOUNT_ID);
+        doThrow(new MongoException("test message")).when(subscriptionHistoryCollection)
+                                                   .find(eq(new BasicDBObject("userId", USER_ID)));
+
+        accountDao.getSubscriptionHistoryEvents(new SubscriptionHistoryEvent().withUserId(USER_ID));
     }
 
     @Test

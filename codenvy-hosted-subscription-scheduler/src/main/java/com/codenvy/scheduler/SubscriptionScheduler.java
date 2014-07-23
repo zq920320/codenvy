@@ -74,7 +74,8 @@ public class SubscriptionScheduler {
 
                     for (SubscriptionSchedulerHandler handler : handlers) {
                         try {
-                            handler.checkSubscription(subscription);
+                            // prevent subscription changing inside method
+                            handler.checkSubscription(new Subscription(subscription));
                         } catch (Exception e) {
                             LOG.error(e.getLocalizedMessage(), e);
                         }

@@ -22,8 +22,8 @@ import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.api.core.rest.HttpJsonHelper;
 import com.codenvy.api.core.rest.shared.dto.Link;
-import com.codenvy.api.workspace.server.dao.WorkspaceDao;
 import com.codenvy.api.workspace.server.dao.Workspace;
+import com.codenvy.api.workspace.server.dao.WorkspaceDao;
 import com.codenvy.api.workspace.shared.dto.WorkspaceDescriptor;
 import com.codenvy.dto.server.DtoFactory;
 import com.google.common.cache.CacheBuilder;
@@ -36,7 +36,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 

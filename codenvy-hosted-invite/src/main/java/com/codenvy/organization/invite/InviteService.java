@@ -18,11 +18,11 @@
 package com.codenvy.organization.invite;
 
 import com.codenvy.api.core.ApiException;
-import com.codenvy.api.core.rest.HttpJsonHelper;
-import com.codenvy.api.core.rest.shared.dto.Link;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
+import com.codenvy.api.core.rest.HttpJsonHelper;
+import com.codenvy.api.core.rest.shared.dto.Link;
 import com.codenvy.api.user.shared.dto.User;
 import com.codenvy.api.workspace.shared.dto.NewMembership;
 import com.codenvy.api.workspace.shared.dto.WorkspaceDescriptor;

@@ -30,7 +30,6 @@ import org.mockito.ArgumentMatcher;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.testng.MockitoTestNGListener;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
@@ -66,16 +65,13 @@ public class RemoveExpiredSubscriptionSchedulerHandlerTest {
     @InjectMocks
     private RemoveExpiredSubscriptionSchedulerHandler handler;
 
-    @BeforeMethod
-    public void setUp() throws Exception {
-    }
-
     @Test
     public void shouldNotDoAnythingOnCheckSubscriptionIfSubscriptionIsNotExpired() throws ApiException {
         when(registry.get(SERVICE_ID)).thenReturn(subscriptionService);
         final Subscription subscription = new Subscription().withId(ID)
                                                             .withServiceId(SERVICE_ID)
-                                                            .withEndDate(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(1));
+                                                            .withStartDate(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(1))
+                                                            .withEndDate(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(30));
 
         handler.checkSubscription(subscription);
     }
@@ -85,7 +81,8 @@ public class RemoveExpiredSubscriptionSchedulerHandlerTest {
         when(registry.get(SERVICE_ID)).thenReturn(subscriptionService);
         final Subscription subscription = new Subscription().withId(ID)
                                                             .withServiceId(SERVICE_ID)
-                                                            .withEndDate(System.currentTimeMillis() - 1);
+                                                            .withStartDate(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(30))
+                                                            .withEndDate(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(1));
 
         handler.checkSubscription(subscription);
 
@@ -109,7 +106,8 @@ public class RemoveExpiredSubscriptionSchedulerHandlerTest {
         when(registry.get(SERVICE_ID)).thenReturn(null);
         final Subscription subscription = new Subscription().withId(ID)
                                                             .withServiceId(SERVICE_ID)
-                                                            .withEndDate(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(1));
+                                                            .withStartDate(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(1))
+                                                            .withEndDate(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(30));
 
         handler.checkSubscription(subscription);
     }
@@ -122,7 +120,8 @@ public class RemoveExpiredSubscriptionSchedulerHandlerTest {
         doThrow(new ServerException("exception")).when(subscriptionService).onRemoveSubscription(any(Subscription.class));
         final Subscription subscription = new Subscription().withId(ID)
                                                             .withServiceId(SERVICE_ID)
-                                                            .withEndDate(System.currentTimeMillis() - 1);
+                                                            .withStartDate(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(30))
+                                                            .withEndDate(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(1));
 
         handler.checkSubscription(subscription);
 
@@ -137,7 +136,8 @@ public class RemoveExpiredSubscriptionSchedulerHandlerTest {
         doThrow(new ServerException("exception")).when(accountDao).addSubscriptionHistoryEvent(any(SubscriptionHistoryEvent.class));
         final Subscription subscription = new Subscription().withId(ID)
                                                             .withServiceId(SERVICE_ID)
-                                                            .withEndDate(System.currentTimeMillis() - 1);
+                                                            .withStartDate(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(30))
+                                                            .withEndDate(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(1));
 
         handler.checkSubscription(subscription);
 
@@ -152,7 +152,8 @@ public class RemoveExpiredSubscriptionSchedulerHandlerTest {
         doThrow(new ServerException("exception")).when(accountDao).removeSubscription(ID);
         final Subscription subscription = new Subscription().withId(ID)
                                                             .withServiceId(SERVICE_ID)
-                                                            .withEndDate(System.currentTimeMillis() - 1);
+                                                            .withStartDate(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(30))
+                                                            .withEndDate(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(1));
 
         handler.checkSubscription(subscription);
 
