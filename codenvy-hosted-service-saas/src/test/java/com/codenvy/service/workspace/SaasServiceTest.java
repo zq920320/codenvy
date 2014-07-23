@@ -33,12 +33,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import static org.mockito.Mockito.when;
@@ -63,60 +58,63 @@ public class SaasServiceTest {
         service = new SaasService(workspaceDao, accountDao);
     }
 
-    @Test(expectedExceptions = ConflictException.class,
-          expectedExceptionsMessageRegExp = "Subscription property codenvy:workspace_id required")
-    public void testOnCreateSubscriptionWithoutWorkspaceIdProperty() throws ApiException {
-        final Subscription subscription = new Subscription().withState(Subscription.State.ACTIVE);
-        service.afterCreateSubscription(subscription);
-    }
+//    @Test(expectedExceptions = ConflictException.class,
+//          expectedExceptionsMessageRegExp = "Subscription property codenvy:workspace_id required")
+//    public void testOnCreateSubscriptionWithoutWorkspaceIdProperty() throws ApiException {
+//        final Subscription subscription = new Subscription().withState(Subscription.State.ACTIVE);
+//        service.afterCreateSubscription(subscription);
+//    }
 
     @Test(expectedExceptions = ConflictException.class, expectedExceptionsMessageRegExp = "Bad RAM value")
     public void testOnCreateSubscriptionWithBadSubscriptionRAM() throws ApiException {
         final String workspaceId = "ws1";
+        final String accountId = "ws1";
         final Workspace workspace = new Workspace().withId(workspaceId)
                                                    .withAttributes(new HashMap<String, String>());
-        when(workspaceDao.getById(workspaceId)).thenReturn(workspace);
+        when(workspaceDao.getByAccount(accountId)).thenReturn(Arrays.asList(workspace));
         final Map<String, String> properties = new HashMap<>(3);
         properties.put("codenvy:workspace_id", workspaceId);
         properties.put("RAM", "0xAGB");
         properties.put("Package", "developer");
-        final Subscription subscription = new Subscription().withState(Subscription.State.ACTIVE)
+        final Subscription subscription = new Subscription().withAccountId(accountId)
+                                                            .withState(Subscription.State.ACTIVE)
                                                             .withProperties(properties);
 
         service.afterCreateSubscription(subscription);
     }
 
-    @Test(expectedExceptions = ConflictException.class,
-          expectedExceptionsMessageRegExp = "Subscription property codenvy:workspace_id required")
-    public void testOnUpdateSubscriptionWithoutWorkspaceIdProperty() throws ApiException {
-        final Subscription subscription = new Subscription().withState(Subscription.State.ACTIVE);
-        service.onUpdateSubscription(subscription, subscription);
-    }
+//    @Test(expectedExceptions = ConflictException.class,
+//          expectedExceptionsMessageRegExp = "Subscription property codenvy:workspace_id required")
+//    public void testOnUpdateSubscriptionWithoutWorkspaceIdProperty() throws ApiException {
+//        final Subscription subscription = new Subscription().withState(Subscription.State.ACTIVE);
+//        service.onUpdateSubscription(subscription, subscription);
+//    }
 
-    @Test(expectedExceptions = ConflictException.class,
-          expectedExceptionsMessageRegExp = "Subscription property codenvy:workspace_id required")
-    public void testTarifficateSubscriptionWithoutWorkspaceIdProperty() throws ApiException {
-        final Subscription subscription = new Subscription().withState(Subscription.State.ACTIVE);
-        service.afterCreateSubscription(subscription);
-    }
+//    @Test(expectedExceptions = ConflictException.class,
+//          expectedExceptionsMessageRegExp = "Subscription property codenvy:workspace_id required")
+//    public void testTarifficateSubscriptionWithoutWorkspaceIdProperty() throws ApiException {
+//        final Subscription subscription = new Subscription().withState(Subscription.State.ACTIVE);
+//        service.afterCreateSubscription(subscription);
+//    }
 
-    @Test(expectedExceptions = ConflictException.class,
-          expectedExceptionsMessageRegExp = "Subscription property codenvy:workspace_id required")
-    public void testRemoveSubscriptionWithoutWorkspaceIdProperty() throws ApiException {
-        final Subscription subscription = new Subscription();
-        service.onRemoveSubscription(subscription);
-    }
+//    @Test(expectedExceptions = ConflictException.class,
+//          expectedExceptionsMessageRegExp = "Subscription property codenvy:workspace_id required")
+//    public void testRemoveSubscriptionWithoutWorkspaceIdProperty() throws ApiException {
+//        final Subscription subscription = new Subscription();
+//        service.onRemoveSubscription(subscription);
+//    }
 
     @Test
     public void testWorkspaceAttributesAddedWhenOnCreateInvoked() throws ApiException {
         final String workspaceId = "ws1";
+        final String accountId = "acc1";
         final Workspace workspace = new Workspace().withId(workspaceId);
-        when(workspaceDao.getById(workspaceId)).thenReturn(workspace);
-        final Map<String, String> properties = new HashMap<>(3);
-        properties.put("codenvy:workspace_id", workspaceId);
+        when(workspaceDao.getByAccount(accountId)).thenReturn(Arrays.asList(workspace));
+        final Map<String, String> properties = new HashMap<>(2);
         properties.put("Package", "developer");
         properties.put("RAM", "1GB");
-        final Subscription subscription = new Subscription().withState(Subscription.State.ACTIVE)
+        final Subscription subscription = new Subscription().withAccountId(accountId)
+                                                            .withState(Subscription.State.ACTIVE)
                                                             .withProperties(properties);
 
         service.afterCreateSubscription(subscription);
@@ -130,13 +128,14 @@ public class SaasServiceTest {
     @Test
     public void testWorkspaceAttributesAddedWhenOnCheckInvoked() throws ApiException {
         final String workspaceId = "ws1";
+        final String accountId = "acc1";
         final Workspace workspace = new Workspace().withId(workspaceId);
-        when(workspaceDao.getById(workspaceId)).thenReturn(workspace);
-        final Map<String, String> properties = new HashMap<>(3);
-        properties.put("codenvy:workspace_id", workspaceId);
+        when(workspaceDao.getByAccount(accountId)).thenReturn(Arrays.asList(workspace));
+        final Map<String, String> properties = new HashMap<>(2);
         properties.put("Package", "developer");
         properties.put("RAM", "1GB");
-        final Subscription subscription = new Subscription().withState(Subscription.State.ACTIVE)
+        final Subscription subscription = new Subscription().withAccountId(accountId)
+                                                            .withState(Subscription.State.ACTIVE)
                                                             .withProperties(properties)
                                                             .withStartDate(System.currentTimeMillis())
                                                             .withEndDate(System.currentTimeMillis() + 60_000);
@@ -151,13 +150,14 @@ public class SaasServiceTest {
     @Test
     public void testWorkspaceAttributesNotAddedWhenOnCheckInvoked() throws ApiException {
         final String workspaceId = "ws1";
+        final String accountId = "acc1";
         final Workspace workspace = new Workspace().withId(workspaceId);
-        when(workspaceDao.getById(workspaceId)).thenReturn(workspace);
-        final Map<String, String> properties = new HashMap<>(3);
-        properties.put("codenvy:workspace_id", workspaceId);
+        when(workspaceDao.getByAccount(accountId)).thenReturn(Arrays.asList(workspace));
+        final Map<String, String> properties = new HashMap<>(2);
         properties.put("Package", "developer");
         properties.put("RAM", "1GB");
-        final Subscription subscription = new Subscription().withState(Subscription.State.ACTIVE)
+        final Subscription subscription = new Subscription().withAccountId(accountId)
+                                                            .withState(Subscription.State.ACTIVE)
                                                             .withProperties(properties)
                                                             .withStartDate(System.currentTimeMillis() + 60_000);
 
@@ -169,13 +169,14 @@ public class SaasServiceTest {
     @Test
     public void testWorkspaceAttributesReplacedOrAddedWhenOnUpdateWithActiveSubscriptionInvoked() throws ApiException {
         final String workspaceId = "ws1";
+        final String accountId = "acc1";
         final Workspace workspace = new Workspace().withId(workspaceId);
-        when(workspaceDao.getById(workspaceId)).thenReturn(workspace);
+        when(workspaceDao.getByAccount(accountId)).thenReturn(Arrays.asList(workspace));
         final Map<String, String> properties = new HashMap<>(3);
-        properties.put("codenvy:workspace_id", workspaceId);
         properties.put("Package", "developer");
         properties.put("RAM", "1GB");
-        final Subscription subscription = new Subscription().withState(Subscription.State.ACTIVE)
+        final Subscription subscription = new Subscription().withAccountId(accountId)
+                                                            .withState(Subscription.State.ACTIVE)
                                                             .withProperties(properties);
 
         service.onUpdateSubscription(subscription, subscription);
@@ -188,14 +189,16 @@ public class SaasServiceTest {
     @Test
     public void testWorkspaceAttributesRemovedWhenOnUpdateWithNotActiveSubscriptionInvoked() throws ApiException {
         final String workspaceId = "ws1";
+        final String accountId = "acc1";
         final Map<String, String> attributes = new HashMap<>(2);
         attributes.put("codenvy:runner_ram", "fake");
         attributes.put("codenvy:runner_lifetime", "fake");
         final Workspace workspace = new Workspace().withId(workspaceId)
                                                    .withAttributes(attributes);
-        final Subscription subscription = new Subscription().withState(Subscription.State.WAIT_FOR_PAYMENT)
+        final Subscription subscription = new Subscription().withAccountId(accountId)
+                                                            .withState(Subscription.State.WAIT_FOR_PAYMENT)
                                                             .withProperties(Collections.singletonMap("codenvy:workspace_id", workspaceId));
-        when(workspaceDao.getById(workspaceId)).thenReturn(workspace);
+        when(workspaceDao.getByAccount(accountId)).thenReturn(Arrays.asList(workspace));
 
         service.onUpdateSubscription(subscription, subscription);
 
@@ -205,13 +208,15 @@ public class SaasServiceTest {
     @Test
     public void testRemoveWorkspaceAttributesWhenOnRemoveInvoked() throws ApiException {
         final String workspaceId = "ws1";
+        final String accountId = "acc1";
         final Map<String, String> attributes = new HashMap<>(2);
         attributes.put("codenvy:runner_ram", "fake");
         attributes.put("codenvy:runner_lifetime", "fake");
         final Workspace workspace = new Workspace().withId(workspaceId)
                                                    .withAttributes(attributes);
-        final Subscription subscription = new Subscription().withProperties(Collections.singletonMap("codenvy:workspace_id", workspaceId));
-        when(workspaceDao.getById(workspaceId)).thenReturn(workspace);
+        final Subscription subscription = new Subscription().withAccountId(accountId)
+                .withProperties(Collections.singletonMap("codenvy:workspace_id", workspaceId));
+        when(workspaceDao.getByAccount(accountId)).thenReturn(Arrays.asList(workspace));
 
         service.onRemoveSubscription(subscription);
 

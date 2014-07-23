@@ -241,30 +241,34 @@ public class SaasService extends SubscriptionService {
         if (properties == null) {
             throw new ConflictException("Subscription properties required");
         }
-        final String wsId = ensureExistsAndGet("codenvy:workspace_id", subscription);
-        final String tariffPackage = ensureExistsAndGet("Package", subscription);
-        final Workspace workspace = workspaceDao.getById(wsId);
-        final Map<String, String> wsAttributes = workspace.getAttributes();
-        switch (tariffPackage.toLowerCase()) {
-            case "developer":
-                wsAttributes.put("codenvy:builder_execution_time", String.valueOf(TimeUnit.MINUTES.toSeconds(10)));
-            case "team":
-                //1 hour
-                wsAttributes.put("codenvy:runner_lifetime", String.valueOf(TimeUnit.HOURS.toSeconds(1)));
-                wsAttributes.put("codenvy:builder_execution_time", String.valueOf(TimeUnit.MINUTES.toSeconds(10)));
-                break;
-            case "project":
-                wsAttributes.put("codenvy:builder_execution_time", String.valueOf(TimeUnit.MINUTES.toSeconds(10)));
-            case "enterprise":
-                //unlimited
-                wsAttributes.put("codenvy:runner_lifetime", "-1");
-                wsAttributes.put("codenvy:builder_execution_time", String.valueOf(TimeUnit.MINUTES.toSeconds(10)));
-                break;
-            default:
-                throw new NotFoundException(String.format("Package %s not found", tariffPackage));
+        List<Workspace> workspaces = workspaceDao.getByAccount(subscription.getAccountId());
+        if (!workspaces.isEmpty()) {
+            final String tariffPackage = ensureExistsAndGet("Package", subscription);
+            final Workspace workspace = workspaces.iterator().next();
+            final Map<String, String> wsAttributes = workspace.getAttributes();
+            switch (tariffPackage.toLowerCase()) {
+                case "developer":
+                    wsAttributes.put("codenvy:builder_execution_time", String.valueOf(TimeUnit.MINUTES.toSeconds(10)));
+                case "team":
+                    //1 hour
+                    wsAttributes.put("codenvy:runner_lifetime", String.valueOf(TimeUnit.HOURS.toSeconds(1)));
+                    wsAttributes.put("codenvy:builder_execution_time", String.valueOf(TimeUnit.MINUTES.toSeconds(10)));
+                    break;
+                case "project":
+                    wsAttributes.put("codenvy:builder_execution_time", String.valueOf(TimeUnit.MINUTES.toSeconds(10)));
+                case "enterprise":
+                    //unlimited
+                    wsAttributes.put("codenvy:runner_lifetime", "-1");
+                    wsAttributes.put("codenvy:builder_execution_time", String.valueOf(TimeUnit.MINUTES.toSeconds(10)));
+                    break;
+                default:
+                    throw new NotFoundException(String.format("Package %s not found", tariffPackage));
+            }
+            wsAttributes.put("codenvy:runner_ram", String.valueOf(convert(ensureExistsAndGet("RAM", subscription))));
+            workspaceDao.update(workspace);
+        } else {
+            throw new ConflictException("Given account don't have any workspaces.");
         }
-        wsAttributes.put("codenvy:runner_ram", String.valueOf(convert(ensureExistsAndGet("RAM", subscription))));
-        workspaceDao.update(workspace);
     }
 
     private String ensureExistsAndGet(String propertyName, Subscription src) throws ConflictException {
@@ -298,12 +302,17 @@ public class SaasService extends SubscriptionService {
         if (properties == null) {
             throw new ServerException("Subscription properties required");
         }
-        final String wsId = ensureExistsAndGet("codenvy:workspace_id", subscription);
-        final Workspace workspace = workspaceDao.getById(wsId);
-        final Map<String, String> wsAttributes = workspace.getAttributes();
-        wsAttributes.remove("codenvy:runner_ram");
-        wsAttributes.remove("codenvy:runner_lifetime");
-        workspaceDao.update(workspace);
+        List<Workspace> workspaces = workspaceDao.getByAccount(subscription.getAccountId());
+        if (!workspaces.isEmpty()) {
+            for (Workspace workspace : workspaces) {
+                final Map<String, String> wsAttributes = workspace.getAttributes();
+                wsAttributes.remove("codenvy:runner_ram");
+                wsAttributes.remove("codenvy:runner_lifetime");
+                workspaceDao.update(workspace);
+            }
+        } else {
+            throw new ConflictException("Given account don't have any workspaces.");
+        }
     }
 
     /**
