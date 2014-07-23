@@ -121,9 +121,11 @@ public class SaasServiceTest {
 
         service.afterCreateSubscription(subscription);
 
-        assertEquals(workspace.getAttributes().size(), 2);
+        assertEquals(workspace.getAttributes().size(), 3);
         assertEquals(workspace.getAttributes().get("codenvy:runner_ram"), "1024");
         assertEquals(workspace.getAttributes().get("codenvy:runner_lifetime"), String.valueOf(TimeUnit.HOURS.toSeconds(1)));
+        assertEquals(workspace.getAttributes().get("codenvy:builder_execution_time"),
+                     String.valueOf(TimeUnit.MINUTES.toSeconds(10)));
     }
 
     //if checked subscription has start date before current, workspace attributes should be added
@@ -142,9 +144,11 @@ public class SaasServiceTest {
                                                             .withEndDate(System.currentTimeMillis() + 60_000);
         service.onCheckSubscription(subscription);
 
-        assertEquals(workspace.getAttributes().size(), 2);
+        assertEquals(workspace.getAttributes().size(), 3);
         assertEquals(workspace.getAttributes().get("codenvy:runner_ram"), "1024");
         assertEquals(workspace.getAttributes().get("codenvy:runner_lifetime"), String.valueOf(TimeUnit.HOURS.toSeconds(1)));
+        assertEquals(workspace.getAttributes().get("codenvy:builder_execution_time"),
+                     String.valueOf(TimeUnit.MINUTES.toSeconds(10)));
     }
 
     //if checked subscription has start date after current date, workspace attributes should not be added
@@ -180,9 +184,11 @@ public class SaasServiceTest {
 
         service.onUpdateSubscription(subscription, subscription);
 
-        assertEquals(workspace.getAttributes().size(), 2);
+        assertEquals(workspace.getAttributes().size(), 3);
         assertEquals(workspace.getAttributes().get("codenvy:runner_ram"), "1024");
         assertEquals(workspace.getAttributes().get("codenvy:runner_lifetime"), String.valueOf(TimeUnit.HOURS.toSeconds(1)));
+        assertEquals(workspace.getAttributes().get("codenvy:builder_execution_time"),
+                     String.valueOf(TimeUnit.MINUTES.toSeconds(10)));
     }
 
     @Test
