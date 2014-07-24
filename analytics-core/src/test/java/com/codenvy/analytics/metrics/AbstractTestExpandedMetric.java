@@ -21,6 +21,7 @@ import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.Configurator;
 import com.codenvy.analytics.Injector;
 import com.codenvy.analytics.persistent.JdbcDataPersisterFactory;
+import com.codenvy.analytics.pig.scripts.ScriptType;
 import com.codenvy.analytics.services.configuration.XmlConfigurationManager;
 import com.codenvy.analytics.services.view.CSVReportPersister;
 import com.codenvy.analytics.services.view.DisplayConfiguration;
@@ -30,7 +31,9 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.testng.annotations.BeforeClass;
 
+import java.io.File;
 import java.io.IOException;
+import java.text.ParseException;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
@@ -44,6 +47,8 @@ public abstract class AbstractTestExpandedMetric  extends BaseTest {
     protected ViewBuilder viewBuilder;
 
     private static final String ANALYSIS_VIEW_CONFIGURATION = BASE_DIR + "/classes/views/analysis.xml";
+
+    protected File log;
 
     @BeforeClass
     public void prepareViewBuilder() throws IOException {
@@ -65,6 +70,22 @@ public abstract class AbstractTestExpandedMetric  extends BaseTest {
                                           configurationManager,
                                           configurator));
     }
+
+    protected void computeProfiles(String date) throws IOException, ParseException {
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, date);
+        builder.put(Parameters.TO_DATE, date);
+        builder.put(Parameters.LOG, log.getAbsolutePath());
+
+        builder.putAll(
+                scriptsManager.getScript(ScriptType.USERS_PROFILES, MetricType.USERS_PROFILES_LIST).getParamsAsMap());
+        pigServer.execute(ScriptType.USERS_PROFILES, builder.build());
+
+        builder.putAll(scriptsManager.getScript(ScriptType.WORKSPACES_PROFILES, MetricType.WORKSPACES_PROFILES_LIST)
+                                     .getParamsAsMap());
+        pigServer.execute(ScriptType.WORKSPACES_PROFILES, builder.build());
+    }
+
 
     @BeforeClass
     public abstract void prepareDatabase() throws Exception;

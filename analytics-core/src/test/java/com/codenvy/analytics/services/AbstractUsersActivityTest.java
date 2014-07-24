@@ -122,6 +122,15 @@ public abstract class AbstractUsersActivityTest extends BaseTest {
         events.add(Event.Builder.createUserUpdateProfile("id3", "user3", "user3", "", "", "", "", "")
                                 .withDate("2013-11-01").build());
 
+        events.add(Event.Builder.createWorkspaceCreatedEvent("ws1", "wsid1", "user1")
+                                .withDate("2013-11-01").withTime("08:59:00").build());
+        events.add(Event.Builder.createWorkspaceCreatedEvent("ws2", "wsid2", "user2")
+                                .withDate("2013-11-01").withTime("08:59:00").build());
+        events.add(Event.Builder.createWorkspaceCreatedEvent("ws3", "wsid3", "user3")
+                                .withDate("2013-11-01").withTime("08:59:00").build());
+        events.add(Event.Builder.createWorkspaceCreatedEvent("ws2___", "wsid4", "user3")
+                                .withDate("2013-11-01").withTime("08:59:00").build());
+
         // active users [user1, user2, user3]
         events.add(Event.Builder.createTenantCreatedEvent("ws1", "user1").withTime("09:00:00").withDate("2013-11-01")
                                 .build());
