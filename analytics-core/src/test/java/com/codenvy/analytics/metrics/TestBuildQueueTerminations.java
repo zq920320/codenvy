@@ -40,6 +40,17 @@ public class TestBuildQueueTerminations extends BaseTest {
     @BeforeClass
     public void init() throws Exception {
         List<Event> events = new ArrayList<>();
+
+        events.add(Event.Builder.createUserCreatedEvent("uid1", "user1", "user1").withDate("2013-02-10").withTime("10:00:00,000").build());
+        events.add(Event.Builder.createUserCreatedEvent("uid2", "user2", "user2").withDate("2013-02-10").withTime("10:00:00,000").build());
+        events.add(Event.Builder.createUserCreatedEvent("uid3", "user3", "user3").withDate("2013-02-10").withTime("10:00:00,000").build());
+        events.add(Event.Builder.createUserCreatedEvent("uid5", "user5", "user5").withDate("2013-02-10").withTime("10:00:00,000").build());
+
+        events.add(Event.Builder.createWorkspaceCreatedEvent("ws1", "wsid1", "user1").withDate("2013-02-10").withTime("10:00:00").build());
+        events.add(Event.Builder.createWorkspaceCreatedEvent("ws2", "wsid2", "user2").withDate("2013-02-10").withTime("10:00:00").build());
+        events.add(Event.Builder.createWorkspaceCreatedEvent("ws3", "wsid3", "user3").withDate("2013-02-10").withTime("10:00:00").build());
+        events.add(Event.Builder.createWorkspaceCreatedEvent("ws5", "wsid5", "user5").withDate("2013-02-10").withTime("10:00:00").build());
+
         events.add(
                 Event.Builder.buildQueueTerminatedEvent("ws1", "user1", "project1", "type1", "id1").withDate("2013-02-10").withTime("10:00:00")
                              .build());
@@ -59,6 +70,13 @@ public class TestBuildQueueTerminations extends BaseTest {
         builder.put(Parameters.FROM_DATE, "20130210");
         builder.put(Parameters.TO_DATE, "20130210");
         builder.put(Parameters.LOG, log.getAbsolutePath());
+
+        builder.putAll(scriptsManager.getScript(ScriptType.USERS_PROFILES, MetricType.USERS_PROFILES_LIST).getParamsAsMap());
+        pigServer.execute(ScriptType.USERS_PROFILES, builder.build());
+
+        builder.putAll(scriptsManager.getScript(ScriptType.WORKSPACES_PROFILES, MetricType.WORKSPACES_PROFILES_LIST).getParamsAsMap());
+        pigServer.execute(ScriptType.WORKSPACES_PROFILES, builder.build());
+
         builder.putAll(scriptsManager.getScript(ScriptType.EVENTS, MetricType.BUILD_QUEUE_TERMINATIONS).getParamsAsMap());
         pigServer.execute(ScriptType.EVENTS, builder.build());
     }

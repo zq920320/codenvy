@@ -41,6 +41,18 @@ public class TestFactoryCreatedList extends BaseTest {
     @BeforeClass
     public void init() throws Exception {
         List<Event> events = new ArrayList<>();
+        events.add(Event.Builder.createWorkspaceCreatedEvent("ws1", "wsid1", "anonymoususer_1")
+                                .withDate("2013-01-01")
+                                .withTime("13:00:00")
+                                .build());
+        events.add(Event.Builder.createWorkspaceCreatedEvent("ws2", "wsid2", "anonymoususer_3")
+                                .withDate("2013-01-01")
+                                .withTime("13:00:00")
+                                .build());
+        events.add(Event.Builder.createWorkspaceCreatedEvent("ws3", "wsid3", "anonymoususer_4")
+                                .withDate("2013-01-01")
+                                .withTime("13:00:00")
+                                .build());
         events.add(Event.Builder.createFactoryCreatedEvent("ws1",
                                                            "anonymoususer_1",
                                                            "project1",
@@ -79,6 +91,11 @@ public class TestFactoryCreatedList extends BaseTest {
         builder.put(Parameters.FROM_DATE, "20130101");
         builder.put(Parameters.TO_DATE, "20130101");
         builder.put(Parameters.LOG, log.getAbsolutePath());
+
+        builder.putAll(scriptsManager.getScript(ScriptType.WORKSPACES_PROFILES, MetricType.WORKSPACES_PROFILES_LIST)
+                                     .getParamsAsMap());
+        pigServer.execute(ScriptType.WORKSPACES_PROFILES, builder.build());
+
         builder.putAll(scriptsManager.getScript(ScriptType.CREATED_FACTORIES, MetricType.CREATED_FACTORIES_SET).getParamsAsMap());
         pigServer.execute(ScriptType.CREATED_FACTORIES, builder.build());
     }

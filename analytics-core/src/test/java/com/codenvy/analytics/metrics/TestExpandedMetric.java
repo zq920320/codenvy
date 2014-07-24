@@ -17,101 +17,68 @@
  */
 package com.codenvy.analytics.metrics;
 
-import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsList;
-import static java.util.Arrays.asList;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
+import com.codenvy.analytics.Utils;
+import com.codenvy.analytics.datamodel.*;
+import com.codenvy.analytics.metrics.projects.*;
+import com.codenvy.analytics.metrics.sessions.*;
+import com.codenvy.analytics.metrics.sessions.factory.AbstractFactorySessions;
+import com.codenvy.analytics.metrics.sessions.factory.FactorySessionsBelow10Min;
+import com.codenvy.analytics.metrics.sessions.factory.FactorySessionsWithBuildPercent;
+import com.codenvy.analytics.metrics.sessions.factory.ProductUsageFactorySessionsList;
+import com.codenvy.analytics.metrics.users.*;
+import com.codenvy.analytics.metrics.workspaces.ActiveWorkspaces;
+import com.codenvy.analytics.pig.scripts.ScriptType;
+import com.codenvy.analytics.pig.scripts.util.Event;
+import com.codenvy.analytics.pig.scripts.util.LogGenerator;
+import com.codenvy.analytics.services.view.SectionData;
+import com.codenvy.analytics.services.view.ViewData;
 
-import java.io.File;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
-import com.codenvy.analytics.BaseTest;
-import com.codenvy.analytics.Configurator;
-import com.codenvy.analytics.Injector;
-import com.codenvy.analytics.Utils;
-import com.codenvy.analytics.datamodel.ListValueData;
-import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.datamodel.MapValueData;
-import com.codenvy.analytics.datamodel.StringValueData;
-import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.projects.AbstractProjectPaas;
-import com.codenvy.analytics.metrics.projects.AbstractProjectType;
-import com.codenvy.analytics.metrics.projects.CreatedProjects;
-import com.codenvy.analytics.metrics.projects.ProjectPaasGae;
-import com.codenvy.analytics.metrics.projects.ProjectTypeWar;
-import com.codenvy.analytics.metrics.projects.ProjectsList;
-import com.codenvy.analytics.metrics.sessions.AbstractTimelineProductUsageCondition;
-import com.codenvy.analytics.metrics.sessions.ProductUsageTimeBelow1Min;
-import com.codenvy.analytics.metrics.sessions.ProductUsageTimeTotal;
-import com.codenvy.analytics.metrics.sessions.ProductUsageUsersBelow10Min;
-import com.codenvy.analytics.metrics.sessions.TimelineProductUsageConditionAbove300Min;
-import com.codenvy.analytics.metrics.sessions.TimelineProductUsageConditionBelow120Min;
-import com.codenvy.analytics.metrics.sessions.TimelineProductUsageConditionBetween120And300Min;
-import com.codenvy.analytics.metrics.sessions.factory.AbstractFactorySessions;
-import com.codenvy.analytics.metrics.sessions.factory.FactorySessionsBelow10Min;
-import com.codenvy.analytics.metrics.sessions.factory.FactorySessionsWithBuildPercent;
-import com.codenvy.analytics.metrics.sessions.factory.ProductUsageFactorySessionsList;
-import com.codenvy.analytics.metrics.users.AbstractLoggedInType;
-import com.codenvy.analytics.metrics.users.CreatedUsers;
-import com.codenvy.analytics.metrics.users.CreatedUsersFromAuth;
-import com.codenvy.analytics.metrics.users.NonActiveUsers;
-import com.codenvy.analytics.metrics.users.UserInvite;
-import com.codenvy.analytics.metrics.users.UsersAcceptedInvitesPercent;
-import com.codenvy.analytics.metrics.users.UsersLoggedInWithForm;
-import com.codenvy.analytics.metrics.users.UsersStatisticsList;
-import com.codenvy.analytics.metrics.workspaces.ActiveWorkspaces;
-import com.codenvy.analytics.persistent.JdbcDataPersisterFactory;
-import com.codenvy.analytics.pig.scripts.ScriptType;
-import com.codenvy.analytics.pig.scripts.util.Event;
-import com.codenvy.analytics.pig.scripts.util.LogGenerator;
-import com.codenvy.analytics.services.configuration.XmlConfigurationManager;
-import com.codenvy.analytics.services.view.CSVReportPersister;
-import com.codenvy.analytics.services.view.DisplayConfiguration;
-import com.codenvy.analytics.services.view.SectionData;
-import com.codenvy.analytics.services.view.ViewBuilder;
-import com.codenvy.analytics.services.view.ViewData;
+import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsList;
+import static java.util.Arrays.asList;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 /** @author <a href="mailto:dnochevnov@codenvy.com">Dmytro Nochevnov</a> */
-public class TestExpandedMetric extends BaseTest {
+public class TestExpandedMetric extends AbstractTestExpandedMetric {
 
     private static final String TEST_WS    = "ws1";
+    private static final String TEST_WS_ID = "wsid1";
     private static final String TEST_USER  = "user1@gmail.com";
     private static final String SESSION_ID = "session_id";
     private static final String TEST_COMPANY = "comp";    
-
-    private ViewBuilder viewBuilder;
-
-    private File log;
-
-    private static final String ANALYSIS_VIEW_CONFIGURATION = BASE_DIR + "/classes/views/analysis.xml";
 
     @BeforeClass
     public void prepareDatabase() throws IOException, ParseException {
         List<Event> events = new ArrayList<>();
 
         // add user activity at previous day
+        /*events.add(Event.Builder.createUserCreatedEvent(TEST_USER, TEST_USER, TEST_USER)
+                                .withDate("2013-10-31").withTime("08:00:00").build());*/
         events.add(Event.Builder.createUserAddedToWsEvent("user5@gmail.com", TEST_WS, "", "", "", "website")
                                 .withDate("2013-10-31").withTime("08:00:00").build());
 
-        // set user company
         events.add(Event.Builder.createUserCreatedEvent(TEST_USER, TEST_USER, TEST_USER)
+                                .withDate("2013-11-01").withTime("08:00:00").build());
+
+        // set user company
+        events.add(Event.Builder.createUserCreatedEvent("user1", "user1", "user1")
                                 .withDate("2013-11-01").withTime("08:40:00").build());
+
+        events.add(Event.Builder.createWorkspaceCreatedEvent(TEST_WS, TEST_WS_ID, TEST_USER)
+                                .withDate("2013-11-01").withTime("08:41:00").build());
+        events.add(Event.Builder.createWorkspaceCreatedEvent("ws2", "wsid2", TEST_USER)
+                                .withDate("2013-11-01").withTime("08:41:00").build());
+
         events.add(Event.Builder.createUserUpdateProfile(TEST_USER, 
                                                          TEST_USER,
                                                          TEST_USER,
@@ -124,6 +91,9 @@ public class TestExpandedMetric extends BaseTest {
         
         events.add(Event.Builder.createUserCreatedEvent("user2@gmail.com", "user2@gmail.com", "user2@gmail.com")
                                 .withDate("2013-11-01").withTime("08:51:00").build());
+
+        events.add(Event.Builder.createWorkspaceCreatedEvent("ws3", "wsid3", "user2@gmail.com")
+                                .withDate("2013-11-01").withTime("08:52:00").build());
         
         events.add(Event.Builder.createUserUpdateProfile("user2@gmail.com", 
                                                          "user2@gmail.com",
@@ -193,12 +163,12 @@ public class TestExpandedMetric extends BaseTest {
 
 
         // same user invites twice
-        events.add(Event.Builder.createUserInviteEvent(TEST_USER, TEST_WS, TEST_USER + "_invite")
+        events.add(Event.Builder.createUserInviteEvent(TEST_USER, TEST_WS, "_invite" + TEST_USER )
                                 .withDate("2013-11-01").withTime("15:00:00,155").build());
-        events.add(Event.Builder.createUserInviteEvent(TEST_USER, TEST_WS, TEST_USER + "_invite")
+        events.add(Event.Builder.createUserInviteEvent(TEST_USER, TEST_WS, "_invite" + TEST_USER)
                                 .withDate("2013-11-01").withTime("16:00:00,155").build());
         // add user to workspace by accepting invite
-        events.add(Event.Builder.createUserAddedToWsEvent(TEST_USER + "_invite", TEST_WS, "", "", "", "invite")
+        events.add(Event.Builder.createUserAddedToWsEvent("_invite" + TEST_USER, TEST_WS, "", "", "", "invite")
                                 .withDate("2013-11-01").withTime("16:01:03").build());
 
 
@@ -326,35 +296,19 @@ public class TestExpandedMetric extends BaseTest {
         // add event of accepting factory url for the testDrillDownTopFactoriesMetric test
         events.add(Event.Builder.createFactoryUrlAcceptedEvent("tmp-5", "factoryUrl1", "http://referrer3", "org3", "affiliate2")
                    .withDate("2013-12-20").withTime("11:00:02").build());
+
+        events.add(Event.Builder.createUserCreatedEvent("factory_user5", "factory_user5", "factory_user5")
+                                .withDate("2013-12-20").withTime("11:00:03").build());
         events.add(Event.Builder.createTenantCreatedEvent("tmp-5", "factory_user5")
                    .withDate("2013-12-20").withTime("12:01:00").build());  
         
         log = LogGenerator.generateLog(events);
     }
 
-    @BeforeClass
-    public void prepareViewBuilder() throws IOException {
-        XmlConfigurationManager configurationManager = mock(XmlConfigurationManager.class);
-
-        when(configurationManager.loadConfiguration(any(Class.class), anyString())).thenAnswer(new Answer<Object>() {
-            @Override
-            public Object answer(InvocationOnMock invocation) throws Throwable {
-                XmlConfigurationManager manager = new XmlConfigurationManager();
-                return manager.loadConfiguration(DisplayConfiguration.class, ANALYSIS_VIEW_CONFIGURATION);
-            }
-        });
-
-        Configurator configurator = spy(Injector.getInstance(Configurator.class));
-        doReturn(new String[]{ANALYSIS_VIEW_CONFIGURATION}).when(configurator).getArray(anyString());
-
-        viewBuilder = spy(new ViewBuilder(Injector.getInstance(JdbcDataPersisterFactory.class),
-                                          Injector.getInstance(CSVReportPersister.class),
-                                          configurationManager,
-                                          configurator));
-    }
-
     @Test
     public void testFilteringUsersStatisticsListByTotalUsersAndTimeUnit() throws Exception {
+        computeProfiles("20131101");
+
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
@@ -386,14 +340,13 @@ public class TestExpandedMetric extends BaseTest {
     
     @Test
     public void testFilteringOfDrillDownPage() throws Exception {
+        computeProfiles("20131101");
+
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.LOG, log.getAbsolutePath());
 
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
-        
-        builder.putAll(scriptsManager.getScript(ScriptType.USERS_PROFILES, MetricType.USERS_PROFILES_LIST).getParamsAsMap());
-        pigServer.execute(ScriptType.USERS_PROFILES, builder.build());
         
         builder.putAll(scriptsManager.getScript(ScriptType.EVENTS, MetricType.BUILDS).getParamsAsMap());
         pigServer.execute(ScriptType.EVENTS, builder.build());
@@ -423,7 +376,7 @@ public class TestExpandedMetric extends BaseTest {
         assertEquals(record.get("user").getAsString(), TEST_USER);
     }    
     
-    /**
+    /*
      * Testing metric: WorkspacesStatisticsList
      * Filtered by workspaces list from expanded_metric_name=temporary_workspaces_created
      * passed_days_count=by_7_days|by_60_days
@@ -432,6 +385,9 @@ public class TestExpandedMetric extends BaseTest {
      */
     @Test
     public void testDrillDownTopFactoriesMetric() throws Exception {
+        computeProfiles("20131101");
+        computeProfiles("20131220");
+
         Context.Builder builder = new Context.Builder();
 
         builder.put(Parameters.FROM_DATE, "20131101");
@@ -501,6 +457,10 @@ public class TestExpandedMetric extends BaseTest {
      */
     @Test
     public void testDrillDownTopUsersMetric() throws Exception {
+        computeProfiles("20131031");
+        computeProfiles("20131101");
+        computeProfiles("20131220");
+
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.LOG, log.getAbsolutePath());
 
@@ -540,152 +500,10 @@ public class TestExpandedMetric extends BaseTest {
     }
     
     @Test
-    public void testAbstractTimelineProductUsageConditionMetric() throws Exception {
-        Context.Builder builder = new Context.Builder();
-        builder.put(Parameters.LOG, log.getAbsolutePath());
-
-        builder.put(Parameters.FROM_DATE, "20131101");
-        builder.put(Parameters.TO_DATE, "20131101");
-        builder.putAll(scriptsManager.getScript(ScriptType.PRODUCT_USAGE_SESSIONS, MetricType.PRODUCT_USAGE_SESSIONS_LIST).getParamsAsMap());
-        pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, builder.build());
-
-        builder.putAll(scriptsManager.getScript(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST).getParamsAsMap());
-        pigServer.execute(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, builder.build());
-
-        builder.put(Parameters.FROM_DATE, "20131120");
-        builder.put(Parameters.TO_DATE, "20131120");
-        builder.putAll(scriptsManager.getScript(ScriptType.PRODUCT_USAGE_SESSIONS, MetricType.PRODUCT_USAGE_SESSIONS_LIST).getParamsAsMap());
-        pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, builder.build());
-
-        builder.putAll(scriptsManager.getScript(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST).getParamsAsMap());
-        pigServer.execute(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, builder.build());
-        
-        builder.put(Parameters.FROM_DATE, "20131220");
-        builder.put(Parameters.TO_DATE, "20131220");
-        builder.putAll(scriptsManager.getScript(ScriptType.PRODUCT_USAGE_SESSIONS, MetricType.PRODUCT_USAGE_SESSIONS_LIST).getParamsAsMap());
-        pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, builder.build());
-        
-        builder.putAll(scriptsManager.getScript(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST).getParamsAsMap());
-        pigServer.execute(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, builder.build());
-
-
-        /** test TimelineProductUsageConditionBelow120Min */
-        builder = new Context.Builder();
-        builder.put(Parameters.TO_DATE, "20131220");
-        builder.put(Parameters.TIME_INTERVAL, "0");
-        AbstractTimelineProductUsageCondition metric = new TimelineProductUsageConditionBelow120Min();
-        Context context = metric.initContextBasedOnTimeInterval(builder.build());
-        ValueData expandedValue = metric.getExpandedValue(context);
-        List<ValueData> all = treatAsList(expandedValue);
-        assertEquals(all.size(), 4);
-
-        Map<String, ValueData> record = ((MapValueData)all.get(0)).getAll();
-        assertEquals(record.size(), 1);
-        assertEquals(record.get("user").toString(), "factory_user5");
-
-        record = ((MapValueData)all.get(1)).getAll();
-        assertEquals(record.size(), 1);
-        assertEquals(record.get("user").toString(), "user1");
-        
-        record = ((MapValueData)all.get(2)).getAll();
-        assertEquals(record.size(), 1);
-        assertEquals(record.get("user").toString(), "user4@gmail.com");
-        
-        record = ((MapValueData)all.get(3)).getAll();
-        assertEquals(record.size(), 1);
-        assertEquals(record.get("user").toString(), TEST_USER);
-
-
-        builder = new Context.Builder();
-        builder.put(Parameters.TO_DATE, "20131220");
-        builder.put(Parameters.TIME_INTERVAL, "2");
-        context = metric.initContextBasedOnTimeInterval(builder.build());
-        expandedValue = metric.getExpandedValue(context);
-        all = treatAsList(expandedValue);
-        assertEquals(all.size(), 3);
-
-        record = ((MapValueData)all.get(0)).getAll();
-        assertEquals(record.size(), 1);
-        assertEquals(record.get("user").toString(), "user1");
-        record = ((MapValueData)all.get(1)).getAll();
-        assertEquals(record.size(), 1);
-        assertEquals(record.get("user").toString(), "user4@gmail.com");
-        record = ((MapValueData)all.get(2)).getAll();
-        assertEquals(record.size(), 1);
-        assertEquals(record.get("user").toString(), TEST_USER);
-
-        /** test TimelineProductUsageConditionBetween120And300Min */
-        builder = new Context.Builder();
-        builder.put(Parameters.TO_DATE, "20131220");
-        builder.put(Parameters.TIME_INTERVAL, "0");
-        metric = new TimelineProductUsageConditionBetween120And300Min();
-        context = metric.initContextBasedOnTimeInterval(builder.build());
-        expandedValue = metric.getExpandedValue(context);
-        all = treatAsList(expandedValue);
-        assertEquals(all.size(), 1);
-
-        record = ((MapValueData)all.get(0)).getAll();
-        assertEquals(record.size(), 1);
-        assertEquals(record.get("user").toString(), "user6@gmail.com");
-
-        builder = new Context.Builder();
-        builder.put(Parameters.TO_DATE, "20131220");
-        builder.put(Parameters.TIME_INTERVAL, "1");
-        context = metric.initContextBasedOnTimeInterval(builder.build());
-        expandedValue = metric.getExpandedValue(context);
-        all = treatAsList(expandedValue);
-        assertEquals(all.size(), 1);
-
-        record = ((MapValueData)all.get(0)).getAll();
-        assertEquals(record.size(), 1);
-        assertEquals(record.get("user").toString(), "user6@gmail.com");
-
-        builder = new Context.Builder();
-        builder.put(Parameters.TO_DATE, "20131220");
-        builder.put(Parameters.TIME_INTERVAL, "2");
-        context = metric.initContextBasedOnTimeInterval(builder.build());
-        expandedValue = metric.getExpandedValue(context);
-        all = treatAsList(expandedValue);
-        assertEquals(all.size(), 1);
-
-        record = ((MapValueData)all.get(0)).getAll();
-        assertEquals(record.size(), 1);
-        assertEquals(record.get("user").toString(), "user6@gmail.com");
-
-
-        /** test TimelineProductUsageConditionAbove300Min */
-        builder = new Context.Builder();
-        builder.put(Parameters.TO_DATE, "20131220");
-        builder.put(Parameters.TIME_INTERVAL, "0");
-        metric = new TimelineProductUsageConditionAbove300Min();
-        context = metric.initContextBasedOnTimeInterval(builder.build());
-        expandedValue = metric.getExpandedValue(context);
-        all = treatAsList(expandedValue);
-        assertEquals(all.size(), 1);
-
-        record = ((MapValueData)all.get(0)).getAll();
-        assertEquals(record.size(), 1);
-        assertEquals(record.get("user").toString(), "user7@gmail.com");
-
-        builder = new Context.Builder();
-        builder.put(Parameters.TO_DATE, "20131220");
-        builder.put(Parameters.TIME_INTERVAL, "1");
-        context = metric.initContextBasedOnTimeInterval(builder.build());
-        expandedValue = metric.getExpandedValue(context);
-        all = treatAsList(expandedValue);
-        assertEquals(all.size(), 0);
-
-        builder = new Context.Builder();
-        builder.put(Parameters.TO_DATE, "20131220");
-        builder.put(Parameters.TIME_INTERVAL, "2");
-        context = metric.initContextBasedOnTimeInterval(builder.build());
-        expandedValue = metric.getExpandedValue(context);
-        all = treatAsList(expandedValue);
-        assertEquals(all.size(), 0);
-    }
-
-    @Test
     public void testNonActiveUsersMetric() throws Exception {
+        computeProfiles("20131031");
+        computeProfiles("20131101");
+
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.LOG, log.getAbsolutePath());
 
@@ -729,9 +547,9 @@ public class TestExpandedMetric extends BaseTest {
         metric = new CreatedUsers();
         expandedValue = metric.getExpandedValue(builder.build());
         all = treatAsList(expandedValue);
-        assertEquals(all.size(), 4);
-        assertTrue(all.contains(MapValueData.valueOf("user=user4@gmail.com")));
-        assertTrue(all.contains(MapValueData.valueOf("user=user5")));
+        assertEquals(all.size(), 5);
+        assertTrue(all.contains(MapValueData.valueOf("user=user-id4")));
+        assertTrue(all.contains(MapValueData.valueOf("user=user-id5")));
 
         // test filtering user list by "non_active_users" metric
         builder = new Context.Builder();
@@ -753,6 +571,8 @@ public class TestExpandedMetric extends BaseTest {
 
     @Test
     public void testUsersAcceptedInvitesPercentMetric() throws Exception {
+        computeProfiles("20131101");
+
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.LOG, log.getAbsolutePath());
         builder.put(Parameters.FROM_DATE, "20131101");
@@ -772,11 +592,13 @@ public class TestExpandedMetric extends BaseTest {
 
         Map<String, ValueData> record = ((MapValueData)all.get(0)).getAll();
         assertEquals(record.size(), 1);
-        assertEquals(record.get("user").toString(), TEST_USER + "_invite");
+        assertEquals(record.get("user").toString(), "_invite" + TEST_USER);
     }
 
     @Test
     public void testAbstractFactorySessionsMetrics() throws Exception {
+        computeProfiles("20131101");
+
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
@@ -801,40 +623,9 @@ public class TestExpandedMetric extends BaseTest {
     }
 
     @Test
-    public void testProductUsageUsersBelow10MinMetric() throws Exception {
-        Context.Builder builder = new Context.Builder();
-        builder.put(Parameters.FROM_DATE, "20131101");
-        builder.put(Parameters.TO_DATE, "20131101");
-        builder.put(Parameters.LOG, log.getAbsolutePath());
-        builder.putAll(scriptsManager.getScript(ScriptType.PRODUCT_USAGE_SESSIONS, MetricType.PRODUCT_USAGE_SESSIONS_LIST).getParamsAsMap());
-        pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, builder.build());
-
-        builder = new Context.Builder();
-        builder.put(Parameters.FROM_DATE, "20131101");
-        builder.put(Parameters.TO_DATE, "20131101");
-        builder.putAll(scriptsManager.getScript(ScriptType.ACTIVE_ENTITIES, MetricType.ACTIVE_USERS_SET).getParamsAsMap());
-        builder.put(Parameters.LOG, log.getAbsolutePath());
-        pigServer.execute(ScriptType.ACTIVE_ENTITIES, builder.build());
-
-        builder = new Context.Builder();
-        builder.put(Parameters.TO_DATE, "20131101");
-
-        ProductUsageUsersBelow10Min metric = new ProductUsageUsersBelow10Min();
-
-        // test expanded metric value
-        ValueData expandedValue = metric.getExpandedValue(builder.build());
-        List<ValueData> all = treatAsList(expandedValue);
-        assertEquals(all.size(), 5);
-
-        assertTrue(all.contains(MapValueData.valueOf("user=user2@gmail.com")));
-        assertTrue(all.contains(MapValueData.valueOf("user=user1")));
-        assertTrue(all.contains(MapValueData.valueOf("user=user5")));
-        assertTrue(all.contains(MapValueData.valueOf("user=user5")));
-        assertTrue(all.contains(MapValueData.valueOf("user=" + TEST_USER + "_invite")));
-    }
-
-    @Test
     public void testProductUsageTimeBelow1MinMetric() throws Exception {
+        computeProfiles("20131101");
+
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
@@ -859,6 +650,8 @@ public class TestExpandedMetric extends BaseTest {
 
     @Test
     public void testProductUsageTimeTotalMetric() throws Exception {
+        computeProfiles("20131101");
+
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
@@ -886,6 +679,8 @@ public class TestExpandedMetric extends BaseTest {
 
     @Test
     public void testAbstractLoggedInTypeMetrics() throws Exception {
+        computeProfiles("20131101");
+
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
@@ -910,6 +705,8 @@ public class TestExpandedMetric extends BaseTest {
 
     @Test
     public void testCalculatedSubtractionMetrics() throws Exception {
+        computeProfiles("20131101");
+
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
@@ -929,19 +726,21 @@ public class TestExpandedMetric extends BaseTest {
         // test expanded metric value
         ValueData expandedValue = createdUsersMetric.getExpandedValue(builder.build());
         List<ValueData> all = treatAsList(expandedValue);
-        assertEquals(all.size(), 4);
+        assertEquals(all.size(), 5);
 
         CalculatedMetric createdUsersFromAuthMetric = new CreatedUsersFromAuth();
 
         // test expanded metric value
         expandedValue = ((Expandable)createdUsersFromAuthMetric).getExpandedValue(builder.build());
         all = treatAsList(expandedValue);
-        assertEquals(all.size(), 3);
-        assertTrue(all.contains(MapValueData.valueOf("user=user5")));
+        assertEquals(all.size(), 4);
+        assertTrue(all.contains(MapValueData.valueOf("user=user-id5")));
     }
 
     @Test
     public void testCalculatedPercentMetric() throws Exception {
+        computeProfiles("20131101");
+
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
@@ -967,6 +766,8 @@ public class TestExpandedMetric extends BaseTest {
 
     @Test
     public void testSessionsListFilteredByCalculatedMetric() throws Exception {
+        computeProfiles("20131101");
+
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
@@ -1012,6 +813,8 @@ public class TestExpandedMetric extends BaseTest {
 
     @Test
     public void testExpandedAbstractActiveEntitiesMetrics() throws Exception {
+        computeProfiles("20131101");
+
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
@@ -1032,9 +835,9 @@ public class TestExpandedMetric extends BaseTest {
         ValueData expandedValue = metric.getExpandedValue(builder.build());
         List<ValueData> all = treatAsList(expandedValue);
         assertEquals(all.size(), 3);
-        assertTrue(all.contains(MapValueData.valueOf("ws=ws1")));
-        assertTrue(all.contains(MapValueData.valueOf("ws=ws2")));
-        assertTrue(all.contains(MapValueData.valueOf("ws=ws3")));
+        assertTrue(all.contains(MapValueData.valueOf("ws=wsid1")));
+        assertTrue(all.contains(MapValueData.valueOf("ws=wsid2")));
+        assertTrue(all.contains(MapValueData.valueOf("ws=wsid3")));
 
         // test expanded metric value pagination
         builder.put(Parameters.PAGE, 2);
@@ -1045,11 +848,13 @@ public class TestExpandedMetric extends BaseTest {
 
         all = treatAsList(expandedValue);
         assertEquals(all.size(), 1);
-        assertTrue(all.contains(MapValueData.valueOf("ws=ws2")));
+        assertTrue(all.contains(MapValueData.valueOf("ws=wsid2")));
     }
 
     @Test
     public void testExpandedAbstractLongValueResultedMetrics() throws Exception {
+        computeProfiles("20131101");
+
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
@@ -1077,6 +882,8 @@ public class TestExpandedMetric extends BaseTest {
 
     @Test
     public void testExpandedAbstractCountMetrics() throws Exception {
+        computeProfiles("20131101");
+
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
@@ -1093,17 +900,19 @@ public class TestExpandedMetric extends BaseTest {
         assertEquals(all.size(), 3);
 
         Map<String, ValueData> record1 = ((MapValueData)all.get(0)).getAll();
-        assertEquals(record1.get(metric.getExpandedField()).toString(), "user2@gmail.com/ws3/project2");
+        assertEquals(record1.get(metric.getExpandedField()).toString(), "user2@gmail.com/wsid3/project2");
 
         Map<String, ValueData> record2 = ((MapValueData)all.get(1)).getAll();
-        assertEquals(record2.get(metric.getExpandedField()).toString(), TEST_USER + "/ws2/project2");
+        assertEquals(record2.get(metric.getExpandedField()).toString(), TEST_USER + "/wsid2/project2");
 
         Map<String, ValueData> record3 = ((MapValueData)all.get(2)).getAll();
-        assertEquals(record3.get(metric.getExpandedField()).toString(), TEST_USER + "/" + TEST_WS + "/project1");
+        assertEquals(record3.get(metric.getExpandedField()).toString(), TEST_USER + "/" + TEST_WS_ID + "/project1");
     }
 
     @Test
     public void testExpandedAbstractProjectTypeMetrics() throws Exception {
+        computeProfiles("20131101");
+
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
@@ -1120,14 +929,16 @@ public class TestExpandedMetric extends BaseTest {
         assertEquals(all.size(), 2);
 
         Map<String, ValueData> record1 = ((MapValueData)all.get(0)).getAll();
-        assertEquals(record1.get(metric.getExpandedField()).toString(), "user2@gmail.com/ws3/project2");
+        assertEquals(record1.get(metric.getExpandedField()).toString(), "user2@gmail.com/wsid3/project2");
 
         Map<String, ValueData> record2 = ((MapValueData)all.get(1)).getAll();
-        assertEquals(record2.get(metric.getExpandedField()).toString(), TEST_USER + "/ws2/project2");
+        assertEquals(record2.get(metric.getExpandedField()).toString(), TEST_USER + "/wsid2/project2");
     }
 
     @Test
     public void testExpandedAbstractProjectPaasMetrics() throws Exception {
+        computeProfiles("20131101");
+
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
@@ -1144,14 +955,16 @@ public class TestExpandedMetric extends BaseTest {
         assertEquals(all.size(), 2);
 
         Map<String, ValueData> record = ((MapValueData)all.get(0)).getAll();
-        assertEquals(record.get(metric.getExpandedField()).toString(), TEST_USER + "/ws2/project2");
+        assertEquals(record.get(metric.getExpandedField()).toString(), TEST_USER + "/wsid2/project2");
 
         record = ((MapValueData)all.get(1)).getAll();
-        assertEquals(record.get(metric.getExpandedField()).toString(), TEST_USER + "/" + TEST_WS + "/project1");
+        assertEquals(record.get(metric.getExpandedField()).toString(), TEST_USER + "/" + TEST_WS_ID + "/project1");
     }
 
     @Test
     public void testProjectListFilteredByReadBasedMetric() throws Exception {
+        computeProfiles("20131101");
+
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
@@ -1185,15 +998,17 @@ public class TestExpandedMetric extends BaseTest {
 
         Map<String, ValueData> project1 = ((MapValueData)all.get(0)).getAll();
         assertEquals(project1.get(ProjectsList.PROJECT).toString(), "project1");
-        assertEquals(project1.get(ProjectsList.WS).toString(), TEST_WS);
+        assertEquals(project1.get(ProjectsList.WS).toString(), TEST_WS_ID);
 
         Map<String, ValueData> project2 = ((MapValueData)all.get(1)).getAll();
         assertEquals(project2.get(ProjectsList.PROJECT).toString(), "project2");
-        assertEquals(project2.get(ProjectsList.WS).toString(), "ws3");
+        assertEquals(project2.get(ProjectsList.WS).toString(), "wsid3");
     }
 
     @Test
     public void testConversionExpandedValueDataIntoViewData() throws Exception {
+        computeProfiles("20131101");
+
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
@@ -1217,13 +1032,15 @@ public class TestExpandedMetric extends BaseTest {
         assertEquals(sectionData.size(), 4);
 
         assertTrue(sectionData.contains(asList(StringValueData.valueOf("ws"))));
-        assertTrue(sectionData.contains(asList(StringValueData.valueOf("ws1"))));
-        assertTrue(sectionData.contains(asList(StringValueData.valueOf("ws2"))));
-        assertTrue(sectionData.contains(asList(StringValueData.valueOf("ws3"))));
+        assertTrue(sectionData.contains(asList(StringValueData.valueOf("wsid1"))));
+        assertTrue(sectionData.contains(asList(StringValueData.valueOf("wsid2"))));
+        assertTrue(sectionData.contains(asList(StringValueData.valueOf("wsid3"))));
     }
 
     @Test
     public void testTotalUsers() throws Exception {
+        computeProfiles("20131101");
+
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
@@ -1235,9 +1052,9 @@ public class TestExpandedMetric extends BaseTest {
         ValueData expandedValue = metric.getExpandedValue(Context.EMPTY);
 
         List<ValueData> list = treatAsList(expandedValue);
-        assertEquals(list.size(), 4);
-        assertTrue(list.contains(MapValueData.valueOf("user=user5")));
-        assertTrue(list.contains(MapValueData.valueOf("user=user4@gmail.com")));
+        assertEquals(list.size(), 5);
+        assertTrue(list.contains(MapValueData.valueOf("user=user-id5")));
+        assertTrue(list.contains(MapValueData.valueOf("user=user-id4")));
     }
 
     @BeforeMethod

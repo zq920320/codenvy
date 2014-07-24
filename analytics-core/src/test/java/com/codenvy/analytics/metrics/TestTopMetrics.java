@@ -43,6 +43,9 @@ public class TestTopMetrics extends BaseTest {
     @BeforeClass
     public void init() throws Exception {
         List<Event> events = new ArrayList<>();
+        events.add(Event.Builder.createUserCreatedEvent("uid1", "user1", "user1")
+                                .withDate("2013-02-10").withTime("10:00:00,000").build());
+
         events.add(Event.Builder.createSessionFactoryStartedEvent("id1", "tmp-1", "user1", "true", "brType")
                                 .withDate("2013-02-10").withTime("10:00:00").build());
         events.add(Event.Builder.createSessionFactoryStoppedEvent("id1", "tmp-1", "user1")
@@ -111,6 +114,11 @@ public class TestTopMetrics extends BaseTest {
         builder.put(Parameters.FROM_DATE, "20130210");
         builder.put(Parameters.TO_DATE, "20130210");
         builder.put(Parameters.LOG, log.getAbsolutePath());
+
+        builder.putAll(scriptsManager.getScript(ScriptType.USERS_PROFILES, MetricType.USERS_PROFILES_LIST)
+                                     .getParamsAsMap());
+        pigServer.execute(ScriptType.USERS_PROFILES, builder.build());
+
         builder.putAll(scriptsManager.getScript(ScriptType.ACCEPTED_FACTORIES, MetricType.FACTORIES_ACCEPTED_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.ACCEPTED_FACTORIES, builder.build());
 

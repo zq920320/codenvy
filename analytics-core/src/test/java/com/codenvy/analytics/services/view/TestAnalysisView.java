@@ -192,7 +192,7 @@ public class TestAnalysisView extends BaseTest {
 
         // test data of column
         Map<RowLabel, String> columnData = getColumn(1, lifetimeAnalysisReport, rowsLabels, true);
-        assertEquals(columnData.get(RowLabel.TOTAL_USERS), "2,003");
+        assertEquals(columnData.get(RowLabel.TOTAL_USERS), "2,004");
         assertEquals(columnData.get(RowLabel.TOTAL_NUMBER_OF_USERS_WE_TRACK), "3");
         assertEquals(columnData.get(RowLabel.CREATED_PROJECTS), "3");
         assertEquals(columnData.get(RowLabel.AND_BUILT), "1");
@@ -233,8 +233,8 @@ public class TestAnalysisView extends BaseTest {
 
         // test data of column 3 with label "Nov 2013"
         Map<RowLabel, String> column3Data = getColumn(3, monthlyAnalysisReport, rowsLabels, true);
-        assertEquals(column3Data.get(RowLabel.TOTAL_USERS), "2,002");
-        assertEquals(column3Data.get(RowLabel.TOTAL_NUMBER_OF_USERS_WE_TRACK), "2");
+        assertEquals(column3Data.get(RowLabel.TOTAL_USERS), "2,003");
+        assertEquals(column3Data.get(RowLabel.TOTAL_NUMBER_OF_USERS_WE_TRACK), "3");
         assertEquals(column3Data.get(RowLabel.CREATED_PROJECTS), "2");
         assertEquals(column3Data.get(RowLabel.AND_BUILT), "1");
         assertEquals(column3Data.get(RowLabel.AND_RUN), "2");
@@ -244,7 +244,7 @@ public class TestAnalysisView extends BaseTest {
 
         // test data of column 2 with label "Dec 2013"
         Map<RowLabel, String> column2Data = getColumn(2, monthlyAnalysisReport, rowsLabels, true);
-        assertEquals(column2Data.get(RowLabel.TOTAL_USERS), "2,003");
+        assertEquals(column2Data.get(RowLabel.TOTAL_USERS), "2,004");
         assertEquals(column2Data.get(RowLabel.TOTAL_NUMBER_OF_USERS_WE_TRACK), "3");
         assertEquals(column2Data.get(RowLabel.CREATED_PROJECTS), "3");
         assertEquals(column2Data.get(RowLabel.AND_BUILT), "1");
@@ -255,7 +255,7 @@ public class TestAnalysisView extends BaseTest {
 
         // test data of column 1 with label "Jan 2014"
         Map<RowLabel, String> column1Data = getColumn(1, monthlyAnalysisReport, rowsLabels, true);
-        assertEquals(column1Data.get(RowLabel.TOTAL_USERS), "2,003");
+        assertEquals(column1Data.get(RowLabel.TOTAL_USERS), "2,004");
         assertEquals(column1Data.get(RowLabel.TOTAL_NUMBER_OF_USERS_WE_TRACK), "3");
         assertEquals(column1Data.get(RowLabel.CREATED_PROJECTS), "3");
         assertEquals(column1Data.get(RowLabel.AND_BUILT), "1");
@@ -286,7 +286,7 @@ public class TestAnalysisView extends BaseTest {
         // test data of column 1 with label "04 Jan"
         {
             Map<RowLabel, String> columnData = getColumn(1, weeklyAnalysisReport, rowsLabels, true);
-            assertEquals(columnData.get(RowLabel.TOTAL_USERS), "2,003");
+            assertEquals(columnData.get(RowLabel.TOTAL_USERS), "2,004");
             assertEquals(columnData.get(RowLabel.TOTAL_NUMBER_OF_USERS_WE_TRACK), "3");
             assertEquals(columnData.get(RowLabel.CREATED_PROJECTS), "3");
             assertEquals(columnData.get(RowLabel.AND_BUILT), "1");
@@ -299,8 +299,8 @@ public class TestAnalysisView extends BaseTest {
         // test data of column 6 with label "30 Nov"
         {
             Map<RowLabel, String> columnData = getColumn(6, weeklyAnalysisReport, rowsLabels, true);
-            assertEquals(columnData.get(RowLabel.TOTAL_USERS), "2,002");
-            assertEquals(columnData.get(RowLabel.TOTAL_NUMBER_OF_USERS_WE_TRACK), "2");
+            assertEquals(columnData.get(RowLabel.TOTAL_USERS), "2,003");
+            assertEquals(columnData.get(RowLabel.TOTAL_NUMBER_OF_USERS_WE_TRACK), "3");
             assertEquals(columnData.get(RowLabel.CREATED_PROJECTS), "2");
             assertEquals(columnData.get(RowLabel.AND_BUILT), "1");
             assertEquals(columnData.get(RowLabel.AND_RUN), "2");
@@ -344,7 +344,7 @@ public class TestAnalysisView extends BaseTest {
         // test data of first column 1 with label "01 Jan"
         {
             Map<RowLabel, String> columnData = getColumn(1, weeklyAnalysisReport, rowsLabels, true);
-            assertEquals(columnData.get(RowLabel.TOTAL_USERS), "2,003");
+            assertEquals(columnData.get(RowLabel.TOTAL_USERS), "2,004");
             assertEquals(columnData.get(RowLabel.TOTAL_NUMBER_OF_USERS_WE_TRACK), "3");
             assertEquals(columnData.get(RowLabel.CREATED_PROJECTS), "3");
             assertEquals(columnData.get(RowLabel.AND_BUILT), "1");
@@ -357,7 +357,7 @@ public class TestAnalysisView extends BaseTest {
         // test data of last column 14 with label "19 Dec"
         {
             Map<RowLabel, String> columnData = getColumn(14, weeklyAnalysisReport, rowsLabels, true);
-            assertEquals(columnData.get(RowLabel.TOTAL_USERS), "2,003");
+            assertEquals(columnData.get(RowLabel.TOTAL_USERS), "2,004");
             assertEquals(columnData.get(RowLabel.TOTAL_NUMBER_OF_USERS_WE_TRACK), "3");
             assertEquals(columnData.get(RowLabel.CREATED_PROJECTS), "3");
             assertEquals(columnData.get(RowLabel.AND_BUILT), "1");
@@ -392,6 +392,15 @@ public class TestAnalysisView extends BaseTest {
         events.add(Event.Builder.createUserCreatedEvent("user1-id", "user1", "user1")
                                 .withDate(DATE1).build());
         events.add(Event.Builder.createUserCreatedEvent("user2-id", "user2", "user2")
+                                .withDate(DATE1).build());
+        events.add(Event.Builder.createUserCreatedEvent("user3-id", "user3", "user3")
+                                .withDate(DATE1).build());
+
+        events.add(Event.Builder.createWorkspaceCreatedEvent("ws1", "wsid1", "user1")
+                                .withDate(DATE1).build());
+        events.add(Event.Builder.createWorkspaceCreatedEvent("ws2", "wsid2", "user2")
+                                .withDate(DATE1).build());
+        events.add(Event.Builder.createWorkspaceCreatedEvent("ws3", "wsid3", "user3")
                                 .withDate(DATE1).build());
 
         // update users' profiles
@@ -527,6 +536,9 @@ public class TestAnalysisView extends BaseTest {
         builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.toString());
         builder.putAll(scriptsManager.getScript(ScriptType.USERS_PROFILES, MetricType.USERS_PROFILES_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.USERS_PROFILES, builder.build());
+
+        builder.putAll(scriptsManager.getScript(ScriptType.WORKSPACES_PROFILES, MetricType.WORKSPACES_PROFILES_LIST).getParamsAsMap());
+        pigServer.execute(ScriptType.WORKSPACES_PROFILES, builder.build());
 
         builder.putAll(scriptsManager.getScript(ScriptType.EVENTS, MetricType.REMOVED_USERS).getParamsAsMap());
         pigServer.execute(ScriptType.EVENTS, builder.build());

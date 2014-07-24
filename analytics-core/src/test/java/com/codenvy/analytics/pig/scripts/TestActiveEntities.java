@@ -42,6 +42,13 @@ public class TestActiveEntities extends BaseTest {
     @BeforeClass
     public void setUp() throws Exception {
         List<Event> events = new ArrayList<>();
+
+        events.add(Event.Builder.createWorkspaceCreatedEvent("ws1", "wsid1", "user1@gmail.com").withDate("2013-01-01")
+                                .build());
+        events.add(Event.Builder.createWorkspaceCreatedEvent("ws2", "wsid2", "user2@gmail.com").withDate("2013-01-01")
+                                .build());
+        events.add(Event.Builder.createWorkspaceCreatedEvent("tmp-1", "wsid3", "user2@gmail.com").withDate("2013-01-01")
+                                .build());
         events.add(Event.Builder.createTenantCreatedEvent("ws1", "anonymoususer_1").withDate("2013-01-01").build());
         events.add(Event.Builder.createTenantCreatedEvent("ws1", "user1@gmail.com").withDate("2013-01-01").build());
         events.add(Event.Builder.createTenantCreatedEvent("ws2", "user2@gmail.com").withDate("2013-01-01").build());
@@ -53,10 +60,16 @@ public class TestActiveEntities extends BaseTest {
         builder.put(Parameters.TO_DATE, "20130101");
         builder.put(Parameters.LOG, log.getAbsolutePath());
 
-        builder.putAll(scriptsManager.getScript(ScriptType.ACTIVE_ENTITIES, MetricType.ACTIVE_USERS_SET).getParamsAsMap());
+        builder.putAll(scriptsManager.getScript(ScriptType.WORKSPACES_PROFILES, MetricType.WORKSPACES_PROFILES_LIST)
+                                     .getParamsAsMap());
+        pigServer.execute(ScriptType.WORKSPACES_PROFILES, builder.build());
+
+        builder.putAll(
+                scriptsManager.getScript(ScriptType.ACTIVE_ENTITIES, MetricType.ACTIVE_USERS_SET).getParamsAsMap());
         pigServer.execute(ScriptType.ACTIVE_ENTITIES, builder.build());
 
-        builder.putAll(scriptsManager.getScript(ScriptType.ACTIVE_ENTITIES, MetricType.ACTIVE_WORKSPACES_SET).getParamsAsMap());
+        builder.putAll(scriptsManager.getScript(ScriptType.ACTIVE_ENTITIES, MetricType.ACTIVE_WORKSPACES_SET)
+                                     .getParamsAsMap());
         pigServer.execute(ScriptType.ACTIVE_ENTITIES, builder.build());
     }
 
@@ -96,8 +109,8 @@ public class TestActiveEntities extends BaseTest {
         SetValueData result = ValueDataUtil.getAsSet(metric, builder.build());
 
         assertEquals(result.size(), 2);
-        assertTrue(result.getAll().contains(StringValueData.valueOf("ws1")));
-        assertTrue(result.getAll().contains(StringValueData.valueOf("ws2")));
+        assertTrue(result.getAll().contains(StringValueData.valueOf("wsid1")));
+        assertTrue(result.getAll().contains(StringValueData.valueOf("wsid2")));
     }
 
     @Test

@@ -40,6 +40,11 @@ public class TestDockerConfigurationTime extends BaseTest {
     public void prepare() throws Exception {
         List<Event> events = new ArrayList<>();
 
+        events.add(Event.Builder.createWorkspaceCreatedEvent("ws1", "wsid1", "user1@gmail.com")
+                                .withDate("2013-01-01").withTime("19:00:00").build());
+        events.add(Event.Builder.createWorkspaceCreatedEvent("ws2", "wsid2", "user2@gmail.com")
+                                .withDate("2013-01-01").withTime("19:00:00").build());
+
         // user1@gmail.com 6m session
         events.add(Event.Builder.createConfigureDockerStartedEvent("user1@gmail.com", "ws1", "").withDate(
                 "2013-01-01").withTime("19:00:00").build());
@@ -72,6 +77,10 @@ public class TestDockerConfigurationTime extends BaseTest {
         builder.put(Parameters.FROM_DATE, "20130101");
         builder.put(Parameters.TO_DATE, "20130101");
         builder.put(Parameters.LOG, log.getAbsolutePath());
+
+        builder.putAll(scriptsManager.getScript(ScriptType.WORKSPACES_PROFILES, MetricType.WORKSPACES_PROFILES_LIST).getParamsAsMap());
+        pigServer.execute(ScriptType.WORKSPACES_PROFILES, builder.build());
+
         builder.putAll(scriptsManager.getScript(ScriptType.TIME_SPENT_IN_ACTION, MetricType.DOCKER_CONFIGURATION_TIME).getParamsAsMap());
         pigServer.execute(ScriptType.TIME_SPENT_IN_ACTION, builder.build());
     }

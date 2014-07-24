@@ -73,6 +73,9 @@ public class TestScriptsBefore20130822 extends BaseTest {
     public void prepareDataFor(String date) throws Exception {
         List<Event> events = new ArrayList<>();
 
+        events.add(Event.Builder.createWorkspaceCreatedEvent("ws1", "wsid1", "user@gmail.com")
+                                .withDate(date).withTime("18:00:00").build());
+
         // sessions #1 - 2m
         events.add(Event.Builder.createProjectCreatedEvent("ANONYMOUSUSER_user11", "ws1", "sss", "project1", "type3")
                                 .withDate(date).withTime("18:00:00").build());
@@ -104,6 +107,10 @@ public class TestScriptsBefore20130822 extends BaseTest {
         builder.put(Parameters.FROM_DATE, date);
         builder.put(Parameters.TO_DATE, date);
         builder.put(Parameters.LOG, log.getAbsolutePath());
+
+        builder.putAll(scriptsManager.getScript(ScriptType.WORKSPACES_PROFILES, MetricType.WORKSPACES_PROFILES_LIST).getParamsAsMap());
+        pigServer.execute(ScriptType.WORKSPACES_PROFILES, builder.build());
+
         builder.putAll(scriptsManager.getScript(ScriptType.PRODUCT_USAGE_SESSIONS, MetricType.PRODUCT_USAGE_SESSIONS_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, builder.build());
     }

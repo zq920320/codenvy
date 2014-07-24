@@ -49,6 +49,9 @@ public class TestTotalUserWithCompanyFilter extends BaseTest {
         events.add(Event.Builder.createUserUpdateProfile("id1", "user1@gmail.com", "user1@gmail.com", "f2", "l2", "BYU-Idaho", "11", "1")
                                 .withDate("2013-01-01").withTime("10:10:00,000").build());
 
+        events.add(Event.Builder.createWorkspaceCreatedEvent("TEST_WS", "wsid1", "user2@gmail.com")
+                                .withDate("2013-01-01").withTime("10:10:00").build());
+
         // This use case from issue DASHB-494 where is not created-user event for user.
         events.add(Event.Builder.createUserUpdateProfile("id2", "user2@gmail.com", "user2@gmail.com", "f2", "l2", "eXo", "11", "1")
                                 .withDate("2013-01-01").withTime("10:10:00,000").build());
@@ -75,21 +78,16 @@ public class TestTotalUserWithCompanyFilter extends BaseTest {
         builder.put(Parameters.FROM_DATE, date);
         builder.put(Parameters.TO_DATE, date);
         builder.put(Parameters.LOG, log.getAbsolutePath());
+
         builder.putAll(scriptsManager.getScript(ScriptType.USERS_PROFILES, MetricType.USERS_PROFILES_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.USERS_PROFILES, builder.build());
 
+        builder.putAll(scriptsManager.getScript(ScriptType.WORKSPACES_PROFILES, MetricType.WORKSPACES_PROFILES_LIST).getParamsAsMap());
+        pigServer.execute(ScriptType.WORKSPACES_PROFILES, builder.build());
 
-        builder = new Context.Builder();
-        builder.put(Parameters.FROM_DATE, date);
-        builder.put(Parameters.TO_DATE, date);
-        builder.put(Parameters.LOG, log.getAbsolutePath());
         builder.putAll(scriptsManager.getScript(ScriptType.EVENTS, MetricType.CREATED_USERS).getParamsAsMap());
         pigServer.execute(ScriptType.EVENTS, builder.build());
 
-        builder = new Context.Builder();
-        builder.put(Parameters.FROM_DATE, date);
-        builder.put(Parameters.TO_DATE, date);
-        builder.put(Parameters.LOG, log.getAbsolutePath());
         builder.putAll(scriptsManager.getScript(ScriptType.USERS_STATISTICS, MetricType.USERS_STATISTICS_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.USERS_STATISTICS, builder.build());
     }

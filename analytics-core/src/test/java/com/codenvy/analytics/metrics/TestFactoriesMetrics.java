@@ -41,6 +41,11 @@ public class TestFactoriesMetrics extends BaseTest {
     @BeforeClass
     public void init() throws Exception {
         List<Event> events = new ArrayList<>();
+
+        events.add(Event.Builder.createUserCreatedEvent("uid1", "user1", "user1")
+                                .withDate("2013-02-10").withTime("13:00:00,000").build());
+        events.add(Event.Builder.createWorkspaceCreatedEvent("ws1", "wsid1", "user1")
+                                .withDate("2013-02-10").withTime("13:00:00").build());
         events.add(Event.Builder.createFactoryCreatedEvent("ws1", "user1", "project1", "type1", "repo1", "factory1", "", "")
                                 .withDate("2013-02-10").withTime("13:00:00").build());
         events.add(Event.Builder.createFactoryCreatedEvent("ws1", "user1", "project2", "type1", "repo2", "factory2", "", "")
@@ -53,6 +58,13 @@ public class TestFactoriesMetrics extends BaseTest {
         builder.put(Parameters.FROM_DATE, "20130210");
         builder.put(Parameters.TO_DATE, "20130210");
         builder.put(Parameters.LOG, log.getAbsolutePath());
+
+        builder.putAll(scriptsManager.getScript(ScriptType.USERS_PROFILES, MetricType.USERS_PROFILES_LIST).getParamsAsMap());
+        pigServer.execute(ScriptType.USERS_PROFILES, builder.build());
+
+        builder.putAll(scriptsManager.getScript(ScriptType.WORKSPACES_PROFILES, MetricType.WORKSPACES_PROFILES_LIST).getParamsAsMap());
+        pigServer.execute(ScriptType.WORKSPACES_PROFILES, builder.build());
+
         builder.putAll(scriptsManager.getScript(ScriptType.CREATED_FACTORIES, MetricType.CREATED_FACTORIES_SET).getParamsAsMap());
         pigServer.execute(ScriptType.CREATED_FACTORIES, builder.build());
 

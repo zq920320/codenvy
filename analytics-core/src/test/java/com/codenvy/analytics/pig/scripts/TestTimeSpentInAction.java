@@ -38,6 +38,17 @@ public class TestTimeSpentInAction extends BaseTest {
     @BeforeClass
     public void prepare() throws Exception {
         List<Event> events = new ArrayList<>();
+        events.add(Event.Builder.createUserCreatedEvent("uid1", "user1@gmail.com", "user1@gmail.com")
+                                .withDate("2013-01-01").withTime("19:00:00").build());
+        events.add(Event.Builder.createUserCreatedEvent("uid2", "user2@gmail.com", "user2@gmail.com")
+                                .withDate("2013-01-01").withTime("19:00:00").build());
+        events.add(Event.Builder.createUserCreatedEvent("uid3", "user4@gmail.com", "user4@gmail.com")
+                                .withDate("2013-01-01").withTime("19:00:00").build());
+
+        events.add(Event.Builder.createWorkspaceCreatedEvent("ws1", "wsid1", "user1@gmail.com")
+                                .withDate("2013-01-01").withTime("19:00:00").build());
+        events.add(Event.Builder.createWorkspaceCreatedEvent("ws2", "wsid2", "user2@gmail.com")
+                                .withDate("2013-01-01").withTime("19:00:00").build());
 
         // user1@gmail.com 6m session
         events.add(Event.Builder.createRunStartedEvent("user1@gmail.com", "ws1", "project", "type", "").withDate(
@@ -71,6 +82,15 @@ public class TestTimeSpentInAction extends BaseTest {
         builder.put(Parameters.FROM_DATE, "20130101");
         builder.put(Parameters.TO_DATE, "20130101");
         builder.put(Parameters.LOG, log.getAbsolutePath());
+
+        builder.putAll(scriptsManager.getScript(ScriptType.USERS_PROFILES, MetricType.USERS_PROFILES_LIST)
+                                     .getParamsAsMap());
+        pigServer.execute(ScriptType.USERS_PROFILES, builder.build());
+
+        builder.putAll(scriptsManager.getScript(ScriptType.WORKSPACES_PROFILES, MetricType.WORKSPACES_PROFILES_LIST)
+                                     .getParamsAsMap());
+        pigServer.execute(ScriptType.WORKSPACES_PROFILES, builder.build());
+
         builder.putAll(scriptsManager.getScript(ScriptType.TIME_SPENT_IN_ACTION, MetricType.RUNS_TIME).getParamsAsMap());
         pigServer.execute(ScriptType.TIME_SPENT_IN_ACTION, builder.build());
     }
@@ -80,6 +100,7 @@ public class TestTimeSpentInAction extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20130101");
         builder.put(Parameters.TO_DATE, "20130101");
+        builder.put(MetricFilter.REGISTERED_USER, 1);
 
         Metric metric = MetricFactory.getMetric(MetricType.RUNS_TIME);
         Assert.assertEquals(metric.getValue(builder.build()), new LongValueData(540000));
@@ -101,7 +122,7 @@ public class TestTimeSpentInAction extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20130101");
         builder.put(Parameters.TO_DATE, "20130101");
-        builder.put(Parameters.USER, "user1@gmail.com");
+        builder.put(Parameters.USER, "uid1");
 
         Metric metric = MetricFactory.getMetric(MetricType.RUNS_TIME);
         Assert.assertEquals(metric.getValue(builder.build()), new LongValueData(420000));
@@ -112,7 +133,7 @@ public class TestTimeSpentInAction extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20130101");
         builder.put(Parameters.TO_DATE, "20130101");
-        builder.put(Parameters.USER, "user1@gmail.com OR user2@gmail.com");
+        builder.put(Parameters.USER, "uid1 OR uid2");
 
         Metric metric = MetricFactory.getMetric(MetricType.RUNS_TIME);
         Assert.assertEquals(metric.getValue(builder.build()), new LongValueData(540000));
@@ -123,8 +144,8 @@ public class TestTimeSpentInAction extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20130101");
         builder.put(Parameters.TO_DATE, "20130101");
-        builder.put(Parameters.USER, "user1@gmail.com OR user2@gmail.com");
-        builder.put(Parameters.WS, "ws2");
+        builder.put(Parameters.USER, "uid1 OR uid2");
+        builder.put(Parameters.WS, "wsid2");
 
         Metric metric = MetricFactory.getMetric(MetricType.RUNS_TIME);
         Assert.assertEquals(metric.getValue(builder.build()), new LongValueData(120000));

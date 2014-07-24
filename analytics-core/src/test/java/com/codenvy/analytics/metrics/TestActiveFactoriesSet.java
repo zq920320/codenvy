@@ -42,6 +42,8 @@ public class TestActiveFactoriesSet extends BaseTest {
     @BeforeClass
     public void init() throws Exception {
         List<Event> events = new ArrayList<>();
+        events.add(Event.Builder.createUserCreatedEvent("uid1", "a1", "a1").withDate("2013-01-01").withTime("10:00:00,000").build());
+
         events.add(createFactoryUrlAcceptedEvent("tmp-1", "factory1", "", "", "").withDate("2013-01-01").withTime("13:00:00").build());
         events.add(createSessionFactoryStartedEvent("id1", "tmp-1", "a1", "", "").withDate("2013-01-01").withTime("13:01:00").build());
         events.add(createSessionFactoryStoppedEvent("id1", "tmp-1", "a1").withDate("2013-01-01").withTime("13:02:00").build());
@@ -60,6 +62,15 @@ public class TestActiveFactoriesSet extends BaseTest {
         File log = LogGenerator.generateLog(events);
 
         Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20130101");
+        builder.put(Parameters.TO_DATE, "20130101");
+        builder.put(Parameters.LOG, log.getAbsolutePath());
+
+        builder.putAll(scriptsManager.getScript(ScriptType.USERS_PROFILES, MetricType.USERS_PROFILES_LIST)
+                                     .getParamsAsMap());
+        pigServer.execute(ScriptType.USERS_PROFILES, builder.build());
+
+        builder = new Context.Builder();
         builder.put(Parameters.LOG, log.getAbsolutePath());
         builder.putAll(scriptsManager.getScript(ScriptType.ACCEPTED_FACTORIES, MetricType.FACTORIES_ACCEPTED_LIST).getParamsAsMap());
 

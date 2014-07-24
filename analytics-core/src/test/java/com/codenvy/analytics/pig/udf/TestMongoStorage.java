@@ -19,6 +19,7 @@ package com.codenvy.analytics.pig.udf;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.pig.scripts.ScriptType;
 import com.codenvy.analytics.pig.scripts.util.Event;
@@ -46,6 +47,10 @@ public class TestMongoStorage extends BaseTest {
     @BeforeClass
     public void prepare() throws Exception {
         List<Event> events = new ArrayList<>();
+        events.add(Event.Builder.createWorkspaceCreatedEvent("ws1", "wsid1", "user1@gmail.com")
+                                .withDate("2013-01-02")
+                                .withTime("00:00:00")
+                                .build());
         events.add(Event.Builder.createTenantCreatedEvent("ws1", "user1@gmail.com")
                                 .withDate("2013-01-02")
                                 .withTime("00:00:00")
@@ -56,11 +61,15 @@ public class TestMongoStorage extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20130102");
         builder.put(Parameters.TO_DATE, "20130102");
+        builder.put(Parameters.LOG, log.getAbsolutePath());
+
+        builder.putAll(scriptsManager.getScript(ScriptType.WORKSPACES_PROFILES, MetricType.WORKSPACES_PROFILES_LIST).getParamsAsMap());
+        pigServer.execute(ScriptType.WORKSPACES_PROFILES, builder.build());
+
         builder.put(Parameters.USER, Parameters.USER_TYPES.REGISTERED.name());
         builder.put(Parameters.WS, Parameters.WS_TYPES.PERSISTENT.name());
         builder.put(Parameters.EVENT, "tenant-created");
         builder.put(Parameters.STORAGE_TABLE, "testmongostorage");
-        builder.put(Parameters.LOG, log.getAbsolutePath());
         context = builder.build();
 
         DB db = mongoDataStorage.getDb();
@@ -78,7 +87,7 @@ public class TestMongoStorage extends BaseTest {
         assertEquals(dbCursor.size(), 1);
 
         DBObject next = dbCursor.next();
-        assertEquals(next.get("ws"), "ws1");
+        assertEquals(next.get("ws"), "wsid1");
         assertEquals(next.get("user"), "user1@gmail.com");
         assertEquals(next.get("value"), 1L);
 

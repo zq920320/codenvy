@@ -45,6 +45,11 @@ public class TestProjectsStatistics extends BaseTest {
     @BeforeClass
     public void init() throws Exception {
         List<Event> events = new ArrayList<>();
+        events.add(Event.Builder.createWorkspaceCreatedEvent("ws1", "wsid1", "user1@gmail.com")
+                                .withDate("2013-01-01")
+                                .withTime("10:00:00")
+                                .build());
+
         events.add(Event.Builder.createProjectCreatedEvent("user1@gmail.com", "ws1", "sid1", "project1", "jar")
                                 .withDate("2013-01-01")
                                 .withTime("10:00:00")
@@ -111,14 +116,15 @@ public class TestProjectsStatistics extends BaseTest {
         builder.put(Parameters.FROM_DATE, "20130101");
         builder.put(Parameters.TO_DATE, "20130101");
         builder.put(Parameters.LOG, log.getAbsolutePath());
+
+        builder.putAll(scriptsManager.getScript(ScriptType.WORKSPACES_PROFILES, MetricType.WORKSPACES_PROFILES_LIST)
+                                     .getParamsAsMap());
+        pigServer.execute(ScriptType.WORKSPACES_PROFILES, builder.build());
+
         builder.putAll(scriptsManager.getScript(ScriptType.PROJECTS_STATISTICS, MetricType.PROJECTS_STATISTICS_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.PROJECTS_STATISTICS, builder.build());
         
-        builder = new Context.Builder();
-        builder.put(Parameters.FROM_DATE, "20130101");
-        builder.put(Parameters.TO_DATE, "20130101");
         builder.putAll(scriptsManager.getScript(ScriptType.PROJECTS, MetricType.PROJECTS_LIST).getParamsAsMap());
-        builder.put(Parameters.LOG, log.getAbsolutePath());
         pigServer.execute(ScriptType.PROJECTS, builder.build());
     }
 
@@ -145,7 +151,7 @@ public class TestProjectsStatistics extends BaseTest {
 
         Map<String, ValueData> m = ((MapValueData)items.get(0)).getAll();
         assertEquals(m.get("project").getAsString(), "project2");
-        assertEquals(m.get("ws").getAsString(), "ws1");
+        assertEquals(m.get("ws").getAsString(), "wsid1");
         assertEquals(m.get("project_type").getAsString(), "spring");
         assertEquals(m.get("date"), LongValueData.valueOf(fullDateFormat.parse("2013-01-01 10:13:00").getTime()));
         assertEquals(m.get("user").getAsString(), "user1@gmail.com");
@@ -168,7 +174,7 @@ public class TestProjectsStatistics extends BaseTest {
 
         m = ((MapValueData)items.get(1)).getAll();
         assertEquals(m.get("project").getAsString(), "project1");
-        assertEquals(m.get("ws").getAsString(), "ws1");
+        assertEquals(m.get("ws").getAsString(), "wsid1");
         assertEquals(m.get("project_type").getAsString(), "jar");
         assertEquals(m.get("date"), LongValueData.valueOf(fullDateFormat.parse("2013-01-01 10:00:00").getTime()));
         assertEquals(m.get("user").getAsString(), "user1@gmail.com");
@@ -203,7 +209,7 @@ public class TestProjectsStatistics extends BaseTest {
 
         Map<String, ValueData> m = ((MapValueData)items.get(0)).getAll();
         assertEquals(m.get("project").getAsString(), "project1");
-        assertEquals(m.get("ws").getAsString(), "ws1");
+        assertEquals(m.get("ws").getAsString(), "wsid1");
         assertEquals(m.get("project_type").getAsString(), "jar");
         assertEquals(m.get("date"), LongValueData.valueOf(fullDateFormat.parse("2013-01-01 10:00:00").getTime()));
         assertEquals(m.get("user").getAsString(), "user1@gmail.com");

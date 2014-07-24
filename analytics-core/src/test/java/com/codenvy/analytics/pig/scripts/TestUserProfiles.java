@@ -60,6 +60,10 @@ public class TestUserProfiles extends BaseTest {
                                 .withDate("2013-01-01").withTime("12:00:00,000").build());
         events.add(Event.Builder.createUserUpdatedEvent("id2", "user2@ukr.net", "user2@ukr.net")
                                 .withDate("2013-01-01").withTime("13:00:00,000").build());
+
+        events.add(Event.Builder.createUserCreatedEvent("user6noi01lzdajwh6ck", "anonymousUser_5xhz40", "[anonymousUser_5xhz40]")
+                                .withDate("2013-01-01").withTime("10:00:00,000").build());
+
         File log = LogGenerator.generateLog(events);
 
         Context.Builder builder = new Context.Builder();
@@ -92,19 +96,20 @@ public class TestUserProfiles extends BaseTest {
     @Test
     public void shouldReturnAllProfiles() throws Exception {
         Metric metric = new UsersProfiles();
-        assertEquals(LongValueData.valueOf(4), metric.getValue(Context.EMPTY));
+        assertEquals(LongValueData.valueOf(5), metric.getValue(Context.EMPTY));
 
         metric = new UsersProfilesList();
         ListValueData value = ValueDataUtil.getAsList(metric, Context.EMPTY);
-        assertEquals(value.size(), 4);
+        assertEquals(value.size(), 5);
 
         Map<String, Map<String, ValueData>> m = listToMap(value, "_id");
 
-        assertEquals(m.size(), 4);
+        assertEquals(m.size(), 5);
         assertTrue(m.containsKey("id1"));
         assertTrue(m.containsKey("id2"));
         assertTrue(m.containsKey("id3"));
         assertTrue(m.containsKey("id4"));
+        assertTrue(m.containsKey("user6noi01lzdajwh6ck"));
 
         assertProfile(m.get("id1"),
                       "f3",
@@ -138,6 +143,14 @@ public class TestUserProfiles extends BaseTest {
                       "",
                       "[user4@gmail.com]",
                       fullDateFormat.parse("2013-01-02 13:00:00").getTime());
+        assertProfile(m.get("user6noi01lzdajwh6ck"),
+                      null,
+                      null,
+                      null,
+                      null,
+                      null,
+                      "[anonymoususer_5xhz40]",
+                      fullDateFormat.parse("2013-01-01 10:00:00").getTime());
     }
 
     private void assertProfile(Map<String, ValueData> profile,
@@ -148,11 +161,11 @@ public class TestUserProfiles extends BaseTest {
                                String job,
                                String aliases,
                                long creationDate) {
-        assertEquals(StringValueData.valueOf(firstName), profile.get("user_first_name"));
-        assertEquals(StringValueData.valueOf(lastName), profile.get("user_last_name"));
-        assertEquals(StringValueData.valueOf(company), profile.get("user_company"));
-        assertEquals(StringValueData.valueOf(phone), profile.get("user_phone"));
-        assertEquals(StringValueData.valueOf(job), profile.get("user_job"));
+        assertEquals(firstName == null ? firstName : StringValueData.valueOf(firstName), profile.get("user_first_name"));
+        assertEquals(lastName == null ? lastName : StringValueData.valueOf(lastName), profile.get("user_last_name"));
+        assertEquals(company == null ? company : StringValueData.valueOf(company), profile.get("user_company"));
+        assertEquals(phone == null ? phone : StringValueData.valueOf(phone), profile.get("user_phone"));
+        assertEquals(job == null ? job : StringValueData.valueOf(job), profile.get("user_job"));
         assertEquals(StringValueData.valueOf(aliases), profile.get("aliases"));
         assertEquals(LongValueData.valueOf(creationDate), profile.get("date"));
     }
@@ -210,16 +223,17 @@ public class TestUserProfiles extends BaseTest {
         builder.put(MetricFilter.USER, "~ id1 OR id2");
 
         Metric metric = new UsersProfiles();
-        assertEquals(LongValueData.valueOf(2), metric.getValue(builder.build()));
+        assertEquals(LongValueData.valueOf(3), metric.getValue(builder.build()));
 
         metric = new UsersProfilesList();
         ListValueData value = ValueDataUtil.getAsList(metric, builder.build());
-        assertEquals(value.size(), 2);
+        assertEquals(value.size(), 3);
 
         Map<String, Map<String, ValueData>> m = listToMap(value, "_id");
-        assertEquals(m.size(), 2);
+        assertEquals(m.size(), 3);
         assertTrue(m.containsKey("id3"));
         assertTrue(m.containsKey("id4"));
+        assertTrue(m.containsKey("user6noi01lzdajwh6ck"));
     }
 
     @Test
@@ -288,11 +302,11 @@ public class TestUserProfiles extends BaseTest {
         builder.put(MetricFilter.USER_COMPANY, "~ company1 OR company2");
 
         Metric metric = new UsersProfiles();
-        assertEquals(LongValueData.valueOf(2), metric.getValue(builder.build()));
+        assertEquals(LongValueData.valueOf(3), metric.getValue(builder.build()));
 
         metric = new UsersProfilesList();
         ListValueData value = ValueDataUtil.getAsList(metric, builder.build());
-        assertEquals(value.size(), 2);
+        assertEquals(value.size(), 3);
     }
 
     @Test

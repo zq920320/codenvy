@@ -41,13 +41,20 @@ public class TestDeploymentsByTypes extends BaseTest {
         builder.put(Parameters.FROM_DATE, "20130101");
         builder.put(Parameters.TO_DATE, "20130101");
         builder.put(Parameters.LOG, new File(LOG_TILL_20140506).getAbsolutePath());
-        builder.putAll(scriptsManager.getScript(ScriptType.DEPLOYMENTS_BY_TYPES, MetricType.PROJECT_PAASES).getParamsAsMap());
+
+        builder.putAll(scriptsManager.getScript(ScriptType.WORKSPACES_PROFILES, MetricType.WORKSPACES_PROFILES_LIST).getParamsAsMap());
+        pigServer.execute(ScriptType.WORKSPACES_PROFILES, builder.build());
+
+        builder.putAll(
+                scriptsManager.getScript(ScriptType.DEPLOYMENTS_BY_TYPES, MetricType.PROJECT_PAASES).getParamsAsMap());
         pigServer.execute(ScriptType.DEPLOYMENTS_BY_TYPES, builder.build());
 
         builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20140507");
         builder.put(Parameters.TO_DATE, "20140507");
         builder.put(Parameters.LOG, new File(LOG).getAbsolutePath());
+
+
         builder.putAll(scriptsManager.getScript(ScriptType.DEPLOYMENTS_BY_TYPES, MetricType.PROJECT_PAASES).getParamsAsMap());
         pigServer.execute(ScriptType.DEPLOYMENTS_BY_TYPES, builder.build());
     }
@@ -58,7 +65,7 @@ public class TestDeploymentsByTypes extends BaseTest {
         builder.put(Parameters.FROM_DATE, "20140507");
         builder.put(Parameters.TO_DATE, "20140507");
         builder.put(MetricFilter.USER, "user1@gmail.com OR user2@gmail.com");
-        builder.put(MetricFilter.WS, "ws3");
+        builder.put(MetricFilter.WS, "wsid3");
 
         Metric metric = MetricFactory.getMetric(MetricType.PROJECT_PAAS_GAE);
         assertEquals(metric.getValue(builder.build()), new LongValueData(1));

@@ -27,7 +27,6 @@ import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -44,11 +43,10 @@ import static org.testng.Assert.assertTrue;
 public class TestExpandedMetricPartTwo extends AbstractTestExpandedMetric {
 
     private static final String TEST_WS      = "ws1";
+    private static final String TEST_WS_ID   = "wsid1";
     private static final String TEST_USER    = "user1@gmail.com";
     private static final String SESSION_ID   = "session_id";
     private static final String TEST_COMPANY = "comp";
-
-    private File log;
 
     @BeforeClass
     public void prepareDatabase() throws IOException, ParseException {
@@ -57,6 +55,9 @@ public class TestExpandedMetricPartTwo extends AbstractTestExpandedMetric {
         // set user company
         events.add(Event.Builder.createUserCreatedEvent(TEST_USER, TEST_USER, TEST_USER)
                                 .withDate("2013-11-01").withTime("08:40:00").build());
+        events.add(Event.Builder.createWorkspaceCreatedEvent(TEST_WS, TEST_WS_ID, TEST_USER)
+                                .withDate("2013-11-01").withTime("08:41:00").build());
+
         events.add(Event.Builder.createUserUpdateProfile(TEST_USER,
                                                          TEST_USER,
                                                          TEST_USER,
@@ -145,7 +146,7 @@ public class TestExpandedMetricPartTwo extends AbstractTestExpandedMetric {
         events.add(Event.Builder.createUserInviteEvent(TEST_USER, TEST_WS, TEST_USER + "_invite")
                                 .withDate("2013-11-01").withTime("16:00:00,155").build());
         // add user to workspace by accepting invite
-        events.add(Event.Builder.createUserAddedToWsEvent(TEST_USER + "_invite", TEST_WS, "", "", "", "invite")
+        events.add(Event.Builder.createUserAddedToWsEvent("_invite" + TEST_USER, TEST_WS, "", "", "", "invite")
                                 .withDate("2013-11-01").withTime("16:01:03").build());
 
 
@@ -292,24 +293,6 @@ public class TestExpandedMetricPartTwo extends AbstractTestExpandedMetric {
         computeProfiles("20131220");
     }
 
-    private void computeProfiles(String date) throws IOException, ParseException {
-        Context.Builder builder = new Context.Builder();
-        builder.put(Parameters.FROM_DATE, date);
-        builder.put(Parameters.TO_DATE, date);
-        builder.put(Parameters.LOG, log.getAbsolutePath());
-        builder.putAll(
-                scriptsManager.getScript(ScriptType.USERS_PROFILES, MetricType.USERS_PROFILES_LIST).getParamsAsMap());
-        pigServer.execute(ScriptType.USERS_PROFILES, builder.build());
-
-        builder = new Context.Builder();
-        builder.put(Parameters.FROM_DATE, date);
-        builder.put(Parameters.TO_DATE, date);
-        builder.put(Parameters.LOG, log.getAbsolutePath());
-        builder.putAll(scriptsManager.getScript(ScriptType.WORKSPACES_PROFILES, MetricType.WORKSPACES_PROFILES_LIST)
-                                     .getParamsAsMap());
-        pigServer.execute(ScriptType.WORKSPACES_PROFILES, builder.build());
-    }
-
     private void computeActiveUserSet(String date) throws IOException, ParseException {
         Context.Builder builder;
         builder = new Context.Builder();
@@ -328,6 +311,9 @@ public class TestExpandedMetricPartTwo extends AbstractTestExpandedMetric {
         builder.put(Parameters.LOG, log.getAbsolutePath());
         builder.putAll(scriptsManager.getScript(ScriptType.PRODUCT_USAGE_SESSIONS, MetricType.PRODUCT_USAGE_SESSIONS_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, builder.build());
+
+        builder.putAll(scriptsManager.getScript(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST).getParamsAsMap());
+        pigServer.execute(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, builder.build());
     }
 
     @Test
@@ -352,15 +338,15 @@ public class TestExpandedMetricPartTwo extends AbstractTestExpandedMetric {
 
         record = ((MapValueData)all.get(1)).getAll();
         assertEquals(record.size(), 1);
-        assertEquals(record.get("user").toString(), "user1@gmail.com");
+        assertEquals(record.get("user").toString(), "user-id1");
 
         record = ((MapValueData)all.get(2)).getAll();
         assertEquals(record.size(), 1);
-        assertEquals(record.get("user").toString(), "user-id4");
+        assertEquals(record.get("user").toString(), "user1@gmail.com");
 
         record = ((MapValueData)all.get(3)).getAll();
         assertEquals(record.size(), 1);
-        assertEquals(record.get("user").toString(), "user-id1");
+        assertEquals(record.get("user").toString(), "user-id4");
 
         builder = new Context.Builder();
         builder.put(Parameters.TO_DATE, "20131220");
@@ -372,13 +358,13 @@ public class TestExpandedMetricPartTwo extends AbstractTestExpandedMetric {
 
         record = ((MapValueData)all.get(0)).getAll();
         assertEquals(record.size(), 1);
-        assertEquals(record.get("user").toString(), "user1@gmail.com");
+        assertEquals(record.get("user").toString(), "user-id1");
         record = ((MapValueData)all.get(1)).getAll();
         assertEquals(record.size(), 1);
-        assertEquals(record.get("user").toString(), "user-id4");
+        assertEquals(record.get("user").toString(), "user1@gmail.com");
         record = ((MapValueData)all.get(2)).getAll();
         assertEquals(record.size(), 1);
-        assertEquals(record.get("user").toString(), "user-id1");
+        assertEquals(record.get("user").toString(), "user-id4");
 
         /** test TimelineProductUsageConditionBetween120And300Min */
         builder = new Context.Builder();
@@ -468,6 +454,6 @@ public class TestExpandedMetricPartTwo extends AbstractTestExpandedMetric {
         assertTrue(all.contains(MapValueData.valueOf("user=user-id1")));
         assertTrue(all.contains(MapValueData.valueOf("user=user-id5")));
         assertTrue(all.contains(MapValueData.valueOf("user=user-id4")));
-        assertTrue(all.contains(MapValueData.valueOf("user=" + TEST_USER + "_invite")));
+        assertTrue(all.contains(MapValueData.valueOf("user=_invite" + TEST_USER)));
     }
 }
