@@ -1,4 +1,8 @@
-127.0.0.1 2013-01-01 09:00:00,000[main] [INFO] [HelloWorld 1010] [user4@gmail.com][ws4][session] - EVENT#project-created# PROJECT#project2# TYPE#type# 
+127.0.0.1 2013-01-01 10:00:00,000[main] [INFO] [HelloWorld 1010] [][][] - EVENT#workspace-created# WS#ws1# WS-ID#wsid1# USER#user1@gmail.com#
+127.0.0.1 2013-01-01 10:00:00,000[main] [INFO] [HelloWorld 1010] [][][] - EVENT#workspace-created# WS#ws2# WS-ID#wsid2# USER#user1@gmail.com#
+127.0.0.1 2013-01-01 10:00:00,000[main] [INFO] [HelloWorld 1010] [][][] - EVENT#workspace-created# WS#ws3# WS-ID#wsid3# USER#user1@gmail.com#
+127.0.0.1 2013-01-01 10:00:00,000[main] [INFO] [HelloWorld 1010] [][][] - EVENT#workspace-created# WS#ws4# WS-ID#wsid4# USER#user2@gmail.com#
+127.0.0.1 2013-01-01 09:00:00,000[main] [INFO] [HelloWorld 1010] [user4@gmail.com][ws4][session] - EVENT#project-created# PROJECT#project2# TYPE#type#
 127.0.0.1 2013-01-01 10:00:00,000[main] [INFO] [HelloWorld 1010] [user1@gmail.com][ws1][session] - EVENT#application-created# PROJECT#project1# TYPE#type# PAAS#paas1# 
 127.0.0.1 2013-01-01 11:00:00,000[main] [INFO] [HelloWorld 1010] [user1@gmail.com][ws2][session] - EVENT#project-created# PROJECT#project2# TYPE#type# 
 127.0.0.1 2013-01-01 11:10:00,000[main] [INFO] [HelloWorld 1010] [user1@gmail.com][ws2][session] - EVENT#application-created# PROJECT#project2# TYPE#type# PAAS#paas3# 
