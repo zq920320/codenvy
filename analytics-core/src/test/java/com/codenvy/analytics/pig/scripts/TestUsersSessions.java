@@ -41,6 +41,10 @@ public class TestUsersSessions extends BaseTest {
     @BeforeClass
     public void prepare() throws Exception {
         List<Event> events = new ArrayList<>();
+        events.add(Event.Builder.createWorkspaceCreatedEvent("ws1", "wsid1", "ANONYMOUSUSER_user11")
+                                .withDate("2013-11-01").withTime("19:00:00").build());
+        events.add(Event.Builder.createWorkspaceCreatedEvent("ws2", "wsid2", "ANONYMOUSUSER_user11")
+                                .withDate("2013-11-01").withTime("19:00:00").build());
 
         // sessions #1 - 240s
         events.add(Event.Builder.createSessionStartedEvent("ANONYMOUSUSER_user11", "ws1", "ide", "1")
@@ -76,8 +80,12 @@ public class TestUsersSessions extends BaseTest {
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
         builder.put(Parameters.LOG, log.getAbsolutePath());
+
         builder.putAll(scriptsManager.getScript(ScriptType.USERS_PROFILES, MetricType.USERS_PROFILES_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.USERS_PROFILES, builder.build());
+
+        builder.putAll(scriptsManager.getScript(ScriptType.WORKSPACES_PROFILES, MetricType.WORKSPACES_PROFILES_LIST).getParamsAsMap());
+        pigServer.execute(ScriptType.WORKSPACES_PROFILES, builder.build());
 
         builder.putAll(scriptsManager.getScript(ScriptType.PRODUCT_USAGE_SESSIONS, MetricType.PRODUCT_USAGE_SESSIONS_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, builder.build());
@@ -104,7 +112,7 @@ public class TestUsersSessions extends BaseTest {
         assertEquals(items.getAll().get("session_id"), StringValueData.valueOf("1"));
         assertEquals(items.getAll().get("time"), LongValueData.valueOf(4 * 60 * 1000));
         assertEquals(items.getAll().get("domain"), StringValueData.valueOf(""));
-        assertEquals(items.getAll().get("ws"), StringValueData.valueOf("ws1"));
+        assertEquals(items.getAll().get("ws"), StringValueData.valueOf("wsid1"));
         assertEquals(items.getAll().get("user_company"), StringValueData.valueOf(""));
         assertEquals(items.getAll().get("logout_interval"), LongValueData.valueOf(0));
 
@@ -116,7 +124,7 @@ public class TestUsersSessions extends BaseTest {
         assertEquals(items.getAll().get("session_id"), StringValueData.valueOf("3"));
         assertEquals(items.getAll().get("time"), LongValueData.valueOf(2 * 60 * 1000));
         assertEquals(items.getAll().get("domain"), StringValueData.valueOf(""));
-        assertEquals(items.getAll().get("ws"), StringValueData.valueOf("ws2"));
+        assertEquals(items.getAll().get("ws"), StringValueData.valueOf("wsid2"));
         assertEquals(items.getAll().get("user_company"), StringValueData.valueOf(""));
         assertEquals(items.getAll().get("logout_interval"), LongValueData.valueOf(0));
 
@@ -149,7 +157,7 @@ public class TestUsersSessions extends BaseTest {
         assertEquals(items.getAll().get("end_time"),
                      LongValueData.valueOf(fullDateFormatMils.parse("2013-11-01 20:06:00,000").getTime()));
         assertEquals(items.getAll().get("session_id"), StringValueData.valueOf("2"));
-        assertEquals(items.getAll().get("ws"), StringValueData.valueOf("ws1"));
+        assertEquals(items.getAll().get("ws"), StringValueData.valueOf("wsid1"));
         assertEquals(items.getAll().get("time"), LongValueData.valueOf(360000));
         assertEquals(items.getAll().get("domain"), StringValueData.valueOf("gmail.com"));
         assertEquals(items.getAll().get("user_company"), StringValueData.valueOf("company"));

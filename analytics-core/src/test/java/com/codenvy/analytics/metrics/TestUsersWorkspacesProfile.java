@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.Arrays;
 
+import static com.codenvy.analytics.datamodel.ValueDataUtil.getAsList;
 import static org.testng.AssertJUnit.assertEquals;
 
 /**
@@ -73,7 +74,7 @@ public class TestUsersWorkspacesProfile extends BaseTest {
     }
 
     @Test
-    public void test() throws Exception {
+    public void testUsersProfiles() throws Exception {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20130101");
         builder.put(Parameters.TO_DATE, "20130101");
@@ -82,17 +83,34 @@ public class TestUsersWorkspacesProfile extends BaseTest {
 
         ListValueData value = (ListValueData)metric.getValue(builder.build());
 
-        assertEquals(value.getAll().size(), 3);
-
+        assertEquals(value.getAll().size(), 4);
         assertEquals("[user1@domain.com]", ((MapValueData)value.getAll().get(0)).getAll().get("aliases").getAsString());
         assertEquals("[user2@domain.com]", ((MapValueData)value.getAll().get(1)).getAll().get("aliases").getAsString());
         assertEquals("[user3@domain.com]", ((MapValueData)value.getAll().get(2)).getAll().get("aliases").getAsString());
+        assertEquals("[anonymoususer_rl3qni]", ((MapValueData)value.getAll().get(3)).getAll().get("aliases").getAsString());
 
         metric = MetricFactory.getMetric(MetricType.USERS_STATISTICS_LIST_PRECOMPUTED);
-
-        value = (ListValueData)metric.getValue(builder.build());
+        value = getAsList(metric, builder.build());
 
         assertEquals(0, value.size());
     }
 
+    @Test
+    public void testTmpWorkspacesProfiles() throws Exception {
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20130101");
+        builder.put(Parameters.TO_DATE, "20130101");
+
+        Metric metric = MetricFactory.getMetric(MetricType.WORKSPACES_PROFILES_LIST);
+
+        ListValueData value = (ListValueData)metric.getValue(builder.build());
+
+        assertEquals(value.getAll().size(), 1);
+        assertEquals("tmp-workspaceks4vox9", ((MapValueData)value.getAll().get(0)).getAll().get(ReadBasedMetric.WS_NAME).getAsString());
+
+        metric = MetricFactory.getMetric(MetricType.USERS_STATISTICS_LIST_PRECOMPUTED);
+        value = getAsList(metric, builder.build());
+
+        assertEquals(0, value.size());
+    }
 }

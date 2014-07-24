@@ -38,6 +38,13 @@ public class TestUsersAddedToWorkspaces extends BaseTest {
     @BeforeClass
     public void init() throws Exception {
         List<Event> events = new ArrayList<>();
+        events.add(Event.Builder.createWorkspaceCreatedEvent("ws1", "wsid1", "user1@gmail.com")
+                                .withDate("2013-01-02").withTime("10:00:00").build());
+        events.add(Event.Builder.createWorkspaceCreatedEvent("ws", "wsid2", "user2@gmail.com")
+                                .withDate("2013-01-02").withTime("10:00:00").build());
+        events.add(Event.Builder.createWorkspaceCreatedEvent("ws2", "wsid3", "user4@gmail.com")
+                                .withDate("2013-01-02").withTime("10:00:00").build());
+
         events.add(Event.Builder.createUserAddedToWsEvent("user1@gmail.com", "ws1", "", "", "", "website")
                                 .withDate("2013-01-02").withTime("10:00:00").build());
         events.add(Event.Builder.createUserAddedToWsEvent("user2@gmail.com", "ws", "", "", "", "website")
@@ -55,6 +62,11 @@ public class TestUsersAddedToWorkspaces extends BaseTest {
         builder.put(Parameters.FROM_DATE, "20130102");
         builder.put(Parameters.TO_DATE, "20130102");
         builder.put(Parameters.LOG, log.getAbsolutePath());
+
+        builder.putAll(scriptsManager.getScript(ScriptType.WORKSPACES_PROFILES, MetricType.WORKSPACES_PROFILES_LIST)
+                                     .getParamsAsMap());
+        pigServer.execute(ScriptType.WORKSPACES_PROFILES, builder.build());
+
         builder.putAll(scriptsManager.getScript(ScriptType.EVENTS_BY_TYPE, MetricType.USERS_ADDED_TO_WORKSPACES).getParamsAsMap());
         pigServer.execute(ScriptType.EVENTS_BY_TYPE, builder.build());
     }
