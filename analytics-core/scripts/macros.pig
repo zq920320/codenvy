@@ -253,19 +253,19 @@ DEFINE usersCreatedFromFactory(X) RETURNS Y {
     -- finds in which temporary workspaces anonymous users have worked
     x1 = filterByEvent($X, 'user-added-to-ws');
     x2 = FOREACH x1 GENERATE dt, ws AS tmpWs, user AS tmpUser;
-    x = FILTER x2 BY INDEXOF(tmpUser, 'anonymoususer_', 0) == 0 AND INDEXOF(tmpWs, 'tmp-', 0) == 0;
+    x = FILTER x2 BY IsAnonymousUserById(tmpUser) AND IsTemporaryWorkspaceById(tmpWs);
 
     -- finds all anonymous users have become registered (created their accounts or just logged in)
     t1 = filterByEvent($X, 'user-changed-name');
     t2 = extractParam(t1, 'OLD-USER', 'old');
     t3 = extractParam(t2, 'NEW-USER', 'new');
     t4 = FOREACH t3 GENERATE dt, ReplaceUserWithId(old) AS old, ReplaceUserWithId(new) AS new;
-    t5 = FILTER t4 BY INDEXOF(LOWER(old), 'anonymoususer_', 0) == 0 AND INDEXOF(LOWER(new), 'anonymoususer_', 0) < 0;
+    t5 = FILTER t4 BY IsAnonymousUserById(old) AND NOT IsAnonymousUserById(new);
     t = FOREACH t5 GENERATE dt, LOWER(old) AS tmpUser, LOWER(new) AS user;
 
     -- finds created users
     k1 = filterByEvent($X, 'user-created');
-    k2 = FILTER k1 BY INDEXOF(user, 'anonymoususer_', 0) < 0;
+    k2 = FILTER k1 BY NOT IsAnonymousUserById(user);
     k = FOREACH k2 GENERATE dt, user;
 
     -- finds which created users worked as anonymous

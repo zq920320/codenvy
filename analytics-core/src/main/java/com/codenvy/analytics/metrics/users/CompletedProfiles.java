@@ -27,6 +27,7 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
 import javax.annotation.security.RolesAllowed;
+import java.io.IOException;
 
 /** @author Anatoliy Bazko */
 @RolesAllowed({"system/admin", "system/manager"})
@@ -65,6 +66,15 @@ public class CompletedProfiles extends AbstractUsersProfile {
 
         return new DBObject[]{new BasicDBObject("$match", match),
                               new BasicDBObject("$group", count)};
+    }
+
+    @Override
+    public Context applySpecificFilter(Context clauses) throws IOException {
+        Context.Builder builder = new Context.Builder(super.applySpecificFilter(clauses));
+
+        builder.put(MetricFilter.REGISTERED_USER, 1);
+
+        return builder.build();
     }
 
     @Override

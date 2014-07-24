@@ -40,7 +40,7 @@ public class AuthenticatedFactorySessions extends AbstractLongValueResulted {
 
     @Override
     public String[] getTrackedFields() {
-        return new String[]{AUTHENTICATED_SESSION};
+        return new String[]{REGISTERED_USER};
     }
 
     @Override
