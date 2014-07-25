@@ -593,10 +593,12 @@ public class AccountDaoImpl implements AccountDao {
      * Converts database list to Map
      */
     private Map<String, String> toAttributes(BasicDBList list) {
-        final Map<String, String> attributes = new HashMap<>(list.size());
-        for (Object obj : list) {
-            final BasicDBObject attribute = (BasicDBObject)obj;
-            attributes.put(attribute.getString("name"), attribute.getString("value"));
+        final Map<String, String> attributes = new HashMap<>();
+        if (list != null) {
+            for (Object obj : list) {
+                final BasicDBObject attribute = (BasicDBObject)obj;
+                attributes.put(attribute.getString("name"), attribute.getString("value"));
+            }
         }
         return attributes;
     }

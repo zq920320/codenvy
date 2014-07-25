@@ -40,6 +40,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -189,10 +190,12 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
     }
 
     private Map<String, String> toAttributes(BasicDBList list) {
-        final Map<String, String> attributes = new HashMap<>(list.size());
-        for (Object obj : list) {
-            final BasicDBObject attribute = (BasicDBObject)obj;
-            attributes.put(attribute.getString("name"), attribute.getString("value"));
+        final Map<String, String> attributes = new HashMap<>();
+        if (list != null) {
+            for (Object obj : list) {
+                final BasicDBObject attribute = (BasicDBObject)obj;
+                attributes.put(attribute.getString("name"), attribute.getString("value"));
+            }
         }
         return attributes;
     }
