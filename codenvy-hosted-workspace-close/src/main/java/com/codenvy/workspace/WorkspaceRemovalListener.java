@@ -23,8 +23,7 @@ import com.codenvy.api.core.ServerException;
 import com.codenvy.api.core.notification.EventService;
 import com.codenvy.api.user.server.dao.UserDao;
 import com.codenvy.api.user.server.dao.UserProfileDao;
-import com.codenvy.api.user.shared.dto.Attribute;
-import com.codenvy.api.user.shared.dto.Profile;
+import com.codenvy.api.user.server.dao.Profile;
 import com.codenvy.api.workspace.server.dao.Member;
 import com.codenvy.api.workspace.server.dao.MemberDao;
 import com.codenvy.api.workspace.server.dao.Workspace;
@@ -81,10 +80,8 @@ public class WorkspaceRemovalListener implements RemovalListener<String, Boolean
 
                 for (Member member : members) {
                     Profile userProfile = userProfileDao.getById(member.getUserId());
-                    for (Attribute attr : userProfile.getAttributes()) {
-                        if ("temporary".equals(attr.getName()) && "true".equals(attr.getValue())) {
-                            userDao.remove(member.getUserId());
-                        }
+                    if ("true".equals(userProfile.getAttributes().get("temporary"))) {
+                        userDao.remove(member.getUserId());
                     }
                 }
             } catch (ConflictException | NotFoundException | ServerException e) {

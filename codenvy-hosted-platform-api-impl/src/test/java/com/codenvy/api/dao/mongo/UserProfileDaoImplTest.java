@@ -19,16 +19,10 @@ package com.codenvy.api.dao.mongo;
 
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
+import com.codenvy.api.user.server.dao.Profile;
 import com.codenvy.api.user.server.dao.UserDao;
-import com.codenvy.api.user.server.dao.UserProfileDao;
-import com.codenvy.api.user.shared.dto.Attribute;
-import com.codenvy.api.user.shared.dto.Profile;
-import com.codenvy.dto.server.DtoFactory;
-import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
-import com.mongodb.BasicDBObjectBuilder;
 import com.mongodb.DBObject;
-import com.mongodb.util.JSON;
 
 import org.mockito.Mock;
 import org.mockito.testng.MockitoTestNGListener;
@@ -37,32 +31,32 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static org.testng.Assert.*;
 
 /**
+ * Tests for {@link com.codenvy.api.dao.mongo.UserProfileDaoImpl}
  *
+ * @author Max
  */
 @Listeners(value = {MockitoTestNGListener.class})
 public class UserProfileDaoImplTest extends BaseDaoTest {
-    @Mock
-    private UserDao userDao;
-    private static final String COLL_NAME = "profile";
-    UserProfileDao profileDao;
 
-    private static final String PROFILE_ID = "profile123abc456def";
     private static final String USER_ID    = "user123abc456def";
+    private static final String PROFILE_ID = "profile123abc456def";
+    private static final String COLL_NAME  = "profile";
 
+    @Mock
+    private UserDao            userDao;
+    private UserProfileDaoImpl profileDaoImpl;
 
     @BeforeMethod
     public void setUp() throws Exception {
         super.setUp(COLL_NAME);
-        profileDao = new UserProfileDaoImpl(userDao, db, COLL_NAME);
+        profileDaoImpl = new UserProfileDaoImpl(userDao, db, COLL_NAME);
     }
 
     @AfterMethod
@@ -72,23 +66,22 @@ public class UserProfileDaoImplTest extends BaseDaoTest {
 
     @Test
     public void mustSaveProfile() throws Exception {
-        Map<String, String> sprefs = new HashMap<>();
-        sprefs.put("first", "first_value");
-        sprefs.put("____firstASD", "other_first_value");
-        sprefs.put("second", "second_value");
-        sprefs.put("other", "other_value");
-        Profile profile = DtoFactory.getInstance().createDto(Profile.class).withId(PROFILE_ID).withUserId(USER_ID)
-                                    .withAttributes(getAttributes());//.withPreferences(sprefs);
-
-
+        Map<String, String> prefs = new HashMap<>();
+        prefs.put("first", "first_value");
+        prefs.put("____firstASD", "other_first_value");
+        prefs.put("second", "second_value");
+        prefs.put("other", "other_value");
+        Profile profile = new Profile().withId(PROFILE_ID)
+                                       .withUserId(USER_ID)
+                                       .withAttributes(getAttributes())
+                                       .withPreferences(prefs);
         // main invoke
-        profileDao.create(profile);
+        profileDaoImpl.create(profile);
 
         DBObject res = collection.findOne(new BasicDBObject("id", PROFILE_ID));
         assertNotNull(res, "Specified user profile does not exists.");
-        Profile result  = toProfile(res);
+        Profile result = profileDaoImpl.toProfile(res);
 
-        assertEquals(profile.getLinks(), result.getLinks());
         assertEquals(profile, result);
     }
 
@@ -100,22 +93,21 @@ public class UserProfileDaoImplTest extends BaseDaoTest {
         prefs.put("second", "second_value");
         prefs.put("other", "other_value");
 
-        Profile tmp = DtoFactory.getInstance().createDto(Profile.class)
-                                .withId(PROFILE_ID)
-                                .withUserId(USER_ID)
-                                .withAttributes(Collections.<Attribute>emptyList())
-                                .withPreferences(prefs);
+        Profile tmp = new Profile().withId(PROFILE_ID)
+                                   .withUserId(USER_ID)
+                                   .withAttributes(Collections.<String, String>emptyMap())
+                                   .withPreferences(prefs);
 
-        collection.save(toDBObject(tmp));
+        collection.save(profileDaoImpl.toDBObject(tmp));
 
-        Profile profile = profileDao.getById(PROFILE_ID, ".*first.*");
+        Profile profile = profileDaoImpl.getById(PROFILE_ID, ".*first.*");
         assertNotNull(profile);
         Map<String, String> expectedPrefs = new HashMap<>();
         expectedPrefs.put("first", "first_value");
         expectedPrefs.put("____firstASD", "other_first_value");
         assertEquals(expectedPrefs, profile.getPreferences());
 
-        profile = profileDao.getById(PROFILE_ID, "other");
+        profile = profileDaoImpl.getById(PROFILE_ID, "other");
         assertNotNull(profile);
         expectedPrefs.clear();
         expectedPrefs.put("other", "other_value");
@@ -124,11 +116,11 @@ public class UserProfileDaoImplTest extends BaseDaoTest {
 
     @Test
     public void mustNotUpdateProfileIfNotExist() throws Exception {
-
-        Profile profile = DtoFactory.getInstance().createDto(Profile.class).withId(PROFILE_ID).withUserId(USER_ID)
-                                    .withAttributes(getAttributes());
+        final Profile profile = new Profile().withId(PROFILE_ID)
+                                             .withUserId(USER_ID)
+                                             .withAttributes(getAttributes());
         try {
-            profileDao.update(profile);
+            profileDaoImpl.update(profile);
             fail("Update of non-existing profile prohibited.");
         } catch (NotFoundException e) {
             // OK
@@ -137,73 +129,20 @@ public class UserProfileDaoImplTest extends BaseDaoTest {
 
     @Test
     public void mustRemoveProfile() throws Exception {
-        DBObject obj = new BasicDBObject("id", PROFILE_ID).append("userid", USER_ID);
+        final DBObject obj = new BasicDBObject().append("id", PROFILE_ID)
+                                                .append("userId", USER_ID);
         collection.insert(obj);
 
-        DBObject query = new BasicDBObject("id", PROFILE_ID);
-        profileDao.remove(PROFILE_ID);
+        profileDaoImpl.remove(PROFILE_ID);
 
-        assertNull(collection.findOne(query));
+        assertNull(collection.findOne(new BasicDBObject("id", PROFILE_ID)));
     }
 
-
-    private List<Attribute> getAttributes() {
-        List<Attribute> attributes = new ArrayList<>();
-        attributes.add(DtoFactory.getInstance().createDto(Attribute.class).withName("attr1").withValue("value1")
-                                 .withDescription("description1"));
-        attributes.add(DtoFactory.getInstance().createDto(Attribute.class).withName("attr2").withValue("value2")
-                                 .withDescription("description2"));
-        attributes.add(DtoFactory.getInstance().createDto(Attribute.class).withName("attr3").withValue("value3")
-                                 .withDescription("description3"));
+    private Map<String, String> getAttributes() {
+        final Map<String, String> attributes = new HashMap<>(3);
+        attributes.put("attr1", "value1");
+        attributes.put("attr2", "value2");
+        attributes.put("attr3", "value3");
         return attributes;
-    }
-
-    private Profile toProfile(DBObject res) {
-        List<Attribute> attributes = new ArrayList<>();
-        BasicDBList atts = (BasicDBList)res.get("attributes");
-        for (Object obj : atts) {
-            attributes.add(DtoFactory.getInstance().createDtoFromJson(obj.toString(), Attribute.class));
-        }
-
-        Map<String, String> preferences = new HashMap<>();
-        BasicDBList prefs = (BasicDBList)res.get("preferences");
-        for (Object obj : prefs) {
-            BasicDBObject dbObject  = (BasicDBObject)obj;
-            preferences.put(dbObject.getString("name"), dbObject.getString("value"));
-        }
-
-        return DtoFactory.getInstance().createDto(Profile.class)
-                         .withId((String)res.get("id"))
-                         .withUserId((String)res.get("userId"))
-                         .withAttributes(attributes)
-                         .withPreferences(preferences);
-    }
-
-    private DBObject toDBObject(Profile obj) {
-        BasicDBList attributes = new BasicDBList();
-        if (obj.getAttributes() != null) {
-            for (Attribute one : obj.getAttributes()) {
-                Attribute attribute = DtoFactory.getInstance().createDto(Attribute.class)
-                                                .withName(one.getName())
-                                                .withValue(one.getValue())
-                                                .withDescription(one.getDescription());
-                attributes.add(JSON.parse(attribute.toString()));
-            }
-        }
-
-        BasicDBList preferences = new BasicDBList();
-        for (Map.Entry<String,String> entry : obj.getPreferences().entrySet()) {
-            BasicDBObjectBuilder pref = new BasicDBObjectBuilder();
-            pref.add("name", entry.getKey()).add("value", entry.getValue());
-            preferences.add(pref.get());
-        }
-        BasicDBObjectBuilder profileBUilder = new BasicDBObjectBuilder();
-        profileBUilder.add("id", obj.getId())
-                      .add("userId", obj.getUserId())
-                      .add("attributes", attributes)
-                      .add("preferences", preferences);
-
-        return profileBUilder.get();
-
     }
 }

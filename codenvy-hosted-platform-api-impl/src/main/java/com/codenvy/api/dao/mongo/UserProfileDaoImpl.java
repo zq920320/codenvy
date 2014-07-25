@@ -21,18 +21,18 @@ import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.api.user.server.dao.UserDao;
 import com.codenvy.api.user.server.dao.UserProfileDao;
-import com.codenvy.api.user.shared.dto.Attribute;
-import com.codenvy.api.user.shared.dto.Profile;
-import com.codenvy.dto.server.DtoFactory;
-import com.mongodb.*;
-import com.mongodb.util.JSON;
+import com.codenvy.api.user.server.dao.Profile;
+import com.mongodb.BasicDBList;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.DBObject;
+import com.mongodb.MongoException;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -115,60 +115,47 @@ public class UserProfileDaoImpl implements UserProfileDao {
     }
 
     /**
-     * Convert UserProfile object to Database ready-to-use object,
-     * Due to mongo restriction of keys (they cannot contain "." symbols),
-     * we cannot store preferences as plain map, so we store them as a list of name-value pairs.
-     *
-     * @param obj
-     *         object to convert
-     * @return DBObject
+     * Convert profile to database ready-to-use object
      */
-    private DBObject toDBObject(Profile obj) {
-        BasicDBList attributes = new BasicDBList();
-        if (obj.getAttributes() != null) {
-            for (Attribute one : obj.getAttributes()) {
-                Attribute attribute = DtoFactory.getInstance().createDto(Attribute.class)
-                                                .withName(one.getName())
-                                                .withValue(one.getValue())
-                                                .withDescription(one.getDescription());
-                attributes.add(JSON.parse(attribute.toString()));
-            }
-        }
-
-        BasicDBList preferences = new BasicDBList();
-        for (Map.Entry<String, String> entry : obj.getPreferences().entrySet()) {
-            BasicDBObjectBuilder pref = new BasicDBObjectBuilder();
-            pref.add("name", entry.getKey()).add("value", entry.getValue());
-            preferences.add(pref.get());
-        }
-        BasicDBObjectBuilder profileBUilder = new BasicDBObjectBuilder();
-        profileBUilder.add("id", obj.getId())
-                      .add("userId", obj.getUserId())
-                      .add("attributes", attributes)
-                      .add("preferences", preferences);
-
-        return profileBUilder.get();
-
+    DBObject toDBObject(Profile profile) {
+        return new BasicDBObject().append("id", profile.getId())
+                                  .append("userId", profile.getUserId())
+                                  .append("attributes", toDBList(profile.getAttributes()))
+                                  .append("preferences", toDBList(profile.getPreferences()));
     }
 
-    private Profile toProfile(DBObject res) {
-        List<Attribute> attributes = new ArrayList<>();
-        BasicDBList atts = (BasicDBList)res.get("attributes");
-        for (Object obj : atts) {
-            attributes.add(DtoFactory.getInstance().createDtoFromJson(obj.toString(), Attribute.class));
-        }
+    /**
+     * Converts database object to profile ready-to-use object
+     */
+    Profile toProfile(DBObject profileObj) {
+        final BasicDBObject basicProfileObj = (BasicDBObject)profileObj;
+        return new Profile().withId(basicProfileObj.getString("id"))
+                            .withUserId(basicProfileObj.getString("userId"))
+                            .withAttributes(toMap((BasicDBList)basicProfileObj.get("attributes")))
+                            .withPreferences(toMap((BasicDBList)basicProfileObj.get("preferences")));
+    }
 
-        Map<String, String> preferences = new HashMap<>();
-        BasicDBList prefs = (BasicDBList)res.get("preferences");
-        for (Object obj : prefs) {
-            BasicDBObject dbObject = (BasicDBObject)obj;
-            preferences.put(dbObject.getString("name"), dbObject.getString("value"));
+    /**
+     * Converts map to database list
+     */
+    private BasicDBList toDBList(Map<String, String> attributes) {
+        final BasicDBList list = new BasicDBList();
+        for (Map.Entry<String, String> entry : attributes.entrySet()) {
+            list.add(new BasicDBObject().append("name", entry.getKey())
+                                        .append("value", entry.getValue()));
         }
+        return list;
+    }
 
-        return DtoFactory.getInstance().createDto(Profile.class)
-                         .withId((String)res.get("id"))
-                         .withUserId((String)res.get("userId"))
-                         .withAttributes(attributes)
-                         .withPreferences(preferences);
+    /**
+     * Converts database list to Map
+     */
+    private Map<String, String> toMap(BasicDBList list) {
+        final Map<String, String> attributes = new HashMap<>(list.size());
+        for (Object obj : list) {
+            final BasicDBObject attribute = (BasicDBObject)obj;
+            attributes.put(attribute.getString("name"), attribute.getString("value"));
+        }
+        return attributes;
     }
 }
