@@ -26,8 +26,8 @@ import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.RequiredFilter;
 import com.codenvy.api.account.shared.dto.AccountMembership;
+import com.codenvy.api.account.shared.dto.Member;
 import com.codenvy.api.user.shared.dto.User;
-import com.codenvy.api.workspace.server.dao.Member;
 import com.codenvy.api.workspace.server.dao.Workspace;
 
 import javax.annotation.security.RolesAllowed;
