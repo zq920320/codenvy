@@ -28,8 +28,7 @@ import com.codenvy.api.factory.dto.Factory;
 import com.codenvy.api.factory.dto.Restriction;
 import com.codenvy.api.user.server.dao.UserDao;
 import com.codenvy.api.user.server.dao.UserProfileDao;
-import com.codenvy.api.user.shared.dto.Attribute;
-import com.codenvy.api.user.shared.dto.Profile;
+import com.codenvy.api.user.server.dao.Profile;
 import com.codenvy.api.user.shared.dto.User;
 
 import java.io.UnsupportedEncodingException;
@@ -102,10 +101,8 @@ public class FactoryUrlBaseValidator {
                 try {
                     User user = userDao.getById(factory.getUserid());
                     Profile profile = profileDao.getById(factory.getUserid());
-                    for (Attribute attribute : profile.getAttributes()) {
-                        if (attribute.getName().equals("temporary") && Boolean.parseBoolean(attribute.getValue()))
+                        if (profile.getAttributes() != null && "true".equals(profile.getAttributes().get("temporary")))
                             throw new ConflictException("Current user is not allowed for using this method.");
-                    }
                     boolean isOwner = false;
                     List<Member> members = accountDao.getMembers(orgid);
                     if (members.isEmpty()) {

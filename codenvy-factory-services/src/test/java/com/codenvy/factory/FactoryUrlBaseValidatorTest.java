@@ -28,9 +28,9 @@ import com.codenvy.api.factory.dto.Factory;
 import com.codenvy.api.factory.dto.ProjectAttributes;
 import com.codenvy.api.factory.dto.Restriction;
 import com.codenvy.api.factory.dto.WelcomePage;
+import com.codenvy.api.user.server.dao.Profile;
 import com.codenvy.api.user.server.dao.UserDao;
 import com.codenvy.api.user.server.dao.UserProfileDao;
-import com.codenvy.api.user.shared.dto.Profile;
 import com.codenvy.api.user.shared.dto.User;
 import com.codenvy.dto.server.DtoFactory;
 
@@ -109,7 +109,7 @@ public class FactoryUrlBaseValidatorTest {
         when(accountDao.getSubscriptions(ID)).thenReturn(Arrays.asList(subscription));
         when(accountDao.getMembers(anyString())).thenReturn(Arrays.asList(member));
         when(userDao.getById("userid")).thenReturn(user);
-        when(profileDao.getById(anyString())).thenReturn(DtoFactory.getInstance().createDto(Profile.class));
+        when(profileDao.getById(anyString())).thenReturn(new Profile());
         url.setOrgid(ID);
         url.setUserid("userid");
     }
