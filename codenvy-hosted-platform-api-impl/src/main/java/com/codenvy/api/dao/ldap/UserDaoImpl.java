@@ -462,6 +462,6 @@ public class UserDaoImpl implements UserDao {
                  event,
                  user.getEmail(),
                  user.getId(),
-                 user.getAliases());
+                 emails);
     }
 }
