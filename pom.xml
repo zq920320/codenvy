@@ -36,8 +36,8 @@
         <module>codenvy-hosted-platform-api-impl</module>
         <module>codenvy-hosted-infra-filters</module>
         <module>codenvy-hosted-service-saas</module>
-        <module>codenvy-hosted-recoverpassword</module>
         <module>codenvy-hosted-service-factory</module>
+        <module>codenvy-hosted-recoverpassword</module>
         <module>codenvy-hosted-subscription-scheduler</module>
         <module>codenvy-hosted-workspace-close</module>
         <module>codenvy-hosted-ide3-migration-service</module>

@@ -145,12 +145,14 @@ public class SaasService extends SubscriptionService {
         if (subscription.getProperties() == null) {
             throw new ConflictException("Subscription properties required");
         }
+
         final Double price = PRICES.get(TariffEntry.of(ensureExistsAndGet("Package", subscription).toLowerCase(),
                                                        ensureExistsAndGet("RAM", subscription).toLowerCase(),
                                                        ensureExistsAndGet("TariffPlan", subscription).toLowerCase()));
         if (price == null) {
             throw new NotFoundException("Tariff plan not found");
         }
+
         final List<Subscription> allSubscriptions = accountDao.getSubscriptions(subscription.getAccountId());
         final List<Subscription> serviceSubscriptions = new LinkedList<>();
         for (Subscription current : allSubscriptions) {
@@ -158,31 +160,54 @@ public class SaasService extends SubscriptionService {
                 serviceSubscriptions.add(current);
             }
         }
+
         if (serviceSubscriptions.size() > 1) {
             throw new ServerException("Subscriptions limit exhausted");
         }
-        switch (subscription.getState()) {
-            case WAIT_FOR_PAYMENT:
-                if (search(serviceSubscriptions, Subscription.State.WAIT_FOR_PAYMENT) != null) {
-                    throw new ConflictException("Subscription with WAIT_FOR_PAYMENT state already exists");
-                }
-                break;
-            case ACTIVE:
-                final Subscription active = search(serviceSubscriptions, Subscription.State.ACTIVE);
-                if (active != null) {
-                    final Calendar calendar = Calendar.getInstance();
-                    calendar.setTimeInMillis(active.getEndDate());
-                    subscription.setStartDate(calendar.getTimeInMillis());
-                    if ("yearly".equalsIgnoreCase(subscription.getProperties().get("TariffPlan"))) {
-                        calendar.add(Calendar.YEAR, 1);
-                    } else {
-                        calendar.add(Calendar.MONTH, 1);
+
+        if ("true".equals((subscription.getProperties().get("codenvy:trial")))) {
+            final Calendar calendar = Calendar.getInstance();
+            subscription.setStartDate(calendar.getTimeInMillis());
+            calendar.add(Calendar.DAY_OF_YEAR, 7);
+            subscription.setEndDate(calendar.getTimeInMillis());
+            subscription.setState(Subscription.State.ACTIVE);
+        } else {
+            final Calendar calendar = Calendar.getInstance();
+            String tariffPlan;
+            if (null == (tariffPlan = subscription.getProperties().get("TariffPlan"))) {
+                throw new ConflictException("TariffPlan property not found");
+            }
+
+            switch (subscription.getState()) {
+                case WAIT_FOR_PAYMENT:
+                    if (search(serviceSubscriptions, Subscription.State.WAIT_FOR_PAYMENT) != null) {
+                        throw new ConflictException("Subscription with WAIT_FOR_PAYMENT state already exists");
                     }
+                    break;
+                case ACTIVE:
+                    final Subscription active = search(serviceSubscriptions, Subscription.State.ACTIVE);
+
+                    if (active != null) {
+                        calendar.setTimeInMillis(active.getEndDate());
+                    }
+
+                    subscription.setStartDate(calendar.getTimeInMillis());
+                    switch (tariffPlan) {
+                        case "yearly":
+                            calendar.add(Calendar.YEAR, 1);
+                            break;
+                        case "monthly":
+                            calendar.add(Calendar.MONTH, 1);
+                            break;
+                        default:
+                            throw new ConflictException("Unknown TariffPlan is used " + tariffPlan);
+                    }
+
                     subscription.setEndDate(calendar.getTimeInMillis());
-                }
-                break;
-            default:
-                throw new ServerException("Incorrect subscription state");
+                    break;
+                default:
+                    throw new ServerException("Incorrect subscription state");
+            }
         }
     }
 
