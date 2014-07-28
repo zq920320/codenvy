@@ -35,6 +35,7 @@
         <module>codenvy-hosted-invite</module>
         <module>codenvy-hosted-platform-api-impl</module>
         <module>codenvy-hosted-infra-filters</module>
+        <module>codenvy-hosted-service-onpremises</module>
         <module>codenvy-hosted-service-saas</module>
         <module>codenvy-hosted-service-factory</module>
         <module>codenvy-hosted-recoverpassword</module>
