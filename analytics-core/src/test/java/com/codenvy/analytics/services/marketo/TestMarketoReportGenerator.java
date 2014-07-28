@@ -79,6 +79,7 @@ public class TestMarketoReportGenerator extends AbstractUsersActivityTest {
         assertEquals("0", user1Data.get(HEADERS.get(UsersStatisticsList.RUNS)));
         assertEquals("5", user1Data.get(HEADERS.get(UsersStatisticsList.TIME)));
         assertEquals("0", user1Data.get(HEADERS.get(UsersStatisticsList.LOGINS)));
+        assertEquals("", user1Data.get(HEADERS.get(MarketoReportGenerator.LAST_PRODUCT_LOGIN)));
         assertEquals("29", user1Data.get(HEADERS.get(MarketoReportGenerator.POINTS)));
 
         // verify "user2@gmail.com" data
@@ -91,8 +92,9 @@ public class TestMarketoReportGenerator extends AbstractUsersActivityTest {
         assertEquals("1", user2Data.get(HEADERS.get(UsersStatisticsList.PROJECTS)));
         assertEquals("1", user2Data.get(HEADERS.get(UsersStatisticsList.RUNS)));
         assertEquals("10", user2Data.get(HEADERS.get(UsersStatisticsList.TIME)));
-        assertEquals("1", user2Data.get(HEADERS.get(UsersStatisticsList.LOGINS)));
-        assertEquals("92", user2Data.get(HEADERS.get(MarketoReportGenerator.POINTS)));
+        assertEquals("2", user2Data.get(HEADERS.get(UsersStatisticsList.LOGINS)));
+        assertEquals("2013-11-01 10:10:30", user2Data.get(HEADERS.get(MarketoReportGenerator.LAST_PRODUCT_LOGIN)));        
+        assertEquals("94", user2Data.get(HEADERS.get(MarketoReportGenerator.POINTS)));
 
         // verify "user3@gmail.com" data
         Map<String, String> user3Data = content.get("user3@gmail.com");
@@ -105,6 +107,7 @@ public class TestMarketoReportGenerator extends AbstractUsersActivityTest {
         assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.RUNS)));
         assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.TIME)));
         assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.LOGINS)));
+        assertEquals("", user3Data.get(HEADERS.get(MarketoReportGenerator.LAST_PRODUCT_LOGIN)));       
         assertEquals("12", user3Data.get(HEADERS.get(MarketoReportGenerator.POINTS)));
     }
 
@@ -149,6 +152,7 @@ public class TestMarketoReportGenerator extends AbstractUsersActivityTest {
         assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.RUNS)));
         assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.TIME)));
         assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.LOGINS)));
+        assertEquals("", user3Data.get(HEADERS.get(MarketoReportGenerator.LAST_PRODUCT_LOGIN)));
         assertEquals("24", user3Data.get(HEADERS.get(MarketoReportGenerator.POINTS)));
     }
 }

@@ -107,12 +107,12 @@ public class TestActOn extends AbstractUsersActivityTest {
         assertEquals("0", user2Data.get(HEADERS.get(UsersStatisticsList.INVITES)));
         assertEquals("0", user2Data.get(HEADERS.get(UsersStatisticsList.FACTORIES)));
         assertEquals("1", user2Data.get(HEADERS.get(UsersStatisticsList.DEBUGS)));
-        assertEquals("1", user2Data.get(HEADERS.get(UsersStatisticsList.LOGINS)));
+        assertEquals("2", user2Data.get(HEADERS.get(UsersStatisticsList.LOGINS)));
         assertEquals("0", user2Data.get(HEADERS.get(UsersStatisticsList.BUILD_TIME)));
         assertEquals("120", user2Data.get(HEADERS.get(UsersStatisticsList.RUN_TIME)));
         assertEquals("false", user2Data.get(HEADERS.get(ActOn.PROFILE_COMPLETED)));
         assertEquals("6", user2Data.get(HEADERS.get(UsersStatisticsList.PAAS_DEPLOYS)));
-        assertEquals("92", user2Data.get(HEADERS.get(ActOn.POINTS)));
+        assertEquals("94", user2Data.get(HEADERS.get(ActOn.POINTS)));
 
         // verify "user3@gmail.com" data
         Map<String, String> user3Data = content.get("user3@gmail.com");

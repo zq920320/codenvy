@@ -113,7 +113,9 @@ public abstract class AbstractUsersActivityTest extends BaseTest {
                                 .withDate("2013-11-01").withTime("10:00:00,000").build());
 
         events.add(Event.Builder.createUserSSOLoggedInEvent("user2@gmail.com", "google")
-                                .withDate("2013-11-01").build());
+                                .withDate("2013-11-01").withTime("10:10:20").build());
+        events.add(Event.Builder.createUserSSOLoggedInEvent("user2@gmail.com", "google")
+                                .withDate("2013-11-01").withTime("10:10:30").build());
 
         events.add(Event.Builder.createUserUpdateProfile("id1", "user1@gmail.com", "user1@gmail.com", "f", "l", "company", "phone", "jobtitle")
                                 .withDate("2013-11-01").build());

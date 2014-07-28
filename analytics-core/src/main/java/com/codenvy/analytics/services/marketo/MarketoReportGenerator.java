@@ -17,26 +17,52 @@
  */
 package com.codenvy.analytics.services.marketo;
 
-import com.codenvy.analytics.Configurator;
-import com.codenvy.analytics.datamodel.*;
-import com.codenvy.analytics.metrics.*;
-import com.codenvy.analytics.metrics.users.UsersStatisticsList;
-import com.codenvy.analytics.services.acton.ActOn;
+import static com.codenvy.analytics.Utils.toArray;
+import static com.codenvy.analytics.metrics.AbstractMetric.BUILDS;
+import static com.codenvy.analytics.metrics.AbstractMetric.DEPLOYS;
+import static com.codenvy.analytics.metrics.AbstractMetric.ID;
+import static com.codenvy.analytics.metrics.AbstractMetric.LOGINS;
+import static com.codenvy.analytics.metrics.AbstractMetric.PROJECTS;
+import static com.codenvy.analytics.metrics.AbstractMetric.RUNS;
+import static com.codenvy.analytics.metrics.AbstractMetric.TIME;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.*;
+import java.text.SimpleDateFormat;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import static com.codenvy.analytics.Utils.toArray;
-import static com.codenvy.analytics.metrics.AbstractMetric.*;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.codenvy.analytics.Configurator;
+import com.codenvy.analytics.datamodel.ListValueData;
+import com.codenvy.analytics.datamodel.LongValueData;
+import com.codenvy.analytics.datamodel.MapValueData;
+import com.codenvy.analytics.datamodel.SetValueData;
+import com.codenvy.analytics.datamodel.StringValueData;
+import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.metrics.AbstractMetric;
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Metric;
+import com.codenvy.analytics.metrics.MetricFactory;
+import com.codenvy.analytics.metrics.MetricFilter;
+import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.metrics.ReadBasedMetric;
+import com.codenvy.analytics.metrics.users.UsersStatisticsList;
+import com.codenvy.analytics.services.acton.ActOn;
+import com.codenvy.analytics.services.view.MetricRow;
 
 /**
  * @author Alexander Reshetnyak
@@ -46,8 +72,9 @@ public class MarketoReportGenerator {
 
     private static final Logger LOG = LoggerFactory.getLogger(MarketoReportGenerator.class);
 
-    public static final String PROFILE_COMPLETED = "Profile Complete";
-    public static final String POINTS            = "Product Score";
+    public static final String PROFILE_COMPLETED  = "Profile Complete";
+    public static final String POINTS             = "Product Score";
+    public static final String LAST_PRODUCT_LOGIN = "Last Product Login";
 
     private final Configurator configurator;
 
@@ -62,6 +89,7 @@ public class MarketoReportGenerator {
         put(RUNS, "Runs");
         put(TIME, "Time in Product");
         put(LOGINS, "Logins");
+        put(LAST_PRODUCT_LOGIN, "Last Product Login");        
         put(POINTS, POINTS);
     }};
 
@@ -125,13 +153,44 @@ public class MarketoReportGenerator {
                                          Map<String, ValueData> profile,
                                          ValueData user) throws IOException, ParseException {
         List<ValueData> stat = getUsersStatistics(user.getAsString());
+        String lastProductLoginDate = getLastProductLogin(user.getAsString());
+        
         if (stat.isEmpty()) {
             MapValueData valueData = MapValueData.DEFAULT;
-            writeStatistics(out, valueData.getAll(), profile);
+            writeStatistics(out, valueData.getAll(), profile, lastProductLoginDate);
         } else {
             MapValueData valueData = (MapValueData)stat.get(0);
-            writeStatistics(out, valueData.getAll(), profile);
+            writeStatistics(out, valueData.getAll(), profile, lastProductLoginDate);
         }
+    }
+
+    /**
+     * @return date of user's last product login from metric USERS_ACTIVITY_LIST, 
+     *         or empty string "" if this metric returns empty result.
+     */
+    private String getLastProductLogin(String user) throws IOException {
+        Context.Builder builder = new Context.Builder();
+        builder.put(MetricFilter.USER, user);
+        builder.put(MetricFilter.EVENT, "user-sso-logged-in");
+        builder.put(MetricFilter.REGISTERED_USER, 1);
+        
+        Metric usersActivityList = MetricFactory.getMetric(MetricType.USERS_ACTIVITY_LIST);
+        ListValueData valueData = (ListValueData)usersActivityList.getValue(builder.build());
+        if (valueData.size() == 0) {
+            return "";            
+        }
+
+        int lastLoginEventIndex = valueData.size() - 1;
+        MapValueData lastLoginEvent = ((MapValueData)valueData.getAll()
+                                                              .get(lastLoginEventIndex));
+     
+        Long lastLoginDateInMillisec = Long.valueOf(lastLoginEvent
+                                  .getAll()
+                                  .get(ReadBasedMetric.DATE)
+                                  .getAsString());
+        String lastLoginDate = new SimpleDateFormat(MetricRow.DEFAULT_DATE_FORMAT).format(lastLoginDateInMillisec);
+        
+        return lastLoginDate;
     }
 
     private Set<ValueData> getActiveUsersByDatePeriod(Context context) throws ParseException, IOException {
@@ -179,7 +238,8 @@ public class MarketoReportGenerator {
 
     private void writeStatistics(BufferedWriter out,
                                  Map<String, ValueData> stat,
-                                 Map<String, ValueData> profile) throws IOException {
+                                 Map<String, ValueData> profile,
+                                 String lastProductLoginDate) throws IOException {
         writeString(out, StringValueData.valueOf(toArray(profile.get(AbstractMetric.ALIASES))[0]));
         out.write(",");
 
@@ -208,6 +268,9 @@ public class MarketoReportGenerator {
         out.write(",");
 
         writeInt(out, stat.get(UsersStatisticsList.LOGINS));
+        out.write(",");
+
+        out.write(lastProductLoginDate);
         out.write(",");
         
         writeInt(out, ActOn.getPoints(stat, profile));

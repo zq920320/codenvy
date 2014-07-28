@@ -40,7 +40,7 @@ public class MetricRow extends AbstractRow {
     private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("00");
 
     private static final String DEFAULT_NUMERIC_FORMAT = "%,.0f";
-    private static final String DEFAULT_DATE_FORMAT    = "yyyy-MM-dd HH:mm:ss";
+    public static final String DEFAULT_DATE_FORMAT     = "yyyy-MM-dd HH:mm:ss";
     private static final String DEFAULT_TIME_FORMAT    = "HH:mm:ss";
 
     /** The name of the metric. */
