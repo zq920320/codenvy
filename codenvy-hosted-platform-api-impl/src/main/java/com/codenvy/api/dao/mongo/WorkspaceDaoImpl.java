@@ -100,7 +100,7 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
     }
 
     @Override
-    public void remove(String id) throws ServerException, NotFoundException, ConflictException {
+    public void remove(String id) throws ServerException, NotFoundException {
         try {
             final DBObject workspace = collection.findAndRemove(new BasicDBObject("id", id));
             final Workspace removedWorkspace = toWorkspace(workspace);
