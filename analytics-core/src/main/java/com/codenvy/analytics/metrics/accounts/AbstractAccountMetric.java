@@ -23,6 +23,7 @@ import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.datamodel.ValueDataUtil;
 import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.persistent.MongoDataLoader;
+import com.codenvy.api.account.shared.dto.AccountDescriptor;
 import com.codenvy.api.account.shared.dto.MemberDescriptor;
 import com.codenvy.api.account.shared.dto.SubscriptionDescriptor;
 import com.codenvy.api.user.shared.dto.ProfileDescriptor;
@@ -45,6 +46,7 @@ public abstract class AbstractAccountMetric extends AbstractMetric {
     public static final String PATH_ACCOUNT = "/account";
     public static final String PATH_PROFILE = "/profile";
 
+    public static final String PATH_ACCOUNT_BY_ID      = "/account/{accountId}";
     public static final String PATH_ACCOUNT_WORKSPACES = "/workspace/find/account?id={accountId}";
     public static final String PARAM_ACCOUNT_ID        = "{accountId}";
     public static final String PATH_WORKSPACES_MEMBERS = "/workspace/{workspaceId}/members";
@@ -89,12 +91,18 @@ public abstract class AbstractAccountMetric extends AbstractMetric {
         httpMetricTransport = Injector.getInstance(MetricTransport.class);
     }
 
+
     public AbstractAccountMetric(MetricType metricType) {
         super(metricType);
     }
 
     protected List<MemberDescriptor> getAccountMemberships() throws IOException {
-        return httpMetricTransport.getResources(MemberDescriptor.class, "GET", AccountsList.PATH_ACCOUNT);
+        return httpMetricTransport.getResources(MemberDescriptor.class, "GET", PATH_ACCOUNT);
+    }
+
+    protected AccountDescriptor getAccountDescriptorById(String accountId) throws IOException {
+        return httpMetricTransport.getResource(AccountDescriptor.class, "GET",
+                                               PATH_ACCOUNT_BY_ID.replace(PARAM_ACCOUNT_ID, accountId));
     }
 
     protected MemberDescriptor getAccountMembership(Context context) throws IOException {
@@ -111,12 +119,15 @@ public abstract class AbstractAccountMetric extends AbstractMetric {
     }
 
     protected List<Workspace> getWorkspaces(String accountId) throws IOException {
-        return httpMetricTransport.getResources(Workspace.class, "GET", PATH_ACCOUNT_WORKSPACES.replace(PARAM_ACCOUNT_ID, accountId));
+        return httpMetricTransport
+                .getResources(Workspace.class, "GET", PATH_ACCOUNT_WORKSPACES.replace(PARAM_ACCOUNT_ID, accountId));
     }
 
-    protected List<com.codenvy.api.workspace.shared.dto.MemberDescriptor> getMembers(String workspaceId) throws IOException {
+    protected List<com.codenvy.api.workspace.shared.dto.MemberDescriptor> getMembers(String workspaceId)
+            throws IOException {
         String pathWorkspaceMembers = PATH_WORKSPACES_MEMBERS.replace(PARAM_WORKSPACE_ID, workspaceId);
-        return httpMetricTransport.getResources(com.codenvy.api.workspace.shared.dto.MemberDescriptor.class, "GET", pathWorkspaceMembers);
+        return httpMetricTransport
+                .getResources(com.codenvy.api.workspace.shared.dto.MemberDescriptor.class, "GET", pathWorkspaceMembers);
     }
 
     protected ProfileDescriptor getProfile() throws IOException {
@@ -125,7 +136,7 @@ public abstract class AbstractAccountMetric extends AbstractMetric {
 
     protected StringValueData getEmail(ProfileDescriptor profile) {
         Map<String, String> attributes = profile.getAttributes();
-        for (Map.Entry<String, String> attribute :  attributes.entrySet()) {
+        for (Map.Entry<String, String> attribute : attributes.entrySet()) {
             if (PROFILE_ATTRIBUTE_EMAIL.equalsIgnoreCase(attribute.getKey())) {
                 return new StringValueData(attribute.getValue());
             }
@@ -138,7 +149,7 @@ public abstract class AbstractAccountMetric extends AbstractMetric {
         String lastName = "";
 
         Map<String, String> attributes = profile.getAttributes();
-        for (Map.Entry<String, String> attribute :  attributes.entrySet()) {
+        for (Map.Entry<String, String> attribute : attributes.entrySet()) {
             if (PROFILE_ATTRIBUTE_FIRST_NAME.equalsIgnoreCase(attribute.getKey())) {
                 firsName = attribute.getValue();
             }

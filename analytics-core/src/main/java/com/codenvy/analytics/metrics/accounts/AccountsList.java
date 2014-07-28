@@ -69,7 +69,9 @@ public class AccountsList extends AbstractAccountMetric {
                 m.put(ACCOUNT_ID, StringValueData.valueOf(accountMembership.getUserId()));
                 m.put(ACCOUNT_NAME, StringValueData.valueOf(accountMembership.getAccountReference().getName()));
                 m.put(ACCOUNT_ROLES, StringValueData.valueOf(accountMembership.getRoles().toString()));
-                m.put(ACCOUNT_ATTRIBUTES, StringValueData.valueOf(/*accountMembership.getAttributes().toString()*/"")); //TODO
+                m.put(ACCOUNT_ATTRIBUTES, StringValueData.valueOf(
+                        getAccountDescriptorById(accountMembership.getAccountReference().getId())
+                                .getAttributes().toString()));
                 m.put(ACCOUNT_USER_ID, StringValueData.valueOf(profile.getUserId()));
                 m.put(ACCOUNT_PROFILE_EMAIL, getEmail(profile));
                 m.put(ACCOUNT_PROFILE_NAME, getFullName(profile));
