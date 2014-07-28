@@ -73,7 +73,7 @@ public class TopReferrers extends AbstractTopMetrics {
                 .append(BUILDS + "_count", new BasicDBObject("$sum", "$" + BUILDS))
                 .append(RUNS + "_count", new BasicDBObject("$sum", "$" + RUNS))
                 .append(DEPLOYS + "_count", new BasicDBObject("$sum", "$" + DEPLOYS))
-                .append(AUTHENTICATED_SESSION + "_count", new BasicDBObject("$sum", "$" + AUTHENTICATED_SESSION))
+                .append(AUTHENTICATED_SESSION + "_count", new BasicDBObject("$sum", "$" + REGISTERED_USER))
                 .append(CONVERTED_SESSION + "_count", new BasicDBObject("$sum", "$" + CONVERTED_SESSION))));
 
         dbOperations.add(new BasicDBObject("$project", new BasicDBObject(TIME, 1)

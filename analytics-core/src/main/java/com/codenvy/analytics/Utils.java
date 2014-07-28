@@ -18,6 +18,8 @@
 
 package com.codenvy.analytics;
 
+import com.codenvy.analytics.datamodel.ListValueData;
+import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.metrics.Context.Builder;
@@ -44,6 +46,7 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 import static com.codenvy.analytics.datamodel.ValueDataUtil.getAsList;
+import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsMap;
 
 
 /**
@@ -299,6 +302,10 @@ public class Utils {
         return s.startsWith("ANONYMOUSUSER_") || s.equals("DEFAULT");
     }
 
+    public static boolean isDefaultUserName(Object userName) {
+        return String.valueOf(userName).equalsIgnoreCase("DEFAULT");
+    }
+
     public static boolean isAnonymousUser(Object user) {
         try {
             if (isAnonymousUserName(user)) {
@@ -307,10 +314,17 @@ public class Utils {
                 return false;
             }
 
-            Context.Builder builder = new Context.Builder(MetricFilter.USER, user);
+            Context.Builder builder = new Context.Builder(MetricFilter.USER, user.toString().toLowerCase());
 
             Metric metric = MetricFactory.getMetric(MetricType.USERS_PROFILES_LIST);
-            return getAsList(metric, builder.build()).size() == 0;
+            ListValueData value = getAsList(metric, builder.build());
+
+            if (value.size() == 0) {
+                return true;
+            }
+
+            Map<String, ValueData> m = treatAsMap(value.getAll().get(0));
+            return m.get(ReadBasedMetric.REGISTERED_USER).equals(LongValueData.DEFAULT);
         } catch (IOException e) {
             throw new IllegalStateException("Can not check user " + user, e);
         }
@@ -321,16 +335,29 @@ public class Utils {
         return s.startsWith("TMP-") || s.equals("DEFAULT");
     }
 
+    public static boolean isDefaultWorkspaceName(Object name) {
+        return String.valueOf(name).equalsIgnoreCase("DEFAULT");
+    }
+
     public static boolean isTemporaryWorkspace(Object workspace) {
         try {
             if (isTemporaryWorkspaceName(workspace)) {
                 return true;
             }
 
-            Context.Builder builder = new Context.Builder(MetricFilter.WS, workspace);
+            Context.Builder builder = new Context.Builder(MetricFilter.WS, workspace.toString().toLowerCase());
 
             Metric metric = MetricFactory.getMetric(MetricType.WORKSPACES_PROFILES_LIST);
-            return getAsList(metric, builder.build()).size() == 0;
+            ListValueData value = getAsList(metric, builder.build());
+
+
+            if (value.size() == 0) {
+                return true;
+            }
+
+            Map<String, ValueData> m = treatAsMap(value.getAll().get(0));
+            return m.get(ReadBasedMetric.PERSISTENT_WS).equals(LongValueData.DEFAULT);
+
         } catch (IOException e) {
             throw new IllegalStateException("Can not check workspace " + workspace, e);
         }

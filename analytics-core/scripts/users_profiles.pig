@@ -34,7 +34,8 @@ a = FOREACH a4 GENERATE dt,
 
 resultA = FOREACH a GENERATE LOWER(userId),
                              TOTUPLE('date', ToMilliSeconds(dt)),
-                             TOTUPLE('aliases', EnsureBrackets(LOWER(emails)));
+                             TOTUPLE('aliases', EnsureBrackets(LOWER(emails))),
+                             TOTUPLE('registered_user', (IsAnonymousUserByName(emails) ? 0 : 1));
 STORE resultA INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 
 
@@ -86,5 +87,6 @@ c = FOREACH c1 GENERATE b::userId AS userId,
                         b::emails AS emails;
 
 resultC = FOREACH c GENERATE LOWER(userId),
-                             TOTUPLE('aliases', EnsureBrackets(LOWER(emails)));
+                             TOTUPLE('aliases', EnsureBrackets(LOWER(emails))),
+                             TOTUPLE('registered_user', (IsAnonymousUserByName(emails) ? 0 : 1));
 STORE resultC INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;

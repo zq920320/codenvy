@@ -43,19 +43,19 @@ public class TestProductUsageFactorySessions extends BaseTest {
     @BeforeClass
     public void init() throws Exception {
         List<Event> events = new ArrayList<>();
-        events.add(Event.Builder.createUserCreatedEvent("uid1", "user1", "user1")
+        events.add(Event.Builder.createUserCreatedEvent("uid1", "user1@gmail.com", "user1@gmail.com")
                                 .withDate("2013-02-10").withTime("10:00:00").build());
         events.add(Event.Builder.createUserCreatedEvent("uid2", "anonymoususer_1", "anonymoususer_1")
                                 .withDate("2013-02-10").withTime("10:00:00").build());
 
-        events.add(Event.Builder.createSessionFactoryStartedEvent("id1", "tmp-1", "user1", "true", "brType")
+        events.add(Event.Builder.createSessionFactoryStartedEvent("id1", "tmp-1", "user1@gmail.com", "true", "brType")
                                 .withDate("2013-02-10").withTime("10:00:00").build());
-        events.add(Event.Builder.createSessionFactoryStoppedEvent("id1", "tmp-1", "user1")
+        events.add(Event.Builder.createSessionFactoryStoppedEvent("id1", "tmp-1", "user1@gmail.com")
                                 .withDate("2013-02-10").withTime("10:05:00").build());
 
-        events.add(Event.Builder.createSessionFactoryStartedEvent("id2", "tmp-2", "user1", "true", "brType")
+        events.add(Event.Builder.createSessionFactoryStartedEvent("id2", "tmp-2", "user1@gmail.com", "true", "brType")
                                 .withDate("2013-02-10").withTime("10:20:00").build());
-        events.add(Event.Builder.createSessionFactoryStoppedEvent("id2", "tmp-2", "user1")
+        events.add(Event.Builder.createSessionFactoryStoppedEvent("id2", "tmp-2", "user1@gmail.com")
                                 .withDate("2013-02-10").withTime("10:30:00").build());
 
         events.add(Event.Builder.createSessionFactoryStartedEvent("id3", "tmp-3", "anonymoususer_1", "false", "brType")
@@ -63,7 +63,7 @@ public class TestProductUsageFactorySessions extends BaseTest {
         events.add(Event.Builder.createSessionFactoryStoppedEvent("id3", "tmp-3", "anonymoususer_1")
                                 .withDate("2013-02-10").withTime("11:15:00").build());
 
-        events.add(Event.Builder.createFactoryProjectImportedEvent("tmp-1", "user1", "project", "type")
+        events.add(Event.Builder.createFactoryProjectImportedEvent("tmp-1", "user1@gmail.com", "project", "type")
                                 .withDate("2013-02-10").withTime("10:05:00").build());
 
         events.add(
@@ -79,13 +79,13 @@ public class TestProductUsageFactorySessions extends BaseTest {
                         .createFactoryUrlAcceptedEvent("tmp-3", "factoryUrl1", "http://referrer3", "org3", "affiliate2")
                         .withDate("2013-02-10").withTime("11:00:02").build());
 
-        events.add(Event.Builder.createTenantCreatedEvent("tmp-1", "user1")
+        events.add(Event.Builder.createTenantCreatedEvent("tmp-1", "user1@gmail.com")
                                 .withDate("2013-02-10").withTime("12:00:00").build());
-        events.add(Event.Builder.createTenantCreatedEvent("tmp-2", "user1")
+        events.add(Event.Builder.createTenantCreatedEvent("tmp-2", "user1@gmail.com")
                                 .withDate("2013-02-10").withTime("12:01:00").build());
 
         // run event for session #1
-        events.add(Event.Builder.createRunStartedEvent("user1", "tmp-1", "project", "type", "id1")
+        events.add(Event.Builder.createRunStartedEvent("user1@gmail.com", "tmp-1", "project", "type", "id1")
                                 .withDate("2013-02-10").withTime("10:03:00").build());
 
 

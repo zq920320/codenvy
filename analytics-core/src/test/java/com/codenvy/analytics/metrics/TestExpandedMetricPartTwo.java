@@ -44,7 +44,7 @@ public class TestExpandedMetricPartTwo extends AbstractTestExpandedMetric {
 
     private static final String TEST_WS      = "ws1";
     private static final String TEST_WS_ID   = "wsid1";
-    private static final String TEST_USER    = "user1@gmail.com";
+    private static final String TEST_USER    = "user_1@gmail.com";
     private static final String SESSION_ID   = "session_id";
     private static final String TEST_COMPANY = "comp";
 
@@ -95,20 +95,20 @@ public class TestExpandedMetricPartTwo extends AbstractTestExpandedMetric {
                                 .withDate("2013-11-01").withTime("09:04:00").build());
 
         // create user
-        events.add(Event.Builder.createUserCreatedEvent("user-id5", "user5", "user5")
+        events.add(Event.Builder.createUserCreatedEvent("user-id5", "user5@gmail.com", "user5@gmail.com")
                                 .withDate("2013-11-01").withTime("09:05:00").build());
-        events.add(Event.Builder.createUserCreatedEvent("user-id1", "user1", "user1")
+        events.add(Event.Builder.createUserCreatedEvent("user-id1", "user1@gmail.com", "user1@gmail.com")
                                 .withDate("2013-11-01").withTime("09:05:00").build());
 
         // create factory session events
-        events.add(Event.Builder.createSessionFactoryStartedEvent("factory-id1", "tmp-1", "user1", "true", "brType")
+        events.add(Event.Builder.createSessionFactoryStartedEvent("factory-id1", "tmp-1", "user1@gmail.com", "true", "brType")
                                 .withDate("2013-11-01").withTime("10:00:00").build());
-        events.add(Event.Builder.createSessionFactoryStoppedEvent("factory-id1", "tmp-1", "user1")
+        events.add(Event.Builder.createSessionFactoryStoppedEvent("factory-id1", "tmp-1", "user1@gmail.com")
                                 .withDate("2013-11-01").withTime("10:05:00").build());
 
-        events.add(Event.Builder.createSessionFactoryStartedEvent("factory-id2", "tmp-2", "user1", "true", "brType")
+        events.add(Event.Builder.createSessionFactoryStartedEvent("factory-id2", "tmp-2", "user1@gmail.com", "true", "brType")
                                 .withDate("2013-11-01").withTime("10:20:00").build());
-        events.add(Event.Builder.createSessionFactoryStoppedEvent("factory-id2", "tmp-2", "user1")
+        events.add(Event.Builder.createSessionFactoryStoppedEvent("factory-id2", "tmp-2", "user1@gmail.com")
                                 .withDate("2013-11-01").withTime("10:30:00").build());
 
         events.add(Event.Builder.createSessionFactoryStartedEvent("factory-id3", "tmp-3", "anonymoususer_1", "false", "brType")
@@ -116,7 +116,7 @@ public class TestExpandedMetricPartTwo extends AbstractTestExpandedMetric {
         events.add(Event.Builder.createSessionFactoryStoppedEvent("factory-id3", "tmp-3", "anonymoususer_1")
                                 .withDate("2013-11-01").withTime("11:15:00").build());
 
-        events.add(Event.Builder.createFactoryProjectImportedEvent("tmp-1", "user1", "project", "type")
+        events.add(Event.Builder.createFactoryProjectImportedEvent("tmp-1", "user1@gmail.com", "project", "type")
                                 .withDate("2013-11-01").withTime("10:05:00").build());
 
         events.add(Event.Builder.createFactoryUrlAcceptedEvent("tmp-1", "factoryUrl1", "http://referrer1", "org1", "affiliate1")
@@ -126,17 +126,17 @@ public class TestExpandedMetricPartTwo extends AbstractTestExpandedMetric {
         events.add(Event.Builder.createFactoryUrlAcceptedEvent("tmp-3", "factoryUrl1", "http://referrer3", "org3", "affiliate2")
                                 .withDate("2013-11-01").withTime("11:00:02").build());
 
-        events.add(Event.Builder.createTenantCreatedEvent("tmp-1", "user1")
+        events.add(Event.Builder.createTenantCreatedEvent("tmp-1", "user1@gmail.com")
                                 .withDate("2013-11-01").withTime("12:00:00").build());
-        events.add(Event.Builder.createTenantCreatedEvent("tmp-2", "user1")
+        events.add(Event.Builder.createTenantCreatedEvent("tmp-2", "user1@gmail.com")
                                 .withDate("2013-11-01").withTime("12:01:00").build());
-        events.add(Event.Builder.createTenantCreatedEvent("tmp-3", "user1")
+        events.add(Event.Builder.createTenantCreatedEvent("tmp-3", "user1@gmail.com")
                                 .withDate("2013-11-01").withTime("12:02:00").build());
 
         // build event for session #1
-        events.add(Event.Builder.createBuildStartedEvent("user1", "tmp-1", "project", "type", "id1")
+        events.add(Event.Builder.createBuildStartedEvent("user1@gmail.com", "tmp-1", "project", "type", "id1")
                                 .withDate("2013-11-01").withTime("10:03:00").build());
-        events.add(Event.Builder.createProjectBuiltEvent("user1", "tmp-1", "", "project", "type")
+        events.add(Event.Builder.createProjectBuiltEvent("user1@gmail.com", "tmp-1", "", "project", "type")
                                 .withDate("2013-11-01").withTime("10:03:00").build());
 
 
@@ -277,12 +277,12 @@ public class TestExpandedMetricPartTwo extends AbstractTestExpandedMetric {
                                 .withDate("2013-12-20").withTime("19:15:00").build());
 
         // add event of accepting factory url for the testDrillDownTopFactoriesMetric test
-        events.add(Event.Builder.createUserCreatedEvent("user-id_factory_user5", "factory_user5", "factory_user5")
+        events.add(Event.Builder.createUserCreatedEvent("user-id_factory_user5", "factory_user5@gmail.com", "factory_user5@gmail.com")
                                 .withDate("2013-12-20").withTime("11:01:00").build());
 
         events.add(Event.Builder.createFactoryUrlAcceptedEvent("tmp-5", "factoryUrl1", "http://referrer3", "org3", "affiliate2")
                                 .withDate("2013-12-20").withTime("11:00:02").build());
-        events.add(Event.Builder.createTenantCreatedEvent("tmp-5", "factory_user5")
+        events.add(Event.Builder.createTenantCreatedEvent("tmp-5", "factory_user5@gmail.com")
                                 .withDate("2013-12-20").withTime("12:01:00").build());
 
 
@@ -342,7 +342,7 @@ public class TestExpandedMetricPartTwo extends AbstractTestExpandedMetric {
 
         record = ((MapValueData)all.get(2)).getAll();
         assertEquals(record.size(), 1);
-        assertEquals(record.get("user").toString(), "user1@gmail.com");
+        assertEquals(record.get("user").toString(), "user_1@gmail.com");
 
         record = ((MapValueData)all.get(3)).getAll();
         assertEquals(record.size(), 1);
@@ -361,7 +361,7 @@ public class TestExpandedMetricPartTwo extends AbstractTestExpandedMetric {
         assertEquals(record.get("user").toString(), "user-id1");
         record = ((MapValueData)all.get(1)).getAll();
         assertEquals(record.size(), 1);
-        assertEquals(record.get("user").toString(), "user1@gmail.com");
+        assertEquals(record.get("user").toString(), "user_1@gmail.com");
         record = ((MapValueData)all.get(2)).getAll();
         assertEquals(record.size(), 1);
         assertEquals(record.get("user").toString(), "user-id4");

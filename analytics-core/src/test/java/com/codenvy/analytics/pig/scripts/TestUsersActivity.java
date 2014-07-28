@@ -47,12 +47,12 @@ public class TestUsersActivity extends BaseTest {
     public void prepare() throws Exception {
         List<Event> events = new ArrayList<>();
 
-        events.add(Event.Builder.createUserCreatedEvent("uid1", "user1","[user1]").withDate("2013-01-01").build());
-        events.add(Event.Builder.createUserCreatedEvent("uid2", "user2","[user2]").withDate("2013-01-01").build());
-        events.add(Event.Builder.createUserCreatedEvent("uid3", "user3","[user3]").withDate("2013-01-01").build());
+        events.add(Event.Builder.createUserCreatedEvent("uid1", "user1@gmail.com","[user1@gmail.com]").withDate("2013-01-01").build());
+        events.add(Event.Builder.createUserCreatedEvent("uid2", "user2@gmail.com","[user2@gmail.com]").withDate("2013-01-01").build());
+        events.add(Event.Builder.createUserCreatedEvent("uid3", "user3@gmail.com","[user3@gmail.com]").withDate("2013-01-01").build());
 
-        events.add(Event.Builder.createWorkspaceCreatedEvent("ws1", "wsid1", "user1").withDate("2013-01-01").build());
-        events.add(Event.Builder.createWorkspaceCreatedEvent("ws2", "wsid2", "user2").withDate("2013-01-01").build());
+        events.add(Event.Builder.createWorkspaceCreatedEvent("ws1", "wsid1", "user1@gmail.com").withDate("2013-01-01").build());
+        events.add(Event.Builder.createWorkspaceCreatedEvent("ws2", "wsid2", "user2@gmail.com").withDate("2013-01-01").build());
 
         File log = LogGenerator.generateLog(events);
 
@@ -69,21 +69,21 @@ public class TestUsersActivity extends BaseTest {
 
 
         events = new ArrayList<>();
-        events.add(Event.Builder.createIDEUsageEvent("user1",
+        events.add(Event.Builder.createIDEUsageEvent("user1@gmail.com",
                                                      "ws1",
                                                      "action1",
                                                      "src1",
                                                      "project1",
                                                      "type1",
                                                      "p1=v1,p2=v2").withDate("2013-01-01").build());
-        events.add(Event.Builder.createIDEUsageEvent("user2",
+        events.add(Event.Builder.createIDEUsageEvent("user2@gmail.com",
                                                      "ws2",
                                                      "action2",
                                                      "src2",
                                                      "project2",
                                                      "type2",
                                                      null).withDate("2013-01-01").build());
-        events.add(Event.Builder.createIDEUsageEvent("user3",
+        events.add(Event.Builder.createIDEUsageEvent("user3@gmail.com",
                                                      null,
                                                      null,
                                                      null,

@@ -18,8 +18,7 @@
 package com.codenvy.analytics.persistent;
 
 import com.codenvy.analytics.Utils;
-import com.codenvy.analytics.metrics.Context;
-import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.services.configuration.XmlConfigurationManager;
 import com.mongodb.*;
 
@@ -30,6 +29,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -252,5 +252,62 @@ public class CollectionsManagement {
 
     private static boolean isIndexNotFoundExceptionType(MongoException me) {
         return me.getCode() == -5 && me.getMessage().contains("index not found");
+    }
+
+    public void removeAnonymousUsers(Context clauses, int skipLastDays) throws ParseException {
+        int removed = removeData(clauses,
+                                 skipLastDays,
+                                 ((ReadBasedMetric)MetricFactory.getMetric(MetricType.USERS_PROFILES_LIST))
+                                         .getStorageCollectionName(),
+                                 MetricFilter.REGISTERED_USER,
+                                 0);
+
+        if (removed > 0) {
+            LOG.info(removed + " anonymous users were removed.");
+        }
+    }
+
+    public void removeTemporaryWorkspaces(Context clauses, int skipLastDays) throws ParseException {
+        int removed = removeData(clauses,
+                                 skipLastDays,
+                                 ((ReadBasedMetric)MetricFactory.getMetric(MetricType.WORKSPACES_PROFILES_LIST))
+                                         .getStorageCollectionName(),
+                                 MetricFilter.PERSISTENT_WS,
+                                 0);
+        if (removed > 0) {
+            LOG.info(removed + " temporary workspaces were removed.");
+        }
+    }
+
+    private int removeData(Context clauses,
+                           int skipLastDays,
+                           String collection,
+                           MetricFilter filter,
+                           Object filterValue) throws ParseException {
+        Context context = getContextWhereSkipDays(clauses, skipLastDays);
+
+        Calendar toDate = context.getAsDate(Parameters.TO_DATE);
+        if (toDate.before(context.getAsDate(Parameters.FROM_DATE))) {
+            return -1;
+        }
+
+        DBObject filters = Utils.setDateFilter(context);
+        filters.put(filter.toString().toLowerCase(), filterValue);
+
+        WriteResult result = db.getCollection(collection).remove(filters);
+
+        return result.getN();
+    }
+
+
+    private Context getContextWhereSkipDays(Context context, int skipDays) throws ParseException {
+        Context.Builder builder = new Context.Builder();
+        builder.putDefaultValue(Parameters.FROM_DATE);
+
+        Calendar toDate = context.getAsDate(Parameters.TO_DATE);
+        toDate.add(Calendar.DAY_OF_MONTH, -skipDays);
+
+        builder.put(Parameters.TO_DATE, toDate);
+        return builder.build();
     }
 }

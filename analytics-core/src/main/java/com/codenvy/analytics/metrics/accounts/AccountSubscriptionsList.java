@@ -22,8 +22,8 @@ import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.RequiredFilter;
-import com.codenvy.api.account.shared.dto.AccountMembership;
-import com.codenvy.api.account.shared.dto.Subscription;
+import com.codenvy.api.account.shared.dto.MemberDescriptor;
+import com.codenvy.api.account.shared.dto.SubscriptionDescriptor;
 
 import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
@@ -55,12 +55,12 @@ public class AccountSubscriptionsList extends AbstractAccountMetric {
 
     @Override
     public ValueData getValue(Context context) throws IOException {
-        AccountMembership accountMembership = getAccountMembership(context);
-        List<Subscription> subscriptions = getSubscriptions(accountMembership.getId());
+        MemberDescriptor accountMembership = getAccountMembership(context);
+        List<SubscriptionDescriptor> subscriptions = getSubscriptions(accountMembership.getUserId());
 
         List<ValueData> list2Return = new ArrayList<>();
 
-        for (Subscription subscription : subscriptions) {
+        for (SubscriptionDescriptor subscription : subscriptions) {
             Map<String, ValueData> m = new HashMap<>();
             m.put(SUBSCRIPTION_SERVICE_ID, StringValueData.valueOf(subscription.getServiceId()));
             m.put(SUBSCRIPTION_START_DATE, LongValueData.valueOf(subscription.getStartDate()));

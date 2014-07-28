@@ -389,144 +389,144 @@ public class TestAnalysisView extends BaseTest {
 
         /** events at the DATE1 */
         // create users
-        events.add(Event.Builder.createUserCreatedEvent("user1-id", "user1", "user1")
+        events.add(Event.Builder.createUserCreatedEvent("user1-id", "user1@gmail.com", "user1@gmail.com")
                                 .withDate(DATE1).build());
-        events.add(Event.Builder.createUserCreatedEvent("user2-id", "user2", "user2")
+        events.add(Event.Builder.createUserCreatedEvent("user2-id", "user2@gmail.com", "user2@gmail.com")
                                 .withDate(DATE1).build());
-        events.add(Event.Builder.createUserCreatedEvent("user3-id", "user3", "user3")
+        events.add(Event.Builder.createUserCreatedEvent("user3-id", "user3@gmail.com", "user3@gmail.com")
                                 .withDate(DATE1).build());
 
-        events.add(Event.Builder.createWorkspaceCreatedEvent("ws1", "wsid1", "user1")
+        events.add(Event.Builder.createWorkspaceCreatedEvent("ws1", "wsid1", "user1@gmail.com")
                                 .withDate(DATE1).build());
-        events.add(Event.Builder.createWorkspaceCreatedEvent("ws2", "wsid2", "user2")
+        events.add(Event.Builder.createWorkspaceCreatedEvent("ws2", "wsid2", "user2@gmail.com")
                                 .withDate(DATE1).build());
-        events.add(Event.Builder.createWorkspaceCreatedEvent("ws3", "wsid3", "user3")
+        events.add(Event.Builder.createWorkspaceCreatedEvent("ws3", "wsid3", "user3@gmail.com")
                                 .withDate(DATE1).build());
 
         // update users' profiles
-        events.add(Event.Builder.createUserUpdateProfile("user1-id", "user1", "user1", "f1", "l1", "company1", "phone1", "jobtitle1")
+        events.add(Event.Builder.createUserUpdateProfile("user1-id", "user1@gmail.com", "user1@gmail.com", "f1", "l1", "company1", "phone1", "jobtitle1")
                                 .withDate(DATE1).build());
-        events.add(Event.Builder.createUserUpdateProfile("user2-id", "user2", "user2", "", "", "", "", "")
+        events.add(Event.Builder.createUserUpdateProfile("user2-id", "user2@gmail.com", "user2@gmail.com", "", "", "", "", "")
                                 .withDate(DATE1).build());
 
         // active users [user1, user2]
-        events.add(Event.Builder.createTenantCreatedEvent("ws1", "user1").withTime("09:00:00").withDate(DATE1)
+        events.add(Event.Builder.createTenantCreatedEvent("ws1", "user1@gmail.com").withTime("09:00:00").withDate(DATE1)
                                 .build());
-        events.add(Event.Builder.createTenantCreatedEvent("ws2", "user2").withTime("09:00:00").withDate(DATE1)
+        events.add(Event.Builder.createTenantCreatedEvent("ws2", "user2@gmail.com").withTime("09:00:00").withDate(DATE1)
                                 .build());
 
         // add shell launched events
-        events.add(Event.Builder.createShellLaunchedEvent("user2", "ws2", "2").withTime("09:00:00").withDate(DATE1)
+        events.add(Event.Builder.createShellLaunchedEvent("user2@gmail.com", "ws2", "2").withTime("09:00:00").withDate(DATE1)
                                 .build());
-        events.add(Event.Builder.createShellLaunchedEvent("user2", "ws2", "2").withTime("10:00:00").withDate(DATE1)
+        events.add(Event.Builder.createShellLaunchedEvent("user2@gmail.com", "ws2", "2").withTime("10:00:00").withDate(DATE1)
                                 .build());
 
         // projects created
         events.add(
-                Event.Builder.createProjectCreatedEvent("user1", "ws1", "", "project1", "type1").withDate(DATE1)
+                Event.Builder.createProjectCreatedEvent("user1@gmail.com", "ws1", "", "project1", "type1").withDate(DATE1)
                              .withTime("10:00:00").build());
         events.add(
-                Event.Builder.createProjectCreatedEvent("user1", "ws1", "", "project2", "type1").withDate(DATE1)
+                Event.Builder.createProjectCreatedEvent("user1@gmail.com", "ws1", "", "project2", "type1").withDate(DATE1)
                              .withTime("10:05:00").build());
         events.add(
-                Event.Builder.createProjectCreatedEvent("user2", "ws2", "", "project1", "type1").withDate(DATE1)
+                Event.Builder.createProjectCreatedEvent("user2@gmail.com", "ws2", "", "project1", "type1").withDate(DATE1)
                              .withTime("10:03:00").build());
 
         // projects deployed to LOCAL
-        events.add(Event.Builder.createProjectDeployedEvent("user2", "ws2", "", "project1", "type1", "LOCAL")
+        events.add(Event.Builder.createProjectDeployedEvent("user2@gmail.com", "ws2", "", "project1", "type1", "LOCAL")
                                 .withTime("10:10:00,000")
                                 .withDate(DATE1).build());
 
         // projects deployed to PaaS
-        events.add(Event.Builder.createApplicationCreatedEvent("user1", "ws1", "", "project1", "type1", "paas1")
+        events.add(Event.Builder.createApplicationCreatedEvent("user1@gmail.com", "ws1", "", "project1", "type1", "paas1")
                                 .withTime("10:10:00,000")
                                 .withDate(DATE1).build());
 
         // projects built
-        events.add(Event.Builder.createProjectBuiltEvent("user2", "ws1", "", "project1", "type1").withTime("10:06:00")
+        events.add(Event.Builder.createProjectBuiltEvent("user2@gmail.com", "ws1", "", "project1", "type1").withTime("10:06:00")
                                 .withDate(DATE1).build());
 
 
-        events.add(Event.Builder.createFactoryCreatedEvent("ws1", "user1", "", "", "", "", "", "")
+        events.add(Event.Builder.createFactoryCreatedEvent("ws1", "user1@gmail.com", "", "", "", "", "", "")
                                 .withDate(DATE1)
                                 .withTime("20:03:00").build());
 
-        events.add(Event.Builder.createDebugStartedEvent("user2", "ws1", "", "", "id1")
+        events.add(Event.Builder.createDebugStartedEvent("user2@gmail.com", "ws1", "", "", "id1")
                                 .withDate(DATE1)
                                 .withTime("20:06:00").build());
 
         // invite users
-        events.add(Event.Builder.createUserInviteEvent("user1", "ws1", "email1")
+        events.add(Event.Builder.createUserInviteEvent("user1@gmail.com", "ws1", "email1")
                                 .withDate(DATE1).build());
 
-        events.add(Event.Builder.createRunStartedEvent("user2", "ws2", "project", "type", "id1")
+        events.add(Event.Builder.createRunStartedEvent("user2@gmail.com", "ws2", "project", "type", "id1")
                                 .withDate(DATE1)
                                 .withTime("20:59:00").build());
-        events.add(Event.Builder.createRunFinishedEvent("user2", "ws2", "project", "type", "id1")
+        events.add(Event.Builder.createRunFinishedEvent("user2@gmail.com", "ws2", "project", "type", "id1")
                                 .withDate(DATE1)
                                 .withTime("21:01:00").build());
 
-        events.add(Event.Builder.createBuildStartedEvent("user1", "ws1", "project", "type", "id2")
+        events.add(Event.Builder.createBuildStartedEvent("user1@gmail.com", "ws1", "project", "type", "id2")
                                 .withDate(DATE1)
                                 .withTime("21:12:00").build());
-        events.add(Event.Builder.createBuildFinishedEvent("user1", "ws1", "project", "type", "id2")
+        events.add(Event.Builder.createBuildFinishedEvent("user1@gmail.com", "ws1", "project", "type", "id2")
                                 .withDate(DATE1)
                                 .withTime("21:14:00").build());
 
 
         /** events at the DATE2 */
         // create user
-        events.add(Event.Builder.createUserCreatedEvent("user3-id", "user3", "user3")
+        events.add(Event.Builder.createUserCreatedEvent("user3-id", "user3@gmail.com", "user3@gmail.com")
                                 .withDate(DATE2).build());
 
-        events.add(Event.Builder.createTenantCreatedEvent("ws3", "user3").withTime("09:00:00").withDate(DATE2)
+        events.add(Event.Builder.createTenantCreatedEvent("ws3", "user3@gmail.com").withTime("09:00:00").withDate(DATE2)
                                 .build());
 
         // update user's profile
-        events.add(Event.Builder.createUserUpdateProfile("user3-id", "user3", "user3", "f3", "l3", "company3", "phone3", "jobtitle3")
+        events.add(Event.Builder.createUserUpdateProfile("user3-id", "user3@gmail.com", "user3@gmail.com", "f3", "l3", "company3", "phone3", "jobtitle3")
                                 .withDate(DATE2).build());
 
         // add shell launched events
-        events.add(Event.Builder.createShellLaunchedEvent("user3", "ws3", "3").withTime("09:00:00").withDate(DATE2)
+        events.add(Event.Builder.createShellLaunchedEvent("user3@gmail.com", "ws3", "3").withTime("09:00:00").withDate(DATE2)
                                 .build());
-        events.add(Event.Builder.createShellLaunchedEvent("user2", "ws2", "2").withTime("10:00:00").withDate(DATE2)
+        events.add(Event.Builder.createShellLaunchedEvent("user2@gmail.com", "ws2", "2").withTime("10:00:00").withDate(DATE2)
                                 .build());
 
         // projects created
         events.add(
-                Event.Builder.createProjectCreatedEvent("user2", "ws2", "", "project22", "type1").withDate(DATE2)
+                Event.Builder.createProjectCreatedEvent("user2@gmail.com", "ws2", "", "project22", "type1").withDate(DATE2)
                              .withTime("10:03:00").build());
         events.add(
-                Event.Builder.createProjectCreatedEvent("user3", "ws3", "", "project33", "type1").withDate(DATE2)
+                Event.Builder.createProjectCreatedEvent("user3@gmail.com", "ws3", "", "project33", "type1").withDate(DATE2)
                              .withTime("10:03:00").build());
 
         // projects deployed to LOCAL
-        events.add(Event.Builder.createProjectDeployedEvent("user2", "ws2", "", "project1", "type1", "LOCAL")
+        events.add(Event.Builder.createProjectDeployedEvent("user2@gmail.com", "ws2", "", "project1", "type1", "LOCAL")
                                 .withTime("10:10:00,000")
                                 .withDate(DATE2).build());
-        events.add(Event.Builder.createProjectDeployedEvent("user3", "ws3", "", "project33", "type1", "LOCAL")
+        events.add(Event.Builder.createProjectDeployedEvent("user3@gmail.com", "ws3", "", "project33", "type1", "LOCAL")
                                 .withTime("10:10:00,000")
                                 .withDate(DATE2).build());
 
 
         // projects deployed to PaaS
-        events.add(Event.Builder.createApplicationCreatedEvent("user2", "ws2", "", "project1", "type1", "paas1")
+        events.add(Event.Builder.createApplicationCreatedEvent("user2@gmail.com", "ws2", "", "project1", "type1", "paas1")
                                 .withTime("10:10:00,000")
                                 .withDate(DATE2).build());
 
-        events.add(Event.Builder.createApplicationCreatedEvent("user3", "ws2", "", "project1", "type1", "paas2")
+        events.add(Event.Builder.createApplicationCreatedEvent("user3@gmail.com", "ws2", "", "project1", "type1", "paas2")
                                 .withTime("10:00:00")
                                 .withDate(DATE2).build());
 
-        events.add(Event.Builder.createApplicationCreatedEvent("user2", "ws2", "", "project2", "type1", "paas1")
+        events.add(Event.Builder.createApplicationCreatedEvent("user2@gmail.com", "ws2", "", "project2", "type1", "paas1")
                                 .withTime("10:11:00,100")
                                 .withDate(DATE2).build());
 
 
         // invite users
-        events.add(Event.Builder.createUserInviteEvent("user1", "ws1", "email2")
+        events.add(Event.Builder.createUserInviteEvent("user1@gmail.com", "ws1", "email2")
                                 .withDate(DATE2).build());
-        events.add(Event.Builder.createUserInviteEvent("user3", "ws3", "email3")
+        events.add(Event.Builder.createUserInviteEvent("user3@gmail.com", "ws3", "email3")
                                 .withDate(DATE2).build());
 
         return LogGenerator.generateLog(events);

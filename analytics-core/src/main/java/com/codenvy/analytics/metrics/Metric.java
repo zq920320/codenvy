@@ -20,15 +20,9 @@ package com.codenvy.analytics.metrics;
 import com.codenvy.analytics.datamodel.ValueData;
 
 import java.io.IOException;
-import java.util.regex.Pattern;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public interface Metric {
-
-    Pattern REGISTERED_USER = Pattern.compile("^(?!(ANONYMOUSUSER_|DEFAULT)).*", Pattern.CASE_INSENSITIVE);
-    Pattern ANONYMOUS_USER = Pattern.compile("^(ANONYMOUSUSER_).*", Pattern.CASE_INSENSITIVE);
-    Pattern PERSISTENT_WS  = Pattern.compile("^(?!(TMP-|DEFAULT)).*", Pattern.CASE_INSENSITIVE);
-    Pattern TEMPORARY_WS   = Pattern.compile("^(TMP-).*", Pattern.CASE_INSENSITIVE);
 
     /**
      * Returns the value of metric.

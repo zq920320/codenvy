@@ -23,7 +23,6 @@ import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.OmitFilters;
-import com.codenvy.analytics.metrics.users.AbstractUsersProfile;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
@@ -32,7 +31,7 @@ import javax.annotation.security.RolesAllowed;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
 @OmitFilters({MetricFilter.USER, MetricFilter.REGISTERED_USER})
-public class WorkspacesProfiles extends AbstractUsersProfile {
+public class WorkspacesProfiles extends AbstractWorkspacesProfile {
 
     public WorkspacesProfiles() {
         super(MetricType.WORKSPACES_PROFILES);

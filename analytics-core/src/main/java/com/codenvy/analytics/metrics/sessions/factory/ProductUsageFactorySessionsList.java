@@ -85,7 +85,7 @@ public class ProductUsageFactorySessionsList extends AbstractListValueResulted i
         group.put(ID, null);
         group.put(TIME, new BasicDBObject("$sum", "$" + TIME));
         group.put(SESSIONS, new BasicDBObject("$sum", 1));
-        group.put(AUTHENTICATED_SESSION, new BasicDBObject("$sum", "$" + AUTHENTICATED_SESSION));
+        group.put(AUTHENTICATED_SESSION, new BasicDBObject("$sum", "$" + REGISTERED_USER));
         group.put(CONVERTED_SESSION, new BasicDBObject("$sum", "$" + CONVERTED_SESSION));
 
         DBObject project = new BasicDBObject();

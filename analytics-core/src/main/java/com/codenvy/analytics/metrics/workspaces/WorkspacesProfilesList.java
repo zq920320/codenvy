@@ -40,7 +40,9 @@ public class WorkspacesProfilesList extends AbstractWorkspacesProfile {
 
     @Override
     public String[] getTrackedFields() {
-        return new String[]{ID, WS_NAME};
+        return new String[]{ID,
+                            WS_NAME,
+                            PERSISTENT_WS};
     }
 
     @Override

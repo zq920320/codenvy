@@ -41,12 +41,19 @@ public class TopFactorySessions extends AbstractTopMetrics {
 
     @Override
     public DBObject[] getSpecificDBOperations(Context clauses) {
-        DBObject[] dbOperations = new DBObject[4];
+        DBObject[] dbOperations = new DBObject[5];
 
         dbOperations[0] = new BasicDBObject("$match", new BasicDBObject(FACTORY, new BasicDBObject("$ne", "")));
         dbOperations[1] = new BasicDBObject("$match", new BasicDBObject(FACTORY, new BasicDBObject("$ne", null)));
         dbOperations[2] = new BasicDBObject("$sort", new BasicDBObject(TIME, -1));
         dbOperations[3] = new BasicDBObject("$limit", MAX_DOCUMENT_COUNT);
+        dbOperations[4]= new BasicDBObject("$project", new BasicDBObject(TIME, 1)
+                .append(SESSION_ID, 1)
+                .append(USER_CREATED, 1)
+                .append(FACTORY, 1)
+                .append(REFERRER, 1)
+                .append(AUTHENTICATED_SESSION, "$" + REGISTERED_USER)
+                .append(CONVERTED_SESSION, 1));
 
         return dbOperations;
     }

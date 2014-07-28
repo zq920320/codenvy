@@ -29,7 +29,7 @@ import org.apache.pig.impl.logicalLayer.schema.Schema;
 import java.io.IOException;
 import java.util.Map;
 
-import static com.codenvy.analytics.Utils.isAnonymousUserName;
+import static com.codenvy.analytics.Utils.isDefaultUserName;
 import static com.codenvy.analytics.datamodel.ValueDataUtil.getAsList;
 import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsMap;
 
@@ -53,7 +53,7 @@ public class ReplaceUserWithId extends EvalFunc<String> {
         if (user == null) {
             return null;
 
-        } else if (isAnonymousUserName(user)) { // TODO remove, log id for anonymous user
+        } else if (isDefaultUserName(user)) {
             return user;
 
         } else {

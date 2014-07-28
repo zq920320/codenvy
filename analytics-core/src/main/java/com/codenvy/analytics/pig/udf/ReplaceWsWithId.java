@@ -29,7 +29,7 @@ import org.apache.pig.impl.logicalLayer.schema.Schema;
 import java.io.IOException;
 import java.util.Map;
 
-import static com.codenvy.analytics.Utils.isTemporaryWorkspaceName;
+import static com.codenvy.analytics.Utils.isDefaultWorkspaceName;
 import static com.codenvy.analytics.datamodel.ValueDataUtil.getAsList;
 import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsMap;
 
@@ -55,7 +55,7 @@ public class ReplaceWsWithId extends EvalFunc<String> {
         if (ws == null) {
             return null;
 
-        } else if (isTemporaryWorkspaceName(ws)) { // TODO remove, log id for temporary workspaces
+        } else if (isDefaultWorkspaceName(ws)) {
             return ws;
 
         } else {

@@ -48,7 +48,7 @@ public class TestIsAnonymousUserById extends BaseTest {
         isAnonymousUserById = new IsAnonymousUserById();
 
         List<Event> events = new ArrayList<>();
-        events.add(Event.Builder.createUserCreatedEvent("uid1", "user1", "user1")
+        events.add(Event.Builder.createUserCreatedEvent("uid1", "user1@gmail.com", "user1@gmail.com")
                                 .withDate("2013-01-01").withTime("10:00:00,000").build());
         events.add(Event.Builder.createUserCreatedEvent("uid2", "AnonymousUser_1", "AnonymousUser_1")
                                 .withDate("2013-01-01").withTime("10:00:00,000").build());

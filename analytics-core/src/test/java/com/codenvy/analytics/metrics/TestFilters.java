@@ -42,11 +42,11 @@ public class TestFilters extends BaseTest {
     @BeforeClass
     public void init() throws Exception {
         List<Event> events = new ArrayList<>();
-        events.add(Event.Builder.createUserCreatedEvent("uid1", "user1","[user1]").withDate("2013-02-10").build());
-        events.add(Event.Builder.createWorkspaceCreatedEvent("ws1", "wsid1", "user1").withDate("2013-02-10").build());
+        events.add(Event.Builder.createUserCreatedEvent("uid1", "user1@gmail.com","[user1@gmail.com]").withDate("2013-02-10").build());
+        events.add(Event.Builder.createWorkspaceCreatedEvent("ws1", "wsid1", "user1@gmail.com").withDate("2013-02-10").build());
 
-        events.add(Event.Builder.createUserCreatedEvent("uid2", "user2","[user2]").withDate("2013-02-10").build());
-        events.add(Event.Builder.createWorkspaceCreatedEvent("tmp-22rct0cq0rh8vs", "wsid2", "user2").withDate("2013-02-10").build());
+        events.add(Event.Builder.createUserCreatedEvent("uid2", "user2@gmail.com","[user2@gmail.com]").withDate("2013-02-10").build());
+        events.add(Event.Builder.createWorkspaceCreatedEvent("tmp-22rct0cq0rh8vs", "wsid2", "user2@gmail.com").withDate("2013-02-10").build());
 
         events.add(Event.Builder.createUserCreatedEvent("uid3", "anonymoususer_edjkx4","[]").withDate("2013-02-10").build());
         events.add(Event.Builder.createWorkspaceCreatedEvent("ws2", "wsid3", "anonymoususer_edjkx4").withDate("2013-02-10").build());

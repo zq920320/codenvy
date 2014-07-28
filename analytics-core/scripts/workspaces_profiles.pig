@@ -31,7 +31,8 @@ a = FOREACH a2 GENERATE dt,
 
 resultA = FOREACH a GENERATE LOWER(wsId),
                              TOTUPLE('date', ToMilliSeconds(dt)),
-                             TOTUPLE('ws_name', wsName);
+                             TOTUPLE('ws_name', LOWER(wsName)),
+                             TOTUPLE('persistent_ws', (IsTemporaryWorkspaceByName(wsName) ? 0 : 1));
 STORE resultA INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 
 ----------------------------------------------------------------------------------
@@ -46,5 +47,6 @@ c = FOREACH c1 GENERATE b::wsId AS wsId,
                         b::wsName AS wsName;
 
 resultC = FOREACH c GENERATE LOWER(wsId),
-                             TOTUPLE('ws_name', wsName);
+                             TOTUPLE('ws_name', LOWER(wsName)),
+                             TOTUPLE('persistent_ws', (IsTemporaryWorkspaceByName(wsName) ? 0 : 1));
 STORE resultC INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;

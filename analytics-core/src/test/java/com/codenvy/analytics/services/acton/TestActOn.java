@@ -64,10 +64,10 @@ public class TestActOn extends AbstractUsersActivityTest {
             assertEquals(column, headData.get(column));
         }
 
-        // verify "user1" data
-        Map<String, String> user1Data = content.get("user1");
+        // verify "user1@gmail.com" data
+        Map<String, String> user1Data = content.get("user1@gmail.com");
         assertEquals(HEADERS.size(), user1Data.size());
-        assertEquals("user1", user1Data.get(HEADERS.get(AbstractMetric.ID)));
+        assertEquals("user1@gmail.com", user1Data.get(HEADERS.get(AbstractMetric.ID)));
         assertEquals("f", user1Data.get(HEADERS.get(AbstractMetric.USER_FIRST_NAME)));
         assertEquals("l", user1Data.get(HEADERS.get(AbstractMetric.USER_LAST_NAME)));
         assertEquals("phone", user1Data.get(HEADERS.get(AbstractMetric.USER_PHONE)));
@@ -89,10 +89,10 @@ public class TestActOn extends AbstractUsersActivityTest {
         assertEquals("0", user1Data.get(HEADERS.get(UsersStatisticsList.PAAS_DEPLOYS)));
         assertEquals("29", user1Data.get(HEADERS.get(ActOn.POINTS)));
 
-        // verify "user2" data
-        Map<String, String> user2Data = content.get("user2");
+        // verify "user2@gmail.com" data
+        Map<String, String> user2Data = content.get("user2@gmail.com");
         assertEquals(HEADERS.size(), user2Data.size());
-        assertEquals("user2", user2Data.get(HEADERS.get(AbstractMetric.ID)));
+        assertEquals("user2@gmail.com", user2Data.get(HEADERS.get(AbstractMetric.ID)));
         assertEquals("", user2Data.get(HEADERS.get(AbstractMetric.USER_FIRST_NAME)));
         assertEquals("", user2Data.get(HEADERS.get(AbstractMetric.USER_LAST_NAME)));
         assertEquals("", user2Data.get(HEADERS.get(AbstractMetric.USER_PHONE)));
@@ -114,10 +114,10 @@ public class TestActOn extends AbstractUsersActivityTest {
         assertEquals("6", user2Data.get(HEADERS.get(UsersStatisticsList.PAAS_DEPLOYS)));
         assertEquals("92", user2Data.get(HEADERS.get(ActOn.POINTS)));
 
-        // verify "user3" data
-        Map<String, String> user3Data = content.get("user3");
+        // verify "user3@gmail.com" data
+        Map<String, String> user3Data = content.get("user3@gmail.com");
         assertEquals(HEADERS.size(), user3Data.size());
-        assertEquals("user3", user3Data.get(HEADERS.get(AbstractMetric.ID)));
+        assertEquals("user3@gmail.com", user3Data.get(HEADERS.get(AbstractMetric.ID)));
         assertEquals("", user3Data.get(HEADERS.get(AbstractMetric.USER_FIRST_NAME)));
         assertEquals("", user3Data.get(HEADERS.get(AbstractMetric.USER_LAST_NAME)));
         assertEquals("", user3Data.get(HEADERS.get(AbstractMetric.USER_PHONE)));

@@ -89,6 +89,13 @@ public class TestAcceptance extends BaseTest {
 
         context = context.cloneAndPut(Parameters.LOG, getResourceAsBytes("2014-04-23", df.format(calendar.getTime())).getAbsolutePath());
         pigRunner.forceExecute(context);
+
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20140721");
+        builder.put(Parameters.TO_DATE, "20140721");
+
+        Metric metric = MetricFactory.getMetric(MetricType.CREATED_USERS_FROM_FACTORY);
+        ValueData valueData = metric.getValue(builder.build());
     }
 
     private File getResourceAsBytes(String originalDate, String newDate) throws Exception {
@@ -568,7 +575,7 @@ public class TestAcceptance extends BaseTest {
     private void assertWorkspaceUsageDay(SectionData sectionData) {
         String row = sectionData.get(1).get(0).getAsString();
         aggregateResult(row, new StringValueData("Total"), sectionData.get(1).get(0));
-        aggregateResult(row, new StringValueData("1,231"), sectionData.get(1).get(1));
+        aggregateResult(row, new StringValueData("1,299"), sectionData.get(1).get(1));
 
         row = sectionData.get(2).get(0).getAsString();
         aggregateResult(row, new StringValueData("New Active Workspaces"), sectionData.get(2).get(0));
@@ -580,7 +587,7 @@ public class TestAcceptance extends BaseTest {
 
         row = sectionData.get(4).get(0).getAsString();
         aggregateResult(row, new StringValueData("Non-Active Workspaces"), sectionData.get(4).get(0));
-        aggregateResult(row, new StringValueData("1,005"), sectionData.get(4).get(1));
+        aggregateResult(row, new StringValueData("1,073"), sectionData.get(4).get(1));
     }
 
     private void assertUsageTimeDay(SectionData sectionData) {
@@ -698,17 +705,17 @@ public class TestAcceptance extends BaseTest {
 
         row = sectionData.get(3).get(0).getAsString();
         aggregateResult(row, new StringValueData("Total"), sectionData.get(3).get(0));
-        aggregateResult(row, new StringValueData("1,231"), sectionData.get(3).get(1));
+        aggregateResult(row, new StringValueData("1,299"), sectionData.get(3).get(1));
     }
 
     private void assertTimeSpentDay(SectionData sectionData) {
         String row = sectionData.get(1).get(0).getAsString();
         aggregateResult(row, new StringValueData("Builds"), sectionData.get(1).get(0));
-        aggregateResult(row, new StringValueData("00:16:01"), sectionData.get(1).get(1));
+        aggregateResult(row, new StringValueData("00:13:47"), sectionData.get(1).get(1));
 
         row = sectionData.get(2).get(0).getAsString();
         aggregateResult(row, new StringValueData("Runs"), sectionData.get(2).get(0));
-        aggregateResult(row, new StringValueData("05:51:14"), sectionData.get(2).get(1));
+        aggregateResult(row, new StringValueData("04:53:40"), sectionData.get(2).get(1));
 
         row = sectionData.get(3).get(0).getAsString();
         aggregateResult(row, new StringValueData("Debugs"), sectionData.get(3).get(0));

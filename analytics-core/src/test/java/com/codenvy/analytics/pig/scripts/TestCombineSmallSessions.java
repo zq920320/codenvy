@@ -62,39 +62,39 @@ public class TestCombineSmallSessions extends BaseTest {
         List<Event> events = new ArrayList<>();
 
         // 6m, single big session
-        events.add(Event.Builder.createSessionStartedEvent("user1", "ws1", "ide", "1").withDate("2013-01-01")
+        events.add(Event.Builder.createSessionStartedEvent("user1@gmail.com", "ws1", "ide", "1").withDate("2013-01-01")
                                 .withTime("19:00:00").build());
-        events.add(Event.Builder.createSessionFinishedEvent("user1", "ws1", "ide", "1").withDate("2013-01-01")
+        events.add(Event.Builder.createSessionFinishedEvent("user1@gmail.com", "ws1", "ide", "1").withDate("2013-01-01")
                                 .withTime("19:02:00").build());
 
-        events.add(Event.Builder.createSessionStartedEvent("user1", "ws1", "ide", "2").withDate("2013-01-01")
+        events.add(Event.Builder.createSessionStartedEvent("user1@gmail.com", "ws1", "ide", "2").withDate("2013-01-01")
                                 .withTime("19:03:00").build());
-        events.add(Event.Builder.createSessionFinishedEvent("user1", "ws1", "ide", "2").withDate("2013-01-01")
+        events.add(Event.Builder.createSessionFinishedEvent("user1@gmail.com", "ws1", "ide", "2").withDate("2013-01-01")
                                 .withTime("19:04:00").build());
 
-        events.add(Event.Builder.createSessionStartedEvent("user1", "ws1", "ide", "3").withDate("2013-01-01")
+        events.add(Event.Builder.createSessionStartedEvent("user1@gmail.com", "ws1", "ide", "3").withDate("2013-01-01")
                                 .withTime("19:05:00").build());
-        events.add(Event.Builder.createSessionFinishedEvent("user1", "ws1", "ide", "3").withDate("2013-01-01")
+        events.add(Event.Builder.createSessionFinishedEvent("user1@gmail.com", "ws1", "ide", "3").withDate("2013-01-01")
                                 .withTime("19:06:00").build());
 
         // 2m
-        events.add(Event.Builder.createSessionStartedEvent("user2", "ws1", "ide", "5").withDate("2013-01-01")
+        events.add(Event.Builder.createSessionStartedEvent("user2@gmail.com", "ws1", "ide", "5").withDate("2013-01-01")
                                 .withTime("19:20:00").build());
-        events.add(Event.Builder.createSessionFinishedEvent("user2", "ws1", "ide", "5").withDate("2013-01-01")
+        events.add(Event.Builder.createSessionFinishedEvent("user2@gmail.com", "ws1", "ide", "5").withDate("2013-01-01")
                                 .withTime("19:22:00").build());
 
         // 5m
-        events.add(Event.Builder.createSessionStartedEvent("user3", "ws1", "ide", "6").withDate("2013-01-01")
+        events.add(Event.Builder.createSessionStartedEvent("user3@gmail.com", "ws1", "ide", "6").withDate("2013-01-01")
                                 .withTime("20:00:00").build());
-        events.add(Event.Builder.createSessionFinishedEvent("user3", "ws1", "ide", "6").withDate("2013-01-01")
+        events.add(Event.Builder.createSessionFinishedEvent("user3@gmail.com", "ws1", "ide", "6").withDate("2013-01-01")
                                 .withTime("20:05:00").build());
-        events.add(Event.Builder.createSessionFinishedEvent("user3", "ws1", "ide", "6").withDate("2013-01-01")
+        events.add(Event.Builder.createSessionFinishedEvent("user3@gmail.com", "ws1", "ide", "6").withDate("2013-01-01")
                                 .withTime("20:10:00").build());
 
         // 1m
-        events.add(Event.Builder.createSessionStartedEvent("user4", "ws1", "ide", "7").withDate("2013-01-01")
+        events.add(Event.Builder.createSessionStartedEvent("user4@gmail.com", "ws1", "ide", "7").withDate("2013-01-01")
                                 .withTime("20:00:00").build());
-        events.add(Event.Builder.createSessionFinishedEvent("user4", "ws1", "ide", "7").withDate("2013-01-01")
+        events.add(Event.Builder.createSessionFinishedEvent("user4@gmail.com", "ws1", "ide", "7").withDate("2013-01-01")
                                 .withTime("20:00:30").build());
 
 
@@ -120,10 +120,10 @@ public class TestCombineSmallSessions extends BaseTest {
         }
 
         Set<String> expected = new HashSet<>();
-        expected.add("(user1,360000)");
-        expected.add("(user2,120000)");
-        expected.add("(user3,300000)");
-        expected.add("(user4,60000)");
+        expected.add("(user1@gmail.com,360000)");
+        expected.add("(user2@gmail.com,120000)");
+        expected.add("(user3@gmail.com,300000)");
+        expected.add("(user4@gmail.com,60000)");
 
         assertEquals(expected, actual);
     }

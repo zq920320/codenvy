@@ -41,27 +41,27 @@ public class TestBuildQueueTerminations extends BaseTest {
     public void init() throws Exception {
         List<Event> events = new ArrayList<>();
 
-        events.add(Event.Builder.createUserCreatedEvent("uid1", "user1", "user1").withDate("2013-02-10").withTime("10:00:00,000").build());
-        events.add(Event.Builder.createUserCreatedEvent("uid2", "user2", "user2").withDate("2013-02-10").withTime("10:00:00,000").build());
-        events.add(Event.Builder.createUserCreatedEvent("uid3", "user3", "user3").withDate("2013-02-10").withTime("10:00:00,000").build());
-        events.add(Event.Builder.createUserCreatedEvent("uid5", "user5", "user5").withDate("2013-02-10").withTime("10:00:00,000").build());
+        events.add(Event.Builder.createUserCreatedEvent("uid1", "user1@gmail.com", "user1@gmail.com").withDate("2013-02-10").withTime("10:00:00,000").build());
+        events.add(Event.Builder.createUserCreatedEvent("uid2", "user2@gmail.com", "user2@gmail.com").withDate("2013-02-10").withTime("10:00:00,000").build());
+        events.add(Event.Builder.createUserCreatedEvent("uid3", "user3@gmail.com", "user3@gmail.com").withDate("2013-02-10").withTime("10:00:00,000").build());
+        events.add(Event.Builder.createUserCreatedEvent("uid5", "user5@gmail.com", "user5@gmail.com").withDate("2013-02-10").withTime("10:00:00,000").build());
 
-        events.add(Event.Builder.createWorkspaceCreatedEvent("ws1", "wsid1", "user1").withDate("2013-02-10").withTime("10:00:00").build());
-        events.add(Event.Builder.createWorkspaceCreatedEvent("ws2", "wsid2", "user2").withDate("2013-02-10").withTime("10:00:00").build());
-        events.add(Event.Builder.createWorkspaceCreatedEvent("ws3", "wsid3", "user3").withDate("2013-02-10").withTime("10:00:00").build());
-        events.add(Event.Builder.createWorkspaceCreatedEvent("ws5", "wsid5", "user5").withDate("2013-02-10").withTime("10:00:00").build());
+        events.add(Event.Builder.createWorkspaceCreatedEvent("ws1", "wsid1", "user1@gmail.com").withDate("2013-02-10").withTime("10:00:00").build());
+        events.add(Event.Builder.createWorkspaceCreatedEvent("ws2", "wsid2", "user2@gmail.com").withDate("2013-02-10").withTime("10:00:00").build());
+        events.add(Event.Builder.createWorkspaceCreatedEvent("ws3", "wsid3", "user3@gmail.com").withDate("2013-02-10").withTime("10:00:00").build());
+        events.add(Event.Builder.createWorkspaceCreatedEvent("ws5", "wsid5", "user5@gmail.com").withDate("2013-02-10").withTime("10:00:00").build());
 
         events.add(
-                Event.Builder.buildQueueTerminatedEvent("ws1", "user1", "project1", "type1", "id1").withDate("2013-02-10").withTime("10:00:00")
+                Event.Builder.buildQueueTerminatedEvent("ws1", "user1@gmail.com", "project1", "type1", "id1").withDate("2013-02-10").withTime("10:00:00")
                              .build());
         events.add(
-                Event.Builder.buildQueueTerminatedEvent("ws2", "user2", "project2", "type2", "id2").withDate("2013-02-10").withTime("10:01:00")
+                Event.Builder.buildQueueTerminatedEvent("ws2", "user2@gmail.com", "project2", "type2", "id2").withDate("2013-02-10").withTime("10:01:00")
                              .build());
         events.add(
-                Event.Builder.buildQueueTerminatedEvent("ws3", "user3", "project3", "type3", "id3").withDate("2013-02-10").withTime("10:02:00")
+                Event.Builder.buildQueueTerminatedEvent("ws3", "user3@gmail.com", "project3", "type3", "id3").withDate("2013-02-10").withTime("10:02:00")
                              .build());
         events.add(
-                Event.Builder.buildQueueTerminatedEvent("ws5", "user5", "project5", "type5", "id5").withDate("2013-02-11").withTime("10:04:00")
+                Event.Builder.buildQueueTerminatedEvent("ws5", "user5@gmail.com", "project5", "type5", "id5").withDate("2013-02-11").withTime("10:04:00")
                              .build());
 
         File log = LogGenerator.generateLog(events);

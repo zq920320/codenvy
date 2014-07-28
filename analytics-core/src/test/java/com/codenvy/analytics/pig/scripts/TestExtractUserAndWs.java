@@ -42,13 +42,13 @@ public class TestExtractUserAndWs extends BaseTest {
     public void prepare() throws Exception {
         List<Event> events = new ArrayList<>();
 
-        events.add(Event.Builder.createUserCreatedEvent("id1", "user1", "user1").withDate("2013-01-01").build());
+        events.add(Event.Builder.createUserCreatedEvent("id1", "user1@gmail.com", "user1@gmail.com").withDate("2013-01-01").build());
 
-        events.add(new Event.Builder().withParam("EVENT", "fake").withParam("USER", "user1")
+        events.add(new Event.Builder().withParam("EVENT", "fake").withParam("USER", "user1@gmail.com")
                                       .withParam("WS", "ws1").withDate("2013-01-01").build());
-        events.add(new Event.Builder().withParam("EVENT", "fake").withParam("ALIASES", "[user2,user3]")
+        events.add(new Event.Builder().withParam("EVENT", "fake").withParam("ALIASES", "[user2@gmail.com,user3@gmail.com]")
                                       .withParam("WS", "Tmp-2").withDate("2013-01-01").build());
-        events.add(new Event.Builder().withParam("EVENT", "fake").withParam("ALIASES", "user4")
+        events.add(new Event.Builder().withParam("EVENT", "fake").withParam("ALIASES", "user4@gmail.com")
                                       .withParam("WS", "Tmp-1").withDate("2013-01-01").build());
 
         // param contains value ' WS' and workspace name contains ' '
@@ -61,7 +61,7 @@ public class TestExtractUserAndWs extends BaseTest {
                                       .withParam("WS", "Tmp-3").withParam("COMPANY", "Mints.WS")
                                       .withParam("PHONE", "123456").withDate("2013-01-01").build());
         events.add(new Event.Builder().withParam("EVENT", "fake").withDate("2013-01-01").build());
-        events.add(Event.Builder.createUserAddedToWsEvent("default", "default", "default", "ws10", "user10", "website")
+        events.add(Event.Builder.createUserAddedToWsEvent("default", "default", "default", "ws10", "user10@gmail.com", "website")
                                 .withDate("2013-01-01").build());
 
         File log = LogGenerator.generateLog(events);
@@ -93,10 +93,10 @@ public class TestExtractUserAndWs extends BaseTest {
 
         Set<String> expected = new HashSet<>();
         expected.add("(id1)");
-        expected.add("(user2)");
-        expected.add("(user3)");
-        expected.add("(user4)");
-        expected.add("(user10)");
+        expected.add("(user2@gmail.com)");
+        expected.add("(user3@gmail.com)");
+        expected.add("(user4@gmail.com)");
+        expected.add("(user10@gmail.com)");
         expected.add("(default)");
         expected.add("(anonymoususer_1)");
         expected.add("(anonymoususer_2)");
@@ -138,10 +138,10 @@ public class TestExtractUserAndWs extends BaseTest {
 
         Set<String> expected = new HashSet<>();
         expected.add("(id1)");
-        expected.add("(user2)");
-        expected.add("(user3)");
-        expected.add("(user4)");
-        expected.add("(user10)");
+        expected.add("(user2@gmail.com)");
+        expected.add("(user3@gmail.com)");
+        expected.add("(user4@gmail.com)");
+        expected.add("(user10@gmail.com)");
         expected.add("(default)");
 
         assertEquals(actual, expected);
@@ -241,7 +241,7 @@ public class TestExtractUserAndWs extends BaseTest {
 
         expected = new HashSet<>();
         expected.add("(id1)");
-        expected.add("(user10)");
+        expected.add("(user10@gmail.com)");
         expected.add("(default)");
 
         assertEquals(actual, expected);

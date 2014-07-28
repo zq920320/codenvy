@@ -40,37 +40,37 @@ public class TestCollaborativeSessionStarted extends BaseTest {
     @BeforeClass
     public void init() throws Exception {
         List<Event> events = new ArrayList<>();
-        events.add(Event.Builder.createUserCreatedEvent("uid1", "user1", "user1")
+        events.add(Event.Builder.createUserCreatedEvent("uid1", "user1@gmail.com", "user1@gmail.com")
                                 .withDate("2013-02-10").withTime("10:00:00,000").build());
-        events.add(Event.Builder.createUserCreatedEvent("uid2", "user2", "user2")
+        events.add(Event.Builder.createUserCreatedEvent("uid2", "user2@gmail.com", "user2@gmail.com")
                                 .withDate("2013-02-10").withTime("10:00:00,000").build());
-        events.add(Event.Builder.createUserCreatedEvent("uid3", "user3", "user3")
+        events.add(Event.Builder.createUserCreatedEvent("uid3", "user3@gmail.com", "user3@gmail.com")
                                 .withDate("2013-02-10").withTime("10:00:00,000").build());
-        events.add(Event.Builder.createUserCreatedEvent("uid4", "user4", "user4")
+        events.add(Event.Builder.createUserCreatedEvent("uid4", "user4@gmail.com", "user4@gmail.com")
                                 .withDate("2013-02-10").withTime("10:00:00,000").build());
-        events.add(Event.Builder.createUserCreatedEvent("uid5", "user5", "user5")
+        events.add(Event.Builder.createUserCreatedEvent("uid5", "user5@gmail.com", "user5@gmail.com")
                                 .withDate("2013-02-10").withTime("10:00:00,000").build());
 
-        events.add(Event.Builder.createWorkspaceCreatedEvent("ws1", "wsid1", "user1")
+        events.add(Event.Builder.createWorkspaceCreatedEvent("ws1", "wsid1", "user1@gmail.com")
                                 .withDate("2013-02-10").withTime("19:00:00").build());
-        events.add(Event.Builder.createWorkspaceCreatedEvent("ws2", "wsid2", "user2")
+        events.add(Event.Builder.createWorkspaceCreatedEvent("ws2", "wsid2", "user2@gmail.com")
                                 .withDate("2013-02-10").withTime("19:00:00").build());
-        events.add(Event.Builder.createWorkspaceCreatedEvent("ws3", "wsid3", "user3")
+        events.add(Event.Builder.createWorkspaceCreatedEvent("ws3", "wsid3", "user3@gmail.com")
                                 .withDate("2013-02-10").withTime("19:00:00").build());
-        events.add(Event.Builder.createWorkspaceCreatedEvent("ws4", "wsid4", "user4")
+        events.add(Event.Builder.createWorkspaceCreatedEvent("ws4", "wsid4", "user4@gmail.com")
                                 .withDate("2013-02-10").withTime("19:00:00").build());
-        events.add(Event.Builder.createWorkspaceCreatedEvent("ws5", "wsid5", "user5")
+        events.add(Event.Builder.createWorkspaceCreatedEvent("ws5", "wsid5", "user5@gmail.com")
                                 .withDate("2013-02-10").withTime("19:00:00").build());
 
-        events.add(Event.Builder.collaborativeSessionStartedEvent("ws1", "user1", "session1")
+        events.add(Event.Builder.collaborativeSessionStartedEvent("ws1", "user1@gmail.com", "session1")
                                 .withDate("2013-02-10").withTime("10:00:00").build());
-        events.add(Event.Builder.collaborativeSessionStartedEvent("ws2", "user2", "session2")
+        events.add(Event.Builder.collaborativeSessionStartedEvent("ws2", "user2@gmail.com", "session2")
                                 .withDate("2013-02-10").withTime("10:01:00").build());
-        events.add(Event.Builder.collaborativeSessionStartedEvent("ws3", "user3", "session3")
+        events.add(Event.Builder.collaborativeSessionStartedEvent("ws3", "user3@gmail.com", "session3")
                                 .withDate("2013-02-10").withTime("10:02:00").build());
-        events.add(Event.Builder.collaborativeSessionStartedEvent("ws4", "user4", "session4")
+        events.add(Event.Builder.collaborativeSessionStartedEvent("ws4", "user4@gmail.com", "session4")
                                 .withDate("2013-02-10").withTime("10:03:00").build());
-        events.add(Event.Builder.collaborativeSessionStartedEvent("ws5", "user5", "session5")
+        events.add(Event.Builder.collaborativeSessionStartedEvent("ws5", "user5@gmail.com", "session5")
                                 .withDate("2013-02-11").withTime("10:04:00").build());
 
         File log = LogGenerator.generateLog(events);

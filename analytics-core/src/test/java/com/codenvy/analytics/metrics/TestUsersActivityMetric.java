@@ -165,30 +165,22 @@ public class TestUsersActivityMetric extends BaseTest {
 
         assertItem(value,
                    0,
-                   "user-created",
-                   "",
-                   TMP_USER_ID,
+                   "workspace-created",
+                   WS_ID,
+                   USER_ID,
                    fullDateFormatMils.parse("2013-11-01 08:40:00,000").getTime(),
                    0, 0);
 
         assertItem(value,
                    1,
-                   "workspace-created",
-                   TMP_WS_ID,
-                   TMP_USER_ID,
+                   "user-created",
+                   "",
+                   USER_ID,
                    fullDateFormatMils.parse("2013-11-01 08:40:00,000").getTime(),
                    0, 0);
 
         assertItem(value,
                    2,
-                   "user-created",
-                   "",
-                   USER2_ID,
-                   fullDateFormatMils.parse("2013-11-01 08:40:00,000").getTime(),
-                   0, 0);
-
-        assertItem(value,
-                   3,
                    "workspace-created",
                    WS2_ID,
                    USER2_ID,
@@ -196,18 +188,26 @@ public class TestUsersActivityMetric extends BaseTest {
                    0, 0);
 
         assertItem(value,
-                   4,
+                   3,
                    "user-created",
                    "",
-                   USER_ID,
+                   USER2_ID,
+                   fullDateFormatMils.parse("2013-11-01 08:40:00,000").getTime(),
+                   0, 0);
+
+        assertItem(value,
+                   4,
+                   "workspace-created",
+                   TMP_WS_ID,
+                   TMP_USER_ID,
                    fullDateFormatMils.parse("2013-11-01 08:40:00,000").getTime(),
                    0, 0);
 
         assertItem(value,
                    5,
-                   "workspace-created",
-                   WS_ID,
-                   USER_ID,
+                   "user-created",
+                   "",
+                   TMP_USER_ID,
                    fullDateFormatMils.parse("2013-11-01 08:40:00,000").getTime(),
                    0, 0);
 

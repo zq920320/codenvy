@@ -40,9 +40,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
-import static com.codenvy.analytics.Utils.toArray;
-import static com.codenvy.analytics.Utils.isAnonymousUser;
-import static com.codenvy.analytics.Utils.isTemporaryWorkspace;
+import static com.codenvy.analytics.Utils.*;
 
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */

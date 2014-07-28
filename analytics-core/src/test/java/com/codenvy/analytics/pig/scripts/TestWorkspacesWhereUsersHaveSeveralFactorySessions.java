@@ -38,14 +38,14 @@ public class TestWorkspacesWhereUsersHaveSeveralFactorySessions extends BaseTest
     @BeforeClass
     public void init() throws Exception {
         List<Event> events = new ArrayList<>();
-        events.add(Event.Builder.createSessionFactoryStartedEvent("id1", "tmp-1", "user1", "true", "brType")
+        events.add(Event.Builder.createSessionFactoryStartedEvent("id1", "tmp-1", "user1@gmail.com", "true", "brType")
                                 .withDate("2013-02-10").withTime("10:00:00").build());
-        events.add(Event.Builder.createSessionFactoryStoppedEvent("id1", "tmp-1", "user1")
+        events.add(Event.Builder.createSessionFactoryStoppedEvent("id1", "tmp-1", "user1@gmail.com")
                                 .withDate("2013-02-10").withTime("10:05:00").build());
 
-        events.add(Event.Builder.createSessionFactoryStartedEvent("id2", "tmp-2", "user1", "true", "brType")
+        events.add(Event.Builder.createSessionFactoryStartedEvent("id2", "tmp-2", "user1@gmail.com", "true", "brType")
                                 .withDate("2013-02-10").withTime("10:20:00").build());
-        events.add(Event.Builder.createSessionFactoryStoppedEvent("id2", "tmp-2", "user1")
+        events.add(Event.Builder.createSessionFactoryStoppedEvent("id2", "tmp-2", "user1@gmail.com")
                                 .withDate("2013-02-10").withTime("10:30:00").build());
 
         events.add(Event.Builder.createSessionFactoryStartedEvent("id3", "tmp-3", "anonymoususer_1", "false", "brType")
@@ -58,9 +58,9 @@ public class TestWorkspacesWhereUsersHaveSeveralFactorySessions extends BaseTest
         events.add(Event.Builder.createSessionFactoryStoppedEvent("id4", "tmp-4", "anonymoususer_1")
                                 .withDate("2013-02-10").withTime("11:30:00").build());
 
-        events.add(Event.Builder.createSessionFactoryStartedEvent("id5", "tmp-2", "user1", "true", "brType")
+        events.add(Event.Builder.createSessionFactoryStartedEvent("id5", "tmp-2", "user1@gmail.com", "true", "brType")
                                 .withDate("2013-02-10").withTime("11:20:00").build());
-        events.add(Event.Builder.createSessionFactoryStoppedEvent("id5", "tmp-2", "user1")
+        events.add(Event.Builder.createSessionFactoryStoppedEvent("id5", "tmp-2", "user1@gmail.com")
                                 .withDate("2013-02-10").withTime("11:30:00").build());
 
         events.add(Event.Builder.createSessionFactoryStartedEvent("id6", "tmp-3", "anonymoususer_1", "false", "brType")
@@ -68,9 +68,9 @@ public class TestWorkspacesWhereUsersHaveSeveralFactorySessions extends BaseTest
         events.add(Event.Builder.createSessionFactoryStoppedEvent("id7", "tmp-3", "anonymoususer_1")
                                 .withDate("2013-02-10").withTime("12:15:00").build());
 
-        events.add(Event.Builder.createSessionFactoryStartedEvent("id8", "tmp-2", "user1", "true", "brType")
+        events.add(Event.Builder.createSessionFactoryStartedEvent("id8", "tmp-2", "user1@gmail.com", "true", "brType")
                                 .withDate("2013-02-10").withTime("12:20:00").build());
-        events.add(Event.Builder.createSessionFactoryStoppedEvent("id8", "tmp-2", "user1")
+        events.add(Event.Builder.createSessionFactoryStoppedEvent("id8", "tmp-2", "user1@gmail.com")
                                 .withDate("2013-02-10").withTime("12:30:00").build());
 
         events.add(Event.Builder.createSessionFactoryStartedEvent("id9", "tmp-3", "anonymoususer_1", "false", "brType")
@@ -89,7 +89,7 @@ public class TestWorkspacesWhereUsersHaveSeveralFactorySessions extends BaseTest
                                 .withDate("2013-02-10").withTime("15:15:00").build());
 
 
-        events.add(Event.Builder.createFactoryProjectImportedEvent("tmp-1", "user1", "project", "type")
+        events.add(Event.Builder.createFactoryProjectImportedEvent("tmp-1", "user1@gmail.com", "project", "type")
                                 .withDate("2013-02-10").withTime("10:05:00").build());
 
         events.add(
@@ -106,22 +106,22 @@ public class TestWorkspacesWhereUsersHaveSeveralFactorySessions extends BaseTest
                              .withDate("2013-02-10").withTime("11:00:03").build());
 
 
-        events.add(Event.Builder.createTenantCreatedEvent("tmp-1", "user1")
+        events.add(Event.Builder.createTenantCreatedEvent("tmp-1", "user1@gmail.com")
                                 .withDate("2013-02-10").withTime("12:00:00").build());
-        events.add(Event.Builder.createTenantCreatedEvent("tmp-2", "user1")
+        events.add(Event.Builder.createTenantCreatedEvent("tmp-2", "user1@gmail.com")
                                 .withDate("2013-02-10").withTime("12:01:00").build());
 
         // run event for session #1
-        events.add(Event.Builder.createRunStartedEvent("user1", "tmp-1", "project", "type", "id")
+        events.add(Event.Builder.createRunStartedEvent("user1@gmail.com", "tmp-1", "project", "type", "id")
                                 .withDate("2013-02-10").withTime("10:03:00").build());
 
-        events.add(Event.Builder.createProjectDeployedEvent("user1", "tmp-1", "session", "project", "type",
+        events.add(Event.Builder.createProjectDeployedEvent("user1@gmail.com", "tmp-1", "session", "project", "type",
                                                             "local")
                                 .withDate("2013-02-10")
                                 .withTime("10:04:00")
                                 .build());
 
-        events.add(Event.Builder.createProjectBuiltEvent("user1", "tmp-1", "session", "project", "type")
+        events.add(Event.Builder.createProjectBuiltEvent("user1@gmail.com", "tmp-1", "session", "project", "type")
                                 .withDate("2013-02-10")
                                 .withTime("10:04:00")
                                 .build());

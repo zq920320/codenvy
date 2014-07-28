@@ -20,9 +20,10 @@ IMPORT 'macros.pig';
 
 l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 
-f1 = extractParam(l, 'PROJECT', project);
-f2 = extractParam(f1, 'TYPE', project_type);
-f = FOREACH f2 GENERATE dt, ws, project, project_type, user;
+f1 = filterByEvent(l, '$EVENT-started,$EVENT-finished');
+f2 = extractParam(f1, 'PROJECT', project);
+f3 = extractParam(f2, 'TYPE', project_type);
+f = FOREACH f3 GENERATE dt, ws, project, project_type, user;
 
 r = calculateTime(l, '$EVENT-started', '$EVENT-finished');
 

@@ -46,7 +46,7 @@ public class TestProductUsersTime extends BaseTest {
         events.add(Event.Builder.createUserCreatedEvent("uid1", "user1@gmail.com","[user1@gmail.com]").withDate("2013-11-01").build());
         events.add(Event.Builder.createUserCreatedEvent("uid2", "user2@gmail.com","[user2@gmail.com]").withDate("2013-11-01").build());
         events.add(Event.Builder.createUserCreatedEvent("uid3", "user3@gmail.com","[user3@gmail.com]").withDate("2013-11-01").build());
-        events.add(Event.Builder.createWorkspaceCreatedEvent("ws1", "wsid1", "user1").withDate("2013-11-01").build());
+        events.add(Event.Builder.createWorkspaceCreatedEvent("ws1", "wsid1", "user1@gmail.com").withDate("2013-11-01").build());
 
         events.add(Event.Builder.createSessionStartedEvent("user1@gmail.com", "ws1", "ide", "1").withDate("2013-11-01")
                                 .withTime("20:00:00").build());
