@@ -263,6 +263,20 @@
     content:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAEeUlEQVR42u2c0WoVQQyG+/5P441X3njTCwVBQUFEqKKFUooWLRUtcuQXAiFNZmZ3LbvH/QILbc/s7jRfktlJsufkgGxKTlABQBCAAAQBCEAQgAAEAQhAEIAgAAEIAhCAIAABCAIQgCAAQbYF5PL69vDo9Oze8fztZTr+9PXFvbFPXnxq3uPmx93h3efrw9NX5+m9Xr6/+vs5QBpAdJxdfFsMRMqurh+Px88+Hs6vbgDSUpCsew6QX3e/S4/oHVvwlk0CyULXKJApnpEdmhdABix2BIi8qnW9Nx++NNcUHboPQAZC1wgQKXw0BApMdd+v338CpGexI0CyMa21ofKU7KECIEGhI0D0+xSLrzxqzcX9KIAo5GTKHgVSSRW2ABIW3lFQo0D0KAyQmUAUv1sLbgtItSZUmz49WgNkAEhLuS0glYKzdIyeuhQKpwDcNZDeniIDonNbG00LXbp3BVyQqhC3ayC9vUK1U6/WkWNJn2waSC90ZUCmPL1l11vTO44CSCt0VdlerQFzYMTdPECKXXIVulrpd20Gq0V+i1ne1YFY8Sge1a46GzuqSHnMlHvtEggCEIAgAAEIAhCAIAAByBobw5Edt3b0sXyrHXi2qdMuPyYXlQuLrT26d2wX0rgtNMttGkgvJ+Wh9CqNlqdq1UF2ne0dAeKtXT9LWV6Z1pESE5D6e8x/maKjZ8Q+rd3WQ3pAopLNwmNS0kJVdi2NjTkrD9kSmQLgQa/ZvbhZIF7x8fMIynuDPEAS1x37ewY5jt9lX1YPiKzahxETWXPsKPFArH5eAfGe4D3Hh61d1tR7QKLibQ3wi7eBiou/vEtW7ushBsQr3tageP4uW0l7TQzZAtx6IurV0g1IqxFi183WI0DkJVW/bmztkVVXUOQVI4/IGrd2GXc1IBb7RyqB9rQ0UumzRrve2Fix3P0bVAhAAIIABCAIQACCAAQgoxJTD77wU71GVmVS/c7aUhtesvcE/TmtXXWcT8zgttIyfmPqx2VZ4F7GYWrmeDKQ2MBc5ZNs5xuThKZEn82tCkNLgMQCVcxR9fJktsPfNJCo3JipzdLgPpPqlZLlk+LklwDJ3ivx472iNVfN3V/bilRTgMioljZ0TwJSvRZgN42Tix7l/6Gsrh0ThnOBRO/rhaLWa21LPeRB1xBvdR6OrD0bIyvzird/0nuNzs3GLAHivc/PU3MbBWLX3iwQb3WWzs4qel4BfjH31u+9RnD8796K5wKJgLMqYRayvDGZkS0NWQ8GpNdmUy3io59nVjwHSK91qKXorDY/BUjvG+7+KZBWL1PLA2JMHvlSALPiHpDsu656r7GZN/eesjJw2ZrUC1lTvWQIiO8A8W4ZJ5utEXGPEcOYXcsr2pQxFYju6w3Hvh8rGoHGzVlDNgNEFltV1ny8NCCxGugf/bLxBj3eI4vFrSqjn2dUhK8kalz13mE8rzVOc+5VPqf2eJE6IZeFAAQgCEAAggAEIAhAAIIABAEIQBCAAAQBCEAQgAAEAQgCEIAgAAEIApD/Wv4AiGGtXL4QTiMAAAAASUVORK5CYII=);
 }
 
+.advanced-factory a,
+.advanced-factory-noted a {
+    position: absolute;
+    left: 5px;
+    top: 5px;
+    width: 100px;
+    height: 100px;
+    border-radius: 3px;
+    border-left: #ccc 1px solid;
+    border-right: #ccc 1px solid;
+    border-top: #ccc 1px solid;
+    box-sizing: border-box;
+}
+
 .advanced-factory div,
 .advanced-factory-noted div {
     position: absolute;

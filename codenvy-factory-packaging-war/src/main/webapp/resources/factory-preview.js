@@ -328,6 +328,7 @@ function Factory() {
         /*
             <div class="advanced-factory">
                 <img alt="" src="..." />
+                <a></a>
                 <div></div>
             </div>
         */
@@ -345,6 +346,9 @@ function Factory() {
 
         _logoImage.style.opacity = 0;
 
+        var _border = document.createElement("a");
+        _embed.appentChild(_border);
+
         var _button = document.createElement("div");
         _button.onclick = factoryButtonClickHandler;
         _embed.appendChild(_button);
@@ -354,6 +358,7 @@ function Factory() {
         /*
             <div class="advanced-factory-noted">
                 <img alt="" src="..." />
+                <a></a>
                 <div></div>
                 <span>33</span>
             </div>
@@ -371,6 +376,9 @@ function Factory() {
         _embed.appendChild(_logoImage);
 
         _logoImage.style.opacity = 0;
+
+        var _border = document.createElement("a");
+        _embed.appendChild(_border);
 
         var _button = document.createElement("div");
         _button.onclick = factoryButtonClickHandler;

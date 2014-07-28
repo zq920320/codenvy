@@ -215,6 +215,7 @@
     /*
      <div class="advanced-factory">
         <img alt="" src="..." />
+        <a></a>
         <div></div>
      </div>
      */
@@ -245,6 +246,9 @@
         //_logoImage.onabort = _logoImage.onerror;
         _embed.appendChild(_logoImage);
 
+        var _border = document.createElement("a");
+        _embed.appendChild(_border);
+
         var _button = document.createElement("div");
         _button.onclick = clickHandler;
         _embed.appendChild(_button);
@@ -253,6 +257,7 @@
     /*
      <div class="advanced-factory-noted">
         <img alt="" src="..." />
+        <a></a>
         <div></div>
         <span>33</span>
      </div>
@@ -283,6 +288,9 @@
 
         //_logoImage.onabort = _logoImage.onerror;
         _embed.appendChild(_logoImage);
+
+        var _border = document.createElement("a");
+        _embed.appendChild(_border);
 
         var _button = document.createElement("div");
         _button.onclick = clickHandler;
