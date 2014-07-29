@@ -55,7 +55,7 @@ public class OnPremisesService extends SubscriptionService {
         PRICES.put(TariffEntry.of("commercial", "500"), 95000D);
         PRICES.put(TariffEntry.of("commercial", "2000"), 350000D);
         PRICES.put(TariffEntry.of("commercial", "10000"), 1600000D);
-        PRICES.put(TariffEntry.of("commercial", "Unlimited"), 1920000D);
+        PRICES.put(TariffEntry.of("commercial", "unlimited"), 1920000D);
 
         PRICES.put(TariffEntry.of("academic", "5"), 25D);
         PRICES.put(TariffEntry.of("academic", "10"), 1000D);
@@ -64,7 +64,7 @@ public class OnPremisesService extends SubscriptionService {
         PRICES.put(TariffEntry.of("academic", "500"), 47500D);
         PRICES.put(TariffEntry.of("academic", "2000"), 175000D);
         PRICES.put(TariffEntry.of("academic", "10000"), 8000000D);
-        PRICES.put(TariffEntry.of("academic", "Unlimited"), 960000D);
+        PRICES.put(TariffEntry.of("academic", "unlimited"), 960000D);
 
         PRICES.put(TariffEntry.of("startup", "5"), 10D);
         PRICES.put(TariffEntry.of("startup", "10"), 20D);
@@ -78,7 +78,7 @@ public class OnPremisesService extends SubscriptionService {
         PRICES.put(TariffEntry.of("openSource", "500"), 0D);
         PRICES.put(TariffEntry.of("openSource", "2000"), 0D);
         PRICES.put(TariffEntry.of("openSource", "10000"), 0D);
-        PRICES.put(TariffEntry.of("openSource", "Unlimited"), 0D);
+        PRICES.put(TariffEntry.of("openSource", "unlimited"), 0D);
     }
 
     private final AccountDao accountDao;
@@ -90,14 +90,6 @@ public class OnPremisesService extends SubscriptionService {
     }
 
     /**
-     * <p> Validates subscription state.
-     * If ACTIVE subscription already exists sets new dates for given subscription.</p>
-     * The valid combinations of subscription states:
-     * <ul>
-     * <li>ACTIVE</li>
-     * <li>WAIT_FOR_PAYMENT</li>
-     * </ul>
-     *
      * @param subscription
      *         new subscription
      * @throws com.codenvy.api.core.ApiException
@@ -109,9 +101,9 @@ public class OnPremisesService extends SubscriptionService {
             throw new ConflictException("Subscription properties required");
         }
 
+
         final Double price = PRICES.get(TariffEntry.of(ensureExistsAndGet("Package", subscription).toLowerCase(),
-                                                       ensureExistsAndGet("Users", subscription).toLowerCase()
-                                                      ));
+                                                       ensureExistsAndGet("Users", subscription).toLowerCase()));
 
         if (price == null) {
             throw new NotFoundException("Tariff plan not found");
@@ -126,7 +118,18 @@ public class OnPremisesService extends SubscriptionService {
         if ("true".equals((subscription.getProperties().get("codenvy:trial")))) {
             final Calendar calendar = Calendar.getInstance();
             subscription.setStartDate(calendar.getTimeInMillis());
-            calendar.add(Calendar.DAY_OF_YEAR, 7);
+
+            String trialPeriod;
+            if ((trialPeriod = subscription.getProperties().get("codenvy:trialPeriod")) != null) {
+                try {
+                    calendar.add(Calendar.DAY_OF_YEAR, Integer.parseInt(trialPeriod));
+                } catch (NumberFormatException e) {
+                    throw new ConflictException("Invalid trialPeriod");
+                }
+            } else {
+                calendar.add(Calendar.DAY_OF_YEAR, 7);
+            }
+
             subscription.setEndDate(calendar.getTimeInMillis());
             subscription.setState(Subscription.State.ACTIVE);
         } else {
