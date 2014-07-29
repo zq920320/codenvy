@@ -203,6 +203,8 @@ function View() {
                                                            widgetName, 
                                                            isEmptyFirstPageLink);
         
+        var currentPageHtml = "<div class='empty'>" + currentPageNumber + "</div>";
+        
         var nextPageLinkHtml = getNextPageNavigationLinkHtml(queryString, 
                                                    currentPageNumber, 
                                                    pageQueryParameter, 
@@ -210,6 +212,7 @@ function View() {
                                                    isEmptyLastPageLink);
 
         print(previousPageLinkHtml);
+        print(currentPageHtml);
         print(nextPageLinkHtml);
         
         print("</div>");
@@ -230,7 +233,7 @@ function View() {
             var href = getPageNavigationUrl(queryString, previousPageNumber, pageQueryParameter);
             var onClickHandler = "analytics.main.reloadWidgetByUrl(\"" + href + "\",\"" + widgetName + "\"); return false;";
             
-            return "<a class='page-link' href='" + href + "' onclick='" + onClickHandler + "' title='Previous'>" + label + "</a>";
+            return "<a class='page-link' href='" + href + "' onclick='" + onClickHandler + "' title='Previous page " + previousPageNumber + "'>" + label + "</a>";
         }
     }
 
@@ -249,7 +252,7 @@ function View() {
             var href = getPageNavigationUrl(queryString, nextPageNumber, pageQueryParameter);
             var onClickHandler = "analytics.main.reloadWidgetByUrl(\"" + href + "\",\"" + widgetName + "\"); return false;";
             
-            return "<a class='page-link' href='" + href + "' onclick='" + onClickHandler + "' title='Next'>" + label + "</a>";
+            return "<a class='page-link' href='" + href + "' onclick='" + onClickHandler + "' title='Next page " + nextPageNumber + "'>" + label + "</a>";
         }
     }
     
