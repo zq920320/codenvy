@@ -22,6 +22,7 @@ import com.codenvy.api.dao.authentication.SSHAPasswordEncryptor;
 import com.codenvy.api.user.shared.dto.User;
 import com.codenvy.dto.server.DtoFactory;
 
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.naming.NamingEnumeration;
@@ -79,6 +80,7 @@ public class UserAttributesMapper {
      *         name of attribute that contains emails associated with user in our implementation.
      *         Typical value is 'initials'.
      */
+    @Inject
     public UserAttributesMapper(PasswordEncryptor encryptor,
                                 @Named("user.ldap.object_classes") String[] userObjectClasses,
                                 @Named("user.ldap.user_dn") String userDn,
