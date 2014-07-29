@@ -32,7 +32,7 @@ function TopMenu() {
 
         // hide popup menu if mouse left browser's window through the top of menu button
         jQuery(".ui-button").mouseleave(function(event) {
-            if (event.pageY < 0) {
+            if (event.clientY < 0) {
                hidePopupMenu();   
             }
         });
