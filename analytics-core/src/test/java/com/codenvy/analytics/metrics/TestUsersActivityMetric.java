@@ -61,19 +61,19 @@ public class TestUsersActivityMetric extends BaseTest {
         List<Event> events = new ArrayList<>();
 
         events.add(Event.Builder.createUserCreatedEvent(USER_ID, USER, USER)
-                                .withDate("2013-11-01").withTime("08:40:00").build());
+                                .withDate("2013-11-01").withTime("08:40:01").build());
         events.add(Event.Builder.createWorkspaceCreatedEvent(WS, WS_ID, USER)
-                                .withDate("2013-11-01").withTime("08:40:00").build());
+                                .withDate("2013-11-01").withTime("08:40:02").build());
 
         events.add(Event.Builder.createUserCreatedEvent(USER2_ID, USER2, USER2)
-                                .withDate("2013-11-01").withTime("08:40:00").build());
+                                .withDate("2013-11-01").withTime("08:40:03").build());
         events.add(Event.Builder.createWorkspaceCreatedEvent(WS2, WS2_ID, USER2)
-                                .withDate("2013-11-01").withTime("08:40:00").build());
+                                .withDate("2013-11-01").withTime("08:40:04").build());
 
         events.add(Event.Builder.createUserCreatedEvent(TMP_USER_ID, TMP_USER, TMP_USER)
-                                .withDate("2013-11-01").withTime("08:40:00").build());
+                                .withDate("2013-11-01").withTime("08:40:05").build());
         events.add(Event.Builder.createWorkspaceCreatedEvent(TMP_WS, TMP_WS_ID, TMP_USER)
-                                .withDate("2013-11-01").withTime("08:40:00").build());
+                                .withDate("2013-11-01").withTime("08:40:06").build());
 
         // start main session
         events.add(Event.Builder.createSessionStartedEvent(USER, WS, "ide", SESSION_ID).withDate("2013-11-01").withTime(
@@ -163,52 +163,54 @@ public class TestUsersActivityMetric extends BaseTest {
 
         assertEquals(value.size(), 20);
 
+        LOG.info(value.getAll().toString());
+        
         assertItem(value,
                    0,
-                   "workspace-created",
-                   WS_ID,
+                   "user-created",
+                   "",
                    USER_ID,
-                   fullDateFormatMils.parse("2013-11-01 08:40:00,000").getTime(),
+                   fullDateFormatMils.parse("2013-11-01 08:40:01,000").getTime(),
                    0, 0);
 
         assertItem(value,
                    1,
-                   "user-created",
-                   "",
+                   "workspace-created",
+                   WS_ID,
                    USER_ID,
-                   fullDateFormatMils.parse("2013-11-01 08:40:00,000").getTime(),
-                   0, 0);
+                   fullDateFormatMils.parse("2013-11-01 08:40:02,000").getTime(),
+                   0, 0);        
 
         assertItem(value,
                    2,
+                   "user-created",
+                   "",
+                   USER2_ID,
+                   fullDateFormatMils.parse("2013-11-01 08:40:03,000").getTime(),
+                   0, 0);        
+        
+        assertItem(value,
+                   3,
                    "workspace-created",
                    WS2_ID,
                    USER2_ID,
-                   fullDateFormatMils.parse("2013-11-01 08:40:00,000").getTime(),
+                   fullDateFormatMils.parse("2013-11-01 08:40:04,000").getTime(),
                    0, 0);
-
-        assertItem(value,
-                   3,
-                   "user-created",
-                   "",
-                   USER2_ID,
-                   fullDateFormatMils.parse("2013-11-01 08:40:00,000").getTime(),
-                   0, 0);
-
+        
         assertItem(value,
                    4,
+                   "user-created",
+                   "",
+                   TMP_USER_ID,
+                   fullDateFormatMils.parse("2013-11-01 08:40:05,000").getTime(),
+                   0, 0);
+        
+        assertItem(value,
+                   5,
                    "workspace-created",
                    TMP_WS_ID,
                    TMP_USER_ID,
-                   fullDateFormatMils.parse("2013-11-01 08:40:00,000").getTime(),
-                   0, 0);
-
-        assertItem(value,
-                   5,
-                   "user-created",
-                   "",
-                   TMP_USER_ID,
-                   fullDateFormatMils.parse("2013-11-01 08:40:00,000").getTime(),
+                   fullDateFormatMils.parse("2013-11-01 08:40:06,000").getTime(),
                    0, 0);
 
         assertItem(value,
