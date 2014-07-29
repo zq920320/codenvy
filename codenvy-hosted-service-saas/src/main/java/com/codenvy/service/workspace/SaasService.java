@@ -80,10 +80,6 @@ public class SaasService extends SubscriptionService {
         PRICES.put(TariffEntry.of("enterprise", "256gb", "yearly"), 1_283D);
         PRICES.put(TariffEntry.of("enterprise", "1024gb", "yearly"), 4_619D);
         PRICES.put(TariffEntry.of("enterprise", "4096gb", "yearly"), 16_628D);
-        PRICES.put(TariffEntry.of("developer", "2gb", "yearly"), 1D);
-        PRICES.put(TariffEntry.of("developer", "4gb", "yearly"), 12D);
-        PRICES.put(TariffEntry.of("developer", "16gb", "yearly"), 53D);
-        PRICES.put(TariffEntry.of("developer", "64gb", "yearly"), 198D);
         //monthly prices for developer
         PRICES.put(TariffEntry.of("developer", "2gb", "monthly"), 5D);
         PRICES.put(TariffEntry.of("developer", "4gb", "monthly"), 14D);
@@ -125,16 +121,6 @@ public class SaasService extends SubscriptionService {
     }
 
     /**
-     * <p> Validates subscription state.
-     * If ACTIVE subscription already exists sets new dates for given subscription.</p>
-     * The valid combinations of subscription states:
-     * <ul>
-     * <li>ACTIVE & ACTIVE</li>
-     * <li>ACTIVE & WAIT_FOR_PAYMENT</li>
-     * <li>just ACTIVE</li>
-     * <li>just WAIT_FOR_PAYMENT</li>
-     * </ul>
-     *
      * @param subscription
      *         new subscription
      * @throws ApiException
@@ -154,15 +140,10 @@ public class SaasService extends SubscriptionService {
         }
 
         final List<Subscription> allSubscriptions = accountDao.getSubscriptions(subscription.getAccountId());
-        final List<Subscription> serviceSubscriptions = new LinkedList<>();
         for (Subscription current : allSubscriptions) {
             if (getServiceId().equals(current.getServiceId())) {
-                serviceSubscriptions.add(current);
+                throw new ServerException("Subscriptions limit exhausted");
             }
-        }
-
-        if (serviceSubscriptions.size() > 1) {
-            throw new ServerException("Subscriptions limit exhausted");
         }
 
         if ("true".equals((subscription.getProperties().get("codenvy:trial")))) {
@@ -178,38 +159,22 @@ public class SaasService extends SubscriptionService {
                 throw new ConflictException("TariffPlan property not found");
             }
 
-            switch (subscription.getState()) {
-                case WAIT_FOR_PAYMENT:
-                    if (search(serviceSubscriptions, Subscription.State.WAIT_FOR_PAYMENT) != null) {
-                        throw new ConflictException("Subscription with WAIT_FOR_PAYMENT state already exists");
-                    }
+            subscription.setStartDate(calendar.getTimeInMillis());
+            switch (tariffPlan) {
+                case "yearly":
+                    calendar.add(Calendar.YEAR, 1);
                     break;
-                case ACTIVE:
-                    final Subscription active = search(serviceSubscriptions, Subscription.State.ACTIVE);
-
-                    if (active != null) {
-                        calendar.setTimeInMillis(active.getEndDate());
-                    }
-
-                    subscription.setStartDate(calendar.getTimeInMillis());
-                    switch (tariffPlan) {
-                        case "yearly":
-                            calendar.add(Calendar.YEAR, 1);
-                            break;
-                        case "monthly":
-                            calendar.add(Calendar.MONTH, 1);
-                            break;
-                        default:
-                            throw new ConflictException("Unknown TariffPlan is used " + tariffPlan);
-                    }
-
-                    subscription.setEndDate(calendar.getTimeInMillis());
+                case "monthly":
+                    calendar.add(Calendar.MONTH, 1);
                     break;
                 default:
-                    throw new ServerException("Incorrect subscription state");
+                    throw new ConflictException("Unknown TariffPlan is used " + tariffPlan);
             }
+
+            subscription.setEndDate(calendar.getTimeInMillis());
         }
     }
+
 
     @Override
     public void afterCreateSubscription(Subscription subscription) throws ApiException {
