@@ -90,7 +90,7 @@ analytics.presenter.HorizontalTablePresenter.prototype.load = function () {
                     presenter.printTable(table);
 
                     // print bottom page navigation
-                    view.printBottomPageNavigator(pageCount, currentPageNumber, modelParams, widgetName, widgetName);
+                    view.printBottomPageNavigator(pageCount, currentPageNumber, modelParams, widgetName);
 
                     view.loadTableHandlers(false);  // don't display client side sorting for table with pagination
                 } else {
