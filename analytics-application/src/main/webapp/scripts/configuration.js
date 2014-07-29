@@ -489,6 +489,7 @@ function Configuration() {
             presenterType: "SummaryTablePresenter",
             modelViewName: "users_statistics_list",
             modelMetricName: "users_statistics",
+            doNotDisplayCSVButton: true,
         },
 
         userOverview: {
@@ -705,6 +706,7 @@ function Configuration() {
             presenterType: "SummaryTablePresenter",
             modelViewName: "product_usage_sessions_list",
             modelMetricName: "product_usage_sessions",
+            doNotDisplayCSVButton: true,
         },
         
         sessionOverview: {
@@ -800,6 +802,7 @@ function Configuration() {
             presenterType: "SummaryTablePresenter",
             modelViewName: "workspaces_statistics_list",
             modelMetricName: "workspaces_statistics",
+            doNotDisplayCSVButton: true,
         },
         
         workspaceOverview: {
@@ -983,6 +986,7 @@ function Configuration() {
             presenterType: "SummaryTablePresenter",
             modelViewName: "projects_statistics_list",
             modelMetricName: "projects_statistics",
+            doNotDisplayCSVButton: true,
         },
         
         projectOverview: {
@@ -1153,6 +1157,7 @@ function Configuration() {
             presenterType: "SummaryTablePresenter",
             modelViewName: "factory_statistics_list",
             modelMetricName: "factory_statistics",
+            doNotDisplayCSVButton: true,
         },
 
         factoryOverview: {
