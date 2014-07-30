@@ -118,18 +118,7 @@ public class OnPremisesService extends SubscriptionService {
         if ("true".equals((subscription.getProperties().get("codenvy:trial")))) {
             final Calendar calendar = Calendar.getInstance();
             subscription.setStartDate(calendar.getTimeInMillis());
-
-            String trialPeriod;
-            if ((trialPeriod = subscription.getProperties().get("codenvy:trialPeriod")) != null) {
-                try {
-                    calendar.add(Calendar.DAY_OF_YEAR, Integer.parseInt(trialPeriod));
-                } catch (NumberFormatException e) {
-                    throw new ConflictException("Invalid trialPeriod");
-                }
-            } else {
-                calendar.add(Calendar.DAY_OF_YEAR, 7);
-            }
-
+            calendar.add(Calendar.DAY_OF_YEAR, 7);
             subscription.setEndDate(calendar.getTimeInMillis());
             subscription.setState(Subscription.State.ACTIVE);
         } else {
