@@ -216,11 +216,16 @@
         */
         var isWebsocketEnabled = function(){
             var USER_AGENT = navigator.userAgent.toLowerCase();
-            var IS_WS_SUPPORTED = ("WebSocket" in window);
-            if (!IS_WS_SUPPORTED || (USER_AGENT.indexOf("chrome") === -1 && USER_AGENT.indexOf("firefox") === -1 && USER_AGENT.indexOf("safari") === -1)) {
+            if (USER_AGENT.indexOf("chrome") === -1 && USER_AGENT.indexOf("firefox") === -1 && USER_AGENT.indexOf("safari") === -1) {
                 window.location = "/site/error/browser-not-supported#show";
                 return false;
             } 
+        var IS_WS_SUPPORTED = ("WebSocket" in window);
+                if (!IS_WS_SUPPORTED) {
+                window.location = "/site/error/websocket-connection-error";
+                return false;
+            }
+
             return true;
         };
 
