@@ -96,7 +96,10 @@ function Main() {
         
         // Show session events selector
         $("#show-session-events").click(function (event) {
-            reloadWidgets($("#show-session-events").attr("targetWidgets"));
+            var namesOfWidgetsToUpdate = $("#show-session-events").attr("targetWidgets");
+            var parameterToRemove = "userSessionActivity";  // display "userSessionActivity" table from the first page
+            
+            reloadWidgets(namesOfWidgetsToUpdate, [parameterToRemove]);
         });
         
         // Show factories selectors group
@@ -187,7 +190,7 @@ function Main() {
      * @param namesOfParamsToRemove: set of parameter names from filter in which the clear button had been clicked
      */
     function reloadWidgets(widgetNames, namesOfParamsToRemove) {
-        var namesOfParamsToRemove = namesOfParamsToRemove || {};
+        var namesOfParamsToRemove = namesOfParamsToRemove || [];
 
         if (typeof widgetNames != "undefined") {
             var widgetNames = widgetNames.split(',');
