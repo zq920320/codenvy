@@ -434,7 +434,6 @@ function Configuration() {
             widgetLabel: "Events",
             presenterType: "EntryViewPresenter",
             modelViewName: "events",
-            modelMetricName: "users_activity",
 
             defaultModelParams: {
                 "sort": "-date"
@@ -456,9 +455,6 @@ function Configuration() {
             widgetLabel: "Users",
             presenterType: "EntryViewPresenter",
             modelViewName: "users",
-
-            isPaginable: true,    // default value is "false"
-            modelMetricName: "users_statistics",
 
             modelSummarizedMetricName: "users_statistics_list",
 
@@ -528,7 +524,6 @@ function Configuration() {
             modelViewName: "user_sessions",
 
             isPaginable: true,    // default value is "false"
-            modelMetricName: "product_usage_sessions",
 
             defaultModelParams: {
                 "sort": "-date"
@@ -559,7 +554,6 @@ function Configuration() {
             modelViewName: "user_workspace_list",
 
             isPaginable: true,    // default value is "false"
-            modelMetricName: "usage_time_by_workspaces",
 
             columnLinkPrefixList: {
                 "Workspace": "/analytics/pages/workspace-view.jsp?ws"
@@ -588,7 +582,6 @@ function Configuration() {
             modelViewName: "user_factories",
 
             isPaginable: true,    // default value is "false"
-            modelMetricName: "created_factories",
 
             columnLinkPrefixList: {
                 "Factory URL": "/analytics/pages/factory-view.jsp?factory",
@@ -615,7 +608,6 @@ function Configuration() {
             modelViewName: "user_events",
 
             isPaginable: true,    // default value is "false"
-            modelMetricName: "users_activity",
             onePageRowsCount: 30,
 
             defaultModelParams: {
@@ -638,7 +630,6 @@ function Configuration() {
             modelViewName: "user_projects",
 
             isPaginable: true,    // default value is "false"
-            modelMetricName: "projects_statistics",
 
             columnLinkPrefixList: {
                 "User": "/analytics/pages/user-view.jsp?user",
@@ -674,7 +665,6 @@ function Configuration() {
             widgetLabel: "Sessions",
             presenterType: "EntryViewPresenter",
             modelViewName: "session_overview",
-            modelMetricName: "product_usage_sessions",
 
             modelSummarizedMetricName: "product_usage_sessions_list",
 
@@ -735,7 +725,6 @@ function Configuration() {
             },
 
             isPaginable: true,    // default value is "false"
-            modelMetricName: "users_activity",
             onePageRowsCount: 30,
 
             defaultModelParams: {
@@ -754,7 +743,7 @@ function Configuration() {
             widgetLabel: "Workspaces",
             presenterType: "EntryViewPresenter",
             modelViewName: "workspaces",
-            modelMetricName: "workspaces_statistics",
+
             columnLinkPrefixList: {
                 "Workspace": "/analytics/pages/workspace-view.jsp?ws"
             },
@@ -842,7 +831,6 @@ function Configuration() {
             modelViewName: "workspace_projects",
 
             isPaginable: true,    // default value is "false"
-            modelMetricName: "projects_statistics",
 
             columnLinkPrefixList: {
                 "User": "/analytics/pages/user-view.jsp?user",
@@ -879,7 +867,6 @@ function Configuration() {
             modelViewName: "workspace_sessions",
 
             isPaginable: true,    // default value is "false"
-            modelMetricName: "product_usage_sessions",
 
             defaultModelParams: {
                 "sort": "-date"
@@ -909,7 +896,6 @@ function Configuration() {
             modelViewName: "workspace_user_list",
 
             isPaginable: true,    // default value is "false"
-            modelMetricName: "usage_time_by_users",
 
             columnLinkPrefixList: {
                 "User": "/analytics/pages/user-view.jsp?user",
@@ -937,7 +923,7 @@ function Configuration() {
             widgetLabel: "Projects",
             presenterType: "EntryViewPresenter",
             modelViewName: "projects",
-            modelMetricName: "projects_statistics",
+
             columnLinkPrefixList: {
                 "Workspace": "/analytics/pages/workspace-view.jsp?ws",
                 "User": "/analytics/pages/user-view.jsp?user",
@@ -1043,7 +1029,6 @@ function Configuration() {
             modelViewName: "project_events",
 
             isPaginable: true,    // default value is "false"
-            modelMetricName: "users_activity",
             onePageRowsCount: 30,
 
             defaultModelParams: {
@@ -1102,7 +1087,6 @@ function Configuration() {
             modelViewName: "account_users_roles",
 
             isPaginable: true,    // default value is "false"
-            modelMetricName: "account_users_roles",
 
             columnLinkPrefixList: {
                 "User": "/analytics/pages/user-view.jsp?user",
@@ -1116,7 +1100,7 @@ function Configuration() {
             widgetLabel: "Factories",
             presenterType: "EntryViewPresenter",
             modelViewName: "factories",
-            modelMetricName: "factory_statistics",
+
             columnLinkPrefixList: {
                 "Factory URL": "/analytics/pages/factory-view.jsp?factory",
                 "Project Type": "/analytics/pages/projects-view.jsp?project_type",
@@ -1196,7 +1180,6 @@ function Configuration() {
             modelViewName: "factory_sessions",
 
             isPaginable: true,    // default value is "false"
-            modelMetricName: "product_usage_factory_sessions",
 
             defaultModelParams: {
                 "sort": "-date"
@@ -1228,7 +1211,6 @@ function Configuration() {
             modelViewName: "factory_users",
 
             isPaginable: true,    // default value is "false"
-            modelMetricName: "factory_users",
 
             defaultModelParams: {
                 "sort": "-time"

@@ -445,7 +445,6 @@ function Util() {
         return localStorage.getItem(globalParamName);  
     }
     
-    
     /** ****************** library API ********** */
     return {
         // url manipulations

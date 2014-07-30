@@ -42,20 +42,10 @@ analytics.presenter.EntryViewPresenter.prototype.load = function () {
 
     presenter.displayEmptyWidget();
     
-    // get page count    
-    model.pushDoneFunction(function (data) {
-        model.popDoneFunction();
-
-        var pageCount = Math.ceil(data / presenter.DEFAULT_ONE_PAGE_ROWS_COUNT);
-
-        presenter.obtainViewData(model, view, presenter, pageCount);
-    });
-
-    var modelMetricName = analytics.configuration.getProperty(presenter.widgetName, "modelMetricName");
-    model.getMetricValue(modelMetricName);
+    presenter.obtainViewData(model, view, presenter);
 }
 
-analytics.presenter.EntryViewPresenter.prototype.obtainViewData = function (model, view, presenter, pageCount) {
+analytics.presenter.EntryViewPresenter.prototype.obtainViewData = function (model, view, presenter) {
     var viewParams = view.getParams();
     var modelParams = presenter.getModelParams(viewParams);
 
@@ -67,7 +57,9 @@ analytics.presenter.EntryViewPresenter.prototype.obtainViewData = function (mode
         currentPageNumber = new Number(currentPageNumber);
     }
 
-    modelParams.per_page = presenter.DEFAULT_ONE_PAGE_ROWS_COUNT;
+    var onePageRowsCount = presenter.DEFAULT_ONE_PAGE_ROWS_COUNT;
+    
+    modelParams.per_page = onePageRowsCount;
     modelParams.page = currentPageNumber;
 
     model.pushDoneFunction(function (data) {
@@ -76,6 +68,8 @@ analytics.presenter.EntryViewPresenter.prototype.obtainViewData = function (mode
         var table = data[0];  // there is only one table in data
         table.columns_original = analytics.util.clone(table.columns); 
 
+        var pageCount = model.recognizePageCount(onePageRowsCount, currentPageNumber, table.rows.length);
+        
         // add links to drill down page
         table = presenter.linkTableValuesWithDrillDownPage(presenter.widgetName, table, modelParams);
 
@@ -92,7 +86,7 @@ analytics.presenter.EntryViewPresenter.prototype.obtainViewData = function (mode
             }
         }
 
-        if (pageCount > 1) {
+        if (pageCount != 1) {
             var viewParams = view.getParams();
 
             // make table header as linked for sorting

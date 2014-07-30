@@ -174,14 +174,10 @@ function View() {
     }
     
     /**
-     * Prints page navigator, meets the requirements: '<' and '>'.
+     * Prints page navigator, meets the requirements: '<<','<' and '>'.
      * CurrentPageNumber is 1-based. 
      */
-    function printBottomPageNavigator(pageCount, currentPageNumber, params, pageQueryParameter, widgetName) {
-        if (typeof pageCount == "undefined" || pageCount <= 0) {
-            return;
-        }
-    
+    function printBottomPageNavigator(pageCount, currentPageNumber, params, pageQueryParameter, widgetName) {   
         // remove old page number
         var params = analytics.util.clone(params);
         delete params[widgetName];  
@@ -195,7 +191,13 @@ function View() {
         print("<div class='bottom-page-navigator'>");
 
         var isEmptyFirstPageLink = (currentPageNumber == 1);
-        var isEmptyLastPageLink = (currentPageNumber == pageCount);
+        var isEmptyLastPageLink = (pageCount != null 
+                                   && currentPageNumber >= pageCount);
+        
+        var firstPageLinkHtml = getFirstPageNavigationLinkHtml(queryString,              
+                                                 pageQueryParameter,
+                                                 widgetName,
+                                                 isEmptyFirstPageLink);
         
         var previousPageLinkHtml = getPreviousPageNavigationLinkHtml(queryString, 
                                                            currentPageNumber, 
@@ -210,14 +212,31 @@ function View() {
                                                    pageQueryParameter, 
                                                    widgetName, 
                                                    isEmptyLastPageLink);
-
+        
+        print(firstPageLinkHtml);
         print(previousPageLinkHtml);
         print(currentPageHtml);
         print(nextPageLinkHtml);
         
         print("</div>");
     }
-
+    
+    function getFirstPageNavigationLinkHtml(queryString, pageQueryParameter, widgetName, isEmptyLink) {
+        if (typeof isEmptyLink == "undefined") {
+            isEmptyLink = false;
+        }
+        
+        var label = "&lt;&lt;";
+        var firstPageNumber = 1;        
+        
+        if (isEmptyLink) {
+            return "<div class='empty'>" + label + "</div>";
+            
+        } else {
+            return getPageNavigationHtml(queryString, firstPageNumber, pageQueryParameter, widgetName, label);
+        }
+    }
+    
     function getPreviousPageNavigationLinkHtml(queryString, currentPageNumber, pageQueryParameter, widgetName, isEmptyLink) {
         if (typeof isEmptyLink == "undefined") {
             isEmptyLink = false;
@@ -230,13 +249,10 @@ function View() {
             return "<div class='empty'>" + label + "</div>";
             
         } else {
-            var href = getPageNavigationUrl(queryString, previousPageNumber, pageQueryParameter);
-            var onClickHandler = "analytics.main.reloadWidgetByUrl(\"" + href + "\",\"" + widgetName + "\"); return false;";
-            
-            return "<a class='page-link' href='" + href + "' onclick='" + onClickHandler + "' title='Previous page " + previousPageNumber + "'>" + label + "</a>";
+            return getPageNavigationHtml(queryString, previousPageNumber, pageQueryParameter, widgetName, label);
         }
     }
-
+    
     function getNextPageNavigationLinkHtml(queryString, currentPageNumber, pageQueryParameter, widgetName, isEmptyLink) {
         if (typeof isEmptyLink == "undefined") {
             isEmptyLink = false;
@@ -249,11 +265,15 @@ function View() {
             return "<div class='empty'>" + label + "</div>";
             
         } else {
-            var href = getPageNavigationUrl(queryString, nextPageNumber, pageQueryParameter);
-            var onClickHandler = "analytics.main.reloadWidgetByUrl(\"" + href + "\",\"" + widgetName + "\"); return false;";
-            
-            return "<a class='page-link' href='" + href + "' onclick='" + onClickHandler + "' title='Next page " + nextPageNumber + "'>" + label + "</a>";
+            return getPageNavigationHtml(queryString, nextPageNumber, pageQueryParameter, widgetName, label);
         }
+    }
+    
+    function getPageNavigationHtml(queryString, pageNumber, pageQueryParameter, widgetName, label) {
+        var href = getPageNavigationUrl(queryString, pageNumber, pageQueryParameter);
+        var onClickHandler = "analytics.main.reloadWidgetByUrl(\"" + href + "\",\"" + widgetName + "\"); return false;";
+        
+        return "<a class='page-link' href='" + href + "' onclick='" + onClickHandler + "' title='Go to page " + pageNumber + "'>" + label + "</a>";
     }
     
     function getPageNavigationUrl(baseQueryString, pageNumber, pageQueryParameter) {

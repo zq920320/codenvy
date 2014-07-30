@@ -319,6 +319,22 @@ function Model() {
         }
     });
 
+    /**
+     * Try to recognize page count.
+     * @returns currentPageNumber if this is last page, that is (rowsNumber < onePageRowsCount) 
+     * @returns null if page count hasn't been recognized.
+     * 
+     */
+    function recognizePageCount(onePageRowsCount, currentPageNumber, rowsNumber) {
+        var pageCount = null;
+        
+        if (rowsNumber < onePageRowsCount) {
+            pageCount = currentPageNumber;
+        }
+        
+        return pageCount;
+    }
+    
     /** ****************** API ********** */
     return {
         getModelViewData: getModelViewData,
@@ -340,5 +356,7 @@ function Model() {
         clearFailFunction: clearFailFunction,
 
         getLinkToExportToCsv: getLinkToExportToCsv,
+        
+        recognizePageCount: recognizePageCount,
     }
 }
