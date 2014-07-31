@@ -39,7 +39,6 @@ import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.ForbiddenException;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
-import com.codenvy.api.core.rest.InvalidArgumentException;
 import com.codenvy.commons.env.EnvironmentContext;
 import com.codenvy.commons.user.User;
 import com.codenvy.dto.server.DtoFactory;
@@ -204,7 +203,6 @@ public class BraintreePaymentServiceTest {
     public ApiException[][] tariffExceptionProvider() {
         return new ApiException[][]{{new ApiException("message")},
                                     {new ServerException("message")},
-                                    {new InvalidArgumentException("message")},
                                     {new ForbiddenException("message")}
         };
     }
