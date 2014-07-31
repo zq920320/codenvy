@@ -29,8 +29,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -111,7 +109,11 @@ public class OnPremisesService extends SubscriptionService {
 
         for (Subscription current : accountDao.getSubscriptions(subscription.getAccountId())) {
             if (getServiceId().equals(current.getServiceId())) {
-                throw new ServerException("Subscriptions limit exhausted");
+                if (current.getState().equals(Subscription.State.WAIT_FOR_PAYMENT)) {
+                    throw new ConflictException("Subscription with WAIT_FOR_PAYMENT state already exists");
+                } else {
+                    throw new ConflictException("Subscriptions limit exhausted");
+                }
             }
         }
 
