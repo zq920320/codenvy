@@ -284,10 +284,10 @@ public class View {
      * "section0-row0-column1", ...] ["section1-row1-column0", "section0-row1-column1", ...] ... ], ... ]
      */
     protected String transformToJson(ViewData data) {
-        List<LinkedHashSet<Object>> result = new ArrayList<>(data.size());
+        List<ArrayList<Object>> result = new ArrayList<>(data.size());
 
         for (Entry<String, SectionData> sectionEntry : data.entrySet()) {
-            LinkedHashSet<Object> newSectionData = new LinkedHashSet<>(sectionEntry.getValue().size());
+            ArrayList<Object> newSectionData = new ArrayList<>(sectionEntry.getValue().size());
 
             for (int i = 0; i < sectionEntry.getValue().size(); i++) {
                 List<ValueData> rowData = sectionEntry.getValue().get(i);
