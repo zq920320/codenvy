@@ -31,7 +31,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -142,7 +141,11 @@ public class SaasService extends SubscriptionService {
         final List<Subscription> allSubscriptions = accountDao.getSubscriptions(subscription.getAccountId());
         for (Subscription current : allSubscriptions) {
             if (getServiceId().equals(current.getServiceId())) {
-                throw new ServerException("Subscriptions limit exhausted");
+                if (current.getState().equals(Subscription.State.WAIT_FOR_PAYMENT)) {
+                    throw new ConflictException("Subscription with WAIT_FOR_PAYMENT state already exists");
+                } else {
+                    throw new ConflictException("Subscriptions limit exhausted");
+                }
             }
         }
 
@@ -263,24 +266,6 @@ public class SaasService extends SubscriptionService {
             throw new ConflictException(String.format("Subscription property %s required", propertyName));
         }
         return target;
-    }
-
-    /**
-     * Searches for subscription by status
-     *
-     * @param src
-     *         where to search
-     * @param target
-     *         target subscription state
-     * @return found subscription object or {@code null} if subscription with given status missed in source
-     */
-    private Subscription search(List<Subscription> src, Subscription.State target) {
-        for (Subscription current : src) {
-            if (current.getState() == target) {
-                return current;
-            }
-        }
-        return null;
     }
 
     private void removeWorkspaceAttributes(Subscription subscription) throws NotFoundException, ServerException, ConflictException {
