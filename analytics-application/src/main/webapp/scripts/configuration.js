@@ -1223,9 +1223,9 @@ function Configuration() {
             mapColumnToServerSortParam: {
                 "# Sessions": "sessions",
                 "Duration": "time",
-                "# Runs": "run",
-                "# Builds": "build",
-                "# Deploys": "deploy",
+                "# Runs": "runs",
+                "# Builds": "builds",
+                "# Deploys": "deploys",
             },
 
             columnDrillDownPageLinkConfiguration: {
