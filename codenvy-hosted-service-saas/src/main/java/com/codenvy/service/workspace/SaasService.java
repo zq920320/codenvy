@@ -149,20 +149,19 @@ public class SaasService extends SubscriptionService {
             }
         }
 
+
+        final Calendar calendar = Calendar.getInstance();
+        subscription.setStartDate(calendar.getTimeInMillis());
         if ("true".equals((subscription.getProperties().get("codenvy:trial")))) {
-            final Calendar calendar = Calendar.getInstance();
-            subscription.setStartDate(calendar.getTimeInMillis());
             calendar.add(Calendar.DAY_OF_YEAR, 7);
             subscription.setEndDate(calendar.getTimeInMillis());
             subscription.setState(Subscription.State.ACTIVE);
         } else {
-            final Calendar calendar = Calendar.getInstance();
             String tariffPlan;
             if (null == (tariffPlan = subscription.getProperties().get("TariffPlan"))) {
                 throw new ConflictException("TariffPlan property not found");
             }
 
-            subscription.setStartDate(calendar.getTimeInMillis());
             switch (tariffPlan) {
                 case "yearly":
                     calendar.add(Calendar.YEAR, 1);
