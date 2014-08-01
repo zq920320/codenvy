@@ -93,7 +93,16 @@ public abstract class ReadBasedMetric extends AbstractMetric {
             context = omitFilters(context);
             validateRestrictions(context);
 
-            return dataLoader.loadSummarizedValue(this, context);
+            if (canReadPrecomputedData(context)) {
+                Metric metric = MetricFactory.getMetric(getName() + PRECOMPUTED);
+
+                Context.Builder builder = new Context.Builder(context);
+                builder.remove(Parameters.FROM_DATE);
+                builder.remove(Parameters.TO_DATE);
+                return ((ReadBasedMetric) metric).getSummaryValue(builder.build());
+            } else {
+                return dataLoader.loadSummarizedValue(this, context);
+            }
         } finally {
             if (LOG.isDebugEnabled()) {
                 long duration = (System.currentTimeMillis() - start) / 1000;

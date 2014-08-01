@@ -26,6 +26,7 @@ import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.metrics.users.UsersStatisticsList;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
+import com.codenvy.analytics.services.DataComputationFeature;
 
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -109,6 +110,9 @@ public class TestProductUsageFactorySessions extends BaseTest {
 
         builder.putAll(scriptsManager.getScript(ScriptType.CREATED_TEMPORARY_WORKSPACES, MetricType.TEMPORARY_WORKSPACES_CREATED).getParamsAsMap());
         pigServer.execute(ScriptType.CREATED_TEMPORARY_WORKSPACES, builder.build());
+        
+        DataComputationFeature dataComputationFeature = new DataComputationFeature();
+        dataComputationFeature.forceExecute(builder.build());
     }
 
     @Test
@@ -211,6 +215,7 @@ public class TestProductUsageFactorySessions extends BaseTest {
         Summaraziable metric = (Summaraziable)MetricFactory.getMetric(MetricType.FACTORY_STATISTICS_LIST);
         ListValueData summaryValue = (ListValueData)metric.getSummaryValue(Context.EMPTY);
 
+        // verify summary data on metric FACTORY_STATISTICS_LIST_PRECOMPUTED
         assertEquals(summaryValue.size(), 1);
         Map<String, ValueData> summary = ((MapValueData)summaryValue.getAll().get(0)).getAll();
         assertEquals(summary.get(UsersStatisticsList.SESSIONS).getAsString(), "3");
@@ -223,5 +228,23 @@ public class TestProductUsageFactorySessions extends BaseTest {
         assertEquals(summary.get(UsersStatisticsList.DEPLOYS).getAsString(), "0");
         assertEquals(summary.get(UsersStatisticsList.WS_CREATED).getAsString(), "2");
         assertEquals(summary.get(UsersStatisticsList.ENCODED_FACTORY).getAsString(), "0");
+
+        // verify the same summary data on metric FACTORY_STATISTICS_LIST
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.DATA_COMPUTATION_PROCESS, 1);  // notes don't read precomputed data
+        summaryValue = (ListValueData)metric.getSummaryValue(builder.build());
+
+        assertEquals(summaryValue.size(), 1);
+        summary = ((MapValueData)summaryValue.getAll().get(0)).getAll();
+        assertEquals(summary.get(UsersStatisticsList.SESSIONS).getAsString(), "3");
+        assertEquals(summary.get(UsersStatisticsList.TIME).getAsString(), "1800000");
+        assertEquals(summary.get(UsersStatisticsList.AUTHENTICATED_SESSION).getAsString(), "2");
+        assertEquals(summary.get(UsersStatisticsList.CONVERTED_SESSION).getAsString(), "1");
+        assertEquals(summary.get(UsersStatisticsList.RUNS).getAsString(), "1");
+        assertEquals(summary.get(UsersStatisticsList.BUILDS).getAsString(), "0");
+        assertEquals(summary.get(UsersStatisticsList.DEBUGS).getAsString(), "0");
+        assertEquals(summary.get(UsersStatisticsList.DEPLOYS).getAsString(), "0");
+        assertEquals(summary.get(UsersStatisticsList.WS_CREATED).getAsString(), "2");
+        assertEquals(summary.get(UsersStatisticsList.ENCODED_FACTORY).getAsString(), "0");        
     }
 }

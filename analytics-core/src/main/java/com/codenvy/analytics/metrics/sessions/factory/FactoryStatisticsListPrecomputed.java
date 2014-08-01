@@ -18,6 +18,7 @@
 package com.codenvy.analytics.metrics.sessions.factory;
 
 import com.codenvy.analytics.metrics.*;
+import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
 import javax.annotation.security.RolesAllowed;
@@ -50,6 +51,8 @@ public class FactoryStatisticsListPrecomputed extends AbstractListValueResulted 
                             RUNS,
                             DEPLOYS,
                             BUILDS,
+                            ENCODED_FACTORY,
+                            DEBUGS,
                             SESSIONS,
                             AUTHENTICATED_SESSION,
                             CONVERTED_SESSION,
@@ -61,7 +64,12 @@ public class FactoryStatisticsListPrecomputed extends AbstractListValueResulted 
     @Override
     public DBObject[] getSpecificSummarizedDBOperations(Context clauses) {
         ReadBasedSummariziable summariziable = (ReadBasedSummariziable)MetricFactory.getMetric(getBasedMetric());
-        return summariziable.getSpecificSummarizedDBOperations(clauses);
+        DBObject[] dbOperations = summariziable.getSpecificSummarizedDBOperations(clauses);
+        
+        ((DBObject)(dbOperations[2].get("$group"))).put(SESSIONS, new BasicDBObject("$sum", "$" + SESSIONS));
+        ((DBObject)(dbOperations[2].get("$group"))).put(AUTHENTICATED_SESSION, new BasicDBObject("$sum", "$" + AUTHENTICATED_SESSION));
+        
+        return dbOperations; 
     }
 
     @Override
