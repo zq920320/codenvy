@@ -17,10 +17,8 @@
  */
 package com.codenvy.analytics.pig.scripts.util;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.UUID;
 
 /** @author <a href="mailto:abazko@exoplatform.com">Anatoliy Bazko</a> */
 public class Event {
@@ -120,6 +118,23 @@ public class Event {
             return this;
         }
 
+        private Builder withParam(String name, Map<String,String> value) {
+            StringBuilder sb = new StringBuilder();
+            Iterator<Entry<String, String>> iterator = value.entrySet().iterator();
+            while (iterator.hasNext()) {
+                Entry<String, String> entry = iterator.next();
+
+                sb.append(entry.getKey()).append("=").append(entry.getValue());
+
+                if (iterator.hasNext()) {
+                    sb.append(",");
+                }
+            }
+
+            params.put(name, sb.toString());
+            return this;
+        }
+
         public Event build() {
             return new Event(date, time, context, params, false);
         }
@@ -152,6 +167,29 @@ public class Event {
                                 .withParam("WS", ws)
                                 .withParam("USER", user)
                                 .withParam("WINDOW", window);
+        }
+
+        public static Builder createSessionStartedEventParamenters(String user, String ws, String window, String sessionId) {
+            Map<String, String> map = new HashMap<>();
+            map.put("SESSION-ID", sessionId);
+            map.put("WINDOW", window);
+
+
+            return new Builder().withParam("EVENT", "session-started")
+                                .withParam("WS", ws)
+                                .withParam("USER", user)
+                                .withParam("PARAMETERS", map);
+        }
+
+        public static Builder createSessionFinishedEventParameters(String user, String ws, String window, String sessionId) {
+            Map<String, String> map = new HashMap<>();
+            map.put("SESSION-ID", sessionId);
+            map.put("WINDOW", window);
+
+            return new Builder().withParam("EVENT", "session-finished")
+                                .withParam("WS", ws)
+                                .withParam("USER", user)
+                                .withParam("PARAMETERS", map);
         }
 
         public static Builder createRunStartedEvent(String user, String ws, String project, String type, String id) {

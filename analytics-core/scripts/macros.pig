@@ -159,7 +159,7 @@ DEFINE extractUser(X, userType) RETURNS Y {
 -- @return  {..., $paramFieldNameParam : bytearray}
 ---------------------------------------------------------------------------
 DEFINE extractParam(X, paramNameParam, paramFieldNameParam) RETURNS Y {
-  $Y = FOREACH $X GENERATE *, FLATTEN(REGEX_EXTRACT_ALL(message, '.*\\s$paramNameParam#([^\\s#][^#]*|)#.*')) AS $paramFieldNameParam;
+  $Y = FOREACH $X GENERATE *, FLATTEN(ExtractParam(message, '$paramNameParam')) AS $paramFieldNameParam;
 };
 
 ---------------------------------------------------------------------------
