@@ -17,12 +17,16 @@
  */
 package com.codenvy.analytics.pig.udf;
 
+import com.codenvy.analytics.Utils;
+
 import org.apache.pig.EvalFunc;
 import org.apache.pig.data.DataType;
 import org.apache.pig.data.Tuple;
 import org.apache.pig.impl.logicalLayer.schema.Schema;
 
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,9 +35,10 @@ import java.util.regex.Pattern;
  */
 public class ExtractParam extends EvalFunc<String> {
 
-    private static String PARAM_NAME = "paramNameParam";
-    private static String PARAM_PATTERN = ".*\\sparamNameParam#([^\\s#][^#]*|)#.*";
-    private static String PARAM_IN_PARAMETERS_PATTERN = ".*\\sPARAMETERS#[^\\s]*paramNameParam=([^,^#]+|).*";
+    private final static String  PARAM_NAME         = "paramNameParam";
+    private final static String  PARAM_PATTERN      = ".*\\sparamNameParam#([^\\s#][^#]*|)#.*";
+
+    private final static Pattern parametersPattern = Pattern.compile(".*\\sPARAMETERS#([^\\s^#]+|)#.*");
 
     @Override
     public String exec(Tuple input) throws IOException {
@@ -44,7 +49,8 @@ public class ExtractParam extends EvalFunc<String> {
         String message = (String)input.get(0);
         String paramNameParam = (String)input.get(1);
 
-        if (!message.contains(paramNameParam)) {
+        if (!message.contains(paramNameParam) &&
+            !message.contains(URLEncoder.encode(paramNameParam, "UTF-8"))) {
             return null;
         }
 
@@ -54,10 +60,14 @@ public class ExtractParam extends EvalFunc<String> {
         if (matcher.find()) {
             return matcher.group(1);
         } else {
-            pattern = Pattern.compile(PARAM_IN_PARAMETERS_PATTERN.replaceAll(PARAM_NAME, paramNameParam));
-            matcher = pattern.matcher(message);
+            matcher = parametersPattern.matcher(message);
 
-            return matcher.find() ? matcher.group(1) : null;
+            if (matcher.find()) {
+                Map<String, String> params = Utils.fetchEncodedPairs(matcher.group(1), true);
+                return params.get(paramNameParam.toLowerCase());
+            }
+
+            return null;
         }
     }
 

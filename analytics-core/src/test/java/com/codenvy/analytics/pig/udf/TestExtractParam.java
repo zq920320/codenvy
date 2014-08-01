@@ -67,6 +67,14 @@ public class TestExtractParam extends BaseTest {
                 {" EVENT#session-started# WS#ws1# USER#user1@gmail.com# PARAMETERS#WINDOW=,SESSION-ID=# ", "WINDOW", ""},
                 {" EVENT#session-started# WS#ws1# USER#user1@gmail.com# PARAMETERS#SESSION-ID=sid1# ", "SESSION-ID", "sid1"},
                 {" EVENT#session-started# WS#ws1# USER#user1@gmail.com# PARAMETERS#SESSION-ID=# ", "SESSION-ID", ""},
+                {" EVENT#ide-usage# PARAMETERS#p1=%2C,p2=%3D,p3=%23#", "p1", ","},
+                {" EVENT#ide-usage# PARAMETERS#p1=%2C,p2=%3D,p3=%23#", "p2", "="},
+                {" EVENT#ide-usage# PARAMETERS#p1=%2C,p2=%3D,p3=%23#", "p3", "#"},
+                {" EVENT#session-started# WS#ws1# USER#user1@gmail.com# PARAMETERS#SESSION%23ID=sid1# ", "SESSION#ID", "sid1"},
+                {" EVENT#session-started# WS#ws1# USER#user1@gmail.com# PARAMETERS#SESSION%23ID=%23sid1# ", "SESSION#ID", "#sid1"},
+                {" EVENT#session-started# WS#ws1# USER#user1@gmail.com# PARAMETERS#SESSION%23ID=# ", "SESSION#ID", ""},
+                {" EVENT#session-started# WS#ws1# USER#user1@gmail.com# PARAMETERS#WINDOW=ide,SESSION-ID=sid1# ", "SESSION-ID2", null},
+                {" EVENT#session-started# WS#ws1# USER#user1@gmail.com# PARAMETERS#WINDOW=ide,SESSION%23ID=sid1# ", "SESSION#ID2", null},
         };
     }
 }
