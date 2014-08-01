@@ -18,7 +18,7 @@
 package com.codenvy.service.http;
 
 /**
- * Holder for version ThreadLocal
+ * Holder for IDE version ThreadLocal
  */
 public class IdeVersionHolder {
 
