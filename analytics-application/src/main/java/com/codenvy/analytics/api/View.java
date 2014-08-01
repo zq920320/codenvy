@@ -25,7 +25,6 @@ import com.codenvy.api.analytics.shared.dto.MetricValueDTO;
 import com.codenvy.dto.server.DtoFactory;
 import com.codenvy.dto.server.JsonArrayImpl;
 import com.codenvy.dto.server.JsonStringMapImpl;
-import com.google.inject.Singleton;
 
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -50,7 +49,6 @@ import static com.codenvy.analytics.metrics.Context.valueOf;
  * @author Anatoliy Bazko
  */
 @Path("view")
-@Singleton
 public class View {
 
     private static final Logger LOG = LoggerFactory.getLogger(View.class);

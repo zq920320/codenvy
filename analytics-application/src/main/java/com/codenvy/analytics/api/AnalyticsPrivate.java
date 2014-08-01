@@ -28,7 +28,6 @@ import com.codenvy.api.analytics.shared.dto.MetricValueDTO;
 import com.codenvy.api.analytics.shared.dto.MetricValueListDTO;
 import com.codenvy.api.core.rest.annotations.GenerateLink;
 import com.google.inject.Inject;
-import com.google.inject.Singleton;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,7 +47,6 @@ import java.util.Map;
  * @author Anatoliy Bazko
  */
 @Path("analytics-private")
-@Singleton
 public class AnalyticsPrivate {
 
     private static final Logger LOG = LoggerFactory.getLogger(AnalyticsPrivate.class);
