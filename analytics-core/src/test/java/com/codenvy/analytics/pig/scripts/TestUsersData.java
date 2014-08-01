@@ -349,7 +349,7 @@ public class TestUsersData extends BaseTest {
     }
 
     @Test
-    public void testUserStatisticsFilteredByWrongAliases() throws Exception {
+    public void testUserStatisticsFilteredByIdTreatingAsAlias() throws Exception {
         Metric metric = MetricFactory.getMetric(MetricType.USERS_STATISTICS_LIST);
 
         Context.Builder builder = new Context.Builder();
@@ -357,7 +357,13 @@ public class TestUsersData extends BaseTest {
 
         ListValueData valueData = getAsList(metric, builder.build());
         List<ValueData> rows = treatAsList(valueData);
-        assertEquals(rows.size(), 0);
+        assertEquals(rows.size(), 1);
+        
+        String userId = ((MapValueData) rows.get(0)).getAll().get(AbstractMetric.USER).getAsString();
+        assertEquals(userId, "id1");
+        
+        String aliases = ((MapValueData) rows.get(0)).getAll().get(AbstractMetric.ALIASES).getAsString();
+        assertEquals(aliases, "[user1@gmail.com]");
     }
 
     @Test

@@ -477,6 +477,12 @@ public class MongoDataLoader implements DataLoader {
     }
 
     public String[] getUserIdByAliases(Object aliases) throws IOException {
+        // try to filter by alias as userId in case if they aren't email
+        boolean isUserId = ! aliases.toString().contains("@");
+        if (isUserId) {
+            return new String[] { aliases.toString() };
+        }
+        
         Metric metric = MetricFactory.getMetric(MetricType.USERS_PROFILES_LIST);
 
         Context.Builder builder = new Context.Builder();
