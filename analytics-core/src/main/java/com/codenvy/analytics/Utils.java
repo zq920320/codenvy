@@ -232,6 +232,13 @@ public class Utils {
                 String value = URLDecoder.decode(pair[1], "UTF-8");
 
                 result.put(key, value);
+            } else if (pair.length == 1) {
+                String key = URLDecoder.decode(pair[0], "UTF-8");
+                if (keyToLowerCase) {
+                    key = key.toLowerCase();
+                }
+
+                result.put(key, "");
             }
         }
 
