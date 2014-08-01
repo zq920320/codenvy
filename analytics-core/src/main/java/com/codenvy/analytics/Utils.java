@@ -350,7 +350,6 @@ public class Utils {
             Metric metric = MetricFactory.getMetric(MetricType.WORKSPACES_PROFILES_LIST);
             ListValueData value = getAsList(metric, builder.build());
 
-
             if (value.size() == 0) {
                 return true;
             }

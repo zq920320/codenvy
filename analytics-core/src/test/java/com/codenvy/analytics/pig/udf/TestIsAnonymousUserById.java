@@ -82,6 +82,8 @@ public class TestIsAnonymousUserById extends BaseTest {
         return new Object[][]{
                 {"uid1", false},
                 {"uid2", true},
+                {"user2@gmail.com", false},
+                {"AnonymousUser_2", true},
         };
     }
 }

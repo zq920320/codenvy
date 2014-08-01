@@ -94,6 +94,9 @@ public class TestIsTemporaryWorkspaceById extends BaseTest {
                 {"wsid1", false},
                 {"wsid2", true},
                 {"wsid3", true},
+                {"tmp-workspace000001", true},
+                {"default", true},
+                {"real-workspace-name", true},
         };
     }
 }
