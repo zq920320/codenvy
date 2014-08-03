@@ -102,9 +102,10 @@ public class FactoryUrlBaseValidatorTest {
         User user = DtoFactory.getInstance().createDto(User.class).withId("userid");
 
         Subscription subscription = new Subscription()
-                .withServiceId("TrackedFactory")
+                .withServiceId("Factory")
                 .withStartDate(datetimeFormatter.parse("2000-11-21 11:11:11").getTime())
-                .withEndDate(datetimeFormatter.parse("2022-11-30 11:21:15").getTime());
+                .withEndDate(datetimeFormatter.parse("2022-11-30 11:21:15").getTime())
+                .withProperties(Collections.singletonMap("Package", "Tracked"));
         member = new Member().withUserId("userid").withRoles(Arrays.asList("account/owner"));
         when(accountDao.getSubscriptions(ID)).thenReturn(Arrays.asList(subscription));
         when(accountDao.getMembers(anyString())).thenReturn(Arrays.asList(member));
@@ -277,9 +278,10 @@ public class FactoryUrlBaseValidatorTest {
     public void shouldNotValidateIfOrgIdIsExpired() throws ApiException, ParseException, ServerException, NotFoundException {
         // given
         Subscription subscription = new Subscription()
-                                              .withServiceId("TrackedFactory")
+                                              .withServiceId("Factory")
                                               .withStartDate(datetimeFormatter.parse("2000-11-21 11:11:11").getTime())
-                                              .withEndDate(datetimeFormatter.parse("2000-11-21 11:11:11").getTime());
+                                              .withEndDate(datetimeFormatter.parse("2000-11-21 11:11:11").getTime())
+                                              .withProperties(Collections.singletonMap("Package", "Tracked"));
         when(accountDao.getSubscriptions(ID)).thenReturn(Arrays.asList(subscription));
         // when, then
         validator.validateTrackedFactoryAndParams(url);
@@ -289,9 +291,10 @@ public class FactoryUrlBaseValidatorTest {
     public void shouldNotValidateIfOrgIdIsNotValidYet() throws ApiException, ParseException, ServerException, NotFoundException {
         // given
         Subscription subscription = new Subscription()
-                                              .withServiceId("TrackedFactory")
+                                              .withServiceId("Factory")
                                               .withStartDate(datetimeFormatter.parse("2049-11-21 11:11:11").getTime())
-                                              .withEndDate(datetimeFormatter.parse("2050-11-21 11:11:11").getTime());
+                                              .withEndDate(datetimeFormatter.parse("2050-11-21 11:11:11").getTime())
+                                              .withProperties(Collections.singletonMap("Package", "Tracked"));
         when(accountDao.getSubscriptions(ID)).thenReturn(Arrays.asList(subscription));
         // when, then
         validator.validateTrackedFactoryAndParams(url);
