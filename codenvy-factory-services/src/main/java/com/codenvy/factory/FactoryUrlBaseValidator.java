@@ -136,7 +136,7 @@ public class FactoryUrlBaseValidator {
                 List<Subscription> subscriptions = accountDao.getSubscriptions(orgid);
                 boolean isTracked = false;
                 for (Subscription one : subscriptions) {
-                    if ("TrackedFactory".equals(one.getServiceId())) {
+                    if ("Factory".equals(one.getServiceId() && "Tracked".equals(one.getProperties().get("Package")) {
                         Date startTimeDate = new Date(one.getStartDate());
                         Date endTimeDate = new Date(one.getEndDate());
                         Date currentDate = new Date();
