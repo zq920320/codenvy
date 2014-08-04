@@ -21,10 +21,12 @@ import com.codenvy.api.account.server.SubscriptionService;
 import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.server.dao.Subscription;
 import com.codenvy.api.core.ApiException;
+import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.ServerException;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 
@@ -49,15 +51,37 @@ public class FactoryService extends SubscriptionService {
     @Override
     public void beforeCreateSubscription(Subscription subscription) throws ApiException {
         final List<Subscription> allSubscriptions = accountDao.getSubscriptions(subscription.getAccountId());
-        Subscription factory = null;
-        for (Iterator<Subscription> sIt = allSubscriptions.iterator(); sIt.hasNext() && factory == null; ) {
-            final Subscription current = sIt.next();
+        for (Subscription current : allSubscriptions) {
             if (getServiceId().equals(current.getServiceId())) {
-                factory = current;
+                throw new ConflictException("Factory subscription already exists");
             }
         }
-        if (factory != null) {
-            throw new ServerException("Factory subscription already exists");
+
+
+        final Calendar calendar = Calendar.getInstance();
+        subscription.setStartDate(calendar.getTimeInMillis());
+        if ("true".equals((subscription.getProperties().get("codenvy:trial")))) {
+            calendar.add(Calendar.DAY_OF_YEAR, 7);
+            subscription.setEndDate(calendar.getTimeInMillis());
+            subscription.setState(Subscription.State.ACTIVE);
+        } else {
+            String tariffPlan;
+            if (null == (tariffPlan = subscription.getProperties().get("TariffPlan"))) {
+                throw new ConflictException("TariffPlan property not found");
+            }
+
+            switch (tariffPlan) {
+                case "yearly":
+                    calendar.add(Calendar.YEAR, 1);
+                    break;
+                case "monthly":
+                    calendar.add(Calendar.MONTH, 1);
+                    break;
+                default:
+                    throw new ConflictException("Unknown TariffPlan is used " + tariffPlan);
+            }
+
+            subscription.setEndDate(calendar.getTimeInMillis());
         }
     }
 

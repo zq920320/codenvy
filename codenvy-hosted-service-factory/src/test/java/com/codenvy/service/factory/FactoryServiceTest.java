@@ -21,6 +21,7 @@ import com.codenvy.api.account.server.SubscriptionService;
 import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.server.dao.Subscription;
 import com.codenvy.api.core.ApiException;
+import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.ServerException;
 
 import org.mockito.Mock;
@@ -30,7 +31,9 @@ import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.mockito.Mockito.when;
 
@@ -52,7 +55,7 @@ public class FactoryServiceTest {
         service = new FactoryService(accountDao);
     }
 
-    @Test(expectedExceptions = ServerException.class,
+    @Test(expectedExceptions = ConflictException.class,
           expectedExceptionsMessageRegExp = "Factory subscription already exists")
     public void beforeCreateSubscriptionWhenOneAlreadyExists() throws ApiException {
         final String accountId = "acc1";
@@ -68,8 +71,11 @@ public class FactoryServiceTest {
     @Test
     public void beforeCreateSubscription() throws ApiException {
         final String accountId = "acc1";
+        final Map<String, String> properties = new HashMap<>(1);
+        properties.put("TariffPlan", "monthly");
         final Subscription newSubscription = new Subscription().withServiceId(service.getServiceId())
-                                                               .withAccountId(accountId);
+                                                               .withAccountId(accountId)
+                                                               .withProperties(properties);
         service.beforeCreateSubscription(newSubscription);
     }
 }
