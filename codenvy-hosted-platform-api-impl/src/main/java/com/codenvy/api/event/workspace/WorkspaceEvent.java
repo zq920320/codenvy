@@ -37,13 +37,17 @@ public abstract class WorkspaceEvent {
         public String toString() {
             return value;
         }
+
     }
 
-    private String     workspaceId;
+    private String workspaceId;
+
+    private boolean    isTemporary;
     private ChangeType type;
 
-    protected WorkspaceEvent(String workspaceId, ChangeType type) {
+    protected WorkspaceEvent(String workspaceId, boolean isTemporary, ChangeType type) {
         this.workspaceId = workspaceId;
+        this.isTemporary = isTemporary;
         this.type = type;
     }
 
@@ -64,5 +68,13 @@ public abstract class WorkspaceEvent {
 
     public void setType(ChangeType type) {
         this.type = type;
+    }
+
+    public boolean isTemporary() {
+        return isTemporary;
+    }
+
+    public void setTemporary(boolean isTemporary) {
+        this.isTemporary = isTemporary;
     }
 }

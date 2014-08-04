@@ -22,24 +22,15 @@ import com.codenvy.api.core.notification.EventOrigin;
 /** @author Sergii Leschenko */
 @EventOrigin("workspace")
 public class DeleteWorkspaceEvent extends WorkspaceEvent {
+    private String name;
+
     public DeleteWorkspaceEvent(String workspaceId, boolean temporary, String name) {
-        super(workspaceId, ChangeType.DELETED);
-        this.temporary = temporary;
+        super(workspaceId, temporary, ChangeType.DELETED);
         this.name = name;
     }
 
-    private boolean temporary;
-    private String  name;
-
     public DeleteWorkspaceEvent() {
-    }
-
-    public boolean isTemporary() {
-        return temporary;
-    }
-
-    public void setTemporary(boolean temporary) {
-        this.temporary = temporary;
+        super();
     }
 
     public String getName() {

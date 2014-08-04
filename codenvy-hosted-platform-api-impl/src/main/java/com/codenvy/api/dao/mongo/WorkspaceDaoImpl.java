@@ -23,8 +23,8 @@ import com.codenvy.api.core.ServerException;
 import com.codenvy.api.core.notification.EventService;
 import com.codenvy.api.event.workspace.CreateWorkspaceEvent;
 import com.codenvy.api.event.workspace.DeleteWorkspaceEvent;
-import com.codenvy.api.workspace.server.dao.WorkspaceDao;
 import com.codenvy.api.workspace.server.dao.Workspace;
+import com.codenvy.api.workspace.server.dao.WorkspaceDao;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
@@ -40,7 +40,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -79,7 +78,7 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
             validateWorkspaceName(workspace.getName());
             ensureWorkspaceNameDoesNotExist(workspace.getName());
             collection.save(toDBObject(workspace));
-            eventService.publish(new CreateWorkspaceEvent(workspace.getId()));
+            eventService.publish(new CreateWorkspaceEvent(workspace.getId(), workspace.isTemporary()));
         } catch (MongoException me) {
             throw new ServerException(me.getMessage(), me);
         }

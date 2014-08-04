@@ -22,10 +22,11 @@ import com.codenvy.api.core.notification.EventOrigin;
 /** @author Sergii Leschenko */
 @EventOrigin("workspace")
 public class CreateWorkspaceEvent extends WorkspaceEvent {
-    public CreateWorkspaceEvent(String workspaceId) {
-        super(workspaceId, ChangeType.CREATED);
+    public CreateWorkspaceEvent(String workspaceId, boolean isTemporary) {
+        super(workspaceId, isTemporary, ChangeType.CREATED);
     }
 
     public CreateWorkspaceEvent() {
+        super();
     }
 }
