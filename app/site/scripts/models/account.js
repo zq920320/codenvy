@@ -332,7 +332,7 @@
 
             createWorkspace : function(username,bearertoken,workspace,redirect_url,success,error){
                 var data = {username: username.toLowerCase(), token: bearertoken};
-                var destinationUrl = window.location.protocol + "//" + window.location.host + "/ide/" + workspace + "?" +
+                var destinationUrl = window.location.protocol + "//" + window.location.host + "/ws/" + workspace + "?" +
                     window.location.search.substring(1);
                 var waitUrl = "../wait-for-tenant?type=create&tenantName=" + workspace + "&redirect_url=" + encodeURIComponent(destinationUrl);
                 var workspaceName = {name: workspace};
@@ -378,7 +378,7 @@
 
             joinWorkspace : function(username,bearertoken,workspace,success,error){
                 var data = {username: username.toLowerCase(), token: bearertoken};
-                var destinationUrl = window.location.protocol + "//" + window.location.host + "/ide/" + workspace;
+                var destinationUrl = window.location.protocol + "//" + window.location.host + "/ws/" + workspace;
                 var waitUrl = "../wait-for-tenant?type=start&tenantName=" + workspace + "&redirect_url=" + encodeURIComponent(destinationUrl);
                 //var workspaceName = {name: workspace};
                 var authenticateUrl = "/api/internal/token/authenticate";
@@ -591,7 +591,7 @@
                     switch (tenants.length) {
                         case 0: redirect({url:"/site/create-account"});
                             break;
-                        case 1: redirect({url:"/ide/" + tenants[0].toJSON().name});
+                        case 1: redirect({url:"/ws/" + tenants[0].toJSON().name});
                             break;
                         default: 
                             $.when(Profile.getUser()).done(function(user){

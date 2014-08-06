@@ -31,7 +31,7 @@
 
             __buildTenantUrl : function(){
                 return window.location.protocol +
-                    "//" + window.location.host + "/ide/" + this.get("name") + location.search.substr(0);
+                    "//" + window.location.host + "/ws/" + this.get("name") + location.search.substr(0);
             }
 
         });
