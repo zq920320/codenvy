@@ -31,7 +31,7 @@ import java.io.IOException;
 /** Initialize  EnvironmentContext variables; */
 @Singleton
 public class Ide2EnvironmentInitializationFilter implements Filter {
-    //public static final Pattern TENANT_URL_PATTERN = Pattern.compile("^/ide/(?:rest/|websocket/)?([^/]+?)(?:/.*)?$");
+    //public static final Pattern TENANT_URL_PATTERN = Pattern.compile("^/ws/(?:rest/|websocket/)?([^/]+?)(?:/.*)?$");
 
     private final File   vfsRootDir;
     private final File   tempVfsRootDir;
@@ -74,7 +74,7 @@ public class Ide2EnvironmentInitializationFilter implements Filter {
             context.setVariable(EnvironmentContext.MASTERHOST_PORT, request.getServerPort());
             context.setVariable(EnvironmentContext.MASTERHOST_URL, ub.build().toString());
             context.setVariable(EnvironmentContext.WORKSPACE_URL,
-                                ub.replacePath("/ide/").path(context.getWorkspaceName()).build().toString());
+                                ub.replacePath("/ws/").path(context.getWorkspaceName()).build().toString());
             context.setVariable(EnvironmentContext.GIT_SERVER, "git");
             chain.doFilter(request, response);
         } finally {
