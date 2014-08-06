@@ -332,7 +332,7 @@ public class Utils {
 
             Map<String, ValueData> m = treatAsMap(value.getAll().get(0));
             return m.get(ReadBasedMetric.REGISTERED_USER).equals(LongValueData.DEFAULT);
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new IllegalStateException("Can not check user " + user, e);
         }
     }
@@ -364,7 +364,7 @@ public class Utils {
             Map<String, ValueData> m = treatAsMap(value.getAll().get(0));
             return m.get(ReadBasedMetric.PERSISTENT_WS).equals(LongValueData.DEFAULT);
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new IllegalStateException("Can not check workspace " + workspace, e);
         }
     }
