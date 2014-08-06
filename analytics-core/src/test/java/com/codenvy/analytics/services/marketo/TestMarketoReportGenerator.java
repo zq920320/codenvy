@@ -25,6 +25,8 @@ import com.codenvy.analytics.metrics.users.UsersStatisticsList;
 import com.codenvy.analytics.services.AbstractUsersActivityTest;
 import com.codenvy.analytics.services.view.CSVFileHolder;
 
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.io.File;
@@ -44,8 +46,20 @@ public class TestMarketoReportGenerator extends AbstractUsersActivityTest {
         return HEADERS;
     }
 
-    @Test(priority=1)
+    @BeforeClass
+    public void prepare() throws Exception {
+    }
+
+    @BeforeMethod
+    public void clearDatabase() {
+        super.clearDatabase();
+    }
+
+    @Test
     public void testWholePeriod() throws Exception {
+        computeStatistics("20131101");
+        computeStatistics("20131102");
+
         MarketoReportGenerator job = Injector.getInstance(MarketoReportGenerator.class);
         CSVFileHolder cleaner = Injector.getInstance(CSVFileHolder.class);
 
@@ -111,8 +125,11 @@ public class TestMarketoReportGenerator extends AbstractUsersActivityTest {
         assertEquals("12", user3Data.get(HEADERS.get(MarketoReportGenerator.POINTS)));
     }
 
-    @Test(priority=2)
+    @Test
     public void testUpdate() throws Exception {
+        computeStatistics("20131101");
+        computeStatistics("20131102");
+
         computeStatistics("20131103");
 
         MarketoReportGenerator job = Injector.getInstance(MarketoReportGenerator.class);
