@@ -21,7 +21,6 @@ import com.codenvy.api.account.server.dao.Account;
 import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.server.dao.Member;
 import com.codenvy.api.account.server.dao.Subscription;
-import com.codenvy.api.account.server.dao.SubscriptionHistoryEvent;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
@@ -41,6 +40,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -65,16 +65,17 @@ import java.util.Map;
 @Singleton
 public class AccountDaoImpl implements AccountDao {
 
-    private static final Logger LOG                             = LoggerFactory.getLogger(AccountDaoImpl.class);
-    private static final String ACCOUNT_COLLECTION              = "organization.storage.db.account.collection";
-    private static final String SUBSCRIPTION_COLLECTION         = "organization.storage.db.subscription.collection";
-    private static final String MEMBER_COLLECTION               = "organization.storage.db.acc.member.collection";
-    private static final String SUBSCRIPTION_HISTORY_COLLECTION = "organization.storage.db.subscription.history.collection";
+    private static final Logger LOG                                        = LoggerFactory.getLogger(AccountDaoImpl.class);
+    private static final String ACCOUNT_COLLECTION                         = "organization.storage.db.account.collection";
+    private static final String SUBSCRIPTION_COLLECTION                    = "organization.storage.db.subscription.collection";
+    private static final String SUBSCRIPTION_BILLING_PROPERTIES_COLLECTION =
+            "organization.storage.db.subscription.billing_properties.collection";
+    private static final String MEMBER_COLLECTION                          = "organization.storage.db.acc.member.collection";
 
     private final DBCollection accountCollection;
     private final DBCollection subscriptionCollection;
     private final DBCollection memberCollection;
-    private final DBCollection subscriptionHistoryCollection;
+    private final DBCollection subscriptionBillingPropertiesCollection;
     private final WorkspaceDao workspaceDao;
 
     @Inject
@@ -83,22 +84,17 @@ public class AccountDaoImpl implements AccountDao {
                           @Named(ACCOUNT_COLLECTION) String accountCollectionName,
                           @Named(SUBSCRIPTION_COLLECTION) String subscriptionCollectionName,
                           @Named(MEMBER_COLLECTION) String memberCollectionName,
-                          @Named(SUBSCRIPTION_HISTORY_COLLECTION) String subscriptionHistoryCollectionName) {
+                          @Named(SUBSCRIPTION_BILLING_PROPERTIES_COLLECTION) String subscriptionBillingPropertiesCollectionName) {
         accountCollection = db.getCollection(accountCollectionName);
         accountCollection.ensureIndex(new BasicDBObject("id", 1), new BasicDBObject("unique", true));
         accountCollection.ensureIndex(new BasicDBObject("name", 1));
         subscriptionCollection = db.getCollection(subscriptionCollectionName);
         subscriptionCollection.ensureIndex(new BasicDBObject("id", 1), new BasicDBObject("unique", true));
         subscriptionCollection.ensureIndex(new BasicDBObject("accountId", 1));
+        subscriptionBillingPropertiesCollection = db.getCollection(subscriptionBillingPropertiesCollectionName);
+        subscriptionBillingPropertiesCollection.ensureIndex(new BasicDBObject("subscriptionId", 1));
         memberCollection = db.getCollection(memberCollectionName);
         memberCollection.ensureIndex(new BasicDBObject("members.accountId", 1));
-        subscriptionHistoryCollection = db.getCollection(subscriptionHistoryCollectionName);
-        subscriptionHistoryCollection.ensureIndex(new BasicDBObject("id", 1), new BasicDBObject("unique", true));
-        subscriptionHistoryCollection.ensureIndex(new BasicDBObject("userId", 1));
-        subscriptionHistoryCollection.ensureIndex(new BasicDBObject("type", 1));
-        subscriptionHistoryCollection.ensureIndex(new BasicDBObject("subscription.accountId", 1));
-        subscriptionHistoryCollection.ensureIndex(new BasicDBObject("subscription.serviceId", 1));
-        subscriptionHistoryCollection.ensureIndex(new BasicDBObject("subscription.properties.codenvy:trial", 1));
         this.workspaceDao = workspaceDao;
     }
 
@@ -336,10 +332,10 @@ public class AccountDaoImpl implements AccountDao {
     @Override
     public void addSubscription(Subscription subscription) throws NotFoundException, ConflictException, ServerException {
         try {
+            ensureConsistency(subscription);
             if (null == accountCollection.findOne(new BasicDBObject("id", subscription.getAccountId()))) {
                 throw new NotFoundException("Account not found " + subscription.getAccountId());
             }
-            ensureConsistency(subscription);
             subscriptionCollection.save(toDBObject(subscription));
         } catch (MongoException me) {
             throw new ServerException(me.getMessage(), me);
@@ -373,30 +369,6 @@ public class AccountDaoImpl implements AccountDao {
     }
 
     @Override
-    public void addSubscriptionHistoryEvent(SubscriptionHistoryEvent historyEvent) throws ServerException, ConflictException {
-        try {
-            ensureConsistency(historyEvent);
-            subscriptionHistoryCollection.save(toDBObject(historyEvent));
-        } catch (MongoException e) {
-            throw new ServerException(e.getMessage(), e);
-        }
-    }
-
-    @Override
-    public List<SubscriptionHistoryEvent> getSubscriptionHistoryEvents(SubscriptionHistoryEvent searchEvent) throws ServerException {
-        DBObject query = getSearchQueryForHistoryEvent(searchEvent);
-        List<SubscriptionHistoryEvent> result = new ArrayList<>();
-        try (DBCursor events = subscriptionHistoryCollection.find(query)) {
-            for (DBObject event : events) {
-                result.add(toSubscriptionHistoryEvent(event));
-            }
-            return result;
-        } catch (MongoException e) {
-            throw new ServerException(e.getMessage(), e);
-        }
-    }
-
-    @Override
     public List<Subscription> getSubscriptions() throws ServerException {
         try (DBCursor subscriptions = subscriptionCollection.find()) {
             final ArrayList<Subscription> result = new ArrayList<>(subscriptions.size());
@@ -409,45 +381,46 @@ public class AccountDaoImpl implements AccountDao {
         }
     }
 
-    private DBObject getSearchQueryForHistoryEvent(SubscriptionHistoryEvent searchEvent) {
-        final BasicDBObject query = new BasicDBObject();
-        if (searchEvent.getId() != null) {
-            query.put("id", searchEvent.getId());
+    @Override
+    public void saveBillingProperties(String subscriptionId, Map<String, String> billingProperties)
+            throws ServerException, NotFoundException {
+        try {
+            if (null == subscriptionCollection.findOne(new BasicDBObject("id", subscriptionId))) {
+                throw new NotFoundException("Subscription not found " + subscriptionId);
+            }
+            subscriptionBillingPropertiesCollection.save(toDBObject(subscriptionId, billingProperties));
+        } catch (MongoException me) {
+            throw new ServerException(me.getMessage(), me);
         }
-        if (searchEvent.getUserId() != null) {
-            query.put("userId", searchEvent.getUserId());
-        }
-        if (searchEvent.getType() != null) {
-            query.put("type", searchEvent.getType().toString());
-        }
-        if (searchEvent.getTransactionId() != null) {
-            query.put("transactionId", searchEvent.getTransactionId());
-        }
-        if (searchEvent.getSubscription() != null) {
-            String subscriptionPrefix = "subscription.";
-            Subscription subscription = searchEvent.getSubscription();
-            if (subscription.getId() != null) {
-                query.put(subscriptionPrefix + "id", subscription.getId());
+    }
+
+    @Override
+    public Map<String, String> getBillingProperties(String subscriptionId) throws ServerException {
+        try {
+            final DBObject billingProperties = subscriptionBillingPropertiesCollection.findOne(new BasicDBObject("subscriptionId", subscriptionId));
+            if (null == billingProperties) {
+                return Collections.emptyMap();
             }
-            if (subscription.getAccountId() != null) {
-                query.put(subscriptionPrefix + "accountId", subscription.getAccountId());
-            }
-            if (subscription.getServiceId() != null) {
-                query.put(subscriptionPrefix + "serviceId", subscription.getServiceId());
-            }
-            if (subscription.getState() != null) {
-                query.put(subscriptionPrefix + "state", subscription.getState().toString());
-            }
-            final Map<String, String> properties = subscription.getProperties();
-            if (properties != null && !properties.isEmpty()) {
-                String propertiesPrefix = "properties.";
-                for (Map.Entry<String, String> entry : properties.entrySet()) {
-                    query.put(subscriptionPrefix + propertiesPrefix + entry.getKey(), entry.getValue());
-                }
-            }
+            @SuppressWarnings("unchecked")
+            final HashMap<String, String> result = new HashMap(billingProperties.toMap());
+            result.remove("_id");
+            return result;
+        } catch (MongoException me) {
+            throw new ServerException(me.getMessage(), me);
         }
 
-        return query;
+    }
+
+    @Override
+    public void removeBillingProperties(String subscriptionId) throws ServerException, NotFoundException {
+        try {
+            if (null == subscriptionBillingPropertiesCollection.findOne(new BasicDBObject("subscriptionId", subscriptionId))) {
+                throw new NotFoundException("Billing properties of subscription " + subscriptionId + " not found ");
+            }
+            subscriptionBillingPropertiesCollection.remove(new BasicDBObject("subscriptionId", subscriptionId));
+        } catch (MongoException me) {
+            throw new ServerException(me.getMessage(), me);
+        }
     }
 
     /**
@@ -457,32 +430,17 @@ public class AccountDaoImpl implements AccountDao {
      *         when end date goes before start date or subscription state is not set
      */
     private void ensureConsistency(Subscription subscription) throws ConflictException {
-        if (subscription.getStartDate() >= subscription.getEndDate()) {
-            throw new ConflictException("Subscription startDate should go before endDate");
+        if (subscription.getPlanId() == null) {
+            throw new ConflictException("Plan id is missing");
         }
-        if (null == subscription.getState()) {
-            throw new ConflictException("Subscription state is missing");
+        if (subscription.getServiceId() == null) {
+            throw new ConflictException("Plan service id is missing");
         }
-    }
-
-    /**
-     * Check that subscription history event object has legal state
-     *
-     * @throws com.codenvy.api.core.ConflictException
-     *         when end date goes before start date
-     */
-    private void ensureConsistency(SubscriptionHistoryEvent historyEvent) throws ConflictException {
-        if (null == historyEvent.getType()) {
-            throw new ConflictException("SubscriptionHistoryEvent type is missing");
+        if (subscription.getAccountId() == null) {
+            throw new ConflictException("Plan account id is missing");
         }
-        if (null == historyEvent.getId()) {
-            throw new ConflictException("SubscriptionHistoryEvent id is missing");
-        }
-        if (historyEvent.getTime() == 0) {
-            throw new ConflictException("SubscriptionHistoryEvent time can't be 0");
-        }
-        if (null == historyEvent.getUserId()) {
-            throw new ConflictException("SubscriptionHistoryEvent userId is missing");
+        if (subscription.getId() == null) {
+            throw new ConflictException("Subscription id is missing");
         }
     }
 
@@ -505,24 +463,16 @@ public class AccountDaoImpl implements AccountDao {
         properties.putAll(subscription.getProperties());
         return new BasicDBObject().append("id", subscription.getId())
                                   .append("accountId", subscription.getAccountId())
+                                  .append("planId", subscription.getPlanId())
                                   .append("serviceId", subscription.getServiceId())
-                                  .append("state", subscription.getState().toString())
-                                  .append("startDate", subscription.getStartDate())
-                                  .append("endDate", subscription.getEndDate())
                                   .append("properties", properties);
     }
 
-    /**
-     * Converts subscription history event to Database ready-to-use object
-     */
-    DBObject toDBObject(SubscriptionHistoryEvent event) {
-        return new BasicDBObject().append("id", event.getId())
-                                  .append("userId", event.getUserId())
-                                  .append("time", event.getTime())
-                                  .append("amount", event.getAmount())
-                                  .append("type", event.getType().toString())
-                                  .append("transactionId", event.getTransactionId())
-                                  .append("subscription", toDBObject(event.getSubscription()));
+    DBObject toDBObject(String subscriptionId, Map<String, String> billingProperties) {
+        final BasicDBObject properties = new BasicDBObject();
+        properties.append("subscriptionId", subscriptionId);
+        properties.putAll(billingProperties);
+        return properties;
     }
 
     /**
@@ -545,9 +495,7 @@ public class AccountDaoImpl implements AccountDao {
         return new Subscription().withId(basicSubscriptionObj.getString("id"))
                                  .withAccountId(basicSubscriptionObj.getString("accountId"))
                                  .withServiceId(basicSubscriptionObj.getString("serviceId"))
-                                 .withState(Subscription.State.valueOf(basicSubscriptionObj.getString("state")))
-                                 .withStartDate(basicSubscriptionObj.getLong("startDate"))
-                                 .withEndDate(basicSubscriptionObj.getLong("endDate"))
+                                 .withPlanId(basicSubscriptionObj.getString("planId"))
                                  .withProperties(properties);
     }
 
@@ -564,20 +512,6 @@ public class AccountDaoImpl implements AccountDao {
         return new Member().withAccountId(basicMemberObj.getString("accountId"))
                            .withUserId(basicMemberObj.getString("userId"))
                            .withRoles(roles);
-    }
-
-    /**
-     * Converts database object to subscription history event ready-to-use object
-     */
-    SubscriptionHistoryEvent toSubscriptionHistoryEvent(Object eventObj) {
-        final BasicDBObject basicEventObj = (BasicDBObject)eventObj;
-        return new SubscriptionHistoryEvent().withId(basicEventObj.getString("id"))
-                                             .withUserId(basicEventObj.getString("userId"))
-                                             .withTime(basicEventObj.getLong("time"))
-                                             .withAmount(basicEventObj.getDouble("amount"))
-                                             .withTransactionId(basicEventObj.getString("transactionId"))
-                                             .withType(SubscriptionHistoryEvent.Type.valueOf(basicEventObj.getString("type")))
-                                             .withSubscription(toSubscription(basicEventObj.get("subscription")));
     }
 
     /**

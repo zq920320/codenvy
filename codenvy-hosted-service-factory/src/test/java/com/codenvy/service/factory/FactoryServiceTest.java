@@ -22,7 +22,6 @@ import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.server.dao.Subscription;
 import com.codenvy.api.core.ApiException;
 import com.codenvy.api.core.ConflictException;
-import com.codenvy.api.core.ServerException;
 
 import org.mockito.Mock;
 import org.mockito.testng.MockitoTestNGListener;
@@ -35,6 +34,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
@@ -72,10 +72,11 @@ public class FactoryServiceTest {
     public void beforeCreateSubscription() throws ApiException {
         final String accountId = "acc1";
         final Map<String, String> properties = new HashMap<>(1);
-        properties.put("TariffPlan", "monthly");
         final Subscription newSubscription = new Subscription().withServiceId(service.getServiceId())
                                                                .withAccountId(accountId)
                                                                .withProperties(properties);
         service.beforeCreateSubscription(newSubscription);
+
+        verify(accountDao).getSubscriptions(accountId);
     }
 }

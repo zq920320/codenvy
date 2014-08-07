@@ -20,12 +20,11 @@ package com.codenvy.api.dao.mongo;
 import com.codenvy.api.account.server.dao.Account;
 import com.codenvy.api.account.server.dao.Member;
 import com.codenvy.api.account.server.dao.Subscription;
-import com.codenvy.api.account.server.dao.SubscriptionHistoryEvent;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
-import com.codenvy.api.workspace.server.dao.WorkspaceDao;
 import com.codenvy.api.workspace.server.dao.Workspace;
+import com.codenvy.api.workspace.server.dao.WorkspaceDao;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
@@ -37,22 +36,16 @@ import org.mockito.Mock;
 import org.mockito.testng.MockitoTestNGListener;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.DataProvider;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.codenvy.api.account.server.dao.Subscription.State.ACTIVE;
-import static com.codenvy.api.account.server.dao.SubscriptionHistoryEvent.Type.CREATE;
-import static com.codenvy.api.account.server.dao.SubscriptionHistoryEvent.Type.UPDATE;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -80,10 +73,7 @@ public class AccountDaoImplTest extends BaseDaoTest {
     private static final String SUBSCRIPTION_HISTORY_COLL_NAME = "history";
     private static final String SUBSCRIPTION_ID                = "Subscription0xfffffff";
     private static final String SERVICE_NAME                   = "builder";
-    private static final long   START_DATE                     = System.currentTimeMillis();
-    private static final long   END_DATE                       = START_DATE + /* 1 day ms */ 86_400_000;
-    private static final String SUBSCRIPTION_HISTORY_EVENT_ID  = "event0xfffffff";
-    private static final String TRANSACTION_ID                 = "transaction_id";
+    private static final String PLAN_ID                        = "plan_id";
     private static final Subscription        defaultSubscription;
     private static final Map<String, String> PROPS;
 
@@ -100,11 +90,9 @@ public class AccountDaoImplTest extends BaseDaoTest {
         PROPS.put("key2", "value2");
         defaultSubscription = new Subscription().withId(SUBSCRIPTION_ID)
                                                 .withAccountId(ACCOUNT_ID)
+                                                .withPlanId(PLAN_ID)
                                                 .withServiceId(SERVICE_NAME)
-                                                .withStartDate(START_DATE)
-                                                .withEndDate(END_DATE)
-                                                .withProperties(PROPS)
-                                                .withState(ACTIVE);
+                                                .withProperties(PROPS);
     }
 
     @BeforeMethod
@@ -351,11 +339,9 @@ public class AccountDaoImplTest extends BaseDaoTest {
 
         Subscription ss = new Subscription().withId(SUBSCRIPTION_ID)
                                             .withAccountId(ACCOUNT_ID)
+                                            .withPlanId(PLAN_ID)
                                             .withServiceId(SERVICE_NAME)
-                                            .withStartDate(START_DATE)
-                                            .withEndDate(END_DATE)
-                                            .withProperties(PROPS)
-                                            .withState(ACTIVE);
+                                            .withProperties(PROPS);
 
         accountDao.addSubscription(ss);
 
@@ -367,8 +353,7 @@ public class AccountDaoImplTest extends BaseDaoTest {
             Subscription subscription = accountDao.toSubscription(currentSubscription);
             assertEquals(subscription.getServiceId(), SERVICE_NAME);
             assertEquals(subscription.getAccountId(), ACCOUNT_ID);
-            assertEquals(subscription.getStartDate(), START_DATE);
-            assertEquals(subscription.getEndDate(), END_DATE);
+            assertEquals(subscription.getPlanId(), PLAN_ID);
             assertEquals(subscription.getProperties(), PROPS);
         }
     }
@@ -382,21 +367,14 @@ public class AccountDaoImplTest extends BaseDaoTest {
                 .withId(SUBSCRIPTION_ID)
                 .withAccountId(ACCOUNT_ID)
                 .withServiceId(SERVICE_NAME)
-                .withStartDate(START_DATE)
-                .withEndDate(END_DATE)
-                .withProperties(new HashMap<String, String>())
-                .withState(Subscription.State.ACTIVE);
+                .withPlanId(PLAN_ID)
+                .withProperties(new HashMap<String, String>());
 
         subscriptionCollection.insert(new BasicDBObject().append("id", SUBSCRIPTION_ID)
                                                          .append("accountId", ACCOUNT_ID)
+                                                         .append("planId", PLAN_ID)
                                                          .append("serviceId", SERVICE_NAME)
-                                                         .append("state", Subscription.State.ACTIVE.toString())
-                                                         .append("properties", new BasicDBObject())
-                                                         .append("startDate", START_DATE)
-                                                         .append("endDate", END_DATE));
-
-        ss.setStartDate(START_DATE + 1);
-        ss.setEndDate(END_DATE - 1);
+                                                         .append("properties", new BasicDBObject()));
 
         accountDao.updateSubscription(ss);
 
@@ -405,12 +383,11 @@ public class AccountDaoImplTest extends BaseDaoTest {
     }
 
     @Test(expectedExceptions = NotFoundException.class)
-    public void shouldThrowNotFoundExceptionIfSubscriptionToUpdateDoesNotExist() throws Exception {
+    public void shouldThrowNotFoundExceptionIfSubscriptionDoesNotExist() throws Exception {
         Subscription ss = new Subscription().withId(SUBSCRIPTION_ID)
                                             .withAccountId(ACCOUNT_ID)
-                                            .withServiceId(SERVICE_NAME)
-                                            .withStartDate(START_DATE)
-                                            .withEndDate(END_DATE);
+                                            .withPlanId(PLAN_ID)
+                                            .withServiceId(SERVICE_NAME);
 
         accountDao.updateSubscription(ss);
     }
@@ -420,9 +397,8 @@ public class AccountDaoImplTest extends BaseDaoTest {
             throws ServerException, NotFoundException, ConflictException {
         Subscription ss = new Subscription().withId(SUBSCRIPTION_ID)
                                             .withAccountId(ACCOUNT_ID)
-                                            .withServiceId(SERVICE_NAME)
-                                            .withStartDate(START_DATE)
-                                            .withEndDate(END_DATE);
+                                            .withPlanId(PLAN_ID)
+                                            .withServiceId(SERVICE_NAME);
 
         doThrow(new MongoException("")).when(subscriptionCollection).findOne(new BasicDBObject("id", SUBSCRIPTION_ID));
         accountDao.updateSubscription(ss);
@@ -434,16 +410,12 @@ public class AccountDaoImplTest extends BaseDaoTest {
         subscriptionCollection.insert(new BasicDBObject().append("id", SUBSCRIPTION_ID)
                                                          .append("accountId", ACCOUNT_ID)
                                                          .append("serviceId", SERVICE_NAME)
-                                                         .append("startDate", START_DATE)
-                                                         .append("endDate", END_DATE)
-                                                         .append("state", Subscription.State.ACTIVE.toString())
+                                                         .append("planId", PLAN_ID)
                                                          .append("properties", new BasicDBObject()));
         Subscription ss = new Subscription().withId(SUBSCRIPTION_ID)
                                             .withAccountId(ACCOUNT_ID)
                                             .withServiceId(SERVICE_NAME)
-                                            .withStartDate(START_DATE)
-                                            .withEndDate(END_DATE)
-                                            .withState(Subscription.State.ACTIVE)
+                                            .withPlanId(PLAN_ID)
                                             .withProperties(new HashMap<String, String>());
         doThrow(new MongoException("")).when(subscriptionCollection).update(any(DBObject.class), any(DBObject.class));
         accountDao.updateSubscription(ss);
@@ -457,41 +429,7 @@ public class AccountDaoImplTest extends BaseDaoTest {
         Subscription subscription = new Subscription().withId(SUBSCRIPTION_ID)
                                                       .withAccountId("DO_NOT_EXIST")
                                                       .withServiceId(SERVICE_NAME)
-                                                      .withStartDate(START_DATE)
-                                                      .withEndDate(END_DATE)
-                                                      .withProperties(PROPS);
-
-        accountDao.addSubscription(subscription);
-    }
-
-    @Test(expectedExceptions = ConflictException.class, expectedExceptionsMessageRegExp = "Subscription state is " +
-                                                                                          "missing")
-    public void shouldThrowConflictExceptionOnAddSubscriptionWithoutState() throws ServerException,
-                                                                                   ConflictException, NotFoundException {
-        collection.insert(new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME).append("owner", ACCOUNT_OWNER));
-
-        Subscription subscription = new Subscription().withId(SUBSCRIPTION_ID)
-                                                      .withAccountId(ACCOUNT_ID)
-                                                      .withServiceId(SERVICE_NAME)
-                                                      .withStartDate(START_DATE)
-                                                      .withEndDate(END_DATE)
-                                                      .withProperties(PROPS);
-
-        accountDao.addSubscription(subscription);
-    }
-
-    @Test(expectedExceptions = ConflictException.class, expectedExceptionsMessageRegExp = "Subscription startDate " +
-                                                                                          "should go before endDate")
-    public void shouldThrowConflictExceptionOnAddSubscriptionIfEndDateIsSmallerThanStartSate() throws ServerException,
-                                                                                                      ConflictException, NotFoundException {
-        collection.insert(new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME).append("owner", ACCOUNT_OWNER));
-
-        Subscription subscription = new Subscription().withId(SUBSCRIPTION_ID)
-                                                      .withAccountId(ACCOUNT_ID)
-                                                      .withServiceId(SERVICE_NAME)
-                                                      .withStartDate(START_DATE)
-                                                      .withEndDate(START_DATE - 1)
-                                                      .withState(ACTIVE)
+                                                      .withPlanId(PLAN_ID)
                                                       .withProperties(PROPS);
 
         accountDao.addSubscription(subscription);
@@ -504,10 +442,8 @@ public class AccountDaoImplTest extends BaseDaoTest {
         Subscription subscription = new Subscription().withId(SUBSCRIPTION_ID)
                                                       .withAccountId(ACCOUNT_ID)
                                                       .withServiceId(SERVICE_NAME)
-                                                      .withStartDate(START_DATE)
-                                                      .withEndDate(END_DATE)
-                                                      .withProperties(PROPS)
-                                                      .withState(ACTIVE);
+                                                      .withPlanId(PLAN_ID)
+                                                      .withProperties(PROPS);
         accountDao.addSubscription(subscription);
     }
 
@@ -517,10 +453,8 @@ public class AccountDaoImplTest extends BaseDaoTest {
         Subscription subscription = new Subscription().withId(SUBSCRIPTION_ID)
                                                       .withAccountId(ACCOUNT_ID)
                                                       .withServiceId(SERVICE_NAME)
-                                                      .withStartDate(START_DATE)
-                                                      .withEndDate(END_DATE)
-                                                      .withProperties(PROPS)
-                                                      .withState(ACTIVE);
+                                                      .withPlanId(PLAN_ID)
+                                                      .withProperties(PROPS);
         collection.insert(new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME)
                                                              .append("owner", ACCOUNT_OWNER));
 
@@ -535,16 +469,12 @@ public class AccountDaoImplTest extends BaseDaoTest {
 
         Subscription ss1 = new Subscription().withAccountId(ACCOUNT_ID)
                                              .withServiceId(SERVICE_NAME)
-                                             .withStartDate(START_DATE)
-                                             .withEndDate(END_DATE)
                                              .withProperties(PROPS)
-                                             .withState(ACTIVE);
+                                             .withPlanId(PLAN_ID);
         Subscription ss2 = new Subscription().withAccountId(ACCOUNT_ID)
                                              .withServiceId(SERVICE_NAME)
-                                             .withStartDate(START_DATE)
-                                             .withEndDate(END_DATE)
                                              .withProperties(PROPS)
-                                             .withState(ACTIVE);
+                                             .withPlanId(PLAN_ID);
 
         subscriptionCollection.save(accountDao.toDBObject(ss1));
         subscriptionCollection.save(accountDao.toDBObject(ss2));
@@ -589,10 +519,8 @@ public class AccountDaoImplTest extends BaseDaoTest {
         Subscription ss = new Subscription().withId(SUBSCRIPTION_ID)
                                             .withAccountId(ACCOUNT_ID)
                                             .withServiceId(SERVICE_NAME)
-                                            .withStartDate(START_DATE)
-                                            .withEndDate(END_DATE)
                                             .withProperties(PROPS)
-                                            .withState(ACTIVE);
+                                            .withPlanId(PLAN_ID);
 
         subscriptionCollection.save(accountDao.toDBObject(ss));
 
@@ -626,10 +554,8 @@ public class AccountDaoImplTest extends BaseDaoTest {
         Subscription ss = new Subscription().withId(SUBSCRIPTION_ID)
                                             .withAccountId(ACCOUNT_ID)
                                             .withServiceId(SERVICE_NAME)
-                                            .withStartDate(START_DATE)
-                                            .withEndDate(END_DATE)
                                             .withProperties(PROPS)
-                                            .withState(ACTIVE);
+                                            .withPlanId(PLAN_ID);
 
         subscriptionCollection.save(accountDao.toDBObject(ss));
 
@@ -646,10 +572,8 @@ public class AccountDaoImplTest extends BaseDaoTest {
         Subscription subscription = new Subscription().withId(SUBSCRIPTION_ID)
                                                       .withAccountId(ACCOUNT_ID)
                                                       .withServiceId(SERVICE_NAME)
-                                                      .withStartDate(START_DATE)
-                                                      .withEndDate(END_DATE)
                                                       .withProperties(PROPS)
-                                                      .withState(ACTIVE);
+                                                      .withPlanId(PLAN_ID);
 
         subscriptionCollection.save(accountDao.toDBObject(subscription));
 
@@ -672,170 +596,15 @@ public class AccountDaoImplTest extends BaseDaoTest {
     }
 
     @Test
-    public void shouldBeAbleToAddSubscriptionHistoryEvent() throws ServerException, ConflictException {
-        final long time = System.currentTimeMillis();
-        SubscriptionHistoryEvent event = new SubscriptionHistoryEvent().withId(SUBSCRIPTION_HISTORY_EVENT_ID)
-                                                                       .withTime(time)
-                                                                       .withUserId(USER_ID)
-                                                                       .withType(CREATE)
-                                                                       .withAmount(12D)
-                                                                       .withTransactionId("transaction_id")
-                                                                       .withSubscription(defaultSubscription);
-
-        accountDao.addSubscriptionHistoryEvent(event);
-
-        DBObject res = subscriptionHistoryCollection.findOne(new BasicDBObject("id", SUBSCRIPTION_HISTORY_EVENT_ID));
-        assertNotNull(res);
-
-        SubscriptionHistoryEvent actual = accountDao.toSubscriptionHistoryEvent(res);
-        assertEquals(actual.getAmount(), 12D);
-        assertEquals(actual.getId(), SUBSCRIPTION_HISTORY_EVENT_ID);
-        assertEquals(actual.getTransactionId(), TRANSACTION_ID);
-        assertEquals(actual.getType(), CREATE);
-        assertEquals(actual.getUserId(), USER_ID);
-        assertEquals(actual.getTime(), time);
-        assertEquals(actual.getSubscription(), defaultSubscription);
-    }
-
-    @Test(expectedExceptions = ServerException.class)
-    public void shouldThrowServerExceptionOnAddSubscriptionHistoryEventIfMongoExceptionOccurs() throws ServerException, ConflictException {
-        SubscriptionHistoryEvent event = new SubscriptionHistoryEvent().withId("id")
-                                                                       .withTime(System.currentTimeMillis())
-                                                                       .withUserId("userID")
-                                                                       .withType(CREATE)
-                                                                       .withAmount(12D)
-                                                                       .withTransactionId(TRANSACTION_ID)
-                                                                       .withSubscription(defaultSubscription);
-
-        doThrow(new MongoException("")).when(subscriptionHistoryCollection).save(any(DBObject.class));
-        accountDao.addSubscriptionHistoryEvent(event);
-    }
-
-    @Test(expectedExceptions = ConflictException.class, dataProvider = "badSubscriptionHistoryEventProvider")
-    public void shouldThrowConflictExceptionOnAddSubscriptionHistoryEventIfMongoExceptionOccurs(SubscriptionHistoryEvent event)
-            throws ServerException, ConflictException {
-        accountDao.addSubscriptionHistoryEvent(event);
-    }
-
-    @DataProvider(name = "badSubscriptionHistoryEventProvider")
-    public Object[][] badSubscriptionHistoryEventProvider() {
-        SubscriptionHistoryEvent event = new SubscriptionHistoryEvent().withId(SUBSCRIPTION_HISTORY_EVENT_ID)
-                                                                       .withTime(System.currentTimeMillis())
-                                                                       .withUserId(USER_ID)
-                                                                       .withType(CREATE)
-                                                                       .withAmount(12D)
-                                                                       .withTransactionId(TRANSACTION_ID)
-                                                                       .withSubscription(defaultSubscription);
-        return new Object[][]{{new SubscriptionHistoryEvent(event).withUserId(null)}, {new SubscriptionHistoryEvent(event).withTime(0)},
-                              {new SubscriptionHistoryEvent(event).withId(null)}, {new SubscriptionHistoryEvent(event).withType(null)}};
-    }
-
-    @Test
-    public void shouldReturnAllEventsOnGetSubscriptionHistoryEventsWithOutFilledParameters() throws ServerException, ConflictException {
-        List<SubscriptionHistoryEvent> expected = new ArrayList<>();
-        SubscriptionHistoryEvent event = new SubscriptionHistoryEvent().withId("id")
-                                                                       .withTime(System.currentTimeMillis())
-                                                                       .withUserId("userID").withType(CREATE)
-                                                                       .withAmount(12D)
-                                                                       .withTransactionId(TRANSACTION_ID)
-                                                                       .withSubscription(defaultSubscription);
-
-        expected.add(event);
-        expected.add(new SubscriptionHistoryEvent(event).withType(UPDATE));
-        for (SubscriptionHistoryEvent event1 : expected) {
-            subscriptionHistoryCollection.save(accountDao.toDBObject(event1));
-        }
-
-        List<SubscriptionHistoryEvent> actual =
-                accountDao.getSubscriptionHistoryEvents(new SubscriptionHistoryEvent());
-
-        assertEquals(actual, expected);
-    }
-
-    @Test
-    public void shouldReturnMatchedEventOnGetSubscriptionHistoryEventsWithFilledId() throws ServerException, ConflictException {
-        SubscriptionHistoryEvent event = new SubscriptionHistoryEvent().withId(SUBSCRIPTION_HISTORY_EVENT_ID)
-                                                                       .withTime(System.currentTimeMillis())
-                                                                       .withUserId(USER_ID)
-                                                                       .withType(CREATE)
-                                                                       .withAmount(12D)
-                                                                       .withTransactionId(TRANSACTION_ID)
-                                                                       .withSubscription(defaultSubscription);
-
-        subscriptionHistoryCollection.save(accountDao.toDBObject(event));
-
-        subscriptionHistoryCollection.save(accountDao.toDBObject(new SubscriptionHistoryEvent(event)
-                                                                         .withId("another id")));
-
-        List<SubscriptionHistoryEvent> actual =
-                accountDao.getSubscriptionHistoryEvents(
-                        new SubscriptionHistoryEvent().withId("another id"));
-
-        assertEquals(actual, Collections.singletonList(new SubscriptionHistoryEvent(event).withId("another id")));
-    }
-
-    @Test
-    public void shouldReturnMatchedEventOnGetSubscriptionHistoryEventsWithFilledFields() throws ServerException, ConflictException {
-        SubscriptionHistoryEvent event =
-                new SubscriptionHistoryEvent().withId(SUBSCRIPTION_HISTORY_EVENT_ID)
-                                              .withTime(System.currentTimeMillis())
-                                              .withUserId(
-                                                      USER_ID).withType(CREATE).withAmount(12D).withTransactionId(TRANSACTION_ID)
-                                              .withSubscription(defaultSubscription);
-
-        subscriptionHistoryCollection.save(accountDao.toDBObject(event));
-
-        subscriptionHistoryCollection
-                .save(accountDao.toDBObject(new SubscriptionHistoryEvent(event).withId("sub_his_eve_id1").withUserId("another user id")));
-
-        subscriptionHistoryCollection.save(accountDao.toDBObject(
-                new SubscriptionHistoryEvent(event).withId("sub_his_eve_id2").withType(UPDATE)));
-
-        subscriptionHistoryCollection
-                .save(accountDao.toDBObject(
-                        new SubscriptionHistoryEvent(event).withId("sub_his_eve_id3").withTransactionId(TRANSACTION_ID + "1")));
-
-        subscriptionHistoryCollection.save(accountDao.toDBObject(
-                new SubscriptionHistoryEvent(event).withId("sub_his_eve_id4").withSubscription(
-                        new Subscription(defaultSubscription).withAccountId(ACCOUNT_ID + "1"))));
-
-        List<SubscriptionHistoryEvent> actual =
-                accountDao.getSubscriptionHistoryEvents(new SubscriptionHistoryEvent(event).withType(CREATE));
-
-        assertEquals(actual, Collections.singletonList(new SubscriptionHistoryEvent(event)));
-    }
-
-    @Test
-    public void shouldReturnEmptyListOnGetSubscriptionHistoryEventsIfThereIsNoSuchEvents()
-            throws ServerException, ConflictException {
-        List<SubscriptionHistoryEvent> actual = accountDao.getSubscriptionHistoryEvents(new SubscriptionHistoryEvent());
-
-        assertTrue(actual.isEmpty());
-    }
-
-    @Test(expectedExceptions = ServerException.class, expectedExceptionsMessageRegExp = "test message")
-    public void shouldThrowServerExceptionOnGetSubscriptionHistoryEventsIfMongoExceptionIsThrown()
-            throws ServerException, ConflictException {
-        doThrow(new MongoException("test message")).when(subscriptionHistoryCollection)
-                                                   .find(eq(new BasicDBObject("userId", USER_ID)));
-
-        accountDao.getSubscriptionHistoryEvents(new SubscriptionHistoryEvent().withUserId(USER_ID));
-    }
-
-    @Test
     public void shouldBeAbleToGetAllSubscriptions() throws ServerException {
         Subscription ss1 = new Subscription().withAccountId(ACCOUNT_ID)
                                              .withServiceId(SERVICE_NAME)
-                                             .withStartDate(START_DATE)
-                                             .withEndDate(END_DATE)
                                              .withProperties(PROPS)
-                                             .withState(ACTIVE);
+                                             .withPlanId(PLAN_ID);
         Subscription ss2 = new Subscription().withAccountId("ANOTHER" + ACCOUNT_ID)
                                              .withServiceId("ANOTHER" + SERVICE_NAME)
-                                             .withStartDate(1000 + START_DATE)
-                                             .withEndDate(1000 + END_DATE)
                                              .withProperties(PROPS)
-                                             .withState(ACTIVE);
+                                             .withPlanId(PLAN_ID);
 
         subscriptionCollection.save(accountDao.toDBObject(ss1));
         subscriptionCollection.save(accountDao.toDBObject(ss2));

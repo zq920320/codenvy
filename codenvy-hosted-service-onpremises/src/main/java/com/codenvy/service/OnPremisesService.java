@@ -27,58 +27,15 @@ import com.codenvy.api.core.ServerException;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * Service provide functionality of On-premises subscription.
  *
  * @author Sergii Leschenko
+ * @author Alexander Garagatyi
  */
 @Singleton
 public class OnPremisesService extends SubscriptionService {
-
-    private static final Map<TariffEntry, Double> PRICES;
-
-    static {
-        //todo mb move it to (@DynaModule or store in json) and @Inject?
-        PRICES = new HashMap<>();
-
-        PRICES.put(TariffEntry.of("commercial", "5"), 50D);
-        PRICES.put(TariffEntry.of("commercial", "10"), 2000D);
-        PRICES.put(TariffEntry.of("commercial", "25"), 5000D);
-        PRICES.put(TariffEntry.of("commercial", "50"), 10000D);
-        PRICES.put(TariffEntry.of("commercial", "500"), 95000D);
-        PRICES.put(TariffEntry.of("commercial", "2000"), 350000D);
-        PRICES.put(TariffEntry.of("commercial", "10000"), 1600000D);
-        PRICES.put(TariffEntry.of("commercial", "unlimited"), 1920000D);
-
-        PRICES.put(TariffEntry.of("academic", "5"), 25D);
-        PRICES.put(TariffEntry.of("academic", "10"), 1000D);
-        PRICES.put(TariffEntry.of("academic", "25"), 2500D);
-        PRICES.put(TariffEntry.of("academic", "50"), 5000D);
-        PRICES.put(TariffEntry.of("academic", "500"), 47500D);
-        PRICES.put(TariffEntry.of("academic", "2000"), 175000D);
-        PRICES.put(TariffEntry.of("academic", "10000"), 8000000D);
-        PRICES.put(TariffEntry.of("academic", "unlimited"), 960000D);
-
-        PRICES.put(TariffEntry.of("startup", "5"), 10D);
-        PRICES.put(TariffEntry.of("startup", "10"), 20D);
-        PRICES.put(TariffEntry.of("startup", "25"), 50D);
-        PRICES.put(TariffEntry.of("startup", "50"), 100D);
-
-        PRICES.put(TariffEntry.of("openSource", "5"), 0D);
-        PRICES.put(TariffEntry.of("openSource", "10"), 0D);
-        PRICES.put(TariffEntry.of("openSource", "25"), 0D);
-        PRICES.put(TariffEntry.of("openSource", "50"), 0D);
-        PRICES.put(TariffEntry.of("openSource", "500"), 0D);
-        PRICES.put(TariffEntry.of("openSource", "2000"), 0D);
-        PRICES.put(TariffEntry.of("openSource", "10000"), 0D);
-        PRICES.put(TariffEntry.of("openSource", "unlimited"), 0D);
-    }
-
     private final AccountDao accountDao;
 
     @Inject
@@ -98,34 +55,17 @@ public class OnPremisesService extends SubscriptionService {
         if (subscription.getProperties() == null) {
             throw new ConflictException("Subscription properties required");
         }
-
-
-        final Double price = PRICES.get(TariffEntry.of(ensureExistsAndGet("Package", subscription).toLowerCase(),
-                                                       ensureExistsAndGet("Users", subscription).toLowerCase()));
-
-        if (price == null) {
-            throw new NotFoundException("Tariff plan not found");
+        if (subscription.getProperties().get("Package") == null) {
+            throw new ConflictException("Subscription property 'Package' required");
+        }
+        if (subscription.getProperties().get("Users") == null) {
+            throw new ConflictException("Subscription property 'Users' required");
         }
 
         for (Subscription current : accountDao.getSubscriptions(subscription.getAccountId())) {
             if (getServiceId().equals(current.getServiceId())) {
-                if (current.getState().equals(Subscription.State.WAIT_FOR_PAYMENT)) {
-                    throw new ConflictException("Subscription with WAIT_FOR_PAYMENT state already exists");
-                } else {
-                    throw new ConflictException("Subscriptions limit exhausted");
-                }
+                throw new ConflictException("Subscriptions limit exhausted");
             }
-        }
-
-        final Calendar calendar = Calendar.getInstance();
-        subscription.setStartDate(calendar.getTimeInMillis());
-        if ("true".equals((subscription.getProperties().get("codenvy:trial")))) {
-            calendar.add(Calendar.DAY_OF_YEAR, 7);
-            subscription.setEndDate(calendar.getTimeInMillis());
-            subscription.setState(Subscription.State.ACTIVE);
-        } else {
-            calendar.add(Calendar.YEAR, 1);
-            subscription.setEndDate(calendar.getTimeInMillis());
         }
     }
 
@@ -146,64 +86,5 @@ public class OnPremisesService extends SubscriptionService {
     @Override
     public void onUpdateSubscription(Subscription oldSubscription, Subscription newSubscription)
             throws ServerException, NotFoundException, ConflictException {
-    }
-
-    @Override
-    public double tarifficate(Subscription subscription) throws ApiException {
-        final Map<String, String> properties = subscription.getProperties();
-        if (properties == null) {
-            throw new ConflictException("Subscription properties required");
-        }
-        final Double price = PRICES.get(TariffEntry.of(ensureExistsAndGet("Package", subscription).toLowerCase(),
-                                                       ensureExistsAndGet("Users", subscription).toLowerCase()
-                                                      ));
-        if (price == null) {
-            throw new NotFoundException("Tariff not found");
-        }
-        return price;
-    }
-
-    private String ensureExistsAndGet(String propertyName, Subscription src) throws ConflictException {
-        final String target = src.getProperties().get(propertyName);
-        if (target == null) {
-            throw new ConflictException(String.format("Subscription property %s required", propertyName));
-        }
-        return target;
-    }
-
-    private static class TariffEntry {
-
-        static TariffEntry of(String pack, String ram) {
-            return new TariffEntry(pack, ram);
-        }
-
-        final String pack;
-        final String users;
-
-        TariffEntry(String pack, String users) {
-            this.pack = Objects.requireNonNull(pack);
-            this.users = Objects.requireNonNull(users);
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (!(obj instanceof TariffEntry)) {
-                return false;
-            }
-            final TariffEntry other = (TariffEntry)obj;
-            return pack.equals(other.pack) &&
-                   users.equals(other.users);
-        }
-
-        @Override
-        public int hashCode() {
-            int hash = 7;
-            hash = hash * 31 + pack.hashCode();
-            hash = hash * 31 + users.hashCode();
-            return hash;
-        }
     }
 }
