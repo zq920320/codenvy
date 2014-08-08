@@ -46,7 +46,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
- * Implementation of {@link com.codenvy.api.dao.mongo.WorkspaceDaoImpl} based on MongoDB storage.
+ * Implementation of {@link WorkspaceDao} based on MongoDB storage.
  *
  * @author Max Shaposhnik
  * @author Eugene Voevodin
