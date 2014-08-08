@@ -18,9 +18,9 @@
 package com.codenvy.factory;
 
 import com.codenvy.api.account.server.dao.AccountDao;
-import com.codenvy.api.core.ApiException;
 import com.codenvy.api.account.server.dao.Member;
 import com.codenvy.api.account.server.dao.Subscription;
+import com.codenvy.api.core.ApiException;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.api.factory.FactoryBuilder;
@@ -51,7 +51,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.TimeZone;
 
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
@@ -96,15 +95,10 @@ public class FactoryUrlBaseValidatorTest {
         nonencoded.setVcsurl(VALID_REPOSITORY_URL);
         url = nonencoded;
 
-        datetimeFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        datetimeFormatter.setTimeZone(TimeZone.getTimeZone("GMT"));
-
         User user = DtoFactory.getInstance().createDto(User.class).withId("userid");
 
         Subscription subscription = new Subscription()
                 .withServiceId("Factory")
-                .withStartDate(datetimeFormatter.parse("2000-11-21 11:11:11").getTime())
-                .withEndDate(datetimeFormatter.parse("2022-11-30 11:21:15").getTime())
                 .withProperties(Collections.singletonMap("Package", "Tracked"));
         member = new Member().withUserId("userid").withRoles(Arrays.asList("account/owner"));
         when(accountDao.getSubscriptions(ID)).thenReturn(Arrays.asList(subscription));
@@ -231,19 +225,19 @@ public class FactoryUrlBaseValidatorTest {
     }
 
     @Test
-    public void shouldBeAbleToValidateIfOrgIdIsValid() throws  ApiException, ParseException {
+    public void shouldBeAbleToValidateIfOrgIdIsValid() throws ApiException, ParseException {
         validator.validateOrgid(url);
     }
 
     @Test
     public void shouldBeAbleToValidateIfOrgIdAndOwnerAreValid()
-            throws  ApiException, ParseException {
+            throws ApiException, ParseException {
         // when, then
         validator.validateOrgid(url);
     }
 
     @Test(expectedExceptions = ApiException.class)
-    public void shouldNotValidateIfAccountDoesNotExist() throws  ApiException, NotFoundException, ServerException {
+    public void shouldNotValidateIfAccountDoesNotExist() throws ApiException, NotFoundException, ServerException {
         when(accountDao.getMembers(anyString())).thenReturn(Collections.<Member>emptyList());
 
         validator.validateOrgid(url);
@@ -251,9 +245,9 @@ public class FactoryUrlBaseValidatorTest {
 
     @Test(expectedExceptions = ApiException.class, expectedExceptionsMessageRegExp = "You are not authorized to use this orgid.")
     public void shouldNotValidateIfFactoryOwnerIsNotOrgidOwner()
-            throws  ApiException, ParseException,
+            throws ApiException, ParseException,
                    ServerException {
-        Member wronMember  = member;
+        Member wronMember = member;
         wronMember.setUserId("anotheruserid");
         when(accountDao.getMembers(anyString())).thenReturn(Arrays.asList(wronMember));
 
@@ -265,43 +259,14 @@ public class FactoryUrlBaseValidatorTest {
     public void shouldNotValidateIfSubscriptionHasIllegalTariffPlan()
             throws ApiException, ParseException, ServerException, NotFoundException {
         // given
-        Subscription subscription = new Subscription()
-                                              .withServiceId("INVALID")
-                                              .withStartDate(datetimeFormatter.parse("2000-11-21 11:11:11").getTime())
-                                              .withEndDate(datetimeFormatter.parse("2050-11-21 11:11:11").getTime());
-        when(accountDao.getSubscriptions(ID)).thenReturn(Arrays.asList(subscription));
-        // when, then
-        validator.validateTrackedFactoryAndParams(url);
-    }
-
-    @Test(expectedExceptions = ApiException.class)
-    public void shouldNotValidateIfOrgIdIsExpired() throws ApiException, ParseException, ServerException, NotFoundException {
-        // given
-        Subscription subscription = new Subscription()
-                                              .withServiceId("Factory")
-                                              .withStartDate(datetimeFormatter.parse("2000-11-21 11:11:11").getTime())
-                                              .withEndDate(datetimeFormatter.parse("2000-11-21 11:11:11").getTime())
-                                              .withProperties(Collections.singletonMap("Package", "Tracked"));
-        when(accountDao.getSubscriptions(ID)).thenReturn(Arrays.asList(subscription));
-        // when, then
-        validator.validateTrackedFactoryAndParams(url);
-    }
-
-    @Test(expectedExceptions = ApiException.class)
-    public void shouldNotValidateIfOrgIdIsNotValidYet() throws ApiException, ParseException, ServerException, NotFoundException {
-        // given
-        Subscription subscription = new Subscription()
-                                              .withServiceId("Factory")
-                                              .withStartDate(datetimeFormatter.parse("2049-11-21 11:11:11").getTime())
-                                              .withEndDate(datetimeFormatter.parse("2050-11-21 11:11:11").getTime())
-                                              .withProperties(Collections.singletonMap("Package", "Tracked"));
+        Subscription subscription = new Subscription().withServiceId("INVALID");
         when(accountDao.getSubscriptions(ID)).thenReturn(Arrays.asList(subscription));
         // when, then
         validator.validateTrackedFactoryAndParams(url);
     }
 
     @Test
-    public void shouldValidateIfHostNameIsLegal() throws  ApiException, ParseException {
+    public void shouldValidateIfHostNameIsLegal() throws ApiException, ParseException {
         // given
         url.setRestriction(DtoFactory.getInstance().createDto(Restriction.class).withRefererhostname("notcodenvy.com"));
 
@@ -313,7 +278,7 @@ public class FactoryUrlBaseValidatorTest {
 
     @Test
     public void shouldValidateIfRefererIsRelativeAndCurrentHostnameIsEqualToRequiredHostName()
-            throws  ApiException, ParseException {
+            throws ApiException, ParseException {
         // given
         url.setRestriction(DtoFactory.getInstance().createDto(Restriction.class).withRefererhostname("next.codenvy.com"));
 

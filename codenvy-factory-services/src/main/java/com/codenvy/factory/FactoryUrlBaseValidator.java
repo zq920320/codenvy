@@ -26,9 +26,9 @@ import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.api.factory.dto.Factory;
 import com.codenvy.api.factory.dto.Restriction;
+import com.codenvy.api.user.server.dao.Profile;
 import com.codenvy.api.user.server.dao.UserDao;
 import com.codenvy.api.user.server.dao.UserProfileDao;
-import com.codenvy.api.user.server.dao.Profile;
 import com.codenvy.api.user.shared.dto.User;
 
 import java.io.UnsupportedEncodingException;
@@ -43,9 +43,6 @@ import java.util.regex.Pattern;
  * @author Alexander Garagatyi
  */
 public class FactoryUrlBaseValidator {
-
-
-
     private static final Pattern PROJECT_NAME_VALIDATOR = Pattern.compile("^[\\\\\\w\\\\\\d]+[\\\\\\w\\\\\\d_.-]*$");
 
     private AccountDao accountDao;
@@ -60,23 +57,23 @@ public class FactoryUrlBaseValidator {
         this.profileDao = profileDao;
     }
 
-
-    protected void validateVcs(Factory factory) throws ApiException{
+    protected void validateVcs(Factory factory) throws ApiException {
         // check that vcs value is correct (only git is supported for now)
         if (!"git".equals(factory.getVcs())) {
             throw new ConflictException("Parameter 'vcs' has illegal value. Only 'git' is supported for now.");
         }
         if (factory.getVcsurl() == null || factory.getVcsurl().isEmpty()) {
-            throw new ConflictException(String.format(FactoryConstants.PARAMETRIZED_ILLEGAL_PARAMETER_VALUE_MESSAGE, "vcsurl", factory.getVcsurl()));
+            throw new ConflictException(
+                    String.format(FactoryConstants.PARAMETRIZED_ILLEGAL_PARAMETER_VALUE_MESSAGE, "vcsurl", factory.getVcsurl()));
         } else {
             try {
                 URLDecoder.decode(factory.getVcsurl(), "UTF-8");
             } catch (IllegalArgumentException | UnsupportedEncodingException e) {
-                throw new ConflictException(String.format(FactoryConstants.PARAMETRIZED_ILLEGAL_PARAMETER_VALUE_MESSAGE, "vcsurl", factory.getVcsurl()));
+                throw new ConflictException(
+                        String.format(FactoryConstants.PARAMETRIZED_ILLEGAL_PARAMETER_VALUE_MESSAGE, "vcsurl", factory.getVcsurl()));
             }
         }
     }
-
 
     protected void validateProjectName(Factory factory) throws ApiException {
         // validate project name
@@ -93,7 +90,7 @@ public class FactoryUrlBaseValidator {
     }
 
 
-    protected void  validateOrgid(Factory factory) throws ApiException {
+    protected void validateOrgid(Factory factory) throws ApiException {
         // validate orgid
         String orgid = "".equals(factory.getOrgid()) ? null : factory.getOrgid();
         if (null != orgid) {
@@ -101,12 +98,13 @@ public class FactoryUrlBaseValidator {
                 try {
                     User user = userDao.getById(factory.getUserid());
                     Profile profile = profileDao.getById(factory.getUserid());
-                        if (profile.getAttributes() != null && "true".equals(profile.getAttributes().get("temporary")))
-                            throw new ConflictException("Current user is not allowed for using this method.");
+                    if (profile.getAttributes() != null && "true".equals(profile.getAttributes().get("temporary")))
+                        throw new ConflictException("Current user is not allowed for using this method.");
                     boolean isOwner = false;
                     List<Member> members = accountDao.getMembers(orgid);
                     if (members.isEmpty()) {
-                        throw new ConflictException(String.format(FactoryConstants.PARAMETRIZED_ILLEGAL_ORGID_PARAMETER_MESSAGE, factory.getOrgid()));
+                        throw new ConflictException(
+                                String.format(FactoryConstants.PARAMETRIZED_ILLEGAL_ORGID_PARAMETER_MESSAGE, factory.getOrgid()));
                     }
                     for (Member accountMember : members) {
                         if (accountMember.getUserId().equals(user.getId()) && accountMember.getRoles().contains(
@@ -137,23 +135,17 @@ public class FactoryUrlBaseValidator {
                 boolean isTracked = false;
                 for (Subscription one : subscriptions) {
                     if ("Factory".equals(one.getServiceId()) && "Tracked".equals(one.getProperties().get("Package"))) {
-                        Date startTimeDate = new Date(one.getStartDate());
-                        Date endTimeDate = new Date(one.getEndDate());
-                        Date currentDate = new Date();
-                        if (!startTimeDate.before(currentDate) || !endTimeDate.after(currentDate)) {
-                            throw new ConflictException(
-                                    String.format(FactoryConstants.PARAMETRIZED_ILLEGAL_ORGID_PARAMETER_MESSAGE,orgid));
-                        }
                         isTracked = true;
                         break;
                     }
                 }
-                if (!isTracked)
+                if (!isTracked) {
                     throw new ConflictException(
                             String.format(FactoryConstants.PARAMETRIZED_ILLEGAL_ORGID_PARAMETER_MESSAGE, orgid));
+                }
             } catch (NotFoundException | ServerException | NumberFormatException e) {
                 throw new ConflictException(
-                        String.format(FactoryConstants.PARAMETRIZED_ILLEGAL_ORGID_PARAMETER_MESSAGE,orgid));
+                        String.format(FactoryConstants.PARAMETRIZED_ILLEGAL_ORGID_PARAMETER_MESSAGE, orgid));
             }
         }
 
@@ -161,7 +153,8 @@ public class FactoryUrlBaseValidator {
         if (restriction != null) {
             if (0 != restriction.getValidsince()) {
                 if (null == orgid) {
-                    throw new ConflictException(String.format(FactoryConstants.PARAMETRIZED_ILLEGAL_TRACKED_PARAMETER_MESSAGE, null, "validsince"));
+                    throw new ConflictException(
+                            String.format(FactoryConstants.PARAMETRIZED_ILLEGAL_TRACKED_PARAMETER_MESSAGE, null, "validsince"));
                 }
 
                 if (new Date().before(new Date(restriction.getValidsince()))) {
@@ -171,14 +164,14 @@ public class FactoryUrlBaseValidator {
 
             if (0 != restriction.getValiduntil()) {
                 if (null == orgid) {
-                    throw new ConflictException(String.format(FactoryConstants.PARAMETRIZED_ILLEGAL_TRACKED_PARAMETER_MESSAGE, null, "validuntil"));
+                    throw new ConflictException(
+                            String.format(FactoryConstants.PARAMETRIZED_ILLEGAL_TRACKED_PARAMETER_MESSAGE, null, "validuntil"));
                 }
 
                 if (new Date().after(new Date(restriction.getValiduntil()))) {
                     throw new ConflictException(FactoryConstants.ILLEGAL_VALIDUNTIL_MESSAGE);
                 }
             }
-
 
 
             if (restriction.getRestrictbypassword()) {
@@ -192,7 +185,8 @@ public class FactoryUrlBaseValidator {
 
             if (null != restriction.getPassword()) {
                 if (null == orgid) {
-                    throw new ConflictException(String.format(FactoryConstants.PARAMETRIZED_ILLEGAL_TRACKED_PARAMETER_MESSAGE, null, "password"));
+                    throw new ConflictException(
+                            String.format(FactoryConstants.PARAMETRIZED_ILLEGAL_TRACKED_PARAMETER_MESSAGE, null, "password"));
                 }
 
                 // TODO implement
@@ -200,7 +194,8 @@ public class FactoryUrlBaseValidator {
 
             if (0 != restriction.getMaxsessioncount()) {
                 if (null == orgid) {
-                    throw new ConflictException(String.format(FactoryConstants.PARAMETRIZED_ILLEGAL_TRACKED_PARAMETER_MESSAGE, null, "maxsessioncount"));
+                    throw new ConflictException(
+                            String.format(FactoryConstants.PARAMETRIZED_ILLEGAL_TRACKED_PARAMETER_MESSAGE, null, "maxsessioncount"));
                 }
 
                 // TODO implement
@@ -209,7 +204,8 @@ public class FactoryUrlBaseValidator {
 
         if (null != factory.getWelcome()) {
             if (null == orgid) {
-                throw new ConflictException(String.format(FactoryConstants.PARAMETRIZED_ILLEGAL_TRACKED_PARAMETER_MESSAGE, null, "welcome"));
+                throw new ConflictException(
+                        String.format(FactoryConstants.PARAMETRIZED_ILLEGAL_TRACKED_PARAMETER_MESSAGE, null, "welcome"));
             }
         }
     }
