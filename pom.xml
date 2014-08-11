@@ -29,7 +29,7 @@
     <artifactId>codenvy-hosted-infrastructure-parent</artifactId>
     <version>0.6.0-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>Codenvy Hosted :: Parent</name>
+    <name>Codenvy :: Hosted Infrastructure</name>
     <modules>
         <module>codenvy-hosted-invite</module>
         <module>codenvy-hosted-platform-api-impl</module>
