@@ -46,6 +46,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -63,17 +64,17 @@ import static org.testng.Assert.assertTrue;
 @Listeners(value = {MockitoTestNGListener.class})
 public class AccountDaoImplTest extends BaseDaoTest {
 
-    private static final String USER_ID                        = "user12837asjhda823981h";
-    private static final String ACCOUNT_ID                     = "org123abc456def";
-    private static final String ACCOUNT_NAME                   = "account";
-    private static final String ACCOUNT_OWNER                  = "user123@codenvy.com";
-    private static final String ACC_COLL_NAME                  = "accounts";
-    private static final String SUBSCRIPTION_COLL_NAME         = "subscriptions";
-    private static final String MEMBER_COLL_NAME               = "members";
-    private static final String SUBSCRIPTION_HISTORY_COLL_NAME = "history";
-    private static final String SUBSCRIPTION_ID                = "Subscription0xfffffff";
-    private static final String SERVICE_NAME                   = "builder";
-    private static final String PLAN_ID                        = "plan_id";
+    private static final String USER_ID                                   = "user12837asjhda823981h";
+    private static final String ACCOUNT_ID                                = "org123abc456def";
+    private static final String ACCOUNT_NAME                              = "account";
+    private static final String ACCOUNT_OWNER                             = "user123@codenvy.com";
+    private static final String ACC_COLL_NAME                             = "accounts";
+    private static final String SUBSCRIPTION_COLL_NAME                    = "subscriptions";
+    private static final String MEMBER_COLL_NAME                          = "members";
+    private static final String SUBSCRIPTION_BILLING_PROPERTIES_COLL_NAME = "billing";
+    private static final String SUBSCRIPTION_ID                           = "Subscription0xfffffff";
+    private static final String SERVICE_NAME                              = "builder";
+    private static final String PLAN_ID                                   = "plan_id";
     private static final Subscription        defaultSubscription;
     private static final Map<String, String> PROPS;
 
@@ -82,7 +83,7 @@ public class AccountDaoImplTest extends BaseDaoTest {
     private AccountDaoImpl accountDao;
     private DBCollection   subscriptionCollection;
     private DBCollection   membersCollection;
-    private DBCollection   subscriptionHistoryCollection;
+    private DBCollection   subscriptionBillingPropertiesCollection;
 
     static {
         PROPS = new HashMap<>(2);
@@ -101,18 +102,18 @@ public class AccountDaoImplTest extends BaseDaoTest {
         db = spy(db);
         collection = spy(db.getCollection(ACC_COLL_NAME));
         subscriptionCollection = spy(db.getCollection(SUBSCRIPTION_COLL_NAME));
+        subscriptionBillingPropertiesCollection = spy(db.getCollection(SUBSCRIPTION_BILLING_PROPERTIES_COLL_NAME));
         membersCollection = spy(db.getCollection(MEMBER_COLL_NAME));
-        subscriptionHistoryCollection = spy(db.getCollection(SUBSCRIPTION_HISTORY_COLL_NAME));
         when(db.getCollection(ACC_COLL_NAME)).thenReturn(collection);
         when(db.getCollection(SUBSCRIPTION_COLL_NAME)).thenReturn(subscriptionCollection);
+        when(db.getCollection(SUBSCRIPTION_BILLING_PROPERTIES_COLL_NAME)).thenReturn(subscriptionBillingPropertiesCollection);
         when(db.getCollection(MEMBER_COLL_NAME)).thenReturn(membersCollection);
-        when(db.getCollection(SUBSCRIPTION_HISTORY_COLL_NAME)).thenReturn(subscriptionHistoryCollection);
         accountDao = new AccountDaoImpl(db,
                                         workspaceDao,
                                         ACC_COLL_NAME,
                                         SUBSCRIPTION_COLL_NAME,
                                         MEMBER_COLL_NAME,
-                                        SUBSCRIPTION_HISTORY_COLL_NAME);
+                                        SUBSCRIPTION_BILLING_PROPERTIES_COLL_NAME);
     }
 
     @Override
@@ -624,6 +625,119 @@ public class AccountDaoImplTest extends BaseDaoTest {
         when(subscriptionCollection.find()).thenThrow(new MongoException("mongo exception"));
 
         accountDao.getSubscriptions();
+    }
+
+    @Test
+    public void shouldBeAbleToSaveBillingProperties() throws ServerException, NotFoundException, ConflictException {
+        Map<String, String> expected = new HashMap<>();
+        expected.put("payment_token", "token");
+        expected.put("subscriptionId", SUBSCRIPTION_ID);
+        Subscription ss = new Subscription().withId(SUBSCRIPTION_ID)
+                                            .withAccountId(ACCOUNT_ID)
+                                            .withServiceId(SERVICE_NAME)
+                                            .withProperties(PROPS)
+                                            .withPlanId(PLAN_ID);
+
+        subscriptionCollection.save(accountDao.toDBObject(ss));
+
+        accountDao.saveBillingProperties(SUBSCRIPTION_ID, Collections.singletonMap("payment_token", "token"));
+
+        DBObject dbObject = subscriptionBillingPropertiesCollection.findOne(new BasicDBObject("subscriptionId", SUBSCRIPTION_ID));
+        Map result = dbObject.toMap();
+        result.remove("_id");
+        assertEquals(result, expected);
+    }
+
+    @Test(expectedExceptions = NotFoundException.class, expectedExceptionsMessageRegExp = "Subscription not found " + SUBSCRIPTION_ID)
+    public void shouldThrowNotFoundExceptionIfSubscriptionIsMissingOnSaveBillingProperties() throws ServerException, NotFoundException {
+        accountDao.saveBillingProperties(SUBSCRIPTION_ID, Collections.singletonMap("payment_token", "token"));
+    }
+
+    @Test(expectedExceptions = ServerException.class, expectedExceptionsMessageRegExp = "Mongo exception message")
+    public void shouldThrowServerExceptionIfMongoExceptionOccursOnGetSubscriptionInSaveBillingProperties()
+            throws ServerException, NotFoundException {
+        when(subscriptionCollection.findOne(eq(new BasicDBObject("id", SUBSCRIPTION_ID))))
+                .thenThrow(new MongoException("Mongo exception message"));
+
+        accountDao.saveBillingProperties(SUBSCRIPTION_ID, Collections.singletonMap("payment_token", "token"));
+    }
+
+    @Test(expectedExceptions = ServerException.class, expectedExceptionsMessageRegExp = "Mongo exception message")
+    public void shouldThrowServerExceptionIfMongoExceptionOccursOnSaveBillingProperties() throws ServerException, NotFoundException {
+        Subscription ss = new Subscription().withId(SUBSCRIPTION_ID)
+                                            .withAccountId(ACCOUNT_ID)
+                                            .withServiceId(SERVICE_NAME)
+                                            .withProperties(PROPS)
+                                            .withPlanId(PLAN_ID);
+
+        subscriptionCollection.save(accountDao.toDBObject(ss));
+        doThrow(new MongoException("Mongo exception message")).when(subscriptionBillingPropertiesCollection).save(any(DBObject.class));
+
+        accountDao.saveBillingProperties(SUBSCRIPTION_ID, Collections.singletonMap("payment_token", "token"));
+    }
+
+    @Test
+    public void shouldBeAbleToGetBillingProperties() throws ServerException, NotFoundException {
+        subscriptionBillingPropertiesCollection
+                .save(new BasicDBObject("subscriptionId", SUBSCRIPTION_ID).append("payment_token", "token").append("startDate", "date"));
+        Map<String, String> expected = new HashMap<>();
+        expected.put("payment_token", "token");
+        expected.put("subscriptionId", SUBSCRIPTION_ID);
+        expected.put("startDate", "date");
+
+        Map<String, String> billingProperties = accountDao.getBillingProperties(SUBSCRIPTION_ID);
+
+        assertEquals(billingProperties, expected);
+    }
+
+    @Test(expectedExceptions = NotFoundException.class,
+          expectedExceptionsMessageRegExp = "Billing properties of subscription " + SUBSCRIPTION_ID + " not found")
+    public void shouldThrowNotFoundExceptionIfBillingPropertiesAreMissingOnGetBillingProperties()
+            throws ServerException, NotFoundException {
+        accountDao.getBillingProperties(SUBSCRIPTION_ID);
+    }
+
+    @Test(expectedExceptions = ServerException.class, expectedExceptionsMessageRegExp = "Mongo exception message")
+    public void shouldThrowServerExceptionIfMongoExceptionOccursOnGetBillingProperties() throws ServerException, NotFoundException {
+        when(subscriptionBillingPropertiesCollection.findOne(eq(new BasicDBObject("subscriptionId", SUBSCRIPTION_ID))))
+                .thenThrow(new MongoException("Mongo exception message"));
+
+        accountDao.getBillingProperties(SUBSCRIPTION_ID);
+    }
+
+    @Test
+    public void shouldBeAbleToRemoveBillingProperties() throws ServerException, NotFoundException {
+        subscriptionBillingPropertiesCollection
+                .save(new BasicDBObject("subscriptionId", SUBSCRIPTION_ID).append("payment_token", "token").append("startDate", "date"));
+        assertNotNull(subscriptionBillingPropertiesCollection.findOne(new BasicDBObject("subscriptionId", SUBSCRIPTION_ID)));
+
+        accountDao.removeBillingProperties(SUBSCRIPTION_ID);
+
+        assertNull(subscriptionBillingPropertiesCollection.findOne(new BasicDBObject("subscriptionId", SUBSCRIPTION_ID)));
+    }
+
+    @Test(expectedExceptions = NotFoundException.class,
+          expectedExceptionsMessageRegExp = "Billing properties of subscription " + SUBSCRIPTION_ID + " not found")
+    public void shouldThrowNotFoundExceptionIfBillingPropertiesDontExist() throws ServerException, NotFoundException {
+        accountDao.removeBillingProperties(SUBSCRIPTION_ID);
+    }
+
+    @Test(expectedExceptions = ServerException.class, expectedExceptionsMessageRegExp = "Mongo exception message")
+    public void shouldThrowServerExceptionIfMongoExceptionOccursOnRetrievingBillingPropertiesInRemoveBillingProperties()
+            throws ServerException, NotFoundException {
+        when(subscriptionBillingPropertiesCollection.findOne(any(DBObject.class))).thenThrow(new MongoException("Mongo exception message"));
+
+        accountDao.removeBillingProperties(SUBSCRIPTION_ID);
+    }
+
+    @Test(expectedExceptions = ServerException.class, expectedExceptionsMessageRegExp = "Mongo exception message")
+    public void shouldThrowServerExceptionIfMongoExceptionOccursOnRemoveBillingProperties() throws ServerException, NotFoundException {
+        subscriptionBillingPropertiesCollection
+                .save(new BasicDBObject("subscriptionId", SUBSCRIPTION_ID).append("payment_token", "token").append("startDate", "date"));
+
+        doThrow(new MongoException("Mongo exception message")).when(subscriptionBillingPropertiesCollection).remove(any(DBObject.class));
+
+        accountDao.removeBillingProperties(SUBSCRIPTION_ID);
     }
 
     private Map<String, String> getAttributes() {

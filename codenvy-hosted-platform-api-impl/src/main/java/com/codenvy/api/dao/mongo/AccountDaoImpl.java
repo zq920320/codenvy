@@ -40,7 +40,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -395,11 +394,12 @@ public class AccountDaoImpl implements AccountDao {
     }
 
     @Override
-    public Map<String, String> getBillingProperties(String subscriptionId) throws ServerException {
+    public Map<String, String> getBillingProperties(String subscriptionId) throws ServerException, NotFoundException {
         try {
-            final DBObject billingProperties = subscriptionBillingPropertiesCollection.findOne(new BasicDBObject("subscriptionId", subscriptionId));
+            final DBObject billingProperties =
+                    subscriptionBillingPropertiesCollection.findOne(new BasicDBObject("subscriptionId", subscriptionId));
             if (null == billingProperties) {
-                return Collections.emptyMap();
+                throw new NotFoundException("Billing properties of subscription " + subscriptionId + " not found");
             }
             @SuppressWarnings("unchecked")
             final HashMap<String, String> result = new HashMap(billingProperties.toMap());
@@ -415,7 +415,7 @@ public class AccountDaoImpl implements AccountDao {
     public void removeBillingProperties(String subscriptionId) throws ServerException, NotFoundException {
         try {
             if (null == subscriptionBillingPropertiesCollection.findOne(new BasicDBObject("subscriptionId", subscriptionId))) {
-                throw new NotFoundException("Billing properties of subscription " + subscriptionId + " not found ");
+                throw new NotFoundException("Billing properties of subscription " + subscriptionId + " not found");
             }
             subscriptionBillingPropertiesCollection.remove(new BasicDBObject("subscriptionId", subscriptionId));
         } catch (MongoException me) {
