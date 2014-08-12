@@ -17,7 +17,7 @@
  */
 package com.codenvy.migration;
 
-import com.codenvy.api.project.server.ProjectProperties;
+import com.codenvy.api.project.server.ProjectJson;
 import com.codenvy.commons.json.JsonHelper;
 import com.codenvy.ide.factory.server.migration.ProjectTypeHelper;
 
@@ -80,7 +80,7 @@ public class MigrationService {
 
             String currentName = projectFile.getName().substring(0, projectFile.getName().lastIndexOf("_props"));
             String runnerTemplate = ProjectTypeHelper.getRunnerTemplate(inputProps.get("vfs:projectType")[0]);
-            ProjectProperties projectDescription = ProjectTypeHelper.projectTypeToDescription(inputProps.get("vfs:projectType")[0]);
+            ProjectJson projectDescription = ProjectTypeHelper.projectTypeToDescription(inputProps.get("vfs:projectType")[0]);
 
 
 
