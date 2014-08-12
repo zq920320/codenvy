@@ -28,7 +28,7 @@ import com.codenvy.api.account.shared.dto.MemberDescriptor;
 import com.codenvy.api.account.shared.dto.SubscriptionDescriptor;
 import com.codenvy.api.user.shared.dto.ProfileDescriptor;
 import com.codenvy.api.user.shared.dto.User;
-import com.codenvy.api.workspace.server.dao.Workspace;
+import com.codenvy.api.workspace.shared.dto.WorkspaceDescriptor;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -118,16 +118,13 @@ public abstract class AbstractAccountMetric extends AbstractMetric {
         throw new IOException("There is no account with id " + accountId);
     }
 
-    protected List<Workspace> getWorkspaces(String accountId) throws IOException {
-        return httpMetricTransport
-                .getResources(Workspace.class, "GET", PATH_ACCOUNT_WORKSPACES.replace(PARAM_ACCOUNT_ID, accountId));
+    protected List<WorkspaceDescriptor> getWorkspaces(String accountId) throws IOException {
+        return httpMetricTransport.getResources(WorkspaceDescriptor.class, "GET", PATH_ACCOUNT_WORKSPACES.replace(PARAM_ACCOUNT_ID, accountId));
     }
 
-    protected List<com.codenvy.api.workspace.shared.dto.MemberDescriptor> getMembers(String workspaceId)
-            throws IOException {
+    protected List<MemberDescriptor> getMembers(String workspaceId) throws IOException {
         String pathWorkspaceMembers = PATH_WORKSPACES_MEMBERS.replace(PARAM_WORKSPACE_ID, workspaceId);
-        return httpMetricTransport
-                .getResources(com.codenvy.api.workspace.shared.dto.MemberDescriptor.class, "GET", pathWorkspaceMembers);
+        return httpMetricTransport.getResources(MemberDescriptor.class, "GET", pathWorkspaceMembers);
     }
 
     protected ProfileDescriptor getProfile() throws IOException {
@@ -165,9 +162,9 @@ public abstract class AbstractAccountMetric extends AbstractMetric {
     }
 
     protected String getUserRoleInWorkspace(String userId, String workspaceId) throws IOException {
-        List<com.codenvy.api.workspace.shared.dto.MemberDescriptor> members = getMembers(workspaceId);
+        List<MemberDescriptor> members = getMembers(workspaceId);
 
-        for (com.codenvy.api.workspace.shared.dto.MemberDescriptor member : members) {
+        for (MemberDescriptor member : members) {
             if (member.getUserId().equals(userId)) {
                 return member.getRoles().toString();
             }

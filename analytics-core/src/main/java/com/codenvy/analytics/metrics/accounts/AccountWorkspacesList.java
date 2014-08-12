@@ -27,7 +27,7 @@ import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.RequiredFilter;
 import com.codenvy.api.account.shared.dto.MemberDescriptor;
 import com.codenvy.api.user.shared.dto.User;
-import com.codenvy.api.workspace.server.dao.Workspace;
+import com.codenvy.api.workspace.shared.dto.WorkspaceDescriptor;
 
 import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
@@ -60,7 +60,7 @@ public class AccountWorkspacesList extends AbstractAccountMetric {
         String currentUserId = user.getId();
 
         List<ValueData> list2Return = new ArrayList<>();
-        for (Workspace workspace : getWorkspaces(accountById.getUserId())) {
+        for (WorkspaceDescriptor workspace : getWorkspaces(accountById.getUserId())) {
             Map<String, ValueData> m = new HashMap<>();
             m.put(ACCOUNT_ID, new StringValueData(workspace.getAccountId()));
             m.put(WORKSPACE_ID, new StringValueData(workspace.getId()));
