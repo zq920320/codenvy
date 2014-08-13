@@ -66,13 +66,13 @@ public class AccountsList extends AbstractAccountMetric {
             if (!context.exists(MetricFilter.ACCOUNT_ID) || accountMembership.getUserId().equals(accountId)) {
 
                 Map<String, ValueData> m = new HashMap<>();
-                m.put(ACCOUNT_ID, StringValueData.valueOf(accountMembership.getUserId()));
+                m.put(ACCOUNT_ID, StringValueData.valueOf(accountMembership.getAccountReference().getId()));
                 m.put(ACCOUNT_NAME, StringValueData.valueOf(accountMembership.getAccountReference().getName()));
                 m.put(ACCOUNT_ROLES, StringValueData.valueOf(accountMembership.getRoles().toString()));
                 m.put(ACCOUNT_ATTRIBUTES, StringValueData.valueOf(
                         getAccountDescriptorById(accountMembership.getAccountReference().getId())
                                 .getAttributes().toString()));
-                m.put(ACCOUNT_USER_ID, StringValueData.valueOf(profile.getUserId()));
+                m.put(ACCOUNT_USER_ID, StringValueData.valueOf(accountMembership.getUserId()));
                 m.put(ACCOUNT_PROFILE_EMAIL, getEmail(profile));
                 m.put(ACCOUNT_PROFILE_NAME, getFullName(profile));
 
