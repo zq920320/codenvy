@@ -56,7 +56,7 @@ public class AccountSubscriptionsList extends AbstractAccountMetric {
     @Override
     public ValueData getValue(Context context) throws IOException {
         MemberDescriptor accountMembership = getAccountMembership(context);
-        List<SubscriptionDescriptor> subscriptions = getSubscriptions(accountMembership.getUserId());
+        List<SubscriptionDescriptor> subscriptions = getSubscriptions(accountMembership.getAccountReference().getId());
 
         List<ValueData> list2Return = new ArrayList<>();
 
