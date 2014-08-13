@@ -110,7 +110,7 @@ public abstract class AbstractAccountMetric extends AbstractMetric {
         List<MemberDescriptor> accountMemberships = getAccountMemberships();
 
         for (MemberDescriptor accountMembership : accountMemberships) {
-            if (accountMembership.getUserId().equals(accountId)) {
+            if (accountMembership.getAccountReference().getId().equals(accountId)) {
                 return accountMembership;
             }
         }
