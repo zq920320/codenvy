@@ -22,6 +22,7 @@ import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.server.dao.Member;
 import com.codenvy.api.account.server.dao.Subscription;
 import com.codenvy.api.core.ConflictException;
+import com.codenvy.api.core.ForbiddenException;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
@@ -345,7 +346,7 @@ public class AccountDaoImpl implements AccountDao {
     public void removeSubscription(String subscriptionId) throws NotFoundException, ServerException {
         try {
             if (null == subscriptionCollection.findOne(new BasicDBObject("id", subscriptionId))) {
-                LOG.warn(String.format("Subscription with id = %s, cant be removed cause it doesn't exist", subscriptionId));
+                LOG.warn(String.format("Subscription with id = %s, cant be removed because it doesn't exist", subscriptionId));
                 throw new NotFoundException("Subscription not found " + subscriptionId);
             }
             subscriptionCollection.remove(new BasicDBObject("id", subscriptionId));
@@ -382,7 +383,11 @@ public class AccountDaoImpl implements AccountDao {
 
     @Override
     public void saveBillingProperties(String subscriptionId, Map<String, String> billingProperties)
-            throws ServerException, NotFoundException {
+            throws ServerException, NotFoundException, ForbiddenException {
+        // prevents NPE if admin adds subscription
+        if (null == billingProperties) {
+            throw new ForbiddenException("Billing properties required");
+        }
         try {
             if (null == subscriptionCollection.findOne(new BasicDBObject("id", subscriptionId))) {
                 throw new NotFoundException("Subscription not found " + subscriptionId);

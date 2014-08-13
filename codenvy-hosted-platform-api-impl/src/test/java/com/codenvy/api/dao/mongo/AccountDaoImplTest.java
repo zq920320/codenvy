@@ -21,6 +21,7 @@ import com.codenvy.api.account.server.dao.Account;
 import com.codenvy.api.account.server.dao.Member;
 import com.codenvy.api.account.server.dao.Subscription;
 import com.codenvy.api.core.ConflictException;
+import com.codenvy.api.core.ForbiddenException;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.api.workspace.server.dao.Workspace;
@@ -628,7 +629,7 @@ public class AccountDaoImplTest extends BaseDaoTest {
     }
 
     @Test
-    public void shouldBeAbleToSaveBillingProperties() throws ServerException, NotFoundException, ConflictException {
+    public void shouldBeAbleToSaveBillingProperties() throws ServerException, NotFoundException, ConflictException, ForbiddenException {
         Map<String, String> expected = new HashMap<>();
         expected.put("payment_token", "token");
         expected.put("subscriptionId", SUBSCRIPTION_ID);
@@ -649,21 +650,29 @@ public class AccountDaoImplTest extends BaseDaoTest {
     }
 
     @Test(expectedExceptions = NotFoundException.class, expectedExceptionsMessageRegExp = "Subscription not found " + SUBSCRIPTION_ID)
-    public void shouldThrowNotFoundExceptionIfSubscriptionIsMissingOnSaveBillingProperties() throws ServerException, NotFoundException {
+    public void shouldThrowNotFoundExceptionIfSubscriptionIsMissingOnSaveBillingProperties()
+            throws ServerException, NotFoundException, ForbiddenException {
         accountDao.saveBillingProperties(SUBSCRIPTION_ID, Collections.singletonMap("payment_token", "token"));
     }
 
     @Test(expectedExceptions = ServerException.class, expectedExceptionsMessageRegExp = "Mongo exception message")
     public void shouldThrowServerExceptionIfMongoExceptionOccursOnGetSubscriptionInSaveBillingProperties()
-            throws ServerException, NotFoundException {
+            throws ServerException, NotFoundException, ForbiddenException {
         when(subscriptionCollection.findOne(eq(new BasicDBObject("id", SUBSCRIPTION_ID))))
                 .thenThrow(new MongoException("Mongo exception message"));
 
         accountDao.saveBillingProperties(SUBSCRIPTION_ID, Collections.singletonMap("payment_token", "token"));
     }
 
+    @Test(expectedExceptions = ForbiddenException.class, expectedExceptionsMessageRegExp = "Billing properties required")
+    public void shouldThrowForbiddenExceptionIfBillingPropertiesIsNullOnSaveBillingProperties()
+            throws ServerException, NotFoundException, ForbiddenException {
+        accountDao.saveBillingProperties(SUBSCRIPTION_ID, null);
+    }
+
     @Test(expectedExceptions = ServerException.class, expectedExceptionsMessageRegExp = "Mongo exception message")
-    public void shouldThrowServerExceptionIfMongoExceptionOccursOnSaveBillingProperties() throws ServerException, NotFoundException {
+    public void shouldThrowServerExceptionIfMongoExceptionOccursOnSaveBillingProperties()
+            throws ServerException, NotFoundException, ForbiddenException {
         Subscription ss = new Subscription().withId(SUBSCRIPTION_ID)
                                             .withAccountId(ACCOUNT_ID)
                                             .withServiceId(SERVICE_NAME)

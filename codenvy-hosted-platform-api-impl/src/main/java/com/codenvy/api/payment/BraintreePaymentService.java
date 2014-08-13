@@ -25,6 +25,7 @@ import com.codenvy.api.account.server.PaymentService;
 import com.codenvy.api.account.server.dao.Subscription;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.ForbiddenException;
+import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
 
 import org.slf4j.Logger;
@@ -77,5 +78,23 @@ public class BraintreePaymentService implements PaymentService {
 
         LOG.error("PAYMENTS# state#{}# subscriptionId#{}# message#{}#", "Payment error", subscription.getId(), result.getMessage());
         throw new ConflictException(result.getMessage());
+    }
+
+    @Override
+    public void removeSubscription(String subscriptionId) throws ServerException, NotFoundException, ForbiddenException {
+        if (null == subscriptionId) {
+            throw new ForbiddenException("Subscription id is missing");
+        }
+
+        try {
+            gateway.subscription().cancel(subscriptionId);
+        } catch (com.braintreegateway.exceptions.NotFoundException e) {
+            // subscription is missing on BT
+            LOG.error(e.getLocalizedMessage(), e);
+        } catch (BraintreeException e) {
+            LOG.error(e.getLocalizedMessage(), e);
+            // Braintree does not return exception message for now
+            throw new ServerException("Internal server error occurs. Please, contact support");
+        }
     }
 }

@@ -25,6 +25,7 @@ import com.braintreegateway.exceptions.BraintreeException;
 import com.codenvy.api.account.server.dao.Subscription;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.ForbiddenException;
+import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
 
 import org.mockito.InjectMocks;
@@ -55,17 +56,17 @@ public class BraintreePaymentServiceTest {
     private static final String PAYMENT_TOKEN   = "ptoken";
 
     @Mock
-    private BraintreeGateway    gateway;
+    private BraintreeGateway                  gateway;
     @Mock
-    private SubscriptionGateway subscriptionGateway;
+    private SubscriptionGateway               subscriptionGateway;
     @Mock
-    private Result              result;
+    private Result                            result;
     @Mock
     private com.braintreegateway.Subscription btSubscription;
 
     @InjectMocks
     private BraintreePaymentService service;
-    private Subscription                      subscription;
+    private Subscription            subscription;
 
     @BeforeMethod
     public void setUp() throws Exception {
@@ -118,11 +119,44 @@ public class BraintreePaymentServiceTest {
 
     @Test(expectedExceptions = ServerException.class,
           expectedExceptionsMessageRegExp = "Internal server error occurs. Please, contact support")
-    public void shouldThrowServerExceptionIfBTExceptionOccurs() throws Exception {
+    public void shouldThrowServerExceptionIfBTExceptionOccursonAddSubscription() throws Exception {
         when(gateway.subscription()).thenReturn(subscriptionGateway);
         when(subscriptionGateway.create(Matchers.<SubscriptionRequest>any())).thenThrow(
                 new BraintreeException("Braintree exception message"));
 
         service.addSubscription(subscription, Collections.singletonMap("payment_token", "ptoken"));
+    }
+
+    @Test
+    public void shouldBeAbleToRemoveSubscription() throws ServerException, NotFoundException, ForbiddenException {
+        when(gateway.subscription()).thenReturn(subscriptionGateway);
+
+        service.removeSubscription(SUBSCRIPTION_ID);
+
+        verify(subscriptionGateway).cancel(SUBSCRIPTION_ID);
+    }
+
+    @Test(expectedExceptions = ForbiddenException.class, expectedExceptionsMessageRegExp = "Subscription id is missing")
+    public void shouldThrowForbiddenExceptionIfSubscriptionIdIsNull() throws ServerException, NotFoundException, ForbiddenException {
+        service.removeSubscription(null);
+    }
+
+    @Test(expectedExceptions = ServerException.class,
+          expectedExceptionsMessageRegExp = "Internal server error occurs. Please, contact support")
+    public void shouldThrowServerExceptionIfBTExceptionOccursOnRemoveSubscription()
+            throws ServerException, NotFoundException, ForbiddenException {
+        when(gateway.subscription()).thenReturn(subscriptionGateway);
+        when(subscriptionGateway.cancel(SUBSCRIPTION_ID)).thenThrow(new BraintreeException("exception message"));
+
+        service.removeSubscription(SUBSCRIPTION_ID);
+    }
+
+    @Test
+    public void shouldDoNothingIfIfBTNotFoundExceptionOccursOnRemoveSubscription()
+            throws ServerException, NotFoundException, ForbiddenException {
+        when(gateway.subscription()).thenReturn(subscriptionGateway);
+        when(subscriptionGateway.cancel(SUBSCRIPTION_ID)).thenThrow(new com.braintreegateway.exceptions.NotFoundException("exception message"));
+
+        service.removeSubscription(SUBSCRIPTION_ID);
     }
 }
