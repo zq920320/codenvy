@@ -63,7 +63,7 @@ public class AccountsList extends AbstractAccountMetric {
         String accountId = context.getAsString(MetricFilter.ACCOUNT_ID);
 
         for (MemberDescriptor accountMembership : accountMemberships) {
-            if (!context.exists(MetricFilter.ACCOUNT_ID) || accountMembership.getUserId().equals(accountId)) {
+            if (!context.exists(MetricFilter.ACCOUNT_ID) || accountMembership.getAccountReference().getId().equals(accountId)) {
 
                 Map<String, ValueData> m = new HashMap<>();
                 m.put(ACCOUNT_ID, StringValueData.valueOf(accountMembership.getAccountReference().getId()));
