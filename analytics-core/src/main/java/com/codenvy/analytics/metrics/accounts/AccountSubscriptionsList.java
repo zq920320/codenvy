@@ -17,7 +17,10 @@
  */
 package com.codenvy.analytics.metrics.accounts;
 
-import com.codenvy.analytics.datamodel.*;
+import com.codenvy.analytics.datamodel.ListValueData;
+import com.codenvy.analytics.datamodel.MapValueData;
+import com.codenvy.analytics.datamodel.StringValueData;
+import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
@@ -63,8 +66,6 @@ public class AccountSubscriptionsList extends AbstractAccountMetric {
         for (SubscriptionDescriptor subscription : subscriptions) {
             Map<String, ValueData> m = new HashMap<>();
             m.put(SUBSCRIPTION_SERVICE_ID, StringValueData.valueOf(subscription.getServiceId()));
-            m.put(SUBSCRIPTION_START_DATE, LongValueData.valueOf(subscription.getStartDate()));
-            m.put(SUBSCRIPTION_END_DATE, LongValueData.valueOf(subscription.getEndDate()));
             m.put(SUBSCRIPTION_PROPERTIES, StringValueData.valueOf(subscription.getProperties().toString()));
 
             list2Return.add(new MapValueData(m));

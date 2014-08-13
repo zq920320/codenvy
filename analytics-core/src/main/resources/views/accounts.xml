@@ -70,12 +70,11 @@
     <view name="account_subscriptions_list" on-demand="true">
         <section name="account_subscriptions_list">
             <row class="com.codenvy.analytics.services.view.TitleRow">
-                <parameter key="titles" value="Subscription,Start Date,End Date,Properties"/>
+                <parameter key="titles" value="Subscription,Properties"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="account_subscriptions_list"/>
-                <parameter key="fields" value="subscription_service_id,subscription_start_date,subscription_end_date,subscription_properties"/>
-                <parameter key="date-fields" value="subscription_start_date=yyyy-MM-dd,subscription_end_date=yyyy-MM-dd"/>
+                <parameter key="fields" value="subscription_service_id,subscription_properties"/>
             </row>
         </section>
     </view>
