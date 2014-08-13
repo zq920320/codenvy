@@ -275,7 +275,7 @@ public class MongoDataLoader implements DataLoader {
 
             } else if (!(metric instanceof AbstractUsersProfile) && filter == MetricFilter.ALIASES) {
                 String[] userIds = getUserIdByAliases(value);
-                userFilters.add(processFilter(userIds, filter.isNumericType()));
+                userFilters.add(processFilter(userIds.length != 0 ? userIds : value, MetricFilter.USER.isNumericType()));
 
             } else if (filter == MetricFilter.WS) {
                 if (value.equals(Parameters.WS_TYPES.PERSISTENT.name())) {
