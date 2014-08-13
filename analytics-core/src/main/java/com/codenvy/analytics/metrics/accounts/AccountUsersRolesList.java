@@ -55,7 +55,7 @@ public class AccountUsersRolesList extends AbstractAccountMetric {
         String currentUserId = currentUser.getId();
 
         List<ValueData> list2Return = new ArrayList<>();
-        for (WorkspaceDescriptor workspace : getWorkspaces(accountById.getUserId())) {
+        for (WorkspaceDescriptor workspace : getWorkspaces(accountById.getAccountReference().getId())) {
             String rolesCurrentUserInWorkspace = getUserRoleInWorkspace(currentUserId, workspace.getId());
             boolean hasAdminRoles = rolesCurrentUserInWorkspace.contains(ROLE_WORKSPACE_ADMIN.toLowerCase());
 
