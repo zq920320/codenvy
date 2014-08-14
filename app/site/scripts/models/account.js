@@ -153,15 +153,13 @@
                 userProfile = response.attributes;
                 var profileAttributes = userProfile.attributes;
                 var attributes = {};
-                profileAttributes.forEach(
-                    function(attribute){
+                for (var key : profileAttribures) {
                         // Get attributes only for Profile page
                         var profilePageAttributes = ["firstName","lastName","phone","employer","jobtitle","email"];
-                        if (profilePageAttributes.indexOf(attribute.name)>=0){
-                            Object.defineProperty(attributes, attribute.name,{value:attribute.value});
+                        if (profilePageAttributes.indexOf(key)>=0){
+                             Object.defineProperty(attributes, key,{value:profileAttributes[key]});
                         }
-
-                });
+                }
                 document.getElementById("account_value").innerHTML = attributes.email || "";
                 document.getElementsByName("first_name")[0].value = attributes.firstName || "";
                 document.getElementsByName("last_name")[0].value = attributes.lastName || "";
