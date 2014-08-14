@@ -153,7 +153,7 @@
                 userProfile = response.attributes;
                 var profileAttributes = userProfile.attributes;
                 var attributes = {};
-                for (var key : profileAttribures) {
+                for (var key in profileAttributes) {
                         // Get attributes only for Profile page
                         var profilePageAttributes = ["firstName","lastName","phone","employer","jobtitle","email"];
                         if (profilePageAttributes.indexOf(key)>=0){
