@@ -40,7 +40,7 @@ public class OnPremisesSubscriptionService extends SubscriptionService {
 
     @Inject
     public OnPremisesSubscriptionService(AccountDao accountDao) {
-        super("onPremises", "onPremises");
+        super("OnPremises", "OnPremises");
         this.accountDao = accountDao;
     }
 
