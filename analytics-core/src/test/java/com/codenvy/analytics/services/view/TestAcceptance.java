@@ -89,13 +89,6 @@ public class TestAcceptance extends BaseTest {
 
         context = context.cloneAndPut(Parameters.LOG, getResourceAsBytes("2014-04-23", df.format(calendar.getTime())).getAbsolutePath());
         pigRunner.forceExecute(context);
-
-        Context.Builder builder = new Context.Builder();
-        builder.put(Parameters.FROM_DATE, "20140721");
-        builder.put(Parameters.TO_DATE, "20140721");
-
-        Metric metric = MetricFactory.getMetric(MetricType.CREATED_USERS_FROM_FACTORY);
-        ValueData valueData = metric.getValue(builder.build());
     }
 
     private File getResourceAsBytes(String originalDate, String newDate) throws Exception {
