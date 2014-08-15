@@ -29,7 +29,6 @@ import javax.inject.Singleton;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
-import java.util.regex.Pattern;
 
 /**
  * Set information about workspace in request by following path:
