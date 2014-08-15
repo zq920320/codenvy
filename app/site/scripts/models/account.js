@@ -498,20 +498,7 @@
                 
                 // userProfile.attributes = body;//Updating profile attributes
                 Object.getOwnPropertyNames(userAttributes).forEach(function(prop){
-                    var newAttribute = true;
-                    userProfile.attributes.forEach(function(attribute){
-                        if (attribute.name === prop) {
-                            attribute.value = userAttributes[prop];
-                            newAttribute = false;
-                        }
-                    });
-                    if (newAttribute){
-                        var el = {};
-                        el["name"] = prop;
-                        el["value"] = userAttributes[prop];
-                        userProfile.attributes.push(el);
-                    }
-
+                    userProfile.attributes[prop] = userAttributes[prop];
                 });
                 var data = JSON.stringify(userProfile.attributes);
                 $.ajax({
