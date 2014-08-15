@@ -68,9 +68,9 @@ public class MongoDBFactoryStore implements FactoryStore {
             db = mongoClient.getDB(dbName);
 
             if (username != null && password != null) {
-                if (!db.authenticate(username, password.toCharArray()))
+                if (!db.authenticate(username, password.toCharArray())) {
                     throw new RuntimeException("Wrong MongoDB credentians, authentication failed.");
-
+                }
             }
             factories = db.getCollection(collectionName);
 
@@ -142,7 +142,7 @@ public class MongoDBFactoryStore implements FactoryStore {
 
         DBObject res = factories.findOne(new BasicDBObject("_id", factoryId));
         if (res == null) {
-            return Collections.EMPTY_SET;
+            return Collections.emptySet();
         }
 
         BasicDBList imagesAsDbObject = (BasicDBList)res.get("images");

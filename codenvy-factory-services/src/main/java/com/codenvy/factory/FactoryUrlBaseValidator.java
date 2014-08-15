@@ -78,7 +78,7 @@ public class FactoryUrlBaseValidator {
     protected void validateProjectName(Factory factory) throws ApiException {
         // validate project name
         String pname = null;
-        if (factory.getV().equals("1.0")) {
+        if ("1.0".equals(factory.getV())) {
             pname = factory.getPname();
         } else if (factory.getProjectattributes() != null) {
             pname = factory.getProjectattributes().getPname();
