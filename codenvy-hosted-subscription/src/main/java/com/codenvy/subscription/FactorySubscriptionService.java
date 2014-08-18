@@ -22,6 +22,11 @@ import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.server.dao.Subscription;
 import com.codenvy.api.core.ApiException;
 import com.codenvy.api.core.ConflictException;
+import com.codenvy.api.core.NotFoundException;
+import com.codenvy.api.core.ServerException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -32,10 +37,11 @@ import java.util.List;
  *
  * @author Sergii Kabashniuk
  * @author Eugene Voevodin
+ * @author Alexander Garagatyi
  */
 @Singleton
 public class FactorySubscriptionService extends SubscriptionService {
-
+    private static final Logger LOG = LoggerFactory.getLogger(FactorySubscriptionService.class);
     private final AccountDao accountDao;
 
     @Inject
@@ -46,12 +52,18 @@ public class FactorySubscriptionService extends SubscriptionService {
 
     //fixme for now Factory supports only 1 active subscription per 1 account
     @Override
-    public void beforeCreateSubscription(Subscription subscription) throws ApiException {
-        final List<Subscription> allSubscriptions = accountDao.getSubscriptions(subscription.getAccountId());
-        for (Subscription current : allSubscriptions) {
-            if (getServiceId().equals(current.getServiceId())) {
-                throw new ConflictException("Factory subscription already exists");
+    public void beforeCreateSubscription(Subscription subscription) throws ConflictException, ServerException {
+        final List<Subscription> allSubscriptions;
+        try {
+            allSubscriptions = accountDao.getSubscriptions(subscription.getAccountId());
+            for (Subscription current : allSubscriptions) {
+                if (getServiceId().equals(current.getServiceId())) {
+                    throw new ConflictException("Factory subscription already exists");
+                }
             }
+        } catch (NotFoundException e) {
+            LOG.error(e.getLocalizedMessage(), e);
+            throw new ServerException(e.getLocalizedMessage());
         }
     }
 

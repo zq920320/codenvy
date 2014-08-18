@@ -27,6 +27,9 @@ import com.codenvy.api.core.ServerException;
 import com.codenvy.api.workspace.server.dao.Workspace;
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.List;
@@ -43,6 +46,8 @@ import java.util.concurrent.TimeUnit;
  */
 @Singleton
 public class SaasSubscriptionService extends SubscriptionService {
+    private static final Logger LOG = LoggerFactory.getLogger(SaasSubscriptionService.class);
+
     private final WorkspaceDao workspaceDao;
     private final AccountDao   accountDao;
 
@@ -56,11 +61,13 @@ public class SaasSubscriptionService extends SubscriptionService {
     /**
      * @param subscription
      *         new subscription
-     * @throws ApiException
+     * @throws com.codenvy.api.core.ConflictException
      *         if subscription state is not valid
+     * @throws com.codenvy.api.core.ServerException
+     *         if internal error occurs
      */
     @Override
-    public void beforeCreateSubscription(Subscription subscription) throws ApiException {
+    public void beforeCreateSubscription(Subscription subscription) throws ConflictException, ServerException {
         if (subscription.getProperties() == null) {
             throw new ConflictException("Subscription properties required");
         }
@@ -71,7 +78,13 @@ public class SaasSubscriptionService extends SubscriptionService {
             throw new ConflictException("Subscription property 'RAM' required");
         }
 
-        final List<Subscription> allSubscriptions = accountDao.getSubscriptions(subscription.getAccountId());
+        final List<Subscription> allSubscriptions;
+        try {
+            allSubscriptions = accountDao.getSubscriptions(subscription.getAccountId());
+        } catch (NotFoundException e) {
+            LOG.error(e.getLocalizedMessage(), e);
+            throw new ServerException(e.getLocalizedMessage());
+        }
         for (Subscription current : allSubscriptions) {
             if (getServiceId().equals(current.getServiceId())) {
                 throw new ConflictException("Subscriptions limit exhausted");

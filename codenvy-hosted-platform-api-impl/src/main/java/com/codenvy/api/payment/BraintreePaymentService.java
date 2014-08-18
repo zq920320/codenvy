@@ -90,7 +90,7 @@ public class BraintreePaymentService implements PaymentService {
             gateway.subscription().cancel(subscriptionId);
         } catch (com.braintreegateway.exceptions.NotFoundException e) {
             // subscription is missing on BT
-            LOG.error(e.getLocalizedMessage(), e);
+            throw new NotFoundException(e.getLocalizedMessage());
         } catch (BraintreeException e) {
             LOG.error(e.getLocalizedMessage(), e);
             // Braintree does not return exception message for now

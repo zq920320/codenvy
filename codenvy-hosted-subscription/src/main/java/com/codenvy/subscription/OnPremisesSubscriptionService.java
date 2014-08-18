@@ -25,6 +25,9 @@ import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -36,6 +39,7 @@ import javax.inject.Singleton;
  */
 @Singleton
 public class OnPremisesSubscriptionService extends SubscriptionService {
+    private static final Logger LOG = LoggerFactory.getLogger(OnPremisesSubscriptionService.class);
     private final AccountDao accountDao;
 
     @Inject
@@ -44,14 +48,8 @@ public class OnPremisesSubscriptionService extends SubscriptionService {
         this.accountDao = accountDao;
     }
 
-    /**
-     * @param subscription
-     *         new subscription
-     * @throws com.codenvy.api.core.ApiException
-     *         if subscription state is not valid
-     */
     @Override
-    public void beforeCreateSubscription(Subscription subscription) throws ApiException {
+    public void beforeCreateSubscription(Subscription subscription) throws ConflictException, ServerException {
         if (subscription.getProperties() == null) {
             throw new ConflictException("Subscription properties required");
         }
@@ -62,10 +60,15 @@ public class OnPremisesSubscriptionService extends SubscriptionService {
             throw new ConflictException("Subscription property 'Users' required");
         }
 
-        for (Subscription current : accountDao.getSubscriptions(subscription.getAccountId())) {
-            if (getServiceId().equals(current.getServiceId())) {
-                throw new ConflictException("Subscriptions limit exhausted");
+        try {
+            for (Subscription current : accountDao.getSubscriptions(subscription.getAccountId())) {
+                if (getServiceId().equals(current.getServiceId())) {
+                    throw new ConflictException("Subscriptions limit exhausted");
+                }
             }
+        } catch (NotFoundException e) {
+            LOG.error(e.getLocalizedMessage(), e);
+            throw new ServerException(e.getLocalizedMessage());
         }
     }
 

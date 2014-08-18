@@ -151,8 +151,8 @@ public class BraintreePaymentServiceTest {
         service.removeSubscription(SUBSCRIPTION_ID);
     }
 
-    @Test
-    public void shouldDoNothingIfIfBTNotFoundExceptionOccursOnRemoveSubscription()
+    @Test(expectedExceptions = NotFoundException.class, expectedExceptionsMessageRegExp = "exception message")
+    public void shouldThrowNotFoundExceptionIfBTNotFoundExceptionOccursOnRemoveSubscription()
             throws ServerException, NotFoundException, ForbiddenException {
         when(gateway.subscription()).thenReturn(subscriptionGateway);
         when(subscriptionGateway.cancel(SUBSCRIPTION_ID)).thenThrow(new com.braintreegateway.exceptions.NotFoundException("exception message"));
