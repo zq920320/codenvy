@@ -29,7 +29,7 @@ a = FOREACH a2 GENERATE dt,
                         (wsId IS NOT NULL ? wsId : ReplaceWsWithId(wsName)) AS wsId,
                         wsName;
 
-resultA = FOREACH a GENERATE LOWER(wsId),
+resultA = FOREACH a GENERATE wsId,
                              TOTUPLE('date', ToMilliSeconds(dt)),
                              TOTUPLE('ws_name', LOWER(wsName)),
                              TOTUPLE('persistent_ws', (IsTemporaryWorkspaceByName(wsName) ? 0 : 1));
@@ -46,7 +46,7 @@ c1 = lastUpdate(b, 'wsId');
 c = FOREACH c1 GENERATE b::wsId AS wsId,
                         b::wsName AS wsName;
 
-resultC = FOREACH c GENERATE LOWER(wsId),
+resultC = FOREACH c GENERATE wsId,
                              TOTUPLE('ws_name', LOWER(wsName)),
                              TOTUPLE('persistent_ws', (IsTemporaryWorkspaceByName(wsName) ? 0 : 1));
 STORE resultC INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;

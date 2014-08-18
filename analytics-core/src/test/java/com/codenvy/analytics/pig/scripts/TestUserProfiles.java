@@ -61,7 +61,7 @@ public class TestUserProfiles extends BaseTest {
         events.add(Event.Builder.createUserUpdatedEvent("id2", "user2@ukr.net", "user2@ukr.net")
                                 .withDate("2013-01-01").withTime("13:00:00,000").build());
 
-        events.add(Event.Builder.createUserCreatedEvent("user6noi01lzdajwh6ck", "anonymousUser_5xhz40", "[anonymousUser_5xhz40]")
+        events.add(Event.Builder.createUserCreatedEvent("User6noi01lzdajwh6ck", "anonymousUser_5xhz40", "[anonymousUser_5xhz40]")
                                 .withDate("2013-01-01").withTime("10:00:00,000").build());
 
         File log = LogGenerator.generateLog(events);
@@ -109,7 +109,7 @@ public class TestUserProfiles extends BaseTest {
         assertTrue(m.containsKey("id2"));
         assertTrue(m.containsKey("id3"));
         assertTrue(m.containsKey("id4"));
-        assertTrue(m.containsKey("user6noi01lzdajwh6ck"));
+        assertTrue(m.containsKey("User6noi01lzdajwh6ck"));
 
         assertProfile(m.get("id1"),
                       "f3",
@@ -143,7 +143,7 @@ public class TestUserProfiles extends BaseTest {
                       "",
                       "[user4@gmail.com]",
                       fullDateFormat.parse("2013-01-02 13:00:00").getTime());
-        assertProfile(m.get("user6noi01lzdajwh6ck"),
+        assertProfile(m.get("User6noi01lzdajwh6ck"),
                       null,
                       null,
                       null,
@@ -233,7 +233,7 @@ public class TestUserProfiles extends BaseTest {
         assertEquals(m.size(), 3);
         assertTrue(m.containsKey("id3"));
         assertTrue(m.containsKey("id4"));
-        assertTrue(m.containsKey("user6noi01lzdajwh6ck"));
+        assertTrue(m.containsKey("User6noi01lzdajwh6ck"));
     }
 
     @Test

@@ -443,7 +443,7 @@ public class View {
                 return aliases[0];
             }
         } else {
-            return userId;
+            return "anonymous";
         }
     }
 
@@ -463,7 +463,7 @@ public class View {
             ValueData name = profile.get(AbstractMetric.WS_NAME);
             return name == null ? wsId : name.getAsString();
         } else {
-            return wsId;
+            return "temporary";
         }
     }
 
