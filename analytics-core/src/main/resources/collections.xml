@@ -706,6 +706,11 @@
                 <field>event</field>
                 <field desc="true">date</field>
             </index>
+            <index name="user_event">
+                <field>user</field>
+                <field>event</field>
+                <field desc="true">date</field>
+            </index>
             <index name="date">
                 <field desc="true">date</field>
             </index>
