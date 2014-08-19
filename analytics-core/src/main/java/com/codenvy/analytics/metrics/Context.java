@@ -155,6 +155,10 @@ public class Context {
         return cloneAndPut(param, Long.toString(value));
     }
 
+    public Context cloneAndPut(MetricFilter param, long value) {
+        return cloneAndPut(param, Long.toString(value));
+    }
+
     @Override
     public String toString() {
         Iterator<Map.Entry<String, Object>> i = params.entrySet().iterator();

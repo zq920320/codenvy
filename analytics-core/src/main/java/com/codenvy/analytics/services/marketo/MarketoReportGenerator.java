@@ -23,6 +23,7 @@ import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.metrics.users.UsersStatisticsList;
 import com.codenvy.analytics.services.acton.ActOn;
 import com.codenvy.analytics.services.view.MetricRow;
+import com.mongodb.DBObject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,9 +78,7 @@ public class MarketoReportGenerator {
     public void prepareReport(File toFileReport,
                               Context context,
                               Context activeUsersContext,
-                              boolean processActiveUsersOnly)
-            throws IOException, ParseException {
-
+                              boolean processActiveUsersOnly) throws IOException, ParseException {
         Set<ValueData> activeUsers = processActiveUsersOnly ? getActiveUsersByDatePeriod(activeUsersContext)
                                                             : new HashSet<ValueData>() {
                                                                 @Override
@@ -89,7 +88,11 @@ public class MarketoReportGenerator {
                                                             };
                                                             
         final int pageSize = configurator.getInt(MarketoInitializer.PAGE_SIZE, 10000);
-        context = context.cloneAndPut(Parameters.PER_PAGE, pageSize);
+        Context.Builder builder = new Context.Builder(context);
+        builder.put(Parameters.PER_PAGE, pageSize);
+        builder.put(Parameters.SORT, "+user");
+        builder.put(MetricFilter.REGISTERED_USER, 1);
+        context = builder.build();
 
         try (BufferedWriter out = new BufferedWriter(new FileWriter(toFileReport))) {
             writeHeader(out);
@@ -147,25 +150,13 @@ public class MarketoReportGenerator {
     private String getLastProductLogin(String user) throws IOException {
         Context.Builder builder = new Context.Builder();
         builder.put(MetricFilter.USER, user);
-        builder.put(MetricFilter.EVENT, "user-sso-logged-in");
-        builder.put(Parameters.PAGE, 1);
-        builder.put(Parameters.PER_PAGE, 1);
-        builder.put(Parameters.SORT, "-date");
 
-        Metric usersActivityList = MetricFactory.getMetric(MetricType.USERS_ACTIVITY_LIST);
-        ListValueData valueData = (ListValueData)usersActivityList.getValue(builder.build());
-        if (valueData.size() == 0) {
-            return "";            
+        LongValueData value = ValueDataUtil.getAsLong(LastLoginTime.INSTANCE, builder.build());
+        if (value.equals(LongValueData.DEFAULT)) {
+            return "";
         }
 
-        MapValueData lastLoginEvent = ((MapValueData)valueData.getAll().get(0));
-     
-        Long lastLoginDateInMillisec = Long.valueOf(lastLoginEvent
-                                  .getAll()
-                                  .get(ReadBasedMetric.DATE)
-                                  .getAsString());
-
-        return new SimpleDateFormat(MetricRow.DEFAULT_DATE_FORMAT).format(lastLoginDateInMillisec);
+        return new SimpleDateFormat(MetricRow.DEFAULT_DATE_FORMAT).format(value.getAsLong());
     }
 
     private Set<ValueData> getActiveUsersByDatePeriod(Context context) throws ParseException, IOException {
@@ -276,4 +267,48 @@ public class MarketoReportGenerator {
         out.write("\"");
     }
 
+    /**
+     * Last user's login time.
+     */
+    private static class LastLoginTime extends ReadBasedMetric {
+        private static final LastLoginTime INSTANCE = new LastLoginTime();
+
+        private LastLoginTime() {
+            super(LastLoginTime.class.getSimpleName());
+        }
+
+        @Override
+        public String getStorageCollectionName() {
+            return getStorageCollectionName(MetricType.USERS_LOGGED_IN_TYPES);
+        }
+
+        @Override
+        public Context applySpecificFilter(Context context) throws IOException {
+            Context.Builder builder = new Context.Builder(context);
+            builder.put(Parameters.PAGE, 1);
+            builder.put(Parameters.PER_PAGE, 1);
+            builder.put(Parameters.SORT, "-date");
+            return builder.build();
+        }
+
+        @Override
+        public String[] getTrackedFields() {
+            return new String[]{DATE};
+        }
+
+        @Override
+        public DBObject[] getSpecificDBOperations(Context clauses) {
+            return new DBObject[0];
+        }
+
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return LongValueData.class;
+        }
+
+        @Override
+        public String getDescription() {
+            return "Last login time";
+        }
+    }
 }

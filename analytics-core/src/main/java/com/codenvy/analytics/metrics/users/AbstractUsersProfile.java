@@ -51,8 +51,8 @@ abstract public class AbstractUsersProfile extends ReadBasedMetric {
 
                 builder.put(filter, convertToPattern(value));
 
-            } else if (filter == MetricFilter.ALIASES) {
-                builder.put(MetricFilter.ALIASES, MongoDataLoader.processFilter(value, filter.isNumericType()));
+            } else if (filter == MetricFilter.ALIASES || filter == MetricFilter.REGISTERED_USER) {
+                builder.put(filter, MongoDataLoader.processFilter(value, filter.isNumericType()));
             }
         }
 
