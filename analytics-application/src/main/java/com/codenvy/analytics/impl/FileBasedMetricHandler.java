@@ -62,37 +62,6 @@ public class FileBasedMetricHandler implements MetricHandler {
         return metricValueDTO;
     }
 
-    @Override
-    public MetricValueListDTO getListValues(String metricName,
-                                            List<Map<String, String>> parameters,
-                                            Map<String, String> context,
-                                            UriInfo uriInfo) throws Exception {
-        MetricValueListDTO metricValueListDTO = DtoFactory.getInstance().createDto(MetricValueListDTO.class);
-        List<MetricValueDTO> metricValues = new ArrayList<>();
-
-        if (parameters != null) {
-            for (int i = 0; i < parameters.size(); i++) {
-                Map<String, String> mergedContext = merge(parameters.get(i), context);
-                metricValues.add(getValue(metricName, mergedContext, uriInfo));
-            }
-        }
-
-        metricValueListDTO.setMetrics(metricValues);
-        return metricValueListDTO;
-    }
-
-    @Override
-    public MetricValueDTO getValueByJson(String metricName,
-                                         Map<String, String> parameters,
-                                         Map<String, String> context,
-                                         UriInfo uriInfo) throws Exception {
-        if (parameters != null) {
-            context = merge(parameters, context);
-        }
-
-        return getValue(metricName, context, uriInfo);
-    }
-
     public MetricValueDTO getPublicValue(String metricName,
                                          Map<String, String> context,
                                          UriInfo uriInfo) throws MetricNotFoundException, MetricRestrictionException {

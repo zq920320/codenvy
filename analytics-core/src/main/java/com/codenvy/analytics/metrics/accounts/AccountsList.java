@@ -24,8 +24,8 @@ import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.api.account.shared.dto.MemberDescriptor;
-import com.codenvy.api.user.shared.dto.ProfileDescriptor;
+import com.codenvy.api.account.shared.dto.AccountMembership;
+import com.codenvy.api.user.shared.dto.Profile;
 
 import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
@@ -56,23 +56,22 @@ public class AccountsList extends AbstractAccountMetric {
 
     @Override
     public ValueData getValue(Context context) throws IOException {
-        ProfileDescriptor profile = getProfile();
-        List<MemberDescriptor> accountMemberships = getAccountMemberships();
+        Profile profile = getProfile();
+        List<AccountMembership> accountMemberships = getAccountMemberships();
 
         List<ValueData> list2Return = new ArrayList<>();
         String accountId = context.getAsString(MetricFilter.ACCOUNT_ID);
 
-        for (MemberDescriptor accountMembership : accountMemberships) {
-            if (!context.exists(MetricFilter.ACCOUNT_ID) || accountMembership.getAccountReference().getId().equals(accountId)) {
+        for (AccountMembership accountMembership : accountMemberships) {
+            if (!context.exists(MetricFilter.ACCOUNT_ID) || accountMembership.getId().equals(accountId)) {
 
                 Map<String, ValueData> m = new HashMap<>();
-                m.put(ACCOUNT_ID, StringValueData.valueOf(accountMembership.getAccountReference().getId()));
-                m.put(ACCOUNT_NAME, StringValueData.valueOf(accountMembership.getAccountReference().getName()));
+                m.put(ACCOUNT_ID, StringValueData.valueOf(accountMembership.getId()));
+                m.put(ACCOUNT_NAME, StringValueData.valueOf(accountMembership.getName()));
                 m.put(ACCOUNT_ROLES, StringValueData.valueOf(accountMembership.getRoles().toString()));
-                m.put(ACCOUNT_ATTRIBUTES, StringValueData.valueOf(
-                        getAccountDescriptorById(accountMembership.getAccountReference().getId())
-                                .getAttributes().toString()));
-                m.put(ACCOUNT_USER_ID, StringValueData.valueOf(accountMembership.getUserId()));
+                m.put(ACCOUNT_ATTRIBUTES, StringValueData.valueOf(accountMembership.getAttributes().toString()));
+//                m.put(ACCOUNT_ATTRIBUTES, StringValueData.valueOf(getAccountDescriptorById(accountMembership.getId()).getAttributes().toString()));
+                m.put(ACCOUNT_USER_ID, StringValueData.valueOf(profile.getUserId()));
                 m.put(ACCOUNT_PROFILE_EMAIL, getEmail(profile));
                 m.put(ACCOUNT_PROFILE_NAME, getFullName(profile));
 

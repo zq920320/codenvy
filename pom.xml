@@ -43,11 +43,12 @@
         <tag>2.0.0</tag>
     </scm>
     <properties>
+        <!-- DASHB-512 -->
+        <codenvy.platform-api.version>0.22.0</codenvy.platform-api.version>
         <maven.releases.repo.url>https://maven.codenvycorp.com/content/repositories/codenvy-private-releases/</maven.releases.repo.url>
         <maven.snapshots.repo.url>https://maven.codenvycorp.com/content/repositories/codenvy-private-snapshots/</maven.snapshots.repo.url>
         <!-- Required by Apache Pig -->
         <org.apache.log4j.version>1.2.16</org.apache.log4j.version>
-        <!-- DASHB-512 -->
         <org.apache.tomcat.version>7.0.50</org.apache.tomcat.version>
         <version.license-header>codenvy-codenvy-license-resource-bundle</version.license-header>
     </properties>

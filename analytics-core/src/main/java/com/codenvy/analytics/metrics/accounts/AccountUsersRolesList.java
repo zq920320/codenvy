@@ -25,9 +25,10 @@ import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.RequiredFilter;
-import com.codenvy.api.account.shared.dto.MemberDescriptor;
+import com.codenvy.api.account.shared.dto.AccountMembership;
+import com.codenvy.api.user.shared.dto.Member;
 import com.codenvy.api.user.shared.dto.User;
-import com.codenvy.api.workspace.shared.dto.WorkspaceDescriptor;
+import com.codenvy.api.workspace.shared.dto.Workspace;
 
 import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
@@ -49,17 +50,17 @@ public class AccountUsersRolesList extends AbstractAccountMetric {
 
     @Override
     public ValueData getValue(Context context) throws IOException {
-        MemberDescriptor accountById = getAccountMembership(context);
+        AccountMembership accountById = getAccountMembership(context);
 
         User currentUser = getCurrentUser();
         String currentUserId = currentUser.getId();
 
         List<ValueData> list2Return = new ArrayList<>();
-        for (WorkspaceDescriptor workspace : getWorkspaces(accountById.getAccountReference().getId())) {
+        for (Workspace workspace : getWorkspaces(accountById.getId())) {
             String rolesCurrentUserInWorkspace = getUserRoleInWorkspace(currentUserId, workspace.getId());
             boolean hasAdminRoles = rolesCurrentUserInWorkspace.contains(ROLE_WORKSPACE_ADMIN.toLowerCase());
 
-            for (MemberDescriptor member : getMembers(workspace.getId())) {
+            for (Member member : getMembers(workspace.getId())) {
                 if (hasAdminRoles || member.getUserId().equals(currentUserId)) {
                     Map<String, ValueData> m = new HashMap<>();
                     m.put(ROLES, StringValueData.valueOf(member.getRoles().toString()));

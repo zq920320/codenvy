@@ -23,18 +23,19 @@ import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.datamodel.ValueDataUtil;
 import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.persistent.MongoDataLoader;
-import com.codenvy.api.account.shared.dto.AccountDescriptor;
-import com.codenvy.api.account.shared.dto.MemberDescriptor;
-import com.codenvy.api.account.shared.dto.SubscriptionDescriptor;
-import com.codenvy.api.user.shared.dto.ProfileDescriptor;
+import com.codenvy.api.account.shared.dto.Account;
+import com.codenvy.api.account.shared.dto.AccountMembership;
+import com.codenvy.api.account.shared.dto.Subscription;
+import com.codenvy.api.user.shared.dto.Attribute;
+import com.codenvy.api.user.shared.dto.Member;
+import com.codenvy.api.user.shared.dto.Profile;
 import com.codenvy.api.user.shared.dto.User;
-import com.codenvy.api.workspace.shared.dto.WorkspaceDescriptor;
+import com.codenvy.api.workspace.shared.dto.Workspace;
 
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 
 import static java.lang.Math.min;
 
@@ -96,21 +97,20 @@ public abstract class AbstractAccountMetric extends AbstractMetric {
         super(metricType);
     }
 
-    protected List<MemberDescriptor> getAccountMemberships() throws IOException {
-        return httpMetricTransport.getResources(MemberDescriptor.class, "GET", PATH_ACCOUNT);
+    protected List<AccountMembership> getAccountMemberships() throws IOException {
+        return httpMetricTransport.getResources(AccountMembership.class, "GET", PATH_ACCOUNT);
     }
 
-    protected AccountDescriptor getAccountDescriptorById(String accountId) throws IOException {
-        return httpMetricTransport.getResource(AccountDescriptor.class, "GET",
-                                               PATH_ACCOUNT_BY_ID.replace(PARAM_ACCOUNT_ID, accountId));
+    protected Account getAccountDescriptorById(String accountId) throws IOException {
+        return httpMetricTransport.getResource(Account.class, "GET", PATH_ACCOUNT_BY_ID.replace(PARAM_ACCOUNT_ID, accountId));
     }
 
-    protected MemberDescriptor getAccountMembership(Context context) throws IOException {
+    protected AccountMembership getAccountMembership(Context context) throws IOException {
         String accountId = context.getAsString(MetricFilter.ACCOUNT_ID);
-        List<MemberDescriptor> accountMemberships = getAccountMemberships();
+        List<AccountMembership> accountMemberships = getAccountMemberships();
 
-        for (MemberDescriptor accountMembership : accountMemberships) {
-            if (accountMembership.getAccountReference().getId().equals(accountId)) {
+        for (AccountMembership accountMembership : accountMemberships) {
+            if (accountMembership.getId().equals(accountId)) {
                 return accountMembership;
             }
         }
@@ -118,39 +118,37 @@ public abstract class AbstractAccountMetric extends AbstractMetric {
         throw new IOException("There is no account with id " + accountId);
     }
 
-    protected List<WorkspaceDescriptor> getWorkspaces(String accountId) throws IOException {
-        return httpMetricTransport.getResources(WorkspaceDescriptor.class, "GET", PATH_ACCOUNT_WORKSPACES.replace(PARAM_ACCOUNT_ID, accountId));
+    protected List<Workspace> getWorkspaces(String accountId) throws IOException {
+        return httpMetricTransport.getResources(Workspace.class, "GET", PATH_ACCOUNT_WORKSPACES.replace(PARAM_ACCOUNT_ID, accountId));
     }
 
-    protected List<MemberDescriptor> getMembers(String workspaceId) throws IOException {
+    protected List<Member> getMembers(String workspaceId) throws IOException {
         String pathWorkspaceMembers = PATH_WORKSPACES_MEMBERS.replace(PARAM_WORKSPACE_ID, workspaceId);
-        return httpMetricTransport.getResources(MemberDescriptor.class, "GET", pathWorkspaceMembers);
+        return httpMetricTransport.getResources(Member.class, "GET", pathWorkspaceMembers);
     }
 
-    protected ProfileDescriptor getProfile() throws IOException {
-        return httpMetricTransport.getResource(ProfileDescriptor.class, "GET", PATH_PROFILE);
+    protected Profile getProfile() throws IOException {
+        return httpMetricTransport.getResource(Profile.class, "GET", PATH_PROFILE);
     }
 
-    protected StringValueData getEmail(ProfileDescriptor profile) {
-        Map<String, String> attributes = profile.getAttributes();
-        for (Map.Entry<String, String> attribute : attributes.entrySet()) {
-            if (PROFILE_ATTRIBUTE_EMAIL.equalsIgnoreCase(attribute.getKey())) {
+    protected StringValueData getEmail(Profile profile) {
+        for (Attribute attribute : profile.getAttributes()) {
+            if (PROFILE_ATTRIBUTE_EMAIL.equalsIgnoreCase(attribute.getName())) {
                 return new StringValueData(attribute.getValue());
             }
         }
         return StringValueData.DEFAULT;
     }
 
-    protected StringValueData getFullName(ProfileDescriptor profile) {
+    protected StringValueData getFullName(Profile profile) {
         String firsName = "";
         String lastName = "";
 
-        Map<String, String> attributes = profile.getAttributes();
-        for (Map.Entry<String, String> attribute : attributes.entrySet()) {
-            if (PROFILE_ATTRIBUTE_FIRST_NAME.equalsIgnoreCase(attribute.getKey())) {
+        for (Attribute attribute : profile.getAttributes()) {
+            if (PROFILE_ATTRIBUTE_FIRST_NAME.equalsIgnoreCase(attribute.getName())) {
                 firsName = attribute.getValue();
             }
-            if (PROFILE_ATTRIBUTE_LAST_NAME.equalsIgnoreCase(attribute.getKey())) {
+            if (PROFILE_ATTRIBUTE_LAST_NAME.equalsIgnoreCase(attribute.getName())) {
                 lastName = attribute.getValue();
             }
         }
@@ -162,9 +160,9 @@ public abstract class AbstractAccountMetric extends AbstractMetric {
     }
 
     protected String getUserRoleInWorkspace(String userId, String workspaceId) throws IOException {
-        List<MemberDescriptor> members = getMembers(workspaceId);
+        List<Member> members = getMembers(workspaceId);
 
-        for (MemberDescriptor member : members) {
+        for (Member member : members) {
             if (member.getUserId().equals(userId)) {
                 return member.getRoles().toString();
             }
@@ -173,9 +171,9 @@ public abstract class AbstractAccountMetric extends AbstractMetric {
         throw new IOException("There is no member " + userId + " in " + workspaceId);
     }
 
-    protected List<SubscriptionDescriptor> getSubscriptions(String accountId) throws IOException {
+    protected List<Subscription> getSubscriptions(String accountId) throws IOException {
         String path = PATH_ACCOUNT_SUBSCRIPTIONS.replace(PARAM_ID, accountId);
-        return httpMetricTransport.getResources(SubscriptionDescriptor.class, "GET", path);
+        return httpMetricTransport.getResources(Subscription.class, "GET", path);
     }
 
     protected List<ValueData> keepSpecificPage(List<ValueData> list, Context context) {
