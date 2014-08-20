@@ -26,6 +26,7 @@ import com.codenvy.api.workspace.server.dao.Member;
 import com.codenvy.api.workspace.server.dao.MemberDao;
 import com.codenvy.api.workspace.server.dao.Workspace;
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
+import com.codenvy.dto.server.DtoFactory;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
@@ -199,6 +200,21 @@ public class MemberDaoImpl implements MemberDao {
             throw new ServerException(me.getMessage(), me);
         }
         return result;
+    }
+
+    @Override
+    public Member getWorkspaceMember(String wsId, String userId) throws ServerException, NotFoundException {
+        try {
+            final DBObject one = collection.findOne(new BasicDBObject("_id", userId).append("members.workspaceId", wsId));
+            if (one == null) {
+                throw new NotFoundException(String.format("User with id %s hasn't membership in workspace with id %s", userId, wsId));
+            }
+            final BasicDBList members = (BasicDBList)one.get("members");
+
+            return fromDBObject((DBObject)members.get(0));
+        } catch (MongoException me) {
+            throw new ServerException(me.getMessage(), me);
+        }
     }
 
     @Override

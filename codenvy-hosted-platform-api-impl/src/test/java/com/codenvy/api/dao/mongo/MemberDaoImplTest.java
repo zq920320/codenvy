@@ -157,4 +157,17 @@ public class MemberDaoImplTest extends BaseDaoTest {
         List<Member> found = memberDao.getUserRelationships(USER_ID);
         assertEquals(found.size(), 2);
     }
+
+    @Test
+    public void shouldFindUserMemberships() throws Exception {
+        Member member1 = new Member().withUserId(USER_ID)
+                                     .withWorkspaceId(WORKSPACE_ID)
+                                     .withRoles(roles.subList(0, 1));
+
+        memberDao.create(member1);
+
+        Member found = memberDao.getWorkspaceMember(WORKSPACE_ID, USER_ID);
+
+        assertEquals(member1, found);
+    }
 }
