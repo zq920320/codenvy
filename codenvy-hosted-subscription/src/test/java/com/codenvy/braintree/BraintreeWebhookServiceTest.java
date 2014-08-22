@@ -18,13 +18,14 @@
 package com.codenvy.braintree;
 
 import com.braintreegateway.BraintreeGateway;
-import com.braintreegateway.Subscription;
 import com.braintreegateway.WebhookNotification;
 import com.braintreegateway.WebhookNotificationGateway;
 import com.braintreegateway.exceptions.InvalidSignatureException;
+import com.codenvy.api.account.server.SubscriptionService;
+import com.codenvy.api.account.server.SubscriptionServiceRegistry;
 import com.codenvy.api.account.server.dao.AccountDao;
-import com.codenvy.api.core.NotFoundException;
-import com.codenvy.api.core.ServerException;
+import com.codenvy.api.account.server.dao.Subscription;
+import com.codenvy.api.core.ApiException;
 
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -34,7 +35,6 @@ import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
 import javax.ws.rs.core.Response;
-
 import java.util.Calendar;
 
 import static com.braintreegateway.WebhookNotification.Kind;
@@ -52,35 +52,46 @@ import static org.testng.Assert.assertEquals;
 @Listeners(MockitoTestNGListener.class)
 public class BraintreeWebhookServiceTest {
     private static final String SUBSCRIPTION_ID = "subscription_id";
+    private static final String SERVICE_ID      = "service_id";
     @Mock
-    private BraintreeGateway           gateway;
+    private BraintreeGateway                  gateway;
     @Mock
-    private WebhookNotificationGateway webhookNotificationGateway;
+    private WebhookNotificationGateway        webhookNotificationGateway;
     @Mock
-    private AccountDao                 accountDao;
+    private AccountDao                        accountDao;
     @Mock
-    private WebhookNotification        notification;
+    private WebhookNotification               notification;
     @Mock
-    private Subscription               subscription;
+    private Subscription                      subscription;
+    @Mock
+    private com.braintreegateway.Subscription btSubscription;
+    @Mock
+    private SubscriptionService               subscriptionService;
+    @Mock
+    private SubscriptionServiceRegistry       registry;
 
     @InjectMocks
     private BraintreeWebhookService webhookService;
 
     @Test(dataProvider = "subscriptionWebhookProvider")
-    public void shouldRemoveSubscriptionOnSubscriptionExpiredWebhook(Kind kind) throws NotFoundException, ServerException {
+    public void shouldRemoveSubscriptionOnSubscriptionExpiredWebhook(Kind kind) throws ApiException {
         when(gateway.webhookNotification()).thenReturn(webhookNotificationGateway);
         when(webhookNotificationGateway.parse(anyString(), anyString())).thenReturn(notification);
         when(notification.getKind()).thenReturn(kind);
-        when(notification.getSubscription()).thenReturn(subscription);
-        when(subscription.getId()).thenReturn(SUBSCRIPTION_ID);
+        when(notification.getSubscription()).thenReturn(btSubscription);
+        when(btSubscription.getId()).thenReturn(SUBSCRIPTION_ID);
         when(notification.getTimestamp()).thenReturn(Calendar.getInstance());
+        when(accountDao.getSubscriptionById(SUBSCRIPTION_ID)).thenReturn(subscription);
+        when(subscription.getServiceId()).thenReturn(SERVICE_ID);
+        when(registry.get(SERVICE_ID)).thenReturn(subscriptionService);
 
         Response response = webhookService.processWebhooks("signature", "payload");
 
         assertEquals(response.getStatus(), Response.Status.OK.getStatusCode());
 
+        verify(subscriptionService).onRemoveSubscription(subscription);
         verify(accountDao).removeSubscription(SUBSCRIPTION_ID);
-        verify(accountDao).removeBillingProperties(SUBSCRIPTION_ID);
+        verify(accountDao).removeSubscriptionAttributes(SUBSCRIPTION_ID);
     }
 
     @DataProvider(name = "subscriptionWebhookProvider")

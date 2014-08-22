@@ -23,16 +23,18 @@ import com.braintreegateway.SubscriptionRequest;
 import com.braintreegateway.exceptions.BraintreeException;
 import com.codenvy.api.account.server.PaymentService;
 import com.codenvy.api.account.server.dao.Subscription;
+import com.codenvy.api.account.shared.dto.SubscriptionAttributes;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.ForbiddenException;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
+import com.codenvy.dto.server.DtoFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-import java.util.Map;
+import java.text.SimpleDateFormat;
 
 /**
  * Add subscriptions at Braintree.
@@ -50,9 +52,10 @@ public class BraintreePaymentService implements PaymentService {
     }
 
     @Override
-    public void addSubscription(Subscription subscription, Map<String, String> billingProperties)
+    public SubscriptionAttributes addSubscription(Subscription subscription, SubscriptionAttributes subscriptionAttributes)
             throws ServerException, ConflictException, ForbiddenException {
-        if (billingProperties == null || billingProperties.get("payment_token") == null) {
+        if (subscriptionAttributes == null || subscriptionAttributes.getBilling() == null ||
+            subscriptionAttributes.getBilling().getPaymentToken() == null) {
             throw new ForbiddenException("No billing information provided");
         }
 
@@ -62,14 +65,18 @@ public class BraintreePaymentService implements PaymentService {
 
             SubscriptionRequest subscriptionRequest = new SubscriptionRequest()
                     .id(subscription.getId())
-                    .paymentMethodToken(billingProperties.get("payment_token"))
+                    .paymentMethodToken(subscriptionAttributes.getBilling().getPaymentToken())
                     .planId(subscription.getPlanId());
 
             result = gateway.subscription().create(subscriptionRequest);
             if (result.isSuccess()) {
                 com.braintreegateway.Subscription target = result.getTarget();
                 LOG.info("PAYMENTS# state#{}# subscriptionId#{}# subscriptionStatus#{}#", "Successful", target.getId(), target.getStatus());
-                return;
+
+                SubscriptionAttributes newAttributes = DtoFactory.getInstance().clone(subscriptionAttributes);
+                newAttributes.getBilling().withStartDate(new SimpleDateFormat("MM/dd/yyyy").format(target.getFirstBillingDate().getTime()));
+                newAttributes.setTrialDuration(target.getTrialDuration());
+                return newAttributes;
             }
         } catch (BraintreeException e) {
             LOG.error(e.getLocalizedMessage(), e);

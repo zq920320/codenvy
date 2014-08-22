@@ -21,11 +21,14 @@ import com.codenvy.api.account.server.dao.Account;
 import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.server.dao.Member;
 import com.codenvy.api.account.server.dao.Subscription;
+import com.codenvy.api.account.shared.dto.Billing;
+import com.codenvy.api.account.shared.dto.SubscriptionAttributes;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.ForbiddenException;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
+import com.codenvy.dto.server.DtoFactory;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
@@ -65,17 +68,17 @@ import java.util.Map;
 @Singleton
 public class AccountDaoImpl implements AccountDao {
 
-    private static final Logger LOG                                        = LoggerFactory.getLogger(AccountDaoImpl.class);
-    private static final String ACCOUNT_COLLECTION                         = "organization.storage.db.account.collection";
-    private static final String SUBSCRIPTION_COLLECTION                    = "organization.storage.db.subscription.collection";
-    private static final String SUBSCRIPTION_BILLING_PROPERTIES_COLLECTION =
-            "organization.storage.db.subscription.billing_properties.collection";
-    private static final String MEMBER_COLLECTION                          = "organization.storage.db.acc.member.collection";
+    private static final Logger LOG                                = LoggerFactory.getLogger(AccountDaoImpl.class);
+    private static final String ACCOUNT_COLLECTION                 = "organization.storage.db.account.collection";
+    private static final String SUBSCRIPTION_COLLECTION            = "organization.storage.db.subscription.collection";
+    private static final String SUBSCRIPTION_ATTRIBUTES_COLLECTION =
+            "organization.storage.db.subscription.attributes.collection";
+    private static final String MEMBER_COLLECTION                  = "organization.storage.db.acc.member.collection";
 
     private final DBCollection accountCollection;
     private final DBCollection subscriptionCollection;
     private final DBCollection memberCollection;
-    private final DBCollection subscriptionBillingPropertiesCollection;
+    private final DBCollection subscriptionAttributesCollection;
     private final WorkspaceDao workspaceDao;
 
     @Inject
@@ -84,15 +87,14 @@ public class AccountDaoImpl implements AccountDao {
                           @Named(ACCOUNT_COLLECTION) String accountCollectionName,
                           @Named(SUBSCRIPTION_COLLECTION) String subscriptionCollectionName,
                           @Named(MEMBER_COLLECTION) String memberCollectionName,
-                          @Named(SUBSCRIPTION_BILLING_PROPERTIES_COLLECTION) String subscriptionBillingPropertiesCollectionName) {
+                          @Named(SUBSCRIPTION_ATTRIBUTES_COLLECTION) String subscriptionAttributesCollectionName) {
         accountCollection = db.getCollection(accountCollectionName);
         accountCollection.ensureIndex(new BasicDBObject("id", 1), new BasicDBObject("unique", true));
         accountCollection.ensureIndex(new BasicDBObject("name", 1));
         subscriptionCollection = db.getCollection(subscriptionCollectionName);
         subscriptionCollection.ensureIndex(new BasicDBObject("id", 1), new BasicDBObject("unique", true));
         subscriptionCollection.ensureIndex(new BasicDBObject("accountId", 1));
-        subscriptionBillingPropertiesCollection = db.getCollection(subscriptionBillingPropertiesCollectionName);
-        subscriptionBillingPropertiesCollection.ensureIndex(new BasicDBObject("subscriptionId", 1));
+        subscriptionAttributesCollection = db.getCollection(subscriptionAttributesCollectionName);
         memberCollection = db.getCollection(memberCollectionName);
         memberCollection.ensureIndex(new BasicDBObject("members.accountId", 1));
         this.workspaceDao = workspaceDao;
@@ -382,34 +384,30 @@ public class AccountDaoImpl implements AccountDao {
     }
 
     @Override
-    public void saveBillingProperties(String subscriptionId, Map<String, String> billingProperties)
+    public void saveSubscriptionAttributes(String subscriptionId, SubscriptionAttributes subscriptionAttributes)
             throws ServerException, NotFoundException, ForbiddenException {
-        // prevents NPE if admin adds subscription
-        if (null == billingProperties) {
-            throw new ForbiddenException("Billing properties required");
+        if (null == subscriptionAttributes) {
+            throw new ForbiddenException("Subscription attributes required");
         }
         try {
             if (null == subscriptionCollection.findOne(new BasicDBObject("id", subscriptionId))) {
                 throw new NotFoundException("Subscription not found " + subscriptionId);
             }
-            subscriptionBillingPropertiesCollection.save(toDBObject(subscriptionId, billingProperties));
+            subscriptionAttributesCollection.save(toDBObject(subscriptionId, subscriptionAttributes));
         } catch (MongoException me) {
             throw new ServerException(me.getMessage(), me);
         }
     }
 
     @Override
-    public Map<String, String> getBillingProperties(String subscriptionId) throws ServerException, NotFoundException {
+    public SubscriptionAttributes getSubscriptionAttributes(String subscriptionId) throws ServerException, NotFoundException {
         try {
-            final DBObject billingProperties =
-                    subscriptionBillingPropertiesCollection.findOne(new BasicDBObject("subscriptionId", subscriptionId));
-            if (null == billingProperties) {
-                throw new NotFoundException("Billing properties of subscription " + subscriptionId + " not found");
+            final DBObject subscriptionAttributesObject =
+                    subscriptionAttributesCollection.findOne(new BasicDBObject("_id", subscriptionId));
+            if (null == subscriptionAttributesObject) {
+                throw new NotFoundException("Attributes of subscription " + subscriptionId + " not found");
             }
-            @SuppressWarnings("unchecked")
-            final HashMap<String, String> result = new HashMap(billingProperties.toMap());
-            result.remove("_id");
-            return result;
+            return toSubscriptionAttributes(subscriptionAttributesObject);
         } catch (MongoException me) {
             throw new ServerException(me.getMessage(), me);
         }
@@ -417,12 +415,12 @@ public class AccountDaoImpl implements AccountDao {
     }
 
     @Override
-    public void removeBillingProperties(String subscriptionId) throws ServerException, NotFoundException {
+    public void removeSubscriptionAttributes(String subscriptionId) throws ServerException, NotFoundException {
         try {
-            if (null == subscriptionBillingPropertiesCollection.findOne(new BasicDBObject("subscriptionId", subscriptionId))) {
-                throw new NotFoundException("Billing properties of subscription " + subscriptionId + " not found");
+            if (null == subscriptionAttributesCollection.findOne(new BasicDBObject("_id", subscriptionId))) {
+                throw new NotFoundException("Attributes of subscription " + subscriptionId + " not found");
             }
-            subscriptionBillingPropertiesCollection.remove(new BasicDBObject("subscriptionId", subscriptionId));
+            subscriptionAttributesCollection.remove(new BasicDBObject("_id", subscriptionId));
         } catch (MongoException me) {
             throw new ServerException(me.getMessage(), me);
         }
@@ -473,11 +471,48 @@ public class AccountDaoImpl implements AccountDao {
                                   .append("properties", properties);
     }
 
-    DBObject toDBObject(String subscriptionId, Map<String, String> billingProperties) {
-        final BasicDBObject properties = new BasicDBObject();
-        properties.append("subscriptionId", subscriptionId);
-        properties.putAll(billingProperties);
-        return properties;
+    DBObject toDBObject(String subscriptionId, SubscriptionAttributes subscriptionAttributes) {
+        final BasicDBObject custom = new BasicDBObject();
+        custom.putAll(subscriptionAttributes.getCustom());
+        final Billing billing = subscriptionAttributes.getBilling();
+        final BasicDBObject billingObject = new BasicDBObject().append("contractTerm", billing.getContractTerm())
+                                                               .append("startDate", billing.getStartDate())
+                                                               .append("endDate", billing.getEndDate())
+                                                               .append("cycle", billing.getCycle())
+                                                               .append("cycleType", billing.getCycleType())
+                                                               .append("paymentToken", billing.getPaymentToken())
+                                                               .append("usePaymentSystem", billing.getUsePaymentSystem());
+        return new BasicDBObject().append("_id", subscriptionId)
+                                  .append("description", subscriptionAttributes.getDescription())
+                                  .append("startDate", subscriptionAttributes.getStartDate())
+                                  .append("endDate", subscriptionAttributes.getEndDate())
+                                  .append("trialDuration", subscriptionAttributes.getTrialDuration())
+                                  .append("custom", custom)
+                                  .append("billing", billingObject);
+    }
+
+    SubscriptionAttributes toSubscriptionAttributes(DBObject dbObject) {
+        final BasicDBObject attributes = (BasicDBObject)dbObject;
+        @SuppressWarnings("unchecked")
+        final HashMap<String, String> custom = new HashMap((Map)attributes.get("custom"));
+
+        final BasicDBObject billingAttributes = (BasicDBObject)attributes.get("billing");
+        final Billing billing = DtoFactory.getInstance().createDto(Billing.class)
+                                          .withContractTerm(billingAttributes.getInt("contractTerm"))
+                                          .withCycle(billingAttributes.getInt("cycle"))
+                                          .withCycleType(billingAttributes.getInt("cycleType"))
+                                          .withStartDate(billingAttributes.getString("startDate"))
+                                          .withEndDate(billingAttributes.getString("endDate"))
+                                          .withPaymentToken(billingAttributes.getString("paymentToken"))
+                                          .withUsePaymentSystem(billingAttributes.getString("usePaymentSystem"));
+
+        return DtoFactory.getInstance().createDto(SubscriptionAttributes.class)
+                         .withStartDate(attributes.getString("startDate"))
+                         .withEndDate(attributes.getString("endDate"))
+                         .withDescription(attributes.getString("description"))
+                         .withTrialDuration(attributes.getInt("trialDuration"))
+                         .withCustom(custom)
+                         .withBilling(billing);
     }
 
     /**

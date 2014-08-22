@@ -18,9 +18,11 @@
 package com.codenvy.braintree;
 
 import com.braintreegateway.BraintreeGateway;
-import com.braintreegateway.Subscription;
 import com.braintreegateway.WebhookNotification;
+import com.codenvy.api.account.server.SubscriptionService;
+import com.codenvy.api.account.server.SubscriptionServiceRegistry;
 import com.codenvy.api.account.server.dao.AccountDao;
+import com.codenvy.api.account.server.dao.Subscription;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,20 +39,22 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 /**
- * Receive notifications from Braintree.
+ * Receive notifications from Braintree and performs the appropriate action with subscriptions.
  *
  * @author Alexander Garagatyi
  */
 @Path("subscription/webhook")
 public class BraintreeWebhookService {
     private static final Logger LOG = LoggerFactory.getLogger(BraintreeWebhookService.class);
-    private BraintreeGateway gateway;
-    private AccountDao       accountDao;
+    private BraintreeGateway            gateway;
+    private AccountDao                  accountDao;
+    private SubscriptionServiceRegistry registry;
 
     @Inject
-    public BraintreeWebhookService(BraintreeGateway gateway, AccountDao accountDao) {
+    public BraintreeWebhookService(BraintreeGateway gateway, AccountDao accountDao, SubscriptionServiceRegistry registry) {
         this.gateway = gateway;
         this.accountDao = accountDao;
+        this.registry = registry;
     }
 
     @GET
@@ -69,9 +73,14 @@ public class BraintreeWebhookService {
                 case SUBSCRIPTION_EXPIRED:
                     LOG.info("Subscription webhook was received. Kind#{}# Id#{}# Timestamp#{}#", notification.getKind(),
                              notification.getSubscription().getId(), notification.getTimestamp().getTimeInMillis());
-                    Subscription subscription = notification.getSubscription();
-                    accountDao.removeSubscription(subscription.getId());
-                    accountDao.removeBillingProperties(subscription.getId());
+                    com.braintreegateway.Subscription btSubscription = notification.getSubscription();
+
+                    // remove subscription
+                    final Subscription subscription = accountDao.getSubscriptionById(btSubscription.getId());
+                    accountDao.removeSubscription(btSubscription.getId());
+                    accountDao.removeSubscriptionAttributes(btSubscription.getId());
+                    final SubscriptionService service = registry.get(subscription.getServiceId());
+                    service.onRemoveSubscription(subscription);
                     break;
                 default:
                     LOG.error("Payment error. Kind#{}# Timestamp#{}#", notification.getKind(),

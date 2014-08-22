@@ -15,13 +15,14 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.subscription;
+package com.codenvy.subscription.service;
 
 import com.codenvy.api.account.server.SubscriptionService;
 import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.server.dao.Subscription;
 import com.codenvy.api.core.ApiException;
 import com.codenvy.api.core.ConflictException;
+import com.codenvy.subscription.service.OnPremisesSubscriptionService;
 
 import org.mockito.Mock;
 import org.mockito.testng.MockitoTestNGListener;
@@ -39,7 +40,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
- * Tests for {@link OnPremisesSubscriptionService}
+ * Tests for {@link com.codenvy.subscription.service.OnPremisesSubscriptionService}
  *
  * @author Sergii Leschenko
  * @author Alexander Garagatyi

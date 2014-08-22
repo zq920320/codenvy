@@ -15,7 +15,7 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.subscription;
+package com.codenvy.subscription.service;
 
 import com.codenvy.api.account.server.SubscriptionService;
 import com.codenvy.api.account.server.dao.AccountDao;
@@ -24,6 +24,7 @@ import com.codenvy.api.core.ApiException;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.workspace.server.dao.Workspace;
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
+import com.codenvy.subscription.service.SaasSubscriptionService;
 
 import org.mockito.Mock;
 import org.mockito.testng.MockitoTestNGListener;
@@ -43,7 +44,7 @@ import java.util.concurrent.TimeUnit;
 import static org.mockito.Mockito.when;
 
 /**
- * Tests for {@link SaasSubscriptionService}
+ * Tests for {@link com.codenvy.subscription.service.SaasSubscriptionService}
  *
  * @author Eugene Voevodin
  * @author Alexander Garagatyi

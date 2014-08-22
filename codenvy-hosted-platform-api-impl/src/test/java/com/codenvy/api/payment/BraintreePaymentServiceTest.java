@@ -23,10 +23,13 @@ import com.braintreegateway.SubscriptionGateway;
 import com.braintreegateway.SubscriptionRequest;
 import com.braintreegateway.exceptions.BraintreeException;
 import com.codenvy.api.account.server.dao.Subscription;
+import com.codenvy.api.account.shared.dto.Billing;
+import com.codenvy.api.account.shared.dto.SubscriptionAttributes;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.ForbiddenException;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
+import com.codenvy.dto.server.DtoFactory;
 
 import org.mockito.InjectMocks;
 import org.mockito.Matchers;
@@ -37,12 +40,13 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
+import java.util.Calendar;
 import java.util.Collections;
-import java.util.Map;
 
 import static org.mockito.Matchers.refEq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.testng.Assert.assertEquals;
 
 /**
  * Tests for {@link BraintreePaymentService}
@@ -66,11 +70,28 @@ public class BraintreePaymentServiceTest {
 
     @InjectMocks
     private BraintreePaymentService service;
-    private Subscription            subscription;
+
+    private Subscription           subscription;
+    private SubscriptionAttributes subscriptionAttributes;
 
     @BeforeMethod
     public void setUp() throws Exception {
         subscription = new Subscription().withId(SUBSCRIPTION_ID).withPlanId(PLAN_ID);
+        subscriptionAttributes =
+                DtoFactory.getInstance().createDto(SubscriptionAttributes.class)
+                          .withTrialDuration(7)
+                          .withStartDate("11/12/2014")
+                          .withEndDate("11/12/2015")
+                          .withDescription("description")
+                          .withCustom(Collections.singletonMap("key", "value"))
+                          .withBilling(DtoFactory.getInstance().createDto(Billing.class)
+                                                 .withStartDate("11/12/2014")
+                                                 .withEndDate("11/12/2015")
+                                                 .withUsePaymentSystem("true")
+                                                 .withCycleType(1)
+                                                 .withCycle(1)
+                                                 .withContractTerm(1)
+                                                 .withPaymentToken(PAYMENT_TOKEN));
     }
 
     @Test
@@ -79,16 +100,23 @@ public class BraintreePaymentServiceTest {
         when(subscriptionGateway.create(Matchers.<SubscriptionRequest>any())).thenReturn(result);
         when(result.isSuccess()).thenReturn(true);
         when(result.getTarget()).thenReturn(btSubscription);
+        final Calendar calendar = Calendar.getInstance();
+        calendar.set(2019, 9, 27);
+        when(btSubscription.getFirstBillingDate()).thenReturn(calendar);
+        when(btSubscription.getTrialDuration()).thenReturn(15);
         SubscriptionRequest expectedRequest = new SubscriptionRequest()
                 .id(SUBSCRIPTION_ID)
                 .paymentMethodToken(PAYMENT_TOKEN)
                 .planId(PLAN_ID);
+        SubscriptionAttributes expected = DtoFactory.getInstance().clone(subscriptionAttributes);
+        expected.setTrialDuration(15);
+        expected.getBilling().setStartDate("10/27/2019");
 
+        SubscriptionAttributes actual = service.addSubscription(subscription, subscriptionAttributes);
 
-        service.addSubscription(subscription, Collections.singletonMap("payment_token", "ptoken"));
-
+        assertEquals(actual, expected);
         verify(subscriptionGateway).create(
-                refEq(expectedRequest, "addOnsRequest", "billingDayOfMonth", "descriptorRequest", "discountsRequest", "firstBillingDat",
+                refEq(expectedRequest, "addOnsRequest", "billingDayOfMonth", "descriptorRequest", "discountsRequest", "firstBillingDate",
                       "hasTrialPeriod", "merchantAccountId", "neverExpires", "numberOfBillingCycles", "options", "paymentMethodNonce",
                       "price", "trialDuration", "trialDurationUnit")
                                           );
@@ -96,14 +124,18 @@ public class BraintreePaymentServiceTest {
 
     @Test(dataProvider = "missingPaymentTokenProvider", expectedExceptions = ForbiddenException.class,
           expectedExceptionsMessageRegExp = "No billing information provided")
-    public void shouldThrowExceptionIfPaymentTokenIsMissing(Map<String, String> billingProperties)
+    public void shouldThrowExceptionIfRequiredSubscriptionAttributesIsMissing(SubscriptionAttributes subscriptionAttributes)
             throws ServerException, ForbiddenException, ConflictException {
-        service.addSubscription(subscription, billingProperties);
+        service.addSubscription(subscription, subscriptionAttributes);
     }
 
     @DataProvider(name = "missingPaymentTokenProvider")
     public Object[][] missingPaymentTokenProvider() {
-        return new Object[][]{{null}, {Collections.emptyMap()}, {Collections.singletonMap("not a payment token", "value")}};
+        return new Object[][]{
+                {null},
+                {DtoFactory.getInstance().createDto(SubscriptionAttributes.class)},
+                {DtoFactory.getInstance().createDto(SubscriptionAttributes.class).withBilling(
+                        DtoFactory.getInstance().createDto(Billing.class))}};
     }
 
     @Test(expectedExceptions = ConflictException.class, expectedExceptionsMessageRegExp = "BraintreeMessage")
@@ -113,7 +145,7 @@ public class BraintreePaymentServiceTest {
         when(result.isSuccess()).thenReturn(false);
         when(result.getMessage()).thenReturn("BraintreeMessage");
 
-        service.addSubscription(subscription, Collections.singletonMap("payment_token", "ptoken"));
+        service.addSubscription(subscription, subscriptionAttributes);
     }
 
 
@@ -124,7 +156,7 @@ public class BraintreePaymentServiceTest {
         when(subscriptionGateway.create(Matchers.<SubscriptionRequest>any())).thenThrow(
                 new BraintreeException("Braintree exception message"));
 
-        service.addSubscription(subscription, Collections.singletonMap("payment_token", "ptoken"));
+        service.addSubscription(subscription, subscriptionAttributes);
     }
 
     @Test
@@ -155,7 +187,8 @@ public class BraintreePaymentServiceTest {
     public void shouldThrowNotFoundExceptionIfBTNotFoundExceptionOccursOnRemoveSubscription()
             throws ServerException, NotFoundException, ForbiddenException {
         when(gateway.subscription()).thenReturn(subscriptionGateway);
-        when(subscriptionGateway.cancel(SUBSCRIPTION_ID)).thenThrow(new com.braintreegateway.exceptions.NotFoundException("exception message"));
+        when(subscriptionGateway.cancel(SUBSCRIPTION_ID))
+                .thenThrow(new com.braintreegateway.exceptions.NotFoundException("exception message"));
 
         service.removeSubscription(SUBSCRIPTION_ID);
     }
