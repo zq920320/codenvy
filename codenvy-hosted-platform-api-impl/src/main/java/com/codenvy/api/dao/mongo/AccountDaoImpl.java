@@ -472,8 +472,6 @@ public class AccountDaoImpl implements AccountDao {
     }
 
     DBObject toDBObject(String subscriptionId, SubscriptionAttributes subscriptionAttributes) {
-        final BasicDBObject custom = new BasicDBObject();
-        custom.putAll(subscriptionAttributes.getCustom());
         final Billing billing = subscriptionAttributes.getBilling();
         final BasicDBObject billingObject = new BasicDBObject().append("contractTerm", billing.getContractTerm())
                                                                .append("startDate", billing.getStartDate())
@@ -487,15 +485,12 @@ public class AccountDaoImpl implements AccountDao {
                                   .append("startDate", subscriptionAttributes.getStartDate())
                                   .append("endDate", subscriptionAttributes.getEndDate())
                                   .append("trialDuration", subscriptionAttributes.getTrialDuration())
-                                  .append("custom", custom)
+                                  .append("custom", toDBList(subscriptionAttributes.getCustom()))
                                   .append("billing", billingObject);
     }
 
     SubscriptionAttributes toSubscriptionAttributes(DBObject dbObject) {
         final BasicDBObject attributes = (BasicDBObject)dbObject;
-        @SuppressWarnings("unchecked")
-        final HashMap<String, String> custom = new HashMap((Map)attributes.get("custom"));
-
         final BasicDBObject billingAttributes = (BasicDBObject)attributes.get("billing");
         final Billing billing = DtoFactory.getInstance().createDto(Billing.class)
                                           .withContractTerm(billingAttributes.getInt("contractTerm"))
@@ -511,7 +506,7 @@ public class AccountDaoImpl implements AccountDao {
                          .withEndDate(attributes.getString("endDate"))
                          .withDescription(attributes.getString("description"))
                          .withTrialDuration(attributes.getInt("trialDuration"))
-                         .withCustom(custom)
+                         .withCustom(toMap((BasicDBList)attributes.get("custom")))
                          .withBilling(billing);
     }
 
@@ -522,7 +517,7 @@ public class AccountDaoImpl implements AccountDao {
         final BasicDBObject accountObject = (BasicDBObject)dbObject;
         return new Account().withId(accountObject.getString("id"))
                             .withName(accountObject.getString("name"))
-                            .withAttributes(toAttributes((BasicDBList)accountObject.get("attributes")));
+                            .withAttributes(toMap((BasicDBList)accountObject.get("attributes")));
     }
 
     /**
@@ -566,7 +561,7 @@ public class AccountDaoImpl implements AccountDao {
     /**
      * Converts database list to Map
      */
-    private Map<String, String> toAttributes(BasicDBList list) {
+    private Map<String, String> toMap(BasicDBList list) {
         final Map<String, String> attributes = new HashMap<>();
         if (list != null) {
             for (Object obj : list) {
