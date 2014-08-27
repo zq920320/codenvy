@@ -44,6 +44,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -576,6 +577,9 @@ public class AccountDaoImpl implements AccountDao {
      * Converts Map to Database list
      */
     private BasicDBList toDBList(Map<String, String> attributes) {
+        if (null == attributes) {
+            attributes = Collections.emptyMap();
+        }
         final BasicDBList list = new BasicDBList();
         for (Map.Entry<String, String> entry : attributes.entrySet()) {
             list.add(new BasicDBObject().append("name", entry.getKey())
