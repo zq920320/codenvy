@@ -101,7 +101,7 @@ public class FactoryUrlBaseValidatorTest {
                 .withServiceId("Factory")
                 .withProperties(Collections.singletonMap("Package", "Tracked"));
         member = new Member().withUserId("userid").withRoles(Arrays.asList("account/owner"));
-        when(accountDao.getSubscriptions(ID)).thenReturn(Arrays.asList(subscription));
+        when(accountDao.getSubscriptions(ID, "Factory")).thenReturn(Arrays.asList(subscription));
         when(accountDao.getMembers(anyString())).thenReturn(Arrays.asList(member));
         when(userDao.getById("userid")).thenReturn(user);
         when(profileDao.getById(anyString())).thenReturn(new Profile());
@@ -256,11 +256,22 @@ public class FactoryUrlBaseValidatorTest {
     }
 
     @Test(expectedExceptions = ApiException.class)
-    public void shouldNotValidateIfSubscriptionHasIllegalTariffPlan()
+    public void shouldNotValidateIfAccountDoesntHaveFactorySubscriptions()
             throws ApiException, ParseException, ServerException, NotFoundException {
         // given
-        Subscription subscription = new Subscription().withServiceId("INVALID");
-        when(accountDao.getSubscriptions(ID)).thenReturn(Arrays.asList(subscription));
+        when(accountDao.getSubscriptions(ID, "Factory")).thenReturn(Collections.<Subscription>emptyList());
+        // when, then
+        validator.validateTrackedFactoryAndParams(url);
+    }
+
+    @Test(expectedExceptions = ApiException.class)
+    public void shouldNotValidateIfPackageIsNotTracked()
+            throws ApiException, ParseException, ServerException, NotFoundException {
+        // given
+        Subscription subscription = new Subscription()
+                .withServiceId("Factory")
+                .withProperties(Collections.singletonMap("Package", "Another"));
+        when(accountDao.getSubscriptions(ID, "Factory")).thenReturn(Arrays.asList(subscription));
         // when, then
         validator.validateTrackedFactoryAndParams(url);
     }

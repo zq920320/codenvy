@@ -131,10 +131,10 @@ public class FactoryUrlBaseValidator {
         String orgid = "".equals(factory.getOrgid()) ? null : factory.getOrgid();
         if (orgid != null) {
             try {
-                List<Subscription> subscriptions = accountDao.getSubscriptions(orgid);
+                List<Subscription> subscriptions = accountDao.getSubscriptions(orgid, "Factory");
                 boolean isTracked = false;
                 for (Subscription one : subscriptions) {
-                    if ("Factory".equals(one.getServiceId()) && "Tracked".equals(one.getProperties().get("Package"))) {
+                    if ("Tracked".equals(one.getProperties().get("Package"))) {
                         isTracked = true;
                         break;
                     }
