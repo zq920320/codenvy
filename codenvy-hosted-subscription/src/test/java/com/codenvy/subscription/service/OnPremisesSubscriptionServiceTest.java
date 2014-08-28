@@ -59,7 +59,7 @@ public class OnPremisesSubscriptionServiceTest {
     @Test
     public void testBeforeCreateSubscription() throws ApiException {
         final String accountId = "acc1";
-        when(accountDao.getSubscriptions(accountId)).thenReturn(Collections.<Subscription>emptyList());
+        when(accountDao.getSubscriptions(accountId, service.getServiceId())).thenReturn(Collections.<Subscription>emptyList());
         final Map<String, String> properties = new HashMap<>(2);
         properties.put("Package", "startup");
         properties.put("Users", "5");
@@ -68,7 +68,7 @@ public class OnPremisesSubscriptionServiceTest {
 
         service.beforeCreateSubscription(newSubscription);
 
-        verify(accountDao).getSubscriptions(accountId);
+        verify(accountDao).getSubscriptions(accountId, service.getServiceId());
     }
 
     @Test(expectedExceptions = ConflictException.class,
@@ -77,7 +77,7 @@ public class OnPremisesSubscriptionServiceTest {
         final String accountId = "acc1";
         final List<Subscription> existedSubscriptions = new ArrayList<>(1);
         existedSubscriptions.add(new Subscription().withServiceId(service.getServiceId()));
-        when(accountDao.getSubscriptions(accountId)).thenReturn(existedSubscriptions);
+        when(accountDao.getSubscriptions(accountId, service.getServiceId())).thenReturn(existedSubscriptions);
         final Map<String, String> properties = new HashMap<>(2);
         properties.put("Package", "startup");
         properties.put("Users", "5");

@@ -72,13 +72,6 @@ public class SaasSubscriptionServiceTest {
 
     @Test(expectedExceptions = ConflictException.class,
           expectedExceptionsMessageRegExp = "Given account don't have any workspaces.")
-    public void testRemoveSubscriptionWithoutAccountIdProperty() throws ApiException {
-        final Subscription subscription = new Subscription();
-        service.onRemoveSubscription(subscription);
-    }
-
-    @Test(expectedExceptions = ConflictException.class,
-          expectedExceptionsMessageRegExp = "Given account don't have any workspaces.")
     public void testUpdateSubscriptionWithoutAccountIdProperty() throws ApiException {
         final Subscription subscription = new Subscription();
         service.onUpdateSubscription(subscription, subscription);
@@ -190,7 +183,7 @@ public class SaasSubscriptionServiceTest {
         final List<Subscription> existedSubscriptions = new ArrayList<>(1);
         existedSubscriptions.add(new Subscription().withServiceId(service.getServiceId())
                                                    .withProperties(Collections.singletonMap("codenvy:workspace_id", workspaceId)));
-        when(accountDao.getSubscriptions(accountId)).thenReturn(existedSubscriptions);
+        when(accountDao.getSubscriptions(accountId, service.getServiceId())).thenReturn(existedSubscriptions);
         final Map<String, String> properties = new HashMap<>(4);
         properties.put("codenvy:workspace_id", workspaceId);
         properties.put("Package", "team");

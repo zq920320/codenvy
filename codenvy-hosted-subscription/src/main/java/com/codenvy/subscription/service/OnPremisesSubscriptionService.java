@@ -61,10 +61,8 @@ public class OnPremisesSubscriptionService extends SubscriptionService {
         }
 
         try {
-            for (Subscription current : accountDao.getSubscriptions(subscription.getAccountId())) {
-                if (getServiceId().equals(current.getServiceId())) {
-                    throw new ConflictException("Subscriptions limit exhausted");
-                }
+            if (!accountDao.getSubscriptions(subscription.getAccountId(), getServiceId()).isEmpty()) {
+                throw new ConflictException("Subscriptions limit exhausted");
             }
         } catch (NotFoundException e) {
             LOG.error(e.getLocalizedMessage(), e);

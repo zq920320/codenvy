@@ -441,15 +441,44 @@ public class AccountDaoImplTest extends BaseDaoTest {
     }
 
     @Test
-    public void shouldBeAbleToGetSubscriptions() throws Exception {
+    public void shouldBeAbleToGetSubscriptionsByAccount() throws Exception {
         collection.insert(new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME)
                                                              .append("owner", ACCOUNT_OWNER));
 
         subscriptionCollection.save(accountDao.toDBObject(defaultSubscription));
-        subscriptionCollection.save(accountDao.toDBObject(new Subscription(defaultSubscription).withId("ANOTHER_ID")));
+        Subscription anotherSubscription = new Subscription(defaultSubscription).withId("ANOTHER_ID");
+        subscriptionCollection.save(accountDao.toDBObject(anotherSubscription));
 
-        List<Subscription> found = accountDao.getSubscriptions(ACCOUNT_ID);
-        assertEquals(found.size(), 2);
+        List<Subscription> found = accountDao.getSubscriptions(ACCOUNT_ID, null);
+        assertEquals(found, Arrays.asList(defaultSubscription, anotherSubscription));
+    }
+
+    @Test
+    public void shouldNotReturnSubscriptionIfServiceDoesNotMatch() throws Exception {
+        collection.insert(new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME)
+                                                             .append("owner", ACCOUNT_OWNER));
+
+        subscriptionCollection.save(accountDao.toDBObject(defaultSubscription));
+        subscriptionCollection.save(accountDao.toDBObject(
+                new Subscription(defaultSubscription).withId("ANOTHER_ID").withServiceId("ANOTHER_SERVICE_ID")));
+
+        List<Subscription> found = accountDao.getSubscriptions(ACCOUNT_ID, SERVICE_NAME);
+        assertEquals(found, Arrays.asList(defaultSubscription));
+    }
+
+    @Test
+    public void shouldBeAbleToGetSubscriptionsByAccountAndService() throws Exception {
+        collection.insert(new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME)
+                                                             .append("owner", ACCOUNT_OWNER));
+
+        subscriptionCollection.save(accountDao.toDBObject(defaultSubscription));
+        Subscription anotherSubscription = new Subscription(defaultSubscription).withId("ANOTHER_ID").withServiceId("ANOTHER_SERVICE_ID");
+        Subscription anotherSubscription2 = new Subscription(defaultSubscription).withId("ANOTHER_ID2");
+        subscriptionCollection.save(accountDao.toDBObject(anotherSubscription));
+        subscriptionCollection.save(accountDao.toDBObject(anotherSubscription2));
+
+        List<Subscription> found = accountDao.getSubscriptions(ACCOUNT_ID, SERVICE_NAME);
+        assertEquals(found, Arrays.asList(defaultSubscription, anotherSubscription2));
     }
 
     @Test
@@ -457,13 +486,13 @@ public class AccountDaoImplTest extends BaseDaoTest {
         collection.insert(new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME)
                                                              .append("owner", ACCOUNT_OWNER));
 
-        List<Subscription> found = accountDao.getSubscriptions(ACCOUNT_ID);
+        List<Subscription> found = accountDao.getSubscriptions(ACCOUNT_ID, null);
         assertEquals(found.size(), 0);
     }
 
     @Test(expectedExceptions = NotFoundException.class)
     public void shouldThrowNotFoundExceptionOnGetSubscriptionsWithInvalidAccountId() throws ServerException, NotFoundException {
-        accountDao.getSubscriptions(ACCOUNT_ID);
+        accountDao.getSubscriptions(ACCOUNT_ID, null);
     }
 
     @Test(expectedExceptions = ServerException.class)
@@ -473,14 +502,14 @@ public class AccountDaoImplTest extends BaseDaoTest {
                                                              .append("owner", ACCOUNT_OWNER));
 
         doThrow(new MongoException("")).when(subscriptionCollection).find(new BasicDBObject("accountId", ACCOUNT_ID));
-        accountDao.getSubscriptions(ACCOUNT_ID);
+        accountDao.getSubscriptions(ACCOUNT_ID, null);
     }
 
     @Test(expectedExceptions = ServerException.class)
     public void shouldThrowServerExceptionOnGetSubscriptionsIfMongoExceptionOccurs2()
             throws ServerException, NotFoundException, ConflictException {
         doThrow(new MongoException("")).when(collection).findOne(new BasicDBObject("id", ACCOUNT_ID));
-        accountDao.getSubscriptions(ACCOUNT_ID);
+        accountDao.getSubscriptions(ACCOUNT_ID, null);
     }
 
     @Test

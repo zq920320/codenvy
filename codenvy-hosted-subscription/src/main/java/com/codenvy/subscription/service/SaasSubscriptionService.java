@@ -78,17 +78,13 @@ public class SaasSubscriptionService extends SubscriptionService {
             throw new ConflictException("Subscription property 'RAM' required");
         }
 
-        final List<Subscription> allSubscriptions;
         try {
-            allSubscriptions = accountDao.getSubscriptions(subscription.getAccountId());
+            if (!accountDao.getSubscriptions(subscription.getAccountId(), getServiceId()).isEmpty()) {
+                throw new ConflictException("Subscriptions limit exhausted");
+            }
         } catch (NotFoundException e) {
             LOG.error(e.getLocalizedMessage(), e);
             throw new ServerException(e.getLocalizedMessage());
-        }
-        for (Subscription current : allSubscriptions) {
-            if (getServiceId().equals(current.getServiceId())) {
-                throw new ConflictException("Subscriptions limit exhausted");
-            }
         }
     }
 
@@ -159,17 +155,16 @@ public class SaasSubscriptionService extends SubscriptionService {
         if (properties == null) {
             throw new ServerException("Subscription properties required");
         }
-        List<Workspace> workspaces = workspaceDao.getByAccount(subscription.getAccountId());
-        if (!workspaces.isEmpty()) {
-            for (Workspace workspace : workspaces) {
+        for (Workspace workspace : workspaceDao.getByAccount(subscription.getAccountId())) {
+            try {
                 final Map<String, String> wsAttributes = workspace.getAttributes();
                 wsAttributes.remove("codenvy:runner_ram");
                 wsAttributes.remove("codenvy:runner_lifetime");
                 wsAttributes.remove("codenvy:builder_execution_time");
                 workspaceDao.update(workspace);
+            } catch (ApiException e) {
+                LOG.error(e.getLocalizedMessage(), e);
             }
-        } else {
-            throw new ConflictException("Given account don't have any workspaces.");
         }
     }
 

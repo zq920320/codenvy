@@ -22,7 +22,6 @@ import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.server.dao.Subscription;
 import com.codenvy.api.core.ApiException;
 import com.codenvy.api.core.ConflictException;
-import com.codenvy.subscription.service.FactorySubscriptionService;
 
 import org.mockito.Mock;
 import org.mockito.testng.MockitoTestNGListener;
@@ -57,12 +56,12 @@ public class FactorySubscriptionServiceTest {
     }
 
     @Test(expectedExceptions = ConflictException.class,
-          expectedExceptionsMessageRegExp = "Factory subscription already exists")
+          expectedExceptionsMessageRegExp = "Subscriptions limit exhausted")
     public void beforeCreateSubscriptionWhenOneAlreadyExists() throws ApiException {
         final String accountId = "acc1";
         final List<Subscription> existedSubscriptions = new ArrayList<>(1);
         existedSubscriptions.add(new Subscription().withServiceId(service.getServiceId()));
-        when(accountDao.getSubscriptions(accountId)).thenReturn(existedSubscriptions);
+        when(accountDao.getSubscriptions(accountId, service.getServiceId())).thenReturn(existedSubscriptions);
 
         final Subscription newSubscription = new Subscription().withServiceId(service.getServiceId())
                                                                .withAccountId(accountId);
@@ -78,6 +77,6 @@ public class FactorySubscriptionServiceTest {
                                                                .withProperties(properties);
         service.beforeCreateSubscription(newSubscription);
 
-        verify(accountDao).getSubscriptions(accountId);
+        verify(accountDao).getSubscriptions(accountId, service.getServiceId());
     }
 }

@@ -30,7 +30,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.util.List;
 
 /**
  * Subscription of factories
@@ -53,13 +52,9 @@ public class FactorySubscriptionService extends SubscriptionService {
     //fixme for now Factory supports only 1 active subscription per 1 account
     @Override
     public void beforeCreateSubscription(Subscription subscription) throws ConflictException, ServerException {
-        final List<Subscription> allSubscriptions;
         try {
-            allSubscriptions = accountDao.getSubscriptions(subscription.getAccountId());
-            for (Subscription current : allSubscriptions) {
-                if (getServiceId().equals(current.getServiceId())) {
-                    throw new ConflictException("Factory subscription already exists");
-                }
+            if (!accountDao.getSubscriptions(subscription.getAccountId(), getServiceId()).isEmpty()) {
+                throw new ConflictException("Subscriptions limit exhausted");
             }
         } catch (NotFoundException e) {
             LOG.error(e.getLocalizedMessage(), e);

@@ -301,13 +301,17 @@ public class AccountDaoImpl implements AccountDao {
     }
 
     @Override
-    public List<Subscription> getSubscriptions(String accountId) throws ServerException, NotFoundException {
+    public List<Subscription> getSubscriptions(String accountId, String serviceId) throws ServerException, NotFoundException {
         final List<Subscription> result;
         try {
             if (null == accountCollection.findOne(new BasicDBObject("id", accountId))) {
                 throw new NotFoundException("Account not found " + accountId);
             }
-            try (DBCursor subscriptions = subscriptionCollection.find(new BasicDBObject("accountId", accountId))) {
+            final BasicDBObject query = new BasicDBObject("accountId", accountId);
+            if (null != serviceId) {
+                query.append("serviceId", serviceId);
+            }
+            try (DBCursor subscriptions = subscriptionCollection.find(query)) {
                 result = new ArrayList<>(subscriptions.size());
                 for (DBObject currentSubscription : subscriptions) {
                     result.add(toSubscription(currentSubscription));
