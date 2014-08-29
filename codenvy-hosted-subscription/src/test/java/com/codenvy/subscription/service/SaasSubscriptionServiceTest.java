@@ -24,8 +24,8 @@ import com.codenvy.api.core.ApiException;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.workspace.server.dao.Workspace;
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
-import com.codenvy.subscription.service.SaasSubscriptionService;
 
+import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
 import org.mockito.testng.MockitoTestNGListener;
 import org.testng.Assert;
@@ -35,12 +35,14 @@ import org.testng.annotations.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import static org.mockito.Matchers.argThat;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
@@ -51,6 +53,8 @@ import static org.mockito.Mockito.when;
  */
 @Listeners(value = {MockitoTestNGListener.class})
 public class SaasSubscriptionServiceTest {
+    private static final String ACCOUNT_ID   = "accountID";
+    private static final String WORKSPACE_ID = "wsID";
 
     private SubscriptionService service;
     @Mock
@@ -80,31 +84,24 @@ public class SaasSubscriptionServiceTest {
 
     @Test(expectedExceptions = ConflictException.class, expectedExceptionsMessageRegExp = "Bad RAM value")
     public void testOnCreateSubscriptionWithBadSubscriptionRAM() throws ApiException {
-        final String workspaceId = "ws1";
-        final String accountId = "ws1";
-        final Workspace workspace = new Workspace().withId(workspaceId)
-                                                   .withAttributes(new HashMap<String, String>());
-        when(workspaceDao.getByAccount(accountId)).thenReturn(Arrays.asList(workspace));
+        final Workspace workspace = new Workspace().withId(WORKSPACE_ID).withAttributes(new HashMap<String, String>());
+        when(workspaceDao.getByAccount(ACCOUNT_ID)).thenReturn(Arrays.asList(workspace));
         final Map<String, String> properties = new HashMap<>(3);
-        properties.put("codenvy:workspace_id", workspaceId);
         properties.put("RAM", "0xAGB");
         properties.put("Package", "developer");
-        final Subscription subscription = new Subscription().withAccountId(accountId)
-                                                            .withProperties(properties);
+        final Subscription subscription = new Subscription().withAccountId(ACCOUNT_ID).withProperties(properties);
 
         service.afterCreateSubscription(subscription);
     }
 
     @Test
     public void testWorkspaceAttributesAddedWhenOnCreateInvoked() throws ApiException {
-        final String workspaceId = "ws1";
-        final String accountId = "acc1";
-        final Workspace workspace = new Workspace().withId(workspaceId);
-        when(workspaceDao.getByAccount(accountId)).thenReturn(Arrays.asList(workspace));
+        final Workspace workspace = new Workspace().withId(WORKSPACE_ID);
+        when(workspaceDao.getByAccount(ACCOUNT_ID)).thenReturn(Arrays.asList(workspace));
         final Map<String, String> properties = new HashMap<>(2);
         properties.put("Package", "developer");
         properties.put("RAM", "1GB");
-        final Subscription subscription = new Subscription().withAccountId(accountId)
+        final Subscription subscription = new Subscription().withAccountId(ACCOUNT_ID)
                                                             .withProperties(properties);
 
         service.afterCreateSubscription(subscription);
@@ -118,14 +115,12 @@ public class SaasSubscriptionServiceTest {
 
     @Test
     public void testWorkspaceAttributesAddedWhenOnCheckInvoked() throws ApiException {
-        final String workspaceId = "ws1";
-        final String accountId = "acc1";
-        final Workspace workspace = new Workspace().withId(workspaceId);
-        when(workspaceDao.getByAccount(accountId)).thenReturn(Arrays.asList(workspace));
+        final Workspace workspace = new Workspace().withId(WORKSPACE_ID);
+        when(workspaceDao.getByAccount(ACCOUNT_ID)).thenReturn(Arrays.asList(workspace));
         final Map<String, String> properties = new HashMap<>(2);
         properties.put("Package", "developer");
         properties.put("RAM", "1GB");
-        final Subscription subscription = new Subscription().withAccountId(accountId)
+        final Subscription subscription = new Subscription().withAccountId(ACCOUNT_ID)
                                                             .withProperties(properties);
         service.onCheckSubscription(subscription);
 
@@ -138,14 +133,12 @@ public class SaasSubscriptionServiceTest {
 
     @Test
     public void testWorkspaceAttributesReplacedOrAddedWhenOnUpdateInvoked() throws ApiException {
-        final String workspaceId = "ws1";
-        final String accountId = "acc1";
-        final Workspace workspace = new Workspace().withId(workspaceId);
-        when(workspaceDao.getByAccount(accountId)).thenReturn(Arrays.asList(workspace));
+        final Workspace workspace = new Workspace().withId(WORKSPACE_ID);
+        when(workspaceDao.getByAccount(ACCOUNT_ID)).thenReturn(Arrays.asList(workspace));
         final Map<String, String> properties = new HashMap<>(3);
         properties.put("Package", "developer");
         properties.put("RAM", "1GB");
-        final Subscription subscription = new Subscription().withAccountId(accountId)
+        final Subscription subscription = new Subscription().withAccountId(ACCOUNT_ID)
                                                             .withProperties(properties);
 
         service.onUpdateSubscription(subscription, subscription);
@@ -159,16 +152,13 @@ public class SaasSubscriptionServiceTest {
 
     @Test
     public void testRemoveWorkspaceAttributesWhenOnRemoveInvoked() throws ApiException {
-        final String workspaceId = "ws1";
-        final String accountId = "acc1";
         final Map<String, String> attributes = new HashMap<>(2);
         attributes.put("codenvy:runner_ram", "fake");
         attributes.put("codenvy:runner_lifetime", "fake");
-        final Workspace workspace = new Workspace().withId(workspaceId)
+        final Workspace workspace = new Workspace().withId(WORKSPACE_ID)
                                                    .withAttributes(attributes);
-        final Subscription subscription = new Subscription().withAccountId(accountId)
-                                                            .withProperties(Collections.singletonMap("codenvy:workspace_id", workspaceId));
-        when(workspaceDao.getByAccount(accountId)).thenReturn(Arrays.asList(workspace));
+        final Subscription subscription = new Subscription().withAccountId(ACCOUNT_ID);
+        when(workspaceDao.getByAccount(ACCOUNT_ID)).thenReturn(Arrays.asList(workspace));
 
         service.onRemoveSubscription(subscription);
 
@@ -178,19 +168,51 @@ public class SaasSubscriptionServiceTest {
     @Test(expectedExceptions = ConflictException.class,
           expectedExceptionsMessageRegExp = "Subscriptions limit exhausted")
     public void testBeforeCreateSubscriptionWhenExistsActiveState() throws ApiException {
-        final String workspaceId = "ws1";
-        final String accountId = "acc1";
         final List<Subscription> existedSubscriptions = new ArrayList<>(1);
-        existedSubscriptions.add(new Subscription().withServiceId(service.getServiceId())
-                                                   .withProperties(Collections.singletonMap("codenvy:workspace_id", workspaceId)));
-        when(accountDao.getSubscriptions(accountId, service.getServiceId())).thenReturn(existedSubscriptions);
+        existedSubscriptions.add(new Subscription().withServiceId(service.getServiceId()));
+        when(accountDao.getSubscriptions(ACCOUNT_ID, service.getServiceId())).thenReturn(existedSubscriptions);
         final Map<String, String> properties = new HashMap<>(4);
-        properties.put("codenvy:workspace_id", workspaceId);
         properties.put("Package", "team");
         properties.put("TariffPlan", "monthly");
         properties.put("RAM", "2GB");
-        final Subscription newSubscription = new Subscription().withAccountId(accountId)
-                                                               .withProperties(properties);
+        final Subscription newSubscription = new Subscription().withAccountId(ACCOUNT_ID).withProperties(properties);
         service.beforeCreateSubscription(newSubscription);
+    }
+
+    @Test
+    public void shouldSetDefaultRamForOneWorkspaceOnly() throws Exception {
+        final Subscription subscription = new Subscription().withAccountId(ACCOUNT_ID);
+        final Map<String, String> attributes = new HashMap<>(2);
+        attributes.put("codenvy:runner_ram", "fake");
+        attributes.put("codenvy:runner_lifetime", "fake");
+        attributes.put("codenvy:builder_execution_time", "fake");
+        final Workspace workspace = new Workspace().withId(WORKSPACE_ID)
+                                                   .withAttributes(new HashMap<>(attributes));
+        final Workspace workspace2 = new Workspace().withId("ANOTHER_WORKSPACE_ID")
+                                                    .withAttributes(new HashMap<>(attributes));
+        final Workspace workspace3 = new Workspace().withId("YET_ANOTHER_WORKSPACE_ID")
+                                                    .withAttributes(new HashMap<>(attributes));
+        when(workspaceDao.getByAccount(ACCOUNT_ID)).thenReturn(Arrays.asList(workspace, workspace2, workspace3));
+
+        service.onRemoveSubscription(subscription);
+
+        verify(workspaceDao).update(argThat(new ArgumentMatcher<Workspace>() {
+            @Override
+            public boolean matches(Object argument) {
+                Workspace actual = (Workspace)argument;
+                return actual.getAttributes().get("codenvy:builder_execution_time") == null &&
+                       actual.getAttributes().get("codenvy:runner_lifetime") == null &&
+                       actual.getAttributes().get("codenvy:runner_ram") == null;
+            }
+        }));
+        verify(workspaceDao, times(2)).update(argThat(new ArgumentMatcher<Workspace>() {
+            @Override
+            public boolean matches(Object argument) {
+                Workspace actual = (Workspace)argument;
+                return actual.getAttributes().get("codenvy:builder_execution_time") == null &&
+                       actual.getAttributes().get("codenvy:runner_lifetime") == null &&
+                       "0".equals(actual.getAttributes().get("codenvy:runner_ram"));
+            }
+        }));
     }
 }

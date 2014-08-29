@@ -151,14 +151,16 @@ public class SaasSubscriptionService extends SubscriptionService {
     }
 
     private void removeWorkspaceAttributes(Subscription subscription) throws NotFoundException, ServerException, ConflictException {
-        final Map<String, String> properties = subscription.getProperties();
-        if (properties == null) {
-            throw new ServerException("Subscription properties required");
-        }
+        boolean defaultRamUsed = false;
         for (Workspace workspace : workspaceDao.getByAccount(subscription.getAccountId())) {
             try {
                 final Map<String, String> wsAttributes = workspace.getAttributes();
-                wsAttributes.remove("codenvy:runner_ram");
+                if (defaultRamUsed) {
+                    wsAttributes.put("codenvy:runner_ram", "0");
+                } else {
+                    wsAttributes.remove("codenvy:runner_ram");
+                    defaultRamUsed = true;
+                }
                 wsAttributes.remove("codenvy:runner_lifetime");
                 wsAttributes.remove("codenvy:builder_execution_time");
                 workspaceDao.update(workspace);
