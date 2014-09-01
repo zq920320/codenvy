@@ -57,12 +57,8 @@
                                 <exec dir="${basedir}" executable="npm" failonerror="true">
                                     <arg value="install" />
                                 </exec>
-			    <!-- Download NPM dependencies -->
-                                <exec dir="${basedir}/build" executable="npm" failonerror="true">
-                                    <arg value="install" />
-                                </exec>
-                                <exec dir="${basedir}/build" executable="grunt" failonerror="true">
-                                    <arg value="build" />
+                                <exec dir="${basedir}" executable="gulp" failonerror="true">
+                                    <arg value="prod" />
                                 </exec>
                             </target>
                         </configuration>
@@ -74,14 +70,6 @@
                 <version>2.5</version>
                 <configuration>
                     <filesets>
-                        <fileset>
-                            <directory>${basedir}/app/_site</directory>
-                            <followSymlinks>false</followSymlinks>
-                        </fileset>
-                        <fileset>
-                            <directory>${basedir}/build/node_modules</directory>
-                            <followSymlinks>false</followSymlinks>
-                        </fileset>
                         <fileset>
                             <directory>${basedir}/node_modules</directory>
                             <followSymlinks>false</followSymlinks>
@@ -106,7 +94,7 @@
                         </configuration>
                     </execution>
                     -->
-                    <execution>
+<!--                     <execution>
                         <id>stage</id>
                         <phase>package</phase>
                         <goals>
@@ -118,7 +106,7 @@
                                 <descriptor>${basedir}/assembly/assembly-stage.xml</descriptor>
                             </descriptors>
                         </configuration>
-                    </execution>
+                    </execution> -->
                     <execution>
                         <id>prod</id>
                         <phase>package</phase>
@@ -132,7 +120,7 @@
                             </descriptors>
                         </configuration>
                     </execution>
-                    <execution>
+<!--                     <execution>
                         <id>enterprise</id>
                         <phase>package</phase>
                         <goals>
@@ -144,7 +132,7 @@
                                 <descriptor>${basedir}/assembly/assembly-enterprise.xml</descriptor>
                             </descriptors>
                         </configuration>
-                    </execution>
+                    </execution> -->
                 </executions>
             </plugin>
         </plugins>
