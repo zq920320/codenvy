@@ -25,13 +25,13 @@ var buildConfig = {
     };
 
 var paths = {
-        src: 'app/',
-        prod: 'target/prod/',
-        stage: 'target/stage/',
-        temp: 'target/temp/',
-        dist: 'target/dist/',
-        config: 'build/',
-        site: 'app/_site/'
+        src: './app/',
+        prod: './target/prod/',
+        stage: './target/stage/',
+        temp: './target/temp/',
+        dist: './target/dist/',
+        config: './build/',
+        site: './app/_site/'
 };
 
 // prod building
@@ -69,7 +69,7 @@ gulp.task('rjs1',function(){
 // This task creates local server
 gulp.task('connect', function() {
   connect.server({
-    root: paths.prod,
+    root: paths.stage
   });
 });
 
@@ -120,7 +120,7 @@ gulp.task('rjs',['copy_src'], function(){
       .pipe(gulp.dest(paths.prod + 'site/scripts'));
  });
 
-gulp.task('jekyll',['copy_src','prod_cfg']/*,['copy_src','css','rjs']*/, function () {
+gulp.task('jekyll',['copy_src','prod_cfg'], function () {
          console.log('Jekyll ......... ');
      return require('child_process')
         .spawn('jekyll', ['build'], {stdio: 'inherit', cwd: paths.temp});
@@ -171,6 +171,59 @@ gulp.task('copy_prod',['copy_src','prod_cfg','css','rjs','jekyll','myrev','repla
     paths.prod+'**/modernizr.custom.*.js'] // robots.txt
     )
   .pipe(gulp.dest(paths.dist+'prod'));
+});
+
+// Cleans gulp's folders
+gulp.task('clean',function(){
+  return gulp.src([paths.temp,paths.prod,paths.stage,paths.dist],{ read: false }) // much faster
+    .pipe(rimraf());
+})
+
+// --------------------------- Building Stage -----------------------------
+//----------------
+//----------
+gulp.task('stage',['copy_src','stage_cfg','css_stage','jekyll_stage','copy_stage'], function(){
+
+})
+// Copies src to temp folder
+gulp.task('copy_src', function(){
+  return gulp.src(paths.src + '**/*.*')
+  .pipe(gulp.dest(paths.temp))
+})
+
+gulp.task('stage_cfg', function(){
+  return gulp.src(paths.config + buildConfig.jekyllStageConfig)
+  .pipe(rename('_config.yml'))
+  .pipe(gulp.dest(paths.temp))
+})
+
+gulp.task('css_stage', ['copy_src'], function() {
+  return gulp.src(paths.temp+'site/styles/*.scss')
+  .pipe(compass({
+    //config_file: './compass-config.rb',
+    css: paths.temp +'site/styles',
+    sass: paths.temp +'site/styles'
+  }))
+  .pipe(gulp.dest(paths.stage + 'site/styles/'));
+});
+
+gulp.task('jekyll_stage',['copy_src','stage_cfg'], function () {
+         console.log('Jekyll ......... ');
+     return require('child_process')
+        .spawn('jekyll', ['build'], {stdio: 'inherit', cwd: paths.temp});
+
+});
+
+gulp.task('copy_stage',['copy_src','stage_cfg','css_stage','jekyll_stage'], function(){
+  gulp.src([paths.stage+'/**/*.html', // all HTML
+    paths.stage+'**/*.js',
+    paths.stage+'**/*.css',
+    paths.stage+'**/*.jpg',
+    paths.stage+'**/*.png',
+    paths.stage+'**/*.svg',
+    paths.stage+'**/*.txt'  // robots.txt
+    ])
+  .pipe(gulp.dest(paths.dist+'stage'));
 });
 
 // Cleans gulp's folders
