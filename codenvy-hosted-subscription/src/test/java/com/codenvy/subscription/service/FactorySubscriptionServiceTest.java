@@ -56,7 +56,7 @@ public class FactorySubscriptionServiceTest {
     }
 
     @Test(expectedExceptions = ConflictException.class,
-          expectedExceptionsMessageRegExp = "Subscriptions limit exhausted")
+          expectedExceptionsMessageRegExp = SubscriptionService.SUBSCRIPTION_LIMIT_EXHAUSTED_MESSAGE)
     public void beforeCreateSubscriptionWhenOneAlreadyExists() throws ApiException {
         final String accountId = "acc1";
         final List<Subscription> existedSubscriptions = new ArrayList<>(1);

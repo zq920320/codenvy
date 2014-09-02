@@ -166,7 +166,7 @@ public class SaasSubscriptionServiceTest {
     }
 
     @Test(expectedExceptions = ConflictException.class,
-          expectedExceptionsMessageRegExp = "Subscriptions limit exhausted")
+          expectedExceptionsMessageRegExp = SubscriptionService.SUBSCRIPTION_LIMIT_EXHAUSTED_MESSAGE)
     public void testBeforeCreateSubscriptionWhenExistsActiveState() throws ApiException {
         final List<Subscription> existedSubscriptions = new ArrayList<>(1);
         existedSubscriptions.add(new Subscription().withServiceId(service.getServiceId()));

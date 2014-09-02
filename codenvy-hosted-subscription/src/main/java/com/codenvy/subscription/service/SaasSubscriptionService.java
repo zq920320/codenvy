@@ -80,7 +80,7 @@ public class SaasSubscriptionService extends SubscriptionService {
 
         try {
             if (!accountDao.getSubscriptions(subscription.getAccountId(), getServiceId()).isEmpty()) {
-                throw new ConflictException("Subscriptions limit exhausted");
+                throw new ConflictException(SUBSCRIPTION_LIMIT_EXHAUSTED_MESSAGE);
             }
         } catch (NotFoundException e) {
             LOG.error(e.getLocalizedMessage(), e);
