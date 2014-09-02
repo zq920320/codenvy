@@ -25,13 +25,13 @@ var buildConfig = {
     };
 
 var paths = {
-        src: './app/',
+        src: 'app/',
         prod: './target/prod/',
         stage: './target/stage/',
-        temp: './target/temp/',
-        dist: './target/dist/',
-        config: './build/',
-        site: './app/_site/'
+        temp: 'target/temp/',
+        dist: 'target/dist/',
+        config: 'build/',
+        site: 'app/_site/'
 };
 
 // prod building
