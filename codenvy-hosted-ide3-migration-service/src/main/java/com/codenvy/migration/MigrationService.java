@@ -114,7 +114,7 @@ public class MigrationService {
             if (!descriptionFile.exists()) {
                 try (Writer writer = new BufferedWriter(new FileWriter(descriptionFile))) {
                     out.append(String.format("Converting project: %s, type: %s <br/> ", projectFile.getName(),
-                                             projectDescription.getType()));
+                                             projectDescription.getProjectTypeId()));
                     writer.write(JsonHelper.toJson(projectDescription));
                     File metadataDir = new File(codenvyFolder, PROPS_DIR);
                     File metadataFile = new File(metadataDir, descriptionFile.getName() + PROPERTIES_FILE_SUFFIX);
