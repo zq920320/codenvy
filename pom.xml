@@ -36,7 +36,7 @@
         <module>codenvy-hosted-infra-filters</module>
         <module>codenvy-hosted-subscription</module>
         <module>codenvy-hosted-recoverpassword</module>
-        <module>codenvy-hosted-workspace-close</module>
+        <module>codenvy-hosted-workspace-events</module>
         <module>codenvy-hosted-ide3-migration-service</module>
     </modules>
     <scm>
