@@ -30,11 +30,13 @@ import org.mockito.Mock;
 import org.mockito.testng.MockitoTestNGListener;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -68,30 +70,51 @@ public class SaasSubscriptionServiceTest {
     }
 
     @Test(expectedExceptions = ConflictException.class,
-          expectedExceptionsMessageRegExp = "Given account don't have any workspaces.")
+          expectedExceptionsMessageRegExp = "Given account doesn't have any workspaces.")
     public void testOnCreateSubscriptionWithoutAccountId() throws ApiException {
         final Subscription subscription = new Subscription();
         service.afterCreateSubscription(subscription);
     }
 
     @Test(expectedExceptions = ConflictException.class,
-          expectedExceptionsMessageRegExp = "Given account don't have any workspaces.")
+          expectedExceptionsMessageRegExp = "Given account doesn't have any workspaces.")
     public void testUpdateSubscriptionWithoutAccountIdProperty() throws ApiException {
         final Subscription subscription = new Subscription();
         service.onUpdateSubscription(subscription, subscription);
     }
 
 
-    @Test(expectedExceptions = ConflictException.class, expectedExceptionsMessageRegExp = "Bad RAM value")
-    public void testOnCreateSubscriptionWithBadSubscriptionRAM() throws ApiException {
+    @Test(expectedExceptions = ConflictException.class, expectedExceptionsMessageRegExp = "Subscription with such plan can't be added",
+          dataProvider = "badRamProvider")
+    public void shouldThrowConflictExceptionOnAfterCreateSubscriptionWithBadSubscriptionRAM(String ram) throws ApiException {
         final Workspace workspace = new Workspace().withId(WORKSPACE_ID).withAttributes(new HashMap<String, String>());
         when(workspaceDao.getByAccount(ACCOUNT_ID)).thenReturn(Arrays.asList(workspace));
         final Map<String, String> properties = new HashMap<>(3);
-        properties.put("RAM", "0xAGB");
+        properties.put("RAM", ram);
         properties.put("Package", "developer");
         final Subscription subscription = new Subscription().withAccountId(ACCOUNT_ID).withProperties(properties);
 
         service.afterCreateSubscription(subscription);
+    }
+
+    @DataProvider(name = "badRamProvider")
+    public String[][] badRamProvider() {
+        return new String[][]{
+                {"0xAGB"},
+                {"0xAMB"},
+                {"1024"},
+                {"2TB"},
+                {"1gb"},
+                {"1536mb"},
+                {"1Gb"},
+                {"1gB"},
+                {"1536mB"},
+                {"1gigabyte"},
+                {"4gigabytes"},
+                {"1536megabytes"},
+                {"4Gbytes"},
+                {"4GBytes"},
+        };
     }
 
     @Test
@@ -180,7 +203,7 @@ public class SaasSubscriptionServiceTest {
     }
 
     @Test
-    public void shouldSetDefaultRamForOneWorkspaceOnly() throws Exception {
+    public void shouldSetDefaultRamForOneWorkspaceOnlyOnRemoveSubscription() throws Exception {
         final Subscription subscription = new Subscription().withAccountId(ACCOUNT_ID);
         final Map<String, String> attributes = new HashMap<>(2);
         attributes.put("codenvy:runner_ram", "fake");
@@ -211,6 +234,97 @@ public class SaasSubscriptionServiceTest {
                 Workspace actual = (Workspace)argument;
                 return actual.getAttributes().get("codenvy:builder_execution_time") == null &&
                        actual.getAttributes().get("codenvy:runner_lifetime") == null &&
+                       "0".equals(actual.getAttributes().get("codenvy:runner_ram"));
+            }
+        }));
+    }
+
+    @Test
+    public void shouldBeAbleToCheckBeforeCreateSubscription() throws Exception {
+        final Workspace workspace = new Workspace().withId(WORKSPACE_ID);
+        when(accountDao.getSubscriptions(ACCOUNT_ID, service.getServiceId())).thenReturn(Collections.<Subscription>emptyList());
+        when(workspaceDao.getByAccount(ACCOUNT_ID)).thenReturn(Collections.singletonList(workspace));
+        final Map<String, String> properties = new HashMap<>(4);
+        properties.put("Package", "team");
+        properties.put("TariffPlan", "monthly");
+        properties.put("RAM", "2GB");
+        final Subscription newSubscription = new Subscription().withAccountId(ACCOUNT_ID).withProperties(properties);
+        service.beforeCreateSubscription(newSubscription);
+    }
+
+    @Test(expectedExceptions = ConflictException.class, expectedExceptionsMessageRegExp = "Given account doesn't have any workspaces.")
+    public void shouldThrowConflictExceptionOnBeforeCreateSubscriptionIfAccountDoesNotHaveWs() throws Exception {
+        when(accountDao.getSubscriptions(ACCOUNT_ID, service.getServiceId())).thenReturn(Collections.<Subscription>emptyList());
+        when(workspaceDao.getByAccount(ACCOUNT_ID)).thenReturn(Collections.<Workspace>emptyList());
+        final Map<String, String> properties = new HashMap<>(4);
+        properties.put("Package", "team");
+        properties.put("TariffPlan", "monthly");
+        properties.put("RAM", "2GB");
+        final Subscription newSubscription = new Subscription().withAccountId(ACCOUNT_ID).withProperties(properties);
+        service.beforeCreateSubscription(newSubscription);
+    }
+
+    @Test(dataProvider = "goodRamValuesProvider")
+    public void shouldBeAbleToUseMBOrGBOnAfterCreateSubscription(String actualRam, String expectedRam) throws Exception {
+        final Workspace workspace = new Workspace().withId(WORKSPACE_ID);
+        when(workspaceDao.getByAccount(ACCOUNT_ID)).thenReturn(Arrays.asList(workspace));
+        final Map<String, String> properties = new HashMap<>(2);
+        properties.put("Package", "developer");
+        properties.put("RAM", actualRam);
+        final Subscription subscription = new Subscription().withAccountId(ACCOUNT_ID)
+                                                            .withProperties(properties);
+
+        service.afterCreateSubscription(subscription);
+
+        Assert.assertEquals(workspace.getAttributes().size(), 3);
+        Assert.assertEquals(workspace.getAttributes().get("codenvy:runner_ram"), expectedRam);
+        Assert.assertEquals(workspace.getAttributes().get("codenvy:runner_lifetime"), String.valueOf(TimeUnit.HOURS.toSeconds(1)));
+        Assert.assertEquals(workspace.getAttributes().get("codenvy:builder_execution_time"),
+                            String.valueOf(TimeUnit.MINUTES.toSeconds(10)));
+    }
+
+    @DataProvider(name = "goodRamValuesProvider")
+    public String[][] goodRamValuesProvider() {
+        return new String[][]{
+                {"1GB", String.valueOf(1024)},
+                {"2GB", String.valueOf(2 * 1024)},
+                {"32GB", String.valueOf(32 * 1024)},
+                {"1536MB", "1536"},
+                {"512MB", "512"},
+                {"105MB", "105"},
+        };
+    }
+
+    @Test
+    public void shouldAddAttributesExceptRamToAllWorkspacesOnAfterCreateSubscription() throws Exception {
+        final Workspace workspace = new Workspace().withId(WORKSPACE_ID);
+        final Workspace workspace2 = new Workspace().withId("ANOTHER_WORKSPACE_ID");
+        final Workspace workspace3 = new Workspace().withId("YET_ANOTHER_WORKSPACE_ID");
+        when(accountDao.getSubscriptions(ACCOUNT_ID, service.getServiceId())).thenReturn(Collections.<Subscription>emptyList());
+        when(workspaceDao.getByAccount(ACCOUNT_ID)).thenReturn(Arrays.asList(workspace, workspace2, workspace3));
+        final Map<String, String> properties = new HashMap<>(4);
+        properties.put("Package", "team");
+        properties.put("TariffPlan", "monthly");
+        properties.put("RAM", "2GB");
+        final Subscription newSubscription = new Subscription().withAccountId(ACCOUNT_ID).withProperties(properties);
+
+        service.afterCreateSubscription(newSubscription);
+
+        verify(workspaceDao).update(argThat(new ArgumentMatcher<Workspace>() {
+            @Override
+            public boolean matches(Object argument) {
+                Workspace actual = (Workspace)argument;
+                return actual.getAttributes().get("codenvy:builder_execution_time") != null &&
+                       actual.getAttributes().get("codenvy:runner_lifetime") != null &&
+                       "2048".equals(actual.getAttributes().get("codenvy:runner_ram"));
+            }
+        }));
+        verify(workspaceDao, times(2)).update(argThat(new ArgumentMatcher<Workspace>() {
+            @Override
+            public boolean matches(Object argument) {
+                Workspace actual = (Workspace)argument;
+                return actual.getAttributes().get("codenvy:builder_execution_time") != null &&
+                       actual.getAttributes().get("codenvy:runner_lifetime") != null &&
                        "0".equals(actual.getAttributes().get("codenvy:runner_ram"));
             }
         }));

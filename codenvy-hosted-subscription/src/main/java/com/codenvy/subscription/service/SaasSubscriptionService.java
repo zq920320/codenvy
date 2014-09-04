@@ -82,9 +82,13 @@ public class SaasSubscriptionService extends SubscriptionService {
             if (!accountDao.getSubscriptions(subscription.getAccountId(), getServiceId()).isEmpty()) {
                 throw new ConflictException(SUBSCRIPTION_LIMIT_EXHAUSTED_MESSAGE);
             }
-        } catch (NotFoundException e) {
+        } catch (ServerException | NotFoundException e) {
             LOG.error(e.getLocalizedMessage(), e);
             throw new ServerException(e.getLocalizedMessage());
+        }
+
+        if (workspaceDao.getByAccount(subscription.getAccountId()).isEmpty()) {
+            throw new ConflictException("Given account doesn't have any workspaces.");
         }
     }
 
@@ -117,28 +121,36 @@ public class SaasSubscriptionService extends SubscriptionService {
         List<Workspace> workspaces = workspaceDao.getByAccount(subscription.getAccountId());
         if (!workspaces.isEmpty()) {
             final String tariffPackage = ensureExistsAndGet("Package", subscription);
-            final Workspace workspace = workspaces.iterator().next();
-            final Map<String, String> wsAttributes = workspace.getAttributes();
-            switch (tariffPackage.toLowerCase()) {
-                case "developer":
-                case "team":
-                    //1 hour
-                    wsAttributes.put("codenvy:runner_lifetime", String.valueOf(TimeUnit.HOURS.toSeconds(1)));
-                    wsAttributes.put("codenvy:builder_execution_time", String.valueOf(TimeUnit.MINUTES.toSeconds(10)));
-                    break;
-                case "project":
-                case "enterprise":
-                    //unlimited
-                    wsAttributes.put("codenvy:runner_lifetime", "-1");
-                    wsAttributes.put("codenvy:builder_execution_time", String.valueOf(TimeUnit.MINUTES.toSeconds(10)));
-                    break;
-                default:
-                    throw new NotFoundException(String.format("Package %s not found", tariffPackage));
+            boolean ramIsSet = false;
+            for (Workspace workspace : workspaces) {
+                final Map<String, String> wsAttributes = workspace.getAttributes();
+                switch (tariffPackage.toLowerCase()) {
+                    case "developer":
+                    case "team":
+                        //1 hour
+                        wsAttributes.put("codenvy:runner_lifetime", String.valueOf(TimeUnit.HOURS.toSeconds(1)));
+                        wsAttributes.put("codenvy:builder_execution_time", String.valueOf(TimeUnit.MINUTES.toSeconds(10)));
+                        break;
+                    case "project":
+                    case "enterprise":
+                        //unlimited
+                        wsAttributes.put("codenvy:runner_lifetime", "-1");
+                        wsAttributes.put("codenvy:builder_execution_time", String.valueOf(TimeUnit.MINUTES.toSeconds(10)));
+                        break;
+                    default:
+                        throw new NotFoundException(String.format("Package %s not found", tariffPackage));
+                }
+                if (ramIsSet) {
+                    wsAttributes.put("codenvy:runner_ram", "0");
+                } else {
+                    wsAttributes.put("codenvy:runner_ram", String.valueOf(convert(ensureExistsAndGet("RAM", subscription))));
+                    ramIsSet = true;
+                }
+
+                workspaceDao.update(workspace);
             }
-            wsAttributes.put("codenvy:runner_ram", String.valueOf(convert(ensureExistsAndGet("RAM", subscription))));
-            workspaceDao.update(workspace);
         } else {
-            throw new ConflictException("Given account don't have any workspaces.");
+            throw new ConflictException("Given account doesn't have any workspaces.");
         }
     }
 
@@ -181,10 +193,23 @@ public class SaasSubscriptionService extends SubscriptionService {
      */
     private int convert(String RAM) throws ConflictException {
         try {
-            int ramGb = Integer.parseInt(RAM.substring(0, RAM.length() - 2));
-            return 1024 * ramGb;
+            int ramMb;
+            switch (RAM.substring(RAM.length() - 2)) {
+                case "GB":
+                    ramMb = 1024 * Integer.parseInt(RAM.substring(0, RAM.length() - 2));
+                    break;
+                case "MB":
+                    ramMb = Integer.parseInt(RAM.substring(0, RAM.length() - 2));
+                    break;
+                default:
+                    LOG.error("Bad RAM value " + RAM);
+                    throw new ConflictException("Subscription with such plan can't be added");
+            }
+
+            return ramMb;
         } catch (NumberFormatException nfEx) {
-            throw new ConflictException("Bad RAM value");
+            LOG.error("Bad RAM value " + RAM);
+            throw new ConflictException("Subscription with such plan can't be added");
         }
     }
 }
