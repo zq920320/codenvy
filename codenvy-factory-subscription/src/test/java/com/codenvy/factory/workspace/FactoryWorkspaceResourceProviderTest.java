@@ -22,11 +22,11 @@ import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.api.core.notification.EventService;
-import com.codenvy.api.event.workspace.CreateWorkspaceEvent;
 import com.codenvy.api.factory.FactoryBuilder;
 import com.codenvy.api.factory.dto.Factory;
 import com.codenvy.api.workspace.server.dao.Workspace;
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
+import com.codenvy.workspace.event.CreateWorkspaceEvent;
 
 import org.mockito.Mock;
 import org.mockito.testng.MockitoTestNGListener;
