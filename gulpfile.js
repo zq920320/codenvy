@@ -1,5 +1,6 @@
 var gulp = require('gulp'),
     minifyCSS = require('gulp-minify-css'), // CSS minifying
+    watch = require('gulp-watch'),
     //imagemin = require('gulp-imagemin'), // Img minifying
     uglify = require('gulp-uglify'),    // JS minifying
     concat = require('gulp-concat'),    // Files merging
@@ -25,51 +26,20 @@ var buildConfig = {
     };
 
 var paths = {
-        src: 'app/',
+        src: './app/',
         prod: './target/prod/',
         stage: './target/stage/',
+        gh: './target/gh/',
         temp: 'target/temp/',
         dist: 'target/dist/',
         config: 'build/',
         site: 'app/_site/'
 };
 
-// prod building
-gulp.task('jek', function () {
-     require('child_process')
-        .spawn('jekyll', ['build'], {stdio: 'inherit', cwd: paths.temp, exclude: [paths.temp +'site/_scss']}); 
-});
-
-gulp.task('rjs1',function(){
-      /*return 
-      gulp.src(paths.temp + 'site/_rjs/*.js')
-        .pipe(rjs({
-            mainConfigFile: paths.temp +'site/_rjs/main.js',
-            //optimize: 'none', //hardcoded in requirejs plugin
-            baseUrl: paths.temp + 'site/_rjs',
-            wrap: true,
-            name: 'main',
-            mainFile: paths.temp+'site/index.html',
-            out: 'main.js'
-        }))*/
-        rjs({
-            mainConfigFile: paths.temp +'site/_rjs/main.js',
-            //optimize: 'none', //hardcoded in requirejs plugin
-            baseUrl: paths.temp + 'site/_rjs',
-            wrap: true,
-            name: 'main',
-            mainFile: paths.temp+'site/index.html',
-            out: 'main.js'
-        })
-        .pipe(gulp.dest(paths.temp + 'site/scripts'))
-
-        ;
- });
-
 // This task creates local server
-gulp.task('connect', function() {
+gulp.task('connect', ['gh'], function() {
   connect.server({
-    root: paths.stage
+    root: paths.gh
   });
 });
 
@@ -231,3 +201,57 @@ gulp.task('clean',function(){
   return gulp.src([paths.temp,paths.prod,paths.stage,paths.dist],{ read: false }) // much faster
     .pipe(rimraf());
 })
+
+// --------------------------- Building GitHub pages (localhost:8080) -----------------------------
+//----------------
+//----------
+gulp.task('gh',['copy_src','gh_cfg','css_gh','jekyll_gh','copy_gh'], function(){
+
+})
+// Copies src to temp folder
+gulp.task('copy_src', function(){
+  return gulp.src(paths.src + '**/*.*')
+  .pipe(gulp.dest(paths.temp))
+})
+
+gulp.task('gh_cfg', function(){
+  return gulp.src(paths.config + buildConfig.jekyllGHConfig)
+  .pipe(rename('_config.yml'))
+  .pipe(gulp.dest(paths.temp))
+})
+
+gulp.task('css_gh', ['copy_src'], function() {
+  return gulp.src(paths.temp+'site/styles/*.scss')
+  .pipe(compass({
+    //config_file: './compass-config.rb',
+    css: paths.temp +'site/styles',
+    sass: paths.temp +'site/styles'
+  }))
+  .pipe(gulp.dest(paths.gh + 'site/styles/'));
+});
+
+gulp.task('jekyll_gh',['copy_src','gh_cfg'], function () {
+         console.log('Jekyll ......... ');
+     return require('child_process')
+        .spawn('jekyll', ['build'], {stdio: 'inherit', cwd: paths.temp});
+
+});
+
+gulp.task('copy_gh',['copy_src','gh_cfg','css_gh','jekyll_gh'], function(){
+  gulp.src([paths.gh+'/**/*.html', // all HTML
+    paths.gh+'**/*.js',
+    paths.gh+'**/*.css',
+    paths.gh+'**/*.jpg',
+    paths.gh+'**/*.png',
+    paths.gh+'**/*.svg',
+    paths.gh+'**/*.txt'  // robots.txt
+    ])
+  .pipe(gulp.dest(paths.dist+'gh'));
+});
+
+gulp.task('watch', function(){
+return 
+gulp.watch('**/*.*',['gh']);
+//.pipe(gulp.dest(paths.temp+'watch'));
+
+});

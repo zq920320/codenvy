@@ -31,6 +31,7 @@
     "gulp-rimraf": "^0.1.0",
     "gulp-uglify": "^0.3.1",
     "gulp-useref": "^0.6.0",
+    "gulp-watch": "^0.7.0",
     "reversible": "^0.1.0"
   }
 }
