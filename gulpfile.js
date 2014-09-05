@@ -1,6 +1,9 @@
 var gulp = require('gulp'),
+    tinylr = require('tiny-lr'), // Mini webserver for livereload
     minifyCSS = require('gulp-minify-css'), // CSS minifying
     watch = require('gulp-watch'),
+    
+    print = require('gulp-print'),
     //imagemin = require('gulp-imagemin'), // Img minifying
     uglify = require('gulp-uglify'),    // JS minifying
     concat = require('gulp-concat'),    // Files merging
@@ -14,7 +17,7 @@ var gulp = require('gulp'),
     reverse = require('reversible'),
     rimraf = require('gulp-rimraf');                      // Remove files and folders
     //wait = require('gulp-wait'),
-    //lr = require('tiny-lr'), // Минивебсервер для livereload
+    //
     //server = lr(),
     //livereload = require('gulp-livereload'), // Livereload for Gulp
 
@@ -26,7 +29,7 @@ var buildConfig = {
     };
 
 var paths = {
-        src: './app/',
+        src: 'app/',
         prod: './target/prod/',
         stage: './target/stage/',
         gh: './target/gh/',
@@ -46,7 +49,7 @@ gulp.task('connect', ['gh'], function() {
 // --------------------------- Building Prod -----------------------------
 //----------------
 //----------
-gulp.task('prod',['copy_src','prod_cfg','css','rjs','jekyll','myrev','replace','rmbuild','copy_prod'], function(){
+gulp.task('prod',['copy_src','prod_cfg','css','jekyll','rjs','myrev','replace','rmbuild','copy_prod'], function(){
 
 })
 // Copies src to temp folder
@@ -73,7 +76,7 @@ gulp.task('css', ['copy_src'], function() {
 });
 
 // Builds projects using require.js's optimizer + Minify files with UglifyJS
-gulp.task('rjs',['copy_src'], function(){
+gulp.task('rjs',['copy_src','jekyll'], function(){
       return  rjs({
             mainConfigFile: paths.temp +'site/scripts/main.js',
             //optimize: 'none', //hardcoded in requirejs plugin
@@ -83,6 +86,9 @@ gulp.task('rjs',['copy_src'], function(){
             mainFile: paths.temp+'site/index.html',
             out: 'amd-main.js'
         })
+      .pipe(print(function(filepath) {
+        return "rjs -> built: " + filepath;
+      }))
       .pipe(gulp.src(paths.temp +'site/scripts/vendor/require.js'))
       .pipe(reverse({objectMode: true})) // requirejs should be at the begining
       .pipe(concat('amd-app.js'))
@@ -91,7 +97,7 @@ gulp.task('rjs',['copy_src'], function(){
  });
 
 gulp.task('jekyll',['copy_src','prod_cfg'], function () {
-         console.log('Jekyll ......... ');
+         console.log('Jekyll building ......... ');
      return require('child_process')
         .spawn('jekyll', ['build'], {stdio: 'inherit', cwd: paths.temp});
 
@@ -102,8 +108,14 @@ gulp.task('jekyll',['copy_src','prod_cfg'], function () {
     return gulp.src([paths.prod + 'site/scripts/amd-app.js', paths.prod + 'site/styles/*.css'],{base:paths.prod})
     //.pipe(wait(1500))
     .pipe(rev())
+    .pipe(print(function(filepath) {
+        return "rev -> built: " + filepath;
+      }))
     .pipe(gulp.dest(paths.prod))
     .pipe(rev.manifest())
+    .pipe(print(function(filepath) {
+        return "manifest -> built: " + filepath;
+      }))
     .pipe(gulp.dest(paths.prod));
   });
 
@@ -111,6 +123,8 @@ gulp.task('jekyll',['copy_src','prod_cfg'], function () {
 gulp.task('replace',['copy_src','prod_cfg','css','rjs','jekyll','myrev'], function(){
 
   var manifest = require(paths.prod+'rev-manifest.json')
+  console.log('Process rev-manifest.json: \n');
+  console.log(manifest);
   return gulp.src([paths.prod+'**/*.html'])
   .pipe(replaceRevRef({
     base: process.cwd()+'/target/prod',
@@ -126,6 +140,9 @@ gulp.task('replace',['copy_src','prod_cfg','css','rjs','jekyll','myrev'], functi
 gulp.task('rmbuild', ['copy_src','prod_cfg','css','rjs','jekyll','myrev','replace'], function(){
   return gulp.src(paths.prod+'**/*.html')
   .pipe(useref())
+  .pipe(print(function(filepath) {
+        return "remove <!-- build:js ... blocks -> built: " + filepath;
+      }))
   .pipe(gulp.dest(paths.prod));
 
 });
@@ -140,6 +157,10 @@ gulp.task('copy_prod',['copy_src','prod_cfg','css','rjs','jekyll','myrev','repla
     paths.prod+'**/*.txt',
     paths.prod+'**/modernizr.custom.*.js'] // robots.txt
     )
+      .pipe(print(function(filepath) {
+        if (filepath){return "copy prod -> built: " + filepath;}
+        
+      }))
   .pipe(gulp.dest(paths.dist+'prod'));
 });
 
@@ -206,7 +227,7 @@ gulp.task('clean',function(){
 //----------------
 //----------
 gulp.task('gh',['copy_src','gh_cfg','css_gh','jekyll_gh','copy_gh'], function(){
-
+  console.log('Update localhost .....');
 })
 // Copies src to temp folder
 gulp.task('copy_src', function(){
@@ -250,8 +271,50 @@ gulp.task('copy_gh',['copy_src','gh_cfg','css_gh','jekyll_gh'], function(){
 });
 
 gulp.task('watch', function(){
-return 
-gulp.watch('**/*.*',['gh']);
-//.pipe(gulp.dest(paths.temp+'watch'));
+  console.log('Watching for changes in : '+paths.src+'*.*');
+return gulp.watch(''+paths.src+'**/*.*',['gh']);
+
 
 });
+
+// --------------------------- Dev config for LiveReload localhost:8080) -----------------------------
+//----------------
+//----------
+//  Set Up LiveReload (port 35729 which LiveReload uses by default)
+
+gulp.task('express', function() {
+  var express = require('express');
+  var app = express();
+  app.use(require('connect-livereload')({port: 4002}));
+  app.use(express.static(__dirname));
+  app.listen(4000);
+});
+
+var tinylr;
+gulp.task('livereload', function() {
+  tinylr = require('tiny-lr')();
+  tinylr.listen(4002);
+});
+
+function notifyLiveReload(event) {
+  var fileName = require('path').relative(__dirname, event.path);
+
+  tinylr.changed({
+    body: {
+      files: [fileName]
+    }
+  });
+}
+
+gulp.task('__watch', function() {
+  gulp.watch(''+paths.src+'site/styles/*.scss', ['css_gh']);
+  gulp.watch(''+paths.src+'site/**/*.html', ['jekyll_gh']);
+  gulp.watch(''+paths.gh+'**/*.html', notifyLiveReload);
+  gulp.watch(''+paths.gh+'site/styles/*.css', notifyLiveReload);
+});
+
+gulp.task('lr', ['css_gh', 'express', 'livereload', 'watch'], function() {
+
+});
+
+// -------------------- Utils ------------------------

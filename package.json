@@ -19,11 +19,14 @@
     "backbone": "0.9.9"
   },
   "devDependencies": {
+    "connect-livereload": "^0.4.0",
+    "express": "^4.8.7",
     "gulp": "^3.8.7",
     "gulp-compass": "^1.3.1",
     "gulp-concat": "^2.3.4",
     "gulp-connect": "^2.0.6",
     "gulp-minify-css": "^0.3.7",
+    "gulp-print": "^1.1.0",
     "gulp-rename": "^1.2.0",
     "gulp-requirejs": "^0.1.3",
     "gulp-rev": "^1.0.0",
@@ -32,6 +35,7 @@
     "gulp-uglify": "^0.3.1",
     "gulp-useref": "^0.6.0",
     "gulp-watch": "^0.7.0",
-    "reversible": "^0.1.0"
+    "reversible": "^0.1.0",
+    "tiny-lr": "^0.1.1"
   }
 }
