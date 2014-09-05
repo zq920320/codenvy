@@ -24,8 +24,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.mail.Authenticator;
-import javax.mail.Session;
 import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -80,6 +80,8 @@ public class SessionHolder {
                         return new PasswordAuthentication(username, password);
                     }
                 });
+            } else {
+                this.session = Session.getInstance(props);
             }
         } finally {
             if (is != null) {
