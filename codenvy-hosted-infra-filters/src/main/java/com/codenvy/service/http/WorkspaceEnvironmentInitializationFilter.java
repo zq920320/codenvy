@@ -20,10 +20,12 @@ package com.codenvy.service.http;
 import com.codenvy.api.workspace.shared.dto.WorkspaceDescriptor;
 import com.codenvy.commons.env.EnvironmentContext;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.*;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
@@ -32,6 +34,8 @@ import java.io.IOException;
  */
 
 public abstract class WorkspaceEnvironmentInitializationFilter implements Filter {
+
+    private static final Logger LOG = LoggerFactory.getLogger(WorkspaceEnvironmentInitializationFilter.class);
 
     @Named("error.page.workspace_not_found_redirect_url")
     @Inject
@@ -55,6 +59,8 @@ public abstract class WorkspaceEnvironmentInitializationFilter implements Filter
             env.setWorkspaceId(workspace.getId());
             env.setAccountId(workspace.getAccountId());
             env.setWorkspaceTemporary(workspace.isTemporary());
+            LOG.debug("Set context wsn:{}. wsid:{}, accountid:{} , iswstmp:{}", env.getWorkspaceName(), env.getWorkspaceId(),
+                      env.getAccountId(), env.isWorkspaceTemporary());
             chain.doFilter(request, response);
         } finally {
             EnvironmentContext.reset();
