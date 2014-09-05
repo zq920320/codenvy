@@ -43,8 +43,20 @@ mvn clean install
 gulp connect
 
 ```
+Enabling watcher
+=======
+
+```
+mvn clean install
+gulp connect
+gulp watch
+
+```
+
+
 
 The site will be available at localhost:8080
+
 
 How to build
 =======
