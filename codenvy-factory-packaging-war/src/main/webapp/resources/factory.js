@@ -107,7 +107,7 @@ if (!window["codenvy-factories"]) {
             }
 
             if (_url) {
-                frameQuery += "&url=" + _url;
+                frameQuery += "&url=" + encodeURIComponent(_url);
             }
 
             if (_logo) {
@@ -188,7 +188,7 @@ if (!window["codenvy-factories"]) {
             }
         }
 
-        var scriptPart = "/factory/resources/factory.js";
+        var scriptPart = "resources/factory.js";
 
         var scripts = document.getElementsByTagName('script');
         for (var i = 0; i < scripts.length; i++) {
@@ -203,6 +203,6 @@ if (!window["codenvy-factories"]) {
             }
         }
 
-    }, 1000);
+    }, 100);
 
 }
