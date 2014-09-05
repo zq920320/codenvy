@@ -36,7 +36,6 @@ import org.joda.time.LocalDate;
 import org.joda.time.Months;
 import org.joda.time.Weeks;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.text.DateFormat;
@@ -218,6 +217,10 @@ public class Utils {
     }
 
     public static Map<String, String> fetchEncodedPairs(String data, boolean keyToLowerCase) throws UnsupportedEncodingException {
+        if (data.isEmpty()) {
+            return Collections.emptyMap();
+        }
+
         String[] splitted = data.split(",");
         Map<String, String> result = new HashMap<>(splitted.length);
 
@@ -498,3 +501,4 @@ public class Utils {
         return c_list.toArray(new String[0]);
     }
 }
+
