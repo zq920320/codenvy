@@ -32,6 +32,7 @@
     "gulp-rev": "^1.0.0",
     "gulp-rev-manifest-replace": "0.0.3",
     "gulp-rimraf": "^0.1.0",
+    "gulp-shell": "^0.2.9",
     "gulp-uglify": "^0.3.1",
     "gulp-useref": "^0.6.0",
     "gulp-watch": "^0.7.0",

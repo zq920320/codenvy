@@ -2,7 +2,7 @@ var gulp = require('gulp'),
     tinylr = require('tiny-lr'), // Mini webserver for livereload
     minifyCSS = require('gulp-minify-css'), // CSS minifying
     watch = require('gulp-watch'),
-    
+    shell = require('gulp-shell'),
     print = require('gulp-print'),
     //imagemin = require('gulp-imagemin'), // Img minifying
     uglify = require('gulp-uglify'),    // JS minifying
@@ -97,10 +97,18 @@ gulp.task('rjs',['copy_src','jekyll'], function(){
  });
 
 gulp.task('jekyll',['copy_src','prod_cfg'], function () {
-         console.log('Jekyll building ......... ');
-     return require('child_process')
-        .spawn('jekyll', ['build'], {stdio: 'inherit', cwd: paths.temp});
-
+       console.log('Jekyll building ......... ');
+   return gulp.src(paths.temp+'_config.yml', {read: false})
+    .pipe(shell([
+      'jekyll build'
+    ], {
+      cwd: 'target/temp',
+      templateData: {
+        f: function (s) {
+          return s.replace(/$/, '.bak')
+        }
+      }
+    }))
 });
 
 // Replaces references with reved names
