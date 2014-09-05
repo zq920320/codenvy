@@ -160,7 +160,7 @@ public class InviteService {
 
             mailSenderClient
                     .sendMail("Codenvy <noreply@cloud-ide.com>", mailRecipient, null,
-                              "You've been invited to use " + workspace.getName() + " workspace",
+                              sender + " Has Invited You To Codenvy",
                               "text/html; charset=utf-8",
                               readAndCloseQuietly(getResource("/email-templates/invite_a_friend.html")),
                               inviteMessageProperties);

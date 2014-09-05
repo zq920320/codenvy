@@ -67,7 +67,7 @@ public class PasswordService {
     private final String mailSender = "Codenvy <noreply@codenvy.com>";
 
     // TODO made this configurable
-    private final String recoverMailSubject = "Codenvy password recover";
+    private final String recoverMailSubject = "Codenvy Password Recovery";
 
     private final CacheControl noCache;
 
