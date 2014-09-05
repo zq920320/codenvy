@@ -18,6 +18,7 @@
 package com.codenvy.subscription.service;
 
 import com.codenvy.api.account.server.SubscriptionService;
+import com.codenvy.api.account.server.dao.Account;
 import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.server.dao.Subscription;
 import com.codenvy.api.core.ApiException;
@@ -95,22 +96,38 @@ public class SaasSubscriptionService extends SubscriptionService {
     @Override
     public void afterCreateSubscription(Subscription subscription) throws ApiException {
         addWorkspaceAttributes(subscription);
+        addAccountAttributes(subscription);
     }
 
     @Override
     public void onRemoveSubscription(Subscription subscription) throws ServerException, NotFoundException, ConflictException {
         removeWorkspaceAttributes(subscription);
+        removeAccountAttributes(subscription);
     }
 
     @Override
     public void onCheckSubscription(Subscription subscription) throws ServerException, NotFoundException, ConflictException {
         addWorkspaceAttributes(subscription);
+        addAccountAttributes(subscription);
     }
 
     @Override
     public void onUpdateSubscription(Subscription oldSubscription, Subscription newSubscription)
             throws ServerException, NotFoundException, ConflictException {
         addWorkspaceAttributes(newSubscription);
+        addAccountAttributes(newSubscription);
+    }
+
+    private void addAccountAttributes(Subscription subscription) throws NotFoundException, ServerException {
+        final Account account = accountDao.getById(subscription.getAccountId());
+        account.getAttributes().put("codenvy:multi-ws", "true");
+        accountDao.update(account);
+    }
+
+    private void removeAccountAttributes(Subscription subscription) throws NotFoundException, ServerException {
+        final Account account = accountDao.getById(subscription.getAccountId());
+        account.getAttributes().remove("codenvy:multi-ws");
+        accountDao.update(account);
     }
 
     private void addWorkspaceAttributes(Subscription subscription) throws NotFoundException, ConflictException, ServerException {
