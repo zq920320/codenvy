@@ -31,6 +31,8 @@
     <packaging>pom</packaging>
     <name>Codenvy :: Hosted Infrastructure</name>
     <modules>
+        <module>codenvy-hosted-mail-client</module>
+        <module>codenvy-hosted-mail-server</module>
         <module>codenvy-hosted-invite</module>
         <module>codenvy-hosted-platform-api-impl</module>
         <module>codenvy-hosted-infra-filters</module>
