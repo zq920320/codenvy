@@ -52,7 +52,7 @@ import static com.codenvy.commons.lang.IoUtil.readAndCloseQuietly;
 @Path("/password")
 public class PasswordService {
     private static final Logger LOG           = LoggerFactory.getLogger(PasswordService.class);
-    private static final String MAIL_TEMPLATE = "/template-mail-password-restoring.html";
+    private static final String MAIL_TEMPLATE = "/email-templates/password_recovery.html";
 
     @Inject
     private MailSenderClient mailService;
