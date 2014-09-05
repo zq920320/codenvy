@@ -162,7 +162,7 @@ public class InviteService {
                     .sendMail("Codenvy <noreply@cloud-ide.com>", mailRecipient, null,
                               "You've been invited to use " + workspace.getName() + " workspace",
                               "text/html; charset=utf-8",
-                              readAndCloseQuietly(getResource("/codenvy-template-mail-invitation-registered-user.html")),
+                              readAndCloseQuietly(getResource("/email-templates/invite_a_friend.html")),
                               inviteMessageProperties);
 
             LOG.info("EVENT#user-invite# EMAIL#{}# USER#{}# WS#{}#", mailRecipient, sender, workspace.getName());
