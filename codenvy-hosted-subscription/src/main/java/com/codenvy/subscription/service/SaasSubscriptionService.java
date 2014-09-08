@@ -146,13 +146,13 @@ public class SaasSubscriptionService extends SubscriptionService {
                     case "team":
                         //1 hour
                         wsAttributes.put("codenvy:runner_lifetime", String.valueOf(TimeUnit.HOURS.toSeconds(1)));
-                        wsAttributes.put("codenvy:builder_execution_time", String.valueOf(TimeUnit.MINUTES.toSeconds(10)));
+                        wsAttributes.put("codenvy:builder_execution_time", String.valueOf(TimeUnit.MINUTES.toSeconds(20)));
                         break;
                     case "project":
                     case "enterprise":
                         //unlimited
                         wsAttributes.put("codenvy:runner_lifetime", "-1");
-                        wsAttributes.put("codenvy:builder_execution_time", String.valueOf(TimeUnit.MINUTES.toSeconds(10)));
+                        wsAttributes.put("codenvy:builder_execution_time", String.valueOf(TimeUnit.MINUTES.toSeconds(20)));
                         break;
                     default:
                         throw new NotFoundException(String.format("Package %s not found", tariffPackage));

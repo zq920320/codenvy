@@ -135,7 +135,7 @@ public class SaasSubscriptionServiceTest {
         Assert.assertEquals(workspace.getAttributes().get("codenvy:runner_ram"), "1024");
         Assert.assertEquals(workspace.getAttributes().get("codenvy:runner_lifetime"), String.valueOf(TimeUnit.HOURS.toSeconds(1)));
         Assert.assertEquals(workspace.getAttributes().get("codenvy:builder_execution_time"),
-                            String.valueOf(TimeUnit.MINUTES.toSeconds(10)));
+                            String.valueOf(TimeUnit.MINUTES.toSeconds(20)));
         verify(accountDao).update(argThat(new ArgumentMatcher<Account>() {
             @Override
             public boolean matches(Object argument) {
@@ -161,7 +161,7 @@ public class SaasSubscriptionServiceTest {
         Assert.assertEquals(workspace.getAttributes().get("codenvy:runner_ram"), "1024");
         Assert.assertEquals(workspace.getAttributes().get("codenvy:runner_lifetime"), String.valueOf(TimeUnit.HOURS.toSeconds(1)));
         Assert.assertEquals(workspace.getAttributes().get("codenvy:builder_execution_time"),
-                            String.valueOf(TimeUnit.MINUTES.toSeconds(10)));
+                            String.valueOf(TimeUnit.MINUTES.toSeconds(20)));
         verify(accountDao).update(argThat(new ArgumentMatcher<Account>() {
             @Override
             public boolean matches(Object argument) {
@@ -188,7 +188,7 @@ public class SaasSubscriptionServiceTest {
         Assert.assertEquals(workspace.getAttributes().get("codenvy:runner_ram"), "1024");
         Assert.assertEquals(workspace.getAttributes().get("codenvy:runner_lifetime"), String.valueOf(TimeUnit.HOURS.toSeconds(1)));
         Assert.assertEquals(workspace.getAttributes().get("codenvy:builder_execution_time"),
-                            String.valueOf(TimeUnit.MINUTES.toSeconds(10)));
+                            String.valueOf(TimeUnit.MINUTES.toSeconds(20)));
         verify(accountDao).update(argThat(new ArgumentMatcher<Account>() {
             @Override
             public boolean matches(Object argument) {
@@ -326,7 +326,7 @@ public class SaasSubscriptionServiceTest {
         Assert.assertEquals(workspace.getAttributes().get("codenvy:runner_ram"), expectedRam);
         Assert.assertEquals(workspace.getAttributes().get("codenvy:runner_lifetime"), String.valueOf(TimeUnit.HOURS.toSeconds(1)));
         Assert.assertEquals(workspace.getAttributes().get("codenvy:builder_execution_time"),
-                            String.valueOf(TimeUnit.MINUTES.toSeconds(10)));
+                            String.valueOf(TimeUnit.MINUTES.toSeconds(20)));
     }
 
     @DataProvider(name = "goodRamValuesProvider")
