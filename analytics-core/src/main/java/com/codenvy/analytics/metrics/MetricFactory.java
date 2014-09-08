@@ -37,7 +37,7 @@ public class MetricFactory {
                     throw new IllegalStateException("There is 2 metrics with name " + existed.getName());
                 }
             }
-        } catch (Throwable e) {
+        } catch (Exception e) {
             LOG.error(e.getMessage(), e);
             throw e;
         }

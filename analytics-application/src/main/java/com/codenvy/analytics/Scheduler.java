@@ -89,7 +89,7 @@ public class Scheduler implements ServletContextListener {
             if (configurator.getString(SCHEDULER_FORCE_RUN_PERIOD) != null) {
                 executeSpecificFeature();
             }
-        } catch (Throwable e) {
+        } catch (Exception e) {
             LOG.error(e.getMessage(), e);
             throw new IllegalStateException(e);
         }
@@ -106,7 +106,7 @@ public class Scheduler implements ServletContextListener {
         if (configurator.getBoolean(SCHEDULER_FORCE_RUN_ASYNCHRONOUS)) {
             forceRunFeatureThread.start();
         } else {
-            forceRunFeatureThread.run();
+            forceRunFeatureThread.run(); // NOSONAR
         }
     }
 
@@ -135,7 +135,7 @@ public class Scheduler implements ServletContextListener {
                     }
                 }
             }
-        } catch (Throwable e) {
+        } catch (Exception e) {
             LOG.error("Unable to force job run: " + e.getMessage(), e);
         }
     }

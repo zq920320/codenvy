@@ -175,7 +175,7 @@ public class MongoDataStorage {
                 sock.connect(sockaddr, timeout);
             }
 
-        } catch (Throwable e) {
+        } catch (Exception e) {
             return false;
         }
 

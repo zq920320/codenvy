@@ -53,7 +53,7 @@ public abstract class Feature implements Job {
 
             Context.Builder builder = new Context.Builder(context);
             doExecute(builder.build());
-        } catch (Throwable e) {
+        } catch (Exception e) {
             LOG.error(e.getMessage(), e);
             throw new JobExecutionException(e);
         }
@@ -64,7 +64,7 @@ public abstract class Feature implements Job {
         try {
             Context.Builder builder = initializeContextBuilder();
             doExecute(builder.build());
-        } catch (Throwable e) {
+        } catch (Exception e) {
             LOG.error(e.getMessage(), e);
             throw new JobExecutionException(e);
         }
