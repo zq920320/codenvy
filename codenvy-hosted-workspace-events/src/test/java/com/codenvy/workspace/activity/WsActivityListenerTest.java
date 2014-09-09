@@ -29,7 +29,8 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
-import static org.mockito.Mockito.spy;
+import java.lang.reflect.Method;
+
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -42,65 +43,55 @@ public class WsActivityListenerTest {
 
     private EventService eventService;
 
-    WsActivityListener activityListener;
-    final Long   temporaryTimeout  = 200L;
-    final Long   persistentTimeout = 500L;
-    final String WSID              = "workspace1231234";
-
+    private WsActivityListener activityListener;
+    private final Long   temporaryTimeout  = 20L;
+    private final Long   persistentTimeout = 50L;
+    private final String WSID              = "workspace1231234";
 
     @BeforeMethod
     public void setUp() throws Exception {
         eventService = new EventService();
-        activityListener = spy(new WsActivityListener(listener, temporaryTimeout, persistentTimeout, eventService));
+        activityListener = new WsActivityListener(listener, temporaryTimeout, persistentTimeout, eventService);
+        final Method subscribe = activityListener.getClass().getDeclaredMethod("subscribe");
+        subscribe.setAccessible(true);
+        subscribe.invoke(activityListener);
     }
 
     @Test
     public void shouldRemoveTempWSOnTimeout() throws Exception {
-        activityListener.onMessage(WSID, true);
-        Thread.sleep(500);
-        activityListener.onMessage("anotherWS", true);
-        verify(listener, timeout(1000)).onRemoval(Matchers.<RemovalNotification<String, Boolean>>any());
+        eventService.publish(new WsActivityEvent(WSID, true));
+        Thread.sleep(50);
+        eventService.publish(new WsActivityEvent("anotherWS", true));
+        verify(listener, timeout(100)).onRemoval(Matchers.<RemovalNotification<String, Boolean>>any());
     }
 
     @Test
     public void shouldRemovePersistentWSOnTimeout() throws Exception {
-        activityListener.onMessage(WSID, false);
-        Thread.sleep(1000);
-        activityListener.onMessage("anotherWS", false);
-        verify(listener, timeout(1000)).onRemoval(Matchers.<RemovalNotification<String, Boolean>>any());
+        eventService.publish(new WsActivityEvent(WSID, false));
+        Thread.sleep(100);
+        eventService.publish(new WsActivityEvent("anotherWS", false));
+        verify(listener, timeout(100)).onRemoval(Matchers.<RemovalNotification<String, Boolean>>any());
     }
 
     @Test
     public void shouldNotRemoveWSOnTimeoutNotReached() throws Exception {
-        activityListener.onMessage(WSID, true);
-        Thread.sleep(100);
-        activityListener.onMessage(WSID, true);
-        Thread.sleep(100);
-        activityListener.onMessage(WSID, true);
-        Thread.sleep(100);
-        activityListener.onMessage(WSID, true);
+        eventService.publish(new WsActivityEvent(WSID, true));
+        Thread.sleep(10);
+        eventService.publish(new WsActivityEvent(WSID, true));
+        Thread.sleep(10);
+        eventService.publish(new WsActivityEvent(WSID, true));
+        Thread.sleep(10);
+        eventService.publish(new WsActivityEvent(WSID, true));
         verifyZeroInteractions(listener);
     }
 
     @Test
     public void shouldNotRemovePersistentWSOnTimeoutNotReached() throws Exception {
-        activityListener.onMessage(WSID, false);
-        Thread.sleep(400);
-        activityListener.onMessage(WSID, false);
-        Thread.sleep(400);
-        activityListener.onMessage(WSID, false);
+        eventService.publish(new WsActivityEvent(WSID, false));
+        Thread.sleep(40);
+        eventService.publish(new WsActivityEvent(WSID, false));
+        Thread.sleep(40);
+        eventService.publish(new WsActivityEvent(WSID, false));
         verifyZeroInteractions(listener);
-    }
-
-    @Test
-    public void shouldCallOnMessageOnActivityEvent() {
-        // given
-        activityListener.subscribe();
-
-        // when
-        eventService.publish(new WsActivityEvent(WSID, true));
-
-        // then
-        verify(activityListener).onMessage(WSID, true);
     }
 }

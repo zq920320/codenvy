@@ -25,6 +25,7 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -44,7 +45,8 @@ public class WsActivityListener {
     private final Cache<String, Boolean> persistentWSCache;
     private final Cache<String, Boolean> temporaryWSCache;
 
-    private final EventService eventService;
+    private final EventService                     eventService;
+    private final EventSubscriber<WsActivityEvent> subscriber;
 
     @Inject
     public WsActivityListener(WorkspaceRemovalListener removalListener, @Named(TEMPORARY_WS_STOP_TIME) long temporaryTime,
@@ -61,27 +63,30 @@ public class WsActivityListener {
                                             .expireAfterAccess(temporaryTime, TimeUnit.MILLISECONDS)
                                             .removalListener(removalListener)
                                             .build();
-    }
 
-    public void onMessage(String workspaceId, boolean isTemporary) {
-        if (isTemporary) {
-            if (temporaryWSCache.getIfPresent(workspaceId) == null) {
-                temporaryWSCache.put(workspaceId, true);
+        this.subscriber = new EventSubscriber<WsActivityEvent>() {
+            @Override
+            public void onEvent(WsActivityEvent event) {
+                if (event.isTemporary()) {
+                    if (temporaryWSCache.getIfPresent(event.getWorkspaceId()) == null) {
+                        temporaryWSCache.put(event.getWorkspaceId(), true);
+                    }
+                } else if (persistentWSCache.getIfPresent(event.getWorkspaceId()) == null) {
+                    persistentWSCache.put(event.getWorkspaceId(), false);
+                }
+                temporaryWSCache.cleanUp();
+                persistentWSCache.cleanUp();
             }
-        } else if (persistentWSCache.getIfPresent(workspaceId) == null) {
-            persistentWSCache.put(workspaceId, false);
-        }
-        temporaryWSCache.cleanUp();
-        persistentWSCache.cleanUp();
+        };
     }
 
     @PostConstruct
-    public void subscribe() {
-        eventService.subscribe(new EventSubscriber<WsActivityEvent>() {
-            @Override
-            public void onEvent(WsActivityEvent event) {
-                onMessage(event.getWorkspaceId(), event.isTemporary());
-            }
-        });
+    private void subscribe() {
+        eventService.subscribe(subscriber);
+    }
+
+    @PreDestroy
+    private void unsubscribe() {
+        eventService.unsubscribe(subscriber);
     }
 }
