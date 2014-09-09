@@ -4,6 +4,8 @@ var gulp = require('gulp'),
     watch = require('gulp-watch'),
     shell = require('gulp-shell'),
     print = require('gulp-print'),
+    jshint = require('gulp-jshint'),
+    stylish = require('jshint-stylish'),
     //imagemin = require('gulp-imagemin'), // Img minifying
     uglify = require('gulp-uglify'),    // JS minifying
     concat = require('gulp-concat'),    // Files merging
@@ -49,7 +51,7 @@ gulp.task('connect', ['gh'], function() {
 // --------------------------- Building Prod -----------------------------
 //----------------
 //----------
-gulp.task('prod',['copy_src','prod_cfg','css','jekyll','rjs','myrev','replace','rmbuild','copy_prod'], function(){
+gulp.task('prod',['copy_src','lint','prod_cfg','css','jekyll','rjs','myrev','replace','rmbuild','copy_prod'], function(){
 
 })
 // Copies src to temp folder
@@ -73,6 +75,13 @@ gulp.task('css', ['copy_src'], function() {
   }))
   .pipe(minifyCSS())
   .pipe(gulp.dest(paths.prod + 'site/styles/'));
+});
+
+gulp.task('lint',function(){
+  gulp.src(['!'+paths.src+'site/scripts/vendor/*.*',paths.src+'site/scripts/**/*.js'])
+    .pipe(jshint())
+  .pipe(jshint.reporter('jshint-stylish'))
+  .pipe(jshint.reporter('fail'))
 });
 
 // Builds projects using require.js's optimizer + Minify files with UglifyJS

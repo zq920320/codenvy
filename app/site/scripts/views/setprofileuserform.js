@@ -84,11 +84,11 @@ define(["jquery","underscore","views/accountformbase","models/account"],
                 if (submitProfileForm)
                 {
                     var body =  {  
-                           "firstName" : Account.escapeSpecialSymbols(submitProfileForm["first_name"].value.trim()),
-                           "lastName" : Account.escapeSpecialSymbols(submitProfileForm["last_name"].value.trim()),
-                           "phone" : Account.escapeSpecialSymbols(submitProfileForm["phone_work"].value.trim()),
-                           "employer" : Account.escapeSpecialSymbols(submitProfileForm["company"].value.trim()),
-                           "jobtitle" : Account.escapeSpecialSymbols(submitProfileForm["title"].value)
+                           "firstName" : Account.escapeSpecialSymbols(submitProfileForm.first_name.value.trim()),
+                           "lastName" : Account.escapeSpecialSymbols(submitProfileForm.last_name.value.trim()),
+                           "phone" : Account.escapeSpecialSymbols(submitProfileForm.phone_work.value.trim()),
+                           "employer" : Account.escapeSpecialSymbols(submitProfileForm.company.value.trim()),
+                           "jobtitle" : Account.escapeSpecialSymbols(submitProfileForm.title.value)
                      };
 
                     Account.updateProfile(
