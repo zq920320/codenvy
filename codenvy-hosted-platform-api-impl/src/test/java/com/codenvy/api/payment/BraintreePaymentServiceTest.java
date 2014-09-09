@@ -162,6 +162,7 @@ public class BraintreePaymentServiceTest {
     @Test
     public void shouldBeAbleToRemoveSubscription() throws ServerException, NotFoundException, ForbiddenException {
         when(gateway.subscription()).thenReturn(subscriptionGateway);
+        when(subscriptionGateway.cancel(SUBSCRIPTION_ID)).thenReturn(result);
 
         service.removeSubscription(SUBSCRIPTION_ID);
 
