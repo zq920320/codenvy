@@ -19,7 +19,8 @@ package com.codenvy.analytics.pig.udf;
 
 import com.codenvy.analytics.Injector;
 import com.codenvy.analytics.Utils;
-import com.codenvy.analytics.metrics.*;
+import com.codenvy.analytics.metrics.MetricFilter;
+import com.codenvy.analytics.metrics.ReadBasedMetric;
 import com.codenvy.analytics.persistent.CollectionsManagement;
 import com.codenvy.analytics.persistent.MongoDataStorage;
 import com.codenvy.analytics.pig.scripts.EventsHolder;
@@ -124,12 +125,18 @@ public class MongoStorage extends StoreFunc {
                         } else if (isAliases(key)) {
                             dbObject.put(key, toArray(str));
 
+                        } else if ("params-only-remove-event".equals(key)) {
+                            putMessageParameters(dbObject, str);
+                            dbObject.remove("event");
+
                         } else {
                             dbObject.put(key, data);
                             if (isMessage(key)) {
                                 putMessageParameters(dbObject, str);
                             }
                         }
+                    } else if (data instanceof Tuple) {
+
                     } else {
                         dbObject.put(key, data);
                     }
