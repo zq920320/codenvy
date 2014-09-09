@@ -23,6 +23,7 @@ import com.codenvy.service.http.WorkspaceInfoCache;
 import com.codenvy.workspace.event.DeleteWorkspaceEvent;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -34,24 +35,28 @@ import javax.inject.Singleton;
  */
 @Singleton
 public class WsCacheCleanupSubscriber {
-    private final EventService eventService;
-
-    private WorkspaceInfoCache cache;
+    private final EventService                          eventService;
+    private final EventSubscriber<DeleteWorkspaceEvent> subscriber;
 
     @Inject
-    public WsCacheCleanupSubscriber(EventService eventService, WorkspaceInfoCache cache) {
+    public WsCacheCleanupSubscriber(EventService eventService, final WorkspaceInfoCache cache) {
         this.eventService = eventService;
-        this.cache = cache;
-    }
-
-    @PostConstruct
-    public void subscribe() {
-        eventService.subscribe(new EventSubscriber<DeleteWorkspaceEvent>() {
+        this.subscriber = new EventSubscriber<DeleteWorkspaceEvent>() {
             @Override
             public void onEvent(DeleteWorkspaceEvent event) {
                 cache.removeById(event.getWorkspaceId());
                 cache.removeByName(event.getName());
             }
-        });
+        };
+    }
+
+    @PostConstruct
+    public void subscribe() {
+        eventService.subscribe(subscriber);
+    }
+
+    @PreDestroy
+    public void unsubscribe() {
+        eventService.unsubscribe(subscriber);
     }
 }

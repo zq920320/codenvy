@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.io.IOException;
@@ -39,18 +40,26 @@ import java.io.IOException;
 @Singleton
 public class VfsStopSubscriber {
     private static final Logger LOG = LoggerFactory.getLogger(VfsStopSubscriber.class);
-    private final EventService        eventService;
-    private final VfsCleanupPerformer vfsCleanupPerformer;
+    private final EventService                          eventService;
+    private final EventSubscriber<StopWsEvent>          stopWsEventSubscriber;
+    private final EventSubscriber<DeleteWorkspaceEvent> deleteWsEventSubscriber;
 
     @Inject
-    public VfsStopSubscriber(EventService eventService, VfsCleanupPerformer vfsCleanupPerformer) {
+    public VfsStopSubscriber(EventService eventService, final VfsCleanupPerformer vfsCleanupPerformer) {
         this.eventService = eventService;
-        this.vfsCleanupPerformer = vfsCleanupPerformer;
-    }
+        this.stopWsEventSubscriber = new EventSubscriber<StopWsEvent>() {
+            @Override
+            public void onEvent(StopWsEvent event) {
+                String id = event.getWorkspaceId();
+                try {
+                    vfsCleanupPerformer.unregisterProvider(id);
+                } catch (IOException e) {
+                    LOG.error(e.getLocalizedMessage(), e);
+                }
+            }
+        };
 
-    @PostConstruct
-    public void subscribe() {
-        eventService.subscribe(new EventSubscriber<DeleteWorkspaceEvent>() {
+        this.deleteWsEventSubscriber = new EventSubscriber<DeleteWorkspaceEvent>() {
             @Override
             public void onEvent(DeleteWorkspaceEvent event) {
                 String id = event.getWorkspaceId();
@@ -66,18 +75,18 @@ public class VfsStopSubscriber {
                     LOG.error(e.getLocalizedMessage(), e);
                 }
             }
-        });
+        };
+    }
 
-        eventService.subscribe(new EventSubscriber<StopWsEvent>() {
-            @Override
-            public void onEvent(StopWsEvent event) {
-                String id = event.getWorkspaceId();
-                try {
-                    vfsCleanupPerformer.unregisterProvider(id);
-                } catch (IOException e) {
-                    LOG.error(e.getLocalizedMessage(), e);
-                }
-            }
-        });
+    @PostConstruct
+    public void subscribe() {
+        eventService.subscribe(deleteWsEventSubscriber);
+        eventService.subscribe(stopWsEventSubscriber);
+    }
+
+    @PreDestroy
+    public void unsubscribe() {
+        eventService.unsubscribe(deleteWsEventSubscriber);
+        eventService.unsubscribe(stopWsEventSubscriber);
     }
 }
