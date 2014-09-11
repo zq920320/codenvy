@@ -71,7 +71,11 @@ public class WorkspaceRemovalListener implements RemovalListener<String, Boolean
         if (notification.getValue()) {
             try {
                 String wsId = notification.getKey();
-                Workspace workspace = workspaceDao.getById(wsId);
+                try {
+                    workspaceDao.getById(wsId);
+                } catch (NotFoundException e) {
+                    return;
+                }
                 final List<Member> members = memberDao.getWorkspaceMembers(wsId);
                 for (Member member : members) {
                     memberDao.remove(member);
@@ -87,8 +91,8 @@ public class WorkspaceRemovalListener implements RemovalListener<String, Boolean
             } catch (ConflictException | NotFoundException | ServerException e) {
                 LOG.warn(e.getLocalizedMessage(), e);
             }
-        } else {
-            eventService.publish(new StopWsEvent());
         }
+        eventService.publish(new StopWsEvent(notification.getKey(), notification.getValue()));
+        LOG.info("Workspace is stopped. Id#{}# Temporary#{}#", notification.getKey(), notification.getValue());
     }
 }
