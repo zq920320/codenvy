@@ -38,15 +38,27 @@
                     <div class="collabsiblePanelBody">
                         <table>
                             <tr>
-                               <td><label for="input-factory">Factory:</label></td>
+                               <td><label for="input-factory">Factory URL:</label></td>
                                <td><div class="filter-item">
                                    <input type="text" id="input-factory" name="factory" class="text-box" />
+                               </div></td>
+                            </tr>
+                            <tr>
+                               <td><label for="input-aliases">User:</label></td>
+                               <td><div class="filter-item">
+                                   <input type="text" id="input-aliases" name="aliases" class="text-box" />
                                </div></td>
                             </tr>
                             <tr>
                                <td><label for="input-org_id">Organization:</label></td>
                                <td><div class="filter-item">
                                    <input type="text" id="input-org_id" name="org_id" class="text-box" />
+                               </div></td>
+                            </tr>
+                            <tr>
+                               <td><label for="input-affiliate_id">Affiliate:</label></td>
+                               <td><div class="filter-item">
+                                   <input type="text" id="input-affiliate_id" name="affiliate_id" class="text-box" />
                                </div></td>
                             </tr>
                             <tr>

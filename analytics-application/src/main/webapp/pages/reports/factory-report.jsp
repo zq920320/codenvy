@@ -39,6 +39,12 @@
                     <div class="collabsiblePanelBody">
                         <table>
                             <tr>
+                               <td><label for="input-factory">Factory URL:</label></td>
+                               <td><div class="filter-item">
+                                   <input type="text" id="input-factory" name="factory" class="text-box" />
+                               </div></td>
+                            </tr>
+                            <tr>
                                <td><label for="input-aliases">User:</label></td>
                                <td><div class="filter-item">
                                    <input type="text" id="input-aliases" name="aliases" class="text-box" />
