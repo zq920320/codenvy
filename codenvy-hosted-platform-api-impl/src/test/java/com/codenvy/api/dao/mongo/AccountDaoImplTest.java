@@ -482,12 +482,68 @@ public class AccountDaoImplTest extends BaseDaoTest {
     }
 
     @Test
-    public void shouldReturnEmptyListIfThereIsNoSubscriptionsOnGetSubscriptions() throws Exception {
+    public void shouldReturnEmptyListIfThereIsNoSubscriptionsOnGetSubscriptionsWithNotSaasService() throws Exception {
         collection.insert(new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME)
                                                              .append("owner", ACCOUNT_OWNER));
 
+        List<Subscription> found = accountDao.getSubscriptions(ACCOUNT_ID, "Factory");
+        assertTrue(found.isEmpty());
+    }
+
+    @Test
+    public void shouldReturnEmptyListIfThereIsNoSubscriptionsOnGetSubscriptionsAndServiceIsSaasAndAccountDoesNotContainWs()
+            throws Exception {
+        collection.insert(new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME)
+                                                             .append("owner", ACCOUNT_OWNER));
+        when(workspaceDao.getByAccount(ACCOUNT_ID)).thenReturn(Collections.<Workspace>emptyList());
+
+        List<Subscription> found = accountDao.getSubscriptions(ACCOUNT_ID, "Saas");
+
+        assertTrue(found.isEmpty());
+    }
+
+    @Test
+    public void shouldReturnEmptyListIfThereIsNoSubscriptionsOnGetSubscriptionsAndServiceIsNotProvidedAndAccountDoesNotContainWs()
+            throws Exception {
+        collection.insert(new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME)
+                                                             .append("owner", ACCOUNT_OWNER));
+        when(workspaceDao.getByAccount(ACCOUNT_ID)).thenReturn(Collections.<Workspace>emptyList());
+
         List<Subscription> found = accountDao.getSubscriptions(ACCOUNT_ID, null);
-        assertEquals(found.size(), 0);
+
+        assertTrue(found.isEmpty());
+    }
+
+    @Test
+    public void shouldReturnDefaultSubscriptionIfThereIsNoSubscriptionsOnGetSubscriptionsAndServiceIsSaas() throws Exception {
+        collection.insert(new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME)
+                                                             .append("owner", ACCOUNT_OWNER));
+        when(workspaceDao.getByAccount(ACCOUNT_ID)).thenReturn(Collections.singletonList(new Workspace()));
+
+        List<Subscription> found = accountDao.getSubscriptions(ACCOUNT_ID, "Saas");
+
+        assertEquals(found, Collections.singletonList(new Subscription()
+                                                              .withId("community" + ACCOUNT_ID)
+                                                              .withPlanId("sas-community")
+                                                              .withAccountId(ACCOUNT_ID)
+                                                              .withServiceId("Saas")
+                                                              .withProperties(Collections.singletonMap("Package", "Community"))));
+    }
+
+    @Test
+    public void shouldReturnDefaultSubscriptionIfThereIsNoSubscriptionsOnGetSubscriptionsWithoutService() throws Exception {
+        collection.insert(new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME)
+                                                             .append("owner", ACCOUNT_OWNER));
+        when(workspaceDao.getByAccount(ACCOUNT_ID)).thenReturn(Collections.singletonList(new Workspace()));
+
+        List<Subscription> found = accountDao.getSubscriptions(ACCOUNT_ID, null);
+
+        assertEquals(found, Collections.singletonList(new Subscription()
+                                                              .withId("community" + ACCOUNT_ID)
+                                                              .withPlanId("sas-community")
+                                                              .withAccountId(ACCOUNT_ID)
+                                                              .withServiceId("Saas")
+                                                              .withProperties(Collections.singletonMap("Package", "Community"))));
     }
 
     @Test(expectedExceptions = NotFoundException.class)

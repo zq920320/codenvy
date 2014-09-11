@@ -312,9 +312,13 @@ public class AccountDaoImpl implements AccountDao {
                 query.append("serviceId", serviceId);
             }
             try (DBCursor subscriptions = subscriptionCollection.find(query)) {
-                result = new ArrayList<>(subscriptions.size());
-                for (DBObject currentSubscription : subscriptions) {
-                    result.add(toSubscription(currentSubscription));
+                if (subscriptions.size() == 0 && (null == serviceId || "Saas".equals(serviceId))) {
+                    return getDefaultSubscriptions(accountId);
+                } else {
+                    result = new ArrayList<>(subscriptions.size());
+                    for (DBObject currentSubscription : subscriptions) {
+                        result.add(toSubscription(currentSubscription));
+                    }
                 }
             }
         } catch (MongoException me) {
@@ -429,6 +433,23 @@ public class AccountDaoImpl implements AccountDao {
         } catch (MongoException me) {
             throw new ServerException(me.getMessage(), me);
         }
+    }
+
+    private List<Subscription> getDefaultSubscriptions(String accountId) {
+        try {
+            if (!workspaceDao.getByAccount(accountId).isEmpty()) {
+                return Collections.singletonList(new Subscription()
+                                                         .withId("community" + accountId)
+                                                         .withAccountId(accountId)
+                                                         .withPlanId("sas-community")
+                                                         .withServiceId("Saas")
+                                                         .withProperties(Collections.singletonMap("Package", "Community"))
+                                                );
+            }
+        } catch (ServerException e) {
+            LOG.error(e.getLocalizedMessage(), e);
+        }
+        return Collections.emptyList();
     }
 
     /**
