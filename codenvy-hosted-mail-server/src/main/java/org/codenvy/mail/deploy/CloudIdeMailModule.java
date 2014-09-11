@@ -21,14 +21,12 @@ import com.codenvy.inject.DynaModule;
 import com.google.inject.AbstractModule;
 
 import org.codenvy.mail.MailSender;
-import org.codenvy.mail.SessionHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
 /**
  * Guice container configuration file. Replaces old REST application composers and servlet context listeners.
- *
  */
 @DynaModule
 public class CloudIdeMailModule extends AbstractModule {

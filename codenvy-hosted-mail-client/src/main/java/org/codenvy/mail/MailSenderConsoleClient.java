@@ -34,6 +34,9 @@ import static com.codenvy.commons.lang.Deserializer.resolveVariables;
 public class MailSenderConsoleClient {
     private static final Logger LOG = LoggerFactory.getLogger(MailSenderConsoleClient.class);
 
+    private MailSenderConsoleClient() {
+    }
+
     /** Entry point for the application */
     public static void main(String[] args) {
         if (args.length != 1) {
@@ -66,16 +69,7 @@ public class MailSenderConsoleClient {
 
             sendMails(server, from, recipientsFileName, replyTo, subject, mimeType, template);
 
-        } catch (FileNotFoundException e) {
-            LOG.error("Mails sending failed - {}", e.getLocalizedMessage(), e);
-            throw new RuntimeException(e.getLocalizedMessage(), e);
-        } catch (IOException e) {
-            LOG.error("Mails sending failed - {}", e.getLocalizedMessage(), e);
-            throw new RuntimeException(e.getLocalizedMessage(), e);
-        } catch (MessagingException e) {
-            LOG.error("Mails sending failed - {}", e.getLocalizedMessage(), e);
-            throw new RuntimeException(e.getLocalizedMessage(), e);
-        } catch (InterruptedException e) {
+        } catch (IOException | MessagingException | InterruptedException e) {
             LOG.error("Mails sending failed - {}", e.getLocalizedMessage(), e);
             throw new RuntimeException(e.getLocalizedMessage(), e);
         } finally {

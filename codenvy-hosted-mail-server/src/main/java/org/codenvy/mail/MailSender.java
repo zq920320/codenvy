@@ -53,12 +53,11 @@ public class MailSender {
      * @param emailBean
      *         - bean that contains all message parameters
      * @return - the Response with corresponded status (200)
-     * @throws WebApplicationException
      */
     @POST
     @Path("send")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response sendMail(EmailBean emailBean) throws WebApplicationException {
+    public Response sendMail(EmailBean emailBean) {
         try {
             MimeMessage message = new MimeMessage(sessionHolder.getMailSession());
             message.setContent(emailBean.getBody(), emailBean.getMimeType());
@@ -69,7 +68,7 @@ public class MailSender {
             if (emailBean.getReplyTo() != null) {
                 message.setReplyTo(InternetAddress.parse(emailBean.getReplyTo()));
             }
-            LOG.info("Sending from {} to {} with subject {}", new Object[]{emailBean.getFrom(), emailBean.getTo(), emailBean.getSubject()});
+            LOG.info("Sending from {} to {} with subject {}", emailBean.getFrom(), emailBean.getTo(), emailBean.getSubject());
 
             Transport.send(message);
             LOG.debug("Mail send");

@@ -75,6 +75,8 @@ public class StopAppOnRemoveWsListener {
                     case ERROR:
                         removeProcess(event.getWorkspace(), event.getProcessId());
                         break;
+                    default:
+                        // do nothing
                 }
             }
         };
@@ -106,7 +108,7 @@ public class StopAppOnRemoveWsListener {
                 try {
                     final RunQueueTask runTask = runQueue.getTask(appId);
                     runTask.cancel();
-                } catch (NotFoundException e) {
+                } catch (NotFoundException ignored) {
                 } catch (Exception e) {
                     LOG.error(e.getLocalizedMessage(), e);
                 }

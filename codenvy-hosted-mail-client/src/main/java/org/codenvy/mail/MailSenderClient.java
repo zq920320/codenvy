@@ -20,9 +20,6 @@ package org.codenvy.mail;
 import com.codenvy.commons.json.JsonHelper;
 import com.codenvy.commons.lang.Deserializer;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.mail.MessagingException;
@@ -37,8 +34,6 @@ import java.util.Map;
 
 /** Client for MailSender service */
 public class MailSenderClient {
-    private static final Logger LOG = LoggerFactory.getLogger(MailSenderClient.class);
-
     private static final String MAILSENDER_APPLICATION_SERVER_URL = "mailsender.application.server.url";
 
     /** Base path */

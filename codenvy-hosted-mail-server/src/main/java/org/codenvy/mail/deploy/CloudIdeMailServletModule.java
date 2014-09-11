@@ -17,7 +17,6 @@
  */
 package org.codenvy.mail.deploy;
 
-
 import com.codenvy.inject.DynaModule;
 import com.google.inject.servlet.ServletModule;
 
@@ -25,9 +24,7 @@ import org.everrest.guice.servlet.GuiceEverrestServlet;
 
 /**
  * Servlet module composer for api war.
- *
  */
-
 @DynaModule
 public class CloudIdeMailServletModule extends ServletModule {
     @Override
