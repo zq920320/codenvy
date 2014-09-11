@@ -52,6 +52,7 @@ public class VfsStopSubscriber {
             public void onEvent(StopWsEvent event) {
                 String id = event.getWorkspaceId();
                 try {
+                    LOG.info("Unregister vfs. Workspace id:{}", id);
                     vfsCleanupPerformer.unregisterProvider(id);
                 } catch (IOException e) {
                     LOG.error(e.getLocalizedMessage(), e);
@@ -64,12 +65,14 @@ public class VfsStopSubscriber {
             public void onEvent(DeleteWorkspaceEvent event) {
                 String id = event.getWorkspaceId();
                 try {
+                    LOG.info("Unregister vfs. Workspace id:{}", id);
                     vfsCleanupPerformer.unregisterProvider(id);
                 } catch (IOException e) {
                     LOG.error(e.getLocalizedMessage(), e);
                 }
 
                 try {
+                    LOG.info("Remove FS. Workspace id:{}. Temporary:{}", id, event.isTemporary());
                     vfsCleanupPerformer.removeFS(id, event.isTemporary());
                 } catch (IOException e) {
                     LOG.error(e.getLocalizedMessage(), e);
