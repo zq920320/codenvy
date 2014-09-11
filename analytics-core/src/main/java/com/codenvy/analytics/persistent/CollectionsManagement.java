@@ -153,17 +153,14 @@ public class CollectionsManagement {
      */
     public void removeData(Context context) throws ParseException {
         long start = System.currentTimeMillis();
-        LOG.info("Start removing data " + context.toString());
+        LOG.info("Start removing data...");
 
         try {
             DBObject dateFilter = Utils.setDateFilter(context);
 
             for (CollectionConfiguration collectionConf : configuration.values()) {
                 String name = collectionConf.getName();
-                int removed = db.getCollection(name).remove(dateFilter).getN();
-                if (removed > 0) {
-                    LOG.info("Removed " + removed + " records in " + name);
-                }
+                db.getCollection(name).remove(dateFilter);
             }
         } finally {
             LOG.info("Finished removing data in " + (System.currentTimeMillis() - start) / 1000 + " sec.");

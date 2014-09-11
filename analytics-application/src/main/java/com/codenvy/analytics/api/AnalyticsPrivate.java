@@ -88,6 +88,58 @@ public class AnalyticsPrivate {
     }
 
     @GenerateLink(rel = "metric value")
+    @POST
+    @Path("metric/{name}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"user", "system/admin", "system/manager"})
+    public Response getValueByJson(@PathParam("name") String metricName,
+                                   @QueryParam("page") String page,
+                                   @QueryParam("per_page") String perPage,
+                                   @Context UriInfo uriInfo,
+                                   @Context SecurityContext securityContext,
+                                   Map<String, String> parameters) {
+        try {
+            Map<String, String> context = utils.extractParams(uriInfo,
+                                                              page,
+                                                              perPage,
+                                                              securityContext);
+
+            MetricValueDTO value = metricHandler.getValueByJson(metricName, parameters, context, uriInfo);
+            return Response.status(Response.Status.OK).entity(value).build();
+        } catch (MetricNotFoundException e) {
+            LOG.error(e.getMessage(), e);
+            return Response.status(Response.Status.NOT_FOUND).build();
+        } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+        }
+    }
+
+    @GenerateLink(rel = "metric value")
+    @POST
+    @Path("metric/{name}/list")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"user", "system/admin", "system/manager"})
+    public Response getListValues(@PathParam("name") String metricName,
+                                  @Context UriInfo uriInfo,
+                                  @Context SecurityContext securityContext,
+                                  List<Map<String, String>> parameters) {
+        try {
+            Map<String, String> context = utils.extractParams(uriInfo, securityContext);
+            MetricValueListDTO list = metricHandler.getListValues(metricName, parameters, context, uriInfo);
+            return Response.status(Response.Status.OK).entity(list).build();
+        } catch (MetricNotFoundException e) {
+            LOG.error(e.getMessage(), e);
+            return Response.status(Response.Status.NOT_FOUND).build();
+        } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+        }
+    }
+
+    @GenerateLink(rel = "metric value")
     @GET
     @Path("public-metric/{name}")
     @Produces(MediaType.APPLICATION_JSON)
