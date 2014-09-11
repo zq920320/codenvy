@@ -80,7 +80,8 @@ public class SaasSubscriptionService extends SubscriptionService {
         }
 
         try {
-            if (!accountDao.getSubscriptions(subscription.getAccountId(), getServiceId()).isEmpty()) {
+            final List<Subscription> subscriptions = accountDao.getSubscriptions(subscription.getAccountId(), getServiceId());
+            if (!subscriptions.isEmpty() && !"sas-community".equals(subscriptions.get(0).getPlanId())) {
                 throw new ConflictException(SUBSCRIPTION_LIMIT_EXHAUSTED_MESSAGE);
             }
         } catch (ServerException | NotFoundException e) {

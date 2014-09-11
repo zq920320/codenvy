@@ -225,15 +225,29 @@ public class SaasSubscriptionServiceTest {
 
     @Test(expectedExceptions = ConflictException.class,
           expectedExceptionsMessageRegExp = SubscriptionService.SUBSCRIPTION_LIMIT_EXHAUSTED_MESSAGE)
-    public void testBeforeCreateSubscriptionWhenExistsActiveState() throws ApiException {
+    public void shouldThrowExceptionIfAccountHasSubscriptionOnBeforeCreateSubscription() throws ApiException {
         final List<Subscription> existedSubscriptions = new ArrayList<>(1);
         existedSubscriptions.add(new Subscription().withServiceId(service.getServiceId()));
         when(accountDao.getSubscriptions(ACCOUNT_ID, service.getServiceId())).thenReturn(existedSubscriptions);
         final Map<String, String> properties = new HashMap<>(4);
         properties.put("Package", "team");
-        properties.put("TariffPlan", "monthly");
         properties.put("RAM", "2GB");
         final Subscription newSubscription = new Subscription().withAccountId(ACCOUNT_ID).withProperties(properties);
+        service.beforeCreateSubscription(newSubscription);
+    }
+
+    @Test
+    public void shouldNotThrowExceptionOnBeforeCreateSubscriptionWhenAccountHasCommunitySubscription() throws ApiException {
+        final List<Subscription> existingSubscriptions = new ArrayList<>(1);
+        existingSubscriptions.add(new Subscription().withServiceId(service.getServiceId()).withPlanId("sas-community"));
+        when(accountDao.getSubscriptions(ACCOUNT_ID, service.getServiceId())).thenReturn(existingSubscriptions);
+        final Workspace workspace = new Workspace().withId(WORKSPACE_ID);
+        when(workspaceDao.getByAccount(ACCOUNT_ID)).thenReturn(Arrays.asList(workspace));
+        final Map<String, String> properties = new HashMap<>(4);
+        properties.put("Package", "team");
+        properties.put("RAM", "2GB");
+        final Subscription newSubscription = new Subscription().withAccountId(ACCOUNT_ID).withProperties(properties);
+
         service.beforeCreateSubscription(newSubscription);
     }
 
