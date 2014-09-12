@@ -252,6 +252,12 @@
                 return (/^[^\+\/]+$/).test(email);
             },
 
+            redirectIfUserHasLoginCookie: function(){
+                if (!$.cookie('logged_in')){
+                    window.location = '/site/create-account';
+                }
+            },
+
             login : function(email, password, redirect_url, success, error){
 
                 if (isWebsocketEnabled()){
