@@ -37,7 +37,7 @@ var paths = {
         gh: './target/gh/',
         temp: 'target/temp/',
         dist: 'target/dist/',
-        config: 'build/',
+        config: 'assembly/build/',
         site: 'app/_site/'
 };
 
