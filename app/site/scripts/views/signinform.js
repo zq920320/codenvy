@@ -27,8 +27,11 @@
                     AccountFormBase.prototype.initialize.apply(this,attributes);
                     Account.supportTab();
                     if (Account.isAuthtypeLdap()){
-                        $(".email").attr("placeholder", "Type your login here").removeClass("email");}
-                    
+                        $(".email").attr("placeholder", "Type your login here").removeClass("email");
+                    }
+                     // remove cookie to be able to sign up
+                    $("#signUp").click(function(){$.removeCookie('logged_in',{path: "/"});});
+                    $("#signUp").click(function(){$.removeCookie('logged_in',{path: "/site"});});
                     //bind onclick to Google and GitHub buttons
                     $(".oauth-button.google").click(function(){
                         Account.loginWithGoogle("Login page", function(url){

@@ -15,7 +15,7 @@ module Jekyll
 
     def script(input)
         case @context.registers[:site].config['profile']
-        when "stage"
+        when "stage","gh"
             "/" + input
         else
             input

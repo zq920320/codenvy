@@ -229,7 +229,7 @@
 
         var removeCookie = function(cookie){
             if ($.cookie(cookie)){
-                $.cookie(cookie, null);
+                $.removeCookie("cookie",{path: "/"});
             }
         };
 
@@ -251,10 +251,10 @@
             isValidEmail : function(email){
                 return (/^[^\+\/]+$/).test(email);
             },
-
+            // redirect to login page if user has 'logged_in' cookie
             redirectIfUserHasLoginCookie: function(){
-                if (!$.cookie('logged_in')){
-                    window.location = '/site/create-account';
+                if ($.cookie('logged_in')){
+                    window.location = '/site/login';
                 }
             },
 
