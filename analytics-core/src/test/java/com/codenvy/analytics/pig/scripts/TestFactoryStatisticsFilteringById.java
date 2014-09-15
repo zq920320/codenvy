@@ -116,8 +116,6 @@ public class TestFactoryStatisticsFilteringById extends BaseTest {
         assertEquals(summaryValue.size(), 1);
         Map<String, ValueData> summary = ((MapValueData)summaryValue.getAll().get(0)).getAll();
 
-        org.slf4j.LoggerFactory.getLogger(getClass()).info("testSummarizedFactoryStatistics: " + summary);
-
         assertEquals(summary.get(UsersStatisticsList.SESSIONS).getAsString(), "2");
         assertEquals(summary.get(UsersStatisticsList.TIME).getAsString(), "900000");
         assertEquals(summary.get(UsersStatisticsList.AUTHENTICATED_SESSION).getAsString(), "2");
@@ -141,8 +139,6 @@ public class TestFactoryStatisticsFilteringById extends BaseTest {
         assertEquals(summaryValue.size(), 1);
         Map<String, ValueData> summary = ((MapValueData)summaryValue.getAll().get(0)).getAll();
 
-        org.slf4j.LoggerFactory.getLogger(getClass()).info("testSummarizedFactoryStatisticsFilteredById: " + summary);
-
         assertEquals(summary.get(UsersStatisticsList.SESSIONS).getAsString(), "1");
         assertEquals(summary.get(UsersStatisticsList.TIME).getAsString(), "300000");
         assertEquals(summary.get(UsersStatisticsList.AUTHENTICATED_SESSION).getAsString(), "1");
@@ -165,8 +161,6 @@ public class TestFactoryStatisticsFilteringById extends BaseTest {
 
         assertEquals(summaryValue.size(), 1);
         Map<String, ValueData> summary = ((MapValueData)summaryValue.getAll().get(0)).getAll();
-
-        org.slf4j.LoggerFactory.getLogger(getClass()).info("testSummarizedFactoryStatisticsFilteredByUrl: " + summary);
 
         assertEquals(summary.get(UsersStatisticsList.SESSIONS).getAsString(), "1");
         assertEquals(summary.get(UsersStatisticsList.TIME).getAsString(), "600000");
