@@ -24,14 +24,16 @@ a1 = filterByEvent(l, 'factory-url-accepted');
 a2 = extractUrlParam(a1, 'REFERRER', 'referrer');
 a3 = extractUrlParam(a2, 'FACTORY-URL', 'factory');
 a4 = extractOrgAndAffiliateId(a3);
-a = FOREACH a4 GENERATE dt,
+a5 = extractFactoryId(a4);
+a = FOREACH a5 GENERATE dt,
                         ws,
                         user,
                         ExtractDomain(referrer) AS referrer,
                         factory,
                         orgId,
                         affiliateId,
-                        (INDEXOF(factory, 'factory?id=', 0) > 0 ? 1 : 0) AS encodedFactory;
+                        factoryId,
+                        (factoryId IS NULL ? 0 : 1) AS encodedFactory;
 
 result = FOREACH a GENERATE UUID(),
                             TOTUPLE('date',
@@ -41,5 +43,6 @@ result = FOREACH a GENERATE UUID(),
                             TOTUPLE('affiliate_id', affiliateId),
                             TOTUPLE('referrer', referrer),
                             TOTUPLE('factory', factory),
+                            TOTUPLE('factory_id', factoryId),
                             TOTUPLE('encoded_factory', encodedFactory);
 STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;

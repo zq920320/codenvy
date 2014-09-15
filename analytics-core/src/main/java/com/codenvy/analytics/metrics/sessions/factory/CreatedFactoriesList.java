@@ -51,6 +51,7 @@ public class CreatedFactoriesList extends AbstractListValueResulted {
                             PROJECT_TYPE,
                             REPOSITORY,
                             AFFILIATE_ID,
-                            ORG_ID};
+                            ORG_ID,
+                            FACTORY_ID};
     }
 }

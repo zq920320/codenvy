@@ -495,6 +495,10 @@
                 <field>factory</field>
                 <field>date</field>
             </index>
+            <index name="factory_id">
+                <field>factory_id</field>
+                <field>date</field>
+            </index>
             <index name="date">
                 <field>date</field>
             </index>
@@ -557,6 +561,10 @@
             </index>
             <index name="factory">
                 <field>factory</field>
+                <field>date</field>
+            </index>
+            <index name="factory_id">
+                <field>factory_id</field>
                 <field>date</field>
             </index>
             <index name="date">
@@ -625,6 +633,10 @@
             </index>
             <index name="encoded_factory">
                 <field>encoded_factory</field>
+                <field>date</field>
+            </index>
+            <index name="factory_id">
+                <field>factory_id</field>
                 <field>date</field>
             </index>
             <index name="ws_created">

@@ -52,12 +52,12 @@
         <section name="factory_overview">
             <row class="com.codenvy.analytics.services.view.TitleRow">
                 <parameter key="titles"
-                           value="Factory,Created By,Repository,Project Type,Organization ID,Affiliate ID"/>
+                           value="Factory URL,Created By,Repository,Project Type,Factory ID,Organization ID,Affiliate ID"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="created_factories_list"/>
                 <parameter key="fields"
-                           value="factory,user,repository,project_type,org_id,affiliate_id"/>
+                           value="factory,user,repository,project_type,org_id,affiliate_id,factory_id"/>
             </row>
         </section>
     </view>
