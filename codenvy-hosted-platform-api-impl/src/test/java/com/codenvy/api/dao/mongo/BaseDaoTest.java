@@ -55,8 +55,4 @@ public class BaseDaoTest {
         client.close();
         server.shutdownNow();
     }
-
-
-
-
 }

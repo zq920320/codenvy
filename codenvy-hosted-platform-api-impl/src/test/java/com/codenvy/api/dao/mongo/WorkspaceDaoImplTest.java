@@ -22,7 +22,6 @@ import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.api.core.notification.EventService;
 import com.codenvy.api.workspace.server.dao.Workspace;
-import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
@@ -34,6 +33,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static java.util.Collections.singletonMap;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
@@ -48,9 +48,7 @@ import static org.testng.Assert.fail;
  */
 public class WorkspaceDaoImplTest extends BaseDaoTest {
 
-    private static final String WORKSPACE_ID   = "workspace123abc456def";
-    private static final String COLL_NAME      = "workspaces";
-    private static final String WORKSPACE_NAME = "ws1";
+    private static final String COLL_NAME = "workspaces";
 
     private WorkspaceDaoImpl workspaceDao;
 
@@ -66,141 +64,135 @@ public class WorkspaceDaoImplTest extends BaseDaoTest {
     }
 
     @Test
-    public void mustSaveWorkspace() throws Exception {
-        Workspace workspace = new Workspace().withId(WORKSPACE_ID)
-                                             .withName(WORKSPACE_NAME)
-                                             .withTemporary(true)
-                                             .withAttributes(getAttributes());
-        // main invoke
-        workspaceDao.create(workspace);
+    public void shouldBeAbleToCreateWorkspace() throws Exception {
+        final Workspace testWorkspace = createWorkspace();
 
-        DBObject res = collection.findOne(new BasicDBObject("id", WORKSPACE_ID));
-        assertNotNull(res, "Specified user profile does not exists.");
-        assertEquals(workspace, workspaceDao.toWorkspace(res));
+        workspaceDao.create(testWorkspace);
+
+        final DBObject dbWorkspace = collection.findOne(new BasicDBObject("id", testWorkspace.getId()));
+        assertNotNull(dbWorkspace);
+        assertEquals(workspaceDao.toWorkspace(dbWorkspace), testWorkspace);
     }
 
     @Test(expectedExceptions = ConflictException.class, expectedExceptionsMessageRegExp = "Workspace name required")
-    public void mustNotCreateWorkspaceWithNullName() throws ConflictException, ServerException {
+    public void shouldNotBeAbleToCreateWorkspaceWithNullName() throws ConflictException, ServerException {
         workspaceDao.create(new Workspace().withName(null));
     }
 
     @Test(expectedExceptions = ConflictException.class, expectedExceptionsMessageRegExp = "Incorrect workspace name")
-    public void mustNotCreateWorkspaceThatNameLengthMoreThan20Characters() throws ConflictException, ServerException {
+    public void shouldNotBeAbleToCreateWorkspaceWithNameLengthMoreThan20Characters() throws ConflictException, ServerException {
         workspaceDao.create(new Workspace().withName("12345678901234567890x"));
     }
 
     @Test(expectedExceptions = ConflictException.class, expectedExceptionsMessageRegExp = "Incorrect workspace name")
-    public void mustNotCreateWorkspaceThatNameLengthLessThan3Characters() throws ConflictException, ServerException {
+    public void shouldNotBeAbleToCreateWorkspaceWithNameLengthLessThan3Characters() throws ConflictException, ServerException {
         workspaceDao.create(new Workspace().withName("ws"));
     }
 
     @Test(expectedExceptions = ConflictException.class, expectedExceptionsMessageRegExp = "Incorrect workspace name")
-    public void mustNotCreateWorkspaceThatNameStartsNotWithLetterOrDigit() throws ConflictException, ServerException {
+    public void shouldNotBeAbleToCreateWorkspaceWithNameStartsNotWithLetterOrDigit() throws ConflictException, ServerException {
         workspaceDao.create(new Workspace().withName(".ws"));
     }
 
     @Test(expectedExceptions = ConflictException.class, expectedExceptionsMessageRegExp = "Incorrect workspace name")
-    public void mustNotCreateWorkspaceThatNameEndsNotWithLetterOrDigit() throws ConflictException, ServerException {
+    public void shouldNotBeAbleToCreateWorkspaceWithNameEndsNotWithLetterOrDigit() throws ConflictException, ServerException {
         workspaceDao.create(new Workspace().withName("ws-"));
     }
 
     @Test(expectedExceptions = ConflictException.class, expectedExceptionsMessageRegExp = "Incorrect workspace name")
-    public void mustNotCreateWorkspaceThatNameContainsIllegalCharacters() throws ConflictException, ServerException {
+    public void shouldNotBeAbleToCreateWorkspaceWithNameWhichContainsIllegalCharacters() throws ConflictException, ServerException {
         workspaceDao.create(new Workspace().withName("worksp@ce"));
     }
 
     @Test
-    public void mustUpdateWorkspace() throws Exception {
-        Workspace workspace = new Workspace().withId(WORKSPACE_ID)
-                                             .withName(WORKSPACE_NAME)
-                                             .withAttributes(getAttributes())
-                                             .withTemporary(true);
-        // Put first object
-        collection.insert(new BasicDBObject("id", WORKSPACE_ID).append("name", WORKSPACE_NAME));
-        // main invoke
-        workspaceDao.update(workspace);
+    public void shouldBeAbleToUpdate() throws Exception {
+        final Workspace testWorkspace = createWorkspace();
+        //persist workspace
+        collection.insert(workspaceDao.toDBObject(testWorkspace));
+        //prepare update
+        final Workspace update = new Workspace().withId(testWorkspace.getId())
+                                                .withName("new_name")
+                                                .withAttributes(singletonMap("new_attribute", "value"));
 
-        DBObject res = collection.findOne(new BasicDBObject("id", WORKSPACE_ID));
-        assertNotNull(res, "Specified workspace does not exists.");
-        assertEquals(workspaceDao.toWorkspace(res), workspace);
+        workspaceDao.update(update);
+
+        final DBObject dbWorkspace = collection.findOne(new BasicDBObject("id", testWorkspace.getId()));
+        assertNotNull(dbWorkspace);
+        final Workspace actual = workspaceDao.toWorkspace(dbWorkspace);
+        assertEquals(actual.getName(), update.getName());
+        assertEquals(actual.getAttributes(), update.getAttributes());
     }
 
     @Test
-    public void mustNotSaveWorkspaceIfSameNameExist() throws Exception {
-        // Put first object
-        collection.insert(new BasicDBObject().append("id", WORKSPACE_ID)
-                                             .append("name", WORKSPACE_NAME));
-        Workspace workspace = new Workspace().withId(WORKSPACE_ID)
-                                             .withName(WORKSPACE_NAME)
-                                             .withTemporary(true);
+    public void shouldThrowConflictExceptionIfWorkspaceWithUpdateNameAlreadyExists() throws Exception {
+        final Workspace testWorkspace = createWorkspace();
+        //persist workspace
+        collection.insert(workspaceDao.toDBObject(testWorkspace));
+        //prepare update
+        final Workspace update = new Workspace().withId(testWorkspace.getId())
+                                                .withName(testWorkspace.getName());
+        //persist workspace with same name as update name
+        collection.insert(new BasicDBObject("id", "test_id2").append("name", update.getName()));
         try {
-            workspaceDao.create(workspace);
-            fail("Workspace with same name exists, but another is created.");
-        } catch (ConflictException e) {
-            // OK
+            workspaceDao.create(update);
+            fail();
+        } catch (ConflictException ex) {
+            assertEquals(ex.getMessage(), "Workspace with name '" + testWorkspace.getName() + "' already exists");
         }
     }
 
     @Test
-    public void mustFindWorkspaceById() throws Exception {
-        collection.insert(new BasicDBObject().append("id", WORKSPACE_ID)
-                                             .append("name", WORKSPACE_NAME)
-                                             .append("temporary", true)
-                                             .append("attributes", new BasicDBList()));
-        Workspace result = workspaceDao.getById(WORKSPACE_ID);
-        assertNotNull(result);
-        assertEquals(result.getName(), WORKSPACE_NAME);
-        assertTrue(result.isTemporary());
+    public void shouldBeAbleToGetWorkspaceById() throws Exception {
+        final Workspace testWorkspace = createWorkspace();
+        collection.insert(workspaceDao.toDBObject(testWorkspace));
+
+        final Workspace actual = workspaceDao.getById(testWorkspace.getId());
+
+        assertEquals(actual, testWorkspace);
     }
 
     @Test
-    public void mustFindWorkspaceByName() throws Exception {
-        collection.insert(new BasicDBObject().append("id", WORKSPACE_ID)
-                                             .append("name", WORKSPACE_NAME)
-                                             .append("temporary", true)
-                                             .append("attributes", new BasicDBList()));
-        Workspace result = workspaceDao.getByName(WORKSPACE_NAME);
-        assertNotNull(result);
-        assertEquals(result.getId(), WORKSPACE_ID);
-        assertTrue(result.isTemporary());
+    public void shouldBeAbleToGetWorkspaceByName() throws Exception {
+        final Workspace testWorkspace = createWorkspace();
+        collection.insert(workspaceDao.toDBObject(testWorkspace));
+
+        final Workspace actual = workspaceDao.getByName(testWorkspace.getName());
+
+        assertEquals(actual, testWorkspace);
     }
 
     @Test
-    public void mustFindWorkspacesByAccount() throws Exception {
-        String accId = "acc123456";
-        collection.insert(new BasicDBObject().append("id", WORKSPACE_ID)
-                                             .append("name", WORKSPACE_NAME)
-                                             .append("temporary", true)
-                                             .append("accountId", accId)
-                                             .append("attributes", new BasicDBList()));
-        collection.insert(new BasicDBObject().append("id", WORKSPACE_ID + "2")
-                                             .append("name", WORKSPACE_NAME + "2")
-                                             .append("temporary", false)
-                                             .append("accountId", accId)
-                                             .append("attributes", new BasicDBList()));
-        List<Workspace> result = workspaceDao.getByAccount(accId);
-        assertNotNull(result);
-        assertEquals(result.size(), 2);
+    public void shouldBeAbleToGetWorkspacesByAccount() throws Exception {
+        final Workspace testWorkspace1 = createWorkspace();
+        final Workspace testWorkspace2 = createWorkspace().withId("test_id2");
+        collection.insert(workspaceDao.toDBObject(testWorkspace1));
+        collection.insert(workspaceDao.toDBObject(testWorkspace2));
+
+        final List<Workspace> workspaces = workspaceDao.getByAccount(testWorkspace1.getAccountId());
+
+        assertEquals(workspaces.size(), 2);
+        assertTrue(workspaces.contains(testWorkspace1));
+        assertTrue(workspaces.contains(testWorkspace2));
     }
 
     @Test
-    public void mustRemoveWorkspace() throws Exception {
-        Workspace workspace = new Workspace().withId(WORKSPACE_ID)
-                                             .withName(WORKSPACE_NAME)
-                                             .withAttributes(getAttributes())
-                                             .withTemporary(true);
-        workspaceDao.create(workspace);
+    public void shouldBeAbleToRemoveWorkspace() throws Exception {
+        final Workspace testWorkspace = createWorkspace();
+        collection.insert(workspaceDao.toDBObject(testWorkspace));
 
-        workspaceDao.remove(WORKSPACE_ID);
-        assertNull(collection.findOne(new BasicDBObject("id", WORKSPACE_ID)));
+        workspaceDao.remove(testWorkspace.getId());
+
+        assertNull(collection.findOne(new BasicDBObject("id", testWorkspace.getId())));
     }
 
-    private Map<String, String> getAttributes() {
-        final Map<String, String> attributes = new HashMap<>(3);
+    private Workspace createWorkspace() {
+        final Map<String, String> attributes = new HashMap<>(8);
         attributes.put("attr.with.dots", "value1");
         attributes.put("attr2", "value2");
         attributes.put("attr3", "value3");
-        return attributes;
+        return new Workspace().withId("test_id")
+                              .withAccountId("test_account_id")
+                              .withName("test_name")
+                              .withAttributes(attributes);
     }
-
 }

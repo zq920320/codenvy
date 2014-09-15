@@ -67,95 +67,106 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
                             @Named(DB_COLLECTION) String collectionName) {
         collection = db.getCollection(collectionName);
         collection.ensureIndex(new BasicDBObject("id", 1), new BasicDBObject("unique", true));
+        collection.ensureIndex(new BasicDBObject("name", 1), new BasicDBObject("unique", true));
         collection.ensureIndex(new BasicDBObject("accountId", 1));
-        collection.ensureIndex(new BasicDBObject("name", 1));
         this.eventService = eventService;
     }
 
     @Override
     public void create(Workspace workspace) throws ConflictException, ServerException {
+        validateName(workspace.getName());
+        checkNameAvailable(workspace.getName());
+        checkIdAvailable(workspace.getId());
         try {
-            validateWorkspaceName(workspace.getName());
-            ensureWorkspaceNameDoesNotExist(workspace.getName());
             collection.save(toDBObject(workspace));
-            eventService.publish(new CreateWorkspaceEvent(workspace.getId(), workspace.isTemporary()));
-        } catch (MongoException me) {
-            throw new ServerException(me.getMessage(), me);
+        } catch (MongoException ex) {
+            LOG.error(ex.getMessage(), ex);
+            throw new ServerException("It is not possible to create workspace");
         }
+        eventService.publish(new CreateWorkspaceEvent(workspace.getId(), workspace.isTemporary()));
     }
 
     @Override
-    public void update(Workspace workspace) throws ConflictException, NotFoundException, ServerException {
-        final DBObject query = new BasicDBObject("id", workspace.getId());
-        if (collection.findOne(query) == null) {
-            throw new NotFoundException("Workspace not found " + workspace.getId());
+    public void update(Workspace update) throws ConflictException, NotFoundException, ServerException {
+        final DBObject query = new BasicDBObject("id", update.getId());
+        final DBObject dbWorkspace = collection.findOne(query);
+        if (dbWorkspace == null) {
+            throw new NotFoundException("Workspace not found " + update.getId());
+        }
+        if (!update.getName().equals(dbWorkspace.get("name"))) {
+            validateName(update.getName());
+            checkNameAvailable(update.getName());
         }
         try {
-            validateWorkspaceName(workspace.getName());
-            collection.update(query, toDBObject(workspace));
-        } catch (MongoException me) {
-            throw new ServerException(me.getMessage(), me);
-        }
-    }
-
-    @Override
-    public void remove(String id) throws ServerException, NotFoundException {
-        try {
-            final DBObject workspace = collection.findAndRemove(new BasicDBObject("id", id));
-            final Workspace removedWorkspace = toWorkspace(workspace);
-            LOG.info("EVENT#workspace-destroyed# WS#{}# WS-ID#{}#", removedWorkspace.getName(), removedWorkspace.getId());
-            eventService.publish(new DeleteWorkspaceEvent(id, removedWorkspace.isTemporary(), removedWorkspace.getName()));
-        } catch (MongoException me) {
-            throw new ServerException(me.getMessage(), me);
+            collection.update(query, toDBObject(update));
+        } catch (MongoException ex) {
+            LOG.error(ex.getMessage(), ex);
+            throw new ServerException("It is not possible to update workspace");
         }
     }
 
     @Override
     public Workspace getById(String id) throws NotFoundException, ServerException {
-        final DBObject res;
+        final DBObject dbWorkspace;
         try {
-            res = collection.findOne(new BasicDBObject("id", id));
-        } catch (MongoException me) {
-            throw new ServerException(me.getMessage(), me);
+            dbWorkspace = collection.findOne(new BasicDBObject("id", id));
+        } catch (MongoException ex) {
+            LOG.error(ex.getMessage(), ex);
+            throw new ServerException("It is not possible to retrieve workspace");
         }
-        if (res == null) {
+        if (dbWorkspace == null) {
             throw new NotFoundException("Workspace not found " + id);
         }
-        return toWorkspace(res);
+        return toWorkspace(dbWorkspace);
     }
 
     @Override
     public Workspace getByName(String name) throws NotFoundException, ServerException {
-        final DBObject res;
+        final DBObject dbWorkspace;
         try {
-            res = collection.findOne(new BasicDBObject("name", name));
-        } catch (MongoException me) {
-            throw new ServerException(me.getMessage(), me);
+            dbWorkspace = collection.findOne(new BasicDBObject("name", name));
+        } catch (MongoException ex) {
+            LOG.error(ex.getMessage(), ex);
+            throw new ServerException("It is not possible to retrieve workspace");
         }
-        if (res == null) {
+        if (dbWorkspace == null) {
             throw new NotFoundException("Workspace not found " + name);
         }
-        return toWorkspace(res);
+        return toWorkspace(dbWorkspace);
     }
 
     @Override
     public List<Workspace> getByAccount(String accountId) throws ServerException {
-        final List<Workspace> result;
-        try (DBCursor cursor = collection.find(new BasicDBObject("accountId", accountId))) {
-            result = new ArrayList<>(cursor.size());
-            for (DBObject wsObj : cursor) {
-                result.add(toWorkspace(wsObj));
+        final List<Workspace> workspaces;
+        try (DBCursor workspacesCursor = collection.find(new BasicDBObject("accountId", accountId))) {
+            workspaces = new ArrayList<>(workspacesCursor.size());
+            for (DBObject dbWorkspace : workspacesCursor) {
+                workspaces.add(toWorkspace(dbWorkspace));
             }
-        } catch (MongoException me) {
-            throw new ServerException(me.getMessage(), me);
+        } catch (MongoException ex) {
+            LOG.error(ex.getMessage(), ex);
+            throw new ServerException("It is not possible to retrieve workspaces");
         }
-        return result;
+        return workspaces;
+    }
+
+    @Override
+    public void remove(String id) throws ServerException {
+        try {
+            final DBObject dbWorkspace = collection.findAndRemove(new BasicDBObject("id", id));
+            final Workspace removedWorkspace = toWorkspace(dbWorkspace);
+            LOG.info("EVENT#workspace-destroyed# WS#{}# WS-ID#{}#", removedWorkspace.getName(), removedWorkspace.getId());
+            eventService.publish(new DeleteWorkspaceEvent(id, removedWorkspace.isTemporary(), removedWorkspace.getName()));
+        } catch (MongoException ex) {
+            LOG.error(ex.getMessage(), ex);
+            throw new ServerException("It is not possible to remove workspace");
+        }
     }
 
     /**
      * Converts database object to workspace ready-to-use object
      */
-    Workspace toWorkspace(DBObject wsObj) {
+    /*used in tests*/Workspace toWorkspace(DBObject wsObj) {
         final BasicDBObject basicWsObj = (BasicDBObject)wsObj;
         return new Workspace().withId(basicWsObj.getString("id"))
                               .withName(basicWsObj.getString("name"))
@@ -180,7 +191,7 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
      *         Workspace to convert
      * @return DBObject
      */
-    private DBObject toDBObject(Workspace workspace) {
+    /*used in tests*/DBObject toDBObject(Workspace workspace) {
         return new BasicDBObject().append("id", workspace.getId())
                                   .append("name", workspace.getName())
                                   .append("accountId", workspace.getAccountId())
@@ -208,7 +219,7 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
         return list;
     }
 
-    private void validateWorkspaceName(String workspaceName) throws ConflictException {
+    private void validateName(String workspaceName) throws ConflictException {
         if (workspaceName == null) {
             throw new ConflictException("Workspace name required");
         }
@@ -217,17 +228,15 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
         }
     }
 
-    /**
-     * Ensure that user given workspace name not already occupied and it is valid.
-     *
-     * @param workspaceName
-     *         workspace name to check
-     * @throws com.codenvy.api.core.ConflictException
-     */
-    private void ensureWorkspaceNameDoesNotExist(String workspaceName) throws ConflictException {
-        final DBObject res = collection.findOne(new BasicDBObject("name", workspaceName));
-        if (res != null) {
-            throw new ConflictException(String.format("Unable to create workspace: name '%s' already exists.", workspaceName));
+    private void checkIdAvailable(String id) throws ConflictException {
+        if (collection.findOne(new BasicDBObject("id", id)) != null) {
+            throw new ConflictException(String.format("Workspace with id '%s' already exists", id));
+        }
+    }
+
+    private void checkNameAvailable(String name) throws ConflictException {
+        if (collection.findOne(new BasicDBObject("name", name)) != null) {
+            throw new ConflictException(String.format("Workspace with name '%s' already exists", name));
         }
     }
 }
