@@ -37,54 +37,54 @@ import java.util.List;
 import static org.testng.Assert.assertEquals;
 
 /** @author <a href="mailto:dnochevnov@codenvy.com">Dmytro Nochevnov</a> */
-public class TestEncodedFactoryUrl extends BaseTest {
+public class TestFactoryUriComponentsDecode extends BaseTest {
 
-    private static final String ENCODED_URL =
-            "https%3A%2F%2Fcodenvy.com%2Ffactory%2F%3Fv%3D1" +
-            ".0%26pname%3DSample-Angul%0AarJS%26wname%3Dcodenvy-factories%26vcs%3Dgit%26vcsurl%3Dhttp%3A%2F%2Fcodenvy" +
-            ".com%2Fgit%2F04%2F0f%2F7f%2Fworkspacegcpv6cdxy1q34n1i%2FSample-AngularJS%26idcommit" +
-            "%3D37a21ef422e7995cbab615431f0f63991a9b314a%26ptype%3DJavaScript%26welcome%3D%7B%0A%22authenticated%22" +
-            "%3A%20%7B%0A%22title%22%3A%20%22TodoMVC%20-%20AngularJS%20Implementation%22%2C%0A%22iconurl%22%3A%20" +
-            "%22https%3A%2F%2Fdl.dropboxusercontent" +
-            ".com%2Fu%2F2187905%2FCodenvy%2FSampleCustomizedWelcomeMessage%2Fangularjs-icon" +
-            ".png%22%2C%0A%22contenturl%22%3A%20%22https%3A%2F%2Fdl.dropboxusercontent" +
-            ".com%2Fu%2F2187905%2FCodenvy%2FSampleCustomizedWelcomeMessage%2Fangular_welcome_message_authenticated" +
-            ".html%22%0A%7D%2C%0A%22nonauthenticated%22%3A%20%7B%0A%22title%22%3A%20%22TodoMVC%20-%20AngularJS" +
-            "%20Implementation%22%2C%0A%22iconurl%22%3A%20%22https%3A%2F%2Fdl.dropboxusercontent" +
-            ".com%2Fu%2F2187905%2FCodenvy%2FSampleCustomizedWelcomeMessage%2Fangularjs-icon" +
-            ".png%22%2C%0A%22contenturl%22%3A%20%22https%3A%2F%2Fdl.dropboxusercontent" +
-            ".com%2Fu%2F2187905%2FCodenvy%2FSampleCustomizedWelcomeMessage%2Fangular_welcome_message_not" +
-            "-authenticated.html%22%0A%7D";
+    private static final String ENCODE_URI_COMPONENTS =
+        "https%3A%2F%2Fcodenvy.com%2Ffactory%2F%3Fv%3D1" +
+        ".0%26pname%3DSample-Angul%0AarJS%26wname%3Dcodenvy-factories%26vcs%3Dgit%26vcsurl%3Dhttp%3A%2F%2Fcodenvy" +
+        ".com%2Fgit%2F04%2F0f%2F7f%2Fworkspacegcpv6cdxy1q34n1i%2FSample-AngularJS%26idcommit" +
+        "%3D37a21ef422e7995cbab615431f0f63991a9b314a%26ptype%3DJavaScript%26welcome%3D%7B%0A%22authenticated%22" +
+        "%3A%20%7B%0A%22title%22%3A%20%22TodoMVC%20-%20AngularJS%20Implementation%22%2C%0A%22iconurl%22%3A%20" +
+        "%22https%3A%2F%2Fdl.dropboxusercontent" +
+        ".com%2Fu%2F2187905%2FCodenvy%2FSampleCustomizedWelcomeMessage%2Fangularjs-icon" +
+        ".png%22%2C%0A%22contenturl%22%3A%20%22https%3A%2F%2Fdl.dropboxusercontent" +
+        ".com%2Fu%2F2187905%2FCodenvy%2FSampleCustomizedWelcomeMessage%2Fangular_welcome_message_authenticated" +
+        ".html%22%0A%7D%2C%0A%22nonauthenticated%22%3A%20%7B%0A%22title%22%3A%20%22TodoMVC%20-%20AngularJS" +
+        "%20Implementation%22%2C%0A%22iconurl%22%3A%20%22https%3A%2F%2Fdl.dropboxusercontent" +
+        ".com%2Fu%2F2187905%2FCodenvy%2FSampleCustomizedWelcomeMessage%2Fangularjs-icon" +
+        ".png%22%2C%0A%22contenturl%22%3A%20%22https%3A%2F%2Fdl.dropboxusercontent" +
+        ".com%2Fu%2F2187905%2FCodenvy%2FSampleCustomizedWelcomeMessage%2Fangular_welcome_message_not" +
+        "-authenticated.html%22%0A%7D";
 
     // 'ptype=' param is removed
     // 'factory/?v=' replaced with 'factory?v='
-    private static final String DECODED_URL
-            = "https://codenvy.com/factory?v=1.0&pname=Sample-Angul\n" +
-              "arJS&wname=codenvy-factories&vcs=git&vcsurl=http://codenvy" +
-              ".com/git/04/0f/7f/workspacegcpv6cdxy1q34n1i/Sample-AngularJS&idcommit=37a21ef422e7995cbab615431f0f63991a9b314a&welcome={\n" +
-              "\"authenticated\": {\n" +
-              "\"title\": \"TodoMVC - AngularJS Implementation\",\n" +
-              "\"iconurl\": \"https://dl.dropboxusercontent" +
-              ".com/u/2187905/Codenvy/SampleCustomizedWelcomeMessage/angularjs-icon" +
-              ".png\",\n" +
-              "\"contenturl\": \"https://dl.dropboxusercontent" +
-              ".com/u/2187905/Codenvy/SampleCustomizedWelcomeMessage/angular_welcome_message_authenticated.html\"\n" +
-              "},\n" +
-              "\"nonauthenticated\": {\n" +
-              "\"title\": \"TodoMVC - AngularJS Implementation\",\n" +
-              "\"iconurl\": \"https://dl.dropboxusercontent" +
-              ".com/u/2187905/Codenvy/SampleCustomizedWelcomeMessage/angularjs-icon" +
-              ".png\",\n" +
-              "\"contenturl\": \"https://dl.dropboxusercontent" +
-              ".com/u/2187905/Codenvy/SampleCustomizedWelcomeMessage/angular_welcome_message_not-authenticated.html\"\n" +
-              "}";
+    private static final String DECODE_URI_COMPONENTS
+        = "https://codenvy.com/factory?v=1.0&pname=Sample-Angul\n" +
+          "arJS&wname=codenvy-factories&vcs=git&vcsurl=http://codenvy" +
+          ".com/git/04/0f/7f/workspacegcpv6cdxy1q34n1i/Sample-AngularJS&idcommit=37a21ef422e7995cbab615431f0f63991a9b314a&welcome={\n" +
+          "\"authenticated\": {\n" +
+          "\"title\": \"TodoMVC - AngularJS Implementation\",\n" +
+          "\"iconurl\": \"https://dl.dropboxusercontent" +
+          ".com/u/2187905/Codenvy/SampleCustomizedWelcomeMessage/angularjs-icon" +
+          ".png\",\n" +
+          "\"contenturl\": \"https://dl.dropboxusercontent" +
+          ".com/u/2187905/Codenvy/SampleCustomizedWelcomeMessage/angular_welcome_message_authenticated.html\"\n" +
+          "},\n" +
+          "\"nonauthenticated\": {\n" +
+          "\"title\": \"TodoMVC - AngularJS Implementation\",\n" +
+          "\"iconurl\": \"https://dl.dropboxusercontent" +
+          ".com/u/2187905/Codenvy/SampleCustomizedWelcomeMessage/angularjs-icon" +
+          ".png\",\n" +
+          "\"contenturl\": \"https://dl.dropboxusercontent" +
+          ".com/u/2187905/Codenvy/SampleCustomizedWelcomeMessage/angular_welcome_message_not-authenticated.html\"\n" +
+          "}";
 
     @BeforeClass
     public void init() throws Exception {
         List<Event> events = new ArrayList<>();
 
         // broken event, factory url contains new line character
-        events.add(Event.Builder.createFactoryUrlAcceptedEvent("tmp-4", ENCODED_URL, "referrer2", "org3", "affiliate2")
+        events.add(Event.Builder.createFactoryUrlAcceptedEvent("tmp-4", ENCODE_URI_COMPONENTS, "referrer2", "org3", "affiliate2")
                                 .withDate("2013-02-10").withTime("10:00:00").build());
         events.add(Event.Builder.createTenantCreatedEvent("tmp-4", "anonymoususer_2")
                                 .withDate("2013-02-10").withTime("10:03:00").build());
@@ -105,24 +105,25 @@ public class TestEncodedFactoryUrl extends BaseTest {
         pigServer.execute(ScriptType.ACCEPTED_FACTORIES, builder.build());
 
         builder.putAll(
-                scriptsManager.getScript(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST).getParamsAsMap());
+            scriptsManager.getScript(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST)
+                          .getParamsAsMap());
         pigServer.execute(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, builder.build());
     }
 
     @Test
-    public void testAbstractTopFactories() throws Exception {
+    public void testAbstractTopFactoriesWithDecodedURIComponents() throws Exception {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20130210");
         builder.put(Parameters.TO_DATE, "20130210");
         builder.put(Parameters.PASSED_DAYS_COUNT, Parameters.PassedDaysCount.BY_LIFETIME.toString());
-        
+
         AbstractTopMetrics metric = new TestTopFactories();
 
         ListValueData value = (ListValueData)metric.getValue(builder.build());
 
         assertEquals(value.size(), 1);
         checkTopFactoriesDataItem((MapValueData)value.getAll().get(0),
-                                  DECODED_URL,
+                                  DECODE_URI_COMPONENTS,
                                   "1",
                                   "0",
                                   "900000",
@@ -133,7 +134,7 @@ public class TestEncodedFactoryUrl extends BaseTest {
                                   "0.0",
                                   "100.0",
                                   "0.0"
-                                 );
+        );
     }
 
     private void checkTopFactoriesDataItem(MapValueData item,
