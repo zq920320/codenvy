@@ -72,7 +72,6 @@ public class UsersActivityList extends AbstractListValueResulted {
     public Context applySpecificFilter(Context context) throws IOException {
         Context.Builder builder = new Context.Builder(context);
         builder.put(Parameters.SORT, MongoDataLoader.ASC_SORT_SIGN + DATE);
-        excludeStartAndStopFactorySessionsEvents(builder);
 
         if (context.exists(MetricFilter.SESSION_ID)) {
             setUserWsAndDateFilters(builder);
@@ -291,16 +290,6 @@ public class UsersActivityList extends AbstractListValueResulted {
             totalActionsNumberMetric = MetricFactory.getMetric(MetricType.USERS_ACTIVITY);
         }
         return ValueDataUtil.getAsLong(totalActionsNumberMetric, context).getAsLong();
-    }
-
-    private void excludeStartAndStopFactorySessionsEvents(Context.Builder builder) {
-        String eventFilter = builder.getAsString(MetricFilter.EVENT);
-
-        if (eventFilter != null) {
-            builder.put(MetricFilter.EVENT, eventFilter + MongoDataLoader.SEPARATOR + EventsHolder.NOT_FACTORY_SESSIONS);
-        } else {
-            builder.put(MetricFilter.EVENT, MongoDataLoader.EXCLUDE_SIGN + EventsHolder.NOT_FACTORY_SESSIONS);
-        }
     }
 
     private void setUserWsAndDateFilters(Context.Builder builder) throws IOException {

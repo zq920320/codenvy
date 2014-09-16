@@ -94,14 +94,6 @@ function Main() {
             analytics.view.implementUIPreferences();
         });
         
-        // Show session events selector
-        $("#show-session-events").click(function (event) {
-            var namesOfWidgetsToUpdate = $("#show-session-events").attr("targetWidgets");
-            var parameterToRemove = "userSessionActivity";  // display "userSessionActivity" table from the first page
-            
-            reloadWidgets(namesOfWidgetsToUpdate, [parameterToRemove]);
-        });
-        
         // Show factories selectors group
         $("#show-factories button").click(function () {
             $("#show-factories button").removeClass('btn-primary');
@@ -155,13 +147,6 @@ function Main() {
             }
             // params["data_universe"] = null if dataUniverseButton.attr("value") is undefined
             analytics.util.updateGlobalParamInStorage("data_universe", params["data_universe"]);
-        }
-
-        // process show session events selector
-        var showSessionEventsCheckbox = $("#show-session-events");
-        if (showSessionEventsCheckbox.doesExist()
-            && !showSessionEventsCheckbox.prop("checked")) {
-            params.event = showSessionEventsCheckbox.attr("inverseValue");
         }
 
         // process show-factories selector
@@ -332,18 +317,6 @@ function Main() {
             setPrimaryButtonOnValue(uiPreferencesButtons, params["ui_preferences"]);
         }
         
-        // update show session events selector
-        var showSessionEventsCheckbox = jQuery("#show-session-events");
-        if (showSessionEventsCheckbox.doesExist()) {
-            if (typeof params["event"] != "undefined") {
-                if (params["event"] == showSessionEventsCheckbox.attr("inverseValue")) {
-                    showSessionEventsCheckbox.prop("checked", false);
-                } else {
-                    showSessionEventsCheckbox.prop("checked", true);
-                }
-            }
-        }
-
         // update show encoded selection buttons
         var showFactoriesButtons = jQuery("#show-factories button");
         if (showFactoriesButtons.doesExist()) {

@@ -33,12 +33,6 @@
     <div class="row-fluid">
         <div>
             <div class="well topFilteringPanel">
-                <label>
-                    <input type="checkbox" checked="checked" id="show-session-events" 
-                       inverseValue="~ session-started OR session-finished"
-                       targetWidgets="userSessionActivity" />
-                    Micro Events
-                </label>
                 <div id="filter-by" class="left" targetWidgets="userSessionActivity">
                     <div class="collabsiblePanelTitle">Filter</div>
                     <div class="collabsiblePanelBody">

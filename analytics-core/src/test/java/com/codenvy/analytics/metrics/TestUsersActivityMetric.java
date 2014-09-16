@@ -38,23 +38,22 @@ import static com.mongodb.util.MyAsserts.assertEquals;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestUsersActivityMetric extends BaseTest {
 
-    private static final String WS                  = "ws1";
-    private static final String WS_ID               = "wsid1";
-    private static final String USER                = "user1@gmail.com";
-    private static final String USER_ID             = "uid1";
+    private static final String WS      = "ws1";
+    private static final String WS_ID   = "wsid1";
+    private static final String USER    = "user1@gmail.com";
+    private static final String USER_ID = "uid1";
 
-    private static final String WS2                  = "ws2";
-    private static final String WS2_ID               = "wsid2";
-    private static final String USER2                = "user2@gmail.com";
-    private static final String USER2_ID             = "uid2";
+    private static final String WS2      = "ws2";
+    private static final String WS2_ID   = "wsid2";
+    private static final String USER2    = "user2@gmail.com";
+    private static final String USER2_ID = "uid2";
 
-    private static final String TMP_WS                  = "tmp-ws";
-    private static final String TMP_WS_ID               = "wsid3";
-    private static final String TMP_USER                = "anonymoususer_5xhz40";
-    private static final String TMP_USER_ID             = "uid3";
+    private static final String TMP_WS      = "tmp-ws";
+    private static final String TMP_WS_ID   = "wsid3";
+    private static final String TMP_USER    = "anonymoususer_5xhz40";
+    private static final String TMP_USER_ID = "uid3";
 
-    private static final String SESSION_ID          = "8AA06F22-3755-4BDD-9242-8A6371BAB53A";
-    private static final String NON_SESSIONS_EVENTS = "~ session-started OR session-finished OR session-factory-started OR session-factory-stopped";
+    private static final String SESSION_ID = "8AA06F22-3755-4BDD-9242-8A6371BAB53A";
 
     @BeforeClass
     public void prepare() throws Exception {
@@ -153,7 +152,7 @@ public class TestUsersActivityMetric extends BaseTest {
         assertEquals(value.size(), 14);
 
         LOG.info(value.getAll().toString());
-        
+
         assertItem(value,
                    0,
                    "user-created",
@@ -168,7 +167,7 @@ public class TestUsersActivityMetric extends BaseTest {
                    WS_ID,
                    USER_ID,
                    fullDateFormatMils.parse("2013-11-01 08:40:02,000").getTime(),
-                   0, 0);        
+                   0, 0);
 
         assertItem(value,
                    2,
@@ -176,8 +175,8 @@ public class TestUsersActivityMetric extends BaseTest {
                    "",
                    USER2_ID,
                    fullDateFormatMils.parse("2013-11-01 08:40:03,000").getTime(),
-                   0, 0);        
-        
+                   0, 0);
+
         assertItem(value,
                    3,
                    "workspace-created",
@@ -185,7 +184,7 @@ public class TestUsersActivityMetric extends BaseTest {
                    USER2_ID,
                    fullDateFormatMils.parse("2013-11-01 08:40:04,000").getTime(),
                    0, 0);
-        
+
         assertItem(value,
                    4,
                    "user-created",
@@ -193,7 +192,7 @@ public class TestUsersActivityMetric extends BaseTest {
                    TMP_USER_ID,
                    fullDateFormatMils.parse("2013-11-01 08:40:05,000").getTime(),
                    0, 0);
-        
+
         assertItem(value,
                    5,
                    "workspace-created",
@@ -274,7 +273,6 @@ public class TestUsersActivityMetric extends BaseTest {
     public void testOneSessionActivityWithHidedSessionEvents() throws Exception {
         Context.Builder builder = new Context.Builder();
         builder.put(MetricFilter.SESSION_ID, SESSION_ID);
-        builder.put(Parameters.EVENT, NON_SESSIONS_EVENTS);
 
         Metric metric = MetricFactory.getMetric(MetricType.USERS_ACTIVITY_LIST);
         ListValueData value = (ListValueData)metric.getValue(builder.build());
