@@ -1276,6 +1276,7 @@ function Configuration() {
         "ws",
         "factory",
         "referrer",
+        "factory_id",
         "encoded_factory",
         "time_interval",
         "expanded_metric_name",

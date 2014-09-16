@@ -35,7 +35,10 @@ import java.util.List;
 
 import static org.testng.Assert.assertEquals;
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+/**
+ * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
+ * @author Dmytro Nochevnov
+ * */
 public class TestFactoryCreatedList extends BaseTest {
 
     @BeforeClass
@@ -109,9 +112,9 @@ public class TestFactoryCreatedList extends BaseTest {
         Metric metric = MetricFactory.getMetric(MetricType.CREATED_FACTORIES_SET);
         assertEquals(metric.getValue(builder.build()),
                      new SetValueData(Arrays.<ValueData>asList(new StringValueData("http://codenvy.com/factory?id=1"),
-                                                               new StringValueData("factory2"),
-                                                               new StringValueData("factory3"),
-                                                               new StringValueData("factory4"))));
+                                                       new StringValueData("factory2"),
+                                                       new StringValueData("factory3"),
+                                                       new StringValueData("factory4"))));
     }
 
 
@@ -138,8 +141,8 @@ public class TestFactoryCreatedList extends BaseTest {
         Metric metric = MetricFactory.getMetric(MetricType.CREATED_FACTORIES_SET);
         assertEquals(metric.getValue(builder.build()),
                      new SetValueData(Arrays.<ValueData>asList(new StringValueData("http://codenvy.com/factory?id=1"),
-                                                               new StringValueData("factory2"),
-                                                               new StringValueData("factory3"))));
+                                                       new StringValueData("factory2"),
+                                                       new StringValueData("factory3"))));
     }
 
     @Test
@@ -165,7 +168,20 @@ public class TestFactoryCreatedList extends BaseTest {
         Metric metric = MetricFactory.getMetric(MetricType.CREATED_FACTORIES_SET);
         assertEquals(metric.getValue(builder.build()),
                      new SetValueData(Arrays.<ValueData>asList(new StringValueData("factory2"),
-                                                               new StringValueData("factory3"),
-                                                               new StringValueData("factory4"))));
+                                                       new StringValueData("factory3"),
+                                                       new StringValueData("factory4"))));
+    }
+
+    @Test
+    public void testFactoryIdFilter() throws Exception {
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20130101");
+        builder.put(Parameters.TO_DATE, "20130101");
+        builder.put(MetricFilter.FACTORY_ID, "1");
+
+        Metric metric = MetricFactory.getMetric(MetricType.CREATED_FACTORIES_SET);
+        assertEquals(metric.getValue(builder.build()),
+                     new SetValueData(
+                         Arrays.<ValueData>asList(new StringValueData("http://codenvy.com/factory?id=1"))));
     }
 }

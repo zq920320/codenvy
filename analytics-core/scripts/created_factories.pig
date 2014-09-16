@@ -26,7 +26,8 @@ a3 = extractParam(a2, 'TYPE', 'projectType');
 a4 = extractUrlParam(a3, 'REPO-URL', 'repository');
 a5 = extractOrgAndAffiliateId(a4);
 a6 = extractParam(a5, 'PROJECT', 'project');
-a = FOREACH a6 GENERATE dt,
+a7 = extractFactoryId(a6);
+a = FOREACH a7 GENERATE dt,
                         ws,
                         user,
                         factory,
@@ -35,7 +36,8 @@ a = FOREACH a6 GENERATE dt,
                         projectType,
                         orgId,
                         affiliateId,
-                        (INDEXOF(factory, 'factory?id=', 0) > 0 ? 1 : 0) AS encodedFactory;
+                        factoryId,
+                        (factoryId IS NULL ? 0 : 1) AS encodedFactory;
 
 result = FOREACH a GENERATE UUID(),
 					TOTUPLE('date', ToMilliSeconds(dt)), 
@@ -48,5 +50,6 @@ result = FOREACH a GENERATE UUID(),
                     TOTUPLE('project_type', LOWER(projectType)), 
                     TOTUPLE('project_id', CreateProjectId(user, ws, project)),
                     TOTUPLE('factory', factory),
+                    TOTUPLE('factory_id', factoryId),
                     TOTUPLE('encoded_factory', encodedFactory);
 STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;

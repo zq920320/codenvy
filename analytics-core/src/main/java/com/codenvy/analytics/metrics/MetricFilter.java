@@ -43,6 +43,7 @@ public enum MetricFilter {
 
     ORG_ID,
     FACTORY,
+    FACTORY_ID,
     ENCODED_FACTORY(true),
     TIME(true),
     REFERRER,

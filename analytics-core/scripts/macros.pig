@@ -228,7 +228,8 @@ DEFINE createdTemporaryWorkspaces(X) RETURNS Y {
     x2 = extractUrlParam(x1, 'REFERRER', 'referrer');
     x3 = extractUrlParam(x2, 'FACTORY-URL', 'factory');
     x4 = extractOrgAndAffiliateId(x3);
-    x = FOREACH x4 GENERATE ws AS tmpWs, ExtractDomain(referrer) AS referrer, factory, orgId, affiliateId;
+    x5 = extractFactoryId(x4);
+    x = FOREACH x5 GENERATE ws AS tmpWs, ExtractDomain(referrer) AS referrer, factory, orgId, affiliateId, factoryId;
 
     -- created temporary workspaces
     w1 = filterByEvent($X, 'tenant-created,workspace-created');
@@ -236,7 +237,7 @@ DEFINE createdTemporaryWorkspaces(X) RETURNS Y {
 
     y1 = JOIN w BY tmpWs, x BY tmpWs;
     $Y = FOREACH y1 GENERATE w::dt AS dt, w::tmpWs AS ws, w::user AS user, x::referrer AS referrer, x::factory AS factory,
-                x::orgId AS orgId, x::affiliateId AS affiliateId;
+                x::orgId AS orgId, x::affiliateId AS affiliateId, x::factoryId AS factoryId;
 };
 
 ---------------------------------------------------------------------------------------------
@@ -248,7 +249,8 @@ DEFINE usersCreatedFromFactory(X) RETURNS Y {
     u2 = extractUrlParam(u1, 'REFERRER', 'referrer');
     u3 = extractUrlParam(u2, 'FACTORY-URL', 'factory');
     u4 = extractOrgAndAffiliateId(u3);
-    u = FOREACH u4 GENERATE ws AS tmpWs, ExtractDomain(referrer) AS referrer, factory, orgId, affiliateId;
+    u5 = extractFactoryId(u4);
+    u = FOREACH u5 GENERATE ws AS tmpWs, ExtractDomain(referrer) AS referrer, factory, orgId, affiliateId, factoryId;
 
     -- finds in which temporary workspaces anonymous users have worked
     x1 = filterByEvent($X, 'user-added-to-ws');
@@ -279,7 +281,7 @@ DEFINE usersCreatedFromFactory(X) RETURNS Y {
 
     r1 = JOIN z BY tmpWs, u BY tmpWs;
     $Y = FOREACH r1 GENERATE z::dt AS dt, z::user AS user, z::tmpWs AS ws, u::referrer AS referrer, u::factory AS factory,
-        u::orgId AS orgId, u::affiliateId AS affiliateId, z::tmpUser AS tmpUser;
+        u::orgId AS orgId, u::affiliateId AS affiliateId, u::factoryId AS factoryId, z::tmpUser AS tmpUser;
 };
 
 ---------------------------------------------------------------------------------------------
@@ -447,4 +449,13 @@ DEFINE addEventIndicator(W, X,  eventParam, fieldParam, inactiveIntervalParam) R
         t = LIMIT x2 1;
         GENERATE FLATTEN(t);
     }
+};
+
+---------------------------------------------------------------------------
+-- Extract factory id from factory url
+-- @return  {..., factoryId : bytearray}
+---------------------------------------------------------------------------
+DEFINE extractFactoryId(X) RETURNS Y {
+  e1 = extractUrlParam($X, 'FACTORY-URL', 'factoryUrl');
+  $Y = FOREACH e1 GENERATE *, (GetQueryValue(factoryUrl, 'id') == '' ? NULL : GetQueryValue(factoryUrl, 'id')) AS factoryId;
 };
