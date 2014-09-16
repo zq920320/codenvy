@@ -42,7 +42,7 @@ public class TestFactoryStatisticsFilteringById extends BaseTest {
     public static final String TEST_FACTORY_ID          = "abc123";
     public static final String TEST_ENCODED_FACTORY_URL = "https://test.com/factory?id=" + TEST_FACTORY_ID;
     public static final String TEST_USER_ALIAS          = "user1@gmail.com";
-    public static final String TEST_FACTORY_URL         = "factoryUrl2";
+    public static final String TEST_FACTORY_URL         = "https://codenvy.com/factory?affiliateid=javaone&pname=JavaOne-App&v=1.0";
 
     @BeforeClass
     public void init() throws Exception {

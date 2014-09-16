@@ -23,6 +23,8 @@ import org.apache.pig.data.Tuple;
 import org.apache.pig.impl.logicalLayer.schema.Schema;
 
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class GetQueryValue extends EvalFunc<String> {
@@ -40,13 +42,16 @@ public class GetQueryValue extends EvalFunc<String> {
             return null;
         }
 
-        paramName = paramName + "=";
+        Pattern pattern = Pattern.compile("[?&]" + paramName + "=([^?&]*)"); // find out last occurrence
+        Matcher matcher = pattern.matcher(url);
 
-        int indexParam = url.indexOf(paramName);
-        int nextIndexParam = url.indexOf("&", indexParam + 1);
+        String parameterValue = "";
 
-        return indexParam == -1 ? "" : url
-                .substring(indexParam + paramName.length(), nextIndexParam == -1 ? url.length() : nextIndexParam);
+        while (matcher.find()) {
+            parameterValue = matcher.group(1);
+        }
+
+        return parameterValue;
     }
 
     @Override

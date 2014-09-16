@@ -39,7 +39,7 @@ public class TestGetQueryValue extends BaseTest {
     @Test(dataProvider = "provider")
     public void shouldCutPTypeParam(String url, String cutUrl) throws Exception {
         Tuple tuple = makeTuple(url, "ptype");
-        assertEquals(cutQueryParam.exec(tuple), cutUrl);
+        assertEquals(cutUrl, cutQueryParam.exec(tuple));
 
     }
 
@@ -57,6 +57,7 @@ public class TestGetQueryValue extends BaseTest {
                 {"aaa", ""},
                 {"bbb&ptype=Type", "Type"},
                 {"bbb&ptype=Type&ccc", "Type"},
+                {"https://codenvy.com/factory?action=openproject&aptype=javaone", ""}
         };
     }
 }
