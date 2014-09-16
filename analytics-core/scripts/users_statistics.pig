@@ -20,14 +20,6 @@ IMPORT 'macros.pig';
 
 l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 
-a1 = filterByEvent(l, 'run-started');
-a = FOREACH a1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('runs', 1);
-STORE a INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
-
-b1 = filterByEvent(l, 'debug-started');
-b = FOREACH b1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('debugs', 1);
-STORE b INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
-
 c1 = filterByEvent(l, 'project-built');
 c = FOREACH c1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('builds', 1);
 STORE c INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
@@ -60,14 +52,24 @@ p1 = filterByEvent(l, 'user-sso-logged-in');
 p = FOREACH p1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('logins', 1);
 STORE p INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 
-q2 = calculateTime(l, 'run-started', 'run-finished');
-q3 = FOREACH q2 GENERATE dt, ws, user, delta;
-q = FOREACH q3 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('run_time', delta);
+b1 = filterByEvent(l, 'debug-started');
+b = FOREACH b1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('debugs', 1);
+STORE b INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
+
+a1 = filterByEvent(l, 'run-started');
+a = FOREACH a1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('runs', 1);
+STORE a INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
+
+q1 = filterByEvent(l, 'run-finished');
+q2 = extractParam(q1, 'USAGE-TIME', time);
+q3 = FOREACH q2 GENERATE dt, ws, user, (long)time;
+q = FOREACH q3 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('run_time', time);
 STORE q INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 
-r2 = calculateTime(l, 'build-started', 'build-finished');
-r3 = FOREACH r2 GENERATE dt, ws, user, delta;
-r = FOREACH r3 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('build_time', delta);
+r1 = filterByEvent(l, 'build-finished');
+r2 = extractParam(r1, 'USAGE-TIME', time);
+r3 = FOREACH r2 GENERATE dt, ws, user, (long)time;
+r = FOREACH r3 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('build_time', time);
 STORE r INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 
 s1 = filterByEvent(l, 'application-created');

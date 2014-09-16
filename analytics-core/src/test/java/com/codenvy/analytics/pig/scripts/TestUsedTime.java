@@ -17,42 +17,59 @@
  */
 package com.codenvy.analytics.pig.scripts;
 
+
 import com.codenvy.analytics.BaseTest;
-import com.codenvy.analytics.metrics.Context;
-import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.datamodel.LongValueData;
+import com.codenvy.analytics.datamodel.ValueDataUtil;
+import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class TestIde3Events extends BaseTest {
+import static org.testng.AssertJUnit.assertEquals;
 
-    private Context context;
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+public class TestUsedTime extends BaseTest {
+
+    private Context.Builder builder;
 
     @BeforeClass
     public void prepare() throws Exception {
         List<Event> events = new ArrayList<>();
-
-        events.add(new Event.Builder().withParam("EVENT", "1").withDate("2013-01-01").build());
-        events.add(new Event.Builder().withParam("EVENT", "2").withDate("2013-01-01").build());
-        events.add(new Event.Builder().withParam("EVENT", "3").withDate("2013-01-01").buildIDE3Event());
-        events.add(new Event.Builder().withParam("EVENT", "4").withDate("2013-01-01").buildIDE3Event());
-        events.add(new Event.Builder().withParam("EVENT", "5").withDate("2013-01-01").buildIDE3Event());
+        events.add(new Event.Builder().withDate("2013-01-01")
+                                      .withParam("EVENT", "run-finished")
+                                      .withParam("USER", "user")
+                                      .withParam("WS", "ws")
+                                      .withParam("USAGE-TIME", "300").build());
 
         File log = LogGenerator.generateLog(events);
 
-        Context.Builder builder = new Context.Builder();
+        builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20130101");
         builder.put(Parameters.TO_DATE, "20130101");
-        builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.name());
-        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
-        builder.put(Parameters.STORAGE_TABLE, "fake");
+        builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.toString());
+        builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.toString());
+        builder.put(Parameters.EVENT, "run-finished");
+        builder.put(Parameters.PARAM, "USAGE-TIME");
+        builder.put(Parameters.STORAGE_TABLE, "runs_time");
         builder.put(Parameters.LOG, log.getAbsolutePath());
-        context = builder.build();
+    }
+
+    @Test
+    public void testExecute() throws Exception {
+        pigServer.execute(ScriptType.USED_TIME, builder.build());
+
+        Metric metric = MetricFactory.getMetric(MetricType.RUNS_TIME);
+        LongValueData data = ValueDataUtil.getAsLong(metric, Context.EMPTY);
+
+        assertEquals(data.getAsLong(), 300);
     }
 }
+
+

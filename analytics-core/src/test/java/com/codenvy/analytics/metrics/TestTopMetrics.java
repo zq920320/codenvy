@@ -48,20 +48,14 @@ public class TestTopMetrics extends BaseTest {
         events.add(Event.Builder.createUserCreatedEvent("uid2", "anonymoususer_1", "[anonymoususer_1]")
                                 .withDate("2013-02-10").withTime("11:00:00,000").build());
 
-        events.add(Event.Builder.createSessionFactoryStartedEvent("id1", "tmp-1", "user1@gmail.com", "true", "brType")
+        events.add(Event.Builder.createSessionUsageEvent("user1@gmail.com", "tmp-1", "id1", "2013-02-10 10:00:00", "2013-02-10 10:05:00", true)
                                 .withDate("2013-02-10").withTime("10:00:00").build());
-        events.add(Event.Builder.createSessionFactoryStoppedEvent("id1", "tmp-1", "user1@gmail.com")
-                                .withDate("2013-02-10").withTime("10:05:00").build());
 
-        events.add(Event.Builder.createSessionFactoryStartedEvent("id2", "tmp-2", "user1@gmail.com", "true", "brType")
+        events.add(Event.Builder.createSessionUsageEvent("user1@gmail.com", "tmp-2", "id2", "2013-02-10 10:20:00", "2013-02-10 10:30:00", true)
                                 .withDate("2013-02-10").withTime("10:20:00").build());
-        events.add(Event.Builder.createSessionFactoryStoppedEvent("id2", "tmp-2", "user1@gmail.com")
-                                .withDate("2013-02-10").withTime("10:30:00").build());
 
-        events.add(Event.Builder.createSessionFactoryStartedEvent("id3", "tmp-3", "anonymoususer_1", "false", "brType")
+        events.add(Event.Builder.createSessionUsageEvent("anonymoususer_1", "tmp-3", "id3", "2013-02-10 11:00:00", "2013-02-10 11:15:00", true)
                                 .withDate("2013-02-10").withTime("11:00:00").build());
-        events.add(Event.Builder.createSessionFactoryStoppedEvent("id3", "tmp-3", "anonymoususer_1")
-                                .withDate("2013-02-10").withTime("11:15:00").build());
 
         events.add(Event.Builder.createFactoryProjectImportedEvent("tmp-1", "user1@gmail.com", "project", "type")
                                 .withDate("2013-02-10").withTime("10:05:00").build());

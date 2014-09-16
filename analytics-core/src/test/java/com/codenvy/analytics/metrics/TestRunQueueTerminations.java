@@ -30,6 +30,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.codenvy.analytics.datamodel.ValueDataUtil.getAsLong;
 import static org.testng.Assert.assertEquals;
 
 /**
@@ -40,24 +41,6 @@ public class TestRunQueueTerminations extends BaseTest {
     @BeforeClass
     public void init() throws Exception {
         List<Event> events = new ArrayList<>();
-
-        events.add(Event.Builder.createUserCreatedEvent("uid1", "user1@gmail.com", "user1@gmail.com")
-                                .withDate("2013-02-10").withTime("10:00:00,000").build());
-        events.add(Event.Builder.createUserCreatedEvent("uid2", "user2@gmail.com", "user2@gmail.com")
-                                .withDate("2013-02-10").withTime("10:00:00,000").build());
-        events.add(Event.Builder.createUserCreatedEvent("uid3", "user3@gmail.com", "user3@gmail.com")
-                                .withDate("2013-02-10").withTime("10:00:00,000").build());
-        events.add(Event.Builder.createUserCreatedEvent("uid5", "user5@gmail.com", "user5@gmail.com")
-                                .withDate("2013-02-10").withTime("10:00:00,000").build());
-
-        events.add(Event.Builder.createWorkspaceCreatedEvent("ws1", "wsid1", "user1@gmail.com")
-                                .withDate("2013-02-10").withTime("10:00:00").build());
-        events.add(Event.Builder.createWorkspaceCreatedEvent("ws2", "wsid2", "user2@gmail.com")
-                                .withDate("2013-02-10").withTime("10:00:00").build());
-        events.add(Event.Builder.createWorkspaceCreatedEvent("ws3", "wsid3", "user3@gmail.com")
-                                .withDate("2013-02-10").withTime("10:00:00").build());
-        events.add(Event.Builder.createWorkspaceCreatedEvent("ws5", "wsid5", "user5@gmail.com")
-                                .withDate("2013-02-10").withTime("10:00:00").build());
 
         events.add(Event.Builder.buildRunQueueTerminatedEvent("ws1", "user1@gmail.com", "project1", "type1", "id1")
                                 .withDate("2013-02-10").withTime("10:00:00").build());
@@ -75,26 +58,14 @@ public class TestRunQueueTerminations extends BaseTest {
         builder.put(Parameters.TO_DATE, "20130210");
         builder.put(Parameters.LOG, log.getAbsolutePath());
 
-        builder.putAll(scriptsManager.getScript(ScriptType.USERS_PROFILES, MetricType.USERS_PROFILES_LIST).getParamsAsMap());
-        pigServer.execute(ScriptType.USERS_PROFILES, builder.build());
-
-        builder.putAll(scriptsManager.getScript(ScriptType.WORKSPACES_PROFILES, MetricType.WORKSPACES_PROFILES_LIST).getParamsAsMap());
-        pigServer.execute(ScriptType.WORKSPACES_PROFILES, builder.build());
-
         builder.putAll(scriptsManager.getScript(ScriptType.EVENTS, MetricType.RUN_QUEUE_TERMINATIONS).getParamsAsMap());
         pigServer.execute(ScriptType.EVENTS, builder.build());
     }
 
     @Test
     public void testUserEvents() throws Exception {
-        Context.Builder builder = new Context.Builder();
-        builder.put(Parameters.FROM_DATE, "20130210");
-        builder.put(Parameters.TO_DATE, "20130210");
+        LongValueData l = getAsLong(MetricFactory.getMetric(MetricType.RUN_QUEUE_TERMINATIONS), Context.EMPTY);
 
-        Metric metric = MetricFactory.getMetric(MetricType.RUN_QUEUE_TERMINATIONS);
-        LongValueData lvd = (LongValueData)metric.getValue(builder.build());
-
-        assertEquals(lvd.getAsLong(), 3);
-
+        assertEquals(l.getAsLong(), 3);
     }
 }

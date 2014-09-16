@@ -15,23 +15,6 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-/*
-*
-* CODENVY CONFIDENTIAL
-* ________________
-*
-* [2012] - [2014] Codenvy, S.A.
-* All Rights Reserved.
-* NOTICE: All information contained herein is, and remains
-* the property of Codenvy S.A. and its suppliers,
-* if any. The intellectual and technical concepts contained
-* herein are proprietary to Codenvy S.A.
-* and its suppliers and may be covered by U.S. and Foreign Patents,
-* patents in process, and are protected by trade secret or copyright law.
-* Dissemination of this information or reproduction of this material
-* is strictly forbidden unless prior written permission is obtained
-* from Codenvy S.A..
-*/
 
 package com.codenvy.analytics.pig.scripts;
 
@@ -70,6 +53,7 @@ public enum ScriptType {
         @Override
         public Set<Parameters> getParams() {
             Set<Parameters> params = super.getParams();
+            params.add(Parameters.EVENT);
             params.add(Parameters.STORAGE_TABLE_USERS_STATISTICS);
             return params;
         }
@@ -95,6 +79,15 @@ public enum ScriptType {
         public Set<Parameters> getParams() {
             Set<Parameters> params = super.getParams();
             params.add(Parameters.EVENT);
+            return params;
+        }
+    },
+    USED_TIME {
+        @Override
+        public Set<Parameters> getParams() {
+            Set<Parameters> params = super.getParams();
+            params.add(Parameters.EVENT);
+            params.add(Parameters.PARAM);
             return params;
         }
     },

@@ -20,17 +20,20 @@ IMPORT 'macros.pig';
 
 l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 
-a1 = removeEvent(l, 'session-usage');
-a = FOREACH a1 GENERATE dt, user, ws, event, message;
+a1 = filterByEvent(l, '$EVENT');
+a2 = extractParam(a1, 'PROJECT', project);
+a3 = extractParam(a2, 'TYPE', project_type);
+a4 = extractParam(a3, '$PARAM', time);
+a = FOREACH a4 GENERATE dt, ws, user, project, project_type, time;
 
--- Every parameter in the message will be stored separately as well as a whole message.
--- It depends on 'event', that's why message must be passed to the storage function after an event
 result = FOREACH a GENERATE UUID(),
                             TOTUPLE('date', ToMilliSeconds(dt)),
-                            TOTUPLE('event', event),
-                            TOTUPLE('action', EventDescription(event)),
-                            TOTUPLE('ws', NullToEmpty(ws)),
-                            TOTUPLE('user', NullToEmpty(user)),
-                            TOTUPLE('message', message);
+                            TOTUPLE('ws', ws),
+                            TOTUPLE('user', user),
+                            TOTUPLE('project', project),
+                            TOTUPLE('project_type', LOWER(project_type)),
+                            TOTUPLE('project_id', CreateProjectId(user, ws, project)),
+                            TOTUPLE('time', (long)time);
 
 STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
+

@@ -49,7 +49,7 @@ public class TestExpandedMetricPartTwo extends AbstractTestExpandedMetric {
     private static final String TEST_COMPANY = "comp";
 
     @BeforeClass
-    public void prepareDatabase() throws IOException, ParseException {
+    public void prepareDatabase() throws Exception {
         List<Event> events = new ArrayList<>();
 
         // set user company
@@ -101,20 +101,18 @@ public class TestExpandedMetricPartTwo extends AbstractTestExpandedMetric {
                                 .withDate("2013-11-01").withTime("09:05:00").build());
 
         // create factory session events
-        events.add(Event.Builder.createSessionFactoryStartedEvent("factory-id1", "tmp-1", "user1@gmail.com", "true", "brType")
-                                .withDate("2013-11-01").withTime("10:00:00").build());
-        events.add(Event.Builder.createSessionFactoryStoppedEvent("factory-id1", "tmp-1", "user1@gmail.com")
-                                .withDate("2013-11-01").withTime("10:05:00").build());
+        events.add(
+                Event.Builder.createSessionUsageEvent("user1@gmail.com", "tmp-1", "factory-id1", "2013-11-01 10:00:00", "2013-11-01 10:05:00", true)
+                             .withDate("2013-11-01").withTime("10:00:00").build());
 
-        events.add(Event.Builder.createSessionFactoryStartedEvent("factory-id2", "tmp-2", "user1@gmail.com", "true", "brType")
-                                .withDate("2013-11-01").withTime("10:20:00").build());
-        events.add(Event.Builder.createSessionFactoryStoppedEvent("factory-id2", "tmp-2", "user1@gmail.com")
-                                .withDate("2013-11-01").withTime("10:30:00").build());
+        events.add(
+                Event.Builder.createSessionUsageEvent("user1@gmail.com", "tmp-2", "factory-id2", "2013-11-01 10:20:00", "2013-11-01 10:30:00", true)
+                             .withDate("2013-11-01").withTime("10:20:00").build());
 
-        events.add(Event.Builder.createSessionFactoryStartedEvent("factory-id3", "tmp-3", "anonymoususer_1", "false", "brType")
-                                .withDate("2013-11-01").withTime("11:00:00").build());
-        events.add(Event.Builder.createSessionFactoryStoppedEvent("factory-id3", "tmp-3", "anonymoususer_1")
-                                .withDate("2013-11-01").withTime("11:15:00").build());
+        events.add(
+                Event.Builder.createSessionUsageEvent("anonymoususer_1", "tmp-3", "factory-id3", "2013-11-01 11:00:00", "2013-11-01 11:15:00", true)
+                             .withDate("2013-11-01").withTime("11:00:00").build());
+
 
         events.add(Event.Builder.createFactoryProjectImportedEvent("tmp-1", "user1@gmail.com", "project", "type")
                                 .withDate("2013-11-01").withTime("10:05:00").build());
@@ -157,8 +155,16 @@ public class TestExpandedMetricPartTwo extends AbstractTestExpandedMetric {
                                 .withDate("2013-11-01").withTime("19:55:00,155").build());
 
         // start main session
-        events.add(Event.Builder.createSessionStartedEvent(TEST_USER, TEST_WS, "ide", SESSION_ID)
-                                .withDate("2013-11-01").withTime("19:00:00,155").build());
+        events.add(
+                Event.Builder
+                        .createSessionUsageEvent(TEST_USER, TEST_WS, SESSION_ID, "2013-11-01 19:00:00", "2013-11-01 19:55:00", false)
+                        .withDate("2013-11-01").withTime("19:00:00").build());
+
+        events.add(
+                Event.Builder
+                        .createSessionUsageEvent("user4@gmail.com", TEST_WS, SESSION_ID + "_micro", "2013-11-01 23:00:00", "2013-11-01 23:00:30", false)
+                        .withDate("2013-11-01").withTime("23:00:00").build());
+
 
         // create test projects and deploy they into PaaS
         events.add(Event.Builder.createProjectCreatedEvent(TEST_USER, TEST_WS, "id1", "project1", "python")
@@ -179,7 +185,7 @@ public class TestExpandedMetricPartTwo extends AbstractTestExpandedMetric {
         // event of target user in the target workspace and in time of first session
         events.add(Event.Builder.createRunStartedEvent(TEST_USER, TEST_WS, "project1", "Python", "id1")
                                 .withDate("2013-11-01").withTime("19:08:00,600").build());
-        events.add(Event.Builder.createRunFinishedEvent(TEST_USER, TEST_WS, "project1", "Python", "id1")
+        events.add(Event.Builder.createRunFinishedEvent(TEST_USER, TEST_WS, "project1", "Python", "id1", 0)
                                 .withDate("2013-11-01").withTime("19:10:00,900").build());
 
         // event of target user in another workspace and in time of main session
@@ -187,94 +193,85 @@ public class TestExpandedMetricPartTwo extends AbstractTestExpandedMetric {
                                 .withDate("2013-11-01").withTime("19:12:00").build());
         events.add(Event.Builder.createProjectBuiltEvent(TEST_USER, "ws2", "project2", "war", "id2")
                                 .withDate("2013-11-01").withTime("19:13:00").build());
-        events.add(Event.Builder.createBuildFinishedEvent(TEST_USER, "ws2", "project2", "war", "id2")
+        events.add(Event.Builder.createBuildFinishedEvent(TEST_USER, "ws2", "project2", "war", "id2", 0)
                                 .withDate("2013-11-01").withTime("19:14:00").build());
 
         // event of another user in the another workspace and in time of main session
         events.add(Event.Builder.createRunStartedEvent("user2@gmail.com", "ws3", "project2", "java", "id3")
                                 .withDate("2013-11-01").withTime("19:08:00").build());
-        events.add(Event.Builder.createRunFinishedEvent("user2@gmail.com", "ws3", "project2", "java", "id3")
+        events.add(Event.Builder.createRunFinishedEvent("user2@gmail.com", "ws3", "project2", "java", "id3", 0)
                                 .withDate("2013-11-01").withTime("19:10:00").build());
-
-        // finish main session
-        events.add(Event.Builder.createSessionFinishedEvent(TEST_USER, TEST_WS, "ide", SESSION_ID)
-                                .withDate("2013-11-01").withTime("19:55:00,555").build());
-
-        // make micro-session with duration < than 1 min
-        events.add(Event.Builder.createSessionStartedEvent("user4@gmail.com", TEST_WS, "ide", SESSION_ID + "_micro")
-                                .withDate("2013-11-01").withTime("23:00:00,155").build());
-        // finish main session
-        events.add(Event.Builder.createSessionFinishedEvent("user4@gmail.com", TEST_WS, "ide", SESSION_ID + "_micro")
-                                .withDate("2013-11-01").withTime("23:00:30,555").build());
 
         // add user6@gmail.com activity (6 sessions && (120min < time < 300min)) for test
         // testAbstractTimelineProductUsageConditionMetric
-        events.add(Event.Builder.createUserCreatedEvent("user-id6", "user6@gmail.com", "user6@gmail.com")
-                                .withDate("2013-11-20").withTime("00:05:00").build());
-        events.add(Event.Builder.createUserCreatedEvent("user-id7", "user7@gmail.com", "user7@gmail.com")
-                                .withDate("2013-11-20").withTime("00:05:00").build());
+        events.add(
+                Event.Builder
+                        .createSessionUsageEvent("user6@gmail.com", TEST_WS, "user6@gmail.com1", "2013-11-20 01:00:00", "2013-11-20 03:01:00", false)
+                        .withDate("2013-11-20").withTime("01:00:00").build());
 
-        events.add(Event.Builder.createSessionStartedEvent("user6@gmail.com", TEST_WS, "ide", "user6@gmail.com1")
-                                .withDate("2013-11-20").withTime("01:00:00").build());
-        events.add(Event.Builder.createSessionFinishedEvent("user6@gmail.com", TEST_WS, "ide", "user6@gmail.com1")
-                                .withDate("2013-11-20").withTime("03:01:00").build());
 
-        events.add(Event.Builder.createSessionStartedEvent("user6@gmail.com", TEST_WS, "ide", "user6@gmail.com2")
-                                .withDate("2013-11-20").withTime("04:00:00").build());
-        events.add(Event.Builder.createSessionFinishedEvent("user6@gmail.com", TEST_WS, "ide", "user6@gmail.com2")
-                                .withDate("2013-11-20").withTime("04:01:00").build());
+        events.add(
+                Event.Builder
+                        .createSessionUsageEvent("user6@gmail.com", TEST_WS, "user6@gmail.com2", "2013-11-20 04:00:00", "2013-11-20 04:01:00", false)
+                        .withDate("2013-11-20").withTime("04:00:00").build());
 
-        events.add(Event.Builder.createSessionStartedEvent("user6@gmail.com", TEST_WS, "ide", "user6@gmail.com3")
-                                .withDate("2013-11-20").withTime("05:00:00").build());
-        events.add(Event.Builder.createSessionFinishedEvent("user6@gmail.com", TEST_WS, "ide", "user6@gmail.com3")
-                                .withDate("2013-11-20").withTime("05:01:00").build());
+        events.add(
+                Event.Builder
+                        .createSessionUsageEvent("user6@gmail.com", TEST_WS, "user6@gmail.com3", "2013-11-20 05:00:00", "2013-11-20 05:01:00", false)
+                        .withDate("2013-11-20").withTime("05:00:00").build());
 
-        events.add(Event.Builder.createSessionStartedEvent("user6@gmail.com", TEST_WS, "ide", "user6@gmail.com4")
-                                .withDate("2013-11-20").withTime("06:00:00").build());
-        events.add(Event.Builder.createSessionFinishedEvent("user6@gmail.com", TEST_WS, "ide", "user6@gmail.com4")
-                                .withDate("2013-11-20").withTime("06:01:00").build());
 
-        events.add(Event.Builder.createSessionStartedEvent("user6@gmail.com", TEST_WS, "ide", "user6@gmail.com5")
-                                .withDate("2013-11-20").withTime("07:00:00").build());
-        events.add(Event.Builder.createSessionFinishedEvent("user6@gmail.com", TEST_WS, "ide", "user6@gmail.com5")
-                                .withDate("2013-11-20").withTime("07:01:00").build());
+        events.add(
+                Event.Builder
+                        .createSessionUsageEvent("user6@gmail.com", TEST_WS, "user6@gmail.com4", "2013-11-20 06:00:00", "2013-11-20 06:01:00", false)
+                        .withDate("2013-11-20").withTime("06:00:00").build());
 
-        events.add(Event.Builder.createSessionStartedEvent("user6@gmail.com", TEST_WS, "ide", "user6@gmail.com6")
-                                .withDate("2013-11-20").withTime("08:00:00").build());
-        events.add(Event.Builder.createSessionFinishedEvent("user6@gmail.com", TEST_WS, "ide", "user6@gmail.com6")
-                                .withDate("2013-11-20").withTime("08:01:00").build());
+        events.add(
+                Event.Builder
+                        .createSessionUsageEvent("user6@gmail.com", TEST_WS, "user6@gmail.com5", "2013-11-20 07:00:00", "2013-11-20 07:01:00", false)
+                        .withDate("2013-11-20").withTime("07:00:00").build());
+
+        events.add(
+                Event.Builder
+                        .createSessionUsageEvent("user6@gmail.com", TEST_WS, "user6@gmail.com6", "2013-11-20 08:00:00", "2013-11-20 08:01:00", false)
+                        .withDate("2013-11-20").withTime("08:00:00").build());
+
 
         // add user7@gmail.com activity (6 sessions, time > 300 min) for test
         // testAbstractTimelineProductUsageConditionMetric
-        events.add(Event.Builder.createSessionStartedEvent("user7@gmail.com", TEST_WS, "ide", "user7@gmail.com1")
-                                .withDate("2013-12-20").withTime("01:00:00").build());
-        events.add(Event.Builder.createSessionFinishedEvent("user7@gmail.com", TEST_WS, "ide", "user7@gmail.com1")
-                                .withDate("2013-12-20").withTime("03:15:00").build());
+        events.add(
+                Event.Builder
+                        .createSessionUsageEvent("user7@gmail.com", TEST_WS, "user7@gmail.com1", "2013-12-20 01:00:00", "2013-12-20 03:15:00", false)
+                        .withDate("2013-12-20").withTime("01:00:00").build());
 
-        events.add(Event.Builder.createSessionStartedEvent("user7@gmail.com", TEST_WS, "ide", "user7@gmail.com2")
-                                .withDate("2013-12-20").withTime("04:00:00").build());
-        events.add(Event.Builder.createSessionFinishedEvent("user7@gmail.com", TEST_WS, "ide", "user7@gmail.com2")
-                                .withDate("2013-12-20").withTime("06:15:00").build());
 
-        events.add(Event.Builder.createSessionStartedEvent("user7@gmail.com", TEST_WS, "ide", "user7@gmail.com3")
-                                .withDate("2013-12-20").withTime("07:00:00").build());
-        events.add(Event.Builder.createSessionFinishedEvent("user7@gmail.com", TEST_WS, "ide", "user7@gmail.com3")
-                                .withDate("2013-12-20").withTime("09:15:00").build());
+        events.add(
+                Event.Builder
+                        .createSessionUsageEvent("user7@gmail.com", TEST_WS, "user7@gmail.com2", "2013-12-20 04:00:00", "2013-12-20 06:15:00", false)
+                        .withDate("2013-12-20").withTime("04:00:00").build());
 
-        events.add(Event.Builder.createSessionStartedEvent("user7@gmail.com", TEST_WS, "ide", "user7@gmail.com4")
-                                .withDate("2013-12-20").withTime("10:00:00").build());
-        events.add(Event.Builder.createSessionFinishedEvent("user7@gmail.com", TEST_WS, "ide", "user7@gmail.com4")
-                                .withDate("2013-12-20").withTime("13:15:00").build());
 
-        events.add(Event.Builder.createSessionStartedEvent("user7@gmail.com", TEST_WS, "ide", "user7@gmail.com5")
-                                .withDate("2013-12-20").withTime("14:00:00").build());
-        events.add(Event.Builder.createSessionFinishedEvent("user7@gmail.com", TEST_WS, "ide", "user7@gmail.com5")
-                                .withDate("2013-12-20").withTime("16:15:00").build());
+        events.add(
+                Event.Builder
+                        .createSessionUsageEvent("user7@gmail.com", TEST_WS, "user7@gmail.com3", "2013-12-20 07:00:00", "2013-12-20 09:15:00", false)
+                        .withDate("2013-12-20").withTime("07:00:00").build());
 
-        events.add(Event.Builder.createSessionStartedEvent("user7@gmail.com", TEST_WS, "ide", "user7@gmail.com6")
-                                .withDate("2013-12-20").withTime("17:00:00").build());
-        events.add(Event.Builder.createSessionFinishedEvent("user7@gmail.com", TEST_WS, "ide", "user7@gmail.com6")
-                                .withDate("2013-12-20").withTime("19:15:00").build());
+
+        events.add(
+                Event.Builder
+                        .createSessionUsageEvent("user7@gmail.com", TEST_WS, "user7@gmail.com4", "2013-12-20 10:00:00", "2013-12-20 13:15:00", false)
+                        .withDate("2013-12-20").withTime("10:00:00").build());
+
+        events.add(
+                Event.Builder
+                        .createSessionUsageEvent("user7@gmail.com", TEST_WS, "user7@gmail.com5", "2013-12-20 14:00:00", "2013-12-20 16:15:00", false)
+                        .withDate("2013-12-20").withTime("14:00:00").build());
+
+        events.add(
+                Event.Builder
+                        .createSessionUsageEvent("user7@gmail.com", TEST_WS, "user7@gmail.com6", "2013-12-20 17:00:00", "2013-12-20 19:15:00", false)
+                        .withDate("2013-12-20").withTime("17:00:00").build());
+
 
         // add event of accepting factory url for the testDrillDownTopFactoriesMetric test
         events.add(Event.Builder.createUserCreatedEvent("user-id_factory_user5", "factory_user5@gmail.com", "factory_user5@gmail.com")
@@ -378,7 +375,7 @@ public class TestExpandedMetricPartTwo extends AbstractTestExpandedMetric {
 
         record = ((MapValueData)all.get(0)).getAll();
         assertEquals(record.size(), 1);
-        assertEquals(record.get("user").toString(), "user-id6");
+        assertEquals(record.get("user").toString(), "user6@gmail.com");
 
         builder = new Context.Builder();
         builder.put(Parameters.TO_DATE, "20131220");
@@ -390,7 +387,7 @@ public class TestExpandedMetricPartTwo extends AbstractTestExpandedMetric {
 
         record = ((MapValueData)all.get(0)).getAll();
         assertEquals(record.size(), 1);
-        assertEquals(record.get("user").toString(), "user-id6");
+        assertEquals(record.get("user").toString(), "user6@gmail.com");
 
         builder = new Context.Builder();
         builder.put(Parameters.TO_DATE, "20131220");
@@ -402,7 +399,7 @@ public class TestExpandedMetricPartTwo extends AbstractTestExpandedMetric {
 
         record = ((MapValueData)all.get(0)).getAll();
         assertEquals(record.size(), 1);
-        assertEquals(record.get("user").toString(), "user-id6");
+        assertEquals(record.get("user").toString(), "user6@gmail.com");
 
 
         /** test TimelineProductUsageConditionAbove300Min */
@@ -417,7 +414,7 @@ public class TestExpandedMetricPartTwo extends AbstractTestExpandedMetric {
 
         record = ((MapValueData)all.get(0)).getAll();
         assertEquals(record.size(), 1);
-        assertEquals(record.get("user").toString(), "user-id7");
+        assertEquals(record.get("user").toString(), "user7@gmail.com");
 
         builder = new Context.Builder();
         builder.put(Parameters.TO_DATE, "20131220");

@@ -17,6 +17,8 @@
  */
 package com.codenvy.analytics.pig.scripts.util;
 
+import com.codenvy.analytics.BaseTest;
+
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -25,19 +27,17 @@ public class Event {
     private final String              date;
     private final String              time;
     private final EventContext        context;
-    private final boolean             isIDE3Event;
     private final Map<String, String> params;
 
     /**
      * Event constructor. {@link EventContext} parameters could be null. It means they'll be omitted in the resulted
      * message. The same true and for date parameter;
      */
-    private Event(String date, String time, EventContext context, Map<String, String> params, boolean isIDE3Event) {
+    private Event(String date, String time, EventContext context, Map<String, String> params) {
         this.date = date;
         this.time = time;
         this.context = context;
         this.params = params;
-        this.isIDE3Event = isIDE3Event;
     }
 
     /** Represents event as a message of the log. */
@@ -52,10 +52,6 @@ public class Event {
 
         builder.append(time == null ? "10:10:10,000" : time + ",000");
         builder.append("[main] [INFO] [HelloWorld 1010] ");
-
-        if (isIDE3Event) {
-            builder.append("[ide3]");
-        }
 
         if (context.user != null) {
             builder.append("[");
@@ -118,7 +114,7 @@ public class Event {
             return this;
         }
 
-        private Builder withParam(String name, Map<String,String> value) {
+        private Builder withParam(String name, Map<String, String> value) {
             StringBuilder sb = new StringBuilder();
             Iterator<Entry<String, String>> iterator = value.entrySet().iterator();
             while (iterator.hasNext()) {
@@ -136,11 +132,7 @@ public class Event {
         }
 
         public Event build() {
-            return new Event(date, time, context, params, false);
-        }
-
-        public Event buildIDE3Event() {
-            return new Event(date, time, context, params, true);
+            return new Event(date, time, context, params);
         }
 
         public static Builder createTenantCreatedEvent(String ws, String user) {
@@ -151,6 +143,30 @@ public class Event {
                                                       String type) {
             return new Builder().withContext(user, ws, session).withParam("EVENT", "project-built")
                                 .withParam("PROJECT", project).withParam("TYPE", type);
+        }
+
+        public static Builder createSessionUsageEvent(String user,
+                                                      String ws,
+                                                      String sessionId,
+                                                      long startTime,
+                                                      long usageTime,
+                                                      boolean isFactory) {
+            return new Builder().withParam("EVENT", isFactory ? "session-factory-usage" : "session-usage")
+                                .withParam("WS", ws)
+                                .withParam("USER", user)
+                                .withParam("PARAMETERS", "USAGE-TIME=" + usageTime + ",START-TIME=" + startTime + ",SESSION-ID=" + sessionId);
+        }
+
+        public static Builder createSessionUsageEvent(String user,
+                                                      String ws,
+                                                      String sessionId,
+                                                      String statStr,
+                                                      String endStr,
+                                                      boolean isFactory) throws Exception {
+
+            Date startTime = BaseTest.fullDateFormat.parse(statStr);
+            Date endTime = BaseTest.fullDateFormat.parse(endStr);
+            return createSessionUsageEvent(user, ws, sessionId, startTime.getTime(), endTime.getTime() - startTime.getTime(), isFactory);
         }
 
         public static Builder createSessionStartedEvent(String user, String ws, String window, String sessionId) {
@@ -246,32 +262,24 @@ public class Event {
                                 .withParam("ID", id);
         }
 
-        public static Builder createRunFinishedEvent(String user, String ws, String project, String type, String id) {
+        public static Builder createRunFinishedEvent(String user, String ws, String project, String type, String id, long usageTime) {
             return new Builder().withParam("EVENT", "run-finished")
                                 .withParam("WS", ws)
                                 .withParam("USER", user)
                                 .withParam("PROJECT", project)
                                 .withParam("TYPE", type)
-                                .withParam("ID", id);
+                                .withParam("ID", id)
+                                .withParam("USAGE-TIME", Long.toString(usageTime));
         }
 
-        public static Builder createBuildFinishedEvent(String user, String ws, String project, String type, String id) {
+        public static Builder createBuildFinishedEvent(String user, String ws, String project, String type, String id, long usageTime) {
             return new Builder().withParam("EVENT", "build-finished")
                                 .withParam("WS", ws)
                                 .withParam("USER", user)
                                 .withParam("PROJECT", project)
                                 .withParam("TYPE", type)
-                                .withParam("ID", id);
-        }
-
-        public static Builder createBuildQueueWaitingFinishedEvent(String user, String ws, String project, String type,
-                                                                   String id) {
-            return new Builder().withParam("EVENT", "build-queue-waiting-finished")
-                                .withParam("WS", ws)
-                                .withParam("USER", user)
-                                .withParam("PROJECT", project)
-                                .withParam("TYPE", type)
-                                .withParam("ID", id);
+                                .withParam("ID", id)
+                                .withParam("USAGE-TIME", Long.toString(usageTime));
         }
 
         public static Builder createConfigureDockerFinishedEvent(String user, String ws, String id) {
@@ -335,8 +343,8 @@ public class Event {
                                                      String user,
                                                      String aliases) {
             return new Builder().withParam("EVENT", "user-created")
-                                .withParam("USER", user)
                                 .withParam("USER-ID", userId)
+                                .withParam("USER", user)
                                 .withParam("EMAILS", aliases);
         }
 

@@ -33,7 +33,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.codenvy.analytics.pig.scripts.util.Event.Builder.*;
+import static com.codenvy.analytics.pig.scripts.util.Event.Builder.createFactoryUrlAcceptedEvent;
 import static org.testng.Assert.assertEquals;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
@@ -45,19 +45,17 @@ public class TestActiveFactoriesSet extends BaseTest {
         events.add(Event.Builder.createUserCreatedEvent("uid1", "a1", "a1").withDate("2013-01-01").withTime("10:00:00,000").build());
 
         events.add(createFactoryUrlAcceptedEvent("tmp-1", "factory1", "", "", "").withDate("2013-01-01").withTime("13:00:00").build());
-        events.add(createSessionFactoryStartedEvent("id1", "tmp-1", "a1", "", "").withDate("2013-01-01").withTime("13:01:00").build());
-        events.add(createSessionFactoryStoppedEvent("id1", "tmp-1", "a1").withDate("2013-01-01").withTime("13:02:00").build());
-
-        events.add(createSessionFactoryStartedEvent("id1", "tmp-1", "a1", "", "").withDate("2013-01-02").withTime("13:01:00").build());
-        events.add(createSessionFactoryStoppedEvent("id1", "tmp-1", "a1").withDate("2013-01-02").withTime("13:02:00").build());
-
         events.add(createFactoryUrlAcceptedEvent("tmp-2", "factory2", "", "", "").withDate("2013-01-03").withTime("13:00:00").build());
-        events.add(createSessionFactoryStartedEvent("id2", "tmp-2", "a1", "", "").withDate("2013-01-03").withTime("13:01:00").build());
-        events.add(createSessionFactoryStoppedEvent("id2", "tmp-2", "a1").withDate("2013-01-03").withTime("13:02:00").build());
-
         events.add(createFactoryUrlAcceptedEvent("tmp-3", "factory3", "", "", "").withDate("2013-01-04").withTime("13:00:00").build());
-        events.add(createSessionFactoryStartedEvent("id3", "tmp-3", "a1", "", "").withDate("2013-01-04").withTime("13:01:00").build());
-        events.add(createSessionFactoryStoppedEvent("id3", "tmp-3", "a1").withDate("2013-01-04").withTime("13:02:00").build());
+
+        events.add(Event.Builder.createSessionUsageEvent("a1", "tmp-1", "id1", "2013-01-01 13:01:00", "2013-01-01 13:02:00", true)
+                                .withDate("2013-01-01").withTime("13:01:00").build());
+        events.add(Event.Builder.createSessionUsageEvent("a1", "tmp-1", "id2", "2013-01-02 13:01:00", "2013-01-02 13:02:00", true)
+                                .withDate("2013-01-02").withTime("13:01:00").build());
+        events.add(Event.Builder.createSessionUsageEvent("a1", "tmp-2", "id3", "2013-01-03 13:01:00", "2013-01-03 13:02:00", true)
+                                .withDate("2013-01-03").withTime("13:01:00").build());
+        events.add(Event.Builder.createSessionUsageEvent("a1", "tmp-3", "id4", "2013-01-04 13:01:00", "2013-01-04 13:02:00", true)
+                                .withDate("2013-01-04").withTime("13:01:00").build());
 
         File log = LogGenerator.generateLog(events);
 
@@ -66,8 +64,7 @@ public class TestActiveFactoriesSet extends BaseTest {
         builder.put(Parameters.TO_DATE, "20130101");
         builder.put(Parameters.LOG, log.getAbsolutePath());
 
-        builder.putAll(scriptsManager.getScript(ScriptType.USERS_PROFILES, MetricType.USERS_PROFILES_LIST)
-                                     .getParamsAsMap());
+        builder.putAll(scriptsManager.getScript(ScriptType.USERS_PROFILES, MetricType.USERS_PROFILES_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.USERS_PROFILES, builder.build());
 
         builder = new Context.Builder();
@@ -90,12 +87,10 @@ public class TestActiveFactoriesSet extends BaseTest {
         builder.put(Parameters.TO_DATE, "20130104");
         pigServer.execute(ScriptType.ACCEPTED_FACTORIES, builder.build());
 
-        builder.putAll(scriptsManager.getScript(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS,
-                                                MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST)
-                                     .getParamsAsMap());
-
         builder.put(Parameters.FROM_DATE, "20130101");
         builder.put(Parameters.TO_DATE, "20130101");
+        builder.putAll(
+                scriptsManager.getScript(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, builder.build());
 
         builder.put(Parameters.FROM_DATE, "20130102");
@@ -120,7 +115,6 @@ public class TestActiveFactoriesSet extends BaseTest {
         Metric metric = MetricFactory.getMetric(MetricType.ACTIVE_FACTORIES_SET);
         assertEquals(metric.getValue(builder.build()), new SetValueData(Arrays.<ValueData>asList(new StringValueData("factory1"))));
     }
-
 
     @Test
     public void testTwoDaysFilter() throws Exception {

@@ -32,7 +32,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -49,7 +48,7 @@ public abstract class AbstractUsersActivityTest extends BaseTest {
         computeStatistics("20131102");
     }
 
-    protected void computeStatistics(String date) throws IOException, ParseException {
+    protected void computeStatistics(String date) throws Exception {
         executeScript(ScriptType.USERS_PROFILES, MetricType.USERS_PROFILES_LIST, date);
         executeScript(ScriptType.WORKSPACES_PROFILES, MetricType.WORKSPACES_PROFILES_LIST, date);
         executeScript(ScriptType.PRODUCT_USAGE_SESSIONS, MetricType.PRODUCT_USAGE_SESSIONS_LIST, date);
@@ -60,8 +59,7 @@ public abstract class AbstractUsersActivityTest extends BaseTest {
         executeScript(ScriptType.EVENTS_BY_TYPE, MetricType.USERS_LOGGED_IN_TYPES, date);
     }
 
-    private void executeScript(ScriptType scriptType, MetricType metricType, String date)
-            throws IOException, ParseException {
+    private void executeScript(ScriptType scriptType, MetricType metricType, String date) throws Exception {
         Context.Builder builder = new Context.Builder();
         builder.putAll(scriptsManager.getScript(scriptType, metricType).getParamsAsMap());
         builder.put(Parameters.FROM_DATE, date);
@@ -103,7 +101,7 @@ public abstract class AbstractUsersActivityTest extends BaseTest {
         return results;
     }
 
-    private File prepareLog() throws IOException {
+    private File prepareLog() throws Exception {
         List<Event> events = new ArrayList<>();
 
         events.add(Event.Builder.createUserCreatedEvent("id1", "user1@gmail.com", "user1@gmail.com")
@@ -188,19 +186,10 @@ public abstract class AbstractUsersActivityTest extends BaseTest {
                                 .withDate("2013-11-02").build());
 
 
-        events.add(Event.Builder.createSessionStartedEvent("user1@gmail.com", "ws1", "ide", "1")
-                                .withDate("2013-11-02")
-                                .withTime("19:00:00").build());
-        events.add(Event.Builder.createSessionFinishedEvent("user1@gmail.com", "ws1", "ide", "1")
-                                .withDate("2013-11-02")
-                                .withTime("19:05:00").build());
-
-        events.add(Event.Builder.createSessionStartedEvent("user2@gmail.com", "ws1", "ide", "3")
-                                .withDate("2013-11-02")
-                                .withTime("20:00:00").build());
-        events.add(Event.Builder.createSessionFinishedEvent("user2@gmail.com", "ws1", "ide", "3")
-                                .withDate("2013-11-02")
-                                .withTime("20:10:00").build());
+        events.add(Event.Builder.createSessionUsageEvent("user1@gmail.com", "ws1", "1", "2013-11-02 19:00:00", "2013-11-02 19:05:00", false)
+                                .withDate("2013-11-02").withTime("19:00:00").build());
+        events.add(Event.Builder.createSessionUsageEvent("user2@gmail.com", "ws1", "2", "2013-11-02 20:00:00", "2013-11-02 20:10:00", false)
+                                .withDate("2013-11-02").withTime("20:00:00").build());
 
         events.add(Event.Builder.createFactoryCreatedEvent("ws1", "user1@gmail.com", "", "", "", "", "", "")
                                 .withDate("2013-11-01")
@@ -216,14 +205,14 @@ public abstract class AbstractUsersActivityTest extends BaseTest {
         events.add(Event.Builder.createRunStartedEvent("user2@gmail.com", "ws2", "project", "type", "id1")
                                 .withDate("2013-11-01")
                                 .withTime("20:59:00").build());
-        events.add(Event.Builder.createRunFinishedEvent("user2@gmail.com", "ws2", "project", "type", "id1")
+        events.add(Event.Builder.createRunFinishedEvent("user2@gmail.com", "ws2", "project", "type", "id1", 120000)
                                 .withDate("2013-11-01")
                                 .withTime("21:01:00").build());
 
         events.add(Event.Builder.createBuildStartedEvent("user1@gmail.com", "ws1", "project", "type", "id2")
                                 .withDate("2013-11-01")
                                 .withTime("21:12:00").build());
-        events.add(Event.Builder.createBuildFinishedEvent("user1@gmail.com", "ws1", "project", "type", "id2")
+        events.add(Event.Builder.createBuildFinishedEvent("user1@gmail.com", "ws1", "project", "type", "id2", 120000)
                                 .withDate("2013-11-01")
                                 .withTime("21:14:00").build());
 

@@ -91,7 +91,7 @@ public class UsersActivityList extends AbstractListValueResulted {
     public ValueData postComputation(ValueData valueData, Context clauses) throws IOException {
         SessionData sessionData = SessionData.init(clauses);
 
-        long prevActionDate = -1;
+        long prevActionDate = sessionData != null ? sessionData.fromDate : -1;
 
         List<ValueData> items = ((ListValueData)valueData).getAll();
         List<ValueData> item2Return = new ArrayList<>(items.size() + 3);
@@ -129,7 +129,7 @@ public class UsersActivityList extends AbstractListValueResulted {
             item2Return.add(new MapValueData(row2Return));
         }
 
-        if (sessionData != null) {
+        if (sessionData != null && !items.isEmpty()) {
             addArtificialActions(sessionData,
                                  items.size(),
                                  clauses,
@@ -160,12 +160,10 @@ public class UsersActivityList extends AbstractListValueResulted {
                          Context clauses) throws IOException {
         if (actionNumber == 0) {
             if (isFirstPage(clauses)) {
-                return 0;
+                return actionDate - prevActionDate;
             } else {
                 if (clauses.exists(Parameters.PER_PAGE) && clauses.getAsLong(Parameters.PER_PAGE) > 1) {
-                    long prevGlobalActionNumber =
-                            (clauses.getAsLong(Parameters.PAGE) - 1) * clauses.getAsLong(Parameters.PER_PAGE);
-
+                    long prevGlobalActionNumber = (clauses.getAsLong(Parameters.PAGE) - 1) * clauses.getAsLong(Parameters.PER_PAGE);
                     return actionDate - getDateOfAction(clauses, prevGlobalActionNumber);
                 } else {
                     return 0;

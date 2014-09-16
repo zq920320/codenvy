@@ -88,10 +88,9 @@ public class TestEncodedFactoryUrl extends BaseTest {
                                 .withDate("2013-02-10").withTime("10:00:00").build());
         events.add(Event.Builder.createTenantCreatedEvent("tmp-4", "anonymoususer_2")
                                 .withDate("2013-02-10").withTime("10:03:00").build());
-        events.add(Event.Builder.createSessionFactoryStartedEvent("id4", "tmp-4", "anonymoususer_2", "false", "brType")
+
+        events.add(Event.Builder.createSessionUsageEvent("anonymoususer_2", "tmp-4", "id4", "2013-02-10 11:00:00", "2013-02-10 11:15:00", true)
                                 .withDate("2013-02-10").withTime("11:00:00").build());
-        events.add(Event.Builder.createSessionFactoryStoppedEvent("id4", "tmp-4", "anonymoususer_2")
-                                .withDate("2013-02-10").withTime("11:15:00").build());
 
 
         File log = LogGenerator.generateLog(events);

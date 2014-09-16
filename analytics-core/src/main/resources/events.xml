@@ -70,7 +70,7 @@
             <param>TYPE</param>
             <param>ID</param>
             <param>TIMEOUT</param>
-            <param>USED-TIME</param>
+            <param>USAGE-TIME</param>
         </parameters>
     </event>
     <event name="run-started">
@@ -95,7 +95,7 @@
             <param>ID</param>
             <param>MEMORY</param>
             <param>LIFETIME</param>
-            <param>USED-TIME</param>
+            <param>USAGE-TIME</param>
         </parameters>
     </event>
     <event name="debug-started">
@@ -120,7 +120,7 @@
             <param>ID</param>
             <param>MEMORY</param>
             <param>LIFETIME</param>
-            <param>USED-TIME</param>
+            <param>USAGE-TIME</param>
         </parameters>
     </event>
     <event name="build-queue-waiting-started">
@@ -386,6 +386,26 @@
             <param>USER</param>
             <param>SESSION-ID</param>
             <param allow-empty-value="true">WINDOW</param>
+        </parameters>
+    </event>
+    <event name="session-usage">
+        <description>IDE focused</description>
+        <parameters>
+            <param>WS</param>
+            <param>USER</param>
+            <param>START-TIME</param>
+            <param>USAGE-TIME</param>
+            <param>SESSION-ID</param>
+        </parameters>
+    </event>
+    <event name="session-factory-usage">
+        <description>IDE focused</description>
+        <parameters>
+            <param>WS</param>
+            <param>USER</param>
+            <param>START-TIME</param>
+            <param>USAGE-TIME</param>
+            <param>SESSION-ID</param>
         </parameters>
     </event>
     <event name="ide-opened">
