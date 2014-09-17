@@ -245,7 +245,7 @@ public class AccountDaoImplTest extends BaseDaoTest {
     }
 
     @Test(expectedExceptions = ConflictException.class,
-          expectedExceptionsMessageRegExp = "It is not possible to remove account that has associated workspaces")
+          expectedExceptionsMessageRegExp = "It is not possible to remove account having associated workspaces")
     public void shouldNotBeAbleToRemoveAccountWithAssociatedWorkspace() throws Exception {
         when(workspaceDao.getByAccount(ACCOUNT_ID)).thenReturn(Arrays.asList(new Workspace()));
         collection.insert(
@@ -652,7 +652,7 @@ public class AccountDaoImplTest extends BaseDaoTest {
         assertTrue(accountDao.getSubscriptions().isEmpty());
     }
 
-    @Test(expectedExceptions = ServerException.class, expectedExceptionsMessageRegExp = "mongo exception")
+    @Test(expectedExceptions = ServerException.class, expectedExceptionsMessageRegExp = "It is not possible to retrieve subscriptions")
     public void shouldThrowServerExceptionIfMongoExceptionIsThrownOnGetAllSubscriptions() throws ServerException {
         when(subscriptionCollection.find()).thenThrow(new MongoException("mongo exception"));
 
@@ -671,7 +671,8 @@ public class AccountDaoImplTest extends BaseDaoTest {
         accountDao.saveSubscriptionAttributes(SUBSCRIPTION_ID, DtoFactory.getInstance().createDto(SubscriptionAttributes.class));
     }
 
-    @Test(expectedExceptions = ServerException.class, expectedExceptionsMessageRegExp = "Mongo exception message")
+    @Test(expectedExceptions = ServerException.class,
+          expectedExceptionsMessageRegExp = "It is not possible to persist subscription attributes")
     public void shouldThrowServerExceptionIfMongoExceptionOccursOnGetSubscriptionInSaveSubscriptionAttributes()
             throws ServerException, NotFoundException, ForbiddenException {
         when(subscriptionCollection.findOne(eq(new BasicDBObject("id", SUBSCRIPTION_ID))))
@@ -680,7 +681,8 @@ public class AccountDaoImplTest extends BaseDaoTest {
         accountDao.saveSubscriptionAttributes(SUBSCRIPTION_ID, DtoFactory.getInstance().createDto(SubscriptionAttributes.class));
     }
 
-    @Test(expectedExceptions = ServerException.class, expectedExceptionsMessageRegExp = "Mongo exception message")
+    @Test(expectedExceptions = ServerException.class,
+          expectedExceptionsMessageRegExp = "It is not possible to persist subscription attributes")
     public void shouldThrowServerExceptionIfMongoExceptionOccursOnSaveSubscriptionAttributes()
             throws ServerException, NotFoundException, ForbiddenException {
         subscriptionCollection.save(accountDao.toDBObject(defaultSubscription));
@@ -709,7 +711,8 @@ public class AccountDaoImplTest extends BaseDaoTest {
         accountDao.getSubscriptionAttributes(SUBSCRIPTION_ID);
     }
 
-    @Test(expectedExceptions = ServerException.class, expectedExceptionsMessageRegExp = "Mongo exception message")
+    @Test(expectedExceptions = ServerException.class,
+          expectedExceptionsMessageRegExp = "It is not possible to retrieve subscription attributes")
     public void shouldThrowServerExceptionIfMongoExceptionOccursOnGetSubscriptionAttributes() throws ServerException, NotFoundException {
         when(subscriptionAttributesCollection.findOne(eq(new BasicDBObject("_id", SUBSCRIPTION_ID))))
                 .thenThrow(new MongoException("Mongo exception message"));
@@ -732,7 +735,8 @@ public class AccountDaoImplTest extends BaseDaoTest {
         accountDao.removeSubscriptionAttributes(SUBSCRIPTION_ID);
     }
 
-    @Test(expectedExceptions = ServerException.class, expectedExceptionsMessageRegExp = "Mongo exception message")
+    @Test(expectedExceptions = ServerException.class,
+          expectedExceptionsMessageRegExp = "It is not possible to remove subscription attributes")
     public void shouldThrowServerExceptionIfMongoExceptionOccursOnRetrievingSubscriptionAttributesInRemoveSubscriptionAttributes()
             throws ServerException, NotFoundException {
         when(subscriptionAttributesCollection.findOne(any(DBObject.class))).thenThrow(new MongoException("Mongo exception message"));
@@ -740,7 +744,8 @@ public class AccountDaoImplTest extends BaseDaoTest {
         accountDao.removeSubscriptionAttributes(SUBSCRIPTION_ID);
     }
 
-    @Test(expectedExceptions = ServerException.class, expectedExceptionsMessageRegExp = "Mongo exception message")
+    @Test(expectedExceptions = ServerException.class,
+          expectedExceptionsMessageRegExp = "It is not possible to remove subscription attributes")
     public void shouldThrowServerExceptionIfMongoExceptionOccursOnRemoveSubscriptionAttributes() throws ServerException, NotFoundException {
         subscriptionAttributesCollection.save(accountDao.toDBObject(SUBSCRIPTION_ID, defaultSubscriptionAttributes));
 

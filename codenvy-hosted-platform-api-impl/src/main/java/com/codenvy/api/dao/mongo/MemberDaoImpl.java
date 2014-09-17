@@ -26,7 +26,6 @@ import com.codenvy.api.workspace.server.dao.Member;
 import com.codenvy.api.workspace.server.dao.MemberDao;
 import com.codenvy.api.workspace.server.dao.Workspace;
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
-import com.codenvy.dto.server.DtoFactory;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
@@ -42,21 +41,36 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
+import static java.lang.String.format;
+
 /**
- * <p>Implementation of {@link com.codenvy.api.workspace.server.dao.MemberDao} based on MongoDB storage.</p>
+ * Implementation of {@link MemberDao} based on MongoDB storage.
  * <pre>
- * Uses the following DB scheme:
+ * Workspace members collection document scheme:
  *
- * ------------------------------------------------------------------
- * |  _ID (UserId)  |              List of members                    |
- * -------------------------------------------------------------------|
- * |   user1234     |  ["ws1", List of roles], ["ws2", List of roles] |
- * ------------------------------------------------------------------
+ * {
+ *     "_id" : "userId...",
+ *     "members" : [
+ *          ...
+ *          {
+ *              "userId" : "userId...",
+ *              "workspaceId" : "workspaceId...",
+ *              "roles" : [
+ *                  "role1...",
+ *                  "role2..."
+ *              ]
+ *          }
+ *          ...
+ *     ]
+ * }
+ *
  * </pre>
+ *
+ * @author Eugene Voevodin
  */
 @Singleton
 public class MemberDaoImpl implements MemberDao {
@@ -72,180 +86,124 @@ public class MemberDaoImpl implements MemberDao {
                          WorkspaceDao workspaceDao,
                          DB db,
                          @Named(DB_COLLECTION) String collectionName) {
-        collection = db.getCollection(collectionName);
-        collection.ensureIndex("members.workspaceId");
         this.userDao = userDao;
         this.workspaceDao = workspaceDao;
+        collection = db.getCollection(collectionName);
+        collection.ensureIndex("members.workspaceId");
     }
 
     @Override
-    public void create(Member member) throws ConflictException, ServerException, NotFoundException {
-        validateSubjectsExists(member.getUserId(), member.getWorkspaceId());
+    public void create(Member newMember) throws ConflictException, ServerException, NotFoundException {
+        checkWorkspaceAndUserExist(newMember);
         try {
-            // Retrieving his membership list, or creating new one
-            DBObject old = collection.findOne(new BasicDBObject("_id", member.getUserId()));
-            if (old == null) {
-                old = new BasicDBObject("_id", member.getUserId());
-            }
-            BasicDBList members = (BasicDBList)old.get("members");
-            if (members == null)
-                members = new BasicDBList();
-
-            // Ensure such member not exists yet
-            for (Object member1 : members) {
-                Member one = fromDBObject((DBObject)member1);
-                if (one.getWorkspaceId().equals(member.getWorkspaceId()) &&
-                    one.getUserId().equals(member.getUserId())) {
-                    throw new ConflictException(
-                            String.format(
-                                    "Membership of user %s in workspace %s already exists. Use update method instead.",
-                                    member.getUserId(), member.getWorkspaceId())
-                    );
-                }
-            }
-            // Adding new member
-            members.add(toDBObject(member));
-            old.put("members", members);
-            //Save
-            collection.save(old);
-            logUserAddedToWsEvent(member);
-        } catch (MongoException me) {
-            throw new ServerException(me.getMessage(), me);
-        }
-    }
-
-    private void logUserAddedToWsEvent(Member member) {
-        try {
-            User user = userDao.getById(member.getUserId());
-            Workspace workspace = workspaceDao.getById(member.getWorkspaceId());
-
-            LOG.info("EVENT#user-added-to-ws# USER#{}# WS#{}# FROM#website#", user.getEmail(), workspace.getName());
-        } catch (NotFoundException | ServerException e) {
-            LOG.error("Can't log Analytics event", e);
+            final DBObject membersDocument = documentFor(newMember);
+            final BasicDBList members = (BasicDBList)membersDocument.get("members");
+            checkMemberIsAbsent(newMember, members);
+            //member doesn't exist so we can create and save it
+            members.add(toDBObject(newMember));
+            collection.save(membersDocument);
+            logUserAddedToWsEvent(newMember);
+        } catch (MongoException ex) {
+            LOG.error(ex.getMessage(), ex);
+            throw new ServerException("It is not possible to persist member");
         }
     }
 
     @Override
-    public void update(Member member) throws ConflictException, NotFoundException, ServerException {
-        validateSubjectsExists(member.getUserId(), member.getWorkspaceId());
+    public void update(Member update) throws ConflictException, NotFoundException, ServerException {
+        final DBObject query = new BasicDBObject("_id", update.getUserId());
         try {
-            // Retrieving his membership list
-            final DBObject query = new BasicDBObject("_id", member.getUserId());
-            final DBObject old = collection.findOne(query);
-            if (old == null) {
-                throw new NotFoundException(String.format("Unable to update membership: user %s does not exist.", member.getUserId()));
+            final DBObject membersDocument = collection.findOne(query);
+            if (membersDocument == null) {
+                throw new NotFoundException(format("User %s doesn't have memberships", update.getUserId()));
             }
-            final BasicDBList members = (BasicDBList)old.get("members");
-            if (members == null) {
-                throw new NotFoundException(String.format("Unable to update membership: user %s doesn't have any memberships.",
-                                                          member.getUserId()));
+            final BasicDBList dbMembers = (BasicDBList)membersDocument.get("members");
+            if (!remove(update.getWorkspaceId(), dbMembers)) {
+                throw new NotFoundException(format("Membership between %s and %s not found", update.getUserId(), update.getWorkspaceId()));
             }
-            // Find membership in given WS and removing it
-            boolean found = false;
-            final Iterator it = members.iterator();
-            while (it.hasNext() && !found) {
-                final Member currentMember = fromDBObject((DBObject)it.next());
-                if (currentMember.getWorkspaceId().equals(member.getWorkspaceId())) {
-                    it.remove();
-                    found = true;
-                }
-            }
-            if (!found) {
-                throw new NotFoundException(String.format("Unable to update membership: user %s doesn't have no memberships in the WS %s.",
-                                                          member.getUserId(), member.getWorkspaceId()));
-            }
-            // Save new
-            members.add(toDBObject(member));
-            old.put("members", members);
-            collection.update(query, old);
-        } catch (MongoException me) {
-            throw new ServerException(me.getMessage(), me);
+            dbMembers.add(toDBObject(update));
+            collection.update(query, membersDocument);
+        } catch (MongoException ex) {
+            LOG.error(ex.getMessage(), ex);
+            throw new ServerException("It is not possible to update member");
         }
     }
 
     @Override
-    public List<Member> getWorkspaceMembers(String wsId) throws ServerException {
-        final List<Member> result;
-        try (DBCursor cursor = collection.find(new BasicDBObject("members.workspaceId", wsId))) {
-            result = new ArrayList<>(cursor.size());
-            for (DBObject one : cursor) {
-                final BasicDBList members = (BasicDBList)one.get("members");
-                for (Object membershipObject : members) {
-                    final Member member = fromDBObject((DBObject)membershipObject);
-                    if (wsId.equals(member.getWorkspaceId())) {
-                        result.add(member);
-                    }
-                }
+    public List<Member> getWorkspaceMembers(String workspaceId) throws ServerException {
+        final List<Member> workspaceMembers;
+        try (DBCursor membersCursor = collection.find(new BasicDBObject("members.workspaceId", workspaceId))) {
+            workspaceMembers = new ArrayList<>(membersCursor.size());
+            for (DBObject membersDocument : membersCursor) {
+                final BasicDBList members = (BasicDBList)membersDocument.get("members");
+                workspaceMembers.add(retrieveMember(workspaceId, members));
             }
-        } catch (MongoException me) {
-            throw new ServerException(me.getMessage(), me);
+        } catch (MongoException ex) {
+            LOG.error(ex.getMessage(), ex);
+            throw new ServerException("It is not possible to retrieve workspace members");
         }
-        return result;
+        return workspaceMembers;
     }
 
     @Override
     public List<Member> getUserRelationships(String userId) throws ServerException {
-        final List<Member> result;
+        final List<Member> userRelationships = new LinkedList<>();
         try {
-            final DBObject one = collection.findOne(userId);
-            if (one == null) {
-                return Collections.emptyList();
+            final DBObject membersDocument = collection.findOne(userId);
+            if (membersDocument != null) {
+                final BasicDBList members = (BasicDBList)membersDocument.get("members");
+                for (Object memberObj : members) {
+                    userRelationships.add(fromDBObject((DBObject)memberObj));
+                }
             }
-            final BasicDBList members = (BasicDBList)one.get("members");
-            result = new ArrayList<>(members.size());
-            for (Object memberObj : members) {
-                result.add(fromDBObject((DBObject)memberObj));
-            }
-        } catch (MongoException me) {
-            throw new ServerException(me.getMessage(), me);
+        } catch (MongoException ex) {
+            LOG.error(ex.getMessage(), ex);
+            throw new ServerException("It is not possible to get user relationships");
         }
-        return result;
+        return userRelationships;
     }
 
     @Override
     public Member getWorkspaceMember(String wsId, String userId) throws ServerException, NotFoundException {
         try {
-            final DBObject one = collection.findOne(new BasicDBObject("_id", userId).append("members.workspaceId", wsId));
-            if (one == null) {
-                throw new NotFoundException(String.format("User with id %s hasn't membership in workspace with id %s", userId, wsId));
+            final DBObject membersDocument = collection.findOne(new BasicDBObject("_id", userId).append("members.workspaceId", wsId));
+            if (membersDocument == null) {
+                throw new NotFoundException(format("Membership between %s and %s not found", userId, wsId));
             }
-            final BasicDBList members = (BasicDBList)one.get("members");
-
-            return fromDBObject((DBObject)members.get(0));
-        } catch (MongoException me) {
-            throw new ServerException(me.getMessage(), me);
+            final BasicDBList members = (BasicDBList)membersDocument.get("members");
+            return retrieveMember(wsId, members);
+        } catch (MongoException ex) {
+            LOG.error(ex.getMessage(), ex);
+            throw new ServerException(ex.getMessage(), ex);
         }
     }
 
     @Override
     public void remove(Member member) throws ServerException, NotFoundException, ConflictException {
-        validateSubjectsExists(member.getUserId(), member.getWorkspaceId());
         final DBObject query = new BasicDBObject("_id", member.getUserId());
         try {
-            final DBObject old = collection.findOne(query);
-            if (old == null) {
-                throw new NotFoundException(String.format("Workspace member with id %s doesn't exist", member.getUserId()));
+            final DBObject membersDocument = collection.findOne(query);
+            if (membersDocument == null) {
+                throw new NotFoundException(format("User %s doesn't have workspace memberships", member.getUserId()));
             }
-            final BasicDBList members = (BasicDBList)old.get("members");
-            final Iterator it = members.iterator();
-            while (it.hasNext()) {
-                final Member one = fromDBObject((DBObject)it.next());
-                if (member.getWorkspaceId().equals(one.getWorkspaceId())) {
-                    it.remove();
-                }
+            final BasicDBList members = (BasicDBList)membersDocument.get("members");
+            //remove member from members list
+            if (!remove(member.getWorkspaceId(), members)) {
+                throw new NotFoundException(format("Membership between %s and %s not found", member.getUserId(), member.getWorkspaceId()));
             }
-            if (members.size() > 0) {
-                old.put("members", members);
-                collection.update(query, old);
+            //if user doesn't have memberships then remove document
+            if (!members.isEmpty()) {
+                collection.update(query, membersDocument);
             } else {
-                collection.remove(query); // Removing user from table if no memberships anymore.
+                collection.remove(query);
             }
-        } catch (MongoException me) {
-            throw new ServerException(me.getMessage(), me);
+        } catch (MongoException ex) {
+            LOG.error(ex.getMessage(), ex);
+            throw new ServerException(ex.getMessage(), ex);
         }
     }
 
-    Member fromDBObject(DBObject memberObj) {
+    /*used in tests*/Member fromDBObject(DBObject memberObj) {
         final BasicDBObject basicMemberObj = (BasicDBObject)memberObj;
         final BasicDBList basicRoles = (BasicDBList)basicMemberObj.get("roles");
         final List<String> roles = new ArrayList<>(basicRoles.size());
@@ -255,6 +213,29 @@ public class MemberDaoImpl implements MemberDao {
         return new Member().withWorkspaceId(basicMemberObj.getString("workspaceId"))
                            .withUserId(basicMemberObj.getString("userId"))
                            .withRoles(roles);
+    }
+
+    private boolean remove(String workspaceId, BasicDBList src) {
+        boolean found = false;
+        final Iterator it = src.iterator();
+        while (!found && it.hasNext()) {
+            final Member member = fromDBObject((DBObject)it.next());
+            if (member.getWorkspaceId().equals(workspaceId)) {
+                found = true;
+                it.remove();
+            }
+        }
+        return found;
+    }
+
+    private Member retrieveMember(String workspaceId, BasicDBList src) {
+        for (Object dbMember : src) {
+            final Member member = fromDBObject((DBObject)dbMember);
+            if (workspaceId.equals(member.getWorkspaceId())) {
+                return member;
+            }
+        }
+        return null;
     }
 
     /**
@@ -272,18 +253,37 @@ public class MemberDaoImpl implements MemberDao {
                                   .append("roles", dbRoles);
     }
 
-    private void validateSubjectsExists(String userId, String workspaceId) throws ConflictException, ServerException, NotFoundException {
+    private void checkWorkspaceAndUserExist(Member newMember) throws NotFoundException, ServerException {
+        userDao.getById(newMember.getUserId());
+        workspaceDao.getById(newMember.getWorkspaceId());
+    }
+
+    private DBObject documentFor(Member member) {
+        DBObject membersDocument = collection.findOne(new BasicDBObject("_id", member.getUserId()));
+        if (membersDocument == null) {
+            membersDocument = new BasicDBObject("_id", member.getUserId());
+            membersDocument.put("members", new BasicDBList());
+        }
+        return membersDocument;
+    }
+
+    private void checkMemberIsAbsent(Member target, BasicDBList members) throws ConflictException {
+        for (Object dbMember : members) {
+            final Member member = fromDBObject((DBObject)dbMember);
+            if (target.getWorkspaceId().equals(member.getWorkspaceId())) {
+                throw new ConflictException(format("Workspace %s already contains member %s", target.getWorkspaceId(), target.getUserId()));
+            }
+        }
+    }
+
+    private void logUserAddedToWsEvent(Member member) {
         try {
-            userDao.getById(userId);
-            workspaceDao.getById(workspaceId);
-            if (userDao.getById(userId) == null) {
-                throw new ConflictException(String.format("Unable to update membership: user %s does not exist.", userId));
-            }
-            if (workspaceDao.getById(workspaceId) == null) {
-                throw new ConflictException(String.format("Unable to update membership: workspace %s does not exist.", workspaceId));
-            }
-        } catch (NotFoundException ex) {
-            throw new ConflictException("Unable to update membership: " + ex.getMessage());
+            User user = userDao.getById(member.getUserId());
+            Workspace workspace = workspaceDao.getById(member.getWorkspaceId());
+
+            LOG.info("EVENT#user-added-to-ws# USER#{}# WS#{}# FROM#website#", user.getEmail(), workspace.getName());
+        } catch (NotFoundException | ServerException e) {
+            LOG.error("Can't log Analytics event", e);
         }
     }
 }

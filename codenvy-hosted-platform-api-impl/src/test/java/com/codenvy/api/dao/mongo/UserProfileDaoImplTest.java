@@ -21,6 +21,7 @@ import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.api.user.server.dao.Profile;
 import com.codenvy.api.user.server.dao.UserDao;
+import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
@@ -35,28 +36,25 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import static java.util.Collections.singletonMap;
 import static org.testng.Assert.*;
 
 /**
- * Tests for {@link com.codenvy.api.dao.mongo.UserProfileDaoImpl}
+ * Tests for {@link UserProfileDaoImpl}
  *
- * @author Max
+ * @author Max Shaposhnik
+ * @author Eugene Voevodin
  */
-@Listeners(value = {MockitoTestNGListener.class})
 public class UserProfileDaoImplTest extends BaseDaoTest {
 
-    private static final String USER_ID    = "user123abc456def";
-    private static final String PROFILE_ID = "profile123abc456def";
-    private static final String COLL_NAME  = "profile";
+    private static final String COLL_NAME = "profile";
 
-    @Mock
-    private UserDao            userDao;
     private UserProfileDaoImpl profileDaoImpl;
 
     @BeforeMethod
     public void setUp() throws Exception {
         super.setUp(COLL_NAME);
-        profileDaoImpl = new UserProfileDaoImpl(userDao, db, COLL_NAME);
+        profileDaoImpl = new UserProfileDaoImpl(db, COLL_NAME);
     }
 
     @AfterMethod
@@ -65,84 +63,88 @@ public class UserProfileDaoImplTest extends BaseDaoTest {
     }
 
     @Test
-    public void mustSaveProfile() throws Exception {
-        Map<String, String> prefs = new HashMap<>();
-        prefs.put("first", "first_value");
-        prefs.put("____firstASD", "other_first_value");
-        prefs.put("second", "second_value");
-        prefs.put("other", "other_value");
-        Profile profile = new Profile().withId(PROFILE_ID)
-                                       .withUserId(USER_ID)
-                                       .withAttributes(getAttributes())
-                                       .withPreferences(prefs);
-        // main invoke
-        profileDaoImpl.create(profile);
+    public void shouldBeAbleToCreateProfile() throws Exception {
+        final Profile testProfile = createProfile();
 
-        DBObject res = collection.findOne(new BasicDBObject("id", PROFILE_ID));
-        assertNotNull(res, "Specified user profile does not exists.");
-        Profile result = profileDaoImpl.toProfile(res);
+        profileDaoImpl.create(testProfile);
 
-        assertEquals(profile, result);
+        final DBObject profileDocument = collection.findOne(new BasicDBObject("id", testProfile.getId()));
+        assertNotNull(profileDocument, "Specified user profile does not exists");
+        assertEquals(profileDaoImpl.toProfile(profileDocument), testProfile);
     }
 
     @Test
-    public void mustGetProfileByIdWithPreferencesFilter() throws ServerException, NotFoundException {
-        Map<String, String> prefs = new HashMap<>();
-        prefs.put("first", "first_value");
-        prefs.put("____firstASD", "other_first_value");
-        prefs.put("second", "second_value");
-        prefs.put("other", "other_value");
+    public void shouldBeAbleToGetProfileById() throws NotFoundException, ServerException {
+        final Profile testProfile = createProfile();
+        collection.save(profileDaoImpl.toDBObject(testProfile));
 
-        Profile tmp = new Profile().withId(PROFILE_ID)
-                                   .withUserId(USER_ID)
-                                   .withAttributes(Collections.<String, String>emptyMap())
-                                   .withPreferences(prefs);
+        final Profile actual = profileDaoImpl.getById(testProfile.getId());
 
-        collection.save(profileDaoImpl.toDBObject(tmp));
-
-        Profile profile = profileDaoImpl.getById(PROFILE_ID, ".*first.*");
-        assertNotNull(profile);
-        Map<String, String> expectedPrefs = new HashMap<>();
-        expectedPrefs.put("first", "first_value");
-        expectedPrefs.put("____firstASD", "other_first_value");
-        assertEquals(expectedPrefs, profile.getPreferences());
-
-        profile = profileDaoImpl.getById(PROFILE_ID, "other");
-        assertNotNull(profile);
-        expectedPrefs.clear();
-        expectedPrefs.put("other", "other_value");
-        assertEquals(expectedPrefs, profile.getPreferences());
+        assertEquals(actual, testProfile);
     }
 
     @Test
-    public void mustNotUpdateProfileIfNotExist() throws Exception {
-        final Profile profile = new Profile().withId(PROFILE_ID)
-                                             .withUserId(USER_ID)
-                                             .withAttributes(getAttributes());
-        try {
-            profileDaoImpl.update(profile);
-            fail("Update of non-existing profile prohibited.");
-        } catch (NotFoundException e) {
-            // OK
-        }
+    public void shouldBeAbleToGetProfileByIdWithFilteredPreferences() throws ServerException, NotFoundException {
+        final Map<String, String> preferences = new HashMap<>(8);
+        preferences.put("first", "first_value");
+        preferences.put("____firstASD", "other_first_value");
+        preferences.put("second", "second_value");
+        preferences.put("other", "other_value");
+        final Profile testProfile = createProfile().withPreferences(preferences);
+        collection.save(profileDaoImpl.toDBObject(testProfile));
+
+        final Profile actual = profileDaoImpl.getById(testProfile.getId(), ".*first.*");
+
+        final Map<String, String> expectedPreferences = new HashMap<>(4);
+        expectedPreferences.put("first", "first_value");
+        expectedPreferences.put("____firstASD", "other_first_value");
+        testProfile.setPreferences(expectedPreferences);
+        assertEquals(actual, testProfile);
     }
 
     @Test
-    public void mustRemoveProfile() throws Exception {
-        final DBObject obj = new BasicDBObject().append("id", PROFILE_ID)
-                                                .append("userId", USER_ID);
-        collection.insert(obj);
+    public void shouldBeAbleToUpdateProfile() throws NotFoundException, ServerException {
+        final Map<String, String> attributes = new HashMap<>(4);
+        attributes.put("attribute1", "test");
+        attributes.put("attribute2", "test");
+        //persist profile
+        final Profile testProfile = createProfile().withAttributes(attributes);
+        collection.save(profileDaoImpl.toDBObject(testProfile));
+        //prepare update
+        testProfile.setAttributes(singletonMap("new_attribute", "test"));
 
-        profileDaoImpl.remove(PROFILE_ID);
+        profileDaoImpl.update(testProfile);
 
-        assertNull(collection.findOne(new BasicDBObject("id", PROFILE_ID)));
+        final DBObject profileDocument = collection.findOne(new BasicDBObject("id", testProfile.getId()));
+        assertNotNull(profileDocument);
+        assertEquals(profileDaoImpl.toProfile(profileDocument), testProfile);
     }
 
-    private Map<String, String> getAttributes() {
-        final Map<String, String> attributes = new HashMap<>(3);
+    @Test(expectedExceptions = NotFoundException.class)
+    public void shouldNotBeAbleToUpdateProfileWhichDoesNotExist() throws Exception {
+        profileDaoImpl.update(createProfile());
+    }
+
+    @Test
+    public void shouldBeAbleToRemoveProfile() throws Exception {
+        final Profile testProfile = createProfile();
+        collection.insert(profileDaoImpl.toDBObject(testProfile));
+
+        profileDaoImpl.remove(testProfile.getId());
+
+        assertNull(collection.findOne(new BasicDBObject("id", testProfile.getId())));
+    }
+
+    private Profile createProfile() {
+        final Map<String, String> attributes = new HashMap<>(4);
         attributes.put("attr1", "value1");
         attributes.put("attr2", "value2");
-        attributes.put("attr3", "value3");
-        return attributes;
+        final Map<String, String> preferences = new HashMap<>(4);
+        preferences.put("pref1", "v1");
+        preferences.put("pref2", "v2");
+        return new Profile().withId("test_id")
+                            .withUserId("test_id")
+                            .withAttributes(attributes)
+                            .withPreferences(preferences);
     }
 }

@@ -51,15 +51,45 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import static java.lang.String.format;
+
 /**
- * Implementation of {@link com.codenvy.api.account.server.dao.AccountDao} based on MongoDB storage.
+ * Implementation of {@link AccountDao} based on MongoDB storage.
  * <pre>
- *  Members collection schema:
- *  -----------------------------------------------------------------------------------
- * | _ID (UserId)   |              List of account memberships                         |
- * ------------------------------------------------------------------------------------|
- * |     user1234   |  ["acc1", List of roles], ["acc2", List of roles], [...]         |
- *  -----------------------------------------------------------------------------------
+ *  Account members collection document schema:
+ *
+ * {
+ *     "_id" : "userId...",
+ *     "members" : [
+ *          ...
+ *          {
+ *              "userId" : "userId...",
+ *              "accountId" : "accountId...",
+ *              "roles" : [
+ *                  "role1...",
+ *                  "role2..."
+ *              ]
+ *          }
+ *          ...
+ *     ]
+ * }
+ *
+ * Account collection document schema:
+ *
+ * {
+ *      "id" : "accountId...",
+ *      "name" : "name...",
+ *      "attributes" : [
+ *          ...
+ *          {
+ *              "name" : "key...",
+ *              "value" : "value..."
+ *          }
+ *          ...
+ *      ]
+ * }
+ *
+ *
  * </pre>
  *
  * @author Max Shaposhnik
@@ -106,45 +136,48 @@ public class AccountDaoImpl implements AccountDao {
         try {
             accountCollection.save(toDBObject(account));
         } catch (MongoException me) {
-            throw new ServerException(me.getMessage(), me);
+            LOG.error(me.getMessage(), me);
+            throw new ServerException("It is not possible to create account");
         }
     }
 
     @Override
     public Account getById(String id) throws NotFoundException, ServerException {
-        final DBObject res;
+        final DBObject accountDocument;
         try {
-            res = accountCollection.findOne(new BasicDBObject("id", id));
+            accountDocument = accountCollection.findOne(new BasicDBObject("id", id));
         } catch (MongoException me) {
-            throw new ServerException(me.getMessage(), me);
+            LOG.error(me.getMessage(), me);
+            throw new ServerException("It is not possible to retrieve account");
         }
-        if (res == null) {
-            throw new NotFoundException("Account not found " + id);
+        if (accountDocument == null) {
+            throw new NotFoundException(format("Account with id %s was not found", id));
         }
-        return toAccount(res);
+        return toAccount(accountDocument);
     }
 
     @Override
     public Account getByName(String name) throws NotFoundException, ServerException {
-        final DBObject res;
+        final DBObject accountDocument;
         try {
-            res = accountCollection.findOne(new BasicDBObject("name", name));
+            accountDocument = accountCollection.findOne(new BasicDBObject("name", name));
         } catch (MongoException me) {
-            throw new ServerException(me.getMessage(), me);
+            LOG.error(me.getMessage(), me);
+            throw new ServerException("It is not possible to retrieve account");
         }
-        if (res == null) {
-            throw new NotFoundException("Account not found " + name);
+        if (accountDocument == null) {
+            throw new NotFoundException(format("Account with name %s was not found", name));
         }
-        return toAccount(res);
+        return toAccount(accountDocument);
     }
 
     @Override
     public List<Account> getByOwner(String owner) throws ServerException, NotFoundException {
         final List<Account> accounts = new LinkedList<>();
         try {
-            final DBObject line = memberCollection.findOne(owner);
-            if (line != null) {
-                final BasicDBList members = (BasicDBList)line.get("members");
+            final DBObject membersDocument = memberCollection.findOne(owner);
+            if (membersDocument != null) {
+                final BasicDBList members = (BasicDBList)membersDocument.get("members");
                 for (Object memberObj : members) {
                     final Member member = toMember(memberObj);
                     if (member.getRoles().contains("account/owner")) {
@@ -153,7 +186,8 @@ public class AccountDaoImpl implements AccountDao {
                 }
             }
         } catch (MongoException me) {
-            throw new ServerException(me.getMessage(), me);
+            LOG.error(me.getMessage(), me);
+            throw new ServerException("It is not possible to retrieve accounts");
         }
         return accounts;
     }
@@ -162,25 +196,21 @@ public class AccountDaoImpl implements AccountDao {
     public void update(Account account) throws NotFoundException, ServerException {
         final DBObject query = new BasicDBObject("id", account.getId());
         try {
-            if (accountCollection.findOne(query) == null) {
-                throw new NotFoundException("Account not found " + account.getId());
-            }
+            checkAccountExists(account.getId());
             accountCollection.update(query, toDBObject(account));
         } catch (MongoException me) {
-            throw new ServerException(me.getMessage(), me);
+            LOG.error(me.getMessage(), me);
+            throw new ServerException("It is not possible to update account");
         }
     }
 
     @Override
     public void remove(String id) throws ConflictException, NotFoundException, ServerException {
+        //check account doesn't have associated workspaces
+        if (!workspaceDao.getByAccount(id).isEmpty()) {
+            throw new ConflictException("It is not possible to remove account having associated workspaces");
+        }
         try {
-            if (accountCollection.findOne(new BasicDBObject("id", id)) == null) {
-                throw new NotFoundException("Account not found " + id);
-            }
-            //check account hasn't associated workspaces
-            if (workspaceDao.getByAccount(id).size() > 0) {
-                throw new ConflictException("It is not possible to remove account that has associated workspaces");
-            }
             // Removing subscriptions
             subscriptionCollection.remove(new BasicDBObject("accountId", id));
             //Removing members
@@ -189,26 +219,23 @@ public class AccountDaoImpl implements AccountDao {
             }
             // Removing account itself
             accountCollection.remove(new BasicDBObject("id", id));
-        } catch (MongoException ex) {
-            throw new ServerException(ex.getMessage(), ex);
+        } catch (MongoException me) {
+            LOG.error(me.getMessage(), me);
+            throw new ServerException("It is not possible to remove account");
         }
     }
 
     @Override
     public List<Member> getMembers(String accountId) throws ServerException {
         final List<Member> result = new ArrayList<>();
-        try (DBCursor cursor = memberCollection.find(new BasicDBObject("members.accountId", accountId))) {
-            for (DBObject one : cursor) {
-                final BasicDBList members = (BasicDBList)one.get("members");
-                for (Object memberObj : members) {
-                    final Member member = toMember(memberObj);
-                    if (accountId.equals(member.getAccountId())) {
-                        result.add(member);
-                    }
-                }
+        try (DBCursor membersCursor = memberCollection.find(new BasicDBObject("members.accountId", accountId))) {
+            for (DBObject memberDocument : membersCursor) {
+                final BasicDBList members = (BasicDBList)memberDocument.get("members");
+                result.add(retrieveMember(accountId, members));
             }
         } catch (MongoException me) {
-            throw new ServerException(me.getMessage(), me);
+            LOG.error(me.getMessage(), me);
+            throw new ServerException("It is not possible to retrieve account members");
         }
         return result;
     }
@@ -217,15 +244,16 @@ public class AccountDaoImpl implements AccountDao {
     public List<Member> getByMember(String userId) throws NotFoundException, ServerException {
         final List<Member> result = new ArrayList<>();
         try {
-            final DBObject line = memberCollection.findOne(userId);
-            if (line != null) {
-                final BasicDBList members = (BasicDBList)line.get("members");
+            final DBObject membersDocument = memberCollection.findOne(userId);
+            if (membersDocument != null) {
+                final BasicDBList members = (BasicDBList)membersDocument.get("members");
                 for (Object memberObj : members) {
                     result.add(toMember(memberObj));
                 }
             }
         } catch (MongoException me) {
-            throw new ServerException(me.getMessage(), me);
+            LOG.error(me.getMessage(), me);
+            throw new ServerException("It is not possible to retrieve members");
         }
         return result;
     }
@@ -233,70 +261,41 @@ public class AccountDaoImpl implements AccountDao {
     @Override
     public void addMember(Member member) throws NotFoundException, ConflictException, ServerException {
         try {
-            if (accountCollection.findOne(new BasicDBObject("id", member.getAccountId())) == null) {
-                throw new NotFoundException("Account not found " + member.getAccountId());
-            }
-            // Retrieving his membership list, or creating new one
-            DBObject old = memberCollection.findOne(member.getUserId());
-            if (old == null) {
-                old = new BasicDBObject("_id", member.getUserId());
-            }
-            BasicDBList members = (BasicDBList)old.get("members");
-            if (members == null)
-                members = new BasicDBList();
-            // Ensure such member not exists yet
-            for (Object member1 : members) {
-                final Member one = toMember(member1);
-                if (one.getUserId().equals(member.getUserId()) && one.getAccountId().equals(member.getAccountId()))
-                    throw new ConflictException(String.format(
-                            "Membership of user %s in account %s already exists. Use update method instead.",
-                            member.getUserId(), member.getAccountId())
-                    );
-            }
-            // Adding new membership
+            checkAccountExists(member.getAccountId());
+            final DBObject membersDocument = documentFor(member);
+            final BasicDBList members = (BasicDBList)membersDocument.get("members");
+            checkMemberIsAbsent(member, members);
+            //member doesn't exist so we can create and save it
             members.add(toDBObject(member));
-            old.put("members", members);
-            //Save
-            memberCollection.save(old);
+            memberCollection.save(membersDocument);
         } catch (MongoException me) {
-            throw new ServerException(me.getMessage(), me);
+            LOG.error(me.getMessage(), me);
+            throw new ServerException("It is not possible to persist member");
         }
     }
 
     @Override
     public void removeMember(Member member) throws NotFoundException, ServerException, ConflictException {
-        //each account should have at least one owner
-        DBObject query = new BasicDBObject("_id", member.getUserId());
+        final DBObject query = new BasicDBObject("_id", member.getUserId());
         try {
-            DBObject old = memberCollection.findOne(query);
-            if (old == null) {
-                throw new NotFoundException(String.format("User with id %s hasn't any account membership", member.getUserId()));
+            final DBObject membersDocument = memberCollection.findOne(query);
+            if (membersDocument == null) {
+                throw new NotFoundException(format("User %s doesn't have account memberships", member.getUserId()));
             }
-            //check account exists
-            if (accountCollection.findOne(new BasicDBObject("id", member.getAccountId())) == null) {
-                throw new NotFoundException(String.format("Account with id %s doesn't exist", member.getAccountId()));
+            final BasicDBList members = (BasicDBList)membersDocument.get("members");
+            //remove member from members list
+            if (!remove(member.getAccountId(), members)) {
+                throw new NotFoundException(format("Membership between %s and %s not found", member.getUserId(), member.getAccountId()));
             }
-            final BasicDBList members = (BasicDBList)old.get("members");
-            //search for needed membership
-            final Iterator it = members.iterator();
-            Member toRemove = null;
-            while (it.hasNext() && toRemove == null) {
-                toRemove = toMember(it.next());
-            }
-            if (toRemove != null) {
-                it.remove();
+            //if user doesn't have memberships then remove document
+            if (!members.isEmpty()) {
+                memberCollection.update(query, membersDocument);
             } else {
-                throw new NotFoundException(
-                        String.format("Account %s doesn't have user %s as member", member.getAccountId(), member.getUserId()));
-            }
-            if (members.size() > 0) {
-                old.put("members", members);
-                memberCollection.update(query, old);
-            } else {
-                memberCollection.remove(query); // Removing user from table if no memberships anymore.
+                memberCollection.remove(query);
             }
         } catch (MongoException me) {
-            throw new ServerException(me.getMessage(), me);
+            LOG.error(me.getMessage(), me);
+            throw new ServerException("It is not possible to remove member");
         }
     }
 
@@ -322,7 +321,8 @@ public class AccountDaoImpl implements AccountDao {
                 }
             }
         } catch (MongoException me) {
-            throw new ServerException(me.getMessage(), me);
+            LOG.error(me.getMessage(), me);
+            throw new ServerException("It is not possible to retrieve subscriptions");
         }
         return result;
     }
@@ -336,7 +336,8 @@ public class AccountDaoImpl implements AccountDao {
             }
             subscriptionCollection.update(query, toDBObject(subscription));
         } catch (MongoException me) {
-            throw new ServerException(me.getMessage(), me);
+            LOG.error(me.getMessage(), me);
+            throw new ServerException("It is not possible to update subscription");
         }
     }
 
@@ -344,12 +345,11 @@ public class AccountDaoImpl implements AccountDao {
     public void addSubscription(Subscription subscription) throws NotFoundException, ConflictException, ServerException {
         try {
             ensureConsistency(subscription);
-            if (null == accountCollection.findOne(new BasicDBObject("id", subscription.getAccountId()))) {
-                throw new NotFoundException("Account not found " + subscription.getAccountId());
-            }
+            checkAccountExists(subscription.getAccountId());
             subscriptionCollection.save(toDBObject(subscription));
         } catch (MongoException me) {
-            throw new ServerException(me.getMessage(), me);
+            LOG.error(me.getMessage(), me);
+            throw new ServerException("It is not possible to persist subscription");
         }
     }
 
@@ -357,12 +357,13 @@ public class AccountDaoImpl implements AccountDao {
     public void removeSubscription(String subscriptionId) throws NotFoundException, ServerException {
         try {
             if (null == subscriptionCollection.findOne(new BasicDBObject("id", subscriptionId))) {
-                LOG.warn(String.format("Subscription with id = %s, cant be removed because it doesn't exist", subscriptionId));
+                LOG.warn(format("Subscription with id = %s, cant be removed because it doesn't exist", subscriptionId));
                 throw new NotFoundException("Subscription not found " + subscriptionId);
             }
             subscriptionCollection.remove(new BasicDBObject("id", subscriptionId));
         } catch (MongoException me) {
-            throw new ServerException(me.getMessage(), me);
+            LOG.error(me.getMessage(), me);
+            throw new ServerException("It is not possible to remove subscription");
         }
     }
 
@@ -375,7 +376,8 @@ public class AccountDaoImpl implements AccountDao {
             }
             return toSubscription(subscriptionObj);
         } catch (MongoException me) {
-            throw new ServerException(me.getMessage(), me);
+            LOG.error(me.getMessage(), me);
+            throw new ServerException("It is not possible to retrieve subscription");
         }
     }
 
@@ -388,7 +390,8 @@ public class AccountDaoImpl implements AccountDao {
             }
             return result;
         } catch (MongoException me) {
-            throw new ServerException(me.getMessage(), me);
+            LOG.error(me.getMessage(), me);
+            throw new ServerException("It is not possible to retrieve subscriptions");
         }
     }
 
@@ -404,7 +407,8 @@ public class AccountDaoImpl implements AccountDao {
             }
             subscriptionAttributesCollection.save(toDBObject(subscriptionId, subscriptionAttributes));
         } catch (MongoException me) {
-            throw new ServerException(me.getMessage(), me);
+            LOG.error(me.getMessage(), me);
+            throw new ServerException("It is not possible to persist subscription attributes");
         }
     }
 
@@ -418,9 +422,9 @@ public class AccountDaoImpl implements AccountDao {
             }
             return toSubscriptionAttributes(subscriptionAttributesObject);
         } catch (MongoException me) {
-            throw new ServerException(me.getMessage(), me);
+            LOG.error(me.getMessage(), me);
+            throw new ServerException("It is not possible to retrieve subscription attributes");
         }
-
     }
 
     @Override
@@ -431,7 +435,55 @@ public class AccountDaoImpl implements AccountDao {
             }
             subscriptionAttributesCollection.remove(new BasicDBObject("_id", subscriptionId));
         } catch (MongoException me) {
-            throw new ServerException(me.getMessage(), me);
+            LOG.error(me.getMessage(), me);
+            throw new ServerException("It is not possible to remove subscription attributes");
+        }
+    }
+
+    private boolean remove(String accountId, BasicDBList src) {
+        boolean found = false;
+        final Iterator it = src.iterator();
+        while (!found && it.hasNext()) {
+            final Member member = toMember(it.next());
+            if (member.getAccountId().equals(accountId)) {
+                found = true;
+                it.remove();
+            }
+        }
+        return found;
+    }
+
+    private Member retrieveMember(String accountId, BasicDBList src) {
+        for (Object dbMember : src) {
+            final Member member = toMember(dbMember);
+            if (accountId.equals(member.getAccountId())) {
+                return member;
+            }
+        }
+        return null;
+    }
+
+    private DBObject documentFor(Member member) {
+        DBObject membersDocument = memberCollection.findOne(new BasicDBObject("_id", member.getUserId()));
+        if (membersDocument == null) {
+            membersDocument = new BasicDBObject("_id", member.getUserId());
+            membersDocument.put("members", new BasicDBList());
+        }
+        return membersDocument;
+    }
+
+    private void checkAccountExists(String id) throws NotFoundException {
+        if (accountCollection.findOne(new BasicDBObject("id", id)) == null) {
+            throw new NotFoundException(format("Account with id %s was not found", id));
+        }
+    }
+
+    private void checkMemberIsAbsent(Member target, BasicDBList members) throws ConflictException {
+        for (Object dbMember : members) {
+            final Member member = toMember(dbMember);
+            if (target.getAccountId().equals(member.getAccountId())) {
+                throw new ConflictException(format("Workspace %s already contains member %s", target.getAccountId(), target.getUserId()));
+            }
         }
     }
 

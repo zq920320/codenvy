@@ -41,7 +41,7 @@ import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
 /**
- * Tests for {@link com.codenvy.api.dao.mongo.WorkspaceDaoImpl}
+ * Tests for {@link WorkspaceDaoImpl}
  *
  * @author Max Shaposhnik
  * @author Eugene Voevodin
@@ -69,9 +69,9 @@ public class WorkspaceDaoImplTest extends BaseDaoTest {
 
         workspaceDao.create(testWorkspace);
 
-        final DBObject dbWorkspace = collection.findOne(new BasicDBObject("id", testWorkspace.getId()));
-        assertNotNull(dbWorkspace);
-        assertEquals(workspaceDao.toWorkspace(dbWorkspace), testWorkspace);
+        final DBObject workspaceDocument = collection.findOne(new BasicDBObject("id", testWorkspace.getId()));
+        assertNotNull(workspaceDocument);
+        assertEquals(workspaceDao.toWorkspace(workspaceDocument), testWorkspace);
     }
 
     @Test(expectedExceptions = ConflictException.class, expectedExceptionsMessageRegExp = "Workspace name required")
@@ -116,9 +116,9 @@ public class WorkspaceDaoImplTest extends BaseDaoTest {
 
         workspaceDao.update(update);
 
-        final DBObject dbWorkspace = collection.findOne(new BasicDBObject("id", testWorkspace.getId()));
-        assertNotNull(dbWorkspace);
-        final Workspace actual = workspaceDao.toWorkspace(dbWorkspace);
+        final DBObject workspaceDocument = collection.findOne(new BasicDBObject("id", testWorkspace.getId()));
+        assertNotNull(workspaceDocument);
+        final Workspace actual = workspaceDao.toWorkspace(workspaceDocument);
         assertEquals(actual.getName(), update.getName());
         assertEquals(actual.getAttributes(), update.getAttributes());
     }

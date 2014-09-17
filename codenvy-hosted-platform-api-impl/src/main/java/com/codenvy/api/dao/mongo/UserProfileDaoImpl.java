@@ -29,6 +29,9 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 import com.mongodb.MongoException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -36,88 +39,120 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import static java.lang.String.format;
+
 /**
- * User Profile DAO implementation based on MongoDB storage.
+ * Implementation of {@link UserProfileDao} based on MongoDB storage.
+ * <pre>
+ * Profile collection document scheme:
+ *
+ * {
+ *      "id" : "profileId...",
+ *      "userId" : "userId...",
+ *      "attributes": [
+ *          ...
+ *          {
+ *              "name" : "key...",
+ *              "value" : "value..."
+ *          }
+ *          ...
+ *      ],
+ *      "preferences": [
+ *          ...
+ *          {
+ *              "name" : "key...",
+ *              "value" : "value..."
+ *          }
+ *          ...
+ *      ]
+ * }
+ * </pre>
+ *
+ * @author Eugene Voevodin
+ * @author Max Shaposhnik
  */
 @Singleton
 public class UserProfileDaoImpl implements UserProfileDao {
+    private static final Logger LOG           = LoggerFactory.getLogger(UserProfileDaoImpl.class);
+    private static final String DB_COLLECTION = "organization.storage.db.profile.collection";
 
-    protected static final String DB_COLLECTION = "organization.storage.db.profile.collection";
-
-    DBCollection collection;
-
-    UserDao userDao;
+    private final DBCollection collection;
 
     @Inject
-    public UserProfileDaoImpl(UserDao userDao, DB db, @Named(DB_COLLECTION) String collectionName) {
+    public UserProfileDaoImpl(DB db, @Named(DB_COLLECTION) String collectionName) {
         collection = db.getCollection(collectionName);
         collection.ensureIndex(new BasicDBObject("id", 1), new BasicDBObject("unique", true));
-        this.userDao = userDao;
     }
 
     @Override
-    public void create(Profile profile) throws ServerException {
+    public void create(Profile newProfile) throws ServerException {
         try {
-            collection.save(toDBObject(profile));
-        } catch (MongoException me) {
-            throw new ServerException(me.getMessage(), me);
+            collection.save(toDBObject(newProfile));
+        } catch (MongoException ex) {
+            LOG.error(ex.getMessage(), ex);
+            throw new ServerException("It is not possible to create profile");
         }
     }
 
     @Override
-    public void update(Profile profile) throws NotFoundException, ServerException {
-        DBObject query = new BasicDBObject("id", profile.getId());
+    public void update(Profile update) throws NotFoundException, ServerException {
+        final DBObject query = new BasicDBObject("id", update.getId());
         try {
             if (collection.findOne(query) == null) {
-                throw new NotFoundException("Profile not found " + profile.getId());
+                throw new NotFoundException(format("Profile with id %s was not found", update.getId()));
             }
-            collection.update(query, toDBObject(profile));
-        } catch (MongoException me) {
-            throw new ServerException(me.getMessage(), me);
+            collection.update(query, toDBObject(update));
+        } catch (MongoException ex) {
+            LOG.error(ex.getMessage(), ex);
+            throw new ServerException("It is not possible to update profile");
         }
+    }
+
+    @Override
+    public Profile getById(String id) throws NotFoundException, ServerException {
+        final DBObject profileDocument;
+        try {
+            profileDocument = collection.findOne(new BasicDBObject("id", id));
+        } catch (MongoException ex) {
+            LOG.error(ex.getMessage(), ex);
+            throw new ServerException("It is not possible to get profile");
+        }
+        if (profileDocument == null) {
+            throw new NotFoundException(format("Profile with id %s was not found", id));
+        }
+        return toProfile(profileDocument);
+    }
+
+    @Override
+    public Profile getById(String id, String filter) throws NotFoundException, ServerException {
+        final Profile profile = getById(id);
+        if (filter != null && !filter.isEmpty()) {
+            final Map<String, String> matchedPreferences = new HashMap<>();
+            final Pattern pattern = Pattern.compile(filter);
+            for (Map.Entry<String, String> preference : profile.getPreferences().entrySet()) {
+                if (pattern.matcher(preference.getKey()).matches()) {
+                    matchedPreferences.put(preference.getKey(), preference.getValue());
+                }
+            }
+            profile.setPreferences(matchedPreferences);
+        }
+        return profile;
     }
 
     @Override
     public void remove(String id) throws NotFoundException, ServerException {
         try {
             collection.remove(new BasicDBObject("id", id));
-        } catch (MongoException me) {
-            throw new ServerException(me.getMessage(), me);
+        } catch (MongoException ex) {
+            LOG.error(ex.getMessage(), ex);
+            throw new ServerException("It is not possible to remove profile");
         }
-    }
-
-    @Override
-    public Profile getById(String id) throws NotFoundException, ServerException {
-        DBObject res;
-        try {
-            res = collection.findOne(new BasicDBObject("id", id));
-        } catch (MongoException me) {
-            throw new ServerException(me.getMessage(), me);
-        }
-        return res != null ? toProfile(res) : null;
-
-    }
-
-    @Override
-    public Profile getById(String id, String filter) throws NotFoundException, ServerException {
-        Profile profile = getById(id);
-        if (profile != null && filter != null && !filter.isEmpty()) {
-            Map<String, String> matchedPrefs = new HashMap<>();
-            Pattern pattern = Pattern.compile(filter);
-            for (Map.Entry<String, String> pref : profile.getPreferences().entrySet()) {
-                if (pattern.matcher(pref.getKey()).matches()) {
-                    matchedPrefs.put(pref.getKey(), pref.getValue());
-                }
-            }
-            profile.setPreferences(matchedPrefs);
-        }
-        return profile;
     }
 
     /**
      * Convert profile to database ready-to-use object
      */
-    DBObject toDBObject(Profile profile) {
+    /* used in tests */DBObject toDBObject(Profile profile) {
         return new BasicDBObject().append("id", profile.getId())
                                   .append("userId", profile.getUserId())
                                   .append("attributes", toDBList(profile.getAttributes()))
@@ -127,7 +162,7 @@ public class UserProfileDaoImpl implements UserProfileDao {
     /**
      * Converts database object to profile ready-to-use object
      */
-    Profile toProfile(DBObject profileObj) {
+    /* used in tests */Profile toProfile(DBObject profileObj) {
         final BasicDBObject basicProfileObj = (BasicDBObject)profileObj;
         return new Profile().withId(basicProfileObj.getString("id"))
                             .withUserId(basicProfileObj.getString("userId"))
