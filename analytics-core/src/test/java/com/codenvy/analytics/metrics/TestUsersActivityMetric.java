@@ -110,14 +110,6 @@ public class TestUsersActivityMetric extends BaseTest {
         events.add(Event.Builder.createProjectBuiltEvent(USER, WS, "project", "type", "id1")
                                 .withDate("2013-11-01").withTime("20:04:00,320").build());
 
-//
-//        // factory session, won't be taken in account
-//        events.add(Event.Builder.createSessionFactoryStartedEvent("id3", TMP_WS, TMP_USER, "", "")
-//                                .withDate("2013-11-01").withTime("21:00:00,155").build());
-//        events.add(Event.Builder.createSessionFactoryStoppedEvent("id3", TMP_WS, TMP_USER)
-//                                .withDate("2013-11-01").withTime("21:00:05,555").build());
-
-
         File log = LogGenerator.generateLog(events);
 
         Context.Builder builder = new Context.Builder();

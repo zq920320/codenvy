@@ -32,6 +32,10 @@ public class ValueDataUtil {
         return (LongValueData)metric.getValue(context);
     }
 
+    public static DoubleValueData getAsDouble(Metric metric, Context context) throws IOException {
+        return (DoubleValueData)metric.getValue(context);
+    }
+
     public static long treatAsLong(ValueData valueData) {
         return ((LongValueData)valueData).getAsLong();
     }

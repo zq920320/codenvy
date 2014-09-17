@@ -20,6 +20,7 @@ package com.codenvy.analytics.pig.scripts;
 import com.codenvy.analytics.persistent.MongoDataLoader;
 import com.codenvy.analytics.services.configuration.XmlConfigurationManager;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.io.IOException;
@@ -65,16 +66,16 @@ public class EventsHolder {
      * Extracts all available params out of the message.
      * USER and WS parameters will be skipped.
      */
-    public Map<String, String> getParametersValues(String eventName, String message) throws IllegalArgumentException {
-        Map<String, String> result = new LinkedHashMap<>();
+    public Map<String, Object> getParametersValues(String eventName, String message) throws IllegalArgumentException {
+        Map<String, Object> result = new LinkedHashMap<>();
 
         EventConfiguration definition = getDefinition(eventName);
         for (Parameter param : definition.getParameters().getParams()) {
             String paramName = param.getName();
-            String paramValue = getParameterValue(paramName, message);
+            Object paramValue = castType(getParameterValue(paramName, message), param.getType());
 
             if (paramValue != null) {
-                result.put(paramName, paramValue);
+                result.put(paramName.replace("-", "_"), paramValue);
             }
         }
 
@@ -91,6 +92,20 @@ public class EventsHolder {
         result.remove("WS");
 
         return result;
+    }
+
+    private Object castType(@Nullable String value, @Nullable String type) {
+        if (value == null) {
+            return null;
+        }
+
+        if ("String".equalsIgnoreCase(type)) {
+            return value;
+        } else if ("Long".equalsIgnoreCase(type)) {
+            return Long.valueOf(value);
+        }
+
+        return value;
     }
 
     private String getParameterValue(String paramName, String message) {

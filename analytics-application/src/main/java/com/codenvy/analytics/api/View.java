@@ -133,12 +133,12 @@ public class View {
 
     private String getNormalizedSummaryValue(Entry<String, ValueData> entry) {
         String value = entry.getValue().getAsString();
-        
+
         if (entry.getKey().contains("time")) {
-            long milliseconds = ((LongValueData) entry.getValue()).getAsLong();
+            long milliseconds = ((LongValueData)entry.getValue()).getAsLong();
             value = MetricRow.convertToTimeString(milliseconds, null);
         }
-        
+
         return value;
     }
 
@@ -442,8 +442,10 @@ public class View {
             } else {
                 return aliases[0];
             }
-        } else {
+        } else if (userId.toUpperCase().startsWith("ANONYMOUS")) {
             return "anonymous";
+        } else {
+            return userId;
         }
     }
 
@@ -462,8 +464,10 @@ public class View {
             Map<String, ValueData> profile = treatAsMap(treatAsList(valueData).get(0));
             ValueData name = profile.get(AbstractMetric.WS_NAME);
             return name == null ? wsId : name.getAsString();
-        } else {
+        } else if (wsId.toUpperCase().startsWith("TMP-")) {
             return "temporary";
+        } else {
+            return wsId;
         }
     }
 

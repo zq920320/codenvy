@@ -18,7 +18,6 @@
 package com.codenvy.analytics.services.view;
 
 import com.codenvy.analytics.Configurator;
-import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.StringValueData;
 import com.codenvy.analytics.datamodel.ValueData;
@@ -49,6 +48,7 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveAction;
 import java.util.concurrent.TimeUnit;
 
+import static com.codenvy.analytics.Utils.initDateInterval;
 import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsList;
 
 
@@ -326,13 +326,13 @@ public class ViewBuilder extends Feature {
             Parameters.TimeUnit timeUnit = builder.getTimeUnit();
             if (context.exists(Parameters.TIME_INTERVAL)) {
                 int timeShift = (int)-context.getAsLong(Parameters.TIME_INTERVAL);
-                return Utils.initDateInterval(builder.getAsDate(Parameters.TO_DATE), timeUnit, timeShift, builder);
+                return initDateInterval(builder.getAsDate(Parameters.TO_DATE), timeUnit, timeShift, builder);
             } else {
-                return Utils.initDateInterval(builder.getAsDate(Parameters.TO_DATE), timeUnit, builder);
+                return initDateInterval(builder.getAsDate(Parameters.TO_DATE), timeUnit, builder);
             }
 
         } else if (context.exists(Parameters.PASSED_DAYS_COUNT)) {
-            return Utils.initDateInterval(builder.getAsDate(Parameters.TO_DATE), builder.getPassedDaysCount(), builder);
+            return initDateInterval(builder.getAsDate(Parameters.TO_DATE), builder.getPassedDaysCount(), builder);
 
         } else {
             return builder.build();

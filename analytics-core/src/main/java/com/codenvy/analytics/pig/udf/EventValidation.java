@@ -71,11 +71,11 @@ public class EventValidation extends EvalFunc<String> {
         }
 
         StringBuilder validated = new StringBuilder();
-        Map<String, String> values = eventsHolder.getParametersValues(event, message);
+        Map<String, Object> values = eventsHolder.getParametersValues(event, message);
 
         for (Parameter param : eventsHolder.getDefinition(event).getParameters().getParams()) {
             String name = param.getName();
-            String value = values.get(name);
+            String value = String.valueOf(values.get(name));
 
             switch (name) {
                 case WS:

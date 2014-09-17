@@ -206,12 +206,16 @@
                 <field>project_id</field>
                 <field>date</field>
             </index>
+            <index name="lifetime">
+                <field>lifetime</field>
+                <field>date</field>
+            </index>
             <index name="date">
                 <field>date</field>
             </index>
         </indexes>
     </collection>
-    <collection name="run_finished">
+    <collection name="runs_finished">
         <indexes>
             <index name="user">
                 <field>user</field>

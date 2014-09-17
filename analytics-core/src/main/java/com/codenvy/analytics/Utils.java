@@ -37,7 +37,6 @@ import org.joda.time.Months;
 import org.joda.time.Weeks;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -46,6 +45,7 @@ import java.util.regex.Pattern;
 
 import static com.codenvy.analytics.datamodel.ValueDataUtil.getAsList;
 import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsMap;
+import static java.net.URLDecoder.decode;
 
 
 /**
@@ -191,9 +191,6 @@ public class Utils {
      * Calculate FROM_DATE and TO_DATE parameters of context:
      * FROM_DATE will be = @param toDate - @param passedDaysCount)
      * TO_DATE will be = @param toDate
-     *
-     * @param timeShift
-     *         = starting from 0 to represent current time period.
      */
     public static Context initDateInterval(Calendar toDate, PassedDaysCount passedDaysCount, Builder builder) {
         switch (passedDaysCount) {
@@ -227,20 +224,14 @@ public class Utils {
         for (String entry : splitted) {
             String[] pair = entry.split("=");
 
+            String key = decode(pair[0], "UTF-8").replace("-", "_");
+            if (keyToLowerCase) {
+                key = key.toLowerCase();
+            }
+
             if (pair.length == 2) {
-                String key = URLDecoder.decode(pair[0], "UTF-8");
-                if (keyToLowerCase) {
-                    key = key.toLowerCase();
-                }
-                String value = URLDecoder.decode(pair[1], "UTF-8");
-
-                result.put(key, value);
+                result.put(key, decode(pair[1], "UTF-8"));
             } else if (pair.length == 1) {
-                String key = URLDecoder.decode(pair[0], "UTF-8");
-                if (keyToLowerCase) {
-                    key = key.toLowerCase();
-                }
-
                 result.put(key, "");
             }
         }

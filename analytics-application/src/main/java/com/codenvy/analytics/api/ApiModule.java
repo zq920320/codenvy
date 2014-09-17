@@ -17,6 +17,8 @@
  */
 package com.codenvy.analytics.api;
 
+import com.codenvy.analytics.impl.FileBasedMetricHandler;
+import com.codenvy.api.analytics.MetricHandler;
 import com.codenvy.inject.DynaModule;
 import com.google.inject.AbstractModule;
 
@@ -26,6 +28,7 @@ public class ApiModule extends AbstractModule {
 
     @Override
     protected void configure() {
+        bind(MetricHandler.class).to(FileBasedMetricHandler.class);
         bind(AnalyticsPrivate.class);
         bind(View.class);
     }

@@ -108,43 +108,42 @@ public class MongoStorage extends StoreFunc {
         @Override
         public void write(WritableComparable writableComparable, Tuple value) throws IOException, InterruptedException {
             BasicDBObject dbObject = new BasicDBObject();
+            try {
+                for (int i = 1; i < value.size(); i++) {
+                    Tuple tuple = (Tuple)value.get(i);
 
-            for (int i = 1; i < value.size(); i++) {
-                Tuple tuple = (Tuple)value.get(i);
+                    String key = tuple.get(0).toString();
+                    Object data = tuple.get(1);
 
-                String key = tuple.get(0).toString();
-                Object data = tuple.get(1);
+                    if (data != null) {
+                        if (data instanceof String) {
+                            String str = (String)data;
 
-                if (data != null) {
-                    if (data instanceof String) {
-                        String str = (String)data;
+                            if (isParameters(key)) {
+                                putKeyValuePairs(dbObject, str);
 
-                        if (isParameters(key)) {
-                            putKeyValuePairs(dbObject, str);
+                            } else if (isAliases(key)) {
+                                dbObject.put(key, toArray(str));
 
-                        } else if (isAliases(key)) {
-                            dbObject.put(key, toArray(str));
+                            } else if ("params-only-remove-event".equals(key)) {
+                                putMessageParameters(dbObject, str);
+                                dbObject.remove("event");
 
-                        } else if ("params-only-remove-event".equals(key)) {
-                            putMessageParameters(dbObject, str);
-                            dbObject.remove("event");
+                            } else {
+                                dbObject.put(key, data);
+                                if (isMessage(key)) {
+                                    putMessageParameters(dbObject, str);
+                                }
+                            }
+                        } else if (data instanceof Tuple) {
 
                         } else {
                             dbObject.put(key, data);
-                            if (isMessage(key)) {
-                                putMessageParameters(dbObject, str);
-                            }
                         }
-                    } else if (data instanceof Tuple) {
-
-                    } else {
-                        dbObject.put(key, data);
                     }
                 }
-            }
 
-            if (!dbObject.isEmpty()) {
-                try {
+                if (!dbObject.isEmpty()) {
                     addRegisteredUserTag(dbObject);
                     addPersistentWsTag(dbObject);
 
@@ -153,9 +152,9 @@ public class MongoStorage extends StoreFunc {
                                         true,
                                         false);
 
-                } catch (Exception e) {
-                    LOG.error(e.getMessage(), e);
                 }
+            } catch (Exception e) {
+                LOG.error(e.getMessage(), e);
             }
         }
 
@@ -206,14 +205,14 @@ public class MongoStorage extends StoreFunc {
          */
         private void putMessageParameters(DBObject dbObject, String message) throws UnsupportedEncodingException {
             String event = (String)dbObject.get("event");
-            Map<String, String> values = eventsHolder.getParametersValues(event, message);
+            Map<String, Object> values = eventsHolder.getParametersValues(event, message);
 
-            for (Map.Entry<String, String> entry : values.entrySet()) {
+            for (Map.Entry<String, Object> entry : values.entrySet()) {
                 String key = entry.getKey().toLowerCase();
-                String data = entry.getValue();
+                Object data = entry.getValue();
 
                 if (isParameters(key)) {
-                    putKeyValuePairs(dbObject, data);
+                    putKeyValuePairs(dbObject, String.valueOf(data));
                 } else {
                     dbObject.put(key, data);
                 }

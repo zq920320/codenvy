@@ -15,26 +15,23 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.metrics.sessions;
+package com.codenvy.analytics.metrics.runs;
 
-import com.codenvy.analytics.metrics.AbstractSum;
+import com.codenvy.analytics.metrics.AbstractLongValueResulted;
 import com.codenvy.analytics.metrics.MetricType;
 
 import javax.annotation.security.RolesAllowed;
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+/** @author Anatoliy Bazko */
 @RolesAllowed(value = {"user", "system/admin", "system/manager"})
-public class Usage extends AbstractSum {
+public class RunsFinished extends AbstractLongValueResulted {
 
-    public Usage() {
-        super(MetricType.USAGE,
-              MetricType.PRODUCT_USAGE_SESSIONS_LIST,
-              TIME,
-              SESSION_ID);
+    public RunsFinished() {
+        super(MetricType.RUNS_FINISHED, PROJECT_ID);
     }
 
     @Override
     public String getDescription() {
-        return "The product usage time";
+        return "The number of stopped runs";
     }
 }

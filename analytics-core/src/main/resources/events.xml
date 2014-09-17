@@ -58,7 +58,7 @@
             <param>PROJECT</param>
             <param>TYPE</param>
             <param>ID</param>
-            <param>TIMEOUT</param>
+            <param type="long">TIMEOUT</param>
         </parameters>
     </event>
     <event name="build-finished">
@@ -69,8 +69,8 @@
             <param>PROJECT</param>
             <param>TYPE</param>
             <param>ID</param>
-            <param>TIMEOUT</param>
-            <param>USAGE-TIME</param>
+            <param type="long">TIMEOUT</param>
+            <param type="long">USAGE-TIME</param>
         </parameters>
     </event>
     <event name="run-started">
@@ -81,8 +81,8 @@
             <param>PROJECT</param>
             <param>TYPE</param>
             <param>ID</param>
-            <param>MEMORY</param>
-            <param>LIFETIME</param>
+            <param type="long">MEMORY</param>
+            <param type="long">LIFETIME</param>
         </parameters>
     </event>
     <event name="run-finished">
@@ -93,9 +93,9 @@
             <param>PROJECT</param>
             <param>TYPE</param>
             <param>ID</param>
-            <param>MEMORY</param>
-            <param>LIFETIME</param>
-            <param>USAGE-TIME</param>
+            <param type="long">MEMORY</param>
+            <param type="long">LIFETIME</param>
+            <param type="long">USAGE-TIME</param>
         </parameters>
     </event>
     <event name="debug-started">
@@ -106,8 +106,8 @@
             <param>PROJECT</param>
             <param>TYPE</param>
             <param>ID</param>
-            <param>MEMORY</param>
-            <param>LIFETIME</param>
+            <param type="long">MEMORY</param>
+            <param type="long">LIFETIME</param>
         </parameters>
     </event>
     <event name="debug-finished">
@@ -118,9 +118,9 @@
             <param>PROJECT</param>
             <param>TYPE</param>
             <param>ID</param>
-            <param>MEMORY</param>
-            <param>LIFETIME</param>
-            <param>USAGE-TIME</param>
+            <param type="long">MEMORY</param>
+            <param type="long">LIFETIME</param>
+            <param type="long">USAGE-TIME</param>
         </parameters>
     </event>
     <event name="build-queue-waiting-started">
@@ -141,7 +141,7 @@
             <param>PROJECT</param>
             <param>TYPE</param>
             <param>ID</param>
-            <param>WAITING-TIME</param>
+            <param type="long">WAITING-TIME</param>
         </parameters>
     </event>
     <event name="run-queue-waiting-started">
@@ -152,7 +152,7 @@
             <param>PROJECT</param>
             <param>TYPE</param>
             <param>ID</param>
-            <param>WAITING-TIME</param>
+            <param type="long">WAITING-TIME</param>
         </parameters>
     </event>
     <event name="run-queue-waiting-finished">
@@ -394,7 +394,7 @@
             <param>WS</param>
             <param>USER</param>
             <param>START-TIME</param>
-            <param>USAGE-TIME</param>
+            <param> type="long"USAGE-TIME</param>
             <param>SESSION-ID</param>
         </parameters>
     </event>
@@ -404,7 +404,7 @@
             <param>WS</param>
             <param>USER</param>
             <param>START-TIME</param>
-            <param>USAGE-TIME</param>
+            <param type="long">USAGE-TIME</param>
             <param>SESSION-ID</param>
         </parameters>
     </event>

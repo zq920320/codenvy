@@ -15,26 +15,25 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.metrics.sessions;
+package com.codenvy.analytics.metrics.runs;
 
-import com.codenvy.analytics.metrics.AbstractSum;
+import com.codenvy.analytics.metrics.AbstractLongValueResulted;
 import com.codenvy.analytics.metrics.MetricType;
 
 import javax.annotation.security.RolesAllowed;
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-@RolesAllowed(value = {"user", "system/admin", "system/manager"})
-public class Usage extends AbstractSum {
+/**
+ * @author Alexander Reshetnyak
+ */
+@RolesAllowed(value = {"system/admin", "system/manager"})
+public class RunQueueTerminations extends AbstractLongValueResulted {
 
-    public Usage() {
-        super(MetricType.USAGE,
-              MetricType.PRODUCT_USAGE_SESSIONS_LIST,
-              TIME,
-              SESSION_ID);
+    public RunQueueTerminations() {
+        super(MetricType.RUN_QUEUE_TERMINATIONS, PROJECT_ID);
     }
 
     @Override
     public String getDescription() {
-        return "The product usage time";
+        return "The number of run terminations due to threshold timeout";
     }
 }

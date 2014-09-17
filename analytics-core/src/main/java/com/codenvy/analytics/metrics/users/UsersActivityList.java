@@ -142,7 +142,7 @@ public class UsersActivityList extends AbstractListValueResulted {
      * Extracts all available params out of {@link #MESSAGE}.
      */
     private StringValueData getState(String event, String message) {
-        Map<String, String> result = eventsHolder.getParametersValues(event, message);
+        Map<String, Object> result = eventsHolder.getParametersValues(event, message);
         result.remove("ID");
         result.remove("USER-ID");
         result.remove("SESSION-ID");
