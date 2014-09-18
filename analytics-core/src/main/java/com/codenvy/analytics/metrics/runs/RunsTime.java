@@ -15,7 +15,7 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.metrics.projects;
+package com.codenvy.analytics.metrics.runs;
 
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ide_usage.AbstractTimeSpentInAction;
@@ -32,6 +32,6 @@ public class RunsTime extends AbstractTimeSpentInAction {
 
     @Override
     public String getDescription() {
-        return "The total time of all runs in minutes";
+        return "The total time of all runs in milliseconds";
     }
 }

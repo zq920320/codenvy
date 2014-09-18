@@ -57,9 +57,8 @@
             <param>USER</param>
             <param>PROJECT</param>
             <param>TYPE</param>
-            <param>WAITING_TIME</param>
             <param>ID</param>
-            <param>TIMEOUT</param>
+            <param type="long">TIMEOUT</param>
         </parameters>
     </event>
     <event name="build-finished">
@@ -70,7 +69,8 @@
             <param>PROJECT</param>
             <param>TYPE</param>
             <param>ID</param>
-            <param>TIMEOUT</param>
+            <param type="long">TIMEOUT</param>
+            <param type="long">USAGE-TIME</param>
         </parameters>
     </event>
     <event name="run-started">
@@ -81,8 +81,8 @@
             <param>PROJECT</param>
             <param>TYPE</param>
             <param>ID</param>
-            <param>MEMORY</param>
-            <param>LIFETIME</param>
+            <param type="long">MEMORY</param>
+            <param type="long">LIFETIME</param>
         </parameters>
     </event>
     <event name="run-finished">
@@ -93,8 +93,9 @@
             <param>PROJECT</param>
             <param>TYPE</param>
             <param>ID</param>
-            <param>MEMORY</param>
-            <param>LIFETIME</param>
+            <param type="long">MEMORY</param>
+            <param type="long">LIFETIME</param>
+            <param type="long">USAGE-TIME</param>
         </parameters>
     </event>
     <event name="debug-started">
@@ -105,8 +106,8 @@
             <param>PROJECT</param>
             <param>TYPE</param>
             <param>ID</param>
-            <param>MEMORY</param>
-            <param>LIFETIME</param>
+            <param type="long">MEMORY</param>
+            <param type="long">LIFETIME</param>
         </parameters>
     </event>
     <event name="debug-finished">
@@ -117,8 +118,9 @@
             <param>PROJECT</param>
             <param>TYPE</param>
             <param>ID</param>
-            <param>MEMORY</param>
-            <param>LIFETIME</param>
+            <param type="long">MEMORY</param>
+            <param type="long">LIFETIME</param>
+            <param type="long">USAGE-TIME</param>
         </parameters>
     </event>
     <event name="build-queue-waiting-started">
@@ -139,6 +141,7 @@
             <param>PROJECT</param>
             <param>TYPE</param>
             <param>ID</param>
+            <param type="long">WAITING-TIME</param>
         </parameters>
     </event>
     <event name="run-queue-waiting-started">
@@ -149,6 +152,7 @@
             <param>PROJECT</param>
             <param>TYPE</param>
             <param>ID</param>
+            <param type="long">WAITING-TIME</param>
         </parameters>
     </event>
     <event name="run-queue-waiting-finished">
@@ -193,6 +197,7 @@
             <param>PROJECT</param>
             <param>TYPE</param>
             <param>ID</param>
+            <param>WAITING-TIME</param>
         </parameters>
     </event>
     <event name="run-queue-terminated">
@@ -203,6 +208,7 @@
             <param>PROJECT</param>
             <param>TYPE</param>
             <param>ID</param>
+            <param>WAITING-TIME</param>
         </parameters>
     </event>
     <event name="workspace-created">
@@ -380,6 +386,26 @@
             <param>USER</param>
             <param>SESSION-ID</param>
             <param allow-empty-value="true">WINDOW</param>
+        </parameters>
+    </event>
+    <event name="session-usage">
+        <description>IDE focused</description>
+        <parameters>
+            <param>WS</param>
+            <param>USER</param>
+            <param>START-TIME</param>
+            <param> type="long"USAGE-TIME</param>
+            <param>SESSION-ID</param>
+        </parameters>
+    </event>
+    <event name="session-factory-usage">
+        <description>IDE focused</description>
+        <parameters>
+            <param>WS</param>
+            <param>USER</param>
+            <param>START-TIME</param>
+            <param type="long">USAGE-TIME</param>
+            <param>SESSION-ID</param>
         </parameters>
     </event>
     <event name="ide-opened">

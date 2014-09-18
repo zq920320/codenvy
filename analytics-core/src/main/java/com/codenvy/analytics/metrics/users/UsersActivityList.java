@@ -72,7 +72,6 @@ public class UsersActivityList extends AbstractListValueResulted {
     public Context applySpecificFilter(Context context) throws IOException {
         Context.Builder builder = new Context.Builder(context);
         builder.put(Parameters.SORT, MongoDataLoader.ASC_SORT_SIGN + DATE);
-        excludeStartAndStopFactorySessionsEvents(builder);
 
         if (context.exists(MetricFilter.SESSION_ID)) {
             setUserWsAndDateFilters(builder);
@@ -91,7 +90,7 @@ public class UsersActivityList extends AbstractListValueResulted {
     public ValueData postComputation(ValueData valueData, Context clauses) throws IOException {
         SessionData sessionData = SessionData.init(clauses);
 
-        long prevActionDate = -1;
+        long prevActionDate = sessionData != null ? sessionData.fromDate : -1;
 
         List<ValueData> items = ((ListValueData)valueData).getAll();
         List<ValueData> item2Return = new ArrayList<>(items.size() + 3);
@@ -129,7 +128,7 @@ public class UsersActivityList extends AbstractListValueResulted {
             item2Return.add(new MapValueData(row2Return));
         }
 
-        if (sessionData != null) {
+        if (sessionData != null && !items.isEmpty()) {
             addArtificialActions(sessionData,
                                  items.size(),
                                  clauses,
@@ -143,7 +142,7 @@ public class UsersActivityList extends AbstractListValueResulted {
      * Extracts all available params out of {@link #MESSAGE}.
      */
     private StringValueData getState(String event, String message) {
-        Map<String, String> result = eventsHolder.getParametersValues(event, message);
+        Map<String, Object> result = eventsHolder.getParametersValues(event, message);
         result.remove("ID");
         result.remove("USER-ID");
         result.remove("SESSION-ID");
@@ -160,12 +159,10 @@ public class UsersActivityList extends AbstractListValueResulted {
                          Context clauses) throws IOException {
         if (actionNumber == 0) {
             if (isFirstPage(clauses)) {
-                return 0;
+                return actionDate - prevActionDate;
             } else {
                 if (clauses.exists(Parameters.PER_PAGE) && clauses.getAsLong(Parameters.PER_PAGE) > 1) {
-                    long prevGlobalActionNumber =
-                            (clauses.getAsLong(Parameters.PAGE) - 1) * clauses.getAsLong(Parameters.PER_PAGE);
-
+                    long prevGlobalActionNumber = (clauses.getAsLong(Parameters.PAGE) - 1) * clauses.getAsLong(Parameters.PER_PAGE);
                     return actionDate - getDateOfAction(clauses, prevGlobalActionNumber);
                 } else {
                     return 0;
@@ -293,16 +290,6 @@ public class UsersActivityList extends AbstractListValueResulted {
             totalActionsNumberMetric = MetricFactory.getMetric(MetricType.USERS_ACTIVITY);
         }
         return ValueDataUtil.getAsLong(totalActionsNumberMetric, context).getAsLong();
-    }
-
-    private void excludeStartAndStopFactorySessionsEvents(Context.Builder builder) {
-        String eventFilter = builder.getAsString(MetricFilter.EVENT);
-
-        if (eventFilter != null) {
-            builder.put(MetricFilter.EVENT, eventFilter + MongoDataLoader.SEPARATOR + EventsHolder.NOT_FACTORY_SESSIONS);
-        } else {
-            builder.put(MetricFilter.EVENT, MongoDataLoader.EXCLUDE_SIGN + EventsHolder.NOT_FACTORY_SESSIONS);
-        }
     }
 
     private void setUserWsAndDateFilters(Context.Builder builder) throws IOException {

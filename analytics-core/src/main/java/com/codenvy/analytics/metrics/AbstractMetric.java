@@ -17,7 +17,7 @@
  */
 package com.codenvy.analytics.metrics;
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+/** @author Anatoliy Bazko */
 public abstract class AbstractMetric implements Metric {
 
     public static final String ID                    = "_id";
@@ -80,6 +80,9 @@ public abstract class AbstractMetric implements Metric {
     public static final String REGISTERED_USER       = "registered_user";
     public static final String PERSISTENT_WS         = "persistent_ws";
     public static final String DEFAULT_VALUE         = "default";
+    public static final String MEMORY                = "memory";
+    public static final String LIFETIME              = "lifetime";
+    public static final String USAGE_TIME            = "usage_time";
 
     private final String metricName;
 

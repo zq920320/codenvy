@@ -19,7 +19,8 @@ package com.codenvy.analytics.pig.scripts;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.datamodel.ListValueData;
-import com.codenvy.analytics.datamodel.MapValueData;
+import com.codenvy.analytics.datamodel.LongValueData;
+import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
@@ -30,7 +31,10 @@ import org.testng.annotations.Test;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import static com.codenvy.analytics.datamodel.ValueDataUtil.getAsList;
+import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsMap;
 import static org.testng.Assert.assertEquals;
 
 /**
@@ -47,26 +51,14 @@ public class TestProductUsageFactoryReferrers extends BaseTest {
         events.add(Event.Builder.createUserCreatedEvent("uid2", "anonymoususer_1", "anonymoususer_1")
                                 .withDate("2013-02-10").withTime("10:00:00,000").build());
 
-        events.add(Event.Builder.createSessionFactoryStartedEvent("id1", "tmp-1", "user1@gmail.com", "true", "brType")
+        events.add(Event.Builder.createSessionUsageEvent("user1@gmail.com", "tmp-1", "id1", "2013-02-10 10:00:00", "2013-02-10 10:05:00", true)
                                 .withDate("2013-02-10").withTime("10:00:00").build());
-        events.add(Event.Builder.createSessionFactoryStoppedEvent("id1", "tmp-1", "user1@gmail.com")
-                                .withDate("2013-02-10").withTime("10:05:00").build());
-
-        events.add(Event.Builder.createSessionFactoryStartedEvent("id2", "tmp-2", "user1@gmail.com", "true", "brType")
+        events.add(Event.Builder.createSessionUsageEvent("user1@gmail.com", "tmp-2", "id2", "2013-02-10 10:20:00", "2013-02-10 10:30:00", true)
                                 .withDate("2013-02-10").withTime("10:20:00").build());
-        events.add(Event.Builder.createSessionFactoryStoppedEvent("id2", "tmp-2", "user1@gmail.com")
-                                .withDate("2013-02-10").withTime("10:30:00").build());
-
-        events.add(Event.Builder.createSessionFactoryStartedEvent("id3", "tmp-3", "anonymoususer_1", "false", "brType")
+        events.add(Event.Builder.createSessionUsageEvent("anonymoususer_1", "tmp-3", "id3", "2013-02-10 11:00:00", "2013-02-10 11:15:00", true)
                                 .withDate("2013-02-10").withTime("11:00:00").build());
-        events.add(Event.Builder.createSessionFactoryStoppedEvent("id3", "tmp-3", "anonymoususer_1")
-                                .withDate("2013-02-10").withTime("11:15:00").build());
-
-        events.add(Event.Builder.createSessionFactoryStartedEvent("id4", "tmp-4", "anonymoususer_1", "false", "brType")
+        events.add(Event.Builder.createSessionUsageEvent("anonymoususer_1", "tmp-4", "id4", "2013-02-10 11:20:00", "2013-02-10 11:30:00", true)
                                 .withDate("2013-02-10").withTime("11:20:00").build());
-        events.add(Event.Builder.createSessionFactoryStoppedEvent("id4", "tmp-4", "anonymoususer_1")
-                                .withDate("2013-02-10").withTime("11:30:00").build());
-
 
         events.add(Event.Builder.createFactoryProjectImportedEvent("tmp-1", "user1@gmail.com", "project", "type")
                                 .withDate("2013-02-10").withTime("10:05:00").build());
@@ -138,20 +130,20 @@ public class TestProductUsageFactoryReferrers extends BaseTest {
     }
 
     @Test
-    public void testReferers() throws Exception {
+    public void testReferrers() throws Exception {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20130210");
         builder.put(Parameters.TO_DATE, "20130210");
 
         Metric metric = MetricFactory.getMetric(MetricType.REFERRERS_COUNT_TO_SPECIFIC_FACTORY);
-        ListValueData lvd = (ListValueData)metric.getValue(builder.build());
+        ListValueData data = getAsList(metric, builder.build());
 
-        MapValueData vd = (MapValueData)lvd.getAll().get(0);
-        assertEquals(vd.getAll().get("factory").getAsString(), "factoryUrl0");
-        assertEquals(vd.getAll().get("unique_referrers_count").getAsString(), "2");
+        Map<String, ValueData> m = treatAsMap(data.getAll().get(0));
+        assertEquals(m.get("factory").getAsString(), "factoryUrl0");
+        assertEquals(m.get("unique_referrers_count"), LongValueData.valueOf(2));
 
-        vd = (MapValueData)lvd.getAll().get(1);
-        assertEquals(vd.getAll().get("factory").getAsString(), "factoryUrl1");
-        assertEquals(vd.getAll().get("unique_referrers_count").getAsString(), "1");
+        m = treatAsMap(data.getAll().get(1));
+        assertEquals(m.get("factory").getAsString(), "factoryUrl1");
+        assertEquals(m.get("unique_referrers_count"), LongValueData.valueOf(1));
     }
 }

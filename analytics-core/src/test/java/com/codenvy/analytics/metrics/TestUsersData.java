@@ -15,25 +15,27 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.pig.scripts;
+package com.codenvy.analytics.metrics;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.datamodel.*;
-import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.metrics.sessions.ProductUsageSessionsList;
 import com.codenvy.analytics.metrics.users.UsersStatisticsList;
 import com.codenvy.analytics.metrics.workspaces.UsageTimeByWorkspacesList;
 import com.codenvy.analytics.metrics.workspaces.WorkspacesStatisticsList;
+import com.codenvy.analytics.pig.scripts.ScriptType;
 import com.codenvy.analytics.services.DataComputationFeature;
 
+import org.quartz.JobExecutionException;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.util.List;
+import java.io.IOException;
+import java.text.ParseException;
 import java.util.Map;
 
 import static com.codenvy.analytics.datamodel.ValueDataUtil.getAsList;
-import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsList;
+import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsMap;
 import static com.mongodb.util.MyAsserts.assertEquals;
 import static com.mongodb.util.MyAsserts.fail;
 
@@ -44,33 +46,15 @@ public class TestUsersData extends BaseTest {
     private static final String MESSAGES     = RESOURCE_DIR + "/messages.log";
 
     @BeforeClass
-    public void prepare() throws Exception {
-        Context.Builder builder = new Context.Builder();
-        builder.put(Parameters.FROM_DATE, "20131101");
-        builder.put(Parameters.TO_DATE, "20131101");
-        builder.put(Parameters.LOG, MESSAGES);
-
-        builder.putAll(scriptsManager.getScript(ScriptType.USERS_PROFILES, MetricType.USERS_PROFILES_LIST).getParamsAsMap());
-        pigServer.execute(ScriptType.USERS_PROFILES, builder.build());
-
-        builder.putAll(scriptsManager.getScript(ScriptType.WORKSPACES_PROFILES, MetricType.WORKSPACES_PROFILES_LIST).getParamsAsMap());
-        pigServer.execute(ScriptType.WORKSPACES_PROFILES, builder.build());
-
-        builder.putAll(scriptsManager.getScript(ScriptType.PRODUCT_USAGE_SESSIONS, MetricType.PRODUCT_USAGE_SESSIONS_LIST).getParamsAsMap());
-        pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, builder.build());
-
-        builder.putAll(scriptsManager.getScript(ScriptType.USERS_STATISTICS, MetricType.USERS_STATISTICS_LIST).getParamsAsMap());
-        pigServer.execute(ScriptType.USERS_STATISTICS, builder.build());
-
-        DataComputationFeature dataComputationFeature = new DataComputationFeature();
-        dataComputationFeature.forceExecute(builder.build());
+    public void setUp() throws Exception {
+        prepareData();
     }
 
     @Test
     public void testUserStatistics() throws Exception {
         Metric metric = MetricFactory.getMetric(MetricType.USERS_STATISTICS_LIST);
 
-        ListValueData valueData = ValueDataUtil.getAsList(metric, Context.EMPTY);
+        ListValueData valueData = getAsList(metric, Context.EMPTY);
         ListValueData summaryValue = (ListValueData)((Summaraziable)metric).getSummaryValue(Context.EMPTY);
 
         assertUserData(valueData, summaryValue);
@@ -93,7 +77,7 @@ public class TestUsersData extends BaseTest {
                     assertEquals(all.get(UsersStatisticsList.DEBUGS).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.RUNS).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.FACTORIES).getAsString(), "1");
-                    assertEquals(all.get(UsersStatisticsList.TIME).getAsString(), "300500");
+                    assertEquals(all.get(UsersStatisticsList.TIME).getAsString(), "300000");
                     assertEquals(all.get(UsersStatisticsList.SESSIONS).getAsString(), "1");
                     assertEquals(all.get(UsersStatisticsList.INVITES).getAsString(), "1");
                     assertEquals(all.get(UsersStatisticsList.LOGINS).getAsString(), "0");
@@ -117,7 +101,7 @@ public class TestUsersData extends BaseTest {
                     assertEquals(all.get(UsersStatisticsList.SESSIONS).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.INVITES).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.LOGINS).getAsString(), "1");
-                    assertEquals(all.get(UsersStatisticsList.RUN_TIME).getAsString(), "120500");
+                    assertEquals(all.get(UsersStatisticsList.RUN_TIME).getAsString(), "120000");
                     assertEquals(all.get(UsersStatisticsList.BUILD_TIME).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.PAAS_DEPLOYS).getAsString(), "1");
                     assertEquals(all.get(UsersStatisticsList.USER_FIRST_NAME).getAsString(), "f2");
@@ -138,7 +122,7 @@ public class TestUsersData extends BaseTest {
                     assertEquals(all.get(UsersStatisticsList.INVITES).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.LOGINS).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.RUN_TIME).getAsString(), "0");
-                    assertEquals(all.get(UsersStatisticsList.BUILD_TIME).getAsString(), "120500");
+                    assertEquals(all.get(UsersStatisticsList.BUILD_TIME).getAsString(), "120000");
                     assertEquals(all.get(UsersStatisticsList.PAAS_DEPLOYS).getAsString(), "1");
                     assertEquals(all.get(UsersStatisticsList.USER_FIRST_NAME).getAsString(), "f3");
                     assertEquals(all.get(UsersStatisticsList.USER_LAST_NAME).getAsString(), "l3");
@@ -172,20 +156,21 @@ public class TestUsersData extends BaseTest {
         }
 
         assertEquals(summaryValue.size(), 1);
-        Map<String, ValueData> summary = ((MapValueData)summaryValue.getAll().get(0)).getAll();
-        assertEquals(summary.get(UsersStatisticsList.PROJECTS).getAsString(), "1");
-        assertEquals(summary.get(UsersStatisticsList.DEPLOYS).getAsString(), "3");
-        assertEquals(summary.get(UsersStatisticsList.BUILDS).getAsString(), "0");
-        assertEquals(summary.get(UsersStatisticsList.DEBUGS).getAsString(), "1");
-        assertEquals(summary.get(UsersStatisticsList.RUNS).getAsString(), "2");
-        assertEquals(summary.get(UsersStatisticsList.FACTORIES).getAsString(), "1");
-        assertEquals(summary.get(UsersStatisticsList.TIME).getAsString(), "420500");
-        assertEquals(summary.get(UsersStatisticsList.SESSIONS).getAsString(), "2");
-        assertEquals(summary.get(UsersStatisticsList.INVITES).getAsString(), "1");
-        assertEquals(summary.get(UsersStatisticsList.LOGINS).getAsString(), "1");
-        assertEquals(summary.get(UsersStatisticsList.RUN_TIME).getAsString(), "120500");
-        assertEquals(summary.get(UsersStatisticsList.BUILD_TIME).getAsString(), "120500");
-        assertEquals(summary.get(UsersStatisticsList.PAAS_DEPLOYS).getAsString(), "2");
+
+        Map<String, ValueData> m = treatAsMap(summaryValue.getAll().get(0));
+        assertEquals(m.get(UsersStatisticsList.PROJECTS), LongValueData.valueOf(1));
+        assertEquals(m.get(UsersStatisticsList.DEPLOYS), LongValueData.valueOf(3));
+        assertEquals(m.get(UsersStatisticsList.BUILDS), LongValueData.valueOf(0));
+        assertEquals(m.get(UsersStatisticsList.DEBUGS), LongValueData.valueOf(1));
+        assertEquals(m.get(UsersStatisticsList.RUNS), LongValueData.valueOf(2));
+        assertEquals(m.get(UsersStatisticsList.FACTORIES), LongValueData.valueOf(1));
+        assertEquals(m.get(UsersStatisticsList.TIME), LongValueData.valueOf(420000));
+        assertEquals(m.get(UsersStatisticsList.SESSIONS), LongValueData.valueOf(2));
+        assertEquals(m.get(UsersStatisticsList.INVITES), LongValueData.valueOf(1));
+        assertEquals(m.get(UsersStatisticsList.LOGINS), LongValueData.valueOf(1));
+        assertEquals(m.get(UsersStatisticsList.RUN_TIME), LongValueData.valueOf(120000));
+        assertEquals(m.get(UsersStatisticsList.BUILD_TIME), LongValueData.valueOf(120000));
+        assertEquals(m.get(UsersStatisticsList.PAAS_DEPLOYS), LongValueData.valueOf(2));
     }
 
     @Test
@@ -215,7 +200,7 @@ public class TestUsersData extends BaseTest {
                     assertEquals(all.get(UsersStatisticsList.DEBUGS).getAsString(), "1");
                     assertEquals(all.get(UsersStatisticsList.FACTORIES).getAsString(), "1");
                     assertEquals(all.get(UsersStatisticsList.PROJECTS).getAsString(), "1");
-                    assertEquals(all.get(UsersStatisticsList.TIME).getAsString(), "300500");
+                    assertEquals(all.get(UsersStatisticsList.TIME).getAsString(), "300000");
                     assertEquals(all.get(WorkspacesStatisticsList.JOINED_USERS).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.BUILD_TIME).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.RUNS).getAsString(), "1");
@@ -234,9 +219,9 @@ public class TestUsersData extends BaseTest {
                     assertEquals(all.get(UsersStatisticsList.PROJECTS).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.TIME).getAsString(), "120000");
                     assertEquals(all.get(WorkspacesStatisticsList.JOINED_USERS).getAsString(), "1");
-                    assertEquals(all.get(UsersStatisticsList.BUILD_TIME).getAsString(), "120500");
+                    assertEquals(all.get(UsersStatisticsList.BUILD_TIME).getAsString(), "120000");
                     assertEquals(all.get(UsersStatisticsList.RUNS).getAsString(), "1");
-                    assertEquals(all.get(UsersStatisticsList.RUN_TIME).getAsString(), "120500");
+                    assertEquals(all.get(UsersStatisticsList.RUN_TIME).getAsString(), "120000");
                     break;
 
                 default:
@@ -257,46 +242,38 @@ public class TestUsersData extends BaseTest {
         assertEquals(summary.get(UsersStatisticsList.DEBUGS).getAsString(), "1");
         assertEquals(summary.get(UsersStatisticsList.FACTORIES).getAsString(), "1");
         assertEquals(summary.get(UsersStatisticsList.PROJECTS).getAsString(), "1");
-        assertEquals(summary.get(UsersStatisticsList.TIME).getAsString(), "420500");
+        assertEquals(summary.get(UsersStatisticsList.TIME).getAsString(), "420000");
         assertEquals(summary.get(WorkspacesStatisticsList.JOINED_USERS).getAsString(), "1");
-        assertEquals(summary.get(UsersStatisticsList.BUILD_TIME).getAsString(), "120500");
+        assertEquals(summary.get(UsersStatisticsList.BUILD_TIME).getAsString(), "120000");
         assertEquals(summary.get(UsersStatisticsList.RUNS).getAsString(), "2");
-        assertEquals(summary.get(UsersStatisticsList.RUN_TIME).getAsString(), "120500");
+        assertEquals(summary.get(UsersStatisticsList.RUN_TIME).getAsString(), "120000");
     }
 
     @Test
-    public void testUsersTimeInWorkspaces() throws Exception {
-        Context.Builder builder = new Context.Builder();
+    public void testUssageTimeInWorkspaces() throws Exception {
+        Metric metric = MetricFactory.getMetric(MetricType.USAGE_TIME_BY_WORKSPACES_LIST);
+        ListValueData data = getAsList(metric, Context.EMPTY);
 
-        UsageTimeByWorkspacesList metric = new UsageTimeByWorkspacesList();
-        ListValueData value = (ListValueData)metric.getValue(builder.build());
+        assertEquals(data.size(), 2);
 
-        assertEquals(value.size(), 2);
+        Map<String, ValueData> m = treatAsMap(data.getAll().get(0));
+        doChecUsageTimeInWorkspaces(m);
 
-        for (ValueData object : value.getAll()) {
-            MapValueData valueData = (MapValueData)object;
+        m = treatAsMap(data.getAll().get(1));
+        doChecUsageTimeInWorkspaces(m);
+    }
 
-            Map<String, ValueData> all = valueData.getAll();
-            String ws = all.get(ProductUsageSessionsList.WS).getAsString();
+    private void doChecUsageTimeInWorkspaces(Map<String, ValueData> m) {
+        if (m.get(AbstractMetric.WS).equals(StringValueData.valueOf("wsid1"))) {
+            assertEquals(m.get(UsersStatisticsList.SESSIONS).getAsString(), LongValueData.valueOf(1));
+            assertEquals(m.get(UsersStatisticsList.TIME).getAsString(), LongValueData.valueOf(300000));
 
-            switch (ws) {
-                case "wsid1":
-                    assertEquals(all.size(), 3);
-                    assertEquals(all.get(UsersStatisticsList.SESSIONS).getAsString(), "1");
-                    assertEquals(all.get(UsersStatisticsList.TIME).getAsString(), "300500");
-                    break;
+        } else if (m.get(AbstractMetric.WS).equals(StringValueData.valueOf("wsid2"))) {
+            assertEquals(m.get(UsersStatisticsList.SESSIONS).getAsString(), LongValueData.valueOf(1));
+            assertEquals(m.get(UsersStatisticsList.TIME).getAsString(), LongValueData.valueOf(120000));
 
-                case "wsid2":
-                    assertEquals(all.size(), 3);
-                    assertEquals(all.get(UsersStatisticsList.SESSIONS).getAsString(), "1");
-                    assertEquals(all.get(UsersStatisticsList.TIME).getAsString(), "120000");
-                    break;
-
-                default:
-                    fail("unknown ws " + ws);
-                    break;
-
-            }
+        } else {
+            fail("unknown ws");
         }
     }
 
@@ -305,91 +282,102 @@ public class TestUsersData extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(MetricFilter.USER, "id1");
 
-        UsageTimeByWorkspacesList metric = new UsageTimeByWorkspacesList();
-        ListValueData valueData = (ListValueData)metric.getValue(builder.build());
+        Metric metric = MetricFactory.getMetric(MetricType.USAGE_TIME_BY_WORKSPACES_LIST);
+        ListValueData data = getAsList(metric, builder.build());
 
-        assertEquals(valueData.size(), 1);
+        assertEquals(data.size(), 1);
 
-        List<ValueData> items = valueData.getAll();
-        MapValueData entry = (MapValueData)items.get(0);
+        Map<String, ValueData> m = treatAsMap(data.getAll().get(0));
 
-        assertEquals(entry.getAll().get(UsageTimeByWorkspacesList.SESSIONS).getAsString(), "1");
-        assertEquals(entry.getAll().get(ProductUsageSessionsList.TIME).getAsString(), "300500");
-        assertEquals(entry.getAll().get(ProductUsageSessionsList.WS).getAsString(), "wsid1");
-
+        assertEquals(m.get(UsageTimeByWorkspacesList.SESSIONS), LongValueData.valueOf(1));
+        assertEquals(m.get(ProductUsageSessionsList.TIME), LongValueData.valueOf(300000));
+        assertEquals(m.get(ProductUsageSessionsList.WS), StringValueData.valueOf("wsid1"));
     }
 
     @Test
-    public void testUsersStatisticsByCompany() throws Exception {
+    public void testFilterStatisticsByCompany() throws Exception {
         Context.Builder builder = new Context.Builder();
         builder.put(MetricFilter.USER_COMPANY, "company1");
 
-        UsersStatisticsList metric = new UsersStatisticsList();
-        ListValueData valueData = (ListValueData)metric.getValue(builder.build());
+        Metric metric = MetricFactory.getMetric(MetricType.USERS_STATISTICS_LIST);
+        ListValueData data = getAsList(metric, builder.build());
 
-        assertEquals(valueData.size(), 2);
+        assertEquals(data.size(), 2);
     }
 
     @Test
-    public void testUserStatisticsFilteredByAliases() throws Exception {
+    public void testFilterStatisticsByUserAliases() throws Exception {
         Metric metric = MetricFactory.getMetric(MetricType.USERS_STATISTICS_LIST);
 
         Context.Builder builder = new Context.Builder();
         builder.put(MetricFilter.ALIASES, "user1@gmail.com");
 
-        ListValueData valueData = (ListValueData)metric.getValue(builder.build());
-        List<ValueData> rows = treatAsList(valueData);
-        assertEquals(rows.size(), 1);
+        ListValueData data = getAsList(metric, builder.build());
+        assertEquals(data.size(), 1);
 
-        String userId = ((MapValueData)rows.get(0)).getAll().get(AbstractMetric.USER).getAsString();
-        assertEquals(userId, "id1");
+        Map<String, ValueData> m = treatAsMap(data.getAll().get(0));
 
-        String aliases = ((MapValueData)rows.get(0)).getAll().get(AbstractMetric.ALIASES).getAsString();
-        assertEquals(aliases, "[user1@gmail.com]");
+        assertEquals(m.get(AbstractMetric.USER), StringValueData.valueOf("id1"));
+        assertEquals(m.get(AbstractMetric.ALIASES), StringValueData.valueOf("[user1@gmail.com]"));
     }
 
     @Test
-    public void testUserStatisticsFilteredByIdTreatingAsAlias() throws Exception {
+    public void testFilterStatisticsByIdAsUserAliases() throws Exception {
         Metric metric = MetricFactory.getMetric(MetricType.USERS_STATISTICS_LIST);
 
         Context.Builder builder = new Context.Builder();
         builder.put(MetricFilter.ALIASES, "id1");
 
-        ListValueData valueData = getAsList(metric, builder.build());
-        List<ValueData> rows = treatAsList(valueData);
-        assertEquals(rows.size(), 1);
-        
-        String userId = ((MapValueData) rows.get(0)).getAll().get(AbstractMetric.USER).getAsString();
-        assertEquals(userId, "id1");
-        
-        String aliases = ((MapValueData) rows.get(0)).getAll().get(AbstractMetric.ALIASES).getAsString();
-        assertEquals(aliases, "[user1@gmail.com]");
+        ListValueData data = getAsList(metric, builder.build());
+        assertEquals(data.size(), 1);
+
+        Map<String, ValueData> m = treatAsMap(data.getAll().get(0));
+
+        assertEquals(m.get(AbstractMetric.USER), StringValueData.valueOf("id1"));
+        assertEquals(m.get(AbstractMetric.ALIASES), StringValueData.valueOf("[user1@gmail.com]"));
     }
 
     @Test
-    public void testUserStatisticsFilteredBySeveralAliases() throws Exception {
-        Metric metric = MetricFactory.getMetric(MetricType.USERS_STATISTICS_LIST);
-
+    public void testFilterStatisticsByUserFirstName() throws Exception {
         Context.Builder builder = new Context.Builder();
-        builder.put(MetricFilter.ALIASES, "user1@gmail.com OR user2@gmail.com");
+        builder.put(MetricFilter.USER_FIRST_NAME, "f1 OR f2");
 
-        ListValueData valueData = getAsList(metric, builder.build());
-        List<ValueData> rows = treatAsList(valueData);
-        assertEquals(rows.size(), 2);
+        Metric metric = MetricFactory.getMetric(MetricType.USERS_STATISTICS_LIST);
+        ListValueData data = getAsList(metric, builder.build());
+
+        assertEquals(data.size(), 2);
     }
 
     @Test
-    public void testUsersStatisticsByCombinedFilter() throws Exception {
+    public void testFilterStatisticsByUserID() throws Exception {
         Context.Builder builder = new Context.Builder();
         builder.put(MetricFilter.USER, "id1 OR id2 OR id3 OR id4");
 
-        UsersStatisticsList metric = new UsersStatisticsList();
-        assertEquals(getAsList(metric, builder.build()).size(), 4);
+        Metric metric = MetricFactory.getMetric(MetricType.USERS_STATISTICS_LIST);
+        ListValueData data = getAsList(metric, builder.build());
 
-        builder.put(MetricFilter.USER_FIRST_NAME, "f1 OR f2");
-        assertEquals(getAsList(metric, builder.build()).size(), 2);
+        assertEquals(data.size(), 4);
+    }
 
-        builder.put(MetricFilter.ALIASES, "user1@gmail.com");
-        assertEquals(getAsList(metric, builder.build()).size(), 1);
+    private void prepareData() throws IOException, ParseException, JobExecutionException {
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20131101");
+        builder.put(Parameters.TO_DATE, "20131101");
+        builder.put(Parameters.LOG, MESSAGES);
+
+        builder.putAll(scriptsManager.getScript(ScriptType.USERS_PROFILES, MetricType.USERS_PROFILES_LIST).getParamsAsMap());
+        pigServer.execute(ScriptType.USERS_PROFILES, builder.build());
+
+        builder.putAll(scriptsManager.getScript(ScriptType.WORKSPACES_PROFILES, MetricType.WORKSPACES_PROFILES_LIST).getParamsAsMap());
+        pigServer.execute(ScriptType.WORKSPACES_PROFILES, builder.build());
+
+        builder.putAll(scriptsManager.getScript(ScriptType.PRODUCT_USAGE_SESSIONS, MetricType.PRODUCT_USAGE_SESSIONS_LIST).getParamsAsMap());
+        pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, builder.build());
+
+        builder.putAll(scriptsManager.getScript(ScriptType.USERS_STATISTICS, MetricType.USERS_STATISTICS_LIST).getParamsAsMap());
+        pigServer.execute(ScriptType.USERS_STATISTICS, builder.build());
+
+        DataComputationFeature dataComputationFeature = new DataComputationFeature();
+        dataComputationFeature.forceExecute(builder.build());
     }
 }

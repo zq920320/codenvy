@@ -22,16 +22,18 @@ import com.codenvy.analytics.datamodel.ValueData;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public abstract class AbstractSum extends ReadBasedMetric {
+/** @author Anatoliy Bazko */
+public abstract class AbstractSum extends ReadBasedMetric implements ReadBasedExpandable {
 
     private final MetricType basedMetric;
     private final String     field;
+    private final String expandingField;
 
-    public AbstractSum(MetricType metricType, MetricType basedMetric, String field) {
+    public AbstractSum(MetricType metricType, MetricType basedMetric, String field, String expandingField) {
         super(metricType);
         this.basedMetric = basedMetric;
         this.field = field;
+        this.expandingField = expandingField;
     }
 
     @Override
@@ -56,5 +58,21 @@ public abstract class AbstractSum extends ReadBasedMetric {
     @Override
     public Class<? extends ValueData> getValueDataClass() {
         return LongValueData.class;
+    }
+
+    @Override
+    public DBObject[] getSpecificExpandedDBOperations(Context clauses) {
+        DBObject group = new BasicDBObject();
+        group.put(ID, "$" + getExpandedField());
+
+        DBObject projection = new BasicDBObject(getExpandedField(), "$_id");
+
+        return new DBObject[]{new BasicDBObject("$group", group),
+                              new BasicDBObject("$project", projection)};
+    }
+
+    @Override
+    public String getExpandedField() {
+        return expandingField;
     }
 }

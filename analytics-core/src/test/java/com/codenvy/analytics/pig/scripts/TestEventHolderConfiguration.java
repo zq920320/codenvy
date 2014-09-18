@@ -40,7 +40,7 @@ public class TestEventHolderConfiguration extends BaseTest {
                                        "    <event name=\"ide_usage\">\n" +
                                        "        <description>desc</description>\n" +
                                        "        <parameters>\n" +
-                                       "            <param allowed-values=\"default\">WS</param>\n" +
+                                       "            <param type=\"String\" allowed-values=\"default\">WS</param>\n" +
                                        "            <param allow-empty-value=\"true\">USER</param>\n" +
                                        "        </parameters>\n" +
                                        "    </event>\n" +
@@ -76,10 +76,12 @@ public class TestEventHolderConfiguration extends BaseTest {
         assertEquals("WS", parameter.getName());
         assertEquals(false, parameter.isAllowEmptyValue());
         assertEquals("default", parameter.getAllowedValues());
+        assertNull(parameter.getType());
 
         parameter = parameters.getParams().get(1);
         assertEquals("USER", parameter.getName());
         assertEquals(true, parameter.isAllowEmptyValue());
+        assertEquals("String", parameter.getType());
         assertNull(parameter.getAllowedValues());
     }
 }

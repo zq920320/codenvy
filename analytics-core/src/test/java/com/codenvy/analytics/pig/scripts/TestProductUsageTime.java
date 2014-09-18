@@ -18,269 +18,140 @@
 package com.codenvy.analytics.pig.scripts;
 
 import com.codenvy.analytics.BaseTest;
-import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.metrics.Context;
-import com.codenvy.analytics.metrics.Metric;
-import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.metrics.sessions.AbstractProductUsage;
-import com.codenvy.analytics.metrics.sessions.AbstractProductUsageTime;
-import com.codenvy.analytics.metrics.sessions.AbstractProductUsageUsers;
+import com.codenvy.analytics.datamodel.*;
+import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-import static org.testng.Assert.assertEquals;
+import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsMap;
+import static org.testng.AssertJUnit.assertEquals;
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+/** @author Anatoliy Bazko */
 public class TestProductUsageTime extends BaseTest {
 
-    @BeforeClass
-    public void prepare() throws Exception {
-        List<Event> events = new ArrayList<>();
+    @Test
+    public void testExecute() throws Exception {
+        doExecute("20140101");
+        doExecute("20140102");
 
-        events.add(Event.Builder.createUserCreatedEvent("user-id1", "user@gmail.com", "user@gmail.com")
-                                .withDate("2013-11-01").withTime("17:00:00").build());
-        events.add(Event.Builder.createWorkspaceCreatedEvent("ws1", "wsid1", "user@gmail.com")
-                                .withDate("2013-11-01").withTime("17:01:00").build());
+        Metric metric = MetricFactory.getMetric(MetricType.PRODUCT_USAGE_SESSIONS_LIST);
+        ListValueData data = ValueDataUtil.getAsList(metric, Context.EMPTY);
 
-        // sessions #1 - 240s
-        events.add(Event.Builder.createSessionStartedEvent("ANONYMOUSUSER_user11", "ws1", "ide", "1")
-                                .withDate("2013-11-01").withTime("19:00:00").build());
-        events.add(Event.Builder.createSessionFinishedEvent("ANONYMOUSUSER_user11", "ws1", "ide", "1")
-                                .withDate("2013-11-01").withTime("19:04:00").build());
+        assertEquals(data.size(), 3);
 
-        // sessions #2 - 300s
-        events.add(Event.Builder.createSessionStartedEvent("user@gmail.com", "ws1", "ide", "2").withDate("2013-11-01")
-                                .withTime("20:00:00").build());
-        events.add(Event.Builder.createSessionFinishedEvent("user@gmail.com", "ws1", "ide", "2").withDate("2013-11-01")
-                                .withTime("20:05:00").build());
+        Map<String, ValueData> m = treatAsMap(data.getAll().get(0));
+        assertEquals(m.get(AbstractMetric.USER), StringValueData.valueOf("user1"));
+        assertEquals(m.get(AbstractMetric.WS), StringValueData.valueOf("ws"));
+        assertEquals(m.get(AbstractMetric.USER_COMPANY), StringValueData.valueOf("company"));
+        assertEquals(m.get(AbstractMetric.DOMAIN), StringValueData.valueOf("gmail.com"));
+        assertEquals(m.get(AbstractMetric.TIME), LongValueData.valueOf(600000));
+        assertEquals(m.get(AbstractMetric.SESSION_ID), StringValueData.valueOf("1"));
+        assertEquals(m.get(AbstractMetric.DATE), LongValueData.valueOf(1388563200000L));
+        assertEquals(m.get(AbstractMetric.END_TIME), LongValueData.valueOf(1388563800000L));
+        assertEquals(m.get(AbstractMetric.LOGOUT_INTERVAL), LongValueData.valueOf(0));
 
-        // sessions #3 - 120s
-        events.add(Event.Builder.createSessionStartedEvent("ANONYMOUSUSER_user11", "ws2", "ide", "3")
-                                .withDate("2013-11-01").withTime("18:00:00").build());
-        events.add(Event.Builder.createSessionFinishedEvent("ANONYMOUSUSER_user11", "ws2", "ide", "3")
-                                .withDate("2013-11-01").withTime("18:02:00").build());
+        m = treatAsMap(data.getAll().get(1));
+        assertEquals(m.get(AbstractMetric.USER), StringValueData.valueOf("user2"));
+        assertEquals(m.get(AbstractMetric.WS), StringValueData.valueOf("ws"));
+        assertEquals(m.get(AbstractMetric.USER_COMPANY), StringValueData.valueOf(""));
+        assertEquals(m.get(AbstractMetric.DOMAIN), StringValueData.valueOf(""));
+        assertEquals(m.get(AbstractMetric.TIME), LongValueData.valueOf(300000));
+        assertEquals(m.get(AbstractMetric.SESSION_ID), StringValueData.valueOf("2"));
+        assertEquals(m.get(AbstractMetric.DATE), LongValueData.valueOf(1388563200000L));
+        assertEquals(m.get(AbstractMetric.END_TIME), LongValueData.valueOf(1388563500000L));
+        assertEquals(m.get(AbstractMetric.LOGOUT_INTERVAL), LongValueData.valueOf(0));
 
-        // by mistake
-        events.add(Event.Builder.createSessionFinishedEvent("user@gmail.com", "ws1", "ide", "2").withDate("2013-11-01")
-                                .withTime("20:25:00").build());
+        m = treatAsMap(data.getAll().get(2));
+        assertEquals(m.get(AbstractMetric.USER), StringValueData.valueOf("user3"));
+        assertEquals(m.get(AbstractMetric.WS), StringValueData.valueOf("ws"));
+        assertEquals(m.get(AbstractMetric.USER_COMPANY), StringValueData.valueOf(""));
+        assertEquals(m.get(AbstractMetric.DOMAIN), StringValueData.valueOf(""));
+        assertEquals(m.get(AbstractMetric.TIME), LongValueData.valueOf(60000));
+        assertEquals(m.get(AbstractMetric.SESSION_ID), StringValueData.valueOf("3"));
+        assertEquals(m.get(AbstractMetric.DATE), LongValueData.valueOf(1388563200000L));
+        assertEquals(m.get(AbstractMetric.END_TIME), LongValueData.valueOf(1388563260000L));
+        assertEquals(m.get(AbstractMetric.LOGOUT_INTERVAL), LongValueData.valueOf(60000));
+    }
 
-        // session will be ignored,
-        events.add(Event.Builder.createSessionStartedEvent("ANONYMOUSUSER_user11", "tmp-1", "ide", "4")
-                                .withDate("2013-11-01").withTime("20:00:00").build());
-        events.add(Event.Builder.createSessionFinishedEvent("ANONYMOUSUSER_user11", "tmp-1", "ide", "4")
-                                .withDate("2013-11-01").withTime("20:05:00").build());
-
-
-        File log = LogGenerator.generateLog(events);
-
+    private void doExecute(String date) throws Exception {
         Context.Builder builder = new Context.Builder();
-        builder.put(Parameters.FROM_DATE, "20131101");
-        builder.put(Parameters.TO_DATE, "20131101");
-        builder.put(Parameters.LOG, log.getAbsolutePath());
+        builder.put(Parameters.LOG, initLog().getAbsolutePath());
+        builder.put(Parameters.FROM_DATE, date);
+        builder.put(Parameters.TO_DATE, date);
 
-        builder.putAll(
-                scriptsManager.getScript(ScriptType.USERS_PROFILES, MetricType.USERS_PROFILES_LIST).getParamsAsMap());
+        builder.putAll(scriptsManager.getScript(ScriptType.USERS_PROFILES, MetricType.USERS_PROFILES_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.USERS_PROFILES, builder.build());
-
-        builder.put(Parameters.LOG, log.getAbsolutePath());
-        builder.putAll(scriptsManager.getScript(ScriptType.WORKSPACES_PROFILES, MetricType.WORKSPACES_PROFILES_LIST)
-                                     .getParamsAsMap());
-        pigServer.execute(ScriptType.WORKSPACES_PROFILES, builder.build());
 
         builder.putAll(scriptsManager.getScript(ScriptType.PRODUCT_USAGE_SESSIONS, MetricType.PRODUCT_USAGE_SESSIONS_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, builder.build());
     }
 
-    @Test
-    public void testDateAndDoubleUserFilterMinIncludeMaxInclude() throws Exception {
-        Context.Builder builder = new Context.Builder();
-        builder.put(Parameters.FROM_DATE, "20131101");
-        builder.put(Parameters.TO_DATE, "20131101");
-        builder.put(Parameters.USER, "user-id1 OR anonymoususer_user11");
 
-        Metric metric = new TestAbstractProductUsageTime(240000, 300000, true, true);
-        assertEquals(metric.getValue(builder.build()), new LongValueData(840000));
+    private File initLog() throws Exception {
+        List<Event> events = new ArrayList<>();
 
-        metric = new TestAbstractProductUsageSessions(240000, 300000, true, true);
-        assertEquals(metric.getValue(builder.build()), new LongValueData(3L));
+        events.add(Event.Builder.createUserCreatedEvent("user1", "user1@gmail.com", "user1@gmail.com")
+                                .withDate("2014-01-01")
+                                .withTime("09:00:00")
+                                .build());
+        events.add(Event.Builder.createUserUpdateProfile("user1", "user1@gmail.com", "user1@gmail.com", "", "", "company", "", "")
+                                .withDate("2014-01-01")
+                                .withTime("09:01:00")
+                                .build());
 
-        metric = new TestProductUsageUsers(300000, 360000, true, true);
-        assertEquals(metric.getValue(builder.build()), new LongValueData(1L));
-    }
+        // simple session, 5 min
+        events.add(new Event.Builder().withDate("2014-01-01")
+                                      .withTime("10:00:00")
+                                      .withParam("EVENT", "session-usage")
+                                      .withParam("WS", "ws")
+                                      .withParam("USER", "user1")
+                                      .withParam("PARAMETERS", "USAGE-TIME=0,START-TIME=1388563200000,SESSION-ID=1")
+                                      .build());
+        events.add(new Event.Builder().withDate("2014-01-01")
+                                      .withTime("10:10:00")
+                                      .withParam("EVENT", "session-usage")
+                                      .withParam("WS", "ws")
+                                      .withParam("USER", "user1")
+                                      .withParam("PARAMETERS", "USAGE-TIME=600000,START-TIME=1388563200000,SESSION-ID=1")
+                                      .build());
 
-    @Test
-    public void testDateAndDoubleUserWsFilterMinIncludeMaxInclude() throws Exception {
-        Context.Builder builder = new Context.Builder();
-        builder.put(Parameters.FROM_DATE, "20131101");
-        builder.put(Parameters.TO_DATE, "20131101");
-        builder.put(Parameters.USER, "user-id1 OR anonymoususer_user11");
-        builder.put(Parameters.WS, "wsid1");
+        // session ends on next day, 10 min
+        events.add(new Event.Builder().withDate("2014-01-01")
+                                      .withTime("10:00:00")
+                                      .withParam("EVENT", "session-usage")
+                                      .withParam("WS", "ws")
+                                      .withParam("USER", "user2")
+                                      .withParam("PARAMETERS", "USAGE-TIME=0,START-TIME=1388563200000,SESSION-ID=2")
+                                      .build());
+        events.add(new Event.Builder().withDate("2014-01-02")
+                                      .withTime("10:05:00")
+                                      .withParam("EVENT", "session-usage")
+                                      .withParam("WS", "ws")
+                                      .withParam("USER", "user2")
+                                      .withParam("PARAMETERS", "USAGE-TIME=300000,START-TIME=1388563200000,SESSION-ID=2")
+                                      .build());
 
-        Metric metric = new TestAbstractProductUsageTime(240000, 300000, true, true);
-        assertEquals(metric.getValue(builder.build()), new LongValueData(540000L));
+        // session with logout event, 1 min
+        events.add(new Event.Builder().withDate("2014-01-01")
+                                      .withTime("10:00:00")
+                                      .withParam("EVENT", "session-usage")
+                                      .withParam("WS", "ws")
+                                      .withParam("USER", "user3")
+                                      .withParam("PARAMETERS", "USAGE-TIME=0,START-TIME=1388563200000,SESSION-ID=3")
+                                      .build());
+        events.add(new Event.Builder().withDate("2014-01-01")
+                                      .withTime("10:01:00")
+                                      .withParam("EVENT", "user-sso-logged-out")
+                                      .withParam("USER", "user3")
+                                      .build());
 
-        metric = new TestAbstractProductUsageSessions(240000, 300000, true, true);
-        assertEquals(metric.getValue(builder.build()), new LongValueData(2L));
-
-        metric = new TestProductUsageUsers(300000, 360000, true, true);
-        assertEquals(metric.getValue(builder.build()), new LongValueData(1L));
-    }
-
-    @Test
-    public void testDateAndUserFilterMinIncludeMaxInclude() throws Exception {
-        Context.Builder builder = new Context.Builder();
-        builder.put(Parameters.FROM_DATE, "20131101");
-        builder.put(Parameters.TO_DATE, "20131101");
-        builder.put(Parameters.USER, "user-id1");
-
-        Metric metric = new TestAbstractProductUsageTime(240000, 300000, true, true);
-        assertEquals(metric.getValue(builder.build()), new LongValueData(300000L));
-
-        metric = new TestAbstractProductUsageSessions(240000, 300000, true, true);
-        assertEquals(metric.getValue(builder.build()), new LongValueData(1L));
-
-        metric = new TestProductUsageUsers(300000, 360000, true, true);
-        assertEquals(metric.getValue(builder.build()), new LongValueData(1L));
-    }
-
-
-    @Test
-    public void testDateFilterMinIncludeMaxInclude() throws Exception {
-        Context.Builder builder = new Context.Builder();
-        builder.put(Parameters.FROM_DATE, "20131101");
-        builder.put(Parameters.TO_DATE, "20131101");
-
-        Metric metric = new TestAbstractProductUsageTime(240000, 300000, true, true);
-        assertEquals(metric.getValue(builder.build()), new LongValueData(840000));
-
-        metric = new TestAbstractProductUsageSessions(240000, 300000, true, true);
-        assertEquals(metric.getValue(builder.build()), new LongValueData(3L));
-
-        metric = new TestProductUsageUsers(300000, 360000, true, true);
-        assertEquals(metric.getValue(builder.build()), new LongValueData(1L));
-    }
-
-    @Test
-    public void testDateFilterMinIncludeMaxExclude() throws Exception {
-        Context.Builder builder = new Context.Builder();
-        builder.put(Parameters.FROM_DATE, "20131101");
-        builder.put(Parameters.TO_DATE, "20131101");
-
-        Metric metric = new TestAbstractProductUsageTime(240000, 300000, true, false);
-        assertEquals(metric.getValue(builder.build()), new LongValueData(240000L));
-
-        metric = new TestAbstractProductUsageSessions(240000, 300000, true, false);
-        assertEquals(metric.getValue(builder.build()), new LongValueData(1L));
-
-        metric = new TestProductUsageUsers(300000, 360000, true, false);
-        assertEquals(metric.getValue(builder.build()), new LongValueData(1L));
-    }
-
-    @Test
-    public void testDateFilterMinExcludeMaxExclude() throws Exception {
-        Context.Builder builder = new Context.Builder();
-        builder.put(Parameters.FROM_DATE, "20131101");
-        builder.put(Parameters.TO_DATE, "20131101");
-
-        Metric metric = new TestAbstractProductUsageTime(240000, 300000, false, false);
-        assertEquals(metric.getValue(builder.build()), new LongValueData(0L));
-
-        metric = new TestAbstractProductUsageSessions(240000, 300000, false, false);
-        assertEquals(metric.getValue(builder.build()), new LongValueData(0L));
-
-        metric = new TestProductUsageUsers(300000, 360000, false, false);
-        assertEquals(metric.getValue(builder.build()), new LongValueData(0L));
-    }
-
-    @Test
-    public void testDateFilterMinExcludeMaxInclude() throws Exception {
-        Context.Builder builder = new Context.Builder();
-        builder.put(Parameters.FROM_DATE, "20131101");
-        builder.put(Parameters.TO_DATE, "20131101");
-
-        Metric metric = new TestAbstractProductUsageTime(240000, 300000, false, true);
-        assertEquals(metric.getValue(builder.build()), new LongValueData(600000L));
-
-        metric = new TestAbstractProductUsageSessions(240000, 300000, false, true);
-        assertEquals(metric.getValue(builder.build()), new LongValueData(2L));
-
-        metric = new TestProductUsageUsers(300000, 360000, false, true);
-        assertEquals(metric.getValue(builder.build()), new LongValueData(0L));
-    }
-
-    @Test
-    public void testDateFilterMinIncludeMaxIncludeNoData() throws Exception {
-        Context.Builder builder = new Context.Builder();
-        builder.put(Parameters.FROM_DATE, "20131102");
-        builder.put(Parameters.TO_DATE, "20131102");
-
-        Metric metric = new TestAbstractProductUsageTime(240000, 300000, true, true);
-        assertEquals(metric.getValue(builder.build()), new LongValueData(0L));
-
-        metric = new TestAbstractProductUsageSessions(240000, 300000, true, true);
-        assertEquals(metric.getValue(builder.build()), new LongValueData(0L));
-
-        metric = new TestProductUsageUsers(300000, 360000, true, true);
-        assertEquals(metric.getValue(builder.build()), new LongValueData(0L));
-    }
-
-    public class TestProductUsageUsers extends AbstractProductUsageUsers {
-
-        public TestProductUsageUsers(long min, long max, boolean includeMin, boolean includeMax) {
-            super("fake", min, max, includeMin, includeMax);
-        }
-
-        @Override
-        public String getStorageCollectionName() {
-            return MetricType.PRODUCT_USAGE_SESSIONS.toString().toLowerCase();
-        }
-
-        @Override
-        public String getDescription() {
-            return null;
-        }
-    }
-
-
-    public class TestAbstractProductUsageTime extends AbstractProductUsageTime {
-
-        public TestAbstractProductUsageTime(long min, long max, boolean includeMin, boolean includeMax) {
-            super("fake", min, max, includeMin, includeMax);
-        }
-
-        @Override
-        public String getStorageCollectionName() {
-            return MetricType.PRODUCT_USAGE_SESSIONS.toString().toLowerCase();
-        }
-
-        @Override
-        public String getDescription() {
-            return null;
-        }
-    }
-
-    private class TestAbstractProductUsageSessions extends AbstractProductUsage {
-
-        public TestAbstractProductUsageSessions(long min, long max, boolean includeMin, boolean includeMax) {
-            super("fake", min, max, includeMin, includeMax);
-        }
-
-        @Override
-        public String getStorageCollectionName() {
-            return MetricType.PRODUCT_USAGE_SESSIONS.toString().toLowerCase();
-        }
-
-        @Override
-        public String getDescription() {
-            return null;
-        }
+        return LogGenerator.generateLog(events);
     }
 }

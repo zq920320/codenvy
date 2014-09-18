@@ -145,7 +145,8 @@ public class PigServer {
         server.registerFunction("EnsureBrackets", new FuncSpec("com.codenvy.analytics.pig.udf.EnsureBrackets"));
         server.registerFunction("ReplaceUserWithId", new FuncSpec("com.codenvy.analytics.pig.udf.ReplaceUserWithId"));
         server.registerFunction("ReplaceWsWithId", new FuncSpec("com.codenvy.analytics.pig.udf.ReplaceWsWithId"));
-        server.registerFunction("GetDomainById", new FuncSpec("com.codenvy.analytics.pig.udf.GetDomainById"));
+        server.registerFunction("GetDomain", new FuncSpec("com.codenvy.analytics.pig.udf.GetDomain"));
+        server.registerFunction("GetUserCompany", new FuncSpec("com.codenvy.analytics.pig.udf.GetUserCompany"));
         server.registerFunction("MongoStorage", new FuncSpec("com.codenvy.analytics.pig.udf.MongoStorage"));
         server.registerFunction("IsAnonymousUserById", new FuncSpec("com.codenvy.analytics.pig.udf.IsAnonymousUserById"));
         server.registerFunction("IsAnonymousUserByName", new FuncSpec("com.codenvy.analytics.pig.udf.IsAnonymousUserByName"));
@@ -168,10 +169,6 @@ public class PigServer {
         server.registerFunction("MongoLoaderTest",
                                 new FuncSpec("com.codenvy.analytics.pig.udf.MongoLoader",
                                              new String[]{"value:Long"}));
-
-        server.registerFunction("MongoLoaderCollectionWithSession",
-                                new FuncSpec("com.codenvy.analytics.pig.udf.MongoLoader",
-                                             new String[]{"id: chararray, session_id: chararray"}));
 
         return server;
     }

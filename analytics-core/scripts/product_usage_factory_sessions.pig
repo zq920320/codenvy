@@ -47,9 +47,19 @@ d2 = FOREACH d1 GENERATE i::dt AS dt, i::tmpWs AS tmpWs, (c::user IS NULL ? i::u
 d3 = UNION d2, i;
 d = DISTINCT d3;
 
--- factory sessions themselves
-s1 = combineSmallSessions(l, 'session-factory-started', 'session-factory-stopped');
-s2 = FOREACH s1 GENERATE dt, id, ws AS tmpWs, user AS tmpUser, delta;
+-- factory sessions
+a1 = filterByEvent(l, 'session-factory-usage');
+a2 = removeEmptyField(a1, 'user');
+a3 = extractParam(a2, 'SESSION-ID', sessionID);
+a4 = extractParam(a3, 'START-TIME', startTime);
+a5 = extractParam(a4, 'USAGE-TIME', usageTime);
+
+s2 = FOREACH a5 GENERATE ToDate((long) startTime) AS dt,
+                         ws AS tmpWs,
+                         user AS tmpUser,
+                         sessionID AS id,
+                         (long) usageTime AS delta;
+
 
 -- founds out the corresponding referrer and factory
 s3 = JOIN s2 BY tmpWs LEFT, u BY tmpWs;
@@ -171,7 +181,7 @@ r = FOREACH r1 GENERATE *, test_id AS id;
 t = FOREACH t1 GENERATE *, UPPER(UUID()) AS id;
 
 -- stores both relations
-result1 = FOREACH r GENERATE UUID(),
+result1 = FOREACH r GENERATE id,
                             TOTUPLE('date', ToMilliSeconds(dt)),
                             TOTUPLE('ws', ws),
                             TOTUPLE('user', user),
@@ -192,7 +202,7 @@ result1 = FOREACH r GENERATE UUID(),
                             TOTUPLE('encoded_factory', encodedFactory);
 STORE result1 INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 
-result2 = FOREACH t GENERATE UUID(),
+result2 = FOREACH t GENERATE id,
                             TOTUPLE('date', ToMilliSeconds(dt)),
                             TOTUPLE('ws', ws),
                             TOTUPLE('user', user),
@@ -215,7 +225,7 @@ result2 = FOREACH t GENERATE UUID(),
 STORE result2 INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 
 -- newly generated sessions should be stored in '$STORAGE_TABLE_PRODUCT_USAGE_SESSIONS' collection too
-result3 = FOREACH t GENERATE UUID(),
+result3 = FOREACH t GENERATE id,
                             TOTUPLE('date', ToMilliSeconds(dt)),
                             TOTUPLE('ws', ws),
                             TOTUPLE('user', user),
@@ -223,14 +233,14 @@ result3 = FOREACH t GENERATE UUID(),
                             TOTUPLE('logout_interval', 0L),
                             TOTUPLE('time', delta),
                             TOTUPLE('end_time', ToMilliSeconds(dt) + delta),
-                            TOTUPLE('domain', GetDomainById(user)),
+                            TOTUPLE('domain', GetDomain(user)),
                             TOTUPLE('user_company', ''),
                             TOTUPLE('factory', factory),
                             TOTUPLE('referrer', referrer),
                             TOTUPLE('factory_id', factoryId);
 STORE result3 INTO '$STORAGE_URL.$STORAGE_TABLE_PRODUCT_USAGE_SESSIONS' USING MongoStorage;
 
-result4 = FOREACH t GENERATE UUID(),
+result4 = FOREACH t GENERATE id,
                              TOTUPLE('date', ToMilliSeconds(dt)),
                              TOTUPLE('user', user),
                              TOTUPLE('ws', ws),
@@ -241,10 +251,7 @@ result4 = FOREACH t GENERATE UUID(),
 STORE result4 INTO '$STORAGE_URL.$STORAGE_TABLE_USERS_STATISTICS' USING MongoStorage;
 
 -- update exists document joined by session_id: add factory and referrer fields
-x1 = LOAD '$STORAGE_URL.$STORAGE_TABLE_PRODUCT_USAGE_SESSIONS' USING MongoLoaderCollectionWithSession;
-x = JOIN x1 BY session_id LEFT, r BY id;
-result5 = FOREACH x GENERATE x1::id,
-                             TOTUPLE('factory', r::factory),
-                             TOTUPLE('factory_id', r::factoryId),
-                             TOTUPLE('referrer', r::referrer);
+result5 = FOREACH r GENERATE id,
+                             TOTUPLE('factory', factory),
+                             TOTUPLE('referrer', referrer);
 STORE result5 INTO '$STORAGE_URL.$STORAGE_TABLE_PRODUCT_USAGE_SESSIONS' USING MongoStorage;

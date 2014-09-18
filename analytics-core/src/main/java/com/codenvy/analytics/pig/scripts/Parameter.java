@@ -28,6 +28,7 @@ public class Parameter {
     private String  name;
     private boolean allowEmptyValue;
     private String  allowedValues;
+    private String type;
 
     @XmlValue
     public void setName(String name) {
@@ -54,5 +55,14 @@ public class Parameter {
 
     public String getAllowedValues() {
         return allowedValues;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    @XmlAttribute(name = "type")
+    public void setType(String type) {
+        this.type = type;
     }
 }

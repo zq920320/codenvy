@@ -15,23 +15,26 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.metrics.projects;
+package com.codenvy.analytics.metrics.runs;
 
-import com.codenvy.analytics.metrics.AbstractLongValueResulted;
+import com.codenvy.analytics.metrics.AbstractSum;
 import com.codenvy.analytics.metrics.MetricType;
 
 import javax.annotation.security.RolesAllowed;
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+/** @author Anatoliy Bazko */
 @RolesAllowed(value = {"user", "system/admin", "system/manager"})
-public class Runs extends AbstractLongValueResulted {
+public class RunsMemoryUsage extends AbstractSum {
 
-    public Runs() {
-        super(MetricType.RUNS, PROJECT_ID);
+    public RunsMemoryUsage() {
+        super(MetricType.RUNS_MEMORY_USAGE,
+              MetricType.RUNS_FINISHED,
+              MEMORY,
+              PROJECT_ID);
     }
 
     @Override
     public String getDescription() {
-        return "The number of times when user run application";
+        return "The memory usage in MB";
     }
 }

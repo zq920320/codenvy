@@ -67,28 +67,67 @@
         <parameter key="STORAGE_TABLE" value="user_invite"/>
     </script>
     <script name="events">
-        <description>The number of runs</description>
         <parameter key="WS" value="ANY"/>
         <parameter key="USER" value="ANY"/>
         <parameter key="EVENT" value="run-started"/>
         <parameter key="STORAGE_TABLE" value="runs"/>
     </script>
     <script name="events">
-        <description>The number of builds</description>
         <parameter key="WS" value="ANY"/>
         <parameter key="USER" value="ANY"/>
-        <parameter key="EVENT" value="project-built"/>
+        <parameter key="EVENT" value="run-finished"/>
+        <parameter key="STORAGE_TABLE" value="runs_finished"/>
+    </script>
+    <script name="events">
+        <parameter key="WS" value="ANY"/>
+        <parameter key="USER" value="ANY"/>
+        <parameter key="EVENT" value="build-started"/>
         <parameter key="STORAGE_TABLE" value="builds"/>
     </script>
     <script name="events">
-        <description>The number of debugs</description>
+        <parameter key="WS" value="ANY"/>
+        <parameter key="USER" value="ANY"/>
+        <parameter key="EVENT" value="build-finished"/>
+        <parameter key="STORAGE_TABLE" value="build_finished"/>
+    </script>
+    <script name="events">
         <parameter key="WS" value="ANY"/>
         <parameter key="USER" value="ANY"/>
         <parameter key="EVENT" value="debug-started"/>
-        <parameter key="STORAGE_TABLE" value="debugs"/>
+        <parameter key="STORAGE_TABLE" value="debug_started"/>
     </script>
     <script name="events">
-        <description>The number of code completions</description>
+        <parameter key="WS" value="ANY"/>
+        <parameter key="USER" value="ANY"/>
+        <parameter key="EVENT" value="debug-finished"/>
+        <parameter key="STORAGE_TABLE" value="debug_finished"/>
+    </script>
+    <script name="events">
+        <parameter key="WS" value="ANY"/>
+        <parameter key="USER" value="ANY"/>
+        <parameter key="EVENT" value="build-queue-waiting-started"/>
+        <parameter key="STORAGE_TABLE" value="build_queue_waiting_started"/>
+    </script>
+    <script name="events">
+        <parameter key="WS" value="ANY"/>
+        <parameter key="USER" value="ANY"/>
+        <parameter key="EVENT" value="build-queue-waiting-finished"/>
+        <parameter key="STORAGE_TABLE" value="build_queue_waiting_finished"/>
+    </script>
+    <script name="events">
+        <parameter key="WS" value="ANY"/>
+        <parameter key="USER" value="ANY"/>
+        <parameter key="EVENT" value="run-queue-waiting-started"/>
+        <parameter key="STORAGE_TABLE" value="run_queue_waiting_started"/>
+    </script>
+    <script name="events">
+        <parameter key="WS" value="ANY"/>
+        <parameter key="USER" value="ANY"/>
+        <parameter key="EVENT" value="run-queue-waiting-finished"/>
+        <parameter key="STORAGE_TABLE" value="run_queue_waiting_finished"/>
+    </script>
+    <script name="events">
+    <description>The number of code completions</description>
         <parameter key="WS" value="ANY"/>
         <parameter key="USER" value="ANY"/>
         <parameter key="EVENT" value="user-code-complete"/>
@@ -129,14 +168,12 @@
         <parameter key="EVENT" value="run-queue-terminated"/>
         <parameter key="STORAGE_TABLE" value="run_queue_terminations"/>
     </script>
-
     <script name="ide_usage_events">
         <description>IDE usage</description>
         <parameter key="WS" value="ANY"/>
         <parameter key="USER" value="REGISTERED"/>
         <parameter key="STORAGE_TABLE" value="ide_usages"/>
     </script>
-
     <script name="events_by_type">
         <description>Project created by types</description>
         <parameter key="WS" value="ANY"/>
@@ -171,51 +208,50 @@
         <description>The product usage sessions</description>
         <parameter key="WS" value="ANY"/>
         <parameter key="USER" value="ANY"/>
+        <parameter key="EVENT" value="session-usage"/>
         <parameter key="STORAGE_TABLE" value="product_usage_sessions"/>
         <parameter key="STORAGE_TABLE_USERS_STATISTICS" value="users_statistics"/>
-        <parameter key="STORAGE_TABLE_USERS_PROFILES" value="users_profiles"/>
     </script>
     <script name="time_spent_in_action">
-        <description>Time of all builds</description>
-        <parameter key="WS" value="ANY"/>
-        <parameter key="USER" value="ANY"/>
-        <parameter key="EVENT" value="build"/>
-        <parameter key="STORAGE_TABLE" value="builds_time"/>
-    </script>
-    <script name="time_spent_in_action">
-        <description>Time of all runs</description>
-        <parameter key="WS" value="ANY"/>
-        <parameter key="USER" value="ANY"/>
-        <parameter key="EVENT" value="run"/>
-        <parameter key="STORAGE_TABLE" value="runs_time"/>
-    </script>
-    <script name="time_spent_in_action">
-        <description>Time of all debugs</description>
-        <parameter key="WS" value="ANY"/>
-        <parameter key="USER" value="ANY"/>
-        <parameter key="EVENT" value="debug"/>
-        <parameter key="STORAGE_TABLE" value="debugs_time"/>
-    </script>
-    <script name="time_spent_in_action">
-        <description>The time spent in build wait queue</description>
-        <parameter key="WS" value="ANY"/>
-        <parameter key="USER" value="ANY"/>
-        <parameter key="EVENT" value="build-queue-waiting"/>
-        <parameter key="STORAGE_TABLE" value="time_in_build_queue"/>
-    </script>
-    <script name="time_spent_in_action">
-        <description>The time spent in runner wait queue</description>
-        <parameter key="WS" value="ANY"/>
-        <parameter key="USER" value="ANY"/>
-        <parameter key="EVENT" value="run-queue-waiting"/>
-        <parameter key="STORAGE_TABLE" value="time_in_run_queue"/>
-    </script>
-    <script name="time_spent_in_action">
-        <description>The time spent in docker configuration</description>
         <parameter key="WS" value="ANY"/>
         <parameter key="USER" value="ANY"/>
         <parameter key="EVENT" value="configure-docker"/>
         <parameter key="STORAGE_TABLE" value="docker_configuration_time"/>
+    </script>
+    <script name="used_time">
+        <parameter key="WS" value="ANY"/>
+        <parameter key="USER" value="ANY"/>
+        <parameter key="EVENT" value="build-finished"/>
+        <parameter key="PARAM" value="USAGE-TIME"/>
+        <parameter key="STORAGE_TABLE" value="builds_time"/>
+    </script>
+    <script name="used_time">
+        <parameter key="WS" value="ANY"/>
+        <parameter key="USER" value="ANY"/>
+        <parameter key="EVENT" value="run-finished"/>
+        <parameter key="PARAM" value="USAGE-TIME"/>
+        <parameter key="STORAGE_TABLE" value="runs_time"/>
+    </script>
+    <script name="used_time">
+        <parameter key="WS" value="ANY"/>
+        <parameter key="USER" value="ANY"/>
+        <parameter key="EVENT" value="debug-finished"/>
+        <parameter key="PARAM" value="USAGE-TIME"/>
+        <parameter key="STORAGE_TABLE" value="debugs_time"/>
+    </script>
+    <script name="used_time">
+        <parameter key="WS" value="ANY"/>
+        <parameter key="USER" value="ANY"/>
+        <parameter key="EVENT" value="build-queue-waiting-finished"/>
+        <parameter key="PARAM" value="WAITING-TIME"/>
+        <parameter key="STORAGE_TABLE" value="time_in_build_queue"/>
+    </script>
+    <script name="used_time">
+        <parameter key="WS" value="ANY"/>
+        <parameter key="USER" value="ANY"/>
+        <parameter key="EVENT" value="run-queue-waiting-finished"/>
+        <parameter key="PARAM" value="WAITING-TIME"/>
+        <parameter key="STORAGE_TABLE" value="time_in_run_queue"/>
     </script>
 
     <!-- Scripts for factory timeline -->

@@ -30,58 +30,39 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import static com.codenvy.analytics.Utils.isAnonymousUserName;
 import static com.codenvy.analytics.Utils.toArray;
 import static com.codenvy.analytics.datamodel.ValueDataUtil.getAsList;
 import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsMap;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class GetDomainById extends EvalFunc<String> {
+public class GetDomain extends EvalFunc<String> {
 
-    private final Metric metric;
-    private final Pattern pattern = Pattern.compile(".*@(.*)");
-
-    public GetDomainById() {
-        metric = MetricFactory.getMetric(MetricType.USERS_PROFILES_LIST);
-    }
-
+    private static final Pattern EMAIL = Pattern.compile(".*@(.*)");
 
     @Override
     public String exec(Tuple input) throws IOException {
         if (input == null || input.size() != 1) {
-            return "";
+            return null;
         }
 
-        String user = (String)input.get(0);
-        if (user == null) {
-            return "";
+        Context.Builder builder = new Context.Builder();
+        builder.put(MetricFilter.USER, (String)input.get(0));
 
-        } else if (isAnonymousUserName(user)) {
-            return "";
+        ListValueData data = getAsList(MetricFactory.getMetric(MetricType.USERS_PROFILES_LIST), builder.build());
+        if (data.size() == 0) {
+            return null;
+        }
 
-        } else if (user.contains("@")) {
-            return pattern.matcher(user).replaceFirst("$1");
+        Map<String, ValueData> profile = treatAsMap(data.getAll().get(0));
 
+        if (!profile.containsKey(AbstractMetric.ALIASES)) {
+            return null;
         } else {
-            Context.Builder builder = new Context.Builder();
-            builder.put(MetricFilter.USER, user);
-
-            ListValueData valueData = getAsList(metric, builder.build());
-            if (valueData.size() == 0) {
-                return "";
+            String[] aliases = toArray(profile.get(AbstractMetric.ALIASES).getAsString());
+            if (aliases.length == 0) {
+                return null;
             } else {
-                Map<String, ValueData> profile = treatAsMap(valueData.getAll().get(0));
-
-                if (!profile.containsKey(AbstractMetric.ALIASES)) {
-                    return "";
-                } else {
-                    String[] aliases = toArray(profile.get(AbstractMetric.ALIASES).getAsString());
-                    if (aliases.length == 0) {
-                        return "";
-                    } else {
-                        return pattern.matcher(aliases[0]).replaceFirst("$1");
-                    }
-                }
+                return EMAIL.matcher(aliases[0]).replaceFirst("$1");
             }
         }
     }

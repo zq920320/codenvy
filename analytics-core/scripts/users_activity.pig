@@ -19,11 +19,13 @@
 IMPORT 'macros.pig';
 
 l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
-r = FOREACH l GENERATE dt, user, ws, event, message;
+
+a1 = removeEvent(l, 'session-usage,session-started,session-finished,session-factory-started,session-factory-stopped');
+a = FOREACH a1 GENERATE dt, user, ws, event, message;
 
 -- Every parameter in the message will be stored separately as well as a whole message.
 -- It depends on 'event', that's why message must be passed to the storage function after an event
-result = FOREACH r GENERATE UUID(),
+result = FOREACH a GENERATE UUID(),
                             TOTUPLE('date', ToMilliSeconds(dt)),
                             TOTUPLE('event', event),
                             TOTUPLE('action', EventDescription(event)),

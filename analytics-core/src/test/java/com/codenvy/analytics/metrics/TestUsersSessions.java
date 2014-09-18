@@ -15,14 +15,14 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.pig.scripts;
+package com.codenvy.analytics.metrics;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.StringValueData;
-import com.codenvy.analytics.metrics.*;
+import com.codenvy.analytics.pig.scripts.ScriptType;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
@@ -35,44 +35,23 @@ import java.util.List;
 
 import static org.testng.Assert.assertEquals;
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+/** @author Anatoliy Bazko */
 public class TestUsersSessions extends BaseTest {
 
     @BeforeClass
     public void prepare() throws Exception {
         List<Event> events = new ArrayList<>();
-        events.add(Event.Builder.createWorkspaceCreatedEvent("ws1", "wsid1", "ANONYMOUSUSER_user11")
-                                .withDate("2013-11-01").withTime("19:00:00").build());
-        events.add(Event.Builder.createWorkspaceCreatedEvent("ws2", "wsid2", "ANONYMOUSUSER_user11")
-                                .withDate("2013-11-01").withTime("19:00:00").build());
 
-        // sessions #1 - 240s
-        events.add(Event.Builder.createSessionStartedEvent("ANONYMOUSUSER_user11", "ws1", "ide", "1")
-                                .withDate("2013-11-01").withTime("19:00:00").build());
-        events.add(Event.Builder.createSessionFinishedEvent("ANONYMOUSUSER_user11", "ws1", "ide", "1")
-                                .withDate("2013-11-01").withTime("19:04:00").build());
+        events.add(Event.Builder.createSessionUsageEvent("ANONYMOUSUSER_user11", "ws1", "1", "2013-11-01 19:00:00", "2013-11-01 19:06:00", false).
+                withDate("2013-11-01").withTime("19:00:00").build());
 
-        // sessions #2 - 300s
-        events.add(Event.Builder.createSessionStartedEvent("user@gmail.com", "ws1", "ide", "2").withDate("2013-11-01")
-                                .withTime("20:00:00").build());
-        events.add(Event.Builder.createSessionFinishedEvent("user@gmail.com", "ws1", "ide", "2").withDate("2013-11-01")
-                                .withTime("20:05:00").build());
+        events.add(Event.Builder.createSessionUsageEvent("user@gmail.com", "ws1", "2", "2013-11-01 20:00:00", "2013-11-01 20:05:00", false).
+                withDate("2013-11-01").withTime("20:00:00").build());
         events.add(Event.Builder.createUserSSOLoggedOutEvent("user@gmail.com").withDate("2013-11-01")
                                 .withTime("20:06:00").build());
 
-
-        // sessions #3 - 120s
-        events.add(Event.Builder.createSessionStartedEvent("ANONYMOUSUSER_user11", "ws2", "ide", "3")
-                                .withDate("2013-11-01").withTime("19:30:00").build());
-        events.add(Event.Builder.createSessionFinishedEvent("ANONYMOUSUSER_user11", "ws2", "ide", "3")
-                                .withDate("2013-11-01").withTime("19:32:00").build());
-
-        // by mistake
-        events.add(Event.Builder.createSessionFinishedEvent("user@gmail.com", "ws1", "ide", "2").withDate("2013-11-01")
-                                .withTime("20:25:00").build());
-
-        events.add(Event.Builder.createUserUpdateProfile("id", "user@gmail.com", "user@gmail.com", "", "", "company", "", "")
-                                .withDate("2013-11-01").build());
+        events.add(Event.Builder.createSessionUsageEvent("ANONYMOUSUSER_user11", "ws2", "3", "2013-11-01 19:30:00", "2013-11-01 19:32:00", false).
+                withDate("2013-11-01").withTime("19:30:00").build());
 
         File log = LogGenerator.generateLog(events);
 
@@ -80,12 +59,6 @@ public class TestUsersSessions extends BaseTest {
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
         builder.put(Parameters.LOG, log.getAbsolutePath());
-
-        builder.putAll(scriptsManager.getScript(ScriptType.USERS_PROFILES, MetricType.USERS_PROFILES_LIST).getParamsAsMap());
-        pigServer.execute(ScriptType.USERS_PROFILES, builder.build());
-
-        builder.putAll(scriptsManager.getScript(ScriptType.WORKSPACES_PROFILES, MetricType.WORKSPACES_PROFILES_LIST).getParamsAsMap());
-        pigServer.execute(ScriptType.WORKSPACES_PROFILES, builder.build());
 
         builder.putAll(scriptsManager.getScript(ScriptType.PRODUCT_USAGE_SESSIONS, MetricType.PRODUCT_USAGE_SESSIONS_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, builder.build());
@@ -108,11 +81,11 @@ public class TestUsersSessions extends BaseTest {
         assertEquals(items.getAll().get("date"),
                      LongValueData.valueOf(fullDateFormatMils.parse("2013-11-01 19:00:00,000").getTime()));
         assertEquals(items.getAll().get("end_time"),
-                     LongValueData.valueOf(fullDateFormatMils.parse("2013-11-01 19:04:00,000").getTime()));
+                     LongValueData.valueOf(fullDateFormatMils.parse("2013-11-01 19:06:00,000").getTime()));
         assertEquals(items.getAll().get("session_id"), StringValueData.valueOf("1"));
-        assertEquals(items.getAll().get("time"), LongValueData.valueOf(4 * 60 * 1000));
+        assertEquals(items.getAll().get("time"), LongValueData.valueOf(6 * 60 * 1000));
         assertEquals(items.getAll().get("domain"), StringValueData.valueOf(""));
-        assertEquals(items.getAll().get("ws"), StringValueData.valueOf("wsid1"));
+        assertEquals(items.getAll().get("ws"), StringValueData.valueOf("ws1"));
         assertEquals(items.getAll().get("user_company"), StringValueData.valueOf(""));
         assertEquals(items.getAll().get("logout_interval"), LongValueData.valueOf(0));
 
@@ -124,7 +97,7 @@ public class TestUsersSessions extends BaseTest {
         assertEquals(items.getAll().get("session_id"), StringValueData.valueOf("3"));
         assertEquals(items.getAll().get("time"), LongValueData.valueOf(2 * 60 * 1000));
         assertEquals(items.getAll().get("domain"), StringValueData.valueOf(""));
-        assertEquals(items.getAll().get("ws"), StringValueData.valueOf("wsid2"));
+        assertEquals(items.getAll().get("ws"), StringValueData.valueOf("ws2"));
         assertEquals(items.getAll().get("user_company"), StringValueData.valueOf(""));
         assertEquals(items.getAll().get("logout_interval"), LongValueData.valueOf(0));
 
@@ -133,7 +106,7 @@ public class TestUsersSessions extends BaseTest {
         items = (MapValueData)summary.getAll().get(0);
 
         assertEquals(items.getAll().get("sessions"), LongValueData.valueOf(2));
-        assertEquals(items.getAll().get("time"), LongValueData.valueOf(6 * 60 * 1000));
+        assertEquals(items.getAll().get("time"), LongValueData.valueOf(8 * 60 * 1000));
 
         metric = MetricFactory.getMetric(MetricType.PRODUCT_USAGE_SESSIONS);
         assertEquals(metric.getValue(builder.build()), LongValueData.valueOf(2));
@@ -144,7 +117,7 @@ public class TestUsersSessions extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
-        builder.put(MetricFilter.USER, "id");
+        builder.put(MetricFilter.ALIASES, "user@gmail.com");
 
         Metric metric = MetricFactory.getMetric(MetricType.PRODUCT_USAGE_SESSIONS_LIST);
 
@@ -157,10 +130,10 @@ public class TestUsersSessions extends BaseTest {
         assertEquals(items.getAll().get("end_time"),
                      LongValueData.valueOf(fullDateFormatMils.parse("2013-11-01 20:06:00,000").getTime()));
         assertEquals(items.getAll().get("session_id"), StringValueData.valueOf("2"));
-        assertEquals(items.getAll().get("ws"), StringValueData.valueOf("wsid1"));
+        assertEquals(items.getAll().get("ws"), StringValueData.valueOf("ws1"));
         assertEquals(items.getAll().get("time"), LongValueData.valueOf(360000));
-        assertEquals(items.getAll().get("domain"), StringValueData.valueOf("gmail.com"));
-        assertEquals(items.getAll().get("user_company"), StringValueData.valueOf("company"));
+        assertEquals(items.getAll().get("domain"), StringValueData.valueOf(""));
+        assertEquals(items.getAll().get("user_company"), StringValueData.valueOf(""));
         assertEquals(items.getAll().get("logout_interval"), LongValueData.valueOf(60 * 1000));
 
         ListValueData summary = (ListValueData)((Summaraziable)metric).getSummaryValue(builder.build());

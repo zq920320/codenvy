@@ -35,7 +35,6 @@ import org.joda.time.*;
 
 import javax.annotation.Nullable;
 import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -44,6 +43,7 @@ import java.util.regex.Pattern;
 
 import static com.codenvy.analytics.datamodel.ValueDataUtil.getAsList;
 import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsMap;
+import static java.net.URLDecoder.decode;
 
 
 /**
@@ -222,20 +222,14 @@ public class Utils {
         for (String entry : splitted) {
             String[] pair = entry.split("=");
 
+            String key = decode(pair[0], "UTF-8").replace("-", "_");
+            if (keyToLowerCase) {
+                key = key.toLowerCase();
+            }
+
             if (pair.length == 2) {
-                String key = URLDecoder.decode(pair[0], "UTF-8");
-                if (keyToLowerCase) {
-                    key = key.toLowerCase();
-                }
-                String value = URLDecoder.decode(pair[1], "UTF-8");
-
-                result.put(key, value);
+                result.put(key, decode(pair[1], "UTF-8"));
             } else if (pair.length == 1) {
-                String key = URLDecoder.decode(pair[0], "UTF-8");
-                if (keyToLowerCase) {
-                    key = key.toLowerCase();
-                }
-
                 result.put(key, "");
             }
         }
