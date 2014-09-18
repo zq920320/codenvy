@@ -34,19 +34,20 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URISyntaxException;
 import java.sql.SQLException;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveAction;
 import java.util.concurrent.TimeUnit;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 import static com.codenvy.analytics.Utils.initDateInterval;
 import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsList;
@@ -72,18 +73,42 @@ public class ViewBuilder extends Feature {
     public ViewBuilder(JdbcDataPersisterFactory jdbcDataPersisterFactory,
                        CSVReportPersister csvReportPersister,
                        XmlConfigurationManager confManager,
-                       Configurator configurator) throws IOException {
-        this.displayConfiguration = new DisplayConfiguration();
+                       Configurator configurator) throws IOException, URISyntaxException {
 
-        List<ViewConfiguration> views = new ArrayList<>();
+        Set<ViewConfiguration> views = new HashSet<>();
+        readViewsFromConfiguration(confManager, configurator, views);
+        readViewsFromResources(confManager, views);
+
+        this.displayConfiguration = new DisplayConfiguration();
+        this.displayConfiguration.setViews(new ArrayList<>(views));
+        this.jdbcPersister = jdbcDataPersisterFactory.getDataPersister();
+        this.csvReportPersister = csvReportPersister;
+    }
+
+    protected void readViewsFromResources(XmlConfigurationManager confManager, Set<ViewConfiguration> views) throws IOException {
+        final File jarFile = new File(getClass().getProtectionDomain().getCodeSource().getLocation().getPath());
+        if (jarFile.isFile()) {
+            final JarFile jar = new JarFile(jarFile);
+            final Enumeration<JarEntry> entries = jar.entries();
+            while (entries.hasMoreElements()) {
+                final String name = entries.nextElement().getName();
+                if (name.startsWith("views" + File.separator) && name.endsWith(".xml")) {
+                    DisplayConfiguration dc = confManager.loadConfiguration(DisplayConfiguration.class, name);
+                    views.addAll(dc.getViews());
+                }
+            }
+            jar.close();
+        }
+    }
+
+    protected void readViewsFromConfiguration(XmlConfigurationManager confManager,
+                                              Configurator configurator,
+                                              Set<ViewConfiguration> views) throws IOException {
+
         for (String view : configurator.getArray(VIEWS_CONFIGURATION)) {
             DisplayConfiguration dc = confManager.loadConfiguration(DisplayConfiguration.class, view);
             views.addAll(dc.getViews());
         }
-        this.displayConfiguration.setViews(views);
-
-        this.jdbcPersister = jdbcDataPersisterFactory.getDataPersister();
-        this.csvReportPersister = csvReportPersister;
     }
 
     public ViewData getViewData(String name, Context context) throws IOException, ParseException {

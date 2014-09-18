@@ -86,4 +86,19 @@ public class ViewConfiguration {
     public String getPassedDaysCount() {
         return passedDaysCount;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ViewConfiguration)) return false;
+
+        ViewConfiguration that = (ViewConfiguration)o;
+
+        return name.equals(that.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return name.hashCode();
+    }
 }

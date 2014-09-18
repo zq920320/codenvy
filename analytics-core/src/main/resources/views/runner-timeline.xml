@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    CODENVY CONFIDENTIAL
+    __________________
+
+     [2012] - [2014] Codenvy, S.A.
+     All Rights Reserved.
+
+    NOTICE:  All information contained herein is, and remains
+    the property of Codenvy S.A. and its suppliers,
+    if any.  The intellectual and technical concepts contained
+    herein are proprietary to Codenvy S.A.
+    and its suppliers and may be covered by U.S. and Foreign Patents,
+    patents in process, and are protected by trade secret or copyright law.
+    Dissemination of this information or reproduction of this material
+    is strictly forbidden unless prior written permission is obtained
+    from Codenvy S.A..
+
+-->
+<display>
+    <view time-unit="day,week,month,lifetime" name="runner-timeline" columns="15">
+        <section name="runner">
+            <row class="com.codenvy.analytics.services.view.DateRow">
+                <parameter key="section-name" value=""/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="runs"/>
+                <parameter key="description" value="Runners Launched"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="runs_finished"/>
+                <parameter key="description" value="Runners Stopped"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="runs_memory_usage_per_hour"/>
+                <parameter key="description" value="Gigabyte RAM Hours"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="runs_with_timeout"/>
+                <parameter key="description" value="Runners Launched w/ Timeout"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="runs_with_always_on"/>
+                <parameter key="description" value="Runners Launched w/ Always-On"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="runs_finished_by_user"/>
+                <parameter key="description" value="Runners Stopped by User"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="runs_finished_by_timeout"/>
+                <parameter key="description" value="Runners Stopped by Timeout"/>
+            </row>
+        </section>
+    </view>
+</display>

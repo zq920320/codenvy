@@ -45,6 +45,18 @@ function Configuration() {
             displayLineChart: true,  // default is false
         },
 
+        runnerReport: {
+            widgetLabel: "Runner Report",
+            presenterType: "ReportPresenter",
+            modelViewName: "runner-timeline",
+
+            defaultModelParams: {
+                "time_unit": "day"
+            },
+
+            displayLineChart: true,  // default is false
+        },
+
         summaryReport: {
             widgetLabel: "Summary Report",
             presenterType: "ReportPresenter",
