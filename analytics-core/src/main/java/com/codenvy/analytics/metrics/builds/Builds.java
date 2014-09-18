@@ -15,23 +15,23 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.metrics.projects;
+package com.codenvy.analytics.metrics.builds;
 
+import com.codenvy.analytics.metrics.AbstractLongValueResulted;
 import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.analytics.metrics.ide_usage.AbstractTimeSpentInAction;
 
 import javax.annotation.security.RolesAllowed;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-@RolesAllowed({"system/admin", "system/manager"})
-public class BuildsTime extends AbstractTimeSpentInAction {
+@RolesAllowed(value = {"user", "system/admin", "system/manager"})
+public class Builds extends AbstractLongValueResulted {
 
-    public BuildsTime() {
-        super(MetricType.BUILDS_TIME, PROJECT_ID);
+    public Builds() {
+        super(MetricType.BUILDS, PROJECT_ID);
     }
 
     @Override
     public String getDescription() {
-        return "The total time of all builds in minutes";
+        return "The number of times when user build projects";
     }
 }

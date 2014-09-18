@@ -33,6 +33,11 @@
                 <parameter key="description" value="Runners Stopped"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="runs_time"/>
+                <parameter key="description" value="Runners Time"/>
+                <parameter key="time-field" value="true"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="runs_memory_usage_per_hour"/>
                 <parameter key="description" value="Gigabyte RAM Hours"/>
             </row>

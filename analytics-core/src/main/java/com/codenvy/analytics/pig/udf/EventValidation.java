@@ -34,6 +34,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import static java.lang.String.valueOf;
+
 /**
  * @author Alexander Reshetnyak
  * @author Anatoliy Bazko
@@ -75,7 +77,7 @@ public class EventValidation extends EvalFunc<String> {
 
         for (Parameter param : eventsHolder.getDefinition(event).getParameters().getParams()) {
             String name = param.getName();
-            String value = String.valueOf(values.get(name));
+            String value = values.containsKey(name) ? valueOf(values.get(name)) : "";
 
             switch (name) {
                 case WS:

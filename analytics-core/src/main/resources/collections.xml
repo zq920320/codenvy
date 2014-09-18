@@ -253,7 +253,7 @@
             </index>
         </indexes>
     </collection>
-    <collection name="build_finished">
+    <collection name="builds_finished">
         <indexes>
             <index name="user">
                 <field>user</field>

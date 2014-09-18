@@ -88,7 +88,7 @@
         <parameter key="WS" value="ANY"/>
         <parameter key="USER" value="ANY"/>
         <parameter key="EVENT" value="build-finished"/>
-        <parameter key="STORAGE_TABLE" value="build_finished"/>
+        <parameter key="STORAGE_TABLE" value="builds_finished"/>
     </script>
     <script name="events">
         <parameter key="WS" value="ANY"/>

@@ -17,7 +17,6 @@
  */
 package com.codenvy.analytics.pig.scripts;
 
-import com.codenvy.analytics.persistent.MongoDataLoader;
 import com.codenvy.analytics.services.configuration.XmlConfigurationManager;
 
 import javax.annotation.Nullable;
@@ -39,7 +38,6 @@ public class EventsHolder {
 
     public static final String IDE_CLOSED            = "ide-closed";
     public static final String IDE_OPENED            = "ide-opened";
-    public static final String NOT_FACTORY_SESSIONS  = "session-factory-stopped" + MongoDataLoader.SEPARATOR + "session-factory-started";
     public static final String USER_SSO_LOGOUT_EVENT = "user-sso-logged-out";
     public static final String USER_IDLE_EVENT       = "idle";
 
@@ -75,7 +73,7 @@ public class EventsHolder {
             Object paramValue = castType(getParameterValue(paramName, message), param.getType());
 
             if (paramValue != null) {
-                result.put(paramName.replace("-", "_"), paramValue);
+                result.put(paramName, paramValue);
             }
         }
 

@@ -15,25 +15,23 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.metrics.projects;
+package com.codenvy.analytics.metrics.builds;
 
+import com.codenvy.analytics.metrics.AbstractLongValueResulted;
 import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.analytics.metrics.ide_usage.AbstractTimeSpentInAction;
 
 import javax.annotation.security.RolesAllowed;
 
-/**
- * @author Alexander Reshetnyak
- */
-@RolesAllowed({"system/admin", "system/manager"})
-public class TimeInBuildQueue extends AbstractTimeSpentInAction {
+/** @author Anatoliy Bazko */
+@RolesAllowed(value = {"user", "system/admin", "system/manager"})
+public class BuildsFinished extends AbstractLongValueResulted {
 
-    public TimeInBuildQueue() {
-        super(MetricType.TIME_IN_BUILD_QUEUE, PROJECT_ID);
+    public BuildsFinished() {
+        super(MetricType.BUILDS_FINISHED, PROJECT_ID);
     }
 
     @Override
     public String getDescription() {
-        return "The time spent in build wait queue";
+        return "The number of stopped builds";
     }
 }

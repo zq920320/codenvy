@@ -33,6 +33,7 @@ import org.testng.annotations.BeforeClass;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.text.ParseException;
 
 import static org.mockito.Matchers.any;
@@ -51,7 +52,7 @@ public abstract class AbstractTestExpandedMetric  extends BaseTest {
     protected File log;
 
     @BeforeClass
-    public void prepareViewBuilder() throws IOException {
+    public void prepareViewBuilder() throws IOException, URISyntaxException {
         XmlConfigurationManager configurationManager = mock(XmlConfigurationManager.class);
 
         when(configurationManager.loadConfiguration(any(Class.class), anyString())).thenAnswer(new Answer<Object>() {

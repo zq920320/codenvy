@@ -18,7 +18,6 @@
 package com.codenvy.analytics.pig.udf;
 
 import com.codenvy.analytics.Injector;
-import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.ReadBasedMetric;
 import com.codenvy.analytics.persistent.CollectionsManagement;
@@ -123,22 +122,20 @@ public class MongoStorage extends StoreFunc {
                                 putKeyValuePairs(dbObject, str);
 
                             } else if (isAliases(key)) {
-                                dbObject.put(key, toArray(str));
+                                put(dbObject, key, toArray(str));
 
                             } else if ("params-only-remove-event".equals(key)) {
                                 putMessageParameters(dbObject, str);
                                 dbObject.remove("event");
 
                             } else {
-                                dbObject.put(key, data);
+                                put(dbObject, key, data);
                                 if (isMessage(key)) {
                                     putMessageParameters(dbObject, str);
                                 }
                             }
-                        } else if (data instanceof Tuple) {
-
                         } else {
-                            dbObject.put(key, data);
+                            put(dbObject, key, data);
                         }
                     }
                 }
@@ -179,7 +176,7 @@ public class MongoStorage extends StoreFunc {
          * @return true if key equals to 'message' and false otherwise
          */
         private boolean isMessage(String key) {
-            return key.equals("message");
+            return key.equalsIgnoreCase("message");
         }
 
         /**
@@ -188,7 +185,7 @@ public class MongoStorage extends StoreFunc {
          * @return true if key equals to 'parameters' and false otherwise
          */
         private boolean isParameters(String key) {
-            return key.equals("parameters");
+            return key.equalsIgnoreCase("parameters");
         }
 
         /**
@@ -197,7 +194,7 @@ public class MongoStorage extends StoreFunc {
          * @return true if key equals to 'aliases' and false otherwise
          */
         private boolean isAliases(String key) {
-            return key.equals("aliases");
+            return key.equalsIgnoreCase("aliases");
         }
 
         /**
@@ -208,13 +205,13 @@ public class MongoStorage extends StoreFunc {
             Map<String, Object> values = eventsHolder.getParametersValues(event, message);
 
             for (Map.Entry<String, Object> entry : values.entrySet()) {
-                String key = entry.getKey().toLowerCase();
+                String key = entry.getKey();
                 Object data = entry.getValue();
 
                 if (isParameters(key)) {
                     putKeyValuePairs(dbObject, String.valueOf(data));
                 } else {
-                    dbObject.put(key, data);
+                    put(dbObject, key, data);
                 }
             }
         }
@@ -223,7 +220,13 @@ public class MongoStorage extends StoreFunc {
          * Puts key-value encoded pairs separated by ",".
          */
         private void putKeyValuePairs(DBObject dbObject, String data) throws UnsupportedEncodingException {
-            dbObject.putAll(Utils.fetchEncodedPairs(data, true));
+            for (Map.Entry<String, String> e : fetchEncodedPairs(data, true).entrySet()) {
+                put(dbObject, e.getKey(), e.getValue());
+            }
+        }
+
+        private void put(DBObject object, String key, Object value) {
+            object.put(key.toLowerCase().replace("-", "_"), value);
         }
 
         @Override

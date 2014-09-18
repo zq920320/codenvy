@@ -35,8 +35,8 @@ import java.util.regex.Pattern;
  */
 public class ExtractParam extends EvalFunc<String> {
 
-    private final static String  PARAM_NAME         = "paramNameParam";
-    private final static String  PARAM_PATTERN      = ".*\\sparamNameParam#([^\\s#][^#]*|)#.*";
+    private final static String PARAM_NAME    = "paramNameParam";
+    private final static String PARAM_PATTERN = ".*\\sparamNameParam#([^\\s#][^#]*|)#.*";
 
     private final static Pattern parametersPattern = Pattern.compile(".*\\sPARAMETERS#([^\\s^#]+|)#.*");
 

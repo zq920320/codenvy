@@ -15,25 +15,25 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.metrics.projects;
+package com.codenvy.analytics.metrics.builds;
 
+import com.codenvy.analytics.metrics.AbstractLongValueResulted;
 import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.analytics.metrics.ide_usage.AbstractTimeSpentInAction;
 
 import javax.annotation.security.RolesAllowed;
 
 /**
  * @author Alexander Reshetnyak
  */
-@RolesAllowed({"system/admin", "system/manager"})
-public class TimeInRunQueue extends AbstractTimeSpentInAction {
+@RolesAllowed(value = {"system/admin", "system/manager"})
+public class BuildQueueTerminations extends AbstractLongValueResulted {
 
-    public TimeInRunQueue() {
-        super(MetricType.TIME_IN_RUN_QUEUE, PROJECT_ID);
+    public BuildQueueTerminations() {
+        super(MetricType.BUILD_QUEUE_TERMINATIONS, PROJECT_ID);
     }
 
     @Override
     public String getDescription() {
-        return "The time spent in runner wait queue";
+        return "The number of build terminations due to threshold timeout";
     }
 }
