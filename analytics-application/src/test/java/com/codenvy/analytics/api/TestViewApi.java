@@ -55,6 +55,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.*;
+import java.net.URISyntaxException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -132,7 +133,7 @@ public class TestViewApi extends BaseTest {
     }
 
 
-    private ViewBuilder getViewBuilder(final String viewConfigurationFile) throws IOException {
+    private ViewBuilder getViewBuilder(final String viewConfigurationFile) throws IOException, URISyntaxException {
         XmlConfigurationManager configurationManager = mock(XmlConfigurationManager.class);
 
         when(configurationManager.loadConfiguration(any(Class.class), anyString())).thenAnswer(new Answer<Object>() {

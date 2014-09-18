@@ -18,7 +18,6 @@
 package com.codenvy.analytics.metrics;
 
 import com.codenvy.analytics.BaseTest;
-import com.codenvy.analytics.datamodel.DoubleValueData;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.pig.scripts.ScriptType;
 import com.codenvy.analytics.pig.scripts.util.Event;
@@ -31,12 +30,11 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.codenvy.analytics.datamodel.ValueDataUtil.getAsDouble;
 import static com.codenvy.analytics.datamodel.ValueDataUtil.getAsLong;
 import static org.testng.AssertJUnit.assertEquals;
 
 /** @author Anatoliy Bazko */
-public class TestRunners extends BaseTest {
+public class TestBuilders extends BaseTest {
 
     @BeforeClass
     public void setUp() throws Exception {
@@ -44,71 +42,36 @@ public class TestRunners extends BaseTest {
     }
 
     @Test
-    public void testRunsFinishedByUser() throws Exception {
-        Metric metric = MetricFactory.getMetric(MetricType.RUNS_FINISHED_BY_USER);
-
-        LongValueData l = getAsLong(metric, Context.EMPTY);
-
-        assertEquals(l.getAsLong(), 2);
-    }
-
-    @Test
-    public void testRunsFinishedByTimeout() throws Exception {
-        Metric metric = MetricFactory.getMetric(MetricType.RUNS_FINISHED_BY_TIMEOUT);
-
-        LongValueData l = getAsLong(metric, Context.EMPTY);
-
-        assertEquals(l.getAsLong(), 1);
-    }
-
-    @Test
-    public void testRunsWithAlwaysOn() throws Exception {
-        Metric metric = MetricFactory.getMetric(MetricType.RUNS_WITH_ALWAYS_ON);
-
-        LongValueData l = getAsLong(metric, Context.EMPTY);
-
-        assertEquals(l.getAsLong(), 1);
-    }
-
-    @Test
-    public void testRunsWithTimeout() throws Exception {
-        Metric metric = MetricFactory.getMetric(MetricType.RUNS_WITH_TIMEOUT);
-
-        LongValueData l = getAsLong(metric, Context.EMPTY);
-
-        assertEquals(l.getAsLong(), 2);
-    }
-
-    @Test
-    public void testMemoryUsagePerHour() throws Exception {
-        Metric metric = MetricFactory.getMetric(MetricType.RUNS_MEMORY_USAGE_PER_HOUR);
-
-        DoubleValueData d = getAsDouble(metric, Context.EMPTY);
-
-        assertEquals(d.getAsDouble(), 4.5);
-    }
-
-    @Test
-    public void testMemoryUsage() throws Exception {
-        Metric metric = MetricFactory.getMetric(MetricType.RUNS_MEMORY_USAGE);
-
-        LongValueData l = getAsLong(metric, Context.EMPTY);
-
-        assertEquals(l.getAsLong(), 384);
-    }
-
-    @Test
-    public void testRuns() throws Exception {
-        Metric metric = MetricFactory.getMetric(MetricType.RUNS);
+    public void testBuilds() throws Exception {
+        Metric metric = MetricFactory.getMetric(MetricType.BUILDS);
 
         LongValueData l = getAsLong(metric, Context.EMPTY);
 
         assertEquals(l.getAsLong(), 3);
+    }
+
+
+    @Test
+    public void testRunsFinishedByTimeout() throws Exception {
+        Metric metric = MetricFactory.getMetric(MetricType.BUILDS_FINISHED_BY_TIMEOUT);
+
+        LongValueData l = getAsLong(metric, Context.EMPTY);
+
+        assertEquals(l.getAsLong(), 1);
+    }
+
+    @Test
+    public void testRunsFinishedNormally() throws Exception {
+        Metric metric = MetricFactory.getMetric(MetricType.BUILDS_FINISHED_NORMALLY);
+
+        LongValueData l = getAsLong(metric, Context.EMPTY);
+
+        assertEquals(l.getAsLong(), 2);
     }
 
     @Test
     public void testRunsFinished() throws Exception {
-        Metric metric = MetricFactory.getMetric(MetricType.RUNS_FINISHED);
+        Metric metric = MetricFactory.getMetric(MetricType.BUILDS_FINISHED);
 
         LongValueData l = getAsLong(metric, Context.EMPTY);
 
@@ -116,8 +79,8 @@ public class TestRunners extends BaseTest {
     }
 
     @Test
-    public void testRunsTime() throws Exception {
-        Metric metric = MetricFactory.getMetric(MetricType.RUNS_TIME);
+    public void testBuildsTime() throws Exception {
+        Metric metric = MetricFactory.getMetric(MetricType.BUILDS_TIME);
 
         LongValueData l = getAsLong(metric, Context.EMPTY);
 
@@ -130,66 +93,62 @@ public class TestRunners extends BaseTest {
         builder.put(Parameters.TO_DATE, "20131020");
         builder.put(Parameters.LOG, initLogs().getAbsolutePath());
 
-        builder.putAll(scriptsManager.getScript(ScriptType.EVENTS, MetricType.RUNS).getParamsAsMap());
+        builder.putAll(scriptsManager.getScript(ScriptType.EVENTS, MetricType.BUILDS).getParamsAsMap());
         pigServer.execute(ScriptType.EVENTS, builder.build());
 
-        builder.putAll(scriptsManager.getScript(ScriptType.EVENTS, MetricType.RUNS_FINISHED).getParamsAsMap());
+        builder.putAll(scriptsManager.getScript(ScriptType.EVENTS, MetricType.BUILDS_FINISHED).getParamsAsMap());
         pigServer.execute(ScriptType.EVENTS, builder.build());
 
-        builder.putAll(scriptsManager.getScript(ScriptType.USED_TIME, MetricType.RUNS_TIME).getParamsAsMap());
+        builder.putAll(scriptsManager.getScript(ScriptType.USED_TIME, MetricType.BUILDS_TIME).getParamsAsMap());
         pigServer.execute(ScriptType.USED_TIME, builder.build());
     }
 
     private File initLogs() throws Exception {
         List<Event> events = new ArrayList<>();
 
-        // #1 2min, stopped by user
+        // #1 2min, stopped normally
         events.add(new Event.Builder().withDate("2013-10-20")
                                       .withTime("10:00:00")
-                                      .withParam("EVENT", "run-started")
+                                      .withParam("EVENT", "build-started")
                                       .withParam("WS", "ws")
                                       .withParam("USER", "user")
                                       .withParam("PROJECT", "project")
                                       .withParam("TYPE", "projectType")
                                       .withParam("ID", "id1")
-                                      .withParam("MEMORY", "128")
-                                      .withParam("LIFETIME", "600")
+                                      .withParam("TIMEOUT", "600")
                                       .build());
         events.add(new Event.Builder().withDate("2013-10-20")
                                       .withTime("10:10:00")
-                                      .withParam("EVENT", "run-finished")
+                                      .withParam("EVENT", "build-finished")
                                       .withParam("WS", "ws")
                                       .withParam("USER", "user")
                                       .withParam("PROJECT", "project")
                                       .withParam("TYPE", "projectType")
                                       .withParam("ID", "id1")
-                                      .withParam("MEMORY", "128")
-                                      .withParam("LIFETIME", "600")
+                                      .withParam("TIMEOUT", "600")
                                       .withParam("USAGE-TIME", "120000")
                                       .build());
 
-        // #2 1m, stopped by user
+        // #2 1m, stopped normally
         events.add(new Event.Builder().withDate("2013-10-20")
                                       .withTime("11:00:00")
-                                      .withParam("EVENT", "run-started")
+                                      .withParam("EVENT", "build-started")
                                       .withParam("WS", "ws")
                                       .withParam("USER", "user")
                                       .withParam("PROJECT", "project")
                                       .withParam("TYPE", "projectType")
                                       .withParam("ID", "id2")
-                                      .withParam("MEMORY", "128")
-                                      .withParam("LIFETIME", "-1")
+                                      .withParam("TIMEOUT", "-1")
                                       .build());
         events.add(new Event.Builder().withDate("2013-10-20")
                                       .withTime("11:01:00")
-                                      .withParam("EVENT", "run-finished")
+                                      .withParam("EVENT", "build-finished")
                                       .withParam("WS", "ws")
                                       .withParam("USER", "user")
                                       .withParam("PROJECT", "project")
                                       .withParam("TYPE", "projectType")
                                       .withParam("ID", "id2")
-                                      .withParam("MEMORY", "128")
-                                      .withParam("LIFETIME", "-1")
+                                      .withParam("TIMEOUT", "-1")
                                       .withParam("USAGE-TIME", "60000")
                                       .build());
 
@@ -197,25 +156,23 @@ public class TestRunners extends BaseTest {
         // #3 1m, stopped by timeout
         events.add(new Event.Builder().withDate("2013-10-20")
                                       .withTime("11:00:00")
-                                      .withParam("EVENT", "run-started")
+                                      .withParam("EVENT", "build-started")
                                       .withParam("WS", "ws")
                                       .withParam("USER", "user")
                                       .withParam("PROJECT", "project")
                                       .withParam("TYPE", "projectType")
                                       .withParam("ID", "id3")
-                                      .withParam("MEMORY", "128")
-                                      .withParam("LIFETIME", "60")
+                                      .withParam("TIMEOUT", "60")
                                       .build());
         events.add(new Event.Builder().withDate("2013-10-20")
                                       .withTime("11:01:00")
-                                      .withParam("EVENT", "run-finished")
+                                      .withParam("EVENT", "build-finished")
                                       .withParam("WS", "ws")
                                       .withParam("USER", "user")
                                       .withParam("PROJECT", "project")
                                       .withParam("TYPE", "projectType")
                                       .withParam("ID", "id3")
-                                      .withParam("MEMORY", "128")
-                                      .withParam("LIFETIME", "60")
+                                      .withParam("TIMEOUT", "60")
                                       .withParam("USAGE-TIME", "120000")
                                       .build());
 

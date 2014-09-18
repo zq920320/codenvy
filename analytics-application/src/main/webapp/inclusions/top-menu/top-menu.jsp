@@ -50,6 +50,7 @@
                         <li><a href="/analytics/pages/reports/project-report.jsp" id="topmenu-reports-project_report">Project</a></li>
                         <li><a href="/analytics/pages/reports/factory-report.jsp" id="topmenu-reports-factory_report">Factory</a></li>
                         <li><a href="/analytics/pages/reports/runner-report.jsp" id="topmenu-reports-runner_report">Runner</a></li>
+                        <li><a href="/analytics/pages/reports/builder-report.jsp" id="topmenu-reports-builder_report">Builder</a></li>
                         <li><a href="/analytics/pages/reports/top-factory-sessions.jsp" id="topmenu-reports-top_metrics">Top Metrics</a></li>
                         <li><a href="/analytics/pages/reports/signup-analysis.jsp" id="topmenu-reports-analysis">Analysis</a></li>
                         <li><a href="/analytics/pages/reports/time-tracking-workspaces.jsp" id="topmenu-reports-time_tracking">Time Tracking</a></li>

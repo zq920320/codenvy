@@ -24,6 +24,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import static java.lang.String.format;
 import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertNull;
 
@@ -63,7 +64,7 @@ public class TestEventValidation extends BaseTest {
     public void testMessagesWithWrongProjectType(String event, String ws, String user, String message, String type) throws Exception {
         Tuple tuple = makeTuple(event, ws, user, message);
         assertEquals(message,
-                     String.format(EventValidation.VALUE_IS_NOT_ALLOWED, type, "TYPE"),
+                     format(EventValidation.VALUE_IS_NOT_ALLOWED, type, "TYPE"),
                      eventValidation.exec(tuple));
     }
 
@@ -72,7 +73,7 @@ public class TestEventValidation extends BaseTest {
     public void testMessagesWithWrongPaas(String event, String ws, String user, String message, String paas) throws Exception {
         Tuple tuple = makeTuple(event, ws, user, message);
         assertEquals(message,
-                     String.format(EventValidation.VALUE_IS_NOT_ALLOWED, paas, "PAAS"),
+                     format(EventValidation.VALUE_IS_NOT_ALLOWED, paas, "PAAS"),
                      eventValidation.exec(tuple));
     }
 
@@ -80,7 +81,7 @@ public class TestEventValidation extends BaseTest {
     public void testMessagesWithWrongUsingParameter(String event, String ws, String user, String message, String value) throws Exception {
         Tuple tuple = makeTuple(event, ws, user, message);
         assertEquals(message,
-                     String.format(EventValidation.VALUE_IS_NOT_ALLOWED, value, "USING"),
+                     format(EventValidation.VALUE_IS_NOT_ALLOWED, value, "USING"),
                      eventValidation.exec(tuple));
     }
 
@@ -145,14 +146,14 @@ public class TestEventValidation extends BaseTest {
     public Object[][] getMessagesWithWrongProjectType() {
         return new Object[][]{
                 {"project-created", "ws", "user", "PROJECT#Sample-TwitterBootstrap# TYPE## PAAS#null#", ""},
-                {"project-created", "ws", "user", "PROJECT#Sample-TwitterBootstrap# PAAS#null#", "null"},
+                {"project-created", "ws", "user", "PROJECT#Sample-TwitterBootstrap# PAAS#null#", ""},
         };
     }
 
     @DataProvider(name = "wrongPaasProvider")
     public Object[][] getMessagesWithWrongPaas() {
         return new Object[][]{
-                {"application-created", "ws", "user", "PROJECT#Sample# TYPE#JavaScript#", "null"},
+                {"application-created", "ws", "user", "PROJECT#Sample# TYPE#JavaScript#", ""},
                 {"application-created", "ws", "user", "PROJECT#Sample# TYPE#JavaScript# PAAS##", ""},
                 {"application-created", "ws", "user", "PROJECT#Sample# TYPE#JavaScript# PAAS#null#", "null"},
                 {"application-created", "ws", "user", "PROJECT#Sample# TYPE#JavaScript# PAAS#unknown#", "unknown"},
@@ -176,7 +177,7 @@ public class TestEventValidation extends BaseTest {
         return new Object[][]{
                 {"user-sso-logged-in", "default", "user", "USING#null#", "null"},
                 {"user-sso-logged-in", "default", "user", "USING##", ""},
-                {"user-sso-logged-in", "default", "user", "", "null"},
+                {"user-sso-logged-in", "default", "user", "", ""},
         };
     }
 

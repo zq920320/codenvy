@@ -224,7 +224,7 @@ public class Utils {
         for (String entry : splitted) {
             String[] pair = entry.split("=");
 
-            String key = decode(pair[0], "UTF-8").replace("-", "_");
+            String key = decode(pair[0], "UTF-8");
             if (keyToLowerCase) {
                 key = key.toLowerCase();
             }

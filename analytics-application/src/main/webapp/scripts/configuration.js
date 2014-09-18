@@ -57,6 +57,18 @@ function Configuration() {
             displayLineChart: true,  // default is false
         },
 
+        builderReport: {
+            widgetLabel: "Builder Report",
+            presenterType: "ReportPresenter",
+            modelViewName: "builder-timeline",
+
+            defaultModelParams: {
+                "time_unit": "day"
+            },
+
+            displayLineChart: true,  // default is false
+        },
+
         summaryReport: {
             widgetLabel: "Summary Report",
             presenterType: "ReportPresenter",

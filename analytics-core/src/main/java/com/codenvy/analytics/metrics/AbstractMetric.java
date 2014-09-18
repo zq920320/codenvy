@@ -82,6 +82,7 @@ public abstract class AbstractMetric implements Metric {
     public static final String DEFAULT_VALUE         = "default";
     public static final String MEMORY                = "memory";
     public static final String LIFETIME              = "lifetime";
+    public static final String TIMEOUT               = "timeout";
     public static final String USAGE_TIME            = "usage_time";
 
     private final String metricName;

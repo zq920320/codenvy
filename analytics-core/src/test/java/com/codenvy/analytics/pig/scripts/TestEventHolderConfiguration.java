@@ -76,12 +76,12 @@ public class TestEventHolderConfiguration extends BaseTest {
         assertEquals("WS", parameter.getName());
         assertEquals(false, parameter.isAllowEmptyValue());
         assertEquals("default", parameter.getAllowedValues());
-        assertNull(parameter.getType());
+        assertEquals(parameter.getType(), "String");
 
         parameter = parameters.getParams().get(1);
         assertEquals("USER", parameter.getName());
         assertEquals(true, parameter.isAllowEmptyValue());
-        assertEquals("String", parameter.getType());
+        assertNull(parameter.getType());
         assertNull(parameter.getAllowedValues());
     }
 }
