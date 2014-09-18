@@ -23,6 +23,7 @@ import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.server.dao.Subscription;
 import com.codenvy.api.core.ApiException;
 import com.codenvy.api.core.ConflictException;
+import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.workspace.server.dao.Workspace;
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
 
@@ -43,7 +44,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -73,17 +77,26 @@ public class SaasSubscriptionServiceTest {
     @Test(expectedExceptions = ConflictException.class,
           expectedExceptionsMessageRegExp = "Given account doesn't have any workspaces.")
     public void testOnCreateSubscriptionWithoutAccountId() throws ApiException {
-        final Subscription subscription = new Subscription();
+        final Subscription subscription = new Subscription().withProperties(Collections.singletonMap("Package", "developer"));
         service.afterCreateSubscription(subscription);
     }
 
     @Test(expectedExceptions = ConflictException.class,
           expectedExceptionsMessageRegExp = "Given account doesn't have any workspaces.")
-    public void testUpdateSubscriptionWithoutAccountIdProperty() throws ApiException {
-        final Subscription subscription = new Subscription();
+    public void testUpdateSubscriptionIfNoWsFound() throws ApiException {
+        final Subscription subscription = new Subscription().withAccountId(ACCOUNT_ID).withProperties(
+                Collections.singletonMap("Package", "developer"));
+        when(workspaceDao.getByAccount(ACCOUNT_ID)).thenReturn(Collections.<Workspace>emptyList());
         service.onUpdateSubscription(subscription, subscription);
     }
 
+    @Test(expectedExceptions = ConflictException.class,
+          expectedExceptionsMessageRegExp = "not found message")
+    public void testUpdateSubscriptionWithoutAccountIdProperty() throws ApiException {
+        final Subscription subscription = new Subscription().withProperties(Collections.singletonMap("Package", "team"));
+        when(accountDao.getById(anyString())).thenThrow(new NotFoundException("not found message"));
+        service.onUpdateSubscription(subscription, subscription);
+    }
 
     @Test(expectedExceptions = ConflictException.class, expectedExceptionsMessageRegExp = "Subscription with such plan can't be added",
           dataProvider = "badRamProvider")
@@ -119,7 +132,7 @@ public class SaasSubscriptionServiceTest {
     }
 
     @Test
-    public void testWorkspaceAttributesAddedWhenOnCreateInvoked() throws ApiException {
+    public void shouldSetDeveloperResourcesAreSetWhenOnCreateInvoked() throws ApiException {
         final Workspace workspace = new Workspace().withId(WORKSPACE_ID);
         when(workspaceDao.getByAccount(ACCOUNT_ID)).thenReturn(Arrays.asList(workspace));
         when(accountDao.getById(ACCOUNT_ID)).thenReturn(new Account());
@@ -136,17 +149,86 @@ public class SaasSubscriptionServiceTest {
         Assert.assertEquals(workspace.getAttributes().get("codenvy:runner_lifetime"), String.valueOf(TimeUnit.HOURS.toSeconds(1)));
         Assert.assertEquals(workspace.getAttributes().get("codenvy:builder_execution_time"),
                             String.valueOf(TimeUnit.MINUTES.toSeconds(20)));
+        verify(accountDao, never()).update(any(Account.class));
+    }
+
+    @Test
+    public void shouldSetTeamResourcesWhenOnCreateInvoked() throws ApiException {
+        final Workspace workspace = new Workspace().withId(WORKSPACE_ID);
+        when(workspaceDao.getByAccount(ACCOUNT_ID)).thenReturn(Arrays.asList(workspace));
+        when(accountDao.getById(ACCOUNT_ID)).thenReturn(new Account());
+        final Map<String, String> properties = new HashMap<>(2);
+        properties.put("Package", "team");
+        properties.put("RAM", "1GB");
+        final Subscription subscription = new Subscription().withAccountId(ACCOUNT_ID)
+                                                            .withProperties(properties);
+
+        service.afterCreateSubscription(subscription);
+
+        Assert.assertEquals(workspace.getAttributes().size(), 3);
+        Assert.assertEquals(workspace.getAttributes().get("codenvy:runner_ram"), "1024");
+        Assert.assertEquals(workspace.getAttributes().get("codenvy:runner_lifetime"), String.valueOf(TimeUnit.HOURS.toSeconds(1)));
+        Assert.assertEquals(workspace.getAttributes().get("codenvy:builder_execution_time"),
+                            String.valueOf(TimeUnit.MINUTES.toSeconds(20)));
         verify(accountDao).update(argThat(new ArgumentMatcher<Account>() {
             @Override
             public boolean matches(Object argument) {
-                Account actual = (Account) argument;
+                Account actual = (Account)argument;
                 return Collections.singletonMap("codenvy:multi-ws", "true").equals(actual.getAttributes());
             }
         }));
     }
 
     @Test
-    public void testWorkspaceAttributesAddedWhenOnCheckInvoked() throws ApiException {
+    public void shouldSetProjectResourcesWhenOnCreateInvoked() throws ApiException {
+        final Workspace workspace = new Workspace().withId(WORKSPACE_ID);
+        when(workspaceDao.getByAccount(ACCOUNT_ID)).thenReturn(Arrays.asList(workspace));
+        when(accountDao.getById(ACCOUNT_ID)).thenReturn(new Account());
+        final Map<String, String> properties = new HashMap<>(2);
+        properties.put("Package", "project");
+        properties.put("RAM", "1GB");
+        final Subscription subscription = new Subscription().withAccountId(ACCOUNT_ID)
+                                                            .withProperties(properties);
+
+        service.afterCreateSubscription(subscription);
+
+        Assert.assertEquals(workspace.getAttributes().size(), 3);
+        Assert.assertEquals(workspace.getAttributes().get("codenvy:runner_ram"), "1024");
+        Assert.assertEquals(workspace.getAttributes().get("codenvy:runner_lifetime"), "-1");
+        Assert.assertEquals(workspace.getAttributes().get("codenvy:builder_execution_time"),
+                            String.valueOf(TimeUnit.MINUTES.toSeconds(20)));
+        verify(accountDao, never()).update(any(Account.class));
+    }
+
+    @Test
+    public void shouldSetEnterpriseResourcesWhenOnCreateInvoked() throws ApiException {
+        final Workspace workspace = new Workspace().withId(WORKSPACE_ID);
+        when(workspaceDao.getByAccount(ACCOUNT_ID)).thenReturn(Arrays.asList(workspace));
+        when(accountDao.getById(ACCOUNT_ID)).thenReturn(new Account());
+        final Map<String, String> properties = new HashMap<>(2);
+        properties.put("Package", "enterprise");
+        properties.put("RAM", "1GB");
+        final Subscription subscription = new Subscription().withAccountId(ACCOUNT_ID)
+                                                            .withProperties(properties);
+
+        service.afterCreateSubscription(subscription);
+
+        Assert.assertEquals(workspace.getAttributes().size(), 3);
+        Assert.assertEquals(workspace.getAttributes().get("codenvy:runner_ram"), "1024");
+        Assert.assertEquals(workspace.getAttributes().get("codenvy:runner_lifetime"), "-1");
+        Assert.assertEquals(workspace.getAttributes().get("codenvy:builder_execution_time"),
+                            String.valueOf(TimeUnit.MINUTES.toSeconds(20)));
+        verify(accountDao).update(argThat(new ArgumentMatcher<Account>() {
+            @Override
+            public boolean matches(Object argument) {
+                Account actual = (Account)argument;
+                return Collections.singletonMap("codenvy:multi-ws", "true").equals(actual.getAttributes());
+            }
+        }));
+    }
+
+    @Test
+    public void testResourcesAreSetWhenOnCheckInvoked() throws ApiException {
         final Workspace workspace = new Workspace().withId(WORKSPACE_ID);
         when(workspaceDao.getByAccount(ACCOUNT_ID)).thenReturn(Arrays.asList(workspace));
         when(accountDao.getById(ACCOUNT_ID)).thenReturn(new Account());
@@ -162,13 +244,7 @@ public class SaasSubscriptionServiceTest {
         Assert.assertEquals(workspace.getAttributes().get("codenvy:runner_lifetime"), String.valueOf(TimeUnit.HOURS.toSeconds(1)));
         Assert.assertEquals(workspace.getAttributes().get("codenvy:builder_execution_time"),
                             String.valueOf(TimeUnit.MINUTES.toSeconds(20)));
-        verify(accountDao).update(argThat(new ArgumentMatcher<Account>() {
-            @Override
-            public boolean matches(Object argument) {
-                Account actual = (Account) argument;
-                return Collections.singletonMap("codenvy:multi-ws", "true").equals(actual.getAttributes());
-            }
-        }));
+        verify(accountDao, never()).update(any(Account.class));
     }
 
     @Test
@@ -189,13 +265,7 @@ public class SaasSubscriptionServiceTest {
         Assert.assertEquals(workspace.getAttributes().get("codenvy:runner_lifetime"), String.valueOf(TimeUnit.HOURS.toSeconds(1)));
         Assert.assertEquals(workspace.getAttributes().get("codenvy:builder_execution_time"),
                             String.valueOf(TimeUnit.MINUTES.toSeconds(20)));
-        verify(accountDao).update(argThat(new ArgumentMatcher<Account>() {
-            @Override
-            public boolean matches(Object argument) {
-                Account actual = (Account) argument;
-                return Collections.singletonMap("codenvy:multi-ws", "true").equals(actual.getAttributes());
-            }
-        }));
+        verify(accountDao, never()).update(any(Account.class));
     }
 
     @Test
@@ -205,7 +275,8 @@ public class SaasSubscriptionServiceTest {
         attributes.put("codenvy:runner_lifetime", "fake");
         final Workspace workspace = new Workspace().withId(WORKSPACE_ID)
                                                    .withAttributes(attributes);
-        final Subscription subscription = new Subscription().withAccountId(ACCOUNT_ID);
+        final Subscription subscription = new Subscription().withAccountId(ACCOUNT_ID).withProperties(
+                Collections.singletonMap("Package", "team"));
         when(workspaceDao.getByAccount(ACCOUNT_ID)).thenReturn(Arrays.asList(workspace));
         HashMap<String, String> accountAttributes = new HashMap<>();
         accountAttributes.put("codenvy:multi-ws", "true");
@@ -217,7 +288,7 @@ public class SaasSubscriptionServiceTest {
         verify(accountDao).update(argThat(new ArgumentMatcher<Account>() {
             @Override
             public boolean matches(Object argument) {
-                Account actual = (Account) argument;
+                Account actual = (Account)argument;
                 return actual.getAttributes().isEmpty();
             }
         }));
@@ -253,7 +324,8 @@ public class SaasSubscriptionServiceTest {
 
     @Test
     public void shouldSetDefaultRamForOneWorkspaceOnlyOnRemoveSubscription() throws Exception {
-        final Subscription subscription = new Subscription().withAccountId(ACCOUNT_ID);
+        final Subscription subscription =
+                new Subscription().withAccountId(ACCOUNT_ID).withProperties(Collections.singletonMap("Package", "team"));
         final Map<String, String> attributes = new HashMap<>(2);
         attributes.put("codenvy:runner_ram", "fake");
         attributes.put("codenvy:runner_lifetime", "fake");
@@ -292,7 +364,7 @@ public class SaasSubscriptionServiceTest {
         verify(accountDao).update(argThat(new ArgumentMatcher<Account>() {
             @Override
             public boolean matches(Object argument) {
-                Account actual = (Account) argument;
+                Account actual = (Account)argument;
                 return actual.getAttributes().isEmpty();
             }
         }));

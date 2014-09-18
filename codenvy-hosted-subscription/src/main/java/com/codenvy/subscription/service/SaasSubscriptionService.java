@@ -96,49 +96,44 @@ public class SaasSubscriptionService extends SubscriptionService {
 
     @Override
     public void afterCreateSubscription(Subscription subscription) throws ApiException {
-        addWorkspaceAttributes(subscription);
-        addAccountAttributes(subscription);
+        setResources(subscription);
     }
 
     @Override
     public void onRemoveSubscription(Subscription subscription) throws ServerException, NotFoundException, ConflictException {
-        removeWorkspaceAttributes(subscription);
-        removeAccountAttributes(subscription);
+        unsetResources(subscription);
     }
 
     @Override
     public void onCheckSubscription(Subscription subscription) throws ServerException, NotFoundException, ConflictException {
-        addWorkspaceAttributes(subscription);
-        addAccountAttributes(subscription);
+        setResources(subscription);
     }
 
     @Override
     public void onUpdateSubscription(Subscription oldSubscription, Subscription newSubscription)
             throws ServerException, NotFoundException, ConflictException {
-        addWorkspaceAttributes(newSubscription);
-        addAccountAttributes(newSubscription);
+        setResources(newSubscription);
     }
 
-    private void addAccountAttributes(Subscription subscription) throws NotFoundException, ServerException {
-        final Account account = accountDao.getById(subscription.getAccountId());
-        account.getAttributes().put("codenvy:multi-ws", "true");
-        accountDao.update(account);
-    }
-
-    private void removeAccountAttributes(Subscription subscription) throws NotFoundException, ServerException {
-        final Account account = accountDao.getById(subscription.getAccountId());
-        account.getAttributes().remove("codenvy:multi-ws");
-        accountDao.update(account);
-    }
-
-    private void addWorkspaceAttributes(Subscription subscription) throws NotFoundException, ConflictException, ServerException {
+    private void setResources(Subscription subscription) throws NotFoundException, ConflictException, ServerException {
         final Map<String, String> properties = subscription.getProperties();
         if (properties == null) {
             throw new ConflictException("Subscription properties required");
         }
+
+        final String tariffPackage = ensureExistsAndGet("Package", subscription);
+        if ("team".equals(tariffPackage) || "enterprise".equals(tariffPackage)) {
+            try {
+                final Account account = accountDao.getById(subscription.getAccountId());
+                account.getAttributes().put("codenvy:multi-ws", "true");
+                accountDao.update(account);
+            } catch (NotFoundException e) {
+                throw new ConflictException(e.getLocalizedMessage());
+            }
+        }
+
         List<Workspace> workspaces = workspaceDao.getByAccount(subscription.getAccountId());
         if (!workspaces.isEmpty()) {
-            final String tariffPackage = ensureExistsAndGet("Package", subscription);
             boolean ramIsSet = false;
             for (Workspace workspace : workspaces) {
                 final Map<String, String> wsAttributes = workspace.getAttributes();
@@ -180,7 +175,18 @@ public class SaasSubscriptionService extends SubscriptionService {
         return target;
     }
 
-    private void removeWorkspaceAttributes(Subscription subscription) throws NotFoundException, ServerException, ConflictException {
+    private void unsetResources(Subscription subscription) throws NotFoundException, ServerException, ConflictException {
+        final String tariffPackage = subscription.getProperties().get("Package");
+        if ("team".equals(tariffPackage) || "enterprise".equals(tariffPackage)) {
+            try {
+                final Account account = accountDao.getById(subscription.getAccountId());
+                account.getAttributes().remove("codenvy:multi-ws");
+                accountDao.update(account);
+            } catch (ApiException e) {
+                LOG.error(e.getLocalizedMessage(), e);
+            }
+        }
+
         boolean defaultRamUsed = false;
         for (Workspace workspace : workspaceDao.getByAccount(subscription.getAccountId())) {
             try {
