@@ -18,6 +18,7 @@
 package com.codenvy.analytics.services.view;
 
 import com.codenvy.analytics.Configurator;
+import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.StringValueData;
 import com.codenvy.analytics.datamodel.ValueData;

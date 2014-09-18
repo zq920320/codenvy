@@ -44,20 +44,20 @@ public class TestInitRowsCountForCVSReport {
     @DataProvider(name = "provider")
     public Object[][] actionFilterProvider() {
         return new Object[][]{
-                {"20130101","20131229", Parameters.TimeUnit.DAY, 362},
-                {"20140101","20140509", Parameters.TimeUnit.DAY, 128},
-                {"20140502","20140509", Parameters.TimeUnit.DAY, 7},
+                {"20130101","20131229", Parameters.TimeUnit.DAY, 364},
+                {"20140101","20140509", Parameters.TimeUnit.DAY, 130},
+                {"20140502","20140509", Parameters.TimeUnit.DAY, 9},
                 {"20130101","20140509", Parameters.TimeUnit.DAY, ViewBuilder.MAX_CSV_ROWS},
 
-                {"20130101","20140509", Parameters.TimeUnit.WEEK, 71},
-                {"20140101","20140509", Parameters.TimeUnit.WEEK, 19},
-                {"20140401","20140509", Parameters.TimeUnit.WEEK, 6},
-                {"20140503","20140509", Parameters.TimeUnit.WEEK, 1},
+                {"20130101","20140509", Parameters.TimeUnit.WEEK, 72},
+                {"20140101","20140509", Parameters.TimeUnit.WEEK, 20},
+                {"20140401","20140509", Parameters.TimeUnit.WEEK, 7},
+                {"20140503","20140509", Parameters.TimeUnit.WEEK, 3},
                 {"20140101","20250509", Parameters.TimeUnit.WEEK, ViewBuilder.MAX_CSV_ROWS},
 
-                {"20130101","20140509", Parameters.TimeUnit.MONTH, 17},
-                {"20140101","20140509", Parameters.TimeUnit.MONTH, 5},
-                {"20140501","20140509", Parameters.TimeUnit.MONTH, 1},
+                {"20130101","20140509", Parameters.TimeUnit.MONTH, 18},
+                {"20140101","20140509", Parameters.TimeUnit.MONTH, 6},
+                {"20140501","20140509", Parameters.TimeUnit.MONTH, 2},
                 {"20140501","20500509", Parameters.TimeUnit.MONTH, ViewBuilder.MAX_CSV_ROWS},
 
                 {"20140101","20140509", Parameters.TimeUnit.LIFETIME, 2},
