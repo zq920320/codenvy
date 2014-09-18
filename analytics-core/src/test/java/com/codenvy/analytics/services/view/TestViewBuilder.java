@@ -190,6 +190,188 @@ public class TestViewBuilder extends BaseTest {
         assertLastDayData(actualData.values().iterator().next());
     }
 
+    @Test
+    public void testCustomDateRangeWithDayUnit() throws Exception {
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.TIME_UNIT, Parameters.TimeUnit.DAY.toString());
+        builder.put(Parameters.FROM_DATE, "20130928");
+        builder.put(Parameters.TO_DATE, "20130930");
+        builder.put(Parameters.IS_CUSTOM_DATE_RANGE, "");
+
+        viewBuilder.computeDisplayData(builder.build());
+
+        ViewData actualData = viewBuilder.getViewData("view", builder.build());
+
+        assertEquals(actualData.size(), 1);
+
+        List<List<ValueData>> data = actualData.values().iterator().next();
+
+        assertEquals(3, data.size());
+
+        List<ValueData> dateRow = data.get(0);
+        assertEquals(4, dateRow.size());
+        assertEquals(new StringValueData("desc"), dateRow.get(0));
+        assertEquals("30 Sep", dateRow.get(1).getAsString());
+        assertEquals("29 Sep", dateRow.get(2).getAsString());
+        assertEquals("28 Sep", dateRow.get(3).getAsString());
+
+        List<ValueData> metricRow = data.get(1);
+        assertEquals(4, metricRow.size());
+        assertEquals(new StringValueData("Created Workspaces"), metricRow.get(0));
+        assertEquals(new StringValueData("5"), metricRow.get(1));
+        assertEquals(new StringValueData("5"), metricRow.get(2));
+        assertEquals(new StringValueData("5"), metricRow.get(3));
+
+        List<ValueData> emptyRow = data.get(2);
+        assertEquals(4, emptyRow.size());
+        assertEquals(StringValueData.DEFAULT, emptyRow.get(0));
+        assertEquals(StringValueData.DEFAULT, emptyRow.get(1));
+        assertEquals(StringValueData.DEFAULT, emptyRow.get(2));
+        assertEquals(StringValueData.DEFAULT, emptyRow.get(3));
+    }
+
+    @Test
+    public void testSameWeekCustomDateRangeWithWeekUnit() throws Exception {
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.TIME_UNIT, Parameters.TimeUnit.WEEK.toString());
+        builder.put(Parameters.FROM_DATE, "20131230");
+        builder.put(Parameters.TO_DATE, "20140102");      // same week
+        builder.put(Parameters.IS_CUSTOM_DATE_RANGE, "");
+
+        viewBuilder.computeDisplayData(builder.build());
+
+        ViewData actualData = viewBuilder.getViewData("view", builder.build());
+
+        assertEquals(actualData.size(), 1);
+
+        List<List<ValueData>> data = actualData.values().iterator().next();
+
+        assertEquals(3, data.size());
+
+        List<ValueData> dateRow = data.get(0);
+        assertEquals(2, dateRow.size());
+        assertEquals(new StringValueData("desc"), dateRow.get(0));
+        assertEquals("02 Jan", dateRow.get(1).getAsString());
+
+        List<ValueData> metricRow = data.get(1);
+        assertEquals(2, metricRow.size());
+        assertEquals(new StringValueData("Created Workspaces"), metricRow.get(0));
+        assertEquals(new StringValueData("5"), metricRow.get(1));
+
+        List<ValueData> emptyRow = data.get(2);
+        assertEquals(2, emptyRow.size());
+        assertEquals(StringValueData.DEFAULT, emptyRow.get(0));
+        assertEquals(StringValueData.DEFAULT, emptyRow.get(1));
+    }
+
+    @Test
+    public void testDifferentWeekCustomDateRangeWithWeekUnit() throws Exception {
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.TIME_UNIT, Parameters.TimeUnit.WEEK.toString());
+        builder.put(Parameters.FROM_DATE, "20131227");
+        builder.put(Parameters.TO_DATE, "20140102");    // different week
+        builder.put(Parameters.IS_CUSTOM_DATE_RANGE, "");
+
+        viewBuilder.computeDisplayData(builder.build());
+
+        ViewData actualData = viewBuilder.getViewData("view", builder.build());
+
+        assertEquals(1, actualData.size());
+
+        List<List<ValueData>> data = actualData.values().iterator().next();
+
+        assertEquals(3, data.size());
+
+        List<ValueData> dateRow = data.get(0);
+        assertEquals(3, dateRow.size());
+        assertEquals(new StringValueData("desc"), dateRow.get(0));
+        assertEquals("02 Jan", dateRow.get(1).getAsString());
+        assertEquals("28 Dec", dateRow.get(2).getAsString());
+
+        List<ValueData> metricRow = data.get(1);
+        assertEquals(3, metricRow.size());
+        assertEquals(new StringValueData("Created Workspaces"), metricRow.get(0));
+        assertEquals(new StringValueData("5"), metricRow.get(1));
+        assertEquals(new StringValueData("5"), metricRow.get(2));
+
+        List<ValueData> emptyRow = data.get(2);
+        assertEquals(3, emptyRow.size());
+        assertEquals(StringValueData.DEFAULT, emptyRow.get(0));
+        assertEquals(StringValueData.DEFAULT, emptyRow.get(1));
+        assertEquals(StringValueData.DEFAULT, emptyRow.get(2));
+    }
+
+    @Test
+    public void testSameMonthCustomDateRangeWithMonthUnit() throws Exception {
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.TIME_UNIT, Parameters.TimeUnit.MONTH.toString());
+        builder.put(Parameters.FROM_DATE, "20140106");
+        builder.put(Parameters.TO_DATE, "20140126");   // same month
+        builder.put(Parameters.IS_CUSTOM_DATE_RANGE, "");
+
+        viewBuilder.computeDisplayData(builder.build());
+
+        ViewData actualData = viewBuilder.getViewData("view", builder.build());
+
+        assertEquals(1, actualData.size());
+
+        List<List<ValueData>> data = actualData.values().iterator().next();
+
+        assertEquals(3, data.size());
+
+        List<ValueData> dateRow = data.get(0);
+        assertEquals(2, dateRow.size());
+        assertEquals(new StringValueData("desc"), dateRow.get(0));
+        assertEquals("Jan 2014", dateRow.get(1).getAsString());
+
+        List<ValueData> metricRow = data.get(1);
+        assertEquals(2, metricRow.size());
+        assertEquals(new StringValueData("Created Workspaces"), metricRow.get(0));
+        assertEquals(new StringValueData("5"), metricRow.get(1));
+
+        List<ValueData> emptyRow = data.get(2);
+        assertEquals(2, emptyRow.size());
+        assertEquals(StringValueData.DEFAULT, emptyRow.get(0));
+        assertEquals(StringValueData.DEFAULT, emptyRow.get(1));
+    }
+
+    @Test
+    public void testDifferentMonthCustomDateRangeWithMonthUnit() throws Exception {
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.TIME_UNIT, Parameters.TimeUnit.MONTH.toString());
+        builder.put(Parameters.FROM_DATE, "20131227");
+        builder.put(Parameters.TO_DATE, "20140102");    // different month
+        builder.put(Parameters.IS_CUSTOM_DATE_RANGE, "");
+
+        viewBuilder.computeDisplayData(builder.build());
+
+        ViewData actualData = viewBuilder.getViewData("view", builder.build());
+
+        assertEquals(actualData.size(), 1);
+
+        List<List<ValueData>> data = actualData.values().iterator().next();
+
+        assertEquals(3, data.size());
+
+        List<ValueData> dateRow = data.get(0);
+        assertEquals(3, dateRow.size());
+        assertEquals(new StringValueData("desc"), dateRow.get(0));
+        assertEquals("Jan 2014", dateRow.get(1).getAsString());
+        assertEquals("Dec 2013", dateRow.get(2).getAsString());
+
+        List<ValueData> metricRow = data.get(1);
+        assertEquals(3, metricRow.size());
+        assertEquals(new StringValueData("Created Workspaces"), metricRow.get(0));
+        assertEquals(new StringValueData("5"), metricRow.get(1));
+        assertEquals(new StringValueData("5"), metricRow.get(2));
+
+        List<ValueData> emptyRow = data.get(2);
+        assertEquals(3, emptyRow.size());
+        assertEquals(StringValueData.DEFAULT, emptyRow.get(0));
+        assertEquals(StringValueData.DEFAULT, emptyRow.get(1));
+        assertEquals(StringValueData.DEFAULT, emptyRow.get(2));
+    }
+
     private void assertSpecificDayData(List<List<ValueData>> data) {
         assertEquals(3, data.size());
 

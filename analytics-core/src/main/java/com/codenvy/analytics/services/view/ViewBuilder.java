@@ -40,10 +40,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveAction;
@@ -283,7 +280,7 @@ public class ViewBuilder extends Feature {
 
                 return viewData;
             } catch (NoSuchMethodException | ClassCastException | ClassNotFoundException | InvocationTargetException |
-                    IllegalAccessException | InstantiationException e) {
+                IllegalAccessException | InstantiationException | ParseException e) {
                 throw new IOException(e);
             } finally {
                 LOG.info("ViewBuilder is finished in " + (System.currentTimeMillis() - start) / 1000 + " sec. for " +
@@ -322,7 +319,7 @@ public class ViewBuilder extends Feature {
         }
         builder.put(Parameters.REPORT_DATE, builder.getAsString(Parameters.TO_DATE));
 
-        if (context.exists(Parameters.TIME_UNIT)) {
+        if (context.exists(Parameters.TIME_UNIT) && !context.exists(Parameters.IS_CUSTOM_DATE_RANGE)) {
             Parameters.TimeUnit timeUnit = builder.getTimeUnit();
             if (context.exists(Parameters.TIME_INTERVAL)) {
                 int timeShift = (int)-context.getAsLong(Parameters.TIME_INTERVAL);
@@ -339,11 +336,16 @@ public class ViewBuilder extends Feature {
         }
     }
 
-    private int getRowCount(int rowCountFromConf, Context context) {
+    private int getRowCount(int rowCountFromConf, Context context) throws ParseException {
         if (context.exists(Parameters.REPORT_ROWS)) {
             return (int)context.getAsLong(Parameters.REPORT_ROWS);
         } else if (context.exists(Parameters.TIME_UNIT) && context.getTimeUnit() == Parameters.TimeUnit.LIFETIME) {
             return 2;
+        } else if (context.exists(Parameters.TIME_UNIT)
+                   && context.exists(Parameters.IS_CUSTOM_DATE_RANGE)) {
+            Calendar fromDate = context.getAsDate(Parameters.FROM_DATE);
+            Calendar toDate = context.getAsDate(Parameters.TO_DATE);
+            return Utils.getUnitsAboveDates(context.getTimeUnit(), fromDate, toDate) + 1; // add one for metric name row
         } else {
             return rowCountFromConf;
         }

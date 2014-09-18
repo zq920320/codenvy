@@ -22,6 +22,12 @@
 <head>
     <title>Summary Report</title>
     <%@ include file="/inclusions/header.jsp"%>
+    <style type="text/css">
+        /* redefine style of Accordion Widget of jQuery UI (@see http://api.jqueryui.com/accordion/#method-disable ) */
+        .ui-accordion {
+            width: 550px;
+        }
+    </style>
 </head>
 <body>
 
@@ -34,6 +40,34 @@
     <div class="row-fluid">
         <div>
             <div class="well topFilteringPanel">
+                <div id="filter-by" class="left" targetWidgets="_all">
+                    <div class="collabsiblePanelTitle">Filter</div>
+                    <div class="collabsiblePanelBody">
+                        <table>
+                            <tr>
+                                <td><label for="datepicker-to-date" class="right">To Date:</label></td>
+                                <td>
+                                    <div class="filter-item">
+                                        <input type="text" id="datepicker-to-date" name="to_date" class="short-date-box"/>
+                                    </div>
+                                </td>
+                                <td>&nbsp;&nbsp;&nbsp;</td>
+                                <td><label for="datepicker-from-date">From Date:</label></td>
+                                <td>
+                                    <div class="filter-item">
+                                        <input type="text" id="datepicker-from-date" name="from_date" class="short-date-box"/>
+                                    </div>
+                                </td>
+                                <td>&nbsp;&nbsp;&nbsp;</td>
+                                <td><div>
+                                    <button class="btn command-btn btn-primary">Filter</button>
+                                    <button id="clearSelectionBtn" class="btn btn-small clear-btn">Clear</button>
+                                </div></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
                 <div id="timely-dd" class="btn-group right" targetWidgets="_all">
                     <button class="btn command-btn" value="Day">Day</button>
                     <button class="btn command-btn" value="Week">Week</button>

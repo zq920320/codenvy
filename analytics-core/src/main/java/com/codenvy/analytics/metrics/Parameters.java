@@ -161,6 +161,8 @@ public enum Parameters {
             }
         }
     },
+    IS_CUSTOM_DATE_RANGE,  // existence of this parameter indicates that user set date range through URL parameters; could contain any String value.
+
     USER {
         @Override
         public void validate(String value, Context context) throws IllegalArgumentException {

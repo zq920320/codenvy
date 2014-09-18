@@ -21,10 +21,7 @@ package com.codenvy.analytics.services.view;
 import com.codenvy.analytics.Injector;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.*;
-import com.codenvy.analytics.metrics.Context;
-import com.codenvy.analytics.metrics.InitialValueNotFoundException;
-import com.codenvy.analytics.metrics.Metric;
-import com.codenvy.analytics.metrics.MetricFactory;
+import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.pig.scripts.EventsHolder;
 
 import java.io.IOException;
@@ -163,11 +160,23 @@ public class MetricRow extends AbstractRow {
             if (isMultipleColumnsMetric()) {
                 return getMultipleValues(initialContext);
             } else {
-                return getSingleValue(initialContext, iterationsCount);
+                Calendar fixedFromDate = getFixedFromDate(initialContext);
+                return getSingleValue(initialContext.cloneAndPut(Parameters.FROM_DATE, fixedFromDate), iterationsCount);
             }
         } catch (ParseException e) {
             throw new IOException(e);
         }
+    }
+
+    private Calendar getFixedFromDate(Context context) throws ParseException {
+        if (context.exists(Parameters.IS_CUSTOM_DATE_RANGE)
+            && context.exists(Parameters.TIME_UNIT)
+            && context.getTimeUnit() != Parameters.TimeUnit.LIFETIME
+            ) {
+            return Utils.getFirstDayDate(context.getTimeUnit(), context.getAsDate(Parameters.TO_DATE));
+        }
+
+        return context.getAsDate(Parameters.FROM_DATE);
     }
 
     private boolean isMultipleColumnsMetric() {

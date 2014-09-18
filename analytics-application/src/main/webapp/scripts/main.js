@@ -419,7 +419,9 @@ function Main() {
         }
         
         // display filter panel as opened if there is at least one non-empty filter parameter
-        analytics.views.accordion.display("filter-by", isParamExists);
+        if (typeof analytics.views.accordion != "undefined") {
+            analytics.views.accordion.display("filter-by", isParamExists);
+        }
     }
     
     function clearFilter() {

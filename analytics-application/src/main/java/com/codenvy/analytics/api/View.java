@@ -186,6 +186,10 @@ public class View {
 
             com.codenvy.analytics.metrics.Context context = valueOf(params);
 
+            if (context.exists(Parameters.FROM_DATE)) {
+                context = context.cloneAndPut(Parameters.IS_CUSTOM_DATE_RANGE, "");
+            }
+
             ViewData result = viewBuilder.getViewData(name, context);
             result = supplyUserWsIdWithNames(result);
             String json = transformToJson(result);
@@ -212,6 +216,10 @@ public class View {
 
             if (context.exists(Parameters.TIME_UNIT)) {
                 context = com.codenvy.analytics.Utils.initRowsCountForCSVReport(context);
+            }
+
+            if (context.exists(Parameters.FROM_DATE)) {
+                context = context.cloneAndPut(Parameters.IS_CUSTOM_DATE_RANGE, "");
             }
 
             ViewData result = viewBuilder.getViewData(viewName, context);

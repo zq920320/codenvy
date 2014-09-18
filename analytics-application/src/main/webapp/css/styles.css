@@ -163,6 +163,10 @@ div.jqplot-table-legend-swatch-outline {
     font-size: 11px !important;
 }
 
+.short-date-box {
+    width: 65px;
+}
+
 .collabsiblePanelTitle {
     padding: 5px 10px !important;
 }

@@ -31,11 +31,9 @@ import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
-import org.joda.time.Days;
-import org.joda.time.LocalDate;
-import org.joda.time.Months;
-import org.joda.time.Weeks;
+import org.joda.time.*;
 
+import javax.annotation.Nullable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.text.DateFormat;
@@ -191,9 +189,6 @@ public class Utils {
      * Calculate FROM_DATE and TO_DATE parameters of context:
      * FROM_DATE will be = @param toDate - @param passedDaysCount)
      * TO_DATE will be = @param toDate
-     *
-     * @param timeShift
-     *         = starting from 0 to represent current time period.
      */
     public static Context initDateInterval(Calendar toDate, PassedDaysCount passedDaysCount, Builder builder) {
         switch (passedDaysCount) {
@@ -257,28 +252,46 @@ public class Utils {
     }
 
     public static Context initRowsCountForCSVReport(Context context) throws ParseException {
-        LocalDate fromDate = new LocalDate(context.getAsDate(Parameters.FROM_DATE));
-        LocalDate toDate = new LocalDate(context.getAsDate(Parameters.TO_DATE));
+        Calendar fromDate = context.getAsDate(Parameters.FROM_DATE);
+        Calendar toDate = context.getAsDate(Parameters.TO_DATE);
 
-        long rows = 0;
-
-        switch (context.getTimeUnit()) {
-            case DAY:
-                rows = Days.daysBetween(fromDate, toDate).getDays();
-                break;
-            case WEEK:
-                rows = Weeks.weeksBetween(fromDate, toDate).getWeeks() + 1; // add one for current week
-                break;
-            case MONTH:
-                rows = Months.monthsBetween(fromDate, toDate).getMonths() + 1; // add one for current month
-                break;
-            case LIFETIME:
-                rows = 2;
-                break;
-        }
+        int rows = getUnitsAboveDates(context.getTimeUnit(), fromDate, toDate) + 1; // add one for metric name row
 
         return context.cloneAndPut(Parameters.REPORT_ROWS,
                                    (rows > ViewBuilder.MAX_CSV_ROWS ? ViewBuilder.MAX_CSV_ROWS : rows));
+    }
+
+    /**
+     * Returns number of units between the dates, taking into account incomplete weeks and months.
+     */
+    public static int getUnitsAboveDates(TimeUnit timeUnit, Calendar fromDate, Calendar toDate) {
+        switch (timeUnit) {
+            case DAY:
+                return Days.daysBetween(new LocalDate(fromDate), new LocalDate(toDate)).getDays() + 1;  // add one for last day
+
+            case WEEK:
+                fromDate.set(Calendar.DAY_OF_WEEK, fromDate.getFirstDayOfWeek());
+                toDate.set(Calendar.DAY_OF_WEEK, toDate.getFirstDayOfWeek());
+                if (fromDate.getTime() != toDate.getTime()) {
+                    toDate.add(Calendar.WEEK_OF_MONTH, 1);
+                }
+
+                return Weeks.weeksBetween(new LocalDate(fromDate), new LocalDate(toDate)).getWeeks();
+
+            case MONTH:
+                fromDate.set(Calendar.DAY_OF_MONTH, 1);
+                toDate.set(Calendar.DAY_OF_MONTH, 1);
+                if (fromDate.getTime() != toDate.getTime()) {
+                    toDate.add(Calendar.MONTH, 1);
+                }
+
+                return Months.monthsBetween(new LocalDate(fromDate), new LocalDate(toDate)).getMonths();
+
+            case LIFETIME:
+                return 1;
+        }
+        
+        return 0;
     }
 
     public static String getFilterAsString(Set<String> values) {
@@ -499,6 +512,27 @@ public class Utils {
         c_list.retainAll(b_list);
 
         return c_list.toArray(new String[0]);
+    }
+
+    /**
+     * @return date of first day of time unit containing toDate.
+     */
+    @Nullable
+    public static Calendar getFirstDayDate(TimeUnit timeUnit, Calendar toDate) {
+        switch (timeUnit) {
+            case DAY:
+                return toDate;
+
+            case WEEK:
+                toDate.set(Calendar.DAY_OF_WEEK, toDate.getFirstDayOfWeek());
+                return toDate;
+
+            case MONTH:
+                toDate.set(Calendar.DAY_OF_MONTH, 1);
+                return toDate;
+        }
+
+        return null;
     }
 }
 
