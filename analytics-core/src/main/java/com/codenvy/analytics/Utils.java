@@ -245,16 +245,6 @@ public class Utils {
         return new BasicDBObject(ReadBasedMetric.DATE, dateFilter);
     }
 
-    public static Context initRowsCountForCSVReport(Context context) throws ParseException {
-        Calendar fromDate = context.getAsDate(Parameters.FROM_DATE);
-        Calendar toDate = context.getAsDate(Parameters.TO_DATE);
-
-        int rows = getUnitsAboveDates(context.getTimeUnit(), fromDate, toDate) + 1; // add one for metric name row
-
-        return context.cloneAndPut(Parameters.REPORT_ROWS,
-                                   (rows > ViewBuilder.MAX_CSV_ROWS ? ViewBuilder.MAX_CSV_ROWS : rows));
-    }
-
     /**
      * Returns number of units between the dates, taking into account incomplete weeks and months.
      */

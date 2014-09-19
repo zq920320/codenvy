@@ -61,7 +61,7 @@ import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsList;
 @Singleton
 public class ViewBuilder extends Feature {
 
-    public static final int MAX_CSV_ROWS = 365;
+    public static final int MAX_ROWS = 365;
 
     private static final Logger LOG                 = LoggerFactory.getLogger(ViewBuilder.class);
     private static final String VIEWS_CONFIGURATION = "analytics.views";
@@ -171,7 +171,6 @@ public class ViewBuilder extends Feature {
     private boolean isSimplified(Context context) {
         return !context.exists(Parameters.SORT)
                && !context.exists(Parameters.PAGE)
-               && !context.exists(Parameters.REPORT_ROWS)
                && (!context.exists(Parameters.FROM_DATE) || context.isDefaultValue(Parameters.FROM_DATE))
                && (!context.exists(Parameters.TO_DATE) || context.isDefaultValue(Parameters.TO_DATE))
                && context.getFilters().isEmpty();
@@ -323,7 +322,7 @@ public class ViewBuilder extends Feature {
                                                             IllegalAccessException,
                                                             InvocationTargetException {
             String className = rowConf.getClazz();
-            if (context.exists(Parameters.REPORT_ROWS) && DateRow.class.getName().equals(className)) {
+            if (context.exists(Parameters.IS_CSV_DATA) && DateRow.class.getName().equals(className)) {
                 className = CVSDateRow.class.getName();
             }
 
@@ -366,15 +365,15 @@ public class ViewBuilder extends Feature {
     }
 
     private int getRowCount(int rowCountFromConf, Context context) throws ParseException {
-        if (context.exists(Parameters.REPORT_ROWS)) {
-            return (int)context.getAsLong(Parameters.REPORT_ROWS);
-        } else if (context.exists(Parameters.TIME_UNIT) && context.getTimeUnit() == Parameters.TimeUnit.LIFETIME) {
+        if (context.exists(Parameters.TIME_UNIT) && context.getTimeUnit() == Parameters.TimeUnit.LIFETIME) {
             return 2;
         } else if (context.exists(Parameters.TIME_UNIT)
                    && context.exists(Parameters.IS_CUSTOM_DATE_RANGE)) {
             Calendar fromDate = context.getAsDate(Parameters.FROM_DATE);
             Calendar toDate = context.getAsDate(Parameters.TO_DATE);
-            return Utils.getUnitsAboveDates(context.getTimeUnit(), fromDate, toDate) + 1; // add one for metric name row
+            int rows = Utils.getUnitsAboveDates(context.getTimeUnit(), fromDate, toDate) + 1; // add one for metric name row
+
+            return (rows > ViewBuilder.MAX_ROWS) ? ViewBuilder.MAX_ROWS : rows;
         } else {
             return rowCountFromConf;
         }

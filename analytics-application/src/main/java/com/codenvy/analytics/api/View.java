@@ -214,9 +214,7 @@ public class View {
 
             com.codenvy.analytics.metrics.Context context = valueOf(params);
 
-            if (context.exists(Parameters.TIME_UNIT)) {
-                context = com.codenvy.analytics.Utils.initRowsCountForCSVReport(context);
-            }
+            context.cloneAndPut(Parameters.IS_CSV_DATA, "");
 
             if (context.exists(Parameters.FROM_DATE)) {
                 context = context.cloneAndPut(Parameters.IS_CUSTOM_DATE_RANGE, "");

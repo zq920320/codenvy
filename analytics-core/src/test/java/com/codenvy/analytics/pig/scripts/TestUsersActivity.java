@@ -161,7 +161,7 @@ public class TestUsersActivity extends BaseTest {
                               {"", 3}};
     }
 
-    @DataProvider(name = "actionFilterProvider")
+    @DataProvider(name = "testDataProvider")
     public Object[][] actionFilterProvider() {
         return new Object[][]{{"action1", 1},
                               {"IDE usage", 1}};

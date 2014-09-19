@@ -187,7 +187,9 @@ public enum Parameters {
 
     },
     ORIGINAL_USER,
-    ORIGINAL_WS;
+    ORIGINAL_WS,
+
+    IS_CSV_DATA;
 
     /** @return the default value for given parameter. */
     public String getDefaultValue() {

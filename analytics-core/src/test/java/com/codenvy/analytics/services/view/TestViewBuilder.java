@@ -372,6 +372,28 @@ public class TestViewBuilder extends BaseTest {
         assertEquals(StringValueData.DEFAULT, emptyRow.get(2));
     }
 
+    @Test
+    public void testMaxRowsCountConstraint() throws Exception {
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.TIME_UNIT, Parameters.TimeUnit.DAY.toString());
+        builder.put(Parameters.FROM_DATE, "20101227");
+        builder.put(Parameters.TO_DATE, "20140102");    // more then ViewBuilder.MAX_ROWS
+        builder.put(Parameters.IS_CUSTOM_DATE_RANGE, "");
+
+        viewBuilder.computeDisplayData(builder.build());
+
+        ViewData actualData = viewBuilder.getViewData("view", builder.build());
+
+        assertEquals(1, actualData.size());
+
+        List<List<ValueData>> data = actualData.values().iterator().next();
+
+        assertEquals(3, data.size());
+
+        List<ValueData> dateRow = data.get(0);
+        assertEquals(ViewBuilder.MAX_ROWS, dateRow.size());
+    }
+
     private void assertSpecificDayData(List<List<ValueData>> data) {
         assertEquals(3, data.size());
 
