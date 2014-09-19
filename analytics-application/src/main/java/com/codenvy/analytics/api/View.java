@@ -78,12 +78,18 @@ public class View {
                                    @Context SecurityContext securityContext) {
 
         try {
-            Map<String, String> context = utils.extractParams(uriInfo,
+            Map<String, String> params = utils.extractParams(uriInfo,
                                                               page,
                                                               perPage,
                                                               securityContext);
 
-            ValueData value = getMetricValue(metricName, valueOf(context));
+            com.codenvy.analytics.metrics.Context context = valueOf(params);
+
+            if (context.exists(Parameters.FROM_DATE)) {
+                context = context.cloneAndPut(Parameters.IS_CUSTOM_DATE_RANGE, "");
+            }
+
+            ValueData value = getMetricValue(metricName, context);
             MetricValueDTO outputValue = getMetricValueDTO(metricName, value);
             return Response.status(Response.Status.OK).entity(outputValue).build();
         } catch (MetricNotFoundException e) {
@@ -105,7 +111,14 @@ public class View {
 
         try {
             Map<String, String> params = utils.extractParams(uriInfo, securityContext);
-            ListValueData value = getSummarizedMetricValue(metricName, valueOf(params));
+
+            com.codenvy.analytics.metrics.Context context = valueOf(params);
+
+            if (context.exists(Parameters.FROM_DATE)) {
+                context = context.cloneAndPut(Parameters.IS_CUSTOM_DATE_RANGE, "");
+            }
+
+            ListValueData value = getSummarizedMetricValue(metricName, context);
 
             Map<String, String> m;
             if (value.size() == 0) {
@@ -153,12 +166,18 @@ public class View {
                                            @Context SecurityContext securityContext) {
 
         try {
-            Map<String, String> context = utils.extractParams(uriInfo,
-                                                              page,
-                                                              perPage,
-                                                              securityContext);
+            Map<String, String> params = utils.extractParams(uriInfo,
+                                                             page,
+                                                             perPage,
+                                                             securityContext);
 
-            ValueData value = getExpandedMetricValue(metricName, valueOf(context));
+            com.codenvy.analytics.metrics.Context context = valueOf(params);
+
+            if (context.exists(Parameters.FROM_DATE)) {
+                context = context.cloneAndPut(Parameters.IS_CUSTOM_DATE_RANGE, "");
+            }
+
+            ValueData value = getExpandedMetricValue(metricName, context);
             ViewData result = viewBuilder.getViewData(value);
             result = supplyUserWsIdWithNames(result);
             String json = transformToJson(result);

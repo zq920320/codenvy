@@ -54,7 +54,7 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
     private static final String TEST_WS_ID = "wsid1";
     private static final String TEST_USER  = "user1_@gmail.com";
     private static final String SESSION_ID = "session_id";
-    private static final String TEST_COMPANY = "comp";    
+    private static final String TEST_COMPANY = "comp";
 
     @BeforeClass
     public void prepareDatabase() throws Exception {
@@ -78,33 +78,33 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
         events.add(Event.Builder.createWorkspaceCreatedEvent("ws2", "wsid2", TEST_USER)
                                 .withDate("2013-11-01").withTime("08:41:00").build());
 
-        events.add(Event.Builder.createUserUpdateProfile(TEST_USER, 
+        events.add(Event.Builder.createUserUpdateProfile(TEST_USER,
                                                          TEST_USER,
                                                          TEST_USER,
-                                                         "first name 1", 
-                                                         "last name 1", 
-                                                         TEST_COMPANY, 
-                                                         "555-444-333", 
+                                                         "first name 1",
+                                                         "last name 1",
+                                                         TEST_COMPANY,
+                                                         "555-444-333",
                                                          "adm")
                                 .withDate("2013-11-01").withTime("08:50:00").build());
-        
+
         events.add(Event.Builder.createUserCreatedEvent("user2@gmail.com", "user2@gmail.com", "user2@gmail.com")
                                 .withDate("2013-11-01").withTime("08:51:00").build());
 
         events.add(Event.Builder.createWorkspaceCreatedEvent("ws3", "wsid3", "user2@gmail.com")
                                 .withDate("2013-11-01").withTime("08:52:00").build());
-        
-        events.add(Event.Builder.createUserUpdateProfile("user2@gmail.com", 
+
+        events.add(Event.Builder.createUserUpdateProfile("user2@gmail.com",
                                                          "user2@gmail.com",
                                                          "user2@gmail.com",
-                                                         "first name 2", 
-                                                         "last name 3", 
-                                                         TEST_COMPANY, 
-                                                         "555-444-333", 
+                                                         "first name 2",
+                                                         "last name 3",
+                                                         TEST_COMPANY,
+                                                         "555-444-333",
                                                          "develop")
                                 .withDate("2013-11-01").withTime("08:52:00").build());
-        
-        
+
+
         // create user from factory
         events.add(Event.Builder.createFactoryUrlAcceptedEvent("tmp-4", "factoryUrl1", "referrer1", "org1", "affiliate1")
                                 .withDate("2013-11-01").withTime("09:01:00").build());
@@ -123,16 +123,16 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
 
         // create factory session events
         events.add(
-                Event.Builder.createSessionUsageEvent("user1@gmail.com", "tmp-1", "factory-id1", "2013-11-01 10:00:00", "2013-11-01 10:05:00", true)
-                             .withDate("2013-11-01").withTime("10:00:00").build());
+            Event.Builder.createSessionUsageEvent("user1@gmail.com", "tmp-1", "factory-id1", "2013-11-01 10:00:00", "2013-11-01 10:05:00", true)
+                         .withDate("2013-11-01").withTime("10:00:00").build());
 
         events.add(
-                Event.Builder.createSessionUsageEvent("user1@gmail.com", "tmp-2", "factory-id2", "2013-11-01 10:20:00", "2013-11-01 10:30:00", true)
-                             .withDate("2013-11-01").withTime("10:20:00").build());
+            Event.Builder.createSessionUsageEvent("user1@gmail.com", "tmp-2", "factory-id2", "2013-11-01 10:20:00", "2013-11-01 10:30:00", true)
+                         .withDate("2013-11-01").withTime("10:20:00").build());
 
         events.add(
-                Event.Builder.createSessionUsageEvent("anonymoususer_1", "tmp-3", "factory-id3", "2013-11-01 11:00:00", "2013-11-01 11:15:00", true)
-                             .withDate("2013-11-01").withTime("11:00:00").build());
+            Event.Builder.createSessionUsageEvent("anonymoususer_1", "tmp-3", "factory-id3", "2013-11-01 11:00:00", "2013-11-01 11:15:00", true)
+                         .withDate("2013-11-01").withTime("11:00:00").build());
 
         events.add(Event.Builder.createFactoryProjectImportedEvent("tmp-1", "user1@gmail.com", "project", "type")
                                 .withDate("2013-11-01").withTime("10:05:00").build());
@@ -149,7 +149,7 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
         events.add(Event.Builder.createTenantCreatedEvent("tmp-2", "user1@gmail.com")
                                 .withDate("2013-11-01").withTime("12:01:00").build());
         events.add(Event.Builder.createTenantCreatedEvent("tmp-3", "user1@gmail.com")
-                                .withDate("2013-11-01").withTime("12:02:00").build());        
+                                .withDate("2013-11-01").withTime("12:02:00").build());
 
         // build event for session #1
         events.add(Event.Builder.createBuildStartedEvent("user1@gmail.com", "tmp-1", "project", "type", "id1")
@@ -176,14 +176,14 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
 
         // start main session
         events.add(
-                Event.Builder
-                        .createSessionUsageEvent(TEST_USER, TEST_WS, SESSION_ID, "2013-11-01 19:00:00", "2013-11-01 19:55:00", false)
-                        .withDate("2013-11-01").withTime("19:00:00").build());
+            Event.Builder
+                .createSessionUsageEvent(TEST_USER, TEST_WS, SESSION_ID, "2013-11-01 19:00:00", "2013-11-01 19:55:00", false)
+                .withDate("2013-11-01").withTime("19:00:00").build());
 
         events.add(
-                Event.Builder
-                        .createSessionUsageEvent("user4@gmail.com", TEST_WS, SESSION_ID + "_micro", "2013-11-01 23:00:00", "2013-11-01 23:00:30", false)
-                        .withDate("2013-11-01").withTime("23:00:00").build());
+            Event.Builder
+                .createSessionUsageEvent("user4@gmail.com", TEST_WS, SESSION_ID + "_micro", "2013-11-01 23:00:00", "2013-11-01 23:00:30", false)
+                .withDate("2013-11-01").withTime("23:00:00").build());
 
 
         // create test projects and deploy they into PaaS
@@ -225,86 +225,86 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
         // add user6@gmail.com activity (6 sessions && (120min < time < 300min)) for test
         // testAbstractTimelineProductUsageConditionMetric
         events.add(
-                Event.Builder
-                        .createSessionUsageEvent("user6@gmail.com", TEST_WS, "user6@gmail.com1", "2013-11-20 01:00:00", "2013-11-20 03:01:00", false)
-                        .withDate("2013-11-20").withTime("01:00:00").build());
+            Event.Builder
+                .createSessionUsageEvent("user6@gmail.com", TEST_WS, "user6@gmail.com1", "2013-11-20 01:00:00", "2013-11-20 03:01:00", false)
+                .withDate("2013-11-20").withTime("01:00:00").build());
 
 
         events.add(
-                Event.Builder
-                        .createSessionUsageEvent("user6@gmail.com", TEST_WS, "user6@gmail.com2", "2013-11-20 04:00:00", "2013-11-20 04:01:00", false)
-                        .withDate("2013-11-20").withTime("04:00:00").build());
+            Event.Builder
+                .createSessionUsageEvent("user6@gmail.com", TEST_WS, "user6@gmail.com2", "2013-11-20 04:00:00", "2013-11-20 04:01:00", false)
+                .withDate("2013-11-20").withTime("04:00:00").build());
 
         events.add(
-                Event.Builder
-                        .createSessionUsageEvent("user6@gmail.com", TEST_WS, "user6@gmail.com3", "2013-11-20 05:00:00", "2013-11-20 05:01:00", false)
-                        .withDate("2013-11-20").withTime("05:00:00").build());
+            Event.Builder
+                .createSessionUsageEvent("user6@gmail.com", TEST_WS, "user6@gmail.com3", "2013-11-20 05:00:00", "2013-11-20 05:01:00", false)
+                .withDate("2013-11-20").withTime("05:00:00").build());
 
 
         events.add(
-                Event.Builder
-                        .createSessionUsageEvent("user6@gmail.com", TEST_WS, "user6@gmail.com4", "2013-11-20 06:00:00", "2013-11-20 06:01:00", false)
-                        .withDate("2013-11-20").withTime("06:00:00").build());
+            Event.Builder
+                .createSessionUsageEvent("user6@gmail.com", TEST_WS, "user6@gmail.com4", "2013-11-20 06:00:00", "2013-11-20 06:01:00", false)
+                .withDate("2013-11-20").withTime("06:00:00").build());
 
         events.add(
-                Event.Builder
-                        .createSessionUsageEvent("user6@gmail.com", TEST_WS, "user6@gmail.com5", "2013-11-20 07:00:00", "2013-11-20 07:01:00", false)
-                        .withDate("2013-11-20").withTime("07:00:00").build());
+            Event.Builder
+                .createSessionUsageEvent("user6@gmail.com", TEST_WS, "user6@gmail.com5", "2013-11-20 07:00:00", "2013-11-20 07:01:00", false)
+                .withDate("2013-11-20").withTime("07:00:00").build());
 
         events.add(
-                Event.Builder
-                        .createSessionUsageEvent("user6@gmail.com", TEST_WS, "user6@gmail.com6", "2013-11-20 08:00:00", "2013-11-20 08:01:00", false)
-                        .withDate("2013-11-20").withTime("08:00:00").build());
+            Event.Builder
+                .createSessionUsageEvent("user6@gmail.com", TEST_WS, "user6@gmail.com6", "2013-11-20 08:00:00", "2013-11-20 08:01:00", false)
+                .withDate("2013-11-20").withTime("08:00:00").build());
 
 
         // add user7@gmail.com activity (6 sessions, time > 300 min) for test
         // testAbstractTimelineProductUsageConditionMetric
         events.add(
-                Event.Builder
-                        .createSessionUsageEvent("user7@gmail.com", TEST_WS, "user7@gmail.com1", "2013-12-20 01:00:00", "2013-12-20 03:15:00", false)
-                        .withDate("2013-12-20").withTime("01:00:00").build());
+            Event.Builder
+                .createSessionUsageEvent("user7@gmail.com", TEST_WS, "user7@gmail.com1", "2013-12-20 01:00:00", "2013-12-20 03:15:00", false)
+                .withDate("2013-12-20").withTime("01:00:00").build());
 
 
         events.add(
-                Event.Builder
-                        .createSessionUsageEvent("user7@gmail.com", TEST_WS, "user7@gmail.com2", "2013-12-20 04:00:00", "2013-12-20 06:15:00", false)
-                        .withDate("2013-12-20").withTime("04:00:00").build());
+            Event.Builder
+                .createSessionUsageEvent("user7@gmail.com", TEST_WS, "user7@gmail.com2", "2013-12-20 04:00:00", "2013-12-20 06:15:00", false)
+                .withDate("2013-12-20").withTime("04:00:00").build());
 
 
         events.add(
-                Event.Builder
-                        .createSessionUsageEvent("user7@gmail.com", TEST_WS, "user7@gmail.com3", "2013-12-20 07:00:00", "2013-12-20 09:15:00", false)
-                        .withDate("2013-12-20").withTime("07:00:00").build());
+            Event.Builder
+                .createSessionUsageEvent("user7@gmail.com", TEST_WS, "user7@gmail.com3", "2013-12-20 07:00:00", "2013-12-20 09:15:00", false)
+                .withDate("2013-12-20").withTime("07:00:00").build());
 
 
         events.add(
-                Event.Builder
-                        .createSessionUsageEvent("user7@gmail.com", TEST_WS, "user7@gmail.com4", "2013-12-20 10:00:00", "2013-12-20 13:15:00", false)
-                        .withDate("2013-12-20").withTime("10:00:00").build());
+            Event.Builder
+                .createSessionUsageEvent("user7@gmail.com", TEST_WS, "user7@gmail.com4", "2013-12-20 10:00:00", "2013-12-20 13:15:00", false)
+                .withDate("2013-12-20").withTime("10:00:00").build());
 
         events.add(
-                Event.Builder
-                        .createSessionUsageEvent("user7@gmail.com", TEST_WS, "user7@gmail.com5", "2013-12-20 14:00:00", "2013-12-20 16:15:00", false)
-                        .withDate("2013-12-20").withTime("14:00:00").build());
+            Event.Builder
+                .createSessionUsageEvent("user7@gmail.com", TEST_WS, "user7@gmail.com5", "2013-12-20 14:00:00", "2013-12-20 16:15:00", false)
+                .withDate("2013-12-20").withTime("14:00:00").build());
 
         events.add(
-                Event.Builder
-                        .createSessionUsageEvent("user7@gmail.com", TEST_WS, "user7@gmail.com6", "2013-12-20 17:00:00", "2013-12-20 19:15:00", false)
-                        .withDate("2013-12-20").withTime("17:00:00").build());
+            Event.Builder
+                .createSessionUsageEvent("user7@gmail.com", TEST_WS, "user7@gmail.com6", "2013-12-20 17:00:00", "2013-12-20 19:15:00", false)
+                .withDate("2013-12-20").withTime("17:00:00").build());
 
         // add event of accepting factory url for the testDrillDownTopFactoriesMetric test
         events.add(Event.Builder.createFactoryUrlAcceptedEvent("tmp-5", "factoryUrl1", "http://referrer3", "org3", "affiliate2")
-                   .withDate("2013-12-20").withTime("11:00:02").build());
+                                .withDate("2013-12-20").withTime("11:00:02").build());
 
         events.add(Event.Builder.createUserCreatedEvent("factory_user5", "factory_user5@gmail.com", "factory_user5@gmail.com")
                                 .withDate("2013-12-20").withTime("11:00:03").build());
         events.add(Event.Builder.createTenantCreatedEvent("tmp-5", "factory_user5")
-                   .withDate("2013-12-20").withTime("12:01:00").build());  
-        
+                                .withDate("2013-12-20").withTime("12:01:00").build());
+
         log = LogGenerator.generateLog(events);
     }
 
-    @Test
+    //@Test
     public void testFilteringUsersStatisticsListByTotalUsersAndTimeUnit() throws Exception {
         computeProfiles("20131101");
 
@@ -312,14 +312,14 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
         builder.put(Parameters.LOG, log.getAbsolutePath());
-        
+
         builder.putAll(scriptsManager.getScript(ScriptType.USERS_STATISTICS, MetricType.USERS_STATISTICS_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.USERS_STATISTICS, builder.build());
-        
+
         builder.put(Parameters.FROM_DATE, "20131220");
         builder.put(Parameters.TO_DATE, "20131220");
         pigServer.execute(ScriptType.USERS_STATISTICS, builder.build());
-        
+
         // test filtering user list by "total_users" metric
         builder = new Context.Builder();
         builder.put(Parameters.TO_DATE, "20131120");
@@ -328,16 +328,55 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
         builder.put(Parameters.EXPANDED_METRIC_NAME, MetricType.TOTAL_USERS.toString());
 
         Metric usersStatisticsListMetric = MetricFactory.getMetric(MetricType.USERS_STATISTICS_LIST);
-        
+
         Context context = builder.build();
         context = viewBuilder.initializeTimeInterval(context);
-        
+
         ListValueData filteredValue = (ListValueData)usersStatisticsListMetric.getValue(context);
-        List<ValueData> all = filteredValue.getAll();        
+        List<ValueData> all = filteredValue.getAll();
         assertEquals(all.size(), 5);
-    }    
-    
+    }
+
     @Test
+    public void testFilteringUsersStatisticsListByTotalUsersTimeUnitAndDateRange() throws Exception {
+        computeProfiles("20131101");
+
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20131101");
+        builder.put(Parameters.TO_DATE, "20131101");
+        builder.put(Parameters.LOG, log.getAbsolutePath());
+
+        builder.putAll(scriptsManager.getScript(ScriptType.USERS_STATISTICS, MetricType.USERS_STATISTICS_LIST).getParamsAsMap());
+        pigServer.execute(ScriptType.USERS_STATISTICS, builder.build());
+
+        builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20131025");
+        builder.put(Parameters.TO_DATE, "20131031");  // !!!
+        builder.put(Parameters.TIME_UNIT, Parameters.TimeUnit.WEEK.toString());
+        builder.put(Parameters.TIME_INTERVAL, 0);
+        builder.put(Parameters.EXPANDED_METRIC_NAME, MetricType.TOTAL_USERS.toString());
+        builder.put(Parameters.IS_CUSTOM_DATE_RANGE, "");  // !!!
+
+        Metric usersStatisticsListMetric = MetricFactory.getMetric(MetricType.USERS_STATISTICS_LIST);
+
+        Context context = builder.build();
+        context = viewBuilder.initializeTimeInterval(context);
+
+        ListValueData filteredValue = (ListValueData)usersStatisticsListMetric.getValue(context);
+        List<ValueData> all = filteredValue.getAll();
+        assertEquals(all.size(), 0);  // !!!
+
+
+        builder.put(Parameters.TO_DATE, "20131101");  // !!!
+        context = builder.build();
+        context = viewBuilder.initializeTimeInterval(context);
+
+        filteredValue = (ListValueData)usersStatisticsListMetric.getValue(context);
+        all = filteredValue.getAll();
+        assertEquals(all.size(), 5);  // !!!
+    }
+
+    //@Test
     public void testFilteringOfDrillDownPage() throws Exception {
         computeProfiles("20131101");
 
@@ -346,35 +385,35 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
 
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
-        
+
         builder.putAll(scriptsManager.getScript(ScriptType.EVENTS, MetricType.BUILDS).getParamsAsMap());
         pigServer.execute(ScriptType.EVENTS, builder.build());
 
         builder.putAll(scriptsManager.getScript(ScriptType.USERS_STATISTICS, MetricType.USERS_STATISTICS_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.USERS_STATISTICS, builder.build());
-        
+
         // test expanded metric value
         builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20131101");
-        builder.put(Parameters.TO_DATE, "20131101");   
-        
+        builder.put(Parameters.TO_DATE, "20131101");
+
         // filter users who built: {user1@gmail.com, user1}
         builder.put(Parameters.EXPANDED_METRIC_NAME, MetricType.USERS_WHO_BUILT.toString());
 
         // filter users by USER_COMPANY=TEST_COMPANY : {user1@gmail.com, user2@gmail.com}
         builder.put(MetricFilter.USER_COMPANY, TEST_COMPANY);
-        
+
         // result = {user1@gmail.com, user1} INTERSECT {user1@gmail.com, user2@gmail.com} = {user1@gmail.com}
         Metric metric = MetricFactory.getMetric(MetricType.USERS_STATISTICS_LIST);
         ListValueData filteredValue = (ListValueData)metric.getValue(builder.build());
         List<ValueData> all = filteredValue.getAll();
-        
+
         assertEquals(all.size(), 1);
-        
+
         Map<String, ValueData> record = ((MapValueData)all.get(0)).getAll();
         assertEquals(record.get("user").getAsString(), TEST_USER);
-    }    
-    
+    }
+
     /*
      * Testing metric: WorkspacesStatisticsList
      * Filtered by workspaces list from expanded_metric_name=temporary_workspaces_created
@@ -382,7 +421,7 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
      * to_date=20131101
      * factory=factoryUrl1
      */
-    @Test
+    //@Test
     public void testDrillDownTopFactoriesMetric() throws Exception {
         computeProfiles("20131101");
         computeProfiles("20131220");
@@ -392,7 +431,7 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
         builder.put(Parameters.LOG, log.getAbsolutePath());
-        
+
         builder.putAll(scriptsManager.getScript(ScriptType.PRODUCT_USAGE_SESSIONS, MetricType.PRODUCT_USAGE_SESSIONS_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, builder.build());
 
@@ -402,28 +441,28 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
         builder.putAll(scriptsManager.getScript(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, builder.build());
 
-        
+
         builder.put(Parameters.FROM_DATE, "20131220");
         builder.put(Parameters.TO_DATE, "20131220");
         builder.put(Parameters.LOG, log.getAbsolutePath());
 
         builder.putAll(scriptsManager.getScript(ScriptType.PRODUCT_USAGE_SESSIONS, MetricType.PRODUCT_USAGE_SESSIONS_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, builder.build());
-        
+
         builder.putAll(scriptsManager.getScript(ScriptType.CREATED_TEMPORARY_WORKSPACES, MetricType.TEMPORARY_WORKSPACES_CREATED).getParamsAsMap());
         pigServer.execute(ScriptType.CREATED_TEMPORARY_WORKSPACES, builder.build());
-        
+
         builder.putAll(scriptsManager.getScript(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST).getParamsAsMap());
-        pigServer.execute(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, builder.build());               
-        
+        pigServer.execute(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, builder.build());
+
         builder = new Context.Builder();
         builder.put(Parameters.EXPANDED_METRIC_NAME, MetricType.TEMPORARY_WORKSPACES_CREATED.toString());
         builder.put(MetricFilter.FACTORY, "factoryUrl1");
 
         builder.put(Parameters.TO_DATE, "20131220");
         builder.put(Parameters.PASSED_DAYS_COUNT, Parameters.PassedDaysCount.BY_7_DAYS.toString());
-        Context context = Utils.initDateInterval(builder.getAsDate(Parameters.TO_DATE), builder.getPassedDaysCount(), builder);        
-        
+        Context context = Utils.initDateInterval(builder.getAsDate(Parameters.TO_DATE), builder.getPassedDaysCount(), builder);
+
         Metric metric = MetricFactory.getMetric(MetricType.WORKSPACES_STATISTICS_LIST);
 
         // test drill down page values
@@ -432,16 +471,16 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
         assertEquals(all.size(), 1);
 
         Map<String, ValueData> record = ((MapValueData)all.get(0)).getAll();
-        assertEquals(record.get("ws").toString(), "tmp-5");        
-        
+        assertEquals(record.get("ws").toString(), "tmp-5");
+
         builder.put(Parameters.PASSED_DAYS_COUNT, Parameters.PassedDaysCount.BY_60_DAYS.toString());
         context = Utils.initDateInterval(builder.getAsDate(Parameters.TO_DATE), builder.getPassedDaysCount(), builder);
-        
+
         value = metric.getValue(context);
         all = treatAsList(value);
 
         assertEquals(all.size(), 3);
-        
+
         record = ((MapValueData)all.get(1)).getAll();
         assertEquals(record.get("ws").toString(), "tmp-4");
     }
@@ -454,7 +493,7 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
      * user=factory_user5
      * @throws Exception
      */
-    @Test
+    //@Test
     public void testDrillDownTopUsersMetric() throws Exception {
         computeProfiles("20131031");
         computeProfiles("20131101");
@@ -467,11 +506,11 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
         builder.put(Parameters.TO_DATE, "20131220");
         builder.putAll(scriptsManager.getScript(ScriptType.PRODUCT_USAGE_SESSIONS, MetricType.PRODUCT_USAGE_SESSIONS_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, builder.build());
-        
+
         builder.putAll(scriptsManager.getScript(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, builder.build());
-        
-        
+
+
         builder = new Context.Builder();
         builder.put(Parameters.EXPANDED_METRIC_NAME, MetricType.PRODUCT_USAGE_SESSIONS.toString());
         builder.put(MetricFilter.USER, "factory_user5");
@@ -479,26 +518,26 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
         builder.put(Parameters.TO_DATE, "20131221");
         builder.put(Parameters.PASSED_DAYS_COUNT, Parameters.PassedDaysCount.BY_1_DAY.toString());
         Context context = Utils.initDateInterval(builder.getAsDate(Parameters.TO_DATE), builder.getPassedDaysCount(), builder);
-        
+
         Metric metric = MetricFactory.getMetric(MetricType.PRODUCT_USAGE_SESSIONS_LIST);
 
         // test drill down page values
         ValueData value = metric.getValue(context);
         List<ValueData> all = treatAsList(value);
         assertEquals(all.size(), 0);
-        
+
         builder.put(Parameters.TO_DATE, "20131220");
         context = Utils.initDateInterval(builder.getAsDate(Parameters.TO_DATE), builder.getPassedDaysCount(), builder);
-        
+
         value = metric.getValue(context);
         all = treatAsList(value);
         assertEquals(all.size(), 1);
-        
+
         Map<String, ValueData> record = ((MapValueData)all.get(0)).getAll();
         assertEquals(record.get("user").toString(), "factory_user5");
     }
-    
-    @Test
+
+    //@Test
     public void testNonActiveUsersMetric() throws Exception {
         computeProfiles("20131031");
         computeProfiles("20131101");
@@ -568,7 +607,7 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
         assertEquals(all.size(), 0);
     }
 
-    @Test
+    //@Test
     public void testUsersAcceptedInvitesPercentMetric() throws Exception {
         computeProfiles("20131101");
 
@@ -594,7 +633,7 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
         assertEquals(record.get("user").toString(), "_invite" + TEST_USER);
     }
 
-    @Test
+    //@Test
     public void testAbstractFactorySessionsMetrics() throws Exception {
         computeProfiles("20131101");
 
@@ -603,7 +642,7 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
         builder.put(Parameters.TO_DATE, "20131101");
         builder.put(Parameters.LOG, log.getAbsolutePath());
         builder.putAll(
-                scriptsManager.getScript(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST).getParamsAsMap());
+            scriptsManager.getScript(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, builder.build());
 
         builder = new Context.Builder();
@@ -621,7 +660,7 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
         assertEquals(record.get("session_id").toString(), "factory-id1");
     }
 
-    @Test
+    //@Test
     public void testProductUsageTimeBelow1MinMetric() throws Exception {
         computeProfiles("20131101");
 
@@ -634,7 +673,7 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
 
         builder.putAll(scriptsManager.getScript(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, builder.build());
-        
+
         builder = new Context.Builder();
         builder.put(Parameters.TO_DATE, "20131101");
 
@@ -647,7 +686,7 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
         assertTrue(all.contains(MapValueData.valueOf("session_id=" + SESSION_ID + "_micro")));
     }
 
-    @Test
+    //@Test
     public void testProductUsageTimeTotalMetric() throws Exception {
         computeProfiles("20131101");
 
@@ -660,7 +699,7 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
 
         builder.putAll(scriptsManager.getScript(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, builder.build());
-        
+
         builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
@@ -676,7 +715,7 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
         assertTrue(all.contains(MapValueData.valueOf("session_id=" + SESSION_ID + "_micro")));
     }
 
-    @Test
+    //@Test
     public void testAbstractLoggedInTypeMetrics() throws Exception {
         computeProfiles("20131101");
 
@@ -702,7 +741,7 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
         assertEquals(record.get(metric.getExpandedField()).toString(), TEST_USER);
     }
 
-    @Test
+    //@Test
     public void testCalculatedSubtractionMetrics() throws Exception {
         computeProfiles("20131101");
 
@@ -736,7 +775,7 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
         assertTrue(all.contains(MapValueData.valueOf("user=user-id5")));
     }
 
-    @Test
+    //@Test
     public void testCalculatedPercentMetric() throws Exception {
         computeProfiles("20131101");
 
@@ -745,7 +784,7 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
         builder.put(Parameters.TO_DATE, "20131101");
         builder.put(Parameters.LOG, log.getAbsolutePath());
         builder.putAll(
-                scriptsManager.getScript(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST).getParamsAsMap());
+            scriptsManager.getScript(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, builder.build());
 
         builder = new Context.Builder();
@@ -763,7 +802,7 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
         assertEquals(workspace1.get("session_id").toString(), "factory-id1");
     }
 
-    @Test
+    //@Test
     public void testSessionsListFilteredByCalculatedMetric() throws Exception {
         computeProfiles("20131101");
 
@@ -772,7 +811,7 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
         builder.put(Parameters.TO_DATE, "20131101");
         builder.put(Parameters.LOG, log.getAbsolutePath());
         builder.putAll(
-                scriptsManager.getScript(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST).getParamsAsMap());
+            scriptsManager.getScript(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, builder.build());
 
         builder = new Context.Builder();
@@ -810,7 +849,7 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
         assertEquals(record.get(ProductUsageFactorySessionsList.SESSION_ID).toString(), "factory-id1");
     }
 
-    @Test
+    //@Test
     public void testExpandedAbstractActiveEntitiesMetrics() throws Exception {
         computeProfiles("20131101");
 
@@ -850,7 +889,7 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
         assertTrue(all.contains(MapValueData.valueOf("ws=wsid2")));
     }
 
-    @Test
+    //@Test
     public void testExpandedAbstractLongValueResultedMetrics() throws Exception {
         computeProfiles("20131101");
 
@@ -879,7 +918,7 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
         assertEquals(workspace1.get(metric.getExpandedField()).toString(), TEST_USER);
     }
 
-    @Test
+    //@Test
     public void testExpandedAbstractCountMetrics() throws Exception {
         computeProfiles("20131101");
 
@@ -908,7 +947,7 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
         assertEquals(record3.get(metric.getExpandedField()).toString(), "user2@gmail.com/wsid3/project2");
     }
 
-    @Test
+    //@Test
     public void testExpandedAbstractProjectTypeMetrics() throws Exception {
         computeProfiles("20131101");
 
@@ -934,7 +973,7 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
         assertEquals(record2.get(metric.getExpandedField()).toString(), "user2@gmail.com/wsid3/project2");
     }
 
-    @Test
+    //@Test
     public void testExpandedAbstractProjectPaasMetrics() throws Exception {
         computeProfiles("20131101");
 
@@ -960,7 +999,7 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
         assertEquals(record.get(metric.getExpandedField()).toString(), TEST_USER + "/" + TEST_WS_ID + "/project1");
     }
 
-    @Test
+    //@Test
     public void testProjectListFilteredByReadBasedMetric() throws Exception {
         computeProfiles("20131101");
 
@@ -1004,7 +1043,7 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
         assertEquals(project2.get(ProjectsList.WS).toString(), TEST_WS_ID);
     }
 
-    @Test
+    //@Test
     public void testConversionExpandedValueDataIntoViewData() throws Exception {
         computeProfiles("20131101");
 
@@ -1036,7 +1075,7 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
         assertTrue(sectionData.contains(asList(StringValueData.valueOf("wsid3"))));
     }
 
-    @Test
+    //@Test
     public void testTotalUsers() throws Exception {
         computeProfiles("20131101");
 
