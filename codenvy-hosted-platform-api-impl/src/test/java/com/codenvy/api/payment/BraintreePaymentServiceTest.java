@@ -23,8 +23,8 @@ import com.braintreegateway.SubscriptionGateway;
 import com.braintreegateway.SubscriptionRequest;
 import com.braintreegateway.exceptions.BraintreeException;
 import com.codenvy.api.account.server.dao.Subscription;
-import com.codenvy.api.account.shared.dto.Billing;
-import com.codenvy.api.account.shared.dto.SubscriptionAttributes;
+import com.codenvy.api.account.shared.dto.NewBilling;
+import com.codenvy.api.account.shared.dto.NewSubscriptionAttributes;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.ForbiddenException;
 import com.codenvy.api.core.NotFoundException;
@@ -71,20 +71,20 @@ public class BraintreePaymentServiceTest {
     @InjectMocks
     private BraintreePaymentService service;
 
-    private Subscription           subscription;
-    private SubscriptionAttributes subscriptionAttributes;
+    private Subscription              subscription;
+    private NewSubscriptionAttributes subscriptionAttributes;
 
     @BeforeMethod
     public void setUp() throws Exception {
         subscription = new Subscription().withId(SUBSCRIPTION_ID).withPlanId(PLAN_ID);
         subscriptionAttributes =
-                DtoFactory.getInstance().createDto(SubscriptionAttributes.class)
+                DtoFactory.getInstance().createDto(NewSubscriptionAttributes.class)
                           .withTrialDuration(7)
                           .withStartDate("11/12/2014")
                           .withEndDate("11/12/2015")
                           .withDescription("description")
                           .withCustom(Collections.singletonMap("key", "value"))
-                          .withBilling(DtoFactory.getInstance().createDto(Billing.class)
+                          .withBilling(DtoFactory.getInstance().createDto(NewBilling.class)
                                                  .withStartDate("11/12/2014")
                                                  .withEndDate("11/12/2015")
                                                  .withUsePaymentSystem("true")
@@ -108,11 +108,11 @@ public class BraintreePaymentServiceTest {
                 .id(SUBSCRIPTION_ID)
                 .paymentMethodToken(PAYMENT_TOKEN)
                 .planId(PLAN_ID);
-        SubscriptionAttributes expected = DtoFactory.getInstance().clone(subscriptionAttributes);
+        NewSubscriptionAttributes expected = DtoFactory.getInstance().clone(subscriptionAttributes);
         expected.setTrialDuration(15);
         expected.getBilling().setStartDate("10/27/2019");
 
-        SubscriptionAttributes actual = service.addSubscription(subscription, subscriptionAttributes);
+        NewSubscriptionAttributes actual = service.addSubscription(subscription, subscriptionAttributes);
 
         assertEquals(actual, expected);
         verify(subscriptionGateway).create(
@@ -124,7 +124,7 @@ public class BraintreePaymentServiceTest {
 
     @Test(dataProvider = "missingPaymentTokenProvider", expectedExceptions = ForbiddenException.class,
           expectedExceptionsMessageRegExp = "No billing information provided")
-    public void shouldThrowExceptionIfRequiredSubscriptionAttributesIsMissing(SubscriptionAttributes subscriptionAttributes)
+    public void shouldThrowExceptionIfRequiredSubscriptionAttributesIsMissing(NewSubscriptionAttributes subscriptionAttributes)
             throws ServerException, ForbiddenException, ConflictException {
         service.addSubscription(subscription, subscriptionAttributes);
     }
@@ -133,9 +133,9 @@ public class BraintreePaymentServiceTest {
     public Object[][] missingPaymentTokenProvider() {
         return new Object[][]{
                 {null},
-                {DtoFactory.getInstance().createDto(SubscriptionAttributes.class)},
-                {DtoFactory.getInstance().createDto(SubscriptionAttributes.class).withBilling(
-                        DtoFactory.getInstance().createDto(Billing.class))}};
+                {DtoFactory.getInstance().createDto(NewSubscriptionAttributes.class)},
+                {DtoFactory.getInstance().createDto(NewSubscriptionAttributes.class).withBilling(
+                        DtoFactory.getInstance().createDto(NewBilling.class))}};
     }
 
     @Test(expectedExceptions = ConflictException.class, expectedExceptionsMessageRegExp = "BraintreeMessage")

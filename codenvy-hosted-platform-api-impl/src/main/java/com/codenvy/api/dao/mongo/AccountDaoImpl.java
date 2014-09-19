@@ -21,14 +21,13 @@ import com.codenvy.api.account.server.dao.Account;
 import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.server.dao.Member;
 import com.codenvy.api.account.server.dao.Subscription;
-import com.codenvy.api.account.shared.dto.Billing;
-import com.codenvy.api.account.shared.dto.SubscriptionAttributes;
+import com.codenvy.api.account.server.dao.Billing;
+import com.codenvy.api.account.server.dao.SubscriptionAttributes;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.ForbiddenException;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
-import com.codenvy.dto.server.DtoFactory;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
@@ -556,7 +555,6 @@ public class AccountDaoImpl implements AccountDao {
                                                                .append("endDate", billing.getEndDate())
                                                                .append("cycle", billing.getCycle())
                                                                .append("cycleType", billing.getCycleType())
-                                                               .append("paymentToken", billing.getPaymentToken())
                                                                .append("usePaymentSystem", billing.getUsePaymentSystem());
         return new BasicDBObject().append("_id", subscriptionId)
                                   .append("description", subscriptionAttributes.getDescription())
@@ -570,22 +568,19 @@ public class AccountDaoImpl implements AccountDao {
     SubscriptionAttributes toSubscriptionAttributes(DBObject dbObject) {
         final BasicDBObject attributes = (BasicDBObject)dbObject;
         final BasicDBObject billingAttributes = (BasicDBObject)attributes.get("billing");
-        final Billing billing = DtoFactory.getInstance().createDto(Billing.class)
-                                          .withContractTerm(billingAttributes.getInt("contractTerm"))
-                                          .withCycle(billingAttributes.getInt("cycle"))
-                                          .withCycleType(billingAttributes.getInt("cycleType"))
-                                          .withStartDate(billingAttributes.getString("startDate"))
-                                          .withEndDate(billingAttributes.getString("endDate"))
-                                          .withPaymentToken(billingAttributes.getString("paymentToken"))
-                                          .withUsePaymentSystem(billingAttributes.getString("usePaymentSystem"));
+        final Billing billing = new Billing().withContractTerm(billingAttributes.getInt("contractTerm"))
+                                             .withCycle(billingAttributes.getInt("cycle"))
+                                             .withCycleType(billingAttributes.getInt("cycleType"))
+                                             .withStartDate(billingAttributes.getString("startDate"))
+                                             .withEndDate(billingAttributes.getString("endDate"))
+                                             .withUsePaymentSystem(billingAttributes.getString("usePaymentSystem"));
 
-        return DtoFactory.getInstance().createDto(SubscriptionAttributes.class)
-                         .withStartDate(attributes.getString("startDate"))
-                         .withEndDate(attributes.getString("endDate"))
-                         .withDescription(attributes.getString("description"))
-                         .withTrialDuration(attributes.getInt("trialDuration"))
-                         .withCustom(toMap((BasicDBList)attributes.get("custom")))
-                         .withBilling(billing);
+        return new SubscriptionAttributes().withStartDate(attributes.getString("startDate"))
+                                           .withEndDate(attributes.getString("endDate"))
+                                           .withDescription(attributes.getString("description"))
+                                           .withTrialDuration(attributes.getInt("trialDuration"))
+                                           .withCustom(toMap((BasicDBList)attributes.get("custom")))
+                                           .withBilling(billing);
     }
 
     /**

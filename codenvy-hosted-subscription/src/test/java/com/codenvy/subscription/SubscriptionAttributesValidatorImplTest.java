@@ -17,8 +17,8 @@
  */
 package com.codenvy.subscription;
 
-import com.codenvy.api.account.shared.dto.Billing;
-import com.codenvy.api.account.shared.dto.SubscriptionAttributes;
+import com.codenvy.api.account.shared.dto.NewBilling;
+import com.codenvy.api.account.shared.dto.NewSubscriptionAttributes;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.dto.server.DtoFactory;
 
@@ -32,20 +32,20 @@ import java.util.Collections;
  * Tests for {@link com.codenvy.subscription.SubscriptionAttributesValidatorImpl]}
  */
 public class SubscriptionAttributesValidatorImplTest {
-    private SubscriptionAttributes              defaultSubscriptionAttributes;
+    private NewSubscriptionAttributes           defaultSubscriptionAttributes;
     private SubscriptionAttributesValidatorImpl validator;
 
     @BeforeMethod
     public void setUp() throws Exception {
         validator = new SubscriptionAttributesValidatorImpl();
 
-        defaultSubscriptionAttributes = DtoFactory.getInstance().createDto(SubscriptionAttributes.class)
+        defaultSubscriptionAttributes = DtoFactory.getInstance().createDto(NewSubscriptionAttributes.class)
                                                   .withTrialDuration(7)
                                                   .withStartDate("11/12/2014")
                                                   .withEndDate("11/12/2015")
                                                   .withDescription("description")
                                                   .withCustom(Collections.singletonMap("key", "value"))
-                                                  .withBilling(DtoFactory.getInstance().createDto(Billing.class)
+                                                  .withBilling(DtoFactory.getInstance().createDto(NewBilling.class)
                                                                          .withStartDate("11/12/2014")
                                                                          .withEndDate("11/12/2015")
                                                                          .withUsePaymentSystem("true")

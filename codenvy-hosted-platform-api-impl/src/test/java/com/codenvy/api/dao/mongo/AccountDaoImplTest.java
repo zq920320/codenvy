@@ -20,15 +20,14 @@ package com.codenvy.api.dao.mongo;
 import com.codenvy.api.account.server.dao.Account;
 import com.codenvy.api.account.server.dao.Member;
 import com.codenvy.api.account.server.dao.Subscription;
-import com.codenvy.api.account.shared.dto.Billing;
-import com.codenvy.api.account.shared.dto.SubscriptionAttributes;
+import com.codenvy.api.account.server.dao.Billing;
+import com.codenvy.api.account.server.dao.SubscriptionAttributes;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.ForbiddenException;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.api.workspace.server.dao.Workspace;
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
-import com.codenvy.dto.server.DtoFactory;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
@@ -117,20 +116,17 @@ public class AccountDaoImplTest extends BaseDaoTest {
                                                 .withPlanId(PLAN_ID)
                                                 .withServiceId(SERVICE_NAME)
                                                 .withProperties(props);
-        defaultSubscriptionAttributes = DtoFactory.getInstance().createDto(SubscriptionAttributes.class)
-                                                  .withTrialDuration(7)
-                                                  .withStartDate("11/12/2014")
-                                                  .withEndDate("11/12/2015")
-                                                  .withDescription("description")
-                                                  .withCustom(Collections.singletonMap("key", "value"))
-                                                  .withBilling(DtoFactory.getInstance().createDto(Billing.class)
-                                                                         .withStartDate("11/12/2014")
-                                                                         .withEndDate("11/12/2015")
-                                                                         .withUsePaymentSystem("true")
-                                                                         .withCycleType(1)
-                                                                         .withCycle(1)
-                                                                         .withContractTerm(1)
-                                                                         .withPaymentToken("token"));
+        defaultSubscriptionAttributes = new SubscriptionAttributes().withTrialDuration(7)
+                                                                    .withStartDate("11/12/2014")
+                                                                    .withEndDate("11/12/2015")
+                                                                    .withDescription("description")
+                                                                    .withCustom(Collections.singletonMap("key", "value"))
+                                                                    .withBilling(new Billing().withStartDate("11/12/2014")
+                                                                                              .withEndDate("11/12/2015")
+                                                                                              .withUsePaymentSystem("true")
+                                                                                              .withCycleType(1)
+                                                                                              .withCycle(1)
+                                                                                              .withContractTerm(1));
     }
 
     @Override
@@ -668,7 +664,7 @@ public class AccountDaoImplTest extends BaseDaoTest {
     @Test(expectedExceptions = NotFoundException.class, expectedExceptionsMessageRegExp = "Subscription not found " + SUBSCRIPTION_ID)
     public void shouldThrowNotFoundExceptionIfSubscriptionIsMissingOnSaveSubscriptionAttributes()
             throws ServerException, NotFoundException, ForbiddenException {
-        accountDao.saveSubscriptionAttributes(SUBSCRIPTION_ID, DtoFactory.getInstance().createDto(SubscriptionAttributes.class));
+        accountDao.saveSubscriptionAttributes(SUBSCRIPTION_ID, new SubscriptionAttributes());
     }
 
     @Test(expectedExceptions = ServerException.class,
@@ -678,7 +674,7 @@ public class AccountDaoImplTest extends BaseDaoTest {
         when(subscriptionCollection.findOne(eq(new BasicDBObject("id", SUBSCRIPTION_ID))))
                 .thenThrow(new MongoException("Mongo exception message"));
 
-        accountDao.saveSubscriptionAttributes(SUBSCRIPTION_ID, DtoFactory.getInstance().createDto(SubscriptionAttributes.class));
+        accountDao.saveSubscriptionAttributes(SUBSCRIPTION_ID, new SubscriptionAttributes());
     }
 
     @Test(expectedExceptions = ServerException.class,

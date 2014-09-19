@@ -23,7 +23,7 @@ import com.braintreegateway.SubscriptionRequest;
 import com.braintreegateway.exceptions.BraintreeException;
 import com.codenvy.api.account.server.PaymentService;
 import com.codenvy.api.account.server.dao.Subscription;
-import com.codenvy.api.account.shared.dto.SubscriptionAttributes;
+import com.codenvy.api.account.shared.dto.NewSubscriptionAttributes;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.ForbiddenException;
 import com.codenvy.api.core.NotFoundException;
@@ -52,7 +52,7 @@ public class BraintreePaymentService implements PaymentService {
     }
 
     @Override
-    public SubscriptionAttributes addSubscription(Subscription subscription, SubscriptionAttributes subscriptionAttributes)
+    public NewSubscriptionAttributes addSubscription(Subscription subscription, NewSubscriptionAttributes subscriptionAttributes)
             throws ServerException, ConflictException, ForbiddenException {
         if (subscriptionAttributes == null || subscriptionAttributes.getBilling() == null ||
             subscriptionAttributes.getBilling().getPaymentToken() == null) {
@@ -73,7 +73,7 @@ public class BraintreePaymentService implements PaymentService {
                 com.braintreegateway.Subscription target = result.getTarget();
                 LOG.info("PAYMENTS# state#{}# subscriptionId#{}# subscriptionStatus#{}#", "Successful", target.getId(), target.getStatus());
 
-                SubscriptionAttributes newAttributes = DtoFactory.getInstance().clone(subscriptionAttributes);
+                NewSubscriptionAttributes newAttributes = DtoFactory.getInstance().clone(subscriptionAttributes);
                 newAttributes.getBilling().withStartDate(new SimpleDateFormat("MM/dd/yyyy").format(target.getFirstBillingDate().getTime()));
                 newAttributes.setTrialDuration(target.getTrialDuration());
                 return newAttributes;

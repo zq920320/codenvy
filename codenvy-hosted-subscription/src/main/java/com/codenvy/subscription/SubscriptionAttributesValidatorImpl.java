@@ -18,25 +18,25 @@
 package com.codenvy.subscription;
 
 import com.codenvy.api.account.server.SubscriptionAttributesValidator;
-import com.codenvy.api.account.shared.dto.Billing;
-import com.codenvy.api.account.shared.dto.SubscriptionAttributes;
+import com.codenvy.api.account.shared.dto.NewBilling;
+import com.codenvy.api.account.shared.dto.NewSubscriptionAttributes;
 import com.codenvy.api.core.ConflictException;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 /**
- * Validates {@link com.codenvy.api.account.shared.dto.SubscriptionAttributes}
+ * Validates {@link com.codenvy.api.account.server.dao.SubscriptionAttributes}
  *
  * @author Alexander Garagatyi
  */
 public class SubscriptionAttributesValidatorImpl implements SubscriptionAttributesValidator {
     @Override
-    public void validate(SubscriptionAttributes subscriptionAttributes) throws ConflictException {
+    public void validate(NewSubscriptionAttributes subscriptionAttributes) throws ConflictException {
         if (null == subscriptionAttributes) {
             throw new ConflictException("Subscription attributes required");
         }
-        final Billing billing = subscriptionAttributes.getBilling();
+        final NewBilling billing = subscriptionAttributes.getBilling();
         if (null == billing) {
             throw new ConflictException("Subscription attribute billing required");
         }
