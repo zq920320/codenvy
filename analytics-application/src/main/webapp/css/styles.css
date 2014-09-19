@@ -167,6 +167,10 @@ div.jqplot-table-legend-swatch-outline {
     width: 65px;
 }
 
+.short-gap {
+    width: 10px;
+}
+
 .collabsiblePanelTitle {
     padding: 5px 10px !important;
 }

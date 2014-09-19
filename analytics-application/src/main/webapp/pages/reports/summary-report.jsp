@@ -25,7 +25,7 @@
     <style type="text/css">
         /* redefine style of Accordion Widget of jQuery UI (@see http://api.jqueryui.com/accordion/#method-disable ) */
         .ui-accordion {
-            width: 550px;
+            width: 540px;
         }
     </style>
 </head>
@@ -45,20 +45,20 @@
                     <div class="collabsiblePanelBody">
                         <table>
                             <tr>
-                                <td><label for="datepicker-to-date" class="right">To Date:</label></td>
-                                <td>
-                                    <div class="filter-item">
-                                        <input type="text" id="datepicker-to-date" name="to_date" class="short-date-box"/>
-                                    </div>
-                                </td>
-                                <td>&nbsp;&nbsp;&nbsp;</td>
                                 <td><label for="datepicker-from-date">From Date:</label></td>
                                 <td>
                                     <div class="filter-item">
                                         <input type="text" id="datepicker-from-date" name="from_date" class="short-date-box"/>
                                     </div>
                                 </td>
-                                <td>&nbsp;&nbsp;&nbsp;</td>
+                                <td class="short-gap" />
+                                <td><label for="datepicker-to-date" class="right">To Date:</label></td>
+                                <td>
+                                    <div class="filter-item">
+                                        <input type="text" id="datepicker-to-date" name="to_date" class="short-date-box"/>
+                                    </div>
+                                </td>
+                                <td class="short-gap" />
                                 <td><div>
                                     <button class="btn command-btn btn-primary">Filter</button>
                                     <button id="clearSelectionBtn" class="btn btn-small clear-btn">Clear</button>
