@@ -17,15 +17,21 @@
  */
 package com.codenvy.factory.workspace;
 
+import com.codenvy.api.account.shared.dto.SubscriptionDescriptor;
 import com.codenvy.api.core.ApiException;
 import com.codenvy.api.core.ConflictException;
+import com.codenvy.api.core.ForbiddenException;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
+import com.codenvy.api.core.UnauthorizedException;
 import com.codenvy.api.core.notification.EventService;
+import com.codenvy.api.core.rest.HttpJsonHelper;
 import com.codenvy.api.factory.FactoryBuilder;
 import com.codenvy.api.factory.dto.Factory;
 import com.codenvy.api.workspace.server.dao.Workspace;
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
+import com.codenvy.commons.lang.Pair;
+import com.codenvy.dto.server.DtoFactory;
 import com.codenvy.workspace.event.CreateWorkspaceEvent;
 
 import org.mockito.Mock;
@@ -35,13 +41,20 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
+import java.io.IOException;
+import java.lang.reflect.Field;
 import java.net.URI;
 import java.net.URLEncoder;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Map;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyMap;
+import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.isNull;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -55,38 +68,49 @@ public class FactoryWorkspaceResourceProviderTest {
     private String runnerLifetime              = "runnerLifetime";
     private String runnerRam                   = "runnerRam";
     private String builderExecutionTime        = "builderExecutionTime";
-    private String trackedRunnerRam            = "trackedRunnerRam";
     private String trackedRunnerLifetime       = "trackedRunnerLifetime";
     private String trackedBuilderExecutionTime = "trackedBuilderExecutionTime";
     private String apiEndpoint                 = "http://dev.box.com/api";
 
     @Mock
-    private FactoryBuilder      factoryBuilder;
+    private FactoryBuilder                    factoryBuilder;
     @Mock
-    private WorkspaceDao        workspaceDao;
+    private WorkspaceDao                      workspaceDao;
     @Mock
-    private Workspace           workspace;
+    private Workspace                         workspace;
     @Mock
-    private Factory             factory;
+    private Factory                           factory;
     @Mock
-    private Map<String, String> attributes;
+    private Map<String, String>               attributes;
+    @Mock
+    private HttpJsonHelper.HttpJsonHelperImpl jsonHelper;
 
-    private String               factoryUrl;
-    private String               nonfactoryUrl;
+
+    private String               encodedFactoryUrl;
+    private String               nonEncodedFactoryUrl;
     private CreateWorkspaceEvent event;
 
     private FactoryWorkspaceResourceProvider provider;
 
     @BeforeMethod
     public void setUp() throws Exception {
-        factoryUrl = URLEncoder.encode("http://dev.box.com/factory?id=" + factoryId, "UTF-8");
-        nonfactoryUrl =
+        encodedFactoryUrl = URLEncoder.encode("http://dev.box.com/factory?id=" + factoryId, "UTF-8");
+        nonEncodedFactoryUrl =
                 URLEncoder.encode("http://dev.box.com/factory?v=1.1&vcsUrl=http://github.com/codenvy/platform-api.git", "UTF-8");
         event = new CreateWorkspaceEvent(WS_ID, true);
-        provider =
-                new FactoryWorkspaceResourceProvider(trackedRunnerRam, trackedRunnerLifetime, trackedBuilderExecutionTime, runnerLifetime,
-                                                     runnerRam, builderExecutionTime, apiEndpoint, workspaceDao, new EventService(),
-                                                     factoryBuilder);
+        provider = new FactoryWorkspaceResourceProvider(trackedRunnerLifetime,
+                                                        trackedBuilderExecutionTime,
+                                                        runnerLifetime,
+                                                        runnerRam,
+                                                        builderExecutionTime,
+                                                        apiEndpoint,
+                                                        workspaceDao,
+                                                        new EventService(),
+                                                        factoryBuilder);
+        Field field = HttpJsonHelper.class.getDeclaredField("httpJsonHelperImpl");
+        field.setAccessible(true);
+        field.set(null, jsonHelper);
+
     }
 
     @Test
@@ -110,81 +134,152 @@ public class FactoryWorkspaceResourceProviderTest {
         verify(attributes).put("codenvy:builder_execution_time", builderExecutionTime);
     }
 
-    // TODO fix it when we will be able to mock HttpJsonHelper
-    @Test(enabled = false)
-    public void shouldBeAbleToSetTrackedValuesForEncodedFactoryWithTrackedSubscription()
-            throws NotFoundException, ServerException, ConflictException {
-        when(workspaceDao.getById(WS_ID)).thenReturn(workspace);
-        when(workspace.getAttributes()).thenReturn(attributes);
-        when(attributes.get("factoryUrl")).thenReturn(factoryUrl);
-        when(workspace.withAttributes(anyMap())).thenReturn(workspace);
-
-        provider.onEvent(event);
-
-        verify(workspaceDao).update(workspace);
-        verify(attributes).put("codenvy:runner_lifetime", trackedRunnerLifetime);
-        verify(attributes).put("codenvy:runner_ram", trackedRunnerRam);
-        verify(attributes).put("codenvy:builder_execution_time", trackedBuilderExecutionTime);
-    }
-
-    // TODO fix it when we will be able to mock HttpJsonHelper
-    @Test(enabled = false)
-    public void shouldSetCommonAttributesIfEncodedFactoryIsNotTracked()
-            throws NotFoundException, ServerException, ConflictException {
-        when(workspaceDao.getById(WS_ID)).thenReturn(workspace);
-        when(workspace.getAttributes()).thenReturn(attributes);
-        when(attributes.get("factoryUrl")).thenReturn(factoryUrl);
-        when(workspace.withAttributes(anyMap())).thenReturn(workspace);
-
-        provider.onEvent(event);
-
-        verify(workspaceDao).update(workspace);
-        verify(attributes).put("codenvy:runner_lifetime", trackedRunnerLifetime);
-        verify(attributes).put("codenvy:runner_ram", trackedRunnerRam);
-        verify(attributes).put("codenvy:builder_execution_time", trackedBuilderExecutionTime);
-    }
-
     @Test
-    public void shouldBeAbleToSetTrackedValuesForNonEncodedFactoryWithTrackedSubscription() throws ApiException {
+    public void shouldSetCommonAttributesIfNonEncodedFactoryIsNotTracked()
+            throws ApiException, IOException {
         when(workspaceDao.getById(WS_ID)).thenReturn(workspace);
         when(workspace.getAttributes()).thenReturn(attributes);
-        when(attributes.get("factoryUrl")).thenReturn(nonfactoryUrl);
+        when(attributes.get("factoryUrl")).thenReturn(nonEncodedFactoryUrl);
         when(factoryBuilder.buildNonEncoded(any(URI.class))).thenReturn(factory);
         when(workspace.withAttributes(anyMap())).thenReturn(workspace);
 
         provider.onEvent(event);
 
         verify(workspaceDao).update(workspace);
-        verify(attributes).put("codenvy:runner_lifetime", runnerLifetime);
-        verify(attributes).put("codenvy:runner_ram", runnerRam);
-        verify(attributes).put("codenvy:builder_execution_time", builderExecutionTime);
+        verifySettingOfAttributes(runnerLifetime, runnerRam, builderExecutionTime);
     }
 
     @Test
-    public void shouldBeAbleToSetTrackedValuesIfNonEncodedFactoryIsTracked() throws ApiException {
+    public void shouldSetCommonAttributesIfEncodedFactoryIsNotTracked()
+            throws NotFoundException, ServerException, ConflictException, UnauthorizedException, IOException, ForbiddenException {
         when(workspaceDao.getById(WS_ID)).thenReturn(workspace);
         when(workspace.getAttributes()).thenReturn(attributes);
-        when(attributes.get("factoryUrl")).thenReturn(nonfactoryUrl);
+        when(attributes.get("factoryUrl")).thenReturn(encodedFactoryUrl);
+        when(jsonHelper.request(eq(Factory.class),
+                                anyString(),
+                                anyString(),
+                                isNull(),
+                                eq(Pair.of("validate", false))))
+                .thenReturn(factory);
+        when(workspace.withAttributes(anyMap())).thenReturn(workspace);
+
+        provider.onEvent(event);
+
+        verify(workspaceDao).update(workspace);
+        verifySettingOfAttributes(runnerLifetime, runnerRam, builderExecutionTime);
+    }
+
+    @Test
+    public void shouldSetCommonValuesIfEncodedTrackedFactoryHasNoSubscriptions() throws ApiException, IOException {
+        when(workspaceDao.getById(WS_ID)).thenReturn(workspace);
+        when(workspace.getAttributes()).thenReturn(attributes);
+        when(attributes.get("factoryUrl")).thenReturn(encodedFactoryUrl);
+        when(jsonHelper.request(eq(Factory.class),
+                                anyString(),
+                                anyString(),
+                                isNull(),
+                                eq(Pair.of("validate", false))))
+                .thenReturn(factory);
+        when(factory.getOrgid()).thenReturn("orgid");
+        when(workspace.withAttributes(anyMap())).thenReturn(workspace);
+        when(jsonHelper.requestArray(eq(SubscriptionDescriptor.class),
+                                     anyString(),
+                                     eq("GET"),
+                                     anyObject(),
+                                     eq(new Pair<>("service", "Factory"))))
+                .thenReturn(Collections.<SubscriptionDescriptor>emptyList());
+
+        provider.onEvent(event);
+
+        verify(workspaceDao).update(workspace);
+        verifySettingOfAttributes(runnerLifetime, runnerRam, builderExecutionTime);
+    }
+
+    @Test
+    public void shouldSetCommonValuesIfNonEncodedTrackedFactoryHasNoSubscriptions() throws ApiException, IOException {
+        when(workspaceDao.getById(WS_ID)).thenReturn(workspace);
+        when(workspace.getAttributes()).thenReturn(attributes);
+        when(attributes.get("factoryUrl")).thenReturn(nonEncodedFactoryUrl);
         when(factoryBuilder.buildNonEncoded(any(URI.class))).thenReturn(factory);
         when(factory.getOrgid()).thenReturn("orgid");
         when(workspace.withAttributes(anyMap())).thenReturn(workspace);
+        when(jsonHelper.requestArray(eq(SubscriptionDescriptor.class),
+                                     anyString(),
+                                     eq("GET"),
+                                     anyObject(),
+                                     eq(new Pair<>("service", "Factory"))))
+                .thenReturn(Collections.<SubscriptionDescriptor>emptyList());
 
         provider.onEvent(event);
 
         verify(workspaceDao).update(workspace);
-        verify(attributes).put("codenvy:runner_lifetime", trackedRunnerLifetime);
-        verify(attributes).put("codenvy:runner_ram", trackedRunnerRam);
-        verify(attributes).put("codenvy:builder_execution_time", trackedBuilderExecutionTime);
+        verifySettingOfAttributes(runnerLifetime, runnerRam, builderExecutionTime);
+    }
+
+    @Test
+    public void shouldSetTrackedValuesIfEncodedFactoryIsTracked() throws ApiException, IOException {
+        when(workspaceDao.getById(WS_ID)).thenReturn(workspace);
+        when(workspace.getAttributes()).thenReturn(attributes);
+        when(attributes.get("factoryUrl")).thenReturn(encodedFactoryUrl);
+        when(jsonHelper.request(eq(Factory.class),
+                                anyString(),
+                                anyString(),
+                                isNull(),
+                                eq(Pair.of("validate", false))))
+                .thenReturn(factory);
+        when(factory.getOrgid()).thenReturn("orgid");
+        when(workspace.withAttributes(anyMap())).thenReturn(workspace);
+        SubscriptionDescriptor subscription = DtoFactory.getInstance().createDto(SubscriptionDescriptor.class).withProperties(
+                Collections.singletonMap("RAM", "8GB"));
+        when(jsonHelper.requestArray(eq(SubscriptionDescriptor.class),
+                                     anyString(),
+                                     eq("GET"),
+                                     anyObject(),
+                                     eq(new Pair<>("service", "Factory"))))
+                .thenReturn(Arrays.asList(subscription));
+
+        provider.onEvent(event);
+
+        verify(workspaceDao).update(workspace);
+        verifySettingOfAttributes(trackedRunnerLifetime, "8192", trackedBuilderExecutionTime);
+    }
+
+    @Test
+    public void shouldSetTrackedValuesIfNonEncodedFactoryIsTracked() throws ApiException, IOException {
+        when(workspaceDao.getById(WS_ID)).thenReturn(workspace);
+        when(workspace.getAttributes()).thenReturn(attributes);
+        when(attributes.get("factoryUrl")).thenReturn(nonEncodedFactoryUrl);
+        when(factoryBuilder.buildNonEncoded(any(URI.class))).thenReturn(factory);
+        when(factory.getOrgid()).thenReturn("orgid");
+        when(workspace.withAttributes(anyMap())).thenReturn(workspace);
+        SubscriptionDescriptor subscription = DtoFactory.getInstance().createDto(SubscriptionDescriptor.class).withProperties(
+                Collections.singletonMap("RAM", "8GB"));
+        when(jsonHelper.requestArray(eq(SubscriptionDescriptor.class),
+                                     anyString(),
+                                     eq("GET"),
+                                     anyObject(),
+                                     eq(new Pair<>("service", "Factory"))))
+                .thenReturn(Arrays.asList(subscription));
+
+        provider.onEvent(event);
+
+        verify(workspaceDao).update(workspace);
+        verifySettingOfAttributes(trackedRunnerLifetime, "8192", trackedBuilderExecutionTime);
     }
 
     @Test(dataProvider = "attributesProvider")
     public void shouldNotSetCommonValueIfValueIsNullOrEmpty(String runnerLifetime,
                                                             String runnerRam, String builderExecutionTime)
             throws NotFoundException, ServerException, ConflictException {
-        provider =
-                new FactoryWorkspaceResourceProvider(trackedRunnerRam, trackedRunnerLifetime, trackedBuilderExecutionTime, runnerLifetime,
-                                                     runnerRam, builderExecutionTime, apiEndpoint, workspaceDao, new EventService(),
-                                                     factoryBuilder);
+        provider = new FactoryWorkspaceResourceProvider(trackedRunnerLifetime,
+                                                        trackedBuilderExecutionTime,
+                                                        runnerLifetime,
+                                                        runnerRam,
+                                                        builderExecutionTime,
+                                                        apiEndpoint,
+                                                        workspaceDao,
+                                                        new EventService(),
+                                                        factoryBuilder);
 
         when(workspaceDao.getById(WS_ID)).thenReturn(workspace);
         when(workspace.getAttributes()).thenReturn(attributes);
@@ -213,5 +308,62 @@ public class FactoryWorkspaceResourceProviderTest {
                               {"notNull", "notNull", null},
                               {null, null, null}
         };
+    }
+
+    @Test
+    public void shouldSetCommonValuesIfExceptionOccursOnGetFactory() throws Exception {
+        when(workspaceDao.getById(WS_ID)).thenReturn(workspace);
+        when(workspace.getAttributes()).thenReturn(attributes);
+        when(attributes.get("factoryUrl")).thenReturn(encodedFactoryUrl);
+        when(jsonHelper.request(eq(Factory.class),
+                                anyString(),
+                                anyString(),
+                                isNull(),
+                                eq(Pair.of("validate", false))))
+                .thenThrow(new ServerException(""));
+        when(factory.getOrgid()).thenReturn("orgid");
+        when(workspace.withAttributes(anyMap())).thenReturn(workspace);
+        SubscriptionDescriptor subscription = DtoFactory.getInstance().createDto(SubscriptionDescriptor.class).withProperties(
+                Collections.singletonMap("RAM", "8GB"));
+        when(jsonHelper.requestArray(eq(SubscriptionDescriptor.class),
+                                     anyString(),
+                                     eq("GET"),
+                                     anyObject(),
+                                     eq(new Pair<>("service", "Factory"))))
+                .thenReturn(Arrays.asList(subscription));
+
+        provider.onEvent(event);
+
+        verify(workspaceDao).update(workspace);
+        verifySettingOfAttributes(runnerLifetime, runnerRam, builderExecutionTime);
+    }
+
+    @Test
+    public void shouldSetCommonValuesIfExeptionIsThrownOnBuildNonEncodedFactory() throws ApiException, IOException {
+        when(workspaceDao.getById(WS_ID)).thenReturn(workspace);
+        when(workspace.getAttributes()).thenReturn(attributes);
+        when(attributes.get("factoryUrl")).thenReturn(nonEncodedFactoryUrl);
+        when(factoryBuilder.buildNonEncoded(any(URI.class))).thenThrow(new ApiException(""));
+        when(factory.getOrgid()).thenReturn("orgid");
+        when(workspace.withAttributes(anyMap())).thenReturn(workspace);
+        SubscriptionDescriptor subscription = DtoFactory.getInstance().createDto(SubscriptionDescriptor.class).withProperties(
+                Collections.singletonMap("RAM", "8GB"));
+        when(jsonHelper.requestArray(eq(SubscriptionDescriptor.class),
+                                     anyString(),
+                                     eq("GET"),
+                                     anyObject(),
+                                     eq(new Pair<>("service", "Factory"))))
+                .thenReturn(Arrays.asList(subscription));
+
+        provider.onEvent(event);
+
+        verify(workspaceDao).update(workspace);
+        verifySettingOfAttributes(runnerLifetime, runnerRam, builderExecutionTime);
+    }
+
+    private void verifySettingOfAttributes(String runnerLifetime, String runnerRam, String builderExecutionTime) {
+        verify(attributes).put("codenvy:runner_lifetime", runnerLifetime);
+        verify(attributes).put("codenvy:runner_ram", runnerRam);
+        verify(attributes).put("codenvy:builder_execution_time", builderExecutionTime);
     }
 }
