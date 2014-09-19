@@ -52,6 +52,18 @@ public class FactorySubscriptionService extends SubscriptionService {
     //fixme for now Factory supports only 1 active subscription per 1 account
     @Override
     public void beforeCreateSubscription(Subscription subscription) throws ConflictException, ServerException {
+        if (subscription.getProperties() == null) {
+            throw new ConflictException("Subscription properties required");
+        }
+        String tariffPackage;
+        if (null == (tariffPackage = subscription.getProperties().get("Package"))) {
+            throw new ConflictException("Subscription property 'Package' required");
+        } else if (!"Tracked".equals(tariffPackage)) {
+            throw new ConflictException(String.format("Package '%s' is unknown", tariffPackage));
+        }
+        if (subscription.getProperties().get("RAM") == null) {
+            throw new ConflictException("Subscription property 'RAM' required");
+        }
         try {
             if (!accountDao.getSubscriptions(subscription.getAccountId(), getServiceId()).isEmpty()) {
                 throw new ConflictException(SUBSCRIPTION_LIMIT_EXHAUSTED_MESSAGE);

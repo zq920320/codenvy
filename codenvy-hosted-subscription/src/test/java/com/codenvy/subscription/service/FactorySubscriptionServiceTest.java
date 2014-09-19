@@ -59,24 +59,64 @@ public class FactorySubscriptionServiceTest {
           expectedExceptionsMessageRegExp = SubscriptionService.SUBSCRIPTION_LIMIT_EXHAUSTED_MESSAGE)
     public void beforeCreateSubscriptionWhenOneAlreadyExists() throws ApiException {
         final String accountId = "acc1";
+        final Map<String, String> properties = new HashMap<>(2);
+        properties.put("RAM", "2GB");
+        properties.put("Package", "Tracked");
         final List<Subscription> existedSubscriptions = new ArrayList<>(1);
         existedSubscriptions.add(new Subscription().withServiceId(service.getServiceId()));
         when(accountDao.getSubscriptions(accountId, service.getServiceId())).thenReturn(existedSubscriptions);
 
         final Subscription newSubscription = new Subscription().withServiceId(service.getServiceId())
-                                                               .withAccountId(accountId);
+                                                               .withAccountId(accountId)
+                                                               .withProperties(properties);
         service.beforeCreateSubscription(newSubscription);
     }
 
     @Test
     public void beforeCreateSubscription() throws ApiException {
         final String accountId = "acc1";
-        final Map<String, String> properties = new HashMap<>(1);
+        final Map<String, String> properties = new HashMap<>(2);
+        properties.put("RAM", "2GB");
+        properties.put("Package", "Tracked");
         final Subscription newSubscription = new Subscription().withServiceId(service.getServiceId())
                                                                .withAccountId(accountId)
                                                                .withProperties(properties);
         service.beforeCreateSubscription(newSubscription);
 
         verify(accountDao).getSubscriptions(accountId, service.getServiceId());
+    }
+
+    @Test(expectedExceptions = ConflictException.class, expectedExceptionsMessageRegExp = "Subscription property 'RAM' required")
+    public void shouldThrowExceptionIfRAMPropertyIsMissingOnBeforeCreateSubscription() throws ApiException {
+        final String accountId = "acc1";
+        final Map<String, String> properties = new HashMap<>(1);
+        properties.put("Package", "Tracked");
+        final Subscription newSubscription = new Subscription().withServiceId(service.getServiceId())
+                                                               .withAccountId(accountId)
+                                                               .withProperties(properties);
+        service.beforeCreateSubscription(newSubscription);
+    }
+
+    @Test(expectedExceptions = ConflictException.class, expectedExceptionsMessageRegExp = "Subscription property 'Package' required")
+    public void shouldThrowExceptionIfPackagePropertyIsMissingOnBeforeCreateSubscription() throws ApiException {
+        final String accountId = "acc1";
+        final Map<String, String> properties = new HashMap<>(1);
+        properties.put("RAM", "2GB");
+        final Subscription newSubscription = new Subscription().withServiceId(service.getServiceId())
+                                                               .withAccountId(accountId)
+                                                               .withProperties(properties);
+        service.beforeCreateSubscription(newSubscription);
+    }
+
+    @Test(expectedExceptions = ConflictException.class, expectedExceptionsMessageRegExp = "Package 'NotTracked' is unknown")
+    public void shouldThrowExceptionIfPackagePropertyIsIllegalOnBeforeCreateSubscription() throws ApiException {
+        final String accountId = "acc1";
+        final Map<String, String> properties = new HashMap<>(2);
+        properties.put("RAM", "2GB");
+        properties.put("Package", "NotTracked");
+        final Subscription newSubscription = new Subscription().withServiceId(service.getServiceId())
+                                                               .withAccountId(accountId)
+                                                               .withProperties(properties);
+        service.beforeCreateSubscription(newSubscription);
     }
 }

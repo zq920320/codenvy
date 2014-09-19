@@ -207,12 +207,12 @@ public class SaasSubscriptionService extends SubscriptionService {
     }
 
     /**
-     * Converts String RAM with suffix GB to int RAM in MB
+     * Converts String RAM with suffix GB or MB to int RAM in MB.
      * e.g.
      * "1GB" -> 1024
      *
      * @param RAM
-     *         string RAM in GB
+     *         string RAM in GB or MB
      * @return int RAM in MB
      */
     private int convert(String RAM) throws ConflictException {
