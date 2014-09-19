@@ -18,6 +18,7 @@
 
 package com.codenvy.analytics.services.view;
 
+import com.codenvy.analytics.DateRangeUtils;
 import com.codenvy.analytics.Injector;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.*;
@@ -160,23 +161,11 @@ public class MetricRow extends AbstractRow {
             if (isMultipleColumnsMetric()) {
                 return getMultipleValues(initialContext);
             } else {
-                Calendar fixedFromDate = getFixedFromDate(initialContext);
-                return getSingleValue(initialContext.cloneAndPut(Parameters.FROM_DATE, fixedFromDate), iterationsCount);
+                return getSingleValue(initialContext, iterationsCount);
             }
         } catch (ParseException e) {
             throw new IOException(e);
         }
-    }
-
-    private Calendar getFixedFromDate(Context context) throws ParseException {
-        if (context.exists(Parameters.IS_CUSTOM_DATE_RANGE)
-            && context.exists(Parameters.TIME_UNIT)
-            && context.getTimeUnit() != Parameters.TimeUnit.LIFETIME
-            ) {
-            return Utils.getFirstDayDate(context.getTimeUnit(), context.getAsDate(Parameters.TO_DATE));
-        }
-
-        return context.getAsDate(Parameters.FROM_DATE);
     }
 
     private boolean isMultipleColumnsMetric() {
@@ -188,9 +177,17 @@ public class MetricRow extends AbstractRow {
                                                                              ParseException {
         List<ValueData> result = new ArrayList<>();
 
+        String initialFromDate = initialContext.getAsString(Parameters.FROM_DATE);
+
         boolean descriptionExists = parameters.containsKey(DESCRIPTION);
         if (descriptionExists) {
             result.add(new StringValueData(parameters.get(DESCRIPTION)));
+        }
+
+        if (DateRangeUtils.isCustomDateRange(initialContext)) {
+            Calendar fixedFromDate = DateRangeUtils.getFirstDayDate(initialContext.getTimeUnit(),
+                                                                    initialContext.getAsDate(Parameters.TO_DATE));
+            initialContext = initialContext.cloneAndPut(Parameters.FROM_DATE, fixedFromDate);
         }
 
         for (int i = descriptionExists ? 1 : 0; i < iterationsCount; i++) {
@@ -201,6 +198,13 @@ public class MetricRow extends AbstractRow {
             }
 
             initialContext = Utils.prevDateInterval(new Context.Builder(initialContext));
+
+            // restore initial value of parameter "from date" for the first unit
+            if (i == (iterationsCount - 2)
+                && DateRangeUtils.isCustomDateRange(initialContext)
+                && initialFromDate != null) {
+                initialContext = initialContext.cloneAndPut(Parameters.FROM_DATE, initialFromDate);
+            }
         }
 
         return Arrays.asList(result);

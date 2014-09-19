@@ -245,39 +245,6 @@ public class Utils {
         return new BasicDBObject(ReadBasedMetric.DATE, dateFilter);
     }
 
-    /**
-     * Returns number of units between the dates, taking into account incomplete weeks and months.
-     */
-    public static int getUnitsAboveDates(TimeUnit timeUnit, Calendar fromDate, Calendar toDate) {
-        switch (timeUnit) {
-            case DAY:
-                return Days.daysBetween(new LocalDate(fromDate), new LocalDate(toDate)).getDays() + 1;  // add one for last day
-
-            case WEEK:
-                fromDate.set(Calendar.DAY_OF_WEEK, fromDate.getFirstDayOfWeek());
-                toDate.set(Calendar.DAY_OF_WEEK, toDate.getFirstDayOfWeek());
-                if (fromDate.getTime() != toDate.getTime()) {
-                    toDate.add(Calendar.WEEK_OF_MONTH, 1);
-                }
-
-                return Weeks.weeksBetween(new LocalDate(fromDate), new LocalDate(toDate)).getWeeks();
-
-            case MONTH:
-                fromDate.set(Calendar.DAY_OF_MONTH, 1);
-                toDate.set(Calendar.DAY_OF_MONTH, 1);
-                if (fromDate.getTime() != toDate.getTime()) {
-                    toDate.add(Calendar.MONTH, 1);
-                }
-
-                return Months.monthsBetween(new LocalDate(fromDate), new LocalDate(toDate)).getMonths();
-
-            case LIFETIME:
-                return 1;
-        }
-        
-        return 0;
-    }
-
     public static String getFilterAsString(Set<String> values) {
         StringBuilder result = new StringBuilder();
         for (String value : values) {
@@ -498,25 +465,5 @@ public class Utils {
         return c_list.toArray(new String[0]);
     }
 
-    /**
-     * @return date of first day of time unit containing toDate.
-     */
-    @Nullable
-    public static Calendar getFirstDayDate(TimeUnit timeUnit, Calendar toDate) {
-        switch (timeUnit) {
-            case DAY:
-                return toDate;
-
-            case WEEK:
-                toDate.set(Calendar.DAY_OF_WEEK, toDate.getFirstDayOfWeek());
-                return toDate;
-
-            case MONTH:
-                toDate.set(Calendar.DAY_OF_MONTH, 1);
-                return toDate;
-        }
-
-        return null;
-    }
 }
 

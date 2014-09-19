@@ -17,7 +17,7 @@
  */
 package com.codenvy.analytics.services.view;
 
-import com.codenvy.analytics.Utils;
+import com.codenvy.analytics.DateRangeUtils;
 import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.Parameters;
 
@@ -39,9 +39,9 @@ public class TestCalculateTimeUnitCount {
         builder.put(Parameters.TO_DATE, toDate);
         builder.put(Parameters.TIME_UNIT, timeUnit.toString());
 
-        Assert.assertEquals(Utils.getUnitsAboveDates(timeUnit,
-                                                     builder.getAsDate(Parameters.FROM_DATE),
-                                                     builder.getAsDate(Parameters.TO_DATE)),
+        Assert.assertEquals(DateRangeUtils.getUnitsAboveDates(timeUnit,
+                                                              builder.getAsDate(Parameters.FROM_DATE),
+                                                              builder.getAsDate(Parameters.TO_DATE)),
                             rowsCount);
     }
 

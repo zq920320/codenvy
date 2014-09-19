@@ -35,23 +35,16 @@ import static org.testng.Assert.assertEquals;
 /**
  * @author Anatoliy Bazko
  */
-public class TestDateFieldsMetricRow extends BaseTest {
-
-    private Context context;
-    private Map<String, String> parameters;
-
-    @BeforeClass
-    public void prepare() throws Exception {
-        context = Utils.initializeContext(Parameters.TimeUnit.DAY);
-
-        parameters = new HashMap<>();
-        parameters.put("date-fields", "date1,date2=HH:mm:ss");
-        parameters.put("fields", "date1,date2,date3");
-    }
-
+public class TestMetricRow extends BaseTest {
     @Test
     public void testFormatTimeValue15h50m() throws Exception {
-        TestedMetric metric = new TestedMetric();
+        Context context = Utils.initializeContext(Parameters.TimeUnit.DAY);
+
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("date-fields", "date1,date2=HH:mm:ss");
+        parameters.put("fields", "date1,date2,date3");
+
+        ListValueTestedMetric metric = new ListValueTestedMetric();
         Row row = new MetricRow(metric, parameters);
 
         List<List<ValueData>> data = row.getData(context, 1);
@@ -65,9 +58,31 @@ public class TestDateFieldsMetricRow extends BaseTest {
         assertEquals(items.get(2), StringValueData.valueOf("10,800,000"));
     }
 
+    @Test
+    public void testDateRangeFilter() throws Exception {
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.TIME_UNIT, Parameters.TimeUnit.MONTH.toString());
+        builder.put(Parameters.FROM_DATE, "20131227");
+        builder.put(Parameters.TO_DATE, "20140202");    // 3 months
+        builder.put(Parameters.IS_CUSTOM_DATE_RANGE, "");
+
+        SingleValueTestedMetric metric = new SingleValueTestedMetric();
+        Row row = new MetricRow(metric, new HashMap<String, String>());
+
+        List<List<ValueData>> data = row.getData(builder.build(), 3);
+        assertEquals(data.size(), 1);
+
+        List<ValueData> items = data.get(0);
+        assertEquals(items.size(), 3);
+
+        assertEquals(items.get(0).getAsString(), "fromDate: 20140201; toDate: 20140202");
+        assertEquals(items.get(1).getAsString(), "fromDate: 20140101; toDate: 20140131");
+        assertEquals(items.get(2).getAsString(), "fromDate: 20131227; toDate: 20131231");
+    }
+
     // ----------------------> Tested metric
 
-    private class TestedMetric implements Metric {
+    private class ListValueTestedMetric implements Metric {
 
         @Override
         public ValueData getValue(Context context) throws IOException {
@@ -83,6 +98,31 @@ public class TestDateFieldsMetricRow extends BaseTest {
         @Override
         public Class<? extends ValueData> getValueDataClass() {
             return ListValueData.class;
+        }
+
+        @Override
+        public String getName() {
+            return null;
+        }
+
+        @Override
+        public String getDescription() {
+            return null;
+        }
+    }
+
+    private class SingleValueTestedMetric implements Metric {
+
+        @Override
+        public ValueData getValue(Context context) throws IOException {
+            return StringValueData.valueOf(String.format("fromDate: %s; toDate: %s",
+                                                         context.getAsString(Parameters.FROM_DATE),
+                                                         context.getAsString(Parameters.TO_DATE)));
+        }
+
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return StringValueData.class;
         }
 
         @Override

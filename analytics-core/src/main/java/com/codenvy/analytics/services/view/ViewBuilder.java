@@ -18,7 +18,7 @@
 package com.codenvy.analytics.services.view;
 
 import com.codenvy.analytics.Configurator;
-import com.codenvy.analytics.Utils;
+import com.codenvy.analytics.DateRangeUtils;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.StringValueData;
 import com.codenvy.analytics.datamodel.ValueData;
@@ -371,7 +371,7 @@ public class ViewBuilder extends Feature {
                    && context.exists(Parameters.IS_CUSTOM_DATE_RANGE)) {
             Calendar fromDate = context.getAsDate(Parameters.FROM_DATE);
             Calendar toDate = context.getAsDate(Parameters.TO_DATE);
-            int rows = Utils.getUnitsAboveDates(context.getTimeUnit(), fromDate, toDate) + 1; // add one for metric name row
+            int rows = DateRangeUtils.getUnitsAboveDates(context.getTimeUnit(), fromDate, toDate) + 1; // add one for metric name row
 
             return (rows > ViewBuilder.MAX_ROWS) ? ViewBuilder.MAX_ROWS : rows;
         } else {
