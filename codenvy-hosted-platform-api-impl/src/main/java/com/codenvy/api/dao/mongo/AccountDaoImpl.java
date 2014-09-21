@@ -481,7 +481,7 @@ public class AccountDaoImpl implements AccountDao {
         for (Object dbMember : members) {
             final Member member = toMember(dbMember);
             if (target.getAccountId().equals(member.getAccountId())) {
-                throw new ConflictException(format("Workspace %s already contains member %s", target.getAccountId(), target.getUserId()));
+                throw new ConflictException(format("Account %s already contains member %s", target.getAccountId(), target.getUserId()));
             }
         }
     }
