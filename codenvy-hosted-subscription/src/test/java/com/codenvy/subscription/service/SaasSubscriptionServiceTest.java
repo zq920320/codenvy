@@ -42,7 +42,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
@@ -60,8 +59,10 @@ import static org.mockito.Mockito.when;
  */
 @Listeners(value = {MockitoTestNGListener.class})
 public class SaasSubscriptionServiceTest {
-    private static final String ACCOUNT_ID   = "accountID";
-    private static final String WORKSPACE_ID = "wsID";
+    private static final String ACCOUNT_ID             = "accountID";
+    private static final String WORKSPACE_ID           = "wsID";
+    private static final String RUNNER_LIFE_TIME       = "3600";
+    private static final String BUILDER_EXECUTION_TIME = "600";
 
     private SubscriptionService service;
     @Mock
@@ -71,7 +72,10 @@ public class SaasSubscriptionServiceTest {
 
     @BeforeClass
     public void initialize() {
-        service = new SaasSubscriptionService(workspaceDao, accountDao);
+        service = new SaasSubscriptionService(workspaceDao,
+                                              accountDao,
+                                              RUNNER_LIFE_TIME,
+                                              BUILDER_EXECUTION_TIME);
     }
 
     @Test(expectedExceptions = ConflictException.class,
@@ -146,9 +150,8 @@ public class SaasSubscriptionServiceTest {
 
         Assert.assertEquals(workspace.getAttributes().size(), 3);
         Assert.assertEquals(workspace.getAttributes().get("codenvy:runner_ram"), "1024");
-        Assert.assertEquals(workspace.getAttributes().get("codenvy:runner_lifetime"), String.valueOf(TimeUnit.HOURS.toSeconds(1)));
-        Assert.assertEquals(workspace.getAttributes().get("codenvy:builder_execution_time"),
-                            String.valueOf(TimeUnit.MINUTES.toSeconds(20)));
+        Assert.assertEquals(workspace.getAttributes().get("codenvy:runner_lifetime"), RUNNER_LIFE_TIME);
+        Assert.assertEquals(workspace.getAttributes().get("codenvy:builder_execution_time"), BUILDER_EXECUTION_TIME);
         verify(accountDao, never()).update(any(Account.class));
     }
 
@@ -167,9 +170,8 @@ public class SaasSubscriptionServiceTest {
 
         Assert.assertEquals(workspace.getAttributes().size(), 3);
         Assert.assertEquals(workspace.getAttributes().get("codenvy:runner_ram"), "1024");
-        Assert.assertEquals(workspace.getAttributes().get("codenvy:runner_lifetime"), String.valueOf(TimeUnit.HOURS.toSeconds(1)));
-        Assert.assertEquals(workspace.getAttributes().get("codenvy:builder_execution_time"),
-                            String.valueOf(TimeUnit.MINUTES.toSeconds(20)));
+        Assert.assertEquals(workspace.getAttributes().get("codenvy:runner_lifetime"), RUNNER_LIFE_TIME);
+        Assert.assertEquals(workspace.getAttributes().get("codenvy:builder_execution_time"), BUILDER_EXECUTION_TIME);
         verify(accountDao).update(argThat(new ArgumentMatcher<Account>() {
             @Override
             public boolean matches(Object argument) {
@@ -195,8 +197,7 @@ public class SaasSubscriptionServiceTest {
         Assert.assertEquals(workspace.getAttributes().size(), 3);
         Assert.assertEquals(workspace.getAttributes().get("codenvy:runner_ram"), "1024");
         Assert.assertEquals(workspace.getAttributes().get("codenvy:runner_lifetime"), "-1");
-        Assert.assertEquals(workspace.getAttributes().get("codenvy:builder_execution_time"),
-                            String.valueOf(TimeUnit.MINUTES.toSeconds(20)));
+        Assert.assertEquals(workspace.getAttributes().get("codenvy:builder_execution_time"), BUILDER_EXECUTION_TIME);
         verify(accountDao, never()).update(any(Account.class));
     }
 
@@ -216,8 +217,7 @@ public class SaasSubscriptionServiceTest {
         Assert.assertEquals(workspace.getAttributes().size(), 3);
         Assert.assertEquals(workspace.getAttributes().get("codenvy:runner_ram"), "1024");
         Assert.assertEquals(workspace.getAttributes().get("codenvy:runner_lifetime"), "-1");
-        Assert.assertEquals(workspace.getAttributes().get("codenvy:builder_execution_time"),
-                            String.valueOf(TimeUnit.MINUTES.toSeconds(20)));
+        Assert.assertEquals(workspace.getAttributes().get("codenvy:builder_execution_time"), BUILDER_EXECUTION_TIME);
         verify(accountDao).update(argThat(new ArgumentMatcher<Account>() {
             @Override
             public boolean matches(Object argument) {
@@ -241,9 +241,8 @@ public class SaasSubscriptionServiceTest {
 
         Assert.assertEquals(workspace.getAttributes().size(), 3);
         Assert.assertEquals(workspace.getAttributes().get("codenvy:runner_ram"), "1024");
-        Assert.assertEquals(workspace.getAttributes().get("codenvy:runner_lifetime"), String.valueOf(TimeUnit.HOURS.toSeconds(1)));
-        Assert.assertEquals(workspace.getAttributes().get("codenvy:builder_execution_time"),
-                            String.valueOf(TimeUnit.MINUTES.toSeconds(20)));
+        Assert.assertEquals(workspace.getAttributes().get("codenvy:runner_lifetime"), RUNNER_LIFE_TIME);
+        Assert.assertEquals(workspace.getAttributes().get("codenvy:builder_execution_time"), BUILDER_EXECUTION_TIME);
         verify(accountDao, never()).update(any(Account.class));
     }
 
@@ -262,9 +261,8 @@ public class SaasSubscriptionServiceTest {
 
         Assert.assertEquals(workspace.getAttributes().size(), 3);
         Assert.assertEquals(workspace.getAttributes().get("codenvy:runner_ram"), "1024");
-        Assert.assertEquals(workspace.getAttributes().get("codenvy:runner_lifetime"), String.valueOf(TimeUnit.HOURS.toSeconds(1)));
-        Assert.assertEquals(workspace.getAttributes().get("codenvy:builder_execution_time"),
-                            String.valueOf(TimeUnit.MINUTES.toSeconds(20)));
+        Assert.assertEquals(workspace.getAttributes().get("codenvy:runner_lifetime"), RUNNER_LIFE_TIME);
+        Assert.assertEquals(workspace.getAttributes().get("codenvy:builder_execution_time"), BUILDER_EXECUTION_TIME);
         verify(accountDao, never()).update(any(Account.class));
     }
 
@@ -410,9 +408,8 @@ public class SaasSubscriptionServiceTest {
 
         Assert.assertEquals(workspace.getAttributes().size(), 3);
         Assert.assertEquals(workspace.getAttributes().get("codenvy:runner_ram"), expectedRam);
-        Assert.assertEquals(workspace.getAttributes().get("codenvy:runner_lifetime"), String.valueOf(TimeUnit.HOURS.toSeconds(1)));
-        Assert.assertEquals(workspace.getAttributes().get("codenvy:builder_execution_time"),
-                            String.valueOf(TimeUnit.MINUTES.toSeconds(20)));
+        Assert.assertEquals(workspace.getAttributes().get("codenvy:runner_lifetime"), RUNNER_LIFE_TIME);
+        Assert.assertEquals(workspace.getAttributes().get("codenvy:builder_execution_time"), BUILDER_EXECUTION_TIME);
     }
 
     @DataProvider(name = "goodRamValuesProvider")

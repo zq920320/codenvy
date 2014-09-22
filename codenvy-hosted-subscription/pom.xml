@@ -44,6 +44,12 @@
             <artifactId>codenvy-api-workspace</artifactId>
             <version>${codenvy.platform-api.version}</version>
         </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${ch.qos.logback.version}</version>
+            <scope>test</scope>
+        </dependency>
         <!-- Mock testing -->
         <dependency>
             <groupId>org.mockito</groupId>
