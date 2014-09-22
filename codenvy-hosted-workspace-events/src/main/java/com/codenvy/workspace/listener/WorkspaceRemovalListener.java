@@ -26,7 +26,6 @@ import com.codenvy.api.user.server.dao.UserDao;
 import com.codenvy.api.user.server.dao.UserProfileDao;
 import com.codenvy.api.workspace.server.dao.Member;
 import com.codenvy.api.workspace.server.dao.MemberDao;
-import com.codenvy.api.workspace.server.dao.Workspace;
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
 import com.codenvy.workspace.event.StopWsEvent;
 import com.google.common.cache.RemovalListener;
@@ -68,31 +67,31 @@ public class WorkspaceRemovalListener implements RemovalListener<String, Boolean
 
     @Override
     public void onRemoval(RemovalNotification<String, Boolean> notification) {
-        if (notification.getValue()) {
-            try {
-                String wsId = notification.getKey();
+        try {
+            if (notification.getValue()) {
                 try {
-                    workspaceDao.getById(wsId);
-                } catch (NotFoundException e) {
-                    return;
-                }
-                final List<Member> members = memberDao.getWorkspaceMembers(wsId);
-                for (Member member : members) {
-                    memberDao.remove(member);
-                }
-                workspaceDao.remove(wsId);
-
-                for (Member member : members) {
-                    Profile userProfile = userProfileDao.getById(member.getUserId());
-                    if ("true".equals(userProfile.getAttributes().get("temporary"))) {
-                        userDao.remove(member.getUserId());
+                    String wsId = notification.getKey();
+                    final List<Member> members;
+                    try {
+                        members = memberDao.getWorkspaceMembers(wsId);
+                        workspaceDao.remove(wsId);
+                    } catch (NotFoundException e) {
+                        return;
                     }
+
+                    for (Member member : members) {
+                        Profile userProfile = userProfileDao.getById(member.getUserId());
+                        if ("true".equals(userProfile.getAttributes().get("temporary"))) {
+                            userDao.remove(member.getUserId());
+                        }
+                    }
+                } catch (ConflictException | NotFoundException | ServerException e) {
+                    LOG.warn(e.getLocalizedMessage(), e);
                 }
-            } catch (ConflictException | NotFoundException | ServerException e) {
-                LOG.warn(e.getLocalizedMessage(), e);
             }
+        } finally {
+            eventService.publish(new StopWsEvent(notification.getKey(), notification.getValue()));
+            LOG.info("Workspace is stopped. Id#{}# Temporary#{}#", notification.getKey(), notification.getValue());
         }
-        eventService.publish(new StopWsEvent(notification.getKey(), notification.getValue()));
-        LOG.info("Workspace is stopped. Id#{}# Temporary#{}#", notification.getKey(), notification.getValue());
     }
 }
