@@ -51,6 +51,7 @@ public class TestViewBuilder extends BaseTest {
 
     private static final String           RESOURCE_DIR = BASE_DIR + "/test-classes/" + TestViewBuilder.class.getSimpleName();
     private static final String           VIEW_CONF    = RESOURCE_DIR + "/view.xml";
+    private static final String           PASSED_DAYS_VIEW_CONF    = RESOURCE_DIR + "/passed_days_view.xml";
     private static final SimpleDateFormat DIR_FORMAT   = new SimpleDateFormat("yyyy" + File.separator + "MM" + File.separator + "dd");
 
     private ViewBuilder viewBuilder;
@@ -99,6 +100,7 @@ public class TestViewBuilder extends BaseTest {
         for (int i = 1; i < 4; i++) {
             if (viewData.getAllValues().get(i).containsKey("workspaces_day")) {
                 actualData = viewData.getAllValues().get(i);
+                break;
             }
         }
 
@@ -161,6 +163,23 @@ public class TestViewBuilder extends BaseTest {
 
     @Test
     public void testSpecificPassedDaysCount() throws Exception {
+        XmlConfigurationManager configurationManager = mock(XmlConfigurationManager.class);
+        when(configurationManager.loadConfiguration(any(Class.class), anyString())).thenAnswer(new Answer<Object>() {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable {
+                XmlConfigurationManager manager = new XmlConfigurationManager();
+                return manager.loadConfiguration(DisplayConfiguration.class, PASSED_DAYS_VIEW_CONF);
+            }
+        });
+
+        Configurator configurator = spy(Injector.getInstance(Configurator.class));
+        doReturn(new String[]{PASSED_DAYS_VIEW_CONF}).when(configurator).getArray(anyString());
+
+        viewBuilder = spy(new ViewBuilder(Injector.getInstance(JdbcDataPersisterFactory.class),
+                                          Injector.getInstance(CSVReportPersister.class),
+                                          configurationManager,
+                                          configurator));
+
         ArgumentCaptor<String> viewId = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<ViewData> viewData = ArgumentCaptor.forClass(ViewData.class);
         ArgumentCaptor<Context> context = ArgumentCaptor.forClass(Context.class);
