@@ -21,19 +21,29 @@ package com.codenvy.api.dao.mongo;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.api.core.notification.EventService;
+import com.codenvy.api.workspace.server.dao.Member;
+import com.codenvy.api.workspace.server.dao.MemberDao;
 import com.codenvy.api.workspace.server.dao.Workspace;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
+import org.mockito.Mock;
+import org.mockito.testng.MockitoTestNGListener;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
@@ -46,16 +56,19 @@ import static org.testng.Assert.fail;
  * @author Max Shaposhnik
  * @author Eugene Voevodin
  */
+@Listeners(value = {MockitoTestNGListener.class})
 public class WorkspaceDaoImplTest extends BaseDaoTest {
 
     private static final String COLL_NAME = "workspaces";
 
+    @Mock
+    private MemberDao        memberDao;
     private WorkspaceDaoImpl workspaceDao;
 
     @BeforeMethod
     public void setUp() throws Exception {
         super.setUp(COLL_NAME);
-        workspaceDao = new WorkspaceDaoImpl(db, new EventService(), COLL_NAME);
+        workspaceDao = new WorkspaceDaoImpl(db, memberDao, new EventService(), COLL_NAME);
     }
 
     @AfterMethod
@@ -178,10 +191,20 @@ public class WorkspaceDaoImplTest extends BaseDaoTest {
     @Test
     public void shouldBeAbleToRemoveWorkspace() throws Exception {
         final Workspace testWorkspace = createWorkspace();
+        final ArrayList<Member> workspaceMembers = new ArrayList<>(2);
+        workspaceMembers.add(new Member().withUserId("test_user1")
+                                         .withWorkspaceId(testWorkspace.getId())
+                                         .withRoles(singletonList("workspace/developer")));
+        workspaceMembers.add(new Member().withUserId("test_user2")
+                                         .withWorkspaceId(testWorkspace.getId())
+                                         .withRoles(singletonList("workspace/admin")));
+        when(memberDao.getWorkspaceMembers(testWorkspace.getId())).thenReturn(workspaceMembers);
         collection.insert(workspaceDao.toDBObject(testWorkspace));
 
         workspaceDao.remove(testWorkspace.getId());
 
+        verify(memberDao).remove(workspaceMembers.get(0));
+        verify(memberDao).remove(workspaceMembers.get(1));
         assertNull(collection.findOne(new BasicDBObject("id", testWorkspace.getId())));
     }
 

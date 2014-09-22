@@ -21,6 +21,8 @@ import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.api.core.notification.EventService;
+import com.codenvy.api.workspace.server.dao.Member;
+import com.codenvy.api.workspace.server.dao.MemberDao;
 import com.codenvy.api.workspace.server.dao.Workspace;
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
 import com.codenvy.workspace.event.CreateWorkspaceEvent;
@@ -80,9 +82,11 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
 
     private final DBCollection collection;
     private final EventService eventService;
+    private final MemberDao    memberDao;
 
     @Inject
     public WorkspaceDaoImpl(DB db,
+                            MemberDao memberDao,
                             EventService eventService,
                             @Named(DB_COLLECTION) String collectionName) {
         collection = db.getCollection(collectionName);
@@ -90,6 +94,7 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
         collection.ensureIndex(new BasicDBObject("name", 1), new BasicDBObject("unique", true));
         collection.ensureIndex(new BasicDBObject("accountId", 1));
         this.eventService = eventService;
+        this.memberDao = memberDao;
     }
 
     @Override
@@ -111,7 +116,7 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
         final DBObject query = new BasicDBObject("id", update.getId());
         final DBObject workspaceDocument = collection.findOne(query);
         if (workspaceDocument == null) {
-            throw new NotFoundException("Workspace not found " + update.getId());
+            throw new NotFoundException(format("Workspace with id %s was not found ", update.getId()));
         }
         if (!update.getName().equals(workspaceDocument.get("name"))) {
             validateName(update.getName());
@@ -150,7 +155,8 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
             throw new ServerException("It is not possible to retrieve workspace");
         }
         if (workspaceDocument == null) {
-            throw new NotFoundException("Workspace not found " + name);
+            throw new NotFoundException(format("Workspace with name %s was not found ", name));
+
         }
         return toWorkspace(workspaceDocument);
     }
@@ -171,9 +177,19 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
     }
 
     @Override
-    public void remove(String id) throws ServerException {
+    public void remove(String id) throws NotFoundException, ServerException, ConflictException {
         try {
-            final DBObject workspaceDocument = collection.findAndRemove(new BasicDBObject("id", id));
+            final DBObject query = new BasicDBObject("id", id);
+            final DBObject workspaceDocument = collection.findOne(query);
+            if (workspaceDocument == null) {
+                throw new NotFoundException(format("Workspace with id %s was not found ", id));
+            }
+            //removing all workspace members
+            for (Member member : memberDao.getWorkspaceMembers(id)) {
+                memberDao.remove(member);
+            }
+            //removing workspace itself
+            collection.remove(query);
             final Workspace removedWorkspace = toWorkspace(workspaceDocument);
             LOG.info("EVENT#workspace-destroyed# WS#{}# WS-ID#{}#", removedWorkspace.getName(), removedWorkspace.getId());
             eventService.publish(new DeleteWorkspaceEvent(id, removedWorkspace.isTemporary(), removedWorkspace.getName()));
