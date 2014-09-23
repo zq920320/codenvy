@@ -21,24 +21,34 @@ package com.codenvy.analytics;
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.*;
+import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.Context.Builder;
+import com.codenvy.analytics.metrics.Metric;
+import com.codenvy.analytics.metrics.MetricFactory;
+import com.codenvy.analytics.metrics.MetricFilter;
+import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.Parameters.PassedDaysCount;
 import com.codenvy.analytics.metrics.Parameters.TimeUnit;
+import com.codenvy.analytics.metrics.ReadBasedMetric;
 import com.codenvy.analytics.persistent.MongoDataLoader;
-import com.codenvy.analytics.services.view.ViewBuilder;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
-import org.joda.time.*;
-
-import javax.annotation.Nullable;
 import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import static com.codenvy.analytics.datamodel.ValueDataUtil.getAsList;
@@ -240,8 +250,7 @@ public class Utils {
     public static DBObject setDateFilter(Context context) throws ParseException {
         DBObject dateFilter = new BasicDBObject();
         dateFilter.put("$gte", context.getAsDate(Parameters.FROM_DATE).getTimeInMillis());
-        dateFilter.put("$lt",
-                       context.getAsDate(Parameters.TO_DATE).getTimeInMillis() + MongoDataLoader.DAY_IN_MILLISECONDS);
+        dateFilter.put("$lt", context.getAsDate(Parameters.TO_DATE).getTimeInMillis() + MongoDataLoader.DAY_IN_MILLISECONDS);
         return new BasicDBObject(ReadBasedMetric.DATE, dateFilter);
     }
 
@@ -464,6 +473,5 @@ public class Utils {
 
         return c_list.toArray(new String[0]);
     }
-
 }
 

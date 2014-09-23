@@ -21,15 +21,33 @@ package com.codenvy.analytics.services.view;
 import com.codenvy.analytics.DateRangeUtils;
 import com.codenvy.analytics.Injector;
 import com.codenvy.analytics.Utils;
-import com.codenvy.analytics.datamodel.*;
-import com.codenvy.analytics.metrics.*;
+import com.codenvy.analytics.datamodel.DoubleValueData;
+import com.codenvy.analytics.datamodel.ListValueData;
+import com.codenvy.analytics.datamodel.LongValueData;
+import com.codenvy.analytics.datamodel.MapValueData;
+import com.codenvy.analytics.datamodel.NumericValueData;
+import com.codenvy.analytics.datamodel.SetValueData;
+import com.codenvy.analytics.datamodel.StringValueData;
+import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.InitialValueNotFoundException;
+import com.codenvy.analytics.metrics.Metric;
+import com.codenvy.analytics.metrics.MetricFactory;
+import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.pig.scripts.EventsHolder;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static com.codenvy.analytics.DateRangeUtils.getFirstDayOfPeriod;
 
 /**
  * @author Anatoliy Bazko
@@ -38,7 +56,7 @@ public class MetricRow extends AbstractRow {
     private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("00");
 
     private static final String DEFAULT_NUMERIC_FORMAT = "%,.0f";
-    public static final String DEFAULT_DATE_FORMAT     = "yyyy-MM-dd HH:mm:ss";
+    public static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
     private static final String DEFAULT_TIME_FORMAT    = "HH:mm:ss";
 
     /** The name of the metric. */
@@ -185,8 +203,7 @@ public class MetricRow extends AbstractRow {
         }
 
         if (DateRangeUtils.isCustomDateRange(initialContext)) {
-            Calendar fixedFromDate = DateRangeUtils.getFirstDayDate(initialContext.getTimeUnit(),
-                                                                    initialContext.getAsDate(Parameters.TO_DATE));
+            Calendar fixedFromDate = getFirstDayOfPeriod(initialContext.getTimeUnit(), initialContext.getAsDate(Parameters.TO_DATE));
             initialContext = initialContext.cloneAndPut(Parameters.FROM_DATE, fixedFromDate);
         }
 
@@ -340,7 +357,7 @@ public class MetricRow extends AbstractRow {
         if (format == null) {
             format = DEFAULT_TIME_FORMAT;
         }
-        
+
         int secs = (int)((milliseconds / 1000) % 60);
         int minutes = (int)((milliseconds / (1000 * 60)) % 60);
         int hours = (int)(milliseconds / (1000 * 60 * 60));

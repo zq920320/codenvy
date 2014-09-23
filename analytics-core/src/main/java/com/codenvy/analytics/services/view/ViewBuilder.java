@@ -18,11 +18,15 @@
 package com.codenvy.analytics.services.view;
 
 import com.codenvy.analytics.Configurator;
-import com.codenvy.analytics.DateRangeUtils;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.StringValueData;
 import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.*;
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Expandable;
+import com.codenvy.analytics.metrics.Metric;
+import com.codenvy.analytics.metrics.MetricFactory;
+import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.sessions.AbstractTimelineProductUsageCondition;
 import com.codenvy.analytics.metrics.top.AbstractTopEntitiesTime;
 import com.codenvy.analytics.persistent.DataPersister;
@@ -42,14 +46,22 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URISyntaxException;
 import java.sql.SQLException;
 import java.text.ParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveAction;
 import java.util.concurrent.TimeUnit;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import static com.codenvy.analytics.DateRangeUtils.getNumberOfUnitsBetweenDates;
 import static com.codenvy.analytics.Utils.initDateInterval;
 import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsList;
 
@@ -364,14 +376,15 @@ public class ViewBuilder extends Feature {
         }
     }
 
+
     private int getRowCount(int rowCountFromConf, Context context) throws ParseException {
         if (context.exists(Parameters.TIME_UNIT) && context.getTimeUnit() == Parameters.TimeUnit.LIFETIME) {
             return 2;
-        } else if (context.exists(Parameters.TIME_UNIT)
-                   && context.exists(Parameters.IS_CUSTOM_DATE_RANGE)) {
+
+        } else if (context.exists(Parameters.TIME_UNIT) && context.exists(Parameters.IS_CUSTOM_DATE_RANGE)) {
             Calendar fromDate = context.getAsDate(Parameters.FROM_DATE);
             Calendar toDate = context.getAsDate(Parameters.TO_DATE);
-            int rows = DateRangeUtils.getUnitsAboveDates(context.getTimeUnit(), fromDate, toDate) + 1; // add one for metric name row
+            int rows = getNumberOfUnitsBetweenDates(context.getTimeUnit(), fromDate, toDate) + 1; // add one for metric name row
 
             return (rows > ViewBuilder.MAX_ROWS) ? ViewBuilder.MAX_ROWS : rows;
         } else {

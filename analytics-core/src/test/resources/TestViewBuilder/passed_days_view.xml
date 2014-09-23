@@ -27,8 +27,7 @@
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="top_users"/>
                 <parameter key="description" value="Top Users"/>
-                <parameter key="fields"
-                           value="entity,sessions,by_1_day,by_7_days,by_30_days"/>
+                <parameter key="fields" value="entity,sessions,by_1_day,by_7_days,by_30_days"/>
             </row>
         </section>
     </view>

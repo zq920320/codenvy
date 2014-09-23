@@ -20,72 +20,70 @@ package com.codenvy.analytics;
 
 import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.Parameters;
-import org.joda.time.Days;
-import org.joda.time.LocalDate;
-import org.joda.time.Months;
-import org.joda.time.Weeks;
 
-import javax.annotation.Nullable;
+import org.joda.time.LocalDate;
+
 import java.util.Calendar;
+
+import static org.joda.time.Days.daysBetween;
+import static org.joda.time.Months.monthsBetween;
+import static org.joda.time.Weeks.weeksBetween;
 
 /** @author Dmytro Nochevnov */
 public final class DateRangeUtils {
     private DateRangeUtils() {
-
     }
 
-    /**
-     * @return date of first day of time unit containing toDate.
-     */
-    @Nullable
-    public static Calendar getFirstDayDate(Parameters.TimeUnit timeUnit, Calendar toDate) {
+    /** @return date of first day of time unit containing date. */
+    public static Calendar getFirstDayOfPeriod(Parameters.TimeUnit timeUnit, Calendar date) {
+        date = (Calendar)date.clone();
+
         switch (timeUnit) {
             case DAY:
-                return toDate;
+                return date;
 
             case WEEK:
-                toDate.set(Calendar.DAY_OF_WEEK, toDate.getFirstDayOfWeek());
-                return toDate;
+                date.set(Calendar.DAY_OF_WEEK, date.getFirstDayOfWeek());
+                return date;
 
             case MONTH:
-                toDate.set(Calendar.DAY_OF_MONTH, 1);
-                return toDate;
-        }
+                date.set(Calendar.DAY_OF_MONTH, 1);
+                return date;
 
-        return null;
+            default:
+                throw new IllegalArgumentException("Illegal TimeUnit: " + timeUnit);
+        }
     }
 
     /**
      * Returns number of units between the dates, taking into account incomplete weeks and months.
      */
-    public static int getUnitsAboveDates(Parameters.TimeUnit timeUnit, Calendar fromDate, Calendar toDate) {
+    public static int getNumberOfUnitsBetweenDates(Parameters.TimeUnit timeUnit, Calendar fromDate, Calendar toDate) {
+        toDate = (Calendar)toDate.clone();
+        fromDate = (Calendar)fromDate.clone();
+
         switch (timeUnit) {
             case DAY:
-                return Days.daysBetween(new LocalDate(fromDate), new LocalDate(toDate)).getDays() + 1;  // add one for last day
+                return daysBetween(new LocalDate(fromDate), new LocalDate(toDate)).getDays() + 1;  // add one for last day
 
             case WEEK:
-                fromDate.set(Calendar.DAY_OF_WEEK, fromDate.getFirstDayOfWeek());
-                toDate.set(Calendar.DAY_OF_WEEK, toDate.getFirstDayOfWeek());
-                if (fromDate.getTime() != toDate.getTime()) {
-                    toDate.add(Calendar.WEEK_OF_MONTH, 1);
-                }
+                fromDate.set(Calendar.DAY_OF_WEEK, 1);
+                toDate.set(Calendar.DAY_OF_WEEK, toDate.getActualMaximum(Calendar.DAY_OF_WEEK));
 
-                return Weeks.weeksBetween(new LocalDate(fromDate), new LocalDate(toDate)).getWeeks();
+                return weeksBetween(new LocalDate(fromDate), new LocalDate(toDate)).getWeeks() + 1;
 
             case MONTH:
                 fromDate.set(Calendar.DAY_OF_MONTH, 1);
-                toDate.set(Calendar.DAY_OF_MONTH, 1);
-                if (fromDate.getTime() != toDate.getTime()) {
-                    toDate.add(Calendar.MONTH, 1);
-                }
+                toDate.set(Calendar.DAY_OF_MONTH, toDate.getActualMaximum(Calendar.DAY_OF_MONTH));
 
-                return Months.monthsBetween(new LocalDate(fromDate), new LocalDate(toDate)).getMonths();
+                return monthsBetween(new LocalDate(fromDate), new LocalDate(toDate)).getMonths() + 1;
 
             case LIFETIME:
                 return 1;
-        }
 
-        return 0;
+            default:
+                throw new IllegalArgumentException("Illegal TimeUnit: " + timeUnit);
+        }
     }
 
     public static boolean isCustomDateRange(Context context) {
