@@ -60,6 +60,9 @@
                                 <exec dir="${basedir}" executable="gulp" failonerror="true">
                                     <arg value="prod" />
                                 </exec>
+                                <exec dir="${basedir}" executable="gulp" failonerror="true">
+                                    <arg value="stage" />
+                                </exec>
                             </target>
                         </configuration>
                     </execution>
@@ -94,7 +97,7 @@
                         </configuration>
                     </execution>
                     -->
-<!--                     <execution>
+                     <execution>
                         <id>stage</id>
                         <phase>package</phase>
                         <goals>
@@ -106,7 +109,7 @@
                                 <descriptor>${basedir}/assembly/assembly-stage.xml</descriptor>
                             </descriptors>
                         </configuration>
-                    </execution> -->
+                    </execution>
                     <execution>
                         <id>prod</id>
                         <phase>package</phase>
