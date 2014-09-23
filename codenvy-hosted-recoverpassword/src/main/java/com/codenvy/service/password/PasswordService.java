@@ -20,7 +20,7 @@ package com.codenvy.service.password;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.api.user.server.dao.UserDao;
-import com.codenvy.api.user.shared.dto.User;
+import com.codenvy.api.user.server.dao.User;
 
 import org.codenvy.mail.MailSenderClient;
 import org.slf4j.Logger;
@@ -143,7 +143,7 @@ public class PasswordService {
                     .cacheControl(noCache).build();
         }
         // TODO review logic
-        catch (IOException | MessagingException  e) {
+        catch (IOException | MessagingException e) {
             LOG.error("Error during recovering users password", e);
             return Response.status(500)
                            .entity("Unable to recover password. Please contact with administrators or try " + "later.").build();
@@ -223,7 +223,7 @@ public class PasswordService {
     @Path("setup")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public Response setupPassword(@FormParam("uuid") String uuid, @FormParam("password") String newPassword)
-       throws NotFoundException, ServerException {
+            throws NotFoundException, ServerException {
         // verify is confirmationId valid
         if (!recoveryStorage.isValid(uuid)) {
             LOG.warn("Setup password token is incorrect or has expired");
@@ -247,7 +247,7 @@ public class PasswordService {
             recoveryStorage.remove(uuid);
 
             throw new NotFoundException("User " + userName + " is not registered in the system.");
-        }  catch (ServerException e) {
+        } catch (ServerException e) {
             LOG.error("Error during setting user's password", e);
             throw new ServerException("Unable to setup password. Please contact with administrators.", e);
         }
