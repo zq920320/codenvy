@@ -27,6 +27,7 @@ import com.codenvy.api.user.server.dao.UserProfileDao;
 import com.codenvy.api.user.shared.dto.User;
 import com.codenvy.api.workspace.server.dao.Member;
 import com.codenvy.api.workspace.server.dao.MemberDao;
+import com.codenvy.api.workspace.server.dao.WorkspaceDao;
 import com.codenvy.commons.lang.IoUtil;
 import com.codenvy.dto.server.DtoFactory;
 
@@ -42,6 +43,8 @@ import java.io.File;
 import java.net.URL;
 import java.util.Arrays;
 
+import static java.util.Arrays.asList;
+import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -57,12 +60,12 @@ public class UserDaoTest {
 
     @Mock
     UserProfileDao profileDao;
-
     @Mock
-    AccountDao accountDao;
-
+    AccountDao     accountDao;
     @Mock
-    MemberDao memberDao;
+    MemberDao      memberDao;
+    @Mock
+    WorkspaceDao   workspaceDao;
 
     @BeforeMethod
     public void setUp() throws Exception {
@@ -72,24 +75,30 @@ public class UserDaoTest {
         server = new File(target, "server");
         Assert.assertTrue(server.mkdirs(), "Unable create directory for temporary data");
         embeddedLdapServer = EmbeddedLdapServer.start(server);
-        userDao = new UserDaoImpl(accountDao, memberDao, profileDao, embeddedLdapServer.getUrl(), "dc=codenvy;dc=com",
-                                  new UserAttributesMapper(), new EventService());
+        userDao = new UserDaoImpl(accountDao,
+                                  memberDao,
+                                  profileDao,
+                                  workspaceDao,
+                                  embeddedLdapServer.getUrl(),
+                                  "dc=codenvy;dc=com",
+                                  new UserAttributesMapper(),
+                                  new EventService());
         users = new User[]{
                 DtoFactory.getInstance().createDto(User.class)
                           .withId("1")
                           .withEmail("user1@mail.com")
                           .withPassword("secret")
-                          .withAliases(Arrays.asList("user1@mail.com")),
+                          .withAliases(asList("user1@mail.com")),
                 DtoFactory.getInstance().createDto(User.class)
                           .withId("2")
                           .withEmail("user2@mail.com")
                           .withPassword("secret")
-                          .withAliases(Arrays.asList("user2@mail.com")),
+                          .withAliases(asList("user2@mail.com")),
                 DtoFactory.getInstance().createDto(User.class)
                           .withId("3")
                           .withEmail("user3@mail.com")
                           .withPassword("secret")
-                          .withAliases(Arrays.asList("user3@mail.com"))
+                          .withAliases(asList("user3@mail.com"))
         };
         for (User user : users) {
             userDao.create(user);
@@ -150,7 +159,7 @@ public class UserDaoTest {
         User copy = DtoFactory.getInstance().clone(users[0]);
         copy.setEmail("example@mail.com");
         copy.setPassword("new_secret");
-        copy.setAliases(Arrays.asList("example@mail.com"));
+        copy.setAliases(asList("example@mail.com"));
         userDao.update(copy);
         User updated = userDao.getById(copy.getId());
         Assert.assertEquals(updated.getId(), copy.getId());
@@ -165,7 +174,7 @@ public class UserDaoTest {
         copy.setId("invalid"); // ID may not be updated
         copy.setEmail("example@mail.com");
         copy.setPassword("new_secret");
-        copy.setAliases(Arrays.asList("example@mail.com"));
+        copy.setAliases(asList("example@mail.com"));
         try {
             userDao.update(copy);
             fail();
@@ -202,14 +211,19 @@ public class UserDaoTest {
 
     @Test
     public void testRemoveUser() throws Exception {
-        when(accountDao.getByOwner(users[0].getId()))
-                .thenReturn(Arrays.asList(new Account().withId("account_id")));
-        Member member = new Member().withUserId(users[0].getId())
-                                    .withWorkspaceId("no_matter")
-                                    .withRoles(Arrays.asList("workspace/developer"));
-        when(memberDao.getUserRelationships(users[0].getId())).thenReturn(Arrays.asList(member));
-        User user = userDao.getById(users[0].getId());
-        assertNotNull(user);
+        final Account testAccount = new Account().withId("account_id");
+        when(accountDao.getByOwner(users[0].getId())).thenReturn(asList(testAccount));
+        final com.codenvy.api.account.server.dao.Member accountMember = new com.codenvy.api.account.server.dao.Member();
+        accountMember.withUserId(users[0].getId())
+                     .withAccountId(testAccount.getId())
+                     .withRoles(asList("account/owner"));
+        when(accountDao.getMembers(testAccount.getId())).thenReturn(asList(accountMember));
+        when(accountDao.getByMember(users[0].getId())).thenReturn(asList(accountMember));
+        final Member workspaceMember = new Member().withUserId(users[0].getId())
+                                                   .withWorkspaceId("test_workspace_id")
+                                                   .withRoles(asList("workspace/developer"));
+        when(memberDao.getUserRelationships(users[0].getId())).thenReturn(asList(workspaceMember));
+        assertNotNull(userDao.getById(users[0].getId()));
 
         userDao.remove(users[0].getId());
 
@@ -218,9 +232,10 @@ public class UserDaoTest {
             fail();
         } catch (NotFoundException ignored) {
         }
-        verify(accountDao, times(1)).remove("account_id");
-        verify(memberDao, times(1)).remove(member);
-        verify(profileDao, times(1)).remove(users[0].getId());
+        verify(accountDao).remove(testAccount.getId());
+        verify(accountDao).removeMember(accountMember);
+        verify(memberDao).remove(workspaceMember);
+        verify(profileDao).remove(users[0].getId());
     }
 
     @Test
@@ -237,7 +252,7 @@ public class UserDaoTest {
         User copy = DtoFactory.getInstance().clone(users[0]);
         copy.setEmail("example@mail.com");
         copy.setPassword("new_secret");
-        copy.setAliases(Arrays.asList("example@mail.com"));
+        copy.setAliases(asList("example@mail.com"));
         userDao.create(copy);
     }
 

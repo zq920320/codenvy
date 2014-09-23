@@ -29,6 +29,7 @@ import com.codenvy.api.user.server.dao.UserProfileDao;
 import com.codenvy.api.user.shared.dto.User;
 import com.codenvy.api.workspace.server.dao.Member;
 import com.codenvy.api.workspace.server.dao.MemberDao;
+import com.codenvy.api.workspace.server.dao.WorkspaceDao;
 import com.codenvy.dto.server.DtoFactory;
 
 import org.slf4j.Logger;
@@ -52,7 +53,11 @@ import javax.naming.directory.SearchResult;
 import javax.naming.ldap.InitialLdapContext;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
+
+import static java.lang.String.format;
 
 /**
  * LDAP based implementation of {@code UserDao}.
@@ -81,6 +86,7 @@ public class UserDaoImpl implements UserDao {
     private final AccountDao     accountDao;
     private final MemberDao      memberDao;
     private final UserProfileDao profileDao;
+    private final WorkspaceDao   workspaceDao;
 
     /**
      * Creates new instance of {@code UserDaoImpl}.
@@ -121,6 +127,7 @@ public class UserDaoImpl implements UserDao {
     public UserDaoImpl(AccountDao accountDao,
                        MemberDao memberDao,
                        UserProfileDao profileDao,
+                       WorkspaceDao workspaceDao,
                        @Named(Context.PROVIDER_URL) String providerUrl,
                        @Nullable @Named(Context.SECURITY_PRINCIPAL) String systemDn,
                        @Nullable @Named(Context.SECURITY_CREDENTIALS) String systemPassword,
@@ -148,6 +155,7 @@ public class UserDaoImpl implements UserDao {
         this.accountDao = accountDao;
         this.memberDao = memberDao;
         this.profileDao = profileDao;
+        this.workspaceDao = workspaceDao;
         StringBuilder sb = new StringBuilder();
         for (String objectClass : userAttributesMapper.userObjectClasses) {
             sb.append("(objectClass=");
@@ -160,6 +168,7 @@ public class UserDaoImpl implements UserDao {
     UserDaoImpl(AccountDao accountDao,
                 MemberDao memberDao,
                 UserProfileDao profileDao,
+                WorkspaceDao workspaceDao,
                 @Named(Context.PROVIDER_URL) String providerUrl,
                 @Nullable @Named(Context.SECURITY_PRINCIPAL) String systemDn,
                 @Nullable @Named(Context.SECURITY_CREDENTIALS) String systemPassword,
@@ -167,7 +176,19 @@ public class UserDaoImpl implements UserDao {
                 @Named("user.ldap.user_container_dn") String userContainerDn,
                 UserAttributesMapper userAttributesMapper,
                 EventService eventService) {
-        this(accountDao, memberDao, profileDao, providerUrl, systemDn, systemPassword, authType, null, null, null, null, null,
+        this(accountDao,
+             memberDao,
+             profileDao,
+             workspaceDao,
+             providerUrl,
+             systemDn,
+             systemPassword,
+             authType,
+             null,
+             null,
+             null,
+             null,
+             null,
              userContainerDn,
              userAttributesMapper,
              eventService);
@@ -176,11 +197,25 @@ public class UserDaoImpl implements UserDao {
     UserDaoImpl(AccountDao accountDao,
                 MemberDao memberDao,
                 UserProfileDao profileDao,
+                WorkspaceDao workspaceDao,
                 @Named(Context.PROVIDER_URL) String providerUrl,
                 @Named("user.ldap.user_container_dn") String userContainerDn,
                 UserAttributesMapper userAttributesMapper,
                 EventService eventService) {
-        this(accountDao, memberDao, profileDao, providerUrl, null, null, null, null, null, null, null, null, userContainerDn,
+        this(accountDao,
+             memberDao,
+             profileDao,
+             workspaceDao,
+             providerUrl,
+             null,
+             null,
+             null,
+             null,
+             null,
+             null,
+             null,
+             null,
+             userContainerDn,
              userAttributesMapper,
              eventService);
     }
@@ -243,15 +278,15 @@ public class UserDaoImpl implements UserDao {
                 authContext = new InitialLdapContext(env, null);
                 return true;
             } catch (AuthenticationException e) {
-                LOG.warn(String.format("Invalid password for user %s", userDn));
+                LOG.warn(format("Invalid password for user %s", userDn));
                 return false;
             } catch (NamingException e) {
-                throw new ServerException(String.format("Authentication failed for user '%s'", alias), e);
+                throw new ServerException(format("Authentication failed for user '%s'", alias), e);
             } finally {
                 close(authContext);
             }
         } catch (NamingException e) {
-            throw new ServerException(String.format("Authentication failed for user '%s'", alias), e);
+            throw new ServerException(format("Authentication failed for user '%s'", alias), e);
         }
     }
 
@@ -263,7 +298,7 @@ public class UserDaoImpl implements UserDao {
             for (String alias : user.getAliases()) {
                 if (doGetByAlias(alias) != null) {
                     throw new ConflictException(
-                            String.format("Unable create new user '%s'. User alias %s is already in use.", user.getEmail(), alias));
+                            format("Unable create new user '%s'. User alias %s is already in use.", user.getEmail(), alias));
                 }
             }
             context = getLdapContext();
@@ -271,9 +306,9 @@ public class UserDaoImpl implements UserDao {
 
             logUserEvent("user-created", user);
         } catch (NameAlreadyBoundException e) {
-            throw new ConflictException(String.format("Unable create new user '%s'. User already exists.", user.getId()));
+            throw new ConflictException(format("Unable create new user '%s'. User already exists.", user.getId()));
         } catch (NamingException e) {
-            throw new ServerException(String.format("Unable create new user '%s'", user.getEmail()), e);
+            throw new ServerException(format("Unable create new user '%s'", user.getEmail()), e);
         } finally {
             close(newContext);
             close(context);
@@ -293,7 +328,7 @@ public class UserDaoImpl implements UserDao {
             for (String alias : user.getAliases()) {
                 final User byAlias = doGetByAlias(alias);
                 if (!(byAlias == null || id.equals(byAlias.getId()))) {
-                    throw new ServerException(String.format("Unable update user '%s'. User alias %s is already in use.", id, alias));
+                    throw new ServerException(format("Unable update user '%s'. User alias %s is already in use.", id, alias));
                 }
             }
 
@@ -307,28 +342,50 @@ public class UserDaoImpl implements UserDao {
                 }
             } catch (NamingException e) {
 
-                throw new ServerException(String.format("Unable update (user) '%s'", user.getEmail()), e);
+                throw new ServerException(format("Unable update (user) '%s'", user.getEmail()), e);
             } finally {
                 close(context);
             }
 
             logUserEvent("user-updated", user);
         } catch (NamingException e) {
-            throw new ServerException(String.format("Unable update user '%s'", user.getEmail()), e);
+            throw new ServerException(format("Unable update user '%s'", user.getEmail()), e);
         }
     }
 
     @Override
     public void remove(String id) throws NotFoundException, ServerException, ConflictException {
-        User user;
-        user = getById(id);
-        //remove account
-        for (Account account : accountDao.getByOwner(id)) {
-            accountDao.remove(account.getId());
+        final User user = getById(id);
+        //check removal user is not last workspace/admin of any workspace
+        final List<Member> wsRelationships = memberDao.getUserRelationships(id);
+        for (Member member : wsRelationships) {
+            if (isLastWorkspaceAdmin(member)) {
+                throw new ConflictException(format("User %s is last 'workspace/admin' in workspace %s", id, member.getWorkspaceId()));
+            }
         }
-        //remove all workspace memberships
-        for (Member member : memberDao.getUserRelationships(id)) {
+        //search for accounts which should be removed
+        final List<Account> accountsToRemove = new LinkedList<>();
+        for (Account account : accountDao.getByOwner(id)) {
+            //if user is last account owner we should remove account
+            if (isOnlyOneOwner(account.getId())) {
+                if (workspaceDao.getByAccount(account.getId()).isEmpty()) {
+                    accountsToRemove.add(account);
+                } else {
+                    throw new ConflictException(format("Account %s has related workspaces", account.getId()));
+                }
+            }
+        }
+        //remove user relationships with workspaces
+        for (Member member : wsRelationships) {
             memberDao.remove(member);
+        }
+        //remove user relationships with accounts
+        for (com.codenvy.api.account.server.dao.Member member : accountDao.getByMember(id)) {
+            accountDao.removeMember(member);
+        }
+        //remove accounts
+        for (Account account : accountsToRemove) {
+            accountDao.remove(account.getId());
         }
         //remove profile
         profileDao.remove(id);
@@ -342,7 +399,7 @@ public class UserDaoImpl implements UserDao {
         } catch (NameNotFoundException e) {
             throw new NotFoundException("User not found " + id);
         } catch (NamingException e) {
-            throw new ServerException(String.format("Unable remove user '%s'", id), e);
+            throw new ServerException(format("Unable remove user '%s'", id), e);
         } finally {
             close(context);
         }
@@ -359,7 +416,7 @@ public class UserDaoImpl implements UserDao {
             }
             return DtoFactory.getInstance().clone(user);
         } catch (NamingException e) {
-            throw new ServerException(String.format("Unable get user '%s'", alias), e);
+            throw new ServerException(format("Unable get user '%s'", alias), e);
         }
     }
 
@@ -372,8 +429,30 @@ public class UserDaoImpl implements UserDao {
             }
             return DtoFactory.getInstance().clone(user);
         } catch (NamingException e) {
-            throw new ServerException(String.format("Unable get user '%s'", id), e);
+            throw new ServerException(format("Unable get user '%s'", id), e);
         }
+    }
+
+    private boolean isLastWorkspaceAdmin(Member removal) throws NotFoundException, ServerException {
+        if (!removal.getRoles().contains("workspace/admin")) {
+            return false;
+        }
+        for (Member member : memberDao.getWorkspaceMembers(removal.getWorkspaceId())) {
+            if (!member.getUserId().equals(removal.getUserId()) && member.getRoles().contains("workspace/admin")) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean isOnlyOneOwner(String accountId) throws ServerException {
+        int owners = 0;
+        for (com.codenvy.api.account.server.dao.Member member : accountDao.getMembers(accountId)) {
+            if (member.getRoles().contains("account/owner")) {
+                owners++;
+            }
+        }
+        return owners == 1;
     }
 
     private User doGetByAlias(String alias) throws NamingException {

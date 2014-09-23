@@ -48,12 +48,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static java.util.Arrays.asList;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
@@ -108,7 +110,7 @@ public class AccountDaoImplTest extends BaseDaoTest {
                                         SUBSCRIPTION_COLL_NAME,
                                         MEMBER_COLL_NAME,
                                         SUBSCRIPTION_ATTRIBUTES_COLL_NAME);
-        props = new HashMap<>(2);
+        props = new HashMap<>(4);
         props.put("key1", "value1");
         props.put("key2", "value2");
         defaultSubscription = new Subscription().withId(SUBSCRIPTION_ID)
@@ -191,10 +193,10 @@ public class AccountDaoImplTest extends BaseDaoTest {
                                              .append("attributes", new BasicDBList()));
         BasicDBList members = new BasicDBList();
         members.add(accountDao.toDBObject(new Member().withAccountId(ACCOUNT_ID)
-                                                      .withRoles(Arrays.asList("account/owner"))
+                                                      .withRoles(asList("account/owner"))
                                                       .withUserId(USER_ID)));
         members.add(accountDao.toDBObject(new Member().withAccountId("fake")
-                                                      .withRoles(Arrays.asList("account/member"))
+                                                      .withRoles(asList("account/member"))
                                                       .withUserId(USER_ID)));
         membersCollection.insert(new BasicDBObject().append("_id", USER_ID)
                                                     .append("members", members));
@@ -226,28 +228,31 @@ public class AccountDaoImplTest extends BaseDaoTest {
     public void shouldRemoveAccount() throws Exception {
         when(workspaceDao.getByAccount(ACCOUNT_ID)).thenReturn(Collections.<Workspace>emptyList());
         collection.insert(new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME).append("owner", ACCOUNT_OWNER));
-
-        List<String> roles = Arrays.asList("account/admin", "account/member");
-        Member member1 = new Member().withUserId(USER_ID)
-                                     .withAccountId(ACCOUNT_ID)
-                                     .withRoles(roles.subList(0, 1));
         subscriptionCollection.insert(new BasicDBObject("accountId", ACCOUNT_ID));
+
+        Member member1 = new Member().withUserId("test_user_1")
+                                     .withAccountId(ACCOUNT_ID)
+                                     .withRoles(asList("account/member", "account/owner"));
+        Member member2 = new Member().withUserId("test_user_2")
+                                     .withAccountId(ACCOUNT_ID)
+                                     .withRoles(asList("account/member"));
         accountDao.addMember(member1);
+        accountDao.addMember(member2);
 
         accountDao.remove(ACCOUNT_ID);
         assertNull(collection.findOne(new BasicDBObject("id", ACCOUNT_ID)));
-        assertNull(membersCollection.findOne(new BasicDBObject("_id", USER_ID)));
+        assertFalse(membersCollection.find(new BasicDBObject("members.accountId", ACCOUNT_ID)).hasNext());
         assertNull(subscriptionCollection.findOne(new BasicDBObject("accountId", ACCOUNT_ID)));
     }
 
     @Test(expectedExceptions = ConflictException.class,
           expectedExceptionsMessageRegExp = "It is not possible to remove account having associated workspaces")
     public void shouldNotBeAbleToRemoveAccountWithAssociatedWorkspace() throws Exception {
-        when(workspaceDao.getByAccount(ACCOUNT_ID)).thenReturn(Arrays.asList(new Workspace()));
+        when(workspaceDao.getByAccount(ACCOUNT_ID)).thenReturn(asList(new Workspace()));
         collection.insert(
                 new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME).append("owner", ACCOUNT_OWNER));
 
-        List<String> roles = Arrays.asList("account/admin", "account/manager");
+        List<String> roles = asList("account/admin", "account/manager");
         Member member1 = new Member().withUserId(USER_ID)
                                      .withAccountId(ACCOUNT_ID)
                                      .withRoles(roles.subList(0, 1));
@@ -258,7 +263,7 @@ public class AccountDaoImplTest extends BaseDaoTest {
 
     @Test
     public void shouldAddMember() throws Exception {
-        List<String> roles = Arrays.asList("account/admin", "account/manager");
+        List<String> roles = asList("account/admin", "account/manager");
         collection.insert(new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME)
                                                              .append("owner", ACCOUNT_OWNER));
         Member member = new Member().withUserId(USER_ID)
@@ -278,7 +283,7 @@ public class AccountDaoImplTest extends BaseDaoTest {
 
     @Test
     public void shouldFindMembers() throws Exception {
-        List<String> roles = Arrays.asList("account/admin", "account/manager");
+        List<String> roles = asList("account/admin", "account/manager");
         collection.insert(new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME)
                                                              .append("owner", ACCOUNT_OWNER));
         Member member1 = new Member().withUserId(USER_ID)
@@ -296,14 +301,14 @@ public class AccountDaoImplTest extends BaseDaoTest {
     }
 
     @Test
-    public void shouldRemoveMembers() throws Exception {
+    public void shouldRemoveMember() throws Exception {
         collection.insert(new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME));
         Member accountOwner = new Member().withUserId(USER_ID)
                                           .withAccountId(ACCOUNT_ID)
-                                          .withRoles(Arrays.asList("account/owner"));
+                                          .withRoles(asList("account/owner"));
         Member accountMember = new Member().withUserId("user2")
                                            .withAccountId(ACCOUNT_ID)
-                                           .withRoles(Arrays.asList("account/member"));
+                                           .withRoles(asList("account/member"));
 
         accountDao.addMember(accountOwner);
         accountDao.addMember(accountMember);
@@ -315,36 +320,17 @@ public class AccountDaoImplTest extends BaseDaoTest {
     }
 
     @Test
-    public void shouldBeAbleToRemoveAccountOwnerIfOtherOneExists() throws ConflictException, NotFoundException, ServerException {
-        collection.insert(new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME));
-        Member accountOwner = new Member().withUserId(USER_ID)
-                                          .withAccountId(ACCOUNT_ID)
-                                          .withRoles(Arrays.asList("account/owner"));
-        Member accountOwner2 = new Member().withUserId("user2")
-                                           .withAccountId(ACCOUNT_ID)
-                                           .withRoles(Arrays.asList("account/owner"));
-
-        accountDao.addMember(accountOwner);
-        accountDao.addMember(accountOwner2);
-
-        accountDao.removeMember(accountOwner);
-
-        assertNull(membersCollection.findOne(new BasicDBObject("_id", accountOwner.getUserId())));
-        assertNotNull(membersCollection.findOne(new BasicDBObject("_id", accountOwner2.getUserId())));
-    }
-
-    @Test
     public void shouldBeAbleToGetAccountMembershipsByMember() throws NotFoundException, ServerException {
         BasicDBList members = new BasicDBList();
         members.add(accountDao.toDBObject(new Member().withAccountId(ACCOUNT_ID)
                                                       .withUserId(USER_ID)
-                                                      .withRoles(Arrays.asList("account/owner"))));
+                                                      .withRoles(asList("account/owner"))));
         membersCollection.insert(new BasicDBObject("_id", USER_ID).append("members", members));
         collection.insert(new BasicDBObject().append("id", ACCOUNT_ID)
                                              .append("name", ACCOUNT_NAME));
         List<Member> memberships = accountDao.getByMember(USER_ID);
         assertEquals(memberships.size(), 1);
-        assertEquals(memberships.get(0).getRoles(), Arrays.asList("account/owner"));
+        assertEquals(memberships.get(0).getRoles(), asList("account/owner"));
     }
 
     @Test
@@ -446,7 +432,7 @@ public class AccountDaoImplTest extends BaseDaoTest {
         subscriptionCollection.save(accountDao.toDBObject(anotherSubscription));
 
         List<Subscription> found = accountDao.getSubscriptions(ACCOUNT_ID, null);
-        assertEquals(found, Arrays.asList(defaultSubscription, anotherSubscription));
+        assertEquals(found, asList(defaultSubscription, anotherSubscription));
     }
 
     @Test
@@ -459,7 +445,7 @@ public class AccountDaoImplTest extends BaseDaoTest {
                 new Subscription(defaultSubscription).withId("ANOTHER_ID").withServiceId("ANOTHER_SERVICE_ID")));
 
         List<Subscription> found = accountDao.getSubscriptions(ACCOUNT_ID, SERVICE_NAME);
-        assertEquals(found, Arrays.asList(defaultSubscription));
+        assertEquals(found, asList(defaultSubscription));
     }
 
     @Test
@@ -474,7 +460,7 @@ public class AccountDaoImplTest extends BaseDaoTest {
         subscriptionCollection.save(accountDao.toDBObject(anotherSubscription2));
 
         List<Subscription> found = accountDao.getSubscriptions(ACCOUNT_ID, SERVICE_NAME);
-        assertEquals(found, Arrays.asList(defaultSubscription, anotherSubscription2));
+        assertEquals(found, asList(defaultSubscription, anotherSubscription2));
     }
 
     @Test
@@ -640,7 +626,7 @@ public class AccountDaoImplTest extends BaseDaoTest {
 
         List<Subscription> actual = accountDao.getSubscriptions();
 
-        assertEquals(actual, Arrays.asList(defaultSubscription, ss2));
+        assertEquals(actual, asList(defaultSubscription, ss2));
     }
 
     @Test
