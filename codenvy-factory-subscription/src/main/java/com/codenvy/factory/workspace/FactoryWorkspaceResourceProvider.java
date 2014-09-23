@@ -17,7 +17,8 @@
  */
 package com.codenvy.factory.workspace;
 
-import com.codenvy.api.account.shared.dto.SubscriptionDescriptor;
+import com.codenvy.api.account.server.dao.AccountDao;
+import com.codenvy.api.account.server.dao.Subscription;
 import com.codenvy.api.core.ApiException;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.notification.EventService;
@@ -42,7 +43,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.ws.rs.core.UriBuilder;
-import java.io.IOException;
 import java.net.URI;
 import java.net.URLDecoder;
 import java.util.List;
@@ -73,6 +73,7 @@ public class FactoryWorkspaceResourceProvider implements EventSubscriber<CreateW
     private final String apiEndpoint;
 
     private final WorkspaceDao   workspaceDao;
+    private final AccountDao     accountDao;
     private final EventService   eventService;
     private final FactoryBuilder factoryBuilder;
 
@@ -84,6 +85,7 @@ public class FactoryWorkspaceResourceProvider implements EventSubscriber<CreateW
                                             @Nullable @Named(BUILDER_EXECUTION_TIME) String builderExecutionTime,
                                             @Named("api.endpoint") String apiEndpoint,
                                             WorkspaceDao workspaceDao,
+                                            AccountDao accountDao,
                                             EventService eventService,
                                             FactoryBuilder factoryBuilder) {
         this.trackedRunnerLifetime = trackedRunnerLifetime;
@@ -95,6 +97,7 @@ public class FactoryWorkspaceResourceProvider implements EventSubscriber<CreateW
         this.workspaceDao = workspaceDao;
         this.eventService = eventService;
         this.factoryBuilder = factoryBuilder;
+        this.accountDao = accountDao;
     }
 
     @PostConstruct
@@ -131,18 +134,10 @@ public class FactoryWorkspaceResourceProvider implements EventSubscriber<CreateW
                             factory = factoryBuilder.buildNonEncoded(URI.create(factoryUrl));
                         }
 
-                        if (factory.getOrgid() != null) {
-                            final Link subscriptionLink =
-                                    DtoFactory.getInstance().createDto(Link.class)
-                                              .withMethod("GET")
-                                              .withHref(UriBuilder.fromUri(apiEndpoint)
-                                                                  .path("account/" + factory.getOrgid() + "/subscriptions")
-                                                                  .build().toString());
-                            final List<SubscriptionDescriptor> subscriptions =
-                                    HttpJsonHelper.requestArray(SubscriptionDescriptor.class, subscriptionLink,
-                                                                Pair.of("service", "Factory"));
+                        if (null != factory.getOrgid()) {
+                            final List<Subscription> subscriptions = accountDao.getSubscriptions(factory.getOrgid(), "Factory");
                             if (!subscriptions.isEmpty()) {
-                                final SubscriptionDescriptor subscription = subscriptions.iterator().next();
+                                final Subscription subscription = subscriptions.iterator().next();
                                 // factory workspace with subscription
                                 attributes.put("codenvy:runner_lifetime", trackedRunnerLifetime);
                                 attributes.put("codenvy:builder_execution_time", trackedBuilderExecutionTime);

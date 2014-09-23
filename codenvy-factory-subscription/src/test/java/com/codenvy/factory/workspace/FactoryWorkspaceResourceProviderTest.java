@@ -17,7 +17,8 @@
  */
 package com.codenvy.factory.workspace;
 
-import com.codenvy.api.account.shared.dto.SubscriptionDescriptor;
+import com.codenvy.api.account.server.dao.AccountDao;
+import com.codenvy.api.account.server.dao.Subscription;
 import com.codenvy.api.core.ApiException;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.ForbiddenException;
@@ -31,7 +32,6 @@ import com.codenvy.api.factory.dto.Factory;
 import com.codenvy.api.workspace.server.dao.Workspace;
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
 import com.codenvy.commons.lang.Pair;
-import com.codenvy.dto.server.DtoFactory;
 import com.codenvy.workspace.event.CreateWorkspaceEvent;
 
 import org.mockito.Mock;
@@ -45,13 +45,11 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.URI;
 import java.net.URLEncoder;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyMap;
-import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.anyMapOf;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isNull;
@@ -62,8 +60,8 @@ import static org.mockito.Mockito.when;
 
 @Listeners(value = {MockitoTestNGListener.class})
 public class FactoryWorkspaceResourceProviderTest {
-    private static final String WS_ID     = "wsid";
-    private static final String factoryId = "factoryId";
+    private static final String WS_ID  = "wsid";
+    private static final String ORG_ID = "orgid";
 
     private String runnerLifetime              = "runnerLifetime";
     private String runnerRam                   = "runnerRam";
@@ -76,6 +74,8 @@ public class FactoryWorkspaceResourceProviderTest {
     private FactoryBuilder                    factoryBuilder;
     @Mock
     private WorkspaceDao                      workspaceDao;
+    @Mock
+    private AccountDao                        accountDao;
     @Mock
     private Workspace                         workspace;
     @Mock
@@ -94,7 +94,7 @@ public class FactoryWorkspaceResourceProviderTest {
 
     @BeforeMethod
     public void setUp() throws Exception {
-        encodedFactoryUrl = URLEncoder.encode("http://dev.box.com/factory?id=" + factoryId, "UTF-8");
+        encodedFactoryUrl = URLEncoder.encode("http://dev.box.com/factory?id=factory123456", "UTF-8");
         nonEncodedFactoryUrl =
                 URLEncoder.encode("http://dev.box.com/factory?v=1.1&vcsUrl=http://github.com/codenvy/platform-api.git", "UTF-8");
         event = new CreateWorkspaceEvent(WS_ID, true);
@@ -105,6 +105,7 @@ public class FactoryWorkspaceResourceProviderTest {
                                                         builderExecutionTime,
                                                         apiEndpoint,
                                                         workspaceDao,
+                                                        accountDao,
                                                         new EventService(),
                                                         factoryBuilder);
         Field field = HttpJsonHelper.class.getDeclaredField("httpJsonHelperImpl");
@@ -124,7 +125,7 @@ public class FactoryWorkspaceResourceProviderTest {
     public void shouldSetCommonAttributesIfWsDoesNotContainFactoryUrl() throws NotFoundException, ServerException, ConflictException {
         when(workspaceDao.getById(WS_ID)).thenReturn(workspace);
         when(workspace.getAttributes()).thenReturn(attributes);
-        when(workspace.withAttributes(anyMap())).thenReturn(workspace);
+        when(workspace.withAttributes(anyMapOf(String.class, String.class))).thenReturn(workspace);
 
         provider.onEvent(event);
 
@@ -141,7 +142,7 @@ public class FactoryWorkspaceResourceProviderTest {
         when(workspace.getAttributes()).thenReturn(attributes);
         when(attributes.get("factoryUrl")).thenReturn(nonEncodedFactoryUrl);
         when(factoryBuilder.buildNonEncoded(any(URI.class))).thenReturn(factory);
-        when(workspace.withAttributes(anyMap())).thenReturn(workspace);
+        when(workspace.withAttributes(anyMapOf(String.class, String.class))).thenReturn(workspace);
 
         provider.onEvent(event);
 
@@ -161,7 +162,7 @@ public class FactoryWorkspaceResourceProviderTest {
                                 isNull(),
                                 eq(Pair.of("validate", false))))
                 .thenReturn(factory);
-        when(workspace.withAttributes(anyMap())).thenReturn(workspace);
+        when(workspace.withAttributes(anyMapOf(String.class, String.class))).thenReturn(workspace);
 
         provider.onEvent(event);
 
@@ -180,14 +181,9 @@ public class FactoryWorkspaceResourceProviderTest {
                                 isNull(),
                                 eq(Pair.of("validate", false))))
                 .thenReturn(factory);
-        when(factory.getOrgid()).thenReturn("orgid");
-        when(workspace.withAttributes(anyMap())).thenReturn(workspace);
-        when(jsonHelper.requestArray(eq(SubscriptionDescriptor.class),
-                                     anyString(),
-                                     eq("GET"),
-                                     anyObject(),
-                                     eq(new Pair<>("service", "Factory"))))
-                .thenReturn(Collections.<SubscriptionDescriptor>emptyList());
+        when(factory.getOrgid()).thenReturn(ORG_ID);
+        when(workspace.withAttributes(anyMapOf(String.class, String.class))).thenReturn(workspace);
+        when(accountDao.getSubscriptions(ORG_ID, "Factory")).thenReturn(Collections.<Subscription>emptyList());
 
         provider.onEvent(event);
 
@@ -201,14 +197,9 @@ public class FactoryWorkspaceResourceProviderTest {
         when(workspace.getAttributes()).thenReturn(attributes);
         when(attributes.get("factoryUrl")).thenReturn(nonEncodedFactoryUrl);
         when(factoryBuilder.buildNonEncoded(any(URI.class))).thenReturn(factory);
-        when(factory.getOrgid()).thenReturn("orgid");
-        when(workspace.withAttributes(anyMap())).thenReturn(workspace);
-        when(jsonHelper.requestArray(eq(SubscriptionDescriptor.class),
-                                     anyString(),
-                                     eq("GET"),
-                                     anyObject(),
-                                     eq(new Pair<>("service", "Factory"))))
-                .thenReturn(Collections.<SubscriptionDescriptor>emptyList());
+        when(factory.getOrgid()).thenReturn(ORG_ID);
+        when(workspace.withAttributes(anyMapOf(String.class, String.class))).thenReturn(workspace);
+        when(accountDao.getSubscriptions(ORG_ID, "Factory")).thenReturn(Collections.<Subscription>emptyList());
 
         provider.onEvent(event);
 
@@ -227,16 +218,10 @@ public class FactoryWorkspaceResourceProviderTest {
                                 isNull(),
                                 eq(Pair.of("validate", false))))
                 .thenReturn(factory);
-        when(factory.getOrgid()).thenReturn("orgid");
-        when(workspace.withAttributes(anyMap())).thenReturn(workspace);
-        SubscriptionDescriptor subscription = DtoFactory.getInstance().createDto(SubscriptionDescriptor.class).withProperties(
-                Collections.singletonMap("RAM", "8GB"));
-        when(jsonHelper.requestArray(eq(SubscriptionDescriptor.class),
-                                     anyString(),
-                                     eq("GET"),
-                                     anyObject(),
-                                     eq(new Pair<>("service", "Factory"))))
-                .thenReturn(Arrays.asList(subscription));
+        when(factory.getOrgid()).thenReturn(ORG_ID);
+        when(workspace.withAttributes(anyMapOf(String.class, String.class))).thenReturn(workspace);
+        Subscription subscription = new Subscription().withProperties(Collections.singletonMap("RAM", "8GB"));
+        when(accountDao.getSubscriptions(ORG_ID, "Factory")).thenReturn(Collections.singletonList(subscription));
 
         provider.onEvent(event);
 
@@ -250,16 +235,10 @@ public class FactoryWorkspaceResourceProviderTest {
         when(workspace.getAttributes()).thenReturn(attributes);
         when(attributes.get("factoryUrl")).thenReturn(nonEncodedFactoryUrl);
         when(factoryBuilder.buildNonEncoded(any(URI.class))).thenReturn(factory);
-        when(factory.getOrgid()).thenReturn("orgid");
-        when(workspace.withAttributes(anyMap())).thenReturn(workspace);
-        SubscriptionDescriptor subscription = DtoFactory.getInstance().createDto(SubscriptionDescriptor.class).withProperties(
-                Collections.singletonMap("RAM", "8GB"));
-        when(jsonHelper.requestArray(eq(SubscriptionDescriptor.class),
-                                     anyString(),
-                                     eq("GET"),
-                                     anyObject(),
-                                     eq(new Pair<>("service", "Factory"))))
-                .thenReturn(Arrays.asList(subscription));
+        when(factory.getOrgid()).thenReturn(ORG_ID);
+        when(workspace.withAttributes(anyMapOf(String.class, String.class))).thenReturn(workspace);
+        Subscription subscription = new Subscription().withProperties(Collections.singletonMap("RAM", "8GB"));
+        when(accountDao.getSubscriptions(ORG_ID, "Factory")).thenReturn(Collections.singletonList(subscription));
 
         provider.onEvent(event);
 
@@ -278,12 +257,13 @@ public class FactoryWorkspaceResourceProviderTest {
                                                         builderExecutionTime,
                                                         apiEndpoint,
                                                         workspaceDao,
+                                                        accountDao,
                                                         new EventService(),
                                                         factoryBuilder);
 
         when(workspaceDao.getById(WS_ID)).thenReturn(workspace);
         when(workspace.getAttributes()).thenReturn(attributes);
-        when(workspace.withAttributes(anyMap())).thenReturn(workspace);
+        when(workspace.withAttributes(anyMapOf(String.class, String.class))).thenReturn(workspace);
 
         provider.onEvent(event);
 
@@ -321,16 +301,10 @@ public class FactoryWorkspaceResourceProviderTest {
                                 isNull(),
                                 eq(Pair.of("validate", false))))
                 .thenThrow(new ServerException(""));
-        when(factory.getOrgid()).thenReturn("orgid");
-        when(workspace.withAttributes(anyMap())).thenReturn(workspace);
-        SubscriptionDescriptor subscription = DtoFactory.getInstance().createDto(SubscriptionDescriptor.class).withProperties(
-                Collections.singletonMap("RAM", "8GB"));
-        when(jsonHelper.requestArray(eq(SubscriptionDescriptor.class),
-                                     anyString(),
-                                     eq("GET"),
-                                     anyObject(),
-                                     eq(new Pair<>("service", "Factory"))))
-                .thenReturn(Arrays.asList(subscription));
+        when(factory.getOrgid()).thenReturn(ORG_ID);
+        when(workspace.withAttributes(anyMapOf(String.class, String.class))).thenReturn(workspace);
+        Subscription subscription = new Subscription().withProperties(Collections.singletonMap("RAM", "8GB"));
+        when(accountDao.getSubscriptions(ORG_ID, "Factory")).thenReturn(Collections.singletonList(subscription));
 
         provider.onEvent(event);
 
@@ -344,16 +318,10 @@ public class FactoryWorkspaceResourceProviderTest {
         when(workspace.getAttributes()).thenReturn(attributes);
         when(attributes.get("factoryUrl")).thenReturn(nonEncodedFactoryUrl);
         when(factoryBuilder.buildNonEncoded(any(URI.class))).thenThrow(new ApiException(""));
-        when(factory.getOrgid()).thenReturn("orgid");
-        when(workspace.withAttributes(anyMap())).thenReturn(workspace);
-        SubscriptionDescriptor subscription = DtoFactory.getInstance().createDto(SubscriptionDescriptor.class).withProperties(
-                Collections.singletonMap("RAM", "8GB"));
-        when(jsonHelper.requestArray(eq(SubscriptionDescriptor.class),
-                                     anyString(),
-                                     eq("GET"),
-                                     anyObject(),
-                                     eq(new Pair<>("service", "Factory"))))
-                .thenReturn(Arrays.asList(subscription));
+        when(factory.getOrgid()).thenReturn(ORG_ID);
+        when(workspace.withAttributes(anyMapOf(String.class, String.class))).thenReturn(workspace);
+        Subscription subscription = new Subscription().withProperties(Collections.singletonMap("RAM", "8GB"));
+        when(accountDao.getSubscriptions(ORG_ID, "Factory")).thenReturn(Collections.singletonList(subscription));
 
         provider.onEvent(event);
 
