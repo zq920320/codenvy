@@ -36,7 +36,8 @@ define(["jquery","config",
         "views/create_ws",
         "views/join_ws",
         "views/adminform",
-        "views/paymentform"
+        "views/paymentform",
+        "views/create_ws_add_member"
         ],
 
     function($,Config,
@@ -59,7 +60,8 @@ define(["jquery","config",
         CreatingWorkspace,
         JoiningWorkspace,
         AdminForm,
-        PaymentForm){
+        PaymentForm,
+        CreateWsAdd_Member){
 
         function modernize(){
             Modernizr.load({
@@ -100,7 +102,8 @@ define(["jquery","config",
                         creatingWorkspace = $(".creating-ws"),
                         joiningWorkspace = $(".invite"),
                         adminForm = $(".admin-form"),
-                        paymentForm = $('.codenvy-payment-form');
+                        paymentForm = $('.codenvy-payment-form'),
+                        creatWsAddMember = $(".create-ws-add-memeber");
 
                     if(gcBannerElement.length !== 0){
                         (function(){
@@ -132,6 +135,22 @@ define(["jquery","config",
                                 errorReport.show(message);
                             });
                             form.selectWorkspace();
+                        }());
+                    }
+
+                    if(creatWsAddMember.length !== 0){
+                        (function(){
+                            var form = CreateWsAdd_Member.get(creatWsAddMember),
+                            errorReport = ErrorReport.get(errorContainer);
+
+                            form.on("success", function(d){
+                                window.location.href = d.url;
+                            });
+
+                            form.on("invalid", function(field,message){
+                                errorReport.show(message);
+                            });
+                            
                         }());
                     }
 

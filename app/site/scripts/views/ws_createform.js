@@ -25,6 +25,7 @@
 
                 initialize : function(attributes){
                     Account.redirectIfUserHasLoginCookie();
+                    $('.create-ws-container').removeClass('hidden-text-box'); // Shows page content
                     AccountFormBase.prototype.initialize.apply(this,attributes);
                     Account.supportTab();
                     //bind onclick to Google and GitHub buttons
