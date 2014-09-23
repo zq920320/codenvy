@@ -251,12 +251,6 @@
             isValidEmail : function(email){
                 return (/^[^\+\/]+$/).test(email);
             },
-            // redirect to login page if user has 'logged_in' cookie
-            redirectIfUserHasLoginCookie: function(){
-                if ($.cookie('logged_in')){
-                    window.location = '/site/login';
-                }
-            },
 
             login : function(email, password, redirect_url, success, error){
 
