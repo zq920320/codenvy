@@ -132,4 +132,14 @@ public class TestIdeUsageEvents extends BaseTest {
         Metric metric = MetricFactory.getMetric(MetricType.CODE_COMPLETIONS_BASED_ON_IDE_USAGES);
         Assert.assertEquals(LongValueData.valueOf(3), metric.getValue(Context.EMPTY));
     }
+
+    @Test
+    public void testGetDescriptionOfIdeUsageMetric() {
+        Metric metric = MetricFactory.getMetric(MetricType.ADD_TO_INDEX_ACTION);
+        Assert.assertEquals(metric.getDescription(), "Add To Index");
+
+
+        metric = MetricFactory.getMetric(MetricType.BUILD_ACTION);
+        Assert.assertEquals(metric.getDescription(), "Build");
+    }
 }

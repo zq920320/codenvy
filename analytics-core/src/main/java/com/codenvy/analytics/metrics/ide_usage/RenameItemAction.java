@@ -22,22 +22,12 @@ import com.codenvy.analytics.metrics.MetricType;
 import javax.annotation.security.RolesAllowed;
 
 /**
- * @author Anatoliy Bazko
+ * @author Dmytro Nochevnov
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
-public class CodeCompletionsBasedOnIdeUsage extends AbstractIdeUsage {
+public class RenameItemAction extends AbstractIdeUsage {
 
-    public CodeCompletionsBasedOnIdeUsage() {
-        super(MetricType.CODE_COMPLETIONS_BASED_ON_IDE_USAGES, new String[]{AUTOCOMPLETING});
-    }
-
-    @Override
-    public String getDescription() {
-        return "The number of code completion actions";
-    }
-
-    @Override
-    public String getExpandedField() {
-        return PROJECT_ID;
+    public RenameItemAction() {
+        super(MetricType.RENAME_ITEM_ACTION, new String[]{RENAME_ITEM_ACTION});
     }
 }

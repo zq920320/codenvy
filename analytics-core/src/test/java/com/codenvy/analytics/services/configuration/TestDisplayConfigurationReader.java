@@ -31,6 +31,7 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 
 import static com.mongodb.util.MyAsserts.assertFalse;
+import static org.testng.Assert.assertNull;
 import static org.testng.AssertJUnit.assertEquals;
 
 
@@ -44,6 +45,7 @@ public class TestDisplayConfigurationReader extends BaseTest {
                                                 "            <description>desc</description>" +
                                                 "            <row class=\"Date.class\">" +
                                                 "                <parameter key=\"format\" value=\"dd MMM\"/>" +
+                                                "                <parameter key=\"description\"/>" +
                                                 "            </row>" +
                                                 "            <row class=\"Empty.class\" />" +
                                                 "        </section>" +
@@ -83,9 +85,13 @@ public class TestDisplayConfigurationReader extends BaseTest {
 
         RowConfiguration rowConfiguration = sectionConfiguration.getRows().get(0);
         assertEquals("Date.class", rowConfiguration.getClazz());
-        assertEquals(1, rowConfiguration.getParameters().size());
+        assertEquals(2, rowConfiguration.getParameters().size());
+
         assertEquals("format", rowConfiguration.getParameters().get(0).getKey());
         assertEquals("dd MMM", rowConfiguration.getParameters().get(0).getValue());
+
+        assertEquals("description", rowConfiguration.getParameters().get(1).getKey());
+        assertNull(rowConfiguration.getParameters().get(1).getValue());
 
         rowConfiguration = sectionConfiguration.getRows().get(1);
         assertEquals("Empty.class", rowConfiguration.getClazz());

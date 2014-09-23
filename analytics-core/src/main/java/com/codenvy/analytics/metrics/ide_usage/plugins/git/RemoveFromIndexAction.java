@@ -15,29 +15,25 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.metrics.ide_usage;
+package com.codenvy.analytics.metrics.ide_usage.plugins.git;
 
 import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
 
 import javax.annotation.security.RolesAllowed;
 
 /**
- * @author Anatoliy Bazko
+ * @author Dmytro Nochevnov
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
-public class CodeCompletionsBasedOnIdeUsage extends AbstractIdeUsage {
+public class RemoveFromIndexAction extends AbstractIdeUsage {
 
-    public CodeCompletionsBasedOnIdeUsage() {
-        super(MetricType.CODE_COMPLETIONS_BASED_ON_IDE_USAGES, new String[]{AUTOCOMPLETING});
+    public RemoveFromIndexAction() {
+        super(MetricType.REMOVE_FROM_INDEX_ACTION, new String[]{REMOVE_FROM_INDEX_ACTION});
     }
 
     @Override
     public String getDescription() {
-        return "The number of code completion actions";
-    }
-
-    @Override
-    public String getExpandedField() {
-        return PROJECT_ID;
+        return "Git plugin: " + super.getDescription();
     }
 }

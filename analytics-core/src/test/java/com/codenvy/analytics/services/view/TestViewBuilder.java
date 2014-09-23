@@ -52,7 +52,9 @@ public class TestViewBuilder extends BaseTest {
     private static final String           RESOURCE_DIR = BASE_DIR + "/test-classes/" + TestViewBuilder.class.getSimpleName();
     private static final String           VIEW_CONF    = RESOURCE_DIR + "/view.xml";
     private static final String           PASSED_DAYS_VIEW_CONF    = RESOURCE_DIR + "/passed_days_view.xml";
-    private static final SimpleDateFormat DIR_FORMAT   = new SimpleDateFormat("yyyy" + File.separator + "MM" + File.separator + "dd");
+    private static final String           EMPTY_DESCRIPTION_VIEW_CONF = RESOURCE_DIR + "/empty_description_view.xml";
+    private static final SimpleDateFormat DIR_FORMAT                  =
+        new SimpleDateFormat("yyyy" + File.separator + "MM" + File.separator + "dd");
 
     private ViewBuilder viewBuilder;
 
@@ -413,6 +415,51 @@ public class TestViewBuilder extends BaseTest {
         assertEquals(ViewBuilder.MAX_ROWS, dateRow.size());
     }
 
+    @Test
+    public void testViewWithEmptyDescription() throws Exception {
+        XmlConfigurationManager configurationManager = mock(XmlConfigurationManager.class);
+        when(configurationManager.loadConfiguration(any(Class.class), anyString())).thenAnswer(new Answer<Object>() {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable {
+                XmlConfigurationManager manager = new XmlConfigurationManager();
+                return manager.loadConfiguration(DisplayConfiguration.class, EMPTY_DESCRIPTION_VIEW_CONF);
+            }
+        });
+
+        Configurator configurator = spy(Injector.getInstance(Configurator.class));
+        doReturn(new String[]{EMPTY_DESCRIPTION_VIEW_CONF}).when(configurator).getArray(anyString());
+
+        viewBuilder = spy(new ViewBuilder(Injector.getInstance(JdbcDataPersisterFactory.class),
+                                          Injector.getInstance(CSVReportPersister.class),
+                                          configurationManager,
+                                          configurator));
+
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.TIME_UNIT, Parameters.TimeUnit.DAY.toString());
+        builder.put(Parameters.FROM_DATE, "20140120");
+        builder.put(Parameters.TO_DATE, "20140120");
+        builder.put(Parameters.IS_CUSTOM_DATE_RANGE, "");
+
+        viewBuilder.computeDisplayData(builder.build());
+        ViewData actualData = viewBuilder.getViewData("key_feature_usage_view", builder.build());
+
+        assertEquals(actualData.size(), 1);
+
+        List<List<ValueData>> data = actualData.values().iterator().next();
+
+        assertEquals(2, data.size());
+
+        List<ValueData> dateRow = data.get(0);
+        assertEquals(2, dateRow.size());
+        assertEquals(new StringValueData("desc"), dateRow.get(0));
+        assertEquals("20 Jan", dateRow.get(1).getAsString());
+
+        List<ValueData> metricRow = data.get(1);
+        assertEquals(2, metricRow.size());
+        assertEquals(new StringValueData("Metric Description"), metricRow.get(0));
+        assertEquals(new StringValueData("5"), metricRow.get(1));
+    }
+
     private void assertSpecificDayData(List<List<ValueData>> data) {
         assertEquals(3, data.size());
 
@@ -479,6 +526,10 @@ public class TestViewBuilder extends BaseTest {
             } else {
                 return new StringValueData("5");
             }
+        }
+
+        @Override protected String getMetricDescription() {
+            return "Metric Description";
         }
     }
 

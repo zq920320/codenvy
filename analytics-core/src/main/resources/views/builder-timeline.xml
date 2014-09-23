@@ -19,7 +19,7 @@
 
 -->
 <display>
-    <view time-unit="day,week,month,lifetime" name="builder-timeline" columns="15">
+    <view time-unit="day,week,month,lifetime" name="builder_timeline" columns="15">
         <section name="builder">
             <row class="com.codenvy.analytics.services.view.DateRow">
                 <parameter key="section-name" value=""/>

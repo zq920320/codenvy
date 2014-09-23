@@ -121,16 +121,16 @@ public class MetricRow extends AbstractRow {
         this.eventsHolder = Injector.getInstance(EventsHolder.class);
 
         numericFormat = parameters.containsKey(NUMERIC_FORMAT)
-                        ? parameters.get(NUMERIC_FORMAT)
-                        : DEFAULT_NUMERIC_FORMAT;
+            ? parameters.get(NUMERIC_FORMAT)
+            : DEFAULT_NUMERIC_FORMAT;
         fields = parameters.containsKey(FIELDS) ? parameters.get(FIELDS).split(",") : new String[0];
 
         hideNegativeValues = parameters.containsKey(HIDE_NEGATIVE_VALUES) &&
                              Boolean.parseBoolean(parameters.get(HIDE_NEGATIVE_VALUES));
 
         booleanFields = parameters.containsKey(BOOLEAN_FIELDS)
-                        ? Arrays.asList(parameters.get(BOOLEAN_FIELDS).split(","))
-                        : new ArrayList<String>();
+            ? Arrays.asList(parameters.get(BOOLEAN_FIELDS).split(","))
+            : new ArrayList<String>();
 
         this.dateFields = new HashMap<>();
         this.timeFields = new HashMap<>();
@@ -150,8 +150,8 @@ public class MetricRow extends AbstractRow {
         }
 
         eventFields = parameters.containsKey(EVENT_FIELDS)
-                      ? Arrays.asList(parameters.get(EVENT_FIELDS).split(","))
-                      : new ArrayList<String>();
+            ? Arrays.asList(parameters.get(EVENT_FIELDS).split(","))
+            : new ArrayList<String>();
 
         isTimeField = parameters.containsKey(TIME_FIELD) && Boolean.parseBoolean(parameters.get(TIME_FIELD));
     }
@@ -199,7 +199,12 @@ public class MetricRow extends AbstractRow {
 
         boolean descriptionExists = parameters.containsKey(DESCRIPTION);
         if (descriptionExists) {
-            result.add(new StringValueData(parameters.get(DESCRIPTION)));
+            String description = parameters.get(DESCRIPTION);
+            if (description != null) {
+                result.add(new StringValueData(parameters.get(DESCRIPTION)));
+            } else {
+                result.add(new StringValueData(getMetricDescription()));
+            }
         }
 
         if (DateRangeUtils.isCustomDateRange(initialContext)) {
@@ -371,5 +376,9 @@ public class MetricRow extends AbstractRow {
 
     protected ValueData getMetricValue(Context context) throws IOException {
         return metric.getValue(context);
+    }
+
+    protected String getMetricDescription() {
+        return metric.getDescription();
     }
 }

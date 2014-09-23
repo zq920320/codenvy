@@ -48,7 +48,7 @@ function Configuration() {
         runnerReport: {
             widgetLabel: "Runner Report",
             presenterType: "ReportPresenter",
-            modelViewName: "runner-timeline",
+            modelViewName: "runner_timeline",
 
             defaultModelParams: {
                 "time_unit": "day"
@@ -60,7 +60,7 @@ function Configuration() {
         builderReport: {
             widgetLabel: "Builder Report",
             presenterType: "ReportPresenter",
-            modelViewName: "builder-timeline",
+            modelViewName: "builder_timeline",
 
             defaultModelParams: {
                 "time_unit": "day"
@@ -171,6 +171,18 @@ function Configuration() {
             displayLineChart: true,  // default is false
         },
 
+        keyFeatureUsageReport: {
+            widgetLabel: "Key Feature Usage Report",
+            presenterType: "ReportPresenter",
+            modelViewName: "key_feature_usage_report",
+
+            defaultModelParams: {
+                "time_unit": "month"
+            },
+
+            displayLineChart: true,  // default is false
+        },
+
         topFactorySessions: {
             widgetLabel: "Top Factory Sessions",
             presenterType: "TopMetricsPresenter",
@@ -201,7 +213,7 @@ function Configuration() {
             },
 
             doNotLinkOnEmptyParameter: false,  // default value = true,
-            // true means that link should't be added if at least one parameter is empty;
+            // true means that link shouldn't be added if at least one parameter is empty;
             // false means that link should be added without empty parameters
         },
 

@@ -46,6 +46,7 @@
                         <li><a href="/analytics/pages/reports/user-report.jsp" id="topmenu-reports-user_report">User</a></li>
                         <li><a href="/analytics/pages/reports/collaboration-report.jsp" id="topmenu-reports-collaboration_report">Collaboration</a></li>
                         <li><a href="/analytics/pages/reports/usage-report.jsp" id="topmenu-reports-usage_report">Usage</a></li>
+                        <li><a href="/analytics/pages/reports/key-feature-usage-report.jsp" id="topmenu-reports-key_feature_usage_report">Key Feature Usage</a></li>
                         <li><a href="/analytics/pages/reports/session-report.jsp" id="topmenu-reports-session_report">Session</a></li>
                         <li><a href="/analytics/pages/reports/project-report.jsp" id="topmenu-reports-project_report">Project</a></li>
                         <li><a href="/analytics/pages/reports/factory-report.jsp" id="topmenu-reports-factory_report">Factory</a></li>

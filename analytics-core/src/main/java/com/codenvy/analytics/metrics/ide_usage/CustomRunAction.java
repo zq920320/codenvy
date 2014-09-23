@@ -22,22 +22,12 @@ import com.codenvy.analytics.metrics.MetricType;
 import javax.annotation.security.RolesAllowed;
 
 /**
- * @author Anatoliy Bazko
+ * @author Dmytro Nochevnov
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
-public class CodeCompletionsBasedOnIdeUsage extends AbstractIdeUsage {
+public class CustomRunAction extends AbstractIdeUsage {
 
-    public CodeCompletionsBasedOnIdeUsage() {
-        super(MetricType.CODE_COMPLETIONS_BASED_ON_IDE_USAGES, new String[]{AUTOCOMPLETING});
-    }
-
-    @Override
-    public String getDescription() {
-        return "The number of code completion actions";
-    }
-
-    @Override
-    public String getExpandedField() {
-        return PROJECT_ID;
+    public CustomRunAction() {
+        super(MetricType.CUSTOM_RUN_ACTION, new String[]{CUSTOM_RUN_ACTION});
     }
 }
