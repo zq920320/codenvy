@@ -23,7 +23,7 @@ import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.api.core.rest.HttpJsonHelper;
 import com.codenvy.api.core.rest.shared.dto.Link;
-import com.codenvy.api.user.shared.dto.User;
+import com.codenvy.api.user.shared.dto.UserDescriptor;
 import com.codenvy.api.workspace.shared.dto.NewMembership;
 import com.codenvy.api.workspace.shared.dto.WorkspaceDescriptor;
 import com.codenvy.commons.env.EnvironmentContext;
@@ -66,9 +66,9 @@ public class InviteService {
 
     public static final  Pattern EMAIL_PATTERN = Pattern.compile("^(?:.*<)?(.+@.+?)(?:>)?$");
     private static final Logger  LOG           = LoggerFactory.getLogger(InviteService.class);
-    protected final URI                              INVITE_ERROR_PAGE;
-    protected final BearerTokenProvider              provider;
-    protected final MailSenderClient                 mailSenderClient;
+    protected final URI                 INVITE_ERROR_PAGE;
+    protected final BearerTokenProvider provider;
+    protected final MailSenderClient    mailSenderClient;
 
     @Inject
     public InviteService(
@@ -120,27 +120,27 @@ public class InviteService {
 
             Link getWorkspaceLink = DtoFactory.getInstance().createDto(Link.class).withMethod("GET")
                                               .withHref(uriInfo.getBaseUriBuilder()
-                                              .replacePath("api/workspace/" + workspaceId).build().toString());
+                                                               .replacePath("api/workspace/" + workspaceId).build().toString());
             WorkspaceDescriptor workspace = HttpJsonHelper.request(WorkspaceDescriptor.class, getWorkspaceLink);
-            User user;
+            UserDescriptor user;
             try {
                 Link getUserLink = DtoFactory.getInstance().createDto(Link.class).withMethod("GET")
                                              .withHref(uriInfo.getBaseUriBuilder()
-                                             .replacePath("api/user/find").build().toString());
-                user = HttpJsonHelper.request(User.class, getUserLink, Pair.of("email", mailRecipient));
+                                                              .replacePath("api/user/find").build().toString());
+                user = HttpJsonHelper.request(UserDescriptor.class, getUserLink, Pair.of("email", mailRecipient));
             } catch (NotFoundException e) {
                 String token = provider.getBearerToken(mailRecipient);
                 Link createUserLink = DtoFactory.getInstance().createDto(Link.class).withMethod("POST")
                                                 .withHref(uriInfo.getBaseUriBuilder()
-                                                .replacePath("api/user/create").build().toString());
+                                                                 .replacePath("api/user/create").build().toString());
 
-                user = HttpJsonHelper.request(User.class, createUserLink, Pair.of("token", token));
+                user = HttpJsonHelper.request(UserDescriptor.class, createUserLink, Pair.of("token", token));
             }
 
             Link createMembershipLink = DtoFactory.getInstance().createDto(Link.class).withMethod("POST")
-                                                 .withHref(uriInfo.getBaseUriBuilder().replacePath(
-                                                         "api/workspace/" + workspaceId + "/members").build()
-                                                                  .toString());
+                                                  .withHref(uriInfo.getBaseUriBuilder().replacePath(
+                                                          "api/workspace/" + workspaceId + "/members").build()
+                                                                   .toString());
 
             NewMembership membership = DtoFactory.getInstance().createDto(NewMembership.class).withUserId(user.getId())
                                                  .withRoles(Arrays.asList("workspace/developer"));

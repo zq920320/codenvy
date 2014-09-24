@@ -26,11 +26,10 @@ import com.codenvy.api.core.notification.EventService;
 import com.codenvy.api.event.user.RemoveUserEvent;
 import com.codenvy.api.user.server.dao.UserDao;
 import com.codenvy.api.user.server.dao.UserProfileDao;
-import com.codenvy.api.user.shared.dto.User;
+import com.codenvy.api.user.server.dao.User;
 import com.codenvy.api.workspace.server.dao.Member;
 import com.codenvy.api.workspace.server.dao.MemberDao;
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
-import com.codenvy.dto.server.DtoFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,6 +50,7 @@ import javax.naming.directory.ModificationItem;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 import javax.naming.ldap.InitialLdapContext;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.LinkedList;
@@ -414,7 +414,7 @@ public class UserDaoImpl implements UserDao {
             if (user == null) {
                 throw new NotFoundException("User not found " + alias);
             }
-            return DtoFactory.getInstance().clone(user);
+            return doClone(user);
         } catch (NamingException e) {
             throw new ServerException(format("Unable get user '%s'", alias), e);
         }
@@ -427,10 +427,17 @@ public class UserDaoImpl implements UserDao {
             if (user == null) {
                 throw new NotFoundException("User not found " + id);
             }
-            return DtoFactory.getInstance().clone(user);
+            return doClone(user);
         } catch (NamingException e) {
             throw new ServerException(format("Unable get user '%s'", id), e);
         }
+    }
+
+    private User doClone(User other) {
+        return new User().withId(other.getId())
+                         .withEmail(other.getEmail())
+                         .withPassword(other.getPassword())
+                         .withAliases(new ArrayList<>(other.getAliases()));
     }
 
     private boolean isLastWorkspaceAdmin(Member removal) throws NotFoundException, ServerException {

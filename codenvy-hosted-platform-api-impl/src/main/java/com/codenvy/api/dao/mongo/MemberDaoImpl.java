@@ -21,7 +21,7 @@ import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.api.user.server.dao.UserDao;
-import com.codenvy.api.user.shared.dto.User;
+import com.codenvy.api.user.server.dao.User;
 import com.codenvy.api.workspace.server.dao.Member;
 import com.codenvy.api.workspace.server.dao.MemberDao;
 import com.codenvy.api.workspace.server.dao.Workspace;

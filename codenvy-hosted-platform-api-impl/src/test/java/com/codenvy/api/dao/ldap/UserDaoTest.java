@@ -24,7 +24,7 @@ import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.api.core.notification.EventService;
 import com.codenvy.api.user.server.dao.UserProfileDao;
-import com.codenvy.api.user.shared.dto.User;
+import com.codenvy.api.user.server.dao.User;
 import com.codenvy.api.workspace.server.dao.Member;
 import com.codenvy.api.workspace.server.dao.MemberDao;
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
@@ -41,6 +41,7 @@ import org.testng.annotations.Test;
 
 import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import static java.util.Arrays.asList;
@@ -84,18 +85,15 @@ public class UserDaoTest {
                                   new UserAttributesMapper(),
                                   new EventService());
         users = new User[]{
-                DtoFactory.getInstance().createDto(User.class)
-                          .withId("1")
+                new User().withId("1")
                           .withEmail("user1@mail.com")
                           .withPassword("secret")
                           .withAliases(asList("user1@mail.com")),
-                DtoFactory.getInstance().createDto(User.class)
-                          .withId("2")
+                new User().withId("2")
                           .withEmail("user2@mail.com")
                           .withPassword("secret")
                           .withAliases(asList("user2@mail.com")),
-                DtoFactory.getInstance().createDto(User.class)
-                          .withId("3")
+                new User().withId("3")
                           .withEmail("user3@mail.com")
                           .withPassword("secret")
                           .withAliases(asList("user3@mail.com"))
@@ -156,7 +154,7 @@ public class UserDaoTest {
 
     @Test
     public void testUpdateUser() throws Exception {
-        User copy = DtoFactory.getInstance().clone(users[0]);
+        User copy = doClone(users[0]);
         copy.setEmail("example@mail.com");
         copy.setPassword("new_secret");
         copy.setAliases(asList("example@mail.com"));
@@ -170,7 +168,7 @@ public class UserDaoTest {
 
     @Test
     public void testUpdateNotExistedUser() throws Exception {
-        User copy = DtoFactory.getInstance().clone(users[0]);
+        User copy = doClone(users[0]);
         copy.setId("invalid"); // ID may not be updated
         copy.setEmail("example@mail.com");
         copy.setPassword("new_secret");
@@ -189,7 +187,7 @@ public class UserDaoTest {
 
     @Test
     public void testUpdateUserConflictAlias() throws Exception {
-        User copy = DtoFactory.getInstance().clone(users[0]);
+        User copy = doClone(users[0]);
         copy.setEmail("example@mail.com");
         copy.setPassword("new_secret");
         String conflictAlias = users[1].getAliases().get(0);
@@ -249,7 +247,7 @@ public class UserDaoTest {
 
     @Test(expectedExceptions = ConflictException.class, expectedExceptionsMessageRegExp = ".*User already exists.*")
     public void testCreateUserConflictId() throws Exception {
-        User copy = DtoFactory.getInstance().clone(users[0]);
+        User copy = doClone(users[0]);
         copy.setEmail("example@mail.com");
         copy.setPassword("new_secret");
         copy.setAliases(asList("example@mail.com"));
@@ -258,12 +256,19 @@ public class UserDaoTest {
 
     @Test(expectedExceptions = ConflictException.class, expectedExceptionsMessageRegExp = ".*User alias .* is already in use.*")
     public void testCreateUserConflictAlias() throws Exception {
-        User copy = DtoFactory.getInstance().clone(users[0]);
+        User copy = doClone(users[0]);
         copy.setId("new_id");
         copy.setEmail("example@mail.com");
         copy.setPassword("new_secret");
         // Keep one of aliases from existed user. Duplication of aliases is not allowed!!
         copy.getAliases().add("example@mail.com");
         userDao.create(copy);
+    }
+
+    private User doClone(User other) {
+        return new User().withId(other.getId())
+                         .withEmail(other.getEmail())
+                         .withPassword(other.getPassword())
+                         .withAliases(new ArrayList<>(other.getAliases()));
     }
 }

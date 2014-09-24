@@ -19,16 +19,24 @@ package com.codenvy.api.dao.ldap;
 
 import com.codenvy.api.dao.authentication.PasswordEncryptor;
 import com.codenvy.api.dao.authentication.SSHAPasswordEncryptor;
-import com.codenvy.api.user.shared.dto.User;
-import com.codenvy.dto.server.DtoFactory;
+import com.codenvy.api.user.server.dao.User;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
-import javax.naming.directory.*;
-import java.util.*;
+import javax.naming.directory.Attribute;
+import javax.naming.directory.Attributes;
+import javax.naming.directory.BasicAttribute;
+import javax.naming.directory.BasicAttributes;
+import javax.naming.directory.DirContext;
+import javax.naming.directory.ModificationItem;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Mapper is used for mapping LDAP Attributes to/from {@code User} POJO.
@@ -120,7 +128,7 @@ public class UserAttributesMapper {
 
     /** Restores instance of {@code User} from LDAP {@code Attributes}. */
     public User fromAttributes(Attributes attributes) throws NamingException {
-        final User user = DtoFactory.getInstance().createDto(User.class);
+        final User user = new User();
         user.setId(attributes.get(userIdAttr).get().toString());
         user.setEmail(attributes.get(userEmailAttr).get().toString());
         final NamingEnumeration enumeration = attributes.get(userAliasesAttr).getAll();
