@@ -26,8 +26,9 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class SaveAction extends AbstractIdeUsage {
+    public static final String ACTION_ID = "IDE: Save file";
 
     public SaveAction() {
-        super(MetricType.SAVE_ACTION, new String[]{SAVE_ACTION});
+        super(MetricType.SAVE_ACTION, ACTION_ID);
     }
 }

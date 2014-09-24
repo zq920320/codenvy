@@ -26,8 +26,9 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class RedirectToFeedbackAction extends AbstractIdeUsage {
+    public static final String ACTION_ID = "IDE: Open Feedback window";
 
     public RedirectToFeedbackAction() {
-        super(MetricType.REDIRECT_TO_FEEDBACK_ACTION, new String[]{REDIRECT_TO_FEEDBACK_ACTION});
+        super(MetricType.REDIRECT_TO_FEEDBACK_ACTION, ACTION_ID);
     }
 }

@@ -18,9 +18,15 @@
 package com.codenvy.analytics.pig.scripts;
 
 import com.codenvy.analytics.BaseTest;
+import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.LongValueData;
+import com.codenvy.analytics.datamodel.MapValueData;
+import com.codenvy.analytics.datamodel.StringValueData;
+import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.*;
-import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
+import com.codenvy.analytics.metrics.ide_usage.BuildAction;
+import com.codenvy.analytics.metrics.ide_usage.CodeCompletionsBasedOnIdeUsage;
+import com.codenvy.analytics.metrics.ide_usage.OpenProjectAction;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 import com.mongodb.BasicDBObject;
@@ -35,6 +41,7 @@ import org.testng.annotations.Test;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static org.testng.Assert.assertNotNull;
 import static org.testng.AssertJUnit.assertEquals;
@@ -58,12 +65,18 @@ public class TestIdeUsageEvents extends BaseTest {
                                 .withDate("2013-01-01").build());
         events.add(Event.Builder.createIDEUsageEvent("user2@gmail.com", null, null, null, null, null, null)
                                 .withDate("2013-01-01").build());
-        events.add(Event.Builder.createIDEUsageEvent("user3@gmail.com", null, AbstractIdeUsage.AUTOCOMPLETING, null, null, null, null)
+        events.add(Event.Builder.createIDEUsageEvent("user3@gmail.com", null, CodeCompletionsBasedOnIdeUsage.ACTION_ID, null, null, null, null)
                                 .withDate("2013-01-01").build());
-        events.add(Event.Builder.createIDEUsageEvent("user4@gmail.com", null, AbstractIdeUsage.AUTOCOMPLETING, null, null, null, null)
+        events.add(Event.Builder.createIDEUsageEvent("user4@gmail.com", null, CodeCompletionsBasedOnIdeUsage.ACTION_ID, null, null, null, null)
                                 .withDate("2013-01-01").build());
-        events.add(Event.Builder.createIDEUsageEvent("user5@gmail.com", null, AbstractIdeUsage.AUTOCOMPLETING, null, null, null, null)
+        events.add(Event.Builder.createIDEUsageEvent("user5@gmail.com", null, CodeCompletionsBasedOnIdeUsage.ACTION_ID, null, null, null, null)
                                 .withDate("2013-01-01").build());
+        events.add(Event.Builder.createIDEUsageEvent("user5@gmail.com", "testWs", OpenProjectAction.ACTION_ID, null, "testProject", null, null)
+                                .withDate("2013-01-01").withTime("11:00:00").build());
+        events.add(Event.Builder.createIDEUsageEvent("user5@gmail.com", "testWs", BuildAction.ACTION_ID, null, "testProject", "spring", null)
+                                .withDate("2013-01-01").withTime("11:01:00").build());
+        events.add(Event.Builder.createIDEUsageEvent("user5@gmail.com", "testWs", BuildAction.ACTION_ID, null, "testProject", "spring", null)
+                                .withDate("2013-01-01").withTime("11:02:00").build());
 
         File log = LogGenerator.generateLog(events);
 
@@ -128,15 +141,27 @@ public class TestIdeUsageEvents extends BaseTest {
     }
 
     @Test
-    public void testSingleActions() throws Exception {
+    public void testEditorSingleActions() throws Exception {
         Metric metric = MetricFactory.getMetric(MetricType.CODE_COMPLETIONS_BASED_ON_IDE_USAGES);
-        Assert.assertEquals(LongValueData.valueOf(3), metric.getValue(Context.EMPTY));
+        Assert.assertEquals(metric.getValue(Context.EMPTY), LongValueData.valueOf(3));
+    }
+
+    @Test
+    public void testIDEMenuSingleActions() throws Exception {
+        Metric metric = MetricFactory.getMetric(MetricType.BUILD_ACTION);
+        Assert.assertEquals(metric.getValue(Context.EMPTY), LongValueData.valueOf(2));
+
+        ListValueData data = (ListValueData) ((Expandable) metric).getExpandedValue(Context.EMPTY);
+        assertEquals(data.getAll().size(), 1);
+
+        Map<String, ValueData> record = ((MapValueData)data.getAll().get(0)).getAll();
+        assertEquals("uid5/testWs/testProject", record.get(AbstractMetric.PROJECT_ID).getAsString());
     }
 
     @Test
     public void testGetDescriptionOfIdeUsageMetric() {
         Metric metric = MetricFactory.getMetric(MetricType.ADD_TO_INDEX_ACTION);
-        Assert.assertEquals(metric.getDescription(), "Git plugin: Add To Index");
+        Assert.assertEquals(metric.getDescription(), "Add To Index");
 
 
         metric = MetricFactory.getMetric(MetricType.BUILD_ACTION);

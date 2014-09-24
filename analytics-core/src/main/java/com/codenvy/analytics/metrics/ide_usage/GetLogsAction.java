@@ -26,8 +26,9 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class GetLogsAction extends AbstractIdeUsage {
+    public static final String ACTION_ID = "IDE: Show application logs";
 
     public GetLogsAction() {
-        super(MetricType.GET_LOGS_ACTION, new String[]{GET_LOGS_ACTION});
+        super(MetricType.GET_LOGS_ACTION, ACTION_ID);
     }
 }

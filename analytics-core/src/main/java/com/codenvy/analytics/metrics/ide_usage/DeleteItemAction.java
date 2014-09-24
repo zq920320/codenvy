@@ -26,8 +26,9 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class DeleteItemAction extends AbstractIdeUsage {
+    public static final String ACTION_ID = "IDE: Delete file";
 
     public DeleteItemAction() {
-        super(MetricType.DELETE_ITEM_ACTION, new String[]{DELETE_ITEM_ACTION});
+        super(MetricType.DELETE_ITEM_ACTION, ACTION_ID);
     }
 }

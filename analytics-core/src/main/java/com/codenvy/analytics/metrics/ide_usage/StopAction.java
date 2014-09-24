@@ -26,8 +26,9 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class StopAction extends AbstractIdeUsage {
+    public static final String ACTION_ID = "IDE: Stop application";
 
     public StopAction() {
-        super(MetricType.STOP_ACTION, new String[]{STOP_ACTION});
+        super(MetricType.STOP_ACTION, ACTION_ID);
     }
 }

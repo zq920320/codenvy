@@ -19,3 +19,11 @@
 127.0.0.1 2013-11-24 00:34:45,446[]  [] []    [][][] - EVENT#user-removed# USER-ID#userhkcvmojpm4et5pcf# ALIASES#anonymoususer_nvo3w6#
 127.0.0.1 2013-11-24 00:34:45,473[]  [] []    [][][] - EVENT#user-removed# USER-ID#userluhkksi0c0k5izl2# ALIASES#anonymoususer_2hm5b0#
 127.0.0.1 2013-11-24 00:34:57,211[]  [] []       [][][] - EVENT#user-code-complete# PROJECT#myproject# TYPE#PHP# WS#hnordt# USER#awkvfc@awkvfc.tkq#
+
+127.0.0.1 2013-11-24 00:35:11,318[]  [] []   [][][] - EVENT#project-created# PROJECT#sprint# TYPE#spring# WS#default# USER#codenvy#
+127.0.0.1 2013-11-24 00:35:12,318[]  [] []   [][][] - EVENT#ide-usage# WS#default# USER#codenvy@codenvy.com# PROJECT#sprint# TYPE#spring# ACTION#IDE: Navigate to file# PARAMETERS##
+127.0.0.1 2013-11-24 00:35:13,318[]  [] []   [][][] - EVENT#ide-usage# WS#default# USER#codenvy@codenvy.com# PROJECT#sprint# TYPE#spring# ACTION#IDE: Git show history# PARAMETERS##
+127.0.0.1 2013-11-24 00:35:13,318[]  [] []   [][][] - EVENT#ide-usage# WS#default# USER#codenvy@codenvy.com# PROJECT#testSprint# TYPE#spring# ACTION#IDE: Build project# PARAMETERS##
+127.0.0.1 2013-11-24 00:35:13,318[]  [] []   [][][] - EVENT#build-started# WS#1q2w3e# USER#codenvy# PROJECT#/testSprint# TYPE#spring# ID#1411553720830-2#
+127.0.0.1 2013-11-24 00:35:13,318[]  [] []   [][][] - EVENT#ide-usage# WS#default# USER#codenvy@codenvy.com# PROJECT#testSprint# TYPE#spring# ACTION#IDE: Close project# PARAMETERS##
+127.0.0.1 2013-11-24 00:35:13,318[]  [] []   [][][] - EVENT#build-finished# WS#1q2w3e# USER#codenvy# PROJECT#/testSprint# TYPE#spring# ID#1411553720830-2#

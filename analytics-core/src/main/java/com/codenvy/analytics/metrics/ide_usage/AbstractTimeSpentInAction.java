@@ -20,7 +20,9 @@ package com.codenvy.analytics.metrics.ide_usage;
 import com.codenvy.analytics.metrics.AbstractLongValueResulted;
 import com.codenvy.analytics.metrics.MetricType;
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+/**
+ * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
+ */
 public abstract class AbstractTimeSpentInAction extends AbstractLongValueResulted {
 
     public AbstractTimeSpentInAction(MetricType metricType, String expandingField) {

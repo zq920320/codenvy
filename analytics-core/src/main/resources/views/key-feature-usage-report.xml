@@ -20,9 +20,9 @@
 -->
 <display>
     <view time-unit="day,week,month,lifetime" name="key_feature_usage_report" columns="15">
-        <section name="key_feature_usage_report">
+        <section name="ide">
             <row class="com.codenvy.analytics.services.view.DateRow">
-                <parameter key="section-name" value=""/>
+                <parameter key="section-name" value="Core IDE Features"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="build_action"/>
@@ -108,6 +108,12 @@
                 <parameter key="name" value="upload_file_action"/>
                 <parameter key="description"/>
             </row>
+        </section>
+
+        <section name="plugin_git">
+            <row class="com.codenvy.analytics.services.view.DateRow">
+                <parameter key="section-name" value="Git Plugin Features"/>
+            </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="add_to_index_action"/>
                 <parameter key="description"/>
@@ -171,6 +177,12 @@
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="show_status_action"/>
                 <parameter key="description"/>
+            </row>
+        </section>
+
+        <section name="plugin_hosted">
+            <row class="com.codenvy.analytics.services.view.DateRow">
+                <parameter key="section-name" value="Hosted Plugin Features"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="share_factory_action"/>

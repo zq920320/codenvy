@@ -26,8 +26,9 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class RedirectToHelpAction extends AbstractIdeUsage {
+    public static final String ACTION_ID = "IDE: Open Help window";
 
     public RedirectToHelpAction() {
-        super(MetricType.REDIRECT_TO_HELP_ACTION, new String[]{REDIRECT_TO_HELP_ACTION});
+        super(MetricType.REDIRECT_TO_HELP_ACTION, ACTION_ID);
     }
 }

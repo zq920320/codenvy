@@ -26,8 +26,9 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class RedirectToForumsAction extends AbstractIdeUsage {
+    public static final String ACTION_ID = "IDE: Open Forums window";
 
     public RedirectToForumsAction() {
-        super(MetricType.REDIRECT_TO_FORUMS_ACTION, new String[]{REDIRECT_TO_FORUMS_ACTION});
+        super(MetricType.REDIRECT_TO_FORUMS_ACTION, ACTION_ID);
     }
 }

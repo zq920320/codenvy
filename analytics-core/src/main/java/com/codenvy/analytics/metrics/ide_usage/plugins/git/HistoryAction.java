@@ -27,13 +27,9 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class HistoryAction extends AbstractIdeUsage {
+    public static final String ACTION_ID = "IDE: Git show history";
 
     public HistoryAction() {
-        super(MetricType.HISTORY_ACTION, new String[]{HISTORY_ACTION});
-    }
-
-    @Override
-    public String getDescription() {
-        return "Git plugin: " + super.getDescription();
+        super(MetricType.HISTORY_ACTION, ACTION_ID);
     }
 }

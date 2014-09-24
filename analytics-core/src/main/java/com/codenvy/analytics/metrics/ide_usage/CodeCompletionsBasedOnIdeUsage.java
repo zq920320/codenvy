@@ -26,9 +26,10 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class CodeCompletionsBasedOnIdeUsage extends AbstractIdeUsage {
+    public static final String ACTION_ID = "Autocompleting";
 
     public CodeCompletionsBasedOnIdeUsage() {
-        super(MetricType.CODE_COMPLETIONS_BASED_ON_IDE_USAGES, new String[]{AUTOCOMPLETING});
+        super(MetricType.CODE_COMPLETIONS_BASED_ON_IDE_USAGES, ACTION_ID);
     }
 
     @Override

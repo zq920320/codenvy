@@ -28,7 +28,9 @@ import com.codenvy.analytics.metrics.MetricType;
 import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+/**
+ * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
+ */
 @RolesAllowed({"system/admin", "system/manager"})
 public class CodeCompletions extends CalculatedMetric implements Expandable {
 

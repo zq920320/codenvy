@@ -27,13 +27,9 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class ShareFactoryAction extends AbstractIdeUsage {
+    public static final String ACTION_ID = "IDE: Share factory";
 
     public ShareFactoryAction() {
-        super(MetricType.SHARE_FACTORY_ACTION, new String[]{SHARE_FACTORY_ACTION});
-    }
-
-    @Override
-    public String getDescription() {
-        return "Hosted plugin: " + super.getDescription();
+        super(MetricType.SHARE_FACTORY_ACTION, ACTION_ID);
     }
 }

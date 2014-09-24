@@ -26,8 +26,9 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class ImportProjectFromLocationAction extends AbstractIdeUsage {
+    public static final String ACTION_ID = "IDE: Import project";
 
     public ImportProjectFromLocationAction() {
-        super(MetricType.IMPORT_PROJECT_FROM_LOCATION_ACTION, new String[]{IMPORT_PROJECT_FROM_LOCATION_ACTION});
+        super(MetricType.IMPORT_PROJECT_FROM_LOCATION_ACTION, ACTION_ID);
     }
 }

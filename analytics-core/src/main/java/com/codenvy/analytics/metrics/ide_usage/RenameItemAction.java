@@ -26,8 +26,9 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class RenameItemAction extends AbstractIdeUsage {
+    public static final String ACTION_ID = "IDE: File rename";
 
     public RenameItemAction() {
-        super(MetricType.RENAME_ITEM_ACTION, new String[]{RENAME_ITEM_ACTION});
+        super(MetricType.RENAME_ITEM_ACTION, ACTION_ID);
     }
 }

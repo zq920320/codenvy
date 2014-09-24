@@ -27,13 +27,9 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class FetchAction extends AbstractIdeUsage {
+    public static final String ACTION_ID = "IDE: Git fetch";
 
     public FetchAction() {
-        super(MetricType.FETCH_ACTION, new String[]{FETCH_ACTION});
-    }
-
-    @Override
-    public String getDescription() {
-        return "Git plugin: " + super.getDescription();
+        super(MetricType.FETCH_ACTION, ACTION_ID);
     }
 }

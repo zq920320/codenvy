@@ -27,13 +27,9 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class PushAction extends AbstractIdeUsage {
+    public static final String ACTION_ID = "IDE: Git push";
 
     public PushAction() {
-        super(MetricType.PUSH_ACTION, new String[]{PUSH_ACTION});
-    }
-
-    @Override
-    public String getDescription() {
-        return "Git plugin: " + super.getDescription();
+        super(MetricType.PUSH_ACTION, ACTION_ID);
     }
 }

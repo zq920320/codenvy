@@ -27,13 +27,9 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class AddToIndexAction extends AbstractIdeUsage {
+    public static final String ACTION_ID = "IDE: Git add";
 
     public AddToIndexAction() {
-        super(MetricType.ADD_TO_INDEX_ACTION, new String[]{ADD_TO_INDEX_ACTION});
-    }
-
-    @Override
-    public String getDescription() {
-        return "Git plugin: " + super.getDescription();
+        super(MetricType.ADD_TO_INDEX_ACTION, ACTION_ID);
     }
 }

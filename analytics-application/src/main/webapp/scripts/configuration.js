@@ -180,6 +180,11 @@ function Configuration() {
                 "time_unit": "month"
             },
 
+            /** @see DatabaseTable::makeTableSortable() method docs */
+            clientSortParams: {
+                "ascSortColumnNumber": 0
+            },
+
             displayLineChart: true,  // default is false
         },
 

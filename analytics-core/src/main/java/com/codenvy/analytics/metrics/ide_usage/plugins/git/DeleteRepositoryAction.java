@@ -27,13 +27,9 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class DeleteRepositoryAction extends AbstractIdeUsage {
+    public static final String ACTION_ID = "IDE: Git delete repository";
 
     public DeleteRepositoryAction() {
-        super(MetricType.DELETE_REPOSITORY_ACTION, new String[]{DELETE_REPOSITORY_ACTION});
-    }
-
-    @Override
-    public String getDescription() {
-        return "Git plugin: " + super.getDescription();
+        super(MetricType.DELETE_REPOSITORY_ACTION, ACTION_ID);
     }
 }

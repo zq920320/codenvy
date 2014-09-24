@@ -27,13 +27,9 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class RemoveFromIndexAction extends AbstractIdeUsage {
+    public static final String ACTION_ID = "IDE: Git remove";
 
     public RemoveFromIndexAction() {
-        super(MetricType.REMOVE_FROM_INDEX_ACTION, new String[]{REMOVE_FROM_INDEX_ACTION});
-    }
-
-    @Override
-    public String getDescription() {
-        return "Git plugin: " + super.getDescription();
+        super(MetricType.REMOVE_FROM_INDEX_ACTION, ACTION_ID);
     }
 }

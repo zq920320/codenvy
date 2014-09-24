@@ -27,13 +27,9 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class ShowRemoteAction extends AbstractIdeUsage {
+    public static final String ACTION_ID = "IDE: Git show remotes";
 
     public ShowRemoteAction() {
-        super(MetricType.SHOW_REMOTE_ACTION, new String[]{SHOW_REMOTE_ACTION});
-    }
-
-    @Override
-    public String getDescription() {
-        return "Git plugin: " + super.getDescription();
+        super(MetricType.SHOW_REMOTE_ACTION, ACTION_ID);
     }
 }

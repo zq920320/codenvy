@@ -27,13 +27,9 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class ResetFilesAction extends AbstractIdeUsage {
+    public static final String ACTION_ID = "IDE: Git reset";
 
     public ResetFilesAction() {
-        super(MetricType.RESET_FILES_ACTION, new String[]{RESET_FILES_ACTION});
-    }
-
-    @Override
-    public String getDescription() {
-        return "Git plugin: " + super.getDescription();
+        super(MetricType.RESET_FILES_ACTION, ACTION_ID);
     }
 }

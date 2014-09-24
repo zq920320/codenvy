@@ -27,13 +27,9 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class ResetToCommitAction extends AbstractIdeUsage {
+    public static final String ACTION_ID = "IDE: Git reset to commit";
 
     public ResetToCommitAction() {
-        super(MetricType.RESET_TO_COMMIT_ACTION, new String[]{RESET_TO_COMMIT_ACTION});
-    }
-
-    @Override
-    public String getDescription() {
-        return "Git plugin: " + super.getDescription();
+        super(MetricType.RESET_TO_COMMIT_ACTION, ACTION_ID);
     }
 }

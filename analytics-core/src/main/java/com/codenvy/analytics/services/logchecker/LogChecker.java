@@ -22,7 +22,7 @@ import com.codenvy.analytics.Injector;
 import com.codenvy.analytics.MailService;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.metrics.*;
-import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
+import com.codenvy.analytics.metrics.ide_usage.CodeCompletionsBasedOnIdeUsage;
 import com.codenvy.analytics.persistent.CollectionsManagement;
 import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.EventConfiguration;
@@ -110,8 +110,8 @@ public class LogChecker extends Feature {
                 writeLine("Event doesn't exist: " + event, out);
                 continue;
             } else if (event.equals("ide-usage")) {
-                if (!isEventExist(context, event, AbstractMetric.ACTION, AbstractIdeUsage.AUTOCOMPLETING)) {
-                    writeLine("Event 'ide-usage' doesn't exist for action: " + AbstractIdeUsage.AUTOCOMPLETING, out);
+                if (!isEventExist(context, event, AbstractMetric.ACTION, CodeCompletionsBasedOnIdeUsage.ACTION_ID)) {
+                    writeLine("Event 'ide-usage' doesn't exist for action: " + CodeCompletionsBasedOnIdeUsage.ACTION_ID, out);
                 }
             }
 

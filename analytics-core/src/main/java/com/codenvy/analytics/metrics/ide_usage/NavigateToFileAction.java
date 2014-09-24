@@ -26,8 +26,9 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class NavigateToFileAction extends AbstractIdeUsage {
+    public static final String ACTION_ID = "IDE: Navigate to file";
 
     public NavigateToFileAction() {
-        super(MetricType.NAVIGATE_TO_FILE_ACTION, new String[]{NAVIGATE_TO_FILE_ACTION});
+        super(MetricType.NAVIGATE_TO_FILE_ACTION, ACTION_ID);
     }
 }

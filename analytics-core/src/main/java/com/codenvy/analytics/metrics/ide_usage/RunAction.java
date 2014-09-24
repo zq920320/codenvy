@@ -26,8 +26,9 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class RunAction extends AbstractIdeUsage {
+    public static final String ACTION_ID = "IDE: Run application";
 
     public RunAction() {
-        super(MetricType.RUN_ACTION, new String[]{RUN_ACTION});
+        super(MetricType.RUN_ACTION, ACTION_ID);
     }
 }

@@ -27,13 +27,9 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class InitRepositoryAction extends AbstractIdeUsage {
+    public static final String ACTION_ID = "IDE: Git initialize repository";
 
     public InitRepositoryAction() {
-        super(MetricType.INIT_REPOSITORY_ACTION, new String[]{INIT_REPOSITORY_ACTION});
-    }
-
-    @Override
-    public String getDescription() {
-        return "Git plugin: " + super.getDescription();
+        super(MetricType.INIT_REPOSITORY_ACTION, ACTION_ID);
     }
 }

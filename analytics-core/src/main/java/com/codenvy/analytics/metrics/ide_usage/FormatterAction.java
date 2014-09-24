@@ -26,8 +26,9 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class FormatterAction extends AbstractIdeUsage {
+    private static final String ACTION_LOG = "IDE: Format file";
 
     public FormatterAction() {
-        super(MetricType.FORMATTER_ACTION, new String[]{FORMATTER_ACTION});
+        super(MetricType.FORMATTER_ACTION, ACTION_LOG);
     }
 }

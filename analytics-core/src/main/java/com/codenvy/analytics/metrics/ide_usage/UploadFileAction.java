@@ -26,8 +26,9 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class UploadFileAction extends AbstractIdeUsage {
+    public static final String ACTION_ID = "IDE: Upload file";
 
     public UploadFileAction() {
-        super(MetricType.UPLOAD_FILE_ACTION, new String[]{UPLOAD_FILE_ACTION});
+        super(MetricType.UPLOAD_FILE_ACTION, ACTION_ID);
     }
 }

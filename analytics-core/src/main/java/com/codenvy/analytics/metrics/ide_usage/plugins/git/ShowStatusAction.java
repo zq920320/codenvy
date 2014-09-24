@@ -27,13 +27,9 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class ShowStatusAction extends AbstractIdeUsage {
+    public static final String ACTION_ID = "IDE: Git status";
 
     public ShowStatusAction() {
-        super(MetricType.SHOW_STATUS_ACTION, new String[]{SHOW_STATUS_ACTION});
-    }
-
-    @Override
-    public String getDescription() {
-        return "Git plugin: " + super.getDescription();
+        super(MetricType.SHOW_STATUS_ACTION, ACTION_ID);
     }
 }

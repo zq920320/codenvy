@@ -26,8 +26,11 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class CustomRunAction extends AbstractIdeUsage {
+    /* TODO fix com.codenvy.ide.extension.runner.client.actions.CustomRunAction of IDE3
+    to log "IDE: Custom run application" instead of "IDE: Run application" */
+    public static final String ACTION_ID = "IDE: Custom run application";
 
     public CustomRunAction() {
-        super(MetricType.CUSTOM_RUN_ACTION, new String[]{CUSTOM_RUN_ACTION});
+        super(MetricType.CUSTOM_RUN_ACTION, ACTION_ID);
     }
 }

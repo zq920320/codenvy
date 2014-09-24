@@ -26,8 +26,9 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class CloseProjectAction extends AbstractIdeUsage {
+    public static final String ACTION_ID = "IDE: Close project";
 
     public CloseProjectAction() {
-        super(MetricType.CLOSE_PROJECT_ACTION, new String[]{CLOSE_PROJECT_ACTION});
+        super(MetricType.CLOSE_PROJECT_ACTION, ACTION_ID);
     }
 }

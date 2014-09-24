@@ -27,13 +27,9 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class PullAction extends AbstractIdeUsage {
+    public static final String ACTION_ID = "IDE: Git pull";
 
     public PullAction() {
-        super(MetricType.PULL_ACTION, new String[]{PULL_ACTION});
-    }
-
-    @Override
-    public String getDescription() {
-        return "Git plugin: " + super.getDescription();
+        super(MetricType.PULL_ACTION, ACTION_ID);
     }
 }
