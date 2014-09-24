@@ -26,7 +26,7 @@ import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.RequiredFilter;
 import com.codenvy.api.account.shared.dto.MemberDescriptor;
-import com.codenvy.api.user.shared.dto.User;
+import com.codenvy.api.user.shared.dto.UserDescriptor;
 import com.codenvy.api.workspace.shared.dto.WorkspaceDescriptor;
 
 import javax.annotation.security.RolesAllowed;
@@ -51,7 +51,7 @@ public class AccountUsersRolesList extends AbstractAccountMetric {
     public ValueData getValue(Context context) throws IOException {
         MemberDescriptor accountById = getAccountMembership(context);
 
-        User currentUser = getCurrentUser();
+        UserDescriptor currentUser = getCurrentUser();
         String currentUserId = currentUser.getId();
 
         List<ValueData> list2Return = new ArrayList<>();

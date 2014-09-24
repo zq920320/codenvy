@@ -21,13 +21,17 @@ import com.codenvy.analytics.Injector;
 import com.codenvy.analytics.datamodel.StringValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.datamodel.ValueDataUtil;
-import com.codenvy.analytics.metrics.*;
+import com.codenvy.analytics.metrics.AbstractMetric;
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.MetricFilter;
+import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.persistent.MongoDataLoader;
 import com.codenvy.api.account.shared.dto.AccountDescriptor;
 import com.codenvy.api.account.shared.dto.MemberDescriptor;
 import com.codenvy.api.account.shared.dto.SubscriptionDescriptor;
 import com.codenvy.api.user.shared.dto.ProfileDescriptor;
-import com.codenvy.api.user.shared.dto.User;
+import com.codenvy.api.user.shared.dto.UserDescriptor;
 import com.codenvy.api.workspace.shared.dto.WorkspaceDescriptor;
 
 import java.io.IOException;
@@ -119,7 +123,8 @@ public abstract class AbstractAccountMetric extends AbstractMetric {
     }
 
     protected List<WorkspaceDescriptor> getWorkspaces(String accountId) throws IOException {
-        return httpMetricTransport.getResources(WorkspaceDescriptor.class, "GET", PATH_ACCOUNT_WORKSPACES.replace(PARAM_ACCOUNT_ID, accountId));
+        return httpMetricTransport
+                .getResources(WorkspaceDescriptor.class, "GET", PATH_ACCOUNT_WORKSPACES.replace(PARAM_ACCOUNT_ID, accountId));
     }
 
     protected List<MemberDescriptor> getMembers(String workspaceId) throws IOException {
@@ -157,8 +162,8 @@ public abstract class AbstractAccountMetric extends AbstractMetric {
         return new StringValueData(firsName + " " + lastName);
     }
 
-    public static User getCurrentUser() throws IOException {
-        return httpMetricTransport.getResource(User.class, "GET", AbstractAccountMetric.PATH_USER);
+    public static UserDescriptor getCurrentUser() throws IOException {
+        return httpMetricTransport.getResource(UserDescriptor.class, "GET", AbstractAccountMetric.PATH_USER);
     }
 
     protected String getUserRoleInWorkspace(String userId, String workspaceId) throws IOException {
