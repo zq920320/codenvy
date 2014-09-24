@@ -136,7 +136,7 @@ public class TestIdeUsageEvents extends BaseTest {
     @Test
     public void testGetDescriptionOfIdeUsageMetric() {
         Metric metric = MetricFactory.getMetric(MetricType.ADD_TO_INDEX_ACTION);
-        Assert.assertEquals(metric.getDescription(), "Add To Index");
+        Assert.assertEquals(metric.getDescription(), "Git plugin: Add To Index");
 
 
         metric = MetricFactory.getMetric(MetricType.BUILD_ACTION);
