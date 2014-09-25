@@ -26,7 +26,7 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class ShowPreferencesAction extends AbstractIdeUsage {
-    public static final String ACTION_ID = "IDE: Show preferences";
+    public static final String ACTION_ID = "com.codenvy.ide.actions.ShowPreferencesAction";
 
     public ShowPreferencesAction() {
         super(MetricType.SHOW_PREFERENCES_ACTION, ACTION_ID);

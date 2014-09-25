@@ -26,7 +26,7 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class NewProjectWizardAction extends AbstractIdeUsage {
-    public static final String ACTION_ID = "IDE: New project from wizard";
+    public static final String ACTION_ID = "com.codenvy.ide.actions.NewProjectWizardAction";
 
     public NewProjectWizardAction() {
         super(MetricType.NEW_PROJECT_WIZARD_ACTION, ACTION_ID);

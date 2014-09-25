@@ -26,7 +26,7 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class FormatterAction extends AbstractIdeUsage {
-    private static final String ACTION_LOG = "IDE: Format file";
+    private static final String ACTION_LOG = "com.codenvy.ide.actions.FormatterAction";
 
     public FormatterAction() {
         super(MetricType.FORMATTER_ACTION, ACTION_LOG);

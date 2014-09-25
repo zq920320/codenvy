@@ -26,7 +26,7 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class SaveAllAction extends AbstractIdeUsage {
-    public static final String ACTION_ID = "IDE: Save all";
+    public static final String ACTION_ID = "com.codenvy.ide.actions.SaveAllAction";
 
     public SaveAllAction() {
         super(MetricType.SAVE_ALL_ACTION, ACTION_ID);
