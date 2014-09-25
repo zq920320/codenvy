@@ -73,7 +73,8 @@ Presenter.prototype.getModelParams = function(viewParams) {
 
     // construct event parameter
     if (typeof viewParams[this.EVENT_PARAMETER_NAME_FIELD] != "undefined"
-        && typeof viewParams[this.EVENT_PARAMETER_VALUE_FIELD] != "undefined") {
+        && typeof viewParams[this.EVENT_PARAMETER_VALUE_FIELD] != "undefined"
+        && viewParams[this.EVENT_PARAMETER_NAME_FIELD] != "") {
         modelParams[this.EVENT_PARAMETER_FIELD] =
             viewParams[this.EVENT_PARAMETER_NAME_FIELD] + "=" + viewParams[this.EVENT_PARAMETER_VALUE_FIELD];
     }
