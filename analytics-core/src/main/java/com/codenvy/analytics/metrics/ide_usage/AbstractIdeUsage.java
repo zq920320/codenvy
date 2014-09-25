@@ -19,7 +19,11 @@ package com.codenvy.analytics.metrics.ide_usage;
 
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.*;
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.MetricFilter;
+import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.ReadBasedExpandable;
+import com.codenvy.analytics.metrics.ReadBasedMetric;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
@@ -110,11 +114,7 @@ public abstract class AbstractIdeUsage extends ReadBasedMetric implements ReadBa
 
         // divide separate words by space
         description = description.replaceAll("([A-Z][a-z]*)", "$1 "); // find out separate words and add space to them
-        if (description.endsWith(" ")) {   // remove redundant ended space
-            description = description.substring(0, description.length() - 1);
-        }
-
-        return description;
+        return description.trim();
     }
 
     @Override
