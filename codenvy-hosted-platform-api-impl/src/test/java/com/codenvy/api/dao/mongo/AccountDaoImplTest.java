@@ -31,7 +31,6 @@ import com.codenvy.api.workspace.server.dao.WorkspaceDao;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
-import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoException;
 
@@ -42,16 +41,19 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
+import static java.util.Collections.singletonMap;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
@@ -69,21 +71,10 @@ import static org.testng.Assert.assertTrue;
 @Listeners(value = {MockitoTestNGListener.class})
 public class AccountDaoImplTest extends BaseDaoTest {
 
-    private static final String USER_ID                           = "user12837asjhda823981h";
-    private static final String ACCOUNT_ID                        = "org123abc456def";
-    private static final String ACCOUNT_NAME                      = "account";
-    private static final String ACCOUNT_OWNER                     = "user123@codenvy.com";
     private static final String ACC_COLL_NAME                     = "accounts";
     private static final String SUBSCRIPTION_COLL_NAME            = "subscriptions";
     private static final String MEMBER_COLL_NAME                  = "members";
     private static final String SUBSCRIPTION_ATTRIBUTES_COLL_NAME = "subscriptionAttributes";
-    private static final String SUBSCRIPTION_ID                   = "Subscription0xfffffff";
-    private static final String SERVICE_NAME                      = "builder";
-    private static final String PLAN_ID                           = "plan_id";
-
-    private Map<String, String>    props;
-    private Subscription           defaultSubscription;
-    private SubscriptionAttributes defaultSubscriptionAttributes;
 
     @Mock
     private WorkspaceDao   workspaceDao;
@@ -110,25 +101,6 @@ public class AccountDaoImplTest extends BaseDaoTest {
                                         SUBSCRIPTION_COLL_NAME,
                                         MEMBER_COLL_NAME,
                                         SUBSCRIPTION_ATTRIBUTES_COLL_NAME);
-        props = new HashMap<>(4);
-        props.put("key1", "value1");
-        props.put("key2", "value2");
-        defaultSubscription = new Subscription().withId(SUBSCRIPTION_ID)
-                                                .withAccountId(ACCOUNT_ID)
-                                                .withPlanId(PLAN_ID)
-                                                .withServiceId(SERVICE_NAME)
-                                                .withProperties(props);
-        defaultSubscriptionAttributes = new SubscriptionAttributes().withTrialDuration(7)
-                                                                    .withStartDate("11/12/2014")
-                                                                    .withEndDate("11/12/2015")
-                                                                    .withDescription("description")
-                                                                    .withCustom(Collections.singletonMap("key", "value"))
-                                                                    .withBilling(new Billing().withStartDate("11/12/2014")
-                                                                                              .withEndDate("11/12/2015")
-                                                                                              .withUsePaymentSystem("true")
-                                                                                              .withCycleType(1)
-                                                                                              .withCycle(1)
-                                                                                              .withContractTerm(1));
     }
 
     @Override
@@ -138,348 +110,306 @@ public class AccountDaoImplTest extends BaseDaoTest {
     }
 
     @Test
-    public void shouldCreateAccount() throws Exception {
-        Account account = new Account().withId(ACCOUNT_ID)
-                                       .withName(ACCOUNT_NAME)
-                                       .withAttributes(getAttributes());
+    public void shouldBeAbleToCreateAccount() throws Exception {
+        final Account account = createAccount();
 
         accountDao.create(account);
 
-        DBObject res = collection.findOne(new BasicDBObject("id", ACCOUNT_ID));
-        assertNotNull(res, "Specified user account does not exists.");
-
-        Account result = accountDao.toAccount(res);
-        assertEquals(result, account);
+        final DBObject accountDocument = collection.findOne(new BasicDBObject("id", account.getId()));
+        assertNotNull(accountDocument);
+        assertEquals(accountDao.toAccount(accountDocument), account);
     }
 
     @Test
-    public void shouldFindAccountById() throws Exception {
-        collection.insert(new BasicDBObject().append("id", ACCOUNT_ID)
-                                             .append("name", ACCOUNT_NAME)
-                                             .append("owner", ACCOUNT_OWNER)
-                                             .append("attributes", new BasicDBList()));
-        Account result = accountDao.getById(ACCOUNT_ID);
-        assertNotNull(result);
-        assertEquals(result.getName(), ACCOUNT_NAME);
+    public void shouldBeAbleToGetAccountById() throws Exception {
+        final Account account = createAccount();
+        insertAccounts(account);
+
+        final Account actual = accountDao.getById(account.getId());
+
+        assertEquals(actual, account);
     }
 
     @Test
-    public void shouldFindAccountByName() throws Exception {
-        collection.insert(new BasicDBObject().append("id", ACCOUNT_ID)
-                                             .append("name", ACCOUNT_NAME)
-                                             .append("owner", ACCOUNT_OWNER)
-                                             .append("attributes", new BasicDBList()));
-        Account result = accountDao.getByName(ACCOUNT_NAME);
-        assertNotNull(result);
-        assertEquals(result.getId(), ACCOUNT_ID);
+    public void shouldBeAbleToGetAccountByName() throws Exception {
+        final Account account = createAccount();
+        insertAccounts(account);
+
+        final Account actual = accountDao.getByName(account.getName());
+
+        assertEquals(actual, account);
     }
 
     @Test(expectedExceptions = NotFoundException.class)
-    public void shouldNotFindUnExistingAccountByName() throws Exception {
-        collection.insert(new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME).append("owner", ACCOUNT_OWNER));
-        Account result = accountDao.getByName("randomName");
-        assertNull(result);
+    public void shouldThrowNotFoundExceptionIfAccountWithGivenNameDoesNotExist() throws Exception {
+        final Account account = createAccount();
+        insertAccounts(account);
+
+        assertNull(accountDao.getByName(account.getName() + "suffix"));
     }
 
     @Test
-    public void shouldFindAccountByOwner() throws Exception {
-        collection.insert(new BasicDBObject().append("id", ACCOUNT_ID)
-                                             .append("name", ACCOUNT_NAME)
-                                             .append("owner", ACCOUNT_OWNER)
-                                             .append("attributes", new BasicDBList()));
-        collection.insert(new BasicDBObject().append("id", "fake")
-                                             .append("name", "fake")
-                                             .append("owner", "fake")
-                                             .append("attributes", new BasicDBList()));
-        BasicDBList members = new BasicDBList();
-        members.add(accountDao.toDBObject(new Member().withAccountId(ACCOUNT_ID)
-                                                      .withRoles(asList("account/owner"))
-                                                      .withUserId(USER_ID)));
-        members.add(accountDao.toDBObject(new Member().withAccountId("fake")
-                                                      .withRoles(asList("account/member"))
-                                                      .withUserId(USER_ID)));
-        membersCollection.insert(new BasicDBObject().append("_id", USER_ID)
-                                                    .append("members", members));
-        List<Account> result = accountDao.getByOwner(USER_ID);
+    public void shouldBeAbleToGetAccountByOwner() throws Exception {
+        final Account account = createAccount();
+        final Member member = new Member().withAccountId(account.getId())
+                                          .withRoles(asList("account/owner"))
+                                          .withUserId("test_user_id");
+        insertAccounts(account);
+        insertMembers(member);
+
+        final List<Account> result = accountDao.getByOwner(member.getUserId());
+
         assertEquals(result.size(), 1);
-        assertEquals(result.get(0).getId(), ACCOUNT_ID);
-        assertEquals(result.get(0).getName(), ACCOUNT_NAME);
+        assertEquals(result.get(0), account);
     }
 
     @Test
-    public void shouldUpdateAccount() throws Exception {
-        Account account = new Account().withId(ACCOUNT_ID)
-                                       .withName(ACCOUNT_NAME)
-                                       .withAttributes(getAttributes());
-        // Put first object
-        collection.insert(new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME).append("owner", ACCOUNT_OWNER));
-        // main invoke
+    public void shouldBeAbleToUpdateAccount() throws Exception {
+        final Account account = createAccount();
+        insertAccounts(account);
+        //prepare update
+        account.setName(account.getName() + "new_name_suffix");
+
         accountDao.update(account);
 
-        DBObject res = collection.findOne(new BasicDBObject("id", ACCOUNT_ID));
-        assertNotNull(res, "Specified user profile does not exists.");
-
-        Account result = accountDao.toAccount(res);
-
-        assertEquals(account, result);
+        final DBObject accountDocument = collection.findOne(new BasicDBObject("id", account.getId()));
+        assertNotNull(accountDocument);
+        assertEquals(accountDao.toAccount(accountDocument), account);
     }
 
     @Test
-    public void shouldRemoveAccount() throws Exception {
-        when(workspaceDao.getByAccount(ACCOUNT_ID)).thenReturn(Collections.<Workspace>emptyList());
-        collection.insert(new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME).append("owner", ACCOUNT_OWNER));
-        subscriptionCollection.insert(new BasicDBObject("accountId", ACCOUNT_ID));
+    public void shouldBeAbleToRemoveAccount() throws Exception {
+        final Account account = createAccount();
+        when(workspaceDao.getByAccount(account.getId())).thenReturn(Collections.<Workspace>emptyList());
+        final Subscription subscription = createSubscription().withAccountId(account.getId());
+        final Member member1 = new Member().withUserId("test_user_1")
+                                           .withAccountId(account.getId())
+                                           .withRoles(asList("account/owner"));
+        final Member member2 = new Member().withUserId("test_user_2")
+                                           .withAccountId(account.getId())
+                                           .withRoles(asList("account/member"));
+        insertMembers(member1, member2);
+        insertAccounts(account);
+        insertSubscriptions(subscription);
+        subscriptionAttributesCollection.insert(new BasicDBObject("_id", subscription.getId()));
 
-        Member member1 = new Member().withUserId("test_user_1")
-                                     .withAccountId(ACCOUNT_ID)
-                                     .withRoles(asList("account/member", "account/owner"));
-        Member member2 = new Member().withUserId("test_user_2")
-                                     .withAccountId(ACCOUNT_ID)
-                                     .withRoles(asList("account/member"));
-        accountDao.addMember(member1);
-        accountDao.addMember(member2);
+        accountDao.remove(account.getId());
 
-        accountDao.remove(ACCOUNT_ID);
-        assertNull(collection.findOne(new BasicDBObject("id", ACCOUNT_ID)));
-        assertFalse(membersCollection.find(new BasicDBObject("members.accountId", ACCOUNT_ID)).hasNext());
-        assertNull(subscriptionCollection.findOne(new BasicDBObject("accountId", ACCOUNT_ID)));
+        assertNull(collection.findOne(new BasicDBObject("id", account.getId())));
+        assertNull(subscriptionCollection.findOne(new BasicDBObject("accountId", account.getId())));
+        assertNull(subscriptionAttributesCollection.findOne(new BasicDBObject("_id", subscription.getId())));
+        assertFalse(membersCollection.find(new BasicDBObject("members.accountId", account.getId())).hasNext());
     }
 
     @Test(expectedExceptions = ConflictException.class,
           expectedExceptionsMessageRegExp = "It is not possible to remove account having associated workspaces")
     public void shouldNotBeAbleToRemoveAccountWithAssociatedWorkspace() throws Exception {
-        when(workspaceDao.getByAccount(ACCOUNT_ID)).thenReturn(asList(new Workspace()));
-        collection.insert(
-                new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME).append("owner", ACCOUNT_OWNER));
+        final Account account = createAccount();
+        when(workspaceDao.getByAccount(account.getId())).thenReturn(asList(mock(Workspace.class)));
+        insertAccounts(account);
 
-        List<String> roles = asList("account/admin", "account/manager");
-        Member member1 = new Member().withUserId(USER_ID)
-                                     .withAccountId(ACCOUNT_ID)
-                                     .withRoles(roles.subList(0, 1));
-        accountDao.addMember(member1);
-
-        accountDao.remove(ACCOUNT_ID);
+        accountDao.remove(account.getId());
     }
 
     @Test
-    public void shouldAddMember() throws Exception {
-        List<String> roles = asList("account/admin", "account/manager");
-        collection.insert(new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME)
-                                                             .append("owner", ACCOUNT_OWNER));
-        Member member = new Member().withUserId(USER_ID)
-                                    .withAccountId(ACCOUNT_ID)
-                                    .withRoles(roles);
+    public void shouldBeAbleToAddMember() throws Exception {
+        final Account account = createAccount();
+        final Member member = new Member().withUserId("test_user_id")
+                                          .withAccountId(account.getId())
+                                          .withRoles(asList("account/admin", "account/manager"));
+        insertAccounts(account);
+
         accountDao.addMember(member);
 
-        DBObject res = membersCollection.findOne(new BasicDBObject("_id", USER_ID));
-        assertNotNull(res, "Specified user membership does not exists.");
-
-        for (Object dbMembership : (BasicDBList)res.get("members")) {
-            Member membership = accountDao.toMember(dbMembership);
-            assertEquals(membership.getAccountId(), ACCOUNT_ID);
-            assertEquals(roles, membership.getRoles());
-        }
+        final DBObject membersDocument = membersCollection.findOne(new BasicDBObject("_id", member.getUserId()));
+        assertNotNull(membersDocument);
+        final BasicDBList actualMembers = (BasicDBList)membersDocument.get("members");
+        assertEquals(actualMembers.size(), 1);
+        assertEquals(accountDao.toMember(actualMembers.get(0)), member);
     }
 
     @Test
-    public void shouldFindMembers() throws Exception {
-        List<String> roles = asList("account/admin", "account/manager");
-        collection.insert(new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME)
-                                                             .append("owner", ACCOUNT_OWNER));
-        Member member1 = new Member().withUserId(USER_ID)
-                                     .withAccountId(ACCOUNT_ID)
-                                     .withRoles(roles.subList(0, 1));
-        Member member2 = new Member().withUserId("anotherUserId")
-                                     .withAccountId(ACCOUNT_ID)
-                                     .withRoles(roles);
-
-        accountDao.addMember(member1);
-        accountDao.addMember(member2);
-
-        List<Member> found = accountDao.getMembers(ACCOUNT_ID);
-        assertEquals(found.size(), 2);
-    }
-
-    @Test
-    public void shouldRemoveMember() throws Exception {
-        collection.insert(new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME));
-        Member accountOwner = new Member().withUserId(USER_ID)
-                                          .withAccountId(ACCOUNT_ID)
-                                          .withRoles(asList("account/owner"));
-        Member accountMember = new Member().withUserId("user2")
-                                           .withAccountId(ACCOUNT_ID)
+    public void shouldBeAbleToGetMembers() throws Exception {
+        final Account account = createAccount();
+        final Member member1 = new Member().withUserId("test_user_id1")
+                                           .withAccountId(account.getId())
+                                           .withRoles(asList("account/owner"));
+        final Member member2 = new Member().withUserId("test_user_id2")
+                                           .withAccountId(account.getId())
                                            .withRoles(asList("account/member"));
+        insertMembers(member1, member2);
 
-        accountDao.addMember(accountOwner);
-        accountDao.addMember(accountMember);
+        final List<Member> actualMembers = accountDao.getMembers(account.getId());
 
-        accountDao.removeMember(accountMember);
+        assertEquals(new HashSet<>(actualMembers), new HashSet<>(asList(member1, member2)));
+    }
 
-        assertNull(membersCollection.findOne(new BasicDBObject("_id", accountMember.getUserId())));
-        assertNotNull(membersCollection.findOne(new BasicDBObject("_id", accountOwner.getUserId())));
+    @Test
+    public void shouldBeAbleToRemoveMember() throws Exception {
+        final Account account = createAccount();
+        final Member member1 = new Member().withUserId("test_user_1")
+                                           .withAccountId(account.getId())
+                                           .withRoles(asList("account/owner"));
+        final Member member2 = new Member().withUserId("test_user_2")
+                                           .withAccountId(account.getId())
+                                           .withRoles(asList("account/member"));
+        insertMembers(member1, member2);
+
+        accountDao.removeMember(member2);
+
+        assertNull(membersCollection.findOne(new BasicDBObject("_id", member2.getUserId())));
+        assertNotNull(membersCollection.findOne(new BasicDBObject("_id", member1.getUserId())));
     }
 
     @Test
     public void shouldBeAbleToGetAccountMembershipsByMember() throws NotFoundException, ServerException {
-        BasicDBList members = new BasicDBList();
-        members.add(accountDao.toDBObject(new Member().withAccountId(ACCOUNT_ID)
-                                                      .withUserId(USER_ID)
-                                                      .withRoles(asList("account/owner"))));
-        membersCollection.insert(new BasicDBObject("_id", USER_ID).append("members", members));
-        collection.insert(new BasicDBObject().append("id", ACCOUNT_ID)
-                                             .append("name", ACCOUNT_NAME));
-        List<Member> memberships = accountDao.getByMember(USER_ID);
-        assertEquals(memberships.size(), 1);
-        assertEquals(memberships.get(0).getRoles(), asList("account/owner"));
+        final Account account = createAccount();
+        final Member member = new Member().withAccountId(account.getId())
+                                          .withUserId("test_user_id")
+                                          .withRoles(asList("account/owner"));
+        insertMembers(member);
+
+        final List<Member> actualMembers = accountDao.getByMember(member.getUserId());
+
+        assertEquals(actualMembers.size(), 1);
+        assertEquals(actualMembers.get(0), member);
     }
 
     @Test
     public void shouldBeAbleToAddSubscription() throws Exception {
-        collection.insert(new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME).append("owner", ACCOUNT_OWNER));
+        final Account account = createAccount();
+        final Subscription subscription = createSubscription().withAccountId(account.getId());
+        insertAccounts(account);
 
-        accountDao.addSubscription(defaultSubscription);
+        accountDao.addSubscription(subscription);
 
-        DBObject res = subscriptionCollection.findOne(new BasicDBObject("accountId", ACCOUNT_ID));
-        assertNotNull(res, "Specified subscription does not exists.");
-
-        DBCursor dbSubscriptions = subscriptionCollection.find(new BasicDBObject("id", SUBSCRIPTION_ID));
-        for (DBObject currentSubscription : dbSubscriptions) {
-            Subscription subscription = accountDao.toSubscription(currentSubscription);
-            assertEquals(subscription.getServiceId(), SERVICE_NAME);
-            assertEquals(subscription.getAccountId(), ACCOUNT_ID);
-            assertEquals(subscription.getPlanId(), PLAN_ID);
-            assertEquals(subscription.getProperties(), props);
-        }
+        final DBObject subscriptionDocument = subscriptionCollection.findOne(new BasicDBObject("accountId", account.getId()));
+        assertNotNull(subscriptionDocument);
+        assertEquals(accountDao.toSubscription(subscriptionDocument), subscription);
     }
 
     @Test
     public void shouldBeAbleToUpdateSubscription() throws Exception {
-        collection.insert(new BasicDBObject().append("id", ACCOUNT_ID)
-                                             .append("name", ACCOUNT_NAME)
-                                             .append("owner", ACCOUNT_OWNER));
+        final Subscription subscription = createSubscription();
+        insertSubscriptions(subscription);
+        //prepare update
+        subscription.setPlanId(subscription.getPlanId() + "suffix");
+        subscription.setServiceId(subscription.getServiceId() + "suffix");
 
-        subscriptionCollection.insert(new BasicDBObject().append("id", SUBSCRIPTION_ID)
-                                                         .append("accountId", ACCOUNT_ID)
-                                                         .append("planId", PLAN_ID)
-                                                         .append("serviceId", SERVICE_NAME)
-                                                         .append("properties", new BasicDBObject()));
+        accountDao.updateSubscription(subscription);
 
-        accountDao.updateSubscription(defaultSubscription);
-
-        DBCursor newDbSubscription = subscriptionCollection.find(new BasicDBObject("id", SUBSCRIPTION_ID));
-        assertEquals(accountDao.toSubscription(newDbSubscription.next()), defaultSubscription);
+        final DBObject subscriptionDocument = subscriptionCollection.findOne(new BasicDBObject("id", subscription.getId()));
+        assertEquals(accountDao.toSubscription(subscriptionDocument), subscription);
     }
 
     @Test(expectedExceptions = NotFoundException.class)
     public void shouldThrowNotFoundExceptionIfSubscriptionDoesNotExist() throws Exception {
-        accountDao.updateSubscription(defaultSubscription);
+        accountDao.updateSubscription(createSubscription());
     }
 
     @Test(expectedExceptions = ServerException.class)
     public void shouldThrowServerExceptionOnUpdateSubscriptionsIfMongoExceptionOccurs()
             throws ServerException, NotFoundException, ConflictException {
-        doThrow(new MongoException("")).when(subscriptionCollection).findOne(new BasicDBObject("id", SUBSCRIPTION_ID));
-        accountDao.updateSubscription(defaultSubscription);
+        final Subscription subscription = createSubscription();
+        doThrow(new MongoException("")).when(subscriptionCollection).findOne(new BasicDBObject("id", subscription.getId()));
+        accountDao.updateSubscription(subscription);
     }
 
     @Test(expectedExceptions = ServerException.class)
-    public void shouldThrowServerExceptionOnUpdateSubscriptionsIfMongoExceptionOccurs2()
-            throws ServerException, NotFoundException, ConflictException {
-        subscriptionCollection.insert(new BasicDBObject().append("id", SUBSCRIPTION_ID)
-                                                         .append("accountId", ACCOUNT_ID)
-                                                         .append("serviceId", SERVICE_NAME)
-                                                         .append("planId", PLAN_ID)
-                                                         .append("properties", new BasicDBObject()));
+    public void shouldThrowServerExceptionOnUpdateSubscriptionsIfMongoExceptionOccurs2() throws Exception {
+        final Subscription subscription = createSubscription();
+        insertSubscriptions(subscription);
         doThrow(new MongoException("")).when(subscriptionCollection).update(any(DBObject.class), any(DBObject.class));
-        accountDao.updateSubscription(defaultSubscription);
+
+        accountDao.updateSubscription(subscription);
     }
 
     @Test(expectedExceptions = NotFoundException.class)
-    public void shouldThrowAnExceptionWhileAddingSubscriptionToNotExistedAccount() throws ServerException,
-                                                                                          ConflictException, NotFoundException {
-        collection.insert(new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME).append("owner", ACCOUNT_OWNER));
-
-        defaultSubscription.setAccountId("DO_NOT_EXIST");
-
-        accountDao.addSubscription(defaultSubscription);
+    public void shouldThrowAnExceptionWhileAddingSubscriptionToNotExistedAccount() throws Exception {
+        accountDao.addSubscription(createSubscription());
     }
 
     @Test(expectedExceptions = ServerException.class)
-    public void shouldThrowServerExceptionOnAddSubscriptionsIfMongoExceptionOccurs()
-            throws ServerException, NotFoundException, ConflictException {
-        doThrow(new MongoException("")).when(collection).findOne(new BasicDBObject("id", ACCOUNT_ID));
+    public void shouldThrowServerExceptionOnAddSubscriptionsIfMongoExceptionOccurs() throws Exception {
+        doThrow(new MongoException("")).when(collection).findOne(any(DBObject.class));
 
-        accountDao.addSubscription(defaultSubscription);
+        accountDao.addSubscription(createSubscription());
     }
 
     @Test(expectedExceptions = ServerException.class)
-    public void shouldThrowServerExceptionOnAddSubscriptionsIfMongoExceptionOccurs2()
-            throws ServerException, NotFoundException, ConflictException {
-        collection.insert(new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME)
-                                                             .append("owner", ACCOUNT_OWNER));
+    public void shouldThrowServerExceptionOnAddSubscriptionsIfMongoExceptionOccurs2() throws Exception {
+        final Account account = createAccount();
+        final Subscription subscription = createSubscription().withAccountId(account.getId());
+        insertAccounts(account);
+        doThrow(new MongoException("")).when(subscriptionCollection).save(accountDao.toDBObject(subscription));
 
-        doThrow(new MongoException("")).when(subscriptionCollection).save(accountDao.toDBObject(defaultSubscription));
-        accountDao.addSubscription(defaultSubscription);
+        accountDao.addSubscription(subscription);
     }
 
     @Test
     public void shouldBeAbleToGetSubscriptionsByAccount() throws Exception {
-        collection.insert(new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME)
-                                                             .append("owner", ACCOUNT_OWNER));
+        final Account account = createAccount();
+        final Subscription subscription1 = createSubscription().withAccountId(account.getId());
+        final Subscription subscription2 = createSubscription().withAccountId(account.getId())
+                                                               .withId(subscription1.getId() + "other");
+        insertSubscriptions(subscription1, subscription2);
+        insertAccounts(account);
 
-        subscriptionCollection.save(accountDao.toDBObject(defaultSubscription));
-        Subscription anotherSubscription = new Subscription(defaultSubscription).withId("ANOTHER_ID");
-        subscriptionCollection.save(accountDao.toDBObject(anotherSubscription));
+        final List<Subscription> found = accountDao.getSubscriptions(account.getId(), null);
 
-        List<Subscription> found = accountDao.getSubscriptions(ACCOUNT_ID, null);
-        assertEquals(found, asList(defaultSubscription, anotherSubscription));
+        assertEquals(new HashSet<>(found), new HashSet<>(asList(subscription1, subscription2)));
     }
 
     @Test
     public void shouldNotReturnSubscriptionIfServiceDoesNotMatch() throws Exception {
-        collection.insert(new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME)
-                                                             .append("owner", ACCOUNT_OWNER));
+        final Account account = createAccount();
+        final Subscription subscription1 = createSubscription().withAccountId(account.getId());
+        final Subscription subscription2 = createSubscription().withAccountId(account.getId())
+                                                               .withId(subscription1.getId() + "other")
+                                                               .withServiceId(subscription1.getServiceId() + "other");
+        insertAccounts(account);
+        insertSubscriptions(subscription1, subscription2);
 
-        subscriptionCollection.save(accountDao.toDBObject(defaultSubscription));
-        subscriptionCollection.save(accountDao.toDBObject(
-                new Subscription(defaultSubscription).withId("ANOTHER_ID").withServiceId("ANOTHER_SERVICE_ID")));
+        final List<Subscription> found = accountDao.getSubscriptions(account.getId(), subscription2.getServiceId());
 
-        List<Subscription> found = accountDao.getSubscriptions(ACCOUNT_ID, SERVICE_NAME);
-        assertEquals(found, asList(defaultSubscription));
+        assertEquals(found, asList(subscription2));
     }
 
     @Test
     public void shouldBeAbleToGetSubscriptionsByAccountAndService() throws Exception {
-        collection.insert(new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME)
-                                                             .append("owner", ACCOUNT_OWNER));
+        final Account account = createAccount();
+        final Subscription subscription1 = createSubscription().withAccountId(account.getId());
+        final Subscription subscription2 = createSubscription().withAccountId(account.getId())
+                                                               .withId(subscription1.getId() + "other");
+        final Subscription subscription3 = createSubscription().withAccountId(account.getId())
+                                                               .withId(subscription1.getId() + "other2")
+                                                               .withServiceId(subscription1.getServiceId() + "other");
+        insertAccounts(account);
+        insertSubscriptions(subscription1, subscription2, subscription3);
 
-        subscriptionCollection.save(accountDao.toDBObject(defaultSubscription));
-        Subscription anotherSubscription = new Subscription(defaultSubscription).withId("ANOTHER_ID").withServiceId("ANOTHER_SERVICE_ID");
-        Subscription anotherSubscription2 = new Subscription(defaultSubscription).withId("ANOTHER_ID2");
-        subscriptionCollection.save(accountDao.toDBObject(anotherSubscription));
-        subscriptionCollection.save(accountDao.toDBObject(anotherSubscription2));
+        final List<Subscription> found = accountDao.getSubscriptions(account.getId(), subscription1.getServiceId());
 
-        List<Subscription> found = accountDao.getSubscriptions(ACCOUNT_ID, SERVICE_NAME);
-        assertEquals(found, asList(defaultSubscription, anotherSubscription2));
+        assertEquals(new HashSet<>(found), new HashSet<>(asList(subscription1, subscription2)));
     }
 
     @Test
     public void shouldReturnEmptyListIfThereIsNoSubscriptionsOnGetSubscriptionsWithNotSaasService() throws Exception {
-        collection.insert(new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME)
-                                                             .append("owner", ACCOUNT_OWNER));
+        final Account account = createAccount();
+        insertAccounts(account);
 
-        List<Subscription> found = accountDao.getSubscriptions(ACCOUNT_ID, "Factory");
+        final List<Subscription> found = accountDao.getSubscriptions(account.getId(), "Factory");
+
         assertTrue(found.isEmpty());
     }
 
     @Test
     public void shouldReturnEmptyListIfThereIsNoSubscriptionsOnGetSubscriptionsAndServiceIsSaasAndAccountDoesNotContainWs()
             throws Exception {
-        collection.insert(new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME)
-                                                             .append("owner", ACCOUNT_OWNER));
-        when(workspaceDao.getByAccount(ACCOUNT_ID)).thenReturn(Collections.<Workspace>emptyList());
+        final Account account = createAccount();
+        insertAccounts(account);
+        when(workspaceDao.getByAccount(account.getId())).thenReturn(Collections.<Workspace>emptyList());
 
-        List<Subscription> found = accountDao.getSubscriptions(ACCOUNT_ID, "Saas");
+        final List<Subscription> found = accountDao.getSubscriptions(account.getId(), "Saas");
 
         assertTrue(found.isEmpty());
     }
@@ -487,146 +417,134 @@ public class AccountDaoImplTest extends BaseDaoTest {
     @Test
     public void shouldReturnEmptyListIfThereIsNoSubscriptionsOnGetSubscriptionsAndServiceIsNotProvidedAndAccountDoesNotContainWs()
             throws Exception {
-        collection.insert(new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME)
-                                                             .append("owner", ACCOUNT_OWNER));
-        when(workspaceDao.getByAccount(ACCOUNT_ID)).thenReturn(Collections.<Workspace>emptyList());
+        final Account account = createAccount();
+        insertAccounts(account);
+        when(workspaceDao.getByAccount(account.getId())).thenReturn(Collections.<Workspace>emptyList());
 
-        List<Subscription> found = accountDao.getSubscriptions(ACCOUNT_ID, null);
+        final List<Subscription> found = accountDao.getSubscriptions(account.getId(), null);
 
         assertTrue(found.isEmpty());
     }
 
     @Test
     public void shouldReturnDefaultSubscriptionIfThereIsNoSubscriptionsOnGetSubscriptionsAndServiceIsSaas() throws Exception {
-        collection.insert(new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME)
-                                                             .append("owner", ACCOUNT_OWNER));
-        when(workspaceDao.getByAccount(ACCOUNT_ID)).thenReturn(Collections.singletonList(new Workspace()));
+        final Account account = createAccount();
+        insertAccounts(account);
+        when(workspaceDao.getByAccount(account.getId())).thenReturn(singletonList(new Workspace()));
 
-        List<Subscription> found = accountDao.getSubscriptions(ACCOUNT_ID, "Saas");
+        final List<Subscription> found = accountDao.getSubscriptions(account.getId(), "Saas");
 
-        assertEquals(found, Collections.singletonList(new Subscription()
-                                                              .withId("community" + ACCOUNT_ID)
-                                                              .withPlanId("sas-community")
-                                                              .withAccountId(ACCOUNT_ID)
-                                                              .withServiceId("Saas")
-                                                              .withProperties(Collections.singletonMap("Package", "Community"))));
+        assertEquals(found, singletonList(new Subscription().withId("community" + account.getId())
+                                                            .withPlanId("sas-community")
+                                                            .withAccountId(account.getId())
+                                                            .withServiceId("Saas")
+                                                            .withProperties(singletonMap("Package", "Community"))));
     }
 
     @Test
     public void shouldReturnDefaultSubscriptionIfThereIsNoSubscriptionsOnGetSubscriptionsWithoutService() throws Exception {
-        collection.insert(new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME)
-                                                             .append("owner", ACCOUNT_OWNER));
-        when(workspaceDao.getByAccount(ACCOUNT_ID)).thenReturn(Collections.singletonList(new Workspace()));
+        final Account account = createAccount();
+        insertAccounts(account);
+        when(workspaceDao.getByAccount(account.getId())).thenReturn(singletonList(new Workspace()));
 
-        List<Subscription> found = accountDao.getSubscriptions(ACCOUNT_ID, null);
+        final List<Subscription> found = accountDao.getSubscriptions(account.getId(), null);
 
-        assertEquals(found, Collections.singletonList(new Subscription()
-                                                              .withId("community" + ACCOUNT_ID)
-                                                              .withPlanId("sas-community")
-                                                              .withAccountId(ACCOUNT_ID)
-                                                              .withServiceId("Saas")
-                                                              .withProperties(Collections.singletonMap("Package", "Community"))));
+        assertEquals(found, singletonList(new Subscription()
+                                                  .withId("community" + account.getId())
+                                                  .withPlanId("sas-community")
+                                                  .withAccountId(account.getId())
+                                                  .withServiceId("Saas")
+                                                  .withProperties(singletonMap("Package", "Community"))));
     }
 
     @Test(expectedExceptions = NotFoundException.class)
-    public void shouldThrowNotFoundExceptionOnGetSubscriptionsWithInvalidAccountId() throws ServerException, NotFoundException {
-        accountDao.getSubscriptions(ACCOUNT_ID, null);
+    public void shouldThrowNotFoundExceptionOnGetSubscriptionsWithInvalidAccountId() throws Exception {
+        accountDao.getSubscriptions("invalid_account_id", null);
     }
 
     @Test(expectedExceptions = ServerException.class)
-    public void shouldThrowServerExceptionOnGetSubscriptionsIfMongoExceptionOccurs()
-            throws ServerException, NotFoundException, ConflictException {
-        collection.insert(new BasicDBObject("id", ACCOUNT_ID).append("name", ACCOUNT_NAME)
-                                                             .append("owner", ACCOUNT_OWNER));
+    public void shouldThrowServerExceptionOnGetSubscriptionsIfMongoExceptionOccurs() throws Exception {
+        final Account account = createAccount();
+        insertAccounts(account);
+        doThrow(new MongoException("")).when(subscriptionCollection).find(new BasicDBObject("accountId", account.getId()));
 
-        doThrow(new MongoException("")).when(subscriptionCollection).find(new BasicDBObject("accountId", ACCOUNT_ID));
-        accountDao.getSubscriptions(ACCOUNT_ID, null);
+        accountDao.getSubscriptions(account.getId(), null);
     }
 
     @Test(expectedExceptions = ServerException.class)
-    public void shouldThrowServerExceptionOnGetSubscriptionsIfMongoExceptionOccurs2()
-            throws ServerException, NotFoundException, ConflictException {
-        doThrow(new MongoException("")).when(collection).findOne(new BasicDBObject("id", ACCOUNT_ID));
-        accountDao.getSubscriptions(ACCOUNT_ID, null);
+    public void shouldThrowServerExceptionOnGetSubscriptionsIfMongoExceptionOccurs2() throws Exception {
+        final String accountId = "test_account_id";
+        doThrow(new MongoException("")).when(collection).findOne(new BasicDBObject("id", accountId));
+
+        accountDao.getSubscriptions(accountId, null);
     }
 
     @Test
     public void shouldBeAbleToRemoveSubscription() throws Exception {
-        subscriptionCollection.save(accountDao.toDBObject(defaultSubscription));
+        final Subscription subscription = createSubscription();
+        insertSubscriptions(subscription);
 
-        final String anotherSubscriptionId = "Subscription0x00000000f";
-        defaultSubscription.setId(anotherSubscriptionId);
-        defaultSubscription.setAccountId("another_account");
+        accountDao.removeSubscription(subscription.getId());
 
-        subscriptionCollection.save(accountDao.toDBObject(defaultSubscription));
-
-        accountDao.removeSubscription(SUBSCRIPTION_ID);
-
-        assertNull(subscriptionCollection.findOne(new BasicDBObject("id", SUBSCRIPTION_ID)));
-        assertNotNull(subscriptionCollection.findOne(new BasicDBObject("id", anotherSubscriptionId)));
+        assertNull(subscriptionCollection.findOne(new BasicDBObject("id", subscription.getId())));
     }
 
-    @Test(expectedExceptions = NotFoundException.class, expectedExceptionsMessageRegExp = "Subscription not found " + SUBSCRIPTION_ID)
+    @Test(expectedExceptions = NotFoundException.class, expectedExceptionsMessageRegExp = "Subscription not found .*")
     public void shouldThrowNotFoundExceptionOnRemoveSubscriptionsWithInvalidSubscriptionId() throws ServerException, NotFoundException {
-        accountDao.removeSubscription(SUBSCRIPTION_ID);
+        accountDao.removeSubscription("test-id");
     }
 
     @Test(expectedExceptions = ServerException.class)
-    public void shouldThrowServerExceptionOnRemoveSubscriptionsIfMongoExceptionOccurs()
-            throws ServerException, NotFoundException, ConflictException {
-        doThrow(new MongoException("")).when(subscriptionCollection).findOne(new BasicDBObject("id", SUBSCRIPTION_ID));
-        accountDao.removeSubscription(SUBSCRIPTION_ID);
+    public void shouldThrowServerExceptionOnRemoveSubscriptionsIfMongoExceptionOccurs() throws Exception {
+        final String subscriptionId = "test_subscription_id";
+        doThrow(new MongoException("")).when(subscriptionCollection).findOne(new BasicDBObject("id", subscriptionId));
+
+        accountDao.removeSubscription(subscriptionId);
     }
 
     @Test(expectedExceptions = ServerException.class)
-    public void shouldThrowServerExceptionOnRemoveSubscriptionsIfMongoExceptionOccurs2()
-            throws ServerException, NotFoundException, ConflictException {
-        subscriptionCollection.save(accountDao.toDBObject(defaultSubscription));
+    public void shouldThrowServerExceptionOnRemoveSubscriptionsIfMongoExceptionOccurs2() throws Exception {
+        final Subscription subscription = createSubscription();
+        insertSubscriptions(subscription);
+        doThrow(new MongoException("")).when(subscriptionCollection).remove(new BasicDBObject("id", subscription.getId()));
 
-        doThrow(new MongoException("")).when(subscriptionCollection).remove(new BasicDBObject("id", SUBSCRIPTION_ID));
-
-        accountDao.removeSubscription(SUBSCRIPTION_ID);
+        accountDao.removeSubscription(subscription.getId());
     }
 
     @Test
     public void shouldBeAbleToGetSubscriptionById() throws ServerException, NotFoundException, ConflictException {
-        collection.insert(new BasicDBObject().append("id", ACCOUNT_ID)
-                                             .append("name", ACCOUNT_NAME)
-                                             .append("owner", ACCOUNT_OWNER));
+        final Account account = createAccount();
+        final Subscription subscription = createSubscription().withAccountId(account.getId());
+        insertAccounts(account);
+        insertSubscriptions(subscription);
 
-        subscriptionCollection.save(accountDao.toDBObject(defaultSubscription));
-
-        Subscription actual = accountDao.getSubscriptionById(SUBSCRIPTION_ID);
+        final Subscription actual = accountDao.getSubscriptionById(subscription.getId());
 
         assertNotNull(actual);
-        assertEquals(actual, defaultSubscription);
+        assertEquals(actual, subscription);
     }
 
-    @Test(expectedExceptions = NotFoundException.class, expectedExceptionsMessageRegExp = "Subscription not found " + SUBSCRIPTION_ID)
+    @Test(expectedExceptions = NotFoundException.class, expectedExceptionsMessageRegExp = "Subscription not found .*")
     public void shouldThrowNotFoundExceptionOnGetSubscriptionsByIdWithInvalidSubscriptionId() throws ServerException, NotFoundException {
-        accountDao.getSubscriptionById(SUBSCRIPTION_ID);
+        accountDao.getSubscriptionById("test-id");
     }
 
     @Test(expectedExceptions = ServerException.class)
-    public void shouldThrowServerExceptionOnGetSubscriptionsByIdIfMongoExceptionOccurs()
-            throws ServerException, NotFoundException, ConflictException {
-        doThrow(new MongoException("")).when(subscriptionCollection).findOne(new BasicDBObject("id", SUBSCRIPTION_ID));
-        accountDao.getSubscriptionById(SUBSCRIPTION_ID);
+    public void shouldThrowServerExceptionOnGetSubscriptionsByIdIfMongoExceptionOccurs() throws Exception {
+        final String subscriptionId = "subscription-id";
+        doThrow(new MongoException("")).when(subscriptionCollection).findOne(new BasicDBObject("id", subscriptionId));
+        accountDao.getSubscriptionById(subscriptionId);
     }
 
     @Test
     public void shouldBeAbleToGetAllSubscriptions() throws ServerException {
-        Subscription ss2 = new Subscription().withAccountId("ANOTHER" + ACCOUNT_ID)
-                                             .withServiceId("ANOTHER" + SERVICE_NAME)
-                                             .withProperties(props)
-                                             .withPlanId(PLAN_ID);
+        final Subscription subscription1 = createSubscription();
+        final Subscription subscription2 = createSubscription().withId(subscription1.getId() + "suffix");
+        insertSubscriptions(subscription1, subscription2);
 
-        subscriptionCollection.save(accountDao.toDBObject(defaultSubscription));
-        subscriptionCollection.save(accountDao.toDBObject(ss2));
+        final List<Subscription> actual = accountDao.getSubscriptions();
 
-        List<Subscription> actual = accountDao.getSubscriptions();
-
-        assertEquals(actual, asList(defaultSubscription, ss2));
+        assertEquals(new HashSet<>(actual), new HashSet<>(asList(subscription1, subscription2)));
     }
 
     @Test
@@ -642,115 +560,171 @@ public class AccountDaoImplTest extends BaseDaoTest {
     }
 
     @Test(expectedExceptions = ForbiddenException.class, expectedExceptionsMessageRegExp = "Subscription attributes required")
-    public void shouldThrowForbiddenExceptionIfSubscriptionAttributesIsNullOnSaveSubscriptionAttributes()
-            throws ServerException, NotFoundException, ForbiddenException {
-        accountDao.saveSubscriptionAttributes(SUBSCRIPTION_ID, null);
+    public void shouldThrowForbiddenExceptionIfSubscriptionAttributesIsNullOnSaveSubscriptionAttributes() throws Exception {
+        accountDao.saveSubscriptionAttributes("test-id", null);
     }
 
-    @Test(expectedExceptions = NotFoundException.class, expectedExceptionsMessageRegExp = "Subscription not found " + SUBSCRIPTION_ID)
-    public void shouldThrowNotFoundExceptionIfSubscriptionIsMissingOnSaveSubscriptionAttributes()
-            throws ServerException, NotFoundException, ForbiddenException {
-        accountDao.saveSubscriptionAttributes(SUBSCRIPTION_ID, new SubscriptionAttributes());
+    @Test(expectedExceptions = NotFoundException.class, expectedExceptionsMessageRegExp = "Subscription not found .*")
+    public void shouldThrowNotFoundExceptionIfSubscriptionIsMissingOnSaveSubscriptionAttributes() throws Exception {
+        accountDao.saveSubscriptionAttributes("subscription-id", new SubscriptionAttributes());
     }
 
     @Test(expectedExceptions = ServerException.class,
           expectedExceptionsMessageRegExp = "It is not possible to persist subscription attributes")
-    public void shouldThrowServerExceptionIfMongoExceptionOccursOnGetSubscriptionInSaveSubscriptionAttributes()
-            throws ServerException, NotFoundException, ForbiddenException {
-        when(subscriptionCollection.findOne(eq(new BasicDBObject("id", SUBSCRIPTION_ID))))
+    public void shouldThrowServerExceptionIfMongoExceptionOccursOnGetSubscriptionInSaveSubscriptionAttributes() throws Exception {
+        final String subscriptionId = "subscription-id";
+        when(subscriptionCollection.findOne(eq(new BasicDBObject("id", subscriptionId))))
                 .thenThrow(new MongoException("Mongo exception message"));
 
-        accountDao.saveSubscriptionAttributes(SUBSCRIPTION_ID, new SubscriptionAttributes());
+        accountDao.saveSubscriptionAttributes(subscriptionId, new SubscriptionAttributes());
     }
 
     @Test(expectedExceptions = ServerException.class,
           expectedExceptionsMessageRegExp = "It is not possible to persist subscription attributes")
-    public void shouldThrowServerExceptionIfMongoExceptionOccursOnSaveSubscriptionAttributes()
-            throws ServerException, NotFoundException, ForbiddenException {
-        subscriptionCollection.save(accountDao.toDBObject(defaultSubscription));
+    public void shouldThrowServerExceptionIfMongoExceptionOccursOnSaveSubscriptionAttributes() throws Exception {
+        final Subscription subscription = createSubscription();
+        insertSubscriptions(subscription);
         doThrow(new MongoException("Mongo exception message")).when(subscriptionAttributesCollection).save(any(DBObject.class));
 
-        accountDao.saveSubscriptionAttributes(SUBSCRIPTION_ID, defaultSubscriptionAttributes);
+        accountDao.saveSubscriptionAttributes(subscription.getId(), createSubscriptionAttributes());
     }
 
     @Test
-    public void shouldBeAbleToSaveSubscriptionAttributes()
-            throws ServerException, NotFoundException, ConflictException, ForbiddenException {
-        subscriptionCollection.save(accountDao.toDBObject(defaultSubscription));
+    public void shouldBeAbleToSaveSubscriptionAttributes() throws Exception {
+        final Subscription subscription = createSubscription();
+        final SubscriptionAttributes attributes = createSubscriptionAttributes();
+        insertSubscriptions(subscription);
 
-        accountDao.saveSubscriptionAttributes(SUBSCRIPTION_ID, defaultSubscriptionAttributes);
+        accountDao.saveSubscriptionAttributes(subscription.getId(), createSubscriptionAttributes());
 
-        DBObject dbObject = subscriptionAttributesCollection.findOne(new BasicDBObject("_id", SUBSCRIPTION_ID));
-        assertEquals(dbObject, dbObject);
-        SubscriptionAttributes actual = accountDao.toSubscriptionAttributes(dbObject);
-        assertEquals(actual, defaultSubscriptionAttributes);
+        final DBObject attributesDocument = subscriptionAttributesCollection.findOne(new BasicDBObject("_id", subscription.getId()));
+        assertNotNull(attributesDocument);
+        assertEquals(accountDao.toSubscriptionAttributes(attributesDocument), attributes);
     }
 
     @Test(expectedExceptions = NotFoundException.class,
-          expectedExceptionsMessageRegExp = "Attributes of subscription " + SUBSCRIPTION_ID + " not found")
-    public void shouldThrowNotFoundExceptionIfSubscriptionAttributesAreMissingOnGetSubscriptionAttributes()
-            throws ServerException, NotFoundException {
-        accountDao.getSubscriptionAttributes(SUBSCRIPTION_ID);
+          expectedExceptionsMessageRegExp = "Attributes of subscription .* not found")
+    public void shouldThrowNotFoundExceptionIfSubscriptionAttributesAreMissingOnGetSubscriptionAttributes() throws Exception {
+        accountDao.getSubscriptionAttributes("subscription-id");
     }
 
     @Test(expectedExceptions = ServerException.class,
           expectedExceptionsMessageRegExp = "It is not possible to retrieve subscription attributes")
     public void shouldThrowServerExceptionIfMongoExceptionOccursOnGetSubscriptionAttributes() throws ServerException, NotFoundException {
-        when(subscriptionAttributesCollection.findOne(eq(new BasicDBObject("_id", SUBSCRIPTION_ID))))
+        final String subscriptionId = "subscription-id";
+        when(subscriptionAttributesCollection.findOne(eq(new BasicDBObject("_id", subscriptionId))))
                 .thenThrow(new MongoException("Mongo exception message"));
 
-        accountDao.getSubscriptionAttributes(SUBSCRIPTION_ID);
+        accountDao.getSubscriptionAttributes(subscriptionId);
     }
 
     @Test
     public void shouldBeAbleToGetSubscriptionAttributes() throws ServerException, NotFoundException {
-        subscriptionAttributesCollection.save(accountDao.toDBObject(SUBSCRIPTION_ID, defaultSubscriptionAttributes));
+        final String subscriptionId = "subscription-id";
+        final SubscriptionAttributes attributes = createSubscriptionAttributes();
+        subscriptionAttributesCollection.save(accountDao.toDBObject(subscriptionId, attributes));
 
-        final SubscriptionAttributes actual = accountDao.getSubscriptionAttributes(SUBSCRIPTION_ID);
+        final SubscriptionAttributes actual = accountDao.getSubscriptionAttributes(subscriptionId);
 
-        assertEquals(actual, defaultSubscriptionAttributes);
+        assertEquals(actual, attributes);
     }
 
     @Test(expectedExceptions = NotFoundException.class,
-          expectedExceptionsMessageRegExp = "Attributes of subscription " + SUBSCRIPTION_ID + " not found")
-    public void shouldThrowNotFoundExceptionIfSubscriptionAttributesDontExist() throws ServerException, NotFoundException {
-        accountDao.removeSubscriptionAttributes(SUBSCRIPTION_ID);
+          expectedExceptionsMessageRegExp = "Attributes of subscription .* not found")
+    public void shouldThrowNotFoundExceptionIfSubscriptionAttributesDoNotExist() throws ServerException, NotFoundException {
+        accountDao.removeSubscriptionAttributes("subscription-id");
     }
 
     @Test(expectedExceptions = ServerException.class,
           expectedExceptionsMessageRegExp = "It is not possible to remove subscription attributes")
     public void shouldThrowServerExceptionIfMongoExceptionOccursOnRetrievingSubscriptionAttributesInRemoveSubscriptionAttributes()
-            throws ServerException, NotFoundException {
+            throws Exception {
         when(subscriptionAttributesCollection.findOne(any(DBObject.class))).thenThrow(new MongoException("Mongo exception message"));
 
-        accountDao.removeSubscriptionAttributes(SUBSCRIPTION_ID);
+        accountDao.removeSubscriptionAttributes("subscription-id");
     }
 
     @Test(expectedExceptions = ServerException.class,
           expectedExceptionsMessageRegExp = "It is not possible to remove subscription attributes")
     public void shouldThrowServerExceptionIfMongoExceptionOccursOnRemoveSubscriptionAttributes() throws ServerException, NotFoundException {
-        subscriptionAttributesCollection.save(accountDao.toDBObject(SUBSCRIPTION_ID, defaultSubscriptionAttributes));
+        final String subscriptionId = "subscription-id";
+        final SubscriptionAttributes attributes = createSubscriptionAttributes();
+        subscriptionAttributesCollection.save(accountDao.toDBObject(subscriptionId, attributes));
 
         doThrow(new MongoException("Mongo exception message")).when(subscriptionAttributesCollection).remove(any(DBObject.class));
 
-        accountDao.removeSubscriptionAttributes(SUBSCRIPTION_ID);
+        accountDao.removeSubscriptionAttributes(subscriptionId);
     }
 
     @Test
     public void shouldBeAbleToRemoveSubscriptionAttributes() throws ServerException, NotFoundException {
-        subscriptionAttributesCollection.save(accountDao.toDBObject(SUBSCRIPTION_ID, defaultSubscriptionAttributes));
-        assertNotNull(subscriptionAttributesCollection.findOne(new BasicDBObject("_id", SUBSCRIPTION_ID)));
+        final String subscriptionId = "subscription-id";
+        final SubscriptionAttributes attributes = createSubscriptionAttributes();
+        subscriptionAttributesCollection.save(accountDao.toDBObject(subscriptionId, attributes));
+        assertNotNull(subscriptionAttributesCollection.findOne(new BasicDBObject("_id", subscriptionId)));
 
-        accountDao.removeSubscriptionAttributes(SUBSCRIPTION_ID);
+        accountDao.removeSubscriptionAttributes(subscriptionId);
 
-        assertNull(subscriptionAttributesCollection.findOne(new BasicDBObject("_id", SUBSCRIPTION_ID)));
+        assertNull(subscriptionAttributesCollection.findOne(new BasicDBObject("_id", subscriptionId)));
     }
 
-    private Map<String, String> getAttributes() {
-        Map<String, String> attributes = new HashMap<>();
+    private void insertAccounts(Account... accounts) {
+        for (Account account : accounts) {
+            collection.insert(accountDao.toDBObject(account));
+        }
+    }
+
+    private void insertSubscriptions(Subscription... subscriptions) {
+        for (Subscription subscription : subscriptions) {
+            subscriptionCollection.insert(accountDao.toDBObject(subscription));
+        }
+    }
+
+    private void insertMembers(Member... members) {
+        final Map<String, BasicDBList> membersMap = new HashMap<>();
+        for (Member member : members) {
+            if (!membersMap.containsKey(member.getUserId())) {
+                membersMap.put(member.getUserId(), new BasicDBList());
+            }
+            membersMap.get(member.getUserId()).add(accountDao.toDBObject(member));
+        }
+        for (Map.Entry<String, BasicDBList> entry : membersMap.entrySet()) {
+            membersCollection.insert(new BasicDBObject("_id", entry.getKey()).append("members", entry.getValue()));
+        }
+    }
+
+    private SubscriptionAttributes createSubscriptionAttributes() {
+        return new SubscriptionAttributes().withTrialDuration(7)
+                                           .withStartDate("11/12/2014")
+                                           .withEndDate("11/12/2015")
+                                           .withDescription("description")
+                                           .withCustom(singletonMap("key", "value"))
+                                           .withBilling(new Billing().withStartDate("11/12/2014")
+                                                                     .withEndDate("11/12/2015")
+                                                                     .withUsePaymentSystem("true")
+                                                                     .withCycleType(1)
+                                                                     .withCycle(1)
+                                                                     .withContractTerm(1));
+    }
+
+    private Subscription createSubscription() {
+        final HashMap<String, String> properties = new HashMap<>(4);
+        properties.put("key1", "value1");
+        properties.put("key2", "value2");
+        return new Subscription().withId("test_subscription_id")
+                                 .withAccountId("test_account_id")
+                                 .withPlanId("test_plan_id")
+                                 .withServiceId("test_service_id")
+                                 .withProperties(properties);
+    }
+
+    private Account createAccount() {
+        final Map<String, String> attributes = new HashMap<>(8);
         attributes.put("attr1", "value1");
         attributes.put("attr2", "value2");
         attributes.put("attr3", "value3");
-        return attributes;
+        return new Account().withId("test_account_id")
+                            .withName("test_account_name")
+                            .withAttributes(attributes);
     }
 }

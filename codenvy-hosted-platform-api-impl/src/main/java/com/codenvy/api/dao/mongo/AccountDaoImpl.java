@@ -50,6 +50,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import static java.lang.String.copyValueOf;
 import static java.lang.String.format;
 
 /**
@@ -211,7 +212,13 @@ public class AccountDaoImpl implements AccountDao {
         }
         try {
             // Removing subscriptions
-            subscriptionCollection.remove(new BasicDBObject("accountId", id));
+            try (DBCursor cursor = subscriptionCollection.find(new BasicDBObject("accountId", id))) {
+                while (cursor.hasNext()) {
+                    final Subscription current = toSubscription(cursor.next());
+                    subscriptionCollection.remove(new BasicDBObject("id", current.getId()));
+                    subscriptionAttributesCollection.remove(new BasicDBObject("_id", current.getId()));
+                }
+            }
             //Removing members
             for (Member member : getMembers(id)) {
                 removeMember(member);
@@ -625,7 +632,7 @@ public class AccountDaoImpl implements AccountDao {
     /**
      * Converts account to database ready-to-use object
      */
-    private DBObject toDBObject(Account account) {
+    DBObject toDBObject(Account account) {
         return new BasicDBObject().append("id", account.getId())
                                   .append("name", account.getName())
                                   .append("attributes", toDBList(account.getAttributes()));
