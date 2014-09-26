@@ -28,25 +28,27 @@ import com.mongodb.DBObject;
  * @author Anatoliy Bazko
  */
 public abstract class AbstractIdeUsage extends ReadBasedMetric implements ReadBasedExpandable {
+    private final String[] sources;
+    private String action;
 
-    /* ide actions which is not has metric */
-    public static final String FILE_NEW_FILE                 = "IDE: New file";
-    public static final String PROJECT_CREATE_NEW_PROJECT    = "IDE: New project";
-    public static final String PROJECT_IMPORT_FROM_GITHUB    = "IDE: Import project from GitHub";
-    public static final String PROJECT_UPDATE_DEPENDENCIES   = "IDE: Update project dependencies";
-    public static final String PROJECT_BUILD_WITH_PARAMETERS = "IDE: Build project with Maven parameter";
-    public static final String RUN_DEBUG_APPLICATION         = "IDE: Debug application";
-    public static final String HELP_TUTORIAL                 = "IDE: Show tutorial";
 
-    private final String[] actions;
-
-    protected AbstractIdeUsage(String metricName, String... actions) {
+    protected AbstractIdeUsage(String metricName, String... sources) {
         super(metricName);
-        this.actions = actions;
+        this.sources = sources;
     }
 
-    protected AbstractIdeUsage(MetricType metricType, String... types) {
-        this(metricType.name(), types);
+    protected AbstractIdeUsage(MetricType metricType, String... sources) {
+        this(metricType.name(), sources);
+    }
+
+    protected AbstractIdeUsage(String action, String metricName, String... sources) {
+        super(metricName);
+        this.sources = sources;
+        this.action = action;
+    }
+
+    protected AbstractIdeUsage(String action, MetricType metricType, String... sources) {
+        this(action, metricType.name(), sources);
     }
 
     @Override
@@ -57,7 +59,12 @@ public abstract class AbstractIdeUsage extends ReadBasedMetric implements ReadBa
     @Override
     public Context applySpecificFilter(Context clauses) {
         Context.Builder builder = new Context.Builder(clauses);
-        builder.put(MetricFilter.ACTION, actions);
+        builder.put(MetricFilter.SOURCE, sources);
+
+        if (action != null) {
+            builder.put(MetricFilter.ACTION, action);
+        }
+
         return builder.build();
     }
 

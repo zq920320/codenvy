@@ -26,9 +26,9 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class OpenProjectAction extends AbstractIdeUsage {
-    public static final String ACTION_ID = "com.codenvy.ide.actions.OpenProjectAction";
+    public static final String SOURCE = "com.codenvy.ide.actions.OpenProjectAction";
 
     public OpenProjectAction() {
-        super(MetricType.OPEN_PROJECT_ACTION, ACTION_ID);
+        super(MetricType.OPEN_PROJECT_ACTION, SOURCE);
     }
 }

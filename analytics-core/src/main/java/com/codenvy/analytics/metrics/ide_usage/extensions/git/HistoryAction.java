@@ -27,9 +27,9 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class HistoryAction extends AbstractIdeUsage {
-    public static final String ACTION_ID = "com.codenvy.ide.ext.git.client.action.HistoryAction";
+    public static final String SOURCE = "com.codenvy.ide.ext.git.client.action.HistoryAction";
 
     public HistoryAction() {
-        super(MetricType.HISTORY_ACTION, ACTION_ID);
+        super(MetricType.HISTORY_ACTION, SOURCE);
     }
 }

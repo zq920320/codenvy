@@ -26,9 +26,9 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class SortByStatusAction extends AbstractIdeUsage {
-    public static final String ACTION_ID = "com.codenvy.ide.extension.SortByStatusAction";
+    public static final String SOURCE = "com.codenvy.ide.extension.SortByStatusAction";
 
     public SortByStatusAction() {
-        super(MetricType.SORT_BY_STATUS_ACTION, ACTION_ID);
+        super(MetricType.SORT_BY_STATUS_ACTION, SOURCE);
     }
 }

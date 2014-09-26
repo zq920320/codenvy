@@ -26,9 +26,9 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class UndoAction extends AbstractIdeUsage {
-    public static final String ACTION_ID = "com.codenvy.ide.actions.UndoAction";
+    public static final String SOURCE = "com.codenvy.ide.actions.UndoAction";
 
     public UndoAction() {
-        super(MetricType.UNDO_ACTION, ACTION_ID);
+        super(MetricType.UNDO_ACTION, SOURCE);
     }
 }

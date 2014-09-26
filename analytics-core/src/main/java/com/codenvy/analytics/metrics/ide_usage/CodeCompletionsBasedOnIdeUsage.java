@@ -26,10 +26,11 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class CodeCompletionsBasedOnIdeUsage extends AbstractIdeUsage {
-    public static final String ACTION_ID = "Autocompleting";
+    public static final String SOURCE = "com.codenvy.ide.ext.java.client.editor.JavaCodeAssistProcessor";
+    public static final String ACTION = "Autocompleting";
 
     public CodeCompletionsBasedOnIdeUsage() {
-        super(MetricType.CODE_COMPLETIONS_BASED_ON_IDE_USAGES, ACTION_ID);
+        super(ACTION, MetricType.CODE_COMPLETIONS_BASED_ON_IDE_USAGES, SOURCE);
     }
 
     @Override

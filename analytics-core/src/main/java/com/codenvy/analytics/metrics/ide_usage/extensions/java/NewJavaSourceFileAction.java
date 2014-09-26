@@ -27,9 +27,9 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class NewJavaSourceFileAction extends AbstractIdeUsage {
-    public static final String ACTION_ID = "com.codenvy.ide.ext.java.client.action.NewJavaSourceFileAction";
+    public static final String SOURCE = "com.codenvy.ide.ext.java.client.action.NewJavaSourceFileAction";
 
     public NewJavaSourceFileAction() {
-        super(MetricType.NEW_JAVA_SOURCE_FILE_ACTION, ACTION_ID);
+        super(MetricType.NEW_JAVA_SOURCE_FILE_ACTION, SOURCE);
     }
 }

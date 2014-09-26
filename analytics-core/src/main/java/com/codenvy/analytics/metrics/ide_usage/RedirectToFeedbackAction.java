@@ -26,9 +26,9 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class RedirectToFeedbackAction extends AbstractIdeUsage {
-    public static final String ACTION_ID = "com.codenvy.ide.actions.RedirectToFeedbackAction";
+    public static final String SOURCE = "com.codenvy.ide.actions.RedirectToFeedbackAction";
 
     public RedirectToFeedbackAction() {
-        super(MetricType.REDIRECT_TO_FEEDBACK_ACTION, ACTION_ID);
+        super(MetricType.REDIRECT_TO_FEEDBACK_ACTION, SOURCE);
     }
 }

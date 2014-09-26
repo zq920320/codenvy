@@ -27,9 +27,9 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class NewSqlFileAction extends AbstractIdeUsage {
-    public static final String ACTION_ID = "com.codenvy.ide.ext.datasource.client.action.NewSqlFileAction";
+    public static final String SOURCE = "com.codenvy.ide.ext.datasource.client.action.NewSqlFileAction";
 
     public NewSqlFileAction() {
-        super(MetricType.NEW_SQL_FILE_ACTION, ACTION_ID);
+        super(MetricType.NEW_SQL_FILE_ACTION, SOURCE);
     }
 }

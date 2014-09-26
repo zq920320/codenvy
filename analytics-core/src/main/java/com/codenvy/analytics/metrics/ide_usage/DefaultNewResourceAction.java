@@ -26,9 +26,9 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class DefaultNewResourceAction extends AbstractIdeUsage {
-    public static final String ACTION_ID = "com.codenvy.ide.newresource.DefaultNewResourceAction";
+    public static final String SOURCE = "com.codenvy.ide.newresource.DefaultNewResourceAction";
 
     public DefaultNewResourceAction() {
-        super(MetricType.DEFAULT_NEW_RESOURCE_ACTION, ACTION_ID);
+        super(MetricType.DEFAULT_NEW_RESOURCE_ACTION, SOURCE);
     }
 }

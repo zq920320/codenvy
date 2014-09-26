@@ -27,9 +27,9 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class RunImageAction extends AbstractIdeUsage {
-    public static final String ACTION_ID = "com.codenvy.ide.extension.runner.client.actions.RunImageAction";
+    public static final String SOURCE = "com.codenvy.ide.extension.runner.client.actions.RunImageAction";
 
     public RunImageAction() {
-        super(MetricType.RUN_IMAGE_ACTION, ACTION_ID);
+        super(MetricType.RUN_IMAGE_ACTION, SOURCE);
     }
 }

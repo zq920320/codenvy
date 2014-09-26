@@ -27,9 +27,9 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class ShareFactoryAction extends AbstractIdeUsage {
-    public static final String ACTION_ID = "com.codenvy.ide.factory.client.share";
+    public static final String SOURCE = "com.codenvy.ide.factory.client.share";
 
     public ShareFactoryAction() {
-        super(MetricType.SHARE_FACTORY_ACTION, ACTION_ID);
+        super(MetricType.SHARE_FACTORY_ACTION, SOURCE);
     }
 }

@@ -26,9 +26,9 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class CloseProjectAction extends AbstractIdeUsage {
-    public static final String ACTION_ID = "com.codenvy.ide.actions.CloseProjectAction";
+    public static final String SOURCE = "com.codenvy.ide.actions.CloseProjectAction";
 
     public CloseProjectAction() {
-        super(MetricType.CLOSE_PROJECT_ACTION, ACTION_ID);
+        super(MetricType.CLOSE_PROJECT_ACTION, SOURCE);
     }
 }

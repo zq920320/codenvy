@@ -27,9 +27,9 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class AddToIndexAction extends AbstractIdeUsage {
-    public static final String ACTION_ID = "com.codenvy.ide.ext.git.client.action.AddToIndexAction";
+    public static final String SOURCE = "com.codenvy.ide.ext.git.client.action.AddToIndexAction";
 
     public AddToIndexAction() {
-        super(MetricType.ADD_TO_INDEX_ACTION, ACTION_ID);
+        super(MetricType.ADD_TO_INDEX_ACTION, SOURCE);
     }
 }

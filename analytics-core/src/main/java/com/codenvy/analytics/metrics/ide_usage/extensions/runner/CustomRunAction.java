@@ -27,9 +27,9 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class CustomRunAction extends AbstractIdeUsage {
-    public static final String ACTION_ID = "com.codenvy.ide.extension.runner.client.actions.CustomRunAction";
+    public static final String SOURCE = "com.codenvy.ide.extension.runner.client.actions.CustomRunAction";
 
     public CustomRunAction() {
-        super(MetricType.CUSTOM_RUN_ACTION, ACTION_ID);
+        super(MetricType.CUSTOM_RUN_ACTION, SOURCE);
     }
 }

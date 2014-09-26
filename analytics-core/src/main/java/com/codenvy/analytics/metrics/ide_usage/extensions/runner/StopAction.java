@@ -27,9 +27,9 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class StopAction extends AbstractIdeUsage {
-    public static final String ACTION_ID = "com.codenvy.ide.extension.runner.client.actions.StopAction";
+    public static final String SOURCE = "com.codenvy.ide.extension.runner.client.actions.StopAction";
 
     public StopAction() {
-        super(MetricType.STOP_ACTION, ACTION_ID);
+        super(MetricType.STOP_ACTION, SOURCE);
     }
 }

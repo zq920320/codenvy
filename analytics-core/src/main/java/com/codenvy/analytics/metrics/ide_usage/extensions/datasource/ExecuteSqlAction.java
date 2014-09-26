@@ -27,9 +27,9 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class ExecuteSqlAction extends AbstractIdeUsage {
-    public static final String ACTION_ID = "com.codenvy.ide.ext.datasource.client.sqllauncher.ExecuteSqlAction";
+    public static final String SOURCE = "com.codenvy.ide.ext.datasource.client.sqllauncher.ExecuteSqlAction";
 
     public ExecuteSqlAction() {
-        super(MetricType.EXECUTE_SQL_ACTION, ACTION_ID);
+        super(MetricType.EXECUTE_SQL_ACTION, SOURCE);
     }
 }

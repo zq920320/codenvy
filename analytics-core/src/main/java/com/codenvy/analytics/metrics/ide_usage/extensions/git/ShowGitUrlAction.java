@@ -27,9 +27,9 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class ShowGitUrlAction extends AbstractIdeUsage {
-    public static final String ACTION_ID = "com.codenvy.ide.ext.git.client.action.ShowGitUrlAction";
+    public static final String SOURCE = "com.codenvy.ide.ext.git.client.action.ShowGitUrlAction";
 
     public ShowGitUrlAction() {
-        super(MetricType.SHOW_GIT_URL_ACTION, ACTION_ID);
+        super(MetricType.SHOW_GIT_URL_ACTION, SOURCE);
     }
 }

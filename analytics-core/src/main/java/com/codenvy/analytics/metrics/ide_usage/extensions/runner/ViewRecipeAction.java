@@ -27,9 +27,9 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class ViewRecipeAction extends AbstractIdeUsage {
-    public static final String ACTION_ID = "com.codenvy.ide.extension.runner.client.actions.ViewRecipeAction";
+    public static final String SOURCE = "com.codenvy.ide.extension.runner.client.actions.ViewRecipeAction";
 
     public ViewRecipeAction() {
-        super(MetricType.VIEW_RECIPE_ACTION, ACTION_ID);
+        super(MetricType.VIEW_RECIPE_ACTION, SOURCE);
     }
 }

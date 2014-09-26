@@ -26,9 +26,9 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class RedirectToHelpAction extends AbstractIdeUsage {
-    public static final String ACTION_ID = "com.codenvy.ide.actions.RedirectToHelpAction";
+    public static final String SOURCE = "com.codenvy.ide.actions.RedirectToHelpAction";
 
     public RedirectToHelpAction() {
-        super(MetricType.REDIRECT_TO_HELP_ACTION, ACTION_ID);
+        super(MetricType.REDIRECT_TO_HELP_ACTION, SOURCE);
     }
 }

@@ -64,17 +64,17 @@ public class TestIdeUsageEvents extends BaseTest {
                                 .withDate("2013-01-01").build());
         events.add(Event.Builder.createIDEUsageEvent("user2@gmail.com", null, null, null, null, null, null)
                                 .withDate("2013-01-01").build());
-        events.add(Event.Builder.createIDEUsageEvent("user3@gmail.com", null, CodeCompletionsBasedOnIdeUsage.ACTION_ID, null, null, null, null)
+        events.add(Event.Builder.createIDEUsageEvent("user3@gmail.com", null, CodeCompletionsBasedOnIdeUsage.ACTION, CodeCompletionsBasedOnIdeUsage.SOURCE, null, null, null)
                                 .withDate("2013-01-01").build());
-        events.add(Event.Builder.createIDEUsageEvent("user4@gmail.com", null, CodeCompletionsBasedOnIdeUsage.ACTION_ID, null, null, null, null)
+        events.add(Event.Builder.createIDEUsageEvent("user4@gmail.com", null, CodeCompletionsBasedOnIdeUsage.ACTION, CodeCompletionsBasedOnIdeUsage.SOURCE, null, null, null)
                                 .withDate("2013-01-01").build());
-        events.add(Event.Builder.createIDEUsageEvent("user5@gmail.com", null, CodeCompletionsBasedOnIdeUsage.ACTION_ID, null, null, null, null)
+        events.add(Event.Builder.createIDEUsageEvent("user5@gmail.com", null, CodeCompletionsBasedOnIdeUsage.ACTION, CodeCompletionsBasedOnIdeUsage.SOURCE, null, null, null)
                                 .withDate("2013-01-01").build());
-        events.add(Event.Builder.createIDEUsageEvent("user5@gmail.com", "testWs", OpenProjectAction.ACTION_ID, null, "testProject", null, null)
+        events.add(Event.Builder.createIDEUsageEvent("user5@gmail.com", "testWs", null, OpenProjectAction.SOURCE, "testProject", null, null)
                                 .withDate("2013-01-01").withTime("11:00:00").build());
-        events.add(Event.Builder.createIDEUsageEvent("user5@gmail.com", "testWs", BuildAction.ACTION_ID, null, "testProject", "spring", null)
+        events.add(Event.Builder.createIDEUsageEvent("user5@gmail.com", "testWs", null, BuildAction.SOURCE, "testProject", "spring", null)
                                 .withDate("2013-01-01").withTime("11:01:00").build());
-        events.add(Event.Builder.createIDEUsageEvent("user5@gmail.com", "testWs", BuildAction.ACTION_ID, null, "testProject", "spring", null)
+        events.add(Event.Builder.createIDEUsageEvent("user5@gmail.com", "testWs", null, BuildAction.SOURCE, "testProject", "spring", null)
                                 .withDate("2013-01-01").withTime("11:02:00").build());
 
         File log = LogGenerator.generateLog(events);

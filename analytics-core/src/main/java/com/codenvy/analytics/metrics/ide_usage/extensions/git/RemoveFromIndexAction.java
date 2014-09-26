@@ -27,9 +27,9 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class RemoveFromIndexAction extends AbstractIdeUsage {
-    public static final String ACTION_ID = "com.codenvy.ide.ext.git.client.action.RemoveFromIndexAction";
+    public static final String SOURCE = "com.codenvy.ide.ext.git.client.action.RemoveFromIndexAction";
 
     public RemoveFromIndexAction() {
-        super(MetricType.REMOVE_FROM_INDEX_ACTION, ACTION_ID);
+        super(MetricType.REMOVE_FROM_INDEX_ACTION, SOURCE);
     }
 }

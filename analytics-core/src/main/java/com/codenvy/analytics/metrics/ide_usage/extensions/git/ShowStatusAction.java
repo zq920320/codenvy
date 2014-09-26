@@ -27,9 +27,9 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class ShowStatusAction extends AbstractIdeUsage {
-    public static final String ACTION_ID = "com.codenvy.ide.ext.git.client.action.ShowStatusAction";
+    public static final String SOURCE = "com.codenvy.ide.ext.git.client.action.ShowStatusAction";
 
     public ShowStatusAction() {
-        super(MetricType.SHOW_STATUS_ACTION, ACTION_ID);
+        super(MetricType.SHOW_STATUS_ACTION, SOURCE);
     }
 }

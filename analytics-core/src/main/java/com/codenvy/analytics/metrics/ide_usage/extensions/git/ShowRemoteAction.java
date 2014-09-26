@@ -27,9 +27,9 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class ShowRemoteAction extends AbstractIdeUsage {
-    public static final String ACTION_ID = "com.codenvy.ide.ext.git.client.action.ShowRemoteAction";
+    public static final String SOURCE = "com.codenvy.ide.ext.git.client.action.ShowRemoteAction";
 
     public ShowRemoteAction() {
-        super(MetricType.SHOW_REMOTE_ACTION, ACTION_ID);
+        super(MetricType.SHOW_REMOTE_ACTION, SOURCE);
     }
 }

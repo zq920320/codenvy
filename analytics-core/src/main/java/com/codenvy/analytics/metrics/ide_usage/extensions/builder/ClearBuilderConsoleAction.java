@@ -27,9 +27,9 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class ClearBuilderConsoleAction extends AbstractIdeUsage {
-    public static final String ACTION_ID = "com.codenvy.ide.extension.builder.client.console.ClearConsoleAction";
+    public static final String SOURCE = "com.codenvy.ide.extension.builder.client.console.ClearConsoleAction";
 
     public ClearBuilderConsoleAction() {
-        super(MetricType.CLEAR_BUILDER_CONSOLE_ACTION, ACTION_ID);
+        super(MetricType.CLEAR_BUILDER_CONSOLE_ACTION, SOURCE);
     }
 }

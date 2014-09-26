@@ -27,9 +27,9 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class NewJavaScriptFileAction extends AbstractIdeUsage {
-    public static final String ACTION_ID = "com.codenvy.ide.ext.web.js.NewJavaScriptFileAction";
+    public static final String SOURCE = "com.codenvy.ide.ext.web.js.NewJavaScriptFileAction";
 
     public NewJavaScriptFileAction() {
-        super(MetricType.NEW_JAVA_SCRIPT_FILE_ACTION, ACTION_ID);
+        super(MetricType.NEW_JAVA_SCRIPT_FILE_ACTION, SOURCE);
     }
 }

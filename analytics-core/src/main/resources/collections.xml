@@ -944,7 +944,8 @@
                 <field>source</field>
                 <field>date</field>
             </index>
-            <index name="action">
+            <index name="source-action">
+                <field>source</field>
                 <field>action</field>
                 <field>date</field>
             </index>

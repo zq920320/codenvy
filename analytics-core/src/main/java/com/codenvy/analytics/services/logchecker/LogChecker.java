@@ -110,8 +110,8 @@ public class LogChecker extends Feature {
                 writeLine("Event doesn't exist: " + event, out);
                 continue;
             } else if (event.equals("ide-usage")) {
-                if (!isEventExist(context, event, AbstractMetric.ACTION, CodeCompletionsBasedOnIdeUsage.ACTION_ID)) {
-                    writeLine("Event 'ide-usage' doesn't exist for action: " + CodeCompletionsBasedOnIdeUsage.ACTION_ID, out);
+                if (!isEventExist(context, event, AbstractMetric.ACTION, CodeCompletionsBasedOnIdeUsage.ACTION)) {
+                    writeLine("Event 'ide-usage' doesn't exist for action: " + CodeCompletionsBasedOnIdeUsage.ACTION, out);
                 }
             }
 

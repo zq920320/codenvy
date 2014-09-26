@@ -26,9 +26,9 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class RedirectToForumsAction extends AbstractIdeUsage {
-    public static final String ACTION_ID = "com.codenvy.ide.actions.RedirectToForumsAction";
+    public static final String SOURCE = "com.codenvy.ide.actions.RedirectToForumsAction";
 
     public RedirectToForumsAction() {
-        super(MetricType.REDIRECT_TO_FORUMS_ACTION, ACTION_ID);
+        super(MetricType.REDIRECT_TO_FORUMS_ACTION, SOURCE);
     }
 }

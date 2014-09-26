@@ -26,9 +26,9 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class ShowAboutAction extends AbstractIdeUsage {
-    public static final String ACTION_ID = "com.codenvy.ide.actions.ShowAboutAction";
+    public static final String SOURCE = "com.codenvy.ide.actions.ShowAboutAction";
 
     public ShowAboutAction() {
-        super(MetricType.SHOW_ABOUT_ACTION, ACTION_ID);
+        super(MetricType.SHOW_ABOUT_ACTION, SOURCE);
     }
 }

@@ -27,9 +27,9 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class GetLogsAction extends AbstractIdeUsage {
-    public static final String ACTION_ID = "com.codenvy.ide.extension.runner.client.actions.GetLogsAction";
+    public static final String SOURCE = "com.codenvy.ide.extension.runner.client.actions.GetLogsAction";
 
     public GetLogsAction() {
-        super(MetricType.GET_LOGS_ACTION, ACTION_ID);
+        super(MetricType.GET_LOGS_ACTION, SOURCE);
     }
 }

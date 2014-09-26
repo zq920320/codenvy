@@ -26,9 +26,9 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class ToggleAction extends AbstractIdeUsage {
-    public static final String ACTION_ID = "com.codenvy.ide.api.action.ToggleAction";
+    public static final String SOURCE = "com.codenvy.ide.api.action.ToggleAction";
 
     public ToggleAction() {
-        super(MetricType.TOGGLE_ACTION, ACTION_ID);
+        super(MetricType.TOGGLE_ACTION, SOURCE);
     }
 }

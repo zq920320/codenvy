@@ -27,9 +27,9 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class NewLessFileAction extends AbstractIdeUsage {
-    public static final String ACTION_ID = "com.codenvy.ide.ext.web.css.NewLessFileAction";
+    public static final String SOURCE = "com.codenvy.ide.ext.web.css.NewLessFileAction";
 
     public NewLessFileAction() {
-        super(MetricType.NEW_LESS_FILE_ACTION, ACTION_ID);
+        super(MetricType.NEW_LESS_FILE_ACTION, SOURCE);
     }
 }

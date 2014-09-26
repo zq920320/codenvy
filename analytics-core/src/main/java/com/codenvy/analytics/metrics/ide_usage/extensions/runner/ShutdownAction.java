@@ -27,9 +27,9 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class ShutdownAction extends AbstractIdeUsage {
-    public static final String ACTION_ID = "com.codenvy.ide.extension.runner.client.actions.ShutdownAction";
+    public static final String SOURCE = "com.codenvy.ide.extension.runner.client.actions.ShutdownAction";
 
     public ShutdownAction() {
-        super(MetricType.SHUTDOWN_ACTION, ACTION_ID);
+        super(MetricType.SHUTDOWN_ACTION, SOURCE);
     }
 }

@@ -26,9 +26,9 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class RenameItemAction extends AbstractIdeUsage {
-    public static final String ACTION_ID = "com.codenvy.ide.actions.RenameItemAction";
+    public static final String SOURCE = "com.codenvy.ide.actions.RenameItemAction";
 
     public RenameItemAction() {
-        super(MetricType.RENAME_ITEM_ACTION, ACTION_ID);
+        super(MetricType.RENAME_ITEM_ACTION, SOURCE);
     }
 }

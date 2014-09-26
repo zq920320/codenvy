@@ -26,9 +26,9 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class UploadFileAction extends AbstractIdeUsage {
-    public static final String ACTION_ID = "com.codenvy.ide.actions.UploadFileAction";
+    public static final String SOURCE = "com.codenvy.ide.actions.UploadFileAction";
 
     public UploadFileAction() {
-        super(MetricType.UPLOAD_FILE_ACTION, ACTION_ID);
+        super(MetricType.UPLOAD_FILE_ACTION, SOURCE);
     }
 }

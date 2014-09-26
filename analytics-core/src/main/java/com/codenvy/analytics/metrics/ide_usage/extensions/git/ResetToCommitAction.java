@@ -27,9 +27,9 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class ResetToCommitAction extends AbstractIdeUsage {
-    public static final String ACTION_ID = "com.codenvy.ide.ext.git.client.action.ResetToCommitAction";
+    public static final String SOURCE = "com.codenvy.ide.ext.git.client.action.ResetToCommitAction";
 
     public ResetToCommitAction() {
-        super(MetricType.RESET_TO_COMMIT_ACTION, ACTION_ID);
+        super(MetricType.RESET_TO_COMMIT_ACTION, SOURCE);
     }
 }

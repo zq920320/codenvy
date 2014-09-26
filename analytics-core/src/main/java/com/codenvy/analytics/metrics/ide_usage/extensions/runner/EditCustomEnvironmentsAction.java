@@ -27,9 +27,9 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class EditCustomEnvironmentsAction extends AbstractIdeUsage {
-    public static final String ACTION_ID = "com.codenvy.ide.extension.runner.client.actions.EditCustomEnvironmentsAction";
+    public static final String SOURCE = "com.codenvy.ide.extension.runner.client.actions.EditCustomEnvironmentsAction";
 
     public EditCustomEnvironmentsAction() {
-        super(MetricType.EDIT_CUSTOM_ENVIRONMENTS_ACTION, ACTION_ID);
+        super(MetricType.EDIT_CUSTOM_ENVIRONMENTS_ACTION, SOURCE);
     }
 }
