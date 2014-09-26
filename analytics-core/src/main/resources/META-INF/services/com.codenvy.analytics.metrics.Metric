@@ -238,15 +238,13 @@ com.codenvy.analytics.metrics.ide_usage.SaveAction
 com.codenvy.analytics.metrics.ide_usage.SaveAllAction
 com.codenvy.analytics.metrics.ide_usage.ShowAboutAction
 com.codenvy.analytics.metrics.ide_usage.ShowPreferencesAction
-com.codenvy.analytics.metrics.ide_usage.SortByStatusAction
-com.codenvy.analytics.metrics.ide_usage.ToggleAction
 com.codenvy.analytics.metrics.ide_usage.UndoAction
 com.codenvy.analytics.metrics.ide_usage.UploadFileAction
 
 com.codenvy.analytics.metrics.ide_usage.extensions.builder.BuildAction
 com.codenvy.analytics.metrics.ide_usage.extensions.builder.ClearBuilderConsoleAction
 
-com.codenvy.analytics.metrics.ide_usage.extensions.datasource.EditDatasourcesAction
+com.codenvy.analytics.metrics.ide_usage.extensions.datasource.ManageDatasourcesAction
 com.codenvy.analytics.metrics.ide_usage.extensions.datasource.ExecuteSqlAction
 com.codenvy.analytics.metrics.ide_usage.extensions.datasource.NewDatasourceWizardAction
 com.codenvy.analytics.metrics.ide_usage.extensions.datasource.NewSqlFileAction
@@ -258,6 +256,7 @@ com.codenvy.analytics.metrics.ide_usage.extensions.git.DeleteRepositoryAction
 com.codenvy.analytics.metrics.ide_usage.extensions.git.FetchAction
 com.codenvy.analytics.metrics.ide_usage.extensions.git.HistoryAction
 com.codenvy.analytics.metrics.ide_usage.extensions.git.InitRepositoryAction
+com.codenvy.analytics.metrics.ide_usage.extensions.git.ImportProjectFromGitHubAction
 com.codenvy.analytics.metrics.ide_usage.extensions.git.PullAction
 com.codenvy.analytics.metrics.ide_usage.extensions.git.PushAction
 com.codenvy.analytics.metrics.ide_usage.extensions.git.RemoveFromIndexAction

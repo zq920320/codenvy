@@ -37,6 +37,10 @@
                 <parameter key="description"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="clear_runner_console_action"/>
+                <parameter key="description"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="close_project_action"/>
                 <parameter key="description"/>
             </row>
@@ -45,15 +49,19 @@
                 <parameter key="description"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="default_new_resource_action"/>
-                <parameter key="description"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="delete_item_action"/>
                 <parameter key="description"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="edit_custom_environments_action"/>
+                <parameter key="description"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="edit_images_action"/>
+                <parameter key="description"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="environment_action"/>
                 <parameter key="description"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
@@ -161,15 +169,11 @@
                 <parameter key="description"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="sort_by_status_action"/>
+                <parameter key="name" value="shutdown_action"/>
                 <parameter key="description"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="stop_action"/>
-                <parameter key="description"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="toggle_action"/>
                 <parameter key="description"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
@@ -191,10 +195,6 @@
                 <parameter key="section-name" value="Java Plugin Features"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="clear_runner_console_action"/>
-                <parameter key="description"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="custom_build_action"/>
                 <parameter key="description"/>
             </row>
@@ -203,23 +203,11 @@
                 <parameter key="description"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="edit_custom_environments_action"/>
-                <parameter key="description"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="environment_action"/>
-                <parameter key="description"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="new_java_source_file_action"/>
                 <parameter key="description"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="new_package_action"/>
-                <parameter key="description"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="shutdown_action"/>
                 <parameter key="description"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
@@ -254,6 +242,10 @@
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="init_repository_action"/>
+                <parameter key="description"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="import_project_from_git_hub_action"/>
                 <parameter key="description"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
@@ -303,7 +295,7 @@
                 <parameter key="section-name" value="Datasource Plugin Features"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="edit_datasources_action"/>
+                <parameter key="name" value="manage_datasources_action"/>
                 <parameter key="description"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
