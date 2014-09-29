@@ -30,6 +30,7 @@ result = FOREACH a GENERATE UUID(),
                              TOTUPLE('ws', ws), 
                              TOTUPLE('user', user),                            
                              TOTUPLE('project_id', CreateProjectId(user, ws, project)),
+                             TOTUPLE('factory_id', NullToEmpty(GetFactoryId(ws))),
                              TOTUPLE('event', event),
                              TOTUPLE('params-only-remove-event', message),
                              TOTUPLE('value', 1L);

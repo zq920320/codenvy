@@ -42,6 +42,7 @@ public class FactoriesAcceptedList extends AbstractListValueResulted {
     public String[] getTrackedFields() {
         return new String[]{WS,
                             FACTORY,
+                            FACTORY_ID,
                             ORG_ID,
                             AFFILIATE_ID,
                             REFERRER};

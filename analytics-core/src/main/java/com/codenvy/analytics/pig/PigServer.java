@@ -152,6 +152,7 @@ public class PigServer {
         server.registerFunction("IsAnonymousUserByName", new FuncSpec("com.codenvy.analytics.pig.udf.IsAnonymousUserByName"));
         server.registerFunction("IsTemporaryWorkspaceById", new FuncSpec("com.codenvy.analytics.pig.udf.IsTemporaryWorkspaceById"));
         server.registerFunction("IsTemporaryWorkspaceByName", new FuncSpec("com.codenvy.analytics.pig.udf.IsTemporaryWorkspaceByName"));
+        server.registerFunction("GetFactoryId", new FuncSpec("com.codenvy.analytics.pig.udf.GetFactoryId"));
 
         server.registerFunction("MongoLoaderUsersCompanies",
                                 new FuncSpec("com.codenvy.analytics.pig.udf.MongoLoader",
