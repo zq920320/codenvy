@@ -217,7 +217,6 @@ com.codenvy.analytics.metrics.top.TimeTrackingWorkspaces
 com.codenvy.analytics.metrics.ide_usage.ChangeProjectTypeAction
 com.codenvy.analytics.metrics.ide_usage.CloseProjectAction
 com.codenvy.analytics.metrics.ide_usage.CodeCompletionsBasedOnIdeUsage
-com.codenvy.analytics.metrics.ide_usage.DefaultNewResourceAction
 com.codenvy.analytics.metrics.ide_usage.DeleteItemAction
 com.codenvy.analytics.metrics.ide_usage.ExpandEditorAction
 com.codenvy.analytics.metrics.ide_usage.FindActionAction
