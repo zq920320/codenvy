@@ -318,12 +318,54 @@
 
         <section name="plugin_hosted">
             <row class="com.codenvy.analytics.services.view.DateRow">
-                <parameter key="section-name" value="Hosted Plugin Features"/>
+                <parameter key="section-name" value="Factory Plugin Features"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="export_config_action"/>
+                <parameter key="description"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="import_from_config_action"/>
+                <parameter key="description"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="permissions_action"/>
+                <parameter key="description"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="share_factory_action"/>
                 <parameter key="description"/>
             </row>
          </section>
+
+        <section name="plugin_grunt">
+            <row class="com.codenvy.analytics.services.view.DateRow">
+                <parameter key="section-name" value="Grunt Plugin Features"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="custom_grunt_run_action"/>
+                <parameter key="description"/>
+            </row>
+        </section>
+
+        <section name="plugin_npm">
+            <row class="com.codenvy.analytics.services.view.DateRow">
+                <parameter key="section-name" value="Npm Plugin Features"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="npm_install_action"/>
+                <parameter key="description"/>
+            </row>
+        </section>
+
+        <section name="plugin_bower">
+            <row class="com.codenvy.analytics.services.view.DateRow">
+                <parameter key="section-name" value="Bower Plugin Features"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="bower_install_action"/>
+                <parameter key="description"/>
+            </row>
+        </section>
     </view>
 </display>

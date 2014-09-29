@@ -15,7 +15,7 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.metrics.ide_usage.extensions.hosted;
+package com.codenvy.analytics.metrics.ide_usage.extensions.factory;
 
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
@@ -26,10 +26,10 @@ import javax.annotation.security.RolesAllowed;
  * @author Dmytro Nochevnov
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
-public class ShareFactoryAction extends AbstractIdeUsage {
-    public static final String SOURCE = "com.codenvy.ide.factory.client.share";
+public class PermissionsAction extends AbstractIdeUsage {
+    public static final String SOURCE = "com.codenvy.ide.factory.client.permission.PermissionsAction";
 
-    public ShareFactoryAction() {
-        super(MetricType.SHARE_FACTORY_ACTION, SOURCE);
+    public PermissionsAction() {
+        super(MetricType.PERMISSIONS_ACTION, SOURCE);
     }
 }
