@@ -106,7 +106,7 @@ public abstract class AbstractIdeUsage extends ReadBasedMetric implements ReadBa
     @Override
     public String getDescription() {
         String description = getClass().getSimpleName();
-        description = description.replace("Action", "");
+        description = description.replaceAll("Action$", "");   // remove only last occurrence of "Action" word
 
         // divide separate words by space
         description = description.replaceAll("([A-Z][a-z]*)", "$1 "); // find out separate words and add space to them

@@ -165,5 +165,8 @@ public class TestIdeUsageEvents extends BaseTest {
 
         metric = MetricFactory.getMetric(MetricType.BUILD_ACTION);
         Assert.assertEquals(metric.getDescription(), "Build");
+
+        metric = MetricFactory.getMetric(MetricType.FIND_ACTION_ACTION);
+        Assert.assertEquals(metric.getDescription(), "Find Action");
     }
 }
