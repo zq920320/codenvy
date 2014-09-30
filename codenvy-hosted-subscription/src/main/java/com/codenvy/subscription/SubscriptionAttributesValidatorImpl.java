@@ -78,7 +78,7 @@ public class SubscriptionAttributesValidatorImpl implements SubscriptionAttribut
             throw new ConflictException("Value of subscription attribute endDate is invalid");
         }
 
-        if (billing.getPaymentToken() == null || billing.getPaymentToken().isEmpty()) {
+        if ("true".equals(billing.getUsePaymentSystem()) && (billing.getPaymentToken() == null || billing.getPaymentToken().isEmpty())) {
             throw new ConflictException("Billing attribute paymentToken required");
         }
 

@@ -215,24 +215,6 @@ public class SubscriptionAttributesValidatorImplTest {
         };
     }
 
-    @Test(expectedExceptions = ConflictException.class, expectedExceptionsMessageRegExp = "Billing attribute paymentToken required")
-    public void shouldFailsIfUsePaymentIsTrueAndPaymentTokenIsNull() throws Exception {
-        defaultSubscriptionAttributes.getBilling()
-                                     .withUsePaymentSystem("false")
-                                     .withPaymentToken(null);
-
-        validator.validate(defaultSubscriptionAttributes);
-    }
-
-    @Test(expectedExceptions = ConflictException.class, expectedExceptionsMessageRegExp = "Billing attribute paymentToken required")
-    public void shouldFailsIfUsePaymentIsTrueAndPaymentTokenIsEmpty() throws Exception {
-        defaultSubscriptionAttributes.getBilling()
-                                     .withUsePaymentSystem("false")
-                                     .withPaymentToken("");
-
-        validator.validate(defaultSubscriptionAttributes);
-    }
-
     @Test(expectedExceptions = ConflictException.class, expectedExceptionsMessageRegExp = "Billing attribute startDate required")
     public void shouldFailsIfUsePaymentIsTrueAndBillingStartDateIsNull() throws Exception {
         defaultSubscriptionAttributes.getBilling()
