@@ -24,8 +24,8 @@
     <url>https://fisheye.codenvycorp.com/browse/factory</url>
   </scm>
   <properties>
-    <maven.snapshots.repo.url>https://maven.codenvycorp.com/content/repositories/codenvy-private-snapshots/</maven.snapshots.repo.url>
     <maven.releases.repo.url>https://maven.codenvycorp.com/content/repositories/codenvy-private-releases/</maven.releases.repo.url>
+    <maven.snapshots.repo.url>https://maven.codenvycorp.com/content/repositories/codenvy-private-snapshots/</maven.snapshots.repo.url>
     <version.license-header>codenvy-codenvy-license-resource-bundle</version.license-header>
   </properties>
 </project>
