@@ -21,6 +21,7 @@ import de.bwaldvogel.mongo.MongoServer;
 import de.bwaldvogel.mongo.backend.memory.MemoryBackend;
 
 import com.codenvy.api.core.ApiException;
+import com.codenvy.api.core.factory.FactoryParameter;
 import com.codenvy.api.factory.*;
 import com.codenvy.api.factory.dto.Factory;
 import com.codenvy.api.factory.dto.*;
@@ -84,7 +85,7 @@ public class MongoDBFactoryStoreTest {
         // authentication is done
         assertTrue(db.authenticate(username, password.toCharArray()));
         DBCollection collection = db.getCollection("factory");
-        factoryBuilder = new FactoryBuilder(new SourceParametersValidator()));
+        factoryBuilder = new FactoryBuilder(new SourceParametersValidator());
 
         try (DBCursor cursor = collection.find()) {
             for (DBObject one : cursor) {
@@ -92,7 +93,7 @@ public class MongoDBFactoryStoreTest {
                 Factory factory = DtoFactory.getInstance().createDtoFromJson(factoryObject.toString(), Factory.class);
                 Factory toCheck = (Factory)DtoFactory.getInstance().clone(factory).withUserid(null).withCreated(0);
                 try {
-                    factoryBuilder.checkValid(toCheck, FactoryFormat.ENCODED);
+                    factoryBuilder.checkValid(toCheck, FactoryParameter.FactoryFormat.ENCODED);
                 } catch (ApiException e) {
                     System.err.println(factory.toString());
                     fail();

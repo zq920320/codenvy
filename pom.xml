@@ -1,31 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <artifactId>maven-depmgt-pom</artifactId>
-    <groupId>com.codenvy</groupId>
-    <version>1.8.18-SNAPSHOT</version>
-  </parent>
-  <groupId>com.codenvy.factory</groupId>
-  <artifactId>codenvy-factory-parent</artifactId>
-  <version>0.16.0-SNAPSHOT</version>
-  <packaging>pom</packaging>
-  <name>Codenvy Factory :: Parent</name>
-  <modules>
-    <module>codenvy-factory-services</module>
-    <module>codenvy-factory-packaging-war</module>
-    <module>codenvy-factory-storage-mongo</module>
-    <module>codenvy-factory-subscription</module>
-  </modules>
-  <scm>
-    <connection>scm:git:git@github.com:codenvy/factory.git</connection>
-    <developerConnection>scm:git:git@github.com:codenvy/factory.git</developerConnection>
-    <url>https://fisheye.codenvycorp.com/browse/factory</url>
-  </scm>
-  <properties>
-    <maven.releases.repo.url>https://maven.codenvycorp.com/content/repositories/codenvy-private-releases/</maven.releases.repo.url>
-    <maven.snapshots.repo.url>https://maven.codenvycorp.com/content/repositories/codenvy-private-snapshots/</maven.snapshots.repo.url>
-    <version.license-header>codenvy-codenvy-license-resource-bundle</version.license-header>
-  </properties>
+<!--
+
+    CODENVY CONFIDENTIAL
+    __________________
+
+     [2012] - [2014] Codenvy, S.A.
+     All Rights Reserved.
+
+    NOTICE:  All information contained herein is, and remains
+    the property of Codenvy S.A. and its suppliers,
+    if any.  The intellectual and technical concepts contained
+    herein are proprietary to Codenvy S.A.
+    and its suppliers and may be covered by U.S. and Foreign Patents,
+    patents in process, and are protected by trade secret or copyright law.
+    Dissemination of this information or reproduction of this material
+    is strictly forbidden unless prior written permission is obtained
+    from Codenvy S.A..
+
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>maven-depmgt-pom</artifactId>
+        <groupId>com.codenvy</groupId>
+        <version>1.8.18-SNAPSHOT</version>
+    </parent>
+    <groupId>com.codenvy.factory</groupId>
+    <artifactId>codenvy-factory-parent</artifactId>
+    <version>0.16.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>Codenvy Factory :: Parent</name>
+    <modules>
+        <module>codenvy-factory-services</module>
+        <module>codenvy-factory-packaging-war</module>
+        <module>codenvy-factory-storage-mongo</module>
+        <module>codenvy-factory-subscription</module>
+    </modules>
+    <scm>
+        <connection>scm:git:git@github.com:codenvy/factory.git</connection>
+        <developerConnection>scm:git:git@github.com:codenvy/factory.git</developerConnection>
+        <tag>HEAD</tag>
+        <url>https://fisheye.codenvycorp.com/browse/factory</url>
+    </scm>
+    <properties>
+        <maven.releases.repo.url>https://maven.codenvycorp.com/content/repositories/codenvy-private-releases/</maven.releases.repo.url>
+        <maven.snapshots.repo.url>https://maven.codenvycorp.com/content/repositories/codenvy-private-snapshots/</maven.snapshots.repo.url>
+        <version.license-header>codenvy-codenvy-license-resource-bundle</version.license-header>
+    </properties>
 </project>
