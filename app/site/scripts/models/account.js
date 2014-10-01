@@ -1,8 +1,8 @@
 /*
  * CODENVY CONFIDENTIAL
  * __________________
- * 
- *  [2012] - [2013] Codenvy, S.A. 
+ *
+ *  [2012] - [2013] Codenvy, S.A.
  *  All Rights Reserved.
  * 
  * NOTICE:  All information contained herein is, and remains
@@ -15,13 +15,9 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
- 
-(function(window){
-
+(function(window) {
     var _gaq = _gaq || [];
-
-    define(["jquery","json", "models/tenant", "models/useraccounts", "models/profile","models/workspaces","cookies"],function($,JSON,Tenant,Accounts,Profile,Workspaces){
-
+    define(["jquery", "json", "models/tenant", "models/useraccounts", "models/profile", "models/workspaces", "cookies"], function($, JSON, Tenant, Accounts, Profile, Workspaces) {
         /*
             AccountError is used to report errors through error callback function
             (see details below ). Example usage:
@@ -30,77 +26,71 @@
 
         */
         var userProfile = userProfile || {}; // user Profile to store user's data from server
-
-        var showSupportLink = function(isPaid){
+        var showSupportLink = function(isPaid) {
             var freeLink = $('.footer-link')[2];
             var paidLink = $('#uvTabLabel')[0];
-            if (!paidLink & !freeLink){
-                if (isPaid){
-                    var uv = document.createElement('script'); uv.type = 'text/javascript'; uv.async = true;
+            if (!paidLink & !freeLink) {
+                if (isPaid) {
+                    var uv = document.createElement('script');
+                    uv.type = 'text/javascript';
+                    uv.async = true;
                     uv.src = ('https:' === document.location.protocol ? 'https://' : 'http://') + 'widget.uservoice.com/wfZmoiHoOptcKkBgu238zw.js';
-                    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(uv, s);
-                }else {
+                    var s = document.getElementsByTagName('script')[0];
+                    s.parentNode.insertBefore(uv, s);
+                } else {
                     var el = $("footer").find("ul");
                     el.append('<li><a class="footer-link" href="http://helpdesk.codenvy.com">Feedback & support</a></li>');
                 }
-            
             }
-            
         };
-        var AccountError = function(fieldName, errorDescription){
+        var AccountError = function(fieldName, errorDescription) {
             return {
-                getFieldName : function(){
+                getFieldName: function() {
                     return fieldName;
                 },
-
-                getErrorDescription : function(){
+                getErrorDescription: function() {
                     return errorDescription;
                 }
             };
         };
-
-        var isBadGateway = function(jqXHR){
-                return jqXHR.status === 502;
+        var isBadGateway = function(jqXHR) {
+            return jqXHR.status === 502;
         };
-
-        var getQueryParameterByName = function(name){
-                name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
-                var regex = new RegExp("[\\?&]" + name + "=([^&#]*)");
-                var results = regex.exec(window.location.search);
-                if(results){
-                    return decodeURIComponent(results[1].replace(/\+/g, " "));
+        var getQueryParameterByName = function(name) {
+            name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+            var regex = new RegExp("[\\?&]" + name + "=([^&#]*)");
+            var results = regex.exec(window.location.search);
+            if (results) {
+                return decodeURIComponent(results[1].replace(/\+/g, " "));
             }
         };
-
         /*START paid support tab*/
         /*global ActiveXObject: false */
         // Verify subscriptions for Organization
         function checkSubscriptionFor(orgId) {
             var request;
             var plansArray = ["Saas", "Factory"];
-            var url =  "/api/account/" + orgId + "/subscriptions";
-            if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+            var url = "/api/account/" + orgId + "/subscriptions";
+            if (window.XMLHttpRequest) { // code for IE7+, Firefox, Chrome, Opera, Safari
                 request = new XMLHttpRequest();
-            } else {// code for IE6, IE5
+            } else { // code for IE6, IE5
                 request = new ActiveXObject("Microsoft.XMLHTTP");
             }
-            request.onreadystatechange = function () {
+            request.onreadystatechange = function() {
                 var response;
                 var paid = false;
                 if (request.readyState === 4 && request.status === 200) {
                     try {
-                    response = JSON.parse(request.responseText);
-                    if (response.length) {
-                        if (response.some(function (sub) {
+                        response = JSON.parse(request.responseText);
+                        if (response.length) {
+                            if (response.some(function(sub) {
                                 return (plansArray.indexOf(sub.serviceId) >= 0);
-
                             })) {
-                            paid = true;
+                                paid = true;
+                            }
                         }
-
-                    }
-                    showSupportLink(paid);
-                    } catch(err) {
+                        showSupportLink(paid);
+                    } catch (err) {
                         showSupportLink(false);
                     }
                 }
@@ -108,94 +98,78 @@
             request.open("GET", url, true);
             request.send();
         }
-
         // Sets Info for Premium User 
         function setPremiumUserInfo() {
             var request;
-            var url =  "/api/account";
-            if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+            var url = "/api/account";
+            if (window.XMLHttpRequest) { // code for IE7+, Firefox, Chrome, Opera, Safari
                 request = new XMLHttpRequest();
-            } else {// code for IE6, IE5
+            } else { // code for IE6, IE5
                 request = new ActiveXObject("Microsoft.XMLHTTP");
             }
-            request.onreadystatechange = function () {
+            request.onreadystatechange = function() {
                 var response;
                 /*var accountOwnerIndex=null;*/
                 if (request.readyState === 4 && request.status === 200) {
                     response = JSON.parse(request.responseText);
-                    if (response.length > 0){
-                        response.forEach(function(account,index){
+                    if (response.length > 0) {
+                        response.forEach(function(account, index) {
                             var isOwner = (account.roles.indexOf('account/owner') >= 0);
-                            if (isOwner){
+                            if (isOwner) {
                                 checkSubscriptionFor(response[index].accountReference.id);
                             }
-                        }
-
-
-                    );
-                } else {
+                        });
+                    } else {
                         showSupportLink(false);
                     }
-            }
-        };
+                }
+            };
             request.open("GET", url, true);
             request.send();
-    }
-
+        }
         /*END paid support tab*/
-
         /*
 
             Filling the Profile page
         */
-        function onReceiveUserProfileInfo(response)
-        {
-                userProfile = response.attributes;
-                var profileAttributes = userProfile.attributes;
-                var attributes = {};
-                for (var key in profileAttributes) {
-                        // Get attributes only for Profile page
-                        var profilePageAttributes = ["firstName","lastName","phone","employer","jobtitle","email"];
-                        if (profilePageAttributes.indexOf(key)>=0){
-                             Object.defineProperty(attributes, key,{value:profileAttributes[key]});
-                        }
+        function onReceiveUserProfileInfo(response) {
+            userProfile = response.attributes;
+            var profileAttributes = userProfile.attributes;
+            var attributes = {};
+            for (var key in profileAttributes) {
+                // Get attributes only for Profile page
+                var profilePageAttributes = ["firstName", "lastName", "phone", "employer", "jobtitle", "email"];
+                if (profilePageAttributes.indexOf(key) >= 0) {
+                    Object.defineProperty(attributes, key, {
+                        value: profileAttributes[key]
+                    });
                 }
-                document.getElementById("account_value").innerHTML = attributes.email || "";
-                document.getElementsByName("first_name")[0].value = attributes.firstName || "";
-                document.getElementsByName("last_name")[0].value = attributes.lastName || "";
-                document.getElementsByName("phone_work")[0].value = attributes.phone || "";
-                document.getElementsByName("company")[0].value = attributes.employer || "";
-                document.getElementsByName("title")[0].value = attributes.jobtitle || "";
+            }
+            document.getElementById("account_value").innerHTML = attributes.email || "";
+            document.getElementsByName("first_name")[0].value = attributes.firstName || "";
+            document.getElementsByName("last_name")[0].value = attributes.lastName || "";
+            document.getElementsByName("phone_work")[0].value = attributes.phone || "";
+            document.getElementsByName("company")[0].value = attributes.employer || "";
+            document.getElementsByName("title")[0].value = attributes.jobtitle || "";
         }
-
-
-        var loginWithGoogle = function(page,callback){
+        var loginWithGoogle = function(page, callback) {
             if (isWebsocketEnabled()) {
-               _gaq.push(['_trackEvent', 'Regisration', 'Google registration', page]);
-                var url = "/api/oauth/authenticate?oauth_provider=google&mode=federated_login" +
-                   "&scope=https://www.googleapis.com/auth/userinfo.profile&scope=https://www.googleapis.com/auth/userinfo.email"+
-                   "&redirect_after_login=" + encodeURIComponent(window.location.protocol + "//" + window.location.host +
-                   "/api/oauth?" + window.location.search.substring(1) + "&oauth_provider=google");
-
-                if(typeof callback !== 'undefined'){
+                _gaq.push(['_trackEvent', 'Regisration', 'Google registration', page]);
+                var url = "/api/oauth/authenticate?oauth_provider=google&mode=federated_login" + "&scope=https://www.googleapis.com/auth/userinfo.profile&scope=https://www.googleapis.com/auth/userinfo.email" + "&redirect_after_login=" + encodeURIComponent(window.location.protocol + "//" + window.location.host + "/api/oauth?" + window.location.search.substring(1) + "&oauth_provider=google");
+                if (typeof callback !== 'undefined') {
                     callback(url);
                 }
             }
         };
-
-        var loginWithGithub = function(page,callback){
+        var loginWithGithub = function(page, callback) {
             if (isWebsocketEnabled()) {
                 _gaq.push(['_trackEvent', 'Regisration', 'GitHub registration', page]);
-                var url = "/api/oauth/authenticate?oauth_provider=github&mode=federated_login&scope=user&scope=repo" +
-                "&redirect_after_login=" + encodeURIComponent(window.location.protocol + "//" + window.location.host +
-                "/api/oauth?" + window.location.search.substring(1) + "&oauth_provider=github");
-
-                if(typeof callback !== 'undefined'){
+                var url = "/api/oauth/authenticate?oauth_provider=github&mode=federated_login&scope=user&scope=repo" + "&redirect_after_login=" + encodeURIComponent(window.location.protocol + "//" + window.location.host + "/api/oauth?" + window.location.search.substring(1) + "&oauth_provider=github");
+                if (typeof callback !== 'undefined') {
                     callback(url);
                 }
             }
         };
-
         /*
             Every method accepts 0 or more data values and two callbacks (success and error)
 
@@ -212,122 +186,354 @@
                 }
 
         */
-        var isWebsocketEnabled = function(){
+        var isWebsocketEnabled = function() {
             var USER_AGENT = navigator.userAgent.toLowerCase();
             if (USER_AGENT.indexOf("chrome") === -1 && USER_AGENT.indexOf("firefox") === -1 && USER_AGENT.indexOf("safari") === -1) {
                 window.location = "/site/error/browser-not-supported#show";
                 return false;
-            } 
-        var IS_WS_SUPPORTED = ("WebSocket" in window);
-                if (!IS_WS_SUPPORTED) {
+            }
+            var IS_WS_SUPPORTED = ("WebSocket" in window);
+            if (!IS_WS_SUPPORTED) {
                 window.location = "/site/error/websocket-connection-error";
                 return false;
             }
-
             return true;
         };
-
-        var removeCookie = function(cookie){
-            if ($.cookie(cookie)){
-                $.removeCookie("cookie",{path: "/"});
+        var removeCookie = function(cookie) {
+            if ($.cookie(cookie)) {
+                $.removeCookie("cookie", {
+                    path: "/"
+                });
             }
         };
-
-        return {
-
-            removeCookie : removeCookie,
-
-            isWebsocketEnabled :isWebsocketEnabled,
-
-            getQueryParameterByName : getQueryParameterByName,
-
-            AccountError : AccountError,
-
-            isValidDomain : function(domain){
-
-                return (/^[a-z0-9][a-z0-9_.-]{2,19}$/).exec(domain) !== null ;
-            },
-
-            isValidEmail : function(email){
-                return (/^[^\+\/]+$/).test(email);
-            },
-
-            login : function(email, password, redirect_url, success, error){
-
-                if (isWebsocketEnabled()){
-                    var loginUrl = "/api/auth/login?" + window.location.search.substring(1);
-                    var selectWsUrl = "../site/private/select-tenant?cookiePresent&" + window.location.search.substring(1);
-                    var data = {username: email, password: password};
-                 $.ajax({
-                    url : loginUrl,
-                    type : "POST",
-                    contentType: "application/json",
-                    data: JSON.stringify(data),
-                    success : function(){
-                        if (redirect_url) {
-                            success({url: redirect_url});
-                        } else {
-                            success({url: selectWsUrl});
-                        }
-                    },
-                    error : function(xhr/*, status , err*/){
-                        error([
-                            new AccountError(null,xhr.responseText)
-                        ]);
-                    }
-                });             
+        var authenticate = function(username, bearertoken, success, error) {
+            var data = {
+                username: username.toLowerCase(),
+                token: bearertoken
+            };
+            var authenticateUrl = "/api/internal/token/authenticate";
+            $.ajax({
+                url: authenticateUrl,
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify(data),
+                success: function() {
+                    success();
+                },
+                error: function(xhr /*, status , err*/ ) {
+                    error([
+                        new AccountError(null, xhr.responseText)
+                    ]);
+                }
+            });
+        };
+        var ensureExistenceAccount = function(accountName, success, error) {
+            var url = "/api/account";
+            $.ajax({
+                url: url,
+                type: "GET",
+                success: function(xhr, status, response) {
+                    var memberships = JSON.parse(response.responseText);
+                    if (memberships.length > 0) {
+                        memberships.forEach(function(membership) {
+                            var isOwner = (membership.roles.indexOf('account/owner') >= 0);
+                            if (isOwner) {
+                                success(membership.accountReference); //returns Account
+                            }
+                        });
+                    } else {
+                        // user hasn't memberships
+                        createAccount(accountName, success, error);
                     }
                 },
-
-            adminLogin : function(email, password, redirect_url, success, error){
-
-                if (isWebsocketEnabled()){
+                error: function(xhr /*, status , err*/ ) {
+                    error([
+                        new AccountError(null, xhr.responseText)
+                    ]);
+                }
+            });
+        };
+        var createAccount = function(account, success, error) {
+            var url = "/api/account";
+            var data = {
+                name: account
+            };
+            $.ajax({
+                url: url,
+                type: "POST",
+                data: JSON.stringify(data),
+                contentType: "application/json",
+                success: function(response) {
+                    success(response); //returns Account
+                },
+                error: function(xhr /*, status , err*/ ) {
+                    error([
+                        new AccountError(null, JSON.parse(xhr.responseText).message)
+                    ]);
+                }
+            });
+        };
+        var createWorkspace = function(workspace, account, success, error) {
+            var url = "/api/workspace";
+            var data = {
+                name: workspace,
+                accountId: account
+            };
+            $.ajax({
+                url: url,
+                type: "POST",
+                data: JSON.stringify(data),
+                contentType: "application/json",
+                success: function(response) {
+                    success(response);
+                },
+                error: function(xhr /*, status , err*/ ) {
+                    error([
+                        new AccountError(null, xhr.responseText)
+                    ]);
+                }
+            });
+        };
+        var getUserInfo = function(success, error) {
+            var url = "/api/user";
+            $.ajax({
+                url: url,
+                type: "GET",
+                success: function(response) {
+                    success(response);
+                },
+                error: function(xhr /*, status , err*/ ) {
+                    error([
+                        new AccountError(null, xhr.responseText)
+                    ]);
+                }
+            });
+        };
+        var addMemberToWorkspace = function(workspaceId, userId, success, error) {
+            var url = "/api/workspace/" + workspaceId + "/members";
+            var data = {
+                userId: userId,
+                roles: []
+            };
+            $.ajax({
+                url: url,
+                type: "POST",
+                data: JSON.stringify(data),
+                contentType: "application/json",
+                success: function(response) {
+                    success(response);
+                },
+                error: function(xhr /*, status , err*/ ) {
+                    error([
+                        new AccountError(null, xhr.responseText)
+                    ]);
+                }
+            });
+        };
+        var redirectToUrl = function(url) {
+            window.location = url;
+        };
+        return {
+            removeCookie: removeCookie,
+            isWebsocketEnabled: isWebsocketEnabled,
+            getQueryParameterByName: getQueryParameterByName,
+            AccountError: AccountError,
+            authenticate: authenticate,
+            ensureExistenceAccount: ensureExistenceAccount,
+            isValidDomain: function(domain) {
+                return (/^[a-z0-9][a-z0-9_.-]{2,19}$/).exec(domain) !== null;
+            },
+            isValidEmail: function(email) {
+                return (/^[^\+\/]+$/).test(email);
+            },
+            // redirect to login page if user has 'logged_in' cookie
+            redirectIfUserHasLoginCookie: function() {
+                if ($.cookie('logged_in')) {
+                    window.location = '/site/login';
+                }
+            },
+            login: function(email, password, redirect_url, success, error) {
+                if (isWebsocketEnabled()) {
                     var loginUrl = "/api/auth/login?" + window.location.search.substring(1);
                     var selectWsUrl = "../site/private/select-tenant?cookiePresent&" + window.location.search.substring(1);
-                    var data = {username: email, password: password, realm:"sysldap"};
-                 $.ajax({
-                    url : loginUrl,
-                    type : "POST",
-                    contentType: "application/json",
-                    data: JSON.stringify(data),
-                    success : function(){
-                        if (redirect_url) {
-                            success({url: redirect_url});
-                        } else {
-                            success({url: selectWsUrl});
+                    var data = {
+                        username: email,
+                        password: password
+                    };
+                    $.ajax({
+                        url: loginUrl,
+                        type: "POST",
+                        contentType: "application/json",
+                        data: JSON.stringify(data),
+                        success: function() {
+                            if (redirect_url) {
+                                success({
+                                    url: redirect_url
+                                });
+                            } else {
+                                success({
+                                    url: selectWsUrl
+                                });
+                            }
+                        },
+                        error: function(xhr /*, status , err*/ ) {
+                            error([
+                                new AccountError(null, xhr.responseText)
+                            ]);
                         }
-                    },
-                    error : function(xhr/*, status , err*/){
-                        error([
-                            new AccountError(null,xhr.responseText)
-                        ]);
-                    }
-                });             
-                    }
-                },                
-
-            loginWithGoogle : loginWithGoogle,
-            loginWithGithub : loginWithGithub,
-
-            createTenant : function(email,domain,success,error){
-                var data = {email: email.toLowerCase(), workspacename: domain.toLowerCase()};
+                    });
+                }
+            },
+            adminLogin: function(email, password, redirect_url, success, error) {
+                if (isWebsocketEnabled()) {
+                    var loginUrl = "/api/auth/login?" + window.location.search.substring(1);
+                    var selectWsUrl = "../site/private/select-tenant?cookiePresent&" + window.location.search.substring(1);
+                    var data = {
+                        username: email,
+                        password: password,
+                        realm: "sysldap"
+                    };
+                    $.ajax({
+                        url: loginUrl,
+                        type: "POST",
+                        contentType: "application/json",
+                        data: JSON.stringify(data),
+                        success: function() {
+                            if (redirect_url) {
+                                success({
+                                    url: redirect_url
+                                });
+                            } else {
+                                success({
+                                    url: selectWsUrl
+                                });
+                            }
+                        },
+                        error: function(xhr /*, status , err*/ ) {
+                            error([
+                                new AccountError(null, xhr.responseText)
+                            ]);
+                        }
+                    });
+                }
+            },
+            loginWithGoogle: loginWithGoogle,
+            loginWithGithub: loginWithGithub,
+            createTenant: function(email, domain, success, error) {
+                var data = {
+                    email: email.toLowerCase(),
+                    workspacename: domain.toLowerCase()
+                };
                 var emailValidateUrl = "/api/internal/token/validate?" + window.location.search.substring(1);
                 $.ajax({
-                    url : emailValidateUrl,
-                    type : "POST",
+                    url: emailValidateUrl,
+                    type: "POST",
                     contentType: "application/json",
                     data: JSON.stringify(data),
-                    success : function(){
-                        success({url: '../site/thank-you'});
+                    success: function() {
+                        success({
+                            url: '../site/thank-you'
+                        });
                     },
-                    error : function(xhr/*, status , err*/){
+                    error: function(xhr /*, status , err*/ ) {
                         error([
-                            new AccountError(null,xhr.responseText)
+                            new AccountError(null, xhr.responseText)
                         ]);
                     }
                 });
             },
+            processCreate: function(username, bearertoken, src_workspace, workspace, redirect_url, queryParams, error) {
+                var accountId, workspaceId, userId;
+                authenticate(username, bearertoken, function() {
+                    if (workspace) {
+                        ensureExistenceAccount(workspace, function(account) {
+                                accountId = account.id;
+                                createWorkspace(workspace, accountId, function(workspace) {
+                                        workspaceId = workspace.id;
+                                        getUserInfo(
+                                            //success getUserInfo
+                                            function(user) {
+                                                userId = user.id;
+                                                addMemberToWorkspace(workspaceId, userId,
+                                                    //success addMemberToWorkspace
+                                                    function() {
+                                                        if (redirect_url) {
+                                                            redirectToUrl(redirect_url);
+                                                        } else if (src_workspace) {
+                                                            // Initializer.processWaitForTenant(workspace, "", "?" + queryParams);
+                                                        } else {
+                                                            //Initializer.processWaitForTenant(workspace, "create", "?" + queryParams);
+                                                            redirectToUrl("/dashboard/");
+                                                        }
+                                                    },
+                                                    //error addMemberToWorkspace
+                                                    function() {
+                                                        error([
+                                                            new AccountError(null, "Unable to add User " + userId + " to workspace " + workspaceId)
+                                                        ]);
+                                                    }); //addMemberToWorkspace
+                                            },
+                                            //error getUserInfo
+                                            function() {
+                                                error([
+                                                    new AccountError(null, "Unable to get User info ")
+                                                ]);
+                                            }); //getUserInfo
+                                    },
+                                    //error createWorkspace
+                                    function() {
+                                        error([
+                                            new AccountError(null, "Unable to create workspace " + username)
+                                        ]);
+                                    }); //createWorkspace
+                            },
+                            // error createWorkspace
+                            function() {
+                                error([
+                                    new AccountError(null, "Unable to create workspace " + username)
+                                ]);
+                            }); //ensureExistenceAccount
+                    } else if (src_workspace) {
+                        // TODO
+                        /*SelectWorkspace.getTenants(
+                                function (workspaces) {
+                                    for (var i = 0; i < workspaces.length; i++) {
+                                        if (!workspaces[i].workspaceReference.temporary) {
+                                            Initializer.processWaitForTenant(workspaces[i].workspaceReference.name, "", "?" + queryParams);
+                                        }
+                                    }
+                                }, function(){
+                                    error([
+                                        new AccountError("Unable to create account " + account )
+                                    ]);
+                                });*/
+                    } else if (redirect_url) {
+                        // TODO
+                        /*var base = window.location.protocol + "//" + window.location.host + window.IDE.config.context + "/";
 
+                            if (window.location.href.startsWith(base)) {
+                                var tenant = redirect_url.substring(base.length);
+
+                                if (tenant.indexOf("?") < 0) {
+                                    Initializer.processTenant(tenant, null, null, null);
+                                } else {
+                                    var params = tenant.substring(tenant.indexOf("?"));
+                                    tenant = tenant.substring(0, tenant.indexOf("?"));
+                                    Initializer.processTenant(tenant, null, null, params);
+                                }
+                            } else {
+                                Page.redirect(redirect_url);
+                            }*/
+                    } else {
+                        redirectToUrl("/dashboard/");
+                    }
+                }, function() {
+                    error([
+                        new AccountError(null, "Unable to create account " + username)
+                    ]);
+                });
+            },
+            /*
             createWorkspace : function(username,bearertoken,workspace,redirect_url,success,error){
                 var data = {username: username.toLowerCase(), token: bearertoken};
                 var destinationUrl = window.location.protocol + "//" + window.location.host + "/ws/" + workspace + "?" +
@@ -352,7 +558,7 @@
                                 success : function(){
                                     success({url: waitUrl});
                                 },
-                                error : function(xhr/*, status , err*/){
+                                error : function(xhr){
                                     error([
                                         new AccountError(null,xhr.responseText)
                                     ]);
@@ -366,482 +572,455 @@
                             }
                         }
                     },
-                    error : function(xhr/*, status , err*/){
+                    error : function(xhr){
                         error([
                             new AccountError(null,xhr.responseText)
                         ]);
                     }
                 });
             },
-
-            joinWorkspace : function(username,bearertoken,workspace,success,error){
-                var data = {username: username.toLowerCase(), token: bearertoken};
+*/
+            joinWorkspace: function(username, bearertoken, workspace, success, error) {
+                var data = {
+                    username: username.toLowerCase(),
+                    token: bearertoken
+                };
                 var destinationUrl = window.location.protocol + "//" + window.location.host + "/ws/" + workspace;
                 var waitUrl = "../wait-for-tenant?type=start&tenantName=" + workspace + "&redirect_url=" + encodeURIComponent(destinationUrl);
                 //var workspaceName = {name: workspace};
                 var authenticateUrl = "/api/internal/token/authenticate";
                 $.ajax({
-                    url : authenticateUrl,
-                    type : "POST",
+                    url: authenticateUrl,
+                    type: "POST",
                     contentType: "application/json",
                     data: JSON.stringify(data),
-                    success : function(){
-                        success({url: waitUrl});
+                    success: function() {
+                        success({
+                            url: waitUrl
+                        });
                     },
-                    error : function(xhr/*, status , err*/){
+                    error: function(xhr /*, status , err*/ ) {
                         error([
-                            new AccountError(null,xhr.responseText)
+                            new AccountError(null, xhr.responseText)
                         ]);
                     }
                 });
             },
-
-            recoverPassword : function(email,success,error){
+            recoverPassword: function(email, success, error) {
                 //implementation based on this:
                 //https://github.com/codenvy/cloud-ide/blob/master/cloud-ide-war/src/main/webapp/js/recover-password.js
-
                 var passwordRecoveryUrl = "/api/password/recover/" + email;
-
                 $.ajax({
-                    url : passwordRecoveryUrl,
-                    type : "POST",
+                    url: passwordRecoveryUrl,
+                    type: "POST",
                     data: {},
-                    success : function(output, status, xhr){
-                        success({message: xhr.responseText});
+                    success: function(output, status, xhr) {
+                        success({
+                            message: xhr.responseText
+                        });
                     },
-                    error : function(xhr){
+                    error: function(xhr) {
                         error([
                             new AccountError(null, JSON.parse(xhr.responseText).message)
                         ]);
                     }
                 });
             },
-
-            confirmSetupPassword : function(success,error){
+            confirmSetupPassword: function(success, error) {
                 // implementation based on this:
                 // https://github.com/codenvy/cloud-ide/blob/master/cloud-ide-war/src/main/webapp/js/setup-password.js
                 // just like with setupPassword, we expect the id to be in the url:
                 // https://codenvy.com/pages/setup-password?id=df3c62fe-1459-48af-a4a0-d0c1cc17614a
-
                 var confirmSetupPasswordUrl = "/api/password/verify",
                     id = getQueryParameterByName("id");
-
-                if(typeof id === 'undefined'){
+                if (typeof id === 'undefined') {
                     error([
-                        new AccountError(null,"Invalid password reset url")
+                        new AccountError(null, "Invalid password reset url")
                     ]);
-
                     return;
                 }
-
                 $.ajax({
-                    url : confirmSetupPasswordUrl + "/" + id,
-                    type : "GET",
-                    success : function(output, status, xhr){
-                        success({ email : xhr.responseText });
+                    url: confirmSetupPasswordUrl + "/" + id,
+                    type: "GET",
+                    success: function(output, status, xhr) {
+                        success({
+                            email: xhr.responseText
+                        });
                     },
-                    error : function(xhr /*,status , err*/){
-                        setTimeout(function(){window.location = "/site/recover-password";}, 10000);
+                    error: function(xhr /*,status , err*/ ) {
+                        setTimeout(function() {
+                            window.location = "/site/recover-password";
+                        }, 10000);
                         error([
-                            new AccountError(null,xhr.responseText + ".<br>You will be redirected in 10 sec")
+                            new AccountError(null, xhr.responseText + ".<br>You will be redirected in 10 sec")
                         ]);
                     }
                 });
-
             },
-
-            setupPassword : function(password,success,error){
+            setupPassword: function(password, success, error) {
                 // implementation based on this:
                 // https://github.com/codenvy/cloud-ide/blob/master/cloud-ide-war/src/main/webapp/js/setup-password.js
                 // We assume that uid is part of the url :
                 //  https://codenvy.com/pages/setup-password?id=df3c62fe-1459-48af-a4a0-d0c1cc17614a
-
                 var setupPasswordUrl = "/api/password/setup",
                     id = getQueryParameterByName("id");
-
-
                 $.ajax({
-                    url : setupPasswordUrl,
-                    type : "POST",
-                    data : { uuid : id, password : password },
-                    success : function(){
-                        success({url: "/site/login"});
+                    url: setupPasswordUrl,
+                    type: "POST",
+                    data: {
+                        uuid: id,
+                        password: password
                     },
-                    error : function(xhr){
+                    success: function() {
+                        success({
+                            url: "/site/login"
+                        });
+                    },
+                    error: function(xhr) {
                         error([
-                            new AccountError(null,xhr.responseText)
+                            new AccountError(null, xhr.responseText)
                         ]);
                     }
                 });
             },
             // change password in Profile page
-            changePassword : function(password,success,error){
-
+            changePassword: function(password, success, error) {
                 var changePasswordUrl = "/api/user/password";
-
                 $.ajax({
-                    url : changePasswordUrl,
-                    type : "POST",
-                    data : "password="+password,
-                    success : function(){
-                        success({url: "/"});
+                    url: changePasswordUrl,
+                    type: "POST",
+                    data: "password=" + password,
+                    success: function() {
+                        success({
+                            url: "/"
+                        });
                     },
-                    error : function(xhr){
+                    error: function(xhr) {
                         error([
-                            new AccountError(null,xhr.responseText)
+                            new AccountError(null, xhr.responseText)
                         ]);
                     }
                 });
             },
             // update User`s profile in Profile page
-            updateProfile : function(userAttributes,success,error){
-                
+            updateProfile: function(userAttributes, success, error) {
                 // userProfile.attributes = body;//Updating profile attributes
-                Object.getOwnPropertyNames(userAttributes).forEach(function(prop){
+                Object.getOwnPropertyNames(userAttributes).forEach(function(prop) {
                     userProfile.attributes[prop] = userAttributes[prop];
                 });
                 var data = JSON.stringify(userProfile.attributes);
                 $.ajax({
-                    url : "/api/profile",
-                    type : "POST",
-                    data : data,
+                    url: "/api/profile",
+                    type: "POST",
+                    data: data,
                     contentType: "application/json; charset=utf-8",
-                    success : function(){
+                    success: function() {
                         success();
                     },
-                    error : function(xhr){
+                    error: function(xhr) {
                         error([
-                            new AccountError(null,xhr.responseText)
+                            new AccountError(null, xhr.responseText)
                         ]);
                     }
                 });
-
             },
-
             // get User`s profile in Profile page
-            getUserProfile : function(success,error){
-                $.when(Profile.getUser()).done(function(user){
-                   onReceiveUserProfileInfo(user);
-                }).fail(function(msg){
+            getUserProfile: function(success, error) {
+                $.when(Profile.getUser()).done(function(user) {
+                    onReceiveUserProfileInfo(user);
+                }).fail(function(msg) {
                     error([
-                        new  AccountError(null,msg)
+                        new AccountError(null, msg)
                     ]);
                 });
             },
-
             /**
              * Encode all special characters including ~!*()'. Replace " " on "+"
              * @see http://xkr.us/articles/javascript/encode-compare/
              * @param {Object} string
              */
-            encodeSpecialSymbolsForPost: function (string)
-            {
-               if (string)
-               {
-                  string = encodeURIComponent(string);
-                  string = string.replace(/~/g, escape("~"));
-                  string = string.replace(/!/g, escape("!"));
-                  string = string.replace(/\*/g, escape("*"));
-                  string = string.replace(/[(]/g, escape("("));
-                  string = string.replace(/[)]/g, escape(")"));
-                  string = string.replace(/'/g, escape("'"));
-                  string = string.replace(/%20/g, escape("+"));
-               }
-
-               return string;
-            },
-
-          /**
-           * Escape special symbols from user input
-           * @param string
-           * @returns
-           */
-          escapeSpecialSymbols : function (string)
-          {
-            if (string)
-                {
-                string = string.replace(/\n/g, "\\n");
-                string = string.replace(/\r/g, "\\r");
-                string = string.replace(/\t/g, "\\t");
-                string = string.replace(/[\b]/g, "\\b");
-                string = string.replace(/\f/g, "\\f");
-                string = string.replace(/\\/g, "\\\\");
-                string = string.replace(/\"/g, "\\\"");
+            encodeSpecialSymbolsForPost: function(string) {
+                if (string) {
+                    string = encodeURIComponent(string);
+                    string = string.replace(/~/g, escape("~"));
+                    string = string.replace(/!/g, escape("!"));
+                    string = string.replace(/\*/g, escape("*"));
+                    string = string.replace(/[(]/g, escape("("));
+                    string = string.replace(/[)]/g, escape(")"));
+                    string = string.replace(/'/g, escape("'"));
+                    string = string.replace(/%20/g, escape("+"));
                 }
-            return string;
+                return string;
             },
-
-            getTenants : function(success,error,redirect){
-                $.when(Tenant.getTenants()).done(function(tenants){
+            /**
+             * Escape special symbols from user input
+             * @param string
+             * @returns
+             */
+            escapeSpecialSymbols: function(string) {
+                if (string) {
+                    string = string.replace(/\n/g, "\\n");
+                    string = string.replace(/\r/g, "\\r");
+                    string = string.replace(/\t/g, "\\t");
+                    string = string.replace(/[\b]/g, "\\b");
+                    string = string.replace(/\f/g, "\\f");
+                    string = string.replace(/\\/g, "\\\\");
+                    string = string.replace(/\"/g, "\\\"");
+                }
+                return string;
+            },
+            getTenants: function(success, error, redirect) {
+                $.when(Tenant.getTenants()).done(function(tenants) {
                     switch (tenants.length) {
-                        case 0: redirect({url:"/site/create-account"});
+                        case 0:
+                            redirect({
+                                url: "/site/create-account"
+                            });
                             break;
-                        case 1: redirect({url:"/ws/" + tenants[0].toJSON().name});
+                        case 1:
+                            redirect({
+                                url: "/ws/" + tenants[0].toJSON().name
+                            });
                             break;
-                        default: 
-                            $.when(Profile.getUser()).done(function(user){
-                                success(tenants,user);
-                            }).fail(function(msg){
+                        default:
+                            $.when(Profile.getUser()).done(function(user) {
+                                success(tenants, user);
+                            }).fail(function(msg) {
                                 error([
-                                    new  AccountError(null,msg)
+                                    new AccountError(null, msg)
                                 ]);
                             });
-                }
-                }).fail(function(msg){
+                    }
+                }).fail(function(msg) {
                     error([
-                        new  AccountError(null,msg)
+                        new AccountError(null, msg)
                     ]);
                 });
             },
             // Braintree payment: select account for payment 
-            getAccounts : function(payment,success,error,redirect){
-                $.when(Accounts.getAccounts()).done(function(accounts){
+            getAccounts: function(payment, success, error, redirect) {
+                $.when(Accounts.getAccounts()).done(function(accounts) {
                     switch (accounts.length) {
-                        case 0: redirect({url:"/site/error/no-valid-workspaces"});
-                            break;
-                        default: 
-                            $.each(accounts, function(index, account){
-                                $.when(Workspaces.getWorkspaces(account.id)).done(function(workspaces){
-                                    switch (workspaces.length) {
-                                        case 0: redirect({url:"/site/error/no-valid-workspaces"});
-                                            break;
-                                        /*case 1: success(workspaces);
-                                            break;*/
-                                        default: success(workspaces,payment);
-
-                                    }
-                                    }).fail(function(msg){
-                                        error([
-                                            new  AccountError(null,msg)
-                                        ]);
-                                    });
+                        case 0:
+                            redirect({
+                                url: "/site/error/no-valid-workspaces"
                             });
-                }
-                }).fail(function(msg){
+                            break;
+                        default:
+                            $.each(accounts, function(index, account) {
+                                $.when(Workspaces.getWorkspaces(account.id)).done(function(workspaces) {
+                                    switch (workspaces.length) {
+                                        case 0:
+                                            redirect({
+                                                url: "/site/error/no-valid-workspaces"
+                                            });
+                                            break;
+                                            /*case 1: success(workspaces);
+                                            break;*/
+                                        default:
+                                            success(workspaces, payment);
+                                    }
+                                }).fail(function(msg) {
+                                    error([
+                                        new AccountError(null, msg)
+                                    ]);
+                                });
+                            });
+                    }
+                }).fail(function(msg) {
                     error([
-                        new  AccountError(null,msg)
+                        new AccountError(null, msg)
                     ]);
                 });
             },
             // Returns true if User has WS with tariff plan
-            supportTab : function(){
-                if($.cookie("logged_in")){
+            supportTab: function() {
+                if ($.cookie("logged_in")) {
                     setPremiumUserInfo();
                 } else {
                     showSupportLink(false);
                 }
             },
-
-            addSubscription : function(form,workspaceId,showPaymentForm,success,error){
+            addSubscription: function(form, workspaceId, showPaymentForm, success, error) {
                 // Get accountId for current User
                 var url = "/api/account";
                 $.ajax({
-                    url : url,
-                    type : "GET",
-                    success : function(data){
+                    url: url,
+                    type: "GET",
+                    success: function(data) {
                         //Get accountId
                         sendSubscriptionRequest(data[0].id, workspaceId, form, showPaymentForm, success, error);
                     },
-                    error : function(response){
+                    error: function(response) {
                         //Show error
-                    error([
-                        new AccountError(
-                            null,
-                            "Authentication Error" + response.message
-                        )
-
-                    ]);                        
+                        error([
+                            new AccountError(null, "Authentication Error" + response.message)
+                        ]);
                     }
-
                 });
                 /*form = $('#codenvy-add-subscription-form');
                 e.preventDefault();*/
-
-                var sendSubscriptionRequest = function(accountId,workspaceId,form,showPaymentForm,success,error){
+                var sendSubscriptionRequest = function(accountId, workspaceId, form, showPaymentForm, success, error) {
                     var addSubscriptionUrl = "/api/account/subscriptions/";
-                    var data ={};
+                    var data = {};
                     var serviceId = getQueryParameterByName("serviceId"),
                         startDate = getQueryParameterByName("startDate"),
                         endDate = getQueryParameterByName("endDate"),
                         Package = getQueryParameterByName("Package"),
                         RAM = getQueryParameterByName("RAM"),
                         TariffPlan = getQueryParameterByName("TariffPlan");
-                    if (serviceId){ //If serviceId not exists in query params - throw error
+                    if (serviceId) { //If serviceId not exists in query params - throw error
                         data.serviceId = serviceId;
                         data.accountId = accountId;
-                        if (startDate)
-                            {data.startDate = startDate;}
-                        if (endDate)
-                            {data.endDate = endDate;}
-                        data.properties={"codenvy:workspace_id":workspaceId};
-                        if (Package)
-                            {data.properties.Package = Package;}
-                        if (RAM)
-                            {data.properties.RAM = RAM;}
-                        if (TariffPlan)
-                            {data.properties.TariffPlan = TariffPlan;}
-                         $.ajax({
-                            url : addSubscriptionUrl,
-                            type : "POST",
+                        if (startDate) {
+                            data.startDate = startDate;
+                        }
+                        if (endDate) {
+                            data.endDate = endDate;
+                        }
+                        data.properties = {
+                            "codenvy:workspace_id": workspaceId
+                        };
+                        if (Package) {
+                            data.properties.Package = Package;
+                        }
+                        if (RAM) {
+                            data.properties.RAM = RAM;
+                        }
+                        if (TariffPlan) {
+                            data.properties.TariffPlan = TariffPlan;
+                        }
+                        $.ajax({
+                            url: addSubscriptionUrl,
+                            type: "POST",
                             contentType: "application/json",
                             data: JSON.stringify(data),
-                            success : function(){
+                            success: function() {
                                 success('Subscription added succesfully');
                             },
-                            error : function(response){
+                            error: function(response) {
                                 if (response.status === 402) {
                                     var subscription = JSON.parse(response.responseText);
                                     showPaymentForm(subscription.id);
                                 } else {
-                                     error([
-                                        new AccountError(
-                                            null,
-                                            response.responseText
-                                        )
+                                    error([
+                                        new AccountError(null, response.responseText)
                                     ]);
                                 }
                             }
                         });
-
                     } else {
                         error([
-                            new AccountError(
-                                null,
-                                "Not found serviceId parameter. Error"
-                            )
-
-                        ]); 
-
+                            new AccountError(null, "Not found serviceId parameter. Error")
+                        ]);
                     }
-
                 };
             },
-
-            paymentFormSubmit : function(subscriptionid,success,error){
-            //var subscriptionid = $("input[name=subscriptionid]")[0].value;
-            var purchaseUrl = "/api/account/subscriptions/"+ subscriptionid + "/purchase";
-            var data = {
-                cardholderName:$('input[name=cardholderName]')[0].value,
-                //subscriptionid:$('input[name=subscriptionid]')[0].value,
-                subscriptionid:subscriptionid,
-                cardNumber:$('input[name=cardNumber]')[0].value,
-                cvv:$('input[name=cvv]')[0].value,
-                expirationMonth:$('input[name=expirationMonth]')[0].value,
-                expirationYear:$('input[name=expirationYear]')[0].value
+            paymentFormSubmit: function(subscriptionid, success, error) {
+                //var subscriptionid = $("input[name=subscriptionid]")[0].value;
+                var purchaseUrl = "/api/account/subscriptions/" + subscriptionid + "/purchase";
+                var data = {
+                    cardholderName: $('input[name=cardholderName]')[0].value,
+                    //subscriptionid:$('input[name=subscriptionid]')[0].value,
+                    subscriptionid: subscriptionid,
+                    cardNumber: $('input[name=cardNumber]')[0].value,
+                    cvv: $('input[name=cvv]')[0].value,
+                    expirationMonth: $('input[name=expirationMonth]')[0].value,
+                    expirationYear: $('input[name=expirationYear]')[0].value
                 };
-             $.ajax({
-                url : purchaseUrl,
-                type : "POST",
-                contentType: "application/json",
-                data: JSON.stringify(data),
-                success : function(){
-                    success("Subscription added succesfully.");
-                },
-                error : function(response){
-                    var paymentError, message;
-                    paymentError = JSON.parse(response.responseText);
-                    if (paymentError.message){
-                        message = paymentError.message;
-                    } else {
-                        message = "Payment error cccurred. Please contact support.";
+                $.ajax({
+                    url: purchaseUrl,
+                    type: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify(data),
+                    success: function() {
+                        success("Subscription added succesfully.");
+                    },
+                    error: function(response) {
+                        var paymentError, message;
+                        paymentError = JSON.parse(response.responseText);
+                        if (paymentError.message) {
+                            message = paymentError.message;
+                        } else {
+                            message = "Payment error cccurred. Please contact support.";
+                        }
+                        error([
+                            new AccountError(null, message)
+                        ]);
                     }
-                    error([
-                        new AccountError(
-                            null,
-                            message
-                        )
-
-                    ]);
-                }
-            }); 
+                });
             },
-
             // Changing login page behavior if authtype=ldap
-            isAuthtypeLdap : function() {
+            isAuthtypeLdap: function() {
                 var type = getQueryParameterByName("authtype");
                 return type;
-
             },
-
-            waitForTenant : function(success, error){
+            waitForTenant: function(success, error) {
                 //based on : https://github.com/codenvy/cloud-ide/blob/8fe1e50cc6434899dfdfd7b2e85c82008a39a880/cloud-ide-war/src/main/webapp/js/wait-tenant-creation.js
-                var type = getQueryParameterByName("type");//create OR start
+                var type = getQueryParameterByName("type"); //create OR start
                 var redirectUrl = getQueryParameterByName("redirect_url");
                 var tenantName = getQueryParameterByName("tenantName");
-                if(typeof tenantName === 'undefined'){
+                if (typeof tenantName === 'undefined') {
                     error([
-                        new AccountError(null,"This is not a valid url")
+                        new AccountError(null, "This is not a valid url")
                     ]);
                 }
-
                 var MAX_WAIT_TIME_SECONDS = 180,
                     PING_TIMEOUT_MILLISECONDS = 500,
                     endTime = new Date().getTime() + MAX_WAIT_TIME_SECONDS * 1000;
 
-                function buildRedirectUrl(){ return redirectUrl; }
+                function buildRedirectUrl() {
+                    return redirectUrl;
+                }
 
-
-                function hitServer(){
-
-                    if(new Date().getTime() >= endTime){
-                    // removing autologin cookie if exist
-                    removeCookie("autologin");
-                        if (type === "create"){
+                function hitServer() {
+                    if (new Date().getTime() >= endTime) {
+                        // removing autologin cookie if exist
+                        removeCookie("autologin");
+                        if (type === "create") {
                             error([
-                                new AccountError(
-                                    null,
-                                    "Workspace creation delayed. We'll email you the credentials after your workspace is created."
-                                )
+                                new AccountError(null, "Workspace creation delayed. We'll email you the credentials after your workspace is created.")
                             ]);
-                        } else if (type === "factory"){
-                            window.location = "/site/error/error-factory-creation";              
-                        }else{
+                        } else if (type === "factory") {
+                            window.location = "/site/error/error-factory-creation";
+                        } else {
                             error([
-                                new AccountError(
-                                    null,
-                                    "The requested workspace <strong>'" + tenantName + "'</strong> is not available. Please, contact support."
-                                )
-
+                                new AccountError(null, "The requested workspace <strong>'" + tenantName + "'</strong> is not available. Please, contact support.")
                             ]);
                         }
-
                         return;
                     }
-
                     $.ajax({
-                        url : "/cloud-admin/rest/cloud-admin/tenant-service/tenant-state/" + tenantName,
-                        type : "GET",
-                        success : function(output,status, xhr){
-                            if(xhr.responseText === "ONLINE"){
+                        url: "/cloud-admin/rest/cloud-admin/tenant-service/tenant-state/" + tenantName,
+                        type: "GET",
+                        success: function(output, status, xhr) {
+                            if (xhr.responseText === "ONLINE") {
                                 success({
-                                    url : buildRedirectUrl()
+                                    url: buildRedirectUrl()
                                 });
-                            } else if(xhr.responseText === "CREATION_FAIL"){
+                            } else if (xhr.responseText === "CREATION_FAIL") {
                                 success({
-                                    url : "/site/error/error-create-tenant"
+                                    url: "/site/error/error-create-tenant"
                                 });
-                            }else{
-                                setTimeout(hitServer,PING_TIMEOUT_MILLISECONDS);
+                            } else {
+                                setTimeout(hitServer, PING_TIMEOUT_MILLISECONDS);
                             }
                         },
-                        error : function(xhr){
-                            if(isBadGateway(xhr)){
+                        error: function(xhr) {
+                            if (isBadGateway(xhr)) {
                                 error([
-                                    new AccountError(null,"The requested workspace is not available. Please, contact support.")
+                                    new AccountError(null, "The requested workspace is not available. Please, contact support.")
                                 ]);
                             } else {
                                 error([
-                                    new AccountError(null,xhr.responseText)
+                                    new AccountError(null, xhr.responseText)
                                 ]);
                             }
                         }
                     });
                 }
-
                 hitServer();
-
             }
-
         };
     });
 }(window));

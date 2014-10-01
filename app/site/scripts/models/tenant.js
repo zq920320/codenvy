@@ -37,13 +37,13 @@
         });
 
         var Tenants = Backbone.Collection.extend({
-            url : "/api/workspace",
+            url : "/api/workspace/all",
             model : Tenant,
             parse : function(response){
                 return _.map(_.filter(response, function(r){
-                    return r.temporary===false;
+                    return r.workspaceReference.temporary===false;
                 }), function(r){
-                    return { name : r.name, owner : r.owner.id, id : r.id };
+                    return { name : r.name, owner : r.account.id, id : r.id };
                 });
             },
             fetch : function(options){

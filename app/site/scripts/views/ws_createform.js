@@ -24,6 +24,7 @@
             var WSCreateForm = AccountFormBase.extend({
 
                 initialize : function(attributes){
+                    Account.redirectIfUserHasLoginCookie();
                     AccountFormBase.prototype.initialize.apply(this,attributes);
                     Account.supportTab();
                     //bind onclick to Google and GitHub buttons
