@@ -309,13 +309,15 @@
                 }
             });
         };
-        var addMemberToWorkspace = function(workspaceId, userId, success, error) {
-            var url = "/api/workspace/" + workspaceId + "/members";
+        var addMemberToWorkspace = function(workspaceId, userId, success/*, error*/) {
+            success();
+/*             var url = "/api/workspace/" + workspaceId + "/members";
             var data = {
                 userId: userId,
                 roles: []
             };
-            $.ajax({
+
+           $.ajax({
                 url: url,
                 type: "POST",
                 data: JSON.stringify(data),
@@ -323,12 +325,12 @@
                 success: function(response) {
                     success(response);
                 },
-                error: function(xhr /*, status , err*/ ) {
+                error: function(xhr) {
                     error([
                         new AccountError(null, xhr.responseText)
                     ]);
                 }
-            });
+            });*/
         };
         var redirectToUrl = function(url) {
             window.location = url;
