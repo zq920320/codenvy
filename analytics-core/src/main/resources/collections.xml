@@ -272,7 +272,7 @@
             </index>
         </indexes>
     </collection>
-    <collection name="debug_started">
+    <collection name="debugs">
         <indexes>
             <index name="user">
                 <field>user</field>

@@ -94,7 +94,7 @@
         <parameter key="WS" value="ANY"/>
         <parameter key="USER" value="ANY"/>
         <parameter key="EVENT" value="debug-started"/>
-        <parameter key="STORAGE_TABLE" value="debug_started"/>
+        <parameter key="STORAGE_TABLE" value="debugs"/>
     </script>
     <script name="events">
         <parameter key="WS" value="ANY"/>
