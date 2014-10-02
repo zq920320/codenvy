@@ -20,24 +20,20 @@ package com.codenvy.api.dao.mongo;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.api.user.server.dao.Profile;
-import com.codenvy.api.user.server.dao.UserDao;
-import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
-import org.mockito.Mock;
-import org.mockito.testng.MockitoTestNGListener;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import static java.util.Collections.singletonMap;
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
 
 /**
  * Tests for {@link UserProfileDaoImpl}
@@ -84,25 +80,6 @@ public class UserProfileDaoImplTest extends BaseDaoTest {
     }
 
     @Test
-    public void shouldBeAbleToGetProfileByIdWithFilteredPreferences() throws ServerException, NotFoundException {
-        final Map<String, String> preferences = new HashMap<>(8);
-        preferences.put("first", "first_value");
-        preferences.put("____firstASD", "other_first_value");
-        preferences.put("second", "second_value");
-        preferences.put("other", "other_value");
-        final Profile testProfile = createProfile().withPreferences(preferences);
-        collection.save(profileDaoImpl.toDBObject(testProfile));
-
-        final Profile actual = profileDaoImpl.getById(testProfile.getId(), ".*first.*");
-
-        final Map<String, String> expectedPreferences = new HashMap<>(4);
-        expectedPreferences.put("first", "first_value");
-        expectedPreferences.put("____firstASD", "other_first_value");
-        testProfile.setPreferences(expectedPreferences);
-        assertEquals(actual, testProfile);
-    }
-
-    @Test
     public void shouldBeAbleToUpdateProfile() throws NotFoundException, ServerException {
         final Map<String, String> attributes = new HashMap<>(4);
         attributes.put("attribute1", "test");
@@ -139,12 +116,8 @@ public class UserProfileDaoImplTest extends BaseDaoTest {
         final Map<String, String> attributes = new HashMap<>(4);
         attributes.put("attr1", "value1");
         attributes.put("attr2", "value2");
-        final Map<String, String> preferences = new HashMap<>(4);
-        preferences.put("pref1", "v1");
-        preferences.put("pref2", "v2");
         return new Profile().withId("test_id")
                             .withUserId("test_id")
-                            .withAttributes(attributes)
-                            .withPreferences(preferences);
+                            .withAttributes(attributes);
     }
 }

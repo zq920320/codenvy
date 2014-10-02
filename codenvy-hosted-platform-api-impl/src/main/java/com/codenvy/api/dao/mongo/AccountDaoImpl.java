@@ -50,6 +50,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import static com.codenvy.api.dao.mongo.MongoUtil.asDBList;
+import static com.codenvy.api.dao.mongo.MongoUtil.asMap;
 import static java.lang.String.format;
 
 /**
@@ -567,7 +569,7 @@ public class AccountDaoImpl implements AccountDao {
                                   .append("startDate", subscriptionAttributes.getStartDate())
                                   .append("endDate", subscriptionAttributes.getEndDate())
                                   .append("trialDuration", subscriptionAttributes.getTrialDuration())
-                                  .append("custom", toDBList(subscriptionAttributes.getCustom()))
+                                  .append("custom", asDBList(subscriptionAttributes.getCustom()))
                                   .append("billing", billingObject);
     }
 
@@ -585,7 +587,7 @@ public class AccountDaoImpl implements AccountDao {
                                            .withEndDate(attributes.getString("endDate"))
                                            .withDescription(attributes.getString("description"))
                                            .withTrialDuration(attributes.getInt("trialDuration"))
-                                           .withCustom(toMap((BasicDBList)attributes.get("custom")))
+                                           .withCustom(asMap(attributes.get("custom")))
                                            .withBilling(billing);
     }
 
@@ -596,7 +598,7 @@ public class AccountDaoImpl implements AccountDao {
         final BasicDBObject accountObject = (BasicDBObject)dbObject;
         return new Account().withId(accountObject.getString("id"))
                             .withName(accountObject.getString("name"))
-                            .withAttributes(toMap((BasicDBList)accountObject.get("attributes")));
+                            .withAttributes(asMap(accountObject.get("attributes")));
     }
 
     /**
@@ -634,35 +636,6 @@ public class AccountDaoImpl implements AccountDao {
     DBObject toDBObject(Account account) {
         return new BasicDBObject().append("id", account.getId())
                                   .append("name", account.getName())
-                                  .append("attributes", toDBList(account.getAttributes()));
-    }
-
-    /**
-     * Converts database list to Map
-     */
-    private Map<String, String> toMap(BasicDBList list) {
-        final Map<String, String> attributes = new HashMap<>();
-        if (list != null) {
-            for (Object obj : list) {
-                final BasicDBObject attribute = (BasicDBObject)obj;
-                attributes.put(attribute.getString("name"), attribute.getString("value"));
-            }
-        }
-        return attributes;
-    }
-
-    /**
-     * Converts Map to Database list
-     */
-    private BasicDBList toDBList(Map<String, String> attributes) {
-        if (null == attributes) {
-            attributes = Collections.emptyMap();
-        }
-        final BasicDBList list = new BasicDBList();
-        for (Map.Entry<String, String> entry : attributes.entrySet()) {
-            list.add(new BasicDBObject().append("name", entry.getKey())
-                                        .append("value", entry.getValue()));
-        }
-        return list;
+                                  .append("attributes", asDBList(account.getAttributes()));
     }
 }

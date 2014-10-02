@@ -19,10 +19,8 @@ package com.codenvy.api.dao.mongo;
 
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
-import com.codenvy.api.user.server.dao.UserDao;
 import com.codenvy.api.user.server.dao.UserProfileDao;
 import com.codenvy.api.user.server.dao.Profile;
-import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
@@ -35,10 +33,9 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.regex.Pattern;
 
+import static com.codenvy.api.dao.mongo.MongoUtil.asDBList;
+import static com.codenvy.api.dao.mongo.MongoUtil.asMap;
 import static java.lang.String.format;
 
 /**
@@ -57,14 +54,6 @@ import static java.lang.String.format;
  *          }
  *          ...
  *      ],
- *      "preferences": [
- *          ...
- *          {
- *              "name" : "key...",
- *              "value" : "value..."
- *          }
- *          ...
- *      ]
  * }
  * </pre>
  *
@@ -124,22 +113,6 @@ public class UserProfileDaoImpl implements UserProfileDao {
     }
 
     @Override
-    public Profile getById(String id, String filter) throws NotFoundException, ServerException {
-        final Profile profile = getById(id);
-        if (filter != null && !filter.isEmpty()) {
-            final Map<String, String> matchedPreferences = new HashMap<>();
-            final Pattern pattern = Pattern.compile(filter);
-            for (Map.Entry<String, String> preference : profile.getPreferences().entrySet()) {
-                if (pattern.matcher(preference.getKey()).matches()) {
-                    matchedPreferences.put(preference.getKey(), preference.getValue());
-                }
-            }
-            profile.setPreferences(matchedPreferences);
-        }
-        return profile;
-    }
-
-    @Override
     public void remove(String id) throws NotFoundException, ServerException {
         try {
             collection.remove(new BasicDBObject("id", id));
@@ -155,8 +128,7 @@ public class UserProfileDaoImpl implements UserProfileDao {
     /* used in tests */DBObject toDBObject(Profile profile) {
         return new BasicDBObject().append("id", profile.getId())
                                   .append("userId", profile.getUserId())
-                                  .append("attributes", toDBList(profile.getAttributes()))
-                                  .append("preferences", toDBList(profile.getPreferences()));
+                                  .append("attributes", asDBList(profile.getAttributes()));
     }
 
     /**
@@ -166,33 +138,6 @@ public class UserProfileDaoImpl implements UserProfileDao {
         final BasicDBObject basicProfileObj = (BasicDBObject)profileObj;
         return new Profile().withId(basicProfileObj.getString("id"))
                             .withUserId(basicProfileObj.getString("userId"))
-                            .withAttributes(toMap((BasicDBList)basicProfileObj.get("attributes")))
-                            .withPreferences(toMap((BasicDBList)basicProfileObj.get("preferences")));
-    }
-
-    /**
-     * Converts map to database list
-     */
-    private BasicDBList toDBList(Map<String, String> attributes) {
-        final BasicDBList list = new BasicDBList();
-        for (Map.Entry<String, String> entry : attributes.entrySet()) {
-            list.add(new BasicDBObject().append("name", entry.getKey())
-                                        .append("value", entry.getValue()));
-        }
-        return list;
-    }
-
-    /**
-     * Converts database list to Map
-     */
-    private Map<String, String> toMap(BasicDBList list) {
-        final Map<String, String> attributes = new HashMap<>();
-        if (list != null) {
-            for (Object obj : list) {
-                final BasicDBObject attribute = (BasicDBObject)obj;
-                attributes.put(attribute.getString("name"), attribute.getString("value"));
-            }
-        }
-        return attributes;
+                            .withAttributes(asMap(basicProfileObj.get("attributes")));
     }
 }

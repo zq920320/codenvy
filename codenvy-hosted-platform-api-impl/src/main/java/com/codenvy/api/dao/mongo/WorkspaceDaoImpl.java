@@ -47,6 +47,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import static com.codenvy.api.dao.mongo.MongoUtil.asDBList;
+import static com.codenvy.api.dao.mongo.MongoUtil.asMap;
 import static java.lang.String.format;
 
 /**
@@ -208,7 +210,7 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
                               .withName(basicWsObj.getString("name"))
                               .withAccountId(basicWsObj.getString("accountId"))
                               .withTemporary(basicWsObj.getBoolean("temporary"))
-                              .withAttributes(toAttributes((BasicDBList)basicWsObj.get("attributes")));
+                              .withAttributes(asMap(basicWsObj.get("attributes")));
     }
 
     /**
@@ -232,27 +234,7 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
                                   .append("name", workspace.getName())
                                   .append("accountId", workspace.getAccountId())
                                   .append("temporary", workspace.isTemporary())
-                                  .append("attributes", toDBList(workspace.getAttributes()));
-    }
-
-    private Map<String, String> toAttributes(BasicDBList list) {
-        final Map<String, String> attributes = new HashMap<>();
-        if (list != null) {
-            for (Object obj : list) {
-                final BasicDBObject attribute = (BasicDBObject)obj;
-                attributes.put(attribute.getString("name"), attribute.getString("value"));
-            }
-        }
-        return attributes;
-    }
-
-    private BasicDBList toDBList(Map<String, String> attributes) {
-        final BasicDBList list = new BasicDBList();
-        for (Map.Entry<String, String> entry : attributes.entrySet()) {
-            list.add(new BasicDBObject().append("name", entry.getKey())
-                                        .append("value", entry.getValue()));
-        }
-        return list;
+                                  .append("attributes", asDBList(workspace.getAttributes()));
     }
 
     private void validateName(String workspaceName) throws ConflictException {
