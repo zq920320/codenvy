@@ -52,6 +52,7 @@ public abstract class AbstractProjectType extends ReadBasedMetric implements Rea
     public static final String   OTHER_UNKNOWN       = "unknown";
     public static final String   OTHER_NAMELESS      = "nameless";
     public static final String   OTHER_EXO           = "exo";
+    public static final String   OTHER_BLANK         = "blank";
     public static final String   RUBY                = "ruby";
     public static final String   RAILS               = "rails";
     public static final String   JAVA_SCRIPT         = "javascript";
@@ -61,7 +62,7 @@ public abstract class AbstractProjectType extends ReadBasedMetric implements Rea
             {JAR, JSP, DJANGO, WAR, JAVA, JAVA_ENGINE, MMP1, MMP2, MMP3, SPRING, NODE_JS, PHP, PYTHON, PYTHON_ENGINE,
              ANDROID, GOOGLE_MBS, OTHER_NULL, OTHER_DEFAULT, OTHER_SERV, OTHER_EXO,
              RUBY, RAILS, JAVA_SCRIPT, ANGULAR_JAVA_SCRIPT, HTML, OTHER_UNDEFINED,
-             OTHER_NAMELESS, OTHER_UNKNOWN};
+             OTHER_NAMELESS, OTHER_UNKNOWN, OTHER_BLANK};
     private final String[] types;
 
     protected AbstractProjectType(String metricName, String[] types) {

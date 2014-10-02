@@ -26,7 +26,7 @@ import javax.annotation.security.RolesAllowed;
 @RolesAllowed({"system/admin", "system/manager"})
 public class UsersWhoDeployed extends AbstractAnalysisMetric {
     public UsersWhoDeployed() {
-        super(MetricType.USERS_WHO_DEPLOYED, MetricType.DEPLOYS, USER);
+        super(MetricType.USERS_WHO_DEPLOYED, MetricType.RUNS, USER);
     }
 
     @Override

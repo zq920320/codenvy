@@ -39,12 +39,21 @@ import org.testng.annotations.Test;
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import static com.mongodb.util.MyAsserts.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 
 /** @author Dmytro Nochevnov */
@@ -196,7 +205,7 @@ public class TestAnalysisView extends BaseTest {
         assertEquals(columnData.get(RowLabel.TOTAL_NUMBER_OF_USERS_WE_TRACK), "3");
         assertEquals(columnData.get(RowLabel.CREATED_PROJECTS), "3");
         assertEquals(columnData.get(RowLabel.AND_BUILT), "1");
-        assertEquals(columnData.get(RowLabel.AND_RUN), "3");
+        assertEquals(columnData.get(RowLabel.AND_RUN), "2");
         assertEquals(columnData.get(RowLabel.AND_DEPLOYED_TO_PAAS), "3");
         assertEquals(columnData.get(RowLabel.SENT_INVITES), "2");
         assertEquals(columnData.get(RowLabel.SHELL_LAUNCHED), "2");
@@ -237,7 +246,7 @@ public class TestAnalysisView extends BaseTest {
         assertEquals(column3Data.get(RowLabel.TOTAL_NUMBER_OF_USERS_WE_TRACK), "3");
         assertEquals(column3Data.get(RowLabel.CREATED_PROJECTS), "2");
         assertEquals(column3Data.get(RowLabel.AND_BUILT), "1");
-        assertEquals(column3Data.get(RowLabel.AND_RUN), "2");
+        assertEquals(column3Data.get(RowLabel.AND_RUN), "1");
         assertEquals(column3Data.get(RowLabel.AND_DEPLOYED_TO_PAAS), "1");
         assertEquals(column3Data.get(RowLabel.SENT_INVITES), "1");
         assertEquals(column3Data.get(RowLabel.SHELL_LAUNCHED), "1");
@@ -248,7 +257,7 @@ public class TestAnalysisView extends BaseTest {
         assertEquals(column2Data.get(RowLabel.TOTAL_NUMBER_OF_USERS_WE_TRACK), "3");
         assertEquals(column2Data.get(RowLabel.CREATED_PROJECTS), "3");
         assertEquals(column2Data.get(RowLabel.AND_BUILT), "1");
-        assertEquals(column2Data.get(RowLabel.AND_RUN), "3");
+        assertEquals(column2Data.get(RowLabel.AND_RUN), "2");
         assertEquals(column2Data.get(RowLabel.AND_DEPLOYED_TO_PAAS), "3");
         assertEquals(column2Data.get(RowLabel.SENT_INVITES), "2");
         assertEquals(column2Data.get(RowLabel.SHELL_LAUNCHED), "2");
@@ -259,7 +268,7 @@ public class TestAnalysisView extends BaseTest {
         assertEquals(column1Data.get(RowLabel.TOTAL_NUMBER_OF_USERS_WE_TRACK), "3");
         assertEquals(column1Data.get(RowLabel.CREATED_PROJECTS), "3");
         assertEquals(column1Data.get(RowLabel.AND_BUILT), "1");
-        assertEquals(column1Data.get(RowLabel.AND_RUN), "3");
+        assertEquals(column1Data.get(RowLabel.AND_RUN), "2");
         assertEquals(column1Data.get(RowLabel.AND_DEPLOYED_TO_PAAS), "3");
         assertEquals(column1Data.get(RowLabel.SENT_INVITES), "2");
         assertEquals(column1Data.get(RowLabel.SHELL_LAUNCHED), "2");
@@ -290,7 +299,7 @@ public class TestAnalysisView extends BaseTest {
             assertEquals(columnData.get(RowLabel.TOTAL_NUMBER_OF_USERS_WE_TRACK), "3");
             assertEquals(columnData.get(RowLabel.CREATED_PROJECTS), "3");
             assertEquals(columnData.get(RowLabel.AND_BUILT), "1");
-            assertEquals(columnData.get(RowLabel.AND_RUN), "3");
+            assertEquals(columnData.get(RowLabel.AND_RUN), "2");
             assertEquals(columnData.get(RowLabel.AND_DEPLOYED_TO_PAAS), "3");
             assertEquals(columnData.get(RowLabel.SENT_INVITES), "2");
             assertEquals(columnData.get(RowLabel.SHELL_LAUNCHED), "2");
@@ -303,7 +312,7 @@ public class TestAnalysisView extends BaseTest {
             assertEquals(columnData.get(RowLabel.TOTAL_NUMBER_OF_USERS_WE_TRACK), "3");
             assertEquals(columnData.get(RowLabel.CREATED_PROJECTS), "2");
             assertEquals(columnData.get(RowLabel.AND_BUILT), "1");
-            assertEquals(columnData.get(RowLabel.AND_RUN), "2");
+            assertEquals(columnData.get(RowLabel.AND_RUN), "1");
             assertEquals(columnData.get(RowLabel.AND_DEPLOYED_TO_PAAS), "1");
             assertEquals(columnData.get(RowLabel.SENT_INVITES), "1");
             assertEquals(columnData.get(RowLabel.SHELL_LAUNCHED), "1");
@@ -348,7 +357,7 @@ public class TestAnalysisView extends BaseTest {
             assertEquals(columnData.get(RowLabel.TOTAL_NUMBER_OF_USERS_WE_TRACK), "3");
             assertEquals(columnData.get(RowLabel.CREATED_PROJECTS), "3");
             assertEquals(columnData.get(RowLabel.AND_BUILT), "1");
-            assertEquals(columnData.get(RowLabel.AND_RUN), "3");
+            assertEquals(columnData.get(RowLabel.AND_RUN), "2");
             assertEquals(columnData.get(RowLabel.AND_DEPLOYED_TO_PAAS), "3");
             assertEquals(columnData.get(RowLabel.SENT_INVITES), "2");
             assertEquals(columnData.get(RowLabel.SHELL_LAUNCHED), "2");
@@ -361,7 +370,7 @@ public class TestAnalysisView extends BaseTest {
             assertEquals(columnData.get(RowLabel.TOTAL_NUMBER_OF_USERS_WE_TRACK), "3");
             assertEquals(columnData.get(RowLabel.CREATED_PROJECTS), "3");
             assertEquals(columnData.get(RowLabel.AND_BUILT), "1");
-            assertEquals(columnData.get(RowLabel.AND_RUN), "3");
+            assertEquals(columnData.get(RowLabel.AND_RUN), "2");
             assertEquals(columnData.get(RowLabel.AND_DEPLOYED_TO_PAAS), "3");
             assertEquals(columnData.get(RowLabel.SENT_INVITES), "2");
             assertEquals(columnData.get(RowLabel.SHELL_LAUNCHED), "2");
@@ -500,13 +509,11 @@ public class TestAnalysisView extends BaseTest {
                 Event.Builder.createProjectCreatedEvent("user3@gmail.com", "ws3", "", "project33", "type1").withDate(DATE2)
                              .withTime("10:03:00").build());
 
-        // projects deployed to LOCAL
-        events.add(Event.Builder.createProjectDeployedEvent("user2@gmail.com", "ws2", "", "project1", "type1", "LOCAL")
-                                .withTime("10:10:00,000")
-                                .withDate(DATE2).build());
-        events.add(Event.Builder.createProjectDeployedEvent("user3@gmail.com", "ws3", "", "project33", "type1", "LOCAL")
-                                .withTime("10:10:00,000")
-                                .withDate(DATE2).build());
+        // projects run
+        events.add(Event.Builder.createRunStartedEvent("user2@gmail.com", "ws2", "project1", "type1", "1")
+                                .withTime("10:10:00,000").withDate(DATE2).build());
+        events.add(Event.Builder.createRunStartedEvent("user3@gmail.com", "ws3", "project1", "type1", "1")
+                                .withTime("10:10:00,000").withDate(DATE2).build());
 
 
         // projects deployed to PaaS
@@ -555,8 +562,8 @@ public class TestAnalysisView extends BaseTest {
         builder.putAll(scriptsManager.getScript(ScriptType.EVENTS, MetricType.BUILDS).getParamsAsMap());
         pigServer.execute(ScriptType.EVENTS, builder.build());
 
-        /** create collections "deploys" to calculate "users_who_deployed" metric */
-        builder.putAll(scriptsManager.getScript(ScriptType.EVENTS, MetricType.DEPLOYS).getParamsAsMap());
+        /** create collections "runs" to calculate "users_who_deploy" metric */
+        builder.putAll(scriptsManager.getScript(ScriptType.EVENTS, MetricType.RUNS).getParamsAsMap());
         pigServer.execute(ScriptType.EVENTS, builder.build());
 
         /** create collections "deploys_to_paas" to calculate "users_who_deployed_to_paas" metric */
