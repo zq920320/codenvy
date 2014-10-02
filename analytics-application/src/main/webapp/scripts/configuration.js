@@ -51,7 +51,7 @@ function Configuration() {
             modelViewName: "runner_timeline",
 
             defaultModelParams: {
-                "time_unit": "day"
+                "time_unit": "month"
             },
 
             displayLineChart: true,  // default is false
@@ -63,7 +63,7 @@ function Configuration() {
             modelViewName: "builder_timeline",
 
             defaultModelParams: {
-                "time_unit": "day"
+                "time_unit": "month"
             },
 
             displayLineChart: true,  // default is false
