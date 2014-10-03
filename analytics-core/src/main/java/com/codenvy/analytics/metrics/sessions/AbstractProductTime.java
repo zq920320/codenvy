@@ -19,7 +19,11 @@ package com.codenvy.analytics.metrics.sessions;
 
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.*;
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.MetricFilter;
+import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.metrics.ReadBasedMetric;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
@@ -38,7 +42,7 @@ public abstract class AbstractProductTime extends ReadBasedMetric {
     @Override
     public DBObject[] getSpecificDBOperations(Context clauses) {
         DBObject match = new BasicDBObject();
-        match.put(getTrackedFields()[0], new BasicDBObject("$ne", ""));
+        match.put(getTrackedFields()[0], new DBObject[]{new BasicDBObject("$ne", ""), new BasicDBObject("$ne", null)});
 
         DBObject group = new BasicDBObject();
         group.put(ID, "$" + getTrackedFields()[0]);
