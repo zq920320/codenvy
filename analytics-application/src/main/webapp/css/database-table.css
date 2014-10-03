@@ -48,7 +48,7 @@
 }
 
 .database-table .header div {
-    margin: 7px 0px;
+    margin: 4px 0px;
 }
 
 .database-table .header a.unsorted,
@@ -99,7 +99,7 @@
 
 .database-table .cell {
    overflow: hidden;
-   padding: 8px;
+   padding: 4px 8px;
 }
 
 .database-table .text {
@@ -144,7 +144,7 @@
 .database-table-vertical-row tr {}
 
 .database-table-vertical-row th, .database-table-vertical-row td {
-   padding: 8px;
+   padding: 4px 8px;
 }
 
 .database-table-vertical-row .cell-name {
