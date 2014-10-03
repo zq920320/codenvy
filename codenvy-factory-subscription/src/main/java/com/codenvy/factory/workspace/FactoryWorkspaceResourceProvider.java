@@ -131,7 +131,7 @@ public class FactoryWorkspaceResourceProvider implements EventSubscriber<CreateW
                                                                                          .build().toString());
                             factory = HttpJsonHelper.request(Factory.class, factoryObjectLink, Pair.of("validate", false));
                         } else {
-                            factory = factoryBuilder.buildNonEncoded(URI.create(factoryUrl));
+                            factory = factoryBuilder.buildEncoded(URI.create(factoryUrl));
                         }
 
                         if (null != factory.getOrgid()) {

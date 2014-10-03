@@ -141,7 +141,7 @@ public class FactoryWorkspaceResourceProviderTest {
         when(workspaceDao.getById(WS_ID)).thenReturn(workspace);
         when(workspace.getAttributes()).thenReturn(attributes);
         when(attributes.get("factoryUrl")).thenReturn(nonEncodedFactoryUrl);
-        when(factoryBuilder.buildNonEncoded(any(URI.class))).thenReturn(factory);
+        when(factoryBuilder.buildEncoded(any(URI.class))).thenReturn(factory);
         when(workspace.withAttributes(anyMapOf(String.class, String.class))).thenReturn(workspace);
 
         provider.onEvent(event);
@@ -196,7 +196,7 @@ public class FactoryWorkspaceResourceProviderTest {
         when(workspaceDao.getById(WS_ID)).thenReturn(workspace);
         when(workspace.getAttributes()).thenReturn(attributes);
         when(attributes.get("factoryUrl")).thenReturn(nonEncodedFactoryUrl);
-        when(factoryBuilder.buildNonEncoded(any(URI.class))).thenReturn(factory);
+        when(factoryBuilder.buildEncoded(any(URI.class))).thenReturn(factory);
         when(factory.getOrgid()).thenReturn(ORG_ID);
         when(workspace.withAttributes(anyMapOf(String.class, String.class))).thenReturn(workspace);
         when(accountDao.getSubscriptions(ORG_ID, "Factory")).thenReturn(Collections.<Subscription>emptyList());
@@ -234,7 +234,7 @@ public class FactoryWorkspaceResourceProviderTest {
         when(workspaceDao.getById(WS_ID)).thenReturn(workspace);
         when(workspace.getAttributes()).thenReturn(attributes);
         when(attributes.get("factoryUrl")).thenReturn(nonEncodedFactoryUrl);
-        when(factoryBuilder.buildNonEncoded(any(URI.class))).thenReturn(factory);
+        when(factoryBuilder.buildEncoded(any(URI.class))).thenReturn(factory);
         when(factory.getOrgid()).thenReturn(ORG_ID);
         when(workspace.withAttributes(anyMapOf(String.class, String.class))).thenReturn(workspace);
         Subscription subscription = new Subscription().withProperties(Collections.singletonMap("RAM", "8GB"));
@@ -317,7 +317,7 @@ public class FactoryWorkspaceResourceProviderTest {
         when(workspaceDao.getById(WS_ID)).thenReturn(workspace);
         when(workspace.getAttributes()).thenReturn(attributes);
         when(attributes.get("factoryUrl")).thenReturn(nonEncodedFactoryUrl);
-        when(factoryBuilder.buildNonEncoded(any(URI.class))).thenThrow(new ApiException(""));
+        when(factoryBuilder.buildEncoded(any(URI.class))).thenThrow(new ApiException(""));
         when(factory.getOrgid()).thenReturn(ORG_ID);
         when(workspace.withAttributes(anyMapOf(String.class, String.class))).thenReturn(workspace);
         Subscription subscription = new Subscription().withProperties(Collections.singletonMap("RAM", "8GB"));
