@@ -508,22 +508,7 @@
                                     ]);
                                 });*/
                     } else if (redirect_url) {
-                        // TODO
-                        /*var base = window.location.protocol + "//" + window.location.host + window.IDE.config.context + "/";
-
-                            if (window.location.href.startsWith(base)) {
-                                var tenant = redirect_url.substring(base.length);
-
-                                if (tenant.indexOf("?") < 0) {
-                                    Initializer.processTenant(tenant, null, null, null);
-                                } else {
-                                    var params = tenant.substring(tenant.indexOf("?"));
-                                    tenant = tenant.substring(0, tenant.indexOf("?"));
-                                    Initializer.processTenant(tenant, null, null, params);
-                                }
-                            } else {
-                                Page.redirect(redirect_url);
-                            }*/
+                        redirectToUrl(redirect_url);
                     } else {
                         redirectToUrl("/dashboard/");
                     }
