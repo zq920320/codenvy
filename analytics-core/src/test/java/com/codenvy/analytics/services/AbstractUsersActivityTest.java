@@ -203,18 +203,14 @@ public abstract class AbstractUsersActivityTest extends BaseTest {
                                 .withDate("2013-11-01").build());
 
         events.add(Event.Builder.createRunStartedEvent("user2@gmail.com", "ws2", "project", "type", "id1")
-                                .withDate("2013-11-01")
-                                .withTime("20:59:00").build());
-        events.add(Event.Builder.createRunFinishedEvent("user2@gmail.com", "ws2", "project", "type", "id1", 120000)
-                                .withDate("2013-11-01")
-                                .withTime("21:01:00").build());
+                                .withDate("2013-11-01").withTime("20:59:00").build());
+        events.add(Event.Builder.createRunFinishedEvent("user2@gmail.com", "ws2", "project", "type", "id1", 120000, 1)
+                                .withDate("2013-11-01").withTime("21:01:00").build());
 
         events.add(Event.Builder.createBuildStartedEvent("user1@gmail.com", "ws1", "project", "type", "id2")
-                                .withDate("2013-11-01")
-                                .withTime("21:12:00").build());
+                                .withDate("2013-11-01").withTime("21:12:00").build());
         events.add(Event.Builder.createBuildFinishedEvent("user1@gmail.com", "ws1", "project", "type", "id2", 120000)
-                                .withDate("2013-11-01")
-                                .withTime("21:14:00").build());
+                                .withDate("2013-11-01").withTime("21:14:00").build());
 
         // projects deployed
         events.add(Event.Builder.createApplicationCreatedEvent("user3@gmail.com", "ws2___", "", "project1", "type1", "paas2")

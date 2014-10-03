@@ -127,6 +127,7 @@ public class TestBuilders extends BaseTest {
                                       .withParam("ID", "id1")
                                       .withParam("TIMEOUT", "600")
                                       .withParam("USAGE-TIME", "120000")
+                                      .withParam("FINISHED-NORMALLY", "1")
                                       .build());
 
         // #2 1m, stopped normally
@@ -150,6 +151,7 @@ public class TestBuilders extends BaseTest {
                                       .withParam("ID", "id2")
                                       .withParam("TIMEOUT", "-1")
                                       .withParam("USAGE-TIME", "60000")
+                                      .withParam("FINISHED-NORMALLY", "1")
                                       .build());
 
 
@@ -174,6 +176,7 @@ public class TestBuilders extends BaseTest {
                                       .withParam("ID", "id3")
                                       .withParam("TIMEOUT", "60")
                                       .withParam("USAGE-TIME", "120000")
+                                      .withParam("FINISHED-NORMALLY", "0")
                                       .build());
 
         return LogGenerator.generateLog(events);

@@ -19,11 +19,11 @@ package com.codenvy.analytics.metrics.runs;
 
 import com.codenvy.analytics.metrics.AbstractLongValueResulted;
 import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
 
 import javax.annotation.security.RolesAllowed;
+import java.io.IOException;
 
 /** @author Anatoliy Bazko */
 @RolesAllowed(value = {"user", "system/admin", "system/manager"})
@@ -34,34 +34,10 @@ public class RunsFinishedByUser extends AbstractLongValueResulted {
     }
 
     @Override
-    public DBObject[] getSpecificDBOperations(Context clauses) {
-        String field = getTrackedFields()[0];
-
-        DBObject project1 = new BasicDBObject();
-        project1.put("_id", 1);
-        project1.put(LIFETIME, new BasicDBObject("$multiply", new Object[]{"$" + LIFETIME, 1000})); // to millisec
-        project1.put(USAGE_TIME, 1);
-        project1.put(field, 1);
-
-        DBObject project2 = new BasicDBObject();
-        project2.put("_id", 1);
-        project2.put(LIFETIME, 1);
-        project2.put(USAGE_TIME, 1);
-        project2.put("cmpLifetimeToUsageTime", new BasicDBObject("$cmp", new String[]{"$" + LIFETIME, "$" + USAGE_TIME}));
-        project2.put(field, 1);
-
-        DBObject match = new BasicDBObject();
-        match.put("$or", new Object[]{new BasicDBObject(LIFETIME, -1000),
-                                      new BasicDBObject("cmpLifetimeToUsageTime", 1)});
-
-        DBObject group = new BasicDBObject();
-        group.put(ID, null);
-        group.put(field, new BasicDBObject("$sum", "$" + field));
-
-        return new DBObject[]{new BasicDBObject("$project", project1),
-                              new BasicDBObject("$project", project2),
-                              new BasicDBObject("$match", match),
-                              new BasicDBObject("$group", group)};
+    public Context applySpecificFilter(Context context) throws IOException {
+        Context.Builder builder = new Context.Builder(context);
+        builder.put(MetricFilter.STOPPED_BY_USER, 1);
+        return builder.build();
     }
 
     @Override

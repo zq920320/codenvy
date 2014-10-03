@@ -19,11 +19,13 @@ package com.codenvy.analytics.metrics.runs;
 
 import com.codenvy.analytics.metrics.AbstractLongValueResulted;
 import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
 import javax.annotation.security.RolesAllowed;
+import java.io.IOException;
 
 /** @author Anatoliy Bazko */
 @RolesAllowed(value = {"user", "system/admin", "system/manager"})
@@ -34,18 +36,21 @@ public class RunsWithAlwaysOn extends AbstractLongValueResulted {
     }
 
     @Override
+    public Context applySpecificFilter(Context context) throws IOException {
+        Context.Builder builder = new Context.Builder(context);
+        builder.put(MetricFilter.LIFETIME, -1);
+        return builder.build();
+    }
+
+    @Override
     public DBObject[] getSpecificDBOperations(Context clauses) {
         String field = getTrackedFields()[0];
-
-        DBObject match = new BasicDBObject();
-        match.put(LIFETIME, -1);
 
         DBObject group = new BasicDBObject();
         group.put(ID, null);
         group.put(field, new BasicDBObject("$sum", "$" + field));
 
-        return new DBObject[]{new BasicDBObject("$match", match),
-                              new BasicDBObject("$group", group)};
+        return new DBObject[]{new BasicDBObject("$group", group)};
     }
 
 

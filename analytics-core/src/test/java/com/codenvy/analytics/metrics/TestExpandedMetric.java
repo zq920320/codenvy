@@ -18,15 +18,31 @@
 package com.codenvy.analytics.metrics;
 
 import com.codenvy.analytics.Utils;
-import com.codenvy.analytics.datamodel.*;
-import com.codenvy.analytics.metrics.projects.*;
+import com.codenvy.analytics.datamodel.ListValueData;
+import com.codenvy.analytics.datamodel.LongValueData;
+import com.codenvy.analytics.datamodel.MapValueData;
+import com.codenvy.analytics.datamodel.StringValueData;
+import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.metrics.projects.AbstractProjectPaas;
+import com.codenvy.analytics.metrics.projects.AbstractProjectType;
+import com.codenvy.analytics.metrics.projects.CreatedProjects;
+import com.codenvy.analytics.metrics.projects.ProjectPaasGae;
+import com.codenvy.analytics.metrics.projects.ProjectTypeWar;
+import com.codenvy.analytics.metrics.projects.ProjectsList;
 import com.codenvy.analytics.metrics.sessions.ProductUsageTimeBelow1Min;
 import com.codenvy.analytics.metrics.sessions.ProductUsageTimeTotal;
 import com.codenvy.analytics.metrics.sessions.factory.AbstractFactorySessions;
 import com.codenvy.analytics.metrics.sessions.factory.FactorySessionsBelow10Min;
 import com.codenvy.analytics.metrics.sessions.factory.FactorySessionsWithBuildPercent;
 import com.codenvy.analytics.metrics.sessions.factory.ProductUsageFactorySessionsList;
-import com.codenvy.analytics.metrics.users.*;
+import com.codenvy.analytics.metrics.users.AbstractLoggedInType;
+import com.codenvy.analytics.metrics.users.CreatedUsers;
+import com.codenvy.analytics.metrics.users.CreatedUsersFromAuth;
+import com.codenvy.analytics.metrics.users.NonActiveUsers;
+import com.codenvy.analytics.metrics.users.UserInvite;
+import com.codenvy.analytics.metrics.users.UsersAcceptedInvitesPercent;
+import com.codenvy.analytics.metrics.users.UsersLoggedInWithForm;
+import com.codenvy.analytics.metrics.users.UsersStatisticsList;
 import com.codenvy.analytics.metrics.workspaces.ActiveWorkspaces;
 import com.codenvy.analytics.pig.scripts.ScriptType;
 import com.codenvy.analytics.pig.scripts.util.Event;
@@ -205,7 +221,7 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
         // event of target user in the target workspace and in time of first session
         events.add(Event.Builder.createRunStartedEvent(TEST_USER, TEST_WS, "project1", "Python", "id1")
                                 .withDate("2013-11-01").withTime("19:08:00,600").build());
-        events.add(Event.Builder.createRunFinishedEvent(TEST_USER, TEST_WS, "project1", "Python", "id1", 120000)
+        events.add(Event.Builder.createRunFinishedEvent(TEST_USER, TEST_WS, "project1", "Python", "id1", 120000, 1)
                                 .withDate("2013-11-01").withTime("19:10:00,900").build());
 
         // event of target user in another workspace and in time of main session
@@ -219,7 +235,7 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
         // event of another user in the another workspace and in time of main session
         events.add(Event.Builder.createRunStartedEvent("user2@gmail.com", "ws3", "project2", "java", "id3")
                                 .withDate("2013-11-01").withTime("19:08:00").build());
-        events.add(Event.Builder.createRunFinishedEvent("user2@gmail.com", "ws3", "project2", "java", "id3", 120000)
+        events.add(Event.Builder.createRunFinishedEvent("user2@gmail.com", "ws3", "project2", "java", "id3", 120000, 1)
                                 .withDate("2013-11-01").withTime("19:10:00").build());
 
         // add user6@gmail.com activity (6 sessions && (120min < time < 300min)) for test

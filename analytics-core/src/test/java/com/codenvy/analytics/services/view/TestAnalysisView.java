@@ -471,7 +471,7 @@ public class TestAnalysisView extends BaseTest {
         events.add(Event.Builder.createRunStartedEvent("user2@gmail.com", "ws2", "project", "type", "id1")
                                 .withDate(DATE1)
                                 .withTime("20:59:00").build());
-        events.add(Event.Builder.createRunFinishedEvent("user2@gmail.com", "ws2", "project", "type", "id1", 0)
+        events.add(Event.Builder.createRunFinishedEvent("user2@gmail.com", "ws2", "project", "type", "id1", 0, 1)
                                 .withDate(DATE1)
                                 .withTime("21:01:00").build());
 

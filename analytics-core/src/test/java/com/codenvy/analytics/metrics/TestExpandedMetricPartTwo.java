@@ -19,7 +19,11 @@ package com.codenvy.analytics.metrics;
 
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.sessions.*;
+import com.codenvy.analytics.metrics.sessions.AbstractTimelineProductUsageCondition;
+import com.codenvy.analytics.metrics.sessions.ProductUsageUsersBelow10Min;
+import com.codenvy.analytics.metrics.sessions.TimelineProductUsageConditionAbove300Min;
+import com.codenvy.analytics.metrics.sessions.TimelineProductUsageConditionBelow120Min;
+import com.codenvy.analytics.metrics.sessions.TimelineProductUsageConditionBetween120And300Min;
 import com.codenvy.analytics.pig.scripts.ScriptType;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
@@ -185,7 +189,7 @@ public class TestExpandedMetricPartTwo extends AbstractTestExpandedMetric {
         // event of target user in the target workspace and in time of first session
         events.add(Event.Builder.createRunStartedEvent(TEST_USER, TEST_WS, "project1", "Python", "id1")
                                 .withDate("2013-11-01").withTime("19:08:00,600").build());
-        events.add(Event.Builder.createRunFinishedEvent(TEST_USER, TEST_WS, "project1", "Python", "id1", 0)
+        events.add(Event.Builder.createRunFinishedEvent(TEST_USER, TEST_WS, "project1", "Python", "id1", 0, 1)
                                 .withDate("2013-11-01").withTime("19:10:00,900").build());
 
         // event of target user in another workspace and in time of main session
@@ -199,7 +203,7 @@ public class TestExpandedMetricPartTwo extends AbstractTestExpandedMetric {
         // event of another user in the another workspace and in time of main session
         events.add(Event.Builder.createRunStartedEvent("user2@gmail.com", "ws3", "project2", "java", "id3")
                                 .withDate("2013-11-01").withTime("19:08:00").build());
-        events.add(Event.Builder.createRunFinishedEvent("user2@gmail.com", "ws3", "project2", "java", "id3", 0)
+        events.add(Event.Builder.createRunFinishedEvent("user2@gmail.com", "ws3", "project2", "java", "id3", 0, 1)
                                 .withDate("2013-11-01").withTime("19:10:00").build());
 
         // add user6@gmail.com activity (6 sessions && (120min < time < 300min)) for test

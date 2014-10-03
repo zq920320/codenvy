@@ -18,7 +18,11 @@
 package com.codenvy.analytics.metrics;
 
 import com.codenvy.analytics.BaseTest;
-import com.codenvy.analytics.datamodel.*;
+import com.codenvy.analytics.datamodel.ListValueData;
+import com.codenvy.analytics.datamodel.LongValueData;
+import com.codenvy.analytics.datamodel.MapValueData;
+import com.codenvy.analytics.datamodel.StringValueData;
+import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.users.UsersActivityList;
 import com.codenvy.analytics.pig.scripts.ScriptType;
 import com.codenvy.analytics.pig.scripts.util.Event;
@@ -87,7 +91,7 @@ public class TestUsersActivityMetric extends BaseTest {
         events.add(Event.Builder.createRunStartedEvent(USER, WS, "project", "type", "id1").withDate("2013-11-01")
                                 .withTime(
                                         "19:08:00,600").build());
-        events.add(Event.Builder.createRunFinishedEvent(USER, WS, "project", "type", "id1", 120000).withDate("2013-11-01").withTime(
+        events.add(Event.Builder.createRunFinishedEvent(USER, WS, "project", "type", "id1", 120000, 1).withDate("2013-11-01").withTime(
                 "19:10:00,900").build());
 
         // event of target user in another workspace and in time of main session
@@ -99,7 +103,7 @@ public class TestUsersActivityMetric extends BaseTest {
         // event of another user in the target workspace and in time of main session
         events.add(Event.Builder.createRunStartedEvent(USER2, WS2, "project", "type", "id1")
                                 .withDate("2013-11-01").withTime("19:08:00,000").build());
-        events.add(Event.Builder.createRunFinishedEvent(USER2, WS2, "project", "type", "id1", 120000)
+        events.add(Event.Builder.createRunFinishedEvent(USER2, WS2, "project", "type", "id1", 120000, 1)
                                 .withDate("2013-11-01").withTime("19:10:00,000").build());
 
         // event of target user in the target workspace and in time of second sessi

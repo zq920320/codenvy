@@ -19,8 +19,13 @@ package com.codenvy.analytics.pig.scripts.util;
 
 import com.codenvy.analytics.BaseTest;
 
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.UUID;
 
 /** @author <a href="mailto:abazko@exoplatform.com">Anatoliy Bazko</a> */
 public class Event {
@@ -262,14 +267,16 @@ public class Event {
                                 .withParam("ID", id);
         }
 
-        public static Builder createRunFinishedEvent(String user, String ws, String project, String type, String id, long usageTime) {
+        public static Builder createRunFinishedEvent(String user, String ws, String project, String type, String id, long usageTime,
+                                                     long stoppedByUser) {
             return new Builder().withParam("EVENT", "run-finished")
                                 .withParam("WS", ws)
                                 .withParam("USER", user)
                                 .withParam("PROJECT", project)
                                 .withParam("TYPE", type)
                                 .withParam("ID", id)
-                                .withParam("USAGE-TIME", Long.toString(usageTime));
+                                .withParam("USAGE-TIME", Long.toString(usageTime))
+                                .withParam("STOPPED-BY-USER", Long.toString(stoppedByUser));
         }
 
         public static Builder createBuildFinishedEvent(String user, String ws, String project, String type, String id, long usageTime) {

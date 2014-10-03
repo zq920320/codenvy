@@ -166,6 +166,7 @@ public class TestRunners extends BaseTest {
                                       .withParam("MEMORY", "128")
                                       .withParam("LIFETIME", "600")
                                       .withParam("USAGE-TIME", "120000")
+                                      .withParam("STOPPED-BY-USER", "1")
                                       .build());
 
         // #2 1m, stopped by user
@@ -191,6 +192,7 @@ public class TestRunners extends BaseTest {
                                       .withParam("MEMORY", "128")
                                       .withParam("LIFETIME", "-1")
                                       .withParam("USAGE-TIME", "60000")
+                                      .withParam("STOPPED-BY-USER", "1")
                                       .build());
 
 
@@ -217,6 +219,7 @@ public class TestRunners extends BaseTest {
                                       .withParam("MEMORY", "128")
                                       .withParam("LIFETIME", "60")
                                       .withParam("USAGE-TIME", "120000")
+                                      .withParam("STOPPED-BY-USER", "0")
                                       .build());
 
         return LogGenerator.generateLog(events);

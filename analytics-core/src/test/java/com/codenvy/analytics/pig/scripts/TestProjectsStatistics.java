@@ -22,7 +22,13 @@ import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.*;
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Metric;
+import com.codenvy.analytics.metrics.MetricFactory;
+import com.codenvy.analytics.metrics.MetricFilter;
+import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.metrics.Summaraziable;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 import com.mongodb.util.MyAsserts;
@@ -81,7 +87,7 @@ public class TestProjectsStatistics extends BaseTest {
                                 .withDate("2013-01-01")
                                 .withTime("10:09:00")
                                 .build());
-        events.add(Event.Builder.createRunFinishedEvent("user1@gmail.com", "ws1", "project1", "jar", "id1", 0)
+        events.add(Event.Builder.createRunFinishedEvent("user1@gmail.com", "ws1", "project1", "jar", "id1", 0, 1)
                                 .withDate("2013-01-01")
                                 .withTime("10:10:00")
                                 .build());

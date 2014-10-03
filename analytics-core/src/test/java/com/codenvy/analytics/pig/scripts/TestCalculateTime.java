@@ -28,7 +28,11 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 import static org.testng.AssertJUnit.assertEquals;
 
@@ -49,7 +53,7 @@ public class TestCalculateTime extends BaseTest {
                              .withDate("2013-01-01")
                              .withTime("19:00:00").build());
         events.add(
-                Event.Builder.createRunFinishedEvent("user1@gmail.com", "ws1", "project", "type", "", 0)
+                Event.Builder.createRunFinishedEvent("user1@gmail.com", "ws1", "project", "type", "", 0, 1)
                              .withDate("2013-01-01")
                              .withTime("19:06:00").build());
 
@@ -65,7 +69,7 @@ public class TestCalculateTime extends BaseTest {
                              .withDate("2013-01-01")
                              .withTime("19:08:00").build());
         events.add(
-                Event.Builder.createRunFinishedEvent("user2@gmail.com", "ws1", "project", "type", "id3", 0)
+                Event.Builder.createRunFinishedEvent("user2@gmail.com", "ws1", "project", "type", "id3", 0, 1)
                              .withDate("2013-01-01")
                              .withTime("19:10:00").build());
 
@@ -75,13 +79,13 @@ public class TestCalculateTime extends BaseTest {
                              .withDate("2013-01-01")
                              .withTime("19:11:00").build());
         events.add(
-                Event.Builder.createRunFinishedEvent("user1@gmail.com", "ws1", "project", "type", "id4", 0)
+                Event.Builder.createRunFinishedEvent("user1@gmail.com", "ws1", "project", "type", "id4", 0, 1)
                              .withDate("2013-01-01")
                              .withTime("19:12:00").build());
 
         // failed session, there is no 'run-started' event
         events.add(
-                Event.Builder.createRunFinishedEvent("user1@gmail.com", "ws1", "project", "type", "id5", 0)
+                Event.Builder.createRunFinishedEvent("user1@gmail.com", "ws1", "project", "type", "id5", 0, 1)
                              .withDate("2013-01-01")
                              .withTime("19:13:00").build());
 
