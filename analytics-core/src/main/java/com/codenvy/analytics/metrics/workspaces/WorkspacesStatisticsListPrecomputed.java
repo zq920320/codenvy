@@ -17,7 +17,14 @@
  */
 package com.codenvy.analytics.metrics.workspaces;
 
-import com.codenvy.analytics.metrics.*;
+import com.codenvy.analytics.metrics.AbstractListValueResulted;
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.MetricFactory;
+import com.codenvy.analytics.metrics.MetricFilter;
+import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.metrics.PrecomputedDataMetric;
+import com.codenvy.analytics.metrics.ReadBasedSummariziable;
 import com.mongodb.DBObject;
 
 import javax.annotation.security.RolesAllowed;
@@ -59,7 +66,6 @@ public class WorkspacesStatisticsListPrecomputed extends AbstractListValueResult
                             INVITES,
                             RUN_TIME,
                             BUILD_TIME,
-                            PAAS_DEPLOYS,
                             WorkspacesStatisticsList.JOINED_USERS};
     }
 

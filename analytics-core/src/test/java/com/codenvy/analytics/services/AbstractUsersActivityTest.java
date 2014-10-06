@@ -152,7 +152,7 @@ public abstract class AbstractUsersActivityTest extends BaseTest {
                              .withTime("10:03:00").build());
 
         // projects built
-        events.add(Event.Builder.createProjectBuiltEvent("user2@gmail.com", "ws1", "", "project1", "type1").withTime("10:06:00")
+        events.add(Event.Builder.createBuildStartedEvent("user2@gmail.com", "ws1", "project1", "type1", "").withTime("10:06:00")
                                 .withDate("2013-11-01").build());
 
 

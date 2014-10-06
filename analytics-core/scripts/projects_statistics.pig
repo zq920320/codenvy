@@ -35,7 +35,7 @@ c1 = filterByEvent(f, 'user-code-complete');
 c = FOREACH c1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('code_completes', 1), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('project', project), TOTUPLE('project_type', LOWER(project_type)), TOTUPLE('project_id', CreateProjectId(user, ws, project));
 STORE c INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 
-d1 = filterByEvent(f, 'project-built');
+d1 = filterByEvent(f, 'build-started');
 d = FOREACH d1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('builds', 1), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('project', project), TOTUPLE('project_type', LOWER(project_type)), TOTUPLE('project_id', CreateProjectId(user, ws, project));
 STORE d INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 
@@ -47,7 +47,7 @@ g1 = filterByEvent(f, 'debug-started');
 g = FOREACH g1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('debugs', 1), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('project', project), TOTUPLE('project_type', LOWER(project_type)), TOTUPLE('project_id', CreateProjectId(user, ws, project));
 STORE g INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 
-h1 = filterByEvent(f, 'application-created,project-deployed');
+h1 = filterByEvent(f, 'application-created');
 h = FOREACH h1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('deploys', 1), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('project', project), TOTUPLE('project_type', LOWER(project_type)), TOTUPLE('project_id', CreateProjectId(user, ws, project));
 STORE h INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 
@@ -66,10 +66,6 @@ STORE n INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 o1 = filterByEvent(f, 'project-destroyed');
 o = FOREACH o1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('project_destroys', 1), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('project', project), TOTUPLE('project_type', LOWER(project_type)), TOTUPLE('project_id', CreateProjectId(user, ws, project));
 STORE o INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
-
-y1 = filterByEvent(f, 'application-created');
-y = FOREACH y1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('paas_deploys', 1), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('project', project), TOTUPLE('project_type', LOWER(project_type)), TOTUPLE('project_id', CreateProjectId(user, ws, project));
-STORE y INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 
 s1 = calculateTime(f, 'run-started', 'run-finished');
 s2 = JOIN s1 BY (dt,user,ws), f BY (dt,user,ws);

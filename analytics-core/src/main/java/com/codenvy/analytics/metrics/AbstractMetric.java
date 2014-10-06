@@ -31,7 +31,6 @@ public abstract class AbstractMetric implements Metric {
     public static final String TIME                  = "time";
     public static final String RUN_TIME              = "run_time";
     public static final String BUILD_TIME            = "build_time";
-    public static final String PAAS_DEPLOYS          = "paas_deploys";
     public static final String CUMULATIVE_TIME       = "cumulative_time";
     public static final String STATE                 = "state";
     public static final String LOGOUT_INTERVAL       = "logout_interval";

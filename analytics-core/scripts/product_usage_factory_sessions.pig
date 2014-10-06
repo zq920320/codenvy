@@ -82,12 +82,12 @@ k = FOREACH k1 GENERATE t::s::dt AS dt, t::s::delta AS delta, t::s::factory AS f
                         t::s::orgId AS orgId, t::s::affiliateId AS affiliateId, t::s::factoryId AS factoryId, t::s::ws AS ws,
                         t::s::user AS user, t::s::conv AS conv, t::run AS run, t::s::id AS id;
 
-m1 = addEventIndicator(k, l,  'project-deployed,application-created', 'deploy', '$inactiveInterval');
+m1 = addEventIndicator(k, l,  'application-created', 'deploy', '$inactiveInterval');
 m = FOREACH m1 GENERATE t::k::dt AS dt, t::k::delta AS delta, t::k::factory AS factory, t::k::referrer AS referrer,
                         t::k::orgId AS orgId, t::k::affiliateId AS affiliateId, t::k::factoryId AS factoryId, t::k::ws AS ws, t::k::id AS id,
                         t::k::user AS user, t::k::conv AS conv, t::k::run AS run, t::deploy AS deploy;
 
-n1 = addEventIndicator(m, l,  'project-built', 'build', '$inactiveInterval');
+n1 = addEventIndicator(m, l,  'build-started', 'build', '$inactiveInterval');
 n = FOREACH n1 GENERATE t::m::dt AS dt, t::m::delta AS delta, t::m::factory AS factory, t::m::referrer AS referrer, t::m::id AS id,
                         t::m::orgId AS orgId, t::m::affiliateId AS affiliateId, t::m::factoryId AS factoryId, t::m::ws AS ws,
                         t::m::user AS user, t::m::conv AS conv, t::m::run AS run, t::m::deploy AS deploy, t::build AS build;

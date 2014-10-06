@@ -20,11 +20,11 @@ IMPORT 'macros.pig';
 
 l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 
-c1 = filterByEvent(l, 'project-built');
+c1 = filterByEvent(l, 'build-started');
 c = FOREACH c1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('builds', 1);
 STORE c INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 
-d1 = filterByEvent(l, 'application-created,project-deployed');
+d1 = filterByEvent(l, 'application-created');
 d = FOREACH d1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('deploys', 1);
 STORE d INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 
@@ -71,7 +71,3 @@ r2 = extractParam(r1, 'USAGE-TIME', time);
 r3 = FOREACH r2 GENERATE dt, ws, user, (long)time;
 r = FOREACH r3 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('build_time', time);
 STORE r INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
-
-s1 = filterByEvent(l, 'application-created');
-s = FOREACH s1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('paas_deploys', 1);
-STORE s INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;

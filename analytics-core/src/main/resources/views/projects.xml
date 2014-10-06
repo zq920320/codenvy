@@ -22,7 +22,7 @@
     <view name="projects" on-demand="true">
         <section name="projects">
             <row class="com.codenvy.analytics.services.view.TitleRow">
-                <parameter key="titles" value="Date,Project,Type,Workspace,User,# Builds,# Build Interrupts,# Runs,# Debugs,# Deploys,# Artifact Deploys,# PAAS Deploys,# Code Refactories,# Code Completes"/>                
+                <parameter key="titles" value="Date,Project,Type,Workspace,User,# Builds,# Build Interrupts,# Runs,# Debugs,# Deploys,# Artifact Deploys,# Code Refactories,# Code Completes"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="projects_statistics_list"/>
@@ -55,7 +55,7 @@
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="projects_statistics_list"/>
                 <parameter key="fields"
-                           value="builds,build_time,build_interrupts,runs,run_time,debugs,debug_time,project_creates,project_destroys,deploys,artifact_deploys,paas_deploys,code_refactories,code_completes"/>
+                           value="builds,build_time,build_interrupts,runs,run_time,debugs,debug_time,project_creates,project_destroys,deploys,artifact_deploys,code_refactories,code_completes"/>
                 <parameter key="time-fields" value="build_time,run_time,debug_time"/>
                 <parameter key="hide-negative-values" value="true"/>
             </row>

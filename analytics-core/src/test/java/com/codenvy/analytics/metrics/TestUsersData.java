@@ -18,7 +18,11 @@
 package com.codenvy.analytics.metrics;
 
 import com.codenvy.analytics.BaseTest;
-import com.codenvy.analytics.datamodel.*;
+import com.codenvy.analytics.datamodel.ListValueData;
+import com.codenvy.analytics.datamodel.LongValueData;
+import com.codenvy.analytics.datamodel.MapValueData;
+import com.codenvy.analytics.datamodel.StringValueData;
+import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.sessions.ProductUsageSessionsList;
 import com.codenvy.analytics.metrics.users.UsersStatisticsList;
 import com.codenvy.analytics.metrics.workspaces.UsageTimeByWorkspacesList;
@@ -83,7 +87,6 @@ public class TestUsersData extends BaseTest {
                     assertEquals(all.get(UsersStatisticsList.LOGINS).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.RUN_TIME).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.BUILD_TIME).getAsString(), "0");
-                    assertEquals(all.get(UsersStatisticsList.PAAS_DEPLOYS).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.USER_FIRST_NAME).getAsString(), "f1");
                     assertEquals(all.get(UsersStatisticsList.USER_LAST_NAME).getAsString(), "l1");
                     assertEquals(all.get(UsersStatisticsList.USER_COMPANY).getAsString(), "company1");
@@ -103,7 +106,6 @@ public class TestUsersData extends BaseTest {
                     assertEquals(all.get(UsersStatisticsList.LOGINS).getAsString(), "1");
                     assertEquals(all.get(UsersStatisticsList.RUN_TIME).getAsString(), "120000");
                     assertEquals(all.get(UsersStatisticsList.BUILD_TIME).getAsString(), "0");
-                    assertEquals(all.get(UsersStatisticsList.PAAS_DEPLOYS).getAsString(), "1");
                     assertEquals(all.get(UsersStatisticsList.USER_FIRST_NAME).getAsString(), "f2");
                     assertEquals(all.get(UsersStatisticsList.USER_LAST_NAME).getAsString(), "l2");
                     assertEquals(all.get(UsersStatisticsList.USER_COMPANY).getAsString(), "company1");
@@ -113,7 +115,7 @@ public class TestUsersData extends BaseTest {
                 case "id3":
                     assertEquals(all.get(UsersStatisticsList.PROJECTS).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.DEPLOYS).getAsString(), "1");
-                    assertEquals(all.get(UsersStatisticsList.BUILDS).getAsString(), "0");
+                    assertEquals(all.get(UsersStatisticsList.BUILDS).getAsString(), "1");
                     assertEquals(all.get(UsersStatisticsList.DEBUGS).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.RUNS).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.FACTORIES).getAsString(), "0");
@@ -123,7 +125,6 @@ public class TestUsersData extends BaseTest {
                     assertEquals(all.get(UsersStatisticsList.LOGINS).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.RUN_TIME).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.BUILD_TIME).getAsString(), "120000");
-                    assertEquals(all.get(UsersStatisticsList.PAAS_DEPLOYS).getAsString(), "1");
                     assertEquals(all.get(UsersStatisticsList.USER_FIRST_NAME).getAsString(), "f3");
                     assertEquals(all.get(UsersStatisticsList.USER_LAST_NAME).getAsString(), "l3");
                     assertEquals(all.get(UsersStatisticsList.USER_COMPANY).getAsString(), "company3");
@@ -132,7 +133,7 @@ public class TestUsersData extends BaseTest {
 
                 case "id4":
                     assertEquals(all.get(UsersStatisticsList.PROJECTS).getAsString(), "0");
-                    assertEquals(all.get(UsersStatisticsList.DEPLOYS).getAsString(), "1");
+                    assertEquals(all.get(UsersStatisticsList.DEPLOYS).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.BUILDS).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.DEBUGS).getAsString(), "1");
                     assertEquals(all.get(UsersStatisticsList.RUNS).getAsString(), "1");
@@ -142,7 +143,6 @@ public class TestUsersData extends BaseTest {
                     assertEquals(all.get(UsersStatisticsList.LOGINS).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.RUN_TIME).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.BUILD_TIME).getAsString(), "0");
-                    assertEquals(all.get(UsersStatisticsList.PAAS_DEPLOYS).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.USER_FIRST_NAME).getAsString(), StringValueData.DEFAULT);
                     assertEquals(all.get(UsersStatisticsList.USER_LAST_NAME).getAsString(), StringValueData.DEFAULT);
                     assertEquals(all.get(UsersStatisticsList.USER_COMPANY).getAsString(), StringValueData.DEFAULT);
@@ -159,8 +159,8 @@ public class TestUsersData extends BaseTest {
 
         Map<String, ValueData> m = treatAsMap(summaryValue.getAll().get(0));
         assertEquals(m.get(UsersStatisticsList.PROJECTS), LongValueData.valueOf(1));
-        assertEquals(m.get(UsersStatisticsList.DEPLOYS), LongValueData.valueOf(3));
-        assertEquals(m.get(UsersStatisticsList.BUILDS), LongValueData.valueOf(0));
+        assertEquals(m.get(UsersStatisticsList.DEPLOYS), LongValueData.valueOf(2));
+        assertEquals(m.get(UsersStatisticsList.BUILDS), LongValueData.valueOf(1));
         assertEquals(m.get(UsersStatisticsList.DEBUGS), LongValueData.valueOf(1));
         assertEquals(m.get(UsersStatisticsList.RUNS), LongValueData.valueOf(2));
         assertEquals(m.get(UsersStatisticsList.FACTORIES), LongValueData.valueOf(1));
@@ -170,7 +170,6 @@ public class TestUsersData extends BaseTest {
         assertEquals(m.get(UsersStatisticsList.LOGINS), LongValueData.valueOf(1));
         assertEquals(m.get(UsersStatisticsList.RUN_TIME), LongValueData.valueOf(120000));
         assertEquals(m.get(UsersStatisticsList.BUILD_TIME), LongValueData.valueOf(120000));
-        assertEquals(m.get(UsersStatisticsList.PAAS_DEPLOYS), LongValueData.valueOf(2));
     }
 
     @Test
@@ -186,15 +185,14 @@ public class TestUsersData extends BaseTest {
             MapValueData valueData = (MapValueData)object;
 
             Map<String, ValueData> all = valueData.getAll();
-            assertEquals(all.size(), 14);
+            assertEquals(all.size(), 13);
 
             String ws = all.get(UsersStatisticsList.WS).getAsString();
             switch (ws) {
                 case "wsid1":
-                    assertEquals(all.get(UsersStatisticsList.PAAS_DEPLOYS).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.SESSIONS).getAsString(), "1");
                     assertEquals(all.get(UsersStatisticsList.INVITES).getAsString(), "0");
-                    assertEquals(all.get(UsersStatisticsList.DEPLOYS).getAsString(), "1");
+                    assertEquals(all.get(UsersStatisticsList.DEPLOYS).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.BUILDS).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.WS).getAsString(), "wsid1");
                     assertEquals(all.get(UsersStatisticsList.DEBUGS).getAsString(), "1");
@@ -208,11 +206,10 @@ public class TestUsersData extends BaseTest {
                     break;
 
                 case "wsid2":
-                    assertEquals(all.get(UsersStatisticsList.PAAS_DEPLOYS).getAsString(), "2");
                     assertEquals(all.get(UsersStatisticsList.SESSIONS).getAsString(), "1");
                     assertEquals(all.get(UsersStatisticsList.INVITES).getAsString(), "1");
                     assertEquals(all.get(UsersStatisticsList.DEPLOYS).getAsString(), "2");
-                    assertEquals(all.get(UsersStatisticsList.BUILDS).getAsString(), "0");
+                    assertEquals(all.get(UsersStatisticsList.BUILDS).getAsString(), "1");
                     assertEquals(all.get(UsersStatisticsList.WS).getAsString(), "wsid2");
                     assertEquals(all.get(UsersStatisticsList.DEBUGS).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.FACTORIES).getAsString(), "0");
@@ -234,11 +231,10 @@ public class TestUsersData extends BaseTest {
 
         assertEquals(summaryValue.size(), 1);
         Map<String, ValueData> summary = ((MapValueData)summaryValue.getAll().get(0)).getAll();
-        assertEquals(summary.get(UsersStatisticsList.PAAS_DEPLOYS).getAsString(), "2");
         assertEquals(summary.get(UsersStatisticsList.SESSIONS).getAsString(), "2");
         assertEquals(summary.get(UsersStatisticsList.INVITES).getAsString(), "1");
-        assertEquals(summary.get(UsersStatisticsList.DEPLOYS).getAsString(), "3");
-        assertEquals(summary.get(UsersStatisticsList.BUILDS).getAsString(), "0");
+        assertEquals(summary.get(UsersStatisticsList.DEPLOYS).getAsString(), "2");
+        assertEquals(summary.get(UsersStatisticsList.BUILDS).getAsString(), "1");
         assertEquals(summary.get(UsersStatisticsList.DEBUGS).getAsString(), "1");
         assertEquals(summary.get(UsersStatisticsList.FACTORIES).getAsString(), "1");
         assertEquals(summary.get(UsersStatisticsList.PROJECTS).getAsString(), "1");

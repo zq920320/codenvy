@@ -17,14 +17,28 @@
  */
 package com.codenvy.analytics.metrics.workspaces;
 
-import com.codenvy.analytics.datamodel.*;
-import com.codenvy.analytics.metrics.*;
+import com.codenvy.analytics.datamodel.ListValueData;
+import com.codenvy.analytics.datamodel.MapValueData;
+import com.codenvy.analytics.datamodel.StringValueData;
+import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.datamodel.ValueDataUtil;
+import com.codenvy.analytics.metrics.AbstractListValueResulted;
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Metric;
+import com.codenvy.analytics.metrics.MetricFactory;
+import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.metrics.ReadBasedSummariziable;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
 import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
@@ -60,7 +74,6 @@ public class WorkspacesStatisticsList extends AbstractListValueResulted implemen
                             INVITES,
                             RUN_TIME,
                             BUILD_TIME,
-                            PAAS_DEPLOYS,
                             JOINED_USERS};
     }
 
@@ -79,7 +92,6 @@ public class WorkspacesStatisticsList extends AbstractListValueResulted implemen
         group.put(INVITES, new BasicDBObject("$sum", "$" + INVITES));
         group.put(RUN_TIME, new BasicDBObject("$sum", "$" + RUN_TIME));
         group.put(BUILD_TIME, new BasicDBObject("$sum", "$" + BUILD_TIME));
-        group.put(PAAS_DEPLOYS, new BasicDBObject("$sum", "$" + PAAS_DEPLOYS));
         group.put(JOINED_USERS, new BasicDBObject("$sum", "$" + JOINED_USERS));
 
         DBObject project = new BasicDBObject();
@@ -95,7 +107,6 @@ public class WorkspacesStatisticsList extends AbstractListValueResulted implemen
         project.put(INVITES, "$" + INVITES);
         project.put(RUN_TIME, "$" + RUN_TIME);
         project.put(BUILD_TIME, "$" + BUILD_TIME);
-        project.put(PAAS_DEPLOYS, "$" + PAAS_DEPLOYS);
         project.put(JOINED_USERS, "$" + JOINED_USERS);
 
         return new DBObject[]{new BasicDBObject("$group", group),

@@ -103,10 +103,6 @@ public class TestProjectsStatistics extends BaseTest {
                                 .build());
 
         // added event of build project without "project-created" event within the log
-        events.add(Event.Builder.createProjectBuiltEvent("user1@gmail.com", "ws1", "sid2", "project2", "spring")
-                                .withDate("2013-01-01")
-                                .withTime("10:13:00")
-                                .build());
         events.add(Event.Builder.createBuildStartedEvent("user1@gmail.com", "ws1", "project2", "spring", "id2")
                                 .withDate("2013-01-01")
                                 .withTime("10:14:00")
@@ -159,9 +155,8 @@ public class TestProjectsStatistics extends BaseTest {
         assertEquals(m.get("project").getAsString(), "project2");
         assertEquals(m.get("ws").getAsString(), "wsid1");
         assertEquals(m.get("project_type").getAsString(), "spring");
-        assertEquals(m.get("date"), LongValueData.valueOf(fullDateFormat.parse("2013-01-01 10:13:00").getTime()));
+        assertEquals(m.get("date"), LongValueData.valueOf(fullDateFormat.parse("2013-01-01 10:14:00").getTime()));
         assertEquals(m.get("user").getAsString(), "user1@gmail.com");
-        
         assertEquals(m.get("code_refactories").getAsString(), "0");
         assertEquals(m.get("code_completes").getAsString(), "0");
         assertEquals(m.get("builds").getAsString(), "1");
@@ -172,7 +167,6 @@ public class TestProjectsStatistics extends BaseTest {
         assertEquals(m.get("artifact_deploys").getAsString(), "0");
         assertEquals(m.get("project_creates").getAsString(), "0");
         assertEquals(m.get("project_destroys").getAsString(), "0");
-        assertEquals(m.get("paas_deploys").getAsString(), "0");
         assertEquals(m.get("run_time").getAsString(), "0");
         assertEquals(m.get("build_time").getAsString(), "60000");
         assertEquals(m.get("debug_time").getAsString(), "0");
@@ -184,18 +178,16 @@ public class TestProjectsStatistics extends BaseTest {
         assertEquals(m.get("project_type").getAsString(), "jar");
         assertEquals(m.get("date"), LongValueData.valueOf(fullDateFormat.parse("2013-01-01 10:00:00").getTime()));
         assertEquals(m.get("user").getAsString(), "user1@gmail.com");
-        
         assertEquals(m.get("code_refactories").getAsString(), "0");
         assertEquals(m.get("code_completes").getAsString(), "0");
-        assertEquals(m.get("builds").getAsString(), "0");
+        assertEquals(m.get("builds").getAsString(), "1");
         assertEquals(m.get("runs").getAsString(), "1");
         assertEquals(m.get("debugs").getAsString(), "1");
-        assertEquals(m.get("deploys").getAsString(), "2");
+        assertEquals(m.get("deploys").getAsString(), "1");
         assertEquals(m.get("build_interrupts").getAsString(), "0");
         assertEquals(m.get("artifact_deploys").getAsString(), "0");
         assertEquals(m.get("project_creates").getAsString(), "1");
         assertEquals(m.get("project_destroys").getAsString(), "1");
-        assertEquals(m.get("paas_deploys").getAsString(), "1");
         assertEquals(m.get("run_time").getAsString(), "60000");
         assertEquals(m.get("build_time").getAsString(), "60000");
         assertEquals(m.get("debug_time").getAsString(), "60000");
@@ -222,15 +214,14 @@ public class TestProjectsStatistics extends BaseTest {
 
         assertEquals(m.get("code_refactories").getAsString(), "0");
         assertEquals(m.get("code_completes").getAsString(), "0");
-        assertEquals(m.get("builds").getAsString(), "0");
+        assertEquals(m.get("builds").getAsString(), "1");
         assertEquals(m.get("runs").getAsString(), "1");
         assertEquals(m.get("debugs").getAsString(), "1");
-        assertEquals(m.get("deploys").getAsString(), "2");
+        assertEquals(m.get("deploys").getAsString(), "1");
         assertEquals(m.get("build_interrupts").getAsString(), "0");
         assertEquals(m.get("artifact_deploys").getAsString(), "0");
         assertEquals(m.get("project_creates").getAsString(), "1");
         assertEquals(m.get("project_destroys").getAsString(), "1");
-        assertEquals(m.get("paas_deploys").getAsString(), "1");
         assertEquals(m.get("run_time").getAsString(), "60000");
         assertEquals(m.get("build_time").getAsString(), "60000");
         assertEquals(m.get("debug_time").getAsString(), "60000");
@@ -249,15 +240,14 @@ public class TestProjectsStatistics extends BaseTest {
         Map<String, ValueData> m = ((MapValueData)summaryValue.getAll().get(0)).getAll();
         assertEquals(m.get("code_refactories").getAsString(), "0");
         assertEquals(m.get("code_completes").getAsString(), "0");
-        assertEquals(m.get("builds").getAsString(), "1");
+        assertEquals(m.get("builds").getAsString(), "2");
         assertEquals(m.get("runs").getAsString(), "1");
         assertEquals(m.get("debugs").getAsString(), "1");
-        assertEquals(m.get("deploys").getAsString(), "2");
+        assertEquals(m.get("deploys").getAsString(), "1");
         assertEquals(m.get("build_interrupts").getAsString(), "0");
         assertEquals(m.get("artifact_deploys").getAsString(), "0");
         assertEquals(m.get("project_creates").getAsString(), "1");
         assertEquals(m.get("project_destroys").getAsString(), "1");
-        assertEquals(m.get("paas_deploys").getAsString(), "1");
         assertEquals(m.get("run_time").getAsString(), "60000");
         assertEquals(m.get("build_time").getAsString(), "120000");
         assertEquals(m.get("debug_time").getAsString(), "60000");

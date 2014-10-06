@@ -61,7 +61,6 @@ public class ProjectsStatisticsList extends AbstractListValueResulted implements
                             ARTIFACT_DEPLOYS,
                             PROJECT_CREATES,
                             PROJECT_DESTROYS,
-                            PAAS_DEPLOYS,
                             RUN_TIME,
                             BUILD_TIME,
                             DEBUG_TIME,
@@ -87,7 +86,6 @@ public class ProjectsStatisticsList extends AbstractListValueResulted implements
         group.put(ARTIFACT_DEPLOYS, new BasicDBObject("$sum", "$" + ARTIFACT_DEPLOYS));
         group.put(PROJECT_CREATES, new BasicDBObject("$sum", "$" + PROJECT_CREATES));
         group.put(PROJECT_DESTROYS, new BasicDBObject("$sum", "$" + PROJECT_DESTROYS));
-        group.put(PAAS_DEPLOYS, new BasicDBObject("$sum", "$" + PAAS_DEPLOYS));
         group.put(RUN_TIME, new BasicDBObject("$sum", "$" + RUN_TIME));
         group.put(BUILD_TIME, new BasicDBObject("$sum", "$" + BUILD_TIME));
         group.put(DEBUG_TIME, new BasicDBObject("$sum", "$" + DEBUG_TIME));
@@ -109,7 +107,6 @@ public class ProjectsStatisticsList extends AbstractListValueResulted implements
         project.put(ARTIFACT_DEPLOYS, "$" + ARTIFACT_DEPLOYS);
         project.put(PROJECT_CREATES, "$" + PROJECT_CREATES);
         project.put(PROJECT_DESTROYS, "$" + PROJECT_DESTROYS);
-        project.put(PAAS_DEPLOYS, "$" + PAAS_DEPLOYS);
         project.put(RUN_TIME, "$" + RUN_TIME);
         project.put(BUILD_TIME, "$" + BUILD_TIME);
         project.put(DEBUG_TIME, "$" + DEBUG_TIME);

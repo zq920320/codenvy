@@ -74,7 +74,7 @@ public class TestActOn extends AbstractUsersActivityTest {
         assertEquals("company", user1Data.get(HEADERS.get(AbstractMetric.USER_COMPANY)));
         assertEquals("2013-11-01", user1Data.get(HEADERS.get(ActOn.CREATION_DATE)));
         assertEquals("2", user1Data.get(HEADERS.get(UsersStatisticsList.PROJECTS)));
-        assertEquals("0", user1Data.get(HEADERS.get(UsersStatisticsList.BUILDS)));
+        assertEquals("1", user1Data.get(HEADERS.get(UsersStatisticsList.BUILDS)));
         assertEquals("0", user1Data.get(HEADERS.get(UsersStatisticsList.RUNS)));
         assertEquals("0", user1Data.get(HEADERS.get(UsersStatisticsList.DEPLOYS)));
         assertEquals("5", user1Data.get(HEADERS.get(UsersStatisticsList.TIME)));
@@ -86,8 +86,7 @@ public class TestActOn extends AbstractUsersActivityTest {
         assertEquals("120", user1Data.get(HEADERS.get(UsersStatisticsList.BUILD_TIME)));
         assertEquals("0", user1Data.get(HEADERS.get(UsersStatisticsList.RUN_TIME)));
         assertEquals("true", user1Data.get(HEADERS.get(ActOn.PROFILE_COMPLETED)));
-        assertEquals("0", user1Data.get(HEADERS.get(UsersStatisticsList.PAAS_DEPLOYS)));
-        assertEquals("29", user1Data.get(HEADERS.get(ActOn.POINTS)));
+        assertEquals("31", user1Data.get(HEADERS.get(ActOn.POINTS)));
 
         // verify "user2@gmail.com" data
         Map<String, String> user2Data = content.get("user2@gmail.com");
@@ -111,8 +110,7 @@ public class TestActOn extends AbstractUsersActivityTest {
         assertEquals("0", user2Data.get(HEADERS.get(UsersStatisticsList.BUILD_TIME)));
         assertEquals("120", user2Data.get(HEADERS.get(UsersStatisticsList.RUN_TIME)));
         assertEquals("false", user2Data.get(HEADERS.get(ActOn.PROFILE_COMPLETED)));
-        assertEquals("6", user2Data.get(HEADERS.get(UsersStatisticsList.PAAS_DEPLOYS)));
-        assertEquals("94", user2Data.get(HEADERS.get(ActOn.POINTS)));
+        assertEquals("82", user2Data.get(HEADERS.get(ActOn.POINTS)));
 
         // verify "user3@gmail.com" data
         Map<String, String> user3Data = content.get("user3@gmail.com");
@@ -136,7 +134,6 @@ public class TestActOn extends AbstractUsersActivityTest {
         assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.BUILD_TIME)));
         assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.RUN_TIME)));
         assertEquals("false", user3Data.get(HEADERS.get(ActOn.PROFILE_COMPLETED)));
-        assertEquals("1", user3Data.get(HEADERS.get(UsersStatisticsList.PAAS_DEPLOYS)));
-        assertEquals("12", user3Data.get(HEADERS.get(ActOn.POINTS)));
+        assertEquals("10", user3Data.get(HEADERS.get(ActOn.POINTS)));
     }
 }

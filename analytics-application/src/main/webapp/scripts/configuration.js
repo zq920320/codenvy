@@ -1003,7 +1003,6 @@ function Configuration() {
                 "# Debugs": "debugs",
                 "# Deploys": "deploys",
                 "# Artifact Deploys": "artifact_deploys",
-                "# PAAS Deploys": "paas_deploys",
                 "# Code Refactories": "code_refactories",
                 "# Code Completes": "code_completes",
             },

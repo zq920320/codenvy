@@ -20,8 +20,21 @@ package com.codenvy.analytics.services.acton;
 
 import com.codenvy.analytics.Configurator;
 import com.codenvy.analytics.MailService;
-import com.codenvy.analytics.datamodel.*;
-import com.codenvy.analytics.metrics.*;
+import com.codenvy.analytics.datamodel.ListValueData;
+import com.codenvy.analytics.datamodel.LongValueData;
+import com.codenvy.analytics.datamodel.MapValueData;
+import com.codenvy.analytics.datamodel.SetValueData;
+import com.codenvy.analytics.datamodel.StringValueData;
+import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.datamodel.ValueDataFactory;
+import com.codenvy.analytics.metrics.AbstractMetric;
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Metric;
+import com.codenvy.analytics.metrics.MetricFactory;
+import com.codenvy.analytics.metrics.MetricFilter;
+import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.metrics.ReadBasedMetric;
 import com.codenvy.analytics.metrics.users.AbstractUsersProfile;
 import com.codenvy.analytics.metrics.users.UsersStatisticsList;
 import com.codenvy.analytics.services.Feature;
@@ -33,12 +46,23 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.SocketTimeoutException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static com.codenvy.analytics.Utils.toArray;
 
@@ -93,7 +117,6 @@ public class ActOn extends Feature {
         put(UsersStatisticsList.BUILD_TIME, "build-time");
         put(UsersStatisticsList.RUN_TIME, "run-time");
         put(PROFILE_COMPLETED, PROFILE_COMPLETED);
-        put(UsersStatisticsList.PAAS_DEPLOYS, "paas-deploys");
         put(POINTS, POINTS);
     }};
 
@@ -362,9 +385,6 @@ public class ActOn extends Feature {
         writeNotNullStr(out, Boolean.toString(profileCompleted));
         out.write(",");
 
-        writeInt(out, stat.get(UsersStatisticsList.PAAS_DEPLOYS));
-        out.write(",");
-
         writeInt(out, getPoints(stat, profile));
 
         out.newLine();
@@ -424,7 +444,6 @@ public class ActOn extends Feature {
             int runs = new Integer(statistics.get(UsersStatisticsList.RUNS).toString());
             int debugs = new Integer(statistics.get(UsersStatisticsList.DEBUGS).toString());
             int deploys = new Integer(statistics.get(UsersStatisticsList.DEPLOYS).toString());
-            int paasDeploys = new Integer(statistics.get(UsersStatisticsList.PAAS_DEPLOYS).toString());
             int factories = new Integer(statistics.get(UsersStatisticsList.FACTORIES).toString());
             int invitations = new Integer(statistics.get(UsersStatisticsList.INVITES).toString());
 
@@ -439,15 +458,14 @@ public class ActOn extends Feature {
             total += builds * 2;
             total += runs * 2;
             total += debugs * 2;
-            total += deploys * 2;
-            total += paasDeploys * 10;
+            total += deploys * 10;
             total += factories * 10;
             total += invitations * 10;
 
             // compute Metric Measurement Points
             total += (logins > 5) ? 5 : 0;
             total += (projects > 5) ? 5 : 0;
-            total += (paasDeploys > 5) ? 10 : 0;
+            total += (deploys > 5) ? 10 : 0;
             total += (profileCompleted) ? 5 : 0;
             total += (time > 40) ? 50 : 0;
             total += (buildTime > 3) ? 50 : 0;

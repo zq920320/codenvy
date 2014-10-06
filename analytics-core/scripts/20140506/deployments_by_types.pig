@@ -28,7 +28,7 @@ a4 = extractParam(a3, 'TYPE', project_type);
 a = FOREACH a4 GENERATE dt, ws, user, project, project_type;
 
 -- find project-deployed events
-b1 = filterByEvent(l, 'project-deployed,application-created');
+b1 = filterByEvent(l, 'application-created');
 b2 = extractParam(b1, 'PROJECT', project);
 b3 = extractParam(b2, 'PAAS', paas);
 b4 = extractParam(b3, 'TYPE', project_type);

@@ -86,7 +86,7 @@ public class TestMarketoReportGenerator extends AbstractUsersActivityTest {
         Map<String, String> user1Data = content.get("user1@gmail.com");
         assertEquals(HEADERS.size(), user1Data.size());
         assertEquals("user1@gmail.com", user1Data.get(HEADERS.get(AbstractMetric.ID)));
-        assertEquals("0", user1Data.get(HEADERS.get(UsersStatisticsList.BUILDS)));
+        assertEquals("1", user1Data.get(HEADERS.get(UsersStatisticsList.BUILDS)));
         assertEquals("0", user1Data.get(HEADERS.get(UsersStatisticsList.DEPLOYS)));
         assertEquals("true", user1Data.get(HEADERS.get(MarketoReportGenerator.PROFILE_COMPLETED)));
         assertEquals("2", user1Data.get(HEADERS.get(UsersStatisticsList.PROJECTS)));
@@ -94,7 +94,7 @@ public class TestMarketoReportGenerator extends AbstractUsersActivityTest {
         assertEquals("5", user1Data.get(HEADERS.get(UsersStatisticsList.TIME)));
         assertEquals("0", user1Data.get(HEADERS.get(UsersStatisticsList.LOGINS)));
         assertEquals("", user1Data.get(HEADERS.get(MarketoReportGenerator.LAST_PRODUCT_LOGIN)));
-        assertEquals("29", user1Data.get(HEADERS.get(MarketoReportGenerator.POINTS)));
+        assertEquals("31", user1Data.get(HEADERS.get(MarketoReportGenerator.POINTS)));
 
         // verify "user2@gmail.com" data
         Map<String, String> user2Data = content.get("user2@gmail.com");
@@ -108,7 +108,7 @@ public class TestMarketoReportGenerator extends AbstractUsersActivityTest {
         assertEquals("10", user2Data.get(HEADERS.get(UsersStatisticsList.TIME)));
         assertEquals("2", user2Data.get(HEADERS.get(UsersStatisticsList.LOGINS)));
         assertEquals("2013-11-01 10:10:30", user2Data.get(HEADERS.get(MarketoReportGenerator.LAST_PRODUCT_LOGIN)));        
-        assertEquals("94", user2Data.get(HEADERS.get(MarketoReportGenerator.POINTS)));
+        assertEquals("82", user2Data.get(HEADERS.get(MarketoReportGenerator.POINTS)));
 
         // verify "user3@gmail.com" data
         Map<String, String> user3Data = content.get("user3@gmail.com");
@@ -122,7 +122,7 @@ public class TestMarketoReportGenerator extends AbstractUsersActivityTest {
         assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.TIME)));
         assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.LOGINS)));
         assertEquals("", user3Data.get(HEADERS.get(MarketoReportGenerator.LAST_PRODUCT_LOGIN)));       
-        assertEquals("12", user3Data.get(HEADERS.get(MarketoReportGenerator.POINTS)));
+        assertEquals("10", user3Data.get(HEADERS.get(MarketoReportGenerator.POINTS)));
     }
 
     @Test
@@ -170,6 +170,6 @@ public class TestMarketoReportGenerator extends AbstractUsersActivityTest {
         assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.TIME)));
         assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.LOGINS)));
         assertEquals("", user3Data.get(HEADERS.get(MarketoReportGenerator.LAST_PRODUCT_LOGIN)));
-        assertEquals("24", user3Data.get(HEADERS.get(MarketoReportGenerator.POINTS)));
+        assertEquals("20", user3Data.get(HEADERS.get(MarketoReportGenerator.POINTS)));
     }
 }

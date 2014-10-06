@@ -88,7 +88,7 @@ public class TestTopMetrics extends BaseTest {
                                 .withTime("10:04:00")
                                 .build());
 
-        events.add(Event.Builder.createProjectBuiltEvent("user1@gmail.com", "tmp-1", "session", "project", "type")
+        events.add(Event.Builder.createBuildStartedEvent("user1@gmail.com", "tmp-1", "project", "type", "id")
                                 .withDate("2013-02-10")
                                 .withTime("10:04:00")
                                 .build());
@@ -167,7 +167,7 @@ public class TestTopMetrics extends BaseTest {
                                   "50.0", "50.0", "100.0", "0.0"
                                  );
         checkTopFactoriesDataItem((MapValueData)all.get(1), "factoryUrl0", "1", "0", "1", "300000", "100.0", "100.0",
-                                  "100.0",
+                                  "0.0",
                                   "0.0", "100.0", "0.0", "100.0"
                                  );
     }
@@ -233,7 +233,7 @@ public class TestTopMetrics extends BaseTest {
                                   "50.0",
                                   "50.0", "100.0", "0.0"
                                  );
-        checkTopReferrersDataItem((MapValueData)all.get(1), "referrer1", "1", "0", "1", "300000", "100.0", "100.0", "100.0",
+        checkTopReferrersDataItem((MapValueData)all.get(1), "referrer1", "1", "0", "1", "300000", "100.0", "100.0", "0.0",
                                   "0.0", "100.0", "0.0", "100.0"
                                  );
     }
