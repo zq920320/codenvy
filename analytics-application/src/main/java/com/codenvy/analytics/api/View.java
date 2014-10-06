@@ -42,7 +42,6 @@ import com.codenvy.dto.server.DtoFactory;
 import com.codenvy.dto.server.JsonArrayImpl;
 import com.codenvy.dto.server.JsonStringMapImpl;
 
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,6 +80,7 @@ import static com.codenvy.analytics.datamodel.ValueDataUtil.getAsList;
 import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsList;
 import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsMap;
 import static com.codenvy.analytics.metrics.Context.valueOf;
+import static org.apache.commons.io.IOUtils.copy;
 
 /**
  * @author Alexander Reshetnyak
@@ -265,6 +265,7 @@ public class View {
     public Response getViewDataAsCsv(@PathParam("name") String viewName,
                                      @Context UriInfo uriInfo,
                                      @Context SecurityContext securityContext) {
+
         try {
             Map<String, String> params = utils.extractParams(uriInfo,
                                                              securityContext);
@@ -286,8 +287,13 @@ public class View {
 
             return Response.status(Response.Status.OK).entity(getStreamingOutput(csvFile)).build();
         } catch (Exception e) {
-            LOG.error(e.getMessage(), e);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+            Throwable cause = e.getCause();
+            if (cause != null && cause.getMessage().contains("aggregation result exceeds maximum document size")) {
+                throw new IllegalStateException("Requested document exceeded maximum document size. Please use filter by date to decrease sample.");
+            } else {
+                LOG.error(e.getMessage(), e);
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+            }
         }
     }
 
@@ -296,7 +302,7 @@ public class View {
             @Override
             public void write(OutputStream os) throws IOException, WebApplicationException {
                 try (FileInputStream csvInputStream = new FileInputStream(csvFile)) {
-                    IOUtils.copy(csvInputStream, os);
+                    copy(csvInputStream, os);
                 } finally {
                     csvFile.delete();
                 }
