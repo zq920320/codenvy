@@ -32,6 +32,7 @@ import com.mongodb.MongoException;
 import javax.inject.Named;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 import static com.codenvy.api.dao.mongo.MongoUtil.asDBList;
@@ -98,8 +99,13 @@ public class PreferenceDaoImpl implements PreferenceDao {
 
     @Override
     public void setPreferences(String userId, Map<String, String> preferences) throws ServerException, NotFoundException {
+        if (preferences == null) {
+            throw new IllegalArgumentException("Not null preferences required");
+        }
         checkUserExists(userId);
-        if (preferences != null && !preferences.isEmpty()) {
+        if (preferences.isEmpty()) {
+            remove(userId);
+        } else {
             try {
                 save(userId, preferences);
             } catch (MongoException ex) {

@@ -89,7 +89,7 @@ public class PreferenceDaoTest extends BaseDaoTest {
     }
 
     @Test
-    public void shouldNotPersistEmptyPreferences() throws Exception {
+    public void shouldRemovePreferencesWhenPreferencesAreEmpty() throws Exception {
         final String userId = "test-user-id";
         when(userDao.getById(userId)).thenReturn(mock(User.class));
 
@@ -99,15 +99,12 @@ public class PreferenceDaoTest extends BaseDaoTest {
         assertNull(preferencesDocument);
     }
 
-    @Test
+    @Test(expectedExceptions = IllegalArgumentException.class)
     public void shouldNotPersistNullPreferences() throws Exception {
         final String userId = "test-user-id";
         when(userDao.getById(userId)).thenReturn(mock(User.class));
 
         preferenceDao.setPreferences(userId, null);
-
-        final DBObject preferencesDocument = collection.findOne(new BasicDBObject("_id", userId));
-        assertNull(preferencesDocument);
     }
 
     @Test
