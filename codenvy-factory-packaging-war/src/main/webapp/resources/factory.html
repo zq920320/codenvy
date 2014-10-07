@@ -23,256 +23,270 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <link rel="stylesheet" type="text/css" href="factory.css">
 </head>
-<body style="padding:0; margin:0; background:transparent;"></body>
 
 <script type="text/javascript">
 
-    var _uid;
+var FactoryButton = new function() {
 
-    var _style;
+    /*
+     * Determines whether string conteins substring.
+     */
+    if (!String.prototype.contains) {
+        String.prototype.contains = function (substring) {
+            return this.indexOf(substring) >= 0;
+        }
+    }
 
-    var _factory_id;
 
-    var _click_url;
+    var factoryID, uID;
 
-    var _logo_url;
+    var style;
 
-    // URL to get count of acepted reequests
-    var _accepted_url;
+    var logoURL;
 
-    // Element which contains the number requests to create factory service
-    var _accepted_placeholder;
+    var clickURL;
+
+    var acceptedElement, acceptedURL;
 
 
     /*
-     *
+     * Returns value of named query parameter.
      */
-    function getQueryParam(param){
+    this.getQueryParam = function(param) {
         var search = window.location.search.substring(1);
         var array = search.split('&');
-        for(var i = 0; i < array.length; i++){
+        for(var i = 0; i < array.length; i++) {
             var pair = array[i].split('=');
             if(pair[0] == param){
                 return pair[1];
             }
         }
-    }
+    };
 
-    function getLink(json, rel) {
-        for (i = 0; i < json.links.length; i++) {
-            var linkObj = json.links[i];
-            if (linkObj.rel == rel) {
-                return linkObj.href;
-            }
-        }
-
-        return null;
-    }
-
-    function clickHandler() {
-        if (_click_url) {
-            window.open(_click_url, "_blank");
-            return;
-        }
-    }
 
     /*
-     <div class="codenow-white"></div>
+     * Sends a message to parent frame with with request to change size of a button.
      */
-    function embedWhite() {
+    this.resize = function(width, height) {
+        if (FactoryButton.factoryID && FactoryButton.uID) {
+            var message = "resize-factory-button:" + FactoryButton.factoryID + ":" + FactoryButton.uID + ":" + width + ":" + height;
+            setTimeout(function() {
+                parent.postMessage(message, "*");
+            }, 10);
+        }
+    };
+
+
+    /*
+     * Handles mouse clicking on the button.
+     */
+    this.clickHandler = function() {
+        if (FactoryButton.clickURL) {
+            window.open(FactoryButton.clickURL, "_blank");
+        }
+    };
+
+
+    /*
+     * <div class="codenow-white"></div>
+     */
+    this.embedWhite = function() {
         var _embed = document.createElement("div");
         _embed.classList.add("codenow-white");
-        _embed.onclick = clickHandler;
+        _embed.onclick = FactoryButton.clickHandler;
         document.body.appendChild(_embed);
 
-        resize(77, 21);
-    }
+        FactoryButton.resize(77, 21);
+    };
+
 
     /*
-     <div class="codenow-dark"></div>
+     * <div class="codenow-dark"></div>
      */
-    function embedDark() {
+    this.embedDark = function() {
         var _embed = document.createElement("div");
         _embed.classList.add("codenow-dark");
-        _embed.onclick = clickHandler;
+        _embed.onclick = FactoryButton.clickHandler;
         document.body.appendChild(_embed);
 
-        resize(77, 21);
-    }
+        FactoryButton.resize(77, 21);
+    };
+
 
     /*
-     <div class="codenow-horizontal">
-        <div class="codenow-white codenow-bottom"></div>
-        <div class="codenow-counter-horizontal"><span>333</span></div>
-     </div>
+     * <div class="codenow-horizontal">
+     *    <div class="codenow-white codenow-bottom"></div>
+     *    <div class="codenow-counter-horizontal"><span>333</span></div>
+     * </div>
      */
-    function embedHorizontalWhite() {
+    this.embedHorizontalWhite = function() {
         var _embed = document.createElement("div");
         _embed.classList.add("codenow-horizontal");
         document.body.appendChild(_embed);
 
-        resize(118, 21);
-
         var _button = document.createElement("div");
         _button.classList.add("codenow-white");
         _button.classList.add("codenow-bottom");
-        _button.onclick = clickHandler;
+        _button.onclick = FactoryButton.clickHandler;
         _embed.appendChild(_button);
 
         var _counter = document.createElement("div");
         _counter.classList.add("codenow-counter-horizontal");
         _embed.appendChild(_counter);
 
-        _accepted_placeholder = document.createElement("span");
-        _accepted_placeholder.innerHTML = "...";
-        _counter.appendChild(_accepted_placeholder);
+        FactoryButton.acceptedElement = document.createElement("span");
+        FactoryButton.acceptedElement.innerHTML = "...";
+        _counter.appendChild(FactoryButton.acceptedElement);
+
+        FactoryButton.resize(118, 21);
     }
 
+
     /*
-     <div class="codenow-horizontal">
-        <div class="codenow-dark codenow-bottom"></div>
-        <div class="codenow-counter-horizontal"><span>333</span></div>
-     </div>
+     * <div class="codenow-horizontal">
+     *    <div class="codenow-dark codenow-bottom"></div>
+     *    <div class="codenow-counter-horizontal"><span>333</span></div>
+     * </div>
      */
-    function embedHorizontalDark() {
+    this.embedHorizontalDark = function() {
         var _embed = document.createElement("div");
         _embed.classList.add("codenow-horizontal");
         document.body.appendChild(_embed);
 
-        resize(118, 21);
-
         var _button = document.createElement("div");
         _button.classList.add("codenow-dark");
         _button.classList.add("codenow-bottom");
-        _button.onclick = clickHandler;
+        _button.onclick = FactoryButton.clickHandler;
         _embed.appendChild(_button);
 
         var _counter = document.createElement("div");
         _counter.classList.add("codenow-counter-horizontal");
         _embed.appendChild(_counter);
 
-        _accepted_placeholder = document.createElement("span");
-        _accepted_placeholder.innerHTML = "...";
-        _counter.appendChild(_accepted_placeholder);
+        FactoryButton.acceptedElement = document.createElement("span");
+        FactoryButton.acceptedElement.innerHTML = "...";
+        _counter.appendChild(FactoryButton.acceptedElement);
+
+        FactoryButton.resize(118, 21);
     }
 
+
     /*
-     <div class="codenow-vertical">
-        <div class="codenow-counter-vertical"><span>333</span></div>
-        <div class="codenow-white codenow-bottom"></div>
-     </div>
+     * <div class="codenow-vertical">
+     *    <div class="codenow-counter-vertical"><span>333</span></div>
+     *    <div class="codenow-white codenow-bottom"></div>
+     * </div>
      */
-    function embedVerticalWhite() {
+    this.embedVerticalWhite = function() {
         var _embed = document.createElement("div");
         _embed.classList.add("codenow-vertical");
         document.body.appendChild(_embed);
-
-        resize(77, 61);
 
         var _counter = document.createElement("div");
         _counter.classList.add("codenow-counter-vertical");
         _embed.appendChild(_counter);
 
-        _accepted_placeholder = document.createElement("span");
-        _accepted_placeholder.innerHTML = "...";
-        _counter.appendChild(_accepted_placeholder);
+        FactoryButton.acceptedElement = document.createElement("span");
+        FactoryButton.acceptedElement.innerHTML = "...";
+        _counter.appendChild(FactoryButton.acceptedElement);
 
         var _button = document.createElement("div");
         _button.classList.add("codenow-white");
         _button.classList.add("codenow-bottom");
-        _button.onclick = clickHandler;
+        _button.onclick = FactoryButton.clickHandler;
         _embed.appendChild(_button);
+
+        FactoryButton.resize(77, 61);
     }
 
+
     /*
-     <div class="codenow-vertical">
-        <div class="codenow-counter-vertical"><span>333</span></div>
-        <div class="codenow-dark codenow-bottom"></div>
-     </div>
+     * <div class="codenow-vertical">
+     *    <div class="codenow-counter-vertical"><span>333</span></div>
+     *    <div class="codenow-dark codenow-bottom"></div>
+     * </div>
      */
-    function embedVerticalDark() {
+    this.embedVerticalDark = function() {
         var _embed = document.createElement("div");
         _embed.classList.add("codenow-vertical");
         document.body.appendChild(_embed);
-
-        resize(77, 61);
 
         var _counter = document.createElement("div");
         _counter.classList.add("codenow-counter-vertical");
         _embed.appendChild(_counter);
 
-        _accepted_placeholder = document.createElement("span");
-        _accepted_placeholder.innerHTML = "...";
-        _counter.appendChild(_accepted_placeholder);
+        FactoryButton.acceptedElement = document.createElement("span");
+        FactoryButton.acceptedElement.innerHTML = "...";
+        _counter.appendChild(FactoryButton.acceptedElement);
 
         var _button = document.createElement("div");
         _button.classList.add("codenow-dark");
         _button.classList.add("codenow-bottom");
-        _button.onclick = clickHandler;
+        _button.onclick = FactoryButton.clickHandler;
         _embed.appendChild(_button);
+
+        FactoryButton.resize(77, 61);
     }
 
+
     /*
-     <div class="advanced-factory">
-        <img alt="" src="..." />
-        <a></a>
-        <div></div>
-     </div>
+     * <div class="advanced-factory">
+     *    <img alt="" src="..." />
+     *    <a></a>
+     *    <div></div>
+     * </div>
      */
-    function embedAdvanced() {
+    this.embedAdvanced = function() {
         var _embed = document.createElement("div");
         _embed.classList.add("advanced-factory");
         document.body.appendChild(_embed);
 
-        resize(112, 113);
-
         var _logoImage = document.createElement("img");
-        if (_logo_url) {
+        if (FactoryButton.logoURL) {
             _logoImage.style.opacity = 0;
-            _logoImage.src = _logo_url;
+            _logoImage.src = FactoryButton.logoURL;
         } else {
             _logoImage.classList.add("advanced-factory-no-logo-available");
         }
 
         _logoImage.onload = function(e) {
             e.target.style.opacity = 1;
-        }
+        };
 
         _logoImage.onabort = _logoImage.onerror = function(e) {
             e.target.style.opacity = 1;
             e.target.classList.add("advanced-factory-no-logo-available");
-        }
+        };
 
-        //_logoImage.onabort = _logoImage.onerror;
         _embed.appendChild(_logoImage);
 
         var _border = document.createElement("a");
         _embed.appendChild(_border);
 
         var _button = document.createElement("div");
-        _button.onclick = clickHandler;
+        _button.onclick = FactoryButton.clickHandler;
         _embed.appendChild(_button);
+
+        FactoryButton.resize(112, 113);
     }
 
     /*
-     <div class="advanced-factory-noted">
-        <img alt="" src="..." />
-        <a></a>
-        <div></div>
-        <span>33</span>
-     </div>
+     * <div class="advanced-factory-noted">
+     *    <img alt="" src="..." />
+     *    <a></a>
+     *    <div></div>
+     *    <span>33</span>
+     * </div>
      */
-    function embedAdvancedWithCounter() {
+    this.embedAdvancedWithCounter = function() {
         var _embed = document.createElement("div");
         _embed.classList.add("advanced-factory-noted");
         document.body.appendChild(_embed);
 
-        resize(112, 113);
-
         var _logoImage = document.createElement("img");
-        if (_logo_url) {
+        if (FactoryButton.logoURL) {
             _logoImage.style.opacity = 0;
-            _logoImage.src = _logo_url;
+            _logoImage.src = FactoryButton.logoURL;
         } else {
             _logoImage.classList.add("advanced-factory-no-logo-available");
         }
@@ -286,25 +300,67 @@
             e.target.classList.add("advanced-factory-no-logo-available");
         }
 
-        //_logoImage.onabort = _logoImage.onerror;
         _embed.appendChild(_logoImage);
 
         var _border = document.createElement("a");
         _embed.appendChild(_border);
 
         var _button = document.createElement("div");
-        _button.onclick = clickHandler;
+        _button.onclick = FactoryButton.clickHandler;
         _embed.appendChild(_button);
 
-        _accepted_placeholder = document.createElement("span");
-        _accepted_placeholder.innerHTML = "...";
-        _embed.appendChild(_accepted_placeholder);
+        FactoryButton.acceptedElement = document.createElement("span");
+        FactoryButton.acceptedElement.innerHTML = "...";
+        _embed.appendChild(FactoryButton.acceptedElement);
+
+        FactoryButton.resize(112, 113);
     }
 
 
-    function showAccepted() {
+    /*
+     * Embeds factory button.
+     */
+    this.embed = function() {
+        if (!FactoryButton.style) {
+            return;
+        }
+
+        var style = FactoryButton.style.toLowerCase();
+
+        if (style.contains("advanced")) {
+            if (style.contains("counter")) {
+                FactoryButton.embedAdvancedWithCounter();
+            } else {
+                FactoryButton.embedAdvanced();
+            }
+        } else if (style.contains("horizontal")) {
+            if (style.contains("white")) {
+                FactoryButton.embedHorizontalWhite();
+            } else {
+                FactoryButton.embedHorizontalDark();
+            }
+        } else if (style.contains("vertical")) {
+            if (style.contains("white")) {
+                FactoryButton.embedVerticalWhite();
+            } else {
+                FactoryButton.embedVerticalDark();
+            }
+        } else if (style.contains("white")) {
+            FactoryButton.embedWhite();
+        } else if (style.contains("dark")) {
+            FactoryButton.embedDark();
+        }
+
+        FactoryButton.showCreatedProjects();
+    };
+
+
+    /*
+     * Loads and displays the number of created projects.
+     */
+    this.showCreatedProjects = function() {
         try {
-            if (!_accepted_url || !_accepted_placeholder) {
+            if (!FactoryButton.acceptedURL || !FactoryButton.acceptedElement) {
                 return;
             }
 
@@ -315,9 +371,9 @@
                         var value = JSON.parse(request.responseText).value;
                         var digMask=/^\d+$/;
                         if (digMask.test(value)) {
-                            _accepted_placeholder.innerHTML = value;
+                            FactoryButton.acceptedElement.innerHTML = value;
                         } else {
-                            _accepted_placeholder.innerHTML = "?";
+                            FactoryButton.acceptedElement.innerHTML = "?";
                         }
                     } catch (e) {
                         console.log(e.message);
@@ -325,132 +381,142 @@
                 }
             }
 
-            request.open("GET", _accepted_url, true);
+            request.open("GET", FactoryButton.acceptedURL, true);
             request.send();
 
-            setTimeout(showAccepted, 30000);
+            setTimeout(FactoryButton.showCreatedProjects, 30000);
         } catch (e) {
             console.log(e.message);
         }
     }
 
 
-    function resize(width, height) {
-        if (_factory_id) {
-            if (!_uid) {
-                _uid = "";
+    /*
+     * Checks page parameters and displays a Factory button.
+     */
+    this.go = function() {
+        FactoryButton.factoryID = FactoryButton.getQueryParam("factory");
+        FactoryButton.uID = FactoryButton.getQueryParam("uid");
+
+        FactoryButton.style = FactoryButton.getQueryParam("style");
+        if (FactoryButton.style) {
+            FactoryButton.style = decodeURIComponent(FactoryButton.style);
+        }
+
+        FactoryButton.clickURL = FactoryButton.getQueryParam("url");
+        if (FactoryButton.clickURL) {
+            FactoryButton.clickURL = decodeURIComponent(FactoryButton.clickURL);
+        }
+
+        FactoryButton.logoURL = FactoryButton.getQueryParam("logo");
+        if (FactoryButton.logoURL) {
+            FactoryButton.logoURL = decodeURIComponent(FactoryButton.logoURL);
+        }
+
+        if (FactoryButton.factoryID) {
+            FactoryButton.loadFactoryJSON();
+        } else {
+            FactoryButton.embed();
+        }
+    };
+
+
+    /*
+     * Returns link value by relation.
+     */
+    this.getRelatedLink = function(json, rel) {
+        for (i = 0; i < json.links.length; i++) {
+            var linkObj = json.links[i];
+            if (linkObj.rel == rel) {
+                return linkObj.href;
             }
-            var message = "resize-factory-button:" + _factory_id + ":" + _uid + ":" + width + ":" + height;
-            setTimeout(function() {
-                parent.postMessage(message, "*");
-            }, 10);
-        }
-    }
-
-
-    function injectFactoryButton() {
-        switch (_style.toLowerCase()) {
-            case "white":
-                embedWhite();
-                break;
-
-            case "dark":
-                embedDark();
-                break;
-
-            case "horizontal,white":
-            case "white,horizontal":
-                embedHorizontalWhite();
-                break;
-
-            case "horizontal,dark":
-            case "dark,horizontal":
-                embedHorizontalDark();
-                break;
-
-            case "vertical,white":
-            case "white,vertical":
-                embedVerticalWhite();
-                break;
-
-            case "vertical,dark":
-            case "dark,vertical":
-                embedVerticalDark();
-                break;
-
-            case "advanced":
-                embedAdvanced();
-                break;
-
-            case "advanced with counter":
-            case "advanced,counter":
-            case "counter,advanced":
-                embedAdvancedWithCounter();
-                break;
         }
 
-        showAccepted();
+        return null;
     }
 
 
-    _uid = getQueryParam("uid");
+    /*
+     * Loads Factory JSON and fetches Factory button parameters.
+     */
+    this.loadFactoryJSON = function() {
+        try {
+            var url = window.location.protocol + "//" + window.location.host + "/api/factory/" + FactoryButton.factoryID;
+            var request = new XMLHttpRequest();
 
-    _factory_id = getQueryParam("factory");
+            request.onreadystatechange  = function() {
+                if (request.readyState == 4) {
+                    if (request.status == 200) {
+                        var json = JSON.parse(request.responseText);
 
-    _style = getQueryParam("style");
-    if (_style) {
-        _style = decodeURIComponent(_style);
-    }
+                        if (json.button) { /* Factory 2.0 */
+                            FactoryButton.clickURL = FactoryButton.getRelatedLink(json, "create-project");
+                            FactoryButton.acceptedURL = FactoryButton.getRelatedLink(json, "accepted");
 
-    _click_url = getQueryParam("url");
-    if (_click_url) {
-        _click_url = decodeURIComponent(_click_url);
-    }
+                            if (!FactoryButton.style) {
+                                if (json.button.type == "logo") { /* type = logo */
+                                    if (json.button.attributes.counter == "true") {
+                                        FactoryButton.style = "advanced,counter";
+                                    } else {
+                                        FactoryButton.style = "advanced";
+                                    }
+                                } else if (json.button.type == "nologo") { /* type = nologo */
+                                    if (json.button.attributes.counter == "true") { /* nologo with counter */
+                                        if (json.button.attributes.style == "horizontal") { /* nologo, with counter, horizontal */
+                                            if (json.button.attributes.color == "white") {
+                                                FactoryButton.style = "horizontal,white";
+                                            } else if (json.button.attributes.color == "gray") {
+                                                FactoryButton.style = "horizontal,dark";
+                                            }
+                                        } else if (json.button.attributes.style == "vertical") { /* nologo, with counter, vertical */
+                                            if (json.button.attributes.color == "white") {
+                                                FactoryButton.style = "vertical,white";
+                                            } else if (json.button.attributes.color == "gray") {
+                                                FactoryButton.style = "vertical,dark";
+                                            }
+                                        }
+                                    } else { /* nologo without counter */
+                                        if (json.button.attributes.color == "white") {
+                                            FactoryButton.style = "white";
+                                        } else if (json.button.attributes.color == "gray") {
+                                            FactoryButton.style = "dark";
+                                        }
+                                    }
+                                }
+                            }
 
-    _logo_url = getQueryParam("logo");
-    if (_logo_url) {
-        _logo_url = decodeURIComponent(_logo_url);
-    }
+                            if (!FactoryButton.logoURL && json.button.attributes.logo && json.button.attributes.logo.trim()) {
+                                FactoryButton.logoURL = json.button.attributes.logo.trim();
+                            }
 
-    if (_factory_id) {
-        var request = new XMLHttpRequest();
-        request.onreadystatechange  = function() {
+                        } else { /* Earlier versions of Factory */
+                            if (!FactoryButton.style) {
+                                FactoryButton.style = json.style;
+                            }
 
-            if (request.readyState == 4) {
-                if (request.status == 200) {
-                    var json = JSON.parse(request.responseText);
-                    if (!_style) {
-                        _style = json.style;
+                            if (!FactoryButton.logoURL) {
+                                FactoryButton.logoURL = FactoryButton.getRelatedLink(json, "image");
+                            }
+
+                            FactoryButton.clickURL = FactoryButton.getRelatedLink(json, "create-project");
+                            FactoryButton.acceptedURL = FactoryButton.getRelatedLink(json, "accepted");
+                        }
                     }
 
-                    if (!_click_url) {
-                        _click_url = getLink(json, "create-project");
-                    }
-
-                    if (!_logo_url) {
-                        _logo_url = getLink(json, "image");
-                    }
-
-                    _accepted_url = getLink(json, "accepted");
-
-                    injectFactoryButton();
-                } else {
-                    if (_style) {
-                        injectFactoryButton();
-                    }
+                    FactoryButton.embed();
                 }
+            };
 
-            }
-
+            request.open("GET", url, true);
+            request.send();
+        } catch (e) {
+            console.log("Unable to get Factory JSON. " + e.message);
         }
+    };
 
-        var factoryURL = window.location.protocol + "//" + window.location.host + "/api/factory/" + _factory_id;
-        request.open("GET", factoryURL, true);
-        request.send();
-    } else {
-        injectFactoryButton();
-    }
-
+};
 </script>
 
+
+<body style="padding:0; margin:0; background:transparent;" onload="FactoryButton.go();"></body>
 </html>
