@@ -83,6 +83,7 @@ public class PlanDaoImpl implements PlanDao {
         final Map<String, String> properties = (Map<String, String>)planObj.get("properties");
         return DtoFactory.getInstance().createDto(Plan.class).withId(planObj.getString("id"))
                          .withPaid(planObj.getBoolean("paid"))
+                         .withSalesOnly(planObj.getBoolean("salesOnly"))
                          .withServiceId(planObj.getString("serviceId"))
                          .withProperties(properties);
     }
