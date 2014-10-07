@@ -944,8 +944,8 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
         builder.put(Parameters.LOG, log.getAbsolutePath());
 
         // calculate projects list
-        builder.putAll(scriptsManager.getScript(ScriptType.PROJECTS, MetricType.PROJECTS_LIST).getParamsAsMap());
-        pigServer.execute(ScriptType.PROJECTS, builder.build());
+        builder.putAll(scriptsManager.getScript(ScriptType.EVENTS, MetricType.PROJECTS).getParamsAsMap());
+        pigServer.execute(ScriptType.EVENTS, builder.build());
 
         // test expanded metric value
         AbstractCount metric = new CreatedProjects();
@@ -973,8 +973,8 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
 
         // calculate projects list
         builder.put(Parameters.LOG, log.getAbsolutePath());
-        builder.putAll(scriptsManager.getScript(ScriptType.PROJECTS, MetricType.PROJECTS_LIST).getParamsAsMap());
-        pigServer.execute(ScriptType.PROJECTS, builder.build());
+        builder.putAll(scriptsManager.getScript(ScriptType.EVENTS, MetricType.PROJECTS).getParamsAsMap());
+        pigServer.execute(ScriptType.EVENTS, builder.build());
 
         // test expanded metric value
         AbstractProjectType metric = new ProjectTypeWar();
@@ -1030,8 +1030,8 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
 
         // calculate projects list
         builder.put(Parameters.STORAGE_TABLE, MetricType.PROJECTS_LIST.toString().toLowerCase());
-        builder.putAll(scriptsManager.getScript(ScriptType.PROJECTS, MetricType.PROJECTS_LIST).getParamsAsMap());
-        pigServer.execute(ScriptType.PROJECTS, builder.build());
+        builder.putAll(scriptsManager.getScript(ScriptType.EVENTS, MetricType.PROJECTS).getParamsAsMap());
+        pigServer.execute(ScriptType.EVENTS, builder.build());
 
         // calculate all projects list
         builder = new Context.Builder();

@@ -73,8 +73,8 @@ public class TestFilters extends BaseTest {
         builder.putAll(scriptsManager.getScript(ScriptType.WORKSPACES_PROFILES, MetricType.WORKSPACES_PROFILES_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.WORKSPACES_PROFILES, builder.build());
 
-        builder.putAll(scriptsManager.getScript(ScriptType.PROJECTS, MetricType.PROJECTS).getParamsAsMap());
-        pigServer.execute(ScriptType.PROJECTS, builder.build());
+        builder.putAll(scriptsManager.getScript(ScriptType.EVENTS, MetricType.PROJECTS).getParamsAsMap());
+        pigServer.execute(ScriptType.EVENTS, builder.build());
     }
 
     @Test(dataProvider = "dataProvider")

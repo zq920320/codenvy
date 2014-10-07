@@ -19,7 +19,11 @@ package com.codenvy.analytics.pig.scripts;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.metrics.*;
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Metric;
+import com.codenvy.analytics.metrics.MetricFactory;
+import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
@@ -66,8 +70,8 @@ public class TestNumberOfEventsByTypes_ProjectTypes extends BaseTest {
                                      .getParamsAsMap());
         pigServer.execute(ScriptType.WORKSPACES_PROFILES, builder.build());
 
-        builder.putAll(scriptsManager.getScript(ScriptType.PROJECTS, MetricType.PROJECTS_LIST).getParamsAsMap());
-        pigServer.execute(ScriptType.PROJECTS, builder.build());
+        builder.putAll(scriptsManager.getScript(ScriptType.EVENTS, MetricType.PROJECTS).getParamsAsMap());
+        pigServer.execute(ScriptType.EVENTS, builder.build());
 
         /* is needed for testAllTypes() test only */
         builder.putAll(scriptsManager.getScript(ScriptType.EVENTS_BY_TYPE, MetricType.PROJECT_TYPES).getParamsAsMap());
@@ -88,8 +92,8 @@ public class TestNumberOfEventsByTypes_ProjectTypes extends BaseTest {
         builder.put(Parameters.FROM_DATE, "20130102");
         builder.put(Parameters.TO_DATE, "20130102");
         builder.put(Parameters.LOG, log.getAbsolutePath());
-        builder.putAll(scriptsManager.getScript(ScriptType.PROJECTS, MetricType.PROJECTS_LIST).getParamsAsMap());
-        pigServer.execute(ScriptType.PROJECTS, builder.build());
+        builder.putAll(scriptsManager.getScript(ScriptType.EVENTS, MetricType.PROJECTS).getParamsAsMap());
+        pigServer.execute(ScriptType.EVENTS, builder.build());
         
         /* is needed for testAllTypes() test only */
         builder.putAll(scriptsManager.getScript(ScriptType.EVENTS_BY_TYPE, MetricType.PROJECT_TYPES).getParamsAsMap());

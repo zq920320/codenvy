@@ -108,7 +108,6 @@ public enum ScriptType {
     WORKSPACES_PROFILES,
     USERS_STATISTICS,
     USERS_ACTIVITY,
-    PROJECTS,
     PROJECTS_STATISTICS,
     USERS_EVENTS {
         @Override

@@ -125,9 +125,9 @@ public class TestProjectsStatistics extends BaseTest {
 
         builder.putAll(scriptsManager.getScript(ScriptType.PROJECTS_STATISTICS, MetricType.PROJECTS_STATISTICS_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.PROJECTS_STATISTICS, builder.build());
-        
-        builder.putAll(scriptsManager.getScript(ScriptType.PROJECTS, MetricType.PROJECTS_LIST).getParamsAsMap());
-        pigServer.execute(ScriptType.PROJECTS, builder.build());
+
+        builder.putAll(scriptsManager.getScript(ScriptType.EVENTS, MetricType.PROJECTS).getParamsAsMap());
+        pigServer.execute(ScriptType.EVENTS, builder.build());
     }
 
     @Test

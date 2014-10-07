@@ -555,8 +555,8 @@ public class TestAnalysisView extends BaseTest {
         pigServer.execute(ScriptType.USERS_ACTIVITY, builder.build());
 
         /** create collections "created_project" to calculate "users_who_created_project" metric */
-        builder.putAll(scriptsManager.getScript(ScriptType.PROJECTS, MetricType.PROJECTS_LIST).getParamsAsMap());
-        pigServer.execute(ScriptType.PROJECTS, builder.build());
+        builder.putAll(scriptsManager.getScript(ScriptType.EVENTS, MetricType.PROJECTS).getParamsAsMap());
+        pigServer.execute(ScriptType.EVENTS, builder.build());
 
         /** create collections "builds" to calculate "users_who_built" metric */
         builder.putAll(scriptsManager.getScript(ScriptType.EVENTS, MetricType.BUILDS).getParamsAsMap());

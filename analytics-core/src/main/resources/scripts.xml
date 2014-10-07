@@ -156,7 +156,7 @@
     </script>
     <script name="events">
         <description>The number of destroyed projects</description>
-        <parameter key="WS" value="ANY"/>
+        <parameter key="WS" value="PERSISTENT"/>
         <parameter key="USER" value="ANY"/>
         <parameter key="EVENT" value="project-destroyed"/>
         <parameter key="STORAGE_TABLE" value="destroyed_projects"/>
@@ -176,7 +176,7 @@
     </script>
     <script name="events_by_type">
         <description>Project created by types</description>
-        <parameter key="WS" value="ANY"/>
+        <parameter key="WS" value="PERSISTENT"/>
         <parameter key="USER" value="ANY"/>
         <parameter key="EVENT" value="project-created"/>
         <parameter key="PARAM" value="TYPE"/>
@@ -317,10 +317,11 @@
         <parameter key="STORAGE_TABLE" value="users_activity"/>
     </script>
 
-    <script name="projects">
+    <script name="events">
         <description>Users' created projects</description>
-        <parameter key="WS" value="ANY"/>
+        <parameter key="WS" value="PERSISTENT"/>
         <parameter key="USER" value="ANY"/>
+        <parameter key="EVENT" value="project-created"/>
         <parameter key="STORAGE_TABLE" value="projects"/>
     </script>
 
