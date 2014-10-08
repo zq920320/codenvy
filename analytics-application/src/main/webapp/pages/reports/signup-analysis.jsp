@@ -1,4 +1,4 @@
-s<%--
+<%--
 
     CODENVY CONFIDENTIAL
     __________________
