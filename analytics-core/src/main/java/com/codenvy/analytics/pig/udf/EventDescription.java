@@ -41,7 +41,11 @@ public class EventDescription extends EvalFunc<String> {
     @Override
     public String exec(Tuple input) throws IOException {
         String event = (String)input.get(0);
-        return eventsHolder.getDescription(event);
+        try {
+            return eventsHolder.getDescription(event);
+        } catch (IllegalArgumentException e) {
+            return event;
+        }
     }
 
     @Override
