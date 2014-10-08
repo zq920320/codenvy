@@ -22,7 +22,16 @@ import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.services.Feature;
 import com.codenvy.analytics.services.view.CSVFileHolder;
-import com.marketo.mktows.*;
+import com.marketo.mktows.ArrayOfString;
+import com.marketo.mktows.AuthenticationHeader;
+import com.marketo.mktows.ImportToListModeEnum;
+import com.marketo.mktows.ImportToListStatusEnum;
+import com.marketo.mktows.MktMktowsApiService;
+import com.marketo.mktows.MktowsPort;
+import com.marketo.mktows.ParamsGetImportToListStatus;
+import com.marketo.mktows.ParamsImportToList;
+import com.marketo.mktows.SuccessGetImportToListStatus;
+import com.marketo.mktows.SuccessImportToList;
 
 import org.apache.commons.codec.binary.Hex;
 import org.slf4j.Logger;
@@ -54,7 +63,6 @@ import java.util.Date;
 public class MarketoInitializer extends Feature {
     private final Logger LOG = LoggerFactory.getLogger(getClass());
 
-    private static final   String AVAILABLE      = "analytics.marketo.initializer_available";
     private static final   String SOAP_END_POINT = "analytics.marketo.soap_end_point";
     private static final   String USER_ID        = "analytics.marketo.user_id";
     private static final   String SECRET_KEY     = "analytics.marketo.secret_key";
@@ -73,9 +81,9 @@ public class MarketoInitializer extends Feature {
     private String listName;
     private int    pageSize;
 
-    private final Configurator           configurator;
-    private final MarketoReportGenerator reportGenerator;
-    private final CSVFileHolder          reportHolder;
+    protected final Configurator           configurator;
+    private final   MarketoReportGenerator reportGenerator;
+    private final   CSVFileHolder          reportHolder;
 
     @Inject
     public MarketoInitializer(Configurator configurator,
@@ -118,12 +126,7 @@ public class MarketoInitializer extends Feature {
 
     @Override
     public boolean isAvailable() {
-        String name = availablePropertyName();
-        return configurator.exists(name) && configurator.getBoolean(name);
-    }
-
-    protected String availablePropertyName() {
-        return AVAILABLE;
+        return false;
     }
 
     protected boolean processActiveUsersOnly() {
@@ -174,8 +177,7 @@ public class MarketoInitializer extends Feature {
     private MktowsPort getPort() throws MalformedURLException {
         MktMktowsApiService service = new MktMktowsApiService(new URL(soapEndPoint),
                                                               new QName(serviceUrl, serviceName));
-        MktowsPort port = service.getMktowsApiSoapPort();
-        return port;
+        return service.getMktowsApiSoapPort();
     }
 
 
@@ -197,7 +199,7 @@ public class MarketoInitializer extends Feature {
 
                 if (rows.getStringItems().size() == pageSize) {
                     ++currentPage;
-                    importData(reportHeader, rows, cleanListBeforeImport() ? currentPage == 1 : false);
+                    importData(reportHeader, rows, cleanListBeforeImport() && currentPage == 1);
                     LOG.info("Rows imported : " + (rowsImported += rows.getStringItems().size()));
                     rows = new ArrayOfString();
                 }
@@ -205,7 +207,7 @@ public class MarketoInitializer extends Feature {
 
             if (rows.getStringItems().size() > 0) {
                 ++currentPage;
-                importData(reportHeader, rows, cleanListBeforeImport() ? currentPage == 1 : false);
+                importData(reportHeader, rows, cleanListBeforeImport() && currentPage == 1);
                 LOG.info("Rows imported : " + (rowsImported += rows.getStringItems().size()));
             }
         } finally {

@@ -20,10 +20,25 @@ package com.codenvy.analytics;
 
 import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.services.*;
+import com.codenvy.analytics.services.ActOnFeature;
+import com.codenvy.analytics.services.DataComputationFeature;
+import com.codenvy.analytics.services.DataIntegrityFeature;
+import com.codenvy.analytics.services.Feature;
+import com.codenvy.analytics.services.LogCheckerFeature;
+import com.codenvy.analytics.services.MarketoInitializerFeature;
+import com.codenvy.analytics.services.MarketoUpdaterFeature;
+import com.codenvy.analytics.services.PigRunnerFeature;
+import com.codenvy.analytics.services.ReindexerFeature;
+import com.codenvy.analytics.services.ReportSenderFeature;
+import com.codenvy.analytics.services.ViewBuilderFeature;
 import com.codenvy.analytics.services.view.CSVReportPersister;
 
-import org.quartz.*;
+import org.quartz.CronScheduleBuilder;
+import org.quartz.CronTrigger;
+import org.quartz.JobDetail;
+import org.quartz.JobKey;
+import org.quartz.SchedulerException;
+import org.quartz.TriggerBuilder;
 import org.quartz.impl.JobDetailImpl;
 import org.quartz.impl.StdSchedulerFactory;
 import org.quartz.listeners.JobChainingJobListener;
@@ -33,8 +48,12 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class Scheduler implements ServletContextListener {
@@ -53,15 +72,16 @@ public class Scheduler implements ServletContextListener {
 
     private org.quartz.Scheduler scheduler;
 
-    private static final Class[] features = new Class[]{PigRunnerFeature.class,
-                                                        DataIntegrityFeature.class,
-                                                        DataComputationFeature.class,
-                                                        ViewBuilderFeature.class,
-                                                        LogCheckerFeature.class,
-                                                        ReportSenderFeature.class,
-                                                        ActOnFeature.class,
-                                                        MarketoInitializerFeature.class,
-                                                        MarketoUpdaterFeature.class};
+    private static final Class<? extends Feature>[] features = new Class[]{PigRunnerFeature.class,
+                                                                           DataIntegrityFeature.class,
+                                                                           DataComputationFeature.class,
+                                                                           ViewBuilderFeature.class,
+                                                                           LogCheckerFeature.class,
+                                                                           ReportSenderFeature.class,
+                                                                           ActOnFeature.class,
+                                                                           MarketoInitializerFeature.class,
+                                                                           MarketoUpdaterFeature.class,
+                                                                           ReindexerFeature.class};
 
 
     public Scheduler() {
@@ -113,24 +133,25 @@ public class Scheduler implements ServletContextListener {
     private void forceRunFeatures() {
         try {
             String forceRunPeriod = configurator.getString(SCHEDULER_FORCE_RUN_PERIOD);
-            Set<String> forceRunFeature =
-                    new HashSet<>(Arrays.asList(configurator.getArray(SCHEDULER_FORCE_RUN_CLASS)));
+            Set<String> forceRunFeatures = new HashSet<>(Arrays.asList(configurator.getArray(SCHEDULER_FORCE_RUN_CLASS)));
 
-            for (Class jobClass : features) {
+            for (Class<?> jobClass : features) {
                 Feature job = (Feature)jobClass.getConstructor().newInstance();
 
-                if (forceRunFeature.isEmpty() || forceRunFeature.contains(job.getClass().getName())) {
+                if (forceRunFeatures.isEmpty() || forceRunFeatures.contains(job.getClass().getName())) {
+                    boolean forceRun = !forceRunFeatures.isEmpty();
+
                     switch (forceRunPeriod.toUpperCase()) {
                         case FORCE_RUN_CONDITION_LASTDAY:
-                            executeForLastDay(job);
+                            executeForLastDay(job, forceRun);
                             break;
 
                         case FORCE_RUN_CONDITION_ALLTIME:
-                            executeForAllTime(job);
+                            executeForAllTime(job, forceRun);
                             break;
 
                         default:
-                            executeForSpecificPeriod(job, forceRunPeriod);
+                            executeForSpecificPeriod(job, forceRunPeriod, forceRun);
                             break;
                     }
                 }
@@ -140,52 +161,51 @@ public class Scheduler implements ServletContextListener {
         }
     }
 
-    private void executeForSpecificPeriod(Feature job, String runCondition) throws Exception {
+    private void executeForSpecificPeriod(Feature job, String runCondition, boolean forceRun) throws Exception {
         if (runCondition.contains(",")) {
             String[] dates = runCondition.split(",");
             for (String date : dates) {
-                doExecute(job, date, date);
+                doExecute(job, date, date, forceRun);
             }
         } else if (runCondition.contains("-")) {
             String[] dates = runCondition.split("-");
-            doExecute(job, dates[0], dates[1]);
+            doExecute(job, dates[0], dates[1], forceRun);
         } else {
-            doExecute(job, runCondition, runCondition);
+            doExecute(job, runCondition, runCondition, forceRun);
         }
     }
 
-    private void executeForAllTime(Feature job) throws Exception {
-        doExecute(job, Parameters.FROM_DATE.getDefaultValue(), Parameters.TO_DATE.getDefaultValue());
+    private void executeForAllTime(Feature job, boolean forceRun) throws Exception {
+        doExecute(job, Parameters.FROM_DATE.getDefaultValue(), Parameters.TO_DATE.getDefaultValue(), forceRun);
     }
 
-    private void doExecute(Feature job, String fromDateParam, String toDateParam) throws Exception {
-        if (!job.isAvailable()) {
-            LOG.warn("Execution of " + job.getClass().getName() + " will be skipped. Job is not available");
-            return;
-        }
+    private void doExecute(Feature job, String fromDateParam, String toDateParam, boolean forceRun) throws Exception {
+        if (forceRun || job.isAvailable()) {
+            Context.Builder builder = new Context.Builder();
 
-        Context.Builder builder = new Context.Builder();
+            Calendar fromDate = Utils.parseDate(fromDateParam);
+            Calendar toDate = Utils.parseDate(toDateParam);
 
-        Calendar fromDate = Utils.parseDate(fromDateParam);
-        Calendar toDate = Utils.parseDate(toDateParam);
+            if (fromDate.after(toDate)) {
+                throw new IllegalStateException("FROM_DATE Parameters is bigger than TO_DATE Parameters");
+            }
 
-        if (fromDate.after(toDate)) {
-            throw new IllegalStateException("FROM_DATE Parameters is bigger than TO_DATE Parameters");
-        }
-
-        builder.put(Parameters.FROM_DATE, fromDate);
-        builder.put(Parameters.TO_DATE, fromDate);
-        do {
-            job.forceExecute(builder.build());
-
-            fromDate.add(Calendar.DAY_OF_MONTH, 1);
             builder.put(Parameters.FROM_DATE, fromDate);
             builder.put(Parameters.TO_DATE, fromDate);
-        } while (!builder.getAsDate(Parameters.FROM_DATE).after(toDate));
+            do {
+                job.forceExecute(builder.build());
+
+                fromDate.add(Calendar.DAY_OF_MONTH, 1);
+                builder.put(Parameters.FROM_DATE, fromDate);
+                builder.put(Parameters.TO_DATE, fromDate);
+            } while (!builder.getAsDate(Parameters.FROM_DATE).after(toDate));
+        } else {
+            LOG.warn("Execution of " + job.getClass().getName() + " will be skipped. You can only run this job by force");
+        }
     }
 
-    private void executeForLastDay(Feature job) throws Exception {
-        doExecute(job, Parameters.TO_DATE.getDefaultValue(), Parameters.TO_DATE.getDefaultValue());
+    private void executeForLastDay(Feature job, boolean forceRun) throws Exception {
+        doExecute(job, Parameters.TO_DATE.getDefaultValue(), Parameters.TO_DATE.getDefaultValue(), forceRun);
     }
 
     /** Creates scheduler and adds available jobs. */
@@ -197,7 +217,7 @@ public class Scheduler implements ServletContextListener {
     private void scheduleAllFeatures() throws SchedulerException {
         List<JobDetail> jobDetails = new ArrayList<>(2);
 
-        for (Class feature : features) {
+        for (Class<? extends Feature> feature : features) {
             addJobDetail(feature, jobDetails);
         }
 

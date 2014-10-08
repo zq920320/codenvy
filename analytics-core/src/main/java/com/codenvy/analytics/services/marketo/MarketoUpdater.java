@@ -41,8 +41,8 @@ public class MarketoUpdater extends MarketoInitializer {
     }
 
     @Override
-    protected String availablePropertyName() {
-        return AVAILABLE;
+    public boolean isAvailable() {
+        return configurator.getBoolean(AVAILABLE);
     }
 
     @Override
