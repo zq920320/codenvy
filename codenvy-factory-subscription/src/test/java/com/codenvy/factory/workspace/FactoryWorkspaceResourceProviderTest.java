@@ -29,6 +29,7 @@ import com.codenvy.api.core.notification.EventService;
 import com.codenvy.api.core.rest.HttpJsonHelper;
 import com.codenvy.api.factory.FactoryBuilder;
 import com.codenvy.api.factory.dto.Factory;
+import com.codenvy.api.factory.dto.Author;
 import com.codenvy.api.workspace.server.dao.Workspace;
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
 import com.codenvy.commons.lang.Pair;
@@ -57,6 +58,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.atLeastOnce;
 
 @Listeners(value = {MockitoTestNGListener.class})
 public class FactoryWorkspaceResourceProviderTest {
@@ -80,6 +83,8 @@ public class FactoryWorkspaceResourceProviderTest {
     private Workspace                         workspace;
     @Mock
     private Factory                           factory;
+    @Mock
+    private Author                            author;
     @Mock
     private Map<String, String>               attributes;
     @Mock
@@ -112,6 +117,15 @@ public class FactoryWorkspaceResourceProviderTest {
         field.setAccessible(true);
         field.set(null, jsonHelper);
 
+        when(factory.getV()).thenReturn("2.0");
+        when(factory.getCreator()).thenReturn(author);
+        when(author.getAccountId()).thenReturn(ORG_ID);
+        when(workspaceDao.getById(WS_ID)).thenReturn(workspace);
+        when(workspace.getAttributes()).thenReturn(attributes);
+        when(factoryBuilder.buildEncoded(any(URI.class))).thenReturn(factory);
+        when(workspace.withAttributes(anyMapOf(String.class, String.class))).thenReturn(workspace);
+        Subscription subscription = new Subscription().withProperties(Collections.singletonMap("RAM", "8GB"));
+        when(accountDao.getSubscriptions(ORG_ID, "Factory")).thenReturn(Collections.singletonList(subscription));
     }
 
     @Test
@@ -123,38 +137,28 @@ public class FactoryWorkspaceResourceProviderTest {
 
     @Test
     public void shouldSetCommonAttributesIfWsDoesNotContainFactoryUrl() throws NotFoundException, ServerException, ConflictException {
-        when(workspaceDao.getById(WS_ID)).thenReturn(workspace);
-        when(workspace.getAttributes()).thenReturn(attributes);
-        when(workspace.withAttributes(anyMapOf(String.class, String.class))).thenReturn(workspace);
-
+        when(attributes.get("factoryUrl")).thenReturn(null);
         provider.onEvent(event);
 
         verify(workspaceDao).update(workspace);
-        verify(attributes).put("codenvy:runner_lifetime", runnerLifetime);
-        verify(attributes).put("codenvy:runner_ram", runnerRam);
-        verify(attributes).put("codenvy:builder_execution_time", builderExecutionTime);
+        verifySettingOfAttributes(runnerLifetime, runnerRam, builderExecutionTime, false);
     }
 
     @Test
     public void shouldSetCommonAttributesIfNonEncodedFactoryIsNotTracked()
             throws ApiException, IOException {
-        when(workspaceDao.getById(WS_ID)).thenReturn(workspace);
-        when(workspace.getAttributes()).thenReturn(attributes);
         when(attributes.get("factoryUrl")).thenReturn(nonEncodedFactoryUrl);
-        when(factoryBuilder.buildEncoded(any(URI.class))).thenReturn(factory);
-        when(workspace.withAttributes(anyMapOf(String.class, String.class))).thenReturn(workspace);
+        when(factory.getCreator()).thenReturn(null);
 
         provider.onEvent(event);
 
         verify(workspaceDao).update(workspace);
-        verifySettingOfAttributes(runnerLifetime, runnerRam, builderExecutionTime);
+        verifySettingOfAttributes(runnerLifetime, runnerRam, builderExecutionTime, false);
     }
 
     @Test
     public void shouldSetCommonAttributesIfEncodedFactoryIsNotTracked()
             throws NotFoundException, ServerException, ConflictException, UnauthorizedException, IOException, ForbiddenException {
-        when(workspaceDao.getById(WS_ID)).thenReturn(workspace);
-        when(workspace.getAttributes()).thenReturn(attributes);
         when(attributes.get("factoryUrl")).thenReturn(encodedFactoryUrl);
         when(jsonHelper.request(eq(Factory.class),
                                 anyString(),
@@ -162,18 +166,16 @@ public class FactoryWorkspaceResourceProviderTest {
                                 isNull(),
                                 eq(Pair.of("validate", false))))
                 .thenReturn(factory);
-        when(workspace.withAttributes(anyMapOf(String.class, String.class))).thenReturn(workspace);
+        when(factory.getCreator()).thenReturn(null);
 
         provider.onEvent(event);
 
         verify(workspaceDao).update(workspace);
-        verifySettingOfAttributes(runnerLifetime, runnerRam, builderExecutionTime);
+        verifySettingOfAttributes(runnerLifetime, runnerRam, builderExecutionTime, false);
     }
 
     @Test
     public void shouldSetCommonValuesIfEncodedTrackedFactoryHasNoSubscriptions() throws ApiException, IOException {
-        when(workspaceDao.getById(WS_ID)).thenReturn(workspace);
-        when(workspace.getAttributes()).thenReturn(attributes);
         when(attributes.get("factoryUrl")).thenReturn(encodedFactoryUrl);
         when(jsonHelper.request(eq(Factory.class),
                                 anyString(),
@@ -181,36 +183,49 @@ public class FactoryWorkspaceResourceProviderTest {
                                 isNull(),
                                 eq(Pair.of("validate", false))))
                 .thenReturn(factory);
-        when(factory.getOrgid()).thenReturn(ORG_ID);
-        when(workspace.withAttributes(anyMapOf(String.class, String.class))).thenReturn(workspace);
         when(accountDao.getSubscriptions(ORG_ID, "Factory")).thenReturn(Collections.<Subscription>emptyList());
 
         provider.onEvent(event);
 
         verify(workspaceDao).update(workspace);
-        verifySettingOfAttributes(runnerLifetime, runnerRam, builderExecutionTime);
+        verifySettingOfAttributes(runnerLifetime, runnerRam, builderExecutionTime, false);
+        verify(factory).getV();
+        verify(factory, never()).getOrgid();
+        verify(factory, atLeastOnce()).getCreator();
+        verify(author).getAccountId();
+    }
+
+    @Test
+    public void shouldUseGetOrgIdMethodInsteadOfAccountIdIfVersion1_x() throws ApiException, IOException {
+        when(attributes.get("factoryUrl")).thenReturn(encodedFactoryUrl);
+        when(factory.getV()).thenReturn("1.2");
+        when(factory.getOrgid()).thenReturn(ORG_ID);
+        when(jsonHelper.request(eq(Factory.class),
+                                anyString(),
+                                anyString(),
+                                isNull(),
+                                eq(Pair.of("validate", false))))
+                .thenReturn(factory);
+
+        provider.onEvent(event);
+
+        verify(factory).getV();
+        verify(factory).getOrgid();
     }
 
     @Test
     public void shouldSetCommonValuesIfNonEncodedTrackedFactoryHasNoSubscriptions() throws ApiException, IOException {
-        when(workspaceDao.getById(WS_ID)).thenReturn(workspace);
-        when(workspace.getAttributes()).thenReturn(attributes);
         when(attributes.get("factoryUrl")).thenReturn(nonEncodedFactoryUrl);
-        when(factoryBuilder.buildEncoded(any(URI.class))).thenReturn(factory);
-        when(factory.getOrgid()).thenReturn(ORG_ID);
-        when(workspace.withAttributes(anyMapOf(String.class, String.class))).thenReturn(workspace);
         when(accountDao.getSubscriptions(ORG_ID, "Factory")).thenReturn(Collections.<Subscription>emptyList());
 
         provider.onEvent(event);
 
         verify(workspaceDao).update(workspace);
-        verifySettingOfAttributes(runnerLifetime, runnerRam, builderExecutionTime);
+        verifySettingOfAttributes(runnerLifetime, runnerRam, builderExecutionTime, false);
     }
 
     @Test
     public void shouldSetTrackedValuesIfEncodedFactoryIsTracked() throws ApiException, IOException {
-        when(workspaceDao.getById(WS_ID)).thenReturn(workspace);
-        when(workspace.getAttributes()).thenReturn(attributes);
         when(attributes.get("factoryUrl")).thenReturn(encodedFactoryUrl);
         when(jsonHelper.request(eq(Factory.class),
                                 anyString(),
@@ -218,32 +233,21 @@ public class FactoryWorkspaceResourceProviderTest {
                                 isNull(),
                                 eq(Pair.of("validate", false))))
                 .thenReturn(factory);
-        when(factory.getOrgid()).thenReturn(ORG_ID);
-        when(workspace.withAttributes(anyMapOf(String.class, String.class))).thenReturn(workspace);
-        Subscription subscription = new Subscription().withProperties(Collections.singletonMap("RAM", "8GB"));
-        when(accountDao.getSubscriptions(ORG_ID, "Factory")).thenReturn(Collections.singletonList(subscription));
 
         provider.onEvent(event);
 
         verify(workspaceDao).update(workspace);
-        verifySettingOfAttributes(trackedRunnerLifetime, "8192", trackedBuilderExecutionTime);
+        verifySettingOfAttributes(trackedRunnerLifetime, "8192", trackedBuilderExecutionTime, true);
     }
 
     @Test
     public void shouldSetTrackedValuesIfNonEncodedFactoryIsTracked() throws ApiException, IOException {
-        when(workspaceDao.getById(WS_ID)).thenReturn(workspace);
-        when(workspace.getAttributes()).thenReturn(attributes);
         when(attributes.get("factoryUrl")).thenReturn(nonEncodedFactoryUrl);
-        when(factoryBuilder.buildEncoded(any(URI.class))).thenReturn(factory);
-        when(factory.getOrgid()).thenReturn(ORG_ID);
-        when(workspace.withAttributes(anyMapOf(String.class, String.class))).thenReturn(workspace);
-        Subscription subscription = new Subscription().withProperties(Collections.singletonMap("RAM", "8GB"));
-        when(accountDao.getSubscriptions(ORG_ID, "Factory")).thenReturn(Collections.singletonList(subscription));
 
         provider.onEvent(event);
 
         verify(workspaceDao).update(workspace);
-        verifySettingOfAttributes(trackedRunnerLifetime, "8192", trackedBuilderExecutionTime);
+        verifySettingOfAttributes(trackedRunnerLifetime, "8192", trackedBuilderExecutionTime, true);
     }
 
     @Test(dataProvider = "attributesProvider")
@@ -261,9 +265,6 @@ public class FactoryWorkspaceResourceProviderTest {
                                                         new EventService(),
                                                         factoryBuilder);
 
-        when(workspaceDao.getById(WS_ID)).thenReturn(workspace);
-        when(workspace.getAttributes()).thenReturn(attributes);
-        when(workspace.withAttributes(anyMapOf(String.class, String.class))).thenReturn(workspace);
 
         provider.onEvent(event);
 
@@ -292,8 +293,6 @@ public class FactoryWorkspaceResourceProviderTest {
 
     @Test
     public void shouldSetCommonValuesIfExceptionOccursOnGetFactory() throws Exception {
-        when(workspaceDao.getById(WS_ID)).thenReturn(workspace);
-        when(workspace.getAttributes()).thenReturn(attributes);
         when(attributes.get("factoryUrl")).thenReturn(encodedFactoryUrl);
         when(jsonHelper.request(eq(Factory.class),
                                 anyString(),
@@ -301,37 +300,32 @@ public class FactoryWorkspaceResourceProviderTest {
                                 isNull(),
                                 eq(Pair.of("validate", false))))
                 .thenThrow(new ServerException(""));
-        when(factory.getOrgid()).thenReturn(ORG_ID);
-        when(workspace.withAttributes(anyMapOf(String.class, String.class))).thenReturn(workspace);
-        Subscription subscription = new Subscription().withProperties(Collections.singletonMap("RAM", "8GB"));
-        when(accountDao.getSubscriptions(ORG_ID, "Factory")).thenReturn(Collections.singletonList(subscription));
 
         provider.onEvent(event);
 
         verify(workspaceDao).update(workspace);
-        verifySettingOfAttributes(runnerLifetime, runnerRam, builderExecutionTime);
+        verifySettingOfAttributes(runnerLifetime, runnerRam, builderExecutionTime, false);
     }
 
     @Test
     public void shouldSetCommonValuesIfExeptionIsThrownOnBuildNonEncodedFactory() throws ApiException, IOException {
-        when(workspaceDao.getById(WS_ID)).thenReturn(workspace);
-        when(workspace.getAttributes()).thenReturn(attributes);
         when(attributes.get("factoryUrl")).thenReturn(nonEncodedFactoryUrl);
         when(factoryBuilder.buildEncoded(any(URI.class))).thenThrow(new ApiException(""));
-        when(factory.getOrgid()).thenReturn(ORG_ID);
-        when(workspace.withAttributes(anyMapOf(String.class, String.class))).thenReturn(workspace);
-        Subscription subscription = new Subscription().withProperties(Collections.singletonMap("RAM", "8GB"));
-        when(accountDao.getSubscriptions(ORG_ID, "Factory")).thenReturn(Collections.singletonList(subscription));
 
         provider.onEvent(event);
 
         verify(workspaceDao).update(workspace);
-        verifySettingOfAttributes(runnerLifetime, runnerRam, builderExecutionTime);
+        verifySettingOfAttributes(runnerLifetime, runnerRam, builderExecutionTime, false);
     }
 
-    private void verifySettingOfAttributes(String runnerLifetime, String runnerRam, String builderExecutionTime) {
+    private void verifySettingOfAttributes(String runnerLifetime, String runnerRam, String builderExecutionTime, boolean runnerInfra) {
         verify(attributes).put("codenvy:runner_lifetime", runnerLifetime);
         verify(attributes).put("codenvy:runner_ram", runnerRam);
         verify(attributes).put("codenvy:builder_execution_time", builderExecutionTime);
+        if (runnerInfra) {
+            verify(attributes).put("codenvy:runner_infra", "paid");
+        } else {
+            verify(attributes, never()).put(eq("codenvy:runner_infra"), anyString());
+        }
     }
 }

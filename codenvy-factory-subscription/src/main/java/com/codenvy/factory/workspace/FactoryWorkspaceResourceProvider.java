@@ -134,14 +134,21 @@ public class FactoryWorkspaceResourceProvider implements EventSubscriber<CreateW
                             factory = factoryBuilder.buildEncoded(URI.create(factoryUrl));
                         }
 
-                        if (null != factory.getOrgid()) {
-                            final List<Subscription> subscriptions = accountDao.getSubscriptions(factory.getOrgid(), "Factory");
+                        String orgid;
+                        if (factory.getV().startsWith("1.")) {
+                            orgid = factory.getOrgid();
+                        } else {
+                            orgid = factory.getCreator() != null ? factory.getCreator().getAccountId() : null;
+                        }
+                        if (null != orgid) {
+                            final List<Subscription> subscriptions = accountDao.getSubscriptions(orgid, "Factory");
                             if (!subscriptions.isEmpty()) {
                                 final Subscription subscription = subscriptions.iterator().next();
                                 // factory workspace with subscription
                                 attributes.put("codenvy:runner_lifetime", trackedRunnerLifetime);
                                 attributes.put("codenvy:builder_execution_time", trackedBuilderExecutionTime);
                                 attributes.put("codenvy:runner_ram", convert(subscription.getProperties().get("RAM")));
+                                attributes.put("codenvy:runner_infra", "paid");
 
                                 workspaceDao.update(workspace.withAttributes(attributes));
                                 return;
