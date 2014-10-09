@@ -151,11 +151,13 @@ public class SaasSubscriptionService extends SubscriptionService {
                     case "team":
                         //1 hour
                         wsAttributes.put("codenvy:runner_lifetime", saasRunnerLifetime);
+                        wsAttributes.put("codenvy:runner_infra", "paid");
                         break;
                     case "project":
                     case "enterprise":
                         //unlimited
                         wsAttributes.put("codenvy:runner_lifetime", "-1");
+                        wsAttributes.put("codenvy:runner_infra", "always_on");
                         break;
                     default:
                         throw new NotFoundException(String.format("Package %s not found", tariffPackage));
@@ -207,6 +209,7 @@ public class SaasSubscriptionService extends SubscriptionService {
                 }
                 wsAttributes.remove("codenvy:runner_lifetime");
                 wsAttributes.remove("codenvy:builder_execution_time");
+                wsAttributes.remove("codenvy:runner_infra");
                 workspaceDao.update(workspace);
             } catch (ApiException e) {
                 LOG.error(e.getLocalizedMessage(), e);

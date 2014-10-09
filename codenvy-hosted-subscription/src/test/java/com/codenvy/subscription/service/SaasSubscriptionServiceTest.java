@@ -136,7 +136,7 @@ public class SaasSubscriptionServiceTest {
     }
 
     @Test
-    public void shouldSetDeveloperResourcesAreSetWhenOnCreateInvoked() throws ApiException {
+    public void shouldSetDeveloperResourcesWhenOnCreateInvoked() throws ApiException {
         final Workspace workspace = new Workspace().withId(WORKSPACE_ID);
         when(workspaceDao.getByAccount(ACCOUNT_ID)).thenReturn(Arrays.asList(workspace));
         when(accountDao.getById(ACCOUNT_ID)).thenReturn(new Account());
@@ -148,10 +148,11 @@ public class SaasSubscriptionServiceTest {
 
         service.afterCreateSubscription(subscription);
 
-        Assert.assertEquals(workspace.getAttributes().size(), 3);
+        Assert.assertEquals(workspace.getAttributes().size(), 4);
         Assert.assertEquals(workspace.getAttributes().get("codenvy:runner_ram"), "1024");
         Assert.assertEquals(workspace.getAttributes().get("codenvy:runner_lifetime"), RUNNER_LIFE_TIME);
         Assert.assertEquals(workspace.getAttributes().get("codenvy:builder_execution_time"), BUILDER_EXECUTION_TIME);
+        Assert.assertEquals(workspace.getAttributes().get("codenvy:runner_infra"), "paid");
         verify(accountDao, never()).update(any(Account.class));
     }
 
@@ -168,10 +169,11 @@ public class SaasSubscriptionServiceTest {
 
         service.afterCreateSubscription(subscription);
 
-        Assert.assertEquals(workspace.getAttributes().size(), 3);
+        Assert.assertEquals(workspace.getAttributes().size(), 4);
         Assert.assertEquals(workspace.getAttributes().get("codenvy:runner_ram"), "1024");
         Assert.assertEquals(workspace.getAttributes().get("codenvy:runner_lifetime"), RUNNER_LIFE_TIME);
         Assert.assertEquals(workspace.getAttributes().get("codenvy:builder_execution_time"), BUILDER_EXECUTION_TIME);
+        Assert.assertEquals(workspace.getAttributes().get("codenvy:runner_infra"), "paid");
         verify(accountDao).update(argThat(new ArgumentMatcher<Account>() {
             @Override
             public boolean matches(Object argument) {
@@ -194,10 +196,11 @@ public class SaasSubscriptionServiceTest {
 
         service.afterCreateSubscription(subscription);
 
-        Assert.assertEquals(workspace.getAttributes().size(), 3);
+        Assert.assertEquals(workspace.getAttributes().size(), 4);
         Assert.assertEquals(workspace.getAttributes().get("codenvy:runner_ram"), "1024");
         Assert.assertEquals(workspace.getAttributes().get("codenvy:runner_lifetime"), "-1");
         Assert.assertEquals(workspace.getAttributes().get("codenvy:builder_execution_time"), BUILDER_EXECUTION_TIME);
+        Assert.assertEquals(workspace.getAttributes().get("codenvy:runner_infra"), "always_on");
         verify(accountDao, never()).update(any(Account.class));
     }
 
@@ -214,10 +217,11 @@ public class SaasSubscriptionServiceTest {
 
         service.afterCreateSubscription(subscription);
 
-        Assert.assertEquals(workspace.getAttributes().size(), 3);
+        Assert.assertEquals(workspace.getAttributes().size(), 4);
         Assert.assertEquals(workspace.getAttributes().get("codenvy:runner_ram"), "1024");
         Assert.assertEquals(workspace.getAttributes().get("codenvy:runner_lifetime"), "-1");
         Assert.assertEquals(workspace.getAttributes().get("codenvy:builder_execution_time"), BUILDER_EXECUTION_TIME);
+        Assert.assertEquals(workspace.getAttributes().get("codenvy:runner_infra"), "always_on");
         verify(accountDao).update(argThat(new ArgumentMatcher<Account>() {
             @Override
             public boolean matches(Object argument) {
@@ -228,7 +232,7 @@ public class SaasSubscriptionServiceTest {
     }
 
     @Test
-    public void testResourcesAreSetWhenOnCheckInvoked() throws ApiException {
+    public void shouldSetResourcesWhenOnCheckInvoked() throws ApiException {
         final Workspace workspace = new Workspace().withId(WORKSPACE_ID);
         when(workspaceDao.getByAccount(ACCOUNT_ID)).thenReturn(Arrays.asList(workspace));
         when(accountDao.getById(ACCOUNT_ID)).thenReturn(new Account());
@@ -239,15 +243,16 @@ public class SaasSubscriptionServiceTest {
                                                             .withProperties(properties);
         service.onCheckSubscription(subscription);
 
-        Assert.assertEquals(workspace.getAttributes().size(), 3);
+        Assert.assertEquals(workspace.getAttributes().size(), 4);
         Assert.assertEquals(workspace.getAttributes().get("codenvy:runner_ram"), "1024");
         Assert.assertEquals(workspace.getAttributes().get("codenvy:runner_lifetime"), RUNNER_LIFE_TIME);
         Assert.assertEquals(workspace.getAttributes().get("codenvy:builder_execution_time"), BUILDER_EXECUTION_TIME);
+        Assert.assertEquals(workspace.getAttributes().get("codenvy:runner_infra"), "paid");
         verify(accountDao, never()).update(any(Account.class));
     }
 
     @Test
-    public void testWorkspaceAttributesReplacedOrAddedWhenOnUpdateInvoked() throws ApiException {
+    public void shouldReplacedOrAddWsAttributesWhenOnUpdateInvoked() throws ApiException {
         final Workspace workspace = new Workspace().withId(WORKSPACE_ID);
         when(workspaceDao.getByAccount(ACCOUNT_ID)).thenReturn(Arrays.asList(workspace));
         when(accountDao.getById(ACCOUNT_ID)).thenReturn(new Account());
@@ -259,18 +264,21 @@ public class SaasSubscriptionServiceTest {
 
         service.onUpdateSubscription(subscription, subscription);
 
-        Assert.assertEquals(workspace.getAttributes().size(), 3);
+        Assert.assertEquals(workspace.getAttributes().size(), 4);
         Assert.assertEquals(workspace.getAttributes().get("codenvy:runner_ram"), "1024");
         Assert.assertEquals(workspace.getAttributes().get("codenvy:runner_lifetime"), RUNNER_LIFE_TIME);
         Assert.assertEquals(workspace.getAttributes().get("codenvy:builder_execution_time"), BUILDER_EXECUTION_TIME);
+        Assert.assertEquals(workspace.getAttributes().get("codenvy:runner_infra"), "paid");
         verify(accountDao, never()).update(any(Account.class));
     }
 
     @Test
-    public void testRemoveWorkspaceAttributesWhenOnRemoveInvoked() throws ApiException {
+    public void shouldRemoveWorkspaceAttributesWhenOnRemoveInvoked() throws ApiException {
         final Map<String, String> attributes = new HashMap<>(2);
         attributes.put("codenvy:runner_ram", "fake");
         attributes.put("codenvy:runner_lifetime", "fake");
+        attributes.put("codenvy:builder_execution_time", "fake");
+        attributes.put("codenvy:runner_infra", "fake");
         final Workspace workspace = new Workspace().withId(WORKSPACE_ID)
                                                    .withAttributes(attributes);
         final Subscription subscription = new Subscription().withAccountId(ACCOUNT_ID).withProperties(
@@ -324,10 +332,11 @@ public class SaasSubscriptionServiceTest {
     public void shouldSetDefaultRamForOneWorkspaceOnlyOnRemoveSubscription() throws Exception {
         final Subscription subscription =
                 new Subscription().withAccountId(ACCOUNT_ID).withProperties(Collections.singletonMap("Package", "team"));
-        final Map<String, String> attributes = new HashMap<>(2);
+        final Map<String, String> attributes = new HashMap<>(4);
         attributes.put("codenvy:runner_ram", "fake");
         attributes.put("codenvy:runner_lifetime", "fake");
         attributes.put("codenvy:builder_execution_time", "fake");
+        attributes.put("codenvy:runner_infra", "fake");
         final Workspace workspace = new Workspace().withId(WORKSPACE_ID)
                                                    .withAttributes(new HashMap<>(attributes));
         final Workspace workspace2 = new Workspace().withId("ANOTHER_WORKSPACE_ID")
@@ -345,18 +354,14 @@ public class SaasSubscriptionServiceTest {
             @Override
             public boolean matches(Object argument) {
                 Workspace actual = (Workspace)argument;
-                return actual.getAttributes().get("codenvy:builder_execution_time") == null &&
-                       actual.getAttributes().get("codenvy:runner_lifetime") == null &&
-                       actual.getAttributes().get("codenvy:runner_ram") == null;
+                return actual.getAttributes().isEmpty();
             }
         }));
         verify(workspaceDao, times(2)).update(argThat(new ArgumentMatcher<Workspace>() {
             @Override
             public boolean matches(Object argument) {
                 Workspace actual = (Workspace)argument;
-                return actual.getAttributes().get("codenvy:builder_execution_time") == null &&
-                       actual.getAttributes().get("codenvy:runner_lifetime") == null &&
-                       "0".equals(actual.getAttributes().get("codenvy:runner_ram"));
+                return actual.getAttributes().size() == 1 && "0".equals(actual.getAttributes().get("codenvy:runner_ram"));
             }
         }));
         verify(accountDao).update(argThat(new ArgumentMatcher<Account>() {
@@ -406,10 +411,11 @@ public class SaasSubscriptionServiceTest {
 
         service.afterCreateSubscription(subscription);
 
-        Assert.assertEquals(workspace.getAttributes().size(), 3);
+        Assert.assertEquals(workspace.getAttributes().size(), 4);
         Assert.assertEquals(workspace.getAttributes().get("codenvy:runner_ram"), expectedRam);
         Assert.assertEquals(workspace.getAttributes().get("codenvy:runner_lifetime"), RUNNER_LIFE_TIME);
         Assert.assertEquals(workspace.getAttributes().get("codenvy:builder_execution_time"), BUILDER_EXECUTION_TIME);
+        Assert.assertEquals(workspace.getAttributes().get("codenvy:runner_infra"), "paid");
     }
 
     @DataProvider(name = "goodRamValuesProvider")
@@ -444,8 +450,10 @@ public class SaasSubscriptionServiceTest {
             @Override
             public boolean matches(Object argument) {
                 Workspace actual = (Workspace)argument;
-                return actual.getAttributes().size() == 3 && actual.getAttributes().get("codenvy:builder_execution_time") != null &&
+                return actual.getAttributes().size() == 4 &&
+                       actual.getAttributes().get("codenvy:builder_execution_time") != null &&
                        actual.getAttributes().get("codenvy:runner_lifetime") != null &&
+                       actual.getAttributes().get("codenvy:runner_infra") != null &&
                        "2048".equals(actual.getAttributes().get("codenvy:runner_ram"));
             }
         }));
@@ -453,8 +461,10 @@ public class SaasSubscriptionServiceTest {
             @Override
             public boolean matches(Object argument) {
                 Workspace actual = (Workspace)argument;
-                return actual.getAttributes().size() == 3 && actual.getAttributes().get("codenvy:builder_execution_time") != null &&
+                return actual.getAttributes().size() == 4 &&
+                       actual.getAttributes().get("codenvy:builder_execution_time") != null &&
                        actual.getAttributes().get("codenvy:runner_lifetime") != null &&
+                       actual.getAttributes().get("codenvy:runner_infra") != null &&
                        "0".equals(actual.getAttributes().get("codenvy:runner_ram"));
             }
         }));
