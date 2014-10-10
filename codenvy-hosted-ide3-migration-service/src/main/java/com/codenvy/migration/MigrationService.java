@@ -17,7 +17,7 @@
  */
 package com.codenvy.migration;
 
-import com.codenvy.api.project.server.ProjectJson;
+import com.codenvy.api.project.server.ProjectJson2;
 import com.codenvy.commons.json.JsonHelper;
 import com.codenvy.ide.factory.server.migration.ProjectTypeHelper;
 
@@ -98,7 +98,7 @@ public class MigrationService {
 
             String currentName = projectFile.getName().substring(0, projectFile.getName().lastIndexOf("_props"));
             String runnerTemplate = ProjectTypeHelper.getRunnerTemplate(inputProps.get("vfs:projectType")[0]);
-            ProjectJson projectDescription = ProjectTypeHelper.projectTypeToDescription(inputProps.get("vfs:projectType")[0]);
+            ProjectJson2 projectDescription = ProjectTypeHelper.projectTypeToDescription(inputProps.get("vfs:projectType")[0]);
 
 
             // Writing collected data to a file
@@ -115,7 +115,7 @@ public class MigrationService {
             if (!descriptionFile.exists()) {
                 try (Writer writer = new BufferedWriter(new FileWriter(descriptionFile))) {
                     out.append(String.format("Converting project: %s, type: %s <br/> ", projectFile.getName(),
-                                             projectDescription.getProjectTypeId()));
+                                             projectDescription.getType()));
                     writer.write(JsonHelper.toJson(projectDescription));
                     File metadataDir = new File(codenvyFolder, PROPS_DIR);
                     File metadataFile = new File(metadataDir, descriptionFile.getName() + PROPERTIES_FILE_SUFFIX);
