@@ -93,7 +93,16 @@ function Main() {
             analytics.util.updateGlobalParamInStorage("ui_preferences", $(this).attr("value"));
             analytics.view.implementUIPreferences();
         });
-        
+
+        // Data preferences selector group
+        $("#data-preferences button").click(function () {
+            $("#data-preferences button").removeClass('btn-primary');
+            $(this).addClass('btn-primary');
+
+            analytics.util.updateGlobalParamInStorage("data_preferences", $(this).attr("value"));
+            analytics.view.implementDataPreferences();
+        });
+
         // Show factories selectors group
         $("#show-factories button").click(function () {
             $("#show-factories button").removeClass('btn-primary');
@@ -303,6 +312,12 @@ function Main() {
         var ideVersionButtons = jQuery("#ide-version a");
         if (ideVersionButtons.doesExist()) {
             setPrimaryButtonOnValue(ideVersionButtons, params["ide"]);
+        }
+
+        // update data preferences selection buttons
+        var dataPreferencesButtons = jQuery("#data-preferences button");
+        if (dataPreferencesButtons.doesExist()) {
+            setPrimaryButtonOnValue(dataPreferencesButtons, params["data_preferences"]);
         }
 
         // update data universe selection buttons

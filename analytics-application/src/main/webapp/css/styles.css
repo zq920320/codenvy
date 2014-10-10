@@ -183,11 +183,11 @@ div.jqplot-table-legend-swatch-outline {
     background-color: rgb(255, 235, 239);
 }
 
-#ui-preferences {
+.preferences {
     margin-left: 80px;
 }
 
-#ui-preferences .btn {
+.preferences .btn {
     font-style: italic;
     margin-left: 0px;
     border-color: #ccc;
@@ -201,7 +201,7 @@ div.jqplot-table-legend-swatch-outline {
     outline: none;
 }
 
-#ui-preferences .btn-primary {
+.preferences .btn-primary {
     background-color: #0074cc;
     *background-color: #05c;
     background-image: -ms-linear-gradient(top, #08c, #05c);

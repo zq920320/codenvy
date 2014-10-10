@@ -34,7 +34,7 @@
     <div class="row-fluid">
         <div>
             <div class="well topFilteringPanel">
-                <div id="ui-preferences" class="btn-group right">
+                <div id="ui-preferences" class="btn-group preferences right">
                     <button class="btn command-btn" default value="table">Table</button>
                     <button class="btn command-btn" value="chart">Chart</button>
                     <button class="btn command-btn" value="table&chart">Table & Chart</button>

@@ -286,10 +286,6 @@ function View() {
     
         return url;
     }
-    
-    function getWidgetId() {
-        return widget.attr("id");
-    }
 
     /**
      * Print table and line chart in the separate tabs
@@ -432,7 +428,37 @@ function View() {
             jQuery(allCharts[i]).hide();            
         }
     }
-    
+
+    /**
+     * Update table according to the data preferences
+     */
+    function implementDataPreferences() {
+        // verify if there is UI preferences button group at the current page
+        if (! $("#data-preferences").doesExist()) {
+            return;
+        }
+
+        var dataPreferences = analytics.util.getGlobalParamFromStorage('data_preferences');
+
+        switch (dataPreferences) {
+            case "mean":
+                //displayMean();
+                break;
+
+            case "median":
+                //displayMedian();
+                break;
+
+            case "mode":
+                //displayMode();
+                break;
+
+            case "data":
+            default:
+                //displayData();
+                break;
+        }
+    }
     
     /** ****************** API ********** */
     return {
@@ -465,5 +491,6 @@ function View() {
         showErrorMessage: showErrorMessage,
 
         implementUIPreferences: implementUIPreferences,
+        implementDataPreferences: implementDataPreferences
     }
 }

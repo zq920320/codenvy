@@ -68,6 +68,13 @@
                     </div>
                 </div>
 
+                <div id="data-preferences" class="btn-group preferences right">
+                    <button class="btn command-btn" default value="data">Data</button>
+                    <button class="btn command-btn" value="mean">Mean</button>
+                    <button class="btn command-btn" value="median">Median</button>
+                    <button class="btn command-btn" value="mode">Mode</button>
+                </div>
+
                 <div id="timely-dd" class="btn-group right" targetWidgets="_all">
                     <button class="btn command-btn" value="Day">Day</button>
                     <button class="btn command-btn" value="Week">Week</button>
