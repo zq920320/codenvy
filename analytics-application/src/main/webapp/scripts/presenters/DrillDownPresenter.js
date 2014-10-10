@@ -44,7 +44,7 @@ analytics.presenter.DrillDownPresenter.prototype.load = function() {
 
     model.pushDoneFunction(function(data) {        
         var table = data[0];  // there should be at most one table in data
-        table.columns_original = analytics.util.clone(table.columns); 
+        table.original = analytics.util.clone(table, true, []);
         
         // check on empty answer from server
         if (typeof table == "undefined") {

@@ -43,19 +43,46 @@ function View() {
         } else {
             print('<table cellspacing="0" class="database-table ' + additionalTableCssClass + '" align="center" id="' + tableId + '">');
         }
-        
+
+        // verify if there is UI preferences button group at the current page
+        if (! $("#data-preferences").doesExist()) {
+            printDataTableBody(table, isDisplaySpecificFirstCell);
+        } else {
+            var dataPreference = analytics.util.getGlobalParamFromStorage('data_preferences');
+            switch (dataPreference) {
+                case "mean":
+                case "median":
+                case "mode":
+                    printStatisticsTableBody(table, isDisplaySpecificFirstCell, dataPreference);
+                    break;
+
+                case "data":
+                default:
+                    printDataTableBody(table, isDisplaySpecificFirstCell);
+                    break;
+            }
+        }
+
+        print('<tfoot aria-hidden="true" style="display: none;"></tfoot>');
+        print('</tbody>');
+        print('</table>');
+        print("</div>");
+    }
+
+
+    function printDataTableBody(table, isDisplaySpecificFirstCell) {
         print('<thead aria-hidden="false">');
         print('<tr>');
-    
+
         // print first cell of header
         if (table.columns.length > 0) {
-            var value = table.columns[0] || "&nbsp;";   // add space to be able to display icons in the empty cell of first column of header 
+            var value = table.columns[0] || "&nbsp;";   // add space to be able to display icons in the empty cell of first column of header
             print('<th class="header">');
             print("<div>" + value + "</div>");
             print('</th>');
         }
-    
-        // print other cells of header    
+
+        // print other cells of header
         for (var i = 1; i < table.columns.length; i++) {
             print('<th class="header">');
             print("<div>" + table.columns[i] + "</div>");
@@ -63,33 +90,35 @@ function View() {
         }
         print('</tr>');
         print('</thead>');
-    
+
         // print table body
         print('<tbody>');
         for (var i = 0; i < table.rows.length; i++) {
             // print odd row
             print('<tr>');
-    
+
             var firstCellClass = "cell";
             if (typeof isDisplaySpecificFirstCell != "undefined" && isDisplaySpecificFirstCell) {
                 firstCellClass += " first-cell text-cursor";
             }
-    
-            if (typeof table.columns_original != "undefined"
-                && analytics.configuration.isTextColumnName(table.columns_original[0])) {
+
+            if (typeof table.original != "undefined"
+                && typeof table.original.columns != "undefined"
+                && analytics.configuration.isTextColumnName(table.original.columns[0])) {
                 firstCellClass += " text";
             }
-            
+
             // print first cell
             print('<td class="' + firstCellClass + '">');
             print(table.rows[i][0]);
             print('</td>');
-    
+
             // print another cells
             for (var j = 1; j < table.columns.length; j++) {
                 var cellCssClass = "cell";
-                if (typeof table.columns_original != "undefined"
-                    && analytics.configuration.isTextColumnName(table.columns_original[j])) {
+                if (typeof table.original != "undefined"
+                    && typeof table.original.columns != "undefined"
+                    && analytics.configuration.isTextColumnName(table.original.columns[j])) {
                     cellCssClass += " text";
                 }
                 print('<td class="' + cellCssClass + '">');
@@ -98,13 +127,61 @@ function View() {
             }
             print('</tr>');
         }
-    
-        print('<tfoot aria-hidden="true" style="display: none;"></tfoot>');
-        print('</tbody>');
-        print('</table>');
-        print("</div>");
-    };
-    
+    }
+
+
+    function printStatisticsTableBody(table, isDisplaySpecificFirstCell, dataPreference) {
+        print('<thead aria-hidden="false">');
+        print('<tr>');
+
+        // print first cell of header
+        if (table.columns.length > 0) {
+            var value = table.columns[0] || "&nbsp;";   // add space to be able to display icons in the empty cell of first column of header
+            print('<th class="header">');
+            print("<div>" + value + "</div>");
+            print('</th>');
+        }
+
+        // print column for mean values
+        print('<th class="header">');
+        print("<div>" + dataPreference + "</div>");
+        print('</th>');
+
+        print('</tr>');
+        print('</thead>');
+
+        // print table body
+        print('<tbody>');
+        for (var i = 0; i < table.rows.length; i++) {
+            // print odd row
+            print('<tr>');
+
+            var firstCellClass = "cell";
+            if (typeof isDisplaySpecificFirstCell != "undefined" && isDisplaySpecificFirstCell) {
+                firstCellClass += " first-cell text-cursor";
+            }
+
+            // print first cell
+            print('<td class="' + firstCellClass + '">');
+            print(table.rows[i][0]);
+            print('</td>');
+
+            // print statistics
+            var cellCssClass = "cell";
+            print('<td class="' + cellCssClass + '">');
+            var vector = table.original.rows[i];
+            // remove label in first cell
+            if (typeof isDisplaySpecificFirstCell != "undefined" && isDisplaySpecificFirstCell) {
+                vector.shift();
+            }
+
+            print(analytics.util.calculateMathStatistics(dataPreference, table.original.rows[i]));
+            print('</td>');
+
+            print('</tr>');
+        }
+    }
+
     function printCsvButton(csvButtonLink) {
         var csvButtonLabel = "CSV";
         
@@ -290,10 +367,10 @@ function View() {
     /**
      * Print table and line chart in the separate tabs
      */
-    function printTableAndChart(table, initialTable) {
-        var chartLabel = initialTable.columns[0];
-        var columnLabels = initialTable.columns.slice(1); // don't include label of first column
-        printLineChart(initialTable.rows, columnLabels, chartLabel);
+    function printTableAndChart(table) {
+        var chartLabel = table.original.columns[0];
+        var columnLabels = table.original.columns.slice(1); // don't include label of first column
+        printLineChart(table.original.rows, columnLabels, chartLabel);
 
         printTable(table, true);
     }

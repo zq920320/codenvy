@@ -57,12 +57,13 @@ analytics.presenter.ReportPresenter.prototype.load = function () {
             
             for (var i in data) {
                 var table = analytics.util.clone(data[i], true, []);
+                table.original = data[i];
                 
                 // add links to drill down page
                 table = presenter.linkTableValuesWithDrillDownPage(table, i, expandableMetricPerSection, modelParams);            
                 
                 if (displayLineChart) {
-                    view.printTableAndChart(table, data[i]);
+                    view.printTableAndChart(table);
                 } else {
                     view.printTable(table, true);
                 }

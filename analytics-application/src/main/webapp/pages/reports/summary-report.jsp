@@ -97,6 +97,7 @@
 
 <jsp:include page="/inclusions/footer.jsp">
     <jsp:param name="javaScriptToLoad" value="/analytics/scripts/presenters/ReportPresenter.js"/>
+    <jsp:param name="javaScriptToLoad" value="/analytics/third-party/javascriptStats-1.0.1.js"/>
 </jsp:include>
 
 </body>

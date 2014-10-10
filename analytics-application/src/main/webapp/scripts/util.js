@@ -444,7 +444,33 @@ function Util() {
     function getGlobalParamFromStorage(globalParamName) {
         return localStorage.getItem(globalParamName);  
     }
-    
+
+    /**
+     * Calculate math statistics value by using 'JavaScript Statistics Library' stored in /third-party/javascriptStats-1.0.1.js file
+     * @param mathStatisticName could be:
+     - Mean
+     - Median
+     - Mode
+     - Min
+     - Max
+     - Range
+     - Sum
+     - Sort
+     - Sort Reverse
+     - Sum of Squares
+     - Variance
+     * @param data - array of numbers
+     */
+    function calculateMathStatistics(mathStatisticName, vector) {
+        if (typeof jsStats != "undefined"
+            && typeof jsStats[mathStatisticName] != "undefined") {
+            vector = normalizeNumericValues(vector);
+            return jsStats[mathStatisticName](vector);
+        }
+
+        return undefined;
+    }
+
     /** ****************** library API ********** */
     return {
         // url manipulations
@@ -484,13 +510,14 @@ function Util() {
         
         getShortenFactoryUrl: getShortenFactoryUrl,
         
-        getRandomNumber: getRandomNumber,
-        
-        normalizeNumericValues: normalizeNumericValues,
-        
         // date coding
         encodeDate: encodeDate,
         decodeDate: decodeDate,
+
+        // math functions
+        getRandomNumber: getRandomNumber,
+        normalizeNumericValues: normalizeNumericValues,
+        calculateMathStatistics: calculateMathStatistics
     }
 
 }

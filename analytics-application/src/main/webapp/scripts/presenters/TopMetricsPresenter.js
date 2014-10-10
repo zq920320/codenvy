@@ -70,7 +70,7 @@ analytics.presenter.TopMetricsPresenter.prototype.load = function() {
         
         for (var tableIndex in data) {
             var table = data[tableIndex];
-            table.columns_original = analytics.util.clone(table.columns); 
+            table.original = analytics.util.clone(table, true, []);
             
             // add links to drill down page
             table = presenter.linkTableValuesWithDrillDownPage(presenter.widgetName, table, modelParams, modelViewName);

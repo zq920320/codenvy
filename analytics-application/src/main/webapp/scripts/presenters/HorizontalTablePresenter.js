@@ -54,7 +54,7 @@ analytics.presenter.HorizontalTablePresenter.prototype.load = function () {
             var modelParams = presenter.getModelParams(viewParams);  // restore initial model params
 
             var table = tables[0];  // there is only one table in tables
-            table.columns_original = analytics.util.clone(table.columns); 
+            table.original = analytics.util.clone(table, true, []);
 
             // add links to drill down page
             table = presenter.linkTableValuesWithDrillDownPage(presenter.widgetName, table, modelParams);

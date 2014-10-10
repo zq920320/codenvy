@@ -66,7 +66,7 @@ analytics.presenter.EntryViewPresenter.prototype.obtainViewData = function (mode
         view.print("<div class='body'>");
 
         var table = data[0];  // there is only one table in data
-        table.columns_original = analytics.util.clone(table.columns); 
+        table.original = analytics.util.clone(table, true, []);
 
         var pageCount = model.recognizePageCount(onePageRowsCount, currentPageNumber, table.rows.length);
         
