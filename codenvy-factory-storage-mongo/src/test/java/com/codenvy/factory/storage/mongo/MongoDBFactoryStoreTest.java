@@ -25,7 +25,6 @@ import com.codenvy.api.core.factory.FactoryParameter;
 import com.codenvy.api.factory.*;
 import com.codenvy.api.factory.dto.Factory;
 import com.codenvy.api.factory.dto.*;
-import com.codenvy.api.factory.SourceParametersValidator;
 import com.codenvy.commons.lang.NameGenerator;
 import com.codenvy.commons.lang.Pair;
 import com.codenvy.dto.server.DtoFactory;
@@ -85,7 +84,7 @@ public class MongoDBFactoryStoreTest {
         // authentication is done
         assertTrue(db.authenticate(username, password.toCharArray()));
         DBCollection collection = db.getCollection("factory");
-        factoryBuilder = new FactoryBuilder(new SourceParametersValidator());
+        factoryBuilder = new FactoryBuilder(new SourceProjectParametersValidator());
 
         try (DBCursor cursor = collection.find()) {
             for (DBObject one : cursor) {
