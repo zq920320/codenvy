@@ -26,9 +26,9 @@ function AnalyticsModel() {
 
     var params = {};
 
-    var doneFunctionStack = new Array();
+    var doneFunctionStack = [];
 
-    var failFunctionStack = new Array();
+    var failFunctionStack = [];
 
     function doneFunction(data) {
         for (var i = doneFunctionStack.length - 1; i >= 0; i--) {
@@ -56,7 +56,7 @@ function AnalyticsModel() {
         var request = get(url, "json", callback, isAsync);
 
         if (!isAsync) {
-            data = jQuery.parseJSON(request.responseText);
+            var data = jQuery.parseJSON(request.responseText);
             data = parseInt(data.value);
             return data;
         }
@@ -76,8 +76,7 @@ function AnalyticsModel() {
         var request = get(url, "json", callback, isAsync);
 
         if (!isAsync) {
-            var data = convertJsonToOneRowTable(request.responseText);
-            return data;
+            return convertJsonToOneRowTable(request.responseText);
         }        
     }
 
@@ -118,7 +117,7 @@ function AnalyticsModel() {
             data = convertArrayJsonToTables(data);
 
             doneFunction(data);
-        }
+        };
 
         var request = get(url, "json", callback, isAsync);
 
@@ -138,7 +137,7 @@ function AnalyticsModel() {
 
         var callback = function (data) {
             doneFunction(data);
-        }
+        };
 
         var request = get(url, "json", callback, isAsync);
 
@@ -172,20 +171,19 @@ function AnalyticsModel() {
 
         var callback = function (data) {
             doneFunction(data);
-        }
+        };
 
         var request = get(url, "json", callback, isAsync);
 
         if (!isAsync) {
-            var data = jQuery.parseJSON(request.responseText);
-            return data;
+            return jQuery.parseJSON(request.responseText);
         }
     }
 
-    function get(url, responseType, doneCollback, isAsync) {
+    function get(url, responseType, doneCallback, isAsync) {
         var url = url || "";
         var responseType = responseType || "json";
-        var doneCollback = doneCollback || function () {
+        var doneCallback = doneCallback || function () {
         };
 
         if (!jQuery.isEmptyObject(params)) {
@@ -198,20 +196,20 @@ function AnalyticsModel() {
                 dataType: responseType,
                 async: isAsync
             })
-                .done(function (data) {
-                    doneCollback(data);
-                })
-                .fail(function (data, textStatus, errorThrown) {
-                    failFunction(data.status, textStatus, errorThrown);
-                });
+            .done(function (data) {
+                doneCallback(data);
+            })
+            .fail(function (data, textStatus, errorThrown) {
+                failFunction(data.status, textStatus, errorThrown);
+            });
         } else {
-            var response = currentAjaxRequest = $.ajax({
+            currentAjaxRequest = $.ajax({
                 url: url,
                 dataType: responseType,
                 async: isAsync
             });
 
-            return response;
+            return currentAjaxRequest;
         }
     }
 
@@ -245,7 +243,7 @@ function AnalyticsModel() {
         }
 
         return result;
-    };
+    }
 
     /**
      * Convert @param data - JSON in format '{"projects":"34","paas_deploys":"11",...}'
@@ -269,7 +267,7 @@ function AnalyticsModel() {
         }
 
         return {rows: [row], columns: columns};
-    };
+    }
 
     function getLinkToExportToCsv(modelName) {
         var url = "/analytics/api/view/" + modelName + ".csv";
@@ -298,7 +296,7 @@ function AnalyticsModel() {
     }
 
     function clearDoneFunction() {
-        doneFunctionStack = new Array();
+        doneFunctionStack = [];
     }
 
     function pushFailFunction(newFailFunction) {
@@ -306,7 +304,7 @@ function AnalyticsModel() {
     }
 
     function clearFailFunction() {
-        failFunctionStack = new Array();
+        failFunctionStack = [];
     }
 
     // add handler of pressing "Esc" button
@@ -357,6 +355,6 @@ function AnalyticsModel() {
 
         getLinkToExportToCsv: getLinkToExportToCsv,
         
-        recognizePageCount: recognizePageCount,
+        recognizePageCount: recognizePageCount
     }
 }

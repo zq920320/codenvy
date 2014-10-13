@@ -69,10 +69,11 @@
                 </div>
 
                 <div id="data-preferences" class="btn-group preferences right">
-                    <button class="btn command-btn" default value="data">Data</button>
-                    <button class="btn command-btn" value="mean">Mean</button>
-                    <button class="btn command-btn" value="median">Median</button>
-                    <button class="btn command-btn" value="mode">Mode</button>
+                    <button class="btn command-btn" default value="data" title="Display initial data">Data</button>
+                    <button class="btn command-btn" value="mean" title="Calculate statistic function Mean()">Mean ( )</button>
+                    <button class="btn command-btn" value="median" title="Calculate statistic function Median()">Median ( )</button>
+                    <button class="btn command-btn" value="min"  title="Display minimum value">Min ( )</button>
+                    <button class="btn command-btn" value="max" title="Display maximum value">Max ( )</button>
                 </div>
 
                 <div id="timely-dd" class="btn-group right" targetWidgets="_all">

@@ -52,7 +52,8 @@ function AnalyticsView() {
             switch (dataPreference) {
                 case "mean":
                 case "median":
-                case "mode":
+                case "min":
+                case "max":
                     printStatisticsTableBody(table, isDisplaySpecificFirstCell, dataPreference);
                     break;
 
@@ -359,9 +360,7 @@ function AnalyticsView() {
             paramDelimeter = "?";
         }
     
-        var url = baseQueryString + paramDelimeter + pageQueryParameter + "=" + pageNumber;
-    
-        return url;
+        return baseQueryString + paramDelimeter + pageQueryParameter + "=" + pageNumber;
     }
 
     /**
@@ -400,34 +399,34 @@ function AnalyticsView() {
     
     function setWidget(newWidget) {
         widget = newWidget;
-    };
+    }
     
     function setParams(newParams) {
         params = newParams;
-    };   
+    }
 
     function getParams() {
         return params;
-    };    
+    }
     
     function clear() {
         widget.empty();
         viewHtml = "";
-    };
+    }
     
     function show() {
         widget.html(viewHtml);
-    };
+    }
     
     function showAbortMessage() {
         print(ABORT_LOADING_MESSAGE);
         show();
-    };
+    }
 
     function showInterruptMessage() {
         print(INTERRUPT_LOADING_MESSAGE);
         show();
-    };
+    }
     
     function showErrorMessage(status, textStatus, errorThrown) {
         if (status == 500) {
@@ -437,7 +436,7 @@ function AnalyticsView() {
         }
         
         show();
-    };
+    }
 
     function getSystemMessageLabel(message) {
         return "<div class='system'>(" + message + ")</div>";
@@ -457,7 +456,7 @@ function AnalyticsView() {
         switch (uiPreferences) {
             case "table":
                 displayAllTables();
-                hideAllCharts()
+                hideAllCharts();
                 break;
             
             case "chart":
@@ -472,7 +471,7 @@ function AnalyticsView() {
             
             default:
                 displayAllTables();
-                hideAllCharts()
+                hideAllCharts();
                 break;
         }
     }
@@ -506,37 +505,6 @@ function AnalyticsView() {
         }
     }
 
-    /**
-     * Update table according to the data preferences
-     */
-    function implementDataPreferences() {
-        // verify if there is UI preferences button group at the current page
-        if (! $("#data-preferences").doesExist()) {
-            return;
-        }
-
-        var dataPreferences = analytics.util.getGlobalParamFromStorage('data_preferences');
-
-        switch (dataPreferences) {
-            case "mean":
-                //displayMean();
-                break;
-
-            case "median":
-                //displayMedian();
-                break;
-
-            case "mode":
-                //displayMode();
-                break;
-
-            case "data":
-            default:
-                //displayData();
-                break;
-        }
-    }
-    
     /** ****************** API ********** */
     return {
         setWidget: setWidget,
@@ -567,7 +535,6 @@ function AnalyticsView() {
         showInterruptMessage: showInterruptMessage,
         showErrorMessage: showErrorMessage,
 
-        implementUIPreferences: implementUIPreferences,
-        implementDataPreferences: implementDataPreferences
+        implementUIPreferences: implementUIPreferences
     }
 }

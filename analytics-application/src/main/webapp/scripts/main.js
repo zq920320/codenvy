@@ -100,7 +100,7 @@ function AnalyticsMain() {
             $(this).addClass('btn-primary');
 
             analytics.util.updateGlobalParamInStorage("data_preferences", $(this).attr("value"));
-            analytics.view.implementDataPreferences();
+            reloadWidgets($("#filter-by").attr("targetWidgets"));
         });
 
         // Show factories selectors group
