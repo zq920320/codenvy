@@ -92,8 +92,7 @@ public class TestAnalysisView extends BaseTest {
                                                                    RowLabel.AND_BUILT,
                                                                    RowLabel.AND_RUN,
                                                                    RowLabel.AND_DEPLOYED_TO_PAAS,
-                                                                   RowLabel.SENT_INVITES,
-                                                                   RowLabel.SHELL_LAUNCHED);
+                                                                   RowLabel.SENT_INVITES);
 
     private enum RowLabel {
         TOTAL_USERS("Total Users"),
@@ -103,7 +102,6 @@ public class TestAnalysisView extends BaseTest {
         AND_RUN("& Run"),
         AND_DEPLOYED_TO_PAAS("& Deployed to PAAS"),
         SENT_INVITES("Sent Invites"),
-        SHELL_LAUNCHED("Shell Launched"),
         EMPTY(""),
         UNKNOWN;
 
@@ -188,7 +186,7 @@ public class TestAnalysisView extends BaseTest {
 
     private void testLifetimeReport(SectionData lifetimeAnalysisReport) {
         // test row labels
-        assertEquals(lifetimeAnalysisReport.size(), 9);
+        assertEquals(lifetimeAnalysisReport.size(), 8);
         for (int i = 0; i < lifetimeAnalysisReport.size(); i++) {
             String actualRowLabel = lifetimeAnalysisReport.get(i).get(0).getAsString();
             String expectedRowLabel = rowsLabels.get(i).getLabel();
@@ -208,12 +206,11 @@ public class TestAnalysisView extends BaseTest {
         assertEquals(columnData.get(RowLabel.AND_RUN), "2");
         assertEquals(columnData.get(RowLabel.AND_DEPLOYED_TO_PAAS), "3");
         assertEquals(columnData.get(RowLabel.SENT_INVITES), "2");
-        assertEquals(columnData.get(RowLabel.SHELL_LAUNCHED), "2");
     }
 
     private void testMonthlyReport(SectionData monthlyAnalysisReport) {
         // test row labels
-        assertEquals(monthlyAnalysisReport.size(), 9);
+        assertEquals(monthlyAnalysisReport.size(), 8);
         for (int i = 0; i < monthlyAnalysisReport.size(); i++) {
             String actualRowLabel = monthlyAnalysisReport.get(i).get(0).getAsString();
             String expectedRowLabel = rowsLabels.get(i).getLabel();
@@ -238,7 +235,6 @@ public class TestAnalysisView extends BaseTest {
         assertEquals(column4Data.get(RowLabel.AND_RUN), "0");
         assertEquals(column4Data.get(RowLabel.AND_DEPLOYED_TO_PAAS), "0");
         assertEquals(column4Data.get(RowLabel.SENT_INVITES), "0");
-        assertEquals(column4Data.get(RowLabel.SHELL_LAUNCHED), "0");
 
         // test data of column 3 with label "Nov 2013"
         Map<RowLabel, String> column3Data = getColumn(3, monthlyAnalysisReport, rowsLabels, true);
@@ -249,7 +245,6 @@ public class TestAnalysisView extends BaseTest {
         assertEquals(column3Data.get(RowLabel.AND_RUN), "1");
         assertEquals(column3Data.get(RowLabel.AND_DEPLOYED_TO_PAAS), "1");
         assertEquals(column3Data.get(RowLabel.SENT_INVITES), "1");
-        assertEquals(column3Data.get(RowLabel.SHELL_LAUNCHED), "1");
 
         // test data of column 2 with label "Dec 2013"
         Map<RowLabel, String> column2Data = getColumn(2, monthlyAnalysisReport, rowsLabels, true);
@@ -260,7 +255,6 @@ public class TestAnalysisView extends BaseTest {
         assertEquals(column2Data.get(RowLabel.AND_RUN), "2");
         assertEquals(column2Data.get(RowLabel.AND_DEPLOYED_TO_PAAS), "3");
         assertEquals(column2Data.get(RowLabel.SENT_INVITES), "2");
-        assertEquals(column2Data.get(RowLabel.SHELL_LAUNCHED), "2");
 
         // test data of column 1 with label "Jan 2014"
         Map<RowLabel, String> column1Data = getColumn(1, monthlyAnalysisReport, rowsLabels, true);
@@ -271,12 +265,11 @@ public class TestAnalysisView extends BaseTest {
         assertEquals(column1Data.get(RowLabel.AND_RUN), "2");
         assertEquals(column1Data.get(RowLabel.AND_DEPLOYED_TO_PAAS), "3");
         assertEquals(column1Data.get(RowLabel.SENT_INVITES), "2");
-        assertEquals(column1Data.get(RowLabel.SHELL_LAUNCHED), "2");
     }
 
     private void testWeeklyReport(SectionData weeklyAnalysisReport) {
         // test row labels
-        assertEquals(weeklyAnalysisReport.size(), 9);
+        assertEquals(weeklyAnalysisReport.size(), 8);
         for (int i = 0; i < weeklyAnalysisReport.size(); i++) {
             String actualRowLabel = weeklyAnalysisReport.get(i).get(0).getAsString();
             String expectedRowLabel = rowsLabels.get(i).getLabel();
@@ -302,7 +295,6 @@ public class TestAnalysisView extends BaseTest {
             assertEquals(columnData.get(RowLabel.AND_RUN), "2");
             assertEquals(columnData.get(RowLabel.AND_DEPLOYED_TO_PAAS), "3");
             assertEquals(columnData.get(RowLabel.SENT_INVITES), "2");
-            assertEquals(columnData.get(RowLabel.SHELL_LAUNCHED), "2");
         }
 
         // test data of column 6 with label "30 Nov"
@@ -315,7 +307,6 @@ public class TestAnalysisView extends BaseTest {
             assertEquals(columnData.get(RowLabel.AND_RUN), "1");
             assertEquals(columnData.get(RowLabel.AND_DEPLOYED_TO_PAAS), "1");
             assertEquals(columnData.get(RowLabel.SENT_INVITES), "1");
-            assertEquals(columnData.get(RowLabel.SHELL_LAUNCHED), "1");
         }
 
         // test data of column 11 with label "26 Oct"
@@ -328,13 +319,12 @@ public class TestAnalysisView extends BaseTest {
             assertEquals(columnData.get(RowLabel.AND_RUN), "0");
             assertEquals(columnData.get(RowLabel.AND_DEPLOYED_TO_PAAS), "0");
             assertEquals(columnData.get(RowLabel.SENT_INVITES), "0");
-            assertEquals(columnData.get(RowLabel.SHELL_LAUNCHED), "0");
         }
     }
 
     private void testDailyReport(SectionData weeklyAnalysisReport) {
         // test row labels
-        assertEquals(weeklyAnalysisReport.size(), 9);
+        assertEquals(weeklyAnalysisReport.size(), 8);
         for (int i = 0; i < weeklyAnalysisReport.size(); i++) {
             String actualRowLabel = weeklyAnalysisReport.get(i).get(0).getAsString();
             String expectedRowLabel = rowsLabels.get(i).getLabel();
@@ -360,7 +350,6 @@ public class TestAnalysisView extends BaseTest {
             assertEquals(columnData.get(RowLabel.AND_RUN), "2");
             assertEquals(columnData.get(RowLabel.AND_DEPLOYED_TO_PAAS), "3");
             assertEquals(columnData.get(RowLabel.SENT_INVITES), "2");
-            assertEquals(columnData.get(RowLabel.SHELL_LAUNCHED), "2");
         }
 
         // test data of last column 14 with label "19 Dec"
@@ -373,7 +362,6 @@ public class TestAnalysisView extends BaseTest {
             assertEquals(columnData.get(RowLabel.AND_RUN), "2");
             assertEquals(columnData.get(RowLabel.AND_DEPLOYED_TO_PAAS), "3");
             assertEquals(columnData.get(RowLabel.SENT_INVITES), "2");
-            assertEquals(columnData.get(RowLabel.SHELL_LAUNCHED), "2");
         }
     }
 
@@ -572,10 +560,6 @@ public class TestAnalysisView extends BaseTest {
 
         /** create collections "user_invite" to calculate "users_who_invited" metric */
         builder.putAll(scriptsManager.getScript(ScriptType.EVENTS, MetricType.USER_INVITE).getParamsAsMap());
-        pigServer.execute(ScriptType.EVENTS, builder.build());
-
-        /** create collections "shell_launched" to calculate "users_who_launched_shell" metric */
-        builder.putAll(scriptsManager.getScript(ScriptType.EVENTS, MetricType.SHELL_LAUNCHED).getParamsAsMap());
         pigServer.execute(ScriptType.EVENTS, builder.build());
 
         builder.putAll(scriptsManager.getScript(ScriptType.EVENTS, MetricType.CREATED_USERS).getParamsAsMap());
