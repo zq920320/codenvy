@@ -455,13 +455,13 @@ var FactoryButton = new function() {
 
                             if (!FactoryButton.style) {
                                 if (json.button.type == "logo") { /* type = logo */
-                                    if (json.button.attributes.counter == "true") {
+                                    if (true == json.button.attributes.counter) {
                                         FactoryButton.style = "advanced,counter";
                                     } else {
                                         FactoryButton.style = "advanced";
                                     }
                                 } else if (json.button.type == "nologo") { /* type = nologo */
-                                    if (json.button.attributes.counter == "true") { /* nologo with counter */
+                                    if (true == json.button.attributes.counter) { /* nologo with counter */
                                         if (json.button.attributes.style == "horizontal") { /* nologo, with counter, horizontal */
                                             if (json.button.attributes.color == "white") {
                                                 FactoryButton.style = "horizontal,white";
