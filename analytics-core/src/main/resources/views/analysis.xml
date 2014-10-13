@@ -52,10 +52,6 @@
                 <parameter key="name" value="users_who_invited"/>
                 <parameter key="description" value="Sent Invites"/>
             </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="users_who_launched_shell"/>
-                <parameter key="description" value="Shell Launched"/>
-            </row>
         </section>
     </view>
 </display>

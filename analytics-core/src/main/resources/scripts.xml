@@ -334,13 +334,6 @@
 
     <!-- Scripts for analysis's view -->
     <script name="events">
-        <description>The number of launched shell</description>
-        <parameter key="WS" value="ANY"/>
-        <parameter key="USER" value="REGISTERED"/>
-        <parameter key="EVENT" value="shell-launched"/>
-        <parameter key="STORAGE_TABLE" value="shell_launched"/>
-    </script>
-    <script name="events">
         <description>The number of deploys to PaaS</description>
         <parameter key="WS" value="ANY"/>
         <parameter key="USER" value="ANY"/>
