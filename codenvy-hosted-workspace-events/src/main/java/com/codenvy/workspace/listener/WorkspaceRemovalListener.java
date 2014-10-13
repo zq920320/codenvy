@@ -86,7 +86,7 @@ public class WorkspaceRemovalListener implements RemovalListener<String, Boolean
                         }
                     }
                 } catch (ConflictException | NotFoundException | ServerException e) {
-                    LOG.warn(e.getLocalizedMessage(), e);
+                    LOG.warn(e.getLocalizedMessage());
                 }
             }
         } finally {
