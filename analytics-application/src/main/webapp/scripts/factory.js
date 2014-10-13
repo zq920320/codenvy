@@ -16,17 +16,17 @@
  * from Codenvy S.A..
  */
 var analytics = analytics || {};
-analytics.factory = new Factory();
+analytics.factory = new AnalyticsFactory();
 
-function Factory() {   
+function AnalyticsFactory() {
     var widgetComponents = {};
     
     function getModel() {
-        return new Model();
+        return new AnalyticsModel();
     }
 
     function getView(widgetName, params) {
-        var view = new View();
+        var view = new AnalyticsView();
         
         var widgetElement = jQuery("#" + widgetName);
         view.setWidget(widgetElement);

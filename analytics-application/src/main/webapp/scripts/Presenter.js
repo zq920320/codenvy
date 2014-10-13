@@ -479,7 +479,7 @@ Presenter.prototype.displayEmptyWidget = function(defaultWidgetLabel) {
 }
 
 Presenter.prototype.displayLoader = function() {
-    this.loader = new Loader();
+    this.loader = new AnalyticsLoader();
     this.loader.show(this.widgetName);
 }
 

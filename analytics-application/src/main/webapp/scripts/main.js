@@ -23,9 +23,9 @@ if (typeof analytics === "undefined") {
     analytics = {};
 }
 
-analytics.main = new Main();
+analytics.main = new AnalyticsMain();
 
-function Main() {
+function AnalyticsMain() {
     jQuery(document).ready(function () {
         setupButtons();
         loadAllWidgets();

@@ -19,9 +19,9 @@ if (typeof analytics === "undefined") {
     analytics = {};
 }
 
-analytics.model = new Model();
+analytics.model = new AnalyticsModel();
 
-function Model() {
+function AnalyticsModel() {
     var currentAjaxRequest = null;
 
     var params = {};

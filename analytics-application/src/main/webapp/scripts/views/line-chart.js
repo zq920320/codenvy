@@ -20,9 +20,9 @@ if (typeof analytics === "undefined") {
 }
 
 analytics.views = analytics.views || {};
-analytics.views.lineChart = new LineChart();
+analytics.views.lineChart = new AnalyticsLineChart();
 
-function LineChart() {
+function AnalyticsLineChart() {
     
     var charts = [];
     var isChartDisplayed = false;
@@ -32,7 +32,7 @@ function LineChart() {
 	 * @see http://c3js.org/gettingstarted.html
      */
     function display(columns, columnLabels, chartId) {
-        var normalizedColumns = analytics.util.normalizeNumericValues(columns);
+        var normalizedColumns = analytics.util.normalizeTableNumbers(columns);
         
         var chart = c3.generate({
             bindto: '#' + chartId,

@@ -16,9 +16,9 @@
  * from Codenvy S.A..
  */
 var analytics = analytics || {};
-analytics.configuration = new Configuration();
+analytics.configuration = new AnalyticsConfiguration();
 
-function Configuration() {
+function AnalyticsConfiguration() {
     var widgetConfiguration = {
         /** Reports */
         signupAnalysis: {

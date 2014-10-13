@@ -15,7 +15,7 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-function Loader() {
+function AnalyticsLoader() {
     /**
 	 * Loader.
 	 * @see loader image generator here: http://preloaders.net

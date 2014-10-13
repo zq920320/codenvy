@@ -19,9 +19,9 @@ if (typeof analytics === "undefined") {
     analytics = {};
 }
 
-analytics.view = new View();
+analytics.view = new AnalyticsView();
 
-function View() {
+function AnalyticsView() {
 
     var viewHtml;
 

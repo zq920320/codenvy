@@ -20,9 +20,9 @@ if (typeof analytics === "undefined") {
 }
 
 analytics.views = analytics.views || {};
-analytics.views.topMenu = new TopMenu();
+analytics.views.topMenu = new AnalyticsTopMenu();
 
-function TopMenu() { 
+function AnalyticsTopMenu() {
     var menu;
     
     function addHandlersToHidePopupMenu() {

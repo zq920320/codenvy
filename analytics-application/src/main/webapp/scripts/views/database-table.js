@@ -20,9 +20,9 @@ if (typeof analytics === "undefined") {
 }
 
 analytics.views = analytics.views || {};
-analytics.views.databaseTable = new DatabaseTable();
+analytics.views.databaseTable = new AnalyticsDatabaseTable();
 
-function DatabaseTable() {  
+function AnalyticsDatabaseTable() {
    var lastClickedRow;
    var lastMouseoveredRow;
      

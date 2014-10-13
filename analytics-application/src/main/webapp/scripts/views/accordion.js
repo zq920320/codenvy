@@ -20,9 +20,9 @@ if (typeof analytics === "undefined") {
 }
 
 analytics.views = analytics.views || {};
-analytics.views.accordion = new Accordion();
+analytics.views.accordion = new AnalyticsAccordion();
 
-function Accordion() {
+function AnalyticsAccordion() {
     /**
 	 * Management of Accordion Widget of jQuery UI library 
 	 * @see http://api.jqueryui.com/accordion/
