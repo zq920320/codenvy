@@ -27,14 +27,6 @@ f4 = removeEmptyField(f3, 'project_type');
 f5 = removeEmptyField(f4, 'user');
 f = removeEmptyField(f5, 'ws');
 
-b1 = filterByEvent(f, 'user-code-refactor');
-b = FOREACH b1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('code_refactories', 1), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('project', project), TOTUPLE('project_type', LOWER(project_type)), TOTUPLE('project_id', CreateProjectId(user, ws, project));
-STORE b INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
-
-c1 = filterByEvent(f, 'user-code-complete');
-c = FOREACH c1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('code_completes', 1), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('project', project), TOTUPLE('project_type', LOWER(project_type)), TOTUPLE('project_id', CreateProjectId(user, ws, project));
-STORE c INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
-
 d1 = filterByEvent(f, 'build-started');
 d = FOREACH d1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('builds', 1), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('project', project), TOTUPLE('project_type', LOWER(project_type)), TOTUPLE('project_id', CreateProjectId(user, ws, project));
 STORE d INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;

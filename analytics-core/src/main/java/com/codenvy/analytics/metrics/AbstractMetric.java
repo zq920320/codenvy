@@ -71,10 +71,6 @@ public abstract class AbstractMetric implements Metric {
     public static final String USER_PHONE            = "user_phone";
     public static final String PROJECT_CREATES       = "project_creates";
     public static final String PROJECT_DESTROYS      = "project_destroys";
-    public static final String CODE_REFACTORIES      = "code_refactories";
-    public static final String CODE_COMPLETES        = "code_completes";
-    public static final String BUILD_INTERRUPTS      = "build_interrupts";
-    public static final String ARTIFACT_DEPLOYS      = "artifact_deploys";
     public static final String DEBUG_TIME            = "debug_time";
     public static final String REGISTERED_USER       = "registered_user";
     public static final String PERSISTENT_WS         = "persistent_ws";
@@ -82,7 +78,6 @@ public abstract class AbstractMetric implements Metric {
     public static final String MEMORY                = "memory";
     public static final String LIFETIME              = "lifetime";
     public static final String TIMEOUT               = "timeout";
-    public static final String USAGE_TIME            = "usage_time";
 
     private final String metricName;
 

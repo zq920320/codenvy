@@ -88,8 +88,6 @@ public class ProjectsStatisticsList extends AbstractListValueResulted implements
         group.put(PROJECT_TYPE, new BasicDBObject("$first", "$" + PROJECT_TYPE));
     
         DBObject project = new BasicDBObject();
-        project.put(CODE_REFACTORIES, "$" + CODE_REFACTORIES);
-        project.put(CODE_COMPLETES, "$" + CODE_COMPLETES);
         project.put(BUILDS, "$" + BUILDS);
         project.put(RUNS, "$" + RUNS);
         project.put(DEBUGS, "$" + DEBUGS);
