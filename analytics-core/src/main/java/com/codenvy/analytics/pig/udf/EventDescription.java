@@ -24,6 +24,8 @@ import org.apache.pig.EvalFunc;
 import org.apache.pig.data.DataType;
 import org.apache.pig.data.Tuple;
 import org.apache.pig.impl.logicalLayer.schema.Schema;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
@@ -33,6 +35,8 @@ import java.io.IOException;
 public class EventDescription extends EvalFunc<String> {
 
     private final EventsHolder eventsHolder;
+
+    private static final Logger LOG = LoggerFactory.getLogger(EventDescription.class);
 
     public EventDescription() {
         eventsHolder = Injector.getInstance(EventsHolder.class);
@@ -44,6 +48,7 @@ public class EventDescription extends EvalFunc<String> {
         try {
             return eventsHolder.getDescription(event);
         } catch (IllegalArgumentException e) {
+            LOG.error(e.getMessage());
             return event;
         }
     }
