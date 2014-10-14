@@ -18,19 +18,52 @@
 package com.codenvy.analytics.persistent;
 
 import com.codenvy.analytics.Utils;
-import com.codenvy.analytics.datamodel.*;
-import com.codenvy.analytics.metrics.*;
+import com.codenvy.analytics.datamodel.DoubleValueData;
+import com.codenvy.analytics.datamodel.ListValueData;
+import com.codenvy.analytics.datamodel.LongValueData;
+import com.codenvy.analytics.datamodel.MapValueData;
+import com.codenvy.analytics.datamodel.SetValueData;
+import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.datamodel.ValueDataFactory;
+import com.codenvy.analytics.metrics.AbstractCount;
+import com.codenvy.analytics.metrics.AbstractMetric;
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.CumulativeMetric;
+import com.codenvy.analytics.metrics.Expandable;
+import com.codenvy.analytics.metrics.Metric;
+import com.codenvy.analytics.metrics.MetricFactory;
+import com.codenvy.analytics.metrics.MetricFilter;
+import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.metrics.ReadBasedExpandable;
+import com.codenvy.analytics.metrics.ReadBasedMetric;
+import com.codenvy.analytics.metrics.ReadBasedSummariziable;
+import com.codenvy.analytics.metrics.WithoutFromDateParam;
 import com.codenvy.analytics.metrics.users.AbstractUsersProfile;
 import com.codenvy.analytics.metrics.users.NonActiveUsers;
 import com.codenvy.analytics.metrics.workspaces.NonActiveWorkspaces;
-import com.mongodb.*;
+import com.mongodb.AggregationOutput;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.DBObject;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
-import static com.codenvy.analytics.datamodel.ValueDataUtil.*;
+import static com.codenvy.analytics.datamodel.ValueDataUtil.getAsList;
+import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsList;
+import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsMap;
 
 /**
  * @author Anatoliy Bazko
@@ -522,7 +555,7 @@ public class MongoDataLoader implements DataLoader {
 
     private ValueData createListValueData(Iterator<DBObject> iterator, String[] trackedFields) {
         return doCreateValueData(iterator, trackedFields, ListValueData.class, new CreateValueAction() {
-            Map<String, ValueData> values = new HashMap<>();
+            Map<String, ValueData> values = new LinkedHashMap<>();
 
             @Override
             public void accumulate(String key, Object value) {

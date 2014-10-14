@@ -17,8 +17,19 @@
  */
 package com.codenvy.analytics.metrics.sessions.factory;
 
-import com.codenvy.analytics.datamodel.*;
-import com.codenvy.analytics.metrics.*;
+import com.codenvy.analytics.datamodel.ListValueData;
+import com.codenvy.analytics.datamodel.LongValueData;
+import com.codenvy.analytics.datamodel.MapValueData;
+import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.datamodel.ValueDataUtil;
+import com.codenvy.analytics.metrics.AbstractListValueResulted;
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.MetricFactory;
+import com.codenvy.analytics.metrics.MetricFilter;
+import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.OmitFilters;
+import com.codenvy.analytics.metrics.ReadBasedMetric;
+import com.codenvy.analytics.metrics.ReadBasedSummariziable;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
@@ -42,10 +53,10 @@ public class ProductUsageFactorySessionsList extends AbstractListValueResulted i
     public String[] getTrackedFields() {
         return new String[]{SESSION_ID,
                             USER,
+                            SESSIONS,
+                            TIME,
                             WS,
                             DATE,
-                            TIME,
-                            SESSIONS,
                             REFERRER,
                             FACTORY,
                             AUTHENTICATED_SESSION,

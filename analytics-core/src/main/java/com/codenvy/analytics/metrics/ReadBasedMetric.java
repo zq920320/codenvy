@@ -29,7 +29,9 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
-import static com.codenvy.analytics.Utils.*;
+import static com.codenvy.analytics.Utils.isAllowedEntities;
+import static com.codenvy.analytics.Utils.isAnonymousUser;
+import static com.codenvy.analytics.Utils.isTemporaryWorkspace;
 
 /**
  * It is supposed to load calculated value {@link com.codenvy.analytics.datamodel.ValueData} from the storage.
@@ -236,7 +238,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
 
     /**
      * @return the fields are interested in by given metric. In other words, they are valuable for given metric. It
-     * might returns empty array to read all available fields
+     * might returns empty array to read all available fields. The order of fields is used into displaying summary reports.
      */
     public abstract String[] getTrackedFields();
 

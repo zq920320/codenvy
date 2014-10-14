@@ -51,19 +51,15 @@ public class ProjectsStatisticsList extends AbstractListValueResulted implements
     public String[] getTrackedFields() {
         return new String[]{PROJECT,
                             WS,
-                            CODE_REFACTORIES,
-                            CODE_COMPLETES,
                             BUILDS,
+                            BUILD_TIME,
                             RUNS,
+                            RUN_TIME,
                             DEBUGS,
+                            DEBUG_TIME,
                             DEPLOYS,
-                            BUILD_INTERRUPTS,
-                            ARTIFACT_DEPLOYS,
                             PROJECT_CREATES,
                             PROJECT_DESTROYS,
-                            RUN_TIME,
-                            BUILD_TIME,
-                            DEBUG_TIME,
                             PROJECT_TYPE,
                             DATE,
                             USER
@@ -75,15 +71,11 @@ public class ProjectsStatisticsList extends AbstractListValueResulted implements
         DBObject group = new BasicDBObject();
     
         group.put(ID, new BasicDBObject("PROJECT_ID", "$" + PROJECT_ID));
-        group.put(CODE_REFACTORIES, new BasicDBObject("$sum", "$" + CODE_REFACTORIES));
-        group.put(CODE_COMPLETES, new BasicDBObject("$sum", "$" + CODE_COMPLETES));
         group.put(BUILDS, new BasicDBObject("$sum", "$" + BUILDS));
         group.put(RUNS, new BasicDBObject("$sum", "$" + RUNS));
         group.put(DEBUGS, new BasicDBObject("$sum", "$" + DEBUGS));
         group.put(DEPLOYS, new BasicDBObject("$sum", "$" + DEPLOYS));
         group.put(FACTORIES, new BasicDBObject("$sum", "$" + FACTORIES));
-        group.put(BUILD_INTERRUPTS, new BasicDBObject("$sum", "$" + BUILD_INTERRUPTS));
-        group.put(ARTIFACT_DEPLOYS, new BasicDBObject("$sum", "$" + ARTIFACT_DEPLOYS));
         group.put(PROJECT_CREATES, new BasicDBObject("$sum", "$" + PROJECT_CREATES));
         group.put(PROJECT_DESTROYS, new BasicDBObject("$sum", "$" + PROJECT_DESTROYS));
         group.put(RUN_TIME, new BasicDBObject("$sum", "$" + RUN_TIME));
@@ -103,8 +95,6 @@ public class ProjectsStatisticsList extends AbstractListValueResulted implements
         project.put(DEBUGS, "$" + DEBUGS);
         project.put(DEPLOYS, "$" + DEPLOYS);
         project.put(FACTORIES, "$" + FACTORIES);
-        project.put(BUILD_INTERRUPTS, "$" + BUILD_INTERRUPTS);
-        project.put(ARTIFACT_DEPLOYS, "$" + ARTIFACT_DEPLOYS);
         project.put(PROJECT_CREATES, "$" + PROJECT_CREATES);
         project.put(PROJECT_DESTROYS, "$" + PROJECT_DESTROYS);
         project.put(RUN_TIME, "$" + RUN_TIME);
@@ -130,6 +120,8 @@ public class ProjectsStatisticsList extends AbstractListValueResulted implements
         ((DBObject)(dbOperations[1].get("$project"))).removeField(PROJECT_TYPE);
         ((DBObject)(dbOperations[1].get("$project"))).removeField(USER);
         ((DBObject)(dbOperations[1].get("$project"))).removeField(DATE);
+        ((DBObject)(dbOperations[1].get("$project"))).removeField(PROJECT_CREATES);
+        ((DBObject)(dbOperations[1].get("$project"))).removeField(PROJECT_DESTROYS);
 
         return dbOperations;
     }
