@@ -21,7 +21,14 @@ import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.StringValueData;
 import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.*;
+import com.codenvy.analytics.metrics.AbstractListValueResulted;
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Metric;
+import com.codenvy.analytics.metrics.MetricFactory;
+import com.codenvy.analytics.metrics.MetricFilter;
+import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.OmitFilters;
+import com.codenvy.analytics.metrics.ReadBasedSummariziable;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
@@ -56,16 +63,16 @@ public class FactoryStatisticsList extends AbstractListValueResulted implements 
     @Override
     public String[] getTrackedFields() {
         return new String[]{FACTORY,
+                            WS_CREATED,
+                            SESSIONS,
                             TIME,
+                            BUILDS,
                             RUNS,
                             DEPLOYS,
-                            BUILDS,
-                            DEBUGS,
-                            SESSIONS,
                             AUTHENTICATED_SESSION,
                             CONVERTED_SESSION,
-                            WS_CREATED,
                             ENCODED_FACTORY,
+                            DEBUGS,
                             ORG_ID};
     }
 
@@ -116,6 +123,12 @@ public class FactoryStatisticsList extends AbstractListValueResulted implements 
         DBObject[] dbOperations = getSpecificDBOperations(clauses);
         ((DBObject)(dbOperations[2].get("$group"))).put(ID, null);
         ((DBObject)(dbOperations[3].get("$project"))).removeField(FACTORY);
+        ((DBObject)(dbOperations[3].get("$project"))).removeField(WS_CREATED);
+        ((DBObject)(dbOperations[3].get("$project"))).removeField(ORG_ID);
+        ((DBObject)(dbOperations[3].get("$project"))).removeField(DEBUGS);
+        ((DBObject)(dbOperations[3].get("$project"))).removeField(ENCODED_FACTORY);
+        ((DBObject)(dbOperations[3].get("$project"))).removeField(AUTHENTICATED_SESSION);
+        ((DBObject)(dbOperations[3].get("$project"))).removeField(CONVERTED_SESSION);
 
         return dbOperations;
     }
@@ -133,7 +146,6 @@ public class FactoryStatisticsList extends AbstractListValueResulted implements 
                 items2Return.put(USER, getNotDefaultStringValue(factoryData.get(USER)));
                 items2Return.put(REPOSITORY, getNotNullStringValue(factoryData.get(REPOSITORY)));
                 items2Return.put(PROJECT_TYPE, getNotNullStringValue(factoryData.get(PROJECT_TYPE)));
-//                items2Return.put(ORG_ID, getNotNullStringValue(factoryData.get(ORG_ID)));
                 items2Return.put(AFFILIATE_ID, getNotNullStringValue(factoryData.get(AFFILIATE_ID)));
             }
 

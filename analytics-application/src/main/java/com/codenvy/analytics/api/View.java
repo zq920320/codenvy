@@ -70,6 +70,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -163,7 +164,7 @@ public class View {
                 m = Collections.emptyMap();
             } else {
                 Map<String, ValueData> items = ((MapValueData)value.getAll().get(0)).getAll();
-                m = new HashMap<>(items.size());
+                m = new LinkedHashMap<>(items.size());
 
                 for (Entry<String, ValueData> entry : items.entrySet()) {
                     String entryValue = getNormalizedSummaryValue(entry);

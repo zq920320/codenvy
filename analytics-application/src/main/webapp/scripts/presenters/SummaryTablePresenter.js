@@ -57,7 +57,7 @@ analytics.presenter.SummaryTablePresenter.prototype.obtainSummaryData = function
     model.pushDoneFunction(function(table) {
         // add number of entries into the table
         if (table.rows.length != 0) {
-            table.columns.unshift("Number of entries");
+            table.columns.unshift("entries");
             table.rows[0].unshift("<div class='bold'>" + numberOfEntries + "</div>");
         }
         

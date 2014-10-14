@@ -62,17 +62,18 @@ public class UsersStatisticsList extends AbstractListValueResulted implements Re
     public String[] getTrackedFields() {
         return new String[]{USER,
                             PROJECTS,
-                            RUNS,
-                            DEBUGS,
+                            SESSIONS,
+                            TIME,
                             BUILDS,
+                            BUILD_TIME,
+                            RUNS,
+                            RUN_TIME,
+                            DEBUGS,
+                            DEBUG_TIME,
                             DEPLOYS,
                             FACTORIES,
-                            TIME,
-                            SESSIONS,
                             INVITES,
-                            LOGINS,
-                            RUN_TIME,
-                            BUILD_TIME};
+                            LOGINS};
     }
 
     @Override
@@ -82,6 +83,7 @@ public class UsersStatisticsList extends AbstractListValueResulted implements Re
         group.put(PROJECTS, new BasicDBObject("$sum", "$" + PROJECTS));
         group.put(RUNS, new BasicDBObject("$sum", "$" + RUNS));
         group.put(DEBUGS, new BasicDBObject("$sum", "$" + DEBUGS));
+        group.put(DEBUG_TIME, new BasicDBObject("$sum", "$" + DEBUG_TIME));
         group.put(DEPLOYS, new BasicDBObject("$sum", "$" + DEPLOYS));
         group.put(BUILDS, new BasicDBObject("$sum", "$" + BUILDS));
         group.put(FACTORIES, new BasicDBObject("$sum", "$" + FACTORIES));
@@ -96,16 +98,17 @@ public class UsersStatisticsList extends AbstractListValueResulted implements Re
         project.put(USER, "$" + ID);
         project.put(PROJECTS, "$" + PROJECTS);
         project.put(RUNS, "$" + RUNS);
+        project.put(RUN_TIME, "$" + RUN_TIME);
         project.put(DEBUGS, "$" + DEBUGS);
+        project.put(DEBUG_TIME, "$" + DEBUG_TIME);
         project.put(DEPLOYS, "$" + DEPLOYS);
         project.put(BUILDS, "$" + BUILDS);
+        project.put(BUILD_TIME, "$" + BUILD_TIME);
         project.put(FACTORIES, "$" + FACTORIES);
         project.put(TIME, "$" + TIME);
         project.put(SESSIONS, "$" + SESSIONS);
         project.put(INVITES, "$" + INVITES);
         project.put(LOGINS, "$" + LOGINS);
-        project.put(RUN_TIME, "$" + RUN_TIME);
-        project.put(BUILD_TIME, "$" + BUILD_TIME);
 
         return new DBObject[]{new BasicDBObject("$group", group),
                               new BasicDBObject("$project", project)};
@@ -116,6 +119,8 @@ public class UsersStatisticsList extends AbstractListValueResulted implements Re
         DBObject[] dbOperations = getSpecificDBOperations(clauses);
         ((DBObject)(dbOperations[0].get("$group"))).put(ID, null);
         ((DBObject)(dbOperations[1].get("$project"))).removeField(USER);
+        ((DBObject)(dbOperations[1].get("$project"))).removeField(INVITES);
+        ((DBObject)(dbOperations[1].get("$project"))).removeField(LOGINS);
 
         return dbOperations;
     }
@@ -135,7 +140,6 @@ public class UsersStatisticsList extends AbstractListValueResulted implements Re
             putNotNull(newItems, profile, USER_FIRST_NAME);
             putNotNull(newItems, profile, USER_LAST_NAME);
             putNotNull(newItems, profile, USER_COMPANY);
-            putNotNull(newItems, profile, USER_JOB);
             putNotNull(newItems, profile, ALIASES);
 
             value.add(new MapValueData(newItems));

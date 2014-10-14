@@ -511,14 +511,21 @@ function AnalyticsConfiguration() {
 
             columnDrillDownPageLinkConfiguration: {
                 mapColumnNameToExpandableMetric: {
-                    "# Sessions": "#SESSIONS",
-                    "Usage Time": "#SESSIONS",
-                    "# Projects": "#PROJECTS"
+                    "Sessions": "#SESSIONS",
+                    "Time": "#SESSIONS",
+                    "Projects": "#PROJECTS",
+                    "Factories": "#FACTORIES"
                 },
 
                 mapColumnToParameter: {
                     "User": "user"
                 }
+            },
+
+            mapColumnToServerSortParam: {
+                "Projects": "projects",
+                "Sessions": "sessions",
+                "Time": "time"
             }
         },
 
@@ -546,15 +553,17 @@ function AnalyticsConfiguration() {
             
             columnDrillDownPageLinkConfiguration: {
                 mapColumnNameToExpandableMetric: {
-                    "# Sessions": "#SESSIONS",
-                    "Total Time": "#SESSIONS",
-                    "Total Build Time": "builds_time",
-                    "Total Run Time": "runs_time",
-                    "# Active Projects": "#PROJECTS",
-                    "# Builds": "builds",
-                    "# Debugs": "debugs",
-                    "# Deploys": "deploys",
-                    "# Factories": "#FACTORIES"
+                    "Projects": "#PROJECTS",
+                    "Sessions": "#SESSIONS",
+                    "Time": "#SESSIONS",
+                    "Builds": "builds",
+                    "Build Time": "builds_time",
+                    "Runs": "runs",
+                    "Run Time": "runs_time",
+                    "Debugs": "debugs",
+                    "Debug Time": "debugs_time",
+                    "Deploys": "deploys",
+                    "Factories": "#FACTORIES"
                 }
             }
         },
@@ -801,25 +810,30 @@ function AnalyticsConfiguration() {
             },
 
             mapColumnToServerSortParam: {
+                "Projects": "projects",
                 "Time": "time",
                 "Sessions": "sessions",
-                "# Runs": "runs",
-                "# Debugs": "debugs",
-                "# Builds": "builds",
-                "# Deploys": "deploys",
-                "Invites": "invites"
+                "Builds": "builds",
+                "Build Time": "build_time",
+                "Runs": "runs",
+                "Run Time": "run_time",
+                "Debugs": "debugs",
+                "Debug Time": "debug_time",
+                "Deploys": "deploys",
             },
 
             columnDrillDownPageLinkConfiguration: {
                 mapColumnNameToExpandableMetric: {
-                    "Time": "#SESSIONS",
+                    "Projects": "#PROJECTS",
                     "Sessions": "#SESSIONS",
-                    "# Runs": "runs",
-                    "# Debugs": "debugs",
-                    "# Builds": "builds",
-                    "# Deploys": "deploys",
-                    "Invites": "user_invite",
-                    "Joined Users": "#USERS"
+                    "Time": "#SESSIONS",
+                    "Builds": "builds",
+                    "Build Time": "builds_time",
+                    "Runs": "runs",
+                    "Run Time": "runs_time",
+                    "Debugs": "debugs",
+                    "Debug Time": "debugs_time",
+                    "Deploys": "deploys",
                 },
 
                 mapColumnToParameter: {
@@ -852,16 +866,16 @@ function AnalyticsConfiguration() {
             
             columnDrillDownPageLinkConfiguration: {
                 mapColumnNameToExpandableMetric: {
-                    "# Sessions": "#SESSIONS",
-                    "Total Time": "#SESSIONS",
-                    "Total Build Time": "builds_time",
-                    "Total Run Time": "runs_time",
-                    "# Active Projects": "#PROJECTS",
-                    "# Builds": "builds",
-                    "# Debugs": "debugs",
-                    "# Deploys": "deploys",
-                    "# Factories": "#FACTORIES",
-                    "# Users": "#USERS"
+                    "Projects": "#PROJECTS",
+                    "Sessions": "#SESSIONS",
+                    "Time": "#SESSIONS",
+                    "Builds": "builds",
+                    "Build Time": "builds_time",
+                    "Runs": "runs",
+                    "Run Time": "runs_time",
+                    "Debugs": "debugs",
+                    "Debug Time": "debugs_time",
+                    "Deploys": "deploys",
                 }
             }
         },
@@ -997,14 +1011,13 @@ function AnalyticsConfiguration() {
                 "Date": "date",
                 "Project": "project",
                 "Type": "project_type",
-                "# Builds": "builds",
-                "# Build Interrupts": "build_interrupts",
-                "# Runs": "runs",
-                "# Debugs": "debugs",
-                "# Deploys": "deploys",
-                "# Artifact Deploys": "artifact_deploys",
-                "# Code Refactories": "code_refactories",
-                "# Code Completes": "code_completes"
+                "Builds": "builds",
+                "Build Time": "build_time",
+                "Runs": "runs",
+                "Run Time": "run_time",
+                "Debugs": "debugs",
+                "Debug Time": "debug_time",
+                "Deploys": "deploys",
             }
         },
 
@@ -1150,13 +1163,11 @@ function AnalyticsConfiguration() {
 
             mapColumnToServerSortParam: {
                 "Factory URL": "factory",
-                "Project Type": "project_type",
-                "Clicks": "ws_created",
                 "Sessions": "sessions",
                 "Time": "time",
-                "# Runs": "runs",
-                "# Deploys": "deploys",
-                "# Builds": "builds",
+                "Runs": "runs",
+                "Deploys": "deploys",
+                "Builds": "builds",
                 "Organization": "org_id"
             },
 
@@ -1205,11 +1216,11 @@ function AnalyticsConfiguration() {
 
             columnDrillDownPageLinkConfiguration: {
                 mapColumnNameToExpandableMetric: {
-                    "# Clicks": "temporary_workspaces_created",
-                    "# Sessions": "#SESSIONS",
-                    "# Known": "authenticated_factory_sessions",
-                    "# Converted": "converted_factory_sessions",
-                    "Total Time": "#SESSIONS"
+                    "Clicks": "temporary_workspaces_created",
+                    "Sessions": "#SESSIONS",
+                    "Known": "authenticated_factory_sessions",
+                    "Converted": "converted_factory_sessions",
+                    "Time": "#SESSIONS"
                 }
             }
         },
@@ -1261,17 +1272,17 @@ function AnalyticsConfiguration() {
             },
 
             mapColumnToServerSortParam: {
-                "# Sessions": "sessions",
-                "Duration": "time",
-                "# Runs": "runs",
-                "# Builds": "builds",
-                "# Deploys": "deploys"
+                "Sessions": "sessions",
+                "Time": "time",
+                "Runs": "runs",
+                "Builds": "builds",
+                "Deploys": "deploys"
             },
 
             columnDrillDownPageLinkConfiguration: {
                 mapColumnNameToExpandableMetric: {
-                    "# Sessions": "#SESSIONS",
-                    "Duration": "#SESSIONS"
+                    "Sessions": "#SESSIONS",
+                    "Time": "#SESSIONS"
                 },
 
                 mapColumnToParameter: {

@@ -22,7 +22,13 @@ import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.*;
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Metric;
+import com.codenvy.analytics.metrics.MetricFactory;
+import com.codenvy.analytics.metrics.MetricFilter;
+import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.metrics.Summaraziable;
 import com.codenvy.analytics.metrics.users.UsersStatisticsList;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
@@ -215,14 +221,9 @@ public class TestProductUsageFactorySessions extends BaseTest {
         Map<String, ValueData> summary = ((MapValueData)summaryValue.getAll().get(0)).getAll();
         assertEquals(summary.get(UsersStatisticsList.SESSIONS).getAsString(), "3");
         assertEquals(summary.get(UsersStatisticsList.TIME).getAsString(), "1800000");
-        assertEquals(summary.get(UsersStatisticsList.AUTHENTICATED_SESSION).getAsString(), "2");
-        assertEquals(summary.get(UsersStatisticsList.CONVERTED_SESSION).getAsString(), "1");
         assertEquals(summary.get(UsersStatisticsList.RUNS).getAsString(), "1");
         assertEquals(summary.get(UsersStatisticsList.BUILDS).getAsString(), "0");
-        assertEquals(summary.get(UsersStatisticsList.DEBUGS).getAsString(), "0");
         assertEquals(summary.get(UsersStatisticsList.DEPLOYS).getAsString(), "0");
-        assertEquals(summary.get(UsersStatisticsList.WS_CREATED).getAsString(), "2");
-        assertEquals(summary.get(UsersStatisticsList.ENCODED_FACTORY).getAsString(), "0");
 
         // verify the same summary data on metric FACTORY_STATISTICS_LIST
         Context.Builder builder = new Context.Builder();
@@ -233,13 +234,8 @@ public class TestProductUsageFactorySessions extends BaseTest {
         summary = ((MapValueData)summaryValue.getAll().get(0)).getAll();
         assertEquals(summary.get(UsersStatisticsList.SESSIONS).getAsString(), "3");
         assertEquals(summary.get(UsersStatisticsList.TIME).getAsString(), "1800000");
-        assertEquals(summary.get(UsersStatisticsList.AUTHENTICATED_SESSION).getAsString(), "2");
-        assertEquals(summary.get(UsersStatisticsList.CONVERTED_SESSION).getAsString(), "1");
         assertEquals(summary.get(UsersStatisticsList.RUNS).getAsString(), "1");
         assertEquals(summary.get(UsersStatisticsList.BUILDS).getAsString(), "0");
-        assertEquals(summary.get(UsersStatisticsList.DEBUGS).getAsString(), "0");
         assertEquals(summary.get(UsersStatisticsList.DEPLOYS).getAsString(), "0");
-        assertEquals(summary.get(UsersStatisticsList.WS_CREATED).getAsString(), "2");
-        assertEquals(summary.get(UsersStatisticsList.ENCODED_FACTORY).getAsString(), "0");        
     }
 }

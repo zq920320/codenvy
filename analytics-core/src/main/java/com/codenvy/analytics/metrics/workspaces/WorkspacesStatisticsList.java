@@ -64,16 +64,17 @@ public class WorkspacesStatisticsList extends AbstractListValueResulted implemen
     public String[] getTrackedFields() {
         return new String[]{WS,
                             PROJECTS,
-                            RUNS,
-                            DEBUGS,
+                            SESSIONS,
+                            TIME,
                             BUILDS,
+                            BUILD_TIME,
+                            RUNS,
+                            RUN_TIME,
+                            DEBUGS,
+                            DEBUG_TIME,
                             DEPLOYS,
                             FACTORIES,
-                            TIME,
-                            SESSIONS,
                             INVITES,
-                            RUN_TIME,
-                            BUILD_TIME,
                             JOINED_USERS};
     }
 
@@ -84,6 +85,7 @@ public class WorkspacesStatisticsList extends AbstractListValueResulted implemen
         group.put(PROJECTS, new BasicDBObject("$sum", "$" + PROJECTS));
         group.put(RUNS, new BasicDBObject("$sum", "$" + RUNS));
         group.put(DEBUGS, new BasicDBObject("$sum", "$" + DEBUGS));
+        group.put(DEBUG_TIME, new BasicDBObject("$sum", "$" + DEBUG_TIME));
         group.put(DEPLOYS, new BasicDBObject("$sum", "$" + DEPLOYS));
         group.put(BUILDS, new BasicDBObject("$sum", "$" + BUILDS));
         group.put(FACTORIES, new BasicDBObject("$sum", "$" + FACTORIES));
@@ -99,6 +101,7 @@ public class WorkspacesStatisticsList extends AbstractListValueResulted implemen
         project.put(PROJECTS, "$" + PROJECTS);
         project.put(RUNS, "$" + RUNS);
         project.put(DEBUGS, "$" + DEBUGS);
+        project.put(DEBUG_TIME, "$" + DEBUG_TIME);
         project.put(DEPLOYS, "$" + DEPLOYS);
         project.put(BUILDS, "$" + BUILDS);
         project.put(FACTORIES, "$" + FACTORIES);
@@ -157,6 +160,9 @@ public class WorkspacesStatisticsList extends AbstractListValueResulted implemen
         DBObject[] dbOperations = getSpecificDBOperations(clauses);
         ((DBObject)(dbOperations[0].get("$group"))).put(ID, null);
         ((DBObject)(dbOperations[1].get("$project"))).removeField(WS);
+        ((DBObject)(dbOperations[1].get("$project"))).removeField(JOINED_USERS);
+        ((DBObject)(dbOperations[1].get("$project"))).removeField(INVITES);
+        ((DBObject)(dbOperations[1].get("$project"))).removeField(FACTORIES);
 
         return dbOperations;
     }

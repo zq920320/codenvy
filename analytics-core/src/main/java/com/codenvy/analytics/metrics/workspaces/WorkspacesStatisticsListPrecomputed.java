@@ -56,16 +56,17 @@ public class WorkspacesStatisticsListPrecomputed extends AbstractListValueResult
     public String[] getTrackedFields() {
         return new String[]{WS,
                             PROJECTS,
-                            RUNS,
-                            DEBUGS,
+                            SESSIONS,
+                            TIME,
                             BUILDS,
+                            BUILD_TIME,
+                            RUNS,
+                            RUN_TIME,
+                            DEBUGS,
+                            DEBUG_TIME,
                             DEPLOYS,
                             FACTORIES,
-                            TIME,
-                            SESSIONS,
                             INVITES,
-                            RUN_TIME,
-                            BUILD_TIME,
                             WorkspacesStatisticsList.JOINED_USERS};
     }
 

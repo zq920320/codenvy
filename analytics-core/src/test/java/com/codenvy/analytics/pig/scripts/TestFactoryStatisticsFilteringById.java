@@ -21,7 +21,12 @@ import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.*;
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.MetricFactory;
+import com.codenvy.analytics.metrics.MetricFilter;
+import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.metrics.Summaraziable;
 import com.codenvy.analytics.metrics.users.UsersStatisticsList;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
@@ -117,14 +122,9 @@ public class TestFactoryStatisticsFilteringById extends BaseTest {
 
         assertEquals(summary.get(UsersStatisticsList.SESSIONS).getAsString(), "2");
         assertEquals(summary.get(UsersStatisticsList.TIME).getAsString(), "900000");
-        assertEquals(summary.get(UsersStatisticsList.AUTHENTICATED_SESSION).getAsString(), "2");
-        assertEquals(summary.get(UsersStatisticsList.CONVERTED_SESSION).getAsString(), "1");
         assertEquals(summary.get(UsersStatisticsList.RUNS).getAsString(), "1");
         assertEquals(summary.get(UsersStatisticsList.BUILDS).getAsString(), "0");
-        assertEquals(summary.get(UsersStatisticsList.DEBUGS).getAsString(), "0");
         assertEquals(summary.get(UsersStatisticsList.DEPLOYS).getAsString(), "0");
-        assertEquals(summary.get(UsersStatisticsList.WS_CREATED).getAsString(), "2");
-        assertEquals(summary.get(UsersStatisticsList.ENCODED_FACTORY).getAsString(), "1");
     }
 
     @Test
@@ -140,14 +140,9 @@ public class TestFactoryStatisticsFilteringById extends BaseTest {
 
         assertEquals(summary.get(UsersStatisticsList.SESSIONS).getAsString(), "1");
         assertEquals(summary.get(UsersStatisticsList.TIME).getAsString(), "300000");
-        assertEquals(summary.get(UsersStatisticsList.AUTHENTICATED_SESSION).getAsString(), "1");
-        assertEquals(summary.get(UsersStatisticsList.CONVERTED_SESSION).getAsString(), "1");
         assertEquals(summary.get(UsersStatisticsList.RUNS).getAsString(), "0");
         assertEquals(summary.get(UsersStatisticsList.BUILDS).getAsString(), "0");
-        assertEquals(summary.get(UsersStatisticsList.DEBUGS).getAsString(), "0");
         assertEquals(summary.get(UsersStatisticsList.DEPLOYS).getAsString(), "0");
-        assertEquals(summary.get(UsersStatisticsList.WS_CREATED).getAsString(), "1");
-        assertEquals(summary.get(UsersStatisticsList.ENCODED_FACTORY).getAsString(), "1");
     }
 
     @Test
@@ -163,13 +158,8 @@ public class TestFactoryStatisticsFilteringById extends BaseTest {
 
         assertEquals(summary.get(UsersStatisticsList.SESSIONS).getAsString(), "1");
         assertEquals(summary.get(UsersStatisticsList.TIME).getAsString(), "600000");
-        assertEquals(summary.get(UsersStatisticsList.AUTHENTICATED_SESSION).getAsString(), "1");
-        assertEquals(summary.get(UsersStatisticsList.CONVERTED_SESSION).getAsString(), "0");
         assertEquals(summary.get(UsersStatisticsList.RUNS).getAsString(), "1");
         assertEquals(summary.get(UsersStatisticsList.BUILDS).getAsString(), "0");
-        assertEquals(summary.get(UsersStatisticsList.DEBUGS).getAsString(), "0");
         assertEquals(summary.get(UsersStatisticsList.DEPLOYS).getAsString(), "0");
-        assertEquals(summary.get(UsersStatisticsList.WS_CREATED).getAsString(), "1");
-        assertEquals(summary.get(UsersStatisticsList.ENCODED_FACTORY).getAsString(), "0");
     }
 }

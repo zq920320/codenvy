@@ -17,7 +17,14 @@
  */
 package com.codenvy.analytics.metrics.sessions.factory;
 
-import com.codenvy.analytics.metrics.*;
+import com.codenvy.analytics.metrics.AbstractListValueResulted;
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.MetricFactory;
+import com.codenvy.analytics.metrics.MetricFilter;
+import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.OmitFilters;
+import com.codenvy.analytics.metrics.PrecomputedDataMetric;
+import com.codenvy.analytics.metrics.ReadBasedSummariziable;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
@@ -47,16 +54,16 @@ public class FactoryStatisticsListPrecomputed extends AbstractListValueResulted 
     @Override
     public String[] getTrackedFields() {
         return new String[]{FACTORY,
+                            WS_CREATED,
+                            SESSIONS,
                             TIME,
+                            BUILDS,
                             RUNS,
                             DEPLOYS,
-                            BUILDS,
-                            ENCODED_FACTORY,
-                            DEBUGS,
-                            SESSIONS,
                             AUTHENTICATED_SESSION,
                             CONVERTED_SESSION,
-                            WS_CREATED,
+                            ENCODED_FACTORY,
+                            DEBUGS,
                             ORG_ID,
                             PROJECT_TYPE};
     }

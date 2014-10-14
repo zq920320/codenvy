@@ -105,7 +105,6 @@ public class TestUsersSessions extends BaseTest {
         assertEquals(summary.size(), 1);
         items = (MapValueData)summary.getAll().get(0);
 
-        assertEquals(items.getAll().get("sessions"), LongValueData.valueOf(2));
         assertEquals(items.getAll().get("time"), LongValueData.valueOf(8 * 60 * 1000));
 
         metric = MetricFactory.getMetric(MetricType.PRODUCT_USAGE_SESSIONS);
@@ -140,7 +139,6 @@ public class TestUsersSessions extends BaseTest {
         assertEquals(summary.size(), 1);
         items = (MapValueData)summary.getAll().get(0);
 
-        assertEquals(items.getAll().get("sessions"), LongValueData.valueOf(1));
         assertEquals(items.getAll().get("time"), LongValueData.valueOf(360000));
 
         metric = MetricFactory.getMetric(MetricType.PRODUCT_USAGE_SESSIONS);
