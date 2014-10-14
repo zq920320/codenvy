@@ -111,6 +111,7 @@ analytics.presenter.HorizontalTablePresenter.prototype.load = function () {
         model.pushDoneFunction(function (tables) {
             // print table
             var table = tables[0];  // there is only one table in tables
+            table.original = analytics.util.clone(table, true, []);
 
             // add links to drill down page
             table = presenter.linkTableValuesWithDrillDownPage(presenter.widgetName, table, modelParams);

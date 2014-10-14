@@ -44,7 +44,6 @@
 </div>
 
 <jsp:include page="/inclusions/footer.jsp">
-    <jsp:param name="javaScriptToLoad" value="/analytics/scripts/presenters/VerticalTablePresenter.js"/>
     <jsp:param name="javaScriptToLoad" value="/analytics/scripts/presenters/HorizontalTablePresenter.js"/>
 </jsp:include>
 
