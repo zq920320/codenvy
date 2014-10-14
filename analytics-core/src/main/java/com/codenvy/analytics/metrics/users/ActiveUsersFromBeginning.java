@@ -42,6 +42,7 @@ public class ActiveUsersFromBeginning extends AbstractActiveEntities implements 
     public Context applySpecificFilter(Context clauses) throws IOException {
         Context.Builder builder = new Context.Builder(clauses);
         builder.putDefaultValue(Parameters.FROM_DATE);
+        builder.put(MetricFilter.REGISTERED_USER, 1);
         return super.applySpecificFilter(builder.build());
     }
 }

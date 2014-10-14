@@ -18,11 +18,13 @@
 package com.codenvy.analytics.metrics.users;
 
 import com.codenvy.analytics.metrics.AbstractActiveEntities;
+import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.OmitFilters;
 
 import javax.annotation.security.RolesAllowed;
+import java.io.IOException;
 
 /**
  * @author Anatoliy Bazko
@@ -38,5 +40,14 @@ public class ActiveUsers extends AbstractActiveEntities {
     @Override
     public String getDescription() {
         return "The number of active registered users";
+    }
+
+    @Override
+    public Context applySpecificFilter(Context clauses) throws IOException {
+        Context.Builder builder = new Context.Builder(super.applySpecificFilter(clauses));
+
+        builder.put(MetricFilter.REGISTERED_USER, 1);
+
+        return builder.build();
     }
 }
