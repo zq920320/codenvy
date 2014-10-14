@@ -309,7 +309,7 @@ function AnalyticsUtil() {
     function getShortenFactoryUrl(factoryUrl) {
         var shortenFactoryUrl = factoryUrl;
 
-        shortenFactoryUrl = shortenFactoryUrl.replace(/^[\w\/.:]*[?]/, "");  // remove prefix "https://codenvy.com/factory?"
+        shortenFactoryUrl = shortenFactoryUrl.replace(/^[\w\/.\-:]*[?]/, "");  // remove prefix "https://codenvy.com/factory?"
 
         // shortening url in parameter "vcsurl":
         // replace "vcsurl=https://github.com/EspressoLogicDemo/Demo_4xslT.git" on "vcsurl=Demo_4xslT.git"
