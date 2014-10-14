@@ -313,15 +313,27 @@ function AnalyticsUtil() {
 
         // shortening url in parameter "vcsurl":
         // replace "vcsurl=https://github.com/EspressoLogicDemo/Demo_4xslT.git" on "vcsurl=Demo_4xslT.git"
-        var shortenVcsurl = shortenFactoryUrl.match(/vcsurl=[\w\/:.]*\/([\w]*)/);
+        var shortenVcsurl = shortenFactoryUrl.match(/vcsurl=[\w\/:.]*\/([\w.]*)/);
         if (shortenVcsurl != null) {
             shortenVcsurl = shortenVcsurl[1];
             shortenFactoryUrl = shortenFactoryUrl.replace(/vcsurl=[\w\/:.]*/, "vcsurl=" + shortenVcsurl);
         }
 
+        // shortening url in parameter "source.project.location":
+        // replace "source.project.location=https://github.com/project/spring.git" on "source.project.location=spring.git"
+        // replace "source.location=git@github.com:project/spring.git" on "source.location=spring.git"
+        var shortenLocation = shortenFactoryUrl.match(/[\w.]*location=[\w\/.\-:@]*\/([\w.]*)/);
+        if (shortenLocation != null) {
+            shortenLocation = shortenLocation[1];
+            shortenFactoryUrl = shortenFactoryUrl.replace(/[\w.]*location=[\w\/.\-:@]*/, "location=" + shortenLocation);
+        }
+
+        // remove parameter 'actions.findReplace=[{"files":["{pom.xm*,test.*}","test_file.txt"],...]'
+        shortenFactoryUrl = shortenFactoryUrl.replace(/&actions.findReplace=\[.*\]/, "")
+
         // replace all URL query parameter names on " | "
-        shortenFactoryUrl = shortenFactoryUrl.replace(/^[\w]+=/, "");  // replace first parameter name without starting "&"
-        shortenFactoryUrl = shortenFactoryUrl.replace(/&[\w]+=/g, " | ");
+        shortenFactoryUrl = shortenFactoryUrl.replace(/^[\w.\-]+=/, "");  // replace first parameter name without starting "&"
+        shortenFactoryUrl = shortenFactoryUrl.replace(/&[\w.\-]+=/g, " | ");
 
         return shortenFactoryUrl;
     }
