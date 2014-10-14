@@ -313,10 +313,10 @@ function AnalyticsUtil() {
 
         // shortening url in parameter "vcsurl":
         // replace "vcsurl=https://github.com/EspressoLogicDemo/Demo_4xslT.git" on "vcsurl=Demo_4xslT.git"
-        var shortenVcsurl = shortenFactoryUrl.match(/vcsurl=[\w\/:.]*\/([\w.]*)/);
+        var shortenVcsurl = shortenFactoryUrl.match(/vcsurl=[\w\/.\-:@]*\/([\w.]*)/);
         if (shortenVcsurl != null) {
             shortenVcsurl = shortenVcsurl[1];
-            shortenFactoryUrl = shortenFactoryUrl.replace(/vcsurl=[\w\/:.]*/, "vcsurl=" + shortenVcsurl);
+            shortenFactoryUrl = shortenFactoryUrl.replace(/vcsurl=[\w\/.\-:@]*/, "vcsurl=" + shortenVcsurl);
         }
 
         // shortening url in parameter "source.project.location":
