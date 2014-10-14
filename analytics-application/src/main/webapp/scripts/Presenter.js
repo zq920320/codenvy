@@ -223,7 +223,8 @@ Presenter.prototype.isSortingOrderAscending = function(sortingColumn, sortingPar
 Presenter.prototype.isEmptyValue = function(value) {
     return value == "0"  // 0 numeric value
            || value == "00:00:00"   // 0 time value
-           || value == "0%";   // 0 time value
+           || value == "0%"         // 0% value
+           || value == "0.0%";      // 0.0% value
 }
 
 Presenter.prototype.getDrillDownPageLink = function(metricName, modelParams, timeInterval) {
