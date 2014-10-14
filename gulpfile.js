@@ -169,6 +169,7 @@ gulp.task('copy_prod',['copy_src','prod_cfg','css','rjs','jekyll','myrev','repla
     paths.prod+'**/amd-app-*.js', // minified JS
     paths.prod+'**/*-*.css', // minified CSS
     paths.prod+'**/*.jpg',
+    paths.prod+'**/*.ico',
     paths.prod+'**/*.png',
     paths.prod+'**/*.svg',
     paths.prod+'**/*.txt',
