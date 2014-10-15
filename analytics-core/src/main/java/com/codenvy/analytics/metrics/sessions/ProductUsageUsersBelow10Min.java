@@ -34,7 +34,7 @@ public class ProductUsageUsersBelow10Min extends CalculatedMetric implements Exp
 
     public ProductUsageUsersBelow10Min() {
         super(MetricType.PRODUCT_USAGE_USERS_BELOW_10_MIN,
-              new MetricType[]{MetricType.ACTIVE_USERS,
+              new MetricType[]{MetricType.PRODUCT_USAGE_USERS_TOTAL,
                                MetricType.PRODUCT_USAGE_USERS_BETWEEN_10_AND_60_MIN,
                                MetricType.PRODUCT_USAGE_USERS_BETWEEN_60_AND_300_MIN,
                                MetricType.PRODUCT_USAGE_USERS_ABOVE_300_MIN});

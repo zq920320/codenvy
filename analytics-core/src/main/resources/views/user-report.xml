@@ -61,7 +61,7 @@
                 <parameter key="section-name" value="User Engagement (#)"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="active_users"/>
+                <parameter key="name" value="product_usage_users_total"/>
                 <parameter key="description" value="Total"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">

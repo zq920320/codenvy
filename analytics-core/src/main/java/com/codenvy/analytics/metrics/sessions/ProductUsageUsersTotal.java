@@ -15,39 +15,30 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.metrics.users;
+package com.codenvy.analytics.metrics.sessions;
 
-import com.codenvy.analytics.metrics.AbstractActiveEntities;
+import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Context;
-import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.analytics.metrics.OmitFilters;
 
 import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
 
-/**
- * @author Anatoliy Bazko
- */
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
-@OmitFilters({MetricFilter.WS, MetricFilter.PERSISTENT_WS})
-public class ActiveUsers extends AbstractActiveEntities {
+public class ProductUsageUsersTotal extends AbstractProductUsageUsers {
 
-    public ActiveUsers() {
-        super(MetricType.ACTIVE_USERS, MetricType.ACTIVE_USERS_SET, USER);
+    public ProductUsageUsersTotal() {
+        super(MetricType.PRODUCT_USAGE_USERS_TOTAL, 0, Long.MAX_VALUE, true, true);
+    }
+
+    @Override
+    public ValueData getValue(Context context) throws IOException {
+        return super.getValue(context);
     }
 
     @Override
     public String getDescription() {
-        return "The number of active registered users";
-    }
-
-    @Override
-    public Context applySpecificFilter(Context clauses) throws IOException {
-        Context.Builder builder = new Context.Builder(super.applySpecificFilter(clauses));
-        if (!clauses.exists(MetricFilter.USER)) {
-            builder.put(MetricFilter.REGISTERED_USER, 1);
-        }
-        return builder.build();
+        return "The number of registered users who spent in product any time";
     }
 }

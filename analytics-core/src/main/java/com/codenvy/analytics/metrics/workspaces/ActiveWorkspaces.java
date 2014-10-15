@@ -40,7 +40,10 @@ public class ActiveWorkspaces extends AbstractActiveEntities {
     @Override
     public Context applySpecificFilter(Context clauses) throws IOException {
         Context.Builder builder = new Context.Builder(super.applySpecificFilter(clauses));
-        builder.put(MetricFilter.PERSISTENT_WS, 1);
+        if (!clauses.exists(MetricFilter.WS)) {
+            builder.put(MetricFilter.PERSISTENT_WS, 1);
+        }
+
         return builder.build();
     }
 
