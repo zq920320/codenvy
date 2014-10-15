@@ -45,17 +45,11 @@ public class EventDescription extends EvalFunc<String> {
     @Override
     public String exec(Tuple input) throws IOException {
         String event = (String)input.get(0);
-        try {
-            return eventsHolder.getDescription(event);
-        } catch (IllegalArgumentException e) {
-            LOG.error(e.getMessage());
-            return event;
-        }
+        return eventsHolder.getDescription(event);
     }
 
     @Override
     public Schema outputSchema(Schema input) {
-        return new Schema(new Schema.FieldSchema(getSchemaName(this.getClass().getName().toLowerCase(), input),
-                                                 DataType.CHARARRAY));
+        return new Schema(new Schema.FieldSchema(getSchemaName(this.getClass().getName().toLowerCase(), input), DataType.CHARARRAY));
     }
 }

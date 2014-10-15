@@ -19,12 +19,14 @@ package com.codenvy.analytics.pig.scripts;
 
 import com.codenvy.analytics.services.configuration.XmlConfigurationManager;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -65,6 +67,10 @@ public class EventsHolder {
      * USER and WS parameters will be skipped.
      */
     public Map<String, Object> getParametersValues(String eventName, String message) throws IllegalArgumentException {
+        if (!isEventExists(eventName)) {
+            return Collections.emptyMap();
+        }
+
         Map<String, Object> result = new LinkedHashMap<>();
 
         EventConfiguration definition = getDefinition(eventName);
@@ -131,11 +137,12 @@ public class EventsHolder {
      * @throws IllegalArgumentException
      *         if event doesn't exist into configuration
      */
+    @Nonnull
     public String getDescription(String eventName) throws IllegalArgumentException {
         if (eventsMap.containsKey(eventName)) {
             return eventsMap.get(eventName).getDescription();
+        } else {
+            return eventName;
         }
-
-        throw new IllegalArgumentException("There is no event with name " + eventName);
     }
 }

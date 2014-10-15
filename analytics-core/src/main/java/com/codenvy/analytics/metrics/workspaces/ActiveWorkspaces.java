@@ -18,11 +18,13 @@
 package com.codenvy.analytics.metrics.workspaces;
 
 import com.codenvy.analytics.metrics.AbstractActiveEntities;
+import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.OmitFilters;
 
 import javax.annotation.security.RolesAllowed;
+import java.io.IOException;
 
 /**
  * @author Anatoliy Bazko
@@ -33,6 +35,13 @@ public class ActiveWorkspaces extends AbstractActiveEntities {
 
     public ActiveWorkspaces() {
         super(MetricType.ACTIVE_WORKSPACES, MetricType.ACTIVE_WORKSPACES_SET, WS);
+    }
+
+    @Override
+    public Context applySpecificFilter(Context clauses) throws IOException {
+        Context.Builder builder = new Context.Builder(super.applySpecificFilter(clauses));
+        builder.put(MetricFilter.PERSISTENT_WS, 1);
+        return builder.build();
     }
 
     @Override

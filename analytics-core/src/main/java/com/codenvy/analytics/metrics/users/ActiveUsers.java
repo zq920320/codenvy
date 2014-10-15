@@ -45,9 +45,7 @@ public class ActiveUsers extends AbstractActiveEntities {
     @Override
     public Context applySpecificFilter(Context clauses) throws IOException {
         Context.Builder builder = new Context.Builder(super.applySpecificFilter(clauses));
-
         builder.put(MetricFilter.REGISTERED_USER, 1);
-
         return builder.build();
     }
 }
