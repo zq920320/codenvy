@@ -61,8 +61,7 @@ public class TopFactories extends AbstractTopMetrics {
     public DBObject[] getSpecificDBOperations(Context clauses) {
         List<DBObject> dbOperations = new ArrayList<>();
 
-        dbOperations.add(new BasicDBObject("$match", new BasicDBObject(FACTORY, new BasicDBObject("$ne", ""))));
-        dbOperations.add(new BasicDBObject("$match", new BasicDBObject(FACTORY, new BasicDBObject("$ne", null))));
+        dbOperations.add(new BasicDBObject("$match", new BasicDBObject(FACTORY, new BasicDBObject("$nin", new Object[]{"", null}))));
 
         dbOperations.add(new BasicDBObject("$group", new BasicDBObject(ID, "$" + FACTORY)
                 .append(WS_CREATED, new BasicDBObject("$sum", "$" + WS_CREATED))

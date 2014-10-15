@@ -40,7 +40,7 @@ public class TopReferrers extends AbstractTopMetrics {
     public TopReferrers() {
         super(MetricType.TOP_REFERRERS);
     }
-    
+
     @Override
     public String[] getTrackedFields() {
         return new String[]{REFERRER,
@@ -61,9 +61,7 @@ public class TopReferrers extends AbstractTopMetrics {
     public DBObject[] getSpecificDBOperations(Context clauses) {
         List<DBObject> dbOperations = new ArrayList<>();
 
-        dbOperations.add(
-                new BasicDBObject(
-                        "$match", Utils.getAndOperation(new BasicDBObject(REFERRER, new BasicDBObject("$ne", "")))));
+        dbOperations.add(new BasicDBObject("$match", new BasicDBObject(REFERRER, new BasicDBObject("$ne", ""))));
 
         dbOperations.add(new BasicDBObject("$group", new BasicDBObject(ID, "$" + REFERRER)
                 .append(WS_CREATED, new BasicDBObject("$sum", "$" + WS_CREATED))
@@ -114,7 +112,7 @@ public class TopReferrers extends AbstractTopMetrics {
     public String getStorageCollectionName() {
         return getStorageCollectionName(MetricType.PRODUCT_USAGE_FACTORY_SESSIONS);
     }
-    
+
     @Override
     public String getDescription() {
         return "The top referrers sorted by overall duration of session in period of time during last days";

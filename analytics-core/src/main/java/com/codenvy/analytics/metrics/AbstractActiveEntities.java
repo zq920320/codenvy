@@ -66,7 +66,7 @@ public abstract class AbstractActiveEntities extends ReadBasedMetric implements 
     @Override
     public DBObject[] getSpecificDBOperations(Context clauses) {
         DBObject match = new BasicDBObject();
-        match.put(valueField, new BasicDBObject("$ne", ""));
+        match.put(valueField, new BasicDBObject("$nin", new Object[]{"", null}));
 
         DBObject group = new BasicDBObject();
         group.put(ID, "$" + valueField);
@@ -83,7 +83,7 @@ public abstract class AbstractActiveEntities extends ReadBasedMetric implements 
     @Override
     public DBObject[] getSpecificExpandedDBOperations(Context clauses) {
         DBObject match = new BasicDBObject();
-        match.put(getExpandedField(), new BasicDBObject("$ne", ""));
+        match.put(getExpandedField(), new BasicDBObject("$nin", new Object[]{"", null}));
 
         DBObject group = new BasicDBObject();
         group.put(ID, "$" + getExpandedField());

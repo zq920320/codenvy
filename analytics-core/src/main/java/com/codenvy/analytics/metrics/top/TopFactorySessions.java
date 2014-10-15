@@ -28,7 +28,7 @@ public class TopFactorySessions extends AbstractTopMetrics {
     public TopFactorySessions() {
         super(MetricType.TOP_FACTORY_SESSIONS);
     }
-    
+
     @Override
     public String[] getTrackedFields() {
         return new String[]{TIME,
@@ -43,11 +43,10 @@ public class TopFactorySessions extends AbstractTopMetrics {
     public DBObject[] getSpecificDBOperations(Context clauses) {
         DBObject[] dbOperations = new DBObject[5];
 
-        dbOperations[0] = new BasicDBObject("$match", new BasicDBObject(FACTORY, new BasicDBObject("$ne", "")));
-        dbOperations[1] = new BasicDBObject("$match", new BasicDBObject(FACTORY, new BasicDBObject("$ne", null)));
-        dbOperations[2] = new BasicDBObject("$sort", new BasicDBObject(TIME, -1));
-        dbOperations[3] = new BasicDBObject("$limit", MAX_DOCUMENT_COUNT);
-        dbOperations[4]= new BasicDBObject("$project", new BasicDBObject(TIME, 1)
+        dbOperations[0] = new BasicDBObject("$match", new BasicDBObject(FACTORY, new BasicDBObject("$nin", new Object[]{"", null})));
+        dbOperations[1] = new BasicDBObject("$sort", new BasicDBObject(TIME, -1));
+        dbOperations[2] = new BasicDBObject("$limit", MAX_DOCUMENT_COUNT);
+        dbOperations[3] = new BasicDBObject("$project", new BasicDBObject(TIME, 1)
                 .append(SESSION_ID, 1)
                 .append(USER_CREATED, 1)
                 .append(FACTORY, 1)
@@ -63,7 +62,7 @@ public class TopFactorySessions extends AbstractTopMetrics {
     public String getStorageCollectionName() {
         return getStorageCollectionName(MetricType.PRODUCT_USAGE_FACTORY_SESSIONS);
     }
-    
+
 
     @Override
     public String getDescription() {
