@@ -587,8 +587,8 @@ function AnalyticsMath() {
         var time = time || 0;
 
         var hours = Math.floor(time / (60 * 60));
-        var minutes = Math.floor(time / 60);
-        var seconds = time % 60;
+        var minutes = Math.floor(time / 60) % 60;
+        var seconds = Math.floor(time) % 60;
 
         var hoursString = String(hours);
         if (hoursString.length == 1) {
