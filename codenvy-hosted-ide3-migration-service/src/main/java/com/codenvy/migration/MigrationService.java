@@ -19,7 +19,6 @@ package com.codenvy.migration;
 
 import com.codenvy.api.project.server.ProjectJson2;
 import com.codenvy.commons.json.JsonHelper;
-import com.codenvy.ide.factory.server.migration.ProjectTypeHelper;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
