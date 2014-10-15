@@ -117,14 +117,14 @@ public class FactoryStatisticsList extends AbstractListValueResulted implements 
     @Override
     public DBObject[] getSpecificSummarizedDBOperations(Context clauses) {
         DBObject[] dbOperations = getSpecificDBOperations(clauses);
-        ((DBObject)(dbOperations[2].get("$group"))).put(ID, null);
-        ((DBObject)(dbOperations[3].get("$project"))).removeField(FACTORY);
-        ((DBObject)(dbOperations[3].get("$project"))).removeField(WS_CREATED);
-        ((DBObject)(dbOperations[3].get("$project"))).removeField(ORG_ID);
-        ((DBObject)(dbOperations[3].get("$project"))).removeField(DEBUGS);
-        ((DBObject)(dbOperations[3].get("$project"))).removeField(ENCODED_FACTORY);
-        ((DBObject)(dbOperations[3].get("$project"))).removeField(AUTHENTICATED_SESSION);
-        ((DBObject)(dbOperations[3].get("$project"))).removeField(CONVERTED_SESSION);
+        ((DBObject)(dbOperations[1].get("$group"))).put(ID, null);
+        ((DBObject)(dbOperations[2].get("$project"))).removeField(FACTORY);
+        ((DBObject)(dbOperations[2].get("$project"))).removeField(WS_CREATED);
+        ((DBObject)(dbOperations[2].get("$project"))).removeField(ORG_ID);
+        ((DBObject)(dbOperations[2].get("$project"))).removeField(DEBUGS);
+        ((DBObject)(dbOperations[2].get("$project"))).removeField(ENCODED_FACTORY);
+        ((DBObject)(dbOperations[2].get("$project"))).removeField(AUTHENTICATED_SESSION);
+        ((DBObject)(dbOperations[2].get("$project"))).removeField(CONVERTED_SESSION);
 
         return dbOperations;
     }

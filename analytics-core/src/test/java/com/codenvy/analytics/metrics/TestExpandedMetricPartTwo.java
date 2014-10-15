@@ -439,8 +439,6 @@ public class TestExpandedMetricPartTwo extends AbstractTestExpandedMetric {
 
     @Test
     public void testProductUsageUsersBelow10MinMetric() throws Exception {
-        computeActiveUserSet("20131101");
-
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.TO_DATE, "20131101");
 
@@ -449,12 +447,9 @@ public class TestExpandedMetricPartTwo extends AbstractTestExpandedMetric {
         // test expanded metric value
         ValueData expandedValue = metric.getExpandedValue(builder.build());
         List<ValueData> all = treatAsList(expandedValue);
-        assertEquals(all.size(), 5);
+        assertEquals(all.size(), 2);
 
-        assertTrue(all.contains(MapValueData.valueOf("user=user2@gmail.com")));
         assertTrue(all.contains(MapValueData.valueOf("user=user-id1")));
-        assertTrue(all.contains(MapValueData.valueOf("user=user-id5")));
         assertTrue(all.contains(MapValueData.valueOf("user=user-id4")));
-        assertTrue(all.contains(MapValueData.valueOf("user=_invite" + TEST_USER)));
     }
 }

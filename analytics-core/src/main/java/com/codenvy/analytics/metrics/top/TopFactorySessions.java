@@ -41,7 +41,7 @@ public class TopFactorySessions extends AbstractTopMetrics {
 
     @Override
     public DBObject[] getSpecificDBOperations(Context clauses) {
-        DBObject[] dbOperations = new DBObject[5];
+        DBObject[] dbOperations = new DBObject[4];
 
         dbOperations[0] = new BasicDBObject("$match", new BasicDBObject(FACTORY, new BasicDBObject("$nin", new Object[]{"", null})));
         dbOperations[1] = new BasicDBObject("$sort", new BasicDBObject(TIME, -1));

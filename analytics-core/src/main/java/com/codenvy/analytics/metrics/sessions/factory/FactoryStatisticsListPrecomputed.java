@@ -73,8 +73,8 @@ public class FactoryStatisticsListPrecomputed extends AbstractListValueResulted 
         ReadBasedSummariziable summariziable = (ReadBasedSummariziable)MetricFactory.getMetric(getBasedMetric());
         DBObject[] dbOperations = summariziable.getSpecificSummarizedDBOperations(clauses);
         
-        ((DBObject)(dbOperations[2].get("$group"))).put(SESSIONS, new BasicDBObject("$sum", "$" + SESSIONS));
-        ((DBObject)(dbOperations[2].get("$group"))).put(AUTHENTICATED_SESSION, new BasicDBObject("$sum", "$" + AUTHENTICATED_SESSION));
+        ((DBObject)(dbOperations[1].get("$group"))).put(SESSIONS, new BasicDBObject("$sum", "$" + SESSIONS));
+        ((DBObject)(dbOperations[1].get("$group"))).put(AUTHENTICATED_SESSION, new BasicDBObject("$sum", "$" + AUTHENTICATED_SESSION));
         
         return dbOperations; 
     }
