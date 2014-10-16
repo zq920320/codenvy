@@ -90,7 +90,7 @@ public class MongoDBFactoryStoreTest {
             for (DBObject one : cursor) {
                 BasicDBObject factoryObject = (BasicDBObject)one.get("factoryurl");
                 Factory factory = DtoFactory.getInstance().createDtoFromJson(factoryObject.toString(), Factory.class);
-                Factory toCheck = (Factory)DtoFactory.getInstance().clone(factory).withUserid(null).withCreated(0);
+                Factory toCheck = (Factory)DtoFactory.getInstance().clone(factory).withUserid(null).withCreated(null);
                 try {
                     factoryBuilder.checkValid(toCheck, FactoryParameter.FactoryFormat.ENCODED);
                 } catch (ApiException e) {
@@ -147,14 +147,14 @@ public class MongoDBFactoryStoreTest {
         factoryUrl.setWelcome(welcomePage);
         factoryUrl.setWname("wname");
         factoryUrl.setUserid("123456");
-        factoryUrl.setCreated(123456);
-        factoryUrl.setValidsince(123456);
-        factoryUrl.setValiduntil(456789);
+        factoryUrl.setCreated(123456l);
+        factoryUrl.setValidsince(123456l);
+        factoryUrl.setValiduntil(456789l);
         factoryUrl.setVariables(Arrays.asList(variable, variable));
         factoryUrl.setGit(DtoFactory.getInstance().createDto(Git.class).withConfigbranchmerge("configbranchmerge")
                                     .withConfigpushdefault("configpushdefault").withConfigremoteoriginfetch("configremoteoriginfetch"));
-        factoryUrl.setRestriction(DtoFactory.getInstance().createDto(Restriction.class).withMaxsessioncount(123).withValiduntil(123456798)
-                                            .withRefererhostname("host").withValidsince(123).withPassword("password")
+        factoryUrl.setRestriction(DtoFactory.getInstance().createDto(Restriction.class).withMaxsessioncount(123l).withValiduntil(123456798l)
+                                            .withRefererhostname("host").withValidsince(123l).withPassword("password")
                                             .withRestrictbypassword(true));
 
         String id = store.saveFactory(factoryUrl, images);
