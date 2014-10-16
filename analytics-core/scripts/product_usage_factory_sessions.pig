@@ -53,13 +53,12 @@ a2 = removeEmptyField(a1, 'user');
 a3 = extractParam(a2, 'SESSION-ID', sessionID);
 a4 = extractParam(a3, 'START-TIME', startTime);
 a5 = extractParam(a4, 'USAGE-TIME', usageTime);
-
-s2 = FOREACH a5 GENERATE ToDate((long) startTime) AS dt,
-                         ws AS tmpWs,
-                         user AS tmpUser,
-                         sessionID AS id,
-                         (long) usageTime AS delta;
-
+a6 = lastUpdate(a5, 'sessionID');
+s2 = FOREACH a6 GENERATE ToDate((long)a5::startTime) AS dt,
+                         a5::ws AS tmpWs,
+                         a5::user AS tmpUser,
+                         a5::sessionID AS id,
+                         (long)a5::usageTime AS delta;
 
 -- founds out the corresponding referrer and factory
 s3 = JOIN s2 BY tmpWs LEFT, u BY tmpWs;
