@@ -94,6 +94,7 @@ public class EventsHolder {
 
         result.remove("USER");
         result.remove("WS");
+        result.remove("PARAMETERS");
 
         return result;
     }
