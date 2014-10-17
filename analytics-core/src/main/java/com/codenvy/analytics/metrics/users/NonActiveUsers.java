@@ -20,7 +20,11 @@ package com.codenvy.analytics.metrics.users;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.datamodel.ValueDataUtil;
-import com.codenvy.analytics.metrics.*;
+import com.codenvy.analytics.metrics.CalculatedMetric;
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Expandable;
+import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.Parameters;
 
 import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
@@ -30,7 +34,7 @@ import java.io.IOException;
 public class NonActiveUsers extends CalculatedMetric implements Expandable {
 
     public NonActiveUsers() {
-        super(MetricType.NON_ACTIVE_USERS, new MetricType[]{MetricType.TOTAL_USERS,
+        super(MetricType.NON_ACTIVE_USERS, new MetricType[]{MetricType.CREATED_UNIQUE_USERS,
                                                             MetricType.ACTIVE_USERS});
     }
 

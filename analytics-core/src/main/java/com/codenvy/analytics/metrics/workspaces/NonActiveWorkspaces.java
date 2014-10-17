@@ -20,7 +20,11 @@ package com.codenvy.analytics.metrics.workspaces;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.datamodel.ValueDataUtil;
-import com.codenvy.analytics.metrics.*;
+import com.codenvy.analytics.metrics.CalculatedMetric;
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Expandable;
+import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.Parameters;
 
 import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
@@ -30,7 +34,7 @@ import java.io.IOException;
 public class NonActiveWorkspaces extends CalculatedMetric implements Expandable {
 
     public NonActiveWorkspaces() {
-        super(MetricType.NON_ACTIVE_WORKSPACES, new MetricType[]{MetricType.TOTAL_WORKSPACES,
+        super(MetricType.NON_ACTIVE_WORKSPACES, new MetricType[]{MetricType.CREATED_UNIQUE_WORKSPACES,
                                                                  MetricType.ACTIVE_WORKSPACES});
     }
 

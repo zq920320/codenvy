@@ -1402,6 +1402,7 @@ function AnalyticsConfiguration() {
         "users_logged_in_with_github_percent": "#USERS",
         "users_logged_in_with_google_percent": "#USERS",
         "returning_active_users": "#USERS",
+        "product_usage_users_total": "#USERS",
         "product_usage_users_below_10_min": "#USERS",
         "users_logged_in_total": "#USERS",
         "users_accepted_invites_percent": "#USERS",
