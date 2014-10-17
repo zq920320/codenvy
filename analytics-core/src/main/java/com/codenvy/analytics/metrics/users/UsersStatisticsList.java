@@ -24,8 +24,10 @@ import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.datamodel.ValueDataUtil;
 import com.codenvy.analytics.metrics.AbstractListValueResulted;
 import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.CumulativeMetric;
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricFactory;
+import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.ReadBasedSummariziable;
@@ -169,5 +171,21 @@ public class UsersStatisticsList extends AbstractListValueResulted implements Re
         } else {
             return Collections.emptyMap();
         }
+    }
+
+    public Context applySpecificFilter(Context context) throws IOException {
+        // Return only registered users for expanded cumulative metrics
+        if (context.exists(Parameters.EXPANDED_METRIC_NAME)) {
+            Metric expandable = context.getExpandedMetric();
+
+            if (expandable != null
+                && (expandable instanceof CumulativeMetric)) {
+                Context.Builder builder = new Context.Builder(context);
+                builder.put(MetricFilter.USER, Parameters.USER_TYPES.REGISTERED.toString());
+                context = builder.build();
+            }
+        }
+
+        return context;
     }
 }

@@ -320,7 +320,7 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
         log = LogGenerator.generateLog(events);
     }
 
-    //@Test
+    @Test
     public void testFilteringUsersStatisticsListByTotalUsersAndTimeUnit() throws Exception {
         computeProfiles("20131101");
 
@@ -340,7 +340,7 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
         builder = new Context.Builder();
         builder.put(Parameters.TO_DATE, "20131120");
         builder.put(Parameters.TIME_UNIT, Parameters.TimeUnit.WEEK.toString());
-        builder.put(Parameters.TIME_INTERVAL, 0);  // interval from 20131208 to 20131214  
+        builder.put(Parameters.TIME_INTERVAL, 0);  // interval from 20131208 to 20131214
         builder.put(Parameters.EXPANDED_METRIC_NAME, MetricType.TOTAL_USERS.toString());
 
         Metric usersStatisticsListMetric = MetricFactory.getMetric(MetricType.USERS_STATISTICS_LIST);
@@ -350,7 +350,40 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
 
         ListValueData filteredValue = (ListValueData)usersStatisticsListMetric.getValue(context);
         List<ValueData> all = filteredValue.getAll();
-        assertEquals(all.size(), 5);
+        assertEquals(all.size(), 4);
+    }
+
+    @Test
+    public void testFilteringWorkspaceStatisticsListByTotalWorkspacesAndTimeUnit() throws Exception {
+        computeProfiles("20131101");
+
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20131101");
+        builder.put(Parameters.TO_DATE, "20131101");
+        builder.put(Parameters.LOG, log.getAbsolutePath());
+
+        builder.putAll(scriptsManager.getScript(ScriptType.USERS_STATISTICS, MetricType.USERS_STATISTICS_LIST).getParamsAsMap());
+        pigServer.execute(ScriptType.USERS_STATISTICS, builder.build());
+
+        builder.put(Parameters.FROM_DATE, "20131220");
+        builder.put(Parameters.TO_DATE, "20131220");
+        pigServer.execute(ScriptType.USERS_STATISTICS, builder.build());
+
+        // test filtering user list by "total_users" metric
+        builder = new Context.Builder();
+        builder.put(Parameters.TO_DATE, "20131120");
+        builder.put(Parameters.TIME_UNIT, Parameters.TimeUnit.WEEK.toString());
+        builder.put(Parameters.TIME_INTERVAL, 0);  // interval from 20131208 to 20131214
+        builder.put(Parameters.EXPANDED_METRIC_NAME, MetricType.TOTAL_WORKSPACES.toString());
+
+        Metric usersStatisticsListMetric = MetricFactory.getMetric(MetricType.WORKSPACES_STATISTICS_LIST);
+
+        Context context = builder.build();
+        context = viewBuilder.initializeTimeInterval(context);
+
+        ListValueData filteredValue = (ListValueData)usersStatisticsListMetric.getValue(context);
+        List<ValueData> all = filteredValue.getAll();
+        assertEquals(all.size(), 3);
     }
 
     @Test
@@ -389,10 +422,10 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
 
         filteredValue = (ListValueData)usersStatisticsListMetric.getValue(context);
         all = filteredValue.getAll();
-        assertEquals(all.size(), 5);  // !!!
+        assertEquals(all.size(), 4);  // !!!
     }
 
-    //@Test
+    @Test
     public void testFilteringOfDrillDownPage() throws Exception {
         computeProfiles("20131101");
 
@@ -437,7 +470,7 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
      * to_date=20131101
      * factory=factoryUrl1
      */
-    //@Test
+    @Test
     public void testDrillDownTopFactoriesMetric() throws Exception {
         computeProfiles("20131101");
         computeProfiles("20131220");
@@ -509,7 +542,7 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
      * user=factory_user5
      * @throws Exception
      */
-    //@Test
+    @Test
     public void testDrillDownTopUsersMetric() throws Exception {
         computeProfiles("20131031");
         computeProfiles("20131101");
@@ -553,7 +586,7 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
         assertEquals(record.get("user").toString(), "factory_user5");
     }
 
-    //@Test
+    @Test
     public void testNonActiveUsersMetric() throws Exception {
         computeProfiles("20131031");
         computeProfiles("20131101");
@@ -623,7 +656,7 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
         assertEquals(all.size(), 0);
     }
 
-    //@Test
+    @Test
     public void testUsersAcceptedInvitesPercentMetric() throws Exception {
         computeProfiles("20131101");
 
@@ -649,7 +682,7 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
         assertEquals(record.get("user").toString(), "_invite" + TEST_USER);
     }
 
-    //@Test
+    @Test
     public void testAbstractFactorySessionsMetrics() throws Exception {
         computeProfiles("20131101");
 
@@ -676,7 +709,7 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
         assertEquals(record.get("session_id").toString(), "factory-id1");
     }
 
-    //@Test
+    @Test
     public void testProductUsageTimeBelow1MinMetric() throws Exception {
         computeProfiles("20131101");
 
@@ -702,7 +735,7 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
         assertTrue(all.contains(MapValueData.valueOf("session_id=" + SESSION_ID + "_micro")));
     }
 
-    //@Test
+    @Test
     public void testProductUsageTimeTotalMetric() throws Exception {
         computeProfiles("20131101");
 
@@ -731,7 +764,7 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
         assertTrue(all.contains(MapValueData.valueOf("session_id=" + SESSION_ID + "_micro")));
     }
 
-    //@Test
+    @Test
     public void testAbstractLoggedInTypeMetrics() throws Exception {
         computeProfiles("20131101");
 
@@ -757,7 +790,7 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
         assertEquals(record.get(metric.getExpandedField()).toString(), TEST_USER);
     }
 
-    //@Test
+    @Test
     public void testCalculatedSubtractionMetrics() throws Exception {
         computeProfiles("20131101");
 
@@ -811,7 +844,7 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
         // test expanded metric value
         ValueData expandedValue = metric.getExpandedValue(builder.build());
         List<ValueData> all = treatAsList(expandedValue);
-        assertEquals(all.size(), 1);
+        assertEquals(all.size(), 1);  // TODO fix test: expected [1] but found [6]
 
         Map<String, ValueData> workspace1 = ((MapValueData)all.get(0)).getAll();
         assertEquals(workspace1.size(), 1);
@@ -838,7 +871,7 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
         // test expanded metric value
         ValueData expandedValue = metric.getExpandedValue(builder.build());
         List<ValueData> all = treatAsList(expandedValue);
-        assertEquals(all.size(), 1);
+        assertEquals(all.size(), 1);   // TODO fix test: expected [1] but found [6]
 
         Map<String, ValueData> workspace1 = ((MapValueData)all.get(0)).getAll();
         assertEquals(workspace1.size(), 1);
@@ -865,7 +898,7 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
         assertEquals(record.get(ProductUsageFactorySessionsList.SESSION_ID).toString(), "factory-id1");
     }
 
-    //@Test
+    @Test
     public void testExpandedAbstractActiveEntitiesMetrics() throws Exception {
         computeProfiles("20131101");
 
@@ -905,7 +938,7 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
         assertTrue(all.contains(MapValueData.valueOf("ws=wsid2")));
     }
 
-    //@Test
+    @Test
     public void testExpandedAbstractLongValueResultedMetrics() throws Exception {
         computeProfiles("20131101");
 
@@ -951,7 +984,7 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
         AbstractCount metric = new CreatedProjects();
         ValueData expandedValue = metric.getExpandedValue(builder.build());
         List<ValueData> all = treatAsList(expandedValue);
-        assertEquals(all.size(), 3);
+        assertEquals(all.size(), 3);  // TODO fix test: expected [3] but found [0]
 
         Map<String, ValueData> record1 = ((MapValueData)all.get(0)).getAll();
         assertEquals(record1.get(metric.getExpandedField()).toString(), TEST_USER + "/" + TEST_WS_ID + "/project1");
@@ -980,7 +1013,7 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
         AbstractProjectType metric = new ProjectTypeWar();
         ValueData expandedValue = metric.getExpandedValue(builder.build());
         List<ValueData> all = treatAsList(expandedValue);
-        assertEquals(all.size(), 2);
+        assertEquals(all.size(), 2);   // TODO fix test: expected [2] but found [0]
 
         Map<String, ValueData> record1 = ((MapValueData)all.get(0)).getAll();
         assertEquals(record1.get(metric.getExpandedField()).toString(), TEST_USER + "/wsid2/project2");
@@ -989,7 +1022,7 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
         assertEquals(record2.get(metric.getExpandedField()).toString(), "user2@gmail.com/wsid3/project2");
     }
 
-    //@Test
+    @Test
     public void testExpandedAbstractProjectPaasMetrics() throws Exception {
         computeProfiles("20131101");
 
@@ -1015,7 +1048,7 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
         assertEquals(record.get(metric.getExpandedField()).toString(), TEST_USER + "/" + TEST_WS_ID + "/project1");
     }
 
-    //@Test
+    @Test
     public void testProjectListFilteredByReadBasedMetric() throws Exception {
         computeProfiles("20131101");
 
@@ -1059,7 +1092,7 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
         assertEquals(project2.get(ProjectsList.WS).toString(), TEST_WS_ID);
     }
 
-    //@Test
+    @Test
     public void testConversionExpandedValueDataIntoViewData() throws Exception {
         computeProfiles("20131101");
 
@@ -1091,7 +1124,7 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
         assertTrue(sectionData.contains(asList(StringValueData.valueOf("wsid3"))));
     }
 
-    //@Test
+    @Test
     public void testTotalUsers() throws Exception {
         computeProfiles("20131101");
 
