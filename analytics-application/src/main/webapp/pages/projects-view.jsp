@@ -38,6 +38,18 @@
                     <div class="collabsiblePanelBody">
                         <table>
                             <tr>
+                                <td><label for="input-ws">Workspace ID:</label></td>
+                                <td><div class="filter-item">
+                                    <input type="text" id="input-ws" name="ws" class="text-box" />
+                                </div></td>
+                            </tr>
+                            <tr>
+                               <td><label for="input-aliases">User:</label></td>
+                               <td><div class="filter-item">
+                                   <input type="text" id="input-aliases" name="aliases" class="text-box" />
+                               </div></td>
+                            </tr>
+                            <tr>
                                 <td><label for="input-project">Project:</label></td>
                                 <td><div class="filter-item">
                                     <input type="text" id="input-project" name="project" class="text-box" />
@@ -48,19 +60,6 @@
                                 <td><div class="filter-item">
                                     <input type="text" id="input-project-type" name="project_type" class="text-box" />
                                 </div></td>
-                            </tr>
-                            <tr>
-                                <td><label for="input-ws">Workspace ID:</label></td>
-                                <td><div class="filter-item">
-                                    <input type="text" id="input-ws" name="ws" class="text-box" />
-                                </div></td>
-                            </tr>
-
-                            <tr>
-                               <td><label for="input-aliases">User:</label></td>
-                               <td><div class="filter-item">
-                                   <input type="text" id="input-aliases" name="aliases" class="text-box" />
-                               </div></td>
                             </tr>
                             <tr>
                                 <td></td>

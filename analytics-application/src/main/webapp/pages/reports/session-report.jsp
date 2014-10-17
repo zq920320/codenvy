@@ -22,6 +22,12 @@
 <head>
     <title>Session Report</title>
     <%@ include file="/inclusions/header.jsp"%>
+    <style type="text/css">
+        /* redefine style of Accordion Widget of jQuery UI (@see http://api.jqueryui.com/accordion/#method-disable ) */
+        .ui-accordion {
+            width: 540px;
+        }
+    </style>
 </head>
 <body>
 
@@ -39,17 +45,44 @@
                     <div class="collabsiblePanelBody">
                         <table>
                             <tr>
-                               <td><label for="input-aliases">User:</label></td>
-                               <td><div class="filter-item">
-                                   <input type="text" id="input-aliases" name="aliases" class="text-box" />
-                               </div></td>
+                                <td><label for="input-ws">Workspace ID:</label></td>
+                                <td><div class="filter-item">
+                                    <input type="text" id="input-ws" name="ws" class="text-box" />
+                                </div></td>
                             </tr>
                             <tr>
-                               <td></td>
-                               <td><div class="filter-item">
-                                    <button class="btn command-btn btn-primary">Filter</button>                    
+                                <td><label for="input-aliases">User:</label></td>
+                                <td><div class="filter-item">
+                                    <input type="text" id="input-aliases" name="aliases" class="text-box" />
+                                </div></td>
+                            </tr>
+                            <tr>
+                                <td><label for="input-factory">Factory ID:</label></td>
+                                <td><div class="filter-item">
+                                    <input type="text" id="input-factory" name="factory_id" class="text-box" />
+                                </div></td>
+                            </tr>
+                        </table>
+                        <table>
+                            <tr>
+                                <td><label for="datepicker-from-date">From Date:</label></td>
+                                <td>
+                                    <div class="filter-item">
+                                        <input type="text" id="datepicker-from-date" name="from_date" class="short-date-box"/>
+                                    </div>
+                                </td>
+                                <td class="short-gap" />
+                                <td><label for="datepicker-to-date" class="right">To Date:</label></td>
+                                <td>
+                                    <div class="filter-item">
+                                        <input type="text" id="datepicker-to-date" name="to_date" class="short-date-box"/>
+                                    </div>
+                                </td>
+                                <td class="short-gap" />
+                                <td><div  class="filter-item">
+                                    <button class="btn command-btn btn-primary">Filter</button>
                                     <button id="clearSelectionBtn" class="btn btn-small clear-btn">Clear</button>
-                               </div></td>
+                                </div></td>
                             </tr>
                         </table>
                     </div>

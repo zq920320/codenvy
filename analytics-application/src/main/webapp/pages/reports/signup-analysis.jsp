@@ -22,6 +22,12 @@
 <head>
     <title>Signup Analysis</title>
     <%@ include file="/inclusions/header.jsp"%>
+    <style type="text/css">
+        /* redefine style of Accordion Widget of jQuery UI (@see http://api.jqueryui.com/accordion/#method-disable ) */
+        .ui-accordion {
+            width: 540px;
+        }
+    </style>
 </head>
 <body>
 
@@ -34,13 +40,60 @@
     <div class="row-fluid">
         <div>
             <div class="well topFilteringPanel">
+                <div id="filter-by" class="left" targetWidgets="_all">
+                    <div class="collabsiblePanelTitle">Filter</div>
+                    <div class="collabsiblePanelBody">
+                        <table>
+                            <tr>
+                                <td><label for="input-ws">Workspace ID:</label></td>
+                                <td><div class="filter-item">
+                                    <input type="text" id="input-ws" name="ws" class="text-box" />
+                                </div></td>
+                            </tr>
+                            <tr>
+                                <td><label for="input-aliases">User:</label></td>
+                                <td><div class="filter-item">
+                                    <input type="text" id="input-aliases" name="aliases" class="text-box" />
+                                </div></td>
+                            </tr>
+                            <tr>
+                                <td><label for="input-factory">Factory ID:</label></td>
+                                <td><div class="filter-item">
+                                    <input type="text" id="input-factory" name="factory_id" class="text-box" />
+                                </div></td>
+                            </tr>
+                        </table>
+                        <table>
+                            <tr>
+                                <td><label for="datepicker-from-date">From Date:</label></td>
+                                <td>
+                                    <div class="filter-item">
+                                        <input type="text" id="datepicker-from-date" name="from_date" class="short-date-box"/>
+                                    </div>
+                                </td>
+                                <td class="short-gap" />
+                                <td><label for="datepicker-to-date" class="right">To Date:</label></td>
+                                <td>
+                                    <div class="filter-item">
+                                        <input type="text" id="datepicker-to-date" name="to_date" class="short-date-box"/>
+                                    </div>
+                                </td>
+                                <td class="short-gap" />
+                                <td><div>
+                                    <button class="btn command-btn btn-primary">Filter</button>
+                                    <button id="clearSelectionBtn" class="btn btn-small clear-btn">Clear</button>
+                                </div></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
                 <div id="ui-preferences" class="btn-group preferences right">
                     <button class="btn command-btn" default value="table">Table</button>
                     <button class="btn command-btn" value="chart">Chart</button>
                     <button class="btn command-btn" value="table&chart">Table & Chart</button>
                 </div>
             
-                <div id="timely-dd" class="btn-group left" targetWidgets="_all">
+                <div id="timely-dd" class="btn-group right" targetWidgets="_all">
                     <button class="btn command-btn" value="Day">Day</button>
                     <button class="btn command-btn" value="Week">Week</button>
                     <button class="btn command-btn" default value="Month">Month</button>

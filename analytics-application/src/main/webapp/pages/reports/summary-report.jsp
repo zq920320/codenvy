@@ -45,6 +45,26 @@
                     <div class="collabsiblePanelBody">
                         <table>
                             <tr>
+                                <td><label for="input-ws">Workspace ID:</label></td>
+                                <td><div class="filter-item">
+                                    <input type="text" id="input-ws" name="ws" class="text-box" />
+                                </div></td>
+                            </tr>
+                            <tr>
+                                <td><label for="input-aliases">User:</label></td>
+                                <td><div class="filter-item">
+                                    <input type="text" id="input-aliases" name="aliases" class="text-box" />
+                                </div></td>
+                            </tr>
+                            <tr>
+                                <td><label for="input-factory">Factory ID:</label></td>
+                                <td><div class="filter-item">
+                                    <input type="text" id="input-factory" name="factory_id" class="text-box" />
+                                </div></td>
+                            </tr>
+                        </table>
+                        <table>
+                            <tr>
                                 <td><label for="datepicker-from-date">From Date:</label></td>
                                 <td>
                                     <div class="filter-item">
