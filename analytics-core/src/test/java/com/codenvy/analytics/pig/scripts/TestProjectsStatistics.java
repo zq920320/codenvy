@@ -70,6 +70,7 @@ public class TestProjectsStatistics extends BaseTest {
                                 .withTime("10:01:00")
                                 .build());
         events.add(Event.Builder.createBuildFinishedEvent("user1@gmail.com", "ws1", "project1", "jar", "id1", 0)
+                                .withParam("USAGE-TIME", "60000")
                                 .withDate("2013-01-01")
                                 .withTime("10:02:00")
                                 .build());
@@ -79,6 +80,7 @@ public class TestProjectsStatistics extends BaseTest {
                                 .withTime("10:07:00")
                                 .build());
         events.add(Event.Builder.createDebugFinishedEvent("user1@gmail.com", "ws1", "project1", "jar", "id1")
+                                .withParam("USAGE-TIME", "60000")
                                 .withDate("2013-01-01")
                                 .withTime("10:08:00")
                                 .build());
@@ -88,6 +90,7 @@ public class TestProjectsStatistics extends BaseTest {
                                 .withTime("10:09:00")
                                 .build());
         events.add(Event.Builder.createRunFinishedEvent("user1@gmail.com", "ws1", "project1", "jar", "id1", 0, 1)
+                                .withParam("USAGE-TIME", "60000")
                                 .withDate("2013-01-01")
                                 .withTime("10:10:00")
                                 .build());
@@ -108,6 +111,7 @@ public class TestProjectsStatistics extends BaseTest {
                                 .withTime("10:14:00")
                                 .build());
         events.add(Event.Builder.createBuildFinishedEvent("user1@gmail.com", "ws1", "project2", "spring", "id2", 0)
+                                .withParam("USAGE-TIME", "60000")
                                 .withDate("2013-01-01")
                                 .withTime("10:15:00")
                                 .build());
