@@ -246,8 +246,8 @@ function AnalyticsConfiguration() {
             columnDrillDownPageLinkConfiguration: {
                 mapColumnNameToExpandableMetric: {
                     "Sessions": "#SESSIONS",
-                    "# Workspaces Created": "temporary_workspaces_created",
-                    "# Accounts Created": "created_users_from_factory",
+                    "Workspaces Created": "temporary_workspaces_created",
+                    "Accounts Created": "created_users_from_factory",
                     "Aggregate Time": "#SESSIONS",
                     "% Anon": "anonymous_factory_sessions",
                     "% Auth": "authenticated_factory_sessions",
@@ -278,7 +278,7 @@ function AnalyticsConfiguration() {
             columnDrillDownPageLinkConfiguration: {
                 mapColumnNameToExpandableMetric: {
                     "Sessions": "#SESSIONS",
-                    "# Workspaces Created": "temporary_workspaces_created",
+                    "Workspaces Created": "temporary_workspaces_created",
                     "Aggregate Time": "#SESSIONS",
                     "% Anon": "anonymous_factory_sessions",
                     "% Auth": "authenticated_factory_sessions",
@@ -1177,7 +1177,7 @@ function AnalyticsConfiguration() {
 
             columnDrillDownPageLinkConfiguration: {
                 mapColumnNameToExpandableMetric: {
-                    "Clicks": "temporary_workspaces_created",
+                    "Workspaces Created": "temporary_workspaces_created",
                     "Sessions": "#SESSIONS",
                     "Time": "#SESSIONS"
                 },
@@ -1216,7 +1216,7 @@ function AnalyticsConfiguration() {
 
             columnDrillDownPageLinkConfiguration: {
                 mapColumnNameToExpandableMetric: {
-                    "Clicks": "temporary_workspaces_created",
+                    "Workspaces Created": "temporary_workspaces_created",
                     "Sessions": "#SESSIONS",
                     "Known": "authenticated_factory_sessions",
                     "Converted": "converted_factory_sessions",

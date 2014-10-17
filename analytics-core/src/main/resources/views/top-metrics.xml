@@ -39,7 +39,7 @@
         <section name="top_factories">
             <row class="com.codenvy.analytics.services.view.TitleRow">
                 <parameter key="titles"
-                           value="Factory,Sessions,# Workspaces Created,# Accounts Created,Aggregate Time,% Build,% Run,% Deployed,% Anon,% Auth,% Abandon,% Convert"/>
+                           value="Factory,Sessions,Workspaces Created,Accounts Created,Aggregate Time,% Build,% Run,% Deployed,% Anon,% Auth,% Abandon,% Convert"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="top_factories"/>
@@ -54,7 +54,7 @@
         <section name="top_referrers">
             <row class="com.codenvy.analytics.services.view.TitleRow">
                 <parameter key="titles"
-                           value="Referrer,Sessions,# Workspaces Created,# Accounts Created,Aggregate Time,% Build,% Run,% Deployed,% Anon,% Auth,% Abandon,% Convert"/>
+                           value="Referrer,Sessions,Workspaces Created,Accounts Created,Aggregate Time,% Build,% Run,% Deployed,% Anon,% Auth,% Abandon,% Convert"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="top_referrers"/>
