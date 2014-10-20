@@ -1598,14 +1598,12 @@ function AnalyticsConfiguration() {
         "product_usage_time_total": "#SESSIONS",
         "anonymous_factory_sessions": "#SESSIONS",
 
-
         /** FACTORIES */
         "factory_used": "#FACTORIES",
-        "total_factories": "#FACTORIES",
-
 
         /** DEFAULT */
-        "created_factories": "#DEFAULT"  // not 'FACTORIES' because there could be no created factory in 'product_usage_factory_sessions_list' collection
+        "total_factories": "#DEFAULT",  // isn't 'FACTORIES' because total factory = created factory, and there could be no some created factories in 'product_usage_factory_sessions_list' collection
+        "created_factories": "#DEFAULT"  // isn't 'FACTORIES' because there could be no some created factories in 'product_usage_factory_sessions_list' collection
     };
     var mapDrillDownPageTypeToAddress = {
         "#DEFAULT": defaultDrillDownPageAddress,
