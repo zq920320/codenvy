@@ -1340,6 +1340,18 @@ function login(email, password, redirect_url) {
         });
 }
 
+function loginWithGoogle(e) {
+    var search_str = window.location.search ? window.location.search.substring(1) + '&' : '';
+    var url = "/api/oauth/authenticate?oauth_provider=google&mode=federated_login" + "&scope=https://www.googleapis.com/auth/userinfo.profile&scope=https://www.googleapis.com/auth/userinfo.email" + "&redirect_after_login=" + encodeURIComponent(window.location.protocol + "//" + window.location.host + window.location.pathname + "?" + search_str + "&oauth_provider=google");
+    window.location = url;
+}
+
+function loginWithGithub(e) {
+    var search_str = window.location.search ? window.location.search.substring(1) + '&' : '';
+    var url = "/api/oauth/authenticate?oauth_provider=github&mode=federated_login&scope=user&scope=repo" + "&redirect_after_login=" + encodeURIComponent(window.location.protocol + "//" + window.location.host + window.location.pathname + "?" + search_str + "oauth_provider=github");
+    window.location = url;
+}
+
 function logout(msg) {
     var logout_url = "/api/auth/logout";
    
@@ -1358,7 +1370,15 @@ function logout(msg) {
             var redirect_url = window.location.href;
             login(username,pass,redirect_url);
 
-        });
+            });
+            $('.googleAuth22').click(function(e){
+                e.preventDefault();
+                loginWithGoogle();
+            });
+            $('.githubAuth22').click(function(e){
+                e.preventDefault();
+                loginWithGithub();
+            });
         },
         error: function(){
 
