@@ -30,8 +30,6 @@ define(["jquery","config",
         "views/setprofileuserform",
         "views/inviteorganization",
         "views/errorresponse",
-        "views/maintenancepage",
-        "views/gc_banner",
         "views/ws_createform",
         "views/create_ws",
         "views/join_ws",
@@ -54,8 +52,6 @@ define(["jquery","config",
         SetProfileUser,
         InviteOrganization,
         ErrorResponse,
-        MaintenancePage,
-        GC_banner,
         WSCreateForm,
         CreatingWorkspace,
         JoiningWorkspace,
@@ -96,28 +92,12 @@ define(["jquery","config",
                         setProfileUserForm = $(".cloud-ide-profile"),
                         inviteOrganization = $(".organization"),
                         errorResponse = $(".ErrorIcon"),
-                        maintenancePage = $(".maintenance"),
-                        gcBannerElement = $(".cta"),
                         wsCreateForm = $(".create-form"),
                         creatingWorkspace = $(".creating-ws"),
                         joiningWorkspace = $(".invite"),
                         adminForm = $(".admin-form"),
                         paymentForm = $('.codenvy-payment-form'),
                         creatWsAddMember = $(".create-ws-add-memeber");
-
-                    if(gcBannerElement.length !== 0){
-                        (function(){
-                            // <!--  CTA Banner Rotation   -->
-                            new GC_banner();
-                        }());
-                    }
-
-                    if(gcBannerElement.length !== 0){
-                        (function(){
-                            // <!--  CTA Banner Rotation   -->
-                            new GC_banner();
-                        }());
-                    }
 
                     if(paymentForm.length !== 0){
                         (function(){
@@ -401,15 +381,6 @@ define(["jquery","config",
                         }());
                     }
                     
-                    // maintenance page. queue number
-                    if(maintenancePage.length !== 0){
-                        (function(){
-                            MaintenancePage.get(maintenancePage);
-                            
-                            
-                        }());
-                    }
-
                 });
             }
         };
