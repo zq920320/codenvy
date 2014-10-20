@@ -43,8 +43,7 @@ public class WorkspaceWebsocketConnectionListener implements WSConnectionListene
 
     @Override
     public void onOpen(WSConnection connection) {
-        EnvironmentContext context = (EnvironmentContext)connection.getHttpSession().getAttribute(
-                "ide.websocket." + EnvironmentContext.class.getName());
+        EnvironmentContext context = (EnvironmentContext)connection.getAttribute("ide.websocket." + EnvironmentContext.class.getName());
         if (null != context && null != context.getWorkspaceId()) {
             connection.registerMessageReceiver(
                     new WorkspaceWebsocketMessageReceiver(wsActivitySender, context.getWorkspaceId(), context.isWorkspaceTemporary()));

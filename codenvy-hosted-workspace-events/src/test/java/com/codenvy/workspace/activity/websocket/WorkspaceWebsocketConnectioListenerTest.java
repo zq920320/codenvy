@@ -35,16 +35,13 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
+ * Tests for {@link com.codenvy.workspace.activity.websocket.WorkspaceWebsocketConnectionListener}
+ *
  * @author Max Shaposhnik (mshaposhnik@codenvy.com) on 6/27/13.
  * @version $Id: $
  */
-
 @Listeners(value = {MockitoTestNGListener.class})
 public class WorkspaceWebsocketConnectioListenerTest {
-
-    @Mock
-    private HttpSession httpSession;
-
     @Mock
     private WSConnection wsConnection;
 
@@ -60,8 +57,7 @@ public class WorkspaceWebsocketConnectioListenerTest {
     public void shouldRegisterListener() {
 
         WorkspaceWebsocketConnectionListener listener = new WorkspaceWebsocketConnectionListener(wsActivitySender);
-        when(wsConnection.getHttpSession()).thenReturn(httpSession);
-        when(httpSession.getAttribute(anyString())).thenReturn(environmentContext);
+        when(wsConnection.getAttribute(anyString())).thenReturn(environmentContext);
         when(environmentContext.getWorkspaceId()).thenReturn(wsId);
 
         listener.onOpen(wsConnection);
@@ -72,8 +68,7 @@ public class WorkspaceWebsocketConnectioListenerTest {
     public void shouldNotRegisterListenerWhenNoEnvContext() {
 
         WorkspaceWebsocketConnectionListener listener = new WorkspaceWebsocketConnectionListener(wsActivitySender);
-        when(wsConnection.getHttpSession()).thenReturn(httpSession);
-        when(httpSession.getAttribute(anyString())).thenReturn(null);
+        when(wsConnection.getAttribute(anyString())).thenReturn(null);
 
         listener.onOpen(wsConnection);
         verify(wsConnection, never()).registerMessageReceiver(any(WorkspaceWebsocketMessageReceiver.class));
