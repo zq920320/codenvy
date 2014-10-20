@@ -178,10 +178,9 @@ public class UsersStatisticsList extends AbstractListValueResulted implements Re
         if (context.exists(Parameters.EXPANDED_METRIC_NAME)) {
             Metric expandable = context.getExpandedMetric();
 
-            if (expandable != null
-                && (expandable instanceof CumulativeMetric)) {
+            if (expandable != null && (expandable instanceof CumulativeMetric)) {
                 Context.Builder builder = new Context.Builder(context);
-                builder.put(MetricFilter.USER, Parameters.USER_TYPES.REGISTERED.toString());
+                builder.put(MetricFilter.REGISTERED_USER, 1);
                 context = builder.build();
             }
         }

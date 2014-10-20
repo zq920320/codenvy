@@ -161,10 +161,12 @@ public class WorkspacesStatisticsList extends AbstractListValueResulted implemen
     public DBObject[] getSpecificSummarizedDBOperations(Context clauses) {
         DBObject[] dbOperations = getSpecificDBOperations(clauses);
         ((DBObject)(dbOperations[0].get("$group"))).put(ID, null);
-        ((DBObject)(dbOperations[1].get("$project"))).removeField(WS);
-        ((DBObject)(dbOperations[1].get("$project"))).removeField(JOINED_USERS);
-        ((DBObject)(dbOperations[1].get("$project"))).removeField(INVITES);
-        ((DBObject)(dbOperations[1].get("$project"))).removeField(FACTORIES);
+
+        DBObject project = (DBObject)dbOperations[1].get("$project");
+        project.removeField(WS);
+        project.removeField(JOINED_USERS);
+        project.removeField(INVITES);
+        project.removeField(FACTORIES);
 
         return dbOperations;
     }
@@ -174,10 +176,9 @@ public class WorkspacesStatisticsList extends AbstractListValueResulted implemen
         if (context.exists(Parameters.EXPANDED_METRIC_NAME)) {
             Metric expandable = context.getExpandedMetric();
 
-            if (expandable != null
-                && (expandable instanceof CumulativeMetric)) {
+            if (expandable != null && (expandable instanceof CumulativeMetric)) {
                 Context.Builder builder = new Context.Builder(context);
-                builder.put(MetricFilter.WS, Parameters.WS_TYPES.PERSISTENT.toString());
+                builder.put(MetricFilter.PERSISTENT_WS, 1);
                 context = builder.build();
             }
         }
