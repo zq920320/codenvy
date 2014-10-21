@@ -172,16 +172,6 @@ DEFINE lastUpdate(X, idField) RETURNS Y {
 };
 
 ---------------------------------------------------------------------------
--- @return first update
----------------------------------------------------------------------------
-DEFINE firstUpdate(X, dtField, idField) RETURNS Y {
-  y1 = GROUP $X BY $idField;
-  y2 = FOREACH y1 GENERATE group AS $idField, MIN($X.$dtField) AS minDt, FLATTEN($X);
-  y3 = FILTER y2 BY $dtField == minDt;
-  $Y = FOREACH y3 GENERATE *;
-};
-
----------------------------------------------------------------------------
 -- Extract orgId and affiliateId either from parameter or from factory url.
 -- Removes ending '}' character (known bug)
 -- @return  {..., orgId : bytearray, affiliateId : bytearray}
@@ -411,7 +401,7 @@ DEFINE extractFactoryId(X) RETURNS Y {
 ---------------------------------------------------------------------------
 DEFINE addLogoutInterval(X, L, idleIntervalParam) RETURNS Y {
   z1 = filterByEvent($L, 'user-sso-logged-out');
-  z = FOREACH z1 GENERATE dt, user, UUID() AS logoutID;
+  z = FOREACH z1 GENERATE dt, user;
 
   -- checking if logout event occurred after session
   x1 = JOIN $X BY user LEFT, z BY user;
@@ -423,10 +413,18 @@ DEFINE addLogoutInterval(X, L, idleIntervalParam) RETURNS Y {
                            $X::startTime AS startTime,
                            $X::usageTime AS usageTime,
                            $X::sessionID AS sessionID,
-                           logoutInterval AS logoutInterval,
-                           z::logoutID AS logoutID,
-                           z::dt AS logoutDT;
---                           (z::logoutID IS NULL ? UUID() : z::logoutID) AS logoutID,
---                           (z::dt IS NULL ? ToDate(0) : z::dt) AS logoutDT;
-  $Y = firstUpdate(x4, 'logoutDT', 'logoutID');
+                           logoutInterval AS logoutInterval;
+  $Y = firstUpdate(x4, 'logoutInterval', 'sessionID');
 };
+
+
+---------------------------------------------------------------------------
+-- @return first update
+---------------------------------------------------------------------------
+DEFINE firstUpdate(X, dtField, idField) RETURNS Y {
+  y1 = GROUP $X BY $idField;
+  y2 = FOREACH y1 GENERATE group AS $idField, MIN($X.$dtField) AS minDt, FLATTEN($X);
+  y3 = FILTER y2 BY $dtField == minDt;
+  $Y = FOREACH y3 GENERATE *;
+};
+
