@@ -43,22 +43,19 @@ public class TestFilters extends BaseTest {
     public void init() throws Exception {
         List<Event> events = new ArrayList<>();
         events.add(Event.Builder.createUserCreatedEvent("uid1", "user1@gmail.com","[user1@gmail.com]").withDate("2013-02-10").build());
-        events.add(Event.Builder.createWorkspaceCreatedEvent("ws1", "wsid1", "user1@gmail.com").withDate("2013-02-10").build());
+        events.add(Event.Builder.createUserCreatedEvent("uid2", "user2@gmail.com", "[user2@gmail.com]").withDate("2013-02-10").build());
+        events.add(Event.Builder.createUserCreatedEvent("uid3", "anonymoususer_edjkx4", "[]").withDate("2013-02-10").build());
+        events.add(Event.Builder.createUserCreatedEvent("uid4", "AnonymousUser_lnmyzh", "[]").withDate("2013-02-10").build());
 
-        events.add(Event.Builder.createUserCreatedEvent("uid2", "user2@gmail.com","[user2@gmail.com]").withDate("2013-02-10").build());
-        events.add(Event.Builder.createWorkspaceCreatedEvent("tmp-22rct0cq0rh8vs", "wsid2", "user2@gmail.com").withDate("2013-02-10").build());
-
-        events.add(Event.Builder.createUserCreatedEvent("uid3", "anonymoususer_edjkx4","[]").withDate("2013-02-10").build());
-        events.add(Event.Builder.createWorkspaceCreatedEvent("ws2", "wsid3", "anonymoususer_edjkx4").withDate("2013-02-10").build());
-
-        events.add(Event.Builder.createUserCreatedEvent("uid4", "AnonymousUser_lnmyzh","[]").withDate("2013-02-10").build());
-        events.add(Event.Builder.createWorkspaceCreatedEvent("tmp-p42qbfzn6iz9gn", "wsid4", "AnonymousUser_lnmyzh").withDate("2013-02-10").build());
+        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid1", "ws1", "user1@gmail.com").withDate("2013-02-10").build());
+        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid3", "ws2", "anonymoususer_edjkx4").withDate("2013-02-10").build());
+        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid2", "tmp-22rct0cq0rh8vs", "user2@gmail.com").withDate("2013-02-10").build());
+        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid4", "tmp-p42qbfzn6iz9gn", "AnonymousUser_lnmyzh").withDate("2013-02-10").build());
         
-        events.add(Event.Builder.createProjectCreatedEvent("uid1", "wsid1", "", "p", "t").withDate("2013-02-10").build());
-        events.add(Event.Builder.createProjectCreatedEvent("uid3", "wsid3", "", "p", "t").withDate("2013-02-10").build());
-        events.add(Event.Builder.createProjectCreatedEvent("uid2", "wsid2", "", "p", "t").withDate("2013-02-10").build());
-        events.add(
-                Event.Builder.createProjectCreatedEvent("uid4", "wsid4", "", "p", "t").withDate("2013-02-10").build());
+        events.add(Event.Builder.createProjectCreatedEvent("uid1", "wsid1", "p", "t").withDate("2013-02-10").build());
+        events.add(Event.Builder.createProjectCreatedEvent("uid3", "wsid3", "p", "t").withDate("2013-02-10").build());
+        events.add(Event.Builder.createProjectCreatedEvent("uid2", "wsid2", "p", "t").withDate("2013-02-10").build());
+        events.add(Event.Builder.createProjectCreatedEvent("uid4", "wsid4", "p", "t").withDate("2013-02-10").build());
 
         File log = LogGenerator.generateLog(events);
 
@@ -74,6 +71,7 @@ public class TestFilters extends BaseTest {
         pigServer.execute(ScriptType.WORKSPACES_PROFILES, builder.build());
 
         builder.putAll(scriptsManager.getScript(ScriptType.EVENTS, MetricType.PROJECTS).getParamsAsMap());
+        builder.put(MetricFilter.WS, Parameters.WS_TYPES.ANY.toString());
         pigServer.execute(ScriptType.EVENTS, builder.build());
     }
 

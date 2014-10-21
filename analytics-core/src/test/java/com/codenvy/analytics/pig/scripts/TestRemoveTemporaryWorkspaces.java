@@ -21,7 +21,11 @@ import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.datamodel.ValueDataUtil;
-import com.codenvy.analytics.metrics.*;
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Metric;
+import com.codenvy.analytics.metrics.MetricFactory;
+import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
@@ -49,29 +53,29 @@ public class TestRemoveTemporaryWorkspaces extends BaseTest {
     public void prepare() throws Exception {
         List<Event> events = new ArrayList<>();
 
-        events.add(Event.Builder.createWorkspaceCreatedEvent("ws1", "wsid1", "user1@gmail.com")
+        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid1", "ws1", "user1@gmail.com")
                                 .withDate("2013-01-01").withTime("10:00:00,000").build());
-        events.add(Event.Builder.createWorkspaceCreatedEvent("tmp-1", "wsid2", "AnonymousUser_000001")
+        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid2", "tmp-1", "AnonymousUser_000001")
                                 .withDate("2013-01-01").withTime("10:00:00,000").build());
 
-        events.add(Event.Builder.createWorkspaceCreatedEvent("tmp-2", "wsid3", "user2@gmail.com")
+        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid3", "tmp-2", "user2@gmail.com")
                                 .withDate("2013-01-02").withTime("10:00:00,000").build());
-        events.add(Event.Builder.createWorkspaceCreatedEvent("tmp-3", "wsid4", "AnonymousUser_000002")
+        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid4", "tmp-3", "AnonymousUser_000002")
                                 .withDate("2013-01-02").withTime("10:00:00,000").build());
 
-        events.add(Event.Builder.createWorkspaceCreatedEvent("ws2", "wsid5", "user3@gmail.com")
+        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid5", "ws2", "user3@gmail.com")
                                 .withDate("2013-01-03").withTime("10:00:00,000").build());
-        events.add(Event.Builder.createWorkspaceCreatedEvent("tmp-4", "wsid6", "AnonymousUser_000003")
+        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid6", "tmp-4", "AnonymousUser_000003")
                                 .withDate("2013-01-03").withTime("10:00:00,000").build());
 
-        events.add(Event.Builder.createWorkspaceCreatedEvent("ws3", "wsid7", "user4@gmail.com")
+        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid7", "ws3", "user4@gmail.com")
                                 .withDate("2013-01-04").withTime("10:00:00,000").build());
-        events.add(Event.Builder.createWorkspaceCreatedEvent("tmp-5", "wsid8", "AnonymousUser_000004")
+        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid8", "tmp-5", "AnonymousUser_000004")
                                 .withDate("2013-01-04").withTime("10:00:00,000").build());
 
-        events.add(Event.Builder.createWorkspaceCreatedEvent("ws4", "wsid9", "user5@gmail.com")
+        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid9", "ws4", "user5@gmail.com")
                                 .withDate("2013-01-05").withTime("10:00:00,000").build());
-        events.add(Event.Builder.createWorkspaceCreatedEvent("tmp-6", "wsid10", "AnonymousUser_000005")
+        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid10", "tmp-6", "AnonymousUser_000005")
                                 .withDate("2013-01-05").withTime("10:00:00,000").build());
 
         log = LogGenerator.generateLog(events);

@@ -19,7 +19,11 @@ package com.codenvy.analytics.pig.scripts;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.metrics.*;
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Metric;
+import com.codenvy.analytics.metrics.MetricFactory;
+import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
@@ -92,20 +96,20 @@ public class TestWorkspacesWhereUsersHaveSeveralFactorySessions extends BaseTest
         events.add(Event.Builder.createRunStartedEvent("user1@gmail.com", "tmp-1", "project", "type", "id")
                                 .withDate("2013-02-10").withTime("10:03:00").build());
 
-        events.add(Event.Builder.createProjectDeployedEvent("user1@gmail.com", "tmp-1", "session", "project", "type",
+        events.add(Event.Builder.createProjectDeployedEvent("user1@gmail.com", "tmp-1", "project", "type",
                                                             "local")
                                 .withDate("2013-02-10")
                                 .withTime("10:04:00")
                                 .build());
 
-        events.add(Event.Builder.createProjectBuiltEvent("user1@gmail.com", "tmp-1", "session", "project", "type")
+        events.add(Event.Builder.createProjectBuiltEvent("user1@gmail.com", "tmp-1", "project", "type")
                                 .withDate("2013-02-10")
                                 .withTime("10:04:00")
                                 .build());
 
 
         // create user
-        events.add(Event.Builder.createUserAddedToWsEvent("", "", "", "tmp-3", "anonymoususer_1", "website")
+        events.add(Event.Builder.createUserAddedToWsEvent("", "", "website")
                                 .withDate("2013-02-10").build());
 
         events.add(Event.Builder.createUserChangedNameEvent("anonymoususer_1", "user4@gmail.com").withDate("2013-02-10")
@@ -115,7 +119,7 @@ public class TestWorkspacesWhereUsersHaveSeveralFactorySessions extends BaseTest
 
 
         //___
-        events.add(Event.Builder.createUserAddedToWsEvent("", "", "", "tmp-2", "anonymoususer_1", "website2")
+        events.add(Event.Builder.createUserAddedToWsEvent("", "", "website2")
                                 .withDate("2013-02-10").build());
 
         File log = LogGenerator.generateLog(events);

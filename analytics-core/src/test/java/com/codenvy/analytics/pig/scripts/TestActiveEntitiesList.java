@@ -22,7 +22,11 @@ import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.SetValueData;
 import com.codenvy.analytics.datamodel.StringValueData;
 import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.*;
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Metric;
+import com.codenvy.analytics.metrics.MetricFactory;
+import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
@@ -42,11 +46,11 @@ public class TestActiveEntitiesList extends BaseTest {
     @BeforeClass
     public void init() throws Exception {
         List<Event> events = new ArrayList<>();
-        events.add(Event.Builder.createWorkspaceCreatedEvent("ws1", "wsid1", "user1@gmail.com")
+        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid1", "ws1", "user1@gmail.com")
                                 .withDate("2013-01-01")
                                 .withTime("10:00:00")
                                 .build());
-        events.add(Event.Builder.createWorkspaceCreatedEvent("ws2", "wsid2", "user2@gmail.com")
+        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid2", "ws2", "user2@gmail.com")
                                 .withDate("2013-01-01")
                                 .withTime("10:00:00")
                                 .build());
@@ -78,11 +82,11 @@ public class TestActiveEntitiesList extends BaseTest {
         pigServer.execute(ScriptType.ACTIVE_ENTITIES, builder.build());
 
         events = new ArrayList<>();
-        events.add(Event.Builder.createWorkspaceCreatedEvent("ws3", "wsid3", "user1@gmail.com")
+        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid3", "ws3", "user1@gmail.com")
                                 .withDate("2013-01-02")
                                 .withTime("10:00:00")
                                 .build());
-        events.add(Event.Builder.createWorkspaceCreatedEvent("ws4", "wsid4", "user4@gmail.com")
+        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid4", "ws4", "user4@gmail.com")
                                 .withDate("2013-01-02")
                                 .withTime("10:00:00")
                                 .build());

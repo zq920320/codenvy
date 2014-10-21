@@ -20,7 +20,7 @@ IMPORT 'macros.pig';
 
 l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 
-a1 = removeEvent(l, 'session-usage,session-started,session-finished,session-factory-started,session-factory-stopped');
+a1 = removeEvent(l, 'session-usage,session-started,session-finished,session-factory-usage,session-factory-started,session-factory-stopped');
 a = FOREACH a1 GENERATE dt, user, ws, event, message;
 
 -- Every parameter in the message will be stored separately as well as a whole message.

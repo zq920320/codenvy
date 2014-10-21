@@ -53,14 +53,14 @@ public class TestGetFactoryId extends BaseTest {
         events.add(Event.Builder.createUserCreatedEvent("uid2", "anonymousUser_00002", "[anonymousUser_00002]").withDate("2013-01-01").withTime("10:00:00,000").build());
         events.add(Event.Builder.createUserCreatedEvent("uid3", "user1@gmail.com", "[user1@gmail.com]").withDate("2013-01-01").withTime("10:00:00,000").build());
 
-        events.add(Event.Builder.createWorkspaceCreatedEvent("tmp-1", "wsid1", "anonymousUser_00001").withDate("2013-01-01").withTime("10:00:01,000").build());
-        events.add(Event.Builder.createWorkspaceCreatedEvent("tmp-2", "wsid2", "user1@gmail.com").withDate("2013-01-01").withTime("10:00:02,000").build());
-        events.add(Event.Builder.createWorkspaceCreatedEvent("tmp-3", "wsid3", "user1@gmail.com").withDate("2013-01-01").withTime("10:00:03,000").build());
-        events.add(Event.Builder.createWorkspaceCreatedEvent("tmp-4", "wsid4", "anonymousUser_00002").withDate("2013-01-01").withTime("10:00:04,000").build());
+        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid1", "tmp-1", "anonymousUser_00001").withDate("2013-01-01").withTime("10:00:01,000").build());
+        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid2", "tmp-2", "user1@gmail.com").withDate("2013-01-01").withTime("10:00:02,000").build());
+        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid3", "tmp-3", "user1@gmail.com").withDate("2013-01-01").withTime("10:00:03,000").build());
+        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid4", "tmp-4", "anonymousUser_00002").withDate("2013-01-01").withTime("10:00:04,000").build());
 
         // use case with same workspace id, but different time. Shuald be return latest factory id (fid004)
-        events.add(Event.Builder.createWorkspaceCreatedEvent("tmp-5", "wsid5", "anonymousUser_00002").withDate("2013-01-01").withTime("11:00:04,000").build());
-        events.add(Event.Builder.createWorkspaceCreatedEvent("tmp-6", "wsid5", "anonymousUser_00002").withDate("2013-01-01").withTime("12:00:04,000").build());
+        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid5", "tmp-5", "anonymousUser_00002").withDate("2013-01-01").withTime("11:00:04,000").build());
+        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid5", "tmp-6", "anonymousUser_00002").withDate("2013-01-01").withTime("12:00:04,000").build());
 
         events.add(createFactoryUrlAcceptedEvent("tmp-1", "factory1", "", "", "").withDate("2013-01-01").withTime("13:00:00").build());
         events.add(createFactoryUrlAcceptedEvent("tmp-2", "factory2", "", "", "").withDate("2013-01-01").withTime("13:00:00").build());

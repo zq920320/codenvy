@@ -17,30 +17,29 @@
  */
 package com.codenvy.analytics.metrics.sessions.factory;
 
-import com.codenvy.analytics.metrics.AbstractLongValueResulted;
+import com.codenvy.analytics.metrics.AbstractCount;
+import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.OmitFilters;
 
 import javax.annotation.security.RolesAllowed;
+import java.io.IOException;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
 @OmitFilters({MetricFilter.WS, MetricFilter.PERSISTENT_WS})
-public class ConvertedFactorySessions extends AbstractLongValueResulted {
+public class ConvertedFactorySessions extends AbstractCount {
 
     public ConvertedFactorySessions() {
-        super(MetricType.CONVERTED_FACTORY_SESSIONS, SESSION_ID);
+        super(MetricType.CONVERTED_FACTORY_SESSIONS, MetricType.PRODUCT_USAGE_FACTORY_SESSIONS, SESSION_ID);
     }
 
     @Override
-    public String getStorageCollectionName() {
-        return getStorageCollectionName(MetricType.PRODUCT_USAGE_FACTORY_SESSIONS);
-    }
-
-    @Override
-    public String[] getTrackedFields() {
-        return new String[]{CONVERTED_SESSION};
+    public Context applySpecificFilter(Context context) throws IOException {
+        Context.Builder builder = new Context.Builder(context);
+        builder.put(MetricFilter.CONVERTED_FACTORY_SESSION, 1);
+        return builder.build();
     }
 
     @Override

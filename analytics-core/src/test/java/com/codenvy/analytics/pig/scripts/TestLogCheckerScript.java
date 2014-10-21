@@ -41,9 +41,9 @@ public class TestLogCheckerScript extends BaseTest {
         List<Event> events = new ArrayList<>();
 
         events.add(
-                Event.Builder.createApplicationCreatedEvent("user1@gmail.com", "ws1", "session", "project1", "type1", "null").withDate("2013-01-01").build());
-        events.add(Event.Builder.createApplicationCreatedEvent("user1@gmail.com", "ws1", "session", "project2", "type1", "").withDate("2013-01-01").build());
-        events.add(Event.Builder.createProjectCreatedEvent("", "", "", "project3", "type1").withDate("2013-01-01").build());
+                Event.Builder.createApplicationCreatedEvent("user1@gmail.com", "ws1", "project1", "type1", "null").withDate("2013-01-01").build());
+        events.add(Event.Builder.createApplicationCreatedEvent("user1@gmail.com", "ws1", "project2", "type1", "").withDate("2013-01-01").build());
+        events.add(Event.Builder.createProjectCreatedEvent("", "", "project3", "type1").withDate("2013-01-01").build());
 
         File log = LogGenerator.generateLog(events);
 

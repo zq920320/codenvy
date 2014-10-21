@@ -51,15 +51,15 @@ public class TestCollaborativeSessionStarted extends BaseTest {
         events.add(Event.Builder.createUserCreatedEvent("uid5", "user5@gmail.com", "user5@gmail.com")
                                 .withDate("2013-02-10").withTime("10:00:00,000").build());
 
-        events.add(Event.Builder.createWorkspaceCreatedEvent("ws1", "wsid1", "user1@gmail.com")
+        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid1", "ws1", "user1@gmail.com")
                                 .withDate("2013-02-10").withTime("19:00:00").build());
-        events.add(Event.Builder.createWorkspaceCreatedEvent("ws2", "wsid2", "user2@gmail.com")
+        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid2", "ws2", "user2@gmail.com")
                                 .withDate("2013-02-10").withTime("19:00:00").build());
-        events.add(Event.Builder.createWorkspaceCreatedEvent("ws3", "wsid3", "user3@gmail.com")
+        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid3", "ws3", "user3@gmail.com")
                                 .withDate("2013-02-10").withTime("19:00:00").build());
-        events.add(Event.Builder.createWorkspaceCreatedEvent("ws4", "wsid4", "user4@gmail.com")
+        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid4", "ws4", "user4@gmail.com")
                                 .withDate("2013-02-10").withTime("19:00:00").build());
-        events.add(Event.Builder.createWorkspaceCreatedEvent("ws5", "wsid5", "user5@gmail.com")
+        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid5", "ws5", "user5@gmail.com")
                                 .withDate("2013-02-10").withTime("19:00:00").build());
 
         events.add(Event.Builder.collaborativeSessionStartedEvent("ws1", "user1@gmail.com", "session1")

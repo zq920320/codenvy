@@ -24,7 +24,11 @@ import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.pig.scripts.ScriptType;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
-import com.mongodb.*;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
+import com.mongodb.DBObject;
 
 import org.apache.pig.data.Tuple;
 import org.testng.annotations.BeforeClass;
@@ -47,7 +51,7 @@ public class TestMongoStorage extends BaseTest {
     @BeforeClass
     public void prepare() throws Exception {
         List<Event> events = new ArrayList<>();
-        events.add(Event.Builder.createWorkspaceCreatedEvent("ws1", "wsid1", "user1@gmail.com")
+        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid1", "ws1", "user1@gmail.com")
                                 .withDate("2013-01-02")
                                 .withTime("00:00:00")
                                 .build());

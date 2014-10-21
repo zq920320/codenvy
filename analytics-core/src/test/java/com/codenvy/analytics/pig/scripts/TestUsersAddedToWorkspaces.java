@@ -19,7 +19,11 @@ package com.codenvy.analytics.pig.scripts;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.metrics.*;
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Metric;
+import com.codenvy.analytics.metrics.MetricFactory;
+import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
@@ -38,22 +42,22 @@ public class TestUsersAddedToWorkspaces extends BaseTest {
     @BeforeClass
     public void init() throws Exception {
         List<Event> events = new ArrayList<>();
-        events.add(Event.Builder.createWorkspaceCreatedEvent("ws1", "wsid1", "user1@gmail.com")
+        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid1", "ws1", "user1@gmail.com")
                                 .withDate("2013-01-02").withTime("10:00:00").build());
-        events.add(Event.Builder.createWorkspaceCreatedEvent("ws", "wsid2", "user2@gmail.com")
+        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid2", "ws", "user2@gmail.com")
                                 .withDate("2013-01-02").withTime("10:00:00").build());
-        events.add(Event.Builder.createWorkspaceCreatedEvent("ws2", "wsid3", "user4@gmail.com")
+        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid3", "ws2", "user4@gmail.com")
                                 .withDate("2013-01-02").withTime("10:00:00").build());
 
-        events.add(Event.Builder.createUserAddedToWsEvent("user1@gmail.com", "ws1", "", "", "", "website")
+        events.add(Event.Builder.createUserAddedToWsEvent("user1@gmail.com", "ws1", "website")
                                 .withDate("2013-01-02").withTime("10:00:00").build());
-        events.add(Event.Builder.createUserAddedToWsEvent("user2@gmail.com", "ws", "", "", "", "website")
+        events.add(Event.Builder.createUserAddedToWsEvent("user2@gmail.com", "ws", "website")
                                 .withDate("2013-01-02").withTime("10:00:01").build());
-        events.add(Event.Builder.createUserAddedToWsEvent("user3@gmail.com", "ws", "", "", "", "invite")
+        events.add(Event.Builder.createUserAddedToWsEvent("user3@gmail.com", "ws", "invite")
                                 .withDate("2013-01-02").withTime("10:00:02").build());
-        events.add(Event.Builder.createUserAddedToWsEvent("user4@gmail.com", "ws2", "", "", "", "invite")
+        events.add(Event.Builder.createUserAddedToWsEvent("user4@gmail.com", "ws2", "invite")
                                 .withDate("2013-01-02").withTime("10:00:03").build());
-        events.add(Event.Builder.createUserAddedToWsEvent("user5@gmail.com", "ws2", "", "", "", "invite")
+        events.add(Event.Builder.createUserAddedToWsEvent("user5@gmail.com", "ws2", "invite")
                                 .withDate("2013-01-02").withTime("10:00:04").build());
 
         File log = LogGenerator.generateLog(events);

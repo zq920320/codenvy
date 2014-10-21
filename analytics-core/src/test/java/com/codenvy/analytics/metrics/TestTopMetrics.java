@@ -82,7 +82,7 @@ public class TestTopMetrics extends BaseTest {
         events.add(Event.Builder.createRunStartedEvent("user1@gmail.com", "tmp-1", "project", "type", "id1")
                                 .withDate("2013-02-10").withTime("10:03:00").build());
 
-        events.add(Event.Builder.createProjectDeployedEvent("user1@gmail.com", "tmp-1", "session", "project", "type",
+        events.add(Event.Builder.createProjectDeployedEvent("user1@gmail.com", "tmp-1", "project", "type",
                                                             "local")
                                 .withDate("2013-02-10")
                                 .withTime("10:04:00")
@@ -95,7 +95,7 @@ public class TestTopMetrics extends BaseTest {
 
 
         // create user
-        events.add(Event.Builder.createUserAddedToWsEvent("", "", "", "tmp-3", "anonymoususer_1", "website")
+        events.add(Event.Builder.createUserAddedToWsEvent("", "", "website")
                                 .withDate("2013-02-10")
                                 .withTime("12:00:00")
                                 .build());

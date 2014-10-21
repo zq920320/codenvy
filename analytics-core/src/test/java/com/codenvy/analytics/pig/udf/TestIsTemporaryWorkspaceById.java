@@ -53,11 +53,11 @@ public class TestIsTemporaryWorkspaceById extends BaseTest {
         events.add(Event.Builder.createUserCreatedEvent("uid2", "AnonymousUser_1", "AnonymousUser_1")
                                 .withDate("2013-01-01").withTime("10:00:00,000").build());
 
-        events.add(Event.Builder.createWorkspaceCreatedEvent("ws1", "wsid1", "user1@gmail.com")
+        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid1", "ws1", "user1@gmail.com")
                                 .withDate("2013-01-01").withTime("11:00:00").build());
-        events.add(Event.Builder.createWorkspaceCreatedEvent("tmp-workspace000001", "wsid2", "user1@gmail.com")
+        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid2", "tmp-workspace000001", "user1@gmail.com")
                                 .withDate("2013-01-01").withTime("11:00:00").build());
-        events.add(Event.Builder.createWorkspaceCreatedEvent("tmp-workspace000001", "wsid3", "AnonymousUser_1")
+        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid3", "tmp-workspace000001", "AnonymousUser_1")
                                 .withDate("2013-01-01").withTime("11:00:00").build());
 
         File log = LogGenerator.generateLog(events);

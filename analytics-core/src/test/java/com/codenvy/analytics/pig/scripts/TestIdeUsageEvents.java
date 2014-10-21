@@ -22,10 +22,16 @@ import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.*;
-import com.codenvy.analytics.metrics.ide_usage.extensions.builder.BuildAction;
+import com.codenvy.analytics.metrics.AbstractMetric;
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Expandable;
+import com.codenvy.analytics.metrics.Metric;
+import com.codenvy.analytics.metrics.MetricFactory;
+import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.ide_usage.CodeCompletionsBasedOnIdeUsage;
 import com.codenvy.analytics.metrics.ide_usage.OpenProjectAction;
+import com.codenvy.analytics.metrics.ide_usage.extensions.builder.BuildAction;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 import com.mongodb.BasicDBObject;
@@ -58,7 +64,7 @@ public class TestIdeUsageEvents extends BaseTest {
         events.add(Event.Builder.createUserCreatedEvent("uid4", "user4@gmail.com","[user4@gmail.com]").withDate("2013-01-01").build());
         events.add(Event.Builder.createUserCreatedEvent("uid5", "user5@gmail.com","[user5@gmail.com]").withDate("2013-01-01").build());
 
-        events.add(Event.Builder.createWorkspaceCreatedEvent("ws1", "wsid1", "user1@gmail.com").withDate("2013-01-01").build());
+        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid1", "ws1", "user1@gmail.com").withDate("2013-01-01").build());
 
         events.add(Event.Builder.createIDEUsageEvent("user1@gmail.com", "ws1", "action1", "src1", "project1", "type1", "p1=v1,p2=v2")
                                 .withDate("2013-01-01").build());
@@ -154,7 +160,7 @@ public class TestIdeUsageEvents extends BaseTest {
         assertEquals(data.getAll().size(), 1);
 
         Map<String, ValueData> record = ((MapValueData)data.getAll().get(0)).getAll();
-        assertEquals("uid5/testWs/testProject", record.get(AbstractMetric.PROJECT_ID).getAsString());
+        assertEquals("uid5/testws/testProject", record.get(AbstractMetric.PROJECT_ID).getAsString());
     }
 
     @Test

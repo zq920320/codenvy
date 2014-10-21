@@ -49,23 +49,23 @@ public class TestProjectsList extends BaseTest {
     public void init() throws Exception {
         List<Event> events = new ArrayList<>();
 
-        events.add(Event.Builder.createWorkspaceCreatedEvent("ws1", "wsid1", "user1@gmail.com")
+        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid1", "ws1", "user1@gmail.com")
                                 .withDate("2013-01-01").withTime("08:59:00").build());
-        events.add(Event.Builder.createWorkspaceCreatedEvent("ws2", "wsid2", "user2@gmail.com")
+        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid2", "ws2", "user2@gmail.com")
                                 .withDate("2013-01-01").withTime("08:59:00").build());
-        events.add(Event.Builder.createWorkspaceCreatedEvent("ws3", "wsid3", "user3@gmail.com")
+        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid3", "ws3", "user3@gmail.com")
                                 .withDate("2013-01-01").withTime("08:59:00").build());
 
-        events.add(Event.Builder.createProjectCreatedEvent("user1@gmail.com", "ws1", "sid1", "project1", "jar")
+        events.add(Event.Builder.createProjectCreatedEvent("user1@gmail.com", "ws1", "project1", "jar")
                                 .withDate("2013-01-01")
                                 .withTime("10:00:00")
                                 .build());
-        events.add(Event.Builder.createProjectCreatedEvent("user1@gmail.com", "ws2", "sid2", "project2", "war")
+        events.add(Event.Builder.createProjectCreatedEvent("user1@gmail.com", "ws2", "project2", "war")
                                 .withDate("2013-01-01")
                                 .withTime("10:00:01")
                                 .build());
 
-        events.add(Event.Builder.createProjectCreatedEvent("user2@yahoo.com", "ws3", "sid3", "project3", "war")
+        events.add(Event.Builder.createProjectCreatedEvent("user2@yahoo.com", "ws3", "project3", "war")
                                 .withDate("2013-01-01")
                                 .withTime("10:00:03")
                                 .build());

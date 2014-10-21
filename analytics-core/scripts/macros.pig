@@ -34,8 +34,10 @@ DEFINE loadResources(resourceParam, from, to, userType, wsType) RETURNS Y {
                            message,
                            REGEX_EXTRACT_ALL(message, '([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}) ([0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2},[0-9]{3}).*\\s-(\\s.*)') AS pattern;
 
-  l6 = FOREACH l5 GENERATE user,
-                           ws,
+  l6 = FOREACH l5 GENERATE ReplaceUserWithId(user) AS user,
+                           user AS userName,
+                           ReplaceWsWithId(ws) AS ws,
+                           ws AS wsName,
                            ToDate(pattern.$1, 'yyyy-MM-dd HH:mm:ss,SSS') AS dt,
                            pattern.$2 AS message;
 
@@ -43,14 +45,22 @@ DEFINE loadResources(resourceParam, from, to, userType, wsType) RETURNS Y {
   l8 = extractParam(l7, 'EVENT', 'event');
   l9 = removeEmptyField(l8, 'event');
 
-  l10 = DISTINCT l9;
-  $Y = FOREACH l10 GENERATE dt,
-                            ReplaceUserWithId(user) AS user,
-                            user AS userName,
-                            event,
-                            message,
-                            ReplaceWsWithId(ws) AS ws,
-                            ws AS wsName;
+  l10 = FILTER l9 BY '$wsType' == 'ANY' OR  ws == 'default' OR
+                    ('$wsType' == 'TEMPORARY' AND IsTemporaryWorkspaceById(ws)) OR
+                    ('$wsType' == 'PERSISTENT' AND NOT IsTemporaryWorkspaceById(ws));
+
+  l11 = FILTER l10 BY '$userType' == 'ANY' OR user == 'default' OR
+                      ('$userType' == 'ANONYMOUS' AND IsAnonymousUserById(user)) OR
+                      ('$userType' == 'REGISTERED' AND NOT IsAnonymousUserById(user));
+
+  l12 = DISTINCT l11;
+  $Y = FOREACH l12 GENERATE dt,
+                          user,
+                          userName,
+                          event,
+                          message,
+                          ws,
+                          wsName;
 };
 ---------------------------------------------------------------------------
 -- Removes tuples with empty fields
@@ -128,12 +138,8 @@ DEFINE removeEvent(X, eventNamesParam) RETURNS Y {
 -- @return  {..., ws : bytearray}
 ---------------------------------------------------------------------------
 DEFINE extractWs(X, wsType) RETURNS Y {
-  x1 = FOREACH $X GENERATE *, FLATTEN(REGEX_EXTRACT_ALL(message, '.*\\[.*\\]\\[(.*)\\]\\[.*\\] - .*')) AS ws2, FLATTEN(REGEX_EXTRACT_ALL(message, '.*\\sWS#([^\\s#][^#]*|)#.*')) AS ws1;
-  x2 = FOREACH x1 GENERATE *, (ws1 IS NOT NULL AND ws1 != '' ? ws1 : (ws2 IS NOT NULL AND ws2 != '' ? ws2 : 'default')) AS ws3;
-  x3 = FILTER x2 BY '$wsType' == 'ANY' OR  ws3 == 'default' OR
-            ('$wsType' == 'TEMPORARY' AND INDEXOF(LOWER(ws3), 'tmp-', 0) == 0) OR
-            ('$wsType' == 'PERSISTENT' AND INDEXOF(LOWER(ws3), 'tmp-', 0) < 0);
-  $Y = FOREACH x3 GENERATE *, (INDEXOF(LOWER(ws3), 'tmp-', 0) == 0 ? LOWER(ws3) : ws3) AS ws;
+  x1 = FOREACH $X GENERATE *, FLATTEN(REGEX_EXTRACT_ALL(message, '.*\\sWS#([^\\s#][^#]*|)#.*')) AS ws1;
+  $Y = FOREACH x1 GENERATE *, (ws1 IS NOT NULL AND ws1 != '' ? LOWER(ws1) : 'default') AS ws;
 };
 
 ---------------------------------------------------------------------------
@@ -141,15 +147,8 @@ DEFINE extractWs(X, wsType) RETURNS Y {
 -- @return  {..., user : bytearray}
 ---------------------------------------------------------------------------
 DEFINE extractUser(X, userType) RETURNS Y {
-  x1 = FOREACH $X GENERATE *, FLATTEN(REGEX_EXTRACT_ALL(message, '.*\\sUSER#([^\\s#][^#]*|)#.*')) AS user1,
-                  FLATTEN(REGEX_EXTRACT_ALL(message, '.*ALIASES\\#[\\[]?([^\\#^\\[^\\]]*)[\\]]?\\#.*')) AS user2,
-                  FLATTEN(REGEX_EXTRACT_ALL(message, '.*\\[(.*)\\]\\[.*\\]\\[.*\\] - .*')) AS user3;
-  x2 = FOREACH x1 GENERATE *, (user1 IS NOT NULL AND user1 != '' ? user1 : (user2 IS NOT NULL AND user2 != '' ? user2 : (user3 IS NOT NULL AND user3 != '' ? user3 : 'default'))) AS probUser;
-  x3 = FOREACH x2 GENERATE *, FLATTEN(TOKENIZE(probUser, ',')) AS user4;
-  x4 = FILTER x3 BY '$userType' == 'ANY' OR user4 == 'default' OR
-            ('$userType' == 'ANONYMOUS' AND INDEXOF(LOWER(user4), 'anonymoususer_', 0) == 0) OR
-            ('$userType' == 'REGISTERED' AND INDEXOF(LOWER(user4), 'anonymoususer_', 0) < 0);
-  $Y = FOREACH x4 GENERATE *, (INDEXOF(LOWER(user4), 'anonymoususer_', 0) == 0 ? LOWER(user4) : user4) AS user;
+  x1 = FOREACH $X GENERATE *, FLATTEN(REGEX_EXTRACT_ALL(message, '.*\\sUSER#([^\\s#][^#]*|)#.*')) AS user1;
+  $Y = FOREACH x1 GENERATE *, (user1 IS NOT NULL AND user1 != '' ? LOWER(user1) : 'default') AS user;
 };
 
 ---------------------------------------------------------------------------

@@ -51,16 +51,16 @@ public class TestProjectsStatistics extends BaseTest {
     @BeforeClass
     public void init() throws Exception {
         List<Event> events = new ArrayList<>();
-        events.add(Event.Builder.createWorkspaceCreatedEvent("ws1", "wsid1", "user1@gmail.com")
+        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid1", "ws1", "user1@gmail.com")
                                 .withDate("2013-01-01")
                                 .withTime("10:00:00")
                                 .build());
 
-        events.add(Event.Builder.createProjectCreatedEvent("user1@gmail.com", "ws1", "sid1", "project1", "jar")
+        events.add(Event.Builder.createProjectCreatedEvent("user1@gmail.com", "ws1", "project1", "jar")
                                 .withDate("2013-01-01")
                                 .withTime("10:00:00")
                                 .build());
-        events.add(Event.Builder.createProjectDestroyedEvent("user1@gmail.com", "ws1", "sid2", "project1", "jar")
+        events.add(Event.Builder.createProjectDestroyedEvent("user1@gmail.com", "ws1", "project1", "jar")
                                 .withDate("2013-01-01")
                                 .withTime("11:00:00")
                                 .build());
@@ -95,12 +95,12 @@ public class TestProjectsStatistics extends BaseTest {
                                 .withTime("10:10:00")
                                 .build());
 
-        events.add(Event.Builder.createApplicationCreatedEvent("user1@gmail.com", "ws1", "sid1", "project1", "jar", "paas")
+        events.add(Event.Builder.createApplicationCreatedEvent("user1@gmail.com", "ws1", "project1", "jar", "paas")
                                 .withDate("2013-01-01")
                                 .withTime("10:11:00")
                                 .build());
 
-        events.add(Event.Builder.createProjectDeployedEvent("user1@gmail.com", "ws1", "sid1", "project1", "jar", "paas")
+        events.add(Event.Builder.createProjectDeployedEvent("user1@gmail.com", "ws1", "project1", "jar", "paas")
                                 .withDate("2013-01-01")
                                 .withTime("10:12:00")
                                 .build());

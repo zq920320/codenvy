@@ -21,7 +21,12 @@ import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.datamodel.SetValueData;
 import com.codenvy.analytics.datamodel.StringValueData;
 import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.*;
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Metric;
+import com.codenvy.analytics.metrics.MetricFactory;
+import com.codenvy.analytics.metrics.MetricFilter;
+import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
@@ -44,15 +49,15 @@ public class TestFactoryCreatedList extends BaseTest {
     @BeforeClass
     public void init() throws Exception {
         List<Event> events = new ArrayList<>();
-        events.add(Event.Builder.createWorkspaceCreatedEvent("ws1", "wsid1", "anonymoususer_1")
+        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid1", "ws1", "anonymoususer_1")
                                 .withDate("2013-01-01")
                                 .withTime("13:00:00")
                                 .build());
-        events.add(Event.Builder.createWorkspaceCreatedEvent("ws2", "wsid2", "anonymoususer_3")
+        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid2", "ws2", "anonymoususer_3")
                                 .withDate("2013-01-01")
                                 .withTime("13:00:00")
                                 .build());
-        events.add(Event.Builder.createWorkspaceCreatedEvent("ws3", "wsid3", "anonymoususer_4")
+        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid3", "ws3", "anonymoususer_4")
                                 .withDate("2013-01-01")
                                 .withTime("13:00:00")
                                 .build());

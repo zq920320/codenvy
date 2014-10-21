@@ -29,7 +29,11 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 import static org.testng.AssertJUnit.assertEquals;
 
@@ -42,26 +46,33 @@ public class TestExtractUserAndWs extends BaseTest {
     public void prepare() throws Exception {
         List<Event> events = new ArrayList<>();
 
-        events.add(Event.Builder.createUserCreatedEvent("id1", "user1@gmail.com", "user1@gmail.com").withDate("2013-01-01").build());
+        events.add(Event.Builder.createUserCreatedEvent("uid1", "user1@gmail.com", "user1@gmail.com").withDate("2013-01-01").build());
+        events.add(Event.Builder.createWorkspaceCreatedEvent("wid1", "ws1", "user1@gmail.com").withDate("2013-01-01").build());
+        events.add(Event.Builder.createWorkspaceCreatedEvent("wid2", "ws 2", "user1@gmail.com").withDate("2013-01-01").build());
+        events.add(Event.Builder.createWorkspaceCreatedEvent("wid10", "ws10", "user1@gmail.com").withDate("2013-01-01").build());
 
-        events.add(new Event.Builder().withParam("EVENT", "fake").withParam("USER", "user1@gmail.com")
-                                      .withParam("WS", "ws1").withDate("2013-01-01").build());
-        events.add(new Event.Builder().withParam("EVENT", "fake").withParam("ALIASES", "[user2@gmail.com,user3@gmail.com]")
-                                      .withParam("WS", "Tmp-2").withDate("2013-01-01").build());
-        events.add(new Event.Builder().withParam("EVENT", "fake").withParam("ALIASES", "user4@gmail.com")
-                                      .withParam("WS", "Tmp-1").withDate("2013-01-01").build());
+        events.add(new Event.Builder().withParam("EVENT", "fake")
+                                      .withParam("USER", "user1@gmail.com")
+                                      .withParam("WS", "ws1")
+                                      .withDate("2013-01-01").build());
 
         // param contains value ' WS' and workspace name contains ' '
-        events.add(new Event.Builder().withParam("EVENT", "fake").withParam("USER", "AnonymousUser_1")
-                                      .withParam("WS", "ws 2").withParam("COMPANY", "Mints. WS")
-                                      .withParam("PHONE", "123456").withDate("2013-01-01").build());
+        events.add(new Event.Builder().withParam("EVENT", "fake")
+                                      .withParam("USER", "AnonymousUser_1")
+                                      .withParam("WS", "ws 2")
+                                      .withParam("COMPANY", "Mints. WS")
+                                      .withParam("PHONE", "123456")
+                                      .withDate("2013-01-01").build());
 
         // param contains value 'WS'
-        events.add(new Event.Builder().withParam("EVENT", "fake").withParam("ALIASES", "AnonymousUser_2")
-                                      .withParam("WS", "Tmp-3").withParam("COMPANY", "Mints.WS")
-                                      .withParam("PHONE", "123456").withDate("2013-01-01").build());
+        events.add(new Event.Builder().withParam("EVENT", "fake")
+                                      .withParam("WS", "Tmp-3")
+                                      .withParam("COMPANY", "Mints.WS")
+                                      .withParam("PHONE", "123456")
+                                      .withDate("2013-01-01").build());
+
         events.add(new Event.Builder().withParam("EVENT", "fake").withDate("2013-01-01").build());
-        events.add(Event.Builder.createUserAddedToWsEvent("default", "default", "default", "ws10", "user10@gmail.com", "website")
+        events.add(Event.Builder.createUserAddedToWsEvent("default", "default", "website")
                                 .withDate("2013-01-01").build());
 
         File log = LogGenerator.generateLog(events);
@@ -69,14 +80,18 @@ public class TestExtractUserAndWs extends BaseTest {
         builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20130101");
         builder.put(Parameters.TO_DATE, "20130101");
+
         builder.put(Parameters.LOG, log.getAbsolutePath());
         builder.putAll(scriptsManager.getScript(ScriptType.USERS_PROFILES, MetricType.USERS_PROFILES_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.USERS_PROFILES, builder.build());
 
+        builder.putAll(scriptsManager.getScript(ScriptType.WORKSPACES_PROFILES, MetricType.WORKSPACES_PROFILES_LIST).getParamsAsMap());
+        pigServer.execute(ScriptType.WORKSPACES_PROFILES, builder.build());
 
         builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.name());
         builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.name());
         builder.put(Parameters.STORAGE_TABLE, "fake");
+        builder.put(Parameters.EVENT, "fake,user-added-to-ws");
     }
 
     @Test
@@ -92,14 +107,10 @@ public class TestExtractUserAndWs extends BaseTest {
         }
 
         Set<String> expected = new HashSet<>();
-        expected.add("(id1)");
-        expected.add("(user2@gmail.com)");
-        expected.add("(user3@gmail.com)");
-        expected.add("(user4@gmail.com)");
+        expected.add("(uid1)");
         expected.add("(user10@gmail.com)");
-        expected.add("(default)");
         expected.add("(anonymoususer_1)");
-        expected.add("(anonymoususer_2)");
+        expected.add("(default)");
 
         assertEquals(actual, expected);
     }
@@ -118,7 +129,6 @@ public class TestExtractUserAndWs extends BaseTest {
 
         Set<String> expected = new HashSet<>();
         expected.add("(anonymoususer_1)");
-        expected.add("(anonymoususer_2)");
         expected.add("(default)");
 
         assertEquals(actual, expected);
@@ -137,10 +147,7 @@ public class TestExtractUserAndWs extends BaseTest {
         }
 
         Set<String> expected = new HashSet<>();
-        expected.add("(id1)");
-        expected.add("(user2@gmail.com)");
-        expected.add("(user3@gmail.com)");
-        expected.add("(user4@gmail.com)");
+        expected.add("(uid1)");
         expected.add("(user10@gmail.com)");
         expected.add("(default)");
 
@@ -160,11 +167,9 @@ public class TestExtractUserAndWs extends BaseTest {
         }
 
         Set<String> expected = new HashSet<>();
-        expected.add("(ws1)");
-        expected.add("(ws10)");
-        expected.add("(ws 2)");
-        expected.add("(tmp-1)");
-        expected.add("(tmp-2)");
+        expected.add("(wid1)");
+        expected.add("(wid2)");
+        expected.add("(wid10)");
         expected.add("(tmp-3)");
         expected.add("(default)");
 
@@ -184,8 +189,6 @@ public class TestExtractUserAndWs extends BaseTest {
         }
 
         Set<String> expected = new HashSet<>();
-        expected.add("(tmp-1)");
-        expected.add("(tmp-2)");
         expected.add("(tmp-3)");
         expected.add("(default)");
 
@@ -205,9 +208,9 @@ public class TestExtractUserAndWs extends BaseTest {
         }
 
         Set<String> expected = new HashSet<>();
-        expected.add("(ws1)");
-        expected.add("(ws10)");
-        expected.add("(ws 2)");
+        expected.add("(wid1)");
+        expected.add("(wid2)");
+        expected.add("(wid10)");
         expected.add("(default)");
 
         assertEquals(actual, expected);
@@ -226,8 +229,8 @@ public class TestExtractUserAndWs extends BaseTest {
         }
 
         Set<String> expected = new HashSet<>();
-        expected.add("(ws1)");
-        expected.add("(ws10)");
+        expected.add("(wid1)");
+        expected.add("(wid10)");
         expected.add("(default)");
 
         assertEquals(actual, expected);
@@ -240,7 +243,7 @@ public class TestExtractUserAndWs extends BaseTest {
         }
 
         expected = new HashSet<>();
-        expected.add("(id1)");
+        expected.add("(uid1)");
         expected.add("(user10@gmail.com)");
         expected.add("(default)");
 

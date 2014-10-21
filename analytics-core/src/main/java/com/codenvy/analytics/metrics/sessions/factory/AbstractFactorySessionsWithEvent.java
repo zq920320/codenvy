@@ -17,23 +17,15 @@
  */
 package com.codenvy.analytics.metrics.sessions.factory;
 
-import com.codenvy.analytics.metrics.AbstractLongValueResulted;
+import com.codenvy.analytics.metrics.AbstractCount;
 import com.codenvy.analytics.metrics.MetricType;
 
 /**
  * @author Anatoliy Bazko
  */
-public abstract class AbstractFactorySessionsWithEvent extends AbstractLongValueResulted {
+public abstract class AbstractFactorySessionsWithEvent extends AbstractCount {
 
     public AbstractFactorySessionsWithEvent(MetricType metricType) {
-        super(metricType, SESSION_ID);
+        super(metricType, MetricType.PRODUCT_USAGE_FACTORY_SESSIONS, SESSION_ID);
     }
-
-    @Override
-    public String getStorageCollectionName() {
-        return getStorageCollectionName(MetricType.PRODUCT_USAGE_FACTORY_SESSIONS);
-    }
-
-    @Override
-    public abstract String[] getTrackedFields();
 }

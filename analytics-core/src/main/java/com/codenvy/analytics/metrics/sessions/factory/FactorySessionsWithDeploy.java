@@ -17,11 +17,13 @@
  */
 package com.codenvy.analytics.metrics.sessions.factory;
 
+import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.OmitFilters;
 
 import javax.annotation.security.RolesAllowed;
+import java.io.IOException;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
@@ -38,7 +40,10 @@ public class FactorySessionsWithDeploy extends AbstractFactorySessionsWithEvent 
     }
 
     @Override
-    public String[] getTrackedFields() {
-        return new String[]{DEPLOYS};
+    public Context applySpecificFilter(Context context) throws IOException {
+        Context.Builder builder = new Context.Builder(context);
+        builder.put(MetricFilter.DEPLOYS, 1);
+        return builder.build();
     }
+
 }

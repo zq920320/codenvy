@@ -49,15 +49,17 @@ public class TestTotalUserWithCompanyFilter extends BaseTest {
         events.add(Event.Builder.createUserUpdateProfile("id1", "user1@gmail.com", "user1@gmail.com", "f2", "l2", "BYU-Idaho", "11", "1")
                                 .withDate("2013-01-01").withTime("10:10:00,000").build());
 
-        events.add(Event.Builder.createWorkspaceCreatedEvent("TEST_WS", "wsid1", "user2@gmail.com")
+        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid1", "TEST_WS", "user2@gmail.com")
                                 .withDate("2013-01-01").withTime("10:10:00").build());
 
         // This use case from issue DASHB-494 where is not created-user event for user.
+        events.add(Event.Builder.createUserCreatedEvent("id2", "user2@gmail.com", "user2@gmail.com")
+                                .withDate("2013-01-01").withTime("10:00:00,000").build());
         events.add(Event.Builder.createUserUpdateProfile("id2", "user2@gmail.com", "user2@gmail.com", "f2", "l2", "eXo", "11", "1")
                                 .withDate("2013-01-01").withTime("10:10:00,000").build());
 
         // add user2 activity
-        events.add(Event.Builder.createUserAddedToWsEvent("id2", "TEST_WS", "", "", "", "website")
+        events.add(Event.Builder.createUserAddedToWsEvent("id2", "TEST_WS", "website")
                                 .withDate("2013-01-01").withTime("10:20:00").build());
 
         events.add(Event.Builder.createUserCreatedEvent("id3", "user3@gmail.com", "user3@gmail.com")

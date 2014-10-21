@@ -42,20 +42,20 @@ public class TestNumberOfEventsByTypes_ProjectTypes extends BaseTest {
     @BeforeClass
     public void init() throws Exception {
         List<Event> events = new ArrayList<>();
-        events.add(Event.Builder.createWorkspaceCreatedEvent("ws1", "wsid1", "user1@gmail.com")
+        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid1", "ws1", "user1@gmail.com")
                                 .withDate("2013-01-01")
                                 .withTime("10:00:00")
                                 .build());
-        events.add(Event.Builder.createWorkspaceCreatedEvent("ws2", "wsid2", "user1@yahoo.com")
+        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid2", "ws2", "user1@yahoo.com")
                                 .withDate("2013-01-01")
                                 .withTime("10:00:00")
                                 .build());
 
-        events.add(Event.Builder.createProjectCreatedEvent("user1@gmail.com", "ws1", "", "", "jar")
+        events.add(Event.Builder.createProjectCreatedEvent("user1@gmail.com", "ws1", "", "jar")
                                 .withDate("2013-01-01")
                                 .withTime("10:00:00")
                                 .build());
-        events.add(Event.Builder.createProjectCreatedEvent("user1@yahoo.com", "ws2", "", "", "war")
+        events.add(Event.Builder.createProjectCreatedEvent("user1@yahoo.com", "ws2", "", "war")
                                 .withDate("2013-01-01")
                                 .withTime("10:00:01")
                                 .build());
@@ -79,11 +79,11 @@ public class TestNumberOfEventsByTypes_ProjectTypes extends BaseTest {
 
 
         events = new ArrayList<>();
-        events.add(Event.Builder.createProjectCreatedEvent("user1@gmail.com", "ws1", "", "", "jar")
+        events.add(Event.Builder.createProjectCreatedEvent("user1@gmail.com", "ws1", "", "jar")
                                 .withDate("2013-01-02")
                                 .withTime("10:00:00")
                                 .build());
-        events.add(Event.Builder.createProjectCreatedEvent("user1@yahoo.com", "ws2", "", "", "war")
+        events.add(Event.Builder.createProjectCreatedEvent("user1@yahoo.com", "ws2", "", "war")
                                 .withDate("2013-01-02")
                                 .withTime("10:00:01")
                                 .build());

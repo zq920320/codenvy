@@ -65,17 +65,17 @@ public class TestUsersActivityMetric extends BaseTest {
 
         events.add(Event.Builder.createUserCreatedEvent(USER_ID, USER, USER)
                                 .withDate("2013-11-01").withTime("08:40:01").build());
-        events.add(Event.Builder.createWorkspaceCreatedEvent(WS, WS_ID, USER)
+        events.add(Event.Builder.createWorkspaceCreatedEvent(WS_ID, WS, USER)
                                 .withDate("2013-11-01").withTime("08:40:02").build());
 
         events.add(Event.Builder.createUserCreatedEvent(USER2_ID, USER2, USER2)
                                 .withDate("2013-11-01").withTime("08:40:03").build());
-        events.add(Event.Builder.createWorkspaceCreatedEvent(WS2, WS2_ID, USER2)
+        events.add(Event.Builder.createWorkspaceCreatedEvent(WS2_ID, WS2, USER2)
                                 .withDate("2013-11-01").withTime("08:40:04").build());
 
         events.add(Event.Builder.createUserCreatedEvent(TMP_USER_ID, TMP_USER, TMP_USER)
                                 .withDate("2013-11-01").withTime("08:40:05").build());
-        events.add(Event.Builder.createWorkspaceCreatedEvent(TMP_WS, TMP_WS_ID, TMP_USER)
+        events.add(Event.Builder.createWorkspaceCreatedEvent(TMP_WS_ID, TMP_WS, TMP_USER)
                                 .withDate("2013-11-01").withTime("08:40:06").build());
 
         events.add(
@@ -111,7 +111,7 @@ public class TestUsersActivityMetric extends BaseTest {
                                 .withDate("2013-11-01").withTime("20:02:00,600").build());
 
         // event of target user in the target workspace and after the second session is finished
-        events.add(Event.Builder.createProjectBuiltEvent(USER, WS, "project", "type", "id1")
+        events.add(Event.Builder.createProjectBuiltEvent(USER, WS, "type", "id1")
                                 .withDate("2013-11-01").withTime("20:04:00,320").build());
 
         File log = LogGenerator.generateLog(events);

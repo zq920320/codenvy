@@ -22,7 +22,11 @@ import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.SetValueData;
 import com.codenvy.analytics.datamodel.StringValueData;
 import com.codenvy.analytics.datamodel.ValueDataUtil;
-import com.codenvy.analytics.metrics.*;
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Metric;
+import com.codenvy.analytics.metrics.MetricFactory;
+import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
@@ -43,11 +47,11 @@ public class TestActiveEntities extends BaseTest {
     public void setUp() throws Exception {
         List<Event> events = new ArrayList<>();
 
-        events.add(Event.Builder.createWorkspaceCreatedEvent("ws1", "wsid1", "user1@gmail.com").withDate("2013-01-01")
+        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid1", "ws1", "user1@gmail.com").withDate("2013-01-01")
                                 .build());
-        events.add(Event.Builder.createWorkspaceCreatedEvent("ws2", "wsid2", "user2@gmail.com").withDate("2013-01-01")
+        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid2", "ws2", "user2@gmail.com").withDate("2013-01-01")
                                 .build());
-        events.add(Event.Builder.createWorkspaceCreatedEvent("tmp-1", "wsid3", "user2@gmail.com").withDate("2013-01-01")
+        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid3", "tmp-1", "user2@gmail.com").withDate("2013-01-01")
                                 .build());
         events.add(Event.Builder.createTenantCreatedEvent("ws1", "anonymoususer_1").withDate("2013-01-01").build());
         events.add(Event.Builder.createTenantCreatedEvent("ws1", "user1@gmail.com").withDate("2013-01-01").build());

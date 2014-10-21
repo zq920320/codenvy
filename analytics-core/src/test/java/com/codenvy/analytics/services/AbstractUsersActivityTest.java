@@ -123,13 +123,13 @@ public abstract class AbstractUsersActivityTest extends BaseTest {
         events.add(Event.Builder.createUserUpdateProfile("id3", "user3@gmail.com", "user3@gmail.com", "", "", "", "", "")
                                 .withDate("2013-11-01").build());
 
-        events.add(Event.Builder.createWorkspaceCreatedEvent("ws1", "wsid1", "user1@gmail.com")
+        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid1", "ws1", "user1@gmail.com")
                                 .withDate("2013-11-01").withTime("08:59:00").build());
-        events.add(Event.Builder.createWorkspaceCreatedEvent("ws2", "wsid2", "user2@gmail.com")
+        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid2", "ws2", "user2@gmail.com")
                                 .withDate("2013-11-01").withTime("08:59:00").build());
-        events.add(Event.Builder.createWorkspaceCreatedEvent("ws3", "wsid3", "user3@gmail.com")
+        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid3", "ws3", "user3@gmail.com")
                                 .withDate("2013-11-01").withTime("08:59:00").build());
-        events.add(Event.Builder.createWorkspaceCreatedEvent("ws2___", "wsid4", "user3@gmail.com")
+        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid4", "ws2___", "user3@gmail.com")
                                 .withDate("2013-11-01").withTime("08:59:00").build());
 
         // active users [user1, user2, user3]
@@ -142,13 +142,13 @@ public abstract class AbstractUsersActivityTest extends BaseTest {
 
         // projects created
         events.add(
-                Event.Builder.createProjectCreatedEvent("user1@gmail.com", "ws1", "", "project1", "type1").withDate("2013-11-01")
+                Event.Builder.createProjectCreatedEvent("user1@gmail.com", "ws1", "project1", "type1").withDate("2013-11-01")
                              .withTime("10:00:00").build());
         events.add(
-                Event.Builder.createProjectCreatedEvent("user1@gmail.com", "ws1", "", "project2", "type1").withDate("2013-11-01")
+                Event.Builder.createProjectCreatedEvent("user1@gmail.com", "ws1", "project2", "type1").withDate("2013-11-01")
                              .withTime("10:05:00").build());
         events.add(
-                Event.Builder.createProjectCreatedEvent("user2@gmail.com", "ws2", "", "project1", "type1").withDate("2013-11-01")
+                Event.Builder.createProjectCreatedEvent("user2@gmail.com", "ws2", "project1", "type1").withDate("2013-11-01")
                              .withTime("10:03:00").build());
 
         // projects built
@@ -157,31 +157,31 @@ public abstract class AbstractUsersActivityTest extends BaseTest {
 
 
         // projects deployed
-        events.add(Event.Builder.createApplicationCreatedEvent("user2@gmail.com", "ws2", "", "project1", "type1", "paas1")
+        events.add(Event.Builder.createApplicationCreatedEvent("user2@gmail.com", "ws2", "project1", "type1", "paas1")
                                 .withTime("10:10:00,000")
                                 .withDate("2013-11-02").build());
 
-        events.add(Event.Builder.createApplicationCreatedEvent("user3@gmail.com", "ws2", "", "project1", "type1", "paas2")
+        events.add(Event.Builder.createApplicationCreatedEvent("user3@gmail.com", "ws2", "project1", "type1", "paas2")
                                 .withTime("10:00:00")
                                 .withDate("2013-11-02").build());
 
-        events.add(Event.Builder.createApplicationCreatedEvent("user2@gmail.com", "ws2", "", "project2", "type1", "paas1")
+        events.add(Event.Builder.createApplicationCreatedEvent("user2@gmail.com", "ws2", "project2", "type1", "paas1")
                                 .withTime("10:11:00,100")
                                 .withDate("2013-11-02").build());
 
-        events.add(Event.Builder.createApplicationCreatedEvent("user2@gmail.com", "ws2", "", "project3", "type1", "paas1")
+        events.add(Event.Builder.createApplicationCreatedEvent("user2@gmail.com", "ws2", "project3", "type1", "paas1")
                                 .withTime("10:12:00,200")
                                 .withDate("2013-11-02").build());
 
-        events.add(Event.Builder.createApplicationCreatedEvent("user2@gmail.com", "ws2", "", "project4", "type1", "paas1")
+        events.add(Event.Builder.createApplicationCreatedEvent("user2@gmail.com", "ws2", "project4", "type1", "paas1")
                                 .withTime("10:13:00,300")
                                 .withDate("2013-11-02").build());
 
-        events.add(Event.Builder.createApplicationCreatedEvent("user2@gmail.com", "ws2", "", "project5", "type1", "paas1")
+        events.add(Event.Builder.createApplicationCreatedEvent("user2@gmail.com", "ws2", "project5", "type1", "paas1")
                                 .withTime("10:14:00,400")
                                 .withDate("2013-11-02").build());
 
-        events.add(Event.Builder.createApplicationCreatedEvent("user2@gmail.com", "ws2", "", "project1", "type1", "paas1")
+        events.add(Event.Builder.createApplicationCreatedEvent("user2@gmail.com", "ws2", "project1", "type1", "paas1")
                                 .withTime("10:15:00,500")
                                 .withDate("2013-11-02").build());
 
@@ -213,7 +213,7 @@ public abstract class AbstractUsersActivityTest extends BaseTest {
                                 .withDate("2013-11-01").withTime("21:14:00").build());
 
         // projects deployed
-        events.add(Event.Builder.createApplicationCreatedEvent("user3@gmail.com", "ws2___", "", "project1", "type1", "paas2")
+        events.add(Event.Builder.createApplicationCreatedEvent("user3@gmail.com", "ws2___", "project1", "type1", "paas2")
                                 .withTime("10:00:01")
                                 .withDate("2013-11-03").build());
 

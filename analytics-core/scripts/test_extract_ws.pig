@@ -18,7 +18,8 @@
 
 IMPORT 'macros.pig';
 
-l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
+a1 = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
+a2 = filterByEvent(a1, '$EVENT');
+a = FOREACH a2 GENERATE ws;
 
-a = FOREACH l GENERATE ws;
 result = DISTINCT a;

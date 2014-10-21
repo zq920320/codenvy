@@ -79,7 +79,7 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
         // add user activity at previous day
         /*events.add(Event.Builder.createUserCreatedEvent(TEST_USER, TEST_USER, TEST_USER)
                                 .withDate("2013-10-31").withTime("08:00:00").build());*/
-        events.add(Event.Builder.createUserAddedToWsEvent("user5@gmail.com", TEST_WS, "", "", "", "website")
+        events.add(Event.Builder.createUserAddedToWsEvent("user5@gmail.com", TEST_WS, "website")
                                 .withDate("2013-10-31").withTime("08:00:00").build());
 
         events.add(Event.Builder.createUserCreatedEvent(TEST_USER, TEST_USER, TEST_USER)
@@ -89,9 +89,9 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
         events.add(Event.Builder.createUserCreatedEvent("user1@gmail.com", "user1@gmail.com", "user1@gmail.com")
                                 .withDate("2013-11-01").withTime("08:40:00").build());
 
-        events.add(Event.Builder.createWorkspaceCreatedEvent(TEST_WS, TEST_WS_ID, TEST_USER)
+        events.add(Event.Builder.createWorkspaceCreatedEvent(TEST_WS_ID, TEST_WS, TEST_USER)
                                 .withDate("2013-11-01").withTime("08:41:00").build());
-        events.add(Event.Builder.createWorkspaceCreatedEvent("ws2", "wsid2", TEST_USER)
+        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid2", "ws2", TEST_USER)
                                 .withDate("2013-11-01").withTime("08:41:00").build());
 
         events.add(Event.Builder.createUserUpdateProfile(TEST_USER,
@@ -107,7 +107,7 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
         events.add(Event.Builder.createUserCreatedEvent("user2@gmail.com", "user2@gmail.com", "user2@gmail.com")
                                 .withDate("2013-11-01").withTime("08:51:00").build());
 
-        events.add(Event.Builder.createWorkspaceCreatedEvent("ws3", "wsid3", "user2@gmail.com")
+        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid3", "ws3", "user2@gmail.com")
                                 .withDate("2013-11-01").withTime("08:52:00").build());
 
         events.add(Event.Builder.createUserUpdateProfile("user2@gmail.com",
@@ -126,7 +126,7 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
                                 .withDate("2013-11-01").withTime("09:01:00").build());
         events.add(Event.Builder.createTenantCreatedEvent("tmp-4", "anonymoususer_04")
                                 .withDate("2013-11-01").withTime("09:01:30").build());
-        events.add(Event.Builder.createUserAddedToWsEvent("", "", "", "tmp-4", "anonymoususer_4", "website")
+        events.add(Event.Builder.createUserAddedToWsEvent("", "", "website")
                                 .withDate("2013-11-01").withTime("09:02:00").build());
         events.add(Event.Builder.createUserChangedNameEvent("anonymoususer_4", "user4@gmail.com")
                                 .withDate("2013-11-01").withTime("09:03:00").build());
@@ -170,7 +170,7 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
         // build event for session #1
         events.add(Event.Builder.createBuildStartedEvent("user1@gmail.com", "tmp-1", "project", "type", "id1")
                                 .withDate("2013-11-01").withTime("10:03:00").build());
-        events.add(Event.Builder.createProjectBuiltEvent("user1@gmail.com", "tmp-1", "", "project", "type")
+        events.add(Event.Builder.createProjectBuiltEvent("user1@gmail.com", "tmp-1", "project", "type")
                                 .withDate("2013-11-01").withTime("10:03:00").build());
 
 
@@ -180,7 +180,7 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
         events.add(Event.Builder.createUserInviteEvent(TEST_USER, TEST_WS, "_invite" + TEST_USER)
                                 .withDate("2013-11-01").withTime("16:00:00,155").build());
         // add user to workspace by accepting invite
-        events.add(Event.Builder.createUserAddedToWsEvent("_invite" + TEST_USER, TEST_WS, "", "", "", "invite")
+        events.add(Event.Builder.createUserAddedToWsEvent("_invite" + TEST_USER, TEST_WS, "invite")
                                 .withDate("2013-11-01").withTime("16:01:03").build());
 
 
@@ -203,19 +203,19 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
 
 
         // create test projects and deploy they into PaaS
-        events.add(Event.Builder.createProjectCreatedEvent(TEST_USER, TEST_WS, "id1", "project1", "python")
+        events.add(Event.Builder.createProjectCreatedEvent(TEST_USER, TEST_WS, "project1", "python")
                                 .withDate("2013-11-01").withTime("18:08:00,600").build());
-        events.add(Event.Builder.createApplicationCreatedEvent(TEST_USER, TEST_WS, "id1", "project1", "python", "gae")
+        events.add(Event.Builder.createApplicationCreatedEvent(TEST_USER, TEST_WS, "project1", "python", "gae")
                                 .withDate("2013-11-01").withTime("18:08:10").build());
 
-        events.add(Event.Builder.createProjectCreatedEvent(TEST_USER, "ws2", "id2", "project2", "war")
+        events.add(Event.Builder.createProjectCreatedEvent(TEST_USER, "ws2", "project2", "war")
                                 .withDate("2013-11-01").withTime("18:12:00").build());
-        events.add(Event.Builder.createApplicationCreatedEvent(TEST_USER, "ws2", "id2", "project2", "war", "gae")
+        events.add(Event.Builder.createApplicationCreatedEvent(TEST_USER, "ws2", "project2", "war", "gae")
                                 .withDate("2013-11-01").withTime("18:12:30").build());
 
-        events.add(Event.Builder.createProjectCreatedEvent("user2@gmail.com", "ws3", "id3", "project2", "java")
+        events.add(Event.Builder.createProjectCreatedEvent("user2@gmail.com", "ws3", "project2", "java")
                                 .withDate("2013-11-01").withTime("18:20:10").build());
-        events.add(Event.Builder.createProjectDeployedEvent("user2@gmail.com", "ws3", "id3", "project2", "java", "local")
+        events.add(Event.Builder.createProjectDeployedEvent("user2@gmail.com", "ws3", "project2", "java", "local")
                                 .withDate("2013-11-01").withTime("18:21:30").build());
 
         // event of target user in the target workspace and in time of first session
@@ -227,7 +227,7 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
         // event of target user in another workspace and in time of main session
         events.add(Event.Builder.createBuildStartedEvent(TEST_USER, "ws2", "project2", "war", "id2")
                                 .withDate("2013-11-01").withTime("19:12:00").build());
-        events.add(Event.Builder.createProjectBuiltEvent(TEST_USER, "ws2", "project2", "war", "id2")
+        events.add(Event.Builder.createProjectBuiltEvent(TEST_USER, "ws2", "war", "id2")
                                 .withDate("2013-11-01").withTime("19:13:00").build());
         events.add(Event.Builder.createBuildFinishedEvent(TEST_USER, "ws2", "project2", "war", "id2", 120000)
                                 .withDate("2013-11-01").withTime("19:14:00").build());
