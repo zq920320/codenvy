@@ -21,24 +21,6 @@ IMPORT 'macros.pig';
 %DEFAULT idleInterval '600000'; -- 10 min
 
 ---------------------------------------------------------------------------------------------
-DEFINE addLogoutInterval(X, L, idleIntervalParam) RETURNS Y {
-  z1 = filterByEvent($L, 'user-sso-logged-out');
-  z = FOREACH z1 GENERATE dt, user;
-
-  -- checking if logout event occurred after session
-  x1 = JOIN $X BY user LEFT, z BY user;
-  x2 = FOREACH x1 GENERATE *, (z::user IS NULL ? 0 : ToMilliSeconds(z::dt) - ($X::startTime + $X::usageTime)) AS delta;
-  x3 = FOREACH x2 GENERATE *, (0 < delta AND delta < (long) $idleIntervalParam ? delta : 0) AS logoutInterval;
-  $Y = FOREACH x3 GENERATE $X::dt AS dt,
-                           $X::ws AS ws,
-                           $X::user AS user,
-                           $X::startTime AS startTime,
-                           $X::usageTime AS usageTime,
-                           $X::sessionID AS sessionID,
-                           logoutInterval AS logoutInterval;
-};
-
----------------------------------------------------------------------------------------------
 l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 
 a1 = filterByEvent(l, '$EVENT');

@@ -333,21 +333,10 @@ public class TestExpandedMetricPartTwo extends AbstractTestExpandedMetric {
         List<ValueData> all = treatAsList(expandedValue);
         assertEquals(all.size(), 4);
 
-        Map<String, ValueData> record = ((MapValueData)all.get(0)).getAll();
-        assertEquals(record.size(), 1);
-        assertEquals(record.get("user").toString(), "user-id_factory_user5");
-
-        record = ((MapValueData)all.get(1)).getAll();
-        assertEquals(record.size(), 1);
-        assertEquals(record.get("user").toString(), "user-id1");
-
-        record = ((MapValueData)all.get(2)).getAll();
-        assertEquals(record.size(), 1);
-        assertEquals(record.get("user").toString(), "user_1@gmail.com");
-
-        record = ((MapValueData)all.get(3)).getAll();
-        assertEquals(record.size(), 1);
-        assertEquals(record.get("user").toString(), "user-id4");
+        all.contains(MapValueData.valueOf("user=user-id_factory_user5"));
+        all.contains(MapValueData.valueOf("user=user-id1"));
+        all.contains(MapValueData.valueOf("user=user-id4"));
+        all.contains(MapValueData.valueOf("user=user_1@gmail.com"));
 
         builder = new Context.Builder();
         builder.put(Parameters.TO_DATE, "20131220");
@@ -357,15 +346,9 @@ public class TestExpandedMetricPartTwo extends AbstractTestExpandedMetric {
         all = treatAsList(expandedValue);
         assertEquals(all.size(), 3);
 
-        record = ((MapValueData)all.get(0)).getAll();
-        assertEquals(record.size(), 1);
-        assertEquals(record.get("user").toString(), "user-id1");
-        record = ((MapValueData)all.get(1)).getAll();
-        assertEquals(record.size(), 1);
-        assertEquals(record.get("user").toString(), "user_1@gmail.com");
-        record = ((MapValueData)all.get(2)).getAll();
-        assertEquals(record.size(), 1);
-        assertEquals(record.get("user").toString(), "user-id4");
+        all.contains(MapValueData.valueOf("user=user-id1"));
+        all.contains(MapValueData.valueOf("user=user-id4"));
+        all.contains(MapValueData.valueOf("user=user_1@gmail.com"));
 
         /** test TimelineProductUsageConditionBetween120And300Min */
         builder = new Context.Builder();
@@ -377,7 +360,7 @@ public class TestExpandedMetricPartTwo extends AbstractTestExpandedMetric {
         all = treatAsList(expandedValue);
         assertEquals(all.size(), 1);
 
-        record = ((MapValueData)all.get(0)).getAll();
+        Map<String, ValueData> record = ((MapValueData)all.get(0)).getAll();
         assertEquals(record.size(), 1);
         assertEquals(record.get("user").toString(), "user6@gmail.com");
 

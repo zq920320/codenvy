@@ -20,6 +20,7 @@
 IMPORT 'macros.pig';
 
 %DEFAULT inactiveInterval '10';
+%DEFAULT idleInterval '600000'; -- 10 min
 
 l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 
@@ -54,11 +55,20 @@ a3 = extractParam(a2, 'SESSION-ID', sessionID);
 a4 = extractParam(a3, 'START-TIME', startTime);
 a5 = extractParam(a4, 'USAGE-TIME', usageTime);
 a6 = lastUpdate(a5, 'sessionID');
-s2 = FOREACH a6 GENERATE ToDate((long)a5::startTime) AS dt,
-                         a5::ws AS tmpWs,
-                         a5::user AS tmpUser,
-                         a5::sessionID AS id,
-                         (long)a5::usageTime AS delta;
+a7 = FOREACH a6 GENERATE a5::dt AS dt,
+                         (long)a5::startTime AS startTime,
+                         (long)a5::usageTime AS usageTime,
+                         a5::ws AS ws,
+                         a5::user AS user,
+                         a5::sessionID AS sessionID;
+
+
+a8 = addLogoutInterval(a7, l, '$idleInterval');
+s2 = FOREACH a8 GENERATE ToDate(startTime) AS dt,
+                         ws AS tmpWs,
+                         user AS tmpUser,
+                         sessionID AS id,
+                         (usageTime + logoutInterval) AS delta;
 
 -- founds out the corresponding referrer and factory
 s3 = JOIN s2 BY tmpWs LEFT, u BY tmpWs;

@@ -171,6 +171,15 @@ DEFINE lastUpdate(X, idField) RETURNS Y {
   $Y = FOREACH y3 GENERATE *;
 };
 
+---------------------------------------------------------------------------
+-- @return first update
+---------------------------------------------------------------------------
+DEFINE firstUpdate(X, dtField, idField) RETURNS Y {
+  y1 = GROUP $X BY $idField;
+  y2 = FOREACH y1 GENERATE group AS $idField, MIN($X.$dtField) AS minDt, FLATTEN($X);
+  y3 = FILTER y2 BY $dtField == minDt;
+  $Y = FOREACH y3 GENERATE *;
+};
 
 ---------------------------------------------------------------------------
 -- Extract orgId and affiliateId either from parameter or from factory url.
@@ -284,69 +293,6 @@ DEFINE usersCreatedFromFactory(X) RETURNS Y {
 };
 
 ---------------------------------------------------------------------------------------------
--- Combines small sessions into big one if time between them is less than $inactiveInterval
--- @return {user : bytearray, ws: bytearray, dt: datetime, delta: long}
----------------------------------------------------------------------------------------------
-DEFINE combineSmallSessions(X, startEvent, finishEvent) RETURNS Y {
-    a1 = extractEventsWithSessionId($X, '$startEvent');
-
-    -- avoids cases when there are several $finishEvent with same id, let's take the first one
-    a2 = FOREACH a1 GENERATE ws, user, id, dt;
-    a3 = GROUP a2 BY id;
-    a4 = FOREACH a3 GENERATE FLATTEN(group), MIN(a2.dt) AS minDt, FLATTEN(a2);
-    a5 = FILTER a4 BY dt == minDt;
-    a = FOREACH a5 GENERATE a2::ws AS ws, a2::user AS user, id AS id, a2::dt AS dt;
-
-    b1 = extractEventsWithSessionId($X, '$finishEvent');
-
-    -- avoids cases when there are several $finishEvent with same id, let's take the first one
-    b2 = FOREACH b1 GENERATE ws, user, id, dt;
-    b3 = GROUP b2 BY id;
-    b4 = FOREACH b3 GENERATE FLATTEN(group), MIN(b2.dt) AS minDt, FLATTEN(b2);
-    b5 = FILTER b4 BY dt == minDt;
-    b = FOREACH b5 GENERATE b2::ws AS ws, b2::user AS user, id AS id, b2::dt AS dt;
-
-    -- joins $startEvent and $finishEvent by same id, removes events without corresponding pair
-    c1 = JOIN a BY id LEFT, b BY id;
-    c2 = FILTER c1 BY a::dt <= b::dt;
-    c = removeEmptyField(c2, 'b::id');
-
-    -- split them back
-    d1 = FOREACH c GENERATE *, FLATTEN(TOKENIZE('$startEvent,$finishEvent', ',')) AS event;
-    SPLIT d1 INTO d2 IF event == '$startEvent', d3 OTHERWISE;
-
-    -- A: $startEvent
-    A = FOREACH d2 GENERATE a::ws AS ws, a::user AS user, a::dt AS dt, a::id AS id;
-
-    -- B: $finishEvent
-    B = FOREACH d3 GENERATE b::ws AS ws, b::user AS user, b::dt AS dt, b::id AS id;
-
-    -- joins $finishEvent and $startEvent, finds for every $finishEvent the closest
-    -- $startEvent to decide whether the pause between them is less than $inactiveInterval
-    e1 = JOIN B BY (ws, user) LEFT, A BY (ws, user);
-    e2 = FILTER e1 BY A::ws IS NOT NULL;
-    e3 = FOREACH e2 GENERATE B::id AS finishId, A::id AS startId, MilliSecondsBetween(A::dt, B::dt) AS interval;
-    e = FILTER e3 BY interval > 0 AND interval <= (long) 10 * 60 * 1000; -- $inactiveInterval = 10min
-
-    -- removes $startEvents which are close to any $finishEvent
-    d1 = JOIN A BY id LEFT, e BY startId;
-    d2 = FILTER d1 BY e::startId IS NULL;
-    S = FOREACH d2 GENERATE A::ws AS ws, A::user AS user, A::dt AS dt, '$startEvent' AS event, A::id AS id;
-
-    -- removes $finishEvent which are close to any $startEvent
-    f1 = JOIN B BY id LEFT, e BY finishId;
-    f2 = FILTER f1 BY e::finishId IS NULL;
-    F = FOREACH f2 GENERATE B::ws AS ws, B::user AS user, B::dt AS dt, '$finishEvent' AS event, B::id AS id;
-
-    -- finally, combines closest events to get completed sessions
-    u1 = UNION S, F;
-    u2 = combineClosestEvents(u1, '$startEvent', '$finishEvent');
-
-    -- considering sessions less than 1 min as 1 min columns
-    $Y = FOREACH u2 GENERATE ws AS ws, user AS user, dt AS dt, (delta < 60 * 1000 ? 60 * 1000 : delta) AS delta, id AS id;
-};
-
----------------------------------------------------------------------------------------------
 -- Calculates time between pairs of $startEvent and $finishEvent
 -- @return {user : bytearray, ws: bytearray, dt: datetime, delta: long}
 ---------------------------------------------------------------------------------------------
@@ -457,4 +403,30 @@ DEFINE addEventIndicator(W, X,  eventParam, fieldParam, inactiveIntervalParam) R
 DEFINE extractFactoryId(X) RETURNS Y {
   e1 = extractUrlParam($X, 'FACTORY-URL', 'factoryUrl');
   $Y = FOREACH e1 GENERATE *, (GetQueryValue(factoryUrl, 'id') == '' ? NULL : GetQueryValue(factoryUrl, 'id')) AS factoryId;
+};
+
+
+---------------------------------------------------------------------------
+-- Adds logout interval
+---------------------------------------------------------------------------
+DEFINE addLogoutInterval(X, L, idleIntervalParam) RETURNS Y {
+  z1 = filterByEvent($L, 'user-sso-logged-out');
+  z = FOREACH z1 GENERATE dt, user, UUID() AS logoutID;
+
+  -- checking if logout event occurred after session
+  x1 = JOIN $X BY user LEFT, z BY user;
+  x2 = FOREACH x1 GENERATE *, (z::user IS NULL ? 0 : ToMilliSeconds(z::dt) - ($X::startTime + $X::usageTime)) AS delta;
+  x3 = FOREACH x2 GENERATE *, (0 < delta AND delta < (long) $idleIntervalParam ? delta : 0) AS logoutInterval;
+  x4 = FOREACH x3 GENERATE $X::dt AS dt,
+                           $X::ws AS ws,
+                           $X::user AS user,
+                           $X::startTime AS startTime,
+                           $X::usageTime AS usageTime,
+                           $X::sessionID AS sessionID,
+                           logoutInterval AS logoutInterval,
+                           z::logoutID AS logoutID,
+                           z::dt AS logoutDT;
+--                           (z::logoutID IS NULL ? UUID() : z::logoutID) AS logoutID,
+--                           (z::dt IS NULL ? ToDate(0) : z::dt) AS logoutDT;
+  $Y = firstUpdate(x4, 'logoutDT', 'logoutID');
 };

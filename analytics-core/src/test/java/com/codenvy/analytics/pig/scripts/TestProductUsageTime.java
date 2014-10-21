@@ -18,8 +18,17 @@
 package com.codenvy.analytics.pig.scripts;
 
 import com.codenvy.analytics.BaseTest;
-import com.codenvy.analytics.datamodel.*;
-import com.codenvy.analytics.metrics.*;
+import com.codenvy.analytics.datamodel.ListValueData;
+import com.codenvy.analytics.datamodel.LongValueData;
+import com.codenvy.analytics.datamodel.StringValueData;
+import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.datamodel.ValueDataUtil;
+import com.codenvy.analytics.metrics.AbstractMetric;
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Metric;
+import com.codenvy.analytics.metrics.MetricFactory;
+import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
@@ -27,11 +36,13 @@ import org.testng.annotations.Test;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsMap;
 import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.fail;
 
 /** @author Anatoliy Bazko */
 public class TestProductUsageTime extends BaseTest {
@@ -46,38 +57,45 @@ public class TestProductUsageTime extends BaseTest {
 
         assertEquals(data.size(), 3);
 
-        Map<String, ValueData> m = treatAsMap(data.getAll().get(0));
-        assertEquals(m.get(AbstractMetric.USER), StringValueData.valueOf("user1"));
-        assertEquals(m.get(AbstractMetric.WS), StringValueData.valueOf("ws"));
-        assertEquals(m.get(AbstractMetric.USER_COMPANY), StringValueData.valueOf("company"));
-        assertEquals(m.get(AbstractMetric.DOMAIN), StringValueData.valueOf("gmail.com"));
-        assertEquals(m.get(AbstractMetric.TIME), LongValueData.valueOf(600000));
-        assertEquals(m.get(AbstractMetric.SESSION_ID), StringValueData.valueOf("1"));
-        assertEquals(m.get(AbstractMetric.DATE), LongValueData.valueOf(1388563200000L));
-        assertEquals(m.get(AbstractMetric.END_TIME), LongValueData.valueOf(1388563800000L));
-        assertEquals(m.get(AbstractMetric.LOGOUT_INTERVAL), LongValueData.valueOf(0));
+        Iterator<ValueData> iterator = data.getAll().iterator();
+        while (iterator.hasNext()) {
+            Map<String, ValueData> m = treatAsMap(iterator.next());
 
-        m = treatAsMap(data.getAll().get(1));
-        assertEquals(m.get(AbstractMetric.USER), StringValueData.valueOf("user2"));
-        assertEquals(m.get(AbstractMetric.WS), StringValueData.valueOf("ws"));
-        assertEquals(m.get(AbstractMetric.USER_COMPANY), StringValueData.valueOf(""));
-        assertEquals(m.get(AbstractMetric.DOMAIN), StringValueData.valueOf(""));
-        assertEquals(m.get(AbstractMetric.TIME), LongValueData.valueOf(300000));
-        assertEquals(m.get(AbstractMetric.SESSION_ID), StringValueData.valueOf("2"));
-        assertEquals(m.get(AbstractMetric.DATE), LongValueData.valueOf(1388563200000L));
-        assertEquals(m.get(AbstractMetric.END_TIME), LongValueData.valueOf(1388563500000L));
-        assertEquals(m.get(AbstractMetric.LOGOUT_INTERVAL), LongValueData.valueOf(0));
+            if (m.get(AbstractMetric.USER).equals(StringValueData.valueOf("user1"))) {
+                assertEquals(m.get(AbstractMetric.WS), StringValueData.valueOf("ws"));
+                assertEquals(m.get(AbstractMetric.USER_COMPANY), StringValueData.valueOf("company"));
+                assertEquals(m.get(AbstractMetric.DOMAIN), StringValueData.valueOf("gmail.com"));
+                assertEquals(m.get(AbstractMetric.TIME), LongValueData.valueOf(600000));
+                assertEquals(m.get(AbstractMetric.SESSION_ID), StringValueData.valueOf("1"));
+                assertEquals(m.get(AbstractMetric.DATE), LongValueData.valueOf(1388563200000L));
+                assertEquals(m.get(AbstractMetric.END_TIME), LongValueData.valueOf(1388563800000L));
+                assertEquals(m.get(AbstractMetric.LOGOUT_INTERVAL), LongValueData.valueOf(0));
 
-        m = treatAsMap(data.getAll().get(2));
-        assertEquals(m.get(AbstractMetric.USER), StringValueData.valueOf("user3"));
-        assertEquals(m.get(AbstractMetric.WS), StringValueData.valueOf("ws"));
-        assertEquals(m.get(AbstractMetric.USER_COMPANY), StringValueData.valueOf(""));
-        assertEquals(m.get(AbstractMetric.DOMAIN), StringValueData.valueOf(""));
-        assertEquals(m.get(AbstractMetric.TIME), LongValueData.valueOf(60000));
-        assertEquals(m.get(AbstractMetric.SESSION_ID), StringValueData.valueOf("3"));
-        assertEquals(m.get(AbstractMetric.DATE), LongValueData.valueOf(1388563200000L));
-        assertEquals(m.get(AbstractMetric.END_TIME), LongValueData.valueOf(1388563260000L));
-        assertEquals(m.get(AbstractMetric.LOGOUT_INTERVAL), LongValueData.valueOf(60000));
+            } else if (m.get(AbstractMetric.USER).equals(StringValueData.valueOf("user2"))) {
+                assertEquals(m.get(AbstractMetric.USER), StringValueData.valueOf("user2"));
+                assertEquals(m.get(AbstractMetric.WS), StringValueData.valueOf("ws"));
+                assertEquals(m.get(AbstractMetric.USER_COMPANY), StringValueData.valueOf(""));
+                assertEquals(m.get(AbstractMetric.DOMAIN), StringValueData.valueOf(""));
+                assertEquals(m.get(AbstractMetric.TIME), LongValueData.valueOf(300000));
+                assertEquals(m.get(AbstractMetric.SESSION_ID), StringValueData.valueOf("2"));
+                assertEquals(m.get(AbstractMetric.DATE), LongValueData.valueOf(1388563200000L));
+                assertEquals(m.get(AbstractMetric.END_TIME), LongValueData.valueOf(1388563500000L));
+                assertEquals(m.get(AbstractMetric.LOGOUT_INTERVAL), LongValueData.valueOf(0));
+
+            } else if (m.get(AbstractMetric.USER).equals(StringValueData.valueOf("user3"))) {
+                assertEquals(m.get(AbstractMetric.USER), StringValueData.valueOf("user3"));
+                assertEquals(m.get(AbstractMetric.WS), StringValueData.valueOf("ws"));
+                assertEquals(m.get(AbstractMetric.USER_COMPANY), StringValueData.valueOf(""));
+                assertEquals(m.get(AbstractMetric.DOMAIN), StringValueData.valueOf(""));
+                assertEquals(m.get(AbstractMetric.TIME), LongValueData.valueOf(60000));
+                assertEquals(m.get(AbstractMetric.SESSION_ID), StringValueData.valueOf("3"));
+                assertEquals(m.get(AbstractMetric.DATE), LongValueData.valueOf(1388563200000L));
+                assertEquals(m.get(AbstractMetric.END_TIME), LongValueData.valueOf(1388563260000L));
+                assertEquals(m.get(AbstractMetric.LOGOUT_INTERVAL), LongValueData.valueOf(60000));
+            } else {
+                fail();
+            }
+        }
     }
 
     private void doExecute(String date) throws Exception {
