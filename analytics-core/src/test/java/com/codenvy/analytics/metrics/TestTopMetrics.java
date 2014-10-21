@@ -95,7 +95,7 @@ public class TestTopMetrics extends BaseTest {
 
 
         // create user
-        events.add(Event.Builder.createUserAddedToWsEvent("", "", "website")
+        events.add(Event.Builder.createUserAddedToWsEvent("anonymoususer_1", "tmp-3", "website")
                                 .withDate("2013-02-10")
                                 .withTime("12:00:00")
                                 .build());

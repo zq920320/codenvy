@@ -77,8 +77,8 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
         List<Event> events = new ArrayList<>();
 
         // add user activity at previous day
-        /*events.add(Event.Builder.createUserCreatedEvent(TEST_USER, TEST_USER, TEST_USER)
-                                .withDate("2013-10-31").withTime("08:00:00").build());*/
+//        events.add(Event.Builder.createUserCreatedEvent(TEST_USER, TEST_USER, TEST_USER)
+//                                .withDate("2013-10-31").withTime("07:00:00").build());
         events.add(Event.Builder.createUserAddedToWsEvent("user5@gmail.com", TEST_WS, "website")
                                 .withDate("2013-10-31").withTime("08:00:00").build());
 
@@ -126,7 +126,7 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
                                 .withDate("2013-11-01").withTime("09:01:00").build());
         events.add(Event.Builder.createTenantCreatedEvent("tmp-4", "anonymoususer_04")
                                 .withDate("2013-11-01").withTime("09:01:30").build());
-        events.add(Event.Builder.createUserAddedToWsEvent("", "", "website")
+        events.add(Event.Builder.createUserAddedToWsEvent("anonymoususer_4","tmp-4",  "website")
                                 .withDate("2013-11-01").withTime("09:02:00").build());
         events.add(Event.Builder.createUserChangedNameEvent("anonymoususer_4", "user4@gmail.com")
                                 .withDate("2013-11-01").withTime("09:03:00").build());
@@ -190,7 +190,6 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
         events.add(Event.Builder.createUserSSOLoggedInEvent("user2@gmail.com", "google")
                                 .withDate("2013-11-01").withTime("19:55:00,155").build());
 
-        // start main session
         events.add(
             Event.Builder
                 .createSessionUsageEvent(TEST_USER, TEST_WS, SESSION_ID, "2013-11-01 19:00:00", "2013-11-01 19:55:00", false)

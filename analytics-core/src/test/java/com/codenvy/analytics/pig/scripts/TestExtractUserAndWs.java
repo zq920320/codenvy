@@ -49,7 +49,6 @@ public class TestExtractUserAndWs extends BaseTest {
         events.add(Event.Builder.createUserCreatedEvent("uid1", "user1@gmail.com", "user1@gmail.com").withDate("2013-01-01").build());
         events.add(Event.Builder.createWorkspaceCreatedEvent("wid1", "ws1", "user1@gmail.com").withDate("2013-01-01").build());
         events.add(Event.Builder.createWorkspaceCreatedEvent("wid2", "ws 2", "user1@gmail.com").withDate("2013-01-01").build());
-        events.add(Event.Builder.createWorkspaceCreatedEvent("wid10", "ws10", "user1@gmail.com").withDate("2013-01-01").build());
 
         events.add(new Event.Builder().withParam("EVENT", "fake")
                                       .withParam("USER", "user1@gmail.com")
@@ -72,8 +71,7 @@ public class TestExtractUserAndWs extends BaseTest {
                                       .withDate("2013-01-01").build());
 
         events.add(new Event.Builder().withParam("EVENT", "fake").withDate("2013-01-01").build());
-        events.add(Event.Builder.createUserAddedToWsEvent("default", "default", "website")
-                                .withDate("2013-01-01").build());
+        events.add(Event.Builder.createUserAddedToWsEvent("default", "default", "website").withDate("2013-01-01").build());
 
         File log = LogGenerator.generateLog(events);
 
@@ -108,11 +106,10 @@ public class TestExtractUserAndWs extends BaseTest {
 
         Set<String> expected = new HashSet<>();
         expected.add("(uid1)");
-        expected.add("(user10@gmail.com)");
         expected.add("(anonymoususer_1)");
         expected.add("(default)");
 
-        assertEquals(actual, expected);
+        assertEquals(expected, actual);
     }
 
     @Test
@@ -148,7 +145,6 @@ public class TestExtractUserAndWs extends BaseTest {
 
         Set<String> expected = new HashSet<>();
         expected.add("(uid1)");
-        expected.add("(user10@gmail.com)");
         expected.add("(default)");
 
         assertEquals(actual, expected);
@@ -169,7 +165,6 @@ public class TestExtractUserAndWs extends BaseTest {
         Set<String> expected = new HashSet<>();
         expected.add("(wid1)");
         expected.add("(wid2)");
-        expected.add("(wid10)");
         expected.add("(tmp-3)");
         expected.add("(default)");
 
@@ -210,7 +205,6 @@ public class TestExtractUserAndWs extends BaseTest {
         Set<String> expected = new HashSet<>();
         expected.add("(wid1)");
         expected.add("(wid2)");
-        expected.add("(wid10)");
         expected.add("(default)");
 
         assertEquals(actual, expected);
@@ -230,7 +224,6 @@ public class TestExtractUserAndWs extends BaseTest {
 
         Set<String> expected = new HashSet<>();
         expected.add("(wid1)");
-        expected.add("(wid10)");
         expected.add("(default)");
 
         assertEquals(actual, expected);
@@ -244,7 +237,6 @@ public class TestExtractUserAndWs extends BaseTest {
 
         expected = new HashSet<>();
         expected.add("(uid1)");
-        expected.add("(user10@gmail.com)");
         expected.add("(default)");
 
         assertEquals(actual, expected);

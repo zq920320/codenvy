@@ -48,7 +48,7 @@ public class TestUsersCreatedFromFactory extends BaseTest {
                 Event.Builder.createFactoryUrlAcceptedEvent("tmp-1", "factoryUrl1", "referrer1", "org1", "affiliate1")
                              .withDate("2013-01-01").withTime("11:00:00").build());
 
-        events.add(Event.Builder.createUserAddedToWsEvent("", "", "website")
+        events.add(Event.Builder.createUserAddedToWsEvent("Anonymoususer_1", "tmp-1", "website")
                                 .withDate("2013-01-01").build());
 
         events.add(Event.Builder.createUserChangedNameEvent("user1@gmail.com", "user3@gmail.com").withDate("2013-01-01")
