@@ -262,7 +262,7 @@ DEFINE usersCreatedFromFactory(X) RETURNS Y {
     t3 = extractParam(t2, 'NEW-USER', 'new');
     t4 = FOREACH t3 GENERATE dt, ReplaceUserWithId(old) AS old, ReplaceUserWithId(new) AS new;
     t5 = FILTER t4 BY IsAnonymousUserById(old) AND NOT IsAnonymousUserById(new);
-    t = FOREACH t5 GENERATE dt, LOWER(old) AS tmpUser, LOWER(new) AS user;
+    t = FOREACH t5 GENERATE dt, old AS tmpUser, new AS user;
 
     -- finds created users
     k1 = filterByEvent($X, 'user-created');
