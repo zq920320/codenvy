@@ -27,7 +27,7 @@
     </parent>
     <groupId>com.codenvy.hosted-infrastructure</groupId>
     <artifactId>codenvy-hosted-infrastructure-parent</artifactId>
-    <version>0.8.0</version>
+    <version>0.9.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Codenvy :: Hosted Infrastructure</name>
     <modules>
@@ -44,7 +44,7 @@
     <scm>
         <connection>scm:git:git@github.com:codenvy/hosted-infrastructure.git</connection>
         <developerConnection>scm:git:git@github.com:codenvy/hosted-infrastructure.git</developerConnection>
-        <tag>0.8.0</tag>
+        <tag>HEAD</tag>
         <url>https://github.com/codenvy/hosted-infrastructure</url>
     </scm>
     <properties>
