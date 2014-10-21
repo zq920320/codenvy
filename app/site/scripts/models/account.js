@@ -53,6 +53,25 @@
                 }
             };
         };
+
+        var redirectToNonTempWS = function() {
+            $.when(Tenant.getTenants()).done(function(tenants) {
+                var url;
+                switch (tenants.length) {
+                    case 0:
+                        url = "/site/create-account" + window.location.search;
+                        window.location = url;
+                        break;
+                    default:
+                        url = "/ws/" + tenants[0].toJSON().name + window.location.search;
+                        window.location = url;
+
+                }
+            }).fail(function(msg) {
+                window.alert(msg);
+            });
+        };
+
         var isBadGateway = function(jqXHR) {
             return jqXHR.status === 502;
         };
@@ -349,7 +368,7 @@
             // redirect to login page if user has 'logged_in' cookie
             redirectIfUserHasLoginCookie: function() {
                 if ($.cookie('logged_in')) {
-                    window.location = '/site/login';
+                    window.location = '/site/login' + window.location.search;
                 }
             },
             login: function(email, password, redirect_url, success, error) {
@@ -494,19 +513,7 @@
                                 ]);
                             }); //ensureExistenceAccount
                     } else if (src_workspace) {
-                        // TODO
-                        /*SelectWorkspace.getTenants(
-                                function (workspaces) {
-                                    for (var i = 0; i < workspaces.length; i++) {
-                                        if (!workspaces[i].workspaceReference.temporary) {
-                                            Initializer.processWaitForTenant(workspaces[i].workspaceReference.name, "", "?" + queryParams);
-                                        }
-                                    }
-                                }, function(){
-                                    error([
-                                        new AccountError("Unable to create account " + account )
-                                    ]);
-                                });*/
+                        redirectToNonTempWS();
                     } else if (redirect_url) {
                         redirectToUrl(redirect_url);
                     } else {
@@ -518,53 +525,7 @@
                     ]);
                 });
             },
-            /*
-            createWorkspace : function(username,bearertoken,workspace,redirect_url,success,error){
-                var data = {username: username.toLowerCase(), token: bearertoken};
-                var destinationUrl = window.location.protocol + "//" + window.location.host + "/ws/" + workspace + "?" +
-                    window.location.search.substring(1);
-                var waitUrl = "../wait-for-tenant?type=create&tenantName=" + workspace + "&redirect_url=" + encodeURIComponent(destinationUrl);
-                var workspaceName = {name: workspace};
-                var authenticateUrl = "/api/internal/token/authenticate";
-                var createWSUrl = "/api/workspace/create";
-                var selectWsUrl = "/site/private/select-tenant";
-                $.ajax({
-                    url : authenticateUrl,
-                    type : "POST",
-                    contentType: "application/json",
-                    data: JSON.stringify(data),
-                    success : function(){
-                        if (workspace){
-                            $.ajax({
-                                url : createWSUrl,
-                                type : "POST",
-                                contentType: "application/json",
-                                data: JSON.stringify(workspaceName),
-                                success : function(){
-                                    success({url: waitUrl});
-                                },
-                                error : function(xhr){
-                                    error([
-                                        new AccountError(null,xhr.responseText)
-                                    ]);
-                                }
-                            });
-                        } else {
-                            if (redirect_url) {
-                                success({url: redirect_url});
-                            } else {
-                                success({url: selectWsUrl});
-                            }
-                        }
-                    },
-                    error : function(xhr){
-                        error([
-                            new AccountError(null,xhr.responseText)
-                        ]);
-                    }
-                });
-            },
-*/
+
             joinWorkspace: function(username, bearertoken, workspace, success, error) {
                 var data = {
                     username: username.toLowerCase(),

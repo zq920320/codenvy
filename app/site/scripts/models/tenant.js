@@ -43,7 +43,7 @@
                 return _.map(_.filter(response, function(r){
                     return r.workspaceReference.temporary===false;
                 }), function(r){
-                    return { name : r.name, owner : r.account.id, id : r.id };
+                    return { name : r.workspaceReference.name, owner : r.userId, id : r.workspaceReference.id };
                 });
             },
             fetch : function(options){
