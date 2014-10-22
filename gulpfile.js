@@ -215,12 +215,20 @@ gulp.task('css_stage', ['copy_src'], function() {
   }))
   .pipe(gulp.dest(paths.stage + 'site/styles/'));
 });
-
+// Ensure waiting for Jekill job finishing
 gulp.task('jekyll_stage',['copy_src','stage_cfg'], function () {
-         console.log('Jekyll ......... ');
-     return require('child_process')
-        .spawn('jekyll', ['build'], {stdio: 'inherit', cwd: paths.temp});
-
+         console.log('Jekyll stage......... ');
+   return gulp.src(paths.temp+'_config.yml', {read: false})
+    .pipe(shell([
+      'jekyll build'
+    ], {
+      cwd: 'target/temp',
+      templateData: {
+        f: function (s) {
+          return s.replace(/$/, '.bak')
+        }
+      }
+    }))
 });
 
 gulp.task('copy_stage',['copy_src','stage_cfg','css_stage','jekyll_stage'], function(){
@@ -228,6 +236,7 @@ gulp.task('copy_stage',['copy_src','stage_cfg','css_stage','jekyll_stage'], func
     paths.stage+'**/*.js',
     paths.stage+'**/*.css',
     paths.stage+'**/*.jpg',
+    paths.prod+'**/*.ico',
     paths.stage+'**/*.png',
     paths.stage+'**/*.svg',
     paths.stage+'**/*.txt'  // robots.txt
