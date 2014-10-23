@@ -54,11 +54,6 @@ gulp.task('connect', ['gh'], function() {
 gulp.task('prod',['copy_src','lint','prod_cfg','css','jekyll','rjs','myrev','replace','rmbuild','copy_prod'], function(){
 
 })
-// Copies src to temp folder
-gulp.task('copy_src', function(){
-  return gulp.src(paths.src + '**/*.*')
-  .pipe(gulp.dest(paths.temp))
-})
 
 gulp.task('prod_cfg', function(){
   return gulp.src(paths.config + buildConfig.jekyllProdConfig)
@@ -195,8 +190,15 @@ gulp.task('stage',['copy_src','stage_cfg','css_stage','jekyll_stage','copy_stage
 
 })
 // Copies src to temp folder
-gulp.task('copy_src', function(){
+gulp.task('copy_src', ['duplicate_html'], function(){
   return gulp.src(paths.src + '**/*.*')
+  .pipe(gulp.dest(paths.temp))
+})
+
+// Copies src to temp folder
+gulp.task('duplicate_html', function(){
+  return gulp.src(paths.temp + '/site/create-account.html')
+  .pipe(rename('index.html'))
   .pipe(gulp.dest(paths.temp))
 })
 
@@ -255,11 +257,6 @@ gulp.task('clean',function(){
 //----------
 gulp.task('gh',['copy_src','gh_cfg','css_gh','jekyll_gh','copy_gh'], function(){
   console.log('Update localhost .....');
-})
-// Copies src to temp folder
-gulp.task('copy_src', function(){
-  return gulp.src(paths.src + '**/*.*')
-  .pipe(gulp.dest(paths.temp))
 })
 
 gulp.task('gh_cfg', function(){

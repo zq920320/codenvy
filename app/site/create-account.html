@@ -1,32 +1,33 @@
 ---
     layout : homepage
-    title: Codenvy - Login
+    title: Codenvy Developer Environment Cloud
 ---
 <div class="create-ws-container">
-<div class="authentication">
-  <div class="dark login shadow">
-    <div class="error-container"></div>
-    <h2 class="center">Sign In or Create Your Free Account</h2>
+  <div class="authentication">
+    <div class="dark login shadow">
+      <div class="error-container"></div>
+      <h2 class="center">Sign In or Create Your Free Account</h2>
 
-    <div class="aternative-create">
-      <div class="label">Sign Up With</div>
-      <div class="oauth-google oauth"><a href="#" class="oauth-button google"><img src="/site/images/buttonGoogle.svg" alt="Signup with Google">Google</a></div>
-      <div class="oauth-github oauth"><a href="#" class="oauth-button github"><img src="/site/images/buttonGithub.svg" alt="Signup with Github">Github</a></div>
+      <div class="aternative-create">
+        <div class="label">Sign Up With</div>
+        <div class="oauth-google oauth"><a href="#" class="oauth-button google"><img src="/site/images/buttonGoogle.svg" alt="Signup with Google">Google</a></div>
+        <div class="oauth-github oauth"><a href="#" class="oauth-button github"><img src="/site/images/buttonGithub.svg" alt="Signup with Github">Github</a></div>
+      </div>
+      <div class = "hr">OR</div>
+      <form class="create-form">
+        <div class="field">
+          <input name="email" type="text" class="required email" placeholder="Your Email">
+        </div>
+        <div class="field">
+          <input name="domain" type="text" class="required domain-name" placeholder="Your workspace name" maxlength="20">
+        </div>
+        <div class="field action">
+          <input type="submit" class="signup-button blue-button" value="Create Free Account">
+          <div class="working hidden">working...</div>
+        </div>
+      </form>
+      <p class = "terms">By signing up, you agree to the <a href = "{{ 'tos.html' | url }}" title = "Terms of Service" >Terms of Service</a> and the <a href = "{{ 'privacy.html' | url }}" title = "Privacy Policy">Privacy Policy</a>.</p>
     </div>
-    <div class = "hr">OR</div>
-    <form class="create-form">
-      <div class="field">
-        <input name="email" type="text" class="required email" placeholder="Your Email">
-      </div>
-      <div class="field">
-        <input name="domain" type="text" class="required domain-name" placeholder="Your workspace name" maxlength="20">
-      </div>
-      <div class="field action">
-        <input type="submit" class="signup-button blue-button" value="Create Free Account">
-        <div class="working hidden">working...</div>
-      </div>
-    </form>
-    <p class = "terms">By signing up, you agree to the <a href = "{{ 'tos.html' | url }}" title = "Terms of Service" >Terms of Service</a> and the <a href = "{{ 'privacy.html' | url }}" title = "Privacy Policy">Privacy Policy</a>.</p>
   </div>
 </div>
 <footer>
