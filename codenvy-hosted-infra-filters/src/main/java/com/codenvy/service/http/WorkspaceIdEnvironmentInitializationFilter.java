@@ -47,7 +47,7 @@ public class WorkspaceIdEnvironmentInitializationFilter extends WorkspaceEnviron
 
 
     @Override
-    protected WorkspaceDescriptor getWorkspaceFromRequest(ServletRequest request) throws ServletException {
+    protected WorkspaceDescriptor getWorkspaceFromRequest(ServletRequest request) {
         HttpServletRequest httpRequest = (HttpServletRequest)request;
         String requestUrl = httpRequest.getRequestURI();
         String[] pathParts = requestUrl.split("/", 5);
@@ -57,7 +57,7 @@ public class WorkspaceIdEnvironmentInitializationFilter extends WorkspaceEnviron
             return null;
         } catch (ServerException e) {
             LOG.warn(e.getLocalizedMessage(), e);
-            throw new ServletException(e.getLocalizedMessage(), e);
+            return null;
         }
     }
 

@@ -67,7 +67,7 @@ public abstract class WorkspaceEnvironmentInitializationFilter implements Filter
         }
     }
 
-    protected abstract WorkspaceDescriptor getWorkspaceFromRequest(ServletRequest request) throws ServletException;
+    protected abstract WorkspaceDescriptor getWorkspaceFromRequest(ServletRequest request);
 
     @Override
     public void destroy() {
