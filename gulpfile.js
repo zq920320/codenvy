@@ -51,7 +51,7 @@ gulp.task('connect', ['gh'], function() {
 // --------------------------- Building Prod -----------------------------
 //----------------
 //----------
-gulp.task('prod',['copy_src','lint','prod_cfg','css','jekyll','rjs','myrev','replace','rmbuild','copy_prod'], function(){
+gulp.task('prod',['copy_src','duplicate_html','lint','prod_cfg','css','jekyll','rjs','myrev','replace','rmbuild','copy_prod'], function(){
 
 })
 
@@ -159,7 +159,7 @@ gulp.task('rmbuild', ['copy_src','prod_cfg','css','rjs','jekyll','myrev','replac
 
 });
 
-gulp.task('copy_prod',['copy_src','prod_cfg','css','rjs','jekyll','myrev','replace','rmbuild'], function(){
+gulp.task('copy_prod',['copy_src','duplicate_html','prod_cfg','css','rjs','jekyll','myrev','replace','rmbuild'], function(){
   gulp.src([paths.prod+'/**/*.html', // all HTML
     paths.prod+'**/amd-app-*.js', // minified JS
     paths.prod+'**/*-*.css', // minified CSS
@@ -197,7 +197,7 @@ gulp.task('copy_src', ['duplicate_html'], function(){
 
 // Copies src to temp folder
 gulp.task('duplicate_html', function(){
-  return gulp.src(paths.temp + '/site/create-account.html')
+  return gulp.src(paths.src + '/site/create-account.html')
   .pipe(rename('index.html'))
   .pipe(gulp.dest(paths.temp))
 })
