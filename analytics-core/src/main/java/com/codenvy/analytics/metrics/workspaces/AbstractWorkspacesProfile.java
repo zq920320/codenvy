@@ -17,12 +17,10 @@
  */
 package com.codenvy.analytics.metrics.workspaces;
 
-import com.codenvy.analytics.metrics.*;
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.ReadBasedMetric;
 import com.mongodb.DBObject;
-
-import java.io.IOException;
-
-import static com.codenvy.analytics.persistent.MongoDataLoader.processFilter;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 abstract public class AbstractWorkspacesProfile extends ReadBasedMetric {
@@ -31,27 +29,7 @@ abstract public class AbstractWorkspacesProfile extends ReadBasedMetric {
         super(metricType);
     }
 
-    @Override
-    public Context applySpecificFilter(Context clauses) throws IOException {
-        Context.Builder builder = new Context.Builder();
-        builder.putIfNotNull(Parameters.PER_PAGE, clauses.getAsString(Parameters.PER_PAGE));
-        builder.putIfNotNull(Parameters.PAGE, clauses.getAsString(Parameters.PAGE));
-        builder.putIfNotNull(Parameters.SORT, clauses.getAsString(Parameters.SORT));
-
-        for (MetricFilter filter : clauses.getFilters()) {
-            Object value = clauses.get(filter);
-
-            if (filter == MetricFilter.WS) {
-                builder.put(MetricFilter._ID, processFilter(value, filter.isNumericType()));
-
-            } else if (filter == MetricFilter.WS_NAME) {
-                builder.put(filter, processFilter(value, filter.isNumericType()));
-            }
-        }
-
-        return builder.build();
-    }
-
+    /** {@inheritDoc} */
     @Override
     public DBObject[] getSpecificDBOperations(Context clauses) {
         return new DBObject[0];

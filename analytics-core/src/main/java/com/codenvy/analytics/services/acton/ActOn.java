@@ -293,7 +293,7 @@ public class ActOn extends Feature {
 
     private List<ValueData> getUsersStatistics(String user) throws IOException, ParseException {
         Context.Builder builder = new Context.Builder();
-        builder.put(MetricFilter.USER, user);
+        builder.put(MetricFilter.USER_ID, user);
 
         Metric usersStatistics = MetricFactory.getMetric(MetricType.USERS_STATISTICS_LIST);
         ListValueData valueData = (ListValueData)usersStatistics.getValue(builder.build());

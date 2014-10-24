@@ -23,9 +23,7 @@ import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.StringValueData;
 import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.sessions.ProductUsageSessionsList;
 import com.codenvy.analytics.metrics.users.UsersStatisticsList;
-import com.codenvy.analytics.metrics.workspaces.UsageTimeByWorkspacesList;
 import com.codenvy.analytics.metrics.workspaces.WorkspacesStatisticsList;
 import com.codenvy.analytics.pig.scripts.ScriptType;
 import com.codenvy.analytics.services.DataComputationFeature;
@@ -36,14 +34,17 @@ import org.testng.annotations.Test;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.List;
 import java.util.Map;
 
 import static com.codenvy.analytics.datamodel.ValueDataUtil.getAsList;
+import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsList;
 import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsMap;
-import static com.mongodb.util.MyAsserts.assertEquals;
-import static com.mongodb.util.MyAsserts.fail;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+/** @author Anatoliy Bazko */
 public class TestUsersData extends BaseTest {
 
     private static final String RESOURCE_DIR = BASE_DIR + "/test-classes/" + TestUsersData.class.getSimpleName();
@@ -58,23 +59,23 @@ public class TestUsersData extends BaseTest {
     public void testUserStatistics() throws Exception {
         Metric metric = MetricFactory.getMetric(MetricType.USERS_STATISTICS_LIST);
 
-        ListValueData valueData = getAsList(metric, Context.EMPTY);
-        ListValueData summaryValue = (ListValueData)((Summaraziable)metric).getSummaryValue(Context.EMPTY);
+        List<ValueData> value = getAsList(metric, Context.EMPTY).getAll();
+        List<ValueData> summaryValue = treatAsList(((Summaraziable)metric).getSummaryValue(Context.EMPTY));
 
-        assertUserData(valueData, summaryValue);
+        assertUserData(value, summaryValue);
     }
 
-    private void assertUserData(ListValueData value, ListValueData summaryValue) {
+    private void assertUserData(List<ValueData> value, List<ValueData> summaryValue) {
         assertEquals(value.size(), 4);
 
-        for (ValueData object : value.getAll()) {
+        for (ValueData object : value) {
             MapValueData valueData = (MapValueData)object;
 
             Map<String, ValueData> all = valueData.getAll();
 
             String user = all.get(UsersStatisticsList.USER).getAsString();
             switch (user) {
-                case "id1":
+                case "user1_12345678901234":
                     assertEquals(all.get(UsersStatisticsList.PROJECTS).getAsString(), "1");
                     assertEquals(all.get(UsersStatisticsList.DEPLOYS).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.BUILDS).getAsString(), "0");
@@ -92,7 +93,7 @@ public class TestUsersData extends BaseTest {
                     assertEquals(all.get(UsersStatisticsList.USER_COMPANY).getAsString(), "company1");
                     break;
 
-                case "id2":
+                case "user2_12345678901234":
                     assertEquals(all.get(UsersStatisticsList.PROJECTS).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.DEPLOYS).getAsString(), "1");
                     assertEquals(all.get(UsersStatisticsList.BUILDS).getAsString(), "0");
@@ -110,7 +111,7 @@ public class TestUsersData extends BaseTest {
                     assertEquals(all.get(UsersStatisticsList.USER_COMPANY).getAsString(), "company1");
                     break;
 
-                case "id3":
+                case "user3_12345678901234":
                     assertEquals(all.get(UsersStatisticsList.PROJECTS).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.DEPLOYS).getAsString(), "1");
                     assertEquals(all.get(UsersStatisticsList.BUILDS).getAsString(), "1");
@@ -128,7 +129,7 @@ public class TestUsersData extends BaseTest {
                     assertEquals(all.get(UsersStatisticsList.USER_COMPANY).getAsString(), "company3");
                     break;
 
-                case "id4":
+                case "user4_12345678901234":
                     assertEquals(all.get(UsersStatisticsList.PROJECTS).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.DEPLOYS).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.BUILDS).getAsString(), "0");
@@ -140,9 +141,9 @@ public class TestUsersData extends BaseTest {
                     assertEquals(all.get(UsersStatisticsList.LOGINS).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.RUN_TIME).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.BUILD_TIME).getAsString(), "0");
-                    assertEquals(all.get(UsersStatisticsList.USER_FIRST_NAME).getAsString(), StringValueData.DEFAULT);
-                    assertEquals(all.get(UsersStatisticsList.USER_LAST_NAME).getAsString(), StringValueData.DEFAULT);
-                    assertEquals(all.get(UsersStatisticsList.USER_COMPANY).getAsString(), StringValueData.DEFAULT);
+                    assertEquals(all.get(UsersStatisticsList.USER_FIRST_NAME), StringValueData.DEFAULT);
+                    assertEquals(all.get(UsersStatisticsList.USER_LAST_NAME), StringValueData.DEFAULT);
+                    assertEquals(all.get(UsersStatisticsList.USER_COMPANY), StringValueData.DEFAULT);
                     break;
 
                 default:
@@ -153,7 +154,7 @@ public class TestUsersData extends BaseTest {
 
         assertEquals(summaryValue.size(), 1);
 
-        Map<String, ValueData> m = treatAsMap(summaryValue.getAll().get(0));
+        Map<String, ValueData> m = treatAsMap(summaryValue.get(0));
         assertEquals(m.get(UsersStatisticsList.PROJECTS), LongValueData.valueOf(1));
         assertEquals(m.get(UsersStatisticsList.DEPLOYS), LongValueData.valueOf(2));
         assertEquals(m.get(UsersStatisticsList.BUILDS), LongValueData.valueOf(1));
@@ -183,12 +184,11 @@ public class TestUsersData extends BaseTest {
 
             String ws = all.get(UsersStatisticsList.WS).getAsString();
             switch (ws) {
-                case "wsid1":
+                case "workspace1_12345678901234":
                     assertEquals(all.get(UsersStatisticsList.SESSIONS).getAsString(), "1");
                     assertEquals(all.get(UsersStatisticsList.INVITES).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.DEPLOYS).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.BUILDS).getAsString(), "0");
-                    assertEquals(all.get(UsersStatisticsList.WS).getAsString(), "wsid1");
                     assertEquals(all.get(UsersStatisticsList.DEBUGS).getAsString(), "1");
                     assertEquals(all.get(UsersStatisticsList.FACTORIES).getAsString(), "1");
                     assertEquals(all.get(UsersStatisticsList.PROJECTS).getAsString(), "1");
@@ -199,12 +199,11 @@ public class TestUsersData extends BaseTest {
                     assertEquals(all.get(UsersStatisticsList.RUN_TIME).getAsString(), "0");
                     break;
 
-                case "wsid2":
+                case "workspace2_12345678901234":
                     assertEquals(all.get(UsersStatisticsList.SESSIONS).getAsString(), "1");
                     assertEquals(all.get(UsersStatisticsList.INVITES).getAsString(), "1");
                     assertEquals(all.get(UsersStatisticsList.DEPLOYS).getAsString(), "2");
                     assertEquals(all.get(UsersStatisticsList.BUILDS).getAsString(), "1");
-                    assertEquals(all.get(UsersStatisticsList.WS).getAsString(), "wsid2");
                     assertEquals(all.get(UsersStatisticsList.DEBUGS).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.FACTORIES).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.PROJECTS).getAsString(), "0");
@@ -237,113 +236,13 @@ public class TestUsersData extends BaseTest {
     }
 
     @Test
-    public void testUssageTimeInWorkspaces() throws Exception {
+    public void testUsageTimeInWorkspaces() throws Exception {
         Metric metric = MetricFactory.getMetric(MetricType.USAGE_TIME_BY_WORKSPACES_LIST);
-        ListValueData data = getAsList(metric, Context.EMPTY);
+        List<ValueData> value = getAsList(metric, Context.EMPTY).getAll();
 
-        assertEquals(data.size(), 2);
-
-        Map<String, ValueData> m = treatAsMap(data.getAll().get(0));
-        doChecUsageTimeInWorkspaces(m);
-
-        m = treatAsMap(data.getAll().get(1));
-        doChecUsageTimeInWorkspaces(m);
-    }
-
-    private void doChecUsageTimeInWorkspaces(Map<String, ValueData> m) {
-        if (m.get(AbstractMetric.WS).equals(StringValueData.valueOf("wsid1"))) {
-            assertEquals(m.get(UsersStatisticsList.SESSIONS).getAsString(), LongValueData.valueOf(1));
-            assertEquals(m.get(UsersStatisticsList.TIME).getAsString(), LongValueData.valueOf(300000));
-
-        } else if (m.get(AbstractMetric.WS).equals(StringValueData.valueOf("wsid2"))) {
-            assertEquals(m.get(UsersStatisticsList.SESSIONS).getAsString(), LongValueData.valueOf(1));
-            assertEquals(m.get(UsersStatisticsList.TIME).getAsString(), LongValueData.valueOf(120000));
-
-        } else {
-            fail("unknown ws");
-        }
-    }
-
-    @Test
-    public void testUsersTimeInWorkspacesWithFilter() throws Exception {
-        Context.Builder builder = new Context.Builder();
-        builder.put(MetricFilter.USER, "id1");
-
-        Metric metric = MetricFactory.getMetric(MetricType.USAGE_TIME_BY_WORKSPACES_LIST);
-        ListValueData data = getAsList(metric, builder.build());
-
-        assertEquals(data.size(), 1);
-
-        Map<String, ValueData> m = treatAsMap(data.getAll().get(0));
-
-        assertEquals(m.get(UsageTimeByWorkspacesList.SESSIONS), LongValueData.valueOf(1));
-        assertEquals(m.get(ProductUsageSessionsList.TIME), LongValueData.valueOf(300000));
-        assertEquals(m.get(ProductUsageSessionsList.WS), StringValueData.valueOf("wsid1"));
-    }
-
-    @Test
-    public void testFilterStatisticsByCompany() throws Exception {
-        Context.Builder builder = new Context.Builder();
-        builder.put(MetricFilter.USER_COMPANY, "company1");
-
-        Metric metric = MetricFactory.getMetric(MetricType.USERS_STATISTICS_LIST);
-        ListValueData data = getAsList(metric, builder.build());
-
-        assertEquals(data.size(), 2);
-    }
-
-    @Test
-    public void testFilterStatisticsByUserAliases() throws Exception {
-        Metric metric = MetricFactory.getMetric(MetricType.USERS_STATISTICS_LIST);
-
-        Context.Builder builder = new Context.Builder();
-        builder.put(MetricFilter.ALIASES, "user1@gmail.com");
-
-        ListValueData data = getAsList(metric, builder.build());
-        assertEquals(data.size(), 1);
-
-        Map<String, ValueData> m = treatAsMap(data.getAll().get(0));
-
-        assertEquals(m.get(AbstractMetric.USER), StringValueData.valueOf("id1"));
-        assertEquals(m.get(AbstractMetric.ALIASES), StringValueData.valueOf("[user1@gmail.com]"));
-    }
-
-    @Test
-    public void testFilterStatisticsByIdAsUserAliases() throws Exception {
-        Metric metric = MetricFactory.getMetric(MetricType.USERS_STATISTICS_LIST);
-
-        Context.Builder builder = new Context.Builder();
-        builder.put(MetricFilter.ALIASES, "id1");
-
-        ListValueData data = getAsList(metric, builder.build());
-        assertEquals(data.size(), 1);
-
-        Map<String, ValueData> m = treatAsMap(data.getAll().get(0));
-
-        assertEquals(m.get(AbstractMetric.USER), StringValueData.valueOf("id1"));
-        assertEquals(m.get(AbstractMetric.ALIASES), StringValueData.valueOf("[user1@gmail.com]"));
-    }
-
-    @Test
-    public void testFilterStatisticsByUserFirstName() throws Exception {
-        Context.Builder builder = new Context.Builder();
-        builder.put(MetricFilter.USER_FIRST_NAME, "f1 OR f2");
-
-        Metric metric = MetricFactory.getMetric(MetricType.USERS_STATISTICS_LIST);
-        ListValueData data = getAsList(metric, builder.build());
-
-        assertEquals(data.size(), 2);
-    }
-
-    @Test
-    public void testFilterStatisticsByUserID() throws Exception {
-        Context.Builder builder = new Context.Builder();
-        builder.put(MetricFilter.USER, "id1 OR id2 OR id3 OR id4");
-
-        Metric metric = MetricFactory.getMetric(MetricType.USERS_STATISTICS_LIST);
-        ListValueData data = getAsList(metric, builder.build());
-
-        assertEquals(data.size(), 4);
+        assertEquals(value.size(), 2);
+        assertTrue(value.contains(MapValueData.valueOf("ws=workspace1_12345678901234,sessions=1,time=300000")));
+        assertTrue(value.contains(MapValueData.valueOf("ws=workspace2_12345678901234,sessions=1,time=120000")));
     }
 
     private void prepareData() throws IOException, ParseException, JobExecutionException {

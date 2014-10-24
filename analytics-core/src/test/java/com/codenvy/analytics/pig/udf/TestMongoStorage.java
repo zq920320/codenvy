@@ -51,11 +51,11 @@ public class TestMongoStorage extends BaseTest {
     @BeforeClass
     public void prepare() throws Exception {
         List<Event> events = new ArrayList<>();
-        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid1", "ws1", "user1@gmail.com")
+        events.add(Event.Builder.createWorkspaceCreatedEvent(WID1, "ws1", "user1@gmail.com")
                                 .withDate("2013-01-02")
                                 .withTime("00:00:00")
                                 .build());
-        events.add(Event.Builder.createTenantCreatedEvent("ws1", "user1@gmail.com")
+        events.add(Event.Builder.createWorkspaceCreatedEvent(WID1, "ws1", "user1@gmail.com")
                                 .withDate("2013-01-02")
                                 .withTime("00:00:00")
                                 .build());
@@ -72,7 +72,7 @@ public class TestMongoStorage extends BaseTest {
 
         builder.put(Parameters.USER, Parameters.USER_TYPES.REGISTERED.name());
         builder.put(Parameters.WS, Parameters.WS_TYPES.PERSISTENT.name());
-        builder.put(Parameters.EVENT, "tenant-created");
+        builder.put(Parameters.EVENT, "workspace-created");
         builder.put(Parameters.STORAGE_TABLE, "testmongostorage");
         context = builder.build();
 
@@ -91,7 +91,7 @@ public class TestMongoStorage extends BaseTest {
         assertEquals(dbCursor.size(), 1);
 
         DBObject next = dbCursor.next();
-        assertEquals(next.get("ws"), "wsid1");
+        assertEquals(next.get("ws"), WID1);
         assertEquals(next.get("user"), "user1@gmail.com");
         assertEquals(next.get("value"), 1L);
 

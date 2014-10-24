@@ -17,13 +17,18 @@
  */
 package com.codenvy.analytics.metrics.users;
 
-import com.codenvy.analytics.metrics.*;
+import com.codenvy.analytics.metrics.AbstractSetValueResulted;
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.MetricFilter;
+import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.OmitFilters;
+import com.codenvy.analytics.metrics.Parameters;
 
 import javax.annotation.security.RolesAllowed;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
-@OmitFilters({MetricFilter.WS, MetricFilter.PERSISTENT_WS})
+@OmitFilters({MetricFilter.WS_ID, MetricFilter.PERSISTENT_WS})
 public class CreatedUsersSet extends AbstractSetValueResulted {
 
     public CreatedUsersSet() {

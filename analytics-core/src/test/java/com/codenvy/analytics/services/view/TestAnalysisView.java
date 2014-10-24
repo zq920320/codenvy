@@ -407,20 +407,20 @@ public class TestAnalysisView extends BaseTest {
                                 .withDate(DATE1).build());
 
         // active users [user1, user2]
-        events.add(Event.Builder.createTenantCreatedEvent("ws1", "user1@gmail.com").withTime("09:00:00").withDate(DATE1)
+        events.add(Event.Builder.createWorkspaceCreatedEvent(WID1, "ws1", "user1@gmail.com").withTime("09:00:00").withDate(DATE1)
                                 .build());
-        events.add(Event.Builder.createTenantCreatedEvent("ws2", "user2@gmail.com").withTime("09:00:00").withDate(DATE1)
+        events.add(Event.Builder.createWorkspaceCreatedEvent(WID2, "ws2", "user2@gmail.com").withTime("09:00:00").withDate(DATE1)
                                 .build());
 
         // projects created
         events.add(
-                Event.Builder.createProjectCreatedEvent("user1@gmail.com", "ws1", "project1", "type1").withDate(DATE1)
+                Event.Builder.createProjectCreatedEvent("ws1", "user1@gmail.com", "project1", "type1").withDate(DATE1)
                              .withTime("10:00:00").build());
         events.add(
-                Event.Builder.createProjectCreatedEvent("user1@gmail.com", "ws1", "project2", "type1").withDate(DATE1)
+                Event.Builder.createProjectCreatedEvent("ws1", "user1@gmail.com", "project2", "type1").withDate(DATE1)
                              .withTime("10:05:00").build());
         events.add(
-                Event.Builder.createProjectCreatedEvent("user2@gmail.com", "ws2", "project1", "type1").withDate(DATE1)
+                Event.Builder.createProjectCreatedEvent("ws2", "user2@gmail.com", "project1", "type1").withDate(DATE1)
                              .withTime("10:03:00").build());
 
         // projects deployed to LOCAL
@@ -470,7 +470,7 @@ public class TestAnalysisView extends BaseTest {
         events.add(Event.Builder.createUserCreatedEvent("user3-id", "user3@gmail.com", "user3@gmail.com")
                                 .withDate(DATE2).build());
 
-        events.add(Event.Builder.createTenantCreatedEvent("ws3", "user3@gmail.com").withTime("09:00:00").withDate(DATE2)
+        events.add(Event.Builder.createWorkspaceCreatedEvent(WID3, "ws3", "user3@gmail.com").withTime("09:00:00").withDate(DATE2)
                                 .build());
 
         // update user's profile
@@ -479,10 +479,10 @@ public class TestAnalysisView extends BaseTest {
 
         // projects created
         events.add(
-                Event.Builder.createProjectCreatedEvent("user2@gmail.com", "ws2", "project22", "type1").withDate(DATE2)
+                Event.Builder.createProjectCreatedEvent("ws2", "user2@gmail.com", "project22", "type1").withDate(DATE2)
                              .withTime("10:03:00").build());
         events.add(
-                Event.Builder.createProjectCreatedEvent("user3@gmail.com", "ws3", "project33", "type1").withDate(DATE2)
+                Event.Builder.createProjectCreatedEvent("ws3", "user3@gmail.com", "project33", "type1").withDate(DATE2)
                              .withTime("10:03:00").build());
 
         // projects run

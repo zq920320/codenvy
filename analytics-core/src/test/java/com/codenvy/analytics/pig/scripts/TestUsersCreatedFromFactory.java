@@ -42,6 +42,11 @@ public class TestUsersCreatedFromFactory extends BaseTest {
 
     @BeforeClass
     public void prepare() throws Exception {
+        addRegisteredUser(UID1, "user1@gmail.com");
+        addRegisteredUser(UID2, "user2@gmail.com");
+        addRegisteredUser(UID3, "user3@gmail.com");
+        addRegisteredUser(UID4, "user4@gmail.com");
+
         List<Event> events = new ArrayList<>();
 
         events.add(
@@ -51,20 +56,19 @@ public class TestUsersCreatedFromFactory extends BaseTest {
         events.add(Event.Builder.createUserAddedToWsEvent("anonymoususer_1", "tmp-1", "website")
                                 .withDate("2013-01-01").build());
 
-        events.add(Event.Builder.createUserChangedNameEvent("user1@gmail.com", "user3@gmail.com").withDate("2013-01-01")
+        events.add(Event.Builder.createUserChangedNameEvent("user1@gmail.com", "user2@gmail.com").withDate("2013-01-01")
                                 .build());
-        events.add(Event.Builder.createUserChangedNameEvent("anonymoususer_2", "user5@gmail.com").withDate("2013-01-01")
+        events.add(Event.Builder.createUserChangedNameEvent("anonymoususer_2", "user4@gmail.com").withDate("2013-01-01")
                                 .build());
-        events.add(Event.Builder.createUserChangedNameEvent("anonymoususer_1", "user4@gmail.com").withDate("2013-01-01")
+        events.add(Event.Builder.createUserChangedNameEvent("anonymoususer_1", "user3@gmail.com").withDate("2013-01-01")
                                 .build());
-        events.add(Event.Builder.createUserChangedNameEvent("anonymoususer_2", "user5@gmail.com").withDate("2013-01-01")
+        events.add(Event.Builder.createUserChangedNameEvent("anonymoususer_2", "user4@gmail.com").withDate("2013-01-01")
                                 .build());
 
-        events.add(Event.Builder.createUserCreatedEvent("user-id1", "user3@gmail.com", "user3@gmail.com").withDate("2013-01-01").build());
-        events.add(Event.Builder.createUserCreatedEvent("user-id2", "user4@gmail.com", "user4@gmail.com").withDate("2013-01-01").build());
-        events.add(Event.Builder.createUserCreatedEvent("user-id3", "anonymoususer_1", "anonymoususer_1").withDate("2013-01-01").build());
-        events.add(Event.Builder.createUserCreatedEvent("user-id4", "anonymoususer_2", "anonymoususer_2").withDate("2013-01-01").build());
-
+        events.add(Event.Builder.createUserCreatedEvent(UID3, "user2@gmail.com", "user2@gmail.com").withDate("2013-01-01").build());
+        events.add(Event.Builder.createUserCreatedEvent(UID4, "user3@gmail.com", "user3@gmail.com").withDate("2013-01-01").build());
+        events.add(Event.Builder.createUserCreatedEvent(AUID1, "anonymoususer_1", "anonymoususer_1").withDate("2013-01-01").build());
+        events.add(Event.Builder.createUserCreatedEvent(AUID2, "anonymoususer_2", "anonymoususer_2").withDate("2013-01-01").build());
 
         File log = LogGenerator.generateLog(events);
 

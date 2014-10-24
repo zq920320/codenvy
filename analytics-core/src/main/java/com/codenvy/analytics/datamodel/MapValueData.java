@@ -53,7 +53,11 @@ public class MapValueData extends CollectionValueData {
         Map<String, ValueData> value = new HashMap<>();
         for (String s : values.split(",")) {
             String[] pair = s.split("=");
-            value.put(pair[0], StringValueData.valueOf(pair[1]));
+            try {
+                value.put(pair[0], LongValueData.valueOf(Long.parseLong(pair[1])));
+            } catch (NumberFormatException e) {
+                value.put(pair[0], StringValueData.valueOf(pair[1]));
+            }
         }
 
         return new MapValueData(value);

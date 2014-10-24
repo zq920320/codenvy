@@ -21,5 +21,11 @@ package com.codenvy.analytics.datamodel;
  * @author Anatoliy Bazko
  */
 public abstract class CollectionValueData extends AbstractValueData {
+    /** @return the size of underlying collection */
     public abstract int size();
+
+    /** @return true if underlying collection is empty */
+    public boolean isEmpty() {
+        return size() == 0;
+    }
 }

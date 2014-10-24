@@ -62,7 +62,7 @@ public class TestFactoryStatisticsFilteringById extends BaseTest {
                 .createFactoryUrlAcceptedEvent("tmp-1", TEST_ENCODED_FACTORY_URL, "http://referrer1", "org1", "affiliate1")
                 .withDate("2013-02-10").withTime("08:00:00").build());
 
-        events.add(Event.Builder.createTenantCreatedEvent("tmp-1", TEST_USER_ALIAS)
+        events.add(Event.Builder.createWorkspaceCreatedEvent(TWID1, "tmp-1", TEST_USER_ALIAS)
                                 .withDate("2013-02-10").withTime("09:00:00").build());
 
         events.add(Event.Builder.createSessionUsageEvent(TEST_USER_ALIAS, "tmp-1", "id1", "2013-02-10 10:00:00", "2013-02-10 10:05:00", true)
@@ -77,7 +77,7 @@ public class TestFactoryStatisticsFilteringById extends BaseTest {
                 .createFactoryUrlAcceptedEvent("tmp-2", TEST_FACTORY_URL, "http://referrer2", "org2", "affiliate1")
                 .withDate("2013-02-10").withTime("08:00:01").build());
 
-        events.add(Event.Builder.createTenantCreatedEvent("tmp-2", TEST_USER_ALIAS)
+        events.add(Event.Builder.createWorkspaceCreatedEvent(TWID2, "tmp-2", TEST_USER_ALIAS)
                                 .withDate("2013-02-10").withTime("09:01:00").build());
 
         events.add(Event.Builder.createSessionUsageEvent(TEST_USER_ALIAS, "tmp-2", "id2", "2013-02-10 10:20:00", "2013-02-10 10:30:00", true)

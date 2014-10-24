@@ -19,7 +19,11 @@ package com.codenvy.analytics.metrics.sessions.factory;
 
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.*;
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.MetricFilter;
+import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.OmitFilters;
+import com.codenvy.analytics.metrics.ReadBasedMetric;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
@@ -29,7 +33,7 @@ import java.util.List;
 
 /** @author Alexander Reshetnyak */
 @RolesAllowed({"system/admin", "system/manager"})
-@OmitFilters({MetricFilter.WS, MetricFilter.PERSISTENT_WS})
+@OmitFilters({MetricFilter.WS_ID, MetricFilter.PERSISTENT_WS})
 public class ReferrersCountToSpecificFactory extends ReadBasedMetric {
 
     public static final String UNIQUE_REFERRERS_COUNT = "unique_referrers_count";

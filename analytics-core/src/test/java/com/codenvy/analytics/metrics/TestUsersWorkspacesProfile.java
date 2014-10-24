@@ -20,6 +20,7 @@ package com.codenvy.analytics.metrics;
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
+import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.pig.scripts.ScriptType;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 import com.codenvy.analytics.services.DataComputationFeature;
@@ -32,9 +33,11 @@ import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Arrays;
+import java.util.Map;
 
 import static com.codenvy.analytics.datamodel.ValueDataUtil.getAsList;
 import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertTrue;
 
 /**
  * @author Alexander Reshetnyak
@@ -83,11 +86,13 @@ public class TestUsersWorkspacesProfile extends BaseTest {
 
         ListValueData value = (ListValueData)metric.getValue(builder.build());
 
-        assertEquals(value.getAll().size(), 4);
-        assertEquals("[user1@domain.com]", ((MapValueData)value.getAll().get(0)).getAll().get("aliases").getAsString());
-        assertEquals("[user2@domain.com]", ((MapValueData)value.getAll().get(1)).getAll().get("aliases").getAsString());
-        assertEquals("[user3@domain.com]", ((MapValueData)value.getAll().get(2)).getAll().get("aliases").getAsString());
-        assertEquals("[anonymoususer_rl3qni]", ((MapValueData)value.getAll().get(3)).getAll().get("aliases").getAsString());
+        Map<String, Map<String, ValueData>> m = listToMap(value, "aliases");
+
+        assertEquals(m.size(), 4);
+        assertTrue(m.containsKey("[anonymoususer_rl3qni]"));
+        assertTrue(m.containsKey("[user1@domain.com]"));
+        assertTrue(m.containsKey("[user2@domain.com]"));
+        assertTrue(m.containsKey("[user3@domain.com]"));
 
         metric = MetricFactory.getMetric(MetricType.USERS_STATISTICS_LIST_PRECOMPUTED);
         value = getAsList(metric, builder.build());

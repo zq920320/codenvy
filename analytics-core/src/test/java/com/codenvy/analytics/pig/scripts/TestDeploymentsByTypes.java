@@ -19,7 +19,12 @@ package com.codenvy.analytics.pig.scripts;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.metrics.*;
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Metric;
+import com.codenvy.analytics.metrics.MetricFactory;
+import com.codenvy.analytics.metrics.MetricFilter;
+import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.Parameters;
 
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -64,8 +69,8 @@ public class TestDeploymentsByTypes extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20140507");
         builder.put(Parameters.TO_DATE, "20140507");
-        builder.put(MetricFilter.USER, "user1@gmail.com OR user2@gmail.com");
-        builder.put(MetricFilter.WS, "wsid3");
+        builder.put(MetricFilter.USER_ID, "user1@gmail.com OR user2@gmail.com");
+        builder.put(MetricFilter.WS_ID, "wsid3");
 
         Metric metric = MetricFactory.getMetric(MetricType.PROJECT_PAAS_GAE);
         assertEquals(metric.getValue(builder.build()), new LongValueData(1));

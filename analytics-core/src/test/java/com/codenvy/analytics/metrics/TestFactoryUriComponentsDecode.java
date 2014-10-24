@@ -86,7 +86,7 @@ public class TestFactoryUriComponentsDecode extends BaseTest {
         // broken event, factory url contains new line character
         events.add(Event.Builder.createFactoryUrlAcceptedEvent("tmp-4", ENCODE_URI_COMPONENTS, "referrer2", "org3", "affiliate2")
                                 .withDate("2013-02-10").withTime("10:00:00").build());
-        events.add(Event.Builder.createTenantCreatedEvent("tmp-4", "anonymoususer_2")
+        events.add(Event.Builder.createWorkspaceCreatedEvent(TWID4, "tmp-4", "anonymoususer_2")
                                 .withDate("2013-02-10").withTime("10:03:00").build());
 
         events.add(Event.Builder.createSessionUsageEvent("anonymoususer_2", "tmp-4", "id4", "2013-02-10 11:00:00", "2013-02-10 11:15:00", true)
@@ -99,6 +99,9 @@ public class TestFactoryUriComponentsDecode extends BaseTest {
         builder.put(Parameters.FROM_DATE, "20130210");
         builder.put(Parameters.TO_DATE, "20130210");
         builder.put(Parameters.LOG, log.getAbsolutePath());
+
+        builder.putAll(scriptsManager.getScript(ScriptType.WORKSPACES_PROFILES, MetricType.WORKSPACES_PROFILES_LIST).getParamsAsMap());
+        pigServer.execute(ScriptType.WORKSPACES_PROFILES, builder.build());
 
         builder.putAll(scriptsManager.getScript(ScriptType.ACCEPTED_FACTORIES, MetricType.FACTORIES_ACCEPTED_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.ACCEPTED_FACTORIES, builder.build());

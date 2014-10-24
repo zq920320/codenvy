@@ -21,14 +21,19 @@ import com.codenvy.analytics.datamodel.DoubleValueData;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.datamodel.ValueDataUtil;
-import com.codenvy.analytics.metrics.*;
+import com.codenvy.analytics.metrics.CalculatedMetric;
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Expandable;
+import com.codenvy.analytics.metrics.MetricFilter;
+import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.OmitFilters;
 
 import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
-@OmitFilters({MetricFilter.WS, MetricFilter.PERSISTENT_WS})
+@OmitFilters({MetricFilter.WS_ID, MetricFilter.PERSISTENT_WS})
 public class FactorySessionsWithDeployPercent extends CalculatedMetric implements Expandable {
     public FactorySessionsWithDeployPercent() {
         super(MetricType.FACTORY_SESSIONS_WITH_DEPLOY_PERCENT,

@@ -41,6 +41,7 @@ import com.codenvy.analytics.metrics.ReadBasedSummariziable;
 import com.codenvy.analytics.metrics.WithoutFromDateParam;
 import com.codenvy.analytics.metrics.users.AbstractUsersProfile;
 import com.codenvy.analytics.metrics.users.NonActiveUsers;
+import com.codenvy.analytics.metrics.workspaces.AbstractWorkspacesProfile;
 import com.codenvy.analytics.metrics.workspaces.NonActiveWorkspaces;
 import com.mongodb.AggregationOutput;
 import com.mongodb.BasicDBObject;
@@ -61,9 +62,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import static com.codenvy.analytics.Utils.getFilterAsSet;
+import static com.codenvy.analytics.Utils.getFilterAsString;
+import static com.codenvy.analytics.Utils.isUserID;
+import static com.codenvy.analytics.Utils.isWorkspaceID;
 import static com.codenvy.analytics.datamodel.ValueDataUtil.getAsList;
 import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsList;
 import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsMap;
+import static com.codenvy.analytics.metrics.AbstractMetric.ID;
 
 /**
  * @author Anatoliy Bazko
@@ -262,8 +268,7 @@ public class MongoDataLoader implements DataLoader {
         if (clauses.exists(Parameters.EXPANDED_METRIC_NAME)) {
             Metric expandable = clauses.getExpandedMetric();
 
-            if (expandable != null
-                && !(expandable instanceof CumulativeMetric)) {
+            if (expandable != null && !(expandable instanceof CumulativeMetric)) {
                 filteringValues = getExpandedMetricValues(clauses, expandable);
                 filteringField = ((Expandable)expandable).getExpandedField();
                 match.put(filteringField, new BasicDBObject("$in", filteringValues));
@@ -279,6 +284,7 @@ public class MongoDataLoader implements DataLoader {
         setDateFilter(clauses, match);
 
         List<Object> userFilters = new ArrayList<>();
+        List<Object> wsFilters = new ArrayList<>();
 
         for (MetricFilter filter : clauses.getFilters()) {
             String field = filter.toString().toLowerCase();
@@ -287,28 +293,32 @@ public class MongoDataLoader implements DataLoader {
                 continue;
             }
 
-            if (!(metric instanceof AbstractUsersProfile) && (filter == MetricFilter.USER_COMPANY
-                                                              || filter == MetricFilter.USER_FIRST_NAME
-                                                              || filter == MetricFilter.USER_LAST_NAME)) {
+            if (filter == MetricFilter.USER_COMPANY || filter == MetricFilter.USER_FIRST_NAME || filter == MetricFilter.USER_LAST_NAME) {
+                if (metric instanceof AbstractUsersProfile) {
+                    match.put(field, convertToPattern(value));
+                } else {
+                    String userFieldName = MetricFilter.USER_ID.toString().toLowerCase();
+                    DBObject usersToFilter = (userFieldName.equals(filteringField))
+                                             ? getUsers(filter, value, filteringValues)
+                                             : getUsers(filter, value, null);
+                    userFilters.add(usersToFilter);
+                }
 
-                String userFieldName = MetricFilter.USER.toString().toLowerCase();
-                DBObject usersToFilter = (userFieldName.equals(filteringField))
-                                         ? getUsers(filter, value, filteringValues)
-                                         : getUsers(filter, value, null);
-                userFilters.add(usersToFilter);
+            } else if (filter == MetricFilter.USER_ID || (filter == MetricFilter._ID && metric instanceof AbstractUsersProfile)) {
+                userFilters.add(processFilter(value, false));
 
-            } else if (!(metric instanceof AbstractUsersProfile) && filter == MetricFilter.USER) {
+            } else if (filter == MetricFilter.USER) {
                 if (value.equals(Parameters.USER_TYPES.REGISTERED.name())) {
                     match.put(MetricFilter.REGISTERED_USER.toString().toLowerCase(), 1);
                 } else if (value.equals(Parameters.USER_TYPES.ANONYMOUS.name())) {
                     match.put(MetricFilter.REGISTERED_USER.toString().toLowerCase(), 0);
                 } else if (!value.equals(Parameters.USER_TYPES.ANY.name())) {
-                    userFilters.add(processFilter(value, filter.isNumericType()));
+                    String[] userIds = getUsersIDs(value);
+                    userFilters.add(processFilter(userIds, false));
                 }
 
-            } else if (!(metric instanceof AbstractUsersProfile) && filter == MetricFilter.ALIASES) {
-                String[] userIds = getUserIdByAliases(value);
-                userFilters.add(processFilter(userIds.length != 0 ? userIds : value, MetricFilter.USER.isNumericType()));
+            } else if (filter == MetricFilter.WS_ID || (filter == MetricFilter._ID && metric instanceof AbstractWorkspacesProfile)) {
+                wsFilters.add(processFilter(value, false));
 
             } else if (filter == MetricFilter.WS) {
                 if (value.equals(Parameters.WS_TYPES.PERSISTENT.name())) {
@@ -316,7 +326,8 @@ public class MongoDataLoader implements DataLoader {
                 } else if (value.equals(Parameters.WS_TYPES.TEMPORARY.name())) {
                     match.put(MetricFilter.PERSISTENT_WS.toString().toLowerCase(), 0);
                 } else if (!value.equals(Parameters.WS_TYPES.ANY.name())) {
-                    match.put(MetricFilter.WS.toString().toLowerCase(), processFilter(value, filter.isNumericType()));
+                    String[] wsIds = getWorkspaceIDs(value);
+                    wsFilters.add(processFilter(wsIds, false));
                 }
 
             } else if (filter == MetricFilter.PARAMETERS) {
@@ -327,14 +338,16 @@ public class MongoDataLoader implements DataLoader {
             }
         }
 
-        mergerFilter(userFilters, match, MetricFilter.USER.toString().toLowerCase());
+        mergerFilter(userFilters, match, metric instanceof AbstractUsersProfile ? MetricFilter._ID.toString().toLowerCase()
+                                                                                : MetricFilter.USER.toString().toLowerCase());
+
+        mergerFilter(wsFilters, match, metric instanceof AbstractWorkspacesProfile ? MetricFilter._ID.toString().toLowerCase()
+                                                                                   : MetricFilter.WS.toString().toLowerCase());
 
         return new BasicDBObject("$match", match);
     }
 
-    /**
-     * Add either {key: value} or {$and: [{key:value1, key:value2, ...}]}
-     */
+    /** Add either {key: value} or {$and: [{key:value1, key:value2, ...}]} */
     private void mergerFilter(List<Object> values, BasicDBObject match, String fieldName) {
         if (values.size() == 1) {
             match.put(fieldName, values.get(0));
@@ -453,6 +466,42 @@ public class MongoDataLoader implements DataLoader {
         return result;
     }
 
+    private Object convertToPattern(Object value) throws IOException {
+        if (value instanceof Pattern) {
+            return value;
+
+        } else if (value instanceof Pattern[]) {
+            return new BasicDBObject("$in", value);
+
+        } else if (value instanceof String) {
+            return stringFilterToPattern((String)value);
+
+        } else if (value instanceof String[]) {
+            return new BasicDBObject("$in", getPatterns((String[])value));
+
+        } else {
+            throw new IllegalArgumentException("Unsupported type " + value.getClass());
+        }
+    }
+
+    protected Object stringFilterToPattern(String value) {
+        boolean processExclusiveValues = value.startsWith(MongoDataLoader.EXCLUDE_SIGN);
+        if (processExclusiveValues) {
+            value = value.substring(MongoDataLoader.EXCLUDE_SIGN.length());
+        }
+
+        Pattern[] patterns = getPatterns(value.split(MongoDataLoader.SEPARATOR));
+        return new BasicDBObject(processExclusiveValues ? "$nin" : "$in", patterns);
+    }
+
+    private Pattern[] getPatterns(String[] values) {
+        Pattern[] patterns = new Pattern[values.length];
+        for (int i = 0; i < values.length; i++) {
+            patterns[i] = Pattern.compile(Pattern.quote(values[i]), Pattern.CASE_INSENSITIVE);
+        }
+        return patterns;
+    }
+
     /**
      * @return if usersToFilter != null: (usersToFilter INTERSECT usersFromFilter)
      * otherwise: usersFromFilter
@@ -471,7 +520,7 @@ public class MongoDataLoader implements DataLoader {
             MapValueData user = (MapValueData)users.get(i);
             Map<String, ValueData> profile = user.getAll();
 
-            result[i] = profile.get(AbstractMetric.ID).getAsString();
+            result[i] = profile.get(ID).getAsString();
         }
 
         if (usersToFilter != null) {
@@ -509,30 +558,66 @@ public class MongoDataLoader implements DataLoader {
         }
     }
 
-    public String[] getUserIdByAliases(Object aliases) throws IOException {
-        // try to filter by alias as userId in case if they aren't email
-        boolean isUserId = ! aliases.toString().contains("@");
-        if (isUserId) {
-            return new String[] { aliases.toString() };
-        }
-        
-        Metric metric = MetricFactory.getMetric(MetricType.USERS_PROFILES_LIST);
-
-        Context.Builder builder = new Context.Builder();
-        builder.put(MetricFilter.ALIASES, aliases);
-        Context context = builder.build();
-
-        ListValueData value = getAsList(metric, context);
-        List<ValueData> rows = treatAsList(value);
-
-        String[] userId = new String[rows.size()];
-        for (int i = 0; i < rows.size(); i++) {
-            userId[i] = treatAsMap(rows.get(i)).get(AbstractMetric.ID).getAsString();
-        }
-
-        return userId;
+    private String[] getUsersIDs(Object aliases) throws IOException {
+        return getIDsByNames(MetricFactory.getMetric(MetricType.USERS_PROFILES_LIST), aliases, MetricFilter.USER_ID, MetricFilter.ALIASES);
     }
 
+    private String[] getWorkspaceIDs(Object names) throws IOException {
+        return getIDsByNames(MetricFactory.getMetric(MetricType.WORKSPACES_PROFILES_LIST), names, MetricFilter.WS_ID, MetricFilter.WS_NAME);
+    }
+
+    private String[] getIDsByNames(Metric metric, Object filterValue, MetricFilter idFilter, MetricFilter nameFilter) throws IOException {
+        if (!(filterValue instanceof String)) {
+            throw new IllegalStateException("Only string filter is supported");
+        }
+
+        String value = (String)filterValue;
+
+        boolean processExclusiveValues = value.startsWith(EXCLUDE_SIGN);
+        if (processExclusiveValues) {
+            value = value.substring(EXCLUDE_SIGN.length());
+        }
+
+        Set<String> entityIds = getFilterAsSet(value);
+        Set<String> entityNames = new HashSet<>();
+
+        Iterator<String> iter = entityIds.iterator();
+        while (iter.hasNext()) {
+            String next = iter.next();
+
+            if (!isWorkspaceID(next) && !isUserID(next)) {
+                entityNames.add(next);
+                iter.remove();
+            }
+        }
+
+        // convert names into ids
+        if (!entityNames.isEmpty()) {
+            String[] ids = doGetIDs(metric, nameFilter, entityNames.toArray(new String[entityNames.size()]));
+            entityIds.addAll(Arrays.asList(ids));
+        }
+
+        if (processExclusiveValues) {
+            return doGetIDs(metric, idFilter, EXCLUDE_SIGN + getFilterAsString(entityIds));
+        } else {
+            return entityIds.toArray(new String[entityIds.size()]);
+        }
+    }
+
+    private String[] doGetIDs(Metric metric, MetricFilter filterName, Object filterValue) throws IOException {
+        Context.Builder builder = new Context.Builder();
+        builder.put(filterName, filterValue);
+        Context context = builder.build();
+
+        List<ValueData> rows = getAsList(metric, context).getAll();
+
+        String[] ids = new String[rows.size()];
+        for (int i = 0; i < rows.size(); i++) {
+            ids[i] = treatAsMap(rows.get(i)).get(ID).getAsString();
+        }
+
+        return ids;
+    }
 
     private ValueData createdValueData(ReadBasedMetric metric, Iterator<DBObject> iterator) {
         Class<? extends ValueData> clazz = metric.getValueDataClass();

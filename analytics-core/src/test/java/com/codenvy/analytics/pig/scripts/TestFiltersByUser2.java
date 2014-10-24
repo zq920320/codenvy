@@ -18,8 +18,16 @@
 package com.codenvy.analytics.pig.scripts;
 
 import com.codenvy.analytics.BaseTest;
-import com.codenvy.analytics.datamodel.*;
-import com.codenvy.analytics.metrics.*;
+import com.codenvy.analytics.datamodel.ListValueData;
+import com.codenvy.analytics.datamodel.LongValueData;
+import com.codenvy.analytics.datamodel.StringValueData;
+import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.datamodel.ValueDataUtil;
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Metric;
+import com.codenvy.analytics.metrics.MetricFilter;
+import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.users.CompletedProfiles;
 import com.codenvy.analytics.metrics.users.UsersProfiles;
 import com.codenvy.analytics.metrics.users.UsersProfilesList;
@@ -41,7 +49,8 @@ import static org.testng.Assert.assertTrue;
 /**
  * @author Anatoliy Bazko
  */
-public class TestUserProfiles extends BaseTest {
+// TODO
+public class TestFiltersByUser2 extends BaseTest {
 
     @BeforeClass
     public void prepare() throws Exception {
@@ -173,7 +182,7 @@ public class TestUserProfiles extends BaseTest {
     @Test
     public void testFilterByUserAsString() throws Exception {
         Context.Builder builder = new Context.Builder();
-        builder.put(MetricFilter.USER, "id1 OR id2 OR id3 OR id4");
+        builder.put(MetricFilter.USER_ID, "id1 OR id2 OR id3 OR id4");
 
         Metric metric = new UsersProfiles();
         assertEquals(LongValueData.valueOf(4), metric.getValue(builder.build()));
@@ -185,7 +194,7 @@ public class TestUserProfiles extends BaseTest {
     @Test
     public void testFilterByUserAndFirstName() throws Exception {
         Context.Builder builder = new Context.Builder();
-        builder.put(MetricFilter.USER, "id1");
+        builder.put(MetricFilter.USER_ID, "id1");
 
         Metric metric = new UsersProfiles();
         assertEquals(LongValueData.valueOf(1), metric.getValue(builder.build()));
@@ -202,7 +211,7 @@ public class TestUserProfiles extends BaseTest {
     @Test
     public void testFilterByUserAsStringSeveralValues() throws Exception {
         Context.Builder builder = new Context.Builder();
-        builder.put(MetricFilter.USER, "id1 OR id2");
+        builder.put(MetricFilter.USER_ID, "id1 OR id2");
 
         Metric metric = new UsersProfiles();
         assertEquals(LongValueData.valueOf(2), metric.getValue(builder.build()));
@@ -220,7 +229,7 @@ public class TestUserProfiles extends BaseTest {
     @Test
     public void testFilterByUserAsStringSeveralValuesWithExclusion() throws Exception {
         Context.Builder builder = new Context.Builder();
-        builder.put(MetricFilter.USER, "~ id1 OR id2");
+        builder.put(MetricFilter.USER_ID, "~ id1 OR id2");
 
         Metric metric = new UsersProfiles();
         assertEquals(LongValueData.valueOf(3), metric.getValue(builder.build()));
@@ -239,7 +248,7 @@ public class TestUserProfiles extends BaseTest {
     @Test
     public void testFilterByUserAsStringArray() throws Exception {
         Context.Builder builder = new Context.Builder();
-        builder.put(MetricFilter.USER, new String[]{"id1"});
+        builder.put(MetricFilter.USER_ID, new String[]{"id1"});
 
         Metric metric = new UsersProfiles();
         assertEquals(LongValueData.valueOf(1), metric.getValue(builder.build()));
@@ -256,7 +265,7 @@ public class TestUserProfiles extends BaseTest {
     @Test
     public void testFilterByUserAsPatternArray() throws Exception {
         Context.Builder builder = new Context.Builder();
-        builder.put(MetricFilter.USER, new Pattern[]{Pattern.compile("id1")});
+        builder.put(MetricFilter.USER_ID, new Pattern[]{Pattern.compile("id1")});
 
         Metric metric = new UsersProfiles();
         assertEquals(LongValueData.valueOf(1), metric.getValue(builder.build()));

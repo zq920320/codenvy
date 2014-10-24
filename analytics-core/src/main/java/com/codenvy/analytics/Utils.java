@@ -32,6 +32,10 @@ import com.codenvy.analytics.metrics.Parameters.PassedDaysCount;
 import com.codenvy.analytics.metrics.Parameters.TimeUnit;
 import com.codenvy.analytics.metrics.ReadBasedMetric;
 import com.codenvy.analytics.persistent.MongoDataLoader;
+import com.codenvy.api.user.server.dao.User;
+import com.codenvy.api.user.shared.dto.UserDescriptor;
+import com.codenvy.api.workspace.server.Constants;
+import com.codenvy.api.workspace.server.dao.Workspace;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
@@ -297,7 +301,7 @@ public class Utils {
                 return false;
             }
 
-            Context.Builder builder = new Context.Builder(MetricFilter.USER, user.toString().toLowerCase());
+            Context.Builder builder = new Context.Builder(MetricFilter.USER_ID, user.toString().toLowerCase());
 
             Metric metric = MetricFactory.getMetric(MetricType.USERS_PROFILES_LIST);
             ListValueData value = getAsList(metric, builder.build());
@@ -328,7 +332,7 @@ public class Utils {
                 return true;
             }
 
-            Context.Builder builder = new Context.Builder(MetricFilter.WS, workspace.toString().toLowerCase());
+            Context.Builder builder = new Context.Builder(MetricFilter.WS_ID, workspace.toString().toLowerCase());
 
             Metric metric = MetricFactory.getMetric(MetricType.WORKSPACES_PROFILES_LIST);
             ListValueData value = getAsList(metric, builder.build());
@@ -415,6 +419,21 @@ public class Utils {
         }
     }
 
+    /** @return true if given string corresponds to workspace ID */
+    public static boolean isWorkspaceID(String value) {
+        return isID(value, Workspace.class.getSimpleName().toLowerCase());
+    }
+
+    /** @return true if given string corresponds to user ID */
+    public static boolean isUserID(String value) {
+        return isID(value, User.class.getSimpleName().toLowerCase()) ||
+               isID(value, UserDescriptor.class.getSimpleName().toLowerCase());
+    }
+
+    private static boolean isID(String value, String prefix) {
+        return value.length() == prefix.length() + Constants.ID_LENGTH && value.startsWith(prefix);
+    }
+
     /** @return mongodb operation (arg1 - arg2Field) */
 
     public static BasicDBObject getSubtractOperation(long arg1, String arg2Field) {
@@ -425,19 +444,20 @@ public class Utils {
         return new BasicDBObject("$subtract", subtractArgs);
     }
 
-    public static BasicDBObject getAndOperation(BasicDBObject... predicates) {
-        BasicDBList andArgs = new BasicDBList();
-        Collections.addAll(andArgs, predicates);
-        return new BasicDBObject("$and", andArgs);
-    }
-
     public static BasicDBObject getOrOperation(BasicDBObject... predicates) {
         BasicDBList orArgs = new BasicDBList();
         Collections.addAll(orArgs, predicates);
         return new BasicDBObject("$or", predicates);
     }
 
+
+    /** Converts string into array. Uses ',' as a delimiter. */
     public static String[] toArray(String value) {
+        return toArray(value, ",");
+    }
+
+    /** Converts string into array. */
+    public static String[] toArray(String value, String delimeter) {
         if (value == null) {
             return new String[0];
         }
@@ -449,7 +469,7 @@ public class Utils {
         if (bareValue.trim().isEmpty()) {
             return new String[0];
         } else {
-            return bareValue.split(",");
+            return bareValue.split(delimeter);
         }
     }
 

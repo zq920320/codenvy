@@ -26,7 +26,7 @@ import javax.annotation.security.RolesAllowed;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
-@OmitFilters({MetricFilter.USER, MetricFilter.REGISTERED_USER})
+@OmitFilters({MetricFilter.USER_ID, MetricFilter.REGISTERED_USER})
 public class ActiveWorkspacesSet extends AbstractSetValueResulted {
 
     public ActiveWorkspacesSet() {

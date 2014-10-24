@@ -17,82 +17,16 @@
  */
 package com.codenvy.analytics.metrics.users;
 
-import com.codenvy.analytics.metrics.*;
-import com.codenvy.analytics.persistent.MongoDataLoader;
-import com.mongodb.BasicDBObject;
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.ReadBasedMetric;
 import com.mongodb.DBObject;
-
-import java.io.IOException;
-import java.util.regex.Pattern;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 abstract public class AbstractUsersProfile extends ReadBasedMetric {
 
     public AbstractUsersProfile(MetricType metricType) {
         super(metricType);
-    }
-
-    @Override
-    public Context applySpecificFilter(Context clauses) throws IOException {
-        Context.Builder builder = new Context.Builder();
-        builder.putIfNotNull(Parameters.PER_PAGE, clauses.getAsString(Parameters.PER_PAGE));
-        builder.putIfNotNull(Parameters.PAGE, clauses.getAsString(Parameters.PAGE));
-        builder.putIfNotNull(Parameters.SORT, clauses.getAsString(Parameters.SORT));
-
-        for (MetricFilter filter : clauses.getFilters()) {
-            Object value = clauses.get(filter);
-
-            if (filter == MetricFilter.USER) {
-                builder.put(MetricFilter._ID, MongoDataLoader.processFilter(value, filter.isNumericType()));
-
-            } else if (filter == MetricFilter.USER_COMPANY
-                       || filter == MetricFilter.USER_FIRST_NAME
-                       || filter == MetricFilter.USER_LAST_NAME) {
-
-                builder.put(filter, convertToPattern(value));
-
-            } else if (filter == MetricFilter.ALIASES || filter == MetricFilter.REGISTERED_USER) {
-                builder.put(filter, MongoDataLoader.processFilter(value, filter.isNumericType()));
-            }
-        }
-
-        return builder.build();
-    }
-
-    private Object convertToPattern(Object value) throws IOException {
-        if (value instanceof Pattern) {
-            return value;
-
-        } else if (value instanceof Pattern[]) {
-            return new BasicDBObject("$in", value);
-
-        } else if (value instanceof String) {
-            return processStringFilter((String)value);
-
-        } else if (value instanceof String[]) {
-            return new BasicDBObject("$in", getPatterns((String[])value));
-
-        } else {
-            throw new IllegalArgumentException("Unsupported type " + value.getClass());
-        }
-    }
-
-    protected Object processStringFilter(String value) {
-        boolean processExclusiveValues = value.startsWith(MongoDataLoader.EXCLUDE_SIGN);
-        if (processExclusiveValues) {
-            value = value.substring(MongoDataLoader.EXCLUDE_SIGN.length());
-        }
-
-        Pattern[] patterns = getPatterns(value.split(MongoDataLoader.SEPARATOR));
-        return new BasicDBObject(processExclusiveValues ? "$nin" : "$in", patterns);
-    }
-
-    private Pattern[] getPatterns(String[] values) {
-        Pattern[] patterns = new Pattern[values.length];
-        for (int i = 0; i < values.length; i++) {
-            patterns[i] = Pattern.compile(Pattern.quote(values[i]), Pattern.CASE_INSENSITIVE);
-        }
-        return patterns;
     }
 
     @Override

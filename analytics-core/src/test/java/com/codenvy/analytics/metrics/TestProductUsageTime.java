@@ -41,7 +41,6 @@ public class TestProductUsageTime extends BaseTest {
     @BeforeClass
     public void setUp() throws Exception {
         prepareData();
-        makeAllUsersRegistered(ScriptType.PRODUCT_USAGE_SESSIONS.toString().toLowerCase());
     }
 
     @Test
@@ -49,8 +48,8 @@ public class TestProductUsageTime extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20140101");
         builder.put(Parameters.TO_DATE, "20140101");
-        builder.put(Parameters.USER, "user1 OR user2");
-        builder.put(Parameters.WS, "ws");
+        builder.put(Parameters.USER, "user1@gmail.com OR user2@gmail.com");
+        builder.put(Parameters.WS, "ws1");
 
         Metric metric = new TestAbstractProductUsageTime(300000, 600000, true, true);
         assertEquals(metric.getValue(builder.build()), LongValueData.valueOf(900000));
@@ -95,6 +94,10 @@ public class TestProductUsageTime extends BaseTest {
     }
 
     private void prepareData() throws Exception {
+        addRegisteredUser(UID1, "user1@gmail.com");
+        addRegisteredUser(UID2, "user2@gmail.com");
+        addPersistentWs(WID1, "ws1");
+
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.LOG, initLog().getAbsolutePath());
         builder.put(Parameters.FROM_DATE, "20140101");
@@ -112,15 +115,15 @@ public class TestProductUsageTime extends BaseTest {
         events.add(new Event.Builder().withDate("2014-01-01")
                                       .withTime("10:00:00")
                                       .withParam("EVENT", "session-usage")
-                                      .withParam("WS", "ws")
-                                      .withParam("USER", "user1")
+                                      .withParam("WS", "ws1")
+                                      .withParam("USER", "user1@gmail.com")
                                       .withParam("PARAMETERS", "USAGE-TIME=0,START-TIME=1388563200000,SESSION-ID=1")
                                       .build());
         events.add(new Event.Builder().withDate("2014-01-01")
                                       .withTime("10:10:00")
                                       .withParam("EVENT", "session-usage")
-                                      .withParam("WS", "ws")
-                                      .withParam("USER", "user1")
+                                      .withParam("WS", "ws1")
+                                      .withParam("USER", "user1@gmail.com")
                                       .withParam("PARAMETERS", "USAGE-TIME=600000,START-TIME=1388563200000,SESSION-ID=1")
                                       .build());
 
@@ -128,15 +131,15 @@ public class TestProductUsageTime extends BaseTest {
         events.add(new Event.Builder().withDate("2014-01-01")
                                       .withTime("10:00:00")
                                       .withParam("EVENT", "session-usage")
-                                      .withParam("WS", "ws")
-                                      .withParam("USER", "user2")
+                                      .withParam("WS", "ws1")
+                                      .withParam("USER", "user2@gmail.com")
                                       .withParam("PARAMETERS", "USAGE-TIME=0,START-TIME=1388563200000,SESSION-ID=2")
                                       .build());
         events.add(new Event.Builder().withDate("2014-01-01")
                                       .withTime("10:05:00")
                                       .withParam("EVENT", "session-usage")
-                                      .withParam("WS", "ws")
-                                      .withParam("USER", "user2")
+                                      .withParam("WS", "ws1")
+                                      .withParam("USER", "user2@gmail.com")
                                       .withParam("PARAMETERS", "USAGE-TIME=300000,START-TIME=1388563200000,SESSION-ID=2")
                                       .build());
 

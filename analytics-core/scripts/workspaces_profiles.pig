@@ -24,12 +24,12 @@ l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 ------------------------------ ws creation processing ----------------------------
 ----------------------------------------------------------------------------------
 a1 = filterByEvent(l, 'workspace-created');
-a2 = extractParam(a1, 'WS-ID', 'wsId');
+a2 = extractParam(a1, 'WS', 'wsName');
 a = FOREACH a2 GENERATE dt,
-                        (wsId IS NOT NULL ? wsId : ReplaceWsWithId(wsName)) AS wsId,
+                        ws,
                         wsName;
 
-resultA = FOREACH a GENERATE wsId,
+resultA = FOREACH a GENERATE ws,
                              TOTUPLE('date', ToMilliSeconds(dt)),
                              TOTUPLE('ws_name', LOWER(wsName)),
                              TOTUPLE('persistent_ws', (IsTemporaryWorkspaceByName(wsName) ? 0 : 1));
@@ -39,14 +39,14 @@ STORE resultA INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 ------------------------------ ws updating processing ----------------------------
 ----------------------------------------------------------------------------------
 b1 = filterByEvent(l, 'workspace-updated');
-b2 = extractParam(b1, 'WS-ID', 'wsId');
-b = FOREACH b2 GENERATE dt, wsId, wsName;
+b2 = extractParam(b1, 'WS', 'wsName');
+b = FOREACH b2 GENERATE dt, ws, wsName;
 
-c1 = lastUpdate(b, 'wsId');
-c = FOREACH c1 GENERATE b::wsId AS wsId,
+c1 = lastUpdate(b, 'ws');
+c = FOREACH c1 GENERATE b::ws AS ws,
                         b::wsName AS wsName;
 
-resultC = FOREACH c GENERATE wsId,
+resultC = FOREACH c GENERATE ws,
                              TOTUPLE('ws_name', LOWER(wsName)),
                              TOTUPLE('persistent_ws', (IsTemporaryWorkspaceByName(wsName) ? 0 : 1));
 STORE resultC INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;

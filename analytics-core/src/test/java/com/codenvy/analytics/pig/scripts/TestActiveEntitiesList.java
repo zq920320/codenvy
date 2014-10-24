@@ -46,24 +46,24 @@ public class TestActiveEntitiesList extends BaseTest {
     @BeforeClass
     public void init() throws Exception {
         List<Event> events = new ArrayList<>();
-        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid1", "ws1", "user1@gmail.com")
+        events.add(Event.Builder.createWorkspaceCreatedEvent(WID1, "ws1", "user1@gmail.com")
                                 .withDate("2013-01-01")
                                 .withTime("10:00:00")
                                 .build());
-        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid2", "ws2", "user2@gmail.com")
+        events.add(Event.Builder.createWorkspaceCreatedEvent(WID2, "ws2", "user2@gmail.com")
                                 .withDate("2013-01-01")
                                 .withTime("10:00:00")
                                 .build());
 
-        events.add(Event.Builder.createTenantCreatedEvent("ws1", "user1@gmail.com")
+        events.add(Event.Builder.createWorkspaceCreatedEvent(WID1, "ws1", "user1@gmail.com")
                                 .withDate("2013-01-01")
                                 .withTime("10:00:00")
                                 .build());
-        events.add(Event.Builder.createTenantCreatedEvent("ws1", "user1@gmail.com")
+        events.add(Event.Builder.createWorkspaceCreatedEvent(WID1, "ws1", "user1@gmail.com")
                                 .withDate("2013-01-01")
                                 .withTime("10:00:01")
                                 .build());
-        events.add(Event.Builder.createTenantCreatedEvent("ws2", "user2@gmail.com")
+        events.add(Event.Builder.createWorkspaceCreatedEvent(WID2, "ws2", "user2@gmail.com")
                                 .withDate("2013-01-01")
                                 .withTime("10:00:02")
                                 .build());
@@ -82,24 +82,24 @@ public class TestActiveEntitiesList extends BaseTest {
         pigServer.execute(ScriptType.ACTIVE_ENTITIES, builder.build());
 
         events = new ArrayList<>();
-        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid3", "ws3", "user1@gmail.com")
+        events.add(Event.Builder.createWorkspaceCreatedEvent(WID3, "ws3", "user1@gmail.com")
                                 .withDate("2013-01-02")
                                 .withTime("10:00:00")
                                 .build());
-        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid4", "ws4", "user4@gmail.com")
+        events.add(Event.Builder.createWorkspaceCreatedEvent(WID4, "ws4", "user4@gmail.com")
                                 .withDate("2013-01-02")
                                 .withTime("10:00:00")
                                 .build());
 
-        events.add(Event.Builder.createTenantCreatedEvent("ws2", "user2@gmail.com")
+        events.add(Event.Builder.createWorkspaceCreatedEvent(WID2, "ws2", "user2@gmail.com")
                                 .withDate("2013-01-02")
                                 .withTime("10:00:00")
                                 .build());
-        events.add(Event.Builder.createTenantCreatedEvent("ws3", "user1@gmail.com")
+        events.add(Event.Builder.createWorkspaceCreatedEvent(WID3, "ws3", "user1@gmail.com")
                                 .withDate("2013-01-02")
                                 .withTime("10:00:01")
                                 .build());
-        events.add(Event.Builder.createTenantCreatedEvent("ws4", "user4@gmail.com")
+        events.add(Event.Builder.createWorkspaceCreatedEvent(WID4, "ws4", "user4@gmail.com")
                                 .withDate("2013-01-02")
                                 .withTime("10:00:02")
                                 .build());
@@ -125,8 +125,8 @@ public class TestActiveEntitiesList extends BaseTest {
 
         Metric metric = MetricFactory.getMetric(MetricType.ACTIVE_WORKSPACES_SET);
         assertEquals(metric.getValue(builder.build()),
-                     new SetValueData(Arrays.<ValueData>asList(new StringValueData("wsid1"),
-                                                               new StringValueData("wsid2"))));
+                     new SetValueData(Arrays.<ValueData>asList(new StringValueData(WID1),
+                                                               new StringValueData(WID2))));
         metric = MetricFactory.getMetric(MetricType.ACTIVE_WORKSPACES);
         assertEquals(metric.getValue(builder.build()), new LongValueData(2));
     }
@@ -139,10 +139,10 @@ public class TestActiveEntitiesList extends BaseTest {
 
         Metric metric = MetricFactory.getMetric(MetricType.ACTIVE_WORKSPACES_SET);
         assertEquals(metric.getValue(builder.build()),
-                     new SetValueData(Arrays.<ValueData>asList(new StringValueData("wsid1"),
-                                                               new StringValueData("wsid2"),
-                                                               new StringValueData("wsid3"),
-                                                               new StringValueData("wsid4"))));
+                     new SetValueData(Arrays.<ValueData>asList(new StringValueData(WID1),
+                                                               new StringValueData(WID2),
+                                                               new StringValueData(WID3),
+                                                               new StringValueData(WID4))));
 
         metric = MetricFactory.getMetric(MetricType.ACTIVE_WORKSPACES);
         assertEquals(metric.getValue(builder.build()), new LongValueData(4));
@@ -153,11 +153,11 @@ public class TestActiveEntitiesList extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20130101");
         builder.put(Parameters.TO_DATE, "20130102");
-        builder.put(Parameters.WS, "wsid2");
+        builder.put(Parameters.WS, WID2);
 
         Metric metric = MetricFactory.getMetric(MetricType.ACTIVE_WORKSPACES_SET);
         assertEquals(metric.getValue(builder.build()),
-                     new SetValueData(Arrays.<ValueData>asList(new StringValueData("wsid2"))));
+                     new SetValueData(Arrays.<ValueData>asList(new StringValueData(WID2))));
 
         metric = MetricFactory.getMetric(MetricType.ACTIVE_WORKSPACES);
         assertEquals(metric.getValue(builder.build()), new LongValueData(1));

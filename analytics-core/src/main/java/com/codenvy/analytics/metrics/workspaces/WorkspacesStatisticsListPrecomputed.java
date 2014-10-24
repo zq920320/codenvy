@@ -90,7 +90,7 @@ public class WorkspacesStatisticsListPrecomputed extends AbstractListValueResult
 
     @Override
     public boolean canReadPrecomputedData(Context context) {
-        String value = context.getAsString(MetricFilter.WS);
+        String value = context.getAsString(MetricFilter.WS_ID);
         return value == null || !isTemporaryExist(getFilterAsSet(value));
     }
 }

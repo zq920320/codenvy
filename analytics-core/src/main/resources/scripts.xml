@@ -175,14 +175,6 @@
         <parameter key="STORAGE_TABLE" value="ide_usages"/>
     </script>
     <script name="events_by_type">
-        <description>Project created by types</description>
-        <parameter key="WS" value="PERSISTENT"/>
-        <parameter key="USER" value="ANY"/>
-        <parameter key="EVENT" value="project-created"/>
-        <parameter key="PARAM" value="TYPE"/>
-        <parameter key="STORAGE_TABLE" value="project_types"/>
-    </script>
-    <script name="events_by_type">
         <description>User's authentication types</description>
         <parameter key="WS" value="ANY"/>
         <parameter key="USER" value="REGISTERED"/>

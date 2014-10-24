@@ -27,40 +27,40 @@ DEFINE loadResources(resourceParam, from, to, userType, wsType) RETURNS Y {
   l1 = LOAD '$resourceParam' USING PigStorage() as (message : chararray);
   l2 = FILTER l1 BY INDEXOF(message, 'EVENT#', 0) > 0;
 
-  l3 = extractUser(l2, '$userType');
-  l4 = extractWs(l3, '$wsType');
-  l5 = FOREACH l4 GENERATE user,
-                           ws,
-                           message,
-                           REGEX_EXTRACT_ALL(message, '([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}) ([0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2},[0-9]{3}).*\\s-(\\s.*)') AS pattern;
+  l3 = extractUser(l2, '$userType'); -- TODO check filter
+  l4 = extractWs(l3, '$wsType'); -- TODO check filter
+  l5 = extractParam(l4, 'WS-ID', 'wsId');
+  l6 = extractParam(l5, 'USER-ID', 'userId');
+  l = FOREACH l6 GENERATE user,
+                          userId,
+                          ws,
+                          wsId,
+                          message,
+                          REGEX_EXTRACT_ALL(message, '([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}) ([0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2},[0-9]{3}).*\\s-(\\s.*)') AS pattern;
 
-  l6 = FOREACH l5 GENERATE ReplaceUserWithId(user) AS user,
-                           user AS userName,
-                           ReplaceWsWithId(ws) AS ws,
-                           ws AS wsName,
-                           ToDate(pattern.$1, 'yyyy-MM-dd HH:mm:ss,SSS') AS dt,
-                           pattern.$2 AS message;
+  k1 = FOREACH l GENERATE ReplaceUserWithId(user, userId) AS user,
+                          ReplaceWsWithId(ws, wsId) AS ws,
+                          ToDate(pattern.$1, 'yyyy-MM-dd HH:mm:ss,SSS') AS dt,
+                          pattern.$2 AS message;
 
-  l7 = filterByDate(l6, '$from', '$to');
-  l8 = extractParam(l7, 'EVENT', 'event');
-  l9 = removeEmptyField(l8, 'event');
+  k2 = filterByDate(k1, '$from', '$to');
+  k3 = extractParam(k2, 'EVENT', 'event');
+  k = removeEmptyField(k3, 'event');
 
-  l10 = FILTER l9 BY '$wsType' == 'ANY' OR  ws == 'default' OR
+  m1 = FILTER k BY '$wsType' == 'ANY' OR  ws == 'default' OR
                     ('$wsType' == 'TEMPORARY' AND IsTemporaryWorkspaceById(ws)) OR
                     ('$wsType' == 'PERSISTENT' AND NOT IsTemporaryWorkspaceById(ws));
 
-  l11 = FILTER l10 BY '$userType' == 'ANY' OR user == 'default' OR
+  m2 = FILTER m1 BY '$userType' == 'ANY' OR user == 'default' OR
                       ('$userType' == 'ANONYMOUS' AND IsAnonymousUserById(user)) OR
                       ('$userType' == 'REGISTERED' AND NOT IsAnonymousUserById(user));
 
-  l12 = DISTINCT l11;
-  $Y = FOREACH l12 GENERATE dt,
+  m = DISTINCT m2;
+  $Y = FOREACH m GENERATE dt,
                           user,
-                          userName,
                           event,
                           message,
-                          ws,
-                          wsName;
+                          ws;
 };
 ---------------------------------------------------------------------------
 -- Removes tuples with empty fields
@@ -252,15 +252,15 @@ DEFINE usersCreatedFromFactory(X) RETURNS Y {
 
     -- finds in which temporary workspaces anonymous users have worked
     x1 = filterByEvent($X, 'user-added-to-ws');
-    x2 = FOREACH x1 GENERATE dt, ws AS tmpWs, user AS tmpUser;
-    x = FILTER x2 BY IsAnonymousUserById(tmpUser) AND IsTemporaryWorkspaceById(tmpWs);
+    x2 = FOREACH x1 GENERATE dt, ws AS tmpWs, user AS tmpUser; -- TODO
+    x = FILTER x2 BY IsAnonymousUserById(tmpUser) AND IsTemporaryWorkspaceById(tmpWs); -- TODO
 
     -- finds all anonymous users have become registered (created their accounts or just logged in)
     t1 = filterByEvent($X, 'user-changed-name');
     t2 = extractParam(t1, 'OLD-USER', 'old');
     t3 = extractParam(t2, 'NEW-USER', 'new');
-    t4 = FOREACH t3 GENERATE dt, ReplaceUserWithId(old) AS old, ReplaceUserWithId(new) AS new;
-    t5 = FILTER t4 BY IsAnonymousUserById(old) AND NOT IsAnonymousUserById(new);
+    t4 = FOREACH t3 GENERATE dt, ReplaceUserWithId(old, null) AS old, ReplaceUserWithId(new, null) AS new, old AS old1, new AS new1;
+    t5 = FILTER t4 BY IsAnonymousUserById(old, old1, new1) AND NOT IsAnonymousUserById(new);
     t = FOREACH t5 GENERATE dt, old AS tmpUser, new AS user;
 
     -- finds created users

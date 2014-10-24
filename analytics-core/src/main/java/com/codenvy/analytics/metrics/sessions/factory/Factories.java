@@ -28,7 +28,7 @@ import javax.annotation.security.RolesAllowed;
  * @author Anatoliy Bazko
  */
 @RolesAllowed(value = {"user", "system/admin", "system/manager"})
-@OmitFilters({MetricFilter.WS, MetricFilter.PERSISTENT_WS})
+@OmitFilters({MetricFilter.WS_ID, MetricFilter.PERSISTENT_WS})
 public class Factories extends AbstractAlias {
     public Factories() {
         super(MetricType.FACTORIES, MetricType.CREATED_FACTORIES);

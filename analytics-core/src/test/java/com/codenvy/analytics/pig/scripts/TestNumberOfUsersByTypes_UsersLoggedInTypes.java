@@ -18,7 +18,11 @@
 package com.codenvy.analytics.pig.scripts;
 
 import com.codenvy.analytics.BaseTest;
-import com.codenvy.analytics.metrics.*;
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Metric;
+import com.codenvy.analytics.metrics.MetricFactory;
+import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
@@ -36,19 +40,16 @@ public class TestNumberOfUsersByTypes_UsersLoggedInTypes extends BaseTest {
 
     @BeforeClass
     public void init() throws Exception {
+        addRegisteredUser(UID1, "user1@gmail.com");
+        addRegisteredUser(UID2, "user2@gmail.com");
+
         List<Event> events = new ArrayList<>();
         events.add(Event.Builder.createUserSSOLoggedInEvent("user1@gmail.com", "google")
-                                .withDate("2013-01-02")
-                                .withTime("10:00:00")
-                                .build());
+                                .withDate("2013-01-02", "10:00:00").build());
         events.add(Event.Builder.createUserSSOLoggedInEvent("user2@gmail.com", "google")
-                                .withDate("2013-01-02")
-                                .withTime("10:00:01")
-                                .build());
+                                .withDate("2013-01-02", "10:00:01").build());
         events.add(Event.Builder.createUserSSOLoggedInEvent("user2@gmail.com", "jaas")
-                                .withDate("2013-01-02")
-                                .withTime("10:00:02")
-                                .build());
+                                .withDate("2013-01-02", "10:00:02").build());
         File log = LogGenerator.generateLog(events);
 
 

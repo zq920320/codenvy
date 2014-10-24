@@ -26,7 +26,7 @@ import javax.annotation.security.RolesAllowed;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
-@OmitFilters({MetricFilter.WS, MetricFilter.PERSISTENT_WS})
+@OmitFilters({MetricFilter.WS_ID, MetricFilter.PERSISTENT_WS})
 public class FactorySessionsProductUsageTotal extends AbstractLongValueResulted {
     public FactorySessionsProductUsageTotal() {
         super(MetricType.FACTORY_PRODUCT_USAGE_TIME_TOTAL, SESSION_ID);

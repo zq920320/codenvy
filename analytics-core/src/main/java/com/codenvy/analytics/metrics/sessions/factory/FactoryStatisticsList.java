@@ -43,7 +43,7 @@ import java.util.Map;
  * @author Anatoliy Bazko
  */
 @RolesAllowed({"system/admin", "system/manager"})
-@OmitFilters({MetricFilter.WS, MetricFilter.PERSISTENT_WS})
+@OmitFilters({MetricFilter.WS_ID, MetricFilter.PERSISTENT_WS})
 public class FactoryStatisticsList extends AbstractListValueResulted implements ReadBasedSummariziable {
 
     public FactoryStatisticsList() {

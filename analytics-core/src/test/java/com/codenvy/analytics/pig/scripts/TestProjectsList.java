@@ -20,7 +20,7 @@ package com.codenvy.analytics.pig.scripts;
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.datamodel.MapValueData;
+import com.codenvy.analytics.datamodel.StringValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.Metric;
@@ -38,37 +38,30 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static com.codenvy.analytics.datamodel.ValueDataUtil.getAsList;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
-/**
- * @author Alexander Reshetnyak
- */
+/** @author Alexander Reshetnyak */
 public class TestProjectsList extends BaseTest {
 
     @BeforeClass
     public void init() throws Exception {
         List<Event> events = new ArrayList<>();
 
-        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid1", "ws1", "user1@gmail.com")
-                                .withDate("2013-01-01").withTime("08:59:00").build());
-        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid2", "ws2", "user2@gmail.com")
-                                .withDate("2013-01-01").withTime("08:59:00").build());
-        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid3", "ws3", "user3@gmail.com")
-                                .withDate("2013-01-01").withTime("08:59:00").build());
+        addRegisteredUser(UID1, "user1@gmail.com");
+        addRegisteredUser(UID2, "user2@gmail.com");
+        addRegisteredUser(UID3, "user3@gmail.com");
+        addPersistentWs(WID1, "ws1");
+        addPersistentWs(WID2, "ws2");
+        addPersistentWs(WID3, "ws3");
 
-        events.add(Event.Builder.createProjectCreatedEvent("user1@gmail.com", "ws1", "project1", "jar")
-                                .withDate("2013-01-01")
-                                .withTime("10:00:00")
-                                .build());
-        events.add(Event.Builder.createProjectCreatedEvent("user1@gmail.com", "ws2", "project2", "war")
-                                .withDate("2013-01-01")
-                                .withTime("10:00:01")
-                                .build());
-
-        events.add(Event.Builder.createProjectCreatedEvent("user2@yahoo.com", "ws3", "project3", "war")
-                                .withDate("2013-01-01")
-                                .withTime("10:00:03")
-                                .build());
+        events.add(Event.Builder.createProjectCreatedEvent("ws1", "user1@gmail.com", "project1", "jar")
+                                .withDate("2013-01-01", "10:00:00").build());
+        events.add(Event.Builder.createProjectCreatedEvent("ws2", "user1@gmail.com", "project2", "war")
+                                .withDate("2013-01-01", "10:00:01").build());
+        events.add(Event.Builder.createProjectCreatedEvent("ws3", "user3@gmail.com", "project3", "war")
+                                .withDate("2013-01-01", "10:00:02").build());
 
         File log = LogGenerator.generateLog(events);
 
@@ -76,10 +69,6 @@ public class TestProjectsList extends BaseTest {
         builder.put(Parameters.FROM_DATE, "20130101");
         builder.put(Parameters.TO_DATE, "20130101");
         builder.put(Parameters.LOG, log.getAbsolutePath());
-
-        builder.putAll(scriptsManager.getScript(ScriptType.WORKSPACES_PROFILES, MetricType.WORKSPACES_PROFILES_LIST)
-                                     .getParamsAsMap());
-        pigServer.execute(ScriptType.WORKSPACES_PROFILES, builder.build());
 
         builder.putAll(scriptsManager.getScript(ScriptType.EVENTS, MetricType.PROJECTS).getParamsAsMap());
         pigServer.execute(ScriptType.EVENTS, builder.build());
@@ -92,30 +81,31 @@ public class TestProjectsList extends BaseTest {
         builder.put(Parameters.TO_DATE, "20130101");
 
         Metric metric = MetricFactory.getMetric(MetricType.PROJECTS_LIST);
-        List<ValueData> items = ((ListValueData)metric.getValue(builder.build())).getAll();
+        ListValueData items = getAsList(metric, builder.build());
 
-        assertEquals(3, items.size());
+        Map<String, Map<String, ValueData>> m = listToMap(items, "project");
+        assertEquals(m.size(), 3);
+        assertTrue(m.containsKey("project1"));
+        assertTrue(m.containsKey("project2"));
+        assertTrue(m.containsKey("project3"));
 
-        Map<String, ValueData> m = ((MapValueData)items.get(0)).getAll();
-        assertEquals("project1", m.get("project").getAsString());
-        assertEquals("jar", m.get("project_type").getAsString());
-        assertEquals("wsid1", m.get("ws").getAsString());
-        assertEquals("user1@gmail.com", m.get("user").getAsString());
-        assertEquals(LongValueData.valueOf(fullDateFormat.parse("2013-01-01 10:00:00").getTime()), m.get("date"));
+        Map<String, ValueData> p = m.get("project1");
+        assertEquals(StringValueData.valueOf("jar"), p.get("project_type"));
+        assertEquals(StringValueData.valueOf(WID1), p.get("ws"));
+        assertEquals(StringValueData.valueOf(UID1), p.get("user"));
+        assertEquals(LongValueData.valueOf(fullDateFormat.parse("2013-01-01 10:00:00").getTime()), p.get("date"));
 
-        m = ((MapValueData)items.get(1)).getAll();
-        assertEquals("project2", m.get("project").getAsString());
-        assertEquals("war", m.get("project_type").getAsString());
-        assertEquals("wsid2", m.get("ws").getAsString());
-        assertEquals("user1@gmail.com", m.get("user").getAsString());
-        assertEquals(LongValueData.valueOf(fullDateFormat.parse("2013-01-01 10:00:01").getTime()), m.get("date"));
+        p = m.get("project2");
+        assertEquals(StringValueData.valueOf("war"), p.get("project_type"));
+        assertEquals(StringValueData.valueOf(WID2), p.get("ws"));
+        assertEquals(StringValueData.valueOf(UID1), p.get("user"));
+        assertEquals(LongValueData.valueOf(fullDateFormat.parse("2013-01-01 10:00:01").getTime()), p.get("date"));
 
-        m = ((MapValueData)items.get(2)).getAll();
-        assertEquals("project3", m.get("project").getAsString());
-        assertEquals("war", m.get("project_type").getAsString());
-        assertEquals("wsid3", m.get("ws").getAsString());
-        assertEquals("user2@yahoo.com", m.get("user").getAsString());
-        assertEquals(LongValueData.valueOf(fullDateFormat.parse("2013-01-01 10:00:03").getTime()), m.get("date"));
+        p = m.get("project3");
+        assertEquals(StringValueData.valueOf("war"), p.get("project_type"));
+        assertEquals(StringValueData.valueOf(WID3), p.get("ws"));
+        assertEquals(StringValueData.valueOf(UID3), p.get("user"));
+        assertEquals(LongValueData.valueOf(fullDateFormat.parse("2013-01-01 10:00:02").getTime()), p.get("date"));
     }
 
     @Test
@@ -126,23 +116,24 @@ public class TestProjectsList extends BaseTest {
         builder.put(Parameters.USER, "user1@gmail.com");
 
         Metric metric = MetricFactory.getMetric(MetricType.PROJECTS_LIST);
-        List<ValueData> items = ((ListValueData)metric.getValue(builder.build())).getAll();
+        ListValueData items = getAsList(metric, builder.build());
 
-        assertEquals(2, items.size());
+        Map<String, Map<String, ValueData>> m = listToMap(items, "project");
+        assertEquals(m.size(), 2);
+        assertTrue(m.containsKey("project1"));
+        assertTrue(m.containsKey("project2"));
 
-        Map<String, ValueData> m = ((MapValueData)items.get(0)).getAll();
-        assertEquals("project1", m.get("project").getAsString());
-        assertEquals("jar", m.get("project_type").getAsString());
-        assertEquals("wsid1", m.get("ws").getAsString());
-        assertEquals("user1@gmail.com", m.get("user").getAsString());
-        assertEquals(LongValueData.valueOf(fullDateFormat.parse("2013-01-01 10:00:00").getTime()), m.get("date"));
+        Map<String, ValueData> p = m.get("project1");
+        assertEquals(StringValueData.valueOf("jar"), p.get("project_type"));
+        assertEquals(StringValueData.valueOf(WID1), p.get("ws"));
+        assertEquals(StringValueData.valueOf(UID1), p.get("user"));
+        assertEquals(LongValueData.valueOf(fullDateFormat.parse("2013-01-01 10:00:00").getTime()), p.get("date"));
 
-        m = ((MapValueData)items.get(1)).getAll();
-        assertEquals("project2", m.get("project").getAsString());
-        assertEquals("war", m.get("project_type").getAsString());
-        assertEquals("wsid2", m.get("ws").getAsString());
-        assertEquals("user1@gmail.com", m.get("user").getAsString());
-        assertEquals(LongValueData.valueOf(fullDateFormat.parse("2013-01-01 10:00:01").getTime()), m.get("date"));
+        p = m.get("project2");
+        assertEquals(StringValueData.valueOf("war"), p.get("project_type"));
+        assertEquals(StringValueData.valueOf(WID2), p.get("ws"));
+        assertEquals(StringValueData.valueOf(UID1), p.get("user"));
+        assertEquals(LongValueData.valueOf(fullDateFormat.parse("2013-01-01 10:00:01").getTime()), p.get("date"));
     }
 
     @Test

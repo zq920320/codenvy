@@ -40,17 +40,18 @@ public class TestUsersSessions extends BaseTest {
 
     @BeforeClass
     public void prepare() throws Exception {
-        List<Event> events = new ArrayList<>();
+        addRegisteredUser(UID1, "user1@gmail.com");
 
-        events.add(Event.Builder.createSessionUsageEvent("ANONYMOUSUSER_user11", "ws1", "1", "2013-11-01 19:00:00", "2013-11-01 19:06:00", false).
+        List<Event> events = new ArrayList<>();
+        events.add(Event.Builder.createSessionUsageEvent("anonymoususer_user11", "ws1", "1", "2013-11-01 19:00:00", "2013-11-01 19:06:00", false).
                 withDate("2013-11-01").withTime("19:00:00").build());
 
-        events.add(Event.Builder.createSessionUsageEvent("user@gmail.com", "ws1", "2", "2013-11-01 20:00:00", "2013-11-01 20:05:00", false).
+        events.add(Event.Builder.createSessionUsageEvent("user1@gmail.com", "ws1", "2", "2013-11-01 20:00:00", "2013-11-01 20:05:00", false).
                 withDate("2013-11-01").withTime("20:00:00").build());
-        events.add(Event.Builder.createUserSSOLoggedOutEvent("user@gmail.com").withDate("2013-11-01")
+        events.add(Event.Builder.createUserSSOLoggedOutEvent("user1@gmail.com").withDate("2013-11-01")
                                 .withTime("20:06:00").build());
 
-        events.add(Event.Builder.createSessionUsageEvent("ANONYMOUSUSER_user11", "ws2", "3", "2013-11-01 19:30:00", "2013-11-01 19:32:00", false).
+        events.add(Event.Builder.createSessionUsageEvent("anonymoususer_user11", "ws2", "3", "2013-11-01 19:30:00", "2013-11-01 19:32:00", false).
                 withDate("2013-11-01").withTime("19:30:00").build());
 
         File log = LogGenerator.generateLog(events);
@@ -70,7 +71,7 @@ public class TestUsersSessions extends BaseTest {
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
         builder.put(Parameters.SORT, "+date");
-        builder.put(MetricFilter.USER, "anonymoususer_user11");
+        builder.put(MetricFilter.USER_ID, "anonymoususer_user11");
 
         Metric metric = MetricFactory.getMetric(MetricType.PRODUCT_USAGE_SESSIONS_LIST);
 
@@ -116,7 +117,7 @@ public class TestUsersSessions extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
-        builder.put(MetricFilter.ALIASES, "user@gmail.com");
+        builder.put(MetricFilter.USER, "user1@gmail.com");
 
         Metric metric = MetricFactory.getMetric(MetricType.PRODUCT_USAGE_SESSIONS_LIST);
 
@@ -131,7 +132,7 @@ public class TestUsersSessions extends BaseTest {
         assertEquals(items.getAll().get("session_id"), StringValueData.valueOf("2"));
         assertEquals(items.getAll().get("ws"), StringValueData.valueOf("ws1"));
         assertEquals(items.getAll().get("time"), LongValueData.valueOf(360000));
-        assertEquals(items.getAll().get("domain"), StringValueData.valueOf(""));
+        assertEquals(items.getAll().get("domain"), StringValueData.valueOf("gmail.com"));
         assertEquals(items.getAll().get("user_company"), StringValueData.valueOf(""));
         assertEquals(items.getAll().get("logout_interval"), LongValueData.valueOf(60 * 1000));
 
@@ -150,7 +151,7 @@ public class TestUsersSessions extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
-        builder.put(MetricFilter.USER, "user@gmail");
+        builder.put(MetricFilter.USER_ID, "user@gmail");
 
         Metric metric = MetricFactory.getMetric(MetricType.PRODUCT_USAGE_SESSIONS_LIST);
 

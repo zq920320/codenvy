@@ -42,7 +42,7 @@ import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
-@OmitFilters({MetricFilter.WS, MetricFilter.PERSISTENT_WS})
+@OmitFilters({MetricFilter.WS_ID, MetricFilter.PERSISTENT_WS})
 public class ProductUsageFactorySessionsList extends AbstractListValueResulted implements ReadBasedSummariziable {
 
     public ProductUsageFactorySessionsList() {

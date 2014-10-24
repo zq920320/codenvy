@@ -175,8 +175,8 @@ public abstract class ReadBasedMetric extends AbstractMetric {
         String allowedUsers = context.getAsString(Parameters.ORIGINAL_USER);
         String allowedWorkspaces = context.getAsString(Parameters.ORIGINAL_WS);
 
-        String ws = context.getAsString(MetricFilter.WS);
-        Object user = context.get(MetricFilter.USER);
+        String ws = context.getAsString(MetricFilter.WS_ID);
+        Object user = context.get(MetricFilter.USER_ID);
 
         boolean isAllowedUserEntities = isAllowedEntities(user, allowedUsers);
         boolean isAllowedWsEntities = isAllowedEntities(ws, allowedWorkspaces);

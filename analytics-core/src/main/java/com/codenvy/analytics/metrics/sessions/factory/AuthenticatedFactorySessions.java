@@ -28,7 +28,7 @@ import java.io.IOException;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
-@OmitFilters({MetricFilter.WS, MetricFilter.PERSISTENT_WS})
+@OmitFilters({MetricFilter.WS_ID, MetricFilter.PERSISTENT_WS})
 public class AuthenticatedFactorySessions extends AbstractLongValueResulted {
 
     public AuthenticatedFactorySessions() {
@@ -42,7 +42,7 @@ public class AuthenticatedFactorySessions extends AbstractLongValueResulted {
 
     @Override
     public Context applySpecificFilter(Context context) throws IOException {
-        if (!context.exists(MetricFilter.USER)) {
+        if (!context.exists(MetricFilter.USER_ID)) {
             Context.Builder builder = new Context.Builder(context);
             builder.put(MetricFilter.REGISTERED_USER, 1);
             return builder.build();

@@ -26,7 +26,7 @@ import com.codenvy.analytics.metrics.OmitFilters;
 /**
  * @author Anatoliy Bazko
  */
-@OmitFilters({MetricFilter.USER, MetricFilter.REGISTERED_USER})
+@OmitFilters({MetricFilter.USER_ID, MetricFilter.REGISTERED_USER})
 public class WorkspacesProfilesList extends AbstractWorkspacesProfile {
 
     public WorkspacesProfilesList() {

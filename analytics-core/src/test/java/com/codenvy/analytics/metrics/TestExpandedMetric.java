@@ -124,7 +124,7 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
         // create user from factory
         events.add(Event.Builder.createFactoryUrlAcceptedEvent("tmp-4", "factoryUrl1", "referrer1", "org1", "affiliate1")
                                 .withDate("2013-11-01").withTime("09:01:00").build());
-        events.add(Event.Builder.createTenantCreatedEvent("tmp-4", "anonymoususer_04")
+        events.add(Event.Builder.createWorkspaceCreatedEvent(TWID4, "tmp-4", "anonymoususer_04")
                                 .withDate("2013-11-01").withTime("09:01:30").build());
         events.add(Event.Builder.createUserAddedToWsEvent("anonymoususer_4","tmp-4",  "website")
                                 .withDate("2013-11-01").withTime("09:02:00").build());
@@ -160,11 +160,11 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
         events.add(Event.Builder.createFactoryUrlAcceptedEvent("tmp-3", "factoryUrl1", "http://referrer3", "org3", "affiliate2")
                                 .withDate("2013-11-01").withTime("11:00:02").build());
 
-        events.add(Event.Builder.createTenantCreatedEvent("tmp-1", "user1@gmail.com")
+        events.add(Event.Builder.createWorkspaceCreatedEvent(TWID1, "tmp-1", "user1@gmail.com")
                                 .withDate("2013-11-01").withTime("12:00:00").build());
-        events.add(Event.Builder.createTenantCreatedEvent("tmp-2", "user1@gmail.com")
+        events.add(Event.Builder.createWorkspaceCreatedEvent(TWID2, "tmp-2", "user1@gmail.com")
                                 .withDate("2013-11-01").withTime("12:01:00").build());
-        events.add(Event.Builder.createTenantCreatedEvent("tmp-3", "user1@gmail.com")
+        events.add(Event.Builder.createWorkspaceCreatedEvent(TWID3, "tmp-3", "user1@gmail.com")
                                 .withDate("2013-11-01").withTime("12:02:00").build());
 
         // build event for session #1
@@ -202,17 +202,17 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
 
 
         // create test projects and deploy they into PaaS
-        events.add(Event.Builder.createProjectCreatedEvent(TEST_USER, TEST_WS, "project1", "python")
+        events.add(Event.Builder.createProjectCreatedEvent(TEST_WS, TEST_USER, "project1", "python")
                                 .withDate("2013-11-01").withTime("18:08:00,600").build());
         events.add(Event.Builder.createApplicationCreatedEvent(TEST_USER, TEST_WS, "project1", "python", "gae")
                                 .withDate("2013-11-01").withTime("18:08:10").build());
 
-        events.add(Event.Builder.createProjectCreatedEvent(TEST_USER, "ws2", "project2", "war")
+        events.add(Event.Builder.createProjectCreatedEvent("ws2", TEST_USER, "project2", "war")
                                 .withDate("2013-11-01").withTime("18:12:00").build());
         events.add(Event.Builder.createApplicationCreatedEvent(TEST_USER, "ws2", "project2", "war", "gae")
                                 .withDate("2013-11-01").withTime("18:12:30").build());
 
-        events.add(Event.Builder.createProjectCreatedEvent("user2@gmail.com", "ws3", "project2", "java")
+        events.add(Event.Builder.createProjectCreatedEvent("ws3", "user2@gmail.com", "project2", "java")
                                 .withDate("2013-11-01").withTime("18:20:10").build());
         events.add(Event.Builder.createProjectDeployedEvent("user2@gmail.com", "ws3", "project2", "java", "local")
                                 .withDate("2013-11-01").withTime("18:21:30").build());
@@ -313,7 +313,7 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
 
         events.add(Event.Builder.createUserCreatedEvent("factory_user5", "factory_user5@gmail.com", "factory_user5@gmail.com")
                                 .withDate("2013-12-20").withTime("11:00:03").build());
-        events.add(Event.Builder.createTenantCreatedEvent("tmp-5", "factory_user5")
+        events.add(Event.Builder.createWorkspaceCreatedEvent(TWID5, "tmp-5", "factory_user5")
                                 .withDate("2013-12-20").withTime("12:01:00").build());
 
         log = LogGenerator.generateLog(events);
@@ -456,10 +456,12 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
         ListValueData filteredValue = (ListValueData)metric.getValue(builder.build());
         List<ValueData> all = filteredValue.getAll();
 
-        assertEquals(all.size(), 1);
+        assertEquals(all.size(), 2);
 
         Map<String, ValueData> record = ((MapValueData)all.get(0)).getAll();
         assertEquals(record.get("user").getAsString(), TEST_USER);
+        record = ((MapValueData)all.get(1)).getAll();
+        assertEquals(record.get("user").getAsString(), "user2@gmail.com");
     }
 
     /*
@@ -519,7 +521,7 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
         assertEquals(all.size(), 1);
 
         Map<String, ValueData> record = ((MapValueData)all.get(0)).getAll();
-        assertEquals(record.get("ws").toString(), "tmp-5");
+        assertEquals(record.get("ws").toString(), TWID5);
 
         builder.put(Parameters.PASSED_DAYS_COUNT, Parameters.PassedDaysCount.BY_60_DAYS.toString());
         context = Utils.initDateInterval(builder.getAsDate(Parameters.TO_DATE), builder.getPassedDaysCount(), builder);
@@ -528,9 +530,6 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
         all = treatAsList(value);
 
         assertEquals(all.size(), 3);
-
-        record = ((MapValueData)all.get(1)).getAll();
-        assertEquals(record.get("ws").toString(), "tmp-4");
     }
 
     /**
@@ -561,7 +560,7 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
 
         builder = new Context.Builder();
         builder.put(Parameters.EXPANDED_METRIC_NAME, MetricType.PRODUCT_USAGE_SESSIONS.toString());
-        builder.put(MetricFilter.USER, "factory_user5");
+        builder.put(MetricFilter.USER_ID, "factory_user5");
 
         builder.put(Parameters.TO_DATE, "20131221");
         builder.put(Parameters.PASSED_DAYS_COUNT, Parameters.PassedDaysCount.BY_1_DAY.toString());
@@ -910,7 +909,6 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
 
         builder = new Context.Builder();
         builder.put(Parameters.TO_DATE, "20131101");
-        builder.put(Parameters.USER, TEST_USER);
 
         AbstractActiveEntities metric = new ActiveWorkspaces();
 
@@ -1102,13 +1100,9 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
         builder.putAll(scriptsManager.getScript(ScriptType.ACTIVE_ENTITIES, MetricType.ACTIVE_WORKSPACES_SET).getParamsAsMap());
         pigServer.execute(ScriptType.ACTIVE_ENTITIES, builder.build());
 
-        builder = new Context.Builder();
-        builder.put(Parameters.TO_DATE, "20131101");
-        builder.put(Parameters.USER, TEST_USER);
-
         Expandable metric = (Expandable)MetricFactory.getMetric(MetricType.ACTIVE_WORKSPACES);
 
-        ValueData expandedValue = metric.getExpandedValue(builder.build());
+        ValueData expandedValue = metric.getExpandedValue(Context.EMPTY);
 
         // test view data builded on expanded metric value data
         ViewData viewData = viewBuilder.getViewData(expandedValue);

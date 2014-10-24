@@ -19,7 +19,12 @@ package com.codenvy.analytics;
 
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.*;
+import com.codenvy.analytics.metrics.AbstractMetric;
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Metric;
+import com.codenvy.analytics.metrics.MetricFactory;
+import com.codenvy.analytics.metrics.MetricFilter;
+import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.pig.udf.CreateProjectId;
 import com.codenvy.analytics.pig.udf.ReplaceUserWithId;
 import com.codenvy.analytics.pig.udf.ReplaceWsWithId;
@@ -32,7 +37,9 @@ import org.testng.annotations.Test;
 
 import java.util.Map;
 
-import static com.codenvy.analytics.datamodel.ValueDataUtil.*;
+import static com.codenvy.analytics.datamodel.ValueDataUtil.getAsList;
+import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsList;
+import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsMap;
 
 /**
  * Modify analytics.properties:
@@ -67,7 +74,7 @@ public class TestRestoreID extends BaseTest {
 
                 String user = (String)doc.get(AbstractMetric.USER);
                 if (user != null && !user.equals("default")) {
-                    String userId = ReplaceUserWithId.exec(user);
+                    String userId = ReplaceUserWithId.doReplace(user);
                     if (!user.equals(userId)) {
                         save = true;
                         doc.put(AbstractMetric.USER, userId);
@@ -76,7 +83,7 @@ public class TestRestoreID extends BaseTest {
 
                 String ws = (String)doc.get(AbstractMetric.WS);
                 if (ws != null && !ws.equals("default")) {
-                    String wsId = ReplaceWsWithId.exec(ws);
+                    String wsId = ReplaceWsWithId.doReplace(ws);
                     if (!ws.equals(wsId)) {
                         save = true;
                         doc.put(AbstractMetric.WS, wsId);
@@ -85,10 +92,10 @@ public class TestRestoreID extends BaseTest {
 
                 String company = (String)doc.get(AbstractMetric.USER_COMPANY);
                 if (company != null && user != null) {
-                    String userId = ReplaceUserWithId.exec(user);
+                    String userId = ReplaceUserWithId.doReplace(user);
 
                     Context.Builder builder = new Context.Builder();
-                    builder.put(MetricFilter.USER, userId);
+                    builder.put(MetricFilter.USER_ID, userId);
 
                     Metric metric = MetricFactory.getMetric(MetricType.USERS_PROFILES_LIST);
                     ListValueData list = getAsList(metric, builder.build());
@@ -109,8 +116,8 @@ public class TestRestoreID extends BaseTest {
 
                 String projectId = (String)doc.get(AbstractMetric.PROJECT_ID);
                 if (projectId != null) {
-                    String userId = ReplaceUserWithId.exec(user);
-                    String wsId = ReplaceWsWithId.exec(ws);
+                    String userId = ReplaceUserWithId.doReplace(user);
+                    String wsId = ReplaceWsWithId.doReplace(ws);
                     String project = (String)doc.get(AbstractMetric.PROJECT);
 
                     String newProjectId = CreateProjectId.exec(userId, wsId, project);

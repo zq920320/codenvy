@@ -33,7 +33,7 @@ public abstract class AbstractAnalysisMetric extends AbstractActiveEntities impl
         Context.Builder builder = new Context.Builder(clauses);
         builder.remove(Parameters.FROM_DATE);
 
-        if (!clauses.exists(MetricFilter.USER)) {
+        if (!clauses.exists(MetricFilter.USER_ID)) {
             builder.put(MetricFilter.REGISTERED_USER, 1);
         }
 

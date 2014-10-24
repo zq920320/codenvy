@@ -19,7 +19,12 @@ package com.codenvy.analytics.pig.udf;
 
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.*;
+import com.codenvy.analytics.metrics.AbstractMetric;
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Metric;
+import com.codenvy.analytics.metrics.MetricFactory;
+import com.codenvy.analytics.metrics.MetricFilter;
+import com.codenvy.analytics.metrics.MetricType;
 
 import org.apache.pig.EvalFunc;
 import org.apache.pig.data.DataType;
@@ -39,16 +44,21 @@ public class ReplaceUserWithId extends EvalFunc<String> {
     public ReplaceUserWithId() {
     }
 
+    /** {@inheritDoc} */
     @Override
     public String exec(Tuple input) throws IOException {
-        if (input == null || input.size() != 1) {
+        if (input == null || input.size() != 2) {
             return null;
         }
 
-        return exec((String)input.get(0));
+        String user = (String)input.get(0);
+        String userId = (String)input.get(1);
+
+        return userId != null ? userId : doReplace(user);
     }
 
-    public static String exec(String user) throws IOException {
+    /** Does replacement */
+    public static String doReplace(String user) throws IOException {
         Metric metric = MetricFactory.getMetric(MetricType.USERS_PROFILES_LIST);
         if (user == null) {
             return null;
@@ -70,6 +80,7 @@ public class ReplaceUserWithId extends EvalFunc<String> {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public Schema outputSchema(Schema input) {
         return new Schema(new Schema.FieldSchema(getSchemaName(this.getClass().getName().toLowerCase(), input), DataType.CHARARRAY));

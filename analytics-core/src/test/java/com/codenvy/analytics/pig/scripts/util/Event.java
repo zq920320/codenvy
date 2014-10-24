@@ -78,6 +78,16 @@ public class Event {
             return this;
         }
 
+        public Builder withDate(String date, String time) {
+            if (date.length() == 8) {
+                this.date = date.substring(0, 4) + "-" + date.substring(4, 6) + "-" + date.substring(6, 8);
+            } else {
+                this.date = date;
+            }
+            this.time = time;
+            return this;
+        }
+
         public Builder withTime(String time) {
             this.time = time;
             return this;
@@ -107,10 +117,6 @@ public class Event {
 
         public Event build() {
             return new Event(date, time, params);
-        }
-
-        public static Builder createTenantCreatedEvent(String ws, String user) {
-            return new Builder().withParam("EVENT", "tenant-created").withParam("WS", ws).withParam("USER", user);
         }
 
         public static Builder createProjectBuiltEvent(String user,
@@ -316,8 +322,7 @@ public class Event {
                                 .withParam("USER", user);
         }
 
-        public static Builder createProjectCreatedEvent(String user,
-                                                        String ws,
+        public static Builder createProjectCreatedEvent(String ws, String user,
                                                         String project,
                                                         String type) {
             return new Builder().withParam("USER", user)
@@ -336,7 +341,8 @@ public class Event {
                                 .withParam("EMAILS", aliases);
         }
 
-        public static Builder createWorkspaceCreatedEvent(String wsId, String ws,
+        public static Builder createWorkspaceCreatedEvent(String wsId,
+                                                          String ws,
                                                           String user) {
             return new Builder().withParam("EVENT", "workspace-created")
                                 .withParam("WS", ws)

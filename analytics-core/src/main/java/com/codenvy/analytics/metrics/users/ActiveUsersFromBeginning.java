@@ -32,7 +32,7 @@ import java.io.IOException;
  * @author Anatoliy Bazko
  */
 @RolesAllowed({"system/admin", "system/manager"})
-@OmitFilters({MetricFilter.WS, MetricFilter.PERSISTENT_WS})
+@OmitFilters({MetricFilter.WS_ID, MetricFilter.PERSISTENT_WS})
 public class ActiveUsersFromBeginning extends AbstractActiveEntities implements WithoutFromDateParam {
 
     public ActiveUsersFromBeginning() {
@@ -48,7 +48,7 @@ public class ActiveUsersFromBeginning extends AbstractActiveEntities implements 
     public Context applySpecificFilter(Context clauses) throws IOException {
         Context.Builder builder = new Context.Builder(clauses);
         builder.putDefaultValue(Parameters.FROM_DATE);
-        if (!clauses.exists(MetricFilter.USER)) {
+        if (!clauses.exists(MetricFilter.USER_ID)) {
             builder.put(MetricFilter.REGISTERED_USER, 1);
         }
 

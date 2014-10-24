@@ -43,19 +43,13 @@ import static com.mongodb.util.MyAsserts.assertEquals;
 public class TestUsersActivityMetric extends BaseTest {
 
     private static final String WS      = "ws1";
-    private static final String WS_ID   = "wsid1";
     private static final String USER    = "user1@gmail.com";
-    private static final String USER_ID = "uid1";
 
     private static final String WS2      = "ws2";
-    private static final String WS2_ID   = "wsid2";
     private static final String USER2    = "user2@gmail.com";
-    private static final String USER2_ID = "uid2";
 
     private static final String TMP_WS      = "tmp-ws";
-    private static final String TMP_WS_ID   = "wsid3";
     private static final String TMP_USER    = "anonymoususer_5xhz40";
-    private static final String TMP_USER_ID = "uid3";
 
     private static final String SESSION_ID = "8AA06F22-3755-4BDD-9242-8A6371BAB53A";
 
@@ -63,19 +57,19 @@ public class TestUsersActivityMetric extends BaseTest {
     public void prepare() throws Exception {
         List<Event> events = new ArrayList<>();
 
-        events.add(Event.Builder.createUserCreatedEvent(USER_ID, USER, USER)
+        events.add(Event.Builder.createUserCreatedEvent(UID1, USER, USER)
                                 .withDate("2013-11-01").withTime("08:40:01").build());
-        events.add(Event.Builder.createWorkspaceCreatedEvent(WS_ID, WS, USER)
+        events.add(Event.Builder.createWorkspaceCreatedEvent(WID1, WS, USER)
                                 .withDate("2013-11-01").withTime("08:40:02").build());
 
-        events.add(Event.Builder.createUserCreatedEvent(USER2_ID, USER2, USER2)
+        events.add(Event.Builder.createUserCreatedEvent(UID2, USER2, USER2)
                                 .withDate("2013-11-01").withTime("08:40:03").build());
-        events.add(Event.Builder.createWorkspaceCreatedEvent(WS2_ID, WS2, USER2)
+        events.add(Event.Builder.createWorkspaceCreatedEvent(WID2, WS2, USER2)
                                 .withDate("2013-11-01").withTime("08:40:04").build());
 
-        events.add(Event.Builder.createUserCreatedEvent(TMP_USER_ID, TMP_USER, TMP_USER)
+        events.add(Event.Builder.createUserCreatedEvent(AUID1, TMP_USER, TMP_USER)
                                 .withDate("2013-11-01").withTime("08:40:05").build());
-        events.add(Event.Builder.createWorkspaceCreatedEvent(TMP_WS_ID, TMP_WS, TMP_USER)
+        events.add(Event.Builder.createWorkspaceCreatedEvent(TWID1, TMP_WS, TMP_USER)
                                 .withDate("2013-11-01").withTime("08:40:06").build());
 
         events.add(
@@ -153,15 +147,15 @@ public class TestUsersActivityMetric extends BaseTest {
                    0,
                    "user-created",
                    "",
-                   USER_ID,
+                   UID1,
                    fullDateFormatMils.parse("2013-11-01 08:40:01,000").getTime(),
                    0, 0);
 
         assertItem(value,
                    1,
                    "workspace-created",
-                   WS_ID,
-                   USER_ID,
+                   WID1,
+                   UID1,
                    fullDateFormatMils.parse("2013-11-01 08:40:02,000").getTime(),
                    0, 0);
 
@@ -169,15 +163,15 @@ public class TestUsersActivityMetric extends BaseTest {
                    2,
                    "user-created",
                    "",
-                   USER2_ID,
+                   UID2,
                    fullDateFormatMils.parse("2013-11-01 08:40:03,000").getTime(),
                    0, 0);
 
         assertItem(value,
                    3,
                    "workspace-created",
-                   WS2_ID,
-                   USER2_ID,
+                   WID2,
+                   UID2,
                    fullDateFormatMils.parse("2013-11-01 08:40:04,000").getTime(),
                    0, 0);
 
@@ -185,79 +179,79 @@ public class TestUsersActivityMetric extends BaseTest {
                    4,
                    "user-created",
                    "",
-                   TMP_USER_ID,
+                   AUID1,
                    fullDateFormatMils.parse("2013-11-01 08:40:05,000").getTime(),
                    0, 0);
 
         assertItem(value,
                    5,
                    "workspace-created",
-                   TMP_WS_ID,
-                   TMP_USER_ID,
+                   TWID1,
+                   AUID1,
                    fullDateFormatMils.parse("2013-11-01 08:40:06,000").getTime(),
                    0, 0);
 
         assertItem(value,
                    6,
                    "run-started",
-                   WS2_ID,
-                   USER2_ID,
+                   WID2,
+                   UID2,
                    fullDateFormatMils.parse("2013-11-01 19:08:00,000").getTime(),
                    0, 0);
 
         assertItem(value,
                    7,
                    "run-started",
-                   WS_ID,
-                   USER_ID,
+                   WID1,
+                   UID1,
                    fullDateFormatMils.parse("2013-11-01 19:08:00,600").getTime(),
                    0, 0);
 
         assertItem(value,
                    8,
                    "run-finished",
-                   WS2_ID,
-                   USER2_ID,
+                   WID2,
+                   UID2,
                    fullDateFormatMils.parse("2013-11-01 19:10:00,000").getTime(),
                    0, 0);
 
         assertItem(value,
                    9,
                    "run-finished",
-                   WS_ID,
-                   USER_ID,
+                   WID1,
+                   UID1,
                    fullDateFormatMils.parse("2013-11-01 19:10:00,900").getTime(),
                    0, 0);
 
         assertItem(value,
                    10,
                    "build-started",
-                   WS2_ID,
-                   USER_ID,
+                   WID2,
+                   UID1,
                    fullDateFormatMils.parse("2013-11-01 19:12:00,000").getTime(),
                    0, 0);
 
         assertItem(value,
                    11,
                    "build-finished",
-                   WS2_ID,
-                   USER_ID,
+                   WID2,
+                   UID1,
                    fullDateFormatMils.parse("2013-11-01 19:14:00,000").getTime(),
                    0, 0);
 
         assertItem(value,
                    12,
                    "debug-started",
-                   WS_ID,
-                   USER_ID,
+                   WID1,
+                   UID1,
                    fullDateFormatMils.parse("2013-11-01 20:02:00,600").getTime(),
                    0, 0);
 
         assertItem(value,
                    13,
                    "project-built",
-                   WS_ID,
-                   USER_ID,
+                   WID1,
+                   UID1,
                    fullDateFormatMils.parse("2013-11-01 20:04:00,320").getTime(),
                    0, 0);
 
@@ -289,8 +283,8 @@ public class TestUsersActivityMetric extends BaseTest {
         assertItem(value,
                    1,
                    "run-started",
-                   WS_ID,
-                   USER_ID,
+                   WID1,
+                   UID1,
                    fullDateFormatMils.parse("2013-11-01 19:08:00,600").getTime(),
                    fullDateFormatMils.parse("2013-11-01 19:08:00,600").getTime() -
                    fullDateFormatMils.parse("2013-11-01 19:00:00,000").getTime(),
@@ -299,8 +293,8 @@ public class TestUsersActivityMetric extends BaseTest {
         assertItem(value,
                    2,
                    "run-finished",
-                   WS_ID,
-                   USER_ID,
+                   WID1,
+                   UID1,
                    fullDateFormatMils.parse("2013-11-01 19:10:00,900").getTime(),
                    fullDateFormatMils.parse("2013-11-01 19:10:00,900").getTime() -
                    fullDateFormatMils.parse("2013-11-01 19:08:00,600").getTime(),
@@ -309,8 +303,8 @@ public class TestUsersActivityMetric extends BaseTest {
         assertItem(value,
                    3,
                    "debug-started",
-                   WS_ID,
-                   USER_ID,
+                   WID1,
+                   UID1,
                    fullDateFormatMils.parse("2013-11-01 20:02:00,600").getTime(),
                    fullDateFormatMils.parse("2013-11-01 20:02:00,600").getTime() -
                    fullDateFormatMils.parse("2013-11-01 19:10:00,900").getTime(),
@@ -363,8 +357,8 @@ public class TestUsersActivityMetric extends BaseTest {
         assertItem(value,
                    1,
                    "run-started",
-                   WS_ID,
-                   USER_ID,
+                   WID1,
+                   UID1,
                    fullDateFormatMils.parse("2013-11-01 19:08:00,600").getTime(),
                    fullDateFormatMils.parse("2013-11-01 19:08:00,600").getTime() -
                    fullDateFormatMils.parse("2013-11-01 19:00:00,000").getTime(),
@@ -373,8 +367,8 @@ public class TestUsersActivityMetric extends BaseTest {
         assertItem(value,
                    2,
                    "run-finished",
-                   WS_ID,
-                   USER_ID,
+                   WID1,
+                   UID1,
                    fullDateFormatMils.parse("2013-11-01 19:10:00,900").getTime(),
                    fullDateFormatMils.parse("2013-11-01 19:10:00,900").getTime() -
                    fullDateFormatMils.parse("2013-11-01 19:08:00,600").getTime(),
@@ -383,8 +377,8 @@ public class TestUsersActivityMetric extends BaseTest {
         assertItem(value,
                    3,
                    "debug-started",
-                   WS_ID,
-                   USER_ID,
+                   WID1,
+                   UID1,
                    fullDateFormatMils.parse("2013-11-01 20:02:00,600").getTime(),
                    fullDateFormatMils.parse("2013-11-01 20:02:00,600").getTime() -
                    fullDateFormatMils.parse("2013-11-01 19:10:00,900").getTime(),
@@ -439,8 +433,8 @@ public class TestUsersActivityMetric extends BaseTest {
         assertItem(value,
                    1,
                    "run-started",
-                   WS_ID,
-                   USER_ID,
+                   WID1,
+                   UID1,
                    fullDateFormatMils.parse("2013-11-01 19:08:00,600").getTime(),
                    fullDateFormatMils.parse("2013-11-01 19:08:00,600").getTime() -
                    fullDateFormatMils.parse("2013-11-01 19:00:00,000").getTime(),
@@ -449,8 +443,8 @@ public class TestUsersActivityMetric extends BaseTest {
         assertItem(value,
                    2,
                    "run-finished",
-                   WS_ID,
-                   USER_ID,
+                   WID1,
+                   UID1,
                    fullDateFormatMils.parse("2013-11-01 19:10:00,900").getTime(),
                    fullDateFormatMils.parse("2013-11-01 19:10:00,900").getTime() -
                    fullDateFormatMils.parse("2013-11-01 19:08:00,600").getTime(),
@@ -464,8 +458,8 @@ public class TestUsersActivityMetric extends BaseTest {
         assertItem(value,
                    0,
                    "debug-started",
-                   WS_ID,
-                   USER_ID,
+                   WID1,
+                   UID1,
                    fullDateFormatMils.parse("2013-11-01 20:02:00,600").getTime(),
                    fullDateFormatMils.parse("2013-11-01 20:02:00,600").getTime() -
                    fullDateFormatMils.parse("2013-11-01 19:10:00,900").getTime(),

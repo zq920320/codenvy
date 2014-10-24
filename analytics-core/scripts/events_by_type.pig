@@ -20,13 +20,15 @@ IMPORT 'macros.pig';
 
 l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 
-f1 = filterByEvent(l, '$EVENT');
-f = extractParam(f1, '$PARAM', param);
+a1 = filterByEvent(l, '$EVENT');
+a2 = extractParam(a1, '$PARAM', param);
+a3 = FOREACH a2 GENERATE dt, ws, user, LOWER(param) AS param;
+a = FILTER a3 BY param IS NOT NULL AND param != '';
 
-r1 = FOREACH f GENERATE dt, ws, user, LOWER(param) AS param;
-r = FILTER r1 BY param IS NOT NULL AND param != '';
-
-result = FOREACH r GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('ws', ws), TOTUPLE('user', user),
-    TOTUPLE(param, 1L);
+result = FOREACH a GENERATE UUID(),
+                            TOTUPLE('date', ToMilliSeconds(dt)),
+                            TOTUPLE('ws', ws),
+                            TOTUPLE('user', user),
+                            TOTUPLE(param, 1L);
 
 STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;

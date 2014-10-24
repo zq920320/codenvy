@@ -43,9 +43,9 @@ public class TestTopMetrics extends BaseTest {
     @BeforeClass
     public void init() throws Exception {
         List<Event> events = new ArrayList<>();
-        events.add(Event.Builder.createUserCreatedEvent("uid1", "user1@gmail.com", "user1@gmail.com")
+        events.add(Event.Builder.createUserCreatedEvent(UID1, "user1@gmail.com", "user1@gmail.com")
                                 .withDate("2013-02-10").withTime("10:00:00,000").build());
-        events.add(Event.Builder.createUserCreatedEvent("uid2", "anonymoususer_1", "[anonymoususer_1]")
+        events.add(Event.Builder.createUserCreatedEvent(AUID1, "anonymoususer_1", "anonymoususer_1")
                                 .withDate("2013-02-10").withTime("11:00:00,000").build());
 
         events.add(Event.Builder.createSessionUsageEvent("user1@gmail.com", "tmp-1", "id1", "2013-02-10 10:00:00", "2013-02-10 10:05:00", true)
@@ -73,17 +73,16 @@ public class TestTopMetrics extends BaseTest {
                         .createFactoryUrlAcceptedEvent("tmp-3", "factoryUrl1", "http://referrer2", "org3", "affiliate2")
                         .withDate("2013-02-10").withTime("11:00:02").build());
 
-        events.add(Event.Builder.createTenantCreatedEvent("tmp-1", "user1@gmail.com")
+        events.add(Event.Builder.createWorkspaceCreatedEvent(TWID1, "tmp-1", "user1@gmail.com")
                                 .withDate("2013-02-10").withTime("12:00:00").build());
-        events.add(Event.Builder.createTenantCreatedEvent("tmp-2", "user1@gmail.com")
+        events.add(Event.Builder.createWorkspaceCreatedEvent(TWID2, "tmp-2", "user1@gmail.com")
                                 .withDate("2013-02-10").withTime("12:01:00").build());
 
         // run event for session #1
         events.add(Event.Builder.createRunStartedEvent("user1@gmail.com", "tmp-1", "project", "type", "id1")
                                 .withDate("2013-02-10").withTime("10:03:00").build());
 
-        events.add(Event.Builder.createProjectDeployedEvent("user1@gmail.com", "tmp-1", "project", "type",
-                                                            "local")
+        events.add(Event.Builder.createProjectDeployedEvent("user1@gmail.com", "tmp-1", "project", "type", "local")
                                 .withDate("2013-02-10")
                                 .withTime("10:04:00")
                                 .build());
@@ -105,7 +104,7 @@ public class TestTopMetrics extends BaseTest {
                                 .withTime("12:00:00")
                                 .build());
 
-        events.add(Event.Builder.createUserCreatedEvent("user-id2", "user4@gmail.com", "user4@gmail.com")
+        events.add(Event.Builder.createUserCreatedEvent(UID4, "user4@gmail.com", "user4@gmail.com")
                                 .withDate("2013-02-10")
                                 .withTime("12:00:00")
                                 .build());
@@ -118,8 +117,10 @@ public class TestTopMetrics extends BaseTest {
         builder.put(Parameters.TO_DATE, "20130210");
         builder.put(Parameters.LOG, log.getAbsolutePath());
 
-        builder.putAll(scriptsManager.getScript(ScriptType.USERS_PROFILES, MetricType.USERS_PROFILES_LIST)
-                                     .getParamsAsMap());
+        builder.putAll(scriptsManager.getScript(ScriptType.WORKSPACES_PROFILES, MetricType.WORKSPACES_PROFILES_LIST).getParamsAsMap());
+        pigServer.execute(ScriptType.WORKSPACES_PROFILES, builder.build());
+
+        builder.putAll(scriptsManager.getScript(ScriptType.USERS_PROFILES, MetricType.USERS_PROFILES_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.USERS_PROFILES, builder.build());
 
         builder.putAll(scriptsManager.getScript(ScriptType.ACCEPTED_FACTORIES, MetricType.FACTORIES_ACCEPTED_LIST).getParamsAsMap());

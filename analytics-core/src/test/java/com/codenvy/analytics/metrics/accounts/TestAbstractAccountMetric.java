@@ -47,9 +47,9 @@ public class TestAbstractAccountMetric extends BaseTest {
                                                                                            LongValueData.valueOf(3),
                                                                                            LongValueData.valueOf(4),
                                                                                            LongValueData.valueOf(5)));
-    private List<ValueData> listForSortingTest    = new ArrayList<ValueData>(Arrays.asList(MapValueData.valueOf("user=2"),
-                                                                                           MapValueData.valueOf("user=3"),
-                                                                                           MapValueData.valueOf("user=1")));
+    private List<ValueData> listForSortingTest    = new ArrayList<ValueData>(Arrays.asList(MapValueData.valueOf("user=u2"),
+                                                                                           MapValueData.valueOf("user=u3"),
+                                                                                           MapValueData.valueOf("user=u1")));
 
     @Test(dataProvider = "paginationContextDataProvider")
     public void testPagination(int page, int perPage, int[] items) throws Exception {
@@ -87,8 +87,8 @@ public class TestAbstractAccountMetric extends BaseTest {
 
     @DataProvider(name = "SortingContext")
     public static Object[][] soringContextDataProvider() {
-        return new Object[][]{{"+user", new String[]{"1", "2", "3"}},
-                              {"-user", new String[]{"3", "2", "1"}}};
+        return new Object[][]{{"+user", new String[]{"u1", "u2", "u3"}},
+                              {"-user", new String[]{"u3", "u2", "u1"}}};
 
     }
 

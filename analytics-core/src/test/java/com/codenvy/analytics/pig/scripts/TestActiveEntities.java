@@ -47,16 +47,10 @@ public class TestActiveEntities extends BaseTest {
     public void setUp() throws Exception {
         List<Event> events = new ArrayList<>();
 
-        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid1", "ws1", "user1@gmail.com").withDate("2013-01-01")
-                                .build());
-        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid2", "ws2", "user2@gmail.com").withDate("2013-01-01")
-                                .build());
-        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid3", "tmp-1", "user2@gmail.com").withDate("2013-01-01")
-                                .build());
-        events.add(Event.Builder.createTenantCreatedEvent("ws1", "anonymoususer_1").withDate("2013-01-01").build());
-        events.add(Event.Builder.createTenantCreatedEvent("ws1", "user1@gmail.com").withDate("2013-01-01").build());
-        events.add(Event.Builder.createTenantCreatedEvent("ws2", "user2@gmail.com").withDate("2013-01-01").build());
-        events.add(Event.Builder.createTenantCreatedEvent("tmp-1", "user2@gmail.com").withDate("2013-01-01").build());
+        events.add(Event.Builder.createWorkspaceCreatedEvent(WID1, "ws1", "anonymoususer_1").withDate("2013-01-01").build());
+        events.add(Event.Builder.createWorkspaceCreatedEvent(WID2, "ws2", "user1@gmail.com").withDate("2013-01-01").build());
+        events.add(Event.Builder.createWorkspaceCreatedEvent(WID3, "ws3", "user2@gmail.com").withDate("2013-01-01").build());
+        events.add(Event.Builder.createWorkspaceCreatedEvent(TWID1, "tmp-1", "user2@gmail.com").withDate("2013-01-01").build());
         File log = LogGenerator.generateLog(events);
 
         Context.Builder builder = new Context.Builder();
@@ -112,9 +106,10 @@ public class TestActiveEntities extends BaseTest {
         Metric metric = MetricFactory.getMetric(MetricType.ACTIVE_WORKSPACES_SET);
         SetValueData result = ValueDataUtil.getAsSet(metric, builder.build());
 
-        assertEquals(result.size(), 2);
-        assertTrue(result.getAll().contains(StringValueData.valueOf("wsid1")));
-        assertTrue(result.getAll().contains(StringValueData.valueOf("wsid2")));
+        assertEquals(result.size(), 3);
+        assertTrue(result.getAll().contains(StringValueData.valueOf(WID1)));
+        assertTrue(result.getAll().contains(StringValueData.valueOf(WID2)));
+        assertTrue(result.getAll().contains(StringValueData.valueOf(WID3)));
     }
 
     @Test
@@ -126,6 +121,6 @@ public class TestActiveEntities extends BaseTest {
         Metric metric = MetricFactory.getMetric(MetricType.ACTIVE_WORKSPACES);
         LongValueData result = ValueDataUtil.getAsLong(metric, builder.build());
 
-        assertEquals(result, LongValueData.valueOf(2));
+        assertEquals(result, LongValueData.valueOf(3));
     }
 }

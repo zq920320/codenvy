@@ -19,7 +19,12 @@ package com.codenvy.analytics.pig.udf;
 
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.*;
+import com.codenvy.analytics.metrics.AbstractMetric;
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.MetricFactory;
+import com.codenvy.analytics.metrics.MetricFilter;
+import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.Parameters;
 
 import org.apache.pig.EvalFunc;
 import org.apache.pig.data.DataType;
@@ -44,7 +49,7 @@ public class GetFactoryId extends EvalFunc<String> {
         }
 
         Context.Builder builder = new Context.Builder();
-        builder.put(MetricFilter.WS, (String)input.get(0));
+        builder.put(MetricFilter.WS_ID, (String)input.get(0));
         builder.put(Parameters.SORT, "-date");
         builder.put(Parameters.PAGE, 1);
         builder.put(Parameters.PER_PAGE, 10);

@@ -21,7 +21,13 @@ import com.codenvy.analytics.Configurator;
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.*;
+import com.codenvy.analytics.metrics.AbstractMetric;
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Metric;
+import com.codenvy.analytics.metrics.MetricFactory;
+import com.codenvy.analytics.metrics.MetricFilter;
+import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.accounts.AbstractAccountMetric;
 import com.codenvy.analytics.metrics.accounts.AccountWorkspacesList;
 import com.codenvy.api.analytics.shared.dto.MetricInfoDTO;
@@ -34,7 +40,13 @@ import javax.ws.rs.core.UriInfo;
 import java.io.IOException;
 import java.security.Principal;
 import java.text.ParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import static com.codenvy.analytics.Utils.getFilterAsSet;
@@ -174,8 +186,8 @@ public class Utils {
             allowedUsers = getAllowedUsers();
         }
 
-        if (!context.containsKey(MetricFilter.USER.toString())) {
-            context.put(MetricFilter.USER.toString(), getFilterAsString(allowedUsers));
+        if (!context.containsKey(MetricFilter.USER_ID.toString())) {
+            context.put(MetricFilter.USER_ID.toString(), getFilterAsString(allowedUsers));
         }
         context.put(Parameters.ORIGINAL_USER.toString(), getFilterAsString(allowedUsers));
     }
@@ -228,8 +240,8 @@ public class Utils {
             allowedWorkspaces = getAllowedWorkspacesForCurrentUser(context);
         }
 
-        if (!context.containsKey(MetricFilter.WS.toString())) {
-            context.put(MetricFilter.WS.toString(), getFilterAsString(allowedWorkspaces));
+        if (!context.containsKey(MetricFilter.WS_ID.toString())) {
+            context.put(MetricFilter.WS_ID.toString(), getFilterAsString(allowedWorkspaces));
         }
         context.put(Parameters.ORIGINAL_WS.toString(), getFilterAsString(allowedWorkspaces));
     }

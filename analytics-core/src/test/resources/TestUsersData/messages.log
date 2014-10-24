@@ -1,13 +1,13 @@
-127.0.0.1 2013-11-01 10:10:10,000[main] [INFO] [HelloWorld 1010]  - EVENT#workspace-created# WS#ws1# WS-ID#wsid1#
-127.0.0.1 2013-11-01 10:10:10,000[main] [INFO] [HelloWorld 1010]  - EVENT#workspace-created# WS#ws2# WS-ID#wsid2#
+127.0.0.1 2013-11-01 10:10:10,000[main] [INFO] [HelloWorld 1010]  - EVENT#workspace-created# WS#ws1# WS-ID#workspace1_12345678901234#
+127.0.0.1 2013-11-01 10:10:10,000[main] [INFO] [HelloWorld 1010]  - EVENT#workspace-created# WS#ws2# WS-ID#workspace2_12345678901234#
 
 127.0.0.1 2013-11-01 10:10:10,000[main] [INFO] [HelloWorld 1010]  - EVENT#user-sso-logged-in# USING#google# USER#user2@gmail.com#
 
-127.0.0.1 2013-11-01 10:10:10,000[main] [INFO] [HelloWorld 1010]  - EVENT#user-update-profile# USER-ID#id1# USER#user1@gmail.com# EMAILS#user1@gmail.com# FIRSTNAME#f1# LASTNAME#l1# COMPANY#company1# PHONE#11# JOBTITLE#1#
-127.0.0.1 2013-11-01 10:10:10,000[main] [INFO] [HelloWorld 1010]  - EVENT#user-update-profile# USER-ID#id2# USER#user2@gmail.com# EMAILS#user2@gmail.com# FIRSTNAME#f2# LASTNAME#l2# COMPANY#company1# PHONE#22# JOBTITLE#2#
-127.0.0.1 2013-11-01 19:10:00,000[main] [INFO] [HelloWorld 1010]  - EVENT#user-update-profile# USER-ID#id3# USER#user3@gmail.com# EMAILS#user3@gmail.com# FIRSTNAME## LASTNAME## COMPANY## PHONE## JOBTITLE##
-127.0.0.1 2013-11-01 19:12:00,000[main] [INFO] [HelloWorld 1010]  - EVENT#user-update-profile# USER-ID#id4# USER#user4@gmail.com# EMAILS#user4@gmail.com# FIRSTNAME## LASTNAME## COMPANY## PHONE## JOBTITLE##
-127.0.0.1 2013-11-01 19:15:00,000[main] [INFO] [HelloWorld 1010]  - EVENT#user-update-profile# USER-ID#id3# USER#user3@gmail.com# EMAILS#user3@gmail.com# FIRSTNAME#f3# LASTNAME#l3# COMPANY#company3# PHONE#33# JOBTITLE#3#
+127.0.0.1 2013-11-01 10:10:10,000[main] [INFO] [HelloWorld 1010]  - EVENT#user-update-profile# USER-ID#user1_12345678901234# USER#user1@gmail.com# EMAILS#user1@gmail.com# FIRSTNAME#f1# LASTNAME#l1# COMPANY#company1# PHONE#11# JOBTITLE#1#
+127.0.0.1 2013-11-01 10:10:10,000[main] [INFO] [HelloWorld 1010]  - EVENT#user-update-profile# USER-ID#user2_12345678901234# USER#user2@gmail.com# EMAILS#user2@gmail.com# FIRSTNAME#f2# LASTNAME#l2# COMPANY#company1# PHONE#22# JOBTITLE#2#
+127.0.0.1 2013-11-01 19:10:00,000[main] [INFO] [HelloWorld 1010]  - EVENT#user-update-profile# USER-ID#user3_12345678901234# USER#user3@gmail.com# EMAILS#user3@gmail.com# FIRSTNAME## LASTNAME## COMPANY## PHONE## JOBTITLE##
+127.0.0.1 2013-11-01 19:12:00,000[main] [INFO] [HelloWorld 1010]  - EVENT#user-update-profile# USER-ID#user4_12345678901234# USER#user4@gmail.com# EMAILS#user4@gmail.com# FIRSTNAME## LASTNAME## COMPANY## PHONE## JOBTITLE##
+127.0.0.1 2013-11-01 19:15:00,000[main] [INFO] [HelloWorld 1010]  - EVENT#user-update-profile# USER-ID#user3_12345678901234# USER#user3@gmail.com# EMAILS#user3@gmail.com# FIRSTNAME#f3# LASTNAME#l3# COMPANY#company3# PHONE#33# JOBTITLE#3#
 
 127.0.0.1 2013-11-01 20:00:00,000[main] [INFO] [HelloWorld 1010]  - EVENT#session-usage# SESSION-ID#1# WS#ws1# USER#user1@gmail.com# START-TIME#1383328800000# USAGE-TIME#300000# SESSION-ID#1#
 127.0.0.1 2013-11-01 19:00:00,000[main] [INFO] [HelloWorld 1010]  - EVENT#session-usage# SESSION-ID#1# WS#ws2# USER#user3@gmail.com# START-TIME#1383325200000# USAGE-TIME#120000# SESSION-ID#2#

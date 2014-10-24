@@ -74,9 +74,9 @@ public class TestWorkspacesWithZeroFactorySessionsLength extends BaseTest {
                              .withDate("2013-02-10").withTime("11:00:03").build());
 
 
-        events.add(Event.Builder.createTenantCreatedEvent("tmp-1", "user1@gmail.com")
+        events.add(Event.Builder.createWorkspaceCreatedEvent(TWID1, "tmp-1", "user1@gmail.com")
                                 .withDate("2013-02-10").withTime("12:00:00").build());
-        events.add(Event.Builder.createTenantCreatedEvent("tmp-2", "user1@gmail.com")
+        events.add(Event.Builder.createWorkspaceCreatedEvent(TWID2, "tmp-2", "user1@gmail.com")
                                 .withDate("2013-02-10").withTime("12:01:00").build());
 
         // run event for session #1

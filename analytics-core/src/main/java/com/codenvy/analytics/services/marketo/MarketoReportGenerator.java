@@ -18,8 +18,21 @@
 package com.codenvy.analytics.services.marketo;
 
 import com.codenvy.analytics.Configurator;
-import com.codenvy.analytics.datamodel.*;
-import com.codenvy.analytics.metrics.*;
+import com.codenvy.analytics.datamodel.ListValueData;
+import com.codenvy.analytics.datamodel.LongValueData;
+import com.codenvy.analytics.datamodel.MapValueData;
+import com.codenvy.analytics.datamodel.SetValueData;
+import com.codenvy.analytics.datamodel.StringValueData;
+import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.datamodel.ValueDataUtil;
+import com.codenvy.analytics.metrics.AbstractMetric;
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Metric;
+import com.codenvy.analytics.metrics.MetricFactory;
+import com.codenvy.analytics.metrics.MetricFilter;
+import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.metrics.ReadBasedMetric;
 import com.codenvy.analytics.metrics.users.UsersStatisticsList;
 import com.codenvy.analytics.services.acton.ActOn;
 import com.codenvy.analytics.services.view.MetricRow;
@@ -36,10 +49,21 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static com.codenvy.analytics.Utils.toArray;
-import static com.codenvy.analytics.metrics.AbstractMetric.*;
+import static com.codenvy.analytics.metrics.AbstractMetric.BUILDS;
+import static com.codenvy.analytics.metrics.AbstractMetric.DEPLOYS;
+import static com.codenvy.analytics.metrics.AbstractMetric.ID;
+import static com.codenvy.analytics.metrics.AbstractMetric.LOGINS;
+import static com.codenvy.analytics.metrics.AbstractMetric.PROJECTS;
+import static com.codenvy.analytics.metrics.AbstractMetric.RUNS;
+import static com.codenvy.analytics.metrics.AbstractMetric.TIME;
 
 /**
  * @author Alexander Reshetnyak
@@ -149,7 +173,7 @@ public class MarketoReportGenerator {
      */
     private String getLastProductLogin(String user) throws IOException {
         Context.Builder builder = new Context.Builder();
-        builder.put(MetricFilter.USER, user);
+        builder.put(MetricFilter.USER_ID, user);
 
         LongValueData value = ValueDataUtil.getAsLong(LastLoginTime.INSTANCE, builder.build());
         if (value.equals(LongValueData.DEFAULT)) {
@@ -179,7 +203,7 @@ public class MarketoReportGenerator {
 
     private List<ValueData> getUsersStatistics(String user) throws IOException, ParseException {
         Context.Builder builder = new Context.Builder();
-        builder.put(MetricFilter.USER, user);
+        builder.put(MetricFilter.USER_ID, user);
 
         Metric usersStatistics = MetricFactory.getMetric(MetricType.USERS_STATISTICS_LIST);
         ListValueData valueData = (ListValueData)usersStatistics.getValue(builder.build());

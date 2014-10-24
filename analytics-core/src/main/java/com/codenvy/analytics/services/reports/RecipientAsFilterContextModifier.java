@@ -35,6 +35,6 @@ public class RecipientAsFilterContextModifier extends AbstractContextModifier {
 
     @Override
     public Context update(Context context) {
-        return context.cloneAndPut(MetricFilter.USER, context.getAsString(Parameters.RECIPIENT));
+        return context.cloneAndPut(MetricFilter.USER_ID, context.getAsString(Parameters.RECIPIENT));
     }
 }

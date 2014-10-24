@@ -31,7 +31,7 @@ import java.io.IOException;
 
 /** @author Anatoliy Bazko */
 @RolesAllowed({"system/admin", "system/manager"})
-@OmitFilters({MetricFilter.WS, MetricFilter.PERSISTENT_WS})
+@OmitFilters({MetricFilter.WS_ID, MetricFilter.PERSISTENT_WS})
 public class CompletedProfiles extends AbstractUsersProfile {
 
     private final String VALUE = "value";

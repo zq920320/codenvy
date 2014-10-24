@@ -20,6 +20,7 @@ package com.codenvy.analytics.metrics;
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.LongValueData;
+import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.StringValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.sessions.AbstractProductUsageCondition;
@@ -38,8 +39,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static com.codenvy.analytics.datamodel.ValueDataUtil.*;
+import static com.codenvy.analytics.datamodel.ValueDataUtil.getAsList;
+import static com.codenvy.analytics.datamodel.ValueDataUtil.getAsLong;
+import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsMap;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestProductUsersTime extends BaseTest {
@@ -57,28 +61,14 @@ public class TestProductUsersTime extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20131101");
         builder.put(Parameters.TO_DATE, "20131101");
-        builder.put(Parameters.SORT, "-time");
 
         Metric metric = MetricFactory.getMetric(MetricType.PRODUCT_USERS_TIME);
-        ListValueData data = getAsList(metric, builder.build());
+        List<ValueData> value = getAsList(metric, builder.build()).getAll();
 
-        assertEquals(data.size(), 3);
-        List<ValueData> all = data.getAll();
-
-        Map<String, ValueData> m = treatAsMap(all.get(0));
-        assertEquals(m.get("user"), StringValueData.valueOf("user1@gmail.com"));
-        assertEquals(m.get("time"), LongValueData.valueOf(480000));
-        assertEquals(m.get("sessions"), LongValueData.valueOf(2));
-
-        m = treatAsMap(all.get(1));
-        assertEquals(m.get("user"), StringValueData.valueOf("user3@gmail.com"));
-        assertEquals(m.get("time"), LongValueData.valueOf(420000));
-        assertEquals(m.get("sessions"), LongValueData.valueOf(1));
-
-        m = treatAsMap(all.get(2));
-        assertEquals(m.get("user"), StringValueData.valueOf("user2@gmail.com"));
-        assertEquals(m.get("time"), LongValueData.valueOf(60000));
-        assertEquals(m.get("sessions"), LongValueData.valueOf(1));
+        assertEquals(value.size(), 3);
+        assertTrue(value.contains(MapValueData.valueOf("user=user1_12345678901234,time=480000,sessions=2")));
+        assertTrue(value.contains(MapValueData.valueOf("user=user2_12345678901234,time=60000,sessions=1")));
+        assertTrue(value.contains(MapValueData.valueOf("user=user3_12345678901234,time=420000,sessions=1")));
     }
 
     @Test
@@ -95,19 +85,19 @@ public class TestProductUsersTime extends BaseTest {
         List<ValueData> all = data.getAll();
 
         Map<String, ValueData> m = treatAsMap(all.get(0));
-        assertEquals(m.get("entity"), StringValueData.valueOf("user1@gmail.com"));
+        assertEquals(m.get("entity"), StringValueData.valueOf("user1_12345678901234"));
         assertEquals(m.get("sessions"), LongValueData.valueOf(2));
         assertEquals(m.get("by_1_day"), LongValueData.valueOf(480000));
         assertEquals(m.get("by_lifetime"), LongValueData.valueOf(480000));
 
         m = treatAsMap(all.get(1));
-        assertEquals(m.get("entity"), StringValueData.valueOf("user3@gmail.com"));
+        assertEquals(m.get("entity"), StringValueData.valueOf("user3_12345678901234"));
         assertEquals(m.get("sessions"), LongValueData.valueOf(1));
         assertEquals(m.get("by_1_day"), LongValueData.valueOf(420000));
         assertEquals(m.get("by_lifetime"), LongValueData.valueOf(420000));
 
         m = treatAsMap(all.get(2));
-        assertEquals(m.get("entity"), StringValueData.valueOf("user2@gmail.com"));
+        assertEquals(m.get("entity"), StringValueData.valueOf("user2_12345678901234"));
         assertEquals(m.get("sessions"), LongValueData.valueOf(1));
         assertEquals(m.get("by_1_day"), LongValueData.valueOf(60000));
         assertEquals(m.get("by_lifetime"), LongValueData.valueOf(60000));
@@ -182,28 +172,28 @@ public class TestProductUsersTime extends BaseTest {
                                       .withTime("20:00:00")
                                       .withParam("EVENT", "session-usage")
                                       .withParam("WS", "ws1")
-                                      .withParam("USER", "user1@gmail.com")
+                                      .withParam("USER", "user1_12345678901234")
                                       .withParam("PARAMETERS", "USAGE-TIME=300000,START-TIME=1383328800000,SESSION-ID=1")
                                       .build());
         events.add(new Event.Builder().withDate("2013-11-01")
                                       .withTime("20:00:00")
                                       .withParam("EVENT", "session-usage")
                                       .withParam("WS", "ws1")
-                                      .withParam("USER", "user1@gmail.com")
+                                      .withParam("USER", "user1_12345678901234")
                                       .withParam("PARAMETERS", "USAGE-TIME=180000,START-TIME=1383328800000,SESSION-ID=2")
                                       .build());
         events.add(new Event.Builder().withDate("2013-11-01")
                                       .withTime("20:00:00")
                                       .withParam("EVENT", "session-usage")
                                       .withParam("WS", "ws1")
-                                      .withParam("USER", "user2@gmail.com")
+                                      .withParam("USER", "user2_12345678901234")
                                       .withParam("PARAMETERS", "USAGE-TIME=60000,START-TIME=1383328800000,SESSION-ID=3")
                                       .build());
         events.add(new Event.Builder().withDate("2013-11-01")
                                       .withTime("20:00:00")
                                       .withParam("EVENT", "session-usage")
                                       .withParam("WS", "ws1")
-                                      .withParam("USER", "user3@gmail.com")
+                                      .withParam("USER", "user3_12345678901234")
                                       .withParam("PARAMETERS", "USAGE-TIME=420000,START-TIME=1383328800000,SESSION-ID=4")
                                       .build());
 

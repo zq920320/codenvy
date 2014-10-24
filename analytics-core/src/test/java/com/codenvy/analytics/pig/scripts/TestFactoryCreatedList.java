@@ -48,21 +48,14 @@ public class TestFactoryCreatedList extends BaseTest {
 
     @BeforeClass
     public void init() throws Exception {
+        addRegisteredUser(UID1, "user1@gmail.com");
+        addRegisteredUser(UID2, "user2@gmail.com");
+        addRegisteredUser(UID3, "user3@gmail.com");
+        addRegisteredUser(UID4, "user4@gmail.com");
+
         List<Event> events = new ArrayList<>();
-        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid1", "ws1", "anonymoususer_1")
-                                .withDate("2013-01-01")
-                                .withTime("13:00:00")
-                                .build());
-        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid2", "ws2", "anonymoususer_3")
-                                .withDate("2013-01-01")
-                                .withTime("13:00:00")
-                                .build());
-        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid3", "ws3", "anonymoususer_4")
-                                .withDate("2013-01-01")
-                                .withTime("13:00:00")
-                                .build());
         events.add(Event.Builder.createFactoryCreatedEvent("ws1",
-                                                           "anonymoususer_1",
+                                                           "user1@gmail.com",
                                                            "project1",
                                                            "type1",
                                                            "repo1",
@@ -70,7 +63,7 @@ public class TestFactoryCreatedList extends BaseTest {
                                                            "",
                                                            "").withDate("2013-01-01").withTime("13:00:00").build());
         events.add(Event.Builder.createFactoryCreatedEvent("ws1",
-                                                           "anonymoususer_2",
+                                                           "user2@gmail.com",
                                                            "project1",
                                                            "type1",
                                                            "repo1",
@@ -78,7 +71,7 @@ public class TestFactoryCreatedList extends BaseTest {
                                                            "",
                                                            "").withDate("2013-01-01").withTime("14:00:00").build());
         events.add(Event.Builder.createFactoryCreatedEvent("ws2",
-                                                           "anonymoususer_3",
+                                                           "user3@gmail.com",
                                                            "project1",
                                                            "type1",
                                                            "repo1",
@@ -86,7 +79,7 @@ public class TestFactoryCreatedList extends BaseTest {
                                                            "",
                                                            "").withDate("2013-01-01").withTime("15:00:00").build());
         events.add(Event.Builder.createFactoryCreatedEvent("ws3",
-                                                           "anonymoususer_4",
+                                                           "user4@gmail.com",
                                                            "project1",
                                                            "type1",
                                                            "repo1",
@@ -128,7 +121,7 @@ public class TestFactoryCreatedList extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20130101");
         builder.put(Parameters.TO_DATE, "20130101");
-        builder.put(Parameters.USER, "anonymoususer_1");
+        builder.put(Parameters.USER, "user1@gmail.com");
 
         Metric metric = MetricFactory.getMetric(MetricType.CREATED_FACTORIES_SET);
         assertEquals(metric.getValue(builder.build()),
@@ -141,7 +134,7 @@ public class TestFactoryCreatedList extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20130101");
         builder.put(Parameters.TO_DATE, "20130101");
-        builder.put(Parameters.USER, "anonymoususer_1 OR anonymoususer_2 OR anonymoususer_3");
+        builder.put(Parameters.USER, "user1@gmail.com OR user2@gmail.com OR user3@gmail.com");
 
         Metric metric = MetricFactory.getMetric(MetricType.CREATED_FACTORIES_SET);
         assertEquals(metric.getValue(builder.build()),

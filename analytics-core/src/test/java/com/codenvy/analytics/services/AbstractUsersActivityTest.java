@@ -133,22 +133,22 @@ public abstract class AbstractUsersActivityTest extends BaseTest {
                                 .withDate("2013-11-01").withTime("08:59:00").build());
 
         // active users [user1, user2, user3]
-        events.add(Event.Builder.createTenantCreatedEvent("ws1", "user1@gmail.com").withTime("09:00:00").withDate("2013-11-01")
+        events.add(Event.Builder.createWorkspaceCreatedEvent(WID1, "ws1", "user1@gmail.com").withTime("09:00:00").withDate("2013-11-01")
                                 .build());
-        events.add(Event.Builder.createTenantCreatedEvent("ws2", "user2@gmail.com").withTime("09:00:00").withDate("2013-11-01")
+        events.add(Event.Builder.createWorkspaceCreatedEvent(WID1, "ws2", "user2@gmail.com").withTime("09:00:00").withDate("2013-11-01")
                                 .build());
-        events.add(Event.Builder.createTenantCreatedEvent("ws3", "user3@gmail.com").withTime("09:00:00").withDate("2013-11-01")
+        events.add(Event.Builder.createWorkspaceCreatedEvent(WID1, "ws3", "user3@gmail.com").withTime("09:00:00").withDate("2013-11-01")
                                 .build());
 
         // projects created
         events.add(
-                Event.Builder.createProjectCreatedEvent("user1@gmail.com", "ws1", "project1", "type1").withDate("2013-11-01")
+                Event.Builder.createProjectCreatedEvent("ws1", "user1@gmail.com", "project1", "type1").withDate("2013-11-01")
                              .withTime("10:00:00").build());
         events.add(
-                Event.Builder.createProjectCreatedEvent("user1@gmail.com", "ws1", "project2", "type1").withDate("2013-11-01")
+                Event.Builder.createProjectCreatedEvent("ws1", "user1@gmail.com", "project2", "type1").withDate("2013-11-01")
                              .withTime("10:05:00").build());
         events.add(
-                Event.Builder.createProjectCreatedEvent("user2@gmail.com", "ws2", "project1", "type1").withDate("2013-11-01")
+                Event.Builder.createProjectCreatedEvent("ws2", "user2@gmail.com", "project1", "type1").withDate("2013-11-01")
                              .withTime("10:03:00").build());
 
         // projects built

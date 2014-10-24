@@ -30,7 +30,7 @@ import java.io.IOException;
  * @author Anatoliy Bazko
  */
 @RolesAllowed({"system/admin", "system/manager"})
-@OmitFilters({MetricFilter.USER, MetricFilter.REGISTERED_USER})
+@OmitFilters({MetricFilter.USER_ID, MetricFilter.REGISTERED_USER})
 public class ActiveWorkspaces extends AbstractActiveEntities {
 
     public ActiveWorkspaces() {
@@ -40,7 +40,7 @@ public class ActiveWorkspaces extends AbstractActiveEntities {
     @Override
     public Context applySpecificFilter(Context clauses) throws IOException {
         Context.Builder builder = new Context.Builder(super.applySpecificFilter(clauses));
-        if (!clauses.exists(MetricFilter.WS)) {
+        if (!clauses.exists(MetricFilter.WS_ID)) {
             builder.put(MetricFilter.PERSISTENT_WS, 1);
         }
 

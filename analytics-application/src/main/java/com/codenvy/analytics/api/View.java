@@ -498,7 +498,7 @@ public class View {
         }
 
         com.codenvy.analytics.metrics.Context.Builder builder = new com.codenvy.analytics.metrics.Context.Builder();
-        builder = builder.put(MetricFilter.USER, userId);
+        builder = builder.put(MetricFilter.USER_ID, userId);
 
         Metric metric = MetricFactory.getMetric(MetricType.USERS_PROFILES_LIST);
         ListValueData valueData = getAsList(metric, builder.build());
@@ -525,7 +525,7 @@ public class View {
         }
 
         com.codenvy.analytics.metrics.Context.Builder builder = new com.codenvy.analytics.metrics.Context.Builder();
-        builder = builder.put(MetricFilter.WS, wsId);
+        builder = builder.put(MetricFilter.WS_ID, wsId);
 
         Metric metric = MetricFactory.getMetric(MetricType.WORKSPACES_PROFILES_LIST);
         ListValueData valueData = getAsList(metric, builder.build());
