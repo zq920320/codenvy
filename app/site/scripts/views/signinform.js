@@ -25,7 +25,6 @@
 
                 initialize : function(attributes){
                     AccountFormBase.prototype.initialize.apply(this,attributes);
-                    Account.supportTab();
                     if (Account.isAuthtypeLdap()){
                         $(".email").attr("placeholder", "Type your login here").removeClass("email");
                     }
