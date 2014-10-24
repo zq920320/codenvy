@@ -19,7 +19,6 @@ package com.codenvy.analytics.pig.scripts;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.datamodel.ListValueData;
-import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.AbstractMetric;
 import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.Metric;
@@ -42,7 +41,6 @@ import java.util.List;
 import java.util.Set;
 
 import static com.codenvy.analytics.datamodel.ValueDataUtil.getAsList;
-import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsMap;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
@@ -59,6 +57,11 @@ public class TestFiltersByUser extends BaseTest {
         events.add(Event.Builder.createUserCreatedEvent(UID2, "u2", "u2@u.com").withDate("2013-01-01").build());
         events.add(Event.Builder.createUserCreatedEvent(UID3, "anonymoususer_3", "anonymoususer_3").withDate("2013-01-01").build());
         events.add(Event.Builder.createUserCreatedEvent(UID4, "anonymoususer_4", "anonymoususer_4").withDate("2013-01-01").build());
+
+        events.add(Event.Builder.createUserUpdateProfile(UID1, "u1@u.com", "u1@u.com", "f1", "l1", "company1", "", "")
+                                .withDate("2013-01-01").build());
+        events.add(Event.Builder.createUserUpdateProfile(UID2, "u2@u.com", "u2@u.com", "f2", "l2", "company2", "", "")
+                                .withDate("2013-01-01").build());
 
 
         File log = LogGenerator.generateLog(events);
@@ -261,17 +264,11 @@ public class TestFiltersByUser extends BaseTest {
         assertResult(l, wsIdField, UID2);
     }
 
-    private void assertResult(ListValueData l, String userIdField, String... user) {
-        assertEquals(l.size(), user.length);
+    private void assertResult(ListValueData l, String userIdField, String... users) {
+        Set<String> m = listToMap(l, userIdField).keySet();
 
-        Set<String> actual = new HashSet<>();
-        for (ValueData valueData : l.getAll()) {
-            ValueData userId = treatAsMap(valueData).get(userIdField);
-            actual.add(userId.getAsString());
-        }
-
-        Set<String> expected = new HashSet<>(Arrays.asList(user));
-        assertEquals(actual, expected);
+        assertEquals(m.size(), users.length);
+        assertEquals(m, new HashSet<>(Arrays.asList(users)));
     }
 
     @DataProvider(name = "metricsToTest")

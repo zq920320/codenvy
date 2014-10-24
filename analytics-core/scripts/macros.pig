@@ -27,8 +27,8 @@ DEFINE loadResources(resourceParam, from, to, userType, wsType) RETURNS Y {
   l1 = LOAD '$resourceParam' USING PigStorage() as (message : chararray);
   l2 = FILTER l1 BY INDEXOF(message, 'EVENT#', 0) > 0;
 
-  l3 = extractUser(l2, '$userType'); -- TODO check filter
-  l4 = extractWs(l3, '$wsType'); -- TODO check filter
+  l3 = extractUser(l2, '$userType');
+  l4 = extractWs(l3, '$wsType');
   l5 = extractParam(l4, 'WS-ID', 'wsId');
   l6 = extractParam(l5, 'USER-ID', 'userId');
   l = FOREACH l6 GENERATE user,
@@ -252,8 +252,8 @@ DEFINE usersCreatedFromFactory(X) RETURNS Y {
 
     -- finds in which temporary workspaces anonymous users have worked
     x1 = filterByEvent($X, 'user-added-to-ws');
-    x2 = FOREACH x1 GENERATE dt, ws AS tmpWs, user AS tmpUser; -- TODO
-    x = FILTER x2 BY IsAnonymousUserById(tmpUser) AND IsTemporaryWorkspaceById(tmpWs); -- TODO
+    x2 = FOREACH x1 GENERATE dt, ws AS tmpWs, user AS tmpUser;
+    x = FILTER x2 BY IsAnonymousUserById(tmpUser) AND IsTemporaryWorkspaceById(tmpWs);
 
     -- finds all anonymous users have become registered (created their accounts or just logged in)
     t1 = filterByEvent($X, 'user-changed-name');
