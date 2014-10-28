@@ -22,21 +22,48 @@ import de.bwaldvogel.mongo.backend.memory.MemoryBackend;
 
 import com.codenvy.api.core.ApiException;
 import com.codenvy.api.core.factory.FactoryParameter;
-import com.codenvy.api.factory.*;
+import com.codenvy.api.factory.FactoryBuilder;
+import com.codenvy.api.factory.FactoryImage;
+import com.codenvy.api.factory.FactoryStore;
+import com.codenvy.api.factory.SourceProjectParametersValidator;
 import com.codenvy.api.factory.dto.Factory;
-import com.codenvy.api.factory.dto.*;
+import com.codenvy.api.factory.dto.Git;
+import com.codenvy.api.factory.dto.ProjectAttributes;
+import com.codenvy.api.factory.dto.Restriction;
+import com.codenvy.api.factory.dto.WelcomeConfiguration;
+import com.codenvy.api.factory.dto.WelcomePage;
+import com.codenvy.api.vfs.shared.dto.ReplacementSet;
+import com.codenvy.api.vfs.shared.dto.Variable;
 import com.codenvy.commons.lang.NameGenerator;
 import com.codenvy.commons.lang.Pair;
 import com.codenvy.dto.server.DtoFactory;
-import com.mongodb.*;
+import com.mongodb.BasicDBObject;
+import com.mongodb.BasicDBObjectBuilder;
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
+import com.mongodb.DBObject;
+import com.mongodb.MongoClient;
+import com.mongodb.ServerAddress;
 
-import org.testng.annotations.*;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
 
 
 /**
@@ -120,9 +147,9 @@ public class MongoDBFactoryStoreTest {
         welcomePage.setAuthenticated(authConf);
         welcomePage.setNonauthenticated(notAuthConf);
 
-        Variable variable = DtoFactory.getInstance().createDto(Variable.class);
-        Replacement replacement =
-                DtoFactory.getInstance().createDto(Replacement.class).withFind("find").withReplace("replace").withReplacemode("mode");
+        ReplacementSet variable = DtoFactory.getInstance().createDto(ReplacementSet.class);
+        Variable replacement =
+                DtoFactory.getInstance().createDto(Variable.class).withFind("find").withReplace("replace").withReplacemode("mode");
         variable.withFiles(Arrays.asList("file1", "file2")).withEntries(Arrays.asList(replacement, replacement));
 
         Factory factoryUrl = DtoFactory.getInstance().createDto(Factory.class);
@@ -237,12 +264,16 @@ public class MongoDBFactoryStoreTest {
                                                  .withOpenfile("openfile");
 
         Factory factoryUrl2 = (Factory)DtoFactory.getInstance().createDto(Factory.class)
-                                                 .withProjectattributes(DtoFactory.getInstance().createDto(ProjectAttributes.class).withPname("pname2").withPtype("ptype2"))
+                                                 .withProjectattributes(
+                                                         DtoFactory.getInstance().createDto(ProjectAttributes.class).withPname("pname2")
+                                                                   .withPtype("ptype2"))
                                                  .withOrgid("org123456")
                                                  .withOpenfile("closedfile");
 
         Factory factoryUrl3 = (Factory)DtoFactory.getInstance().createDto(Factory.class)
-                                                 .withProjectattributes(DtoFactory.getInstance().createDto(ProjectAttributes.class).withPname("pname").withPtype("ptype"))
+                                                 .withProjectattributes(
+                                                         DtoFactory.getInstance().createDto(ProjectAttributes.class).withPname("pname")
+                                                                   .withPtype("ptype"))
                                                  .withOrgid("org123456789")
                                                  .withOpenfile("openfile");
 
@@ -254,6 +285,6 @@ public class MongoDBFactoryStoreTest {
         assertEquals(2, store.findByAttribute(Pair.of("orgid", "org123456")).size());
         assertEquals(2, store.findByAttribute(Pair.of("openfile", "openfile")).size());
         assertEquals(1, store.findByAttribute(Pair.of("projectattributes.pname", "pname2")).size());
-        assertEquals(1, store.findByAttribute(Pair.of("orgid", "org123456"),Pair.of("openfile", "closedfile") ).size());
+        assertEquals(1, store.findByAttribute(Pair.of("orgid", "org123456"), Pair.of("openfile", "closedfile")).size());
     }
 }
