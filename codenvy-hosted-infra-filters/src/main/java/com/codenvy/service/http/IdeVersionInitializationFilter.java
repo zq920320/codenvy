@@ -47,6 +47,7 @@ public class IdeVersionInitializationFilter implements Filter {
             }
         } finally {
             filterChain.doFilter(servletRequest, servletResponse);
+            IdeVersionHolder.remove();
         }
     }
 

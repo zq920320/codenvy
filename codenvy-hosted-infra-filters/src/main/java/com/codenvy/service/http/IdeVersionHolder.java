@@ -22,7 +22,7 @@ package com.codenvy.service.http;
  */
 public class IdeVersionHolder {
 
-    private static ThreadLocal<Boolean> isIDE2 = new ThreadLocal<Boolean>() {
+    private static final ThreadLocal<Boolean> isIDE2 = new ThreadLocal<Boolean>() {
         @Override
         protected Boolean initialValue() {
             return Boolean.FALSE;
@@ -35,5 +35,9 @@ public class IdeVersionHolder {
 
     public static void set(boolean value) {
          isIDE2.set(Boolean.valueOf(value));
+    }
+
+    public static void remove() {
+        isIDE2.remove();
     }
 }
