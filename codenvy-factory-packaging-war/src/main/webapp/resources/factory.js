@@ -83,6 +83,11 @@ if (!window["codenvy-factories"]) {
                 frameParams += "&style=" + style.toLowerCase();
             }
 
+            var counter = script.getAttribute("counter");
+            if (counter) {
+                frameParams += "&counter=" + counter.toLowerCase();
+            }
+
             var logo = script.getAttribute("logo");
             if (logo) {
                 frameParams += "&logo=" + encodeURIComponent(logo);
@@ -117,6 +122,7 @@ if (!window["codenvy-factories"]) {
             }
 
             var frame = ButtonInjector.injectFrame(frameParams, script);
+
             if (style.indexOf("advanced") >= 0) {
                 frame.style.width = "112px";
                 frame.style.height = "113px";
@@ -126,7 +132,7 @@ if (!window["codenvy-factories"]) {
             } else if (style.indexOf("vertical") >= 0) {
                 frame.style.width = "77px";
                 frame.style.height = "61px";
-            } else if (style.indexOf("white") >= 0 || style.indexOf("dark") >= 0) {
+            } else if (style.indexOf("white") >= 0 || style.indexOf("dark") >= 0 || style.indexOf("gray") >= 0) {
                 frame.style.width = "77px";
                 frame.style.height = "21px";
             }

@@ -42,6 +42,8 @@ var FactoryButton = new function() {
 
     var style;
 
+    var counter;
+
     var logoURL;
 
     var clickURL;
@@ -327,28 +329,77 @@ var FactoryButton = new function() {
 
         var style = FactoryButton.style.toLowerCase();
 
-        if (style.contains("advanced")) {
-            if (style.contains("counter")) {
-                FactoryButton.embedAdvancedWithCounter();
+        if ("gray" == style) {
+            if (FactoryButton.counter) {
+                if ("vertical" == FactoryButton.counter) {
+                    FactoryButton.embedVerticalDark();
+                } else if ("horizontal" == FactoryButton.counter) {
+                    FactoryButton.embedHorizontalDark();
+                } else {
+                    FactoryButton.embedDark();
+                }
+            } else {
+                FactoryButton.embedDark();
+            }
+        } else if ("white" == style) {
+            if (FactoryButton.counter) {
+                if ("vertical" == FactoryButton.counter) {
+                    FactoryButton.embedVerticalWhite();
+                } else if ("horizontal" == FactoryButton.counter) {
+                    FactoryButton.embedHorizontalWhite();
+                } else {
+                    FactoryButton.embedWhite();
+                }
+            } else {
+                FactoryButton.embedWhite();
+            }
+        } else if ("white" == style) {
+            if (FactoryButton.counter) {
+                if ("vertical" == FactoryButton.counter) {
+                    FactoryButton.embedVerticalWhite();
+                } else if ("horizontal" == FactoryButton.counter) {
+                    FactoryButton.embedHorizontalWhite();
+                } else {
+                    FactoryButton.embedWhite();
+                }
+            } else {
+                FactoryButton.embedWhite();
+            }
+        } else if ("advanced" == style) {
+            if (FactoryButton.counter) {
+                if ("horizontal" == FactoryButton.counter || "vertical" == FactoryButton.counter) {
+                    FactoryButton.embedAdvancedWithCounter();
+                } else {
+                    FactoryButton.embedAdvanced();
+                }
             } else {
                 FactoryButton.embedAdvanced();
             }
-        } else if (style.contains("horizontal")) {
-            if (style.contains("white")) {
-                FactoryButton.embedHorizontalWhite();
-            } else {
-                FactoryButton.embedHorizontalDark();
+        } else {
+            // Following verifications are needed to be compatible with old factories.
+            if (style.contains("advanced")) {
+                if (style.contains("counter")) {
+                    FactoryButton.embedAdvancedWithCounter();
+                } else {
+                    FactoryButton.embedAdvanced();
+                }
+            } else if (style.contains("horizontal")) {
+                if (style.contains("white")) {
+                    FactoryButton.embedHorizontalWhite();
+                } else {
+                    FactoryButton.embedHorizontalDark();
+                }
+            } else if (style.contains("vertical")) {
+                if (style.contains("white")) {
+                    FactoryButton.embedVerticalWhite();
+                } else {
+                    FactoryButton.embedVerticalDark();
+                }
+            } else if (style.contains("white")) {
+                FactoryButton.embedWhite();
+            } else if (style.contains("dark")) {
+                FactoryButton.embedDark();
             }
-        } else if (style.contains("vertical")) {
-            if (style.contains("white")) {
-                FactoryButton.embedVerticalWhite();
-            } else {
-                FactoryButton.embedVerticalDark();
-            }
-        } else if (style.contains("white")) {
-            FactoryButton.embedWhite();
-        } else if (style.contains("dark")) {
-            FactoryButton.embedDark();
         }
 
         FactoryButton.showCreatedProjects();
@@ -401,6 +452,11 @@ var FactoryButton = new function() {
         FactoryButton.style = FactoryButton.getQueryParam("style");
         if (FactoryButton.style) {
             FactoryButton.style = decodeURIComponent(FactoryButton.style);
+        }
+
+        FactoryButton.counter = FactoryButton.getQueryParam("counter");
+        if (FactoryButton.counter) {
+            FactoryButton.counter = decodeURIComponent(FactoryButton.counter);
         }
 
         FactoryButton.clickURL = FactoryButton.getQueryParam("url");
