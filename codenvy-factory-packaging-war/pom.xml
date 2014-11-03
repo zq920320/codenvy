@@ -30,6 +30,13 @@
     <name>Codenvy Factory :: Factory packaging war</name>
     <dependencies>
         <dependency>
+            <groupId>com.codenvy</groupId>
+            <artifactId>odyssey</artifactId>
+            <version>${codenvy.odyssey.version}</version>
+            <type>zip</type>
+            <classifier>prod</classifier>
+        </dependency>
+        <dependency>
             <groupId>com.codenvy.factory</groupId>
             <artifactId>codenvy-factory-services</artifactId>
             <version>${project.version}</version>
