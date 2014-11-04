@@ -75,6 +75,8 @@
                                 <unzip dest="${project.build.directory}/unzip/odyssey" src="${project.build.directory}/dependency/odyssey-prod.zip" />
                                 <copy file="${project.build.directory}/unzip/odyssey/site/war/factory/error/error-invalid-factory-url.html" tofile="${project.build.directory}/${project.artifactId}-${project.version}/resources/error-invalid-factory-url.jsp" />
                                 <copy file="${project.build.directory}/unzip/odyssey/site/war/factory/error/browser-not-supported.html" tofile="${project.build.directory}/${project.artifactId}-${project.version}/resources/browser-not-supported.jsp" />
+                                <copy file="${project.build.directory}/unzip/odyssey/site/war/factory/error/error-factory-creation.html" tofile="${project.build.directory}/${project.artifactId}-${project.version}/resources/error-factory-creation.html" />
+                                <copy file="${project.build.directory}/unzip/odyssey/site/war/factory/error/too-many-factories.html" tofile="${project.build.directory}/${project.artifactId}-${project.version}/resources/too-many-factories.html" />
                             </tasks>
                         </configuration>
                     </execution>
