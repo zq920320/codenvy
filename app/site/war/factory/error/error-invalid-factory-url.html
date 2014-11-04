@@ -2,7 +2,6 @@
     layout : base
     title: Codenvy
 ---
-    <%@ page isErrorPage="true" %>
     <div class="container light">
         <h1>INVALID FACTORY URL</h1>
 
@@ -13,5 +12,5 @@
                 color: #60AFD9;
             }
         </style>
-        <p id="errorMessage" style="text-align: center;"><%= exception.getLocalizedMessage() %></p>
+        <p id="errorMessage" style="text-align: center;"><%= request.getAttribute("javax.servlet.error.message") %></p>
     </div>
