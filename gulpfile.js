@@ -190,16 +190,22 @@ gulp.task('stage',['copy_src','stage_cfg','css_stage','jekyll_stage','copy_stage
 
 })
 // Copies src to temp folder
-gulp.task('copy_src', ['duplicate_html'], function(){
+gulp.task('copy_src', ['duplicate_html','duplicate_error_html'], function(){
   return gulp.src(paths.src + '**/*.*')
   .pipe(gulp.dest(paths.temp))
 })
 
-// Copies src to temp folder
+// Duplicate create-account as index.html to temp folder
 gulp.task('duplicate_html', function(){
   return gulp.src(paths.src + '/site/create-account.html')
   .pipe(rename('index.html'))
   .pipe(gulp.dest(paths.temp))
+})
+
+// Duplicate html pages
+gulp.task('duplicate_error_html', function(){
+  return gulp.src([paths.src + '/site/error/error-factory-creation.html',paths.src + '/site/error/browser-not-supported.html'])
+  .pipe(gulp.dest(paths.temp + '/site/war/factory/error/'))
 })
 
 gulp.task('stage_cfg', function(){
