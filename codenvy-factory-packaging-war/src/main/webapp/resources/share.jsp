@@ -17,24 +17,7 @@
     from Codenvy S.A..
 
 --%>
-<% /*
-    CODENVY CONFIDENTIAL
-    __________________
-
-    [2012] - [2013] Codenvy, S.A.
-    All Rights Reserved.
-
-    NOTICE:  All information contained herein is, and remains
-    the property of Codenvy S.A. and its suppliers,
-    if any.  The intellectual and technical concepts contained
-    herein are proprietary to Codenvy S.A.
-    and its suppliers and may be covered by U.S. and Foreign Patents,
-    patents in process, and are protected by trade secret or copyright law.
-    Dissemination of this information or reproduction of this material
-    is strictly forbidden unless prior written permission is obtained
-    from Codenvy S.A..
-*/ %>
-<%@ page 
+<%@ page
 	language="java"
 	contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"
@@ -110,9 +93,9 @@ try {
     JsonParser parser = new JsonParser();
     JsonObject json = parser.parse(jsonText).getAsJsonObject();    
     
-    _title = json.get("projectattributes").getAsJsonObject().get("pname").getAsString() + " - Codenvy";
+    _title = json.get("project").getAsJsonObject().get("name").getAsString() + " - Codenvy";
     
-    _description = json.get("description").isJsonNull() ? null : json.get("description").getAsString();
+    _description = json.get("project").getAsJsonObject().get("name").isJsonNull() ? null : json.get("project").getAsJsonObject().get("name").getAsString();
     if (_description == null || _description.trim().isEmpty()) {
     	_description = "Code, Build, Test and Deploy instantly using Codenvy.";
     }
