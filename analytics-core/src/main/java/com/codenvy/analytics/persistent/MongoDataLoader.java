@@ -699,7 +699,7 @@ public class MongoDataLoader implements DataLoader {
     }
 
     private ValueData createDoubleValueData(Iterator<DBObject> iterator, String[] trackedFields) {
-        return doCreateValueData(iterator, trackedFields, LongValueData.class, new CreateValueAction() {
+        return doCreateValueData(iterator, trackedFields, DoubleValueData.class, new CreateValueAction() {
             double value = 0;
 
             @Override

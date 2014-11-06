@@ -19,49 +19,75 @@ package com.codenvy.analytics.metrics.runs;
 
 import com.codenvy.analytics.datamodel.DoubleValueData;
 import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.CalculatedMetric;
 import com.codenvy.analytics.metrics.Context;
-import com.codenvy.analytics.metrics.Expandable;
 import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.ReadBasedExpandable;
+import com.codenvy.analytics.metrics.ReadBasedMetric;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
 
 import javax.annotation.security.RolesAllowed;
-import java.io.IOException;
-
-import static com.codenvy.analytics.datamodel.ValueDataUtil.getAsLong;
 
 /** @author Anatoliy Bazko */
 @RolesAllowed(value = {"user", "system/admin", "system/manager"})
-public class RunsMemoryUsagePerHour extends CalculatedMetric implements Expandable {
+public class RunsMemoryUsagePerHour extends ReadBasedMetric implements ReadBasedExpandable {
 
     public RunsMemoryUsagePerHour() {
-        super(MetricType.RUNS_MEMORY_USAGE_PER_HOUR, new MetricType[]{MetricType.RUNS_TIME,
-                                                                      MetricType.RUNS_MEMORY_USAGE});
+        super(MetricType.RUNS_MEMORY_USAGE_PER_HOUR);
     }
 
+    /** {@inheritDoc} */
     @Override
-    public ValueData getValue(Context context) throws IOException {
-        double hours = getAsLong(basedMetric[0], context).getAsDouble() / (1000 * 60 * 60); // in hours
-        double gb = getAsLong(basedMetric[1], context).getAsDouble() / 1024; // in GB
-        return new DoubleValueData(gb / hours);
+    public String getStorageCollectionName() {
+        return getStorageCollectionName(MetricType.RUNS_FINISHED);
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public String[] getTrackedFields() {
+        return new String[]{VALUE};
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public DBObject[] getSpecificDBOperations(Context clauses) {
+        DBObject project1 = new BasicDBObject("x", new BasicDBObject("$multiply", new Object[]{"$" + MEMORY, "$" + USAGE_TIME}));
+        DBObject project2 = new BasicDBObject("y", new BasicDBObject("$divide", new Object[]{"$x", 3686400000L}));
+        DBObject group = new BasicDBObject(ID, null).append(VALUE, new BasicDBObject("$sum", "$y"));
+
+        return new DBObject[]{new BasicDBObject("$project", project1),
+                              new BasicDBObject("$project", project2),
+                              new BasicDBObject("$group", group)};
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public DBObject[] getSpecificExpandedDBOperations(Context clauses) {
+        DBObject group = new BasicDBObject();
+        group.put(ID, "$" + getExpandedField());
+
+        DBObject project = new BasicDBObject(getExpandedField(), "$_id");
+
+        return new DBObject[]{new BasicDBObject("$group", group),
+                              new BasicDBObject("$project", project)};
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String getExpandedField() {
+        return PROJECT_ID;
+    }
+
+    /** {@inheritDoc} */
     @Override
     public Class<? extends ValueData> getValueDataClass() {
         return DoubleValueData.class;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
-        return "The memory usage in GB per hour";
+        return "The memory usage in GB hour";
     }
 
-    @Override
-    public ValueData getExpandedValue(Context context) throws IOException {
-        return ((Expandable)basedMetric[0]).getExpandedValue(context);
-    }
-
-    @Override
-    public String getExpandedField() {
-        return ((Expandable)basedMetric[0]).getExpandedField();
-    }
 }

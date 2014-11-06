@@ -76,6 +76,7 @@ public abstract class AbstractMetric implements Metric {
     public static final String PERSISTENT_WS         = "persistent_ws";
     public static final String DEFAULT_VALUE         = "default";
     public static final String MEMORY                = "memory";
+    public static final String USAGE_TIME            = "usage_time";
     public static final String LIFETIME              = "lifetime";
     public static final String TIMEOUT               = "timeout";
 

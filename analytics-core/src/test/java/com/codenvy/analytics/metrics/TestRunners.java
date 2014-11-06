@@ -33,6 +33,7 @@ import java.util.List;
 
 import static com.codenvy.analytics.datamodel.ValueDataUtil.getAsDouble;
 import static com.codenvy.analytics.datamodel.ValueDataUtil.getAsLong;
+import static java.lang.Math.round;
 import static org.testng.AssertJUnit.assertEquals;
 
 /** @author Anatoliy Bazko */
@@ -85,7 +86,7 @@ public class TestRunners extends BaseTest {
 
         DoubleValueData d = getAsDouble(metric, Context.EMPTY);
 
-        assertEquals(d.getAsDouble(), 4.5);
+        assertEquals(round(d.getAsDouble() * 10000), 104);
     }
 
     @Test
