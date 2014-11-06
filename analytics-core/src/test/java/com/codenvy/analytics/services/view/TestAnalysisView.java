@@ -414,13 +414,13 @@ public class TestAnalysisView extends BaseTest {
 
         // projects created
         events.add(
-                Event.Builder.createProjectCreatedEvent("ws1", "user1@gmail.com", "project1", "type1").withDate(DATE1)
+                Event.Builder.createProjectCreatedEvent("user1@gmail.com", "ws1", "project1", "type1").withDate(DATE1)
                              .withTime("10:00:00").build());
         events.add(
-                Event.Builder.createProjectCreatedEvent("ws1", "user1@gmail.com", "project2", "type1").withDate(DATE1)
+                Event.Builder.createProjectCreatedEvent("user1@gmail.com", "ws1", "project2", "type1").withDate(DATE1)
                              .withTime("10:05:00").build());
         events.add(
-                Event.Builder.createProjectCreatedEvent("ws2", "user2@gmail.com", "project1", "type1").withDate(DATE1)
+                Event.Builder.createProjectCreatedEvent("user2@gmail.com", "ws2", "project1", "type1").withDate(DATE1)
                              .withTime("10:03:00").build());
 
         // projects deployed to LOCAL
@@ -438,7 +438,7 @@ public class TestAnalysisView extends BaseTest {
                                 .withDate(DATE1).build());
 
 
-        events.add(Event.Builder.createFactoryCreatedEvent("ws1", "user1@gmail.com", "", "", "", "", "", "")
+        events.add(Event.Builder.createFactoryCreatedEvent("user1@gmail.com", "ws1", "", "", "", "", "", "")
                                 .withDate(DATE1)
                                 .withTime("20:03:00").build());
 
@@ -479,10 +479,10 @@ public class TestAnalysisView extends BaseTest {
 
         // projects created
         events.add(
-                Event.Builder.createProjectCreatedEvent("ws2", "user2@gmail.com", "project22", "type1").withDate(DATE2)
+                Event.Builder.createProjectCreatedEvent("user2@gmail.com", "ws2", "project22", "type1").withDate(DATE2)
                              .withTime("10:03:00").build());
         events.add(
-                Event.Builder.createProjectCreatedEvent("ws3", "user3@gmail.com", "project33", "type1").withDate(DATE2)
+                Event.Builder.createProjectCreatedEvent("user3@gmail.com", "ws3", "project33", "type1").withDate(DATE2)
                              .withTime("10:03:00").build());
 
         // projects run

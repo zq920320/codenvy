@@ -56,7 +56,7 @@ public class TestProjectsStatistics extends BaseTest {
                                 .withTime("10:00:00")
                                 .build());
 
-        events.add(Event.Builder.createProjectCreatedEvent("ws1", "user1@gmail.com", "project1", "jar")
+        events.add(Event.Builder.createProjectCreatedEvent("user1@gmail.com", "ws1", "project1", "jar")
                                 .withDate("2013-01-01")
                                 .withTime("10:00:00")
                                 .build());

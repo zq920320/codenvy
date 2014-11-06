@@ -52,16 +52,16 @@ public class TestBuildQueueTerminations extends BaseTest {
         events.add(Event.Builder.createWorkspaceCreatedEvent("wsid5", "ws5", "user5@gmail.com").withDate("2013-02-10").withTime("10:00:00").build());
 
         events.add(
-                Event.Builder.buildQueueTerminatedEvent("ws1", "user1@gmail.com", "project1", "type1", "id1").withDate("2013-02-10").withTime("10:00:00")
+                Event.Builder.buildQueueTerminatedEvent("user1@gmail.com", "ws1", "project1", "type1", "id1").withDate("2013-02-10").withTime("10:00:00")
                              .build());
         events.add(
-                Event.Builder.buildQueueTerminatedEvent("ws2", "user2@gmail.com", "project2", "type2", "id2").withDate("2013-02-10").withTime("10:01:00")
+                Event.Builder.buildQueueTerminatedEvent("user2@gmail.com", "ws2", "project2", "type2", "id2").withDate("2013-02-10").withTime("10:01:00")
                              .build());
         events.add(
-                Event.Builder.buildQueueTerminatedEvent("ws3", "user3@gmail.com", "project3", "type3", "id3").withDate("2013-02-10").withTime("10:02:00")
+                Event.Builder.buildQueueTerminatedEvent("user3@gmail.com", "ws3", "project3", "type3", "id3").withDate("2013-02-10").withTime("10:02:00")
                              .build());
         events.add(
-                Event.Builder.buildQueueTerminatedEvent("ws5", "user5@gmail.com", "project5", "type5", "id5").withDate("2013-02-11").withTime("10:04:00")
+                Event.Builder.buildQueueTerminatedEvent("user5@gmail.com", "ws5", "project5", "type5", "id5").withDate("2013-02-11").withTime("10:04:00")
                              .build());
 
         File log = LogGenerator.generateLog(events);

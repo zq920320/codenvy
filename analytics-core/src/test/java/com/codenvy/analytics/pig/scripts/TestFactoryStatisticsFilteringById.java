@@ -68,7 +68,7 @@ public class TestFactoryStatisticsFilteringById extends BaseTest {
         events.add(Event.Builder.createSessionUsageEvent(TEST_USER_ALIAS, "tmp-1", "id1", "2013-02-10 10:00:00", "2013-02-10 10:05:00", true)
                                 .withDate("2013-02-10").withTime("10:00:00").build());
 
-        events.add(Event.Builder.createFactoryProjectImportedEvent("tmp-1", TEST_USER_ALIAS, "project", "type")
+        events.add(Event.Builder.createFactoryProjectImportedEvent(TEST_USER_ALIAS, "tmp-1", "project", "type")
                                 .withDate("2013-02-10").withTime("10:04:00").build());
 
         // factory 2 events

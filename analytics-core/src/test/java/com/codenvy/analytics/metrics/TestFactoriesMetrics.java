@@ -46,9 +46,9 @@ public class TestFactoriesMetrics extends BaseTest {
                                 .withDate("2013-02-10").withTime("13:00:00,000").build());
         events.add(Event.Builder.createWorkspaceCreatedEvent("wsid1", "ws1", "user1@gmail.com")
                                 .withDate("2013-02-10").withTime("13:00:00").build());
-        events.add(Event.Builder.createFactoryCreatedEvent("ws1", "user1@gmail.com", "project1", "type1", "repo1", "factory1", "", "")
+        events.add(Event.Builder.createFactoryCreatedEvent("user1@gmail.com", "ws1", "project1", "type1", "repo1", "factory1", "", "")
                                 .withDate("2013-02-10").withTime("13:00:00").build());
-        events.add(Event.Builder.createFactoryCreatedEvent("ws1", "user1@gmail.com", "project2", "type1", "repo2", "factory2", "", "")
+        events.add(Event.Builder.createFactoryCreatedEvent("user1@gmail.com", "ws1", "project2", "type1", "repo2", "factory2", "", "")
                                 .withDate("2013-02-11").withTime("13:00:00").build());
 
 

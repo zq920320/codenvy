@@ -70,7 +70,7 @@ public class TestWorkspacesWhereUsersHaveSeveralFactorySessions extends BaseTest
                 Event.Builder.createSessionUsageEvent("anonymoususer_1", "tmp-2", "id11", "2013-02-10 15:00:00", "2013-02-10 15:15:00", true)
                              .withDate("2013-02-10").withTime("15:00:00").build());
 
-        events.add(Event.Builder.createFactoryProjectImportedEvent("tmp-1", "user1@gmail.com", "project", "type")
+        events.add(Event.Builder.createFactoryProjectImportedEvent("user1@gmail.com", "tmp-1", "project", "type")
                                 .withDate("2013-02-10").withTime("10:05:00").build());
 
         events.add(

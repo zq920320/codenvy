@@ -54,32 +54,28 @@ public class TestFactoryCreatedList extends BaseTest {
         addRegisteredUser(UID4, "user4@gmail.com");
 
         List<Event> events = new ArrayList<>();
-        events.add(Event.Builder.createFactoryCreatedEvent("ws1",
-                                                           "user1@gmail.com",
+        events.add(Event.Builder.createFactoryCreatedEvent("user1@gmail.com", "ws1",
                                                            "project1",
                                                            "type1",
                                                            "repo1",
                                                            "http://codenvy.com/factory?id=1",
                                                            "",
                                                            "").withDate("2013-01-01").withTime("13:00:00").build());
-        events.add(Event.Builder.createFactoryCreatedEvent("ws1",
-                                                           "user2@gmail.com",
+        events.add(Event.Builder.createFactoryCreatedEvent("user2@gmail.com", "ws1",
                                                            "project1",
                                                            "type1",
                                                            "repo1",
                                                            "factory2",
                                                            "",
                                                            "").withDate("2013-01-01").withTime("14:00:00").build());
-        events.add(Event.Builder.createFactoryCreatedEvent("ws2",
-                                                           "user3@gmail.com",
+        events.add(Event.Builder.createFactoryCreatedEvent("user3@gmail.com", "ws2",
                                                            "project1",
                                                            "type1",
                                                            "repo1",
                                                            "factory3",
                                                            "",
                                                            "").withDate("2013-01-01").withTime("15:00:00").build());
-        events.add(Event.Builder.createFactoryCreatedEvent("ws3",
-                                                           "user4@gmail.com",
+        events.add(Event.Builder.createFactoryCreatedEvent("user4@gmail.com", "ws3",
                                                            "project1",
                                                            "type1",
                                                            "repo1",

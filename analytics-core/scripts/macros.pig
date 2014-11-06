@@ -379,7 +379,7 @@ DEFINE addEventIndicator(W, X,  eventParam, fieldParam, inactiveIntervalParam) R
   x2 = FOREACH x1 GENERATE *, (z::ws IS NULL ? 0
                                              : (MilliSecondsBetween(z::dt, $W::dt) > 0 AND MilliSecondsBetween(z::dt, $W::dt) <= $W::delta + (int) $inactiveIntervalParam*60*1000 ? 1 : 0 )) AS $fieldParam;
   -- if several events were occurred then keep only one
-  x3 = GROUP x2 BY $W::dt;
+  x3 = GROUP x2 BY ($W::dt, $W::id);
   $Y = FOREACH x3 {
         t = LIMIT x2 1;
         GENERATE FLATTEN(t);

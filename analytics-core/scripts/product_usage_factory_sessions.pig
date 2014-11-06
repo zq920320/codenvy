@@ -24,7 +24,6 @@ IMPORT 'macros.pig';
 
 l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 
-
 u1 = LOAD '$STORAGE_URL.$STORAGE_TABLE_ACCEPTED_FACTORIES' using MongoLoaderAcceptedFactories();
 u = FOREACH u1 GENERATE ws AS tmpWs, referrer, factory, org_id AS orgId, affiliate_id AS affiliateId, factory_id AS factoryId;
 
@@ -49,6 +48,7 @@ d2 = FOREACH d1 GENERATE i::dt AS dt, i::tmpWs AS tmpWs, (c::user IS NULL ? i::u
 d3 = UNION d2, i;
 d = DISTINCT d3;
 
+
 -- factory sessions
 a1 = filterByEvent(l, 'session-factory-usage');
 a2 = removeEmptyField(a1, 'user');
@@ -62,14 +62,13 @@ a7 = FOREACH a6 GENERATE a5::dt AS dt,
                          a5::ws AS ws,
                          a5::user AS user,
                          a5::sessionID AS sessionID;
-
-
 a8 = addLogoutInterval(a7, l, '$idleInterval');
 s2 = FOREACH a8 GENERATE ToDate(startTime) AS dt,
                          ws AS tmpWs,
                          user AS tmpUser,
                          sessionID AS id,
                          (usageTime + logoutInterval) AS delta;
+
 
 -- founds out the corresponding referrer and factory
 s3 = JOIN s2 BY tmpWs LEFT, u BY tmpWs;
@@ -91,7 +90,6 @@ k1 = addEventIndicator(s, l,  'run-started', 'run', '$inactiveInterval');
 k = FOREACH k1 GENERATE t::s::dt AS dt, t::s::delta AS delta, t::s::factory AS factory, t::s::referrer AS referrer,
                         t::s::orgId AS orgId, t::s::affiliateId AS affiliateId, t::s::factoryId AS factoryId, t::s::ws AS ws,
                         t::s::user AS user, t::s::conv AS conv, t::run AS run, t::s::id AS id;
-
 m1 = addEventIndicator(k, l,  'application-created', 'deploy', '$inactiveInterval');
 m = FOREACH m1 GENERATE t::k::dt AS dt, t::k::delta AS delta, t::k::factory AS factory, t::k::referrer AS referrer,
                         t::k::orgId AS orgId, t::k::affiliateId AS affiliateId, t::k::factoryId AS factoryId, t::k::ws AS ws, t::k::id AS id,
@@ -106,10 +104,9 @@ o1 = addEventIndicator(n, l,  'debug-started', 'debug', '$inactiveInterval');
 o = FOREACH o1 GENERATE t::n::dt AS dt, t::n::delta AS delta, t::n::factory AS factory, t::n::referrer AS referrer, t::n::id AS id,
                         t::n::orgId AS orgId, t::n::affiliateId AS affiliateId, t::n::factoryId AS factoryId, t::n::ws AS ws,
                         t::n::user AS user, t::n::conv AS conv, t::n::run AS run, t::n::deploy AS deploy, t::n::build AS build, t::debug AS debug;
-
-
 -- add created temporary session indicator
 w = createdTemporaryWorkspaces(l);
+
 z1 = JOIN o BY (ws, user) FULL, w BY (ws, user);
 z2 = FOREACH z1 GENERATE (o::ws IS NULL ? w::dt : o::dt) AS dt,
     (o::ws IS NULL ? '' : o::id) AS id,
@@ -183,7 +180,6 @@ p = FOREACH p4 GENERATE ws,
                         p2::ws_created AS ws_created,
                         (p2::dt == minDT ? p2::user_created : 0) AS user_created,
                         (factoryId IS NULL ? 0 : 1) AS encodedFactory;
-
 -- Set session id if absent
 SPLIT p INTO r1 IF test_id != '', t1 OTHERWISE;
 

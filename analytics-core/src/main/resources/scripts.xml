@@ -59,6 +59,12 @@
         <parameter key="EVENT" value="user-removed"/>
         <parameter key="STORAGE_TABLE" value="removed_users"/>
     </script>
+    <script name="accepted_factories">
+        <description>Accepted factories</description>
+        <parameter key="WS" value="ANY"/>
+        <parameter key="USER" value="ANY"/>
+        <parameter key="STORAGE_TABLE" value="factories_accepted"/>
+    </script>
     <script name="events">
         <description>The number of invites</description>
         <parameter key="WS" value="ANY"/>
@@ -247,12 +253,6 @@
     </script>
 
     <!-- Scripts for factory timeline -->
-    <script name="accepted_factories">
-        <description>Accepted factories</description>
-        <parameter key="WS" value="ANY"/>
-        <parameter key="USER" value="ANY"/>
-        <parameter key="STORAGE_TABLE" value="factories_accepted"/>
-    </script>
     <script name="created_users_from_factory">
         <description>The number of created users from factory</description>
         <parameter key="WS" value="ANY"/>
