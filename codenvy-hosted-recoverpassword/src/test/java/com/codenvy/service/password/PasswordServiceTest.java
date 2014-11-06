@@ -19,9 +19,11 @@ package com.codenvy.service.password;
 
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
+import com.codenvy.api.user.server.dao.Profile;
 import com.codenvy.api.user.server.dao.UserDao;
 import com.codenvy.api.user.server.dao.User;
 //import com.codenvy.dto.server.DtoFactory;
+import com.codenvy.api.user.server.dao.UserProfileDao;
 import com.jayway.restassured.response.Response;
 
 import org.codenvy.mail.MailSenderClient;
@@ -29,11 +31,13 @@ import org.everrest.assured.EverrestJetty;
 import org.everrest.core.tools.DependencySupplierImpl;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.testng.MockitoTestNGListener;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -53,7 +57,16 @@ public class PasswordServiceTest {
     private UserDao userDao;
 
     @Mock
+    private UserProfileDao userProfileDao;
+
+    @Mock
     private RecoveryStorage recoveryStorage;
+
+    @Mock
+    private Profile profile;
+
+    @Spy
+    private User user;
 
    /*
     * Not a mock objects
@@ -70,8 +83,6 @@ public class PasswordServiceTest {
 
     private static final String username = "user@mail.com";
 
-    private User user;
-
     private static Map<String, String> validationData = new HashMap<>();
 
     static {
@@ -80,9 +91,10 @@ public class PasswordServiceTest {
 
     @BeforeMethod
     public void setup() {
-        user = new User().withEmail(username);
+        doReturn(username).when(user).getEmail();
         DependencySupplierImpl dependencies = new DependencySupplierImpl();
         dependencies.addComponent(UserDao.class, userDao);
+        dependencies.addComponent(UserProfileDao.class, userProfileDao);
     }
 
     @Test
@@ -90,15 +102,37 @@ public class PasswordServiceTest {
         when(recoveryStorage.isValid(uuid)).thenReturn(true);
         when(recoveryStorage.get(uuid)).thenReturn(validationData);
         when(userDao.getByAlias(username)).thenReturn(user);
-
+        doReturn("userId").when(user).getId();
+        when(userProfileDao.getById(eq("userId"))).thenReturn(profile);
+        when(profile.getAttributes()).thenReturn(Collections.<String, String>emptyMap());
 
         Response response =
                 given().formParam("uuid", uuid).formParam("password", newPass).when().post(SERVICE_PATH + "/setup");
 
         assertEquals(response.statusCode(), 200);
 
-        verify(recoveryStorage, times(1)).remove(uuid);
-        verify(userDao, times(1)).update(any(User.class));
+        verify(recoveryStorage).remove(uuid);
+        verify(userDao).update(any(User.class));
+        verify(userProfileDao, never()).update(profile);
+    }
+
+    @Test
+    public void shouldBeAbleToSetupPassAndRemoveResetPassFlagFromProfile() throws Exception {
+        when(recoveryStorage.isValid(uuid)).thenReturn(true);
+        when(recoveryStorage.get(uuid)).thenReturn(validationData);
+        when(userDao.getByAlias(username)).thenReturn(user);
+        doReturn("userId").when(user).getId();
+        when(userProfileDao.getById(eq("userId"))).thenReturn(profile);
+        when(profile.getAttributes()).thenReturn(new HashMap<String, String>(){{put("resetPassword", "true");}});
+
+        Response response =
+                given().formParam("uuid", uuid).formParam("password", newPass).when().post(SERVICE_PATH + "/setup");
+
+        assertEquals(response.statusCode(), 200);
+
+        verify(recoveryStorage).remove(uuid);
+        verify(userDao).update(any(User.class));
+        verify(userProfileDao).update(profile);
     }
 
     @Test

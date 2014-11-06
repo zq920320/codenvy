@@ -19,8 +19,10 @@ package com.codenvy.service.password;
 
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
+import com.codenvy.api.user.server.dao.Profile;
 import com.codenvy.api.user.server.dao.UserDao;
 import com.codenvy.api.user.server.dao.User;
+import com.codenvy.api.user.server.dao.UserProfileDao;
 
 import org.codenvy.mail.MailSenderClient;
 import org.slf4j.Logger;
@@ -61,6 +63,9 @@ public class PasswordService {
     private UserDao userDao;
 
     @Inject
+    private UserProfileDao userProfileDao;
+
+    @Inject
     private RecoveryStorage recoveryStorage;
 
     // TODO made this configurable
@@ -77,10 +82,11 @@ public class PasswordService {
     }
 
     @Inject
-    PasswordService(MailSenderClient mailService, UserDao userDao, RecoveryStorage recoveryStorage) {
+    PasswordService(MailSenderClient mailService, UserDao userDao, RecoveryStorage recoveryStorage, UserProfileDao userProfileDao) {
         this.recoveryStorage = recoveryStorage;
         this.mailService = mailService;
         this.userDao = userDao;
+        this.userProfileDao = userProfileDao;
         noCache = new CacheControl();
         noCache.setNoCache(true);
     }
@@ -239,9 +245,14 @@ public class PasswordService {
         String userName = recoveryStorage.get(uuid).get("user.name");
 
         try {
-            User user = userDao.getByAlias(userName);
+            final User user = userDao.getByAlias(userName);
             user.setPassword(newPassword);
             userDao.update(user);
+
+            final Profile profile = userProfileDao.getById(user.getId());
+            if (profile.getAttributes().remove("resetPassword") != null) {
+                userProfileDao.update(profile);
+            }
         } catch (NotFoundException e) {
             // remove invalid validationData
             recoveryStorage.remove(uuid);
