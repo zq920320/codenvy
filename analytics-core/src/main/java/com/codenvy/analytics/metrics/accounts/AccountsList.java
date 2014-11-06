@@ -34,9 +34,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author Alexander Reshetnyak
- */
+/** @author Alexander Reshetnyak */
 @RolesAllowed(value = {"system/admin", "system/manager"})
 public class AccountsList extends AbstractAccountMetric {
 
@@ -44,16 +42,19 @@ public class AccountsList extends AbstractAccountMetric {
         super(MetricType.ACCOUNTS_LIST);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "Accounts data";
     }
 
+    /** {@inheritDoc} */
     @Override
     public Class<? extends ValueData> getValueDataClass() {
         return ListValueData.class;
     }
 
+    /** {@inheritDoc} */
     @Override
     public ValueData getValue(Context context) throws IOException {
         ProfileDescriptor profile = getProfile();
