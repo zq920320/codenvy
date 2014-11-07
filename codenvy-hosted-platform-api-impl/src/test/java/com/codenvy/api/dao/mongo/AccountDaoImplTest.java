@@ -349,9 +349,8 @@ public class AccountDaoImplTest extends BaseDaoTest {
     @Test
     public void shouldBeAbleToGetSubscriptionsByAccount() throws Exception {
         final Account account = createAccount();
-        final Subscription subscription1 = createSubscription().withAccountId(account.getId());
-        final Subscription subscription2 = createSubscription().withAccountId(account.getId())
-                                                               .withId(subscription1.getId() + "other");
+        final Subscription subscription1 = createSubscription().withAccountId(account.getId()).withServiceId("Saas");
+        final Subscription subscription2 = createSubscription().withAccountId(account.getId()).withId(subscription1.getId() + "other");
         insertSubscriptions(subscription1, subscription2);
         insertAccounts(account);
 
@@ -455,6 +454,25 @@ public class AccountDaoImplTest extends BaseDaoTest {
                                                   .withAccountId(account.getId())
                                                   .withServiceId("Saas")
                                                   .withProperties(singletonMap("Package", "Community"))));
+    }
+
+    @Test
+    public void shouldReturnDefaultSubscriptionIfThereIsNonSaasSubscriptionsOnGetSubscriptionsWithoutService() throws Exception {
+        final Account account = createAccount();
+        insertAccounts(account);
+        final Subscription subscription = createSubscription().withAccountId(account.getId()).withServiceId("NonSaas");
+        insertSubscriptions(subscription);
+        Subscription defaultSaasSubscription = new Subscription()
+                .withId("community" + account.getId())
+                .withPlanId("sas-community")
+                .withAccountId(account.getId())
+                .withServiceId("Saas")
+                .withProperties(singletonMap("Package", "Community"));
+        when(workspaceDao.getByAccount(account.getId())).thenReturn(singletonList(new Workspace()));
+
+        final List<Subscription> found = accountDao.getSubscriptions(account.getId(), null);
+
+        assertEquals(new HashSet<>(found), new HashSet<>(asList(subscription, defaultSaasSubscription)));
     }
 
     @Test(expectedExceptions = NotFoundException.class)

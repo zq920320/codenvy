@@ -44,7 +44,6 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -318,14 +317,18 @@ public class AccountDaoImpl implements AccountDao {
                 query.append("serviceId", serviceId);
             }
             try (DBCursor subscriptions = subscriptionCollection.find(query)) {
-                if (subscriptions.size() == 0 && (null == serviceId || "Saas".equals(serviceId))) {
-                    return getDefaultSubscriptions(accountId);
-                } else {
                     result = new ArrayList<>(subscriptions.size());
                     for (DBObject currentSubscription : subscriptions) {
                         result.add(toSubscription(currentSubscription));
                     }
+            }
+            if (!"Factory".equals(serviceId)) {
+                for(Subscription subscription : result) {
+                    if ("Saas".equals(subscription.getServiceId())) {
+                        return result;
+                    }
                 }
+                addDefaultSubscription(accountId, result);
             }
         } catch (MongoException me) {
             LOG.error(me.getMessage(), me);
@@ -494,21 +497,19 @@ public class AccountDaoImpl implements AccountDao {
         }
     }
 
-    private List<Subscription> getDefaultSubscriptions(String accountId) {
+    private void addDefaultSubscription(String accountId, List<Subscription> subscriptions) {
         try {
             if (!workspaceDao.getByAccount(accountId).isEmpty()) {
-                return Collections.singletonList(new Subscription()
-                                                         .withId("community" + accountId)
-                                                         .withAccountId(accountId)
-                                                         .withPlanId("sas-community")
-                                                         .withServiceId("Saas")
-                                                         .withProperties(Collections.singletonMap("Package", "Community"))
-                                                );
+                subscriptions.add(new Subscription()
+                                          .withId("community" + accountId)
+                                          .withAccountId(accountId)
+                                          .withPlanId("sas-community")
+                                          .withServiceId("Saas")
+                                          .withProperties(Collections.singletonMap("Package", "Community")));
             }
         } catch (ServerException e) {
             LOG.error(e.getLocalizedMessage(), e);
         }
-        return Collections.emptyList();
     }
 
     /**
