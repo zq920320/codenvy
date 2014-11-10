@@ -162,7 +162,7 @@ public class SaasSubscriptionServiceTest {
         when(workspaceDao.getByAccount(ACCOUNT_ID)).thenReturn(Arrays.asList(workspace));
         when(accountDao.getById(ACCOUNT_ID)).thenReturn(new Account());
         final Map<String, String> properties = new HashMap<>(2);
-        properties.put("Package", "team");
+        properties.put("Package", "Team");
         properties.put("RAM", "1GB");
         final Subscription subscription = new Subscription().withAccountId(ACCOUNT_ID)
                                                             .withProperties(properties);

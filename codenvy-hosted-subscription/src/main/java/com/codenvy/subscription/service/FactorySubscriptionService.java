@@ -58,7 +58,7 @@ public class FactorySubscriptionService extends SubscriptionService {
         String tariffPackage;
         if (null == (tariffPackage = subscription.getProperties().get("Package"))) {
             throw new ConflictException("Subscription property 'Package' required");
-        } else if (!"Tracked".equals(tariffPackage)) {
+        } else if (!"Tracked".equals(tariffPackage.toLowerCase())) {
             throw new ConflictException(String.format("Package '%s' is unknown", tariffPackage));
         }
         if (subscription.getProperties().get("RAM") == null) {

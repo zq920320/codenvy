@@ -130,7 +130,8 @@ public class SaasSubscriptionService extends SubscriptionService {
             throw new ConflictException("Subscription properties required");
         }
 
-        final String tariffPackage = ensureExistsAndGet("Package", subscription);
+        String tariffPackage = ensureExistsAndGet("Package", subscription).toLowerCase();
+
         if ("team".equals(tariffPackage) || "enterprise".equals(tariffPackage)) {
             try {
                 final Account account = accountDao.getById(subscription.getAccountId());
@@ -146,7 +147,7 @@ public class SaasSubscriptionService extends SubscriptionService {
             boolean ramIsSet = false;
             for (Workspace workspace : workspaces) {
                 final Map<String, String> wsAttributes = workspace.getAttributes();
-                switch (tariffPackage.toLowerCase()) {
+                switch (tariffPackage) {
                     case "developer":
                     case "team":
                         //1 hour
@@ -186,7 +187,9 @@ public class SaasSubscriptionService extends SubscriptionService {
     }
 
     private void unsetResources(Subscription subscription) throws NotFoundException, ServerException, ConflictException {
-        final String tariffPackage = subscription.getProperties().get("Package");
+        String tariffPackage = subscription.getProperties().get("Package");
+        tariffPackage = null == tariffPackage ? null : tariffPackage.toLowerCase();
+
         if ("team".equals(tariffPackage) || "enterprise".equals(tariffPackage)) {
             try {
                 final Account account = accountDao.getById(subscription.getAccountId());
