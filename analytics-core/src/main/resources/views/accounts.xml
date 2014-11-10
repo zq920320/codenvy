@@ -62,7 +62,7 @@
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="account_workspaces_list"/>
-                <parameter key="fields" value="workspace_name,workspace_temporary,workspace_roles"/>
+                <parameter key="fields" value="workspace_id,workspace_temporary,workspace_roles"/>
             </row>
         </section>
     </view>
