@@ -72,14 +72,10 @@ public class TestUsersActivityMetric extends BaseTest {
         events.add(Event.Builder.createWorkspaceCreatedEvent(TWID1, TMP_WS, TMP_USER)
                                 .withDate("2013-11-01").withTime("08:40:06").build());
 
-        events.add(
-                Event.Builder
-                        .createSessionUsageEvent(USER, WS, SESSION_ID, "2013-11-01 19:00:00", "2013-11-01 20:04:00", false)
-                        .withDate("2013-11-01").withTime("19:00:00").build());
-        events.add(
-                Event.Builder
-                        .createSessionUsageEvent(TMP_USER, TMP_WS, "id3", "2013-11-01 21:00:00", "2013-11-01 21:05:00", false)
-                        .withDate("2013-11-01").withTime("21:00:00").build());
+        events.add(Event.Builder.createSessionUsageEvent(USER, WS, SESSION_ID, false).withDate("2013-11-01").withTime("19:00:00").build());
+        events.add(Event.Builder.createSessionUsageEvent(USER, WS, SESSION_ID, false).withDate("2013-11-01").withTime("20:04:00").build());
+        events.add(Event.Builder.createSessionUsageEvent(TMP_USER, TMP_WS, "id3", false).withDate("2013-11-01").withTime("21:00:00").build());
+        events.add(Event.Builder.createSessionUsageEvent(TMP_USER, TMP_WS, "id3", false).withDate("2013-11-01").withTime("21:05:00").build());
 
         // event of target user in the target workspace and in time of first session
         events.add(Event.Builder.createRunStartedEvent(USER, WS, "project", "type", "id1").withDate("2013-11-01")

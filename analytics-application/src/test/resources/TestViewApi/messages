@@ -4,11 +4,20 @@
 127.0.0.1 2013-11-24 00:34:11,932[]  [] []   [][][] - EVENT#tenant-created# WS#hnordt# USER#awkvfc@awkvfc.tkq#
 127.0.0.1 2013-11-24 00:34:12,318[]  [] []   [][][] - EVENT#user-sso-logged-in# USING#signed# USER#awkvfc@awkvfc.tkq#
 
-127.0.0.1 2013-11-24 00:34:12,660[]  [] []        [][][] - EVENT#session-usage# SESSION-ID#2C310747-C76E-4FFC-9169-2240056A8DE3# USER#pkwilz6@sqhli.tkq# WS#freecode# START-TIME#1385246052660# USAGE-TIME#3603#
-127.0.0.1 2013-11-24 00:34:13,717[]  [] []        [][][] - EVENT#session-usage# SESSION-ID#78C286CB-B313-4C55-8B76-D28638C43AD2# USER#AnonymousUser_vc0585# WS#tmp-tajxh6wc1afwz3# START-TIME#1385246053717# USAGE-TIME#15727#
-127.0.0.1 2013-11-24 00:34:23,568[]  [] []        [][][] - EVENT#session-usage# SESSION-ID#F7C4265B-92E0-47ED-B529-E405B0F452DB# USER#awkvfc@awkvfc.tkq# WS#hnordt# START-TIME#1385246063568# USAGE-TIME#52089#
-127.0.0.1 2013-11-24 00:34:23,934[]  [] []        [][][] - EVENT#session-usage# SESSION-ID#EBB1F460-063F-4231-8551-6AC01557CECD# USER#vkebvcdiph@akcqhli.tkq# WS#ama# START-TIME#1385246063934# USAGE-TIME#4869#
-127.0.0.1 2013-11-24 00:34:13,723[]  [] []        [][][] - EVENT#session-factory-usage# SESSION-ID#78C286CB-B313-4C55-8B76-D28638C43AD2# WS#tmp-tajxh6wc1afwz3# USER#AnonymousUser_vc0585# START-TIME#1385246053723# USAGE-TIME#15724#
+127.0.0.1 2013-11-24 00:34:12,660[]  [] [] [][][] - EVENT#session-usage# SESSION-ID#2C310747-C76E-4FFC-9169-2240056A8DE3# USER#pkwilz6@sqhli.tkq# WS#freecode#
+127.0.0.1 2013-11-24 00:34:16,263[]  [] [] [][][] - EVENT#session-usage# SESSION-ID#2C310747-C76E-4FFC-9169-2240056A8DE3# USER#pkwilz6@sqhli.tkq# WS#freecode#
+
+127.0.0.1 2013-11-24 00:34:13,717[]  [] [] [][][] - EVENT#session-usage# SESSION-ID#78C286CB-B313-4C55-8B76-D28638C43AD2# USER#AnonymousUser_vc0585# WS#tmp-tajxh6wc1afwz3#
+127.0.0.1 2013-11-24 00:34:29,444[]  [] [] [][][] - EVENT#session-usage# SESSION-ID#78C286CB-B313-4C55-8B76-D28638C43AD2# USER#AnonymousUser_vc0585# WS#tmp-tajxh6wc1afwz3#
+
+127.0.0.1 2013-11-24 00:34:23,568[]  [] [] [][][] - EVENT#session-usage# SESSION-ID#F7C4265B-92E0-47ED-B529-E405B0F452DB# USER#awkvfc@awkvfc.tkq# WS#hnordt#
+127.0.0.1 2013-11-24 00:35:15,657[]  [] [] [][][] - EVENT#session-usage# SESSION-ID#F7C4265B-92E0-47ED-B529-E405B0F452DB# USER#awkvfc@awkvfc.tkq# WS#hnordt#
+
+127.0.0.1 2013-11-24 00:34:23,934[]  [] [] [][][] - EVENT#session-usage# SESSION-ID#EBB1F460-063F-4231-8551-6AC01557CECD# USER#vkebvcdiph@akcqhli.tkq# WS#ama#
+127.0.0.1 2013-11-24 00:34:28,803[]  [] [] [][][] - EVENT#session-usage# SESSION-ID#EBB1F460-063F-4231-8551-6AC01557CECD# USER#vkebvcdiph@akcqhli.tkq# WS#ama#
+
+127.0.0.1 2013-11-24 00:34:13,723[]  [] [] [][][] - EVENT#session-factory-usage# SESSION-ID#78C286CB-B313-4C55-8B76-D28638C43AD2# WS#tmp-tajxh6wc1afwz3# USER#AnonymousUser_vc0585#
+127.0.0.1 2013-11-24 00:34:29,447[]  [] [] [][][] - EVENT#session-factory-usage# SESSION-ID#78C286CB-B313-4C55-8B76-D28638C43AD2# WS#tmp-tajxh6wc1afwz3# USER#AnonymousUser_vc0585#
 
 127.0.0.1 2013-11-24 00:34:42,458[]  [] []    [awkvfc@awkvfc.tkq][hnordt][47973D43DBE1409FA8071530A364662B] - EVENT#project-created# PROJECT#myproject# TYPE#PHP#
 127.0.0.1 2013-11-24 00:34:44,305[]  [] []  [][][] - EVENT#tenant-stopped# WS#tmp-x9ib1a261k1se3#

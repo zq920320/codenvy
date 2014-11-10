@@ -81,19 +81,25 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
         events.add(Event.Builder.createUserAddedToWsEvent(AUID1, TWID1, "website").withDate("2013-11-20", "07:10:00").build());
         events.add(Event.Builder.createUserChangedNameEvent(AUID1, UID1).withDate("2013-11-20", "08:10:00").build());
 
-        events.add(
-                Event.Builder.createSessionUsageEvent(AUID1, TWID1, "session-fid1", "2013-11-20 11:00:00", "2013-11-20 11:05:00", false)
-                             .withDate("2013-11-20").withTime("11:00:00").build());
-        events.add(
-                Event.Builder.createSessionUsageEvent(AUID1, TWID1, "session-fid1", "2013-11-20 11:00:00", "2013-11-20 11:05:00", true)
-                             .withDate("2013-11-20").withTime("11:00:00").build());
+        events.add(Event.Builder.createSessionUsageEvent(AUID1, TWID1, "session-fid1", false)
+                                .withDate("2013-11-20").withTime("11:00:00").build());
+        events.add(Event.Builder.createSessionUsageEvent(AUID1, TWID1, "session-fid1", false)
+                                .withDate("2013-11-20").withTime("11:05:00").build());
 
-        events.add(
-                Event.Builder.createSessionUsageEvent(UID2, TWID2, "session-fid2", "2013-11-20 11:00:00", "2013-11-20 11:05:00", false)
-                             .withDate("2013-11-20").withTime("11:00:00").build());
-        events.add(
-                Event.Builder.createSessionUsageEvent(UID2, TWID2, "session-fid2", "2013-11-20 11:00:00", "2013-11-20 11:05:00", true)
-                             .withDate("2013-11-20").withTime("11:00:00").build());
+        events.add(Event.Builder.createSessionUsageEvent(AUID1, TWID1, "session-fid1", true)
+                                .withDate("2013-11-20").withTime("11:00:00").build());
+        events.add(Event.Builder.createSessionUsageEvent(AUID1, TWID1, "session-fid1", true)
+                                .withDate("2013-11-20").withTime("11:05:00").build());
+
+        events.add(Event.Builder.createSessionUsageEvent(UID2, TWID2, "session-fid2", false)
+                                .withDate("2013-11-20").withTime("11:00:00").build());
+        events.add(Event.Builder.createSessionUsageEvent(UID2, TWID2, "session-fid2", false)
+                                .withDate("2013-11-20").withTime("11:05:00").build());
+
+        events.add(Event.Builder.createSessionUsageEvent(UID2, TWID2, "session-fid2", true)
+                                .withDate("2013-11-20").withTime("11:00:00").build());
+        events.add(Event.Builder.createSessionUsageEvent(UID2, TWID2, "session-fid2", true)
+                                .withDate("2013-11-20").withTime("11:05:00").build());
 
         events.add(Event.Builder.createBuildStartedEvent(UID1, TWID1, "project", "type", "build-id1")
                                 .withDate("2013-11-20").withTime("12:00:00").build());

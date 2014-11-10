@@ -22,7 +22,6 @@ import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.StringValueData;
 import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.datamodel.ValueDataUtil;
 import com.codenvy.analytics.metrics.AbstractMetric;
 import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.Metric;
@@ -36,13 +35,12 @@ import org.testng.annotations.Test;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsMap;
+import static com.codenvy.analytics.datamodel.ValueDataUtil.getAsList;
 import static org.testng.AssertJUnit.assertEquals;
-import static org.testng.AssertJUnit.fail;
+import static org.testng.AssertJUnit.assertTrue;
 
 /** @author Anatoliy Bazko */
 public class TestProductUsageTime extends BaseTest {
@@ -53,49 +51,45 @@ public class TestProductUsageTime extends BaseTest {
         doExecute("20140102");
 
         Metric metric = MetricFactory.getMetric(MetricType.PRODUCT_USAGE_SESSIONS_LIST);
-        ListValueData data = ValueDataUtil.getAsList(metric, Context.EMPTY);
 
-        assertEquals(data.size(), 3);
+        ListValueData l = getAsList(metric, Context.EMPTY);
+        Map<String, Map<String, ValueData>> m = listToMap(l, AbstractMetric.USER);
 
-        Iterator<ValueData> iterator = data.getAll().iterator();
-        while (iterator.hasNext()) {
-            Map<String, ValueData> m = treatAsMap(iterator.next());
+        assertEquals(m.size(), 3);
+        assertTrue(m.containsKey("user1"));
+        assertTrue(m.containsKey("user2"));
+        assertTrue(m.containsKey("user3"));
 
-            if (m.get(AbstractMetric.USER).equals(StringValueData.valueOf("user1"))) {
-                assertEquals(m.get(AbstractMetric.WS), StringValueData.valueOf("ws"));
-                assertEquals(m.get(AbstractMetric.USER_COMPANY), StringValueData.valueOf("company"));
-                assertEquals(m.get(AbstractMetric.DOMAIN), StringValueData.valueOf("gmail.com"));
-                assertEquals(m.get(AbstractMetric.TIME), LongValueData.valueOf(600000));
-                assertEquals(m.get(AbstractMetric.SESSION_ID), StringValueData.valueOf("1"));
-                assertEquals(m.get(AbstractMetric.DATE), LongValueData.valueOf(1388563200000L));
-                assertEquals(m.get(AbstractMetric.END_TIME), LongValueData.valueOf(1388563800000L));
-                assertEquals(m.get(AbstractMetric.LOGOUT_INTERVAL), LongValueData.valueOf(0));
+        Map<String, ValueData> data = m.get("user1");
+        assertEquals(data.get(AbstractMetric.WS), StringValueData.valueOf("ws"));
+        assertEquals(data.get(AbstractMetric.USER_COMPANY), StringValueData.valueOf("company"));
+        assertEquals(data.get(AbstractMetric.DOMAIN), StringValueData.valueOf("gmail.com"));
+        assertEquals(data.get(AbstractMetric.TIME), LongValueData.valueOf(600000));
+        assertEquals(data.get(AbstractMetric.SESSION_ID), StringValueData.valueOf("1"));
+        assertEquals(data.get(AbstractMetric.DATE), LongValueData.valueOf(fullDateFormat.parse("2014-01-01 10:00:00").getTime()));
+        assertEquals(data.get(AbstractMetric.END_TIME), LongValueData.valueOf(fullDateFormat.parse("2014-01-01 10:10:00").getTime()));
+        assertEquals(data.get(AbstractMetric.LOGOUT_INTERVAL), LongValueData.valueOf(0));
 
-            } else if (m.get(AbstractMetric.USER).equals(StringValueData.valueOf("user2"))) {
-                assertEquals(m.get(AbstractMetric.USER), StringValueData.valueOf("user2"));
-                assertEquals(m.get(AbstractMetric.WS), StringValueData.valueOf("ws"));
-                assertEquals(m.get(AbstractMetric.USER_COMPANY), StringValueData.valueOf(""));
-                assertEquals(m.get(AbstractMetric.DOMAIN), StringValueData.valueOf(""));
-                assertEquals(m.get(AbstractMetric.TIME), LongValueData.valueOf(300000));
-                assertEquals(m.get(AbstractMetric.SESSION_ID), StringValueData.valueOf("2"));
-                assertEquals(m.get(AbstractMetric.DATE), LongValueData.valueOf(1388563200000L));
-                assertEquals(m.get(AbstractMetric.END_TIME), LongValueData.valueOf(1388563500000L));
-                assertEquals(m.get(AbstractMetric.LOGOUT_INTERVAL), LongValueData.valueOf(0));
+        data = m.get("user2");
+        assertEquals(data.get(AbstractMetric.WS), StringValueData.valueOf("ws"));
+        assertEquals(data.get(AbstractMetric.USER_COMPANY), StringValueData.valueOf(""));
+        assertEquals(data.get(AbstractMetric.DOMAIN), StringValueData.valueOf(""));
+        assertEquals(data.get(AbstractMetric.TIME), LongValueData.valueOf(600000));
+        assertEquals(data.get(AbstractMetric.SESSION_ID), StringValueData.valueOf("2"));
+        assertEquals(data.get(AbstractMetric.DATE), LongValueData.valueOf(fullDateFormat.parse("2014-01-01 23:55:00").getTime()));
+        assertEquals(data.get(AbstractMetric.END_TIME), LongValueData.valueOf(fullDateFormat.parse("2014-01-02 00:05:00").getTime()));
+        assertEquals(data.get(AbstractMetric.LOGOUT_INTERVAL), LongValueData.valueOf(0));
 
-            } else if (m.get(AbstractMetric.USER).equals(StringValueData.valueOf("user3"))) {
-                assertEquals(m.get(AbstractMetric.USER), StringValueData.valueOf("user3"));
-                assertEquals(m.get(AbstractMetric.WS), StringValueData.valueOf("ws"));
-                assertEquals(m.get(AbstractMetric.USER_COMPANY), StringValueData.valueOf(""));
-                assertEquals(m.get(AbstractMetric.DOMAIN), StringValueData.valueOf(""));
-                assertEquals(m.get(AbstractMetric.TIME), LongValueData.valueOf(60000));
-                assertEquals(m.get(AbstractMetric.SESSION_ID), StringValueData.valueOf("3"));
-                assertEquals(m.get(AbstractMetric.DATE), LongValueData.valueOf(1388563200000L));
-                assertEquals(m.get(AbstractMetric.END_TIME), LongValueData.valueOf(1388563260000L));
-                assertEquals(m.get(AbstractMetric.LOGOUT_INTERVAL), LongValueData.valueOf(60000));
-            } else {
-                fail();
-            }
-        }
+        data = m.get("user3");
+        assertEquals(data.get(AbstractMetric.USER), StringValueData.valueOf("user3"));
+        assertEquals(data.get(AbstractMetric.WS), StringValueData.valueOf("ws"));
+        assertEquals(data.get(AbstractMetric.USER_COMPANY), StringValueData.valueOf(""));
+        assertEquals(data.get(AbstractMetric.DOMAIN), StringValueData.valueOf(""));
+        assertEquals(data.get(AbstractMetric.TIME), LongValueData.valueOf(60000));
+        assertEquals(data.get(AbstractMetric.SESSION_ID), StringValueData.valueOf("3"));
+        assertEquals(data.get(AbstractMetric.DATE), LongValueData.valueOf(fullDateFormat.parse("2014-01-01 10:00:00").getTime()));
+        assertEquals(data.get(AbstractMetric.END_TIME), LongValueData.valueOf(fullDateFormat.parse("2014-01-01 10:01:00").getTime()));
+        assertEquals(data.get(AbstractMetric.LOGOUT_INTERVAL), LongValueData.valueOf(60000));
     }
 
     private void doExecute(String date) throws Exception {
@@ -124,37 +118,53 @@ public class TestProductUsageTime extends BaseTest {
                                 .withTime("09:01:00")
                                 .build());
 
-        // simple session, 5 min
+        // simple session, 10 min
         events.add(new Event.Builder().withDate("2014-01-01")
                                       .withTime("10:00:00")
                                       .withParam("EVENT", "session-usage")
                                       .withParam("WS", "ws")
                                       .withParam("USER", "user1")
-                                      .withParam("PARAMETERS", "USAGE-TIME=0,START-TIME=1388563200000,SESSION-ID=1")
+                                      .withParam("PARAMETERS", "SESSION-ID=1")
                                       .build());
         events.add(new Event.Builder().withDate("2014-01-01")
                                       .withTime("10:10:00")
                                       .withParam("EVENT", "session-usage")
                                       .withParam("WS", "ws")
                                       .withParam("USER", "user1")
-                                      .withParam("PARAMETERS", "USAGE-TIME=600000,START-TIME=1388563200000,SESSION-ID=1")
+                                      .withParam("PARAMETERS", "SESSION-ID=1")
                                       .build());
 
         // session ends on next day, 10 min
         events.add(new Event.Builder().withDate("2014-01-01")
-                                      .withTime("10:00:00")
+                                      .withTime("23:55:00")
                                       .withParam("EVENT", "session-usage")
                                       .withParam("WS", "ws")
                                       .withParam("USER", "user2")
-                                      .withParam("PARAMETERS", "USAGE-TIME=0,START-TIME=1388563200000,SESSION-ID=2")
+                                      .withParam("PARAMETERS", "SESSION-ID=2")
+                                      .build());
+        events.add(new Event.Builder().withDate("2014-01-01")
+                                      .withTime("23:59:00")
+                                      .withParam("EVENT", "session-usage")
+                                      .withParam("WS", "ws")
+                                      .withParam("USER", "user2")
+                                      .withParam("PARAMETERS", "SESSION-ID=2")
+                                      .build());
+
+        events.add(new Event.Builder().withDate("2014-01-02")
+                                      .withTime("00:01:00")
+                                      .withParam("EVENT", "session-usage")
+                                      .withParam("WS", "ws")
+                                      .withParam("USER", "user2")
+                                      .withParam("PARAMETERS", "SESSION-ID=2")
                                       .build());
         events.add(new Event.Builder().withDate("2014-01-02")
-                                      .withTime("10:05:00")
+                                      .withTime("00:05:00")
                                       .withParam("EVENT", "session-usage")
                                       .withParam("WS", "ws")
                                       .withParam("USER", "user2")
-                                      .withParam("PARAMETERS", "USAGE-TIME=300000,START-TIME=1388563200000,SESSION-ID=2")
+                                      .withParam("PARAMETERS", "SESSION-ID=2")
                                       .build());
+
 
         // session with logout event, 1 min
         events.add(new Event.Builder().withDate("2014-01-01")
@@ -162,10 +172,15 @@ public class TestProductUsageTime extends BaseTest {
                                       .withParam("EVENT", "session-usage")
                                       .withParam("WS", "ws")
                                       .withParam("USER", "user3")
-                                      .withParam("PARAMETERS", "USAGE-TIME=0,START-TIME=1388563200000,SESSION-ID=3")
+                                      .withParam("PARAMETERS", "SESSION-ID=3")
                                       .build());
         events.add(new Event.Builder().withDate("2014-01-01")
                                       .withTime("10:01:00")
+                                      .withParam("EVENT", "user-sso-logged-out")
+                                      .withParam("USER", "user3")
+                                      .build());
+        events.add(new Event.Builder().withDate("2014-01-01")
+                                      .withTime("10:02:00")
                                       .withParam("EVENT", "user-sso-logged-out")
                                       .withParam("USER", "user3")
                                       .build());

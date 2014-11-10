@@ -186,10 +186,10 @@ public abstract class AbstractUsersActivityTest extends BaseTest {
                                 .withDate("2013-11-02").build());
 
 
-        events.add(Event.Builder.createSessionUsageEvent("user1@gmail.com", "ws1", "1", "2013-11-02 19:00:00", "2013-11-02 19:05:00", false)
-                                .withDate("2013-11-02").withTime("19:00:00").build());
-        events.add(Event.Builder.createSessionUsageEvent("user2@gmail.com", "ws1", "2", "2013-11-02 20:00:00", "2013-11-02 20:10:00", false)
-                                .withDate("2013-11-02").withTime("20:00:00").build());
+        events.add(Event.Builder.createSessionUsageEvent("user1@gmail.com", "ws1", "1", false).withDate("2013-11-02").withTime("19:00:00").build());
+        events.add(Event.Builder.createSessionUsageEvent("user1@gmail.com", "ws1", "1", false).withDate("2013-11-02").withTime("19:05:00").build());
+        events.add(Event.Builder.createSessionUsageEvent("user2@gmail.com", "ws1", "2", false).withDate("2013-11-02").withTime("20:00:00").build());
+        events.add(Event.Builder.createSessionUsageEvent("user2@gmail.com", "ws1", "2", false).withDate("2013-11-02").withTime("20:10:00").build());
 
         events.add(Event.Builder.createFactoryCreatedEvent("user1@gmail.com", "ws1", "", "", "", "", "", "")
                                 .withDate("2013-11-01")

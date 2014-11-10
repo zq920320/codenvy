@@ -396,8 +396,6 @@
         <parameters>
             <param>WS</param>
             <param>USER</param>
-            <param>START-TIME</param>
-            <param> type="long"USAGE-TIME</param>
             <param>SESSION-ID</param>
         </parameters>
     </event>
@@ -406,8 +404,6 @@
         <parameters>
             <param>WS</param>
             <param>USER</param>
-            <param>START-TIME</param>
-            <param type="long">USAGE-TIME</param>
             <param>SESSION-ID</param>
         </parameters>
     </event>

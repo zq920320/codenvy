@@ -48,27 +48,13 @@ d2 = FOREACH d1 GENERATE i::dt AS dt, i::tmpWs AS tmpWs, (c::user IS NULL ? i::u
 d3 = UNION d2, i;
 d = DISTINCT d3;
 
-
 -- factory sessions
-a1 = filterByEvent(l, 'session-factory-usage');
-a2 = removeEmptyField(a1, 'user');
-a3 = extractParam(a2, 'SESSION-ID', sessionID);
-a4 = extractParam(a3, 'START-TIME', startTime);
-a5 = extractParam(a4, 'USAGE-TIME', usageTime);
-a6 = lastUpdate(a5, 'sessionID');
-a7 = FOREACH a6 GENERATE a5::dt AS dt,
-                         (long)a5::startTime AS startTime,
-                         (long)a5::usageTime AS usageTime,
-                         a5::ws AS ws,
-                         a5::user AS user,
-                         a5::sessionID AS sessionID;
-a8 = addLogoutInterval(a7, l, '$idleInterval');
-s2 = FOREACH a8 GENERATE ToDate(startTime) AS dt,
+s1 = getSessions(l, 'session-factory-usage');
+s2 = FOREACH s1 GENERATE ToDate(startTime) AS dt,
+                         usageTime AS delta,
                          ws AS tmpWs,
                          user AS tmpUser,
-                         sessionID AS id,
-                         (usageTime + logoutInterval) AS delta;
-
+                         sessionID AS id;
 
 -- founds out the corresponding referrer and factory
 s3 = JOIN s2 BY tmpWs LEFT, u BY tmpWs;

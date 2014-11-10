@@ -9,8 +9,10 @@
 127.0.0.1 2013-11-01 19:12:00,000[main] [INFO] [HelloWorld 1010]  - EVENT#user-update-profile# USER-ID#user4_12345678901234# USER#user4@gmail.com# EMAILS#user4@gmail.com# FIRSTNAME## LASTNAME## COMPANY## PHONE## JOBTITLE##
 127.0.0.1 2013-11-01 19:15:00,000[main] [INFO] [HelloWorld 1010]  - EVENT#user-update-profile# USER-ID#user3_12345678901234# USER#user3@gmail.com# EMAILS#user3@gmail.com# FIRSTNAME#f3# LASTNAME#l3# COMPANY#company3# PHONE#33# JOBTITLE#3#
 
-127.0.0.1 2013-11-01 20:00:00,000[main] [INFO] [HelloWorld 1010]  - EVENT#session-usage# SESSION-ID#1# WS#ws1# USER#user1@gmail.com# START-TIME#1383328800000# USAGE-TIME#300000# SESSION-ID#1#
-127.0.0.1 2013-11-01 19:00:00,000[main] [INFO] [HelloWorld 1010]  - EVENT#session-usage# SESSION-ID#1# WS#ws2# USER#user3@gmail.com# START-TIME#1383325200000# USAGE-TIME#120000# SESSION-ID#2#
+127.0.0.1 2013-11-01 20:00:00,000[main] [INFO] [HelloWorld 1010]  - EVENT#session-usage# SESSION-ID#1# WS#ws1# USER#user1@gmail.com# SESSION-ID#1#
+127.0.0.1 2013-11-01 20:05:00,000[main] [INFO] [HelloWorld 1010]  - EVENT#session-usage# SESSION-ID#1# WS#ws1# USER#user1@gmail.com# SESSION-ID#1#
+127.0.0.1 2013-11-01 19:00:00,000[main] [INFO] [HelloWorld 1010]  - EVENT#session-usage# SESSION-ID#1# WS#ws2# USER#user3@gmail.com# SESSION-ID#2#
+127.0.0.1 2013-11-01 19:02:00,000[main] [INFO] [HelloWorld 1010]  - EVENT#session-usage# SESSION-ID#1# WS#ws2# USER#user3@gmail.com# SESSION-ID#2#
 
 127.0.0.1 2013-11-01 19:07:00,000[main] [INFO] [HelloWorld 1010]  - EVENT#user-added-to-ws# WS#ws2# USER#user2@gmail.com# FROM##
 

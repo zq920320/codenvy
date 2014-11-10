@@ -17,9 +17,6 @@
  */
 package com.codenvy.analytics.pig.scripts.util;
 
-import com.codenvy.analytics.BaseTest;
-
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -113,25 +110,11 @@ public class Event {
         public static Builder createSessionUsageEvent(String user,
                                                       String ws,
                                                       String sessionId,
-                                                      long startTime,
-                                                      long usageTime,
                                                       boolean isFactory) {
             return new Builder().withParam("EVENT", isFactory ? "session-factory-usage" : "session-usage")
                                 .withParam("WS", ws)
                                 .withParam("USER", user)
-                                .withParam("PARAMETERS", "USAGE-TIME=" + usageTime + ",START-TIME=" + startTime + ",SESSION-ID=" + sessionId);
-        }
-
-        public static Builder createSessionUsageEvent(String user,
-                                                      String ws,
-                                                      String sessionId,
-                                                      String statStr,
-                                                      String endStr,
-                                                      boolean isFactory) throws Exception {
-
-            Date startTime = BaseTest.fullDateFormat.parse(statStr);
-            Date endTime = BaseTest.fullDateFormat.parse(endStr);
-            return createSessionUsageEvent(user, ws, sessionId, startTime.getTime(), endTime.getTime() - startTime.getTime(), isFactory);
+                                .withParam("PARAMETERS", "SESSION-ID=" + sessionId);
         }
 
         public static Builder createRunStartedEvent(String user, String ws, String project, String type, String id) {
@@ -282,15 +265,6 @@ public class Event {
                                 .withParam("WS", ws)
                                 .withParam("WS-ID", wsId)
                                 .withParam("USER", user);
-        }
-
-        public static Builder createUserUpdatedEvent(String userId,
-                                                     String user,
-                                                     String aliases) {
-            return new Builder().withParam("EVENT", "user-updated")
-                                .withParam("USER", user)
-                                .withParam("USER-ID", userId)
-                                .withParam("EMAILS", aliases);
         }
 
         public static Builder createIDEUsageEvent(String user,

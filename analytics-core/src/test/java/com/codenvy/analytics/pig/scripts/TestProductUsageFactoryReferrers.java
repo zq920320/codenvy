@@ -55,14 +55,22 @@ public class TestProductUsageFactoryReferrers extends BaseTest {
         events.add(Event.Builder.createUserCreatedEvent("uid2", "anonymoususer_1", "anonymoususer_1")
                                 .withDate("2013-02-10").withTime("10:00:00,000").build());
 
-        events.add(Event.Builder.createSessionUsageEvent("user1@gmail.com", "tmp-1", "id1", "2013-02-10 10:00:00", "2013-02-10 10:05:00", true)
+        events.add(Event.Builder.createSessionUsageEvent("user1@gmail.com", "tmp-1", "id1", true)
                                 .withDate("2013-02-10").withTime("10:00:00").build());
-        events.add(Event.Builder.createSessionUsageEvent("user1@gmail.com", "tmp-2", "id2", "2013-02-10 10:20:00", "2013-02-10 10:30:00", true)
+        events.add(Event.Builder.createSessionUsageEvent("user1@gmail.com", "tmp-1", "id1", true)
+                                .withDate("2013-02-10").withTime("10:05:00").build());
+        events.add(Event.Builder.createSessionUsageEvent("user1@gmail.com", "tmp-2", "id2", true)
                                 .withDate("2013-02-10").withTime("10:20:00").build());
-        events.add(Event.Builder.createSessionUsageEvent("anonymoususer_1", "tmp-3", "id3", "2013-02-10 11:00:00", "2013-02-10 11:15:00", true)
+        events.add(Event.Builder.createSessionUsageEvent("user1@gmail.com", "tmp-2", "id2", true)
+                                .withDate("2013-02-10").withTime("10:40:00").build());
+        events.add(Event.Builder.createSessionUsageEvent("anonymoususer_1", "tmp-3", "id3", true)
                                 .withDate("2013-02-10").withTime("11:00:00").build());
-        events.add(Event.Builder.createSessionUsageEvent("anonymoususer_1", "tmp-4", "id4", "2013-02-10 11:20:00", "2013-02-10 11:30:00", true)
+        events.add(Event.Builder.createSessionUsageEvent("anonymoususer_1", "tmp-3", "id3", true)
+                                .withDate("2013-02-10").withTime("11:15:00").build());
+        events.add(Event.Builder.createSessionUsageEvent("anonymoususer_1", "tmp-4", "id4", true)
                                 .withDate("2013-02-10").withTime("11:20:00").build());
+        events.add(Event.Builder.createSessionUsageEvent("anonymoususer_1", "tmp-4", "id4", true)
+                                .withDate("2013-02-10").withTime("11:30:00").build());
 
         events.add(Event.Builder.createFactoryProjectImportedEvent("user1@gmail.com", "tmp-1", "project", "type")
                                 .withDate("2013-02-10").withTime("10:05:00").build());

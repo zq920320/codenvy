@@ -56,14 +56,20 @@ public class TestProductUsageFactorySessions extends BaseTest {
         events.add(Event.Builder.createUserCreatedEvent(AUID1, "anonymoususer_1", "anonymoususer_1")
                                 .withDate("2013-02-10").withTime("10:00:00").build());
 
-        events.add(Event.Builder.createSessionUsageEvent("user1@gmail.com", "tmp-1", "id1", "2013-02-10 10:00:00", "2013-02-10 10:05:00", true)
+        events.add(Event.Builder.createSessionUsageEvent("user1@gmail.com", "tmp-1", "id1", true)
                                 .withDate("2013-02-10").withTime("10:00:00").build());
+        events.add(Event.Builder.createSessionUsageEvent("user1@gmail.com", "tmp-1", "id1", true)
+                                .withDate("2013-02-10").withTime("10:05:00").build());
 
-        events.add(Event.Builder.createSessionUsageEvent("user1@gmail.com", "tmp-2", "id2", "2013-02-10 10:20:00", "2013-02-10 10:30:00", true)
+        events.add(Event.Builder.createSessionUsageEvent("user1@gmail.com", "tmp-2", "id2", true)
                                 .withDate("2013-02-10").withTime("10:20:00").build());
+        events.add(Event.Builder.createSessionUsageEvent("user1@gmail.com", "tmp-2", "id2", true)
+                                .withDate("2013-02-10").withTime("10:40:00").build());
 
-        events.add(Event.Builder.createSessionUsageEvent("anonymoususer_1", "tmp-3", "id3", "2013-02-10 11:00:00", "2013-02-10 11:15:00", true)
+        events.add(Event.Builder.createSessionUsageEvent("anonymoususer_1", "tmp-3", "id3", true)
                                 .withDate("2013-02-10").withTime("11:00:00").build());
+        events.add(Event.Builder.createSessionUsageEvent("anonymoususer_1", "tmp-3", "id3", true)
+                                .withDate("2013-02-10").withTime("11:15:00").build());
 
         events.add(Event.Builder.createFactoryProjectImportedEvent("user1@gmail.com", "tmp-1", "project", "type")
                                 .withDate("2013-02-10").withTime("10:05:00").build());
@@ -127,7 +133,7 @@ public class TestProductUsageFactorySessions extends BaseTest {
         builder.put(Parameters.TO_DATE, "20130210");
 
         Metric metric = MetricFactory.getMetric(MetricType.FACTORY_PRODUCT_USAGE_TIME_TOTAL);
-        assertEquals(metric.getValue(builder.build()), new LongValueData(1800000L));
+        assertEquals(metric.getValue(builder.build()), new LongValueData(2400000L));
 
         metric = MetricFactory.getMetric(MetricType.FACTORY_SESSIONS);
         assertEquals(metric.getValue(builder.build()), new LongValueData(3));
@@ -210,7 +216,7 @@ public class TestProductUsageFactorySessions extends BaseTest {
         assertEquals(summaryValue.size(), 1);
         Map<String, ValueData> summary = ((MapValueData)summaryValue.getAll().get(0)).getAll();
         assertEquals(summary.get(UsersStatisticsList.SESSIONS).getAsString(), "3");
-        assertEquals(summary.get(UsersStatisticsList.TIME).getAsString(), "1800000");
+        assertEquals(summary.get(UsersStatisticsList.TIME).getAsString(), "2400000");
         assertEquals(summary.get(UsersStatisticsList.AUTHENTICATED_SESSION).getAsString(), "2");
         assertEquals(summary.get(UsersStatisticsList.CONVERTED_SESSION).getAsString(), "1");
     }
@@ -224,7 +230,7 @@ public class TestProductUsageFactorySessions extends BaseTest {
         assertEquals(summaryValue.size(), 1);
         Map<String, ValueData> summary = ((MapValueData)summaryValue.getAll().get(0)).getAll();
         assertEquals(summary.get(UsersStatisticsList.SESSIONS).getAsString(), "3");
-        assertEquals(summary.get(UsersStatisticsList.TIME).getAsString(), "1800000");
+        assertEquals(summary.get(UsersStatisticsList.TIME).getAsString(), "2400000");
         assertEquals(summary.get(UsersStatisticsList.RUNS).getAsString(), "1");
         assertEquals(summary.get(UsersStatisticsList.BUILDS).getAsString(), "0");
         assertEquals(summary.get(UsersStatisticsList.DEPLOYS).getAsString(), "0");
@@ -237,7 +243,7 @@ public class TestProductUsageFactorySessions extends BaseTest {
         assertEquals(summaryValue.size(), 1);
         summary = ((MapValueData)summaryValue.getAll().get(0)).getAll();
         assertEquals(summary.get(UsersStatisticsList.SESSIONS).getAsString(), "3");
-        assertEquals(summary.get(UsersStatisticsList.TIME).getAsString(), "1800000");
+        assertEquals(summary.get(UsersStatisticsList.TIME).getAsString(), "2400000");
         assertEquals(summary.get(UsersStatisticsList.RUNS).getAsString(), "1");
         assertEquals(summary.get(UsersStatisticsList.BUILDS).getAsString(), "0");
         assertEquals(summary.get(UsersStatisticsList.DEPLOYS).getAsString(), "0");

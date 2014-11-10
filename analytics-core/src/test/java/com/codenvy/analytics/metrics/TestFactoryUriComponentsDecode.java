@@ -89,8 +89,10 @@ public class TestFactoryUriComponentsDecode extends BaseTest {
         events.add(Event.Builder.createWorkspaceCreatedEvent(TWID4, "tmp-4", "anonymoususer_2")
                                 .withDate("2013-02-10").withTime("10:03:00").build());
 
-        events.add(Event.Builder.createSessionUsageEvent("anonymoususer_2", "tmp-4", "id4", "2013-02-10 11:00:00", "2013-02-10 11:15:00", true)
+        events.add(Event.Builder.createSessionUsageEvent("anonymoususer_2", "tmp-4", "id4", true)
                                 .withDate("2013-02-10").withTime("11:00:00").build());
+        events.add(Event.Builder.createSessionUsageEvent("anonymoususer_2", "tmp-4", "id4", true)
+                                .withDate("2013-02-10").withTime("11:15:00").build());
 
 
         File log = LogGenerator.generateLog(events);

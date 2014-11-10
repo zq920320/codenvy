@@ -32,11 +32,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -128,7 +138,6 @@ public class PigServer {
         server.registerJar(PigServer.class.getProtectionDomain().getCodeSource().getLocation().getPath());
         server.registerJar(DBObject.class.getProtectionDomain().getCodeSource().getLocation().getPath());
 
-
         server.registerFunction("UUID", new FuncSpec("com.codenvy.analytics.pig.udf.UUID"));
         server.registerFunction("ExtractParam", new FuncSpec("com.codenvy.analytics.pig.udf.ExtractParam"));
         server.registerFunction("ExtractDomain", new FuncSpec("com.codenvy.analytics.pig.udf.ExtractDomain"));
@@ -153,6 +162,7 @@ public class PigServer {
         server.registerFunction("IsTemporaryWorkspaceById", new FuncSpec("com.codenvy.analytics.pig.udf.IsTemporaryWorkspaceById"));
         server.registerFunction("IsTemporaryWorkspaceByName", new FuncSpec("com.codenvy.analytics.pig.udf.IsTemporaryWorkspaceByName"));
         server.registerFunction("GetFactoryId", new FuncSpec("com.codenvy.analytics.pig.udf.GetFactoryId"));
+        server.registerFunction("GetSessionStartTime", new FuncSpec("com.codenvy.analytics.pig.udf.GetSessionStartTime"));
 
         server.registerFunction("MongoLoaderUsersCompanies",
                                 new FuncSpec("com.codenvy.analytics.pig.udf.MongoLoader",
