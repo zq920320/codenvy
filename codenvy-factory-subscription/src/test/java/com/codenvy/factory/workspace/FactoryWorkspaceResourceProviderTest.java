@@ -71,6 +71,7 @@ public class FactoryWorkspaceResourceProviderTest {
     private String builderExecutionTime        = "builderExecutionTime";
     private String trackedRunnerLifetime       = "trackedRunnerLifetime";
     private String trackedBuilderExecutionTime = "trackedBuilderExecutionTime";
+    private String trackedRunnerRam            = "trackedRunnerRam";
     private String apiEndpoint                 = "http://dev.box.com/api";
 
     @Mock
@@ -105,10 +106,12 @@ public class FactoryWorkspaceResourceProviderTest {
         event = new CreateWorkspaceEvent(WS_ID, true);
         provider = new FactoryWorkspaceResourceProvider(trackedRunnerLifetime,
                                                         trackedBuilderExecutionTime,
+                                                        trackedRunnerRam,
                                                         runnerLifetime,
                                                         runnerRam,
                                                         builderExecutionTime,
                                                         apiEndpoint,
+                                                        false,
                                                         workspaceDao,
                                                         accountDao,
                                                         new EventService(),
@@ -256,10 +259,12 @@ public class FactoryWorkspaceResourceProviderTest {
             throws NotFoundException, ServerException, ConflictException {
         provider = new FactoryWorkspaceResourceProvider(trackedRunnerLifetime,
                                                         trackedBuilderExecutionTime,
+                                                        trackedRunnerRam,
                                                         runnerLifetime,
                                                         runnerRam,
                                                         builderExecutionTime,
                                                         apiEndpoint,
+                                                        false,
                                                         workspaceDao,
                                                         accountDao,
                                                         new EventService(),
@@ -316,6 +321,28 @@ public class FactoryWorkspaceResourceProviderTest {
 
         verify(workspaceDao).update(workspace);
         verifySettingOfAttributes(runnerLifetime, runnerRam, builderExecutionTime, false);
+    }
+
+    @Test
+    public void shouldSetTrackedValuesIfOnPremisesTrue() throws ApiException, IOException {
+        provider = new FactoryWorkspaceResourceProvider(trackedRunnerLifetime,
+                                                        trackedBuilderExecutionTime,
+                                                        trackedRunnerRam,
+                                                        runnerLifetime,
+                                                        runnerRam,
+                                                        builderExecutionTime,
+                                                        apiEndpoint,
+                                                        true,
+                                                        workspaceDao,
+                                                        accountDao,
+                                                        new EventService(),
+                                                        factoryBuilder);
+
+        provider.onEvent(event);
+
+        verify(workspaceDao).update(workspace);
+        verifySettingOfAttributes(trackedRunnerLifetime, trackedRunnerRam, trackedBuilderExecutionTime, false);
+        verifyZeroInteractions(factory, factoryBuilder, accountDao, author, jsonHelper);
     }
 
     private void verifySettingOfAttributes(String runnerLifetime, String runnerRam, String builderExecutionTime, boolean runnerInfra) {

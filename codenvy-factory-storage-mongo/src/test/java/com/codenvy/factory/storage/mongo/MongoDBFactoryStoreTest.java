@@ -111,7 +111,7 @@ public class MongoDBFactoryStoreTest {
         // authentication is done
         assertTrue(db.authenticate(username, password.toCharArray()));
         DBCollection collection = db.getCollection("factory");
-        factoryBuilder = new FactoryBuilder(new SourceProjectParametersValidator());
+        factoryBuilder = new FactoryBuilder(new SourceProjectParametersValidator(), false);
 
         try (DBCursor cursor = collection.find()) {
             for (DBObject one : cursor) {

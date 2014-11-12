@@ -43,6 +43,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.ws.rs.core.UriBuilder;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URLDecoder;
 import java.util.List;
@@ -63,6 +64,7 @@ public class FactoryWorkspaceResourceProvider implements EventSubscriber<CreateW
     private static final String  BUILDER_EXECUTION_TIME         = "factory.builder.execution_time";
     private static final String  TRACKED_RUNNER_LIFETIME        = "factory.tracked.runner.lifetime";
     private static final String  TRACKED_BUILDER_EXECUTION_TIME = "factory.tracked.builder.execution_time";
+    private static final String  TRACKED_RUNNER_RAM             = "factory.tracked.runner.ram";
     private static final Pattern ID_PATTERN                     = Pattern.compile("\\?id=([^&].*)");
 
     private final String runnerLifetime;
@@ -70,9 +72,12 @@ public class FactoryWorkspaceResourceProvider implements EventSubscriber<CreateW
     private final String builderExecutionTime;
     private final String trackedRunnerLifetime;
     private final String trackedBuilderExecutionTime;
-    private final String apiEndpoint;
+    private final String trackedRunnerRam;
 
-    private final WorkspaceDao   workspaceDao;
+    private final String apiEndpoint;
+    private final boolean onPremises;
+
+    private final WorkspaceDao workspaceDao;
     private final AccountDao     accountDao;
     private final EventService   eventService;
     private final FactoryBuilder factoryBuilder;
@@ -80,20 +85,24 @@ public class FactoryWorkspaceResourceProvider implements EventSubscriber<CreateW
     @Inject
     public FactoryWorkspaceResourceProvider(@Named(TRACKED_RUNNER_LIFETIME) String trackedRunnerLifetime,
                                             @Named(TRACKED_BUILDER_EXECUTION_TIME) String trackedBuilderExecutionTime,
+                                            @Nullable @Named(TRACKED_RUNNER_RAM) String trackedRunnerRam,
                                             @Nullable @Named(RUNNER_LIFETIME) String runnerLifetime,
                                             @Nullable @Named(RUNNER_RAM) String runnerRam,
                                             @Nullable @Named(BUILDER_EXECUTION_TIME) String builderExecutionTime,
                                             @Named("api.endpoint") String apiEndpoint,
+                                            @Named("subscription.orgaddon.enabled") boolean onPremises,
                                             WorkspaceDao workspaceDao,
                                             AccountDao accountDao,
                                             EventService eventService,
                                             FactoryBuilder factoryBuilder) {
         this.trackedRunnerLifetime = trackedRunnerLifetime;
         this.trackedBuilderExecutionTime = trackedBuilderExecutionTime;
+        this.trackedRunnerRam = trackedRunnerRam;
         this.runnerLifetime = runnerLifetime;
         this.runnerRam = runnerRam;
         this.builderExecutionTime = builderExecutionTime;
         this.apiEndpoint = apiEndpoint;
+        this.onPremises = onPremises;
         this.workspaceDao = workspaceDao;
         this.eventService = eventService;
         this.factoryBuilder = factoryBuilder;
@@ -117,46 +126,55 @@ public class FactoryWorkspaceResourceProvider implements EventSubscriber<CreateW
                 final Workspace workspace = workspaceDao.getById(event.getWorkspaceId());
                 final Map<String, String> attributes = workspace.getAttributes();
 
-                String factoryUrl = attributes.get("factoryUrl");
-                try {
-                    if (factoryUrl != null) {
-                        factoryUrl = URLDecoder.decode(factoryUrl, "UTF-8");
-                        final Matcher matcher = ID_PATTERN.matcher(factoryUrl);
-                        Factory factory;
-                        if (matcher.find()) {
-                            final Link factoryObjectLink = DtoFactory.getInstance().createDto(Link.class)
-                                                                     .withMethod("GET")
-                                                                     .withHref(UriBuilder.fromUri(apiEndpoint)
-                                                                                         .path("factory/" + matcher.group(1))
-                                                                                         .build().toString());
-                            factory = HttpJsonHelper.request(Factory.class, factoryObjectLink, Pair.of("validate", false));
-                        } else {
-                            factory = factoryBuilder.buildEncoded(URI.create(factoryUrl));
-                        }
+                if (onPremises) {
+                    attributes.put("codenvy:runner_lifetime", trackedRunnerLifetime);
+                    attributes.put("codenvy:builder_execution_time", trackedBuilderExecutionTime);
+                    attributes.put("codenvy:runner_ram", trackedRunnerRam);
 
-                        String orgid;
-                        if (factory.getV().startsWith("1.")) {
-                            orgid = factory.getOrgid();
-                        } else {
-                            orgid = factory.getCreator() != null ? factory.getCreator().getAccountId() : null;
-                        }
-                        if (null != orgid) {
-                            final List<Subscription> subscriptions = accountDao.getSubscriptions(orgid, "Factory");
-                            if (!subscriptions.isEmpty()) {
-                                final Subscription subscription = subscriptions.iterator().next();
-                                // factory workspace with subscription
-                                attributes.put("codenvy:runner_lifetime", trackedRunnerLifetime);
-                                attributes.put("codenvy:builder_execution_time", trackedBuilderExecutionTime);
-                                attributes.put("codenvy:runner_ram", convert(subscription.getProperties().get("RAM")));
-                                attributes.put("codenvy:runner_infra", "paid");
+                    workspaceDao.update(workspace.withAttributes(attributes));
+                    return;
+                } else {
+                    String factoryUrl = attributes.get("factoryUrl");
+                    try {
+                        if (factoryUrl != null) {
+                            factoryUrl = URLDecoder.decode(factoryUrl, "UTF-8");
+                            final Matcher matcher = ID_PATTERN.matcher(factoryUrl);
+                            Factory factory;
+                            if (matcher.find()) {
+                                final Link factoryObjectLink = DtoFactory.getInstance().createDto(Link.class)
+                                                                         .withMethod("GET")
+                                                                         .withHref(UriBuilder.fromUri(apiEndpoint)
+                                                                                             .path("factory/" + matcher.group(1))
+                                                                                             .build().toString());
+                                factory = HttpJsonHelper.request(Factory.class, factoryObjectLink, Pair.of("validate", false));
+                            } else {
+                                factory = factoryBuilder.buildEncoded(URI.create(factoryUrl));
+                            }
 
-                                workspaceDao.update(workspace.withAttributes(attributes));
-                                return;
+                            String orgid;
+                            if (factory.getV().startsWith("1.")) {
+                                orgid = factory.getOrgid();
+                            } else {
+                                orgid = factory.getCreator() != null ? factory.getCreator().getAccountId() : null;
+                            }
+                            if (null != orgid) {
+                                final List<Subscription> subscriptions = accountDao.getSubscriptions(orgid, "Factory");
+                                if (!subscriptions.isEmpty()) {
+                                    final Subscription subscription = subscriptions.iterator().next();
+                                    // factory workspace with subscription
+                                    attributes.put("codenvy:runner_lifetime", trackedRunnerLifetime);
+                                    attributes.put("codenvy:builder_execution_time", trackedBuilderExecutionTime);
+                                    attributes.put("codenvy:runner_ram", convert(subscription.getProperties().get("RAM")));
+                                    attributes.put("codenvy:runner_infra", "paid");
+
+                                    workspaceDao.update(workspace.withAttributes(attributes));
+                                    return;
+                                }
                             }
                         }
+                    } catch (ApiException | IOException e) {
+                        LOG.error(e.getLocalizedMessage(), e);
                     }
-                } catch (Exception e) {
-                    LOG.error(e.getLocalizedMessage(), e);
                 }
 
                 // common factory workspace
