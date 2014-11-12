@@ -322,7 +322,7 @@ public class AccountDaoImpl implements AccountDao {
                         result.add(toSubscription(currentSubscription));
                     }
             }
-            if (!"Factory".equals(serviceId)) {
+            if (null == serviceId || "Saas".equals(serviceId)) {
                 for(Subscription subscription : result) {
                     if ("Saas".equals(subscription.getServiceId())) {
                         return result;

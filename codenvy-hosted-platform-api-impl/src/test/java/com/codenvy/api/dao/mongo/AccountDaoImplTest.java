@@ -38,6 +38,7 @@ import org.mockito.Mock;
 import org.mockito.testng.MockitoTestNGListener;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
@@ -391,14 +392,23 @@ public class AccountDaoImplTest extends BaseDaoTest {
         assertEquals(new HashSet<>(found), new HashSet<>(asList(subscription1, subscription2)));
     }
 
-    @Test
-    public void shouldReturnEmptyListIfThereIsNoSubscriptionsOnGetSubscriptionsWithNotSaasService() throws Exception {
+    @Test(dataProvider = "notSaasServiceIdProvider")
+    public void shouldReturnEmptyListIfThereIsNoSubscriptionsOnGetSubscriptionsWithNotSaasService(String serviceId) throws Exception {
         final Account account = createAccount();
         insertAccounts(account);
 
-        final List<Subscription> found = accountDao.getSubscriptions(account.getId(), "Factory");
+        final List<Subscription> found = accountDao.getSubscriptions(account.getId(), serviceId);
 
         assertTrue(found.isEmpty());
+    }
+
+    @DataProvider(name = "notSaasServiceIdProvider")
+    public String [][] notSaasServiceIdProvider() {
+        return new String[][] {
+                {"Factory"},
+                {"OnPremises"},
+                {"NotSaas"}
+        };
     }
 
     @Test
