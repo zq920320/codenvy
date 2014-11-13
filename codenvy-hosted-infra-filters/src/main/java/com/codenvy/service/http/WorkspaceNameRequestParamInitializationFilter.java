@@ -20,6 +20,7 @@ package com.codenvy.service.http;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.api.workspace.shared.dto.WorkspaceDescriptor;
+import com.codenvy.dto.server.DtoFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +32,8 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.MediaType;
 import java.io.IOException;
 
 /**
@@ -53,7 +56,7 @@ public class WorkspaceNameRequestParamInitializationFilter extends WorkspaceEnvi
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        if (request.getParameter("name") != null && !request.getParameter("name").isEmpty()) {
+        if (request.getParameter("name") != null && !request.getParameter("name").isEmpty() && getWorkspaceFromRequest(request) != null) {
             super.doFilter(request, response, chain);
         } else {
             chain.doFilter(request, response);

@@ -122,18 +122,18 @@ public class WorkspaceNameRequestParamInitializationFilterTest {
     }
 
     @Test
-    public void shouldRedirectIfWorkspaceCantBeFound() throws IOException, ServletException {
+    public void shouldContinueChainIfWorkspaceCantBeFound() throws IOException, ServletException {
         //given
         ServletRequest request =
                 new MockHttpServletRequest("http://localhost:8080/api/workspace?name=myWorkspace", null, 0, "GET", null);
         //when
         filter.doFilter(request, response, chain);
         //then
-        verify(response).sendRedirect(eq("http://codenvy.com/wsnotfound"));
+        verify(chain).doFilter(eq(request), eq(response));
     }
 
     @Test
-    public void shouldRedirectIfFailToGetWorkspaceFromCache() throws IOException, ServletException, ServerException, NotFoundException {
+    public void shouldContinueChainIfFailToGetWorkspaceFromCache() throws IOException, ServletException, ServerException, NotFoundException {
         //given
         when(cache.getByName(eq("myWorkspace"))).thenThrow(NotFoundException.class);
         ServletRequest request =
@@ -141,11 +141,11 @@ public class WorkspaceNameRequestParamInitializationFilterTest {
         //when
         filter.doFilter(request, response, chain);
         //then
-        verify(response).sendRedirect(eq("http://codenvy.com/wsnotfound"));
+        verify(chain).doFilter(eq(request), eq(response));
     }
 
     @Test
-    public void shouldRedirectIfErrorToGetWorkspaceFromCache() throws IOException, ServletException, ServerException, NotFoundException {
+    public void shouldContinueChainIfErrorToGetWorkspaceFromCache() throws IOException, ServletException, ServerException, NotFoundException {
         //given
         when(cache.getByName(eq("myWorkspace"))).thenThrow(ServerException.class);
         ServletRequest request =
@@ -153,6 +153,6 @@ public class WorkspaceNameRequestParamInitializationFilterTest {
         //when
         filter.doFilter(request, response, chain);
         //then
-        verify(response).sendRedirect(eq("http://codenvy.com/wsnotfound"));
+        verify(chain).doFilter(eq(request), eq(response));
     }
 }
