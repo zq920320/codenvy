@@ -465,15 +465,6 @@
             <param allow-empty-value="true">ORG-ID</param>
         </parameters>
     </event>
-    <event name="factory-project-imported">
-        <description>Factory project imported</description>
-        <parameters>
-            <param>WS</param>
-            <param>USER</param>
-            <param>PROJECT</param>
-            <param>TYPE</param>
-        </parameters>
-    </event>
     <event name="session-factory-started">
         <description>Factory session started</description>
         <parameters>

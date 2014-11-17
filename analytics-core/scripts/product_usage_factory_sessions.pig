@@ -28,10 +28,13 @@ u1 = LOAD '$STORAGE_URL.$STORAGE_TABLE_ACCEPTED_FACTORIES' using MongoLoaderAcce
 u = FOREACH u1 GENERATE ws AS tmpWs, referrer, factory, org_id AS orgId, affiliate_id AS affiliateId, factory_id AS factoryId;
 
 ---- finds out all imported projects
-i1 = filterByEvent(l, 'factory-project-imported');
-i2 = FOREACH i1 GENERATE dt, ws AS tmpWs, user;
-i3 = GROUP i2 BY (tmpWs, user);
-i = FOREACH i3 GENERATE MIN(i2.dt) AS dt, group.tmpWs AS tmpWs, group.user AS user;
+i1 = filterByEvent(l, 'ide-usage');
+i2 = extractParam(i1, 'SOURCE', 'source');
+i3 = extractParam(i2, 'ACTION', 'action');
+i4 = FILTER i3 BY source == 'com.codenvy.ide.factory.client.persist.PersistProjectHandler' AND action == 'clone';
+i5 = FOREACH i4 GENERATE dt, ws AS tmpWs, user;
+i6 = GROUP i5 BY (tmpWs, user);
+i = FOREACH i6 GENERATE MIN(i5.dt) AS dt, group.tmpWs AS tmpWs, group.user AS user;
 
 -- users could work anonymously and their factory sessions associated with those names
 -- so, lets find their name before 'user-changed-name' has been occurred

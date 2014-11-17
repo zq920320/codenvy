@@ -351,11 +351,13 @@ public class Event {
                                                                 String ws,
                                                                 String project,
                                                                 String type) {
-            return new Builder().withParam("EVENT", "factory-project-imported")
+            return new Builder().withParam("EVENT", "ide-usage")
                                 .withParam("WS", ws)
                                 .withParam("USER", user)
                                 .withParam("PROJECT", project)
-                                .withParam("TYPE", type);
+                                .withParam("TYPE", type)
+                                .withParam("SOURCE", "com.codenvy.ide.factory.client.persist.PersistProjectHandler")
+                                .withParam("ACTION", "clone");
 
         }
 
