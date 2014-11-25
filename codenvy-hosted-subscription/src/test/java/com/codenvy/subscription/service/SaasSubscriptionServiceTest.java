@@ -122,11 +122,6 @@ public class SaasSubscriptionServiceTest {
                 {"0xAMB"},
                 {"1024"},
                 {"2TB"},
-                {"1gb"},
-                {"1536mb"},
-                {"1Gb"},
-                {"1gB"},
-                {"1536mB"},
                 {"1gigabyte"},
                 {"4gigabytes"},
                 {"1536megabytes"},
@@ -427,6 +422,9 @@ public class SaasSubscriptionServiceTest {
                 {"1536MB", "1536"},
                 {"512MB", "512"},
                 {"105MB", "105"},
+                {"1536mb", "1536"},
+                {"1Gb", "1024"},
+                {"1gB", "1024"}
         };
     }
 

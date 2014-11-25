@@ -37,6 +37,8 @@ import javax.inject.Singleton;
 import java.util.List;
 import java.util.Map;
 
+import static com.codenvy.commons.lang.MemoryUtils.convert;
+
 /**
  * Service provide functionality of Saas subscription.
  *
@@ -167,7 +169,11 @@ public class SaasSubscriptionService extends SubscriptionService {
                 if (ramIsSet) {
                     wsAttributes.put("codenvy:runner_ram", "0");
                 } else {
-                    wsAttributes.put("codenvy:runner_ram", String.valueOf(convert(ensureExistsAndGet("RAM", subscription))));
+                    try {
+                        wsAttributes.put("codenvy:runner_ram", String.valueOf(convert(ensureExistsAndGet("RAM", subscription))));
+                    } catch (IllegalArgumentException exception) {
+                        throw new ConflictException("Subscription with such plan can't be added");
+                    }
                     ramIsSet = true;
                 }
 
@@ -217,37 +223,6 @@ public class SaasSubscriptionService extends SubscriptionService {
             } catch (ApiException e) {
                 LOG.error(e.getLocalizedMessage(), e);
             }
-        }
-    }
-
-    /**
-     * Converts String RAM with suffix GB or MB to int RAM in MB.
-     * e.g.
-     * "1GB" -> 1024
-     *
-     * @param RAM
-     *         string RAM in GB or MB
-     * @return int RAM in MB
-     */
-    private int convert(String RAM) throws ConflictException {
-        try {
-            int ramMb;
-            switch (RAM.substring(RAM.length() - 2)) {
-                case "GB":
-                    ramMb = 1024 * Integer.parseInt(RAM.substring(0, RAM.length() - 2));
-                    break;
-                case "MB":
-                    ramMb = Integer.parseInt(RAM.substring(0, RAM.length() - 2));
-                    break;
-                default:
-                    LOG.error("Bad RAM value " + RAM);
-                    throw new ConflictException("Subscription with such plan can't be added");
-            }
-
-            return ramMb;
-        } catch (NumberFormatException nfEx) {
-            LOG.error("Bad RAM value " + RAM);
-            throw new ConflictException("Subscription with such plan can't be added");
         }
     }
 }

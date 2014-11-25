@@ -1,0 +1,172 @@
+/*
+ * CODENVY CONFIDENTIAL
+ * __________________
+ *
+ *  [2012] - [2014] Codenvy, S.A.
+ *  All Rights Reserved.
+ *
+ * NOTICE:  All information contained herein is, and remains
+ * the property of Codenvy S.A. and its suppliers,
+ * if any.  The intellectual and technical concepts contained
+ * herein are proprietary to Codenvy S.A.
+ * and its suppliers and may be covered by U.S. and Foreign Patents,
+ * patents in process, and are protected by trade secret or copyright law.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from Codenvy S.A..
+ */
+package com.codenvy.api.account;
+
+import com.codenvy.api.account.server.ResourcesManager;
+import com.codenvy.api.account.server.dao.Account;
+import com.codenvy.api.account.server.dao.AccountDao;
+import com.codenvy.api.account.server.dao.Subscription;
+import com.codenvy.api.account.shared.dto.UpdateResourcesDescriptor;
+import com.codenvy.api.core.ConflictException;
+import com.codenvy.api.core.ForbiddenException;
+import com.codenvy.api.core.NotFoundException;
+import com.codenvy.api.core.ServerException;
+import com.codenvy.api.runner.dto.ResourcesDescriptor;
+import com.codenvy.api.runner.internal.Constants;
+import com.codenvy.api.workspace.server.dao.Workspace;
+import com.codenvy.api.workspace.server.dao.WorkspaceDao;
+import com.codenvy.dto.server.DtoFactory;
+
+import org.everrest.websockets.WSConnectionContext;
+import org.everrest.websockets.message.ChannelBroadcastMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.inject.Inject;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static com.codenvy.commons.lang.MemoryUtils.convert;
+import static java.lang.String.format;
+
+/**
+ * Implementation of {@link com.codenvy.api.account.server.ResourcesManager}
+ *
+ * @author Sergii Leschenko
+ */
+public class ResourcesManagerImpl implements ResourcesManager {
+    private static final Logger LOG = LoggerFactory.getLogger(ResourcesManagerImpl.class);
+
+    private final AccountDao   accountDao;
+    private final WorkspaceDao workspaceDao;
+
+    @Inject
+    public ResourcesManagerImpl(AccountDao accountDao,
+                                WorkspaceDao workspaceDao) {
+        this.accountDao = accountDao;
+        this.workspaceDao = workspaceDao;
+    }
+
+    @Override
+    public void redistributeResources(String accountId, List<UpdateResourcesDescriptor> updates) throws NotFoundException,
+                                                                                                        ServerException,
+                                                                                                        ConflictException,
+                                                                                                        ForbiddenException {
+        final Account account = accountDao.getById(accountId);
+        final Map<String, Workspace> ownWorkspaces = new HashMap<>();
+        for (Workspace workspace : workspaceDao.getByAccount(account.getId())) {
+            ownWorkspaces.put(workspace.getId(), workspace);
+        }
+
+        Map<String, UpdateResourcesDescriptor> resources = new HashMap<>();
+        for (UpdateResourcesDescriptor resDescriptor : updates) {
+            resources.put(resDescriptor.getWorkspaceId(), resDescriptor);
+        }
+
+        for (String wsId : resources.keySet()) {
+            if (!ownWorkspaces.containsKey(wsId)) {
+                throw new ForbiddenException(format("Workspace %s is not related to account %s", wsId, accountId));
+            }
+        }
+
+        if (ownWorkspaces.size() != resources.size()) {
+            for (String workspaceId : ownWorkspaces.keySet()) {
+                if (!resources.containsKey(workspaceId)) {
+                    throw new ConflictException(format("Missed description of resources for workspace %s", workspaceId));
+                }
+            }
+        }
+
+        //getting allowed RAM
+        final List<Subscription> saasSubscriptions = accountDao.getSubscriptions(accountId, "Saas");
+        if (saasSubscriptions.isEmpty()) {
+            throw new ConflictException("Account hasn't Saas subscription");
+        }
+        if (saasSubscriptions.size() > 1) {
+            throw new ConflictException("Account has more than 1 Saas subscription");
+        }
+        final Subscription saas = saasSubscriptions.get(0);
+        if ("Community".equals(saas.getProperties().get("Package"))) {
+            throw new ConflictException("Users who have community subscription can't distribute resources");
+        }
+        final int allowedRAM = convert(saas.getProperties().get("RAM"));
+
+        //getting size of RAM that will be used after distributing
+        int futureRAM = 0;
+        for (UpdateResourcesDescriptor resourcesDescriptor : resources.values()) {
+            if (!resourcesDescriptor.getResources().containsKey("RAM")) {
+                throw new ConflictException(
+                        format("Missed size of RAM in resources description for workspace %s", resourcesDescriptor.getWorkspaceId()));
+            }
+            try {
+                futureRAM += Integer.parseInt(resourcesDescriptor.getResources().get("RAM"));
+            } catch (NumberFormatException nfe) {
+                throw new ConflictException(format("Invalid size of RAM for workspace %s", resourcesDescriptor.getWorkspaceId()));
+            }
+        }
+
+        if (futureRAM > allowedRAM) {
+            throw new ConflictException(format("Failed to allocate %smb of RAM. Your account is provisioned with %smb of RAM", futureRAM,
+                                               allowedRAM));
+        }
+
+        //automatic distributing the remaining of RAM
+        if (futureRAM < allowedRAM) {
+            Workspace primaryWorkspace = getPrimaryWorkspace(ownWorkspaces.values());
+            UpdateResourcesDescriptor updateResourcesDescriptor = resources.get(primaryWorkspace.getId());
+            int oldPrimaryRAM = Integer.parseInt(updateResourcesDescriptor.getResources().get("RAM"));
+            int newPrimaryRAM = oldPrimaryRAM + (allowedRAM - futureRAM);
+            updateResourcesDescriptor.getResources().put("RAM", String.valueOf(newPrimaryRAM));
+        }
+
+        //redistributing resources
+        for (UpdateResourcesDescriptor resDescriptor : updates) {
+            Workspace workspace = ownWorkspaces.get(resDescriptor.getWorkspaceId());
+            workspace.getAttributes().put(Constants.RUNNER_MAX_MEMORY_SIZE, resDescriptor.getResources().get("RAM"));
+            workspaceDao.update(workspace);
+            publishResourcesChangedWsEvent(resDescriptor.getWorkspaceId(), resDescriptor.getResources().get("RAM"));
+        }
+    }
+
+    private Workspace getPrimaryWorkspace(Collection<Workspace> values) throws ConflictException {
+        for (Workspace workspace : values) {
+            if (workspace.getAttributes() == null || workspace.getAttributes().get("codenvy:role") == null) {
+
+                return workspace;
+            }
+        }
+        throw new ConflictException("Primary workspace is not found for distribution of the remaining RAM");
+    }
+
+    private void publishResourcesChangedWsEvent(String workspaceId, String totalMemory) {
+        try {
+            final ChannelBroadcastMessage bm = new ChannelBroadcastMessage();
+
+            bm.setChannel(format("workspace:resources:%s", workspaceId));
+
+            final ResourcesDescriptor resourcesDescriptor = DtoFactory.getInstance().createDto(ResourcesDescriptor.class)
+                                                                      .withTotalMemory(totalMemory);
+            bm.setBody(DtoFactory.getInstance().toJson(resourcesDescriptor));
+            WSConnectionContext.sendMessage(bm);
+        } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
+        }
+    }
+}
