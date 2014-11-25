@@ -502,14 +502,14 @@
                                     //error createWorkspace
                                     function() {
                                         error([
-                                            new AccountError(null, "Unable to create workspace " + username)
+                                            new AccountError(null, "Unable to create workspace " + workspace + " for user: " + username)
                                         ]);
                                     }); //createWorkspace
                             },
                             // error createWorkspace
                             function() {
                                 error([
-                                    new AccountError(null, "Unable to create workspace " + username)
+                                    new AccountError(null, "Unable to create workspace " + workspace + " for user: " + username)
                                 ]);
                             }); //ensureExistenceAccount
                     } else if (src_workspace) {
