@@ -20,7 +20,6 @@ package com.codenvy.factory.workspace;
 import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.server.dao.Subscription;
 import com.codenvy.api.core.ApiException;
-import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.notification.EventService;
 import com.codenvy.api.core.notification.EventSubscriber;
 import com.codenvy.api.core.rest.HttpJsonHelper;
@@ -51,6 +50,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.codenvy.commons.lang.MemoryUtils.convert;
+
 /**
  * Set attributes to temporary workspaces that make runner/builder use custom resources for factory
  *
@@ -74,10 +75,10 @@ public class FactoryWorkspaceResourceProvider implements EventSubscriber<CreateW
     private final String trackedBuilderExecutionTime;
     private final String trackedRunnerRam;
 
-    private final String apiEndpoint;
+    private final String  apiEndpoint;
     private final boolean onPremises;
 
-    private final WorkspaceDao workspaceDao;
+    private final WorkspaceDao   workspaceDao;
     private final AccountDao     accountDao;
     private final EventService   eventService;
     private final FactoryBuilder factoryBuilder;
@@ -164,7 +165,7 @@ public class FactoryWorkspaceResourceProvider implements EventSubscriber<CreateW
                                     // factory workspace with subscription
                                     attributes.put("codenvy:runner_lifetime", trackedRunnerLifetime);
                                     attributes.put("codenvy:builder_execution_time", trackedBuilderExecutionTime);
-                                    attributes.put("codenvy:runner_ram", convert(subscription.getProperties().get("RAM")));
+                                    attributes.put("codenvy:runner_ram", String.valueOf(convert(subscription.getProperties().get("RAM"))));
                                     attributes.put("codenvy:runner_infra", "paid");
 
                                     workspaceDao.update(workspace.withAttributes(attributes));
@@ -192,38 +193,6 @@ public class FactoryWorkspaceResourceProvider implements EventSubscriber<CreateW
     private void setIfValuePresents(Map<String, String> attributes, String key, String value) {
         if (value != null && !value.isEmpty()) {
             attributes.put(key, value);
-        }
-    }
-
-    /**
-     * Converts String RAM with suffix GB or MB to int RAM in MB.
-     * e.g.
-     * "1GB" -> "1024"
-     *
-     * @param RAM
-     *         string RAM in GB or MB
-     * @return string value of RAM in MB
-     */
-    private String convert(String RAM) throws ConflictException {
-        try {
-            int ramMb;
-            switch (RAM.substring(RAM.length() - 2)) {
-                case "GB":
-                    ramMb = 1024 * Integer.parseInt(RAM.substring(0, RAM.length() - 2));
-                    break;
-                case "MB":
-                    ramMb = Integer.parseInt(RAM.substring(0, RAM.length() - 2));
-                    break;
-                default:
-                    // should never happen
-                    return "0";
-            }
-
-            return String.valueOf(ramMb);
-        } catch (NumberFormatException e) {
-            // should never happen
-            LOG.error("Bad RAM value " + RAM);
-            return "0";
         }
     }
 }
