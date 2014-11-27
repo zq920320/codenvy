@@ -18,9 +18,7 @@
 package com.codenvy.api.account;
 
 import com.codenvy.api.account.server.ResourcesManager;
-import com.codenvy.api.account.server.dao.Account;
 import com.codenvy.api.account.server.dao.AccountDao;
-import com.codenvy.api.account.server.dao.Subscription;
 import com.codenvy.api.account.shared.dto.UpdateResourcesDescriptor;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.ForbiddenException;
@@ -43,7 +41,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.codenvy.commons.lang.MemoryUtils.convert;
 import static java.lang.String.format;
 
 /**
@@ -65,13 +62,20 @@ public class ResourcesManagerImpl implements ResourcesManager {
     }
 
     @Override
-    public void redistributeResources(String accountId, List<UpdateResourcesDescriptor> updates) throws NotFoundException,
-                                                                                                        ServerException,
+    public void redistributeResources(String accountId, List<UpdateResourcesDescriptor> updates) throws ForbiddenException,
                                                                                                         ConflictException,
-                                                                                                        ForbiddenException {
-        final Account account = accountDao.getById(accountId);
+                                                                                                        NotFoundException,
+                                                                                                        ServerException {
+        redistributeResources(accountId, -1, updates);
+    }
+
+    @Override
+    public void redistributeResources(String accountId, int allowedRAM, List<UpdateResourcesDescriptor> updates) throws NotFoundException,
+                                                                                                                        ServerException,
+                                                                                                                        ConflictException,
+                                                                                                                        ForbiddenException {
         final Map<String, Workspace> ownWorkspaces = new HashMap<>();
-        for (Workspace workspace : workspaceDao.getByAccount(account.getId())) {
+        for (Workspace workspace : workspaceDao.getByAccount(accountId)) {
             ownWorkspaces.put(workspace.getId(), workspace);
         }
 
@@ -94,20 +98,6 @@ public class ResourcesManagerImpl implements ResourcesManager {
             }
         }
 
-        //getting allowed RAM
-        final List<Subscription> saasSubscriptions = accountDao.getSubscriptions(accountId, "Saas");
-        if (saasSubscriptions.isEmpty()) {
-            throw new ConflictException("Account hasn't Saas subscription");
-        }
-        if (saasSubscriptions.size() > 1) {
-            throw new ConflictException("Account has more than 1 Saas subscription");
-        }
-        final Subscription saas = saasSubscriptions.get(0);
-        if ("Community".equals(saas.getProperties().get("Package"))) {
-            throw new ConflictException("Users who have community subscription can't distribute resources");
-        }
-        final int allowedRAM = convert(saas.getProperties().get("RAM"));
-
         //getting size of RAM that will be used after distributing
         int futureRAM = 0;
         for (UpdateResourcesDescriptor resourcesDescriptor : resources.values()) {
@@ -116,24 +106,31 @@ public class ResourcesManagerImpl implements ResourcesManager {
                         format("Missed size of RAM in resources description for workspace %s", resourcesDescriptor.getWorkspaceId()));
             }
             try {
-                futureRAM += Integer.parseInt(resourcesDescriptor.getResources().get("RAM"));
+                int sizeOfRAM = Integer.parseInt(resourcesDescriptor.getResources().get("RAM"));
+                if (sizeOfRAM < 0) {
+                    throw new ConflictException(format("Size of RAM for workspace %s is a negative number",
+                                                       resourcesDescriptor.getWorkspaceId()));
+                }
+                futureRAM += sizeOfRAM;
             } catch (NumberFormatException nfe) {
                 throw new ConflictException(format("Invalid size of RAM for workspace %s", resourcesDescriptor.getWorkspaceId()));
             }
         }
 
-        if (futureRAM > allowedRAM) {
-            throw new ConflictException(format("Failed to allocate %smb of RAM. Your account is provisioned with %smb of RAM", futureRAM,
-                                               allowedRAM));
-        }
+        if (allowedRAM != -1) {
+            if (futureRAM > allowedRAM) {
+                throw new ConflictException(format("Failed to allocate %smb of RAM. Your account is provisioned with %smb of RAM",
+                                                   futureRAM, allowedRAM));
+            }
 
-        //automatic distributing the remaining of RAM
-        if (futureRAM < allowedRAM) {
-            Workspace primaryWorkspace = getPrimaryWorkspace(ownWorkspaces.values());
-            UpdateResourcesDescriptor updateResourcesDescriptor = resources.get(primaryWorkspace.getId());
-            int oldPrimaryRAM = Integer.parseInt(updateResourcesDescriptor.getResources().get("RAM"));
-            int newPrimaryRAM = oldPrimaryRAM + (allowedRAM - futureRAM);
-            updateResourcesDescriptor.getResources().put("RAM", String.valueOf(newPrimaryRAM));
+            //automatic distributing the remaining of RAM
+            if (futureRAM < allowedRAM) {
+                Workspace primaryWorkspace = getPrimaryWorkspace(ownWorkspaces.values());
+                UpdateResourcesDescriptor updateResourcesDescriptor = resources.get(primaryWorkspace.getId());
+                int oldPrimaryRAM = Integer.parseInt(updateResourcesDescriptor.getResources().get("RAM"));
+                int newPrimaryRAM = oldPrimaryRAM + (allowedRAM - futureRAM);
+                updateResourcesDescriptor.getResources().put("RAM", String.valueOf(newPrimaryRAM));
+            }
         }
 
         //redistributing resources
