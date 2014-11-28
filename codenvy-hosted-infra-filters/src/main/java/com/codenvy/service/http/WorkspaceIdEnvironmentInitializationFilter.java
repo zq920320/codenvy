@@ -19,16 +19,22 @@ package com.codenvy.service.http;
 
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
+import com.codenvy.api.core.rest.shared.dto.ServiceError;
 import com.codenvy.api.workspace.shared.dto.WorkspaceDescriptor;
+import com.codenvy.dto.server.DtoFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**
  * Set information about workspace in request by following path:
@@ -61,5 +67,14 @@ public class WorkspaceIdEnvironmentInitializationFilter extends WorkspaceEnviron
         }
     }
 
-
+    @Override
+    protected void workspaceNotFoundHandler(ServletRequest request, ServletResponse response, FilterChain chain)
+            throws IOException {
+        //super.workspaceNotFoundHandler(request, response, chain);
+        HttpServletResponse httpResponse = (HttpServletResponse)response;
+        httpResponse.setStatus(404);
+        httpResponse.setContentType("application/json");
+        httpResponse.getWriter().write(DtoFactory.getInstance().toJson(DtoFactory.getInstance().createDto(ServiceError.class)
+                                                                                 .withMessage("Workspace not found")));
+    }
 }

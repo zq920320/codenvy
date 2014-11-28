@@ -51,7 +51,7 @@ public abstract class WorkspaceEnvironmentInitializationFilter implements Filter
         try {
             WorkspaceDescriptor workspace = getWorkspaceFromRequest(request);
             if (workspace == null) {
-                ((HttpServletResponse)response).sendRedirect(wsNotFoundRedirectUrl);
+                workspaceNotFoundHandler(request, response, chain);
                 return;
             }
             final EnvironmentContext env = EnvironmentContext.getCurrent();
@@ -67,7 +67,24 @@ public abstract class WorkspaceEnvironmentInitializationFilter implements Filter
         }
     }
 
+    /**
+     * @param request
+     *         - given request
+     * @return - workspace name for given request.
+     */
     protected abstract WorkspaceDescriptor getWorkspaceFromRequest(ServletRequest request);
+
+    /**
+     * Handle situation when workspace is not found.
+     *
+     * @param request
+     * @param response
+     * @param chain
+     * @throws IOException
+     */
+    protected void workspaceNotFoundHandler(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException {
+        ((HttpServletResponse)response).sendRedirect(wsNotFoundRedirectUrl);
+    }
 
     @Override
     public void destroy() {
