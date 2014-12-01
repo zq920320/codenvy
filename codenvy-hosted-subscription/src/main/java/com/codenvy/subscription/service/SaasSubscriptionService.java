@@ -37,7 +37,7 @@ import javax.inject.Singleton;
 import java.util.List;
 import java.util.Map;
 
-import static com.codenvy.commons.lang.MemoryUtils.convert;
+import static com.codenvy.commons.lang.Size.parseSizeToMegabytes;
 
 /**
  * Service provide functionality of Saas subscription.
@@ -170,7 +170,8 @@ public class SaasSubscriptionService extends SubscriptionService {
                     wsAttributes.put("codenvy:runner_ram", "0");
                 } else {
                     try {
-                        wsAttributes.put("codenvy:runner_ram", String.valueOf(convert(ensureExistsAndGet("RAM", subscription))));
+                        wsAttributes
+                                .put("codenvy:runner_ram", String.valueOf(parseSizeToMegabytes(ensureExistsAndGet("RAM", subscription))));
                     } catch (IllegalArgumentException exception) {
                         throw new ConflictException("Subscription with such plan can't be added");
                     }
