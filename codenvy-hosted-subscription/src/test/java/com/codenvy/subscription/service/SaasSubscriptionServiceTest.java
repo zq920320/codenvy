@@ -120,8 +120,6 @@ public class SaasSubscriptionServiceTest {
         return new String[][]{
                 {"0xAGB"},
                 {"0xAMB"},
-                {"1024"},
-                {"2TB"},
                 {"1gigabyte"},
                 {"4gigabytes"},
                 {"1536megabytes"},
