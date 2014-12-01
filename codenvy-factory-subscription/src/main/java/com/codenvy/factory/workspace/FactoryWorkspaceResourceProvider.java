@@ -50,7 +50,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.codenvy.commons.lang.MemoryUtils.convert;
+import static com.codenvy.commons.lang.Size.parseSizeToMegabytes;
 
 /**
  * Set attributes to temporary workspaces that make runner/builder use custom resources for factory
@@ -165,7 +165,8 @@ public class FactoryWorkspaceResourceProvider implements EventSubscriber<CreateW
                                     // factory workspace with subscription
                                     attributes.put("codenvy:runner_lifetime", trackedRunnerLifetime);
                                     attributes.put("codenvy:builder_execution_time", trackedBuilderExecutionTime);
-                                    attributes.put("codenvy:runner_ram", String.valueOf(convert(subscription.getProperties().get("RAM"))));
+                                    attributes.put("codenvy:runner_ram",
+                                                   String.valueOf(parseSizeToMegabytes(subscription.getProperties().get("RAM"))));
                                     attributes.put("codenvy:runner_infra", "paid");
 
                                     workspaceDao.update(workspace.withAttributes(attributes));
