@@ -103,7 +103,7 @@ public class FactoryWorkspaceResourceProviderTest {
         encodedFactoryUrl = URLEncoder.encode("http://dev.box.com/factory?id=factory123456", "UTF-8");
         nonEncodedFactoryUrl =
                 URLEncoder.encode("http://dev.box.com/factory?v=1.1&vcsUrl=http://github.com/codenvy/platform-api.git", "UTF-8");
-        event = new CreateWorkspaceEvent(WS_ID, true);
+        event = new CreateWorkspaceEvent(workspace);
         provider = new FactoryWorkspaceResourceProvider(trackedRunnerLifetime,
                                                         trackedBuilderExecutionTime,
                                                         trackedRunnerRam,
@@ -133,7 +133,7 @@ public class FactoryWorkspaceResourceProviderTest {
 
     @Test
     public void shouldDoNothingOnCreateNonTemporaryWs() {
-        provider.onEvent(new CreateWorkspaceEvent(WS_ID, false));
+        provider.onEvent(new CreateWorkspaceEvent(workspace));
 
         verifyZeroInteractions(workspaceDao);
     }

@@ -122,9 +122,10 @@ public class FactoryWorkspaceResourceProvider implements EventSubscriber<CreateW
 
     @Override
     public void onEvent(CreateWorkspaceEvent event) {
-        if (event.isTemporary()) {
+        Workspace createdWorkspace = event.getWorkspace();
+        if (createdWorkspace.isTemporary()) {
             try {
-                final Workspace workspace = workspaceDao.getById(event.getWorkspaceId());
+                final Workspace workspace = workspaceDao.getById(createdWorkspace.getId());
                 final Map<String, String> attributes = workspace.getAttributes();
 
                 if (onPremises) {
