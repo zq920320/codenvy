@@ -28,8 +28,8 @@ import com.codenvy.api.core.UnauthorizedException;
 import com.codenvy.api.core.notification.EventService;
 import com.codenvy.api.core.rest.HttpJsonHelper;
 import com.codenvy.api.factory.FactoryBuilder;
-import com.codenvy.api.factory.dto.Factory;
 import com.codenvy.api.factory.dto.Author;
+import com.codenvy.api.factory.dto.Factory;
 import com.codenvy.api.workspace.server.dao.Workspace;
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
 import com.codenvy.commons.lang.Pair;
@@ -54,12 +54,12 @@ import static org.mockito.Matchers.anyMapOf;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isNull;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.atLeastOnce;
 
 @Listeners(value = {MockitoTestNGListener.class})
 public class FactoryWorkspaceResourceProviderTest {
@@ -103,7 +103,8 @@ public class FactoryWorkspaceResourceProviderTest {
         encodedFactoryUrl = URLEncoder.encode("http://dev.box.com/factory?id=factory123456", "UTF-8");
         nonEncodedFactoryUrl =
                 URLEncoder.encode("http://dev.box.com/factory?v=1.1&vcsUrl=http://github.com/codenvy/platform-api.git", "UTF-8");
-        event = new CreateWorkspaceEvent(workspace);
+        event = new CreateWorkspaceEvent(new Workspace().withId(WS_ID)
+                                                        .withTemporary(true));
         provider = new FactoryWorkspaceResourceProvider(trackedRunnerLifetime,
                                                         trackedBuilderExecutionTime,
                                                         trackedRunnerRam,
