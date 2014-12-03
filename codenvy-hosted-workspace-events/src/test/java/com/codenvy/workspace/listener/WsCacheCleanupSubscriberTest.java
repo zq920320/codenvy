@@ -20,14 +20,19 @@ package com.codenvy.workspace.listener;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.api.core.notification.EventService;
+import com.codenvy.api.workspace.server.dao.Workspace;
 import com.codenvy.service.http.WorkspaceInfoCache;
 import com.codenvy.workspace.event.DeleteWorkspaceEvent;
 
 import org.mockito.Mock;
 import org.mockito.testng.MockitoTestNGListener;
-import org.testng.annotations.*;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Listeners;
+import org.testng.annotations.Test;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.timeout;
+import static org.mockito.Mockito.verify;
 
 @Listeners(MockitoTestNGListener.class)
 public class WsCacheCleanupSubscriberTest {
@@ -57,7 +62,9 @@ public class WsCacheCleanupSubscriberTest {
         wsCacheCleanupSubscriber.subscribe();
 
         // when
-        eventService.publish(new DeleteWorkspaceEvent(ID, true, NAME));
+        eventService.publish(new DeleteWorkspaceEvent(new Workspace().withId(ID)
+                                                                     .withTemporary(true)
+                                                                     .withName(NAME)));
 
         //then
         verify(workspaceInfoCache, timeout(500)).removeByName(NAME);

@@ -18,8 +18,6 @@
 package com.codenvy.api.account;
 
 import com.codenvy.api.account.server.ResourcesManager;
-import com.codenvy.api.account.server.dao.Account;
-import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.shared.dto.UpdateResourcesDescriptor;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.ForbiddenException;
@@ -62,8 +60,6 @@ public class ResourcesManagerImplTest {
     private static int DEFAULT_LIMITATION = 1024;
 
     @Mock
-    AccountDao   accountDao;
-    @Mock
     WorkspaceDao workspaceDao;
 
     ResourcesManager resourcesManager;
@@ -81,10 +77,7 @@ public class ResourcesManagerImplTest {
 
         when(workspaceDao.getByAccount(ACCOUNT_ID)).thenReturn(Arrays.asList(primaryWorkspace, extraWorkspace));
 
-        Account account = new Account().withId(ACCOUNT_ID);
-        when(accountDao.getById(ACCOUNT_ID)).thenReturn(account);
-
-        resourcesManager = new ResourcesManagerImpl(accountDao, workspaceDao);
+        resourcesManager = new ResourcesManagerImpl(workspaceDao);
     }
 
     @Test(expectedExceptions = ForbiddenException.class,

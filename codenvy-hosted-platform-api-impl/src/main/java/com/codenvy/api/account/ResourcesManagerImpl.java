@@ -18,7 +18,6 @@
 package com.codenvy.api.account;
 
 import com.codenvy.api.account.server.ResourcesManager;
-import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.shared.dto.UpdateResourcesDescriptor;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.ForbiddenException;
@@ -51,13 +50,10 @@ import static java.lang.String.format;
 public class ResourcesManagerImpl implements ResourcesManager {
     private static final Logger LOG = LoggerFactory.getLogger(ResourcesManagerImpl.class);
 
-    private final AccountDao   accountDao;
     private final WorkspaceDao workspaceDao;
 
     @Inject
-    public ResourcesManagerImpl(AccountDao accountDao,
-                                WorkspaceDao workspaceDao) {
-        this.accountDao = accountDao;
+    public ResourcesManagerImpl(WorkspaceDao workspaceDao) {
         this.workspaceDao = workspaceDao;
     }
 

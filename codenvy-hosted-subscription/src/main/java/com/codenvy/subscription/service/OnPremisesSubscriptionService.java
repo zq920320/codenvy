@@ -50,9 +50,6 @@ public class OnPremisesSubscriptionService extends SubscriptionService {
 
     @Override
     public void beforeCreateSubscription(Subscription subscription) throws ConflictException, ServerException {
-        if (subscription.getProperties() == null) {
-            throw new ConflictException("Subscription properties required");
-        }
         if (subscription.getProperties().get("Package") == null) {
             throw new ConflictException("Subscription property 'Package' required");
         }

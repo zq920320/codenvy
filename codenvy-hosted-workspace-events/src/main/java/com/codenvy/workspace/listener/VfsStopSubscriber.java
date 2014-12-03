@@ -19,6 +19,7 @@ package com.codenvy.workspace.listener;
 
 import com.codenvy.api.core.notification.EventService;
 import com.codenvy.api.core.notification.EventSubscriber;
+import com.codenvy.api.workspace.server.dao.Workspace;
 import com.codenvy.workspace.event.DeleteWorkspaceEvent;
 import com.codenvy.workspace.event.StopWsEvent;
 
@@ -63,7 +64,8 @@ public class VfsStopSubscriber {
         this.deleteWsEventSubscriber = new EventSubscriber<DeleteWorkspaceEvent>() {
             @Override
             public void onEvent(DeleteWorkspaceEvent event) {
-                String id = event.getWorkspaceId();
+                Workspace removedWorkspace = event.getWorkspace();
+                String id = removedWorkspace.getId();
                 try {
                     LOG.info("Unregister vfs. Workspace id:{}", id);
                     vfsCleanupPerformer.unregisterProvider(id);
@@ -72,8 +74,8 @@ public class VfsStopSubscriber {
                 }
 
                 try {
-                    LOG.info("Remove FS. Workspace id:{}. Temporary:{}", id, event.isTemporary());
-                    vfsCleanupPerformer.removeFS(id, event.isTemporary());
+                    LOG.info("Remove FS. Workspace id:{}. Temporary:{}", id, removedWorkspace.isTemporary());
+                    vfsCleanupPerformer.removeFS(id, removedWorkspace.isTemporary());
                 } catch (IOException e) {
                     LOG.error(e.getLocalizedMessage(), e);
                 }

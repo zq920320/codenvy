@@ -18,6 +18,7 @@
 package com.codenvy.workspace.listener;
 
 import com.codenvy.api.core.notification.EventService;
+import com.codenvy.api.workspace.server.dao.Workspace;
 import com.codenvy.workspace.event.DeleteWorkspaceEvent;
 import com.codenvy.workspace.event.StopWsEvent;
 
@@ -66,7 +67,9 @@ public class VfsStopSubscriberTest {
         subscriber.subscribe();
 
         // when
-        eventService.publish(new DeleteWorkspaceEvent("id", true, "name"));
+        eventService.publish(new DeleteWorkspaceEvent(new Workspace().withId("id")
+                                                                     .withTemporary(true)
+                                                                     .withName("name")));
 
         // then
         verify(vfsCleanupPerformer, timeout(500)).unregisterProvider("id");

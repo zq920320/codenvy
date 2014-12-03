@@ -18,26 +18,21 @@
 package com.codenvy.subscription.service;
 
 import com.codenvy.api.account.server.SubscriptionService;
-import com.codenvy.api.account.server.dao.Account;
 import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.server.dao.Subscription;
 import com.codenvy.api.core.ApiException;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
-import com.codenvy.api.workspace.server.dao.Workspace;
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
+import com.codenvy.subscription.service.saas.SaasResourceManager;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Singleton;
 import java.util.List;
-import java.util.Map;
-
-import static com.codenvy.commons.lang.Size.parseSizeToMegabytes;
 
 /**
  * Service provide functionality of Saas subscription.
@@ -49,25 +44,20 @@ import static com.codenvy.commons.lang.Size.parseSizeToMegabytes;
  */
 @Singleton
 public class SaasSubscriptionService extends SubscriptionService {
-    private static final Logger LOG                         = LoggerFactory.getLogger(SaasSubscriptionService.class);
-    private static final String SAAS_RUNNER_LIFETIME        = "saas.runner.lifetime";
-    private static final String SAAS_BUILDER_EXECUTION_TIME = "saas.builder.execution_time";
+    private static final Logger LOG = LoggerFactory.getLogger(SaasSubscriptionService.class);
 
-    private final String       saasRunnerLifetime;
-    private final String       saasBuilderExecutionTime;
-    private final WorkspaceDao workspaceDao;
-    private final AccountDao   accountDao;
+    private final WorkspaceDao        workspaceDao;
+    private final AccountDao          accountDao;
+    private final SaasResourceManager saasResourceManager;
 
     @Inject
     public SaasSubscriptionService(WorkspaceDao workspaceDao,
                                    AccountDao accountDao,
-                                   @Named(SAAS_RUNNER_LIFETIME) String saasRunnerLifetime,
-                                   @Named(SAAS_BUILDER_EXECUTION_TIME) String saasBuilderExecutionTime) {
+                                   SaasResourceManager saasResourceManager) {
         super("Saas", "Saas");
-        this.saasRunnerLifetime = saasRunnerLifetime;
-        this.saasBuilderExecutionTime = saasBuilderExecutionTime;
         this.workspaceDao = workspaceDao;
         this.accountDao = accountDao;
+        this.saasResourceManager = saasResourceManager;
     }
 
     /**
@@ -80,9 +70,6 @@ public class SaasSubscriptionService extends SubscriptionService {
      */
     @Override
     public void beforeCreateSubscription(Subscription subscription) throws ConflictException, ServerException {
-        if (subscription.getProperties() == null) {
-            throw new ConflictException("Subscription properties required");
-        }
         if (subscription.getProperties().get("Package") == null) {
             throw new ConflictException("Subscription property 'Package' required");
         }
@@ -107,123 +94,22 @@ public class SaasSubscriptionService extends SubscriptionService {
 
     @Override
     public void afterCreateSubscription(Subscription subscription) throws ApiException {
-        setResources(subscription);
+        saasResourceManager.setResources(subscription);
     }
 
     @Override
     public void onRemoveSubscription(Subscription subscription) throws ServerException, NotFoundException, ConflictException {
-        unsetResources(subscription);
+        saasResourceManager.resetResources(subscription);
     }
 
     @Override
     public void onCheckSubscription(Subscription subscription) throws ServerException, NotFoundException, ConflictException {
-        setResources(subscription);
+        saasResourceManager.setResources(subscription);
     }
 
     @Override
     public void onUpdateSubscription(Subscription oldSubscription, Subscription newSubscription)
             throws ServerException, NotFoundException, ConflictException {
-        setResources(newSubscription);
-    }
-
-    private void setResources(Subscription subscription) throws NotFoundException, ConflictException, ServerException {
-        final Map<String, String> properties = subscription.getProperties();
-        if (properties == null) {
-            throw new ConflictException("Subscription properties required");
-        }
-
-        String tariffPackage = ensureExistsAndGet("Package", subscription).toLowerCase();
-
-        if ("team".equals(tariffPackage) || "enterprise".equals(tariffPackage)) {
-            try {
-                final Account account = accountDao.getById(subscription.getAccountId());
-                account.getAttributes().put("codenvy:multi-ws", "true");
-                accountDao.update(account);
-            } catch (NotFoundException e) {
-                throw new ConflictException(e.getLocalizedMessage());
-            }
-        }
-
-        List<Workspace> workspaces = workspaceDao.getByAccount(subscription.getAccountId());
-        if (!workspaces.isEmpty()) {
-            boolean ramIsSet = false;
-            for (Workspace workspace : workspaces) {
-                final Map<String, String> wsAttributes = workspace.getAttributes();
-                switch (tariffPackage) {
-                    case "developer":
-                    case "team":
-                        //1 hour
-                        wsAttributes.put("codenvy:runner_lifetime", saasRunnerLifetime);
-                        wsAttributes.put("codenvy:runner_infra", "paid");
-                        break;
-                    case "project":
-                    case "enterprise":
-                        //unlimited
-                        wsAttributes.put("codenvy:runner_lifetime", "-1");
-                        wsAttributes.put("codenvy:runner_infra", "always_on");
-                        break;
-                    default:
-                        throw new NotFoundException(String.format("Package %s not found", tariffPackage));
-                }
-                wsAttributes.put("codenvy:builder_execution_time", saasBuilderExecutionTime);
-                if (ramIsSet) {
-                    wsAttributes.put("codenvy:runner_ram", "0");
-                } else {
-                    try {
-                        wsAttributes
-                                .put("codenvy:runner_ram", String.valueOf(parseSizeToMegabytes(ensureExistsAndGet("RAM", subscription))));
-                    } catch (IllegalArgumentException exception) {
-                        throw new ConflictException("Subscription with such plan can't be added");
-                    }
-                    ramIsSet = true;
-                }
-
-                workspaceDao.update(workspace);
-            }
-        } else {
-            throw new ConflictException("Given account doesn't have any workspaces.");
-        }
-    }
-
-    private String ensureExistsAndGet(String propertyName, Subscription src) throws ConflictException {
-        final String target = src.getProperties().get(propertyName);
-        if (target == null) {
-            throw new ConflictException(String.format("Subscription property %s required", propertyName));
-        }
-        return target;
-    }
-
-    private void unsetResources(Subscription subscription) throws NotFoundException, ServerException, ConflictException {
-        String tariffPackage = subscription.getProperties().get("Package");
-        tariffPackage = null == tariffPackage ? null : tariffPackage.toLowerCase();
-
-        if ("team".equals(tariffPackage) || "enterprise".equals(tariffPackage)) {
-            try {
-                final Account account = accountDao.getById(subscription.getAccountId());
-                account.getAttributes().remove("codenvy:multi-ws");
-                accountDao.update(account);
-            } catch (ApiException e) {
-                LOG.error(e.getLocalizedMessage(), e);
-            }
-        }
-
-        boolean defaultRamUsed = false;
-        for (Workspace workspace : workspaceDao.getByAccount(subscription.getAccountId())) {
-            try {
-                final Map<String, String> wsAttributes = workspace.getAttributes();
-                if (defaultRamUsed) {
-                    wsAttributes.put("codenvy:runner_ram", "0");
-                } else {
-                    wsAttributes.remove("codenvy:runner_ram");
-                    defaultRamUsed = true;
-                }
-                wsAttributes.remove("codenvy:runner_lifetime");
-                wsAttributes.remove("codenvy:builder_execution_time");
-                wsAttributes.remove("codenvy:runner_infra");
-                workspaceDao.update(workspace);
-            } catch (ApiException e) {
-                LOG.error(e.getLocalizedMessage(), e);
-            }
-        }
+        saasResourceManager.setResources(newSubscription);
     }
 }

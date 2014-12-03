@@ -60,7 +60,7 @@ public class StopAppOnRemoveWsListener {
         this.deleteWsSubscriber = new EventSubscriber<DeleteWorkspaceEvent>() {
             @Override
             public void onEvent(DeleteWorkspaceEvent event) {
-                stopProcesses(event.getWorkspaceId());
+                stopProcesses(event.getWorkspace().getId());
             }
         };
         this.runnerEventSubscriber = new EventSubscriber<RunnerEvent>() {

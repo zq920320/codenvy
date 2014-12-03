@@ -27,7 +27,6 @@ import com.codenvy.api.workspace.server.dao.Workspace;
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
 import com.codenvy.workspace.event.CreateWorkspaceEvent;
 import com.codenvy.workspace.event.DeleteWorkspaceEvent;
-import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
@@ -42,9 +41,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 import static com.codenvy.api.dao.mongo.MongoUtil.asDBList;
@@ -110,7 +107,7 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
             LOG.error(ex.getMessage(), ex);
             throw new ServerException("It is not possible to create workspace");
         }
-        eventService.publish(new CreateWorkspaceEvent(workspace.getId(), workspace.isTemporary()));
+        eventService.publish(new CreateWorkspaceEvent(workspace));
     }
 
     @Override
@@ -194,7 +191,7 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
             collection.remove(query);
             final Workspace removedWorkspace = toWorkspace(workspaceDocument);
             LOG.info("EVENT#workspace-destroyed# WS#{}# WS-ID#{}#", removedWorkspace.getName(), removedWorkspace.getId());
-            eventService.publish(new DeleteWorkspaceEvent(id, removedWorkspace.isTemporary(), removedWorkspace.getName()));
+            eventService.publish(new DeleteWorkspaceEvent(removedWorkspace));
         } catch (MongoException ex) {
             LOG.error(ex.getMessage(), ex);
             throw new ServerException("It is not possible to remove workspace");

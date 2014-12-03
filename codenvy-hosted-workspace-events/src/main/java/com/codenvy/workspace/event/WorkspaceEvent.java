@@ -17,6 +17,8 @@
  */
 package com.codenvy.workspace.event;
 
+import com.codenvy.api.workspace.server.dao.Workspace;
+
 /** @author Sergii Leschenko */
 public abstract class WorkspaceEvent {
     public static enum ChangeType {
@@ -40,41 +42,19 @@ public abstract class WorkspaceEvent {
 
     }
 
-    private String workspaceId;
+    private final ChangeType type;
+    private final Workspace  workspace;
 
-    private boolean    isTemporary;
-    private ChangeType type;
-
-    protected WorkspaceEvent(String workspaceId, boolean isTemporary, ChangeType type) {
-        this.workspaceId = workspaceId;
-        this.isTemporary = isTemporary;
+    protected WorkspaceEvent(ChangeType type, Workspace workspace) {
         this.type = type;
-    }
-
-    protected WorkspaceEvent() {
-    }
-
-    public String getWorkspaceId() {
-        return workspaceId;
+        this.workspace = workspace;
     }
 
     public ChangeType getType() {
         return type;
     }
 
-    public void setWorkspaceId(String workspaceId) {
-        this.workspaceId = workspaceId;
-    }
-
-    public void setType(ChangeType type) {
-        this.type = type;
-    }
-
-    public boolean isTemporary() {
-        return isTemporary;
-    }
-
-    public void setTemporary(boolean isTemporary) {
-        this.isTemporary = isTemporary;
+    public Workspace getWorkspace() {
+        return workspace;
     }
 }

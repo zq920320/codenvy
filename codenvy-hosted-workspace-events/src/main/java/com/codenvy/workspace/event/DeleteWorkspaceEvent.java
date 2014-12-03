@@ -18,26 +18,14 @@
 package com.codenvy.workspace.event;
 
 import com.codenvy.api.core.notification.EventOrigin;
+import com.codenvy.api.workspace.server.dao.Workspace;
 
-/** @author Sergii Leschenko */
+/**
+ * @author Sergii Leschenko 
+ */
 @EventOrigin("workspace")
 public class DeleteWorkspaceEvent extends WorkspaceEvent {
-    private String name;
-
-    public DeleteWorkspaceEvent(String workspaceId, boolean temporary, String name) {
-        super(workspaceId, temporary, ChangeType.DELETED);
-        this.name = name;
-    }
-
-    public DeleteWorkspaceEvent() {
-        super();
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+    public DeleteWorkspaceEvent(Workspace workspace) {
+        super(ChangeType.DELETED, workspace);
     }
 }

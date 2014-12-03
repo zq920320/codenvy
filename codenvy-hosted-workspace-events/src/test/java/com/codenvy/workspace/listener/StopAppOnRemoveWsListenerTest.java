@@ -20,6 +20,7 @@ package com.codenvy.workspace.listener;
 import com.codenvy.api.core.notification.EventService;
 import com.codenvy.api.runner.RunQueue;
 import com.codenvy.api.runner.internal.RunnerEvent;
+import com.codenvy.api.workspace.server.dao.Workspace;
 import com.codenvy.workspace.event.DeleteWorkspaceEvent;
 
 import org.mockito.Mock;
@@ -110,7 +111,9 @@ public class StopAppOnRemoveWsListenerTest {
         eventService.publish(RunnerEvent.queueStartedEvent(PROCESS_2_ID, WORKSPACE_ID, PROJECT));
         eventService.publish(RunnerEvent.queueStartedEvent(PROCESS_3_ID, WORKSPACE_2_ID, PROJECT));
 
-        eventService.publish(new DeleteWorkspaceEvent(WORKSPACE_ID, false, "name"));
+        eventService.publish(new DeleteWorkspaceEvent(new Workspace().withId(WORKSPACE_ID)
+                                                                     .withTemporary(false)
+                                                                     .withName("name")));
 
         assertEquals(getProcessesMap(), new HashMap() {{
             put(WORKSPACE_2_ID, new HashSet<Long>() {{

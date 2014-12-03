@@ -49,12 +49,8 @@ public class FactorySubscriptionService extends SubscriptionService {
         this.accountDao = accountDao;
     }
 
-    //fixme for now Factory supports only 1 active subscription per 1 account
     @Override
     public void beforeCreateSubscription(Subscription subscription) throws ConflictException, ServerException {
-        if (subscription.getProperties() == null) {
-            throw new ConflictException("Subscription properties required");
-        }
         String tariffPackage;
         if (null == (tariffPackage = subscription.getProperties().get("Package"))) {
             throw new ConflictException("Subscription property 'Package' required");
