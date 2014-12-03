@@ -93,12 +93,10 @@ try {
     JsonParser parser = new JsonParser();
     JsonObject json = parser.parse(jsonText).getAsJsonObject();    
     
-    _title = json.get("project").getAsJsonObject().get("name").getAsString() + " - Codenvy";
+    _title = "Codenvy | Provision, Share and Scale Developer Workspaces";
     
-    _description = json.get("project").getAsJsonObject().get("name").isJsonNull() ? null : json.get("project").getAsJsonObject().get("name").getAsString();
-    if (_description == null || _description.trim().isEmpty()) {
-    	_description = "Code, Build, Test and Deploy instantly using Codenvy.";
-    }
+    _description = "Develop faster and release more frequently with Codenvy developer environments. Command Docker microservices to " +
+                   "build, run, and deploy projects.";
     
     _image_url = getLink(json, "image");
     if (_image_url == null) {
