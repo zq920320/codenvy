@@ -265,11 +265,15 @@
                     } else {
                         // user hasn't memberships
                         createAccount(accountName)
+                        .fail(function(error){deferredResult.reject(error);})
                         .then(function(account){
                         deferredResult.resolve(account);    
                         });
                         
                     }
+                },
+                error: function(error){
+                    deferredResult.reject(error);
                 }
             });
             return deferredResult;
@@ -471,6 +475,19 @@
             processCreate: function(username, bearertoken, src_workspace, workspace, redirect_url, queryParams, error) {
                 var workspaceID;
                 authenticate(username, bearertoken)
+                .fail(function(response) {
+                    var responseErr;
+                    try{
+                        responseErr = JSON.parse(response.responseText).message;
+                    }catch(e){
+                        responseErr = "Something went wrong. Please try again or contact support";
+                    }
+
+                    
+                    error([
+                        new AccountError(null, responseErr)
+                    ]);
+                })
                 .then(function(){
                     if (workspace) {
                         ensureExistenceAccount(workspace) // get/create account
@@ -495,9 +512,16 @@
                             }
                         })
                         .fail(function(response) {
-                            var responseErr = JSON.parse(response.responseText);
+                            var responseErr;
+                            try{
+                                responseErr = JSON.parse(response.responseText).message;
+                            }catch(e){
+                                responseErr = "Something went wrong. Please try again or contact support";
+                            }
+
+                            
                             error([
-                                new AccountError(null, responseErr.message)
+                                new AccountError(null, responseErr)
                             ]);
                         });
                     } else if (src_workspace) {
