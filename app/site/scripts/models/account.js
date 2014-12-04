@@ -225,7 +225,8 @@
                 });
             }
         };
-        var authenticate = function(username, bearertoken, success, error) {
+        var authenticate = function(username, bearertoken) {
+            var deferredResult = $.Deferred();
             var data = {
                 username: username.toLowerCase(),
                 token: bearertoken
@@ -235,18 +236,19 @@
                 url: authenticateUrl,
                 type: "POST",
                 contentType: "application/json",
-                data: JSON.stringify(data),
-                success: function() {
-                    success();
-                },
-                error: function(xhr /*, status , err*/ ) {
-                    error([
-                        new AccountError(null, xhr.responseText)
-                    ]);
-                }
+                data: JSON.stringify(data)
+            })
+            .success(function(response){
+                deferredResult.resolve(response);
+            })
+            .error(function(error){
+                deferredResult.reject(error);
             });
+            return deferredResult;
         };
-        var ensureExistenceAccount = function(accountName, success, error) {
+
+        var ensureExistenceAccount = function(accountName) {
+            var deferredResult = $.Deferred();
             var url = "/api/account";
             $.ajax({
                 url: url,
@@ -257,22 +259,24 @@
                         memberships.forEach(function(membership) {
                             var isOwner = (membership.roles.indexOf('account/owner') >= 0);
                             if (isOwner) {
-                                success(membership.accountReference); //returns Account
+                                deferredResult.resolve(membership.accountReference); //returns Account
                             }
                         });
                     } else {
                         // user hasn't memberships
-                        createAccount(accountName, success, error);
+                        createAccount(accountName)
+                        .then(function(account){
+                        deferredResult.resolve(account);    
+                        });
+                        
                     }
-                },
-                error: function(xhr /*, status , err*/ ) {
-                    error([
-                        new AccountError(null, xhr.responseText)
-                    ]);
                 }
             });
+            return deferredResult;
         };
-        var createAccount = function(account, success, error) {
+
+        var createAccount = function(account) {
+            var deferredResult = $.Deferred();
             var url = "/api/account";
             var data = {
                 name: account
@@ -281,18 +285,19 @@
                 url: url,
                 type: "POST",
                 data: JSON.stringify(data),
-                contentType: "application/json",
-                success: function(response) {
-                    success(response); //returns Account
-                },
-                error: function(xhr /*, status , err*/ ) {
-                    error([
-                        new AccountError(null, JSON.parse(xhr.responseText).message)
-                    ]);
-                }
+                contentType: "application/json"
+            })
+            .success(function(response){
+                deferredResult.resolve(response);
+            })
+            .error(function(error){
+                deferredResult.reject(error);
             });
+            return deferredResult;
         };
-        var createWorkspace = function(workspace, account, success, error) {
+
+        var createWorkspace = function(workspace, account) {
+            var deferredResult = $.Deferred();
             var url = "/api/workspace";
             var data = {
                 name: workspace,
@@ -302,33 +307,35 @@
                 url: url,
                 type: "POST",
                 data: JSON.stringify(data),
-                contentType: "application/json",
-                success: function(response) {
-                    success(response);
-                },
-                error: function(xhr /*, status , err*/ ) {
-                    error([
-                        new AccountError(null, xhr.responseText)
-                    ]);
-                }
+                contentType: "application/json"
+            })
+            .success(function(ws){
+                deferredResult.resolve(ws);//return ws
+            })
+            .error(function(error){
+                deferredResult.reject(error);
             });
+            return deferredResult;
         };
-        var getUserInfo = function(success, error) {
+
+        var getUserInfo = function() {
+            var deferredResult = $.Deferred();
             var url = "/api/user";
             $.ajax({
                 url: url,
-                type: "GET",
-                success: function(response) {
-                    success(response);
-                },
-                error: function(xhr /*, status , err*/ ) {
-                    error([
-                        new AccountError(null, xhr.responseText)
-                    ]);
-                }
+                type: "GET"
+            })
+            .success(function(response){
+                deferredResult.resolve(response);
+            })
+            .error(function(error){
+                deferredResult.reject(error);
             });
+            return deferredResult;
         };
-        var addMemberToWorkspace = function(workspaceId, userId, success, error) {
+
+        var addMemberToWorkspace = function(workspaceId, userId) {
+            var deferredResult = $.Deferred();
             var url = "/api/workspace/" + workspaceId + "/members";
             var data = {
                 userId: userId,
@@ -338,16 +345,15 @@
                 url: url,
                 type: "POST",
                 data: JSON.stringify(data),
-                contentType: "application/json",
-                success: function(response) {
-                    success(response);
-                },
-                error: function(xhr /*, status , err*/ ) {
-                    error([
-                        new AccountError(null, xhr.responseText)
-                    ]);
-                }
+                contentType: "application/json"
+            })
+            .success(function(response){
+                deferredResult.resolve(response);
+            })
+            .error(function(error){
+                deferredResult.reject(error);
             });
+            return deferredResult;
         };
         var redirectToUrl = function(url) {
             window.location = url;
@@ -461,57 +467,39 @@
                     }
                 });
             },
+
             processCreate: function(username, bearertoken, src_workspace, workspace, redirect_url, queryParams, error) {
-                var accountId, workspaceId, userId;
-                authenticate(username, bearertoken, function() {
+                var workspaceID;
+                authenticate(username, bearertoken)
+                .then(function(){
                     if (workspace) {
-                        ensureExistenceAccount(workspace, function(account) {
-                                accountId = account.id;
-                                createWorkspace(workspace, accountId, function(workspace) {
-                                        workspaceId = workspace.id;
-                                        getUserInfo(
-                                            //success getUserInfo
-                                            function(user) {
-                                                userId = user.id;
-                                                addMemberToWorkspace(workspaceId, userId,
-                                                    //success addMemberToWorkspace
-                                                    function() {
-                                                        if (redirect_url) {
-                                                            redirectToUrl(redirect_url);
-                                                        } else if (src_workspace) {
-                                                            // Initializer.processWaitForTenant(workspace, "", "?" + queryParams);
-                                                        } else {
-                                                            //Initializer.processWaitForTenant(workspace, "create", "?" + queryParams);
-                                                            redirectToUrl("/dashboard/");
-                                                        }
-                                                    },
-                                                    //error addMemberToWorkspace
-                                                    function() {
-                                                        error([
-                                                            new AccountError(null, "Unable to add User " + userId + " to workspace " + workspaceId)
-                                                        ]);
-                                                    }); //addMemberToWorkspace
-                                            },
-                                            //error getUserInfo
-                                            function() {
-                                                error([
-                                                    new AccountError(null, "Unable to get User info ")
-                                                ]);
-                                            }); //getUserInfo
-                                    },
-                                    //error createWorkspace
-                                    function() {
-                                        error([
-                                            new AccountError(null, "Unable to create workspace " + workspace + " for user: " + username)
-                                        ]);
-                                    }); //createWorkspace
-                            },
-                            // error createWorkspace
-                            function() {
-                                error([
-                                    new AccountError(null, "Unable to create workspace " + workspace + " for user: " + username)
-                                ]);
-                            }); //ensureExistenceAccount
+                        ensureExistenceAccount(workspace) // get/create account
+                        .then(function(account){
+                            return createWorkspace(workspace, account.id);
+                        })
+                        .then(function(workspace){
+                            workspaceID = workspace.id; // store workspace id
+                            return getUserInfo();
+                        })
+                        .then(function(user){
+                            return addMemberToWorkspace(workspaceID,user.id);
+                        })
+                        .done(function() {
+                            if (redirect_url) {
+                                redirectToUrl(redirect_url);
+                            } else if (src_workspace) {
+                                // Initializer.processWaitForTenant(workspace, "", "?" + queryParams);
+                            } else {
+                                //Initializer.processWaitForTenant(workspace, "create", "?" + queryParams);
+                                redirectToUrl("/dashboard/");
+                            }
+                        })
+                        .fail(function(response) {
+                            var responseErr = JSON.parse(response.responseText);
+                            error([
+                                new AccountError(null, responseErr.message)
+                            ]);
+                        });
                     } else if (src_workspace) {
                         redirectToNonTempWS();
                     } else if (redirect_url) {
@@ -519,13 +507,11 @@
                     } else {
                         redirectToUrl("/dashboard/");
                     }
-                }, function() {
-                    error([
-                        new AccountError(null, "Unable to create account " + username)
-                    ]);
-                });
-            },
 
+                });
+              
+            },
+            
             joinWorkspace: function(username, bearertoken, workspace, success, error) {
                 var data = {
                     username: username.toLowerCase(),
