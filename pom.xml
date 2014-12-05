@@ -48,7 +48,6 @@
         <!-- Required by Apache Pig -->
         <org.apache.log4j.version>1.2.16</org.apache.log4j.version>
         <!-- DASHB-512 -->
-        <org.apache.tomcat.version>7.0.50</org.apache.tomcat.version>
         <version.license-header>codenvy-codenvy-license-resource-bundle</version.license-header>
     </properties>
 </project>
