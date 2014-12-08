@@ -97,6 +97,11 @@ public class ResourcesManagerImpl implements ResourcesManager {
         //getting size of RAM that will be used after distributing
         int futureRAM = 0;
         for (UpdateResourcesDescriptor resourcesDescriptor : resources.values()) {
+            if (resourcesDescriptor.getResources() == null) {
+                throw new ConflictException(format("Missed description of resources for workspace %s",
+                                                   resourcesDescriptor.getWorkspaceId()));
+            }
+
             if (!resourcesDescriptor.getResources().containsKey("RAM")) {
                 throw new ConflictException(
                         format("Missed size of RAM in resources description for workspace %s", resourcesDescriptor.getWorkspaceId()));

@@ -30,6 +30,7 @@ import com.codenvy.dto.server.DtoFactory;
 
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.testng.MockitoTestNGListener;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Listeners;
@@ -121,10 +122,22 @@ public class ResourcesManagerImplTest {
 
     @Test(expectedExceptions = ConflictException.class,
           expectedExceptionsMessageRegExp = "Missed size of RAM in resources description for workspace \\w*")
-    public void shouldThrowConflictExceptionIfMissedResources() throws Exception {
+    public void shouldThrowConflictExceptionIfMissedRAMInResources() throws Exception {
         resourcesManager.redistributeResources(ACCOUNT_ID, DEFAULT_LIMITATION,
                                                Arrays.asList(DtoFactory.getInstance().createDto(UpdateResourcesDescriptor.class)
                                                                        .withWorkspaceId(PRIMARY_WORKSPACE_ID),
+                                                             DtoFactory.getInstance().createDto(UpdateResourcesDescriptor.class)
+                                                                       .withWorkspaceId(EXTRA_WORKSPACE_ID)));
+    }
+
+    @Test(expectedExceptions = ConflictException.class,
+          expectedExceptionsMessageRegExp = "Missed description of resources for workspace \\w*")
+    public void shouldThrowConflictExceptionIfMissedResources() throws Exception {
+        final UpdateResourcesDescriptor mock = Mockito.mock(UpdateResourcesDescriptor.class);
+        when(mock.getWorkspaceId()).thenReturn(PRIMARY_WORKSPACE_ID);
+        when(mock.getResources()).thenReturn(null);
+        resourcesManager.redistributeResources(ACCOUNT_ID, DEFAULT_LIMITATION,
+                                               Arrays.asList(mock,
                                                              DtoFactory.getInstance().createDto(UpdateResourcesDescriptor.class)
                                                                        .withWorkspaceId(EXTRA_WORKSPACE_ID)));
     }
