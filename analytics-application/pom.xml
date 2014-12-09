@@ -23,7 +23,7 @@
     <parent>
         <artifactId>analytics-parent</artifactId>
         <groupId>com.codenvy.analytics</groupId>
-        <version>3.3.1-SNAPSHOT</version>
+        <version>3.3.1</version>
     </parent>
     <artifactId>analytics-application</artifactId>
     <packaging>war</packaging>
