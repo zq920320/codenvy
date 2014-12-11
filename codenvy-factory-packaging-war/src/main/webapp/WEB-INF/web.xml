@@ -26,19 +26,4 @@
          metadata-complete="true">
     <display-name>Factory Service</display-name>
 
-    <servlet>
-        <servlet-name>share</servlet-name>
-        <jsp-file>/resources/share.jsp</jsp-file>
-    </servlet>
-
-    <servlet-mapping>
-        <servlet-name>share</servlet-name>
-        <url-pattern>/share/*</url-pattern>
-    </servlet-mapping>
-
-    <error-page>
-        <exception-type>java.lang.Exception</exception-type>
-        <location>/resources/error-invalid-factory-url.jsp</location>
-    </error-page>
-
 </web-app>
