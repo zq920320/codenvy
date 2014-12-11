@@ -148,7 +148,7 @@ DEFINE extractWs(X, wsType) RETURNS Y {
 ---------------------------------------------------------------------------
 DEFINE extractUser(X, userType) RETURNS Y {
   x1 = FOREACH $X GENERATE *, FLATTEN(REGEX_EXTRACT_ALL(message, '.*\\sUSER#([^\\s#][^#]*|)#.*')) AS user1;
-  $Y = FOREACH x1 GENERATE *, (user1 IS NOT NULL AND user1 != '' ? LOWER(user1) : 'default') AS user;
+  $Y = FOREACH x1 GENERATE *, (user1 IS NOT NULL AND user1 != '' ? user1 : 'default') AS user;
 };
 
 ---------------------------------------------------------------------------
