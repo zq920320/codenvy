@@ -50,6 +50,23 @@ public class TestBuilders extends BaseTest {
         assertEquals(l.getAsLong(), 3);
     }
 
+    @Test
+    public void testBuildsWithAlwaysOn() throws Exception {
+        Metric metric = MetricFactory.getMetric(MetricType.BUILDS_WITH_ALWAYS_ON);
+
+        LongValueData l = getAsLong(metric, Context.EMPTY);
+
+        assertEquals(l.getAsLong(), 1);
+    }
+
+    @Test
+    public void testBuildsWithTimeout() throws Exception {
+        Metric metric = MetricFactory.getMetric(MetricType.BUILDS_WITH_TIMEOUT);
+
+        LongValueData l = getAsLong(metric, Context.EMPTY);
+
+        assertEquals(l.getAsLong(), 2);
+    }
 
     @Test
     public void testRunsFinishedByTimeout() throws Exception {

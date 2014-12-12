@@ -38,6 +38,14 @@
                 <parameter key="time-field" value="true"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="builds_with_timeout"/>
+                <parameter key="description" value="Builders Launched w/ Timeout"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="builds_with_always_on"/>
+                <parameter key="description" value="Builders Launched w/ Always-On"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="builds_finished_normally"/>
                 <parameter key="description" value="Builders Stopped Normally"/>
             </row>

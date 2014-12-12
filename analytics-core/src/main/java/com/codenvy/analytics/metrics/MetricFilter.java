@@ -49,6 +49,7 @@ public enum MetricFilter {
     ENCODED_FACTORY(true),
     TIME(true),
     LIFETIME(true),
+    TIMEOUT(true),
     STOPPED_BY_USER(true),
     FINISHED_NORMALLY(true),
     BUILDS(true),

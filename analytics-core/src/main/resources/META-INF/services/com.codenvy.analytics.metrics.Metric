@@ -56,6 +56,8 @@ com.codenvy.analytics.metrics.runs.RunsMemoryUsagePerHour
 com.codenvy.analytics.metrics.runs.RunQueueTerminations
 com.codenvy.analytics.metrics.runs.TimeInRunQueue
 com.codenvy.analytics.metrics.builds.Builds
+com.codenvy.analytics.metrics.builds.BuildsWithAlwaysOn
+com.codenvy.analytics.metrics.builds.BuildsWithTimeout
 com.codenvy.analytics.metrics.builds.BuildsFinished
 com.codenvy.analytics.metrics.builds.BuildsFinishedNormally
 com.codenvy.analytics.metrics.builds.BuildsFinishedByTimeout
