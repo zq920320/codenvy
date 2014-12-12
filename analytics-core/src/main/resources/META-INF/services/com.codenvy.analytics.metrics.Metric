@@ -61,6 +61,7 @@ com.codenvy.analytics.metrics.builds.BuildsWithTimeout
 com.codenvy.analytics.metrics.builds.BuildsFinished
 com.codenvy.analytics.metrics.builds.BuildsFinishedNormally
 com.codenvy.analytics.metrics.builds.BuildsFinishedByTimeout
+com.codenvy.analytics.metrics.builds.BuildsMemoryUsagePerHour
 com.codenvy.analytics.metrics.builds.BuildsTime
 com.codenvy.analytics.metrics.builds.BuildQueueTerminations
 com.codenvy.analytics.metrics.builds.TimeInBuildQueue

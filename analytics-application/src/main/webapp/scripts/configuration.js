@@ -1477,6 +1477,7 @@ function AnalyticsConfiguration() {
         "project_paas_any": "#PROJECTS",
 
         "builds_finished": "#PROJECTS",
+        "builds_memory_usage_per_hour": "#PROJECTS",
         "builds_with_timeout": "#PROJECTS",
         "builds_with_always_on": "#PROJECTS",
         "builds_finished_normally": "#PROJECTS",

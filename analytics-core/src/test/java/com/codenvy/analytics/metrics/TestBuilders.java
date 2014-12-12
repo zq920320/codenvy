@@ -18,6 +18,7 @@
 package com.codenvy.analytics.metrics;
 
 import com.codenvy.analytics.BaseTest;
+import com.codenvy.analytics.datamodel.DoubleValueData;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.pig.scripts.ScriptType;
 import com.codenvy.analytics.pig.scripts.util.Event;
@@ -30,7 +31,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.codenvy.analytics.datamodel.ValueDataUtil.getAsDouble;
 import static com.codenvy.analytics.datamodel.ValueDataUtil.getAsLong;
+import static java.lang.Math.round;
 import static org.testng.AssertJUnit.assertEquals;
 
 /** @author Anatoliy Bazko */
@@ -48,6 +51,15 @@ public class TestBuilders extends BaseTest {
         LongValueData l = getAsLong(metric, Context.EMPTY);
 
         assertEquals(l.getAsLong(), 3);
+    }
+
+    @Test
+    public void testMemoryUsagePerHour() throws Exception {
+        Metric metric = MetricFactory.getMetric(MetricType.BUILDS_MEMORY_USAGE_PER_HOUR);
+
+        DoubleValueData d = getAsDouble(metric, Context.EMPTY);
+
+        assertEquals(1250, round(d.getAsDouble() * 10000));
     }
 
     @Test

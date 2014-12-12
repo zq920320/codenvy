@@ -15,7 +15,7 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.metrics.runs;
+package com.codenvy.analytics.metrics.builds;
 
 import com.codenvy.analytics.datamodel.DoubleValueData;
 import com.codenvy.analytics.datamodel.ValueData;
@@ -28,18 +28,20 @@ import com.mongodb.DBObject;
 
 import javax.annotation.security.RolesAllowed;
 
-/** @author Anatoliy Bazko */
+/** @author Dmytro Nochevnov */
 @RolesAllowed(value = {"user", "system/admin", "system/manager"})
-public class RunsMemoryUsagePerHour extends ReadBasedMetric implements ReadBasedExpandable {
+public class BuildsMemoryUsagePerHour extends ReadBasedMetric implements ReadBasedExpandable {
 
-    public RunsMemoryUsagePerHour() {
-        super(MetricType.RUNS_MEMORY_USAGE_PER_HOUR);
+    public BuildsMemoryUsagePerHour() {
+        super(MetricType.BUILDS_MEMORY_USAGE_PER_HOUR);
     }
+
+    public static final int BUILDER_MEMORY_USAGE_IN_MB = 1536;  // TODO (dnochevnov) temporary constant 1.5GB until the issue IDEX-1760 will be resolved.
 
     /** {@inheritDoc} */
     @Override
     public String getStorageCollectionName() {
-        return getStorageCollectionName(MetricType.RUNS_FINISHED);
+        return getStorageCollectionName(MetricType.BUILDS_FINISHED);
     }
 
     /** {@inheritDoc} */
@@ -51,7 +53,7 @@ public class RunsMemoryUsagePerHour extends ReadBasedMetric implements ReadBased
     /** {@inheritDoc} */
     @Override
     public DBObject[] getSpecificDBOperations(Context clauses) {
-        DBObject project1 = new BasicDBObject("x", new BasicDBObject("$multiply", new Object[]{"$" + MEMORY, "$" + USAGE_TIME}));
+        DBObject project1 = new BasicDBObject("x", new BasicDBObject("$multiply", new Object[]{BUILDER_MEMORY_USAGE_IN_MB, "$" + USAGE_TIME}));
         DBObject project2 = new BasicDBObject("y", new BasicDBObject("$divide", new Object[]{"$x", 3686400000L}));
         DBObject group = new BasicDBObject(ID, null).append(VALUE, new BasicDBObject("$sum", "$y"));
 
