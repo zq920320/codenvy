@@ -23,7 +23,7 @@
     <parent>
         <artifactId>analytics-parent</artifactId>
         <groupId>com.codenvy.analytics</groupId>
-        <version>3.3.2-SNAPSHOT</version>
+        <version>3.3.2</version>
     </parent>
     <artifactId>analytics-tomcat-pkg</artifactId>
     <packaging>pom</packaging>
