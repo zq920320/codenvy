@@ -160,7 +160,7 @@ public class TestIdeUsageEvents extends BaseTest {
         assertEquals(data.getAll().size(), 1);
 
         Map<String, ValueData> record = ((MapValueData)data.getAll().get(0)).getAll();
-        assertEquals("uid5/testws/testProject", record.get(AbstractMetric.PROJECT_ID).getAsString());
+        assertEquals("uid5/testWs/testProject", record.get(AbstractMetric.PROJECT_ID).getAsString());
     }
 
     @Test

@@ -139,7 +139,7 @@ DEFINE removeEvent(X, eventNamesParam) RETURNS Y {
 ---------------------------------------------------------------------------
 DEFINE extractWs(X, wsType) RETURNS Y {
   x1 = FOREACH $X GENERATE *, FLATTEN(REGEX_EXTRACT_ALL(message, '.*\\sWS#([^\\s#][^#]*|)#.*')) AS ws1;
-  $Y = FOREACH x1 GENERATE *, (ws1 IS NOT NULL AND ws1 != '' ? LOWER(ws1) : 'default') AS ws;
+  $Y = FOREACH x1 GENERATE *, (ws1 IS NOT NULL AND ws1 != '' ? ws1 : 'default') AS ws;
 };
 
 ---------------------------------------------------------------------------
