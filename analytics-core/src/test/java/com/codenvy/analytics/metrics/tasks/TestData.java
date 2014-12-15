@@ -15,63 +15,23 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.metrics.builds;
+package com.codenvy.analytics.metrics.tasks;
 
 import com.codenvy.analytics.BaseTest;
-import com.codenvy.analytics.datamodel.DoubleValueData;
-import com.codenvy.analytics.datamodel.ListValueData;
-import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.AbstractMetric;
 import com.codenvy.analytics.metrics.Context;
-import com.codenvy.analytics.metrics.Expandable;
-import com.codenvy.analytics.metrics.Metric;
-import com.codenvy.analytics.metrics.MetricFactory;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.pig.scripts.ScriptType;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
-import org.testng.Assert;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-
-import static com.codenvy.analytics.datamodel.ValueDataUtil.getAsDouble;
-import static java.lang.Math.round;
-import static org.testng.Assert.*;
-import static org.testng.AssertJUnit.assertEquals;
 
 /** @author dnochevnov@codenvy.com */
-public class TestBuildsRunsMemoryUsagePerHour extends BaseTest {
-
-    @BeforeClass
-    public void setUp() throws Exception {
-        prepareData();
-    }
-
-    @Test
-    public void testGetValue() throws Exception {
-        Metric metric = MetricFactory.getMetric(MetricType.BUILDS_RUNS_MEMORY_USAGE_PER_HOUR);
-        DoubleValueData d = getAsDouble(metric, Context.EMPTY);
-        assertEquals(round(d.getAsDouble() * 10000), 542);
-    }
-
-    @Test
-    public void testGetExpandedValue() throws Exception {
-        Metric metric = MetricFactory.getMetric(MetricType.BUILDS_RUNS_MEMORY_USAGE_PER_HOUR);
-
-        ListValueData expandedValue = (ListValueData)((Expandable)metric).getExpandedValue(Context.EMPTY);
-
-        Map<String, Map<String, ValueData>> m = listToMap(expandedValue, AbstractMetric.PROJECT_ID);
-        Assert.assertEquals(m.size(), 2);
-        assertEquals("{user/ws/project1={project_id=user/ws/project1}, user/ws/project2={project_id=user/ws/project2}}", m.toString());
-    }
-
-    private void prepareData() throws Exception {
+class TestData extends BaseTest {
+    void prepareData() throws Exception {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20131020");
         builder.put(Parameters.TO_DATE, "20131020");
@@ -151,4 +111,5 @@ public class TestBuildsRunsMemoryUsagePerHour extends BaseTest {
 
         return LogGenerator.generateLog(events);
     }
+
 }

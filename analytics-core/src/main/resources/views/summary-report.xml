@@ -25,7 +25,7 @@
                 <parameter key="section-name" value=""/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="builds_runs_memory_usage_per_hour"/>
+                <parameter key="name" value="tasks_memory_usage_per_hour"/>
                 <parameter key="description" value="Gigabyte RAM Hours"/>
                 <parameter key="numeric-format" value="%.1f"/>
             </row>

@@ -1477,7 +1477,7 @@ function AnalyticsConfiguration() {
         "runs_with_always_on": "#PROJECTS",
         "runs_finished_by_user": "#PROJECTS",
         "runs_finished_by_timeout": "#PROJECTS",
-        "builds_runs_memory_usage_per_hour": "#PROJECTS",
+        "tasks_memory_usage_per_hour": "#PROJECTS",
 
         "change_project_type_action": "#PROJECTS",
         "close_project_action": "#PROJECTS",

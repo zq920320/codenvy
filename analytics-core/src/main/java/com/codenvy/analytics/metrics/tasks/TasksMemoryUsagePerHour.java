@@ -15,11 +15,10 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.metrics.builds;
+package com.codenvy.analytics.metrics.tasks;
 
 import com.codenvy.analytics.datamodel.DoubleValueData;
 import com.codenvy.analytics.datamodel.ListValueData;
-import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.datamodel.ValueDataUtil;
 import com.codenvy.analytics.metrics.CalculatedMetric;
@@ -33,10 +32,10 @@ import java.io.IOException;
 
 /** @author Dmytro Nochevnov */
 @RolesAllowed(value = {"user", "system/admin", "system/manager"})
-public class BuildsRunsMemoryUsagePerHour extends CalculatedMetric implements Expandable {
+public class TasksMemoryUsagePerHour extends CalculatedMetric implements Expandable {
 
-    public BuildsRunsMemoryUsagePerHour() {
-        super(MetricType.BUILDS_RUNS_MEMORY_USAGE_PER_HOUR, new MetricType[]{MetricType.BUILDS_MEMORY_USAGE_PER_HOUR,
+    public TasksMemoryUsagePerHour() {
+        super(MetricType.TASKS_MEMORY_USAGE_PER_HOUR, new MetricType[]{MetricType.BUILDS_MEMORY_USAGE_PER_HOUR,
                                                             MetricType.RUNS_MEMORY_USAGE_PER_HOUR});
 
     }
@@ -79,7 +78,7 @@ public class BuildsRunsMemoryUsagePerHour extends CalculatedMetric implements Ex
     /** {@inheritDoc} */
     @Override
     public String getDescription() {
-        return "The builds and runs memory usage in GB per hour";
+        return "The tasks memory usage in GB per hour";
     }
 
 }
