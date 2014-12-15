@@ -25,6 +25,11 @@
                 <parameter key="section-name" value=""/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="builds_runs_memory_usage_per_hour"/>
+                <parameter key="description" value="Gigabyte RAM Hours"/>
+                <parameter key="numeric-format" value="%.1f"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="total_workspaces"/>
                 <parameter key="description" value="Workspaces - Cumulative"/>
             </row>
