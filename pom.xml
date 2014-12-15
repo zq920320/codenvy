@@ -39,6 +39,12 @@
         <module>codenvy-hosted-recoverpassword</module>
         <module>codenvy-hosted-workspace-events</module>
         <module>codenvy-hosted-ide3-migration-service</module>
+        <module>codenvy-hosted-sso-server</module>
+        <module>codenvy-hosted-sso-auth-bearer</module>
+        <module>codenvy-hosted-sso-client</module>
+        <module>codenvy-hosted-sso-oauth</module>
+        <module>codenvy-hosted-sso-server-ldap</module>
+        <module>codenvy-hosted-sso-server-organization</module>
     </modules>
     <scm>
         <connection>scm:git:git@github.com:codenvy/hosted-infrastructure.git</connection>
