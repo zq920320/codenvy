@@ -19,10 +19,57 @@
 
 -->
 <display>
-    <view time-unit="day,week,month,lifetime" name="runner_timeline" columns="15">
+    <view time-unit="day,week,month,lifetime" name="tasker_report" columns="15">
+        <section name="summary">
+            <row class="com.codenvy.analytics.services.view.DateRow">
+                <parameter key="section-name" value="Summary"/>
+            </row>
+            <!--  TODO DASHB-598 -->
+        </section>
+
+        <section name="builder">
+            <row class="com.codenvy.analytics.services.view.DateRow">
+                <parameter key="section-name" value="Builder Info"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="builds"/>
+                <parameter key="description" value="Builders Launched"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="builds_finished"/>
+                <parameter key="description" value="Builders Stopped"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="builds_time"/>
+                <parameter key="description" value="Builder Time"/>
+                <parameter key="time-field" value="true"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="builds_memory_usage_per_hour"/>
+                <parameter key="description" value="Gigabyte RAM Hours"/>
+                <parameter key="numeric-format" value="%.1f"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="builds_with_timeout"/>
+                <parameter key="description" value="Builders Launched w/ Timeout"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="builds_with_always_on"/>
+                <parameter key="description" value="Builders Launched w/ Always-On"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="builds_finished_normally"/>
+                <parameter key="description" value="Builders Stopped Normally"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="builds_finished_by_timeout"/>
+                <parameter key="description" value="Builders Stopped by Timeout"/>
+            </row>
+        </section>
+
         <section name="runner">
             <row class="com.codenvy.analytics.services.view.DateRow">
-                <parameter key="section-name" value=""/>
+                <parameter key="section-name" value="Runner Info"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="runs"/>
@@ -59,5 +106,6 @@
                 <parameter key="description" value="Runners Stopped by Timeout"/>
             </row>
         </section>
+
     </view>
 </display>

@@ -20,7 +20,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Builder Report</title>
+    <title>Tasker Report</title>
     <%@ include file="/inclusions/header.jsp"%>
     <style type="text/css">
         /* redefine style of Accordion Widget of jQuery UI (@see http://api.jqueryui.com/accordion/#method-disable ) */
@@ -33,7 +33,7 @@
 
 <jsp:include page="/inclusions/top-menu/top-menu.jsp">
     <jsp:param name="selectedMenuItemId" value="topmenu-reports"/>
-    <jsp:param name="selectedMenuItemId" value="topmenu-reports-builder_report"/>
+    <jsp:param name="selectedMenuItemId" value="topmenu-reports-tasker_report"/>
 </jsp:include>
 
 <div class="container-fluid">
@@ -54,12 +54,6 @@
                                 <td><label for="input-user">User:</label></td>
                                 <td><div class="filter-item">
                                     <input type="text" id="input-user" name="user" class="text-box" />
-                                </div></td>
-                            </tr>
-                            <tr>
-                                <td><label for="input-factory">Factory ID:</label></td>
-                                <td><div class="filter-item">
-                                    <input type="text" id="input-factory" name="factory_id" class="text-box" />
                                 </div></td>
                             </tr>
                         </table>
@@ -106,7 +100,7 @@
                 <div class="single-column-gadget">
                     <div class="view">
                         <div class="tables">
-                            <div id="builderReport"></div>
+                            <div id="taskerReport"></div>
                         </div>
                     </div>
                 </div>

@@ -45,22 +45,10 @@ function AnalyticsConfiguration() {
             displayLineChart: true  // default is false
         },
 
-        runnerReport: {
-            widgetLabel: "Runner Report",
+        taskerReport: {
+            widgetLabel: "Tasker Report",
             presenterType: "ReportPresenter",
-            modelViewName: "runner_timeline",
-
-            defaultModelParams: {
-                "time_unit": "month"
-            },
-
-            displayLineChart: true  // default is false
-        },
-
-        builderReport: {
-            widgetLabel: "Builder Report",
-            presenterType: "ReportPresenter",
-            modelViewName: "builder_timeline",
+            modelViewName: "tasker_report",
 
             defaultModelParams: {
                 "time_unit": "month"
