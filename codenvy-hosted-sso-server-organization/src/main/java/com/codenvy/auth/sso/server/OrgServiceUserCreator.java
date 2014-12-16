@@ -26,7 +26,7 @@ import com.codenvy.api.user.server.Constants;
 import com.codenvy.api.user.server.dao.Profile;
 import com.codenvy.api.user.server.dao.UserDao;
 import com.codenvy.api.user.server.dao.UserProfileDao;
-import com.codenvy.auth.organization.UserCreator;
+import com.codenvy.auth.sso.server.organization.UserCreator;
 import com.codenvy.commons.lang.NameGenerator;
 import com.codenvy.commons.user.User;
 import com.codenvy.commons.user.UserImpl;

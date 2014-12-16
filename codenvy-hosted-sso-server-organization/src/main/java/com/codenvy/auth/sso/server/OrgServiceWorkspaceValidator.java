@@ -24,7 +24,8 @@ import com.codenvy.api.user.server.dao.UserDao;
 import com.codenvy.api.workspace.server.dao.Member;
 import com.codenvy.api.user.server.dao.User;
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
-import com.codenvy.auth.organization.WorkspaceCreationValidator;
+import com.codenvy.auth.sso.server.organization.WorkspaceCreationValidator;
+
 
 import javax.inject.Inject;
 import java.io.IOException;

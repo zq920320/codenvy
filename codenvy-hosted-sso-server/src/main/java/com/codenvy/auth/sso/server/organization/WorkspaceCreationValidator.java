@@ -15,7 +15,7 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.auth.organization;
+package com.codenvy.auth.sso.server.organization;
 
 
 import java.io.IOException;

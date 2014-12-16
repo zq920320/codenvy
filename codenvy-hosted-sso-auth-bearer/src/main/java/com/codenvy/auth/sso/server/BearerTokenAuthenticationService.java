@@ -22,9 +22,10 @@ import com.codenvy.api.dao.authentication.AccessTicket;
 import com.codenvy.api.dao.authentication.CookieBuilder;
 import com.codenvy.api.dao.authentication.TicketManager;
 import com.codenvy.api.dao.authentication.TokenGenerator;
-import com.codenvy.auth.organization.UserCreator;
-import com.codenvy.auth.organization.WorkspaceCreationValidator;
+
 import com.codenvy.auth.sso.server.handler.BearerTokenAuthenticationHandler;
+import com.codenvy.auth.sso.server.organization.UserCreator;
+import com.codenvy.auth.sso.server.organization.WorkspaceCreationValidator;
 import com.codenvy.commons.lang.IoUtil;
 import com.codenvy.commons.user.User;
 
