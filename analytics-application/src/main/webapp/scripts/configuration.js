@@ -1477,7 +1477,15 @@ function AnalyticsConfiguration() {
         "runs_with_always_on": "#PROJECTS",
         "runs_finished_by_user": "#PROJECTS",
         "runs_finished_by_timeout": "#PROJECTS",
+
+        "tasks_launched": "#PROJECTS",
+        "tasks_stopped": "#PROJECTS",
+        "tasks_time": "#PROJECTS",
         "tasks_memory_usage_per_hour": "#PROJECTS",
+        "tasks_launched_with_timeout": "#PROJECTS",
+        "tasks_launched_with_always_on": "#PROJECTS",
+        "tasks_stopped_normally": "#PROJECTS",
+        "tasks_stopped_by_timeout": "#PROJECTS",
 
         "change_project_type_action": "#PROJECTS",
         "close_project_action": "#PROJECTS",

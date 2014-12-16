@@ -25,11 +25,39 @@
                 <parameter key="section-name" value="Summary"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="tasks_launched"/>
+                <parameter key="description" value="Tasks Launched"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="tasks_stopped"/>
+                <parameter key="description" value="Tasks Stopped"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="tasks_time"/>
+                <parameter key="description" value="Tasker Time"/>
+                <parameter key="time-field" value="true"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="tasks_memory_usage_per_hour"/>
                 <parameter key="description" value="Gigabyte RAM Hours"/>
                 <parameter key="numeric-format" value="%.1f"/>
             </row>
-            <!--  TODO DASHB-598 -->
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="tasks_launched_with_timeout"/>
+                <parameter key="description" value="Tasks Launched w/ Timeout"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="tasks_launched_with_always_on"/>
+                <parameter key="description" value="Tasks Launched w/ Always-On"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="tasks_stopped_normally"/>
+                <parameter key="description" value="Tasks Stopped Normally"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="tasks_stopped_by_timeout"/>
+                <parameter key="description" value="Tasks Stopped by Timeout"/>
+            </row>
         </section>
 
         <section name="builder">

@@ -17,7 +17,7 @@
  */
 package com.codenvy.analytics.metrics.tasks;
 
-import com.codenvy.analytics.datamodel.DoubleValueData;
+import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.datamodel.ValueDataUtil;
 import com.codenvy.analytics.metrics.Context;
@@ -29,33 +29,31 @@ import java.io.IOException;
 
 /** @author Dmytro Nochevnov */
 @RolesAllowed(value = {"user", "system/admin", "system/manager"})
-public class TasksMemoryUsagePerHour extends AbstractTasksMetric {
+public class TasksLaunchedWithTimeout extends AbstractTasksMetric {
 
-    public TasksMemoryUsagePerHour() {
-        super(MetricType.TASKS_MEMORY_USAGE_PER_HOUR, new MetricType[]{MetricType.BUILDS_MEMORY_USAGE_PER_HOUR,
-                                                                       MetricType.RUNS_MEMORY_USAGE_PER_HOUR});
+    public TasksLaunchedWithTimeout() {
+        super(MetricType.TASKS_LAUNCHED_WITH_TIMEOUT, new MetricType[]{MetricType.BUILDS_WITH_TIMEOUT, MetricType.RUNS_WITH_TIMEOUT});
     }
 
     @Override
     public ValueData getValue(Context context) throws IOException {
-        double sum = 0;
+        long sum = 0;
 
         for (Metric metric : basedMetric) {
-            sum += ValueDataUtil.getAsDouble(metric, context).getAsDouble();
+            sum += ValueDataUtil.getAsLong(metric, context).getAsLong();
         }
 
-        return new DoubleValueData(sum);
+        return new LongValueData(sum);
     }
 
     /** {@inheritDoc} */
     @Override
     public Class<? extends ValueData> getValueDataClass() {
-        return DoubleValueData.class;
+        return LongValueData.class;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getDescription() {
-        return "The tasks memory usage in GB per hour";
+        return "The number tasks launched with timeout";
     }
 }
