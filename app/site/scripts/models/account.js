@@ -405,9 +405,17 @@
                                 });
                             }
                         },
-                        error: function(xhr /*, status , err*/ ) {
+                        error: function(response /*, status , err*/ ) {
+                            var responseErr;
+                            try{
+                                responseErr = JSON.parse(response.responseText).message;
+                            }catch(e){
+                                responseErr = "Authentication: Something went wrong. Please try again or contact support";
+                            }
+
+                            
                             error([
-                                new AccountError(null, xhr.responseText)
+                                new AccountError(null, responseErr)
                             ]);
                         }
                     });
@@ -438,9 +446,17 @@
                                 });
                             }
                         },
-                        error: function(xhr /*, status , err*/ ) {
+                        error: function(response /*, status , err*/ ) {
+                            var responseErr;
+                            try{
+                                responseErr = JSON.parse(response.responseText).message;
+                            }catch(e){
+                                responseErr = "Authentication: Something went wrong. Please try again or contact support";
+                            }
+
+                            
                             error([
-                                new AccountError(null, xhr.responseText)
+                                new AccountError(null, responseErr)
                             ]);
                         }
                     });
