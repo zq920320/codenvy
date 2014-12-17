@@ -29,12 +29,14 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import static com.codenvy.analytics.datamodel.ValueDataUtil.getAsDouble;
 import static com.codenvy.analytics.datamodel.ValueDataUtil.getAsLong;
+import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsMap;
 import static java.lang.Math.round;
 import static org.testng.Assert.assertEquals;
 
@@ -44,6 +46,137 @@ public class TestTaskerMetrics extends BaseTest {
     @BeforeClass
     public void setUp() throws Exception {
         prepareData();
+    }
+
+    @Test
+    public void testTasks() throws IOException {
+        Metric metric = MetricFactory.getMetric(MetricType.TASKS);
+
+        LongValueData l = getAsLong(metric, Context.EMPTY);
+        assertEquals(l.getAsLong(), 6);
+    }
+
+    @Test
+    public void testTasksList() throws IOException {
+        Metric metric = MetricFactory.getMetric(MetricType.TASKS_LIST);
+
+        ListValueData value = (ListValueData)(metric).getValue(Context.EMPTY);
+        assertEquals(value.size(), 6);
+
+        List<ValueData> tasks = value.getAll();
+        assertEquals(treatAsMap(tasks.get(0)).toString(), "{"
+                                                          + "date=1382252400000, "
+                                                          + "user=user, "
+                                                          + "ws=ws, "
+                                                          + "project=project1, "
+                                                          + "project_type=projecttype, "
+                                                          + "project_id=user/ws/project1, "
+                                                          + "persistent_ws=0, "
+                                                          + "task_id=id1_b, "
+                                                          + "task_type=builder, "
+                                                          + "memory=1536, "
+                                                          + "usage_time=120000, "
+                                                          + "started_time=1382252400000, "
+                                                          + "stopped_time=1382253000000, "
+                                                          + "gigabyte_ram_hours=0.05, "
+                                                          + "launch_type=timeout, "
+                                                          + "shutdown_type=normally"
+                                                          + "}");
+
+        assertEquals(treatAsMap(tasks.get(1)).toString(), "{"
+                                                          + "date=1382256000000, "
+                                                          + "user=user, "
+                                                          + "ws=ws, "
+                                                          + "project=project2, "
+                                                          + "project_type=projecttype, "
+                                                          + "project_id=user/ws/project2, "
+                                                          + "persistent_ws=0, "
+                                                          + "task_id=id2_b, "
+                                                          + "task_type=builder, "
+                                                          + "memory=250, "
+                                                          + "usage_time=60000, "
+                                                          + "started_time=1382256000000, "
+                                                          + "stopped_time=1382256060000, "
+                                                          + "gigabyte_ram_hours=0.004069010416666667, "
+                                                          + "launch_type=always-on, "
+                                                          + "shutdown_type=normally"
+                                                          + "}");
+
+        assertEquals(treatAsMap(tasks.get(2)).toString(), "{"
+                                                          + "date=1382256000000, "
+                                                          + "user=user, "
+                                                          + "ws=ws, "
+                                                          + "project=project3, "
+                                                          + "project_type=projecttype, "
+                                                          + "project_id=user/ws/project3, "
+                                                          + "persistent_ws=0, "
+                                                          + "task_id=id3_b, "
+                                                          + "task_type=builder, "
+                                                          + "memory=1536, "
+                                                          + "usage_time=120000, "
+                                                          + "started_time=1382256000000, "
+                                                          + "stopped_time=1382256060000, "
+                                                          + "gigabyte_ram_hours=0.05, "
+                                                          + "launch_type=timeout, "
+                                                          + "shutdown_type=timeout"
+                                                          + "}");
+
+        assertEquals(treatAsMap(tasks.get(3)).toString(), "{"
+                                                          + "date=1382252400000, "
+                                                          + "user=user, "
+                                                          + "ws=ws, "
+                                                          + "project=project1, "
+                                                          + "project_type=projecttype, "
+                                                          + "project_id=user/ws/project1, "
+                                                          + "persistent_ws=0, "
+                                                          + "task_id=id1_r, "
+                                                          + "task_type=runner, "
+                                                          + "memory=128, "
+                                                          + "usage_time=120000, "
+                                                          + "started_time=1382252400000, "
+                                                          + "stopped_time=1382253000000, "
+                                                          + "gigabyte_ram_hours=0.004166666666666667, "
+                                                          + "launch_type=timeout, "
+                                                          + "shutdown_type=normally"
+                                                          + "}");
+
+        assertEquals(treatAsMap(tasks.get(4)).toString(), "{"
+                                                          + "date=1382256000000, "
+                                                          + "user=user, "
+                                                          + "ws=ws, "
+                                                          + "project=project2, "
+                                                          + "project_type=projecttype, "
+                                                          + "project_id=user/ws/project2, "
+                                                          + "persistent_ws=0, "
+                                                          + "task_id=id2_r, "
+                                                          + "task_type=runner, "
+                                                          + "memory=128, "
+                                                          + "usage_time=120000, "
+                                                          + "started_time=1382256000000, "
+                                                          + "stopped_time=1382256060000, "
+                                                          + "gigabyte_ram_hours=0.004166666666666667, "
+                                                          + "launch_type=always-on, "
+                                                          + "shutdown_type=timeout"
+                                                          + "}");
+
+        assertEquals(treatAsMap(tasks.get(5)).toString(), "{"
+                                                          + "date=1382256000000, "
+                                                          + "user=user, "
+                                                          + "ws=ws, "
+                                                          + "project=project3, "
+                                                          + "project_type=projecttype, "
+                                                          + "project_id=user/ws/project3, "
+                                                          + "persistent_ws=0, "
+                                                          + "task_id=id3_r, "
+                                                          + "task_type=runner, "
+                                                          + "memory=128, "
+                                                          + "usage_time=60000, "
+                                                          + "started_time=1382256000000, "
+                                                          + "stopped_time=1382256060000, "
+                                                          + "gigabyte_ram_hours=0.0020833333333333333, "
+                                                          + "launch_type=timeout, "
+                                                          + "shutdown_type=normally"
+                                                          + "}");
     }
 
     @Test
@@ -226,6 +359,10 @@ public class TestTaskerMetrics extends BaseTest {
 
         builder.putAll(scriptsManager.getScript(ScriptType.USED_TIME, MetricType.RUNS_TIME).getParamsAsMap());
         pigServer.execute(ScriptType.USED_TIME, builder.build());
+
+        builder.putAll(scriptsManager.getScript(ScriptType.TASKS, MetricType.TASKS).getParamsAsMap());
+        pigServer.execute(ScriptType.TASKS, builder.build());
+
     }
 
     private File initLogs() throws Exception {
@@ -240,7 +377,7 @@ public class TestTaskerMetrics extends BaseTest {
                                       .withParam("USER", "user")
                                       .withParam("PROJECT", "project1")
                                       .withParam("TYPE", "projectType")
-                                      .withParam("ID", "id1")
+                                      .withParam("ID", "id1_b")
                                       .withParam("TIMEOUT", "600")
                                       .build());
         events.add(new Event.Builder().withDate("2013-10-20")
@@ -250,7 +387,7 @@ public class TestTaskerMetrics extends BaseTest {
                                       .withParam("USER", "user")
                                       .withParam("PROJECT", "project1")
                                       .withParam("TYPE", "projectType")
-                                      .withParam("ID", "id1")
+                                      .withParam("ID", "id1_b")
                                       .withParam("TIMEOUT", "600")
                                       .withParam("USAGE-TIME", "120000")
                                       .withParam("FINISHED-NORMALLY", "1")
@@ -264,7 +401,7 @@ public class TestTaskerMetrics extends BaseTest {
                                       .withParam("USER", "user")
                                       .withParam("PROJECT", "project2")
                                       .withParam("TYPE", "projectType")
-                                      .withParam("ID", "id2")
+                                      .withParam("ID", "id2_b")
                                       .withParam("TIMEOUT", "-1")
                                       .build());
         events.add(new Event.Builder().withDate("2013-10-20")
@@ -274,7 +411,8 @@ public class TestTaskerMetrics extends BaseTest {
                                       .withParam("USER", "user")
                                       .withParam("PROJECT", "project2")
                                       .withParam("TYPE", "projectType")
-                                      .withParam("ID", "id2")
+                                      .withParam("ID", "id2_b")
+                                      .withParam("MEMORY", "250")
                                       .withParam("TIMEOUT", "-1")
                                       .withParam("USAGE-TIME", "60000")
                                       .withParam("FINISHED-NORMALLY", "1")
@@ -289,7 +427,7 @@ public class TestTaskerMetrics extends BaseTest {
                                       .withParam("USER", "user")
                                       .withParam("PROJECT", "project3")
                                       .withParam("TYPE", "projectType")
-                                      .withParam("ID", "id3")
+                                      .withParam("ID", "id3_b")
                                       .withParam("TIMEOUT", "600")
                                       .build());
         events.add(new Event.Builder().withDate("2013-10-20")
@@ -299,7 +437,7 @@ public class TestTaskerMetrics extends BaseTest {
                                       .withParam("USER", "user")
                                       .withParam("PROJECT", "project3")
                                       .withParam("TYPE", "projectType")
-                                      .withParam("ID", "id3")
+                                      .withParam("ID", "id3_b")
                                       .withParam("TIMEOUT", "600")
                                       .withParam("USAGE-TIME", "120000")
                                       .withParam("FINISHED-NORMALLY", "0")
@@ -314,7 +452,7 @@ public class TestTaskerMetrics extends BaseTest {
                                       .withParam("USER", "user")
                                       .withParam("PROJECT", "project1")
                                       .withParam("TYPE", "projectType")
-                                      .withParam("ID", "id1")
+                                      .withParam("ID", "id1_r")
                                       .withParam("MEMORY", "128")
                                       .withParam("LIFETIME", "600")
                                       .build());
@@ -325,7 +463,7 @@ public class TestTaskerMetrics extends BaseTest {
                                       .withParam("USER", "user")
                                       .withParam("PROJECT", "project1")
                                       .withParam("TYPE", "projectType")
-                                      .withParam("ID", "id1")
+                                      .withParam("ID", "id1_r")
                                       .withParam("MEMORY", "128")
                                       .withParam("LIFETIME", "600")
                                       .withParam("USAGE-TIME", "120000")
@@ -340,7 +478,7 @@ public class TestTaskerMetrics extends BaseTest {
                                       .withParam("USER", "user")
                                       .withParam("PROJECT", "project2")
                                       .withParam("TYPE", "projectType")
-                                      .withParam("ID", "id2")
+                                      .withParam("ID", "id2_r")
                                       .withParam("MEMORY", "128")
                                       .withParam("LIFETIME", "-1")
                                       .build());
@@ -351,7 +489,7 @@ public class TestTaskerMetrics extends BaseTest {
                                       .withParam("USER", "user")
                                       .withParam("PROJECT", "project2")
                                       .withParam("TYPE", "projectType")
-                                      .withParam("ID", "id2")
+                                      .withParam("ID", "id2_r")
                                       .withParam("MEMORY", "128")
                                       .withParam("LIFETIME", "-1")
                                       .withParam("USAGE-TIME", "120000")
@@ -367,7 +505,7 @@ public class TestTaskerMetrics extends BaseTest {
                                       .withParam("USER", "user")
                                       .withParam("PROJECT", "project3")
                                       .withParam("TYPE", "projectType")
-                                      .withParam("ID", "id3")
+                                      .withParam("ID", "id3_r")
                                       .withParam("MEMORY", "128")
                                       .withParam("LIFETIME", "60")
                                       .build());
@@ -378,7 +516,7 @@ public class TestTaskerMetrics extends BaseTest {
                                       .withParam("USER", "user")
                                       .withParam("PROJECT", "project3")
                                       .withParam("TYPE", "projectType")
-                                      .withParam("ID", "id3")
+                                      .withParam("ID", "id3_r")
                                       .withParam("MEMORY", "128")
                                       .withParam("LIFETIME", "60")
                                       .withParam("USAGE-TIME", "60000")

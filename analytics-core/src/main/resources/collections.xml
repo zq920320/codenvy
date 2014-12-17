@@ -1188,4 +1188,28 @@
             </index>
         </indexes>
     </collection>
+
+    <collection name="tasks">
+        <indexes>
+            <index name="user">
+                <field>user</field>
+                <field>date</field>
+            </index>
+            <index name="ws">
+                <field>ws</field>
+                <field>date</field>
+            </index>
+            <index name="project_id">
+                <field>project_id</field>
+                <field>date</field>
+            </index>
+            <index name="task_id">
+                <field>task_id</field>
+                <field>date</field>
+            </index>
+            <index name="date">
+                <field>date</field>
+            </index>
+        </indexes>
+    </collection>
 </collections>

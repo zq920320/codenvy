@@ -43,8 +43,9 @@ com.codenvy.analytics.metrics.projects.ProjectTypeSpring
 com.codenvy.analytics.metrics.projects.ProjectTypeWar
 com.codenvy.analytics.metrics.projects.Deploys
 com.codenvy.analytics.metrics.projects.DeploysToPaas
-com.codenvy.analytics.metrics.runs.RunsTime
 com.codenvy.analytics.metrics.projects.DebugsTime
+
+com.codenvy.analytics.metrics.runs.RunsTime
 com.codenvy.analytics.metrics.runs.Runs
 com.codenvy.analytics.metrics.runs.RunsWithAlwaysOn
 com.codenvy.analytics.metrics.runs.RunsWithTimeout
@@ -67,6 +68,8 @@ com.codenvy.analytics.metrics.builds.BuildsTime
 com.codenvy.analytics.metrics.builds.BuildQueueTerminations
 com.codenvy.analytics.metrics.builds.TimeInBuildQueue
 
+com.codenvy.analytics.metrics.tasks.TasksList
+com.codenvy.analytics.metrics.tasks.Tasks
 com.codenvy.analytics.metrics.tasks.TasksLaunched
 com.codenvy.analytics.metrics.tasks.TasksStopped
 com.codenvy.analytics.metrics.tasks.TasksTime

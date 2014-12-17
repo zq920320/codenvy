@@ -79,6 +79,13 @@ public abstract class AbstractMetric implements Metric {
     public static final String USAGE_TIME            = "usage_time";
     public static final String LIFETIME              = "lifetime";
     public static final String TIMEOUT               = "timeout";
+    public static final String TASK_ID               = "task_id";
+    public static final String TASK_TYPE             = "task_type";
+    public static final String STARTED_TIME          = "started_time";
+    public static final String STOPPED_TME           = "stopped_time";
+    public static final String GIGABYTE_RAM_HOURS    = "gigabyte_ram_hours";
+    public static final String LAUNCH_TYPE           = "launch_type";
+    public static final String SHUTDOWN_TYPE         = "shutdown_type";
 
     private final String metricName;
 
