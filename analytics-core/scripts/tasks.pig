@@ -45,7 +45,7 @@ build_finished = FOREACH build_finished GENERATE dt,
                                                  id,
                                                  (long) usage_time_msec,
                                                  (long) (memory_mb IS NOT NULL ? memory_mb : '1536'),  /* setup default BUILDER MEMORY USAGE = 1.5 GB */
-                                                 (finished_normally == '0' ? 'timeout' : 'normally')  AS shutdown_type;
+                                                 (finished_normally == '0' ? 'timeout' : 'normal')  AS shutdown_type;
 
 builds = JOIN build_started BY id LEFT, build_finished BY id;
 
@@ -91,7 +91,7 @@ run_finished = FOREACH run_finished GENERATE dt,
                                              id,
                                              (long) usage_time_msec,
                                              (long) memory_mb,
-                                             (stopped_by_user == '0' ? 'timeout' : 'normally')  AS shutdown_type;
+                                             (stopped_by_user == '0' ? 'timeout' : 'user')  AS shutdown_type;
 
 runs = JOIN run_started BY id LEFT, run_finished BY id;
 

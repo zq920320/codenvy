@@ -53,7 +53,7 @@ public class TestTaskerMetrics extends BaseTest {
         Metric metric = MetricFactory.getMetric(MetricType.TASKS);
 
         LongValueData l = getAsLong(metric, Context.EMPTY);
-        assertEquals(l.getAsLong(), 6);
+        assertEquals(l.getAsLong(), 7);
     }
 
     @Test
@@ -61,7 +61,7 @@ public class TestTaskerMetrics extends BaseTest {
         Metric metric = MetricFactory.getMetric(MetricType.TASKS_LIST);
 
         ListValueData value = (ListValueData)(metric).getValue(Context.EMPTY);
-        assertEquals(value.size(), 6);
+        assertEquals(value.size(), 7);
 
         List<ValueData> tasks = value.getAll();
         assertEquals(treatAsMap(tasks.get(0)).toString(), "{"
@@ -80,7 +80,7 @@ public class TestTaskerMetrics extends BaseTest {
                                                           + "stopped_time=1382253000000, "
                                                           + "gigabyte_ram_hours=0.05, "
                                                           + "launch_type=timeout, "
-                                                          + "shutdown_type=normally"
+                                                          + "shutdown_type=normal"
                                                           + "}");
 
         assertEquals(treatAsMap(tasks.get(1)).toString(), "{"
@@ -99,7 +99,7 @@ public class TestTaskerMetrics extends BaseTest {
                                                           + "stopped_time=1382256060000, "
                                                           + "gigabyte_ram_hours=0.004069010416666667, "
                                                           + "launch_type=always-on, "
-                                                          + "shutdown_type=normally"
+                                                          + "shutdown_type=normal"
                                                           + "}");
 
         assertEquals(treatAsMap(tasks.get(2)).toString(), "{"
@@ -137,7 +137,7 @@ public class TestTaskerMetrics extends BaseTest {
                                                           + "stopped_time=1382253000000, "
                                                           + "gigabyte_ram_hours=0.004166666666666667, "
                                                           + "launch_type=timeout, "
-                                                          + "shutdown_type=normally"
+                                                          + "shutdown_type=user"
                                                           + "}");
 
         assertEquals(treatAsMap(tasks.get(4)).toString(), "{"
@@ -175,7 +175,21 @@ public class TestTaskerMetrics extends BaseTest {
                                                           + "stopped_time=1382256060000, "
                                                           + "gigabyte_ram_hours=0.0020833333333333333, "
                                                           + "launch_type=timeout, "
-                                                          + "shutdown_type=normally"
+                                                          + "shutdown_type=user"
+                                                          + "}");
+
+        assertEquals(treatAsMap(tasks.get(6)).toString(), "{"
+                                                          + "date=1382259600000, "
+                                                          + "user=user, "
+                                                          + "ws=ws, "
+                                                          + "project=project1, "
+                                                          + "project_type=projecttype, "
+                                                          + "project_id=user/ws/project1, "
+                                                          + "persistent_ws=0, "
+                                                          + "task_id=id4_r, "
+                                                          + "task_type=runner, "
+                                                          + "started_time=1382259600000, "
+                                                          + "launch_type=timeout"
                                                           + "}");
     }
 
@@ -184,7 +198,7 @@ public class TestTaskerMetrics extends BaseTest {
         Metric metric = MetricFactory.getMetric(MetricType.TASKS_LAUNCHED);
 
         LongValueData l = getAsLong(metric, Context.EMPTY);
-        assertEquals(l.getAsLong(), 6);
+        assertEquals(l.getAsLong(), 7);
     }
 
     @Test
@@ -263,7 +277,7 @@ public class TestTaskerMetrics extends BaseTest {
         Metric metric = MetricFactory.getMetric(MetricType.TASKS_LAUNCHED_WITH_TIMEOUT);
 
         LongValueData l = getAsLong(metric, Context.EMPTY);
-        assertEquals(l.getAsLong(), 4);
+        assertEquals(l.getAsLong(), 5);
     }
 
     @Test
@@ -521,6 +535,19 @@ public class TestTaskerMetrics extends BaseTest {
                                       .withParam("LIFETIME", "60")
                                       .withParam("USAGE-TIME", "60000")
                                       .withParam("STOPPED-BY-USER", "1")
+                                      .build());
+
+        // #1 2min, non-finished run
+        events.add(new Event.Builder().withDate("2013-10-20")
+                                      .withTime("12:00:00")
+                                      .withParam("EVENT", "run-started")
+                                      .withParam("WS", "ws")
+                                      .withParam("USER", "user")
+                                      .withParam("PROJECT", "project1")
+                                      .withParam("TYPE", "projectType")
+                                      .withParam("ID", "id4_r")
+                                      .withParam("MEMORY", "128")
+                                      .withParam("LIFETIME", "600")
                                       .build());
 
         return LogGenerator.generateLog(events);

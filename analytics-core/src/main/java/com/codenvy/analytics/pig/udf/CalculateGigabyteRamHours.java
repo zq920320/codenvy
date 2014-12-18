@@ -41,7 +41,7 @@ public class CalculateGigabyteRamHours extends EvalFunc<Double> {
             double usage_time = (long)input.get(1);
 
             return (memory * usage_time) / GRH_DEVIDER;
-        } catch (NumberFormatException | ArithmeticException e) {
+        } catch (NumberFormatException | ArithmeticException | NullPointerException e) {
             return null;
         }
     }
