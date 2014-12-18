@@ -51,7 +51,7 @@ builds = JOIN build_started BY id LEFT, build_finished BY id;
 
 build_table = FOREACH builds GENERATE UUID(),
                                       TOTUPLE('date', ToMilliSeconds(build_started::dt)),
-                                      TOTUPLE('ws', build_started::ws),
+                                      TOTUPLE('ws', LOWER(build_started::ws)),
                                       TOTUPLE('user', build_started::user),
                                       TOTUPLE('project', build_started::project),
                                       TOTUPLE('project_type', LOWER(build_started::project_type)),
@@ -63,6 +63,7 @@ build_table = FOREACH builds GENERATE UUID(),
                                       TOTUPLE('started_time', ToMilliSeconds(build_started::dt)),
                                       TOTUPLE('stopped_time', ToMilliSeconds(build_finished::dt)),
                                       TOTUPLE('gigabyte_ram_hours', CalculateGigabyteRamHours(build_finished::memory_mb, build_finished::usage_time_msec)),
+                                      TOTUPLE('is_factory', (IsTemporaryWorkspaceById(build_started::ws) ? 'yes' : 'no')),
                                       TOTUPLE('launch_type', build_started::launch_type),
                                       TOTUPLE('shutdown_type', build_finished::shutdown_type);
 
@@ -97,7 +98,7 @@ runs = JOIN run_started BY id LEFT, run_finished BY id;
 
 run_table = FOREACH runs GENERATE UUID(),
                                   TOTUPLE('date', ToMilliSeconds(run_started::dt)),
-                                  TOTUPLE('ws', run_started::ws),
+                                  TOTUPLE('ws', LOWER(run_started::ws)),
                                   TOTUPLE('user', run_started::user),
                                   TOTUPLE('project', run_started::project),
                                   TOTUPLE('project_type', LOWER(run_started::project_type)),
@@ -109,6 +110,7 @@ run_table = FOREACH runs GENERATE UUID(),
                                   TOTUPLE('started_time', ToMilliSeconds(run_started::dt)),
                                   TOTUPLE('stopped_time', ToMilliSeconds(run_finished::dt)),
                                   TOTUPLE('gigabyte_ram_hours', CalculateGigabyteRamHours(run_finished::memory_mb, run_finished::usage_time_msec)),
+                                  TOTUPLE('is_factory', (IsTemporaryWorkspaceById(run_started::ws) ? 'yes' : 'no')),
                                   TOTUPLE('launch_type', run_started::launch_type),
                                   TOTUPLE('shutdown_type', run_finished::shutdown_type);
 

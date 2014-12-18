@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    CODENVY CONFIDENTIAL
+    __________________
+
+     [2012] - [2014] Codenvy, S.A.
+     All Rights Reserved.
+
+    NOTICE:  All information contained herein is, and remains
+    the property of Codenvy S.A. and its suppliers,
+    if any.  The intellectual and technical concepts contained
+    herein are proprietary to Codenvy S.A.
+    and its suppliers and may be covered by U.S. and Foreign Patents,
+    patents in process, and are protected by trade secret or copyright law.
+    Dissemination of this information or reproduction of this material
+    is strictly forbidden unless prior written permission is obtained
+    from Codenvy S.A..
+
+-->
+<display>
+    <view name="tasks" on-demand="true">
+        <section name="tasks">
+            <row class="com.codenvy.analytics.services.view.TitleRow">
+                <parameter key="titles" value="Type,Started Time,Stopped Time,Size (MB),Gigabyte RAM Hours,User,Project,Project Type,Factory?,Launch,Shutdown"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="tasks_list"/>
+                <parameter key="fields" value="task_type,started_time,stopped_time,memory,gigabyte_ram_hours,user,project,project_type,is_factory,launch_type,shutdown_type"/>
+                <parameter key="date-fields" value="started_time,stopped_time"/>
+                <parameter key="numeric-format" value="%.1f"/>
+            </row>
+        </section>
+    </view>
+</display>

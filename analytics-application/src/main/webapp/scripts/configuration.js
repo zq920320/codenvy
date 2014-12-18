@@ -1279,6 +1279,53 @@ function AnalyticsConfiguration() {
             }
         },
 
+        /** for Tasker View */
+        tasks: {
+            widgetLabel: "Tasks",
+            presenterType: "EntryViewPresenter",
+            modelViewName: "tasks",
+
+            columnLinkPrefixList: {
+                "User": "/analytics/pages/user-view.jsp?user",
+                "Workspace": "/analytics/pages/workspace-view.jsp?ws",
+                "Project Type": "/analytics/pages/projects-view.jsp?project_type"
+            },
+
+            columnCombinedLinkConfiguration: {
+                "Project": {
+                    baseLink: "/analytics/pages/project-view.jsp",
+                    mapColumnToParameter: {
+                        "Project": "project",
+                        "Workspace": "ws",
+                        "User": "user"
+                    }
+                }
+            },
+
+            /** @see DatabaseTable::makeTableSortable() method docs */
+            clientSortParams: {
+                "descSortColumnNumber": 2
+            },
+
+            defaultModelParams: {
+                "sort": "-started_time"
+            },
+
+            mapColumnToServerSortParam: {
+                "Type": "task_type",
+                "Started Time": "started_time",
+                "Stopped Time": "stopped_time",
+                "Size (MB)": "memory",
+                "Gigabyte RAM Hours": "gigabyte_ram_hours",
+                "User": "user",
+                "Project": "project",
+                "Project Type": "project_type",
+                "Factory?": "is_factory",
+                "Launch": "launch_type",
+                "Shutdown": "shutdown_type"
+            }
+        },
+
         // drill-down page
         drillDown: {
             widgetLabel: "Drill Down Report",
@@ -1325,7 +1372,8 @@ function AnalyticsConfiguration() {
         "action",
         "account_id",
         "data_universe",
-        "passed_days_count"
+        "passed_days_count",
+        "started_time"
      ];
 
     /** Global parameters stored in Browser Storage */
@@ -1339,7 +1387,9 @@ function AnalyticsConfiguration() {
     /** Date params which should have "yyyymmdd" in model and "yyyy-mm-dd" format in view */
     var dateParams = [
         "from_date",
-        "to_date"
+        "to_date",
+        "started_time",
+        "stopped_time"
     ];
 
     /**

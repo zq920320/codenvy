@@ -55,6 +55,7 @@ public class TasksList extends AbstractListValueResulted {
                             STARTED_TIME,
                             STOPPED_TME,
                             GIGABYTE_RAM_HOURS,
+                            IS_FACTORY,
                             LAUNCH_TYPE,
                             SHUTDOWN_TYPE
         };

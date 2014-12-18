@@ -79,6 +79,7 @@ public class TestTaskerMetrics extends BaseTest {
                                                           + "started_time=1382252400000, "
                                                           + "stopped_time=1382253000000, "
                                                           + "gigabyte_ram_hours=0.05, "
+                                                          + "is_factory=yes, "
                                                           + "launch_type=timeout, "
                                                           + "shutdown_type=normal"
                                                           + "}");
@@ -98,6 +99,7 @@ public class TestTaskerMetrics extends BaseTest {
                                                           + "started_time=1382256000000, "
                                                           + "stopped_time=1382256060000, "
                                                           + "gigabyte_ram_hours=0.004069010416666667, "
+                                                          + "is_factory=yes, "
                                                           + "launch_type=always-on, "
                                                           + "shutdown_type=normal"
                                                           + "}");
@@ -117,6 +119,7 @@ public class TestTaskerMetrics extends BaseTest {
                                                           + "started_time=1382256000000, "
                                                           + "stopped_time=1382256060000, "
                                                           + "gigabyte_ram_hours=0.05, "
+                                                          + "is_factory=yes, "
                                                           + "launch_type=timeout, "
                                                           + "shutdown_type=timeout"
                                                           + "}");
@@ -136,6 +139,7 @@ public class TestTaskerMetrics extends BaseTest {
                                                           + "started_time=1382252400000, "
                                                           + "stopped_time=1382253000000, "
                                                           + "gigabyte_ram_hours=0.004166666666666667, "
+                                                          + "is_factory=yes, "
                                                           + "launch_type=timeout, "
                                                           + "shutdown_type=user"
                                                           + "}");
@@ -155,6 +159,7 @@ public class TestTaskerMetrics extends BaseTest {
                                                           + "started_time=1382256000000, "
                                                           + "stopped_time=1382256060000, "
                                                           + "gigabyte_ram_hours=0.004166666666666667, "
+                                                          + "is_factory=yes, "
                                                           + "launch_type=always-on, "
                                                           + "shutdown_type=timeout"
                                                           + "}");
@@ -174,6 +179,7 @@ public class TestTaskerMetrics extends BaseTest {
                                                           + "started_time=1382256000000, "
                                                           + "stopped_time=1382256060000, "
                                                           + "gigabyte_ram_hours=0.0020833333333333333, "
+                                                          + "is_factory=yes, "
                                                           + "launch_type=timeout, "
                                                           + "shutdown_type=user"
                                                           + "}");
@@ -189,6 +195,7 @@ public class TestTaskerMetrics extends BaseTest {
                                                           + "task_id=id4_r, "
                                                           + "task_type=runner, "
                                                           + "started_time=1382259600000, "
+                                                          + "is_factory=yes, "
                                                           + "launch_type=timeout"
                                                           + "}");
     }

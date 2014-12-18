@@ -35,6 +35,7 @@
                 <a class="nav" href="/analytics/pages/factories-view.jsp" id="topmenu-factories">Factories</a>
                 <a class="nav" href="/analytics/pages/projects-view.jsp" id="topmenu-projects">Projects</a>
                 <a class="nav" href="/analytics/pages/events-view.jsp" id="topmenu-events">Events</a>
+                <a class="nav" href="/analytics/pages/tasker-view.jsp" id="topmenu-tasks">Tasks</a>
 
                 <div class="nav">
                     <div>
