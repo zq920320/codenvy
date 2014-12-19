@@ -22,13 +22,14 @@
     <view name="tasks" on-demand="true">
         <section name="tasks">
             <row class="com.codenvy.analytics.services.view.TitleRow">
-                <parameter key="titles" value="Type,Started Time,Stopped Time,Size (MB),Gigabyte RAM Hours,User,Project,Project Type,Factory?,Launch,Shutdown"/>
+                <parameter key="titles" value="Type,Start Time,Stop Time,Size (MB),Time,Gigabyte RAM Hours,User,Project,Project Type,Factory?,Launch,Shutdown"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="tasks_list"/>
-                <parameter key="fields" value="task_type,started_time,stopped_time,memory,gigabyte_ram_hours,user,project,project_type,is_factory,launch_type,shutdown_type"/>
+                <parameter key="fields" value="task_type,started_time,stopped_time,memory,usage_time,gigabyte_ram_hours,user,project,project_type,is_factory,launch_type,shutdown_type"/>
                 <parameter key="date-fields" value="started_time,stopped_time"/>
-                <parameter key="numeric-format" value="%.1f"/>
+                <parameter key="time-fields" value="usage_time"/>
+                <parameter key="numeric-format" value="%.4f"/>
             </row>
         </section>
     </view>

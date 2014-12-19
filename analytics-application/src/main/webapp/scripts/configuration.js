@@ -1313,9 +1313,10 @@ function AnalyticsConfiguration() {
 
             mapColumnToServerSortParam: {
                 "Type": "task_type",
-                "Started Time": "started_time",
-                "Stopped Time": "stopped_time",
+                "Start Time": "started_time",
+                "Stop Time": "stopped_time",
                 "Size (MB)": "memory",
+                "Time": "usage_time",
                 "Gigabyte RAM Hours": "gigabyte_ram_hours",
                 "User": "user",
                 "Project": "project",
@@ -1692,6 +1693,7 @@ function AnalyticsConfiguration() {
         "Event",
         "Date",
         "Start Time",
+        "Stop Time",
         "End Time",
         "Started",
         "Is Authenticated Session",
