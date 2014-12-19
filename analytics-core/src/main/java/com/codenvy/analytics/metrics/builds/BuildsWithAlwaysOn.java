@@ -32,7 +32,7 @@ import java.io.IOException;
 public class BuildsWithAlwaysOn extends AbstractLongValueResulted {
 
     public BuildsWithAlwaysOn() {
-        super(MetricType.BUILDS_WITH_ALWAYS_ON, PROJECT_ID);
+        super(MetricType.BUILDS_WITH_ALWAYS_ON, TASK_ID);
     }
 
     @Override

@@ -37,7 +37,7 @@ public abstract class AbstractTasksMetric extends CalculatedMetric implements Ex
     /** {@inheritDoc} */
     @Override
     public String getExpandedField() {
-        return PROJECT_ID;
+        return TASK_ID;
     }
 
     @Override

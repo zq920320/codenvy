@@ -75,7 +75,7 @@ public class RunsMemoryUsagePerHour extends ReadBasedMetric implements ReadBased
     /** {@inheritDoc} */
     @Override
     public String getExpandedField() {
-        return PROJECT_ID;
+        return TASK_ID;
     }
 
     /** {@inheritDoc} */

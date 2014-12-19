@@ -1204,7 +1204,7 @@
                 <field>date</field>
             </index>
             <index name="task_id">
-                <field>task_id</field>
+                <field>id</field>
                 <field>date</field>
             </index>
             <index name="date">

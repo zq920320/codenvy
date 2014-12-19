@@ -30,7 +30,7 @@ import java.io.IOException;
 public class RunsFinishedByTimeout extends AbstractLongValueResulted {
 
     public RunsFinishedByTimeout() {
-        super(MetricType.RUNS_FINISHED_BY_TIMEOUT, PROJECT_ID);
+        super(MetricType.RUNS_FINISHED_BY_TIMEOUT, TASK_ID);
     }
 
     @Override

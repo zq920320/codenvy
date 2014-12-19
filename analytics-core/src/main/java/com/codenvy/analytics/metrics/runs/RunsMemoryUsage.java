@@ -30,7 +30,7 @@ public class RunsMemoryUsage extends AbstractSum {
         super(MetricType.RUNS_MEMORY_USAGE,
               MetricType.RUNS_FINISHED,
               MEMORY,
-              PROJECT_ID);
+              TASK_ID);
     }
 
     @Override

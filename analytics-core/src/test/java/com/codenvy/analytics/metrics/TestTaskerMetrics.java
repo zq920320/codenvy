@@ -35,8 +35,10 @@ import java.util.List;
 import java.util.Map;
 
 import static com.codenvy.analytics.datamodel.ValueDataUtil.getAsDouble;
+import static com.codenvy.analytics.datamodel.ValueDataUtil.getAsList;
 import static com.codenvy.analytics.datamodel.ValueDataUtil.getAsLong;
 import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsMap;
+import static com.codenvy.analytics.metrics.MetricFactory.getMetric;
 import static java.lang.Math.round;
 import static org.testng.Assert.assertEquals;
 
@@ -72,7 +74,7 @@ public class TestTaskerMetrics extends BaseTest {
                                                           + "project_type=projecttype, "
                                                           + "project_id=user/ws/project1, "
                                                           + "persistent_ws=0, "
-                                                          + "task_id=id1_b, "
+                                                          + "id=id1_b, "
                                                           + "task_type=builder, "
                                                           + "memory=1536, "
                                                           + "usage_time=120000, "
@@ -92,7 +94,7 @@ public class TestTaskerMetrics extends BaseTest {
                                                           + "project_type=projecttype, "
                                                           + "project_id=user/ws/project2, "
                                                           + "persistent_ws=0, "
-                                                          + "task_id=id2_b, "
+                                                          + "id=id2_b, "
                                                           + "task_type=builder, "
                                                           + "memory=250, "
                                                           + "usage_time=60000, "
@@ -112,7 +114,7 @@ public class TestTaskerMetrics extends BaseTest {
                                                           + "project_type=projecttype, "
                                                           + "project_id=user/ws/project3, "
                                                           + "persistent_ws=0, "
-                                                          + "task_id=id3_b, "
+                                                          + "id=id3_b, "
                                                           + "task_type=builder, "
                                                           + "memory=1536, "
                                                           + "usage_time=120000, "
@@ -132,7 +134,7 @@ public class TestTaskerMetrics extends BaseTest {
                                                           + "project_type=projecttype, "
                                                           + "project_id=user/ws/project1, "
                                                           + "persistent_ws=0, "
-                                                          + "task_id=id1_r, "
+                                                          + "id=id1_r, "
                                                           + "task_type=runner, "
                                                           + "memory=128, "
                                                           + "usage_time=120000, "
@@ -152,7 +154,7 @@ public class TestTaskerMetrics extends BaseTest {
                                                           + "project_type=projecttype, "
                                                           + "project_id=user/ws/project2, "
                                                           + "persistent_ws=0, "
-                                                          + "task_id=id2_r, "
+                                                          + "id=id2_r, "
                                                           + "task_type=runner, "
                                                           + "memory=128, "
                                                           + "usage_time=120000, "
@@ -172,7 +174,7 @@ public class TestTaskerMetrics extends BaseTest {
                                                           + "project_type=projecttype, "
                                                           + "project_id=user/ws/project3, "
                                                           + "persistent_ws=0, "
-                                                          + "task_id=id3_r, "
+                                                          + "id=id3_r, "
                                                           + "task_type=runner, "
                                                           + "memory=128, "
                                                           + "usage_time=60000, "
@@ -192,13 +194,91 @@ public class TestTaskerMetrics extends BaseTest {
                                                           + "project_type=projecttype, "
                                                           + "project_id=user/ws/project1, "
                                                           + "persistent_ws=0, "
-                                                          + "task_id=id4_r, "
+                                                          + "id=id4_r, "
                                                           + "task_type=runner, "
                                                           + "started_time=1382259600000, "
                                                           + "is_factory=yes, "
                                                           + "launch_type=timeout"
                                                           + "}");
     }
+
+    @Test
+    public void testTaskListFilteredByRunsMetric() throws Exception {
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.EXPANDED_METRIC_NAME, MetricType.RUNS.toString());
+
+        Metric metric = getMetric(MetricType.TASKS_LIST);
+
+        ListValueData l = getAsList(metric, builder.build());
+        assertEquals(l.size(), 4);
+        assertEquals(l.getAll().toString(), "[{\"date\":\"1382252400000\","
+                                            + "\"user\":\"user\","
+                                            + "\"ws\":\"ws\","
+                                            + "\"project\":\"project1\","
+                                            + "\"project_type\":\"projecttype\","
+                                            + "\"project_id\":\"user/ws/project1\","
+                                            + "\"persistent_ws\":\"0\","
+                                            + "\"id\":\"id1_r\","
+                                            + "\"task_type\":\"runner\","
+                                            + "\"memory\":\"128\","
+                                            + "\"usage_time\":\"120000\","
+                                            + "\"started_time\":\"1382252400000\","
+                                            + "\"stopped_time\":\"1382253000000\","
+                                            + "\"gigabyte_ram_hours\":\"0.004166666666666667\","
+                                            + "\"is_factory\":\"yes\","
+                                            + "\"launch_type\":\"timeout\","
+                                            + "\"shutdown_type\":\"user\""
+                                            + "}, {"
+                                            + "\"date\":\"1382256000000\","
+                                            + "\"user\":\"user\","
+                                            + "\"ws\":\"ws\","
+                                            + "\"project\":\"project2\","
+                                            + "\"project_type\":\"projecttype\","
+                                            + "\"project_id\":\"user/ws/project2\","
+                                            + "\"persistent_ws\":\"0\","
+                                            + "\"id\":\"id2_r\","
+                                            + "\"task_type\":\"runner\","
+                                            + "\"memory\":\"128\","
+                                            + "\"usage_time\":\"120000\","
+                                            + "\"started_time\":\"1382256000000\","
+                                            + "\"stopped_time\":\"1382256060000\","
+                                            + "\"gigabyte_ram_hours\":\"0.004166666666666667\","
+                                            + "\"is_factory\":\"yes\","
+                                            + "\"launch_type\":\"always-on\","
+                                            + "\"shutdown_type\":\"timeout\""
+                                            + "}, {"
+                                            + "\"date\":\"1382256000000\","
+                                            + "\"user\":\"user\","
+                                            + "\"ws\":\"ws\","
+                                            + "\"project\":\"project3\","
+                                            + "\"project_type\":\"projecttype\","
+                                            + "\"project_id\":\"user/ws/project3\","
+                                            + "\"persistent_ws\":\"0\","
+                                            + "\"id\":\"id3_r\","
+                                            + "\"task_type\":\"runner\","
+                                            + "\"memory\":\"128\","
+                                            + "\"usage_time\":\"60000\","
+                                            + "\"started_time\":\"1382256000000\","
+                                            + "\"stopped_time\":\"1382256060000\","
+                                            + "\"gigabyte_ram_hours\":\"0.0020833333333333333\","
+                                            + "\"is_factory\":\"yes\","
+                                            + "\"launch_type\":\"timeout\","
+                                            + "\"shutdown_type\":\"user\""
+                                            + "}, {"
+                                            + "\"date\":\"1382259600000\","
+                                            + "\"user\":\"user\","
+                                            + "\"ws\":\"ws\","
+                                            + "\"project\":\"project1\","
+                                            + "\"project_type\":\"projecttype\","
+                                            + "\"project_id\":\"user/ws/project1\","
+                                            + "\"persistent_ws\":\"0\","
+                                            + "\"id\":\"id4_r\","
+                                            + "\"task_type\":\"runner\","
+                                            + "\"started_time\":\"1382259600000\","
+                                            + "\"is_factory\":\"yes\","
+                                            + "\"launch_type\":\"timeout\"}]");
+    }
+
 
     @Test
     public void testTasksLaunched() throws Exception {
@@ -214,10 +294,14 @@ public class TestTaskerMetrics extends BaseTest {
 
         ListValueData expandedValue = (ListValueData)((Expandable)metric).getExpandedValue(Context.EMPTY);
 
-        Map<String, Map<String, ValueData>> m = listToMap(expandedValue, AbstractMetric.PROJECT_ID);
-        assertEquals(m.toString(), "{user/ws/project1={project_id=user/ws/project1}, " +
-                                   "user/ws/project3={project_id=user/ws/project3}, " +
-                                   "user/ws/project2={project_id=user/ws/project2}}");
+        Map<String, Map<String, ValueData>> m = listToMap(expandedValue, AbstractMetric.TASK_ID);
+        assertEquals(m.toString(), "{id4_r={id=id4_r}, " +
+                                   "id1_b={id=id1_b}, " +
+                                   "id1_r={id=id1_r}, " +
+                                   "id3_b={id=id3_b}, " +
+                                   "id3_r={id=id3_r}, " +
+                                   "id2_b={id=id2_b}, " +
+                                   "id2_r={id=id2_r}}");
     }
 
     @Test
@@ -234,10 +318,13 @@ public class TestTaskerMetrics extends BaseTest {
 
         ListValueData expandedValue = (ListValueData)((Expandable)metric).getExpandedValue(Context.EMPTY);
 
-        Map<String, Map<String, ValueData>> m = listToMap(expandedValue, AbstractMetric.PROJECT_ID);
-        assertEquals(m.toString(), "{user/ws/project1={project_id=user/ws/project1}, " +
-                                   "user/ws/project3={project_id=user/ws/project3}, " +
-                                   "user/ws/project2={project_id=user/ws/project2}}");
+        Map<String, Map<String, ValueData>> m = listToMap(expandedValue, AbstractMetric.TASK_ID);
+        assertEquals(m.toString(), "{id1_b={id=id1_b}, " +
+                                   "id1_r={id=id1_r}, " +
+                                   "id3_b={id=id3_b}, " +
+                                   "id3_r={id=id3_r}, " +
+                                   "id2_b={id=id2_b}, " +
+                                   "id2_r={id=id2_r}}");
     }
 
     @Test
@@ -254,10 +341,13 @@ public class TestTaskerMetrics extends BaseTest {
 
         ListValueData expandedValue = (ListValueData)((Expandable)metric).getExpandedValue(Context.EMPTY);
 
-        Map<String, Map<String, ValueData>> m = listToMap(expandedValue, AbstractMetric.PROJECT_ID);
-        assertEquals(m.toString(), "{user/ws/project1={project_id=user/ws/project1}, " +
-                                   "user/ws/project3={project_id=user/ws/project3}, " +
-                                   "user/ws/project2={project_id=user/ws/project2}}");
+        Map<String, Map<String, ValueData>> m = listToMap(expandedValue, AbstractMetric.TASK_ID);
+        assertEquals(m.toString(), "{id1_b={id=id1_b}, " +
+                                   "id1_r={id=id1_r}, " +
+                                   "id3_b={id=id3_b}, " +
+                                   "id3_r={id=id3_r}, " +
+                                   "id2_b={id=id2_b}, " +
+                                   "id2_r={id=id2_r}}");
     }
 
     @Test
@@ -273,10 +363,13 @@ public class TestTaskerMetrics extends BaseTest {
 
         ListValueData expandedValue = (ListValueData)((Expandable)metric).getExpandedValue(Context.EMPTY);
 
-        Map<String, Map<String, ValueData>> m = listToMap(expandedValue, AbstractMetric.PROJECT_ID);
-        assertEquals(m.toString(), "{user/ws/project1={project_id=user/ws/project1}, " +
-                                   "user/ws/project3={project_id=user/ws/project3}, " +
-                                   "user/ws/project2={project_id=user/ws/project2}}");
+        Map<String, Map<String, ValueData>> m = listToMap(expandedValue, AbstractMetric.TASK_ID);
+        assertEquals(m.toString(), "{id1_b={id=id1_b}, " +
+                                   "id1_r={id=id1_r}, " +
+                                   "id3_b={id=id3_b}, " +
+                                   "id3_r={id=id3_r}, " +
+                                   "id2_b={id=id2_b}, " +
+                                   "id2_r={id=id2_r}}");
     }
 
     @Test
@@ -293,9 +386,12 @@ public class TestTaskerMetrics extends BaseTest {
 
         ListValueData expandedValue = (ListValueData)((Expandable)metric).getExpandedValue(Context.EMPTY);
 
-        Map<String, Map<String, ValueData>> m = listToMap(expandedValue, AbstractMetric.PROJECT_ID);
-        assertEquals(m.toString(), "{user/ws/project1={project_id=user/ws/project1}, " +
-                                   "user/ws/project3={project_id=user/ws/project3}}");
+        Map<String, Map<String, ValueData>> m = listToMap(expandedValue, AbstractMetric.TASK_ID);
+        assertEquals(m.toString(), "{id4_r={id=id4_r}, " +
+                                   "id1_b={id=id1_b}, " +
+                                   "id1_r={id=id1_r}, " +
+                                   "id3_b={id=id3_b}, " +
+                                   "id3_r={id=id3_r}}");
     }
 
     @Test
@@ -312,8 +408,9 @@ public class TestTaskerMetrics extends BaseTest {
 
         ListValueData expandedValue = (ListValueData)((Expandable)metric).getExpandedValue(Context.EMPTY);
 
-        Map<String, Map<String, ValueData>> m = listToMap(expandedValue, AbstractMetric.PROJECT_ID);
-        assertEquals(m.toString(), "{user/ws/project2={project_id=user/ws/project2}}");
+        Map<String, Map<String, ValueData>> m = listToMap(expandedValue, AbstractMetric.TASK_ID);
+        assertEquals(m.toString(), "{id2_b={id=id2_b}, " +
+                                   "id2_r={id=id2_r}}");
     }
 
     @Test
@@ -330,10 +427,11 @@ public class TestTaskerMetrics extends BaseTest {
 
         ListValueData expandedValue = (ListValueData)((Expandable)metric).getExpandedValue(Context.EMPTY);
 
-        Map<String, Map<String, ValueData>> m = listToMap(expandedValue, AbstractMetric.PROJECT_ID);
-        assertEquals(m.toString(), "{user/ws/project1={project_id=user/ws/project1}, " +
-                                   "user/ws/project3={project_id=user/ws/project3}, " +
-                                   "user/ws/project2={project_id=user/ws/project2}}");
+        Map<String, Map<String, ValueData>> m = listToMap(expandedValue, AbstractMetric.TASK_ID);
+        assertEquals(m.toString(), "{id1_b={id=id1_b}, " +
+                                   "id1_r={id=id1_r}, " +
+                                   "id3_r={id=id3_r}, " +
+                                   "id2_b={id=id2_b}}");
     }
 
     @Test
@@ -350,9 +448,9 @@ public class TestTaskerMetrics extends BaseTest {
 
         ListValueData expandedValue = (ListValueData)((Expandable)metric).getExpandedValue(Context.EMPTY);
 
-        Map<String, Map<String, ValueData>> m = listToMap(expandedValue, AbstractMetric.PROJECT_ID);
-        assertEquals(m.toString(), "{user/ws/project3={project_id=user/ws/project3}, " +
-                                   "user/ws/project2={project_id=user/ws/project2}}");
+        Map<String, Map<String, ValueData>> m = listToMap(expandedValue, AbstractMetric.TASK_ID);
+        assertEquals(m.toString(), "{id3_b={id=id3_b}, " +
+                                   "id2_r={id=id2_r}}");
     }
 
     void prepareData() throws Exception {

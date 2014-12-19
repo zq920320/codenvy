@@ -32,7 +32,7 @@ import java.io.IOException;
 public class BuildsWithTimeout extends AbstractLongValueResulted {
 
     public BuildsWithTimeout() {
-        super(MetricType.BUILDS_WITH_TIMEOUT, PROJECT_ID);
+        super(MetricType.BUILDS_WITH_TIMEOUT, TASK_ID);
     }
 
     @Override

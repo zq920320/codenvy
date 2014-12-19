@@ -1373,7 +1373,8 @@ function AnalyticsConfiguration() {
         "account_id",
         "data_universe",
         "passed_days_count",
-        "started_time"
+        "started_time",
+        "id"
      ];
 
     /** Global parameters stored in Browser Storage */
@@ -1514,29 +1515,6 @@ function AnalyticsConfiguration() {
         "project_no_paas_defined": "#PROJECTS",
         "project_paas_any": "#PROJECTS",
 
-        "builds_finished": "#PROJECTS",
-        "builds_memory_usage_per_hour": "#PROJECTS",
-        "builds_with_timeout": "#PROJECTS",
-        "builds_with_always_on": "#PROJECTS",
-        "builds_finished_normally": "#PROJECTS",
-        "builds_finished_by_timeout": "#PROJECTS",
-
-        "runs_finished": "#PROJECTS",
-        "runs_memory_usage_per_hour": "#PROJECTS",
-        "runs_with_timeout": "#PROJECTS",
-        "runs_with_always_on": "#PROJECTS",
-        "runs_finished_by_user": "#PROJECTS",
-        "runs_finished_by_timeout": "#PROJECTS",
-
-        "tasks_launched": "#PROJECTS",
-        "tasks_stopped": "#PROJECTS",
-        "tasks_time": "#PROJECTS",
-        "tasks_memory_usage_per_hour": "#PROJECTS",
-        "tasks_launched_with_timeout": "#PROJECTS",
-        "tasks_launched_with_always_on": "#PROJECTS",
-        "tasks_stopped_normally": "#PROJECTS",
-        "tasks_stopped_by_timeout": "#PROJECTS",
-
         "change_project_type_action": "#PROJECTS",
         "close_project_action": "#PROJECTS",
         "delete_item_action": "#PROJECTS",
@@ -1651,6 +1629,30 @@ function AnalyticsConfiguration() {
         /** FACTORIES */
         "factory_used": "#FACTORIES",
 
+        /** TASKS */
+        "builds_finished": "#TASKS",
+        "builds_memory_usage_per_hour": "#TASKS",
+        "builds_with_timeout": "#TASKS",
+        "builds_with_always_on": "#TASKS",
+        "builds_finished_normally": "#TASKS",
+        "builds_finished_by_timeout": "#TASKS",
+
+        "runs_finished": "#TASKS",
+        "runs_memory_usage_per_hour": "#TASK",
+        "runs_with_timeout": "#TASKS",
+        "runs_with_always_on": "#TASKS",
+        "runs_finished_by_user": "#TASKS",
+        "runs_finished_by_timeout": "#TASKS",
+
+        "tasks_launched": "#TASKS",
+        "tasks_stopped": "#TASKS",
+        "tasks_time": "#TASKS",
+        "tasks_memory_usage_per_hour": "#TASKS",
+        "tasks_launched_with_timeout": "#TASKS",
+        "tasks_launched_with_always_on": "#TASKS",
+        "tasks_stopped_normally": "#TASKS",
+        "tasks_stopped_by_timeout": "#TASKS",
+
         /** DEFAULT */
         "total_factories": "#DEFAULT",  // isn't 'FACTORIES' because total factory = created factory, and there could be no some created factories in 'product_usage_factory_sessions_list' collection
         "created_factories": "#DEFAULT"  // isn't 'FACTORIES' because there could be no some created factories in 'product_usage_factory_sessions_list' collection
@@ -1661,7 +1663,8 @@ function AnalyticsConfiguration() {
         "#WORKSPACES": "/analytics/pages/workspaces-view.jsp",
         "#FACTORIES": "/analytics/pages/factories-view.jsp",
         "#PROJECTS": "/analytics/pages/projects-view.jsp",
-        "#SESSIONS": "/analytics/pages/sessions-view.jsp"
+        "#SESSIONS": "/analytics/pages/sessions-view.jsp",
+        "#TASKS": "/analytics/pages/tasks-view.jsp"
     };
 
     var factoryUrlColumnNames = ["Factory URL", "Factory"];
@@ -1692,7 +1695,10 @@ function AnalyticsConfiguration() {
         "End Time",
         "Started",
         "Is Authenticated Session",
-        "Is Converted Session"
+        "Is Converted Session",
+        "Factory?",
+        "Launch",
+        "Shutdown"
     ];
 
     /**

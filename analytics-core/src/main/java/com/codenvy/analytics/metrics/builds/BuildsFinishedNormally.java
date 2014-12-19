@@ -30,7 +30,7 @@ import java.io.IOException;
 public class BuildsFinishedNormally extends AbstractLongValueResulted {
 
     public BuildsFinishedNormally() {
-        super(MetricType.BUILDS_FINISHED_NORMALLY, PROJECT_ID);
+        super(MetricType.BUILDS_FINISHED_NORMALLY, TASK_ID);
     }
 
     @Override

@@ -30,7 +30,7 @@ import java.io.IOException;
 public class RunsFinishedByUser extends AbstractLongValueResulted {
 
     public RunsFinishedByUser() {
-        super(MetricType.RUNS_FINISHED_BY_USER, PROJECT_ID);
+        super(MetricType.RUNS_FINISHED_BY_USER, TASK_ID);
     }
 
     @Override

@@ -488,12 +488,12 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
     @Test
     public void testProjectListFilteredByReadBasedMetric() throws Exception {
         Context.Builder builder = new Context.Builder();
-        builder.put(Parameters.EXPANDED_METRIC_NAME, MetricType.RUNS.toString());
+        builder.put(Parameters.EXPANDED_METRIC_NAME, MetricType.CREATED_PROJECTS.toString());
 
         Metric metric = getMetric(MetricType.PROJECTS_LIST);
 
         ListValueData l = getAsList(metric, builder.build());
-        assertEquals(l.size(), 1);
+        assertEquals(l.size(), 2);
     }
 
     @Test
