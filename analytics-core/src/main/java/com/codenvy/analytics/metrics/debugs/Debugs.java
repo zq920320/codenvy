@@ -15,7 +15,7 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.metrics.projects;
+package com.codenvy.analytics.metrics.debugs;
 
 import com.codenvy.analytics.metrics.AbstractLongValueResulted;
 import com.codenvy.analytics.metrics.MetricType;
@@ -27,7 +27,7 @@ import javax.annotation.security.RolesAllowed;
 public class Debugs extends AbstractLongValueResulted {
 
     public Debugs() {
-        super(MetricType.DEBUGS, PROJECT_ID);
+        super(MetricType.DEBUGS, TASK_ID);
     }
 
     @Override

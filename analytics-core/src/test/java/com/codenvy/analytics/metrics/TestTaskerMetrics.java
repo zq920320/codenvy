@@ -55,7 +55,7 @@ public class TestTaskerMetrics extends BaseTest {
         Metric metric = MetricFactory.getMetric(MetricType.TASKS);
 
         LongValueData l = getAsLong(metric, Context.EMPTY);
-        assertEquals(l.getAsLong(), 7);
+        assertEquals(l.getAsLong(), 10);
     }
 
     @Test
@@ -63,7 +63,7 @@ public class TestTaskerMetrics extends BaseTest {
         Metric metric = MetricFactory.getMetric(MetricType.TASKS_LIST);
 
         ListValueData value = (ListValueData)(metric).getValue(Context.EMPTY);
-        assertEquals(value.size(), 7);
+        assertEquals(value.size(), 10);
 
         List<ValueData> tasks = value.getAll();
         assertEquals(treatAsMap(tasks.get(0)).toString(), "{"
@@ -285,7 +285,7 @@ public class TestTaskerMetrics extends BaseTest {
         Metric metric = MetricFactory.getMetric(MetricType.TASKS_LAUNCHED);
 
         LongValueData l = getAsLong(metric, Context.EMPTY);
-        assertEquals(l.getAsLong(), 7);
+        assertEquals(l.getAsLong(), 10);
     }
 
     @Test
@@ -295,13 +295,16 @@ public class TestTaskerMetrics extends BaseTest {
         ListValueData expandedValue = (ListValueData)((Expandable)metric).getExpandedValue(Context.EMPTY);
 
         Map<String, Map<String, ValueData>> m = listToMap(expandedValue, AbstractMetric.TASK_ID);
-        assertEquals(m.toString(), "{id4_r={id=id4_r}, " +
-                                   "id1_b={id=id1_b}, " +
-                                   "id1_r={id=id1_r}, " +
-                                   "id3_b={id=id3_b}, " +
-                                   "id3_r={id=id3_r}, " +
-                                   "id2_b={id=id2_b}, " +
-                                   "id2_r={id=id2_r}}");
+        assertEquals(m.toString(), "{id4_r={id=id4_r}, "
+                                   + "id1_b={id=id1_b}, "
+                                   + "id1_r={id=id1_r}, "
+                                   + "id1_d={id=id1_d}, "
+                                   + "id3_b={id=id3_b}, "
+                                   + "id3_r={id=id3_r}, "
+                                   + "id2_d={id=id2_d}, "
+                                   + "id2_b={id=id2_b}, "
+                                   + "id2_r={id=id2_r}, "
+                                   + "id3_d={id=id3_d}}");
     }
 
     @Test
@@ -309,7 +312,7 @@ public class TestTaskerMetrics extends BaseTest {
         Metric metric = MetricFactory.getMetric(MetricType.TASKS_STOPPED);
 
         LongValueData l = getAsLong(metric, Context.EMPTY);
-        assertEquals(l.getAsLong(), 6);
+        assertEquals(l.getAsLong(), 9);
     }
 
     @Test
@@ -321,10 +324,13 @@ public class TestTaskerMetrics extends BaseTest {
         Map<String, Map<String, ValueData>> m = listToMap(expandedValue, AbstractMetric.TASK_ID);
         assertEquals(m.toString(), "{id1_b={id=id1_b}, " +
                                    "id1_r={id=id1_r}, " +
+                                   "id1_d={id=id1_d}, " +
                                    "id3_b={id=id3_b}, " +
                                    "id3_r={id=id3_r}, " +
+                                   "id2_d={id=id2_d}, " +
                                    "id2_b={id=id2_b}, " +
-                                   "id2_r={id=id2_r}}");
+                                   "id2_r={id=id2_r}, " +
+                                   "id3_d={id=id3_d}}");
     }
 
     @Test
@@ -332,7 +338,7 @@ public class TestTaskerMetrics extends BaseTest {
         Metric metric = MetricFactory.getMetric(MetricType.TASKS_TIME);
 
         LongValueData l = getAsLong(metric, Context.EMPTY);
-        assertEquals(l.getAsLong(), 600000);
+        assertEquals(l.getAsLong(), 900000);
     }
 
     @Test
@@ -342,19 +348,22 @@ public class TestTaskerMetrics extends BaseTest {
         ListValueData expandedValue = (ListValueData)((Expandable)metric).getExpandedValue(Context.EMPTY);
 
         Map<String, Map<String, ValueData>> m = listToMap(expandedValue, AbstractMetric.TASK_ID);
-        assertEquals(m.toString(), "{id1_b={id=id1_b}, " +
-                                   "id1_r={id=id1_r}, " +
-                                   "id3_b={id=id3_b}, " +
-                                   "id3_r={id=id3_r}, " +
-                                   "id2_b={id=id2_b}, " +
-                                   "id2_r={id=id2_r}}");
+        assertEquals(m.toString(), "{id1_b={id=id1_b}, "
+                                   + "id1_r={id=id1_r}, "
+                                   + "id1_d={id=id1_d}, "
+                                   + "id3_b={id=id3_b}, "
+                                   + "id3_r={id=id3_r}, "
+                                   + "id2_d={id=id2_d}, "
+                                   + "id2_b={id=id2_b}, "
+                                   + "id2_r={id=id2_r}, "
+                                   + "id3_d={id=id3_d}}");
     }
 
     @Test
     public void testTasksMemoryUsagePerHour() throws Exception {
         Metric metric = MetricFactory.getMetric(MetricType.TASKS_MEMORY_USAGE_PER_HOUR);
         DoubleValueData d = getAsDouble(metric, Context.EMPTY);
-        assertEquals(round(d.getAsDouble() * 10000), 1354);
+        assertEquals(round(d.getAsDouble() * 10000), 1458);
     }
 
     @Test
@@ -364,12 +373,15 @@ public class TestTaskerMetrics extends BaseTest {
         ListValueData expandedValue = (ListValueData)((Expandable)metric).getExpandedValue(Context.EMPTY);
 
         Map<String, Map<String, ValueData>> m = listToMap(expandedValue, AbstractMetric.TASK_ID);
-        assertEquals(m.toString(), "{id1_b={id=id1_b}, " +
-                                   "id1_r={id=id1_r}, " +
-                                   "id3_b={id=id3_b}, " +
-                                   "id3_r={id=id3_r}, " +
-                                   "id2_b={id=id2_b}, " +
-                                   "id2_r={id=id2_r}}");
+        assertEquals(m.toString(), "{id1_b={id=id1_b}, "
+                                   + "id1_r={id=id1_r}, "
+                                   + "id1_d={id=id1_d}, "
+                                   + "id3_b={id=id3_b}, "
+                                   + "id3_r={id=id3_r}, "
+                                   + "id2_d={id=id2_d}, "
+                                   + "id2_b={id=id2_b}, "
+                                   + "id2_r={id=id2_r}, "
+                                   + "id3_d={id=id3_d}}");
     }
 
     @Test
@@ -377,7 +389,7 @@ public class TestTaskerMetrics extends BaseTest {
         Metric metric = MetricFactory.getMetric(MetricType.TASKS_LAUNCHED_WITH_TIMEOUT);
 
         LongValueData l = getAsLong(metric, Context.EMPTY);
-        assertEquals(l.getAsLong(), 5);
+        assertEquals(l.getAsLong(), 7);
     }
 
     @Test
@@ -390,8 +402,10 @@ public class TestTaskerMetrics extends BaseTest {
         assertEquals(m.toString(), "{id4_r={id=id4_r}, " +
                                    "id1_b={id=id1_b}, " +
                                    "id1_r={id=id1_r}, " +
+                                   "id1_d={id=id1_d}, " +
                                    "id3_b={id=id3_b}, " +
-                                   "id3_r={id=id3_r}}");
+                                   "id3_r={id=id3_r}, " +
+                                   "id3_d={id=id3_d}}");
     }
 
     @Test
@@ -399,7 +413,7 @@ public class TestTaskerMetrics extends BaseTest {
         Metric metric = MetricFactory.getMetric(MetricType.TASKS_LAUNCHED_WITH_ALWAYS_ON);
 
         LongValueData l = getAsLong(metric, Context.EMPTY);
-        assertEquals(l.getAsLong(), 2);
+        assertEquals(l.getAsLong(), 3);
     }
 
     @Test
@@ -409,7 +423,8 @@ public class TestTaskerMetrics extends BaseTest {
         ListValueData expandedValue = (ListValueData)((Expandable)metric).getExpandedValue(Context.EMPTY);
 
         Map<String, Map<String, ValueData>> m = listToMap(expandedValue, AbstractMetric.TASK_ID);
-        assertEquals(m.toString(), "{id2_b={id=id2_b}, " +
+        assertEquals(m.toString(), "{id2_d={id=id2_d}, " +
+                                   "id2_b={id=id2_b}, " +
                                    "id2_r={id=id2_r}}");
     }
 
@@ -418,7 +433,7 @@ public class TestTaskerMetrics extends BaseTest {
         Metric metric = MetricFactory.getMetric(MetricType.TASKS_STOPPED_NORMALLY);
 
         LongValueData l = getAsLong(metric, Context.EMPTY);
-        assertEquals(l.getAsLong(), 4);
+        assertEquals(l.getAsLong(), 6);
     }
 
     @Test
@@ -428,10 +443,12 @@ public class TestTaskerMetrics extends BaseTest {
         ListValueData expandedValue = (ListValueData)((Expandable)metric).getExpandedValue(Context.EMPTY);
 
         Map<String, Map<String, ValueData>> m = listToMap(expandedValue, AbstractMetric.TASK_ID);
-        assertEquals(m.toString(), "{id1_b={id=id1_b}, " +
-                                   "id1_r={id=id1_r}, " +
-                                   "id3_r={id=id3_r}, " +
-                                   "id2_b={id=id2_b}}");
+        assertEquals(m.toString(), "{id1_b={id=id1_b}, "
+                                   + "id1_r={id=id1_r}, "
+                                   + "id1_d={id=id1_d}, "
+                                   + "id3_r={id=id3_r}, "
+                                   + "id2_d={id=id2_d}, "
+                                   + "id2_b={id=id2_b}}");
     }
 
     @Test
@@ -439,7 +456,7 @@ public class TestTaskerMetrics extends BaseTest {
         Metric metric = MetricFactory.getMetric(MetricType.TASKS_STOPPED_BY_TIMEOUT);
 
         LongValueData l = getAsLong(metric, Context.EMPTY);
-        assertEquals(l.getAsLong(), 2);
+        assertEquals(l.getAsLong(), 3);
     }
 
     @Test
@@ -450,7 +467,8 @@ public class TestTaskerMetrics extends BaseTest {
 
         Map<String, Map<String, ValueData>> m = listToMap(expandedValue, AbstractMetric.TASK_ID);
         assertEquals(m.toString(), "{id3_b={id=id3_b}, " +
-                                   "id2_r={id=id2_r}}");
+                                   "id2_r={id=id2_r}, " +
+                                   "id3_d={id=id3_d}}");
     }
 
     void prepareData() throws Exception {
@@ -479,9 +497,19 @@ public class TestTaskerMetrics extends BaseTest {
         builder.putAll(scriptsManager.getScript(ScriptType.USED_TIME, MetricType.RUNS_TIME).getParamsAsMap());
         pigServer.execute(ScriptType.USED_TIME, builder.build());
 
+
+        builder.putAll(scriptsManager.getScript(ScriptType.EVENTS, MetricType.DEBUGS).getParamsAsMap());
+        pigServer.execute(ScriptType.EVENTS, builder.build());
+
+        builder.putAll(scriptsManager.getScript(ScriptType.EVENTS, MetricType.DEBUGS_FINISHED).getParamsAsMap());
+        pigServer.execute(ScriptType.EVENTS, builder.build());
+
+        builder.putAll(scriptsManager.getScript(ScriptType.USED_TIME, MetricType.DEBUGS_TIME).getParamsAsMap());
+        pigServer.execute(ScriptType.USED_TIME, builder.build());
+
+
         builder.putAll(scriptsManager.getScript(ScriptType.TASKS, MetricType.TASKS).getParamsAsMap());
         pigServer.execute(ScriptType.TASKS, builder.build());
-
     }
 
     private File initLogs() throws Exception {
@@ -654,6 +682,87 @@ public class TestTaskerMetrics extends BaseTest {
                                       .withParam("MEMORY", "128")
                                       .withParam("LIFETIME", "600")
                                       .build());
+
+
+        // #1 2min, stopped by user
+        events.add(new Event.Builder().withDate("2013-10-20")
+                                      .withTime("13:00:00")
+                                      .withParam("EVENT", "debug-started")
+                                      .withParam("WS", "ws")
+                                      .withParam("USER", "user")
+                                      .withParam("PROJECT", "project")
+                                      .withParam("TYPE", "projectType")
+                                      .withParam("ID", "id1_d")
+                                      .withParam("MEMORY", "128")
+                                      .withParam("LIFETIME", "600")
+                                      .build());
+        events.add(new Event.Builder().withDate("2013-10-20")
+                                      .withTime("13:10:00")
+                                      .withParam("EVENT", "debug-finished")
+                                      .withParam("WS", "ws")
+                                      .withParam("USER", "user")
+                                      .withParam("PROJECT", "project")
+                                      .withParam("TYPE", "projectType")
+                                      .withParam("ID", "id1_d")
+                                      .withParam("MEMORY", "128")
+                                      .withParam("LIFETIME", "600")
+                                      .withParam("USAGE-TIME", "120000")
+                                      .withParam("STOPPED-BY-USER", "1")
+                                      .build());
+
+        // #2 1m, stopped by user
+        events.add(new Event.Builder().withDate("2013-10-20")
+                                      .withTime("14:00:00")
+                                      .withParam("EVENT", "debug-started")
+                                      .withParam("WS", "ws")
+                                      .withParam("USER", "user")
+                                      .withParam("PROJECT", "project")
+                                      .withParam("TYPE", "projectType")
+                                      .withParam("ID", "id2_d")
+                                      .withParam("MEMORY", "128")
+                                      .withParam("LIFETIME", "-1")
+                                      .build());
+        events.add(new Event.Builder().withDate("2013-10-20")
+                                      .withTime("14:01:00")
+                                      .withParam("EVENT", "debug-finished")
+                                      .withParam("WS", "ws")
+                                      .withParam("USER", "user")
+                                      .withParam("PROJECT", "project")
+                                      .withParam("TYPE", "projectType")
+                                      .withParam("ID", "id2_d")
+                                      .withParam("MEMORY", "128")
+                                      .withParam("LIFETIME", "-1")
+                                      .withParam("USAGE-TIME", "60000")
+                                      .withParam("STOPPED-BY-USER", "1")
+                                      .build());
+
+
+        // #3 1m, stopped by timeout
+        events.add(new Event.Builder().withDate("2013-10-20")
+                                      .withTime("15:00:00")
+                                      .withParam("EVENT", "debug-started")
+                                      .withParam("WS", "ws")
+                                      .withParam("USER", "user")
+                                      .withParam("PROJECT", "project")
+                                      .withParam("TYPE", "projectType")
+                                      .withParam("ID", "id3_d")
+                                      .withParam("MEMORY", "128")
+                                      .withParam("LIFETIME", "60")
+                                      .build());
+        events.add(new Event.Builder().withDate("2013-10-20")
+                                      .withTime("15:01:00")
+                                      .withParam("EVENT", "debug-finished")
+                                      .withParam("WS", "ws")
+                                      .withParam("USER", "user")
+                                      .withParam("PROJECT", "project")
+                                      .withParam("TYPE", "projectType")
+                                      .withParam("ID", "id3_d")
+                                      .withParam("MEMORY", "128")
+                                      .withParam("LIFETIME", "60")
+                                      .withParam("USAGE-TIME", "120000")
+                                      .withParam("STOPPED-BY-USER", "0")
+                                      .build());
+
 
         return LogGenerator.generateLog(events);
     }

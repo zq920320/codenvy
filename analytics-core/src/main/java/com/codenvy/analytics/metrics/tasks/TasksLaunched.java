@@ -32,7 +32,9 @@ import java.io.IOException;
 public class TasksLaunched extends AbstractTasksMetric {
 
     public TasksLaunched() {
-        super(MetricType.TASKS_LAUNCHED, new MetricType[]{MetricType.BUILDS, MetricType.RUNS});
+        super(MetricType.TASKS_LAUNCHED, MetricType.BUILDS,
+                                         MetricType.RUNS,
+                                         MetricType.DEBUGS);
     }
 
     @Override

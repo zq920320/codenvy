@@ -32,7 +32,9 @@ import java.io.IOException;
 public class TasksStoppedByTimeout extends AbstractTasksMetric {
 
     public TasksStoppedByTimeout() {
-        super(MetricType.TASKS_STOPPED_BY_TIMEOUT, new MetricType[]{MetricType.BUILDS_FINISHED_BY_TIMEOUT, MetricType.RUNS_FINISHED_BY_TIMEOUT});
+        super(MetricType.TASKS_STOPPED_BY_TIMEOUT, MetricType.BUILDS_FINISHED_BY_TIMEOUT,
+                                                   MetricType.RUNS_FINISHED_BY_TIMEOUT,
+                                                   MetricType.DEBUGS_FINISHED_BY_TIMEOUT);
     }
 
     @Override

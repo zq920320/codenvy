@@ -114,5 +114,53 @@ run_table = FOREACH runs GENERATE UUID(),
                                   TOTUPLE('launch_type', run_started::launch_type),
                                   TOTUPLE('shutdown_type', run_finished::shutdown_type);
 
-task_table = UNION build_table, run_table;
+
+debug_started = filterByEvent(l, 'debug-started');
+debug_started = extractParam(debug_started, 'PROJECT', project);
+debug_started = extractParam(debug_started, 'TYPE', project_type);
+debug_started = extractParam(debug_started, 'ID', id);
+debug_started = extractParam(debug_started, 'LIFETIME', lifetime);
+
+debug_started = FOREACH debug_started GENERATE dt,
+                                           ws,
+                                           user,
+                                           project,
+                                           project_type,
+                                           id,
+                                           (lifetime != '-1' ? 'timeout' : 'always-on')  AS launch_type;
+
+debug_finished = filterByEvent(l, 'debug-finished');
+debug_finished = extractParam(debug_finished, 'ID', id);
+debug_finished = extractParam(debug_finished, 'USAGE-TIME', usage_time_msec);
+debug_finished = extractParam(debug_finished, 'MEMORY', memory_mb);
+debug_finished = extractParam(debug_finished, 'STOPPED-BY-USER', stopped_by_user);
+
+debug_finished = FOREACH debug_finished GENERATE dt,
+                                             id,
+                                             (long) usage_time_msec,
+                                             (long) memory_mb,
+                                             (stopped_by_user == '0' ? 'timeout' : 'user')  AS shutdown_type;
+
+debugs = JOIN debug_started BY id LEFT, debug_finished BY id;
+
+debug_table = FOREACH debugs GENERATE UUID(),
+                                  TOTUPLE('date', ToMilliSeconds(debug_started::dt)),
+                                  TOTUPLE('ws', LOWER(debug_started::ws)),
+                                  TOTUPLE('user', debug_started::user),
+                                  TOTUPLE('project', debug_started::project),
+                                  TOTUPLE('project_type', LOWER(debug_started::project_type)),
+                                  TOTUPLE('project_id', CreateProjectId(debug_started::user, debug_started::ws, debug_started::project)),
+                                  TOTUPLE('id', debug_started::id),
+                                  TOTUPLE('task_type', 'debugger'),
+                                  TOTUPLE('memory', debug_finished::memory_mb),
+                                  TOTUPLE('usage_time', debug_finished::usage_time_msec),
+                                  TOTUPLE('started_time', ToMilliSeconds(debug_started::dt)),
+                                  TOTUPLE('stopped_time', ToMilliSeconds(debug_finished::dt)),
+                                  TOTUPLE('gigabyte_ram_hours', CalculateGigabyteRamHours(debug_finished::memory_mb, debug_finished::usage_time_msec)),
+                                  TOTUPLE('is_factory', (IsTemporaryWorkspaceById(debug_started::ws) ? 'yes' : 'no')),
+                                  TOTUPLE('launch_type', debug_started::launch_type),
+                                  TOTUPLE('shutdown_type', debug_finished::shutdown_type);
+
+
+task_table = UNION build_table, run_table, debug_table;
 STORE task_table INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;

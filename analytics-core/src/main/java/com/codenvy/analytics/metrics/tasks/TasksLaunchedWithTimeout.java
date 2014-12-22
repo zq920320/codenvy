@@ -32,7 +32,9 @@ import java.io.IOException;
 public class TasksLaunchedWithTimeout extends AbstractTasksMetric {
 
     public TasksLaunchedWithTimeout() {
-        super(MetricType.TASKS_LAUNCHED_WITH_TIMEOUT, new MetricType[]{MetricType.BUILDS_WITH_TIMEOUT, MetricType.RUNS_WITH_TIMEOUT});
+        super(MetricType.TASKS_LAUNCHED_WITH_TIMEOUT, MetricType.BUILDS_WITH_TIMEOUT,
+                                                      MetricType.RUNS_WITH_TIMEOUT,
+                                                      MetricType.DEBUGS_WITH_TIMEOUT);
     }
 
     @Override

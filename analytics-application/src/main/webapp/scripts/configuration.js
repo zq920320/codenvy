@@ -54,7 +54,12 @@ function AnalyticsConfiguration() {
                 "time_unit": "month"
             },
 
-            displayLineChart: true  // default is false
+            displayLineChart: true,  // default is false
+
+            /** @see DatabaseTable::makeTableSortable() method docs */
+            clientSortParams: {
+                "columnsWithoutSorting": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
+            }
         },
 
         summaryReport: {
@@ -1469,19 +1474,13 @@ function AnalyticsConfiguration() {
 
 
         /** PROJECTS */
-        "builds": "#PROJECTS",
         "deploys": "#PROJECTS",
         "deploys_to_paas": "#PROJECTS",
-        "runs": "#PROJECTS",
-        "debugs": "#PROJECTS",
         "destroyed_projects": "#PROJECTS",
         "code_refactorings": "#PROJECTS",
         "code_completions": "#PROJECTS",
         "build_queue_terminations": "#PROJECTS",
         "run_queue_terminations": "#PROJECTS",
-        "builds_time": "#PROJECTS",
-        "debugs_time": "#PROJECTS",
-        "runs_time": "#PROJECTS",
         "time_in_build_queue": "#PROJECTS",
         "time_in_run_queue": "#PROJECTS",
         "created_projects": "#PROJECTS",
@@ -1631,6 +1630,8 @@ function AnalyticsConfiguration() {
         "factory_used": "#FACTORIES",
 
         /** TASKS */
+        "builds": "#TASKS",
+        "builds_time": "#TASKS",
         "builds_finished": "#TASKS",
         "builds_memory_usage_per_hour": "#TASKS",
         "builds_with_timeout": "#TASKS",
@@ -1638,12 +1639,23 @@ function AnalyticsConfiguration() {
         "builds_finished_normally": "#TASKS",
         "builds_finished_by_timeout": "#TASKS",
 
+        "runs": "#TASKS",
+        "runs_time": "#TASKS",
         "runs_finished": "#TASKS",
-        "runs_memory_usage_per_hour": "#TASK",
+        "runs_memory_usage_per_hour": "#TASKS",
         "runs_with_timeout": "#TASKS",
         "runs_with_always_on": "#TASKS",
         "runs_finished_by_user": "#TASKS",
         "runs_finished_by_timeout": "#TASKS",
+
+        "debugs": "#TASKS",
+        "debugs_time": "#TASKS",
+        "debugs_finished": "#TASKS",
+        "debugs_memory_usage_per_hour": "#TASKS",
+        "debugs_with_timeout": "#TASKS",
+        "debugs_with_always_on": "#TASKS",
+        "debugs_finished_by_user": "#TASKS",
+        "debugs_finished_by_timeout": "#TASKS",
 
         "tasks_launched": "#TASKS",
         "tasks_stopped": "#TASKS",

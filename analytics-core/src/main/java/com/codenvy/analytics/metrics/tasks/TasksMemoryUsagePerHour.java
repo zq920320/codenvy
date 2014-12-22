@@ -32,8 +32,9 @@ import java.io.IOException;
 public class TasksMemoryUsagePerHour extends AbstractTasksMetric {
 
     public TasksMemoryUsagePerHour() {
-        super(MetricType.TASKS_MEMORY_USAGE_PER_HOUR, new MetricType[]{MetricType.BUILDS_MEMORY_USAGE_PER_HOUR,
-                                                                       MetricType.RUNS_MEMORY_USAGE_PER_HOUR});
+        super(MetricType.TASKS_MEMORY_USAGE_PER_HOUR, MetricType.BUILDS_MEMORY_USAGE_PER_HOUR,
+                                                      MetricType.RUNS_MEMORY_USAGE_PER_HOUR,
+                                                      MetricType.DEBUGS_MEMORY_USAGE_PER_HOUR);
     }
 
     @Override

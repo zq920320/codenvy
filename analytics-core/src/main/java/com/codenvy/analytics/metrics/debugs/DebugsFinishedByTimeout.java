@@ -15,47 +15,38 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.metrics.tasks;
+package com.codenvy.analytics.metrics.debugs;
 
-import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.datamodel.ValueDataUtil;
+import com.codenvy.analytics.metrics.AbstractLongValueResulted;
 import com.codenvy.analytics.metrics.Context;
-import com.codenvy.analytics.metrics.Metric;
+import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 
 import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
 
-/** @author Dmytro Nochevnov */
+/** @author Anatoliy Bazko */
 @RolesAllowed(value = {"user", "system/admin", "system/manager"})
-public class TasksTime extends AbstractTasksMetric {
+public class DebugsFinishedByTimeout extends AbstractLongValueResulted {
 
-    public TasksTime() {
-        super(MetricType.TASKS_TIME, MetricType.BUILDS_TIME,
-                                     MetricType.RUNS_TIME,
-                                     MetricType.DEBUGS_TIME);
+    public DebugsFinishedByTimeout() {
+        super(MetricType.DEBUGS_FINISHED_BY_TIMEOUT, TASK_ID);
     }
 
     @Override
-    public ValueData getValue(Context context) throws IOException {
-        long sum = 0;
-
-        for (Metric metric : basedMetric) {
-            sum += ValueDataUtil.getAsLong(metric, context).getAsLong();
-        }
-
-        return new LongValueData(sum);
+    public String getStorageCollectionName() {
+        return getStorageCollectionName(MetricType.DEBUGS_FINISHED);
     }
 
-    /** {@inheritDoc} */
     @Override
-    public Class<? extends ValueData> getValueDataClass() {
-        return LongValueData.class;
+    public Context applySpecificFilter(Context context) throws IOException {
+        Context.Builder builder = new Context.Builder(context);
+        builder.put(MetricFilter.STOPPED_BY_USER, 0);
+        return builder.build();
     }
 
     @Override
     public String getDescription() {
-        return "The total time of all tasks in milliseconds";
+        return "The number of debugs stopped by timeout";
     }
 }

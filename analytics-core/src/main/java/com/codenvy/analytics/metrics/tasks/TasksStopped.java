@@ -32,7 +32,9 @@ import java.io.IOException;
 public class TasksStopped extends AbstractTasksMetric {
 
     public TasksStopped() {
-        super(MetricType.TASKS_STOPPED, new MetricType[]{MetricType.BUILDS_FINISHED, MetricType.RUNS_FINISHED});
+        super(MetricType.TASKS_STOPPED, MetricType.BUILDS_FINISHED,
+                                        MetricType.RUNS_FINISHED,
+                                        MetricType.DEBUGS_FINISHED);
     }
 
     @Override

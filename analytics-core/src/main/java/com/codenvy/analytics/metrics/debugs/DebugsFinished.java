@@ -15,23 +15,23 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.metrics.projects;
+package com.codenvy.analytics.metrics.debugs;
 
+import com.codenvy.analytics.metrics.AbstractLongValueResulted;
 import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.analytics.metrics.ide_usage.AbstractTimeSpentInAction;
 
 import javax.annotation.security.RolesAllowed;
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-@RolesAllowed({"system/admin", "system/manager"})
-public class DebugsTime extends AbstractTimeSpentInAction {
+/** @author Anatoliy Bazko */
+@RolesAllowed(value = {"user", "system/admin", "system/manager"})
+public class DebugsFinished extends AbstractLongValueResulted {
 
-    public DebugsTime() {
-        super(MetricType.DEBUGS_TIME, PROJECT_ID);
+    public DebugsFinished() {
+        super(MetricType.DEBUGS_FINISHED, TASK_ID);
     }
 
     @Override
     public String getDescription() {
-        return "The total time of all debugs in minutes";
+        return "The number of stopped debugs";
     }
 }

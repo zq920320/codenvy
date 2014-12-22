@@ -32,7 +32,9 @@ import java.io.IOException;
 public class TasksLaunchedWithAlwaysOn extends AbstractTasksMetric {
 
     public TasksLaunchedWithAlwaysOn() {
-        super(MetricType.TASKS_LAUNCHED_WITH_ALWAYS_ON, new MetricType[]{MetricType.BUILDS_WITH_ALWAYS_ON, MetricType.RUNS_WITH_ALWAYS_ON});
+        super(MetricType.TASKS_LAUNCHED_WITH_ALWAYS_ON, MetricType.BUILDS_WITH_ALWAYS_ON,
+                                                        MetricType.RUNS_WITH_ALWAYS_ON,
+                                                        MetricType.DEBUGS_WITH_ALWAYS_ON);
     }
 
     @Override
