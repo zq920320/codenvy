@@ -449,7 +449,7 @@ public class Utils {
     /**
      * @throws IllegalArgumentException if fieldName == null, or fieldName is empty, or maximumFractionDigits < 0.
      */
-    public static BasicDBObject getRoundOperation(String fieldName, int maximumFractionDigits)  throws IllegalArgumentException {
+    public static BasicDBObject getTruncOperation(String fieldName, int maximumFractionDigits)  throws IllegalArgumentException {
         if (fieldName == null || fieldName.isEmpty() || maximumFractionDigits < 0) {
             throw new IllegalArgumentException();
         }

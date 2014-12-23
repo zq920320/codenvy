@@ -15,7 +15,7 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.metrics.debugs;
+package com.codenvy.analytics.metrics.runs;
 
 import com.codenvy.analytics.datamodel.DoubleValueData;
 import com.codenvy.analytics.datamodel.ValueData;
@@ -30,16 +30,15 @@ import javax.annotation.security.RolesAllowed;
 
 /** @author Anatoliy Bazko */
 @RolesAllowed(value = {"user", "system/admin", "system/manager"})
-public class DebugsMemoryUsagePerHour extends ReadBasedMetric implements ReadBasedExpandable {
-
-    public DebugsMemoryUsagePerHour() {
-        super(MetricType.DEBUGS_MEMORY_USAGE_PER_HOUR);
+public class RunsGigabyteRamHours extends ReadBasedMetric implements ReadBasedExpandable {
+    public RunsGigabyteRamHours() {
+        super(MetricType.RUNS_GIGABYTE_RAM_HOURS);
     }
 
     /** {@inheritDoc} */
     @Override
     public String getStorageCollectionName() {
-        return getStorageCollectionName(MetricType.DEBUGS_FINISHED);
+        return getStorageCollectionName(MetricType.RUNS_FINISHED);
     }
 
     /** {@inheritDoc} */
@@ -87,7 +86,7 @@ public class DebugsMemoryUsagePerHour extends ReadBasedMetric implements ReadBas
     /** {@inheritDoc} */
     @Override
     public String getDescription() {
-        return "The memory usage in GB per hour";
+        return "The memory usage in GB RAM on hour";
     }
 
 }

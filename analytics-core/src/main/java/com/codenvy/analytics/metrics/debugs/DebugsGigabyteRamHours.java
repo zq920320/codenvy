@@ -15,7 +15,7 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.metrics.builds;
+package com.codenvy.analytics.metrics.debugs;
 
 import com.codenvy.analytics.datamodel.DoubleValueData;
 import com.codenvy.analytics.datamodel.ValueData;
@@ -23,26 +23,23 @@ import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ReadBasedExpandable;
 import com.codenvy.analytics.metrics.ReadBasedMetric;
-import com.codenvy.analytics.pig.udf.CalculateGigabyteRamHours;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
 import javax.annotation.security.RolesAllowed;
 
-/** @author Dmytro Nochevnov */
+/** @author Anatoliy Bazko */
 @RolesAllowed(value = {"user", "system/admin", "system/manager"})
-public class BuildsMemoryUsagePerHour extends ReadBasedMetric implements ReadBasedExpandable {
+public class DebugsGigabyteRamHours extends ReadBasedMetric implements ReadBasedExpandable {
 
-    public BuildsMemoryUsagePerHour() {
-        super(MetricType.BUILDS_MEMORY_USAGE_PER_HOUR);
+    public DebugsGigabyteRamHours() {
+        super(MetricType.DEBUGS_GIGABYTE_RAM_HOURS);
     }
-
-    public static final int BUILDER_MEMORY_USAGE_IN_MB = 1536;  // TODO (dnochevnov) temporary constant 1.5GB until the issue IDEX-1760 will be resolved.
 
     /** {@inheritDoc} */
     @Override
     public String getStorageCollectionName() {
-        return getStorageCollectionName(MetricType.BUILDS_FINISHED);
+        return getStorageCollectionName(MetricType.DEBUGS_FINISHED);
     }
 
     /** {@inheritDoc} */
@@ -54,8 +51,8 @@ public class BuildsMemoryUsagePerHour extends ReadBasedMetric implements ReadBas
     /** {@inheritDoc} */
     @Override
     public DBObject[] getSpecificDBOperations(Context clauses) {
-        DBObject project1 = new BasicDBObject("x", new BasicDBObject("$multiply", new Object[]{BUILDER_MEMORY_USAGE_IN_MB, "$" + USAGE_TIME}));
-        DBObject project2 = new BasicDBObject("y", new BasicDBObject("$divide", new Object[]{"$x", CalculateGigabyteRamHours.GRH_DEVIDER}));
+        DBObject project1 = new BasicDBObject("x", new BasicDBObject("$multiply", new Object[]{"$" + MEMORY, "$" + USAGE_TIME}));
+        DBObject project2 = new BasicDBObject("y", new BasicDBObject("$divide", new Object[]{"$x", 3686400000L}));
         DBObject group = new BasicDBObject(ID, null).append(VALUE, new BasicDBObject("$sum", "$y"));
 
         return new DBObject[]{new BasicDBObject("$project", project1),
@@ -90,7 +87,7 @@ public class BuildsMemoryUsagePerHour extends ReadBasedMetric implements ReadBas
     /** {@inheritDoc} */
     @Override
     public String getDescription() {
-        return "The memory usage in GB per hour";
+        return "The memory usage in GB RAM on hour";
     }
 
 }

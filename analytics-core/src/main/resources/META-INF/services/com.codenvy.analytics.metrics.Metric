@@ -52,7 +52,7 @@ com.codenvy.analytics.metrics.runs.RunsFinished
 com.codenvy.analytics.metrics.runs.RunsFinishedByTimeout
 com.codenvy.analytics.metrics.runs.RunsFinishedByUser
 com.codenvy.analytics.metrics.runs.RunsMemoryUsage
-com.codenvy.analytics.metrics.runs.RunsMemoryUsagePerHour
+com.codenvy.analytics.metrics.runs.RunsGigabyteRamHours
 com.codenvy.analytics.metrics.runs.RunQueueTerminations
 com.codenvy.analytics.metrics.runs.TimeInRunQueue
 
@@ -62,7 +62,7 @@ com.codenvy.analytics.metrics.builds.BuildsWithTimeout
 com.codenvy.analytics.metrics.builds.BuildsFinished
 com.codenvy.analytics.metrics.builds.BuildsFinishedNormally
 com.codenvy.analytics.metrics.builds.BuildsFinishedByTimeout
-com.codenvy.analytics.metrics.builds.BuildsMemoryUsagePerHour
+com.codenvy.analytics.metrics.builds.BuildsGigabyteRamHours
 com.codenvy.analytics.metrics.builds.BuildsTime
 com.codenvy.analytics.metrics.builds.BuildQueueTerminations
 com.codenvy.analytics.metrics.builds.TimeInBuildQueue
@@ -75,14 +75,14 @@ com.codenvy.analytics.metrics.debugs.DebugsFinished
 com.codenvy.analytics.metrics.debugs.DebugsFinishedByTimeout
 com.codenvy.analytics.metrics.debugs.DebugsFinishedByUser
 com.codenvy.analytics.metrics.debugs.DebugsMemoryUsage
-com.codenvy.analytics.metrics.debugs.DebugsMemoryUsagePerHour
+com.codenvy.analytics.metrics.debugs.DebugsGigabyteRamHours
 
 com.codenvy.analytics.metrics.tasks.TasksList
 com.codenvy.analytics.metrics.tasks.Tasks
 com.codenvy.analytics.metrics.tasks.TasksLaunched
 com.codenvy.analytics.metrics.tasks.TasksStopped
 com.codenvy.analytics.metrics.tasks.TasksTime
-com.codenvy.analytics.metrics.tasks.TasksMemoryUsagePerHour
+com.codenvy.analytics.metrics.tasks.TasksGigabyteRamHours
 com.codenvy.analytics.metrics.tasks.TasksLaunchedWithTimeout
 com.codenvy.analytics.metrics.tasks.TasksLaunchedWithAlwaysOn
 com.codenvy.analytics.metrics.tasks.TasksStoppedNormally

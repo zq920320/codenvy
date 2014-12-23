@@ -54,8 +54,8 @@ public class TestBuilders extends BaseTest {
     }
 
     @Test
-    public void testMemoryUsagePerHour() throws Exception {
-        Metric metric = MetricFactory.getMetric(MetricType.BUILDS_MEMORY_USAGE_PER_HOUR);
+    public void testGigabyteRamHours() throws Exception {
+        Metric metric = MetricFactory.getMetric(MetricType.BUILDS_GIGABYTE_RAM_HOURS);
 
         DoubleValueData d = getAsDouble(metric, Context.EMPTY);
 

@@ -379,15 +379,15 @@ public class TestTaskerMetrics extends BaseTest {
     }
 
     @Test
-    public void testTasksMemoryUsagePerHour() throws Exception {
-        Metric metric = MetricFactory.getMetric(MetricType.TASKS_MEMORY_USAGE_PER_HOUR);
+    public void testTasksGigabyteRamHours() throws Exception {
+        Metric metric = MetricFactory.getMetric(MetricType.TASKS_GIGABYTE_RAM_HOURS);
         DoubleValueData d = getAsDouble(metric, Context.EMPTY);
         assertEquals(round(d.getAsDouble() * 10000), 1458);
     }
 
     @Test
-    public void testExpandedTasksMemoryUsagePerHour() throws Exception {
-        Metric metric = MetricFactory.getMetric(MetricType.TASKS_MEMORY_USAGE_PER_HOUR);
+    public void testExpandedTasksGigabyteRamHours() throws Exception {
+        Metric metric = MetricFactory.getMetric(MetricType.TASKS_GIGABYTE_RAM_HOURS);
 
         ListValueData expandedValue = (ListValueData)((Expandable)metric).getExpandedValue(Context.EMPTY);
 

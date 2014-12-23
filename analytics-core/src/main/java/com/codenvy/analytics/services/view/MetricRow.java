@@ -55,7 +55,8 @@ import static com.codenvy.analytics.DateRangeUtils.getFirstDayOfPeriod;
 public class MetricRow extends AbstractRow {
     private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("00");
 
-    private static final String DEFAULT_NUMERIC_FORMAT = "%,.0f";
+    private static final String DEFAULT_NUMERIC_FORMAT = "%,.4f";
+    private static final String DEFAULT_INTEGER_FORMAT = "%,d";
     public static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
     private static final String DEFAULT_TIME_FORMAT    = "HH:mm:ss";
 
@@ -238,24 +239,28 @@ public class MetricRow extends AbstractRow {
         if (clazz == StringValueData.class) {
             singleValue.add(valueData);
 
-        } else if (clazz == LongValueData.class || clazz == DoubleValueData.class) {
-            double value = ((NumericValueData)valueData).getAsDouble();
-
-            ValueData formattedValue;
+        } else if (clazz == LongValueData.class) {
             if (isTimeField) {
-                formattedValue = formatTimeValue(valueData, DEFAULT_TIME_FORMAT);
+                singleValue.add(formatTimeValue(valueData, DEFAULT_TIME_FORMAT));
             } else {
-                if (Double.isInfinite(value)
-                    || Double.isNaN(value)
-                    || (value < 0 && hideNegativeValues)) {
-
-                    value = DoubleValueData.DEFAULT.getAsDouble();
+                Long value = ((LongValueData)valueData).getAsLong();
+                if (value < 0 && hideNegativeValues) {
+                    value = LongValueData.DEFAULT.getAsLong();
                 }
 
-                formattedValue = new StringValueData(String.format(numericFormat, value));
+                singleValue.add(new StringValueData(String.format(DEFAULT_INTEGER_FORMAT, value)));
             }
 
-            singleValue.add(formattedValue);
+        } else if (clazz == DoubleValueData.class) {
+            double value = ((NumericValueData)valueData).getAsDouble();
+            if (Double.isInfinite(value)
+                || Double.isNaN(value)
+                || (value < 0 && hideNegativeValues)) {
+
+                value = DoubleValueData.DEFAULT.getAsDouble();
+            }
+
+            singleValue.add(new StringValueData(String.format(numericFormat, value)));
 
         } else {
             throw new IOException("Unsupported class " + clazz);

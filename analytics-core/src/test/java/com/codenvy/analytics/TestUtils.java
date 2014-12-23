@@ -24,27 +24,27 @@ import static org.testng.Assert.assertEquals;
 
 /** @author Dmytro Nochevnov  */
 public class TestUtils extends BaseTest {
-    @Test(dataProvider = "roundOperationProvider")
-    public void testGetRoundOperation(String fieldName, int maximumFractionDigits, String result) throws Exception {
-        assertEquals(Utils.getRoundOperation(fieldName, maximumFractionDigits).toString(), result);
+    @Test(dataProvider = "truncOperationProvider")
+    public void testGetTruncOperation(String fieldName, int maximumFractionDigits, String result) throws Exception {
+        assertEquals(Utils.getTruncOperation(fieldName, maximumFractionDigits).toString(), result);
     }
 
-    @DataProvider(name = "roundOperationProvider")
-    public Object[][] Provider() {
+    @DataProvider(name = "truncOperationProvider")
+    public Object[][] TruncOperationTestDataProvider() {
         return new Object[][]{{"field", 0, "{ \"$divide\" : [ { \"$subtract\" : [ { \"$multiply\" : [ \"$field\" , 1]} , " +
                                            "{ \"$mod\" : [ { \"$multiply\" : [ \"$field\" , 1]} , 1]}]} , 10000]}"},
                               {"field", 4, "{ \"$divide\" : [ { \"$subtract\" : [ { \"$multiply\" : [ \"$field\" , 10000]} , " +
                                            "{ \"$mod\" : [ { \"$multiply\" : [ \"$field\" , 10000]} , 1]}]} , 10000]}"}};
     }
 
-    @Test(dataProvider = "roundOperationExceptionalDataProvider",
+    @Test(dataProvider = "truncOperationExceptionalDataProvider",
           expectedExceptions = IllegalArgumentException.class)
-    public void testGetRoundOperationException(String fieldName, int maximumFractionDigits) throws Exception {
-        Utils.getRoundOperation(fieldName, maximumFractionDigits);
+    public void testGetTruncOperationException(String fieldName, int maximumFractionDigits) throws Exception {
+        Utils.getTruncOperation(fieldName, maximumFractionDigits);
     }
 
-    @DataProvider(name = "roundOperationExceptionalDataProvider")
-    public Object[][] ProviderExceptionalData() {
+    @DataProvider(name = "truncOperationExceptionalDataProvider")
+    public Object[][] TruncOperationExceptionalDataProvider() {
         return new Object[][]{{"", 4},
                               {null, 4},
                               {"field", -1}};

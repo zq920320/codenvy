@@ -29,12 +29,12 @@ import java.io.IOException;
 
 /** @author Dmytro Nochevnov */
 @RolesAllowed(value = {"user", "system/admin", "system/manager"})
-public class TasksMemoryUsagePerHour extends AbstractTasksMetric {
+public class TasksGigabyteRamHours extends AbstractTasksMetric {
 
-    public TasksMemoryUsagePerHour() {
-        super(MetricType.TASKS_MEMORY_USAGE_PER_HOUR, MetricType.BUILDS_MEMORY_USAGE_PER_HOUR,
-                                                      MetricType.RUNS_MEMORY_USAGE_PER_HOUR,
-                                                      MetricType.DEBUGS_MEMORY_USAGE_PER_HOUR);
+    public TasksGigabyteRamHours() {
+        super(MetricType.TASKS_GIGABYTE_RAM_HOURS, MetricType.BUILDS_GIGABYTE_RAM_HOURS,
+                                                      MetricType.RUNS_GIGABYTE_RAM_HOURS,
+                                                      MetricType.DEBUGS_GIGABYTE_RAM_HOURS);
     }
 
     @Override
@@ -57,6 +57,6 @@ public class TasksMemoryUsagePerHour extends AbstractTasksMetric {
     /** {@inheritDoc} */
     @Override
     public String getDescription() {
-        return "The tasks memory usage in GB per hour";
+        return "The tasks memory usage in GB RAM on hour";
     }
 }

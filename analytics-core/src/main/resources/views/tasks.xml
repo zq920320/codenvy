@@ -29,7 +29,7 @@
                 <parameter key="fields" value="task_type,started_time,stopped_time,memory,usage_time,gigabyte_ram_hours,user,project,project_type,is_factory,launch_type,shutdown_type"/>
                 <parameter key="date-fields" value="started_time,stopped_time"/>
                 <parameter key="time-fields" value="usage_time"/>
-                <parameter key="numeric-format" value="%.4f"/>
+                <parameter key="numeric-format" value="%,.4f"/>
             </row>
         </section>
     </view>

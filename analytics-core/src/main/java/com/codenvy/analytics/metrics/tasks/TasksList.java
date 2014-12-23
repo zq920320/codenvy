@@ -34,6 +34,8 @@ public class TasksList extends AbstractListValueResulted implements ReadBasedSum
         super(MetricType.TASKS_LIST);
     }
 
+    private static final int MAXIMUM_FRACTION_DIGITS = 4;
+
     @Override
     public String getDescription() {
         return "List of tasks";
@@ -75,7 +77,7 @@ public class TasksList extends AbstractListValueResulted implements ReadBasedSum
 
         DBObject project = new BasicDBObject();
         project.put(USAGE_TIME, "$" + USAGE_TIME);
-        project.put(GIGABYTE_RAM_HOURS, Utils.getRoundOperation(GIGABYTE_RAM_HOURS, 4));  // round GIGABYTE_RAM_HOURS to 0.0001
+        project.put(GIGABYTE_RAM_HOURS, Utils.getTruncOperation(GIGABYTE_RAM_HOURS, MAXIMUM_FRACTION_DIGITS));  // trunc GIGABYTE_RAM_HOURS to 4 fraction digits
 
         return new DBObject[]{new BasicDBObject("$group", group),
                               new BasicDBObject("$project", project)};

@@ -80,6 +80,30 @@ public class TestMetricRow extends BaseTest {
         assertEquals(items.get(2).getAsString(), "fromDate: 20131227; toDate: 20131231");
     }
 
+
+    @Test
+    public void testNumbers() throws Exception {
+        Context context = Utils.initializeContext(Parameters.TimeUnit.DAY);
+
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("numeric-format", "%,.2f");
+        parameters.put("fields", "date1,date2,date3,float");
+
+        ListValueTestedMetric metric = new ListValueTestedMetric();
+        Row row = new MetricRow(metric, parameters);
+
+        List<List<ValueData>> data = row.getData(context, 1);
+        assertEquals(data.size(), 1);
+
+        List<ValueData> items = data.get(0);
+        assertEquals(items.size(), 4);
+
+        assertEquals(items.get(0), StringValueData.valueOf("3,600,000"));
+        assertEquals(items.get(1), StringValueData.valueOf("7,200,000"));
+        assertEquals(items.get(2), StringValueData.valueOf("10,800,000"));
+        assertEquals(items.get(3), StringValueData.valueOf("12,345.68"));
+    }
+
     // ----------------------> Tested metric
 
     private class ListValueTestedMetric implements Metric {
@@ -90,6 +114,7 @@ public class TestMetricRow extends BaseTest {
             values.put("date1", LongValueData.valueOf(1 * 60 * 60 * 1000));
             values.put("date2", LongValueData.valueOf(2 * 60 * 60 * 1000));
             values.put("date3", LongValueData.valueOf(3 * 60 * 60 * 1000));
+            values.put("float", DoubleValueData.valueOf(12345.6789));
 
             ValueData valueData = new MapValueData(values);
             return new ListValueData(Arrays.asList(valueData));
