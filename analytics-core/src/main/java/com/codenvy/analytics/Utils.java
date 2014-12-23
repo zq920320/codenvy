@@ -446,10 +446,12 @@ public class Utils {
         return new BasicDBObject("$or", predicates);
     }
 
-    @Nullable
-    public static BasicDBObject getRoundOperation(String fieldName, int maximumFractionDigits) {
+    /**
+     * @throws IllegalArgumentException if fieldName == null, or fieldName is empty, or maximumFractionDigits < 0.
+     */
+    public static BasicDBObject getRoundOperation(String fieldName, int maximumFractionDigits)  throws IllegalArgumentException {
         if (fieldName == null || fieldName.isEmpty() || maximumFractionDigits < 0) {
-            return null;
+            throw new IllegalArgumentException();
         }
 
         final long multiplier = (long) Math.pow(10, maximumFractionDigits);

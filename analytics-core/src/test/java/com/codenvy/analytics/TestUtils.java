@@ -17,8 +17,6 @@
  */
 package com.codenvy.analytics;
 
-
-import com.mongodb.BasicDBObject;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -28,12 +26,7 @@ import static org.testng.Assert.assertEquals;
 public class TestUtils extends BaseTest {
     @Test(dataProvider = "roundOperationProvider")
     public void testGetRoundOperation(String fieldName, int maximumFractionDigits, String result) throws Exception {
-        BasicDBObject dbObject = Utils.getRoundOperation(fieldName, maximumFractionDigits);
-        if (dbObject == null) {
-            assertEquals(dbObject, result);
-        } else {
-            assertEquals(Utils.getRoundOperation(fieldName, maximumFractionDigits).toString(), result);
-        }
+        assertEquals(Utils.getRoundOperation(fieldName, maximumFractionDigits).toString(), result);
     }
 
     @DataProvider(name = "roundOperationProvider")
@@ -41,9 +34,19 @@ public class TestUtils extends BaseTest {
         return new Object[][]{{"field", 0, "{ \"$divide\" : [ { \"$subtract\" : [ { \"$multiply\" : [ \"$field\" , 1]} , " +
                                            "{ \"$mod\" : [ { \"$multiply\" : [ \"$field\" , 1]} , 1]}]} , 10000]}"},
                               {"field", 4, "{ \"$divide\" : [ { \"$subtract\" : [ { \"$multiply\" : [ \"$field\" , 10000]} , " +
-                                           "{ \"$mod\" : [ { \"$multiply\" : [ \"$field\" , 10000]} , 1]}]} , 10000]}"},
-                              {"", 4, null},
-                              {null, 4, null},
-                              {"field", -1, null}};
+                                           "{ \"$mod\" : [ { \"$multiply\" : [ \"$field\" , 10000]} , 1]}]} , 10000]}"}};
+    }
+
+    @Test(dataProvider = "roundOperationExceptionalDataProvider",
+          expectedExceptions = IllegalArgumentException.class)
+    public void testGetRoundOperationException(String fieldName, int maximumFractionDigits) throws Exception {
+        Utils.getRoundOperation(fieldName, maximumFractionDigits);
+    }
+
+    @DataProvider(name = "roundOperationExceptionalDataProvider")
+    public Object[][] ProviderExceptionalData() {
+        return new Object[][]{{"", 4},
+                              {null, 4},
+                              {"field", -1}};
     }
 }
