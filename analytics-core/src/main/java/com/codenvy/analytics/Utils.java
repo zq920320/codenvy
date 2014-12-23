@@ -40,6 +40,7 @@ import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
+import javax.annotation.Nullable;
 import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -57,6 +58,7 @@ import java.util.regex.Pattern;
 
 import static com.codenvy.analytics.datamodel.ValueDataUtil.getAsList;
 import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsMap;
+import static java.lang.String.format;
 import static java.net.URLDecoder.decode;
 
 
@@ -444,6 +446,31 @@ public class Utils {
         return new BasicDBObject("$or", predicates);
     }
 
+    @Nullable
+    public static BasicDBObject getRoundOperation(String fieldName, int maximumFractionDigits) {
+        if (fieldName == null || fieldName.isEmpty() || maximumFractionDigits < 0) {
+            return null;
+        }
+
+        final long multiplier = (long) Math.pow(10, maximumFractionDigits);
+        final String fieldToken = "$" + fieldName;
+
+        final BasicDBObject multiply = new BasicDBObject("$multiply", new BasicDBList() {{
+            add(fieldToken);
+            add(multiplier);
+        }});
+
+        return new BasicDBObject("$divide", new BasicDBList() {{
+            add(new BasicDBObject("$subtract", new BasicDBList() {{
+                add(multiply);
+                add(new BasicDBObject("$mod", new BasicDBList() {{
+                    add(multiply);
+                    add(1);
+                }}));
+            }}));
+            add(10000);
+        }});
+    }
 
     /** Converts string into array. Uses ',' as a delimiter. */
     public static String[] toArray(String value) {

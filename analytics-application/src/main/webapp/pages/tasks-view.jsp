@@ -81,6 +81,7 @@
                 <div class="single-column-gadget">
                     <div class="view">
                         <div class="tables">
+                            <div class="item" id="tasksOverview"></div>
                             <div class="item" id="tasks"></div>
                         </div>
                     </div>

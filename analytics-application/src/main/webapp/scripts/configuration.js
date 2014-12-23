@@ -490,8 +490,6 @@ function AnalyticsConfiguration() {
             presenterType: "EntryViewPresenter",
             modelViewName: "users",
 
-            modelSummarizedMetricName: "users_statistics_list",
-
             columnLinkPrefixList: {
                 "User": "/analytics/pages/user-view.jsp?user"
             },
@@ -709,8 +707,6 @@ function AnalyticsConfiguration() {
             presenterType: "EntryViewPresenter",
             modelViewName: "session_overview",
 
-            modelSummarizedMetricName: "product_usage_sessions_list",
-
             columnLinkPrefixList: {
                 "ID": "/analytics/pages/session-view.jsp?session_id",
                 "User": "/analytics/pages/user-view.jsp?user",
@@ -790,8 +786,6 @@ function AnalyticsConfiguration() {
             columnLinkPrefixList: {
                 "Workspace": "/analytics/pages/workspace-view.jsp?ws"
             },
-
-            modelSummarizedMetricName: "workspaces_statistics_list",
 
             /** @see DatabaseTable::makeTableSortable() method docs */
             clientSortParams: {
@@ -978,8 +972,6 @@ function AnalyticsConfiguration() {
                 "Type": "/analytics/pages/projects-view.jsp?project_type"
             },
 
-            modelSummarizedMetricName: "projects_statistics_list",
-
             columnCombinedLinkConfiguration: {
                 "Project": {
                     baseLink: "/analytics/pages/project-view.jsp",
@@ -1151,8 +1143,6 @@ function AnalyticsConfiguration() {
                 "Factory URL": "/analytics/pages/factory-view.jsp?factory",
                 "Project Type": "/analytics/pages/projects-view.jsp?project_type"
             },
-
-            modelSummarizedMetricName: "factory_statistics_list",
 
             mapColumnToServerSortParam: {
                 "Factory URL": "factory",
@@ -1330,6 +1320,13 @@ function AnalyticsConfiguration() {
                 "Launch": "launch_type",
                 "Shutdown": "shutdown_type"
             }
+        },
+
+        tasksOverview: {
+            presenterType: "SummaryTablePresenter",
+            modelViewName: "tasks_list",
+            modelMetricName: "tasks",
+            doNotDisplayCSVButton: true
         },
 
         // drill-down page

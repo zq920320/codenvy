@@ -17,14 +17,19 @@
  */
 package com.codenvy.analytics.metrics.tasks;
 
+import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.metrics.AbstractListValueResulted;
+import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.ReadBasedSummariziable;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
 
 import javax.annotation.security.RolesAllowed;
 
 /** @author Dmytro Nochevnov */
 @RolesAllowed(value = {"system/admin", "system/manager"})
-public class TasksList extends AbstractListValueResulted {
+public class TasksList extends AbstractListValueResulted implements ReadBasedSummariziable {
     public TasksList() {
         super(MetricType.TASKS_LIST);
     }
@@ -59,5 +64,20 @@ public class TasksList extends AbstractListValueResulted {
                             LAUNCH_TYPE,
                             SHUTDOWN_TYPE
         };
+    }
+
+    @Override
+    public DBObject[] getSpecificSummarizedDBOperations(Context clauses) {
+        DBObject group = new BasicDBObject();
+        group.put(ID, null);
+        group.put(USAGE_TIME, new BasicDBObject("$sum", "$" + USAGE_TIME));
+        group.put(GIGABYTE_RAM_HOURS, new BasicDBObject("$sum", "$" + GIGABYTE_RAM_HOURS));
+
+        DBObject project = new BasicDBObject();
+        project.put(USAGE_TIME, "$" + USAGE_TIME);
+        project.put(GIGABYTE_RAM_HOURS, Utils.getRoundOperation(GIGABYTE_RAM_HOURS, 4));  // round GIGABYTE_RAM_HOURS to 0.0001
+
+        return new DBObject[]{new BasicDBObject("$group", group),
+                              new BasicDBObject("$project", project)};
     }
 }

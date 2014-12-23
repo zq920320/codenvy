@@ -21,6 +21,7 @@ import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.datamodel.DoubleValueData;
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.LongValueData;
+import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.pig.scripts.ScriptType;
 import com.codenvy.analytics.pig.scripts.util.Event;
@@ -209,76 +210,94 @@ public class TestTaskerMetrics extends BaseTest {
 
         Metric metric = getMetric(MetricType.TASKS_LIST);
 
-        ListValueData l = getAsList(metric, builder.build());
-        assertEquals(l.size(), 4);
-        assertEquals(l.getAll().toString(), "[{\"date\":\"1382252400000\","
-                                            + "\"user\":\"user\","
-                                            + "\"ws\":\"ws\","
-                                            + "\"project\":\"project1\","
-                                            + "\"project_type\":\"projecttype\","
-                                            + "\"project_id\":\"user/ws/project1\","
-                                            + "\"persistent_ws\":\"0\","
-                                            + "\"id\":\"id1_r\","
-                                            + "\"task_type\":\"runner\","
-                                            + "\"memory\":\"128\","
-                                            + "\"usage_time\":\"120000\","
-                                            + "\"started_time\":\"1382252400000\","
-                                            + "\"stopped_time\":\"1382253000000\","
-                                            + "\"gigabyte_ram_hours\":\"0.004166666666666667\","
-                                            + "\"is_factory\":\"yes\","
-                                            + "\"launch_type\":\"timeout\","
-                                            + "\"shutdown_type\":\"user\""
-                                            + "}, {"
-                                            + "\"date\":\"1382256000000\","
-                                            + "\"user\":\"user\","
-                                            + "\"ws\":\"ws\","
-                                            + "\"project\":\"project2\","
-                                            + "\"project_type\":\"projecttype\","
-                                            + "\"project_id\":\"user/ws/project2\","
-                                            + "\"persistent_ws\":\"0\","
-                                            + "\"id\":\"id2_r\","
-                                            + "\"task_type\":\"runner\","
-                                            + "\"memory\":\"128\","
-                                            + "\"usage_time\":\"120000\","
-                                            + "\"started_time\":\"1382256000000\","
-                                            + "\"stopped_time\":\"1382256060000\","
-                                            + "\"gigabyte_ram_hours\":\"0.004166666666666667\","
-                                            + "\"is_factory\":\"yes\","
-                                            + "\"launch_type\":\"always-on\","
-                                            + "\"shutdown_type\":\"timeout\""
-                                            + "}, {"
-                                            + "\"date\":\"1382256000000\","
-                                            + "\"user\":\"user\","
-                                            + "\"ws\":\"ws\","
-                                            + "\"project\":\"project3\","
-                                            + "\"project_type\":\"projecttype\","
-                                            + "\"project_id\":\"user/ws/project3\","
-                                            + "\"persistent_ws\":\"0\","
-                                            + "\"id\":\"id3_r\","
-                                            + "\"task_type\":\"runner\","
-                                            + "\"memory\":\"128\","
-                                            + "\"usage_time\":\"60000\","
-                                            + "\"started_time\":\"1382256000000\","
-                                            + "\"stopped_time\":\"1382256060000\","
-                                            + "\"gigabyte_ram_hours\":\"0.0020833333333333333\","
-                                            + "\"is_factory\":\"yes\","
-                                            + "\"launch_type\":\"timeout\","
-                                            + "\"shutdown_type\":\"user\""
-                                            + "}, {"
-                                            + "\"date\":\"1382259600000\","
-                                            + "\"user\":\"user\","
-                                            + "\"ws\":\"ws\","
-                                            + "\"project\":\"project1\","
-                                            + "\"project_type\":\"projecttype\","
-                                            + "\"project_id\":\"user/ws/project1\","
-                                            + "\"persistent_ws\":\"0\","
-                                            + "\"id\":\"id4_r\","
-                                            + "\"task_type\":\"runner\","
-                                            + "\"started_time\":\"1382259600000\","
-                                            + "\"is_factory\":\"yes\","
-                                            + "\"launch_type\":\"timeout\"}]");
+        ListValueData value = getAsList(metric, builder.build());
+        assertEquals(value.size(), 4);
+        List<ValueData> tasks = value.getAll();
+        assertEquals(treatAsMap(tasks.get(0)).toString(), "{"
+                                                          + "date=1382252400000, "
+                                                          + "user=user, "
+                                                          + "ws=ws, "
+                                                          + "project=project1, "
+                                                          + "project_type=projecttype, "
+                                                          + "project_id=user/ws/project1, "
+                                                          + "persistent_ws=0, "
+                                                          + "id=id1_r, "
+                                                          + "task_type=runner, "
+                                                          + "memory=128, "
+                                                          + "usage_time=120000, "
+                                                          + "started_time=1382252400000, "
+                                                          + "stopped_time=1382253000000, "
+                                                          + "gigabyte_ram_hours=0.004166666666666667, "
+                                                          + "is_factory=yes, "
+                                                          + "launch_type=timeout, "
+                                                          + "shutdown_type=user"
+                                                          + "}");
+
+        assertEquals(treatAsMap(tasks.get(1)).toString(), "{"
+                                                          + "date=1382256000000, "
+                                                          + "user=user, "
+                                                          + "ws=ws, "
+                                                          + "project=project2, "
+                                                          + "project_type=projecttype, "
+                                                          + "project_id=user/ws/project2, "
+                                                          + "persistent_ws=0, "
+                                                          + "id=id2_r, "
+                                                          + "task_type=runner, "
+                                                          + "memory=128, "
+                                                          + "usage_time=120000, "
+                                                          + "started_time=1382256000000, "
+                                                          + "stopped_time=1382256060000, "
+                                                          + "gigabyte_ram_hours=0.004166666666666667, "
+                                                          + "is_factory=yes, "
+                                                          + "launch_type=always-on, "
+                                                          + "shutdown_type=timeout"
+                                                          + "}");
+
+        assertEquals(treatAsMap(tasks.get(2)).toString(), "{"
+                                                          + "date=1382256000000, "
+                                                          + "user=user, "
+                                                          + "ws=ws, "
+                                                          + "project=project3, "
+                                                          + "project_type=projecttype, "
+                                                          + "project_id=user/ws/project3, "
+                                                          + "persistent_ws=0, "
+                                                          + "id=id3_r, "
+                                                          + "task_type=runner, "
+                                                          + "memory=128, "
+                                                          + "usage_time=60000, "
+                                                          + "started_time=1382256000000, "
+                                                          + "stopped_time=1382256060000, "
+                                                          + "gigabyte_ram_hours=0.0020833333333333333, "
+                                                          + "is_factory=yes, "
+                                                          + "launch_type=timeout, "
+                                                          + "shutdown_type=user"
+                                                          + "}");
+
+        assertEquals(treatAsMap(tasks.get(3)).toString(), "{"
+                                                          + "date=1382259600000, "
+                                                          + "user=user, "
+                                                          + "ws=ws, "
+                                                          + "project=project1, "
+                                                          + "project_type=projecttype, "
+                                                          + "project_id=user/ws/project1, "
+                                                          + "persistent_ws=0, "
+                                                          + "id=id4_r, "
+                                                          + "task_type=runner, "
+                                                          + "started_time=1382259600000, "
+                                                          + "is_factory=yes, "
+                                                          + "launch_type=timeout"
+                                                          + "}");
     }
 
+    @Test
+    public void testTestSummaryOfProjectsStatisticsListMetric() throws Exception {
+        Metric metric = MetricFactory.getMetric(MetricType.TASKS_LIST);
+
+        ListValueData summaryValue = (ListValueData)((Summaraziable)metric).getSummaryValue(Context.EMPTY);
+        assertEquals(summaryValue.size(), 1);
+        Map<String, ValueData> m = ((MapValueData)summaryValue.getAll().get(0)).getAll();
+        assertEquals(m.toString(), "{usage_time=900000, gigabyte_ram_hours=0.1249}");
+    }
 
     @Test
     public void testTasksLaunched() throws Exception {
