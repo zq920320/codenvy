@@ -153,14 +153,10 @@ public class FactoryWorkspaceResourceProvider implements EventSubscriber<CreateW
                                 factory = factoryBuilder.buildEncoded(URI.create(factoryUrl));
                             }
 
-                            String orgid;
-                            if (factory.getV().startsWith("1.")) {
-                                orgid = factory.getOrgid();
-                            } else {
-                                orgid = factory.getCreator() != null ? factory.getCreator().getAccountId() : null;
-                            }
-                            if (null != orgid) {
-                                final List<Subscription> subscriptions = accountDao.getSubscriptions(orgid, "Factory");
+                            String accountId;
+                            accountId = factory.getCreator() != null ? factory.getCreator().getAccountId() : null;
+                            if (null != accountId) {
+                                final List<Subscription> subscriptions = accountDao.getSubscriptions(accountId, "Factory");
                                 if (!subscriptions.isEmpty()) {
                                     final Subscription subscription = subscriptions.iterator().next();
                                     // factory workspace with subscription

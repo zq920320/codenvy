@@ -19,12 +19,20 @@ package com.codenvy.factory.storage.mongo;
 
 
 import com.codenvy.api.core.ApiException;
-import com.codenvy.api.factory.*;
+import com.codenvy.api.factory.FactoryImage;
+import com.codenvy.api.factory.FactoryStore;
 import com.codenvy.api.factory.dto.Factory;
 import com.codenvy.commons.lang.NameGenerator;
 import com.codenvy.commons.lang.Pair;
 import com.codenvy.dto.server.DtoFactory;
-import com.mongodb.*;
+import com.mongodb.BasicDBList;
+import com.mongodb.BasicDBObject;
+import com.mongodb.BasicDBObjectBuilder;
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
+import com.mongodb.DBObject;
+import com.mongodb.MongoClient;
 import com.mongodb.util.JSON;
 
 import org.slf4j.Logger;
@@ -35,7 +43,11 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 import java.io.IOException;
 import java.net.UnknownHostException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /** Implementation of the MongoDB factory storage. */
 

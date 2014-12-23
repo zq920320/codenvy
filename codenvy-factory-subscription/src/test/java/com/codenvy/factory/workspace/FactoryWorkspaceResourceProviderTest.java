@@ -63,8 +63,8 @@ import static org.mockito.Mockito.when;
 
 @Listeners(value = {MockitoTestNGListener.class})
 public class FactoryWorkspaceResourceProviderTest {
-    private static final String WS_ID  = "wsid";
-    private static final String ORG_ID = "orgid";
+    private static final String WS_ID      = "wsid";
+    private static final String ACCOUNT_ID = "accId";
 
     private String runnerLifetime              = "runnerLifetime";
     private String runnerRam                   = "runnerRam";
@@ -123,13 +123,13 @@ public class FactoryWorkspaceResourceProviderTest {
 
         when(factory.getV()).thenReturn("2.0");
         when(factory.getCreator()).thenReturn(author);
-        when(author.getAccountId()).thenReturn(ORG_ID);
+        when(author.getAccountId()).thenReturn(ACCOUNT_ID);
         when(workspaceDao.getById(WS_ID)).thenReturn(workspace);
         when(workspace.getAttributes()).thenReturn(attributes);
         when(factoryBuilder.buildEncoded(any(URI.class))).thenReturn(factory);
         when(workspace.withAttributes(anyMapOf(String.class, String.class))).thenReturn(workspace);
         Subscription subscription = new Subscription().withProperties(Collections.singletonMap("RAM", "8GB"));
-        when(accountDao.getSubscriptions(ORG_ID, "Factory")).thenReturn(Collections.singletonList(subscription));
+        when(accountDao.getSubscriptions(ACCOUNT_ID, "Factory")).thenReturn(Collections.singletonList(subscription));
     }
 
     @Test
@@ -187,40 +187,20 @@ public class FactoryWorkspaceResourceProviderTest {
                                 isNull(),
                                 eq(Pair.of("validate", false))))
                 .thenReturn(factory);
-        when(accountDao.getSubscriptions(ORG_ID, "Factory")).thenReturn(Collections.<Subscription>emptyList());
+        when(accountDao.getSubscriptions(ACCOUNT_ID, "Factory")).thenReturn(Collections.<Subscription>emptyList());
 
         provider.onEvent(event);
 
         verify(workspaceDao).update(workspace);
         verifySettingOfAttributes(runnerLifetime, runnerRam, builderExecutionTime, false);
-        verify(factory).getV();
-        verify(factory, never()).getOrgid();
         verify(factory, atLeastOnce()).getCreator();
         verify(author).getAccountId();
     }
 
     @Test
-    public void shouldUseGetOrgIdMethodInsteadOfAccountIdIfVersion1_x() throws ApiException, IOException {
-        when(attributes.get("factoryUrl")).thenReturn(encodedFactoryUrl);
-        when(factory.getV()).thenReturn("1.2");
-        when(factory.getOrgid()).thenReturn(ORG_ID);
-        when(jsonHelper.request(eq(Factory.class),
-                                anyString(),
-                                anyString(),
-                                isNull(),
-                                eq(Pair.of("validate", false))))
-                .thenReturn(factory);
-
-        provider.onEvent(event);
-
-        verify(factory).getV();
-        verify(factory).getOrgid();
-    }
-
-    @Test
     public void shouldSetCommonValuesIfNonEncodedTrackedFactoryHasNoSubscriptions() throws ApiException, IOException {
         when(attributes.get("factoryUrl")).thenReturn(nonEncodedFactoryUrl);
-        when(accountDao.getSubscriptions(ORG_ID, "Factory")).thenReturn(Collections.<Subscription>emptyList());
+        when(accountDao.getSubscriptions(ACCOUNT_ID, "Factory")).thenReturn(Collections.<Subscription>emptyList());
 
         provider.onEvent(event);
 
