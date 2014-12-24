@@ -56,7 +56,7 @@ public class TestTaskerMetrics extends BaseTest {
         Metric metric = MetricFactory.getMetric(MetricType.TASKS);
 
         LongValueData l = getAsLong(metric, Context.EMPTY);
-        assertEquals(l.getAsLong(), 10);
+        assertEquals(l.getAsLong(), 14);
     }
 
     @Test
@@ -64,10 +64,46 @@ public class TestTaskerMetrics extends BaseTest {
         Metric metric = MetricFactory.getMetric(MetricType.TASKS_LIST);
 
         ListValueData value = (ListValueData)(metric).getValue(Context.EMPTY);
-        assertEquals(value.size(), 10);
+        assertEquals(value.size(), 14);
 
         List<ValueData> tasks = value.getAll();
         assertEquals(treatAsMap(tasks.get(0)).toString(), "{"
+                                                          + "date=1382274000000, "
+                                                          + "user=anonymoususer_user11, "
+                                                          + "ws=ws1, "
+                                                          + "project=project, "
+                                                          + "project_type=projecttype, "
+                                                          + "project_id=anonymoususer_user11/ws1/project, "
+                                                          + "persistent_ws=0, "
+                                                          + "id=session1, "
+                                                          + "task_type=editor, "
+                                                          + "memory=25, "
+                                                          + "usage_time=60000, "
+                                                          + "start_time=1382274000000, "
+                                                          + "stop_time=1382274060000, "
+                                                          + "gigabyte_ram_hours=4.069010416666667E-4, "
+                                                          + "is_factory=yes"
+                                                          + "}");
+
+        assertEquals(treatAsMap(tasks.get(2)).toString(), "{"
+                                                          + "date=1382275200000, "
+                                                          + "user=user1@gmail.com, "
+                                                          + "ws=ws1, "
+                                                          + "project=project, "
+                                                          + "project_type=projecttype, "
+                                                          + "project_id=user1@gmail.com/ws1/project, "
+                                                          + "persistent_ws=0, "
+                                                          + "id=session3, "
+                                                          + "task_type=editor, "
+                                                          + "memory=25, "
+                                                          + "usage_time=60000, "
+                                                          + "start_time=1382275200000, "
+                                                          + "stop_time=1382275260000, "
+                                                          + "gigabyte_ram_hours=4.069010416666667E-4, "
+                                                          + "is_factory=no"
+                                                          + "}");
+
+        assertEquals(treatAsMap(tasks.get(4)).toString(), "{"
                                                           + "date=1382252400000, "
                                                           + "user=user, "
                                                           + "ws=ws, "
@@ -79,15 +115,15 @@ public class TestTaskerMetrics extends BaseTest {
                                                           + "task_type=builder, "
                                                           + "memory=1536, "
                                                           + "usage_time=120000, "
-                                                          + "started_time=1382252400000, "
-                                                          + "stopped_time=1382253000000, "
+                                                          + "start_time=1382252400000, "
+                                                          + "stop_time=1382252520000, "
                                                           + "gigabyte_ram_hours=0.05, "
                                                           + "is_factory=yes, "
                                                           + "launch_type=timeout, "
                                                           + "shutdown_type=normal"
                                                           + "}");
 
-        assertEquals(treatAsMap(tasks.get(1)).toString(), "{"
+        assertEquals(treatAsMap(tasks.get(5)).toString(), "{"
                                                           + "date=1382256000000, "
                                                           + "user=user, "
                                                           + "ws=ws, "
@@ -99,15 +135,15 @@ public class TestTaskerMetrics extends BaseTest {
                                                           + "task_type=builder, "
                                                           + "memory=250, "
                                                           + "usage_time=60000, "
-                                                          + "started_time=1382256000000, "
-                                                          + "stopped_time=1382256060000, "
+                                                          + "start_time=1382256000000, "
+                                                          + "stop_time=1382256060000, "
                                                           + "gigabyte_ram_hours=0.004069010416666667, "
                                                           + "is_factory=yes, "
                                                           + "launch_type=always-on, "
                                                           + "shutdown_type=normal"
                                                           + "}");
 
-        assertEquals(treatAsMap(tasks.get(2)).toString(), "{"
+        assertEquals(treatAsMap(tasks.get(6)).toString(), "{"
                                                           + "date=1382256000000, "
                                                           + "user=user, "
                                                           + "ws=ws, "
@@ -119,15 +155,15 @@ public class TestTaskerMetrics extends BaseTest {
                                                           + "task_type=builder, "
                                                           + "memory=1536, "
                                                           + "usage_time=120000, "
-                                                          + "started_time=1382256000000, "
-                                                          + "stopped_time=1382256060000, "
+                                                          + "start_time=1382256000000, "
+                                                          + "stop_time=1382256120000, "
                                                           + "gigabyte_ram_hours=0.05, "
                                                           + "is_factory=yes, "
                                                           + "launch_type=timeout, "
                                                           + "shutdown_type=timeout"
                                                           + "}");
 
-        assertEquals(treatAsMap(tasks.get(3)).toString(), "{"
+        assertEquals(treatAsMap(tasks.get(7)).toString(), "{"
                                                           + "date=1382252400000, "
                                                           + "user=user, "
                                                           + "ws=ws, "
@@ -139,15 +175,15 @@ public class TestTaskerMetrics extends BaseTest {
                                                           + "task_type=runner, "
                                                           + "memory=128, "
                                                           + "usage_time=120000, "
-                                                          + "started_time=1382252400000, "
-                                                          + "stopped_time=1382253000000, "
+                                                          + "start_time=1382252400000, "
+                                                          + "stop_time=1382252520000, "
                                                           + "gigabyte_ram_hours=0.004166666666666667, "
                                                           + "is_factory=yes, "
                                                           + "launch_type=timeout, "
                                                           + "shutdown_type=user"
                                                           + "}");
 
-        assertEquals(treatAsMap(tasks.get(4)).toString(), "{"
+        assertEquals(treatAsMap(tasks.get(8)).toString(), "{"
                                                           + "date=1382256000000, "
                                                           + "user=user, "
                                                           + "ws=ws, "
@@ -159,15 +195,15 @@ public class TestTaskerMetrics extends BaseTest {
                                                           + "task_type=runner, "
                                                           + "memory=128, "
                                                           + "usage_time=120000, "
-                                                          + "started_time=1382256000000, "
-                                                          + "stopped_time=1382256060000, "
+                                                          + "start_time=1382256000000, "
+                                                          + "stop_time=1382256120000, "
                                                           + "gigabyte_ram_hours=0.004166666666666667, "
                                                           + "is_factory=yes, "
                                                           + "launch_type=always-on, "
                                                           + "shutdown_type=timeout"
                                                           + "}");
 
-        assertEquals(treatAsMap(tasks.get(5)).toString(), "{"
+        assertEquals(treatAsMap(tasks.get(9)).toString(), "{"
                                                           + "date=1382256000000, "
                                                           + "user=user, "
                                                           + "ws=ws, "
@@ -179,15 +215,15 @@ public class TestTaskerMetrics extends BaseTest {
                                                           + "task_type=runner, "
                                                           + "memory=128, "
                                                           + "usage_time=60000, "
-                                                          + "started_time=1382256000000, "
-                                                          + "stopped_time=1382256060000, "
+                                                          + "start_time=1382256000000, "
+                                                          + "stop_time=1382256060000, "
                                                           + "gigabyte_ram_hours=0.0020833333333333333, "
                                                           + "is_factory=yes, "
                                                           + "launch_type=timeout, "
                                                           + "shutdown_type=user"
                                                           + "}");
 
-        assertEquals(treatAsMap(tasks.get(6)).toString(), "{"
+        assertEquals(treatAsMap(tasks.get(10)).toString(), "{"
                                                           + "date=1382259600000, "
                                                           + "user=user, "
                                                           + "ws=ws, "
@@ -197,7 +233,7 @@ public class TestTaskerMetrics extends BaseTest {
                                                           + "persistent_ws=0, "
                                                           + "id=id4_r, "
                                                           + "task_type=runner, "
-                                                          + "started_time=1382259600000, "
+                                                          + "start_time=1382259600000, "
                                                           + "is_factory=yes, "
                                                           + "launch_type=timeout"
                                                           + "}");
@@ -225,8 +261,8 @@ public class TestTaskerMetrics extends BaseTest {
                                                           + "task_type=runner, "
                                                           + "memory=128, "
                                                           + "usage_time=120000, "
-                                                          + "started_time=1382252400000, "
-                                                          + "stopped_time=1382253000000, "
+                                                          + "start_time=1382252400000, "
+                                                          + "stop_time=1382252520000, "
                                                           + "gigabyte_ram_hours=0.004166666666666667, "
                                                           + "is_factory=yes, "
                                                           + "launch_type=timeout, "
@@ -245,8 +281,8 @@ public class TestTaskerMetrics extends BaseTest {
                                                           + "task_type=runner, "
                                                           + "memory=128, "
                                                           + "usage_time=120000, "
-                                                          + "started_time=1382256000000, "
-                                                          + "stopped_time=1382256060000, "
+                                                          + "start_time=1382256000000, "
+                                                          + "stop_time=1382256120000, "
                                                           + "gigabyte_ram_hours=0.004166666666666667, "
                                                           + "is_factory=yes, "
                                                           + "launch_type=always-on, "
@@ -265,8 +301,8 @@ public class TestTaskerMetrics extends BaseTest {
                                                           + "task_type=runner, "
                                                           + "memory=128, "
                                                           + "usage_time=60000, "
-                                                          + "started_time=1382256000000, "
-                                                          + "stopped_time=1382256060000, "
+                                                          + "start_time=1382256000000, "
+                                                          + "stop_time=1382256060000, "
                                                           + "gigabyte_ram_hours=0.0020833333333333333, "
                                                           + "is_factory=yes, "
                                                           + "launch_type=timeout, "
@@ -283,7 +319,7 @@ public class TestTaskerMetrics extends BaseTest {
                                                           + "persistent_ws=0, "
                                                           + "id=id4_r, "
                                                           + "task_type=runner, "
-                                                          + "started_time=1382259600000, "
+                                                          + "start_time=1382259600000, "
                                                           + "is_factory=yes, "
                                                           + "launch_type=timeout"
                                                           + "}");
@@ -296,7 +332,7 @@ public class TestTaskerMetrics extends BaseTest {
         ListValueData summaryValue = (ListValueData)((Summaraziable)metric).getSummaryValue(Context.EMPTY);
         assertEquals(summaryValue.size(), 1);
         Map<String, ValueData> m = ((MapValueData)summaryValue.getAll().get(0)).getAll();
-        assertEquals(m.toString(), "{usage_time=900000, gigabyte_ram_hours=0.1249}");
+        assertEquals(m.toString(), "{usage_time=1260000, gigabyte_ram_hours=0.1273}");
     }
 
     @Test
@@ -547,7 +583,7 @@ public class TestTaskerMetrics extends BaseTest {
                                       .withParam("TIMEOUT", "600")
                                       .build());
         events.add(new Event.Builder().withDate("2013-10-20")
-                                      .withTime("10:10:00")
+                                      .withTime("10:02:00")
                                       .withParam("EVENT", "build-finished")
                                       .withParam("WS", "ws")
                                       .withParam("USER", "user")
@@ -597,7 +633,7 @@ public class TestTaskerMetrics extends BaseTest {
                                       .withParam("TIMEOUT", "600")
                                       .build());
         events.add(new Event.Builder().withDate("2013-10-20")
-                                      .withTime("11:01:00")
+                                      .withTime("11:02:00")
                                       .withParam("EVENT", "build-finished")
                                       .withParam("WS", "ws")
                                       .withParam("USER", "user")
@@ -623,7 +659,7 @@ public class TestTaskerMetrics extends BaseTest {
                                       .withParam("LIFETIME", "600")
                                       .build());
         events.add(new Event.Builder().withDate("2013-10-20")
-                                      .withTime("10:10:00")
+                                      .withTime("10:02:00")
                                       .withParam("EVENT", "run-finished")
                                       .withParam("WS", "ws")
                                       .withParam("USER", "user")
@@ -649,7 +685,7 @@ public class TestTaskerMetrics extends BaseTest {
                                       .withParam("LIFETIME", "-1")
                                       .build());
         events.add(new Event.Builder().withDate("2013-10-20")
-                                      .withTime("11:01:00")
+                                      .withTime("11:02:00")
                                       .withParam("EVENT", "run-finished")
                                       .withParam("WS", "ws")
                                       .withParam("USER", "user")
@@ -702,7 +738,7 @@ public class TestTaskerMetrics extends BaseTest {
                                       .withParam("LIFETIME", "600")
                                       .build());
 
-
+        /** DEBUGS EVENTS */
         // #1 2min, stopped by user
         events.add(new Event.Builder().withDate("2013-10-20")
                                       .withTime("13:00:00")
@@ -716,7 +752,7 @@ public class TestTaskerMetrics extends BaseTest {
                                       .withParam("LIFETIME", "600")
                                       .build());
         events.add(new Event.Builder().withDate("2013-10-20")
-                                      .withTime("13:10:00")
+                                      .withTime("13:02:00")
                                       .withParam("EVENT", "debug-finished")
                                       .withParam("WS", "ws")
                                       .withParam("USER", "user")
@@ -769,7 +805,7 @@ public class TestTaskerMetrics extends BaseTest {
                                       .withParam("LIFETIME", "60")
                                       .build());
         events.add(new Event.Builder().withDate("2013-10-20")
-                                      .withTime("15:01:00")
+                                      .withTime("15:02:00")
                                       .withParam("EVENT", "debug-finished")
                                       .withParam("WS", "ws")
                                       .withParam("USER", "user")
@@ -782,6 +818,26 @@ public class TestTaskerMetrics extends BaseTest {
                                       .withParam("STOPPED-BY-USER", "0")
                                       .build());
 
+        /** EDIT EVENTS */
+        events.add(Event.Builder.createFullSessionUsageEvent("anonymoususer_user11", "ws1", "project", "projectType", "session1", true, 1382274000000l, 60000)
+                                .withDate("2013-10-20")
+                                .withTime("16:00:00")
+                                .build());
+
+        events.add(Event.Builder.createFullSessionUsageEvent("anonymoususer_user11", "ws1", "project", "projectType", "session2", true, 1382274600000l, 120000)
+                                .withDate("2013-10-20")
+                                .withTime("16:10:00")
+                                .build());
+
+        events.add(Event.Builder.createFullSessionUsageEvent("user1@gmail.com", "ws1", "project", "projectType", "session3", false, 1382275200000l, 60000)
+                                .withDate("2013-10-20")
+                                .withTime("16:20:00")
+                                .build());
+
+        events.add(Event.Builder.createFullSessionUsageEvent("user1@gmail.com", "ws1", "project", "projectType", "session4", false, 1382274360000l, 120000)
+                                .withDate("2013-10-20")
+                                .withTime("16:30:00")
+                                .build());
 
         return LogGenerator.generateLog(events);
     }
