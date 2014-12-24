@@ -26,8 +26,8 @@
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="tasks_list"/>
-                <parameter key="fields" value="task_type,started_time,stopped_time,memory,usage_time,gigabyte_ram_hours,user,project,project_type,is_factory,launch_type,shutdown_type"/>
-                <parameter key="date-fields" value="started_time,stopped_time"/>
+                <parameter key="fields" value="task_type,start_time,stop_time,memory,usage_time,gigabyte_ram_hours,user,project,project_type,is_factory,launch_type,shutdown_type"/>
+                <parameter key="date-fields" value="start_time,stop_time"/>
                 <parameter key="time-fields" value="usage_time"/>
                 <parameter key="numeric-format" value="%,.4f"/>
             </row>

@@ -1303,13 +1303,13 @@ function AnalyticsConfiguration() {
             },
 
             defaultModelParams: {
-                "sort": "-started_time"
+                "sort": "-start_time"
             },
 
             mapColumnToServerSortParam: {
                 "Type": "task_type",
-                "Start Time": "started_time",
-                "Stop Time": "stopped_time",
+                "Start Time": "start_time",
+                "Stop Time": "stop_time",
                 "Size (MB)": "memory",
                 "Time": "usage_time",
                 "Gigabyte RAM Hours": "gigabyte_ram_hours",
@@ -1376,7 +1376,7 @@ function AnalyticsConfiguration() {
         "account_id",
         "data_universe",
         "passed_days_count",
-        "started_time",
+        "start_time",
         "id"
      ];
 
@@ -1392,8 +1392,8 @@ function AnalyticsConfiguration() {
     var dateParams = [
         "from_date",
         "to_date",
-        "started_time",
-        "stopped_time"
+        "start_time",
+        "stop_time"
     ];
 
     /**
