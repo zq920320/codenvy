@@ -179,5 +179,29 @@
                 <parameter key="description" value="Debugs Stopped by Timeout"/>
             </row>
         </section>
+
+        <section name="edit">
+            <row class="com.codenvy.analytics.services.view.DateRow">
+                <parameter key="section-name" value="Edits Info"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="edits"/>
+                <parameter key="description" value="Edits Launched"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="edits"/>
+                <parameter key="description" value="Edits Stopped"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="edits_time"/>
+                <parameter key="description" value="Edits Time"/>
+                <parameter key="time-field" value="true"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="edits_gigabyte_ram_hours"/>
+                <parameter key="description" value="Gigabyte RAM Hours"/>
+                <parameter key="numeric-format" value="%,.4f"/>
+            </row>
+        </section>
     </view>
 </display>

@@ -34,7 +34,8 @@ public class TasksStopped extends AbstractTasksMetric {
     public TasksStopped() {
         super(MetricType.TASKS_STOPPED, MetricType.BUILDS_FINISHED,
                                         MetricType.RUNS_FINISHED,
-                                        MetricType.DEBUGS_FINISHED);
+                                        MetricType.DEBUGS_FINISHED,
+                                        MetricType.EDITS);
     }
 
     @Override

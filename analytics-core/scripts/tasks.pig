@@ -197,7 +197,6 @@ edits_table = FOREACH edits GENERATE UUID(),
                                      TOTUPLE('gigabyte_ram_hours', CalculateGigabyteRamHours((long) $default_editor_memory_mb, usageTime)),
                                      TOTUPLE('is_factory', 'no');
 
-
 edits_in_factory = filterByEvent(l, 'session-factory-usage');
 edits_in_factory = extractParam(edits_in_factory, 'PROJECT', project);
 edits_in_factory = extractParam(edits_in_factory, 'TYPE', project_type);

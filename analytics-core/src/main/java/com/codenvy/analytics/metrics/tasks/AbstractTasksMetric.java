@@ -29,6 +29,10 @@ import java.io.IOException;
 
 /** @author Dmytro Nochevnov */
 public abstract class AbstractTasksMetric extends CalculatedMetric implements Expandable {
+    public static final String BUILDER  = "builder";
+    public static final String RUNNER   = "runner";
+    public static final String DEBUGGER = "debugger";
+    public static final String EDITOR   = "editor";
 
     public AbstractTasksMetric(MetricType metric, MetricType... basedMetricTypes) {
         super(metric, basedMetricTypes);

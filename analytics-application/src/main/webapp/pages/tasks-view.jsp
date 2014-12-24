@@ -25,9 +25,7 @@
 </head>
 <body>
 
-<jsp:include page="/inclusions/top-menu/top-menu.jsp">
-    <jsp:param name="selectedMenuItemId" value="topmenu-tasks"/>
-</jsp:include>
+<jsp:include page="/inclusions/top-menu/top-menu.jsp" />
 
 <div class="container-fluid">
     <div class="row-fluid">

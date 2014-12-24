@@ -1314,6 +1314,7 @@ function AnalyticsConfiguration() {
                 "Time": "usage_time",
                 "Gigabyte RAM Hours": "gigabyte_ram_hours",
                 "User": "user",
+                "Workspace": "ws",
                 "Project": "project",
                 "Project Type": "project_type",
                 "Factory?": "is_factory",
@@ -1653,6 +1654,10 @@ function AnalyticsConfiguration() {
         "debugs_with_always_on": "#TASKS",
         "debugs_finished_by_user": "#TASKS",
         "debugs_finished_by_timeout": "#TASKS",
+
+        "edits": "#TASKS",
+        "edits_time": "#TASKS",
+        "edits_gigabyte_ram_hours": "#TASKS",
 
         "tasks_launched": "#TASKS",
         "tasks_stopped": "#TASKS",

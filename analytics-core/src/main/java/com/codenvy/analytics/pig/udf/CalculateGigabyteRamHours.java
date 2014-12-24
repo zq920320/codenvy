@@ -37,13 +37,17 @@ public class CalculateGigabyteRamHours extends EvalFunc<Double> {
         }
 
         try {
-            double memory = (long)input.get(0);
-            double usage_time = (long)input.get(1);
+            long memory = (long)input.get(0);
+            long usage_time = (long)input.get(1);
 
-            return (memory * usage_time) / GRH_DEVIDER;
+            return calculateGigabiteRamHours(memory, usage_time);
         } catch (NumberFormatException | ArithmeticException | NullPointerException e) {
             return null;
         }
+    }
+
+    public static double calculateGigabiteRamHours(long memory_mb, long usage_time_msec) {
+        return ((double) memory_mb * usage_time_msec) / GRH_DEVIDER;
     }
 
     /** {@inheritDoc} */

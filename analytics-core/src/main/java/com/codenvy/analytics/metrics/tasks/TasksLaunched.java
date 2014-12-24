@@ -34,7 +34,8 @@ public class TasksLaunched extends AbstractTasksMetric {
     public TasksLaunched() {
         super(MetricType.TASKS_LAUNCHED, MetricType.BUILDS,
                                          MetricType.RUNS,
-                                         MetricType.DEBUGS);
+                                         MetricType.DEBUGS,
+                                         MetricType.EDITS);
     }
 
     @Override

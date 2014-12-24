@@ -85,22 +85,22 @@ public class TestTaskerMetrics extends BaseTest {
                                                           + "is_factory=yes"
                                                           + "}");
 
-        assertEquals(treatAsMap(tasks.get(2)).toString(), "{"
-                                                          + "date=1382275200000, "
-                                                          + "user=user1@gmail.com, "
+        assertEquals(treatAsMap(tasks.get(1)).toString(), "{"
+                                                          + "date=1382274600000, "
+                                                          + "user=anonymoususer_user11, "
                                                           + "ws=ws1, "
                                                           + "project=project, "
                                                           + "project_type=projecttype, "
-                                                          + "project_id=user1@gmail.com/ws1/project, "
+                                                          + "project_id=anonymoususer_user11/ws1/project, "
                                                           + "persistent_ws=0, "
-                                                          + "id=session3, "
+                                                          + "id=session2, "
                                                           + "task_type=editor, "
                                                           + "memory=25, "
-                                                          + "usage_time=60000, "
-                                                          + "start_time=1382275200000, "
-                                                          + "stop_time=1382275260000, "
-                                                          + "gigabyte_ram_hours=4.069010416666667E-4, "
-                                                          + "is_factory=no"
+                                                          + "usage_time=120000, "
+                                                          + "start_time=1382274600000, "
+                                                          + "stop_time=1382274720000, "
+                                                          + "gigabyte_ram_hours=8.138020833333334E-4, "
+                                                          + "is_factory=yes"
                                                           + "}");
 
         assertEquals(treatAsMap(tasks.get(4)).toString(), "{"
@@ -340,7 +340,7 @@ public class TestTaskerMetrics extends BaseTest {
         Metric metric = MetricFactory.getMetric(MetricType.TASKS_LAUNCHED);
 
         LongValueData l = getAsLong(metric, Context.EMPTY);
-        assertEquals(l.getAsLong(), 10);
+        assertEquals(l.getAsLong(), 14);
     }
 
     @Test
@@ -350,16 +350,22 @@ public class TestTaskerMetrics extends BaseTest {
         ListValueData expandedValue = (ListValueData)((Expandable)metric).getExpandedValue(Context.EMPTY);
 
         Map<String, Map<String, ValueData>> m = listToMap(expandedValue, AbstractMetric.TASK_ID);
-        assertEquals(m.toString(), "{id4_r={id=id4_r}, "
+        assertEquals(m.toString(), "{"
                                    + "id1_b={id=id1_b}, "
-                                   + "id1_r={id=id1_r}, "
                                    + "id1_d={id=id1_d}, "
-                                   + "id3_b={id=id3_b}, "
+                                   + "session1={id=session1}, "
                                    + "id3_r={id=id3_r}, "
+                                   + "session4={id=session4}, "
+                                   + "session2={id=session2}, "
+                                   + "id2_r={id=id2_r}, "
+                                   + "session3={id=session3}, "
+                                   + "id4_r={id=id4_r}, "
+                                   + "id1_r={id=id1_r}, "
+                                   + "id3_b={id=id3_b}, "
                                    + "id2_d={id=id2_d}, "
                                    + "id2_b={id=id2_b}, "
-                                   + "id2_r={id=id2_r}, "
-                                   + "id3_d={id=id3_d}}");
+                                   + "id3_d={id=id3_d}"
+                                   + "}");
     }
 
     @Test
@@ -367,7 +373,7 @@ public class TestTaskerMetrics extends BaseTest {
         Metric metric = MetricFactory.getMetric(MetricType.TASKS_STOPPED);
 
         LongValueData l = getAsLong(metric, Context.EMPTY);
-        assertEquals(l.getAsLong(), 9);
+        assertEquals(l.getAsLong(), 13);
     }
 
     @Test
@@ -377,15 +383,21 @@ public class TestTaskerMetrics extends BaseTest {
         ListValueData expandedValue = (ListValueData)((Expandable)metric).getExpandedValue(Context.EMPTY);
 
         Map<String, Map<String, ValueData>> m = listToMap(expandedValue, AbstractMetric.TASK_ID);
-        assertEquals(m.toString(), "{id1_b={id=id1_b}, " +
-                                   "id1_r={id=id1_r}, " +
-                                   "id1_d={id=id1_d}, " +
-                                   "id3_b={id=id3_b}, " +
-                                   "id3_r={id=id3_r}, " +
-                                   "id2_d={id=id2_d}, " +
-                                   "id2_b={id=id2_b}, " +
-                                   "id2_r={id=id2_r}, " +
-                                   "id3_d={id=id3_d}}");
+        assertEquals(m.toString(), "{"
+                                   + "id1_b={id=id1_b}, "
+                                   + "id1_d={id=id1_d}, "
+                                   + "session1={id=session1}, "
+                                   + "id3_r={id=id3_r}, "
+                                   + "session4={id=session4}, "
+                                   + "id2_r={id=id2_r}, "
+                                   + "session2={id=session2}, "
+                                   + "session3={id=session3}, "
+                                   + "id1_r={id=id1_r}, "
+                                   + "id3_b={id=id3_b}, "
+                                   + "id2_d={id=id2_d}, "
+                                   + "id2_b={id=id2_b}, "
+                                   + "id3_d={id=id3_d}"
+                                   + "}");
     }
 
     @Test
@@ -393,7 +405,7 @@ public class TestTaskerMetrics extends BaseTest {
         Metric metric = MetricFactory.getMetric(MetricType.TASKS_TIME);
 
         LongValueData l = getAsLong(metric, Context.EMPTY);
-        assertEquals(l.getAsLong(), 900000);
+        assertEquals(l.getAsLong(), 1260000);
     }
 
     @Test
@@ -403,22 +415,28 @@ public class TestTaskerMetrics extends BaseTest {
         ListValueData expandedValue = (ListValueData)((Expandable)metric).getExpandedValue(Context.EMPTY);
 
         Map<String, Map<String, ValueData>> m = listToMap(expandedValue, AbstractMetric.TASK_ID);
-        assertEquals(m.toString(), "{id1_b={id=id1_b}, "
-                                   + "id1_r={id=id1_r}, "
+        assertEquals(m.toString(), "{"
+                                   + "id1_b={id=id1_b}, "
                                    + "id1_d={id=id1_d}, "
-                                   + "id3_b={id=id3_b}, "
+                                   + "session1={id=session1}, "
                                    + "id3_r={id=id3_r}, "
+                                   + "session4={id=session4}, "
+                                   + "id2_r={id=id2_r}, "
+                                   + "session2={id=session2}, "
+                                   + "session3={id=session3}, "
+                                   + "id1_r={id=id1_r}, "
+                                   + "id3_b={id=id3_b}, "
                                    + "id2_d={id=id2_d}, "
                                    + "id2_b={id=id2_b}, "
-                                   + "id2_r={id=id2_r}, "
-                                   + "id3_d={id=id3_d}}");
+                                   + "id3_d={id=id3_d}"
+                                   + "}");
     }
 
     @Test
     public void testTasksGigabyteRamHours() throws Exception {
         Metric metric = MetricFactory.getMetric(MetricType.TASKS_GIGABYTE_RAM_HOURS);
         DoubleValueData d = getAsDouble(metric, Context.EMPTY);
-        assertEquals(round(d.getAsDouble() * 10000), 1458);
+        assertEquals(round(d.getAsDouble() * 10000), 1483);
     }
 
     @Test
@@ -428,15 +446,21 @@ public class TestTaskerMetrics extends BaseTest {
         ListValueData expandedValue = (ListValueData)((Expandable)metric).getExpandedValue(Context.EMPTY);
 
         Map<String, Map<String, ValueData>> m = listToMap(expandedValue, AbstractMetric.TASK_ID);
-        assertEquals(m.toString(), "{id1_b={id=id1_b}, "
-                                   + "id1_r={id=id1_r}, "
+        assertEquals(m.toString(), "{"
+                                   + "id1_b={id=id1_b}, "
                                    + "id1_d={id=id1_d}, "
-                                   + "id3_b={id=id3_b}, "
+                                   + "session1={id=session1}, "
                                    + "id3_r={id=id3_r}, "
+                                   + "session4={id=session4}, "
+                                   + "id2_r={id=id2_r}, "
+                                   + "session2={id=session2}, "
+                                   + "session3={id=session3}, "
+                                   + "id1_r={id=id1_r}, "
+                                   + "id3_b={id=id3_b}, "
                                    + "id2_d={id=id2_d}, "
                                    + "id2_b={id=id2_b}, "
-                                   + "id2_r={id=id2_r}, "
-                                   + "id3_d={id=id3_d}}");
+                                   + "id3_d={id=id3_d}"
+                                   + "}");
     }
 
     @Test
@@ -468,7 +492,7 @@ public class TestTaskerMetrics extends BaseTest {
         Metric metric = MetricFactory.getMetric(MetricType.TASKS_LAUNCHED_WITH_ALWAYS_ON);
 
         LongValueData l = getAsLong(metric, Context.EMPTY);
-        assertEquals(l.getAsLong(), 3);
+        assertEquals(l.getAsLong(), 7);
     }
 
     @Test
@@ -478,9 +502,15 @@ public class TestTaskerMetrics extends BaseTest {
         ListValueData expandedValue = (ListValueData)((Expandable)metric).getExpandedValue(Context.EMPTY);
 
         Map<String, Map<String, ValueData>> m = listToMap(expandedValue, AbstractMetric.TASK_ID);
-        assertEquals(m.toString(), "{id2_d={id=id2_d}, " +
-                                   "id2_b={id=id2_b}, " +
-                                   "id2_r={id=id2_r}}");
+        assertEquals(m.toString(), "{"
+                                   + "session1={id=session1}, "
+                                   + "id2_d={id=id2_d}, "
+                                   + "session4={id=session4}, "
+                                   + "id2_b={id=id2_b}, "
+                                   + "session2={id=session2}, "
+                                   + "id2_r={id=id2_r}, "
+                                   + "session3={id=session3}"
+                                   + "}");
     }
 
     @Test
@@ -488,7 +518,7 @@ public class TestTaskerMetrics extends BaseTest {
         Metric metric = MetricFactory.getMetric(MetricType.TASKS_STOPPED_NORMALLY);
 
         LongValueData l = getAsLong(metric, Context.EMPTY);
-        assertEquals(l.getAsLong(), 6);
+        assertEquals(l.getAsLong(), 10);
     }
 
     @Test
@@ -498,12 +528,18 @@ public class TestTaskerMetrics extends BaseTest {
         ListValueData expandedValue = (ListValueData)((Expandable)metric).getExpandedValue(Context.EMPTY);
 
         Map<String, Map<String, ValueData>> m = listToMap(expandedValue, AbstractMetric.TASK_ID);
-        assertEquals(m.toString(), "{id1_b={id=id1_b}, "
+        assertEquals(m.toString(), "{"
+                                   + "id1_b={id=id1_b}, "
                                    + "id1_r={id=id1_r}, "
                                    + "id1_d={id=id1_d}, "
+                                   + "session1={id=session1}, "
                                    + "id3_r={id=id3_r}, "
                                    + "id2_d={id=id2_d}, "
-                                   + "id2_b={id=id2_b}}");
+                                   + "session4={id=session4}, "
+                                   + "id2_b={id=id2_b}, "
+                                   + "session2={id=session2}, "
+                                   + "session3={id=session3}" +
+                                   "}");
     }
 
     @Test
@@ -561,7 +597,6 @@ public class TestTaskerMetrics extends BaseTest {
 
         builder.putAll(scriptsManager.getScript(ScriptType.USED_TIME, MetricType.DEBUGS_TIME).getParamsAsMap());
         pigServer.execute(ScriptType.USED_TIME, builder.build());
-
 
         builder.putAll(scriptsManager.getScript(ScriptType.TASKS, MetricType.TASKS).getParamsAsMap());
         pigServer.execute(ScriptType.TASKS, builder.build());

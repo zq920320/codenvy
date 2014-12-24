@@ -34,7 +34,8 @@ public class TasksTime extends AbstractTasksMetric {
     public TasksTime() {
         super(MetricType.TASKS_TIME, MetricType.BUILDS_TIME,
                                      MetricType.RUNS_TIME,
-                                     MetricType.DEBUGS_TIME);
+                                     MetricType.DEBUGS_TIME,
+                                     MetricType.EDITS_TIME);
     }
 
     @Override

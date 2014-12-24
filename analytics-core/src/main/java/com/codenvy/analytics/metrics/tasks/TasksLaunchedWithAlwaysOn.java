@@ -34,7 +34,8 @@ public class TasksLaunchedWithAlwaysOn extends AbstractTasksMetric {
     public TasksLaunchedWithAlwaysOn() {
         super(MetricType.TASKS_LAUNCHED_WITH_ALWAYS_ON, MetricType.BUILDS_WITH_ALWAYS_ON,
                                                         MetricType.RUNS_WITH_ALWAYS_ON,
-                                                        MetricType.DEBUGS_WITH_ALWAYS_ON);
+                                                        MetricType.DEBUGS_WITH_ALWAYS_ON,
+                                                        MetricType.EDITS);
     }
 
     @Override
