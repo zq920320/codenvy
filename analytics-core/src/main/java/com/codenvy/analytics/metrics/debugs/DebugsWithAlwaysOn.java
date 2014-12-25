@@ -21,8 +21,6 @@ import com.codenvy.analytics.metrics.AbstractLongValueResulted;
 import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
 
 import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
@@ -41,18 +39,6 @@ public class DebugsWithAlwaysOn extends AbstractLongValueResulted {
         builder.put(MetricFilter.LIFETIME, -1);
         return builder.build();
     }
-
-    @Override
-    public DBObject[] getSpecificDBOperations(Context clauses) {
-        String field = getTrackedFields()[0];
-
-        DBObject group = new BasicDBObject();
-        group.put(ID, null);
-        group.put(field, new BasicDBObject("$sum", "$" + field));
-
-        return new DBObject[]{new BasicDBObject("$group", group)};
-    }
-
 
     @Override
     public String getStorageCollectionName() {

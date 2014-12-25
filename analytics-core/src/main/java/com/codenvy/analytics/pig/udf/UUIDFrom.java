@@ -24,25 +24,17 @@ import org.apache.pig.impl.logicalLayer.schema.Schema;
 
 import java.io.IOException;
 
-/** @author Dmytro Nochevnov */
-public class CalculateGigabyteRamHours extends EvalFunc<Double> {
-
-    public static final long GAB_DIVIDER = 3686400000L;  // (number of milliseconds in 1 hour) * (number of MBs in 1 GB)
+/** @author Anatoliy Bazko */
+public class UUIDFrom extends EvalFunc<String> {
 
     /** {@inheritDoc} */
     @Override
-    public Double exec(Tuple input) throws IOException {
-        if (input == null || input.size() < 2) {
-            return null;
-        }
-
-        try {
-            double memory = (long)input.get(0);
-            double usage_time = (long)input.get(1);
-
-            return (memory * usage_time) / GAB_DIVIDER;
-        } catch (NumberFormatException | ArithmeticException | NullPointerException e) {
-            return null;
+    public String exec(Tuple input) throws IOException {
+        if (input.size() == 0) {
+            return java.util.UUID.randomUUID().toString();
+        } else {
+            byte[] bytes = input.toString().getBytes();
+            return java.util.UUID.nameUUIDFromBytes(bytes).toString();
         }
     }
 

@@ -139,6 +139,7 @@ public class PigServer {
         server.registerJar(DBObject.class.getProtectionDomain().getCodeSource().getLocation().getPath());
 
         server.registerFunction("UUID", new FuncSpec("com.codenvy.analytics.pig.udf.UUID"));
+        server.registerFunction("UUIDFrom", new FuncSpec("com.codenvy.analytics.pig.udf.UUIDFrom"));
         server.registerFunction("ExtractParam", new FuncSpec("com.codenvy.analytics.pig.udf.ExtractParam"));
         server.registerFunction("ExtractDomain", new FuncSpec("com.codenvy.analytics.pig.udf.ExtractDomain"));
         server.registerFunction("NullToEmpty", new FuncSpec("com.codenvy.analytics.pig.udf.NullToEmpty"));

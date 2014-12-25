@@ -413,6 +413,7 @@ DEFINE addLogoutInterval(X, L, idleIntervalParam) RETURNS Y {
                            $X::startTime AS startTime,
                            $X::usageTime AS usageTime,
                            $X::sessionID AS sessionID,
+                           $X::message AS message,
                            logoutInterval AS logoutInterval;
   $Y = firstUpdate(x4, 'logoutInterval', 'sessionID');
 };
@@ -436,43 +437,47 @@ DEFINE getSessions(X, eventParam) RETURNS Y {
     a1 = filterByEvent($X, '$eventParam');
     a2 = removeEmptyField(a1, 'user');
     a3 = extractParam(a2, 'SESSION-ID', sessionID);
-    a = FOREACH a3 GENERATE dt, ws, user, sessionID;
+    a = FOREACH a3 GENERATE dt, ws, user, sessionID, message;
 
     -- gets the very FIRST event to figure out the session start time
     s1 = firstUpdate(a, 'dt', 'sessionID');
     s2 = FOREACH s1 GENERATE a::dt AS dt,
-                              a::ws AS ws,
-                              a::user AS user,
-                              a::sessionID AS sessionID,
-                              GetSessionStartTime(a::sessionID) AS startTime;
+                             a::ws AS ws,
+                             a::user AS user,
+                             a::sessionID AS sessionID,
+                             GetSessionStartTime(a::sessionID) AS startTime,
+                             a::message AS message;
     s = FOREACH s2 GENERATE ws,
-                             user,
-                             sessionID,
-                             (startTime IS NULL ? ToMilliSeconds(dt) : startTime) AS startTime;
+                            user,
+                            sessionID,
+                            (startTime IS NULL ? ToMilliSeconds(dt) : startTime) AS startTime,
+                            message;
 
     -- gets the very LAST event to figure out the session start end time
     b1 = lastUpdate(a, 'sessionID');
     b2 = FOREACH b1 GENERATE a::dt AS dt,
-                              ToMilliSeconds(a::dt) AS endTime,
-                              a::ws AS ws,
-                              a::user AS user,
-                              a::sessionID AS sessionID;
+                             ToMilliSeconds(a::dt) AS endTime,
+                             a::ws AS ws,
+                             a::user AS user,
+                             a::sessionID AS sessionID;
 
     b3 = JOIN b2 BY sessionID, s BY sessionID;
     b = FOREACH b3 GENERATE b2::dt AS dt,
-                             b2::ws AS ws,
-                             b2::user AS user,
-                             b2::sessionID AS sessionID,
-                             s::startTime AS startTime,
-                             (b2::endTime - s::startTime) AS usageTime;
+                            b2::ws AS ws,
+                            b2::user AS user,
+                            b2::sessionID AS sessionID,
+                            s::startTime AS startTime,
+                            (b2::endTime - s::startTime) AS usageTime,
+                            s::message AS message;
 
     c = addLogoutInterval(b, $X, '600000');
-    $Y = FOREACH c GENERATE ws,
-                            user,
-                            sessionID,
-                            startTime,
+    $Y = FOREACH c GENERATE ws AS ws,
+                            user AS user,
+                            sessionID AS sessionID,
+                            startTime AS startTime,
                             (usageTime + logoutInterval) AS usageTime,
                             (startTime + usageTime + logoutInterval) AS endTime,
-                            logoutInterval;
+                            logoutInterval AS logoutInterval,
+                            message AS message;
 
 };

@@ -26,6 +26,7 @@ import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.pig.scripts.ScriptType;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
+
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -38,7 +39,6 @@ import java.util.Map;
 import static com.codenvy.analytics.datamodel.ValueDataUtil.getAsDouble;
 import static com.codenvy.analytics.datamodel.ValueDataUtil.getAsList;
 import static com.codenvy.analytics.datamodel.ValueDataUtil.getAsLong;
-import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsMap;
 import static com.codenvy.analytics.metrics.MetricFactory.getMetric;
 import static java.lang.Math.round;
 import static org.testng.Assert.assertEquals;
@@ -66,177 +66,177 @@ public class TestTaskerMetrics extends BaseTest {
         ListValueData value = (ListValueData)(metric).getValue(Context.EMPTY);
         assertEquals(value.size(), 14);
 
-        List<ValueData> tasks = value.getAll();
-        assertEquals(treatAsMap(tasks.get(0)).toString(), "{"
-                                                          + "date=1382274000000, "
-                                                          + "user=anonymoususer_user11, "
-                                                          + "ws=ws1, "
-                                                          + "project=project, "
-                                                          + "project_type=projecttype, "
-                                                          + "project_id=anonymoususer_user11/ws1/project, "
-                                                          + "persistent_ws=0, "
-                                                          + "id=session1, "
-                                                          + "task_type=editor, "
-                                                          + "memory=25, "
-                                                          + "usage_time=60000, "
-                                                          + "start_time=1382274000000, "
-                                                          + "stop_time=1382274060000, "
-                                                          + "gigabyte_ram_hours=4.069010416666667E-4, "
-                                                          + "is_factory=yes"
-                                                          + "}");
+        Map<String, Map<String, ValueData>> m = listToMap(value, "id");
+        assertEquals(m.get("session1").toString(), "{"
+                                                   + "date=1382274000000, "
+                                                   + "user=anonymoususer_user11, "
+                                                   + "ws=ws1, "
+                                                   + "project=project, "
+                                                   + "project_type=projecttype, "
+                                                   + "project_id=anonymoususer_user11/ws1/project, "
+                                                   + "persistent_ws=0, "
+                                                   + "id=session1, "
+                                                   + "task_type=editor, "
+                                                   + "memory=25, "
+                                                   + "usage_time=60000, "
+                                                   + "start_time=1382274000000, "
+                                                   + "stop_time=1382274060000, "
+                                                   + "gigabyte_ram_hours=4.069010416666667E-4, "
+                                                   + "is_factory=1"
+                                                   + "}");
 
-        assertEquals(treatAsMap(tasks.get(2)).toString(), "{"
-                                                          + "date=1382275200000, "
-                                                          + "user=user1@gmail.com, "
-                                                          + "ws=ws1, "
-                                                          + "project=project, "
-                                                          + "project_type=projecttype, "
-                                                          + "project_id=user1@gmail.com/ws1/project, "
-                                                          + "persistent_ws=0, "
-                                                          + "id=session3, "
-                                                          + "task_type=editor, "
-                                                          + "memory=25, "
-                                                          + "usage_time=60000, "
-                                                          + "start_time=1382275200000, "
-                                                          + "stop_time=1382275260000, "
-                                                          + "gigabyte_ram_hours=4.069010416666667E-4, "
-                                                          + "is_factory=no"
-                                                          + "}");
+        assertEquals(m.get("session3").toString(), "{"
+                                                    + "date=1382275200000, "
+                                                    + "user=user1@gmail.com, "
+                                                    + "ws=ws1, "
+                                                    + "project=project, "
+                                                    + "project_type=projecttype, "
+                                                    + "project_id=user1@gmail.com/ws1/project, "
+                                                    + "persistent_ws=0, "
+                                                    + "id=session3, "
+                                                    + "task_type=editor, "
+                                                    + "memory=25, "
+                                                    + "usage_time=60000, "
+                                                    + "start_time=1382275200000, "
+                                                    + "stop_time=1382275260000, "
+                                                    + "gigabyte_ram_hours=4.069010416666667E-4, "
+                                                    + "is_factory=0"
+                                                    + "}");
 
-        assertEquals(treatAsMap(tasks.get(4)).toString(), "{"
-                                                          + "date=1382252400000, "
-                                                          + "user=user, "
-                                                          + "ws=ws, "
-                                                          + "project=project1, "
-                                                          + "project_type=projecttype, "
-                                                          + "project_id=user/ws/project1, "
-                                                          + "persistent_ws=0, "
-                                                          + "id=id1_b, "
-                                                          + "task_type=builder, "
-                                                          + "memory=1536, "
-                                                          + "usage_time=120000, "
-                                                          + "start_time=1382252400000, "
-                                                          + "stop_time=1382252520000, "
-                                                          + "gigabyte_ram_hours=0.05, "
-                                                          + "is_factory=yes, "
-                                                          + "launch_type=timeout, "
-                                                          + "shutdown_type=normal"
-                                                          + "}");
+        assertEquals(m.get("id1_b").toString(), "{"
+                                                + "date=1382252400000, "
+                                                + "user=user, "
+                                                + "ws=ws, "
+                                                + "project=project1, "
+                                                + "project_type=projecttype, "
+                                                + "project_id=user/ws/project1, "
+                                                + "persistent_ws=0, "
+                                                + "id=id1_b, "
+                                                + "task_type=builder, "
+                                                + "memory=1536, "
+                                                + "usage_time=120000, "
+                                                + "start_time=1382252400000, "
+                                                + "stop_time=1382252520000, "
+                                                + "gigabyte_ram_hours=0.05, "
+                                                + "is_factory=1, "
+                                                + "launch_type=timeout, "
+                                                + "shutdown_type=normal"
+                                                + "}");
 
-        assertEquals(treatAsMap(tasks.get(5)).toString(), "{"
-                                                          + "date=1382256000000, "
-                                                          + "user=user, "
-                                                          + "ws=ws, "
-                                                          + "project=project2, "
-                                                          + "project_type=projecttype, "
-                                                          + "project_id=user/ws/project2, "
-                                                          + "persistent_ws=0, "
-                                                          + "id=id2_b, "
-                                                          + "task_type=builder, "
-                                                          + "memory=250, "
-                                                          + "usage_time=60000, "
-                                                          + "start_time=1382256000000, "
-                                                          + "stop_time=1382256060000, "
-                                                          + "gigabyte_ram_hours=0.004069010416666667, "
-                                                          + "is_factory=yes, "
-                                                          + "launch_type=always-on, "
-                                                          + "shutdown_type=normal"
-                                                          + "}");
+        assertEquals(m.get("id2_b").toString(), "{"
+                                                + "date=1382256000000, "
+                                                + "user=user, "
+                                                + "ws=ws, "
+                                                + "project=project2, "
+                                                + "project_type=projecttype, "
+                                                + "project_id=user/ws/project2, "
+                                                + "persistent_ws=0, "
+                                                + "id=id2_b, "
+                                                + "task_type=builder, "
+                                                + "memory=250, "
+                                                + "usage_time=60000, "
+                                                + "start_time=1382256000000, "
+                                                + "stop_time=1382256060000, "
+                                                + "gigabyte_ram_hours=0.004069010416666667, "
+                                                + "is_factory=1, "
+                                                + "launch_type=always-on, "
+                                                + "shutdown_type=normal"
+                                                + "}");
 
-        assertEquals(treatAsMap(tasks.get(6)).toString(), "{"
-                                                          + "date=1382256000000, "
-                                                          + "user=user, "
-                                                          + "ws=ws, "
-                                                          + "project=project3, "
-                                                          + "project_type=projecttype, "
-                                                          + "project_id=user/ws/project3, "
-                                                          + "persistent_ws=0, "
-                                                          + "id=id3_b, "
-                                                          + "task_type=builder, "
-                                                          + "memory=1536, "
-                                                          + "usage_time=120000, "
-                                                          + "start_time=1382256000000, "
-                                                          + "stop_time=1382256120000, "
-                                                          + "gigabyte_ram_hours=0.05, "
-                                                          + "is_factory=yes, "
-                                                          + "launch_type=timeout, "
-                                                          + "shutdown_type=timeout"
-                                                          + "}");
+        assertEquals(m.get("id3_b").toString(), "{"
+                                                + "date=1382256000000, "
+                                                + "user=user, "
+                                                + "ws=ws, "
+                                                + "project=project3, "
+                                                + "project_type=projecttype, "
+                                                + "project_id=user/ws/project3, "
+                                                + "persistent_ws=0, "
+                                                + "id=id3_b, "
+                                                + "task_type=builder, "
+                                                + "memory=1536, "
+                                                + "usage_time=120000, "
+                                                + "start_time=1382256000000, "
+                                                + "stop_time=1382256120000, "
+                                                + "gigabyte_ram_hours=0.05, "
+                                                + "is_factory=1, "
+                                                + "launch_type=timeout, "
+                                                + "shutdown_type=timeout"
+                                                + "}");
 
-        assertEquals(treatAsMap(tasks.get(7)).toString(), "{"
-                                                          + "date=1382252400000, "
-                                                          + "user=user, "
-                                                          + "ws=ws, "
-                                                          + "project=project1, "
-                                                          + "project_type=projecttype, "
-                                                          + "project_id=user/ws/project1, "
-                                                          + "persistent_ws=0, "
-                                                          + "id=id1_r, "
-                                                          + "task_type=runner, "
-                                                          + "memory=128, "
-                                                          + "usage_time=120000, "
-                                                          + "start_time=1382252400000, "
-                                                          + "stop_time=1382252520000, "
-                                                          + "gigabyte_ram_hours=0.004166666666666667, "
-                                                          + "is_factory=yes, "
-                                                          + "launch_type=timeout, "
-                                                          + "shutdown_type=user"
-                                                          + "}");
+        assertEquals(m.get("id1_r").toString(), "{"
+                                                + "date=1382252400000, "
+                                                + "user=user, "
+                                                + "ws=ws, "
+                                                + "project=project1, "
+                                                + "project_type=projecttype, "
+                                                + "project_id=user/ws/project1, "
+                                                + "persistent_ws=0, "
+                                                + "id=id1_r, "
+                                                + "task_type=runner, "
+                                                + "memory=128, "
+                                                + "usage_time=120000, "
+                                                + "start_time=1382252400000, "
+                                                + "stop_time=1382252520000, "
+                                                + "gigabyte_ram_hours=0.004166666666666667, "
+                                                + "is_factory=1, "
+                                                + "launch_type=timeout, "
+                                                + "shutdown_type=user"
+                                                + "}");
 
-        assertEquals(treatAsMap(tasks.get(8)).toString(), "{"
-                                                          + "date=1382256000000, "
-                                                          + "user=user, "
-                                                          + "ws=ws, "
-                                                          + "project=project2, "
-                                                          + "project_type=projecttype, "
-                                                          + "project_id=user/ws/project2, "
-                                                          + "persistent_ws=0, "
-                                                          + "id=id2_r, "
-                                                          + "task_type=runner, "
-                                                          + "memory=128, "
-                                                          + "usage_time=120000, "
-                                                          + "start_time=1382256000000, "
-                                                          + "stop_time=1382256120000, "
-                                                          + "gigabyte_ram_hours=0.004166666666666667, "
-                                                          + "is_factory=yes, "
-                                                          + "launch_type=always-on, "
-                                                          + "shutdown_type=timeout"
-                                                          + "}");
+        assertEquals(m.get("id2_r").toString(), "{"
+                                                + "date=1382256000000, "
+                                                + "user=user, "
+                                                + "ws=ws, "
+                                                + "project=project2, "
+                                                + "project_type=projecttype, "
+                                                + "project_id=user/ws/project2, "
+                                                + "persistent_ws=0, "
+                                                + "id=id2_r, "
+                                                + "task_type=runner, "
+                                                + "memory=128, "
+                                                + "usage_time=120000, "
+                                                + "start_time=1382256000000, "
+                                                + "stop_time=1382256120000, "
+                                                + "gigabyte_ram_hours=0.004166666666666667, "
+                                                + "is_factory=1, "
+                                                + "launch_type=always-on, "
+                                                + "shutdown_type=timeout"
+                                                + "}");
 
-        assertEquals(treatAsMap(tasks.get(9)).toString(), "{"
-                                                          + "date=1382256000000, "
-                                                          + "user=user, "
-                                                          + "ws=ws, "
-                                                          + "project=project3, "
-                                                          + "project_type=projecttype, "
-                                                          + "project_id=user/ws/project3, "
-                                                          + "persistent_ws=0, "
-                                                          + "id=id3_r, "
-                                                          + "task_type=runner, "
-                                                          + "memory=128, "
-                                                          + "usage_time=60000, "
-                                                          + "start_time=1382256000000, "
-                                                          + "stop_time=1382256060000, "
-                                                          + "gigabyte_ram_hours=0.0020833333333333333, "
-                                                          + "is_factory=yes, "
-                                                          + "launch_type=timeout, "
-                                                          + "shutdown_type=user"
-                                                          + "}");
+        assertEquals(m.get("id3_r").toString(), "{"
+                                                + "date=1382256000000, "
+                                                + "user=user, "
+                                                + "ws=ws, "
+                                                + "project=project3, "
+                                                + "project_type=projecttype, "
+                                                + "project_id=user/ws/project3, "
+                                                + "persistent_ws=0, "
+                                                + "id=id3_r, "
+                                                + "task_type=runner, "
+                                                + "memory=128, "
+                                                + "usage_time=60000, "
+                                                + "start_time=1382256000000, "
+                                                + "stop_time=1382256060000, "
+                                                + "gigabyte_ram_hours=0.0020833333333333333, "
+                                                + "is_factory=1, "
+                                                + "launch_type=timeout, "
+                                                + "shutdown_type=user"
+                                                + "}");
 
-        assertEquals(treatAsMap(tasks.get(10)).toString(), "{"
-                                                          + "date=1382259600000, "
-                                                          + "user=user, "
-                                                          + "ws=ws, "
-                                                          + "project=project1, "
-                                                          + "project_type=projecttype, "
-                                                          + "project_id=user/ws/project1, "
-                                                          + "persistent_ws=0, "
-                                                          + "id=id4_r, "
-                                                          + "task_type=runner, "
-                                                          + "start_time=1382259600000, "
-                                                          + "is_factory=yes, "
-                                                          + "launch_type=timeout"
-                                                          + "}");
+        assertEquals(m.get("id4_r").toString(), "{"
+                                                + "date=1382259600000, "
+                                                + "user=user, "
+                                                + "ws=ws, "
+                                                + "project=project1, "
+                                                + "project_type=projecttype, "
+                                                + "project_id=user/ws/project1, "
+                                                + "persistent_ws=0, "
+                                                + "id=id4_r, "
+                                                + "task_type=runner, "
+                                                + "start_time=1382259600000, "
+                                                + "is_factory=1, "
+                                                + "launch_type=timeout"
+                                                + "}");
     }
 
     @Test
@@ -248,8 +248,9 @@ public class TestTaskerMetrics extends BaseTest {
 
         ListValueData value = getAsList(metric, builder.build());
         assertEquals(value.size(), 4);
-        List<ValueData> tasks = value.getAll();
-        assertEquals(treatAsMap(tasks.get(0)).toString(), "{"
+        Map<String, Map<String, ValueData>> m = listToMap(value, "id");
+
+        assertEquals(m.get("id1_r").toString(), "{"
                                                           + "date=1382252400000, "
                                                           + "user=user, "
                                                           + "ws=ws, "
@@ -264,12 +265,12 @@ public class TestTaskerMetrics extends BaseTest {
                                                           + "start_time=1382252400000, "
                                                           + "stop_time=1382252520000, "
                                                           + "gigabyte_ram_hours=0.004166666666666667, "
-                                                          + "is_factory=yes, "
+                                                          + "is_factory=1, "
                                                           + "launch_type=timeout, "
                                                           + "shutdown_type=user"
                                                           + "}");
 
-        assertEquals(treatAsMap(tasks.get(1)).toString(), "{"
+        assertEquals(m.get("id2_r").toString(), "{"
                                                           + "date=1382256000000, "
                                                           + "user=user, "
                                                           + "ws=ws, "
@@ -284,12 +285,12 @@ public class TestTaskerMetrics extends BaseTest {
                                                           + "start_time=1382256000000, "
                                                           + "stop_time=1382256120000, "
                                                           + "gigabyte_ram_hours=0.004166666666666667, "
-                                                          + "is_factory=yes, "
+                                                          + "is_factory=1, "
                                                           + "launch_type=always-on, "
                                                           + "shutdown_type=timeout"
                                                           + "}");
 
-        assertEquals(treatAsMap(tasks.get(2)).toString(), "{"
+        assertEquals(m.get("id3_r").toString(), "{"
                                                           + "date=1382256000000, "
                                                           + "user=user, "
                                                           + "ws=ws, "
@@ -304,12 +305,12 @@ public class TestTaskerMetrics extends BaseTest {
                                                           + "start_time=1382256000000, "
                                                           + "stop_time=1382256060000, "
                                                           + "gigabyte_ram_hours=0.0020833333333333333, "
-                                                          + "is_factory=yes, "
+                                                          + "is_factory=1, "
                                                           + "launch_type=timeout, "
                                                           + "shutdown_type=user"
                                                           + "}");
 
-        assertEquals(treatAsMap(tasks.get(3)).toString(), "{"
+        assertEquals(m.get("id4_r").toString(), "{"
                                                           + "date=1382259600000, "
                                                           + "user=user, "
                                                           + "ws=ws, "
@@ -320,7 +321,7 @@ public class TestTaskerMetrics extends BaseTest {
                                                           + "id=id4_r, "
                                                           + "task_type=runner, "
                                                           + "start_time=1382259600000, "
-                                                          + "is_factory=yes, "
+                                                          + "is_factory=1, "
                                                           + "launch_type=timeout"
                                                           + "}");
     }
@@ -819,24 +820,41 @@ public class TestTaskerMetrics extends BaseTest {
                                       .build());
 
         /** EDIT EVENTS */
-        events.add(Event.Builder.createFullSessionUsageEvent("anonymoususer_user11", "ws1", "project", "projectType", "session1", true, 1382274000000l, 60000)
+        events.add(Event.Builder.createExtendedSessionUsageEvent("anonymoususer_user11", "ws1", "project", "projectType", "session1", true)
                                 .withDate("2013-10-20")
                                 .withTime("16:00:00")
                                 .build());
+        events.add(Event.Builder.createExtendedSessionUsageEvent("anonymoususer_user11", "ws1", "project", "projectType", "session1", true)
+                                .withDate("2013-10-20")
+                                .withTime("16:01:00")
+                                .build());
 
-        events.add(Event.Builder.createFullSessionUsageEvent("anonymoususer_user11", "ws1", "project", "projectType", "session2", true, 1382274600000l, 120000)
+
+        events.add(Event.Builder.createExtendedSessionUsageEvent("anonymoususer_user11", "ws1", "project", "projectType", "session2", true)
                                 .withDate("2013-10-20")
                                 .withTime("16:10:00")
                                 .build());
+        events.add(Event.Builder.createExtendedSessionUsageEvent("anonymoususer_user11", "ws1", "project", "projectType", "session2", true)
+                                .withDate("2013-10-20")
+                                .withTime("16:12:00")
+                                .build());
 
-        events.add(Event.Builder.createFullSessionUsageEvent("user1@gmail.com", "ws1", "project", "projectType", "session3", false, 1382275200000l, 60000)
+        events.add(Event.Builder.createExtendedSessionUsageEvent("user1@gmail.com", "ws1", "project", "projectType", "session3", false)
                                 .withDate("2013-10-20")
                                 .withTime("16:20:00")
                                 .build());
+        events.add(Event.Builder.createExtendedSessionUsageEvent("user1@gmail.com", "ws1", "project", "projectType", "session3", false)
+                                .withDate("2013-10-20")
+                                .withTime("16:21:00")
+                                .build());
 
-        events.add(Event.Builder.createFullSessionUsageEvent("user1@gmail.com", "ws1", "project", "projectType", "session4", false, 1382274360000l, 120000)
+        events.add(Event.Builder.createExtendedSessionUsageEvent("user1@gmail.com", "ws1", "project", "projectType", "session4", false)
                                 .withDate("2013-10-20")
                                 .withTime("16:30:00")
+                                .build());
+        events.add(Event.Builder.createExtendedSessionUsageEvent("user1@gmail.com", "ws1", "project", "projectType", "session4", false)
+                                .withDate("2013-10-20")
+                                .withTime("16:32:00")
                                 .build());
 
         return LogGenerator.generateLog(events);

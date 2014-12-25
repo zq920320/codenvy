@@ -19,13 +19,9 @@ package com.codenvy.analytics.metrics.tasks;
 
 import com.codenvy.analytics.datamodel.DoubleValueData;
 import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.datamodel.ValueDataUtil;
-import com.codenvy.analytics.metrics.Context;
-import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricType;
 
 import javax.annotation.security.RolesAllowed;
-import java.io.IOException;
 
 /** @author Dmytro Nochevnov */
 @RolesAllowed(value = {"user", "system/admin", "system/manager"})
@@ -35,17 +31,6 @@ public class TasksGigabyteRamHours extends AbstractTasksMetric {
         super(MetricType.TASKS_GIGABYTE_RAM_HOURS, MetricType.BUILDS_GIGABYTE_RAM_HOURS,
                                                       MetricType.RUNS_GIGABYTE_RAM_HOURS,
                                                       MetricType.DEBUGS_GIGABYTE_RAM_HOURS);
-    }
-
-    @Override
-    public ValueData getValue(Context context) throws IOException {
-        double sum = 0;
-
-        for (Metric metric : basedMetric) {
-            sum += ValueDataUtil.getAsDouble(metric, context).getAsDouble();
-        }
-
-        return new DoubleValueData(sum);
     }
 
     /** {@inheritDoc} */

@@ -21,8 +21,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import static java.lang.String.format;
-
 /** @author <a href="mailto:abazko@exoplatform.com">Anatoliy Bazko</a> */
 public class Event {
     private final String              date;
@@ -119,21 +117,18 @@ public class Event {
                                 .withParam("PARAMETERS", "SESSION-ID=" + sessionId);
         }
 
-        public static Builder createFullSessionUsageEvent(String user,
-                                                      String ws,
-                                                      String project,
-                                                      String type,
-                                                      String sessionId,
-                                                      boolean isFactory,
-                                                      long startTime,
-                                                      long usageTime) {
-            String parameters = format("USAGE-TIME=%s,START-TIME=%s,SESSION-ID=%s", usageTime, startTime, sessionId);
+        public static Builder createExtendedSessionUsageEvent(String user,
+                                                              String ws,
+                                                              String project,
+                                                              String type,
+                                                              String sessionId,
+                                                              boolean isFactory) {
             return new Builder().withParam("EVENT", isFactory ? "session-factory-usage" : "session-usage")
                                 .withParam("WS", ws)
                                 .withParam("USER", user)
                                 .withParam("PROJECT", project)
                                 .withParam("TYPE", type)
-                                .withParam("PARAMETERS", parameters);
+                                .withParam("PARAMETERS", "SESSION-ID=" + sessionId);
         }
 
         public static Builder createRunStartedEvent(String user, String ws, String project, String type, String id) {

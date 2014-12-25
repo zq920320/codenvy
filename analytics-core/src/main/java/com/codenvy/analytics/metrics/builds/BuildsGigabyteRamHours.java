@@ -55,7 +55,7 @@ public class BuildsGigabyteRamHours extends ReadBasedMetric implements ReadBased
     @Override
     public DBObject[] getSpecificDBOperations(Context clauses) {
         DBObject project1 = new BasicDBObject("x", new BasicDBObject("$multiply", new Object[]{BUILDER_MEMORY_USAGE_IN_MB, "$" + USAGE_TIME}));
-        DBObject project2 = new BasicDBObject("y", new BasicDBObject("$divide", new Object[]{"$x", CalculateGigabyteRamHours.GRH_DEVIDER}));
+        DBObject project2 = new BasicDBObject("y", new BasicDBObject("$divide", new Object[]{"$x", CalculateGigabyteRamHours.GAB_DIVIDER}));
         DBObject group = new BasicDBObject(ID, null).append(VALUE, new BasicDBObject("$sum", "$y"));
 
         return new DBObject[]{new BasicDBObject("$project", project1),
