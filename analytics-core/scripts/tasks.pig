@@ -165,29 +165,18 @@ debug_table = FOREACH debugs GENERATE UUID(),
                                   TOTUPLE('shutdown_type', debug_finished::shutdown_type);
 
 
-edits = filterByEvent(l, 'session-usage');
-edits = extractParam(edits, 'PROJECT', project);
-edits = extractParam(edits, 'TYPE', project_type);
-edits = extractParam(edits, 'SESSION-ID', sessionID);
-edits = extractParam(edits, 'START-TIME', startTime);
-edits = extractParam(edits, 'USAGE-TIME', usageTime);
-
+edits = getSessions(l, 'session-usage');
 edits = FOREACH edits GENERATE ws,
                                user,
-                               project,
-                               project_type,
                                sessionID,
-                               (long) startTime,
-                               (long) usageTime,
-                               ((long) startTime + (long) usageTime) AS endTime;
+                               startTime,
+                               usageTime,
+                               endTime;
 
 edits_table = FOREACH edits GENERATE UUID(),
                                      TOTUPLE('date', startTime),
                                      TOTUPLE('ws', ws),
                                      TOTUPLE('user', user),
-                                     TOTUPLE('project', project),
-                                     TOTUPLE('project_type', LOWER(project_type)),
-                                     TOTUPLE('project_id', CreateProjectId(user, ws, project)),
                                      TOTUPLE('id', sessionID),
                                      TOTUPLE('task_type', 'editor'),
                                      TOTUPLE('memory', $default_editor_memory_mb),
@@ -197,37 +186,27 @@ edits_table = FOREACH edits GENERATE UUID(),
                                      TOTUPLE('gigabyte_ram_hours', CalculateGigabyteRamHours((long) $default_editor_memory_mb, usageTime)),
                                      TOTUPLE('is_factory', 'no');
 
-edits_in_factory = filterByEvent(l, 'session-factory-usage');
-edits_in_factory = extractParam(edits_in_factory, 'PROJECT', project);
-edits_in_factory = extractParam(edits_in_factory, 'TYPE', project_type);
-edits_in_factory = extractParam(edits_in_factory, 'SESSION-ID', sessionID);
-edits_in_factory = extractParam(edits_in_factory, 'START-TIME', startTime);
-edits_in_factory = extractParam(edits_in_factory, 'USAGE-TIME', usageTime);
 
+edits_in_factory = getSessions(l, 'session-factory-usage');
 edits_in_factory = FOREACH edits_in_factory GENERATE ws,
                                                      user,
-                                                     project,
-                                                     project_type,
                                                      sessionID,
-                                                     (long) startTime,
-                                                     (long) usageTime,
-                                                     ((long) startTime + (long) usageTime) AS endTime;
+                                                     startTime,
+                                                     usageTime,
+                                                     endTime;
 
 edits_in_factory_table = FOREACH edits_in_factory GENERATE UUID(),
-                                                           TOTUPLE('date', startTime),
-                                                           TOTUPLE('ws', ws),
-                                                           TOTUPLE('user', user),
-                                                           TOTUPLE('project', project),
-                                                           TOTUPLE('project_type', LOWER(project_type)),
-                                                           TOTUPLE('project_id', CreateProjectId(user, ws, project)),
-                                                           TOTUPLE('id', sessionID),
-                                                           TOTUPLE('task_type', 'editor'),
-                                                           TOTUPLE('memory', $default_editor_memory_mb),
-                                                           TOTUPLE('usage_time', usageTime),
-                                                           TOTUPLE('start_time', startTime),
-                                                           TOTUPLE('stop_time', endTime),
-                                                           TOTUPLE('gigabyte_ram_hours', CalculateGigabyteRamHours((long) $default_editor_memory_mb, usageTime)),
-                                                           TOTUPLE('is_factory', 'yes');
+                                     TOTUPLE('date', startTime),
+                                     TOTUPLE('ws', ws),
+                                     TOTUPLE('user', user),
+                                     TOTUPLE('id', sessionID),
+                                     TOTUPLE('task_type', 'editor'),
+                                     TOTUPLE('memory', $default_editor_memory_mb),
+                                     TOTUPLE('usage_time', usageTime),
+                                     TOTUPLE('start_time', startTime),
+                                     TOTUPLE('stop_time', endTime),
+                                     TOTUPLE('gigabyte_ram_hours', CalculateGigabyteRamHours((long) $default_editor_memory_mb, usageTime)),
+                                     TOTUPLE('is_factory', 'yes');
 
 tasks_table = UNION builds_table, runs_table, debug_table, edits_table, edits_in_factory_table;
 STORE tasks_table INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;

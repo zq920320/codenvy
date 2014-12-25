@@ -56,7 +56,7 @@ public class TestTaskerMetrics extends BaseTest {
         Metric metric = MetricFactory.getMetric(MetricType.TASKS);
 
         LongValueData l = getAsLong(metric, Context.EMPTY);
-        assertEquals(l.getAsLong(), 14);
+        assertEquals(l.getAsLong(), 12);
     }
 
     @Test
@@ -64,46 +64,10 @@ public class TestTaskerMetrics extends BaseTest {
         Metric metric = MetricFactory.getMetric(MetricType.TASKS_LIST);
 
         ListValueData value = (ListValueData)(metric).getValue(Context.EMPTY);
-        assertEquals(value.size(), 14);
+        assertEquals(value.size(), 12);
 
         List<ValueData> tasks = value.getAll();
         assertEquals(treatAsMap(tasks.get(0)).toString(), "{"
-                                                          + "date=1382274000000, "
-                                                          + "user=anonymoususer_user11, "
-                                                          + "ws=ws1, "
-                                                          + "project=project, "
-                                                          + "project_type=projecttype, "
-                                                          + "project_id=anonymoususer_user11/ws1/project, "
-                                                          + "persistent_ws=0, "
-                                                          + "id=session1, "
-                                                          + "task_type=editor, "
-                                                          + "memory=25, "
-                                                          + "usage_time=60000, "
-                                                          + "start_time=1382274000000, "
-                                                          + "stop_time=1382274060000, "
-                                                          + "gigabyte_ram_hours=4.069010416666667E-4, "
-                                                          + "is_factory=yes"
-                                                          + "}");
-
-        assertEquals(treatAsMap(tasks.get(1)).toString(), "{"
-                                                          + "date=1382274600000, "
-                                                          + "user=anonymoususer_user11, "
-                                                          + "ws=ws1, "
-                                                          + "project=project, "
-                                                          + "project_type=projecttype, "
-                                                          + "project_id=anonymoususer_user11/ws1/project, "
-                                                          + "persistent_ws=0, "
-                                                          + "id=session2, "
-                                                          + "task_type=editor, "
-                                                          + "memory=25, "
-                                                          + "usage_time=120000, "
-                                                          + "start_time=1382274600000, "
-                                                          + "stop_time=1382274720000, "
-                                                          + "gigabyte_ram_hours=8.138020833333334E-4, "
-                                                          + "is_factory=yes"
-                                                          + "}");
-
-        assertEquals(treatAsMap(tasks.get(4)).toString(), "{"
                                                           + "date=1382252400000, "
                                                           + "user=user, "
                                                           + "ws=ws, "
@@ -123,7 +87,7 @@ public class TestTaskerMetrics extends BaseTest {
                                                           + "shutdown_type=normal"
                                                           + "}");
 
-        assertEquals(treatAsMap(tasks.get(5)).toString(), "{"
+        assertEquals(treatAsMap(tasks.get(1)).toString(), "{"
                                                           + "date=1382256000000, "
                                                           + "user=user, "
                                                           + "ws=ws, "
@@ -143,7 +107,7 @@ public class TestTaskerMetrics extends BaseTest {
                                                           + "shutdown_type=normal"
                                                           + "}");
 
-        assertEquals(treatAsMap(tasks.get(6)).toString(), "{"
+        assertEquals(treatAsMap(tasks.get(2)).toString(), "{"
                                                           + "date=1382256000000, "
                                                           + "user=user, "
                                                           + "ws=ws, "
@@ -163,7 +127,7 @@ public class TestTaskerMetrics extends BaseTest {
                                                           + "shutdown_type=timeout"
                                                           + "}");
 
-        assertEquals(treatAsMap(tasks.get(7)).toString(), "{"
+        assertEquals(treatAsMap(tasks.get(3)).toString(), "{"
                                                           + "date=1382252400000, "
                                                           + "user=user, "
                                                           + "ws=ws, "
@@ -183,7 +147,7 @@ public class TestTaskerMetrics extends BaseTest {
                                                           + "shutdown_type=user"
                                                           + "}");
 
-        assertEquals(treatAsMap(tasks.get(8)).toString(), "{"
+        assertEquals(treatAsMap(tasks.get(4)).toString(), "{"
                                                           + "date=1382256000000, "
                                                           + "user=user, "
                                                           + "ws=ws, "
@@ -203,7 +167,7 @@ public class TestTaskerMetrics extends BaseTest {
                                                           + "shutdown_type=timeout"
                                                           + "}");
 
-        assertEquals(treatAsMap(tasks.get(9)).toString(), "{"
+        assertEquals(treatAsMap(tasks.get(5)).toString(), "{"
                                                           + "date=1382256000000, "
                                                           + "user=user, "
                                                           + "ws=ws, "
@@ -223,7 +187,7 @@ public class TestTaskerMetrics extends BaseTest {
                                                           + "shutdown_type=user"
                                                           + "}");
 
-        assertEquals(treatAsMap(tasks.get(10)).toString(), "{"
+        assertEquals(treatAsMap(tasks.get(6)).toString(), "{"
                                                           + "date=1382259600000, "
                                                           + "user=user, "
                                                           + "ws=ws, "
@@ -237,6 +201,96 @@ public class TestTaskerMetrics extends BaseTest {
                                                           + "is_factory=yes, "
                                                           + "launch_type=timeout"
                                                           + "}");
+
+        assertEquals(treatAsMap(tasks.get(7)).toString(), "{"
+                                                          + "date=1382263200000, "
+                                                          + "user=user, "
+                                                          + "ws=ws, "
+                                                          + "project=project, "
+                                                          + "project_type=projecttype, "
+                                                          + "project_id=user/ws/project, "
+                                                          + "persistent_ws=0, "
+                                                          + "id=id1_d, "
+                                                          + "task_type=debugger, "
+                                                          + "memory=128, "
+                                                          + "usage_time=120000, "
+                                                          + "start_time=1382263200000, "
+                                                          + "stop_time=1382263320000, "
+                                                          + "gigabyte_ram_hours=0.004166666666666667, "
+                                                          + "is_factory=yes, "
+                                                          + "launch_type=timeout, "
+                                                          + "shutdown_type=user"
+                                                          + "}");
+
+        assertEquals(treatAsMap(tasks.get(8)).toString(), "{"
+                                                          + "date=1382266800000, "
+                                                          + "user=user, "
+                                                          + "ws=ws, "
+                                                          + "project=project, "
+                                                          + "project_type=projecttype, "
+                                                          + "project_id=user/ws/project, "
+                                                          + "persistent_ws=0, "
+                                                          + "id=id2_d, "
+                                                          + "task_type=debugger, "
+                                                          + "memory=128, "
+                                                          + "usage_time=60000, "
+                                                          + "start_time=1382266800000, "
+                                                          + "stop_time=1382266860000, "
+                                                          + "gigabyte_ram_hours=0.0020833333333333333, "
+                                                          + "is_factory=yes, "
+                                                          + "launch_type=always-on, "
+                                                          + "shutdown_type=user"
+                                                          + "}");
+
+        assertEquals(treatAsMap(tasks.get(9)).toString(), "{"
+                                                          + "date=1382270400000, "
+                                                          + "user=user, "
+                                                          + "ws=ws, "
+                                                          + "project=project, "
+                                                          + "project_type=projecttype, "
+                                                          + "project_id=user/ws/project, "
+                                                          + "persistent_ws=0, "
+                                                          + "id=id3_d, "
+                                                          + "task_type=debugger, "
+                                                          + "memory=128, "
+                                                          + "usage_time=120000, "
+                                                          + "start_time=1382270400000, "
+                                                          + "stop_time=1382270520000, "
+                                                          + "gigabyte_ram_hours=0.004166666666666667, "
+                                                          + "is_factory=yes, "
+                                                          + "launch_type=timeout, "
+                                                          + "shutdown_type=timeout"
+                                                          + "}");
+
+        assertEquals(treatAsMap(tasks.get(10)).toString(), "{"
+                                                           + "date=1382275200000, "
+                                                           + "user=user1@gmail.com, "
+                                                           + "ws=ws1, "
+                                                           + "persistent_ws=0, "
+                                                           + "id=session2, "
+                                                           + "task_type=editor, "
+                                                           + "memory=25, "
+                                                           + "usage_time=180000, "
+                                                           + "start_time=1382275200000, "
+                                                           + "stop_time=1382275380000, "
+                                                           + "gigabyte_ram_hours=0.001220703125, "
+                                                           + "is_factory=no"
+                                                           + "}");
+
+        assertEquals(treatAsMap(tasks.get(11)).toString(), "{"
+                                                           + "date=1382274000000, "
+                                                           + "user=anonymoususer_user11, "
+                                                           + "ws=ws1, "
+                                                           + "persistent_ws=0, "
+                                                           + "id=session1, "
+                                                           + "task_type=editor, "
+                                                           + "memory=25, "
+                                                           + "usage_time=180000, "
+                                                           + "start_time=1382274000000, "
+                                                           + "stop_time=1382274180000, "
+                                                           + "gigabyte_ram_hours=0.001220703125, "
+                                                           + "is_factory=yes"
+                                                           + "}");
     }
 
     @Test
@@ -340,7 +394,7 @@ public class TestTaskerMetrics extends BaseTest {
         Metric metric = MetricFactory.getMetric(MetricType.TASKS_LAUNCHED);
 
         LongValueData l = getAsLong(metric, Context.EMPTY);
-        assertEquals(l.getAsLong(), 14);
+        assertEquals(l.getAsLong(), 12);
     }
 
     @Test
@@ -351,19 +405,17 @@ public class TestTaskerMetrics extends BaseTest {
 
         Map<String, Map<String, ValueData>> m = listToMap(expandedValue, AbstractMetric.TASK_ID);
         assertEquals(m.toString(), "{"
+                                   + "id4_r={id=id4_r}, "
                                    + "id1_b={id=id1_b}, "
+                                   + "id1_r={id=id1_r}, "
                                    + "id1_d={id=id1_d}, "
                                    + "session1={id=session1}, "
-                                   + "id3_r={id=id3_r}, "
-                                   + "session4={id=session4}, "
-                                   + "session2={id=session2}, "
-                                   + "id2_r={id=id2_r}, "
-                                   + "session3={id=session3}, "
-                                   + "id4_r={id=id4_r}, "
-                                   + "id1_r={id=id1_r}, "
                                    + "id3_b={id=id3_b}, "
+                                   + "id3_r={id=id3_r}, "
                                    + "id2_d={id=id2_d}, "
                                    + "id2_b={id=id2_b}, "
+                                   + "session2={id=session2}, "
+                                   + "id2_r={id=id2_r}, "
                                    + "id3_d={id=id3_d}"
                                    + "}");
     }
@@ -373,7 +425,7 @@ public class TestTaskerMetrics extends BaseTest {
         Metric metric = MetricFactory.getMetric(MetricType.TASKS_STOPPED);
 
         LongValueData l = getAsLong(metric, Context.EMPTY);
-        assertEquals(l.getAsLong(), 13);
+        assertEquals(l.getAsLong(), 11);
     }
 
     @Test
@@ -385,17 +437,15 @@ public class TestTaskerMetrics extends BaseTest {
         Map<String, Map<String, ValueData>> m = listToMap(expandedValue, AbstractMetric.TASK_ID);
         assertEquals(m.toString(), "{"
                                    + "id1_b={id=id1_b}, "
+                                   + "id1_r={id=id1_r}, "
                                    + "id1_d={id=id1_d}, "
                                    + "session1={id=session1}, "
-                                   + "id3_r={id=id3_r}, "
-                                   + "session4={id=session4}, "
-                                   + "id2_r={id=id2_r}, "
-                                   + "session2={id=session2}, "
-                                   + "session3={id=session3}, "
-                                   + "id1_r={id=id1_r}, "
                                    + "id3_b={id=id3_b}, "
+                                   + "id3_r={id=id3_r}, "
                                    + "id2_d={id=id2_d}, "
                                    + "id2_b={id=id2_b}, "
+                                   + "session2={id=session2}, "
+                                   + "id2_r={id=id2_r}, "
                                    + "id3_d={id=id3_d}"
                                    + "}");
     }
@@ -417,17 +467,15 @@ public class TestTaskerMetrics extends BaseTest {
         Map<String, Map<String, ValueData>> m = listToMap(expandedValue, AbstractMetric.TASK_ID);
         assertEquals(m.toString(), "{"
                                    + "id1_b={id=id1_b}, "
+                                   + "id1_r={id=id1_r}, "
                                    + "id1_d={id=id1_d}, "
                                    + "session1={id=session1}, "
-                                   + "id3_r={id=id3_r}, "
-                                   + "session4={id=session4}, "
-                                   + "id2_r={id=id2_r}, "
-                                   + "session2={id=session2}, "
-                                   + "session3={id=session3}, "
-                                   + "id1_r={id=id1_r}, "
                                    + "id3_b={id=id3_b}, "
+                                   + "id3_r={id=id3_r}, "
                                    + "id2_d={id=id2_d}, "
                                    + "id2_b={id=id2_b}, "
+                                   + "session2={id=session2}, "
+                                   + "id2_r={id=id2_r}, "
                                    + "id3_d={id=id3_d}"
                                    + "}");
     }
@@ -448,17 +496,15 @@ public class TestTaskerMetrics extends BaseTest {
         Map<String, Map<String, ValueData>> m = listToMap(expandedValue, AbstractMetric.TASK_ID);
         assertEquals(m.toString(), "{"
                                    + "id1_b={id=id1_b}, "
+                                   + "id1_r={id=id1_r}, "
                                    + "id1_d={id=id1_d}, "
                                    + "session1={id=session1}, "
-                                   + "id3_r={id=id3_r}, "
-                                   + "session4={id=session4}, "
-                                   + "id2_r={id=id2_r}, "
-                                   + "session2={id=session2}, "
-                                   + "session3={id=session3}, "
-                                   + "id1_r={id=id1_r}, "
                                    + "id3_b={id=id3_b}, "
+                                   + "id3_r={id=id3_r}, "
                                    + "id2_d={id=id2_d}, "
                                    + "id2_b={id=id2_b}, "
+                                   + "session2={id=session2}, "
+                                   + "id2_r={id=id2_r}, "
                                    + "id3_d={id=id3_d}"
                                    + "}");
     }
@@ -492,7 +538,7 @@ public class TestTaskerMetrics extends BaseTest {
         Metric metric = MetricFactory.getMetric(MetricType.TASKS_LAUNCHED_WITH_ALWAYS_ON);
 
         LongValueData l = getAsLong(metric, Context.EMPTY);
-        assertEquals(l.getAsLong(), 7);
+        assertEquals(l.getAsLong(), 5);
     }
 
     @Test
@@ -505,11 +551,9 @@ public class TestTaskerMetrics extends BaseTest {
         assertEquals(m.toString(), "{"
                                    + "session1={id=session1}, "
                                    + "id2_d={id=id2_d}, "
-                                   + "session4={id=session4}, "
                                    + "id2_b={id=id2_b}, "
                                    + "session2={id=session2}, "
-                                   + "id2_r={id=id2_r}, "
-                                   + "session3={id=session3}"
+                                   + "id2_r={id=id2_r}"
                                    + "}");
     }
 
@@ -518,7 +562,7 @@ public class TestTaskerMetrics extends BaseTest {
         Metric metric = MetricFactory.getMetric(MetricType.TASKS_STOPPED_NORMALLY);
 
         LongValueData l = getAsLong(metric, Context.EMPTY);
-        assertEquals(l.getAsLong(), 10);
+        assertEquals(l.getAsLong(), 8);
     }
 
     @Test
@@ -535,10 +579,8 @@ public class TestTaskerMetrics extends BaseTest {
                                    + "session1={id=session1}, "
                                    + "id3_r={id=id3_r}, "
                                    + "id2_d={id=id2_d}, "
-                                   + "session4={id=session4}, "
                                    + "id2_b={id=id2_b}, "
-                                   + "session2={id=session2}, "
-                                   + "session3={id=session3}" +
+                                   + "session2={id=session2}" +
                                    "}");
     }
 
@@ -567,7 +609,6 @@ public class TestTaskerMetrics extends BaseTest {
         builder.put(Parameters.FROM_DATE, "20131020");
         builder.put(Parameters.TO_DATE, "20131020");
         builder.put(Parameters.LOG, initLogs().getAbsolutePath());
-
 
         builder.putAll(scriptsManager.getScript(ScriptType.EVENTS, MetricType.BUILDS).getParamsAsMap());
         pigServer.execute(ScriptType.EVENTS, builder.build());
@@ -854,24 +895,22 @@ public class TestTaskerMetrics extends BaseTest {
                                       .build());
 
         /** EDIT EVENTS */
-        events.add(Event.Builder.createFullSessionUsageEvent("anonymoususer_user11", "ws1", "project", "projectType", "session1", true, 1382274000000l, 60000)
+        events.add(Event.Builder.createSessionUsageEvent("anonymoususer_user11", "ws1", "session1", true)
                                 .withDate("2013-10-20")
                                 .withTime("16:00:00")
                                 .build());
-
-        events.add(Event.Builder.createFullSessionUsageEvent("anonymoususer_user11", "ws1", "project", "projectType", "session2", true, 1382274600000l, 120000)
+        events.add(Event.Builder.createSessionUsageEvent("anonymoususer_user11", "ws1", "session1", true)
                                 .withDate("2013-10-20")
-                                .withTime("16:10:00")
+                                .withTime("16:03:00")
                                 .build());
 
-        events.add(Event.Builder.createFullSessionUsageEvent("user1@gmail.com", "ws1", "project", "projectType", "session3", false, 1382275200000l, 60000)
+        events.add(Event.Builder.createSessionUsageEvent("user1@gmail.com", "ws1", "session2", false)
                                 .withDate("2013-10-20")
                                 .withTime("16:20:00")
                                 .build());
-
-        events.add(Event.Builder.createFullSessionUsageEvent("user1@gmail.com", "ws1", "project", "projectType", "session4", false, 1382274360000l, 120000)
+        events.add(Event.Builder.createSessionUsageEvent("user1@gmail.com", "ws1", "session2", false)
                                 .withDate("2013-10-20")
-                                .withTime("16:30:00")
+                                .withTime("16:23:00")
                                 .build());
 
         return LogGenerator.generateLog(events);
