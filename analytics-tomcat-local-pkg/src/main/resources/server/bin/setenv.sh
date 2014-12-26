@@ -22,7 +22,7 @@
 
 # Set path to organization service server
 [ -z "${ORGANIZATION_SERVICE_APPLICATION_SERVER_URL}" ] && ORGANIZATION_SERVICE_APPLICATION_SERVER_URL="http://localhost:8080/organization/"
-[ -z "${CODENVY_LOCAL_CONF_DIR}" ] && CODENVY_LOCAL_CONF_DIR="$CATALINA_HOME/data/conf"
+CODENVY_LOCAL_CONF_DIR="$CATALINA_HOME/data/conf"
 
 
 ANALYTICS_OPTS="-Dcodenvy.local.conf.dir=${CODENVY_LOCAL_CONF_DIR} \
