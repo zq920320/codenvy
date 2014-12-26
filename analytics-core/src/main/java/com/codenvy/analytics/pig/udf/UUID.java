@@ -24,18 +24,18 @@ import org.apache.pig.impl.logicalLayer.schema.Schema;
 
 import java.io.IOException;
 
-/** @author Anatoliy Bazko */
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class UUID extends EvalFunc<String> {
 
-    /** {@inheritDoc} */
     @Override
     public String exec(Tuple input) throws IOException {
         return java.util.UUID.randomUUID().toString();
     }
 
-    /** {@inheritDoc} */
     @Override
     public Schema outputSchema(Schema input) {
-        return new Schema(new Schema.FieldSchema(getSchemaName(this.getClass().getName().toLowerCase(), input), DataType.CHARARRAY));
+        return new Schema(new Schema.FieldSchema(getSchemaName(this.getClass().getName().toLowerCase(), input),
+                                                 DataType.CHARARRAY));
     }
+
 }

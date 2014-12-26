@@ -32,12 +32,11 @@ import javax.annotation.security.RolesAllowed;
 /** @author Dmytro Nochevnov */
 @RolesAllowed(value = {"user", "system/admin", "system/manager"})
 public class BuildsGigabyteRamHours extends ReadBasedMetric implements ReadBasedExpandable {
+    public static final int BUILDER_MEMORY_USAGE_MB = 1536;  // TODO (dnochevnov) temporary constant 1.5GB until the issue IDEX-1760 will be resolved.
 
     public BuildsGigabyteRamHours() {
         super(MetricType.BUILDS_GIGABYTE_RAM_HOURS);
     }
-
-    public static final int BUILDER_MEMORY_USAGE_IN_MB = 1536;  // TODO (dnochevnov) temporary constant 1.5GB until the issue IDEX-1760 will be resolved.
 
     /** {@inheritDoc} */
     @Override
@@ -54,8 +53,8 @@ public class BuildsGigabyteRamHours extends ReadBasedMetric implements ReadBased
     /** {@inheritDoc} */
     @Override
     public DBObject[] getSpecificDBOperations(Context clauses) {
-        DBObject project1 = new BasicDBObject("x", new BasicDBObject("$multiply", new Object[]{BUILDER_MEMORY_USAGE_IN_MB, "$" + USAGE_TIME}));
-        DBObject project2 = new BasicDBObject("y", new BasicDBObject("$divide", new Object[]{"$x", CalculateGigabyteRamHours.GAB_DIVIDER}));
+        DBObject project1 = new BasicDBObject("x", new BasicDBObject("$multiply", new Object[]{BUILDER_MEMORY_USAGE_MB, "$" + USAGE_TIME}));
+        DBObject project2 = new BasicDBObject("y", new BasicDBObject("$divide", new Object[]{"$x", CalculateGigabyteRamHours.GRH_DEVIDER}));
         DBObject group = new BasicDBObject(ID, null).append(VALUE, new BasicDBObject("$sum", "$y"));
 
         return new DBObject[]{new BasicDBObject("$project", project1),

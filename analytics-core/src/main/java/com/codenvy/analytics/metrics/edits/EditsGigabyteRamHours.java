@@ -15,38 +15,32 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.metrics.tasks;
+package com.codenvy.analytics.metrics.edits;
 
 import com.codenvy.analytics.datamodel.DoubleValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.datamodel.ValueDataUtil;
 import com.codenvy.analytics.metrics.Context;
-import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.tasks.AbstractTasksMetric;
+import com.codenvy.analytics.pig.udf.CalculateGigabyteRamHours;
 
 import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
 
 /** @author Dmytro Nochevnov */
 @RolesAllowed(value = {"user", "system/admin", "system/manager"})
-public class TasksGigabyteRamHours extends AbstractTasksMetric {
+public class EditsGigabyteRamHours extends AbstractTasksMetric {
+    public static final long EDITOR_MEMORY_USAGE_MB = 25;
 
-    public TasksGigabyteRamHours() {
-        super(MetricType.TASKS_GIGABYTE_RAM_HOURS, MetricType.BUILDS_GIGABYTE_RAM_HOURS,
-                                                   MetricType.RUNS_GIGABYTE_RAM_HOURS,
-                                                   MetricType.DEBUGS_GIGABYTE_RAM_HOURS,
-                                                   MetricType.EDITS_GIGABYTE_RAM_HOURS);
+    public EditsGigabyteRamHours() {
+        super(MetricType.EDITS_GIGABYTE_RAM_HOURS, MetricType.EDITS_TIME);
     }
 
     @Override
     public ValueData getValue(Context context) throws IOException {
-        double sum = 0;
-
-        for (Metric metric : basedMetric) {
-            sum += ValueDataUtil.getAsDouble(metric, context).getAsDouble();
-        }
-
-        return new DoubleValueData(sum);
+        long editorUsageTime = ValueDataUtil.getAsLong(basedMetric[0], context).getAsLong();
+        return new DoubleValueData(CalculateGigabyteRamHours.calculateGigabiteRamHours(EDITOR_MEMORY_USAGE_MB, editorUsageTime));
     }
 
     /** {@inheritDoc} */
@@ -58,6 +52,6 @@ public class TasksGigabyteRamHours extends AbstractTasksMetric {
     /** {@inheritDoc} */
     @Override
     public String getDescription() {
-        return "The tasks memory usage in GB RAM on hour";
+        return "The editor memory usage in GB RAM on hour";
     }
 }

@@ -15,61 +15,68 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.metrics.runs;
+package com.codenvy.analytics.metrics.edits;
 
-import com.codenvy.analytics.datamodel.DoubleValueData;
+import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ReadBasedExpandable;
 import com.codenvy.analytics.metrics.ReadBasedMetric;
+import com.codenvy.analytics.metrics.tasks.AbstractTasksMetric;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
 import javax.annotation.security.RolesAllowed;
 
-/** @author Anatoliy Bazko */
-@RolesAllowed(value = {"user", "system/admin", "system/manager"})
-public class RunsGigabyteRamHours extends ReadBasedMetric implements ReadBasedExpandable {
-    public RunsGigabyteRamHours() {
-        super(MetricType.RUNS_GIGABYTE_RAM_HOURS);
+/** @author Dmytro Nochevnov */
+@RolesAllowed({"system/admin", "system/manager"})
+public class EditsTime extends ReadBasedMetric implements ReadBasedExpandable {
+
+    public EditsTime() {
+        super(MetricType.EDITS_TIME);
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getStorageCollectionName() {
-        return getStorageCollectionName(MetricType.RUNS_FINISHED);
+        return getStorageCollectionName(MetricType.TASKS);
     }
 
-    /** {@inheritDoc} */
     @Override
     public String[] getTrackedFields() {
-        return new String[]{VALUE};
+        return new String[]{USAGE_TIME};
     }
 
-    /** {@inheritDoc} */
     @Override
-    public DBObject[] getSpecificDBOperations(Context clauses) {
-        DBObject project1 = new BasicDBObject("x", new BasicDBObject("$multiply", new Object[]{"$" + MEMORY, "$" + USAGE_TIME}));
-        DBObject project2 = new BasicDBObject("y", new BasicDBObject("$divide", new Object[]{"$x", 3686400000L}));
-        DBObject group = new BasicDBObject(ID, null).append(VALUE, new BasicDBObject("$sum", "$y"));
+    public Class<? extends ValueData> getValueDataClass() {
+        return LongValueData.class;
+    }
 
-        return new DBObject[]{new BasicDBObject("$project", project1),
-                              new BasicDBObject("$project", project2),
+    public DBObject[] getSpecificDBOperations(Context clauses) {
+        DBObject match = new BasicDBObject(TASK_TYPE, new BasicDBObject("$in", new String[] {AbstractTasksMetric.EDITOR}));
+
+        DBObject group = new BasicDBObject();
+        group.put(ID, null);
+        group.put(USAGE_TIME, new BasicDBObject("$sum", "$" + USAGE_TIME));
+
+        return new DBObject[]{new BasicDBObject("$match", match),
                               new BasicDBObject("$group", group)};
     }
 
-    /** {@inheritDoc} */
     @Override
     public DBObject[] getSpecificExpandedDBOperations(Context clauses) {
+        DBObject match = new BasicDBObject(TASK_TYPE, new BasicDBObject("$in", new String[] {AbstractTasksMetric.EDITOR}));
+
         DBObject group = new BasicDBObject();
         group.put(ID, "$" + getExpandedField());
 
-        DBObject project = new BasicDBObject(getExpandedField(), "$_id");
+        DBObject projection = new BasicDBObject(getExpandedField(), "$_id");
 
-        return new DBObject[]{new BasicDBObject("$group", group),
-                              new BasicDBObject("$project", project)};
+        return new DBObject[]{new BasicDBObject("$match", match),
+                              new BasicDBObject("$group", group),
+                              new BasicDBObject("$project", projection)};
     }
+
 
     /** {@inheritDoc} */
     @Override
@@ -77,16 +84,8 @@ public class RunsGigabyteRamHours extends ReadBasedMetric implements ReadBasedEx
         return TASK_ID;
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public Class<? extends ValueData> getValueDataClass() {
-        return DoubleValueData.class;
-    }
-
-    /** {@inheritDoc} */
     @Override
     public String getDescription() {
-        return "The memory usage in GB RAM on hour";
+        return "The total time of edits";
     }
-
 }

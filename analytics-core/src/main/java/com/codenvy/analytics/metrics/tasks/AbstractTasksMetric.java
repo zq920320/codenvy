@@ -19,7 +19,6 @@ package com.codenvy.analytics.metrics.tasks;
 
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.datamodel.ValueDataFactory;
 import com.codenvy.analytics.metrics.CalculatedMetric;
 import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.Expandable;
@@ -30,6 +29,10 @@ import java.io.IOException;
 
 /** @author Dmytro Nochevnov */
 public abstract class AbstractTasksMetric extends CalculatedMetric implements Expandable {
+    public static final String BUILDER  = "builder";
+    public static final String RUNNER   = "runner";
+    public static final String DEBUGGER = "debugger";
+    public static final String EDITOR   = "editor";
 
     public AbstractTasksMetric(MetricType metric, MetricType... basedMetricTypes) {
         super(metric, basedMetricTypes);
@@ -39,17 +42,6 @@ public abstract class AbstractTasksMetric extends CalculatedMetric implements Ex
     @Override
     public String getExpandedField() {
         return TASK_ID;
-    }
-
-    @Override
-    public ValueData getValue(Context context) throws IOException {
-        ValueData value = ValueDataFactory.createDefaultValue(getValueDataClass());
-
-        for (Metric metric : basedMetric) {
-            value = value.add(metric.getValue(context));
-        }
-
-        return value;
     }
 
     @Override

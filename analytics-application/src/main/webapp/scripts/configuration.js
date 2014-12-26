@@ -54,8 +54,6 @@ function AnalyticsConfiguration() {
                 "time_unit": "month"
             },
 
-            displayLineChart: true,  // default is false
-
             /** @see DatabaseTable::makeTableSortable() method docs */
             clientSortParams: {
                 "columnsWithoutSorting": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
@@ -1303,17 +1301,18 @@ function AnalyticsConfiguration() {
             },
 
             defaultModelParams: {
-                "sort": "-started_time"
+                "sort": "-start_time"
             },
 
             mapColumnToServerSortParam: {
                 "Type": "task_type",
-                "Start Time": "started_time",
-                "Stop Time": "stopped_time",
+                "Start Time": "start_time",
+                "Stop Time": "stop_time",
                 "Size (MB)": "memory",
                 "Time": "usage_time",
                 "Gigabyte RAM Hours": "gigabyte_ram_hours",
                 "User": "user",
+                "Workspace": "ws",
                 "Project": "project",
                 "Project Type": "project_type",
                 "Factory?": "is_factory",
@@ -1376,7 +1375,7 @@ function AnalyticsConfiguration() {
         "account_id",
         "data_universe",
         "passed_days_count",
-        "started_time",
+        "start_time",
         "id"
      ];
 
@@ -1392,8 +1391,8 @@ function AnalyticsConfiguration() {
     var dateParams = [
         "from_date",
         "to_date",
-        "started_time",
-        "stopped_time"
+        "start_time",
+        "stop_time"
     ];
 
     /**
@@ -1653,6 +1652,10 @@ function AnalyticsConfiguration() {
         "debugs_with_always_on": "#TASKS",
         "debugs_finished_by_user": "#TASKS",
         "debugs_finished_by_timeout": "#TASKS",
+
+        "edits": "#TASKS",
+        "edits_time": "#TASKS",
+        "edits_gigabyte_ram_hours": "#TASKS",
 
         "tasks_launched": "#TASKS",
         "tasks_stopped": "#TASKS",

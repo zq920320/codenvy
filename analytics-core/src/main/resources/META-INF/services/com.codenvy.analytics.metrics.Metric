@@ -77,6 +77,10 @@ com.codenvy.analytics.metrics.debugs.DebugsFinishedByUser
 com.codenvy.analytics.metrics.debugs.DebugsMemoryUsage
 com.codenvy.analytics.metrics.debugs.DebugsGigabyteRamHours
 
+com.codenvy.analytics.metrics.edits.Edits
+com.codenvy.analytics.metrics.edits.EditsTime
+com.codenvy.analytics.metrics.edits.EditsGigabyteRamHours
+
 com.codenvy.analytics.metrics.tasks.TasksList
 com.codenvy.analytics.metrics.tasks.Tasks
 com.codenvy.analytics.metrics.tasks.TasksLaunched

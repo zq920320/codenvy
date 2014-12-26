@@ -19,9 +19,13 @@ package com.codenvy.analytics.metrics.tasks;
 
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.datamodel.ValueDataUtil;
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricType;
 
 import javax.annotation.security.RolesAllowed;
+import java.io.IOException;
 
 /** @author Dmytro Nochevnov */
 @RolesAllowed(value = {"user", "system/admin", "system/manager"})
@@ -30,7 +34,19 @@ public class TasksStopped extends AbstractTasksMetric {
     public TasksStopped() {
         super(MetricType.TASKS_STOPPED, MetricType.BUILDS_FINISHED,
                                         MetricType.RUNS_FINISHED,
-                                        MetricType.DEBUGS_FINISHED);
+                                        MetricType.DEBUGS_FINISHED,
+                                        MetricType.EDITS);
+    }
+
+    @Override
+    public ValueData getValue(Context context) throws IOException {
+        long sum = 0;
+
+        for (Metric metric : basedMetric) {
+            sum += ValueDataUtil.getAsLong(metric, context).getAsLong();
+        }
+
+        return new LongValueData(sum);
     }
 
     /** {@inheritDoc} */
