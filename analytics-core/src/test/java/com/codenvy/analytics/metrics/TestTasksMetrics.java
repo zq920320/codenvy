@@ -44,7 +44,7 @@ import static java.lang.Math.round;
 import static org.testng.Assert.assertEquals;
 
 /** @author Dmytro Nochevnov */
-public class TestTaskerMetrics extends BaseTest {
+public class TestTasksMetrics extends BaseTest {
 
     @BeforeClass
     public void setUp() throws Exception {
