@@ -194,7 +194,8 @@ result1 = FOREACH r GENERATE id,
                             TOTUPLE('time', delta),
                             TOTUPLE('session_id', id),
                             TOTUPLE('user_created', user_created),
-                            TOTUPLE('encoded_factory', encodedFactory);
+                            TOTUPLE('encoded_factory', encodedFactory),
+                            TOTUPLE('builds_gigabyte_ram_hours', CalculateBuildsGigabyteRamHours(factoryId));
 STORE result1 INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 
 result2 = FOREACH t GENERATE id,
@@ -216,7 +217,8 @@ result2 = FOREACH t GENERATE id,
                             TOTUPLE('session', 1),
                             TOTUPLE('session_id', id),
                             TOTUPLE('user_created', user_created),
-                            TOTUPLE('encoded_factory', encodedFactory);
+                            TOTUPLE('encoded_factory', encodedFactory),
+                            TOTUPLE('builds_gigabyte_ram_hours', CalculateBuildsGigabyteRamHours(factoryId));
 STORE result2 INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 
 -- newly generated sessions should be stored in '$STORAGE_TABLE_PRODUCT_USAGE_SESSIONS' collection too
@@ -232,7 +234,8 @@ result3 = FOREACH t GENERATE id,
                             TOTUPLE('user_company', ''),
                             TOTUPLE('factory', factory),
                             TOTUPLE('referrer', referrer),
-                            TOTUPLE('factory_id', factoryId);
+                            TOTUPLE('factory_id', factoryId),
+                            TOTUPLE('builds_gigabyte_ram_hours', CalculateBuildsGigabyteRamHours(factoryId));
 STORE result3 INTO '$STORAGE_URL.$STORAGE_TABLE_PRODUCT_USAGE_SESSIONS' USING MongoStorage;
 
 result4 = FOREACH t GENERATE id,

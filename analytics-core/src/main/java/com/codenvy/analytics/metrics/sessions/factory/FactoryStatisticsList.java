@@ -17,6 +17,7 @@
  */
 package com.codenvy.analytics.metrics.sessions.factory;
 
+import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.StringValueData;
@@ -29,6 +30,7 @@ import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.OmitFilters;
 import com.codenvy.analytics.metrics.ReadBasedSummariziable;
+import com.codenvy.analytics.metrics.tasks.TasksList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
@@ -73,7 +75,9 @@ public class FactoryStatisticsList extends AbstractListValueResulted implements 
                             CONVERTED_SESSION,
                             ENCODED_FACTORY,
                             DEBUGS,
-                            ORG_ID};
+                            ORG_ID,
+                            BUILDS_GIGABYTE_RAM_HOURS
+        };
     }
 
     @Override
@@ -94,6 +98,7 @@ public class FactoryStatisticsList extends AbstractListValueResulted implements 
         group.put(CONVERTED_SESSION, new BasicDBObject("$sum", "$" + CONVERTED_SESSION));
         group.put(WS_CREATED, new BasicDBObject("$sum", "$" + WS_CREATED));
         group.put(ENCODED_FACTORY, new BasicDBObject("$sum", "$" + ENCODED_FACTORY));
+        group.put(BUILDS_GIGABYTE_RAM_HOURS, new BasicDBObject("$sum", "$" + BUILDS_GIGABYTE_RAM_HOURS));
 
         DBObject project = new BasicDBObject();
         project.put(FACTORY, "$_id");
@@ -108,6 +113,7 @@ public class FactoryStatisticsList extends AbstractListValueResulted implements 
         project.put(CONVERTED_SESSION, 1);
         project.put(WS_CREATED, 1);
         project.put(ENCODED_FACTORY, 1);
+        project.put(BUILDS_GIGABYTE_RAM_HOURS, Utils.getTruncOperation(BUILDS_GIGABYTE_RAM_HOURS, TasksList.MAXIMUM_FRACTION_DIGITS));  // trunc to 4 fraction digits
 
         return new DBObject[]{new BasicDBObject("$match", match),
                               new BasicDBObject("$group", group),

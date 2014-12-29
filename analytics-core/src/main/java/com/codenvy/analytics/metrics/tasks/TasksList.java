@@ -34,7 +34,7 @@ public class TasksList extends AbstractListValueResulted implements ReadBasedSum
         super(MetricType.TASKS_LIST);
     }
 
-    private static final int MAXIMUM_FRACTION_DIGITS = 4;
+    public static final int MAXIMUM_FRACTION_DIGITS = 4;
 
     @Override
     public String getDescription() {

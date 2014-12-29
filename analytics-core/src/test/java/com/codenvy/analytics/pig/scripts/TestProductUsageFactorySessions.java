@@ -22,6 +22,7 @@ import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.metrics.AbstractMetric;
 import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricFactory;
@@ -29,6 +30,8 @@ import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.Summaraziable;
+import com.codenvy.analytics.metrics.sessions.factory.FactoryStatisticsList;
+import com.codenvy.analytics.metrics.sessions.factory.FactoryStatisticsListPrecomputed;
 import com.codenvy.analytics.metrics.users.UsersStatisticsList;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
@@ -84,7 +87,7 @@ public class TestProductUsageFactorySessions extends BaseTest {
                         .withDate("2013-02-10").withTime("11:00:01").build());
         events.add(
                 Event.Builder
-                        .createFactoryUrlAcceptedEvent("tmp-3", "factoryUrl1", "http://referrer3", "org3", "affiliate2")
+                        .createFactoryUrlAcceptedEvent("tmp-3", "http://1.com?id=factory3", "http://referrer3", "org3", "affiliate2")
                         .withDate("2013-02-10").withTime("11:00:02").build());
 
         events.add(Event.Builder.createWorkspaceCreatedEvent(TWID1, "tmp-1", "user1@gmail.com")
@@ -97,12 +100,175 @@ public class TestProductUsageFactorySessions extends BaseTest {
                                 .withDate("2013-02-10").withTime("10:03:00").build());
 
 
+        /** BUILD EVENTS */
+        // #1 2min, stopped normally
+        events.add(new Event.Builder().withDate("2013-02-10")
+                                      .withTime("12:00:00")
+                                      .withParam("EVENT", "build-started")
+                                      .withParam("WS", "tmp-3")
+                                      .withParam("USER", "anonymoususer_1")
+                                      .withParam("PROJECT", "project1")
+                                      .withParam("TYPE", "projectType")
+                                      .withParam("ID", "id1_b")
+                                      .withParam("TIMEOUT", "600")
+                                      .build());
+        events.add(new Event.Builder().withDate("2013-02-10")
+                                      .withTime("12:02:00")
+                                      .withParam("EVENT", "build-finished")
+                                      .withParam("WS", "tmp-3")
+                                      .withParam("USER", "anonymoususer_1")
+                                      .withParam("PROJECT", "project1")
+                                      .withParam("TYPE", "projectType")
+                                      .withParam("ID", "id1_b")
+                                      .withParam("TIMEOUT", "600")
+                                      .withParam("USAGE-TIME", "120000")
+                                      .withParam("FINISHED-NORMALLY", "1")
+                                      .build());
+
+        // #2 1m, stopped normally
+        events.add(new Event.Builder().withDate("2013-02-10")
+                                      .withTime("12:10:00")
+                                      .withParam("EVENT", "build-started")
+                                      .withParam("WS", "tmp-3")
+                                      .withParam("USER", "anonymoususer_1")
+                                      .withParam("PROJECT", "project2")
+                                      .withParam("TYPE", "projectType")
+                                      .withParam("ID", "id2_b")
+                                      .withParam("TIMEOUT", "-1")
+                                      .build());
+        events.add(new Event.Builder().withDate("2013-02-10")
+                                      .withTime("12:11:00")
+                                      .withParam("EVENT", "build-finished")
+                                      .withParam("WS", "tmp-3")
+                                      .withParam("USER", "anonymoususer_1")
+                                      .withParam("PROJECT", "project2")
+                                      .withParam("TYPE", "projectType")
+                                      .withParam("ID", "id2_b")
+                                      .withParam("MEMORY", "250")
+                                      .withParam("TIMEOUT", "-1")
+                                      .withParam("USAGE-TIME", "60000")
+                                      .withParam("FINISHED-NORMALLY", "1")
+                                      .build());
+
+        /** RUN EVENTS */
+        // #1 2min, stopped by user
+        events.add(new Event.Builder().withDate("2013-02-10")
+                                      .withTime("12:20:00")
+                                      .withParam("EVENT", "run-started")
+                                      .withParam("WS", "tmp-3")
+                                      .withParam("USER", "anonymoususer_1")
+                                      .withParam("PROJECT", "project1")
+                                      .withParam("TYPE", "projectType")
+                                      .withParam("ID", "id1_r")
+                                      .withParam("MEMORY", "128")
+                                      .withParam("LIFETIME", "600")
+                                      .build());
+        events.add(new Event.Builder().withDate("2013-02-10")
+                                      .withTime("12:22:00")
+                                      .withParam("EVENT", "run-finished")
+                                      .withParam("WS", "tmp-3")
+                                      .withParam("USER", "anonymoususer_1")
+                                      .withParam("PROJECT", "project1")
+                                      .withParam("TYPE", "projectType")
+                                      .withParam("ID", "id1_r")
+                                      .withParam("MEMORY", "128")
+                                      .withParam("LIFETIME", "600")
+                                      .withParam("USAGE-TIME", "120000")
+                                      .withParam("STOPPED-BY-USER", "1")
+                                      .build());
+
+        // #2 1m, stopped by user
+        events.add(new Event.Builder().withDate("2013-02-10")
+                                      .withTime("12:30:00")
+                                      .withParam("EVENT", "run-started")
+                                      .withParam("WS", "tmp-3")
+                                      .withParam("USER", "anonymoususer_1")
+                                      .withParam("PROJECT", "project2")
+                                      .withParam("TYPE", "projectType")
+                                      .withParam("ID", "id2_r")
+                                      .withParam("MEMORY", "128")
+                                      .withParam("LIFETIME", "-1")
+                                      .build());
+        events.add(new Event.Builder().withDate("2013-02-10")
+                                      .withTime("12:32:00")
+                                      .withParam("EVENT", "run-finished")
+                                      .withParam("WS", "tmp-3")
+                                      .withParam("USER", "anonymoususer_1")
+                                      .withParam("PROJECT", "project2")
+                                      .withParam("TYPE", "projectType")
+                                      .withParam("ID", "id2_r")
+                                      .withParam("MEMORY", "128")
+                                      .withParam("LIFETIME", "-1")
+                                      .withParam("USAGE-TIME", "120000")
+                                      .withParam("STOPPED-BY-USER", "0")
+                                      .build());
+
+        /** DEBUGS EVENTS */
+        // #1 2min, stopped by user
+        events.add(new Event.Builder().withDate("2013-02-10")
+                                      .withTime("12:40:00")
+                                      .withParam("EVENT", "debug-started")
+                                      .withParam("WS", "tmp-3")
+                                      .withParam("USER", "anonymoususer_1")
+                                      .withParam("PROJECT", "project")
+                                      .withParam("TYPE", "projectType")
+                                      .withParam("ID", "id1_d")
+                                      .withParam("MEMORY", "128")
+                                      .withParam("LIFETIME", "600")
+                                      .build());
+        events.add(new Event.Builder().withDate("2013-02-10")
+                                      .withTime("12:42:00")
+                                      .withParam("EVENT", "debug-finished")
+                                      .withParam("WS", "tmp-3")
+                                      .withParam("USER", "anonymoususer_1")
+                                      .withParam("PROJECT", "project")
+                                      .withParam("TYPE", "projectType")
+                                      .withParam("ID", "id1_d")
+                                      .withParam("MEMORY", "128")
+                                      .withParam("LIFETIME", "600")
+                                      .withParam("USAGE-TIME", "120000")
+                                      .withParam("STOPPED-BY-USER", "1")
+                                      .build());
+
+        // #2 1m, stopped by user
+        events.add(new Event.Builder().withDate("2013-02-10")
+                                      .withTime("12:50:00")
+                                      .withParam("EVENT", "debug-started")
+                                      .withParam("WS", "tmp-3")
+                                      .withParam("USER", "anonymoususer_1")
+                                      .withParam("PROJECT", "project")
+                                      .withParam("TYPE", "projectType")
+                                      .withParam("ID", "id2_d")
+                                      .withParam("MEMORY", "128")
+                                      .withParam("LIFETIME", "-1")
+                                      .build());
+        events.add(new Event.Builder().withDate("2013-02-10")
+                                      .withTime("12:51:00")
+                                      .withParam("EVENT", "debug-finished")
+                                      .withParam("WS", "tmp-3")
+                                      .withParam("USER", "anonymoususer_1")
+                                      .withParam("PROJECT", "project")
+                                      .withParam("TYPE", "projectType")
+                                      .withParam("ID", "id2_d")
+                                      .withParam("MEMORY", "128")
+                                      .withParam("LIFETIME", "-1")
+                                      .withParam("USAGE-TIME", "60000")
+                                      .withParam("STOPPED-BY-USER", "1")
+                                      .build());
+
+
         File log = LogGenerator.generateLog(events);
 
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20130210");
         builder.put(Parameters.TO_DATE, "20130210");
         builder.put(Parameters.LOG, log.getAbsolutePath());
+
+        builder.putAll(scriptsManager.getScript(ScriptType.ACCEPTED_FACTORIES, MetricType.FACTORIES_ACCEPTED_LIST).getParamsAsMap());
+        pigServer.execute(ScriptType.ACCEPTED_FACTORIES, builder.build());
+
+        builder.putAll(scriptsManager.getScript(ScriptType.TASKS, MetricType.TASKS).getParamsAsMap());
+        pigServer.execute(ScriptType.TASKS, builder.build());
 
         builder.putAll(scriptsManager.getScript(ScriptType.USERS_PROFILES, MetricType.USERS_PROFILES_LIST)
                                      .getParamsAsMap());
@@ -121,7 +287,7 @@ public class TestProductUsageFactorySessions extends BaseTest {
 
         builder.putAll(scriptsManager.getScript(ScriptType.CREATED_TEMPORARY_WORKSPACES, MetricType.TEMPORARY_WORKSPACES_CREATED).getParamsAsMap());
         pigServer.execute(ScriptType.CREATED_TEMPORARY_WORKSPACES, builder.build());
-        
+
         DataComputationFeature dataComputationFeature = new DataComputationFeature();
         dataComputationFeature.forceExecute(builder.build());
     }
@@ -247,5 +413,6 @@ public class TestProductUsageFactorySessions extends BaseTest {
         assertEquals(summary.get(UsersStatisticsList.RUNS).getAsString(), "1");
         assertEquals(summary.get(UsersStatisticsList.BUILDS).getAsString(), "0");
         assertEquals(summary.get(UsersStatisticsList.DEPLOYS).getAsString(), "0");
+        assertEquals(summary.get(AbstractMetric.BUILDS_GIGABYTE_RAM_HOURS).getAsString(), "0.054");
     }
 }
