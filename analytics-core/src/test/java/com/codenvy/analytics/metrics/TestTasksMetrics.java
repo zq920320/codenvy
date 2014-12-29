@@ -40,6 +40,7 @@ import static com.codenvy.analytics.datamodel.ValueDataUtil.getAsList;
 import static com.codenvy.analytics.datamodel.ValueDataUtil.getAsLong;
 import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsMap;
 import static com.codenvy.analytics.metrics.MetricFactory.getMetric;
+import static com.codenvy.analytics.pig.scripts.util.Event.Builder.createFactoryUrlAcceptedEvent;
 import static java.lang.Math.round;
 import static org.testng.Assert.assertEquals;
 
@@ -70,10 +71,10 @@ public class TestTasksMetrics extends BaseTest {
         assertEquals(treatAsMap(tasks.get(0)).toString(), "{"
                                                           + "date=1382252400000, "
                                                           + "user=user, "
-                                                          + "ws=ws, "
+                                                          + "ws=temp-ws2, "
                                                           + "project=project1, "
                                                           + "project_type=projecttype, "
-                                                          + "project_id=user/ws/project1, "
+                                                          + "project_id=user/temp-ws2/project1, "
                                                           + "persistent_ws=0, "
                                                           + "id=id1_b, "
                                                           + "task_type=builder, "
@@ -280,7 +281,7 @@ public class TestTasksMetrics extends BaseTest {
         assertEquals(treatAsMap(tasks.get(11)).toString(), "{"
                                                            + "date=1382274000000, "
                                                            + "user=anonymoususer_user11, "
-                                                           + "ws=ws1, "
+                                                           + "ws=temp-ws1, "
                                                            + "persistent_ws=0, "
                                                            + "id=session1, "
                                                            + "task_type=editor, "
@@ -610,6 +611,9 @@ public class TestTasksMetrics extends BaseTest {
         builder.put(Parameters.TO_DATE, "20131020");
         builder.put(Parameters.LOG, initLogs().getAbsolutePath());
 
+        builder.putAll(scriptsManager.getScript(ScriptType.ACCEPTED_FACTORIES, MetricType.FACTORIES_ACCEPTED_LIST).getParamsAsMap());
+        pigServer.execute(ScriptType.ACCEPTED_FACTORIES, builder.build());
+
         builder.putAll(scriptsManager.getScript(ScriptType.EVENTS, MetricType.BUILDS).getParamsAsMap());
         pigServer.execute(ScriptType.EVENTS, builder.build());
 
@@ -646,12 +650,16 @@ public class TestTasksMetrics extends BaseTest {
     private File initLogs() throws Exception {
         List<Event> events = new ArrayList<>();
 
+        /** FACTORY ACCEPTED EVENTS */
+        events.add(createFactoryUrlAcceptedEvent("temp-ws1", "http://1.com?id=factory1", "", "", "").withDate("2013-10-20").withTime("09:00:00").build());
+        events.add(createFactoryUrlAcceptedEvent("temp-ws2", "http://1.com?id=factory2", "", "", "").withDate("2013-10-20").withTime("09:00:00").build());
+
         /** BUILD EVENTS */
         // #1 2min, stopped normally
         events.add(new Event.Builder().withDate("2013-10-20")
                                       .withTime("10:00:00")
                                       .withParam("EVENT", "build-started")
-                                      .withParam("WS", "ws")
+                                      .withParam("WS", "temp-ws2")
                                       .withParam("USER", "user")
                                       .withParam("PROJECT", "project1")
                                       .withParam("TYPE", "projectType")
@@ -661,7 +669,7 @@ public class TestTasksMetrics extends BaseTest {
         events.add(new Event.Builder().withDate("2013-10-20")
                                       .withTime("10:02:00")
                                       .withParam("EVENT", "build-finished")
-                                      .withParam("WS", "ws")
+                                      .withParam("WS", "temp-ws2")
                                       .withParam("USER", "user")
                                       .withParam("PROJECT", "project1")
                                       .withParam("TYPE", "projectType")
@@ -895,11 +903,11 @@ public class TestTasksMetrics extends BaseTest {
                                       .build());
 
         /** EDIT EVENTS */
-        events.add(Event.Builder.createSessionUsageEvent("anonymoususer_user11", "ws1", "session1", true)
+        events.add(Event.Builder.createSessionUsageEvent("anonymoususer_user11", "temp-ws1", "session1", true)
                                 .withDate("2013-10-20")
                                 .withTime("16:00:00")
                                 .build());
-        events.add(Event.Builder.createSessionUsageEvent("anonymoususer_user11", "ws1", "session1", true)
+        events.add(Event.Builder.createSessionUsageEvent("anonymoususer_user11", "temp-ws1", "session1", true)
                                 .withDate("2013-10-20")
                                 .withTime("16:03:00")
                                 .build());

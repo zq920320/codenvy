@@ -68,7 +68,8 @@ builds_table = FOREACH builds GENERATE UUID(),
                                       TOTUPLE('gigabyte_ram_hours', CalculateGigabyteRamHours(build_finished::memory_mb, build_finished::usage_time_msec)),
                                       TOTUPLE('is_factory', (IsTemporaryWorkspaceById(build_started::ws) ? 'yes' : 'no')),
                                       TOTUPLE('launch_type', build_started::launch_type),
-                                      TOTUPLE('shutdown_type', build_finished::shutdown_type);
+                                      TOTUPLE('shutdown_type', build_finished::shutdown_type),
+                                      TOTUPLE('factory_id', GetFactoryId(build_started::ws));
 
 
 run_started = filterByEvent(l, 'run-started');
@@ -115,7 +116,8 @@ runs_table = FOREACH runs GENERATE UUID(),
                                   TOTUPLE('gigabyte_ram_hours', CalculateGigabyteRamHours(run_finished::memory_mb, run_finished::usage_time_msec)),
                                   TOTUPLE('is_factory', (IsTemporaryWorkspaceById(run_started::ws) ? 'yes' : 'no')),
                                   TOTUPLE('launch_type', run_started::launch_type),
-                                  TOTUPLE('shutdown_type', run_finished::shutdown_type);
+                                  TOTUPLE('shutdown_type', run_finished::shutdown_type),
+                                  TOTUPLE('factory_id', GetFactoryId(run_started::ws));
 
 
 debug_started = filterByEvent(l, 'debug-started');
@@ -162,7 +164,8 @@ debug_table = FOREACH debugs GENERATE UUID(),
                                   TOTUPLE('gigabyte_ram_hours', CalculateGigabyteRamHours(debug_finished::memory_mb, debug_finished::usage_time_msec)),
                                   TOTUPLE('is_factory', (IsTemporaryWorkspaceById(debug_started::ws) ? 'yes' : 'no')),
                                   TOTUPLE('launch_type', debug_started::launch_type),
-                                  TOTUPLE('shutdown_type', debug_finished::shutdown_type);
+                                  TOTUPLE('shutdown_type', debug_finished::shutdown_type),
+                                  TOTUPLE('factory_id', GetFactoryId(debug_started::ws));
 
 
 edits = getSessions(l, 'session-usage');
@@ -206,7 +209,8 @@ edits_in_factory_table = FOREACH edits_in_factory GENERATE UUID(),
                                      TOTUPLE('start_time', startTime),
                                      TOTUPLE('stop_time', endTime),
                                      TOTUPLE('gigabyte_ram_hours', CalculateGigabyteRamHours((long) $default_editor_memory_mb, usageTime)),
-                                     TOTUPLE('is_factory', 'yes');
+                                     TOTUPLE('is_factory', 'yes'),
+                                     TOTUPLE('factory_id', GetFactoryId(ws));
 
 tasks_table = UNION builds_table, runs_table, debug_table, edits_table, edits_in_factory_table;
 STORE tasks_table INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
