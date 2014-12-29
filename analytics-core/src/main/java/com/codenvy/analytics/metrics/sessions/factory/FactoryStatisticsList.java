@@ -69,14 +69,17 @@ public class FactoryStatisticsList extends AbstractListValueResulted implements 
                             SESSIONS,
                             TIME,
                             BUILDS,
+                            BUILDS_GIGABYTE_RAM_HOURS,
                             RUNS,
+                            RUNS_GIGABYTE_RAM_HOURS,
+                            DEBUGS,
+                            DEBUGS_GIGABYTE_RAM_HOURS,
                             DEPLOYS,
                             AUTHENTICATED_SESSION,
                             CONVERTED_SESSION,
                             ENCODED_FACTORY,
-                            DEBUGS,
                             ORG_ID,
-                            BUILDS_GIGABYTE_RAM_HOURS
+                            EDITS_GIGABYTE_RAM_HOURS
         };
     }
 
@@ -99,6 +102,9 @@ public class FactoryStatisticsList extends AbstractListValueResulted implements 
         group.put(WS_CREATED, new BasicDBObject("$sum", "$" + WS_CREATED));
         group.put(ENCODED_FACTORY, new BasicDBObject("$sum", "$" + ENCODED_FACTORY));
         group.put(BUILDS_GIGABYTE_RAM_HOURS, new BasicDBObject("$sum", "$" + BUILDS_GIGABYTE_RAM_HOURS));
+        group.put(RUNS_GIGABYTE_RAM_HOURS, new BasicDBObject("$sum", "$" + RUNS_GIGABYTE_RAM_HOURS));
+        group.put(DEBUGS_GIGABYTE_RAM_HOURS, new BasicDBObject("$sum", "$" + DEBUGS_GIGABYTE_RAM_HOURS));
+        group.put(EDITS_GIGABYTE_RAM_HOURS, new BasicDBObject("$sum", "$" + EDITS_GIGABYTE_RAM_HOURS));
 
         DBObject project = new BasicDBObject();
         project.put(FACTORY, "$_id");
@@ -114,6 +120,9 @@ public class FactoryStatisticsList extends AbstractListValueResulted implements 
         project.put(WS_CREATED, 1);
         project.put(ENCODED_FACTORY, 1);
         project.put(BUILDS_GIGABYTE_RAM_HOURS, Utils.getTruncOperation(BUILDS_GIGABYTE_RAM_HOURS, TasksList.MAXIMUM_FRACTION_DIGITS));  // trunc to 4 fraction digits
+        project.put(RUNS_GIGABYTE_RAM_HOURS, Utils.getTruncOperation(RUNS_GIGABYTE_RAM_HOURS, TasksList.MAXIMUM_FRACTION_DIGITS));  // trunc to 4 fraction digits
+        project.put(DEBUGS_GIGABYTE_RAM_HOURS, Utils.getTruncOperation(DEBUGS_GIGABYTE_RAM_HOURS, TasksList.MAXIMUM_FRACTION_DIGITS));  // trunc to 4 fraction digits
+        project.put(EDITS_GIGABYTE_RAM_HOURS, Utils.getTruncOperation(EDITS_GIGABYTE_RAM_HOURS, TasksList.MAXIMUM_FRACTION_DIGITS));  // trunc to 4 fraction digits
 
         return new DBObject[]{new BasicDBObject("$match", match),
                               new BasicDBObject("$group", group),
@@ -127,7 +136,6 @@ public class FactoryStatisticsList extends AbstractListValueResulted implements 
         ((DBObject)(dbOperations[2].get("$project"))).removeField(FACTORY);
         ((DBObject)(dbOperations[2].get("$project"))).removeField(WS_CREATED);
         ((DBObject)(dbOperations[2].get("$project"))).removeField(ORG_ID);
-        ((DBObject)(dbOperations[2].get("$project"))).removeField(DEBUGS);
         ((DBObject)(dbOperations[2].get("$project"))).removeField(ENCODED_FACTORY);
         ((DBObject)(dbOperations[2].get("$project"))).removeField(AUTHENTICATED_SESSION);
         ((DBObject)(dbOperations[2].get("$project"))).removeField(CONVERTED_SESSION);

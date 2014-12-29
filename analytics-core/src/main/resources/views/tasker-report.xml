@@ -39,7 +39,7 @@
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="tasks_gigabyte_ram_hours"/>
-                <parameter key="description" value="Gigabyte RAM Hours"/>
+                <parameter key="description" value="Tasks Gigabyte RAM Hours"/>
                 <parameter key="numeric-format" value="%,.4f"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
@@ -79,7 +79,7 @@
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="builds_gigabyte_ram_hours"/>
-                <parameter key="description" value="Gigabyte RAM Hours"/>
+                <parameter key="description" value="Builds Gigabyte RAM Hours"/>
                 <parameter key="numeric-format" value="%,.4f"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
@@ -119,7 +119,7 @@
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="runs_gigabyte_ram_hours"/>
-                <parameter key="description" value="Gigabyte RAM Hours"/>
+                <parameter key="description" value="Runs Gigabyte RAM Hours"/>
                 <parameter key="numeric-format" value="%,.4f"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
@@ -159,7 +159,7 @@
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="debugs_gigabyte_ram_hours"/>
-                <parameter key="description" value="Gigabyte RAM Hours"/>
+                <parameter key="description" value="Debugs Gigabyte RAM Hours"/>
                 <parameter key="numeric-format" value="%,.4f"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
@@ -199,7 +199,7 @@
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="edits_gigabyte_ram_hours"/>
-                <parameter key="description" value="Gigabyte RAM Hours"/>
+                <parameter key="description" value="Edits Gigabyte RAM Hours"/>
                 <parameter key="numeric-format" value="%,.4f"/>
             </row>
         </section>

@@ -88,6 +88,9 @@ public abstract class AbstractMetric implements Metric {
     public static final String LAUNCH_TYPE               = "launch_type";
     public static final String SHUTDOWN_TYPE             = "shutdown_type";
     public static final String BUILDS_GIGABYTE_RAM_HOURS = "builds_gigabyte_ram_hours";
+    public static final String RUNS_GIGABYTE_RAM_HOURS   = "runs_gigabyte_ram_hours";
+    public static final String DEBUGS_GIGABYTE_RAM_HOURS = "debugs_gigabyte_ram_hours";
+    public static final String EDITS_GIGABYTE_RAM_HOURS  = "edits_gigabyte_ram_hours";
 
     private final String metricName;
 

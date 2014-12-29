@@ -470,7 +470,7 @@ public class Utils {
                     add(1);
                 }}));
             }}));
-            add(10000);
+            add(multiplier);
         }});
     }
 

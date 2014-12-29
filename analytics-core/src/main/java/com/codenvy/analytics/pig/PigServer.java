@@ -166,6 +166,9 @@ public class PigServer {
         server.registerFunction("GetSessionStartTime", new FuncSpec("com.codenvy.analytics.pig.udf.GetSessionStartTime"));
         server.registerFunction("CalculateGigabyteRamHours", new FuncSpec("com.codenvy.analytics.pig.udf.CalculateGigabyteRamHours"));
         server.registerFunction("CalculateBuildsGigabyteRamHours", new FuncSpec("com.codenvy.analytics.pig.udf.CalculateBuildsGigabyteRamHours"));
+        server.registerFunction("CalculateRunsGigabyteRamHours", new FuncSpec("com.codenvy.analytics.pig.udf.CalculateRunsGigabyteRamHours"));
+        server.registerFunction("CalculateDebugsGigabyteRamHours", new FuncSpec("com.codenvy.analytics.pig.udf.CalculateDebugsGigabyteRamHours"));
+        server.registerFunction("CalculateEditsGigabyteRamHours", new FuncSpec("com.codenvy.analytics.pig.udf.CalculateEditsGigabyteRamHours"));
 
         server.registerFunction("MongoLoaderUsersCompanies",
                                 new FuncSpec("com.codenvy.analytics.pig.udf.MongoLoader",

@@ -37,19 +37,10 @@ import static com.codenvy.analytics.pig.scripts.util.Event.Builder.createFactory
 import static org.testng.Assert.assertEquals;
 
 /** @author Dmytro Nochevnov */
-public class TestCalculateBuildsGigabyteRamHours extends BaseTest {
-
-    private CalculateBuildsGigabyteRamHours function;
-
+public class TestCalculateTaskGigabyteRamHours extends BaseTest {
     @BeforeClass
     public void setUp() throws Exception {
         prepareData();
-    }
-
-    @Test(dataProvider = "provider")
-    public void test(String factoryId, Double result) throws Exception {
-        Tuple tuple = makeTuple(factoryId);
-        assertEquals(function.exec(tuple), result);
     }
 
     private Tuple makeTuple(String factoryId) {
@@ -59,19 +50,79 @@ public class TestCalculateBuildsGigabyteRamHours extends BaseTest {
         return tuple;
     }
 
-    @DataProvider(name = "provider")
-    public Object[][] createData() {
+    @Test(dataProvider = "builds-provider")
+    public void testBuilds(String factoryId, Double result) throws Exception {
+        CalculateBuildsGigabyteRamHours function = new CalculateBuildsGigabyteRamHours();
+
+        Tuple tuple = makeTuple(factoryId);
+        assertEquals(function.exec(tuple), result);
+    }
+
+    @DataProvider(name = "builds-provider")
+    public Object[][] createBuildsData() {
         return new Object[][]{
             {null, null},
             {"", null},
             {"non-exists", null},
-            {"factory2", 0.05},
+            {"factory1", 0.054},
+        };
+    }
+
+    @Test(dataProvider = "runs-provider")
+    public void testRuns(String factoryId, Double result) throws Exception {
+        CalculateRunsGigabyteRamHours function = new CalculateRunsGigabyteRamHours();
+
+        Tuple tuple = makeTuple(factoryId);
+        assertEquals(function.exec(tuple), result);
+    }
+
+    @DataProvider(name = "runs-provider")
+    public Object[][] createRunsData() {
+        return new Object[][]{
+            {null, null},
+            {"", null},
+            {"non-exists", null},
+            {"factory1", 0.0083},
+        };
+    }
+
+    @Test(dataProvider = "debugs-provider")
+    public void testDebugs(String factoryId, Double result) throws Exception {
+        CalculateDebugsGigabyteRamHours function = new CalculateDebugsGigabyteRamHours();
+
+        Tuple tuple = makeTuple(factoryId);
+        assertEquals(function.exec(tuple), result);
+    }
+
+    @DataProvider(name = "debugs-provider")
+    public Object[][] createDebugsData() {
+        return new Object[][]{
+            {null, null},
+            {"", null},
+            {"non-exists", null},
+            {"factory1", 0.0062},
+        };
+    }
+
+    @Test(dataProvider = "edits-provider")
+    public void testEdits(String factoryId, Double result) throws Exception {
+        CalculateEditsGigabyteRamHours function = new CalculateEditsGigabyteRamHours();
+
+        Tuple tuple = makeTuple(factoryId);
+        assertEquals(function.exec(tuple), result);
+    }
+
+    @DataProvider(name = "edits-provider")
+    public Object[][] createEditsData() {
+        return new Object[][]{
+            {null, null},
+            {"", null},
+            {"non-exists", null},
+            {"factory1", 0.0012},
         };
     }
 
     void prepareData() throws Exception {
-        function = new CalculateBuildsGigabyteRamHours();
-
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20131020");
         builder.put(Parameters.TO_DATE, "20131020");
@@ -89,14 +140,13 @@ public class TestCalculateBuildsGigabyteRamHours extends BaseTest {
 
         /** FACTORY ACCEPTED EVENTS */
         events.add(createFactoryUrlAcceptedEvent("temp-ws1", "http://1.com?id=factory1", "", "", "").withDate("2013-10-20").withTime("09:00:00").build());
-        events.add(createFactoryUrlAcceptedEvent("temp-ws2", "http://1.com?id=factory2", "", "", "").withDate("2013-10-20").withTime("09:00:00").build());
 
         /** BUILD EVENTS */
         // #1 2min, stopped normally
         events.add(new Event.Builder().withDate("2013-10-20")
                                       .withTime("10:00:00")
                                       .withParam("EVENT", "build-started")
-                                      .withParam("WS", "temp-ws2")
+                                      .withParam("WS", "temp-ws1")
                                       .withParam("USER", "user")
                                       .withParam("PROJECT", "project1")
                                       .withParam("TYPE", "projectType")
@@ -106,7 +156,7 @@ public class TestCalculateBuildsGigabyteRamHours extends BaseTest {
         events.add(new Event.Builder().withDate("2013-10-20")
                                       .withTime("10:02:00")
                                       .withParam("EVENT", "build-finished")
-                                      .withParam("WS", "temp-ws2")
+                                      .withParam("WS", "temp-ws1")
                                       .withParam("USER", "user")
                                       .withParam("PROJECT", "project1")
                                       .withParam("TYPE", "projectType")
@@ -120,7 +170,7 @@ public class TestCalculateBuildsGigabyteRamHours extends BaseTest {
         events.add(new Event.Builder().withDate("2013-10-20")
                                       .withTime("11:00:00")
                                       .withParam("EVENT", "build-started")
-                                      .withParam("WS", "ws")
+                                      .withParam("WS", "temp-ws1")
                                       .withParam("USER", "user")
                                       .withParam("PROJECT", "project2")
                                       .withParam("TYPE", "projectType")
@@ -130,7 +180,7 @@ public class TestCalculateBuildsGigabyteRamHours extends BaseTest {
         events.add(new Event.Builder().withDate("2013-10-20")
                                       .withTime("11:01:00")
                                       .withParam("EVENT", "build-finished")
-                                      .withParam("WS", "ws")
+                                      .withParam("WS", "temp-ws1")
                                       .withParam("USER", "user")
                                       .withParam("PROJECT", "project2")
                                       .withParam("TYPE", "projectType")
@@ -141,37 +191,12 @@ public class TestCalculateBuildsGigabyteRamHours extends BaseTest {
                                       .withParam("FINISHED-NORMALLY", "1")
                                       .build());
 
-
-        // #3 1m, stopped by timeout
-        events.add(new Event.Builder().withDate("2013-10-20")
-                                      .withTime("11:00:00")
-                                      .withParam("EVENT", "build-started")
-                                      .withParam("WS", "ws")
-                                      .withParam("USER", "user")
-                                      .withParam("PROJECT", "project3")
-                                      .withParam("TYPE", "projectType")
-                                      .withParam("ID", "id3_b")
-                                      .withParam("TIMEOUT", "600")
-                                      .build());
-        events.add(new Event.Builder().withDate("2013-10-20")
-                                      .withTime("11:02:00")
-                                      .withParam("EVENT", "build-finished")
-                                      .withParam("WS", "ws")
-                                      .withParam("USER", "user")
-                                      .withParam("PROJECT", "project3")
-                                      .withParam("TYPE", "projectType")
-                                      .withParam("ID", "id3_b")
-                                      .withParam("TIMEOUT", "600")
-                                      .withParam("USAGE-TIME", "120000")
-                                      .withParam("FINISHED-NORMALLY", "0")
-                                      .build());
-
         /** RUN EVENTS */
         // #1 2min, stopped by user
         events.add(new Event.Builder().withDate("2013-10-20")
                                       .withTime("10:00:00")
                                       .withParam("EVENT", "run-started")
-                                      .withParam("WS", "ws")
+                                      .withParam("WS", "temp-ws1")
                                       .withParam("USER", "user")
                                       .withParam("PROJECT", "project1")
                                       .withParam("TYPE", "projectType")
@@ -182,7 +207,7 @@ public class TestCalculateBuildsGigabyteRamHours extends BaseTest {
         events.add(new Event.Builder().withDate("2013-10-20")
                                       .withTime("10:02:00")
                                       .withParam("EVENT", "run-finished")
-                                      .withParam("WS", "ws")
+                                      .withParam("WS", "temp-ws1")
                                       .withParam("USER", "user")
                                       .withParam("PROJECT", "project1")
                                       .withParam("TYPE", "projectType")
@@ -197,7 +222,7 @@ public class TestCalculateBuildsGigabyteRamHours extends BaseTest {
         events.add(new Event.Builder().withDate("2013-10-20")
                                       .withTime("11:00:00")
                                       .withParam("EVENT", "run-started")
-                                      .withParam("WS", "ws")
+                                      .withParam("WS", "temp-ws1")
                                       .withParam("USER", "user")
                                       .withParam("PROJECT", "project2")
                                       .withParam("TYPE", "projectType")
@@ -208,7 +233,7 @@ public class TestCalculateBuildsGigabyteRamHours extends BaseTest {
         events.add(new Event.Builder().withDate("2013-10-20")
                                       .withTime("11:02:00")
                                       .withParam("EVENT", "run-finished")
-                                      .withParam("WS", "ws")
+                                      .withParam("WS", "temp-ws1")
                                       .withParam("USER", "user")
                                       .withParam("PROJECT", "project2")
                                       .withParam("TYPE", "projectType")
@@ -219,52 +244,12 @@ public class TestCalculateBuildsGigabyteRamHours extends BaseTest {
                                       .withParam("STOPPED-BY-USER", "0")
                                       .build());
 
-
-        // #3 1m, stopped by timeout
-        events.add(new Event.Builder().withDate("2013-10-20")
-                                      .withTime("11:00:00")
-                                      .withParam("EVENT", "run-started")
-                                      .withParam("WS", "ws")
-                                      .withParam("USER", "user")
-                                      .withParam("PROJECT", "project3")
-                                      .withParam("TYPE", "projectType")
-                                      .withParam("ID", "id3_r")
-                                      .withParam("MEMORY", "128")
-                                      .withParam("LIFETIME", "60")
-                                      .build());
-        events.add(new Event.Builder().withDate("2013-10-20")
-                                      .withTime("11:01:00")
-                                      .withParam("EVENT", "run-finished")
-                                      .withParam("WS", "ws")
-                                      .withParam("USER", "user")
-                                      .withParam("PROJECT", "project3")
-                                      .withParam("TYPE", "projectType")
-                                      .withParam("ID", "id3_r")
-                                      .withParam("MEMORY", "128")
-                                      .withParam("LIFETIME", "60")
-                                      .withParam("USAGE-TIME", "60000")
-                                      .withParam("STOPPED-BY-USER", "1")
-                                      .build());
-
-        // #1 2min, non-finished run
-        events.add(new Event.Builder().withDate("2013-10-20")
-                                      .withTime("12:00:00")
-                                      .withParam("EVENT", "run-started")
-                                      .withParam("WS", "ws")
-                                      .withParam("USER", "user")
-                                      .withParam("PROJECT", "project1")
-                                      .withParam("TYPE", "projectType")
-                                      .withParam("ID", "id4_r")
-                                      .withParam("MEMORY", "128")
-                                      .withParam("LIFETIME", "600")
-                                      .build());
-
         /** DEBUGS EVENTS */
         // #1 2min, stopped by user
         events.add(new Event.Builder().withDate("2013-10-20")
                                       .withTime("13:00:00")
                                       .withParam("EVENT", "debug-started")
-                                      .withParam("WS", "ws")
+                                      .withParam("WS", "temp-ws1")
                                       .withParam("USER", "user")
                                       .withParam("PROJECT", "project")
                                       .withParam("TYPE", "projectType")
@@ -275,7 +260,7 @@ public class TestCalculateBuildsGigabyteRamHours extends BaseTest {
         events.add(new Event.Builder().withDate("2013-10-20")
                                       .withTime("13:02:00")
                                       .withParam("EVENT", "debug-finished")
-                                      .withParam("WS", "ws")
+                                      .withParam("WS", "temp-ws1")
                                       .withParam("USER", "user")
                                       .withParam("PROJECT", "project")
                                       .withParam("TYPE", "projectType")
@@ -290,7 +275,7 @@ public class TestCalculateBuildsGigabyteRamHours extends BaseTest {
         events.add(new Event.Builder().withDate("2013-10-20")
                                       .withTime("14:00:00")
                                       .withParam("EVENT", "debug-started")
-                                      .withParam("WS", "ws")
+                                      .withParam("WS", "temp-ws1")
                                       .withParam("USER", "user")
                                       .withParam("PROJECT", "project")
                                       .withParam("TYPE", "projectType")
@@ -301,7 +286,7 @@ public class TestCalculateBuildsGigabyteRamHours extends BaseTest {
         events.add(new Event.Builder().withDate("2013-10-20")
                                       .withTime("14:01:00")
                                       .withParam("EVENT", "debug-finished")
-                                      .withParam("WS", "ws")
+                                      .withParam("WS", "temp-ws1")
                                       .withParam("USER", "user")
                                       .withParam("PROJECT", "project")
                                       .withParam("TYPE", "projectType")
@@ -310,33 +295,6 @@ public class TestCalculateBuildsGigabyteRamHours extends BaseTest {
                                       .withParam("LIFETIME", "-1")
                                       .withParam("USAGE-TIME", "60000")
                                       .withParam("STOPPED-BY-USER", "1")
-                                      .build());
-
-
-        // #3 1m, stopped by timeout
-        events.add(new Event.Builder().withDate("2013-10-20")
-                                      .withTime("15:00:00")
-                                      .withParam("EVENT", "debug-started")
-                                      .withParam("WS", "ws")
-                                      .withParam("USER", "user")
-                                      .withParam("PROJECT", "project")
-                                      .withParam("TYPE", "projectType")
-                                      .withParam("ID", "id3_d")
-                                      .withParam("MEMORY", "128")
-                                      .withParam("LIFETIME", "60")
-                                      .build());
-        events.add(new Event.Builder().withDate("2013-10-20")
-                                      .withTime("15:02:00")
-                                      .withParam("EVENT", "debug-finished")
-                                      .withParam("WS", "ws")
-                                      .withParam("USER", "user")
-                                      .withParam("PROJECT", "project")
-                                      .withParam("TYPE", "projectType")
-                                      .withParam("ID", "id3_d")
-                                      .withParam("MEMORY", "128")
-                                      .withParam("LIFETIME", "60")
-                                      .withParam("USAGE-TIME", "120000")
-                                      .withParam("STOPPED-BY-USER", "0")
                                       .build());
 
         /** EDIT EVENTS */

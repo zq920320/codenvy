@@ -35,12 +35,12 @@
     <view name="factory_statistics" on-demand="true">
         <section name="factory_statistics">
             <row class="com.codenvy.analytics.services.view.TitleRow">
-                <parameter key="titles" value="Workspaces Created,Sessions,Time,Known,Converted,Builds,Builds Gigabyte Ram Hours,Runs,Debugs,Deploys"/>
+                <parameter key="titles" value="Workspaces Created,Sessions,Time,Known,Converted,Builds,Builds Gigabyte RAM Hours,Runs,Runs Gigabyte RAM Hours,Debugs,Debugs Gigabyte RAM Hours,Edits Gigabyte RAM Hours,Deploys"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="factory_statistics_list"/>
                 <parameter key="fields"
-                           value="ws_created,sessions,time,authenticated_factory_session,converted_factory_session,builds,builds_gigabyte_ram_hours,runs,debugs,deploys"/>
+                           value="ws_created,sessions,time,authenticated_factory_session,converted_factory_session,builds,builds_gigabyte_ram_hours,runs,runs_gigabyte_ram_hours,debugs,debugs_gigabyte_ram_hours,edits_gigabyte_ram_hours,deploys"/>
                 <parameter key="time-fields" value="time"/>
                 <parameter key="date-fields" value="date"/>
             </row>

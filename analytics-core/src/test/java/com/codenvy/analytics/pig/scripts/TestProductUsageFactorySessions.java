@@ -30,13 +30,10 @@ import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.Summaraziable;
-import com.codenvy.analytics.metrics.sessions.factory.FactoryStatisticsList;
-import com.codenvy.analytics.metrics.sessions.factory.FactoryStatisticsListPrecomputed;
 import com.codenvy.analytics.metrics.users.UsersStatisticsList;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 import com.codenvy.analytics.services.DataComputationFeature;
-
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -226,7 +223,7 @@ public class TestProductUsageFactorySessions extends BaseTest {
                                       .withParam("ID", "id1_d")
                                       .withParam("MEMORY", "128")
                                       .withParam("LIFETIME", "600")
-                                      .withParam("USAGE-TIME", "120000")
+                                      .withParam("USAGE-TIME", "12000")
                                       .withParam("STOPPED-BY-USER", "1")
                                       .build());
 
@@ -252,7 +249,7 @@ public class TestProductUsageFactorySessions extends BaseTest {
                                       .withParam("ID", "id2_d")
                                       .withParam("MEMORY", "128")
                                       .withParam("LIFETIME", "-1")
-                                      .withParam("USAGE-TIME", "60000")
+                                      .withParam("USAGE-TIME", "6000")
                                       .withParam("STOPPED-BY-USER", "1")
                                       .build());
 
@@ -400,6 +397,10 @@ public class TestProductUsageFactorySessions extends BaseTest {
         assertEquals(summary.get(UsersStatisticsList.RUNS).getAsString(), "1");
         assertEquals(summary.get(UsersStatisticsList.BUILDS).getAsString(), "0");
         assertEquals(summary.get(UsersStatisticsList.DEPLOYS).getAsString(), "0");
+        assertEquals(summary.get(AbstractMetric.BUILDS_GIGABYTE_RAM_HOURS).getAsString(), "0.054");
+        assertEquals(summary.get(AbstractMetric.RUNS_GIGABYTE_RAM_HOURS).getAsString(), "0.0083");
+        assertEquals(summary.get(AbstractMetric.DEBUGS_GIGABYTE_RAM_HOURS).getAsString(), "5.0E-4");
+        assertEquals(summary.get(AbstractMetric.EDITS_GIGABYTE_RAM_HOURS).getAsString(), "0.0061");
 
         // verify the same summary data on metric FACTORY_STATISTICS_LIST
         Context.Builder builder = new Context.Builder();
@@ -414,5 +415,8 @@ public class TestProductUsageFactorySessions extends BaseTest {
         assertEquals(summary.get(UsersStatisticsList.BUILDS).getAsString(), "0");
         assertEquals(summary.get(UsersStatisticsList.DEPLOYS).getAsString(), "0");
         assertEquals(summary.get(AbstractMetric.BUILDS_GIGABYTE_RAM_HOURS).getAsString(), "0.054");
+        assertEquals(summary.get(AbstractMetric.RUNS_GIGABYTE_RAM_HOURS).getAsString(), "0.0083");
+        assertEquals(summary.get(AbstractMetric.DEBUGS_GIGABYTE_RAM_HOURS).getAsString(), "5.0E-4");
+        assertEquals(summary.get(AbstractMetric.EDITS_GIGABYTE_RAM_HOURS).getAsString(), "0.0061");
     }
 }
