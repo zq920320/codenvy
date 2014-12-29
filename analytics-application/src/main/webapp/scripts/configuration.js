@@ -1149,6 +1149,7 @@ function AnalyticsConfiguration() {
                 "Runs": "runs",
                 "Deploys": "deploys",
                 "Builds": "builds",
+                "Debugs": "debugs",
                 "Organization": "org_id"
             },
 
