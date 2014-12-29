@@ -64,7 +64,8 @@ public class TasksList extends AbstractListValueResulted implements ReadBasedSum
                             GIGABYTE_RAM_HOURS,
                             IS_FACTORY,
                             LAUNCH_TYPE,
-                            SHUTDOWN_TYPE
+                            SHUTDOWN_TYPE,
+                            FACTORY_ID
         };
     }
 

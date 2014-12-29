@@ -28,6 +28,8 @@ import com.mongodb.DBObject;
 
 import javax.annotation.security.RolesAllowed;
 
+import static com.codenvy.analytics.pig.udf.CalculateGigabyteRamHours.GRH_DEVIDER;
+
 /** @author Anatoliy Bazko */
 @RolesAllowed(value = {"user", "system/admin", "system/manager"})
 public class RunsGigabyteRamHours extends ReadBasedMetric implements ReadBasedExpandable {
@@ -51,7 +53,7 @@ public class RunsGigabyteRamHours extends ReadBasedMetric implements ReadBasedEx
     @Override
     public DBObject[] getSpecificDBOperations(Context clauses) {
         DBObject project1 = new BasicDBObject("x", new BasicDBObject("$multiply", new Object[]{"$" + MEMORY, "$" + USAGE_TIME}));
-        DBObject project2 = new BasicDBObject("y", new BasicDBObject("$divide", new Object[]{"$x", 3686400000L}));
+        DBObject project2 = new BasicDBObject("y", new BasicDBObject("$divide", new Object[]{"$x", GRH_DEVIDER}));
         DBObject group = new BasicDBObject(ID, null).append(VALUE, new BasicDBObject("$sum", "$y"));
 
         return new DBObject[]{new BasicDBObject("$project", project1),

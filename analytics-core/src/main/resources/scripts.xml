@@ -251,6 +251,12 @@
         <parameter key="PARAM" value="WAITING-TIME"/>
         <parameter key="STORAGE_TABLE" value="time_in_run_queue"/>
     </script>
+    <script name="tasks">
+        <description>List of tasks</description>
+        <parameter key="WS" value="ANY"/>
+        <parameter key="USER" value="ANY"/>
+        <parameter key="STORAGE_TABLE" value="tasks"/>
+    </script>
 
     <!-- Scripts for factory timeline -->
     <script name="created_users_from_factory">
@@ -279,12 +285,6 @@
         <parameter key="STORAGE_TABLE_PRODUCT_USAGE_SESSIONS" value="product_usage_sessions"/>
         <parameter key="STORAGE_TABLE_USERS_STATISTICS" value="users_statistics"/>
         <parameter key="STORAGE_TABLE_ACCEPTED_FACTORIES" value="factories_accepted"/>
-    </script>
-    <script name="tasks">
-        <description>List of tasks</description>
-        <parameter key="WS" value="ANY"/>
-        <parameter key="USER" value="ANY"/>
-        <parameter key="STORAGE_TABLE" value="tasks"/>
     </script>
 
     <!-- Scripts for user's view -->

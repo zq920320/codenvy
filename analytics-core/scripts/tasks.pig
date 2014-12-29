@@ -37,48 +37,61 @@ build_started = FOREACH build_started GENERATE dt,
                                                project_type,
                                                id,
                                                (timeout != '-1' ? 'timeout' : 'always-on')  AS launch_type;
+builds_started = FOREACH build_started GENERATE UUIDFrom(id),
+                                              TOTUPLE('date', ToMilliSeconds(dt)),
+                                              TOTUPLE('ws', ws),
+                                              TOTUPLE('user', user),
+                                              TOTUPLE('project', project),
+                                              TOTUPLE('project_type', LOWER(project_type)),
+                                              TOTUPLE('project_id', CreateProjectId(user, ws, project)),
+                                              TOTUPLE('id', id),
+                                              TOTUPLE('task_type', 'builder'),
+                                              TOTUPLE('start_time', ToMilliSeconds(dt)),
+                                              TOTUPLE('is_factory', (IsTemporaryWorkspaceById(ws) ? 1 : 0)),
+                                              TOTUPLE('launch_type', launch_type),
+                                              TOTUPLE('factory_id', GetFactoryId(ws));
 
 build_finished = filterByEvent(l, 'build-finished');
+build_finished = extractParam(build_finished, 'PROJECT', project);
+build_finished = extractParam(build_finished, 'TYPE', project_type);
 build_finished = extractParam(build_finished, 'ID', id);
 build_finished = extractParam(build_finished, 'USAGE-TIME', usage_time_msec);
 build_finished = extractParam(build_finished, 'MEMORY', memory_mb);
 build_finished = extractParam(build_finished, 'FINISHED-NORMALLY', finished_normally);
 
 build_finished = FOREACH build_finished GENERATE dt,
+                                                 ws,
+                                                 user,
+                                                 project,
+                                                 project_type,
                                                  id,
                                                  (long) usage_time_msec,
                                                  (long) (memory_mb IS NOT NULL ? memory_mb : '$default_builder_memory_mb') AS memory_mb,
                                                  (finished_normally == '0' ? 'timeout' : 'normal')  AS shutdown_type;
 
-builds = JOIN build_started BY id LEFT, build_finished BY id;
-
-builds_table = FOREACH builds GENERATE UUID(),
-                                      TOTUPLE('date', ToMilliSeconds(build_started::dt)),
-                                      TOTUPLE('ws', LOWER(build_started::ws)),
-                                      TOTUPLE('user', build_started::user),
-                                      TOTUPLE('project', build_started::project),
-                                      TOTUPLE('project_type', LOWER(build_started::project_type)),
-                                      TOTUPLE('project_id', CreateProjectId(build_started::user, build_started::ws, build_started::project)),
-                                      TOTUPLE('id', build_started::id),
-                                      TOTUPLE('task_type', 'builder'),
-                                      TOTUPLE('memory', build_finished::memory_mb),
-                                      TOTUPLE('usage_time', build_finished::usage_time_msec),
-                                      TOTUPLE('start_time', ToMilliSeconds(build_started::dt)),
-                                      TOTUPLE('stop_time', ToMilliSeconds(build_finished::dt)),
-                                      TOTUPLE('gigabyte_ram_hours', CalculateGigabyteRamHours(build_finished::memory_mb, build_finished::usage_time_msec)),
-                                      TOTUPLE('is_factory', (IsTemporaryWorkspaceById(build_started::ws) ? 'yes' : 'no')),
-                                      TOTUPLE('launch_type', build_started::launch_type),
-                                      TOTUPLE('shutdown_type', build_finished::shutdown_type),
-                                      TOTUPLE('factory_id', GetFactoryId(build_started::ws));
+builds_finished = FOREACH build_finished GENERATE UUIDFrom(id),
+                                                  TOTUPLE('ws', ws),
+                                                  TOTUPLE('user', user),
+                                                  TOTUPLE('project', project),
+                                                  TOTUPLE('project_type', LOWER(project_type)),
+                                                  TOTUPLE('project_id', CreateProjectId(user, ws, project)),
+                                                  TOTUPLE('id', id),
+                                                  TOTUPLE('task_type', 'builder'),
+                                                  TOTUPLE('memory', memory_mb),
+                                                  TOTUPLE('usage_time', usage_time_msec),
+                                                  TOTUPLE('stop_time', ToMilliSeconds(dt)),
+                                                  TOTUPLE('gigabyte_ram_hours', CalculateGigabyteRamHours(memory_mb, usage_time_msec)),
+                                                  TOTUPLE('shutdown_type', shutdown_type);
 
 
-run_started = filterByEvent(l, 'run-started');
-run_started = extractParam(run_started, 'PROJECT', project);
-run_started = extractParam(run_started, 'TYPE', project_type);
-run_started = extractParam(run_started, 'ID', id);
-run_started = extractParam(run_started, 'LIFETIME', lifetime);
+runs_started = filterByEvent(l, 'run-started');
+runs_started = extractParam(runs_started, 'PROJECT', project);
+runs_started = extractParam(runs_started, 'TYPE', project_type);
+runs_started = extractParam(runs_started, 'ID', id);
+runs_started = extractParam(runs_started, 'LIFETIME', lifetime);
 
-run_started = FOREACH run_started GENERATE dt,
+
+runs_started = FOREACH runs_started GENERATE dt,
                                            ws,
                                            user,
                                            project,
@@ -86,131 +99,179 @@ run_started = FOREACH run_started GENERATE dt,
                                            id,
                                            (lifetime != '-1' ? 'timeout' : 'always-on')  AS launch_type;
 
-run_finished = filterByEvent(l, 'run-finished');
-run_finished = extractParam(run_finished, 'ID', id);
-run_finished = extractParam(run_finished, 'USAGE-TIME', usage_time_msec);
-run_finished = extractParam(run_finished, 'MEMORY', memory_mb);
-run_finished = extractParam(run_finished, 'STOPPED-BY-USER', stopped_by_user);
+runs_started = FOREACH runs_started GENERATE UUIDFrom(id),
+                                              TOTUPLE('date', ToMilliSeconds(dt)),
+                                              TOTUPLE('ws', ws),
+                                              TOTUPLE('user', user),
+                                              TOTUPLE('project', project),
+                                              TOTUPLE('project_type', LOWER(project_type)),
+                                              TOTUPLE('project_id', CreateProjectId(user, ws, project)),
+                                              TOTUPLE('id', id),
+                                              TOTUPLE('task_type', 'runner'),
+                                              TOTUPLE('start_time', ToMilliSeconds(dt)),
+                                              TOTUPLE('is_factory', (IsTemporaryWorkspaceById(ws) ? 1 : 0)),
+                                              TOTUPLE('launch_type', launch_type),
+                                              TOTUPLE('factory_id', GetFactoryId(ws));
 
-run_finished = FOREACH run_finished GENERATE dt,
-                                             id,
-                                             (long) usage_time_msec,
-                                             (long) memory_mb,
-                                             (stopped_by_user == '0' ? 'timeout' : 'user')  AS shutdown_type;
+runs_finished = filterByEvent(l, 'run-finished');
+runs_finished = extractParam(runs_finished, 'ID', id);
+runs_finished = extractParam(runs_finished, 'PROJECT', project);
+runs_finished = extractParam(runs_finished, 'TYPE', project_type);
+runs_finished = extractParam(runs_finished, 'USAGE-TIME', usage_time_msec);
+runs_finished = extractParam(runs_finished, 'MEMORY', memory_mb);
+runs_finished = extractParam(runs_finished, 'STOPPED-BY-USER', stopped_by_user);
 
-runs = JOIN run_started BY id LEFT, run_finished BY id;
-
-runs_table = FOREACH runs GENERATE UUID(),
-                                  TOTUPLE('date', ToMilliSeconds(run_started::dt)),
-                                  TOTUPLE('ws', LOWER(run_started::ws)),
-                                  TOTUPLE('user', run_started::user),
-                                  TOTUPLE('project', run_started::project),
-                                  TOTUPLE('project_type', LOWER(run_started::project_type)),
-                                  TOTUPLE('project_id', CreateProjectId(run_started::user, run_started::ws, run_started::project)),
-                                  TOTUPLE('id', run_started::id),
-                                  TOTUPLE('task_type', 'runner'),
-                                  TOTUPLE('memory', run_finished::memory_mb),
-                                  TOTUPLE('usage_time', run_finished::usage_time_msec),
-                                  TOTUPLE('start_time', ToMilliSeconds(run_started::dt)),
-                                  TOTUPLE('stop_time', ToMilliSeconds(run_finished::dt)),
-                                  TOTUPLE('gigabyte_ram_hours', CalculateGigabyteRamHours(run_finished::memory_mb, run_finished::usage_time_msec)),
-                                  TOTUPLE('is_factory', (IsTemporaryWorkspaceById(run_started::ws) ? 'yes' : 'no')),
-                                  TOTUPLE('launch_type', run_started::launch_type),
-                                  TOTUPLE('shutdown_type', run_finished::shutdown_type),
-                                  TOTUPLE('factory_id', GetFactoryId(run_started::ws));
-
-
-debug_started = filterByEvent(l, 'debug-started');
-debug_started = extractParam(debug_started, 'PROJECT', project);
-debug_started = extractParam(debug_started, 'TYPE', project_type);
-debug_started = extractParam(debug_started, 'ID', id);
-debug_started = extractParam(debug_started, 'LIFETIME', lifetime);
-
-debug_started = FOREACH debug_started GENERATE dt,
+runs_finished = FOREACH runs_finished GENERATE dt,
+                                               id,
                                                ws,
                                                user,
                                                project,
                                                project_type,
-                                               id,
-                                               (lifetime != '-1' ? 'timeout' : 'always-on')  AS launch_type;
+                                               (long) usage_time_msec,
+                                               (long) memory_mb,
+                                               (stopped_by_user == '0' ? 'timeout' : 'user')  AS shutdown_type;
 
-debug_finished = filterByEvent(l, 'debug-finished');
-debug_finished = extractParam(debug_finished, 'ID', id);
-debug_finished = extractParam(debug_finished, 'USAGE-TIME', usage_time_msec);
-debug_finished = extractParam(debug_finished, 'MEMORY', memory_mb);
-debug_finished = extractParam(debug_finished, 'STOPPED-BY-USER', stopped_by_user);
+runs_finished = FOREACH runs_finished GENERATE UUIDFrom(id),
+                                              TOTUPLE('ws', ws),
+                                              TOTUPLE('user', user),
+                                              TOTUPLE('project', project),
+                                              TOTUPLE('project_type', LOWER(project_type)),
+                                              TOTUPLE('project_id', CreateProjectId(user, ws, project)),
+                                              TOTUPLE('id', id),
+                                              TOTUPLE('task_type', 'runner'),
+                                              TOTUPLE('memory', memory_mb),
+                                              TOTUPLE('usage_time', usage_time_msec),
+                                              TOTUPLE('stop_time', ToMilliSeconds(dt)),
+                                              TOTUPLE('gigabyte_ram_hours', CalculateGigabyteRamHours(memory_mb, usage_time_msec)),
+                                              TOTUPLE('shutdown_type', shutdown_type);
 
-debug_finished = FOREACH debug_finished GENERATE dt,
-                                             id,
-                                             (long) usage_time_msec,
-                                             (long) memory_mb,
-                                             (stopped_by_user == '0' ? 'timeout' : 'user')  AS shutdown_type;
 
-debugs = JOIN debug_started BY id LEFT, debug_finished BY id;
+debugs_started = filterByEvent(l, 'debug-started');
+debugs_started = extractParam(debugs_started, 'PROJECT', project);
+debugs_started = extractParam(debugs_started, 'TYPE', project_type);
+debugs_started = extractParam(debugs_started, 'ID', id);
+debugs_started = extractParam(debugs_started, 'LIFETIME', lifetime);
 
-debug_table = FOREACH debugs GENERATE UUID(),
-                                  TOTUPLE('date', ToMilliSeconds(debug_started::dt)),
-                                  TOTUPLE('ws', LOWER(debug_started::ws)),
-                                  TOTUPLE('user', debug_started::user),
-                                  TOTUPLE('project', debug_started::project),
-                                  TOTUPLE('project_type', LOWER(debug_started::project_type)),
-                                  TOTUPLE('project_id', CreateProjectId(debug_started::user, debug_started::ws, debug_started::project)),
-                                  TOTUPLE('id', debug_started::id),
-                                  TOTUPLE('task_type', 'debugger'),
-                                  TOTUPLE('memory', debug_finished::memory_mb),
-                                  TOTUPLE('usage_time', debug_finished::usage_time_msec),
-                                  TOTUPLE('start_time', ToMilliSeconds(debug_started::dt)),
-                                  TOTUPLE('stop_time', ToMilliSeconds(debug_finished::dt)),
-                                  TOTUPLE('gigabyte_ram_hours', CalculateGigabyteRamHours(debug_finished::memory_mb, debug_finished::usage_time_msec)),
-                                  TOTUPLE('is_factory', (IsTemporaryWorkspaceById(debug_started::ws) ? 'yes' : 'no')),
-                                  TOTUPLE('launch_type', debug_started::launch_type),
-                                  TOTUPLE('shutdown_type', debug_finished::shutdown_type),
-                                  TOTUPLE('factory_id', GetFactoryId(debug_started::ws));
+debugs_started = FOREACH debugs_started GENERATE dt,
+                                                ws,
+                                                user,
+                                                project,
+                                                project_type,
+                                                id,
+                                                (lifetime != '-1' ? 'timeout' : 'always-on')  AS launch_type;
+
+debugs_started = FOREACH debugs_started GENERATE UUIDFrom(id),
+                                                  TOTUPLE('date', ToMilliSeconds(dt)),
+                                                  TOTUPLE('ws', ws),
+                                                  TOTUPLE('user', user),
+                                                  TOTUPLE('project', project),
+                                                  TOTUPLE('project_type', LOWER(project_type)),
+                                                  TOTUPLE('project_id', CreateProjectId(user, ws, project)),
+                                                  TOTUPLE('id', id),
+                                                  TOTUPLE('task_type', 'debugger'),
+                                                  TOTUPLE('start_time', ToMilliSeconds(dt)),
+                                                  TOTUPLE('is_factory', (IsTemporaryWorkspaceById(ws) ? 1 : 0)),
+                                                  TOTUPLE('launch_type', launch_type),
+                                                  TOTUPLE('factory_id', GetFactoryId(ws));
+
+debugs_finished = filterByEvent(l, 'debug-finished');
+debugs_finished = extractParam(debugs_finished, 'ID', id);
+debugs_finished = extractParam(debugs_finished, 'PROJECT', project);
+debugs_finished = extractParam(debugs_finished, 'TYPE', project_type);
+debugs_finished = extractParam(debugs_finished, 'USAGE-TIME', usage_time_msec);
+debugs_finished = extractParam(debugs_finished, 'MEMORY', memory_mb);
+debugs_finished = extractParam(debugs_finished, 'STOPPED-BY-USER', stopped_by_user);
+
+debugs_finished = FOREACH debugs_finished GENERATE dt,
+                                                 id,
+                                                 ws,
+                                                 user,
+                                                 project,
+                                                 project_type,
+                                                 (long) usage_time_msec,
+                                                 (long) memory_mb,
+                                                 (stopped_by_user == '0' ? 'timeout' : 'user')  AS shutdown_type;
+
+debugs_finished = FOREACH debugs_finished GENERATE UUIDFrom(id),
+                                                  TOTUPLE('ws', ws),
+                                                  TOTUPLE('user', user),
+                                                  TOTUPLE('project', project),
+                                                  TOTUPLE('project_type', LOWER(project_type)),
+                                                  TOTUPLE('project_id', CreateProjectId(user, ws, project)),
+                                                  TOTUPLE('id', id),
+                                                  TOTUPLE('task_type', 'debugger'),
+                                                  TOTUPLE('memory', memory_mb),
+                                                  TOTUPLE('usage_time', usage_time_msec),
+                                                  TOTUPLE('stop_time', ToMilliSeconds(dt)),
+                                                  TOTUPLE('gigabyte_ram_hours', CalculateGigabyteRamHours(memory_mb, usage_time_msec)),
+                                                  TOTUPLE('shutdown_type', shutdown_type);
 
 
 edits = getSessions(l, 'session-usage');
+edits = extractParam(edits, 'PROJECT', project);
+edits = extractParam(edits, 'TYPE', project_type);
 edits = FOREACH edits GENERATE ws,
                                user,
+                               project,
+                               project_type,
                                sessionID,
-                               startTime,
-                               usageTime,
-                               endTime;
+                               (long) startTime,
+                               (long) usageTime,
+                               (long) endTime;
 
-edits_table = FOREACH edits GENERATE UUID(),
-                                     TOTUPLE('date', startTime),
-                                     TOTUPLE('ws', ws),
-                                     TOTUPLE('user', user),
-                                     TOTUPLE('id', sessionID),
-                                     TOTUPLE('task_type', 'editor'),
-                                     TOTUPLE('memory', $default_editor_memory_mb),
-                                     TOTUPLE('usage_time', usageTime),
-                                     TOTUPLE('start_time', startTime),
-                                     TOTUPLE('stop_time', endTime),
-                                     TOTUPLE('gigabyte_ram_hours', CalculateGigabyteRamHours((long) $default_editor_memory_mb, usageTime)),
-                                     TOTUPLE('is_factory', 'no');
 
+edits = FOREACH edits GENERATE sessionID,
+                             TOTUPLE('date', startTime),
+                             TOTUPLE('ws', ws),
+                             TOTUPLE('user', user),
+                             TOTUPLE('project', project),
+                             TOTUPLE('project_type', LOWER(project_type)),
+                             TOTUPLE('project_id', CreateProjectId(user, ws, project)),
+                             TOTUPLE('id', sessionID),
+                             TOTUPLE('task_type', 'editor'),
+                             TOTUPLE('memory', $default_editor_memory_mb),
+                             TOTUPLE('usage_time', usageTime),
+                             TOTUPLE('start_time', startTime),
+                             TOTUPLE('stop_time', endTime),
+                             TOTUPLE('gigabyte_ram_hours', CalculateGigabyteRamHours((long) $default_editor_memory_mb, usageTime)),
+                             TOTUPLE('is_factory', 0);
 
 edits_in_factory = getSessions(l, 'session-factory-usage');
+edits_in_factory = extractParam(edits_in_factory, 'PROJECT', project);
+edits_in_factory = extractParam(edits_in_factory, 'TYPE', project_type);
+
 edits_in_factory = FOREACH edits_in_factory GENERATE ws,
                                                      user,
+                                                     project,
+                                                     project_type,
                                                      sessionID,
-                                                     startTime,
-                                                     usageTime,
-                                                     endTime;
+                                                     (long) startTime,
+                                                     (long) usageTime,
+                                                     (long) endTime;
 
-edits_in_factory_table = FOREACH edits_in_factory GENERATE UUID(),
-                                     TOTUPLE('date', startTime),
-                                     TOTUPLE('ws', ws),
-                                     TOTUPLE('user', user),
-                                     TOTUPLE('id', sessionID),
-                                     TOTUPLE('task_type', 'editor'),
-                                     TOTUPLE('memory', $default_editor_memory_mb),
-                                     TOTUPLE('usage_time', usageTime),
-                                     TOTUPLE('start_time', startTime),
-                                     TOTUPLE('stop_time', endTime),
-                                     TOTUPLE('gigabyte_ram_hours', CalculateGigabyteRamHours((long) $default_editor_memory_mb, usageTime)),
-                                     TOTUPLE('is_factory', 'yes'),
-                                     TOTUPLE('factory_id', GetFactoryId(ws));
 
-tasks_table = UNION builds_table, runs_table, debug_table, edits_table, edits_in_factory_table;
-STORE tasks_table INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
+edits_in_factory = FOREACH edits_in_factory GENERATE sessionID,
+                                                   TOTUPLE('date', startTime),
+                                                   TOTUPLE('ws', ws),
+                                                   TOTUPLE('user', user),
+                                                   TOTUPLE('project', project),
+                                                   TOTUPLE('project_type', LOWER(project_type)),
+                                                   TOTUPLE('project_id', CreateProjectId(user, ws, project)),
+                                                   TOTUPLE('id', sessionID),
+                                                   TOTUPLE('task_type', 'editor'),
+                                                   TOTUPLE('memory', $default_editor_memory_mb),
+                                                   TOTUPLE('usage_time', usageTime),
+                                                   TOTUPLE('start_time', startTime),
+                                                   TOTUPLE('stop_time', endTime),
+                                                   TOTUPLE('gigabyte_ram_hours', CalculateGigabyteRamHours((long) $default_editor_memory_mb, usageTime)),
+                                                   TOTUPLE('is_factory', 1),
+                                                   TOTUPLE('factory_id', GetFactoryId(ws));
+
+STORE edits INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
+STORE edits_in_factory INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
+STORE builds_started INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
+STORE builds_finished INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
+STORE runs_started INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
+STORE runs_finished INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
+STORE debugs_started INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
+STORE debugs_finished INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;

@@ -25,6 +25,7 @@ import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.pig.scripts.ScriptType;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
+
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
