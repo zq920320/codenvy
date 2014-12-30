@@ -1235,6 +1235,31 @@
 
     <collection name="tasks">
         <indexes>
+            <index name="task_id">
+                <field>id</field>
+                <field>date</field>
+            </index>
+            <index name="date">
+                <field>date</field>
+            </index>
+            <index name="task_type">
+                <field>task_type</field>
+            </index>
+            <index name="stop_time">
+                <field>start_time</field>
+            </index>
+            <index name="start_time">
+                <field>start_time</field>
+            </index>
+            <index name="memory">
+                <field>memory</field>
+            </index>
+            <index name="usage_time">
+                <field>usage_time</field>
+            </index>
+            <index name="gigabyte_ram_hours">
+                <field>gigabyte_ram_hours</field>
+            </index>
             <index name="user">
                 <field>user</field>
                 <field>date</field>
@@ -1243,16 +1268,20 @@
                 <field>ws</field>
                 <field>date</field>
             </index>
-            <index name="project_id">
-                <field>project_id</field>
-                <field>date</field>
+            <index name="project">
+                <field>project</field>
             </index>
-            <index name="task_id">
-                <field>id</field>
-                <field>date</field>
+            <index name="project_type">
+                <field>project_type</field>
             </index>
-            <index name="date">
-                <field>date</field>
+            <index name="is_factory">
+                <field>is_factory</field>
+            </index>
+            <index name="launch_type">
+                <field>launch_type</field>
+            </index>
+            <index name="shutdown_type">
+                <field>shutdown_type</field>
             </index>
         </indexes>
     </collection>
