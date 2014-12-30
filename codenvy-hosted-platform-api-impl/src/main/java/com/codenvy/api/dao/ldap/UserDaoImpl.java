@@ -356,13 +356,6 @@ public class UserDaoImpl implements UserDao {
     @Override
     public void remove(String id) throws NotFoundException, ServerException, ConflictException {
         final User user = getById(id);
-        //check removal user is not last workspace/admin of any workspace
-        final List<Member> wsRelationships = memberDao.getUserRelationships(id);
-        for (Member member : wsRelationships) {
-            if (isLastWorkspaceAdmin(member)) {
-                throw new ConflictException(format("User %s is last 'workspace/admin' in workspace %s", id, member.getWorkspaceId()));
-            }
-        }
         //search for accounts which should be removed
         final List<Account> accountsToRemove = new LinkedList<>();
         for (Account account : accountDao.getByOwner(id)) {
@@ -376,7 +369,7 @@ public class UserDaoImpl implements UserDao {
             }
         }
         //remove user relationships with workspaces
-        for (Member member : wsRelationships) {
+        for (Member member :  memberDao.getUserRelationships(id)) {
             memberDao.remove(member);
         }
         //remove user relationships with accounts
@@ -438,18 +431,6 @@ public class UserDaoImpl implements UserDao {
                          .withEmail(other.getEmail())
                          .withPassword(other.getPassword())
                          .withAliases(new ArrayList<>(other.getAliases()));
-    }
-
-    private boolean isLastWorkspaceAdmin(Member removal) throws NotFoundException, ServerException {
-        if (!removal.getRoles().contains("workspace/admin")) {
-            return false;
-        }
-        for (Member member : memberDao.getWorkspaceMembers(removal.getWorkspaceId())) {
-            if (!member.getUserId().equals(removal.getUserId()) && member.getRoles().contains("workspace/admin")) {
-                return false;
-            }
-        }
-        return true;
     }
 
     private boolean isOnlyOneOwner(String accountId) throws ServerException {
