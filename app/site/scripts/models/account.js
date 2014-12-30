@@ -247,22 +247,37 @@
             return deferredResult;
         };
 
+        var getOwnAccount = function(accounts){
+            var ownAccount = {accountReference:{id:false}};
+            if (accounts.length > 0) {
+                accounts.forEach(function(account) {
+                    if (account.roles.indexOf('account/owner') >= 0){
+                        ownAccount = account;
+                    }
+                });
+            }
+            return ownAccount;
+        };
+
+        var getUserMemberships = function(){
+            var url = "/api/account";
+            return $.ajax({
+                url: url,
+                type: "GET",
+            });
+        };
+
         var ensureExistenceAccount = function(accountName) {
             var deferredResult = $.Deferred();
             var url = "/api/account";
             $.ajax({
                 url: url,
                 type: "GET",
-                success: function(xhr, status, response) {
-                    var memberships = JSON.parse(response.responseText);
-                    if (memberships.length > 0) {
-                        memberships.forEach(function(membership) {
-                            var isOwner = (membership.roles.indexOf('account/owner') >= 0);
-                            if (isOwner) {
-                                deferredResult.resolve(membership.accountReference); //returns Account
-                            }
-                        });
-                    } else {
+                success: function(xhr, status, membership) {
+                    if (getOwnAccount(membership).accountReference.id){
+                        deferredResult.resolve(membership.accountReference); //returns Account
+                    }
+                    else {
                         // user hasn't memberships
                         createAccount(accountName)
                         .fail(function(error){deferredResult.reject(error);})
@@ -322,6 +337,23 @@
             return deferredResult;
         };
 
+                                                                                                           
+        var login = function(email, password) {
+            if (isWebsocketEnabled()) {
+                var loginUrl = "/api/auth/login?" + window.location.search.substring(1);
+                var data = {
+                    username: email,
+                    password: password
+                };
+                return $.ajax({
+                    url: loginUrl,
+                    type: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify(data),
+                });
+            }
+        };
+
         var getUserInfo = function() {
             var deferredResult = $.Deferred();
             var url = "/api/user";
@@ -369,6 +401,7 @@
             AccountError: AccountError,
             authenticate: authenticate,
             ensureExistenceAccount: ensureExistenceAccount,
+            getOwnAccount: getOwnAccount,
             isValidDomain: function(domain) {
                 return (/^[a-z0-9][a-z0-9_.-]{2,19}$/).exec(domain) !== null;
             },
@@ -381,20 +414,30 @@
                     window.location = '/site/login' + window.location.search;
                 }
             },
-            login: function(email, password, redirect_url, success, error) {
-                if (isWebsocketEnabled()) {
-                    var loginUrl = "/api/auth/login?" + window.location.search.substring(1);
-                    var selectWsUrl = "../site/private/select-tenant?cookiePresent&" + window.location.search.substring(1);
-                    var data = {
-                        username: email,
-                        password: password
-                    };
-                    $.ajax({
-                        url: loginUrl,
-                        type: "POST",
-                        contentType: "application/json",
-                        data: JSON.stringify(data),
-                        success: function() {
+
+            processLogin: function(email, password, redirect_url, success, error){
+                var selectWsUrl = "../site/private/select-tenant?cookiePresent&" + window.location.search.substring(1);
+                //TODO login refactoring
+                login(email, password)
+                .then(function() {
+                        getUserMemberships()// getUserMemberships()
+                        .then(function(accounts){
+                            var account = getOwnAccount(accounts);
+                            if(!account.accountReference.id){//if user has no account
+                                var userId = accounts[0].userId;
+                                var accountName = email.substring(0, email.indexOf('@'));
+                                return createAccount(accountName)//create account
+                                .then(function(newAccount){
+                                    account = newAccount;
+                                    return createWorkspace(accountName, account.id);//create WS
+                                })
+                                .then(function(workspace){
+                                    return addMemberToWorkspace(workspace.id,userId);//add User to WS
+                                });
+                                
+                            }
+                        })
+                        .then(function(){
                             if (redirect_url) {
                                 success({
                                     url: redirect_url
@@ -404,23 +447,24 @@
                                     url: selectWsUrl
                                 });
                             }
-                        },
-                        error: function(response /*, status , err*/ ) {
-                            var responseErr;
-                            try{
-                                responseErr = JSON.parse(response.responseText).message;
-                            }catch(e){
-                                responseErr = "Authentication: Something went wrong. Please try again or contact support";
-                            }
+                        });
 
-                            
-                            error([
-                                new AccountError(null, responseErr)
-                            ]);
+                    })
+                    .fail(function(response /*, status , err*/ ) {
+                        var responseErr;
+                        try{
+                            responseErr = JSON.parse(response.responseText).message;
+                        }catch(e){
+                            console.log(e);
+                            responseErr = "Something went wrong. Please try again or contact support";
                         }
-                    });
-                }
-            },
+                        error([
+                            new AccountError(null, responseErr)
+                        ]);
+                        }
+                    );
+
+            },            
             adminLogin: function(email, password, redirect_url, success, error) {
                 if (isWebsocketEnabled()) {
                     var loginUrl = "/api/auth/login?" + window.location.search.substring(1);

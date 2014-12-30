@@ -61,7 +61,7 @@
                 },
 
                 __submit : function(){
-                    Account.login(
+                    Account.processLogin(
                             $(this.el).find("input[name='email']").val(),
                             $(this.el).find("input[name='password']").val(),
                             Account.getQueryParameterByName('redirect_url'),
