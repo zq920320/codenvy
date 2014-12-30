@@ -32,7 +32,7 @@ public class TestUtils extends BaseTest {
     @DataProvider(name = "truncOperationProvider")
     public Object[][] TruncOperationTestDataProvider() {
         return new Object[][]{{"field", 0, "{ \"$divide\" : [ { \"$subtract\" : [ { \"$multiply\" : [ \"$field\" , 1]} , " +
-                                           "{ \"$mod\" : [ { \"$multiply\" : [ \"$field\" , 1]} , 1]}]} , 10000]}"},
+                                           "{ \"$mod\" : [ { \"$multiply\" : [ \"$field\" , 1]} , 1]}]} , 1]}"},
                               {"field", 4, "{ \"$divide\" : [ { \"$subtract\" : [ { \"$multiply\" : [ \"$field\" , 10000]} , " +
                                            "{ \"$mod\" : [ { \"$multiply\" : [ \"$field\" , 10000]} , 1]}]} , 10000]}"}};
     }
