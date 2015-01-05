@@ -19,19 +19,33 @@ package com.codenvy.analytics.metrics.tasks;
 
 import com.codenvy.analytics.datamodel.DoubleValueData;
 import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.metrics.AbstractLongValueResulted;
 import com.codenvy.analytics.metrics.MetricType;
 
 import javax.annotation.security.RolesAllowed;
 
 /** @author Dmytro Nochevnov */
 @RolesAllowed(value = {"user", "system/admin", "system/manager"})
-public class TasksGigabyteRamHours extends AbstractTasksMetric {
+public class TasksGigabyteRamHours extends AbstractLongValueResulted {
 
     public TasksGigabyteRamHours() {
-        super(MetricType.TASKS_GIGABYTE_RAM_HOURS, MetricType.BUILDS_GIGABYTE_RAM_HOURS,
-                                                   MetricType.RUNS_GIGABYTE_RAM_HOURS,
-                                                   MetricType.DEBUGS_GIGABYTE_RAM_HOURS,
-                                                   MetricType.EDITS_GIGABYTE_RAM_HOURS);
+        this(MetricType.TASKS_GIGABYTE_RAM_HOURS);
+    }
+
+    public TasksGigabyteRamHours(MetricType metricType) {
+        super(metricType, TASK_ID);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String getStorageCollectionName() {
+        return getStorageCollectionName(MetricType.TASKS);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String[] getTrackedFields() {
+        return new String[]{GIGABYTE_RAM_HOURS};
     }
 
     /** {@inheritDoc} */

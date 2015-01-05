@@ -15,29 +15,26 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.metrics.tasks;
+package com.codenvy.analytics.metrics.tasks.runs;
 
+import com.codenvy.analytics.metrics.AbstractSum;
 import com.codenvy.analytics.metrics.MetricType;
 
 import javax.annotation.security.RolesAllowed;
 
-/** @author Dmytro Nochevnov */
+/** @author Anatoliy Bazko */
 @RolesAllowed(value = {"user", "system/admin", "system/manager"})
-public class TasksLaunched extends Tasks {
+public class RunsMemoryUsage extends AbstractSum {
 
-    public static final String ALWAYS_ON = "always-on";
-    public static final String TIMEOUT = "timeout";
-
-    public TasksLaunched() {
-        this(MetricType.TASKS_LAUNCHED);
-    }
-
-    public TasksLaunched(MetricType metricType) {
-        super(metricType);
+    public RunsMemoryUsage() {
+        super(MetricType.RUNS_MEMORY_USAGE,
+              MetricType.RUNS_FINISHED,
+              MEMORY,
+              TASK_ID);
     }
 
     @Override
     public String getDescription() {
-        return "The number of times when user launched task on project";
+        return "The memory usage in MB";
     }
 }

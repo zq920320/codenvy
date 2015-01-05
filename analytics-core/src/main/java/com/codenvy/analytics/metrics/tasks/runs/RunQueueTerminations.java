@@ -15,29 +15,25 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.metrics.tasks;
+package com.codenvy.analytics.metrics.tasks.runs;
 
+import com.codenvy.analytics.metrics.AbstractLongValueResulted;
 import com.codenvy.analytics.metrics.MetricType;
 
 import javax.annotation.security.RolesAllowed;
 
-/** @author Dmytro Nochevnov */
-@RolesAllowed(value = {"user", "system/admin", "system/manager"})
-public class TasksLaunched extends Tasks {
+/**
+ * @author Alexander Reshetnyak
+ */
+@RolesAllowed(value = {"system/admin", "system/manager"})
+public class RunQueueTerminations extends AbstractLongValueResulted {
 
-    public static final String ALWAYS_ON = "always-on";
-    public static final String TIMEOUT = "timeout";
-
-    public TasksLaunched() {
-        this(MetricType.TASKS_LAUNCHED);
-    }
-
-    public TasksLaunched(MetricType metricType) {
-        super(metricType);
+    public RunQueueTerminations() {
+        super(MetricType.RUN_QUEUE_TERMINATIONS, TASK_ID);
     }
 
     @Override
     public String getDescription() {
-        return "The number of times when user launched task on project";
+        return "The number of run terminations due to threshold timeout";
     }
 }

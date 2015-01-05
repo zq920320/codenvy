@@ -234,6 +234,8 @@ edits = FOREACH edits GENERATE sessionID,
                              TOTUPLE('start_time', startTime),
                              TOTUPLE('stop_time', endTime),
                              TOTUPLE('gigabyte_ram_hours', CalculateGigabyteRamHours((long) $default_editor_memory_mb, usageTime)),
+                             TOTUPLE('launch_type', 'always-on'),
+                             TOTUPLE('shutdown_type', 'normal'),
                              TOTUPLE('is_factory', 0);
 
 edits_in_factory = getSessions(l, 'session-factory-usage');
@@ -264,6 +266,8 @@ edits_in_factory = FOREACH edits_in_factory GENERATE sessionID,
                                                    TOTUPLE('start_time', startTime),
                                                    TOTUPLE('stop_time', endTime),
                                                    TOTUPLE('gigabyte_ram_hours', CalculateGigabyteRamHours((long) $default_editor_memory_mb, usageTime)),
+                                                   TOTUPLE('launch_type', 'always-on'),
+                                                   TOTUPLE('shutdown_type', 'normal'),
                                                    TOTUPLE('is_factory', 1),
                                                    TOTUPLE('factory_id', GetFactoryId(ws));
 

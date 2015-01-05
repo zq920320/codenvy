@@ -17,27 +17,29 @@
  */
 package com.codenvy.analytics.metrics.tasks;
 
-import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
+import com.mongodb.BasicDBObject;
 
 import javax.annotation.security.RolesAllowed;
+import java.io.IOException;
 
 /** @author Dmytro Nochevnov */
 @RolesAllowed(value = {"user", "system/admin", "system/manager"})
-public class TasksStopped extends AbstractTasksMetric {
-
+public class TasksStopped extends Tasks {
     public TasksStopped() {
-        super(MetricType.TASKS_STOPPED, MetricType.BUILDS_FINISHED,
-                                        MetricType.RUNS_FINISHED,
-                                        MetricType.DEBUGS_FINISHED,
-                                        MetricType.EDITS);
+        this(MetricType.TASKS_STOPPED);
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public Class<? extends ValueData> getValueDataClass() {
-        return LongValueData.class;
+    public TasksStopped(MetricType metricType) {
+        super(metricType);
+    }
+
+    @Override public Context applySpecificFilter(Context context) throws IOException {
+        Context.Builder builder = new Context.Builder(super.applySpecificFilter(context));
+        builder.put(MetricFilter.STOP_TIME, new BasicDBObject("$exists", true));
+        return builder.build();
     }
 
     @Override

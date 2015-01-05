@@ -17,27 +17,31 @@
  */
 package com.codenvy.analytics.metrics.tasks;
 
-import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.ide_usage.AbstractTimeSpentInAction;
 
 import javax.annotation.security.RolesAllowed;
 
 /** @author Dmytro Nochevnov */
 @RolesAllowed(value = {"user", "system/admin", "system/manager"})
-public class TasksTime extends AbstractTasksMetric {
+public class TasksTime extends AbstractTimeSpentInAction {
 
     public TasksTime() {
-        super(MetricType.TASKS_TIME, MetricType.BUILDS_TIME,
-                                     MetricType.RUNS_TIME,
-                                     MetricType.DEBUGS_TIME,
-                                     MetricType.EDITS_TIME);
+        this(MetricType.TASKS_TIME);
     }
 
-    /** {@inheritDoc} */
+    public TasksTime(MetricType metricType) {
+        super(metricType, TASK_ID);
+    }
+
     @Override
-    public Class<? extends ValueData> getValueDataClass() {
-        return LongValueData.class;
+    public String getStorageCollectionName() {
+        return getStorageCollectionName(MetricType.TASKS);
+    }
+
+    @Override
+    public String[] getTrackedFields() {
+        return new String[]{USAGE_TIME};
     }
 
     @Override

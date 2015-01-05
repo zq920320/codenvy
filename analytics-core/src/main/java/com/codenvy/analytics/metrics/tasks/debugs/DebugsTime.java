@@ -15,53 +15,32 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.metrics.tasks;
+package com.codenvy.analytics.metrics.tasks.debugs;
 
-import com.codenvy.analytics.metrics.AbstractLongValueResulted;
 import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
+import com.codenvy.analytics.metrics.tasks.Tasks;
+import com.codenvy.analytics.metrics.tasks.TasksTime;
 
 import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
 
-/** @author Dmytro Nochevnov */
-@RolesAllowed(value = {"user", "system/admin", "system/manager"})
-public class TasksStoppedNormally extends TasksStopped {
-    public enum NormalShutdownType {
-        NORMAL,
-        USER;
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+@RolesAllowed({"system/admin", "system/manager"})
+public class DebugsTime extends TasksTime {
 
-        public static String[] names() {
-            NormalShutdownType[] states = values();
-            String[] names = new String[states.length];
-
-            for (int i = 0; i < states.length; i++) {
-                names[i] = states[i].name().toLowerCase();
-            }
-
-            return names;
-        }
-    }
-
-    public TasksStoppedNormally() {
-        this(MetricType.TASKS_STOPPED_NORMALLY);
-    }
-
-    public TasksStoppedNormally(MetricType metricType) {
-        super(metricType);
+    public DebugsTime() {
+        super(MetricType.DEBUGS_TIME);
     }
 
     @Override public Context applySpecificFilter(Context context) throws IOException {
         Context.Builder builder = new Context.Builder(super.applySpecificFilter(context));
-        builder.put(MetricFilter.SHUTDOWN_TYPE, new BasicDBObject("$in", NormalShutdownType.names()));
+        builder.put(MetricFilter.TASK_TYPE, Tasks.DEBUGGER);
         return builder.build();
     }
-
     @Override
     public String getDescription() {
-        return "The number of tasks stopped normally";
+        return "The total time of all debugs in minutes";
     }
 }

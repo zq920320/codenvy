@@ -15,29 +15,32 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.metrics.tasks;
+package com.codenvy.analytics.metrics.tasks.debugs;
 
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.tasks.TasksLaunchedWithTimeout;
 
 import javax.annotation.security.RolesAllowed;
+import java.io.IOException;
 
-/** @author Dmytro Nochevnov */
+/** @author Anatoliy Bazko */
 @RolesAllowed(value = {"user", "system/admin", "system/manager"})
-public class TasksLaunched extends Tasks {
+public class DebugsWithTimeout extends TasksLaunchedWithTimeout {
 
-    public static final String ALWAYS_ON = "always-on";
-    public static final String TIMEOUT = "timeout";
-
-    public TasksLaunched() {
-        this(MetricType.TASKS_LAUNCHED);
+    public DebugsWithTimeout() {
+        super(MetricType.DEBUGS_WITH_TIMEOUT);
     }
 
-    public TasksLaunched(MetricType metricType) {
-        super(metricType);
+    @Override public Context applySpecificFilter(Context context) throws IOException {
+        Context.Builder builder = new Context.Builder(super.applySpecificFilter(context));
+        builder.put(MetricFilter.TASK_TYPE, DEBUGGER);
+        return builder.build();
     }
 
     @Override
     public String getDescription() {
-        return "The number of times when user launched task on project";
+        return "The number of debugs with timeout";
     }
 }

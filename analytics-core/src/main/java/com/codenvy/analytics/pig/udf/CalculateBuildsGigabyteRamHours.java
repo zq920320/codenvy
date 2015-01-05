@@ -17,14 +17,11 @@
  */
 package com.codenvy.analytics.pig.udf;
 
-import com.codenvy.analytics.metrics.tasks.AbstractTasksMetric;
-import org.apache.pig.data.Tuple;
-
-import java.io.IOException;
+import com.codenvy.analytics.metrics.tasks.Tasks;
 
 /** @author Dmytro Nochevnov */
 public class CalculateBuildsGigabyteRamHours extends AbstractCalculateTaskGigabyteRamHours {
     public CalculateBuildsGigabyteRamHours() {
-        super(AbstractTasksMetric.BUILDER);
+        super(Tasks.BUILDER);
     }
 }

@@ -25,8 +25,17 @@ import javax.annotation.security.RolesAllowed;
 /** @author Dmytro Nochevnov  */
 @RolesAllowed(value = {"user", "system/admin", "system/manager"})
 public class Tasks extends AbstractCount {
+    public static final String BUILDER  = "builder";
+    public static final String RUNNER   = "runner";
+    public static final String DEBUGGER = "debugger";
+    public static final String EDITOR   = "editor";
+
     public Tasks() {
-        super(MetricType.TASKS, MetricType.TASKS_LIST, TASK_ID);
+        this(MetricType.TASKS);
+    }
+
+    public Tasks(MetricType metricType) {
+        super(metricType, MetricType.TASKS_LIST, TASK_ID);
     }
 
     @Override

@@ -15,29 +15,25 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.metrics.tasks;
+package com.codenvy.analytics.metrics.tasks.builds;
 
 import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.ide_usage.AbstractTimeSpentInAction;
 
 import javax.annotation.security.RolesAllowed;
 
-/** @author Dmytro Nochevnov */
-@RolesAllowed(value = {"user", "system/admin", "system/manager"})
-public class TasksLaunched extends Tasks {
+/**
+ * @author Alexander Reshetnyak
+ */
+@RolesAllowed({"system/admin", "system/manager"})
+public class TimeInBuildQueue extends AbstractTimeSpentInAction {
 
-    public static final String ALWAYS_ON = "always-on";
-    public static final String TIMEOUT = "timeout";
-
-    public TasksLaunched() {
-        this(MetricType.TASKS_LAUNCHED);
-    }
-
-    public TasksLaunched(MetricType metricType) {
-        super(metricType);
+    public TimeInBuildQueue() {
+        super(MetricType.TIME_IN_BUILD_QUEUE, TASK_ID);
     }
 
     @Override
     public String getDescription() {
-        return "The number of times when user launched task on project";
+        return "The time spent in build wait queue";
     }
 }

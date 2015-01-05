@@ -17,26 +17,29 @@
  */
 package com.codenvy.analytics.metrics.tasks;
 
-import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 
 import javax.annotation.security.RolesAllowed;
+import java.io.IOException;
 
 /** @author Dmytro Nochevnov */
 @RolesAllowed(value = {"user", "system/admin", "system/manager"})
-public class TasksLaunchedWithTimeout extends AbstractTasksMetric {
+public class TasksLaunchedWithTimeout extends TasksLaunched {
 
     public TasksLaunchedWithTimeout() {
-        super(MetricType.TASKS_LAUNCHED_WITH_TIMEOUT, MetricType.BUILDS_WITH_TIMEOUT,
-                                                      MetricType.RUNS_WITH_TIMEOUT,
-                                                      MetricType.DEBUGS_WITH_TIMEOUT);
+        this(MetricType.TASKS_LAUNCHED_WITH_TIMEOUT);
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public Class<? extends ValueData> getValueDataClass() {
-        return LongValueData.class;
+    public TasksLaunchedWithTimeout(MetricType metricType) {
+        super(metricType);
+    }
+
+    @Override public Context applySpecificFilter(Context context) throws IOException {
+        Context.Builder builder = new Context.Builder(super.applySpecificFilter(context));
+        builder.put(MetricFilter.LAUNCH_TYPE, TIMEOUT);
+        return builder.build();
     }
 
     @Override

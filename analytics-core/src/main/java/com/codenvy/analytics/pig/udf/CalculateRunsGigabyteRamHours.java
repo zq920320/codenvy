@@ -17,11 +17,11 @@
  */
 package com.codenvy.analytics.pig.udf;
 
-import com.codenvy.analytics.metrics.tasks.AbstractTasksMetric;
+import com.codenvy.analytics.metrics.tasks.Tasks;
 
 /** @author Dmytro Nochevnov */
 public class CalculateRunsGigabyteRamHours extends AbstractCalculateTaskGigabyteRamHours {
     public CalculateRunsGigabyteRamHours() {
-        super(AbstractTasksMetric.RUNNER);
+        super(Tasks.RUNNER);
     }
 }
