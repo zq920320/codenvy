@@ -153,11 +153,8 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
                 scriptsManager.getScript(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, MetricType.PRODUCT_USAGE_FACTORY_SESSIONS).getParamsAsMap());
         pigServer.execute(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, builder.build());
 
-        builder.putAll(scriptsManager.getScript(ScriptType.EVENTS, MetricType.BUILDS).getParamsAsMap());
-        pigServer.execute(ScriptType.EVENTS, builder.build());
-
-        builder.putAll(scriptsManager.getScript(ScriptType.EVENTS, MetricType.RUNS).getParamsAsMap());
-        pigServer.execute(ScriptType.EVENTS, builder.build());
+        builder.putAll(scriptsManager.getScript(ScriptType.TASKS, MetricType.TASKS).getParamsAsMap());
+        pigServer.execute(ScriptType.TASKS, builder.build());
 
         builder.putAll(scriptsManager.getScript(ScriptType.DEPLOYMENTS_BY_TYPES, MetricType.PROJECT_PAASES).getParamsAsMap());
         pigServer.execute(ScriptType.DEPLOYMENTS_BY_TYPES, builder.build());

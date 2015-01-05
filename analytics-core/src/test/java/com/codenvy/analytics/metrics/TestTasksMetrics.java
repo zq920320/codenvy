@@ -472,6 +472,7 @@ public class TestTasksMetrics extends BaseTest {
 
         Map<String, Map<String, ValueData>> m = listToMap(expandedValue, AbstractMetric.TASK_ID);
         assertEquals(m.toString(), "{"
+                                   + "id4_r={id=id4_r}, "
                                    + "id1_b={id=id1_b}, "
                                    + "id1_r={id=id1_r}, "
                                    + "id1_d={id=id1_d}, "
@@ -501,6 +502,7 @@ public class TestTasksMetrics extends BaseTest {
 
         Map<String, Map<String, ValueData>> m = listToMap(expandedValue, AbstractMetric.TASK_ID);
         assertEquals(m.toString(), "{"
+                                   + "id4_r={id=id4_r}, "
                                    + "id1_b={id=id1_b}, "
                                    + "id1_r={id=id1_r}, "
                                    + "id1_d={id=id1_d}, "
@@ -618,35 +620,6 @@ public class TestTasksMetrics extends BaseTest {
 
         builder.putAll(scriptsManager.getScript(ScriptType.ACCEPTED_FACTORIES, MetricType.FACTORIES_ACCEPTED_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.ACCEPTED_FACTORIES, builder.build());
-
-        builder.putAll(scriptsManager.getScript(ScriptType.EVENTS, MetricType.BUILDS).getParamsAsMap());
-        pigServer.execute(ScriptType.EVENTS, builder.build());
-
-        builder.putAll(scriptsManager.getScript(ScriptType.EVENTS, MetricType.BUILDS_FINISHED).getParamsAsMap());
-        pigServer.execute(ScriptType.EVENTS, builder.build());
-
-        builder.putAll(scriptsManager.getScript(ScriptType.USED_TIME, MetricType.BUILDS_TIME).getParamsAsMap());
-        pigServer.execute(ScriptType.USED_TIME, builder.build());
-
-
-        builder.putAll(scriptsManager.getScript(ScriptType.EVENTS, MetricType.RUNS).getParamsAsMap());
-        pigServer.execute(ScriptType.EVENTS, builder.build());
-
-        builder.putAll(scriptsManager.getScript(ScriptType.EVENTS, MetricType.RUNS_FINISHED).getParamsAsMap());
-        pigServer.execute(ScriptType.EVENTS, builder.build());
-
-        builder.putAll(scriptsManager.getScript(ScriptType.USED_TIME, MetricType.RUNS_TIME).getParamsAsMap());
-        pigServer.execute(ScriptType.USED_TIME, builder.build());
-
-
-        builder.putAll(scriptsManager.getScript(ScriptType.EVENTS, MetricType.DEBUGS).getParamsAsMap());
-        pigServer.execute(ScriptType.EVENTS, builder.build());
-
-        builder.putAll(scriptsManager.getScript(ScriptType.EVENTS, MetricType.DEBUGS_FINISHED).getParamsAsMap());
-        pigServer.execute(ScriptType.EVENTS, builder.build());
-
-        builder.putAll(scriptsManager.getScript(ScriptType.USED_TIME, MetricType.DEBUGS_TIME).getParamsAsMap());
-        pigServer.execute(ScriptType.USED_TIME, builder.build());
 
         builder.putAll(scriptsManager.getScript(ScriptType.TASKS, MetricType.TASKS).getParamsAsMap());
         pigServer.execute(ScriptType.TASKS, builder.build());

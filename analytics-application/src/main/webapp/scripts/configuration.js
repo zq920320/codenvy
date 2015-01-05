@@ -1377,7 +1377,8 @@ function AnalyticsConfiguration() {
         "data_universe",
         "passed_days_count",
         "start_time",
-        "id"
+        "id",
+        "task_type"
      ];
 
     /** Global parameters stored in Browser Storage */

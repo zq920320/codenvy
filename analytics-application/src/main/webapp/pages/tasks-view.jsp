@@ -25,7 +25,9 @@
 </head>
 <body>
 
-<jsp:include page="/inclusions/top-menu/top-menu.jsp" />
+<jsp:include page="/inclusions/top-menu/top-menu.jsp">
+    <jsp:param name="selectedMenuItemId" value="topmenu-tasks"/>
+</jsp:include>
 
 <div class="container-fluid">
     <div class="row-fluid">
@@ -72,6 +74,14 @@
                             </tr>
                         </table>
                     </div>
+                </div>
+
+                <div id="show-tasks" class="btn-group right" targetWidgets="_all">
+                    <button class="btn command-btn" default value="">All Tasks</button>
+                    <button class="btn command-btn" value="builder">Builder</button>
+                    <button class="btn command-btn" value="runner">Runner</button>
+                    <button class="btn command-btn" value="debugger">Debugger</button>
+                    <button class="btn command-btn" value="editor">Editor</button>
                 </div>
             </div>
             

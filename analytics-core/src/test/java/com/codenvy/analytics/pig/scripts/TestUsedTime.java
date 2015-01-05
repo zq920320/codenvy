@@ -32,7 +32,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.Assert.assertEquals;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestUsedTime extends BaseTest {
@@ -43,10 +43,10 @@ public class TestUsedTime extends BaseTest {
     public void prepare() throws Exception {
         List<Event> events = new ArrayList<>();
         events.add(new Event.Builder().withDate("2013-01-01")
-                                      .withParam("EVENT", "run-finished")
+                                      .withParam("EVENT", "run-queue-waiting-finished")
                                       .withParam("USER", "user")
                                       .withParam("WS", "ws")
-                                      .withParam("USAGE-TIME", "300").build());
+                                      .withParam("WAITING-TIME", "300").build());
 
         File log = LogGenerator.generateLog(events);
 
@@ -55,9 +55,9 @@ public class TestUsedTime extends BaseTest {
         builder.put(Parameters.TO_DATE, "20130101");
         builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.toString());
         builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.toString());
-        builder.put(Parameters.EVENT, "run-finished");
-        builder.put(Parameters.PARAM, "USAGE-TIME");
-        builder.put(Parameters.STORAGE_TABLE, "runs_time");
+        builder.put(Parameters.EVENT, "run-queue-waiting-finished");
+        builder.put(Parameters.PARAM, "WAITING-TIME");
+        builder.put(Parameters.STORAGE_TABLE, "time_in_run_queue");
         builder.put(Parameters.LOG, log.getAbsolutePath());
     }
 
@@ -65,7 +65,7 @@ public class TestUsedTime extends BaseTest {
     public void testExecute() throws Exception {
         pigServer.execute(ScriptType.USED_TIME, builder.build());
 
-        Metric metric = MetricFactory.getMetric(MetricType.RUNS_TIME);
+        Metric metric = MetricFactory.getMetric(MetricType.TIME_IN_RUN_QUEUE);
         LongValueData data = ValueDataUtil.getAsLong(metric, Context.EMPTY);
 
         assertEquals(data.getAsLong(), 300);

@@ -21,6 +21,9 @@ import com.codenvy.analytics.metrics.AbstractLongValueResulted;
 import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.tasks.AbstractTasksMetric;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
 
 import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
@@ -34,15 +37,27 @@ public class RunsFinishedByUser extends AbstractLongValueResulted {
     }
 
     @Override
-    public Context applySpecificFilter(Context context) throws IOException {
-        Context.Builder builder = new Context.Builder(context);
-        builder.put(MetricFilter.STOPPED_BY_USER, 1);
-        return builder.build();
+    public String getStorageCollectionName() {
+        return getStorageCollectionName(MetricType.TASKS);
     }
 
     @Override
-    public String getStorageCollectionName() {
-        return getStorageCollectionName(MetricType.RUNS_FINISHED);
+    public DBObject[] getSpecificDBOperations(Context clauses) {
+        String field = getTrackedFields()[0];
+        DBObject group = new BasicDBObject();
+
+        group.put(ID, null);
+        group.put(field, new BasicDBObject("$sum", 1));
+
+        return new DBObject[]{new BasicDBObject("$group", group)};
+    }
+
+    @Override public Context applySpecificFilter(Context context) throws IOException {
+        Context.Builder builder = new Context.Builder(super.applySpecificFilter(context));
+        builder.put(MetricFilter.TASK_TYPE, AbstractTasksMetric.RUNNER);
+        builder.put(MetricFilter.SHUTDOWN_TYPE, "user");
+
+        return builder.build();
     }
 
     @Override

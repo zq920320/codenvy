@@ -65,7 +65,10 @@ public enum MetricFilter {
     DATA_UNIVERSE(true),
     PROJECT_TYPE,
     TASK_ID,
-    TASK_TYPE;
+    TASK_TYPE,
+    STOP_TIME,
+    SHUTDOWN_TYPE,
+    LAUNCH_TYPE;
 
     private boolean isNumeric;
 

@@ -75,42 +75,6 @@
     <script name="events">
         <parameter key="WS" value="ANY"/>
         <parameter key="USER" value="ANY"/>
-        <parameter key="EVENT" value="run-started"/>
-        <parameter key="STORAGE_TABLE" value="runs"/>
-    </script>
-    <script name="events">
-        <parameter key="WS" value="ANY"/>
-        <parameter key="USER" value="ANY"/>
-        <parameter key="EVENT" value="run-finished"/>
-        <parameter key="STORAGE_TABLE" value="runs_finished"/>
-    </script>
-    <script name="events">
-        <parameter key="WS" value="ANY"/>
-        <parameter key="USER" value="ANY"/>
-        <parameter key="EVENT" value="build-started"/>
-        <parameter key="STORAGE_TABLE" value="builds"/>
-    </script>
-    <script name="events">
-        <parameter key="WS" value="ANY"/>
-        <parameter key="USER" value="ANY"/>
-        <parameter key="EVENT" value="build-finished"/>
-        <parameter key="STORAGE_TABLE" value="builds_finished"/>
-    </script>
-    <script name="events">
-        <parameter key="WS" value="ANY"/>
-        <parameter key="USER" value="ANY"/>
-        <parameter key="EVENT" value="debug-started"/>
-        <parameter key="STORAGE_TABLE" value="debugs"/>
-    </script>
-    <script name="events">
-        <parameter key="WS" value="ANY"/>
-        <parameter key="USER" value="ANY"/>
-        <parameter key="EVENT" value="debug-finished"/>
-        <parameter key="STORAGE_TABLE" value="debugs_finished"/>
-    </script>
-    <script name="events">
-        <parameter key="WS" value="ANY"/>
-        <parameter key="USER" value="ANY"/>
         <parameter key="EVENT" value="build-queue-waiting-started"/>
         <parameter key="STORAGE_TABLE" value="build_queue_waiting_started"/>
     </script>
@@ -215,27 +179,6 @@
         <parameter key="USER" value="ANY"/>
         <parameter key="EVENT" value="configure-docker"/>
         <parameter key="STORAGE_TABLE" value="docker_configuration_time"/>
-    </script>
-    <script name="used_time">
-        <parameter key="WS" value="ANY"/>
-        <parameter key="USER" value="ANY"/>
-        <parameter key="EVENT" value="build-finished"/>
-        <parameter key="PARAM" value="USAGE-TIME"/>
-        <parameter key="STORAGE_TABLE" value="builds_time"/>
-    </script>
-    <script name="used_time">
-        <parameter key="WS" value="ANY"/>
-        <parameter key="USER" value="ANY"/>
-        <parameter key="EVENT" value="run-finished"/>
-        <parameter key="PARAM" value="USAGE-TIME"/>
-        <parameter key="STORAGE_TABLE" value="runs_time"/>
-    </script>
-    <script name="used_time">
-        <parameter key="WS" value="ANY"/>
-        <parameter key="USER" value="ANY"/>
-        <parameter key="EVENT" value="debug-finished"/>
-        <parameter key="PARAM" value="USAGE-TIME"/>
-        <parameter key="STORAGE_TABLE" value="debugs_time"/>
     </script>
     <script name="used_time">
         <parameter key="WS" value="ANY"/>

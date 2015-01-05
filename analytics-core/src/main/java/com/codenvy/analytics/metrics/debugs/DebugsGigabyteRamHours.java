@@ -20,13 +20,16 @@ package com.codenvy.analytics.metrics.debugs;
 import com.codenvy.analytics.datamodel.DoubleValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ReadBasedExpandable;
 import com.codenvy.analytics.metrics.ReadBasedMetric;
+import com.codenvy.analytics.metrics.tasks.AbstractTasksMetric;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
 import javax.annotation.security.RolesAllowed;
+import java.io.IOException;
 
 /** @author Anatoliy Bazko */
 @RolesAllowed(value = {"user", "system/admin", "system/manager"})
@@ -36,16 +39,24 @@ public class DebugsGigabyteRamHours extends ReadBasedMetric implements ReadBased
         super(MetricType.DEBUGS_GIGABYTE_RAM_HOURS);
     }
 
+
     /** {@inheritDoc} */
     @Override
     public String getStorageCollectionName() {
-        return getStorageCollectionName(MetricType.DEBUGS_FINISHED);
+        return getStorageCollectionName(MetricType.TASKS);
     }
 
     /** {@inheritDoc} */
     @Override
     public String[] getTrackedFields() {
         return new String[]{VALUE};
+    }
+
+    @Override public Context applySpecificFilter(Context context) throws IOException {
+        Context.Builder builder = new Context.Builder(super.applySpecificFilter(context));
+        builder.put(MetricFilter.TASK_TYPE, AbstractTasksMetric.DEBUGGER);
+
+        return builder.build();
     }
 
     /** {@inheritDoc} */

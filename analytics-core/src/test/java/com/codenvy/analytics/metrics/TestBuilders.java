@@ -122,14 +122,8 @@ public class TestBuilders extends BaseTest {
         builder.put(Parameters.TO_DATE, "20131020");
         builder.put(Parameters.LOG, initLogs().getAbsolutePath());
 
-        builder.putAll(scriptsManager.getScript(ScriptType.EVENTS, MetricType.BUILDS).getParamsAsMap());
-        pigServer.execute(ScriptType.EVENTS, builder.build());
-
-        builder.putAll(scriptsManager.getScript(ScriptType.EVENTS, MetricType.BUILDS_FINISHED).getParamsAsMap());
-        pigServer.execute(ScriptType.EVENTS, builder.build());
-
-        builder.putAll(scriptsManager.getScript(ScriptType.USED_TIME, MetricType.BUILDS_TIME).getParamsAsMap());
-        pigServer.execute(ScriptType.USED_TIME, builder.build());
+        builder.putAll(scriptsManager.getScript(ScriptType.TASKS, MetricType.TASKS).getParamsAsMap());
+        pigServer.execute(ScriptType.TASKS, builder.build());
     }
 
     private File initLogs() throws Exception {

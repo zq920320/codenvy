@@ -109,6 +109,13 @@ function AnalyticsMain() {
             $(this).addClass('btn-primary');
             reloadWidgets($("#show-factories").attr("targetWidgets"));
         });
+
+        // Show tasks selectors group
+        $("#show-tasks button").click(function () {
+            $("#show-tasks button").removeClass('btn-primary');
+            $(this).addClass('btn-primary');
+            reloadWidgets($("#show-tasks").attr("targetWidgets"));
+        });
     };
 
     /**
@@ -162,6 +169,12 @@ function AnalyticsMain() {
         var selectedShowFactoriesButton = $("#show-factories button.btn-primary");
         if (selectedShowFactoriesButton.doesExist() && selectedShowFactoriesButton.val() != "") {
             params.encoded_factory = selectedShowFactoriesButton.val();
+        }
+
+        // process show-tasks selector
+        var selectedShowTasksButton = $("#show-tasks button.btn-primary");
+        if (selectedShowTasksButton.doesExist() && selectedShowTasksButton.val() != "") {
+            params.task_type = selectedShowTasksButton.val();
         }
 
         return params;
@@ -336,6 +349,12 @@ function AnalyticsMain() {
         var showFactoriesButtons = jQuery("#show-factories button");
         if (showFactoriesButtons.doesExist()) {
             setPrimaryButtonOnValue(showFactoriesButtons, params["encoded_factory"]);
+        }
+
+        // update show encoded selection buttons
+        var showTasksButtons = jQuery("#show-tasks button");
+        if (showTasksButtons.doesExist()) {
+            setPrimaryButtonOnValue(showTasksButtons, params["task_type"]);
         }
     }
 

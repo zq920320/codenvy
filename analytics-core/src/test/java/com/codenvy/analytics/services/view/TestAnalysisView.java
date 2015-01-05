@@ -534,13 +534,9 @@ public class TestAnalysisView extends BaseTest {
         builder.putAll(scriptsManager.getScript(ScriptType.EVENTS, MetricType.PROJECTS).getParamsAsMap());
         pigServer.execute(ScriptType.EVENTS, builder.build());
 
-        /** create collections "builds" to calculate "users_who_built" metric */
-        builder.putAll(scriptsManager.getScript(ScriptType.EVENTS, MetricType.BUILDS).getParamsAsMap());
-        pigServer.execute(ScriptType.EVENTS, builder.build());
-
-        /** create collections "runs" to calculate "users_who_deploy" metric */
-        builder.putAll(scriptsManager.getScript(ScriptType.EVENTS, MetricType.RUNS).getParamsAsMap());
-        pigServer.execute(ScriptType.EVENTS, builder.build());
+        /** create collections "tasks" to calculate "users_who_built", "users_who_deploy" metrics */
+        builder.putAll(scriptsManager.getScript(ScriptType.TASKS, MetricType.TASKS).getParamsAsMap());
+        pigServer.execute(ScriptType.TASKS, builder.build());
 
         /** create collections "deploys_to_paas" to calculate "users_who_deployed_to_paas" metric */
         builder.putAll(scriptsManager.getScript(ScriptType.EVENTS, MetricType.DEPLOYS_TO_PAAS).getParamsAsMap());

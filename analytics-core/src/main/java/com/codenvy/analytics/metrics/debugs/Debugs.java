@@ -18,9 +18,15 @@
 package com.codenvy.analytics.metrics.debugs;
 
 import com.codenvy.analytics.metrics.AbstractLongValueResulted;
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.tasks.AbstractTasksMetric;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
 
 import javax.annotation.security.RolesAllowed;
+import java.io.IOException;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed(value = {"user", "system/admin", "system/manager"})
@@ -28,6 +34,30 @@ public class Debugs extends AbstractLongValueResulted {
 
     public Debugs() {
         super(MetricType.DEBUGS, TASK_ID);
+    }
+
+
+    @Override
+    public String getStorageCollectionName() {
+        return getStorageCollectionName(MetricType.TASKS);
+    }
+
+    @Override public Context applySpecificFilter(Context context) throws IOException {
+        Context.Builder builder = new Context.Builder(super.applySpecificFilter(context));
+        builder.put(MetricFilter.TASK_TYPE, AbstractTasksMetric.DEBUGGER);
+
+        return builder.build();
+    }
+
+    @Override
+    public DBObject[] getSpecificDBOperations(Context clauses) {
+        String field = getTrackedFields()[0];
+        DBObject group = new BasicDBObject();
+
+        group.put(ID, null);
+        group.put(field, new BasicDBObject("$sum", 1));
+
+        return new DBObject[]{new BasicDBObject("$group", group)};
     }
 
     @Override

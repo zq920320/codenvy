@@ -17,10 +17,14 @@
  */
 package com.codenvy.analytics.metrics.builds;
 
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ide_usage.AbstractTimeSpentInAction;
+import com.codenvy.analytics.metrics.tasks.AbstractTasksMetric;
 
 import javax.annotation.security.RolesAllowed;
+import java.io.IOException;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
@@ -28,6 +32,23 @@ public class BuildsTime extends AbstractTimeSpentInAction {
 
     public BuildsTime() {
         super(MetricType.BUILDS_TIME, TASK_ID);
+    }
+
+    @Override
+    public String getStorageCollectionName() {
+        return getStorageCollectionName(MetricType.TASKS);
+    }
+
+    @Override public Context applySpecificFilter(Context context) throws IOException {
+        Context.Builder builder = new Context.Builder(super.applySpecificFilter(context));
+        builder.put(MetricFilter.TASK_TYPE, AbstractTasksMetric.BUILDER);
+
+        return builder.build();
+    }
+
+    @Override
+    public String[] getTrackedFields() {
+        return new String[]{USAGE_TIME};
     }
 
     @Override
