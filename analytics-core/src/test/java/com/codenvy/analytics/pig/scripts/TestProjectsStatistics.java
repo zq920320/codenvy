@@ -100,11 +100,6 @@ public class TestProjectsStatistics extends BaseTest {
                                 .withTime("10:11:00")
                                 .build());
 
-        events.add(Event.Builder.createProjectDeployedEvent("user1@gmail.com", "ws1", "project1", "jar", "paas")
-                                .withDate("2013-01-01")
-                                .withTime("10:12:00")
-                                .build());
-
         // added event of build project without "project-created" event within the log
         events.add(Event.Builder.createBuildStartedEvent("user1@gmail.com", "ws1", "project2", "spring", "id2")
                                 .withDate("2013-01-01")

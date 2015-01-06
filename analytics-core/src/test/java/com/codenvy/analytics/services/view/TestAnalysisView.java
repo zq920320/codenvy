@@ -423,11 +423,6 @@ public class TestAnalysisView extends BaseTest {
                 Event.Builder.createProjectCreatedEvent("user2@gmail.com", "ws2", "project1", "type1").withDate(DATE1)
                              .withTime("10:03:00").build());
 
-        // projects deployed to LOCAL
-        events.add(Event.Builder.createProjectDeployedEvent("user2@gmail.com", "ws2", "project1", "type1", "LOCAL")
-                                .withTime("10:10:00,000")
-                                .withDate(DATE1).build());
-
         // projects deployed to PaaS
         events.add(Event.Builder.createApplicationCreatedEvent("user1@gmail.com", "ws1", "project1", "type1", "paas1")
                                 .withTime("10:10:00,000")

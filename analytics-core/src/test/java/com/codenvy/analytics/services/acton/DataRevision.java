@@ -27,7 +27,14 @@ import com.codenvy.analytics.services.pig.PigRunner;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.OutputSupplier;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -115,7 +122,7 @@ public class DataRevision extends BaseTest {
     private void runScript() throws Exception {
         Context context = Utils.initializeContext(Parameters.TimeUnit.DAY);
         context =
-                context.cloneAndPut(Parameters.LOG, getResourceAsBytes(LOG_DATE, getYerstedayDate()).getAbsolutePath());
+                context.cloneAndPut(Parameters.LOG, getResourceAsBytes(LOG_DATE, getYesterday()).getAbsolutePath());
 
         pigRunner.forceExecute(context);
     }
@@ -132,7 +139,7 @@ public class DataRevision extends BaseTest {
         return df.format(calendar.getTime());
     }
 
-    private String getYerstedayDate() {
+    private String getYesterday() {
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
         Calendar calendar = Calendar.getInstance();
 

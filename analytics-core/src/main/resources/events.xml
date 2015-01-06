@@ -155,7 +155,6 @@
             <param>PROJECT</param>
             <param>TYPE</param>
             <param>ID</param>
-            <param type="long">WAITING-TIME</param>
         </parameters>
     </event>
     <event name="run-queue-waiting-finished">
@@ -166,6 +165,7 @@
             <param>PROJECT</param>
             <param>TYPE</param>
             <param>ID</param>
+            <param type="long">WAITING-TIME</param>
         </parameters>
     </event>
     <event name="configure-docker-started">
@@ -221,37 +221,6 @@
             <param>WS</param>
         </parameters>
     </event>
-    <event name="tenant-created">
-        <description>Workspace created</description>
-        <parameters>
-            <param>WS</param>
-            <param>USER</param>
-        </parameters>
-    </event>
-    <event name="workspace-started">
-        <description>Workspace started</description>
-        <parameters>
-            <param>WS</param>
-        </parameters>
-    </event>
-    <event name="tenant-started">
-        <description>Workspace started</description>
-        <parameters>
-            <param>WS</param>
-        </parameters>
-    </event>
-    <event name="workspace-stopped">
-        <description>Workspace stopped</description>
-        <parameters>
-            <param>WS</param>
-        </parameters>
-    </event>
-    <event name="tenant-stopped">
-        <description>Workspace stopped</description>
-        <parameters>
-            <param>WS</param>
-        </parameters>
-    </event>
     <event name="workspace-destroyed">
         <description>Workspace destroyed</description>
         <parameters>
@@ -264,12 +233,6 @@
         <parameters>
             <param>WS</param>
             <param>WS-ID</param>
-        </parameters>
-    </event>
-    <event name="tenant-destroyed">
-        <description>Workspace destroyed</description>
-        <parameters>
-            <param>WS</param>
         </parameters>
     </event>
     <event name="project-created">
@@ -289,16 +252,6 @@
             <param>USER</param>
             <param>PROJECT</param>
             <param>TYPE</param>
-        </parameters>
-    </event>
-    <event name="project-deployed">
-        <description>Project deployed</description>
-        <parameters>
-            <param>WS</param>
-            <param>USER</param>
-            <param>PROJECT</param>
-            <param>TYPE</param>
-            <param allowed-values="local">PAAS</param>
         </parameters>
     </event>
     <event name="project-built">
@@ -382,15 +335,6 @@
             <param>USER</param>
         </parameters>
     </event>
-    <event name="session-started">
-        <description>IDE focused</description>
-        <parameters>
-            <param>WS</param>
-            <param>USER</param>
-            <param>SESSION-ID</param>
-            <param allow-empty-value="true">WINDOW</param>
-        </parameters>
-    </event>
     <event name="session-usage">
         <description>IDE focused</description>
         <parameters>
@@ -428,22 +372,6 @@
             <param>USER</param>
         </parameters>
     </event>
-    <event name="session-finished">
-        <description>IDE defocused</description>
-        <parameters>
-            <param>WS</param>
-            <param>USER</param>
-            <param>SESSION-ID</param>
-            <param allow-empty-value="true">WINDOW</param>
-        </parameters>
-    </event>
-    <event name="shell-launched">
-        <description>Shell launched</description>
-        <parameters>
-            <param>WS</param>
-            <param>USER</param>
-        </parameters>
-    </event>
     <event name="user-added-to-ws">
         <description>User joined to workspace</description>
         <parameters>
@@ -465,22 +393,6 @@
             <param allow-empty-value="true">ORG-ID</param>
         </parameters>
     </event>
-    <event name="session-factory-started">
-        <description>Factory session started</description>
-        <parameters>
-            <param>WS</param>
-            <param>USER</param>
-            <param>SESSION-ID</param>
-        </parameters>
-    </event>
-    <event name="session-factory-stopped">
-        <description>Factory session finished</description>
-        <parameters>
-            <param>WS</param>
-            <param>USER</param>
-            <param>SESSION-ID</param>
-        </parameters>
-    </event>
     <event name="factory-url-accepted">
         <description>Factory accepted</description>
         <parameters>
@@ -489,27 +401,6 @@
             <param>FACTORY-URL</param>
             <param allow-empty-value="true">AFFILIATE-ID</param>
             <param allow-empty-value="true">ORG-ID</param>
-        </parameters>
-    </event>
-    <event name="jrebel-usage">
-        <description>JRebel usage</description>
-        <parameters>
-            <param>WS</param>
-            <param>USER</param>
-            <param>PROJECT</param>
-            <param>TYPE</param>
-            <param>JREBEL</param>user
-        </parameters>
-    </event>
-    <event name="jrebel-user-profile-info">
-        <description>JRebel profile gathering</description>
-        <parameters>
-            <param>WS</param>
-            <param>USER</param>
-            <param>USER-ID</param>
-            <param>FIRSTNAME</param>
-            <param>LASTNAME</param>
-            <param>PHONE</param>
         </parameters>
     </event>
     <event name="build-interrupted">

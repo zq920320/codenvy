@@ -29,39 +29,49 @@ import com.mongodb.DBObject;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public abstract class AbstractProjectType extends ReadBasedMetric implements ReadBasedExpandable {
 
-    public static final String   JAR                 = "jar";
-    public static final String   JSP                 = "servlet/jsp";
-    public static final String   DJANGO              = "django";
-    public static final String   WAR                 = "war";
-    public static final String   JAVA                = "java";
-    public static final String   JAVA_ENGINE         = "app engine java";
-    public static final String   MMP1                = "maven multi-module";
-    public static final String   MMP2                = "maven_multi_module";
-    public static final String   MMP3                = "maven";
-    public static final String   SPRING              = "spring";
-    public static final String   NODE_JS             = "nodejs";
-    public static final String   PHP                 = "php";
-    public static final String   PYTHON              = "python";
-    public static final String   PYTHON_ENGINE       = "app engine python";
-    public static final String   ANDROID             = "android";
-    public static final String   GOOGLE_MBS          = "google-mbs-client-android";
-    public static final String   OTHER_NULL          = "null";
-    public static final String   OTHER_DEFAULT       = "default";
-    public static final String   OTHER_SERV          = "serv";
-    public static final String   OTHER_UNDEFINED     = "undefined";
-    public static final String   OTHER_UNKNOWN       = "unknown";
-    public static final String   OTHER_NAMELESS      = "nameless";
-    public static final String   OTHER_EXO           = "exo";
-    public static final String   OTHER_BLANK         = "blank";
-    public static final String   RUBY                = "ruby";
-    public static final String   RAILS               = "rails";
-    public static final String   JAVA_SCRIPT         = "javascript";
-    public static final String   ANGULAR_JAVA_SCRIPT = "angularjs";
-    public static final String   HTML                = "html";
-    public static final String[] TYPES               =
-            {JAR, JSP, DJANGO, WAR, JAVA, JAVA_ENGINE, MMP1, MMP2, MMP3, SPRING, NODE_JS, PHP, PYTHON, PYTHON_ENGINE,
-             ANDROID, GOOGLE_MBS, OTHER_NULL, OTHER_DEFAULT, OTHER_SERV, OTHER_EXO,
-             RUBY, RAILS, JAVA_SCRIPT, ANGULAR_JAVA_SCRIPT, HTML, OTHER_UNDEFINED,
+    public static final String JAR                 = "jar";
+    public static final String JSP                 = "servlet/jsp";
+    public static final String DJANGO              = "django";
+    public static final String WAR                 = "war";
+    public static final String JAVA                = "java";
+    public static final String GAE_JAVA            = "gaejava";
+    public static final String JAVA_ENGINE         = "app engine java";
+    public static final String MMP1                = "maven multi-module";
+    public static final String MMP2                = "maven_multi_module";
+    public static final String MMP3                = "maven";
+    public static final String SPRING              = "spring";
+    public static final String NODE_JS             = "nodejs";
+    public static final String PHP                 = "php";
+    public static final String GAE_PHP             = "gaephp";
+    public static final String PYTHON              = "python";
+    public static final String GAE_PYTHON          = "gaepython";
+    public static final String PYTHON_ENGINE       = "app engine python";
+    public static final String ANDROID             = "android";
+    public static final String GOOGLE_MBS          = "google-mbs-client-android";
+    public static final String OTHER_NULL          = "null";
+    public static final String OTHER_DEFAULT       = "default";
+    public static final String OTHER_SERV          = "serv";
+    public static final String OTHER_UNDEFINED     = "undefined";
+    public static final String OTHER_UNKNOWN       = "unknown";
+    public static final String OTHER_NAMELESS      = "nameless";
+    public static final String OTHER_EXO           = "exo";
+    public static final String OTHER_BLANK         = "blank";
+    public static final String RUBY                = "ruby";
+    public static final String RAILS               = "rails";
+    public static final String JS                  = "javascript";
+    public static final String GRANT_JS            = "gruntjs";
+    public static final String BASIC_JS            = "basicjs";
+    public static final String GULP_JS             = "gulpjs";
+    public static final String ANGULAR_JAVA_SCRIPT = "angularjs";
+    public static final String HTML                = "html";
+    public static final String GO                  = "go";
+    public static final String CPP                 = "cpp";
+    public static final String ANT                 = "ant";
+
+    public static final String[] TYPES =
+            {JAR, GAE_JAVA, JSP, DJANGO, WAR, JAVA, JAVA_ENGINE, MMP1, MMP2, MMP3, SPRING, NODE_JS, PHP, PYTHON, PYTHON_ENGINE, GULP_JS, GO, CPP, ANT,
+             ANDROID, GOOGLE_MBS, OTHER_NULL, OTHER_DEFAULT, OTHER_SERV, OTHER_EXO, GRANT_JS, BASIC_JS, GAE_PHP, GAE_PYTHON,
+             RUBY, RAILS, JS, ANGULAR_JAVA_SCRIPT, HTML, OTHER_UNDEFINED,
              OTHER_NAMELESS, OTHER_UNKNOWN, OTHER_BLANK};
     private final String[] types;
 

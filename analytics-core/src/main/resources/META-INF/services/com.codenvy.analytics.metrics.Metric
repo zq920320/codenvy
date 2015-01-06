@@ -37,6 +37,9 @@ com.codenvy.analytics.metrics.projects.ProjectTypeMMP
 com.codenvy.analytics.metrics.projects.ProjectTypeNodejs
 com.codenvy.analytics.metrics.projects.ProjectTypeOthers
 com.codenvy.analytics.metrics.projects.ProjectTypePhp
+com.codenvy.analytics.metrics.projects.ProjectTypeGo
+com.codenvy.analytics.metrics.projects.ProjectTypeCpp
+com.codenvy.analytics.metrics.projects.ProjectTypeAnt
 com.codenvy.analytics.metrics.projects.ProjectTypePython
 com.codenvy.analytics.metrics.projects.ProjectTypeRuby
 com.codenvy.analytics.metrics.projects.ProjectTypeSpring

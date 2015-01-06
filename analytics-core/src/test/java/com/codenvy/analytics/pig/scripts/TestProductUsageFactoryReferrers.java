@@ -101,11 +101,6 @@ public class TestProductUsageFactoryReferrers extends BaseTest {
         events.add(Event.Builder.createRunStartedEvent("user1@gmail.com", "tmp-1", "project", "type", "id1")
                                 .withDate("2013-02-10").withTime("10:03:00").build());
 
-        events.add(Event.Builder.createProjectDeployedEvent("user1@gmail.com", "tmp-1", "project", "type",
-                                                            "local")
-                                .withDate("2013-02-10")
-                                .withTime("10:04:00")
-                                .build());
 
         events.add(Event.Builder.createProjectBuiltEvent("user1@gmail.com", "tmp-1", "project", "type")
                                 .withDate("2013-02-10")

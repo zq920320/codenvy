@@ -35,14 +35,14 @@
         <description>The number of created persistent workspaces</description>
         <parameter key="WS" value="PERSISTENT"/>
         <parameter key="USER" value="ANY"/>
-        <parameter key="EVENT" value="tenant-created,workspace-created"/>
+        <parameter key="EVENT" value="workspace-created"/>
         <parameter key="STORAGE_TABLE" value="created_workspaces"/>
     </script>
     <script name="events">
         <description>The number of destroyed persistent workspaces</description>
         <parameter key="WS" value="PERSISTENT"/>
         <parameter key="USER" value="ANY"/>
-        <parameter key="EVENT" value="tenant-destroyed,workspace-destroyed"/>
+        <parameter key="EVENT" value="workspace-destroyed"/>
         <parameter key="STORAGE_TABLE" value="destroyed_workspaces"/>
     </script>
     <script name="events">

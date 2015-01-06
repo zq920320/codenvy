@@ -198,17 +198,6 @@ public class Event {
                                 .withParam("PROJECT", project).withParam("TYPE", type).withParam("PAAS", paas);
         }
 
-        public static Builder createProjectDeployedEvent(String user,
-                                                         String ws,
-                                                         String project,
-                                                         String type,
-                                                         String paas) {
-            return new Builder().withParam("WS", ws)
-                                .withParam("USER", user)
-                                .withParam("EVENT", "project-deployed")
-                                .withParam("PROJECT", project).withParam("TYPE", type).withParam("PAAS", paas);
-        }
-
         public static Builder createUserAddedToWsEvent(String user,
                                                        String ws,
                                                        String from) {
@@ -333,20 +322,6 @@ public class Event {
                                 .withParam("AFFILIATE-ID", affiliateId);
         }
 
-        public static Builder createSessionFactoryStartedEvent(String tempUser,
-                                                               String tempWs,
-                                                               String sessionId,
-                                                               String auth,
-                                                               String userAgent) {
-            return new Builder().withParam("EVENT", "session-factory-started")
-                                .withParam("SESSION-ID", sessionId)
-                                .withParam("WS", tempWs)
-                                .withParam("USER", tempUser)
-                                .withParam("AUTHENTICATED", auth)
-                                .withParam("USER-AGENT", userAgent);
-
-        }
-
         public static Builder createFactoryProjectImportedEvent(String user,
                                                                 String ws,
                                                                 String project,
@@ -361,12 +336,6 @@ public class Event {
 
         }
 
-        public static Builder createSessionFactoryStoppedEvent(String tempUser, String tempWs, String sessionId) {
-            return new Builder().withParam("EVENT", "session-factory-stopped")
-                                .withParam("SESSION-ID", sessionId)
-                                .withParam("WS", tempWs)
-                                .withParam("USER", tempUser);
-        }
 
         public static Builder createFactoryUrlAcceptedEvent(String tempWs,
                                                             String factoryUrl,

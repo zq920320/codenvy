@@ -230,7 +230,7 @@ DEFINE createdTemporaryWorkspaces(X) RETURNS Y {
     x = FOREACH x5 GENERATE ws AS tmpWs, ExtractDomain(referrer) AS referrer, factory, orgId, affiliateId, factoryId;
 
     -- created temporary workspaces
-    w1 = filterByEvent($X, 'tenant-created,workspace-created');
+    w1 = filterByEvent($X, 'workspace-created');
     w = FOREACH w1 GENERATE dt, ws AS tmpWs, user;
 
     y1 = JOIN w BY tmpWs, x BY tmpWs;

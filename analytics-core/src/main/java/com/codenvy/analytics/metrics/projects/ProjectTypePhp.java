@@ -27,7 +27,7 @@ import javax.annotation.security.RolesAllowed;
 public class ProjectTypePhp extends AbstractProjectType {
 
     public ProjectTypePhp() {
-        super(MetricType.PROJECT_TYPE_PHP, new String[]{PHP});
+        super(MetricType.PROJECT_TYPE_PHP, new String[]{PHP, GAE_PHP});
     }
 
     @Override
