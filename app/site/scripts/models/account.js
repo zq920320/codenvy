@@ -54,24 +54,6 @@
             };
         };
 
-        var redirectToNonTempWS = function() {
-            $.when(Tenant.getTenants()).done(function(tenants) {
-                var url;
-                switch (tenants.length) {
-                    case 0:
-                        url = "/site/create-account" + window.location.search;
-                        window.location = url;
-                        break;
-                    default:
-                        url = "/ws/" + tenants[0].toJSON().name + window.location.search;
-                        window.location = url;
-
-                }
-            }).fail(function(msg) {
-                window.alert(msg);
-            });
-        };
-
         var isBadGateway = function(jqXHR) {
             return jqXHR.status === 502;
         };
@@ -532,7 +514,7 @@
                 });
             },
 
-            processCreate: function(username, bearertoken, src_workspace, workspace, redirect_url, queryParams, error) {
+            processCreate: function(username, bearertoken, workspace, redirect_url, queryParams, error) {
                 var workspaceID;
                 authenticate(username, bearertoken)
                 .fail(function(response) {
@@ -564,10 +546,7 @@
                         .done(function() {
                             if (redirect_url) {
                                 redirectToUrl(redirect_url);
-                            } else if (src_workspace) {
-                                // Initializer.processWaitForTenant(workspace, "", "?" + queryParams);
-                            } else {
-                                //Initializer.processWaitForTenant(workspace, "create", "?" + queryParams);
+                            }else {
                                 redirectToUrl("/dashboard/");
                             }
                         })
@@ -584,8 +563,6 @@
                                 new AccountError(null, responseErr)
                             ]);
                         });
-                    } else if (src_workspace) {
-                        redirectToNonTempWS();
                     } else if (redirect_url) {
                         redirectToUrl(redirect_url);
                     } else {
