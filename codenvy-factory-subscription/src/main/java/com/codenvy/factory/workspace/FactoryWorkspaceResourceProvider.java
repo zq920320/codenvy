@@ -91,7 +91,7 @@ public class FactoryWorkspaceResourceProvider implements EventSubscriber<CreateW
                                             @Nullable @Named(RUNNER_RAM) String runnerRam,
                                             @Nullable @Named(BUILDER_EXECUTION_TIME) String builderExecutionTime,
                                             @Named("api.endpoint") String apiEndpoint,
-                                            @Named("subscription.orgaddon.enabled") boolean onPremises,
+                                            @Named("onpremises.enabled") boolean onPremises,
                                             WorkspaceDao workspaceDao,
                                             AccountDao accountDao,
                                             EventService eventService,
@@ -156,7 +156,7 @@ public class FactoryWorkspaceResourceProvider implements EventSubscriber<CreateW
                             String accountId;
                             accountId = factory.getCreator() != null ? factory.getCreator().getAccountId() : null;
                             if (null != accountId) {
-                                final List<Subscription> subscriptions = accountDao.getSubscriptions(accountId, "Factory");
+                                final List<Subscription> subscriptions = accountDao.getActiveSubscriptions(accountId, "Factory");
                                 if (!subscriptions.isEmpty()) {
                                     final Subscription subscription = subscriptions.iterator().next();
                                     // factory workspace with subscription

@@ -129,7 +129,7 @@ public class FactoryWorkspaceResourceProviderTest {
         when(factoryBuilder.buildEncoded(any(URI.class))).thenReturn(factory);
         when(workspace.withAttributes(anyMapOf(String.class, String.class))).thenReturn(workspace);
         Subscription subscription = new Subscription().withProperties(Collections.singletonMap("RAM", "8GB"));
-        when(accountDao.getSubscriptions(ACCOUNT_ID, "Factory")).thenReturn(Collections.singletonList(subscription));
+        when(accountDao.getActiveSubscriptions(ACCOUNT_ID, "Factory")).thenReturn(Collections.singletonList(subscription));
     }
 
     @Test
@@ -187,7 +187,7 @@ public class FactoryWorkspaceResourceProviderTest {
                                 isNull(),
                                 eq(Pair.of("validate", false))))
                 .thenReturn(factory);
-        when(accountDao.getSubscriptions(ACCOUNT_ID, "Factory")).thenReturn(Collections.<Subscription>emptyList());
+        when(accountDao.getActiveSubscriptions(ACCOUNT_ID, "Factory")).thenReturn(Collections.<Subscription>emptyList());
 
         provider.onEvent(event);
 
@@ -200,7 +200,7 @@ public class FactoryWorkspaceResourceProviderTest {
     @Test
     public void shouldSetCommonValuesIfNonEncodedTrackedFactoryHasNoSubscriptions() throws ApiException, IOException {
         when(attributes.get("factoryUrl")).thenReturn(nonEncodedFactoryUrl);
-        when(accountDao.getSubscriptions(ACCOUNT_ID, "Factory")).thenReturn(Collections.<Subscription>emptyList());
+        when(accountDao.getActiveSubscriptions(ACCOUNT_ID, "Factory")).thenReturn(Collections.<Subscription>emptyList());
 
         provider.onEvent(event);
 
