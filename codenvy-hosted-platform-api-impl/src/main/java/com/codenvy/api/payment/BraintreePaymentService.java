@@ -18,12 +18,14 @@
 package com.codenvy.api.payment;
 
 import com.braintreegateway.BraintreeGateway;
+import com.braintreegateway.Plan;
 import com.braintreegateway.Result;
-import com.braintreegateway.SubscriptionRequest;
-import com.braintreegateway.exceptions.BraintreeException;
-import com.codenvy.api.account.server.PaymentService;
+import com.braintreegateway.Transaction;
+import com.braintreegateway.TransactionRequest;
+import com.codenvy.api.account.server.subscription.PaymentService;
 import com.codenvy.api.account.server.dao.Subscription;
-import com.codenvy.api.account.shared.dto.NewSubscriptionAttributes;
+import com.codenvy.api.account.shared.dto.CreditCard;
+import com.codenvy.api.core.ApiException;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.ForbiddenException;
 import com.codenvy.api.core.NotFoundException;
@@ -33,78 +35,130 @@ import com.codenvy.dto.server.DtoFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.inject.Inject;
-import java.text.SimpleDateFormat;
+import javax.inject.Singleton;
+import java.math.BigDecimal;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
- * Add subscriptions at Braintree.
+ * Charge subscription with the Braintree.
  *
  * @author Alexander Garagatyi
  */
+// must be eager singleton
+@Singleton
 public class BraintreePaymentService implements PaymentService {
     private static final Logger LOG = LoggerFactory.getLogger(BraintreePaymentService.class);
 
-    private final BraintreeGateway gateway;
+    private final BraintreeGateway         gateway;
+    private final ScheduledExecutorService scheduledExecutorService;
+    private       Map<String, BigDecimal>  prices;
 
     @Inject
     public BraintreePaymentService(BraintreeGateway gateway) {
         this.gateway = gateway;
+        this.prices = Collections.emptyMap();
+        this.scheduledExecutorService = Executors.newScheduledThreadPool(1);
     }
 
     @Override
-    public NewSubscriptionAttributes addSubscription(Subscription subscription, NewSubscriptionAttributes subscriptionAttributes)
+    public void charge(Subscription subscription)
             throws ServerException, ConflictException, ForbiddenException {
-        if (subscriptionAttributes == null || subscriptionAttributes.getBilling() == null ||
-            subscriptionAttributes.getBilling().getPaymentToken() == null) {
-            throw new ForbiddenException("No billing information provided");
+        if (subscription == null) {
+            throw new ForbiddenException("No subscription information provided");
+        }
+        if (subscription.getId() == null) {
+            throw new ForbiddenException("Subscription id required");
+        }
+        if (subscription.getPaymentToken() == null) {
+            throw new ForbiddenException("Payment token required");
         }
 
-        Result<com.braintreegateway.Subscription> result;
         try {
-            LOG.info("PAYMENTS# subscriptionId#{}# planId#{}#", subscription.getId(), subscription.getPlanId());
-
-            SubscriptionRequest subscriptionRequest = new SubscriptionRequest()
-                    .id(subscription.getId())
-                    .paymentMethodToken(subscriptionAttributes.getBilling().getPaymentToken())
-                    .planId(subscription.getPlanId());
-
-            result = gateway.subscription().create(subscriptionRequest);
-            if (result.isSuccess()) {
-                com.braintreegateway.Subscription target = result.getTarget();
-                LOG.info("PAYMENTS# state#{}# subscriptionId#{}# subscriptionStatus#{}#", "Successful", target.getId(), target.getStatus());
-
-                NewSubscriptionAttributes newAttributes = DtoFactory.getInstance().clone(subscriptionAttributes);
-                newAttributes.getBilling().withStartDate(new SimpleDateFormat("MM/dd/yyyy").format(target.getFirstBillingDate().getTime()));
-                newAttributes.setTrialDuration(target.getTrialDuration());
-                return newAttributes;
+            // prices should be set already by getPrices method
+            BigDecimal price = prices.get(subscription.getPlanId());
+            if (null == price) {
+                LOG.error("PAYMENTS# state#Error# subscriptionId#{}# message#{}#", subscription.getId(),
+                          "Price of plan is not found " + subscription.getPlanId());
+                throw new ServerException("Internal server error occurs. Please, contact support");
             }
-        } catch (BraintreeException e) {
-            LOG.error(e.getLocalizedMessage(), e);
+
+            TransactionRequest request = new TransactionRequest()
+                    .paymentMethodToken(subscription.getPaymentToken())
+                    // add subscription id to identify charging reason
+                    .customField("subscription_id", subscription.getId())
+                    .options().submitForSettlement(true).done()
+                    .amount(price);
+
+            Result<Transaction> result = gateway.transaction().sale(request);
+            Transaction target = result.getTarget();
+            if (result.isSuccess()) {
+                // transaction successfully submitted for settlement
+                LOG.info("PAYMENTS# state#Success# subscriptionId#{}# transactionStatus#{}# message#{}# transactionId#{}#",
+                         subscription.getId(), target.getStatus(), result.getMessage(), target.getId());
+            } else {
+                LOG.error("PAYMENTS# state#Error# subscriptionId#{}# message#{}#", subscription.getId(), result.getMessage());
+                throw new ConflictException(result.getMessage());
+            }
+        } catch (ApiException e) {
+            // rethrow user-friendly API exceptions
+            throw e;
+        } catch (Exception e) {
+            LOG.error(String.format("PAYMENTS# state#Error# subscriptionId#%s# message#%s#", subscription.getId(), e.getLocalizedMessage()),
+                      e);
             throw new ServerException("Internal server error occurs. Please, contact support");
         }
-
-        LOG.error("PAYMENTS# state#{}# subscriptionId#{}# message#{}#", "Payment error", subscription.getId(), result.getMessage());
-        throw new ConflictException(result.getMessage());
     }
 
     @Override
-    public void removeSubscription(String subscriptionId) throws ServerException, NotFoundException, ForbiddenException {
-        if (null == subscriptionId) {
-            throw new ForbiddenException("Subscription id is missing");
+    public CreditCard getCreditCard(String token) throws NotFoundException, ServerException, ForbiddenException {
+        if (token == null || token.isEmpty()) {
+            throw new ForbiddenException("Token is required");
         }
-
         try {
-            final Result<com.braintreegateway.Subscription> result = gateway.subscription().cancel(subscriptionId);
-            if (!result.isSuccess()) {
-                LOG.error(result.getMessage());
-            }
-        } catch (com.braintreegateway.exceptions.NotFoundException e) {
-            // subscription is missing on BT
-            throw new NotFoundException(e.getLocalizedMessage());
-        } catch (BraintreeException e) {
+            final com.braintreegateway.CreditCard creditCard = gateway.creditCard().find(token);
+            return DtoFactory.getInstance().createDto(CreditCard.class)
+                             .withToken(token)
+                             .withNumber(creditCard.getMaskedNumber())
+                             .withAccountId(creditCard.getCustomerId())
+                             .withExpiration(creditCard.getExpirationDate())
+                             .withType(creditCard.getCardType())
+                             .withCardholder(creditCard.getCardholderName());
+        } catch (Exception e) {
             LOG.error(e.getLocalizedMessage(), e);
-            // Braintree does not return exception message for now
             throw new ServerException("Internal server error occurs. Please, contact support");
         }
+    }
+
+    @PostConstruct
+    private void getPrices() {
+        scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    List<Plan> plans = gateway.plan().all();
+                    final HashMap<String, BigDecimal> newPrices = new HashMap<>(plans.size());
+                    for (Plan plan : plans) {
+                        newPrices.put(plan.getId(), plan.getPrice());
+                    }
+                    prices = newPrices;
+                } catch (Exception e) {
+                    LOG.error("Can't retrieve prices for subscription plans." + e.getLocalizedMessage(), e);
+                }
+            }
+        }, 0, 60, TimeUnit.MINUTES);
+    }
+
+    @PreDestroy
+    private void destroy() {
+        scheduledExecutorService.shutdownNow();
     }
 }

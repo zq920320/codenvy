@@ -17,13 +17,13 @@
  */
 package com.codenvy.subscription.service;
 
-import com.codenvy.api.account.server.SubscriptionService;
+import com.codenvy.api.account.server.subscription.SubscriptionService;
 import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.server.dao.Subscription;
 import com.codenvy.api.core.ApiException;
 import com.codenvy.api.core.ConflictException;
-import com.codenvy.subscription.service.OnPremisesSubscriptionService;
 
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.testng.MockitoTestNGListener;
 import org.testng.annotations.BeforeClass;
@@ -47,19 +47,16 @@ import static org.mockito.Mockito.when;
  */
 @Listeners(value = {MockitoTestNGListener.class})
 public class OnPremisesSubscriptionServiceTest {
-    private SubscriptionService service;
     @Mock
     private AccountDao          accountDao;
 
-    @BeforeClass
-    public void initialize() {
-        service = new OnPremisesSubscriptionService(accountDao);
-    }
+    @InjectMocks
+    private OnPremisesSubscriptionService service;
 
     @Test
     public void testBeforeCreateSubscription() throws ApiException {
         final String accountId = "acc1";
-        when(accountDao.getSubscriptions(accountId, service.getServiceId())).thenReturn(Collections.<Subscription>emptyList());
+        when(accountDao.getActiveSubscriptions(accountId, service.getServiceId())).thenReturn(Collections.<Subscription>emptyList());
         final Map<String, String> properties = new HashMap<>(2);
         properties.put("Package", "startup");
         properties.put("Users", "5");
@@ -68,16 +65,16 @@ public class OnPremisesSubscriptionServiceTest {
 
         service.beforeCreateSubscription(newSubscription);
 
-        verify(accountDao).getSubscriptions(accountId, service.getServiceId());
+        verify(accountDao).getActiveSubscriptions(accountId, service.getServiceId());
     }
 
     @Test(expectedExceptions = ConflictException.class,
-          expectedExceptionsMessageRegExp = SubscriptionService.SUBSCRIPTION_LIMIT_EXHAUSTED_MESSAGE)
+            expectedExceptionsMessageRegExp = SubscriptionService.SUBSCRIPTION_LIMIT_EXHAUSTED_MESSAGE)
     public void testBeforeCreateWhenSubscriptionExists() throws ApiException {
         final String accountId = "acc1";
         final List<Subscription> existedSubscriptions = new ArrayList<>(1);
         existedSubscriptions.add(new Subscription().withServiceId(service.getServiceId()));
-        when(accountDao.getSubscriptions(accountId, service.getServiceId())).thenReturn(existedSubscriptions);
+        when(accountDao.getActiveSubscriptions(accountId, service.getServiceId())).thenReturn(existedSubscriptions);
         final Map<String, String> properties = new HashMap<>(2);
         properties.put("Package", "startup");
         properties.put("Users", "5");

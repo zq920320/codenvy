@@ -35,7 +35,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,18 +57,10 @@ public class ResourcesManagerImpl implements ResourcesManager {
     }
 
     @Override
-    public void redistributeResources(String accountId, List<UpdateResourcesDescriptor> updates) throws ForbiddenException,
+    public void redistributeResources(String accountId, List<UpdateResourcesDescriptor> updates) throws NotFoundException,
+                                                                                                        ServerException,
                                                                                                         ConflictException,
-                                                                                                        NotFoundException,
-                                                                                                        ServerException {
-        redistributeResources(accountId, -1, updates);
-    }
-
-    @Override
-    public void redistributeResources(String accountId, int allowedRAM, List<UpdateResourcesDescriptor> updates) throws NotFoundException,
-                                                                                                                        ServerException,
-                                                                                                                        ConflictException,
-                                                                                                                        ForbiddenException {
+                                                                                                        ForbiddenException {
         final Map<String, Workspace> ownWorkspaces = new HashMap<>();
         for (Workspace workspace : workspaceDao.getByAccount(accountId)) {
             ownWorkspaces.put(workspace.getId(), workspace);
@@ -94,8 +85,6 @@ public class ResourcesManagerImpl implements ResourcesManager {
             }
         }
 
-        //getting size of RAM that will be used after distributing
-        int futureRAM = 0;
         for (UpdateResourcesDescriptor resourcesDescriptor : resources.values()) {
             if (resourcesDescriptor.getResources() == null) {
                 throw new ConflictException(format("Missed description of resources for workspace %s",
@@ -112,25 +101,8 @@ public class ResourcesManagerImpl implements ResourcesManager {
                     throw new ConflictException(format("Size of RAM for workspace %s is a negative number",
                                                        resourcesDescriptor.getWorkspaceId()));
                 }
-                futureRAM += sizeOfRAM;
             } catch (NumberFormatException nfe) {
                 throw new ConflictException(format("Invalid size of RAM for workspace %s", resourcesDescriptor.getWorkspaceId()));
-            }
-        }
-
-        if (allowedRAM != -1) {
-            if (futureRAM > allowedRAM) {
-                throw new ConflictException(format("Failed to allocate %smb of RAM. Your account is provisioned with %smb of RAM",
-                                                   futureRAM, allowedRAM));
-            }
-
-            //automatic distributing the remaining of RAM
-            if (futureRAM < allowedRAM) {
-                Workspace primaryWorkspace = getPrimaryWorkspace(ownWorkspaces.values());
-                UpdateResourcesDescriptor updateResourcesDescriptor = resources.get(primaryWorkspace.getId());
-                int oldPrimaryRAM = Integer.parseInt(updateResourcesDescriptor.getResources().get("RAM"));
-                int newPrimaryRAM = oldPrimaryRAM + (allowedRAM - futureRAM);
-                updateResourcesDescriptor.getResources().put("RAM", String.valueOf(newPrimaryRAM));
             }
         }
 
@@ -141,16 +113,6 @@ public class ResourcesManagerImpl implements ResourcesManager {
             workspaceDao.update(workspace);
             publishResourcesChangedWsEvent(resDescriptor.getWorkspaceId(), resDescriptor.getResources().get("RAM"));
         }
-    }
-
-    private Workspace getPrimaryWorkspace(Collection<Workspace> values) throws ConflictException {
-        for (Workspace workspace : values) {
-            if (workspace.getAttributes() == null || workspace.getAttributes().get("codenvy:role") == null) {
-
-                return workspace;
-            }
-        }
-        throw new ConflictException("Primary workspace is not found for distribution of the remaining RAM");
     }
 
     private void publishResourcesChangedWsEvent(String workspaceId, String totalMemory) {

@@ -20,10 +20,10 @@ package com.codenvy.api.dao.mongo;
 import com.codenvy.api.account.server.dao.Account;
 import com.codenvy.api.account.server.dao.Member;
 import com.codenvy.api.account.server.dao.Subscription;
-import com.codenvy.api.account.server.dao.Billing;
-import com.codenvy.api.account.server.dao.SubscriptionAttributes;
+import com.codenvy.api.account.server.dao.SubscriptionQueryBuilder;
+import com.codenvy.api.account.shared.dto.BillingCycleType;
+import com.codenvy.api.account.shared.dto.SubscriptionState;
 import com.codenvy.api.core.ConflictException;
-import com.codenvy.api.core.ForbiddenException;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.api.workspace.server.dao.Workspace;
@@ -43,16 +43,15 @@ import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
 import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
-import static java.util.Collections.singletonMap;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -62,6 +61,7 @@ import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
 
 /**
  * Tests for {@link AccountDaoImpl}
@@ -75,14 +75,15 @@ public class AccountDaoImplTest extends BaseDaoTest {
     private static final String ACC_COLL_NAME                     = "accounts";
     private static final String SUBSCRIPTION_COLL_NAME            = "subscriptions";
     private static final String MEMBER_COLL_NAME                  = "members";
-    private static final String SUBSCRIPTION_ATTRIBUTES_COLL_NAME = "subscriptionAttributes";
 
     @Mock
+    private SubscriptionQueryBuilder subscriptionQueryBuilder;
+    @Mock
     private WorkspaceDao   workspaceDao;
+
     private AccountDaoImpl accountDao;
     private DBCollection   subscriptionCollection;
     private DBCollection   membersCollection;
-    private DBCollection   subscriptionAttributesCollection;
 
     @BeforeMethod
     public void setUp() throws Exception {
@@ -90,18 +91,16 @@ public class AccountDaoImplTest extends BaseDaoTest {
         db = spy(db);
         collection = spy(db.getCollection(ACC_COLL_NAME));
         subscriptionCollection = spy(db.getCollection(SUBSCRIPTION_COLL_NAME));
-        subscriptionAttributesCollection = spy(db.getCollection(SUBSCRIPTION_ATTRIBUTES_COLL_NAME));
         membersCollection = spy(db.getCollection(MEMBER_COLL_NAME));
         when(db.getCollection(ACC_COLL_NAME)).thenReturn(collection);
         when(db.getCollection(SUBSCRIPTION_COLL_NAME)).thenReturn(subscriptionCollection);
-        when(db.getCollection(SUBSCRIPTION_ATTRIBUTES_COLL_NAME)).thenReturn(subscriptionAttributesCollection);
         when(db.getCollection(MEMBER_COLL_NAME)).thenReturn(membersCollection);
         accountDao = new AccountDaoImpl(db,
                                         workspaceDao,
                                         ACC_COLL_NAME,
                                         SUBSCRIPTION_COLL_NAME,
                                         MEMBER_COLL_NAME,
-                                        SUBSCRIPTION_ATTRIBUTES_COLL_NAME);
+                                        subscriptionQueryBuilder);
     }
 
     @Override
@@ -192,13 +191,11 @@ public class AccountDaoImplTest extends BaseDaoTest {
         insertMembers(member1, member2);
         insertAccounts(account);
         insertSubscriptions(subscription);
-        subscriptionAttributesCollection.insert(new BasicDBObject("_id", subscription.getId()));
 
         accountDao.remove(account.getId());
 
         assertNull(collection.findOne(new BasicDBObject("id", account.getId())));
         assertNull(subscriptionCollection.findOne(new BasicDBObject("accountId", account.getId())));
-        assertNull(subscriptionAttributesCollection.findOne(new BasicDBObject("_id", subscription.getId())));
         assertFalse(membersCollection.find(new BasicDBObject("members.accountId", account.getId())).hasNext());
     }
 
@@ -277,25 +274,29 @@ public class AccountDaoImplTest extends BaseDaoTest {
     }
 
     @Test
-    public void shouldBeAbleToAddSubscription() throws Exception {
-        final Account account = createAccount();
-        final Subscription subscription = createSubscription().withAccountId(account.getId());
-        insertAccounts(account);
-
-        accountDao.addSubscription(subscription);
-
-        final DBObject subscriptionDocument = subscriptionCollection.findOne(new BasicDBObject("accountId", account.getId()));
-        assertNotNull(subscriptionDocument);
-        assertEquals(accountDao.toSubscription(subscriptionDocument), subscription);
-    }
-
-    @Test
     public void shouldBeAbleToUpdateSubscription() throws Exception {
         final Subscription subscription = createSubscription();
         insertSubscriptions(subscription);
         //prepare update
-        subscription.setPlanId(subscription.getPlanId() + "suffix");
-        subscription.setServiceId(subscription.getServiceId() + "suffix");
+        Date updatedDate = new Date();
+        subscription.withPlanId(subscription.getPlanId() + "suffix")
+                    .withServiceId(subscription.getServiceId() + "suffix")
+                    .withAccountId("updatedAccountId")
+                    .withProperties(Collections.singletonMap("updatedKey", "updatedValue"))
+                    .withDescription("updated description")
+                    .withUsePaymentSystem(false)
+                    .withState(SubscriptionState.INACTIVE)
+                    .withPaymentToken("updatedPaymentToken")
+                    .withStartDate(updatedDate)
+                    .withEndDate(updatedDate)
+                    .withTrialStartDate(updatedDate)
+                    .withTrialEndDate(updatedDate)
+                    .withBillingStartDate(updatedDate)
+                    .withBillingEndDate(updatedDate)
+                    .withNextBillingDate(updatedDate)
+                    .withBillingCycle(0)
+                    .withBillingCycleType(BillingCycleType.NoRenewal)
+                    .withBillingContractTerm(0);
 
         accountDao.updateSubscription(subscription);
 
@@ -304,7 +305,7 @@ public class AccountDaoImplTest extends BaseDaoTest {
     }
 
     @Test(expectedExceptions = NotFoundException.class)
-    public void shouldThrowNotFoundExceptionIfSubscriptionDoesNotExist() throws Exception {
+    public void shouldThrowNotFoundExceptionIfSubscriptionDoesNotExistOnUpdateSubscription() throws Exception {
         accountDao.updateSubscription(createSubscription());
     }
 
@@ -325,8 +326,21 @@ public class AccountDaoImplTest extends BaseDaoTest {
         accountDao.updateSubscription(subscription);
     }
 
+    @Test
+    public void shouldBeAbleToAddSubscription() throws Exception {
+        final Account account = createAccount();
+        final Subscription subscription = createSubscription().withAccountId(account.getId());
+        insertAccounts(account);
+
+        accountDao.addSubscription(subscription);
+
+        final DBObject subscriptionDocument = subscriptionCollection.findOne(new BasicDBObject("accountId", account.getId()));
+        assertNotNull(subscriptionDocument);
+        assertEquals(accountDao.toSubscription(subscriptionDocument), subscription);
+    }
+
     @Test(expectedExceptions = NotFoundException.class)
-    public void shouldThrowAnExceptionWhileAddingSubscriptionToNotExistedAccount() throws Exception {
+    public void shouldThrowExceptionOnAddSubscriptionToNotExistedAccount() throws Exception {
         accountDao.addSubscription(createSubscription());
     }
 
@@ -347,15 +361,52 @@ public class AccountDaoImplTest extends BaseDaoTest {
         accountDao.addSubscription(subscription);
     }
 
+    @Test(dataProvider = "nullFieldProvider")
+    public void shouldThrowConflictExceptionOnAddSubscriptionIfMandatoryFiledIsNull(Subscription subscription, String message) throws Exception {
+        final Account account = createAccount();
+        insertAccounts(account.withId("account ID"));
+
+        try {
+            accountDao.addSubscription(subscription);
+        } catch (ConflictException e) {
+            assertEquals(e.getLocalizedMessage(), message);
+            return;
+        }
+        fail();
+    }
+
+    @DataProvider(name = "nullFieldProvider")
+    public Object[][] nullFieldProvider() {
+        Subscription spySubscription = spy(createSubscription().withAccountId("account ID"));
+        doReturn(null).when(spySubscription).getProperties();
+        return new Object[][]{
+                {null, "Subscription information is missing"},
+                {createSubscription().withAccountId("account ID").withPlanId(null), "Plan id is missing"},
+                {createSubscription().withAccountId("account ID").withServiceId(null), "Subscription service id is missing"},
+                {createSubscription().withAccountId("account ID").withAccountId(null), "Subscription account id is missing"},
+                {createSubscription().withAccountId("account ID").withId(null), "Subscription id is missing"},
+                {spySubscription, "Subscription properties are missing"},
+                {createSubscription().withAccountId("account ID").withUsePaymentSystem(null),
+                 "Subscription parameter usePaymentSystem is missing"},
+                {createSubscription().withAccountId("account ID").withBillingContractTerm(null),
+                 "Subscription parameter billingContractTerm is missing"},
+                {createSubscription().withAccountId("account ID").withDescription(null), "Subscription description is missing"},
+                {createSubscription().withAccountId("account ID").withState(null), "Subscription state is missing"},
+                {createSubscription().withAccountId("account ID").withBillingCycle(null), "Subscription parameter billingCycle is missing"},
+                {createSubscription().withAccountId("account ID").withBillingCycleType(null),
+                 "Subscription parameter billingCycleType is missing"},
+        };
+    }
+
     @Test
-    public void shouldBeAbleToGetSubscriptionsByAccount() throws Exception {
+    public void shouldBeAbleToGetActiveSubscriptionsByAccount() throws Exception {
         final Account account = createAccount();
         final Subscription subscription1 = createSubscription().withAccountId(account.getId()).withServiceId("Saas");
         final Subscription subscription2 = createSubscription().withAccountId(account.getId()).withId(subscription1.getId() + "other");
         insertSubscriptions(subscription1, subscription2);
         insertAccounts(account);
 
-        final List<Subscription> found = accountDao.getSubscriptions(account.getId(), null);
+        final List<Subscription> found = accountDao.getActiveSubscriptions(account.getId(), null);
 
         assertEquals(new HashSet<>(found), new HashSet<>(asList(subscription1, subscription2)));
     }
@@ -370,13 +421,26 @@ public class AccountDaoImplTest extends BaseDaoTest {
         insertAccounts(account);
         insertSubscriptions(subscription1, subscription2);
 
-        final List<Subscription> found = accountDao.getSubscriptions(account.getId(), subscription2.getServiceId());
+        final List<Subscription> found = accountDao.getActiveSubscriptions(account.getId(), subscription2.getServiceId());
 
         assertEquals(found, asList(subscription2));
     }
 
     @Test
-    public void shouldBeAbleToGetSubscriptionsByAccountAndService() throws Exception {
+    public void shouldNotReturnInactiveSubscriptionOnGetActive() throws Exception {
+        final Account account = createAccount();
+        final Subscription subscription =
+                createSubscription().withAccountId(account.getId()).withServiceId("Saas").withState(SubscriptionState.INACTIVE);
+        insertAccounts(account);
+        insertSubscriptions(subscription);
+
+        final List<Subscription> found = accountDao.getActiveSubscriptions(account.getId(), null);
+
+        assertTrue(found.isEmpty());
+    }
+
+    @Test
+    public void shouldBeAbleToGetActiveSubscriptionsByAccountAndService() throws Exception {
         final Account account = createAccount();
         final Subscription subscription1 = createSubscription().withAccountId(account.getId());
         final Subscription subscription2 = createSubscription().withAccountId(account.getId())
@@ -387,17 +451,17 @@ public class AccountDaoImplTest extends BaseDaoTest {
         insertAccounts(account);
         insertSubscriptions(subscription1, subscription2, subscription3);
 
-        final List<Subscription> found = accountDao.getSubscriptions(account.getId(), subscription1.getServiceId());
+        final List<Subscription> found = accountDao.getActiveSubscriptions(account.getId(), subscription1.getServiceId());
 
         assertEquals(new HashSet<>(found), new HashSet<>(asList(subscription1, subscription2)));
     }
 
     @Test(dataProvider = "notSaasServiceIdProvider")
-    public void shouldReturnEmptyListIfThereIsNoSubscriptionsOnGetSubscriptionsWithNotSaasService(String serviceId) throws Exception {
+    public void shouldReturnEmptyListIfThereIsNoSubscriptionsOnGetActiveSubscriptionsWithNotSaasService(String serviceId) throws Exception {
         final Account account = createAccount();
         insertAccounts(account);
 
-        final List<Subscription> found = accountDao.getSubscriptions(account.getId(), serviceId);
+        final List<Subscription> found = accountDao.getActiveSubscriptions(account.getId(), serviceId);
 
         assertTrue(found.isEmpty());
     }
@@ -412,99 +476,50 @@ public class AccountDaoImplTest extends BaseDaoTest {
     }
 
     @Test
-    public void shouldReturnEmptyListIfThereIsNoSubscriptionsOnGetSubscriptionsAndServiceIsSaasAndAccountDoesNotContainWs()
+    public void shouldReturnEmptyListIfThereIsNoSubscriptionsOnGetActiveSubscriptionsAndServiceIsSaasAndAccountDoesNotContainWs()
             throws Exception {
         final Account account = createAccount();
         insertAccounts(account);
         when(workspaceDao.getByAccount(account.getId())).thenReturn(Collections.<Workspace>emptyList());
 
-        final List<Subscription> found = accountDao.getSubscriptions(account.getId(), "Saas");
+        final List<Subscription> found = accountDao.getActiveSubscriptions(account.getId(), "Saas");
 
         assertTrue(found.isEmpty());
     }
 
     @Test
-    public void shouldReturnEmptyListIfThereIsNoSubscriptionsOnGetSubscriptionsAndServiceIsNotProvidedAndAccountDoesNotContainWs()
+    public void shouldReturnEmptyListIfThereIsNoSubscriptionsOnGetActiveSubscriptionsAndServiceIsNotProvidedAndAccountDoesNotContainWs()
             throws Exception {
         final Account account = createAccount();
         insertAccounts(account);
         when(workspaceDao.getByAccount(account.getId())).thenReturn(Collections.<Workspace>emptyList());
 
-        final List<Subscription> found = accountDao.getSubscriptions(account.getId(), null);
+        final List<Subscription> found = accountDao.getActiveSubscriptions(account.getId(), null);
 
         assertTrue(found.isEmpty());
-    }
-
-    @Test
-    public void shouldReturnDefaultSubscriptionIfThereIsNoSubscriptionsOnGetSubscriptionsAndServiceIsSaas() throws Exception {
-        final Account account = createAccount();
-        insertAccounts(account);
-        when(workspaceDao.getByAccount(account.getId())).thenReturn(singletonList(new Workspace()));
-
-        final List<Subscription> found = accountDao.getSubscriptions(account.getId(), "Saas");
-
-        assertEquals(found, singletonList(new Subscription().withId("community" + account.getId())
-                                                            .withPlanId("sas-community")
-                                                            .withAccountId(account.getId())
-                                                            .withServiceId("Saas")
-                                                            .withProperties(singletonMap("Package", "Community"))));
-    }
-
-    @Test
-    public void shouldReturnDefaultSubscriptionIfThereIsNoSubscriptionsOnGetSubscriptionsWithoutService() throws Exception {
-        final Account account = createAccount();
-        insertAccounts(account);
-        when(workspaceDao.getByAccount(account.getId())).thenReturn(singletonList(new Workspace()));
-
-        final List<Subscription> found = accountDao.getSubscriptions(account.getId(), null);
-
-        assertEquals(found, singletonList(new Subscription()
-                                                  .withId("community" + account.getId())
-                                                  .withPlanId("sas-community")
-                                                  .withAccountId(account.getId())
-                                                  .withServiceId("Saas")
-                                                  .withProperties(singletonMap("Package", "Community"))));
-    }
-
-    @Test
-    public void shouldReturnDefaultSubscriptionIfThereIsNonSaasSubscriptionsOnGetSubscriptionsWithoutService() throws Exception {
-        final Account account = createAccount();
-        insertAccounts(account);
-        final Subscription subscription = createSubscription().withAccountId(account.getId()).withServiceId("NonSaas");
-        insertSubscriptions(subscription);
-        Subscription defaultSaasSubscription = new Subscription()
-                .withId("community" + account.getId())
-                .withPlanId("sas-community")
-                .withAccountId(account.getId())
-                .withServiceId("Saas")
-                .withProperties(singletonMap("Package", "Community"));
-        when(workspaceDao.getByAccount(account.getId())).thenReturn(singletonList(new Workspace()));
-
-        final List<Subscription> found = accountDao.getSubscriptions(account.getId(), null);
-
-        assertEquals(new HashSet<>(found), new HashSet<>(asList(subscription, defaultSaasSubscription)));
     }
 
     @Test(expectedExceptions = NotFoundException.class)
-    public void shouldThrowNotFoundExceptionOnGetSubscriptionsWithInvalidAccountId() throws Exception {
-        accountDao.getSubscriptions("invalid_account_id", null);
+    public void shouldThrowNotFoundExceptionOnGetActiveSubscriptionsWithInvalidAccountId() throws Exception {
+        accountDao.getActiveSubscriptions("invalid_account_id", null);
     }
 
     @Test(expectedExceptions = ServerException.class)
-    public void shouldThrowServerExceptionOnGetSubscriptionsIfMongoExceptionOccurs() throws Exception {
+    public void shouldThrowServerExceptionOnGetActiveSubscriptionsIfMongoExceptionOccurs() throws Exception {
         final Account account = createAccount();
         insertAccounts(account);
-        doThrow(new MongoException("")).when(subscriptionCollection).find(new BasicDBObject("accountId", account.getId()));
+        doThrow(new MongoException("")).when(subscriptionCollection).find(any(DBObject.class));
 
-        accountDao.getSubscriptions(account.getId(), null);
+        accountDao.getActiveSubscriptions(account.getId(), null);
     }
 
     @Test(expectedExceptions = ServerException.class)
-    public void shouldThrowServerExceptionOnGetSubscriptionsIfMongoExceptionOccurs2() throws Exception {
-        final String accountId = "test_account_id";
-        doThrow(new MongoException("")).when(collection).findOne(new BasicDBObject("id", accountId));
+    public void shouldThrowServerExceptionOnGetActiveSubscriptionsIfMongoExceptionOccurs2() throws Exception {
+        final Account account = createAccount();
+        insertAccounts(account);
+        doThrow(new MongoException("")).when(collection).findOne(any(DBObject.class));
 
-        accountDao.getSubscriptions(accountId, null);
+        accountDao.getActiveSubscriptions(account.getId(), null);
     }
 
     @Test
@@ -564,138 +579,6 @@ public class AccountDaoImplTest extends BaseDaoTest {
         accountDao.getSubscriptionById(subscriptionId);
     }
 
-    @Test
-    public void shouldBeAbleToGetAllSubscriptions() throws ServerException {
-        final Subscription subscription1 = createSubscription();
-        final Subscription subscription2 = createSubscription().withId(subscription1.getId() + "suffix");
-        insertSubscriptions(subscription1, subscription2);
-
-        final List<Subscription> actual = accountDao.getSubscriptions();
-
-        assertEquals(new HashSet<>(actual), new HashSet<>(asList(subscription1, subscription2)));
-    }
-
-    @Test
-    public void shouldReturnEmptyCollectionIfThereIsNoSubscriptionsOnGetAllSubscriptions() throws ServerException {
-        assertTrue(accountDao.getSubscriptions().isEmpty());
-    }
-
-    @Test(expectedExceptions = ServerException.class, expectedExceptionsMessageRegExp = "It is not possible to retrieve subscriptions")
-    public void shouldThrowServerExceptionIfMongoExceptionIsThrownOnGetAllSubscriptions() throws ServerException {
-        when(subscriptionCollection.find()).thenThrow(new MongoException("mongo exception"));
-
-        accountDao.getSubscriptions();
-    }
-
-    @Test(expectedExceptions = ForbiddenException.class, expectedExceptionsMessageRegExp = "Subscription attributes required")
-    public void shouldThrowForbiddenExceptionIfSubscriptionAttributesIsNullOnSaveSubscriptionAttributes() throws Exception {
-        accountDao.saveSubscriptionAttributes("test-id", null);
-    }
-
-    @Test(expectedExceptions = NotFoundException.class, expectedExceptionsMessageRegExp = "Subscription not found .*")
-    public void shouldThrowNotFoundExceptionIfSubscriptionIsMissingOnSaveSubscriptionAttributes() throws Exception {
-        accountDao.saveSubscriptionAttributes("subscription-id", new SubscriptionAttributes());
-    }
-
-    @Test(expectedExceptions = ServerException.class,
-          expectedExceptionsMessageRegExp = "It is not possible to persist subscription attributes")
-    public void shouldThrowServerExceptionIfMongoExceptionOccursOnGetSubscriptionInSaveSubscriptionAttributes() throws Exception {
-        final String subscriptionId = "subscription-id";
-        when(subscriptionCollection.findOne(eq(new BasicDBObject("id", subscriptionId))))
-                .thenThrow(new MongoException("Mongo exception message"));
-
-        accountDao.saveSubscriptionAttributes(subscriptionId, new SubscriptionAttributes());
-    }
-
-    @Test(expectedExceptions = ServerException.class,
-          expectedExceptionsMessageRegExp = "It is not possible to persist subscription attributes")
-    public void shouldThrowServerExceptionIfMongoExceptionOccursOnSaveSubscriptionAttributes() throws Exception {
-        final Subscription subscription = createSubscription();
-        insertSubscriptions(subscription);
-        doThrow(new MongoException("Mongo exception message")).when(subscriptionAttributesCollection).save(any(DBObject.class));
-
-        accountDao.saveSubscriptionAttributes(subscription.getId(), createSubscriptionAttributes());
-    }
-
-    @Test
-    public void shouldBeAbleToSaveSubscriptionAttributes() throws Exception {
-        final Subscription subscription = createSubscription();
-        final SubscriptionAttributes attributes = createSubscriptionAttributes();
-        insertSubscriptions(subscription);
-
-        accountDao.saveSubscriptionAttributes(subscription.getId(), createSubscriptionAttributes());
-
-        final DBObject attributesDocument = subscriptionAttributesCollection.findOne(new BasicDBObject("_id", subscription.getId()));
-        assertNotNull(attributesDocument);
-        assertEquals(accountDao.toSubscriptionAttributes(attributesDocument), attributes);
-    }
-
-    @Test(expectedExceptions = NotFoundException.class,
-          expectedExceptionsMessageRegExp = "Attributes of subscription .* not found")
-    public void shouldThrowNotFoundExceptionIfSubscriptionAttributesAreMissingOnGetSubscriptionAttributes() throws Exception {
-        accountDao.getSubscriptionAttributes("subscription-id");
-    }
-
-    @Test(expectedExceptions = ServerException.class,
-          expectedExceptionsMessageRegExp = "It is not possible to retrieve subscription attributes")
-    public void shouldThrowServerExceptionIfMongoExceptionOccursOnGetSubscriptionAttributes() throws ServerException, NotFoundException {
-        final String subscriptionId = "subscription-id";
-        when(subscriptionAttributesCollection.findOne(eq(new BasicDBObject("_id", subscriptionId))))
-                .thenThrow(new MongoException("Mongo exception message"));
-
-        accountDao.getSubscriptionAttributes(subscriptionId);
-    }
-
-    @Test
-    public void shouldBeAbleToGetSubscriptionAttributes() throws ServerException, NotFoundException {
-        final String subscriptionId = "subscription-id";
-        final SubscriptionAttributes attributes = createSubscriptionAttributes();
-        subscriptionAttributesCollection.save(accountDao.toDBObject(subscriptionId, attributes));
-
-        final SubscriptionAttributes actual = accountDao.getSubscriptionAttributes(subscriptionId);
-
-        assertEquals(actual, attributes);
-    }
-
-    @Test(expectedExceptions = NotFoundException.class,
-          expectedExceptionsMessageRegExp = "Attributes of subscription .* not found")
-    public void shouldThrowNotFoundExceptionIfSubscriptionAttributesDoNotExist() throws ServerException, NotFoundException {
-        accountDao.removeSubscriptionAttributes("subscription-id");
-    }
-
-    @Test(expectedExceptions = ServerException.class,
-          expectedExceptionsMessageRegExp = "It is not possible to remove subscription attributes")
-    public void shouldThrowServerExceptionIfMongoExceptionOccursOnRetrievingSubscriptionAttributesInRemoveSubscriptionAttributes()
-            throws Exception {
-        when(subscriptionAttributesCollection.findOne(any(DBObject.class))).thenThrow(new MongoException("Mongo exception message"));
-
-        accountDao.removeSubscriptionAttributes("subscription-id");
-    }
-
-    @Test(expectedExceptions = ServerException.class,
-          expectedExceptionsMessageRegExp = "It is not possible to remove subscription attributes")
-    public void shouldThrowServerExceptionIfMongoExceptionOccursOnRemoveSubscriptionAttributes() throws ServerException, NotFoundException {
-        final String subscriptionId = "subscription-id";
-        final SubscriptionAttributes attributes = createSubscriptionAttributes();
-        subscriptionAttributesCollection.save(accountDao.toDBObject(subscriptionId, attributes));
-
-        doThrow(new MongoException("Mongo exception message")).when(subscriptionAttributesCollection).remove(any(DBObject.class));
-
-        accountDao.removeSubscriptionAttributes(subscriptionId);
-    }
-
-    @Test
-    public void shouldBeAbleToRemoveSubscriptionAttributes() throws ServerException, NotFoundException {
-        final String subscriptionId = "subscription-id";
-        final SubscriptionAttributes attributes = createSubscriptionAttributes();
-        subscriptionAttributesCollection.save(accountDao.toDBObject(subscriptionId, attributes));
-        assertNotNull(subscriptionAttributesCollection.findOne(new BasicDBObject("_id", subscriptionId)));
-
-        accountDao.removeSubscriptionAttributes(subscriptionId);
-
-        assertNull(subscriptionAttributesCollection.findOne(new BasicDBObject("_id", subscriptionId)));
-    }
-
     private void insertAccounts(Account... accounts) {
         for (Account account : accounts) {
             collection.insert(accountDao.toDBObject(account));
@@ -721,20 +604,6 @@ public class AccountDaoImplTest extends BaseDaoTest {
         }
     }
 
-    private SubscriptionAttributes createSubscriptionAttributes() {
-        return new SubscriptionAttributes().withTrialDuration(7)
-                                           .withStartDate("11/12/2014")
-                                           .withEndDate("11/12/2015")
-                                           .withDescription("description")
-                                           .withCustom(singletonMap("key", "value"))
-                                           .withBilling(new Billing().withStartDate("11/12/2014")
-                                                                     .withEndDate("11/12/2015")
-                                                                     .withUsePaymentSystem("true")
-                                                                     .withCycleType(1)
-                                                                     .withCycle(1)
-                                                                     .withContractTerm(1));
-    }
-
     private Subscription createSubscription() {
         final HashMap<String, String> properties = new HashMap<>(4);
         properties.put("key1", "value1");
@@ -743,7 +612,21 @@ public class AccountDaoImplTest extends BaseDaoTest {
                                  .withAccountId("test_account_id")
                                  .withPlanId("test_plan_id")
                                  .withServiceId("test_service_id")
-                                 .withProperties(properties);
+                                 .withProperties(properties)
+                                 .withBillingCycleType(BillingCycleType.AutoRenew)
+                                 .withBillingCycle(1)
+                                 .withDescription("description")
+                                 .withBillingContractTerm(1)
+                                 .withStartDate(new Date())
+                                 .withEndDate(new Date())
+                                 .withBillingStartDate(new Date())
+                                 .withBillingEndDate(new Date())
+                                 .withNextBillingDate(new Date())
+                                 .withTrialStartDate(new Date())
+                                 .withTrialEndDate(new Date())
+                                 .withPaymentToken("token")
+                                 .withState(SubscriptionState.ACTIVE)
+                                 .withUsePaymentSystem(true);
     }
 
     private Account createAccount() {

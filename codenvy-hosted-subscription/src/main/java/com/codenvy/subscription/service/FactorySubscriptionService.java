@@ -17,13 +17,16 @@
  */
 package com.codenvy.subscription.service;
 
-import com.codenvy.api.account.server.SubscriptionService;
 import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.server.dao.Subscription;
+import com.codenvy.api.account.server.subscription.SubscriptionService;
 import com.codenvy.api.core.ApiException;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
+import com.codenvy.subscription.service.util.SubscriptionCharger;
+import com.codenvy.subscription.service.util.SubscriptionExpirationMailSender;
+import com.codenvy.subscription.service.util.SubscriptionTrialRemover;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,12 +44,21 @@ import javax.inject.Singleton;
 @Singleton
 public class FactorySubscriptionService extends SubscriptionService {
     private static final Logger LOG = LoggerFactory.getLogger(FactorySubscriptionService.class);
-    private final AccountDao accountDao;
+    private final AccountDao                       accountDao;
+    private final SubscriptionCharger              chargeUtil;
+    private final SubscriptionExpirationMailSender expirationUtil;
+    private final SubscriptionTrialRemover         removeUtil;
 
     @Inject
-    public FactorySubscriptionService(AccountDao accountDao) {
+    public FactorySubscriptionService(AccountDao accountDao,
+                                      SubscriptionCharger chargeUtil,
+                                      SubscriptionExpirationMailSender expirationUtil,
+                                      SubscriptionTrialRemover removeUtil) {
         super("Factory", "Factory");
         this.accountDao = accountDao;
+        this.chargeUtil = chargeUtil;
+        this.expirationUtil = expirationUtil;
+        this.removeUtil = removeUtil;
     }
 
     @Override
@@ -61,7 +73,7 @@ public class FactorySubscriptionService extends SubscriptionService {
             throw new ConflictException("Subscription property 'RAM' required");
         }
         try {
-            if (!accountDao.getSubscriptions(subscription.getAccountId(), getServiceId()).isEmpty()) {
+            if (!accountDao.getActiveSubscriptions(subscription.getAccountId(), getServiceId()).isEmpty()) {
                 throw new ConflictException(SUBSCRIPTION_LIMIT_EXHAUSTED_MESSAGE);
             }
         } catch (NotFoundException e) {
@@ -81,8 +93,18 @@ public class FactorySubscriptionService extends SubscriptionService {
     }
 
     @Override
-    public void onCheckSubscription(Subscription subscription) {
-        //nothing to do
+    public void onCheckSubscriptions() throws ApiException {
+        removeUtil.removeExpiredTrial(this);
+
+        expirationUtil.sendEmailAboutExpiringTrial(getServiceId(), 2);
+
+        expirationUtil.sendEmailAboutExpiredTrial(getServiceId(), 2);
+
+        expirationUtil.sendEmailAboutExpiredTrial(getServiceId(), 7);
+
+        chargeUtil.charge(this);
+
+//        removeUtil.removeExpiredSubscriptions(this);
     }
 
     @Override

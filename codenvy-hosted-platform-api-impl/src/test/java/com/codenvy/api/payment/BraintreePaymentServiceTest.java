@@ -18,35 +18,43 @@
 package com.codenvy.api.payment;
 
 import com.braintreegateway.BraintreeGateway;
+import com.braintreegateway.Plan;
+import com.braintreegateway.PlanGateway;
 import com.braintreegateway.Result;
-import com.braintreegateway.SubscriptionGateway;
-import com.braintreegateway.SubscriptionRequest;
+import com.braintreegateway.Transaction;
+import com.braintreegateway.TransactionGateway;
+import com.braintreegateway.TransactionRequest;
 import com.braintreegateway.exceptions.BraintreeException;
 import com.codenvy.api.account.server.dao.Subscription;
-import com.codenvy.api.account.shared.dto.NewBilling;
-import com.codenvy.api.account.shared.dto.NewSubscriptionAttributes;
+import com.codenvy.api.account.shared.dto.BillingCycleType;
+import com.codenvy.api.account.shared.dto.SubscriptionState;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.ForbiddenException;
-import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
-import com.codenvy.dto.server.DtoFactory;
 
 import org.mockito.InjectMocks;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.testng.MockitoTestNGListener;
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.DataProvider;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
-import java.util.Calendar;
+import javax.annotation.PostConstruct;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
-import static org.mockito.Matchers.refEq;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 /**
  * Tests for {@link BraintreePaymentService}
@@ -55,142 +63,153 @@ import static org.testng.Assert.assertEquals;
  */
 @Listeners(MockitoTestNGListener.class)
 public class BraintreePaymentServiceTest {
-    private static final String SUBSCRIPTION_ID = "subscriptionId";
-    private static final String PLAN_ID         = "planId";
-    private static final String PAYMENT_TOKEN   = "ptoken";
+    private static final String     SUBSCRIPTION_ID = "subscriptionId";
+    private static final String     PLAN_ID         = "planId";
+    private static final String     PAYMENT_TOKEN   = "ptoken";
+    private static final BigDecimal PRICE           = new BigDecimal(10);
 
     @Mock
-    private BraintreeGateway                  gateway;
+    private BraintreeGateway   gateway;
     @Mock
-    private SubscriptionGateway               subscriptionGateway;
+    private PlanGateway        planGateway;
     @Mock
-    private Result                            result;
+    private Plan               plan;
     @Mock
-    private com.braintreegateway.Subscription btSubscription;
+    private TransactionGateway transactionGateway;
+    @Mock
+    private Result             result;
+    @Mock
+    private Transaction        transaction;
 
     @InjectMocks
     private BraintreePaymentService service;
 
-    private Subscription              subscription;
-    private NewSubscriptionAttributes subscriptionAttributes;
-
     @BeforeMethod
     public void setUp() throws Exception {
-        subscription = new Subscription().withId(SUBSCRIPTION_ID).withPlanId(PLAN_ID);
-        subscriptionAttributes =
-                DtoFactory.getInstance().createDto(NewSubscriptionAttributes.class)
-                          .withTrialDuration(7)
-                          .withStartDate("11/12/2014")
-                          .withEndDate("11/12/2015")
-                          .withDescription("description")
-                          .withCustom(Collections.singletonMap("key", "value"))
-                          .withBilling(DtoFactory.getInstance().createDto(NewBilling.class)
-                                                 .withStartDate("11/12/2014")
-                                                 .withEndDate("11/12/2015")
-                                                 .withUsePaymentSystem("true")
-                                                 .withCycleType(1)
-                                                 .withCycle(1)
-                                                 .withContractTerm(1)
-                                                 .withPaymentToken(PAYMENT_TOKEN));
+        Field pricesField = BraintreePaymentService.class.getDeclaredField("prices");
+        pricesField.setAccessible(true);
+        pricesField.set(service, Collections.emptyMap());
     }
 
     @Test
-    public void shouldBeAbleToAddSubscription() throws Exception {
-        when(gateway.subscription()).thenReturn(subscriptionGateway);
-        when(subscriptionGateway.create(Matchers.<SubscriptionRequest>any())).thenReturn(result);
-        when(result.isSuccess()).thenReturn(true);
-        when(result.getTarget()).thenReturn(btSubscription);
-        final Calendar calendar = Calendar.getInstance();
-        calendar.set(2019, 9, 27);
-        when(btSubscription.getFirstBillingDate()).thenReturn(calendar);
-        when(btSubscription.getTrialDuration()).thenReturn(15);
-        SubscriptionRequest expectedRequest = new SubscriptionRequest()
-                .id(SUBSCRIPTION_ID)
-                .paymentMethodToken(PAYMENT_TOKEN)
-                .planId(PLAN_ID);
-        NewSubscriptionAttributes expected = DtoFactory.getInstance().clone(subscriptionAttributes);
-        expected.setTrialDuration(15);
-        expected.getBilling().setStartDate("10/27/2019");
+    public void shouldBeAbleToChargeSubscription() throws Exception {
+        prepareSuccessfulCharge();
 
-        NewSubscriptionAttributes actual = service.addSubscription(subscription, subscriptionAttributes);
+        service.charge(createSubscription());
 
-        assertEquals(actual, expected);
-        verify(subscriptionGateway).create(
-                refEq(expectedRequest, "addOnsRequest", "billingDayOfMonth", "descriptorRequest", "discountsRequest", "firstBillingDate",
-                      "hasTrialPeriod", "merchantAccountId", "neverExpires", "numberOfBillingCycles", "options", "paymentMethodNonce",
-                      "price", "trialDuration", "trialDurationUnit")
-                                          );
+        verify(transactionGateway).sale(any(TransactionRequest.class));
     }
 
-    @Test(dataProvider = "missingPaymentTokenProvider", expectedExceptions = ForbiddenException.class,
-          expectedExceptionsMessageRegExp = "No billing information provided")
-    public void shouldThrowExceptionIfRequiredSubscriptionAttributesIsMissing(NewSubscriptionAttributes subscriptionAttributes)
-            throws ServerException, ForbiddenException, ConflictException {
-        service.addSubscription(subscription, subscriptionAttributes);
+    @Test(expectedExceptions = ForbiddenException.class, expectedExceptionsMessageRegExp = "No subscription information provided")
+    public void shouldThrowForbiddenExceptionIfSubscriptionToChargeIsNull() throws Exception {
+        prepareSuccessfulCharge();
+
+        service.charge(null);
     }
 
-    @DataProvider(name = "missingPaymentTokenProvider")
-    public Object[][] missingPaymentTokenProvider() {
-        return new Object[][]{
-                {null},
-                {DtoFactory.getInstance().createDto(NewSubscriptionAttributes.class)},
-                {DtoFactory.getInstance().createDto(NewSubscriptionAttributes.class).withBilling(
-                        DtoFactory.getInstance().createDto(NewBilling.class))}};
+    @Test(expectedExceptions = ForbiddenException.class, expectedExceptionsMessageRegExp = "Subscription id required")
+    public void shouldThrowForbiddenExceptionIfIdIsNull() throws Exception {
+        prepareSuccessfulCharge();
+
+        service.charge(createSubscription().withId(null));
     }
 
-    @Test(expectedExceptions = ConflictException.class, expectedExceptionsMessageRegExp = "BraintreeMessage")
-    public void shouldThrowConflictExceptionIfRequestToBTIsUnsuccessful() throws ServerException, ForbiddenException, ConflictException {
-        when(gateway.subscription()).thenReturn(subscriptionGateway);
-        when(subscriptionGateway.create(Matchers.<SubscriptionRequest>any())).thenReturn(result);
+    @Test(expectedExceptions = ForbiddenException.class, expectedExceptionsMessageRegExp = "Payment token required")
+    public void shouldThrowForbiddenExceptionIfTokenIsNull() throws Exception {
+        prepareSuccessfulCharge();
+
+        service.charge(createSubscription().withPaymentToken(null));
+    }
+
+    @Test(expectedExceptions = ServerException.class, expectedExceptionsMessageRegExp = "Internal server error occurs. Please, contact support")
+    public void shouldThrowServerExceptionIfPriceIsMissing() throws Exception {
+        prepareSuccessfulCharge();
+
+        Field prices = BraintreePaymentService.class.getDeclaredField("prices");
+        prices.setAccessible(true);
+        prices.set(service, Collections.emptyMap());
+
+        service.charge(createSubscription());
+    }
+
+    @Test(expectedExceptions = ConflictException.class, expectedExceptionsMessageRegExp = "error message")
+    public void shouldThrowConflictExceptionIfChargeWasUnsuccessful() throws Exception {
+        prepareSuccessfulCharge();
         when(result.isSuccess()).thenReturn(false);
-        when(result.getMessage()).thenReturn("BraintreeMessage");
+        when(result.getMessage()).thenReturn("error message");
 
-        service.addSubscription(subscription, subscriptionAttributes);
+        service.charge(createSubscription());
+
+        verify(transactionGateway).sale(any(TransactionRequest.class));
     }
 
+    @Test(expectedExceptions = ServerException.class, expectedExceptionsMessageRegExp = "Internal server error occurs. Please, contact support")
+    public void shouldThrowServerExceptionIfOtherExceptionOccurs() throws Exception {
+        prepareSuccessfulCharge();
+        when(transactionGateway.sale(any(TransactionRequest.class))).thenThrow(new BraintreeException("message"));
 
-    @Test(expectedExceptions = ServerException.class,
-          expectedExceptionsMessageRegExp = "Internal server error occurs. Please, contact support")
-    public void shouldThrowServerExceptionIfBTExceptionOccursonAddSubscription() throws Exception {
-        when(gateway.subscription()).thenReturn(subscriptionGateway);
-        when(subscriptionGateway.create(Matchers.<SubscriptionRequest>any())).thenThrow(
-                new BraintreeException("Braintree exception message"));
+        service.charge(createSubscription());
 
-        service.addSubscription(subscription, subscriptionAttributes);
+        verify(transactionGateway).sale(any(TransactionRequest.class));
     }
 
-    @Test
-    public void shouldBeAbleToRemoveSubscription() throws ServerException, NotFoundException, ForbiddenException {
-        when(gateway.subscription()).thenReturn(subscriptionGateway);
-        when(subscriptionGateway.cancel(SUBSCRIPTION_ID)).thenReturn(result);
+    @Test(timeOut = 1000)
+    public void shouldHavePostConstructMethodWhichFillsPrices() throws Exception {
+        when(gateway.plan()).thenReturn(planGateway);
+        when(planGateway.all()).thenReturn(Arrays.asList(plan));
+        when(plan.getId()).thenReturn("planId");
+        when(plan.getPrice()).thenReturn(new BigDecimal(1));
 
-        service.removeSubscription(SUBSCRIPTION_ID);
+        Method getPrices = BraintreePaymentService.class.getDeclaredMethod("getPrices");
+        assertTrue(getPrices.isAnnotationPresent(PostConstruct.class));
+        getPrices.setAccessible(true);
+        getPrices.invoke(service);
 
-        verify(subscriptionGateway).cancel(SUBSCRIPTION_ID);
+        Field pricesField = BraintreePaymentService.class.getDeclaredField("prices");
+        pricesField.setAccessible(true);
+        Map<String, BigInteger> planPricesMap;
+        while (true) {
+            planPricesMap = (Map<String, BigInteger>)pricesField.get(service);
+            if (!planPricesMap.isEmpty()) {
+                break;
+            }
+
+        }
+        assertEquals(planPricesMap, Collections.singletonMap("planId", new BigDecimal(1)));
     }
 
-    @Test(expectedExceptions = ForbiddenException.class, expectedExceptionsMessageRegExp = "Subscription id is missing")
-    public void shouldThrowForbiddenExceptionIfSubscriptionIdIsNull() throws ServerException, NotFoundException, ForbiddenException {
-        service.removeSubscription(null);
+    private Subscription createSubscription() {
+        final HashMap<String, String> properties = new HashMap<>(4);
+        properties.put("key1", "value1");
+        properties.put("key2", "value2");
+        return new Subscription().withId(SUBSCRIPTION_ID)
+                                 .withAccountId("test_account_id")
+                                 .withPlanId(PLAN_ID)
+                                 .withServiceId("test_service_id")
+                                 .withProperties(properties)
+                                 .withBillingCycleType(BillingCycleType.AutoRenew)
+                                 .withBillingCycle(1)
+                                 .withDescription("description")
+                                 .withBillingContractTerm(1)
+                                 .withStartDate(new Date())
+                                 .withEndDate(new Date())
+                                 .withBillingStartDate(new Date())
+                                 .withBillingEndDate(new Date())
+                                 .withNextBillingDate(new Date())
+                                 .withTrialStartDate(new Date())
+                                 .withTrialEndDate(new Date())
+                                 .withPaymentToken(PAYMENT_TOKEN)
+                                 .withState(SubscriptionState.ACTIVE)
+                                 .withUsePaymentSystem(true);
     }
 
-    @Test(expectedExceptions = ServerException.class,
-          expectedExceptionsMessageRegExp = "Internal server error occurs. Please, contact support")
-    public void shouldThrowServerExceptionIfBTExceptionOccursOnRemoveSubscription()
-            throws ServerException, NotFoundException, ForbiddenException {
-        when(gateway.subscription()).thenReturn(subscriptionGateway);
-        when(subscriptionGateway.cancel(SUBSCRIPTION_ID)).thenThrow(new BraintreeException("exception message"));
-
-        service.removeSubscription(SUBSCRIPTION_ID);
-    }
-
-    @Test(expectedExceptions = NotFoundException.class, expectedExceptionsMessageRegExp = "exception message")
-    public void shouldThrowNotFoundExceptionIfBTNotFoundExceptionOccursOnRemoveSubscription()
-            throws ServerException, NotFoundException, ForbiddenException {
-        when(gateway.subscription()).thenReturn(subscriptionGateway);
-        when(subscriptionGateway.cancel(SUBSCRIPTION_ID))
-                .thenThrow(new com.braintreegateway.exceptions.NotFoundException("exception message"));
-
-        service.removeSubscription(SUBSCRIPTION_ID);
+    private void prepareSuccessfulCharge() throws NoSuchFieldException, IllegalAccessException {
+        Field prices = BraintreePaymentService.class.getDeclaredField("prices");
+        prices.setAccessible(true);
+        prices.set(service, Collections.singletonMap(PLAN_ID, PRICE));
+        when(gateway.transaction()).thenReturn(transactionGateway);
+        when(transactionGateway.sale(any(TransactionRequest.class))).thenReturn(result);
+        when(result.getTarget()).thenReturn(transaction);
+        when(result.isSuccess()).thenReturn(true);
     }
 }

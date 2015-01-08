@@ -18,6 +18,7 @@
 package com.codenvy.api.dao.mongo;
 
 import com.codenvy.api.account.server.dao.PlanDao;
+import com.codenvy.api.account.shared.dto.BillingCycleType;
 import com.codenvy.api.account.shared.dto.Plan;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
@@ -81,10 +82,16 @@ public class PlanDaoImpl implements PlanDao {
         final BasicDBObject planObj = (BasicDBObject)dbObj;
         @SuppressWarnings("unchecked") //properties is always Map of Strings
         final Map<String, String> properties = (Map<String, String>)planObj.get("properties");
-        return DtoFactory.getInstance().createDto(Plan.class).withId(planObj.getString("id"))
+        return DtoFactory.getInstance().createDto(Plan.class)
+                         .withId(planObj.getString("id"))
                          .withPaid(planObj.getBoolean("paid"))
                          .withSalesOnly(planObj.getBoolean("salesOnly"))
                          .withServiceId(planObj.getString("serviceId"))
-                         .withProperties(properties);
+                         .withProperties(properties)
+                         .withDescription(planObj.getString("description"))
+                         .withBillingContractTerm(planObj.getInt("billingContractTerm"))
+                         .withTrialDuration(planObj.getInt("trialDuration"))
+                         .withBillingCycle(planObj.getInt("billingCycle"))
+                         .withBillingCycleType(BillingCycleType.valueOf(planObj.getString("billingCycleType")));
     }
 }

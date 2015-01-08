@@ -58,8 +58,6 @@ public class ResourcesManagerImplTest {
     private static final String PRIMARY_WORKSPACE_ID = "primaryWorkspace";
     private static final String EXTRA_WORKSPACE_ID   = "extraWorkspace";
 
-    private static int DEFAULT_LIMITATION = 1024;
-
     @Mock
     WorkspaceDao workspaceDao;
 
@@ -84,7 +82,7 @@ public class ResourcesManagerImplTest {
     @Test(expectedExceptions = ForbiddenException.class,
           expectedExceptionsMessageRegExp = "Workspace \\w* is not related to account \\w*")
     public void shouldThrowConflictExceptionIfAccountIsNotOwnerOfWorkspace() throws Exception {
-        resourcesManager.redistributeResources(ACCOUNT_ID, DEFAULT_LIMITATION,
+        resourcesManager.redistributeResources(ACCOUNT_ID,
                                                Arrays.asList(DtoFactory.getInstance().createDto(UpdateResourcesDescriptor.class)
                                                                        .withResources(Collections.EMPTY_MAP)
                                                                        .withWorkspaceId(PRIMARY_WORKSPACE_ID),
@@ -94,27 +92,12 @@ public class ResourcesManagerImplTest {
     }
 
     @Test(expectedExceptions = ConflictException.class,
-          expectedExceptionsMessageRegExp = "Failed to allocate \\d*mb of RAM. Your account is provisioned with \\d*mb of RAM")
-    public void shouldThrowConflictExceptionIfUseRamMoreThanAllowed() throws Exception {
-        Map<String, String> resources = new HashMap<>();
-        resources.put("RAM", "1024");
-
-        resourcesManager.redistributeResources(ACCOUNT_ID, DEFAULT_LIMITATION,
-                                               Arrays.asList(DtoFactory.getInstance().createDto(UpdateResourcesDescriptor.class)
-                                                                       .withWorkspaceId(PRIMARY_WORKSPACE_ID)
-                                                                       .withResources(resources),
-                                                             DtoFactory.getInstance().createDto(UpdateResourcesDescriptor.class)
-                                                                       .withWorkspaceId(EXTRA_WORKSPACE_ID)
-                                                                       .withResources(resources)));
-    }
-
-    @Test(expectedExceptions = ConflictException.class,
           expectedExceptionsMessageRegExp = "Missed description of resources for workspace \\w*")
     public void shouldThrowConflictExceptionIfMissedResourcesForWorkspace() throws Exception {
         Map<String, String> primaryResources = new HashMap<>();
         primaryResources.put("RAM", "256");
 
-        resourcesManager.redistributeResources(ACCOUNT_ID, DEFAULT_LIMITATION,
+        resourcesManager.redistributeResources(ACCOUNT_ID,
                                                Arrays.asList(DtoFactory.getInstance().createDto(UpdateResourcesDescriptor.class)
                                                                        .withWorkspaceId(PRIMARY_WORKSPACE_ID)
                                                                        .withResources(primaryResources)));
@@ -123,7 +106,7 @@ public class ResourcesManagerImplTest {
     @Test(expectedExceptions = ConflictException.class,
           expectedExceptionsMessageRegExp = "Missed size of RAM in resources description for workspace \\w*")
     public void shouldThrowConflictExceptionIfMissedRAMInResources() throws Exception {
-        resourcesManager.redistributeResources(ACCOUNT_ID, DEFAULT_LIMITATION,
+        resourcesManager.redistributeResources(ACCOUNT_ID,
                                                Arrays.asList(DtoFactory.getInstance().createDto(UpdateResourcesDescriptor.class)
                                                                        .withWorkspaceId(PRIMARY_WORKSPACE_ID),
                                                              DtoFactory.getInstance().createDto(UpdateResourcesDescriptor.class)
@@ -136,7 +119,7 @@ public class ResourcesManagerImplTest {
         final UpdateResourcesDescriptor mock = Mockito.mock(UpdateResourcesDescriptor.class);
         when(mock.getWorkspaceId()).thenReturn(PRIMARY_WORKSPACE_ID);
         when(mock.getResources()).thenReturn(null);
-        resourcesManager.redistributeResources(ACCOUNT_ID, DEFAULT_LIMITATION,
+        resourcesManager.redistributeResources(ACCOUNT_ID,
                                                Arrays.asList(mock,
                                                              DtoFactory.getInstance().createDto(UpdateResourcesDescriptor.class)
                                                                        .withWorkspaceId(EXTRA_WORKSPACE_ID)));
@@ -147,32 +130,12 @@ public class ResourcesManagerImplTest {
         Map<String, String> resources = new HashMap<>();
         resources.put("RAM", "215qw");
 
-        resourcesManager.redistributeResources(ACCOUNT_ID, DEFAULT_LIMITATION,
+        resourcesManager.redistributeResources(ACCOUNT_ID,
                                                Arrays.asList(DtoFactory.getInstance().createDto(UpdateResourcesDescriptor.class)
                                                                        .withWorkspaceId(PRIMARY_WORKSPACE_ID)
                                                                        .withResources(resources),
                                                              DtoFactory.getInstance().createDto(UpdateResourcesDescriptor.class)
                                                                        .withWorkspaceId(EXTRA_WORKSPACE_ID)
-                                                                       .withResources(resources)));
-    }
-
-    @Test(expectedExceptions = ConflictException.class,
-          expectedExceptionsMessageRegExp = "Primary workspace is not found for distribution of the remaining RAM")
-    public void shouldThrowConflictExceptionIfPrimaryWorkspaceDoesNotExist() throws Exception {
-        Map<String, String> resources = new HashMap<>();
-        resources.put("RAM", "512");
-
-        Map<String, String> attributesForExtraWs = new HashMap<>();
-        attributesForExtraWs.put("codenvy:role", "extra");
-
-        Workspace workspace1 = new Workspace().withAccountId(ACCOUNT_ID)
-                                              .withId(PRIMARY_WORKSPACE_ID)
-                                              .withAttributes(attributesForExtraWs);
-        when(workspaceDao.getByAccount(ACCOUNT_ID)).thenReturn(Arrays.asList(workspace1));
-
-        resourcesManager.redistributeResources(ACCOUNT_ID, DEFAULT_LIMITATION,
-                                               Arrays.asList(DtoFactory.getInstance().createDto(UpdateResourcesDescriptor.class)
-                                                                       .withWorkspaceId(PRIMARY_WORKSPACE_ID)
                                                                        .withResources(resources)));
     }
 
@@ -198,7 +161,7 @@ public class ResourcesManagerImplTest {
         Map<String, String> resources = new HashMap<>();
         resources.put("RAM", "512");
 
-        resourcesManager.redistributeResources(ACCOUNT_ID, DEFAULT_LIMITATION,
+        resourcesManager.redistributeResources(ACCOUNT_ID,
                                                Arrays.asList(DtoFactory.getInstance().createDto(UpdateResourcesDescriptor.class)
                                                                        .withWorkspaceId(PRIMARY_WORKSPACE_ID)
                                                                        .withResources(resources),
@@ -211,37 +174,6 @@ public class ResourcesManagerImplTest {
 
         for (Workspace workspace : workspaceArgumentCaptor.getAllValues()) {
             assertEquals(workspace.getAttributes().get(Constants.RUNNER_MAX_MEMORY_SIZE), "512");
-        }
-    }
-
-    @Test
-    public void shouldRedistributeResourcesAndAddedRemainingRAMToPrimaryWorkspace() throws Exception {
-        Map<String, String> primaryResources = new HashMap<>();
-        primaryResources.put("RAM", "256");
-
-        Map<String, String> extraResources = new HashMap<>();
-        extraResources.put("RAM", "256");
-
-        resourcesManager.redistributeResources(ACCOUNT_ID, DEFAULT_LIMITATION,
-                                               Arrays.asList(DtoFactory.getInstance().createDto(UpdateResourcesDescriptor.class)
-                                                                       .withWorkspaceId(PRIMARY_WORKSPACE_ID)
-                                                                       .withResources(primaryResources),
-                                                             DtoFactory.getInstance().createDto(UpdateResourcesDescriptor.class)
-                                                                       .withWorkspaceId(EXTRA_WORKSPACE_ID)
-                                                                       .withResources(extraResources)));
-
-        ArgumentCaptor<Workspace> workspaceArgumentCaptor = ArgumentCaptor.forClass(Workspace.class);
-        verify(workspaceDao, times(2)).update(workspaceArgumentCaptor.capture());
-
-        for (Workspace workspace : workspaceArgumentCaptor.getAllValues()) {
-            switch (workspace.getId()) {
-                case PRIMARY_WORKSPACE_ID:
-                    assertEquals(workspace.getAttributes().get(Constants.RUNNER_MAX_MEMORY_SIZE), "768");
-                    break;
-                case EXTRA_WORKSPACE_ID:
-                    assertEquals(workspace.getAttributes().get(Constants.RUNNER_MAX_MEMORY_SIZE), "256");
-                    break;
-            }
         }
     }
 
