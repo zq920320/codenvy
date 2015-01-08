@@ -24,7 +24,7 @@ import java.util.Date;
  */
 public class MemoryUsedMetric {
 
-    private final Long   amount;
+    private final Integer   amount;
     private final Date   startTime;
     private final Date   stopTime;
     private final String userId;
@@ -32,7 +32,7 @@ public class MemoryUsedMetric {
     private final String workspaceId;
     private final String runId;
 
-    public MemoryUsedMetric(Long amount,
+    public MemoryUsedMetric(Integer amount,
                             Date startTime,
                             Date stopTime,
                             String userId,
@@ -48,7 +48,7 @@ public class MemoryUsedMetric {
         this.runId = runId;
     }
 
-    public Long getAmount() {
+    public Integer getAmount() {
         return amount;
     }
 
