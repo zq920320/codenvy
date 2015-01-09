@@ -22,6 +22,11 @@ import com.codenvy.api.account.MeterBasedStorage;
 import com.codenvy.api.account.UsageInformer;
 
 import javax.inject.Inject;
+import java.beans.Statement;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Map;
 
@@ -29,12 +34,39 @@ import java.util.Map;
  * @author Sergii Kabashniuk
  */
 public class SQLMeterBasedStorage implements MeterBasedStorage {
+
+    private final String STM_INSERT = "INSERT INTO METRICS " +
+                                      "  (" +
+                                      "      AMOUNT," +
+                                      "      START_TIME," +
+                                      "      STOP_TIME," +
+                                      "      USER_ID," +
+                                      "      ACCOUNT_ID," +
+                                      "      WORKSPACE_ID" +
+                                      "  )" +
+                                      "    VALUES (?, ?, ?, ?, ? , ?);";
+    private final ConnectionFactory connectionFactory;
+
     @Inject
     public SQLMeterBasedStorage(ConnectionFactory connectionFactory) {
+        this.connectionFactory = connectionFactory;
     }
 
     @Override
     public UsageInformer createMemoryUsedRecord(MemoryUsedMetric metric) {
+        try (Connection connection = connectionFactory.getConnection()) {
+            try (PreparedStatement statement = connection.prepareStatement(STM_INSERT)) {
+                statement.setInt(1, metric.getAmount());
+                statement.setTimestamp(2, new Timestamp(metric.getStartTime().getTime()));
+                statement.setTimestamp(3, new Timestamp(metric.getStopTime().getTime()));
+                statement.setString(4, metric.getUserId());
+                statement.setString(5, metric.getAccountId());
+                statement.setString(6, metric.getWorkspaceId());
+                statement.execute();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return null;
     }
 
