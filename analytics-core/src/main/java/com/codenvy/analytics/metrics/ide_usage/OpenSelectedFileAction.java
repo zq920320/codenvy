@@ -15,10 +15,9 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.metrics.ide_usage.extensions.git;
+package com.codenvy.analytics.metrics.ide_usage;
 
 import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -26,10 +25,10 @@ import javax.annotation.security.RolesAllowed;
  * @author Dmytro Nochevnov
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
-public class ImportProjectFromGitHubAction extends AbstractIdeUsage {
-    public static final String SOURCE = "com.codenvy.ide.ext.github.client.welcome.ImportProjectFromGitHubAction";
+public class OpenSelectedFileAction extends AbstractIdeUsage {
+    public static final String SOURCE = "com.codenvy.ide.actions.OpenSelectedFileAction";
 
-    public ImportProjectFromGitHubAction() {
-        super(MetricType.IMPORT_PROJECT_FROM_GIT_HUB_ACTION, SOURCE);
+    public OpenSelectedFileAction() {
+        super(MetricType.OPEN_SELECTED_FILE_ACTION, SOURCE);
     }
 }

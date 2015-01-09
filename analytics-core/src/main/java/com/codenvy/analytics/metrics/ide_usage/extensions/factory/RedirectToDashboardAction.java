@@ -15,7 +15,7 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.metrics.ide_usage.extensions.datasource;
+package com.codenvy.analytics.metrics.ide_usage.extensions.factory;
 
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
@@ -26,10 +26,10 @@ import javax.annotation.security.RolesAllowed;
  * @author Dmytro Nochevnov
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
-public class ExecuteSqlAction extends AbstractIdeUsage {
-    public static final String SOURCE = "com.codenvy.ide.ext.datasource.client.sqllauncher.ExecuteSqlAction";
+public class RedirectToDashboardAction extends AbstractIdeUsage {
+    public static final String SOURCE = "com.codenvy.ide.factory.client.RedirectToDashboardAction";
 
-    public ExecuteSqlAction() {
-        super(MetricType.EXECUTE_SQL_ACTION, SOURCE);
+    public RedirectToDashboardAction() {
+        super(MetricType.REDIRECT_TO_DASHBOARD_ACTION, SOURCE);
     }
 }

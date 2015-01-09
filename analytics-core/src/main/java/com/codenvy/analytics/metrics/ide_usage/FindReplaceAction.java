@@ -15,10 +15,9 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.metrics.ide_usage.extensions.runner;
+package com.codenvy.analytics.metrics.ide_usage;
 
 import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -26,10 +25,10 @@ import javax.annotation.security.RolesAllowed;
  * @author Dmytro Nochevnov
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
-public class StopAction extends AbstractIdeUsage {
-    public static final String SOURCE = "com.codenvy.ide.extension.runner.client.actions.StopAction";
+public class FindReplaceAction extends AbstractIdeUsage {
+    public static final String SOURCE = "com.codenvy.ide.actions.FindReplaceAction";
 
-    public StopAction() {
-        super(MetricType.STOP_ACTION, SOURCE);
+    public FindReplaceAction() {
+        super(MetricType.FIND_REPLACE_ACTION, SOURCE);
     }
 }

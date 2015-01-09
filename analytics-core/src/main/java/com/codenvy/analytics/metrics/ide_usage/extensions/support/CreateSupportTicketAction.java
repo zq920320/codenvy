@@ -15,9 +15,10 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.metrics.ide_usage;
+package com.codenvy.analytics.metrics.ide_usage.extensions.support;
 
 import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -25,10 +26,10 @@ import javax.annotation.security.RolesAllowed;
  * @author Dmytro Nochevnov
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
-public class NewProjectWizardAction extends AbstractIdeUsage {
-    public static final String SOURCE = "com.codenvy.ide.actions.NewProjectWizardAction";
+public class CreateSupportTicketAction extends AbstractIdeUsage {
+    public static final String SOURCE = "com.codenvy.ide.support.help.client.action.CreateSupportTicketAction";
 
-    public NewProjectWizardAction() {
-        super(MetricType.NEW_PROJECT_WIZARD_ACTION, SOURCE);
+    public CreateSupportTicketAction() {
+        super(MetricType.CREATE_SUPPORT_TICKET_ACTION, SOURCE);
     }
 }

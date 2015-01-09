@@ -15,7 +15,7 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.metrics.ide_usage.extensions.runner;
+package com.codenvy.analytics.metrics.ide_usage.extensions.maven;
 
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
@@ -26,10 +26,10 @@ import javax.annotation.security.RolesAllowed;
  * @author Dmytro Nochevnov
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
-public class EditImagesAction extends AbstractIdeUsage {
-    public static final String SOURCE = "com.codenvy.ide.extension.runner.client.actions.EditImagesAction";
+public class CreateMavenModuleAction extends AbstractIdeUsage {
+    public static final String SOURCE = "com.codenvy.ide.extension.maven.client.actions.CreateMavenModuleAction";
 
-    public EditImagesAction() {
-        super(MetricType.EDIT_IMAGES_ACTION, SOURCE);
+    public CreateMavenModuleAction() {
+        super(MetricType.CREATE_MAVEN_MODULE_ACTION, SOURCE);
     }
 }

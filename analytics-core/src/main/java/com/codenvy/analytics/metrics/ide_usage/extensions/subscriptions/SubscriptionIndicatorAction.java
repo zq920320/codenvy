@@ -15,7 +15,7 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.metrics.ide_usage.extensions.runner;
+package com.codenvy.analytics.metrics.ide_usage.extensions.subscriptions;
 
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
@@ -26,10 +26,10 @@ import javax.annotation.security.RolesAllowed;
  * @author Dmytro Nochevnov
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
-public class RunImageAction extends AbstractIdeUsage {
-    public static final String SOURCE = "com.codenvy.ide.extension.runner.client.actions.RunImageAction";
+public class SubscriptionIndicatorAction extends AbstractIdeUsage {
+    public static final String SOURCE = "com.codenvy.ide.subscriptions.client.SubscriptionIndicatorAction";
 
-    public RunImageAction() {
-        super(MetricType.RUN_IMAGE_ACTION, SOURCE);
+    public SubscriptionIndicatorAction() {
+        super(MetricType.SUBSCRIPTION_INDICATOR_ACTION, SOURCE);
     }
 }

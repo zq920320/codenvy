@@ -15,9 +15,10 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.metrics.ide_usage;
+package com.codenvy.analytics.metrics.ide_usage.extensions.factory;
 
 import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -25,10 +26,10 @@ import javax.annotation.security.RolesAllowed;
  * @author Dmytro Nochevnov
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
-public class ChangeProjectTypeAction extends AbstractIdeUsage {
-    public static final String SOURCE = "com.codenvy.ide.actions.ChangeProjectTypeAction";
+public class ShareAction extends AbstractIdeUsage {
+    public static final String SOURCE = "com.codenvy.ide.factory.client.privacy.ShareAction";
 
-    public ChangeProjectTypeAction() {
-        super(MetricType.CHANGE_PROJECT_TYPE_ACTION, SOURCE);
+    public ShareAction() {
+        super(MetricType.SHARE_ACTION, SOURCE);
     }
 }
