@@ -1,4 +1,3 @@
-package com.codenvy.api.account;
 /*
  * CODENVY CONFIDENTIAL
  * __________________
@@ -16,30 +15,22 @@ package com.codenvy.api.account;
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
+package com.codenvy.mbstorage.sql;
 
-import java.util.Date;
-import java.util.Map;
+import java.sql.Connection;
+import java.sql.SQLException;
 
 /**
+ * Provide connections to meter based storage
+ *
  * @author Sergii Kabashniuk
  */
-public class SQLMeterBasedStorage implements MeterBasedStorage {
-
-    public SQLMeterBasedStorage() {
-    }
-
-    @Override
-    public UsageInformer createMemoryUsedRecord(MemoryUsedMetric metric) {
-        return null;
-    }
-
-    @Override
-    public Long getMemoryUsed(String accountId, Date from, Date until) {
-        return null;
-    }
-
-    @Override
-    public Map<String, Long> getMemoryUsedReport(String accountId, Date from, Date until) {
-        return null;
-    }
+public interface ConnectionFactory {
+    /**
+     * Provide new sql connection.
+     *
+     * @return - sql connection.
+     * @throws SQLException
+     */
+    Connection getConnection() throws SQLException;
 }
