@@ -29,13 +29,16 @@
     <packaging>jar</packaging>
     <name>Codenvy Hosted :: SQL MB storage</name>
     <dependencies>
-
         <dependency>
             <groupId>com.codenvy.hosted-infrastructure</groupId>
             <artifactId>codenvy-hosted-platform-api-impl</artifactId>
             <version>${project.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>javax.inject</groupId>
+            <artifactId>javax.inject</artifactId>
+            <version>${javax.inject.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
@@ -51,13 +54,6 @@
             <artifactId>postgresql</artifactId>
             <version>9.3-1102-jdbc41</version>
         </dependency>
-
-        <dependency>
-            <groupId>javax.inject</groupId>
-            <artifactId>javax.inject</artifactId>
-            <version>${javax.inject.version}</version>
-        </dependency>
-
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
