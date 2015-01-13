@@ -85,15 +85,6 @@ public class ResourcesManagerImpl implements ResourcesManager {
             }
         }
 
-        if (ownWorkspaces.size() != resources.size()) {
-            for (String workspaceId : ownWorkspaces.keySet()) {
-                if (!resources.containsKey(workspaceId)) {
-                    throw new ConflictException(
-                            format("Missed description of resources for workspace %s", workspaceId));
-                }
-            }
-        }
-
         for (UpdateResourcesDescriptor resourcesDescriptor : resources.values()) {
             if (resourcesDescriptor.getRunnerTimeout() == null && resourcesDescriptor.getRunnerRam() == null &&
                 resourcesDescriptor.getBuilderTimeout() == null) {
@@ -104,12 +95,12 @@ public class ResourcesManagerImpl implements ResourcesManager {
             Integer runnerRam = resourcesDescriptor.getRunnerRam();
 
             if (runnerRam != null) {
-                if (runnerRam.compareTo(0) < 0) {
+                if (runnerRam < 0) {
                     throw new ConflictException(format("Size of RAM for workspace %s is a negative number",
                                                        resourcesDescriptor.getWorkspaceId()));
                 }
                 Account account = accountDao.getById(accountId);
-                if (!account.getAttributes().containsKey("codenvy:paid") && runnerRam.compareTo(4096) > 0) {
+                if (!account.getAttributes().containsKey("codenvy:paid") && runnerRam > 4096) {
                     throw new ConflictException(format("Size of RAM for workspace %s has a 4096 MB limit.",
                                                        resourcesDescriptor.getWorkspaceId()));
 
@@ -119,7 +110,7 @@ public class ResourcesManagerImpl implements ResourcesManager {
             }
 
             if (resourcesDescriptor.getBuilderTimeout() != null) {
-                if (resourcesDescriptor.getBuilderTimeout().compareTo(0) < 0) {
+                if (resourcesDescriptor.getBuilderTimeout() < 0) {
                     throw new ConflictException(format("Builder timeout for workspace %s is a negative number",
                                                        resourcesDescriptor.getWorkspaceId()));
                 }
@@ -128,7 +119,7 @@ public class ResourcesManagerImpl implements ResourcesManager {
             }
 
             if (resourcesDescriptor.getRunnerTimeout() != null) {
-                if (resourcesDescriptor.getRunnerTimeout().compareTo(-1) < 0) { // we allow -1 here
+                if (resourcesDescriptor.getRunnerTimeout() < 0) { // we allow -1 here
                     throw new ConflictException(format("Runner timeout for workspace %s is a negative number",
                                                        resourcesDescriptor.getWorkspaceId()));
                 }

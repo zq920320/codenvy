@@ -80,6 +80,7 @@ public class ResourcesManagerImplTest {
                                                   .withAttributes(attributesForExtraWs);
 
         when(workspaceDao.getByAccount(ACCOUNT_ID)).thenReturn(Arrays.asList(primaryWorkspace, extraWorkspace));
+        when(accountDao.getById(anyString())).thenReturn(new Account().withId(ACCOUNT_ID).withName("testName"));
 
         resourcesManager = new ResourcesManagerImpl(accountDao, workspaceDao);
     }
@@ -97,15 +98,6 @@ public class ResourcesManagerImplTest {
     }
 
     @Test(expectedExceptions = ConflictException.class,
-          expectedExceptionsMessageRegExp = "Missed description of resources for workspace \\w*")
-    public void shouldThrowConflictExceptionIfMissedResourcesForWorkspace() throws Exception {
-        resourcesManager.redistributeResources(ACCOUNT_ID,
-                                               Arrays.asList(DtoFactory.getInstance().createDto(UpdateResourcesDescriptor.class)
-                                                                       .withWorkspaceId(PRIMARY_WORKSPACE_ID)
-                                                                       .withRunnerRam(256)));
-    }
-
-    @Test(expectedExceptions = ConflictException.class,
             expectedExceptionsMessageRegExp = "Missed description of resources for workspace \\w*")
     public void shouldThrowConflictExceptionIfMissedResources() throws Exception {
         resourcesManager.redistributeResources(ACCOUNT_ID,
@@ -120,33 +112,17 @@ public class ResourcesManagerImplTest {
     @Test(expectedExceptions = ConflictException.class,
           expectedExceptionsMessageRegExp = "Size of RAM for workspace \\w* is a negative number")
     public void shouldThrowConflictExceptionIfSizeOfRAMIsNegativeNumber() throws Exception {
-        when(accountDao.getById(anyString())).thenReturn(new Account().withId(ACCOUNT_ID).withName("testName"));
-        resourcesManager.redistributeResources(ACCOUNT_ID,
-
-                                               Arrays.asList(DtoFactory.getInstance().createDto(
-                                                                                   UpdateResourcesDescriptor.class)
-                                                                                     .withWorkspaceId(
-                                                                                             PRIMARY_WORKSPACE_ID).
-                                                                                   withRunnerRam(256),
-                                                                           DtoFactory.getInstance().createDto(
-                                                                                   UpdateResourcesDescriptor.class)
-                                                                                     .withWorkspaceId(
-                                                                                             EXTRA_WORKSPACE_ID)
-                                                                                     .withRunnerRam(-256)));
+        resourcesManager.redistributeResources(ACCOUNT_ID, Arrays.asList(DtoFactory.getInstance().createDto(
+                UpdateResourcesDescriptor.class)
+                                                                                   .withWorkspaceId(
+                                                                                           EXTRA_WORKSPACE_ID)
+                                                                                   .withRunnerRam(-256)));
     }
 
     @Test(expectedExceptions = ConflictException.class,
             expectedExceptionsMessageRegExp = "Builder timeout for workspace \\w* is a negative number")
     public void shouldThrowConflictExceptionIfSizeOfBuilderTimeoutIsNegativeNumber() throws Exception {
-        when(accountDao.getById(anyString())).thenReturn(new Account().withId(ACCOUNT_ID).withName("testName"));
-        resourcesManager.redistributeResources(ACCOUNT_ID,
-
-                                               Arrays.asList(DtoFactory.getInstance().createDto(
-                                                                     UpdateResourcesDescriptor.class)
-                                                                       .withWorkspaceId(
-                                                                               PRIMARY_WORKSPACE_ID).
-                                                                               withBuilderTimeout(5),
-                                                             DtoFactory.getInstance().createDto(
+        resourcesManager.redistributeResources(ACCOUNT_ID, Arrays.asList(DtoFactory.getInstance().createDto(
                                                                      UpdateResourcesDescriptor.class)
                                                                        .withWorkspaceId(
                                                                                EXTRA_WORKSPACE_ID)
@@ -156,7 +132,6 @@ public class ResourcesManagerImplTest {
     @Test(expectedExceptions = ConflictException.class,
             expectedExceptionsMessageRegExp = "Runner timeout for workspace \\w* is a negative number")
     public void shouldThrowConflictExceptionIfSizeOfRunnerTimeoutIsNegativeNumber() throws Exception {
-        when(accountDao.getById(anyString())).thenReturn(new Account().withId(ACCOUNT_ID).withName("testName"));
         resourcesManager.redistributeResources(ACCOUNT_ID,
 
                                                Arrays.asList(DtoFactory.getInstance().createDto(
@@ -175,13 +150,7 @@ public class ResourcesManagerImplTest {
     @Test(expectedExceptions = ConflictException.class,
             expectedExceptionsMessageRegExp = "Size of RAM for workspace \\w* has a 4096 MB limit.")
     public void shouldThrowConflictExceptionIfSizeOfRAMIsTooBigForCommunityAccountNumber() throws Exception {
-        when(accountDao.getById(anyString())).thenReturn(new Account().withId(ACCOUNT_ID).withName("testName"));
         resourcesManager.redistributeResources(ACCOUNT_ID, Arrays.asList(DtoFactory.getInstance().createDto(
-                                                                                 UpdateResourcesDescriptor.class)
-                                                                                   .withWorkspaceId(
-                                                                                           PRIMARY_WORKSPACE_ID).
-                                                                                           withRunnerRam(4095),
-                                                                         DtoFactory.getInstance().createDto(
                                                                                  UpdateResourcesDescriptor.class)
                                                                                    .withWorkspaceId(
                                                                                            EXTRA_WORKSPACE_ID)
@@ -191,7 +160,6 @@ public class ResourcesManagerImplTest {
 
     @Test
     public void shouldRedistributeRAMResources() throws Exception {
-        when(accountDao.getById(anyString())).thenReturn(new Account().withId(ACCOUNT_ID).withName("testName"));
         resourcesManager.redistributeResources(ACCOUNT_ID,
                                                Arrays.asList(DtoFactory.getInstance().createDto(UpdateResourcesDescriptor.class)
                                                                        .withWorkspaceId(PRIMARY_WORKSPACE_ID)
@@ -210,7 +178,6 @@ public class ResourcesManagerImplTest {
 
     @Test
     public void shouldRedistributeRunnerLimitResources() throws Exception {
-        when(accountDao.getById(anyString())).thenReturn(new Account().withId(ACCOUNT_ID).withName("testName"));
         resourcesManager.redistributeResources(ACCOUNT_ID,
                                                Arrays.asList(DtoFactory.getInstance().createDto(UpdateResourcesDescriptor.class)
                                                                        .withWorkspaceId(PRIMARY_WORKSPACE_ID)
@@ -229,7 +196,6 @@ public class ResourcesManagerImplTest {
 
     @Test
     public void shouldRedistributeBuilderLimitResources() throws Exception {
-        when(accountDao.getById(anyString())).thenReturn(new Account().withId(ACCOUNT_ID).withName("testName"));
         resourcesManager.redistributeResources(ACCOUNT_ID,
                                                Arrays.asList(DtoFactory.getInstance().createDto(UpdateResourcesDescriptor.class)
                                                                        .withWorkspaceId(PRIMARY_WORKSPACE_ID)
