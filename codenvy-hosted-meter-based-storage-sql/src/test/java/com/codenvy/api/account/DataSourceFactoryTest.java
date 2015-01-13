@@ -50,7 +50,7 @@ public class DataSourceFactoryTest {
         source.setMaxConnections(10);
         source.setPortNumber(49153);
 
-        StorageInitializer initializer = new StorageInitializer(source, true);
+        StorageInitializer initializer = new StorageInitializer(source, true, "hsqldb");
         initializer.init();
 
         SQLMeterBasedStorage sqlMeterBasedStorage = new SQLMeterBasedStorage(new ConnectionFactory() {
@@ -61,15 +61,15 @@ public class DataSourceFactoryTest {
         });
 
         final UsageInformer informer = sqlMeterBasedStorage.createMemoryUsedRecord(new MemoryUsedMetric(random.nextInt(2048),
-                                                                                                  new Date(),
-                                                                                                  new Date(),
-                                                                                                  "user" + random.nextInt(4),
-                                                                                                  "user" + random.nextInt(4),
-                                                                                                  "user" + random.nextInt(4),
-                                                                                                  Integer.toString(random.nextInt())
+                                                                                                        new Date(),
+                                                                                                        new Date(),
+                                                                                                        "user" + random.nextInt(4),
+                                                                                                        "user" + random.nextInt(4),
+                                                                                                        "user" + random.nextInt(4),
+                                                                                                        Integer.toString(random.nextInt())
 
-                                                                             )
-                                                                            );
+                                                                                   )
+                                                                                  );
         Timer t = new Timer();
         t.schedule(new TimerTask() {
             @Override

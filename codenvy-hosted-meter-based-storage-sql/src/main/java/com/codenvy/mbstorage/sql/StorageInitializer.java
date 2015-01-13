@@ -47,11 +47,20 @@ public class StorageInitializer {
         flyway.configure(config);
     }
 
-    public StorageInitializer(DataSource dataSource, boolean cleanOnValidationError) {
+    public StorageInitializer(DataSource dataSource, boolean cleanOnValidationError, String database) {
         flyway = new Flyway();
         flyway.setCleanOnValidationError(cleanOnValidationError);
         flyway.setDataSource(dataSource);
+        flyway.setLocations("db/migration/" + database);
     }
+
+    /**
+     * Drops all objects (tables, views, procedures, triggers, ...) in the configured schemas.
+     */
+    public void clean() {
+        flyway.clean();
+    }
+
 
     @PostConstruct
     public void init() {

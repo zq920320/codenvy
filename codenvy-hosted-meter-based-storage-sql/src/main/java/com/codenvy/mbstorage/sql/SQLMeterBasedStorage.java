@@ -61,11 +61,23 @@ public class SQLMeterBasedStorage implements MeterBasedStorage {
                                                "      STOP_TIME," +
                                                "      USER_ID," +
                                                "      ACCOUNT_ID," +
-                                               "      WORKSPACE_ID" +
+                                               "      WORKSPACE_ID, " +
+                                               "      RUN_ID" +
                                                "  )" +
-                                               "    VALUES (?, ?, ?, ?, ? , ?);";
+                                               "    VALUES (?, ?, ?, ?, ? , ?, ?);";
 
+    private final String QUERY_SELECT_METRIC = " SELECT " +
 
+                                               "      AMOUNT," +
+                                               "      START_TIME," +
+                                               "      STOP_TIME," +
+                                               "      USER_ID," +
+                                               "      ACCOUNT_ID," +
+                                               "      WORKSPACE_ID,  " +
+                                               "      RUN_ID " +
+                                               "FROM " +
+                                               "  METRICS " +
+                                               "WHERE ID=?";
 
 
     private final ConnectionFactory connectionFactory;
@@ -85,6 +97,7 @@ public class SQLMeterBasedStorage implements MeterBasedStorage {
                 statement.setString(4, metric.getUserId());
                 statement.setString(5, metric.getAccountId());
                 statement.setString(6, metric.getWorkspaceId());
+                statement.setString(7, metric.getRunId());
                 statement.execute();
                 try (ResultSet keys = statement.getGeneratedKeys()) {
                     if (keys.next()) {
@@ -100,8 +113,36 @@ public class SQLMeterBasedStorage implements MeterBasedStorage {
 
     }
 
-    public MemoryUsedMetric getMetric(){
-       return null;
+    /**
+     * Get memory metric from storage.
+     *
+     * @param id
+     *         - id of metrics
+     * @return - Memory metric from storage if it exists or null.
+     * @throws ServerException
+     */
+     MemoryUsedMetric getMetric(long id) throws ServerException {
+        try (Connection connection = connectionFactory.getConnection()) {
+            try (PreparedStatement statement = connection.prepareStatement(QUERY_SELECT_METRIC)) {
+                statement.setLong(1, id);
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    if (resultSet.next()) {
+                        return new MemoryUsedMetric(
+                                resultSet.getInt(1),
+                                resultSet.getTimestamp(2),
+                                resultSet.getTimestamp(3),
+                                resultSet.getString(4),
+                                resultSet.getString(5),
+                                resultSet.getString(6),
+                                resultSet.getString(7)
+                        );
+                    }
+                    return null;
+                }
+            }
+        } catch (SQLException e) {
+            throw new ServerException(e.getLocalizedMessage(), e);
+        }
     }
 
 
@@ -115,7 +156,7 @@ public class SQLMeterBasedStorage implements MeterBasedStorage {
         return null;
     }
 
-    private final static class SQLUsageInformer implements UsageInformer {
+     final static class SQLUsageInformer implements UsageInformer {
         public final String QUERY_UPDATE_METRIC = "UPDATE  METRICS " +
                                                   " SET STOP_TIME=? " +
                                                   " WHERE ID=? ";
@@ -150,6 +191,10 @@ public class SQLMeterBasedStorage implements MeterBasedStorage {
         public void resourceUsageStopped() throws ServerException {
             resourceInUse();
             isResourceUsageStopped = true;
+        }
+
+        long getRecordId() {
+            return recordId;
         }
     }
 }
