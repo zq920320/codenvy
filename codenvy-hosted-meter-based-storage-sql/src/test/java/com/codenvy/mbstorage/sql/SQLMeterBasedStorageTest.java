@@ -15,24 +15,9 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.api.account;
+package com.codenvy.mbstorage.sql;
 
-import com.codenvy.api.core.ServerException;
+public class SQLMeterBasedStorageTest {
 
-/**
- * Allow to inform @MeterBasedStorage about state of resource
- *
- * @author Sergii Kabashniuk
- */
-public interface UsageInformer {
-    /**
-     * Inform about the fact that resource is still in use.
-     */
-    void resourceInUse() throws ServerException;
-
-    /**
-     * Inform about the fact that resource usage are stopped.
-     */
-    void resourceUsageStopped() throws ServerException;
 
 }

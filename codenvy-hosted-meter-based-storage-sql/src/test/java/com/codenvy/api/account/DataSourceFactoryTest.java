@@ -17,6 +17,7 @@
  */
 package com.codenvy.api.account;
 
+import com.codenvy.api.core.ServerException;
 import com.codenvy.mbstorage.sql.ConnectionFactory;
 import com.codenvy.mbstorage.sql.SQLMeterBasedStorage;
 import com.codenvy.mbstorage.sql.StorageInitializer;
@@ -29,19 +30,21 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class DataSourceFactoryTest {
 
     Random random = new Random();
 
     @Test(enabled = false)
-    public void testinit() throws SQLException, NamingException {
+    public void testinit() throws SQLException, NamingException, ServerException, InterruptedException {
 
 
         final PGPoolingDataSource source = new PGPoolingDataSource();
         source.setDataSourceName("A Data Source");
         source.setServerName("localhost");
-        source.setDatabaseName("postgres");
+        source.setDatabaseName("docker");
         source.setUser("docker");
         source.setPassword("docker");
         source.setMaxConnections(10);
@@ -57,17 +60,42 @@ public class DataSourceFactoryTest {
             }
         });
 
-        for (int i = 0; i < 100; i++) {
-            sqlMeterBasedStorage.createMemoryUsedRecord(new MemoryUsedMetric(random.nextInt(2048),
-                                                                             new Date(),
-                                                                             new Date(),
-                                                                             "user" + random.nextInt(4),
-                                                                             "user" + random.nextInt(4),
-                                                                             "user" + random.nextInt(4), Integer.toString(random.nextInt())
+        final UsageInformer informer = sqlMeterBasedStorage.createMemoryUsedRecord(new MemoryUsedMetric(random.nextInt(2048),
+                                                                                                  new Date(),
+                                                                                                  new Date(),
+                                                                                                  "user" + random.nextInt(4),
+                                                                                                  "user" + random.nextInt(4),
+                                                                                                  "user" + random.nextInt(4),
+                                                                                                  Integer.toString(random.nextInt())
 
-                                                        )
-                                                       );
-        }
+                                                                             )
+                                                                            );
+        Timer t = new Timer();
+        t.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                try {
+                    informer.resourceInUse();
+                } catch (ServerException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, 0, 1000);
+
+        Thread.sleep(1000000);
+
+//        for (int i = 0; i < 100; i++) {
+//            sqlMeterBasedStorage.createMemoryUsedRecord(new MemoryUsedMetric(random.nextInt(2048),
+//                                                                             new Date(),
+//                                                                             new Date(),
+//                                                                             "user" + random.nextInt(4),
+//                                                                             "user" + random.nextInt(4),
+//                                                                             "user" + random.nextInt(4), Integer.toString(random
+// .nextInt())
+//
+//                                                        )
+//                                                       );
+//        }
 
 
     }

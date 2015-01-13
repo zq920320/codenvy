@@ -37,12 +37,14 @@ package com.codenvy.mbstorage.sql;
 import com.codenvy.api.account.MemoryUsedMetric;
 import com.codenvy.api.account.MeterBasedStorage;
 import com.codenvy.api.account.UsageInformer;
+import com.codenvy.api.core.ServerException;
 
 import javax.inject.Inject;
-import java.beans.Statement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Map;
@@ -52,16 +54,20 @@ import java.util.Map;
  */
 public class SQLMeterBasedStorage implements MeterBasedStorage {
 
-    private final String STM_INSERT = "INSERT INTO METRICS " +
-                                      "  (" +
-                                      "      AMOUNT," +
-                                      "      START_TIME," +
-                                      "      STOP_TIME," +
-                                      "      USER_ID," +
-                                      "      ACCOUNT_ID," +
-                                      "      WORKSPACE_ID" +
-                                      "  )" +
-                                      "    VALUES (?, ?, ?, ?, ? , ?);";
+    private final String QUERY_INSERT_METRIC = "INSERT INTO METRICS " +
+                                               "  (" +
+                                               "      AMOUNT," +
+                                               "      START_TIME," +
+                                               "      STOP_TIME," +
+                                               "      USER_ID," +
+                                               "      ACCOUNT_ID," +
+                                               "      WORKSPACE_ID" +
+                                               "  )" +
+                                               "    VALUES (?, ?, ?, ?, ? , ?);";
+
+
+
+
     private final ConnectionFactory connectionFactory;
 
     @Inject
@@ -70,9 +76,9 @@ public class SQLMeterBasedStorage implements MeterBasedStorage {
     }
 
     @Override
-    public UsageInformer createMemoryUsedRecord(MemoryUsedMetric metric) {
+    public UsageInformer createMemoryUsedRecord(MemoryUsedMetric metric) throws ServerException {
         try (Connection connection = connectionFactory.getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement(STM_INSERT)) {
+            try (PreparedStatement statement = connection.prepareStatement(QUERY_INSERT_METRIC, Statement.RETURN_GENERATED_KEYS)) {
                 statement.setInt(1, metric.getAmount());
                 statement.setTimestamp(2, new Timestamp(metric.getStartTime().getTime()));
                 statement.setTimestamp(3, new Timestamp(metric.getStopTime().getTime()));
@@ -80,12 +86,24 @@ public class SQLMeterBasedStorage implements MeterBasedStorage {
                 statement.setString(5, metric.getAccountId());
                 statement.setString(6, metric.getWorkspaceId());
                 statement.execute();
+                try (ResultSet keys = statement.getGeneratedKeys()) {
+                    if (keys.next()) {
+                        return new SQLUsageInformer(keys.getInt(1), connectionFactory);
+                    } else {
+                        throw new ServerException("Can't find inserted record id");
+                    }
+                }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new ServerException(e.getLocalizedMessage(), e);
         }
-        return null;
+
     }
+
+    public MemoryUsedMetric getMetric(){
+       return null;
+    }
+
 
     @Override
     public Long getMemoryUsed(String accountId, Date from, Date until) {
@@ -95,5 +113,43 @@ public class SQLMeterBasedStorage implements MeterBasedStorage {
     @Override
     public Map<String, Long> getMemoryUsedReport(String accountId, Date from, Date until) {
         return null;
+    }
+
+    private final static class SQLUsageInformer implements UsageInformer {
+        public final String QUERY_UPDATE_METRIC = "UPDATE  METRICS " +
+                                                  " SET STOP_TIME=? " +
+                                                  " WHERE ID=? ";
+        private final long recordId;
+
+        private final ConnectionFactory connectionFactory;
+
+        private boolean isResourceUsageStopped = false;
+
+        private SQLUsageInformer(long recordId, ConnectionFactory connectionFactory) {
+            this.recordId = recordId;
+            this.connectionFactory = connectionFactory;
+        }
+
+
+        @Override
+        public void resourceInUse() throws ServerException {
+            if (!isResourceUsageStopped) {
+                try (Connection connection = connectionFactory.getConnection()) {
+                    try (PreparedStatement statement = connection.prepareStatement(QUERY_UPDATE_METRIC)) {
+                        statement.setTimestamp(1, new Timestamp(new Date().getTime()));
+                        statement.setLong(2, recordId);
+                        statement.execute();
+                    }
+                } catch (SQLException e) {
+                    throw new ServerException(e.getLocalizedMessage(), e);
+                }
+            }
+        }
+
+        @Override
+        public void resourceUsageStopped() throws ServerException {
+            resourceInUse();
+            isResourceUsageStopped = true;
+        }
     }
 }

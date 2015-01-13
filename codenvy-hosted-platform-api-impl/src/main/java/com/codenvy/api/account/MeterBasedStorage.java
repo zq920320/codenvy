@@ -17,6 +17,8 @@
  */
 package com.codenvy.api.account;
 
+import com.codenvy.api.core.ServerException;
+
 import java.util.Date;
 import java.util.Map;
 
@@ -33,7 +35,7 @@ public interface MeterBasedStorage {
      *         - memory usage metric
      * @return - tracker. It allow to inform about the usage and stopping usage of memory.
      */
-    UsageInformer createMemoryUsedRecord(MemoryUsedMetric metric);
+    UsageInformer createMemoryUsedRecord(MemoryUsedMetric metric) throws ServerException;
 
 
     /**
@@ -48,7 +50,7 @@ public interface MeterBasedStorage {
      *         end of period
      * @return - total number of consumed  Mb/min
      */
-    Long getMemoryUsed(String accountId, Date from, Date until);
+    Long getMemoryUsed(String accountId, Date from, Date until) throws ServerException;
 
     /**
      * Get total consumed Mb/min of account by given period group by workspace id's
@@ -62,5 +64,5 @@ public interface MeterBasedStorage {
      *         end of period
      * @return - total number of consumed  Mb/min group by workspace id's
      */
-    Map<String, Long> getMemoryUsedReport(String accountId, Date from, Date until);
+    Map<String, Long> getMemoryUsedReport(String accountId, Date from, Date until) throws ServerException;
 }
