@@ -25,16 +25,16 @@ import java.util.Date;
 public class MemoryUsedMetric {
 
     private final Integer   amount;
-    private final Date   startTime;
-    private final Date   stopTime;
+    private final Long   startTime;
+    private final Long   stopTime;
     private final String userId;
     private final String accountId;
     private final String workspaceId;
     private final String runId;
 
     public MemoryUsedMetric(Integer amount,
-                            Date startTime,
-                            Date stopTime,
+                            Long startTime,
+                            Long stopTime,
                             String userId,
                             String accountId,
                             String workspaceId,
@@ -52,11 +52,11 @@ public class MemoryUsedMetric {
         return amount;
     }
 
-    public Date getStartTime() {
+    public Long getStartTime() {
         return startTime;
     }
 
-    public Date getStopTime() {
+    public Long getStopTime() {
         return stopTime;
     }
 

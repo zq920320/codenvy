@@ -74,8 +74,8 @@ public class SQLMeterBasedStorageTest {
         //given
         MemoryUsedMetric expected =
                 new MemoryUsedMetric(1024,
-                                     sdf.parse("10-01-2015 10:20:56"),
-                                     sdf.parse("31-01-2015 10:00:00"),
+                                     sdf.parse("10-01-2015 10:20:56").getTime(),
+                                     sdf.parse("31-01-2015 10:00:00").getTime(),
                                      "usr-123",
                                      "ac-46534",
                                      "ws-235423",
@@ -92,8 +92,8 @@ public class SQLMeterBasedStorageTest {
         //given
         MemoryUsedMetric expected =
                 new MemoryUsedMetric(1024,
-                                     sdf.parse("10-01-2014 10:20:56"),
-                                     sdf.parse("31-01-2014 10:00:00"),
+                                     sdf.parse("10-01-2014 10:20:56").getTime(),
+                                     sdf.parse("31-01-2014 10:00:00").getTime(),
                                      "usr-123",
                                      "ac-46534",
                                      "ws-235423",
@@ -104,8 +104,8 @@ public class SQLMeterBasedStorageTest {
         //
         MemoryUsedMetric actual = meterBasedStorage.getMetric(((SQLMeterBasedStorage.SQLUsageInformer)usageInformer).getRecordId());
 
-        Assert.assertTrue(new Date().getTime() < actual.getStopTime().getTime() + 1000 * 60);
-        Assert.assertEquals(actual.getStartTime(), sdf.parse("10-01-2014 10:20:56"));
+        Assert.assertTrue(new Date().getTime() < actual.getStopTime() + 1000 * 60);
+        Assert.assertEquals(actual.getStartTime(),(Long)sdf.parse("10-01-2014 10:20:56").getTime());
 
     }
 
@@ -114,8 +114,8 @@ public class SQLMeterBasedStorageTest {
         //given
         MemoryUsedMetric usedMetric =
                 new MemoryUsedMetric(1024,
-                                     sdf.parse("10-01-2014 10:20:56"),
-                                     sdf.parse("31-01-2014 10:00:00"),
+                                     sdf.parse("10-01-2014 10:20:56").getTime(),
+                                     sdf.parse("31-01-2014 10:00:00").getTime(),
                                      "usr-123",
                                      "ac-46534",
                                      "ws-235423",

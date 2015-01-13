@@ -61,8 +61,8 @@ public class DataSourceFactoryTest {
         });
 
         final UsageInformer informer = sqlMeterBasedStorage.createMemoryUsedRecord(new MemoryUsedMetric(random.nextInt(2048),
-                                                                                                        new Date(),
-                                                                                                        new Date(),
+                                                                                                        new Date().getTime(),
+                                                                                                        new Date().getTime(),
                                                                                                         "user" + random.nextInt(4),
                                                                                                         "user" + random.nextInt(4),
                                                                                                         "user" + random.nextInt(4),

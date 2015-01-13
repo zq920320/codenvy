@@ -92,8 +92,8 @@ public class SQLMeterBasedStorage implements MeterBasedStorage {
         try (Connection connection = connectionFactory.getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(QUERY_INSERT_METRIC, Statement.RETURN_GENERATED_KEYS)) {
                 statement.setInt(1, metric.getAmount());
-                statement.setTimestamp(2, new Timestamp(metric.getStartTime().getTime()));
-                statement.setTimestamp(3, new Timestamp(metric.getStopTime().getTime()));
+                statement.setLong(2, metric.getStartTime());
+                statement.setLong(3, metric.getStopTime());
                 statement.setString(4, metric.getUserId());
                 statement.setString(5, metric.getAccountId());
                 statement.setString(6, metric.getWorkspaceId());
@@ -121,7 +121,7 @@ public class SQLMeterBasedStorage implements MeterBasedStorage {
      * @return - Memory metric from storage if it exists or null.
      * @throws ServerException
      */
-     MemoryUsedMetric getMetric(long id) throws ServerException {
+    MemoryUsedMetric getMetric(long id) throws ServerException {
         try (Connection connection = connectionFactory.getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(QUERY_SELECT_METRIC)) {
                 statement.setLong(1, id);
@@ -129,8 +129,8 @@ public class SQLMeterBasedStorage implements MeterBasedStorage {
                     if (resultSet.next()) {
                         return new MemoryUsedMetric(
                                 resultSet.getInt(1),
-                                resultSet.getTimestamp(2),
-                                resultSet.getTimestamp(3),
+                                resultSet.getLong(2),
+                                resultSet.getLong(3),
                                 resultSet.getString(4),
                                 resultSet.getString(5),
                                 resultSet.getString(6),
@@ -156,7 +156,7 @@ public class SQLMeterBasedStorage implements MeterBasedStorage {
         return null;
     }
 
-     final static class SQLUsageInformer implements UsageInformer {
+    final static class SQLUsageInformer implements UsageInformer {
         public final String QUERY_UPDATE_METRIC = "UPDATE  METRICS " +
                                                   " SET STOP_TIME=? " +
                                                   " WHERE ID=? ";
@@ -177,7 +177,7 @@ public class SQLMeterBasedStorage implements MeterBasedStorage {
             if (!isResourceUsageStopped) {
                 try (Connection connection = connectionFactory.getConnection()) {
                     try (PreparedStatement statement = connection.prepareStatement(QUERY_UPDATE_METRIC)) {
-                        statement.setTimestamp(1, new Timestamp(new Date().getTime()));
+                        statement.setLong(1, new Date().getTime());
                         statement.setLong(2, recordId);
                         statement.execute();
                     }
