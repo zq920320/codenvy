@@ -45,8 +45,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Timestamp;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -67,7 +67,6 @@ public class SQLMeterBasedStorage implements MeterBasedStorage {
                                                "    VALUES (?, ?, ?, ?, ? , ?, ?);";
 
     private final String QUERY_SELECT_METRIC = " SELECT " +
-
                                                "      AMOUNT," +
                                                "      START_TIME," +
                                                "      STOP_TIME," +
@@ -78,6 +77,26 @@ public class SQLMeterBasedStorage implements MeterBasedStorage {
                                                "FROM " +
                                                "  METRICS " +
                                                "WHERE ID=?";
+
+    private final String QUERY_SELECT_MEMORY_TOTAL = "SELECT " +
+                                                     "   SUM(AMOUNT * (LEAST(?, STOP_TIME) - GREATEST(?, START_TIME)) / (60000)) " +
+                                                     "FROM " +
+                                                     "  METRICS " +
+                                                     "WHERE " +
+                                                     "   ACCOUNT_ID=?" +
+                                                     "   AND START_TIME<?" +
+                                                     "   AND STOP_TIME>?";
+
+    private final String QUERY_SELECT_WS_MEMORY_TOTAL = "SELECT " +
+                                                        "   SUM(AMOUNT * (LEAST(?, STOP_TIME) - GREATEST(?, START_TIME)) / (60000)), " +
+                                                        "   WORKSPACE_ID" +
+                                                        "FROM " +
+                                                        "  METRICS " +
+                                                        "WHERE " +
+                                                        "   ACCOUNT_ID=?" +
+                                                        "   AND START_TIME<?" +
+                                                        "   AND STOP_TIME>?" +
+                                                        "GROUp BY WORKSPACE_ID";
 
 
     private final ConnectionFactory connectionFactory;
@@ -147,13 +166,47 @@ public class SQLMeterBasedStorage implements MeterBasedStorage {
 
 
     @Override
-    public Long getMemoryUsed(String accountId, Date from, Date until) {
-        return null;
+    public Long getMemoryUsed(String accountId, long from, long until) throws ServerException {
+        try (Connection connection = connectionFactory.getConnection()) {
+            try (PreparedStatement statement = connection.prepareStatement(QUERY_SELECT_MEMORY_TOTAL)) {
+                statement.setLong(1, until);
+                statement.setLong(2, from);
+                statement.setString(3, accountId);
+                statement.setLong(4, until);
+                statement.setLong(5, from);
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    if (resultSet.next()) {
+                        return resultSet.getLong(1);
+                    }
+                    return null;
+                }
+            }
+        } catch (SQLException e) {
+            throw new ServerException(e.getLocalizedMessage(), e);
+        }
     }
 
     @Override
-    public Map<String, Long> getMemoryUsedReport(String accountId, Date from, Date until) {
-        return null;
+    public Map<String, Long> getMemoryUsedReport(String accountId, long from, long until) throws ServerException {
+        Map<String, Long> result = new HashMap<>();
+        try (Connection connection = connectionFactory.getConnection()) {
+            try (PreparedStatement statement = connection.prepareStatement(QUERY_SELECT_WS_MEMORY_TOTAL)) {
+                statement.setLong(1, until);
+                statement.setLong(2, from);
+                statement.setString(3, accountId);
+                statement.setLong(4, until);
+                statement.setLong(5, from);
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    while (resultSet.next()) {
+                        result.put(resultSet.getString(2), resultSet.getLong(1));
+                    }
+
+                }
+            }
+        } catch (SQLException e) {
+            throw new ServerException(e.getLocalizedMessage(), e);
+        }
+        return result;
     }
 
     final static class SQLUsageInformer implements UsageInformer {
