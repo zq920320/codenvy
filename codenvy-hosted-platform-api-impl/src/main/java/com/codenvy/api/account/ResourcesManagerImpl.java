@@ -119,7 +119,7 @@ public class ResourcesManagerImpl implements ResourcesManager {
             }
 
             if (resourcesDescriptor.getRunnerTimeout() != null) {
-                if (resourcesDescriptor.getRunnerTimeout() < 0) { // we allow -1 here
+                if (resourcesDescriptor.getRunnerTimeout() < -1) { // we allow -1 here
                     throw new ConflictException(format("Runner timeout for workspace %s is a negative number",
                                                        resourcesDescriptor.getWorkspaceId()));
                 }
