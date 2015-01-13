@@ -25,6 +25,7 @@ import com.codenvy.api.account.server.dao.SubscriptionQueryBuilder;
 import com.codenvy.api.account.shared.dto.BillingCycleType;
 import com.codenvy.api.account.shared.dto.SubscriptionState;
 import com.codenvy.api.core.ConflictException;
+import com.codenvy.api.core.ForbiddenException;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
@@ -43,6 +44,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -120,6 +122,7 @@ public class AccountDaoImpl implements AccountDao {
         accountCollection = db.getCollection(accountCollectionName);
         accountCollection.ensureIndex(new BasicDBObject("id", 1), new BasicDBObject("unique", true));
         accountCollection.ensureIndex(new BasicDBObject("name", 1));
+        accountCollection.ensureIndex(new BasicDBObject("attributes.name", 1).append("attributes.value", 1));
         subscriptionCollection = db.getCollection(subscriptionCollectionName);
         subscriptionCollection.ensureIndex(new BasicDBObject("id", 1), new BasicDBObject("unique", true));
         subscriptionCollection.ensureIndex(new BasicDBObject("accountId", 1));
@@ -399,8 +402,30 @@ public class AccountDaoImpl implements AccountDao {
 //            throw new ServerException("It is not possible to retrieve subscriptions");
 //        }
 //    }
+    @Override
     public SubscriptionQueryBuilder getSubscriptionQueryBuilder() {
         return subscriptionQueryBuilder;
+    }
+
+    @Override
+    public List<Account> getPaidSaasAccountsWithOldBillingDate(Date newDate) throws ServerException, ForbiddenException {
+        if (newDate == null) {
+            throw new ForbiddenException("Date can't be null");
+        }
+        BasicDBObject query = new BasicDBObject("attributes.name", "codenvy:paid");
+        query.append("attributes.name", "codenvy:billing.date");
+        query.append("attributes.value", new BasicDBObject("$lt", String.valueOf(newDate.getTime())));
+
+        try (DBCursor accounts = accountCollection.find(query)) {
+            final ArrayList<Account> result = new ArrayList<>();
+            for (DBObject accountObj : accounts) {
+                result.add(toAccount(accountObj));
+            }
+            return result;
+        } catch (MongoException me) {
+            LOG.error(me.getMessage(), me);
+            throw new ServerException("It is not possible to retrieve accounts");
+        }
     }
 
     private boolean remove(String accountId, BasicDBList src) {

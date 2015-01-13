@@ -22,8 +22,8 @@ import com.braintreegateway.Plan;
 import com.braintreegateway.Result;
 import com.braintreegateway.Transaction;
 import com.braintreegateway.TransactionRequest;
-import com.codenvy.api.account.server.subscription.PaymentService;
 import com.codenvy.api.account.server.dao.Subscription;
+import com.codenvy.api.account.server.subscription.PaymentService;
 import com.codenvy.api.account.shared.dto.CreditCard;
 import com.codenvy.api.core.ApiException;
 import com.codenvy.api.core.ConflictException;
@@ -40,6 +40,7 @@ import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -106,7 +107,7 @@ public class BraintreePaymentService implements PaymentService {
                          subscription.getId(), target.getStatus(), result.getMessage(), target.getId());
             } else {
                 LOG.error("PAYMENTS# state#Error# subscriptionId#{}# message#{}#", subscription.getId(), result.getMessage());
-                throw new ConflictException(result.getMessage());
+                throw new ForbiddenException(result.getMessage());
             }
         } catch (ApiException e) {
             // rethrow user-friendly API exceptions
@@ -114,6 +115,43 @@ public class BraintreePaymentService implements PaymentService {
         } catch (Exception e) {
             LOG.error(String.format("PAYMENTS# state#Error# subscriptionId#%s# message#%s#", subscription.getId(), e.getLocalizedMessage()),
                       e);
+            throw new ServerException("Internal server error occurs. Please, contact support");
+        }
+    }
+
+    @Override
+    public void charge(String creditCardToken, double amount, String account, String paymentDescription) throws ServerException, ForbiddenException {
+        if (creditCardToken == null) {
+            throw new ForbiddenException("Credit card token can't be null");
+        }
+        if (amount == 0) {
+            throw new ForbiddenException("Amount can't be 0");
+        }
+
+        try {
+            TransactionRequest request = new TransactionRequest()
+                    .paymentMethodToken(creditCardToken)
+                    .customField("reason", paymentDescription + "; accountId:" + account)
+                    .options().submitForSettlement(true).done()
+                    .amount(new BigDecimal(amount, new MathContext(2)));
+
+            Result<Transaction> result = gateway.transaction().sale(request);
+            Transaction target = result.getTarget();
+            if (result.isSuccess()) {
+                // transaction successfully submitted for settlement
+                LOG.info("PAYMENTS# state#Success# subscription#Saas# accountId#{}# transactionStatus#{}# message#{}# transactionId#{}#",
+                         account, target.getStatus(), result.getMessage(), target.getId());
+            } else {
+                LOG.error("PAYMENTS# state#Error# subscription#Saas# accountId#{}# message#{}#", account, result.getMessage());
+                throw new ForbiddenException(result.getMessage());
+            }
+        } catch (ApiException e) {
+            // rethrow user-friendly API exceptions
+            throw e;
+        } catch (Exception e) {
+            LOG.error(
+                    String.format("PAYMENTS# state#Error# subscription#Saas# accountId#%s# message#%s#", account, e.getLocalizedMessage()),
+                    e);
             throw new ServerException("Internal server error occurs. Please, contact support");
         }
     }
