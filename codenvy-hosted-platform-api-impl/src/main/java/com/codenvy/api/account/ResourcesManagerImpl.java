@@ -64,28 +64,22 @@ public class ResourcesManagerImpl implements ResourcesManager {
     }
 
     @Override
-    public void redistributeResources(String accountId, List<UpdateResourcesDescriptor> updates)
-            throws NotFoundException,
-                   ServerException,
-                   ConflictException,
-                   ForbiddenException {
+    public void redistributeResources(String accountId, List<UpdateResourcesDescriptor> updates) throws NotFoundException,
+                                                                                                        ServerException,
+                                                                                                        ConflictException,
+                                                                                                        ForbiddenException {
         final Map<String, Workspace> ownWorkspaces = new HashMap<>();
         for (Workspace workspace : workspaceDao.getByAccount(accountId)) {
             ownWorkspaces.put(workspace.getId(), workspace);
         }
 
-        Map<String, UpdateResourcesDescriptor> resources = new HashMap<>();
-        for (UpdateResourcesDescriptor resDescriptor : updates) {
-            resources.put(resDescriptor.getWorkspaceId(), resDescriptor);
-        }
-
-        for (String wsId : resources.keySet()) {
-            if (!ownWorkspaces.containsKey(wsId)) {
-                throw new ForbiddenException(format("Workspace %s is not related to account %s", wsId, accountId));
+        for (UpdateResourcesDescriptor update : updates) {
+            if (!ownWorkspaces.containsKey(update.getWorkspaceId())) {
+                throw new ForbiddenException(format("Workspace %s is not related to account %s", update.getWorkspaceId(), accountId));
             }
         }
 
-        for (UpdateResourcesDescriptor resourcesDescriptor : resources.values()) {
+        for (UpdateResourcesDescriptor resourcesDescriptor : updates) {
             if (resourcesDescriptor.getRunnerTimeout() == null && resourcesDescriptor.getRunnerRam() == null &&
                 resourcesDescriptor.getBuilderTimeout() == null) {
                 throw new ConflictException(format("Missed description of resources for workspace %s",
@@ -119,7 +113,7 @@ public class ResourcesManagerImpl implements ResourcesManager {
             }
 
             if (resourcesDescriptor.getRunnerTimeout() != null) {
-                if (resourcesDescriptor.getRunnerTimeout() < -1) { // we allow -1 here
+                if (resourcesDescriptor.getRunnerTimeout() < 0) { // we allow -1 here
                     throw new ConflictException(format("Runner timeout for workspace %s is a negative number",
                                                        resourcesDescriptor.getWorkspaceId()));
                 }
