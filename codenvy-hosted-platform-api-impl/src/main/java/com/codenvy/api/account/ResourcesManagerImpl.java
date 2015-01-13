@@ -18,6 +18,8 @@
 package com.codenvy.api.account;
 
 import com.codenvy.api.account.server.ResourcesManager;
+import com.codenvy.api.account.server.dao.Account;
+import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.shared.dto.UpdateResourcesDescriptor;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.ForbiddenException;
@@ -45,22 +47,28 @@ import static java.lang.String.format;
  * Implementation of {@link com.codenvy.api.account.server.ResourcesManager}
  *
  * @author Sergii Leschenko
+ * @author Max Shaposhnik
  */
 public class ResourcesManagerImpl implements ResourcesManager {
     private static final Logger LOG = LoggerFactory.getLogger(ResourcesManagerImpl.class);
 
+
+    private final AccountDao accountDao;
+
     private final WorkspaceDao workspaceDao;
 
     @Inject
-    public ResourcesManagerImpl(WorkspaceDao workspaceDao) {
+    public ResourcesManagerImpl(AccountDao accountDao, WorkspaceDao workspaceDao) {
+        this.accountDao = accountDao;
         this.workspaceDao = workspaceDao;
     }
 
     @Override
-    public void redistributeResources(String accountId, List<UpdateResourcesDescriptor> updates) throws NotFoundException,
-                                                                                                        ServerException,
-                                                                                                        ConflictException,
-                                                                                                        ForbiddenException {
+    public void redistributeResources(String accountId, List<UpdateResourcesDescriptor> updates)
+            throws NotFoundException,
+                   ServerException,
+                   ConflictException,
+                   ForbiddenException {
         final Map<String, Workspace> ownWorkspaces = new HashMap<>();
         for (Workspace workspace : workspaceDao.getByAccount(accountId)) {
             ownWorkspaces.put(workspace.getId(), workspace);
@@ -80,38 +88,58 @@ public class ResourcesManagerImpl implements ResourcesManager {
         if (ownWorkspaces.size() != resources.size()) {
             for (String workspaceId : ownWorkspaces.keySet()) {
                 if (!resources.containsKey(workspaceId)) {
-                    throw new ConflictException(format("Missed description of resources for workspace %s", workspaceId));
+                    throw new ConflictException(
+                            format("Missed description of resources for workspace %s", workspaceId));
                 }
             }
         }
 
         for (UpdateResourcesDescriptor resourcesDescriptor : resources.values()) {
-            if (resourcesDescriptor.getResources() == null) {
+            if (resourcesDescriptor.getRunnerTimeout() == null && resourcesDescriptor.getRunnerRam() == null &&
+                resourcesDescriptor.getBuilderTimeout() == null) {
                 throw new ConflictException(format("Missed description of resources for workspace %s",
                                                    resourcesDescriptor.getWorkspaceId()));
             }
+            Workspace workspace = ownWorkspaces.get(resourcesDescriptor.getWorkspaceId());
+            Integer runnerRam = resourcesDescriptor.getRunnerRam();
 
-            if (!resourcesDescriptor.getResources().containsKey("RAM")) {
-                throw new ConflictException(
-                        format("Missed size of RAM in resources description for workspace %s", resourcesDescriptor.getWorkspaceId()));
-            }
-            try {
-                int sizeOfRAM = Integer.parseInt(resourcesDescriptor.getResources().get("RAM"));
-                if (sizeOfRAM < 0) {
+            if (runnerRam != null) {
+                if (runnerRam.compareTo(0) < 0) {
                     throw new ConflictException(format("Size of RAM for workspace %s is a negative number",
                                                        resourcesDescriptor.getWorkspaceId()));
                 }
-            } catch (NumberFormatException nfe) {
-                throw new ConflictException(format("Invalid size of RAM for workspace %s", resourcesDescriptor.getWorkspaceId()));
-            }
-        }
+                Account account = accountDao.getById(accountId);
+                if (!account.getAttributes().containsKey("codenvy:paid") && runnerRam.compareTo(4096) > 0) {
+                    throw new ConflictException(format("Size of RAM for workspace %s has a 4096 MB limit.",
+                                                       resourcesDescriptor.getWorkspaceId()));
 
-        //redistributing resources
-        for (UpdateResourcesDescriptor resDescriptor : updates) {
-            Workspace workspace = ownWorkspaces.get(resDescriptor.getWorkspaceId());
-            workspace.getAttributes().put(Constants.RUNNER_MAX_MEMORY_SIZE, resDescriptor.getResources().get("RAM"));
+                }
+                workspace.getAttributes()
+                         .put(Constants.RUNNER_MAX_MEMORY_SIZE, Integer.toString(resourcesDescriptor.getRunnerRam()));
+            }
+
+            if (resourcesDescriptor.getBuilderTimeout() != null) {
+                if (resourcesDescriptor.getBuilderTimeout().compareTo(0) < 0) {
+                    throw new ConflictException(format("Builder timeout for workspace %s is a negative number",
+                                                       resourcesDescriptor.getWorkspaceId()));
+                }
+                workspace.getAttributes().put(com.codenvy.api.builder.internal.Constants.BUILDER_EXECUTION_TIME,
+                                              Integer.toString(resourcesDescriptor.getBuilderTimeout()));
+            }
+
+            if (resourcesDescriptor.getRunnerTimeout() != null) {
+                if (resourcesDescriptor.getRunnerTimeout().compareTo(-1) < 0) { // we allow -1 here
+                    throw new ConflictException(format("Runner timeout for workspace %s is a negative number",
+                                                       resourcesDescriptor.getWorkspaceId()));
+                }
+                workspace.getAttributes().put(Constants.RUNNER_LIFETIME,
+                                              Integer.toString(resourcesDescriptor.getRunnerTimeout()));
+            }
             workspaceDao.update(workspace);
-            publishResourcesChangedWsEvent(resDescriptor.getWorkspaceId(), resDescriptor.getResources().get("RAM"));
+            if (runnerRam != null) {
+                publishResourcesChangedWsEvent(resourcesDescriptor.getWorkspaceId(),
+                                               Integer.toString(resourcesDescriptor.getRunnerRam()));
+            }
         }
     }
 
