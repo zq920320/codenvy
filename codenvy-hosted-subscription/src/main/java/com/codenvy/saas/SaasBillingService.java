@@ -34,16 +34,10 @@ import org.codenvy.mail.MailSenderClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.mail.MessagingException;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -53,29 +47,19 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author Alexander Garagatyi
  */
 // must be eager singleton
-// Will be REST service
-// allow start charging for all accounts
-// allow charge specified account
-@Path("billing/saas")
 @Singleton
 public class SaasBillingService {
     private static final Logger LOG = LoggerFactory.getLogger(SaasBillingService.class);
 
-    private final AccountDao               accountDao;
-    private final UserDao                  userDao;
-    private final MailSenderClient         mailSenderClient;
-    private final PaymentService           paymentService;
-    private final ScheduledExecutorService scheduler;
-    private final ChargeTask               chargeTask;
-
+    private final AccountDao       accountDao;
+    private final UserDao          userDao;
+    private final MailSenderClient mailSenderClient;
+    private final PaymentService   paymentService;
     private final long             freeUsage;
     private final String           billingAddress;
     private final String           invoiceSubject;
@@ -83,8 +67,6 @@ public class SaasBillingService {
     private final String           billingFailedSubject;
     private final String           successfulChargeMailTemplate;
     private final String           unsuccessfulChargeMailTemplate;
-    private final int              schedulerDelay;
-    private final int              schedulerPeriod;
     private final SimpleDateFormat dateFormat;
 
     @Inject
@@ -98,9 +80,7 @@ public class SaasBillingService {
                               @Named("subscription.saas.mail.invoice.subject") String invoiceSubject,
                               @Named("subscription.saas.mail.billing.failed.subject") String billingFailedSubject,
                               @Named("subscription.saas.mail.template.success") String successfulChargeMailTemplate,
-                              @Named("subscription.saas.mail.template.fail") String unsuccessfulChargeMailTemplate,
-                              @Named("subscription.saas.scheduler.delay.minutes") int schedulerDelay,
-                              @Named("subscription.saas.scheduler.period.minutes") int schedulerPeriod) {
+                              @Named("subscription.saas.mail.template.fail") String unsuccessfulChargeMailTemplate) {
         this.accountDao = accountDao;
         this.userDao = userDao;
         this.mailSenderClient = mailSenderClient;
@@ -112,67 +92,17 @@ public class SaasBillingService {
         this.billingFailedSubject = billingFailedSubject;
         this.successfulChargeMailTemplate = successfulChargeMailTemplate;
         this.unsuccessfulChargeMailTemplate = unsuccessfulChargeMailTemplate;
-        this.schedulerDelay = schedulerDelay;
-        this.schedulerPeriod = schedulerPeriod;
-
-        this.scheduler = Executors.newScheduledThreadPool(1);
-        this.chargeTask = new ChargeTask();
 
         dateFormat = new SimpleDateFormat("HH:mm:ss MM/dd/yy");
         dateFormat.setLenient(false);
     }
 
-    @PostConstruct
-    public void scheduleBilling() {
-        scheduler.scheduleAtFixedRate(chargeTask, schedulerDelay, schedulerPeriod, TimeUnit.MINUTES);
+    public void chargeAccounts() throws ApiException {
+        chargeAccounts(getDefaultBillingStartDate(), getBillingPeriodEndDate());
     }
 
-    @PreDestroy
-    private void destroy() {
-        scheduler.shutdownNow();
-    }
-
-    @POST
-    @Path("charge")
-    @RolesAllowed({"system/admin", "system/manager"})
-    public void chargeAccountsForPreviousPeriodAsynchronously() {
-        final ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(1);
-        scheduledExecutorService.schedule(new ChargeTask(), 0, TimeUnit.SECONDS);
-    }
-
-    @POST
-    @Path("charge/{accountId}")
-    @RolesAllowed({"system/admin", "system/manager"})
-    public void chargeAccountForPreviousPeriod(@PathParam("accountId") String accountId) throws ApiException {
-        Account account = accountDao.getById(accountId);
-
-        LOG.info("PAYMENTS# Saas #Start# accountId#{}#", accountId);
+    public void chargeAccount(Account account) throws ApiException {
         chargeAccount(account, getDefaultBillingStartDate(), getBillingPeriodEndDate());
-        LOG.info("PAYMENTS# Saas #End# accountId#{}#", accountId);
-    }
-
-    private Date getDefaultBillingStartDate() {
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.DATE, calendar.getActualMinimum(Calendar.DAY_OF_MONTH));
-        calendar.set(Calendar.HOUR_OF_DAY, calendar.getActualMinimum(Calendar.HOUR_OF_DAY));
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-
-        return calendar.getTime();
-    }
-
-    private Date getBillingPeriodEndDate() {
-        // TODO use period from config
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.MONTH, 1);
-        calendar.set(Calendar.DATE, calendar.getActualMinimum(Calendar.DAY_OF_MONTH));
-        calendar.set(Calendar.HOUR_OF_DAY, calendar.getActualMinimum(Calendar.HOUR_OF_DAY));
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-
-        return calendar.getTime();
     }
 
     public void chargeAccounts(Date defaultMeasurementStartDate, Date measurementEndDate) throws ApiException {
@@ -185,21 +115,20 @@ public class SaasBillingService {
                 measurementStartDate = new Date(Long.parseLong(startBillingDateInMilliseconds));
             }
 
-            LOG.info("PAYMENTS# Saas #Start# accountId#{}#", paidSaasAccount.getId());
             try {
                 chargeAccount(paidSaasAccount, measurementStartDate, measurementEndDate);
             } catch (Exception e) {
                 LOG.error(e.getLocalizedMessage(), e);
             }
-            LOG.info("PAYMENTS# Saas #End# accountId#{}#", paidSaasAccount.getId());
         }
     }
 
-    private void chargeAccount(Account account, Date startDate, Date endDate) throws ApiException {
-        String accountId = account.getId();
-        Map<String, Long> memoryUsedReport = new HashMap<>();
-        memoryUsedReport.put("ws1", 3000l);
-        memoryUsedReport.put("ws2", 10000l);
+    public void chargeAccount(Account account, Date startDate, Date endDate) throws ApiException {
+        final String accountId = account.getId();
+        LOG.info("PAYMENTS# Saas #Start# accountId#{}#", account.getId());
+        final Map<String, Long> memoryUsedReport = new HashMap<>();
+        memoryUsedReport.put("ws1", 30000l);
+        memoryUsedReport.put("ws2", 100000l);
         memoryUsedReport.put("ws3", 600000l);
         //= meterBasedStorage.getMemoryUsedReport(accountId, startDate, endDate);
 
@@ -217,13 +146,14 @@ public class SaasBillingService {
                 throw new ServerException("Paid account " + accountId + " doesn't have credit card token");
             }
 
-            String paymentDescription = "Saas; Period:" +
-                                        dateFormat.format(startDate) +
-                                        "-" +
-                                        dateFormat.format(endDate);
+            final String paymentDescription = "Saas; Period:" +
+                                              dateFormat.format(startDate) +
+                                              "-" +
+                                              dateFormat.format(endDate);
 
             try {
-                paymentService.charge(ccToken, (totalRamUsage - freeUsage) * price, accountId, paymentDescription);
+                final double chargeAmount = Math.ceil(((double)totalRamUsage - freeUsage) / 61440) * price;
+                paymentService.charge(ccToken, chargeAmount, accountId, paymentDescription);
             } catch (ForbiddenException e) {
                 sendBillingFailedEmail(accountOwnersEmails);
                 throw e;
@@ -234,6 +164,30 @@ public class SaasBillingService {
         accountDao.update(account);
 
         sendInvoiceEmail(accountOwnersEmails);
+    }
+
+    private Date getDefaultBillingStartDate() {
+        final Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.DATE, calendar.getActualMinimum(Calendar.DAY_OF_MONTH));
+        calendar.set(Calendar.HOUR_OF_DAY, calendar.getActualMinimum(Calendar.HOUR_OF_DAY));
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+
+        return calendar.getTime();
+    }
+
+    private Date getBillingPeriodEndDate() {
+        // TODO use period from config
+        final Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.MONTH, 1);
+        calendar.set(Calendar.DATE, calendar.getActualMinimum(Calendar.DAY_OF_MONTH));
+        calendar.set(Calendar.HOUR_OF_DAY, calendar.getActualMinimum(Calendar.HOUR_OF_DAY));
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+
+        return calendar.getTime();
     }
 
     private void sendBillingFailedEmail(List<String> accountOwnersEmails) {
@@ -265,11 +219,11 @@ public class SaasBillingService {
     }
 
     private List<String> getAccountOwnersEmails(String accountId) throws ServerException {
-        List<String> emails = new ArrayList<>();
+        final List<String> emails = new ArrayList<>();
         for (Member member : accountDao.getMembers(accountId)) {
             if (member.getRoles().contains("account/owner")) {
                 try {
-                    User user = userDao.getById(member.getUserId());
+                    final User user = userDao.getById(member.getUserId());
 
                     emails.add(user.getEmail());
                 } catch (ServerException | NotFoundException e) {
@@ -278,16 +232,5 @@ public class SaasBillingService {
             }
         }
         return emails;
-    }
-
-    private class ChargeTask implements Runnable {
-        @Override
-        public void run() {
-            try {
-                chargeAccounts(getDefaultBillingStartDate(), getBillingPeriodEndDate());
-            } catch (Exception e) {
-                LOG.error(e.getLocalizedMessage(), e);
-            }
-        }
     }
 }

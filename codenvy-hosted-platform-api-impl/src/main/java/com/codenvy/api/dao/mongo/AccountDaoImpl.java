@@ -36,6 +36,7 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoException;
+import com.mongodb.QueryBuilder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -412,9 +413,15 @@ public class AccountDaoImpl implements AccountDao {
         if (newDate == null) {
             throw new ForbiddenException("Date can't be null");
         }
-        BasicDBObject query = new BasicDBObject("attributes.name", "codenvy:paid");
-        query.append("attributes.name", "codenvy:billing.date");
-        query.append("attributes.value", new BasicDBObject("$lt", String.valueOf(newDate.getTime())));
+
+        DBObject paidAccountQuery = new BasicDBObject("name", "codenvy:paid");
+
+        DBObject billingDateFits = QueryBuilder.start().and(new BasicDBObject("name", "codenvy:billing.date"),
+                                                            QueryBuilder.start("value").lessThan(String.valueOf(newDate.getTime())).get())
+                                               .get();
+
+        DBObject query = QueryBuilder.start().and(QueryBuilder.start("attributes").elemMatch(paidAccountQuery).get(),
+                                                  QueryBuilder.start("attributes").elemMatch(billingDateFits).get()).get();
 
         try (DBCursor accounts = accountCollection.find(query)) {
             final ArrayList<Account> result = new ArrayList<>();
