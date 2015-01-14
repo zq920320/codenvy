@@ -17,6 +17,8 @@
  */
 package com.codenvy.saas;
 
+import com.codenvy.commons.lang.NamedThreadFactory;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +43,7 @@ public class SaasBillingScheduler {
     private final int                      schedulerPeriod;
     private final SaasBillingService       saasBillingService;
     private final ScheduledExecutorService scheduler;
-    private final ChargeTask               chargeTask;
+    private final SaasChargeTask           chargeTask;
 
     @Inject
     public SaasBillingScheduler(@Named("subscription.saas.scheduler.delay.minutes") int schedulerDelay,
@@ -50,8 +52,8 @@ public class SaasBillingScheduler {
         this.schedulerDelay = schedulerDelay;
         this.schedulerPeriod = schedulerPeriod;
         this.saasBillingService = saasBillingService;
-        this.scheduler = Executors.newScheduledThreadPool(1);
-        this.chargeTask = new ChargeTask();
+        this.scheduler = Executors.newScheduledThreadPool(1, new NamedThreadFactory("SaasChargeTask", false));
+        this.chargeTask = new SaasChargeTask();
     }
 
     @PostConstruct
@@ -64,7 +66,7 @@ public class SaasBillingScheduler {
         scheduler.shutdownNow();
     }
 
-    private class ChargeTask implements Runnable {
+    private class SaasChargeTask implements Runnable {
         @Override
         public void run() {
             try {

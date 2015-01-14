@@ -134,7 +134,6 @@ public class SaasBillingService {
 
         final List<String> accountOwnersEmails = getAccountOwnersEmails(account.getId());
 
-        // TODO Partial hours are charged a full hour
         Long totalRamUsage = 0l;
         for (Map.Entry<String, Long> wsMemoryUsage : memoryUsedReport.entrySet()) {
             totalRamUsage += wsMemoryUsage.getValue();

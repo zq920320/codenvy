@@ -71,8 +71,7 @@ public class BraintreePaymentService implements PaymentService {
     }
 
     @Override
-    public void charge(Subscription subscription)
-            throws ServerException, ConflictException, ForbiddenException {
+    public void charge(Subscription subscription) throws ServerException, ConflictException, ForbiddenException {
         if (subscription == null) {
             throw new ForbiddenException("No subscription information provided");
         }
@@ -85,22 +84,22 @@ public class BraintreePaymentService implements PaymentService {
 
         try {
             // prices should be set already by getPrices method
-            BigDecimal price = prices.get(subscription.getPlanId());
+            final BigDecimal price = prices.get(subscription.getPlanId());
             if (null == price) {
                 LOG.error("PAYMENTS# state#Error# subscriptionId#{}# message#{}#", subscription.getId(),
                           "Price of plan is not found " + subscription.getPlanId());
                 throw new ServerException("Internal server error occurs. Please, contact support");
             }
 
-            TransactionRequest request = new TransactionRequest()
+            final TransactionRequest request = new TransactionRequest()
                     .paymentMethodToken(subscription.getPaymentToken())
                     // add subscription id to identify charging reason
                     .customField("subscription_id", subscription.getId())
                     .options().submitForSettlement(true).done()
                     .amount(price);
 
-            Result<Transaction> result = gateway.transaction().sale(request);
-            Transaction target = result.getTarget();
+            final Result<Transaction> result = gateway.transaction().sale(request);
+            final Transaction target = result.getTarget();
             if (result.isSuccess()) {
                 // transaction successfully submitted for settlement
                 LOG.info("PAYMENTS# state#Success# subscriptionId#{}# transactionStatus#{}# message#{}# transactionId#{}#",
@@ -129,14 +128,14 @@ public class BraintreePaymentService implements PaymentService {
         }
 
         try {
-            TransactionRequest request = new TransactionRequest()
+            final TransactionRequest request = new TransactionRequest()
                     .paymentMethodToken(creditCardToken)
                     .customField("reason", paymentDescription + "; accountId:" + account)
                     .options().submitForSettlement(true).done()
                     .amount(new BigDecimal(amount, new MathContext(2)));
 
-            Result<Transaction> result = gateway.transaction().sale(request);
-            Transaction target = result.getTarget();
+            final Result<Transaction> result = gateway.transaction().sale(request);
+            final Transaction target = result.getTarget();
             if (result.isSuccess()) {
                 // transaction successfully submitted for settlement
                 LOG.info("PAYMENTS# state#Success# subscription#Saas# accountId#{}# transactionStatus#{}# message#{}# transactionId#{}#",
@@ -170,6 +169,27 @@ public class BraintreePaymentService implements PaymentService {
                              .withExpiration(creditCard.getExpirationDate())
                              .withType(creditCard.getCardType())
                              .withCardholder(creditCard.getCardholderName());
+        } catch (Exception e) {
+            LOG.error(e.getLocalizedMessage(), e);
+            throw new ServerException("Internal server error occurs. Please, contact support");
+        }
+    }
+
+    @Override
+    public void removeCreditCard(String creditCardToken) throws NotFoundException, ServerException, ForbiddenException {
+        if (creditCardToken == null) {
+            throw new ForbiddenException("Credit card token can't be null");
+        }
+        try {
+            final Result<com.braintreegateway.CreditCard> result = gateway.creditCard().delete(creditCardToken);
+            if (result.isSuccess()) {
+                LOG.info("CreditCard removing# state#Success#");
+            } else {
+                LOG.error("CreditCard removing# state#Error# message#{}#", result.getMessage());
+                throw new ForbiddenException(result.getMessage());
+            }
+        } catch (ApiException e) {
+            throw e;
         } catch (Exception e) {
             LOG.error(e.getLocalizedMessage(), e);
             throw new ServerException("Internal server error occurs. Please, contact support");

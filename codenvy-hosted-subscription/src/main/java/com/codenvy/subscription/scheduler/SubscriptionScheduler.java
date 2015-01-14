@@ -19,6 +19,7 @@ package com.codenvy.subscription.scheduler;
 
 import com.codenvy.api.account.server.subscription.SubscriptionService;
 import com.codenvy.api.account.server.subscription.SubscriptionServiceRegistry;
+import com.codenvy.commons.lang.NamedThreadFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,7 +56,7 @@ public class SubscriptionScheduler {
         this.task = task;
         this.subscriptionSchedulerInitDelay = subscriptionSchedulerInitDelay;
         this.subscriptionSchedulerPeriod = subscriptionSchedulerPeriod;
-        this.scheduler = Executors.newScheduledThreadPool(1);
+        this.scheduler = Executors.newScheduledThreadPool(1, new NamedThreadFactory("SubscriptionCheckerTask", false));
     }
 
     @PostConstruct
