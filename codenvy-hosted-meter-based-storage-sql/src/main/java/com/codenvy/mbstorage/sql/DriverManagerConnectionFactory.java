@@ -17,6 +17,7 @@
  */
 package com.codenvy.mbstorage.sql;
 
+import javax.inject.Inject;
 import javax.inject.Named;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -32,7 +33,7 @@ public class DriverManagerConnectionFactory implements ConnectionFactory {
     private final String userName;
     private final String password;
     private final String url;
-
+    @Inject
     public DriverManagerConnectionFactory(@Named("jdbc.url") String url,
                                           @Named("jdbc.username") String userName,
                                           @Named("jdbc.password") String password) {

@@ -36,7 +36,7 @@ public class JndiDataSourcedConnectionFactory implements ConnectionFactory {
     private       DataSource dataSource;
 
     @Inject
-    public JndiDataSourcedConnectionFactory(@Named String jndiLocation) {
+    public JndiDataSourcedConnectionFactory(@Named("jdbc.ds.jndiname") String jndiLocation) {
         this.jndiLocation = jndiLocation;
     }
 

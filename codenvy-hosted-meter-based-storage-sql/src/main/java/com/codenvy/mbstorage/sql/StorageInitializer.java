@@ -21,9 +21,10 @@ import org.flywaydb.core.Flyway;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.sql.DataSource;
-import java.util.Properties;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.SQLException;
 
 /**
  * Initialize database structures.
@@ -35,16 +36,11 @@ public class StorageInitializer {
     private final Flyway flyway;
 
     @Inject
-    public StorageInitializer(@Named("jdbc.url") String url,
-                              @Named("jdbc.username") String userName,
-                              @Named("jdbc.password") String password
-                             ) {
+    public StorageInitializer(JndiDataSourcedConnectionFactory dataSourcedConnectionFactory) throws SQLException {
         flyway = new Flyway();
-        Properties config = new Properties();
-        config.setProperty("flyway.url", url);
-        config.setProperty("flyway.user", userName);
-        config.setProperty("flyway.password", password);
-        flyway.configure(config);
+        flyway.setDataSource(dataSourcedConnectionFactory.getDataSource());
+        flyway.setLocations(getScriptLocation());
+
     }
 
     public StorageInitializer(DataSource dataSource, boolean cleanOnValidationError, String database) {
@@ -65,5 +61,21 @@ public class StorageInitializer {
     @PostConstruct
     public void init() {
         flyway.migrate();
+    }
+
+    private String getScriptLocation() throws SQLException {
+        try (Connection connection = flyway.getDataSource().getConnection()) {
+            DatabaseMetaData metdadata = connection.getMetaData();
+            switch (metdadata.getDatabaseProductName()) {
+                case "PostgreSQL":
+                    return "db/migration/postgresql";
+                case "MySQL":
+                    return "db/migration/mysql";
+                case "HSQL Database Engine":
+                    return "db/migration/hsqldb";
+                default:
+                    throw new RuntimeException("Unknown database " + metdadata.getDatabaseProductName());
+            }
+        }
     }
 }
