@@ -414,16 +414,19 @@ public class AccountDaoImpl implements AccountDao {
             throw new ForbiddenException("Date can't be null");
         }
 
-        DBObject paidAccountQuery = new BasicDBObject("name", "codenvy:paid");
+//        DBObject paidAccountQuery = new BasicDBObject("name", "codenvy:paid");
 
-        DBObject billingDateFits = QueryBuilder.start().and(new BasicDBObject("name", "codenvy:billing.date"),
-                                                            QueryBuilder.start("value").lessThan(String.valueOf(newDate.getTime())).get())
-                                               .get();
+//        DBObject billingDateFits = QueryBuilder.start().and(new BasicDBObject("name", "codenvy:billing.date"),
+//                                                            QueryBuilder.start("value").lessThan(String.valueOf(newDate.getTime())).get())
+//                                               .get();
+//
+//        DBObject query = QueryBuilder.start().and(QueryBuilder.start("attributes").elemMatch(paidAccountQuery).get(),
+//                                                  QueryBuilder.start("attributes").elemMatch(billingDateFits).get()).get();
+        // TODO accounts with no codenvy:billing.date attributes should match
 
-        DBObject query = QueryBuilder.start().and(QueryBuilder.start("attributes").elemMatch(paidAccountQuery).get(),
-                                                  QueryBuilder.start("attributes").elemMatch(billingDateFits).get()).get();
-
-        try (DBCursor accounts = accountCollection.find(query)) {
+        // TODO commented for tests and demo
+//        try (DBCursor accounts = accountCollection.find(query)) {
+        try (DBCursor accounts = accountCollection.find(new BasicDBObject("attributes.name", "codenvy:paid"))) {
             final ArrayList<Account> result = new ArrayList<>();
             for (DBObject accountObj : accounts) {
                 result.add(toAccount(accountObj));
