@@ -470,7 +470,22 @@ DEFINE getSessions(X, eventParam) RETURNS Y {
                             (b2::endTime - s::startTime) AS usageTime,
                             s::message AS message;
 
-    c = addLogoutInterval(b, $X, '600000');
+    -- gets srart time by event factory-url-accepted if it's present.
+    f1 = filterByEvent($X, 'factory-url-accepted');
+    f = JOIN b BY ws LEFT, f1 BY ws;
+
+    m1 = firstUpdate(b, 'dt', 'ws');
+    m = JOIN f BY b::sessionID LEFT, m1 BY b::sessionID;
+
+    n = FOREACH m GENERATE f::b::dt AS dt,
+                           f::b::ws AS ws,
+                           f::b::user AS user,
+                           f::b::sessionID AS sessionID,
+                           (f::f1::dt IS NOT NULL AND m1::minDt IS NOT NULL ? ToMilliSeconds(f::f1::dt) : f::b::startTime) AS startTime,
+                           (f::f1::dt IS NOT NULL AND m1::minDt IS NOT NULL ? f::b::startTime - ToMilliSeconds(f::f1::dt) + f::b::usageTime : f::b::usageTime) AS usageTime,
+                           f::b::message AS message;
+
+    c = addLogoutInterval(n, $X, '600000');
     $Y = FOREACH c GENERATE ws AS ws,
                             user AS user,
                             sessionID AS sessionID,

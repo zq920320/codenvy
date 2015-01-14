@@ -44,10 +44,10 @@ public class TestFactorySessionsInTmpWs extends BaseTest {
     public void init() throws Exception {
         File log = LogGenerator.generateLogByStrings(Arrays.asList(new String[]
         {  //Events from user which was used not supported browser
-           "127.0.0.1 2014-12-08 14:17:52,159[]  [ ] []  [][][] - EVENT#user-created# USER#AnonymousUser_2vsur8# USER-ID#Userc8mqap7aau1vqgqy# EMAILS#[AnonymousUser_2vsur8]#",
-            "127.0.0.1 2014-12-08 14:17:52,486[]  [ ] []  [][][] - EVENT#user-added-to-ws# USER#AnonymousUser_2vsur8# WS#tmp-workspacel4nbgx4# FROM#website#",
-            "127.0.0.1 2014-12-08 14:17:52,487[]  [ ] []  [][][] - EVENT#workspace-created# WS#tmp-workspacel4nbgx4# WS-ID#workspacev3ebqp87tgzppmfy# USER#Userc8mqap7aau1vqgqy#",
-            "127.0.0.1 2014-12-08 14:17:52,489[]  [ ] []  [][][] - EVENT#factory-url-accepted# WS#tmp-workspacel4nbgx4# REFERRER## FACTORY-URL#https://codenvy.com/factory/?id=oxumdbmtuhy87jqb#  AFFILIATE-ID## ORG-ID#accountya9vidwqbifhqd9p#",
+            "127.0.0.1 2014-12-08 14:10:51,159[]  [ ] []  [][][] - EVENT#user-created# USER#AnonymousUser_2vsur8# USER-ID#Userc8mqap7aau1vqgqy# EMAILS#[AnonymousUser_2vsur8]#",
+            "127.0.0.1 2014-12-08 14:10:51,486[]  [ ] []  [][][] - EVENT#user-added-to-ws# USER#AnonymousUser_2vsur8# WS#tmp-workspacel4nbgx4# FROM#website#",
+            "127.0.0.1 2014-12-08 14:10:51,487[]  [ ] []  [][][] - EVENT#workspace-created# WS#tmp-workspacel4nbgx4# WS-ID#workspacev3ebqp87tgzppmfy# USER#Userc8mqap7aau1vqgqy#",
+            "127.0.0.1 2014-12-08 14:10:51,489[]  [ ] []  [][][] - EVENT#factory-url-accepted# WS#tmp-workspacel4nbgx4# REFERRER## FACTORY-URL#https://codenvy.com/factory/?id=oxumdbmtuhy87jqb#  AFFILIATE-ID## ORG-ID#accountya9vidwqbifhqd9p#",
 
             //Events from user which was used supported browser
             "127.0.0.1 2014-12-08 14:10:55,562[]  [ ] []  [][][] - EVENT#user-created# USER#AnonymousUser_zlnh4z# USER-ID#Usertn8qmf6zhcf1a4v4# EMAILS#[AnonymousUser_zlnh4z]#",
@@ -76,6 +76,9 @@ public class TestFactorySessionsInTmpWs extends BaseTest {
         builder.putAll(scriptsManager.getScript(ScriptType.WORKSPACES_PROFILES, MetricType.WORKSPACES_PROFILES_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.WORKSPACES_PROFILES, builder.build());
 
+        builder.putAll(scriptsManager.getScript(ScriptType.ACCEPTED_FACTORIES, MetricType.FACTORIES_ACCEPTED_LIST).getParamsAsMap());
+        pigServer.execute(ScriptType.ACCEPTED_FACTORIES, builder.build());
+
         builder.putAll(scriptsManager.getScript(ScriptType.PRODUCT_USAGE_SESSIONS, MetricType.PRODUCT_USAGE_SESSIONS_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, builder.build());
 
@@ -94,14 +97,20 @@ public class TestFactorySessionsInTmpWs extends BaseTest {
         builder.put(Parameters.WS, "workspacev3ebqp87tgzppmfy");
 
         Metric metric = MetricFactory.getMetric(MetricType.PRODUCT_USAGE_SESSIONS_LIST);
-
         ListValueData value = (ListValueData)metric.getValue(builder.build());
-
         assertEquals(value.size(), 1);
-
         MapValueData m = (MapValueData)value.getAll().get(0);
         assertEquals(m.getAll().get("ws").toString(), "workspacev3ebqp87tgzppmfy");
         assertEquals(m.getAll().get("user").toString(), "Userc8mqap7aau1vqgqy");
+        assertEquals(m.getAll().get("time").toString(), "0");
+
+        metric = MetricFactory.getMetric(MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST);
+        value = (ListValueData)metric.getValue(builder.build());
+        assertEquals(value.size(), 1);
+        m = (MapValueData)value.getAll().get(0);
+        assertEquals(m.getAll().get("ws").toString(), "workspacev3ebqp87tgzppmfy");
+        assertEquals(m.getAll().get("user").toString(), "Userc8mqap7aau1vqgqy");
+        assertEquals(m.getAll().get("time").toString(), "0");
     }
 
     @Test
@@ -112,14 +121,21 @@ public class TestFactorySessionsInTmpWs extends BaseTest {
         builder.put(Parameters.WS, "workspacewdzvro7kgx2xy407");
 
         Metric metric = MetricFactory.getMetric(MetricType.PRODUCT_USAGE_SESSIONS_LIST);
-
         ListValueData value = (ListValueData)metric.getValue(builder.build());
-
         assertEquals(value.size(), 1);
-
         MapValueData m = (MapValueData)value.getAll().get(0);
         assertEquals(m.getAll().get("session_id").toString(), "DCB787A0-CD1B-433B-8777-AF04ADBA5391");
         assertEquals(m.getAll().get("ws").toString(), "workspacewdzvro7kgx2xy407");
         assertEquals(m.getAll().get("user").toString(), "Usertn8qmf6zhcf1a4v4");
+        assertEquals(m.getAll().get("time").toString(), "8158");
+
+        metric = MetricFactory.getMetric(MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST);
+        value = (ListValueData)metric.getValue(builder.build());
+        assertEquals(value.size(), 1);
+        m = (MapValueData)value.getAll().get(0);
+        assertEquals(m.getAll().get("session_id").toString(), "DCB787A0-CD1B-433B-8777-AF04ADBA5391");
+        assertEquals(m.getAll().get("ws").toString(), "workspacewdzvro7kgx2xy407");
+        assertEquals(m.getAll().get("user").toString(), "Usertn8qmf6zhcf1a4v4");
+        assertEquals(m.getAll().get("time").toString(), "8178");
     }
 }

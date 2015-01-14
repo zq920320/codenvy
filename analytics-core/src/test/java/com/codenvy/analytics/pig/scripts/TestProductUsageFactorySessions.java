@@ -34,6 +34,7 @@ import com.codenvy.analytics.metrics.users.UsersStatisticsList;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 import com.codenvy.analytics.services.DataComputationFeature;
+
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -56,6 +57,29 @@ public class TestProductUsageFactorySessions extends BaseTest {
         events.add(Event.Builder.createUserCreatedEvent(AUID1, "anonymoususer_1", "anonymoususer_1")
                                 .withDate("2013-02-10").withTime("10:00:00").build());
 
+        events.add(Event.Builder.createWorkspaceCreatedEvent(TWID1, "tmp-1", "user1@gmail.com")
+                                .withDate("2013-02-10").withTime("10:00:00").build());
+        events.add(Event.Builder.createWorkspaceCreatedEvent(TWID2, "tmp-2", "user1@gmail.com")
+                                .withDate("2013-02-10").withTime("10:00:00").build());
+        events.add(Event.Builder.createWorkspaceCreatedEvent(TWID3, "tmp-3", "anonymoususer_1")
+                                .withDate("2013-02-10").withTime("10:00:00").build());
+
+        events.add(
+                Event.Builder
+                        .createFactoryUrlAcceptedEvent("tmp-1", "factoryUrl1", "http://referrer1", "org1", "affiliate1")
+                        .withDate("2013-02-10").withTime("10:00:00").build());
+        events.add(
+                Event.Builder
+                        .createFactoryUrlAcceptedEvent("tmp-2", "factoryUrl1", "http://referrer2", "org2", "affiliate1")
+                        .withDate("2013-02-10").withTime("10:20:00").build());
+        events.add(
+                Event.Builder
+                        .createFactoryUrlAcceptedEvent("tmp-3", "http://1.com?id=factory3", "http://referrer3", "org3", "affiliate2")
+                        .withDate("2013-02-10").withTime("11:00:00").build());
+
+        events.add(Event.Builder.createFactoryProjectImportedEvent("user1@gmail.com", "tmp-1", "project", "type")
+                                .withDate("2013-02-10").withTime("10:00:00").build());
+
         events.add(Event.Builder.createSessionUsageEvent("user1@gmail.com", "tmp-1", "id1", true)
                                 .withDate("2013-02-10").withTime("10:00:00").build());
         events.add(Event.Builder.createSessionUsageEvent("user1@gmail.com", "tmp-1", "id1", true)
@@ -70,27 +94,6 @@ public class TestProductUsageFactorySessions extends BaseTest {
                                 .withDate("2013-02-10").withTime("11:00:00").build());
         events.add(Event.Builder.createSessionUsageEvent("anonymoususer_1", "tmp-3", "id3", true)
                                 .withDate("2013-02-10").withTime("11:15:00").build());
-
-        events.add(Event.Builder.createFactoryProjectImportedEvent("user1@gmail.com", "tmp-1", "project", "type")
-                                .withDate("2013-02-10").withTime("10:05:00").build());
-
-        events.add(
-                Event.Builder
-                        .createFactoryUrlAcceptedEvent("tmp-1", "factoryUrl1", "http://referrer1", "org1", "affiliate1")
-                        .withDate("2013-02-10").withTime("11:00:00").build());
-        events.add(
-                Event.Builder
-                        .createFactoryUrlAcceptedEvent("tmp-2", "factoryUrl1", "http://referrer2", "org2", "affiliate1")
-                        .withDate("2013-02-10").withTime("11:00:01").build());
-        events.add(
-                Event.Builder
-                        .createFactoryUrlAcceptedEvent("tmp-3", "http://1.com?id=factory3", "http://referrer3", "org3", "affiliate2")
-                        .withDate("2013-02-10").withTime("11:00:02").build());
-
-        events.add(Event.Builder.createWorkspaceCreatedEvent(TWID1, "tmp-1", "user1@gmail.com")
-                                .withDate("2013-02-10").withTime("12:00:00").build());
-        events.add(Event.Builder.createWorkspaceCreatedEvent(TWID2, "tmp-2", "user1@gmail.com")
-                                .withDate("2013-02-10").withTime("12:01:00").build());
 
         // run event for session #1
         events.add(Event.Builder.createRunStartedEvent("user1@gmail.com", "tmp-1", "project", "type", "id1")
@@ -346,7 +349,7 @@ public class TestProductUsageFactorySessions extends BaseTest {
         builder.put(Parameters.TO_DATE, "20130210");
 
         Metric metric = MetricFactory.getMetric(MetricType.TEMPORARY_WORKSPACES_CREATED);
-        assertEquals(metric.getValue(builder.build()), LongValueData.valueOf(2));
+        assertEquals(metric.getValue(builder.build()), LongValueData.valueOf(3));
     }
 
     @Test

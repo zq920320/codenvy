@@ -35,10 +35,14 @@ import java.util.List;
 /** @author Alexander Reshetnyak */
 @RolesAllowed({"system/admin", "system/manager"})
 @OmitFilters({MetricFilter.WS_ID, MetricFilter.PERSISTENT_WS})
-public class WorkspacesWithZeroFactorySessionsLength extends ReadBasedMetric implements ReadBasedExpandable {
+public class FailedFactorySessions extends ReadBasedMetric implements ReadBasedExpandable {
 
-    public WorkspacesWithZeroFactorySessionsLength() {
-        super(MetricType.WORKSPACES_WITH_ZERO_FACTORY_SESSIONS_LENGTH);
+    public FailedFactorySessions() {
+        super(MetricType.FAILED_FACTORY_SESSIONS);
+    }
+
+    protected FailedFactorySessions(MetricType type) {
+        super(type);
     }
 
     @Override
@@ -78,7 +82,7 @@ public class WorkspacesWithZeroFactorySessionsLength extends ReadBasedMetric imp
 
     @Override
     public String getDescription() {
-        return "The workspaces count with zero factory sessions length";
+        return "Failed factory sessions";
     }
 
     @Override

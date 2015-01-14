@@ -9,15 +9,20 @@
 127.0.0.1 2013-11-01 19:12:00,000[main] [INFO] [HelloWorld 1010]  - EVENT#user-update-profile# USER-ID#user4_12345678901234# USER#user4@gmail.com# EMAILS#user4@gmail.com# FIRSTNAME## LASTNAME## COMPANY## PHONE## JOBTITLE##
 127.0.0.1 2013-11-01 19:15:00,000[main] [INFO] [HelloWorld 1010]  - EVENT#user-update-profile# USER-ID#user3_12345678901234# USER#user3@gmail.com# EMAILS#user3@gmail.com# FIRSTNAME#f3# LASTNAME#l3# COMPANY#company3# PHONE#33# JOBTITLE#3#
 
-127.0.0.1 2013-11-01 20:00:00,000[main] [INFO] [HelloWorld 1010]  - EVENT#session-usage# SESSION-ID#1# WS#ws1# USER#user1@gmail.com# SESSION-ID#1#
-127.0.0.1 2013-11-01 20:05:00,000[main] [INFO] [HelloWorld 1010]  - EVENT#session-usage# SESSION-ID#1# WS#ws1# USER#user1@gmail.com# SESSION-ID#1#
-127.0.0.1 2013-11-01 19:00:00,000[main] [INFO] [HelloWorld 1010]  - EVENT#session-usage# SESSION-ID#1# WS#ws2# USER#user3@gmail.com# SESSION-ID#2#
-127.0.0.1 2013-11-01 19:02:00,000[main] [INFO] [HelloWorld 1010]  - EVENT#session-usage# SESSION-ID#1# WS#ws2# USER#user3@gmail.com# SESSION-ID#2#
+127.0.0.1 2013-11-01 20:00:00,000[main] [INFO] [HelloWorld 1010]  - EVENT#session-usage# WS#ws1# USER#user1@gmail.com# SESSION-ID#1#
+127.0.0.1 2013-11-01 20:05:00,000[main] [INFO] [HelloWorld 1010]  - EVENT#session-usage# WS#ws1# USER#user1@gmail.com# SESSION-ID#1#
+127.0.0.1 2013-11-01 19:00:00,000[main] [INFO] [HelloWorld 1010]  - EVENT#session-usage# WS#ws2# USER#user3@gmail.com# SESSION-ID#2#
+127.0.0.1 2013-11-01 19:02:00,000[main] [INFO] [HelloWorld 1010]  - EVENT#session-usage# WS#ws2# USER#user3@gmail.com# SESSION-ID#2#
 
 127.0.0.1 2013-11-01 19:07:00,000[main] [INFO] [HelloWorld 1010]  - EVENT#user-added-to-ws# WS#ws2# USER#user2@gmail.com# FROM##
 
+127.0.0.1 2013-11-01 19:07:58,000[main] [INFO] [HelloWorld 1010]  - EVENT#run-queue-waiting-started# WS#ws2# USER#user2@gmail.com# PROJECT#project# TYPE#type# ID#id1#
+127.0.0.1 2013-11-01 19:08:00,000[main] [INFO] [HelloWorld 1010]  - EVENT#run-queue-waiting-finished# WS#ws2# USER#user2@gmail.com# PROJECT#project# TYPE#type# ID#id1# WAITING-TIME#2000#
 127.0.0.1 2013-11-01 19:08:00,000[main] [INFO] [HelloWorld 1010]  - EVENT#run-started# WS#ws2# USER#user2@gmail.com# PROJECT#project# TYPE#type# ID#id1#
 127.0.0.1 2013-11-01 19:10:00,000[main] [INFO] [HelloWorld 1010]  - EVENT#run-finished# WS#ws2# USER#user2@gmail.com# PROJECT#project# TYPE#type# ID#id1# USAGE-TIME#120000#
+
+127.0.0.1 2013-11-01 19:11:59,000[main] [INFO] [HelloWorld 1010]  - EVENT#build-queue-waiting-started# WS#ws2# USER#user3@gmail.com# PROJECT#project# TYPE#type# ID#id2#
+127.0.0.1 2013-11-01 19:12:00,000[main] [INFO] [HelloWorld 1010]  - EVENT#build-queue-waiting-finished# WS#ws2# USER#user3@gmail.com# PROJECT#project# TYPE#type# ID#id2# WAITING-TIME#1000#
 127.0.0.1 2013-11-01 19:12:00,000[main] [INFO] [HelloWorld 1010]  - EVENT#build-started# WS#ws2# USER#user3@gmail.com# PROJECT#project# TYPE#type# ID#id2#
 127.0.0.1 2013-11-01 19:14:00,000[main] [INFO] [HelloWorld 1010]  - EVENT#build-finished# WS#ws2# USER#user3@gmail.com# PROJECT#project# TYPE#type# ID#id2# USAGE-TIME#120000#
 
@@ -25,6 +30,8 @@
 127.0.0.1 2013-11-01 20:01:00,000[main] [INFO] [HelloWorld 1010]  - EVENT#project-created# PROJECT## TYPE## WS#ws1# USER#user1@gmail.com#
 127.0.0.1 2013-11-01 20:02:00,000[main] [INFO] [HelloWorld 1010]  - EVENT#project-deployed# PROJECT## TYPE## PAAS## WS#ws1# USER#user4@gmail.com#
 127.0.0.1 2013-11-01 20:03:00,000[main] [INFO] [HelloWorld 1010]  - EVENT#factory-created# WS#ws1# USER#user1@gmail.com# PROJECT## TYPE## REPO-URL## FACTORY-URL## ORG-ID## AFFILIATE-ID##
+127.0.0.1 2013-11-01 20:03:57,000[main] [INFO] [HelloWorld 1010]  - EVENT#run-queue-waiting-started# WS#ws1# USER#user4@gmail.com# PROJECT## TYPE## ID#id3#
+127.0.0.1 2013-11-01 20:04:00,000[main] [INFO] [HelloWorld 1010]  - EVENT#run-queue-waiting-finished# WS#ws1# USER#user4@gmail.com# PROJECT## TYPE## ID#id3# WAITING-TIME#3000#
 127.0.0.1 2013-11-01 20:04:00,000[main] [INFO] [HelloWorld 1010]  - EVENT#run-started# WS#ws1# USER#user4@gmail.com# PROJECT## TYPE## ID#id3# 
 127.0.0.1 2013-11-01 20:06:00,000[main] [INFO] [HelloWorld 1010]  - EVENT#debug-started# WS#ws1# USER#user4@gmail.com# PROJECT## TYPE## ID#id4# 
 127.0.0.1 2013-11-01 20:10:00,000[main] [INFO] [HelloWorld 1010]  - EVENT#application-created# PROJECT#project1# TYPE#type1# PAAS#paas1# WS#ws2# USER#user2@gmail.com#

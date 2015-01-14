@@ -217,7 +217,9 @@ com.codenvy.analytics.metrics.sessions.factory.FactoryStatisticsPrecomputed
 com.codenvy.analytics.metrics.sessions.factory.ActiveFactoriesSet
 com.codenvy.analytics.metrics.sessions.factory.ReferrersCountToSpecificFactory
 com.codenvy.analytics.metrics.sessions.factory.WorkspacesWhereUsersHaveSeveralFactorySessions
-com.codenvy.analytics.metrics.sessions.factory.WorkspacesWithZeroFactorySessionsLength
+com.codenvy.analytics.metrics.sessions.factory.FailedFactorySessions
+com.codenvy.analytics.metrics.sessions.factory.FailedFactorySessionsWrongBrowser
+com.codenvy.analytics.metrics.sessions.factory.FailedFactorySessionsLoadingIncomplete
 com.codenvy.analytics.metrics.sessions.factory.AuthenticatedFactorySessions
 com.codenvy.analytics.metrics.sessions.factory.AnonymousFactorySessions
 com.codenvy.analytics.metrics.sessions.factory.ConvertedFactorySessions

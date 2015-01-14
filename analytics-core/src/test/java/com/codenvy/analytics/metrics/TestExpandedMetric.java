@@ -65,18 +65,18 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
                                 .withDate("2013-11-20").withTime("08:00:00").build());
 
         events.add(Event.Builder.createWorkspaceCreatedEvent(TWID1, "tmp-1", AUID1)
-                                .withDate("2013-11-20").withTime("08:00:00").build());
+                                .withDate("2013-11-20").withTime("11:00:00").build());
         events.add(Event.Builder.createWorkspaceCreatedEvent(TWID2, "tmp-2", UID2)
-                                .withDate("2013-11-20").withTime("08:00:00").build());
+                                .withDate("2013-11-20").withTime("11:00:00").build());
         events.add(Event.Builder.createWorkspaceCreatedEvent(WID1, "ws1", UID1)
                                 .withDate("2013-11-20").withTime("08:00:00").build());
         events.add(Event.Builder.createWorkspaceCreatedEvent(WID2, "ws2", UID2)
                                 .withDate("2013-11-20").withTime("08:00:00").build());
 
         events.add(Event.Builder.createFactoryUrlAcceptedEvent(TWID1, "factory1", "referrer1", "org1", "affiliate1")
-                                .withDate("2013-11-20").withTime("07:00:00").build());
+                                .withDate("2013-11-20").withTime("11:00:00").build());
         events.add(Event.Builder.createFactoryUrlAcceptedEvent(TWID2, "factory2", "referrer1", "org1", "affiliate1")
-                                .withDate("2013-11-20").withTime("07:00:00").build());
+                                .withDate("2013-11-20").withTime("11:00:00").build());
 
         events.add(Event.Builder.createUserAddedToWsEvent(AUID1, TWID1, "website").withDate("2013-11-20", "07:10:00").build());
         events.add(Event.Builder.createUserChangedNameEvent(AUID1, UID1).withDate("2013-11-20", "08:10:00").build());

@@ -139,7 +139,7 @@ public class TestCalculateTaskGigabyteRamHours extends BaseTest {
         List<Event> events = new ArrayList<>();
 
         /** FACTORY ACCEPTED EVENTS */
-        events.add(createFactoryUrlAcceptedEvent("temp-ws1", "http://1.com?id=factory1", "", "", "").withDate("2013-10-20").withTime("09:00:00").build());
+        events.add(createFactoryUrlAcceptedEvent("temp-ws1", "http://1.com?id=factory1", "", "", "").withDate("2013-10-20").withTime("16:00:00").build());
 
         /** BUILD EVENTS */
         // #1 2min, stopped normally

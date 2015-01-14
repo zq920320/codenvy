@@ -84,10 +84,10 @@ public class TestFactoryUriComponentsDecode extends BaseTest {
         List<Event> events = new ArrayList<>();
 
         // broken event, factory url contains new line character
-        events.add(Event.Builder.createFactoryUrlAcceptedEvent("tmp-4", ENCODE_URI_COMPONENTS, "referrer2", "org3", "affiliate2")
-                                .withDate("2013-02-10").withTime("10:00:00").build());
         events.add(Event.Builder.createWorkspaceCreatedEvent(TWID4, "tmp-4", "anonymoususer_2")
-                                .withDate("2013-02-10").withTime("10:03:00").build());
+                                .withDate("2013-02-10").withTime("11:00:00").build());
+        events.add(Event.Builder.createFactoryUrlAcceptedEvent("tmp-4", ENCODE_URI_COMPONENTS, "referrer2", "org3", "affiliate2")
+                                .withDate("2013-02-10").withTime("11:00:00").build());
 
         events.add(Event.Builder.createSessionUsageEvent("anonymoususer_2", "tmp-4", "id4", true)
                                 .withDate("2013-02-10").withTime("11:00:00").build());

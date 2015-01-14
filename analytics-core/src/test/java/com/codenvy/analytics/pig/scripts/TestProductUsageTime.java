@@ -20,6 +20,7 @@ package com.codenvy.analytics.pig.scripts;
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.LongValueData;
+import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.StringValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.AbstractMetric;
@@ -39,8 +40,8 @@ import java.util.List;
 import java.util.Map;
 
 import static com.codenvy.analytics.datamodel.ValueDataUtil.getAsList;
+import static org.testng.Assert.assertTrue;
 import static org.testng.AssertJUnit.assertEquals;
-import static org.testng.AssertJUnit.assertTrue;
 
 /** @author Anatoliy Bazko */
 public class TestProductUsageTime extends BaseTest {
@@ -92,9 +93,54 @@ public class TestProductUsageTime extends BaseTest {
         assertEquals(data.get(AbstractMetric.LOGOUT_INTERVAL), LongValueData.valueOf(60000));
     }
 
+    @Test
+    public void testExecute2() throws Exception {
+        clearDatabase();
+        doExecute2("20140101");
+
+        Metric metric = MetricFactory.getMetric(MetricType.PRODUCT_USAGE_SESSIONS_LIST);
+
+        ListValueData l = getAsList(metric, Context.EMPTY);
+
+        assertEquals(l.getAll().size(), 2);
+
+        Map<String, ValueData> data = ((MapValueData)l.getAll().get(0)).getAll();
+        assertEquals(data.get(AbstractMetric.USER), StringValueData.valueOf("userid1"));
+        assertEquals(data.get(AbstractMetric.WS), StringValueData.valueOf("tmp-workspace01"));
+        assertEquals(data.get(AbstractMetric.DOMAIN), StringValueData.valueOf("gmail.com"));
+        assertEquals(data.get(AbstractMetric.TIME), LongValueData.valueOf(608000));
+        assertEquals(data.get(AbstractMetric.SESSION_ID), StringValueData.valueOf("sid1"));
+        assertEquals(data.get(AbstractMetric.DATE), LongValueData.valueOf(fullDateFormat.parse("2014-01-01 09:02:02").getTime()));
+        assertEquals(data.get(AbstractMetric.END_TIME), LongValueData.valueOf(fullDateFormat.parse("2014-01-01 09:12:10").getTime()));
+        assertEquals(data.get(AbstractMetric.LOGOUT_INTERVAL), LongValueData.valueOf(0));
+
+        data = ((MapValueData)l.getAll().get(1)).getAll();
+        assertEquals(data.get(AbstractMetric.USER), StringValueData.valueOf("userid1"));
+        assertEquals(data.get(AbstractMetric.WS), StringValueData.valueOf("tmp-workspace01"));
+        assertEquals(data.get(AbstractMetric.DOMAIN), StringValueData.valueOf("gmail.com"));
+        assertEquals(data.get(AbstractMetric.TIME), LongValueData.valueOf(600000));
+        assertEquals(data.get(AbstractMetric.SESSION_ID), StringValueData.valueOf("sid2"));
+        assertEquals(data.get(AbstractMetric.DATE), LongValueData.valueOf(fullDateFormat.parse("2014-01-01 10:02:00").getTime()));
+        assertEquals(data.get(AbstractMetric.END_TIME), LongValueData.valueOf(fullDateFormat.parse("2014-01-01 10:12:00").getTime()));
+        assertEquals(data.get(AbstractMetric.LOGOUT_INTERVAL), LongValueData.valueOf(0));
+    }
+
     private void doExecute(String date) throws Exception {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.LOG, initLog().getAbsolutePath());
+        builder.put(Parameters.FROM_DATE, date);
+        builder.put(Parameters.TO_DATE, date);
+
+        builder.putAll(scriptsManager.getScript(ScriptType.USERS_PROFILES, MetricType.USERS_PROFILES_LIST).getParamsAsMap());
+        pigServer.execute(ScriptType.USERS_PROFILES, builder.build());
+
+        builder.putAll(scriptsManager.getScript(ScriptType.PRODUCT_USAGE_SESSIONS, MetricType.PRODUCT_USAGE_SESSIONS_LIST).getParamsAsMap());
+        pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, builder.build());
+    }
+
+    private void doExecute2(String date) throws Exception {
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.LOG, initLogWithFactoryUrlAccepted().getAbsolutePath());
         builder.put(Parameters.FROM_DATE, date);
         builder.put(Parameters.TO_DATE, date);
 
@@ -183,6 +229,66 @@ public class TestProductUsageTime extends BaseTest {
                                       .withTime("10:02:00")
                                       .withParam("EVENT", "user-sso-logged-out")
                                       .withParam("USER", "user3")
+                                      .build());
+
+        return LogGenerator.generateLog(events);
+    }
+
+    private File initLogWithFactoryUrlAccepted() throws Exception {
+        List<Event> events = new ArrayList<>();
+
+        events.add(Event.Builder.createUserCreatedEvent("userid1", "user1@gmail.com", "user1@gmail.com")
+                                .withDate("2014-01-01")
+                                .withTime("09:00:00")
+                                .build());
+        events.add(Event.Builder.createUserUpdateProfile("user1", "user1@gmail.com", "user1@gmail.com", "", "", "company", "", "")
+                                .withDate("2014-01-01")
+                                .withTime("09:01:00")
+                                .build());
+
+        events.add(Event.Builder.createUserAddedToWsEvent("user1@gmail.com", "tmp-workspace01", "website")
+                                .withDate("2014-01-01")
+                                .withTime("09:02:00")
+                                .build());
+        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid1", "tmp-workspace01", "user")
+                                .withDate("2014-01-01")
+                                .withTime("09:02:01")
+                                .build());
+        events.add(Event.Builder.createFactoryUrlAcceptedEvent("tmp-workspace01", "https://codenvy.com/factory/?id=01", "", "accounty01", "")
+                                .withDate("2014-01-01")
+                                .withTime("09:02:02")
+                                .build());
+
+        // simple session, 10 min + 8 sec
+        events.add(new Event.Builder().withDate("2014-01-01")
+                                      .withTime("09:02:10")
+                                      .withParam("EVENT", "session-usage")
+                                      .withParam("WS", "tmp-workspace01")
+                                      .withParam("USER", "user1@gmail.com")
+                                      .withParam("PARAMETERS", "SESSION-ID=sid1")
+                                      .build());
+        events.add(new Event.Builder().withDate("2014-01-01")
+                                      .withTime("09:12:10")
+                                      .withParam("EVENT", "session-usage")
+                                      .withParam("WS", "tmp-workspace01")
+                                      .withParam("USER", "user1@gmail.com")
+                                      .withParam("PARAMETERS", "SESSION-ID=sid1")
+                                      .build());
+
+        // second session, 10 min sec
+        events.add(new Event.Builder().withDate("2014-01-01")
+                                      .withTime("10:02:00")
+                                      .withParam("EVENT", "session-usage")
+                                      .withParam("WS", "tmp-workspace01")
+                                      .withParam("USER", "user1@gmail.com")
+                                      .withParam("PARAMETERS", "SESSION-ID=sid2")
+                                      .build());
+        events.add(new Event.Builder().withDate("2014-01-01")
+                                      .withTime("10:12:00")
+                                      .withParam("EVENT", "session-usage")
+                                      .withParam("WS", "tmp-workspace01")
+                                      .withParam("USER", "user1@gmail.com")
+                                      .withParam("PARAMETERS", "SESSION-ID=sid2")
                                       .build());
 
         return LogGenerator.generateLog(events);

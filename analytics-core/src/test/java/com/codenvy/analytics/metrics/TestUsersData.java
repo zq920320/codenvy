@@ -180,7 +180,7 @@ public class TestUsersData extends BaseTest {
             MapValueData valueData = (MapValueData)object;
 
             Map<String, ValueData> all = valueData.getAll();
-            assertEquals(all.size(), 14);
+            assertEquals(all.size(), 16);
 
             String ws = all.get(UsersStatisticsList.WS).getAsString();
             switch (ws) {
@@ -197,6 +197,8 @@ public class TestUsersData extends BaseTest {
                     assertEquals(all.get(UsersStatisticsList.BUILD_TIME).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.RUNS).getAsString(), "1");
                     assertEquals(all.get(UsersStatisticsList.RUN_TIME).getAsString(), "0");
+                    assertEquals(all.get(UsersStatisticsList.BUILD_WAITING_TIME).getAsString(), "0");
+                    assertEquals(all.get(UsersStatisticsList.RUN_WAITING_TIME).getAsString(), "3000");
                     break;
 
                 case "workspace2_12345678901234":
@@ -212,6 +214,8 @@ public class TestUsersData extends BaseTest {
                     assertEquals(all.get(UsersStatisticsList.BUILD_TIME).getAsString(), "120000");
                     assertEquals(all.get(UsersStatisticsList.RUNS).getAsString(), "1");
                     assertEquals(all.get(UsersStatisticsList.RUN_TIME).getAsString(), "120000");
+                    assertEquals(all.get(UsersStatisticsList.BUILD_WAITING_TIME).getAsString(), "1000");
+                    assertEquals(all.get(UsersStatisticsList.RUN_WAITING_TIME).getAsString(), "2000");
                     break;
 
                 default:
@@ -233,6 +237,8 @@ public class TestUsersData extends BaseTest {
         assertEquals(summary.get(UsersStatisticsList.BUILD_TIME).getAsString(), "120000");
         assertEquals(summary.get(UsersStatisticsList.RUNS).getAsString(), "2");
         assertEquals(summary.get(UsersStatisticsList.RUN_TIME).getAsString(), "120000");
+        assertEquals(summary.get(UsersStatisticsList.BUILD_WAITING_TIME).getAsString(), "1000");
+        assertEquals(summary.get(UsersStatisticsList.RUN_WAITING_TIME).getAsString(), "5000");
     }
 
     @Test

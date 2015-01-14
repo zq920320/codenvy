@@ -37,7 +37,7 @@ import java.util.List;
 import static org.testng.Assert.assertEquals;
 
 /** @author Alexander Reshetnyak */
-public class TestWorkspacesWithZeroFactorySessionsLength extends BaseTest {
+public class TestFailedFactorySessions extends BaseTest {
 
     @BeforeClass
     public void init() throws Exception {
@@ -130,9 +130,16 @@ public class TestWorkspacesWithZeroFactorySessionsLength extends BaseTest {
         builder.put(Parameters.FROM_DATE, "20130210");
         builder.put(Parameters.TO_DATE, "20130210");
 
-        Metric metric = MetricFactory.getMetric(MetricType.WORKSPACES_WITH_ZERO_FACTORY_SESSIONS_LENGTH);
+        Metric metric = MetricFactory.getMetric(MetricType.FAILED_FACTORY_SESSIONS);
         LongValueData lvd = (LongValueData)metric.getValue(builder.build());
+        assertEquals(lvd.getAsLong(), 2);
 
+        metric = MetricFactory.getMetric(MetricType.FAILED_FACTORY_SESSIONS_LOADING_INCOMPLETE);
+        lvd = (LongValueData)metric.getValue(builder.build());
+        assertEquals(lvd.getAsLong(), 2);
+
+        metric = MetricFactory.getMetric(MetricType.FAILED_FACTORY_SESSIONS_WRONG_BROWSER);
+        lvd = (LongValueData)metric.getValue(builder.build());
         assertEquals(lvd.getAsLong(), 2);
     }
 }

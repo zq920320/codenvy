@@ -57,13 +57,13 @@ public class TestFactoryStatisticsFilteringById extends BaseTest {
                                 .withDate("2013-02-10").withTime("07:00:00").build());
 
         // factory 1 events
+        events.add(Event.Builder.createWorkspaceCreatedEvent(TWID1, "tmp-1", TEST_USER_ALIAS)
+                                .withDate("2013-02-10").withTime("10:00:00").build());
         events.add(
             Event.Builder
                 .createFactoryUrlAcceptedEvent("tmp-1", TEST_ENCODED_FACTORY_URL, "http://referrer1", "org1", "affiliate1")
-                .withDate("2013-02-10").withTime("08:00:00").build());
+                .withDate("2013-02-10").withTime("10:00:00").build());
 
-        events.add(Event.Builder.createWorkspaceCreatedEvent(TWID1, "tmp-1", TEST_USER_ALIAS)
-                                .withDate("2013-02-10").withTime("09:00:00").build());
 
         events.add(Event.Builder.createSessionUsageEvent(TEST_USER_ALIAS, "tmp-1", "id1", true)
                                 .withDate("2013-02-10").withTime("10:00:00").build());
@@ -74,13 +74,13 @@ public class TestFactoryStatisticsFilteringById extends BaseTest {
                                 .withDate("2013-02-10").withTime("10:04:00").build());
 
         // factory 2 events
+        events.add(Event.Builder.createWorkspaceCreatedEvent(TWID2, "tmp-2", TEST_USER_ALIAS)
+                                .withDate("2013-02-10").withTime("10:20:00").build());
         events.add(
             Event.Builder
                 .createFactoryUrlAcceptedEvent("tmp-2", TEST_FACTORY_URL, "http://referrer2", "org2", "affiliate1")
-                .withDate("2013-02-10").withTime("08:00:01").build());
+                .withDate("2013-02-10").withTime("10:20:00").build());
 
-        events.add(Event.Builder.createWorkspaceCreatedEvent(TWID2, "tmp-2", TEST_USER_ALIAS)
-                                .withDate("2013-02-10").withTime("09:01:00").build());
 
         events.add(Event.Builder.createSessionUsageEvent(TEST_USER_ALIAS, "tmp-2", "id2", true)
                                 .withDate("2013-02-10").withTime("10:20:00").build());
