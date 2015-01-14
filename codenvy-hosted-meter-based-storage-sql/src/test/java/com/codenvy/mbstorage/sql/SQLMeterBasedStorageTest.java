@@ -20,6 +20,7 @@ package com.codenvy.mbstorage.sql;
 import com.codenvy.api.account.MemoryUsedMetric;
 import com.codenvy.api.account.UsageInformer;
 import com.codenvy.api.core.ServerException;
+import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 
 import org.hsqldb.jdbc.JDBCDataSource;
 import org.postgresql.ds.PGPoolingDataSource;
@@ -51,10 +52,21 @@ public class SQLMeterBasedStorageTest {
 //        source.setPassword("docker");
 //        source.setMaxConnections(10);
 //        source.setPortNumber(49153);
+
         JDBCDataSource source = new JDBCDataSource();
         source.setUrl("jdbc:hsqldb:mem:test");
         source.setUser("SA");
         source.setPassword("");
+
+//        MysqlDataSource source = new MysqlDataSource();
+//        source.setURL("jdbc:mysql://localhost:3306/LVBsp");
+//        source.setUser("Me");
+//        source.setPassword("mine");
+
+//        MysqlDataSource source = new MysqlDataSource();
+//        source.setURL("jdbc:mysql://dev.box.com:3306/test");
+//        source.setUser("root");
+//        source.setPassword("MysqlROOTpass");
 
         dataSource = source;
         sdf.setLenient(false);
