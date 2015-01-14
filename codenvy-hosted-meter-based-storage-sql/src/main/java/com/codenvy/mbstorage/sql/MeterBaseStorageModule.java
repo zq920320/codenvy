@@ -28,6 +28,6 @@ public class MeterBaseStorageModule  extends AbstractModule {
     protected void configure() {
         bind(ConnectionFactory.class).to(JndiDataSourcedConnectionFactory.class);
         bind(MeterBasedStorage.class).to(SQLMeterBasedStorage.class);
-        bind(StorageInitializer.class);
+        bind(StorageInitializer.class).asEagerSingleton();
     }
 }

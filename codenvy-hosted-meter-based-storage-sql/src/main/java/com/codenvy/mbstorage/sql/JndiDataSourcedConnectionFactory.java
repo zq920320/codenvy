@@ -20,6 +20,8 @@ package com.codenvy.mbstorage.sql;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Singleton;
+import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
@@ -31,18 +33,23 @@ import java.sql.SQLException;
  *
  * @author Sergii Kabashniuk
  */
+@Singleton
 public class JndiDataSourcedConnectionFactory implements ConnectionFactory {
     private final String     jndiLocation;
     private       DataSource dataSource;
 
     @Inject
-    public JndiDataSourcedConnectionFactory(@Named("jdbc.ds.jndiname") String jndiLocation) {
-        this.jndiLocation = jndiLocation;
+    public JndiDataSourcedConnectionFactory() {
+        this.jndiLocation = "jdbc/codenvy";
     }
 
     @PostConstruct
     public void init() throws NamingException {
-        dataSource = (DataSource)new InitialContext().lookup(jndiLocation);
+
+        Context initContext = new InitialContext();
+        Context envContext  = (Context)initContext.lookup("java:/comp/env");
+        dataSource =  (DataSource)envContext.lookup("jdbc/codenvy");
+
         if (dataSource == null) {
             throw new RuntimeException("Data source is not configured in jndi location " + jndiLocation);
         }
