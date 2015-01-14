@@ -43,6 +43,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -54,7 +55,8 @@ import java.util.Map;
 // must be eager singleton
 @Singleton
 public class SaasBillingService {
-    private static final Logger LOG = LoggerFactory.getLogger(SaasBillingService.class);
+    private static final Logger LOG                              = LoggerFactory.getLogger(SaasBillingService.class);
+    public static final  Long   GIGABYTE_HOUR_IN_MEGABYTE_MINUTE = 61440l;
 
     private final AccountDao       accountDao;
     private final UserDao          userDao;
@@ -102,20 +104,30 @@ public class SaasBillingService {
     }
 
     public void chargeAccount(Account account) throws ApiException {
-        chargeAccount(account, getDefaultBillingStartDate(), getBillingPeriodEndDate());
+        Date billingPeriodStartDate = getDefaultBillingStartDate();
+        final Date billingPeriodEndDate = getBillingPeriodEndDate();
+        final String startBillingDateInMilliseconds = account.getAttributes().get("codenvy:billing.date");
+        if (startBillingDateInMilliseconds != null) {
+            final Date accountLastBillingDate = new Date(Long.parseLong(startBillingDateInMilliseconds));
+            if (!accountLastBillingDate.before(billingPeriodEndDate)) {
+                return;
+            }
+            billingPeriodStartDate = accountLastBillingDate;
+        }
+        chargeAccount(account, billingPeriodStartDate, billingPeriodEndDate);
     }
 
     public void chargeAccounts(Date defaultMeasurementStartDate, Date measurementEndDate) throws ApiException {
         final List<Account> paidSaasAccounts = accountDao.getPaidSaasAccountsWithOldBillingDate(measurementEndDate);
 
         for (Account paidSaasAccount : paidSaasAccounts) {
-            Date measurementStartDate = defaultMeasurementStartDate;
-            final String startBillingDateInMilliseconds = paidSaasAccount.getAttributes().get("codenvy:billing.date");
-            if (startBillingDateInMilliseconds != null) {
-                measurementStartDate = new Date(Long.parseLong(startBillingDateInMilliseconds));
-            }
-
             try {
+                Date measurementStartDate = defaultMeasurementStartDate;
+                final String startBillingDateInMilliseconds = paidSaasAccount.getAttributes().get("codenvy:billing.date");
+                if (startBillingDateInMilliseconds != null) {
+                    measurementStartDate = new Date(Long.parseLong(startBillingDateInMilliseconds));
+                }
+
                 chargeAccount(paidSaasAccount, measurementStartDate, measurementEndDate);
             } catch (Exception e) {
                 LOG.error(e.getLocalizedMessage(), e);
@@ -151,7 +163,7 @@ public class SaasBillingService {
                                               dateFormat.format(endDate);
 
             try {
-                final double chargeAmount = Math.ceil(((double)totalRamUsage - freeUsage) / 61440) * price;
+                final double chargeAmount = Math.ceil(((double)totalRamUsage - freeUsage) / GIGABYTE_HOUR_IN_MEGABYTE_MINUTE) * price;
                 paymentService.charge(ccToken, chargeAmount, accountId, paymentDescription);
             } catch (ForbiddenException e) {
                 sendBillingFailedEmail(accountOwnersEmails);
@@ -162,7 +174,11 @@ public class SaasBillingService {
         account.getAttributes().put("codenvy:billing.date", String.valueOf(endDate.getTime()));
         accountDao.update(account);
 
-        sendInvoiceEmail(accountOwnersEmails);
+        if (totalRamUsage > freeUsage) {
+            sendInvoiceEmail(accountOwnersEmails, memoryUsedReport);
+        } else {
+            // TODO send email that says user consumed less than free amount
+        }
     }
 
     private Date getDefaultBillingStartDate() {
@@ -203,7 +219,15 @@ public class SaasBillingService {
         }
     }
 
-    private void sendInvoiceEmail(List<String> accountOwnersEmails) {
+    private void sendInvoiceEmail(List<String> accountOwnersEmails, Map<String, Long> consumption) {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (Map.Entry<String, Long> resourceConsumption : consumption.entrySet()) {
+            stringBuilder.append("<tr><td>")
+                         .append(resourceConsumption.getKey())
+                         .append("</td><td>")
+                         .append((double)resourceConsumption.getValue() / GIGABYTE_HOUR_IN_MEGABYTE_MINUTE)
+                         .append("</td></tr>");
+        }
         try {
             mailSenderClient.sendMail(billingAddress,
                                       Strings.join(", ", accountOwnersEmails.toArray(new String[0])),
@@ -211,7 +235,7 @@ public class SaasBillingService {
                                       invoiceSubject,
                                       MediaType.TEXT_HTML,
                                       IoUtil.readAndCloseQuietly(IoUtil.getResource(successfulChargeMailTemplate)),
-                                      new HashMap<String, String>());
+                                      Collections.singletonMap("resource.consumption", stringBuilder.toString()));
         } catch (IOException | MessagingException e) {
             LOG.error(e.getLocalizedMessage(), e);
         }
