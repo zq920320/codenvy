@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 /**
@@ -47,6 +48,7 @@ import javax.inject.Singleton;
 public class RunStatusSubscriber implements EventSubscriber<RunnerEvent> {
     private static final Logger LOG = LoggerFactory.getLogger(RunStatusSubscriber.class);
 
+    private final Integer               schedulingPeriod;
     private final EventService          eventService;
     private final WorkspaceDao          workspaceDao;
     private final UserDao               userDao;
@@ -54,11 +56,13 @@ public class RunStatusSubscriber implements EventSubscriber<RunnerEvent> {
     private final ResourcesUsageTracker resourcesUsageTracker;
 
     @Inject
-    public RunStatusSubscriber(EventService eventService,
+    public RunStatusSubscriber(@Named(TasksActivityChecker.RUN_ACTIVITY_CHECKING_PERIOD) Integer schedulingPeriod,
+                               EventService eventService,
                                WorkspaceDao workspaceDao,
                                UserDao userDao,
                                RunQueue runQueue,
                                ResourcesUsageTracker resourcesUsageTracker) {
+        this.schedulingPeriod = schedulingPeriod;
         this.eventService = eventService;
         this.workspaceDao = workspaceDao;
         this.userDao = userDao;
@@ -96,7 +100,7 @@ public class RunStatusSubscriber implements EventSubscriber<RunnerEvent> {
             final User user = userDao.getByAlias(task.getRequest().getUserName());
             final MemoryUsedMetric memoryUsedMetric = new MemoryUsedMetric(task.getRequest().getMemorySize(),
                                                                            task.getCreationTime(),
-                                                                           task.getCreationTime(),
+                                                                           task.getCreationTime() + schedulingPeriod,
                                                                            user.getId(),
                                                                            workspace.getAccountId(),
                                                                            workspace.getId(),
