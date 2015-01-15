@@ -30,7 +30,6 @@ import com.codenvy.api.workspace.server.dao.Workspace;
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
 
 import org.mockito.ArgumentMatcher;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.testng.MockitoTestNGListener;
 import org.testng.annotations.BeforeMethod;
@@ -70,11 +69,11 @@ public class RunStatusSubscriberTest {
     @Mock
     RunQueueTask          runQueueTask;
 
-    @InjectMocks
     RunStatusSubscriber runStatusSubscriber;
 
     @BeforeMethod
     public void setUp() throws Exception {
+        runStatusSubscriber = new RunStatusSubscriber(10, eventService, workspaceDao, userDao, runQueue, resourcesUsageTracker);
         when(workspaceDao.getById(anyString())).thenReturn(new Workspace().withAccountId("accountId")
                                                                           .withId(WS_ID));
         when(userDao.getByAlias(anyString())).thenReturn(new User().withId("userId"));
@@ -99,6 +98,19 @@ public class RunStatusSubscriberTest {
                        && memoryUsedMetric.getUserId().equals("userId")
                        && memoryUsedMetric.getAccountId().equals("accountId")
                        && memoryUsedMetric.getAmount() == 256;
+            }
+        }));
+    }
+
+    @Test
+    public void shouldCreateMemoryUsedRecordWithMinValueForRunDuration() throws ServerException {
+        runStatusSubscriber.onEvent(RunnerEvent.startedEvent(PROCESS_ID, WS_ID, "/project"));
+
+        verify(resourcesUsageTracker).resourceUsageStarted(argThat(new ArgumentMatcher<MemoryUsedMetric>() {
+            @Override
+            public boolean matches(Object argument) {
+                final MemoryUsedMetric memoryUsedMetric = (MemoryUsedMetric)argument;
+                return memoryUsedMetric.getStopTime() - memoryUsedMetric.getStartTime() == 10;
             }
         }));
     }
