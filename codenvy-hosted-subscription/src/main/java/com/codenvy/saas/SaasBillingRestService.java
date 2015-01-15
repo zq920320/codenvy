@@ -17,7 +17,6 @@
  */
 package com.codenvy.saas;
 
-import com.codenvy.api.account.server.dao.Account;
 import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.core.ApiException;
 
@@ -29,6 +28,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 /**
+ * Service to call charging over REST
+ *
  * @author Alexander Garagatyi
  */
 // must be eager singleton
@@ -56,8 +57,6 @@ public class SaasBillingRestService {
     @Path("charge/{accountId}")
     @RolesAllowed({"system/admin", "system/manager"})
     public void chargeAccountForPreviousPeriod(@PathParam("accountId") String accountId) throws ApiException {
-        final Account account = accountDao.getById(accountId);
-
-        saasBillingService.chargeAccount(account);
+        saasBillingService.chargeAccount(accountId);
     }
 }

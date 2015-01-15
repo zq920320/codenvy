@@ -17,6 +17,7 @@
  */
 package com.codenvy.saas;
 
+import com.codenvy.api.account.MeterBasedStorage;
 import com.codenvy.api.account.server.dao.Account;
 import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.server.dao.Member;
@@ -50,6 +51,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * Charges paid saas accounts
+ *
  * @author Alexander Garagatyi
  */
 // must be eager singleton
@@ -58,24 +61,26 @@ public class SaasBillingService {
     private static final Logger LOG                              = LoggerFactory.getLogger(SaasBillingService.class);
     public static final  Long   GIGABYTE_HOUR_IN_MEGABYTE_MINUTE = 61440l;
 
-    private final AccountDao       accountDao;
-    private final UserDao          userDao;
-    private final MailSenderClient mailSenderClient;
-    private final PaymentService   paymentService;
-    private final long             freeUsage;
-    private final String           billingAddress;
-    private final String           invoiceSubject;
-    private final double           price;
-    private final String           billingFailedSubject;
-    private final String           successfulChargeMailTemplate;
-    private final String           unsuccessfulChargeMailTemplate;
-    private final SimpleDateFormat dateFormat;
+    private final AccountDao        accountDao;
+    private final UserDao           userDao;
+    private final MailSenderClient  mailSenderClient;
+    private final PaymentService    paymentService;
+    private final MeterBasedStorage meterBasedStorage;
+    private final long              freeUsage;
+    private final String            billingAddress;
+    private final String            invoiceSubject;
+    private final double            price;
+    private final String            billingFailedSubject;
+    private final String            successfulChargeMailTemplate;
+    private final String            unsuccessfulChargeMailTemplate;
+    private final SimpleDateFormat  dateFormat;
 
     @Inject
     public SaasBillingService(AccountDao accountDao,
                               UserDao userDao,
                               MailSenderClient mailSenderClient,
                               PaymentService paymentService,
+                              MeterBasedStorage meterBasedStorage,
                               @Named("subscription.saas.usage.free.mb_minutes") long freeUsage,
                               @Named("subscription.saas.price") double price,
                               @Named("subscription.saas.mail.address") String billingAddress,
@@ -87,6 +92,7 @@ public class SaasBillingService {
         this.userDao = userDao;
         this.mailSenderClient = mailSenderClient;
         this.paymentService = paymentService;
+        this.meterBasedStorage = meterBasedStorage;
         this.freeUsage = freeUsage;
         this.billingAddress = billingAddress;
         this.invoiceSubject = invoiceSubject;
@@ -103,46 +109,45 @@ public class SaasBillingService {
         chargeAccounts(getDefaultBillingStartDate(), getBillingPeriodEndDate());
     }
 
-    public void chargeAccount(Account account) throws ApiException {
-        Date billingPeriodStartDate = getDefaultBillingStartDate();
-        final Date billingPeriodEndDate = getBillingPeriodEndDate();
-        final String startBillingDateInMilliseconds = account.getAttributes().get("codenvy:billing.date");
-        if (startBillingDateInMilliseconds != null) {
-            final Date accountLastBillingDate = new Date(Long.parseLong(startBillingDateInMilliseconds));
-            if (!accountLastBillingDate.before(billingPeriodEndDate)) {
-                return;
-            }
-            billingPeriodStartDate = accountLastBillingDate;
-        }
-        chargeAccount(account, billingPeriodStartDate, billingPeriodEndDate);
+    public void chargeAccount(String accountId) throws ApiException {
+        final Account account = accountDao.getById(accountId);
+
+        chargeAccount(account, getDefaultBillingStartDate(), getBillingPeriodEndDate());
     }
 
-    public void chargeAccounts(Date defaultMeasurementStartDate, Date measurementEndDate) throws ApiException {
-        final List<Account> paidSaasAccounts = accountDao.getPaidSaasAccountsWithOldBillingDate(measurementEndDate);
+    public void chargeAccounts(Date billingStartDate, Date billingEndDate) throws ApiException {
+        final List<Account> paidSaasAccounts = accountDao.getPaidSaasAccountsWithOldBillingDate(billingEndDate);
 
         for (Account paidSaasAccount : paidSaasAccounts) {
             try {
-                Date measurementStartDate = defaultMeasurementStartDate;
-                final String startBillingDateInMilliseconds = paidSaasAccount.getAttributes().get("codenvy:billing.date");
-                if (startBillingDateInMilliseconds != null) {
-                    measurementStartDate = new Date(Long.parseLong(startBillingDateInMilliseconds));
-                }
-
-                chargeAccount(paidSaasAccount, measurementStartDate, measurementEndDate);
+                chargeAccount(paidSaasAccount, billingStartDate, billingEndDate);
             } catch (Exception e) {
                 LOG.error(e.getLocalizedMessage(), e);
             }
         }
+
+    }
+    public void chargeAccount(Account account, Date billingStartDate, Date billingEndDate) throws ApiException {
+        final String startBillingDateInMilliseconds = account.getAttributes().get("codenvy:billing.date");
+        if (startBillingDateInMilliseconds != null) {
+            final Date accountLastBillingDate = new Date(Long.parseLong(startBillingDateInMilliseconds));
+            // TODO uncomment
+//            if (!accountLastBillingDate.before(billingEndDate)) {
+//                return;
+//            }
+//            billingStartDate = accountLastBillingDate;
+        }
+        doChargeAccount(account, billingStartDate, billingEndDate);
     }
 
-    public void chargeAccount(Account account, Date startDate, Date endDate) throws ApiException {
+    private void doChargeAccount(Account account, Date startDate, Date endDate) throws ApiException {
         final String accountId = account.getId();
         LOG.info("PAYMENTS# Saas #Start# accountId#{}#", account.getId());
-        final Map<String, Long> memoryUsedReport = new HashMap<>();
-        memoryUsedReport.put("ws1", 30000l);
-        memoryUsedReport.put("ws2", 100000l);
-        memoryUsedReport.put("ws3", 600000l);
-        //= meterBasedStorage.getMemoryUsedReport(accountId, startDate, endDate);
+//        final Map<String, Long> memoryUsedReport = new HashMap<>();
+//        memoryUsedReport.put("ws1", 30000l);
+//        memoryUsedReport.put("ws2", 100000l);
+//        memoryUsedReport.put("ws3", 600000l);
+        final Map<String, Long> memoryUsedReport = meterBasedStorage.getMemoryUsedReport(accountId, startDate.getTime(), endDate.getTime());
 
         final List<String> accountOwnersEmails = getAccountOwnersEmails(account.getId());
 
@@ -182,7 +187,14 @@ public class SaasBillingService {
     }
 
     private Date getDefaultBillingStartDate() {
+        // TODO use period from config
         final Calendar calendar = Calendar.getInstance();
+
+        //calendar.add(Calendar.MONTH, -1);
+        // TODO used to calculate for current month
+        // TODO change to -1 to get prev month
+//        calendar.add(Calendar.MONTH, 1);
+
         calendar.set(Calendar.DATE, calendar.getActualMinimum(Calendar.DAY_OF_MONTH));
         calendar.set(Calendar.HOUR_OF_DAY, calendar.getActualMinimum(Calendar.HOUR_OF_DAY));
         calendar.set(Calendar.MINUTE, 0);
@@ -193,9 +205,12 @@ public class SaasBillingService {
     }
 
     private Date getBillingPeriodEndDate() {
-        // TODO use period from config
         final Calendar calendar = Calendar.getInstance();
+
+        // TODO used to calculate for current month
+        // TODO remove to get prev month
         calendar.add(Calendar.MONTH, 1);
+
         calendar.set(Calendar.DATE, calendar.getActualMinimum(Calendar.DAY_OF_MONTH));
         calendar.set(Calendar.HOUR_OF_DAY, calendar.getActualMinimum(Calendar.HOUR_OF_DAY));
         calendar.set(Calendar.MINUTE, 0);
