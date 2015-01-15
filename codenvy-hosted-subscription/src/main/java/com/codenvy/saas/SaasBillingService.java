@@ -155,6 +155,8 @@ public class SaasBillingService {
         for (Map.Entry<String, Long> wsMemoryUsage : memoryUsedReport.entrySet()) {
             totalRamUsage += wsMemoryUsage.getValue();
         }
+        // TODO
+        totalRamUsage+=614400l;
 
         if (totalRamUsage > freeUsage) {
             final String ccToken = account.getAttributes().get("codenvy:creditCardToken");
