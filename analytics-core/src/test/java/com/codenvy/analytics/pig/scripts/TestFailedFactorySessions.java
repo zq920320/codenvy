@@ -134,11 +134,11 @@ public class TestFailedFactorySessions extends BaseTest {
         LongValueData lvd = (LongValueData)metric.getValue(builder.build());
         assertEquals(lvd.getAsLong(), 2);
 
-        metric = MetricFactory.getMetric(MetricType.FAILED_FACTORY_SESSIONS_LOADING_INCOMPLETE);
+        metric = MetricFactory.getMetric(MetricType.FAILED_FACTORY_SESSIONS_LOADING_CANCELED);
         lvd = (LongValueData)metric.getValue(builder.build());
         assertEquals(lvd.getAsLong(), 2);
 
-        metric = MetricFactory.getMetric(MetricType.FAILED_FACTORY_SESSIONS_WRONG_BROWSER);
+        metric = MetricFactory.getMetric(MetricType.FAILED_FACTORY_SESSIONS_UNSUPPORTED_BROWSER);
         lvd = (LongValueData)metric.getValue(builder.build());
         assertEquals(lvd.getAsLong(), 2);
     }

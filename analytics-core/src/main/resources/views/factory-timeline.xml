@@ -42,7 +42,7 @@
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="workspaces_with_zero_factory_sessions_length"/>
-                <parameter key="description" value="# sessions from not supported browser or close browser"/>
+                <parameter key="description" value="# unsupported browser or canceled loading"/>
             </row>
         </section>
 

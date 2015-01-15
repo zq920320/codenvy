@@ -28,14 +28,14 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"system/admin", "system/manager"})
 @OmitFilters({MetricFilter.WS_ID, MetricFilter.PERSISTENT_WS})
-public class FailedFactorySessionsWrongBrowser  extends FailedFactorySessions {
+public class FailedFactorySessionsUnsupportedBrowser extends AbstractFailedFactorySessions {
 
-    public FailedFactorySessionsWrongBrowser() {
-        super(MetricType.FAILED_FACTORY_SESSIONS_WRONG_BROWSER);
+    public FailedFactorySessionsUnsupportedBrowser() {
+        super(MetricType.FAILED_FACTORY_SESSIONS_UNSUPPORTED_BROWSER);
     }
 
     @Override
     public String getDescription() {
-        return "Failed factory sessions from wrong browser";
+        return "Failed factory sessions after unsupported browser";
     }
 }

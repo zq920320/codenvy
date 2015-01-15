@@ -28,14 +28,14 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"system/admin", "system/manager"})
 @OmitFilters({MetricFilter.WS_ID, MetricFilter.PERSISTENT_WS})
-public class FailedFactorySessionsLoadingIncomplete  extends FailedFactorySessions {
+public class FailedFactorySessionsLoadingCanceled extends AbstractFailedFactorySessions {
 
-    public FailedFactorySessionsLoadingIncomplete() {
-        super(MetricType.FAILED_FACTORY_SESSIONS_LOADING_INCOMPLETE);
+    public FailedFactorySessionsLoadingCanceled() {
+        super(MetricType.FAILED_FACTORY_SESSIONS_LOADING_CANCELED);
     }
 
     @Override
     public String getDescription() {
-        return "Failed factory sessions by loading incomplete";
+        return "Failed factory sessions after canceled loading";
     }
 }

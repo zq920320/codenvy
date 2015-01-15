@@ -37,14 +37,6 @@ public enum ScriptType {
             return params;
         }
     },
-    EVENTS_WAITING {
-        @Override
-        public Set<Parameters> getParams() {
-            Set<Parameters> params = super.getParams();
-            params.add(Parameters.EVENT);
-            return params;
-        }
-    },
     EVENTS_BY_TYPE {
         @Override
         public Set<Parameters> getParams() {
