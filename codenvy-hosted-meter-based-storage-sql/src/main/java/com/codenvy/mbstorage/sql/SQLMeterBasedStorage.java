@@ -89,14 +89,14 @@ public class SQLMeterBasedStorage implements MeterBasedStorage {
 
     private final String QUERY_SELECT_WS_MEMORY_TOTAL = "SELECT " +
                                                         "   SUM(AMOUNT * (LEAST(?, STOP_TIME) - GREATEST(?, START_TIME)) / (60000)), " +
-                                                        "   WORKSPACE_ID" +
+                                                        "   WORKSPACE_ID " +
                                                         "FROM " +
                                                         "  METRICS " +
                                                         "WHERE " +
                                                         "   ACCOUNT_ID=?" +
                                                         "   AND START_TIME<?" +
-                                                        "   AND STOP_TIME>?" +
-                                                        "GROUp BY WORKSPACE_ID";
+                                                        "   AND STOP_TIME>? " +
+                                                        "GROUP BY WORKSPACE_ID";
 
 
     private final ConnectionFactory connectionFactory;

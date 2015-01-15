@@ -43,11 +43,11 @@ public class StorageInitializer {
 
     }
 
-    public StorageInitializer(DataSource dataSource, boolean cleanOnValidationError, String database) {
+    public StorageInitializer(DataSource dataSource, boolean cleanOnValidationError) throws SQLException {
         flyway = new Flyway();
         flyway.setCleanOnValidationError(cleanOnValidationError);
         flyway.setDataSource(dataSource);
-        flyway.setLocations("db/migration/" + database);
+        flyway.setLocations(getScriptLocation());
     }
 
     /**

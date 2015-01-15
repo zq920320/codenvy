@@ -30,9 +30,11 @@ import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 import javax.sql.DataSource;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Map;
 
 public class SQLMeterBasedStorageTest {
 
@@ -73,8 +75,8 @@ public class SQLMeterBasedStorageTest {
     }
 
     @BeforeMethod
-    public void init() {
-        StorageInitializer initializer = new StorageInitializer(dataSource, true, "hsqldb");
+    public void init() throws SQLException {
+        StorageInitializer initializer = new StorageInitializer(dataSource, true);
         initializer.clean();
         initializer.init();
         meterBasedStorage = new SQLMeterBasedStorage(new DataSourceConnectionFactory(dataSource));
@@ -244,6 +246,75 @@ public class SQLMeterBasedStorageTest {
                                     .getMemoryUsed("ac-46534", sdf.parse("10-01-2014 10:00:00").getTime(),
                                                    sdf.parse("10-01-2014 12:10:00").getTime()), (Long)13312L);
 
+    }
+
+    @Test
+    public void shouldGetSumByDifferentWs() throws ServerException, ParseException {
+        //given
+        //when
+        meterBasedStorage.createMemoryUsedRecord(new MemoryUsedMetric(256,
+                                                                      sdf.parse("10-01-2014 11:00:00").getTime(),
+                                                                      sdf.parse("10-01-2014 11:01:00").getTime(),
+                                                                      "usr-123453",
+                                                                      "ac-348798",
+                                                                      "ws-235675423",
+                                                                      "run-2344567"));
+
+        meterBasedStorage.createMemoryUsedRecord(new MemoryUsedMetric(256,
+                                                                      sdf.parse("10-01-2013 10:00:00").getTime(),
+                                                                      sdf.parse("10-01-2013 10:05:00").getTime(),
+                                                                      "usr-123",
+                                                                      "ac-46534",
+                                                                      "ws-235423",
+                                                                      "run-234"));
+
+        meterBasedStorage.createMemoryUsedRecord(new MemoryUsedMetric(256,
+                                                                      sdf.parse("10-01-2014 09:55:00").getTime(),
+                                                                      sdf.parse("10-01-2014 10:05:00").getTime(),
+                                                                      "usr-123",
+                                                                      "ac-46534",
+                                                                      "ws-235423",
+                                                                      "run-234"));
+        meterBasedStorage.createMemoryUsedRecord(new MemoryUsedMetric(256,
+                                                                      sdf.parse("10-01-2014 11:00:00").getTime(),
+                                                                      sdf.parse("10-01-2014 11:07:00").getTime(),
+                                                                      "usr-123",
+                                                                      "ac-46534",
+                                                                      "ws-235423",
+                                                                      "run-234"));
+
+        meterBasedStorage.createMemoryUsedRecord(new MemoryUsedMetric(256,
+                                                                      sdf.parse("10-01-2014 10:00:00").getTime(),
+                                                                      sdf.parse("10-01-2014 11:08:00").getTime(),
+                                                                      "usr-123",
+                                                                      "ac-46534",
+                                                                      "ws-124",
+                                                                      "run-234"));
+
+        meterBasedStorage.createMemoryUsedRecord(new MemoryUsedMetric(1024,
+                                                                      sdf.parse("10-01-2014 12:00:00").getTime(),
+                                                                      sdf.parse("10-01-2014 12:20:00").getTime(),
+                                                                      "usr-123",
+                                                                      "ac-46534",
+                                                                      "ws-235423",
+                                                                      "run-234"));
+
+        meterBasedStorage.createMemoryUsedRecord(new MemoryUsedMetric(256,
+                                                                      sdf.parse("10-01-2015 10:00:00").getTime(),
+                                                                      sdf.parse("10-01-2015 10:05:00").getTime(),
+                                                                      "usr-123",
+                                                                      "ac-46534",
+                                                                      "ws-235423",
+                                                                      "run-234"));
+
+        //then
+
+        Map<String, Long> result = meterBasedStorage
+                .getMemoryUsedReport("ac-46534", sdf.parse("10-01-2014 10:00:00").getTime(),
+                                     sdf.parse("10-01-2014 12:10:00").getTime());
+        Assert.assertEquals(result.get("ws-124"), (Long)17408L);
+        Assert.assertEquals(result.get("ws-235423"), (Long)13312L);
+        Assert.assertEquals(2, result.size());
     }
 
 }

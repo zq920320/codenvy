@@ -50,7 +50,7 @@ public class DataSourceFactoryTest {
         source.setMaxConnections(10);
         source.setPortNumber(49153);
 
-        StorageInitializer initializer = new StorageInitializer(source, true, "hsqldb");
+        StorageInitializer initializer = new StorageInitializer(source, true);
         initializer.init();
 
         SQLMeterBasedStorage sqlMeterBasedStorage = new SQLMeterBasedStorage(new ConnectionFactory() {
