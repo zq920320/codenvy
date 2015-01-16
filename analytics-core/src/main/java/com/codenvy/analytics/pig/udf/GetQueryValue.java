@@ -45,7 +45,7 @@ public class GetQueryValue extends EvalFunc<String> {
         Pattern pattern = Pattern.compile("[?&]" + paramName + "=([^?&]*)"); // find out last occurrence
         Matcher matcher = pattern.matcher(url);
 
-        String parameterValue = "";
+        String parameterValue = null;
 
         while (matcher.find()) {
             parameterValue = matcher.group(1);
