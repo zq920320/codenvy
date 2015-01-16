@@ -19,10 +19,12 @@ package com.codenvy.api.metrics;
 
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
+import com.codenvy.api.project.shared.dto.ProjectDescriptor;
 import com.codenvy.api.runner.ApplicationStatus;
 import com.codenvy.api.runner.RunQueue;
 import com.codenvy.api.runner.RunQueueTask;
 import com.codenvy.api.runner.dto.ApplicationProcessDescriptor;
+import com.codenvy.api.runner.dto.RunRequest;
 
 import org.mockito.Mock;
 import org.mockito.testng.MockitoTestNGListener;
@@ -64,6 +66,10 @@ public class TasksActivityCheckerTest {
     RunQueueTask                 runQueueTask;
     @Mock
     ApplicationProcessDescriptor applicationDescriptor;
+    @Mock
+    RunRequest runRequest;
+    @Mock
+    ProjectDescriptor projectDescriptor;
 
     TasksActivityChecker tasksActivityChecker;
 
@@ -76,6 +82,9 @@ public class TasksActivityCheckerTest {
         ApplicationProcessDescriptor processDescriptor = createProcessDescriptor(PROCESS_ID, currentTimeMillis(), RUNNING);
         when(runQueueTask.getDescriptor()).thenReturn(processDescriptor);
         when(runQueue.getTask(anyLong())).thenReturn(runQueueTask);
+
+        when(runQueueTask.getRequest()).thenReturn(runRequest);
+        when(runRequest.getProjectDescriptor()).thenReturn(projectDescriptor);
     }
 
     @Test
@@ -110,6 +119,8 @@ public class TasksActivityCheckerTest {
         RunQueueTask secondRunQueueTask = mock(RunQueueTask.class);
 
         when(runQueue.getTasks()).thenReturn(new ArrayList(Arrays.asList(runQueueTask, secondRunQueueTask)));
+
+        when(secondRunQueueTask.getRequest()).thenReturn(runRequest);
 
         final ApplicationProcessDescriptor secondDescriptor = createProcessDescriptor(2L, currentTimeMillis() - SCHEDULING_PERIOD, RUNNING);
         when(secondRunQueueTask.getDescriptor()).thenReturn(secondDescriptor);

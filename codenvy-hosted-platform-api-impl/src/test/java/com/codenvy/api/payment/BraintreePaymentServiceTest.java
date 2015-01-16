@@ -132,7 +132,7 @@ public class BraintreePaymentServiceTest {
         service.charge(createSubscription());
     }
 
-    @Test(expectedExceptions = ConflictException.class, expectedExceptionsMessageRegExp = "error message")
+    @Test(expectedExceptions = ForbiddenException.class, expectedExceptionsMessageRegExp = "error message")
     public void shouldThrowConflictExceptionIfChargeWasUnsuccessful() throws Exception {
         prepareSuccessfulCharge();
         when(result.isSuccess()).thenReturn(false);
