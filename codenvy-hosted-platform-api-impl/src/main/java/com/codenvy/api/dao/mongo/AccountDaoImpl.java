@@ -407,7 +407,7 @@ public class AccountDaoImpl implements AccountDao {
         DBObject billingDatePropertyValueLessThanSpecified = new BasicDBObject("value", new BasicDBObject("$lt", String.valueOf(newDate.getTime())));
         DBObject billingDateFits2 = new QueryBuilder().and(billingDatePropertyExist,
                                                            billingDatePropertyValueLessThanSpecified).get();
-        DBObject billingDatePropertyDoesNotExist = QueryBuilder.start("attributes.name").notIn("codenvy:billing.date").get();
+        DBObject billingDatePropertyDoesNotExist = QueryBuilder.start("attributes.name").notIn("[codenvy:billing.date]").get();
         DBObject query2 = new QueryBuilder().and(paidAccountQuery,
                                                  new QueryBuilder().or(billingDatePropertyDoesNotExist,
                                                                        billingDateFits2).get()).get();
