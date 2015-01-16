@@ -28,6 +28,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 import static com.codenvy.analytics.Utils.isAllowedEntities;
 import static com.codenvy.analytics.Utils.isAnonymousUser;
@@ -169,6 +171,19 @@ public abstract class ReadBasedMetric extends AbstractMetric {
             MetricFilter requiredFilter = getClass().getAnnotation(RequiredFilter.class).value();
             if (!context.exists(requiredFilter)) {
                 throw new MetricRestrictionException("Parameter " + requiredFilter + " required to be passed to get the value of the metric");
+            }
+        }
+
+        if (getClass().isAnnotationPresent(RequiredAnyFilter.class)) {
+            Set<String> existedFilters = context.getAll().keySet();
+            Set<String> requiredFilters = new HashSet<>();
+            for (MetricFilter filter : getClass().getAnnotation(RequiredAnyFilter.class).value()) {
+                requiredFilters.add(filter.toString());
+            }
+
+            existedFilters.retainAll(requiredFilters);
+            if (existedFilters.isEmpty()) {
+                throw new MetricRestrictionException("Any parameter " + requiredFilters + " required to be passed to get the value of the metric");
             }
         }
 

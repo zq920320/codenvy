@@ -21,7 +21,7 @@ import com.codenvy.analytics.metrics.AbstractCount;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.OmitFilters;
-import com.codenvy.analytics.metrics.RequiredFilter;
+import com.codenvy.analytics.metrics.RequiredAnyFilter;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -29,7 +29,7 @@ import javax.annotation.security.RolesAllowed;
  * @author Anatoliy Bazko
  */
 @RolesAllowed({"any"})
-@RequiredFilter(MetricFilter.FACTORY)
+@RequiredAnyFilter({MetricFilter.FACTORY, MetricFilter.FACTORY_ID})
 @OmitFilters({MetricFilter.USER_ID, MetricFilter.WS_ID})
 public class FactoryUsed extends AbstractCount {
 

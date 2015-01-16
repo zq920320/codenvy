@@ -471,6 +471,10 @@
                 <field>factory</field>
                 <field>date</field>
             </index>
+            <index name="factory_id">
+                <field>factory</field>
+                <field>date</field>
+            </index>
             <index name="date">
                 <field>date</field>
             </index>
@@ -536,6 +540,10 @@
                 <field>date</field>
             </index>
             <index name="factory">
+                <field>factory</field>
+                <field>date</field>
+            </index>
+            <index name="factory_id">
                 <field>factory</field>
                 <field>date</field>
             </index>
