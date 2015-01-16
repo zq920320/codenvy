@@ -76,7 +76,7 @@ public class Utils {
     public Map<String, String> extractParams(UriInfo info,
                                              String page,
                                              String perPage,
-                                             SecurityContext securityContext) {
+                                             SecurityContext securityContext) throws ParseException {
 
         MultivaluedMap<String, String> parameters = info.getQueryParameters();
         Map<String, String> context = new HashMap<>(parameters.size());
@@ -106,14 +106,14 @@ public class Utils {
         return context;
     }
 
-    public Map<String, String> extractParams(UriInfo info, SecurityContext securityContext) {
+    public Map<String, String> extractParams(UriInfo info, SecurityContext securityContext) throws ParseException {
         return extractParams(info,
                              null,
                              null,
                              securityContext);
     }
 
-    public Map<String, String> extractParams(UriInfo info) {
+    public Map<String, String> extractParams(UriInfo info) throws ParseException {
         return extractParams(info,
                              null,
                              null,
@@ -158,21 +158,17 @@ public class Utils {
 
     }
 
-    private void validateFormDateToDate(Map<String, String> context) {
-        try {
-            String fromDateKey = Parameters.FROM_DATE.toString();
-            Calendar fromDate = com.codenvy.analytics.Utils
-                    .parseDate(context.containsKey(fromDateKey) ? context.get(fromDateKey) : Parameters.FROM_DATE.getDefaultValue());
+    private void validateFormDateToDate(Map<String, String> context) throws ParseException {
+        String fromDateKey = Parameters.FROM_DATE.toString();
+        Calendar fromDate = com.codenvy.analytics.Utils
+                .parseDate(context.containsKey(fromDateKey) ? context.get(fromDateKey) : Parameters.FROM_DATE.getDefaultValue());
 
-            String toDateKey = Parameters.TO_DATE.toString();
-            Calendar toDate = com.codenvy.analytics.Utils
-                    .parseDate(context.containsKey(toDateKey) ? context.get(toDateKey) : Parameters.TO_DATE.getDefaultValue());
+        String toDateKey = Parameters.TO_DATE.toString();
+        Calendar toDate = com.codenvy.analytics.Utils
+                .parseDate(context.containsKey(toDateKey) ? context.get(toDateKey) : Parameters.TO_DATE.getDefaultValue());
 
-            if (fromDate.after(toDate)) {
-                throw new RuntimeException("The parameter " + Parameters.TO_DATE + " must be greater than " + Parameters.FROM_DATE);
-            }
-        } catch (ParseException e) {
-            throw new RuntimeException("Can not parse " + Parameters.FROM_DATE + " or " + Parameters.TO_DATE + " parameters");
+        if (fromDate.after(toDate)) {
+            throw new RuntimeException("The parameter " + Parameters.TO_DATE + " must be greater than " + Parameters.FROM_DATE);
         }
     }
 
