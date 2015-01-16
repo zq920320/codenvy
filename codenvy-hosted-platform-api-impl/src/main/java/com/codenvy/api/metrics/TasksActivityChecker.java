@@ -22,6 +22,7 @@ import com.codenvy.api.runner.RunQueue;
 import com.codenvy.api.runner.RunQueueTask;
 import com.codenvy.api.runner.RunnerException;
 import com.codenvy.api.runner.dto.ApplicationProcessDescriptor;
+import com.codenvy.api.runner.dto.RunRequest;
 import com.codenvy.commons.lang.NamedThreadFactory;
 
 import org.slf4j.Logger;
@@ -86,7 +87,6 @@ public class TasksActivityChecker implements Runnable {
     public void run() {
         for (RunQueueTask runTask : runQueue.getTasks()) {
             ApplicationProcessDescriptor descriptor;
-
             try {
                 descriptor = runTask.getDescriptor();
             } catch (RunnerException e) {
@@ -97,8 +97,17 @@ public class TasksActivityChecker implements Runnable {
                 continue;
             }
 
+            final RunRequest request = runTask.getRequest();
             if (RUNNING.equals(descriptor.getStatus()) && isExpiredTickPeriod(descriptor.getStartTime())) {
                 resourcesUsageTracker.resourceInUse(descriptor.getProcessId());
+                LOG.info("EVENT#run-usage# WS#{}# USER#{}# PROJECT#{}# TYPE#{}# ID#{}# MEMORY#{}# USAGE-TIME#{}#",
+                         descriptor.getWorkspace(),
+                         descriptor.getUserName(),
+                         descriptor.getProject(),
+                         request.getProjectDescriptor().getType(),
+                         descriptor.getCreationTime() + "-" + descriptor.getProcessId(),
+                         request.getMemorySize(),
+                         currentTimeMillis() - descriptor.getStartTime());
             }
         }
     }
