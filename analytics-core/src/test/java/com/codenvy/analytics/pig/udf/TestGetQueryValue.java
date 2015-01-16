@@ -54,10 +54,10 @@ public class TestGetQueryValue extends BaseTest {
     @DataProvider(name = "provider")
     public Object[][] createData() {
         return new Object[][]{
-                {"aaa", ""},
+                {"aaa", null},
                 {"bbb&ptype=Type", "Type"},
                 {"bbb&ptype=Type&ccc", "Type"},
-                {"https://codenvy.com/factory?action=openproject&aptype=javaone", ""}
+                {"https://codenvy.com/factory?action=openproject&aptype=javaone", null}
         };
     }
 }
