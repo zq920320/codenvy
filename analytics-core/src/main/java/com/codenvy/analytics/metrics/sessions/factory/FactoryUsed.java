@@ -18,12 +18,20 @@
 package com.codenvy.analytics.metrics.sessions.factory;
 
 import com.codenvy.analytics.metrics.AbstractCount;
+import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.OmitFilters;
 import com.codenvy.analytics.metrics.RequiredAnyFilter;
+import com.codenvy.analytics.persistent.MongoDataLoader;
 
 import javax.annotation.security.RolesAllowed;
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
+
+import static com.codenvy.analytics.Utils.getFilterAsSet;
+import static com.codenvy.analytics.Utils.getFilterAsString;
 
 /**
  * @author Anatoliy Bazko
@@ -40,5 +48,29 @@ public class FactoryUsed extends AbstractCount {
     @Override
     public String getDescription() {
         return "The number of factory usage";
+    }
+
+    @Override
+    public Context applySpecificFilter(Context clauses) throws IOException {
+        Object obj = clauses.get(MetricFilter.FACTORY);
+        if (obj instanceof String) {
+            String factory = (String)obj;
+            boolean exclude = factory.startsWith(MongoDataLoader.EXCLUDE_SIGN);
+            if (exclude) {
+                factory = factory.substring(MongoDataLoader.EXCLUDE_SIGN.length());
+            }
+
+            Set<String> filters = new HashSet<>();
+            for (String s : getFilterAsSet(factory)) {
+                filters.add(s);
+                filters.add(s.replace("/factory?id=", "/f?id="));
+                filters.add(s.replace("/f?id=", "/factory?id="));
+            }
+
+            clauses = clauses.cloneAndPut(MetricFilter.FACTORY, (exclude ? MongoDataLoader.EXCLUDE_SIGN : "") + getFilterAsString(filters));
+        }
+
+
+        return super.applySpecificFilter(clauses);
     }
 }

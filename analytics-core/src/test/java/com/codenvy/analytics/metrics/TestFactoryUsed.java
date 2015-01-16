@@ -40,11 +40,11 @@ public class TestFactoryUsed extends BaseTest {
     public void setUp() throws Exception {
         List<Event> events = new ArrayList<>();
 
-        events.add(Event.Builder.createFactoryUrlAcceptedEvent(TWID1, "factory?id=1", "referrer1", "org1", "affiliate1")
+        events.add(Event.Builder.createFactoryUrlAcceptedEvent(TWID1, "factory/factory/?id=1", "referrer1", "org1", "affiliate1")
                                 .withDate("2013-11-20").withTime("10:00:00").build());
-        events.add(Event.Builder.createFactoryUrlAcceptedEvent(TWID2, "factory?id=1", "referrer1", "org1", "affiliate1")
+        events.add(Event.Builder.createFactoryUrlAcceptedEvent(TWID2, "factory/f?id=1", "referrer1", "org1", "affiliate1")
                                 .withDate("2013-11-20").withTime("11:00:00").build());
-        events.add(Event.Builder.createFactoryUrlAcceptedEvent(TWID3, "factory?id=2", "referrer1", "org1", "affiliate1")
+        events.add(Event.Builder.createFactoryUrlAcceptedEvent(TWID1, "factory/factory?id=1", "referrer1", "org1", "affiliate1")
                                 .withDate("2013-11-20").withTime("12:00:00").build());
 
         File log = LogGenerator.generateLog(events);
@@ -60,12 +60,24 @@ public class TestFactoryUsed extends BaseTest {
     @Test
     public void testFactoryUsedByFactoryUrl() throws Exception {
         Context.Builder builder = new Context.Builder();
-        builder.put(MetricFilter.FACTORY, "factory?id=1");
+        builder.put(MetricFilter.FACTORY, "factory/factory?id=1");
 
         Metric metric = MetricFactory.getMetric(MetricType.FACTORY_USED);
         LongValueData v = getAsLong(metric, builder.build());
 
-        assertEquals(v.getAsLong(), 2L);
+        assertEquals(v.getAsLong(), 3L);
+    }
+
+
+    @Test
+    public void testFactoryUsedByShorterFactoryUrl() throws Exception {
+        Context.Builder builder = new Context.Builder();
+        builder.put(MetricFilter.FACTORY, "factory/f?id=1");
+
+        Metric metric = MetricFactory.getMetric(MetricType.FACTORY_USED);
+        LongValueData v = getAsLong(metric, builder.build());
+
+        assertEquals(v.getAsLong(), 3L);
     }
 
     @Test
@@ -76,6 +88,6 @@ public class TestFactoryUsed extends BaseTest {
         Metric metric = MetricFactory.getMetric(MetricType.FACTORY_USED);
         LongValueData v = getAsLong(metric, builder.build());
 
-        assertEquals(v.getAsLong(), 2L);
+        assertEquals(v.getAsLong(), 3L);
     }
 }

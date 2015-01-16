@@ -392,7 +392,7 @@ DEFINE addEventIndicator(W, X,  eventParam, fieldParam, inactiveIntervalParam) R
 ---------------------------------------------------------------------------
 DEFINE extractFactoryId(X) RETURNS Y {
   e1 = extractUrlParam($X, 'FACTORY-URL', 'factoryUrl');
-  $Y = FOREACH e1 GENERATE *, (GetQueryValue(factoryUrl, 'id') == '' ? NULL : GetQueryValue(factoryUrl, 'id')) AS factoryId;
+  $Y = FOREACH e1 GENERATE *, GetQueryValue(factoryUrl, 'id') AS factoryId;
 };
 
 
