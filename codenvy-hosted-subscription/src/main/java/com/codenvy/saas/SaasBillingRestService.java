@@ -17,6 +17,7 @@
  */
 package com.codenvy.saas;
 
+import com.codenvy.api.account.server.dao.Account;
 import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.core.ApiException;
 
@@ -26,6 +27,7 @@ import javax.inject.Singleton;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import java.util.Calendar;
 
 /**
  * Service to call charging over REST
@@ -49,7 +51,7 @@ public class SaasBillingRestService {
     @POST
     @Path("charge")
     @RolesAllowed({"system/admin", "system/manager"})
-    public void chargeAccountsForPreviousPeriodAsynchronously() throws ApiException {
+    public void chargeAccountsForPreviousPeriod() throws ApiException {
         saasBillingService.chargeAccounts();
     }
 
@@ -58,5 +60,29 @@ public class SaasBillingRestService {
     @RolesAllowed({"system/admin", "system/manager"})
     public void chargeAccountForPreviousPeriod(@PathParam("accountId") String accountId) throws ApiException {
         saasBillingService.chargeAccount(accountId);
+    }
+
+    @POST
+    @Path("charge/{accountId}/current")
+    @RolesAllowed({"system/admin", "system/manager"})
+    public void chargeAccountForCurrentMonth(@PathParam("accountId") String accountId) throws ApiException {
+        final Account account = accountDao.getById(accountId);
+
+        final Calendar currentMonthStart = Calendar.getInstance();
+        currentMonthStart.set(Calendar.DATE, currentMonthStart.getActualMinimum(Calendar.DAY_OF_MONTH));
+        currentMonthStart.set(Calendar.HOUR_OF_DAY, currentMonthStart.getActualMinimum(Calendar.HOUR_OF_DAY));
+        currentMonthStart.set(Calendar.MINUTE, 0);
+        currentMonthStart.set(Calendar.SECOND, 0);
+        currentMonthStart.set(Calendar.MILLISECOND, 0);
+
+        final Calendar currentMonthEnd = Calendar.getInstance();
+        currentMonthEnd.add(Calendar.MONTH, 1);
+        currentMonthEnd.set(Calendar.DATE, currentMonthEnd.getActualMinimum(Calendar.DAY_OF_MONTH));
+        currentMonthEnd.set(Calendar.HOUR_OF_DAY, currentMonthEnd.getActualMinimum(Calendar.HOUR_OF_DAY));
+        currentMonthEnd.set(Calendar.MINUTE, 0);
+        currentMonthEnd.set(Calendar.SECOND, 0);
+        currentMonthEnd.set(Calendar.MILLISECOND, 0);
+
+        saasBillingService.chargeAccount(account, currentMonthStart.getTime(), currentMonthEnd.getTime());
     }
 }
