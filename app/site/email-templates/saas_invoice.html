@@ -24,13 +24,31 @@
     <title></title>
 </head>
 <body>
-Saas invoice
+Saas successful charge
 <table>
   <tr>
     <th>Workspace</th>
     <th>Resources consumption GB/H</th>
   </tr>
 ${resource.consumption}
+</table>
+<table>
+  <tr>
+    <th>Free resources</th>
+    <th>${resource.free}</th>
+  </tr>
+  <tr>
+    <th>Total resource consuption</th>
+    <th>${resource.consumption.total}</th>
+  </tr>
+  <tr>
+    <th>Resources price for GB/H</th>
+    <th>${resource.price}</th>
+  </tr>
+  <tr>
+    <th>Amount</th>
+    <th>${resource.amount}</th>
+  </tr>
 </table>
 </body>
 </html>
