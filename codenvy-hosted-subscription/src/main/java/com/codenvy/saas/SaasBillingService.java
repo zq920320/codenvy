@@ -44,7 +44,6 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -70,8 +69,10 @@ public class SaasBillingService {
     private final String            billingAddress;
     private final String            invoiceSubject;
     private final double            price;
+    private final String            invoiceNoPaymentSubject;
     private final String            billingFailedSubject;
     private final String            successfulChargeMailTemplate;
+    private final String            invoiceNoPaymentTemplate;
     private final String            unsuccessfulChargeMailTemplate;
     private final SimpleDateFormat  dateFormat;
 
@@ -85,8 +86,10 @@ public class SaasBillingService {
                               @Named("subscription.saas.price") double price,
                               @Named("subscription.saas.mail.address") String billingAddress,
                               @Named("subscription.saas.mail.invoice.subject") String invoiceSubject,
+                              @Named("subscription.saas.mail.invoice.no_payment.subject") String invoiceNoPaymentSubject,
                               @Named("subscription.saas.mail.billing.failed.subject") String billingFailedSubject,
                               @Named("subscription.saas.mail.template.success") String successfulChargeMailTemplate,
+                              @Named("subscription.saas.mail.template.success.no_payment") String invoiceNoPaymentTemplate,
                               @Named("subscription.saas.mail.template.fail") String unsuccessfulChargeMailTemplate) {
         this.accountDao = accountDao;
         this.userDao = userDao;
@@ -97,8 +100,10 @@ public class SaasBillingService {
         this.billingAddress = billingAddress;
         this.invoiceSubject = invoiceSubject;
         this.price = price;
+        this.invoiceNoPaymentSubject = invoiceNoPaymentSubject;
         this.billingFailedSubject = billingFailedSubject;
         this.successfulChargeMailTemplate = successfulChargeMailTemplate;
+        this.invoiceNoPaymentTemplate = invoiceNoPaymentTemplate;
         this.unsuccessfulChargeMailTemplate = unsuccessfulChargeMailTemplate;
 
         dateFormat = new SimpleDateFormat("HH:mm:ss MM/dd/yy");
@@ -143,10 +148,6 @@ public class SaasBillingService {
     private void doChargeAccount(Account account, Date startDate, Date endDate) throws ApiException {
         final String accountId = account.getId();
         LOG.info("PAYMENTS# Saas #Start# accountId#{}#", account.getId());
-//        final Map<String, Long> memoryUsedReport = new HashMap<>();
-//        memoryUsedReport.put("ws1", 30000l);
-//        memoryUsedReport.put("ws2", 100000l);
-//        memoryUsedReport.put("ws3", 600000l);
         final Map<String, Long> memoryUsedReport = meterBasedStorage.getMemoryUsedReport(accountId, startDate.getTime(), endDate.getTime());
 
         final List<String> accountOwnersEmails = getAccountOwnersEmails(account.getId());
@@ -155,8 +156,7 @@ public class SaasBillingService {
         for (Map.Entry<String, Long> wsMemoryUsage : memoryUsedReport.entrySet()) {
             totalRamUsage += wsMemoryUsage.getValue();
         }
-        // TODO
-        totalRamUsage+=614400l;
+        double chargeAmount = 0;
 
         if (totalRamUsage > freeUsage) {
             final String ccToken = account.getAttributes().get("codenvy:creditCardToken");
@@ -170,33 +170,28 @@ public class SaasBillingService {
                                               dateFormat.format(endDate);
 
             try {
-                final double chargeAmount = Math.ceil(((double)totalRamUsage - freeUsage) / GIGABYTE_HOUR_IN_MEGABYTE_MINUTE) * price;
+                chargeAmount = Math.ceil(((double)totalRamUsage - freeUsage) / GIGABYTE_HOUR_IN_MEGABYTE_MINUTE) * price;
                 paymentService.charge(ccToken, chargeAmount, accountId, paymentDescription);
             } catch (ForbiddenException e) {
-                sendBillingFailedEmail(accountOwnersEmails);
+                sendMailWithConsumption(accountOwnersEmails, memoryUsedReport, billingFailedSubject, unsuccessfulChargeMailTemplate, chargeAmount);
                 throw e;
             }
         }
 
         account.getAttributes().put("codenvy:billing.date", String.valueOf(endDate.getTime()));
-        accountDao.update(account);
+        // TODO uncomment to prevent multiple charges for the same period
+//        accountDao.update(account);
 
         if (totalRamUsage > freeUsage) {
-            sendInvoiceEmail(accountOwnersEmails, memoryUsedReport);
+            sendMailWithConsumption(accountOwnersEmails, memoryUsedReport, invoiceSubject, successfulChargeMailTemplate, chargeAmount);
         } else {
-            // TODO send email that says user consumed less than free amount
+            sendMailWithConsumption(accountOwnersEmails, memoryUsedReport, invoiceNoPaymentSubject, invoiceNoPaymentTemplate, 0);
         }
     }
 
     private Date getDefaultBillingStartDate() {
-        // TODO use period from config
         final Calendar calendar = Calendar.getInstance();
-
-        //calendar.add(Calendar.MONTH, -1);
-        // TODO used to calculate for current month
-        // TODO change to -1 to get prev month
-//        calendar.add(Calendar.MONTH, 1);
-
+        calendar.add(Calendar.MONTH, -1);
         calendar.set(Calendar.DATE, calendar.getActualMinimum(Calendar.DAY_OF_MONTH));
         calendar.set(Calendar.HOUR_OF_DAY, calendar.getActualMinimum(Calendar.HOUR_OF_DAY));
         calendar.set(Calendar.MINUTE, 0);
@@ -208,11 +203,6 @@ public class SaasBillingService {
 
     private Date getBillingPeriodEndDate() {
         final Calendar calendar = Calendar.getInstance();
-
-        // TODO used to calculate for current month
-        // TODO remove to get prev month
-        calendar.add(Calendar.MONTH, 1);
-
         calendar.set(Calendar.DATE, calendar.getActualMinimum(Calendar.DAY_OF_MONTH));
         calendar.set(Calendar.HOUR_OF_DAY, calendar.getActualMinimum(Calendar.HOUR_OF_DAY));
         calendar.set(Calendar.MINUTE, 0);
@@ -222,37 +212,33 @@ public class SaasBillingService {
         return calendar.getTime();
     }
 
-    private void sendBillingFailedEmail(List<String> accountOwnersEmails) {
-        try {
-            mailSenderClient.sendMail(billingAddress,
-                                      Strings.join(", ", accountOwnersEmails.toArray(new String[0])),
-                                      null,
-                                      billingFailedSubject,
-                                      MediaType.TEXT_HTML,
-                                      IoUtil.readAndCloseQuietly(IoUtil.getResource(unsuccessfulChargeMailTemplate)),
-                                      new HashMap<String, String>());
-        } catch (IOException | MessagingException innerException) {
-            LOG.error(innerException.getLocalizedMessage(), innerException);
-        }
-    }
-
-    private void sendInvoiceEmail(List<String> accountOwnersEmails, Map<String, Long> consumption) {
+    private void sendMailWithConsumption(List<String> accountOwnersEmails, Map<String, Long> consumption, String subject,
+                                         String mailTemplate, double amount) {
+        long totalConsumption = 0;
         StringBuilder stringBuilder = new StringBuilder();
         for (Map.Entry<String, Long> resourceConsumption : consumption.entrySet()) {
+            totalConsumption+=resourceConsumption.getValue();
             stringBuilder.append("<tr><td>")
                          .append(resourceConsumption.getKey())
                          .append("</td><td>")
                          .append((double)resourceConsumption.getValue() / GIGABYTE_HOUR_IN_MEGABYTE_MINUTE)
                          .append("</td></tr>");
         }
+        final HashMap<String, String> mailTemplateProperties = new HashMap<>();
+        mailTemplateProperties.put("resource.consumption", stringBuilder.toString());
+        mailTemplateProperties.put("resource.consumption.total", String.valueOf(totalConsumption));
+        mailTemplateProperties.put("resource.free", String.valueOf((double)freeUsage / GIGABYTE_HOUR_IN_MEGABYTE_MINUTE));
+        mailTemplateProperties.put("resource.price", String.valueOf(price));
+        mailTemplateProperties.put("resource.amount", String.valueOf(amount));
+
         try {
             mailSenderClient.sendMail(billingAddress,
                                       Strings.join(", ", accountOwnersEmails.toArray(new String[0])),
                                       null,
-                                      invoiceSubject,
+                                      subject,
                                       MediaType.TEXT_HTML,
-                                      IoUtil.readAndCloseQuietly(IoUtil.getResource(successfulChargeMailTemplate)),
-                                      Collections.singletonMap("resource.consumption", stringBuilder.toString()));
+                                      IoUtil.readAndCloseQuietly(IoUtil.getResource(mailTemplate)),
+                                      mailTemplateProperties);
         } catch (IOException | MessagingException e) {
             LOG.error(e.getLocalizedMessage(), e);
         }
