@@ -20,6 +20,8 @@ package com.codenvy.factory.storage.mongo;
 import de.bwaldvogel.mongo.MongoServer;
 import de.bwaldvogel.mongo.backend.memory.MemoryBackend;
 
+import com.codenvy.api.core.NotFoundException;
+import com.codenvy.api.core.ServerException;
 import com.codenvy.api.factory.FactoryBuilder;
 import com.codenvy.api.factory.FactoryImage;
 import com.codenvy.api.factory.FactoryStore;
@@ -152,6 +154,17 @@ public class MongoDBFactoryStoreTest {
         assertEquals(result, factory);
     }
 
+    /**
+     * Checks we can't save a null factory
+     * Expects a server exception
+     * @throws Exception
+     */
+    @Test(expectedExceptions = ServerException.class)
+    public void testSaveNulFactory() throws Exception {
+        store.saveFactory(null, null);
+
+    }
+
     @Test
     public void testRemoveFactory() throws Exception {
 
@@ -236,5 +249,88 @@ public class MongoDBFactoryStoreTest {
         assertEquals(2, store.findByAttribute(Pair.of("project.name", "projectName")).size());
         assertEquals(1, store.findByAttribute(Pair.of("project.name", "projectName"), Pair.of("project.type", "projectType")).size());
         assertEquals(1, store.findByAttribute(Pair.of("creator.userId", "userOK"), Pair.of("project.type", "projectType")).size());
+    }
+
+    /**
+     * Checks that we can update a factory that has images and images are unchanged after the update
+     * @throws Exception if there is failure
+     */
+    @Test
+    public void testUpdateFactory() throws Exception {
+        Factory factory = DtoFactory.getInstance().createDto(Factory.class);
+        factory.setV("2.1");
+
+        factory.setCreator(DtoFactory.getInstance().createDto(Author.class)
+                                     .withName("Florent")
+                                     .withAccountId("acc1")
+                                     .withCreated(System.currentTimeMillis())
+                                     .withEmail("test@codenvy.com"));
+
+        factory.setProject(DtoFactory.getInstance().createDto(NewProject.class)
+                                     .withName("projectName")
+                                     .withType("AngularJS")
+                                     .withDescription("Description of project"));
+
+        factory.setSource(DtoFactory.getInstance().createDto(Source.class)
+                                    .withProject(DtoFactory.getInstance().createDto(ImportSourceDescriptor.class)
+                                                           .withType("git")
+                                                           .withLocation("gitUrl")));
+
+
+        // new Factory
+        Factory updatedFactory = DtoFactory.getInstance().clone(factory);
+        updatedFactory.getSource().getProject().setLocation("gitUrlChanged");
+
+
+        Set<FactoryImage> images = new HashSet<>();
+        FactoryImage image = new FactoryImage();
+        byte[] b = new byte[4096];
+        new Random().nextBytes(b);
+        image.setName("test123.jpg");
+        image.setMediaType("image/jpeg");
+        image.setImageData(b);
+        images.add(image);
+        // First save a factory
+        String id = store.saveFactory(factory, images);
+
+        // now update factory
+        store.updateFactory(id, updatedFactory);
+
+
+        DBObject query = new BasicDBObject("_id", id);
+        DBObject res = (DBObject)collection.findOne(query).get("factoryurl");
+
+        Factory result = DtoFactory.getInstance().createDtoFromJson(res.toString(), Factory.class);
+
+        // check factory has been modified
+        assertEquals(result.getSource().getProject().getLocation(), "gitUrlChanged");
+
+
+        // check images have not been modified
+        Set<FactoryImage> newImages = store.getFactoryImages(id, null);
+        assertNotNull(newImages);
+        FactoryImage newImage = newImages.iterator().next();
+
+        assertTrue(newImage.getName().endsWith(image.getName()));
+        assertEquals(newImage.getMediaType(), image.getMediaType());
+        assertEquals(newImage.getImageData(), image.getImageData());
+
+    }
+
+    /**
+     * Check that exception is thrown when using an unknown id
+     * @throws Exception the NotFoundException expectd one
+     */
+    @Test(expectedExceptions = NotFoundException.class)
+    public void testUpdateUnknownFactory() throws Exception {
+        Factory factory = DtoFactory.getInstance().createDto(Factory.class);
+        factory.setV("2.1");
+
+        // new Factory
+        Factory updatedFactory = DtoFactory.getInstance().clone(factory);
+
+        // now update factory
+        store.updateFactory("1234", updatedFactory);
+
     }
 }
