@@ -46,6 +46,7 @@
         <module>codenvy-hosted-sso-server-organization</module>
         <module>codenvy-hosted-fs-migration</module>
         <module>codenvy-hosted-meter-based-storage-sql</module>
+        <module>codenvy-hosted-meter-based-storage-jmh</module>
     </modules>
     <scm>
         <connection>scm:git:git@github.com:codenvy/hosted-infrastructure.git</connection>

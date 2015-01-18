@@ -1,0 +1,4 @@
+docker run -d -p 5432:5432 -e POSTGRES_USER=codenvy -e POSTGRES_PASSWORD=codenvy  postgres
+docker run -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=codenvy -e MYSQL_USER=codenvy -e MYSQL_PASSWORD=codenvy  -e MYSQL_DATABASE=codenvy mysql
+
+rm -rf target/* && ./benchmark.sh quick -p dbType=postgres

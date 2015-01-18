@@ -127,6 +127,7 @@ public class SQLMeterBasedStorage implements MeterBasedStorage {
                 }
             }
         } catch (SQLException e) {
+            e.printStackTrace();
             throw new ServerException(e.getLocalizedMessage(), e);
         }
 
