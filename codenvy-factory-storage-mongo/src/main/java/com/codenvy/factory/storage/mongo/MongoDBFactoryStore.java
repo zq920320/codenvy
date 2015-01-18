@@ -2,7 +2,7 @@
  * CODENVY CONFIDENTIAL
  * __________________
  *
- *  [2012] - [2014] Codenvy, S.A.
+ *  [2012] - [2015] Codenvy, S.A.
  *  All Rights Reserved.
  *
  * NOTICE:  All information contained herein is, and remains
@@ -19,6 +19,8 @@ package com.codenvy.factory.storage.mongo;
 
 
 import com.codenvy.api.core.ApiException;
+import com.codenvy.api.core.NotFoundException;
+import com.codenvy.api.core.ServerException;
 import com.codenvy.api.factory.FactoryImage;
 import com.codenvy.api.factory.FactoryStore;
 import com.codenvy.api.factory.dto.Factory;
@@ -48,6 +50,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import static java.lang.String.format;
 
 /** Implementation of the MongoDB factory storage. */
 
@@ -94,6 +98,10 @@ public class MongoDBFactoryStore implements FactoryStore {
     @Override
     public String saveFactory(Factory factoryUrl, Set<FactoryImage> images) throws ApiException {
 
+        if (factoryUrl == null) {
+            throw new ServerException("The factory shouldn't be null");
+        }
+
         factoryUrl.setId(NameGenerator.generate("", 16));
 
         List<DBObject> imageList = new ArrayList<>();
@@ -137,7 +145,7 @@ public class MongoDBFactoryStore implements FactoryStore {
         List<Factory> result = new ArrayList<>();
         BasicDBObject query = new BasicDBObject();
         for (Pair<String, String> one : attributes) {
-            query.append(String.format("factoryurl.%s", one.first), one.second);
+            query.append(format("factoryurl.%s", one.first), one.second);
         }
         DBCursor cursor = factories.find(query);
         for (DBObject one :cursor) {
@@ -174,5 +182,42 @@ public class MongoDBFactoryStore implements FactoryStore {
         }
 
         return images;
+    }
+
+
+    /**
+     * Update factory at storage.
+     *
+     * @param factoryId
+     *         - factory information
+     * @param factory
+     *         - factory information
+     * @return - if of stored factory
+     * @throws com.codenvy.api.core.NotFoundException if the given factory ID is not found
+     * @throws com.codenvy.api.core.ServerException if factory is null
+     */
+    @Override
+    public String updateFactory(String factoryId, Factory factory) throws NotFoundException, ServerException {
+
+        if (factory == null) {
+            throw new ServerException("The factory shouldn't be null");
+        }
+
+        DBObject query = new BasicDBObject("_id", factoryId);
+        long res = factories.count(query);
+        if (res == 0) {
+            throw new NotFoundException(format("The factory with ID %s has not been found.", factoryId));
+        }
+        final Factory clonedFactory = DtoFactory.getInstance().clone(factory);
+        clonedFactory.setId(factoryId);
+
+        BasicDBObject factoryReplacement = new BasicDBObject("$set",
+                                                             new BasicDBObject("factoryurl",
+                                                                               JSON.parse(DtoFactory.getInstance().toJson(clonedFactory))));
+
+        factories.update(query, factoryReplacement);
+
+        // return the factory ID
+        return factory.getId();
     }
 }
