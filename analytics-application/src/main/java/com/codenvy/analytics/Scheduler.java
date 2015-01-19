@@ -165,21 +165,21 @@ public class Scheduler implements ServletContextListener {
         if (runCondition.contains(",")) {
             String[] dates = runCondition.split(",");
             for (String date : dates) {
-                doExecute(job, date, date, forceRun);
+                executeJob(job, date, date, forceRun);
             }
         } else if (runCondition.contains("-")) {
             String[] dates = runCondition.split("-");
-            doExecute(job, dates[0], dates[1], forceRun);
+            executeJob(job, dates[0], dates[1], forceRun);
         } else {
-            doExecute(job, runCondition, runCondition, forceRun);
+            executeJob(job, runCondition, runCondition, forceRun);
         }
     }
 
     private void executeForAllTime(Feature job, boolean forceRun) throws Exception {
-        doExecute(job, Parameters.FROM_DATE.getDefaultValue(), Parameters.TO_DATE.getDefaultValue(), forceRun);
+        executeJob(job, Parameters.FROM_DATE.getDefaultValue(), Parameters.TO_DATE.getDefaultValue(), forceRun);
     }
 
-    private void doExecute(Feature job, String fromDateParam, String toDateParam, boolean forceRun) throws Exception {
+    public static void executeJob(Feature job, String fromDateParam, String toDateParam, boolean forceRun) throws Exception {
         if (forceRun || job.isAvailable()) {
             Context.Builder builder = new Context.Builder();
 
@@ -205,7 +205,7 @@ public class Scheduler implements ServletContextListener {
     }
 
     private void executeForLastDay(Feature job, boolean forceRun) throws Exception {
-        doExecute(job, Parameters.TO_DATE.getDefaultValue(), Parameters.TO_DATE.getDefaultValue(), forceRun);
+        executeJob(job, Parameters.TO_DATE.getDefaultValue(), Parameters.TO_DATE.getDefaultValue(), forceRun);
     }
 
     /** Creates scheduler and adds available jobs. */
