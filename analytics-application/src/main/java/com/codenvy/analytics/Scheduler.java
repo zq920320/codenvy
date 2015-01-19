@@ -179,6 +179,28 @@ public class Scheduler implements ServletContextListener {
         executeJob(job, Parameters.FROM_DATE.getDefaultValue(), Parameters.TO_DATE.getDefaultValue(), forceRun);
     }
 
+    /**
+     * Launches a specific job for arbitrary date interval.
+     *
+     * @param job
+     *         one of the jobs:
+     *         analytics.scheduler.force_run_class=com.codenvy.analytics.services.PigRunnerFeature
+     *         analytics.scheduler.force_run_class=com.codenvy.analytics.services.DataComputationFeature
+     *         analytics.scheduler.force_run_class=com.codenvy.analytics.services.DataIntegrityFeature
+     *         analytics.scheduler.force_run_class=com.codenvy.analytics.services.ViewBuilderFeature
+     *         analytics.scheduler.force_run_class=com.codenvy.analytics.services.LogCheckerFeature
+     *         analytics.scheduler.force_run_class=com.codenvy.analytics.services.ReportSenderFeature
+     *         analytics.scheduler.force_run_class=com.codenvy.analytics.services.ActOnFeature
+     *         analytics.scheduler.force_run_class=com.codenvy.analytics.services.MarketoInitializerFeature
+     *         analytics.scheduler.force_run_class=com.codenvy.analytics.services.MarketoUpdaterFeature
+     *         analytics.scheduler.force_run_class=com.codenvy.analytics.services.ReindexerFeature
+     * @param fromDateParam
+     *         the beginning of the date interval in format yyyyMMdd
+     * @param toDateParam
+     *         the ending of the date interval in format yyyyMMdd
+     * @param forceRun
+     *         launch job despite that it was disabled into the configuration
+     */
     public static void executeJob(Feature job, String fromDateParam, String toDateParam, boolean forceRun) throws Exception {
         if (forceRun || job.isAvailable()) {
             Context.Builder builder = new Context.Builder();

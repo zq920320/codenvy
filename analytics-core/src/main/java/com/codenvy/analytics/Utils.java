@@ -40,7 +40,6 @@ import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
-import javax.annotation.Nullable;
 import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -58,7 +57,6 @@ import java.util.regex.Pattern;
 
 import static com.codenvy.analytics.datamodel.ValueDataUtil.getAsList;
 import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsMap;
-import static java.lang.String.format;
 import static java.net.URLDecoder.decode;
 
 
@@ -447,14 +445,15 @@ public class Utils {
     }
 
     /**
-     * @throws IllegalArgumentException if fieldName == null, or fieldName is empty, or maximumFractionDigits < 0.
+     * @throws IllegalArgumentException
+     *         if fieldName == null, or fieldName is empty, or maximumFractionDigits < 0.
      */
-    public static BasicDBObject getTruncOperation(String fieldName, int maximumFractionDigits)  throws IllegalArgumentException {
+    public static BasicDBObject getTruncOperation(String fieldName, int maximumFractionDigits) throws IllegalArgumentException {
         if (fieldName == null || fieldName.isEmpty() || maximumFractionDigits < 0) {
             throw new IllegalArgumentException();
         }
 
-        final long multiplier = (long) Math.pow(10, maximumFractionDigits);
+        final long multiplier = (long)Math.pow(10, maximumFractionDigits);
         final String fieldToken = "$" + fieldName;
 
         final BasicDBObject multiply = new BasicDBObject("$multiply", new BasicDBList() {{

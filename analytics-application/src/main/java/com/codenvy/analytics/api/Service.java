@@ -40,7 +40,6 @@ import java.text.ParseException;
 /**
  * @author Anatoliy Bazko
  */
-@javax.inject.Singleton
 @Path("service")
 public class Service {
 
@@ -53,6 +52,27 @@ public class Service {
         this.utils = utils;
     }
 
+    /**
+     * Launches a specific job for arbitrary date interval.
+     * This method avoids restarting tomcat to launch given job at startup.
+     *
+     * @param jobClass
+     *         one of the jobs:
+     *         analytics.scheduler.force_run_class=com.codenvy.analytics.services.PigRunnerFeature
+     *         analytics.scheduler.force_run_class=com.codenvy.analytics.services.DataComputationFeature
+     *         analytics.scheduler.force_run_class=com.codenvy.analytics.services.DataIntegrityFeature
+     *         analytics.scheduler.force_run_class=com.codenvy.analytics.services.ViewBuilderFeature
+     *         analytics.scheduler.force_run_class=com.codenvy.analytics.services.LogCheckerFeature
+     *         analytics.scheduler.force_run_class=com.codenvy.analytics.services.ReportSenderFeature
+     *         analytics.scheduler.force_run_class=com.codenvy.analytics.services.ActOnFeature
+     *         analytics.scheduler.force_run_class=com.codenvy.analytics.services.MarketoInitializerFeature
+     *         analytics.scheduler.force_run_class=com.codenvy.analytics.services.MarketoUpdaterFeature
+     *         analytics.scheduler.force_run_class=com.codenvy.analytics.services.ReindexerFeature
+     * @param fromDate
+     *         the beginning of the date interval in format yyyyMMdd
+     * @param toDate
+     *         the ending of the date interval in format yyyyMMdd
+     */
     @GET
     @Path("launch/{job}/{fromDate}/{toDate}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -61,7 +81,6 @@ public class Service {
                               @PathParam("fromDate") String fromDate,
                               @PathParam("toDate") String toDate,
                               @Context SecurityContext securityContext) {
-
         if (!utils.isSystemUser(securityContext)) {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
