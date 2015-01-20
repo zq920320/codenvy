@@ -30,6 +30,7 @@ import com.codenvy.api.user.server.dao.User;
 import com.codenvy.api.user.server.dao.UserDao;
 import com.codenvy.commons.lang.IoUtil;
 import com.codenvy.commons.lang.Strings;
+import com.codenvy.subscription.service.util.BillingDates;
 
 import org.codenvy.mail.MailSenderClient;
 import org.slf4j.Logger;
@@ -43,7 +44,6 @@ import javax.ws.rs.core.MediaType;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -111,13 +111,13 @@ public class SaasBillingService {
     }
 
     public void chargeAccounts() throws ApiException {
-        chargeAccounts(getDefaultBillingStartDate(), getBillingPeriodEndDate());
+        chargeAccounts(BillingDates.getDefaultBillingStartDate(), BillingDates.getBillingPeriodEndDate());
     }
 
     public void chargeAccount(String accountId) throws ApiException {
         final Account account = accountDao.getById(accountId);
 
-        chargeAccount(account, getDefaultBillingStartDate(), getBillingPeriodEndDate());
+        chargeAccount(account, BillingDates.getDefaultBillingStartDate(), BillingDates.getBillingPeriodEndDate());
     }
 
     public void chargeAccounts(Date billingStartDate, Date billingEndDate) throws ApiException {
@@ -187,29 +187,6 @@ public class SaasBillingService {
         } else {
             sendMailWithConsumption(accountOwnersEmails, memoryUsedReport, invoiceNoPaymentSubject, invoiceNoPaymentTemplate, 0);
         }
-    }
-
-    private Date getDefaultBillingStartDate() {
-        final Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.MONTH, -1);
-        calendar.set(Calendar.DATE, calendar.getActualMinimum(Calendar.DAY_OF_MONTH));
-        calendar.set(Calendar.HOUR_OF_DAY, calendar.getActualMinimum(Calendar.HOUR_OF_DAY));
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-
-        return calendar.getTime();
-    }
-
-    private Date getBillingPeriodEndDate() {
-        final Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.DATE, calendar.getActualMinimum(Calendar.DAY_OF_MONTH));
-        calendar.set(Calendar.HOUR_OF_DAY, calendar.getActualMinimum(Calendar.HOUR_OF_DAY));
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-
-        return calendar.getTime();
     }
 
     private void sendMailWithConsumption(List<String> accountOwnersEmails, Map<String, Long> consumption, String subject,
