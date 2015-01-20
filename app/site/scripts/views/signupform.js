@@ -79,16 +79,17 @@ define(["jquery","underscore","models/account","views/accountformbase","validati
             initialize : function(attributes){
                 ProgressiveForm.prototype.initialize.apply(this,attributes);
                 //bind onclick to Google and GitHub buttons
+                var searchString=(window.location.search.length>0)?'&'+window.location.search.substring(1):'';
                 $(".oauth-button.google").click(function(){
                     Account.loginWithGoogle("Main page", function(url){
                         window.location = url;
-                    });
+                    }, searchString);
                 });
 
                 $(".oauth-button.github").click(function(){
                     Account.loginWithGithub("Main page", function(url){
                         window.location = url;
-                    });
+                    }, searchString);
                 });
             },
 

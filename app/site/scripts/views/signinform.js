@@ -32,16 +32,17 @@
                     $("#signUp").click(function(){$.removeCookie('logged_in',{path: "/"});});
                     $("#signUp").click(function(){$.removeCookie('logged_in',{path: "/site"});});
                     //bind onclick to Google and GitHub buttons
+                    var searchString=(window.location.search.length>0)?'&'+window.location.search.substring(1):'';
                     $(".oauth-button.google").click(function(){
                         Account.loginWithGoogle("Login page", function(url){
                             window.location = url;
-                        });
+                        }, searchString);
                     });
 
                     $(".oauth-button.github").click(function(){
                         Account.loginWithGithub("Login page", function(url){
                             window.location = url;
-                        });
+                        }, searchString);
                     });
                 },
 
