@@ -60,6 +60,8 @@ public class StorageInitializer {
 
     @PostConstruct
     public void init() {
+        //TODO remove before prod update.
+        clean();
         flyway.migrate();
     }
 
