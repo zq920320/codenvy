@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    CODENVY CONFIDENTIAL
+    __________________
+
+     [2012] - [2015] Codenvy, S.A.
+     All Rights Reserved.
+
+    NOTICE:  All information contained herein is, and remains
+    the property of Codenvy S.A. and its suppliers,
+    if any.  The intellectual and technical concepts contained
+    herein are proprietary to Codenvy S.A.
+    and its suppliers and may be covered by U.S. and Foreign Patents,
+    patents in process, and are protected by trade secret or copyright law.
+    Dissemination of this information or reproduction of this material
+    is strictly forbidden unless prior written permission is obtained
+    from Codenvy S.A..
+
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>cloud-ide-parent</artifactId>
+        <groupId>com.codenvy.cloud-ide</groupId>
+        <version>3.6.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>cloud-ide-packaging-tomcat-api</artifactId>
+    <packaging>pom</packaging>
+    <name>Hosted IDE :: Tomcat :: IDE :: API</name>
+    <dependencies>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${ch.qos.logback.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+            <version>${ch.qos.logback.version}</version>
+        </dependency>
+        <!-- Cloud IDE dependency -->
+        <dependency>
+            <groupId>com.codenvy.cloud-ide</groupId>
+            <artifactId>cloud-ide-packaging-war-factory</artifactId>
+            <version>${project.version}</version>
+            <type>war</type>
+        </dependency>
+        <dependency>
+            <groupId>com.codenvy.cloud-ide</groupId>
+            <artifactId>cloud-ide-packaging-war-platform-api</artifactId>
+            <version>${project.version}</version>
+            <type>war</type>
+        </dependency>
+        <dependency>
+            <groupId>com.codenvy.hosted-infrastructure</groupId>
+            <artifactId>codenvy-hosted-mail-server</artifactId>
+            <version>${codenvy.hosted-infrastructure.version}</version>
+            <type>war</type>
+        </dependency>
+        <dependency>
+            <groupId>com.codenvy.ide</groupId>
+            <artifactId>codenvy-git-server</artifactId>
+            <version>${codenvy.plugin.git.version}</version>
+            <type>war</type>
+        </dependency>
+        <!-- Dependency for SMTPAppender -->
+        <dependency>
+            <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
+            <version>${javax.mail.version}</version>
+        </dependency>
+        <!-- MUST HAVE TOMCAT DEPS -->
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-catalina-jmx-remote</artifactId>
+            <version>${org.apache.tomcat.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>tomcat-coyote</artifactId>
+                    <groupId>org.apache.tomcat</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>tomcat-catalina</artifactId>
+                    <groupId>org.apache.tomcat</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>tomcat-juli</artifactId>
+                    <groupId>org.apache.tomcat</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <version>${org.slf4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jul-to-slf4j</artifactId>
+            <version>${org.slf4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>log4j-over-slf4j</artifactId>
+            <version>${org.slf4j.version}</version>
+        </dependency>
+        <!-- Logger dependencies -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${org.slf4j.version}</version>
+        </dependency>
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-clear-tomcat</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <tasks>
+                                <unzip dest="${project.build.directory}" src="${project.build.directory}/packager-conf/zip/tomcat.zip">
+                                    <patternset>
+                                        <exclude name="**/ROOT/**" />
+                                        <exclude name="**/docs/**" />
+                                        <exclude name="**/examples/**" />
+                                        <exclude name="**/manager/**" />
+                                        <exclude name="**/host-manager/**" />
+                                    </patternset>
+                                </unzip>
+                                <move todir="${project.build.directory}/tomcat-api">
+                                    <fileset dir="${project.build.directory}/apache-tomcat-${org.apache.tomcat.version}" />
+                                </move>
+
+                                <echo message="Copy configuration for api tomcat" />
+                                <copy overwrite="true" todir="${project.build.directory}/tomcat-api/">
+                                    <fileset dir="${basedir}/src/main/resources/tomcat/" />
+                                </copy>
+
+                                <echo message="Deploy platform api services to api.war" />
+                                <copy file="${project.build.directory}/packager-conf/war/cloud-ide-packaging-war-platform-api.war" tofile="${project.build.directory}/tomcat-api/webapps/api.war" />
+
+                                <echo message="Deploy mail.war" />
+                                <copy file="${project.build.directory}/packager-conf/war/codenvy-hosted-mail-server.war" tofile="${project.build.directory}/tomcat-api/webapps/mail.war" />
+
+                                <echo message="Deploy factory.war" />
+                                <copy file="${project.build.directory}/packager-conf/war/cloud-ide-packaging-war-factory.war" tofile="${project.build.directory}/tomcat-api/webapps/factory.war" />
+
+                                <echo message="Deploy git.war" />
+                                <copy file="${project.build.directory}/packager-conf/war/codenvy-git-server.war" tofile="${project.build.directory}/tomcat-api/webapps/git.war" />
+
+                                <chmod file="${project.build.directory}/tomcat-api/bin/*.sh" perm="+x" />
+                                <echo message="Copy tomcat-catalina-jmx-remote.jar" />
+                                <copy file="${project.build.directory}/packager-conf/tomcat-jar/tomcat-catalina-jmx-remote-${org.apache.tomcat.version}.jar" tofile="${project.build.directory}/tomcat-api/lib/tomcat-catalina-jmx-remote-${org.apache.tomcat.version}.jar" />
+                                <echo message="Copy logger jars" />
+                                <copy todir="${project.build.directory}/tomcat-api/endorsed">
+                                    <fileset dir="${project.build.directory}/packager-conf/jar" />
+                                </copy>
+                            </tasks>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <!-- Create the distribution zip and attach it to maven -->
+                    <execution>
+                        <id>tomcat-zip</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <appendAssemblyId>false</appendAssemblyId>
+                            <updateOnly>false</updateOnly>
+                            <descriptors>
+                                <descriptor>${project.basedir}/src/main/assembly/tomcat-archive.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies-war</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <includeTypes>war</includeTypes>
+                            <stripVersion>true</stripVersion>
+                            <outputDirectory>${project.build.directory}/packager-conf/war</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-dependencies-jar1</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <includeTypes>jar</includeTypes>
+                            <excludeArtifactIds>tomcat-catalina-jmx-remote</excludeArtifactIds>
+                            <stripVersion>false</stripVersion>
+                            <outputDirectory>${project.build.directory}/packager-conf/jar</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-dependencies-jar2</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <includeTypes>jar</includeTypes>
+                            <stripVersion>false</stripVersion>
+                            <includeArtifactIds>tomcat-catalina-jmx-remote</includeArtifactIds>
+                            <outputDirectory>${project.build.directory}/packager-conf/tomcat-jar</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-zip-resources</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.apache.tomcat</groupId>
+                                    <artifactId>tomcat</artifactId>
+                                    <type>zip</type>
+                                    <version>${org.apache.tomcat.version}</version>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${project.build.directory}/packager-conf/zip</outputDirectory>
+                                    <destFileName>tomcat.zip</destFileName>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
