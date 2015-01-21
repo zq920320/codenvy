@@ -49,7 +49,7 @@ getOptionsHelp() {
     echo "             Add -U to maven command."
     echo ""
     echo "         --nobuild, --b"
-    echo "             Do not build cloud-ide project."
+    echo "             Do not build onpremises project."
     echo ""
     echo "         --centos7, --c7"
     echo "             Provision Centos7"
@@ -75,7 +75,7 @@ cloneDeploymentProject() {
 pullDeploymentProject() {
   cd ../deployment
   git pull
-  cd ../cloud-ide
+  cd ../onpremises
 }
 
 parseParameters() {
@@ -116,7 +116,7 @@ parseParameters() {
         if [[ ${mvn_version} < "3.2.1" ]]; then
           echo "'--nogwt' is supported for maven 3.2.1 or later"
         else
-          MAVEN_PARAMS=${MAVEN_PARAMS}" -pl \"!cloud-ide-compiling-war-next-ide-codenvy\""
+          MAVEN_PARAMS=${MAVEN_PARAMS}" -pl \"!onpremises-ide-compiling-war-next-ide-codenvy\""
         fi
         ;;
       *)
@@ -129,7 +129,9 @@ parseParameters() {
 
 # Check tomcat logs for errors
 checkThatTomcatStartsWithoutErrors() {
-  echo -e "\n########  Check tomcat logs for errors | " $1 "\t  ########"
+  [[ ${1} == "" ]] && tomcat_name="aio" || tomcat_name=${1}
+  echo -e "\n########  Check tomcat logs for errors | " ${tomcat_name} "\t  ########"
+
   SERVER_STATE='Starting'
   COUNTER=0
   testfile=/tmp/catalin.out
@@ -156,7 +158,7 @@ checkThatTomcatStartsWithoutErrors() {
       echo "standalone build state = ${SERVER_STATE}  Attempt ${COUNTER}"
       sleep 5
       let COUNTER=COUNTER+1
-    fi 
+    fi
   done
 }
 
@@ -214,13 +216,13 @@ fi
 
 if [ ${MULTI_SERVER} == false ]; then
   # Copy all-in-one tomcat zip to puppet folder for subsequent update
-  cp -f cloud-ide-packaging-tomcat-codenvy-allinone/target/*.zip ../deployment/puppet/modules/all_in_one/files/cloud-ide-packaging-tomcat-codenvy-allinone.zip
+  cp -f onpremises-ide-packaging-tomcat-codenvy-allinone/target/*.zip ../deployment/puppet/modules/all_in_one/files/onpremises-ide-packaging-tomcat-codenvy-allinone.zip
   # Open folder for AIO env
   cd ../deployment/puppet
 else
   # Copy tomcats for multi-server environment
-  cp -f cloud-ide-packaging-tomcat-api/target/*.zip ../deployment/puppet/modules/multi_server/files/cloud-ide-packaging-tomcat-api.zip
-  cp -f cloud-ide-packaging-tomcat-site/target/*.zip ../deployment/puppet/modules/multi_server/files/cloud-ide-packaging-tomcat-site.zip
+  cp -f onpremises-ide-packaging-tomcat-api/target/*.zip ../deployment/puppet/modules/multi_server/files/cloud-ide-packaging-tomcat-api.zip
+  cp -f onpremises-ide-packaging-tomcat-site/target/*.zip ../deployment/puppet/modules/multi_server/files/cloud-ide-packaging-tomcat-site.zip
   cp -f cloud-ide-packaging-tomcat-next-runner/target/*.zip ../deployment/puppet/modules/multi_server/files/cloud-ide-packaging-tomcat-next-runner.zip
   cp -f cloud-ide-packaging-tomcat-next-builder/target/*.zip ../deployment/puppet/modules/multi_server/files/cloud-ide-packaging-tomcat-next-builder.zip
   cp -f cloud-ide-packaging-tomcat-datasource-plugin/target/*.zip ../deployment/puppet/modules/multi_server/files/cloud-ide-packaging-tomcat-datasource-plugin.zip

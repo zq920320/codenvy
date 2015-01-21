@@ -30,9 +30,11 @@ import com.codenvy.api.core.notification.WSocketEventBusServer;
 import com.codenvy.api.core.rest.ApiInfoService;
 import com.codenvy.api.dao.authentication.PasswordEncryptor;
 import com.codenvy.api.dao.authentication.SSHAPasswordEncryptor;
+import com.codenvy.api.factory.FactoryAcceptValidator;
+import com.codenvy.api.factory.FactoryAcceptValidatorImpl;
+import com.codenvy.api.factory.FactoryCreateValidator;
+import com.codenvy.api.factory.FactoryCreateValidatorImpl;
 import com.codenvy.api.factory.FactoryService;
-import com.codenvy.api.factory.FactoryUrlAcceptValidator;
-import com.codenvy.api.factory.FactoryUrlCreateValidator;
 import com.codenvy.api.runner.RandomRunnerSelectionStrategy;
 import com.codenvy.api.runner.RunnerAdminService;
 import com.codenvy.api.runner.RunnerSelectionStrategy;
@@ -161,8 +163,8 @@ public class CloudIdeApiModule extends AbstractModule {
         bind(com.codenvy.api.auth.oauth.OAuthTokenProvider.class).to(com.codenvy.security.oauth.OAuthAuthenticatorTokenProvider.class);
         //factory
         bind(com.codenvy.api.factory.FactoryStore.class).to(com.codenvy.factory.storage.mongo.MongoDBFactoryStore.class);
-        bind(FactoryUrlAcceptValidator.class).to(com.codenvy.api.factory.FactoryUrlAcceptValidatorImpl.class);
-        bind(FactoryUrlCreateValidator.class).to(com.codenvy.api.factory.FactoryUrlCreateValidatorImpl.class);
+        bind(FactoryAcceptValidator.class).to(FactoryAcceptValidatorImpl.class);
+        bind(FactoryCreateValidator.class).to(FactoryCreateValidatorImpl.class);
         bind(FactoryService.class);
         bind(com.codenvy.ide.factory.server.MessageService.class);
 
