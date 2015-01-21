@@ -21,13 +21,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <artifactId>cloud-ide-parent</artifactId>
-        <groupId>com.codenvy.cloud-ide</groupId>
+        <artifactId>onpremises-ide-parent</artifactId>
+        <groupId>com.codenvy.onpremises</groupId>
         <version>3.6.0-SNAPSHOT</version>
     </parent>
-    <artifactId>cloud-ide-compiling-war-next-ide-codenvy</artifactId>
+    <artifactId>onpremises-ide-compiling-war-next-ide-codenvy</artifactId>
     <packaging>war</packaging>
-    <name>Hosted IDE :: WAR :: IDE3 :: Compiling App</name>
+    <name>Onpremises IDE :: WAR :: IDE3 :: Compiling App</name>
     <properties>
         <generated.sources.directory>${project.build.directory}/generated-sources/gen</generated.sources.directory>
         <ide.module>com.codenvy.ide.IDE</ide.module>
