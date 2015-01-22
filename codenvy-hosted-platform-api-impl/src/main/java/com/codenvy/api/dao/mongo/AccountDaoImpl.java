@@ -439,6 +439,27 @@ public class AccountDaoImpl implements AccountDao {
         }
     }
 
+
+    @Override
+    public List<Account> getLockedCommunityAccounts() throws ServerException, ForbiddenException {
+        DBObject query1 = QueryBuilder.start("attributes").elemMatch(new BasicDBObject("name", "codenvy:locked")).get();
+        DBObject query2 = QueryBuilder.start("attributes").not().elemMatch(
+                new BasicDBObject("name", "codenvy:paid")).get();
+        DBObject query = new QueryBuilder().and(query1, query2).get();
+
+        try (DBCursor accounts = accountCollection.find(query)) {
+            final ArrayList<Account> result = new ArrayList<>();
+            for (DBObject accountObj : accounts) {
+                result.add(toAccount(accountObj));
+            }
+            return result;
+        } catch (MongoException me) {
+            LOG.error(me.getMessage(), me);
+            throw new ServerException("It is not possible to retrieve accounts");
+        }
+    }
+
+
     private boolean remove(String accountId, BasicDBList src) {
         boolean found = false;
         final Iterator it = src.iterator();

@@ -29,6 +29,18 @@ import java.util.Date;
 public class BillingDates {
 
     public static Date getDefaultBillingStartDate() {
+         return getPreviousMonthStart();
+    }
+
+    public static Date getBillingPeriodEndDate() {
+         return  getCurrentMonthStart();
+    }
+
+    public static Date getCurrentPeriodStartDate() {
+        return  getCurrentMonthStart();
+    }
+
+    private static Date getPreviousMonthStart() {
         final Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.MONTH, -1);
         calendar.set(Calendar.DATE, calendar.getActualMinimum(Calendar.DAY_OF_MONTH));
@@ -40,7 +52,7 @@ public class BillingDates {
         return calendar.getTime();
     }
 
-    public static Date getBillingPeriodEndDate() {
+    private static Date getCurrentMonthStart() {
         final Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.DATE, calendar.getActualMinimum(Calendar.DAY_OF_MONTH));
         calendar.set(Calendar.HOUR_OF_DAY, calendar.getActualMinimum(Calendar.HOUR_OF_DAY));

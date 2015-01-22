@@ -101,7 +101,7 @@ public class CheckRemainResourcesOnStopSubscriber implements EventSubscriber<Run
                 return;
             }
             Long used =
-                    storage.getMemoryUsed(workspace.getAccountId(), BillingDates.getDefaultBillingStartDate().getTime(),
+                    storage.getMemoryUsed(workspace.getAccountId(), BillingDates.getCurrentPeriodStartDate().getTime(),
                                           System.currentTimeMillis());
             if (used >= freeUsageLimit) {
                 account.getAttributes().put(Constants.LOCKED_PROPERTY, "true");
@@ -111,7 +111,7 @@ public class CheckRemainResourcesOnStopSubscriber implements EventSubscriber<Run
                     try {
                         workspaceDao.update(ws);
                     } catch (NotFoundException | ServerException | ConflictException e) {
-                        LOG.error("Error writing  lock properti into workspace  {} .", event.getWorkspace());
+                        LOG.error("Error writing  lock property into workspace  {} .", event.getWorkspace());
                     }
                 }
             }
