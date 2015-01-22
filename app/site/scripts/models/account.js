@@ -153,19 +153,21 @@
             document.getElementsByName("company")[0].value = attributes.employer || "";
             document.getElementsByName("title")[0].value = attributes.jobtitle || "";
         }
-        var loginWithGoogle = function(page, callback, searchString) {
+        var loginWithGoogle = function(page, callback) {
             if (isWebsocketEnabled()) {
+                var redirectAfterLogin=encodeURIComponent(window.location.origin + "/api/oauth?" + window.location.search.substring(1) + (window.location.search ? '&' : '') + 'oauth_provider=google' + window.location.hash);
                 _gaq.push(['_trackEvent', 'Regisration', 'Google registration', page]);
-                var url = "/api/oauth/authenticate?oauth_provider=google&mode=federated_login" + "&scope=https://www.googleapis.com/auth/userinfo.profile&scope=https://www.googleapis.com/auth/userinfo.email" + "&redirect_after_login=" + encodeURIComponent(window.location.protocol + "//" + window.location.host + "/api/oauth?oauth_provider=google" + searchString);
+                var url = "/api/oauth/authenticate?oauth_provider=google&mode=federated_login" + "&scope=https://www.googleapis.com/auth/userinfo.profile&scope=https://www.googleapis.com/auth/userinfo.email" + "&redirect_after_login=" + redirectAfterLogin;
                 if (typeof callback !== 'undefined') {
                     callback(url);
                 }
             }
         };
-        var loginWithGithub = function(page, callback, searchString) {
+        var loginWithGithub = function(page, callback) {
             if (isWebsocketEnabled()) {
                 _gaq.push(['_trackEvent', 'Regisration', 'GitHub registration', page]);
-                var url = "/api/oauth/authenticate?oauth_provider=github&mode=federated_login&scope=user,repo,write:public_key" + "&redirect_after_login=" + encodeURIComponent(window.location.protocol + "//" + window.location.host + "/api/oauth?oauth_provider=github" + searchString);
+                var redirectAfterLogin=encodeURIComponent(window.location.origin + "/api/oauth?" + window.location.search.substring(1) + (window.location.search ? '&' : '') + 'oauth_provider=github' + window.location.hash);
+                var url = "/api/oauth/authenticate?oauth_provider=github&mode=federated_login&scope=user,repo,write:public_key" + "&redirect_after_login=" + redirectAfterLogin;
                 if (typeof callback !== 'undefined') {
                     callback(url);
                 }

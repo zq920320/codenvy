@@ -28,17 +28,16 @@
                     AccountFormBase.prototype.initialize.apply(this,attributes);
                     Account.supportTab();
                     //bind onclick to Google and GitHub buttons
-                    var searchString=(window.location.search.length>0)?'&'+window.location.search.substring(1):'';
                     $(".oauth-button.google").click(function(){
                         Account.loginWithGoogle("Create WS page", function(url){
                             window.location = url;
-                        }, searchString);
+                        });
                     });
 
                     $(".oauth-button.github").click(function(){
                         Account.loginWithGithub("Create WS page", function(url){
                             window.location = url;
-                        }, searchString);
+                        });
                     });
 
                     $(".sign-in").click(function(){
