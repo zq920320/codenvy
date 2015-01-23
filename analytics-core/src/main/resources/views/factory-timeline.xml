@@ -41,8 +41,8 @@
                 <parameter key="description" value="# with more than one session"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="workspaces_with_zero_factory_sessions_length"/>
-                <parameter key="description" value="# with empty sessions"/>
+                <parameter key="name" value="failed_factory_sessions"/>
+                <parameter key="description" value="# unsupported browser or canceled loading"/>
             </row>
         </section>
 

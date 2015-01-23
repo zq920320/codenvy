@@ -106,7 +106,7 @@ public class TestExtractUserAndWs extends BaseTest {
 
         Set<String> expected = new HashSet<>();
         expected.add("(uid1)");
-        expected.add("(anonymoususer_1)");
+        expected.add("(AnonymousUser_1)");
         expected.add("(default)");
 
         assertEquals(expected, actual);
@@ -125,7 +125,7 @@ public class TestExtractUserAndWs extends BaseTest {
         }
 
         Set<String> expected = new HashSet<>();
-        expected.add("(anonymoususer_1)");
+        expected.add("(AnonymousUser_1)");
         expected.add("(default)");
 
         assertEquals(actual, expected);
@@ -165,7 +165,7 @@ public class TestExtractUserAndWs extends BaseTest {
         Set<String> expected = new HashSet<>();
         expected.add("(wid1)");
         expected.add("(wid2)");
-        expected.add("(tmp-3)");
+        expected.add("(Tmp-3)");
         expected.add("(default)");
 
         assertEquals(actual, expected);
@@ -184,7 +184,7 @@ public class TestExtractUserAndWs extends BaseTest {
         }
 
         Set<String> expected = new HashSet<>();
-        expected.add("(tmp-3)");
+        expected.add("(Tmp-3)");
         expected.add("(default)");
 
         assertEquals(actual, expected);

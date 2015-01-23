@@ -17,11 +17,6 @@
  */
 package com.codenvy.analytics.pig.scripts.util;
 
-import com.codenvy.analytics.BaseTest;
-
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -67,7 +62,7 @@ public class Event {
     public static class Builder {
         private String time;
         private String date;
-        private Map<String, String> params  = new LinkedHashMap<>();
+        private Map<String, String> params = new LinkedHashMap<>();
 
         public Builder withDate(String date) {
             if (date.length() == 8) {
@@ -98,23 +93,6 @@ public class Event {
             return this;
         }
 
-        private Builder withParam(String name, Map<String, String> value) {
-            StringBuilder sb = new StringBuilder();
-            Iterator<Entry<String, String>> iterator = value.entrySet().iterator();
-            while (iterator.hasNext()) {
-                Entry<String, String> entry = iterator.next();
-
-                sb.append(entry.getKey()).append("=").append(entry.getValue());
-
-                if (iterator.hasNext()) {
-                    sb.append(",");
-                }
-            }
-
-            params.put(name, sb.toString());
-            return this;
-        }
-
         public Event build() {
             return new Event(date, time, params);
         }
@@ -132,64 +110,11 @@ public class Event {
         public static Builder createSessionUsageEvent(String user,
                                                       String ws,
                                                       String sessionId,
-                                                      long startTime,
-                                                      long usageTime,
                                                       boolean isFactory) {
             return new Builder().withParam("EVENT", isFactory ? "session-factory-usage" : "session-usage")
                                 .withParam("WS", ws)
                                 .withParam("USER", user)
-                                .withParam("PARAMETERS", "USAGE-TIME=" + usageTime + ",START-TIME=" + startTime + ",SESSION-ID=" + sessionId);
-        }
-
-        public static Builder createSessionUsageEvent(String user,
-                                                      String ws,
-                                                      String sessionId,
-                                                      String statStr,
-                                                      String endStr,
-                                                      boolean isFactory) throws Exception {
-
-            Date startTime = BaseTest.fullDateFormat.parse(statStr);
-            Date endTime = BaseTest.fullDateFormat.parse(endStr);
-            return createSessionUsageEvent(user, ws, sessionId, startTime.getTime(), endTime.getTime() - startTime.getTime(), isFactory);
-        }
-
-        public static Builder createSessionStartedEvent(String user, String ws, String window, String sessionId) {
-            return new Builder().withParam("EVENT", "session-started")
-                                .withParam("SESSION-ID", sessionId)
-                                .withParam("WS", ws)
-                                .withParam("USER", user)
-                                .withParam("WINDOW", window);
-        }
-
-        public static Builder createSessionFinishedEvent(String user, String ws, String window, String sessionId) {
-            return new Builder().withParam("EVENT", "session-finished")
-                                .withParam("SESSION-ID", sessionId)
-                                .withParam("WS", ws)
-                                .withParam("USER", user)
-                                .withParam("WINDOW", window);
-        }
-
-        public static Builder createSessionStartedEventParamenters(String user, String ws, String window, String sessionId) {
-            Map<String, String> map = new HashMap<>();
-            map.put("SESSION-ID", sessionId);
-            map.put("WINDOW", window);
-
-
-            return new Builder().withParam("EVENT", "session-started")
-                                .withParam("WS", ws)
-                                .withParam("USER", user)
-                                .withParam("PARAMETERS", map);
-        }
-
-        public static Builder createSessionFinishedEventParameters(String user, String ws, String window, String sessionId) {
-            Map<String, String> map = new HashMap<>();
-            map.put("SESSION-ID", sessionId);
-            map.put("WINDOW", window);
-
-            return new Builder().withParam("EVENT", "session-finished")
-                                .withParam("WS", ws)
-                                .withParam("USER", user)
-                                .withParam("PARAMETERS", map);
+                                .withParam("PARAMETERS", "SESSION-ID=" + sessionId);
         }
 
         public static Builder createRunStartedEvent(String user, String ws, String project, String type, String id) {
@@ -203,26 +128,6 @@ public class Event {
 
         public static Builder createBuildStartedEvent(String user, String ws, String project, String type, String id) {
             return new Builder().withParam("EVENT", "build-started")
-                                .withParam("WS", ws)
-                                .withParam("USER", user)
-                                .withParam("PROJECT", project)
-                                .withParam("TYPE", type)
-                                .withParam("ID", id);
-        }
-
-        public static Builder createBuildQueueWaitingStartedEvent(String user, String ws, String project, String type,
-                                                                  String id) {
-            return new Builder().withParam("EVENT", "build-queue-waiting-started")
-                                .withParam("WS", ws)
-                                .withParam("USER", user)
-                                .withParam("PROJECT", project)
-                                .withParam("TYPE", type)
-                                .withParam("ID", id);
-        }
-
-        public static Builder createRunQueueWaitingStartedEvent(String user, String ws, String project, String type,
-                                                                String id) {
-            return new Builder().withParam("EVENT", "run-queue-waiting-started")
                                 .withParam("WS", ws)
                                 .withParam("USER", user)
                                 .withParam("PROJECT", project)
@@ -293,17 +198,6 @@ public class Event {
                                 .withParam("PROJECT", project).withParam("TYPE", type).withParam("PAAS", paas);
         }
 
-        public static Builder createProjectDeployedEvent(String user,
-                                                         String ws,
-                                                         String project,
-                                                         String type,
-                                                         String paas) {
-            return new Builder().withParam("WS", ws)
-                                .withParam("USER", user)
-                                .withParam("EVENT", "project-deployed")
-                                .withParam("PROJECT", project).withParam("TYPE", type).withParam("PAAS", paas);
-        }
-
         public static Builder createUserAddedToWsEvent(String user,
                                                        String ws,
                                                        String from) {
@@ -322,7 +216,7 @@ public class Event {
                                 .withParam("USER", user);
         }
 
-        public static Builder createProjectCreatedEvent(String ws, String user,
+        public static Builder createProjectCreatedEvent(String user, String ws,
                                                         String project,
                                                         String type) {
             return new Builder().withParam("USER", user)
@@ -330,6 +224,18 @@ public class Event {
                                 .withParam("EVENT", "project-created")
                                 .withParam("PROJECT", project)
                                 .withParam("TYPE", type);
+        }
+
+        public static Builder createProjectCreatedEvent(String user, String ws,
+                                                        String project,
+                                                        String type,
+                                                        String paas) {
+            return new Builder().withParam("EVENT", "project-created")
+                                .withParam("USER", user)
+                                .withParam("WS", ws)
+                                .withParam("PROJECT", project)
+                                .withParam("TYPE", type)
+                                .withParam("PAAS", paas);
         }
 
         public static Builder createUserCreatedEvent(String userId,
@@ -348,15 +254,6 @@ public class Event {
                                 .withParam("WS", ws)
                                 .withParam("WS-ID", wsId)
                                 .withParam("USER", user);
-        }
-
-        public static Builder createUserUpdatedEvent(String userId,
-                                                     String user,
-                                                     String aliases) {
-            return new Builder().withParam("EVENT", "user-updated")
-                                .withParam("USER", user)
-                                .withParam("USER-ID", userId)
-                                .withParam("EMAILS", aliases);
         }
 
         public static Builder createIDEUsageEvent(String user,
@@ -406,8 +303,8 @@ public class Event {
                                 .withParam("JOBTITLE", jobTitle);
         }
 
-        public static Builder createFactoryCreatedEvent(String ws,
-                                                        String user,
+        public static Builder createFactoryCreatedEvent(String user,
+                                                        String ws,
                                                         String project,
                                                         String type,
                                                         String repoUrl,
@@ -425,40 +322,20 @@ public class Event {
                                 .withParam("AFFILIATE-ID", affiliateId);
         }
 
-        public static Builder createSessionFactoryStartedEvent(String sessionId,
-                                                               String tempWs,
-                                                               String tempUser,
-                                                               String auth,
-                                                               String userAgent) {
-            return new Builder().withParam("EVENT", "session-factory-started")
-                                .withParam("SESSION-ID", sessionId)
-                                .withParam("WS", tempWs)
-                                .withParam("USER", tempUser)
-                                .withParam("AUTHENTICATED", auth)
-                                .withParam("USER-AGENT", userAgent);
-
-        }
-
-        public static Builder createFactoryProjectImportedEvent(String ws,
-                                                                String user,
+        public static Builder createFactoryProjectImportedEvent(String user,
+                                                                String ws,
                                                                 String project,
                                                                 String type) {
-            return new Builder().withParam("EVENT", "factory-project-imported")
+            return new Builder().withParam("EVENT", "ide-usage")
                                 .withParam("WS", ws)
                                 .withParam("USER", user)
                                 .withParam("PROJECT", project)
-                                .withParam("TYPE", type);
+                                .withParam("TYPE", type)
+                                .withParam("SOURCE", "com.codenvy.ide.factory.client.persist.PersistProjectHandler")
+                                .withParam("ACTION", "clone");
 
         }
 
-        public static Builder createSessionFactoryStoppedEvent(String sessionId,
-                                                               String tempWs,
-                                                               String tempUser) {
-            return new Builder().withParam("EVENT", "session-factory-stopped")
-                                .withParam("SESSION-ID", sessionId)
-                                .withParam("WS", tempWs)
-                                .withParam("USER", tempUser);
-        }
 
         public static Builder createFactoryUrlAcceptedEvent(String tempWs,
                                                             String factoryUrl,
@@ -473,7 +350,7 @@ public class Event {
                                 .withParam("AFFILIATE-ID", affiliateId);
         }
 
-        public static Builder collaborativeSessionStartedEvent(String ws, String userId, String sessionId) {
+        public static Builder collaborativeSessionStartedEvent(String userId, String ws, String sessionId) {
 
             return new Builder().withParam("EVENT", "collaborative-session-started")
                                 .withParam("WS", ws)
@@ -481,7 +358,7 @@ public class Event {
                                 .withParam("ID", sessionId);
         }
 
-        public static Builder buildQueueTerminatedEvent(String ws, String user, String project, String type,
+        public static Builder buildQueueTerminatedEvent(String user, String ws, String project, String type,
                                                         String uuid) {
 
             return new Builder().withParam("EVENT", "build-queue-terminated")
@@ -492,7 +369,7 @@ public class Event {
                                 .withParam("ID", uuid);
         }
 
-        public static Builder buildRunQueueTerminatedEvent(String ws, String user, String project, String type,
+        public static Builder buildRunQueueTerminatedEvent(String user, String ws, String project, String type,
                                                            String uuid) {
 
             return new Builder().withParam("EVENT", "run-queue-terminated")

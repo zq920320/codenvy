@@ -43,16 +43,22 @@ public class TestUsersSessions extends BaseTest {
         addRegisteredUser(UID1, "user1@gmail.com");
 
         List<Event> events = new ArrayList<>();
-        events.add(Event.Builder.createSessionUsageEvent("anonymoususer_user11", "ws1", "1", "2013-11-01 19:00:00", "2013-11-01 19:06:00", false).
+        events.add(Event.Builder.createSessionUsageEvent("anonymoususer_user11", "ws1", "1", false).
                 withDate("2013-11-01").withTime("19:00:00").build());
+        events.add(Event.Builder.createSessionUsageEvent("anonymoususer_user11", "ws1", "1", false).
+                withDate("2013-11-01").withTime("19:06:00").build());
 
-        events.add(Event.Builder.createSessionUsageEvent("user1@gmail.com", "ws1", "2", "2013-11-01 20:00:00", "2013-11-01 20:05:00", false).
+        events.add(Event.Builder.createSessionUsageEvent("user1@gmail.com", "ws1", "2", false).
                 withDate("2013-11-01").withTime("20:00:00").build());
-        events.add(Event.Builder.createUserSSOLoggedOutEvent("user1@gmail.com").withDate("2013-11-01")
-                                .withTime("20:06:00").build());
+        events.add(Event.Builder.createSessionUsageEvent("user1@gmail.com", "ws1", "2", false).
+                withDate("2013-11-01").withTime("20:05:00").build());
+        events.add(Event.Builder.createUserSSOLoggedOutEvent("user1@gmail.com").withDate("2013-11-01").withTime(
+                "20:06:00").build());
 
-        events.add(Event.Builder.createSessionUsageEvent("anonymoususer_user11", "ws2", "3", "2013-11-01 19:30:00", "2013-11-01 19:32:00", false).
+        events.add(Event.Builder.createSessionUsageEvent("anonymoususer_user11", "ws2", "3", false).
                 withDate("2013-11-01").withTime("19:30:00").build());
+        events.add(Event.Builder.createSessionUsageEvent("anonymoususer_user11", "ws2", "3", false).
+                withDate("2013-11-01").withTime("19:32:00").build());
 
         File log = LogGenerator.generateLog(events);
 

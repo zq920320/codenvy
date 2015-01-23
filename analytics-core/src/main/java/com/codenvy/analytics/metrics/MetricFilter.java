@@ -49,6 +49,7 @@ public enum MetricFilter {
     ENCODED_FACTORY(true),
     TIME(true),
     LIFETIME(true),
+    TIMEOUT(true),
     STOPPED_BY_USER(true),
     FINISHED_NORMALLY(true),
     BUILDS(true),
@@ -62,7 +63,12 @@ public enum MetricFilter {
     PROJECT,
     ACCOUNT_ID,
     DATA_UNIVERSE(true),
-    PROJECT_TYPE;
+    PROJECT_TYPE,
+    TASK_ID,
+    TASK_TYPE,
+    STOP_TIME,
+    SHUTDOWN_TYPE,
+    LAUNCH_TYPE;
 
     private boolean isNumeric;
 

@@ -73,3 +73,15 @@ s2 = extractParam(s1, 'USAGE-TIME', time);
 s3 = FOREACH s2 GENERATE dt, ws, user, (long)time;
 s = FOREACH s3 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('debug_time', time);
 STORE s INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
+
+t1 = filterByEvent(l, 'run-queue-waiting-finished');
+t2 = extractParam(t1, 'WAITING-TIME', time);
+t3 = FOREACH t2 GENERATE dt, ws, user, (long)time;
+t = FOREACH t3 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('run_waiting_time', time);
+STORE t INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
+
+u1 = filterByEvent(l, 'build-queue-waiting-finished');
+u2 = extractParam(u1, 'WAITING-TIME', time);
+u3 = FOREACH u2 GENERATE dt, ws, user, (long)time;
+u = FOREACH u3 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('build_waiting_time', time);
+STORE u INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;

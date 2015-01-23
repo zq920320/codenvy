@@ -45,10 +45,10 @@ public class TestEvents extends BaseTest {
     public void prepare() throws Exception {
         List<Event> events = new ArrayList<>();
         events.add(new Event.Builder().withDate("2013-01-01")
-                                      .withParam("EVENT", "build-finished")
+                                      .withParam("EVENT", "build-queue-waiting-finished")
                                       .withParam("USER", "user")
                                       .withParam("WS", "ws")
-                                      .withParam("USAGE-TIME", "1")
+                                      .withParam("WAITING-TIME", "1")
                                       .withParam("PARAMETERS", "PARAM-A=a").build());
 
         File log = LogGenerator.generateLog(events);
@@ -58,8 +58,8 @@ public class TestEvents extends BaseTest {
         builder.put(Parameters.TO_DATE, "20130101");
         builder.put(Parameters.USER, Parameters.USER_TYPES.ANY.toString());
         builder.put(Parameters.WS, Parameters.WS_TYPES.ANY.toString());
-        builder.put(Parameters.EVENT, "build-finished");
-        builder.put(Parameters.STORAGE_TABLE, "runs_time");
+        builder.put(Parameters.EVENT, "build-queue-waiting-finished");
+        builder.put(Parameters.STORAGE_TABLE, "time_in_build_queue");
         builder.put(Parameters.LOG, log.getAbsolutePath());
     }
 
@@ -67,12 +67,12 @@ public class TestEvents extends BaseTest {
     public void testExecute() throws Exception {
         pigServer.execute(ScriptType.EVENTS, builder.build());
 
-        DBCollection collection = mongoDb.getCollection("runs_time");
+        DBCollection collection = mongoDb.getCollection("time_in_build_queue");
         DBObject object = collection.findOne();
 
         assertEquals(object.get(AbstractMetric.USER), "user");
         assertEquals(object.get(AbstractMetric.WS), "ws");
-        assertEquals(object.get("usage_time"), 1L);
+        assertEquals(object.get("waiting_time"), 1L);
         assertEquals(object.get("param_a"), "a");
     }
 }

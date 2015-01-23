@@ -20,11 +20,19 @@ IMPORT 'macros.pig';
 
 l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 
-r1 = createdTemporaryWorkspaces(l);
-r = FOREACH r1 GENERATE *, (INDEXOF(factory, 'factory?id=', 0) > 0 ? 1 : 0) AS encodedFactory;
+r = createdTemporaryWorkspaces(l);
+r = FOREACH r GENERATE *, (factoryId IS NULL ? 0 : 1) AS encodedFactory;
 
-result = FOREACH r GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('ws', ws), TOTUPLE('user', user),
-                    TOTUPLE('org_id', orgId), TOTUPLE('affiliate_id', affiliateId),
-                    TOTUPLE('referrer', referrer), TOTUPLE('factory', factory), TOTUPLE('value', 1), TOTUPLE('encoded_factory', encodedFactory);
-STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
+r = FOREACH r GENERATE UUID(),
+                        TOTUPLE('date', ToMilliSeconds(dt)),
+                        TOTUPLE('ws', ws),
+                        TOTUPLE('user', user),
+                        TOTUPLE('org_id', orgId),
+                        TOTUPLE('affiliate_id', affiliateId),
+                        TOTUPLE('referrer', referrer),
+                        TOTUPLE('factory', factory),
+                        TOTUPLE('factory_id', factoryId),
+                        TOTUPLE('value', 1),
+                        TOTUPLE('encoded_factory', encodedFactory);
+STORE r INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 

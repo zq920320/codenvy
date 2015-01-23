@@ -44,9 +44,9 @@ public class TestNumberOfEventsByTypesProjectTypes extends BaseTest {
         addPersistentWs(WID2, "ws2");
 
         List<Event> events = new ArrayList<>();
-        events.add(Event.Builder.createProjectCreatedEvent("ws1", "user1@gmail.com", "project1", "jar")
+        events.add(Event.Builder.createProjectCreatedEvent("user1@gmail.com", "ws1", "project1", "jar")
                                 .withDate("2013-01-01", "10:00:00").build());
-        events.add(Event.Builder.createProjectCreatedEvent("ws2", "user2@gmail.com", "project2", "war")
+        events.add(Event.Builder.createProjectCreatedEvent("user2@gmail.com", "ws2", "project2", "war")
                                 .withDate("2013-01-01", "10:00:01").build());
 
         Context.Builder builder = new Context.Builder();

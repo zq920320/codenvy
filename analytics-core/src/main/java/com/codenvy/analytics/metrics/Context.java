@@ -20,7 +20,15 @@ package com.codenvy.analytics.metrics;
 import com.codenvy.analytics.Utils;
 
 import java.text.ParseException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
 
 import static com.codenvy.analytics.Utils.getFilterAsString;
 
@@ -58,7 +66,7 @@ public class Context {
     }
 
     public Map<String, Object> getAll() {
-        return Collections.unmodifiableMap(params);
+        return new HashMap<>(params);
     }
 
     public Map<String, String> getAllAsString() {

@@ -56,11 +56,11 @@ public class TestProjectsList extends BaseTest {
         addPersistentWs(WID2, "ws2");
         addPersistentWs(WID3, "ws3");
 
-        events.add(Event.Builder.createProjectCreatedEvent("ws1", "user1@gmail.com", "project1", "jar")
+        events.add(Event.Builder.createProjectCreatedEvent("user1@gmail.com", "ws1", "project1", "jar")
                                 .withDate("2013-01-01", "10:00:00").build());
-        events.add(Event.Builder.createProjectCreatedEvent("ws2", "user1@gmail.com", "project2", "war")
+        events.add(Event.Builder.createProjectCreatedEvent("user1@gmail.com", "ws2", "project2", "war")
                                 .withDate("2013-01-01", "10:00:01").build());
-        events.add(Event.Builder.createProjectCreatedEvent("ws3", "user3@gmail.com", "project3", "war")
+        events.add(Event.Builder.createProjectCreatedEvent("user3@gmail.com", "ws3", "project3", "war")
                                 .withDate("2013-01-01", "10:00:02").build());
 
         File log = LogGenerator.generateLog(events);

@@ -33,8 +33,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.security.RolesAllowed;
-import javax.ws.rs.*;
-import javax.ws.rs.core.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
+import javax.ws.rs.core.UriInfo;
+import java.text.ParseException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -78,8 +89,9 @@ public class AnalyticsPrivate {
 
             MetricValueDTO value = metricHandler.getValue(metricName, context, uriInfo);
             return Response.status(Response.Status.OK).entity(value).build();
+        } catch (ParseException e) {
+            return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
         } catch (MetricNotFoundException e) {
-            LOG.error(e.getMessage(), e);
             return Response.status(Response.Status.NOT_FOUND).build();
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
@@ -107,8 +119,9 @@ public class AnalyticsPrivate {
 
             MetricValueDTO value = metricHandler.getValueByJson(metricName, parameters, context, uriInfo);
             return Response.status(Response.Status.OK).entity(value).build();
+        } catch (ParseException e) {
+            return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
         } catch (MetricNotFoundException e) {
-            LOG.error(e.getMessage(), e);
             return Response.status(Response.Status.NOT_FOUND).build();
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
@@ -130,8 +143,9 @@ public class AnalyticsPrivate {
             Map<String, String> context = utils.extractParams(uriInfo, securityContext);
             MetricValueListDTO list = metricHandler.getListValues(metricName, parameters, context, uriInfo);
             return Response.status(Response.Status.OK).entity(list).build();
+        } catch (ParseException e) {
+            return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
         } catch (MetricNotFoundException e) {
-            LOG.error(e.getMessage(), e);
             return Response.status(Response.Status.NOT_FOUND).build();
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
@@ -155,8 +169,9 @@ public class AnalyticsPrivate {
             Map<String, String> context = utils.extractParams(uriInfo);
             MetricValueDTO value = metricHandler.getValue(metricName, context, uriInfo);
             return Response.status(Response.Status.OK).entity(value).build();
+        } catch (ParseException e) {
+            return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
         } catch (MetricNotFoundException e) {
-            LOG.error(e.getMessage(), e);
             return Response.status(Response.Status.NOT_FOUND).build();
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
@@ -179,8 +194,9 @@ public class AnalyticsPrivate {
 
             MetricValueListDTO list = metricHandler.getUserValues(metricNames, context, uriInfo);
             return Response.status(Response.Status.OK).entity(list).build();
+        } catch (ParseException e) {
+            return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
         } catch (MetricNotFoundException e) {
-            LOG.error(e.getMessage(), e);
             return Response.status(Response.Status.NOT_FOUND).build();
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);

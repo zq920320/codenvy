@@ -62,15 +62,15 @@ public class TestCollaborativeSessionStarted extends BaseTest {
         events.add(Event.Builder.createWorkspaceCreatedEvent("wsid5", "ws5", "user5@gmail.com")
                                 .withDate("2013-02-10").withTime("19:00:00").build());
 
-        events.add(Event.Builder.collaborativeSessionStartedEvent("ws1", "user1@gmail.com", "session1")
+        events.add(Event.Builder.collaborativeSessionStartedEvent("user1@gmail.com", "ws1", "session1")
                                 .withDate("2013-02-10").withTime("10:00:00").build());
-        events.add(Event.Builder.collaborativeSessionStartedEvent("ws2", "user2@gmail.com", "session2")
+        events.add(Event.Builder.collaborativeSessionStartedEvent("user2@gmail.com", "ws2", "session2")
                                 .withDate("2013-02-10").withTime("10:01:00").build());
-        events.add(Event.Builder.collaborativeSessionStartedEvent("ws3", "user3@gmail.com", "session3")
+        events.add(Event.Builder.collaborativeSessionStartedEvent("user3@gmail.com", "ws3", "session3")
                                 .withDate("2013-02-10").withTime("10:02:00").build());
-        events.add(Event.Builder.collaborativeSessionStartedEvent("ws4", "user4@gmail.com", "session4")
+        events.add(Event.Builder.collaborativeSessionStartedEvent("user4@gmail.com", "ws4", "session4")
                                 .withDate("2013-02-10").withTime("10:03:00").build());
-        events.add(Event.Builder.collaborativeSessionStartedEvent("ws5", "user5@gmail.com", "session5")
+        events.add(Event.Builder.collaborativeSessionStartedEvent("user5@gmail.com", "ws5", "session5")
                                 .withDate("2013-02-11").withTime("10:04:00").build());
 
         File log = LogGenerator.generateLog(events);

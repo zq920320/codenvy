@@ -175,125 +175,6 @@
         </indexes>
     </collection>
 
-
-    <collection name="runs">
-        <indexes>
-            <index name="user">
-                <field>user</field>
-                <field>date</field>
-            </index>
-            <index name="ws">
-                <field>ws</field>
-                <field>date</field>
-            </index>
-            <index name="project_id">
-                <field>project_id</field>
-                <field>date</field>
-            </index>
-            <index name="lifetime">
-                <field>lifetime</field>
-                <field>date</field>
-            </index>
-            <index name="date">
-                <field>date</field>
-            </index>
-        </indexes>
-    </collection>
-    <collection name="runs_finished">
-        <indexes>
-            <index name="user">
-                <field>user</field>
-                <field>date</field>
-            </index>
-            <index name="ws">
-                <field>ws</field>
-                <field>date</field>
-            </index>
-            <index name="project_id">
-                <field>project_id</field>
-                <field>date</field>
-            </index>
-            <index name="date">
-                <field>date</field>
-            </index>
-        </indexes>
-    </collection>
-    <collection name="build_started">
-        <indexes>
-            <index name="user">
-                <field>user</field>
-                <field>date</field>
-            </index>
-            <index name="ws">
-                <field>ws</field>
-                <field>date</field>
-            </index>
-            <index name="project_id">
-                <field>project_id</field>
-                <field>date</field>
-            </index>
-            <index name="date">
-                <field>date</field>
-            </index>
-        </indexes>
-    </collection>
-    <collection name="builds_finished">
-        <indexes>
-            <index name="user">
-                <field>user</field>
-                <field>date</field>
-            </index>
-            <index name="ws">
-                <field>ws</field>
-                <field>date</field>
-            </index>
-            <index name="project_id">
-                <field>project_id</field>
-                <field>date</field>
-            </index>
-            <index name="date">
-                <field>date</field>
-            </index>
-        </indexes>
-    </collection>
-    <collection name="debugs">
-        <indexes>
-            <index name="user">
-                <field>user</field>
-                <field>date</field>
-            </index>
-            <index name="ws">
-                <field>ws</field>
-                <field>date</field>
-            </index>
-            <index name="project_id">
-                <field>project_id</field>
-                <field>date</field>
-            </index>
-            <index name="date">
-                <field>date</field>
-            </index>
-        </indexes>
-    </collection>
-    <collection name="debug_finished">
-        <indexes>
-            <index name="user">
-                <field>user</field>
-                <field>date</field>
-            </index>
-            <index name="ws">
-                <field>ws</field>
-                <field>date</field>
-            </index>
-            <index name="project_id">
-                <field>project_id</field>
-                <field>date</field>
-            </index>
-            <index name="date">
-                <field>date</field>
-            </index>
-        </indexes>
-    </collection>
     <collection name="build_queue_waiting_started">
         <indexes>
             <index name="user">
@@ -528,106 +409,6 @@
         </indexes>
     </collection>
 
-    <collection name="builds">
-        <indexes>
-            <index name="user">
-                <field>user</field>
-                <field>date</field>
-            </index>
-            <index name="ws">
-                <field>ws</field>
-                <field>date</field>
-            </index>
-            <index name="project_id">
-                <field>project_id</field>
-                <field>date</field>
-            </index>
-            <index name="date">
-                <field>date</field>
-            </index>
-        </indexes>
-    </collection>
-
-    <collection name="builds">
-        <indexes>
-            <index name="user">
-                <field>user</field>
-                <field>date</field>
-            </index>
-            <index name="ws">
-                <field>ws</field>
-                <field>date</field>
-            </index>
-            <index name="project_id">
-                <field>project_id</field>
-                <field>date</field>
-            </index>
-            <index name="date">
-                <field>date</field>
-            </index>
-        </indexes>
-    </collection>
-
-    <collection name="runs_time">
-        <indexes>
-            <index name="user">
-                <field>user</field>
-                <field>date</field>
-            </index>
-            <index name="ws">
-                <field>ws</field>
-                <field>date</field>
-            </index>
-            <index name="project_id">
-                <field>project_id</field>
-                <field>date</field>
-            </index>
-            <index name="date">
-                <field>date</field>
-            </index>
-        </indexes>
-    </collection>
-
-    <collection name="builds_time">
-        <indexes>
-            <index name="user">
-                <field>user</field>
-                <field>date</field>
-            </index>
-            <index name="ws">
-                <field>ws</field>
-                <field>date</field>
-            </index>
-            <index name="project_id">
-                <field>project_id</field>
-                <field>date</field>
-            </index>
-            <index name="date">
-                <field>date</field>
-            </index>
-        </indexes>
-    </collection>
-
-    <collection name="debugs_time">
-        <indexes>
-            <index name="user">
-                <field>user</field>
-                <field>date</field>
-            </index>
-            <index name="ws">
-                <field>ws</field>
-                <field>date</field>
-            </index>
-            <index name="project_id">
-                <field>project_id</field>
-                <field>date</field>
-            </index>
-            <index name="date">
-                <field>date</field>
-            </index>
-        </indexes>
-    </collection>
-
     <collection name="factories_accepted">
         <indexes>
             <index name="user">
@@ -687,6 +468,10 @@
                 <field>date</field>
             </index>
             <index name="factory">
+                <field>factory</field>
+                <field>date</field>
+            </index>
+            <index name="factory_id">
                 <field>factory</field>
                 <field>date</field>
             </index>
@@ -755,6 +540,10 @@
                 <field>date</field>
             </index>
             <index name="factory">
+                <field>factory</field>
+                <field>date</field>
+            </index>
+            <index name="factory_id">
                 <field>factory</field>
                 <field>date</field>
             </index>
@@ -1185,6 +974,59 @@
             </index>
             <index name="date">
                 <field>date</field>
+            </index>
+        </indexes>
+    </collection>
+
+    <collection name="tasks">
+        <indexes>
+            <index name="task_id">
+                <field>id</field>
+                <field>date</field>
+            </index>
+            <index name="date">
+                <field>date</field>
+            </index>
+            <index name="task_type">
+                <field>task_type</field>
+            </index>
+            <index name="stop_time">
+                <field>start_time</field>
+            </index>
+            <index name="start_time">
+                <field>start_time</field>
+            </index>
+            <index name="memory">
+                <field>memory</field>
+            </index>
+            <index name="usage_time">
+                <field>usage_time</field>
+            </index>
+            <index name="gigabyte_ram_hours">
+                <field>gigabyte_ram_hours</field>
+            </index>
+            <index name="user">
+                <field>user</field>
+                <field>date</field>
+            </index>
+            <index name="ws">
+                <field>ws</field>
+                <field>date</field>
+            </index>
+            <index name="project">
+                <field>project</field>
+            </index>
+            <index name="project_type">
+                <field>project_type</field>
+            </index>
+            <index name="is_factory">
+                <field>is_factory</field>
+            </index>
+            <index name="launch_type">
+                <field>launch_type</field>
+            </index>
+            <index name="shutdown_type">
+                <field>shutdown_type</field>
             </index>
         </indexes>
     </collection>

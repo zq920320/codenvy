@@ -61,7 +61,11 @@ public class GetFactoryId extends EvalFunc<String> {
 
         Map<String, ValueData> profile = treatAsMap(data.getAll().get(0));
         if (profile.containsKey(AbstractMetric.FACTORY_ID)) {
-            return profile.get(AbstractMetric.FACTORY_ID).getAsString();
+            String s = profile.get(AbstractMetric.FACTORY_ID).getAsString();
+            if (s.trim().isEmpty()) {
+                return null;
+            }
+            return s;
         } else {
             return null;
         }

@@ -24,15 +24,17 @@ IMPORT 'macros.pig';
 
 l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 
-
 u1 = LOAD '$STORAGE_URL.$STORAGE_TABLE_ACCEPTED_FACTORIES' using MongoLoaderAcceptedFactories();
 u = FOREACH u1 GENERATE ws AS tmpWs, referrer, factory, org_id AS orgId, affiliate_id AS affiliateId, factory_id AS factoryId;
 
 ---- finds out all imported projects
-i1 = filterByEvent(l, 'factory-project-imported');
-i2 = FOREACH i1 GENERATE dt, ws AS tmpWs, user;
-i3 = GROUP i2 BY (tmpWs, user);
-i = FOREACH i3 GENERATE MIN(i2.dt) AS dt, group.tmpWs AS tmpWs, group.user AS user;
+i1 = filterByEvent(l, 'ide-usage');
+i2 = extractParam(i1, 'SOURCE', 'source');
+i3 = extractParam(i2, 'ACTION', 'action');
+i4 = FILTER i3 BY source == 'com.codenvy.ide.factory.client.persist.PersistProjectHandler' AND action == 'clone';
+i5 = FOREACH i4 GENERATE dt, ws AS tmpWs, user;
+i6 = GROUP i5 BY (tmpWs, user);
+i = FOREACH i6 GENERATE MIN(i5.dt) AS dt, group.tmpWs AS tmpWs, group.user AS user;
 
 -- users could work anonymously and their factory sessions associated with those names
 -- so, lets find their name before 'user-changed-name' has been occurred
@@ -50,26 +52,12 @@ d3 = UNION d2, i;
 d = DISTINCT d3;
 
 -- factory sessions
-a1 = filterByEvent(l, 'session-factory-usage');
-a2 = removeEmptyField(a1, 'user');
-a3 = extractParam(a2, 'SESSION-ID', sessionID);
-a4 = extractParam(a3, 'START-TIME', startTime);
-a5 = extractParam(a4, 'USAGE-TIME', usageTime);
-a6 = lastUpdate(a5, 'sessionID');
-a7 = FOREACH a6 GENERATE a5::dt AS dt,
-                         (long)a5::startTime AS startTime,
-                         (long)a5::usageTime AS usageTime,
-                         a5::ws AS ws,
-                         a5::user AS user,
-                         a5::sessionID AS sessionID;
-
-
-a8 = addLogoutInterval(a7, l, '$idleInterval');
-s2 = FOREACH a8 GENERATE ToDate(startTime) AS dt,
+s1 = getSessions(l, 'session-factory-usage');
+s2 = FOREACH s1 GENERATE ToDate(startTime) AS dt,
+                         usageTime AS delta,
                          ws AS tmpWs,
                          user AS tmpUser,
-                         sessionID AS id,
-                         (usageTime + logoutInterval) AS delta;
+                         sessionID AS id;
 
 -- founds out the corresponding referrer and factory
 s3 = JOIN s2 BY tmpWs LEFT, u BY tmpWs;
@@ -91,7 +79,6 @@ k1 = addEventIndicator(s, l,  'run-started', 'run', '$inactiveInterval');
 k = FOREACH k1 GENERATE t::s::dt AS dt, t::s::delta AS delta, t::s::factory AS factory, t::s::referrer AS referrer,
                         t::s::orgId AS orgId, t::s::affiliateId AS affiliateId, t::s::factoryId AS factoryId, t::s::ws AS ws,
                         t::s::user AS user, t::s::conv AS conv, t::run AS run, t::s::id AS id;
-
 m1 = addEventIndicator(k, l,  'application-created', 'deploy', '$inactiveInterval');
 m = FOREACH m1 GENERATE t::k::dt AS dt, t::k::delta AS delta, t::k::factory AS factory, t::k::referrer AS referrer,
                         t::k::orgId AS orgId, t::k::affiliateId AS affiliateId, t::k::factoryId AS factoryId, t::k::ws AS ws, t::k::id AS id,
@@ -106,10 +93,9 @@ o1 = addEventIndicator(n, l,  'debug-started', 'debug', '$inactiveInterval');
 o = FOREACH o1 GENERATE t::n::dt AS dt, t::n::delta AS delta, t::n::factory AS factory, t::n::referrer AS referrer, t::n::id AS id,
                         t::n::orgId AS orgId, t::n::affiliateId AS affiliateId, t::n::factoryId AS factoryId, t::n::ws AS ws,
                         t::n::user AS user, t::n::conv AS conv, t::n::run AS run, t::n::deploy AS deploy, t::n::build AS build, t::debug AS debug;
-
-
 -- add created temporary session indicator
 w = createdTemporaryWorkspaces(l);
+
 z1 = JOIN o BY (ws, user) FULL, w BY (ws, user);
 z2 = FOREACH z1 GENERATE (o::ws IS NULL ? w::dt : o::dt) AS dt,
     (o::ws IS NULL ? '' : o::id) AS id,
@@ -183,7 +169,6 @@ p = FOREACH p4 GENERATE ws,
                         p2::ws_created AS ws_created,
                         (p2::dt == minDT ? p2::user_created : 0) AS user_created,
                         (factoryId IS NULL ? 0 : 1) AS encodedFactory;
-
 -- Set session id if absent
 SPLIT p INTO r1 IF test_id != '', t1 OTHERWISE;
 
@@ -209,7 +194,11 @@ result1 = FOREACH r GENERATE id,
                             TOTUPLE('time', delta),
                             TOTUPLE('session_id', id),
                             TOTUPLE('user_created', user_created),
-                            TOTUPLE('encoded_factory', encodedFactory);
+                            TOTUPLE('encoded_factory', encodedFactory),
+                            TOTUPLE('builds_gigabyte_ram_hours', CalculateBuildsGigabyteRamHours(factoryId)),
+                            TOTUPLE('runs_gigabyte_ram_hours', CalculateRunsGigabyteRamHours(factoryId)),
+                            TOTUPLE('debugs_gigabyte_ram_hours', CalculateDebugsGigabyteRamHours(factoryId)),
+                            TOTUPLE('edits_gigabyte_ram_hours', CalculateEditsGigabyteRamHours(factoryId));
 STORE result1 INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 
 result2 = FOREACH t GENERATE id,
@@ -231,7 +220,11 @@ result2 = FOREACH t GENERATE id,
                             TOTUPLE('session', 1),
                             TOTUPLE('session_id', id),
                             TOTUPLE('user_created', user_created),
-                            TOTUPLE('encoded_factory', encodedFactory);
+                            TOTUPLE('encoded_factory', encodedFactory),
+                            TOTUPLE('builds_gigabyte_ram_hours', CalculateBuildsGigabyteRamHours(factoryId)),
+                            TOTUPLE('runs_gigabyte_ram_hours', CalculateRunsGigabyteRamHours(factoryId)),
+                            TOTUPLE('debugs_gigabyte_ram_hours', CalculateDebugsGigabyteRamHours(factoryId)),
+                            TOTUPLE('edits_gigabyte_ram_hours', CalculateEditsGigabyteRamHours(factoryId));
 STORE result2 INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 
 -- newly generated sessions should be stored in '$STORAGE_TABLE_PRODUCT_USAGE_SESSIONS' collection too
@@ -247,7 +240,11 @@ result3 = FOREACH t GENERATE id,
                             TOTUPLE('user_company', ''),
                             TOTUPLE('factory', factory),
                             TOTUPLE('referrer', referrer),
-                            TOTUPLE('factory_id', factoryId);
+                            TOTUPLE('factory_id', factoryId),
+                            TOTUPLE('builds_gigabyte_ram_hours', CalculateBuildsGigabyteRamHours(factoryId)),
+                            TOTUPLE('runs_gigabyte_ram_hours', CalculateRunsGigabyteRamHours(factoryId)),
+                            TOTUPLE('debugs_gigabyte_ram_hours', CalculateDebugsGigabyteRamHours(factoryId)),
+                            TOTUPLE('edits_gigabyte_ram_hours', CalculateEditsGigabyteRamHours(factoryId));
 STORE result3 INTO '$STORAGE_URL.$STORAGE_TABLE_PRODUCT_USAGE_SESSIONS' USING MongoStorage;
 
 result4 = FOREACH t GENERATE id,

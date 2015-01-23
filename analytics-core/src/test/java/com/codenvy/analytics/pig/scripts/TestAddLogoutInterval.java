@@ -51,7 +51,7 @@ public class TestAddLogoutInterval extends BaseTest {
                                       .withParam("EVENT", "session-usage")
                                       .withParam("WS", "ws")
                                       .withParam("USER", "user1")
-                                      .withParam("PARAMETERS", "USAGE-TIME=60000,START-TIME=1388563200000,SESSION-ID=1")
+                                      .withParam("PARAMETERS", "SESSION-ID=1")
                                       .build());
         events.add(Event.Builder.createUserSSOLoggedOutEvent("user1").withDate("2014-01-01").withTime("10:02:00").build());
         events.add(Event.Builder.createUserSSOLoggedOutEvent("user1").withDate("2014-01-01").withTime("10:03:00").build());

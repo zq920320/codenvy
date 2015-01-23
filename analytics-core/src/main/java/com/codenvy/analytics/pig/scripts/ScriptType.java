@@ -127,6 +127,8 @@ public enum ScriptType {
         }
     },
 
+    TASKS,
+
     /** Script for testing purpose. */
     TEST_MONGO_LOADER {
         public Set<Parameters> getParams() {

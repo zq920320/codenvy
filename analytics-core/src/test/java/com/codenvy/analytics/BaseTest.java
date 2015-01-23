@@ -48,11 +48,10 @@ public class BaseTest {
     protected static final String UID2 = NameGenerator.generate("user_2_", com.codenvy.api.user.server.Constants.ID_LENGTH - 3);
     protected static final String UID3 = NameGenerator.generate("user_3_", com.codenvy.api.user.server.Constants.ID_LENGTH - 3);
     protected static final String UID4 = NameGenerator.generate("user_4_", com.codenvy.api.user.server.Constants.ID_LENGTH - 3);
+    protected static final String UID5 = NameGenerator.generate("user_5_", com.codenvy.api.user.server.Constants.ID_LENGTH - 3);
 
     protected static final String AUID1 = NameGenerator.generate("user_a1_", com.codenvy.api.user.server.Constants.ID_LENGTH - 4);
     protected static final String AUID2 = NameGenerator.generate("user_a2_", com.codenvy.api.user.server.Constants.ID_LENGTH - 4);
-    protected static final String AUID3 = NameGenerator.generate("user_a3_", com.codenvy.api.user.server.Constants.ID_LENGTH - 4);
-    protected static final String AUID4 = NameGenerator.generate("user_a4_", com.codenvy.api.user.server.Constants.ID_LENGTH - 4);
 
     protected static final String WID1  = NameGenerator.generate("workspace_1_", com.codenvy.api.workspace.server.Constants.ID_LENGTH - 3);
     protected static final String WID2  = NameGenerator.generate("workspace_2_", com.codenvy.api.workspace.server.Constants.ID_LENGTH - 3);

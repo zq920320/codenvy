@@ -142,13 +142,13 @@ public abstract class AbstractUsersActivityTest extends BaseTest {
 
         // projects created
         events.add(
-                Event.Builder.createProjectCreatedEvent("ws1", "user1@gmail.com", "project1", "type1").withDate("2013-11-01")
+                Event.Builder.createProjectCreatedEvent("user1@gmail.com", "ws1", "project1", "type1").withDate("2013-11-01")
                              .withTime("10:00:00").build());
         events.add(
-                Event.Builder.createProjectCreatedEvent("ws1", "user1@gmail.com", "project2", "type1").withDate("2013-11-01")
+                Event.Builder.createProjectCreatedEvent("user1@gmail.com", "ws1", "project2", "type1").withDate("2013-11-01")
                              .withTime("10:05:00").build());
         events.add(
-                Event.Builder.createProjectCreatedEvent("ws2", "user2@gmail.com", "project1", "type1").withDate("2013-11-01")
+                Event.Builder.createProjectCreatedEvent("user2@gmail.com", "ws2", "project1", "type1").withDate("2013-11-01")
                              .withTime("10:03:00").build());
 
         // projects built
@@ -186,12 +186,12 @@ public abstract class AbstractUsersActivityTest extends BaseTest {
                                 .withDate("2013-11-02").build());
 
 
-        events.add(Event.Builder.createSessionUsageEvent("user1@gmail.com", "ws1", "1", "2013-11-02 19:00:00", "2013-11-02 19:05:00", false)
-                                .withDate("2013-11-02").withTime("19:00:00").build());
-        events.add(Event.Builder.createSessionUsageEvent("user2@gmail.com", "ws1", "2", "2013-11-02 20:00:00", "2013-11-02 20:10:00", false)
-                                .withDate("2013-11-02").withTime("20:00:00").build());
+        events.add(Event.Builder.createSessionUsageEvent("user1@gmail.com", "ws1", "1", false).withDate("2013-11-02").withTime("19:00:00").build());
+        events.add(Event.Builder.createSessionUsageEvent("user1@gmail.com", "ws1", "1", false).withDate("2013-11-02").withTime("19:05:00").build());
+        events.add(Event.Builder.createSessionUsageEvent("user2@gmail.com", "ws1", "2", false).withDate("2013-11-02").withTime("20:00:00").build());
+        events.add(Event.Builder.createSessionUsageEvent("user2@gmail.com", "ws1", "2", false).withDate("2013-11-02").withTime("20:10:00").build());
 
-        events.add(Event.Builder.createFactoryCreatedEvent("ws1", "user1@gmail.com", "", "", "", "", "", "")
+        events.add(Event.Builder.createFactoryCreatedEvent("user1@gmail.com", "ws1", "", "", "", "", "", "")
                                 .withDate("2013-11-01")
                                 .withTime("20:03:00").build());
 

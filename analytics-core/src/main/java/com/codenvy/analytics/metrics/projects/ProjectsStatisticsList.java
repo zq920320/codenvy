@@ -53,8 +53,10 @@ public class ProjectsStatisticsList extends AbstractListValueResulted implements
                             WS,
                             BUILDS,
                             BUILD_TIME,
+                            BUILD_WAITING_TIME,
                             RUNS,
                             RUN_TIME,
+                            RUN_WAITING_TIME,
                             DEBUGS,
                             DEBUG_TIME,
                             DEPLOYS,
@@ -81,6 +83,8 @@ public class ProjectsStatisticsList extends AbstractListValueResulted implements
         group.put(RUN_TIME, new BasicDBObject("$sum", "$" + RUN_TIME));
         group.put(BUILD_TIME, new BasicDBObject("$sum", "$" + BUILD_TIME));
         group.put(DEBUG_TIME, new BasicDBObject("$sum", "$" + DEBUG_TIME));
+        group.put(RUN_WAITING_TIME, new BasicDBObject("$sum", "$" + RUN_WAITING_TIME));
+        group.put(BUILD_WAITING_TIME, new BasicDBObject("$sum", "$" + BUILD_WAITING_TIME));
         group.put(PROJECT, new BasicDBObject("$first", "$" + PROJECT));
         group.put(WS, new BasicDBObject("$first", "$" + WS));
         group.put(USER, new BasicDBObject("$first", "$" + USER));
@@ -98,6 +102,8 @@ public class ProjectsStatisticsList extends AbstractListValueResulted implements
         project.put(RUN_TIME, "$" + RUN_TIME);
         project.put(BUILD_TIME, "$" + BUILD_TIME);
         project.put(DEBUG_TIME, "$" + DEBUG_TIME);
+        project.put(RUN_WAITING_TIME, "$" + RUN_WAITING_TIME);
+        project.put(BUILD_WAITING_TIME, "$" + BUILD_WAITING_TIME);
         project.put(PROJECT, "$" + PROJECT);
         project.put(WS, "$" + WS);
         project.put(USER, "$" + USER);

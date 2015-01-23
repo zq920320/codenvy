@@ -110,7 +110,6 @@ public class TestEventValidation extends BaseTest {
     @DataProvider(name = "correctMessagesProvider")
     public Object[][] getCorrectMessages() {
         return new Object[][]{
-                {"session-started", "ws", "user", "PARAMETERS#SESSION-ID=9F8D988D-78DC-412D-BD34-C3470450A21D#"},
                 {"application-created", "ws", "user", "PROJECT#Sample# TYPE#JavaScript# PAAS#default#"},
                 {"project-created", "ws", "user", "PROJECT#Sample-TwitterBootstrap# TYPE#null# PAAS#null#"},
                 {"project-created", "ws", "user", "PROJECT#Sample-TwitterBootstrap# TYPE#unknown# PAAS#default#"},
@@ -167,7 +166,6 @@ public class TestEventValidation extends BaseTest {
                 {"application-created", "ws", "user", "PROJECT#Sample# TYPE#JavaScript# PAAS#gae#"},
                 {"application-created", "ws", "user", "PROJECT#Sample# TYPE#JavaScript# PAAS#CloudFoundry#"},
                 {"application-created", "ws", "user", "PROJECT#Sample# TYPE#JavaScript# PAAS#AWS#"},
-                {"project-deployed", "ws", "user", "PROJECT#Sample# TYPE#JavaScript# PAAS#LOCAL#"},
                 {"artifact-deployed", "ws", "user", "PROJECT#Sample# TYPE#JavaScript# PAAS#LOCAL#"},
         };
     }

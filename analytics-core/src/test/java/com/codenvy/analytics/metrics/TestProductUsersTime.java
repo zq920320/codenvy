@@ -173,28 +173,59 @@ public class TestProductUsersTime extends BaseTest {
                                       .withParam("EVENT", "session-usage")
                                       .withParam("WS", "ws1")
                                       .withParam("USER", "user1_12345678901234")
-                                      .withParam("PARAMETERS", "USAGE-TIME=300000,START-TIME=1383328800000,SESSION-ID=1")
+                                      .withParam("PARAMETERS", "SESSION-ID=1")
                                       .build());
+        events.add(new Event.Builder().withDate("2013-11-01")
+                                      .withTime("20:05:00")
+                                      .withParam("EVENT", "session-usage")
+                                      .withParam("WS", "ws1")
+                                      .withParam("USER", "user1_12345678901234")
+                                      .withParam("PARAMETERS", "SESSION-ID=1")
+                                      .build());
+
         events.add(new Event.Builder().withDate("2013-11-01")
                                       .withTime("20:00:00")
                                       .withParam("EVENT", "session-usage")
                                       .withParam("WS", "ws1")
                                       .withParam("USER", "user1_12345678901234")
-                                      .withParam("PARAMETERS", "USAGE-TIME=180000,START-TIME=1383328800000,SESSION-ID=2")
+                                      .withParam("PARAMETERS", "SESSION-ID=2")
                                       .build());
+        events.add(new Event.Builder().withDate("2013-11-01")
+                                      .withTime("20:03:00")
+                                      .withParam("EVENT", "session-usage")
+                                      .withParam("WS", "ws1")
+                                      .withParam("USER", "user1_12345678901234")
+                                      .withParam("PARAMETERS", "SESSION-ID=2")
+                                      .build());
+
         events.add(new Event.Builder().withDate("2013-11-01")
                                       .withTime("20:00:00")
                                       .withParam("EVENT", "session-usage")
                                       .withParam("WS", "ws1")
                                       .withParam("USER", "user2_12345678901234")
-                                      .withParam("PARAMETERS", "USAGE-TIME=60000,START-TIME=1383328800000,SESSION-ID=3")
+                                      .withParam("PARAMETERS", "SESSION-ID=3")
                                       .build());
+        events.add(new Event.Builder().withDate("2013-11-01")
+                                      .withTime("20:01:00")
+                                      .withParam("EVENT", "session-usage")
+                                      .withParam("WS", "ws1")
+                                      .withParam("USER", "user2_12345678901234")
+                                      .withParam("PARAMETERS", "SESSION-ID=3")
+                                      .build());
+
         events.add(new Event.Builder().withDate("2013-11-01")
                                       .withTime("20:00:00")
                                       .withParam("EVENT", "session-usage")
                                       .withParam("WS", "ws1")
                                       .withParam("USER", "user3_12345678901234")
-                                      .withParam("PARAMETERS", "USAGE-TIME=420000,START-TIME=1383328800000,SESSION-ID=4")
+                                      .withParam("PARAMETERS", "SESSION-ID=4")
+                                      .build());
+        events.add(new Event.Builder().withDate("2013-11-01")
+                                      .withTime("20:07:00")
+                                      .withParam("EVENT", "session-usage")
+                                      .withParam("WS", "ws1")
+                                      .withParam("USER", "user3_12345678901234")
+                                      .withParam("PARAMETERS", "SESSION-ID=4")
                                       .build());
 
         return LogGenerator.generateLog(events);

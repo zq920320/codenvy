@@ -27,7 +27,10 @@ import javax.annotation.security.RolesAllowed;
 public class ProjectTypeJavaScript extends AbstractProjectType {
 
     public ProjectTypeJavaScript() {
-        super(MetricType.PROJECT_TYPE_JAVASCRIPT, new String[]{JAVA_SCRIPT,
+        super(MetricType.PROJECT_TYPE_JAVASCRIPT, new String[]{JS,
+                                                               GRANT_JS,
+                                                               GULP_JS,
+                                                               BASIC_JS,
                                                                ANGULAR_JAVA_SCRIPT,
                                                                HTML});
     }

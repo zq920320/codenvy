@@ -31,5 +31,6 @@ public class ApiModule extends AbstractModule {
         bind(MetricHandler.class).to(FileBasedMetricHandler.class);
         bind(AnalyticsPrivate.class);
         bind(View.class);
+        bind(Service.class);
     }
 }

@@ -58,14 +58,18 @@ public class FactoryStatisticsListPrecomputed extends AbstractListValueResulted 
                             SESSIONS,
                             TIME,
                             BUILDS,
+                            BUILDS_GIGABYTE_RAM_HOURS,
                             RUNS,
+                            RUNS_GIGABYTE_RAM_HOURS,
+                            DEBUGS,
+                            DEBUGS_GIGABYTE_RAM_HOURS,
                             DEPLOYS,
                             AUTHENTICATED_SESSION,
                             CONVERTED_SESSION,
                             ENCODED_FACTORY,
-                            DEBUGS,
                             ORG_ID,
-                            PROJECT_TYPE};
+                            PROJECT_TYPE,
+                            EDITS_GIGABYTE_RAM_HOURS};
     }
 
     @Override

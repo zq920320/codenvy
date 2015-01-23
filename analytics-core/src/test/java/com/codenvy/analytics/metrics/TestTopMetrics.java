@@ -47,45 +47,45 @@ public class TestTopMetrics extends BaseTest {
                                 .withDate("2013-02-10").withTime("10:00:00,000").build());
         events.add(Event.Builder.createUserCreatedEvent(AUID1, "anonymoususer_1", "anonymoususer_1")
                                 .withDate("2013-02-10").withTime("11:00:00,000").build());
-
-        events.add(Event.Builder.createSessionUsageEvent("user1@gmail.com", "tmp-1", "id1", "2013-02-10 10:00:00", "2013-02-10 10:05:00", true)
+        events.add(Event.Builder.createWorkspaceCreatedEvent(TWID1, "tmp-1", "user1@gmail.com")
                                 .withDate("2013-02-10").withTime("10:00:00").build());
-
-        events.add(Event.Builder.createSessionUsageEvent("user1@gmail.com", "tmp-2", "id2", "2013-02-10 10:20:00", "2013-02-10 10:30:00", true)
+        events.add(Event.Builder.createWorkspaceCreatedEvent(TWID2, "tmp-2", "user1@gmail.com")
                                 .withDate("2013-02-10").withTime("10:20:00").build());
-
-        events.add(Event.Builder.createSessionUsageEvent("anonymoususer_1", "tmp-3", "id3", "2013-02-10 11:00:00", "2013-02-10 11:15:00", true)
-                                .withDate("2013-02-10").withTime("11:00:00").build());
-
-        events.add(Event.Builder.createFactoryProjectImportedEvent("tmp-1", "user1@gmail.com", "project", "type")
-                                .withDate("2013-02-10").withTime("10:05:00").build());
-
         events.add(
                 Event.Builder
                         .createFactoryUrlAcceptedEvent("tmp-1", "factoryUrl0", "http://referrer1", "org1", "affiliate1")
-                        .withDate("2013-02-10").withTime("11:00:00").build());
+                        .withDate("2013-02-10").withTime("10:00:00").build());
         events.add(
                 Event.Builder
                         .createFactoryUrlAcceptedEvent("tmp-2", "factoryUrl1", "http://referrer2", "org2", "affiliate1")
-                        .withDate("2013-02-10").withTime("11:00:01").build());
+                        .withDate("2013-02-10").withTime("10:20:00").build());
         events.add(
                 Event.Builder
                         .createFactoryUrlAcceptedEvent("tmp-3", "factoryUrl1", "http://referrer2", "org3", "affiliate2")
-                        .withDate("2013-02-10").withTime("11:00:02").build());
+                        .withDate("2013-02-10").withTime("11:00:00").build());
 
-        events.add(Event.Builder.createWorkspaceCreatedEvent(TWID1, "tmp-1", "user1@gmail.com")
-                                .withDate("2013-02-10").withTime("12:00:00").build());
-        events.add(Event.Builder.createWorkspaceCreatedEvent(TWID2, "tmp-2", "user1@gmail.com")
-                                .withDate("2013-02-10").withTime("12:01:00").build());
+        events.add(Event.Builder.createSessionUsageEvent("user1@gmail.com", "tmp-1", "id1", true)
+                                .withDate("2013-02-10").withTime("10:00:00").build());
+        events.add(Event.Builder.createSessionUsageEvent("user1@gmail.com", "tmp-1", "id1", true)
+                                .withDate("2013-02-10").withTime("10:05:00").build());
+
+        events.add(Event.Builder.createSessionUsageEvent("user1@gmail.com", "tmp-2", "id2", true)
+                                .withDate("2013-02-10").withTime("10:20:00").build());
+        events.add(Event.Builder.createSessionUsageEvent("user1@gmail.com", "tmp-2", "id2", true)
+                                .withDate("2013-02-10").withTime("10:30:00").build());
+
+        events.add(Event.Builder.createSessionUsageEvent("anonymoususer_1", "tmp-3", "id3", true)
+                                .withDate("2013-02-10").withTime("11:00:00").build());
+        events.add(Event.Builder.createSessionUsageEvent("anonymoususer_1", "tmp-3", "id3", true)
+                                .withDate("2013-02-10").withTime("11:15:00").build());
+
+        events.add(Event.Builder.createFactoryProjectImportedEvent("user1@gmail.com", "tmp-1", "project", "type")
+                                .withDate("2013-02-10").withTime("10:05:00").build());
 
         // run event for session #1
         events.add(Event.Builder.createRunStartedEvent("user1@gmail.com", "tmp-1", "project", "type", "id1")
                                 .withDate("2013-02-10").withTime("10:03:00").build());
 
-        events.add(Event.Builder.createProjectDeployedEvent("user1@gmail.com", "tmp-1", "project", "type", "local")
-                                .withDate("2013-02-10")
-                                .withTime("10:04:00")
-                                .build());
 
         events.add(Event.Builder.createBuildStartedEvent("user1@gmail.com", "tmp-1", "project", "type", "id")
                                 .withDate("2013-02-10")

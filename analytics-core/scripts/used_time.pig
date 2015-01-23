@@ -24,7 +24,8 @@ a1 = filterByEvent(l, '$EVENT');
 a2 = extractParam(a1, 'PROJECT', project);
 a3 = extractParam(a2, 'TYPE', project_type);
 a4 = extractParam(a3, '$PARAM', time);
-a = FOREACH a4 GENERATE dt, ws, user, project, project_type, time;
+a5 = extractParam(a4, 'ID', id);
+a = FOREACH a5 GENERATE dt, ws, user, project, project_type, time, id;
 
 result = FOREACH a GENERATE UUID(),
                             TOTUPLE('date', ToMilliSeconds(dt)),
@@ -34,7 +35,8 @@ result = FOREACH a GENERATE UUID(),
                             TOTUPLE('project_type', LOWER(project_type)),
                             TOTUPLE('project_id', CreateProjectId(user, ws, project)),
                             TOTUPLE('factory_id', GetFactoryId(ws)),
-                            TOTUPLE('time', (long)time);
+                            TOTUPLE('time', (long)time),
+                            TOTUPLE('id', id);
 
 STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 

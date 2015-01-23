@@ -29,6 +29,7 @@ public class ProjectTypeWar extends AbstractProjectType {
     public ProjectTypeWar() {
         super(MetricType.PROJECT_TYPE_WAR, new String[]{WAR,
                                                         JAVA,
+                                                        GAE_JAVA,
                                                         JAVA_ENGINE});
     }
 

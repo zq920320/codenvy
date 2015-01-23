@@ -45,28 +45,19 @@ function AnalyticsConfiguration() {
             displayLineChart: true  // default is false
         },
 
-        runnerReport: {
-            widgetLabel: "Runner Report",
+        taskerReport: {
+            widgetLabel: "Tasker Report",
             presenterType: "ReportPresenter",
-            modelViewName: "runner_timeline",
+            modelViewName: "tasker_report",
 
             defaultModelParams: {
                 "time_unit": "month"
             },
 
-            displayLineChart: true  // default is false
-        },
-
-        builderReport: {
-            widgetLabel: "Builder Report",
-            presenterType: "ReportPresenter",
-            modelViewName: "builder_timeline",
-
-            defaultModelParams: {
-                "time_unit": "month"
-            },
-
-            displayLineChart: true  // default is false
+            /** @see DatabaseTable::makeTableSortable() method docs */
+            clientSortParams: {
+                "columnsWithoutSorting": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
+            }
         },
 
         summaryReport: {
@@ -497,8 +488,6 @@ function AnalyticsConfiguration() {
             presenterType: "EntryViewPresenter",
             modelViewName: "users",
 
-            modelSummarizedMetricName: "users_statistics_list",
-
             columnLinkPrefixList: {
                 "User": "/analytics/pages/user-view.jsp?user"
             },
@@ -716,8 +705,6 @@ function AnalyticsConfiguration() {
             presenterType: "EntryViewPresenter",
             modelViewName: "session_overview",
 
-            modelSummarizedMetricName: "product_usage_sessions_list",
-
             columnLinkPrefixList: {
                 "ID": "/analytics/pages/session-view.jsp?session_id",
                 "User": "/analytics/pages/user-view.jsp?user",
@@ -797,8 +784,6 @@ function AnalyticsConfiguration() {
             columnLinkPrefixList: {
                 "Workspace": "/analytics/pages/workspace-view.jsp?ws"
             },
-
-            modelSummarizedMetricName: "workspaces_statistics_list",
 
             /** @see DatabaseTable::makeTableSortable() method docs */
             clientSortParams: {
@@ -985,8 +970,6 @@ function AnalyticsConfiguration() {
                 "Type": "/analytics/pages/projects-view.jsp?project_type"
             },
 
-            modelSummarizedMetricName: "projects_statistics_list",
-
             columnCombinedLinkConfiguration: {
                 "Project": {
                     baseLink: "/analytics/pages/project-view.jsp",
@@ -1159,8 +1142,6 @@ function AnalyticsConfiguration() {
                 "Project Type": "/analytics/pages/projects-view.jsp?project_type"
             },
 
-            modelSummarizedMetricName: "factory_statistics_list",
-
             mapColumnToServerSortParam: {
                 "Factory URL": "factory",
                 "Sessions": "sessions",
@@ -1168,6 +1149,7 @@ function AnalyticsConfiguration() {
                 "Runs": "runs",
                 "Deploys": "deploys",
                 "Builds": "builds",
+                "Debugs": "debugs",
                 "Organization": "org_id"
             },
 
@@ -1291,6 +1273,62 @@ function AnalyticsConfiguration() {
             }
         },
 
+        /** for Tasker View */
+        tasks: {
+            widgetLabel: "Tasks",
+            presenterType: "EntryViewPresenter",
+            modelViewName: "tasks",
+
+            columnLinkPrefixList: {
+                "User": "/analytics/pages/user-view.jsp?user",
+                "Workspace": "/analytics/pages/workspace-view.jsp?ws",
+                "Project Type": "/analytics/pages/projects-view.jsp?project_type"
+            },
+
+            columnCombinedLinkConfiguration: {
+                "Project": {
+                    baseLink: "/analytics/pages/project-view.jsp",
+                    mapColumnToParameter: {
+                        "Project": "project",
+                        "Workspace": "ws",
+                        "User": "user"
+                    }
+                }
+            },
+
+            /** @see DatabaseTable::makeTableSortable() method docs */
+            clientSortParams: {
+                "descSortColumnNumber": 2
+            },
+
+            defaultModelParams: {
+                "sort": "-start_time"
+            },
+
+            mapColumnToServerSortParam: {
+                "Type": "task_type",
+                "Start Time": "start_time",
+                "Stop Time": "stop_time",
+                "Size (MB)": "memory",
+                "Time": "usage_time",
+                "Gigabyte RAM Hours": "gigabyte_ram_hours",
+                "User": "user",
+                "Workspace": "ws",
+                "Project": "project",
+                "Project Type": "project_type",
+                "Factory?": "is_factory",
+                "Launch": "launch_type",
+                "Shutdown": "shutdown_type"
+            }
+        },
+
+        tasksOverview: {
+            presenterType: "SummaryTablePresenter",
+            modelViewName: "tasks_list",
+            modelMetricName: "tasks",
+            doNotDisplayCSVButton: true
+        },
+
         // drill-down page
         drillDown: {
             widgetLabel: "Drill Down Report",
@@ -1337,7 +1375,10 @@ function AnalyticsConfiguration() {
         "action",
         "account_id",
         "data_universe",
-        "passed_days_count"
+        "passed_days_count",
+        "start_time",
+        "id",
+        "task_type"
      ];
 
     /** Global parameters stored in Browser Storage */
@@ -1351,7 +1392,9 @@ function AnalyticsConfiguration() {
     /** Date params which should have "yyyymmdd" in model and "yyyy-mm-dd" format in view */
     var dateParams = [
         "from_date",
-        "to_date"
+        "to_date",
+        "start_time",
+        "stop_time"
     ];
 
     /**
@@ -1429,19 +1472,13 @@ function AnalyticsConfiguration() {
 
 
         /** PROJECTS */
-        "builds": "#PROJECTS",
         "deploys": "#PROJECTS",
         "deploys_to_paas": "#PROJECTS",
-        "runs": "#PROJECTS",
-        "debugs": "#PROJECTS",
         "destroyed_projects": "#PROJECTS",
         "code_refactorings": "#PROJECTS",
         "code_completions": "#PROJECTS",
         "build_queue_terminations": "#PROJECTS",
         "run_queue_terminations": "#PROJECTS",
-        "builds_time": "#PROJECTS",
-        "debugs_time": "#PROJECTS",
-        "runs_time": "#PROJECTS",
         "time_in_build_queue": "#PROJECTS",
         "time_in_run_queue": "#PROJECTS",
         "created_projects": "#PROJECTS",
@@ -1476,18 +1513,7 @@ function AnalyticsConfiguration() {
         "project_no_paas_defined": "#PROJECTS",
         "project_paas_any": "#PROJECTS",
 
-        "builds_finished": "#PROJECTS",
-        "builds_finished_normally": "#PROJECTS",
-        "builds_finished_by_timeout": "#PROJECTS",
-
-        "runs_finished": "#PROJECTS",
-        "runs_memory_usage_per_hour": "#PROJECTS",
-        "runs_with_timeout": "#PROJECTS",
-        "runs_with_always_on": "#PROJECTS",
-        "runs_finished_by_user": "#PROJECTS",
-        "runs_finished_by_timeout": "#PROJECTS",
-
-        "change_project_type_action": "#PROJECTS",
+        "project_configuration_action": "#PROJECTS",
         "close_project_action": "#PROJECTS",
         "delete_item_action": "#PROJECTS",
         "edit_custom_environments_action": "#PROJECTS",
@@ -1497,7 +1523,7 @@ function AnalyticsConfiguration() {
         "formatter_action": "#PROJECTS",
         "import_project_from_location_action": "#PROJECTS",
         "navigate_to_file_action": "#PROJECTS",
-        "new_project_wizard_action": "#PROJECTS",
+        "new_project_action": "#PROJECTS",
         "open_project_action": "#PROJECTS",
         "redirect_to_feedback_action": "#PROJECTS",
         "redirect_to_forums_action": "#PROJECTS",
@@ -1518,11 +1544,8 @@ function AnalyticsConfiguration() {
         "clear_builder_console_action": "#PROJECTS",
         "clear_runner_console_action": "#PROJECTS",
         "custom_run_action": "#PROJECTS",
-        "edit_images_action": "#PROJECTS",
         "get_logs_action": "#PROJECTS",
         "run_action": "#PROJECTS",
-        "run_image_action": "#PROJECTS",
-        "stop_action": "#PROJECTS",
         "view_recipe_action": "#PROJECTS",
         "sort_by_status_action": "#PROJECTS",
         "default_new_resource_action": "#PROJECTS",
@@ -1537,7 +1560,6 @@ function AnalyticsConfiguration() {
         "history_action": "#PROJECTS",
         "init_repository_action": "#PROJECTS",
         "pull_action": "#PROJECTS",
-        "import_project_from_git_hub_action": "#PROJECTS",
         "push_action": "#PROJECTS",
         "remove_from_index_action": "#PROJECTS",
         "reset_files_action": "#PROJECTS",
@@ -1548,10 +1570,8 @@ function AnalyticsConfiguration() {
         "show_remote_action": "#PROJECTS",
         "show_status_action": "#PROJECTS",
         "manage_datasources_action": "#PROJECTS",
-        "execute_sql_action": "#PROJECTS",
         "new_datasource_wizard_action": "#PROJECTS",
         "new_sql_file_action": "#PROJECTS",
-        "sql_request_launcher_action": "#PROJECTS",
         "bower_install_action": "#PROJECTS",
         "export_config_action": "#PROJECTS",
         "import_from_config_action": "#PROJECTS",
@@ -1564,6 +1584,23 @@ function AnalyticsConfiguration() {
         "new_java_source_file_action": "#PROJECTS",
         "new_package_action": "#PROJECTS",
         "update_dependency_action": "#PROJECTS",
+        "show_hidden_files_action": "#PROJECTS",
+        "open_selected_file_action": "#PROJECTS",
+        "find_replace_action": "#PROJECTS",
+        "browse_target_folder_action": "#PROJECTS",
+        "create_support_ticket_action": "#PROJECTS",
+        "redirect_to_engineer_chat_channel_action": "#PROJECTS",
+        "subscription_indicator_action": "#PROJECTS",
+        "redirect_link_action": "#PROJECTS",
+        "queue_type_indicator_action": "#PROJECTS",
+        "memory_indicator_action": "#PROJECTS",
+        "permissions_indicator_action": "#PROJECTS",
+        "open_welcome_page_action": "#PROJECTS",
+        "share_action": "#PROJECTS",
+        "redirect_to_dashboard_action": "#PROJECTS",
+        "create_maven_module_action": "#PROJECTS",
+        "quick_documentation_action": "#PROJECTS",
+        "open_declaration_action": "#PROJECTS",
 
         /** SESSIONS */
         "factory_sessions_with_build": "#SESSIONS",
@@ -1601,6 +1638,47 @@ function AnalyticsConfiguration() {
         /** FACTORIES */
         "factory_used": "#FACTORIES",
 
+        /** TASKS */
+        "builds": "#TASKS",
+        "builds_time": "#TASKS",
+        "builds_finished": "#TASKS",
+        "builds_gigabyte_ram_hours": "#TASKS",
+        "builds_with_timeout": "#TASKS",
+        "builds_with_always_on": "#TASKS",
+        "builds_finished_normally": "#TASKS",
+        "builds_finished_by_timeout": "#TASKS",
+
+        "runs": "#TASKS",
+        "runs_time": "#TASKS",
+        "runs_finished": "#TASKS",
+        "runs_gigabyte_ram_hours": "#TASKS",
+        "runs_with_timeout": "#TASKS",
+        "runs_with_always_on": "#TASKS",
+        "runs_finished_by_user": "#TASKS",
+        "runs_finished_by_timeout": "#TASKS",
+
+        "debugs": "#TASKS",
+        "debugs_time": "#TASKS",
+        "debugs_finished": "#TASKS",
+        "debugs_gigabyte_ram_hours": "#TASKS",
+        "debugs_with_timeout": "#TASKS",
+        "debugs_with_always_on": "#TASKS",
+        "debugs_finished_by_user": "#TASKS",
+        "debugs_finished_by_timeout": "#TASKS",
+
+        "edits": "#TASKS",
+        "edits_time": "#TASKS",
+        "edits_gigabyte_ram_hours": "#TASKS",
+
+        "tasks_launched": "#TASKS",
+        "tasks_stopped": "#TASKS",
+        "tasks_time": "#TASKS",
+        "tasks_gigabyte_ram_hours": "#TASKS",
+        "tasks_launched_with_timeout": "#TASKS",
+        "tasks_launched_with_always_on": "#TASKS",
+        "tasks_stopped_normally": "#TASKS",
+        "tasks_stopped_by_timeout": "#TASKS",
+
         /** DEFAULT */
         "total_factories": "#DEFAULT",  // isn't 'FACTORIES' because total factory = created factory, and there could be no some created factories in 'product_usage_factory_sessions_list' collection
         "created_factories": "#DEFAULT"  // isn't 'FACTORIES' because there could be no some created factories in 'product_usage_factory_sessions_list' collection
@@ -1611,7 +1689,8 @@ function AnalyticsConfiguration() {
         "#WORKSPACES": "/analytics/pages/workspaces-view.jsp",
         "#FACTORIES": "/analytics/pages/factories-view.jsp",
         "#PROJECTS": "/analytics/pages/projects-view.jsp",
-        "#SESSIONS": "/analytics/pages/sessions-view.jsp"
+        "#SESSIONS": "/analytics/pages/sessions-view.jsp",
+        "#TASKS": "/analytics/pages/tasks-view.jsp"
     };
 
     var factoryUrlColumnNames = ["Factory URL", "Factory"];
@@ -1639,10 +1718,14 @@ function AnalyticsConfiguration() {
         "Event",
         "Date",
         "Start Time",
+        "Stop Time",
         "End Time",
         "Started",
         "Is Authenticated Session",
-        "Is Converted Session"
+        "Is Converted Session",
+        "Factory?",
+        "Launch",
+        "Shutdown"
     ];
 
     /**

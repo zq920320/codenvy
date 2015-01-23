@@ -19,7 +19,6 @@
 IMPORT 'macros.pig';
 
 l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
-
 a1 = filterByEvent(l, 'project-created');
 a2 = extractParam(a1, 'PROJECT', project);
 a3 = extractParam(a2, 'TYPE', project_type);

@@ -35,14 +35,14 @@
         <description>The number of created persistent workspaces</description>
         <parameter key="WS" value="PERSISTENT"/>
         <parameter key="USER" value="ANY"/>
-        <parameter key="EVENT" value="tenant-created,workspace-created"/>
+        <parameter key="EVENT" value="workspace-created"/>
         <parameter key="STORAGE_TABLE" value="created_workspaces"/>
     </script>
     <script name="events">
         <description>The number of destroyed persistent workspaces</description>
         <parameter key="WS" value="PERSISTENT"/>
         <parameter key="USER" value="ANY"/>
-        <parameter key="EVENT" value="tenant-destroyed,workspace-destroyed"/>
+        <parameter key="EVENT" value="workspace-destroyed"/>
         <parameter key="STORAGE_TABLE" value="destroyed_workspaces"/>
     </script>
     <script name="events">
@@ -59,48 +59,18 @@
         <parameter key="EVENT" value="user-removed"/>
         <parameter key="STORAGE_TABLE" value="removed_users"/>
     </script>
+    <script name="accepted_factories">
+        <description>Accepted factories</description>
+        <parameter key="WS" value="ANY"/>
+        <parameter key="USER" value="ANY"/>
+        <parameter key="STORAGE_TABLE" value="factories_accepted"/>
+    </script>
     <script name="events">
         <description>The number of invites</description>
         <parameter key="WS" value="ANY"/>
         <parameter key="USER" value="REGISTERED"/>
         <parameter key="EVENT" value="user-invite"/>
         <parameter key="STORAGE_TABLE" value="user_invite"/>
-    </script>
-    <script name="events">
-        <parameter key="WS" value="ANY"/>
-        <parameter key="USER" value="ANY"/>
-        <parameter key="EVENT" value="run-started"/>
-        <parameter key="STORAGE_TABLE" value="runs"/>
-    </script>
-    <script name="events">
-        <parameter key="WS" value="ANY"/>
-        <parameter key="USER" value="ANY"/>
-        <parameter key="EVENT" value="run-finished"/>
-        <parameter key="STORAGE_TABLE" value="runs_finished"/>
-    </script>
-    <script name="events">
-        <parameter key="WS" value="ANY"/>
-        <parameter key="USER" value="ANY"/>
-        <parameter key="EVENT" value="build-started"/>
-        <parameter key="STORAGE_TABLE" value="builds"/>
-    </script>
-    <script name="events">
-        <parameter key="WS" value="ANY"/>
-        <parameter key="USER" value="ANY"/>
-        <parameter key="EVENT" value="build-finished"/>
-        <parameter key="STORAGE_TABLE" value="builds_finished"/>
-    </script>
-    <script name="events">
-        <parameter key="WS" value="ANY"/>
-        <parameter key="USER" value="ANY"/>
-        <parameter key="EVENT" value="debug-started"/>
-        <parameter key="STORAGE_TABLE" value="debugs"/>
-    </script>
-    <script name="events">
-        <parameter key="WS" value="ANY"/>
-        <parameter key="USER" value="ANY"/>
-        <parameter key="EVENT" value="debug-finished"/>
-        <parameter key="STORAGE_TABLE" value="debug_finished"/>
     </script>
     <script name="events">
         <parameter key="WS" value="ANY"/>
@@ -213,27 +183,6 @@
     <script name="used_time">
         <parameter key="WS" value="ANY"/>
         <parameter key="USER" value="ANY"/>
-        <parameter key="EVENT" value="build-finished"/>
-        <parameter key="PARAM" value="USAGE-TIME"/>
-        <parameter key="STORAGE_TABLE" value="builds_time"/>
-    </script>
-    <script name="used_time">
-        <parameter key="WS" value="ANY"/>
-        <parameter key="USER" value="ANY"/>
-        <parameter key="EVENT" value="run-finished"/>
-        <parameter key="PARAM" value="USAGE-TIME"/>
-        <parameter key="STORAGE_TABLE" value="runs_time"/>
-    </script>
-    <script name="used_time">
-        <parameter key="WS" value="ANY"/>
-        <parameter key="USER" value="ANY"/>
-        <parameter key="EVENT" value="debug-finished"/>
-        <parameter key="PARAM" value="USAGE-TIME"/>
-        <parameter key="STORAGE_TABLE" value="debugs_time"/>
-    </script>
-    <script name="used_time">
-        <parameter key="WS" value="ANY"/>
-        <parameter key="USER" value="ANY"/>
         <parameter key="EVENT" value="build-queue-waiting-finished"/>
         <parameter key="PARAM" value="WAITING-TIME"/>
         <parameter key="STORAGE_TABLE" value="time_in_build_queue"/>
@@ -245,14 +194,14 @@
         <parameter key="PARAM" value="WAITING-TIME"/>
         <parameter key="STORAGE_TABLE" value="time_in_run_queue"/>
     </script>
-
-    <!-- Scripts for factory timeline -->
-    <script name="accepted_factories">
-        <description>Accepted factories</description>
+    <script name="tasks">
+        <description>List of tasks</description>
         <parameter key="WS" value="ANY"/>
         <parameter key="USER" value="ANY"/>
-        <parameter key="STORAGE_TABLE" value="factories_accepted"/>
+        <parameter key="STORAGE_TABLE" value="tasks"/>
     </script>
+
+    <!-- Scripts for factory timeline -->
     <script name="created_users_from_factory">
         <description>The number of created users from factory</description>
         <parameter key="WS" value="ANY"/>

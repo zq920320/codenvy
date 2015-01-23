@@ -70,8 +70,10 @@ public class WorkspacesStatisticsList extends AbstractListValueResulted implemen
                             TIME,
                             BUILDS,
                             BUILD_TIME,
+                            BUILD_WAITING_TIME,
                             RUNS,
                             RUN_TIME,
+                            RUN_WAITING_TIME,
                             DEBUGS,
                             DEBUG_TIME,
                             DEPLOYS,
@@ -96,6 +98,8 @@ public class WorkspacesStatisticsList extends AbstractListValueResulted implemen
         group.put(INVITES, new BasicDBObject("$sum", "$" + INVITES));
         group.put(RUN_TIME, new BasicDBObject("$sum", "$" + RUN_TIME));
         group.put(BUILD_TIME, new BasicDBObject("$sum", "$" + BUILD_TIME));
+        group.put(RUN_WAITING_TIME, new BasicDBObject("$sum", "$" + RUN_WAITING_TIME));
+        group.put(BUILD_WAITING_TIME, new BasicDBObject("$sum", "$" + BUILD_WAITING_TIME));
         group.put(JOINED_USERS, new BasicDBObject("$sum", "$" + JOINED_USERS));
 
         DBObject project = new BasicDBObject();
@@ -112,6 +116,8 @@ public class WorkspacesStatisticsList extends AbstractListValueResulted implemen
         project.put(INVITES, "$" + INVITES);
         project.put(RUN_TIME, "$" + RUN_TIME);
         project.put(BUILD_TIME, "$" + BUILD_TIME);
+        project.put(RUN_WAITING_TIME, "$" + RUN_WAITING_TIME);
+        project.put(BUILD_WAITING_TIME, "$" + BUILD_WAITING_TIME);
         project.put(JOINED_USERS, "$" + JOINED_USERS);
 
         return new DBObject[]{new BasicDBObject("$group", group),

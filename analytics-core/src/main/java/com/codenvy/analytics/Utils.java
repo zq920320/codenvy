@@ -65,16 +65,14 @@ import static java.net.URLDecoder.decode;
  */
 public class Utils {
 
-    private static Pattern VALID_EMAIL_ADDRESS_RFC822 =
-            Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
+    private static Pattern VALID_EMAIL_ADDRESS_RFC822 = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
 
     private Utils() {
     }
 
     /**
      * Parse date represented by give string using {@link com.codenvy.analytics.metrics.Parameters#PARAM_DATE_FORMAT}
-     * format. Wraps {@link
-     * ParseException} into {@link java.io.IOException}.
+     * format.
      */
     public static Calendar parseDate(String date) throws ParseException {
         DateFormat df = new SimpleDateFormat(Parameters.PARAM_DATE_FORMAT);
@@ -96,8 +94,7 @@ public class Utils {
     }
 
     /** Initialize date interval accordingly to passed {@link Parameters#TIME_UNIT} */
-    public static Context initDateInterval(Calendar toDate, Parameters.TimeUnit timeUnit, Context.Builder builder)
-            throws ParseException {
+    public static Context initDateInterval(Calendar toDate, Parameters.TimeUnit timeUnit, Context.Builder builder) throws ParseException {
         return initDateInterval(toDate, timeUnit, 0, builder);
     }
 
@@ -110,11 +107,8 @@ public class Utils {
         toDate.add(Calendar.WEEK_OF_MONTH, shift);
 
         Calendar fromDate = (Calendar)toDate.clone();
-        fromDate.add(Calendar.DAY_OF_MONTH,
-                     fromDate.getActualMinimum(Calendar.DAY_OF_WEEK) - fromDate.get(Calendar.DAY_OF_WEEK));
-
-        toDate.add(Calendar.DAY_OF_MONTH,
-                   toDate.getActualMaximum(Calendar.DAY_OF_WEEK) - toDate.get(Calendar.DAY_OF_WEEK));
+        fromDate.add(Calendar.DAY_OF_MONTH, fromDate.getActualMinimum(Calendar.DAY_OF_WEEK) - fromDate.get(Calendar.DAY_OF_WEEK));
+        toDate.add(Calendar.DAY_OF_MONTH, toDate.getActualMaximum(Calendar.DAY_OF_WEEK) - toDate.get(Calendar.DAY_OF_WEEK));
 
         builder.put(Parameters.FROM_DATE, fromDate);
         builder.put(Parameters.TO_DATE, toDate);
@@ -450,6 +444,34 @@ public class Utils {
         return new BasicDBObject("$or", predicates);
     }
 
+    /**
+     * @throws IllegalArgumentException
+     *         if fieldName == null, or fieldName is empty, or maximumFractionDigits < 0.
+     */
+    public static BasicDBObject getTruncOperation(String fieldName, int maximumFractionDigits) throws IllegalArgumentException {
+        if (fieldName == null || fieldName.isEmpty() || maximumFractionDigits < 0) {
+            throw new IllegalArgumentException();
+        }
+
+        final long multiplier = (long)Math.pow(10, maximumFractionDigits);
+        final String fieldToken = "$" + fieldName;
+
+        final BasicDBObject multiply = new BasicDBObject("$multiply", new BasicDBList() {{
+            add(fieldToken);
+            add(multiplier);
+        }});
+
+        return new BasicDBObject("$divide", new BasicDBList() {{
+            add(new BasicDBObject("$subtract", new BasicDBList() {{
+                add(multiply);
+                add(new BasicDBObject("$mod", new BasicDBList() {{
+                    add(multiply);
+                    add(1);
+                }}));
+            }}));
+            add(multiplier);
+        }});
+    }
 
     /** Converts string into array. Uses ',' as a delimiter. */
     public static String[] toArray(String value) {

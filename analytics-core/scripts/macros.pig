@@ -139,7 +139,7 @@ DEFINE removeEvent(X, eventNamesParam) RETURNS Y {
 ---------------------------------------------------------------------------
 DEFINE extractWs(X, wsType) RETURNS Y {
   x1 = FOREACH $X GENERATE *, FLATTEN(REGEX_EXTRACT_ALL(message, '.*\\sWS#([^\\s#][^#]*|)#.*')) AS ws1;
-  $Y = FOREACH x1 GENERATE *, (ws1 IS NOT NULL AND ws1 != '' ? LOWER(ws1) : 'default') AS ws;
+  $Y = FOREACH x1 GENERATE *, (ws1 IS NOT NULL AND ws1 != '' ? ws1 : 'default') AS ws;
 };
 
 ---------------------------------------------------------------------------
@@ -148,7 +148,7 @@ DEFINE extractWs(X, wsType) RETURNS Y {
 ---------------------------------------------------------------------------
 DEFINE extractUser(X, userType) RETURNS Y {
   x1 = FOREACH $X GENERATE *, FLATTEN(REGEX_EXTRACT_ALL(message, '.*\\sUSER#([^\\s#][^#]*|)#.*')) AS user1;
-  $Y = FOREACH x1 GENERATE *, (user1 IS NOT NULL AND user1 != '' ? LOWER(user1) : 'default') AS user;
+  $Y = FOREACH x1 GENERATE *, (user1 IS NOT NULL AND user1 != '' ? user1 : 'default') AS user;
 };
 
 ---------------------------------------------------------------------------
@@ -230,7 +230,7 @@ DEFINE createdTemporaryWorkspaces(X) RETURNS Y {
     x = FOREACH x5 GENERATE ws AS tmpWs, ExtractDomain(referrer) AS referrer, factory, orgId, affiliateId, factoryId;
 
     -- created temporary workspaces
-    w1 = filterByEvent($X, 'tenant-created,workspace-created');
+    w1 = filterByEvent($X, 'workspace-created');
     w = FOREACH w1 GENERATE dt, ws AS tmpWs, user;
 
     y1 = JOIN w BY tmpWs, x BY tmpWs;
@@ -379,7 +379,7 @@ DEFINE addEventIndicator(W, X,  eventParam, fieldParam, inactiveIntervalParam) R
   x2 = FOREACH x1 GENERATE *, (z::ws IS NULL ? 0
                                              : (MilliSecondsBetween(z::dt, $W::dt) > 0 AND MilliSecondsBetween(z::dt, $W::dt) <= $W::delta + (int) $inactiveIntervalParam*60*1000 ? 1 : 0 )) AS $fieldParam;
   -- if several events were occurred then keep only one
-  x3 = GROUP x2 BY $W::dt;
+  x3 = GROUP x2 BY ($W::dt, $W::id);
   $Y = FOREACH x3 {
         t = LIMIT x2 1;
         GENERATE FLATTEN(t);
@@ -392,7 +392,7 @@ DEFINE addEventIndicator(W, X,  eventParam, fieldParam, inactiveIntervalParam) R
 ---------------------------------------------------------------------------
 DEFINE extractFactoryId(X) RETURNS Y {
   e1 = extractUrlParam($X, 'FACTORY-URL', 'factoryUrl');
-  $Y = FOREACH e1 GENERATE *, (GetQueryValue(factoryUrl, 'id') == '' ? NULL : GetQueryValue(factoryUrl, 'id')) AS factoryId;
+  $Y = FOREACH e1 GENERATE *, GetQueryValue(factoryUrl, 'id') AS factoryId;
 };
 
 
@@ -413,6 +413,7 @@ DEFINE addLogoutInterval(X, L, idleIntervalParam) RETURNS Y {
                            $X::startTime AS startTime,
                            $X::usageTime AS usageTime,
                            $X::sessionID AS sessionID,
+                           $X::message AS message,
                            logoutInterval AS logoutInterval;
   $Y = firstUpdate(x4, 'logoutInterval', 'sessionID');
 };
@@ -428,3 +429,69 @@ DEFINE firstUpdate(X, dtField, idField) RETURNS Y {
   $Y = FOREACH y3 GENERATE *;
 };
 
+
+---------------------------------------------------------------------------
+-- @return list of sessions
+---------------------------------------------------------------------------
+DEFINE getSessions(X, eventParam) RETURNS Y {
+    a1 = filterByEvent($X, '$eventParam');
+    a2 = removeEmptyField(a1, 'user');
+    a3 = extractParam(a2, 'SESSION-ID', sessionID);
+    a = FOREACH a3 GENERATE dt, ws, user, sessionID, message;
+
+    -- gets the very FIRST event to figure out the session start time
+    s1 = firstUpdate(a, 'dt', 'sessionID');
+    s2 = FOREACH s1 GENERATE a::dt AS dt,
+                              a::ws AS ws,
+                              a::user AS user,
+                              a::sessionID AS sessionID,
+                              GetSessionStartTime(a::sessionID) AS startTime,
+                              a::message AS message;
+    s = FOREACH s2 GENERATE ws,
+                            user,
+                            sessionID,
+                            (startTime IS NULL ? ToMilliSeconds(dt) : startTime) AS startTime,
+                            message;
+
+    -- gets the very LAST event to figure out the session start end time
+    b1 = lastUpdate(a, 'sessionID');
+    b2 = FOREACH b1 GENERATE a::dt AS dt,
+                              ToMilliSeconds(a::dt) AS endTime,
+                              a::ws AS ws,
+                              a::user AS user,
+                              a::sessionID AS sessionID;
+
+    b3 = JOIN b2 BY sessionID, s BY sessionID;
+    b = FOREACH b3 GENERATE b2::dt AS dt,
+                            b2::ws AS ws,
+                            b2::user AS user,
+                            b2::sessionID AS sessionID,
+                            s::startTime AS startTime,
+                            (b2::endTime - s::startTime) AS usageTime,
+                            s::message AS message;
+
+    -- gets srart time by event factory-url-accepted if it's present.
+    f1 = filterByEvent($X, 'factory-url-accepted');
+    f = JOIN b BY ws LEFT, f1 BY ws;
+
+    m1 = firstUpdate(b, 'dt', 'ws');
+    m = JOIN f BY b::sessionID LEFT, m1 BY b::sessionID;
+
+    n = FOREACH m GENERATE f::b::dt AS dt,
+                           f::b::ws AS ws,
+                           f::b::user AS user,
+                           f::b::sessionID AS sessionID,
+                           (f::f1::dt IS NOT NULL AND m1::minDt IS NOT NULL ? ToMilliSeconds(f::f1::dt) : f::b::startTime) AS startTime,
+                           (f::f1::dt IS NOT NULL AND m1::minDt IS NOT NULL ? f::b::startTime - ToMilliSeconds(f::f1::dt) + f::b::usageTime : f::b::usageTime) AS usageTime,
+                           f::b::message AS message;
+
+    c = addLogoutInterval(n, $X, '600000');
+    $Y = FOREACH c GENERATE ws AS ws,
+                            user AS user,
+                            sessionID AS sessionID,
+                            startTime AS startTime,
+                            (usageTime + logoutInterval) AS usageTime,
+                            (startTime + usageTime + logoutInterval) AS endTime,
+                            logoutInterval AS logoutInterval,
+                            message AS message;
+};

@@ -41,8 +41,8 @@ export CATALINA_HOME
 export CATALINA_TMPDIR
 export CODENVY_LOCAL_CONF_DIR
 export JAVA_OPTS="$JAVA_OPTS $SECURITY_OPTS $ANALYTICS_OPTS $JMX_OPTS $QUARTZ_OPTS $REMOTE_DEBUG $JMX_OPTS"
-export CLASSPATH="${CATALINA_HOME}/conf/:${CATALINA_HOME}/lib/jul-to-slf4j.jar:\
-${CATALINA_HOME}/lib/slf4j-api.jar:${CATALINA_HOME}/lib/logback-classic.jar:${CATALINA_HOME}/lib/logback-core.jar:\
-${CATALINA_HOME}/lib/mail.jar"
+export CLASSPATH="${CATALINA_HOME}/conf/:${CATALINA_HOME}/endorsed/jul-to-slf4j.jar:\
+${CATALINA_HOME}/endorsed/slf4j-api.jar:${CATALINA_HOME}/endorsed/logback-classic.jar:${CATALINA_HOME}/endorsed/logback-core.jar:\
+${CATALINA_HOME}/endorsed/mail.jar"
 
 echo "Using LOCAL_CONF_DIR:  $CODENVY_LOCAL_CONF_DIR"

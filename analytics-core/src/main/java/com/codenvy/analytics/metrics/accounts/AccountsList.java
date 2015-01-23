@@ -34,9 +34,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author Alexander Reshetnyak
- */
+/** @author Alexander Reshetnyak */
 @RolesAllowed(value = {"system/admin", "system/manager"})
 public class AccountsList extends AbstractAccountMetric {
 
@@ -44,16 +42,19 @@ public class AccountsList extends AbstractAccountMetric {
         super(MetricType.ACCOUNTS_LIST);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "Accounts data";
     }
 
+    /** {@inheritDoc} */
     @Override
     public Class<? extends ValueData> getValueDataClass() {
         return ListValueData.class;
     }
 
+    /** {@inheritDoc} */
     @Override
     public ValueData getValue(Context context) throws IOException {
         ProfileDescriptor profile = getProfile();
@@ -69,9 +70,12 @@ public class AccountsList extends AbstractAccountMetric {
                 m.put(ACCOUNT_ID, StringValueData.valueOf(accountMembership.getAccountReference().getId()));
                 m.put(ACCOUNT_NAME, StringValueData.valueOf(accountMembership.getAccountReference().getName()));
                 m.put(ACCOUNT_ROLES, StringValueData.valueOf(accountMembership.getRoles().toString()));
-                m.put(ACCOUNT_ATTRIBUTES, StringValueData.valueOf(
-                        getAccountDescriptorById(accountMembership.getAccountReference().getId())
-                                .getAttributes().toString()));
+                try {
+                    m.put(ACCOUNT_ATTRIBUTES, StringValueData.valueOf(getAccountDescriptorById(accountMembership.getAccountReference().getId())
+                                                                              .getAttributes().toString()));
+                } catch (IOException e) { // if use isn't owner of the account
+                    m.put(ACCOUNT_ATTRIBUTES, StringValueData.DEFAULT);
+                }
                 m.put(ACCOUNT_USER_ID, StringValueData.valueOf(accountMembership.getUserId()));
                 m.put(ACCOUNT_PROFILE_EMAIL, getEmail(profile));
                 m.put(ACCOUNT_PROFILE_NAME, getFullName(profile));

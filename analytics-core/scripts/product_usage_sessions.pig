@@ -18,39 +18,20 @@
 
 IMPORT 'macros.pig';
 
-%DEFAULT idleInterval '600000'; -- 10 min
-
----------------------------------------------------------------------------------------------
 l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 
-a1 = filterByEvent(l, '$EVENT');
-a2 = removeEmptyField(a1, 'user');
-a3 = extractParam(a2, 'SESSION-ID', sessionID);
-a4 = extractParam(a3, 'START-TIME', startTime);
-a5 = extractParam(a4, 'USAGE-TIME', usageTime);
-a = FOREACH a5 GENERATE dt, ws, user, sessionID, (long) startTime, (long) usageTime;
+a1 = getSessions(l, '$EVENT');
+a = FOREACH a1 GENERATE ws,
+                        user,
+                        sessionID,
+                        startTime,
+                        usageTime,
+                        endTime,
+                        logoutInterval,
+                        NullToEmpty(GetUserCompany(user)) AS userCompany,
+                        NullToEmpty(GetDomain(user)) AS userEmailDomain;
 
-
-b1 = lastUpdate(a, 'sessionID');
-b = FOREACH b1 GENERATE a::startTime AS dt,
-                        a::ws AS ws,
-                        a::user AS user,
-                        a::sessionID AS sessionID,
-                        a::startTime AS startTime,
-                        a::usageTime AS usageTime;
-
-c = addLogoutInterval(b, l, '$idleInterval');
-d = FOREACH c GENERATE ws,
-                       user,
-                       sessionID,
-                       startTime,
-                       (usageTime + logoutInterval) AS usageTime,
-                       (startTime + usageTime + logoutInterval) AS endTime,
-                       logoutInterval,
-                       NullToEmpty(GetUserCompany(user)) AS userCompany,
-                       NullToEmpty(GetDomain(user)) AS userEmailDomain;
-
-result = FOREACH d GENERATE sessionID,
+result = FOREACH a GENERATE sessionID,
                             TOTUPLE('date', startTime),
                             TOTUPLE('ws', ws),
                             TOTUPLE('user', user),
@@ -63,7 +44,7 @@ result = FOREACH d GENERATE sessionID,
 STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 
 -- store sessions for users' statistics
-result2 = FOREACH d GENERATE sessionID,
+result2 = FOREACH a GENERATE sessionID,
                              TOTUPLE('date', startTime),
                              TOTUPLE('user', user),
                              TOTUPLE('ws', ws),

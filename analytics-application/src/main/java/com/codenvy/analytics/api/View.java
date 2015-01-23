@@ -131,8 +131,9 @@ public class View {
             ValueData value = getMetricValue(metricName, context);
             MetricValueDTO outputValue = getMetricValueDTO(metricName, value);
             return Response.status(Response.Status.OK).entity(outputValue).build();
+        } catch (ParseException e) {
+            return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
         } catch (MetricNotFoundException e) {
-            LOG.error(e.getMessage(), e);
             return Response.status(Response.Status.NOT_FOUND).build();
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
@@ -174,8 +175,9 @@ public class View {
 
             return Response.status(Response.Status.OK).entity(new JsonStringMapImpl<>(m).toJson()).build();
 
+        } catch (ParseException e) {
+            return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
         } catch (MetricNotFoundException e) {
-            LOG.error(e.getMessage(), e);
             return Response.status(Response.Status.NOT_FOUND).build();
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
@@ -222,8 +224,9 @@ public class View {
             String json = transformToJson(result);
 
             return Response.status(Response.Status.OK).entity(json).build();
+        } catch (ParseException e) {
+            return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
         } catch (MetricNotFoundException e) {
-            LOG.error(e.getMessage(), e);
             return Response.status(Response.Status.NOT_FOUND).build();
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
@@ -253,6 +256,8 @@ public class View {
             String json = transformToJson(result);
 
             return Response.status(Response.Status.OK).entity(json).build();
+        } catch (ParseException e) {
+            return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
@@ -287,6 +292,8 @@ public class View {
             }
 
             return Response.status(Response.Status.OK).entity(getStreamingOutput(csvFile)).build();
+        } catch (ParseException e) {
+            return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
         } catch (Exception e) {
             Throwable cause = e.getCause();
             if (cause != null && cause.getMessage().contains("aggregation result exceeds maximum document size")) {

@@ -48,14 +48,17 @@ public class TestActiveFactoriesSet extends BaseTest {
         events.add(createFactoryUrlAcceptedEvent("tmp-2", "factory2", "", "", "").withDate("2013-01-03").withTime("13:00:00").build());
         events.add(createFactoryUrlAcceptedEvent("tmp-3", "factory3", "", "", "").withDate("2013-01-04").withTime("13:00:00").build());
 
-        events.add(Event.Builder.createSessionUsageEvent("a1", "tmp-1", "id1", "2013-01-01 13:01:00", "2013-01-01 13:02:00", true)
-                                .withDate("2013-01-01").withTime("13:01:00").build());
-        events.add(Event.Builder.createSessionUsageEvent("a1", "tmp-1", "id2", "2013-01-02 13:01:00", "2013-01-02 13:02:00", true)
-                                .withDate("2013-01-02").withTime("13:01:00").build());
-        events.add(Event.Builder.createSessionUsageEvent("a1", "tmp-2", "id3", "2013-01-03 13:01:00", "2013-01-03 13:02:00", true)
-                                .withDate("2013-01-03").withTime("13:01:00").build());
-        events.add(Event.Builder.createSessionUsageEvent("a1", "tmp-3", "id4", "2013-01-04 13:01:00", "2013-01-04 13:02:00", true)
-                                .withDate("2013-01-04").withTime("13:01:00").build());
+        events.add(Event.Builder.createSessionUsageEvent("a1", "tmp-1", "id1", true).withDate("2013-01-01").withTime("13:01:00").build());
+        events.add(Event.Builder.createSessionUsageEvent("a1", "tmp-1", "id1", true).withDate("2013-01-01").withTime("13:02:00").build());
+
+        events.add(Event.Builder.createSessionUsageEvent("a1", "tmp-1", "id2", true).withDate("2013-01-02").withTime("13:01:00").build());
+        events.add(Event.Builder.createSessionUsageEvent("a1", "tmp-1", "id2", true).withDate("2013-01-02").withTime("13:02:00").build());
+
+        events.add(Event.Builder.createSessionUsageEvent("a1", "tmp-2", "id3", true).withDate("2013-01-03").withTime("13:01:00").build());
+        events.add(Event.Builder.createSessionUsageEvent("a1", "tmp-2", "id3", true).withDate("2013-01-03").withTime("13:02:00").build());
+
+        events.add(Event.Builder.createSessionUsageEvent("a1", "tmp-3", "id4", true).withDate("2013-01-04").withTime("13:01:00").build());
+        events.add(Event.Builder.createSessionUsageEvent("a1", "tmp-3", "id4", true).withDate("2013-01-04").withTime("13:02:00").build());
 
         File log = LogGenerator.generateLog(events);
 

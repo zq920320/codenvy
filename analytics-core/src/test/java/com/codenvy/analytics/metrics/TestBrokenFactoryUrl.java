@@ -45,10 +45,6 @@ public class TestBrokenFactoryUrl extends BaseTest {
                                 .withDate("2013-02-10").withTime("11:00:03").build());
         events.add(Event.Builder.createWorkspaceCreatedEvent(TWID4, "tmp-4", "anonymoususer_2")
                                 .withDate("2013-02-10").withTime("12:01:00").build());
-        events.add(Event.Builder.createSessionFactoryStartedEvent("id4", "tmp-4", "anonymoususer_2", "false", "brType")
-                                .withDate("2013-02-10").withTime("11:00:00").build());
-        events.add(Event.Builder.createSessionFactoryStoppedEvent("id4", "tmp-4", "anonymoususer_2")
-                                .withDate("2013-02-10").withTime("11:15:00").build());
 
 
         File log = LogGenerator.generateLog(events);
