@@ -44,7 +44,7 @@ import javax.inject.Inject;
  *
  */
 
-@Scheduled(cron = "0 0 12 1 * ?")
+@Scheduled(cron = "0 0 7 1 * ?") // 0sec 0min 07hour 1st day of every month
 public class RefillJob implements Job {
     private static final Logger LOG = LoggerFactory.getLogger(RefillJob.class);
 
