@@ -102,7 +102,7 @@ public class TasksActivityChecker implements Runnable {
                 resourcesUsageTracker.resourceInUse(descriptor.getProcessId());
                 LOG.info("EVENT#run-usage# WS#{}# USER#{}# PROJECT#{}# TYPE#{}# ID#{}# MEMORY#{}# USAGE-TIME#{}#",
                          descriptor.getWorkspace(),
-                         descriptor.getUserName(),
+                         descriptor.getUserId(),
                          descriptor.getProject(),
                          request.getProjectDescriptor().getType(),
                          descriptor.getCreationTime() + "-" + descriptor.getProcessId(),

@@ -24,8 +24,8 @@ import com.codenvy.api.core.notification.EventService;
 import com.codenvy.api.core.notification.EventSubscriber;
 import com.codenvy.api.runner.RunQueue;
 import com.codenvy.api.runner.RunQueueTask;
+import com.codenvy.api.runner.dto.RunRequest;
 import com.codenvy.api.runner.internal.RunnerEvent;
-import com.codenvy.api.user.server.dao.User;
 import com.codenvy.api.user.server.dao.UserDao;
 import com.codenvy.api.workspace.server.dao.Workspace;
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
@@ -96,12 +96,11 @@ public class RunStatusSubscriber implements EventSubscriber<RunnerEvent> {
         try {
             final Workspace workspace = workspaceDao.getById(event.getWorkspace());
             final RunQueueTask task = runQueue.getTask(event.getProcessId());
-            //TODO Remove usage of userDao when request will be contain user id
-            final User user = userDao.getByAlias(task.getRequest().getUserName());
-            final MemoryUsedMetric memoryUsedMetric = new MemoryUsedMetric(task.getRequest().getMemorySize(),
+            final RunRequest request = task.getRequest();
+            final MemoryUsedMetric memoryUsedMetric = new MemoryUsedMetric(request.getMemorySize(),
                                                                            task.getCreationTime(),
                                                                            task.getCreationTime() + schedulingPeriod,
-                                                                           user.getId(),
+                                                                           request.getUserId(),
                                                                            workspace.getAccountId(),
                                                                            workspace.getId(),
                                                                            String.valueOf(event.getProcessId()));
