@@ -51,15 +51,12 @@ import static org.mockito.Mockito.when;
 @Listeners(MockitoTestNGListener.class)
 public class RunStatusSubscriberTest {
     private static final long PROCESS_ID = 1;
-
     private static final String WS_ID = "workspaceId";
 
     @Mock
     EventService          eventService;
     @Mock
     WorkspaceDao          workspaceDao;
-    @Mock
-    UserDao               userDao;
     @Mock
     RunQueue              runQueue;
     @Mock
@@ -73,13 +70,12 @@ public class RunStatusSubscriberTest {
 
     @BeforeMethod
     public void setUp() throws Exception {
-        runStatusSubscriber = new RunStatusSubscriber(10, eventService, workspaceDao, userDao, runQueue, resourcesUsageTracker);
+        runStatusSubscriber = new RunStatusSubscriber(10, eventService, workspaceDao, runQueue, resourcesUsageTracker);
         when(workspaceDao.getById(anyString())).thenReturn(new Workspace().withAccountId("accountId")
                                                                           .withId(WS_ID));
-        when(userDao.getByAlias(anyString())).thenReturn(new User().withId("userId"));
 
         when(runRequest.getMemorySize()).thenReturn(256);
-        when(runRequest.getUserName()).thenReturn("user");
+        when(runRequest.getUserId()).thenReturn("userId");
 
         when(runQueueTask.getRequest()).thenReturn(runRequest);
 
