@@ -35,6 +35,11 @@
             <version>${com.braintreepayments.gateway.version}</version>
         </dependency>
         <dependency>
+            <groupId>com.codenvy.commons</groupId>
+            <artifactId>codenvy-commons-quartz</artifactId>
+            <version>${codenvy.commons.version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.codenvy.hosted-infrastructure</groupId>
             <artifactId>codenvy-hosted-mail-client</artifactId>
             <version>${project.version}</version>

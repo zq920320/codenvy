@@ -72,22 +72,53 @@ public class ResourcesManagerImpl implements ResourcesManager {
         for (Workspace workspace : workspaceDao.getByAccount(accountId)) {
             ownWorkspaces.put(workspace.getId(), workspace);
         }
-
-        for (UpdateResourcesDescriptor update : updates) {
-            if (!ownWorkspaces.containsKey(update.getWorkspaceId())) {
-                throw new ForbiddenException(format("Workspace %s is not related to account %s", update.getWorkspaceId(), accountId));
-            }
-        }
+        validateUpdates(accountId, updates, ownWorkspaces);
 
         for (UpdateResourcesDescriptor resourcesDescriptor : updates) {
+            Workspace workspace = ownWorkspaces.get(resourcesDescriptor.getWorkspaceId());
+
+            if (resourcesDescriptor.getRunnerRam() != null) {
+                workspace.getAttributes()
+                         .put(Constants.RUNNER_MAX_MEMORY_SIZE, Integer.toString(resourcesDescriptor.getRunnerRam()));
+            }
+
+            if (resourcesDescriptor.getBuilderTimeout() != null) {
+                workspace.getAttributes().put(com.codenvy.api.builder.internal.Constants.BUILDER_EXECUTION_TIME,
+                                              Integer.toString(resourcesDescriptor.getBuilderTimeout()));
+            }
+
+            if (resourcesDescriptor.getRunnerTimeout() != null) {
+                workspace.getAttributes().put(Constants.RUNNER_LIFETIME,
+                                              Integer.toString(resourcesDescriptor.getRunnerTimeout()));
+            }
+            workspaceDao.update(workspace);
+            if (resourcesDescriptor.getRunnerRam() != null) {
+                publishResourcesChangedWsEvent(resourcesDescriptor.getWorkspaceId(),
+                                               Integer.toString(resourcesDescriptor.getRunnerRam()));
+            }
+        }
+    }
+
+
+    private void validateUpdates(String accountId, List<UpdateResourcesDescriptor> updates,
+                                 Map<String, Workspace> ownWorkspaces)   throws ForbiddenException,
+                                                                                ConflictException,
+                                                                                NotFoundException,
+                                                                                ServerException {
+
+        for (UpdateResourcesDescriptor resourcesDescriptor : updates) {
+            if (!ownWorkspaces.containsKey(resourcesDescriptor.getWorkspaceId())) {
+                throw new ForbiddenException(
+                        format("Workspace %s is not related to account %s", resourcesDescriptor.getWorkspaceId(),
+                               accountId));
+            }
+
             if (resourcesDescriptor.getRunnerTimeout() == null && resourcesDescriptor.getRunnerRam() == null &&
                 resourcesDescriptor.getBuilderTimeout() == null) {
                 throw new ConflictException(format("Missed description of resources for workspace %s",
                                                    resourcesDescriptor.getWorkspaceId()));
             }
-            Workspace workspace = ownWorkspaces.get(resourcesDescriptor.getWorkspaceId());
             Integer runnerRam = resourcesDescriptor.getRunnerRam();
-
             if (runnerRam != null) {
                 if (runnerRam < 0) {
                     throw new ConflictException(format("Size of RAM for workspace %s is a negative number",
@@ -99,31 +130,20 @@ public class ResourcesManagerImpl implements ResourcesManager {
                                                        resourcesDescriptor.getWorkspaceId()));
 
                 }
-                workspace.getAttributes()
-                         .put(Constants.RUNNER_MAX_MEMORY_SIZE, Integer.toString(resourcesDescriptor.getRunnerRam()));
-            }
 
+            }
             if (resourcesDescriptor.getBuilderTimeout() != null) {
                 if (resourcesDescriptor.getBuilderTimeout() < 0) {
                     throw new ConflictException(format("Builder timeout for workspace %s is a negative number",
                                                        resourcesDescriptor.getWorkspaceId()));
                 }
-                workspace.getAttributes().put(com.codenvy.api.builder.internal.Constants.BUILDER_EXECUTION_TIME,
-                                              Integer.toString(resourcesDescriptor.getBuilderTimeout()));
             }
 
             if (resourcesDescriptor.getRunnerTimeout() != null) {
-                if (resourcesDescriptor.getRunnerTimeout() < 0) { // we allow -1 here
+                if (resourcesDescriptor.getRunnerTimeout() < -1) { // we allow -1 here
                     throw new ConflictException(format("Runner timeout for workspace %s is a negative number",
                                                        resourcesDescriptor.getWorkspaceId()));
                 }
-                workspace.getAttributes().put(Constants.RUNNER_LIFETIME,
-                                              Integer.toString(resourcesDescriptor.getRunnerTimeout()));
-            }
-            workspaceDao.update(workspace);
-            if (runnerRam != null) {
-                publishResourcesChangedWsEvent(resourcesDescriptor.getWorkspaceId(),
-                                               Integer.toString(resourcesDescriptor.getRunnerRam()));
             }
         }
     }
@@ -134,8 +154,9 @@ public class ResourcesManagerImpl implements ResourcesManager {
 
             bm.setChannel(format("workspace:resources:%s", workspaceId));
 
-            final ResourcesDescriptor resourcesDescriptor = DtoFactory.getInstance().createDto(ResourcesDescriptor.class)
-                                                                      .withTotalMemory(totalMemory);
+            final ResourcesDescriptor resourcesDescriptor =
+                    DtoFactory.getInstance().createDto(ResourcesDescriptor.class)
+                              .withTotalMemory(totalMemory);
             bm.setBody(DtoFactory.getInstance().toJson(resourcesDescriptor));
             WSConnectionContext.sendMessage(bm);
         } catch (Exception e) {

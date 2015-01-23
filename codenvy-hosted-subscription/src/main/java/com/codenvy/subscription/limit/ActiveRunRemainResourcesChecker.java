@@ -92,7 +92,7 @@ public class ActiveRunRemainResourcesChecker implements Runnable {
                     return;
                 }
                 Long used =
-                        storage.getMemoryUsed(accountRuns.getKey(), BillingDates.getDefaultBillingStartDate().getTime(),
+                        storage.getMemoryUsed(accountRuns.getKey(), BillingDates.getCurrentPeriodStartDate().getTime(),
                                               System.currentTimeMillis());
                 if (used >= freeUsageLimit) {
                     for (Long processId : accountRuns.getValue()) {

@@ -567,6 +567,29 @@ public class AccountDaoImplTest extends BaseDaoTest {
         assertEquals(actual, subscription);
     }
 
+    @Test(enabled = false)
+    // need better backend emulator. current is not supports #elemMatch
+    public void shouldBeAbleToFindLockedAccounts() throws Exception {
+        final Map<String, String> attributes1 = new HashMap<>(2);
+        attributes1.put("codenvy:locked", "true");
+        final Map<String, String> attributes2 = new HashMap<>(attributes1);
+        attributes2.put("codenvy:paid", "true");
+        Account account1 = new Account().withId("acc1")
+                                        .withName("test_account_name")
+                                        .withAttributes(attributes1);
+        Account account2 = new Account().withId("acc2")
+                                        .withName("test_account_name")
+                                        .withAttributes(attributes1);
+        Account account3 = new Account().withId("acc3")
+                                        .withName("test_account_name")
+                                        .withAttributes(attributes2);
+        insertAccounts(account1, account2, account3);
+
+        final List<Account> found = accountDao.getCommunityAccountsWithEmptyResources();
+
+        assertEquals(new HashSet<>(found), new HashSet<>(asList(account1, account2)));
+    }
+
     @Test(expectedExceptions = NotFoundException.class, expectedExceptionsMessageRegExp = "Subscription not found .*")
     public void shouldThrowNotFoundExceptionOnGetSubscriptionsByIdWithInvalidSubscriptionId() throws ServerException, NotFoundException {
         accountDao.getSubscriptionById("test-id");
