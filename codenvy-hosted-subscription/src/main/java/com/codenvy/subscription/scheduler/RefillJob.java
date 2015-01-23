@@ -58,7 +58,7 @@ public class RefillJob implements Job {
     public void execute(final JobExecutionContext ctx)
             throws JobExecutionException {
         try {
-            for (Account account : accountDao.getCommunityAccountsWithEmptyResources()) {
+            for (Account account : accountDao.getLockedCommunityAccounts()) {
                 account.getAttributes().remove(Constants.LOCKED_PROPERTY);
                 try {
                     accountDao.update(account);
