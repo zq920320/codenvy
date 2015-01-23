@@ -68,7 +68,6 @@ public class ResourcesManagerImpl implements ResourcesManager {
                                                                                                         ServerException,
                                                                                                         ConflictException,
                                                                                                         ForbiddenException {
-
         final Map<String, Workspace> ownWorkspaces = new HashMap<>();
         for (Workspace workspace : workspaceDao.getByAccount(accountId)) {
             ownWorkspaces.put(workspace.getId(), workspace);
