@@ -47,7 +47,7 @@
         <dependency>
             <!-- TODO : declare dependency in parent pom -->
             <groupId>javax.ws.rs</groupId>
-            <artifactId>jsr311-api</artifactId>
+            <artifactId>javax.ws.rs-api</artifactId>
             <version>${javax.ws.rs.version}</version>
         </dependency>
         <!-- Logger -->
