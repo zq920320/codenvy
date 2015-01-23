@@ -585,7 +585,7 @@ public class AccountDaoImplTest extends BaseDaoTest {
                                         .withAttributes(attributes2);
         insertAccounts(account1, account2, account3);
 
-        final List<Account> found = accountDao.getCommunityAccountsWithEmptyResources();
+        final List<Account> found = accountDao.getLockedCommunityAccounts();
 
         assertEquals(new HashSet<>(found), new HashSet<>(asList(account1, account2)));
     }
