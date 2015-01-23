@@ -64,11 +64,10 @@ public class ResourcesManagerImpl implements ResourcesManager {
     }
 
     @Override
-    public void redistributeResources(String accountId, List<UpdateResourcesDescriptor> updates)
-            throws NotFoundException,
-                   ServerException,
-                   ConflictException,
-                   ForbiddenException {
+    public void redistributeResources(String accountId, List<UpdateResourcesDescriptor> updates) throws NotFoundException,
+                                                                                                        ServerException,
+                                                                                                        ConflictException,
+                                                                                                        ForbiddenException {
 
         final Map<String, Workspace> ownWorkspaces = new HashMap<>();
         for (Workspace workspace : workspaceDao.getByAccount(accountId)) {
