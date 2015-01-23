@@ -44,7 +44,7 @@ import javax.inject.Inject;
  *
  */
 
-@Scheduled(cron = "0 * 0-23 * * ?")
+@Scheduled(cron = "0 0 12 1 * ?")
 public class RefillJob implements Job {
     private static final Logger LOG = LoggerFactory.getLogger(RefillJob.class);
 
@@ -58,7 +58,7 @@ public class RefillJob implements Job {
     public void execute(final JobExecutionContext ctx)
             throws JobExecutionException {
         try {
-            for (Account account : accountDao.getLockedCommunityAccounts()) {
+            for (Account account : accountDao.getCommunityAccountsWithEmptyResources()) {
                 account.getAttributes().remove(Constants.LOCKED_PROPERTY);
                 try {
                     accountDao.update(account);
