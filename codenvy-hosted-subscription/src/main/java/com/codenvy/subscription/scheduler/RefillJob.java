@@ -27,25 +27,22 @@ import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.api.workspace.server.dao.Workspace;
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
-import com.codenvy.commons.quartz.Scheduled;
+import com.codenvy.commons.schedule.ScheduleCron;
 
-import org.quartz.Job;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 /**
  * Refill accounts with RAM limit exceeded at the beginning of new period.
  *
  * @author Max Shaposhnik (mshaposhnik@codenvy.com) on 1/21/15.
- *
  */
 
-@Scheduled(cron = "0 0 7 1 * ?") // 0sec 0min 07hour 1st day of every month
-public class RefillJob implements Job {
+@Singleton
+public class RefillJob implements Runnable {
     private static final Logger LOG = LoggerFactory.getLogger(RefillJob.class);
 
     @Inject
@@ -54,9 +51,10 @@ public class RefillJob implements Job {
     @Inject
     AccountDao accountDao;
 
+    // 0sec 0min 07hour 1st day of every month
+    @ScheduleCron(cron = "0 0 7 1 * ?")
     @Override
-    public void execute(final JobExecutionContext ctx)
-            throws JobExecutionException {
+    public void run() {
         try {
             for (Account account : accountDao.getLockedCommunityAccounts()) {
                 account.getAttributes().remove(Constants.LOCKED_PROPERTY);

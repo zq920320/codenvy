@@ -36,7 +36,7 @@
         </dependency>
         <dependency>
             <groupId>com.codenvy.commons</groupId>
-            <artifactId>codenvy-commons-quartz</artifactId>
+            <artifactId>codenvy-commons-schedule</artifactId>
             <version>${codenvy.commons.version}</version>
         </dependency>
         <dependency>
