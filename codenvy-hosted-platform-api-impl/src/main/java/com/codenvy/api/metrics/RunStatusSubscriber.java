@@ -51,7 +51,6 @@ public class RunStatusSubscriber implements EventSubscriber<RunnerEvent> {
     private final Integer               schedulingPeriod;
     private final EventService          eventService;
     private final WorkspaceDao          workspaceDao;
-    private final UserDao               userDao;
     private final RunQueue              runQueue;
     private final ResourcesUsageTracker resourcesUsageTracker;
 
@@ -59,13 +58,11 @@ public class RunStatusSubscriber implements EventSubscriber<RunnerEvent> {
     public RunStatusSubscriber(@Named(TasksActivityChecker.RUN_ACTIVITY_CHECKING_PERIOD) Integer schedulingPeriod,
                                EventService eventService,
                                WorkspaceDao workspaceDao,
-                               UserDao userDao,
                                RunQueue runQueue,
                                ResourcesUsageTracker resourcesUsageTracker) {
         this.schedulingPeriod = schedulingPeriod;
         this.eventService = eventService;
         this.workspaceDao = workspaceDao;
-        this.userDao = userDao;
         this.runQueue = runQueue;
         this.resourcesUsageTracker = resourcesUsageTracker;
     }
