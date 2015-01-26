@@ -30,7 +30,6 @@ import com.codenvy.api.user.server.dao.User;
 import com.codenvy.api.user.server.dao.UserDao;
 import com.codenvy.commons.lang.IoUtil;
 import com.codenvy.commons.lang.Strings;
-import com.codenvy.subscription.service.util.BillingDates;
 
 import org.codenvy.mail.MailSenderClient;
 import org.slf4j.Logger;
@@ -48,6 +47,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.codenvy.api.util.BillingDates.*;
 
 /**
  * Charges paid saas accounts
@@ -111,13 +112,13 @@ public class SaasBillingService {
     }
 
     public void chargeAccounts() throws ApiException {
-        chargeAccounts(BillingDates.getDefaultBillingStartDate(), BillingDates.getBillingPeriodEndDate());
+        chargeAccounts(getPreviousPeriodStartDate(), getPreviousPeriodEndDate());
     }
 
     public void chargeAccount(String accountId) throws ApiException {
         final Account account = accountDao.getById(accountId);
 
-        chargeAccount(account, BillingDates.getDefaultBillingStartDate(), BillingDates.getBillingPeriodEndDate());
+        chargeAccount(account, getPreviousPeriodStartDate(), getPreviousPeriodEndDate());
     }
 
     public void chargeAccounts(Date billingStartDate, Date billingEndDate) throws ApiException {
@@ -132,6 +133,7 @@ public class SaasBillingService {
         }
 
     }
+
     public void chargeAccount(Account account, Date billingStartDate, Date billingEndDate) throws ApiException {
         final String startBillingDateInMilliseconds = account.getAttributes().get("codenvy:billing.date");
         if (startBillingDateInMilliseconds != null) {
@@ -173,7 +175,8 @@ public class SaasBillingService {
                 chargeAmount = Math.ceil(((double)totalRamUsage - freeUsage) / GIGABYTE_HOUR_IN_MEGABYTE_MINUTE) * price;
                 paymentService.charge(ccToken, chargeAmount, accountId, paymentDescription);
             } catch (ForbiddenException e) {
-                sendMailWithConsumption(accountOwnersEmails, memoryUsedReport, billingFailedSubject, unsuccessfulChargeMailTemplate, chargeAmount);
+                sendMailWithConsumption(accountOwnersEmails, memoryUsedReport, billingFailedSubject, unsuccessfulChargeMailTemplate,
+                                        chargeAmount);
                 throw e;
             }
         }
@@ -194,7 +197,7 @@ public class SaasBillingService {
         long totalConsumption = 0;
         StringBuilder stringBuilder = new StringBuilder();
         for (Map.Entry<String, Long> resourceConsumption : consumption.entrySet()) {
-            totalConsumption+=resourceConsumption.getValue();
+            totalConsumption += resourceConsumption.getValue();
             stringBuilder.append("<tr><td>")
                          .append(resourceConsumption.getKey())
                          .append("</td><td>")

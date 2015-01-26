@@ -20,7 +20,9 @@ package com.codenvy.api.account;
 import com.codenvy.api.account.server.ResourcesManager;
 import com.codenvy.api.account.server.dao.Account;
 import com.codenvy.api.account.server.dao.AccountDao;
+import com.codenvy.api.account.shared.dto.AccountMetrics;
 import com.codenvy.api.account.shared.dto.UpdateResourcesDescriptor;
+import com.codenvy.api.account.shared.dto.WorkspaceMetrics;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.ForbiddenException;
 import com.codenvy.api.core.NotFoundException;
@@ -37,10 +39,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import javax.inject.Named;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.codenvy.api.util.BillingDates.getCurrentPeriodEndDate;
+import static com.codenvy.api.util.BillingDates.getCurrentPeriodStartDate;
 import static java.lang.String.format;
 
 /**
@@ -52,15 +58,28 @@ import static java.lang.String.format;
 public class ResourcesManagerImpl implements ResourcesManager {
     private static final Logger LOG = LoggerFactory.getLogger(ResourcesManagerImpl.class);
 
+    private final AccountDao        accountDao;
+    private final WorkspaceDao      workspaceDao;
+    private final MeterBasedStorage meterBasedStorage;
+    private final Long              freeMemory;
+    private final Integer           freeMaxLimit;
 
-    private final AccountDao accountDao;
+    @com.google.inject.Inject(optional = true)
+    @Named(Constants.RUNNER_WS_MAX_MEMORY_SIZE)
+    private int defMaxMemorySize = 512;
 
-    private final WorkspaceDao workspaceDao;
 
     @Inject
-    public ResourcesManagerImpl(AccountDao accountDao, WorkspaceDao workspaceDao) {
+    public ResourcesManagerImpl(@Named("subscription.saas.usage.free.mb_minutes") long freeMemory,
+                                @Named("subscription.saas.free.max_limit_mb") int freeMaxLimit,
+                                AccountDao accountDao,
+                                WorkspaceDao workspaceDao,
+                                MeterBasedStorage meterBasedStorage) {
+        this.freeMemory = freeMemory;
+        this.freeMaxLimit = freeMaxLimit;
         this.accountDao = accountDao;
         this.workspaceDao = workspaceDao;
+        this.meterBasedStorage = meterBasedStorage;
     }
 
     @Override
@@ -99,12 +118,50 @@ public class ResourcesManagerImpl implements ResourcesManager {
         }
     }
 
+    @Override
+    public AccountMetrics getAccountMetrics(String accountId) throws ServerException, NotFoundException {
+        final Account account = accountDao.getById(accountId);
+        final Map<String, String> accountAttributes = account.getAttributes();
+        final boolean isPaid = accountAttributes.containsKey("codenvy:paid") &&
+                               "true".equals(accountAttributes.get("codenvy:paid"));
 
-    private void validateUpdates(String accountId, List<UpdateResourcesDescriptor> updates,
-                                 Map<String, Workspace> ownWorkspaces)   throws ForbiddenException,
-                                                                                ConflictException,
-                                                                                NotFoundException,
-                                                                                ServerException {
+        final List<WorkspaceMetrics> workspacesMetrics = getWorkspacesMetricsByAccount(accountId);
+        Long usedMemory = 0L;
+        for (WorkspaceMetrics workspaceMetrics : workspacesMetrics) {
+            usedMemory += workspaceMetrics.getUsedMemoryInCurrentBillingPeriod();
+        }
+
+        return DtoFactory.getInstance().createDto(AccountMetrics.class)
+                         .withWorkspaceMetrics(workspacesMetrics)
+                         .withUsedMemoryInCurrentBillingPeriod(usedMemory)
+                         .withFreeMemory(freeMemory)
+                         .withResourcesResetTime(getCurrentPeriodEndDate().getTime())
+                         .withMaxWorkspaceMemoryLimit(isPaid ? -1 : freeMaxLimit)
+                         .withPremium(isPaid);
+    }
+
+    private List<WorkspaceMetrics> getWorkspacesMetricsByAccount(String accountId) throws ServerException {
+        final Map<String, Long> memoryUsedReport = meterBasedStorage.getMemoryUsedReport(accountId,
+                                                                                         getCurrentPeriodStartDate().getTime(),
+                                                                                         System.currentTimeMillis());
+
+        final List<Workspace> workspaces = workspaceDao.getByAccount(accountId);
+        final List<WorkspaceMetrics> result = new ArrayList<>();
+
+        for (Workspace workspace : workspaces) {
+            final Long usedMemory = memoryUsedReport.get(workspace.getId());
+            final String maxRunnerRam = workspace.getAttributes().get(Constants.RUNNER_MAX_MEMORY_SIZE);
+            result.add(DtoFactory.getInstance().createDto(WorkspaceMetrics.class)
+                                 .withWorkspaceId(workspace.getId())
+                                 .withUsedMemoryInCurrentBillingPeriod(usedMemory != null ? usedMemory : 0)
+                                 .withWorkspaceMemoryLimit(maxRunnerRam != null ? Integer.parseInt(maxRunnerRam) : defMaxMemorySize));
+        }
+
+        return result;
+    }
+
+    private void validateUpdates(String accountId, List<UpdateResourcesDescriptor> updates, Map<String, Workspace> ownWorkspaces)
+            throws ForbiddenException, ConflictException, NotFoundException, ServerException {
 
         for (UpdateResourcesDescriptor resourcesDescriptor : updates) {
             if (!ownWorkspaces.containsKey(resourcesDescriptor.getWorkspaceId())) {
@@ -125,7 +182,7 @@ public class ResourcesManagerImpl implements ResourcesManager {
                                                        resourcesDescriptor.getWorkspaceId()));
                 }
                 Account account = accountDao.getById(accountId);
-                if (!account.getAttributes().containsKey("codenvy:paid") && runnerRam > 4096) {
+                if (!account.getAttributes().containsKey("codenvy:paid") && runnerRam > freeMaxLimit) {
                     throw new ConflictException(format("Size of RAM for workspace %s has a 4096 MB limit.",
                                                        resourcesDescriptor.getWorkspaceId()));
 
@@ -154,9 +211,9 @@ public class ResourcesManagerImpl implements ResourcesManager {
 
             bm.setChannel(format("workspace:resources:%s", workspaceId));
 
-            final ResourcesDescriptor resourcesDescriptor =
-                    DtoFactory.getInstance().createDto(ResourcesDescriptor.class)
-                              .withTotalMemory(totalMemory);
+            final ResourcesDescriptor resourcesDescriptor = DtoFactory.getInstance().createDto(ResourcesDescriptor.class)
+                                                                      .withTotalMemory(totalMemory);
+
             bm.setBody(DtoFactory.getInstance().toJson(resourcesDescriptor));
             WSConnectionContext.sendMessage(bm);
         } catch (Exception e) {

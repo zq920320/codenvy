@@ -26,7 +26,6 @@ import com.codenvy.api.runner.RunQueue;
 import com.codenvy.api.runner.RunQueueTask;
 import com.codenvy.api.runner.dto.RunRequest;
 import com.codenvy.api.runner.internal.RunnerEvent;
-import com.codenvy.api.user.server.dao.UserDao;
 import com.codenvy.api.workspace.server.dao.Workspace;
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
 

@@ -25,7 +25,7 @@ import com.codenvy.api.core.ServerException;
 import com.codenvy.api.runner.RunQueue;
 import com.codenvy.api.runner.RunQueueTask;
 import com.codenvy.commons.lang.NamedThreadFactory;
-import com.codenvy.subscription.service.util.BillingDates;
+import com.codenvy.api.util.BillingDates;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -24,9 +24,6 @@ import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.api.runner.RunQueue;
 import com.codenvy.api.runner.RunQueueTask;
-import com.codenvy.api.runner.internal.RunnerEvent;
-import com.codenvy.subscription.limit.ActiveRunHolder;
-import com.codenvy.subscription.limit.ActiveRunRemainResourcesChecker;
 
 import org.mockito.Mock;
 import org.mockito.testng.MockitoTestNGListener;
@@ -34,10 +31,8 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 

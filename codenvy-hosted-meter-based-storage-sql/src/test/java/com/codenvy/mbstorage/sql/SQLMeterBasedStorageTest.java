@@ -20,10 +20,8 @@ package com.codenvy.mbstorage.sql;
 import com.codenvy.api.account.MemoryUsedMetric;
 import com.codenvy.api.account.UsageInformer;
 import com.codenvy.api.core.ServerException;
-import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 
 import org.hsqldb.jdbc.JDBCDataSource;
-import org.postgresql.ds.PGPoolingDataSource;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;

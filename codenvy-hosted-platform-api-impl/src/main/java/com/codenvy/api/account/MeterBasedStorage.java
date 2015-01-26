@@ -19,7 +19,6 @@ package com.codenvy.api.account;
 
 import com.codenvy.api.core.ServerException;
 
-import java.util.Date;
 import java.util.Map;
 
 /**

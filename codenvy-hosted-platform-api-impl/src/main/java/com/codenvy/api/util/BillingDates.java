@@ -15,7 +15,7 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.subscription.service.util;
+package com.codenvy.api.util;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -24,42 +24,37 @@ import java.util.Date;
  * Helper to get different billing dates.
  *
  * @author Max Shaposhnik (mshaposhnik@codenvy.com) on 1/19/15.
- *
+ * @author Sergii Leschenko
  */
 public class BillingDates {
 
-    public static Date getDefaultBillingStartDate() {
-         return getPreviousMonthStart();
+    public static Date getPreviousPeriodStartDate() {
+        final Calendar calendar = getCurrentMonthStart();
+        calendar.add(Calendar.MONTH, -1);
+        return calendar.getTime();
     }
 
-    public static Date getBillingPeriodEndDate() {
-         return  getCurrentMonthStart();
+    public static Date getPreviousPeriodEndDate() {
+        return getCurrentMonthStart().getTime();
     }
 
     public static Date getCurrentPeriodStartDate() {
-        return  getCurrentMonthStart();
+        return getCurrentMonthStart().getTime();
     }
 
-    private static Date getPreviousMonthStart() {
-        final Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.MONTH, -1);
-        calendar.set(Calendar.DATE, calendar.getActualMinimum(Calendar.DAY_OF_MONTH));
-        calendar.set(Calendar.HOUR_OF_DAY, calendar.getActualMinimum(Calendar.HOUR_OF_DAY));
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-
+    public static Date getCurrentPeriodEndDate() {
+        final Calendar calendar = getCurrentMonthStart();
+        calendar.add(Calendar.MONTH, 1);
         return calendar.getTime();
     }
 
-    private static Date getCurrentMonthStart() {
+    private static Calendar getCurrentMonthStart() {
         final Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.DATE, calendar.getActualMinimum(Calendar.DAY_OF_MONTH));
-        calendar.set(Calendar.HOUR_OF_DAY, calendar.getActualMinimum(Calendar.HOUR_OF_DAY));
+        calendar.set(Calendar.DATE, 1);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
-
-        return calendar.getTime();
+        return calendar;
     }
 }

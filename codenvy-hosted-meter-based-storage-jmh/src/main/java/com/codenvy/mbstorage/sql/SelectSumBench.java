@@ -18,7 +18,6 @@
 package com.codenvy.mbstorage.sql;
 
 import com.codenvy.api.account.MemoryUsedMetric;
-import com.codenvy.api.account.UsageInformer;
 import com.codenvy.api.core.ServerException;
 
 import org.openjdk.jmh.annotations.Benchmark;

@@ -17,8 +17,6 @@
  */
 package com.codenvy.api.account;
 
-import java.util.Date;
-
 /**
  * @author Sergii Kabashniuk
  */

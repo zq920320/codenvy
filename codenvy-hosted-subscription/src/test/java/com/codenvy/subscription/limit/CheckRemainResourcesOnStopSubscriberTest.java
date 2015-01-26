@@ -28,8 +28,6 @@ import com.codenvy.api.core.notification.EventService;
 import com.codenvy.api.runner.internal.RunnerEvent;
 import com.codenvy.api.workspace.server.dao.Workspace;
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
-import com.codenvy.subscription.limit.ActiveRunHolder;
-import com.codenvy.subscription.limit.CheckRemainResourcesOnStopSubscriber;
 
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
