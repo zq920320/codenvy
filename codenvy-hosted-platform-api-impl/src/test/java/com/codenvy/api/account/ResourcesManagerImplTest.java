@@ -91,14 +91,16 @@ public class ResourcesManagerImplTest {
         resourcesManager.redistributeResources(ACCOUNT_ID,
                                                Arrays.asList(DtoFactory.getInstance().createDto(
                                                                      UpdateResourcesDescriptor.class)
-                                                                       .withWorkspaceId(PRIMARY_WORKSPACE_ID),
+                                                                       .withWorkspaceId(PRIMARY_WORKSPACE_ID)
+                                                                       .withRunnerRam(1024),
                                                              DtoFactory.getInstance().createDto(
                                                                      UpdateResourcesDescriptor.class)
-                                                                       .withWorkspaceId("another_workspace")));
+                                                                       .withWorkspaceId("another_workspace")
+                                                                       .withRunnerRam(1024)));
     }
 
     @Test(expectedExceptions = ConflictException.class,
-            expectedExceptionsMessageRegExp = "Missed description of resources for workspace \\w*")
+          expectedExceptionsMessageRegExp = "Missed description of resources for workspace \\w*")
     public void shouldThrowConflictExceptionIfMissedResources() throws Exception {
         resourcesManager.redistributeResources(ACCOUNT_ID,
                                                Arrays.asList(DtoFactory.getInstance().createDto(UpdateResourcesDescriptor.class)
@@ -106,7 +108,6 @@ public class ResourcesManagerImplTest {
                                                              DtoFactory.getInstance().createDto(UpdateResourcesDescriptor.class)
                                                                        .withWorkspaceId(EXTRA_WORKSPACE_ID)));
     }
-
 
 
     @Test(expectedExceptions = ConflictException.class,
@@ -120,17 +121,15 @@ public class ResourcesManagerImplTest {
     }
 
     @Test(expectedExceptions = ConflictException.class,
-            expectedExceptionsMessageRegExp = "Builder timeout for workspace \\w* is a negative number")
+          expectedExceptionsMessageRegExp = "Builder timeout for workspace \\w* is a negative number")
     public void shouldThrowConflictExceptionIfSizeOfBuilderTimeoutIsNegativeNumber() throws Exception {
-        resourcesManager.redistributeResources(ACCOUNT_ID, Arrays.asList(DtoFactory.getInstance().createDto(
-                                                                     UpdateResourcesDescriptor.class)
-                                                                       .withWorkspaceId(
-                                                                               EXTRA_WORKSPACE_ID)
-                                                                       .withBuilderTimeout(-5)));
+        resourcesManager.redistributeResources(ACCOUNT_ID, Arrays.asList(DtoFactory.getInstance().createDto(UpdateResourcesDescriptor.class)
+                                                                                   .withWorkspaceId(EXTRA_WORKSPACE_ID)
+                                                                                   .withBuilderTimeout(-5)));
     }
 
     @Test(expectedExceptions = ConflictException.class,
-            expectedExceptionsMessageRegExp = "Runner timeout for workspace \\w* is a negative number")
+          expectedExceptionsMessageRegExp = "Runner timeout for workspace \\w* is a negative number")
     public void shouldThrowConflictExceptionIfSizeOfRunnerTimeoutIsNegativeNumber() throws Exception {
         resourcesManager.redistributeResources(ACCOUNT_ID,
 
@@ -148,12 +147,10 @@ public class ResourcesManagerImplTest {
 
 
     @Test(expectedExceptions = ConflictException.class,
-            expectedExceptionsMessageRegExp = "Size of RAM for workspace \\w* has a 4096 MB limit.")
+          expectedExceptionsMessageRegExp = "Size of RAM for workspace \\w* has a 4096 MB limit.")
     public void shouldThrowConflictExceptionIfSizeOfRAMIsTooBigForCommunityAccountNumber() throws Exception {
-        resourcesManager.redistributeResources(ACCOUNT_ID, Arrays.asList(DtoFactory.getInstance().createDto(
-                                                                                 UpdateResourcesDescriptor.class)
-                                                                                   .withWorkspaceId(
-                                                                                           EXTRA_WORKSPACE_ID)
+        resourcesManager.redistributeResources(ACCOUNT_ID, Arrays.asList(DtoFactory.getInstance().createDto(UpdateResourcesDescriptor.class)
+                                                                                   .withWorkspaceId(EXTRA_WORKSPACE_ID)
                                                                                    .withRunnerRam(5000)));
     }
 
