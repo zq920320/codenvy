@@ -58,7 +58,7 @@ public class SaasBillingScheduler {
 
     @PostConstruct
     public void scheduleBilling() {
-        scheduler.scheduleAtFixedRate(chargeTask, schedulerDelay, schedulerPeriod, TimeUnit.MINUTES);
+        //scheduler.scheduleAtFixedRate(chargeTask, schedulerDelay, schedulerPeriod, TimeUnit.MINUTES);
     }
 
     @PreDestroy
