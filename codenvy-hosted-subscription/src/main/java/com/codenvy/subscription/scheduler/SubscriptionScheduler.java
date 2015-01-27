@@ -20,6 +20,7 @@ package com.codenvy.subscription.scheduler;
 import com.codenvy.api.account.server.subscription.SubscriptionService;
 import com.codenvy.api.account.server.subscription.SubscriptionServiceRegistry;
 import com.codenvy.commons.lang.NamedThreadFactory;
+import com.codenvy.commons.schedule.ScheduleDelay;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,58 +39,33 @@ import java.util.concurrent.TimeUnit;
  *
  * @author Alexander Garagatyi
  */
-// must be eager singleton
 @Singleton
 public class SubscriptionScheduler {
+    private static final Logger LOG = LoggerFactory.getLogger(SubscriptionScheduler.class);
+
     public static final String SUBSCRIPTION_SCHEDULER_INITIAL_DELAY_MINUTES = "subscription.scheduler.initDelay.minutes";
     public static final String SUBSCRIPTION_SCHEDULER_PERIOD_MINUTES        = "subscription.scheduler.period.minutes";
 
-    private final ScheduledExecutorService scheduler;
-    private final SubscriptionCheckerTask  task;
-    private final Integer                  subscriptionSchedulerInitDelay;
-    private final Integer                  subscriptionSchedulerPeriod;
+    private final SubscriptionServiceRegistry registry;
 
     @Inject
-    public SubscriptionScheduler(SubscriptionCheckerTask task,
-                                 @Named(SUBSCRIPTION_SCHEDULER_INITIAL_DELAY_MINUTES) Integer subscriptionSchedulerInitDelay,
-                                 @Named(SUBSCRIPTION_SCHEDULER_PERIOD_MINUTES) Integer subscriptionSchedulerPeriod) {
-        this.task = task;
-        this.subscriptionSchedulerInitDelay = subscriptionSchedulerInitDelay;
-        this.subscriptionSchedulerPeriod = subscriptionSchedulerPeriod;
-        this.scheduler = Executors.newScheduledThreadPool(1, new NamedThreadFactory("SubscriptionCheckerTask", false));
+    public SubscriptionScheduler(SubscriptionServiceRegistry registry) {
+        this.registry = registry;
     }
 
-    @PostConstruct
-    private void startScheduling() {
-        scheduler.scheduleAtFixedRate(task, subscriptionSchedulerInitDelay, subscriptionSchedulerPeriod, TimeUnit.MINUTES);
-    }
-
-    @PreDestroy
-    private void destroy() {
-        scheduler.shutdownNow();
-    }
-
-    private static class SubscriptionCheckerTask implements Runnable {
-        private static final Logger LOG = LoggerFactory.getLogger(SubscriptionCheckerTask.class);
-
-        private final SubscriptionServiceRegistry registry;
-
-        @Inject
-        public SubscriptionCheckerTask(SubscriptionServiceRegistry registry) {
-            this.registry = registry;
-        }
-
-        @Override
-        public void run() {
-            LOG.info("Subscription scheduler task is started");
-            try {
-                for (SubscriptionService subscriptionService : registry.getAll()) {
-                    subscriptionService.onCheckSubscriptions();
-                }
-            } catch (Exception e) {
-                LOG.error(e.getLocalizedMessage(), e);
+    @ScheduleDelay(
+            initialDelayParameterName = SUBSCRIPTION_SCHEDULER_INITIAL_DELAY_MINUTES,
+            delayParameterName = SUBSCRIPTION_SCHEDULER_PERIOD_MINUTES,
+            unit = TimeUnit.MINUTES)
+    public void checkSubscribtions() {
+        LOG.info("Subscription scheduler task is started");
+        try {
+            for (SubscriptionService subscriptionService : registry.getAll()) {
+                subscriptionService.onCheckSubscriptions();
             }
-            LOG.info("Subscription scheduler task is finished");
+        } catch (Exception e) {
+            LOG.error(e.getLocalizedMessage(), e);
         }
+        LOG.info("Subscription scheduler task is finished");
     }
 }
