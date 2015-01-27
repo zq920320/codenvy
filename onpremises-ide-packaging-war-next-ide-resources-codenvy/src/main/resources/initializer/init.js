@@ -1061,6 +1061,9 @@ var SiteApp = new function () {
 
 
     this.onError = function (message, exception) {
+        Initializer.hide();
+        document.body.style["background-color"] = "#373737";
+
         var html = "" +
             "<div style='position: absolute; left:0px; right:0px; top:0px; bottom:0px; overflow:hidden;'>" +
             "<div id='error-panel' class='select-ws-error'>" +
@@ -1428,7 +1431,7 @@ switch (Page.getInitiator()) {
             } else {
                 var project = window.location.pathname.split('/')[3];
                 if (!project) {
-                    if (window.location.search && window.location.search.indexOf("action=") >= 0) {
+                    if (window.location.search) {
                         Initializer.processTenant(workspaceName, null, null, window.location.search);
                     } else {
                         Page.redirect("/dashboard/");
@@ -1472,7 +1475,7 @@ switch (Page.getInitiator()) {
         break;
 
     case "/site/private/select-tenant.html":
-        if (window.location.search && window.location.search.indexOf("action=") >= 0) {
+        if (window.location.search) {
             SelectWorkspace.process(window.location.search);
         } else {
             Page.redirect("/dashboard/");
