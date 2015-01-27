@@ -91,7 +91,7 @@ public class TasksActivityCheckerTest {
     public void shouldSendTick() throws NotFoundException, ServerException {
         when(runQueue.getTasks()).thenReturn(new ArrayList(Arrays.asList(runQueueTask)));
 
-        tasksActivityChecker.run();
+        tasksActivityChecker.check();
 
         verify(resourcesUsageTracker).resourceInUse(eq(PROCESS_ID));
     }
@@ -107,9 +107,9 @@ public class TasksActivityCheckerTest {
 
         when(runQueueTask.getDescriptor()).thenReturn(applicationDescriptor);
 
-        tasksActivityChecker.run();
+        tasksActivityChecker.check();
         Thread.sleep(TICK_PERIOD);
-        tasksActivityChecker.run();
+        tasksActivityChecker.check();
 
         verify(resourcesUsageTracker, times(2)).resourceInUse(eq(PROCESS_ID));
     }
@@ -126,7 +126,7 @@ public class TasksActivityCheckerTest {
         when(secondRunQueueTask.getDescriptor()).thenReturn(secondDescriptor);
 
         for (int i = 0; i < 3; ++i) {
-            tasksActivityChecker.run();
+            tasksActivityChecker.check();
             Thread.sleep(SCHEDULING_PERIOD);
         }
 

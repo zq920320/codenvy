@@ -30,6 +30,7 @@ import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.ForbiddenException;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
+import com.codenvy.commons.schedule.ScheduleDelay;
 import com.codenvy.dto.server.DtoFactory;
 
 import org.slf4j.Logger;
@@ -59,15 +60,13 @@ import java.util.concurrent.TimeUnit;
 public class BraintreePaymentService implements PaymentService {
     private static final Logger LOG = LoggerFactory.getLogger(BraintreePaymentService.class);
 
-    private final BraintreeGateway         gateway;
-    private final ScheduledExecutorService scheduledExecutorService;
-    private       Map<String, BigDecimal>  prices;
+    private final BraintreeGateway        gateway;
+    private       Map<String, BigDecimal> prices;
 
     @Inject
     public BraintreePaymentService(BraintreeGateway gateway) {
         this.gateway = gateway;
         this.prices = Collections.emptyMap();
-        this.scheduledExecutorService = Executors.newScheduledThreadPool(1);
     }
 
     @Override
@@ -93,7 +92,7 @@ public class BraintreePaymentService implements PaymentService {
 
             final TransactionRequest request = new TransactionRequest()
                     .paymentMethodToken(subscription.getPaymentToken())
-                    // add subscription id to identify charging reason
+                            // add subscription id to identify charging reason
                     .customField("subscription_id", subscription.getId())
                     .options().submitForSettlement(true).done()
                     .amount(price);
@@ -119,7 +118,8 @@ public class BraintreePaymentService implements PaymentService {
     }
 
     @Override
-    public void charge(String creditCardToken, double amount, String account, String paymentDescription) throws ServerException, ForbiddenException {
+    public void charge(String creditCardToken, double amount, String account, String paymentDescription)
+            throws ServerException, ForbiddenException {
         if (creditCardToken == null) {
             throw new ForbiddenException("Credit card token can't be null");
         }
@@ -196,27 +196,17 @@ public class BraintreePaymentService implements PaymentService {
         }
     }
 
-    @PostConstruct
-    private void getPrices() {
-        scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    List<Plan> plans = gateway.plan().all();
-                    final HashMap<String, BigDecimal> newPrices = new HashMap<>(plans.size());
-                    for (Plan plan : plans) {
-                        newPrices.put(plan.getId(), plan.getPrice());
-                    }
-                    prices = newPrices;
-                } catch (Exception e) {
-                    LOG.error("Can't retrieve prices for subscription plans." + e.getLocalizedMessage(), e);
-                }
+    @ScheduleDelay(delay = 1, unit = TimeUnit.HOURS)
+    public void updatePrices() {
+        try {
+            List<Plan> plans = gateway.plan().all();
+            final HashMap<String, BigDecimal> newPrices = new HashMap<>(plans.size());
+            for (Plan plan : plans) {
+                newPrices.put(plan.getId(), plan.getPrice());
             }
-        }, 0, 60, TimeUnit.MINUTES);
-    }
-
-    @PreDestroy
-    private void destroy() {
-        scheduledExecutorService.shutdownNow();
+            prices = newPrices;
+        } catch (Exception e) {
+            LOG.error("Can't retrieve prices for subscription plans." + e.getLocalizedMessage(), e);
+        }
     }
 }

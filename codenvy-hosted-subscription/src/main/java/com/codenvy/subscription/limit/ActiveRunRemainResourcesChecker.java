@@ -24,65 +24,47 @@ import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.api.runner.RunQueue;
 import com.codenvy.api.runner.RunQueueTask;
-import com.codenvy.commons.lang.NamedThreadFactory;
 import com.codenvy.api.util.BillingDates;
+import com.codenvy.commons.schedule.ScheduleRate;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Singleton;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Periodically check the active runs to make sure they not exceeded the free RAM limit.
- * @author Max Shaposhnik (mshaposhnik@codenvy.com) on 1/16/15.
  *
+ * @author Max Shaposhnik (mshaposhnik@codenvy.com) on 1/16/15.
  */
+@Singleton
 public class ActiveRunRemainResourcesChecker implements Runnable {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ActiveRunRemainResourcesChecker.class);
-    public static final String  RUN_ACTIVITY_CHECKING_PERIOD = "resources.run_activity_checking.period_sec";
+    private static final Logger LOG                          = LoggerFactory.getLogger(ActiveRunRemainResourcesChecker.class);
+    public static final  String RUN_ACTIVITY_CHECKING_PERIOD = "resources.run_activity_checking.period_sec";
 
-    private final ActiveRunHolder          activeRunHolder;
-    private final ScheduledExecutorService scheduler;
-    private final Integer                  schedulingPeriod;
-    private final AccountDao               accountDao;
-    private final MeterBasedStorage        storage;
-    private final RunQueue                 runQueue;
-    private final long                     freeUsageLimit;
+    private final ActiveRunHolder   activeRunHolder;
+    private final AccountDao        accountDao;
+    private final MeterBasedStorage storage;
+    private final RunQueue          runQueue;
+    private final long              freeUsageLimit;
 
     @Inject
     public ActiveRunRemainResourcesChecker(ActiveRunHolder activeRunHolder, AccountDao accountDao,
                                            MeterBasedStorage storage, RunQueue runQueue,
-                                           @Named(RUN_ACTIVITY_CHECKING_PERIOD) Integer schedulingPeriod,
                                            @Named("subscription.saas.usage.free.mb_minutes") long freeUsage) {
         this.activeRunHolder = activeRunHolder;
         this.accountDao = accountDao;
         this.storage = storage;
         this.runQueue = runQueue;
         this.freeUsageLimit = freeUsage;
-        this.scheduler =
-                Executors.newScheduledThreadPool(1, new NamedThreadFactory("ActiveRunRemainResourcesChecker", true));
-        this.schedulingPeriod = schedulingPeriod;
     }
 
-    @PostConstruct
-    private void startScheduling() {
-        scheduler.scheduleAtFixedRate(this, 0, schedulingPeriod, TimeUnit.SECONDS);
-    }
-
-    @PreDestroy
-    private void destroy() {
-        scheduler.shutdownNow();
-    }
-
+    @ScheduleRate(periodParameterName = RUN_ACTIVITY_CHECKING_PERIOD)
     @Override
     public void run() {
         for (Map.Entry<String, Set<Long>> accountRuns : activeRunHolder.getActiveRuns().entrySet()) {

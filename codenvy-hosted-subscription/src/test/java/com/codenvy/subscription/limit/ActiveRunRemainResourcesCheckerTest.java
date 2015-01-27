@@ -45,8 +45,8 @@ import static org.mockito.Mockito.when;
 
 /**
  * Tests for ActiveRunRemainResourcesChecker.
- * @author Max Shaposhnik (mshaposhnik@codenvy.com) on 1/19/15.
  *
+ * @author Max Shaposhnik (mshaposhnik@codenvy.com) on 1/19/15.
  */
 
 @Listeners(MockitoTestNGListener.class)
@@ -73,8 +73,7 @@ public class ActiveRunRemainResourcesCheckerTest {
 
     @BeforeMethod
     public void setUp() throws Exception {
-        this.checker = new ActiveRunRemainResourcesChecker(activeRunHolder, accountDao, storage, runQueue,
-                                                           RUN_ACTIVITY_CHECKING_PERIOD, FREE_LIMIT);
+        this.checker = new ActiveRunRemainResourcesChecker(activeRunHolder, accountDao, storage, runQueue, FREE_LIMIT);
         Map<String, Set<Long>> activeRuns = new HashMap<>();
         Set<Long> pIds = new HashSet<>();
         pIds.add(PROCESS_ID);
@@ -83,8 +82,7 @@ public class ActiveRunRemainResourcesCheckerTest {
     }
 
     @Test
-    public void shouldNotCheckOnPaidAccounts()  throws ServerException,NotFoundException
-    {
+    public void shouldNotCheckOnPaidAccounts() throws ServerException, NotFoundException {
         Map<String, String> attributes = new HashMap<>();
         attributes.put("codenvy:paid", "true");
         when(accountDao.getById(anyString())).thenReturn(new Account().withId(ACC_ID).withAttributes(attributes));
@@ -95,19 +93,17 @@ public class ActiveRunRemainResourcesCheckerTest {
     }
 
     @Test
-    public void shouldStopRunIfLimitExeeded()  throws Exception
-    {
+    public void shouldStopRunIfLimitExeeded() throws Exception {
         when(accountDao.getById(anyString())).thenReturn(new Account().withId(ACC_ID));
         when(storage.getMemoryUsed(anyString(), anyLong(), anyLong())).thenReturn(180L);
         when(runQueue.getTask(anyLong())).thenReturn(runQueueTask);
 
         checker.run();
-        verify(runQueueTask ,times(1)).stop();
+        verify(runQueueTask, times(1)).stop();
     }
 
     @Test
-    public void shouldNotStopRunIfLimitNotExeeded()  throws Exception
-    {
+    public void shouldNotStopRunIfLimitNotExeeded() throws Exception {
         when(accountDao.getById(anyString())).thenReturn(new Account().withId(ACC_ID));
         when(storage.getMemoryUsed(anyString(), anyLong(), anyLong())).thenReturn(80L);
         when(runQueue.getTask(anyLong())).thenReturn(runQueueTask);

@@ -31,6 +31,7 @@ import com.codenvy.api.account.shared.dto.SubscriptionState;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.ForbiddenException;
 import com.codenvy.api.core.ServerException;
+import com.codenvy.commons.schedule.ScheduleDelay;
 
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -160,8 +161,8 @@ public class BraintreePaymentServiceTest {
         when(plan.getId()).thenReturn("planId");
         when(plan.getPrice()).thenReturn(new BigDecimal(1));
 
-        Method getPrices = BraintreePaymentService.class.getDeclaredMethod("getPrices");
-        assertTrue(getPrices.isAnnotationPresent(PostConstruct.class));
+        Method getPrices = BraintreePaymentService.class.getDeclaredMethod("updatePrices");
+        assertTrue(getPrices.isAnnotationPresent(ScheduleDelay.class));
         getPrices.setAccessible(true);
         getPrices.invoke(service);
 

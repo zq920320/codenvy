@@ -45,6 +45,11 @@
             <version>${codenvy.commons.version}</version>
         </dependency>
         <dependency>
+            <groupId>com.codenvy.commons</groupId>
+            <artifactId>codenvy-commons-schedule</artifactId>
+            <version>${codenvy.commons.version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.codenvy.hosted-infrastructure</groupId>
             <artifactId>codenvy-hosted-workspace-events</artifactId>
             <version>${project.version}</version>

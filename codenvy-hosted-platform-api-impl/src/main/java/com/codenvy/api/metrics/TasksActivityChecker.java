@@ -24,6 +24,7 @@ import com.codenvy.api.runner.RunnerException;
 import com.codenvy.api.runner.dto.ApplicationProcessDescriptor;
 import com.codenvy.api.runner.dto.RunRequest;
 import com.codenvy.commons.lang.NamedThreadFactory;
+import com.codenvy.commons.schedule.ScheduleRate;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +33,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Singleton;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -44,7 +46,8 @@ import static java.lang.System.currentTimeMillis;
  *
  * @author Sergii Leschenko
  */
-public class TasksActivityChecker implements Runnable {
+@Singleton
+public class TasksActivityChecker {
     private static final Logger LOG = LoggerFactory.getLogger(TasksActivityChecker.class);
 
     static TimeUnit usedTimeUnit = TimeUnit.SECONDS;
@@ -55,11 +58,10 @@ public class TasksActivityChecker implements Runnable {
     /** Period between ticks of resources use */
     public static final String RUN_TICK_PERIOD = "metrics.run_tick.period_sec";
 
-    private final Integer                  runTickPeriod;
-    private final Integer                  schedulingPeriod;
-    private final ScheduledExecutorService scheduler;
-    private final RunQueue                 runQueue;
-    private final ResourcesUsageTracker    resourcesUsageTracker;
+    private final Integer               runTickPeriod;
+    private final Integer               schedulingPeriod;
+    private final RunQueue              runQueue;
+    private final ResourcesUsageTracker resourcesUsageTracker;
 
     @Inject
     public TasksActivityChecker(@Named(RUN_TICK_PERIOD) Integer runTickPeriod,
@@ -70,21 +72,10 @@ public class TasksActivityChecker implements Runnable {
         this.runQueue = runQueue;
         this.resourcesUsageTracker = resourcesUsageTracker;
         this.schedulingPeriod = schedulingPeriod;
-        this.scheduler = Executors.newScheduledThreadPool(1, new NamedThreadFactory("TasksActivityChecker", true));
     }
 
-    @PostConstruct
-    private void startScheduling() {
-        scheduler.scheduleAtFixedRate(this, 0, schedulingPeriod, usedTimeUnit);
-    }
-
-    @PreDestroy
-    private void destroy() {
-        scheduler.shutdownNow();
-    }
-
-    @Override
-    public void run() {
+    @ScheduleRate(periodParameterName = RUN_ACTIVITY_CHECKING_PERIOD)
+    public void check() {
         for (RunQueueTask runTask : runQueue.getTasks()) {
             ApplicationProcessDescriptor descriptor;
             try {
