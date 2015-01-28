@@ -20,6 +20,7 @@ package com.codenvy.api.account.server;
 import static java.lang.String.format;
 
 import com.codenvy.api.account.billing.BillingPeriod;
+import com.codenvy.api.account.metrics.MeterBasedStorage;
 import com.codenvy.api.account.server.dao.Account;
 import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.shared.dto.AccountMetrics;
@@ -59,9 +60,9 @@ public class ResourcesManagerImpl implements ResourcesManager {
     private final AccountDao        accountDao;
     private final WorkspaceDao      workspaceDao;
     private final MeterBasedStorage meterBasedStorage;
-    private final BillingPeriod billingPeriod;
-    private final Long    freeMemory;
-    private final Integer freeMaxLimit;
+    private final BillingPeriod     billingPeriod;
+    private final Long              freeMemory;
+    private final Integer           freeMaxLimit;
 
     @com.google.inject.Inject(optional = true)
     @Named(Constants.RUNNER_WS_MAX_MEMORY_SIZE)

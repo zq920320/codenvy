@@ -34,9 +34,9 @@ package com.codenvy.mbstorage.sql;
  * from Codenvy S.A..
  */
 
-import com.codenvy.api.account.server.MemoryUsedMetric;
-import com.codenvy.api.account.server.MeterBasedStorage;
-import com.codenvy.api.account.server.UsageInformer;
+import com.codenvy.api.account.metrics.MemoryUsedMetric;
+import com.codenvy.api.account.metrics.MeterBasedStorage;
+import com.codenvy.api.account.metrics.UsageInformer;
 import com.codenvy.api.core.ServerException;
 
 import javax.inject.Inject;

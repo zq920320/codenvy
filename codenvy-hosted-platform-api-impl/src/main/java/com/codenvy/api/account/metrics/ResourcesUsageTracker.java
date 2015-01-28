@@ -17,9 +17,6 @@
  */
 package com.codenvy.api.account.metrics;
 
-import com.codenvy.api.account.server.MemoryUsedMetric;
-import com.codenvy.api.account.server.MeterBasedStorage;
-import com.codenvy.api.account.server.UsageInformer;
 import com.codenvy.api.core.ServerException;
 
 import org.slf4j.Logger;

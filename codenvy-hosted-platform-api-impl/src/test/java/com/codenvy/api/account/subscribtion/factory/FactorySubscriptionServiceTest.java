@@ -15,13 +15,14 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.api.account.subscription.service;
+package com.codenvy.api.account.subscribtion.factory;
 
 import com.codenvy.api.account.server.subscription.PaymentService;
 import com.codenvy.api.account.server.subscription.SubscriptionService;
 import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.server.dao.Subscription;
-import com.codenvy.api.account.subscribtion.subscription.service.FactorySubscriptionService;
+
+import com.codenvy.api.account.subscribtion.factory.FactorySubscriptionService;
 import com.codenvy.api.core.ApiException;
 import com.codenvy.api.core.ConflictException;
 

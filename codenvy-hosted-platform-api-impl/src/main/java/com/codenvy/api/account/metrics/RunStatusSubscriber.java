@@ -17,7 +17,6 @@
  */
 package com.codenvy.api.account.metrics;
 
-import com.codenvy.api.account.server.MemoryUsedMetric;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.api.core.notification.EventService;

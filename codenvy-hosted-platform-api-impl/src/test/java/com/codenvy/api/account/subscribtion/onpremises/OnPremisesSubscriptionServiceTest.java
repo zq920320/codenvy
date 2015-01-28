@@ -15,7 +15,7 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.api.account.subscription.service;
+package com.codenvy.api.account.subscribtion.onpremises;
 
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -23,7 +23,7 @@ import static org.mockito.Mockito.when;
 import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.server.dao.Subscription;
 import com.codenvy.api.account.server.subscription.SubscriptionService;
-import com.codenvy.api.account.subscribtion.subscription.service.OnPremisesSubscriptionService;
+
 import com.codenvy.api.core.ApiException;
 import com.codenvy.api.core.ConflictException;
 
@@ -40,7 +40,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Tests for {@link com.codenvy.api.account.subscribtion.subscription.service.OnPremisesSubscriptionService}
+ * Tests for {@link com.codenvy.api.account.subscribtion.onpremises.OnPremisesSubscriptionService}
  *
  * @author Sergii Leschenko
  * @author Alexander Garagatyi

@@ -15,15 +15,14 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.api.account.subscription.limit;
+package com.codenvy.api.account.subscribtion.saas.limit;
 
 import com.codenvy.api.account.billing.MonthlyBillingPeriod;
-import com.codenvy.api.account.server.MeterBasedStorage;
+
+import com.codenvy.api.account.metrics.MeterBasedStorage;
 import com.codenvy.api.account.server.Constants;
 import com.codenvy.api.account.server.dao.Account;
 import com.codenvy.api.account.server.dao.AccountDao;
-import com.codenvy.api.account.subscribtion.subscription.limit.ActiveRunHolder;
-import com.codenvy.api.account.subscribtion.subscription.limit.CheckRemainResourcesOnStopSubscriber;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;

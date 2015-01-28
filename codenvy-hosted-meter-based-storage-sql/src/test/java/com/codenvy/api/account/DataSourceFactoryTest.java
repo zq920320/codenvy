@@ -17,8 +17,8 @@
  */
 package com.codenvy.api.account;
 
-import com.codenvy.api.account.server.MemoryUsedMetric;
-import com.codenvy.api.account.server.UsageInformer;
+import com.codenvy.api.account.metrics.MemoryUsedMetric;
+import com.codenvy.api.account.metrics.UsageInformer;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.mbstorage.sql.ConnectionFactory;
 import com.codenvy.mbstorage.sql.SQLMeterBasedStorage;

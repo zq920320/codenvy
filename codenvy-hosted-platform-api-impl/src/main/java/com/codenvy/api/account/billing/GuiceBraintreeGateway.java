@@ -15,7 +15,7 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.api.account.subscribtion.braintree;
+package com.codenvy.api.account.billing;
 
 import com.braintreegateway.BraintreeGateway;
 import com.braintreegateway.Environment;

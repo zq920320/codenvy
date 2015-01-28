@@ -18,7 +18,7 @@
 package com.codenvy.api.account.subscribtion.saas;
 
 import com.codenvy.api.account.billing.BillingPeriod;
-import com.codenvy.api.account.server.MeterBasedStorage;
+import com.codenvy.api.account.metrics.MeterBasedStorage;
 import com.codenvy.api.account.server.dao.Account;
 import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.server.dao.Member;

@@ -15,7 +15,7 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.api.account.subscribtion.subscription.service;
+package com.codenvy.api.account.subscribtion.onpremises;
 
 import com.codenvy.api.account.server.subscription.SubscriptionService;
 import com.codenvy.api.account.server.dao.AccountDao;

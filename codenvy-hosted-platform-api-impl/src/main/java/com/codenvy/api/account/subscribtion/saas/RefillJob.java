@@ -16,7 +16,7 @@
  * from Codenvy S.A..
  */
 
-package com.codenvy.api.account.subscribtion.subscription.scheduler;
+package com.codenvy.api.account.subscribtion.saas;
 
 import com.codenvy.api.account.server.Constants;
 import com.codenvy.api.account.server.dao.Account;

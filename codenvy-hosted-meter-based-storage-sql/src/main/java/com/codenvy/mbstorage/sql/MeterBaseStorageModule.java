@@ -17,7 +17,7 @@
  */
 package com.codenvy.mbstorage.sql;
 
-import com.codenvy.api.account.server.MeterBasedStorage;
+import com.codenvy.api.account.metrics.MeterBasedStorage;
 import com.google.inject.AbstractModule;
 
 /**
