@@ -17,8 +17,8 @@
  */
 package com.codenvy.mbstorage.sql;
 
-import com.codenvy.api.account.MemoryUsedMetric;
-import com.codenvy.api.account.UsageInformer;
+import com.codenvy.api.account.server.MemoryUsedMetric;
+import com.codenvy.api.account.server.UsageInformer;
 import com.codenvy.api.core.ServerException;
 
 import org.hsqldb.jdbc.JDBCDataSource;

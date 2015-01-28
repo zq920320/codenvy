@@ -15,19 +15,24 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.mbstorage.sql;
+package com.codenvy.api.account.server;
 
-import com.codenvy.api.account.server.MeterBasedStorage;
-import com.google.inject.AbstractModule;
+import com.codenvy.api.core.ServerException;
 
 /**
+ * Allow to inform @MeterBasedStorage about state of resource
+ *
  * @author Sergii Kabashniuk
  */
-public class MeterBaseStorageModule  extends AbstractModule {
-    @Override
-    protected void configure() {
-        bind(ConnectionFactory.class).to(JndiDataSourcedConnectionFactory.class);
-        bind(MeterBasedStorage.class).to(SQLMeterBasedStorage.class);
-        bind(StorageInitializer.class).asEagerSingleton();
-    }
+public interface UsageInformer {
+    /**
+     * Inform about the fact that resource is still in use.
+     */
+    void resourceInUse() throws ServerException;
+
+    /**
+     * Inform about the fact that resource usage are stopped.
+     */
+    void resourceUsageStopped() throws ServerException;
+
 }
