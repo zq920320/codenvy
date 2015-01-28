@@ -25,12 +25,16 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 @Listeners(MockitoTestNGListener.class)
 public class MonthlyBillingPeriodTest {
-    
 
+    private DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
     MonthlyBillingPeriod monthlyBillingPeriod;
 
     @BeforeMethod
@@ -51,26 +55,26 @@ public class MonthlyBillingPeriodTest {
     @Test
     public void testGetPreviousPeriodStartDate() throws Exception {
         assertEquals(monthlyBillingPeriod.getPreviousPeriodStartDate(),
-                     MonthlyBillingPeriod.ID_FORMAT.parse("1982-05"));
+                     df.parse("1982-05-01 00:00:00:000"));
 
     }
 
     @Test
     public void testGetPreviousPeriodEndDate() throws Exception {
         assertEquals(monthlyBillingPeriod.getPreviousPeriodEndDate(),
-                     MonthlyBillingPeriod.ID_FORMAT.parse("1982-06"));
+                     df.parse("1982-05-31 23:59:59:999"));
     }
 
     @Test
     public void testGetCurrentPeriodStartDate() throws Exception {
-        assertEquals(monthlyBillingPeriod.getPreviousPeriodEndDate(),
-                     MonthlyBillingPeriod.ID_FORMAT.parse("1982-06"));
+        assertEquals(monthlyBillingPeriod.getCurrentPeriodStartDate(),
+                     df.parse("1982-06-01 00:00:00:000"));
     }
 
     @Test
     public void testGetCurrentPeriodEndDate() throws Exception {
         assertEquals(monthlyBillingPeriod.getCurrentPeriodEndDate(),
-                     MonthlyBillingPeriod.ID_FORMAT.parse("1982-07"));
+                     df.parse("1982-06-30 23:59:59:999"));
     }
 
     @Test

@@ -44,7 +44,14 @@ public class MonthlyBillingPeriod implements BillingPeriod {
 
     @Override
     public Date getPreviousPeriodEndDate() {
-        return getCurrentPeriodStartDate();
+        Calendar calendar = now();
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        calendar.add(Calendar.MILLISECOND, -1);
+        return calendar.getTime();
     }
 
     @Override
@@ -67,6 +74,7 @@ public class MonthlyBillingPeriod implements BillingPeriod {
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
+        calendar.add(Calendar.MILLISECOND, -1);
         return calendar.getTime();
     }
 
