@@ -22,7 +22,7 @@
 
 
 getUserHelp() {
-  echo "usage: ./vagrant.sh  [--nobuild|--b] [--nogwt|--g] [--notests|--t] [--U] [--o] [-h|--h|-help|--help] [--destroy|--d] [--multi] [--dp] [--centos7|--c7]"
+  echo "usage: ./vagrant.sh  [--nobuild|--b] [--nogwt|--g] [--notests|--t] [--U] [--o] [-h|--h|-help|--help] [--destroy|--d] [--multi] [--dp] [--centos6|--c6]"
 }
 
 getOptionsHelp() {
@@ -51,8 +51,8 @@ getOptionsHelp() {
     echo "         --nobuild, --b"
     echo "             Do not build onpremises project."
     echo ""
-    echo "         --centos7, --c7"
-    echo "             Provision Centos7"
+    echo "         --centos6, --c6"
+    echo "             Provision Centos6"
     echo ""
     echo "         -h, --h, -help, --help"
     echo "             Show user help"
@@ -102,8 +102,8 @@ parseParameters() {
       --destroy | --d)
         DESTROY_VM=true
         ;;
-      --centos7 | --c7)
-        OS_CENTOS7=true
+      --centos6 | --c6)
+        OS_CENTOS6=true
         ;;
       --multi)
         MULTI_SERVER=true
@@ -192,7 +192,7 @@ SKIP_BUILD=false
 DESTROY_VM=false
 MULTI_SERVER=false
 MAKE_PULL_IN_DEPLOYMENT=true
-OS_CENTOS7=false
+OS_CENTOS6=false
 #
 
 # parse parameters specified by user
@@ -209,9 +209,9 @@ if [ ${SKIP_BUILD} == false ]; then
   mvn clean install ${MAVEN_PARAMS}
 fi
 
-# Use Centos7 OS
-if [ ${OS_CENTOS7} == true ]; then
-  export OS_CENTOS7="true"
+# Use Centos6 OS
+if [ ${OS_CENTOS6} == true ]; then
+  export OS_CENTOS6="true"
 fi
 
 if [ ${MULTI_SERVER} == false ]; then
