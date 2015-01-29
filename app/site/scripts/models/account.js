@@ -155,8 +155,9 @@
         }
         var loginWithGoogle = function(page, callback) {
             if (isWebsocketEnabled()) {
+                var redirectAfterLogin=encodeURIComponent(window.location.origin + "/api/oauth?" + window.location.search.substring(1) + (window.location.search ? '&' : '') + 'oauth_provider=google' + window.location.hash);
                 _gaq.push(['_trackEvent', 'Regisration', 'Google registration', page]);
-                var url = "/api/oauth/authenticate?oauth_provider=google&mode=federated_login" + "&scope=https://www.googleapis.com/auth/userinfo.profile&scope=https://www.googleapis.com/auth/userinfo.email" + "&redirect_after_login=" + encodeURIComponent(window.location.protocol + "//" + window.location.host + "/api/oauth?" + window.location.search.substring(1) + "&oauth_provider=google");
+                var url = "/api/oauth/authenticate?oauth_provider=google&mode=federated_login" + "&scope=https://www.googleapis.com/auth/userinfo.profile&scope=https://www.googleapis.com/auth/userinfo.email" + "&redirect_after_login=" + redirectAfterLogin;
                 if (typeof callback !== 'undefined') {
                     callback(url);
                 }
@@ -165,7 +166,8 @@
         var loginWithGithub = function(page, callback) {
             if (isWebsocketEnabled()) {
                 _gaq.push(['_trackEvent', 'Regisration', 'GitHub registration', page]);
-                var url = "/api/oauth/authenticate?oauth_provider=github&mode=federated_login&scope=user&scope=repo" + "&redirect_after_login=" + encodeURIComponent(window.location.protocol + "//" + window.location.host + "/api/oauth?" + window.location.search.substring(1) + "&oauth_provider=github");
+                var redirectAfterLogin=encodeURIComponent(window.location.origin + "/api/oauth?" + window.location.search.substring(1) + (window.location.search ? '&' : '') + 'oauth_provider=github' + window.location.hash);
+                var url = "/api/oauth/authenticate?oauth_provider=github&mode=federated_login&scope=user,repo,write:public_key" + "&redirect_after_login=" + redirectAfterLogin;
                 if (typeof callback !== 'undefined') {
                     callback(url);
                 }
@@ -514,7 +516,7 @@
                 });
             },
 
-            processCreate: function(username, bearertoken, workspace, redirect_url, queryParams, error) {
+            processCreate: function(username, bearertoken, workspace, redirect_url, error) {
                 var workspaceID;
                 authenticate(username, bearertoken)
                 .fail(function(response) {
