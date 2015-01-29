@@ -27,7 +27,7 @@
     </parent>
     <artifactId>codenvy-hosted-meter-based-storage-sql</artifactId>
     <packaging>jar</packaging>
-    <name>Codenvy Hosted :: SQL MB storage</name>
+    <name>Codenvy Hosted :: SQL Meter-based storage</name>
     <dependencies>
         <dependency>
             <groupId>com.codenvy.hosted-infrastructure</groupId>
@@ -40,29 +40,9 @@
             <version>${javax.inject.version}</version>
         </dependency>
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.6</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.tomcat</groupId>
-            <artifactId>tomcat-jdbc</artifactId>
-            <version>${org.apache.tomcat.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
-            <version>3.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.hsqldb</groupId>
-            <artifactId>hsqldb</artifactId>
-            <version>2.2.8</version>
-        </dependency>
-        <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <version>9.3-1102-jdbc41</version>
+            <version>${org.flyway.version}</version>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
@@ -70,7 +50,18 @@
             <version>${ch.qos.logback.version}</version>
             <scope>test</scope>
         </dependency>
-        <!-- Mock testing -->
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-jdbc</artifactId>
+            <version>${org.apache.tomcat.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <version>${jdbc.hsqldb-driver.version}</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
@@ -88,6 +79,12 @@
                     <groupId>org.mockito</groupId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>${jdbc.postgresql-driver.version}</version>
+            <scope>test</scope>
         </dependency>
         <!-- Test dependencies -->
         <dependency>
