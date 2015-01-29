@@ -1,10 +1,10 @@
 /*
  * CODENVY CONFIDENTIAL
  * __________________
- *
- *  [2012] - [2015] Codenvy, S.A.
+ * 
+ *  [2012] - [2015] Codenvy, S.A. 
  *  All Rights Reserved.
- *
+ * 
  * NOTICE:  All information contained herein is, and remains
  * the property of Codenvy S.A. and its suppliers,
  * if any.  The intellectual and technical concepts contained
@@ -15,24 +15,29 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.mbstorage.sql;
+package com.codenvy.api.dao.sql;
 
-import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.SQLException;
+import com.codenvy.api.account.billing.BillingService;
+import com.codenvy.api.account.shared.dto.Receipt;
+
+import java.util.List;
 
 /**
  * @author Sergii Kabashniuk
  */
-public class DataSourceConnectionFactory implements ConnectionFactory {
-    private final DataSource dataSource;
+public class SqlBillingService implements BillingService {
+    @Override
+    public void generateReceipts(String billingPeriodId) {
 
-    public DataSourceConnectionFactory(DataSource dataSource) {
-        this.dataSource = dataSource;
     }
 
     @Override
-    public Connection getConnection() throws SQLException {
-        return dataSource.getConnection();
+    public List<Receipt> getUnpaidReceipt(int limit) {
+        return null;
+    }
+
+    @Override
+    public List<Receipt> getNotSendReceipt(int limit) {
+        return null;
     }
 }

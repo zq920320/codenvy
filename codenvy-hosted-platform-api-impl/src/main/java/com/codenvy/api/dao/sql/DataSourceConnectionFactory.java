@@ -15,35 +15,24 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.mbstorage.sql;
+package com.codenvy.api.dao.sql;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+import javax.sql.DataSource;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 
 /**
- * Provide database connection by url, username and password.
- *
  * @author Sergii Kabashniuk
  */
-public class DriverManagerConnectionFactory implements ConnectionFactory {
+public class DataSourceConnectionFactory implements ConnectionFactory {
+    private final DataSource dataSource;
 
-    private final String userName;
-    private final String password;
-    private final String url;
-    @Inject
-    public DriverManagerConnectionFactory(@Named("jdbc.url") String url,
-                                          @Named("jdbc.username") String userName,
-                                          @Named("jdbc.password") String password) {
-        this.userName = userName;
-        this.password = password;
-        this.url = url;
+    public DataSourceConnectionFactory(DataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
     @Override
     public Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(url, userName, password);
+        return dataSource.getConnection();
     }
 }
