@@ -79,6 +79,6 @@ public class MonthlyBillingPeriodTest {
 
     @Test
     public void testGetCurrentPeriodId() throws Exception {
-        assertEquals(monthlyBillingPeriod.getCurrentPeriodId(), "1982-06");
+        assertEquals(monthlyBillingPeriod.getCurrentPeriodId(), "June, 1982");
     }
 }
