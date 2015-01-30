@@ -83,7 +83,6 @@ builds_finished = FOREACH build_finished GENERATE UUIDFrom(id),
                                                   TOTUPLE('gigabyte_ram_hours', CalculateGigabyteRamHours(memory_mb, usage_time_msec)),
                                                   TOTUPLE('shutdown_type', shutdown_type);
 
-
 runs_started = filterByEvent(l, 'run-started');
 runs_started = extractParam(runs_started, 'PROJECT', project);
 runs_started = extractParam(runs_started, 'TYPE', project_type);

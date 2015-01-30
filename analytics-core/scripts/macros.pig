@@ -31,18 +31,19 @@ DEFINE loadResources(resourceParam, from, to, userType, wsType) RETURNS Y {
   l4 = extractWs(l3, '$wsType');
   l5 = extractParam(l4, 'WS-ID', 'wsId');
   l6 = extractParam(l5, 'USER-ID', 'userId');
-  l = FOREACH l6 GENERATE user,
+  l7 = extractParam(l6, 'TIME', 'time');
+  l = FOREACH l7 GENERATE user,
                           userId,
                           ws,
                           wsId,
                           message,
+                          time,
                           REGEX_EXTRACT_ALL(message, '([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}) ([0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2},[0-9]{3}).*\\s-(\\s.*)') AS pattern;
 
   k1 = FOREACH l GENERATE ReplaceUserWithId(user, userId) AS user,
                           ReplaceWsWithId(ws, wsId) AS ws,
-                          ToDate(pattern.$1, 'yyyy-MM-dd HH:mm:ss,SSS') AS dt,
+                          (time IS NOT NULL ? ToDate((long)time) : ToDate(pattern.$1, 'yyyy-MM-dd HH:mm:ss,SSS')) AS dt,
                           pattern.$2 AS message;
-
   k2 = filterByDate(k1, '$from', '$to');
   k3 = extractParam(k2, 'EVENT', 'event');
   k = removeEmptyField(k3, 'event');
