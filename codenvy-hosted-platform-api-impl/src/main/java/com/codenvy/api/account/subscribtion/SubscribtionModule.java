@@ -24,6 +24,7 @@ import com.codenvy.api.account.subscribtion.saas.RefillJob;
 import com.codenvy.api.account.subscribtion.saas.SaasBillingRestService;
 import com.codenvy.api.account.subscribtion.saas.SaasBillingScheduler;
 import com.codenvy.api.account.subscribtion.saas.SaasBillingService;
+import com.codenvy.api.account.subscribtion.saas.SaasSubscriptionService;
 import com.codenvy.api.account.subscribtion.saas.limit.ActiveRunHolder;
 import com.codenvy.api.account.subscribtion.saas.limit.ActiveRunRemainResourcesChecker;
 import com.codenvy.api.account.subscribtion.saas.limit.CheckRemainResourcesOnStopSubscriber;
@@ -41,6 +42,7 @@ public class SubscribtionModule extends AbstractModule {
                 Multibinder.newSetBinder(binder(), com.codenvy.api.account.server.subscription.SubscriptionService.class);
         subscriptionServiceBinder.addBinding().to(FactorySubscriptionService.class);
         subscriptionServiceBinder.addBinding().to(OnPremisesSubscriptionService.class);
+        subscriptionServiceBinder.addBinding().to(SaasSubscriptionService.class);
 
         bindConstant().annotatedWith(Names.named(ActiveRunRemainResourcesChecker.RUN_ACTIVITY_CHECKING_PERIOD)).to(60);
         bind(ActiveRunHolder.class);

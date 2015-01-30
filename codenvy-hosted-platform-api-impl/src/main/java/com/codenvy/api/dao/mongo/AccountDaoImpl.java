@@ -45,6 +45,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -325,15 +326,36 @@ public class AccountDaoImpl implements AccountDao {
 
             final List<Subscription> result = new ArrayList<>();
             try (DBCursor subscriptions = subscriptionCollection.find(query)) {
-                    for (DBObject currentSubscription : subscriptions) {
-                        result.add(toSubscription(currentSubscription));
-                    }
+                for (DBObject currentSubscription : subscriptions) {
+                    result.add(toSubscription(currentSubscription));
+                }
             }
+
+            if ((serviceId == null || "Saas".equals(serviceId))
+                && !containSaasSubscription(result)) {
+
+                result.add(new Subscription()
+                                   .withId("community" + accountId)
+                                   .withAccountId(accountId)
+                                   .withPlanId("sas-community")
+                                   .withServiceId("Saas")
+                                   .withProperties(Collections.singletonMap("Package", "Community")));
+            }
+
             return result;
         } catch (MongoException me) {
             LOG.error(me.getMessage(), me);
             throw new ServerException("It is not possible to retrieve subscriptions");
         }
+    }
+
+    private boolean containSaasSubscription(List<Subscription> subscriptions) {
+        for (Subscription subscription : subscriptions) {
+            if ("Saas".equals(subscription.getServiceId())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -404,7 +426,8 @@ public class AccountDaoImpl implements AccountDao {
         DBObject paidAccountQuery = new BasicDBObject("name", "codenvy:paid");
         //
         DBObject billingDatePropertyExist = new BasicDBObject("name", "codenvy:billing.date");
-        DBObject billingDatePropertyValueLessThanSpecified = new BasicDBObject("value", new BasicDBObject("$lt", String.valueOf(newDate.getTime())));
+        DBObject billingDatePropertyValueLessThanSpecified = new BasicDBObject("value",
+                                                                               new BasicDBObject("$lt", String.valueOf(newDate.getTime())));
         DBObject billingDateFits2 = new QueryBuilder().and(billingDatePropertyExist,
                                                            billingDatePropertyValueLessThanSpecified).get();
         DBObject billingDatePropertyDoesNotExist = QueryBuilder.start("attributes.name").notIn("[codenvy:billing.date]").get();
@@ -412,7 +435,6 @@ public class AccountDaoImpl implements AccountDao {
                                                  new QueryBuilder().or(billingDatePropertyDoesNotExist,
                                                                        billingDateFits2).get()).get();
 
-                //
 //        DBObject billingDateFits = QueryBuilder.start().and(new BasicDBObject("name", "codenvy:billing.date"),
 //                                                            new BasicDBObject("value",
 //                                                                              new BasicDBObject("$lt", String.valueOf(newDate.getTime()))))

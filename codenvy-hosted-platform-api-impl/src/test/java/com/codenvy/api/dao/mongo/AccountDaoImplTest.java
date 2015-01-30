@@ -72,14 +72,14 @@ import static org.testng.Assert.fail;
 @Listeners(value = {MockitoTestNGListener.class})
 public class AccountDaoImplTest extends BaseDaoTest {
 
-    private static final String ACC_COLL_NAME                     = "accounts";
-    private static final String SUBSCRIPTION_COLL_NAME            = "subscriptions";
-    private static final String MEMBER_COLL_NAME                  = "members";
+    private static final String ACC_COLL_NAME          = "accounts";
+    private static final String SUBSCRIPTION_COLL_NAME = "subscriptions";
+    private static final String MEMBER_COLL_NAME       = "members";
 
     @Mock
     private SubscriptionQueryBuilder subscriptionQueryBuilder;
     @Mock
-    private WorkspaceDao   workspaceDao;
+    private WorkspaceDao             workspaceDao;
 
     private AccountDaoImpl accountDao;
     private DBCollection   subscriptionCollection;
@@ -362,7 +362,8 @@ public class AccountDaoImplTest extends BaseDaoTest {
     }
 
     @Test(dataProvider = "nullFieldProvider")
-    public void shouldThrowConflictExceptionOnAddSubscriptionIfMandatoryFiledIsNull(Subscription subscription, String message) throws Exception {
+    public void shouldThrowConflictExceptionOnAddSubscriptionIfMandatoryFiledIsNull(Subscription subscription, String message)
+            throws Exception {
         final Account account = createAccount();
         insertAccounts(account.withId("account ID"));
 
@@ -427,14 +428,26 @@ public class AccountDaoImplTest extends BaseDaoTest {
     }
 
     @Test
-    public void shouldNotReturnInactiveSubscriptionOnGetActive() throws Exception {
+    public void shouldReturnDefaultSaasSubscriptionButNotInactiveSubscriptionOnGetActive() throws Exception {
         final Account account = createAccount();
         final Subscription subscription =
-                createSubscription().withAccountId(account.getId()).withServiceId("Saas").withState(SubscriptionState.INACTIVE);
+                createSubscription().withAccountId(account.getId()).withServiceId("Factory").withState(SubscriptionState.INACTIVE);
         insertAccounts(account);
         insertSubscriptions(subscription);
 
         final List<Subscription> found = accountDao.getActiveSubscriptions(account.getId(), null);
+
+        assertEquals(found.size(), 1);
+        assertEquals(found.get(0).getId(), "community" + account.getId());
+    }
+
+    @Test
+    public void shouldReturnEmptyListIfThereIsNoSubscriptionsOnGetActiveSubscriptionsAndServiceIsFactory() throws Exception {
+        final Account account = createAccount();
+        insertAccounts(account);
+        when(workspaceDao.getByAccount(account.getId())).thenReturn(Collections.<Workspace>emptyList());
+
+        final List<Subscription> found = accountDao.getActiveSubscriptions(account.getId(), "Factory");
 
         assertTrue(found.isEmpty());
     }
@@ -467,36 +480,12 @@ public class AccountDaoImplTest extends BaseDaoTest {
     }
 
     @DataProvider(name = "notSaasServiceIdProvider")
-    public String [][] notSaasServiceIdProvider() {
-        return new String[][] {
+    public String[][] notSaasServiceIdProvider() {
+        return new String[][]{
                 {"Factory"},
                 {"OnPremises"},
                 {"NotSaas"}
         };
-    }
-
-    @Test
-    public void shouldReturnEmptyListIfThereIsNoSubscriptionsOnGetActiveSubscriptionsAndServiceIsSaasAndAccountDoesNotContainWs()
-            throws Exception {
-        final Account account = createAccount();
-        insertAccounts(account);
-        when(workspaceDao.getByAccount(account.getId())).thenReturn(Collections.<Workspace>emptyList());
-
-        final List<Subscription> found = accountDao.getActiveSubscriptions(account.getId(), "Saas");
-
-        assertTrue(found.isEmpty());
-    }
-
-    @Test
-    public void shouldReturnEmptyListIfThereIsNoSubscriptionsOnGetActiveSubscriptionsAndServiceIsNotProvidedAndAccountDoesNotContainWs()
-            throws Exception {
-        final Account account = createAccount();
-        insertAccounts(account);
-        when(workspaceDao.getByAccount(account.getId())).thenReturn(Collections.<Workspace>emptyList());
-
-        final List<Subscription> found = accountDao.getActiveSubscriptions(account.getId(), null);
-
-        assertTrue(found.isEmpty());
     }
 
     @Test(expectedExceptions = NotFoundException.class)

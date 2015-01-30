@@ -20,6 +20,7 @@ package com.codenvy.api.account.subscribtion.factory;
 import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.server.dao.Subscription;
 import com.codenvy.api.account.server.subscription.SubscriptionService;
+import com.codenvy.api.account.shared.dto.AccountResources;
 import com.codenvy.api.account.subscribtion.subscription.service.util.SubscriptionCharger;
 import com.codenvy.api.account.subscribtion.subscription.service.util.SubscriptionExpirationMailSender;
 import com.codenvy.api.account.subscribtion.subscription.service.util.SubscriptionTrialRemover;
@@ -27,7 +28,7 @@ import com.codenvy.api.core.ApiException;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
-
+import com.codenvy.dto.server.DtoFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -111,5 +112,10 @@ public class FactorySubscriptionService extends SubscriptionService {
     @Override
     public void onUpdateSubscription(Subscription oldSubscription, Subscription newSubscription) {
         //nothing to do
+    }
+
+    @Override
+    public AccountResources getAccountResources(Subscription subscription) throws ServerException {
+        return DtoFactory.getInstance().createDto(AccountResources.class);
     }
 }

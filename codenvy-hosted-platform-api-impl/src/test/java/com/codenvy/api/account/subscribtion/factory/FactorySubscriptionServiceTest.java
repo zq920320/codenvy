@@ -41,7 +41,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
- * Tests for {@link com.codenvy.subscription.service.FactorySubscriptionService}
+ * Tests for {@link com.codenvy.api.account.subscribtion.factory.FactorySubscriptionService}
  *
  * @author Sergii Kabashniuk
  * @author Eugene Voevodin

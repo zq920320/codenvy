@@ -17,15 +17,11 @@
  */
 package com.codenvy.api.account.server;
 
-import static java.lang.String.format;
-
 import com.codenvy.api.account.billing.BillingPeriod;
 import com.codenvy.api.account.metrics.MeterBasedStorage;
 import com.codenvy.api.account.server.dao.Account;
 import com.codenvy.api.account.server.dao.AccountDao;
-import com.codenvy.api.account.shared.dto.AccountMetrics;
 import com.codenvy.api.account.shared.dto.UpdateResourcesDescriptor;
-import com.codenvy.api.account.shared.dto.WorkspaceMetrics;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.ForbiddenException;
 import com.codenvy.api.core.NotFoundException;
@@ -43,10 +39,11 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static java.lang.String.format;
 
 /**
  * Implementation of {@link com.codenvy.api.account.server.ResourcesManager}
@@ -120,48 +117,6 @@ public class ResourcesManagerImpl implements ResourcesManager {
         }
     }
 
-    @Override
-    public AccountMetrics getAccountMetrics(String accountId) throws ServerException, NotFoundException {
-        final Account account = accountDao.getById(accountId);
-        final Map<String, String> accountAttributes = account.getAttributes();
-        final boolean isPaid = accountAttributes.containsKey("codenvy:paid") &&
-                               "true".equals(accountAttributes.get("codenvy:paid"));
-
-        final List<WorkspaceMetrics> workspacesMetrics = getWorkspacesMetricsByAccount(accountId);
-        Long usedMemory = 0L;
-        for (WorkspaceMetrics workspaceMetrics : workspacesMetrics) {
-            usedMemory += workspaceMetrics.getUsedMemoryInCurrentBillingPeriod();
-        }
-
-        return DtoFactory.getInstance().createDto(AccountMetrics.class)
-                         .withWorkspaceMetrics(workspacesMetrics)
-                         .withUsedMemoryInCurrentBillingPeriod(usedMemory)
-                         .withFreeMemory(freeMemory)
-                         .withResourcesResetTime(billingPeriod.getCurrentPeriodEndDate().getTime())
-                         .withMaxWorkspaceMemoryLimit(isPaid ? -1 : freeMaxLimit)
-                         .withPremium(isPaid);
-    }
-
-    private List<WorkspaceMetrics> getWorkspacesMetricsByAccount(String accountId) throws ServerException {
-        final Map<String, Long> memoryUsedReport = meterBasedStorage.getMemoryUsedReport(accountId,
-                                                                                         billingPeriod.getCurrentPeriodStartDate().getTime(),
-                                                                                         System.currentTimeMillis());
-
-        final List<Workspace> workspaces = workspaceDao.getByAccount(accountId);
-        final List<WorkspaceMetrics> result = new ArrayList<>();
-
-        for (Workspace workspace : workspaces) {
-            final Long usedMemory = memoryUsedReport.get(workspace.getId());
-            final String maxRunnerRam = workspace.getAttributes().get(Constants.RUNNER_MAX_MEMORY_SIZE);
-            result.add(DtoFactory.getInstance().createDto(WorkspaceMetrics.class)
-                                 .withWorkspaceId(workspace.getId())
-                                 .withUsedMemoryInCurrentBillingPeriod(usedMemory != null ? usedMemory : 0)
-                                 .withWorkspaceMemoryLimit(maxRunnerRam != null ? Integer.parseInt(maxRunnerRam) : defMaxMemorySize));
-        }
-
-        return result;
-    }
-
     private void validateUpdates(String accountId, List<UpdateResourcesDescriptor> updates, Map<String, Workspace> ownWorkspaces)
             throws ForbiddenException, ConflictException, NotFoundException, ServerException {
 
@@ -214,7 +169,7 @@ public class ResourcesManagerImpl implements ResourcesManager {
             bm.setChannel(format("workspace:resources:%s", workspaceId));
 
             final ResourcesDescriptor resourcesDescriptor = DtoFactory.getInstance().createDto(ResourcesDescriptor.class)
-                                                                      .withTotalMemory(totalMemory);
+                                                                .withTotalMemory(totalMemory);
 
             bm.setBody(DtoFactory.getInstance().toJson(resourcesDescriptor));
             WSConnectionContext.sendMessage(bm);

@@ -17,21 +17,11 @@
  */
 package com.codenvy.api.account.server;
 
-import static org.mockito.Matchers.anyLong;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.testng.Assert.assertEquals;
-
 import com.codenvy.api.account.billing.MonthlyBillingPeriod;
 import com.codenvy.api.account.metrics.MeterBasedStorage;
 import com.codenvy.api.account.server.dao.Account;
 import com.codenvy.api.account.server.dao.AccountDao;
-import com.codenvy.api.account.shared.dto.AccountMetrics;
 import com.codenvy.api.account.shared.dto.UpdateResourcesDescriptor;
-import com.codenvy.api.account.shared.dto.WorkspaceMetrics;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.ForbiddenException;
 import com.codenvy.api.core.NotFoundException;
@@ -51,6 +41,12 @@ import org.testng.annotations.Test;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.testng.Assert.assertEquals;
 
 /**
  * Tests for {@link com.codenvy.api.account.server.ResourcesManagerImpl}
@@ -100,7 +96,7 @@ public class ResourcesManagerImplTest {
     }
 
     @Test(expectedExceptions = ForbiddenException.class,
-            expectedExceptionsMessageRegExp = "Workspace \\w* is not related to account \\w*")
+          expectedExceptionsMessageRegExp = "Workspace \\w* is not related to account \\w*")
     public void shouldThrowConflictExceptionIfAccountIsNotOwnerOfWorkspace() throws Exception {
         resourcesManager.redistributeResources(ACCOUNT_ID,
                                                Arrays.asList(DtoFactory.getInstance().createDto(UpdateResourcesDescriptor.class)
@@ -112,7 +108,7 @@ public class ResourcesManagerImplTest {
     }
 
     @Test(expectedExceptions = ConflictException.class,
-            expectedExceptionsMessageRegExp = "Missed description of resources for workspace \\w*")
+          expectedExceptionsMessageRegExp = "Missed description of resources for workspace \\w*")
     public void shouldThrowConflictExceptionIfMissedResources() throws Exception {
         resourcesManager.redistributeResources(ACCOUNT_ID,
                                                Arrays.asList(DtoFactory.getInstance().createDto(UpdateResourcesDescriptor.class)
@@ -123,7 +119,7 @@ public class ResourcesManagerImplTest {
 
 
     @Test(expectedExceptions = ConflictException.class,
-            expectedExceptionsMessageRegExp = "Size of RAM for workspace \\w* is a negative number")
+          expectedExceptionsMessageRegExp = "Size of RAM for workspace \\w* is a negative number")
     public void shouldThrowConflictExceptionIfSizeOfRAMIsNegativeNumber() throws Exception {
         resourcesManager.redistributeResources(ACCOUNT_ID,
                                                Arrays.asList(DtoFactory.getInstance().createDto(UpdateResourcesDescriptor.class)
@@ -132,7 +128,7 @@ public class ResourcesManagerImplTest {
     }
 
     @Test(expectedExceptions = ConflictException.class,
-            expectedExceptionsMessageRegExp = "Builder timeout for workspace \\w* is a negative number")
+          expectedExceptionsMessageRegExp = "Builder timeout for workspace \\w* is a negative number")
     public void shouldThrowConflictExceptionIfSizeOfBuilderTimeoutIsNegativeNumber() throws Exception {
         resourcesManager.redistributeResources(ACCOUNT_ID, Arrays.asList(DtoFactory.getInstance().createDto(UpdateResourcesDescriptor.class)
                                                                                    .withWorkspaceId(SECOND_WORKSPACE_ID)
@@ -140,7 +136,7 @@ public class ResourcesManagerImplTest {
     }
 
     @Test(expectedExceptions = ConflictException.class,
-            expectedExceptionsMessageRegExp = "Runner timeout for workspace \\w* is a negative number")
+          expectedExceptionsMessageRegExp = "Runner timeout for workspace \\w* is a negative number")
     public void shouldThrowConflictExceptionIfSizeOfRunnerTimeoutIsNegativeNumber() throws Exception {
         resourcesManager.redistributeResources(ACCOUNT_ID,
                                                Arrays.asList(DtoFactory.getInstance().createDto(UpdateResourcesDescriptor.class)
@@ -153,7 +149,7 @@ public class ResourcesManagerImplTest {
     }
 
     @Test(expectedExceptions = ConflictException.class,
-            expectedExceptionsMessageRegExp = "Size of RAM for workspace \\w* has a 4096 MB limit.")
+          expectedExceptionsMessageRegExp = "Size of RAM for workspace \\w* has a 4096 MB limit.")
     public void shouldThrowConflictExceptionIfSizeOfRAMIsTooBigForCommunityAccountNumber() throws Exception {
         resourcesManager.redistributeResources(ACCOUNT_ID, Arrays.asList(DtoFactory.getInstance().createDto(UpdateResourcesDescriptor.class)
                                                                                    .withWorkspaceId(SECOND_WORKSPACE_ID)
@@ -242,54 +238,5 @@ public class ResourcesManagerImplTest {
                     break;
             }
         }
-    }
-
-    @Test
-    public void shouldBeAbleToGetAccountMetrics() throws Exception {
-        Map<String, String> attributes = new HashMap<>();
-        attributes.put("codenvy:paid", "false");
-        when(accountDao.getById(anyString())).thenReturn(new Account().withId(ACCOUNT_ID)
-                                                                      .withName("testName")
-                                                                      .withAttributes(attributes));
-
-        Map<String, Long> usedReport = new HashMap<>();
-        usedReport.put(FIRST_WORKSPACE_ID, 1024L);
-        usedReport.put(SECOND_WORKSPACE_ID, 512L);
-        when(meterBasedStorage.getMemoryUsedReport(eq(ACCOUNT_ID), anyLong(), anyLong())).thenReturn(usedReport);
-
-        final AccountMetrics accountMetrics = resourcesManager.getAccountMetrics(ACCOUNT_ID);
-
-        assertEquals(accountMetrics.isPremium(), Boolean.FALSE);
-        assertEquals(accountMetrics.getMaxWorkspaceMemoryLimit(), MAX_LIMIT);
-
-        assertEquals(accountMetrics.getFreeMemory(), FREE_MEMORY);
-        assertEquals(accountMetrics.getUsedMemoryInCurrentBillingPeriod(), new Long(1536));
-        assertEquals(accountMetrics.getWorkspaceMetrics().size(), 2);
-        for (WorkspaceMetrics workspaceMetrics : accountMetrics.getWorkspaceMetrics()) {
-            switch (workspaceMetrics.getWorkspaceId()) {
-                case FIRST_WORKSPACE_ID:
-                    assertEquals(workspaceMetrics.getUsedMemoryInCurrentBillingPeriod(), new Long(1024));
-                    assertEquals(workspaceMetrics.getWorkspaceMemoryLimit(), new Integer(1024));
-                    break;
-                case SECOND_WORKSPACE_ID:
-                    assertEquals(workspaceMetrics.getUsedMemoryInCurrentBillingPeriod(), new Long(512));
-                    assertEquals(workspaceMetrics.getWorkspaceMemoryLimit(), new Integer(2048));
-                    break;
-            }
-        }
-    }
-
-    @Test
-    public void shouldBeAbleToGetAccountMetricsForPremiumAccount() throws Exception {
-        Map<String, String> attributes = new HashMap<>();
-        attributes.put("codenvy:paid", "true");
-        when(accountDao.getById(anyString())).thenReturn(new Account().withId(ACCOUNT_ID)
-                                                                      .withName("testName")
-                                                                      .withAttributes(attributes));
-
-        final AccountMetrics accountMetrics = resourcesManager.getAccountMetrics(ACCOUNT_ID);
-
-        assertEquals(accountMetrics.getMaxWorkspaceMemoryLimit(), new Integer(-1));
-        assertEquals(accountMetrics.isPremium(), Boolean.TRUE);
     }
 }
