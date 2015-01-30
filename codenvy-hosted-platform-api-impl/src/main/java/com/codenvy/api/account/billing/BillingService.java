@@ -18,20 +18,22 @@
 package com.codenvy.api.account.billing;
 
 import com.codenvy.api.account.shared.dto.Receipt;
+import com.codenvy.api.core.ServerException;
 
+import java.sql.SQLException;
 import java.util.List;
 
 /**
  * @author Sergii Kabashniuk
  */
 public interface BillingService {
-    void generateReceipts(String billingPeriodId);
+    void generateReceipts(String billingPeriodId) throws ServerException;
 
-    List<Receipt> getUnpaidReceipt(int limit);
+    List<Receipt> getUnpaidReceipt(int limit) throws ServerException;
 
-    void setPaidStatus(long receiptId, int status);
+    void setPaidStatus(long receiptId, int status) throws ServerException;
 
-    List<Receipt> getNotSendReceipt(int limit);
+    List<Receipt> getNotSendReceipt(int limit) throws ServerException;
 
-    void markReceiptAsSent(long receiptId);
+    void markReceiptAsSent(long receiptId) throws ServerException;
 }

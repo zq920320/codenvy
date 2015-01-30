@@ -17,17 +17,19 @@
  */
 package com.codenvy.api.dao.sql;
 
+import com.codenvy.api.account.billing.BillingService;
 import com.codenvy.api.account.metrics.MeterBasedStorage;
 import com.google.inject.AbstractModule;
 
 /**
  * @author Sergii Kabashniuk
  */
-public class MeterBaseStorageModule  extends AbstractModule {
+public class SQLModule extends AbstractModule {
     @Override
     protected void configure() {
         bind(ConnectionFactory.class).to(JndiDataSourcedConnectionFactory.class);
         bind(MeterBasedStorage.class).to(SQLMeterBasedStorage.class);
+        bind(BillingService.class).to(SqlBillingService.class);
         bind(StorageInitializer.class).asEagerSingleton();
     }
 }
