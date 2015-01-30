@@ -37,7 +37,17 @@ public class SqlBillingService implements BillingService {
     }
 
     @Override
+    public void setPaidStatus(long receiptId, int status) {
+
+    }
+
+    @Override
     public List<Receipt> getNotSendReceipt(int limit) {
         return null;
+    }
+
+    @Override
+    public void markReceiptAsSent(long receiptId) {
+
     }
 }

@@ -29,6 +29,9 @@ public interface BillingService {
 
     List<Receipt> getUnpaidReceipt(int limit);
 
+    void setPaidStatus(long receiptId, int status);
+
     List<Receipt> getNotSendReceipt(int limit);
 
+    void markReceiptAsSent(long receiptId);
 }
