@@ -68,6 +68,7 @@ import com.codenvy.auth.sso.server.RolesExtractor;
 import com.codenvy.auth.sso.server.organization.UserCreator;
 import com.codenvy.auth.sso.server.organization.WorkspaceCreationValidator;
 import com.codenvy.everrest.CodenvyAsynchronousJobPool;
+import com.codenvy.everrest.ETagResponseFilter;
 import com.codenvy.ide.ext.java.jdi.server.DebuggerService;
 import com.codenvy.ide.ext.java.server.format.FormatService;
 import com.codenvy.ide.ext.ssh.server.KeyService;
@@ -130,6 +131,7 @@ public class CloudIdeApiModule extends AbstractModule {
         bind(AsynchronousJobPool.class).to(CodenvyAsynchronousJobPool.class);
         bind(new PathKey<>(AsynchronousJobService.class, "/async/{ws-id}")).to(AsynchronousJobService.class);
 
+        bind(ETagResponseFilter.class);
         bind(WSocketEventBusServer.class);
 
         install(new com.codenvy.api.core.rest.CoreRestModule());

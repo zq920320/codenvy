@@ -23,7 +23,7 @@
     <parent>
         <artifactId>onpremises-ide-parent</artifactId>
         <groupId>com.codenvy.onpremises</groupId>
-        <version>3.6.0-SNAPSHOT</version>
+        <version>3.7.0-SNAPSHOT</version>
     </parent>
     <artifactId>onpremises-ide-compiling-war-next-ide-codenvy</artifactId>
     <packaging>war</packaging>
@@ -176,22 +176,22 @@
         </dependency>
         <dependency>
             <groupId>com.codenvy.plugin-hosted</groupId>
-            <artifactId>codenvy-ide-factory</artifactId>
+            <artifactId>codenvy-ext-factory</artifactId>
             <version>${codenvy.plugin.hosted.version}</version>
         </dependency>
         <dependency>
             <groupId>com.codenvy.plugin-hosted</groupId>
-            <artifactId>codenvy-ide-permissions</artifactId>
+            <artifactId>codenvy-ext-permissions</artifactId>
             <version>${codenvy.plugin.hosted.version}</version>
         </dependency>
         <dependency>
             <groupId>com.codenvy.plugin-hosted</groupId>
-            <artifactId>codenvy-ide-subscriptions</artifactId>
+            <artifactId>codenvy-ext-subscriptions</artifactId>
             <version>${codenvy.plugin.hosted.version}</version>
         </dependency>
         <dependency>
             <groupId>com.codenvy.plugin-hosted</groupId>
-            <artifactId>codenvy-ide-support-help</artifactId>
+            <artifactId>codenvy-ext-support-help</artifactId>
             <version>${codenvy.plugin.hosted.version}</version>
         </dependency>
         <dependency>
