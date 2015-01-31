@@ -104,7 +104,7 @@ public class CheckRemainResourcesOnStopSubscriber implements EventSubscriber<Run
                 return;
             }
             Long used =
-                    storage.getMemoryUsed(workspace.getAccountId(), billingPeriod.getCurrentPeriodStartDate().getTime(),
+                    storage.getMemoryUsed(workspace.getAccountId(), billingPeriod.getCurrent().getStartDate().getTime(),
                                           System.currentTimeMillis());
             if (used >= freeUsageLimit) {
                 account.getAttributes().put(Constants.LOCKED_PROPERTY, "true");

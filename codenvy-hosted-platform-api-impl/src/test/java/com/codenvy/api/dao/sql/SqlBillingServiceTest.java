@@ -20,6 +20,7 @@ package com.codenvy.api.dao.sql;
 import static org.testng.Assert.*;
 
 import com.codenvy.api.account.billing.BillingService;
+import com.codenvy.api.account.billing.MonthlyBillingPeriod;
 import com.codenvy.api.account.metrics.MemoryUsedMetric;
 import com.codenvy.api.account.metrics.MeterBasedStorage;
 import com.codenvy.api.account.metrics.UsageInformer;
@@ -85,7 +86,7 @@ public class SqlBillingServiceTest {
         Object[][] result = new Object[sources.length][];
         for (int i = 0; i < sources.length; i++) {
             DataSourceConnectionFactory connectionFactory = new DataSourceConnectionFactory(sources[i]);
-            result[i] = new Object[]{new SQLMeterBasedStorage(connectionFactory), new SqlBillingService(connectionFactory)};
+            result[i] = new Object[]{new SQLMeterBasedStorage(connectionFactory, new MonthlyBillingPeriod()), new SqlBillingService(connectionFactory)};
         }
         return result;
     }

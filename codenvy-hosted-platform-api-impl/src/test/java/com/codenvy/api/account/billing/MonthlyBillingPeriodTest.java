@@ -17,73 +17,83 @@
  */
 package com.codenvy.api.account.billing;
 
-import static org.testng.Assert.assertEquals;
-
-import com.codenvy.api.account.billing.MonthlyBillingPeriod;
-
-import org.mockito.Mockito;
-import org.mockito.testng.MockitoTestNGListener;
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import java.util.Date;
 
-@Listeners(MockitoTestNGListener.class)
+import static org.testng.Assert.assertEquals;
+
 public class MonthlyBillingPeriodTest {
 
     private DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
     MonthlyBillingPeriod monthlyBillingPeriod;
 
-    @BeforeMethod
-    public void setUp() {
-        monthlyBillingPeriod = Mockito.spy(new MonthlyBillingPeriod());
+    Date testDate;
 
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.YEAR, 1982);
-        calendar.set(Calendar.MONTH, 5);
-        calendar.set(Calendar.DAY_OF_MONTH, 6);
-        calendar.set(Calendar.HOUR_OF_DAY, 23);
-        calendar.set(Calendar.MINUTE, 13);
-        calendar.set(Calendar.SECOND, 18);
-        calendar.set(Calendar.MILLISECOND, 564);
-        Mockito.when(monthlyBillingPeriod.now()).thenReturn(calendar);
+    @BeforeMethod
+    public void setUp() throws ParseException {
+        testDate = df.parse("1982-06-06 23:13:18:564");
+        monthlyBillingPeriod = new MonthlyBillingPeriod();
+
     }
 
     @Test
     public void shouldReturnPreviousPeriodStartDate() throws Exception {
-        assertEquals(monthlyBillingPeriod.getPreviousPeriodStartDate(),
+        assertEquals(monthlyBillingPeriod.get(testDate).getPreviousPeriod().getStartDate(),
                      df.parse("1982-05-01 00:00:00:000"));
 
     }
 
     @Test
     public void shouldReturnPreviousPeriodEndDate() throws Exception {
-        assertEquals(monthlyBillingPeriod.getPreviousPeriodEndDate(),
+        assertEquals(monthlyBillingPeriod.get(testDate).getPreviousPeriod().getEndDate(),
                      df.parse("1982-05-31 23:59:59:999"));
     }
 
     @Test
     public void shouldReturnCurrentPeriodStartDate() throws Exception {
-        assertEquals(monthlyBillingPeriod.getCurrentPeriodStartDate(),
+        assertEquals(monthlyBillingPeriod.get(testDate).getStartDate(),
                      df.parse("1982-06-01 00:00:00:000"));
     }
 
     @Test
     public void shouldReturnCurrentPeriodEndDate() throws Exception {
-        assertEquals(monthlyBillingPeriod.getCurrentPeriodEndDate(),
+        assertEquals(monthlyBillingPeriod.get(testDate).getEndDate(),
                      df.parse("1982-06-30 23:59:59:999"));
     }
 
     @Test
     public void shouldReturnCurrentPeriodId() throws Exception {
-        assertEquals(monthlyBillingPeriod.getCurrentPeriodId(), "1982-06");
+        assertEquals(monthlyBillingPeriod.get(testDate).getId(), "1982-06");
     }
 
     @Test
     public void shouldReturnPreviousPeriodId() throws Exception {
-        assertEquals(monthlyBillingPeriod.getPreviousPeriodId(), "1982-05");
+        assertEquals(monthlyBillingPeriod.get(testDate).getPreviousPeriod().getId(), "1982-05");
+    }
+
+    @Test
+    public void shouldReturnNextPeriodId() throws Exception {
+        assertEquals(monthlyBillingPeriod.get(testDate).getNextPeriod().getId(), "1982-07");
+    }
+
+    @Test
+    public void shouldReturnPeriodById() throws Exception {
+        //given
+        Period expected = monthlyBillingPeriod.get(testDate);
+        //when
+        Period actual = monthlyBillingPeriod.get("1982-06");
+        //then
+        assertEquals(actual, expected);
+        assertEquals(actual.getId(), expected.getId());
+        assertEquals(actual.getStartDate(), expected.getStartDate());
+        assertEquals(actual.getEndDate(), expected.getEndDate());
+        assertEquals(actual.getNextPeriod(), expected.getNextPeriod());
+        assertEquals(actual.getPreviousPeriod(), expected.getPreviousPeriod());
+
     }
 }

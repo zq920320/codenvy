@@ -17,6 +17,7 @@
  */
 package com.codenvy.api.account.metrics;
 
+import com.codenvy.api.account.billing.BillingPeriod;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.api.core.notification.EventService;
@@ -36,6 +37,7 @@ import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
+import java.util.Date;
 
 /**
  * Registers start and end of resources usage
@@ -51,18 +53,22 @@ public class RunStatusSubscriber implements EventSubscriber<RunnerEvent> {
     private final WorkspaceDao          workspaceDao;
     private final RunQueue              runQueue;
     private final ResourcesUsageTracker resourcesUsageTracker;
+    private final BillingPeriod         billingPeriod;
 
     @Inject
     public RunStatusSubscriber(@Named(TasksActivityChecker.RUN_ACTIVITY_CHECKING_PERIOD) Integer schedulingPeriod,
                                EventService eventService,
                                WorkspaceDao workspaceDao,
                                RunQueue runQueue,
-                               ResourcesUsageTracker resourcesUsageTracker) {
+                               ResourcesUsageTracker resourcesUsageTracker,
+                               BillingPeriod billingPeriod
+                              ) {
         this.schedulingPeriod = schedulingPeriod;
         this.eventService = eventService;
         this.workspaceDao = workspaceDao;
         this.runQueue = runQueue;
         this.resourcesUsageTracker = resourcesUsageTracker;
+        this.billingPeriod = billingPeriod;
     }
 
     @PostConstruct
@@ -94,15 +100,22 @@ public class RunStatusSubscriber implements EventSubscriber<RunnerEvent> {
             final RunRequest request = task.getRequest();
             final MemoryUsedMetric memoryUsedMetric = new MemoryUsedMetric(request.getMemorySize(),
                                                                            task.getCreationTime(),
-                                                                           task.getCreationTime() + schedulingPeriod,
+                                                                           Math.min(task.getCreationTime() +
+                                                                                    schedulingPeriod,
+                                                                                    billingPeriod
+                                                                                            .get(new Date(
+                                                                                                    task.getCreationTime()))
+                                                                                            .getEndDate().getTime()),
                                                                            request.getUserId(),
                                                                            workspace.getAccountId(),
                                                                            workspace.getId(),
-                                                                           String.valueOf(event.getProcessId()));
+                                                                           String.valueOf(
+                                                                                   event.getProcessId()));
 
             resourcesUsageTracker.resourceUsageStarted(memoryUsedMetric);
         } catch (NotFoundException | ServerException e) {
-            LOG.error("Error registration usage of resources by process {} in workspace {} in project {}", event.getProcessId(),
+            LOG.error("Error registration usage of resources by process {} in workspace {} in project {}",
+                      event.getProcessId(),
                       event.getWorkspace(), event.getProject());
         }
     }

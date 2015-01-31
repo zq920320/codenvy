@@ -84,7 +84,7 @@ public class SaasSubscriptionService extends SubscriptionService {
     public AccountResources getAccountResources(Subscription subscription) throws ServerException {
         final String accountId = subscription.getAccountId();
         final Map<String, Long> memoryUsedReport = meterBasedStorage.getMemoryUsedReport(accountId,
-                                                                                         billingPeriod.getCurrentPeriodStartDate()
+                                                                                         billingPeriod.getCurrent().getStartDate()
                                                                                                       .getTime(),
                                                                                          System.currentTimeMillis());
 

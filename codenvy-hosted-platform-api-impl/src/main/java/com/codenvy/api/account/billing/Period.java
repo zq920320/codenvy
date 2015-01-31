@@ -1,10 +1,10 @@
 /*
  * CODENVY CONFIDENTIAL
  * __________________
- * 
- *  [2012] - [2015] Codenvy, S.A. 
+ *
+ *  [2012] - [2015] Codenvy, S.A.
  *  All Rights Reserved.
- * 
+ *
  * NOTICE:  All information contained herein is, and remains
  * the property of Codenvy S.A. and its suppliers,
  * if any.  The intellectual and technical concepts contained
@@ -20,31 +20,34 @@ package com.codenvy.api.account.billing;
 import java.util.Date;
 
 /**
- * Provider if billing dates information.
+ * Billing period.
  *
  * @author Sergii Kabashniuk
  */
-public interface BillingPeriod {
-    /**
-     * @return current billing period.
-     */
-    Period getCurrent();
+public interface Period {
 
     /**
-     * Get period for given date.
-     *
-     * @param date
-     *         -given date
-     * @return - billing period.
+     * @return date of period start.
      */
-    Period get(Date date);
+    Date getStartDate();
 
     /**
-     * Get period by given id.
-     *
-     * @param id
-     *         - period id.
-     * @return - billing period
+     * @return date of period end.
      */
-    Period get(String id);
+    Date getEndDate();
+
+    /**
+     * @return next billing period information.
+     */
+    Period getNextPeriod();
+
+    /**
+     * @return previous billing period information.
+     */
+    Period getPreviousPeriod();
+
+    /**
+     * @return period string representation.
+     */
+    String getId();
 }

@@ -66,16 +66,16 @@ public class SaasBillingService {
     private final PaymentService    paymentService;
     private final MeterBasedStorage meterBasedStorage;
     private final BillingPeriod     billingPeriod;
-    private final long freeUsage;
-    private final String           billingAddress;
-    private final String           invoiceSubject;
-    private final double           price;
-    private final String           invoiceNoPaymentSubject;
-    private final String           billingFailedSubject;
-    private final String           successfulChargeMailTemplate;
-    private final String           invoiceNoPaymentTemplate;
-    private final String           unsuccessfulChargeMailTemplate;
-    private final SimpleDateFormat dateFormat;
+    private final long              freeUsage;
+    private final String            billingAddress;
+    private final String            invoiceSubject;
+    private final double            price;
+    private final String            invoiceNoPaymentSubject;
+    private final String            billingFailedSubject;
+    private final String            successfulChargeMailTemplate;
+    private final String            invoiceNoPaymentTemplate;
+    private final String            unsuccessfulChargeMailTemplate;
+    private final SimpleDateFormat  dateFormat;
 
     @Inject
     public SaasBillingService(AccountDao accountDao,
@@ -88,10 +88,12 @@ public class SaasBillingService {
                               @Named("subscription.saas.price") double price,
                               @Named("subscription.saas.mail.address") String billingAddress,
                               @Named("subscription.saas.mail.invoice.subject") String invoiceSubject,
-                              @Named("subscription.saas.mail.invoice.no_payment.subject") String invoiceNoPaymentSubject,
+                              @Named("subscription.saas.mail.invoice.no_payment.subject") String
+                                      invoiceNoPaymentSubject,
                               @Named("subscription.saas.mail.billing.failed.subject") String billingFailedSubject,
                               @Named("subscription.saas.mail.template.success") String successfulChargeMailTemplate,
-                              @Named("subscription.saas.mail.template.success.no_payment") String invoiceNoPaymentTemplate,
+                              @Named("subscription.saas.mail.template.success.no_payment") String
+                                      invoiceNoPaymentTemplate,
                               @Named("subscription.saas.mail.template.fail") String unsuccessfulChargeMailTemplate) {
         this.accountDao = accountDao;
         this.userDao = userDao;
@@ -114,13 +116,15 @@ public class SaasBillingService {
     }
 
     public void chargeAccounts() throws ApiException {
-        chargeAccounts(billingPeriod.getPreviousPeriodStartDate(), billingPeriod.getPreviousPeriodEndDate());
+        chargeAccounts(billingPeriod.getCurrent().getPreviousPeriod().getStartDate(),
+                       billingPeriod.getCurrent().getPreviousPeriod().getEndDate());
     }
 
     public void chargeAccount(String accountId) throws ApiException {
         final Account account = accountDao.getById(accountId);
 
-        chargeAccount(account, billingPeriod.getPreviousPeriodStartDate(), billingPeriod.getPreviousPeriodEndDate());
+        chargeAccount(account, billingPeriod.getCurrent().getPreviousPeriod().getStartDate(),
+                      billingPeriod.getCurrent().getPreviousPeriod().getEndDate());
     }
 
     public void chargeAccounts(Date billingStartDate, Date billingEndDate) throws ApiException {
@@ -152,7 +156,8 @@ public class SaasBillingService {
     private void doChargeAccount(Account account, Date startDate, Date endDate) throws ApiException {
         final String accountId = account.getId();
         LOG.info("PAYMENTS# Saas #Start# accountId#{}#", account.getId());
-        final Map<String, Long> memoryUsedReport = meterBasedStorage.getMemoryUsedReport(accountId, startDate.getTime(), endDate.getTime());
+        final Map<String, Long> memoryUsedReport =
+                meterBasedStorage.getMemoryUsedReport(accountId, startDate.getTime(), endDate.getTime());
 
         final List<String> accountOwnersEmails = getAccountOwnersEmails(account.getId());
 
@@ -174,10 +179,12 @@ public class SaasBillingService {
                                               dateFormat.format(endDate);
 
             try {
-                chargeAmount = Math.ceil(((double)totalRamUsage - freeUsage) / GIGABYTE_HOUR_IN_MEGABYTE_MINUTE) * price;
+                chargeAmount =
+                        Math.ceil(((double)totalRamUsage - freeUsage) / GIGABYTE_HOUR_IN_MEGABYTE_MINUTE) * price;
                 paymentService.charge(ccToken, chargeAmount, accountId, paymentDescription);
             } catch (ForbiddenException e) {
-                sendMailWithConsumption(accountOwnersEmails, memoryUsedReport, billingFailedSubject, unsuccessfulChargeMailTemplate,
+                sendMailWithConsumption(accountOwnersEmails, memoryUsedReport, billingFailedSubject,
+                                        unsuccessfulChargeMailTemplate,
                                         chargeAmount);
                 throw e;
             }
@@ -188,13 +195,16 @@ public class SaasBillingService {
 //        accountDao.update(account);
 
         if (totalRamUsage > freeUsage) {
-            sendMailWithConsumption(accountOwnersEmails, memoryUsedReport, invoiceSubject, successfulChargeMailTemplate, chargeAmount);
+            sendMailWithConsumption(accountOwnersEmails, memoryUsedReport, invoiceSubject, successfulChargeMailTemplate,
+                                    chargeAmount);
         } else {
-            sendMailWithConsumption(accountOwnersEmails, memoryUsedReport, invoiceNoPaymentSubject, invoiceNoPaymentTemplate, 0);
+            sendMailWithConsumption(accountOwnersEmails, memoryUsedReport, invoiceNoPaymentSubject,
+                                    invoiceNoPaymentTemplate, 0);
         }
     }
 
-    private void sendMailWithConsumption(List<String> accountOwnersEmails, Map<String, Long> consumption, String subject,
+    private void sendMailWithConsumption(List<String> accountOwnersEmails, Map<String, Long> consumption,
+                                         String subject,
                                          String mailTemplate, double amount) {
         long totalConsumption = 0;
         StringBuilder stringBuilder = new StringBuilder();
@@ -209,7 +219,8 @@ public class SaasBillingService {
         final HashMap<String, String> mailTemplateProperties = new HashMap<>();
         mailTemplateProperties.put("resource.consumption", stringBuilder.toString());
         mailTemplateProperties.put("resource.consumption.total", String.valueOf(totalConsumption));
-        mailTemplateProperties.put("resource.free", String.valueOf((double)freeUsage / GIGABYTE_HOUR_IN_MEGABYTE_MINUTE));
+        mailTemplateProperties
+                .put("resource.free", String.valueOf((double)freeUsage / GIGABYTE_HOUR_IN_MEGABYTE_MINUTE));
         mailTemplateProperties.put("resource.price", String.valueOf(price));
         mailTemplateProperties.put("resource.amount", String.valueOf(amount));
 

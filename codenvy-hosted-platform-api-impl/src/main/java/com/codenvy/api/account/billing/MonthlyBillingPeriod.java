@@ -17,6 +17,7 @@
  */
 package com.codenvy.api.account.billing;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -32,64 +33,92 @@ public class MonthlyBillingPeriod implements BillingPeriod {
     public final static SimpleDateFormat ID_FORMAT = new SimpleDateFormat("yyyy-MM", Locale.ENGLISH);
 
     @Override
-    public Date getPreviousPeriodStartDate() {
-        Calendar calendar = now();
-        calendar.add(Calendar.MONTH, -1);
-        calendar.set(Calendar.DAY_OF_MONTH, 1);
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        return calendar.getTime();
+    public Period getCurrent() {
+        return get(new Date());
     }
 
     @Override
-    public Date getPreviousPeriodEndDate() {
-        Calendar calendar = now();
-        calendar.set(Calendar.DAY_OF_MONTH, 1);
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        calendar.add(Calendar.MILLISECOND, -1);
-        return calendar.getTime();
+    public Period get(String id) {
+        try {
+            return get(ID_FORMAT.parse(id));
+        } catch (ParseException e) {
+            throw new RuntimeException(e.getLocalizedMessage(), e);
+        }
     }
 
     @Override
-    public Date getCurrentPeriodStartDate() {
-        Calendar calendar = now();
-        calendar.set(Calendar.DAY_OF_MONTH, 1);
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        return calendar.getTime();
+    public Period get(final Date date) {
+        return new Period() {
+            @Override
+            public Date getStartDate() {
+                final Calendar calendar = Calendar.getInstance();
+                calendar.setTimeInMillis(date.getTime());
+                calendar.set(Calendar.DAY_OF_MONTH, 1);
+                calendar.set(Calendar.HOUR_OF_DAY, 0);
+                calendar.set(Calendar.MINUTE, 0);
+                calendar.set(Calendar.SECOND, 0);
+                calendar.set(Calendar.MILLISECOND, 0);
+                return calendar.getTime();
+            }
+
+            @Override
+            public boolean equals(Object obj) {
+                if (this == obj) {
+                    return true;
+                }
+                if (obj instanceof Period) {
+                    return this.getId().equals(((Period)obj).getId());
+                }
+                return false;
+            }
+
+            @Override
+            public Date getEndDate() {
+                final Calendar calendar = Calendar.getInstance();
+                calendar.setTimeInMillis(date.getTime());
+                calendar.add(Calendar.MONTH, 1);
+                calendar.set(Calendar.DAY_OF_MONTH, 1);
+                calendar.set(Calendar.HOUR_OF_DAY, 0);
+                calendar.set(Calendar.MINUTE, 0);
+                calendar.set(Calendar.SECOND, 0);
+                calendar.set(Calendar.MILLISECOND, 0);
+                calendar.add(Calendar.MILLISECOND, -1);
+                return calendar.getTime();
+            }
+
+            @Override
+            public Period getNextPeriod() {
+                final Calendar calendar = Calendar.getInstance();
+                calendar.setTimeInMillis(date.getTime());
+                calendar.add(Calendar.MONTH, 1);
+                calendar.set(Calendar.DAY_OF_MONTH, 1);
+                calendar.set(Calendar.HOUR_OF_DAY, 0);
+                calendar.set(Calendar.MINUTE, 0);
+                calendar.set(Calendar.SECOND, 0);
+                calendar.set(Calendar.MILLISECOND, 0);
+                return get(calendar.getTime());
+            }
+
+            @Override
+            public Period getPreviousPeriod() {
+                final Calendar calendar = Calendar.getInstance();
+                calendar.setTimeInMillis(date.getTime());
+                calendar.add(Calendar.MONTH, -1);
+                calendar.set(Calendar.DAY_OF_MONTH, 1);
+                calendar.set(Calendar.HOUR_OF_DAY, 0);
+                calendar.set(Calendar.MINUTE, 0);
+                calendar.set(Calendar.SECOND, 0);
+                calendar.set(Calendar.MILLISECOND, 0);
+                return get(calendar.getTime());
+            }
+
+
+            @Override
+            public String getId() {
+                return ID_FORMAT.format(date.getTime());
+            }
+        };
     }
 
-    @Override
-    public Date getCurrentPeriodEndDate() {
-        Calendar calendar = now();
-        calendar.add(Calendar.MONTH, 1);
-        calendar.set(Calendar.DAY_OF_MONTH, 1);
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        calendar.add(Calendar.MILLISECOND, -1);
-        return calendar.getTime();
-    }
 
-    @Override
-    public String getCurrentPeriodId() {
-        return ID_FORMAT.format(now().getTime());
-    }
-
-    @Override
-    public String getPreviousPeriodId() {
-        return ID_FORMAT.format(getPreviousPeriodStartDate().getTime());
-    }
-
-    Calendar now() {
-        return Calendar.getInstance();
-    }
 }

@@ -24,6 +24,7 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.codenvy.api.account.billing.MonthlyBillingPeriod;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.api.core.notification.EventService;
 import com.codenvy.api.runner.RunQueue;
@@ -67,7 +68,8 @@ public class RunStatusSubscriberTest {
 
     @BeforeMethod
     public void setUp() throws Exception {
-        runStatusSubscriber = new RunStatusSubscriber(10, eventService, workspaceDao, runQueue, resourcesUsageTracker);
+        runStatusSubscriber = new RunStatusSubscriber(10, eventService, workspaceDao, runQueue, resourcesUsageTracker,
+                                                      new MonthlyBillingPeriod());
         when(workspaceDao.getById(anyString())).thenReturn(new Workspace().withAccountId("accountId")
                                                                           .withId(WS_ID));
 
