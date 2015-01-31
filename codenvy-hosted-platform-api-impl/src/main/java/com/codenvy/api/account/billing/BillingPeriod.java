@@ -36,5 +36,5 @@ public interface BillingPeriod {
 
     String getCurrentPeriodId();
 
-
+    String getPreviousPeriodId();
 }

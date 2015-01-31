@@ -53,32 +53,37 @@ public class MonthlyBillingPeriodTest {
     }
 
     @Test
-    public void testGetPreviousPeriodStartDate() throws Exception {
+    public void shouldReturnPreviousPeriodStartDate() throws Exception {
         assertEquals(monthlyBillingPeriod.getPreviousPeriodStartDate(),
                      df.parse("1982-05-01 00:00:00:000"));
 
     }
 
     @Test
-    public void testGetPreviousPeriodEndDate() throws Exception {
+    public void shouldReturnPreviousPeriodEndDate() throws Exception {
         assertEquals(monthlyBillingPeriod.getPreviousPeriodEndDate(),
                      df.parse("1982-05-31 23:59:59:999"));
     }
 
     @Test
-    public void testGetCurrentPeriodStartDate() throws Exception {
+    public void shouldReturnCurrentPeriodStartDate() throws Exception {
         assertEquals(monthlyBillingPeriod.getCurrentPeriodStartDate(),
                      df.parse("1982-06-01 00:00:00:000"));
     }
 
     @Test
-    public void testGetCurrentPeriodEndDate() throws Exception {
+    public void shouldReturnCurrentPeriodEndDate() throws Exception {
         assertEquals(monthlyBillingPeriod.getCurrentPeriodEndDate(),
                      df.parse("1982-06-30 23:59:59:999"));
     }
 
     @Test
-    public void testGetCurrentPeriodId() throws Exception {
-        assertEquals(monthlyBillingPeriod.getCurrentPeriodId(), "June, 1982");
+    public void shouldReturnCurrentPeriodId() throws Exception {
+        assertEquals(monthlyBillingPeriod.getCurrentPeriodId(), "1982-06");
+    }
+
+    @Test
+    public void shouldReturnPreviousPeriodId() throws Exception {
+        assertEquals(monthlyBillingPeriod.getPreviousPeriodId(), "1982-05");
     }
 }

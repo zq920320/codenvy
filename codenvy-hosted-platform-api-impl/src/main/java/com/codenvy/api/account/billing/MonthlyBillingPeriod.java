@@ -17,8 +17,6 @@
  */
 package com.codenvy.api.account.billing;
 
-import com.codenvy.api.account.billing.BillingPeriod;
-
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -31,7 +29,7 @@ import java.util.Locale;
  */
 public class MonthlyBillingPeriod implements BillingPeriod {
 
-    public final static SimpleDateFormat ID_FORMAT = new SimpleDateFormat("MMMM, yyyy", Locale.ENGLISH);
+    public final static SimpleDateFormat ID_FORMAT = new SimpleDateFormat("yyyy-MM", Locale.ENGLISH);
 
     @Override
     public Date getPreviousPeriodStartDate() {
@@ -84,6 +82,11 @@ public class MonthlyBillingPeriod implements BillingPeriod {
     @Override
     public String getCurrentPeriodId() {
         return ID_FORMAT.format(now().getTime());
+    }
+
+    @Override
+    public String getPreviousPeriodId() {
+        return ID_FORMAT.format(getPreviousPeriodStartDate().getTime());
     }
 
     Calendar now() {
