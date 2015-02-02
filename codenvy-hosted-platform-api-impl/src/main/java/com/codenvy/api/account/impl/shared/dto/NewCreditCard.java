@@ -25,11 +25,35 @@ import com.codenvy.dto.shared.DTO;import java.lang.String;
  *
  */
 @DTO
-public interface Nonce {
+public interface NewCreditCard {
 
     public String getNonce();
 
     void setNonce(String nonce);
 
-    Nonce withNonce(String nonce);
+    NewCreditCard withNonce(String nonce);
+
+    public String getStreetAddress();
+
+    void setStreetAddress(String streetAddress);
+
+    NewCreditCard withStreetAddress(String streetAddress);
+
+    public String getCity();
+
+    void setCity(String city);
+
+    NewCreditCard withCity(String city);
+
+    public String getState();
+
+    void setState(String state);
+
+    NewCreditCard withState(String state);
+
+    public String getCountry();
+
+    void setCountry(String country);
+
+    NewCreditCard withCountry(String country);
 }

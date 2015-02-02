@@ -114,7 +114,7 @@ public class BraintreeCreditCardDaoImplTest {
         when(customerResult.getTarget()).thenReturn(customer);
         List<CreditCard> list = Arrays.asList(creditCard);
         when(customer.getCreditCards()).thenReturn(list);
-        dao.registerCard(ACCOUNT_ID, "nonce123");
+        dao.registerCard(ACCOUNT_ID, "nonce123", null, null, null, null);
         verify(customerGateway).create(any(CustomerRequest.class));
     }
 
@@ -129,7 +129,7 @@ public class BraintreeCreditCardDaoImplTest {
         List<CreditCard> list = new ArrayList<>();
         list.add(creditCard);
         when(customer.getCreditCards()).thenReturn(list);
-        dao.registerCard(ACCOUNT_ID, "nonce123");
+        dao.registerCard(ACCOUNT_ID, "nonce123", null, null, null, null);
         verify(customerGateway).update(eq(ACCOUNT_ID), any(CustomerRequest.class));
     }
 
@@ -167,7 +167,7 @@ public class BraintreeCreditCardDaoImplTest {
 
     @Test(expectedExceptions = ForbiddenException.class)
     public void shouldThrowExceptionIfNullPassedRegisterCard() throws Exception {
-        dao.registerCard(null, "nonce123");
+        dao.registerCard(null, "nonce123", null, null, null, null);
     }
 
 

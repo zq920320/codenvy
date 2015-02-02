@@ -20,7 +20,7 @@ package com.codenvy.api.account.billing;
 import com.codenvy.api.account.impl.shared.dto.ClientToken;
 import com.codenvy.api.account.shared.dto.CreditCard;
 import com.codenvy.api.account.impl.shared.dto.CreditCardDescriptor;
-import com.codenvy.api.account.impl.shared.dto.Nonce;
+import com.codenvy.api.account.impl.shared.dto.NewCreditCard;
 import com.codenvy.api.core.ForbiddenException;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
@@ -96,10 +96,12 @@ public class CreditCardService extends Service {
     public void addCreditCardToAccount(@ApiParam(value = "Account ID", required = true)
                                        @PathParam("accountId") String accountId,
                                        @ApiParam(value = "Client nonce", required = true)
-                                       @Required Nonce nonce)
+                                       @Required NewCreditCard creditCard)
             throws NotFoundException, ServerException, ForbiddenException {
 
-        creditCardDao.registerCard(accountId, nonce.getNonce());
+        creditCardDao
+                .registerCard(accountId, creditCard.getNonce(), creditCard.getStreetAddress(), creditCard.getCity(), creditCard.getState(),
+                              creditCard.getCountry());
     }
 
     @ApiOperation(value = "Get credit cards",

@@ -72,7 +72,7 @@ public class BraintreeCreditCardDaoImpl implements CreditCardDao {
     }
 
     @Override
-    public String registerCard(String accountId, String nonce) throws ServerException, ForbiddenException {
+    public String registerCard(String accountId, String nonce, String streetAddress, String city, String state, String country) throws ServerException, ForbiddenException {
         if (accountId == null) {
             throw new ForbiddenException("Account ID required.");
         }
@@ -86,6 +86,12 @@ public class BraintreeCreditCardDaoImpl implements CreditCardDao {
             List<com.braintreegateway.CreditCard> oldCards = customer.getCreditCards();
             CustomerRequest request = new CustomerRequest().creditCard()
                                                            .paymentMethodNonce(nonce)
+                                                           .billingAddress()
+                                                               .streetAddress(streetAddress)
+                                                               .locality(city)
+                                                               .region(state)
+                                                               .countryName(country)
+                                                               .done()
                                                            .done();
             result = gateway.customer().update(customer.getId(), request);
             if (!result.isSuccess()) {
@@ -97,7 +103,15 @@ public class BraintreeCreditCardDaoImpl implements CreditCardDao {
             newCards.removeAll(oldCards);
             token = newCards.get(0).getToken();
         } catch (NotFoundException nf) {
-            CustomerRequest request = new CustomerRequest().id(accountId).paymentMethodNonce(nonce);
+            CustomerRequest request = new CustomerRequest().id(accountId).creditCard()
+                                                           .paymentMethodNonce(nonce)
+                                                           .billingAddress()
+                                                               .streetAddress(streetAddress)
+                                                               .locality(city)
+                                                               .region(state)
+                                                               .countryName(country)
+                                                               .done()
+                                                           .done();
             result = gateway.customer().create(request);
             if (!result.isSuccess()) {
                 LOG.warn(String.format("Failed to register new card for account %s. Errors: %s ", accountId,
