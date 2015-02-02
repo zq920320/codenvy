@@ -24,14 +24,11 @@ import com.braintreegateway.Transaction;
 import com.braintreegateway.TransactionRequest;
 import com.codenvy.api.account.server.dao.Subscription;
 import com.codenvy.api.account.server.subscription.PaymentService;
-import com.codenvy.api.account.shared.dto.CreditCard;
 import com.codenvy.api.core.ApiException;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.ForbiddenException;
-import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.commons.schedule.ScheduleDelay;
-import com.codenvy.dto.server.DtoFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -151,46 +148,6 @@ public class BraintreePaymentService implements PaymentService {
         }
     }
 
-    @Override
-    public CreditCard getCreditCard(String token) throws NotFoundException, ServerException, ForbiddenException {
-        if (token == null || token.isEmpty()) {
-            throw new ForbiddenException("Token is required");
-        }
-        try {
-            final com.braintreegateway.CreditCard creditCard = gateway.creditCard().find(token);
-            return DtoFactory.getInstance().createDto(CreditCard.class)
-                             .withToken(token)
-                             .withNumber(creditCard.getMaskedNumber())
-                             .withAccountId(creditCard.getCustomerId())
-                             .withExpiration(creditCard.getExpirationDate())
-                             .withType(creditCard.getCardType())
-                             .withCardholder(creditCard.getCardholderName());
-        } catch (Exception e) {
-            LOG.error(e.getLocalizedMessage(), e);
-            throw new ServerException("Internal server error occurs. Please, contact support");
-        }
-    }
-
-    @Override
-    public void removeCreditCard(String creditCardToken) throws NotFoundException, ServerException, ForbiddenException {
-        if (creditCardToken == null) {
-            throw new ForbiddenException("Credit card token can't be null");
-        }
-        try {
-            final Result<com.braintreegateway.CreditCard> result = gateway.creditCard().delete(creditCardToken);
-            if (result.isSuccess()) {
-                LOG.info("CreditCard removing# state#Success#");
-            } else {
-                LOG.error("CreditCard removing# state#Error# message#{}#", result.getMessage());
-                throw new ForbiddenException(result.getMessage());
-            }
-        } catch (ApiException e) {
-            throw e;
-        } catch (Exception e) {
-            LOG.error(e.getLocalizedMessage(), e);
-            throw new ServerException("Internal server error occurs. Please, contact support");
-        }
-    }
 
     @ScheduleDelay(delay = 1, unit = TimeUnit.HOURS)
     public void updatePrices() {
