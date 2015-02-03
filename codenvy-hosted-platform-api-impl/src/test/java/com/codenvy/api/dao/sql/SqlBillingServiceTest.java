@@ -55,18 +55,18 @@ public class SqlBillingServiceTest {
         hsqldb.setPassword("");
 //
 //
-        final PGPoolingDataSource postgresql = new PGPoolingDataSource();
-        postgresql.setDataSourceName("codenvy");
-        postgresql.setServerName("dev.box.com");
-        postgresql.setDatabaseName("codenvy");
-        postgresql.setUser("codenvy");
-        postgresql.setPassword("codenvypassword");
-        postgresql.setMaxConnections(10);
-        postgresql.setPortNumber(5432);
+//        final PGPoolingDataSource postgresql = new PGPoolingDataSource();
+//        postgresql.setDataSourceName("codenvy");
+//        postgresql.setServerName("dev.box.com");
+//        postgresql.setDatabaseName("codenvy");
+//        postgresql.setUser("codenvy");
+//        postgresql.setPassword("codenvypassword");
+//        postgresql.setMaxConnections(10);
+//        postgresql.setPortNumber(5432);
 
         sources = new DataSource[]{
-                 hsqldb,
-                postgresql
+                 hsqldb
+                //postgresql
         };
     }
 
