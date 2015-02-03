@@ -27,7 +27,7 @@ import java.util.List;
  * @author Sergii Kabashniuk
  */
 public interface BillingService {
-    void generateReceipts(String billingPeriodId) throws ServerException;
+    void generateReceipts(long from, long till) throws ServerException;
 
     List<Receipt> getUnpaidReceipt(int limit) throws ServerException;
 

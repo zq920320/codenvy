@@ -18,10 +18,9 @@
 package com.codenvy.api.dao.sql;
 
 import com.codenvy.api.account.billing.BillingService;
-import com.codenvy.api.account.metrics.MemoryUsedMetric;
+import com.codenvy.api.account.billing.PaymentState;
 import com.codenvy.api.account.shared.dto.Receipt;
 import com.codenvy.api.core.ServerException;
-import com.codenvy.dto.server.DtoFactory;
 
 import javax.inject.Inject;
 import java.sql.Connection;
@@ -30,6 +29,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * @author Sergii Kabashniuk
@@ -41,15 +41,15 @@ public class SqlBillingService implements BillingService {
             "INSERT INTO " +
             "  MEMORY_CHARGES (" +
             "                   AMOUNT, " +
-            "                   PRICE, " +
             "                   ACCOUNT_ID, " +
-            "                   WORKSPACE_ID " +
+            "                   WORKSPACE_ID,  " +
+            "                   CALC_ID " +
             "                  ) " +
             "SELECT " +
-            "   SUM(AMOUNT * (LEAST(?, STOP_TIME) - GREATEST(?, START_TIME)) / (60000))/61440 AS AMOUNT, " +
-            "   0.0 as PRICE, " +
-            " ACCOUNT_ID, " +
-            " WORKSPACE_ID " +
+            "   ROUND(SUM(AMOUNT * (LEAST(?, STOP_TIME) - GREATEST(?, START_TIME)) / (60000))/61440,2) AS AMOUNT, " +
+            "   ACCOUNT_ID, " +
+            "   WORKSPACE_ID,  " +
+            "   ? AS CALC_ID  " +
             "FROM " +
             "  METRICS " +
             "WHERE " +
@@ -59,27 +59,83 @@ public class SqlBillingService implements BillingService {
             " ACCOUNT_ID, " +
             " WORKSPACE_ID ";
 
-    private final static String MEMORY_CHARGES_UPDATE_PRICE =
-            "UPDATE " +
-            "   MEMORY_CHARGES " +
-            "SET " +
-            "   PRICE = ?" +
+    private final static String FREE_SAAS_CHARGES_INSERT =
+            "INSERT INTO " +
+            "   CHARGES (" +
+            "                   AMOUNT, " +
+            "                   ACCOUNT_ID, " +
+            "                   SERVICE_ID, " +
+            "                   TYPE, " +
+            "                   PRICE, " +
+            "                   CALC_ID " +
+            "                  ) " +
+            "SELECT " +
+            "   SUM(AMOUNT) AS AMOUNT, " +
+            "   ACCOUNT_ID AS ACCOUNT_ID, " +
+            "   ? AS SERVICE_ID, " +
+            "   ? AS TYPE, " +
+            "   0 AS PRICE, " +
+            "   ? as CALC_ID " +
+            "FROM " +
+            "  MEMORY_CHARGES " +
             "WHERE " +
-            "  AMOUNT>? ";
+            "  CALC_ID = ? " +
+            "GROUP BY " +
+            "  ACCOUNT_ID " +
+            "HAVING  " +
+            " SUM(AMOUNT) < ? ";
+
+    private final static String PAID_SAAS_CHARGES_INSERT =
+            "INSERT INTO " +
+            "   CHARGES (" +
+            "                   AMOUNT, " +
+            "                   ACCOUNT_ID, " +
+            "                   SERVICE_ID, " +
+            "                   TYPE, " +
+            "                   PRICE, " +
+            "                   CALC_ID " +
+            "                  ) " +
+            "SELECT " +
+            "   SUM(AMOUNT) AS AMOUNT, " +
+            "   ACCOUNT_ID AS ACCOUNT_ID, " +
+            "   ? AS SERVICE_ID, " +
+            "   ? AS TYPE, " +
+            "   ? AS PRICE, " +
+            "   ? as CALC_ID " +
+            "FROM " +
+            "  MEMORY_CHARGES " +
+            "WHERE " +
+            "  CALC_ID = ? " +
+            "GROUP BY " +
+            "  ACCOUNT_ID " +
+            "HAVING  " +
+            " SUM(AMOUNT) >= ? ";
+
 
     private final static String RECEIPTS_INSERT =
             "INSERT INTO " +
             "   RECEIPTS (" +
             "                   TOTAL, " +
             "                   ACCOUNT_ID, " +
-            "                   PAYMENT_STATUS " +
+            "                   PAYMENT_STATUS, " +
+            "                   FROM_TIME, " +
+            "                   TILL_TIME, " +
+            "                   CALC_ID " +
             "                  ) " +
             "SELECT " +
-            "   AMOUNT*PRICE AS TOTAL, " +
+            "   ROUND(SUM(AMOUNT*PRICE), 2) AS TOTAL, " +
             "   ACCOUNT_ID AS ACCOUNT_ID, " +
-            "   0 as PAYMENT_STATUS " +
+            "   ? as PAYMENT_STATUS, " +
+            "   ? as FROM_TIME, " +
+            "   ? as TILL_TIME, " +
+            "   ? as CALC_ID " +
             "FROM " +
-            "  MEMORY_CHARGES ";
+            "  CHARGES "+
+            "WHERE " +
+            "  CALC_ID = ? " +
+            "GROUP BY " +
+            "  ACCOUNT_ID "
+            ;
 
     private final static String RECEIPTS_SELECT_UNPAID =
             "SELECT " +
@@ -87,10 +143,8 @@ public class SqlBillingService implements BillingService {
             "FROM " +
             "  RECEIPTS " +
             "WHERE " +
-            " PAYMENT_TIME IS NULL "+
-            " LIMIT ?"
-
-            ;
+            " PAYMENT_TIME IS NULL " +
+            " LIMIT ?";
 
 
     @Inject
@@ -99,25 +153,47 @@ public class SqlBillingService implements BillingService {
     }
 
     @Override
-    public void generateReceipts(String billingPeriodId) throws ServerException {
+    public void generateReceipts(long from, long till) throws ServerException {
+        String calculationId = UUID.randomUUID().toString();
+
         try (Connection connection = connectionFactory.getConnection()) {
             connection.setAutoCommit(false);
             try {
+                //calculate memory usage statistic
                 try (PreparedStatement memoryChargesStatement = connection.prepareStatement(MEMORY_CHARGES_INSERT)) {
-                    memoryChargesStatement.setLong(1, Long.MAX_VALUE);
-                    memoryChargesStatement.setLong(2, Long.MIN_VALUE);
-                    memoryChargesStatement.setLong(3, Long.MAX_VALUE);
-                    memoryChargesStatement.setLong(4, Long.MIN_VALUE);
+                    memoryChargesStatement.setLong(1, till);
+                    memoryChargesStatement.setLong(2, from);
+                    memoryChargesStatement.setString(3, calculationId);
+                    memoryChargesStatement.setLong(4, till);
+                    memoryChargesStatement.setLong(5, from);
                     memoryChargesStatement.execute();
                 }
-                try (PreparedStatement updateMemoryChargesStatement = connection.prepareStatement(MEMORY_CHARGES_UPDATE_PRICE)) {
-                    updateMemoryChargesStatement.setDouble(1, 2.8);
-                    updateMemoryChargesStatement.setDouble(2, 10.0);
-                    updateMemoryChargesStatement.execute();
+
+                try (PreparedStatement freeSaasCharges = connection.prepareStatement(FREE_SAAS_CHARGES_INSERT)) {
+                    freeSaasCharges.setString(1, "Saas");
+                    freeSaasCharges.setString(2, "Free");
+                    freeSaasCharges.setString(3, calculationId);
+                    freeSaasCharges.setString(4, calculationId);
+                    freeSaasCharges.setDouble(5, 10.0);
+                    freeSaasCharges.execute();
+                }
+                try (PreparedStatement paidSaasCharges = connection.prepareStatement(PAID_SAAS_CHARGES_INSERT)) {
+                    paidSaasCharges.setString(1, "Saas");
+                    paidSaasCharges.setString(2, "Paid");
+                    paidSaasCharges.setDouble(3, 0.15);
+                    paidSaasCharges.setString(4, calculationId);
+                    paidSaasCharges.setString(5, calculationId);
+                    paidSaasCharges.setDouble(6, 10.0);
+                    paidSaasCharges.execute();
                 }
 
-                try (PreparedStatement receiptInsertStatement = connection.prepareStatement(RECEIPTS_INSERT)) {
-                    receiptInsertStatement.execute();
+                try (PreparedStatement receipts = connection.prepareStatement(RECEIPTS_INSERT)) {
+                    receipts.setInt(1, PaymentState.WAITING_EXECUTOR.getState());
+                    receipts.setLong(2, from);
+                    receipts.setLong(3, till);
+                    receipts.setString(4, calculationId);
+                    receipts.setString(5, calculationId);
+                    receipts.execute();
                 }
 
                 connection.commit();
@@ -130,6 +206,7 @@ public class SqlBillingService implements BillingService {
         }
 
     }
+
 
     @Override
     public List<Receipt> getUnpaidReceipt(int limit) throws ServerException {

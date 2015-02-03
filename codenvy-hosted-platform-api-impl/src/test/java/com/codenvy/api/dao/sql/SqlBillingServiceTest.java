@@ -49,24 +49,24 @@ public class SqlBillingServiceTest {
     @BeforeSuite
     public void initSources() {
 
-//        final JDBCDataSource hsqldb = new JDBCDataSource();
-//        hsqldb.setUrl("jdbc:hsqldb:mem:test");
-//        hsqldb.setUser("SA");
-//        hsqldb.setPassword("");
+        final JDBCDataSource hsqldb = new JDBCDataSource();
+        hsqldb.setUrl("jdbc:hsqldb:mem:test");
+        hsqldb.setUser("SA");
+        hsqldb.setPassword("");
 //
 //
-//        final PGPoolingDataSource postgresql = new PGPoolingDataSource();
-//        postgresql.setDataSourceName("codenvy");
-//        postgresql.setServerName("localhost");
-//        postgresql.setDatabaseName("codenvy");
-//        postgresql.setUser("codenvy");
-//        postgresql.setPassword("codenvy");
-//        postgresql.setMaxConnections(10);
-//        postgresql.setPortNumber(5432);
+        final PGPoolingDataSource postgresql = new PGPoolingDataSource();
+        postgresql.setDataSourceName("codenvy");
+        postgresql.setServerName("dev.box.com");
+        postgresql.setDatabaseName("codenvy");
+        postgresql.setUser("codenvy");
+        postgresql.setPassword("codenvypassword");
+        postgresql.setMaxConnections(10);
+        postgresql.setPortNumber(5432);
 
         sources = new DataSource[]{
-               // hsqldb
-               //postgresql
+                 hsqldb,
+                postgresql
         };
     }
 
@@ -86,7 +86,8 @@ public class SqlBillingServiceTest {
         Object[][] result = new Object[sources.length][];
         for (int i = 0; i < sources.length; i++) {
             DataSourceConnectionFactory connectionFactory = new DataSourceConnectionFactory(sources[i]);
-            result[i] = new Object[]{new SQLMeterBasedStorage(connectionFactory, new MonthlyBillingPeriod()), new SqlBillingService(connectionFactory)};
+            result[i] = new Object[]{new SQLMeterBasedStorage(connectionFactory, new MonthlyBillingPeriod()),
+                                     new SqlBillingService(connectionFactory)};
         }
         return result;
     }
@@ -116,6 +117,15 @@ public class SqlBillingServiceTest {
 
         meterBasedStorage.createMemoryUsedRecord(
                 new MemoryUsedMetric(256,
+                                     sdf.parse("10-01-2015 10:20:56").getTime(),
+                                     sdf.parse("10-01-2015 11:18:35").getTime(),
+                                     "usr-4358634",
+                                     "ac-8975698",
+                                     "ws-4356",
+                                     "run-435876"));
+
+        meterBasedStorage.createMemoryUsedRecord(
+                new MemoryUsedMetric(256,
                                      sdf.parse("01-01-2015 10:20:56").getTime(),
                                      sdf.parse("10-01-2015 10:00:00").getTime(),
                                      "usr-345",
@@ -123,11 +133,11 @@ public class SqlBillingServiceTest {
                                      "ws-235423",
                                      "run-234"));
         //when
-        billingService.generateReceipts(null);
+        billingService.generateReceipts(Long.MIN_VALUE, Long.MAX_VALUE);
 
         //then
-      //  Assert.assertEquals(billingService.getNotSendReceipt(1).size(), 1);
-       // Assert.assertEquals(billingService.getUnpaidReceipt(1).size(), 1);
+        //  Assert.assertEquals(billingService.getNotSendReceipt(1).size(), 1);
+        // Assert.assertEquals(billingService.getUnpaidReceipt(1).size(), 1);
     }
 
     @Test
