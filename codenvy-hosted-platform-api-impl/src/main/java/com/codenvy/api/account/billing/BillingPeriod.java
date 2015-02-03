@@ -40,6 +40,16 @@ public interface BillingPeriod {
     Period get(Date date);
 
     /**
+     * Get period for given date.
+     *
+     * @param date
+     *         -given date in milliseconds
+     * @return - billing period.
+     */
+    Period get(long date);
+
+
+    /**
      * Get period by given id.
      *
      * @param id

@@ -34,7 +34,7 @@ public class MonthlyBillingPeriod implements BillingPeriod {
 
     @Override
     public Period getCurrent() {
-        return get(new Date());
+        return get(System.currentTimeMillis());
     }
 
     @Override
@@ -48,11 +48,16 @@ public class MonthlyBillingPeriod implements BillingPeriod {
 
     @Override
     public Period get(final Date date) {
+        return get(date.getTime());
+    }
+
+    @Override
+    public Period get(final long date) {
         return new Period() {
             @Override
             public Date getStartDate() {
                 final Calendar calendar = Calendar.getInstance();
-                calendar.setTimeInMillis(date.getTime());
+                calendar.setTimeInMillis(date);
                 calendar.set(Calendar.DAY_OF_MONTH, 1);
                 calendar.set(Calendar.HOUR_OF_DAY, 0);
                 calendar.set(Calendar.MINUTE, 0);
@@ -75,7 +80,7 @@ public class MonthlyBillingPeriod implements BillingPeriod {
             @Override
             public Date getEndDate() {
                 final Calendar calendar = Calendar.getInstance();
-                calendar.setTimeInMillis(date.getTime());
+                calendar.setTimeInMillis(date);
                 calendar.add(Calendar.MONTH, 1);
                 calendar.set(Calendar.DAY_OF_MONTH, 1);
                 calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -89,7 +94,7 @@ public class MonthlyBillingPeriod implements BillingPeriod {
             @Override
             public Period getNextPeriod() {
                 final Calendar calendar = Calendar.getInstance();
-                calendar.setTimeInMillis(date.getTime());
+                calendar.setTimeInMillis(date);
                 calendar.add(Calendar.MONTH, 1);
                 calendar.set(Calendar.DAY_OF_MONTH, 1);
                 calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -102,7 +107,7 @@ public class MonthlyBillingPeriod implements BillingPeriod {
             @Override
             public Period getPreviousPeriod() {
                 final Calendar calendar = Calendar.getInstance();
-                calendar.setTimeInMillis(date.getTime());
+                calendar.setTimeInMillis(date);
                 calendar.add(Calendar.MONTH, -1);
                 calendar.set(Calendar.DAY_OF_MONTH, 1);
                 calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -115,7 +120,7 @@ public class MonthlyBillingPeriod implements BillingPeriod {
 
             @Override
             public String getId() {
-                return ID_FORMAT.format(date.getTime());
+                return ID_FORMAT.format(new Date(date));
             }
         };
     }
