@@ -95,8 +95,7 @@ public class BraintreeCreditCardDaoImpl implements CreditCardDao {
                                                            .done();
             result = gateway.customer().update(customer.getId(), request);
             if (!result.isSuccess()) {
-                LOG.warn(String.format("Failed to register new card for account %s. Errors: %s ", accountId,
-                                       result.getErrors().forObject("customer").onField("nonce").get(0).getMessage()));
+                LOG.warn(String.format("Failed to register new card for account %s. Error message: %s ", accountId, result.getMessage()));
                 throw new ServerException(String.format("Failed to register new card for account %s.", accountId));
             }
             List<com.braintreegateway.CreditCard> newCards = result.getTarget().getCreditCards();
@@ -114,8 +113,7 @@ public class BraintreeCreditCardDaoImpl implements CreditCardDao {
                                                            .done();
             result = gateway.customer().create(request);
             if (!result.isSuccess()) {
-                LOG.warn(String.format("Failed to register new card for account %s. Errors: %s ", accountId,
-                                       result.getErrors().forObject("customer").onField("nonce").get(0).getMessage()));
+                LOG.warn(String.format("Failed to register new card for account %s. Error message: %s ", accountId, result.getMessage()));
                 throw new ServerException(String.format("Failed to register new card for account %s.", accountId));
             }
             token = result.getTarget().getCreditCards().get(0).getToken();
@@ -165,9 +163,7 @@ public class BraintreeCreditCardDaoImpl implements CreditCardDao {
         try {
             Result<com.braintreegateway.CreditCard> result = gateway.creditCard().delete(token);
             if (!result.isSuccess()) {
-                LOG.warn(String.format("Failed to remove card. Error: %s",
-                                       result.getErrors().forObject("creditCard").onField("token").get(0)
-                                             .getMessage()));
+                LOG.warn(String.format("Failed to remove card. Error message: %s", result.getMessage()));
                 throw new ServerException("Failed to remove card.");
             }
         } catch (BraintreeException e) {
