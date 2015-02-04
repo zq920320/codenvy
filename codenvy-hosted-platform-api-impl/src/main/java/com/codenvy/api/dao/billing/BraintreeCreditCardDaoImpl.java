@@ -102,12 +102,6 @@ public class BraintreeCreditCardDaoImpl implements CreditCardDao {
                 throw new ForbiddenException(msg);
             }
             List<com.braintreegateway.CreditCard> newCards = result.getTarget().getCreditCards();
-            Collections.sort(newCards, new Comparator<com.braintreegateway.CreditCard>() {
-                @Override
-                public int compare(com.braintreegateway.CreditCard o1, com.braintreegateway.CreditCard o2) {
-                    return o1.getCreatedAt().compareTo(o2.getCreatedAt());
-                }
-            });
             token = newCards.get(newCards.size() -1).getToken();
         } catch (NotFoundException nf) {
             CustomerRequest request = new CustomerRequest().id(accountId).creditCard()
