@@ -35,6 +35,9 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -83,7 +86,6 @@ public class BraintreeCreditCardDaoImpl implements CreditCardDao {
         String token;
         try {
             Customer customer = gateway.customer().find(accountId);
-            List<com.braintreegateway.CreditCard> oldCards = customer.getCreditCards();
             CustomerRequest request = new CustomerRequest().creditCard()
                                                            .paymentMethodNonce(nonce)
                                                            .billingAddress()
@@ -95,12 +97,18 @@ public class BraintreeCreditCardDaoImpl implements CreditCardDao {
                                                            .done();
             result = gateway.customer().update(customer.getId(), request);
             if (!result.isSuccess()) {
-                LOG.warn(String.format("Failed to register new card for account %s. Error message: %s ", accountId, result.getMessage()));
-                throw new ServerException(String.format("Failed to register new card for account %s.", accountId));
+                String msg = String.format("Failed to register new card for account %s. Error message: %s ", accountId, result.getMessage());
+                LOG.error(msg);
+                throw new ForbiddenException(msg);
             }
             List<com.braintreegateway.CreditCard> newCards = result.getTarget().getCreditCards();
-            newCards.removeAll(oldCards);
-            token = newCards.get(0).getToken();
+            Collections.sort(newCards, new Comparator<com.braintreegateway.CreditCard>() {
+                @Override
+                public int compare(com.braintreegateway.CreditCard o1, com.braintreegateway.CreditCard o2) {
+                    return o1.getCreatedAt().compareTo(o2.getCreatedAt());
+                }
+            });
+            token = newCards.get(newCards.size() -1).getToken();
         } catch (NotFoundException nf) {
             CustomerRequest request = new CustomerRequest().id(accountId).creditCard()
                                                            .paymentMethodNonce(nonce)
@@ -113,8 +121,9 @@ public class BraintreeCreditCardDaoImpl implements CreditCardDao {
                                                            .done();
             result = gateway.customer().create(request);
             if (!result.isSuccess()) {
-                LOG.warn(String.format("Failed to register new card for account %s. Error message: %s ", accountId, result.getMessage()));
-                throw new ServerException(String.format("Failed to register new card for account %s.", accountId));
+                String msg = String.format("Failed to register new card for account %s. Error message: %s ", accountId, result.getMessage());
+                LOG.error(msg);
+                throw new ForbiddenException(msg);
             }
             token = result.getTarget().getCreditCards().get(0).getToken();
         } catch (BraintreeException e) {
@@ -144,7 +153,7 @@ public class BraintreeCreditCardDaoImpl implements CreditCardDao {
             }
         } catch (NotFoundException nf) {
             LOG.warn(String.format("Failed to get cards - account %s not found.", accountId));
-            throw new ServerException("Failed to get cards - such account not found in vault.");
+            throw new ForbiddenException("Failed to get cards - such account id not found in vault.");
         } catch (BraintreeException e) {
             LOG.warn("Braintree exception: ", e);
             throw new ServerException("Internal server error. Please, contact support.");
@@ -164,7 +173,7 @@ public class BraintreeCreditCardDaoImpl implements CreditCardDao {
             Result<com.braintreegateway.CreditCard> result = gateway.creditCard().delete(token);
             if (!result.isSuccess()) {
                 LOG.warn(String.format("Failed to remove card. Error message: %s", result.getMessage()));
-                throw new ServerException("Failed to remove card.");
+                throw new ForbiddenException(String.format("Failed to remove card. Error message: %s",result.getMessage()));
             }
         } catch (BraintreeException e) {
             LOG.warn("Braintree exception: ", e);
