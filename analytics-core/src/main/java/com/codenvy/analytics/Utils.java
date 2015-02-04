@@ -88,6 +88,7 @@ public class Utils {
         return df.format(date.getTime());
     }
 
+    /** Indicates if given string represents a date */
     public static boolean isDateFormat(String date) {
         return date.length() == Parameters.PARAM_DATE_FORMAT.length();
     }
@@ -154,6 +155,9 @@ public class Utils {
         return initDateInterval(toDate, timeUnit, -1, builder);
     }
 
+    /**
+     * Initialize context with specific time time unit.
+     */
     public static Context initializeContext(Parameters.TimeUnit timeUnit) throws ParseException {
         Calendar cal = Calendar.getInstance();
 
@@ -219,14 +223,14 @@ public class Utils {
     }
 
     public static Map<String, String> fetchEncodedPairs(String data, boolean keyToLowerCase) throws UnsupportedEncodingException {
-        if (data.isEmpty()) {
+        if (data.trim().isEmpty()) {
             return Collections.emptyMap();
         }
 
-        String[] splitted = data.split(",");
-        Map<String, String> result = new HashMap<>(splitted.length);
+        String[] items = data.split(",");
+        Map<String, String> result = new HashMap<>(items.length);
 
-        for (String entry : splitted) {
+        for (String entry : items) {
             String[] pair = entry.split("=");
 
             String key = decode(pair[0], "UTF-8");
@@ -245,10 +249,14 @@ public class Utils {
     }
 
     public static DBObject setDateFilter(Context context) throws ParseException {
+        return setDateFilter(context, ReadBasedMetric.DATE);
+    }
+
+    public static DBObject setDateFilter(Context context, String field) throws ParseException {
         DBObject dateFilter = new BasicDBObject();
         dateFilter.put("$gte", context.getAsDate(Parameters.FROM_DATE).getTimeInMillis());
         dateFilter.put("$lt", context.getAsDate(Parameters.TO_DATE).getTimeInMillis() + MongoDataLoader.DAY_IN_MILLISECONDS);
-        return new BasicDBObject(ReadBasedMetric.DATE, dateFilter);
+        return new BasicDBObject(field, dateFilter);
     }
 
     public static String getFilterAsString(Set<String> values) {

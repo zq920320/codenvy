@@ -76,7 +76,6 @@ public abstract class AbstractMetric implements Metric {
     public static final String DEBUG_TIME                = "debug_time";
     public static final String REGISTERED_USER           = "registered_user";
     public static final String PERSISTENT_WS             = "persistent_ws";
-    public static final String DEFAULT_VALUE             = "default";
     public static final String MEMORY                    = "memory";
     public static final String USAGE_TIME                = "usage_time";
     public static final String LIFETIME                  = "lifetime";
@@ -84,7 +83,7 @@ public abstract class AbstractMetric implements Metric {
     public static final String TASK_ID                   = "id";
     public static final String TASK_TYPE                 = "task_type";
     public static final String START_TIME                = "start_time";
-    public static final String STOP_TME                  = "stop_time";
+    public static final String STOP_TIME                 = "stop_time";
     public static final String GIGABYTE_RAM_HOURS        = "gigabyte_ram_hours";
     public static final String IS_FACTORY                = "is_factory";
     public static final String LAUNCH_TYPE               = "launch_type";

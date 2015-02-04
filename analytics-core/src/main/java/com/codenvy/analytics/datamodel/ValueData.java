@@ -27,7 +27,7 @@ public interface ValueData extends Externalizable {
      * Combines two {@link com.codenvy.analytics.datamodel.ValueData} into one single. The passed and the current
      * {@link com.codenvy.analytics.datamodel.ValueData} won't be modified.
      */
-    ValueData add(ValueData valueData);
+    <T extends ValueData> ValueData add(T valueData);
 
     /**
      * Subtracts passed {@link com.codenvy.analytics.datamodel.ValueData} from the current one. The passed and the current

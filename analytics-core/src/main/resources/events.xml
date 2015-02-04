@@ -70,8 +70,6 @@
             <param>TYPE</param>
             <param>ID</param>
             <param type="long">TIMEOUT</param>
-            <param type="long">USAGE-TIME</param>
-            <param type="long">FINISHED-NORMALLY</param>
         </parameters>
     </event>
     <event name="run-started">
@@ -96,8 +94,6 @@
             <param>ID</param>
             <param type="long">MEMORY</param>
             <param type="long">LIFETIME</param>
-            <param type="long">USAGE-TIME</param>
-            <param type="long">STOPPED-BY-USER</param>
         </parameters>
     </event>
     <event name="debug-started">
@@ -122,8 +118,6 @@
             <param>ID</param>
             <param type="long">MEMORY</param>
             <param type="long">LIFETIME</param>
-            <param type="long">USAGE-TIME</param>
-            <param type="long">STOPPED-BY-USER</param>
         </parameters>
     </event>
     <event name="build-queue-waiting-started">

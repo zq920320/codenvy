@@ -233,13 +233,6 @@ public class Context {
             this.params.putAll(params);
         }
 
-        public Builder putIfNotNull(Parameters param, String value) {
-            if (value != null) {
-                params.put(param.toString(), value);
-            }
-            return this;
-        }
-
         public Builder putAll(Context context) {
             this.params.putAll(context.params);
             return this;
@@ -274,6 +267,11 @@ public class Context {
 
         public Builder put(Parameters param, Calendar value) {
             params.put(param.toString(), Utils.formatDate(value));
+            return this;
+        }
+
+        public Builder put(Object param, Object value) {
+            params.put(param.toString(), value);
             return this;
         }
 

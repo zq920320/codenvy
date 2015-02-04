@@ -60,7 +60,7 @@ public class TasksList extends AbstractListValueResulted implements ReadBasedSum
                             MEMORY,
                             USAGE_TIME,
                             START_TIME,
-                            STOP_TME,
+                            STOP_TIME,
                             GIGABYTE_RAM_HOURS,
                             IS_FACTORY,
                             LAUNCH_TYPE,

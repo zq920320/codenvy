@@ -21,10 +21,13 @@ import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.AbstractMetric;
+import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.persistent.CollectionsManagement;
 import com.codenvy.analytics.persistent.MongoDataStorage;
 import com.codenvy.analytics.pig.PigServer;
+import com.codenvy.analytics.services.integrity.TasksIntegrity;
 import com.codenvy.analytics.services.pig.ScriptsManager;
 import com.codenvy.commons.lang.NameGenerator;
 import com.mongodb.BasicDBObject;
@@ -35,6 +38,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.BeforeClass;
 
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
@@ -61,7 +65,6 @@ public class BaseTest {
     protected static final String TWID2 = NameGenerator.generate("workspace_t2_", com.codenvy.api.workspace.server.Constants.ID_LENGTH - 4);
     protected static final String TWID3 = NameGenerator.generate("workspace_t3_", com.codenvy.api.workspace.server.Constants.ID_LENGTH - 4);
     protected static final String TWID4 = NameGenerator.generate("workspace_t4_", com.codenvy.api.workspace.server.Constants.ID_LENGTH - 4);
-    protected static final String TWID5 = NameGenerator.generate("workspace_t5_", com.codenvy.api.workspace.server.Constants.ID_LENGTH - 4);
 
     protected static final Logger LOG = LoggerFactory.getLogger(BaseTest.class);
 
@@ -136,5 +139,15 @@ public class BaseTest {
                 new BasicDBObject(AbstractMetric.PERSISTENT_WS, 1L)
                         .append(AbstractMetric.ID, id)
                         .append(AbstractMetric.WS_NAME, name));
+    }
+
+    protected void doIntegrity(String date) throws IOException {
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, date);
+        builder.put(Parameters.TO_DATE, date);
+        Context context = builder.build();
+
+        TasksIntegrity integrity = new TasksIntegrity(collectionsManagement);
+        integrity.doCompute(context);
     }
 }

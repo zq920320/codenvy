@@ -117,21 +117,24 @@ public class Event {
                                 .withParam("PARAMETERS", "SESSION-ID=" + sessionId);
         }
 
-        public static Builder createRunStartedEvent(String user, String ws, String project, String type, String id) {
+        public static Builder createRunStartedEvent(String user, String ws, String project, String type, String id, String lifetime, String mem) {
             return new Builder().withParam("EVENT", "run-started")
                                 .withParam("WS", ws)
                                 .withParam("USER", user)
                                 .withParam("PROJECT", project)
                                 .withParam("TYPE", type)
+                                .withParam("LIFETIME", lifetime)
+                                .withParam("MEMORY", mem)
                                 .withParam("ID", id);
         }
 
-        public static Builder createBuildStartedEvent(String user, String ws, String project, String type, String id) {
+        public static Builder createBuildStartedEvent(String user, String ws, String project, String type, String id, String timeout) {
             return new Builder().withParam("EVENT", "build-started")
                                 .withParam("WS", ws)
                                 .withParam("USER", user)
                                 .withParam("PROJECT", project)
                                 .withParam("TYPE", type)
+                                .withParam("TIMEOUT", timeout)
                                 .withParam("ID", id);
         }
 
@@ -142,35 +145,36 @@ public class Event {
                                 .withParam("ID", id);
         }
 
-        public static Builder createDebugStartedEvent(String user, String ws, String project, String type, String id) {
+        public static Builder createDebugStartedEvent(String user, String ws, String project, String type, String id, String lifetime, String mem) {
             return new Builder().withParam("EVENT", "debug-started")
                                 .withParam("WS", ws)
                                 .withParam("USER", user)
                                 .withParam("PROJECT", project)
                                 .withParam("TYPE", type)
+                                .withParam("LIFETIME", lifetime)
+                                .withParam("MEMORY", mem)
                                 .withParam("ID", id);
         }
 
-        public static Builder createRunFinishedEvent(String user, String ws, String project, String type, String id, long usageTime,
-                                                     long stoppedByUser) {
+        public static Builder createRunFinishedEvent(String user, String ws, String project, String type, String id, String lifetime, String mem) {
             return new Builder().withParam("EVENT", "run-finished")
                                 .withParam("WS", ws)
                                 .withParam("USER", user)
                                 .withParam("PROJECT", project)
                                 .withParam("TYPE", type)
-                                .withParam("ID", id)
-                                .withParam("USAGE-TIME", Long.toString(usageTime))
-                                .withParam("STOPPED-BY-USER", Long.toString(stoppedByUser));
+                                .withParam("LIFETIME", lifetime)
+                                .withParam("MEMORY", mem)
+                                .withParam("ID", id);
         }
 
-        public static Builder createBuildFinishedEvent(String user, String ws, String project, String type, String id, long usageTime) {
+        public static Builder createBuildFinishedEvent(String user, String ws, String project, String type, String id, String timeout) {
             return new Builder().withParam("EVENT", "build-finished")
                                 .withParam("WS", ws)
                                 .withParam("USER", user)
                                 .withParam("PROJECT", project)
                                 .withParam("TYPE", type)
-                                .withParam("ID", id)
-                                .withParam("USAGE-TIME", Long.toString(usageTime));
+                                .withParam("TIMEOUT", timeout)
+                                .withParam("ID", id);
         }
 
         public static Builder createConfigureDockerFinishedEvent(String user, String ws, String id) {
@@ -399,12 +403,14 @@ public class Event {
                                 .withParam("TYPE", type);
         }
 
-        public static Builder createDebugFinishedEvent(String user, String ws, String project, String type, String id) {
+        public static Builder createDebugFinishedEvent(String user, String ws, String project, String type, String id, String lifetime, String mem) {
             return new Builder().withParam("EVENT", "debug-finished")
                                 .withParam("WS", ws)
                                 .withParam("USER", user)
                                 .withParam("PROJECT", project)
                                 .withParam("TYPE", type)
+                                .withParam("LIFETIME", lifetime)
+                                .withParam("MEMORY", mem)
                                 .withParam("ID", id);
         }
     }

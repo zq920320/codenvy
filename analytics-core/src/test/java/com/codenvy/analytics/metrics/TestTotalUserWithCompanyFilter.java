@@ -22,7 +22,6 @@ import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.pig.scripts.ScriptType;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
-import com.codenvy.analytics.services.metrics.integrity.CreatedUsersIntegrity;
 
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -69,10 +68,6 @@ public class TestTotalUserWithCompanyFilter extends BaseTest {
 
         File log = LogGenerator.generateLog(events);
         computeStatistics(log, "20130101");
-
-        CreatedUsersIntegrity
-                createdUsersUpdater = new CreatedUsersIntegrity(collectionsManagement);
-        createdUsersUpdater.doCompute();
     }
 
     private void computeStatistics(File log, String date) throws IOException, ParseException {
@@ -177,6 +172,7 @@ public class TestTotalUserWithCompanyFilter extends BaseTest {
 
         assertEquals(value.getAsLong(), 1);
     }
+
     @Test
     public void testFilterCompany7() throws Exception {
         Context.Builder builder = new Context.Builder();

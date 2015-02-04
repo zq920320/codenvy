@@ -22,6 +22,7 @@ import com.codenvy.analytics.datamodel.DoubleValueData;
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
+import com.codenvy.analytics.datamodel.StringValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.AbstractMetric;
 import com.codenvy.analytics.metrics.Context;
@@ -34,6 +35,7 @@ import com.codenvy.analytics.metrics.Summaraziable;
 import com.codenvy.analytics.pig.scripts.ScriptType;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
+
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -57,6 +59,7 @@ public class TestTaskMetrics extends BaseTest {
     @BeforeClass
     public void setUp() throws Exception {
         prepareData();
+        doIntegrity("20131020");
     }
 
     @Test
@@ -173,7 +176,7 @@ public class TestTaskMetrics extends BaseTest {
                                                 + "gigabyte_ram_hours=0.004166666666666667, "
                                                 + "is_factory=1, "
                                                 + "launch_type=always-on, "
-                                                + "shutdown_type=timeout"
+                                                + "shutdown_type=user"
                                                 + "}");
 
         assertEquals(m.get("id3_r").toString(), "{"
@@ -193,7 +196,7 @@ public class TestTaskMetrics extends BaseTest {
                                                 + "gigabyte_ram_hours=0.0020833333333333333, "
                                                 + "is_factory=1, "
                                                 + "launch_type=timeout, "
-                                                + "shutdown_type=user"
+                                                + "shutdown_type=timeout"
                                                 + "}");
 
         assertEquals(m.get("id4_r").toString(), "{"
@@ -356,7 +359,7 @@ public class TestTaskMetrics extends BaseTest {
                                                 + "gigabyte_ram_hours=0.004166666666666667, "
                                                 + "is_factory=1, "
                                                 + "launch_type=always-on, "
-                                                + "shutdown_type=timeout"
+                                                + "shutdown_type=user"
                                                 + "}");
 
         assertEquals(m.get("id3_r").toString(), "{"
@@ -376,7 +379,7 @@ public class TestTaskMetrics extends BaseTest {
                                                 + "gigabyte_ram_hours=0.0020833333333333333, "
                                                 + "is_factory=1, "
                                                 + "launch_type=timeout, "
-                                                + "shutdown_type=user"
+                                                + "shutdown_type=timeout"
                                                 + "}");
 
         assertEquals(m.get("id4_r").toString(), "{"
@@ -566,13 +569,12 @@ public class TestTaskMetrics extends BaseTest {
         ListValueData expandedValue = (ListValueData)((Expandable)metric).getExpandedValue(Context.EMPTY);
 
         Map<String, Map<String, ValueData>> m = listToMap(expandedValue, AbstractMetric.TASK_ID);
-        assertEquals(m.toString(), "{"
-                                   + "session1={id=session1}, "
-                                   + "id2_d={id=id2_d}, "
-                                   + "id2_b={id=id2_b}, "
-                                   + "id2_r={id=id2_r}, "
-                                   + "session2={id=session2}"
-                                   + "}");
+        assertEquals(m.size(), 5);
+        assertEquals(m.get("session1").get("id"), StringValueData.valueOf("session1"));
+        assertEquals(m.get("session2").get("id"), StringValueData.valueOf("session2"));
+        assertEquals(m.get("id2_d").get("id"), StringValueData.valueOf("id2_d"));
+        assertEquals(m.get("id2_b").get("id"), StringValueData.valueOf("id2_b"));
+        assertEquals(m.get("id2_r").get("id"), StringValueData.valueOf("id2_r"));
     }
 
     @Test
@@ -590,16 +592,15 @@ public class TestTaskMetrics extends BaseTest {
         ListValueData expandedValue = (ListValueData)((Expandable)metric).getExpandedValue(Context.EMPTY);
 
         Map<String, Map<String, ValueData>> m = listToMap(expandedValue, AbstractMetric.TASK_ID);
-        assertEquals(m.toString(), "{"
-                                   + "id1_b={id=id1_b}, "
-                                   + "id1_r={id=id1_r}, "
-                                   + "id1_d={id=id1_d}, "
-                                   + "session1={id=session1}, "
-                                   + "id3_r={id=id3_r}, "
-                                   + "id2_d={id=id2_d}, "
-                                   + "id2_b={id=id2_b}, "
-                                   + "session2={id=session2}" +
-                                   "}");
+        assertEquals(m.size(), 8);
+        assertEquals(m.get("session1").get("id"), StringValueData.valueOf("session1"));
+        assertEquals(m.get("session2").get("id"), StringValueData.valueOf("session2"));
+        assertEquals(m.get("id2_d").get("id"), StringValueData.valueOf("id2_d"));
+        assertEquals(m.get("id2_b").get("id"), StringValueData.valueOf("id2_b"));
+        assertEquals(m.get("id2_r").get("id"), StringValueData.valueOf("id2_r"));
+        assertEquals(m.get("id1_d").get("id"), StringValueData.valueOf("id1_d"));
+        assertEquals(m.get("id1_b").get("id"), StringValueData.valueOf("id1_b"));
+        assertEquals(m.get("id1_r").get("id"), StringValueData.valueOf("id1_r"));
     }
 
     @Test
@@ -618,7 +619,7 @@ public class TestTaskMetrics extends BaseTest {
 
         Map<String, Map<String, ValueData>> m = listToMap(expandedValue, AbstractMetric.TASK_ID);
         assertEquals(m.toString(), "{id3_b={id=id3_b}, " +
-                                   "id2_r={id=id2_r}, " +
+                                   "id3_r={id=id3_r}, " +
                                    "id3_d={id=id3_d}}");
     }
 
@@ -652,7 +653,7 @@ public class TestTaskMetrics extends BaseTest {
                                       .withParam("PROJECT", "project1")
                                       .withParam("TYPE", "projectType")
                                       .withParam("ID", "id1_b")
-                                      .withParam("TIMEOUT", "600")
+                                      .withParam("TIMEOUT", "600000")
                                       .build());
         events.add(new Event.Builder().withDate("2013-10-20")
                                       .withTime("10:02:00")
@@ -662,9 +663,7 @@ public class TestTaskMetrics extends BaseTest {
                                       .withParam("PROJECT", "project1")
                                       .withParam("TYPE", "projectType")
                                       .withParam("ID", "id1_b")
-                                      .withParam("TIMEOUT", "600")
-                                      .withParam("USAGE-TIME", "120000")
-                                      .withParam("FINISHED-NORMALLY", "1")
+                                      .withParam("TIMEOUT", "600000")
                                       .build());
 
         // #2 1m, stopped normally
@@ -688,8 +687,6 @@ public class TestTaskMetrics extends BaseTest {
                                       .withParam("ID", "id2_b")
                                       .withParam("MEMORY", "250")
                                       .withParam("TIMEOUT", "-1")
-                                      .withParam("USAGE-TIME", "60000")
-                                      .withParam("FINISHED-NORMALLY", "1")
                                       .build());
 
 
@@ -702,7 +699,7 @@ public class TestTaskMetrics extends BaseTest {
                                       .withParam("PROJECT", "project3")
                                       .withParam("TYPE", "projectType")
                                       .withParam("ID", "id3_b")
-                                      .withParam("TIMEOUT", "600")
+                                      .withParam("TIMEOUT", "50000")
                                       .build());
         events.add(new Event.Builder().withDate("2013-10-20")
                                       .withTime("11:02:00")
@@ -712,9 +709,7 @@ public class TestTaskMetrics extends BaseTest {
                                       .withParam("PROJECT", "project3")
                                       .withParam("TYPE", "projectType")
                                       .withParam("ID", "id3_b")
-                                      .withParam("TIMEOUT", "600")
-                                      .withParam("USAGE-TIME", "120000")
-                                      .withParam("FINISHED-NORMALLY", "0")
+                                      .withParam("TIMEOUT", "50000")
                                       .build());
 
         /** RUN EVENTS */
@@ -728,7 +723,7 @@ public class TestTaskMetrics extends BaseTest {
                                       .withParam("TYPE", "projectType")
                                       .withParam("ID", "id1_r")
                                       .withParam("MEMORY", "128")
-                                      .withParam("LIFETIME", "600")
+                                      .withParam("LIFETIME", "600000")
                                       .build());
         events.add(new Event.Builder().withDate("2013-10-20")
                                       .withTime("10:02:00")
@@ -739,9 +734,7 @@ public class TestTaskMetrics extends BaseTest {
                                       .withParam("TYPE", "projectType")
                                       .withParam("ID", "id1_r")
                                       .withParam("MEMORY", "128")
-                                      .withParam("LIFETIME", "600")
-                                      .withParam("USAGE-TIME", "120000")
-                                      .withParam("STOPPED-BY-USER", "1")
+                                      .withParam("LIFETIME", "600000")
                                       .build());
 
         // #2 1m, stopped by user
@@ -766,8 +759,6 @@ public class TestTaskMetrics extends BaseTest {
                                       .withParam("ID", "id2_r")
                                       .withParam("MEMORY", "128")
                                       .withParam("LIFETIME", "-1")
-                                      .withParam("USAGE-TIME", "120000")
-                                      .withParam("STOPPED-BY-USER", "0")
                                       .build());
 
 
@@ -781,7 +772,7 @@ public class TestTaskMetrics extends BaseTest {
                                       .withParam("TYPE", "projectType")
                                       .withParam("ID", "id3_r")
                                       .withParam("MEMORY", "128")
-                                      .withParam("LIFETIME", "60")
+                                      .withParam("LIFETIME", "50000")
                                       .build());
         events.add(new Event.Builder().withDate("2013-10-20")
                                       .withTime("11:01:00")
@@ -792,9 +783,7 @@ public class TestTaskMetrics extends BaseTest {
                                       .withParam("TYPE", "projectType")
                                       .withParam("ID", "id3_r")
                                       .withParam("MEMORY", "128")
-                                      .withParam("LIFETIME", "60")
-                                      .withParam("USAGE-TIME", "60000")
-                                      .withParam("STOPPED-BY-USER", "1")
+                                      .withParam("LIFETIME", "50000")
                                       .build());
 
         // #1 2min, non-finished run
@@ -821,7 +810,7 @@ public class TestTaskMetrics extends BaseTest {
                                       .withParam("TYPE", "projectType")
                                       .withParam("ID", "id1_d")
                                       .withParam("MEMORY", "128")
-                                      .withParam("LIFETIME", "600")
+                                      .withParam("LIFETIME", "600000")
                                       .build());
         events.add(new Event.Builder().withDate("2013-10-20")
                                       .withTime("13:02:00")
@@ -832,9 +821,7 @@ public class TestTaskMetrics extends BaseTest {
                                       .withParam("TYPE", "projectType")
                                       .withParam("ID", "id1_d")
                                       .withParam("MEMORY", "128")
-                                      .withParam("LIFETIME", "600")
-                                      .withParam("USAGE-TIME", "120000")
-                                      .withParam("STOPPED-BY-USER", "1")
+                                      .withParam("LIFETIME", "600000")
                                       .build());
 
         // #2 1m, stopped by user
@@ -859,8 +846,6 @@ public class TestTaskMetrics extends BaseTest {
                                       .withParam("ID", "id2_d")
                                       .withParam("MEMORY", "128")
                                       .withParam("LIFETIME", "-1")
-                                      .withParam("USAGE-TIME", "60000")
-                                      .withParam("STOPPED-BY-USER", "1")
                                       .build());
 
         // #3 1m, stopped by timeout
@@ -873,7 +858,7 @@ public class TestTaskMetrics extends BaseTest {
                                       .withParam("TYPE", "projectType")
                                       .withParam("ID", "id3_d")
                                       .withParam("MEMORY", "128")
-                                      .withParam("LIFETIME", "60")
+                                      .withParam("LIFETIME", "50000")
                                       .build());
         events.add(new Event.Builder().withDate("2013-10-20")
                                       .withTime("15:02:00")
@@ -884,9 +869,7 @@ public class TestTaskMetrics extends BaseTest {
                                       .withParam("TYPE", "projectType")
                                       .withParam("ID", "id3_d")
                                       .withParam("MEMORY", "128")
-                                      .withParam("LIFETIME", "60")
-                                      .withParam("USAGE-TIME", "120000")
-                                      .withParam("STOPPED-BY-USER", "0")
+                                      .withParam("LIFETIME", "50000")
                                       .build());
 
         /** EDIT EVENTS */

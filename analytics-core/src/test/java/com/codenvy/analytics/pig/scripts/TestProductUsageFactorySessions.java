@@ -96,7 +96,7 @@ public class TestProductUsageFactorySessions extends BaseTest {
                                 .withDate("2013-02-10").withTime("11:15:00").build());
 
         // run event for session #1
-        events.add(Event.Builder.createRunStartedEvent("user1@gmail.com", "tmp-1", "project", "type", "id1")
+        events.add(Event.Builder.createRunStartedEvent("user1@gmail.com", "tmp-1", "project", "type", "id1", "60000", "128")
                                 .withDate("2013-02-10").withTime("10:03:00").build());
 
 
@@ -121,8 +121,6 @@ public class TestProductUsageFactorySessions extends BaseTest {
                                       .withParam("TYPE", "projectType")
                                       .withParam("ID", "id1_b")
                                       .withParam("TIMEOUT", "600")
-                                      .withParam("USAGE-TIME", "120000")
-                                      .withParam("FINISHED-NORMALLY", "1")
                                       .build());
 
         // #2 1m, stopped normally
@@ -144,10 +142,7 @@ public class TestProductUsageFactorySessions extends BaseTest {
                                       .withParam("PROJECT", "project2")
                                       .withParam("TYPE", "projectType")
                                       .withParam("ID", "id2_b")
-                                      .withParam("MEMORY", "250")
                                       .withParam("TIMEOUT", "-1")
-                                      .withParam("USAGE-TIME", "60000")
-                                      .withParam("FINISHED-NORMALLY", "1")
                                       .build());
 
         /** RUN EVENTS */
@@ -173,8 +168,6 @@ public class TestProductUsageFactorySessions extends BaseTest {
                                       .withParam("ID", "id1_r")
                                       .withParam("MEMORY", "128")
                                       .withParam("LIFETIME", "600")
-                                      .withParam("USAGE-TIME", "120000")
-                                      .withParam("STOPPED-BY-USER", "1")
                                       .build());
 
         // #2 1m, stopped by user
@@ -199,8 +192,6 @@ public class TestProductUsageFactorySessions extends BaseTest {
                                       .withParam("ID", "id2_r")
                                       .withParam("MEMORY", "128")
                                       .withParam("LIFETIME", "-1")
-                                      .withParam("USAGE-TIME", "120000")
-                                      .withParam("STOPPED-BY-USER", "0")
                                       .build());
 
         /** DEBUGS EVENTS */
@@ -226,8 +217,6 @@ public class TestProductUsageFactorySessions extends BaseTest {
                                       .withParam("ID", "id1_d")
                                       .withParam("MEMORY", "128")
                                       .withParam("LIFETIME", "600")
-                                      .withParam("USAGE-TIME", "12000")
-                                      .withParam("STOPPED-BY-USER", "1")
                                       .build());
 
         // #2 1m, stopped by user
@@ -252,8 +241,6 @@ public class TestProductUsageFactorySessions extends BaseTest {
                                       .withParam("ID", "id2_d")
                                       .withParam("MEMORY", "128")
                                       .withParam("LIFETIME", "-1")
-                                      .withParam("USAGE-TIME", "6000")
-                                      .withParam("STOPPED-BY-USER", "1")
                                       .build());
 
 
@@ -263,33 +250,30 @@ public class TestProductUsageFactorySessions extends BaseTest {
         builder.put(Parameters.FROM_DATE, "20130210");
         builder.put(Parameters.TO_DATE, "20130210");
         builder.put(Parameters.LOG, log.getAbsolutePath());
+        Context context = builder.build();
+
+        builder.putAll(scriptsManager.getScript(ScriptType.USERS_PROFILES, MetricType.USERS_PROFILES_LIST).getParamsAsMap());
+        pigServer.execute(ScriptType.USERS_PROFILES, context);
+
+        builder.putAll(scriptsManager.getScript(ScriptType.WORKSPACES_PROFILES, MetricType.WORKSPACES_PROFILES_LIST).getParamsAsMap());
+        pigServer.execute(ScriptType.WORKSPACES_PROFILES, context);
 
         builder.putAll(scriptsManager.getScript(ScriptType.ACCEPTED_FACTORIES, MetricType.FACTORIES_ACCEPTED_LIST).getParamsAsMap());
-        pigServer.execute(ScriptType.ACCEPTED_FACTORIES, builder.build());
+        pigServer.execute(ScriptType.ACCEPTED_FACTORIES, context);
 
-        builder.putAll(scriptsManager.getScript(ScriptType.TASKS, MetricType.TASKS).getParamsAsMap());
-        pigServer.execute(ScriptType.TASKS, builder.build());
+        builder.putAll(scriptsManager.getScript(ScriptType.TASKS, MetricType.TASKS_LIST).getParamsAsMap());
+        pigServer.execute(ScriptType.TASKS, context);
 
-        builder.putAll(scriptsManager.getScript(ScriptType.USERS_PROFILES, MetricType.USERS_PROFILES_LIST)
-                                     .getParamsAsMap());
-        pigServer.execute(ScriptType.USERS_PROFILES, builder.build());
-
-        builder.putAll(scriptsManager.getScript(ScriptType.WORKSPACES_PROFILES, MetricType.WORKSPACES_PROFILES_LIST)
-                                     .getParamsAsMap());
-        pigServer.execute(ScriptType.WORKSPACES_PROFILES, builder.build());
-
-        builder.putAll(scriptsManager.getScript(ScriptType.ACCEPTED_FACTORIES, MetricType.FACTORIES_ACCEPTED_LIST).getParamsAsMap());
-        pigServer.execute(ScriptType.ACCEPTED_FACTORIES, builder.build());
-
-        builder.putAll(
-                scriptsManager.getScript(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST).getParamsAsMap());
-        pigServer.execute(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, builder.build());
+        builder.putAll(scriptsManager.getScript(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST).getParamsAsMap());
+        pigServer.execute(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, context);
 
         builder.putAll(scriptsManager.getScript(ScriptType.CREATED_TEMPORARY_WORKSPACES, MetricType.TEMPORARY_WORKSPACES_CREATED).getParamsAsMap());
-        pigServer.execute(ScriptType.CREATED_TEMPORARY_WORKSPACES, builder.build());
+        pigServer.execute(ScriptType.CREATED_TEMPORARY_WORKSPACES, context);
+
+        doIntegrity("20130210");
 
         DataComputationFeature dataComputationFeature = new DataComputationFeature();
-        dataComputationFeature.forceExecute(builder.build());
+        dataComputationFeature.forceExecute(context);
     }
 
     @Test
@@ -400,9 +384,9 @@ public class TestProductUsageFactorySessions extends BaseTest {
         assertEquals(summary.get(UsersStatisticsList.RUNS).getAsString(), "1");
         assertEquals(summary.get(UsersStatisticsList.BUILDS).getAsString(), "0");
         assertEquals(summary.get(UsersStatisticsList.DEPLOYS).getAsString(), "0");
-        assertEquals(summary.get(AbstractMetric.BUILDS_GIGABYTE_RAM_HOURS).getAsString(), "0.054");
+        assertEquals(summary.get(AbstractMetric.BUILDS_GIGABYTE_RAM_HOURS).getAsString(), "0.075");
         assertEquals(summary.get(AbstractMetric.RUNS_GIGABYTE_RAM_HOURS).getAsString(), "0.0083");
-        assertEquals(summary.get(AbstractMetric.DEBUGS_GIGABYTE_RAM_HOURS).getAsString(), "5.0E-4");
+        assertEquals(summary.get(AbstractMetric.DEBUGS_GIGABYTE_RAM_HOURS).getAsString(), "0.0062");
         assertEquals(summary.get(AbstractMetric.EDITS_GIGABYTE_RAM_HOURS).getAsString(), "0.0061");
 
         // verify the same summary data on metric FACTORY_STATISTICS_LIST
@@ -417,9 +401,9 @@ public class TestProductUsageFactorySessions extends BaseTest {
         assertEquals(summary.get(UsersStatisticsList.RUNS).getAsString(), "1");
         assertEquals(summary.get(UsersStatisticsList.BUILDS).getAsString(), "0");
         assertEquals(summary.get(UsersStatisticsList.DEPLOYS).getAsString(), "0");
-        assertEquals(summary.get(AbstractMetric.BUILDS_GIGABYTE_RAM_HOURS).getAsString(), "0.054");
+        assertEquals(summary.get(AbstractMetric.BUILDS_GIGABYTE_RAM_HOURS).getAsString(), "0.075");
         assertEquals(summary.get(AbstractMetric.RUNS_GIGABYTE_RAM_HOURS).getAsString(), "0.0083");
-        assertEquals(summary.get(AbstractMetric.DEBUGS_GIGABYTE_RAM_HOURS).getAsString(), "5.0E-4");
+        assertEquals(summary.get(AbstractMetric.DEBUGS_GIGABYTE_RAM_HOURS).getAsString(), "0.0062");
         assertEquals(summary.get(AbstractMetric.EDITS_GIGABYTE_RAM_HOURS).getAsString(), "0.0061");
     }
 }

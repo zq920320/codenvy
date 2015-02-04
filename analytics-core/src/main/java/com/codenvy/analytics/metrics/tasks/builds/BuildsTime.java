@@ -34,7 +34,8 @@ public class BuildsTime extends TasksTime {
         super(MetricType.BUILDS_TIME);
     }
 
-    @Override public Context applySpecificFilter(Context context) throws IOException {
+    @Override
+    public Context applySpecificFilter(Context context) throws IOException {
         Context.Builder builder = new Context.Builder(super.applySpecificFilter(context));
         builder.put(MetricFilter.TASK_TYPE, Tasks.BUILDER);
         return builder.build();

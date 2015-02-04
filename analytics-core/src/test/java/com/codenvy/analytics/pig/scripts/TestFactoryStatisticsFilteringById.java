@@ -87,7 +87,7 @@ public class TestFactoryStatisticsFilteringById extends BaseTest {
         events.add(Event.Builder.createSessionUsageEvent(TEST_USER_ALIAS, "tmp-2", "id2", true)
                                 .withDate("2013-02-10").withTime("10:30:00").build());
 
-        events.add(Event.Builder.createRunStartedEvent(TEST_USER_ALIAS, "tmp-2", "project", "type", "id1")
+        events.add(Event.Builder.createRunStartedEvent(TEST_USER_ALIAS, "tmp-2", "project", "type", "id1","60000", "128")
                                 .withDate("2013-02-10").withTime("10:23:00").build());
 
         File log = LogGenerator.generateLog(events);

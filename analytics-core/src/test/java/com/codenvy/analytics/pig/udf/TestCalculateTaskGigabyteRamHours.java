@@ -24,6 +24,7 @@ import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.pig.scripts.ScriptType;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
+
 import org.apache.pig.data.Tuple;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
@@ -41,6 +42,7 @@ public class TestCalculateTaskGigabyteRamHours extends BaseTest {
     @BeforeClass
     public void setUp() throws Exception {
         prepareData();
+        doIntegrity("20131020");
     }
 
     private Tuple makeTuple(String factoryId) {
@@ -162,8 +164,6 @@ public class TestCalculateTaskGigabyteRamHours extends BaseTest {
                                       .withParam("TYPE", "projectType")
                                       .withParam("ID", "id1_b")
                                       .withParam("TIMEOUT", "600")
-                                      .withParam("USAGE-TIME", "120000")
-                                      .withParam("FINISHED-NORMALLY", "1")
                                       .build());
 
         // #2 1m, stopped normally
@@ -187,8 +187,6 @@ public class TestCalculateTaskGigabyteRamHours extends BaseTest {
                                       .withParam("ID", "id2_b")
                                       .withParam("MEMORY", "250")
                                       .withParam("TIMEOUT", "-1")
-                                      .withParam("USAGE-TIME", "60000")
-                                      .withParam("FINISHED-NORMALLY", "1")
                                       .build());
 
         /** RUN EVENTS */
@@ -214,8 +212,6 @@ public class TestCalculateTaskGigabyteRamHours extends BaseTest {
                                       .withParam("ID", "id1_r")
                                       .withParam("MEMORY", "128")
                                       .withParam("LIFETIME", "600")
-                                      .withParam("USAGE-TIME", "120000")
-                                      .withParam("STOPPED-BY-USER", "1")
                                       .build());
 
         // #2 1m, stopped by user
@@ -240,8 +236,6 @@ public class TestCalculateTaskGigabyteRamHours extends BaseTest {
                                       .withParam("ID", "id2_r")
                                       .withParam("MEMORY", "128")
                                       .withParam("LIFETIME", "-1")
-                                      .withParam("USAGE-TIME", "120000")
-                                      .withParam("STOPPED-BY-USER", "0")
                                       .build());
 
         /** DEBUGS EVENTS */
@@ -267,8 +261,6 @@ public class TestCalculateTaskGigabyteRamHours extends BaseTest {
                                       .withParam("ID", "id1_d")
                                       .withParam("MEMORY", "128")
                                       .withParam("LIFETIME", "600")
-                                      .withParam("USAGE-TIME", "120000")
-                                      .withParam("STOPPED-BY-USER", "1")
                                       .build());
 
         // #2 1m, stopped by user
@@ -293,8 +285,6 @@ public class TestCalculateTaskGigabyteRamHours extends BaseTest {
                                       .withParam("ID", "id2_d")
                                       .withParam("MEMORY", "128")
                                       .withParam("LIFETIME", "-1")
-                                      .withParam("USAGE-TIME", "60000")
-                                      .withParam("STOPPED-BY-USER", "1")
                                       .build());
 
         /** EDIT EVENTS */

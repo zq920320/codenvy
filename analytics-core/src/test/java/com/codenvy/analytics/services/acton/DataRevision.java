@@ -120,9 +120,7 @@ public class DataRevision extends BaseTest {
 
     private void runScript() throws Exception {
         Context context = Utils.initializeContext(Parameters.TimeUnit.DAY);
-        context =
-                context.cloneAndPut(Parameters.LOG, getResourceAsBytes(LOG_DATE, getYesterday()).getAbsolutePath());
-
+        context = context.cloneAndPut(Parameters.LOG, getResourceAsBytes(LOG_DATE, getYesterday()).getAbsolutePath());
         pigRunner.forceExecute(context);
     }
 

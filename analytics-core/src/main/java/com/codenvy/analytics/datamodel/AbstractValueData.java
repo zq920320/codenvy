@@ -24,7 +24,7 @@ public abstract class AbstractValueData implements ValueData {
     private Integer hash;
 
     @Override
-    public ValueData add(ValueData valueData) {
+    public <T extends ValueData> T add(T valueData) {
         if (getClass() != valueData.getClass()) {
             throw new IllegalArgumentException(
                     "Can not add two different classes " + getClass().getName() + " and " + valueData.getClass().getName());
@@ -70,7 +70,7 @@ public abstract class AbstractValueData implements ValueData {
     abstract protected int doHashCode();
 
     /** Combines two value data into one new single instance */
-    abstract protected ValueData doAdd(ValueData valueData);
+    abstract protected <T extends ValueData> T doAdd(T valueData);
 
     /** Subtract passed value data from the current one */
     abstract protected ValueData doSubtract(ValueData valueData);

@@ -47,6 +47,7 @@ public class TestBuildMetrics extends BaseTest {
     @BeforeClass
     public void setUp() throws Exception {
         prepareData();
+        doIntegrity("20131020");
     }
 
     @Test
@@ -64,7 +65,7 @@ public class TestBuildMetrics extends BaseTest {
 
         DoubleValueData d = getAsDouble(metric, Context.EMPTY);
 
-        assertEquals(1250, round(d.getAsDouble() * 10000));
+        assertEquals(round(d.getAsDouble() * 10), 3);
     }
 
     @Test
@@ -86,7 +87,7 @@ public class TestBuildMetrics extends BaseTest {
     }
 
     @Test
-    public void testRunsFinishedByTimeout() throws Exception {
+    public void testBuildsFinishedByTimeout() throws Exception {
         Metric metric = MetricFactory.getMetric(MetricType.BUILDS_FINISHED_BY_TIMEOUT);
 
         LongValueData l = getAsLong(metric, Context.EMPTY);
@@ -95,7 +96,7 @@ public class TestBuildMetrics extends BaseTest {
     }
 
     @Test
-    public void testRunsFinishedNormally() throws Exception {
+    public void testBuildsFinishedNormally() throws Exception {
         Metric metric = MetricFactory.getMetric(MetricType.BUILDS_FINISHED_NORMALLY);
 
         LongValueData l = getAsLong(metric, Context.EMPTY);
@@ -104,7 +105,7 @@ public class TestBuildMetrics extends BaseTest {
     }
 
     @Test
-    public void testRunsFinished() throws Exception {
+    public void testBuildsFinished() throws Exception {
         Metric metric = MetricFactory.getMetric(MetricType.BUILDS_FINISHED);
 
         LongValueData l = getAsLong(metric, Context.EMPTY);
@@ -118,7 +119,7 @@ public class TestBuildMetrics extends BaseTest {
 
         LongValueData l = getAsLong(metric, Context.EMPTY);
 
-        assertEquals(l.getAsLong(), 300000);
+        assertEquals(l.getAsLong(), 720000);
     }
 
     private void prepareData() throws Exception {
@@ -143,7 +144,7 @@ public class TestBuildMetrics extends BaseTest {
                                       .withParam("PROJECT", "project")
                                       .withParam("TYPE", "projectType")
                                       .withParam("ID", "id1")
-                                      .withParam("TIMEOUT", "600")
+                                      .withParam("TIMEOUT", "600000")
                                       .build());
         events.add(new Event.Builder().withDate("2013-10-20")
                                       .withTime("10:10:00")
@@ -153,9 +154,7 @@ public class TestBuildMetrics extends BaseTest {
                                       .withParam("PROJECT", "project")
                                       .withParam("TYPE", "projectType")
                                       .withParam("ID", "id1")
-                                      .withParam("TIMEOUT", "600")
-                                      .withParam("USAGE-TIME", "120000")
-                                      .withParam("FINISHED-NORMALLY", "1")
+                                      .withParam("TIMEOUT", "600000")
                                       .build());
 
         // #2 1m, stopped normally
@@ -178,8 +177,6 @@ public class TestBuildMetrics extends BaseTest {
                                       .withParam("TYPE", "projectType")
                                       .withParam("ID", "id2")
                                       .withParam("TIMEOUT", "-1")
-                                      .withParam("USAGE-TIME", "60000")
-                                      .withParam("FINISHED-NORMALLY", "1")
                                       .build());
 
 
@@ -192,7 +189,7 @@ public class TestBuildMetrics extends BaseTest {
                                       .withParam("PROJECT", "project")
                                       .withParam("TYPE", "projectType")
                                       .withParam("ID", "id3")
-                                      .withParam("TIMEOUT", "60")
+                                      .withParam("TIMEOUT", "50000")
                                       .build());
         events.add(new Event.Builder().withDate("2013-10-20")
                                       .withTime("11:01:00")
@@ -202,9 +199,7 @@ public class TestBuildMetrics extends BaseTest {
                                       .withParam("PROJECT", "project")
                                       .withParam("TYPE", "projectType")
                                       .withParam("ID", "id3")
-                                      .withParam("TIMEOUT", "60")
-                                      .withParam("USAGE-TIME", "120000")
-                                      .withParam("FINISHED-NORMALLY", "0")
+                                      .withParam("TIMEOUT", "50000")
                                       .build());
 
         return LogGenerator.generateLog(events);

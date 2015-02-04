@@ -17,9 +17,7 @@
  */
 package com.codenvy.analytics.pig.udf;
 
-import com.codenvy.analytics.datamodel.DoubleValueData;
 import com.codenvy.analytics.datamodel.ListValueData;
-import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.AbstractMetric;
 import com.codenvy.analytics.metrics.Context;
@@ -27,12 +25,19 @@ import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricFactory;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.metrics.Summaraziable;
+
 import org.apache.pig.data.Tuple;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
+
+import static com.codenvy.analytics.datamodel.ValueDataUtil.getAsList;
+import static com.codenvy.analytics.datamodel.ValueDataUtil.getSummaryValue;
+import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsDouble;
+import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsList;
+import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsLong;
+import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsMap;
 
 /** @author Dmytro Nochevnov */
 public abstract class AbstractCalculateTaskGigabyteRamHours extends CalculateGigabyteRamHours {
@@ -61,24 +66,33 @@ public abstract class AbstractCalculateTaskGigabyteRamHours extends CalculateGig
         Context.Builder builder = new Context.Builder();
         builder.put(MetricFilter.FACTORY_ID, factory_id);
         builder.put(MetricFilter.TASK_TYPE, taskType);
-        builder.put(Parameters.PAGE, 1);
-        builder.put(Parameters.PER_PAGE, 10);
 
+        Double result = Double.valueOf(0);
         try {
             Metric metric = MetricFactory.getMetric(MetricType.TASKS_LIST);
-            ListValueData summaryValue = (ListValueData)((Summaraziable)metric).getSummaryValue(builder.build());
 
-            if (summaryValue.size() == 0) {
-                return null;
+            ListValueData summaryValue = getSummaryValue(metric, builder.build());
+            if (!summaryValue.isEmpty()) {
+                List<ValueData> l = treatAsList(summaryValue);
+                Map<String, ValueData> m = treatAsMap(l.get(0));
+                if (!m.containsKey(AbstractMetric.GIGABYTE_RAM_HOURS)) {
+                    result += treatAsDouble(m.get(AbstractMetric.GIGABYTE_RAM_HOURS));
+                }
             }
 
-            Map<String, ValueData> valueMap = ((MapValueData)summaryValue.getAll().get(0)).getAll();
-            if (!valueMap.containsKey(AbstractMetric.GIGABYTE_RAM_HOURS)) {
-                return null;
+            /** DataIntegrity starts later, that's why we have to take into account empty GIGABYTE_RAM_HOURS fields */
+            builder.put(AbstractMetric.GIGABYTE_RAM_HOURS, null);
+            List<ValueData> l = treatAsList(getAsList(metric, builder.build()));
+            for (ValueData v : l) {
+                Map<String, ValueData> m = treatAsMap(v);
+                if (m.containsKey(AbstractMetric.MEMORY) && m.containsKey(AbstractMetric.START_TIME) && m.containsKey(AbstractMetric.STOP_TIME)) {
+                    result += calculateGigabyteRamHours(treatAsLong(m.get(AbstractMetric.MEMORY)),
+                                                        treatAsLong(m.get(AbstractMetric.STOP_TIME)) - treatAsLong(m.get(AbstractMetric.START_TIME)));
+                }
             }
 
-            return ((DoubleValueData) valueMap.get(AbstractMetric.GIGABYTE_RAM_HOURS)).getAsDouble();
-        } catch (NullPointerException e) {
+            return result;
+        } catch (Exception e) {
             return null;
         }
     }

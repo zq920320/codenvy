@@ -17,7 +17,8 @@
  */
 package com.codenvy.analytics.services;
 
-import com.codenvy.analytics.services.metrics.DataIntegrity;
+
+import com.codenvy.analytics.services.integrity.DataIntegrity;
 
 /**
  * @author Alexander Reshetnyak

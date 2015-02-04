@@ -45,9 +45,6 @@ public class TestRestoreLastLoginDate extends BaseTest {
     public void clearDatabase() {
     }
 
-    /**
-     * @throws Exception
-     */
     @Test
     public void restore() throws Exception {
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");

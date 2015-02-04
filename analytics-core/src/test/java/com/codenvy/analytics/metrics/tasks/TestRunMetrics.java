@@ -47,6 +47,7 @@ public class TestRunMetrics extends BaseTest {
     @BeforeClass
     public void setUp() throws Exception {
         prepareData();
+        doIntegrity("20131020");
     }
 
     @Test
@@ -91,7 +92,7 @@ public class TestRunMetrics extends BaseTest {
 
         DoubleValueData d = getAsDouble(metric, Context.EMPTY);
 
-        assertEquals(round(d.getAsDouble() * 10000), 104);
+        assertEquals(round(d.getAsDouble() * 10000), 250);
     }
 
     @Test
@@ -127,7 +128,7 @@ public class TestRunMetrics extends BaseTest {
 
         LongValueData l = getAsLong(metric, Context.EMPTY);
 
-        assertEquals(l.getAsLong(), 300000);
+        assertEquals(l.getAsLong(), 720000);
     }
 
     private void prepareData() throws Exception {
@@ -153,7 +154,7 @@ public class TestRunMetrics extends BaseTest {
                                       .withParam("TYPE", "projectType")
                                       .withParam("ID", "id1")
                                       .withParam("MEMORY", "128")
-                                      .withParam("LIFETIME", "600")
+                                      .withParam("LIFETIME", "600000")
                                       .build());
         events.add(new Event.Builder().withDate("2013-10-20")
                                       .withTime("10:10:00")
@@ -164,9 +165,7 @@ public class TestRunMetrics extends BaseTest {
                                       .withParam("TYPE", "projectType")
                                       .withParam("ID", "id1")
                                       .withParam("MEMORY", "128")
-                                      .withParam("LIFETIME", "600")
-                                      .withParam("USAGE-TIME", "120000")
-                                      .withParam("STOPPED-BY-USER", "1")
+                                      .withParam("LIFETIME", "600000")
                                       .build());
 
         // #2 1m, stopped by user
@@ -191,8 +190,6 @@ public class TestRunMetrics extends BaseTest {
                                       .withParam("ID", "id2")
                                       .withParam("MEMORY", "128")
                                       .withParam("LIFETIME", "-1")
-                                      .withParam("USAGE-TIME", "60000")
-                                      .withParam("STOPPED-BY-USER", "1")
                                       .build());
 
 
@@ -206,7 +203,7 @@ public class TestRunMetrics extends BaseTest {
                                       .withParam("TYPE", "projectType")
                                       .withParam("ID", "id3")
                                       .withParam("MEMORY", "128")
-                                      .withParam("LIFETIME", "60")
+                                      .withParam("LIFETIME", "50000")
                                       .build());
         events.add(new Event.Builder().withDate("2013-10-20")
                                       .withTime("11:01:00")
@@ -217,9 +214,7 @@ public class TestRunMetrics extends BaseTest {
                                       .withParam("TYPE", "projectType")
                                       .withParam("ID", "id3")
                                       .withParam("MEMORY", "128")
-                                      .withParam("LIFETIME", "60")
-                                      .withParam("USAGE-TIME", "120000")
-                                      .withParam("STOPPED-BY-USER", "0")
+                                      .withParam("LIFETIME", "50000")
                                       .build());
 
         return LogGenerator.generateLog(events);

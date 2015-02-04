@@ -263,11 +263,16 @@ public class TestUsersData extends BaseTest {
         builder.putAll(scriptsManager.getScript(ScriptType.WORKSPACES_PROFILES, MetricType.WORKSPACES_PROFILES_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.WORKSPACES_PROFILES, builder.build());
 
+        builder.putAll(scriptsManager.getScript(ScriptType.TASKS, MetricType.TASKS_LIST).getParamsAsMap());
+        pigServer.execute(ScriptType.TASKS, builder.build());
+
         builder.putAll(scriptsManager.getScript(ScriptType.PRODUCT_USAGE_SESSIONS, MetricType.PRODUCT_USAGE_SESSIONS_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, builder.build());
 
         builder.putAll(scriptsManager.getScript(ScriptType.USERS_STATISTICS, MetricType.USERS_STATISTICS_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.USERS_STATISTICS, builder.build());
+
+        doIntegrity("20131101");
 
         DataComputationFeature dataComputationFeature = new DataComputationFeature();
         dataComputationFeature.forceExecute(builder.build());

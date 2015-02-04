@@ -83,11 +83,11 @@ public class TestTopMetrics extends BaseTest {
                                 .withDate("2013-02-10").withTime("10:05:00").build());
 
         // run event for session #1
-        events.add(Event.Builder.createRunStartedEvent("user1@gmail.com", "tmp-1", "project", "type", "id1")
+        events.add(Event.Builder.createRunStartedEvent("user1@gmail.com", "tmp-1", "project", "type", "id1","60000", "128")
                                 .withDate("2013-02-10").withTime("10:03:00").build());
 
 
-        events.add(Event.Builder.createBuildStartedEvent("user1@gmail.com", "tmp-1", "project", "type", "id")
+        events.add(Event.Builder.createBuildStartedEvent("user1@gmail.com", "tmp-1", "project", "type", "id","60000")
                                 .withDate("2013-02-10")
                                 .withTime("10:04:00")
                                 .build());

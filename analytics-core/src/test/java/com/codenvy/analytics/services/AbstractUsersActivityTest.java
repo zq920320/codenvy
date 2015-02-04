@@ -57,6 +57,8 @@ public abstract class AbstractUsersActivityTest extends BaseTest {
         executeScript(ScriptType.ACTIVE_ENTITIES, MetricType.ACTIVE_USERS_SET, date);
         executeScript(ScriptType.ACTIVE_ENTITIES, MetricType.ACTIVE_WORKSPACES_SET, date);
         executeScript(ScriptType.EVENTS_BY_TYPE, MetricType.USERS_LOGGED_IN_TYPES, date);
+        executeScript(ScriptType.TASKS, MetricType.TASKS_LIST, date);
+        doIntegrity(date);
     }
 
     private void executeScript(ScriptType scriptType, MetricType metricType, String date) throws Exception {
@@ -152,7 +154,7 @@ public abstract class AbstractUsersActivityTest extends BaseTest {
                              .withTime("10:03:00").build());
 
         // projects built
-        events.add(Event.Builder.createBuildStartedEvent("user2@gmail.com", "ws1", "project1", "type1", "").withTime("10:06:00")
+        events.add(Event.Builder.createBuildStartedEvent("user2@gmail.com", "ws1", "project1", "type1", "", "60000").withTime("10:06:00")
                                 .withDate("2013-11-01").build());
 
 
@@ -195,21 +197,21 @@ public abstract class AbstractUsersActivityTest extends BaseTest {
                                 .withDate("2013-11-01")
                                 .withTime("20:03:00").build());
 
-        events.add(Event.Builder.createDebugStartedEvent("user2@gmail.com", "ws1", "", "", "id1")
+        events.add(Event.Builder.createDebugStartedEvent("user2@gmail.com", "ws1", "", "", "id1", "60000", "128")
                                 .withDate("2013-11-01")
                                 .withTime("20:06:00").build());
 
         events.add(Event.Builder.createUserInviteEvent("user1@gmail.com", "ws2", "email")
                                 .withDate("2013-11-01").build());
 
-        events.add(Event.Builder.createRunStartedEvent("user2@gmail.com", "ws2", "project", "type", "id1")
+        events.add(Event.Builder.createRunStartedEvent("user2@gmail.com", "ws2", "project", "type", "id1","60000", "128")
                                 .withDate("2013-11-01").withTime("20:59:00").build());
-        events.add(Event.Builder.createRunFinishedEvent("user2@gmail.com", "ws2", "project", "type", "id1", 120000, 1)
+        events.add(Event.Builder.createRunFinishedEvent("user2@gmail.com", "ws2", "project", "type", "id1","60000", "128")
                                 .withDate("2013-11-01").withTime("21:01:00").build());
 
-        events.add(Event.Builder.createBuildStartedEvent("user1@gmail.com", "ws1", "project", "type", "id2")
+        events.add(Event.Builder.createBuildStartedEvent("user1@gmail.com", "ws1", "project", "type", "id2", "60000")
                                 .withDate("2013-11-01").withTime("21:12:00").build());
-        events.add(Event.Builder.createBuildFinishedEvent("user1@gmail.com", "ws1", "project", "type", "id2", 120000)
+        events.add(Event.Builder.createBuildFinishedEvent("user1@gmail.com", "ws1", "project", "type", "id2", "60000")
                                 .withDate("2013-11-01").withTime("21:14:00").build());
 
         // projects deployed

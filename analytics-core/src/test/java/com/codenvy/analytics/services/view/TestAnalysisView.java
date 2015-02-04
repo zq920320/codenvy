@@ -437,7 +437,7 @@ public class TestAnalysisView extends BaseTest {
                                 .withDate(DATE1)
                                 .withTime("20:03:00").build());
 
-        events.add(Event.Builder.createDebugStartedEvent("user2@gmail.com", "ws1", "", "", "id1")
+        events.add(Event.Builder.createDebugStartedEvent("user2@gmail.com", "ws1", "", "", "id1", "60000", "128")
                                 .withDate(DATE1)
                                 .withTime("20:06:00").build());
 
@@ -445,17 +445,17 @@ public class TestAnalysisView extends BaseTest {
         events.add(Event.Builder.createUserInviteEvent("user1@gmail.com", "ws1", "email1")
                                 .withDate(DATE1).build());
 
-        events.add(Event.Builder.createRunStartedEvent("user2@gmail.com", "ws2", "project", "type", "id1")
+        events.add(Event.Builder.createRunStartedEvent("user2@gmail.com", "ws2", "project", "type", "id1","60000", "128")
                                 .withDate(DATE1)
                                 .withTime("20:59:00").build());
-        events.add(Event.Builder.createRunFinishedEvent("user2@gmail.com", "ws2", "project", "type", "id1", 0, 1)
+        events.add(Event.Builder.createRunFinishedEvent("user2@gmail.com", "ws2", "project", "type", "id1","60000", "128")
                                 .withDate(DATE1)
                                 .withTime("21:01:00").build());
 
-        events.add(Event.Builder.createBuildStartedEvent("user1@gmail.com", "ws1", "project", "type", "id2")
+        events.add(Event.Builder.createBuildStartedEvent("user1@gmail.com", "ws1", "project", "type", "id2", "60000")
                                 .withDate(DATE1)
                                 .withTime("21:12:00").build());
-        events.add(Event.Builder.createBuildFinishedEvent("user1@gmail.com", "ws1", "project", "type", "id2", 0)
+        events.add(Event.Builder.createBuildFinishedEvent("user1@gmail.com", "ws1", "project", "type", "id2", "60000")
                                 .withDate(DATE1)
                                 .withTime("21:14:00").build());
 
@@ -481,9 +481,9 @@ public class TestAnalysisView extends BaseTest {
                              .withTime("10:03:00").build());
 
         // projects run
-        events.add(Event.Builder.createRunStartedEvent("user2@gmail.com", "ws2", "project1", "type1", "1")
+        events.add(Event.Builder.createRunStartedEvent("user2@gmail.com", "ws2", "project1", "type1", "1","60000", "128")
                                 .withTime("10:10:00,000").withDate(DATE2).build());
-        events.add(Event.Builder.createRunStartedEvent("user3@gmail.com", "ws3", "project1", "type1", "1")
+        events.add(Event.Builder.createRunStartedEvent("user3@gmail.com", "ws3", "project1", "type1", "1","60000", "128")
                                 .withTime("10:10:00,000").withDate(DATE2).build());
 
 

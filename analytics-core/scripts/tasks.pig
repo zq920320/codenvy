@@ -36,6 +36,7 @@ build_started = FOREACH build_started GENERATE dt,
                                                project,
                                                project_type,
                                                id,
+                                               timeout,
                                                (timeout != '-1' ? 'timeout' : 'always-on')  AS launch_type;
 builds_started = FOREACH build_started GENERATE UUIDFrom(id),
                                               TOTUPLE('date', ToMilliSeconds(dt)),
@@ -48,6 +49,7 @@ builds_started = FOREACH build_started GENERATE UUIDFrom(id),
                                               TOTUPLE('task_type', 'builder'),
                                               TOTUPLE('start_time', ToMilliSeconds(dt)),
                                               TOTUPLE('is_factory', (IsTemporaryWorkspaceById(ws) ? 1 : 0)),
+                                              TOTUPLE('timeout', timeout),
                                               TOTUPLE('launch_type', launch_type),
                                               TOTUPLE('factory_id', GetFactoryId(ws));
 
@@ -55,9 +57,7 @@ build_finished = filterByEvent(l, 'build-finished');
 build_finished = extractParam(build_finished, 'PROJECT', project);
 build_finished = extractParam(build_finished, 'TYPE', project_type);
 build_finished = extractParam(build_finished, 'ID', id);
-build_finished = extractParam(build_finished, 'USAGE-TIME', usage_time_msec);
 build_finished = extractParam(build_finished, 'MEMORY', memory_mb);
-build_finished = extractParam(build_finished, 'FINISHED-NORMALLY', finished_normally);
 
 build_finished = FOREACH build_finished GENERATE dt,
                                                  ws,
@@ -65,9 +65,7 @@ build_finished = FOREACH build_finished GENERATE dt,
                                                  project,
                                                  project_type,
                                                  id,
-                                                 (long) usage_time_msec,
-                                                 (long) (memory_mb IS NOT NULL ? memory_mb : '$default_builder_memory_mb') AS memory_mb,
-                                                 (finished_normally == '0' ? 'timeout' : 'normal')  AS shutdown_type;
+                                                 (long) (memory_mb IS NOT NULL ? memory_mb : '$default_builder_memory_mb') AS memory_mb;
 
 builds_finished = FOREACH build_finished GENERATE UUIDFrom(id),
                                                   TOTUPLE('ws', ws),
@@ -78,10 +76,7 @@ builds_finished = FOREACH build_finished GENERATE UUIDFrom(id),
                                                   TOTUPLE('id', id),
                                                   TOTUPLE('task_type', 'builder'),
                                                   TOTUPLE('memory', memory_mb),
-                                                  TOTUPLE('usage_time', usage_time_msec),
-                                                  TOTUPLE('stop_time', ToMilliSeconds(dt)),
-                                                  TOTUPLE('gigabyte_ram_hours', CalculateGigabyteRamHours(memory_mb, usage_time_msec)),
-                                                  TOTUPLE('shutdown_type', shutdown_type);
+                                                  TOTUPLE('stop_time', ToMilliSeconds(dt));
 
 runs_started = filterByEvent(l, 'run-started');
 runs_started = extractParam(runs_started, 'PROJECT', project);
@@ -96,6 +91,7 @@ runs_started = FOREACH runs_started GENERATE dt,
                                            project,
                                            project_type,
                                            id,
+                                           lifetime as timeout,
                                            (lifetime != '-1' ? 'timeout' : 'always-on')  AS launch_type;
 
 runs_started = FOREACH runs_started GENERATE UUIDFrom(id),
@@ -109,6 +105,7 @@ runs_started = FOREACH runs_started GENERATE UUIDFrom(id),
                                               TOTUPLE('task_type', 'runner'),
                                               TOTUPLE('start_time', ToMilliSeconds(dt)),
                                               TOTUPLE('is_factory', (IsTemporaryWorkspaceById(ws) ? 1 : 0)),
+                                              TOTUPLE('timeout', timeout),
                                               TOTUPLE('launch_type', launch_type),
                                               TOTUPLE('factory_id', GetFactoryId(ws));
 
@@ -116,9 +113,7 @@ runs_finished = filterByEvent(l, 'run-finished');
 runs_finished = extractParam(runs_finished, 'ID', id);
 runs_finished = extractParam(runs_finished, 'PROJECT', project);
 runs_finished = extractParam(runs_finished, 'TYPE', project_type);
-runs_finished = extractParam(runs_finished, 'USAGE-TIME', usage_time_msec);
 runs_finished = extractParam(runs_finished, 'MEMORY', memory_mb);
-runs_finished = extractParam(runs_finished, 'STOPPED-BY-USER', stopped_by_user);
 
 runs_finished = FOREACH runs_finished GENERATE dt,
                                                id,
@@ -126,9 +121,7 @@ runs_finished = FOREACH runs_finished GENERATE dt,
                                                user,
                                                project,
                                                project_type,
-                                               (long) usage_time_msec,
-                                               (long) memory_mb,
-                                               (stopped_by_user == '0' ? 'timeout' : 'user')  AS shutdown_type;
+                                               (long) memory_mb;
 
 runs_finished = FOREACH runs_finished GENERATE UUIDFrom(id),
                                               TOTUPLE('ws', ws),
@@ -139,10 +132,7 @@ runs_finished = FOREACH runs_finished GENERATE UUIDFrom(id),
                                               TOTUPLE('id', id),
                                               TOTUPLE('task_type', 'runner'),
                                               TOTUPLE('memory', memory_mb),
-                                              TOTUPLE('usage_time', usage_time_msec),
-                                              TOTUPLE('stop_time', ToMilliSeconds(dt)),
-                                              TOTUPLE('gigabyte_ram_hours', CalculateGigabyteRamHours(memory_mb, usage_time_msec)),
-                                              TOTUPLE('shutdown_type', shutdown_type);
+                                              TOTUPLE('stop_time', ToMilliSeconds(dt));
 
 
 debugs_started = filterByEvent(l, 'debug-started');
@@ -157,6 +147,7 @@ debugs_started = FOREACH debugs_started GENERATE dt,
                                                 project,
                                                 project_type,
                                                 id,
+                                                lifetime as timeout,
                                                 (lifetime != '-1' ? 'timeout' : 'always-on')  AS launch_type;
 
 debugs_started = FOREACH debugs_started GENERATE UUIDFrom(id),
@@ -170,6 +161,7 @@ debugs_started = FOREACH debugs_started GENERATE UUIDFrom(id),
                                                   TOTUPLE('task_type', 'debugger'),
                                                   TOTUPLE('start_time', ToMilliSeconds(dt)),
                                                   TOTUPLE('is_factory', (IsTemporaryWorkspaceById(ws) ? 1 : 0)),
+                                                  TOTUPLE('timeout', timeout),
                                                   TOTUPLE('launch_type', launch_type),
                                                   TOTUPLE('factory_id', GetFactoryId(ws));
 
@@ -177,9 +169,7 @@ debugs_finished = filterByEvent(l, 'debug-finished');
 debugs_finished = extractParam(debugs_finished, 'ID', id);
 debugs_finished = extractParam(debugs_finished, 'PROJECT', project);
 debugs_finished = extractParam(debugs_finished, 'TYPE', project_type);
-debugs_finished = extractParam(debugs_finished, 'USAGE-TIME', usage_time_msec);
 debugs_finished = extractParam(debugs_finished, 'MEMORY', memory_mb);
-debugs_finished = extractParam(debugs_finished, 'STOPPED-BY-USER', stopped_by_user);
 
 debugs_finished = FOREACH debugs_finished GENERATE dt,
                                                  id,
@@ -187,9 +177,7 @@ debugs_finished = FOREACH debugs_finished GENERATE dt,
                                                  user,
                                                  project,
                                                  project_type,
-                                                 (long) usage_time_msec,
-                                                 (long) memory_mb,
-                                                 (stopped_by_user == '0' ? 'timeout' : 'user')  AS shutdown_type;
+                                                 (long) memory_mb;
 
 debugs_finished = FOREACH debugs_finished GENERATE UUIDFrom(id),
                                                   TOTUPLE('ws', ws),
@@ -200,10 +188,7 @@ debugs_finished = FOREACH debugs_finished GENERATE UUIDFrom(id),
                                                   TOTUPLE('id', id),
                                                   TOTUPLE('task_type', 'debugger'),
                                                   TOTUPLE('memory', memory_mb),
-                                                  TOTUPLE('usage_time', usage_time_msec),
-                                                  TOTUPLE('stop_time', ToMilliSeconds(dt)),
-                                                  TOTUPLE('gigabyte_ram_hours', CalculateGigabyteRamHours(memory_mb, usage_time_msec)),
-                                                  TOTUPLE('shutdown_type', shutdown_type);
+                                                  TOTUPLE('stop_time', ToMilliSeconds(dt));
 
 
 edits = getSessions(l, 'session-usage');

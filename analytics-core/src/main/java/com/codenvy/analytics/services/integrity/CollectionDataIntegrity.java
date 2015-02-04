@@ -15,7 +15,9 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.services.metrics.integrity;
+package com.codenvy.analytics.services.integrity;
+
+import com.codenvy.analytics.metrics.Context;
 
 import java.io.IOException;
 
@@ -23,5 +25,5 @@ import java.io.IOException;
  * @author Alexander Reshetnyak
  */
 public interface CollectionDataIntegrity {
-    void doCompute() throws IOException;
+    void doCompute(Context context) throws IOException;
 }

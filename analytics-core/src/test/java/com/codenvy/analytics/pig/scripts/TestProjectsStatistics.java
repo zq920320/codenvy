@@ -50,11 +50,10 @@ public class TestProjectsStatistics extends BaseTest {
 
     @BeforeClass
     public void init() throws Exception {
+        addPersistentWs(WID1, "ws1");
+        addRegisteredUser(UID1, "user1@gmail.com");
+
         List<Event> events = new ArrayList<>();
-        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid1", "ws1", "user1@gmail.com")
-                                .withDate("2013-01-01")
-                                .withTime("10:00:00")
-                                .build());
 
         events.add(Event.Builder.createProjectCreatedEvent("user1@gmail.com", "ws1", "project1", "jar")
                                 .withDate("2013-01-01")
@@ -65,32 +64,29 @@ public class TestProjectsStatistics extends BaseTest {
                                 .withTime("11:00:00")
                                 .build());
 
-        events.add(Event.Builder.createBuildStartedEvent("user1@gmail.com", "ws1", "project1", "jar", "id1")
+        events.add(Event.Builder.createBuildStartedEvent("user1@gmail.com", "ws1", "project1", "jar", "id1", "60000")
                                 .withDate("2013-01-01")
                                 .withTime("10:01:00")
                                 .build());
-        events.add(Event.Builder.createBuildFinishedEvent("user1@gmail.com", "ws1", "project1", "jar", "id1", 0)
-                                .withParam("USAGE-TIME", "60000")
+        events.add(Event.Builder.createBuildFinishedEvent("user1@gmail.com", "ws1", "project1", "jar", "id1", "60000")
                                 .withDate("2013-01-01")
                                 .withTime("10:02:00")
                                 .build());
 
-        events.add(Event.Builder.createDebugStartedEvent("user1@gmail.com", "ws1", "project1", "jar", "id1")
+        events.add(Event.Builder.createDebugStartedEvent("user1@gmail.com", "ws1", "project1", "jar", "id2", "60000", "128")
                                 .withDate("2013-01-01")
                                 .withTime("10:07:00")
                                 .build());
-        events.add(Event.Builder.createDebugFinishedEvent("user1@gmail.com", "ws1", "project1", "jar", "id1")
-                                .withParam("USAGE-TIME", "60000")
+        events.add(Event.Builder.createDebugFinishedEvent("user1@gmail.com", "ws1", "project1", "jar", "id2", "60000", "128")
                                 .withDate("2013-01-01")
                                 .withTime("10:08:00")
                                 .build());
 
-        events.add(Event.Builder.createRunStartedEvent("user1@gmail.com", "ws1", "project1", "jar", "id1")
+        events.add(Event.Builder.createRunStartedEvent("user1@gmail.com", "ws1", "project1", "jar", "id3","60000", "128")
                                 .withDate("2013-01-01")
                                 .withTime("10:09:00")
                                 .build());
-        events.add(Event.Builder.createRunFinishedEvent("user1@gmail.com", "ws1", "project1", "jar", "id1", 0, 1)
-                                .withParam("USAGE-TIME", "60000")
+        events.add(Event.Builder.createRunFinishedEvent("user1@gmail.com", "ws1", "project1", "jar", "id3","60000", "128")
                                 .withDate("2013-01-01")
                                 .withTime("10:10:00")
                                 .build());
@@ -101,12 +97,11 @@ public class TestProjectsStatistics extends BaseTest {
                                 .build());
 
         // added event of build project without "project-created" event within the log
-        events.add(Event.Builder.createBuildStartedEvent("user1@gmail.com", "ws1", "project2", "spring", "id2")
+        events.add(Event.Builder.createBuildStartedEvent("user1@gmail.com", "ws1", "project2", "spring", "id4", "60000")
                                 .withDate("2013-01-01")
                                 .withTime("10:14:00")
                                 .build());
-        events.add(Event.Builder.createBuildFinishedEvent("user1@gmail.com", "ws1", "project2", "spring", "id2", 0)
-                                .withParam("USAGE-TIME", "60000")
+        events.add(Event.Builder.createBuildFinishedEvent("user1@gmail.com", "ws1", "project2", "spring", "id4", "60000")
                                 .withDate("2013-01-01")
                                 .withTime("10:15:00")
                                 .build());
@@ -118,15 +113,17 @@ public class TestProjectsStatistics extends BaseTest {
         builder.put(Parameters.TO_DATE, "20130101");
         builder.put(Parameters.LOG, log.getAbsolutePath());
 
-        builder.putAll(scriptsManager.getScript(ScriptType.WORKSPACES_PROFILES, MetricType.WORKSPACES_PROFILES_LIST)
-                                     .getParamsAsMap());
-        pigServer.execute(ScriptType.WORKSPACES_PROFILES, builder.build());
+
+        builder.putAll(scriptsManager.getScript(ScriptType.TASKS, MetricType.TASKS_LIST).getParamsAsMap());
+        pigServer.execute(ScriptType.TASKS, builder.build());
 
         builder.putAll(scriptsManager.getScript(ScriptType.PROJECTS_STATISTICS, MetricType.PROJECTS_STATISTICS_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.PROJECTS_STATISTICS, builder.build());
 
         builder.putAll(scriptsManager.getScript(ScriptType.EVENTS, MetricType.PROJECTS).getParamsAsMap());
         pigServer.execute(ScriptType.EVENTS, builder.build());
+
+        doIntegrity("20130101");
     }
 
     @Test
@@ -152,10 +149,10 @@ public class TestProjectsStatistics extends BaseTest {
 
         Map<String, ValueData> m = ((MapValueData)items.get(0)).getAll();
         assertEquals(m.get("project").getAsString(), "project2");
-        assertEquals(m.get("ws").getAsString(), "wsid1");
+        assertEquals(m.get("ws").getAsString(), WID1);
         assertEquals(m.get("project_type").getAsString(), "spring");
         assertEquals(m.get("date"), LongValueData.valueOf(fullDateFormat.parse("2013-01-01 10:14:00").getTime()));
-        assertEquals(m.get("user").getAsString(), "user1@gmail.com");
+        assertEquals(m.get("user").getAsString(), UID1);
         assertEquals(m.get("builds").getAsString(), "1");
         assertEquals(m.get("runs").getAsString(), "0");
         assertEquals(m.get("debugs").getAsString(), "0");
@@ -169,10 +166,10 @@ public class TestProjectsStatistics extends BaseTest {
 
         m = ((MapValueData)items.get(1)).getAll();
         assertEquals(m.get("project").getAsString(), "project1");
-        assertEquals(m.get("ws").getAsString(), "wsid1");
+        assertEquals(m.get("ws").getAsString(), WID1);
         assertEquals(m.get("project_type").getAsString(), "jar");
         assertEquals(m.get("date"), LongValueData.valueOf(fullDateFormat.parse("2013-01-01 10:00:00").getTime()));
-        assertEquals(m.get("user").getAsString(), "user1@gmail.com");
+        assertEquals(m.get("user").getAsString(), UID1);
         assertEquals(m.get("builds").getAsString(), "1");
         assertEquals(m.get("runs").getAsString(), "1");
         assertEquals(m.get("debugs").getAsString(), "1");
@@ -198,10 +195,10 @@ public class TestProjectsStatistics extends BaseTest {
 
         Map<String, ValueData> m = ((MapValueData)items.get(0)).getAll();
         assertEquals(m.get("project").getAsString(), "project1");
-        assertEquals(m.get("ws").getAsString(), "wsid1");
+        assertEquals(m.get("ws").getAsString(), WID1);
         assertEquals(m.get("project_type").getAsString(), "jar");
         assertEquals(m.get("date"), LongValueData.valueOf(fullDateFormat.parse("2013-01-01 10:00:00").getTime()));
-        assertEquals(m.get("user").getAsString(), "user1@gmail.com");
+        assertEquals(m.get("user").getAsString(), UID1);
 
         assertEquals(m.get("builds").getAsString(), "1");
         assertEquals(m.get("runs").getAsString(), "1");

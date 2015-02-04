@@ -49,7 +49,8 @@ public class ProjectsStatisticsList extends AbstractListValueResulted implements
 
     @Override
     public String[] getTrackedFields() {
-        return new String[]{PROJECT,
+        return new String[]{PROJECT_ID,
+                            PROJECT,
                             WS,
                             BUILDS,
                             BUILD_TIME,
@@ -71,8 +72,8 @@ public class ProjectsStatisticsList extends AbstractListValueResulted implements
     @Override
     public DBObject[] getSpecificDBOperations(Context clauses) {
         DBObject group = new BasicDBObject();
-    
-        group.put(ID, new BasicDBObject("PROJECT_ID", "$" + PROJECT_ID));
+
+        group.put(ID, "$" + PROJECT_ID);
         group.put(BUILDS, new BasicDBObject("$sum", "$" + BUILDS));
         group.put(RUNS, new BasicDBObject("$sum", "$" + RUNS));
         group.put(DEBUGS, new BasicDBObject("$sum", "$" + DEBUGS));
@@ -92,6 +93,7 @@ public class ProjectsStatisticsList extends AbstractListValueResulted implements
         group.put(PROJECT_TYPE, new BasicDBObject("$first", "$" + PROJECT_TYPE));
     
         DBObject project = new BasicDBObject();
+        project.put(PROJECT_ID, "$" + ID);
         project.put(BUILDS, "$" + BUILDS);
         project.put(RUNS, "$" + RUNS);
         project.put(DEBUGS, "$" + DEBUGS);
@@ -119,6 +121,7 @@ public class ProjectsStatisticsList extends AbstractListValueResulted implements
     public DBObject[] getSpecificSummarizedDBOperations(Context clauses) {
         DBObject[] dbOperations = getSpecificDBOperations(clauses);
         ((DBObject)(dbOperations[0].get("$group"))).put(ID, null);
+        ((DBObject)(dbOperations[1].get("$project"))).removeField(PROJECT_ID);
         ((DBObject)(dbOperations[1].get("$project"))).removeField(WS);
         ((DBObject)(dbOperations[1].get("$project"))).removeField(PROJECT);
         ((DBObject)(dbOperations[1].get("$project"))).removeField(PROJECT_TYPE);

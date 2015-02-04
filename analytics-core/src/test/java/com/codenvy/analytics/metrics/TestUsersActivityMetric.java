@@ -78,26 +78,26 @@ public class TestUsersActivityMetric extends BaseTest {
         events.add(Event.Builder.createSessionUsageEvent(TMP_USER, TMP_WS, "id3", false).withDate("2013-11-01").withTime("21:05:00").build());
 
         // event of target user in the target workspace and in time of first session
-        events.add(Event.Builder.createRunStartedEvent(USER, WS, "project", "type", "id1").withDate("2013-11-01")
+        events.add(Event.Builder.createRunStartedEvent(USER, WS, "project", "type", "id1", "60000", "128").withDate("2013-11-01")
                                 .withTime(
                                         "19:08:00,600").build());
-        events.add(Event.Builder.createRunFinishedEvent(USER, WS, "project", "type", "id1", 120000, 1).withDate("2013-11-01").withTime(
+        events.add(Event.Builder.createRunFinishedEvent(USER, WS, "project", "type", "id1","60000", "128").withDate("2013-11-01").withTime(
                 "19:10:00,900").build());
 
         // event of target user in another workspace and in time of main session
-        events.add(Event.Builder.createBuildStartedEvent(USER, WS2, "project", "type", "id2")
+        events.add(Event.Builder.createBuildStartedEvent(USER, WS2, "project", "type", "id2", "60000")
                                 .withDate("2013-11-01").withTime("19:12:00,000").build());
-        events.add(Event.Builder.createBuildFinishedEvent(USER, WS2, "project", "type", "id2", 120000)
+        events.add(Event.Builder.createBuildFinishedEvent(USER, WS2, "project", "type", "id2", "60000")
                                 .withDate("2013-11-01").withTime("19:14:00,000").build());
 
         // event of another user in the target workspace and in time of main session
-        events.add(Event.Builder.createRunStartedEvent(USER2, WS2, "project", "type", "id1")
+        events.add(Event.Builder.createRunStartedEvent(USER2, WS2, "project", "type", "id1","60000", "128")
                                 .withDate("2013-11-01").withTime("19:08:00,000").build());
-        events.add(Event.Builder.createRunFinishedEvent(USER2, WS2, "project", "type", "id1", 120000, 1)
+        events.add(Event.Builder.createRunFinishedEvent(USER2, WS2, "project", "type", "id1","60000", "128")
                                 .withDate("2013-11-01").withTime("19:10:00,000").build());
 
         // event of target user in the target workspace and in time of second sessi
-        events.add(Event.Builder.createDebugStartedEvent(USER, WS, "project", "type", "id1")
+        events.add(Event.Builder.createDebugStartedEvent(USER, WS, "project", "type", "id1", "60000", "128")
                                 .withDate("2013-11-01").withTime("20:02:00,600").build());
 
         // event of target user in the target workspace and after the second session is finished

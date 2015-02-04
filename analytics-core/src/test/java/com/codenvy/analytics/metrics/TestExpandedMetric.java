@@ -101,9 +101,9 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
         events.add(Event.Builder.createSessionUsageEvent(UID2, TWID2, "session-fid2", true)
                                 .withDate("2013-11-20").withTime("11:05:00").build());
 
-        events.add(Event.Builder.createBuildStartedEvent(UID1, TWID1, "project", "type", "build-id1")
+        events.add(Event.Builder.createBuildStartedEvent(UID1, TWID1, "project", "type", "build-id1","60000")
                                 .withDate("2013-11-20").withTime("12:00:00").build());
-        events.add(Event.Builder.createBuildStartedEvent(UID2, WID2, "project", "type", "build-id2")
+        events.add(Event.Builder.createBuildStartedEvent(UID2, WID2, "project", "type", "build-id2", "60000")
                                 .withDate("2013-11-20").withTime("12:00:00").build());
 
         events.add(Event.Builder.createUserSSOLoggedInEvent(UID1, "jaas").withDate("2013-11-20").withTime("09:00:00").build());
@@ -113,8 +113,8 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
         events.add(Event.Builder.createProjectCreatedEvent(UID2, WID2, "project2", "war", "gae").withDate("2013-11-20").withTime("09:00:00").build());
 
         // inside 'session-fid1' session
-        events.add(Event.Builder.createBuildStartedEvent(UID2, TWID2, "project", "type", "bid1").withDate("2013-11-20").withTime("11:01:00").build());
-        events.add(Event.Builder.createRunStartedEvent(UID2, WID2, "project1", "jar", "rid1").withDate("2013-11-20").withTime("11:01:00").build());
+        events.add(Event.Builder.createBuildStartedEvent(UID2, TWID2, "project", "type", "bid1", "60000").withDate("2013-11-20").withTime("11:01:00").build());
+        events.add(Event.Builder.createRunStartedEvent(UID2, WID2, "project1", "jar", "rid1", "60000", "128").withDate("2013-11-20").withTime("11:01:00").build());
 
         File log = LogGenerator.generateLog(events);
         Context.Builder builder = new Context.Builder();

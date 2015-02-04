@@ -51,24 +51,6 @@ o1 = filterByEvent(f, 'project-destroyed');
 o = FOREACH o1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('project_destroys', 1), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('project', project), TOTUPLE('project_type', LOWER(project_type)), TOTUPLE('project_id', CreateProjectId(user, ws, project));
 STORE o INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 
-q1 = filterByEvent(f, 'run-finished');
-q2 = extractParam(q1, 'USAGE-TIME', time);
-q3 = FOREACH q2 GENERATE dt, ws, user, (long)time, project, project_type;
-q = FOREACH q3 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('run_time', time), TOTUPLE('project', project), TOTUPLE('project_type', LOWER(project_type)), TOTUPLE('project_id', CreateProjectId(user, ws, project));
-STORE q INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
-
-r1 = filterByEvent(f, 'build-finished');
-r2 = extractParam(r1, 'USAGE-TIME', time);
-r3 = FOREACH r2 GENERATE dt, ws, user, (long)time, project, project_type;
-r = FOREACH r3 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('build_time', time), TOTUPLE('project', project), TOTUPLE('project_type', LOWER(project_type)), TOTUPLE('project_id', CreateProjectId(user, ws, project));
-STORE r INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
-
-s1 = filterByEvent(f, 'debug-finished');
-s2 = extractParam(s1, 'USAGE-TIME', time);
-s3 = FOREACH s2 GENERATE dt, ws, user, (long)time, project, project_type;
-s = FOREACH s3 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('debug_time', time), TOTUPLE('project', project), TOTUPLE('project_type', LOWER(project_type)), TOTUPLE('project_id', CreateProjectId(user, ws, project));
-STORE s INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
-
 t1 = filterByEvent(f, 'run-queue-waiting-finished');
 t2 = extractParam(t1, 'WAITING-TIME', time);
 t3 = FOREACH t2 GENERATE dt, ws, user, (long)time, project, project_type;

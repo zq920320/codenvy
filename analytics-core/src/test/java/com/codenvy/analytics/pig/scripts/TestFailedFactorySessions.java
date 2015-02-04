@@ -88,7 +88,7 @@ public class TestFailedFactorySessions extends BaseTest {
                                 .withDate("2013-02-10").withTime("12:01:00").build());
 
         // run event for session #1
-        events.add(Event.Builder.createRunStartedEvent("user1@gmail.com", "tmp-1", "project", "type", "id")
+        events.add(Event.Builder.createRunStartedEvent("user1@gmail.com", "tmp-1", "project", "type", "id", "60000", "128")
                                 .withDate("2013-02-10").withTime("10:03:00").build());
 
         events.add(Event.Builder.createProjectBuiltEvent("user1@gmail.com", "tmp-1", "project", "type")
