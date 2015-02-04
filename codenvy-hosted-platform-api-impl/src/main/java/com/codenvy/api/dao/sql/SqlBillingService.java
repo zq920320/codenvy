@@ -19,8 +19,10 @@ package com.codenvy.api.dao.sql;
 
 import com.codenvy.api.account.billing.BillingService;
 import com.codenvy.api.account.billing.PaymentState;
+import com.codenvy.api.account.shared.dto.Charge;
 import com.codenvy.api.account.shared.dto.Receipt;
 import com.codenvy.api.core.ServerException;
+import com.codenvy.dto.server.DtoFactory;
 
 import javax.inject.Inject;
 import java.sql.Connection;
@@ -70,7 +72,7 @@ public class SqlBillingService implements BillingService {
             "                   CALC_ID " +
             "                  ) " +
             "SELECT " +
-            "   SUM(AMOUNT) AS AMOUNT, " +
+            "   LEAST(SUM(AMOUNT), ?) AS AMOUNT, " +
             "   ACCOUNT_ID AS ACCOUNT_ID, " +
             "   ? AS SERVICE_ID, " +
             "   ? AS TYPE, " +
@@ -81,9 +83,7 @@ public class SqlBillingService implements BillingService {
             "WHERE " +
             "  CALC_ID = ? " +
             "GROUP BY " +
-            "  ACCOUNT_ID " +
-            "HAVING  " +
-            " SUM(AMOUNT) < ? ";
+            "  ACCOUNT_ID ";
 
     private final static String PAID_SAAS_CHARGES_INSERT =
             "INSERT INTO " +
@@ -96,7 +96,7 @@ public class SqlBillingService implements BillingService {
             "                   CALC_ID " +
             "                  ) " +
             "SELECT " +
-            "   SUM(AMOUNT) AS AMOUNT, " +
+            "   SUM(AMOUNT)-? AS AMOUNT, " +
             "   ACCOUNT_ID AS ACCOUNT_ID, " +
             "   ? AS SERVICE_ID, " +
             "   ? AS TYPE, " +
@@ -130,21 +130,37 @@ public class SqlBillingService implements BillingService {
             "   ? as TILL_TIME, " +
             "   ? as CALC_ID " +
             "FROM " +
-            "  CHARGES "+
+            "  CHARGES " +
             "WHERE " +
             "  CALC_ID = ? " +
             "GROUP BY " +
-            "  ACCOUNT_ID "
-            ;
+            "  ACCOUNT_ID ";
 
-    private final static String RECEIPTS_SELECT_UNPAID =
+    private final static String RECEIPTS_SELECT =
             "SELECT " +
-            "   * " +
+            "                   ID, " +
+            "                   TOTAL, " +
+            "                   ACCOUNT_ID, " +
+            "                   FROM_TIME, " +
+            "                   TILL_TIME, " +
+            "                   CALC_ID " +
             "FROM " +
             "  RECEIPTS " +
             "WHERE " +
-            " PAYMENT_TIME IS NULL " +
+            " PAYMENT_STATUS = ? " +
             " LIMIT ?";
+
+    private final static String CHARGES_SELECT =
+            "SELECT " +
+            "                   AMOUNT, " +
+            "                   SERVICE_ID, " +
+            "                   TYPE, " +
+            "                   PRICE " +
+            "FROM " +
+            "  CHARGES " +
+            "WHERE " +
+            " ACCOUNT_ID  = ? " +
+            " AND CALC_ID = ? ";
 
 
     @Inject
@@ -170,20 +186,22 @@ public class SqlBillingService implements BillingService {
                 }
 
                 try (PreparedStatement freeSaasCharges = connection.prepareStatement(FREE_SAAS_CHARGES_INSERT)) {
-                    freeSaasCharges.setString(1, "Saas");
-                    freeSaasCharges.setString(2, "Free");
-                    freeSaasCharges.setString(3, calculationId);
+                    freeSaasCharges.setDouble(1, 10.0);
+                    freeSaasCharges.setString(2, "Saas");
+                    freeSaasCharges.setString(3, "Free");
                     freeSaasCharges.setString(4, calculationId);
-                    freeSaasCharges.setDouble(5, 10.0);
+                    freeSaasCharges.setString(5, calculationId);
+
                     freeSaasCharges.execute();
                 }
                 try (PreparedStatement paidSaasCharges = connection.prepareStatement(PAID_SAAS_CHARGES_INSERT)) {
-                    paidSaasCharges.setString(1, "Saas");
-                    paidSaasCharges.setString(2, "Paid");
-                    paidSaasCharges.setDouble(3, 0.15);
-                    paidSaasCharges.setString(4, calculationId);
+                    paidSaasCharges.setDouble(1, 10.0);
+                    paidSaasCharges.setString(2, "Saas");
+                    paidSaasCharges.setString(3, "Paid");
+                    paidSaasCharges.setDouble(4, 0.15);
                     paidSaasCharges.setString(5, calculationId);
-                    paidSaasCharges.setDouble(6, 10.0);
+                    paidSaasCharges.setString(6, calculationId);
+                    paidSaasCharges.setDouble(7, 10.0);
                     paidSaasCharges.execute();
                 }
 
@@ -211,12 +229,39 @@ public class SqlBillingService implements BillingService {
     @Override
     public List<Receipt> getUnpaidReceipt(int limit) throws ServerException {
         try (Connection connection = connectionFactory.getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement(RECEIPTS_SELECT_UNPAID)) {
-                statement.setLong(1, limit);
-                try (ResultSet resultSet = statement.executeQuery()) {
+            try (PreparedStatement statement = connection.prepareStatement(RECEIPTS_SELECT)) {
+                statement.setInt(1, PaymentState.WAITING_EXECUTOR.getState());
+                statement.setLong(2, limit);
+                try (ResultSet receiptsResultSet = statement.executeQuery()) {
                     List<Receipt> result = new ArrayList<>(limit);
-                    while (resultSet.next()) {
-                        //result.add(DtoFactory.getInstance().createDto(Receipt.class).withAccountId());
+                    while (receiptsResultSet.next()) {
+                        List<Charge> charges = new ArrayList<>();
+
+                        try (PreparedStatement chargesStatement = connection.prepareStatement(CHARGES_SELECT)) {
+                            chargesStatement.setString(1, receiptsResultSet.getString(3));
+                            chargesStatement.setString(2, receiptsResultSet.getString(6));
+                            try (ResultSet chargesResultSet = chargesStatement.executeQuery()) {
+                                while (chargesResultSet.next()) {
+                                    charges.add(DtoFactory.getInstance().createDto(Charge.class)
+                                                          .withAmount(chargesResultSet.getDouble(1))
+                                                          .withServiceId(chargesResultSet.getString(2))
+                                                          .withType(chargesResultSet.getString(3))
+                                                          .withPrice(chargesResultSet.getDouble(4))
+                                               );
+                                }
+                            }
+
+                        }
+
+
+                        result.add(DtoFactory.getInstance().createDto(Receipt.class)
+                                             .withId(receiptsResultSet.getLong(1))
+                                             .withTotal(receiptsResultSet.getDouble(2))
+                                             .withAccountId(receiptsResultSet.getString(3))
+                                             .withCharges(charges)
+                                  );
+
+
                     }
                     return result;
                 }

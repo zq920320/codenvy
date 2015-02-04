@@ -53,20 +53,20 @@ public class SqlBillingServiceTest {
         hsqldb.setUrl("jdbc:hsqldb:mem:test");
         hsqldb.setUser("SA");
         hsqldb.setPassword("");
+////
 //
-//
-//        final PGPoolingDataSource postgresql = new PGPoolingDataSource();
-//        postgresql.setDataSourceName("codenvy");
-//        postgresql.setServerName("dev.box.com");
-//        postgresql.setDatabaseName("codenvy");
-//        postgresql.setUser("codenvy");
-//        postgresql.setPassword("codenvypassword");
-//        postgresql.setMaxConnections(10);
-//        postgresql.setPortNumber(5432);
+        final PGPoolingDataSource postgresql = new PGPoolingDataSource();
+        postgresql.setDataSourceName("codenvy");
+        postgresql.setServerName("dev.box.com");
+        postgresql.setDatabaseName("codenvy");
+        postgresql.setUser("codenvy");
+        postgresql.setPassword("codenvypassword");
+        postgresql.setMaxConnections(10);
+        postgresql.setPortNumber(5432);
 
         sources = new DataSource[]{
-                 hsqldb
-                //postgresql
+                hsqldb
+//                postgresql
         };
     }
 
@@ -93,7 +93,7 @@ public class SqlBillingServiceTest {
     }
 
 
-    @Test(dataProvider = "storage")
+    @Test(dataProvider = "storage" , enabled = false)
     public void shouldBeAbleToStoreMetric(MeterBasedStorage meterBasedStorage, BillingService billingService)
             throws ParseException, ServerException {
         //given
@@ -136,8 +136,8 @@ public class SqlBillingServiceTest {
         billingService.generateReceipts(Long.MIN_VALUE, Long.MAX_VALUE);
 
         //then
-        //  Assert.assertEquals(billingService.getNotSendReceipt(1).size(), 1);
-        // Assert.assertEquals(billingService.getUnpaidReceipt(1).size(), 1);
+        //Assert.assertEquals(billingService.getNotSendReceipt(1).size(), 1);
+         Assert.assertEquals(billingService.getUnpaidReceipt(4).size(),  4);
     }
 
     @Test
