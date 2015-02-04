@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.codenvy.analytics.pig.scripts.util.Event.Builder.createFactoryUrlAcceptedEvent;
+import static java.lang.Math.round;
 import static org.testng.Assert.assertEquals;
 
 /** @author Dmytro Nochevnov */
@@ -53,11 +54,11 @@ public class TestCalculateTaskGigabyteRamHours extends BaseTest {
     }
 
     @Test(dataProvider = "builds-provider")
-    public void testBuilds(String factoryId, Double result) throws Exception {
+    public void testBuilds(String factoryId, Double expected) throws Exception {
         CalculateBuildsGigabyteRamHours function = new CalculateBuildsGigabyteRamHours();
 
         Tuple tuple = makeTuple(factoryId);
-        assertEquals(function.exec(tuple), result);
+        assertResult(function.exec(tuple), expected);
     }
 
     @DataProvider(name = "builds-provider")
@@ -65,17 +66,17 @@ public class TestCalculateTaskGigabyteRamHours extends BaseTest {
         return new Object[][]{
             {null, null},
             {"", null},
-            {"non-exists", null},
-            {"factory1", 0.054},
+            {"non-exists", 0.0},
+            {"factory1", 0.0541},
         };
     }
 
     @Test(dataProvider = "runs-provider")
-    public void testRuns(String factoryId, Double result) throws Exception {
+    public void testRuns(String factoryId, Double expected) throws Exception {
         CalculateRunsGigabyteRamHours function = new CalculateRunsGigabyteRamHours();
 
         Tuple tuple = makeTuple(factoryId);
-        assertEquals(function.exec(tuple), result);
+        assertResult(function.exec(tuple), expected);
     }
 
     @DataProvider(name = "runs-provider")
@@ -83,17 +84,17 @@ public class TestCalculateTaskGigabyteRamHours extends BaseTest {
         return new Object[][]{
             {null, null},
             {"", null},
-            {"non-exists", null},
+            {"non-exists", 0.0},
             {"factory1", 0.0083},
         };
     }
 
     @Test(dataProvider = "debugs-provider")
-    public void testDebugs(String factoryId, Double result) throws Exception {
+    public void testDebugs(String factoryId, Double expected) throws Exception {
         CalculateDebugsGigabyteRamHours function = new CalculateDebugsGigabyteRamHours();
 
         Tuple tuple = makeTuple(factoryId);
-        assertEquals(function.exec(tuple), result);
+        assertResult(function.exec(tuple), expected);
     }
 
     @DataProvider(name = "debugs-provider")
@@ -101,17 +102,25 @@ public class TestCalculateTaskGigabyteRamHours extends BaseTest {
         return new Object[][]{
             {null, null},
             {"", null},
-            {"non-exists", null},
-            {"factory1", 0.0062},
+            {"non-exists", 0.0},
+            {"factory1", 0.0063},
         };
     }
 
     @Test(dataProvider = "edits-provider")
-    public void testEdits(String factoryId, Double result) throws Exception {
+    public void testEdits(String factoryId, Double expected) throws Exception {
         CalculateEditsGigabyteRamHours function = new CalculateEditsGigabyteRamHours();
 
         Tuple tuple = makeTuple(factoryId);
-        assertEquals(function.exec(tuple), result);
+        assertResult(function.exec(tuple), expected);
+    }
+
+    private void assertResult(Double result, Double expected) {
+        if (result != null && expected != null) {
+            assertEquals(round(result * 10000), round(expected * 10000));
+        } else {
+            assertEquals(result, expected);
+        }
     }
 
     @DataProvider(name = "edits-provider")
@@ -119,7 +128,7 @@ public class TestCalculateTaskGigabyteRamHours extends BaseTest {
         return new Object[][]{
             {null, null},
             {"", null},
-            {"non-exists", null},
+            {"non-exists", 0.0},
             {"factory1", 0.0012},
         };
     }
