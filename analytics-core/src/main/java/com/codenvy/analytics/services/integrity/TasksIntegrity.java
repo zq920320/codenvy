@@ -37,6 +37,7 @@ import java.util.UUID;
 
 import static com.codenvy.analytics.metrics.AbstractMetric.DATE;
 import static com.codenvy.analytics.metrics.AbstractMetric.ID;
+import static com.codenvy.analytics.metrics.AbstractMetric.LAUNCH_TYPE;
 import static com.codenvy.analytics.metrics.AbstractMetric.MEMORY;
 import static com.codenvy.analytics.metrics.AbstractMetric.PERSISTENT_WS;
 import static com.codenvy.analytics.metrics.AbstractMetric.PROJECT;
@@ -87,9 +88,15 @@ public class TasksIntegrity implements CollectionDataIntegrity {
             DBObject doc = cursor.next();
 
             String taskType = doc.get(AbstractMetric.TASK_TYPE).toString();
-            String launchType = doc.get(AbstractMetric.LAUNCH_TYPE).toString();
             long startTime = Long.parseLong(doc.get(AbstractMetric.START_TIME).toString());
             long endTime = Long.parseLong(doc.get(AbstractMetric.STOP_TIME).toString());
+
+            String launchType;
+            if (doc.containsField(LAUNCH_TYPE)) {
+                launchType = doc.get(LAUNCH_TYPE).toString();
+            } else {
+                launchType = "timeout";
+            }
 
             long timeout;
             if (doc.containsField(TIMEOUT)) {
