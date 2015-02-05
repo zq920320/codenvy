@@ -23,12 +23,13 @@ import com.codenvy.api.account.metrics.MemoryUsedMetric;
 import com.codenvy.api.account.metrics.UsageInformer;
 import com.codenvy.api.core.ServerException;
 
-import org.hsqldb.jdbc.JDBCDataSource;
-import org.mockito.Mockito;
-import org.mockito.testng.MockitoTestNGListener;
-import org.postgresql.ds.PGPoolingDataSource;
+import org.h2.jdbcx.JdbcConnectionPool;
 import org.testng.Assert;
-import org.testng.annotations.*;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
@@ -50,11 +51,8 @@ public class SQLMeterBasedStorageTest {
     @BeforeSuite
     public void initSources() {
 
-        final JDBCDataSource hsqldb = new JDBCDataSource();
-        hsqldb.setUrl("jdbc:hsqldb:mem:test");
-        hsqldb.setUser("SA");
-        hsqldb.setPassword("");
-
+        JdbcConnectionPool h2 = JdbcConnectionPool.
+                                                          create("jdbc:h2:mem:test", "sa", "sa");
 
 //        final PGPoolingDataSource postgresql = new PGPoolingDataSource();
 //        postgresql.setDataSourceName("codenvy1");
@@ -66,7 +64,7 @@ public class SQLMeterBasedStorageTest {
 //        postgresql.setPortNumber(5432);
 
         sources = new DataSource[]{
-                hsqldb
+                h2
                 //postgresql
         };
     }

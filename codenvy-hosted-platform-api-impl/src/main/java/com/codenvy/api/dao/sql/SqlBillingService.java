@@ -61,6 +61,7 @@ public class SqlBillingService implements BillingService {
             " ACCOUNT_ID, " +
             " WORKSPACE_ID ";
 
+
     private final static String FREE_SAAS_CHARGES_INSERT =
             "INSERT INTO " +
             "   CHARGES (" +
@@ -84,6 +85,7 @@ public class SqlBillingService implements BillingService {
             "  CALC_ID = ? " +
             "GROUP BY " +
             "  ACCOUNT_ID ";
+
 
     private final static String PAID_SAAS_CHARGES_INSERT =
             "INSERT INTO " +

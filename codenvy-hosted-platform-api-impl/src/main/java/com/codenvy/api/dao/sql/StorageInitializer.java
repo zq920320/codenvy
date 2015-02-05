@@ -69,12 +69,11 @@ public class StorageInitializer {
         try (Connection connection = flyway.getDataSource().getConnection()) {
             DatabaseMetaData metdadata = connection.getMetaData();
             switch (metdadata.getDatabaseProductName()) {
+
                 case "PostgreSQL":
                     return "db/migration/postgresql";
-                case "MySQL":
-                    return "db/migration/mysql";
-                case "HSQL Database Engine":
-                    return "db/migration/hsqldb";
+                case "H2":
+                    return "db/migration/h2";
                 default:
                     throw new RuntimeException("Unknown database " + metdadata.getDatabaseProductName());
             }

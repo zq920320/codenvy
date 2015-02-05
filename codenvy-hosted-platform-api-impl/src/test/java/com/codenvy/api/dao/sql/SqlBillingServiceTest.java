@@ -17,16 +17,13 @@
  */
 package com.codenvy.api.dao.sql;
 
-import static org.testng.Assert.*;
-
 import com.codenvy.api.account.billing.BillingService;
 import com.codenvy.api.account.billing.MonthlyBillingPeriod;
 import com.codenvy.api.account.metrics.MemoryUsedMetric;
 import com.codenvy.api.account.metrics.MeterBasedStorage;
-import com.codenvy.api.account.metrics.UsageInformer;
 import com.codenvy.api.core.ServerException;
 
-import org.hsqldb.jdbc.JDBCDataSource;
+import org.h2.jdbcx.JdbcConnectionPool;
 import org.postgresql.ds.PGPoolingDataSource;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -40,6 +37,7 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
+
 public class SqlBillingServiceTest {
 
     private DataSource[] sources;
@@ -47,14 +45,12 @@ public class SqlBillingServiceTest {
     private SimpleDateFormat sdf = new SimpleDateFormat("dd-M-yyyy HH:mm:ss");
 
     @BeforeSuite
-    public void initSources() {
+    public void initSources() throws SQLException {
 
-        final JDBCDataSource hsqldb = new JDBCDataSource();
-        hsqldb.setUrl("jdbc:hsqldb:mem:test");
-        hsqldb.setUser("SA");
-        hsqldb.setPassword("");
-////
-//
+
+        JdbcConnectionPool h2 = JdbcConnectionPool.create("jdbc:h2:mem:test", "sa", "sa");
+
+
         final PGPoolingDataSource postgresql = new PGPoolingDataSource();
         postgresql.setDataSourceName("codenvy");
         postgresql.setServerName("dev.box.com");
@@ -65,8 +61,8 @@ public class SqlBillingServiceTest {
         postgresql.setPortNumber(5432);
 
         sources = new DataSource[]{
-                hsqldb
-//                postgresql
+                h2
+                //postgresql
         };
     }
 
@@ -93,7 +89,7 @@ public class SqlBillingServiceTest {
     }
 
 
-    @Test(dataProvider = "storage" , enabled = false)
+    @Test(dataProvider = "storage")
     public void shouldBeAbleToStoreMetric(MeterBasedStorage meterBasedStorage, BillingService billingService)
             throws ParseException, ServerException {
         //given
@@ -137,7 +133,7 @@ public class SqlBillingServiceTest {
 
         //then
         //Assert.assertEquals(billingService.getNotSendReceipt(1).size(), 1);
-         Assert.assertEquals(billingService.getUnpaidReceipt(4).size(),  4);
+        Assert.assertEquals(billingService.getUnpaidReceipt(4).size(), 4);
     }
 
     @Test
