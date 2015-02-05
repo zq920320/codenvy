@@ -37,12 +37,14 @@ import java.util.UUID;
 
 import static com.codenvy.analytics.metrics.AbstractMetric.DATE;
 import static com.codenvy.analytics.metrics.AbstractMetric.ID;
+import static com.codenvy.analytics.metrics.AbstractMetric.MEMORY;
 import static com.codenvy.analytics.metrics.AbstractMetric.PERSISTENT_WS;
 import static com.codenvy.analytics.metrics.AbstractMetric.PROJECT;
 import static com.codenvy.analytics.metrics.AbstractMetric.PROJECT_ID;
 import static com.codenvy.analytics.metrics.AbstractMetric.PROJECT_TYPE;
 import static com.codenvy.analytics.metrics.AbstractMetric.REGISTERED_USER;
 import static com.codenvy.analytics.metrics.AbstractMetric.STOP_TIME;
+import static com.codenvy.analytics.metrics.AbstractMetric.TIMEOUT;
 import static com.codenvy.analytics.metrics.AbstractMetric.USER;
 import static com.codenvy.analytics.metrics.AbstractMetric.WS;
 import static com.codenvy.analytics.pig.udf.CalculateGigabyteRamHours.calculateGigabyteRamHours;
@@ -84,14 +86,32 @@ public class TasksIntegrity implements CollectionDataIntegrity {
         while (cursor.hasNext()) {
             DBObject doc = cursor.next();
 
-            // TODO empty fields
-
             String taskType = doc.get(AbstractMetric.TASK_TYPE).toString();
             String launchType = doc.get(AbstractMetric.LAUNCH_TYPE).toString();
             long startTime = Long.parseLong(doc.get(AbstractMetric.START_TIME).toString());
             long endTime = Long.parseLong(doc.get(AbstractMetric.STOP_TIME).toString());
-            long memory = Long.parseLong(doc.get(AbstractMetric.MEMORY).toString());
-            long timeout = Long.parseLong(doc.get(AbstractMetric.TIMEOUT).toString());
+
+            long timeout;
+            if (doc.containsField(TIMEOUT)) {
+                timeout = Long.parseLong(doc.get(TIMEOUT).toString());
+            } else {
+                if (taskType.equals("builder")) {
+                    timeout = 300 * 1000;
+                } else {
+                    timeout = 3600 * 1000;
+                }
+            }
+
+            long memory;
+            if (doc.containsField(MEMORY)) {
+                memory = Long.parseLong(doc.get(MEMORY).toString());
+            } else {
+                if (taskType.equals("builder")) {
+                    memory = 1536;
+                } else {
+                    memory = 256;
+                }
+            }
 
             long usageTime = endTime - startTime;
             double gigabyteRamHours = calculateGigabyteRamHours(memory, usageTime);
@@ -102,6 +122,8 @@ public class TasksIntegrity implements CollectionDataIntegrity {
             doc.put(AbstractMetric.USAGE_TIME, usageTime);
             doc.put(AbstractMetric.GIGABYTE_RAM_HOURS, gigabyteRamHours);
             doc.put(AbstractMetric.SHUTDOWN_TYPE, shutDownType);
+            doc.put(TIMEOUT, timeout);
+            doc.put(MEMORY, memory);
 
             collection.update(new BasicDBObject(ID, doc.get(ID)),
                               doc,
@@ -214,6 +236,7 @@ public class TasksIntegrity implements CollectionDataIntegrity {
         DBObject q = Utils.setDateFilter(context, STOP_TIME);
         q.put(AbstractMetric.STOP_TIME, new BasicDBObject("$exists", true));
         q.put(AbstractMetric.START_TIME, new BasicDBObject("$exists", false));
+        q.put(AbstractMetric.TASK_ID, new BasicDBObject("$exists", true));
 
         collection.remove(q);
     }

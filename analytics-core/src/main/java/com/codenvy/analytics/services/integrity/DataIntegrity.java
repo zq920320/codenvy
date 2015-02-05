@@ -39,7 +39,7 @@ public class DataIntegrity extends Feature {
     private static final Logger LOG = LoggerFactory.getLogger(DataIntegrity.class);
 
     private static final List<CollectionDataIntegrity> DATA_INTEGRITY = new ArrayList<CollectionDataIntegrity>() {{
-        Injector.getInstance(TasksIntegrity.class);
+        add(Injector.getInstance(TasksIntegrity.class));
     }};
 
     @Inject
@@ -55,12 +55,19 @@ public class DataIntegrity extends Feature {
     /** {@inheritDoc} */
     @Override
     protected void doExecute(Context context) {
-        for (CollectionDataIntegrity integrity : DATA_INTEGRITY) {
-            try {
-                integrity.doCompute(context);
-            } catch (IOException e) {
-                LOG.error(e.getMessage(), e);
+        LOG.info("DataIntegrity is started " + context.toString());
+        long start = System.currentTimeMillis();
+
+        try {
+            for (CollectionDataIntegrity integrity : DATA_INTEGRITY) {
+                try {
+                    integrity.doCompute(context);
+                } catch (IOException e) {
+                    LOG.error(e.getMessage(), e);
+                }
             }
+        } finally {
+            LOG.info("DataIntegrity is finished in " + (System.currentTimeMillis() - start) / 1000 + " sec.");
         }
     }
 }

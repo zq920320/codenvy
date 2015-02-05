@@ -194,7 +194,6 @@
         <parameter key="PARAM" value="WAITING-TIME"/>
         <parameter key="STORAGE_TABLE" value="time_in_run_queue"/>
     </script>
-    <!--TODO order of tasks-->
     <script name="tasks">
         <description>List of tasks</description>
         <parameter key="WS" value="ANY"/>
