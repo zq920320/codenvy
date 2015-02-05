@@ -32,7 +32,7 @@ public interface CreditCardDao {
 
     String getClientToken(String accountId) throws ServerException, ForbiddenException;
 
-    String registerCard(String accountId, String nonce, String streetAddress, String city, String state, String country)  throws ServerException,ForbiddenException;
+    void registerCard(String accountId, String nonce, String streetAddress, String city, String state, String country)  throws ServerException,ForbiddenException;
 
     List<CreditCard> getCards(String accountId)  throws ServerException,ForbiddenException;
 

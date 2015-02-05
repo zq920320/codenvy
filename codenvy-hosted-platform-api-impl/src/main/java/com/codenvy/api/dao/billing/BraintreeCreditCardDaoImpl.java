@@ -72,7 +72,7 @@ public class BraintreeCreditCardDaoImpl implements CreditCardDao {
     }
 
     @Override
-    public String registerCard(String accountId, String nonce, String streetAddress, String city, String state, String country) throws ServerException, ForbiddenException {
+    public void registerCard(String accountId, String nonce, String streetAddress, String city, String state, String country) throws ServerException, ForbiddenException {
         if (accountId == null) {
             throw new ForbiddenException("Account ID required.");
         }
@@ -80,7 +80,6 @@ public class BraintreeCreditCardDaoImpl implements CreditCardDao {
             throw new ForbiddenException("Credit card nonce is required.");
         }
         Result<Customer> result;
-        String token;
         try {
             Customer customer = gateway.customer().find(accountId);
             CustomerRequest request = new CustomerRequest().creditCard()
@@ -98,8 +97,6 @@ public class BraintreeCreditCardDaoImpl implements CreditCardDao {
                 LOG.error(msg);
                 throw new ForbiddenException(msg);
             }
-            List<com.braintreegateway.CreditCard> newCards = result.getTarget().getCreditCards();
-            token = newCards.get(newCards.size() -1).getToken();
         } catch (NotFoundException nf) {
             CustomerRequest request = new CustomerRequest().id(accountId).creditCard()
                                                            .paymentMethodNonce(nonce)
@@ -116,14 +113,10 @@ public class BraintreeCreditCardDaoImpl implements CreditCardDao {
                 LOG.error(msg);
                 throw new ForbiddenException(msg);
             }
-            token = result.getTarget().getCreditCards().get(0).getToken();
         } catch (BraintreeException e) {
             LOG.warn("Braintree exception: ", e);
             throw new ServerException("Internal server error. Please, contact support.");
         }
-
-        return token;
-
     }
 
     @Override
