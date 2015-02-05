@@ -31,6 +31,8 @@ public interface BillingService {
 
     List<Receipt> getUnpaidReceipt(int limit) throws ServerException;
 
+    List<Receipt> getReceipts(String accountId) throws ServerException;
+
     void setPaidStatus(long receiptId, int status) throws ServerException;
 
     List<Receipt> getNotSendReceipt(int limit) throws ServerException;

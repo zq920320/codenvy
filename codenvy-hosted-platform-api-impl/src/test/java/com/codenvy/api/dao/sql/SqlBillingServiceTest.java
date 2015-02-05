@@ -21,6 +21,7 @@ import com.codenvy.api.account.billing.BillingService;
 import com.codenvy.api.account.billing.MonthlyBillingPeriod;
 import com.codenvy.api.account.metrics.MemoryUsedMetric;
 import com.codenvy.api.account.metrics.MeterBasedStorage;
+import com.codenvy.api.account.shared.dto.Receipt;
 import com.codenvy.api.core.ServerException;
 
 import org.h2.jdbcx.JdbcConnectionPool;
@@ -36,6 +37,7 @@ import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.List;
 
 
 public class SqlBillingServiceTest {
@@ -61,7 +63,7 @@ public class SqlBillingServiceTest {
         postgresql.setPortNumber(5432);
 
         sources = new DataSource[]{
-                h2
+                h2,
                 //postgresql
         };
     }
@@ -132,8 +134,8 @@ public class SqlBillingServiceTest {
         billingService.generateReceipts(Long.MIN_VALUE, Long.MAX_VALUE);
 
         //then
-        //Assert.assertEquals(billingService.getNotSendReceipt(1).size(), 1);
-        Assert.assertEquals(billingService.getUnpaidReceipt(4).size(), 4);
+        List<Receipt> ac3 = billingService.getReceipts("ac-3");
+        Assert.assertEquals(ac3.size(), 1);
     }
 
     @Test
