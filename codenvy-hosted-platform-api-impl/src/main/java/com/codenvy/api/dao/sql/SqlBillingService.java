@@ -35,6 +35,7 @@ import com.codenvy.api.core.ServerException;
 import com.codenvy.dto.server.DtoFactory;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -50,11 +51,19 @@ public class SqlBillingService implements BillingService {
 
 
     private final ConnectionFactory connectionFactory;
+    private final double            saasChargeableGbHPrice;
+    private final double            saasFreeGbH;
 
 
     @Inject
-    public SqlBillingService(ConnectionFactory connectionFactory) {
+    public SqlBillingService(ConnectionFactory connectionFactory,
+                             @Named("billing.saas.chargeable.gbh.price") Double saasChargeableGbHPrice,
+                             @Named("billing.saas.free.gbh") Double saasFreeGbH
+
+                            ) {
         this.connectionFactory = connectionFactory;
+        this.saasChargeableGbHPrice = saasChargeableGbHPrice;
+        this.saasFreeGbH = saasFreeGbH;
     }
 
     @Override
@@ -75,7 +84,7 @@ public class SqlBillingService implements BillingService {
                 }
 
                 try (PreparedStatement freeSaasCharges = connection.prepareStatement(CHARGES_FREE_INSERT)) {
-                    freeSaasCharges.setDouble(1, 10.0);
+                    freeSaasCharges.setDouble(1, saasFreeGbH);
                     freeSaasCharges.setString(2, "Saas");
                     freeSaasCharges.setString(3, "Free");
                     freeSaasCharges.setString(4, calculationId);
@@ -84,13 +93,13 @@ public class SqlBillingService implements BillingService {
                     freeSaasCharges.execute();
                 }
                 try (PreparedStatement paidSaasCharges = connection.prepareStatement(CHARGES_PAID_INSERT)) {
-                    paidSaasCharges.setDouble(1, 10.0);
+                    paidSaasCharges.setDouble(1, saasFreeGbH);
                     paidSaasCharges.setString(2, "Saas");
                     paidSaasCharges.setString(3, "Paid");
-                    paidSaasCharges.setDouble(4, 0.15);
+                    paidSaasCharges.setDouble(4, saasChargeableGbHPrice);
                     paidSaasCharges.setString(5, calculationId);
                     paidSaasCharges.setString(6, calculationId);
-                    paidSaasCharges.setDouble(7, 10.0);
+                    paidSaasCharges.setDouble(7, saasFreeGbH);
                     paidSaasCharges.execute();
                 }
 
@@ -159,8 +168,8 @@ public class SqlBillingService implements BillingService {
                                              .withTotal(receiptsResultSet.getDouble(2))
                                              .withAccountId(receiptsResultSet.getString(3))
                                              .withCharges(
-                                                     getCharges(connection, receiptsResultSet.getString(3), receiptsResultSet.getString(6)))
-                                             .withMemoryChargeDetails(getMemoryChargeDetails(connection, receiptsResultSet.getString(3),
+                                                     getCharges(connection, accountId, receiptsResultSet.getString(6)))
+                                             .withMemoryChargeDetails(getMemoryChargeDetails(connection, accountId,
                                                                                              receiptsResultSet.getString(6)))
                                   );
 

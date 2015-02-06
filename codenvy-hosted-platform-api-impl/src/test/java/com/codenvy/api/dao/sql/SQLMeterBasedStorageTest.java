@@ -23,62 +23,23 @@ import com.codenvy.api.account.metrics.MemoryUsedMetric;
 import com.codenvy.api.account.metrics.UsageInformer;
 import com.codenvy.api.core.ServerException;
 
-import org.h2.jdbcx.JdbcConnectionPool;
 import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 
-public class SQLMeterBasedStorageTest {
+public class SQLMeterBasedStorageTest extends  AbstractSQLTest{
 
-    private DataSource[] sources;
 
-    private SimpleDateFormat sdf = new SimpleDateFormat("dd-M-yyyy HH:mm:ss");
 
     private BillingPeriod billingPeriod = new MonthlyBillingPeriod();
 
-    @BeforeSuite
-    public void initSources() {
-
-        JdbcConnectionPool h2 = JdbcConnectionPool.
-                                                          create("jdbc:h2:mem:test", "sa", "sa");
-
-//        final PGPoolingDataSource postgresql = new PGPoolingDataSource();
-//        postgresql.setDataSourceName("codenvy1");
-//        postgresql.setServerName("localhost");
-//        postgresql.setDatabaseName("codenvy");
-//        postgresql.setUser("codenvy");
-//        postgresql.setPassword("codenvy");
-//        postgresql.setMaxConnections(10);
-//        postgresql.setPortNumber(5432);
-
-        sources = new DataSource[]{
-                h2
-                //postgresql
-        };
-    }
-
-
-    @BeforeMethod
-    @AfterMethod
-    public void cleanup() throws SQLException {
-        for (DataSource source : sources) {
-            StorageInitializer initializer = new StorageInitializer(source, true);
-            initializer.clean();
-            initializer.init();
-        }
-    }
 
     @DataProvider(name = "storage")
     public Object[][] createDS() throws SQLException {
@@ -86,7 +47,7 @@ public class SQLMeterBasedStorageTest {
         Object[][] result = new Object[sources.length][];
         for (int i = 0; i < sources.length; i++) {
             result[i] = new Object[]{
-                    new SQLMeterBasedStorage(new DataSourceConnectionFactory(sources[i]), billingPeriod)};
+                    new SqlMeterBasedStorage(new DataSourceConnectionFactory(sources[i]), billingPeriod)};
         }
         return result;
     }
@@ -94,7 +55,7 @@ public class SQLMeterBasedStorageTest {
 
     @Test(dataProvider = "storage", expectedExceptions = ServerException.class, expectedExceptionsMessageRegExp =
             "Stop time can't be less then start time")
-    public void shouldCheckIfStartTimeLessThenStop(SQLMeterBasedStorage meterBasedStorage)
+    public void shouldCheckIfStartTimeLessThenStop(SqlMeterBasedStorage meterBasedStorage)
             throws ParseException, ServerException {
         //given
         MemoryUsedMetric expected =
@@ -111,7 +72,7 @@ public class SQLMeterBasedStorageTest {
     }
 
     @Test(dataProvider = "storage")
-    public void shouldBeAbleToStoreMetric(SQLMeterBasedStorage meterBasedStorage)
+    public void shouldBeAbleToStoreMetric(SqlMeterBasedStorage meterBasedStorage)
             throws ParseException, ServerException {
         //given
         MemoryUsedMetric expected =
@@ -127,12 +88,12 @@ public class SQLMeterBasedStorageTest {
         //then
         //meterBasedStorage.getMetric()
         Assert.assertEquals(
-                meterBasedStorage.getMetric(((SQLMeterBasedStorage.SQLUsageInformer)usageInformer).getRecordId()),
+                meterBasedStorage.getMetric(((SqlMeterBasedStorage.SQLUsageInformer)usageInformer).getRecordId()),
                 expected);
     }
 
     @Test(dataProvider = "storage")
-    public void shouldBeAbleToUpdateEndTime(SQLMeterBasedStorage meterBasedStorage)
+    public void shouldBeAbleToUpdateEndTime(SqlMeterBasedStorage meterBasedStorage)
             throws ServerException, ParseException {
         //given
         MemoryUsedMetric expected =
@@ -148,7 +109,7 @@ public class SQLMeterBasedStorageTest {
         usageInformer.resourceInUse();
         //
         MemoryUsedMetric actual =
-                meterBasedStorage.getMetric(((SQLMeterBasedStorage.SQLUsageInformer)usageInformer).getRecordId());
+                meterBasedStorage.getMetric(((SqlMeterBasedStorage.SQLUsageInformer)usageInformer).getRecordId());
 
         Assert.assertTrue(new Date().getTime() < actual.getStopTime() + 1000 * 60);
         Assert.assertEquals(actual.getStartTime().longValue(), billingPeriod.getCurrent().getStartDate().getTime());
@@ -156,7 +117,7 @@ public class SQLMeterBasedStorageTest {
     }
 
     @Test(dataProvider = "storage")
-    public void shouldNotUpdateAfterStop(SQLMeterBasedStorage meterBasedStorage)
+    public void shouldNotUpdateAfterStop(SqlMeterBasedStorage meterBasedStorage)
             throws ServerException, ParseException {
         //given
         MemoryUsedMetric usedMetric =
@@ -171,7 +132,7 @@ public class SQLMeterBasedStorageTest {
         UsageInformer usageInformer = meterBasedStorage.createMemoryUsedRecord(usedMetric);
         usageInformer.resourceUsageStopped();
         //when
-        long recordId = ((SQLMeterBasedStorage.SQLUsageInformer)usageInformer).getRecordId();
+        long recordId = ((SqlMeterBasedStorage.SQLUsageInformer)usageInformer).getRecordId();
         MemoryUsedMetric expected = meterBasedStorage.getMetric(recordId);
         usageInformer.resourceInUse();
         //
@@ -179,7 +140,7 @@ public class SQLMeterBasedStorageTest {
     }
 
     @Test(dataProvider = "storage")
-    public void shouldGetSumByAccountWithAllDatesBetweenPeriod(SQLMeterBasedStorage meterBasedStorage)
+    public void shouldGetSumByAccountWithAllDatesBetweenPeriod(SqlMeterBasedStorage meterBasedStorage)
             throws ServerException, ParseException {
         //given
         meterBasedStorage.createMemoryUsedRecord(new MemoryUsedMetric(256,
@@ -226,7 +187,7 @@ public class SQLMeterBasedStorageTest {
     }
 
     @Test(dataProvider = "storage")
-    public void shouldGetSumByAccountWithDatesBetweenPeriod(SQLMeterBasedStorage meterBasedStorage)
+    public void shouldGetSumByAccountWithDatesBetweenPeriod(SqlMeterBasedStorage meterBasedStorage)
             throws ServerException, ParseException {
         //given
         //when
@@ -285,7 +246,7 @@ public class SQLMeterBasedStorageTest {
     }
 
     @Test(dataProvider = "storage")
-    public void shouldGetSumByDifferentWs(SQLMeterBasedStorage meterBasedStorage)
+    public void shouldGetSumByDifferentWs(SqlMeterBasedStorage meterBasedStorage)
             throws ServerException, ParseException {
         //given
         //when
@@ -355,7 +316,7 @@ public class SQLMeterBasedStorageTest {
     }
 
     @Test(dataProvider = "storage")
-    public void shouldAdd2Records(SQLMeterBasedStorage meterBasedStorage) throws ParseException, ServerException {
+    public void shouldAdd2Records(SqlMeterBasedStorage meterBasedStorage) throws ParseException, ServerException {
         //then
         meterBasedStorage.createMemoryUsedRecord(new MemoryUsedMetric(1024,
                                                                       sdf.parse("10-01-2014 12:00:00").getTime(),

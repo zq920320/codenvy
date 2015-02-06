@@ -28,7 +28,7 @@ public class SQLModule extends AbstractModule {
     @Override
     protected void configure() {
         bind(ConnectionFactory.class).to(JndiDataSourcedConnectionFactory.class);
-        bind(MeterBasedStorage.class).to(SQLMeterBasedStorage.class);
+        bind(MeterBasedStorage.class).to(SqlMeterBasedStorage.class);
         bind(BillingService.class).to(SqlBillingService.class);
         bind(StorageInitializer.class).asEagerSingleton();
     }

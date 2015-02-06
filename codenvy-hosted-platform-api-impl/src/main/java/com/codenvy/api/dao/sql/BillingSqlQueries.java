@@ -25,9 +25,15 @@ import java.util.concurrent.TimeUnit;
  * @author Sergii Kabashniuk
  */
 public interface BillingSqlQueries {
+    /**
+     * Multiplier to transform GB/h to MB/msec back and forth.
+     */
+    double MBMSEC_TO_GBH_MULTIPLIER = TimeUnit.HOURS.toMillis(1)*1024.0;
 
-    long MBMSEC_TO_GBH_MULTIPLIER = 1024 * TimeUnit.HOURS.toMillis(1);
-
+    /**
+     * SQL query to calculate memory charges metrics.
+     * Metrics transformed from MB/msec  to  GB/h and rounded with precision 6 before aggregation.
+     */
     String MEMORY_CHARGES_INSERT =
             "INSERT INTO " +
             "  MEMORY_CHARGES (" +
@@ -37,7 +43,7 @@ public interface BillingSqlQueries {
             "                   CALC_ID " +
             "                  ) " +
             "SELECT " +
-            "   SUM(ROUND(AMOUNT * (LEAST(?, STOP_TIME) - GREATEST(?, START_TIME))/" + MBMSEC_TO_GBH_MULTIPLIER + ".0 ,6)) AS AMOUNT, " +
+            "   SUM(ROUND(AMOUNT * (LEAST(?, STOP_TIME) - GREATEST(?, START_TIME))/" + MBMSEC_TO_GBH_MULTIPLIER + " ,6)) AS AMOUNT, " +
             "   ACCOUNT_ID, " +
             "   WORKSPACE_ID,  " +
             "   ? AS CALC_ID  " +
@@ -50,7 +56,9 @@ public interface BillingSqlQueries {
             " ACCOUNT_ID, " +
             " WORKSPACE_ID ";
 
-
+    /**
+     * Create charge with price 0 limited by configurable value from memory charges.
+     */
     String CHARGES_FREE_INSERT =
             "INSERT INTO " +
             "   CHARGES (" +
@@ -75,8 +83,10 @@ public interface BillingSqlQueries {
             "GROUP BY " +
             "  ACCOUNT_ID ";
 
-
-    String CHARGES_PAID_INSERT =
+    /**
+     * Create charge with configurable price where total sum more when configurable value. Sum subtracted with configurable value.
+     */
+    String CHARGES_PAID_INSERT           =
             "INSERT INTO " +
             "   CHARGES (" +
             "                   AMOUNT, " +
@@ -101,9 +111,10 @@ public interface BillingSqlQueries {
             "  ACCOUNT_ID " +
             "HAVING  " +
             " SUM(AMOUNT) >= ? ";
-
-
-    String RECEIPTS_INSERT =
+    /**
+     * Generate receipts from charges.
+     */
+    String RECEIPTS_INSERT               =
             "INSERT INTO " +
             "   RECEIPTS (" +
             "                   TOTAL, " +
@@ -126,7 +137,9 @@ public interface BillingSqlQueries {
             "  CALC_ID = ? " +
             "GROUP BY " +
             "  ACCOUNT_ID ";
-
+    /**
+     * Select receipts by given payment state.
+     */
     String RECEIPTS_PAYMENT_STATE_SELECT =
             "SELECT " +
             "                   ID, " +
@@ -140,8 +153,10 @@ public interface BillingSqlQueries {
             "WHERE " +
             " PAYMENT_STATUS = ? " +
             " LIMIT ?";
-
-    String RECEIPTS_ACCOUNT_SELECT =
+    /**
+     * Select receipts by given account.
+     */
+    String RECEIPTS_ACCOUNT_SELECT       =
             "SELECT " +
             "                   ID, " +
             "                   TOTAL, " +
@@ -153,8 +168,10 @@ public interface BillingSqlQueries {
             "  RECEIPTS " +
             "WHERE " +
             " ACCOUNT_ID = ? ";
-
-    String CHARGES_SELECT =
+    /**
+     * Select charges by given account id and calculation id.
+     */
+    String CHARGES_SELECT                =
             "SELECT " +
             "                   AMOUNT, " +
             "                   SERVICE_ID, " +
@@ -165,8 +182,10 @@ public interface BillingSqlQueries {
             "WHERE " +
             " ACCOUNT_ID  = ? " +
             " AND CALC_ID = ? ";
-
-    String MEMORY_CHARGES_SELECT =
+    /**
+     * Select memory charges by given account id and calculation id.
+     */
+    String MEMORY_CHARGES_SELECT         =
             "SELECT " +
             "                   AMOUNT, " +
             "                   WORKSPACE_ID  " +

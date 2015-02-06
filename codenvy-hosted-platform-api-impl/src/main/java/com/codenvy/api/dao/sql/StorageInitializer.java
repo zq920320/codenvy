@@ -21,6 +21,7 @@ import org.flywaydb.core.Flyway;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -33,10 +34,13 @@ import java.sql.SQLException;
  */
 public class StorageInitializer {
 
-    private final Flyway flyway;
+    private final Flyway  flyway;
+    private final Boolean cleanupOnStartup;
 
     @Inject
-    public StorageInitializer(JndiDataSourcedConnectionFactory dataSourcedConnectionFactory) throws SQLException {
+    public StorageInitializer(JndiDataSourcedConnectionFactory dataSourcedConnectionFactory,
+                              @Named("dbcodenvy.clean_on_startup") Boolean cleanupOnStartup) throws SQLException {
+        this.cleanupOnStartup = cleanupOnStartup;
         flyway = new Flyway();
         flyway.setDataSource(dataSourcedConnectionFactory.getDataSource());
         flyway.setLocations(getScriptLocation());
@@ -44,6 +48,7 @@ public class StorageInitializer {
     }
 
     public StorageInitializer(DataSource dataSource, boolean cleanOnValidationError) throws SQLException {
+        cleanupOnStartup = cleanOnValidationError;
         flyway = new Flyway();
         flyway.setCleanOnValidationError(cleanOnValidationError);
         flyway.setDataSource(dataSource);
@@ -60,22 +65,23 @@ public class StorageInitializer {
 
     @PostConstruct
     public void init() {
-        //TODO remove before prod update.
-        clean();
+        if (cleanupOnStartup) {
+            clean();
+        }
         flyway.migrate();
     }
 
     private String getScriptLocation() throws SQLException {
         try (Connection connection = flyway.getDataSource().getConnection()) {
-            DatabaseMetaData metdadata = connection.getMetaData();
-            switch (metdadata.getDatabaseProductName()) {
+            DatabaseMetaData metadata = connection.getMetaData();
+            switch (metadata.getDatabaseProductName()) {
 
                 case "PostgreSQL":
                     return "db/migration/postgresql";
                 case "H2":
                     return "db/migration/h2";
                 default:
-                    throw new RuntimeException("Unknown database " + metdadata.getDatabaseProductName());
+                    throw new RuntimeException("Unknown database " + metadata.getDatabaseProductName());
             }
         }
     }

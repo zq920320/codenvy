@@ -52,7 +52,7 @@ import java.util.*;
 /**
  * @author Sergii Kabashniuk
  */
-public class SQLMeterBasedStorage implements MeterBasedStorage {
+public class SqlMeterBasedStorage implements MeterBasedStorage {
 
     private final String QUERY_INSERT_METRIC = "INSERT INTO METRICS " +
                                                "  (" +
@@ -122,7 +122,7 @@ public class SQLMeterBasedStorage implements MeterBasedStorage {
     private final BillingPeriod     billingPeriod;
 
     @Inject
-    public SQLMeterBasedStorage(ConnectionFactory connectionFactory, BillingPeriod billingPeriod) {
+    public SqlMeterBasedStorage(ConnectionFactory connectionFactory, BillingPeriod billingPeriod) {
         this.connectionFactory = connectionFactory;
         this.billingPeriod = billingPeriod;
     }
