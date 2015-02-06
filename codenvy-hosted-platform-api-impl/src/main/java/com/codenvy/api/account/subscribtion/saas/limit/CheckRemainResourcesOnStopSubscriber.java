@@ -53,7 +53,7 @@ public class CheckRemainResourcesOnStopSubscriber implements EventSubscriber<Run
     private final MeterBasedStorage storage;
     private final ActiveRunHolder   activeRunHolder;
     private final BillingPeriod     billingPeriod;
-    private final long              freeUsageLimit;
+    private final double              freeUsageLimit;
 
 
     @Inject
@@ -61,7 +61,7 @@ public class CheckRemainResourcesOnStopSubscriber implements EventSubscriber<Run
                                                 AccountDao accountDao, MeterBasedStorage storage,
                                                 ActiveRunHolder activeRunHolder,
                                                 BillingPeriod billingPeriod,
-                                                @Named("subscription.saas.usage.free.mb_minutes") long freeUsage) {
+                                                @Named("subscription.saas.usage.free.mb_minutes") double freeUsage) {
         this.eventService = eventService;
         this.workspaceDao = workspaceDao;
         this.accountDao = accountDao;
@@ -103,7 +103,7 @@ public class CheckRemainResourcesOnStopSubscriber implements EventSubscriber<Run
             if (account.getAttributes().containsKey("codenvy:paid")) {
                 return;
             }
-            Long used =
+            double used =
                     storage.getMemoryUsed(workspace.getAccountId(), billingPeriod.getCurrent().getStartDate().getTime(),
                                           System.currentTimeMillis());
             if (used >= freeUsageLimit) {

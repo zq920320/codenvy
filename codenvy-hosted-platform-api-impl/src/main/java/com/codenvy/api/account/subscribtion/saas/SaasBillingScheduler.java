@@ -36,6 +36,7 @@ import java.util.concurrent.TimeUnit;
  */
 // must be eager singleton
 @Singleton
+@Deprecated
 public class SaasBillingScheduler {
     private static final Logger LOG = LoggerFactory.getLogger(SaasBillingScheduler.class);
 

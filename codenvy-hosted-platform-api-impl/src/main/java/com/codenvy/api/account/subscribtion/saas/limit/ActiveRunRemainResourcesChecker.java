@@ -39,25 +39,24 @@ import java.util.Set;
 /**
  * Periodically check the active runs to make sure they not exceeded the free RAM limit.
  *
- * @author Max Shaposhnik (mshaposhnik@codenvy.com) on 1/16/15.
+ * @author Max Shaposhnik.
  */
 @Singleton
 public class ActiveRunRemainResourcesChecker implements Runnable {
 
-    private static final Logger LOG                          = LoggerFactory.getLogger(ActiveRunRemainResourcesChecker.class);
-    public static final  String RUN_ACTIVITY_CHECKING_PERIOD = "resources.run_activity_checking.period_sec";
+    private static final Logger LOG = LoggerFactory.getLogger(ActiveRunRemainResourcesChecker.class);
 
     private final ActiveRunHolder   activeRunHolder;
     private final AccountDao        accountDao;
     private final MeterBasedStorage storage;
     private final RunQueue          runQueue;
     private final BillingPeriod     billingPeriod;
-    private final long freeUsageLimit;
+    private final double            freeUsageLimit;
 
     @Inject
     public ActiveRunRemainResourcesChecker(ActiveRunHolder activeRunHolder, AccountDao accountDao,
                                            MeterBasedStorage storage, RunQueue runQueue, BillingPeriod billingPeriod,
-                                           @Named("subscription.saas.usage.free.mb_minutes") long freeUsage) {
+                                           @Named("billing.saas.free.gbh") double freeUsage) {
         this.activeRunHolder = activeRunHolder;
         this.accountDao = accountDao;
         this.storage = storage;
@@ -66,7 +65,7 @@ public class ActiveRunRemainResourcesChecker implements Runnable {
         this.freeUsageLimit = freeUsage;
     }
 
-    @ScheduleRate(periodParameterName = RUN_ACTIVITY_CHECKING_PERIOD)
+    @ScheduleRate(period = 60)
     @Override
     public void run() {
         for (Map.Entry<String, Set<Long>> accountRuns : activeRunHolder.getActiveRuns().entrySet()) {
@@ -75,7 +74,7 @@ public class ActiveRunRemainResourcesChecker implements Runnable {
                 if (account.getAttributes().containsKey("codenvy:paid")) {
                     return;
                 }
-                Long used =
+                double used =
                         storage.getMemoryUsed(accountRuns.getKey(), billingPeriod.getCurrent().getStartDate().getTime(),
                                               System.currentTimeMillis());
                 if (used >= freeUsageLimit) {

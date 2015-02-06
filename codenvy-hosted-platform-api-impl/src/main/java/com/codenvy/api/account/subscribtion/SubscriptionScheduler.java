@@ -37,9 +37,6 @@ import java.util.concurrent.TimeUnit;
 public class SubscriptionScheduler {
     private static final Logger LOG = LoggerFactory.getLogger(SubscriptionScheduler.class);
 
-    public static final String SUBSCRIPTION_SCHEDULER_INITIAL_DELAY_MINUTES = "subscription.scheduler.initDelay.minutes";
-    public static final String SUBSCRIPTION_SCHEDULER_PERIOD_MINUTES        = "subscription.scheduler.period.minutes";
-
     private final SubscriptionServiceRegistry registry;
 
     @Inject
@@ -48,8 +45,8 @@ public class SubscriptionScheduler {
     }
 
     @ScheduleDelay(
-            initialDelayParameterName = SUBSCRIPTION_SCHEDULER_INITIAL_DELAY_MINUTES,
-            delayParameterName = SUBSCRIPTION_SCHEDULER_PERIOD_MINUTES,
+            initialDelay =  6,
+            delay = 360,
             unit = TimeUnit.MINUTES)
     public void checkSubscribtions() {
         LOG.info("Subscription scheduler task is started");

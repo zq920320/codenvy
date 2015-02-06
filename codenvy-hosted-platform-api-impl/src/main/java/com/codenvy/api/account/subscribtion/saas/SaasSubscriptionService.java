@@ -83,7 +83,7 @@ public class SaasSubscriptionService extends SubscriptionService {
     @Override
     public AccountResources getAccountResources(Subscription subscription) throws ServerException {
         final String accountId = subscription.getAccountId();
-        final Map<String, Long> memoryUsedReport = meterBasedStorage.getMemoryUsedReport(accountId,
+        final Map<String, Double> memoryUsedReport = meterBasedStorage.getMemoryUsedReport(accountId,
                                                                                          billingPeriod.getCurrent().getStartDate()
                                                                                                       .getTime(),
                                                                                          System.currentTimeMillis());
@@ -92,10 +92,10 @@ public class SaasSubscriptionService extends SubscriptionService {
         final List<WorkspaceResources> result = new ArrayList<>();
 
         for (Workspace workspace : workspaces) {
-            final Long usedMemory = memoryUsedReport.get(workspace.getId());
+            final Double usedMemory = memoryUsedReport.get(workspace.getId());
             result.add(DtoFactory.getInstance().createDto(WorkspaceResources.class)
                                  .withWorkspaceId(workspace.getId())
-                                 .withMemory(usedMemory != null ? usedMemory : 0L));
+                                 .withMemory(usedMemory != null ? usedMemory : 0.0));
         }
 
         return DtoFactory.getInstance().createDto(AccountResources.class)

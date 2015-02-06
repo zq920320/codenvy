@@ -55,6 +55,7 @@ import java.util.Map;
  * @author Alexander Garagatyi
  */
 // must be eager singleton
+@Deprecated
 @Singleton
 public class SaasBillingService {
     private static final Logger LOG                              = LoggerFactory.getLogger(SaasBillingService.class);
@@ -156,13 +157,13 @@ public class SaasBillingService {
     private void doChargeAccount(Account account, Date startDate, Date endDate) throws ApiException {
         final String accountId = account.getId();
         LOG.info("PAYMENTS# Saas #Start# accountId#{}#", account.getId());
-        final Map<String, Long> memoryUsedReport =
+        final Map<String, Double> memoryUsedReport =
                 meterBasedStorage.getMemoryUsedReport(accountId, startDate.getTime(), endDate.getTime());
 
         final List<String> accountOwnersEmails = getAccountOwnersEmails(account.getId());
 
-        Long totalRamUsage = 0l;
-        for (Map.Entry<String, Long> wsMemoryUsage : memoryUsedReport.entrySet()) {
+        Double totalRamUsage = 0.0;
+        for (Map.Entry<String, Double> wsMemoryUsage : memoryUsedReport.entrySet()) {
             totalRamUsage += wsMemoryUsage.getValue();
         }
         double chargeAmount = 0;
@@ -203,12 +204,12 @@ public class SaasBillingService {
         }
     }
 
-    private void sendMailWithConsumption(List<String> accountOwnersEmails, Map<String, Long> consumption,
+    private void sendMailWithConsumption(List<String> accountOwnersEmails, Map<String, Double> consumption,
                                          String subject,
                                          String mailTemplate, double amount) {
         long totalConsumption = 0;
         StringBuilder stringBuilder = new StringBuilder();
-        for (Map.Entry<String, Long> resourceConsumption : consumption.entrySet()) {
+        for (Map.Entry<String, Double> resourceConsumption : consumption.entrySet()) {
             totalConsumption += resourceConsumption.getValue();
             stringBuilder.append("<tr><td>")
                          .append(resourceConsumption.getKey())

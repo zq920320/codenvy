@@ -97,7 +97,7 @@ public class ActiveRunRemainResourcesCheckerTest {
     @Test
     public void shouldStopRunIfLimitExeeded() throws Exception {
         when(accountDao.getById(anyString())).thenReturn(new Account().withId(ACC_ID));
-        when(storage.getMemoryUsed(anyString(), anyLong(), anyLong())).thenReturn(180L);
+        when(storage.getMemoryUsed(anyString(), anyLong(), anyLong())).thenReturn(180D);
         when(runQueue.getTask(anyLong())).thenReturn(runQueueTask);
 
         checker.run();
@@ -107,7 +107,7 @@ public class ActiveRunRemainResourcesCheckerTest {
     @Test
     public void shouldNotStopRunIfLimitNotExeeded() throws Exception {
         when(accountDao.getById(anyString())).thenReturn(new Account().withId(ACC_ID));
-        when(storage.getMemoryUsed(anyString(), anyLong(), anyLong())).thenReturn(80L);
+        when(storage.getMemoryUsed(anyString(), anyLong(), anyLong())).thenReturn(80D);
         when(runQueue.getTask(anyLong())).thenReturn(runQueueTask);
 
         verifyZeroInteractions(runQueue);

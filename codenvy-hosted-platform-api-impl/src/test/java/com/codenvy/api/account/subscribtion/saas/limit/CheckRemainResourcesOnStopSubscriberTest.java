@@ -108,7 +108,7 @@ public class CheckRemainResourcesOnStopSubscriberTest {
     @Test
     public void shouldNotUpdateAccountAndWorkspacesIfResourcesAreLeft() throws ServerException, NotFoundException,
                                                                                ConflictException {
-        when(storage.getMemoryUsed(anyString(), anyLong(), anyLong())).thenReturn(80L);
+        when(storage.getMemoryUsed(anyString(), anyLong(), anyLong())).thenReturn(80D);
         when(workspaceDao.getByAccount(anyString())).thenReturn(Arrays.asList(new Workspace().withAccountId("accountId")
                                                                                              .withId(ACC_ID)));
         subscriber.onEvent(RunnerEvent.stoppedEvent(PROCESS_ID, WS_ID, "/project"));
@@ -119,7 +119,7 @@ public class CheckRemainResourcesOnStopSubscriberTest {
     @Test
     public void shouldUpdateAccountAndWorkspacesIfNoResourcesLeft() throws ServerException, NotFoundException,
                                                                            ConflictException {
-        when(storage.getMemoryUsed(anyString(), anyLong(), anyLong())).thenReturn(120L);
+        when(storage.getMemoryUsed(anyString(), anyLong(), anyLong())).thenReturn(120D);
         when(workspaceDao.getByAccount(anyString())).thenReturn(Arrays.asList(new Workspace().withAccountId("accountId")
                                                                                .withId(ACC_ID)));
         subscriber.onEvent(RunnerEvent.stoppedEvent(PROCESS_ID, WS_ID, "/project"));

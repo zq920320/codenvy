@@ -54,31 +54,17 @@ import static java.lang.String.format;
 public class ResourcesManagerImpl implements ResourcesManager {
     private static final Logger LOG = LoggerFactory.getLogger(ResourcesManagerImpl.class);
 
-    private final AccountDao        accountDao;
-    private final WorkspaceDao      workspaceDao;
-    private final MeterBasedStorage meterBasedStorage;
-    private final BillingPeriod     billingPeriod;
-    private final Long              freeMemory;
-    private final Integer           freeMaxLimit;
-
-    @com.google.inject.Inject(optional = true)
-    @Named(Constants.RUNNER_WS_MAX_MEMORY_SIZE)
-    private int defMaxMemorySize = 512;
-
+    private final AccountDao   accountDao;
+    private final WorkspaceDao workspaceDao;
+    private final Integer      freeMaxLimit;
 
     @Inject
-    public ResourcesManagerImpl(@Named("subscription.saas.usage.free.mb_minutes") long freeMemory,
-                                @Named("subscription.saas.free.max_limit_mb") int freeMaxLimit,
+    public ResourcesManagerImpl(@Named("subscription.saas.free.max_limit_mb") int freeMaxLimit,
                                 AccountDao accountDao,
-                                WorkspaceDao workspaceDao,
-                                MeterBasedStorage meterBasedStorage,
-                                BillingPeriod billingPeriod) {
-        this.freeMemory = freeMemory;
+                                WorkspaceDao workspaceDao) {
         this.freeMaxLimit = freeMaxLimit;
         this.accountDao = accountDao;
         this.workspaceDao = workspaceDao;
-        this.meterBasedStorage = meterBasedStorage;
-        this.billingPeriod = billingPeriod;
     }
 
     @Override
@@ -169,7 +155,7 @@ public class ResourcesManagerImpl implements ResourcesManager {
             bm.setChannel(format("workspace:resources:%s", workspaceId));
 
             final ResourcesDescriptor resourcesDescriptor = DtoFactory.getInstance().createDto(ResourcesDescriptor.class)
-                                                                .withTotalMemory(totalMemory);
+                                                                      .withTotalMemory(totalMemory);
 
             bm.setBody(DtoFactory.getInstance().toJson(resourcesDescriptor));
             WSConnectionContext.sendMessage(bm);

@@ -17,14 +17,14 @@
  */
 package com.codenvy.api.dao.sql;
 
-import static com.codenvy.api.dao.sql.BillingSqlQueries.CHARGES_FREE_INSERT;
-import static com.codenvy.api.dao.sql.BillingSqlQueries.CHARGES_PAID_INSERT;
-import static com.codenvy.api.dao.sql.BillingSqlQueries.CHARGES_SELECT;
-import static com.codenvy.api.dao.sql.BillingSqlQueries.MEMORY_CHARGES_INSERT;
-import static com.codenvy.api.dao.sql.BillingSqlQueries.MEMORY_CHARGES_SELECT;
-import static com.codenvy.api.dao.sql.BillingSqlQueries.RECEIPTS_ACCOUNT_SELECT;
-import static com.codenvy.api.dao.sql.BillingSqlQueries.RECEIPTS_INSERT;
-import static com.codenvy.api.dao.sql.BillingSqlQueries.RECEIPTS_PAYMENT_STATE_SELECT;
+import static com.codenvy.api.dao.sql.SqlDaoQueries.CHARGES_FREE_INSERT;
+import static com.codenvy.api.dao.sql.SqlDaoQueries.CHARGES_PAID_INSERT;
+import static com.codenvy.api.dao.sql.SqlDaoQueries.CHARGES_SELECT;
+import static com.codenvy.api.dao.sql.SqlDaoQueries.MEMORY_CHARGES_INSERT;
+import static com.codenvy.api.dao.sql.SqlDaoQueries.MEMORY_CHARGES_SELECT;
+import static com.codenvy.api.dao.sql.SqlDaoQueries.RECEIPTS_ACCOUNT_SELECT;
+import static com.codenvy.api.dao.sql.SqlDaoQueries.RECEIPTS_INSERT;
+import static com.codenvy.api.dao.sql.SqlDaoQueries.RECEIPTS_PAYMENT_STATE_SELECT;
 
 import com.codenvy.api.account.billing.BillingService;
 import com.codenvy.api.account.billing.PaymentState;

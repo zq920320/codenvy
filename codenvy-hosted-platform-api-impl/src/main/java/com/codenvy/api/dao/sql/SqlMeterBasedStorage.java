@@ -34,6 +34,13 @@ package com.codenvy.api.dao.sql;
  * from Codenvy S.A..
  */
 
+import static com.codenvy.api.dao.sql.SqlDaoQueries.METRIC_INSERT;
+import static com.codenvy.api.dao.sql.SqlDaoQueries.METRIC_SELECT_ACCOUNT_TOTAL;
+import static com.codenvy.api.dao.sql.SqlDaoQueries.METRIC_SELECT_ID;
+import static com.codenvy.api.dao.sql.SqlDaoQueries.METRIC_SELECT_RUNID;
+import static com.codenvy.api.dao.sql.SqlDaoQueries.METRIC_SELECT_ACCOUNT_GB_WS_TOTAL;
+import static com.codenvy.api.dao.sql.SqlDaoQueries.METRIC_UPDATE;
+
 import com.codenvy.api.account.billing.BillingPeriod;
 import com.codenvy.api.account.billing.Period;
 import com.codenvy.api.account.metrics.MemoryUsedMetric;
@@ -47,75 +54,16 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Sergii Kabashniuk
  */
 public class SqlMeterBasedStorage implements MeterBasedStorage {
-
-    private final String QUERY_INSERT_METRIC = "INSERT INTO METRICS " +
-                                               "  (" +
-                                               "      AMOUNT," +
-                                               "      START_TIME," +
-                                               "      STOP_TIME," +
-                                               "      USER_ID," +
-                                               "      ACCOUNT_ID," +
-                                               "      WORKSPACE_ID, " +
-                                               "      BILLING_PERIOD," +
-                                               "      RUN_ID" +
-                                               "  )" +
-                                               "    VALUES (?, ?, ?, ?, ?, ? , ?, ?);";
-
-    private final String QUERY_SELECT_METRIC = " SELECT " +
-                                               "      AMOUNT," +
-                                               "      START_TIME," +
-                                               "      STOP_TIME," +
-                                               "      USER_ID," +
-                                               "      ACCOUNT_ID," +
-                                               "      WORKSPACE_ID,  " +
-                                               "      RUN_ID " +
-                                               "FROM " +
-                                               "  METRICS " +
-                                               "WHERE ID=?";
-
-    private final String QUERY_SELECT_METRIC_RUN_ID = " SELECT " +
-                                                      "      AMOUNT," +
-                                                      "      START_TIME," +
-                                                      "      STOP_TIME," +
-                                                      "      USER_ID," +
-                                                      "      ACCOUNT_ID," +
-                                                      "      WORKSPACE_ID,  " +
-                                                      "      RUN_ID " +
-                                                      "FROM " +
-                                                      "  METRICS " +
-                                                      "WHERE " +
-                                                      "  RUN_ID=? " +
-                                                      "ORDER BY " +
-                                                      "  START_TIME";
-
-
-    private final String QUERY_SELECT_MEMORY_TOTAL = "SELECT " +
-                                                     "   SUM(AMOUNT * (LEAST(?, STOP_TIME) - GREATEST(?, START_TIME))" +
-                                                     " / (60000)) " +
-                                                     "FROM " +
-                                                     "  METRICS " +
-                                                     "WHERE " +
-                                                     "   ACCOUNT_ID=?" +
-                                                     "   AND START_TIME<?" +
-                                                     "   AND STOP_TIME>?";
-
-    private final String QUERY_SELECT_WS_MEMORY_TOTAL = "SELECT " +
-                                                        "   SUM(AMOUNT * (LEAST(?, STOP_TIME) - GREATEST(?, " +
-                                                        "START_TIME)) / (60000)), " +
-                                                        "   WORKSPACE_ID " +
-                                                        "FROM " +
-                                                        "  METRICS " +
-                                                        "WHERE " +
-                                                        "   ACCOUNT_ID=?" +
-                                                        "   AND START_TIME<?" +
-                                                        "   AND STOP_TIME>? " +
-                                                        "GROUP BY WORKSPACE_ID";
 
 
     private final ConnectionFactory connectionFactory;
@@ -141,7 +89,7 @@ public class SqlMeterBasedStorage implements MeterBasedStorage {
         try (Connection connection = connectionFactory.getConnection()) {
             connection.setAutoCommit(false);
             try (PreparedStatement statement = connection
-                    .prepareStatement(QUERY_INSERT_METRIC, Statement.RETURN_GENERATED_KEYS)) {
+                    .prepareStatement(METRIC_INSERT, Statement.RETURN_GENERATED_KEYS)) {
                 try {
                     long lastRecordId = -1;
                     long startTime = metric.getStartTime();
@@ -216,7 +164,7 @@ public class SqlMeterBasedStorage implements MeterBasedStorage {
      */
     MemoryUsedMetric getMetric(long id) throws ServerException {
         try (Connection connection = connectionFactory.getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement(QUERY_SELECT_METRIC)) {
+            try (PreparedStatement statement = connection.prepareStatement(METRIC_SELECT_ID)) {
                 statement.setLong(1, id);
                 try (ResultSet resultSet = statement.executeQuery()) {
                     if (resultSet.next()) {
@@ -248,7 +196,7 @@ public class SqlMeterBasedStorage implements MeterBasedStorage {
      */
     List<MemoryUsedMetric> getMetricsByRunId(String runId) throws ServerException {
         try (Connection connection = connectionFactory.getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement(QUERY_SELECT_METRIC_RUN_ID)) {
+            try (PreparedStatement statement = connection.prepareStatement(METRIC_SELECT_RUNID)) {
                 statement.setString(1, runId);
                 List<MemoryUsedMetric> result = new ArrayList<>();
                 try (ResultSet resultSet = statement.executeQuery()) {
@@ -273,9 +221,9 @@ public class SqlMeterBasedStorage implements MeterBasedStorage {
 
 
     @Override
-    public Long getMemoryUsed(String accountId, long from, long until) throws ServerException {
+    public Double getMemoryUsed(String accountId, long from, long until) throws ServerException {
         try (Connection connection = connectionFactory.getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement(QUERY_SELECT_MEMORY_TOTAL)) {
+            try (PreparedStatement statement = connection.prepareStatement(METRIC_SELECT_ACCOUNT_TOTAL)) {
                 statement.setLong(1, until);
                 statement.setLong(2, from);
                 statement.setString(3, accountId);
@@ -283,7 +231,7 @@ public class SqlMeterBasedStorage implements MeterBasedStorage {
                 statement.setLong(5, from);
                 try (ResultSet resultSet = statement.executeQuery()) {
                     if (resultSet.next()) {
-                        return resultSet.getLong(1);
+                        return resultSet.getDouble(1);
                     }
                     return null;
                 }
@@ -294,10 +242,10 @@ public class SqlMeterBasedStorage implements MeterBasedStorage {
     }
 
     @Override
-    public Map<String, Long> getMemoryUsedReport(String accountId, long from, long until) throws ServerException {
-        Map<String, Long> result = new HashMap<>();
+    public Map<String, Double> getMemoryUsedReport(String accountId, long from, long until) throws ServerException {
+        Map<String, Double> result = new HashMap<>();
         try (Connection connection = connectionFactory.getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement(QUERY_SELECT_WS_MEMORY_TOTAL)) {
+            try (PreparedStatement statement = connection.prepareStatement(METRIC_SELECT_ACCOUNT_GB_WS_TOTAL)) {
                 statement.setLong(1, until);
                 statement.setLong(2, from);
                 statement.setString(3, accountId);
@@ -305,7 +253,7 @@ public class SqlMeterBasedStorage implements MeterBasedStorage {
                 statement.setLong(5, from);
                 try (ResultSet resultSet = statement.executeQuery()) {
                     while (resultSet.next()) {
-                        result.put(resultSet.getString(2), resultSet.getLong(1));
+                        result.put(resultSet.getString(2), resultSet.getDouble(1));
                     }
 
                 }
@@ -317,9 +265,7 @@ public class SqlMeterBasedStorage implements MeterBasedStorage {
     }
 
     final class SQLUsageInformer implements UsageInformer {
-        public final String QUERY_UPDATE_METRIC = "UPDATE  METRICS " +
-                                                  " SET STOP_TIME=? " +
-                                                  " WHERE ID=? ";
+
         private long recordId;
 
         private       Period           currentBillingPeriod;
@@ -347,7 +293,7 @@ public class SqlMeterBasedStorage implements MeterBasedStorage {
                         Date now = new Date();
                         //in the same initial billing period.
                         if (now.before(currentBillingPeriod.getEndDate())) {
-                            try (PreparedStatement statement = connection.prepareStatement(QUERY_UPDATE_METRIC)) {
+                            try (PreparedStatement statement = connection.prepareStatement(METRIC_UPDATE)) {
                                 statement.setLong(1, new Date().getTime());
                                 statement.setLong(2, recordId);
                                 statement.execute();
@@ -357,14 +303,14 @@ public class SqlMeterBasedStorage implements MeterBasedStorage {
                             //jump to the next billing period.
                             if (now.before(nextBillingPeriod.getEndDate())) {
                                 //close previous record
-                                try (PreparedStatement statement = connection.prepareStatement(QUERY_UPDATE_METRIC)) {
+                                try (PreparedStatement statement = connection.prepareStatement(METRIC_UPDATE)) {
                                     statement.setLong(1, currentBillingPeriod.getEndDate().getTime());
                                     statement.setLong(2, recordId);
                                     statement.execute();
                                 }
 
                                 try (PreparedStatement statement = connection
-                                        .prepareStatement(QUERY_INSERT_METRIC, Statement.RETURN_GENERATED_KEYS)) {
+                                        .prepareStatement(METRIC_INSERT, Statement.RETURN_GENERATED_KEYS)) {
 
                                     recordId = doCreateMemoryRecord(statement,
                                                                     new MemoryUsedMetric(metric.getAmount(),

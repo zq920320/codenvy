@@ -38,7 +38,7 @@ public interface MeterBasedStorage {
 
 
     /**
-     * Get total consumed Mb/min of account by given period.
+     * Get total consumed GB*h of account by given period.
      *
      * @param accountId
      *         - Given accountId
@@ -47,12 +47,12 @@ public interface MeterBasedStorage {
      * @param until
      *         -
      *         end of period
-     * @return - total number of consumed  Mb/min
+     * @return - total number of consumed  GB*h
      */
-    Long getMemoryUsed(String accountId, long from, long until) throws ServerException;
+    Double getMemoryUsed(String accountId, long from, long until) throws ServerException;
 
     /**
-     * Get total consumed Mb/min of account by given period group by workspace id's
+     * Get total consumed GB*h of account by given period group by workspace id's
      *
      * @param accountId
      *         - Given accountId
@@ -61,7 +61,7 @@ public interface MeterBasedStorage {
      * @param until
      *         -
      *         end of period
-     * @return - total number of consumed  Mb/min group by workspace id's
+     * @return - total number of consumed  GB*h group by workspace id's
      */
-    Map<String, Long> getMemoryUsedReport(String accountId, long from, long until) throws ServerException;
+    Map<String, Double> getMemoryUsedReport(String accountId, long from, long until) throws ServerException;
 }

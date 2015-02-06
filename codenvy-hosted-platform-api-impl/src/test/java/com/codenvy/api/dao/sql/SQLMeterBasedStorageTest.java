@@ -180,10 +180,10 @@ public class SQLMeterBasedStorageTest extends  AbstractSQLTest{
         //then
         Assert.assertEquals(meterBasedStorage
                                     .getMemoryUsed("ac-46534", sdf.parse("10-01-2014 09:00:00").getTime(),
-                                                   sdf.parse("10-01-2014 14:00:00").getTime()), (Long)23552L);
+                                                   sdf.parse("10-01-2014 14:00:00").getTime()), 0.383333);
         Assert.assertEquals(meterBasedStorage
                                     .getMemoryUsed("ac-348798", sdf.parse("10-01-2014 09:00:00").getTime(),
-                                                   sdf.parse("10-01-2014 14:00:00").getTime()), (Long)256L);
+                                                   sdf.parse("10-01-2014 14:00:00").getTime()), 0.004167);
     }
 
     @Test(dataProvider = "storage")
@@ -241,7 +241,7 @@ public class SQLMeterBasedStorageTest extends  AbstractSQLTest{
         //then
         Assert.assertEquals(meterBasedStorage
                                     .getMemoryUsed("ac-46534", sdf.parse("10-01-2014 10:00:00").getTime(),
-                                                   sdf.parse("10-01-2014 12:10:00").getTime()), (Long)13312L);
+                                                   sdf.parse("10-01-2014 12:10:00").getTime()), 0.216667);
 
     }
 
@@ -307,11 +307,11 @@ public class SQLMeterBasedStorageTest extends  AbstractSQLTest{
 
         //then
 
-        Map<String, Long> result = meterBasedStorage
+        Map<String, Double> result = meterBasedStorage
                 .getMemoryUsedReport("ac-46534", sdf.parse("10-01-2014 10:00:00").getTime(),
                                      sdf.parse("10-01-2014 12:10:00").getTime());
-        Assert.assertEquals(result.get("ws-124"), (Long)17408L);
-        Assert.assertEquals(result.get("ws-235423"), (Long)13312L);
+        Assert.assertEquals(result.get("ws-124"), 0.283333);
+        Assert.assertEquals(result.get("ws-235423"), 0.216667);
         Assert.assertEquals(2, result.size());
     }
 

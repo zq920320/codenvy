@@ -92,7 +92,7 @@ public class ResourcesManagerImplTest {
         when(accountDao.getById(anyString())).thenReturn(new Account().withId(ACCOUNT_ID).withName("accountName"));
 
         resourcesManager =
-                new ResourcesManagerImpl(FREE_MEMORY, MAX_LIMIT, accountDao, workspaceDao, meterBasedStorage, new MonthlyBillingPeriod());
+                new ResourcesManagerImpl( MAX_LIMIT, accountDao, workspaceDao);
     }
 
     @Test(expectedExceptions = ForbiddenException.class,

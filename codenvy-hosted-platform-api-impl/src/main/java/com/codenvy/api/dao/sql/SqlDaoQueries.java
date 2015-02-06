@@ -24,11 +24,14 @@ import java.util.concurrent.TimeUnit;
  *
  * @author Sergii Kabashniuk
  */
-public interface BillingSqlQueries {
+public interface SqlDaoQueries {
     /**
      * Multiplier to transform GB/h to MB/msec back and forth.
      */
-    double MBMSEC_TO_GBH_MULTIPLIER = TimeUnit.HOURS.toMillis(1)*1024.0;
+    double MBMSEC_TO_GBH_MULTIPLIER = TimeUnit.HOURS.toMillis(1) * 1024.0;
+
+    String GBH_SUM =
+            " SUM(ROUND(AMOUNT * (LEAST(?, STOP_TIME) - GREATEST(?, START_TIME))/" + MBMSEC_TO_GBH_MULTIPLIER + " ,6)) ";
 
     /**
      * SQL query to calculate memory charges metrics.
@@ -43,7 +46,7 @@ public interface BillingSqlQueries {
             "                   CALC_ID " +
             "                  ) " +
             "SELECT " +
-            "   SUM(ROUND(AMOUNT * (LEAST(?, STOP_TIME) - GREATEST(?, START_TIME))/" + MBMSEC_TO_GBH_MULTIPLIER + " ,6)) AS AMOUNT, " +
+            "  " + GBH_SUM + " AS AMOUNT, " +
             "   ACCOUNT_ID, " +
             "   WORKSPACE_ID,  " +
             "   ? AS CALC_ID  " +
@@ -194,4 +197,72 @@ public interface BillingSqlQueries {
             "WHERE " +
             " ACCOUNT_ID  = ? " +
             " AND CALC_ID = ? ";
+
+
+    String METRIC_INSERT = "INSERT INTO METRICS " +
+                           "  (" +
+                           "      AMOUNT," +
+                           "      START_TIME," +
+                           "      STOP_TIME," +
+                           "      USER_ID," +
+                           "      ACCOUNT_ID," +
+                           "      WORKSPACE_ID, " +
+                           "      BILLING_PERIOD," +
+                           "      RUN_ID" +
+                           "  )" +
+                           "    VALUES (?, ?, ?, ?, ?, ? , ?, ?);";
+
+    String METRIC_SELECT_ID = " SELECT " +
+                              "      AMOUNT," +
+                              "      START_TIME," +
+                              "      STOP_TIME," +
+                              "      USER_ID," +
+                              "      ACCOUNT_ID," +
+                              "      WORKSPACE_ID,  " +
+                              "      RUN_ID " +
+                              "FROM " +
+                              "  METRICS " +
+                              "WHERE ID=?";
+
+    String METRIC_SELECT_RUNID = " SELECT " +
+                                 "      AMOUNT," +
+                                 "      START_TIME," +
+                                 "      STOP_TIME," +
+                                 "      USER_ID," +
+                                 "      ACCOUNT_ID," +
+                                 "      WORKSPACE_ID,  " +
+                                 "      RUN_ID " +
+                                 "FROM " +
+                                 "  METRICS " +
+                                 "WHERE " +
+                                 "  RUN_ID=? " +
+                                 "ORDER BY " +
+                                 "  START_TIME";
+
+
+    String METRIC_SELECT_ACCOUNT_TOTAL = "SELECT " +
+                                         "  " + GBH_SUM + " AS AMOUNT " +
+                                         "FROM " +
+                                         "  METRICS " +
+                                         "WHERE " +
+                                         "   ACCOUNT_ID=?" +
+                                         "   AND START_TIME<?" +
+                                         "   AND STOP_TIME>?";
+
+    String METRIC_SELECT_ACCOUNT_GB_WS_TOTAL = "SELECT " +
+                                               "  " + GBH_SUM + " AS AMOUNT, " +
+                                               "   WORKSPACE_ID " +
+                                               "FROM " +
+                                               "  METRICS " +
+                                               "WHERE " +
+                                               "   ACCOUNT_ID=?" +
+                                               "   AND START_TIME<?" +
+                                               "   AND STOP_TIME>? " +
+                                               "GROUP BY WORKSPACE_ID";
+
+
+    String METRIC_UPDATE = "UPDATE  METRICS " +
+                           " SET STOP_TIME=? " +
+                           " WHERE ID=? ";
+
 }

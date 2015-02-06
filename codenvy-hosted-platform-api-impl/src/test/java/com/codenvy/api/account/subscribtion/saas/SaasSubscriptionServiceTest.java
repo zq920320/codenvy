@@ -70,8 +70,8 @@ public class SaasSubscriptionServiceTest {
         Workspace workspace = new Workspace().withId("workspaceID");
         when(workspaceDao.getByAccount(anyString())).thenReturn(Arrays.asList(workspace));
 
-        Map<String, Long> usedReport = new HashMap<>();
-        usedReport.put("workspaceID", 1024L);
+        Map<String, Double> usedReport = new HashMap<>();
+        usedReport.put("workspaceID", 1024.0);
         when(meterBasedStorage.getMemoryUsedReport(anyString(), anyLong(), anyLong())).thenReturn(usedReport);
 
         final AccountResources accountResources = service.getAccountResources(new Subscription());
@@ -87,7 +87,7 @@ public class SaasSubscriptionServiceTest {
         Workspace workspace = new Workspace().withId("workspaceID");
         when(workspaceDao.getByAccount(anyString())).thenReturn(Arrays.asList(workspace));
 
-        when(meterBasedStorage.getMemoryUsedReport(anyString(), anyLong(), anyLong())).thenReturn(new HashMap<String, Long>());
+        when(meterBasedStorage.getMemoryUsedReport(anyString(), anyLong(), anyLong())).thenReturn(new HashMap<String, Double>());
 
         final AccountResources accountResources = service.getAccountResources(new Subscription());
 

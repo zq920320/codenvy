@@ -37,6 +37,7 @@ import java.util.Calendar;
 // must be eager singleton
 @Path("billing/saas")
 @Singleton
+@Deprecated
 public class SaasBillingRestService {
 
     private final SaasBillingService saasBillingService;

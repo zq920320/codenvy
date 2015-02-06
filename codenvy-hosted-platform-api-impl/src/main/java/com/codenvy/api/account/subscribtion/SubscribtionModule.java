@@ -44,22 +44,11 @@ public class SubscribtionModule extends AbstractModule {
         subscriptionServiceBinder.addBinding().to(OnPremisesSubscriptionService.class);
         subscriptionServiceBinder.addBinding().to(SaasSubscriptionService.class);
 
-        bindConstant().annotatedWith(Names.named(ActiveRunRemainResourcesChecker.RUN_ACTIVITY_CHECKING_PERIOD)).to(60);
         bind(ActiveRunHolder.class);
         bind(ActiveRunRemainResourcesChecker.class).asEagerSingleton();
         bind(CheckRemainResourcesOnStopSubscriber.class).asEagerSingleton();
         bind(RefillJob.class);
 
         bind(SubscriptionScheduler.class).asEagerSingleton();
-        bindConstant().annotatedWith(
-                Names.named(SubscriptionScheduler.SUBSCRIPTION_SCHEDULER_INITIAL_DELAY_MINUTES)).to(6);
-        bindConstant()
-                .annotatedWith(Names.named(SubscriptionScheduler.SUBSCRIPTION_SCHEDULER_PERIOD_MINUTES))
-                .to(6 * 60);
-
-
-        bind(SaasBillingService.class).asEagerSingleton();
-        bind(SaasBillingRestService.class).asEagerSingleton();
-        bind(SaasBillingScheduler.class).asEagerSingleton();
     }
 }
