@@ -171,10 +171,17 @@ public interface SqlDaoQueries {
             "  RECEIPTS " +
             "WHERE " +
             " ACCOUNT_ID = ? ";
+
+    /**
+     * Update payment status of receipts.
+     */
+    String RECEIPTS_PAYMENT_STATUS_UPDATE = "UPDATE   RECEIPTS " +
+                                            " SET PAYMENT_STATUS=? " +
+                                            " WHERE ID=? ";
     /**
      * Select charges by given account id and calculation id.
      */
-    String CHARGES_SELECT                =
+    String CHARGES_SELECT                 =
             "SELECT " +
             "                   AMOUNT, " +
             "                   SERVICE_ID, " +
@@ -188,7 +195,7 @@ public interface SqlDaoQueries {
     /**
      * Select memory charges by given account id and calculation id.
      */
-    String MEMORY_CHARGES_SELECT         =
+    String MEMORY_CHARGES_SELECT          =
             "SELECT " +
             "                   AMOUNT, " +
             "                   WORKSPACE_ID  " +

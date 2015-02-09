@@ -29,11 +29,11 @@ import java.util.List;
 public interface BillingService {
     void generateReceipts(long from, long till) throws ServerException;
 
-    List<Receipt> getUnpaidReceipt(int limit) throws ServerException;
+    List<Receipt> getReceipt(PaymentState state, int limit) throws ServerException;
+
+    void setPaymentState(long receiptId, PaymentState state) throws ServerException;
 
     List<Receipt> getReceipts(String accountId) throws ServerException;
-
-    void setPaidStatus(long receiptId, int status) throws ServerException;
 
     List<Receipt> getNotSendReceipt(int limit) throws ServerException;
 

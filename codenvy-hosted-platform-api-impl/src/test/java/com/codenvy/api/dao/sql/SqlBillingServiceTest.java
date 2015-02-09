@@ -23,6 +23,7 @@ import static org.testng.Assert.assertTrue;
 
 import com.codenvy.api.account.billing.BillingService;
 import com.codenvy.api.account.billing.MonthlyBillingPeriod;
+import com.codenvy.api.account.billing.PaymentState;
 import com.codenvy.api.account.metrics.MemoryUsedMetric;
 import com.codenvy.api.account.metrics.MeterBasedStorage;
 import com.codenvy.api.account.shared.dto.Charge;
@@ -31,6 +32,7 @@ import com.codenvy.api.account.shared.dto.Receipt;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.dto.server.DtoFactory;
 
+import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -39,8 +41,7 @@ import java.text.ParseException;
 import java.util.List;
 
 
-public class SqlBillingServiceTest extends AbstractSQLTest{
-
+public class SqlBillingServiceTest extends AbstractSQLTest {
 
 
     @DataProvider(name = "storage")
@@ -81,10 +82,10 @@ public class SqlBillingServiceTest extends AbstractSQLTest{
         //free + paid
         assertEquals(receipt.getCharges().size(), 2);
         assertTrue(receipt.getCharges().contains(DtoFactory.getInstance().createDto(Charge.class)
-                                                               .withAmount(10.0)
-                                                               .withPrice(0.0)
-                                                               .withServiceId("Saas")
-                                                               .withType("Free")));
+                                                           .withAmount(10.0)
+                                                           .withPrice(0.0)
+                                                           .withServiceId("Saas")
+                                                           .withType("Free")));
 
         assertTrue(receipt.getCharges().contains(DtoFactory.getInstance().createDto(Charge.class)
                                                            .withAmount(206.0)
@@ -94,8 +95,8 @@ public class SqlBillingServiceTest extends AbstractSQLTest{
 
         assertEquals(receipt.getMemoryChargeDetails().size(), 1);
         assertTrue(receipt.getMemoryChargeDetails().contains(DtoFactory.getInstance().createDto(MemoryChargeDetails.class)
-                                                           .withAmount(216.0)
-                                                           .withWorkspaceId("ws-235423")))
+                                                                       .withAmount(216.0)
+                                                                       .withWorkspaceId("ws-235423")))
 
 
         ;
@@ -240,11 +241,76 @@ public class SqlBillingServiceTest extends AbstractSQLTest{
         assertEquals(ac1.size(), 1);
         assertEquals(get(ac1, 0).getTotal(), 0.0);
 
+    }
+
+    @Test(dataProvider = "storage")
+    public void shouldBeAbleToSetGetByPaymentState(MeterBasedStorage meterBasedStorage, BillingService billingService)
+            throws ParseException, ServerException {
+        //given
+        meterBasedStorage.createMemoryUsedRecord(
+                new MemoryUsedMetric(1024,
+                                     sdf.parse("10-01-2015 10:20:56").getTime(),
+                                     sdf.parse("11-01-2015 10:20:56").getTime(),
+                                     "usr-123",
+                                     "ac-5",
+                                     "ws-7",
+                                     "run-1254"));
+
+        meterBasedStorage.createMemoryUsedRecord(
+                new MemoryUsedMetric(1024,
+                                     sdf.parse("01-01-2015 10:00:00").getTime(),
+                                     sdf.parse("10-01-2015 10:00:00").getTime(),
+                                     "usr-345",
+                                     "ac-3",
+                                     "ws-235423",
+                                     "run-234"));
 
 
+        //when
+        billingService.generateReceipts(Long.MIN_VALUE, Long.MAX_VALUE);
+        //then
+        Assert.assertEquals(billingService.getReceipt(PaymentState.WAITING_EXECUTOR, 5).size(), 2);
+        Assert.assertEquals(billingService.getReceipt(PaymentState.EXECUTING, 5).size(), 0);
+        Assert.assertEquals(billingService.getReceipt(PaymentState.PAYMENT_FAIL, 5).size(), 0);
+        Assert.assertEquals(billingService.getReceipt(PaymentState.CREDIT_CARD_MISSING, 5).size(), 0);
+        Assert.assertEquals(billingService.getReceipt(PaymentState.PAID_SUCCESSFULLY, 5).size(), 0);
+
+    }
+
+    @Test(dataProvider = "storage")
+    public void shouldBeAbleToSetPaymentState(MeterBasedStorage meterBasedStorage, BillingService billingService)
+            throws ParseException, ServerException {
+        //given
+        meterBasedStorage.createMemoryUsedRecord(
+                new MemoryUsedMetric(1024,
+                                     sdf.parse("10-01-2015 10:20:56").getTime(),
+                                     sdf.parse("11-01-2015 10:20:56").getTime(),
+                                     "usr-123",
+                                     "ac-5",
+                                     "ws-7",
+                                     "run-1254"));
+
+        meterBasedStorage.createMemoryUsedRecord(
+                new MemoryUsedMetric(1024,
+                                     sdf.parse("01-01-2015 10:00:00").getTime(),
+                                     sdf.parse("10-01-2015 10:00:00").getTime(),
+                                     "usr-345",
+                                     "ac-3",
+                                     "ws-235423",
+                                     "run-234"));
 
 
-
+        //when
+        billingService.generateReceipts(Long.MIN_VALUE, Long.MAX_VALUE);
+        Receipt receipt = get(billingService.getReceipt(PaymentState.WAITING_EXECUTOR, 5), 1);
+        billingService.setPaymentState(receipt.getId(), PaymentState.PAYMENT_FAIL);
+        //then
+        Assert.assertEquals(billingService.getReceipt(PaymentState.WAITING_EXECUTOR, 5).size(), 1);
+        Assert.assertEquals(billingService.getReceipt(PaymentState.EXECUTING, 5).size(), 0);
+        Assert.assertEquals(billingService.getReceipt(PaymentState.PAYMENT_FAIL, 5).size(), 1);
+        Assert.assertEquals(get(billingService.getReceipt(PaymentState.PAYMENT_FAIL, 5), 0).getId(), receipt.getId());
+        Assert.assertEquals(billingService.getReceipt(PaymentState.CREDIT_CARD_MISSING, 5).size(), 0);
+        Assert.assertEquals(billingService.getReceipt(PaymentState.PAID_SUCCESSFULLY, 5).size(), 0);
 
     }
 }

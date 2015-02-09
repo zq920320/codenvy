@@ -27,7 +27,9 @@ public enum PaymentState {
 
     PAYMENT_FAIL(8),
 
-    PAID_SUCCESSFULLY(16);
+    CREDIT_CARD_MISSING(16),
+
+    PAID_SUCCESSFULLY(32);
 
 
     private final int state;
@@ -49,6 +51,8 @@ public enum PaymentState {
             case 8:
                 return PAYMENT_FAIL;
             case 16:
+                return CREDIT_CARD_MISSING;
+            case 32:
                 return PAID_SUCCESSFULLY;
         }
         throw new RuntimeException("Unknown Payment state : " + state);

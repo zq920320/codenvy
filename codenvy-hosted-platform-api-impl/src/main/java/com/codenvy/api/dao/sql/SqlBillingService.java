@@ -22,9 +22,11 @@ import static com.codenvy.api.dao.sql.SqlDaoQueries.CHARGES_PAID_INSERT;
 import static com.codenvy.api.dao.sql.SqlDaoQueries.CHARGES_SELECT;
 import static com.codenvy.api.dao.sql.SqlDaoQueries.MEMORY_CHARGES_INSERT;
 import static com.codenvy.api.dao.sql.SqlDaoQueries.MEMORY_CHARGES_SELECT;
+import static com.codenvy.api.dao.sql.SqlDaoQueries.METRIC_UPDATE;
 import static com.codenvy.api.dao.sql.SqlDaoQueries.RECEIPTS_ACCOUNT_SELECT;
 import static com.codenvy.api.dao.sql.SqlDaoQueries.RECEIPTS_INSERT;
 import static com.codenvy.api.dao.sql.SqlDaoQueries.RECEIPTS_PAYMENT_STATE_SELECT;
+import static com.codenvy.api.dao.sql.SqlDaoQueries.RECEIPTS_PAYMENT_STATUS_UPDATE;
 
 import com.codenvy.api.account.billing.BillingService;
 import com.codenvy.api.account.billing.PaymentState;
@@ -125,10 +127,30 @@ public class SqlBillingService implements BillingService {
 
 
     @Override
-    public List<Receipt> getUnpaidReceipt(int limit) throws ServerException {
+    public void setPaymentState(long receiptId, PaymentState state) throws ServerException {
+        try (Connection connection = connectionFactory.getConnection()) {
+            try {
+                connection.setAutoCommit(false);
+                try (PreparedStatement statement = connection.prepareStatement(RECEIPTS_PAYMENT_STATUS_UPDATE)) {
+                    statement.setInt(1, state.getState());
+                    statement.setLong(2, receiptId);
+                    statement.execute();
+                }
+                connection.commit();
+            } catch (SQLException e) {
+                connection.rollback();
+            }
+        } catch (SQLException e) {
+            throw new ServerException(e.getLocalizedMessage(), e);
+        }
+    }
+
+
+    @Override
+    public List<Receipt> getReceipt(PaymentState state, int limit) throws ServerException {
         try (Connection connection = connectionFactory.getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(RECEIPTS_PAYMENT_STATE_SELECT)) {
-                statement.setInt(1, PaymentState.WAITING_EXECUTOR.getState());
+                statement.setInt(1, state.getState());
                 statement.setLong(2, limit);
                 try (ResultSet receiptsResultSet = statement.executeQuery()) {
                     List<Receipt> result = new ArrayList<>(limit);
@@ -183,10 +205,6 @@ public class SqlBillingService implements BillingService {
         }
     }
 
-    @Override
-    public void setPaidStatus(long receiptId, int status) {
-
-    }
 
     @Override
     public List<Receipt> getNotSendReceipt(int limit) {
