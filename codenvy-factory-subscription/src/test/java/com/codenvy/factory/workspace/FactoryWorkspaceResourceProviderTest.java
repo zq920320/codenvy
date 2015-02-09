@@ -112,7 +112,6 @@ public class FactoryWorkspaceResourceProviderTest {
                                                         runnerRam,
                                                         builderExecutionTime,
                                                         apiEndpoint,
-                                                        false,
                                                         workspaceDao,
                                                         accountDao,
                                                         new EventService(),
@@ -245,7 +244,6 @@ public class FactoryWorkspaceResourceProviderTest {
                                                         runnerRam,
                                                         builderExecutionTime,
                                                         apiEndpoint,
-                                                        false,
                                                         workspaceDao,
                                                         accountDao,
                                                         new EventService(),
@@ -304,27 +302,7 @@ public class FactoryWorkspaceResourceProviderTest {
         verifySettingOfAttributes(runnerLifetime, runnerRam, builderExecutionTime, false);
     }
 
-    @Test
-    public void shouldSetTrackedValuesIfOnPremisesTrue() throws ApiException, IOException {
-        provider = new FactoryWorkspaceResourceProvider(trackedRunnerLifetime,
-                                                        trackedBuilderExecutionTime,
-                                                        trackedRunnerRam,
-                                                        runnerLifetime,
-                                                        runnerRam,
-                                                        builderExecutionTime,
-                                                        apiEndpoint,
-                                                        true,
-                                                        workspaceDao,
-                                                        accountDao,
-                                                        new EventService(),
-                                                        factoryBuilder);
 
-        provider.onEvent(event);
-
-        verify(workspaceDao).update(workspace);
-        verifySettingOfAttributes(trackedRunnerLifetime, trackedRunnerRam, trackedBuilderExecutionTime, false);
-        verifyZeroInteractions(factory, factoryBuilder, accountDao, author, jsonHelper);
-    }
 
     private void verifySettingOfAttributes(String runnerLifetime, String runnerRam, String builderExecutionTime, boolean runnerInfra) {
         verify(attributes).put("codenvy:runner_lifetime", runnerLifetime);
