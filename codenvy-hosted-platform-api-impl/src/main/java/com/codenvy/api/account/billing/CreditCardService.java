@@ -18,9 +18,9 @@
 package com.codenvy.api.account.billing;
 
 import com.codenvy.api.account.impl.shared.dto.ClientToken;
-import com.codenvy.api.account.shared.dto.CreditCard;
 import com.codenvy.api.account.impl.shared.dto.CreditCardDescriptor;
 import com.codenvy.api.account.impl.shared.dto.NewCreditCard;
+import com.codenvy.api.account.shared.dto.CreditCard;
 import com.codenvy.api.core.ForbiddenException;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
@@ -46,7 +46,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
-import java.lang.String;import java.util.ArrayList;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -66,8 +66,8 @@ public class CreditCardService extends Service {
     }
 
     @ApiOperation(value = "Client token",
-            notes = "Get client token. Roles: account/owner, system/admin, system/manager.",
-            position = 14)
+                  notes = "Get client token. Roles: account/owner, system/admin, system/manager.",
+                  position = 14)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "OK"),
             @ApiResponse(code = 403, message = "Access denied"),
@@ -83,8 +83,8 @@ public class CreditCardService extends Service {
 
 
     @ApiOperation(value = "Add credit card",
-            notes = "Add credit card to account. Roles: account/owner, system/admin, system/manager.",
-            position = 14)
+                  notes = "Add credit card to account. Roles: account/owner, system/admin, system/manager.",
+                  position = 14)
     @ApiResponses(value = {
             @ApiResponse(code = 201, message = "Created"),
             @ApiResponse(code = 403, message = "Access denied"),
@@ -99,14 +99,13 @@ public class CreditCardService extends Service {
                                        @Required NewCreditCard creditCard)
             throws NotFoundException, ServerException, ForbiddenException {
 
-        creditCardDao
-                .registerCard(accountId, creditCard.getNonce(), creditCard.getStreetAddress(), creditCard.getCity(), creditCard.getState(),
-                              creditCard.getCountry());
+        creditCardDao.registerCard(accountId, creditCard.getNonce(), creditCard.getStreetAddress(), creditCard.getCity(),
+                                   creditCard.getState(), creditCard.getCountry());
     }
 
     @ApiOperation(value = "Get credit cards",
-            notes = "Get all credit cards registered to account. Roles: account/owner, system/admin, system/manager.",
-            position = 14)
+                  notes = "Get all credit cards registered to account. Roles: account/owner, system/admin, system/manager.",
+                  position = 14)
     @ApiResponses(value = {
             @ApiResponse(code = 201, message = "Created"),
             @ApiResponse(code = 403, message = "Access denied"),
@@ -116,25 +115,25 @@ public class CreditCardService extends Service {
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed({"account/owner", "system/admin", "system/manager"})
     public List<CreditCardDescriptor> getCreditCardsOfAccount(@ApiParam(value = "Account ID", required = true)
-                                                    @PathParam("accountId") String accountId)
+                                                              @PathParam("accountId") String accountId)
             throws NotFoundException, ServerException, ForbiddenException {
         List<CreditCardDescriptor> result = new ArrayList<>();
         List<CreditCard> storedCards = creditCardDao.getCards(accountId);
         for (CreditCard card : storedCards) {
             result.add(DtoFactory.getInstance().createDto(CreditCardDescriptor.class).withAccountId(card.getAccountId())
-                                                                                     .withType(card.getType())
-                                                                                     .withNumber(card.getNumber())
-                                                                                     .withCardholder(card.getCardholder())
-                                                                                     .withExpiration(card.getExpiration())
-                                                                                     .withLinks(generateLinks(card)));
+                                 .withType(card.getType())
+                                 .withNumber(card.getNumber())
+                                 .withCardholder(card.getCardholder())
+                                 .withExpiration(card.getExpiration())
+                                 .withLinks(generateLinks(card)));
         }
         return result;
     }
 
 
     @ApiOperation(value = "Remove credit card",
-            notes = "Remove credit card and make account free. Roles: account/owner, system/admin, system/manager.",
-            position = 15)
+                  notes = "Remove credit card and make account free. Roles: account/owner, system/admin, system/manager.",
+                  position = 15)
     @ApiResponses(value = {
             @ApiResponse(code = 201, message = "Created"),
             @ApiResponse(code = 403, message = "Access denied"),
@@ -145,7 +144,7 @@ public class CreditCardService extends Service {
     public void removeCreditCardFromAccount(@ApiParam(value = "Account ID", required = true)
                                             @PathParam("accountId") String accountId,
                                             @PathParam("cardNumber") String cardNumber) throws NotFoundException, ServerException,
-                                                                              ForbiddenException {
+                                                                                               ForbiddenException {
 
         for (CreditCard storedCard : creditCardDao.getCards(accountId)) {
             if (storedCard.getNumber().equals(cardNumber)) {
@@ -160,14 +159,14 @@ public class CreditCardService extends Service {
 
     private List<Link> generateLinks(CreditCard card) {
         final UriBuilder uriBuilder = getServiceContext().getServiceUriBuilder();
-        final Link removeCard   = LinksHelper.createLink(HttpMethod.DELETE,
-                                                         uriBuilder.clone()
-                                                                   .path(getClass(), "removeCreditCardFromAccount")
-                                                                   .build(card.getAccountId(), card.getToken())
-                                                                   .toString(),
-                                                         null,
-                                                         null,
-                                                         "remove card");
+        final Link removeCard = LinksHelper.createLink(HttpMethod.DELETE,
+                                                       uriBuilder.clone()
+                                                                 .path(getClass(), "removeCreditCardFromAccount")
+                                                                 .build(card.getAccountId(), card.getToken())
+                                                                 .toString(),
+                                                       null,
+                                                       null,
+                                                       "remove card");
         return Arrays.asList(removeCard);
     }
 }

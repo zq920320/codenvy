@@ -62,8 +62,7 @@ public class RunStatusSubscriber implements EventSubscriber<RunnerEvent> {
                                WorkspaceDao workspaceDao,
                                RunQueue runQueue,
                                ResourcesUsageTracker resourcesUsageTracker,
-                               BillingPeriod billingPeriod
-                              ) {
+                               BillingPeriod billingPeriod) {
         this.schedulingPeriod = schedulingPeriod;
         this.eventService = eventService;
         this.workspaceDao = workspaceDao;
@@ -103,10 +102,8 @@ public class RunStatusSubscriber implements EventSubscriber<RunnerEvent> {
                                                                            task.getCreationTime(),
                                                                            Math.min(task.getCreationTime() +
                                                                                     schedulingPeriod,
-                                                                                    billingPeriod
-                                                                                            .get(new Date(
-                                                                                                    task.getCreationTime()))
-                                                                                            .getEndDate().getTime()),
+                                                                                    billingPeriod.get(new Date(task.getCreationTime()))
+                                                                                                 .getEndDate().getTime()),
                                                                            request.getUserId(),
                                                                            workspace.getAccountId(),
                                                                            workspace.getId(),
@@ -115,8 +112,7 @@ public class RunStatusSubscriber implements EventSubscriber<RunnerEvent> {
 
             resourcesUsageTracker.resourceUsageStarted(memoryUsedMetric);
         } catch (NotFoundException | ServerException e) {
-            LOG.error("Error registration usage of resources by run process {} in workspace {} in project {}",
-                      event.getProcessId(),
+            LOG.error("Error registration usage of resources by run process {} in workspace {} in project {}", event.getProcessId(),
                       event.getWorkspace(), event.getProject());
         }
     }

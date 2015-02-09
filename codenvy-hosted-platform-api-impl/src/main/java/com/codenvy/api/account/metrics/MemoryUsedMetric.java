@@ -22,13 +22,13 @@ package com.codenvy.api.account.metrics;
  */
 public class MemoryUsedMetric {
 
-    private final Integer   amount;
-    private final Long   startTime;
-    private final Long   stopTime;
-    private final String userId;
-    private final String accountId;
-    private final String workspaceId;
-    private final String runId;
+    private final Integer amount;
+    private final Long    startTime;
+    private final Long    stopTime;
+    private final String  userId;
+    private final String  accountId;
+    private final String  workspaceId;
+    private final String  runId;
 
     public MemoryUsedMetric(Integer amount,
                             Long startTime,

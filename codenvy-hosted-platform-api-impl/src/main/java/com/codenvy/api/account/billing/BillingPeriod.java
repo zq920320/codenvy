@@ -34,8 +34,8 @@ public interface BillingPeriod {
      * Get period for given date.
      *
      * @param date
-     *         -given date
-     * @return - billing period.
+     *         given date
+     * @return billing period.
      */
     Period get(Date date);
 
@@ -43,18 +43,17 @@ public interface BillingPeriod {
      * Get period for given date.
      *
      * @param date
-     *         -given date in milliseconds
-     * @return - billing period.
+     *         given date in milliseconds
+     * @return billing period.
      */
     Period get(long date);
-
 
     /**
      * Get period by given id.
      *
      * @param id
-     *         - period id.
-     * @return - billing period
+     *         period id.
+     * @return billing period
      */
     Period get(String id);
 }

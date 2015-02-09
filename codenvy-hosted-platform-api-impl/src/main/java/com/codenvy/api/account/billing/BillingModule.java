@@ -23,12 +23,11 @@ import com.google.inject.AbstractModule;
 /**
  * @author Sergii Kabashniuk
  */
-public class BillingModule extends AbstractModule{
+public class BillingModule extends AbstractModule {
     @Override
     protected void configure() {
         bind(com.braintreegateway.BraintreeGateway.class).to(GuiceBraintreeGateway.class).asEagerSingleton();
-        bind(com.codenvy.api.account.server.subscription.PaymentService.class).to(BraintreePaymentService.class)
-                                                                              .asEagerSingleton();
+        bind(com.codenvy.api.account.server.subscription.PaymentService.class).to(BraintreePaymentService.class).asEagerSingleton();
         bind(BillingPeriod.class).to(MonthlyBillingPeriod.class);
         bind(com.codenvy.api.account.billing.CreditCardDao.class).to(BraintreeCreditCardDaoImpl.class);
     }
