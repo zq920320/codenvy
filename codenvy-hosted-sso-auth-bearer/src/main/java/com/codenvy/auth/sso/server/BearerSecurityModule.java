@@ -18,7 +18,6 @@
 package com.codenvy.auth.sso.server;
 
 import com.codenvy.auth.sso.server.handler.BearerTokenAuthenticationHandler;
-import com.codenvy.auth.sso.server.handler.RestrictedAccessBearerTokenAuthenticationHandler;
 import com.codenvy.inject.DynaModule;
 import com.google.inject.AbstractModule;
 import com.google.inject.name.Names;
@@ -33,7 +32,7 @@ public class BearerSecurityModule extends AbstractModule {
     @Override
     protected void configure() {
         bind(com.codenvy.auth.sso.server.BearerTokenAuthenticationService.class);
-        bind(BearerTokenAuthenticationHandler.class).to(RestrictedAccessBearerTokenAuthenticationHandler.class);
+        bind(BearerTokenAuthenticationHandler.class).to(BearerTokenAuthenticationHandler.class);
         bind(com.codenvy.auth.sso.server.InputDataValidator.class);
         bindConstant().annotatedWith(Names.named(InputDataValidator.WS_BLACKLIST_FILE)).to("cloud-ide-workspace-name-blacklist.txt");
         bindConstant().annotatedWith(Names.named(InputDataValidator.EMAIL_BLACKLIST_FILE)).to("cloud-ide-user-mail-blacklist.txt");
