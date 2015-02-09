@@ -75,8 +75,7 @@ public class FactoryWorkspaceResourceProvider implements EventSubscriber<CreateW
     private final String trackedBuilderExecutionTime;
     private final String trackedRunnerRam;
 
-    private final String  apiEndpoint;
-    private final boolean onPremises;
+    private final String apiEndpoint;
 
     private final WorkspaceDao   workspaceDao;
     private final AccountDao     accountDao;
@@ -91,7 +90,6 @@ public class FactoryWorkspaceResourceProvider implements EventSubscriber<CreateW
                                             @Nullable @Named(RUNNER_RAM) String runnerRam,
                                             @Nullable @Named(BUILDER_EXECUTION_TIME) String builderExecutionTime,
                                             @Named("api.endpoint") String apiEndpoint,
-                                            @Named("onpremises.enabled") boolean onPremises,
                                             WorkspaceDao workspaceDao,
                                             AccountDao accountDao,
                                             EventService eventService,
@@ -103,7 +101,6 @@ public class FactoryWorkspaceResourceProvider implements EventSubscriber<CreateW
         this.runnerRam = runnerRam;
         this.builderExecutionTime = builderExecutionTime;
         this.apiEndpoint = apiEndpoint;
-        this.onPremises = onPremises;
         this.workspaceDao = workspaceDao;
         this.eventService = eventService;
         this.factoryBuilder = factoryBuilder;
@@ -127,53 +124,43 @@ public class FactoryWorkspaceResourceProvider implements EventSubscriber<CreateW
             try {
                 final Workspace workspace = workspaceDao.getById(createdWorkspace.getId());
                 final Map<String, String> attributes = workspace.getAttributes();
+                String factoryUrl = attributes.get("factoryUrl");
+                try {
+                    if (factoryUrl != null) {
+                        factoryUrl = URLDecoder.decode(factoryUrl, "UTF-8");
+                        final Matcher matcher = ID_PATTERN.matcher(factoryUrl);
+                        Factory factory;
+                        if (matcher.find()) {
+                            final Link factoryObjectLink = DtoFactory.getInstance().createDto(Link.class)
+                                                                     .withMethod("GET")
+                                                                     .withHref(UriBuilder.fromUri(apiEndpoint)
+                                                                                         .path("factory/" + matcher.group(1))
+                                                                                         .build().toString());
+                            factory = HttpJsonHelper.request(Factory.class, factoryObjectLink, Pair.of("validate", false));
+                        } else {
+                            factory = factoryBuilder.buildEncoded(URI.create(factoryUrl));
+                        }
 
-                if (onPremises) {
-                    attributes.put("codenvy:runner_lifetime", trackedRunnerLifetime);
-                    attributes.put("codenvy:builder_execution_time", trackedBuilderExecutionTime);
-                    attributes.put("codenvy:runner_ram", trackedRunnerRam);
+                        String accountId;
+                        accountId = factory.getCreator() != null ? factory.getCreator().getAccountId() : null;
+                        if (null != accountId) {
+                            final List<Subscription> subscriptions = accountDao.getActiveSubscriptions(accountId, "Factory");
+                            if (!subscriptions.isEmpty()) {
+                                final Subscription subscription = subscriptions.iterator().next();
+                                // factory workspace with subscription
+                                attributes.put("codenvy:runner_lifetime", trackedRunnerLifetime);
+                                attributes.put("codenvy:builder_execution_time", trackedBuilderExecutionTime);
+                                attributes.put("codenvy:runner_ram",
+                                               String.valueOf(parseSizeToMegabytes(subscription.getProperties().get("RAM"))));
+                                attributes.put("codenvy:runner_infra", "paid");
 
-                    workspaceDao.update(workspace.withAttributes(attributes));
-                    return;
-                } else {
-                    String factoryUrl = attributes.get("factoryUrl");
-                    try {
-                        if (factoryUrl != null) {
-                            factoryUrl = URLDecoder.decode(factoryUrl, "UTF-8");
-                            final Matcher matcher = ID_PATTERN.matcher(factoryUrl);
-                            Factory factory;
-                            if (matcher.find()) {
-                                final Link factoryObjectLink = DtoFactory.getInstance().createDto(Link.class)
-                                                                         .withMethod("GET")
-                                                                         .withHref(UriBuilder.fromUri(apiEndpoint)
-                                                                                             .path("factory/" + matcher.group(1))
-                                                                                             .build().toString());
-                                factory = HttpJsonHelper.request(Factory.class, factoryObjectLink, Pair.of("validate", false));
-                            } else {
-                                factory = factoryBuilder.buildEncoded(URI.create(factoryUrl));
-                            }
-
-                            String accountId;
-                            accountId = factory.getCreator() != null ? factory.getCreator().getAccountId() : null;
-                            if (null != accountId) {
-                                final List<Subscription> subscriptions = accountDao.getActiveSubscriptions(accountId, "Factory");
-                                if (!subscriptions.isEmpty()) {
-                                    final Subscription subscription = subscriptions.iterator().next();
-                                    // factory workspace with subscription
-                                    attributes.put("codenvy:runner_lifetime", trackedRunnerLifetime);
-                                    attributes.put("codenvy:builder_execution_time", trackedBuilderExecutionTime);
-                                    attributes.put("codenvy:runner_ram",
-                                                   String.valueOf(parseSizeToMegabytes(subscription.getProperties().get("RAM"))));
-                                    attributes.put("codenvy:runner_infra", "paid");
-
-                                    workspaceDao.update(workspace.withAttributes(attributes));
-                                    return;
-                                }
+                                workspaceDao.update(workspace.withAttributes(attributes));
+                                return;
                             }
                         }
-                    } catch (ApiException | IOException e) {
-                        LOG.error(e.getLocalizedMessage(), e);
                     }
+                } catch (ApiException | IOException e) {
+                    LOG.error(e.getLocalizedMessage(), e);
                 }
 
                 // common factory workspace
