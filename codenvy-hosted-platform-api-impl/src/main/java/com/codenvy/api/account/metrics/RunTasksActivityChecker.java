@@ -42,8 +42,8 @@ import static java.lang.System.currentTimeMillis;
  * @author Sergii Leschenko
  */
 @Singleton
-public class TasksActivityChecker {
-    private static final Logger LOG = LoggerFactory.getLogger(TasksActivityChecker.class);
+public class RunTasksActivityChecker {
+    private static final Logger LOG = LoggerFactory.getLogger(RunTasksActivityChecker.class);
 
     static TimeUnit usedTimeUnit = TimeUnit.SECONDS;
 
@@ -53,16 +53,19 @@ public class TasksActivityChecker {
     /** Period between ticks of resources use */
     public static final String RUN_TICK_PERIOD = "metrics.run_tick.period_sec";
 
+    /** prefix to store ID in usage tracker (to avoid runner and builder ID's match) */
+    public static final String PFX            = "run-";
+
     private final Integer               runTickPeriod;
     private final Integer               schedulingPeriod;
     private final RunQueue              runQueue;
     private final ResourcesUsageTracker resourcesUsageTracker;
 
     @Inject
-    public TasksActivityChecker(@Named(RUN_TICK_PERIOD) Integer runTickPeriod,
-                                @Named(RUN_ACTIVITY_CHECKING_PERIOD) Integer schedulingPeriod,
-                                RunQueue runQueue,
-                                ResourcesUsageTracker resourcesUsageTracker) {
+    public RunTasksActivityChecker(@Named(RUN_TICK_PERIOD) Integer runTickPeriod,
+                                   @Named(RUN_ACTIVITY_CHECKING_PERIOD) Integer schedulingPeriod,
+                                   RunQueue runQueue,
+                                   ResourcesUsageTracker resourcesUsageTracker) {
         this.runTickPeriod = runTickPeriod;
         this.runQueue = runQueue;
         this.resourcesUsageTracker = resourcesUsageTracker;
@@ -85,7 +88,7 @@ public class TasksActivityChecker {
 
             final RunRequest request = runTask.getRequest();
             if (RUNNING.equals(descriptor.getStatus()) && isExpiredTickPeriod(descriptor.getStartTime())) {
-                resourcesUsageTracker.resourceInUse(descriptor.getProcessId());
+                resourcesUsageTracker.resourceInUse(PFX + String.valueOf(descriptor.getProcessId()));
                 LOG.info("EVENT#run-usage# WS#{}# USER#{}# PROJECT#{}# TYPE#{}# ID#{}# MEMORY#{}# USAGE-TIME#{}#",
                          descriptor.getWorkspace(),
                          descriptor.getUserId(),

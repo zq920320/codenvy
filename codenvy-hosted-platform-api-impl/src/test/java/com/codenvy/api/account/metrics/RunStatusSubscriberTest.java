@@ -89,7 +89,7 @@ public class RunStatusSubscriberTest {
             @Override
             public boolean matches(Object argument) {
                 final MemoryUsedMetric memoryUsedMetric = (MemoryUsedMetric)argument;
-                return memoryUsedMetric.getRunId().equals(String.valueOf(PROCESS_ID))
+                return memoryUsedMetric.getRunId().equals(RunTasksActivityChecker.PFX + String.valueOf(PROCESS_ID))
                        && memoryUsedMetric.getUserId().equals("userId")
                        && memoryUsedMetric.getAccountId().equals("accountId")
                        && memoryUsedMetric.getAmount() == 256;
@@ -114,6 +114,6 @@ public class RunStatusSubscriberTest {
     public void shouldStopUsingResourcesWhenApplicationStopped() throws ServerException {
         runStatusSubscriber.onEvent(RunnerEvent.stoppedEvent(PROCESS_ID, WS_ID, "/project"));
 
-        verify(resourcesUsageTracker).resourceUsageStopped(eq(PROCESS_ID));
+        verify(resourcesUsageTracker).resourceUsageStopped(eq(RunTasksActivityChecker.PFX  + PROCESS_ID));
     }
 }

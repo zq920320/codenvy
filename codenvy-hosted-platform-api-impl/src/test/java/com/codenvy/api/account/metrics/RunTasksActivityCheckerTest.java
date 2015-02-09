@@ -47,12 +47,12 @@ import java.util.concurrent.TimeUnit;
 
 
 /**
- * Tests for {@link com.codenvy.api.account.metrics.TasksActivityChecker}
+ * Tests for {@link com.codenvy.api.account.metrics.RunTasksActivityChecker}
  *
  * @author Sergii Leschenko
  */
 @Listeners(MockitoTestNGListener.class)
-public class TasksActivityCheckerTest {
+public class RunTasksActivityCheckerTest {
     private static final long    PROCESS_ID        = 1L;
     private static final Integer TICK_PERIOD       = 200;
     private static final Integer SCHEDULING_PERIOD = 100;
@@ -71,13 +71,13 @@ public class TasksActivityCheckerTest {
     @Mock
     ProjectDescriptor            projectDescriptor;
 
-    TasksActivityChecker tasksActivityChecker;
+    RunTasksActivityChecker tasksActivityChecker;
 
     @BeforeMethod
     public void setUp() throws Exception {
-        TasksActivityChecker.usedTimeUnit = TimeUnit.MILLISECONDS;
+        RunTasksActivityChecker.usedTimeUnit = TimeUnit.MILLISECONDS;
 
-        tasksActivityChecker = new TasksActivityChecker(TICK_PERIOD, SCHEDULING_PERIOD, runQueue, resourcesUsageTracker);
+        tasksActivityChecker = new RunTasksActivityChecker(TICK_PERIOD, SCHEDULING_PERIOD, runQueue, resourcesUsageTracker);
 
         ApplicationProcessDescriptor processDescriptor = createProcessDescriptor(PROCESS_ID, currentTimeMillis(), RUNNING);
         when(runQueueTask.getDescriptor()).thenReturn(processDescriptor);
@@ -93,7 +93,7 @@ public class TasksActivityCheckerTest {
 
         tasksActivityChecker.check();
 
-        verify(resourcesUsageTracker).resourceInUse(eq(PROCESS_ID));
+        verify(resourcesUsageTracker).resourceInUse(eq(RunTasksActivityChecker.PFX + PROCESS_ID));
     }
 
     @Test
@@ -111,7 +111,7 @@ public class TasksActivityCheckerTest {
         Thread.sleep(TICK_PERIOD);
         tasksActivityChecker.check();
 
-        verify(resourcesUsageTracker, times(2)).resourceInUse(eq(PROCESS_ID));
+        verify(resourcesUsageTracker, times(2)).resourceInUse(eq(RunTasksActivityChecker.PFX + PROCESS_ID));
     }
 
     @Test
@@ -130,8 +130,8 @@ public class TasksActivityCheckerTest {
             Thread.sleep(SCHEDULING_PERIOD);
         }
 
-        verify(resourcesUsageTracker, times(2)).resourceInUse(eq(PROCESS_ID));
-        verify(resourcesUsageTracker).resourceInUse(eq(2L));
+        verify(resourcesUsageTracker, times(2)).resourceInUse(eq(RunTasksActivityChecker.PFX + PROCESS_ID));
+        verify(resourcesUsageTracker).resourceInUse(eq(RunTasksActivityChecker.PFX + 2L));
     }
 
     private ApplicationProcessDescriptor createProcessDescriptor(long processId, long startTime, ApplicationStatus status) {

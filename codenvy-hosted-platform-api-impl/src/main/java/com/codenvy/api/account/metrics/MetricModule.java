@@ -25,7 +25,9 @@ import com.google.inject.AbstractModule;
 public class MetricModule extends AbstractModule {
     @Override
     protected void configure() {
-        bind(TasksActivityChecker.class).asEagerSingleton();
+        bind(BuildTasksActivityChecker.class).asEagerSingleton();
+        bind(RunTasksActivityChecker.class).asEagerSingleton();
+        bind(BuildStatusSubscriber.class);
         bind(RunStatusSubscriber.class);
     }
 }

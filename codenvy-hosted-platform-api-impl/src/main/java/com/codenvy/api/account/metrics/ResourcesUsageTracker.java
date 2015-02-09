@@ -35,7 +35,7 @@ public class ResourcesUsageTracker {
     private static final Logger LOG = LoggerFactory.getLogger(ResourcesUsageTracker.class);
 
     private final MeterBasedStorage meterBasedStorage;
-    private final Map<Long, UsageInformer> inMemoryStorage = new ConcurrentHashMap<>();
+    private final Map<String, UsageInformer> inMemoryStorage = new ConcurrentHashMap<>();
 
     @Inject
     public ResourcesUsageTracker(MeterBasedStorage meterBasedStorage) {
@@ -44,13 +44,13 @@ public class ResourcesUsageTracker {
 
     public void resourceUsageStarted(MemoryUsedMetric metric) {
         try {
-            inMemoryStorage.put(Long.parseLong(metric.getRunId()), meterBasedStorage.createMemoryUsedRecord(metric));
+            inMemoryStorage.put(metric.getRunId(), meterBasedStorage.createMemoryUsedRecord(metric));
         } catch (ServerException e) {
             LOG.error("Error registration usage of resources by process {} in workspace {}", metric.getRunId(), metric.getWorkspaceId());
         }
     }
 
-    public void resourceInUse(long processId) {
+    public void resourceInUse(String processId) {
         final UsageInformer usageInformer = inMemoryStorage.get(processId);
 
         if (usageInformer == null) {
@@ -64,7 +64,7 @@ public class ResourcesUsageTracker {
         }
     }
 
-    public void resourceUsageStopped(long processId) {
+    public void resourceUsageStopped(String processId) {
         final UsageInformer removed = inMemoryStorage.remove(processId);
 
         if (removed == null) {

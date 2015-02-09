@@ -18,14 +18,15 @@
 package com.codenvy.api.account.metrics;
 
 import com.codenvy.api.account.billing.BillingPeriod;
+import com.codenvy.api.builder.BuildQueue;
+import com.codenvy.api.builder.BuildQueueTask;
+import com.codenvy.api.builder.dto.BaseBuilderRequest;
+import com.codenvy.api.builder.dto.DependencyRequest;
+import com.codenvy.api.builder.internal.BuilderEvent;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.api.core.notification.EventService;
 import com.codenvy.api.core.notification.EventSubscriber;
-import com.codenvy.api.runner.RunQueue;
-import com.codenvy.api.runner.RunQueueTask;
-import com.codenvy.api.runner.dto.RunRequest;
-import com.codenvy.api.runner.internal.RunnerEvent;
 import com.codenvy.api.workspace.server.dao.Workspace;
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
 
@@ -40,34 +41,35 @@ import javax.inject.Singleton;
 import java.util.Date;
 
 /**
- * Registers start and end of runner resources usage
+ * Registers start and end of builder resources usage
+ * @author Max Shaposhnik
  *
- * @author Sergii Leschenko
  */
 @Singleton
-public class RunStatusSubscriber implements EventSubscriber<RunnerEvent> {
-    private static final Logger LOG = LoggerFactory.getLogger(RunStatusSubscriber.class);
+public class BuildStatusSubscriber implements EventSubscriber<BuilderEvent> {
+
+    private static final Logger LOG                 = LoggerFactory.getLogger(BuildStatusSubscriber.class);
 
 
     private final Integer               schedulingPeriod;
     private final EventService          eventService;
-    private final WorkspaceDao          workspaceDao;
-    private final RunQueue              runQueue;
     private final ResourcesUsageTracker resourcesUsageTracker;
+    private final WorkspaceDao          workspaceDao;
+    private final BuildQueue            buildQueue;
     private final BillingPeriod         billingPeriod;
 
     @Inject
-    public RunStatusSubscriber(@Named(RunTasksActivityChecker.RUN_ACTIVITY_CHECKING_PERIOD) Integer schedulingPeriod,
+    public BuildStatusSubscriber(@Named(BuildTasksActivityChecker.RUN_ACTIVITY_CHECKING_PERIOD) Integer schedulingPeriod,
                                EventService eventService,
                                WorkspaceDao workspaceDao,
-                               RunQueue runQueue,
+                               BuildQueue buildQueue,
                                ResourcesUsageTracker resourcesUsageTracker,
                                BillingPeriod billingPeriod
                               ) {
         this.schedulingPeriod = schedulingPeriod;
         this.eventService = eventService;
         this.workspaceDao = workspaceDao;
-        this.runQueue = runQueue;
+        this.buildQueue = buildQueue;
         this.resourcesUsageTracker = resourcesUsageTracker;
         this.billingPeriod = billingPeriod;
     }
@@ -83,23 +85,25 @@ public class RunStatusSubscriber implements EventSubscriber<RunnerEvent> {
     }
 
     @Override
-    public void onEvent(RunnerEvent event) {
+    public void onEvent(BuilderEvent event) {
         switch (event.getType()) {
-            case STARTED:
-                registerMemoryUsage(event);
+            case BEGIN:
+                if (!isDependencyRequest(event)) {
+                    registerMemoryUsage(event);
+                }
                 break;
-            case STOPPED:
-                resourcesUsageTracker.resourceUsageStopped(RunTasksActivityChecker.PFX + String.valueOf(event.getProcessId()));
+            case DONE:
+                resourcesUsageTracker.resourceUsageStopped(BuildTasksActivityChecker.PFX + String.valueOf(event.getTaskId()));
                 break;
         }
     }
 
-    private void registerMemoryUsage(RunnerEvent event) {
+    private void registerMemoryUsage(BuilderEvent event) {
         try {
             final Workspace workspace = workspaceDao.getById(event.getWorkspace());
-            final RunQueueTask task = runQueue.getTask(event.getProcessId());
-            final RunRequest request = task.getRequest();
-            final MemoryUsedMetric memoryUsedMetric = new MemoryUsedMetric(request.getMemorySize(),
+            final BuildQueueTask task = buildQueue.getTask(event.getTaskId());
+            final BaseBuilderRequest request = task.getRequest();
+            final MemoryUsedMetric memoryUsedMetric = new MemoryUsedMetric(BuildTasksActivityChecker.BUILDER_MEMORY_SIZE,
                                                                            task.getCreationTime(),
                                                                            Math.min(task.getCreationTime() +
                                                                                     schedulingPeriod,
@@ -110,14 +114,24 @@ public class RunStatusSubscriber implements EventSubscriber<RunnerEvent> {
                                                                            request.getUserId(),
                                                                            workspace.getAccountId(),
                                                                            workspace.getId(),
-                                                                           RunTasksActivityChecker.PFX + String.valueOf(
-                                                                                   event.getProcessId()));
+                                                                           BuildTasksActivityChecker.PFX + String.valueOf(
+                                                                                   event.getTaskId()));
 
             resourcesUsageTracker.resourceUsageStarted(memoryUsedMetric);
         } catch (NotFoundException | ServerException e) {
-            LOG.error("Error registration usage of resources by run process {} in workspace {} in project {}",
-                      event.getProcessId(),
+            LOG.error("Error registration usage of resources by build process {} in workspace {} in project {}",
+                      event.getTaskId(),
                       event.getWorkspace(), event.getProject());
         }
+    }
+
+    private boolean isDependencyRequest(BuilderEvent event) {
+        try {
+            final BaseBuilderRequest request = buildQueue.getTask(event.getTaskId()).getRequest();
+            return request instanceof DependencyRequest;
+        } catch (NotFoundException e) {
+            LOG.error("Unable to determine request type for request {}", event.getTaskId());
+        }
+       return false;
     }
 }
