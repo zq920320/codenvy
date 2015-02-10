@@ -153,7 +153,7 @@ public class AddWorkspaceMemberInterceptorTest {
 
         interceptor.invoke(invocation);
         verify(mailSenderClient)
-                .sendMail(anyString(), eq(recipient), anyString(), anyString(), eq("text/html"),
+                .sendMail(anyString(), eq(recipient), anyString(), anyString(), eq("text/html; charset=utf-8"),
                           anyString(), anyMapOf(String.class, String.class));
 
     }
