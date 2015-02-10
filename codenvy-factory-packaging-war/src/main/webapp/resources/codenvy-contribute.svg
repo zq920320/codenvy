@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="97" height="18">
+<svg xmlns="http://www.w3.org/2000/svg" width="117" height="18">
   <linearGradient id="a" x2="0" y2="100%">
     <stop offset="0" stop-color="#fff" stop-opacity=".7" />
     <stop offset=".1" stop-color="#aaa" stop-opacity=".1" />
     <stop offset=".9" stop-opacity=".3" />
     <stop offset="1" stop-opacity=".5" />
   </linearGradient>
-  <rect rx="4" width="97" height="18" fill="#555" />
-  <rect rx="4" x="30" width="67" height="18" fill="#007ec6" />
+  <rect rx="4" width="117" height="18" fill="#555" />
+  <rect rx="4" x="30" width="87" height="18" fill="#007ec6" />
   <path fill="#007ec6" d="M30 0h4v18h-4z" />
-  <rect rx="4" width="97" height="18" fill="url(#a)" />
+  <rect rx="4" width="117" height="18" fill="url(#a)" />
   <g fill="#fff" text-anchor="middle" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" font-size="11">
     <g  transform="matrix(0.6,0,0,0.6,-17,2)">
       <path fill-rule="evenodd" clip-rule="evenodd" fill="#ffffff" d="M62.869,6.207c3.233,0.249,5.779,2.957,5.779,6.249
@@ -48,7 +48,7 @@
         c0,0.268,0.214,0.3,0.405,0.335c0.104,0.026,0.232,0.069,0.396,0.147c0.155,0.068,0.31,0.179,0.465,0.326
         c0.153,0.146,0.283,0.344,0.395,0.592c0.104,0.249,0.155,0.559,0.164,0.938V16.427z"></path>
     </g>
-    <text x="62.5" y="14" fill="#010101" fill-opacity=".3">Open in IDE</text>
-    <text x="62.5" y="13">Open in IDE</text>
+    <text x="72.5" y="14" fill="#010101" fill-opacity=".3">Open in IDE</text>
+    <text x="72.5" y="13">Open in IDE</text>
   </g>
 </svg>
