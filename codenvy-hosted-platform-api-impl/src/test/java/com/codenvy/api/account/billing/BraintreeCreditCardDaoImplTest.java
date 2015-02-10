@@ -33,6 +33,7 @@ import com.codenvy.api.dao.billing.BraintreeCreditCardDaoImpl;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.testng.MockitoTestNGListener;
+import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
@@ -141,7 +142,7 @@ public class BraintreeCreditCardDaoImplTest {
         List<CreditCard> list =  new ArrayList<>();
         list.add(creditCard);
         when(customer.getCreditCards()).thenReturn(list);
-        List<com.codenvy.api.account.shared.dto.CreditCard> result = dao.getCards(ACCOUNT_ID);
+        List<com.codenvy.api.account.impl.shared.dto.CreditCard> result = dao.getCards(ACCOUNT_ID);
         assertEquals(result.get(0).getAccountId(), list.get(0).getCustomerId());
         assertEquals(result.get(0).getToken(), list.get(0).getToken());
     }

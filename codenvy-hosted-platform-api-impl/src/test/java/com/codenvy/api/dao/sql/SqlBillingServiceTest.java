@@ -24,15 +24,14 @@ import static org.testng.Assert.assertTrue;
 import com.codenvy.api.account.billing.BillingService;
 import com.codenvy.api.account.billing.MonthlyBillingPeriod;
 import com.codenvy.api.account.billing.PaymentState;
+import com.codenvy.api.account.impl.shared.dto.Charge;
+import com.codenvy.api.account.impl.shared.dto.Invoice;
 import com.codenvy.api.account.metrics.MemoryUsedMetric;
 import com.codenvy.api.account.metrics.MeterBasedStorage;
-import com.codenvy.api.account.shared.dto.Charge;
 import com.codenvy.api.account.shared.dto.MemoryChargeDetails;
-import com.codenvy.api.account.shared.dto.Receipt;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.dto.server.DtoFactory;
 
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -74,28 +73,28 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                      "run-234"));
 
         //when
-        billingService.generateReceipts(Long.MIN_VALUE, Long.MAX_VALUE);
-        List<Receipt> ac3 = billingService.getReceipts("ac-3");
+        billingService.generateInvoices(Long.MIN_VALUE, Long.MAX_VALUE);
+        List<Invoice> ac3 = billingService.getInvoices("ac-3");
         //then
         assertEquals(ac3.size(), 1);
-        Receipt receipt = get(ac3, 0);
-        assertEquals(receipt.getTotal(), 30.9);
+        Invoice invoice = get(ac3, 0);
+        assertEquals(invoice.getTotal(), 30.9);
         //free + paid
-        assertEquals(receipt.getCharges().size(), 2);
-        assertTrue(receipt.getCharges().contains(DtoFactory.getInstance().createDto(Charge.class)
+        assertEquals(invoice.getCharges().size(), 2);
+        assertTrue(invoice.getCharges().contains(DtoFactory.getInstance().createDto(Charge.class)
                                                            .withAmount(10.0)
                                                            .withPrice(0.0)
                                                            .withServiceId("Saas")
                                                            .withType("Free")));
 
-        assertTrue(receipt.getCharges().contains(DtoFactory.getInstance().createDto(Charge.class)
+        assertTrue(invoice.getCharges().contains(DtoFactory.getInstance().createDto(Charge.class)
                                                            .withAmount(206.0)
                                                            .withPrice(0.15)
                                                            .withServiceId("Saas")
                                                            .withType("Paid")));
 
-        assertEquals(receipt.getMemoryChargeDetails().size(), 1);
-        assertTrue(receipt.getMemoryChargeDetails().contains(DtoFactory.getInstance().createDto(MemoryChargeDetails.class)
+        assertEquals(invoice.getMemoryChargeDetails().size(), 1);
+        assertTrue(invoice.getMemoryChargeDetails().contains(DtoFactory.getInstance().createDto(MemoryChargeDetails.class)
                                                                        .withAmount(216.0)
                                                                        .withWorkspaceId("ws-235423")))
 
@@ -116,22 +115,22 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                      "run-234"));
 
         //when
-        billingService.generateReceipts(Long.MIN_VALUE, Long.MAX_VALUE);
-        List<Receipt> ac3 = billingService.getReceipts("ac-3");
+        billingService.generateInvoices(Long.MIN_VALUE, Long.MAX_VALUE);
+        List<Invoice> ac3 = billingService.getInvoices("ac-3");
         //then
         assertEquals(ac3.size(), 1);
-        Receipt receipt = get(ac3, 0);
-        assertEquals(receipt.getTotal(), 0.0);
+        Invoice invoice = get(ac3, 0);
+        assertEquals(invoice.getTotal(), 0.0);
         //free + paid
-        assertEquals(receipt.getCharges().size(), 1);
-        assertTrue(receipt.getCharges().contains(DtoFactory.getInstance().createDto(Charge.class)
+        assertEquals(invoice.getCharges().size(), 1);
+        assertTrue(invoice.getCharges().contains(DtoFactory.getInstance().createDto(Charge.class)
                                                            .withAmount(0.52306)
                                                            .withPrice(0.0)
                                                            .withServiceId("Saas")
                                                            .withType("Free")));
 
-        assertEquals(receipt.getMemoryChargeDetails().size(), 1);
-        assertTrue(receipt.getMemoryChargeDetails().contains(DtoFactory.getInstance().createDto(MemoryChargeDetails.class)
+        assertEquals(invoice.getMemoryChargeDetails().size(), 1);
+        assertTrue(invoice.getMemoryChargeDetails().contains(DtoFactory.getInstance().createDto(MemoryChargeDetails.class)
                                                                        .withAmount(0.52306)
                                                                        .withWorkspaceId("ws-235423")));
 
@@ -160,25 +159,25 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                      "run-234"));
 
         //when
-        billingService.generateReceipts(Long.MIN_VALUE, Long.MAX_VALUE);
-        List<Receipt> ac3 = billingService.getReceipts("ac-3");
+        billingService.generateInvoices(Long.MIN_VALUE, Long.MAX_VALUE);
+        List<Invoice> ac3 = billingService.getInvoices("ac-3");
         //then
         assertEquals(ac3.size(), 1);
-        Receipt receipt = get(ac3, 0);
-        assertEquals(receipt.getTotal(), 0.0);
+        Invoice invoice = get(ac3, 0);
+        assertEquals(invoice.getTotal(), 0.0);
         //free + paid
-        assertEquals(receipt.getCharges().size(), 1);
-        assertTrue(receipt.getCharges().contains(DtoFactory.getInstance().createDto(Charge.class)
+        assertEquals(invoice.getCharges().size(), 1);
+        assertTrue(invoice.getCharges().contains(DtoFactory.getInstance().createDto(Charge.class)
                                                            .withAmount(1.04612)
                                                            .withPrice(0.0)
                                                            .withServiceId("Saas")
                                                            .withType("Free")));
 
-        assertEquals(receipt.getMemoryChargeDetails().size(), 2);
-        assertTrue(receipt.getMemoryChargeDetails().contains(DtoFactory.getInstance().createDto(MemoryChargeDetails.class)
+        assertEquals(invoice.getMemoryChargeDetails().size(), 2);
+        assertTrue(invoice.getMemoryChargeDetails().contains(DtoFactory.getInstance().createDto(MemoryChargeDetails.class)
                                                                        .withAmount(0.52306)
                                                                        .withWorkspaceId("ws-235423")));
-        assertTrue(receipt.getMemoryChargeDetails().contains(DtoFactory.getInstance().createDto(MemoryChargeDetails.class)
+        assertTrue(invoice.getMemoryChargeDetails().contains(DtoFactory.getInstance().createDto(MemoryChargeDetails.class)
                                                                        .withAmount(0.52306)
                                                                        .withWorkspaceId("ws-2")));
 
@@ -227,10 +226,10 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                      "run-234"));
 
         //when
-        billingService.generateReceipts(Long.MIN_VALUE, Long.MAX_VALUE);
-        List<Receipt> ac3 = billingService.getReceipts("ac-3");
-        List<Receipt> ac5 = billingService.getReceipts("ac-5");
-        List<Receipt> ac1 = billingService.getReceipts("ac-1");
+        billingService.generateInvoices(Long.MIN_VALUE, Long.MAX_VALUE);
+        List<Invoice> ac3 = billingService.getInvoices("ac-3");
+        List<Invoice> ac5 = billingService.getInvoices("ac-5");
+        List<Invoice> ac1 = billingService.getInvoices("ac-1");
         //then
         assertEquals(ac3.size(), 1);
         assertEquals(get(ac3, 0).getTotal(), 30.9);
@@ -268,13 +267,13 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
 
 
         //when
-        billingService.generateReceipts(Long.MIN_VALUE, Long.MAX_VALUE);
+        billingService.generateInvoices(Long.MIN_VALUE, Long.MAX_VALUE);
         //then
-        assertEquals(billingService.getReceipt(PaymentState.WAITING_EXECUTOR, 5).size(), 2);
-        assertEquals(billingService.getReceipt(PaymentState.EXECUTING, 5).size(), 0);
-        assertEquals(billingService.getReceipt(PaymentState.PAYMENT_FAIL, 5).size(), 0);
-        assertEquals(billingService.getReceipt(PaymentState.CREDIT_CARD_MISSING, 5).size(), 0);
-        assertEquals(billingService.getReceipt(PaymentState.PAID_SUCCESSFULLY, 5).size(), 0);
+        assertEquals(billingService.getInvoices(PaymentState.WAITING_EXECUTOR, 5).size(), 2);
+        assertEquals(billingService.getInvoices(PaymentState.EXECUTING, 5).size(), 0);
+        assertEquals(billingService.getInvoices(PaymentState.PAYMENT_FAIL, 5).size(), 0);
+        assertEquals(billingService.getInvoices(PaymentState.CREDIT_CARD_MISSING, 5).size(), 0);
+        assertEquals(billingService.getInvoices(PaymentState.PAID_SUCCESSFULLY, 5).size(), 0);
 
     }
 
@@ -302,16 +301,16 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
 
 
         //when
-        billingService.generateReceipts(Long.MIN_VALUE, Long.MAX_VALUE);
-        Receipt receipt = get(billingService.getReceipt(PaymentState.WAITING_EXECUTOR, 5), 1);
-        billingService.setPaymentState(receipt.getId(), PaymentState.PAYMENT_FAIL);
+        billingService.generateInvoices(Long.MIN_VALUE, Long.MAX_VALUE);
+        Invoice invoice = get(billingService.getInvoices(PaymentState.WAITING_EXECUTOR, 5), 1);
+        billingService.setPaymentState(invoice.getId(), PaymentState.PAYMENT_FAIL);
         //then
-        assertEquals(billingService.getReceipt(PaymentState.WAITING_EXECUTOR, 5).size(), 1);
-        assertEquals(billingService.getReceipt(PaymentState.EXECUTING, 5).size(), 0);
-        assertEquals(billingService.getReceipt(PaymentState.PAYMENT_FAIL, 5).size(), 1);
-        assertEquals(get(billingService.getReceipt(PaymentState.PAYMENT_FAIL, 5), 0).getId(), receipt.getId());
-        assertEquals(billingService.getReceipt(PaymentState.CREDIT_CARD_MISSING, 5).size(), 0);
-        assertEquals(billingService.getReceipt(PaymentState.PAID_SUCCESSFULLY, 5).size(), 0);
+        assertEquals(billingService.getInvoices(PaymentState.WAITING_EXECUTOR, 5).size(), 1);
+        assertEquals(billingService.getInvoices(PaymentState.EXECUTING, 5).size(), 0);
+        assertEquals(billingService.getInvoices(PaymentState.PAYMENT_FAIL, 5).size(), 1);
+        assertEquals(get(billingService.getInvoices(PaymentState.PAYMENT_FAIL, 5), 0).getId(), invoice.getId());
+        assertEquals(billingService.getInvoices(PaymentState.CREDIT_CARD_MISSING, 5).size(), 0);
+        assertEquals(billingService.getInvoices(PaymentState.PAID_SUCCESSFULLY, 5).size(), 0);
 
     }
 
@@ -340,14 +339,14 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
 
 
         //when
-        billingService.generateReceipts(Long.MIN_VALUE, Long.MAX_VALUE);
-        Long id = get(billingService.getReceipt(PaymentState.WAITING_EXECUTOR, 5), 1).getId();
+        billingService.generateInvoices(Long.MIN_VALUE, Long.MAX_VALUE);
+        Long id = get(billingService.getInvoices(PaymentState.WAITING_EXECUTOR, 5), 1).getId();
         billingService.setPaymentState(id, PaymentState.PAYMENT_FAIL);
 
         //then
-        List<Receipt> notSendReceipt = billingService.getNotSendReceipt(5);
-        assertEquals(notSendReceipt.size(), 1);
-        assertEquals(get(notSendReceipt, 0).getId(), id);
+        List<Invoice> notSendInvoice = billingService.getNotSendInvoices(5);
+        assertEquals(notSendInvoice.size(), 1);
+        assertEquals(get(notSendInvoice, 0).getId(), id);
 
     }
 
@@ -375,14 +374,14 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
 
 
         //when
-        billingService.generateReceipts(Long.MIN_VALUE, Long.MAX_VALUE);
-        Long id = get(billingService.getReceipt(PaymentState.WAITING_EXECUTOR, 5), 1).getId();
+        billingService.generateInvoices(Long.MIN_VALUE, Long.MAX_VALUE);
+        Long id = get(billingService.getInvoices(PaymentState.WAITING_EXECUTOR, 5), 1).getId();
         billingService.setPaymentState(id, PaymentState.PAID_SUCCESSFULLY);
 
         //then
-        List<Receipt> notSendReceipt = billingService.getNotSendReceipt(5);
-        assertEquals(notSendReceipt.size(), 1);
-        assertEquals(get(notSendReceipt, 0).getId(), id);
+        List<Invoice> notSendInvoice = billingService.getNotSendInvoices(5);
+        assertEquals(notSendInvoice.size(), 1);
+        assertEquals(get(notSendInvoice, 0).getId(), id);
 
     }
 
@@ -410,14 +409,14 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
 
 
         //when
-        billingService.generateReceipts(Long.MIN_VALUE, Long.MAX_VALUE);
-        Long id = get(billingService.getReceipt(PaymentState.WAITING_EXECUTOR, 5), 1).getId();
+        billingService.generateInvoices(Long.MIN_VALUE, Long.MAX_VALUE);
+        Long id = get(billingService.getInvoices(PaymentState.WAITING_EXECUTOR, 5), 1).getId();
         billingService.setPaymentState(id, PaymentState.CREDIT_CARD_MISSING);
 
         //then
-        List<Receipt> notSendReceipt = billingService.getNotSendReceipt(5);
-        assertEquals(notSendReceipt.size(), 1);
-        assertEquals(get(notSendReceipt, 0).getId(), id);
+        List<Invoice> notSendInvoice = billingService.getNotSendInvoices(5);
+        assertEquals(notSendInvoice.size(), 1);
+        assertEquals(get(notSendInvoice, 0).getId(), id);
 
     }
 
@@ -446,12 +445,12 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
 
 
         //when
-        billingService.generateReceipts(Long.MIN_VALUE, Long.MAX_VALUE);
-        Long id = get(billingService.getReceipt(PaymentState.WAITING_EXECUTOR, 5), 1).getId();
+        billingService.generateInvoices(Long.MIN_VALUE, Long.MAX_VALUE);
+        Long id = get(billingService.getInvoices(PaymentState.WAITING_EXECUTOR, 5), 1).getId();
         billingService.setPaymentState(id, PaymentState.CREDIT_CARD_MISSING);
-        billingService.markReceiptAsSent(id);
+        billingService.markInvoiceAsSent(id);
         //then
-        assertEquals(billingService.getNotSendReceipt(5).size(), 0);
+        assertEquals(billingService.getNotSendInvoices(5).size(), 0);
     }
 
 }

@@ -17,25 +17,74 @@
  */
 package com.codenvy.api.account.billing;
 
-import com.codenvy.api.account.shared.dto.Receipt;
+
+import com.codenvy.api.account.impl.shared.dto.Invoice;
 import com.codenvy.api.core.ServerException;
 
-import java.sql.SQLException;
 import java.util.List;
 
 /**
+ * Provide access to existed invoices and generate new invoices for the given period.
+ *
  * @author Sergii Kabashniuk
  */
 public interface BillingService {
-    void generateReceipts(long from, long till) throws ServerException;
+    /**
+     * Generate invoices for the given period of time.
+     *
+     * @param from
+     *         beginning of period.
+     * @param till
+     *         end of period.
+     * @throws ServerException
+     */
+    void generateInvoices(long from, long till) throws ServerException;
 
-    List<Receipt> getReceipt(PaymentState state, int limit) throws ServerException;
+    /**
+     * Get list of invoices with given Payment state.
+     *
+     * @param state
+     *         state of payment.
+     * @param limit
+     *         - limit number of invoices
+     * @return - list of invoices with given Payment state.
+     * @throws ServerException
+     */
+    List<Invoice> getInvoices(PaymentState state, int limit) throws ServerException;
 
-    void setPaymentState(long receiptId, PaymentState state) throws ServerException;
+    /**
+     * @param accountId
+     *         account id.
+     * @return all invoices for given account.
+     * @throws ServerException
+     */
+    List<Invoice> getInvoices(String accountId) throws ServerException;
 
-    List<Receipt> getReceipts(String accountId) throws ServerException;
+    /**
+     * @param limit
+     *         max number of invoices to get.
+     * @return list of invoices that should be send to user.
+     * @throws ServerException
+     */
+    List<Invoice> getNotSendInvoices(int limit) throws ServerException;
 
-    List<Receipt> getNotSendReceipt(int limit) throws ServerException;
+    /**
+     * Change payment state of invoice.
+     *
+     * @param invoiceId
+     *         id of invoice.
+     * @param state
+     *         next state of invoice.
+     * @throws ServerException
+     */
+    void setPaymentState(long invoiceId, PaymentState state) throws ServerException;
 
-    void markReceiptAsSent(long receiptId) throws ServerException;
+    /**
+     * Mark invoice as sent to user.
+     *
+     * @param invoiceId
+     *         Id of invoice.
+     * @throws ServerException
+     */
+    void markInvoiceAsSent(long invoiceId) throws ServerException;
 }

@@ -117,7 +117,7 @@ public interface SqlDaoQueries {
             "HAVING  " +
             " SUM(AMOUNT) >= ? ";
     /**
-     * Generate receipts from charges.
+     * Generate invoices from charges.
      */
     String RECEIPTS_INSERT               =
             "INSERT INTO " +
@@ -143,7 +143,7 @@ public interface SqlDaoQueries {
             "GROUP BY " +
             "  ACCOUNT_ID ";
     /**
-     * Select receipts by given payment state.
+     * Select invoices by given payment state.
      */
     String RECEIPTS_PAYMENT_STATE_SELECT =
             "SELECT " +
@@ -160,7 +160,7 @@ public interface SqlDaoQueries {
             " LIMIT ?";
 
     /**
-     * Select receipts which is not mailed.
+     * Select invoices which is not mailed.
      */
     String RECEIPTS_MAILING_STATE_SELECT =
             "SELECT " +
@@ -180,14 +180,14 @@ public interface SqlDaoQueries {
             PaymentState.CREDIT_CARD_MISSING.getState() + ") " +
             " LIMIT ?";
     /**
-     * Update mailing time of receipt.
+     * Update mailing time of invoices.
      */
     String RECEIPTS_MAILING_TIME_UPDATE  = "UPDATE RECEIPTS " +
                                            " SET MAILING_TIME=? " +
                                            " WHERE ID=? ";
 
     /**
-     * Select receipts by given account.
+     * Select invoices by given account.
      */
     String RECEIPTS_ACCOUNT_SELECT =
             "SELECT " +
@@ -203,7 +203,7 @@ public interface SqlDaoQueries {
             " ACCOUNT_ID = ? ";
 
     /**
-     * Update payment status of receipts.
+     * Update payment status of invoices.
      */
     String RECEIPTS_PAYMENT_STATUS_UPDATE = "UPDATE   RECEIPTS " +
                                             " SET PAYMENT_STATUS=? " +

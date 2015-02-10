@@ -18,9 +18,9 @@
 package com.codenvy.api.account.billing;
 
 import com.codenvy.api.account.impl.shared.dto.ClientToken;
+import com.codenvy.api.account.impl.shared.dto.CreditCard;
 import com.codenvy.api.account.impl.shared.dto.CreditCardDescriptor;
 import com.codenvy.api.account.impl.shared.dto.NewCreditCard;
-import com.codenvy.api.account.shared.dto.CreditCard;
 import com.codenvy.api.core.ForbiddenException;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;

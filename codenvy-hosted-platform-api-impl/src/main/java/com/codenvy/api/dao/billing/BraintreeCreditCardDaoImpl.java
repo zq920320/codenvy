@@ -25,7 +25,7 @@ import com.braintreegateway.Result;
 import com.braintreegateway.exceptions.BraintreeException;
 import com.braintreegateway.exceptions.NotFoundException;
 import com.codenvy.api.account.billing.CreditCardDao;
-import com.codenvy.api.account.shared.dto.CreditCard;
+import com.codenvy.api.account.impl.shared.dto.CreditCard;
 import com.codenvy.api.core.ForbiddenException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.dto.server.DtoFactory;

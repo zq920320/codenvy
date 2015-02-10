@@ -17,24 +17,26 @@
  */
 package com.codenvy.api.account.billing;
 
-import com.codenvy.api.account.shared.dto.CreditCard;
+import com.codenvy.api.account.impl.shared.dto.CreditCard;
 import com.codenvy.api.core.ForbiddenException;
 import com.codenvy.api.core.ServerException;
 
-import java.lang.String;import java.util.List;
+
+import java.util.List;
 
 /**
  * Credit card DAO.
- * @author Max Shaposhnik (mshaposhnik@codenvy.com) on 1/26/15.
  *
+ * @author Max Shaposhnik (mshaposhnik@codenvy.com) on 1/26/15.
  */
 public interface CreditCardDao {
 
     String getClientToken(String accountId) throws ServerException, ForbiddenException;
 
-    void registerCard(String accountId, String nonce, String streetAddress, String city, String state, String country)  throws ServerException,ForbiddenException;
+    void registerCard(String accountId, String nonce, String streetAddress, String city, String state, String country)
+            throws ServerException, ForbiddenException;
 
-    List<CreditCard> getCards(String accountId)  throws ServerException,ForbiddenException;
+    List<CreditCard> getCards(String accountId) throws ServerException, ForbiddenException;
 
-    void deleteCard(String accountId, String token)  throws ServerException,ForbiddenException;
+    void deleteCard(String accountId, String token) throws ServerException, ForbiddenException;
 }
