@@ -19,6 +19,8 @@ package com.codenvy.api.account.impl.shared.dto;
 
 import com.codenvy.dto.shared.DTO;
 
+import java.util.Map;
+
 /**
  * @author Sergii Kabashniuk
  */
@@ -31,25 +33,38 @@ public interface Charge {
     Charge withServiceId(String serviceId);
 
 
-    String getType();
+    Double getPaidAmount();
 
-    void setType(String type);
+    void setPaidAmount(Double amount);
 
-    Charge withType(String type);
-
-
-    Double getAmount();
-
-    void setAmount(Double amount);
-
-    Charge withAmount(Double amount);
+    Charge withPaidAmount(Double amount);
 
 
-    Double getPrice();
+    Double getPaidPrice();
 
-    void setPrice(Double usedPrice);
+    void setPaidPrice(Double paidPrice);
 
-    Charge withPrice(Double usedPrice);
+    Charge withPaidPrice(Double paidPrice);
 
+
+    Double getFreeAmount();
+
+    void setFreeAmount(Double freeAmount);
+
+    Charge withFreeAmount(Double freeAmount);
+
+
+    Double getPrePaidAmount();
+
+    void setPrePaidAmount(Double freeAmount);
+
+    Charge withPrePaidAmount(Double freeAmount);
+
+
+    Map<String, String> getDetails();
+
+    void setDetails(Map<String, String> details);
+
+    Charge withDetails(Map<String, String> details);
 
 }

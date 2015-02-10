@@ -17,17 +17,15 @@
  */
 package com.codenvy.api.dao.sql;
 
-import static com.codenvy.api.dao.sql.SqlDaoQueries.CHARGES_FREE_INSERT;
-import static com.codenvy.api.dao.sql.SqlDaoQueries.CHARGES_PAID_INSERT;
 import static com.codenvy.api.dao.sql.SqlDaoQueries.CHARGES_SELECT;
+import static com.codenvy.api.dao.sql.SqlDaoQueries.INVOICES_ACCOUNT_SELECT;
+import static com.codenvy.api.dao.sql.SqlDaoQueries.INVOICES_INSERT;
+import static com.codenvy.api.dao.sql.SqlDaoQueries.INVOICES_MAILING_STATE_SELECT;
+import static com.codenvy.api.dao.sql.SqlDaoQueries.INVOICES_MAILING_TIME_UPDATE;
+import static com.codenvy.api.dao.sql.SqlDaoQueries.INVOICES_PAYMENT_STATE_SELECT;
+import static com.codenvy.api.dao.sql.SqlDaoQueries.INVOICES_PAYMENT_STATE_UPDATE;
 import static com.codenvy.api.dao.sql.SqlDaoQueries.MEMORY_CHARGES_INSERT;
 import static com.codenvy.api.dao.sql.SqlDaoQueries.MEMORY_CHARGES_SELECT;
-import static com.codenvy.api.dao.sql.SqlDaoQueries.RECEIPTS_ACCOUNT_SELECT;
-import static com.codenvy.api.dao.sql.SqlDaoQueries.RECEIPTS_INSERT;
-import static com.codenvy.api.dao.sql.SqlDaoQueries.RECEIPTS_MAILING_STATE_SELECT;
-import static com.codenvy.api.dao.sql.SqlDaoQueries.RECEIPTS_MAILING_TIME_UPDATE;
-import static com.codenvy.api.dao.sql.SqlDaoQueries.RECEIPTS_PAYMENT_STATE_SELECT;
-import static com.codenvy.api.dao.sql.SqlDaoQueries.RECEIPTS_PAYMENT_STATUS_UPDATE;
 
 import com.codenvy.api.account.billing.BillingService;
 import com.codenvy.api.account.billing.PaymentState;
@@ -44,7 +42,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -88,32 +88,24 @@ public class SqlBillingService implements BillingService {
                     memoryChargesStatement.execute();
                 }
 
-                try (PreparedStatement freeSaasCharges = connection.prepareStatement(CHARGES_FREE_INSERT)) {
-                    freeSaasCharges.setDouble(1, saasFreeGbH);
-                    freeSaasCharges.setString(2, "Saas");
-                    freeSaasCharges.setString(3, "Free");
-                    freeSaasCharges.setString(4, calculationId);
+                try (PreparedStatement freeSaasCharges = connection.prepareStatement(SqlDaoQueries.CHARGES_MEMORY_INSERT)) {
+                    freeSaasCharges.setString(1, "Saas");
+                    freeSaasCharges.setDouble(2, saasFreeGbH);
+                    freeSaasCharges.setDouble(3, saasFreeGbH);
+                    freeSaasCharges.setDouble(4, saasChargeableGbHPrice);
                     freeSaasCharges.setString(5, calculationId);
+                    freeSaasCharges.setString(6, calculationId);
 
                     freeSaasCharges.execute();
                 }
-                try (PreparedStatement paidSaasCharges = connection.prepareStatement(CHARGES_PAID_INSERT)) {
-                    paidSaasCharges.setDouble(1, saasFreeGbH);
-                    paidSaasCharges.setString(2, "Saas");
-                    paidSaasCharges.setString(3, "Paid");
-                    paidSaasCharges.setDouble(4, saasChargeableGbHPrice);
-                    paidSaasCharges.setString(5, calculationId);
-                    paidSaasCharges.setString(6, calculationId);
-                    paidSaasCharges.setDouble(7, saasFreeGbH);
-                    paidSaasCharges.execute();
-                }
 
-                try (PreparedStatement invoices = connection.prepareStatement(RECEIPTS_INSERT)) {
-                    invoices.setInt(1, PaymentState.WAITING_EXECUTOR.getState());
-                    invoices.setLong(2, from);
-                    invoices.setLong(3, till);
-                    invoices.setString(4, calculationId);
+                try (PreparedStatement invoices = connection.prepareStatement(INVOICES_INSERT)) {
+                    invoices.setString(1, PaymentState.WAITING_EXECUTOR.getState());
+                    invoices.setLong(2, System.currentTimeMillis());
+                    invoices.setLong(3, from);
+                    invoices.setLong(4, till);
                     invoices.setString(5, calculationId);
+                    invoices.setString(6, calculationId);
                     invoices.execute();
                 }
 
@@ -134,8 +126,8 @@ public class SqlBillingService implements BillingService {
         try (Connection connection = connectionFactory.getConnection()) {
             try {
                 connection.setAutoCommit(false);
-                try (PreparedStatement statement = connection.prepareStatement(RECEIPTS_PAYMENT_STATUS_UPDATE)) {
-                    statement.setInt(1, state.getState());
+                try (PreparedStatement statement = connection.prepareStatement(INVOICES_PAYMENT_STATE_UPDATE)) {
+                    statement.setString(1, state.getState());
                     statement.setLong(2, invoiceId);
                     statement.execute();
                 }
@@ -152,8 +144,8 @@ public class SqlBillingService implements BillingService {
     @Override
     public List<Invoice> getInvoices(PaymentState state, int limit) throws ServerException {
         try (Connection connection = connectionFactory.getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement(RECEIPTS_PAYMENT_STATE_SELECT)) {
-                statement.setInt(1, state.getState());
+            try (PreparedStatement statement = connection.prepareStatement(INVOICES_PAYMENT_STATE_SELECT)) {
+                statement.setString(1, state.getState());
                 statement.setLong(2, limit);
                 try (ResultSet invoicesResultSet = statement.executeQuery()) {
                     List<Invoice> result = new ArrayList<>(limit);
@@ -163,10 +155,9 @@ public class SqlBillingService implements BillingService {
                                              .withId(invoicesResultSet.getLong(1))
                                              .withTotal(invoicesResultSet.getDouble(2))
                                              .withAccountId(invoicesResultSet.getString(3))
+                                             .withPaymentState(state.getState())
                                              .withCharges(
                                                      getCharges(connection, invoicesResultSet.getString(3), invoicesResultSet.getString(6)))
-                                             .withMemoryChargeDetails(getMemoryChargeDetails(connection, invoicesResultSet.getString(3),
-                                                                                             invoicesResultSet.getString(6)))
                                   );
 
 
@@ -182,20 +173,26 @@ public class SqlBillingService implements BillingService {
     @Override
     public List<Invoice> getInvoices(String accountId) throws ServerException {
         try (Connection connection = connectionFactory.getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement(RECEIPTS_ACCOUNT_SELECT)) {
+            try (PreparedStatement statement = connection.prepareStatement(INVOICES_ACCOUNT_SELECT)) {
                 statement.setString(1, accountId);
                 try (ResultSet invoicesResultSet = statement.executeQuery()) {
                     List<Invoice> result = new ArrayList<>();
                     while (invoicesResultSet.next()) {
 
                         result.add(DtoFactory.getInstance().createDto(Invoice.class)
-                                             .withId(invoicesResultSet.getLong(1))
-                                             .withTotal(invoicesResultSet.getDouble(2))
-                                             .withAccountId(invoicesResultSet.getString(3))
+                                             .withId(invoicesResultSet.getLong("FID"))
+                                             .withTotal(invoicesResultSet.getDouble("FTOTAL"))
+                                             .withAccountId(invoicesResultSet.getString("FACCOUNT_ID"))
+                                             .withCreditCardId(invoicesResultSet.getString("FCREDIT_CARD"))
+                                             .withPaymentDate(invoicesResultSet.getLong("FPAYMENT_TIME"))
+                                             .withPaymentState(invoicesResultSet.getString("FPAYMENT_STATE"))
+                                             .withMailingDate(invoicesResultSet.getLong("FMAILING_TIME"))
+                                             .withCreationDate(invoicesResultSet.getLong("FCREATED_TIME"))
+                                             .withFromDate(invoicesResultSet.getLong("FFROM_TIME"))
+                                             .withUntilDate(invoicesResultSet.getLong("FTILL_TIME"))
                                              .withCharges(
-                                                     getCharges(connection, accountId, invoicesResultSet.getString(6)))
-                                             .withMemoryChargeDetails(getMemoryChargeDetails(connection, accountId,
-                                                                                             invoicesResultSet.getString(6)))
+                                                     getCharges(connection, accountId, invoicesResultSet.getString("FCALC_ID")))
+
                                   );
 
 
@@ -212,7 +209,7 @@ public class SqlBillingService implements BillingService {
     @Override
     public List<Invoice> getNotSendInvoices(int limit) throws ServerException {
         try (Connection connection = connectionFactory.getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement(RECEIPTS_MAILING_STATE_SELECT)) {
+            try (PreparedStatement statement = connection.prepareStatement(INVOICES_MAILING_STATE_SELECT)) {
                 statement.setLong(1, limit);
                 try (ResultSet invoicesResultSet = statement.executeQuery()) {
                     List<Invoice> result = new ArrayList<>(limit);
@@ -224,8 +221,6 @@ public class SqlBillingService implements BillingService {
                                              .withAccountId(invoicesResultSet.getString(3))
                                              .withCharges(
                                                      getCharges(connection, invoicesResultSet.getString(3), invoicesResultSet.getString(6)))
-                                             .withMemoryChargeDetails(getMemoryChargeDetails(connection, invoicesResultSet.getString(3),
-                                                                                             invoicesResultSet.getString(6)))
                                   );
 
 
@@ -243,7 +238,7 @@ public class SqlBillingService implements BillingService {
         try (Connection connection = connectionFactory.getConnection()) {
             try {
                 connection.setAutoCommit(false);
-                try (PreparedStatement statement = connection.prepareStatement(RECEIPTS_MAILING_TIME_UPDATE)) {
+                try (PreparedStatement statement = connection.prepareStatement(INVOICES_MAILING_TIME_UPDATE)) {
                     statement.setLong(1, System.currentTimeMillis());
                     statement.setLong(2, invoiceId);
                     statement.execute();
@@ -257,21 +252,18 @@ public class SqlBillingService implements BillingService {
         }
     }
 
-    private List<MemoryChargeDetails> getMemoryChargeDetails(Connection connection, String accountId, String calculationID)
+    private Map<String, String> getMemoryChargeDetails(Connection connection, String accountId, String calculationID)
             throws SQLException {
 
-        List<MemoryChargeDetails> mCharges = new ArrayList<>();
+        Map<String, String> mCharges = new HashMap<>();
         try (PreparedStatement memoryCharges = connection.prepareStatement(MEMORY_CHARGES_SELECT)) {
             memoryCharges.setString(1, accountId);
             memoryCharges.setString(2, calculationID);
 
+
             try (ResultSet chargesResultSet = memoryCharges.executeQuery()) {
                 while (chargesResultSet.next()) {
-                    mCharges.add(DtoFactory.getInstance().createDto(MemoryChargeDetails.class)
-                                           .withAmount(chargesResultSet.getDouble(1))
-                                           .withWorkspaceId(chargesResultSet.getString(2))
-
-                                );
+                    mCharges.put(chargesResultSet.getString("FWORKSPACE_ID"), Double.toString(chargesResultSet.getDouble("FAMOUNT")));
                 }
             }
         }
@@ -289,10 +281,12 @@ public class SqlBillingService implements BillingService {
             try (ResultSet chargesResultSet = chargesStatement.executeQuery()) {
                 while (chargesResultSet.next()) {
                     charges.add(DtoFactory.getInstance().createDto(Charge.class)
-                                          .withAmount(chargesResultSet.getDouble(1))
-                                          .withServiceId(chargesResultSet.getString(2))
-                                          .withType(chargesResultSet.getString(3))
-                                          .withPrice(chargesResultSet.getDouble(4))
+                                          .withPaidAmount(chargesResultSet.getDouble("FPAID_AMOUNT"))
+                                          .withServiceId(chargesResultSet.getString("FSERVICE_ID"))
+                                          .withPaidPrice(chargesResultSet.getDouble("FPAID_PRICE"))
+                                          .withFreeAmount(chargesResultSet.getDouble("FFREE_AMOUNT"))
+                                          .withPrePaidAmount(chargesResultSet.getDouble("FPREPAID_AMOUNT"))
+                                          .withDetails( getMemoryChargeDetails(connection,accountId, calculationID))
                                );
                 }
             }

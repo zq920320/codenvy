@@ -53,8 +53,8 @@ public class AbstractSQLTest {
         postgresql.setPortNumber(5432);
 
         sources = new DataSource[]{
-                h2
-               //, postgresql
+                h2,
+                postgresql
         };
     }
 

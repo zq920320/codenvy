@@ -50,11 +50,25 @@ public interface Invoice {
     Invoice withTotal(Double total);
 
 
-    String getBillingPeriod();
+    long getCreationDate();
 
-    void setBillingPeriod(String billingPeriod);
+    void setCreationDate(long creationDate);
 
-    Invoice withBillingPeriod(String billingPeriod);
+    Invoice withCreationDate(long creationDate);
+
+
+    long getFromDate();
+
+    void setFromDate(long fromDate);
+
+    Invoice withFromDate(long fromDate);
+
+
+    long getUntilDate();
+
+    void setUntilDate(long untilDate);
+
+    Invoice withUntilDate(long untilDate);
 
 
     String getCreditCardId();
@@ -62,6 +76,13 @@ public interface Invoice {
     void setCreditCardId(String creditCardId);
 
     Invoice withCreditCardId(String creditCardId);
+
+
+    String getPaymentState();
+
+    void setPaymentState(String paymentState);
+
+    Invoice withPaymentState(String paymentState);
 
 
     Long getPaymentDate();
@@ -83,12 +104,5 @@ public interface Invoice {
     void setCharges(List<Charge> charges);
 
     Invoice withCharges(List<Charge> charges);
-
-    List<MemoryChargeDetails> getMemoryChargeDetails();
-
-    void setMemoryChargeDetails(List<MemoryChargeDetails> memoryChargeDetails);
-
-    Invoice withMemoryChargeDetails(List<MemoryChargeDetails> memoryChargeDetails);
-
 
 }

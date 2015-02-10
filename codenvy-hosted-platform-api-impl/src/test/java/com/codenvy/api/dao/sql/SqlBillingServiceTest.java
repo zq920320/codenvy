@@ -19,7 +19,7 @@ package com.codenvy.api.dao.sql;
 
 import static com.google.common.collect.Iterables.get;
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.assertNotNull;
 
 import com.codenvy.api.account.billing.BillingService;
 import com.codenvy.api.account.billing.MonthlyBillingPeriod;
@@ -28,9 +28,7 @@ import com.codenvy.api.account.impl.shared.dto.Charge;
 import com.codenvy.api.account.impl.shared.dto.Invoice;
 import com.codenvy.api.account.metrics.MemoryUsedMetric;
 import com.codenvy.api.account.metrics.MeterBasedStorage;
-import com.codenvy.api.account.shared.dto.MemoryChargeDetails;
 import com.codenvy.api.core.ServerException;
-import com.codenvy.dto.server.DtoFactory;
 
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -79,28 +77,20 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
         assertEquals(ac3.size(), 1);
         Invoice invoice = get(ac3, 0);
         assertEquals(invoice.getTotal(), 30.9);
-        //free + paid
-        assertEquals(invoice.getCharges().size(), 2);
-        assertTrue(invoice.getCharges().contains(DtoFactory.getInstance().createDto(Charge.class)
-                                                           .withAmount(10.0)
-                                                           .withPrice(0.0)
-                                                           .withServiceId("Saas")
-                                                           .withType("Free")));
 
-        assertTrue(invoice.getCharges().contains(DtoFactory.getInstance().createDto(Charge.class)
-                                                           .withAmount(206.0)
-                                                           .withPrice(0.15)
-                                                           .withServiceId("Saas")
-                                                           .withType("Paid")));
+        assertEquals(invoice.getCharges().size(), 1);
+        Charge saasCharge = get(invoice.getCharges(), 0);
+        assertEquals(saasCharge.getServiceId(), "Saas");
+        assertEquals(saasCharge.getFreeAmount(), 10.0);
+        assertEquals(saasCharge.getPaidAmount(), 206.0);
+        assertEquals(saasCharge.getPaidPrice(), 0.15);
+        assertEquals(saasCharge.getPrePaidAmount(), 0.0);
+        assertNotNull(saasCharge.getDetails());
+        assertEquals(saasCharge.getDetails().size(), 1);
+        assertEquals(saasCharge.getDetails().get("ws-235423"), "216.0");
 
-        assertEquals(invoice.getMemoryChargeDetails().size(), 1);
-        assertTrue(invoice.getMemoryChargeDetails().contains(DtoFactory.getInstance().createDto(MemoryChargeDetails.class)
-                                                                       .withAmount(216.0)
-                                                                       .withWorkspaceId("ws-235423")))
-
-
-        ;
     }
+
 
     @Test(dataProvider = "storage")
     public void shouldCalculateFreeHours(MeterBasedStorage meterBasedStorage, BillingService billingService)
@@ -121,20 +111,16 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
         assertEquals(ac3.size(), 1);
         Invoice invoice = get(ac3, 0);
         assertEquals(invoice.getTotal(), 0.0);
-        //free + paid
         assertEquals(invoice.getCharges().size(), 1);
-        assertTrue(invoice.getCharges().contains(DtoFactory.getInstance().createDto(Charge.class)
-                                                           .withAmount(0.52306)
-                                                           .withPrice(0.0)
-                                                           .withServiceId("Saas")
-                                                           .withType("Free")));
-
-        assertEquals(invoice.getMemoryChargeDetails().size(), 1);
-        assertTrue(invoice.getMemoryChargeDetails().contains(DtoFactory.getInstance().createDto(MemoryChargeDetails.class)
-                                                                       .withAmount(0.52306)
-                                                                       .withWorkspaceId("ws-235423")));
-
-
+        Charge saasCharge = get(invoice.getCharges(), 0);
+        assertEquals(saasCharge.getServiceId(), "Saas");
+        assertEquals(saasCharge.getFreeAmount(), 0.523056);
+        assertEquals(saasCharge.getPaidAmount(), 0.0);
+        assertEquals(saasCharge.getPaidPrice(), 0.15);
+        assertEquals(saasCharge.getPrePaidAmount(), 0.0);
+        assertNotNull(saasCharge.getDetails());
+        assertEquals(saasCharge.getDetails().size(), 1);
+        assertEquals(saasCharge.getDetails().get("ws-235423"), "0.523056");
     }
 
     @Test(dataProvider = "storage")
@@ -164,24 +150,19 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
         //then
         assertEquals(ac3.size(), 1);
         Invoice invoice = get(ac3, 0);
+
         assertEquals(invoice.getTotal(), 0.0);
-        //free + paid
         assertEquals(invoice.getCharges().size(), 1);
-        assertTrue(invoice.getCharges().contains(DtoFactory.getInstance().createDto(Charge.class)
-                                                           .withAmount(1.04612)
-                                                           .withPrice(0.0)
-                                                           .withServiceId("Saas")
-                                                           .withType("Free")));
-
-        assertEquals(invoice.getMemoryChargeDetails().size(), 2);
-        assertTrue(invoice.getMemoryChargeDetails().contains(DtoFactory.getInstance().createDto(MemoryChargeDetails.class)
-                                                                       .withAmount(0.52306)
-                                                                       .withWorkspaceId("ws-235423")));
-        assertTrue(invoice.getMemoryChargeDetails().contains(DtoFactory.getInstance().createDto(MemoryChargeDetails.class)
-                                                                       .withAmount(0.52306)
-                                                                       .withWorkspaceId("ws-2")));
-
-
+        Charge saasCharge = get(invoice.getCharges(), 0);
+        assertEquals(saasCharge.getServiceId(), "Saas");
+        assertEquals(saasCharge.getFreeAmount(), 1.046112);
+        assertEquals(saasCharge.getPaidAmount(), 0.0);
+        assertEquals(saasCharge.getPaidPrice(), 0.15);
+        assertEquals(saasCharge.getPrePaidAmount(), 0.0);
+        assertNotNull(saasCharge.getDetails());
+        assertEquals(saasCharge.getDetails().size(), 2);
+        assertEquals(saasCharge.getDetails().get("ws-235423"), "0.523056");
+        assertEquals(saasCharge.getDetails().get("ws-2"), "0.523056");
     }
 
 

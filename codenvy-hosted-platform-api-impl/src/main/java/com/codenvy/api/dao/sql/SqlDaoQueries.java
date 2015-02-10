@@ -33,7 +33,7 @@ public interface SqlDaoQueries {
     double MBMSEC_TO_GBH_MULTIPLIER = TimeUnit.HOURS.toMillis(1) * 1024.0;
 
     String GBH_SUM =
-            " SUM(ROUND(AMOUNT * (LEAST(?, STOP_TIME) - GREATEST(?, START_TIME))/" + MBMSEC_TO_GBH_MULTIPLIER + " ,6)) ";
+            " SUM(ROUND(FAMOUNT * (LEAST(?, FSTOP_TIME) - GREATEST(?, FSTART_TIME))/" + MBMSEC_TO_GBH_MULTIPLIER + " ,6)) ";
 
     /**
      * SQL query to calculate memory charges metrics.
@@ -42,264 +42,246 @@ public interface SqlDaoQueries {
     String MEMORY_CHARGES_INSERT =
             "INSERT INTO " +
             "  MEMORY_CHARGES (" +
-            "                   AMOUNT, " +
-            "                   ACCOUNT_ID, " +
-            "                   WORKSPACE_ID,  " +
-            "                   CALC_ID " +
+            "                   FAMOUNT, " +
+            "                   FACCOUNT_ID, " +
+            "                   FWORKSPACE_ID,  " +
+            "                   FCALC_ID " +
             "                  ) " +
             "SELECT " +
-            "  " + GBH_SUM + " AS AMOUNT, " +
-            "   ACCOUNT_ID, " +
-            "   WORKSPACE_ID,  " +
-            "   ? AS CALC_ID  " +
+            "  " + GBH_SUM + " AS FAMOUNT, " +
+            "   FACCOUNT_ID, " +
+            "   FWORKSPACE_ID,  " +
+            "   ? AS FCALC_ID  " +
             "FROM " +
             "  METRICS " +
             "WHERE " +
-            "   START_TIME<?" +
-            "   AND STOP_TIME>?" +
+            "   FSTART_TIME<?" +
+            "   AND FSTOP_TIME>?" +
             "GROUP BY " +
-            " ACCOUNT_ID, " +
-            " WORKSPACE_ID ";
+            " FACCOUNT_ID, " +
+            " FWORKSPACE_ID ";
 
-    /**
-     * Create charge with price 0 limited by configurable value from memory charges.
-     */
-    String CHARGES_FREE_INSERT =
+
+    String CHARGES_MEMORY_INSERT =
             "INSERT INTO " +
             "   CHARGES (" +
-            "                   AMOUNT, " +
-            "                   ACCOUNT_ID, " +
-            "                   SERVICE_ID, " +
-            "                   TYPE, " +
-            "                   PRICE, " +
-            "                   CALC_ID " +
+            "                   FACCOUNT_ID, " +
+            "                   FSERVICE_ID, " +
+            "                   FFREE_AMOUNT, " +
+            "                   FPREPAID_AMOUNT, " +
+            "                   FPAID_AMOUNT, " +
+            "                   FPAID_PRICE, " +
+            "                   FCALC_ID " +
             "                  ) " +
             "SELECT " +
-            "   LEAST(SUM(AMOUNT), ?) AS AMOUNT, " +
-            "   ACCOUNT_ID AS ACCOUNT_ID, " +
-            "   ? AS SERVICE_ID, " +
-            "   ? AS TYPE, " +
-            "   0 AS PRICE, " +
-            "   ? as CALC_ID " +
+            "   FACCOUNT_ID AS FACCOUNT_ID, " +
+            "   ? AS FSERVICE_ID, " +
+            "   LEAST(SUM(FAMOUNT), ?) AS FFREE_AMOUNT, " +
+            "   0 AS FPREPAID_AMOUNT, " +
+            "   GREATEST(SUM(FAMOUNT) -?, 0) AS FPREPAID_AMOUNT, " +
+            "   ? AS FPAID_PRICE, " +
+            "   ? as FCALC_ID " +
             "FROM " +
             "  MEMORY_CHARGES " +
             "WHERE " +
-            "  CALC_ID = ? " +
+            "  FCALC_ID = ? " +
             "GROUP BY " +
-            "  ACCOUNT_ID ";
+            "  FACCOUNT_ID ";
 
-    /**
-     * Create charge with configurable price where total sum more when configurable value. Sum subtracted with configurable value.
-     */
-    String CHARGES_PAID_INSERT           =
-            "INSERT INTO " +
-            "   CHARGES (" +
-            "                   AMOUNT, " +
-            "                   ACCOUNT_ID, " +
-            "                   SERVICE_ID, " +
-            "                   TYPE, " +
-            "                   PRICE, " +
-            "                   CALC_ID " +
-            "                  ) " +
-            "SELECT " +
-            "   SUM(AMOUNT)-? AS AMOUNT, " +
-            "   ACCOUNT_ID AS ACCOUNT_ID, " +
-            "   ? AS SERVICE_ID, " +
-            "   ? AS TYPE, " +
-            "   ? AS PRICE, " +
-            "   ? as CALC_ID " +
-            "FROM " +
-            "  MEMORY_CHARGES " +
-            "WHERE " +
-            "  CALC_ID = ? " +
-            "GROUP BY " +
-            "  ACCOUNT_ID " +
-            "HAVING  " +
-            " SUM(AMOUNT) >= ? ";
+
+
     /**
      * Generate invoices from charges.
      */
-    String RECEIPTS_INSERT               =
+    String INVOICES_INSERT               =
             "INSERT INTO " +
-            "   RECEIPTS (" +
-            "                   TOTAL, " +
-            "                   ACCOUNT_ID, " +
-            "                   PAYMENT_STATUS, " +
-            "                   FROM_TIME, " +
-            "                   TILL_TIME, " +
-            "                   CALC_ID " +
+            "   INVOICES(" +
+            "                   FTOTAL, " +
+            "                   FACCOUNT_ID, " +
+            "                   FPAYMENT_STATE, " +
+            "                   FCREATED_TIME, " +
+            "                   FFROM_TIME, " +
+            "                   FTILL_TIME, " +
+            "                   FCALC_ID " +
             "                  ) " +
             "SELECT " +
-            "   ROUND(SUM(ROUND(AMOUNT,2)*PRICE),2) AS TOTAL, " +
-            "   ACCOUNT_ID AS ACCOUNT_ID, " +
-            "   ? as PAYMENT_STATUS, " +
-            "   ? as FROM_TIME, " +
-            "   ? as TILL_TIME, " +
-            "   ? as CALC_ID " +
+            "   ROUND(SUM(ROUND(FPAID_AMOUNT,2)*FPAID_PRICE),2) AS FTOTAL, " +
+            "   FACCOUNT_ID AS FACCOUNT_ID, " +
+            "   ? as FPAYMENT_STATE, " +
+            "   ? as FCREATED_TIME, " +
+            "   ? as FFROM_TIME, " +
+            "   ? as FTILL_TIME, " +
+            "   ? as FCALC_ID " +
             "FROM " +
             "  CHARGES " +
             "WHERE " +
-            "  CALC_ID = ? " +
+            "  FCALC_ID = ? " +
             "GROUP BY " +
-            "  ACCOUNT_ID ";
+            "  FACCOUNT_ID ";
     /**
      * Select invoices by given payment state.
      */
-    String RECEIPTS_PAYMENT_STATE_SELECT =
+    String INVOICES_PAYMENT_STATE_SELECT =
             "SELECT " +
-            "                   ID, " +
-            "                   TOTAL, " +
-            "                   ACCOUNT_ID, " +
-            "                   FROM_TIME, " +
-            "                   TILL_TIME, " +
-            "                   CALC_ID " +
+            "                   FID, " +
+            "                   FTOTAL, " +
+            "                   FACCOUNT_ID, " +
+            "                   FFROM_TIME, " +
+            "                   FTILL_TIME, " +
+            "                   FCALC_ID " +
             "FROM " +
-            "  RECEIPTS " +
+            "  INVOICES " +
             "WHERE " +
-            " PAYMENT_STATUS = ? " +
+            " FPAYMENT_STATE = ? " +
             " LIMIT ?";
 
     /**
      * Select invoices which is not mailed.
      */
-    String RECEIPTS_MAILING_STATE_SELECT =
+    String INVOICES_MAILING_STATE_SELECT =
             "SELECT " +
-            "                   ID, " +
-            "                   TOTAL, " +
-            "                   ACCOUNT_ID, " +
-            "                   FROM_TIME, " +
-            "                   TILL_TIME, " +
-            "                   CALC_ID " +
+            "                   FID, " +
+            "                   FTOTAL, " +
+            "                   FACCOUNT_ID, " +
+            "                   FFROM_TIME, " +
+            "                   FTILL_TIME, " +
+            "                   FCALC_ID " +
             "FROM " +
-            "  RECEIPTS " +
+            "  INVOICES " +
             "WHERE " +
-            " MAILING_TIME IS NULL " +
-            " AND  PAYMENT_STATUS IN (" +
-            PaymentState.PAYMENT_FAIL.getState() + ", " +
-            PaymentState.PAID_SUCCESSFULLY.getState() + ", " +
-            PaymentState.CREDIT_CARD_MISSING.getState() + ") " +
+            " FMAILING_TIME IS NULL " +
+            " AND  FPAYMENT_STATE IN ('" +
+            PaymentState.PAYMENT_FAIL.getState() + "', '" +
+            PaymentState.PAID_SUCCESSFULLY.getState() + "', '" +
+            PaymentState.CREDIT_CARD_MISSING.getState() + "') " +
             " LIMIT ?";
     /**
      * Update mailing time of invoices.
      */
-    String RECEIPTS_MAILING_TIME_UPDATE  = "UPDATE RECEIPTS " +
-                                           " SET MAILING_TIME=? " +
-                                           " WHERE ID=? ";
+    String INVOICES_MAILING_TIME_UPDATE  = "UPDATE INVOICES " +
+                                           " SET FMAILING_TIME=? " +
+                                           " WHERE FID=? ";
 
     /**
      * Select invoices by given account.
      */
-    String RECEIPTS_ACCOUNT_SELECT =
+    String INVOICES_ACCOUNT_SELECT =
             "SELECT " +
-            "                   ID, " +
-            "                   TOTAL, " +
-            "                   PAYMENT_STATUS, " +
-            "                   FROM_TIME, " +
-            "                   TILL_TIME, " +
-            "                   CALC_ID " +
+            "                   FID, " +
+            "                   FTOTAL, " +
+            "                   FACCOUNT_ID, " +
+            "                   FCREDIT_CARD, " +
+            "                   FPAYMENT_TIME, " +
+            "                   FPAYMENT_STATE, " +
+            "                   FMAILING_TIME, " +
+            "                   FCREATED_TIME, " +
+            "                   FFROM_TIME, " +
+            "                   FTILL_TIME, " +
+            "                   FCALC_ID " +
             "FROM " +
-            "  RECEIPTS " +
+            "  INVOICES " +
             "WHERE " +
-            " ACCOUNT_ID = ? ";
+            " FACCOUNT_ID = ? ";
 
     /**
      * Update payment status of invoices.
      */
-    String RECEIPTS_PAYMENT_STATUS_UPDATE = "UPDATE   RECEIPTS " +
-                                            " SET PAYMENT_STATUS=? " +
-                                            " WHERE ID=? ";
+    String INVOICES_PAYMENT_STATE_UPDATE = "UPDATE   INVOICES " +
+                                            " SET FPAYMENT_STATE=? " +
+                                            " WHERE FID=? ";
     /**
      * Select charges by given account id and calculation id.
      */
     String CHARGES_SELECT                 =
             "SELECT " +
-            "                   AMOUNT, " +
-            "                   SERVICE_ID, " +
-            "                   TYPE, " +
-            "                   PRICE " +
+            "                   FSERVICE_ID, " +
+            "                   FFREE_AMOUNT, " +
+            "                   FPREPAID_AMOUNT, " +
+            "                   FPAID_AMOUNT, " +
+            "                   FPAID_PRICE " +
             "FROM " +
             "  CHARGES " +
             "WHERE " +
-            " ACCOUNT_ID  = ? " +
-            " AND CALC_ID = ? ";
+            " FACCOUNT_ID  = ? " +
+            " AND FCALC_ID = ? ";
     /**
      * Select memory charges by given account id and calculation id.
      */
     String MEMORY_CHARGES_SELECT          =
             "SELECT " +
-            "                   AMOUNT, " +
-            "                   WORKSPACE_ID  " +
+            "                   FAMOUNT, " +
+            "                   FWORKSPACE_ID  " +
             "FROM " +
             "  MEMORY_CHARGES " +
             "WHERE " +
-            " ACCOUNT_ID  = ? " +
-            " AND CALC_ID = ? ";
+            " FACCOUNT_ID  = ? " +
+            " AND FCALC_ID = ? ";
 
 
     String METRIC_INSERT = "INSERT INTO METRICS " +
                            "  (" +
-                           "      AMOUNT," +
-                           "      START_TIME," +
-                           "      STOP_TIME," +
-                           "      USER_ID," +
-                           "      ACCOUNT_ID," +
-                           "      WORKSPACE_ID, " +
-                           "      BILLING_PERIOD," +
-                           "      RUN_ID" +
+                           "      FAMOUNT," +
+                           "      FSTART_TIME," +
+                           "      FSTOP_TIME," +
+                           "      FUSER_ID," +
+                           "      FACCOUNT_ID," +
+                           "      FWORKSPACE_ID, " +
+                           "      FBILLING_PERIOD," +
+                           "      FRUN_ID" +
                            "  )" +
                            "    VALUES (?, ?, ?, ?, ?, ? , ?, ?);";
 
     String METRIC_SELECT_ID = " SELECT " +
-                              "      AMOUNT," +
-                              "      START_TIME," +
-                              "      STOP_TIME," +
-                              "      USER_ID," +
-                              "      ACCOUNT_ID," +
-                              "      WORKSPACE_ID,  " +
-                              "      RUN_ID " +
+                              "      FAMOUNT," +
+                              "      FSTART_TIME," +
+                              "      FSTOP_TIME," +
+                              "      FUSER_ID," +
+                              "      FACCOUNT_ID," +
+                              "      FWORKSPACE_ID,  " +
+                              "      FRUN_ID " +
                               "FROM " +
                               "  METRICS " +
-                              "WHERE ID=?";
+                              "WHERE FID=?";
 
     String METRIC_SELECT_RUNID = " SELECT " +
-                                 "      AMOUNT," +
-                                 "      START_TIME," +
-                                 "      STOP_TIME," +
-                                 "      USER_ID," +
-                                 "      ACCOUNT_ID," +
-                                 "      WORKSPACE_ID,  " +
-                                 "      RUN_ID " +
+                                 "      FAMOUNT," +
+                                 "      FSTART_TIME," +
+                                 "      FSTOP_TIME," +
+                                 "      FUSER_ID," +
+                                 "      FACCOUNT_ID," +
+                                 "      FWORKSPACE_ID,  " +
+                                 "      FRUN_ID " +
                                  "FROM " +
                                  "  METRICS " +
                                  "WHERE " +
-                                 "  RUN_ID=? " +
+                                 "  FRUN_ID=? " +
                                  "ORDER BY " +
-                                 "  START_TIME";
+                                 "  FSTART_TIME";
 
 
     String METRIC_SELECT_ACCOUNT_TOTAL = "SELECT " +
-                                         "  " + GBH_SUM + " AS AMOUNT " +
+                                         "  " + GBH_SUM + " AS FAMOUNT " +
                                          "FROM " +
                                          "  METRICS " +
                                          "WHERE " +
-                                         "   ACCOUNT_ID=?" +
-                                         "   AND START_TIME<?" +
-                                         "   AND STOP_TIME>?";
+                                         "   FACCOUNT_ID=?" +
+                                         "   AND FSTART_TIME<?" +
+                                         "   AND FSTOP_TIME>?";
 
     String METRIC_SELECT_ACCOUNT_GB_WS_TOTAL = "SELECT " +
-                                               "  " + GBH_SUM + " AS AMOUNT, " +
-                                               "   WORKSPACE_ID " +
+                                               "  " + GBH_SUM + " AS FAMOUNT, " +
+                                               "   FWORKSPACE_ID " +
                                                "FROM " +
                                                "  METRICS " +
                                                "WHERE " +
-                                               "   ACCOUNT_ID=?" +
-                                               "   AND START_TIME<?" +
-                                               "   AND STOP_TIME>? " +
-                                               "GROUP BY WORKSPACE_ID";
+                                               "   FACCOUNT_ID=?" +
+                                               "   AND FSTART_TIME<?" +
+                                               "   AND FSTOP_TIME>? " +
+                                               "GROUP BY FWORKSPACE_ID";
 
 
     String METRIC_UPDATE = "UPDATE  METRICS " +
-                           " SET STOP_TIME=? " +
-                           " WHERE ID=? ";
+                           " SET FSTOP_TIME=? " +
+                           " WHERE FID=? ";
 
 }

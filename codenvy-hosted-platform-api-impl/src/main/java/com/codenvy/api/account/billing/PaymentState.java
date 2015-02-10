@@ -21,38 +21,38 @@ package com.codenvy.api.account.billing;
  * @author Sergii Kabashniuk
  */
 public enum PaymentState {
-    WAITING_EXECUTOR(1),
+    WAITING_EXECUTOR("waiting"),
 
-    EXECUTING(2),
+    EXECUTING("executing"),
 
-    PAYMENT_FAIL(8),
+    PAYMENT_FAIL("fail"),
 
-    CREDIT_CARD_MISSING(16),
+    CREDIT_CARD_MISSING("nocc"),
 
-    PAID_SUCCESSFULLY(32);
+    PAID_SUCCESSFULLY("successful");
 
 
-    private final int state;
+    private final String state;
 
-    private PaymentState(int state) {
+    private PaymentState(String state) {
         this.state = state;
     }
 
-    public int getState() {
+    public String getState() {
         return state;
     }
 
-    public PaymentState fromState(int state) {
+    public PaymentState fromState(String state) {
         switch (state) {
-            case 1:
+            case "waiting":
                 return WAITING_EXECUTOR;
-            case 2:
+            case "executing":
                 return EXECUTING;
-            case 8:
+            case "fail":
                 return PAYMENT_FAIL;
-            case 16:
+            case "nocc":
                 return CREDIT_CARD_MISSING;
-            case 32:
+            case "successful":
                 return PAID_SUCCESSFULLY;
         }
         throw new RuntimeException("Unknown Payment state : " + state);
