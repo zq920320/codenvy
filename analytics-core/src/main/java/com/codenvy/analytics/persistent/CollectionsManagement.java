@@ -207,29 +207,33 @@ public class CollectionsManagement {
     /**
      * Ensures index in the collection.
      *
-     * @param name
-     *         the collection name to create index in
+     * @param collectionName
+     *         the collection collectionName to create index in
      * @param indexConfiguration
      *         the index configuration
      */
-    private void ensureIndex(String name, IndexConfiguration indexConfiguration) {
-        if (exists(name)) {
-            DBCollection dbCollection = getOrCreate(name);
+    private void ensureIndex(String collectionName, IndexConfiguration indexConfiguration) {
+        if (exists(collectionName)) {
+            DBCollection dbCollection = getOrCreate(collectionName);
             String expectedIndexName = indexConfiguration.getName();
             DBObject expectedIndex = createIndex(indexConfiguration.getFields());
 
             for (DBObject indexInfo : dbCollection.getIndexInfo()) {
-                Object indexName = indexInfo.get("name");
+                Object indexName = indexInfo.get("collectionName");
                 Object index = indexInfo.get("key");
 
-                if (indexName.equals(expectedIndexName) && index.equals(expectedIndex)) {
-                    return;
+                if (indexName.equals(expectedIndexName)) {
+                    if (index.equals(expectedIndex)) {
+                        return;
+                    } else {
+                        dropIndex(collectionName, indexConfiguration);
+                    }
                 }
             }
 
             dbCollection.ensureIndex(expectedIndex, expectedIndexName);
         } else {
-            LOG.warn("Collection " + name + " doesn't exist");
+            LOG.warn("Collection " + collectionName + " doesn't exist");
         }
     }
 
