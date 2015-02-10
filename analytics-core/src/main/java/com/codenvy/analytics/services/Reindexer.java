@@ -19,10 +19,12 @@ package com.codenvy.analytics.services;
 
 import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.persistent.CollectionsManagement;
+import com.google.inject.Singleton;
 
 import javax.inject.Inject;
 
 /** @author Anatoliy Bazko */
+@Singleton
 public class Reindexer extends Feature {
 
     private final CollectionsManagement collectionsManagement;

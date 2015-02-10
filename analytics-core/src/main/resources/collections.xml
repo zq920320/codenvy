@@ -472,7 +472,7 @@
                 <field>date</field>
             </index>
             <index name="factory_id">
-                <field>factory</field>
+                <field>factory_id</field>
                 <field>date</field>
             </index>
             <index name="date">
@@ -544,7 +544,7 @@
                 <field>date</field>
             </index>
             <index name="factory_id">
-                <field>factory</field>
+                <field>factory_id</field>
                 <field>date</field>
             </index>
             <index name="date">
@@ -991,7 +991,7 @@
                 <field>task_type</field>
             </index>
             <index name="stop_time">
-                <field>start_time</field>
+                <field>stop_time</field>
             </index>
             <index name="start_time">
                 <field>start_time</field>

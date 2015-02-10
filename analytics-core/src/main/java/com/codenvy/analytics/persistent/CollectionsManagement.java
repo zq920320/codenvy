@@ -18,9 +18,19 @@
 package com.codenvy.analytics.persistent;
 
 import com.codenvy.analytics.Utils;
-import com.codenvy.analytics.metrics.*;
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.MetricFactory;
+import com.codenvy.analytics.metrics.MetricFilter;
+import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.metrics.ReadBasedMetric;
 import com.codenvy.analytics.services.configuration.XmlConfigurationManager;
-import com.mongodb.*;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.DBObject;
+import com.mongodb.MongoException;
+import com.mongodb.WriteResult;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -117,17 +127,13 @@ public class CollectionsManagement {
      * Ensures all indexes.
      */
     public void ensureIndexes(String name) {
-        if (db.collectionExists(name)) {
-            CollectionConfiguration collectionConf = configuration.get(name);
+        CollectionConfiguration collectionConf = configuration.get(name);
 
-            IndexesConfiguration indexesConf = collectionConf.getIndexes();
-            List<IndexConfiguration> indexes = indexesConf.getIndexes();
+        IndexesConfiguration indexesConf = collectionConf.getIndexes();
+        List<IndexConfiguration> indexes = indexesConf.getIndexes();
 
-            for (IndexConfiguration indexConf : indexes) {
-                ensureIndex(name, indexConf);
-            }
-        } else {
-            LOG.warn("Collection " + name + " doesn't exist in " + CONFIGURATION);
+        for (IndexConfiguration indexConf : indexes) {
+            ensureIndex(name, indexConf);
         }
     }
 
@@ -209,10 +215,19 @@ public class CollectionsManagement {
     private void ensureIndex(String name, IndexConfiguration indexConfiguration) {
         if (exists(name)) {
             DBCollection dbCollection = getOrCreate(name);
-            String indexName = indexConfiguration.getName();
-            DBObject index = createIndex(indexConfiguration.getFields());
+            String expectedIndexName = indexConfiguration.getName();
+            DBObject expectedIndex = createIndex(indexConfiguration.getFields());
 
-            dbCollection.ensureIndex(index, indexName);
+            for (DBObject indexInfo : dbCollection.getIndexInfo()) {
+                Object indexName = indexInfo.get("name");
+                Object index = indexInfo.get("key");
+
+                if (indexName.equals(expectedIndexName) && index.equals(expectedIndex)) {
+                    return;
+                }
+            }
+
+            dbCollection.ensureIndex(expectedIndex, expectedIndexName);
         } else {
             LOG.warn("Collection " + name + " doesn't exist");
         }

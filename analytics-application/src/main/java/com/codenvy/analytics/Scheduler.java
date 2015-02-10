@@ -35,6 +35,7 @@ import com.codenvy.analytics.services.view.CSVReportPersister;
 import org.quartz.CronScheduleBuilder;
 import org.quartz.CronTrigger;
 import org.quartz.JobDetail;
+import org.quartz.JobExecutionException;
 import org.quartz.JobKey;
 import org.quartz.SchedulerException;
 import org.quartz.TriggerBuilder;
@@ -47,12 +48,15 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import static com.codenvy.analytics.Utils.initializeContext;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class Scheduler implements ServletContextListener {
@@ -105,6 +109,8 @@ public class Scheduler implements ServletContextListener {
             initializeScheduler();
             scheduleAllFeatures();
 
+            forceRunReIndexerFeature();
+
             if (configurator.getString(SCHEDULER_FORCE_RUN_PERIOD) != null) {
                 executeSpecificFeature();
             }
@@ -112,6 +118,13 @@ public class Scheduler implements ServletContextListener {
             LOG.error(e.getMessage(), e);
             throw new IllegalStateException(e);
         }
+    }
+
+    private void forceRunReIndexerFeature() throws JobExecutionException, ParseException {
+        Context context = initializeContext(Parameters.TimeUnit.DAY);
+
+        ReindexerFeature feature = new ReindexerFeature();
+        feature.forceExecute(context);
     }
 
     private void executeSpecificFeature() {
