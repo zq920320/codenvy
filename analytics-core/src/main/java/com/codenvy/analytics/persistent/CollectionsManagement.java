@@ -219,7 +219,7 @@ public class CollectionsManagement {
             DBObject expectedIndex = createIndex(indexConfiguration.getFields());
 
             for (DBObject indexInfo : dbCollection.getIndexInfo()) {
-                Object indexName = indexInfo.get("collectionName");
+                Object indexName = indexInfo.get("name");
                 Object index = indexInfo.get("key");
 
                 if (indexName.equals(expectedIndexName)) {
