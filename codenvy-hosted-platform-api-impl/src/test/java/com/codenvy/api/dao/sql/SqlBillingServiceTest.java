@@ -57,6 +57,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
     }
 
 
+
     @Test(dataProvider = "storage")
     public void shouldCalculateSimpleReceipt(MeterBasedStorage meterBasedStorage, BillingService billingService)
             throws ParseException, ServerException {
@@ -269,11 +270,11 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
         //when
         billingService.generateReceipts(Long.MIN_VALUE, Long.MAX_VALUE);
         //then
-        Assert.assertEquals(billingService.getReceipt(PaymentState.WAITING_EXECUTOR, 5).size(), 2);
-        Assert.assertEquals(billingService.getReceipt(PaymentState.EXECUTING, 5).size(), 0);
-        Assert.assertEquals(billingService.getReceipt(PaymentState.PAYMENT_FAIL, 5).size(), 0);
-        Assert.assertEquals(billingService.getReceipt(PaymentState.CREDIT_CARD_MISSING, 5).size(), 0);
-        Assert.assertEquals(billingService.getReceipt(PaymentState.PAID_SUCCESSFULLY, 5).size(), 0);
+        assertEquals(billingService.getReceipt(PaymentState.WAITING_EXECUTOR, 5).size(), 2);
+        assertEquals(billingService.getReceipt(PaymentState.EXECUTING, 5).size(), 0);
+        assertEquals(billingService.getReceipt(PaymentState.PAYMENT_FAIL, 5).size(), 0);
+        assertEquals(billingService.getReceipt(PaymentState.CREDIT_CARD_MISSING, 5).size(), 0);
+        assertEquals(billingService.getReceipt(PaymentState.PAID_SUCCESSFULLY, 5).size(), 0);
 
     }
 
@@ -305,12 +306,152 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
         Receipt receipt = get(billingService.getReceipt(PaymentState.WAITING_EXECUTOR, 5), 1);
         billingService.setPaymentState(receipt.getId(), PaymentState.PAYMENT_FAIL);
         //then
-        Assert.assertEquals(billingService.getReceipt(PaymentState.WAITING_EXECUTOR, 5).size(), 1);
-        Assert.assertEquals(billingService.getReceipt(PaymentState.EXECUTING, 5).size(), 0);
-        Assert.assertEquals(billingService.getReceipt(PaymentState.PAYMENT_FAIL, 5).size(), 1);
-        Assert.assertEquals(get(billingService.getReceipt(PaymentState.PAYMENT_FAIL, 5), 0).getId(), receipt.getId());
-        Assert.assertEquals(billingService.getReceipt(PaymentState.CREDIT_CARD_MISSING, 5).size(), 0);
-        Assert.assertEquals(billingService.getReceipt(PaymentState.PAID_SUCCESSFULLY, 5).size(), 0);
+        assertEquals(billingService.getReceipt(PaymentState.WAITING_EXECUTOR, 5).size(), 1);
+        assertEquals(billingService.getReceipt(PaymentState.EXECUTING, 5).size(), 0);
+        assertEquals(billingService.getReceipt(PaymentState.PAYMENT_FAIL, 5).size(), 1);
+        assertEquals(get(billingService.getReceipt(PaymentState.PAYMENT_FAIL, 5), 0).getId(), receipt.getId());
+        assertEquals(billingService.getReceipt(PaymentState.CREDIT_CARD_MISSING, 5).size(), 0);
+        assertEquals(billingService.getReceipt(PaymentState.PAID_SUCCESSFULLY, 5).size(), 0);
 
     }
+
+
+    @Test(dataProvider = "storage")
+    public void shouldBeAbleToSetGetByMailingFailPaymentReceipt(MeterBasedStorage meterBasedStorage, BillingService billingService)
+            throws ParseException, ServerException {
+        //given
+        meterBasedStorage.createMemoryUsedRecord(
+                new MemoryUsedMetric(1024,
+                                     sdf.parse("10-01-2015 10:20:56").getTime(),
+                                     sdf.parse("11-01-2015 10:20:56").getTime(),
+                                     "usr-123",
+                                     "ac-5",
+                                     "ws-7",
+                                     "run-1254"));
+
+        meterBasedStorage.createMemoryUsedRecord(
+                new MemoryUsedMetric(1024,
+                                     sdf.parse("01-01-2015 10:00:00").getTime(),
+                                     sdf.parse("10-01-2015 10:00:00").getTime(),
+                                     "usr-345",
+                                     "ac-3",
+                                     "ws-235423",
+                                     "run-234"));
+
+
+        //when
+        billingService.generateReceipts(Long.MIN_VALUE, Long.MAX_VALUE);
+        Long id = get(billingService.getReceipt(PaymentState.WAITING_EXECUTOR, 5), 1).getId();
+        billingService.setPaymentState(id, PaymentState.PAYMENT_FAIL);
+
+        //then
+        List<Receipt> notSendReceipt = billingService.getNotSendReceipt(5);
+        assertEquals(notSendReceipt.size(), 1);
+        assertEquals(get(notSendReceipt, 0).getId(), id);
+
+    }
+
+    @Test(dataProvider = "storage")
+    public void shouldBeAbleToSetGetByMailingPaidSuccessfulyReceipt(MeterBasedStorage meterBasedStorage, BillingService billingService)
+            throws ParseException, ServerException {
+        //given
+        meterBasedStorage.createMemoryUsedRecord(
+                new MemoryUsedMetric(1024,
+                                     sdf.parse("10-01-2015 10:20:56").getTime(),
+                                     sdf.parse("11-01-2015 10:20:56").getTime(),
+                                     "usr-123",
+                                     "ac-5",
+                                     "ws-7",
+                                     "run-1254"));
+
+        meterBasedStorage.createMemoryUsedRecord(
+                new MemoryUsedMetric(1024,
+                                     sdf.parse("01-01-2015 10:00:00").getTime(),
+                                     sdf.parse("10-01-2015 10:00:00").getTime(),
+                                     "usr-345",
+                                     "ac-3",
+                                     "ws-235423",
+                                     "run-234"));
+
+
+        //when
+        billingService.generateReceipts(Long.MIN_VALUE, Long.MAX_VALUE);
+        Long id = get(billingService.getReceipt(PaymentState.WAITING_EXECUTOR, 5), 1).getId();
+        billingService.setPaymentState(id, PaymentState.PAID_SUCCESSFULLY);
+
+        //then
+        List<Receipt> notSendReceipt = billingService.getNotSendReceipt(5);
+        assertEquals(notSendReceipt.size(), 1);
+        assertEquals(get(notSendReceipt, 0).getId(), id);
+
+    }
+
+    @Test(dataProvider = "storage")
+    public void shouldBeAbleToSetGetByMailingCreditCardMissingReceipt(MeterBasedStorage meterBasedStorage, BillingService billingService)
+            throws ParseException, ServerException {
+        //given
+        meterBasedStorage.createMemoryUsedRecord(
+                new MemoryUsedMetric(1024,
+                                     sdf.parse("10-01-2015 10:20:56").getTime(),
+                                     sdf.parse("11-01-2015 10:20:56").getTime(),
+                                     "usr-123",
+                                     "ac-5",
+                                     "ws-7",
+                                     "run-1254"));
+
+        meterBasedStorage.createMemoryUsedRecord(
+                new MemoryUsedMetric(1024,
+                                     sdf.parse("01-01-2015 10:00:00").getTime(),
+                                     sdf.parse("10-01-2015 10:00:00").getTime(),
+                                     "usr-345",
+                                     "ac-3",
+                                     "ws-235423",
+                                     "run-234"));
+
+
+        //when
+        billingService.generateReceipts(Long.MIN_VALUE, Long.MAX_VALUE);
+        Long id = get(billingService.getReceipt(PaymentState.WAITING_EXECUTOR, 5), 1).getId();
+        billingService.setPaymentState(id, PaymentState.CREDIT_CARD_MISSING);
+
+        //then
+        List<Receipt> notSendReceipt = billingService.getNotSendReceipt(5);
+        assertEquals(notSendReceipt.size(), 1);
+        assertEquals(get(notSendReceipt, 0).getId(), id);
+
+    }
+
+
+    @Test(dataProvider = "storage")
+    public void shouldBeAbleToSetReceiptMailState(MeterBasedStorage meterBasedStorage, BillingService billingService)
+            throws ParseException, ServerException {
+        //given
+        meterBasedStorage.createMemoryUsedRecord(
+                new MemoryUsedMetric(1024,
+                                     sdf.parse("10-01-2015 10:20:56").getTime(),
+                                     sdf.parse("11-01-2015 10:20:56").getTime(),
+                                     "usr-123",
+                                     "ac-5",
+                                     "ws-7",
+                                     "run-1254"));
+
+        meterBasedStorage.createMemoryUsedRecord(
+                new MemoryUsedMetric(1024,
+                                     sdf.parse("01-01-2015 10:00:00").getTime(),
+                                     sdf.parse("10-01-2015 10:00:00").getTime(),
+                                     "usr-345",
+                                     "ac-3",
+                                     "ws-235423",
+                                     "run-234"));
+
+
+        //when
+        billingService.generateReceipts(Long.MIN_VALUE, Long.MAX_VALUE);
+        Long id = get(billingService.getReceipt(PaymentState.WAITING_EXECUTOR, 5), 1).getId();
+        billingService.setPaymentState(id, PaymentState.CREDIT_CARD_MISSING);
+        billingService.markReceiptAsSent(id);
+        //then
+        assertEquals(billingService.getNotSendReceipt(5).size(), 0);
+    }
+
 }

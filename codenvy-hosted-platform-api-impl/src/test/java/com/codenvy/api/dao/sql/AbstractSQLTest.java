@@ -54,7 +54,7 @@ public class AbstractSQLTest {
 
         sources = new DataSource[]{
                 h2
-              //  postgresql
+               //, postgresql
         };
     }
 

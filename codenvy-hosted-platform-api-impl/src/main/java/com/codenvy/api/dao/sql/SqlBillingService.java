@@ -22,9 +22,10 @@ import static com.codenvy.api.dao.sql.SqlDaoQueries.CHARGES_PAID_INSERT;
 import static com.codenvy.api.dao.sql.SqlDaoQueries.CHARGES_SELECT;
 import static com.codenvy.api.dao.sql.SqlDaoQueries.MEMORY_CHARGES_INSERT;
 import static com.codenvy.api.dao.sql.SqlDaoQueries.MEMORY_CHARGES_SELECT;
-import static com.codenvy.api.dao.sql.SqlDaoQueries.METRIC_UPDATE;
 import static com.codenvy.api.dao.sql.SqlDaoQueries.RECEIPTS_ACCOUNT_SELECT;
 import static com.codenvy.api.dao.sql.SqlDaoQueries.RECEIPTS_INSERT;
+import static com.codenvy.api.dao.sql.SqlDaoQueries.RECEIPTS_MAILING_STATE_SELECT;
+import static com.codenvy.api.dao.sql.SqlDaoQueries.RECEIPTS_MAILING_TIME_UPDATE;
 import static com.codenvy.api.dao.sql.SqlDaoQueries.RECEIPTS_PAYMENT_STATE_SELECT;
 import static com.codenvy.api.dao.sql.SqlDaoQueries.RECEIPTS_PAYMENT_STATUS_UPDATE;
 
@@ -207,13 +208,51 @@ public class SqlBillingService implements BillingService {
 
 
     @Override
-    public List<Receipt> getNotSendReceipt(int limit) {
-        return null;
+    public List<Receipt> getNotSendReceipt(int limit) throws ServerException {
+        try (Connection connection = connectionFactory.getConnection()) {
+            try (PreparedStatement statement = connection.prepareStatement(RECEIPTS_MAILING_STATE_SELECT)) {
+                statement.setLong(1, limit);
+                try (ResultSet receiptsResultSet = statement.executeQuery()) {
+                    List<Receipt> result = new ArrayList<>(limit);
+                    while (receiptsResultSet.next()) {
+
+                        result.add(DtoFactory.getInstance().createDto(Receipt.class)
+                                             .withId(receiptsResultSet.getLong(1))
+                                             .withTotal(receiptsResultSet.getDouble(2))
+                                             .withAccountId(receiptsResultSet.getString(3))
+                                             .withCharges(
+                                                     getCharges(connection, receiptsResultSet.getString(3), receiptsResultSet.getString(6)))
+                                             .withMemoryChargeDetails(getMemoryChargeDetails(connection, receiptsResultSet.getString(3),
+                                                                                             receiptsResultSet.getString(6)))
+                                  );
+
+
+                    }
+                    return result;
+                }
+            }
+        } catch (SQLException e) {
+            throw new ServerException(e.getLocalizedMessage(), e);
+        }
     }
 
     @Override
-    public void markReceiptAsSent(long receiptId) {
-
+    public void markReceiptAsSent(long receiptId) throws ServerException {
+        try (Connection connection = connectionFactory.getConnection()) {
+            try {
+                connection.setAutoCommit(false);
+                try (PreparedStatement statement = connection.prepareStatement(RECEIPTS_MAILING_TIME_UPDATE)) {
+                    statement.setLong(1, System.currentTimeMillis());
+                    statement.setLong(2, receiptId);
+                    statement.execute();
+                }
+                connection.commit();
+            } catch (SQLException e) {
+                connection.rollback();
+            }
+        } catch (SQLException e) {
+            throw new ServerException(e.getLocalizedMessage(), e);
+        }
     }
 
     private List<MemoryChargeDetails> getMemoryChargeDetails(Connection connection, String accountId, String calculationID)

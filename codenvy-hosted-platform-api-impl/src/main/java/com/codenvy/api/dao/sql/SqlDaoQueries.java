@@ -17,6 +17,8 @@
  */
 package com.codenvy.api.dao.sql;
 
+import com.codenvy.api.account.billing.PaymentState;
+
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -156,10 +158,38 @@ public interface SqlDaoQueries {
             "WHERE " +
             " PAYMENT_STATUS = ? " +
             " LIMIT ?";
+
+    /**
+     * Select receipts which is not mailed.
+     */
+    String RECEIPTS_MAILING_STATE_SELECT =
+            "SELECT " +
+            "                   ID, " +
+            "                   TOTAL, " +
+            "                   ACCOUNT_ID, " +
+            "                   FROM_TIME, " +
+            "                   TILL_TIME, " +
+            "                   CALC_ID " +
+            "FROM " +
+            "  RECEIPTS " +
+            "WHERE " +
+            " MAILING_TIME IS NULL " +
+            " AND  PAYMENT_STATUS IN (" +
+            PaymentState.PAYMENT_FAIL.getState() + ", " +
+            PaymentState.PAID_SUCCESSFULLY.getState() + ", " +
+            PaymentState.CREDIT_CARD_MISSING.getState() + ") " +
+            " LIMIT ?";
+    /**
+     * Update mailing time of receipt.
+     */
+    String RECEIPTS_MAILING_TIME_UPDATE  = "UPDATE RECEIPTS " +
+                                           " SET MAILING_TIME=? " +
+                                           " WHERE ID=? ";
+
     /**
      * Select receipts by given account.
      */
-    String RECEIPTS_ACCOUNT_SELECT       =
+    String RECEIPTS_ACCOUNT_SELECT =
             "SELECT " +
             "                   ID, " +
             "                   TOTAL, " +
