@@ -20,37 +20,55 @@ package com.codenvy.analytics.util;
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.*;
+import com.codenvy.analytics.metrics.AbstractMetric;
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Metric;
+import com.codenvy.analytics.metrics.MetricFactory;
+import com.codenvy.analytics.metrics.MetricFilter;
+import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.accounts.AbstractAccountMetric;
 import com.codenvy.analytics.metrics.users.UsersProfilesList;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.Map;
 
-import static com.codenvy.analytics.datamodel.ValueDataUtil.*;
+import static com.codenvy.analytics.datamodel.ValueDataUtil.getAsList;
+import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsList;
+import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsMap;
 
 /**
  * @author Dmytro Nochevnov
  */
 public class FrontEndUtil {
 
-    public static String getCurrentUserId(HttpServletRequest request) throws IOException {
-        Context.Builder builder = new Context.Builder();
-        builder.put(MetricFilter.ALIASES, request.getUserPrincipal().getName());
+    private static final Logger LOG = LoggerFactory.getLogger(FrontEndUtil.class);
 
-        Metric metric = MetricFactory.getMetric(MetricType.USERS_PROFILES_LIST);
-        ListValueData valueData = getAsList(metric, builder.build());
-        if (valueData.size() == 0) {
-            if (request.isUserInRole("user")) {
-                return AbstractAccountMetric.getCurrentUser().getId();
+    public static String getCurrentUserId(HttpServletRequest request) throws IOException {
+
+        try {
+            Context.Builder builder = new Context.Builder();
+            builder.put(MetricFilter.ALIASES, request.getUserPrincipal().getName());
+
+            Metric metric = MetricFactory.getMetric(MetricType.USERS_PROFILES_LIST);
+            ListValueData valueData = getAsList(metric, builder.build());
+            if (valueData.size() == 0) {
+                if (request.isUserInRole("user")) {
+                    return AbstractAccountMetric.getCurrentUser().getId();
+                } else {
+                    return request.getUserPrincipal().getName();
+                }
             } else {
-                return request.getUserPrincipal().getName();
+                Map<String, ValueData> profile = treatAsMap(treatAsList(valueData).get(0));
+                return profile.get(AbstractMetric.ID).getAsString();
             }
-        } else {
-            Map<String, ValueData> profile = treatAsMap(treatAsList(valueData).get(0));
-            return profile.get(AbstractMetric.ID).getAsString();
+        } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
+            return "";
         }
     }
 
