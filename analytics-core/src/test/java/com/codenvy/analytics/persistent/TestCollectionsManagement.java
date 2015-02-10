@@ -75,15 +75,6 @@ public class TestCollectionsManagement extends BaseTest {
     }
 
     @Test
-    public void shouldNotCreateIndexesIfCollectionNotExists() throws Exception {
-        String collectionSuffix = "1";
-
-        ensureIndexes(collectionSuffix);
-
-        assertIndexesNumber(collectionSuffix, 0);
-    }
-
-    @Test
     public void shouldCreateIndexesIfCollectionExists() throws Exception {
         String collectionSuffix = "2";
 
