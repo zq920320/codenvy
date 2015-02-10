@@ -44,9 +44,11 @@ DEFINE loadResources(resourceParam, from, to, userType, wsType) RETURNS Y {
                           ReplaceWsWithId(ws, wsId) AS ws,
                           (time IS NOT NULL ? ToDate((long)time) : ToDate(pattern.$1, 'yyyy-MM-dd HH:mm:ss,SSS')) AS dt,
                           pattern.$2 AS message;
-  k2 = filterByDate(k1, '$from', '$to');
-  k3 = extractParam(k2, 'EVENT', 'event');
-  k = removeEmptyField(k3, 'event');
+  k2 = extractParam(k1, 'EVENT', 'event');
+  k3 = removeEmptyField(k2, 'event');
+  k4 = FILTER k3 BY dt IS NOT NULL;
+  k = filterByDate(k4, '$from', '$to');
+
 
   m1 = FILTER k BY '$wsType' == 'ANY' OR  ws == 'default' OR
                     ('$wsType' == 'TEMPORARY' AND IsTemporaryWorkspaceById(ws)) OR
