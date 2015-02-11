@@ -28,6 +28,7 @@ import com.codenvy.api.account.impl.shared.dto.Charge;
 import com.codenvy.api.account.impl.shared.dto.Invoice;
 import com.codenvy.api.account.metrics.MemoryUsedMetric;
 import com.codenvy.api.account.metrics.MeterBasedStorage;
+import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
 
 import org.testng.annotations.DataProvider;
@@ -52,7 +53,6 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
         }
         return result;
     }
-
 
 
     @Test(dataProvider = "storage")
@@ -335,7 +335,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
         billingService.setPaymentState(id, PaymentState.PAYMENT_FAIL);
 
         //then
-        List<Invoice> notSendInvoice = billingService.getNotSendInvoices( -1, 0);
+        List<Invoice> notSendInvoice = billingService.getNotSendInvoices(-1, 0);
         assertEquals(notSendInvoice.size(), 1);
         assertEquals(get(notSendInvoice, 0).getId(), id);
 
@@ -477,4 +477,44 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
         assertEquals(billingService.getNotSendInvoices(-1, 0).size(), 0);
     }
 
+
+    @Test(dataProvider = "storage", expectedExceptions = NotFoundException.class, expectedExceptionsMessageRegExp = "Invoice with id " +
+                                                                                                                    "498509 is not found")
+    public void shouldFailIfInvoiceIsNotFound(MeterBasedStorage meterBasedStorage, BillingService billingService)
+            throws ServerException, NotFoundException {
+        //given
+        //when
+        billingService.getInvoice(498509);
+    }
+    @Test(dataProvider = "storage")
+    public void shouldBeAbleToGetInvoicesById(MeterBasedStorage meterBasedStorage, BillingService billingService)
+            throws ParseException, ServerException, NotFoundException {
+        //given
+        meterBasedStorage.createMemoryUsedRecord(
+                new MemoryUsedMetric(1024,
+                                     sdf.parse("10-01-2015 10:20:56").getTime(),
+                                     sdf.parse("11-01-2015 10:20:56").getTime(),
+                                     "usr-123",
+                                     "ac-5",
+                                     "ws-7",
+                                     "run-1254"));
+
+        meterBasedStorage.createMemoryUsedRecord(
+                new MemoryUsedMetric(1024,
+                                     sdf.parse("01-01-2015 10:00:00").getTime(),
+                                     sdf.parse("10-01-2015 10:00:00").getTime(),
+                                     "usr-345",
+                                     "ac-3",
+                                     "ws-235423",
+                                     "run-234"));
+
+
+        //when
+        billingService.generateInvoices(Long.MIN_VALUE, Long.MAX_VALUE);
+        Invoice expected = get(billingService.getInvoices(PaymentState.WAITING_EXECUTOR, -1, 0), 1);
+        Invoice actual  = billingService.getInvoice(expected.getId());
+        assertEquals(actual, expected);
+
+
+    }
 }

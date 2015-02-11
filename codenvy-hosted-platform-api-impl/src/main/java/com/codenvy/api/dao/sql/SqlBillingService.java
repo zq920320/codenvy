@@ -19,6 +19,7 @@ package com.codenvy.api.dao.sql;
 
 import static com.codenvy.api.dao.sql.SqlDaoQueries.CHARGES_SELECT;
 import static com.codenvy.api.dao.sql.SqlDaoQueries.INVOICES_ACCOUNT_SELECT;
+import static com.codenvy.api.dao.sql.SqlDaoQueries.INVOICES_ID_SELECT;
 import static com.codenvy.api.dao.sql.SqlDaoQueries.INVOICES_INSERT;
 import static com.codenvy.api.dao.sql.SqlDaoQueries.INVOICES_MAILING_STATE_SELECT;
 import static com.codenvy.api.dao.sql.SqlDaoQueries.INVOICES_MAILING_TIME_UPDATE;
@@ -31,6 +32,7 @@ import com.codenvy.api.account.billing.BillingService;
 import com.codenvy.api.account.billing.PaymentState;
 import com.codenvy.api.account.impl.shared.dto.Charge;
 import com.codenvy.api.account.impl.shared.dto.Invoice;
+import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.dto.server.DtoFactory;
 
@@ -147,19 +149,12 @@ public class SqlBillingService implements BillingService {
                 statement.setString(1, state.getState());
                 statement.setInt(2, maxItems > 0 ? maxItems : Integer.MAX_VALUE);
                 statement.setInt(3, skipCount);
-                statement.setFetchSize(maxItems > 0 ? maxItems :0);
+                statement.setFetchSize(maxItems > 0 ? maxItems : 0);
                 try (ResultSet invoicesResultSet = statement.executeQuery()) {
                     List<Invoice> result = maxItems > 0 ? new ArrayList<Invoice>(maxItems) : new ArrayList<Invoice>();
                     while (invoicesResultSet.next()) {
 
-                        result.add(DtoFactory.getInstance().createDto(Invoice.class)
-                                             .withId(invoicesResultSet.getLong(1))
-                                             .withTotal(invoicesResultSet.getDouble(2))
-                                             .withAccountId(invoicesResultSet.getString(3))
-                                             .withPaymentState(state.getState())
-                                             .withCharges(
-                                                     getCharges(connection, invoicesResultSet.getString(3), invoicesResultSet.getString(6)))
-                                  );
+                        result.add(toInvoice(connection, invoicesResultSet));
 
 
                     }
@@ -179,26 +174,12 @@ public class SqlBillingService implements BillingService {
                 statement.setString(1, accountId);
                 statement.setInt(2, maxItems > 0 ? maxItems : Integer.MAX_VALUE);
                 statement.setInt(3, skipCount);
-                statement.setFetchSize(maxItems > 0 ? maxItems :0);
+                statement.setFetchSize(maxItems > 0 ? maxItems : 0);
                 try (ResultSet invoicesResultSet = statement.executeQuery()) {
                     List<Invoice> result = maxItems > 0 ? new ArrayList<Invoice>(maxItems) : new ArrayList<Invoice>();
                     while (invoicesResultSet.next()) {
 
-                        result.add(DtoFactory.getInstance().createDto(Invoice.class)
-                                             .withId(invoicesResultSet.getLong("FID"))
-                                             .withTotal(invoicesResultSet.getDouble("FTOTAL"))
-                                             .withAccountId(invoicesResultSet.getString("FACCOUNT_ID"))
-                                             .withCreditCardId(invoicesResultSet.getString("FCREDIT_CARD"))
-                                             .withPaymentDate(invoicesResultSet.getLong("FPAYMENT_TIME"))
-                                             .withPaymentState(invoicesResultSet.getString("FPAYMENT_STATE"))
-                                             .withMailingDate(invoicesResultSet.getLong("FMAILING_TIME"))
-                                             .withCreationDate(invoicesResultSet.getLong("FCREATED_TIME"))
-                                             .withFromDate(invoicesResultSet.getLong("FFROM_TIME"))
-                                             .withUntilDate(invoicesResultSet.getLong("FTILL_TIME"))
-                                             .withCharges(
-                                                     getCharges(connection, accountId, invoicesResultSet.getString("FCALC_ID")))
-
-                                  );
+                        result.add(toInvoice(connection, invoicesResultSet));
 
 
                     }
@@ -218,22 +199,34 @@ public class SqlBillingService implements BillingService {
             try (PreparedStatement statement = connection.prepareStatement(INVOICES_MAILING_STATE_SELECT)) {
                 statement.setInt(1, maxItems > 0 ? maxItems : Integer.MAX_VALUE);
                 statement.setInt(2, skipCount);
-                statement.setFetchSize(maxItems > 0 ? maxItems :0);
+                statement.setFetchSize(maxItems > 0 ? maxItems : 0);
                 try (ResultSet invoicesResultSet = statement.executeQuery()) {
                     List<Invoice> result = maxItems > 0 ? new ArrayList<Invoice>(maxItems) : new ArrayList<Invoice>();
                     while (invoicesResultSet.next()) {
+                        result.add(toInvoice(connection, invoicesResultSet));
+                    }
+                    return result;
+                }
+            }
+        } catch (SQLException e) {
+            throw new ServerException(e.getLocalizedMessage(), e);
+        }
+    }
 
-                        result.add(DtoFactory.getInstance().createDto(Invoice.class)
-                                             .withId(invoicesResultSet.getLong(1))
-                                             .withTotal(invoicesResultSet.getDouble(2))
-                                             .withAccountId(invoicesResultSet.getString(3))
-                                             .withCharges(
-                                                     getCharges(connection, invoicesResultSet.getString(3), invoicesResultSet.getString(6)))
-                                  );
+    @Override
+    public Invoice getInvoice(long id) throws ServerException, NotFoundException {
+        try (Connection connection = connectionFactory.getConnection()) {
+            connection.setAutoCommit(false);
+            try (PreparedStatement statement = connection.prepareStatement(INVOICES_ID_SELECT)) {
+                statement.setLong(1, id);
+                try (ResultSet invoicesResultSet = statement.executeQuery()) {
+                    if (invoicesResultSet.next()) {
+
+                        return toInvoice(connection, invoicesResultSet);
 
 
                     }
-                    return result;
+                    throw new NotFoundException("Invoice with id " + id + " is not found");
                 }
             }
         } catch (SQLException e) {
@@ -277,6 +270,23 @@ public class SqlBillingService implements BillingService {
         }
         return mCharges;
 
+    }
+
+    private Invoice toInvoice(Connection connection, ResultSet invoicesResultSet) throws SQLException {
+        return DtoFactory.getInstance().createDto(Invoice.class)
+                         .withId(invoicesResultSet.getLong("FID"))
+                         .withTotal(invoicesResultSet.getDouble("FTOTAL"))
+                         .withAccountId(invoicesResultSet.getString("FACCOUNT_ID"))
+                         .withCreditCardId(invoicesResultSet.getString("FCREDIT_CARD"))
+                         .withPaymentDate(invoicesResultSet.getLong("FPAYMENT_TIME"))
+                         .withPaymentState(invoicesResultSet.getString("FPAYMENT_STATE"))
+                         .withMailingDate(invoicesResultSet.getLong("FMAILING_TIME"))
+                         .withCreationDate(invoicesResultSet.getLong("FCREATED_TIME"))
+                         .withFromDate(invoicesResultSet.getLong("FFROM_TIME"))
+                         .withUntilDate(invoicesResultSet.getLong("FTILL_TIME"))
+                         .withCharges(getCharges(connection,
+                                                 invoicesResultSet.getString("FACCOUNT_ID"),
+                                                 invoicesResultSet.getString("FCALC_ID")));
     }
 
     private List<Charge> getCharges(Connection connection, String accountId, String calculationID) throws SQLException {
