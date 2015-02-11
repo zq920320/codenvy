@@ -16,7 +16,7 @@
  * from Codenvy S.A..
  */
 
-package com.codenvy.api.account.subscription.saas;
+package com.codenvy.api.account.subscription.saas.job;
 
 import com.codenvy.api.account.server.Constants;
 import com.codenvy.api.account.server.dao.Account;

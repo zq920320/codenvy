@@ -48,7 +48,6 @@ import java.util.Date;
 public class RunStatusSubscriber implements EventSubscriber<RunnerEvent> {
     private static final Logger LOG = LoggerFactory.getLogger(RunStatusSubscriber.class);
 
-
     private final Integer               schedulingPeriod;
     private final EventService          eventService;
     private final WorkspaceDao          workspaceDao;

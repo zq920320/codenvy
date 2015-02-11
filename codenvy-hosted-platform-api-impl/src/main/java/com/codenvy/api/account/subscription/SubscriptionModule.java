@@ -20,7 +20,7 @@ package com.codenvy.api.account.subscription;
 import com.codenvy.api.account.server.subscription.SubscriptionService;
 import com.codenvy.api.account.subscription.factory.FactorySubscriptionService;
 import com.codenvy.api.account.subscription.onpremises.OnPremisesSubscriptionService;
-import com.codenvy.api.account.subscription.saas.RefillJob;
+import com.codenvy.api.account.subscription.saas.job.RefillJob;
 import com.codenvy.api.account.subscription.saas.SaasSubscriptionService;
 import com.codenvy.api.account.subscription.saas.limit.ActiveRunHolder;
 import com.codenvy.api.account.subscription.saas.limit.ActiveRunRemainResourcesChecker;
@@ -44,6 +44,8 @@ public class SubscriptionModule extends AbstractModule {
         bind(ActiveRunRemainResourcesChecker.class).asEagerSingleton();
         bind(CheckRemainResourcesOnStopSubscriber.class).asEagerSingleton();
         bind(RefillJob.class);
+//        bind(ChargeJob.class); TODO remove comment
+//        bind(MailJob.class);   TODO remove comment
 
         bind(SubscriptionScheduler.class).asEagerSingleton();
     }

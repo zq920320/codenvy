@@ -42,14 +42,12 @@ import java.util.Date;
 
 /**
  * Registers start and end of builder resources usage
- * @author Max Shaposhnik
  *
+ * @author Max Shaposhnik
  */
 @Singleton
 public class BuildStatusSubscriber implements EventSubscriber<BuilderEvent> {
-
-    private static final Logger LOG                 = LoggerFactory.getLogger(BuildStatusSubscriber.class);
-
+    private static final Logger LOG = LoggerFactory.getLogger(BuildStatusSubscriber.class);
 
     private final Integer               schedulingPeriod;
     private final EventService          eventService;
@@ -60,12 +58,11 @@ public class BuildStatusSubscriber implements EventSubscriber<BuilderEvent> {
 
     @Inject
     public BuildStatusSubscriber(@Named(BuildTasksActivityChecker.RUN_ACTIVITY_CHECKING_PERIOD) Integer schedulingPeriod,
-                               EventService eventService,
-                               WorkspaceDao workspaceDao,
-                               BuildQueue buildQueue,
-                               ResourcesUsageTracker resourcesUsageTracker,
-                               BillingPeriod billingPeriod
-                              ) {
+                                 EventService eventService,
+                                 WorkspaceDao workspaceDao,
+                                 BuildQueue buildQueue,
+                                 ResourcesUsageTracker resourcesUsageTracker,
+                                 BillingPeriod billingPeriod) {
         this.schedulingPeriod = schedulingPeriod;
         this.eventService = eventService;
         this.workspaceDao = workspaceDao;
@@ -132,6 +129,6 @@ public class BuildStatusSubscriber implements EventSubscriber<BuilderEvent> {
         } catch (NotFoundException e) {
             LOG.error("Unable to determine request type for request {}", event.getTaskId());
         }
-       return false;
+        return false;
     }
 }

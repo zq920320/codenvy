@@ -18,7 +18,6 @@
 package com.codenvy.api.account.subscription.saas.limit;
 
 import com.codenvy.api.account.billing.MonthlyBillingPeriod;
-
 import com.codenvy.api.account.metrics.MeterBasedStorage;
 import com.codenvy.api.account.server.Constants;
 import com.codenvy.api.account.server.dao.Account;
@@ -57,7 +56,7 @@ public class CheckRemainResourcesOnStopSubscriberTest {
 
     private static final long PROCESS_ID = 1L;
 
-    private static final long FREE_LIMIT = 100L;
+    private static final Double FREE_LIMIT = 100D;
 
     private static final String WS_ID = "workspaceId";
 
@@ -121,7 +120,7 @@ public class CheckRemainResourcesOnStopSubscriberTest {
                                                                            ConflictException {
         when(storage.getMemoryUsed(anyString(), anyLong(), anyLong())).thenReturn(120D);
         when(workspaceDao.getByAccount(anyString())).thenReturn(Arrays.asList(new Workspace().withAccountId("accountId")
-                                                                               .withId(ACC_ID)));
+                                                                                             .withId(ACC_ID)));
         subscriber.onEvent(RunnerEvent.stoppedEvent(PROCESS_ID, WS_ID, "/project"));
         verify(accountDao, times(1)).update((Account)argThat(new ArgumentMatcher<Object>() {
             @Override
@@ -136,8 +135,6 @@ public class CheckRemainResourcesOnStopSubscriberTest {
             }
         }));
     }
-
-
 
 
 }

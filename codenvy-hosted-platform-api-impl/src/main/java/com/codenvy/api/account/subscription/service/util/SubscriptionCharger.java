@@ -70,7 +70,7 @@ public class SubscriptionCharger {
             try {
                 Plan plan = planDao.getPlanById(subscription.getPlanId());
 
-                if (plan.isPaid() && Boolean.TRUE.equals(subscription.getUsePaymentSystem())) {
+                if (plan.isPaid()) {
                     try {
                         paymentService.charge(subscription);
 

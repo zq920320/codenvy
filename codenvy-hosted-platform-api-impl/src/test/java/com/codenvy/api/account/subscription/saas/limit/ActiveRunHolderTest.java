@@ -179,7 +179,7 @@ public class ActiveRunHolderTest {
 
         private static final long PROCESS_ID = 1L;
 
-        private static final long FREE_LIMIT = 100L;
+        private static final Double FREE_LIMIT = 100D;
 
         private static final String WS_ID = "workspaceId";
 

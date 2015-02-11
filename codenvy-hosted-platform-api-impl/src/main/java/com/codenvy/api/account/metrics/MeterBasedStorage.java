@@ -31,8 +31,8 @@ public interface MeterBasedStorage {
      * Record memory usage metric.
      *
      * @param metric
-     *         - memory usage metric
-     * @return - tracker. It allow to inform about the usage and stopping usage of memory.
+     *         memory usage metric
+     * @return tracker. It allow to inform about the usage and stopping usage of memory.
      */
     UsageInformer createMemoryUsedRecord(MemoryUsedMetric metric) throws ServerException;
 
@@ -41,13 +41,12 @@ public interface MeterBasedStorage {
      * Get total consumed GB*h of account by given period.
      *
      * @param accountId
-     *         - Given accountId
+     *         given accountId
      * @param from
-     *         - starting of period
+     *         starting of period
      * @param until
-     *         -
      *         end of period
-     * @return - total number of consumed  GB*h
+     * @return total number of consumed  GB*h
      */
     Double getMemoryUsed(String accountId, long from, long until) throws ServerException;
 
@@ -55,13 +54,12 @@ public interface MeterBasedStorage {
      * Get total consumed GB*h of account by given period group by workspace id's
      *
      * @param accountId
-     *         - Given accountId
+     *         given accountId
      * @param from
-     *         - starting of period
+     *         starting of period
      * @param until
-     *         -
      *         end of period
-     * @return - total number of consumed  GB*h group by workspace id's
+     * @return total number of consumed  GB*h group by workspace id's
      */
     Map<String, Double> getMemoryUsedReport(String accountId, long from, long until) throws ServerException;
 }
