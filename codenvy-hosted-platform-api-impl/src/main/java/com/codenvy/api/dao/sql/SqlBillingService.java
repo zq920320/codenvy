@@ -31,7 +31,6 @@ import com.codenvy.api.account.billing.BillingService;
 import com.codenvy.api.account.billing.PaymentState;
 import com.codenvy.api.account.impl.shared.dto.Charge;
 import com.codenvy.api.account.impl.shared.dto.Invoice;
-import com.codenvy.api.account.shared.dto.MemoryChargeDetails;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.dto.server.DtoFactory;
 
@@ -142,13 +141,16 @@ public class SqlBillingService implements BillingService {
 
 
     @Override
-    public List<Invoice> getInvoices(PaymentState state, int limit) throws ServerException {
+    public List<Invoice> getInvoices(PaymentState state, int maxItems, int skipCount) throws ServerException {
         try (Connection connection = connectionFactory.getConnection()) {
+            connection.setAutoCommit(false);
             try (PreparedStatement statement = connection.prepareStatement(INVOICES_PAYMENT_STATE_SELECT)) {
                 statement.setString(1, state.getState());
-                statement.setLong(2, limit);
+                statement.setInt(2, maxItems > 0 ? maxItems : Integer.MAX_VALUE);
+                statement.setInt(3, skipCount);
+                statement.setFetchSize(maxItems > 0 ? maxItems :0);
                 try (ResultSet invoicesResultSet = statement.executeQuery()) {
-                    List<Invoice> result = new ArrayList<>(limit);
+                    List<Invoice> result = maxItems > 0 ? new ArrayList<Invoice>(maxItems) : new ArrayList<Invoice>();
                     while (invoicesResultSet.next()) {
 
                         result.add(DtoFactory.getInstance().createDto(Invoice.class)
@@ -171,12 +173,16 @@ public class SqlBillingService implements BillingService {
     }
 
     @Override
-    public List<Invoice> getInvoices(String accountId) throws ServerException {
+    public List<Invoice> getInvoices(String accountId, int maxItems, int skipCount) throws ServerException {
         try (Connection connection = connectionFactory.getConnection()) {
+            connection.setAutoCommit(false);
             try (PreparedStatement statement = connection.prepareStatement(INVOICES_ACCOUNT_SELECT)) {
                 statement.setString(1, accountId);
+                statement.setInt(2, maxItems > 0 ? maxItems : Integer.MAX_VALUE);
+                statement.setInt(3, skipCount);
+                statement.setFetchSize(maxItems > 0 ? maxItems :0);
                 try (ResultSet invoicesResultSet = statement.executeQuery()) {
-                    List<Invoice> result = new ArrayList<>();
+                    List<Invoice> result = maxItems > 0 ? new ArrayList<Invoice>(maxItems) : new ArrayList<Invoice>();
                     while (invoicesResultSet.next()) {
 
                         result.add(DtoFactory.getInstance().createDto(Invoice.class)
@@ -207,12 +213,15 @@ public class SqlBillingService implements BillingService {
 
 
     @Override
-    public List<Invoice> getNotSendInvoices(int limit) throws ServerException {
+    public List<Invoice> getNotSendInvoices(int maxItems, int skipCount) throws ServerException {
         try (Connection connection = connectionFactory.getConnection()) {
+            connection.setAutoCommit(false);
             try (PreparedStatement statement = connection.prepareStatement(INVOICES_MAILING_STATE_SELECT)) {
-                statement.setLong(1, limit);
+                statement.setInt(1, maxItems > 0 ? maxItems : Integer.MAX_VALUE);
+                statement.setInt(2, skipCount);
+                statement.setFetchSize(maxItems > 0 ? maxItems :0);
                 try (ResultSet invoicesResultSet = statement.executeQuery()) {
-                    List<Invoice> result = new ArrayList<>(limit);
+                    List<Invoice> result = maxItems > 0 ? new ArrayList<Invoice>(maxItems) : new ArrayList<Invoice>();
                     while (invoicesResultSet.next()) {
 
                         result.add(DtoFactory.getInstance().createDto(Invoice.class)
@@ -286,7 +295,7 @@ public class SqlBillingService implements BillingService {
                                           .withPaidPrice(chargesResultSet.getDouble("FPAID_PRICE"))
                                           .withFreeAmount(chargesResultSet.getDouble("FFREE_AMOUNT"))
                                           .withPrePaidAmount(chargesResultSet.getDouble("FPREPAID_AMOUNT"))
-                                          .withDetails( getMemoryChargeDetails(connection,accountId, calculationID))
+                                          .withDetails(getMemoryChargeDetails(connection, accountId, calculationID))
                                );
                 }
             }

@@ -89,7 +89,6 @@ public interface SqlDaoQueries {
             "  FACCOUNT_ID ";
 
 
-
     /**
      * Generate invoices from charges.
      */
@@ -133,7 +132,13 @@ public interface SqlDaoQueries {
             "  INVOICES " +
             "WHERE " +
             " FPAYMENT_STATE = ? " +
-            " LIMIT ?";
+            "ORDER BY " +
+            " FACCOUNT_ID, " +
+            " FCREATED_TIME DESC "+
+            "LIMIT ? " +
+            "OFFSET ? "
+            ;
+
 
     /**
      * Select invoices which is not mailed.
@@ -154,7 +159,13 @@ public interface SqlDaoQueries {
             PaymentState.PAYMENT_FAIL.getState() + "', '" +
             PaymentState.PAID_SUCCESSFULLY.getState() + "', '" +
             PaymentState.CREDIT_CARD_MISSING.getState() + "') " +
-            " LIMIT ?";
+
+            "ORDER BY " +
+            " FACCOUNT_ID, " +
+            " FCREATED_TIME DESC "+
+            "LIMIT ? " +
+            "OFFSET ? "
+            ;
     /**
      * Update mailing time of invoices.
      */
@@ -181,18 +192,23 @@ public interface SqlDaoQueries {
             "FROM " +
             "  INVOICES " +
             "WHERE " +
-            " FACCOUNT_ID = ? ";
+            " FACCOUNT_ID = ? " +
+
+            "ORDER BY FCREATED_TIME DESC "+
+            "LIMIT ? " +
+            "OFFSET ? "
+            ;
 
     /**
      * Update payment status of invoices.
      */
     String INVOICES_PAYMENT_STATE_UPDATE = "UPDATE   INVOICES " +
-                                            " SET FPAYMENT_STATE=? " +
-                                            " WHERE FID=? ";
+                                           " SET FPAYMENT_STATE=? " +
+                                           " WHERE FID=? ";
     /**
      * Select charges by given account id and calculation id.
      */
-    String CHARGES_SELECT                 =
+    String CHARGES_SELECT                =
             "SELECT " +
             "                   FSERVICE_ID, " +
             "                   FFREE_AMOUNT, " +
@@ -207,7 +223,7 @@ public interface SqlDaoQueries {
     /**
      * Select memory charges by given account id and calculation id.
      */
-    String MEMORY_CHARGES_SELECT          =
+    String MEMORY_CHARGES_SELECT         =
             "SELECT " +
             "                   FAMOUNT, " +
             "                   FWORKSPACE_ID  " +

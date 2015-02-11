@@ -45,28 +45,36 @@ public interface BillingService {
      *
      * @param state
      *         state of payment.
-     * @param limit
-     *         - limit number of invoices
+     * @param maxItems
+     *         limit number of items in result
+     * @param skipCount
+     *         how many items skip from the beginning
      * @return - list of invoices with given Payment state.
      * @throws ServerException
      */
-    List<Invoice> getInvoices(PaymentState state, int limit) throws ServerException;
+    List<Invoice> getInvoices(PaymentState state, int maxItems, int skipCount) throws ServerException;
 
     /**
      * @param accountId
      *         account id.
+     * @param maxItems
+     *         limit number of items in result
+     * @param skipCount
+     *         how many items skip from the beginning
      * @return all invoices for given account.
      * @throws ServerException
      */
-    List<Invoice> getInvoices(String accountId) throws ServerException;
+    List<Invoice> getInvoices(String accountId, int maxItems, int skipCount) throws ServerException;
 
     /**
-     * @param limit
-     *         max number of invoices to get.
+     * @param maxItems
+     *         limit number of items in result
+     * @param skipCount
+     *         how many items skip from the beginning
      * @return list of invoices that should be send to user.
      * @throws ServerException
      */
-    List<Invoice> getNotSendInvoices(int limit) throws ServerException;
+    List<Invoice> getNotSendInvoices(int maxItems, int skipCount) throws ServerException;
 
     /**
      * Change payment state of invoice.
