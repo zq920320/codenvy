@@ -418,51 +418,6 @@ public class AccountDaoImpl implements AccountDao {
     }
 
     @Override
-    public List<Account> getPaidSaasAccountsWithOldBillingDate(Date newDate) throws ServerException, ForbiddenException {
-        if (newDate == null) {
-            throw new ForbiddenException("Date can't be null");
-        }
-
-        DBObject paidAccountQuery = new BasicDBObject("name", "codenvy:paid");
-        //
-        DBObject billingDatePropertyExist = new BasicDBObject("name", "codenvy:billing.date");
-        DBObject billingDatePropertyValueLessThanSpecified = new BasicDBObject("value",
-                                                                               new BasicDBObject("$lt", String.valueOf(newDate.getTime())));
-        DBObject billingDateFits2 = new QueryBuilder().and(billingDatePropertyExist,
-                                                           billingDatePropertyValueLessThanSpecified).get();
-        DBObject billingDatePropertyDoesNotExist = QueryBuilder.start("attributes.name").notIn("[codenvy:billing.date]").get();
-        DBObject query2 = new QueryBuilder().and(paidAccountQuery,
-                                                 new QueryBuilder().or(billingDatePropertyDoesNotExist,
-                                                                       billingDateFits2).get()).get();
-
-//        DBObject billingDateFits = QueryBuilder.start().and(new BasicDBObject("name", "codenvy:billing.date"),
-//                                                            new BasicDBObject("value",
-//                                                                              new BasicDBObject("$lt", String.valueOf(newDate.getTime()))))
-//                                               .get();
-//
-//        DBObject query = QueryBuilder.start().and(QueryBuilder.start("attributes").elemMatch(paidAccountQuery).get(),
-//                                                  QueryBuilder.start().or(
-//                                                          QueryBuilder.start("attributes").elemMatch(billingDateFits).get(),
-//                                                          QueryBuilder.start("attributes.name").notIn("codenvy:billing.date").get())
-//                                                              .get())
-//                                     .get();
-        // TODO accounts with no codenvy:billing.date attributes should match
-
-        try (DBCursor accounts = accountCollection.find(query2)) {
-//        try (DBCursor accounts = accountCollection.find(new BasicDBObject("attributes.name", "codenvy:paid"))) {
-            final ArrayList<Account> result = new ArrayList<>();
-            for (DBObject accountObj : accounts) {
-                result.add(toAccount(accountObj));
-            }
-            return result;
-        } catch (MongoException me) {
-            LOG.error(me.getMessage(), me);
-            throw new ServerException("It is not possible to retrieve accounts");
-        }
-    }
-
-
-    @Override
     public List<Account> getLockedCommunityAccounts() throws ServerException, ForbiddenException {
         DBObject query1 = QueryBuilder.start("attributes").elemMatch(new BasicDBObject("name", "codenvy:locked")).get();
         DBObject query2 = QueryBuilder.start("attributes").not().elemMatch(

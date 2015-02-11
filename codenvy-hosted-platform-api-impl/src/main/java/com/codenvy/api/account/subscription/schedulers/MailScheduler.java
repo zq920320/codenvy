@@ -15,7 +15,7 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.api.account.subscription;
+package com.codenvy.api.account.subscription.schedulers;
 
 import com.codenvy.api.account.billing.BillingService;
 import com.codenvy.api.account.billing.PaymentState;
@@ -32,6 +32,7 @@ import org.codenvy.mail.MailSenderClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.mail.MessagingException;
@@ -66,6 +67,7 @@ public class MailScheduler {
     private final double                 price;
     private final String                 billingAddress;
 
+    @Inject
     public MailScheduler(SubscriptionMailSender subscriptionMailSender,
                          BillingService billingService,
                          MailSenderClient mailSenderClient,
@@ -95,15 +97,16 @@ public class MailScheduler {
 
     //TODO configure it
     @ScheduleDelay(initialDelay = 6,
-                   delay = 360,
-                   unit = TimeUnit.MINUTES)
+                   delay = 60,
+                   unit = TimeUnit.SECONDS)
     public void sendEmails() {
         try {
             List<Invoice> notSendInvoices;
             while ((notSendInvoices = billingService.getNotSendInvoices(INVOICES_LIMIT)).size() != 0) {
                 for (Invoice notSendInvoice : notSendInvoices) {
                     try {
-                        doSend(notSendInvoice);
+                        sendMail(notSendInvoice);
+
                         billingService.markInvoiceAsSent(notSendInvoice.getId());
                     } catch (ApiException e) {
                         e.printStackTrace();
@@ -115,28 +118,29 @@ public class MailScheduler {
         }
     }
 
-    public void doSend(Invoice invoice) throws ApiException {
-        final String accountId = invoice.getAccountId();
-        final List<String> accountOwnersEmails = subscriptionMailSender.getAccountOwnersEmails(accountId);
+    private void sendMail(Invoice invoice) throws ServerException {
+        String subject;
+        String template;
 
         if (invoice.getTotal() > 0) {
             if (PaymentState.PAID_SUCCESSFULLY.getState().equals(invoice.getPaymentState())) {//TODO Add check receipt status
-                sendMailWithConsumption(invoice, accountOwnersEmails, invoiceSubject, successfulChargeMailTemplate);
-
+                subject = invoiceSubject;
+                template = successfulChargeMailTemplate;
             } else {
-
-                sendMailWithConsumption(invoice, accountOwnersEmails, billingFailedSubject, unsuccessfulChargeMailTemplate);
-
+                subject = billingFailedSubject;
+                template = unsuccessfulChargeMailTemplate;
             }
         } else {
-            sendMailWithConsumption(invoice, accountOwnersEmails, invoiceNoPaymentSubject, invoiceNoPaymentTemplate);
+            subject = invoiceNoPaymentSubject;
+            template = invoiceNoPaymentTemplate;
         }
+
+        sendMailWithConsumption(invoice, subject, template);
     }
 
-    private void sendMailWithConsumption(Invoice invoice, List<String> accountOwnersEmails, String subject, String mailTemplate) {
+    private void sendMailWithConsumption(Invoice invoice, String subject, String mailTemplate) throws ServerException {
         long totalConsumption = 0;
         StringBuilder stringBuilder = new StringBuilder();
-
 
         for (Charge charge : invoice.getCharges()) {
             stringBuilder.append(charge.getServiceId()).append("</br>");
@@ -165,6 +169,7 @@ public class MailScheduler {
         mailTemplateProperties.put("resource.price", String.valueOf(price));
         mailTemplateProperties.put("resource.amount", String.valueOf(invoice.getTotal()));
 
+        final List<String> accountOwnersEmails = subscriptionMailSender.getAccountOwnersEmails(invoice.getAccountId());
         try {
             mailSenderClient.sendMail(billingAddress,
                                       Strings.join(", ", accountOwnersEmails.toArray(new String[0])),

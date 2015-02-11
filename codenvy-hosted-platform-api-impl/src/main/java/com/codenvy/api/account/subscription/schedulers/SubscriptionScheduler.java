@@ -15,7 +15,7 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.api.account.subscription;
+package com.codenvy.api.account.subscription.schedulers;
 
 import com.codenvy.api.account.server.subscription.SubscriptionService;
 import com.codenvy.api.account.server.subscription.SubscriptionServiceRegistry;
@@ -47,7 +47,7 @@ public class SubscriptionScheduler {
     @ScheduleDelay(initialDelay = 6,
                    delay = 360,
                    unit = TimeUnit.MINUTES)
-    public void checkSubscribtions() {
+    public void checkSubscriptions() {
         LOG.info("Subscription scheduler task is started");
         try {
             for (SubscriptionService subscriptionService : registry.getAll()) {

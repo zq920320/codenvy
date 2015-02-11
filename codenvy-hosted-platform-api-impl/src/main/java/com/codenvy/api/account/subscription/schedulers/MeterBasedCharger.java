@@ -16,7 +16,7 @@
  * from Codenvy S.A..
  */
 
-package com.codenvy.api.account.subscription;
+package com.codenvy.api.account.subscription.schedulers;
 
 import com.codenvy.api.account.billing.BillingService;
 import com.codenvy.api.account.billing.PaymentState;
@@ -24,13 +24,15 @@ import com.codenvy.api.account.impl.shared.dto.Invoice;
 import com.codenvy.api.account.server.subscription.PaymentService;
 import com.codenvy.api.core.ForbiddenException;
 import com.codenvy.api.core.ServerException;
-import com.codenvy.commons.schedule.ScheduleCron;
+import com.codenvy.commons.schedule.ScheduleDelay;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * TODO
@@ -46,20 +48,22 @@ public class MeterBasedCharger implements Runnable {
     private final BillingService billingService;
     private final PaymentService paymentService;
 
+    @Inject
     public MeterBasedCharger(PaymentService paymentService, BillingService billingService) {
         this.billingService = billingService;
         this.paymentService = paymentService;
     }
 
     //TODO configure it
-    // 0sec 0min 07hour 1st day of every month
-    @ScheduleCron(cron = "0 0 7 1 * ?")
+    @ScheduleDelay(initialDelay = 6,
+                   delay = 60,
+                   unit = TimeUnit.SECONDS)
     @Override
     public void run() {
         try {
-            List<Invoice> invoices = billingService.getInvoices(PaymentState.EXECUTING, INVOICES_LIMIT);
+            List<Invoice> invoices;
 
-            while ((billingService.getInvoices(PaymentState.EXECUTING, INVOICES_LIMIT)).size() != 0) {
+            while ((invoices = billingService.getInvoices(PaymentState.EXECUTING, INVOICES_LIMIT, 0)).size() != 0) {
                 for (Invoice invoice : invoices) {
                     doCharge(invoice);
                 }
@@ -70,25 +74,24 @@ public class MeterBasedCharger implements Runnable {
     }
 
     public void doCharge(Invoice invoice) {
-        final String accountId = invoice.getAccountId();
-        LOG.info("PAYMENTS# Saas #Start# accountId#{}#", accountId);
+        if (invoice.getTotal() <= 0) {
+            setPaymentState(invoice.getId(), PaymentState.NOT_REQUIRED);
+            return;
+        }
 
-        if (invoice.getTotal() > 0) {
-            final String ccToken = invoice.getCreditCardId();
-            if (ccToken == null) {
-                setPaymentState(invoice.getId(), PaymentState.CREDIT_CARD_MISSING);
-                return;
-            }
+        final String ccToken = invoice.getCreditCardId();
+        if (ccToken == null) {
+            setPaymentState(invoice.getId(), PaymentState.CREDIT_CARD_MISSING);
+            return;
+        }
 
-            try {
-                paymentService.charge(ccToken, invoice.getTotal(), invoice.getAccountId(),
-                                      "invoice: " + invoice.getId());//TODO Fix description
-
-                setPaymentState(invoice.getId(), PaymentState.PAID_SUCCESSFULLY);
-            } catch (ForbiddenException | ServerException e) {
-                //TODO
-                setPaymentState(invoice.getId(), PaymentState.PAYMENT_FAIL);
-            }
+        LOG.info("PAYMENTS# Saas #Start# accountId#{}#", invoice.getAccountId());
+        try {
+            paymentService.charge(ccToken, invoice.getTotal(), invoice.getAccountId(), "invoice: " + invoice.getId());//TODO Fix description
+            setPaymentState(invoice.getId(), PaymentState.PAID_SUCCESSFULLY);
+        } catch (ForbiddenException | ServerException e) {
+            //TODO
+            setPaymentState(invoice.getId(), PaymentState.PAYMENT_FAIL);
         }
     }
 
@@ -96,7 +99,7 @@ public class MeterBasedCharger implements Runnable {
         try {
             billingService.setPaymentState(invoiceId, PaymentState.PAYMENT_FAIL);
         } catch (ServerException e) {
-            LOG.error("Can't change state for invoice " + invoiceId + " to " + paymentState);
+            LOG.error("Can't change state for invoice " + invoiceId + " to " + paymentState.getState());
         }
     }
 }
