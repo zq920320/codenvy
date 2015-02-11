@@ -21,6 +21,8 @@ package com.codenvy.api.account.billing;
  * @author Sergii Kabashniuk
  */
 public enum PaymentState {
+    NOT_REQUIRED("notrequired"),
+
     WAITING_EXECUTOR("waiting"),
 
     EXECUTING("executing"),
@@ -44,6 +46,8 @@ public enum PaymentState {
 
     public PaymentState fromState(String state) {
         switch (state) {
+            case "notrequired":
+                return NOT_REQUIRED;
             case "waiting":
                 return WAITING_EXECUTOR;
             case "executing":

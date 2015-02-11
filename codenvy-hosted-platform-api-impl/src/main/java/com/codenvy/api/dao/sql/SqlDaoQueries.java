@@ -35,6 +35,7 @@ public interface SqlDaoQueries {
     String GBH_SUM =
             " SUM(ROUND(FAMOUNT * (LEAST(?, FSTOP_TIME) - GREATEST(?, FSTART_TIME))/" + MBMSEC_TO_GBH_MULTIPLIER + " ,6)) ";
 
+    String TOTAL_SUM             = "ROUND(SUM(ROUND(FPAID_AMOUNT,2)*FPAID_PRICE),2)";
     /**
      * SQL query to calculate memory charges metrics.
      * Metrics transformed from MB/msec  to  GB/h and rounded with precision 6 before aggregation.
@@ -104,9 +105,12 @@ public interface SqlDaoQueries {
             "                   FCALC_ID " +
             "                  ) " +
             "SELECT " +
-            "   ROUND(SUM(ROUND(FPAID_AMOUNT,2)*FPAID_PRICE),2) AS FTOTAL, " +
+            "   " + TOTAL_SUM + " AS FTOTAL, " +
             "   FACCOUNT_ID AS FACCOUNT_ID, " +
-            "   ? as FPAYMENT_STATE, " +
+            "  CASE " +
+            "   WHEN " + TOTAL_SUM + "> 0.0 THEN '" + PaymentState.WAITING_EXECUTOR.getState() +"'"+
+            "   ELSE  '" + PaymentState.NOT_REQUIRED.getState() +"'"+
+            "  END as FPAYMENT_STATE, " +
             "   ? as FCREATED_TIME, " +
             "   ? as FFROM_TIME, " +
             "   ? as FTILL_TIME, " +
@@ -134,10 +138,9 @@ public interface SqlDaoQueries {
             " FPAYMENT_STATE = ? " +
             "ORDER BY " +
             " FACCOUNT_ID, " +
-            " FCREATED_TIME DESC "+
+            " FCREATED_TIME DESC " +
             "LIMIT ? " +
-            "OFFSET ? "
-            ;
+            "OFFSET ? ";
 
 
     /**
@@ -156,16 +159,16 @@ public interface SqlDaoQueries {
             "WHERE " +
             " FMAILING_TIME IS NULL " +
             " AND  FPAYMENT_STATE IN ('" +
+            PaymentState.NOT_REQUIRED.getState() + "', '" +
             PaymentState.PAYMENT_FAIL.getState() + "', '" +
             PaymentState.PAID_SUCCESSFULLY.getState() + "', '" +
             PaymentState.CREDIT_CARD_MISSING.getState() + "') " +
 
             "ORDER BY " +
             " FACCOUNT_ID, " +
-            " FCREATED_TIME DESC "+
+            " FCREATED_TIME DESC " +
             "LIMIT ? " +
-            "OFFSET ? "
-            ;
+            "OFFSET ? ";
     /**
      * Update mailing time of invoices.
      */
@@ -194,10 +197,9 @@ public interface SqlDaoQueries {
             "WHERE " +
             " FACCOUNT_ID = ? " +
 
-            "ORDER BY FCREATED_TIME DESC "+
+            "ORDER BY FCREATED_TIME DESC " +
             "LIMIT ? " +
-            "OFFSET ? "
-            ;
+            "OFFSET ? ";
 
     /**
      * Update payment status of invoices.

@@ -225,7 +225,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
     }
 
     @Test(dataProvider = "storage")
-    public void shouldBeAbleToSetGetByPaymentState(MeterBasedStorage meterBasedStorage, BillingService billingService)
+    public void shouldBeAbleToGetByPaymentState(MeterBasedStorage meterBasedStorage, BillingService billingService)
             throws ParseException, ServerException {
         //given
         meterBasedStorage.createMemoryUsedRecord(
@@ -246,11 +246,21 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                      "ws-235423",
                                      "run-234"));
 
+        meterBasedStorage.createMemoryUsedRecord(
+                new MemoryUsedMetric(1024,
+                                     sdf.parse("01-01-2015 10:00:00").getTime(),
+                                     sdf.parse("01-01-2015 11:00:00").getTime(),
+                                     "usr-34",
+                                     "ac-4",
+                                     "ws-4567845",
+                                     "run-345634"));
+
 
         //when
         billingService.generateInvoices(Long.MIN_VALUE, Long.MAX_VALUE);
         //then
         assertEquals(billingService.getInvoices(PaymentState.WAITING_EXECUTOR, -1, 0).size(), 2);
+        assertEquals(billingService.getInvoices(PaymentState.NOT_REQUIRED, -1, 0).size(), 1);
         assertEquals(billingService.getInvoices(PaymentState.EXECUTING, -1, 0).size(), 0);
         assertEquals(billingService.getInvoices(PaymentState.PAYMENT_FAIL, -1, 0).size(), 0);
         assertEquals(billingService.getInvoices(PaymentState.CREDIT_CARD_MISSING, -1, 0).size(), 0);
@@ -398,6 +408,39 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
         List<Invoice> notSendInvoice = billingService.getNotSendInvoices(-1, 0);
         assertEquals(notSendInvoice.size(), 1);
         assertEquals(get(notSendInvoice, 0).getId(), id);
+
+    }
+
+
+    @Test(dataProvider = "storage")
+    public void shouldBeAbleToGetByMailingPaymentNotRequiredReceipt(MeterBasedStorage meterBasedStorage, BillingService billingService)
+            throws ParseException, ServerException {
+        //given
+        meterBasedStorage.createMemoryUsedRecord(
+                new MemoryUsedMetric(1024,
+                                     sdf.parse("10-01-2015 10:20:56").getTime(),
+                                     sdf.parse("10-01-2015 11:20:56").getTime(),
+                                     "usr-123",
+                                     "ac-5",
+                                     "ws-7",
+                                     "run-1254"));
+
+        meterBasedStorage.createMemoryUsedRecord(
+                new MemoryUsedMetric(1024,
+                                     sdf.parse("01-01-2015 10:00:00").getTime(),
+                                     sdf.parse("10-01-2015 10:00:00").getTime(),
+                                     "usr-345",
+                                     "ac-3",
+                                     "ws-235423",
+                                     "run-234"));
+
+
+        //when
+        billingService.generateInvoices(Long.MIN_VALUE, Long.MAX_VALUE);
+        //then
+        List<Invoice> notSendInvoice = billingService.getNotSendInvoices(-1, 0);
+        assertEquals(notSendInvoice.size(), 1);
+        assertEquals(get(notSendInvoice, 0).getAccountId(), "ac-5");
 
     }
 

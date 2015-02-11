@@ -87,24 +87,23 @@ public class SqlBillingService implements BillingService {
                     memoryChargesStatement.execute();
                 }
 
-                try (PreparedStatement freeSaasCharges = connection.prepareStatement(SqlDaoQueries.CHARGES_MEMORY_INSERT)) {
-                    freeSaasCharges.setString(1, "Saas");
-                    freeSaasCharges.setDouble(2, saasFreeGbH);
-                    freeSaasCharges.setDouble(3, saasFreeGbH);
-                    freeSaasCharges.setDouble(4, saasChargeableGbHPrice);
-                    freeSaasCharges.setString(5, calculationId);
-                    freeSaasCharges.setString(6, calculationId);
+                try (PreparedStatement saasCharges = connection.prepareStatement(SqlDaoQueries.CHARGES_MEMORY_INSERT)) {
+                    saasCharges.setString(1, "Saas");
+                    saasCharges.setDouble(2, saasFreeGbH);
+                    saasCharges.setDouble(3, saasFreeGbH);
+                    saasCharges.setDouble(4, saasChargeableGbHPrice);
+                    saasCharges.setString(5, calculationId);
+                    saasCharges.setString(6, calculationId);
 
-                    freeSaasCharges.execute();
+                    saasCharges.execute();
                 }
 
                 try (PreparedStatement invoices = connection.prepareStatement(INVOICES_INSERT)) {
-                    invoices.setString(1, PaymentState.WAITING_EXECUTOR.getState());
-                    invoices.setLong(2, System.currentTimeMillis());
-                    invoices.setLong(3, from);
-                    invoices.setLong(4, till);
+                    invoices.setLong(1, System.currentTimeMillis());
+                    invoices.setLong(2, from);
+                    invoices.setLong(3, till);
+                    invoices.setString(4, calculationId);
                     invoices.setString(5, calculationId);
-                    invoices.setString(6, calculationId);
                     invoices.execute();
                 }
 
