@@ -1,38 +1,40 @@
 ---
-    layout : focused
+    layout : new-simple
     title: Codenvy - Login
----
-<div class="authentication">
-  <div class="dark login-wrap login shadow">
-    <div class="error-container"></div>
-    <h2 class="center">Welcome Back!</h2>
-
-    <div class="aternative-create">
-      <div class="label">Sign In With</div>
-      <div class="oauth-google oauth"><a href="#" class="oauth-button google"><img src="images/buttonGoogle.svg" alt="Signup with Google">Google</a></div>
-      <div class="oauth-github oauth"><a href="#" class="oauth-button github"><img src="images/buttonGithub.svg" alt="Signup with Github">Github</a></div>
-    </div>
-    <div class = "hr">OR</div>
-    <form class="login-form" method="post">
-      <div class="field">
-        <input name="email" type="text" class="required email" placeholder="Your Email" value = "" >
-      </div>
-      <div class="field">
-        <input name="password" type="password" placeholder="Your Password">
-      </div>
-      <div class="field action">
-        <input type="submit" class="signup-button blue-button" value="Login">
-        <div class="working hidden">working...</div>
-      </div>
-    </form>
-  </div>
-</div>
-<footer>
-  <nav>
-    <ul>
-      <li><a href="{{'site/recover-password.html' | url}}">Forgot your password?</a></li>
-      <li>Don't have an account? <a id='signUp' href="{{'site/create-account.html' | url}}">Sign up.</a></li>
-      <li><a class="footer-link" href="http://helpdesk.codenvy.com">Feedback & support</a></li>
-    </ul>
-  </nav>
-</footer>
+---	
+			<div class="vmiddle">
+				<div class="container">
+					<div class="row text-center">
+						<div class="col-md-12">
+							<img src="images/logo@3x.png" alt="logo" class="logo" />
+							<h2>Welcome back. Sign in below.</h2>
+							<form action="" id="loginForm" class="login-form" >
+								<ul>
+									<li>
+										<span class="input-con">
+											<input class="required email" id="emailid" name="email" type="text" placeholder="Email" />
+										</span>
+										<span class="input-con">
+						                    <input name="password" type="password" placeholder="Your Password">
+					                    </span>
+										<input type="submit" Value="Login" />
+										<a class="relative oauth-button github" href="#">
+											<img src="images/logo-github-hover@3x.png" alt="logo-github" />
+											<img class="icon-over" src="images/logo-github@3x.png" alt="logo-github" />
+										</a>
+										<a class="relative oauth-button google" href="#">
+											<img src="images/logo-google-hover@3x.png" alt="logo-google" />
+											<img class="icon-over" src="images/logo-google@3x.png" alt="logo-google" />
+										</a>
+									</li>
+								</ul>
+                				<div class="error-container"></div>
+							</form>
+							<p>
+							<a href="{{'site/recover-password.html' | url}}">Reset Your Password</a>
+							<a id='signUp' href="{{'site/create-account.html' | url}}">Create a New Account</a>
+							<a href="http://helpdesk.codenvy.com">Feedback and Support</a></p>
+						</div>
+					</div>
+				</div>
+			</div>
