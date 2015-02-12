@@ -53,7 +53,7 @@ import java.util.List;
 /**
  * Credit cards operations service.
  *
- * @author Max Shaposhnik (mshaposhnik@codenvy.com) on 1/28/15.
+ * @author Max Shaposhnik
  */
 @Path("/creditcard")
 public class CreditCardService extends Service {
