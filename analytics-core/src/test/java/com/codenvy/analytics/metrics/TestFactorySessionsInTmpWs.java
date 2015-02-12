@@ -98,19 +98,11 @@ public class TestFactorySessionsInTmpWs extends BaseTest {
 
         Metric metric = MetricFactory.getMetric(MetricType.PRODUCT_USAGE_SESSIONS_LIST);
         ListValueData value = (ListValueData)metric.getValue(builder.build());
-        assertEquals(value.size(), 1);
-        MapValueData m = (MapValueData)value.getAll().get(0);
-        assertEquals(m.getAll().get("ws").toString(), "workspacev3ebqp87tgzppmfy");
-        assertEquals(m.getAll().get("user").toString(), "Userc8mqap7aau1vqgqy");
-        assertEquals(m.getAll().get("time").toString(), "0");
+        assertEquals(value.size(), 0);
 
         metric = MetricFactory.getMetric(MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST);
         value = (ListValueData)metric.getValue(builder.build());
-        assertEquals(value.size(), 1);
-        m = (MapValueData)value.getAll().get(0);
-        assertEquals(m.getAll().get("ws").toString(), "workspacev3ebqp87tgzppmfy");
-        assertEquals(m.getAll().get("user").toString(), "Userc8mqap7aau1vqgqy");
-        assertEquals(m.getAll().get("time").toString(), "0");
+        assertEquals(value.size(), 0);
     }
 
     @Test

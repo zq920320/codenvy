@@ -18,23 +18,17 @@
 package com.codenvy.analytics.pig.scripts;
 
 import com.codenvy.analytics.BaseTest;
-import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.metrics.Context;
-import com.codenvy.analytics.metrics.Metric;
-import com.codenvy.analytics.metrics.MetricFactory;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.testng.Assert.assertEquals;
 
 /** @author Alexander Reshetnyak */
 public class TestFailedFactorySessions extends BaseTest {
@@ -122,24 +116,5 @@ public class TestFailedFactorySessions extends BaseTest {
         builder.putAll(
                 scriptsManager.getScript(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, builder.build());
-    }
-
-    @Test
-    public void testMetricWorkspacesWithZeroFactorySessionsLength() throws Exception {
-        Context.Builder builder = new Context.Builder();
-        builder.put(Parameters.FROM_DATE, "20130210");
-        builder.put(Parameters.TO_DATE, "20130210");
-
-        Metric metric = MetricFactory.getMetric(MetricType.FAILED_FACTORY_SESSIONS);
-        LongValueData lvd = (LongValueData)metric.getValue(builder.build());
-        assertEquals(lvd.getAsLong(), 2);
-
-        metric = MetricFactory.getMetric(MetricType.FAILED_FACTORY_SESSIONS_LOADING_CANCELED);
-        lvd = (LongValueData)metric.getValue(builder.build());
-        assertEquals(lvd.getAsLong(), 2);
-
-        metric = MetricFactory.getMetric(MetricType.FAILED_FACTORY_SESSIONS_UNSUPPORTED_BROWSER);
-        lvd = (LongValueData)metric.getValue(builder.build());
-        assertEquals(lvd.getAsLong(), 2);
     }
 }

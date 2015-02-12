@@ -409,6 +409,30 @@
         </indexes>
     </collection>
 
+    <collection name="product_usage_sessions_fails">
+        <indexes>
+            <index name="user">
+                <field>user</field>
+                <field>date</field>
+            </index>
+            <index name="ws">
+                <field>ws</field>
+                <field>date</field>
+            </index>
+            <index name="session_id">
+                <field>session_id</field>
+                <field>date</field>
+            </index>
+            <index name="factory">
+                <field>factory</field>
+                <field>date</field>
+            </index>
+            <index name="date">
+                <field>date</field>
+            </index>
+        </indexes>
+    </collection>
+
     <collection name="factories_accepted">
         <indexes>
             <index name="user">

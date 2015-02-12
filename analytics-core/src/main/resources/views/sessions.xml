@@ -33,6 +33,19 @@
         </section>
     </view>
 
+    <view name="failed_session_overview" on-demand="true">
+        <section name="session_overview">
+            <row class="com.codenvy.analytics.services.view.TitleRow">
+                <parameter key="titles" value="ID,Start Time,User,Workspace,Factory"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="product_usage_sessions_fails_list"/>
+                <parameter key="fields" value="session_id,date,user,ws,factory"/>
+                <parameter key="date-fields" value="date"/>
+            </row>
+        </section>
+    </view>
+
     <view name="session_events" on-demand="true">
         <section name="session_events">
             <row class="com.codenvy.analytics.services.view.TitleRow">

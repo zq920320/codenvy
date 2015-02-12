@@ -729,12 +729,49 @@ function AnalyticsConfiguration() {
             }
         },
 
+        /** for Failed Session View */
+        failedSessions: {
+            widgetLabel: "Sessions",
+            presenterType: "EntryViewPresenter",
+            modelViewName: "failed_session_overview",
+
+            columnLinkPrefixList: {
+                "User": "/analytics/pages/user-view.jsp?user",
+                "Workspace": "/analytics/pages/workspace-view.jsp?ws",
+                "Factory": "/analytics/pages/factory-view.jsp?factory"
+            },
+
+            /** @see DatabaseTable::makeTableSortable() method docs */
+            clientSortParams: {
+                "descSortColumnNumber": 3
+            },
+
+            defaultModelParams: {
+                "sort": "-date"
+            },
+
+            mapColumnToServerSortParam: {
+                "ID": "session_id",
+                "Start Time": "date",
+                "End Time": "end_time",
+                "Duration": "time"
+            }
+        },
+
         sessionsOverview: {
             presenterType: "SummaryTablePresenter",
             modelViewName: "product_usage_sessions_list",
             modelMetricName: "product_usage_sessions",
             doNotDisplayCSVButton: true
         },
+
+        failedSessionsOverview: {
+            presenterType: "SummaryTablePresenter",
+            modelViewName: "product_usage_sessions_fails_list",
+            modelMetricName: "product_usage_sessions_fails",
+            doNotDisplayCSVButton: true
+        },
+
         
         sessionOverview: {
             widgetLabel: "Session Overview",
@@ -1634,6 +1671,8 @@ function AnalyticsConfiguration() {
         "product_usage_time_below_1_min": "#SESSIONS",
         "product_usage_time_total": "#SESSIONS",
         "anonymous_factory_sessions": "#SESSIONS",
+        "product_usage_sessions_fails": "#FAILED_SESSIONS",
+
 
         /** FACTORIES */
         "factory_used": "#FACTORIES",
@@ -1690,6 +1729,7 @@ function AnalyticsConfiguration() {
         "#FACTORIES": "/analytics/pages/factories-view.jsp",
         "#PROJECTS": "/analytics/pages/projects-view.jsp",
         "#SESSIONS": "/analytics/pages/sessions-view.jsp",
+        "#FAILED_SESSIONS": "/analytics/pages/failed-sessions-view.jsp",
         "#TASKS": "/analytics/pages/tasks-view.jsp"
     };
 

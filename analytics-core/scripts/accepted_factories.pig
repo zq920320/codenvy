@@ -45,4 +45,5 @@ result = FOREACH a GENERATE UUID(),
                             TOTUPLE('factory', factory),
                             TOTUPLE('factory_id', factoryId),
                             TOTUPLE('encoded_factory', encodedFactory);
+
 STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;

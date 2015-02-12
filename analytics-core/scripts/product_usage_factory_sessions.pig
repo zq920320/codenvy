@@ -170,10 +170,10 @@ p = FOREACH p4 GENERATE ws,
                         (p2::dt == minDT ? p2::user_created : 0) AS user_created,
                         (factoryId IS NULL ? 0 : 1) AS encodedFactory;
 -- Set session id if absent
-SPLIT p INTO r1 IF test_id != '', t1 OTHERWISE;
+SPLIT p INTO r1 IF test_id != '' AND delta > 0, t1 OTHERWISE;
 
 r = FOREACH r1 GENERATE *, test_id AS id;
-t = FOREACH t1 GENERATE *, UPPER(UUID()) AS id;
+t = FOREACH t1 GENERATE *, UPPER(UUID()) AS sessionId;
 
 -- stores both relations
 result1 = FOREACH r GENERATE id,
@@ -201,64 +201,19 @@ result1 = FOREACH r GENERATE id,
                             TOTUPLE('edits_gigabyte_ram_hours', CalculateEditsGigabyteRamHours(factoryId));
 STORE result1 INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 
-result2 = FOREACH t GENERATE id,
-                            TOTUPLE('date', ToMilliSeconds(dt)),
-                            TOTUPLE('ws', ws),
-                            TOTUPLE('user', user),
-                            TOTUPLE('runs', run),
-                            TOTUPLE('deploys', deploy),
-                            TOTUPLE('builds', build),
-                            TOTUPLE('debugs', debug),
-                            TOTUPLE('ws_created', ws_created),
-                            TOTUPLE('factory', factory),
-                            TOTUPLE('referrer', referrer),
-                            TOTUPLE('org_id', orgId),
-                            TOTUPLE('affiliate_id', affiliateId),
-                            TOTUPLE('factory_id', factoryId),
-                            TOTUPLE('converted_factory_session', conv),
-                            TOTUPLE('time', delta),
-                            TOTUPLE('session', 1),
-                            TOTUPLE('session_id', id),
-                            TOTUPLE('user_created', user_created),
-                            TOTUPLE('encoded_factory', encodedFactory),
-                            TOTUPLE('builds_gigabyte_ram_hours', CalculateBuildsGigabyteRamHours(factoryId)),
-                            TOTUPLE('runs_gigabyte_ram_hours', CalculateRunsGigabyteRamHours(factoryId)),
-                            TOTUPLE('debugs_gigabyte_ram_hours', CalculateDebugsGigabyteRamHours(factoryId)),
-                            TOTUPLE('edits_gigabyte_ram_hours', CalculateEditsGigabyteRamHours(factoryId));
-STORE result2 INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
-
--- newly generated sessions should be stored in '$STORAGE_TABLE_PRODUCT_USAGE_SESSIONS' collection too
-result3 = FOREACH t GENERATE id,
-                            TOTUPLE('date', ToMilliSeconds(dt)),
-                            TOTUPLE('ws', ws),
-                            TOTUPLE('user', user),
-                            TOTUPLE('session_id', id),
-                            TOTUPLE('logout_interval', 0L),
-                            TOTUPLE('time', delta),
-                            TOTUPLE('end_time', ToMilliSeconds(dt) + delta),
-                            TOTUPLE('domain', GetDomain(user)),
-                            TOTUPLE('user_company', ''),
-                            TOTUPLE('factory', factory),
-                            TOTUPLE('referrer', referrer),
-                            TOTUPLE('factory_id', factoryId),
-                            TOTUPLE('builds_gigabyte_ram_hours', CalculateBuildsGigabyteRamHours(factoryId)),
-                            TOTUPLE('runs_gigabyte_ram_hours', CalculateRunsGigabyteRamHours(factoryId)),
-                            TOTUPLE('debugs_gigabyte_ram_hours', CalculateDebugsGigabyteRamHours(factoryId)),
-                            TOTUPLE('edits_gigabyte_ram_hours', CalculateEditsGigabyteRamHours(factoryId));
-STORE result3 INTO '$STORAGE_URL.$STORAGE_TABLE_PRODUCT_USAGE_SESSIONS' USING MongoStorage;
-
-result4 = FOREACH t GENERATE id,
-                             TOTUPLE('date', ToMilliSeconds(dt)),
-                             TOTUPLE('user', user),
-                             TOTUPLE('ws', ws),
-                             TOTUPLE('time', delta),
-                             TOTUPLE('sessions', 1),
-                             TOTUPLE('factory', factory),
-                             TOTUPLE('referrer', referrer);
-STORE result4 INTO '$STORAGE_URL.$STORAGE_TABLE_USERS_STATISTICS' USING MongoStorage;
-
 -- update exists document joined by session_id: add factory and referrer fields
 result5 = FOREACH r GENERATE id,
                              TOTUPLE('factory', factory),
                              TOTUPLE('referrer', referrer);
 STORE result5 INTO '$STORAGE_URL.$STORAGE_TABLE_PRODUCT_USAGE_SESSIONS' USING MongoStorage;
+
+-- store fails
+fails = FOREACH t GENERATE sessionId,
+                           TOTUPLE('date', ToMilliSeconds(dt)),
+                           TOTUPLE('ws', ws),
+                           TOTUPLE('user', user),
+                           TOTUPLE('session_id', sessionId),
+                           TOTUPLE('factory', factory),
+                           TOTUPLE('end_time', ToMilliSeconds(dt)),
+                           TOTUPLE('time', delta);
+STORE fails INTO '$STORAGE_URL.$STORAGE_TABLE_PRODUCT_USAGE_SESSIONS_FAILS' USING MongoStorage;

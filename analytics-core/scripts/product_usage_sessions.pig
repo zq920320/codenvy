@@ -20,16 +20,17 @@ IMPORT 'macros.pig';
 
 l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 
-a1 = getSessions(l, '$EVENT');
-a = FOREACH a1 GENERATE ws,
-                        user,
-                        sessionID,
-                        startTime,
-                        usageTime,
-                        endTime,
-                        logoutInterval,
-                        NullToEmpty(GetUserCompany(user)) AS userCompany,
-                        NullToEmpty(GetDomain(user)) AS userEmailDomain;
+a = getSessions(l, '$EVENT');
+SPLIT a INTO a IF usageTime > 0, fails OTHERWISE;
+a = FOREACH a GENERATE ws,
+                       user,
+                       sessionID,
+                       startTime,
+                       usageTime,
+                       endTime,
+                       logoutInterval,
+                       NullToEmpty(GetUserCompany(user)) AS userCompany,
+                       NullToEmpty(GetDomain(user)) AS userEmailDomain;
 
 result = FOREACH a GENERATE sessionID,
                             TOTUPLE('date', startTime),
@@ -44,11 +45,21 @@ result = FOREACH a GENERATE sessionID,
 STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 
 -- store sessions for users' statistics
-result2 = FOREACH a GENERATE sessionID,
-                             TOTUPLE('date', startTime),
-                             TOTUPLE('user', user),
-                             TOTUPLE('ws', ws),
-                             TOTUPLE('time', usageTime),
-                             TOTUPLE('session_id', sessionID),
-                             TOTUPLE('sessions', 1);
-STORE result2 INTO '$STORAGE_URL.$STORAGE_TABLE_USERS_STATISTICS' USING MongoStorage;
+result = FOREACH a GENERATE sessionID,
+                            TOTUPLE('date', startTime),
+                            TOTUPLE('user', user),
+                            TOTUPLE('ws', ws),
+                            TOTUPLE('time', usageTime),
+                            TOTUPLE('session_id', sessionID),
+                            TOTUPLE('sessions', 1);
+STORE result INTO '$STORAGE_URL.$STORAGE_TABLE_USERS_STATISTICS' USING MongoStorage;
+
+-- store fails
+fails = FOREACH fails GENERATE sessionID,
+                               TOTUPLE('date', startTime),
+                               TOTUPLE('ws', ws),
+                               TOTUPLE('user', user),
+                               TOTUPLE('session_id', sessionID),
+                               TOTUPLE('end_time', endTime),
+                               TOTUPLE('time', usageTime);
+STORE fails INTO '$STORAGE_URL.$STORAGE_TABLE_PRODUCT_USAGE_SESSIONS_FAILS' USING MongoStorage;

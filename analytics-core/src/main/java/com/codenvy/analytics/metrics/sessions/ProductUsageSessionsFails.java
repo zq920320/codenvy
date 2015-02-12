@@ -15,27 +15,26 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.metrics.sessions.factory;
+package com.codenvy.analytics.metrics.sessions;
 
-import com.codenvy.analytics.metrics.MetricFilter;
+import com.codenvy.analytics.metrics.AbstractCount;
 import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.analytics.metrics.OmitFilters;
 
 import javax.annotation.security.RolesAllowed;
 
-/**
- * @author Alexander Reshetnyak
- */
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
-@OmitFilters({MetricFilter.WS_ID, MetricFilter.PERSISTENT_WS})
-public class FailedFactorySessionsLoadingCanceled extends AbstractFailedFactorySessions {
+public class ProductUsageSessionsFails extends AbstractCount {
 
-    public FailedFactorySessionsLoadingCanceled() {
-        super(MetricType.FAILED_FACTORY_SESSIONS_LOADING_CANCELED);
+    public ProductUsageSessionsFails() {
+        super(MetricType.PRODUCT_USAGE_SESSIONS_FAILS,
+              MetricType.PRODUCT_USAGE_SESSIONS_FAILS_LIST,
+              SESSION_ID);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
-        return "Failed factory sessions after canceled loading";
+        return "The total number of failed sessions";
     }
 }

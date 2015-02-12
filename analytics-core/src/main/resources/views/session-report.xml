@@ -63,5 +63,14 @@
                 <parameter key="description" value="User Sessions"/>
             </row>
         </section>
+        <section name="failed_sessions">
+            <row class="com.codenvy.analytics.services.view.DateRow">
+                <parameter key="section-name" value="Fails"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="product_usage_sessions_fails"/>
+                <parameter key="description" value="Failed sessions"/>
+            </row>
+        </section>
     </view>
 </display>

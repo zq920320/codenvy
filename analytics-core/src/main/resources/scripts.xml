@@ -173,6 +173,7 @@
         <parameter key="EVENT" value="session-usage"/>
         <parameter key="STORAGE_TABLE" value="product_usage_sessions"/>
         <parameter key="STORAGE_TABLE_USERS_STATISTICS" value="users_statistics"/>
+        <parameter key="STORAGE_TABLE_PRODUCT_USAGE_SESSIONS_FAILS" value="product_usage_sessions_fails"/>
     </script>
     <script name="time_spent_in_action">
         <parameter key="WS" value="ANY"/>
@@ -228,6 +229,7 @@
         <parameter key="STORAGE_TABLE_PRODUCT_USAGE_SESSIONS" value="product_usage_sessions"/>
         <parameter key="STORAGE_TABLE_USERS_STATISTICS" value="users_statistics"/>
         <parameter key="STORAGE_TABLE_ACCEPTED_FACTORIES" value="factories_accepted"/>
+        <parameter key="STORAGE_TABLE_PRODUCT_USAGE_SESSIONS_FAILS" value="product_usage_sessions_fails"/>
     </script>
 
     <!-- Scripts for user's view -->

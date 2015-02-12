@@ -141,6 +141,13 @@ public class BaseTest {
                         .append(AbstractMetric.WS_NAME, name));
     }
 
+    protected void addTemporaryWs(String id, String name) {
+        mongoDb.getCollection(MetricType.WORKSPACES_PROFILES.toString().toLowerCase()).insert(
+                new BasicDBObject(AbstractMetric.PERSISTENT_WS, 0L)
+                        .append(AbstractMetric.ID, id)
+                        .append(AbstractMetric.WS_NAME, name));
+    }
+
     protected void doIntegrity(String date) throws IOException {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, date);

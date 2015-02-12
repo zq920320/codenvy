@@ -72,7 +72,7 @@ public class ReplaceWsWithId extends EvalFunc<String> {
             builder.put(MetricFilter.WS, ws.toLowerCase());
 
             ListValueData valueData = getAsList(METRIC, builder.build());
-            if (valueData.size() == 0) {
+            if (valueData.isEmpty()) {
                 return ws;
             } else {
                 Map<String, ValueData> profile = treatAsMap(valueData.getAll().get(0));

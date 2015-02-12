@@ -202,7 +202,7 @@ edits = FOREACH edits GENERATE ws,
                                (long) startTime,
                                (long) usageTime,
                                (long) endTime;
-
+edits = FILTER edits BY usageTime > 0;
 
 edits = FOREACH edits GENERATE sessionID,
                              TOTUPLE('date', startTime),
@@ -234,7 +234,7 @@ edits_in_factory = FOREACH edits_in_factory GENERATE ws,
                                                      (long) startTime,
                                                      (long) usageTime,
                                                      (long) endTime;
-
+edits_in_factory = FILTER edits_in_factory BY usageTime > 0;
 
 edits_in_factory = FOREACH edits_in_factory GENERATE sessionID,
                                                    TOTUPLE('date', startTime),
