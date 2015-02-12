@@ -63,11 +63,11 @@ public class InvoiceService extends Service {
 
     private final BillingService billingService;
 
-    private final String templateFile;
+    //private final String templateFile;
 
     @Inject
-    public InvoiceService(@Named(HTML_TEMPLATE_FILE) String templateFile, BillingService billingService) {
-        this.templateFile = templateFile;
+    public InvoiceService(BillingService billingService) {
+        //this.templateFile = templateFile;
         this.billingService = billingService;
     }
 
