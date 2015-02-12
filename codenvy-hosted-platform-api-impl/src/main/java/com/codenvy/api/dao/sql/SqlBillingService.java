@@ -125,7 +125,8 @@ public class SqlBillingService implements BillingService {
                 connection.setAutoCommit(false);
                 try (PreparedStatement statement = connection.prepareStatement(INVOICES_PAYMENT_STATE_UPDATE)) {
                     statement.setString(1, state.getState());
-                    statement.setLong(2, invoiceId);
+                    statement.setLong(2, System.currentTimeMillis());
+                    statement.setLong(3, invoiceId);
                     statement.execute();
                 }
                 connection.commit();
@@ -148,7 +149,7 @@ public class SqlBillingService implements BillingService {
             SqlQueryAppender.appendEqual(invoiceSelect, "FID", filter.getId());
             SqlQueryAppender.appendEqual(invoiceSelect, "FACCOUNT_ID", filter.getAccountId());
             SqlQueryAppender.appendIn(invoiceSelect, "FPAYMENT_STATE", filter.getStates());
-            SqlQueryAppender.appendIsNull(invoiceSelect, "FPAYMENT_TIME", filter.getIsMailSend());
+            SqlQueryAppender.appendIsNull(invoiceSelect, "FMAILING_TIME", filter.getIsMailNotSend());
             SqlQueryAppender.appendGreaterOrEqual(invoiceSelect, "FFROM_TIME", filter.getFromDate());
             SqlQueryAppender.appendLessOrEqual(invoiceSelect, "FTILL_TIME", filter.getUntilDate());
             SqlQueryAppender.appendLimit(invoiceSelect, filter.getMaxItems());
@@ -193,7 +194,7 @@ public class SqlBillingService implements BillingService {
     @Override
     public List<Invoice> getNotSendInvoices(int maxItems, int skipCount) throws ServerException {
         return getInvoices(InvoiceFilter.builder()
-                                        .withIsMailSend()
+                                        .withIsMailNotSend()
                                         .withPaymentStates(PaymentState.NOT_REQUIRED,
                                                            PaymentState.PAYMENT_FAIL,
                                                            PaymentState.PAID_SUCCESSFULLY,

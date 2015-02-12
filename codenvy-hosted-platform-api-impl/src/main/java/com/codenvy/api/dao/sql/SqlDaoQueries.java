@@ -35,7 +35,7 @@ public interface SqlDaoQueries {
     String GBH_SUM =
             " SUM(ROUND(FAMOUNT * (LEAST(?, FSTOP_TIME) - GREATEST(?, FSTART_TIME))/" + MBMSEC_TO_GBH_MULTIPLIER + " ,6)) ";
 
-    String TOTAL_SUM             = "ROUND(SUM(ROUND(FPAID_AMOUNT,2)*FPAID_PRICE),2)";
+    String TOTAL_SUM = "ROUND(SUM(ROUND(FPAID_AMOUNT,2)*FPAID_PRICE),2)";
 
     String INVOICES_FIELDS =
             "                   FID, " +
@@ -137,18 +137,17 @@ public interface SqlDaoQueries {
             "  FACCOUNT_ID ";
 
 
-
     /**
      * Update payment status of invoices.
      */
     String INVOICES_PAYMENT_STATE_UPDATE = "UPDATE   INVOICES " +
-                                           " SET FPAYMENT_STATE=? " +
+                                           " SET FPAYMENT_STATE=? , FPAYMENT_TIME=? " +
                                            " WHERE FID=? ";
     /**
      * Update mailing time of invoices.
      */
     String INVOICES_MAILING_TIME_UPDATE  = "UPDATE INVOICES " +
-                                           " SET FMAILING_TIME=? " +
+                                           " SET FMAILING_TIME=?" +
                                            " WHERE FID=? ";
 
     /**

@@ -26,7 +26,7 @@ public class InvoiceFilter {
     private Long     id;
     private String   accountId;
     private String[] states;
-    private Boolean  isMailSend;
+    private Boolean  isMailNotSend;
     private Integer  maxItems;
     private Integer  skipCount;
     private Long     fromDate;
@@ -49,8 +49,8 @@ public class InvoiceFilter {
         return states;
     }
 
-    public Boolean getIsMailSend() {
-        return isMailSend;
+    public Boolean getIsMailNotSend() {
+        return isMailNotSend;
     }
 
     public Integer getMaxItems() {
@@ -102,8 +102,8 @@ public class InvoiceFilter {
             return this;
         }
 
-        public Builder withIsMailSend() {
-            instance.isMailSend = true;
+        public Builder withIsMailNotSend() {
+            instance.isMailNotSend = true;
             return this;
         }
 
