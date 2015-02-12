@@ -18,17 +18,14 @@
 package com.codenvy.api.dao.sql;
 
 import static com.codenvy.api.dao.sql.SqlDaoQueries.CHARGES_SELECT;
-import static com.codenvy.api.dao.sql.SqlDaoQueries.INVOICES_ACCOUNT_SELECT;
-import static com.codenvy.api.dao.sql.SqlDaoQueries.INVOICES_ID_SELECT;
 import static com.codenvy.api.dao.sql.SqlDaoQueries.INVOICES_INSERT;
-import static com.codenvy.api.dao.sql.SqlDaoQueries.INVOICES_MAILING_STATE_SELECT;
 import static com.codenvy.api.dao.sql.SqlDaoQueries.INVOICES_MAILING_TIME_UPDATE;
-import static com.codenvy.api.dao.sql.SqlDaoQueries.INVOICES_PAYMENT_STATE_SELECT;
 import static com.codenvy.api.dao.sql.SqlDaoQueries.INVOICES_PAYMENT_STATE_UPDATE;
 import static com.codenvy.api.dao.sql.SqlDaoQueries.MEMORY_CHARGES_INSERT;
 import static com.codenvy.api.dao.sql.SqlDaoQueries.MEMORY_CHARGES_SELECT;
 
 import com.codenvy.api.account.billing.BillingService;
+import com.codenvy.api.account.billing.InvoiceFilter;
 import com.codenvy.api.account.billing.PaymentState;
 import com.codenvy.api.account.impl.shared.dto.Charge;
 import com.codenvy.api.account.impl.shared.dto.Invoice;
@@ -140,23 +137,32 @@ public class SqlBillingService implements BillingService {
         }
     }
 
-
     @Override
-    public List<Invoice> getInvoices(PaymentState state, int maxItems, int skipCount) throws ServerException {
+    public List<Invoice> getInvoices(InvoiceFilter filter) throws ServerException {
         try (Connection connection = connectionFactory.getConnection()) {
             connection.setAutoCommit(false);
-            try (PreparedStatement statement = connection.prepareStatement(INVOICES_PAYMENT_STATE_SELECT)) {
-                statement.setString(1, state.getState());
-                statement.setInt(2, maxItems > 0 ? maxItems : Integer.MAX_VALUE);
-                statement.setInt(3, skipCount);
-                statement.setFetchSize(maxItems > 0 ? maxItems : 0);
+
+            StringBuilder invoiceSelect = new StringBuilder();
+            invoiceSelect.append("SELECT ").append(SqlDaoQueries.INVOICES_FIELDS).append(" FROM INVOICES ");
+
+            SqlQueryAppender.appendEqual(invoiceSelect, "FID", filter.getId());
+            SqlQueryAppender.appendEqual(invoiceSelect, "FACCOUNT_ID", filter.getAccountId());
+            SqlQueryAppender.appendIn(invoiceSelect, "FPAYMENT_STATE", filter.getStates());
+            SqlQueryAppender.appendIsNull(invoiceSelect, "FPAYMENT_TIME", filter.getIsMailSend());
+            SqlQueryAppender.appendGreaterOrEqual(invoiceSelect, "FFROM_TIME", filter.getFromDate());
+            SqlQueryAppender.appendLessOrEqual(invoiceSelect, "FTILL_TIME", filter.getUntilDate());
+            SqlQueryAppender.appendLimit(invoiceSelect, filter.getMaxItems());
+            SqlQueryAppender.appendOffset(invoiceSelect, filter.getSkipCount());
+            invoiceSelect.append(" ORDER BY FACCOUNT_ID, FCREATED_TIME DESC");
+
+            try (PreparedStatement statement = connection.prepareStatement(invoiceSelect.toString())) {
+
+                statement.setFetchSize(filter.getMaxItems() != null ? filter.getMaxItems() : 0);
                 try (ResultSet invoicesResultSet = statement.executeQuery()) {
-                    List<Invoice> result = maxItems > 0 ? new ArrayList<Invoice>(maxItems) : new ArrayList<Invoice>();
+                    List<Invoice> result =
+                            filter.getMaxItems() != null ? new ArrayList<Invoice>(filter.getMaxItems()) : new ArrayList<Invoice>();
                     while (invoicesResultSet.next()) {
-
                         result.add(toInvoice(connection, invoicesResultSet));
-
-
                     }
                     return result;
                 }
@@ -164,74 +170,46 @@ public class SqlBillingService implements BillingService {
         } catch (SQLException e) {
             throw new ServerException(e.getLocalizedMessage(), e);
         }
+    }
+
+    @Override
+    public List<Invoice> getInvoices(PaymentState state, int maxItems, int skipCount) throws ServerException {
+        return getInvoices(InvoiceFilter.builder()
+                                        .withPaymentStates(state)
+                                        .withMaxItems(maxItems)
+                                        .withSkipCount(skipCount)
+                                        .build());
     }
 
     @Override
     public List<Invoice> getInvoices(String accountId, int maxItems, int skipCount) throws ServerException {
-        try (Connection connection = connectionFactory.getConnection()) {
-            connection.setAutoCommit(false);
-            try (PreparedStatement statement = connection.prepareStatement(INVOICES_ACCOUNT_SELECT)) {
-                statement.setString(1, accountId);
-                statement.setInt(2, maxItems > 0 ? maxItems : Integer.MAX_VALUE);
-                statement.setInt(3, skipCount);
-                statement.setFetchSize(maxItems > 0 ? maxItems : 0);
-                try (ResultSet invoicesResultSet = statement.executeQuery()) {
-                    List<Invoice> result = maxItems > 0 ? new ArrayList<Invoice>(maxItems) : new ArrayList<Invoice>();
-                    while (invoicesResultSet.next()) {
-
-                        result.add(toInvoice(connection, invoicesResultSet));
-
-
-                    }
-                    return result;
-                }
-            }
-        } catch (SQLException e) {
-            throw new ServerException(e.getLocalizedMessage(), e);
-        }
+        return getInvoices(InvoiceFilter.builder()
+                                        .withAccountId(accountId)
+                                        .withMaxItems(maxItems)
+                                        .withSkipCount(skipCount)
+                                        .build());
     }
-
 
     @Override
     public List<Invoice> getNotSendInvoices(int maxItems, int skipCount) throws ServerException {
-        try (Connection connection = connectionFactory.getConnection()) {
-            connection.setAutoCommit(false);
-            try (PreparedStatement statement = connection.prepareStatement(INVOICES_MAILING_STATE_SELECT)) {
-                statement.setInt(1, maxItems > 0 ? maxItems : Integer.MAX_VALUE);
-                statement.setInt(2, skipCount);
-                statement.setFetchSize(maxItems > 0 ? maxItems : 0);
-                try (ResultSet invoicesResultSet = statement.executeQuery()) {
-                    List<Invoice> result = maxItems > 0 ? new ArrayList<Invoice>(maxItems) : new ArrayList<Invoice>();
-                    while (invoicesResultSet.next()) {
-                        result.add(toInvoice(connection, invoicesResultSet));
-                    }
-                    return result;
-                }
-            }
-        } catch (SQLException e) {
-            throw new ServerException(e.getLocalizedMessage(), e);
-        }
+        return getInvoices(InvoiceFilter.builder()
+                                        .withIsMailSend()
+                                        .withPaymentStates(PaymentState.NOT_REQUIRED,
+                                                           PaymentState.PAYMENT_FAIL,
+                                                           PaymentState.PAID_SUCCESSFULLY,
+                                                           PaymentState.CREDIT_CARD_MISSING)
+                                        .withMaxItems(maxItems)
+                                        .withSkipCount(skipCount).build());
     }
+
 
     @Override
     public Invoice getInvoice(long id) throws ServerException, NotFoundException {
-        try (Connection connection = connectionFactory.getConnection()) {
-            connection.setAutoCommit(false);
-            try (PreparedStatement statement = connection.prepareStatement(INVOICES_ID_SELECT)) {
-                statement.setLong(1, id);
-                try (ResultSet invoicesResultSet = statement.executeQuery()) {
-                    if (invoicesResultSet.next()) {
-
-                        return toInvoice(connection, invoicesResultSet);
-
-
-                    }
-                    throw new NotFoundException("Invoice with id " + id + " is not found");
-                }
-            }
-        } catch (SQLException e) {
-            throw new ServerException(e.getLocalizedMessage(), e);
+        List<Invoice> invoices = getInvoices(InvoiceFilter.builder().withId(id).build());
+        if (invoices.size() < 1) {
+            throw new NotFoundException("Invoice with id " + id + " is not found");
         }
+        return invoices.get(0);
     }
 
     @Override

@@ -44,6 +44,16 @@ public interface BillingService {
     /**
      * Get list of invoices with given Payment state.
      *
+     * @param filter
+     *         filter condition
+     * @return - list of invoices with given Payment state.
+     * @throws ServerException
+     */
+    List<Invoice> getInvoices(InvoiceFilter filter) throws ServerException;
+
+    /**
+     * Get list of invoices with given Payment state.
+     *
      * @param state
      *         state of payment.
      * @param maxItems

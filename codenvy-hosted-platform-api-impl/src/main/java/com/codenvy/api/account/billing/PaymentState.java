@@ -44,7 +44,7 @@ public enum PaymentState {
         return state;
     }
 
-    public PaymentState fromState(String state) {
+    public static PaymentState fromState(String state) {
         switch (state) {
             case "notrequired":
                 return NOT_REQUIRED;

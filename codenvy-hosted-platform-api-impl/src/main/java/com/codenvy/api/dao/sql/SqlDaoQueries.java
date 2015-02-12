@@ -36,6 +36,20 @@ public interface SqlDaoQueries {
             " SUM(ROUND(FAMOUNT * (LEAST(?, FSTOP_TIME) - GREATEST(?, FSTART_TIME))/" + MBMSEC_TO_GBH_MULTIPLIER + " ,6)) ";
 
     String TOTAL_SUM             = "ROUND(SUM(ROUND(FPAID_AMOUNT,2)*FPAID_PRICE),2)";
+
+    String INVOICES_FIELDS =
+            "                   FID, " +
+            "                   FTOTAL, " +
+            "                   FACCOUNT_ID, " +
+            "                   FCREDIT_CARD, " +
+            "                   FPAYMENT_TIME, " +
+            "                   FPAYMENT_STATE, " +
+            "                   FMAILING_TIME, " +
+            "                   FCREATED_TIME, " +
+            "                   FFROM_TIME, " +
+            "                   FTILL_TIME, " +
+            "                   FCALC_ID ";
+
     /**
      * SQL query to calculate memory charges metrics.
      * Metrics transformed from MB/msec  to  GB/h and rounded with precision 6 before aggregation.
@@ -122,77 +136,7 @@ public interface SqlDaoQueries {
             "GROUP BY " +
             "  FACCOUNT_ID ";
 
-    String INVOICES_FIELDS =
-            "                   FID, " +
-            "                   FTOTAL, " +
-            "                   FACCOUNT_ID, " +
-            "                   FCREDIT_CARD, " +
-            "                   FPAYMENT_TIME, " +
-            "                   FPAYMENT_STATE, " +
-            "                   FMAILING_TIME, " +
-            "                   FCREATED_TIME, " +
-            "                   FFROM_TIME, " +
-            "                   FTILL_TIME, " +
-            "                   FCALC_ID ";
 
-    /**
-     * Select invoices by given payment state.
-     */
-    String INVOICES_PAYMENT_STATE_SELECT =
-            "SELECT " + INVOICES_FIELDS +
-            "FROM " +
-            "  INVOICES " +
-            "WHERE " +
-            " FPAYMENT_STATE = ? " +
-            "ORDER BY " +
-            " FACCOUNT_ID, " +
-            " FCREATED_TIME DESC " +
-            "LIMIT ? " +
-            "OFFSET ? ";
-
-
-    /**
-     * Select invoice by id.
-     */
-    String INVOICES_ID_SELECT =
-            "SELECT " + INVOICES_FIELDS +
-            "FROM " +
-            "  INVOICES " +
-            "WHERE " +
-            " FID = ? ";
-    /**
-     * Select invoices which is not mailed.
-     */
-    String INVOICES_MAILING_STATE_SELECT =
-            "SELECT " + INVOICES_FIELDS +
-            "FROM " +
-            "  INVOICES " +
-            "WHERE " +
-            " FMAILING_TIME IS NULL " +
-            " AND  FPAYMENT_STATE IN ('" +
-            PaymentState.NOT_REQUIRED.getState() + "', '" +
-            PaymentState.PAYMENT_FAIL.getState() + "', '" +
-            PaymentState.PAID_SUCCESSFULLY.getState() + "', '" +
-            PaymentState.CREDIT_CARD_MISSING.getState() + "') " +
-
-            "ORDER BY " +
-            " FACCOUNT_ID, " +
-            " FCREATED_TIME DESC " +
-            "LIMIT ? " +
-            "OFFSET ? ";
-
-    /**
-     * Select invoices by given account.
-     */
-    String INVOICES_ACCOUNT_SELECT =
-            "SELECT " + INVOICES_FIELDS +
-            "FROM " +
-            "  INVOICES " +
-            "WHERE " +
-            " FACCOUNT_ID = ? " +
-            "ORDER BY FCREATED_TIME DESC " +
-            "LIMIT ? " +
-            "OFFSET ? ";
 
     /**
      * Update payment status of invoices.
