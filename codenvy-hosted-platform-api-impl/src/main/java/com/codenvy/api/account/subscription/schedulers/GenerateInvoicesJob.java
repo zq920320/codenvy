@@ -53,9 +53,11 @@ public class GenerateInvoicesJob implements Runnable {
         final Period current = billingPeriod.getCurrent();
 
         try {
-            billingService.generateInvoices(current.getStartDate().getTime(), current.getEndDate().getTime());
+//          //TODO Uncomment after testing
+//          billingService.generateInvoices(current.getStartDate().getTime(), current.getEndDate().getTime());
+            billingService.generateInvoices(current.getStartDate().getTime(), System.currentTimeMillis());
         } catch (ServerException e) {
-            e.printStackTrace();
+            LOG.error("Can't generate invoices", e);
         }
     }
 }

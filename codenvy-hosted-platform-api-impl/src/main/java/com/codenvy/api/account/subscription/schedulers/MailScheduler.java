@@ -102,19 +102,19 @@ public class MailScheduler {
     public void sendEmails() {
         try {
             List<Invoice> notSendInvoices;
-            while ((notSendInvoices = billingService.getNotSendInvoices(INVOICES_LIMIT)).size() != 0) {
+            while ((notSendInvoices = billingService.getNotSendInvoices(INVOICES_LIMIT, 0)).size() != 0) {
                 for (Invoice notSendInvoice : notSendInvoices) {
                     try {
                         sendMail(notSendInvoice);
 
                         billingService.markInvoiceAsSent(notSendInvoice.getId());
                     } catch (ApiException e) {
-                        e.printStackTrace();
+                        LOG.error("Can't send email", e);
                     }
                 }
             }
         } catch (ServerException e) {
-            LOG.error("Can't get not sending receipts", e);//TODO
+            LOG.error("Can't get not send invoices", e);//TODO
         }
     }
 
@@ -138,33 +138,57 @@ public class MailScheduler {
         sendMailWithConsumption(invoice, subject, template);
     }
 
+    //TODO Use template engines instead this method
     private void sendMailWithConsumption(Invoice invoice, String subject, String mailTemplate) throws ServerException {
-        long totalConsumption = 0;
         StringBuilder stringBuilder = new StringBuilder();
 
         for (Charge charge : invoice.getCharges()) {
             stringBuilder.append(charge.getServiceId()).append("</br>");
+
+            stringBuilder.append("<table>");
+            stringBuilder.append("<tr>");
+            stringBuilder.append("<td>Free Amount</td>");
+            stringBuilder.append("<td>").append(charge.getFreeAmount()).append("</td>");
+            stringBuilder.append("</tr>");
+
+            stringBuilder.append("<tr>");
+            stringBuilder.append("<td>Paid Amount</td>");
+            stringBuilder.append("<td>").append(charge.getPaidAmount()).append("</td>");
+            stringBuilder.append("</tr>");
+
+            stringBuilder.append("</table>");
+
+            stringBuilder.append(charge.getServiceId()).append("</br>");
+
             stringBuilder.append("<table>");
             stringBuilder.append("<tr>");
             stringBuilder.append("<th>Id</th>");
             stringBuilder.append("<th>Resources</th>");
             stringBuilder.append("</tr>");
 
+            long totalConsumption = 0;
+
             final Map<String, String> details = charge.getDetails();
+
             for (Map.Entry<String, String> entry : details.entrySet()) {
                 stringBuilder.append("<tr><td>")
                              .append(entry.getKey())
                              .append("</td><td>")
                              .append(entry.getValue())
                              .append("</td></tr>");
+
+                totalConsumption += Long.parseLong(entry.getValue());
             }
+
+            stringBuilder.append("<tr><td></td>Total<td>")
+                         .append(totalConsumption)
+                         .append("</td></tr>");
 
             stringBuilder.append("</table>");
         }
 
         final HashMap<String, String> mailTemplateProperties = new HashMap<>();
         mailTemplateProperties.put("resource.consumption", stringBuilder.toString());
-        mailTemplateProperties.put("resource.consumption.total", String.valueOf(totalConsumption));
         mailTemplateProperties.put("resource.free", String.valueOf(freeUsage));
         mailTemplateProperties.put("resource.price", String.valueOf(price));
         mailTemplateProperties.put("resource.amount", String.valueOf(invoice.getTotal()));

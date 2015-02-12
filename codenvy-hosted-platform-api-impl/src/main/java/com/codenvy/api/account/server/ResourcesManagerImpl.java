@@ -107,14 +107,13 @@ public class ResourcesManagerImpl implements ResourcesManager {
         for (UpdateResourcesDescriptor resourcesDescriptor : updates) {
             if (!ownWorkspaces.containsKey(resourcesDescriptor.getWorkspaceId())) {
                 throw new ForbiddenException(
-                        format("Workspace %s is not related to account %s", resourcesDescriptor.getWorkspaceId(),
-                               accountId));
+                        format("Workspace %s is not related to account %s", resourcesDescriptor.getWorkspaceId(), accountId));
             }
 
             if (resourcesDescriptor.getRunnerTimeout() == null && resourcesDescriptor.getRunnerRam() == null &&
                 resourcesDescriptor.getBuilderTimeout() == null) {
-                throw new ConflictException(format("Missed description of resources for workspace %s",
-                                                   resourcesDescriptor.getWorkspaceId()));
+                throw new ConflictException(
+                        format("Missed description of resources for workspace %s", resourcesDescriptor.getWorkspaceId()));
             }
             Integer runnerRam = resourcesDescriptor.getRunnerRam();
             if (runnerRam != null) {
