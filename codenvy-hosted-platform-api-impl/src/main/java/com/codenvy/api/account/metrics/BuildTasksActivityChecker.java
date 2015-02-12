@@ -22,6 +22,7 @@ import com.codenvy.api.builder.BuildQueueTask;
 import com.codenvy.api.builder.BuilderException;
 import com.codenvy.api.builder.dto.BaseBuilderRequest;
 import com.codenvy.api.builder.dto.BuildTaskDescriptor;
+import com.codenvy.api.builder.dto.DependencyRequest;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.commons.schedule.ScheduleRate;
 
@@ -90,7 +91,8 @@ public class BuildTasksActivityChecker {
             }
 
             final BaseBuilderRequest request = task.getRequest();
-            if (IN_PROGRESS.equals(descriptor.getStatus()) && isExpiredTickPeriod(descriptor.getStartTime())) {
+            if (IN_PROGRESS.equals(descriptor.getStatus()) && isExpiredTickPeriod(descriptor.getStartTime()) &&
+                !(request instanceof DependencyRequest)) {
                 resourcesUsageTracker.resourceInUse(PFX + String.valueOf(descriptor.getTaskId()));
                 LOG.info("EVENT#build-usage# TYPE#{}# ID#{}# MEMORY#{}# USAGE-TIME#{}#",
                          request.getProjectDescriptor().getType(),

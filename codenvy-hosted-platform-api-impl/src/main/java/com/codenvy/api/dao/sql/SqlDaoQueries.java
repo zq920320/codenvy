@@ -93,7 +93,7 @@ public interface SqlDaoQueries {
     /**
      * Generate invoices from charges.
      */
-    String INVOICES_INSERT               =
+    String INVOICES_INSERT =
             "INSERT INTO " +
             "   INVOICES(" +
             "                   FTOTAL, " +
@@ -108,8 +108,8 @@ public interface SqlDaoQueries {
             "   " + TOTAL_SUM + " AS FTOTAL, " +
             "   FACCOUNT_ID AS FACCOUNT_ID, " +
             "  CASE " +
-            "   WHEN " + TOTAL_SUM + "> 0.0 THEN '" + PaymentState.WAITING_EXECUTOR.getState() +"'"+
-            "   ELSE  '" + PaymentState.NOT_REQUIRED.getState() +"'"+
+            "   WHEN " + TOTAL_SUM + "> 0.0 THEN '" + PaymentState.WAITING_EXECUTOR.getState() + "'" +
+            "   ELSE  '" + PaymentState.NOT_REQUIRED.getState() + "'" +
             "  END as FPAYMENT_STATE, " +
             "   ? as FCREATED_TIME, " +
             "   ? as FFROM_TIME, " +
@@ -121,17 +121,25 @@ public interface SqlDaoQueries {
             "  FCALC_ID = ? " +
             "GROUP BY " +
             "  FACCOUNT_ID ";
+
+    String INVOICES_FIELDS =
+            "                   FID, " +
+            "                   FTOTAL, " +
+            "                   FACCOUNT_ID, " +
+            "                   FCREDIT_CARD, " +
+            "                   FPAYMENT_TIME, " +
+            "                   FPAYMENT_STATE, " +
+            "                   FMAILING_TIME, " +
+            "                   FCREATED_TIME, " +
+            "                   FFROM_TIME, " +
+            "                   FTILL_TIME, " +
+            "                   FCALC_ID ";
+
     /**
      * Select invoices by given payment state.
      */
     String INVOICES_PAYMENT_STATE_SELECT =
-            "SELECT " +
-            "                   FID, " +
-            "                   FTOTAL, " +
-            "                   FACCOUNT_ID, " +
-            "                   FFROM_TIME, " +
-            "                   FTILL_TIME, " +
-            "                   FCALC_ID " +
+            "SELECT " + INVOICES_FIELDS +
             "FROM " +
             "  INVOICES " +
             "WHERE " +
@@ -144,16 +152,19 @@ public interface SqlDaoQueries {
 
 
     /**
+     * Select invoice by id.
+     */
+    String INVOICES_ID_SELECT =
+            "SELECT " + INVOICES_FIELDS +
+            "FROM " +
+            "  INVOICES " +
+            "WHERE " +
+            " FID = ? ";
+    /**
      * Select invoices which is not mailed.
      */
     String INVOICES_MAILING_STATE_SELECT =
-            "SELECT " +
-            "                   FID, " +
-            "                   FTOTAL, " +
-            "                   FACCOUNT_ID, " +
-            "                   FFROM_TIME, " +
-            "                   FTILL_TIME, " +
-            "                   FCALC_ID " +
+            "SELECT " + INVOICES_FIELDS +
             "FROM " +
             "  INVOICES " +
             "WHERE " +
@@ -169,34 +180,16 @@ public interface SqlDaoQueries {
             " FCREATED_TIME DESC " +
             "LIMIT ? " +
             "OFFSET ? ";
-    /**
-     * Update mailing time of invoices.
-     */
-    String INVOICES_MAILING_TIME_UPDATE  = "UPDATE INVOICES " +
-                                           " SET FMAILING_TIME=? " +
-                                           " WHERE FID=? ";
 
     /**
      * Select invoices by given account.
      */
     String INVOICES_ACCOUNT_SELECT =
-            "SELECT " +
-            "                   FID, " +
-            "                   FTOTAL, " +
-            "                   FACCOUNT_ID, " +
-            "                   FCREDIT_CARD, " +
-            "                   FPAYMENT_TIME, " +
-            "                   FPAYMENT_STATE, " +
-            "                   FMAILING_TIME, " +
-            "                   FCREATED_TIME, " +
-            "                   FFROM_TIME, " +
-            "                   FTILL_TIME, " +
-            "                   FCALC_ID " +
+            "SELECT " + INVOICES_FIELDS +
             "FROM " +
             "  INVOICES " +
             "WHERE " +
             " FACCOUNT_ID = ? " +
-
             "ORDER BY FCREATED_TIME DESC " +
             "LIMIT ? " +
             "OFFSET ? ";
@@ -208,9 +201,16 @@ public interface SqlDaoQueries {
                                            " SET FPAYMENT_STATE=? " +
                                            " WHERE FID=? ";
     /**
+     * Update mailing time of invoices.
+     */
+    String INVOICES_MAILING_TIME_UPDATE  = "UPDATE INVOICES " +
+                                           " SET FMAILING_TIME=? " +
+                                           " WHERE FID=? ";
+
+    /**
      * Select charges by given account id and calculation id.
      */
-    String CHARGES_SELECT                =
+    String CHARGES_SELECT        =
             "SELECT " +
             "                   FSERVICE_ID, " +
             "                   FFREE_AMOUNT, " +
@@ -225,7 +225,7 @@ public interface SqlDaoQueries {
     /**
      * Select memory charges by given account id and calculation id.
      */
-    String MEMORY_CHARGES_SELECT         =
+    String MEMORY_CHARGES_SELECT =
             "SELECT " +
             "                   FAMOUNT, " +
             "                   FWORKSPACE_ID  " +

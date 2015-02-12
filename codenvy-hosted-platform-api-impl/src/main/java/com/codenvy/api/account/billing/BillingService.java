@@ -19,6 +19,7 @@ package com.codenvy.api.account.billing;
 
 
 import com.codenvy.api.account.impl.shared.dto.Invoice;
+import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
 
 import java.util.List;
@@ -75,6 +76,16 @@ public interface BillingService {
      * @throws ServerException
      */
     List<Invoice> getNotSendInvoices(int maxItems, int skipCount) throws ServerException;
+
+    /**
+     * Get invoice by id.
+     *
+     * @param id
+     *         id of invoice
+     * @return invoice
+     * @throws ServerException
+     */
+    Invoice getInvoice(long id) throws ServerException, NotFoundException;
 
     /**
      * Change payment state of invoice.
