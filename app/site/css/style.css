@@ -385,3 +385,8 @@ border-radius: 5px;
 .expanded {
 	padding: 10px;
 }
+.short-line {
+	width: 55px;
+	border: 0;
+	border-bottom: 1px solid #b4b4b4;
+}	
