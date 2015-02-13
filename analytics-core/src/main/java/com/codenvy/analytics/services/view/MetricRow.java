@@ -35,10 +35,11 @@ import com.codenvy.analytics.metrics.MetricFactory;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.pig.scripts.EventsHolder;
 
+import org.joda.time.format.DateTimeFormat;
+
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -90,8 +91,15 @@ public class MetricRow extends AbstractRow {
      */
     private static final String NUMERIC_FORMAT = "numeric-format";
 
+    /**
+     * The format for date fields.
+     */
+    private static final String DATE_FORMAT = "date-format";
+
+
     private final Metric              metric;
     private final String              numericFormat;
+    private final String dateFormat;
     private final String[]            fields;
     private final boolean             hideNegativeValues;
     private final List<String>        booleanFields;
@@ -121,21 +129,25 @@ public class MetricRow extends AbstractRow {
         this.eventsHolder = Injector.getInstance(EventsHolder.class);
 
         numericFormat = parameters.containsKey(NUMERIC_FORMAT)
-            ? parameters.get(NUMERIC_FORMAT)
-            : DEFAULT_NUMERIC_FORMAT;
+                        ? parameters.get(NUMERIC_FORMAT)
+                        : DEFAULT_NUMERIC_FORMAT;
+        dateFormat = parameters.containsKey(DATE_FORMAT)
+                     ? parameters.get(DATE_FORMAT)
+                     : DEFAULT_DATE_FORMAT;
+
         fields = parameters.containsKey(FIELDS) ? parameters.get(FIELDS).split(",") : new String[0];
 
         hideNegativeValues = parameters.containsKey(HIDE_NEGATIVE_VALUES) &&
                              Boolean.parseBoolean(parameters.get(HIDE_NEGATIVE_VALUES));
 
         booleanFields = parameters.containsKey(BOOLEAN_FIELDS)
-            ? Arrays.asList(parameters.get(BOOLEAN_FIELDS).split(","))
-            : new ArrayList<String>();
+                        ? Arrays.asList(parameters.get(BOOLEAN_FIELDS).split(","))
+                        : new ArrayList<String>();
 
         this.dateFields = new HashMap<>();
         this.timeFields = new HashMap<>();
 
-        readFieldsParameters(parameters, DATE_FIELDS, dateFields, DEFAULT_DATE_FORMAT);
+        readFieldsParameters(parameters, DATE_FIELDS, dateFields, dateFormat);
         readFieldsParameters(parameters, TIME_FIELDS, timeFields, DEFAULT_TIME_FORMAT);
 
         if (parameters.containsKey(TIME_FIELDS)) {
@@ -150,8 +162,8 @@ public class MetricRow extends AbstractRow {
         }
 
         eventFields = parameters.containsKey(EVENT_FIELDS)
-            ? Arrays.asList(parameters.get(EVENT_FIELDS).split(","))
-            : new ArrayList<String>();
+                      ? Arrays.asList(parameters.get(EVENT_FIELDS).split(","))
+                      : new ArrayList<String>();
 
         isTimeField = parameters.containsKey(TIME_FIELD) && Boolean.parseBoolean(parameters.get(TIME_FIELD));
     }
@@ -337,8 +349,7 @@ public class MetricRow extends AbstractRow {
         }
 
         Long value = Long.valueOf(valueData.getAsString());
-        String formattedValue = new SimpleDateFormat(format).format(value);
-
+        String formattedValue = DateTimeFormat.forPattern(format).print(value);
         return new StringValueData(formattedValue);
     }
 

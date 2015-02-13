@@ -29,6 +29,7 @@
                 <parameter key="fields" value="task_type,start_time,stop_time,memory,usage_time,gigabyte_ram_hours,user,ws,project,project_type,is_factory,launch_type,shutdown_type"/>
                 <parameter key="date-fields" value="start_time,stop_time"/>
                 <parameter key="time-fields" value="usage_time"/>
+                <parameter key="date-format" value="yyyy-MM-dd HH:mm:ss,SS"/>
                 <parameter key="boolean-fields" value="is_factory"/>
                 <parameter key="numeric-format" value="%,.4f"/>
             </row>
