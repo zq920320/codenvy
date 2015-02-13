@@ -20,6 +20,7 @@ package com.codenvy.api.dao.sql;
 import static com.google.common.collect.Iterables.get;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
 
 import com.codenvy.api.account.billing.BillingService;
 import com.codenvy.api.account.billing.MonthlyBillingPeriod;
@@ -31,6 +32,7 @@ import com.codenvy.api.account.metrics.MeterBasedStorage;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
 
+import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -294,11 +296,18 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
         //when
         billingService.generateInvoices(Long.MIN_VALUE, Long.MAX_VALUE);
         Invoice invoice = get(billingService.getInvoices(PaymentState.WAITING_EXECUTOR, -1, 0), 1);
-        billingService.setPaymentState(invoice.getId(), PaymentState.PAYMENT_FAIL);
+        billingService.setPaymentState(invoice.getId(), PaymentState.PAYMENT_FAIL, "cc111");
+
         //then
+        assertEquals(invoice.getPaymentDate().longValue(), 0L);
         assertEquals(billingService.getInvoices(PaymentState.WAITING_EXECUTOR, -1, 0).size(), 1);
         assertEquals(billingService.getInvoices(PaymentState.EXECUTING, -1, 0).size(), 0);
-        assertEquals(billingService.getInvoices(PaymentState.PAYMENT_FAIL, -1, 0).size(), 1);
+        List<Invoice> invoices = billingService.getInvoices(PaymentState.PAYMENT_FAIL, -1, 0);
+        assertEquals(invoices.size(), 1);
+
+        Invoice invoice1 = get(invoices, 0);
+        Assert.assertTrue(invoice1.getPaymentDate() > 0);
+        assertEquals(invoice1.getCreditCardId(), "cc111");
         assertEquals(get(billingService.getInvoices(PaymentState.PAYMENT_FAIL, -1, 0), 0).getId(), invoice.getId());
         assertEquals(billingService.getInvoices(PaymentState.CREDIT_CARD_MISSING, -1, 0).size(), 0);
         assertEquals(billingService.getInvoices(PaymentState.PAID_SUCCESSFULLY, -1, 0).size(), 0);
@@ -332,7 +341,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
         //when
         billingService.generateInvoices(Long.MIN_VALUE, Long.MAX_VALUE);
         Long id = get(billingService.getInvoices(PaymentState.WAITING_EXECUTOR, -1, 0), 1).getId();
-        billingService.setPaymentState(id, PaymentState.PAYMENT_FAIL);
+        billingService.setPaymentState(id, PaymentState.PAYMENT_FAIL, null);
 
         //then
         List<Invoice> notSendInvoice = billingService.getNotSendInvoices(-1, 0);
@@ -367,7 +376,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
         //when
         billingService.generateInvoices(Long.MIN_VALUE, Long.MAX_VALUE);
         Long id = get(billingService.getInvoices(PaymentState.WAITING_EXECUTOR, -1, 0), 1).getId();
-        billingService.setPaymentState(id, PaymentState.PAID_SUCCESSFULLY);
+        billingService.setPaymentState(id, PaymentState.PAID_SUCCESSFULLY, null);
 
         //then
         List<Invoice> notSendInvoice = billingService.getNotSendInvoices(-1, 0);
@@ -402,7 +411,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
         //when
         billingService.generateInvoices(Long.MIN_VALUE, Long.MAX_VALUE);
         Long id = get(billingService.getInvoices(PaymentState.WAITING_EXECUTOR, -1, 0), 1).getId();
-        billingService.setPaymentState(id, PaymentState.CREDIT_CARD_MISSING);
+        billingService.setPaymentState(id, PaymentState.CREDIT_CARD_MISSING, null);
 
         //then
         List<Invoice> notSendInvoice = billingService.getNotSendInvoices(-1, 0);
@@ -471,7 +480,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
         //when
         billingService.generateInvoices(Long.MIN_VALUE, Long.MAX_VALUE);
         Long id = get(billingService.getInvoices(PaymentState.WAITING_EXECUTOR, -1, 0), 1).getId();
-        billingService.setPaymentState(id, PaymentState.CREDIT_CARD_MISSING);
+        billingService.setPaymentState(id, PaymentState.CREDIT_CARD_MISSING, null);
         billingService.markInvoiceAsSent(id);
         //then
         assertEquals(billingService.getNotSendInvoices(-1, 0).size(), 0);
@@ -486,6 +495,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
         //when
         billingService.getInvoice(498509);
     }
+
     @Test(dataProvider = "storage")
     public void shouldBeAbleToGetInvoicesById(MeterBasedStorage meterBasedStorage, BillingService billingService)
             throws ParseException, ServerException, NotFoundException {
@@ -512,7 +522,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
         //when
         billingService.generateInvoices(Long.MIN_VALUE, Long.MAX_VALUE);
         Invoice expected = get(billingService.getInvoices(PaymentState.WAITING_EXECUTOR, -1, 0), 1);
-        Invoice actual  = billingService.getInvoice(expected.getId());
+        Invoice actual = billingService.getInvoice(expected.getId());
         assertEquals(actual, expected);
 
 

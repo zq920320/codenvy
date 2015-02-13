@@ -44,6 +44,16 @@ public interface BillingService {
     /**
      * Get list of invoices with given Payment state.
      *
+     * @param filter
+     *         filter condition
+     * @return - list of invoices with given Payment state.
+     * @throws ServerException
+     */
+    List<Invoice> getInvoices(InvoiceFilter filter) throws ServerException;
+
+    /**
+     * Get list of invoices with given Payment state.
+     *
      * @param state
      *         state of payment.
      * @param maxItems
@@ -94,9 +104,12 @@ public interface BillingService {
      *         id of invoice.
      * @param state
      *         next state of invoice.
+     * @param creditCard
+     *         credit card id. Null if no credit card was involved during operation with invoice.
      * @throws ServerException
      */
-    void setPaymentState(long invoiceId, PaymentState state) throws ServerException;
+    void setPaymentState(long invoiceId, PaymentState state, String creditCard) throws ServerException;
+
 
     /**
      * Mark invoice as sent to user.
