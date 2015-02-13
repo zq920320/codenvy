@@ -25,7 +25,12 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.security.Principal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /** @author Anatoliy Bazko */
@@ -86,14 +91,19 @@ public class UserPrincipalCache {
 
     public static class UserContext {
         private long lastAccessTime;
-
+        private String dataUniverse;
         private final Set<String> allowedUsers;
         private final Set<String> allowedWorkspaces;
 
-        public UserContext(Set<String> allowedUsers, Set<String> allowedWorkspaces) {
+        public UserContext(String dataUniverse, Set<String> allowedUsers, Set<String> allowedWorkspaces) {
             this.allowedUsers = allowedUsers;
             this.allowedWorkspaces = allowedWorkspaces;
             this.lastAccessTime = System.currentTimeMillis();
+            this.dataUniverse = dataUniverse;
+        }
+
+        public String getDataUniverse() {
+            return dataUniverse;
         }
 
         public Set<String> getAllowedUsers() {

@@ -96,7 +96,8 @@ public class Utils {
                 Set<String> allowedUsers = getFilterAsSet(context.get(Parameters.ORIGINAL_USER.toString()));
                 Set<String> allowedWorkspaces = getFilterAsSet(context.get(Parameters.ORIGINAL_WS.toString()));
 
-                UserPrincipalCache.UserContext userContext = new UserPrincipalCache.UserContext(allowedUsers, allowedWorkspaces);
+                String dataUniverse = context.get(MetricFilter.DATA_UNIVERSE.toString());
+                UserPrincipalCache.UserContext userContext = new UserPrincipalCache.UserContext(dataUniverse, allowedUsers, allowedWorkspaces);
                 cache.put(principal, userContext);
             }
         }
@@ -230,7 +231,9 @@ public class Utils {
         Set<String> allowedWorkspaces;
 
         UserPrincipalCache.UserContext userContext = cache.get(securityContext.getUserPrincipal());
-        if (userContext != null) {
+        String dataUniverse = context.get(MetricFilter.DATA_UNIVERSE.toString());
+
+        if (userContext != null && isSameDataUniverse(userContext.getDataUniverse(), dataUniverse)) {
             allowedWorkspaces = userContext.getAllowedWorkspaces();
         } else {
             allowedWorkspaces = getAllowedWorkspacesForCurrentUser(context);
@@ -240,6 +243,11 @@ public class Utils {
             context.put(MetricFilter.WS_ID.toString(), getFilterAsString(allowedWorkspaces));
         }
         context.put(Parameters.ORIGINAL_WS.toString(), getFilterAsString(allowedWorkspaces));
+    }
+
+    private boolean isSameDataUniverse(String currentDataUniverse, String newDataUniverse) {
+        return (currentDataUniverse == null && newDataUniverse == null)
+               || (currentDataUniverse != null && currentDataUniverse.equals(newDataUniverse));
     }
 
     private Set<String> getAllowedWorkspacesForCurrentUser(Map<String, String> context) {
