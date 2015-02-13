@@ -39,6 +39,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -119,14 +120,19 @@ public class SqlBillingService implements BillingService {
 
 
     @Override
-    public void setPaymentState(long invoiceId, PaymentState state) throws ServerException {
+    public void setPaymentState(long invoiceId, PaymentState state, String creditCard) throws ServerException {
         try (Connection connection = connectionFactory.getConnection()) {
             try {
                 connection.setAutoCommit(false);
                 try (PreparedStatement statement = connection.prepareStatement(INVOICES_PAYMENT_STATE_UPDATE)) {
                     statement.setString(1, state.getState());
                     statement.setLong(2, System.currentTimeMillis());
-                    statement.setLong(3, invoiceId);
+                    if(creditCard!=null && !creditCard.isEmpty()){
+                        statement.setString(3, creditCard);
+                    }else{
+                        statement.setNull(3,  Types.VARCHAR);
+                    }
+                    statement.setLong(4, invoiceId);
                     statement.execute();
                 }
                 connection.commit();

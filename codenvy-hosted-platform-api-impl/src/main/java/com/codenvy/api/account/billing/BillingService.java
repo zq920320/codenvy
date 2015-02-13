@@ -104,9 +104,12 @@ public interface BillingService {
      *         id of invoice.
      * @param state
      *         next state of invoice.
+     * @param creditCard
+     *         credit card id. Null if no credit card was involved during operation with invoice.
      * @throws ServerException
      */
-    void setPaymentState(long invoiceId, PaymentState state) throws ServerException;
+    void setPaymentState(long invoiceId, PaymentState state, String creditCard) throws ServerException;
+
 
     /**
      * Mark invoice as sent to user.
