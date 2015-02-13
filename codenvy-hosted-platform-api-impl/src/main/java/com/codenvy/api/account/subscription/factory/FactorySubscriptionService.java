@@ -17,10 +17,13 @@
  */
 package com.codenvy.api.account.subscription.factory;
 
+import static com.codenvy.api.account.subscription.ServiceId.FACTORY;
+
 import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.server.dao.Subscription;
 import com.codenvy.api.account.server.subscription.SubscriptionService;
 import com.codenvy.api.account.shared.dto.AccountResources;
+import com.codenvy.api.account.subscription.ServiceId;
 import com.codenvy.api.account.subscription.service.util.SubscriptionCharger;
 import com.codenvy.api.account.subscription.service.util.SubscriptionExpirationMailSender;
 import com.codenvy.api.account.subscription.service.util.SubscriptionTrialRemover;
@@ -56,7 +59,7 @@ public class FactorySubscriptionService extends SubscriptionService {
                                       SubscriptionCharger chargeUtil,
                                       SubscriptionExpirationMailSender expirationUtil,
                                       SubscriptionTrialRemover removeUtil) {
-        super("Factory", "Factory");
+        super(FACTORY, FACTORY);
         this.accountDao = accountDao;
         this.chargeUtil = chargeUtil;
         this.expirationUtil = expirationUtil;

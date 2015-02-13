@@ -29,6 +29,7 @@ import com.codenvy.api.account.billing.InvoiceFilter;
 import com.codenvy.api.account.billing.PaymentState;
 import com.codenvy.api.account.impl.shared.dto.Charge;
 import com.codenvy.api.account.impl.shared.dto.Invoice;
+import com.codenvy.api.account.subscription.ServiceId;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.dto.server.DtoFactory;
@@ -88,7 +89,7 @@ public class SqlBillingService implements BillingService {
                 }
 
                 try (PreparedStatement saasCharges = connection.prepareStatement(SqlDaoQueries.CHARGES_MEMORY_INSERT)) {
-                    saasCharges.setString(1, "Saas");
+                    saasCharges.setString(1, ServiceId.SAAS);
                     saasCharges.setDouble(2, saasFreeGbH);
                     saasCharges.setDouble(3, saasFreeGbH);
                     saasCharges.setDouble(4, saasChargeableGbHPrice);

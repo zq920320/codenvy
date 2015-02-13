@@ -17,9 +17,11 @@
  */
 package com.codenvy.api.account.subscription.onpremises;
 
-import com.codenvy.api.account.server.subscription.SubscriptionService;
+import static com.codenvy.api.account.subscription.ServiceId.ONPREMISES;
+
 import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.server.dao.Subscription;
+import com.codenvy.api.account.server.subscription.SubscriptionService;
 import com.codenvy.api.account.shared.dto.AccountResources;
 import com.codenvy.api.account.subscription.service.util.SubscriptionCharger;
 import com.codenvy.api.account.subscription.service.util.SubscriptionExpirationMailSender;
@@ -55,7 +57,7 @@ public class OnPremisesSubscriptionService extends SubscriptionService {
                                          SubscriptionCharger chargeUtil,
                                          SubscriptionExpirationMailSender expirationUtil,
                                          SubscriptionTrialRemover removeUtil) {
-        super("OnPremises", "OnPremises");
+        super(ONPREMISES, ONPREMISES);
         this.accountDao = accountDao;
         this.chargeUtil = chargeUtil;
         this.expirationUtil = expirationUtil;

@@ -17,6 +17,9 @@
  */
 package com.codenvy.api.account.subscription.saas;
 
+import static com.codenvy.api.account.subscription.ServiceId.ONPREMISES;
+import static com.codenvy.api.account.subscription.ServiceId.SAAS;
+
 import com.codenvy.api.account.billing.BillingPeriod;
 import com.codenvy.api.account.metrics.MeterBasedStorage;
 import com.codenvy.api.account.server.dao.Subscription;
@@ -49,7 +52,7 @@ public class SaasSubscriptionService extends SubscriptionService {
     public SaasSubscriptionService(WorkspaceDao workspaceDao,
                                    MeterBasedStorage meterBasedStorage,
                                    BillingPeriod billingPeriod) {
-        super("Saas", "Saas");
+        super(SAAS, SAAS);
         this.workspaceDao = workspaceDao;
         this.meterBasedStorage = meterBasedStorage;
         this.billingPeriod = billingPeriod;
