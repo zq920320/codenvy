@@ -36,6 +36,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -104,7 +105,7 @@ public class AddWorkspaceMemberInterceptor implements MethodInterceptor {
 
                     mailSenderClient.sendMail("Codenvy <noreply@codenvy.com>", recipientEmail, null,
                                               senderUsername + senderEmail + " Has Added You to a Codenvy Workspace",
-                                              MediaType.TEXT_HTML,
+                                              "text/html; charset=utf-8",
                                               IoUtil.readAndCloseQuietly(IoUtil.getResource("/" + MAIL_TEMPLATE)), props);
 
                     LOG.info("User added into ws message send to {}", recipientEmail);
