@@ -30,7 +30,9 @@ import java.util.HashSet;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.testng.AssertJUnit.*;
+import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertFalse;
+import static org.testng.AssertJUnit.assertTrue;
 
 /**
  * @author Anatoliy Bazko
@@ -50,7 +52,7 @@ public class TestUserPrincipalCache extends BaseTest {
 
     @Test
     public void testPut() throws Exception {
-        cache.put(principal, new UserPrincipalCache.UserContext(Collections.<String>emptySet(), Collections.<String>emptySet()));
+        cache.put(principal, new UserPrincipalCache.UserContext(null, Collections.<String>emptySet(), Collections.<String>emptySet()));
         assertEquals(cache.size(), 1);
     }
 
@@ -59,7 +61,7 @@ public class TestUserPrincipalCache extends BaseTest {
         HashSet<String> allowedUses = new HashSet<>(Arrays.asList("user"));
         HashSet<String> allowedWorkspaces = new HashSet<>(Arrays.asList("ws"));
 
-        cache.put(principal, new UserPrincipalCache.UserContext(allowedUses, allowedWorkspaces));
+        cache.put(principal, new UserPrincipalCache.UserContext(null, allowedUses, allowedWorkspaces));
         assertTrue(cache.exist(principal));
 
         UserPrincipalCache.UserContext userContext = cache.get(principal);
@@ -69,7 +71,7 @@ public class TestUserPrincipalCache extends BaseTest {
 
     @Test
     public void testExpireFist() throws Exception {
-        cache.put(principal, new UserPrincipalCache.UserContext(Collections.<String>emptySet(), Collections.<String>emptySet()));
+        cache.put(principal, new UserPrincipalCache.UserContext(null, Collections.<String>emptySet(), Collections.<String>emptySet()));
         Thread.sleep(5000);
 
         assertTrue(cache.exist(principal));
@@ -78,7 +80,7 @@ public class TestUserPrincipalCache extends BaseTest {
             Principal mockPrincipal = mock(Principal.class);
             when(mockPrincipal.getName()).thenReturn("user" + i);
 
-            cache.put(mockPrincipal, new UserPrincipalCache.UserContext(Collections.<String>emptySet(), Collections.<String>emptySet()));
+            cache.put(mockPrincipal, new UserPrincipalCache.UserContext(null, Collections.<String>emptySet(), Collections.<String>emptySet()));
         }
 
         Thread.sleep(2 * 60 * 1000);
