@@ -124,6 +124,7 @@ public class TestProjectsStatistics extends BaseTest {
         pigServer.execute(ScriptType.EVENTS, builder.build());
 
         doIntegrity("20130101");
+        doComputation("20130101");
     }
 
     @Test

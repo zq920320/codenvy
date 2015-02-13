@@ -1002,6 +1002,58 @@
         </indexes>
     </collection>
 
+    <collection name="projects_statistics_precomputed">
+        <indexes>
+            <index name="user">
+                <field>user</field>
+                <field>date</field>
+            </index>
+            <index name="ws">
+                <field>ws</field>
+                <field>date</field>
+            </index>
+            <index name="project">
+                <field>project</field>
+                <field>date</field>
+            </index>
+            <index name="project_type">
+                <field>project_type</field>
+                <field>date</field>
+            </index>
+            <index name="project_id">
+                <field>project_id</field>
+                <field>date</field>
+            </index>
+            <index name="builds">
+                <field>builds</field>
+                <field>date</field>
+            </index>
+            <index name="build_time">
+                <field>build_time</field>
+                <field>date</field>
+            </index>
+            <index name="runs">
+                <field>run_time</field>
+                <field>date</field>
+            </index>
+            <index name="debugs">
+                <field>debugs</field>
+                <field>date</field>
+            </index>
+            <index name="debug_time">
+                <field>debug_time</field>
+                <field>date</field>
+            </index>
+            <index name="deploys">
+                <field>deploys</field>
+                <field>date</field>
+            </index>
+            <index name="date">
+                <field>date</field>
+            </index>
+        </indexes>
+    </collection>
+
     <collection name="tasks">
         <indexes>
             <index name="task_id">

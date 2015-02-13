@@ -28,12 +28,14 @@ import com.codenvy.analytics.persistent.CollectionsManagement;
 import com.codenvy.analytics.persistent.MongoDataStorage;
 import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.services.integrity.TasksIntegrity;
+import com.codenvy.analytics.services.metrics.DataComputation;
 import com.codenvy.analytics.services.pig.ScriptsManager;
 import com.codenvy.commons.lang.NameGenerator;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 
 import org.apache.pig.data.TupleFactory;
+import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.BeforeClass;
@@ -146,6 +148,16 @@ public class BaseTest {
                 new BasicDBObject(AbstractMetric.PERSISTENT_WS, 0L)
                         .append(AbstractMetric.ID, id)
                         .append(AbstractMetric.WS_NAME, name));
+    }
+
+    protected void doComputation(String date) throws IOException, JobExecutionException {
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, date);
+        builder.put(Parameters.TO_DATE, date);
+        Context context = builder.build();
+
+        DataComputation computation = new DataComputation(configurator, collectionsManagement);
+        computation.forceExecute(context);
     }
 
     protected void doIntegrity(String date) throws IOException {
