@@ -26,16 +26,18 @@
 					</ul>
 					<div class="error-container"></div>
 				</form>
-				<p>By signing up, you agree to the
-					<a href = "{{ 'tos.html' | url }}">Terms of Service</a> and the 
-					<a href = "{{ 'privacy.html' | url }}" title = "Privacy Policy">Privacy Policy</a>
-					<span>
-						<a href="http://helpdesk.codenvy.com">Feedback and Support</a>
-					</span>
-					<span>
-						Already have an account? <a href = "{{'site/login.html' | url}}" >Sign in here&hellip;</a>
-					</span>
-				</p>
+					<ul>
+						<li>
+							<p>By signing up, you agree to the
+								<a href = "{{ 'tos.html' | url }}">Terms of Service</a> and the 
+								<a href = "{{ 'privacy.html' | url }}" title = "Privacy Policy">Privacy Policy</a>
+							</p>
+						</li>
+						<br>
+						<li>
+							<a href = "{{'site/login.html' | url}}" >Already have an account? Login in here&hellip;</a>
+						</li>
+					</ul>
 			</div>
 		</div>
 	</div>
