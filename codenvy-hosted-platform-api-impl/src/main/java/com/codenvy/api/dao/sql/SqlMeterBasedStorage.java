@@ -34,31 +34,22 @@ package com.codenvy.api.dao.sql;
  * from Codenvy S.A..
  */
 
-import static com.codenvy.api.dao.sql.SqlDaoQueries.METRIC_INSERT;
-import static com.codenvy.api.dao.sql.SqlDaoQueries.METRIC_SELECT_ACCOUNT_TOTAL;
-import static com.codenvy.api.dao.sql.SqlDaoQueries.METRIC_SELECT_ID;
-import static com.codenvy.api.dao.sql.SqlDaoQueries.METRIC_SELECT_RUNID;
-import static com.codenvy.api.dao.sql.SqlDaoQueries.METRIC_SELECT_ACCOUNT_GB_WS_TOTAL;
-import static com.codenvy.api.dao.sql.SqlDaoQueries.METRIC_UPDATE;
-
 import com.codenvy.api.account.billing.BillingPeriod;
 import com.codenvy.api.account.billing.Period;
 import com.codenvy.api.account.metrics.MemoryUsedMetric;
 import com.codenvy.api.account.metrics.MeterBasedStorage;
 import com.codenvy.api.account.metrics.UsageInformer;
 import com.codenvy.api.core.ServerException;
+import com.codenvy.api.dao.sql.postgresql.Int8RangeType;
+
+import org.postgresql.util.PGobject;
 
 import javax.inject.Inject;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
+import java.sql.*;
+import java.util.*;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
+import static com.codenvy.api.dao.sql.SqlDaoQueries.*;
 
 /**
  * @author Sergii Kabashniuk
@@ -77,48 +68,36 @@ public class SqlMeterBasedStorage implements MeterBasedStorage {
 
     @Override
     public UsageInformer createMemoryUsedRecord(MemoryUsedMetric metric) throws ServerException {
-        if (metric.getStopTime() < metric.getStartTime()) {
-            throw new ServerException("Stop time can't be less then start time");
-        }
-        if (billingPeriod.get(new Date(metric.getStartTime())).getNextPeriod().getEndDate().getTime() <
-            metric.getStopTime()) {
-            throw new ServerException("Stop time should be in the same or next billing period with start time");
-        }
-
-
         try (Connection connection = connectionFactory.getConnection()) {
             connection.setAutoCommit(false);
             try (PreparedStatement statement = connection
                     .prepareStatement(METRIC_INSERT, Statement.RETURN_GENERATED_KEYS)) {
                 try {
-                    long lastRecordId = -1;
-                    long startTime = metric.getStartTime();
-                    Period period = billingPeriod.get(new Date(startTime));
-                    long stopTime = Math.min(metric.getStopTime(),
-                                             period.getEndDate().getTime());
-
-                    while (startTime < stopTime && stopTime <= metric.getStopTime()) {
-
-                        lastRecordId = doCreateMemoryRecord(statement,
-                                                            new MemoryUsedMetric(metric.getAmount(), startTime,
-                                                                                 stopTime,
-                                                                                 metric.getUserId(),
-                                                                                 metric.getAccountId(),
-                                                                                 metric.getWorkspaceId(),
-                                                                                 metric.getRunId()));
-                        period = period.getNextPeriod();
-                        startTime = period.getStartDate().getTime();
-                        stopTime = Math.min(metric.getStopTime(),
-                                            period.getEndDate().getTime());
-
-
-                    }
+                    statement.setInt(1, metric.getAmount());
+                    statement.setObject(2, new Int8RangeType(metric.getStartTime(),
+                                                             metric.getStopTime(), true, true));
+                    statement.setString(3, metric.getUserId());
+                    statement.setString(4, metric.getAccountId());
+                    statement.setString(5, metric.getWorkspaceId());
+                    statement.setString(6, metric.getRunId());
+                    statement.execute();
                     connection.commit();
-                    return new SQLUsageInformer(lastRecordId,
-                                                metric,
-                                                connectionFactory);
+                    try (ResultSet keys = statement.getGeneratedKeys()) {
+                        if (keys.next()) {
+                            return new SQLUsageInformer(keys.getInt(1),
+                                                        metric,
+                                                        connectionFactory);
+                        } else {
+                            throw new ServerException("Can't find inserted record id");
+                        }
+                    }
+
+
                 } catch (SQLException | ServerException e) {
                     connection.rollback();
+                    if(e.getLocalizedMessage().contains("conflicts with existing key (frun_id, fduring)")){
+                        throw new ServerException("Metric with given id and period already exist");
+                    }
                     throw new ServerException(e.getLocalizedMessage(), e);
                 }
             }
@@ -128,31 +107,6 @@ public class SqlMeterBasedStorage implements MeterBasedStorage {
 
     }
 
-    private long doCreateMemoryRecord(PreparedStatement statement, MemoryUsedMetric metric)
-            throws SQLException, ServerException {
-        String billingPeriod = this.billingPeriod.get(new Date(metric.getStartTime())).getId();
-        if (!billingPeriod
-                .equals(this.billingPeriod.get(new Date(metric.getStopTime())).getId())) {
-            throw new ServerException("Start and stop time should be in same billing period");
-        }
-
-        statement.setInt(1, metric.getAmount());
-        statement.setLong(2, metric.getStartTime());
-        statement.setLong(3, metric.getStopTime());
-        statement.setString(4, metric.getUserId());
-        statement.setString(5, metric.getAccountId());
-        statement.setString(6, metric.getWorkspaceId());
-        statement.setString(7, billingPeriod);
-        statement.setString(8, metric.getRunId());
-        statement.execute();
-        try (ResultSet keys = statement.getGeneratedKeys()) {
-            if (keys.next()) {
-                return keys.getInt(1);
-            } else {
-                throw new ServerException("Can't find inserted record id");
-            }
-        }
-    }
 
     /**
      * Get memory metric from storage.
@@ -162,20 +116,22 @@ public class SqlMeterBasedStorage implements MeterBasedStorage {
      * @return - Memory metric from storage if it exists or null.
      * @throws ServerException
      */
+
     MemoryUsedMetric getMetric(long id) throws ServerException {
         try (Connection connection = connectionFactory.getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(METRIC_SELECT_ID)) {
                 statement.setLong(1, id);
                 try (ResultSet resultSet = statement.executeQuery()) {
                     if (resultSet.next()) {
+                        Int8RangeType range = new Int8RangeType((PGobject)resultSet.getObject("FDURING"));
                         return new MemoryUsedMetric(
-                                resultSet.getInt(1),
-                                resultSet.getLong(2),
-                                resultSet.getLong(3),
-                                resultSet.getString(4),
-                                resultSet.getString(5),
-                                resultSet.getString(6),
-                                resultSet.getString(7)
+                                resultSet.getInt("FAMOUNT"),
+                                range.getFrom(),
+                                range.getUntil(),
+                                resultSet.getString("FUSER_ID"),
+                                resultSet.getString("FACCOUNT_ID"),
+                                resultSet.getString("FWORKSPACE_ID"),
+                                resultSet.getString("FRUN_ID")
                         );
                     }
                     return null;
@@ -224,11 +180,11 @@ public class SqlMeterBasedStorage implements MeterBasedStorage {
     public Double getMemoryUsed(String accountId, long from, long until) throws ServerException {
         try (Connection connection = connectionFactory.getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(METRIC_SELECT_ACCOUNT_TOTAL)) {
-                statement.setLong(1, until);
-                statement.setLong(2, from);
+                Int8RangeType range = new Int8RangeType(from, until, true, true);
+                statement.setObject(1, range);
+                statement.setObject(2, range);
                 statement.setString(3, accountId);
-                statement.setLong(4, until);
-                statement.setLong(5, from);
+                statement.setObject(4, range);
                 try (ResultSet resultSet = statement.executeQuery()) {
                     if (resultSet.next()) {
                         return resultSet.getDouble(1);
@@ -246,11 +202,11 @@ public class SqlMeterBasedStorage implements MeterBasedStorage {
         Map<String, Double> result = new HashMap<>();
         try (Connection connection = connectionFactory.getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(METRIC_SELECT_ACCOUNT_GB_WS_TOTAL)) {
-                statement.setLong(1, until);
-                statement.setLong(2, from);
+                Int8RangeType range = new Int8RangeType(from, until, true, true);
+                statement.setObject(1, range);
+                statement.setObject(2, range);
                 statement.setString(3, accountId);
-                statement.setLong(4, until);
-                statement.setLong(5, from);
+                statement.setObject(4, range);
                 try (ResultSet resultSet = statement.executeQuery()) {
                     while (resultSet.next()) {
                         result.put(resultSet.getString(2), resultSet.getDouble(1));
@@ -290,44 +246,11 @@ public class SqlMeterBasedStorage implements MeterBasedStorage {
                 try (Connection connection = connectionFactory.getConnection()) {
                     try {
                         connection.setAutoCommit(false);
-                        Date now = new Date();
-                        //in the same initial billing period.
-                        if (now.before(currentBillingPeriod.getEndDate())) {
-                            try (PreparedStatement statement = connection.prepareStatement(METRIC_UPDATE)) {
-                                statement.setLong(1, new Date().getTime());
-                                statement.setLong(2, recordId);
-                                statement.execute();
-                            }
-                        } else {
-                            Period nextBillingPeriod = currentBillingPeriod.getNextPeriod();
-                            //jump to the next billing period.
-                            if (now.before(nextBillingPeriod.getEndDate())) {
-                                //close previous record
-                                try (PreparedStatement statement = connection.prepareStatement(METRIC_UPDATE)) {
-                                    statement.setLong(1, currentBillingPeriod.getEndDate().getTime());
-                                    statement.setLong(2, recordId);
-                                    statement.execute();
-                                }
-
-                                try (PreparedStatement statement = connection
-                                        .prepareStatement(METRIC_INSERT, Statement.RETURN_GENERATED_KEYS)) {
-
-                                    recordId = doCreateMemoryRecord(statement,
-                                                                    new MemoryUsedMetric(metric.getAmount(),
-                                                                                         currentBillingPeriod
-                                                                                                 .getStartDate()
-                                                                                                 .getTime(),
-                                                                                         now.getTime(),
-                                                                                         metric.getUserId(),
-                                                                                         metric.getAccountId(),
-                                                                                         metric.getWorkspaceId(),
-                                                                                         metric.getRunId()));
-                                }
-                                currentBillingPeriod = nextBillingPeriod;
-                            } else {
-                                throw new RuntimeException(
-                                        "UsageInformer is out of date for more then one billing period");
-                            }
+                        try (PreparedStatement statement = connection.prepareStatement(METRIC_UPDATE)) {
+                            statement.setObject(1, new Int8RangeType(metric.getStartTime(),
+                                                                     System.currentTimeMillis(), true, true));
+                            statement.setLong(2, recordId);
+                            statement.execute();
                         }
                         connection.commit();
                     } catch (SQLException e) {

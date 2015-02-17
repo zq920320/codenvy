@@ -17,11 +17,6 @@
  */
 package com.codenvy.api.dao.sql;
 
-import static com.google.common.collect.Iterables.get;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertNull;
-
 import com.codenvy.api.account.billing.BillingService;
 import com.codenvy.api.account.billing.MonthlyBillingPeriod;
 import com.codenvy.api.account.billing.PaymentState;
@@ -39,6 +34,10 @@ import org.testng.annotations.Test;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.List;
+
+import static com.google.common.collect.Iterables.get;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 
 
 public class SqlBillingServiceTest extends AbstractSQLTest {
@@ -73,7 +72,8 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                      "run-234"));
 
         //when
-        billingService.generateInvoices(Long.MIN_VALUE, Long.MAX_VALUE);
+        billingService.generateInvoices(sdf.parse("01-01-2015 00:00:00").getTime(),
+                                        sdf.parse("01-02-2015 00:00:00").getTime());
         List<Invoice> ac3 = billingService.getInvoices("ac-3", -1, 0);
         //then
         assertEquals(ac3.size(), 1);
@@ -107,7 +107,8 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                      "run-234"));
 
         //when
-        billingService.generateInvoices(Long.MIN_VALUE, Long.MAX_VALUE);
+        billingService.generateInvoices(sdf.parse("01-01-2015 00:00:00").getTime(),
+                                        sdf.parse("01-02-2015 00:00:00").getTime());
         List<Invoice> ac3 = billingService.getInvoices("ac-3", -1, 0);
         //then
         assertEquals(ac3.size(), 1);
@@ -126,7 +127,8 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
     }
 
     @Test(dataProvider = "storage")
-    public void shouldCalculateBetweenSeveralWorkspaces(MeterBasedStorage meterBasedStorage, BillingService billingService)
+    public void shouldCalculateBetweenSeveralWorkspaces(MeterBasedStorage meterBasedStorage,
+                                                        BillingService billingService)
             throws ServerException, ParseException {
         meterBasedStorage.createMemoryUsedRecord(
                 new MemoryUsedMetric(256,
@@ -147,7 +149,8 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                      "run-234"));
 
         //when
-        billingService.generateInvoices(Long.MIN_VALUE, Long.MAX_VALUE);
+        billingService.generateInvoices(sdf.parse("01-01-2015 00:00:00").getTime(),
+                                        sdf.parse("01-02-2015 00:00:00").getTime());
         List<Invoice> ac3 = billingService.getInvoices("ac-3", -1, 0);
         //then
         assertEquals(ac3.size(), 1);
@@ -209,7 +212,8 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                      "run-234"));
 
         //when
-        billingService.generateInvoices(Long.MIN_VALUE, Long.MAX_VALUE);
+        billingService.generateInvoices(sdf.parse("01-01-2015 00:00:00").getTime(),
+                                        sdf.parse("01-02-2015 00:00:00").getTime());
         List<Invoice> ac3 = billingService.getInvoices("ac-3", -1, 0);
         List<Invoice> ac5 = billingService.getInvoices("ac-5", -1, 0);
         List<Invoice> ac1 = billingService.getInvoices("ac-1", -1, 0);
@@ -259,7 +263,8 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
 
 
         //when
-        billingService.generateInvoices(Long.MIN_VALUE, Long.MAX_VALUE);
+        billingService.generateInvoices(sdf.parse("01-01-2015 00:00:00").getTime(),
+                                        sdf.parse("01-02-2015 00:00:00").getTime());
         //then
         assertEquals(billingService.getInvoices(PaymentState.WAITING_EXECUTOR, -1, 0).size(), 2);
         assertEquals(billingService.getInvoices(PaymentState.NOT_REQUIRED, -1, 0).size(), 1);
@@ -294,7 +299,8 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
 
 
         //when
-        billingService.generateInvoices(Long.MIN_VALUE, Long.MAX_VALUE);
+        billingService.generateInvoices(sdf.parse("01-01-2015 00:00:00").getTime(),
+                                        sdf.parse("01-02-2015 00:00:00").getTime());
         Invoice invoice = get(billingService.getInvoices(PaymentState.WAITING_EXECUTOR, -1, 0), 1);
         billingService.setPaymentState(invoice.getId(), PaymentState.PAYMENT_FAIL, "cc111");
 
@@ -316,7 +322,8 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
 
 
     @Test(dataProvider = "storage")
-    public void shouldBeAbleToSetGetByMailingFailPaymentReceipt(MeterBasedStorage meterBasedStorage, BillingService billingService)
+    public void shouldBeAbleToSetGetByMailingFailPaymentReceipt(MeterBasedStorage meterBasedStorage,
+                                                                BillingService billingService)
             throws ParseException, ServerException {
         //given
         meterBasedStorage.createMemoryUsedRecord(
@@ -339,7 +346,8 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
 
 
         //when
-        billingService.generateInvoices(Long.MIN_VALUE, Long.MAX_VALUE);
+        billingService.generateInvoices(sdf.parse("01-01-2015 00:00:00").getTime(),
+                                        sdf.parse("01-02-2015 00:00:00").getTime());
         Long id = get(billingService.getInvoices(PaymentState.WAITING_EXECUTOR, -1, 0), 1).getId();
         billingService.setPaymentState(id, PaymentState.PAYMENT_FAIL, null);
 
@@ -351,7 +359,8 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
     }
 
     @Test(dataProvider = "storage")
-    public void shouldBeAbleToSetGetByMailingPaidSuccessfulyReceipt(MeterBasedStorage meterBasedStorage, BillingService billingService)
+    public void shouldBeAbleToSetGetByMailingPaidSuccessfulyReceipt(MeterBasedStorage meterBasedStorage,
+                                                                    BillingService billingService)
             throws ParseException, ServerException {
         //given
         meterBasedStorage.createMemoryUsedRecord(
@@ -374,7 +383,8 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
 
 
         //when
-        billingService.generateInvoices(Long.MIN_VALUE, Long.MAX_VALUE);
+        billingService.generateInvoices(sdf.parse("01-01-2015 00:00:00").getTime(),
+                                        sdf.parse("01-02-2015 00:00:00").getTime());
         Long id = get(billingService.getInvoices(PaymentState.WAITING_EXECUTOR, -1, 0), 1).getId();
         billingService.setPaymentState(id, PaymentState.PAID_SUCCESSFULLY, null);
 
@@ -386,7 +396,8 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
     }
 
     @Test(dataProvider = "storage")
-    public void shouldBeAbleToSetGetByMailingCreditCardMissingReceipt(MeterBasedStorage meterBasedStorage, BillingService billingService)
+    public void shouldBeAbleToSetGetByMailingCreditCardMissingReceipt(MeterBasedStorage meterBasedStorage,
+                                                                      BillingService billingService)
             throws ParseException, ServerException {
         //given
         meterBasedStorage.createMemoryUsedRecord(
@@ -409,7 +420,8 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
 
 
         //when
-        billingService.generateInvoices(Long.MIN_VALUE, Long.MAX_VALUE);
+        billingService.generateInvoices(sdf.parse("01-01-2015 00:00:00").getTime(),
+                                        sdf.parse("01-02-2015 00:00:00").getTime());
         Long id = get(billingService.getInvoices(PaymentState.WAITING_EXECUTOR, -1, 0), 1).getId();
         billingService.setPaymentState(id, PaymentState.CREDIT_CARD_MISSING, null);
 
@@ -422,7 +434,8 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
 
 
     @Test(dataProvider = "storage")
-    public void shouldBeAbleToGetByMailingPaymentNotRequiredReceipt(MeterBasedStorage meterBasedStorage, BillingService billingService)
+    public void shouldBeAbleToGetByMailingPaymentNotRequiredReceipt(MeterBasedStorage meterBasedStorage,
+                                                                    BillingService billingService)
             throws ParseException, ServerException {
         //given
         meterBasedStorage.createMemoryUsedRecord(
@@ -445,7 +458,8 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
 
 
         //when
-        billingService.generateInvoices(Long.MIN_VALUE, Long.MAX_VALUE);
+        billingService.generateInvoices(sdf.parse("01-01-2015 00:00:00").getTime(),
+                                        sdf.parse("01-02-2015 00:00:00").getTime());
         //then
         List<Invoice> notSendInvoice = billingService.getNotSendInvoices(-1, 0);
         assertEquals(notSendInvoice.size(), 1);
@@ -478,7 +492,8 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
 
 
         //when
-        billingService.generateInvoices(Long.MIN_VALUE, Long.MAX_VALUE);
+        billingService.generateInvoices(sdf.parse("01-01-2015 00:00:00").getTime(),
+                                        sdf.parse("01-02-2015 00:00:00").getTime());
         Long id = get(billingService.getInvoices(PaymentState.WAITING_EXECUTOR, -1, 0), 1).getId();
         billingService.setPaymentState(id, PaymentState.CREDIT_CARD_MISSING, null);
         billingService.markInvoiceAsSent(id);
@@ -487,8 +502,9 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
     }
 
 
-    @Test(dataProvider = "storage", expectedExceptions = NotFoundException.class, expectedExceptionsMessageRegExp = "Invoice with id " +
-                                                                                                                    "498509 is not found")
+    @Test(dataProvider = "storage", expectedExceptions = NotFoundException.class, expectedExceptionsMessageRegExp =
+            "Invoice with id " +
+            "498509 is not found")
     public void shouldFailIfInvoiceIsNotFound(MeterBasedStorage meterBasedStorage, BillingService billingService)
             throws ServerException, NotFoundException {
         //given
@@ -520,10 +536,44 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
 
 
         //when
-        billingService.generateInvoices(Long.MIN_VALUE, Long.MAX_VALUE);
+        billingService.generateInvoices(sdf.parse("01-01-2015 00:00:00").getTime(),
+                                        sdf.parse("01-02-2015 00:00:00").getTime());
         Invoice expected = get(billingService.getInvoices(PaymentState.WAITING_EXECUTOR, -1, 0), 1);
         Invoice actual = billingService.getInvoice(expected.getId());
         assertEquals(actual, expected);
+
+
+    }
+
+    @Test(dataProvider = "storage", expectedExceptions = ServerException.class, expectedExceptionsMessageRegExp = "Not able to generate invoices. Result overlaps with existed invoices.")
+    public void shouldFailToCalculateInvoicesTwiceWithOverlappingPeriod(MeterBasedStorage meterBasedStorage,
+                                                                        BillingService billingService)
+            throws ParseException, ServerException, NotFoundException {
+        //given
+        meterBasedStorage.createMemoryUsedRecord(
+                new MemoryUsedMetric(1024,
+                                     sdf.parse("10-01-2015 10:20:56").getTime(),
+                                     sdf.parse("11-01-2015 10:20:56").getTime(),
+                                     "usr-123",
+                                     "ac-5",
+                                     "ws-7",
+                                     "run-1254"));
+
+        meterBasedStorage.createMemoryUsedRecord(
+                new MemoryUsedMetric(1024,
+                                     sdf.parse("01-01-2015 10:00:00").getTime(),
+                                     sdf.parse("10-01-2015 10:00:00").getTime(),
+                                     "usr-345",
+                                     "ac-3",
+                                     "ws-235423",
+                                     "run-234"));
+
+
+        //when
+        billingService.generateInvoices(sdf.parse("01-01-2015 00:00:00").getTime(),
+                                        sdf.parse("01-02-2015 00:00:00").getTime());
+        billingService.generateInvoices(sdf.parse("09-01-2015 00:00:00").getTime(),
+                                        sdf.parse("15-02-2015 00:00:00").getTime());
 
 
     }

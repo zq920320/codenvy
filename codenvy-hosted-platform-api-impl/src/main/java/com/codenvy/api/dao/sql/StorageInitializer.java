@@ -18,6 +18,7 @@
 package com.codenvy.api.dao.sql;
 
 import org.flywaydb.core.Flyway;
+import org.flywaydb.core.api.callback.FlywayCallback;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -85,4 +86,5 @@ public class StorageInitializer {
             }
         }
     }
+
 }

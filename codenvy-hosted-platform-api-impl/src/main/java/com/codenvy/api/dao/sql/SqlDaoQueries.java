@@ -30,10 +30,12 @@ public interface SqlDaoQueries {
     /**
      * Multiplier to transform GB/h to MB/msec back and forth.
      */
-    double MBMSEC_TO_GBH_MULTIPLIER = TimeUnit.HOURS.toMillis(1) * 1024.0;
+    long MBMSEC_TO_GBH_MULTIPLIER = TimeUnit.HOURS.toMillis(1) * 1024;
 
     String GBH_SUM =
-            " SUM(ROUND(FAMOUNT * (LEAST(?, FSTOP_TIME) - GREATEST(?, FSTART_TIME))/" + MBMSEC_TO_GBH_MULTIPLIER + " ,6)) ";
+            //" SUM(ROUND(FAMOUNT * (LEAST(?, FSTOP_TIME) - GREATEST(?, FSTART_TIME))/" + MBMSEC_TO_GBH_MULTIPLIER +
+            // " ,6)) ";
+            " SUM(ROUND(FAMOUNT * ( upper(FDURING * ?)-lower(FDURING * ?)-1 )/" + MBMSEC_TO_GBH_MULTIPLIER + ".0 ,6)) ";
 
     String TOTAL_SUM = "ROUND(SUM(ROUND(FPAID_AMOUNT,2)*FPAID_PRICE),2)";
 
@@ -46,8 +48,7 @@ public interface SqlDaoQueries {
             "                   FPAYMENT_STATE, " +
             "                   FMAILING_TIME, " +
             "                   FCREATED_TIME, " +
-            "                   FFROM_TIME, " +
-            "                   FTILL_TIME, " +
+            "                   FPERIOD, " +
             "                   FCALC_ID ";
 
     /**
@@ -70,8 +71,7 @@ public interface SqlDaoQueries {
             "FROM " +
             "  METRICS " +
             "WHERE " +
-            "   FSTART_TIME<?" +
-            "   AND FSTOP_TIME>?" +
+            "   FDURING && ?" +
             "GROUP BY " +
             " FACCOUNT_ID, " +
             " FWORKSPACE_ID ";
@@ -114,8 +114,7 @@ public interface SqlDaoQueries {
             "                   FACCOUNT_ID, " +
             "                   FPAYMENT_STATE, " +
             "                   FCREATED_TIME, " +
-            "                   FFROM_TIME, " +
-            "                   FTILL_TIME, " +
+            "                   FPERIOD, " +
             "                   FCALC_ID " +
             "                  ) " +
             "SELECT " +
@@ -126,8 +125,7 @@ public interface SqlDaoQueries {
             "   ELSE  '" + PaymentState.NOT_REQUIRED.getState() + "'" +
             "  END as FPAYMENT_STATE, " +
             "   ? as FCREATED_TIME, " +
-            "   ? as FFROM_TIME, " +
-            "   ? as FTILL_TIME, " +
+            "   ? as FPERIOD, " +
             "   ? as FCALC_ID " +
             "FROM " +
             "  CHARGES " +
@@ -182,20 +180,17 @@ public interface SqlDaoQueries {
     String METRIC_INSERT = "INSERT INTO METRICS " +
                            "  (" +
                            "      FAMOUNT," +
-                           "      FSTART_TIME," +
-                           "      FSTOP_TIME," +
+                           "      FDURING," +
                            "      FUSER_ID," +
                            "      FACCOUNT_ID," +
                            "      FWORKSPACE_ID, " +
-                           "      FBILLING_PERIOD," +
                            "      FRUN_ID" +
                            "  )" +
-                           "    VALUES (?, ?, ?, ?, ?, ? , ?, ?);";
+                           "    VALUES (?, ?, ?, ?, ?, ? );";
 
     String METRIC_SELECT_ID = " SELECT " +
                               "      FAMOUNT," +
-                              "      FSTART_TIME," +
-                              "      FSTOP_TIME," +
+                              "      FDURING," +
                               "      FUSER_ID," +
                               "      FACCOUNT_ID," +
                               "      FWORKSPACE_ID,  " +
@@ -226,8 +221,7 @@ public interface SqlDaoQueries {
                                          "  METRICS " +
                                          "WHERE " +
                                          "   FACCOUNT_ID=?" +
-                                         "   AND FSTART_TIME<?" +
-                                         "   AND FSTOP_TIME>?";
+                                         "   AND FDURING && ?";
 
     String METRIC_SELECT_ACCOUNT_GB_WS_TOTAL = "SELECT " +
                                                "  " + GBH_SUM + " AS FAMOUNT, " +
@@ -236,13 +230,12 @@ public interface SqlDaoQueries {
                                                "  METRICS " +
                                                "WHERE " +
                                                "   FACCOUNT_ID=?" +
-                                               "   AND FSTART_TIME<?" +
-                                               "   AND FSTOP_TIME>? " +
+                                               "   AND FDURING && ?" +
                                                "GROUP BY FWORKSPACE_ID";
 
 
     String METRIC_UPDATE = "UPDATE  METRICS " +
-                           " SET FSTOP_TIME=? " +
+                           " SET FDURING=? " +
                            " WHERE FID=? ";
 
 }

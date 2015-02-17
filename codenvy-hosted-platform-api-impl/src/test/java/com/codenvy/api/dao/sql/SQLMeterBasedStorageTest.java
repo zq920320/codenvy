@@ -54,7 +54,7 @@ public class SQLMeterBasedStorageTest extends  AbstractSQLTest{
 
 
     @Test(dataProvider = "storage", expectedExceptions = ServerException.class, expectedExceptionsMessageRegExp =
-            "Stop time can't be less then start time")
+            "ERROR: range lower bound must be less than or equal to range upper bound")
     public void shouldCheckIfStartTimeLessThenStop(SqlMeterBasedStorage meterBasedStorage)
             throws ParseException, ServerException {
         //given
@@ -264,7 +264,7 @@ public class SQLMeterBasedStorageTest extends  AbstractSQLTest{
                                                                       "usr-123",
                                                                       "ac-46534",
                                                                       "ws-235423",
-                                                                      "run-234"));
+                                                                      "run-1"));
 
         meterBasedStorage.createMemoryUsedRecord(new MemoryUsedMetric(256,
                                                                       sdf.parse("10-01-2014 09:55:00").getTime(),
@@ -272,14 +272,14 @@ public class SQLMeterBasedStorageTest extends  AbstractSQLTest{
                                                                       "usr-123",
                                                                       "ac-46534",
                                                                       "ws-235423",
-                                                                      "run-234"));
+                                                                      "run-2"));
         meterBasedStorage.createMemoryUsedRecord(new MemoryUsedMetric(256,
                                                                       sdf.parse("10-01-2014 11:00:00").getTime(),
                                                                       sdf.parse("10-01-2014 11:07:00").getTime(),
                                                                       "usr-123",
                                                                       "ac-46534",
                                                                       "ws-235423",
-                                                                      "run-234"));
+                                                                      "run-3"));
 
         meterBasedStorage.createMemoryUsedRecord(new MemoryUsedMetric(256,
                                                                       sdf.parse("10-01-2014 10:00:00").getTime(),
@@ -287,7 +287,7 @@ public class SQLMeterBasedStorageTest extends  AbstractSQLTest{
                                                                       "usr-123",
                                                                       "ac-46534",
                                                                       "ws-124",
-                                                                      "run-234"));
+                                                                      "run-5"));
 
         meterBasedStorage.createMemoryUsedRecord(new MemoryUsedMetric(1024,
                                                                       sdf.parse("10-01-2014 12:00:00").getTime(),
@@ -295,7 +295,7 @@ public class SQLMeterBasedStorageTest extends  AbstractSQLTest{
                                                                       "usr-123",
                                                                       "ac-46534",
                                                                       "ws-235423",
-                                                                      "run-234"));
+                                                                      "run-6"));
 
         meterBasedStorage.createMemoryUsedRecord(new MemoryUsedMetric(256,
                                                                       sdf.parse("10-01-2015 10:00:00").getTime(),
@@ -303,7 +303,7 @@ public class SQLMeterBasedStorageTest extends  AbstractSQLTest{
                                                                       "usr-123",
                                                                       "ac-46534",
                                                                       "ws-235423",
-                                                                      "run-234"));
+                                                                      "run-7"));
 
         //then
 
@@ -315,9 +315,10 @@ public class SQLMeterBasedStorageTest extends  AbstractSQLTest{
         Assert.assertEquals(2, result.size());
     }
 
-    @Test(dataProvider = "storage")
-    public void shouldAdd2Records(SqlMeterBasedStorage meterBasedStorage) throws ParseException, ServerException {
+    @Test(dataProvider = "storage",expectedExceptions = ServerException.class , expectedExceptionsMessageRegExp = "Metric with given id and period already exist")
+    public void shouldFailToAddRunWithOverlappingPeriodAdd2Records(SqlMeterBasedStorage meterBasedStorage) throws ParseException, ServerException {
         //then
+        //when
         meterBasedStorage.createMemoryUsedRecord(new MemoryUsedMetric(1024,
                                                                       sdf.parse("10-01-2014 12:00:00").getTime(),
                                                                       sdf.parse("01-02-2014 12:20:00").getTime(),
@@ -325,9 +326,14 @@ public class SQLMeterBasedStorageTest extends  AbstractSQLTest{
                                                                       "ac-46534",
                                                                       "ws-235423",
                                                                       "run-09889797"));
-        //when
-        List<MemoryUsedMetric> actual = meterBasedStorage.getMetricsByRunId("run-09889797");
-        Assert.assertEquals(actual.size(), 2);
+        meterBasedStorage.createMemoryUsedRecord(new MemoryUsedMetric(1024,
+                                                                      sdf.parse("08-01-2014 12:00:00").getTime(),
+                                                                      sdf.parse("10-01-2014 15:20:00").getTime(),
+                                                                      "usr-123",
+                                                                      "ac-46534",
+                                                                      "ws-235423",
+                                                                      "run-09889797"));
+
 
     }
 
