@@ -138,8 +138,6 @@ body,h1,h2,h3,h4,h5,h6,a{
 }
 .signup-page input[type="text"],.signup-page input[type="email"],.signup-page input[type="password"]{
 	width:220px;
-	height:40px;
-	margin:0 5px;
 	border-radius:5px;
 	border:none;
 	background:#2F6286;
@@ -156,6 +154,7 @@ body,h1,h2,h3,h4,h5,h6,a{
 }
 .input-con{
 	position:relative;
+	margin: 0px 5px;
 }
 .input-con input.error{
 	border:1px solid #F04E37;
@@ -207,8 +206,6 @@ body,h1,h2,h3,h4,h5,h6,a{
 }
 .signup-page input[type="submit"]{
 	width:150px;
-	height:40px;
-	margin: 0 5px;
 	border-radius:5px;
 	border:none;
 	background:#F37943;
@@ -280,15 +277,17 @@ body,h1,h2,h3,h4,h5,h6,a{
 	}
 	.input-con{
 		display:block;
+		margin-right: 5px;
 	}
 	.input-con label.error{
 		top:-55px;
 	}
-	.signup-page input[type="text"]{
+	.signup-page input[type="text"], .signup-page input[type="password"]{
 		margin-bottom:10px;
 		width:100%;
 		display:block;
 		margin-left:0px;
+		color: red;
 	}
 	.signup-page input[type="submit"]{
 		margin-left:0px;
@@ -327,7 +326,7 @@ body,h1,h2,h3,h4,h5,h6,a{
 	  line-height: 26px;
 	  margin-bottom: 16px;
 	}
-	.signup-page input[type="text"]{
+	.signup-page input[type="text"], .signup-page input[type="password"]{
 		margin-bottom:10px;
 		width:100%;
 		display:block;
