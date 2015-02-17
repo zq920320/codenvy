@@ -17,21 +17,23 @@
  */
 package com.codenvy.api.account.subscription.saas;
 
-import static com.codenvy.api.account.subscription.ServiceId.ONPREMISES;
-import static com.codenvy.api.account.subscription.ServiceId.SAAS;
-
 import com.codenvy.api.account.billing.BillingPeriod;
 import com.codenvy.api.account.metrics.MeterBasedStorage;
+import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.server.dao.Subscription;
 import com.codenvy.api.account.server.subscription.SubscriptionService;
 import com.codenvy.api.account.shared.dto.AccountResources;
 import com.codenvy.api.account.shared.dto.WorkspaceResources;
 import com.codenvy.api.core.ApiException;
 import com.codenvy.api.core.ConflictException;
+import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.api.workspace.server.dao.Workspace;
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
 import com.codenvy.dto.server.DtoFactory;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -39,28 +41,42 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static com.codenvy.api.account.subscription.ServiceId.SAAS;
+
 /**
  * @author Sergii Leschenko
  */
 @Singleton
 public class SaasSubscriptionService extends SubscriptionService {
+    private static final Logger LOG = LoggerFactory.getLogger(SaasSubscriptionService.class);
+
     private final WorkspaceDao      workspaceDao;
+    private final AccountDao        accountDao;
     private final MeterBasedStorage meterBasedStorage;
     private final BillingPeriod     billingPeriod;
 
     @Inject
     public SaasSubscriptionService(WorkspaceDao workspaceDao,
+                                   AccountDao accountDao,
                                    MeterBasedStorage meterBasedStorage,
                                    BillingPeriod billingPeriod) {
         super(SAAS, SAAS);
         this.workspaceDao = workspaceDao;
+        this.accountDao = accountDao;
         this.meterBasedStorage = meterBasedStorage;
         this.billingPeriod = billingPeriod;
     }
 
     @Override
     public void beforeCreateSubscription(Subscription subscription) throws ConflictException, ServerException {
-        //TODO Implement
+        try {
+            if (!accountDao.getActiveSubscriptions(subscription.getAccountId(), getServiceId()).isEmpty()) {
+                throw new ConflictException(SUBSCRIPTION_LIMIT_EXHAUSTED_MESSAGE);
+            }
+        } catch (NotFoundException e) {
+            LOG.error(e.getLocalizedMessage(), e);
+            throw new ServerException(e.getLocalizedMessage());
+        }
     }
 
     @Override
@@ -87,9 +103,9 @@ public class SaasSubscriptionService extends SubscriptionService {
     public AccountResources getAccountResources(Subscription subscription) throws ServerException {
         final String accountId = subscription.getAccountId();
         final Map<String, Double> memoryUsedReport = meterBasedStorage.getMemoryUsedReport(accountId,
-                                                                                         billingPeriod.getCurrent().getStartDate()
-                                                                                                      .getTime(),
-                                                                                         System.currentTimeMillis());
+                                                                                           billingPeriod.getCurrent().getStartDate()
+                                                                                                        .getTime(),
+                                                                                           System.currentTimeMillis());
 
         final List<Workspace> workspaces = workspaceDao.getByAccount(accountId);
         final List<WorkspaceResources> result = new ArrayList<>();

@@ -20,7 +20,7 @@ package com.codenvy.api.account.subscription.service.util;
 import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.server.dao.PlanDao;
 import com.codenvy.api.account.server.dao.Subscription;
-import com.codenvy.api.account.server.subscription.PaymentService;
+import com.codenvy.api.account.PaymentService;
 import com.codenvy.api.account.server.subscription.SubscriptionService;
 import com.codenvy.api.account.shared.dto.Plan;
 import com.codenvy.api.account.shared.dto.SubscriptionState;

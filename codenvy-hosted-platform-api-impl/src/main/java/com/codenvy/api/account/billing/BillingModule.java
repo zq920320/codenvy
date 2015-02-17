@@ -17,6 +17,7 @@
  */
 package com.codenvy.api.account.billing;
 
+import com.codenvy.api.account.PaymentService;
 import com.codenvy.api.dao.billing.BraintreeCreditCardDaoImpl;
 import com.google.inject.AbstractModule;
 
@@ -27,7 +28,7 @@ public class BillingModule extends AbstractModule {
     @Override
     protected void configure() {
         bind(com.braintreegateway.BraintreeGateway.class).to(GuiceBraintreeGateway.class).asEagerSingleton();
-        bind(com.codenvy.api.account.server.subscription.PaymentService.class).to(BraintreePaymentService.class).asEagerSingleton();
+        bind(PaymentService.class).to(BraintreePaymentService.class).asEagerSingleton();
         bind(BillingPeriod.class).to(MonthlyBillingPeriod.class);
         bind(com.codenvy.api.account.billing.CreditCardDao.class).to(BraintreeCreditCardDaoImpl.class);
     }

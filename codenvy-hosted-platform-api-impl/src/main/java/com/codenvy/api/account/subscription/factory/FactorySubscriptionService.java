@@ -49,6 +49,7 @@ import javax.inject.Singleton;
 @Singleton
 public class FactorySubscriptionService extends SubscriptionService {
     private static final Logger LOG = LoggerFactory.getLogger(FactorySubscriptionService.class);
+
     private final AccountDao                       accountDao;
     private final SubscriptionCharger              chargeUtil;
     private final SubscriptionExpirationMailSender expirationUtil;

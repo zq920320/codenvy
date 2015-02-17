@@ -23,7 +23,7 @@ import com.braintreegateway.Result;
 import com.braintreegateway.Transaction;
 import com.braintreegateway.TransactionRequest;
 import com.codenvy.api.account.server.dao.Subscription;
-import com.codenvy.api.account.server.subscription.PaymentService;
+import com.codenvy.api.account.PaymentService;
 import com.codenvy.api.core.ApiException;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.ForbiddenException;

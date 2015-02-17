@@ -17,8 +17,7 @@
  */
 package com.codenvy.api.account.subscription.onpremises;
 
-import static com.codenvy.api.account.subscription.ServiceId.ONPREMISES;
-
+import com.codenvy.api.account.PaymentService;
 import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.server.dao.Subscription;
 import com.codenvy.api.account.server.subscription.SubscriptionService;
@@ -37,6 +36,9 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.util.Date;
+
+import static com.codenvy.api.account.subscription.ServiceId.ONPREMISES;
 
 /**
  * Service provide functionality of On-premises subscription.
@@ -51,17 +53,20 @@ public class OnPremisesSubscriptionService extends SubscriptionService {
     private final SubscriptionCharger              chargeUtil;
     private final SubscriptionExpirationMailSender expirationUtil;
     private final SubscriptionTrialRemover         removeUtil;
+    private final PaymentService                   paymentService;
 
     @Inject
     public OnPremisesSubscriptionService(AccountDao accountDao,
                                          SubscriptionCharger chargeUtil,
                                          SubscriptionExpirationMailSender expirationUtil,
-                                         SubscriptionTrialRemover removeUtil) {
+                                         SubscriptionTrialRemover removeUtil,
+                                         PaymentService paymentService) {
         super(ONPREMISES, ONPREMISES);
         this.accountDao = accountDao;
         this.chargeUtil = chargeUtil;
         this.expirationUtil = expirationUtil;
         this.removeUtil = removeUtil;
+        this.paymentService = paymentService;
     }
 
     @Override
@@ -85,6 +90,22 @@ public class OnPremisesSubscriptionService extends SubscriptionService {
 
     @Override
     public void afterCreateSubscription(Subscription subscription) throws ApiException {
+        Date startTrial = subscription.getTrialStartDate();
+        Date endTrial = subscription.getTrialEndDate();
+        boolean presentTrialPeriod = startTrial != null && endTrial != null && (endTrial.getTime() - startTrial.getTime() > 0);
+
+        if (!presentTrialPeriod) {
+            try {
+                paymentService.charge(subscription);
+            } catch (Exception e) {
+                LOG.error(e.getLocalizedMessage(), e);
+                // hide not user friendly exception if exception is not Api
+                if (!ApiException.class.isAssignableFrom(e.getClass())) {
+                    throw new ServerException("Internal server error. Please, contact support");
+                }
+                throw e;
+            }
+        }
     }
 
     @Override

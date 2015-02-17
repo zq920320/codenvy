@@ -18,10 +18,10 @@
 
 package com.codenvy.api.account.subscription.schedulers;
 
+import com.codenvy.api.account.PaymentService;
 import com.codenvy.api.account.billing.BillingService;
 import com.codenvy.api.account.billing.PaymentState;
 import com.codenvy.api.account.impl.shared.dto.Invoice;
-import com.codenvy.api.account.server.subscription.PaymentService;
 import com.codenvy.api.core.ForbiddenException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.commons.schedule.ScheduleDelay;
@@ -97,7 +97,7 @@ public class MeterBasedCharger implements Runnable {
 
     private void setPaymentState(Long invoiceId, PaymentState paymentState) {
         try {
-            billingService.setPaymentState(invoiceId, PaymentState.PAYMENT_FAIL);
+            billingService.setPaymentState(invoiceId, PaymentState.PAYMENT_FAIL, "creditCard"); //TODO Fix credit card token
         } catch (ServerException e) {
             LOG.error("Can't change state for invoice " + invoiceId + " to " + paymentState.getState());
         }

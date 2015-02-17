@@ -17,7 +17,7 @@
  */
 package com.codenvy.api.account.subscription.factory;
 
-import com.codenvy.api.account.server.subscription.PaymentService;
+import com.codenvy.api.account.PaymentService;
 import com.codenvy.api.account.server.subscription.SubscriptionService;
 import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.server.dao.Subscription;
