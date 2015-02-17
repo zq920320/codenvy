@@ -17,12 +17,6 @@
  */
 package com.codenvy.api.dao.sql;
 
-import static com.codenvy.api.dao.sql.SqlDaoQueries.CHARGES_SELECT;
-import static com.codenvy.api.dao.sql.SqlDaoQueries.INVOICES_INSERT;
-import static com.codenvy.api.dao.sql.SqlDaoQueries.INVOICES_MAILING_TIME_UPDATE;
-import static com.codenvy.api.dao.sql.SqlDaoQueries.INVOICES_PAYMENT_STATE_UPDATE;
-import static com.codenvy.api.dao.sql.SqlDaoQueries.MEMORY_CHARGES_INSERT;
-import static com.codenvy.api.dao.sql.SqlDaoQueries.MEMORY_CHARGES_SELECT;
 
 import com.codenvy.api.account.billing.BillingService;
 import com.codenvy.api.account.billing.InvoiceFilter;
@@ -32,7 +26,10 @@ import com.codenvy.api.account.impl.shared.dto.Invoice;
 import com.codenvy.api.account.subscription.ServiceId;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
+import com.codenvy.api.dao.sql.postgresql.Int8RangeType;
 import com.codenvy.dto.server.DtoFactory;
+
+import org.postgresql.util.PGobject;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -46,6 +43,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
+import static com.codenvy.api.dao.sql.SqlDaoQueries.CHARGES_SELECT;
+import static com.codenvy.api.dao.sql.SqlDaoQueries.INVOICES_INSERT;
+import static com.codenvy.api.dao.sql.SqlDaoQueries.INVOICES_MAILING_TIME_UPDATE;
+import static com.codenvy.api.dao.sql.SqlDaoQueries.INVOICES_PAYMENT_STATE_UPDATE;
+import static com.codenvy.api.dao.sql.SqlDaoQueries.MEMORY_CHARGES_INSERT;
+import static com.codenvy.api.dao.sql.SqlDaoQueries.MEMORY_CHARGES_SELECT;
+import static com.codenvy.api.dao.sql.SqlDaoQueries.PREPAID_INSERT;
+
 
 /**
  * Database driving BillingService.
@@ -78,13 +84,14 @@ public class SqlBillingService implements BillingService {
         try (Connection connection = connectionFactory.getConnection()) {
             connection.setAutoCommit(false);
             try {
+                Int8RangeType range = new Int8RangeType(from, till, true, true);
                 //calculate memory usage statistic
                 try (PreparedStatement memoryChargesStatement = connection.prepareStatement(MEMORY_CHARGES_INSERT)) {
-                    memoryChargesStatement.setLong(1, till);
-                    memoryChargesStatement.setLong(2, from);
+
+                    memoryChargesStatement.setObject(1, range);
+                    memoryChargesStatement.setObject(2, range);
                     memoryChargesStatement.setString(3, calculationId);
-                    memoryChargesStatement.setLong(4, till);
-                    memoryChargesStatement.setLong(5, from);
+                    memoryChargesStatement.setObject(4, range);
                     memoryChargesStatement.execute();
                 }
 
@@ -101,16 +108,18 @@ public class SqlBillingService implements BillingService {
 
                 try (PreparedStatement invoices = connection.prepareStatement(INVOICES_INSERT)) {
                     invoices.setLong(1, System.currentTimeMillis());
-                    invoices.setLong(2, from);
-                    invoices.setLong(3, till);
+                    invoices.setObject(2, range);
+                    invoices.setString(3, calculationId);
                     invoices.setString(4, calculationId);
-                    invoices.setString(5, calculationId);
                     invoices.execute();
                 }
 
                 connection.commit();
             } catch (SQLException e) {
                 connection.rollback();
+                if (e.getLocalizedMessage().contains("conflicts with existing key (faccount_id, fperiod)")) {
+                    throw new ServerException("Not able to generate invoices. Result overlaps with existed invoices.");
+                }
                 throw new ServerException(e.getLocalizedMessage(), e);
             }
         } catch (SQLException e) {
@@ -128,10 +137,10 @@ public class SqlBillingService implements BillingService {
                 try (PreparedStatement statement = connection.prepareStatement(INVOICES_PAYMENT_STATE_UPDATE)) {
                     statement.setString(1, state.getState());
                     statement.setLong(2, System.currentTimeMillis());
-                    if(creditCard!=null && !creditCard.isEmpty()){
+                    if (creditCard != null && !creditCard.isEmpty()) {
                         statement.setString(3, creditCard);
-                    }else{
-                        statement.setNull(3,  Types.VARCHAR);
+                    } else {
+                        statement.setNull(3, Types.VARCHAR);
                     }
                     statement.setLong(4, invoiceId);
                     statement.execute();
@@ -139,6 +148,7 @@ public class SqlBillingService implements BillingService {
                 connection.commit();
             } catch (SQLException e) {
                 connection.rollback();
+                throw e;
             }
         } catch (SQLException e) {
             throw new ServerException(e.getLocalizedMessage(), e);
@@ -157,8 +167,8 @@ public class SqlBillingService implements BillingService {
             SqlQueryAppender.appendEqual(invoiceSelect, "FACCOUNT_ID", filter.getAccountId());
             SqlQueryAppender.appendIn(invoiceSelect, "FPAYMENT_STATE", filter.getStates());
             SqlQueryAppender.appendIsNull(invoiceSelect, "FMAILING_TIME", filter.getIsMailNotSend());
-            SqlQueryAppender.appendGreaterOrEqual(invoiceSelect, "FFROM_TIME", filter.getFromDate());
-            SqlQueryAppender.appendLessOrEqual(invoiceSelect, "FTILL_TIME", filter.getUntilDate());
+            SqlQueryAppender.appendContainsRange(invoiceSelect, "FPERIOD", filter.getFromDate(),
+                                                 filter.getUntilDate());
             SqlQueryAppender.appendLimit(invoiceSelect, filter.getMaxItems());
             SqlQueryAppender.appendOffset(invoiceSelect, filter.getSkipCount());
             invoiceSelect.append(" ORDER BY FACCOUNT_ID, FCREATED_TIME DESC");
@@ -168,7 +178,8 @@ public class SqlBillingService implements BillingService {
                 statement.setFetchSize(filter.getMaxItems() != null ? filter.getMaxItems() : 0);
                 try (ResultSet invoicesResultSet = statement.executeQuery()) {
                     List<Invoice> result =
-                            filter.getMaxItems() != null ? new ArrayList<Invoice>(filter.getMaxItems()) : new ArrayList<Invoice>();
+                            filter.getMaxItems() != null ? new ArrayList<Invoice>(filter.getMaxItems())
+                                                         : new ArrayList<Invoice>();
                     while (invoicesResultSet.next()) {
                         result.add(toInvoice(connection, invoicesResultSet));
                     }
@@ -233,6 +244,33 @@ public class SqlBillingService implements BillingService {
                 connection.commit();
             } catch (SQLException e) {
                 connection.rollback();
+                throw e;
+            }
+        } catch (SQLException e) {
+            throw new ServerException(e.getLocalizedMessage(), e);
+        }
+    }
+
+    @Override
+    public void addPrepaid(String accountId, double amount, long from, long till) throws ServerException {
+        try (Connection connection = connectionFactory.getConnection()) {
+            try {
+                connection.setAutoCommit(false);
+                Int8RangeType range = new Int8RangeType(from, till, true, true);
+                try (PreparedStatement statement = connection.prepareStatement(PREPAID_INSERT)) {
+                    statement.setString(1, accountId);
+                    statement.setDouble(2, amount);
+                    statement.setObject(3, range);
+                    statement.execute();
+                }
+                connection.commit();
+            } catch (SQLException e) {
+                connection.rollback();
+                if (e.getLocalizedMessage().contains("conflicts with existing key (faccount_id, fperiod)")) {
+                    throw new ServerException(
+                            "Unable to add new prepaid time since it overlapping with existed period");
+                }
+                throw e;
             }
         } catch (SQLException e) {
             throw new ServerException(e.getLocalizedMessage(), e);
@@ -250,7 +288,8 @@ public class SqlBillingService implements BillingService {
 
             try (ResultSet chargesResultSet = memoryCharges.executeQuery()) {
                 while (chargesResultSet.next()) {
-                    mCharges.put(chargesResultSet.getString("FWORKSPACE_ID"), Double.toString(chargesResultSet.getDouble("FAMOUNT")));
+                    mCharges.put(chargesResultSet.getString("FWORKSPACE_ID"),
+                                 Double.toString(chargesResultSet.getDouble("FAMOUNT")));
                 }
             }
         }
@@ -259,6 +298,7 @@ public class SqlBillingService implements BillingService {
     }
 
     private Invoice toInvoice(Connection connection, ResultSet invoicesResultSet) throws SQLException {
+        Int8RangeType range = new Int8RangeType((PGobject)invoicesResultSet.getObject("FPERIOD"));
         return DtoFactory.getInstance().createDto(Invoice.class)
                          .withId(invoicesResultSet.getLong("FID"))
                          .withTotal(invoicesResultSet.getDouble("FTOTAL"))
@@ -268,8 +308,8 @@ public class SqlBillingService implements BillingService {
                          .withPaymentState(invoicesResultSet.getString("FPAYMENT_STATE"))
                          .withMailingDate(invoicesResultSet.getLong("FMAILING_TIME"))
                          .withCreationDate(invoicesResultSet.getLong("FCREATED_TIME"))
-                         .withFromDate(invoicesResultSet.getLong("FFROM_TIME"))
-                         .withUntilDate(invoicesResultSet.getLong("FTILL_TIME"))
+                         .withFromDate(range.getFrom())
+                         .withUntilDate(range.getUntil())
                          .withCharges(getCharges(connection,
                                                  invoicesResultSet.getString("FACCOUNT_ID"),
                                                  invoicesResultSet.getString("FCALC_ID")));

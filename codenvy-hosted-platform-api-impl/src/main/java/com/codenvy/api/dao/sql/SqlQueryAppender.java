@@ -17,6 +17,10 @@
  */
 package com.codenvy.api.dao.sql;
 
+import com.codenvy.api.dao.sql.postgresql.Int8RangeType;
+
+import java.sql.SQLException;
+
 /**
  * @author Sergii Kabashniuk
  */
@@ -42,6 +46,18 @@ public class SqlQueryAppender {
         if (fieldValue != null) {
             appendWhereOrAnd(queryBuilder);
             queryBuilder.append(" ").append(fieldName).append(" IS NULL ");
+        }
+    }
+
+
+    public static void appendContainsRange(StringBuilder queryBuilder, String fieldName, Long from, Long till)
+            throws SQLException {
+        if (from != null && till != null) {
+            appendWhereOrAnd(queryBuilder);
+            queryBuilder.append(" ").append(fieldName).append(" <@ ").append(new Int8RangeType(from,
+                                                                                               till,
+                                                                                               true,
+                                                                                               true));
         }
     }
 

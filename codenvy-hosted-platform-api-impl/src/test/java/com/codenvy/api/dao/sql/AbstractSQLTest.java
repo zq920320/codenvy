@@ -40,7 +40,7 @@ public class AbstractSQLTest {
     public void initSources() throws SQLException {
 
 
-        JdbcConnectionPool h2 = JdbcConnectionPool.create("jdbc:h2:mem:test", "sa", "sa");
+      //  JdbcConnectionPool h2 = JdbcConnectionPool.create("jdbc:h2:mem:test", "sa", "sa");
 
 
         final PGPoolingDataSource postgresql = new PGPoolingDataSource();
@@ -53,9 +53,9 @@ public class AbstractSQLTest {
         postgresql.setPortNumber(5432);
 
         sources = new DataSource[]{
-                h2
+               // h2
                 //,
-                //postgresql
+                postgresql
         };
     }
 

@@ -119,4 +119,18 @@ public interface BillingService {
      * @throws ServerException
      */
     void markInvoiceAsSent(long invoiceId) throws ServerException;
+
+    /**
+     * Add prepaid GB*h
+     *
+     * @param accountId
+     *         id of account for whom will be added prepaid GB*h
+     * @param amount
+     *         prepaid GB*h
+     * @param from
+     *         period when prepaid GB*h is active
+     * @param till
+     *         period when prepaid GB*h is active
+     */
+    void addPrepaid(String accountId, double amount, long from, long till) throws ServerException;
 }
