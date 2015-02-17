@@ -17,8 +17,11 @@
  */
 package com.codenvy.api.dao.sql;
 
+import com.codenvy.api.account.billing.BillingPeriod;
 import com.codenvy.api.account.billing.BillingService;
+import com.codenvy.api.account.billing.MonthlyBillingPeriod;
 import com.codenvy.api.account.billing.PaymentState;
+import com.codenvy.api.account.billing.Period;
 import com.codenvy.api.account.impl.shared.dto.Charge;
 import com.codenvy.api.account.impl.shared.dto.Invoice;
 import com.codenvy.api.account.metrics.MemoryUsedMetric;
@@ -40,7 +43,7 @@ import static org.testng.Assert.assertNotNull;
 
 
 public class SqlBillingServiceTest extends AbstractSQLTest {
-
+    private BillingPeriod billingPeriod = new MonthlyBillingPeriod();
 
     @DataProvider(name = "storage")
     public Object[][] createDS() throws SQLException {
@@ -599,6 +602,41 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
         billingService.addPrepaid("ac-1", 34.34,
                                   sdf.parse("15-01-2015 00:00:00").getTime(),
                                   sdf.parse("15-02-2015 00:00:00").getTime());
+
+    }
+
+
+    @Test(dataProvider = "storage")
+    public void shouldBeAbleToAddPrepaidTimeForInvoicePrepaidAddInTheMidleOfTheMonth(
+            MeterBasedStorage meterBasedStorage,
+            BillingService billingService)
+            throws ParseException, ServerException, NotFoundException {
+        //given
+        meterBasedStorage.createMemoryUsedRecord(
+                new MemoryUsedMetric(1024,
+                                     sdf.parse("10-01-2015 01:00:00").getTime(),
+                                     sdf.parse("11-01-2015 21:00:00").getTime(),
+                                     "usr-123",
+                                     "ac-5",
+                                     "ws-7",
+                                     "run-1254"));
+        billingService.addPrepaid("ac-5", 100,
+                                  sdf.parse("15-01-2015 00:00:00").getTime(),
+                                  sdf.parse("15-05-2015 00:00:00").getTime());
+
+
+        //when
+        Period period = billingPeriod.get(sdf.parse("01-01-2015 00:00:00"));
+        billingService.generateInvoices(period.getStartDate().getTime(), period.getEndDate().getTime());
+        //then
+        Invoice actual = get(billingService.getInvoices("ac-5", -1, 0), 0);
+        assertNotNull(actual);
+        Charge saasCharge = get(actual.getCharges(), 0);
+        assertNotNull(saasCharge);
+        Assert.assertEquals(saasCharge.getFreeAmount(), 10.0);
+        Assert.assertEquals(saasCharge.getPrePaidAmount(), 50.0);
+        Assert.assertEquals(saasCharge.getPaidAmount(), 0.0);
+
 
     }
 }

@@ -99,9 +99,17 @@ public class SqlBillingService implements BillingService {
                     saasCharges.setString(1, ServiceId.SAAS);
                     saasCharges.setDouble(2, saasFreeGbH);
                     saasCharges.setDouble(3, saasFreeGbH);
-                    saasCharges.setDouble(4, saasChargeableGbHPrice);
-                    saasCharges.setString(5, calculationId);
-                    saasCharges.setString(6, calculationId);
+                    saasCharges.setObject(4, range);
+                    saasCharges.setObject(5, range);
+                    saasCharges.setDouble(6, till-from);
+                    saasCharges.setDouble(7, saasFreeGbH);
+                    saasCharges.setObject(8, range);
+                    saasCharges.setObject(9, range);
+                    saasCharges.setDouble(10, till-from);
+                    saasCharges.setDouble(11, saasChargeableGbHPrice);
+                    saasCharges.setString(12, calculationId);
+                    saasCharges.setString(13, calculationId);
+                    saasCharges.setObject(14, range);
 
                     saasCharges.execute();
                 }
