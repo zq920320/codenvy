@@ -47,7 +47,7 @@ public class SQLMeterBasedStorageTest extends  AbstractSQLTest{
         Object[][] result = new Object[sources.length][];
         for (int i = 0; i < sources.length; i++) {
             result[i] = new Object[]{
-                    new SqlMeterBasedStorage(new DataSourceConnectionFactory(sources[i]), billingPeriod)};
+                    new SqlMeterBasedStorage(new DataSourceConnectionFactory(sources[i]))};
         }
         return result;
     }

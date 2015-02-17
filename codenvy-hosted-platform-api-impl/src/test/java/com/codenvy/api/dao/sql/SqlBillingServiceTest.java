@@ -18,7 +18,6 @@
 package com.codenvy.api.dao.sql;
 
 import com.codenvy.api.account.billing.BillingService;
-import com.codenvy.api.account.billing.MonthlyBillingPeriod;
 import com.codenvy.api.account.billing.PaymentState;
 import com.codenvy.api.account.impl.shared.dto.Charge;
 import com.codenvy.api.account.impl.shared.dto.Invoice;
@@ -49,7 +48,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
         Object[][] result = new Object[sources.length][];
         for (int i = 0; i < sources.length; i++) {
             DataSourceConnectionFactory connectionFactory = new DataSourceConnectionFactory(sources[i]);
-            result[i] = new Object[]{new SqlMeterBasedStorage(connectionFactory, new MonthlyBillingPeriod()),
+            result[i] = new Object[]{new SqlMeterBasedStorage(connectionFactory),
                                      new SqlBillingService(connectionFactory, 0.15, 10.0)};
         }
         return result;
@@ -545,7 +544,8 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
 
     }
 
-    @Test(dataProvider = "storage", expectedExceptions = ServerException.class, expectedExceptionsMessageRegExp = "Not able to generate invoices. Result overlaps with existed invoices.")
+    @Test(dataProvider = "storage", expectedExceptions = ServerException.class, expectedExceptionsMessageRegExp =
+            "Not able to generate invoices. Result overlaps with existed invoices.")
     public void shouldFailToCalculateInvoicesTwiceWithOverlappingPeriod(MeterBasedStorage meterBasedStorage,
                                                                         BillingService billingService)
             throws ParseException, ServerException, NotFoundException {
@@ -575,6 +575,30 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
         billingService.generateInvoices(sdf.parse("09-01-2015 00:00:00").getTime(),
                                         sdf.parse("15-02-2015 00:00:00").getTime());
 
+    }
+
+    @Test(dataProvider = "storage")
+    public void shouldBeAbleToAddPrepaidTime(MeterBasedStorage meterBasedStorage,
+                                             BillingService billingService)
+            throws ParseException, ServerException, NotFoundException {
+        //when
+        billingService.addPrepaid("ac-1", 34.34,
+                                  sdf.parse("01-01-2015 00:00:00").getTime(),
+                                  sdf.parse("01-02-2015 00:00:00").getTime());
+    }
+
+    @Test(dataProvider = "storage", expectedExceptions = ServerException.class, expectedExceptionsMessageRegExp =
+            "Unable to add new prepaid time since it overlapping with existed period")
+    public void shouldNoBeAbleToAddPrepaidTimeForIntersectionPeriod(MeterBasedStorage meterBasedStorage,
+                                                                    BillingService billingService)
+            throws ParseException, ServerException, NotFoundException {
+        //when
+        billingService.addPrepaid("ac-1", 34.34,
+                                  sdf.parse("01-01-2015 00:00:00").getTime(),
+                                  sdf.parse("01-02-2015 00:00:00").getTime());
+        billingService.addPrepaid("ac-1", 34.34,
+                                  sdf.parse("15-01-2015 00:00:00").getTime(),
+                                  sdf.parse("15-02-2015 00:00:00").getTime());
 
     }
 }

@@ -238,4 +238,16 @@ public interface SqlDaoQueries {
                            " SET FDURING=? " +
                            " WHERE FID=? ";
 
+
+    String PREPAID_INSERT = "INSERT INTO PREPAID " +
+                           "  (" +
+                           "      FACCOUNT_ID," +
+                           "      FAMOUNT," +
+                           "      FPERIOD," +
+                           "      FADDED" +
+
+                           "  )" +
+                           "    VALUES (?, ?, ?, now());";
+
+
 }

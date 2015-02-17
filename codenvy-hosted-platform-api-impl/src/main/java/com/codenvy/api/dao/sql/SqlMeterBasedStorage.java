@@ -35,7 +35,6 @@ package com.codenvy.api.dao.sql;
  */
 
 import com.codenvy.api.account.billing.BillingPeriod;
-import com.codenvy.api.account.billing.Period;
 import com.codenvy.api.account.metrics.MemoryUsedMetric;
 import com.codenvy.api.account.metrics.MeterBasedStorage;
 import com.codenvy.api.account.metrics.UsageInformer;
@@ -46,8 +45,10 @@ import org.postgresql.util.PGobject;
 
 import javax.inject.Inject;
 import java.sql.*;
-import java.util.*;
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static com.codenvy.api.dao.sql.SqlDaoQueries.*;
 
@@ -58,12 +59,10 @@ public class SqlMeterBasedStorage implements MeterBasedStorage {
 
 
     private final ConnectionFactory connectionFactory;
-    private final BillingPeriod     billingPeriod;
 
     @Inject
-    public SqlMeterBasedStorage(ConnectionFactory connectionFactory, BillingPeriod billingPeriod) {
+    public SqlMeterBasedStorage(ConnectionFactory connectionFactory) {
         this.connectionFactory = connectionFactory;
-        this.billingPeriod = billingPeriod;
     }
 
     @Override
@@ -95,7 +94,7 @@ public class SqlMeterBasedStorage implements MeterBasedStorage {
 
                 } catch (SQLException | ServerException e) {
                     connection.rollback();
-                    if(e.getLocalizedMessage().contains("conflicts with existing key (frun_id, fduring)")){
+                    if (e.getLocalizedMessage().contains("conflicts with existing key (frun_id, fduring)")) {
                         throw new ServerException("Metric with given id and period already exist");
                     }
                     throw new ServerException(e.getLocalizedMessage(), e);
@@ -224,7 +223,6 @@ public class SqlMeterBasedStorage implements MeterBasedStorage {
 
         private long recordId;
 
-        private       Period           currentBillingPeriod;
         private final MemoryUsedMetric metric;
 
         private final ConnectionFactory connectionFactory;
@@ -234,8 +232,6 @@ public class SqlMeterBasedStorage implements MeterBasedStorage {
         private SQLUsageInformer(long recordId, MemoryUsedMetric metric, ConnectionFactory connectionFactory) {
             this.recordId = recordId;
             this.metric = metric;
-            this.currentBillingPeriod =
-                    billingPeriod.get(new Date(metric.getStopTime()));
             this.connectionFactory = connectionFactory;
         }
 
@@ -255,6 +251,7 @@ public class SqlMeterBasedStorage implements MeterBasedStorage {
                         connection.commit();
                     } catch (SQLException e) {
                         connection.rollback();
+                        throw e;
                     }
                 } catch (SQLException e) {
                     throw new ServerException(e.getLocalizedMessage(), e);

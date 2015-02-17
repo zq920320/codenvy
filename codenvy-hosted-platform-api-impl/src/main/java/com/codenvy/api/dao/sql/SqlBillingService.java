@@ -17,12 +17,6 @@
  */
 package com.codenvy.api.dao.sql;
 
-import static com.codenvy.api.dao.sql.SqlDaoQueries.CHARGES_SELECT;
-import static com.codenvy.api.dao.sql.SqlDaoQueries.INVOICES_INSERT;
-import static com.codenvy.api.dao.sql.SqlDaoQueries.INVOICES_MAILING_TIME_UPDATE;
-import static com.codenvy.api.dao.sql.SqlDaoQueries.INVOICES_PAYMENT_STATE_UPDATE;
-import static com.codenvy.api.dao.sql.SqlDaoQueries.MEMORY_CHARGES_INSERT;
-import static com.codenvy.api.dao.sql.SqlDaoQueries.MEMORY_CHARGES_SELECT;
 
 import com.codenvy.api.account.billing.BillingService;
 import com.codenvy.api.account.billing.InvoiceFilter;
@@ -49,6 +43,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
+import static com.codenvy.api.dao.sql.SqlDaoQueries.CHARGES_SELECT;
+import static com.codenvy.api.dao.sql.SqlDaoQueries.INVOICES_INSERT;
+import static com.codenvy.api.dao.sql.SqlDaoQueries.INVOICES_MAILING_TIME_UPDATE;
+import static com.codenvy.api.dao.sql.SqlDaoQueries.INVOICES_PAYMENT_STATE_UPDATE;
+import static com.codenvy.api.dao.sql.SqlDaoQueries.MEMORY_CHARGES_INSERT;
+import static com.codenvy.api.dao.sql.SqlDaoQueries.MEMORY_CHARGES_SELECT;
+import static com.codenvy.api.dao.sql.SqlDaoQueries.PREPAID_INSERT;
+
 
 /**
  * Database driving BillingService.
@@ -145,6 +148,7 @@ public class SqlBillingService implements BillingService {
                 connection.commit();
             } catch (SQLException e) {
                 connection.rollback();
+                throw e;
             }
         } catch (SQLException e) {
             throw new ServerException(e.getLocalizedMessage(), e);
@@ -240,6 +244,33 @@ public class SqlBillingService implements BillingService {
                 connection.commit();
             } catch (SQLException e) {
                 connection.rollback();
+                throw e;
+            }
+        } catch (SQLException e) {
+            throw new ServerException(e.getLocalizedMessage(), e);
+        }
+    }
+
+    @Override
+    public void addPrepaid(String accountId, double amount, long from, long till) throws ServerException {
+        try (Connection connection = connectionFactory.getConnection()) {
+            try {
+                connection.setAutoCommit(false);
+                Int8RangeType range = new Int8RangeType(from, till, true, true);
+                try (PreparedStatement statement = connection.prepareStatement(PREPAID_INSERT)) {
+                    statement.setString(1, accountId);
+                    statement.setDouble(2, amount);
+                    statement.setObject(3, range);
+                    statement.execute();
+                }
+                connection.commit();
+            } catch (SQLException e) {
+                connection.rollback();
+                if (e.getLocalizedMessage().contains("conflicts with existing key (faccount_id, fperiod)")) {
+                    throw new ServerException(
+                            "Unable to add new prepaid time since it overlapping with existed period");
+                }
+                throw e;
             }
         } catch (SQLException e) {
             throw new ServerException(e.getLocalizedMessage(), e);
