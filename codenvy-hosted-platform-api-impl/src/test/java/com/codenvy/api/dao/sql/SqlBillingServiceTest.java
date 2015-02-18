@@ -604,10 +604,8 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                   sdf.parse("15-02-2015 00:00:00").getTime());
 
     }
-
-
     @Test(dataProvider = "storage")
-    public void shouldBeAbleToAddPrepaidTimeForInvoicePrepaidAddInTheMidleOfTheMonth(
+    public void shouldBeAbleToCalculateInvoiceWithoutPrepaid(
             MeterBasedStorage meterBasedStorage,
             BillingService billingService)
             throws ParseException, ServerException, NotFoundException {
@@ -615,7 +613,39 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
         meterBasedStorage.createMemoryUsedRecord(
                 new MemoryUsedMetric(1024,
                                      sdf.parse("10-01-2015 01:00:00").getTime(),
-                                     sdf.parse("11-01-2015 21:00:00").getTime(),
+                                     sdf.parse("21-01-2015 21:00:00").getTime(),
+                                     "usr-123",
+                                     "ac-5",
+                                     "ws-7",
+                                     "run-1254"));
+
+
+
+        //when
+        Period period = billingPeriod.get(sdf.parse("01-01-2015 00:00:00"));
+        billingService.generateInvoices(period.getStartDate().getTime(), period.getEndDate().getTime());
+        //then
+        Invoice actual = get(billingService.getInvoices("ac-5", -1, 0), 0);
+        assertNotNull(actual);
+        Charge saasCharge = get(actual.getCharges(), 0);
+        assertNotNull(saasCharge);
+        Assert.assertEquals(saasCharge.getFreeAmount(), 10.0);
+        Assert.assertEquals(saasCharge.getPrePaidAmount(),0.0);
+        Assert.assertEquals(saasCharge.getPaidAmount(), 274.0);
+
+
+    }
+
+    @Test(dataProvider = "storage")
+    public void shouldBeAbleToAddPrepaidTimeForInvoicePrepaidAddFromTheMiddleOfTheMonth(
+            MeterBasedStorage meterBasedStorage,
+            BillingService billingService)
+            throws ParseException, ServerException, NotFoundException {
+        //given
+        meterBasedStorage.createMemoryUsedRecord(
+                new MemoryUsedMetric(1024,
+                                     sdf.parse("10-01-2015 01:00:00").getTime(),
+                                     sdf.parse("21-01-2015 21:00:00").getTime(),
                                      "usr-123",
                                      "ac-5",
                                      "ws-7",
@@ -634,9 +664,149 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
         Charge saasCharge = get(actual.getCharges(), 0);
         assertNotNull(saasCharge);
         Assert.assertEquals(saasCharge.getFreeAmount(), 10.0);
-        Assert.assertEquals(saasCharge.getPrePaidAmount(), 50.0);
-        Assert.assertEquals(saasCharge.getPaidAmount(), 0.0);
+        Assert.assertEquals(saasCharge.getPrePaidAmount(), 54.83871);
+        Assert.assertEquals(saasCharge.getPaidAmount(), 219.16129);
 
 
     }
+
+    @Test(dataProvider = "storage")
+    public void shouldBeAbleToAddPrepaidTimeForInvoicePrepaidAddTillTheMiddleOfTheMonth(
+            MeterBasedStorage meterBasedStorage,
+            BillingService billingService)
+            throws ParseException, ServerException, NotFoundException {
+        //given
+        meterBasedStorage.createMemoryUsedRecord(
+                new MemoryUsedMetric(1024,
+                                     sdf.parse("10-01-2015 01:00:00").getTime(),
+                                     sdf.parse("21-01-2015 21:00:00").getTime(),
+                                     "usr-123",
+                                     "ac-5",
+                                     "ws-7",
+                                     "run-1254"));
+        billingService.addPrepaid("ac-5", 100,
+                                  sdf.parse("15-12-2014 00:00:00").getTime(),
+                                  sdf.parse("15-01-2015 00:00:00").getTime());
+
+
+        //when
+        Period period = billingPeriod.get(sdf.parse("01-01-2015 00:00:00"));
+        billingService.generateInvoices(period.getStartDate().getTime(), period.getEndDate().getTime());
+        //then
+        Invoice actual = get(billingService.getInvoices("ac-5", -1, 0), 0);
+        assertNotNull(actual);
+        Charge saasCharge = get(actual.getCharges(), 0);
+        assertNotNull(saasCharge);
+        Assert.assertEquals(saasCharge.getFreeAmount(), 10.0);
+        Assert.assertEquals(saasCharge.getPrePaidAmount(), 45,16129);
+        Assert.assertEquals(saasCharge.getPaidAmount(), 228,83871);
+
+
+    }
+
+    @Test(dataProvider = "storage")
+    public void shouldBeAbleToAddPrepaidTimeForInvoicePrepaidAddForTheFullMonth(
+            MeterBasedStorage meterBasedStorage,
+            BillingService billingService)
+            throws ParseException, ServerException, NotFoundException {
+        //given
+        meterBasedStorage.createMemoryUsedRecord(
+                new MemoryUsedMetric(1024,
+                                     sdf.parse("10-01-2015 01:00:00").getTime(),
+                                     sdf.parse("21-01-2015 21:00:00").getTime(),
+                                     "usr-123",
+                                     "ac-5",
+                                     "ws-7",
+                                     "run-1254"));
+        billingService.addPrepaid("ac-5", 100,
+                                  sdf.parse("15-12-2014 00:00:00").getTime(),
+                                  sdf.parse("15-05-2015 00:00:00").getTime());
+
+
+        //when
+        Period period = billingPeriod.get(sdf.parse("01-01-2015 00:00:00"));
+        billingService.generateInvoices(period.getStartDate().getTime(), period.getEndDate().getTime());
+        //then
+        Invoice actual = get(billingService.getInvoices("ac-5", -1, 0), 0);
+        assertNotNull(actual);
+        Charge saasCharge = get(actual.getCharges(), 0);
+        assertNotNull(saasCharge);
+        Assert.assertEquals(saasCharge.getFreeAmount(), 10.0);
+        Assert.assertEquals(saasCharge.getPrePaidAmount(), 100.0);
+        Assert.assertEquals(saasCharge.getPaidAmount(), 174.0);
+
+    }
+
+    @Test(dataProvider = "storage")
+    public void shouldBeAbleToAddPrepaidTimeForInvoiceFromTwoClosePeriods(
+            MeterBasedStorage meterBasedStorage,
+            BillingService billingService)
+            throws ParseException, ServerException, NotFoundException {
+        //given
+        meterBasedStorage.createMemoryUsedRecord(
+                new MemoryUsedMetric(1024,
+                                     sdf.parse("10-01-2015 01:00:00").getTime(),
+                                     sdf.parse("21-01-2015 21:00:00").getTime(),
+                                     "usr-123",
+                                     "ac-5",
+                                     "ws-7",
+                                     "run-1254"));
+        billingService.addPrepaid("ac-5", 100,
+                                  sdf.parse("15-12-2014 00:00:00").getTime(),
+                                  sdf.parse("15-01-2015 00:00:00").getTime()-1);
+        billingService.addPrepaid("ac-5", 100,
+                                  sdf.parse("15-01-2015 00:00:00").getTime(),
+                                  sdf.parse("15-02-2015 00:00:00").getTime());
+
+
+        //when
+        Period period = billingPeriod.get(sdf.parse("01-01-2015 00:00:00"));
+        billingService.generateInvoices(period.getStartDate().getTime(), period.getEndDate().getTime());
+        //then
+        Invoice actual = get(billingService.getInvoices("ac-5", -1, 0), 0);
+        assertNotNull(actual);
+        Charge saasCharge = get(actual.getCharges(), 0);
+        assertNotNull(saasCharge);
+        Assert.assertEquals(saasCharge.getFreeAmount(), 10.0);
+        Assert.assertEquals(saasCharge.getPrePaidAmount(), 100.0);
+        Assert.assertEquals(saasCharge.getPaidAmount(), 174.0);
+
+    }
+
+    @Test(dataProvider = "storage")
+    public void shouldBeAbleToAddPrepaidTimeForInvoiceFromTwoSeparatePeriods(
+            MeterBasedStorage meterBasedStorage,
+            BillingService billingService)
+            throws ParseException, ServerException, NotFoundException {
+        //given
+        meterBasedStorage.createMemoryUsedRecord(
+                new MemoryUsedMetric(1024,
+                                     sdf.parse("10-01-2015 01:00:00").getTime(),
+                                     sdf.parse("21-01-2015 21:00:00").getTime(),
+                                     "usr-123",
+                                     "ac-5",
+                                     "ws-7",
+                                     "run-1254"));
+        billingService.addPrepaid("ac-5", 100,
+                                  sdf.parse("15-12-2014 00:00:00").getTime(),
+                                  sdf.parse("15-01-2015 00:00:00").getTime()-1);
+        billingService.addPrepaid("ac-5", 100,
+                                  sdf.parse("20-01-2015 00:00:00").getTime(),
+                                  sdf.parse("15-02-2015 00:00:00").getTime());
+
+
+        //when
+        Period period = billingPeriod.get(sdf.parse("01-01-2015 00:00:00"));
+        billingService.generateInvoices(period.getStartDate().getTime(), period.getEndDate().getTime());
+        //then
+        Invoice actual = get(billingService.getInvoices("ac-5", -1, 0), 0);
+        assertNotNull(actual);
+        Charge saasCharge = get(actual.getCharges(), 0);
+        assertNotNull(saasCharge);
+        Assert.assertEquals(saasCharge.getFreeAmount(), 10.0);
+        Assert.assertEquals(saasCharge.getPrePaidAmount(), 83.870968);
+        Assert.assertEquals(saasCharge.getPaidAmount(), 190.129032);
+
+    }
+
 }

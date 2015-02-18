@@ -76,9 +76,7 @@ public interface SqlDaoQueries {
             " FWORKSPACE_ID ";
 
     String PREPAID_AMOUNT =
-            //" SUM(ROUND(FAMOUNT * ( upper(FDURING * ?)-lower(FDURING * ?)-1 )/" + MBMSEC_TO_GBH_MULTIPLIER + ".0 ,
-            // 6)) ";
-            " P.FAMOUNT*(upper(P.FPERIOD * ?)-lower(P.FPERIOD * ?)-1)/? ";
+            " SUM(P.FAMOUNT*(upper(P.FPERIOD * ?)-lower(P.FPERIOD * ?))/?)";
 
 
     String CHARGES_MEMORY_INSERT =
@@ -96,22 +94,29 @@ public interface SqlDaoQueries {
             "   M.FACCOUNT_ID AS FACCOUNT_ID, " +
             "   ? AS FSERVICE_ID, " +
             "   LEAST(SUM(M.FAMOUNT), ?) AS FFREE_AMOUNT, " +
-            "   LEAST(GREATEST(SUM(M.FAMOUNT) -?, 0), " + PREPAID_AMOUNT + ") AS FPREPAID_AMOUNT, " +
-            "   GREATEST(SUM(M.FAMOUNT) - ? - "+PREPAID_AMOUNT+", 0) AS FPAID_AMOUNT, " +
+            "   LEAST(GREATEST(SUM(M.FAMOUNT) -?, 0), CASE WHEN P.FAMOUNT IS NULL THEN 0.0 ELSE P.FAMOUNT END) AS FPREPAID_AMOUNT, " +
+            "   GREATEST(SUM(M.FAMOUNT) - ? -  CASE WHEN P.FAMOUNT IS NULL THEN 0.0 ELSE P.FAMOUNT END , 0) AS FPAID_AMOUNT, " +
             "   ? AS FPAID_PRICE, " +
             "   ? as FCALC_ID " +
             "FROM " +
             "  MEMORY_CHARGES AS M " +
-            "  LEFT JOIN PREPAID AS P ON M.FACCOUNT_ID=P.FACCOUNT_ID " +
+            "  LEFT JOIN ( " +
+            "      SELECT " +
+            "        " + PREPAID_AMOUNT + " AS FAMOUNT, " +
+            "        FACCOUNT_ID " +
+            "      FROM  " +
+            "        PREPAID AS P" +
+            "      WHERE  " +
+            "        P.FPERIOD && ? " +
+            "      GROUP BY P.FACCOUNT_ID " +
+            "             ) " +
+            "       AS P  " +
+            "       ON M.FACCOUNT_ID = P.FACCOUNT_ID " +
             "WHERE " +
             "  M.FCALC_ID = ? " +
-            "  AND P.FPERIOD && ? " +
             "GROUP BY " +
-            "  M.FACCOUNT_ID, "+
-            "  P.FPERIOD,  "+
-            "  P.FAMOUNT "
-
-            ;
+            "  M.FACCOUNT_ID, " +
+            "  P.FAMOUNT ";
 
 
     /**
