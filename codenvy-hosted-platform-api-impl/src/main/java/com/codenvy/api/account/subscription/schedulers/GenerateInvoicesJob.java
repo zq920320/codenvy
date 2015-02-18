@@ -21,14 +21,13 @@ import com.codenvy.api.account.billing.BillingPeriod;
 import com.codenvy.api.account.billing.BillingService;
 import com.codenvy.api.account.billing.Period;
 import com.codenvy.api.core.ServerException;
-import com.codenvy.commons.schedule.ScheduleDelay;
+import com.codenvy.commons.schedule.ScheduleCron;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author Sergii Leschenko
@@ -44,18 +43,13 @@ public class GenerateInvoicesJob implements Runnable {
     BillingPeriod billingPeriod;
 
     // 0sec 0min 07hour 1st day of every month
-//    @ScheduleCron(cron = "30 * * * ? ?")
-    @ScheduleDelay(initialDelay = 10,
-                   delay = 30,
-                   unit = TimeUnit.SECONDS)
+    @ScheduleCron(cron = "30 * * * ? ?")
     @Override
     public void run() {
         final Period current = billingPeriod.getCurrent();
 
         try {
-//          //TODO Uncomment after testing
-//          billingService.generateInvoices(current.getStartDate().getTime(), current.getEndDate().getTime());
-            billingService.generateInvoices(current.getStartDate().getTime(), System.currentTimeMillis());
+            billingService.generateInvoices(current.getStartDate().getTime(), current.getEndDate().getTime());
         } catch (ServerException e) {
             LOG.error("Can't generate invoices", e);
         }

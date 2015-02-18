@@ -52,7 +52,7 @@ import java.util.concurrent.TimeUnit;
 public class MailScheduler {
     private static final Logger LOG = LoggerFactory.getLogger(MailScheduler.class);
 
-    private static final int INVOICES_LIMIT = 50;
+    private static final int INVOICES_LIMIT = 50; //TODO mb make it configurable
 
     private final SubscriptionMailSender subscriptionMailSender;
     private final BillingService         billingService;
