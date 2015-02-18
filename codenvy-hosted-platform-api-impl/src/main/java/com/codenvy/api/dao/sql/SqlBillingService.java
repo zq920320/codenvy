@@ -94,7 +94,7 @@ public class SqlBillingService implements BillingService {
                     memoryChargesStatement.setObject(4, range);
                     memoryChargesStatement.execute();
                 }
-                connection.commit();
+
                 try (PreparedStatement saasCharges = connection.prepareStatement(SqlDaoQueries.CHARGES_MEMORY_INSERT)) {
                     saasCharges.setString(1, ServiceId.SAAS);
                     saasCharges.setDouble(2, saasFreeGbH);
