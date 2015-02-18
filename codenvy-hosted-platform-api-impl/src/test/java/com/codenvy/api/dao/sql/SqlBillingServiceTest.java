@@ -303,21 +303,21 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
         //when
         billingService.generateInvoices(sdf.parse("01-01-2015 00:00:00").getTime(),
                                         sdf.parse("01-02-2015 00:00:00").getTime());
-        Invoice invoice = get(billingService.getInvoices(PaymentState.WAITING_EXECUTOR, -1, 0), 1);
+        Invoice invoice = get(billingService.getInvoices(PaymentState.WAITING_EXECUTOR, 50, 0), 1);
         billingService.setPaymentState(invoice.getId(), PaymentState.PAYMENT_FAIL, "cc111");
 
         //then
         assertEquals(invoice.getPaymentDate().longValue(), 0L);
         assertEquals(billingService.getInvoices(PaymentState.WAITING_EXECUTOR, -1, 0).size(), 1);
         assertEquals(billingService.getInvoices(PaymentState.EXECUTING, -1, 0).size(), 0);
-        List<Invoice> invoices = billingService.getInvoices(PaymentState.PAYMENT_FAIL, -1, 0);
+        List<Invoice> invoices = billingService.getInvoices(PaymentState.PAYMENT_FAIL, 50, 0);
         assertEquals(invoices.size(), 1);
 
         Invoice invoice1 = get(invoices, 0);
         Assert.assertTrue(invoice1.getPaymentDate() > 0);
         assertEquals(invoice1.getCreditCardId(), "cc111");
-        assertEquals(get(billingService.getInvoices(PaymentState.PAYMENT_FAIL, -1, 0), 0).getId(), invoice.getId());
-        assertEquals(billingService.getInvoices(PaymentState.CREDIT_CARD_MISSING, -1, 0).size(), 0);
+        assertEquals(get(billingService.getInvoices(PaymentState.PAYMENT_FAIL, 50, 0), 0).getId(), invoice.getId());
+        assertEquals(billingService.getInvoices(PaymentState.CREDIT_CARD_MISSING, 50, 0).size(), 0);
         assertEquals(billingService.getInvoices(PaymentState.PAID_SUCCESSFULLY, -1, 0).size(), 0);
 
     }
@@ -350,7 +350,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
         //when
         billingService.generateInvoices(sdf.parse("01-01-2015 00:00:00").getTime(),
                                         sdf.parse("01-02-2015 00:00:00").getTime());
-        Long id = get(billingService.getInvoices(PaymentState.WAITING_EXECUTOR, -1, 0), 1).getId();
+        Long id = get(billingService.getInvoices(PaymentState.WAITING_EXECUTOR, 50, 0), 1).getId();
         billingService.setPaymentState(id, PaymentState.PAYMENT_FAIL, null);
 
         //then
@@ -387,7 +387,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
         //when
         billingService.generateInvoices(sdf.parse("01-01-2015 00:00:00").getTime(),
                                         sdf.parse("01-02-2015 00:00:00").getTime());
-        Long id = get(billingService.getInvoices(PaymentState.WAITING_EXECUTOR, -1, 0), 1).getId();
+        Long id = get(billingService.getInvoices(PaymentState.WAITING_EXECUTOR, 50, 0), 1).getId();
         billingService.setPaymentState(id, PaymentState.PAID_SUCCESSFULLY, null);
 
         //then
@@ -424,7 +424,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
         //when
         billingService.generateInvoices(sdf.parse("01-01-2015 00:00:00").getTime(),
                                         sdf.parse("01-02-2015 00:00:00").getTime());
-        Long id = get(billingService.getInvoices(PaymentState.WAITING_EXECUTOR, -1, 0), 1).getId();
+        Long id = get(billingService.getInvoices(PaymentState.WAITING_EXECUTOR, 50, 0), 1).getId();
         billingService.setPaymentState(id, PaymentState.CREDIT_CARD_MISSING, null);
 
         //then
@@ -540,7 +540,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
         //when
         billingService.generateInvoices(sdf.parse("01-01-2015 00:00:00").getTime(),
                                         sdf.parse("01-02-2015 00:00:00").getTime());
-        Invoice expected = get(billingService.getInvoices(PaymentState.WAITING_EXECUTOR, -1, 0), 1);
+        Invoice expected = get(billingService.getInvoices(PaymentState.WAITING_EXECUTOR, 50, 0), 1);
         Invoice actual = billingService.getInvoice(expected.getId());
         assertEquals(actual, expected);
 

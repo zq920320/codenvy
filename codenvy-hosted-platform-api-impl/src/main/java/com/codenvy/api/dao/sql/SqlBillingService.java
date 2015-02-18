@@ -105,7 +105,7 @@ public class SqlBillingService implements BillingService {
 
                     saasCharges.setObject(7, range);
                     saasCharges.setObject(8, range);
-                    saasCharges.setDouble(9, till-from);
+                    saasCharges.setDouble(9, till - from);
                     saasCharges.setObject(10, range);
                     saasCharges.setString(11, calculationId);
 
@@ -175,9 +175,12 @@ public class SqlBillingService implements BillingService {
             SqlQueryAppender.appendIsNull(invoiceSelect, "FMAILING_TIME", filter.getIsMailNotSend());
             SqlQueryAppender.appendContainsRange(invoiceSelect, "FPERIOD", filter.getFromDate(),
                                                  filter.getUntilDate());
+
+            invoiceSelect.append(" ORDER BY FACCOUNT_ID, FCREATED_TIME DESC ");
+
             SqlQueryAppender.appendLimit(invoiceSelect, filter.getMaxItems());
             SqlQueryAppender.appendOffset(invoiceSelect, filter.getSkipCount());
-            invoiceSelect.append(" ORDER BY FACCOUNT_ID, FCREATED_TIME DESC");
+
 
             try (PreparedStatement statement = connection.prepareStatement(invoiceSelect.toString())) {
 
