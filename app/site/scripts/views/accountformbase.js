@@ -30,7 +30,9 @@ define(["jquery","models/account","views/form","validation"],
         jQuery.validator.addMethod("checkEmail", function(value) {
             return Account.isValidEmail(value);
         });
-
+        jQuery.validator.addMethod("isValidPassword", function(value) {
+            return Account.isValidPassword(value);
+        });
         var AccountFormBase = Form.extend({
 
             settings : {
@@ -39,7 +41,8 @@ define(["jquery","models/account","views/form","validation"],
                 noPasswordErrorMessage : "Please provide your password",
                 noConfirmPasswordErrorMessage : "Please type your new password again. Both passwords must match",
                 invalidEmailErrorMessage : "Emails with '+' and '/' are not allowed",
-                invalidDomainNameErrorMessage : "Your workspace name should start with a Latin letter or a digit, and must only contain Latin letters, digits, underscores, dots or dashes. You are allowed to use from 3 to 20 characters in a workspace name"
+                invalidDomainNameErrorMessage : "Your workspace name should start with a Latin letter or a digit, and must only contain Latin letters, digits, underscores, dots or dashes. You are allowed to use from 3 to 20 characters in a workspace name",
+                notSecuredPassword : "Use at least 8 characters. Password should contain both letters and digits"
             },
 
             __validationRules : function(){
@@ -66,7 +69,8 @@ define(["jquery","models/account","views/form","validation"],
                         checkEmail : this.settings.invalidEmailErrorMessage
                     },
                     password: {
-                        required: this.settings.noPasswordErrorMessage
+                        required: this.settings.noPasswordErrorMessage,
+                        isValidPassword:this.settings.notSecuredPassword
                     },
                     password1: {
                         required: this.settings.noConfirmPasswordErrorMessage,

@@ -220,13 +220,18 @@ body,h1,h2,h3,h4,h5,h6,a{
 .signup-page input[type="submit"]:hover{
 	background:#ED592B;
 }
-.signup-page ul li a{
+.signup-page li p a{
+	margin: 0px;
+	font-size: 14px;
+	line-height: 24px;
+	font-weight: 300;
+	color: #BAC8DA;
+}
+.signup-page li a{
 	display:inline-block;
-	margin:0 5px;
 	color:#fff;
 }
 .signup-page ul li a:hover{
-	color:#fff;
 	color: #F37943;
 }
 .signup-page ul li a img{
@@ -239,10 +244,6 @@ body,h1,h2,h3,h4,h5,h6,a{
 	font-weight:300;
 	padding:0 10px;
 	color:#BAC8DA;
-}
-.signup-page p a{
-	color:#BAC8DA;
-	margin:0 3px;
 }
 .signup-page p a:hover{
 	color:#fff;

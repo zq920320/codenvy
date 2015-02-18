@@ -392,6 +392,11 @@
             isValidEmail: function(email) {
                 return (/^[^\+\/]+$/).test(email);
             },
+            //Password must contain at least one letter, at least one number, and be longer than 8 charaters.
+            isValidPassword: function(value) {
+                return (/^(?=.*[0-9]+.*)(?=.*[a-zA-Z]+.*)[0-9a-zA-Z]{8,}$/).test(value);
+            },
+            
             // redirect to login page if user has 'logged_in' cookie
             redirectIfUserHasLoginCookie: function() {
                 if ($.cookie('logged_in')) {
