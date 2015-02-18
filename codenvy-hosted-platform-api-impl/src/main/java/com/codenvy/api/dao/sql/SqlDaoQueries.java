@@ -33,9 +33,8 @@ public interface SqlDaoQueries {
     long MBMSEC_TO_GBH_MULTIPLIER = TimeUnit.HOURS.toMillis(1) * 1024;
 
     String GBH_SUM =
-            //" SUM(ROUND(FAMOUNT * (LEAST(?, FSTOP_TIME) - GREATEST(?, FSTART_TIME))/" + MBMSEC_TO_GBH_MULTIPLIER +
-            // " ,6)) ";
             " SUM(ROUND(FAMOUNT * ( upper(FDURING * ?)-lower(FDURING * ?)-1 )/" + MBMSEC_TO_GBH_MULTIPLIER + ".0 ,6)) ";
+
 
     String TOTAL_SUM = "ROUND(SUM(ROUND(FPAID_AMOUNT,2)*FPAID_PRICE),2)";
 
@@ -76,6 +75,9 @@ public interface SqlDaoQueries {
             " FACCOUNT_ID, " +
             " FWORKSPACE_ID ";
 
+    String PREPAID_AMOUNT =
+            " SUM(P.FAMOUNT*(upper(P.FPERIOD * ?)-lower(P.FPERIOD * ?))/?)";
+
 
     String CHARGES_MEMORY_INSERT =
             "INSERT INTO " +
@@ -89,19 +91,32 @@ public interface SqlDaoQueries {
             "                   FCALC_ID " +
             "                  ) " +
             "SELECT " +
-            "   FACCOUNT_ID AS FACCOUNT_ID, " +
+            "   M.FACCOUNT_ID AS FACCOUNT_ID, " +
             "   ? AS FSERVICE_ID, " +
-            "   LEAST(SUM(FAMOUNT), ?) AS FFREE_AMOUNT, " +
-            "   0 AS FPREPAID_AMOUNT, " +
-            "   GREATEST(SUM(FAMOUNT) -?, 0) AS FPREPAID_AMOUNT, " +
+            "   LEAST(SUM(M.FAMOUNT), ?) AS FFREE_AMOUNT, " +
+            "   LEAST(GREATEST(SUM(M.FAMOUNT) -?, 0), CASE WHEN P.FAMOUNT IS NULL THEN 0.0 ELSE P.FAMOUNT END) AS FPREPAID_AMOUNT, " +
+            "   GREATEST(SUM(M.FAMOUNT) - ? -  CASE WHEN P.FAMOUNT IS NULL THEN 0.0 ELSE P.FAMOUNT END , 0) AS FPAID_AMOUNT, " +
             "   ? AS FPAID_PRICE, " +
             "   ? as FCALC_ID " +
             "FROM " +
-            "  MEMORY_CHARGES " +
+            "  MEMORY_CHARGES AS M " +
+            "  LEFT JOIN ( " +
+            "      SELECT " +
+            "        " + PREPAID_AMOUNT + " AS FAMOUNT, " +
+            "        FACCOUNT_ID " +
+            "      FROM  " +
+            "        PREPAID AS P" +
+            "      WHERE  " +
+            "        P.FPERIOD && ? " +
+            "      GROUP BY P.FACCOUNT_ID " +
+            "             ) " +
+            "       AS P  " +
+            "       ON M.FACCOUNT_ID = P.FACCOUNT_ID " +
             "WHERE " +
-            "  FCALC_ID = ? " +
+            "  M.FCALC_ID = ? " +
             "GROUP BY " +
-            "  FACCOUNT_ID ";
+            "  M.FACCOUNT_ID, " +
+            "  P.FAMOUNT ";
 
 
     /**
@@ -240,14 +255,14 @@ public interface SqlDaoQueries {
 
 
     String PREPAID_INSERT = "INSERT INTO PREPAID " +
-                           "  (" +
-                           "      FACCOUNT_ID," +
-                           "      FAMOUNT," +
-                           "      FPERIOD," +
-                           "      FADDED" +
+                            "  (" +
+                            "      FACCOUNT_ID," +
+                            "      FAMOUNT," +
+                            "      FPERIOD," +
+                            "      FADDED" +
 
-                           "  )" +
-                           "    VALUES (?, ?, ?, now());";
+                            "  )" +
+                            "    VALUES (?, ?, ?, now());";
 
 
 }

@@ -99,9 +99,15 @@ public class SqlBillingService implements BillingService {
                     saasCharges.setString(1, ServiceId.SAAS);
                     saasCharges.setDouble(2, saasFreeGbH);
                     saasCharges.setDouble(3, saasFreeGbH);
-                    saasCharges.setDouble(4, saasChargeableGbHPrice);
-                    saasCharges.setString(5, calculationId);
+                    saasCharges.setDouble(4, saasFreeGbH);
+                    saasCharges.setDouble(5, saasChargeableGbHPrice);
                     saasCharges.setString(6, calculationId);
+
+                    saasCharges.setObject(7, range);
+                    saasCharges.setObject(8, range);
+                    saasCharges.setDouble(9, till - from);
+                    saasCharges.setObject(10, range);
+                    saasCharges.setString(11, calculationId);
 
                     saasCharges.execute();
                 }
@@ -169,9 +175,12 @@ public class SqlBillingService implements BillingService {
             SqlQueryAppender.appendIsNull(invoiceSelect, "FMAILING_TIME", filter.getIsMailNotSend());
             SqlQueryAppender.appendContainsRange(invoiceSelect, "FPERIOD", filter.getFromDate(),
                                                  filter.getUntilDate());
+
+            invoiceSelect.append(" ORDER BY FACCOUNT_ID, FCREATED_TIME DESC ");
+
             SqlQueryAppender.appendLimit(invoiceSelect, filter.getMaxItems());
             SqlQueryAppender.appendOffset(invoiceSelect, filter.getSkipCount());
-            invoiceSelect.append(" ORDER BY FACCOUNT_ID, FCREATED_TIME DESC");
+
 
             try (PreparedStatement statement = connection.prepareStatement(invoiceSelect.toString())) {
 

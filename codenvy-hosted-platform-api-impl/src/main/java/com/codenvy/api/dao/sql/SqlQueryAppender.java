@@ -57,7 +57,7 @@ public class SqlQueryAppender {
             queryBuilder.append(" ").append(fieldName).append(" <@ ").append(new Int8RangeType(from,
                                                                                                till,
                                                                                                true,
-                                                                                               true));
+                                                                                               true)).append(" ");
         }
     }
 
