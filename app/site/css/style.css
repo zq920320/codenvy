@@ -162,15 +162,16 @@ body,h1,h2,h3,h4,h5,h6,a{
 .input-con label.error{
 	position:absolute;
 	top:-70px;
-	left:50%;
+	left:115px;
 	margin-left:-115px;
 	width:100%;
 	height:40px;
 	width:240px;
 	font-size:14px;
-	font-weight:400;
 	border-radius:5px;
-	background:#F47A44;
+	background:#FFFFFF;
+	border: 1px solid #F37943;
+	color: #F37943;
 	font-weight:400;
 	display:inline-block;
 	z-index:999;
@@ -287,7 +288,7 @@ body,h1,h2,h3,h4,h5,h6,a{
 		width:100%;
 		display:block;
 		margin-left:0px;
-		color: red;
+		color: #fff;
 	}
 	.signup-page input[type="submit"]{
 		margin-left:0px;
@@ -354,9 +355,14 @@ body,h1,h2,h3,h4,h5,h6,a{
 }
 
 .error-container {
-margin:7px;
-background-color: #F47A44;    
-border-radius: 5px;
+	margin: 10px 130px;
+	background-color: #F47A44;    
+	border-radius: 5px;
+	font-size:14px;
+	border-radius:5px;
+	background:#FFFFFF;
+	color: #F37943;
+	font-weight:400;
 }
 .light {
 	width: 947px;
@@ -391,6 +397,7 @@ border-radius: 5px;
 }
 .expanded {
 	padding: 10px;
+	border: 1px solid #F37943;	
 }
 .short-line {
 	width: 55px;

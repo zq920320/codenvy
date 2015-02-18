@@ -614,9 +614,16 @@
                             message: xhr.responseText
                         });
                     },
-                    error: function(xhr) {
+                    error: function(response) {
+                        var responseErr;
+                        try{
+                            responseErr = JSON.parse(response.responseText).message;
+                        }catch(e){
+                            responseErr = "Recover passowrd: Something went wrong. Please try again or contact support";
+                        }
+
                         error([
-                            new AccountError(null, JSON.parse(xhr.responseText).message)
+                            new AccountError(null, responseErr)
                         ]);
                     }
                 });
@@ -671,9 +678,16 @@
                             url: "/site/login"
                         });
                     },
-                    error: function(xhr) {
+                    error: function(response) {
+                        var responseErr;
+                        try{
+                            responseErr = JSON.parse(response.responseText).message;
+                        }catch(e){
+                            responseErr = "Setup passowrd: Something went wrong. Please try again or contact support";
+                        }
+
                         error([
-                            new AccountError(null, xhr.responseText)
+                            new AccountError(null, responseErr)
                         ]);
                     }
                 });
@@ -690,9 +704,16 @@
                             url: "/"
                         });
                     },
-                    error: function(xhr) {
+                    error: function(response) {
+                        var responseErr;
+                        try{
+                            responseErr = JSON.parse(response.responseText).message;
+                        }catch(e){
+                            responseErr = "Change passowrd: Something went wrong. Please try again or contact support";
+                        }
+
                         error([
-                            new AccountError(null, xhr.responseText)
+                            new AccountError(null, responseErr)
                         ]);
                     }
                 });

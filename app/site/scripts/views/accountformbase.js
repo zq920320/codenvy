@@ -34,12 +34,12 @@ define(["jquery","models/account","views/form","validation"],
         var AccountFormBase = Form.extend({
 
             settings : {
-                noDomainErrorMessage : "Please specify a workspace name.",
-                noEmailErrorMessage : "Please provide an email address.",
-                noPasswordErrorMessage : "Please provide your account password.",
-                noConfirmPasswordErrorMessage : "Please type your new password again. Both passwords must match.",
+                noDomainErrorMessage : "Please specify a workspace name",
+                noEmailErrorMessage : "Please provide an email address",
+                noPasswordErrorMessage : "Please provide your password",
+                noConfirmPasswordErrorMessage : "Please type your new password again. Both passwords must match",
                 invalidEmailErrorMessage : "Emails with '+' and '/' are not allowed",
-                invalidDomainNameErrorMessage : "Your workspace name should start with a Latin letter or a digit, and must only contain Latin letters, digits, underscores, dots or dashes. You are allowed to use from 3 to 20 characters in a workspace name."
+                invalidDomainNameErrorMessage : "Your workspace name should start with a Latin letter or a digit, and must only contain Latin letters, digits, underscores, dots or dashes. You are allowed to use from 3 to 20 characters in a workspace name"
             },
 
             __validationRules : function(){
@@ -79,6 +79,7 @@ define(["jquery","models/account","views/form","validation"],
                 function refocus(el){
                     el.focus();
                 }
+                /*this.validator.defaultShowErrors();*/
 
                 if(typeof errorMap.email !== 'undefined'){
                     this.trigger("invalid","email",errorMap.email);
@@ -116,31 +117,6 @@ define(["jquery","models/account","views/form","validation"],
                     return;
                 }
 
-                if(typeof errorMap.first_name !== 'undefined'){
-                    this.trigger("invalid","first_name",errorMap.first_name);
-                    refocus(this.$("input[name='first_name']"));
-                    return;
-                }
-                if(typeof errorMap.last_name !== 'undefined'){
-                    this.trigger("invalid","last_name",errorMap.last_name);
-                    refocus(this.$("input[name='last_name']"));
-                    return;
-                }
-                if(typeof errorMap.phone_work !== 'undefined'){
-                    this.trigger("invalid","phone_work",errorMap.phone_work);
-                    refocus(this.$("input[name='phone_work']"));
-                    return;
-                }
-                if(typeof errorMap.company !== 'undefined'){
-                    this.trigger("invalid","company",errorMap.company);
-                    refocus(this.$("input[name='company']"));
-                    return;
-                }
-                if(typeof errorMap.title !== 'undefined'){
-                    this.trigger("invalid","title",errorMap.title);
-                    refocus(this.$("input[name='title']"));
-                    return;
-                }
             },
 
             __restoreForm : function(){

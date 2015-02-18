@@ -8,6 +8,7 @@
 						<div class="col-md-12">
 							<a href="/"><img src="/site/images/logo@3x.png" alt="logo" class="logo" /></a>
 							<h2>Welcome back. Sign in below.</h2>
+							<div class="error-container"></div>
 							<form action="" id="loginForm" class="admin-form" >
 								<ul>
 									<li>
@@ -15,8 +16,8 @@
 											<input class="required" id="emailid" name="email" type="text" placeholder="Email" />
 										</span>
 										<span class="input-con">
-						                    <input name="password" type="password" placeholder="Your Password">
-					                    </span>
+											<input name="password" type="password" placeholder="Your Password">
+										</span>
 										<input type="submit" Value="Login" />
 										<a class="relative oauth-button github" href="#">
 											<img src="/site/images/logo-github-hover@3x.png" alt="logo-github" />
@@ -28,7 +29,6 @@
 										</a>
 									</li>
 								</ul>
-                				<div class="error-container"></div>
 							</form>
 							<p>
 							<a href="{{'site/recover-password.html' | url}}">Reset Your Password</a>
