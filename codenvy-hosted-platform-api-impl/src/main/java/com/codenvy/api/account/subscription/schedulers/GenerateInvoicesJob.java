@@ -43,7 +43,7 @@ public class GenerateInvoicesJob implements Runnable {
     BillingPeriod billingPeriod;
 
     // 0sec 0min 07hour 1st day of every month
-    @ScheduleCron(cron = "30 * * * ? ?")
+    @ScheduleCron(cron = "0 0 7 1 * ?")
     @Override
     public void run() {
         final Period current = billingPeriod.getCurrent();

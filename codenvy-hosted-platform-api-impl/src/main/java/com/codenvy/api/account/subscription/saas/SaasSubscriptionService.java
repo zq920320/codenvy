@@ -71,40 +71,23 @@ public class SaasSubscriptionService extends SubscriptionService {
     @Override
     public void beforeCreateSubscription(Subscription subscription) throws ConflictException, ServerException {
         try {
-            if (!accountDao.getActiveSubscriptions(subscription.getAccountId(), getServiceId()).isEmpty()) {
+            final List<Subscription> activeSubscriptions = accountDao.getActiveSubscriptions(subscription.getAccountId(), getServiceId());
+
+            if (!activeSubscriptions.isEmpty() && activeSubscriptions.size() != 1
+                && !"sas-community".equals(activeSubscriptions.get(0).getPlanId())) {
                 throw new ConflictException(SUBSCRIPTION_LIMIT_EXHAUSTED_MESSAGE);
             }
         } catch (NotFoundException e) {
             LOG.error(e.getLocalizedMessage(), e);
             throw new ServerException(e.getLocalizedMessage());
         }
+
+        //TODO Add checking of credit card
     }
 
     @Override
     public void afterCreateSubscription(Subscription subscription) throws ApiException {
-        unlockAccount(subscription.getAccountId());
-    }
-
-    private void unlockAccount(String accountId) throws NotFoundException, ServerException {
-        final Account account = accountDao.getById(accountId);
-        account.getAttributes().put("codenvy:paid", Boolean.toString(true));
-
-        account.getAttributes()
-               .remove(com.codenvy.api.account.server.Constants.LOCKED_PROPERTY); //TODO Add checking unpaid old subscription
-        try {
-            accountDao.update(account);
-        } catch (NotFoundException | ServerException e) {
-            LOG.error("Error removing lock property into account  {} .", account.getId());
-        }
-
-        for (Workspace ws : workspaceDao.getByAccount(account.getId())) {
-            ws.getAttributes().remove(com.codenvy.api.account.server.Constants.LOCKED_PROPERTY);
-            try {
-                workspaceDao.update(ws);
-            } catch (NotFoundException | ServerException | ConflictException e) {
-                LOG.error("Error removing lock property into workspace  {} .", ws.getId());
-            }
-        }
+        markAsPaidAndUnlockAccount(subscription.getAccountId());
     }
 
     @Override
@@ -142,5 +125,27 @@ public class SaasSubscriptionService extends SubscriptionService {
 
         return DtoFactory.getInstance().createDto(AccountResources.class)
                          .withUsed(result);
+    }
+
+    private void markAsPaidAndUnlockAccount(String accountId) throws NotFoundException, ServerException {
+        final Account account = accountDao.getById(accountId);
+        account.getAttributes().put("codenvy:paid", Boolean.toString(true));
+
+        //TODO Add checking unpaid old subscription
+        account.getAttributes().remove(com.codenvy.api.account.server.Constants.LOCKED_PROPERTY);
+        try {
+            accountDao.update(account);
+        } catch (NotFoundException | ServerException e) {
+            LOG.error("Error removing lock property into account  {} .", account.getId());
+        }
+
+        for (Workspace ws : workspaceDao.getByAccount(account.getId())) {
+            ws.getAttributes().remove(com.codenvy.api.account.server.Constants.LOCKED_PROPERTY);
+            try {
+                workspaceDao.update(ws);
+            } catch (NotFoundException | ServerException | ConflictException e) {
+                LOG.error("Error removing lock property into workspace  {} .", ws.getId());
+            }
+        }
     }
 }
