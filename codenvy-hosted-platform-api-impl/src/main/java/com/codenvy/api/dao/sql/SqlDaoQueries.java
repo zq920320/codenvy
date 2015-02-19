@@ -151,16 +151,22 @@ public interface SqlDaoQueries {
 
 
     /**
+     * Update payment status and credit card of invoices.
+     */
+    String INVOICES_PAYMENT_STATE_AND_CC_UPDATE = "UPDATE   INVOICES " +
+                                           " SET FPAYMENT_STATE=? , FPAYMENT_TIME=NOW(), FCREDIT_CARD=? " +
+                                           " WHERE FID=? ";
+    /**
      * Update payment status of invoices.
      */
     String INVOICES_PAYMENT_STATE_UPDATE = "UPDATE   INVOICES " +
-                                           " SET FPAYMENT_STATE=? , FPAYMENT_TIME=?, FCREDIT_CARD=? " +
+                                           " SET FPAYMENT_STATE=? , FPAYMENT_TIME=NOW() " +
                                            " WHERE FID=? ";
     /**
      * Update mailing time of invoices.
      */
     String INVOICES_MAILING_TIME_UPDATE  = "UPDATE INVOICES " +
-                                           " SET FMAILING_TIME=?" +
+                                           " SET FMAILING_TIME=NOW()" +
                                            " WHERE FID=? ";
 
     /**

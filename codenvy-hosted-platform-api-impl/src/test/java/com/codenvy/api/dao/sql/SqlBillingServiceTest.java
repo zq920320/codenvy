@@ -351,7 +351,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
         billingService.generateInvoices(sdf.parse("01-01-2015 00:00:00").getTime(),
                                         sdf.parse("01-02-2015 00:00:00").getTime());
         Long id = get(billingService.getInvoices(PaymentState.WAITING_EXECUTOR, 50, 0), 1).getId();
-        billingService.setPaymentState(id, PaymentState.PAYMENT_FAIL, null);
+        billingService.setPaymentState(id, PaymentState.PAYMENT_FAIL, "cc-234356");
 
         //then
         List<Invoice> notSendInvoice = billingService.getNotSendInvoices(-1, 0);
@@ -388,7 +388,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
         billingService.generateInvoices(sdf.parse("01-01-2015 00:00:00").getTime(),
                                         sdf.parse("01-02-2015 00:00:00").getTime());
         Long id = get(billingService.getInvoices(PaymentState.WAITING_EXECUTOR, 50, 0), 1).getId();
-        billingService.setPaymentState(id, PaymentState.PAID_SUCCESSFULLY, null);
+        billingService.setPaymentState(id, PaymentState.PAID_SUCCESSFULLY, "cc-445");
 
         //then
         List<Invoice> notSendInvoice = billingService.getNotSendInvoices(-1, 0);
@@ -809,4 +809,59 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
 
     }
 
+
+    @Test(dataProvider = "storage",expectedExceptions = ServerException.class, expectedExceptionsMessageRegExp = "Credit card parameter is missing for states  PAYMENT_FAIL or PAID_SUCCESSFULLY")
+    public void shouldNotAllowToSetPaymentStateSuccessfulWithoutCC(
+            MeterBasedStorage meterBasedStorage,
+            BillingService billingService)
+            throws ParseException, ServerException, NotFoundException {
+        //given
+        billingService.setPaymentState(1, PaymentState.PAID_SUCCESSFULLY, null);
+
+    }
+    @Test(dataProvider = "storage",expectedExceptions = ServerException.class, expectedExceptionsMessageRegExp = "Credit card parameter is missing for states  PAYMENT_FAIL or PAID_SUCCESSFULLY")
+    public void shouldNotAllowToSetPaymentStateSuccessfulWithEmptyCC(
+            MeterBasedStorage meterBasedStorage,
+            BillingService billingService)
+            throws ParseException, ServerException, NotFoundException {
+        //given
+        billingService.setPaymentState(1, PaymentState.PAID_SUCCESSFULLY, "");
+    }
+
+    @Test(dataProvider = "storage",expectedExceptions = ServerException.class, expectedExceptionsMessageRegExp = "Credit card parameter is missing for states  PAYMENT_FAIL or PAID_SUCCESSFULLY")
+    public void shouldNotAllowToSetPaymentStateFailWithoutCC(
+            MeterBasedStorage meterBasedStorage,
+            BillingService billingService)
+            throws ParseException, ServerException, NotFoundException {
+        //given
+        billingService.setPaymentState(1, PaymentState.PAYMENT_FAIL, null);
+
+    }
+
+    @Test(dataProvider = "storage",expectedExceptions = ServerException.class, expectedExceptionsMessageRegExp = "Credit card parameter is missing for states  PAYMENT_FAIL or PAID_SUCCESSFULLY")
+    public void shouldNotAllowToSetPaymentStateFailWithEmptyCC(
+            MeterBasedStorage meterBasedStorage,
+            BillingService billingService)
+            throws ParseException, ServerException, NotFoundException {
+        //given
+        billingService.setPaymentState(1, PaymentState.PAYMENT_FAIL, "");
+    }
+
+    @Test(dataProvider = "storage",expectedExceptions = ServerException.class, expectedExceptionsMessageRegExp = "Credit card parameter should be null for states different when PAYMENT_FAIL or PAID_SUCCESSFULLY")
+    public void shouldNotAllowToSetPaymentStateNotRequiredWithCC(
+            MeterBasedStorage meterBasedStorage,
+            BillingService billingService)
+            throws ParseException, ServerException, NotFoundException {
+        //given
+        billingService.setPaymentState(1, PaymentState.NOT_REQUIRED, "CC");
+    }
+
+    @Test(dataProvider = "storage",expectedExceptions = ServerException.class, expectedExceptionsMessageRegExp = "Credit card parameter should be null for states different when PAYMENT_FAIL or PAID_SUCCESSFULLY")
+    public void shouldNotAllowToSetPaymentStateCCMissingWithCC(
+            MeterBasedStorage meterBasedStorage,
+            BillingService billingService)
+            throws ParseException, ServerException, NotFoundException {
+        //given
+        billingService.setPaymentState(1, PaymentState.CREDIT_CARD_MISSING, "CC");
+    }
 }
