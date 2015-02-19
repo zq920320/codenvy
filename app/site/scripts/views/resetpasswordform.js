@@ -42,7 +42,8 @@ define(["underscore", "views/accountformbase","models/account"],
             __validationRules : function(){
                 return {
                     password: {
-                        required : true
+                        required : true,
+                        isValidPassword : true
                     },
                     password1: {
                         required: true,

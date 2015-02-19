@@ -22,19 +22,13 @@ define(["jquery","config",
         "views/forgotpasswordform",
         "views/resetpasswordform",
         "views/errorreport",
-        "views/successreport",
-        "views/selectdomain",
         "views/ideloader",
-        "views/contactform",
-        "views/setprofilepasswordform",
-        "views/setprofileuserform",
         "views/inviteorganization",
         "views/errorresponse",
         "views/ws_createform",
         "views/create_ws",
         "views/join_ws",
         "views/adminform",
-        "views/paymentform",
         "views/create_ws_add_member"
         ],
 
@@ -44,19 +38,13 @@ define(["jquery","config",
         ForgotPasswordForm,
         ResetPasswordForm,
         ErrorReport,
-        SuccessReport,
-        SelectDomain,
         IDELoader,
-        ContactForm,
-        SetProfilePassword,
-        SetProfileUser,
         InviteOrganization,
         ErrorResponse,
         WSCreateForm,
         CreatingWorkspace,
         JoiningWorkspace,
         AdminForm,
-        PaymentForm,
         CreateWsAdd_Member){
 
         function modernize(){
@@ -85,38 +73,14 @@ define(["jquery","config",
                         forgotPasswordForm = $(".forgotpassword-form"),
                         resetPasswordForm = $(".resetpassword-form"),
                         errorContainer = $(".error-container"),
-                        domainSelector = $(".select-domain"),
                         loader = $(".wait-for-tenant"),
-                        contactForm = $(".contact-form"),
-                        setProfilePassword = $(".change-password-form"),
-                        setProfileUserForm = $(".cloud-ide-profile"),
                         inviteOrganization = $(".organization"),
                         errorResponse = $(".ErrorIcon"),
                         wsCreateForm = $(".create-form"),
                         creatingWorkspace = $(".creating-ws"),
                         joiningWorkspace = $(".invite"),
                         adminForm = $(".admin-form"),
-                        paymentForm = $('.codenvy-payment-form'),
                         creatWsAddMember = $(".create-ws-add-memeber");
-
-                    if(paymentForm.length !== 0){
-                        (function(){
-                            var form = PaymentForm.get(paymentForm),
-                            errorReport = ErrorReport.get(errorContainer),
-                            successReport = SuccessReport.get(errorContainer);
-                            form.on("success", function(message){
-                                successReport.show(message);
-                            });
-                            form.on("submitting", function(){
-                                errorReport.hide();
-                            });
-                            form.on("invalid", function(field,message){
-                                form.__restoreForm();
-                                errorReport.show(message);
-                            });
-                            form.selectWorkspace();
-                        }());
-                    }
 
                     if(creatWsAddMember.length !== 0){
                         (function(){
@@ -280,10 +244,6 @@ define(["jquery","config",
                         }());
                     }
 
-                    if(domainSelector.length !== 0){
-                        new SelectDomain.get(domainSelector);
-                    }
-
                     if(loader.length !== 0){
 
                             var ideloader = new IDELoader.IDELoader(),
@@ -297,72 +257,6 @@ define(["jquery","config",
                                 errorReport.show(message);
                             });
                         
-                    }
-
-                    if(contactForm.length !== 0){
-                        (function(){
-                            var form = ContactForm.get(contactForm),
-                                errorReport = ErrorReport.get(errorContainer);
-
-                            form.on("submitting", function(){
-                                errorReport.hide();
-                            });
-
-                            form.on("invalid", function(field,message){
-                                errorReport.show(message);
-                            });
-
-                        }());
-                    }
-
-                    //setProfileUser
-                    if(setProfileUserForm.length !== 0){
-                        (function(){
-
-                            var form = SetProfileUser.get(setProfileUserForm),
-                                errorReport = ErrorReport.get(errorContainer),
-                                successReport = SuccessReport.get(errorContainer);
-
-                            form.getUserProfileInfo(function(field,message){
-                                errorReport.show(message);
-                                });
-                            form.on("submitting", function(){
-                                errorReport.hide();
-                            });
-
-                            form.on("success", function(){
-                                successReport.show(form.settings.successUpdatingProfile);
-
-                            });
-
-                            form.on("invalid", function(field,message){
-                                errorReport.show(message);
-
-                            });
-
-                        }());
-                    }
-
-                    if(setProfilePassword.length !== 0){
-                        (function(){
-
-                            var form = SetProfilePassword.get(setProfilePassword),
-                                errorReport = ErrorReport.get(errorContainer),
-                                successReport = SuccessReport.get(errorContainer);
-
-                            form.on("submitting", function(){
-                                errorReport.hide();
-                            });
-
-                            form.on("success", function(){
-                                successReport.show(form.settings.successChangingPassword);
-                            });
-
-                            form.on("invalid", function(field,message){
-                                errorReport.show(message);
-                            });
-
-                        }());
                     }
 
                     // success invite organization

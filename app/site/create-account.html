@@ -1,40 +1,48 @@
 ---
-    layout : homepage
+    layout : new-simple
     title: Codenvy Developer Environment Cloud
----
-<div class="create-ws-container">
-  <div class="authentication">
-    <div class="dark login shadow">
-      <div class="error-container"></div>
-      <h2 class="center">Sign In or Create Your Free Account</h2>
-
-      <div class="aternative-create">
-        <div class="label">Sign Up With</div>
-        <div class="oauth-google oauth"><a href="#" class="oauth-button google"><img src="/site/images/buttonGoogle.svg" alt="Signup with Google">Google</a></div>
-        <div class="oauth-github oauth"><a href="#" class="oauth-button github"><img src="/site/images/buttonGithub.svg" alt="Signup with Github">Github</a></div>
-      </div>
-      <div class = "hr">OR</div>
-      <form class="create-form">
-        <div class="field">
-          <input name="email" type="text" class="required email" placeholder="Your Email">
-        </div>
-        <div class="field">
-          <input name="domain" type="text" class="required domain-name" placeholder="Your workspace name" maxlength="20">
-        </div>
-        <div class="field action">
-          <input type="submit" class="signup-button blue-button" value="Create Free Account">
-          <div class="working hidden">working...</div>
-        </div>
-      </form>
-      <p class = "terms">By signing up, you agree to the <a href = "{{ 'tos.html' | url }}" title = "Terms of Service" >Terms of Service</a> and the <a href = "{{ 'privacy.html' | url }}" title = "Privacy Policy">Privacy Policy</a>.</p>
-    </div>
-  </div>
-</div>
-<footer>
-  <nav>
-    <ul>
-      <li>Already have an account? <a href = "{{'site/login.html' | url}}" >Sign in here&hellip;</a></li>
-    </ul>
-  </nav>
-</footer>
+---	
+<div class="vmiddle">
+	<div class="container">
+		<div class="row text-center">
+			<div class="col-md-12">
+				<a href="/"><img src="/site/images/logo@3x.png" alt="logo" class="logo" /></a>
+				<h2>Codenvy is free for an unlimited number of projects and developers.</h2>
+				<div class="error-container"></div>
+				<form action="" id="signUpForm" class="create-form" >
+					<ul>
+						<li>
+							<span class="input-con"><input class="required email" name="email" type="text" placeholder="Email" /></span>
+							<span class="input-con"><input class="required domain-name" name="domain" type="text" placeholder="Workspace Name" maxlength="20" /></span>
+							<span class="input-con"><input type="submit" Value="Sign Up" /></span>
+							<span class="input-con">
+								<a class="relative oauth-button github" href="#">
+									<img src="/site/images/logo-github-hover@3x.png" alt="logo-github" />
+									<img class="icon-over" src="/site/images/logo-github@3x.png" alt="logo-github" />
+								</a>
+							</span>
+							<span class="input-con">
+								<a class="relative oauth-button google" href="#">
+									<img src="/site/images/logo-google-hover@3x.png" alt="logo-google" />
+									<img class="icon-over" src="/site/images/logo-google@3x.png" alt="logo-google" />
+								</a>
+							</span>
+						</li>
+					</ul>
+				</form>
+					<ul>
+						<li>
+							<p>By signing up, you agree to the
+								<a href = "{{ 'tos.html' | url }}">Terms of Service</a> and the 
+								<a href = "{{ 'privacy.html' | url }}" title = "Privacy Policy">Privacy Policy</a>
+							</p>
+						</li>
+						<br>
+						<li>
+							<a href = "{{'site/login.html' | url}}" >Already have an account? Login in here&hellip;</a>
+						</li>
+					</ul>
+			</div>
+		</div>
+	</div>
 </div>
