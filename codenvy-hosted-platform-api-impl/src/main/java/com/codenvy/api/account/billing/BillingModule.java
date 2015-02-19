@@ -31,5 +31,10 @@ public class BillingModule extends AbstractModule {
         bind(PaymentService.class).to(BraintreePaymentService.class).asEagerSingleton();
         bind(BillingPeriod.class).to(MonthlyBillingPeriod.class);
         bind(com.codenvy.api.account.billing.CreditCardDao.class).to(BraintreeCreditCardDaoImpl.class);
+        bind(TemplateProcessor.class);
+
+        bind(CreditCardService.class);
+        bind(InvoiceService.class);
+
     }
 }

@@ -19,6 +19,7 @@ package com.codenvy.api.account.billing;
 
 import com.codenvy.api.account.impl.shared.dto.Invoice;
 import com.codenvy.api.account.impl.shared.dto.InvoiceDescriptor;
+import com.codenvy.api.core.ForbiddenException;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.api.core.rest.Service;
@@ -28,9 +29,9 @@ import com.codenvy.dto.server.DtoFactory;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiParam;
 
+
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HttpMethod;
@@ -45,6 +46,7 @@ import javax.ws.rs.core.StreamingOutput;
 import javax.ws.rs.core.UriBuilder;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -59,16 +61,15 @@ import java.util.List;
 @Path("/invoice/{accountId}")
 public class InvoiceService extends Service {
 
-    public static final String HTML_TEMPLATE_FILE = "invoice.html.template.file";
-
     private final BillingService billingService;
 
-    //private final String templateFile;
+
+    private TemplateProcessor templateProcessor;
 
     @Inject
-    public InvoiceService(BillingService billingService) {
-        //this.templateFile = templateFile;
+    public InvoiceService(BillingService billingService, TemplateProcessor initializer) {
         this.billingService = billingService;
+        this.templateProcessor = initializer;
     }
 
     @GET
@@ -81,12 +82,19 @@ public class InvoiceService extends Service {
                                                       @ApiParam(value = "Skip count", required = false)
                                                       @QueryParam("skipCount") int skipCount,
                                                       @ApiParam(value = "Period start time", required = false)
-                                                      @DefaultValue("-1L") @QueryParam("startPeriod") long startPeriod,
+                                                      @DefaultValue("-1") @QueryParam("startPeriod") long startPeriod,
                                                       @ApiParam(value = "Period end time", required = false)
-                                                      @DefaultValue("-1L") @QueryParam("endPeriod") long endPeriod)
+                                                      @DefaultValue("-1") @QueryParam("endPeriod") long endPeriod)
             throws NotFoundException, ServerException {
         List<InvoiceDescriptor> result = new ArrayList<>();
-        for (Invoice invoice : billingService.getInvoices(accountId, maxItems, skipCount)){
+        InvoiceFilter filter = InvoiceFilter.builder()
+                                            .withAccountId(accountId)
+                                            .withMaxItems(maxItems)
+                                            .withSkipCount(skipCount)
+                                            .withFromDate(startPeriod)
+                                            .withUntilDate(endPeriod)
+                                            .build();
+        for (Invoice invoice : billingService.getInvoices(filter)) {
             result.add(DtoFactory.getInstance().createDto(InvoiceDescriptor.class).withId(invoice.getId())
                                  .withAccountId(invoice.getAccountId())
                                  .withCreationDate(invoice.getCreationDate())
@@ -132,14 +140,19 @@ public class InvoiceService extends Service {
     @Produces(MediaType.TEXT_HTML)
     @RolesAllowed({"account/owner", "system/admin", "system/manager"})
     public Response getAccountInvoiceHtml(@ApiParam(value = "Account ID", required = true)
-                                          @PathParam("accountId") String accountId,
+                                          @PathParam("accountId") final String accountId,
                                           @ApiParam(value = "Invoice ID", required = true)
-                                          @PathParam("invoiceId") long invoiceId) throws NotFoundException, ServerException {
+                                          @PathParam("invoiceId") final long invoiceId) throws NotFoundException, ServerException {
         final Invoice invoice = billingService.getInvoice(invoiceId);
         StreamingOutput response = new StreamingOutput() {
             @Override
             public void write(OutputStream outputStream) throws IOException, WebApplicationException {
-                //                        outputStream.write(HTMLStream);
+                try (PrintWriter w = new PrintWriter(outputStream)) {
+                    templateProcessor.processTemplate(invoice, w);
+                    w.flush();
+                } catch (ServerException | ForbiddenException | NotFoundException e) {
+                    throw new WebApplicationException(e);
+                }
             }
         };
         return Response.ok(response).build();
