@@ -30,6 +30,8 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 /**
+ * Generates invoices for previous billing period
+ *
  * @author Sergii Leschenko
  */
 @Singleton
@@ -46,10 +48,10 @@ public class GenerateInvoicesJob implements Runnable {
     @ScheduleCron(cron = "0 0 7 1 * ?")
     @Override
     public void run() {
-        final Period current = billingPeriod.getCurrent();
+        final Period previousPeriod = billingPeriod.getCurrent().getPreviousPeriod();
 
         try {
-            billingService.generateInvoices(current.getStartDate().getTime(), current.getEndDate().getTime());
+            billingService.generateInvoices(previousPeriod.getStartDate().getTime(), previousPeriod.getEndDate().getTime());
         } catch (ServerException e) {
             LOG.error("Can't generate invoices", e);
         }

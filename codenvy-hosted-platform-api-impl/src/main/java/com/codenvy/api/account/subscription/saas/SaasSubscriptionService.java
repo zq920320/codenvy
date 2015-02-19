@@ -92,7 +92,13 @@ public class SaasSubscriptionService extends SubscriptionService {
 
     @Override
     public void onRemoveSubscription(Subscription subscription) throws ApiException {
-        //TODO Implement
+        final Account account = accountDao.getById(subscription.getAccountId());
+        account.getAttributes().remove("codenvy:paid");
+        try {
+            accountDao.update(account);
+        } catch (NotFoundException | ServerException e) {
+            LOG.error("Error removing lock property into account  {} .", account.getId());
+        }
     }
 
     @Override
@@ -102,7 +108,7 @@ public class SaasSubscriptionService extends SubscriptionService {
 
     @Override
     public void onUpdateSubscription(Subscription oldSubscription, Subscription newSubscription) throws ApiException {
-        //TODO Implement
+        //nothing to do
     }
 
     @Override
