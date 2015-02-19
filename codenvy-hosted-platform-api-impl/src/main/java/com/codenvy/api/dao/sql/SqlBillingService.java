@@ -34,6 +34,7 @@ import org.postgresql.util.PGobject;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -47,6 +48,7 @@ import java.util.UUID;
 import static com.codenvy.api.dao.sql.SqlDaoQueries.CHARGES_SELECT;
 import static com.codenvy.api.dao.sql.SqlDaoQueries.INVOICES_INSERT;
 import static com.codenvy.api.dao.sql.SqlDaoQueries.INVOICES_MAILING_TIME_UPDATE;
+import static com.codenvy.api.dao.sql.SqlDaoQueries.INVOICES_PAYMENT_STATE_AND_CC_UPDATE;
 import static com.codenvy.api.dao.sql.SqlDaoQueries.INVOICES_PAYMENT_STATE_UPDATE;
 import static com.codenvy.api.dao.sql.SqlDaoQueries.MEMORY_CHARGES_INSERT;
 import static com.codenvy.api.dao.sql.SqlDaoQueries.MEMORY_CHARGES_SELECT;
@@ -137,20 +139,35 @@ public class SqlBillingService implements BillingService {
 
     @Override
     public void setPaymentState(long invoiceId, PaymentState state, String creditCard) throws ServerException {
+        if ((state == PaymentState.PAYMENT_FAIL || state == PaymentState.PAID_SUCCESSFULLY)) {
+            if (creditCard == null || creditCard.isEmpty()) {
+                throw new ServerException("Credit card parameter is missing for states  PAYMENT_FAIL or PAID_SUCCESSFULLY");
+            }
+        } else {
+            if (creditCard != null && !creditCard.isEmpty()) {
+                throw new ServerException(
+                        "Credit card parameter should be null for states different when PAYMENT_FAIL or PAID_SUCCESSFULLY");
+            }
+        }
         try (Connection connection = connectionFactory.getConnection()) {
             try {
                 connection.setAutoCommit(false);
-                try (PreparedStatement statement = connection.prepareStatement(INVOICES_PAYMENT_STATE_UPDATE)) {
-                    statement.setString(1, state.getState());
-                    statement.setLong(2, System.currentTimeMillis());
-                    if (creditCard != null && !creditCard.isEmpty()) {
-                        statement.setString(3, creditCard);
-                    } else {
-                        statement.setNull(3, Types.VARCHAR);
+                if (state == PaymentState.PAYMENT_FAIL || state == PaymentState.PAID_SUCCESSFULLY) {
+                    try (PreparedStatement statement = connection.prepareStatement(INVOICES_PAYMENT_STATE_AND_CC_UPDATE)) {
+                        statement.setString(1, state.getState());
+                        statement.setString(2, creditCard);
+                        statement.setLong(3, invoiceId);
+                        statement.execute();
                     }
-                    statement.setLong(4, invoiceId);
-                    statement.execute();
+                } else {
+                    try (PreparedStatement statement = connection.prepareStatement(INVOICES_PAYMENT_STATE_UPDATE)) {
+                        statement.setString(1, state.getState());
+                        statement.setLong(2, invoiceId);
+                        statement.execute();
+                    }
+
                 }
+
                 connection.commit();
             } catch (SQLException e) {
                 connection.rollback();
@@ -246,8 +263,7 @@ public class SqlBillingService implements BillingService {
             try {
                 connection.setAutoCommit(false);
                 try (PreparedStatement statement = connection.prepareStatement(INVOICES_MAILING_TIME_UPDATE)) {
-                    statement.setLong(1, System.currentTimeMillis());
-                    statement.setLong(2, invoiceId);
+                    statement.setLong(1, invoiceId);
                     statement.execute();
                 }
                 connection.commit();
@@ -308,14 +324,16 @@ public class SqlBillingService implements BillingService {
 
     private Invoice toInvoice(Connection connection, ResultSet invoicesResultSet) throws SQLException {
         Int8RangeType range = new Int8RangeType((PGobject)invoicesResultSet.getObject("FPERIOD"));
+        Date fpayment_time = invoicesResultSet.getDate("FPAYMENT_TIME");
+        Date fmailing_time = invoicesResultSet.getDate("FMAILING_TIME");
         return DtoFactory.getInstance().createDto(Invoice.class)
                          .withId(invoicesResultSet.getLong("FID"))
                          .withTotal(invoicesResultSet.getDouble("FTOTAL"))
                          .withAccountId(invoicesResultSet.getString("FACCOUNT_ID"))
                          .withCreditCardId(invoicesResultSet.getString("FCREDIT_CARD"))
-                         .withPaymentDate(invoicesResultSet.getLong("FPAYMENT_TIME"))
+                         .withPaymentDate(fpayment_time != null ? fpayment_time.getTime() : 0)
                          .withPaymentState(invoicesResultSet.getString("FPAYMENT_STATE"))
-                         .withMailingDate(invoicesResultSet.getLong("FMAILING_TIME"))
+                         .withMailingDate(fmailing_time != null ? fmailing_time.getTime() : 0)
                          .withCreationDate(invoicesResultSet.getLong("FCREATED_TIME"))
                          .withFromDate(range.getFrom())
                          .withUntilDate(range.getUntil())
