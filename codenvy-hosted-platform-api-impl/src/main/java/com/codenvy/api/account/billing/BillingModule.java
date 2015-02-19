@@ -29,7 +29,7 @@ public class BillingModule extends AbstractModule {
     protected void configure() {
         bind(com.braintreegateway.BraintreeGateway.class).to(GuiceBraintreeGateway.class).asEagerSingleton();
         bind(PaymentService.class).to(BraintreePaymentService.class).asEagerSingleton();
-        bind(BillingPeriod.class).to(MonthlyBillingPeriod.class);
+        bind(BillingPeriod.class).to(DailyBillingPeriod.class);
         bind(com.codenvy.api.account.billing.CreditCardDao.class).to(BraintreeCreditCardDaoImpl.class);
         bind(TemplateProcessor.class);
 
