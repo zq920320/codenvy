@@ -61,13 +61,8 @@ gulp.task('prod_cfg', function(){
   .pipe(gulp.dest(paths.temp))
 })
 
-gulp.task('css', ['copy_src'], function() {
-  return gulp.src(paths.temp+'site/styles/*.scss')
-  .pipe(compass({
-    //config_file: './compass-config.rb',
-    css: paths.temp +'site/styles',
-    sass: paths.temp +'site/styles'
-  }))
+gulp.task('css', ['copy_src','jekyll'], function() {
+  return gulp.src(paths.temp+'site/styles/*.css')
   .pipe(minifyCSS())
   .pipe(gulp.dest(paths.prod + 'site/styles/'));
 });
