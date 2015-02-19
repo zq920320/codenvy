@@ -44,12 +44,10 @@ public class GenerateInvoicesJob implements Runnable {
     @Inject
     BillingPeriod billingPeriod;
 
-    // 0sec 0min 07hour 1st day of every month
-    @ScheduleCron(cron = "0 0 7 1 * ?")
+    @ScheduleCron(cronParameterName = "billing.invoices.generate.cron")
     @Override
     public void run() {
         final Period previousPeriod = billingPeriod.getCurrent().getPreviousPeriod();
-
         try {
             billingService.generateInvoices(previousPeriod.getStartDate().getTime(), previousPeriod.getEndDate().getTime());
         } catch (ServerException e) {

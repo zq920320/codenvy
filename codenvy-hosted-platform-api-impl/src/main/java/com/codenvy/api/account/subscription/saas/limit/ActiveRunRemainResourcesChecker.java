@@ -56,7 +56,7 @@ public class ActiveRunRemainResourcesChecker implements Runnable {
     @Inject
     public ActiveRunRemainResourcesChecker(ActiveRunHolder activeRunHolder, AccountDao accountDao,
                                            MeterBasedStorage storage, RunQueue runQueue, BillingPeriod billingPeriod,
-                                           @Named("billing.saas.free.gbh") double freeUsage) {
+                                           @Named("subscription.saas.usage.free.gbh") double freeUsage) {
         this.activeRunHolder = activeRunHolder;
         this.accountDao = accountDao;
         this.storage = storage;

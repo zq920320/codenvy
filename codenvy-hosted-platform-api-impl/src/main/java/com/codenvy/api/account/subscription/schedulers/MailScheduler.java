@@ -71,14 +71,14 @@ public class MailScheduler {
     public MailScheduler(SubscriptionMailSender subscriptionMailSender,
                          BillingService billingService,
                          MailSenderClient mailSenderClient,
-                         @Named("billing.saas.free.gbh") Double freeUsage,
+                         @Named("subscription.saas.usage.free.gbh") Double freeUsage,
                          @Named("subscription.saas.mail.invoice.subject") String invoiceSubject,
                          @Named("subscription.saas.mail.invoice.no_payment.subject") String invoiceNoPaymentSubject,
                          @Named("subscription.saas.mail.billing.failed.subject") String billingFailedSubject,
                          @Named("subscription.saas.mail.template.success") String successfulChargeMailTemplate,
                          @Named("subscription.saas.mail.template.success.no_payment") String invoiceNoPaymentTemplate,
                          @Named("subscription.saas.mail.template.fail") String unsuccessfulChargeMailTemplate,
-                         @Named("subscription.saas.price") double price,
+                         @Named("subscription.saas.chargeable.gbh.price") double price,
                          @Named("subscription.saas.mail.address") String billingAddress) {
 
         this.billingService = billingService;

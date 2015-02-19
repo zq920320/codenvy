@@ -70,8 +70,8 @@ public class SqlBillingService implements BillingService {
 
     @Inject
     public SqlBillingService(ConnectionFactory connectionFactory,
-                             @Named("billing.saas.chargeable.gbh.price") Double saasChargeableGbHPrice,
-                             @Named("billing.saas.free.gbh") Double saasFreeGbH
+                             @Named("subscription.saas.chargeable.gbh.price") Double saasChargeableGbHPrice,
+                             @Named("subscription.saas.usage.free.gbh") Double saasFreeGbH
 
                             ) {
         this.connectionFactory = connectionFactory;

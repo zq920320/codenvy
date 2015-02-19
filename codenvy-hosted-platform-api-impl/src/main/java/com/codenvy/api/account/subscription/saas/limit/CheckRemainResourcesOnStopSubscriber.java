@@ -63,7 +63,7 @@ public class CheckRemainResourcesOnStopSubscriber implements EventSubscriber<Run
                                                 MeterBasedStorage storage,
                                                 ActiveRunHolder activeRunHolder,
                                                 BillingPeriod billingPeriod,
-                                                @Named("billing.saas.free.gbh") Double freeUsage) {
+                                                @Named("subscription.saas.usage.free.gbh") Double freeUsage) {
         this.eventService = eventService;
         this.workspaceDao = workspaceDao;
         this.accountDao = accountDao;
