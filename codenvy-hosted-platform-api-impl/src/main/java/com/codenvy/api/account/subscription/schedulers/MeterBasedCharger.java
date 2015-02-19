@@ -22,7 +22,10 @@ import com.codenvy.api.account.PaymentService;
 import com.codenvy.api.account.billing.BillingService;
 import com.codenvy.api.account.billing.PaymentState;
 import com.codenvy.api.account.impl.shared.dto.Invoice;
+import com.codenvy.api.account.server.dao.AccountDao;
+import com.codenvy.api.account.server.dao.Subscription;
 import com.codenvy.api.core.ForbiddenException;
+import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.commons.schedule.ScheduleDelay;
 
@@ -47,11 +50,15 @@ public class MeterBasedCharger implements Runnable {
 
     private final BillingService billingService;
     private final PaymentService paymentService;
+    private final AccountDao     accountDao;
 
     @Inject
-    public MeterBasedCharger(PaymentService paymentService, BillingService billingService) {
+    public MeterBasedCharger(PaymentService paymentService,
+                             BillingService billingService,
+                             AccountDao accountDao) {
         this.billingService = billingService;
         this.paymentService = paymentService;
+        this.accountDao = accountDao;
     }
 
     //TODO configure it
@@ -79,7 +86,7 @@ public class MeterBasedCharger implements Runnable {
             return;
         }
 
-        final String ccToken = invoice.getCreditCardId();
+        final String ccToken = getSaasCreditCardToken(invoice.getAccountId());
         if (ccToken == null) {
             setPaymentState(invoice.getId(), PaymentState.CREDIT_CARD_MISSING);
             return;
@@ -90,14 +97,33 @@ public class MeterBasedCharger implements Runnable {
             paymentService.charge(ccToken, invoice.getTotal(), invoice.getAccountId(), "invoice: " + invoice.getId());//TODO Fix description
             setPaymentState(invoice.getId(), PaymentState.PAID_SUCCESSFULLY);
         } catch (ForbiddenException | ServerException e) {
-            //TODO
+            LOG.error("Can't pay invoice " + invoice.getAccountId(), e);
             setPaymentState(invoice.getId(), PaymentState.PAYMENT_FAIL);
         }
     }
 
-    private void setPaymentState(Long invoiceId, PaymentState paymentState) {
+    //TODO Get credit card from account or use different credit card for all charges
+    private String getSaasCreditCardToken(String accountId) {
+        final List<Subscription> saas;
         try {
-            billingService.setPaymentState(invoiceId, PaymentState.PAYMENT_FAIL, "creditCard"); //TODO Fix credit card token
+            saas = accountDao.getActiveSubscriptions(accountId, "Saas");
+        } catch (NotFoundException | ServerException e) {
+            return null;
+        }
+        if (!saas.isEmpty() && !"sas-community".equals(saas.get(0).getPlanId())) {
+            return saas.get(0).getPaymentToken();
+        }
+
+        return null;
+    }
+
+    private void setPaymentState(Long invoiceId, PaymentState paymentState) {
+        setPaymentState(invoiceId, paymentState, null);
+    }
+
+    private void setPaymentState(Long invoiceId, PaymentState paymentState, String creditCardToken) {
+        try {
+            billingService.setPaymentState(invoiceId, PaymentState.PAYMENT_FAIL, creditCardToken); //TODO Fix credit card token
         } catch (ServerException e) {
             LOG.error("Can't change state for invoice " + invoiceId + " to " + paymentState.getState());
         }
