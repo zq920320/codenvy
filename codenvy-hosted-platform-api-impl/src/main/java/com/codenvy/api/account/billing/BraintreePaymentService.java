@@ -22,8 +22,9 @@ import com.braintreegateway.Plan;
 import com.braintreegateway.Result;
 import com.braintreegateway.Transaction;
 import com.braintreegateway.TransactionRequest;
-import com.codenvy.api.account.server.dao.Subscription;
 import com.codenvy.api.account.PaymentService;
+import com.codenvy.api.account.impl.shared.dto.Invoice;
+import com.codenvy.api.account.server.dao.Subscription;
 import com.codenvy.api.core.ApiException;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.ForbiddenException;
@@ -111,39 +112,41 @@ public class BraintreePaymentService implements PaymentService {
     }
 
     @Override
-    public void charge(String creditCardToken, double amount, String account, String paymentDescription)
+//    public void charge(String creditCardToken, double amount, String account, String paymentDescription)
+    public void charge(Invoice invoice)
             throws ServerException, ForbiddenException {
-        if (creditCardToken == null) {
+        if (invoice.getCreditCardId() == null) {
             throw new ForbiddenException("Credit card token can't be null");
         }
-        if (amount == 0) {
+        if (invoice.getTotal() == 0) {
             throw new ForbiddenException("Amount can't be 0");
         }
 
         try {
             final TransactionRequest request = new TransactionRequest()
-                    .paymentMethodToken(creditCardToken)
-                    .customField("reason", paymentDescription + "; accountId:" + account)
+                    .paymentMethodToken(invoice.getCreditCardId())
+                    .customField("invoice_id", String.valueOf(invoice.getId()))
                     .options().submitForSettlement(true).done()
-                    .amount(new BigDecimal(amount, new MathContext(2)));
+                    .amount(new BigDecimal(invoice.getTotal(), new MathContext(2)));
 
             final Result<Transaction> result = gateway.transaction().sale(request);
             final Transaction target = result.getTarget();
             if (result.isSuccess()) {
                 // transaction successfully submitted for settlement
-                LOG.info("PAYMENTS# state#Success# subscription#Saas# accountId#{}# transactionStatus#{}# message#{}# transactionId#{}#",
-                         account, target.getStatus(), result.getMessage(), target.getId());
+                LOG.info("PAYMENTS# state#Success# invoice#{}# accountId#{}# transactionStatus#{}# message#{}# transactionId#{}#",
+                         invoice.getId(), invoice.getAccountId(), target.getStatus(), result.getMessage(), target.getId());
             } else {
-                LOG.error("PAYMENTS# state#Error# subscription#Saas# accountId#{}# message#{}#", account, result.getMessage());
+                LOG.error("PAYMENTS# state#Error# invoice#{}# accountId#{}# message#{}#", invoice.getId(), invoice.getAccountId(),
+                          result.getMessage());
                 throw new ForbiddenException(result.getMessage());
             }
         } catch (ApiException e) {
             // rethrow user-friendly API exceptions
             throw e;
         } catch (Exception e) {
-            LOG.error(
-                    String.format("PAYMENTS# state#Error# subscription#Saas# accountId#%s# message#%s#", account, e.getLocalizedMessage()),
-                    e);
+            LOG.error("PAYMENTS# state#Error# invoice#{}# accountId#{}# message#{}#", invoice.getId(), invoice.getAccountId(),
+                      e.getMessage());
+
             throw new ServerException("Internal server error occurs. Please, contact support");
         }
     }

@@ -17,6 +17,7 @@
  */
 package com.codenvy.api.account;
 
+import com.codenvy.api.account.impl.shared.dto.Invoice;
 import com.codenvy.api.account.server.dao.Subscription;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.ForbiddenException;
@@ -38,5 +39,5 @@ public interface PaymentService {
      */
     void charge(Subscription subscription) throws ConflictException, ServerException, ForbiddenException;
 
-    void charge(String creditCardToken, double amount, String account, String paymentDescription) throws ServerException, ForbiddenException;
+    void charge(Invoice invoice) throws ServerException, ForbiddenException;
 }

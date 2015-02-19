@@ -103,7 +103,7 @@ public class BraintreePaymentServiceTest {
     public void shouldThrowForbiddenExceptionIfSubscriptionToChargeIsNull() throws Exception {
         prepareSuccessfulCharge();
 
-        service.charge(null);
+        service.charge((Subscription)null);
     }
 
     @Test(expectedExceptions = ForbiddenException.class, expectedExceptionsMessageRegExp = "Subscription id required")

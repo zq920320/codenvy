@@ -94,7 +94,7 @@ public class MeterBasedCharger implements Runnable {
 
         LOG.info("PAYMENTS# Saas #Start# accountId#{}#", invoice.getAccountId());
         try {
-            paymentService.charge(ccToken, invoice.getTotal(), invoice.getAccountId(), "invoice: " + invoice.getId());//TODO Fix description
+            paymentService.charge(invoice.withCreditCardId(ccToken));
             setPaymentState(invoice.getId(), PaymentState.PAID_SUCCESSFULLY);
         } catch (ForbiddenException | ServerException e) {
             LOG.error("Can't pay invoice " + invoice.getAccountId(), e);
