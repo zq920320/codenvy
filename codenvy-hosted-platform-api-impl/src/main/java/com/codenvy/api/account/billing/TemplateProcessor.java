@@ -32,7 +32,7 @@ import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.io.PrintWriter;
+import java.io.Writer;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -94,7 +94,7 @@ public class TemplateProcessor {
     }
 
 
-    public void processTemplate(Invoice invoice, PrintWriter w) throws ServerException, NotFoundException, ForbiddenException {
+    public void processTemplate(Invoice invoice, Writer w) throws ServerException, NotFoundException, ForbiddenException {
         TemplateContext context = new TemplateContext();
         context.setVariable("invoice", invoice);
         context.setVariable("creationDate", new Date(invoice.getCreationDate()));
