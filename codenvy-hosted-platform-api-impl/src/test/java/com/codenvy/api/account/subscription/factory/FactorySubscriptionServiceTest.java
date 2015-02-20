@@ -18,10 +18,9 @@
 package com.codenvy.api.account.subscription.factory;
 
 import com.codenvy.api.account.PaymentService;
-import com.codenvy.api.account.server.subscription.SubscriptionService;
 import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.server.dao.Subscription;
-
+import com.codenvy.api.account.server.subscription.SubscriptionService;
 import com.codenvy.api.core.ApiException;
 import com.codenvy.api.core.ConflictException;
 
@@ -31,9 +30,7 @@ import org.mockito.testng.MockitoTestNGListener;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static org.mockito.Mockito.verify;
@@ -57,15 +54,14 @@ public class FactorySubscriptionServiceTest {
     private FactorySubscriptionService service;
 
     @Test(expectedExceptions = ConflictException.class,
-            expectedExceptionsMessageRegExp = SubscriptionService.SUBSCRIPTION_LIMIT_EXHAUSTED_MESSAGE)
+          expectedExceptionsMessageRegExp = SubscriptionService.SUBSCRIPTION_LIMIT_EXHAUSTED_MESSAGE)
     public void beforeCreateSubscriptionWhenOneAlreadyExists() throws ApiException {
         final String accountId = "acc1";
         final Map<String, String> properties = new HashMap<>(2);
         properties.put("RAM", "2GB");
         properties.put("Package", "Tracked");
-        final List<Subscription> existedSubscriptions = new ArrayList<>(1);
-        existedSubscriptions.add(new Subscription().withServiceId(service.getServiceId()));
-        when(accountDao.getActiveSubscriptions(accountId, service.getServiceId())).thenReturn(existedSubscriptions);
+        when(accountDao.getActiveSubscription(accountId, service.getServiceId()))
+                .thenReturn(new Subscription().withServiceId(service.getServiceId()));
 
         final Subscription newSubscription = new Subscription().withServiceId(service.getServiceId())
                                                                .withAccountId(accountId)
@@ -84,7 +80,7 @@ public class FactorySubscriptionServiceTest {
                                                                .withProperties(properties);
         service.beforeCreateSubscription(newSubscription);
 
-        verify(accountDao).getActiveSubscriptions(accountId, service.getServiceId());
+        verify(accountDao).getActiveSubscription(accountId, service.getServiceId());
     }
 
     @Test(expectedExceptions = ConflictException.class, expectedExceptionsMessageRegExp = "Subscription property 'RAM' required")

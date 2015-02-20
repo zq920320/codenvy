@@ -321,19 +321,25 @@ public class AccountDaoImpl implements AccountDao {
             query.append("state", "ACTIVE");
 
             final List<Subscription> result = new ArrayList<>();
+            boolean absentSaas = true;
             try (DBCursor subscriptions = subscriptionCollection.find(query)) {
                 for (DBObject currentSubscription : subscriptions) {
-                    result.add(toSubscription(currentSubscription));
+                    final Subscription subscription = toSubscription(currentSubscription);
+                    if ("Saas".equals(subscription.getServiceId())) {
+                        absentSaas = false;
+                    }
+                    result.add(subscription);
                 }
             }
 
-            result.add(new Subscription()
-                               .withId("community" + accountId)
-                               .withAccountId(accountId)
-                               .withPlanId("sas-community")
-                               .withServiceId("Saas")
-                               .withProperties(Collections.singletonMap("Package", "Community")));
-
+            if (absentSaas) {
+                result.add(new Subscription()
+                                   .withId("community" + accountId)
+                                   .withAccountId(accountId)
+                                   .withPlanId("sas-community")
+                                   .withServiceId("Saas")
+                                   .withProperties(Collections.singletonMap("Package", "Community")));
+            }
             return result;
         } catch (MongoException me) {
             LOG.error(me.getMessage(), me);
@@ -344,9 +350,9 @@ public class AccountDaoImpl implements AccountDao {
     @Override
     public Subscription getActiveSubscription(String accountId, String serviceId) throws ServerException, NotFoundException {
         try {
-//            if (null == accountCollection.findOne(new BasicDBObject("id", accountId))) {
-//                throw new NotFoundException("Account not found " + accountId);
-//            }
+            if (null == accountCollection.findOne(new BasicDBObject("id", accountId))) {
+                throw new NotFoundException("Account not found " + accountId);
+            }
 
             final BasicDBObject query = new BasicDBObject("accountId", accountId);
             query.append("state", "ACTIVE");

@@ -407,7 +407,7 @@ public class AccountDaoImplTest extends BaseDaoTest {
         insertSubscriptions(subscription1, subscription2);
         insertAccounts(account);
 
-        final List<Subscription> found = accountDao.getActiveSubscriptions(account.getId(), null);
+        final List<Subscription> found = accountDao.getActiveSubscriptions(account.getId());
 
         assertEquals(new HashSet<>(found), new HashSet<>(asList(subscription1, subscription2)));
     }
@@ -422,9 +422,9 @@ public class AccountDaoImplTest extends BaseDaoTest {
         insertAccounts(account);
         insertSubscriptions(subscription1, subscription2);
 
-        final List<Subscription> found = accountDao.getActiveSubscriptions(account.getId(), subscription2.getServiceId());
+        final Subscription found = accountDao.getActiveSubscription(account.getId(), subscription2.getServiceId());
 
-        assertEquals(found, asList(subscription2));
+        assertEquals(found, subscription2);
     }
 
     @Test
@@ -435,7 +435,7 @@ public class AccountDaoImplTest extends BaseDaoTest {
         insertAccounts(account);
         insertSubscriptions(subscription);
 
-        final List<Subscription> found = accountDao.getActiveSubscriptions(account.getId(), null);
+        final List<Subscription> found = accountDao.getActiveSubscriptions(account.getId());
 
         assertEquals(found.size(), 1);
         assertEquals(found.get(0).getId(), "community" + account.getId());
@@ -447,9 +447,9 @@ public class AccountDaoImplTest extends BaseDaoTest {
         insertAccounts(account);
         when(workspaceDao.getByAccount(account.getId())).thenReturn(Collections.<Workspace>emptyList());
 
-        final List<Subscription> found = accountDao.getActiveSubscriptions(account.getId(), "Factory");
+        final Subscription found = accountDao.getActiveSubscription(account.getId(), "Factory");
 
-        assertTrue(found.isEmpty());
+        assertNull(found);
     }
 
     @Test
@@ -457,16 +457,14 @@ public class AccountDaoImplTest extends BaseDaoTest {
         final Account account = createAccount();
         final Subscription subscription1 = createSubscription().withAccountId(account.getId());
         final Subscription subscription2 = createSubscription().withAccountId(account.getId())
-                                                               .withId(subscription1.getId() + "other");
-        final Subscription subscription3 = createSubscription().withAccountId(account.getId())
                                                                .withId(subscription1.getId() + "other2")
                                                                .withServiceId(subscription1.getServiceId() + "other");
         insertAccounts(account);
-        insertSubscriptions(subscription1, subscription2, subscription3);
+        insertSubscriptions(subscription1, subscription2);
 
-        final List<Subscription> found = accountDao.getActiveSubscriptions(account.getId(), subscription1.getServiceId());
+        final Subscription found = accountDao.getActiveSubscription(account.getId(), subscription1.getServiceId());
 
-        assertEquals(new HashSet<>(found), new HashSet<>(asList(subscription1, subscription2)));
+        assertEquals(found, subscription1);
     }
 
     @Test(dataProvider = "notSaasServiceIdProvider")
@@ -474,9 +472,9 @@ public class AccountDaoImplTest extends BaseDaoTest {
         final Account account = createAccount();
         insertAccounts(account);
 
-        final List<Subscription> found = accountDao.getActiveSubscriptions(account.getId(), serviceId);
+        final Subscription found = accountDao.getActiveSubscription(account.getId(), serviceId);
 
-        assertTrue(found.isEmpty());
+        assertNull(found);
     }
 
     @DataProvider(name = "notSaasServiceIdProvider")
@@ -490,7 +488,7 @@ public class AccountDaoImplTest extends BaseDaoTest {
 
     @Test(expectedExceptions = NotFoundException.class)
     public void shouldThrowNotFoundExceptionOnGetActiveSubscriptionsWithInvalidAccountId() throws Exception {
-        accountDao.getActiveSubscriptions("invalid_account_id", null);
+        accountDao.getActiveSubscriptions("invalid_account_id");
     }
 
     @Test(expectedExceptions = ServerException.class)
@@ -499,7 +497,7 @@ public class AccountDaoImplTest extends BaseDaoTest {
         insertAccounts(account);
         doThrow(new MongoException("")).when(subscriptionCollection).find(any(DBObject.class));
 
-        accountDao.getActiveSubscriptions(account.getId(), null);
+        accountDao.getActiveSubscriptions(account.getId());
     }
 
     @Test(expectedExceptions = ServerException.class)
@@ -508,7 +506,7 @@ public class AccountDaoImplTest extends BaseDaoTest {
         insertAccounts(account);
         doThrow(new MongoException("")).when(collection).findOne(any(DBObject.class));
 
-        accountDao.getActiveSubscriptions(account.getId(), null);
+        accountDao.getActiveSubscriptions(account.getId());
     }
 
     @Test
