@@ -50,32 +50,32 @@
     <tbody>
     <tr>
         <td style="text-align: right; border: 1px solid grey; padding: 10px;"><strong><span style="color: rgb(0,51,102);">Total Chargeable Usage</span></strong></td>
-        <td style="text-align: right; border: 1px solid grey; padding: 10px;"><strong><span th:text="${#numbers.formatDecimal((factoryCharge == null ? 0.00 : factoryCharge.paidAmount) + (factoryCharge == null ? 0.00 : factoryCharge.freeAmount) + (saasCharge == null ? 0.00 : saasCharge.paidAmount)  + (saasCharge == null ? 0.00 : saasCharge.freeAmount), 1, 2)}" style="color: rgb(0,51,102);">1,215.40</span></strong></td>
+        <td style="text-align: right; border: 1px solid grey; padding: 10px;"><strong><span th:text="${#numbers.formatDecimal((factoryCharge == null ? 0.00 : factoryCharge.paidAmount) + (factoryCharge == null ? 0.00 : factoryCharge.freeAmount) + (saasCharge == null ? 0.00 : saasCharge.paidAmount)  + (saasCharge == null ? 0.00 : saasCharge.freeAmount), 1, 6)}" style="color: rgb(0,51,102);">1,215.40</span></strong></td>
         <td style="text-align: right; border: 1px solid grey; padding: 10px;"><strong th:text="'$' + (${saasCharge != null} ? ${#numbers.formatDecimal(saasCharge.paidPrice, 1, 2)} : '0.00')">$0.15</strong></td>
         <td style="text-align: right; border: 1px solid grey; padding: 10px;"><strong><span th:text="'$' + ${#numbers.formatDecimal(invoice.total, 1, 2)}" style="color: rgb(0,51,102);">$182.31</span></strong></td>
     </tr>
     <tr>
         <td colspan="1" style="text-align: right; border: 1px solid grey; padding: 10px;">Tracked Factory Free Hours</td>
-        <td th:text="${factoryCharge != null} ? ${#numbers.formatDecimal(factoryCharge.freeAmount, 1, 2)} : '0.00'" colspan="1" style="text-align: right; border: 1px solid grey; padding: 10px;">100.00</td>
+        <td th:text="${factoryCharge != null} ? ${#numbers.formatDecimal(factoryCharge.freeAmount, 1, 6)} : '0.000000'" colspan="1" style="text-align: right; border: 1px solid grey; padding: 10px;">100.00</td>
         <td colspan="1" style="text-align: right; border: 1px solid grey; padding: 10px;">&nbsp;</td>
         <td colspan="1" style="text-align: right; border: 1px solid grey; padding: 10px;">&nbsp;</td>
     </tr>
     <tr>
         <td colspan="1" style="text-align: right; border: 1px solid grey; padding: 10px;">Tracked Factory Chargeable Hours</td>
-        <td th:text="${factoryCharge != null} ? ${#numbers.formatDecimal(factoryCharge.paidAmount, 1, 2)} : '0.00'" colspan="1" style="text-align: right; border: 1px solid grey; padding: 10px;">750.20</td>
+        <td th:text="${factoryCharge != null} ? ${#numbers.formatDecimal(factoryCharge.paidAmount, 1, 6)} : '0.000000'" colspan="1" style="text-align: right; border: 1px solid grey; padding: 10px;">750.20</td>
         <td colspan="1" style="text-align: right; border: 1px solid grey; padding: 10px;">&nbsp;</td>
         <td colspan="1" style="text-align: right; border: 1px solid grey; padding: 10px;">&nbsp;</td>
     </tr>
 
     <tr>
         <td colspan="1" style="text-align: right; border: 1px solid grey; padding: 10px;">SaaS Monthly Free Hours</td>
-        <td th:text="${saasCharge != null} ? ${#numbers.formatDecimal(saasCharge.freeAmount, 1, 2)} : '0.00'" colspan="1" style="text-align: right; border: 1px solid grey; padding: 10px;">10.00</td>
+        <td th:text="${saasCharge != null} ? ${#numbers.formatDecimal(saasCharge.freeAmount, 1, 6)} : '0.000000'" colspan="1" style="text-align: right; border: 1px solid grey; padding: 10px;">10.00</td>
         <td colspan="1" style="text-align: right; border: 1px solid grey; padding: 10px;">&nbsp;</td>
         <td colspan="1" style="text-align: right; border: 1px solid grey; padding: 10px;">&nbsp;</td>
     </tr>
     <tr>
         <td colspan="1" style="text-align: right; border: 1px solid grey; padding: 10px;">SaaS Chargeable Hours</td>
-        <td th:text="${saasCharge != null} ? ${#numbers.formatDecimal(saasCharge.paidAmount, 1, 2)} : '0.00'" colspan="1" style="text-align: right; border: 1px solid grey; padding: 10px;">465.20</td>
+        <td th:text="${saasCharge != null} ? ${#numbers.formatDecimal(saasCharge.paidAmount, 1, 6)} : '0.000000'" colspan="1" style="text-align: right; border: 1px solid grey; padding: 10px;">465.20</td>
         <td colspan="1" style="text-align: right; border: 1px solid grey; padding: 10px;">&nbsp;</td>
         <td colspan="1" style="text-align: right; border: 1px solid grey; padding: 10px;">&nbsp;</td>
     </tr>
@@ -97,7 +97,7 @@
     <tbody>
     <tr>
         <td style="text-align: right; border: 1px solid grey; padding: 10px;"><strong><span style="color: rgb(0,51,102);">Total SaaS Monthly Usage</span></strong></td>
-        <td style="text-align: right; border: 1px solid grey; padding: 10px;"><strong><span th:text="${#numbers.formatDecimal(saasCharge.paidAmount + saasCharge.freeAmount, 1, 2)}" style="color: rgb(0,51,102);">475.20</span></strong></td>
+        <td style="text-align: right; border: 1px solid grey; padding: 10px;"><strong><span th:text="${#numbers.formatDecimal(saasCharge.paidAmount + saasCharge.freeAmount, 1, 6)}" style="color: rgb(0,51,102);">475.20</span></strong></td>
     </tr>
     <tr th:each="ws : ${saasCharge.details}">
         <td th:text="${ws.key}" colspan="1" style="text-align: right; border: 1px solid grey; padding: 10px;">Workspace 1</td>
@@ -121,7 +121,7 @@
     <tbody>
     <tr>
         <td style="text-align: right; border: 1px solid grey; padding: 10px;"><strong><span style="color: rgb(0,51,102);">Total Tracked Factory Monthly Usage</span></strong></td>
-        <td style="text-align: right; border: 1px solid grey; padding: 10px;"><strong><span th:text="${#numbers.formatDecimal(factoryCharge.paidAmount + factoryCharge.freeAmount, 1, 2)}" style="color: rgb(0,51,102);">850.20</span></strong></td>
+        <td style="text-align: right; border: 1px solid grey; padding: 10px;"><strong><span th:text="${#numbers.formatDecimal(factoryCharge.paidAmount + factoryCharge.freeAmount, 1, 6)}" style="color: rgb(0,51,102);">850.20</span></strong></td>
     </tr>
     <tr th:each="project : ${factoryCharge.details}">
         <td th:text="${project.key}" colspan="1" style="text-align: right; border: 1px solid grey; padding: 10px;">Project 1 (TF URL)</td>
