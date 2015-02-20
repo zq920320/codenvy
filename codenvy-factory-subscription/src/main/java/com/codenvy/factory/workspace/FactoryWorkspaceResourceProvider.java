@@ -45,7 +45,6 @@ import javax.ws.rs.core.UriBuilder;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URLDecoder;
-import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -144,14 +143,13 @@ public class FactoryWorkspaceResourceProvider implements EventSubscriber<CreateW
                         String accountId;
                         accountId = factory.getCreator() != null ? factory.getCreator().getAccountId() : null;
                         if (null != accountId) {
-                            final List<Subscription> subscriptions = accountDao.getActiveSubscriptions(accountId, "Factory");
-                            if (!subscriptions.isEmpty()) {
-                                final Subscription subscription = subscriptions.iterator().next();
+                            final Subscription factorySubscription = accountDao.getActiveSubscription(accountId, "Factory");
+                            if (factorySubscription != null) {
                                 // factory workspace with subscription
                                 attributes.put("codenvy:runner_lifetime", trackedRunnerLifetime);
                                 attributes.put("codenvy:builder_execution_time", trackedBuilderExecutionTime);
                                 attributes.put("codenvy:runner_ram",
-                                               String.valueOf(parseSizeToMegabytes(subscription.getProperties().get("RAM"))));
+                                               String.valueOf(parseSizeToMegabytes(factorySubscription.getProperties().get("RAM"))));
                                 attributes.put("codenvy:runner_infra", "paid");
 
                                 workspaceDao.update(workspace.withAttributes(attributes));
