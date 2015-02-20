@@ -4,7 +4,6 @@ dist
 _site
 test/scripts
 .bin
-app/site/styles/*.css
 build/node_modules
 node_modules
 npm-debug.log
