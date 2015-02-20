@@ -46,7 +46,6 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -312,7 +311,7 @@ public class AccountDaoImpl implements AccountDao {
     }
 
     @Override
-    public List<Subscription> getActiveSubscriptions(String accountId, String serviceId) throws ServerException, NotFoundException {
+    public List<Subscription> getActiveSubscriptions(String accountId) throws ServerException, NotFoundException {
         try {
             if (null == accountCollection.findOne(new BasicDBObject("id", accountId))) {
                 throw new NotFoundException("Account not found " + accountId);
@@ -320,9 +319,6 @@ public class AccountDaoImpl implements AccountDao {
 
             final BasicDBObject query = new BasicDBObject("accountId", accountId);
             query.append("state", "ACTIVE");
-            if (null != serviceId) {
-                query.append("serviceId", serviceId);
-            }
 
             final List<Subscription> result = new ArrayList<>();
             try (DBCursor subscriptions = subscriptionCollection.find(query)) {
@@ -331,18 +327,47 @@ public class AccountDaoImpl implements AccountDao {
                 }
             }
 
-            if ((serviceId == null || "Saas".equals(serviceId))
-                && !containSaasSubscription(result)) {
-
-                result.add(new Subscription()
-                                   .withId("community" + accountId)
-                                   .withAccountId(accountId)
-                                   .withPlanId("sas-community")
-                                   .withServiceId("Saas")
-                                   .withProperties(Collections.singletonMap("Package", "Community")));
-            }
+            result.add(new Subscription()
+                               .withId("community" + accountId)
+                               .withAccountId(accountId)
+                               .withPlanId("sas-community")
+                               .withServiceId("Saas")
+                               .withProperties(Collections.singletonMap("Package", "Community")));
 
             return result;
+        } catch (MongoException me) {
+            LOG.error(me.getMessage(), me);
+            throw new ServerException("It is not possible to retrieve subscriptions");
+        }
+    }
+
+    @Override
+    public Subscription getActiveSubscription(String accountId, String serviceId) throws ServerException, NotFoundException {
+        try {
+//            if (null == accountCollection.findOne(new BasicDBObject("id", accountId))) {
+//                throw new NotFoundException("Account not found " + accountId);
+//            }
+
+            final BasicDBObject query = new BasicDBObject("accountId", accountId);
+            query.append("state", "ACTIVE");
+            query.append("serviceId", serviceId);
+
+            final DBObject dbSubscription = subscriptionCollection.findOne(query);
+
+            if (dbSubscription != null) {
+                return toSubscription(dbSubscription);
+            }
+
+            if ("Saas".equals(serviceId)) {
+                return new Subscription()
+                        .withId("community" + accountId)
+                        .withAccountId(accountId)
+                        .withPlanId("sas-community")
+                        .withServiceId("Saas")
+                        .withProperties(Collections.singletonMap("Package", "Community"));
+            }
+
+            return null;
         } catch (MongoException me) {
             LOG.error(me.getMessage(), me);
             throw new ServerException("It is not possible to retrieve subscriptions");

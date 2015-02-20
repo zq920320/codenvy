@@ -104,14 +104,14 @@ public class MeterBasedCharger implements Runnable {
 
     //TODO Get credit card from account or use different credit card for all charges
     private String getSaasCreditCardToken(String accountId) {
-        final List<Subscription> saas;
+        final Subscription saasSubscription;
         try {
-            saas = accountDao.getActiveSubscriptions(accountId, "Saas");
+            saasSubscription = accountDao.getActiveSubscription(accountId, "Saas");
         } catch (NotFoundException | ServerException e) {
             return null;
         }
-        if (!saas.isEmpty() && !"sas-community".equals(saas.get(0).getPlanId())) {
-            return saas.get(0).getPaymentToken();
+        if (saasSubscription != null && !"sas-community".equals(saasSubscription.getPlanId())) {
+            return saasSubscription.getPaymentToken();
         }
 
         return null;

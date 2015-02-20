@@ -71,10 +71,9 @@ public class SaasSubscriptionService extends SubscriptionService {
     @Override
     public void beforeCreateSubscription(Subscription subscription) throws ConflictException, ServerException {
         try {
-            final List<Subscription> activeSubscriptions = accountDao.getActiveSubscriptions(subscription.getAccountId(), getServiceId());
+            final Subscription activeSaasSubscription = accountDao.getActiveSubscription(subscription.getAccountId(), getServiceId());
 
-            if (!activeSubscriptions.isEmpty() && activeSubscriptions.size() != 1
-                && !"sas-community".equals(activeSubscriptions.get(0).getPlanId())) {
+            if (activeSaasSubscription != null && !"sas-community".equals(activeSaasSubscription.getPlanId())) {
                 throw new ConflictException(SUBSCRIPTION_LIMIT_EXHAUSTED_MESSAGE);
             }
         } catch (NotFoundException e) {

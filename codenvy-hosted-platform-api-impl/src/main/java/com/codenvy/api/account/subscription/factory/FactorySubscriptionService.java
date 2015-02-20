@@ -79,7 +79,7 @@ public class FactorySubscriptionService extends SubscriptionService {
             throw new ConflictException("Subscription property 'RAM' required");
         }
         try {
-            if (!accountDao.getActiveSubscriptions(subscription.getAccountId(), getServiceId()).isEmpty()) {
+            if (accountDao.getActiveSubscription(subscription.getAccountId(), getServiceId()) != null) {
                 throw new ConflictException(SUBSCRIPTION_LIMIT_EXHAUSTED_MESSAGE);
             }
         } catch (NotFoundException e) {
