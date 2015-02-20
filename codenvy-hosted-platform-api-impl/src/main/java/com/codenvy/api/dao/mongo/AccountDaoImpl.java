@@ -450,10 +450,7 @@ public class AccountDaoImpl implements AccountDao {
 
     @Override
     public List<Account> getLockedCommunityAccounts() throws ServerException, ForbiddenException {
-        DBObject query1 = QueryBuilder.start("attributes").elemMatch(new BasicDBObject("name", "codenvy:locked")).get();
-        DBObject query2 = QueryBuilder.start("attributes").not().elemMatch(
-                new BasicDBObject("name", "codenvy:paid")).get();
-        DBObject query = new QueryBuilder().and(query1, query2).get();
+        DBObject query = QueryBuilder.start("attributes").elemMatch(new BasicDBObject("name", "codenvy:locked")).get();
 
         try (DBCursor accounts = accountCollection.find(query)) {
             final ArrayList<Account> result = new ArrayList<>();

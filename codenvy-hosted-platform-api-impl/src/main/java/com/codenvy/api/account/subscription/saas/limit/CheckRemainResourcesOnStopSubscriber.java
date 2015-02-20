@@ -22,6 +22,8 @@ import com.codenvy.api.account.metrics.MeterBasedStorage;
 import com.codenvy.api.account.server.Constants;
 import com.codenvy.api.account.server.dao.Account;
 import com.codenvy.api.account.server.dao.AccountDao;
+import com.codenvy.api.account.server.dao.Subscription;
+import com.codenvy.api.account.subscription.ServiceId;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
@@ -101,9 +103,11 @@ public class CheckRemainResourcesOnStopSubscriber implements EventSubscriber<Run
         try {
             final Workspace workspace = workspaceDao.getById(event.getWorkspace());
             final Account account = accountDao.getById(workspace.getAccountId());
-            if (account.getAttributes().containsKey("codenvy:paid")) {
+            final Subscription activeSaasSubscription = accountDao.getActiveSubscription(workspace.getAccountId(), ServiceId.SAAS);
+            if (activeSaasSubscription != null && !"sas-community".equals(activeSaasSubscription.getPlanId())) {
                 return;
             }
+
             double used =
                     storage.getMemoryUsed(workspace.getAccountId(), billingPeriod.getCurrent().getStartDate().getTime(),
                                           System.currentTimeMillis());

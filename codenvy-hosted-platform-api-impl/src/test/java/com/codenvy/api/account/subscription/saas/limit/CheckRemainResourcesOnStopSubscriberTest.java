@@ -22,6 +22,8 @@ import com.codenvy.api.account.metrics.MeterBasedStorage;
 import com.codenvy.api.account.server.Constants;
 import com.codenvy.api.account.server.dao.Account;
 import com.codenvy.api.account.server.dao.AccountDao;
+import com.codenvy.api.account.server.dao.Subscription;
+import com.codenvy.api.account.subscription.ServiceId;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
@@ -32,6 +34,7 @@ import com.codenvy.api.workspace.server.dao.WorkspaceDao;
 
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.testng.MockitoTestNGListener;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Listeners;
@@ -45,6 +48,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -96,11 +100,14 @@ public class CheckRemainResourcesOnStopSubscriberTest {
 
     @Test
     public void shouldAddEventOnRunStopped() throws ServerException, NotFoundException {
-        Map<String, String> attributes = new HashMap<>();
-        attributes.put("codenvy:paid", "true");
-        when(accountDao.getById(anyString())).thenReturn(new Account().withId(ACC_ID).withAttributes(attributes));
-
+        //given
+        Subscription subscription = Mockito.mock(Subscription.class);
+        when(subscription.getPlanId()).thenReturn("Super-Pupper-Plan");
+        when(accountDao.getActiveSubscription(eq(ACC_ID), eq(ServiceId.SAAS))).thenReturn(subscription);
+        when(accountDao.getById(anyString())).thenReturn(new Account().withId(ACC_ID).withAttributes(new HashMap<String, String>()));
+        //when
         subscriber.onEvent(RunnerEvent.stoppedEvent(PROCESS_ID, WS_ID, "/project"));
+        //then
         verify(activeRunHolder, times(1)).removeRun(any(RunnerEvent.class));
     }
 

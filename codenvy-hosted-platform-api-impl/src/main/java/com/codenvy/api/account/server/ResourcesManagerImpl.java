@@ -19,7 +19,9 @@ package com.codenvy.api.account.server;
 
 import com.codenvy.api.account.server.dao.Account;
 import com.codenvy.api.account.server.dao.AccountDao;
+import com.codenvy.api.account.server.dao.Subscription;
 import com.codenvy.api.account.shared.dto.UpdateResourcesDescriptor;
+import com.codenvy.api.account.subscription.ServiceId;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.ForbiddenException;
 import com.codenvy.api.core.NotFoundException;
@@ -121,8 +123,10 @@ public class ResourcesManagerImpl implements ResourcesManager {
                     throw new ConflictException(format("Size of RAM for workspace %s is a negative number",
                                                        resourcesDescriptor.getWorkspaceId()));
                 }
-                Account account = accountDao.getById(accountId);
-                if (!account.getAttributes().containsKey("codenvy:paid") && runnerRam > freeMaxLimit) {
+
+                final Subscription activeSaasSubscription = accountDao.getActiveSubscription(accountId, ServiceId.SAAS);
+                if ((activeSaasSubscription == null || "sas-community".equals(activeSaasSubscription.getPlanId())) &&
+                    runnerRam > freeMaxLimit) {
                     throw new ConflictException(format("Size of RAM for workspace %s has a 4096 MB limit.",
                                                        resourcesDescriptor.getWorkspaceId()));
 

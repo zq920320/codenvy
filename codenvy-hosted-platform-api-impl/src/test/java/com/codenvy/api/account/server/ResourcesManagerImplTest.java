@@ -21,7 +21,9 @@ import com.codenvy.api.account.billing.MonthlyBillingPeriod;
 import com.codenvy.api.account.metrics.MeterBasedStorage;
 import com.codenvy.api.account.server.dao.Account;
 import com.codenvy.api.account.server.dao.AccountDao;
+import com.codenvy.api.account.server.dao.Subscription;
 import com.codenvy.api.account.shared.dto.UpdateResourcesDescriptor;
+import com.codenvy.api.account.subscription.ServiceId;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.ForbiddenException;
 import com.codenvy.api.core.NotFoundException;
@@ -33,6 +35,7 @@ import com.codenvy.dto.server.DtoFactory;
 
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.testng.MockitoTestNGListener;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Listeners;
@@ -43,6 +46,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -92,11 +96,11 @@ public class ResourcesManagerImplTest {
         when(accountDao.getById(anyString())).thenReturn(new Account().withId(ACCOUNT_ID).withName("accountName"));
 
         resourcesManager =
-                new ResourcesManagerImpl( MAX_LIMIT, accountDao, workspaceDao);
+                new ResourcesManagerImpl(MAX_LIMIT, accountDao, workspaceDao);
     }
 
     @Test(expectedExceptions = ForbiddenException.class,
-          expectedExceptionsMessageRegExp = "Workspace \\w* is not related to account \\w*")
+            expectedExceptionsMessageRegExp = "Workspace \\w* is not related to account \\w*")
     public void shouldThrowConflictExceptionIfAccountIsNotOwnerOfWorkspace() throws Exception {
         resourcesManager.redistributeResources(ACCOUNT_ID,
                                                Arrays.asList(DtoFactory.getInstance().createDto(UpdateResourcesDescriptor.class)
@@ -108,7 +112,7 @@ public class ResourcesManagerImplTest {
     }
 
     @Test(expectedExceptions = ConflictException.class,
-          expectedExceptionsMessageRegExp = "Missed description of resources for workspace \\w*")
+            expectedExceptionsMessageRegExp = "Missed description of resources for workspace \\w*")
     public void shouldThrowConflictExceptionIfMissedResources() throws Exception {
         resourcesManager.redistributeResources(ACCOUNT_ID,
                                                Arrays.asList(DtoFactory.getInstance().createDto(UpdateResourcesDescriptor.class)
@@ -119,7 +123,7 @@ public class ResourcesManagerImplTest {
 
 
     @Test(expectedExceptions = ConflictException.class,
-          expectedExceptionsMessageRegExp = "Size of RAM for workspace \\w* is a negative number")
+            expectedExceptionsMessageRegExp = "Size of RAM for workspace \\w* is a negative number")
     public void shouldThrowConflictExceptionIfSizeOfRAMIsNegativeNumber() throws Exception {
         resourcesManager.redistributeResources(ACCOUNT_ID,
                                                Arrays.asList(DtoFactory.getInstance().createDto(UpdateResourcesDescriptor.class)
@@ -128,7 +132,7 @@ public class ResourcesManagerImplTest {
     }
 
     @Test(expectedExceptions = ConflictException.class,
-          expectedExceptionsMessageRegExp = "Builder timeout for workspace \\w* is a negative number")
+            expectedExceptionsMessageRegExp = "Builder timeout for workspace \\w* is a negative number")
     public void shouldThrowConflictExceptionIfSizeOfBuilderTimeoutIsNegativeNumber() throws Exception {
         resourcesManager.redistributeResources(ACCOUNT_ID, Arrays.asList(DtoFactory.getInstance().createDto(UpdateResourcesDescriptor.class)
                                                                                    .withWorkspaceId(SECOND_WORKSPACE_ID)
@@ -136,7 +140,7 @@ public class ResourcesManagerImplTest {
     }
 
     @Test(expectedExceptions = ConflictException.class,
-          expectedExceptionsMessageRegExp = "Runner timeout for workspace \\w* is a negative number")
+            expectedExceptionsMessageRegExp = "Runner timeout for workspace \\w* is a negative number")
     public void shouldThrowConflictExceptionIfSizeOfRunnerTimeoutIsNegativeNumber() throws Exception {
         resourcesManager.redistributeResources(ACCOUNT_ID,
                                                Arrays.asList(DtoFactory.getInstance().createDto(UpdateResourcesDescriptor.class)
@@ -149,7 +153,7 @@ public class ResourcesManagerImplTest {
     }
 
     @Test(expectedExceptions = ConflictException.class,
-          expectedExceptionsMessageRegExp = "Size of RAM for workspace \\w* has a 4096 MB limit.")
+            expectedExceptionsMessageRegExp = "Size of RAM for workspace \\w* has a 4096 MB limit.")
     public void shouldThrowConflictExceptionIfSizeOfRAMIsTooBigForCommunityAccountNumber() throws Exception {
         resourcesManager.redistributeResources(ACCOUNT_ID, Arrays.asList(DtoFactory.getInstance().createDto(UpdateResourcesDescriptor.class)
                                                                                    .withWorkspaceId(SECOND_WORKSPACE_ID)
@@ -211,13 +215,14 @@ public class ResourcesManagerImplTest {
     }
 
     @Test
-    public void shouldBeAbleToAddMemoryWithoutLimitation() throws Exception {
-        Map<String, String> attributes = new HashMap<>();
-        attributes.put("codenvy:paid", "true");
-        when(accountDao.getById(anyString())).thenReturn(new Account().withId(ACCOUNT_ID)
-                                                                      .withName("testName")
-                                                                      .withAttributes(attributes));
+    public void shouldBeAbleToAddMemoryWithoutLimitationForAccountWithNotCommunitySubscription() throws Exception {
+        //given
+        Subscription subscription = Mockito.mock(Subscription.class);
+        when(subscription.getPlanId()).thenReturn("Super-Pupper-Plan");
+        when(accountDao.getActiveSubscription(eq(ACCOUNT_ID), eq(ServiceId.SAAS))).thenReturn(subscription);
 
+
+        //when
         resourcesManager.redistributeResources(ACCOUNT_ID, Arrays.asList(DtoFactory.getInstance().createDto(UpdateResourcesDescriptor.class)
                                                                                    .withWorkspaceId(FIRST_WORKSPACE_ID)
                                                                                    .withRunnerRam(Integer.MAX_VALUE),
@@ -225,6 +230,7 @@ public class ResourcesManagerImplTest {
                                                                                    .withWorkspaceId(SECOND_WORKSPACE_ID)
                                                                                    .withRunnerRam(0)));
 
+        //then
         ArgumentCaptor<Workspace> workspaceArgumentCaptor = ArgumentCaptor.forClass(Workspace.class);
         verify(workspaceDao, times(2)).update(workspaceArgumentCaptor.capture());
 

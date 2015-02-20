@@ -19,6 +19,7 @@ package com.codenvy.api.account.subscription.saas.limit;
 
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -28,12 +29,15 @@ import com.codenvy.api.account.billing.MonthlyBillingPeriod;
 import com.codenvy.api.account.metrics.MeterBasedStorage;
 import com.codenvy.api.account.server.dao.Account;
 import com.codenvy.api.account.server.dao.AccountDao;
+import com.codenvy.api.account.server.dao.Subscription;
+import com.codenvy.api.account.subscription.ServiceId;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.api.runner.RunQueue;
 import com.codenvy.api.runner.RunQueueTask;
 
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.testng.MockitoTestNGListener;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Listeners;
@@ -85,11 +89,15 @@ public class ActiveRunRemainResourcesCheckerTest {
 
     @Test
     public void shouldNotCheckOnPaidAccounts() throws ServerException, NotFoundException {
-        Map<String, String> attributes = new HashMap<>();
-        attributes.put("codenvy:paid", "true");
-        when(accountDao.getById(anyString())).thenReturn(new Account().withId(ACC_ID).withAttributes(attributes));
+        //given
+        Subscription subscription = Mockito.mock(Subscription.class);
+        when(subscription.getPlanId()).thenReturn("Super-Pupper-Plan");
+        when(accountDao.getActiveSubscription(eq(ACC_ID), eq(ServiceId.SAAS))).thenReturn(subscription);
 
+        //when
         checker.run();
+
+        //then
         verifyZeroInteractions(storage);
         verifyZeroInteractions(runQueue);
     }

@@ -21,6 +21,8 @@ import com.codenvy.api.account.billing.BillingPeriod;
 import com.codenvy.api.account.metrics.MeterBasedStorage;
 import com.codenvy.api.account.server.dao.Account;
 import com.codenvy.api.account.server.dao.AccountDao;
+import com.codenvy.api.account.server.dao.Subscription;
+import com.codenvy.api.account.subscription.ServiceId;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.api.runner.RunQueue;
@@ -70,10 +72,11 @@ public class ActiveRunRemainResourcesChecker implements Runnable {
     public void run() {
         for (Map.Entry<String, Set<Long>> accountRuns : activeRunHolder.getActiveRuns().entrySet()) {
             try {
-                final Account account = accountDao.getById(accountRuns.getKey());
-                if (account.getAttributes().containsKey("codenvy:paid")) {
+                final Subscription activeSaasSubscription = accountDao.getActiveSubscription(accountRuns.getKey(), ServiceId.SAAS);
+                if (activeSaasSubscription != null && !"sas-community".equals(activeSaasSubscription.getPlanId())) {
                     return;
                 }
+
                 double used =
                         storage.getMemoryUsed(accountRuns.getKey(), billingPeriod.getCurrent().getStartDate().getTime(),
                                               System.currentTimeMillis());
