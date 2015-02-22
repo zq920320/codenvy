@@ -19,6 +19,7 @@ package com.codenvy.api.dao.sql;
 
 import com.codenvy.api.account.billing.BillingPeriod;
 import com.codenvy.api.account.billing.BillingService;
+import com.codenvy.api.account.billing.InvoiceFilter;
 import com.codenvy.api.account.billing.MonthlyBillingPeriod;
 import com.codenvy.api.account.billing.PaymentState;
 import com.codenvy.api.account.billing.Period;
@@ -59,7 +60,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
 
 
     @Test(dataProvider = "storage")
-    public void shouldCalculateSimpleReceipt(MeterBasedStorage meterBasedStorage, BillingService billingService)
+    public void shouldCalculateSimpleInvoice(MeterBasedStorage meterBasedStorage, BillingService billingService)
             throws ParseException, ServerException {
         //given
 
@@ -93,6 +94,47 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
         assertEquals(saasCharge.getDetails().size(), 1);
         assertEquals(saasCharge.getDetails().get("ws-235423"), "216.0");
 
+    }
+
+    @Test(dataProvider = "storage", enabled = false)
+    public void shouldBeAbleToFilterInvoiceByDates(MeterBasedStorage meterBasedStorage, BillingService billingService)
+            throws ParseException, ServerException {
+        //given
+
+
+        meterBasedStorage.createMemoryUsedRecord(
+                new MemoryUsedMetric(1024,
+                                     sdf.parse("01-01-2015 10:00:00").getTime(),
+                                     sdf.parse("10-01-2015 10:00:00").getTime(),
+                                     "usr-345",
+                                     "ac-3",
+                                     "ws-235423",
+                                     "run-234"));
+
+        meterBasedStorage.createMemoryUsedRecord(
+                new MemoryUsedMetric(1024,
+                                     sdf.parse("01-02-2015 10:00:00").getTime(),
+                                     sdf.parse("10-02-2015 10:00:00").getTime(),
+                                     "usr-345",
+                                     "ac-3",
+                                     "ws-235423",
+                                     "run-2343"));
+
+
+        //when
+        billingService.generateInvoices(sdf.parse("01-01-2015 00:00:00").getTime(),
+                                        sdf.parse("01-02-2015 00:00:00").getTime() - 1);
+        billingService.generateInvoices(sdf.parse("01-02-2015 00:00:00").getTime(),
+                                        sdf.parse("01-03-2015 00:00:00").getTime() - 1);
+        List<Invoice> ac3 = billingService.getInvoices(
+                InvoiceFilter.builder()
+                             .withAccountId("ac-3")
+                             .withFromDate(sdf.parse("01-02-2015 00:00:00").getTime())
+                             .withUntilDate(sdf.parse("01-03-2015 00:00:00").getTime() - 1).build());
+        //then
+        assertEquals(ac3.size(), 1);
+        Invoice invoice = get(ac3, 0);
+        assertEquals(invoice.getTotal(), 30.9);
     }
 
 
@@ -324,7 +366,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
 
 
     @Test(dataProvider = "storage")
-    public void shouldBeAbleToSetGetByMailingFailPaymentReceipt(MeterBasedStorage meterBasedStorage,
+    public void shouldBeAbleToSetGetByMailingFailPaymentInvoice(MeterBasedStorage meterBasedStorage,
                                                                 BillingService billingService)
             throws ParseException, ServerException {
         //given
@@ -361,7 +403,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
     }
 
     @Test(dataProvider = "storage")
-    public void shouldBeAbleToSetGetByMailingPaidSuccessfulyReceipt(MeterBasedStorage meterBasedStorage,
+    public void shouldBeAbleToSetGetByMailingPaidSuccessfulyInvoice(MeterBasedStorage meterBasedStorage,
                                                                     BillingService billingService)
             throws ParseException, ServerException {
         //given
@@ -398,7 +440,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
     }
 
     @Test(dataProvider = "storage")
-    public void shouldBeAbleToSetGetByMailingCreditCardMissingReceipt(MeterBasedStorage meterBasedStorage,
+    public void shouldBeAbleToSetGetByMailingCreditCardMissingInvoice(MeterBasedStorage meterBasedStorage,
                                                                       BillingService billingService)
             throws ParseException, ServerException {
         //given
@@ -436,7 +478,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
 
 
     @Test(dataProvider = "storage")
-    public void shouldBeAbleToGetByMailingPaymentNotRequiredReceipt(MeterBasedStorage meterBasedStorage,
+    public void shouldBeAbleToGetByMailingPaymentNotRequiredInvoice(MeterBasedStorage meterBasedStorage,
                                                                     BillingService billingService)
             throws ParseException, ServerException {
         //given
@@ -471,7 +513,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
 
 
     @Test(dataProvider = "storage")
-    public void shouldBeAbleToSetReceiptMailState(MeterBasedStorage meterBasedStorage, BillingService billingService)
+    public void shouldBeAbleToSetInvoiceMailState(MeterBasedStorage meterBasedStorage, BillingService billingService)
             throws ParseException, ServerException {
         //given
         meterBasedStorage.createMemoryUsedRecord(
@@ -604,6 +646,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                   sdf.parse("15-02-2015 00:00:00").getTime());
 
     }
+
     @Test(dataProvider = "storage")
     public void shouldBeAbleToCalculateInvoiceWithoutPrepaid(
             MeterBasedStorage meterBasedStorage,
@@ -620,7 +663,6 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                      "run-1254"));
 
 
-
         //when
         Period period = billingPeriod.get(sdf.parse("01-01-2015 00:00:00"));
         billingService.generateInvoices(period.getStartDate().getTime(), period.getEndDate().getTime());
@@ -630,7 +672,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
         Charge saasCharge = get(actual.getCharges(), 0);
         assertNotNull(saasCharge);
         Assert.assertEquals(saasCharge.getFreeAmount(), 10.0);
-        Assert.assertEquals(saasCharge.getPrePaidAmount(),0.0);
+        Assert.assertEquals(saasCharge.getPrePaidAmount(), 0.0);
         Assert.assertEquals(saasCharge.getPaidAmount(), 274.0);
 
 
@@ -698,8 +740,8 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
         Charge saasCharge = get(actual.getCharges(), 0);
         assertNotNull(saasCharge);
         Assert.assertEquals(saasCharge.getFreeAmount(), 10.0);
-        Assert.assertEquals(saasCharge.getPrePaidAmount(), 45,16129);
-        Assert.assertEquals(saasCharge.getPaidAmount(), 228,83871);
+        Assert.assertEquals(saasCharge.getPrePaidAmount(), 45, 16129);
+        Assert.assertEquals(saasCharge.getPaidAmount(), 228, 83871);
 
 
     }
@@ -753,7 +795,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                      "run-1254"));
         billingService.addPrepaid("ac-5", 100,
                                   sdf.parse("15-12-2014 00:00:00").getTime(),
-                                  sdf.parse("15-01-2015 00:00:00").getTime()-1);
+                                  sdf.parse("15-01-2015 00:00:00").getTime() - 1);
         billingService.addPrepaid("ac-5", 100,
                                   sdf.parse("15-01-2015 00:00:00").getTime(),
                                   sdf.parse("15-02-2015 00:00:00").getTime());
@@ -789,7 +831,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                      "run-1254"));
         billingService.addPrepaid("ac-5", 100,
                                   sdf.parse("15-12-2014 00:00:00").getTime(),
-                                  sdf.parse("15-01-2015 00:00:00").getTime()-1);
+                                  sdf.parse("15-01-2015 00:00:00").getTime() - 1);
         billingService.addPrepaid("ac-5", 100,
                                   sdf.parse("20-01-2015 00:00:00").getTime(),
                                   sdf.parse("15-02-2015 00:00:00").getTime());
@@ -810,7 +852,8 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
     }
 
 
-    @Test(dataProvider = "storage",expectedExceptions = ServerException.class, expectedExceptionsMessageRegExp = "Credit card parameter is missing for states  PAYMENT_FAIL or PAID_SUCCESSFULLY")
+    @Test(dataProvider = "storage", expectedExceptions = ServerException.class, expectedExceptionsMessageRegExp =
+            "Credit card parameter is missing for states  PAYMENT_FAIL or PAID_SUCCESSFULLY")
     public void shouldNotAllowToSetPaymentStateSuccessfulWithoutCC(
             MeterBasedStorage meterBasedStorage,
             BillingService billingService)
@@ -819,7 +862,9 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
         billingService.setPaymentState(1, PaymentState.PAID_SUCCESSFULLY, null);
 
     }
-    @Test(dataProvider = "storage",expectedExceptions = ServerException.class, expectedExceptionsMessageRegExp = "Credit card parameter is missing for states  PAYMENT_FAIL or PAID_SUCCESSFULLY")
+
+    @Test(dataProvider = "storage", expectedExceptions = ServerException.class, expectedExceptionsMessageRegExp =
+            "Credit card parameter is missing for states  PAYMENT_FAIL or PAID_SUCCESSFULLY")
     public void shouldNotAllowToSetPaymentStateSuccessfulWithEmptyCC(
             MeterBasedStorage meterBasedStorage,
             BillingService billingService)
@@ -828,7 +873,8 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
         billingService.setPaymentState(1, PaymentState.PAID_SUCCESSFULLY, "");
     }
 
-    @Test(dataProvider = "storage",expectedExceptions = ServerException.class, expectedExceptionsMessageRegExp = "Credit card parameter is missing for states  PAYMENT_FAIL or PAID_SUCCESSFULLY")
+    @Test(dataProvider = "storage", expectedExceptions = ServerException.class, expectedExceptionsMessageRegExp =
+            "Credit card parameter is missing for states  PAYMENT_FAIL or PAID_SUCCESSFULLY")
     public void shouldNotAllowToSetPaymentStateFailWithoutCC(
             MeterBasedStorage meterBasedStorage,
             BillingService billingService)
@@ -838,7 +884,8 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
 
     }
 
-    @Test(dataProvider = "storage",expectedExceptions = ServerException.class, expectedExceptionsMessageRegExp = "Credit card parameter is missing for states  PAYMENT_FAIL or PAID_SUCCESSFULLY")
+    @Test(dataProvider = "storage", expectedExceptions = ServerException.class, expectedExceptionsMessageRegExp =
+            "Credit card parameter is missing for states  PAYMENT_FAIL or PAID_SUCCESSFULLY")
     public void shouldNotAllowToSetPaymentStateFailWithEmptyCC(
             MeterBasedStorage meterBasedStorage,
             BillingService billingService)
@@ -847,7 +894,8 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
         billingService.setPaymentState(1, PaymentState.PAYMENT_FAIL, "");
     }
 
-    @Test(dataProvider = "storage",expectedExceptions = ServerException.class, expectedExceptionsMessageRegExp = "Credit card parameter should be null for states different when PAYMENT_FAIL or PAID_SUCCESSFULLY")
+    @Test(dataProvider = "storage", expectedExceptions = ServerException.class, expectedExceptionsMessageRegExp =
+            "Credit card parameter should be null for states different when PAYMENT_FAIL or PAID_SUCCESSFULLY")
     public void shouldNotAllowToSetPaymentStateNotRequiredWithCC(
             MeterBasedStorage meterBasedStorage,
             BillingService billingService)
@@ -856,7 +904,8 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
         billingService.setPaymentState(1, PaymentState.NOT_REQUIRED, "CC");
     }
 
-    @Test(dataProvider = "storage",expectedExceptions = ServerException.class, expectedExceptionsMessageRegExp = "Credit card parameter should be null for states different when PAYMENT_FAIL or PAID_SUCCESSFULLY")
+    @Test(dataProvider = "storage", expectedExceptions = ServerException.class, expectedExceptionsMessageRegExp =
+            "Credit card parameter should be null for states different when PAYMENT_FAIL or PAID_SUCCESSFULLY")
     public void shouldNotAllowToSetPaymentStateCCMissingWithCC(
             MeterBasedStorage meterBasedStorage,
             BillingService billingService)
