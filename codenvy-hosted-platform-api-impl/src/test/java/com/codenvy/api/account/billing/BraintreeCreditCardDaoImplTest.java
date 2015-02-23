@@ -33,19 +33,16 @@ import com.codenvy.api.dao.billing.BraintreeCreditCardDaoImpl;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.testng.MockitoTestNGListener;
-import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
@@ -74,9 +71,6 @@ public class BraintreeCreditCardDaoImplTest {
 
     @Mock
     private Customer customer;
-
-    @Mock
-    private Customer customer1;
 
     @Mock
     private Result<Customer> customerResult;
@@ -119,19 +113,13 @@ public class BraintreeCreditCardDaoImplTest {
         verify(customerGateway).create(any(CustomerRequest.class));
     }
 
-    @Test
-    public void shouldBeAbleToRegisterAdditionalCards() throws Exception {
-        when(customerGateway.find(anyString())).thenReturn(customer1);
-        when(customer1.getCreditCards()).thenReturn(Collections.<CreditCard>emptyList());
-        when(customer1.getId()).thenReturn(ACCOUNT_ID);
-        when(customerGateway.update(eq(ACCOUNT_ID), any(CustomerRequest.class))).thenReturn(customerResult);
-        when(customerResult.isSuccess()).thenReturn(true);
-        when(customerResult.getTarget()).thenReturn(customer);
+    @Test(expectedExceptions = ForbiddenException.class)
+    public void shouldBeNotAbleToRegisterAdditionalCards() throws Exception {
+        when(customerGateway.find(anyString())).thenReturn(customer);
         List<CreditCard> list = new ArrayList<>();
         list.add(creditCard);
         when(customer.getCreditCards()).thenReturn(list);
         dao.registerCard(ACCOUNT_ID, "nonce123", null, null, null, null);
-        verify(customerGateway).update(eq(ACCOUNT_ID), any(CustomerRequest.class));
     }
 
     @Test

@@ -82,6 +82,11 @@ public class BraintreeCreditCardDaoImpl implements CreditCardDao {
         Result<Customer> result;
         try {
             Customer customer = gateway.customer().find(accountId);
+            if (customer.getCreditCards().size() >= 1) {
+                String msg = String.format(" Failed to add a new card to account %s, because there is already a card linked with it. ", accountId);
+                LOG.error(msg);
+                throw new ForbiddenException(msg);
+            }
             CustomerRequest request = new CustomerRequest().creditCard()
                                                            .paymentMethodNonce(nonce)
                                                            .billingAddress()
