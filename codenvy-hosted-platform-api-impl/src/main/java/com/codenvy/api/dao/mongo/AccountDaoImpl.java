@@ -591,8 +591,7 @@ public class AccountDaoImpl implements AccountDao {
                                   .append("billingCycleType", subscription.getBillingCycleType().toString())
                                   .append("billingStartDate", subscription.getBillingStartDate())
                                   .append("billingEndDate", subscription.getBillingEndDate())
-                                  .append("nextBillingDate", subscription.getNextBillingDate())
-                                  .append("paymentToken", subscription.getPaymentToken());
+                                  .append("nextBillingDate", subscription.getNextBillingDate());
 
     }
 
@@ -630,8 +629,7 @@ public class AccountDaoImpl implements AccountDao {
                                  .withBillingCycle(basicSubscriptionObj.getInt("billingCycle"))
                                  .withBillingCycleType(BillingCycleType.valueOf(basicSubscriptionObj.getString("billingCycleType")))
                                  .withDescription(basicSubscriptionObj.getString("description"))
-                                 .withUsePaymentSystem(basicSubscriptionObj.getBoolean("usePaymentSystem"))
-                                 .withPaymentToken(basicSubscriptionObj.getString("paymentToken"));
+                                 .withUsePaymentSystem(basicSubscriptionObj.getBoolean("usePaymentSystem"));
     }
 
     /**

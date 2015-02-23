@@ -17,12 +17,6 @@
  */
 package com.codenvy.api.account.billing;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
-
 import com.braintreegateway.BraintreeGateway;
 import com.braintreegateway.Plan;
 import com.braintreegateway.PlanGateway;
@@ -31,12 +25,14 @@ import com.braintreegateway.Transaction;
 import com.braintreegateway.TransactionGateway;
 import com.braintreegateway.TransactionRequest;
 import com.braintreegateway.exceptions.BraintreeException;
+import com.codenvy.api.account.impl.shared.dto.CreditCard;
 import com.codenvy.api.account.server.dao.Subscription;
 import com.codenvy.api.account.shared.dto.BillingCycleType;
 import com.codenvy.api.account.shared.dto.SubscriptionState;
 import com.codenvy.api.core.ForbiddenException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.commons.schedule.ScheduleDelay;
+import com.codenvy.dto.server.DtoFactory;
 
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -55,6 +51,13 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+
 /**
  * Tests for {@link com.codenvy.api.account.billing.BraintreePaymentService}
  *
@@ -67,6 +70,8 @@ public class BraintreePaymentServiceTest {
     private static final String     PAYMENT_TOKEN   = "ptoken";
     private static final BigDecimal PRICE           = new BigDecimal(10);
 
+    @Mock
+    private CreditCardDao      creditCardDao;
     @Mock
     private BraintreeGateway   gateway;
     @Mock
@@ -88,6 +93,9 @@ public class BraintreePaymentServiceTest {
         Field pricesField = BraintreePaymentService.class.getDeclaredField("prices");
         pricesField.setAccessible(true);
         pricesField.set(service, Collections.emptyMap());
+
+        when(creditCardDao.getCards(anyString()))
+                .thenReturn(Arrays.asList(DtoFactory.getInstance().createDto(CreditCard.class).withToken(PAYMENT_TOKEN)));
     }
 
     @Test
@@ -113,11 +121,12 @@ public class BraintreePaymentServiceTest {
         service.charge(createSubscription().withId(null));
     }
 
-    @Test(expectedExceptions = ForbiddenException.class, expectedExceptionsMessageRegExp = "Payment token required")
+    @Test(expectedExceptions = ForbiddenException.class, expectedExceptionsMessageRegExp = "Account hasn't credit card")
     public void shouldThrowForbiddenExceptionIfTokenIsNull() throws Exception {
+        when(creditCardDao.getCards(anyString())).thenReturn(Collections.<CreditCard>emptyList());
         prepareSuccessfulCharge();
 
-        service.charge(createSubscription().withPaymentToken(null));
+        service.charge(createSubscription());
     }
 
     @Test(expectedExceptions = ServerException.class, expectedExceptionsMessageRegExp = "Internal server error occurs. Please, contact " +
@@ -143,7 +152,8 @@ public class BraintreePaymentServiceTest {
         verify(transactionGateway).sale(any(TransactionRequest.class));
     }
 
-    @Test(expectedExceptions = ServerException.class, expectedExceptionsMessageRegExp = "Internal server error occurs. Please, contact support")
+    @Test(expectedExceptions = ServerException.class,
+          expectedExceptionsMessageRegExp = "Internal server error occurs. Please, contact support")
     public void shouldThrowServerExceptionIfOtherExceptionOccurs() throws Exception {
         prepareSuccessfulCharge();
         when(transactionGateway.sale(any(TransactionRequest.class))).thenThrow(new BraintreeException("message"));
@@ -198,7 +208,6 @@ public class BraintreePaymentServiceTest {
                                  .withNextBillingDate(new Date())
                                  .withTrialStartDate(new Date())
                                  .withTrialEndDate(new Date())
-                                 .withPaymentToken(PAYMENT_TOKEN)
                                  .withState(SubscriptionState.ACTIVE)
                                  .withUsePaymentSystem(true);
     }

@@ -103,7 +103,7 @@ public class MailScheduler {
                 }
             }
         } catch (ServerException e) {
-            LOG.error("Can't get not send invoices", e);//TODO
+            LOG.error("Can't get not send invoices", e);
         }
     }
 

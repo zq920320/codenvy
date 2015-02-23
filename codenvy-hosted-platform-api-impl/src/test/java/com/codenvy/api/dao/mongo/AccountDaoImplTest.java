@@ -286,7 +286,6 @@ public class AccountDaoImplTest extends BaseDaoTest {
                     .withDescription("updated description")
                     .withUsePaymentSystem(false)
                     .withState(SubscriptionState.INACTIVE)
-                    .withPaymentToken("updatedPaymentToken")
                     .withStartDate(updatedDate)
                     .withEndDate(updatedDate)
                     .withTrialStartDate(updatedDate)
@@ -630,7 +629,6 @@ public class AccountDaoImplTest extends BaseDaoTest {
                                  .withNextBillingDate(new Date())
                                  .withTrialStartDate(new Date())
                                  .withTrialEndDate(new Date())
-                                 .withPaymentToken("token")
                                  .withState(SubscriptionState.ACTIVE)
                                  .withUsePaymentSystem(true);
     }

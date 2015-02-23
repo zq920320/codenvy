@@ -23,6 +23,7 @@ import com.braintreegateway.Result;
 import com.braintreegateway.Transaction;
 import com.braintreegateway.TransactionRequest;
 import com.codenvy.api.account.PaymentService;
+import com.codenvy.api.account.impl.shared.dto.CreditCard;
 import com.codenvy.api.account.impl.shared.dto.Invoice;
 import com.codenvy.api.account.server.dao.Subscription;
 import com.codenvy.api.core.ApiException;
@@ -54,11 +55,13 @@ import java.util.concurrent.TimeUnit;
 public class BraintreePaymentService implements PaymentService {
     private static final Logger LOG = LoggerFactory.getLogger(BraintreePaymentService.class);
 
+    private final CreditCardDao           creditCardDao;
     private final BraintreeGateway        gateway;
     private       Map<String, BigDecimal> prices;
 
     @Inject
-    public BraintreePaymentService(BraintreeGateway gateway) {
+    public BraintreePaymentService(CreditCardDao creditCardDao, BraintreeGateway gateway) {
+        this.creditCardDao = creditCardDao;
         this.gateway = gateway;
         this.prices = Collections.emptyMap();
     }
@@ -71,8 +74,10 @@ public class BraintreePaymentService implements PaymentService {
         if (subscription.getId() == null) {
             throw new ForbiddenException("Subscription id required");
         }
-        if (subscription.getPaymentToken() == null) {
-            throw new ForbiddenException("Payment token required");
+
+        final String creditCardToken = getCreditCardToken(subscription.getAccountId());
+        if (creditCardToken == null) {
+            throw new ForbiddenException("Account hasn't credit card");
         }
 
         try {
@@ -85,8 +90,8 @@ public class BraintreePaymentService implements PaymentService {
             }
 
             final TransactionRequest request = new TransactionRequest()
-                    .paymentMethodToken(subscription.getPaymentToken())
-                            // add subscription id to identify charging reason
+                    .paymentMethodToken(creditCardToken)
+                    // add subscription id to identify charging reason
                     .customField("subscription_id", subscription.getId())
                     .options().submitForSettlement(true).done()
                     .amount(price);
@@ -112,7 +117,6 @@ public class BraintreePaymentService implements PaymentService {
     }
 
     @Override
-//    public void charge(String creditCardToken, double amount, String account, String paymentDescription)
     public void charge(Invoice invoice)
             throws ServerException, ForbiddenException {
         if (invoice.getCreditCardId() == null) {
@@ -125,6 +129,7 @@ public class BraintreePaymentService implements PaymentService {
         try {
             final TransactionRequest request = new TransactionRequest()
                     .paymentMethodToken(invoice.getCreditCardId())
+                    // add invoice id to identify charging reason
                     .customField("invoice_id", String.valueOf(invoice.getId()))
                     .options().submitForSettlement(true).done()
                     .amount(new BigDecimal(invoice.getTotal(), new MathContext(2)));
@@ -151,7 +156,6 @@ public class BraintreePaymentService implements PaymentService {
         }
     }
 
-
     @ScheduleDelay(delay = 1, unit = TimeUnit.HOURS)
     public void updatePrices() {
         try {
@@ -164,5 +168,21 @@ public class BraintreePaymentService implements PaymentService {
         } catch (Exception e) {
             LOG.error("Can't retrieve prices for subscription plans." + e.getLocalizedMessage(), e);
         }
+    }
+
+    private String getCreditCardToken(String accountId) {
+        try {
+            final List<CreditCard> cards = creditCardDao.getCards(accountId);
+
+            if (!cards.isEmpty()) {
+                //Now user can have only one credit card
+                return cards.get(0).getToken();
+            }
+        } catch (ServerException | ForbiddenException e) {
+            LOG.error("Can't get credit card of account " + accountId, e);
+            return null;
+        }
+
+        return null;
     }
 }

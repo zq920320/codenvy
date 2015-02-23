@@ -20,12 +20,11 @@ package com.codenvy.api.account.subscription.schedulers;
 
 import com.codenvy.api.account.PaymentService;
 import com.codenvy.api.account.billing.BillingService;
+import com.codenvy.api.account.billing.CreditCardDao;
 import com.codenvy.api.account.billing.PaymentState;
+import com.codenvy.api.account.impl.shared.dto.CreditCard;
 import com.codenvy.api.account.impl.shared.dto.Invoice;
-import com.codenvy.api.account.server.dao.AccountDao;
-import com.codenvy.api.account.server.dao.Subscription;
 import com.codenvy.api.core.ForbiddenException;
-import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.commons.schedule.ScheduleDelay;
 
@@ -50,15 +49,15 @@ public class MeterBasedCharger implements Runnable {
 
     private final BillingService billingService;
     private final PaymentService paymentService;
-    private final AccountDao     accountDao;
+    private final CreditCardDao  creditCardDao;
 
     @Inject
     public MeterBasedCharger(PaymentService paymentService,
                              BillingService billingService,
-                             AccountDao accountDao) {
+                             CreditCardDao creditCardDao) {
         this.billingService = billingService;
         this.paymentService = paymentService;
-        this.accountDao = accountDao;
+        this.creditCardDao = creditCardDao;
     }
 
     //TODO configure it
@@ -70,7 +69,7 @@ public class MeterBasedCharger implements Runnable {
         try {
             List<Invoice> invoices;
 
-            while ((invoices = billingService.getInvoices(PaymentState.EXECUTING, INVOICES_LIMIT, 0)).size() != 0) {
+            while ((invoices = billingService.getInvoices(PaymentState.WAITING_EXECUTOR, INVOICES_LIMIT, 0)).size() != 0) {
                 for (Invoice invoice : invoices) {
                     doCharge(invoice);
                 }
@@ -86,7 +85,7 @@ public class MeterBasedCharger implements Runnable {
             return;
         }
 
-        final String ccToken = getSaasCreditCardToken(invoice.getAccountId());
+        final String ccToken = getCreditCardToken(invoice.getAccountId());
         if (ccToken == null) {
             setPaymentState(invoice.getId(), PaymentState.CREDIT_CARD_MISSING);
             return;
@@ -95,23 +94,24 @@ public class MeterBasedCharger implements Runnable {
         LOG.info("PAYMENTS# Saas #Start# accountId#{}#", invoice.getAccountId());
         try {
             paymentService.charge(invoice.withCreditCardId(ccToken));
-            setPaymentState(invoice.getId(), PaymentState.PAID_SUCCESSFULLY);
+            setPaymentState(invoice.getId(), PaymentState.PAID_SUCCESSFULLY, ccToken);
         } catch (ForbiddenException | ServerException e) {
             LOG.error("Can't pay invoice " + invoice.getAccountId(), e);
-            setPaymentState(invoice.getId(), PaymentState.PAYMENT_FAIL);
+            setPaymentState(invoice.getId(), PaymentState.PAYMENT_FAIL, ccToken);
         }
     }
 
-    //TODO Get credit card from account or use different credit card for all charges
-    private String getSaasCreditCardToken(String accountId) {
-        final Subscription saasSubscription;
+    private String getCreditCardToken(String accountId) {
         try {
-            saasSubscription = accountDao.getActiveSubscription(accountId, "Saas");
-        } catch (NotFoundException | ServerException e) {
+            final List<CreditCard> cards = creditCardDao.getCards(accountId);
+
+            if (!cards.isEmpty()) {
+                //Now user can have only one credit card
+                return cards.get(0).getToken();
+            }
+        } catch (ServerException | ForbiddenException e) {
+            LOG.error("Can't get credit card of account " + accountId, e);
             return null;
-        }
-        if (saasSubscription != null && !"sas-community".equals(saasSubscription.getPlanId())) {
-            return saasSubscription.getPaymentToken();
         }
 
         return null;
@@ -123,9 +123,9 @@ public class MeterBasedCharger implements Runnable {
 
     private void setPaymentState(Long invoiceId, PaymentState paymentState, String creditCardToken) {
         try {
-            billingService.setPaymentState(invoiceId, PaymentState.PAYMENT_FAIL, creditCardToken); //TODO Fix credit card token
+            billingService.setPaymentState(invoiceId, paymentState, creditCardToken);
         } catch (ServerException e) {
-            LOG.error("Can't change state for invoice " + invoiceId + " to " + paymentState.getState());
+            LOG.error("Can't change state for invoice " + invoiceId + " to " + paymentState.getState(), e);
         }
     }
 }
