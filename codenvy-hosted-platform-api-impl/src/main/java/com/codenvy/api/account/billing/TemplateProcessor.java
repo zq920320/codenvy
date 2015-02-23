@@ -20,10 +20,13 @@ package com.codenvy.api.account.billing;
 import com.codenvy.api.account.impl.shared.dto.Charge;
 import com.codenvy.api.account.impl.shared.dto.CreditCard;
 import com.codenvy.api.account.impl.shared.dto.Invoice;
+import com.codenvy.api.account.server.dao.AccountDao;
+import com.codenvy.api.account.server.dao.Member;
 import com.codenvy.api.account.subscription.ServiceId;
 import com.codenvy.api.core.ForbiddenException;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
+import com.codenvy.api.user.server.dao.UserDao;
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
 
 import org.thymeleaf.TemplateEngine;
@@ -31,6 +34,7 @@ import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 import java.io.Writer;
 import java.util.Date;
@@ -49,19 +53,30 @@ public class TemplateProcessor {
 
     private final WorkspaceDao workspaceDao;
 
+    private final AccountDao accountDao;
+
     private final CreditCardDao cardDao;
 
+    private final UserDao userDao;
+
+    private final String paymentNotRequiredTemplateName;
+    private final String paymentFailTemplateName;
+    private final String paidSuccessfullyTemplateName;
+
+
     @Inject
-    public TemplateProcessor(WorkspaceDao workspaceDao, CreditCardDao cardDao) {
+    public TemplateProcessor(@Named("subscription.saas.mail.template.success") String successTemplate,
+                             @Named("subscription.saas.mail.template.fail") String failTemplate,
+                             @Named("subscription.saas.mail.template.success.no_payment") String noPaymentRequiredTemplate,
+                             WorkspaceDao workspaceDao, AccountDao accountDao, UserDao userDao, CreditCardDao cardDao) {
+        this.paidSuccessfullyTemplateName = successTemplate;
+        this.paymentFailTemplateName = failTemplate;
+        this.paymentNotRequiredTemplateName = noPaymentRequiredTemplate;
         this.workspaceDao = workspaceDao;
-        this.cardDao  = cardDao;
+        this.accountDao = accountDao;
+        this.cardDao = cardDao;
+        this.userDao = userDao;
     }
-
-
-    private final String NOT_REQUIRED_TEMPLATE_NAME      = "";
-    private final String PAYMENT_FAIL_TEMPLATE_NAME      = "";
-    private final String CC_MISSING_FAIL_TEMPLATE_NAME   = "";
-    private final String PAID_SUCCESSFULLY_TEMPLATE_NAME = "mb_invoice_with_charges";
 
 
     @PostConstruct
@@ -69,8 +84,6 @@ public class TemplateProcessor {
         ClassLoaderTemplateResolver templateResolver =
                 new ClassLoaderTemplateResolver();
         templateResolver.setTemplateMode("XHTML");
-        templateResolver.setPrefix("/email-templates/");
-        templateResolver.setSuffix(".html");
         templateResolver.setCacheTTLMs(3600000L);
 
         templateEngine = new TemplateEngine();
@@ -79,17 +92,14 @@ public class TemplateProcessor {
 
     public String getTemplateName(PaymentState state) throws ServerException {
         switch (state) {
-//            case NOT_REQUIRED:
-//                return  NOT_REQUIRED_TEMPLATE_NAME;
-//            case PAYMENT_FAIL:
-//                return  PAYMENT_FAIL_TEMPLATE_NAME;
-//            case CREDIT_CARD_MISSING:
-//                return  CC_MISSING_FAIL_TEMPLATE_NAME;
-//            case PAID_SUCCESSFULLY:
-//                return  PAID_SUCCESSFULLY_TEMPLATE_NAME;
+            case NOT_REQUIRED:
+                return paymentNotRequiredTemplateName;
+            case PAYMENT_FAIL:
+                return paymentFailTemplateName;
+            case PAID_SUCCESSFULLY:
+                return paidSuccessfullyTemplateName;
             default:
-                return PAID_SUCCESSFULLY_TEMPLATE_NAME;
-//                throw new ServerException(String.format("Unsupported payment state found: {}", state));
+                throw new ServerException(String.format("Unsupported payment state found: {}", state));
         }
     }
 
@@ -100,7 +110,13 @@ public class TemplateProcessor {
         context.setVariable("creationDate", new Date(invoice.getCreationDate()));
         context.setVariable("fromDate", new Date(invoice.getFromDate()));
         context.setVariable("untilDate", new Date(invoice.getUntilDate()));
+
         context.setVariable("sendDate", invoice.getMailingDate() == 0 ? new Date() : new Date(invoice.getMailingDate()));
+        for (Member member : accountDao.getMembers(invoice.getAccountId())) {
+            if (member.getRoles().contains("account/owner")) {
+                context.setVariable("email", userDao.getById(member.getUserId()).getEmail());
+            }
+        }
         for (Charge charge : invoice.getCharges()) {
             if (charge.getServiceId().equals(ServiceId.FACTORY)) {
                 context.setVariable("factoryCharge", charge);
@@ -114,7 +130,8 @@ public class TemplateProcessor {
             }
         }
         PaymentState state = PaymentState.fromState(invoice.getPaymentState());
-        if (state.equals(PaymentState.PAID_SUCCESSFULLY) || state.equals(PaymentState.PAYMENT_FAIL)) {
+        if (state.equals(PaymentState.PAID_SUCCESSFULLY) || state.equals(PaymentState.PAYMENT_FAIL) ||
+            state.equals(PaymentState.NOT_REQUIRED)) {
             for (CreditCard card : cardDao.getCards(invoice.getAccountId())) {
                 if (card.getToken().equals(invoice.getCreditCardId())) {
                     context.setVariable("creditCard", card);

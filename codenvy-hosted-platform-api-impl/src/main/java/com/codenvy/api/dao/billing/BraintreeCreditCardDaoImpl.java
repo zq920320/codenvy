@@ -138,6 +138,10 @@ public class BraintreeCreditCardDaoImpl implements CreditCardDao {
                                      .withType(card.getCardType())
                                      .withNumber(card.getMaskedNumber())
                                      .withCardholder(card.getCardholderName())
+                                     .withStreetAddress(card.getBillingAddress().getStreetAddress())
+                                     .withCity(card.getBillingAddress().getLocality())
+                                     .withState(card.getBillingAddress().getRegion())
+                                     .withCountry(card.getBillingAddress().getCountryName())
                                      .withExpiration(card.getExpirationDate()));
             }
         } catch (NotFoundException nf) {

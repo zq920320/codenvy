@@ -17,6 +17,7 @@
  */
 package com.codenvy.api.account.billing;
 
+import com.braintreegateway.Address;
 import com.braintreegateway.BraintreeGateway;
 import com.braintreegateway.ClientTokenGateway;
 import com.braintreegateway.ClientTokenRequest;
@@ -73,6 +74,9 @@ public class BraintreeCreditCardDaoImplTest {
     private Customer customer;
 
     @Mock
+    private Address address;
+
+    @Mock
     private Result<Customer> customerResult;
 
     @Mock
@@ -127,6 +131,7 @@ public class BraintreeCreditCardDaoImplTest {
         when(customerGateway.find(anyString())).thenReturn(customer);
         when(customerResult.isSuccess()).thenReturn(true);
         when(creditCard.getCustomerId()).thenReturn(ACCOUNT_ID);
+        when(creditCard.getBillingAddress()).thenReturn(address);
         List<CreditCard> list =  new ArrayList<>();
         list.add(creditCard);
         when(customer.getCreditCards()).thenReturn(list);

@@ -56,6 +56,30 @@ public interface CreditCard {
 
     CreditCard withCardholder(String cardholder);
 
+    String getStreetAddress();
+
+    void setStreetAddress(String streetAddress);
+
+    CreditCard withStreetAddress(String streetAddress);
+
+    String getCity();
+
+    void setCity(String city);
+
+    CreditCard withCity(String city);
+
+    String getState();
+
+    void setState(String state);
+
+    CreditCard withState(String state);
+
+    String getCountry();
+
+    void setCountry(String country);
+
+    CreditCard withCountry(String country);
+
     String getType();
 
     void setType(String type);
