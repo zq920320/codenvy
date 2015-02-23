@@ -24,6 +24,7 @@ import com.codenvy.api.account.server.dao.Subscription;
 import com.codenvy.api.account.server.dao.SubscriptionQueryBuilder;
 import com.codenvy.api.account.shared.dto.BillingCycleType;
 import com.codenvy.api.account.shared.dto.SubscriptionState;
+import com.codenvy.api.account.subscription.ServiceId;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.ForbiddenException;
 import com.codenvy.api.core.NotFoundException;
@@ -321,25 +322,16 @@ public class AccountDaoImpl implements AccountDao {
             query.append("state", "ACTIVE");
 
             final List<Subscription> result = new ArrayList<>();
-            boolean absentSaas = true;
             try (DBCursor subscriptions = subscriptionCollection.find(query)) {
                 for (DBObject currentSubscription : subscriptions) {
-                    final Subscription subscription = toSubscription(currentSubscription);
-                    if ("Saas".equals(subscription.getServiceId())) {
-                        absentSaas = false;
-                    }
-                    result.add(subscription);
+                    result.add(toSubscription(currentSubscription));
                 }
             }
 
-            if (absentSaas) {
-                result.add(new Subscription()
-                                   .withId("community" + accountId)
-                                   .withAccountId(accountId)
-                                   .withPlanId("sas-community")
-                                   .withServiceId("Saas")
-                                   .withProperties(Collections.singletonMap("Package", "Community")));
+            if (!containSaasSubscription(result)) {
+                result.add(getDefaultSaasSubscription(accountId));
             }
+
             return result;
         } catch (MongoException me) {
             LOG.error(me.getMessage(), me);
@@ -364,13 +356,8 @@ public class AccountDaoImpl implements AccountDao {
                 return toSubscription(dbSubscription);
             }
 
-            if ("Saas".equals(serviceId)) {
-                return new Subscription()
-                        .withId("community" + accountId)
-                        .withAccountId(accountId)
-                        .withPlanId("sas-community")
-                        .withServiceId("Saas")
-                        .withProperties(Collections.singletonMap("Package", "Community"));
+            if (ServiceId.SAAS.equals(serviceId)) {
+                return getDefaultSaasSubscription(accountId);
             }
 
             return null;
@@ -382,11 +369,20 @@ public class AccountDaoImpl implements AccountDao {
 
     private boolean containSaasSubscription(List<Subscription> subscriptions) {
         for (Subscription subscription : subscriptions) {
-            if ("Saas".equals(subscription.getServiceId())) {
+            if (ServiceId.SAAS.equals(subscription.getServiceId())) {
                 return true;
             }
         }
         return false;
+    }
+
+    private Subscription getDefaultSaasSubscription(String accountId) {
+        return new Subscription()
+                .withId("community" + accountId)
+                .withAccountId(accountId)
+                .withPlanId("sas-community")
+                .withServiceId("Saas")
+                .withProperties(Collections.singletonMap("Package", "Community"));
     }
 
     @Override

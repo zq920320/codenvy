@@ -17,7 +17,6 @@
  */
 package com.codenvy.api.account.server;
 
-import com.codenvy.api.account.server.dao.Account;
 import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.server.dao.Subscription;
 import com.codenvy.api.account.shared.dto.UpdateResourcesDescriptor;

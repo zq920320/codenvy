@@ -41,7 +41,6 @@ import static java.lang.System.currentTimeMillis;
  * Periodically checks for build resources usage.
  *
  * @author Max Shaposhnik
- *
  */
 @Singleton
 public class BuildTasksActivityChecker {
@@ -58,7 +57,7 @@ public class BuildTasksActivityChecker {
     /** prefix to store ID in usage tracker (to avoid runner and builder ID's match) */
     public static final String PFX = "build-";
 
-    public final static int    BUILDER_MEMORY_SIZE = 1536; // assume that builder uses 1.5GB of RAM
+    public final static int BUILDER_MEMORY_SIZE = 1536; // assume that builder uses 1.5GB of RAM
 
     private final Integer               runTickPeriod;
     private final Integer               schedulingPeriod;
@@ -91,8 +90,8 @@ public class BuildTasksActivityChecker {
             }
 
             final BaseBuilderRequest request = task.getRequest();
-            if (IN_PROGRESS.equals(descriptor.getStatus()) && isExpiredTickPeriod(descriptor.getStartTime()) &&
-                !(request instanceof DependencyRequest)) {
+            if (IN_PROGRESS.equals(descriptor.getStatus()) && isExpiredTickPeriod(descriptor.getStartTime())
+                && !(request instanceof DependencyRequest)) {
                 resourcesUsageTracker.resourceInUse(PFX + String.valueOf(descriptor.getTaskId()));
                 LOG.info("EVENT#build-usage# TYPE#{}# ID#{}# MEMORY#{}# USAGE-TIME#{}#",
                          request.getProjectDescriptor().getType(),
