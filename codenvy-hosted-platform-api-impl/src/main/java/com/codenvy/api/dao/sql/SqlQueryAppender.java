@@ -54,10 +54,10 @@ public class SqlQueryAppender {
             throws SQLException {
         if (from != null && till != null) {
             appendWhereOrAnd(queryBuilder);
-            queryBuilder.append(" ").append(fieldName).append(" <@ ").append(new Int8RangeType(from,
+            queryBuilder.append(" ").append(fieldName).append(" <@ '").append(new Int8RangeType(from,
                                                                                                till,
                                                                                                true,
-                                                                                               true)).append(" ");
+                                                                                               true)).append("' ");
         }
     }
 
