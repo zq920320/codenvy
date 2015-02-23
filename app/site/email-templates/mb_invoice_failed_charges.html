@@ -5,10 +5,13 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 </head>
 <body>
+<span th:inline="text">Your credit card ([[${creditCard.type}]] ending ...[[${#strings.substring(creditCard.Number,12,16)}]]) was not able to be charged this month.</span><br/>
+
+<span><strong  th:inline="text">You currently owe $[[${invoice.total}]] and you not be allowed to build or run your projects until the invoice below is paid.</strong> If you wish to pay now you can do so with the <a href="/dashboard">User Dashboard</a>.</span><br/>
 <table style="border: 1px solid grey; border-collapse: collapse;">
     <tbody>
     <tr>
-        <td th:if="${creditCard != null}" style="border: 1px solid grey; padding: 5px;">
+        <td  th:if="${creditCard != null}" style="border: 1px solid grey; padding: 5px;">
         <p><strong>Billed to:</strong></p>
         <p>
           <span th:text="${creditCard.cardholder}">Brad Micklea</span><br/>
@@ -21,7 +24,7 @@
         <td style="border: 1px solid grey; padding: 10px;">
             <p><strong th:text="'Receipt Total: $' + ${invoice.total}">Receipt Total: $69.79</strong></p>
 
-             <p><span th:if="${creditCard != null}" th:text="'Charged to: ' + ${creditCard.type} + ' ending...' + ${#strings.substring(creditCard.Number,12,16)}">Charged to: VISA ending ...2547</span><br/>
+             <p><span th:if="${creditCard != null}" th:text="'Charged to: ' + ${creditCard.type} + ' ending ...' + ${#strings.substring(creditCard.Number,12,16)}">Charged to: VISA ending ...2547</span><br/>
                 <span th:text="'Receipt Date: ' + ${#dates.format(sendDate, 'dd-MMM-yyyy')}">Receipt Date: 2-Jan-2015</span><br/>
                 <span th:text="'Receipt ID: ' + ${invoice.id}">Receipt ID: 123</span><br/>
                 <span th:text="'Usage Period: ' + ${#dates.format(fromDate, 'MMM,dd')} + ' - ' + ${#dates.format(untilDate, 'MMM,dd')}">Usage Period: December, 2014</span>&nbsp;
