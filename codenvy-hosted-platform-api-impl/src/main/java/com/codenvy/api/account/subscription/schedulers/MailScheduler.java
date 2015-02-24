@@ -40,13 +40,12 @@ import javax.ws.rs.core.MediaType;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import static com.codenvy.api.account.billing.PaymentState.NOT_REQUIRED;
 import static com.codenvy.api.account.billing.PaymentState.PAID_SUCCESSFULLY;
 
 /**
- * TODO
+ * Sends emails about resources consumption and charges
  *
  * @author Sergii Leschenko
  */
@@ -54,7 +53,7 @@ import static com.codenvy.api.account.billing.PaymentState.PAID_SUCCESSFULLY;
 public class MailScheduler {
     private static final Logger LOG = LoggerFactory.getLogger(MailScheduler.class);
 
-    private static final int INVOICES_LIMIT = 50; //TODO mb make it configurable
+    private static final String INVOICE_FETCH_LIMIT = "billing.invoice.fetch.limit";
 
     private final SubscriptionMailSender subscriptionMailSender;
     private final BillingService         billingService;
@@ -64,6 +63,7 @@ public class MailScheduler {
     private final String                 billingFailedSubject;
     private final TemplateProcessor      templateProcessor;
     private final String                 billingAddress;
+    private final int                    invoices_limit;
 
     @Inject
     public MailScheduler(SubscriptionMailSender subscriptionMailSender,
@@ -73,7 +73,8 @@ public class MailScheduler {
                          @Named("subscription.saas.mail.invoice.subject") String invoiceSubject,
                          @Named("subscription.saas.mail.invoice.no_payment.subject") String invoiceNoPaymentSubject,
                          @Named("subscription.saas.mail.billing.failed.subject") String billingFailedSubject,
-                         @Named("subscription.saas.mail.address") String billingAddress) {
+                         @Named("subscription.saas.mail.address") String billingAddress,
+                         @Named(INVOICE_FETCH_LIMIT) int invoices_limit) {
         this.billingService = billingService;
         this.subscriptionMailSender = subscriptionMailSender;
         this.invoiceSubject = invoiceSubject;
@@ -82,24 +83,19 @@ public class MailScheduler {
         this.mailSenderClient = mailSenderClient;
         this.templateProcessor = templateProcessor;
         this.billingAddress = billingAddress;
+        this.invoices_limit = invoices_limit;
     }
 
-    //TODO configure it
-    @ScheduleDelay(initialDelay = 6,
-                   delay = 60,
-                   unit = TimeUnit.SECONDS)
+    @ScheduleDelay(delay = 5)
     public void sendEmails() {
         try {
-            List<Invoice> notSendInvoices;
-            while ((notSendInvoices = billingService.getNotSendInvoices(INVOICES_LIMIT, 0)).size() != 0) {
-                for (Invoice notSendInvoice : notSendInvoices) {
-                    try {
-                        sendMail(notSendInvoice);
+            for (Invoice notSendInvoice : billingService.getNotSendInvoices(invoices_limit, 0)) {
+                try {
+                    sendMail(notSendInvoice);
 
-                        billingService.markInvoiceAsSent(notSendInvoice.getId());
-                    } catch (ApiException e) {
-                        LOG.error("Can't send email", e);
-                    }
+                    billingService.markInvoiceAsSent(notSendInvoice.getId());
+                } catch (ApiException e) {
+                    LOG.error("Can't send email", e);
                 }
             }
         } catch (ServerException e) {

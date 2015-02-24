@@ -32,12 +32,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
- * TODO
+ * Charges all unpaid invoices
  *
  * @author Sergii Leschenko
  */
@@ -45,34 +45,30 @@ import java.util.concurrent.TimeUnit;
 public class MeterBasedCharger implements Runnable {
     private static final Logger LOG = LoggerFactory.getLogger(MeterBasedCharger.class);
 
-    private static final int INVOICES_LIMIT = 50;
+    private static final String INVOICE_FETCH_LIMIT = "billing.invoice.fetch.limit";
 
     private final BillingService billingService;
     private final PaymentService paymentService;
     private final CreditCardDao  creditCardDao;
+    private final int            invoices_limit;
 
     @Inject
     public MeterBasedCharger(PaymentService paymentService,
                              BillingService billingService,
-                             CreditCardDao creditCardDao) {
+                             CreditCardDao creditCardDao,
+                             @Named(INVOICE_FETCH_LIMIT) int invoices_limit) {
         this.billingService = billingService;
         this.paymentService = paymentService;
         this.creditCardDao = creditCardDao;
+        this.invoices_limit = invoices_limit;
     }
 
-    //TODO configure it
-    @ScheduleDelay(initialDelay = 6,
-                   delay = 60,
-                   unit = TimeUnit.SECONDS)
+    @ScheduleDelay(delay = 5)
     @Override
     public void run() {
         try {
-            List<Invoice> invoices;
-
-            while ((invoices = billingService.getInvoices(PaymentState.WAITING_EXECUTOR, INVOICES_LIMIT, 0)).size() != 0) {
-                for (Invoice invoice : invoices) {
-                    doCharge(invoice);
-                }
+            for (Invoice invoice : billingService.getInvoices(PaymentState.WAITING_EXECUTOR, invoices_limit, 0)) {
+                doCharge(invoice);
             }
         } catch (ServerException e) {
             LOG.error("Can't get receipts", e);
