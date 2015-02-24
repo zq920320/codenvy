@@ -113,7 +113,7 @@ public class AccountDaoImpl implements AccountDao {
     private final WorkspaceDao workspaceDao;
 
     @Inject
-    public AccountDaoImpl(DB db,
+    public AccountDaoImpl(@Named("mongo.db.organization") DB db,
                           WorkspaceDao workspaceDao,
                           @Named(ACCOUNT_COLLECTION) String accountCollectionName,
                           @Named(SUBSCRIPTION_COLLECTION) String subscriptionCollectionName,

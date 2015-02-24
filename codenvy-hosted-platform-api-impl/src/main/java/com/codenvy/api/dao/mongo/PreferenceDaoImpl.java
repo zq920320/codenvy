@@ -90,7 +90,7 @@ public class PreferenceDaoImpl implements PreferenceDao {
     private final DBCollection collection;
 
     @Inject
-    public PreferenceDaoImpl(DB database,
+    public PreferenceDaoImpl(@Named("mongo.db.organization") DB database,
                              UserDao userDao,
                              @Named(PREFERENCES_COLLECTION) String collectionName) {
         this.collection = database.getCollection(collectionName);

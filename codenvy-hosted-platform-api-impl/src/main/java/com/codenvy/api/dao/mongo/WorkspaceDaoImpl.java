@@ -84,7 +84,7 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
     private final MemberDao    memberDao;
 
     @Inject
-    public WorkspaceDaoImpl(DB db,
+    public WorkspaceDaoImpl(@Named("mongo.db.organization") DB db,
                             MemberDao memberDao,
                             EventService eventService,
                             @Named(DB_COLLECTION) String collectionName) {

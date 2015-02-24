@@ -84,7 +84,7 @@ public class MemberDaoImpl implements MemberDao {
     @Inject
     public MemberDaoImpl(UserDao userDao,
                          WorkspaceDao workspaceDao,
-                         DB db,
+                         @Named("mongo.db.organization") DB db,
                          @Named(DB_COLLECTION) String collectionName) {
         this.userDao = userDao;
         this.workspaceDao = workspaceDao;

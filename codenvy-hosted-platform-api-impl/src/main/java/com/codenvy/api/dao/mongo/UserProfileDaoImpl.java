@@ -68,7 +68,7 @@ public class UserProfileDaoImpl implements UserProfileDao {
     private final DBCollection collection;
 
     @Inject
-    public UserProfileDaoImpl(DB db, @Named(DB_COLLECTION) String collectionName) {
+    public UserProfileDaoImpl(@Named("mongo.db.organization") DB db, @Named(DB_COLLECTION) String collectionName) {
         collection = db.getCollection(collectionName);
         collection.ensureIndex(new BasicDBObject("id", 1), new BasicDBObject("unique", true));
     }

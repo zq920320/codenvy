@@ -29,32 +29,19 @@ import java.net.UnknownHostException;
 /**
  * Provides single instance of database to all consumers.
  */
-
-@Singleton
 public class MongoDatabaseProvider implements Provider<DB> {
-
-    protected static final String DB_URL      = "organization.storage.db.url";
-    protected static final String DB_NAME     = "organization.storage.db.name";
-    protected static final String DB_USERNAME = "organization.storage.db.username";
-    protected static final String DB_PASSWORD = "organization.storage.db.password";
-
-    @Inject
-    @Named(DB_URL)
-    String dbUrl;
-
-    @Inject
-    @Named(DB_NAME)
-    String dbName;
-
-    @Inject
-    @Named(DB_USERNAME)
-    String username;
-
-    @Inject
-    @Named(DB_PASSWORD)
-    String password;
-
+    private final String dbUrl;
+    private final String dbName;
+    private final String username;
+    private final String password;
     private volatile DB db;
+
+    public MongoDatabaseProvider(String dbUrl, String dbName, String username, String password) {
+        this.dbUrl = dbUrl;
+        this.dbName = dbName;
+        this.username = username;
+        this.password = password;
+    }
 
     @Override
     public DB get() {

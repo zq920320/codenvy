@@ -46,7 +46,7 @@ public class PlanDaoImpl implements PlanDao {
     private final DBCollection planCollection;
 
     @Inject
-    public PlanDaoImpl(DB db, @Named(PLAN_COLLECTION) String planCollectionName) {
+    public PlanDaoImpl(@Named("mongo.db.organization") DB db, @Named(PLAN_COLLECTION) String planCollectionName) {
         planCollection = db.getCollection(planCollectionName);
         planCollection.ensureIndex(new BasicDBObject("id", 1), new BasicDBObject("unique", true));
     }
