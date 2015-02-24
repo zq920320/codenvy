@@ -18,10 +18,10 @@
 
 package com.codenvy.api.account.subscription.saas.job;
 
+import com.codenvy.api.account.AccountLockEvent;
 import com.codenvy.api.account.server.Constants;
 import com.codenvy.api.account.server.dao.Account;
 import com.codenvy.api.account.server.dao.AccountDao;
-import com.codenvy.api.account.AccountLockEvent;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.ForbiddenException;
 import com.codenvy.api.core.NotFoundException;
@@ -56,8 +56,7 @@ public class RefillJob implements Runnable {
     @Inject
     EventService eventService;
 
-    // 0sec 0min 07hour 1st day of every month
-    @ScheduleCron(cron = "0 0 7 1 * ?")
+    @ScheduleCron(cronParameterName = "billing.resources.refill.cron")
     @Override
     public void run() {
         try {
