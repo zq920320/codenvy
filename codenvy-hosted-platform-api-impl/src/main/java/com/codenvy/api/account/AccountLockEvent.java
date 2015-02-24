@@ -15,7 +15,7 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.api.account.subscription.saas;
+package com.codenvy.api.account;
 
 import com.codenvy.api.core.notification.EventOrigin;
 
@@ -81,7 +81,7 @@ public class AccountLockEvent {
 
     @Override
     public String toString() {
-        return "ProjectItemModifiedEvent{" +
+        return "AccountLockEvent{" +
                "type=" + type +
                ", account='" + account + '\'' +
                '}';

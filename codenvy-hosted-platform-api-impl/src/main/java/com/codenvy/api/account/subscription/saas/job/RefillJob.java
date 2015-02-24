@@ -21,7 +21,7 @@ package com.codenvy.api.account.subscription.saas.job;
 import com.codenvy.api.account.server.Constants;
 import com.codenvy.api.account.server.dao.Account;
 import com.codenvy.api.account.server.dao.AccountDao;
-import com.codenvy.api.account.subscription.saas.AccountLockEvent;
+import com.codenvy.api.account.AccountLockEvent;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.ForbiddenException;
 import com.codenvy.api.core.NotFoundException;
