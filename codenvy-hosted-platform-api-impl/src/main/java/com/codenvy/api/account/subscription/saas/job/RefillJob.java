@@ -21,10 +21,12 @@ package com.codenvy.api.account.subscription.saas.job;
 import com.codenvy.api.account.server.Constants;
 import com.codenvy.api.account.server.dao.Account;
 import com.codenvy.api.account.server.dao.AccountDao;
+import com.codenvy.api.account.subscription.saas.AccountLockEvent;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.ForbiddenException;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
+import com.codenvy.api.core.notification.EventService;
 import com.codenvy.api.workspace.server.dao.Workspace;
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
 import com.codenvy.commons.schedule.ScheduleCron;
@@ -38,7 +40,7 @@ import javax.inject.Singleton;
 /**
  * Refill accounts with RAM limit exceeded at the beginning of new period.
  *
- * @author Max Shaposhnik (mshaposhnik@codenvy.com) on 1/21/15.
+ * @author Max Shaposhnik
  */
 
 @Singleton
@@ -51,6 +53,9 @@ public class RefillJob implements Runnable {
     @Inject
     AccountDao accountDao;
 
+    @Inject
+    EventService eventService;
+
     // 0sec 0min 07hour 1st day of every month
     @ScheduleCron(cron = "0 0 7 1 * ?")
     @Override
@@ -60,6 +65,7 @@ public class RefillJob implements Runnable {
                 account.getAttributes().remove(Constants.LOCKED_PROPERTY);
                 try {
                     accountDao.update(account);
+                    eventService.publish(AccountLockEvent.accountUnlockedEvent(account.getId()));
                 } catch (NotFoundException | ServerException e) {
                     LOG.error("Error removing lock property into account  {} .", account.getId());
                 }

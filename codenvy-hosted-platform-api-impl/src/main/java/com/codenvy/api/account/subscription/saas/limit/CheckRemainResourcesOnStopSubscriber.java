@@ -24,6 +24,7 @@ import com.codenvy.api.account.server.dao.Account;
 import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.server.dao.Subscription;
 import com.codenvy.api.account.subscription.ServiceId;
+import com.codenvy.api.account.subscription.saas.AccountLockEvent;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
@@ -114,6 +115,7 @@ public class CheckRemainResourcesOnStopSubscriber implements EventSubscriber<Run
             if (used >= freeUsageLimit) {
                 account.getAttributes().put(Constants.LOCKED_PROPERTY, "true");
                 accountDao.update(account);
+                eventService.publish(AccountLockEvent.accountLockedEvent(account.getId()));
                 for (Workspace ws : workspaceDao.getByAccount(account.getId())) {
                     ws.getAttributes().put(Constants.LOCKED_PROPERTY, "true");
                     try {
