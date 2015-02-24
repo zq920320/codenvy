@@ -30,6 +30,7 @@ import com.codenvy.api.core.ApiException;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.ForbiddenException;
 import com.codenvy.api.core.ServerException;
+import com.codenvy.api.core.notification.EventService;
 import com.codenvy.commons.schedule.ScheduleDelay;
 
 import org.slf4j.Logger;
@@ -57,12 +58,14 @@ public class BraintreePaymentService implements PaymentService {
 
     private final CreditCardDao           creditCardDao;
     private final BraintreeGateway        gateway;
-    private       Map<String, BigDecimal> prices;
+    private final EventService            eventService;
+    private       Map<String, Double> prices;
 
     @Inject
-    public BraintreePaymentService(CreditCardDao creditCardDao, BraintreeGateway gateway) {
+    public BraintreePaymentService(CreditCardDao creditCardDao, BraintreeGateway gateway, EventService eventService) {
         this.creditCardDao = creditCardDao;
         this.gateway = gateway;
+        this.eventService = eventService;
         this.prices = Collections.emptyMap();
     }
 
@@ -74,15 +77,16 @@ public class BraintreePaymentService implements PaymentService {
         if (subscription.getId() == null) {
             throw new ForbiddenException("Subscription id required");
         }
+        String accountId = subscription.getAccountId();
 
-        final String creditCardToken = getCreditCardToken(subscription.getAccountId());
+        final String creditCardToken = getCreditCardToken(accountId);
         if (creditCardToken == null) {
             throw new ForbiddenException("Account hasn't credit card");
         }
 
         try {
             // prices should be set already by getPrices method
-            final BigDecimal price = prices.get(subscription.getPlanId());
+            final Double price = prices.get(subscription.getPlanId());
             if (null == price) {
                 LOG.error("PAYMENTS# state#Error# subscriptionId#{}# message#{}#", subscription.getId(),
                           "Price of plan is not found " + subscription.getPlanId());
@@ -94,7 +98,7 @@ public class BraintreePaymentService implements PaymentService {
                     // add subscription id to identify charging reason
                     .customField("subscription_id", subscription.getId())
                     .options().submitForSettlement(true).done()
-                    .amount(price);
+                    .amount(new BigDecimal(price, new MathContext(2)));
 
             final Result<Transaction> result = gateway.transaction().sale(request);
             final Transaction target = result.getTarget();
@@ -102,8 +106,11 @@ public class BraintreePaymentService implements PaymentService {
                 // transaction successfully submitted for settlement
                 LOG.info("PAYMENTS# state#Success# subscriptionId#{}# transactionStatus#{}# message#{}# transactionId#{}#",
                          subscription.getId(), target.getStatus(), result.getMessage(), target.getId());
+                eventService.publish(CreditCardChargeEvent.creditCardChargeSuccessEvent(accountId,getCreditCardNumber(accountId), subscription.getId(), price));
             } else {
                 LOG.error("PAYMENTS# state#Error# subscriptionId#{}# message#{}#", subscription.getId(), result.getMessage());
+                eventService.publish(CreditCardChargeEvent.creditCardChargeFailedEvent(accountId, getCreditCardNumber(accountId),
+                                                                                       subscription.getId(), price));
                 throw new ForbiddenException(result.getMessage());
             }
         } catch (ApiException e) {
@@ -125,24 +132,30 @@ public class BraintreePaymentService implements PaymentService {
         if (invoice.getTotal() == 0) {
             throw new ForbiddenException("Amount can't be 0");
         }
+        String accountId = invoice.getAccountId();
 
         try {
+            Double price =  invoice.getTotal();
             final TransactionRequest request = new TransactionRequest()
                     .paymentMethodToken(invoice.getCreditCardId())
                     // add invoice id to identify charging reason
                     .customField("invoice_id", String.valueOf(invoice.getId()))
                     .options().submitForSettlement(true).done()
-                    .amount(new BigDecimal(invoice.getTotal(), new MathContext(2)));
+                    .amount(new BigDecimal(price, new MathContext(2)));
 
             final Result<Transaction> result = gateway.transaction().sale(request);
             final Transaction target = result.getTarget();
             if (result.isSuccess()) {
                 // transaction successfully submitted for settlement
                 LOG.info("PAYMENTS# state#Success# invoice#{}# accountId#{}# transactionStatus#{}# message#{}# transactionId#{}#",
-                         invoice.getId(), invoice.getAccountId(), target.getStatus(), result.getMessage(), target.getId());
+                         invoice.getId(), accountId, target.getStatus(), result.getMessage(), target.getId());
+                eventService.publish(CreditCardChargeEvent.creditCardChargeSuccessEvent(accountId, getCreditCardNumber(accountId),
+                                                                                        Long.toString(invoice.getId()), price));
             } else {
                 LOG.error("PAYMENTS# state#Error# invoice#{}# accountId#{}# message#{}#", invoice.getId(), invoice.getAccountId(),
                           result.getMessage());
+                eventService.publish(CreditCardChargeEvent.creditCardChargeFailedEvent(accountId, getCreditCardNumber(accountId),
+                                                                                       Long.toString(invoice.getId()), price));
                 throw new ForbiddenException(result.getMessage());
             }
         } catch (ApiException e) {
@@ -160,9 +173,9 @@ public class BraintreePaymentService implements PaymentService {
     public void updatePrices() {
         try {
             List<Plan> plans = gateway.plan().all();
-            final HashMap<String, BigDecimal> newPrices = new HashMap<>(plans.size());
+            final HashMap<String, Double> newPrices = new HashMap<>(plans.size());
             for (Plan plan : plans) {
-                newPrices.put(plan.getId(), plan.getPrice());
+                newPrices.put(plan.getId(), plan.getPrice().doubleValue());
             }
             prices = newPrices;
         } catch (Exception e) {
@@ -177,6 +190,22 @@ public class BraintreePaymentService implements PaymentService {
             if (!cards.isEmpty()) {
                 //Now user can have only one credit card
                 return cards.get(0).getToken();
+            }
+        } catch (ServerException | ForbiddenException e) {
+            LOG.error("Can't get credit card of account " + accountId, e);
+            return null;
+        }
+
+        return null;
+    }
+
+    private String getCreditCardNumber(String accountId) {
+        try {
+            final List<CreditCard> cards = creditCardDao.getCards(accountId);
+
+            if (!cards.isEmpty()) {
+                //Now user can have only one credit card
+                return cards.get(0).getNumber();
             }
         } catch (ServerException | ForbiddenException e) {
             LOG.error("Can't get credit card of account " + accountId, e);

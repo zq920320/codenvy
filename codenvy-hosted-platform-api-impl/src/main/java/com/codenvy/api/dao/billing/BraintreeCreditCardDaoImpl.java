@@ -25,9 +25,12 @@ import com.braintreegateway.Result;
 import com.braintreegateway.exceptions.BraintreeException;
 import com.braintreegateway.exceptions.NotFoundException;
 import com.codenvy.api.account.billing.CreditCardDao;
+import com.codenvy.api.account.billing.CreditCardRegistrationEvent;
 import com.codenvy.api.account.impl.shared.dto.CreditCard;
 import com.codenvy.api.core.ForbiddenException;
 import com.codenvy.api.core.ServerException;
+import com.codenvy.api.core.notification.EventService;
+import com.codenvy.commons.env.EnvironmentContext;
 import com.codenvy.dto.server.DtoFactory;
 
 import org.slf4j.Logger;
@@ -48,10 +51,13 @@ public class BraintreeCreditCardDaoImpl implements CreditCardDao {
 
     private final BraintreeGateway gateway;
 
+    private final EventService eventService;
+
 
     @Inject
-    public BraintreeCreditCardDaoImpl(BraintreeGateway gateway) {
+    public BraintreeCreditCardDaoImpl(BraintreeGateway gateway, EventService eventService) {
         this.gateway = gateway;
+        this.eventService = eventService;
     }
 
     @Override
@@ -102,6 +108,9 @@ public class BraintreeCreditCardDaoImpl implements CreditCardDao {
                 LOG.error(msg);
                 throw new ForbiddenException(msg);
             }
+            eventService.publish(CreditCardRegistrationEvent
+                                         .creditCardAddedEvent(accountId, result.getTarget().getCreditCards().get(0).getMaskedNumber(),
+                                                               EnvironmentContext.getCurrent().getUser().getId()));
         } catch (NotFoundException nf) {
             CustomerRequest request = new CustomerRequest().id(accountId).creditCard()
                                                            .paymentMethodNonce(nonce)
@@ -118,6 +127,9 @@ public class BraintreeCreditCardDaoImpl implements CreditCardDao {
                 LOG.error(msg);
                 throw new ForbiddenException(msg);
             }
+            eventService.publish(CreditCardRegistrationEvent
+                                         .creditCardAddedEvent(accountId, result.getTarget().getCreditCards().get(0).getMaskedNumber(),
+                                                               EnvironmentContext.getCurrent().getUser().getId()));
         } catch (BraintreeException e) {
             LOG.warn("Braintree exception: ", e);
             throw new ServerException("Internal server error. Please, contact support.");
@@ -168,6 +180,9 @@ public class BraintreeCreditCardDaoImpl implements CreditCardDao {
                 LOG.warn(String.format("Failed to remove card. Error message: %s", result.getMessage()));
                 throw new ForbiddenException(String.format("Failed to remove card. Error message: %s",result.getMessage()));
             }
+            eventService.publish(CreditCardRegistrationEvent
+                                         .creditCardRemovedEvent(accountId, result.getTarget().getMaskedNumber(),
+                                                               EnvironmentContext.getCurrent().getUser().getId()));
         } catch (BraintreeException e) {
             LOG.warn("Braintree exception: ", e);
             throw new ServerException("Internal server error. Please, contact support.");
