@@ -20,10 +20,10 @@ package com.codenvy.api.dao.mongo;
 import com.codenvy.api.core.ForbiddenException;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
-import com.codenvy.api.machine.server.ImageKeyImpl;
 import com.codenvy.api.machine.server.ProjectBindingImpl;
 import com.codenvy.api.machine.server.Snapshot;
 import com.codenvy.api.machine.server.SnapshotStorage;
+import com.codenvy.api.machine.server.spi.ImageKey;
 import com.codenvy.api.machine.shared.ProjectBinding;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
@@ -40,7 +40,10 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import static java.lang.String.format;
 
@@ -48,16 +51,16 @@ import static java.lang.String.format;
  * @author Alexander Garagatyi
  */
 public class MongoSnapshotStorageImpl implements SnapshotStorage {
-    private static final Logger LOG = LoggerFactory.getLogger(MongoSnapshotStorageImpl.class);
-    private static final String SNAPSHOT_COLLECTION = "storage.machine.collection";
+    private static final Logger LOG                = LoggerFactory.getLogger(MongoSnapshotStorageImpl.class);
+    private static final String MACHINE_COLLECTION = "storage.machine.collection";
 
-    private final DBCollection snapshotCollection;
+    private final DBCollection machineCollection;
 
     @Inject
-    public MongoSnapshotStorageImpl(@Named("mongo.db.machine") DB db, @Named(SNAPSHOT_COLLECTION) String snapshotCollectionName) {
-        snapshotCollection = db.getCollection(snapshotCollectionName);
-        snapshotCollection.ensureIndex(new BasicDBObject("workspaceId", 1));
-        snapshotCollection.ensureIndex(new BasicDBObject("owner", 1));
+    public MongoSnapshotStorageImpl(@Named("mongo.db.machine") DB db, @Named(MACHINE_COLLECTION) String machineCollectionName) {
+        machineCollection = db.getCollection(machineCollectionName);
+        machineCollection.ensureIndex(new BasicDBObject("workspaceId", 1));
+        machineCollection.ensureIndex(new BasicDBObject("owner", 1));
         // TODO add index for path
     }
 
@@ -65,7 +68,7 @@ public class MongoSnapshotStorageImpl implements SnapshotStorage {
     public Snapshot getSnapshot(String snapshotId) throws NotFoundException, ServerException {
         final DBObject snapshotDocument;
         try {
-            snapshotDocument = snapshotCollection.findOne(new BasicDBObject("_id", snapshotId));
+            snapshotDocument = machineCollection.findOne(new BasicDBObject("_id", snapshotId));
         } catch (MongoException me) {
             LOG.error(me.getMessage(), me);
             throw new ServerException("It is not possible to retrieve snapshot");
@@ -84,7 +87,7 @@ public class MongoSnapshotStorageImpl implements SnapshotStorage {
         requiredNotNull(snapshot.getWorkspaceId(), "Workspace id");
         requiredNotNull(snapshot.getImageKey(), "Image key");
         try {
-            snapshotCollection.save(toDBObject(snapshot));
+            machineCollection.save(toDBObject(snapshot));
         } catch (MongoException me) {
             LOG.error(me.getMessage(), me);
             throw new ServerException("It is not possible to save snapshot");
@@ -95,10 +98,10 @@ public class MongoSnapshotStorageImpl implements SnapshotStorage {
     public List<Snapshot> findSnapshots(String owner, String workspaceId, ProjectBinding project) throws ServerException {
         BasicDBObject query = new BasicDBObject("owner", owner);
         query.append("workspaceId", workspaceId);
-        query.append("path", project.getPath());
+        query.append("projectBindings.path", project.getPath());
 
-        try (DBCursor snapshots = snapshotCollection.find()) {
-            final ArrayList<Snapshot> result = new ArrayList<>(snapshots.size());
+        try (DBCursor snapshots = machineCollection.find(query)) {
+            final ArrayList<Snapshot> result = new ArrayList<>();
             for (DBObject snapshotObj : snapshots) {
                 result.add(toSnapshot(snapshotObj));
             }
@@ -112,7 +115,7 @@ public class MongoSnapshotStorageImpl implements SnapshotStorage {
     @Override
     public void removeSnapshot(String snapshotId) throws NotFoundException, ServerException {
         try {
-            final WriteResult writeResult = snapshotCollection.remove(new BasicDBObject("_id", snapshotId));
+            final WriteResult writeResult = machineCollection.remove(new BasicDBObject("_id", snapshotId));
 
             if (writeResult.getN() == 0) {
                 throw new NotFoundException(format("Snapshot with id %s not found", snapshotId));
@@ -128,12 +131,12 @@ public class MongoSnapshotStorageImpl implements SnapshotStorage {
         final BasicDBList projectBindingsObject = (BasicDBList)snapshotObject.get("projectBindings");
         final List<ProjectBinding> projectBindings = new ArrayList<>(projectBindingsObject.size());
         for (Object projectBinding : projectBindingsObject) {
-            projectBindings.add(new ProjectBindingImpl().withPath(projectBinding.toString()));
+            projectBindings.add(new ProjectBindingImpl().withPath(((BasicDBObject)projectBinding).getString("path")));
         }
 
         return new Snapshot(snapshotObject.getString("_id"),
                             snapshotObject.getString("imageType"),
-                            new ImageKeyImpl(MongoUtil.asMap("imageKey")),
+                            new ImageKeyImpl(MongoUtil.asMap(snapshotObject.get("imageKey"))),
                             snapshotObject.getString("owner"),
                             snapshotObject.getLong("creationDate"),
                             snapshotObject.getString("workspaceId"),
@@ -170,6 +173,24 @@ public class MongoSnapshotStorageImpl implements SnapshotStorage {
     private void requiredNotNull(Object object, String subject) throws ForbiddenException {
         if (object == null) {
             throw new ForbiddenException(subject + " required");
+        }
+    }
+
+    private static class ImageKeyImpl implements ImageKey {
+        private final Map<String, String> fields;
+
+        public ImageKeyImpl(Map<String, String> fields) {
+            this.fields = new LinkedHashMap<>(fields);
+        }
+
+        @Override
+        public Map<String, String> getFields() {
+            return Collections.unmodifiableMap(fields);
+        }
+
+        @Override
+        public String toJson() {
+            throw new UnsupportedOperationException();
         }
     }
 }
