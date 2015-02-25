@@ -59,7 +59,7 @@ public class BraintreePaymentService implements PaymentService {
     private final CreditCardDao           creditCardDao;
     private final BraintreeGateway        gateway;
     private final EventService            eventService;
-    private       Map<String, Double> prices;
+    private       Map<String, Double>     prices;
 
     @Inject
     public BraintreePaymentService(CreditCardDao creditCardDao, BraintreeGateway gateway, EventService eventService) {
@@ -83,11 +83,10 @@ public class BraintreePaymentService implements PaymentService {
         if (creditCardToken == null) {
             throw new ForbiddenException("Account hasn't credit card");
         }
-
+        // prices should be set already by getPrices method
+        final Double price = prices.get(subscription.getPlanId());
         try {
-            // prices should be set already by getPrices method
-            final Double price = prices.get(subscription.getPlanId());
-            if (null == price) {
+            if (price == null) {
                 LOG.error("PAYMENTS# state#Error# subscriptionId#{}# message#{}#", subscription.getId(),
                           "Price of plan is not found " + subscription.getPlanId());
                 throw new ServerException("Internal server error occurs. Please, contact support");
@@ -106,19 +105,24 @@ public class BraintreePaymentService implements PaymentService {
                 // transaction successfully submitted for settlement
                 LOG.info("PAYMENTS# state#Success# subscriptionId#{}# transactionStatus#{}# message#{}# transactionId#{}#",
                          subscription.getId(), target.getStatus(), result.getMessage(), target.getId());
-                eventService.publish(CreditCardChargeEvent.creditCardChargeSuccessEvent(accountId,getCreditCardNumber(accountId), subscription.getId(), price));
+                eventService.publish(CreditCardChargeEvent.creditCardChargeSuccessEvent(accountId, target.getCreditCard().getMaskedNumber(),
+                                                                                        subscription.getId(), price));
             } else {
                 LOG.error("PAYMENTS# state#Error# subscriptionId#{}# message#{}#", subscription.getId(), result.getMessage());
-                eventService.publish(CreditCardChargeEvent.creditCardChargeFailedEvent(accountId, getCreditCardNumber(accountId),
+                eventService.publish(CreditCardChargeEvent.creditCardChargeFailedEvent(accountId, target.getCreditCard().getMaskedNumber(),
                                                                                        subscription.getId(), price));
                 throw new ForbiddenException(result.getMessage());
             }
         } catch (ApiException e) {
             // rethrow user-friendly API exceptions
+            eventService.publish(CreditCardChargeEvent.creditCardChargeFailedEvent(accountId, getCreditCardNumber(accountId),
+                                                                                   subscription.getId(), price));
             throw e;
         } catch (Exception e) {
             LOG.error(String.format("PAYMENTS# state#Error# subscriptionId#%s# message#%s#", subscription.getId(), e.getLocalizedMessage()),
                       e);
+            eventService.publish(CreditCardChargeEvent.creditCardChargeFailedEvent(accountId, getCreditCardNumber(accountId),
+                                                                                   subscription.getId(), price));
             throw new ServerException("Internal server error occurs. Please, contact support");
         }
     }
@@ -133,9 +137,8 @@ public class BraintreePaymentService implements PaymentService {
             throw new ForbiddenException("Amount can't be 0");
         }
         String accountId = invoice.getAccountId();
-
+        Double price =  invoice.getTotal();
         try {
-            Double price =  invoice.getTotal();
             final TransactionRequest request = new TransactionRequest()
                     .paymentMethodToken(invoice.getCreditCardId())
                     // add invoice id to identify charging reason
@@ -149,22 +152,25 @@ public class BraintreePaymentService implements PaymentService {
                 // transaction successfully submitted for settlement
                 LOG.info("PAYMENTS# state#Success# invoice#{}# accountId#{}# transactionStatus#{}# message#{}# transactionId#{}#",
                          invoice.getId(), accountId, target.getStatus(), result.getMessage(), target.getId());
-                eventService.publish(CreditCardChargeEvent.creditCardChargeSuccessEvent(accountId, getCreditCardNumber(accountId),
+                eventService.publish(CreditCardChargeEvent.creditCardChargeSuccessEvent(accountId, target.getCreditCard().getMaskedNumber(),
                                                                                         Long.toString(invoice.getId()), price));
             } else {
                 LOG.error("PAYMENTS# state#Error# invoice#{}# accountId#{}# message#{}#", invoice.getId(), invoice.getAccountId(),
                           result.getMessage());
-                eventService.publish(CreditCardChargeEvent.creditCardChargeFailedEvent(accountId, getCreditCardNumber(accountId),
+                eventService.publish(CreditCardChargeEvent.creditCardChargeFailedEvent(accountId, target.getCreditCard().getMaskedNumber(),
                                                                                        Long.toString(invoice.getId()), price));
                 throw new ForbiddenException(result.getMessage());
             }
         } catch (ApiException e) {
+            eventService.publish(CreditCardChargeEvent.creditCardChargeFailedEvent(accountId, getCreditCardNumber(accountId),
+                                                                                   Long.toString(invoice.getId()), price));
             // rethrow user-friendly API exceptions
             throw e;
         } catch (Exception e) {
             LOG.error("PAYMENTS# state#Error# invoice#{}# accountId#{}# message#{}#", invoice.getId(), invoice.getAccountId(),
                       e.getMessage());
-
+            eventService.publish(CreditCardChargeEvent.creditCardChargeFailedEvent(accountId, getCreditCardNumber(accountId),
+                                                                                   Long.toString(invoice.getId()), price));
             throw new ServerException("Internal server error occurs. Please, contact support");
         }
     }
@@ -177,7 +183,7 @@ public class BraintreePaymentService implements PaymentService {
             for (Plan plan : plans) {
                 newPrices.put(plan.getId(), plan.getPrice().doubleValue());
             }
-            prices = newPrices;
+            this.prices = newPrices;
         } catch (Exception e) {
             LOG.error("Can't retrieve prices for subscription plans." + e.getLocalizedMessage(), e);
         }

@@ -31,6 +31,7 @@ import com.codenvy.api.account.shared.dto.BillingCycleType;
 import com.codenvy.api.account.shared.dto.SubscriptionState;
 import com.codenvy.api.core.ForbiddenException;
 import com.codenvy.api.core.ServerException;
+import com.codenvy.api.core.notification.EventService;
 import com.codenvy.commons.schedule.ScheduleDelay;
 import com.codenvy.dto.server.DtoFactory;
 
@@ -65,34 +66,36 @@ import static org.testng.Assert.assertTrue;
  */
 @Listeners(MockitoTestNGListener.class)
 public class BraintreePaymentServiceTest {
-    private static final String     SUBSCRIPTION_ID = "subscriptionId";
-    private static final String     PLAN_ID         = "planId";
-    private static final String     PAYMENT_TOKEN   = "ptoken";
-    private static final BigDecimal PRICE           = new BigDecimal(10);
+    private static final String SUBSCRIPTION_ID = "subscriptionId";
+    private static final String PLAN_ID         = "planId";
+    private static final String PAYMENT_TOKEN   = "ptoken";
+    private static final Double PRICE           = 10D;
 
     @Mock
-    private CreditCardDao      creditCardDao;
+    private CreditCardDao                   creditCardDao;
     @Mock
-    private BraintreeGateway   gateway;
+    private BraintreeGateway                gateway;
     @Mock
-    private PlanGateway        planGateway;
+    private PlanGateway                     planGateway;
     @Mock
-    private Plan               plan;
+    private Plan                            plan;
     @Mock
-    private TransactionGateway transactionGateway;
+    private TransactionGateway              transactionGateway;
     @Mock
-    private Result             result;
+    private Result                          result;
     @Mock
-    private Transaction        transaction;
+    private EventService                    eventService;
+    @Mock
+    private Transaction                     transaction;
+    @Mock
+    private com.braintreegateway.CreditCard creditCard;
 
     @InjectMocks
     private BraintreePaymentService service;
 
     @BeforeMethod
     public void setUp() throws Exception {
-        Field pricesField = BraintreePaymentService.class.getDeclaredField("prices");
-        pricesField.setAccessible(true);
-        pricesField.set(service, Collections.emptyMap());
+        prepareSuccessfulCharge();
 
         when(creditCardDao.getCards(anyString()))
                 .thenReturn(Arrays.asList(DtoFactory.getInstance().createDto(CreditCard.class).withToken(PAYMENT_TOKEN)));
@@ -100,8 +103,6 @@ public class BraintreePaymentServiceTest {
 
     @Test
     public void shouldBeAbleToChargeSubscription() throws Exception {
-        prepareSuccessfulCharge();
-
         service.charge(createSubscription());
 
         verify(transactionGateway).sale(any(TransactionRequest.class));
@@ -109,22 +110,17 @@ public class BraintreePaymentServiceTest {
 
     @Test(expectedExceptions = ForbiddenException.class, expectedExceptionsMessageRegExp = "No subscription information provided")
     public void shouldThrowForbiddenExceptionIfSubscriptionToChargeIsNull() throws Exception {
-        prepareSuccessfulCharge();
-
         service.charge((Subscription)null);
     }
 
     @Test(expectedExceptions = ForbiddenException.class, expectedExceptionsMessageRegExp = "Subscription id required")
     public void shouldThrowForbiddenExceptionIfIdIsNull() throws Exception {
-        prepareSuccessfulCharge();
-
         service.charge(createSubscription().withId(null));
     }
 
     @Test(expectedExceptions = ForbiddenException.class, expectedExceptionsMessageRegExp = "Account hasn't credit card")
     public void shouldThrowForbiddenExceptionIfTokenIsNull() throws Exception {
         when(creditCardDao.getCards(anyString())).thenReturn(Collections.<CreditCard>emptyList());
-        prepareSuccessfulCharge();
 
         service.charge(createSubscription());
     }
@@ -132,8 +128,6 @@ public class BraintreePaymentServiceTest {
     @Test(expectedExceptions = ServerException.class, expectedExceptionsMessageRegExp = "Internal server error occurs. Please, contact " +
                                                                                         "support")
     public void shouldThrowServerExceptionIfPriceIsMissing() throws Exception {
-        prepareSuccessfulCharge();
-
         Field prices = BraintreePaymentService.class.getDeclaredField("prices");
         prices.setAccessible(true);
         prices.set(service, Collections.emptyMap());
@@ -143,7 +137,6 @@ public class BraintreePaymentServiceTest {
 
     @Test(expectedExceptions = ForbiddenException.class, expectedExceptionsMessageRegExp = "error message")
     public void shouldThrowConflictExceptionIfChargeWasUnsuccessful() throws Exception {
-        prepareSuccessfulCharge();
         when(result.isSuccess()).thenReturn(false);
         when(result.getMessage()).thenReturn("error message");
 
@@ -153,9 +146,8 @@ public class BraintreePaymentServiceTest {
     }
 
     @Test(expectedExceptions = ServerException.class,
-          expectedExceptionsMessageRegExp = "Internal server error occurs. Please, contact support")
+            expectedExceptionsMessageRegExp = "Internal server error occurs. Please, contact support")
     public void shouldThrowServerExceptionIfOtherExceptionOccurs() throws Exception {
-        prepareSuccessfulCharge();
         when(transactionGateway.sale(any(TransactionRequest.class))).thenThrow(new BraintreeException("message"));
 
         service.charge(createSubscription());
@@ -185,7 +177,7 @@ public class BraintreePaymentServiceTest {
             }
 
         }
-        assertEquals(planPricesMap, Collections.singletonMap("planId", new BigDecimal(1)));
+        assertEquals(planPricesMap, Collections.singletonMap("planId", 1D));
     }
 
     private Subscription createSubscription() {
@@ -219,6 +211,7 @@ public class BraintreePaymentServiceTest {
         when(gateway.transaction()).thenReturn(transactionGateway);
         when(transactionGateway.sale(any(TransactionRequest.class))).thenReturn(result);
         when(result.getTarget()).thenReturn(transaction);
+        when(transaction.getCreditCard()).thenReturn(creditCard);
         when(result.isSuccess()).thenReturn(true);
     }
 }

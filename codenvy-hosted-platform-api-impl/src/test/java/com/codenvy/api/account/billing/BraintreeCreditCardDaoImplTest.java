@@ -29,7 +29,10 @@ import com.braintreegateway.CustomerRequest;
 import com.braintreegateway.Result;
 import com.braintreegateway.exceptions.NotFoundException;
 import com.codenvy.api.core.ForbiddenException;
+import com.codenvy.api.core.notification.EventService;
 import com.codenvy.api.dao.billing.BraintreeCreditCardDaoImpl;
+import com.codenvy.commons.env.EnvironmentContext;
+import com.codenvy.commons.user.User;
 
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -74,6 +77,9 @@ public class BraintreeCreditCardDaoImplTest {
     private Customer customer;
 
     @Mock
+    private EventService eventService;
+
+    @Mock
     private Address address;
 
     @Mock
@@ -85,6 +91,8 @@ public class BraintreeCreditCardDaoImplTest {
     @Mock
     private CreditCard creditCard;
 
+    @Mock
+    User user;
 
     @InjectMocks
     private BraintreeCreditCardDaoImpl dao;
@@ -96,6 +104,9 @@ public class BraintreeCreditCardDaoImplTest {
         when(gateway.customer()).thenReturn(customerGateway);
         when(gateway.creditCard()).thenReturn(cardGateway);
         when(creditCard.getToken()).thenReturn(TOKEN);
+        EnvironmentContext context = new EnvironmentContext();
+        context.setUser(user);
+        EnvironmentContext.setCurrent(context);
     }
 
     @Test
@@ -132,7 +143,7 @@ public class BraintreeCreditCardDaoImplTest {
         when(customerResult.isSuccess()).thenReturn(true);
         when(creditCard.getCustomerId()).thenReturn(ACCOUNT_ID);
         when(creditCard.getBillingAddress()).thenReturn(address);
-        List<CreditCard> list =  new ArrayList<>();
+        List<CreditCard> list = new ArrayList<>();
         list.add(creditCard);
         when(customer.getCreditCards()).thenReturn(list);
         List<com.codenvy.api.account.impl.shared.dto.CreditCard> result = dao.getCards(ACCOUNT_ID);
@@ -144,6 +155,7 @@ public class BraintreeCreditCardDaoImplTest {
     public void shouldBeAbleToRemoveCards() throws Exception {
         when(cardGateway.delete(anyString())).thenReturn(cardResult);
         when(cardResult.isSuccess()).thenReturn(true);
+        when(cardResult.getTarget()).thenReturn(creditCard);
         dao.deleteCard(ACCOUNT_ID, TOKEN);
         verify(cardGateway).delete(anyString());
 
