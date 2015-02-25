@@ -99,7 +99,7 @@ public class TemplateProcessor {
             case PAID_SUCCESSFULLY:
                 return paidSuccessfullyTemplateName;
             default:
-                throw new ServerException(String.format("Unsupported payment state found: {}", state));
+                throw new ServerException(String.format("Unsupported payment state found: %s", state));
         }
     }
 
