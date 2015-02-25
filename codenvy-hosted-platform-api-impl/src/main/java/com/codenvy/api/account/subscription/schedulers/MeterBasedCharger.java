@@ -18,6 +18,7 @@
 
 package com.codenvy.api.account.subscription.schedulers;
 
+import com.codenvy.api.account.AccountLocker;
 import com.codenvy.api.account.PaymentService;
 import com.codenvy.api.account.billing.BillingService;
 import com.codenvy.api.account.billing.CreditCardDao;
@@ -50,16 +51,19 @@ public class MeterBasedCharger implements Runnable {
     private final BillingService billingService;
     private final PaymentService paymentService;
     private final CreditCardDao  creditCardDao;
+    private final AccountLocker  accountLocker;
     private final int            invoices_limit;
 
     @Inject
     public MeterBasedCharger(PaymentService paymentService,
                              BillingService billingService,
                              CreditCardDao creditCardDao,
+                             AccountLocker accountLocker,
                              @Named(INVOICE_FETCH_LIMIT) int invoices_limit) {
         this.billingService = billingService;
         this.paymentService = paymentService;
         this.creditCardDao = creditCardDao;
+        this.accountLocker = accountLocker;
         this.invoices_limit = invoices_limit;
     }
 
@@ -94,6 +98,7 @@ public class MeterBasedCharger implements Runnable {
         } catch (ForbiddenException | ServerException e) {
             LOG.error("Can't pay invoice " + invoice.getAccountId(), e);
             setPaymentState(invoice.getId(), PaymentState.PAYMENT_FAIL, ccToken);
+            accountLocker.lockAccount(invoice.getAccountId());
         }
     }
 

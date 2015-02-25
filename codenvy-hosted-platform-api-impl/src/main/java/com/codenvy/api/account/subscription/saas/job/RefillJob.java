@@ -18,17 +18,12 @@
 
 package com.codenvy.api.account.subscription.saas.job;
 
-import com.codenvy.api.account.AccountLockEvent;
+import com.codenvy.api.account.AccountLocker;
 import com.codenvy.api.account.server.Constants;
 import com.codenvy.api.account.server.dao.Account;
 import com.codenvy.api.account.server.dao.AccountDao;
-import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.ForbiddenException;
-import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
-import com.codenvy.api.core.notification.EventService;
-import com.codenvy.api.workspace.server.dao.Workspace;
-import com.codenvy.api.workspace.server.dao.WorkspaceDao;
 import com.codenvy.commons.schedule.ScheduleCron;
 
 import org.slf4j.Logger;
@@ -47,34 +42,24 @@ import javax.inject.Singleton;
 public class RefillJob implements Runnable {
     private static final Logger LOG = LoggerFactory.getLogger(RefillJob.class);
 
-    @Inject
-    WorkspaceDao workspaceDao;
+    private final AccountDao    accountDao;
+    private final AccountLocker accountLocker;
 
     @Inject
-    AccountDao accountDao;
+    public RefillJob(AccountDao accountDao,
+                     AccountLocker accountLocker) {
+        this.accountDao = accountDao;
+        this.accountLocker = accountLocker;
+    }
 
-    @Inject
-    EventService eventService;
 
     @ScheduleCron(cronParameterName = "billing.resources.refill.cron")
     @Override
     public void run() {
         try {
-            for (Account account : accountDao.getLockedCommunityAccounts()) {
-                account.getAttributes().remove(Constants.LOCKED_PROPERTY);
-                try {
-                    accountDao.update(account);
-                    eventService.publish(AccountLockEvent.accountUnlockedEvent(account.getId()));
-                } catch (NotFoundException | ServerException e) {
-                    LOG.error("Error removing lock property into account  {} .", account.getId());
-                }
-                for (Workspace ws : workspaceDao.getByAccount(account.getId())) {
-                    ws.getAttributes().remove(Constants.LOCKED_PROPERTY);
-                    try {
-                        workspaceDao.update(ws);
-                    } catch (NotFoundException | ServerException | ConflictException e) {
-                        LOG.error("Error removing lock property into workspace  {} .", ws.getId());
-                    }
+            for (Account account : accountDao.getAccountsWithLockedResources()) {
+                if (!account.getAttributes().containsKey(Constants.PAYMENT_LOCKED_PROPERTY)) {
+                    accountLocker.unlockAccountResources(account.getId());
                 }
             }
         } catch (ServerException | ForbiddenException e) {

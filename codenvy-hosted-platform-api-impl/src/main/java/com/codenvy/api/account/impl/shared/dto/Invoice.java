@@ -17,7 +17,6 @@
  */
 package com.codenvy.api.account.impl.shared.dto;
 
-import com.codenvy.api.account.shared.dto.MemoryChargeDetails;
 import com.codenvy.dto.shared.DTO;
 
 import java.util.List;

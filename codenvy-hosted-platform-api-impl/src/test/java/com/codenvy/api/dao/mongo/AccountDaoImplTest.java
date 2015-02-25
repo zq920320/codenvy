@@ -17,6 +17,7 @@
  */
 package com.codenvy.api.dao.mongo;
 
+import com.codenvy.api.account.server.Constants;
 import com.codenvy.api.account.server.dao.Account;
 import com.codenvy.api.account.server.dao.Member;
 import com.codenvy.api.account.server.dao.Subscription;
@@ -60,7 +61,6 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
-import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
 /**
@@ -557,7 +557,7 @@ public class AccountDaoImplTest extends BaseDaoTest {
     // need better backend emulator. current is not supports #elemMatch
     public void shouldBeAbleToFindLockedAccounts() throws Exception {
         final Map<String, String> attributes1 = new HashMap<>(2);
-        attributes1.put("codenvy:locked", "true");
+        attributes1.put(Constants.RESOURCES_LOCKED_PROPERTY, "true");
         Account account1 = new Account().withId("acc1")
                                         .withName("test_account_name")
                                         .withAttributes(attributes1);
@@ -567,7 +567,7 @@ public class AccountDaoImplTest extends BaseDaoTest {
 
         insertAccounts(account1, account2);
 
-        final List<Account> found = accountDao.getLockedCommunityAccounts();
+        final List<Account> found = accountDao.getAccountsWithLockedResources();
 
         assertEquals(new HashSet<>(found), new HashSet<>(asList(account1, account2)));
     }

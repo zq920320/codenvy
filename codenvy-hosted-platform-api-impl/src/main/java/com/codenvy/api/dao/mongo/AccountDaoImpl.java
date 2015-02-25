@@ -17,6 +17,7 @@
  */
 package com.codenvy.api.dao.mongo;
 
+import com.codenvy.api.account.server.Constants;
 import com.codenvy.api.account.server.dao.Account;
 import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.server.dao.Member;
@@ -445,8 +446,8 @@ public class AccountDaoImpl implements AccountDao {
     }
 
     @Override
-    public List<Account> getLockedCommunityAccounts() throws ServerException, ForbiddenException {
-        DBObject query = QueryBuilder.start("attributes").elemMatch(new BasicDBObject("name", "codenvy:locked")).get();
+    public List<Account> getAccountsWithLockedResources() throws ServerException, ForbiddenException {
+        DBObject query = QueryBuilder.start("attributes").elemMatch(new BasicDBObject("name", Constants.RESOURCES_LOCKED_PROPERTY)).get();
 
         try (DBCursor accounts = accountCollection.find(query)) {
             final ArrayList<Account> result = new ArrayList<>();

@@ -53,7 +53,6 @@ import java.util.Set;
  *
  * @author Max Shaposhnik (mshaposhnik@codenvy.com) on 1/19/15.
  */
-
 @Listeners(MockitoTestNGListener.class)
 public class ActiveRunRemainResourcesCheckerTest {
 

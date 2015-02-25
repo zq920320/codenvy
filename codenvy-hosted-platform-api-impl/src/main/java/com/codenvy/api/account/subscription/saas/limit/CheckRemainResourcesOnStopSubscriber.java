@@ -19,13 +19,11 @@ package com.codenvy.api.account.subscription.saas.limit;
 
 import com.codenvy.api.account.billing.BillingPeriod;
 import com.codenvy.api.account.metrics.MeterBasedStorage;
-import com.codenvy.api.account.server.Constants;
 import com.codenvy.api.account.server.dao.Account;
 import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.server.dao.Subscription;
+import com.codenvy.api.account.AccountLocker;
 import com.codenvy.api.account.subscription.ServiceId;
-import com.codenvy.api.account.AccountLockEvent;
-import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.api.core.notification.EventService;
@@ -56,6 +54,7 @@ public class CheckRemainResourcesOnStopSubscriber implements EventSubscriber<Run
     private final MeterBasedStorage storage;
     private final ActiveRunHolder   activeRunHolder;
     private final BillingPeriod     billingPeriod;
+    private final AccountLocker     accountLocker;
     private final Double            freeUsageLimit;
 
 
@@ -66,6 +65,7 @@ public class CheckRemainResourcesOnStopSubscriber implements EventSubscriber<Run
                                                 MeterBasedStorage storage,
                                                 ActiveRunHolder activeRunHolder,
                                                 BillingPeriod billingPeriod,
+                                                AccountLocker accountLocker,
                                                 @Named("subscription.saas.usage.free.gbh") Double freeUsage) {
         this.eventService = eventService;
         this.workspaceDao = workspaceDao;
@@ -73,6 +73,7 @@ public class CheckRemainResourcesOnStopSubscriber implements EventSubscriber<Run
         this.billingPeriod = billingPeriod;
         this.freeUsageLimit = freeUsage;
         this.storage = storage;
+        this.accountLocker = accountLocker;
         this.activeRunHolder = activeRunHolder;
     }
 
@@ -109,21 +110,10 @@ public class CheckRemainResourcesOnStopSubscriber implements EventSubscriber<Run
                 return;
             }
 
-            double used =
-                    storage.getMemoryUsed(workspace.getAccountId(), billingPeriod.getCurrent().getStartDate().getTime(),
-                                          System.currentTimeMillis());
+            double used = storage.getMemoryUsed(workspace.getAccountId(), billingPeriod.getCurrent().getStartDate().getTime(),
+                                                System.currentTimeMillis());
             if (used >= freeUsageLimit) {
-                account.getAttributes().put(Constants.LOCKED_PROPERTY, "true");
-                accountDao.update(account);
-                eventService.publish(AccountLockEvent.accountLockedEvent(account.getId()));
-                for (Workspace ws : workspaceDao.getByAccount(account.getId())) {
-                    ws.getAttributes().put(Constants.LOCKED_PROPERTY, "true");
-                    try {
-                        workspaceDao.update(ws);
-                    } catch (NotFoundException | ServerException | ConflictException e) {
-                        LOG.error("Error writing  lock property into workspace  {} .", event.getWorkspace());
-                    }
-                }
+                accountLocker.lockAccountResources(account.getId());
             }
         } catch (NotFoundException | ServerException e) {
             LOG.error("Error check remaining resources {} in workspace {} .", event.getProcessId(), event.getWorkspace());

@@ -17,9 +17,9 @@
  */
 package com.codenvy.api.account.subscription.saas.limit;
 
+import com.codenvy.api.account.AccountLocker;
 import com.codenvy.api.account.billing.MonthlyBillingPeriod;
 import com.codenvy.api.account.metrics.MeterBasedStorage;
-import com.codenvy.api.account.server.Constants;
 import com.codenvy.api.account.server.dao.Account;
 import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.server.dao.Subscription;
@@ -32,7 +32,6 @@ import com.codenvy.api.runner.internal.RunnerEvent;
 import com.codenvy.api.workspace.server.dao.Workspace;
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
 
-import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.testng.MockitoTestNGListener;
@@ -42,29 +41,23 @@ import org.testng.annotations.Test;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Map;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 
 @Listeners(MockitoTestNGListener.class)
 public class CheckRemainResourcesOnStopSubscriberTest {
-
-    private static final long PROCESS_ID = 1L;
-
+    private static final long   PROCESS_ID = 1L;
     private static final Double FREE_LIMIT = 100D;
-
-    private static final String WS_ID = "workspaceId";
-
-    private static final String ACC_ID = "accountId";
+    private static final String WS_ID      = "workspaceId";
+    private static final String ACC_ID     = "accountId";
 
     @Mock
     EventService      eventService;
@@ -76,15 +69,16 @@ public class CheckRemainResourcesOnStopSubscriberTest {
     MeterBasedStorage storage;
     @Mock
     ActiveRunHolder   activeRunHolder;
-
+    @Mock
+    AccountLocker     accountLocker;
 
     CheckRemainResourcesOnStopSubscriber subscriber;
-
 
     @BeforeMethod
     public void setUp() throws Exception {
         subscriber = new CheckRemainResourcesOnStopSubscriber(eventService, workspaceDao, accountDao, storage,
-                                                              activeRunHolder, new MonthlyBillingPeriod(), FREE_LIMIT);
+                                                              activeRunHolder, new MonthlyBillingPeriod(), accountLocker, FREE_LIMIT);
+
         when(workspaceDao.getById(anyString())).thenReturn(new Workspace().withAccountId("accountId")
                                                                           .withId(ACC_ID));
 
@@ -95,19 +89,19 @@ public class CheckRemainResourcesOnStopSubscriberTest {
     @Test
     public void shouldAddEventOnRunStarted() throws ServerException {
         subscriber.onEvent(RunnerEvent.startedEvent(PROCESS_ID, WS_ID, "/project"));
+
         verify(activeRunHolder, times(1)).addRun(any(RunnerEvent.class));
     }
 
     @Test
     public void shouldAddEventOnRunStopped() throws ServerException, NotFoundException {
-        //given
         Subscription subscription = Mockito.mock(Subscription.class);
         when(subscription.getPlanId()).thenReturn("Super-Pupper-Plan");
         when(accountDao.getActiveSubscription(eq(ACC_ID), eq(ServiceId.SAAS))).thenReturn(subscription);
         when(accountDao.getById(anyString())).thenReturn(new Account().withId(ACC_ID).withAttributes(new HashMap<String, String>()));
-        //when
+
         subscriber.onEvent(RunnerEvent.stoppedEvent(PROCESS_ID, WS_ID, "/project"));
-        //then
+
         verify(activeRunHolder, times(1)).removeRun(any(RunnerEvent.class));
     }
 
@@ -117,9 +111,10 @@ public class CheckRemainResourcesOnStopSubscriberTest {
         when(storage.getMemoryUsed(anyString(), anyLong(), anyLong())).thenReturn(80D);
         when(workspaceDao.getByAccount(anyString())).thenReturn(Arrays.asList(new Workspace().withAccountId("accountId")
                                                                                              .withId(ACC_ID)));
+
         subscriber.onEvent(RunnerEvent.stoppedEvent(PROCESS_ID, WS_ID, "/project"));
-        verify(accountDao, never()).update(any(Account.class));
-        verify(workspaceDao, never()).update(any(Workspace.class));
+
+        verifyZeroInteractions(accountLocker);
     }
 
     @Test
@@ -128,19 +123,10 @@ public class CheckRemainResourcesOnStopSubscriberTest {
         when(storage.getMemoryUsed(anyString(), anyLong(), anyLong())).thenReturn(120D);
         when(workspaceDao.getByAccount(anyString())).thenReturn(Arrays.asList(new Workspace().withAccountId("accountId")
                                                                                              .withId(ACC_ID)));
+
         subscriber.onEvent(RunnerEvent.stoppedEvent(PROCESS_ID, WS_ID, "/project"));
-        verify(accountDao, times(1)).update((Account)argThat(new ArgumentMatcher<Object>() {
-            @Override
-            public boolean matches(Object o) {
-                return ((Account)o).getAttributes().get(Constants.LOCKED_PROPERTY).equals("true");
-            }
-        }));
-        verify(workspaceDao, times(1)).update((Workspace)argThat(new ArgumentMatcher<Object>() {
-            @Override
-            public boolean matches(Object o) {
-                return ((Workspace)o).getAttributes().get(Constants.LOCKED_PROPERTY).equals("true");
-            }
-        }));
+
+        verify(accountLocker).lockAccountResources(eq("accountId"));
     }
 
 
