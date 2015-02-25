@@ -298,6 +298,6 @@
         <parameter key="WS" value="ANY"/>
         <parameter key="USER" value="ANY"/>
         <parameter key="EVENT" value="im-subscription-added"/>
-        <parameter key="STORAGE_TABLE" value="im_subscriptions"/>
+        <parameter key="STORAGE_TABLE" value="im_on_prem_issued"/>
     </script>
 </scripts>

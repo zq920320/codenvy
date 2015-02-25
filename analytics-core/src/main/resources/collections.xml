@@ -1127,7 +1127,8 @@
             </index>
         </indexes>
     </collection>
-    <collection name="im_download_statistics">
+
+    <collection name="im_on_prem_issued">
         <indexes>
             <index name="user">
                 <field>user</field>

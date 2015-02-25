@@ -1366,6 +1366,7 @@ function AnalyticsConfiguration() {
             doNotDisplayCSVButton: true
         },
 
+        /** for Download statistics */
         imDownloadStatisticsOverview: {
             presenterType: "SummaryTablePresenter",
             modelViewName: "im_download_statistics_list",
@@ -1373,7 +1374,6 @@ function AnalyticsConfiguration() {
             doNotDisplayCSVButton: true
         },
 
-        /** for Event View */
         imDownloadStatistics: {
             widgetLabel: "Download Statistics",
             presenterType: "EntryViewPresenter",
@@ -1397,6 +1397,37 @@ function AnalyticsConfiguration() {
                 "Artifact": "artifact",
                 "Version": "version",
                 "Date": "date",
+            }
+        },
+
+        imOnPremIssuedOverview: {
+            presenterType: "SummaryTablePresenter",
+            modelViewName: "im_on_prem_issued_list",
+            modelMetricName: "im_on_prem_issued",
+            doNotDisplayCSVButton: true
+        },
+
+        imOnPremIssued: {
+            widgetLabel: "On-Prem trial subscriptions issued",
+            presenterType: "EntryViewPresenter",
+            modelViewName: "im_on_prem_issued_list",
+
+            defaultModelParams: {
+                "sort": "-date"
+            },
+
+            columnLinkPrefixList: {
+                "User": "/analytics/pages/user-view.jsp?user",
+            },
+
+            /** @see DatabaseTable::makeTableSortable() method docs */
+            clientSortParams: {
+                "ascSortColumnNumber": 0
+            },
+
+            mapColumnToServerSortParam: {
+                "User": "user",
+                "Date": "date"
             }
         },
 

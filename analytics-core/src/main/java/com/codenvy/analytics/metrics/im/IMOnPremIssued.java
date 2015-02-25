@@ -27,17 +27,17 @@ import javax.annotation.security.RolesAllowed;
 /** @author Anatoliy Bazko */
 @RolesAllowed({"system/admin", "system/manager"})
 @OmitFilters({MetricFilter.WS_ID, MetricFilter.PERSISTENT_WS})
-public class IMDownloadStatistics extends AbstractActiveEntities {
+public class IMOnPremIssued extends AbstractActiveEntities {
 
-    public IMDownloadStatistics() {
-        super(MetricType.IM_DOWNLOAD_STATISTICS,
-              MetricType.IM_DOWNLOAD_STATISTICS_LIST,
+    public IMOnPremIssued() {
+        super(MetricType.IM_ON_PREM_ISSUED,
+              MetricType.IM_ON_PREM_ISSUED_LIST,
               USER);
     }
 
     /** {@inheritDoc} */
     @Override
     public String getDescription() {
-        return "The number of downloaded artifacts";
+        return "The number of issued on-prem trial subscriptions";
     }
 }

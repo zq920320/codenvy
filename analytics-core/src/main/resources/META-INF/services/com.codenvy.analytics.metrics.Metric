@@ -339,3 +339,5 @@ com.codenvy.analytics.metrics.ide_usage.extensions.subscriptions.SubscriptionInd
 
 com.codenvy.analytics.metrics.im.IMDownloadStatisticsList
 com.codenvy.analytics.metrics.im.IMDownloadStatistics
+com.codenvy.analytics.metrics.im.IMOnPremIssuedList
+com.codenvy.analytics.metrics.im.IMOnPremIssued

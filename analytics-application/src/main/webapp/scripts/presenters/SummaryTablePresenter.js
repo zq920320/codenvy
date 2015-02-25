@@ -59,6 +59,9 @@ analytics.presenter.SummaryTablePresenter.prototype.obtainSummaryData = function
         if (table.rows.length != 0) {
             table.columns.unshift("entries");
             table.rows[0].unshift("<div class='bold'>" + numberOfEntries + "</div>");
+        } else {
+            table.columns = ["entries"];
+            table.rows[0] =  ["<div class='bold'>" + numberOfEntries + "</div>"];
         }
         
         if (typeof modelParams[presenter.EXPANDED_METRIC_NAME_PARAMETER] == "undefined") {  // don't expand summary metric secondary
@@ -66,13 +69,13 @@ analytics.presenter.SummaryTablePresenter.prototype.obtainSummaryData = function
             table = presenter.linkTableValuesWithDrillDownPage(presenter.widgetName, table, modelParams);
         }
     
-        var tabelId = presenter.widgetName + "_table";
+        var tableId = presenter.widgetName + "_table";
         
         view.print("<div class='body'>");
-        view.printTable(table, false, tabelId, "text-aligned-center");
+        view.printTable(table, false, tableId, "text-aligned-center");
         view.print("</div>");
         
-        view.loadTableHandlers(false, {}, tabelId);
+        view.loadTableHandlers(false, {}, tableId);
         
         // finish loading widget
         presenter.needLoader = false;
