@@ -68,7 +68,9 @@ public enum MetricFilter {
     TASK_TYPE,
     STOP_TIME,
     SHUTDOWN_TYPE,
-    LAUNCH_TYPE;
+    LAUNCH_TYPE,
+    ARTIFACT,
+    VERSION;
 
     private boolean isNumeric;
 

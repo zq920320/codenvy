@@ -36,6 +36,9 @@
                 <a class="nav" href="/analytics/pages/projects-view.jsp" id="topmenu-projects">Projects</a>
                 <a class="nav" href="/analytics/pages/events-view.jsp" id="topmenu-events">Events</a>
                 <a class="nav" href="/analytics/pages/tasks-view.jsp" id="topmenu-tasks">Tasks</a>
+                <% if (FrontEndUtil.isCodenvyAdmin(request)) { %>
+                    <a class="nav" href="/analytics/pages/im-statistics.jsp" id="topmenu-im-statistics">Download Statistics</a>
+                <% } %>
 
                 <div class="nav">
                     <div>

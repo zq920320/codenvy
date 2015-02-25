@@ -270,6 +270,9 @@ public enum MetricType {
     TOP_DOMAINS,
     TOP_COMPANIES,
 
+    IM_DOWNLOAD_STATISTICS_LIST,
+    IM_DOWNLOAD_STATISTICS,
+
     IDE_USAGES,
     ZERO,
 

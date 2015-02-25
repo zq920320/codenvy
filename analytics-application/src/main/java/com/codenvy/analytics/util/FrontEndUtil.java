@@ -17,6 +17,7 @@
  */
 package com.codenvy.analytics.util;
 
+import com.codenvy.analytics.Configurator;
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
@@ -33,9 +34,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import static com.codenvy.analytics.datamodel.ValueDataUtil.getAsList;
 import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsList;
@@ -48,8 +51,21 @@ public class FrontEndUtil {
 
     private static final Logger LOG = LoggerFactory.getLogger(FrontEndUtil.class);
 
-    public static String getCurrentUserId(HttpServletRequest request) throws IOException {
+    @NotNull
+    private static Pattern adminPattern;
 
+    static {
+        try {
+            Configurator configurator = new Configurator();
+            String adminLoginRegexp = configurator.getString("analytics.admin_login_regexp");
+            adminPattern = adminLoginRegexp == null ? Pattern.compile("") : Pattern.compile(adminLoginRegexp);
+        } catch (IOException e) {
+            adminPattern = Pattern.compile("");
+            LOG.error(e.getMessage(), e);
+        }
+    }
+
+    public static String getCurrentUserId(HttpServletRequest request) throws IOException {
         try {
             Context.Builder builder = new Context.Builder();
             builder.put(MetricFilter.ALIASES, request.getUserPrincipal().getName());
@@ -124,5 +140,22 @@ public class FrontEndUtil {
         } else {
             return email;
         }
+    }
+
+    /**
+     * Indicates if user is Codenvy administrator.
+     */
+    public static boolean isCodenvyAdmin(HttpServletRequest request) {
+        Principal principal = request.getUserPrincipal();
+        if (principal == null || principal.getName() == null) {
+            return false;
+        }
+
+        return isSystemCodenvyAdmin(request) || adminPattern.matcher(principal.getName()).matches();
+    }
+
+    private static boolean isSystemCodenvyAdmin(HttpServletRequest request) {
+        return request.getServerName().equals("codenvy.com")
+               && (request.isUserInRole("system/admin") || request.isUserInRole("system/manager"));
     }
 }

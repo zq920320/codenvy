@@ -283,4 +283,21 @@
         <parameter key="EVENT" value="application-created"/>
         <parameter key="STORAGE_TABLE" value="deploys_to_paas"/>
     </script>
+
+    <!-- Scripts for download statistics -->
+    <script name="events_by_type">
+        <description>Download statistics by artifacts</description>
+        <parameter key="WS" value="ANY"/>
+        <parameter key="USER" value="ANY"/>
+        <parameter key="EVENT" value="im-artifact-downloaded"/>
+        <parameter key="PARAM" value="ARTIFACT"/>
+        <parameter key="STORAGE_TABLE" value="im_download_statistics"/>
+    </script>
+    <script name="events">
+        <description>On-prem trial licenses issued</description>
+        <parameter key="WS" value="ANY"/>
+        <parameter key="USER" value="ANY"/>
+        <parameter key="EVENT" value="im-subscription-added"/>
+        <parameter key="STORAGE_TABLE" value="im_subscriptions"/>
+    </script>
 </scripts>

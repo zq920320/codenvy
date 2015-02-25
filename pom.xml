@@ -44,7 +44,7 @@
     </scm>
     <properties>
         <maven.releases.repo.url>https://maven.codenvycorp.com/content/repositories/codenvy-private-releases/</maven.releases.repo.url>
-        <maven.snapshots.repo.url>https://maven.codenvycorp.com/content/repositories/codenvy-private-snapshots/</maven.snapshots.repo.url>
+        <maven.snapshots.repo.url>https://maven.codenvycorp.com/content/repicdsicositories/codenvy-private-snapshots/</maven.snapshots.repo.url>
         <!-- Required by Apache Pig -->
         <org.apache.log4j.version>1.2.16</org.apache.log4j.version>
         <!-- DASHB-512 -->

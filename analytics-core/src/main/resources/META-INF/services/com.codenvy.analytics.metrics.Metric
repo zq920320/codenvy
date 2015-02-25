@@ -336,3 +336,6 @@ com.codenvy.analytics.metrics.ide_usage.extensions.support.RedirectToEngineerCha
 com.codenvy.analytics.metrics.ide_usage.extensions.factory.ShareAction
 com.codenvy.analytics.metrics.ide_usage.ShowHiddenFilesAction
 com.codenvy.analytics.metrics.ide_usage.extensions.subscriptions.SubscriptionIndicatorAction
+
+com.codenvy.analytics.metrics.im.IMDownloadStatisticsList
+com.codenvy.analytics.metrics.im.IMDownloadStatistics

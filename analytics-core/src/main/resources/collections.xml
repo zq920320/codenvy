@@ -1106,4 +1106,43 @@
             </index>
         </indexes>
     </collection>
+
+    <collection name="im_download_statistics">
+        <indexes>
+            <index name="user">
+                <field>user</field>
+                <field>date</field>
+            </index>
+            <index name="artifact">
+                <field>artifact</field>
+                <field>version</field>
+                <field>date</field>
+            </index>
+            <index name="date">
+                <field>date</field>
+            </index>
+            <index name="version">
+                <field>version</field>
+                <field>date</field>
+            </index>
+        </indexes>
+    </collection>
+    <collection name="im_download_statistics">
+        <indexes>
+            <index name="user">
+                <field>user</field>
+                <field>date</field>
+            </index>
+            <index name="plan">
+                <field>plan</field>
+                <field>date</field>
+            </index>
+            <index name="stop_time">
+                <field>stop_time</field>
+            </index>
+            <index name="date">
+                <field>date</field>
+            </index>
+        </indexes>
+    </collection>
 </collections>

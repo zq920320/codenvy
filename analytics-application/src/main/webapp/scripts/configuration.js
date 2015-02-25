@@ -1366,6 +1366,40 @@ function AnalyticsConfiguration() {
             doNotDisplayCSVButton: true
         },
 
+        imDownloadStatisticsOverview: {
+            presenterType: "SummaryTablePresenter",
+            modelViewName: "im_download_statistics_list",
+            modelMetricName: "im_download_statistics",
+            doNotDisplayCSVButton: true
+        },
+
+        /** for Event View */
+        imDownloadStatistics: {
+            widgetLabel: "Download Statistics",
+            presenterType: "EntryViewPresenter",
+            modelViewName: "im_download_statistics_list",
+
+            defaultModelParams: {
+                "sort": "-date"
+            },
+
+            columnLinkPrefixList: {
+                "User": "/analytics/pages/user-view.jsp?user",
+            },
+
+            /** @see DatabaseTable::makeTableSortable() method docs */
+            clientSortParams: {
+                "ascSortColumnNumber": 0
+            },
+
+            mapColumnToServerSortParam: {
+                "User": "user",
+                "Artifact": "artifact",
+                "Version": "version",
+                "Date": "date",
+            }
+        },
+
         // drill-down page
         drillDown: {
             widgetLabel: "Drill Down Report",
@@ -1415,7 +1449,9 @@ function AnalyticsConfiguration() {
         "passed_days_count",
         "start_time",
         "id",
-        "task_type"
+        "task_type",
+        "artifact",
+        "version"
      ];
 
     /** Global parameters stored in Browser Storage */
