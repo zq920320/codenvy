@@ -21,7 +21,7 @@ import com.codenvy.api.account.PaymentService;
 import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.server.dao.Subscription;
 import com.codenvy.api.account.server.subscription.SubscriptionService;
-import com.codenvy.api.account.shared.dto.AccountResources;
+import com.codenvy.api.account.shared.dto.UsedAccountResources;
 import com.codenvy.api.account.subscription.service.util.SubscriptionCharger;
 import com.codenvy.api.account.subscription.service.util.SubscriptionExpirationMailSender;
 import com.codenvy.api.account.subscription.service.util.SubscriptionTrialRemover;
@@ -134,7 +134,7 @@ public class OnPremisesSubscriptionService extends SubscriptionService {
     }
 
     @Override
-    public AccountResources getAccountResources(Subscription subscription) throws ServerException {
-        return DtoFactory.getInstance().createDto(AccountResources.class);
+    public UsedAccountResources getAccountResources(Subscription subscription) throws ServerException {
+        return DtoFactory.getInstance().createDto(UsedAccountResources.class);
     }
 }

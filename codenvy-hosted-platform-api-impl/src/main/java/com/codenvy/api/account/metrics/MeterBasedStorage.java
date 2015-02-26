@@ -17,8 +17,12 @@
  */
 package com.codenvy.api.account.metrics;
 
+import com.codenvy.api.account.billing.ResourcesFilter;
+import com.codenvy.api.account.impl.shared.dto.AccountResources;
+import com.codenvy.api.account.impl.shared.dto.Resources;
 import com.codenvy.api.core.ServerException;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -38,17 +42,22 @@ public interface MeterBasedStorage {
 
 
     /**
-     * Get total consumed GB*h of account by given period.
+     * Get total used resources by given period.
      *
-     * @param accountId
-     *         given accountId
      * @param from
      *         starting of period
      * @param until
      *         end of period
-     * @return total number of consumed  GB*h
+     * @return resources related to given account by given period
      */
-    Double getMemoryUsed(String accountId, long from, long until) throws ServerException;
+    Resources getUsedMemory(long from, long until) throws ServerException;
+
+    /**
+     * Get resources related to accounts by given period.
+     *
+     * @return resources related to accounts by given period
+     */
+    List<AccountResources> getUsedMemory(ResourcesFilter resourcesFilter) throws ServerException;
 
     /**
      * Get total consumed GB*h of account by given period group by workspace id's

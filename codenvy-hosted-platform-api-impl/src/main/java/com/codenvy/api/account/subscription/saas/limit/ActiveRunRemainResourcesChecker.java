@@ -18,8 +18,9 @@
 package com.codenvy.api.account.subscription.saas.limit;
 
 import com.codenvy.api.account.billing.BillingPeriod;
+import com.codenvy.api.account.billing.ResourcesFilter;
+import com.codenvy.api.account.impl.shared.dto.AccountResources;
 import com.codenvy.api.account.metrics.MeterBasedStorage;
-import com.codenvy.api.account.server.dao.Account;
 import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.server.dao.Subscription;
 import com.codenvy.api.account.subscription.ServiceId;
@@ -33,8 +34,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Singleton;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -53,18 +54,18 @@ public class ActiveRunRemainResourcesChecker implements Runnable {
     private final MeterBasedStorage storage;
     private final RunQueue          runQueue;
     private final BillingPeriod     billingPeriod;
-    private final double            freeUsageLimit;
 
     @Inject
-    public ActiveRunRemainResourcesChecker(ActiveRunHolder activeRunHolder, AccountDao accountDao,
-                                           MeterBasedStorage storage, RunQueue runQueue, BillingPeriod billingPeriod,
-                                           @Named("subscription.saas.usage.free.gbh") double freeUsage) {
+    public ActiveRunRemainResourcesChecker(ActiveRunHolder activeRunHolder,
+                                           AccountDao accountDao,
+                                           MeterBasedStorage storage,
+                                           RunQueue runQueue,
+                                           BillingPeriod billingPeriod) {
         this.activeRunHolder = activeRunHolder;
         this.accountDao = accountDao;
         this.storage = storage;
         this.runQueue = runQueue;
         this.billingPeriod = billingPeriod;
-        this.freeUsageLimit = freeUsage;
     }
 
     @ScheduleRate(period = 60)
@@ -77,10 +78,14 @@ public class ActiveRunRemainResourcesChecker implements Runnable {
                     return;
                 }
 
-                double used =
-                        storage.getMemoryUsed(accountRuns.getKey(), billingPeriod.getCurrent().getStartDate().getTime(),
-                                              System.currentTimeMillis());
-                if (used >= freeUsageLimit) {
+                long startBillingPeriod = billingPeriod.getCurrent().getStartDate().getTime();
+                final List<AccountResources> usedMemory = storage.getUsedMemory(ResourcesFilter.builder()
+                                                                                               .withAccountId(accountRuns.getKey())
+                                                                                               .withFromDate(startBillingPeriod)
+                                                                                               .withUntilDate(System.currentTimeMillis())
+                                                                                               .withPaidGbHMoreThan(0)
+                                                                                               .build());
+                if (!usedMemory.isEmpty()) {
                     for (Long processId : accountRuns.getValue()) {
                         try {
                             final RunQueueTask task = runQueue.getTask(processId);

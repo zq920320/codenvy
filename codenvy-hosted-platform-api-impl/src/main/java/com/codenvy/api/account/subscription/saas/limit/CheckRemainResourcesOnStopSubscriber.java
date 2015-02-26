@@ -17,12 +17,14 @@
  */
 package com.codenvy.api.account.subscription.saas.limit;
 
+import com.codenvy.api.account.AccountLocker;
 import com.codenvy.api.account.billing.BillingPeriod;
+import com.codenvy.api.account.billing.ResourcesFilter;
+import com.codenvy.api.account.impl.shared.dto.AccountResources;
 import com.codenvy.api.account.metrics.MeterBasedStorage;
 import com.codenvy.api.account.server.dao.Account;
 import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.server.dao.Subscription;
-import com.codenvy.api.account.AccountLocker;
 import com.codenvy.api.account.subscription.ServiceId;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
@@ -39,6 +41,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Named;
+import java.util.List;
 
 /**
  * After run stops, checks that remaining RAM resources is enough, or block further runs for given account.
@@ -110,9 +113,15 @@ public class CheckRemainResourcesOnStopSubscriber implements EventSubscriber<Run
                 return;
             }
 
-            double used = storage.getMemoryUsed(workspace.getAccountId(), billingPeriod.getCurrent().getStartDate().getTime(),
-                                                System.currentTimeMillis());
-            if (used >= freeUsageLimit) {
+            final List<AccountResources> usedMemory = storage.getUsedMemory(ResourcesFilter.builder()
+                                                                                           .withAccountId(workspace.getAccountId())
+                                                                                           .withFromDate(
+                                                                                                   billingPeriod.getCurrent().getStartDate()
+                                                                                                                .getTime())
+                                                                                           .withUntilDate(System.currentTimeMillis())
+                                                                                           .withPaidGbHMoreThan(0)
+                                                                                           .build());
+            if (!usedMemory.isEmpty()) {
                 accountLocker.lockAccountResources(account.getId());
             }
         } catch (NotFoundException | ServerException e) {

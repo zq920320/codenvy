@@ -34,7 +34,9 @@ package com.codenvy.api.dao.sql;
  * from Codenvy S.A..
  */
 
-import com.codenvy.api.account.billing.BillingPeriod;
+import com.codenvy.api.account.billing.ResourcesFilter;
+import com.codenvy.api.account.impl.shared.dto.AccountResources;
+import com.codenvy.api.account.impl.shared.dto.Resources;
 import com.codenvy.api.account.metrics.MemoryUsedMetric;
 import com.codenvy.api.account.metrics.MeterBasedStorage;
 import com.codenvy.api.account.metrics.UsageInformer;
@@ -44,13 +46,21 @@ import com.codenvy.api.dao.sql.postgresql.Int8RangeType;
 import org.postgresql.util.PGobject;
 
 import javax.inject.Inject;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.codenvy.api.dao.sql.SqlDaoQueries.*;
+import static com.codenvy.api.dao.sql.SqlDaoQueries.METRIC_INSERT;
+import static com.codenvy.api.dao.sql.SqlDaoQueries.METRIC_SELECT_ACCOUNT_GB_WS_TOTAL;
+import static com.codenvy.api.dao.sql.SqlDaoQueries.METRIC_SELECT_ID;
+import static com.codenvy.api.dao.sql.SqlDaoQueries.METRIC_SELECT_RUNID;
+import static com.codenvy.api.dao.sql.SqlDaoQueries.METRIC_UPDATE;
 
 /**
  * @author Sergii Kabashniuk
@@ -104,6 +114,41 @@ public class SqlMeterBasedStorage implements MeterBasedStorage {
             throw new ServerException(e.getLocalizedMessage(), e);
         }
 
+    }
+
+    /* //TODO Remove it
+    @Override
+    public Double getUsedMemory(String accountId, long from, long until) throws ServerException {
+        try (Connection connection = connectionFactory.getConnection()) {
+            try (PreparedStatement statement = connection.prepareStatement(METRIC_SELECT_ACCOUNT_TOTAL)) {
+                Int8RangeType range = new Int8RangeType(from, until, true, true);
+                statement.setObject(1, range);
+                statement.setObject(2, range);
+                statement.setString(3, accountId);
+                statement.setObject(4, range);
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    if (resultSet.next()) {
+                        return resultSet.getDouble(1);
+                    }
+                    return null;
+                }
+            }
+        } catch (SQLException e) {
+            throw new ServerException(e.getLocalizedMessage(), e);
+        }
+    }
+    */
+
+    @Override
+    public Resources getUsedMemory(long from, long until) throws ServerException {
+        //TODO Implement it
+        return null;
+    }
+
+    @Override
+    public List<AccountResources> getUsedMemory(ResourcesFilter resourcesFilter) throws ServerException {
+        //TODO Implement it
+        return null;
     }
 
 
@@ -167,28 +212,6 @@ public class SqlMeterBasedStorage implements MeterBasedStorage {
                         ));
                     }
                     return result;
-                }
-            }
-        } catch (SQLException e) {
-            throw new ServerException(e.getLocalizedMessage(), e);
-        }
-    }
-
-
-    @Override
-    public Double getMemoryUsed(String accountId, long from, long until) throws ServerException {
-        try (Connection connection = connectionFactory.getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement(METRIC_SELECT_ACCOUNT_TOTAL)) {
-                Int8RangeType range = new Int8RangeType(from, until, true, true);
-                statement.setObject(1, range);
-                statement.setObject(2, range);
-                statement.setString(3, accountId);
-                statement.setObject(4, range);
-                try (ResultSet resultSet = statement.executeQuery()) {
-                    if (resultSet.next()) {
-                        return resultSet.getDouble(1);
-                    }
-                    return null;
                 }
             }
         } catch (SQLException e) {

@@ -23,7 +23,7 @@ import com.codenvy.api.account.server.dao.Account;
 import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.server.dao.Subscription;
 import com.codenvy.api.account.server.subscription.SubscriptionService;
-import com.codenvy.api.account.shared.dto.AccountResources;
+import com.codenvy.api.account.shared.dto.UsedAccountResources;
 import com.codenvy.api.account.shared.dto.WorkspaceResources;
 import com.codenvy.api.account.AccountLocker;
 import com.codenvy.api.core.ApiException;
@@ -116,7 +116,7 @@ public class SaasSubscriptionService extends SubscriptionService {
     }
 
     @Override
-    public AccountResources getAccountResources(Subscription subscription) throws ServerException {
+    public UsedAccountResources getAccountResources(Subscription subscription) throws ServerException {
         final String accountId = subscription.getAccountId();
         final Map<String, Double> memoryUsedReport = meterBasedStorage.getMemoryUsedReport(accountId,
                                                                                            billingPeriod.getCurrent().getStartDate()
@@ -133,7 +133,7 @@ public class SaasSubscriptionService extends SubscriptionService {
                                  .withMemory(usedMemory != null ? usedMemory : 0.0));
         }
 
-        return DtoFactory.getInstance().createDto(AccountResources.class)
+        return DtoFactory.getInstance().createDto(UsedAccountResources.class)
                          .withUsed(result);
     }
 

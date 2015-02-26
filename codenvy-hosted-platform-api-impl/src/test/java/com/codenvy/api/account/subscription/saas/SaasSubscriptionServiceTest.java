@@ -20,7 +20,7 @@ package com.codenvy.api.account.subscription.saas;
 import com.codenvy.api.account.billing.BillingPeriod;
 import com.codenvy.api.account.metrics.MeterBasedStorage;
 import com.codenvy.api.account.server.dao.Subscription;
-import com.codenvy.api.account.shared.dto.AccountResources;
+import com.codenvy.api.account.shared.dto.UsedAccountResources;
 import com.codenvy.api.account.shared.dto.WorkspaceResources;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.api.workspace.server.dao.Workspace;
@@ -74,9 +74,9 @@ public class SaasSubscriptionServiceTest {
         usedReport.put("workspaceID", 1024.0);
         when(meterBasedStorage.getMemoryUsedReport(anyString(), anyLong(), anyLong())).thenReturn(usedReport);
 
-        final AccountResources accountResources = service.getAccountResources(new Subscription());
+        final UsedAccountResources usedAccountResources = service.getAccountResources(new Subscription());
 
-        final List<WorkspaceResources> used = accountResources.getUsed();
+        final List<WorkspaceResources> used = usedAccountResources.getUsed();
         assertEquals(used.size(), 1);
         assertEquals(used.get(0).getWorkspaceId(), "workspaceID");
         assertEquals(used.get(0).getMemory(), new Long(1024));
@@ -89,9 +89,9 @@ public class SaasSubscriptionServiceTest {
 
         when(meterBasedStorage.getMemoryUsedReport(anyString(), anyLong(), anyLong())).thenReturn(new HashMap<String, Double>());
 
-        final AccountResources accountResources = service.getAccountResources(new Subscription());
+        final UsedAccountResources usedAccountResources = service.getAccountResources(new Subscription());
 
-        final List<WorkspaceResources> used = accountResources.getUsed();
+        final List<WorkspaceResources> used = usedAccountResources.getUsed();
         assertEquals(used.size(), 1);
         assertEquals(used.get(0).getWorkspaceId(), "workspaceID");
         assertEquals(used.get(0).getMemory(), new Long(0));

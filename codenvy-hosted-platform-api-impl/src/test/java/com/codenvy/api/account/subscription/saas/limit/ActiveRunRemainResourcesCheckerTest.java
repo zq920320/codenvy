@@ -17,15 +17,9 @@
  */
 package com.codenvy.api.account.subscription.saas.limit;
 
-import static org.mockito.Matchers.anyLong;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
-
 import com.codenvy.api.account.billing.MonthlyBillingPeriod;
+import com.codenvy.api.account.billing.ResourcesFilter;
+import com.codenvy.api.account.impl.shared.dto.AccountResources;
 import com.codenvy.api.account.metrics.MeterBasedStorage;
 import com.codenvy.api.account.server.dao.Account;
 import com.codenvy.api.account.server.dao.AccountDao;
@@ -35,6 +29,7 @@ import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.api.runner.RunQueue;
 import com.codenvy.api.runner.RunQueueTask;
+import com.codenvy.dto.server.DtoFactory;
 
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -43,10 +38,21 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
 
 /**
  * Tests for ActiveRunRemainResourcesChecker.
@@ -58,10 +64,8 @@ public class ActiveRunRemainResourcesCheckerTest {
 
     private ActiveRunRemainResourcesChecker checker;
 
-    private static final Integer RUN_ACTIVITY_CHECKING_PERIOD = 60;
-    private static final long    FREE_LIMIT                   = 100L;
-    private static final String  ACC_ID                       = "accountId";
-    private static final long    PROCESS_ID                   = 1L;
+    private static final String ACC_ID     = "accountId";
+    private static final long   PROCESS_ID = 1L;
 
     @Mock
     ActiveRunHolder   activeRunHolder;
@@ -77,8 +81,7 @@ public class ActiveRunRemainResourcesCheckerTest {
 
     @BeforeMethod
     public void setUp() throws Exception {
-        this.checker =
-                new ActiveRunRemainResourcesChecker(activeRunHolder, accountDao, storage, runQueue, new MonthlyBillingPeriod(), FREE_LIMIT);
+        this.checker = new ActiveRunRemainResourcesChecker(activeRunHolder, accountDao, storage, runQueue, new MonthlyBillingPeriod());
         Map<String, Set<Long>> activeRuns = new HashMap<>();
         Set<Long> pIds = new HashSet<>();
         pIds.add(PROCESS_ID);
@@ -104,7 +107,8 @@ public class ActiveRunRemainResourcesCheckerTest {
     @Test
     public void shouldStopRunIfLimitExeeded() throws Exception {
         when(accountDao.getById(anyString())).thenReturn(new Account().withId(ACC_ID));
-        when(storage.getMemoryUsed(anyString(), anyLong(), anyLong())).thenReturn(180D);
+        when(storage.getUsedMemory((ResourcesFilter)anyObject())).thenReturn(Arrays.asList(
+                DtoFactory.getInstance().createDto(AccountResources.class)));
         when(runQueue.getTask(anyLong())).thenReturn(runQueueTask);
 
         checker.run();
@@ -114,7 +118,7 @@ public class ActiveRunRemainResourcesCheckerTest {
     @Test
     public void shouldNotStopRunIfLimitNotExeeded() throws Exception {
         when(accountDao.getById(anyString())).thenReturn(new Account().withId(ACC_ID));
-        when(storage.getMemoryUsed(anyString(), anyLong(), anyLong())).thenReturn(80D);
+        when(storage.getUsedMemory((ResourcesFilter)anyObject())).thenReturn(Collections.<AccountResources>emptyList());
         when(runQueue.getTask(anyLong())).thenReturn(runQueueTask);
 
         verifyZeroInteractions(runQueue);

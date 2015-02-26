@@ -19,18 +19,18 @@ package com.codenvy.api.account.subscription.saas.limit;
 
 import com.codenvy.api.account.AccountLocker;
 import com.codenvy.api.account.billing.MonthlyBillingPeriod;
+import com.codenvy.api.account.billing.ResourcesFilter;
+import com.codenvy.api.account.impl.shared.dto.AccountResources;
 import com.codenvy.api.account.metrics.MeterBasedStorage;
 import com.codenvy.api.account.server.dao.Account;
 import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.server.dao.Subscription;
 import com.codenvy.api.account.subscription.ServiceId;
-import com.codenvy.api.core.ConflictException;
-import com.codenvy.api.core.NotFoundException;
-import com.codenvy.api.core.ServerException;
 import com.codenvy.api.core.notification.EventService;
 import com.codenvy.api.runner.internal.RunnerEvent;
 import com.codenvy.api.workspace.server.dao.Workspace;
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
+import com.codenvy.dto.server.DtoFactory;
 
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -40,10 +40,11 @@ import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.times;
@@ -79,22 +80,22 @@ public class CheckRemainResourcesOnStopSubscriberTest {
         subscriber = new CheckRemainResourcesOnStopSubscriber(eventService, workspaceDao, accountDao, storage,
                                                               activeRunHolder, new MonthlyBillingPeriod(), accountLocker, FREE_LIMIT);
 
-        when(workspaceDao.getById(anyString())).thenReturn(new Workspace().withAccountId("accountId")
-                                                                          .withId(ACC_ID));
+        when(workspaceDao.getById(anyString())).thenReturn(new Workspace().withAccountId(ACC_ID)
+                                                                          .withId(WS_ID));
 
         when(accountDao.getById(anyString())).thenReturn(new Account().withId(ACC_ID));
     }
 
 
     @Test
-    public void shouldAddEventOnRunStarted() throws ServerException {
+    public void shouldAddEventOnRunStarted() throws Exception {
         subscriber.onEvent(RunnerEvent.startedEvent(PROCESS_ID, WS_ID, "/project"));
 
         verify(activeRunHolder, times(1)).addRun(any(RunnerEvent.class));
     }
 
     @Test
-    public void shouldAddEventOnRunStopped() throws ServerException, NotFoundException {
+    public void shouldAddEventOnRunStopped() throws Exception {
         Subscription subscription = Mockito.mock(Subscription.class);
         when(subscription.getPlanId()).thenReturn("Super-Pupper-Plan");
         when(accountDao.getActiveSubscription(eq(ACC_ID), eq(ServiceId.SAAS))).thenReturn(subscription);
@@ -106,11 +107,10 @@ public class CheckRemainResourcesOnStopSubscriberTest {
     }
 
     @Test
-    public void shouldNotUpdateAccountAndWorkspacesIfResourcesAreLeft() throws ServerException, NotFoundException,
-                                                                               ConflictException {
-        when(storage.getMemoryUsed(anyString(), anyLong(), anyLong())).thenReturn(80D);
-        when(workspaceDao.getByAccount(anyString())).thenReturn(Arrays.asList(new Workspace().withAccountId("accountId")
-                                                                                             .withId(ACC_ID)));
+    public void shouldNotUpdateAccountAndWorkspacesIfResourcesAreLeft() throws Exception {
+        when(storage.getUsedMemory((ResourcesFilter)anyObject())).thenReturn(Collections.<AccountResources>emptyList());
+        when(workspaceDao.getByAccount(anyString())).thenReturn(Arrays.asList(new Workspace().withAccountId(ACC_ID)
+                                                                                             .withId(WS_ID)));
 
         subscriber.onEvent(RunnerEvent.stoppedEvent(PROCESS_ID, WS_ID, "/project"));
 
@@ -118,15 +118,15 @@ public class CheckRemainResourcesOnStopSubscriberTest {
     }
 
     @Test
-    public void shouldUpdateAccountAndWorkspacesIfNoResourcesLeft() throws ServerException, NotFoundException,
-                                                                           ConflictException {
-        when(storage.getMemoryUsed(anyString(), anyLong(), anyLong())).thenReturn(120D);
-        when(workspaceDao.getByAccount(anyString())).thenReturn(Arrays.asList(new Workspace().withAccountId("accountId")
-                                                                                             .withId(ACC_ID)));
+    public void shouldUpdateAccountAndWorkspacesIfNoResourcesLeft() throws Exception {
+        when(storage.getUsedMemory((ResourcesFilter)anyObject()))
+                .thenReturn(Arrays.asList(DtoFactory.getInstance().createDto(AccountResources.class)));
+        when(workspaceDao.getByAccount(anyString())).thenReturn(Arrays.asList(new Workspace().withAccountId(ACC_ID)
+                                                                                             .withId(WS_ID)));
 
         subscriber.onEvent(RunnerEvent.stoppedEvent(PROCESS_ID, WS_ID, "/project"));
 
-        verify(accountLocker).lockAccountResources(eq("accountId"));
+        verify(accountLocker).lockAccountResources(eq(ACC_ID));
     }
 
 
