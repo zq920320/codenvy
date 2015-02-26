@@ -116,42 +116,6 @@ public class SqlMeterBasedStorage implements MeterBasedStorage {
 
     }
 
-    /* //TODO Remove it
-    @Override
-    public Double getUsedMemory(String accountId, long from, long until) throws ServerException {
-        try (Connection connection = connectionFactory.getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement(METRIC_SELECT_ACCOUNT_TOTAL)) {
-                Int8RangeType range = new Int8RangeType(from, until, true, true);
-                statement.setObject(1, range);
-                statement.setObject(2, range);
-                statement.setString(3, accountId);
-                statement.setObject(4, range);
-                try (ResultSet resultSet = statement.executeQuery()) {
-                    if (resultSet.next()) {
-                        return resultSet.getDouble(1);
-                    }
-                    return null;
-                }
-            }
-        } catch (SQLException e) {
-            throw new ServerException(e.getLocalizedMessage(), e);
-        }
-    }
-    */
-
-    @Override
-    public Resources getUsedMemory(long from, long until) throws ServerException {
-        //TODO Implement it
-        return null;
-    }
-
-    @Override
-    public List<AccountResources> getUsedMemory(ResourcesFilter resourcesFilter) throws ServerException {
-        //TODO Implement it
-        return null;
-    }
-
-
     /**
      * Get memory metric from storage.
      *

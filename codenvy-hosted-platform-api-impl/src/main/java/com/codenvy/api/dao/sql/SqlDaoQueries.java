@@ -33,7 +33,7 @@ public interface SqlDaoQueries {
     long MBMSEC_TO_GBH_MULTIPLIER = TimeUnit.HOURS.toMillis(1) * 1024;
 
     String GBH_SUM =
-            " SUM(ROUND(FAMOUNT * ( upper(FDURING * ?)-lower(FDURING * ?)-1 )/" + MBMSEC_TO_GBH_MULTIPLIER + ".0 ,6)) ";
+            " SUM(ROUND(M.FAMOUNT * ( upper(M.FDURING * ?)-lower(M.FDURING * ?)-1 )/" + MBMSEC_TO_GBH_MULTIPLIER + ".0 ,6)) ";
 
 
     String TOTAL_SUM = "ROUND(SUM(ROUND(FPAID_AMOUNT,2)*FPAID_PRICE),2)";
@@ -64,19 +64,40 @@ public interface SqlDaoQueries {
             "                  ) " +
             "SELECT " +
             "  " + GBH_SUM + " AS FAMOUNT, " +
-            "   FACCOUNT_ID, " +
-            "   FWORKSPACE_ID,  " +
+            "   M.FACCOUNT_ID, " +
+            "   M.FWORKSPACE_ID,  " +
             "   ? AS FCALC_ID  " +
             "FROM " +
-            "  METRICS " +
+            "  METRICS AS M " +
             "WHERE " +
-            "   FDURING && ?" +
+            "   M.FDURING && ?" +
             "GROUP BY " +
-            " FACCOUNT_ID, " +
-            " FWORKSPACE_ID ";
+            " M.FACCOUNT_ID, " +
+            " M.FWORKSPACE_ID ";
 
     String PREPAID_AMOUNT =
             " SUM(P.FAMOUNT*(upper(P.FPERIOD * ?)-lower(P.FPERIOD * ?))/?)";
+
+
+    String ACCOUNT_USAGE_SELECT = "SELECT " +
+                                  "   M.FACCOUNT_ID AS FACCOUNT_ID, " +
+                                  "   LEAST("+GBH_SUM+", ?) AS FFREE_AMOUNT, " +
+                                  "   LEAST(GREATEST("+GBH_SUM+" -?, 0), CASE WHEN P.FAMOUNT IS NULL THEN 0.0 ELSE P.FAMOUNT END) AS FPREPAID_AMOUNT, " +
+                                  "   GREATEST("+GBH_SUM+" - ? -  CASE WHEN P.FAMOUNT IS NULL THEN 0.0 ELSE P.FAMOUNT END , 0) AS FPAID_AMOUNT " +
+                                  "FROM " +
+                                  "   METRICS  AS M " +
+                                  "  LEFT JOIN ( " +
+                                  "      SELECT " +
+                                  "        " + PREPAID_AMOUNT + " AS FAMOUNT, " +
+                                  "        FACCOUNT_ID " +
+                                  "      FROM  " +
+                                  "        PREPAID AS P" +
+                                  "      WHERE  " +
+                                  "        P.FPERIOD && ? " +
+                                  "      GROUP BY P.FACCOUNT_ID " +
+                                  "             ) " +
+                                  "       AS P  " +
+                                  "       ON M.FACCOUNT_ID = P.FACCOUNT_ID ";
 
 
     String CHARGES_MEMORY_INSERT =
@@ -154,20 +175,20 @@ public interface SqlDaoQueries {
      * Update payment status and credit card of invoices.
      */
     String INVOICES_PAYMENT_STATE_AND_CC_UPDATE = "UPDATE   INVOICES " +
-                                           " SET FPAYMENT_STATE=? , FPAYMENT_TIME=NOW(), FCREDIT_CARD=? " +
-                                           " WHERE FID=? ";
+                                                  " SET FPAYMENT_STATE=? , FPAYMENT_TIME=NOW(), FCREDIT_CARD=? " +
+                                                  " WHERE FID=? ";
     /**
      * Update payment status of invoices.
      */
-    String INVOICES_PAYMENT_STATE_UPDATE = "UPDATE   INVOICES " +
-                                           " SET FPAYMENT_STATE=? , FPAYMENT_TIME=NOW() " +
-                                           " WHERE FID=? ";
+    String INVOICES_PAYMENT_STATE_UPDATE        = "UPDATE   INVOICES " +
+                                                  " SET FPAYMENT_STATE=? , FPAYMENT_TIME=NOW() " +
+                                                  " WHERE FID=? ";
     /**
      * Update mailing time of invoices.
      */
-    String INVOICES_MAILING_TIME_UPDATE  = "UPDATE INVOICES " +
-                                           " SET FMAILING_TIME=NOW()" +
-                                           " WHERE FID=? ";
+    String INVOICES_MAILING_TIME_UPDATE         = "UPDATE INVOICES " +
+                                                  " SET FMAILING_TIME=NOW()" +
+                                                  " WHERE FID=? ";
 
     /**
      * Select charges by given account id and calculation id.
@@ -239,20 +260,20 @@ public interface SqlDaoQueries {
     String METRIC_SELECT_ACCOUNT_TOTAL = "SELECT " +
                                          "  " + GBH_SUM + " AS FAMOUNT " +
                                          "FROM " +
-                                         "  METRICS " +
+                                         "  METRICS AS M " +
                                          "WHERE " +
-                                         "   FACCOUNT_ID=?" +
-                                         "   AND FDURING && ?";
+                                         "   M.FACCOUNT_ID=?" +
+                                         "   AND M.FDURING && ?";
 
     String METRIC_SELECT_ACCOUNT_GB_WS_TOTAL = "SELECT " +
                                                "  " + GBH_SUM + " AS FAMOUNT, " +
-                                               "   FWORKSPACE_ID " +
+                                               "   M.FWORKSPACE_ID " +
                                                "FROM " +
-                                               "  METRICS " +
+                                               "  METRICS AS M " +
                                                "WHERE " +
-                                               "   FACCOUNT_ID=?" +
-                                               "   AND FDURING && ?" +
-                                               "GROUP BY FWORKSPACE_ID";
+                                               "   M.FACCOUNT_ID=?" +
+                                               "   AND M.FDURING && ?" +
+                                               "GROUP BY M.FWORKSPACE_ID";
 
 
     String METRIC_UPDATE = "UPDATE  METRICS " +

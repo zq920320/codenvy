@@ -18,10 +18,10 @@
 package com.codenvy.api.account.subscription.saas.limit;
 
 import com.codenvy.api.account.AccountLocker;
+import com.codenvy.api.account.billing.BillingService;
 import com.codenvy.api.account.billing.MonthlyBillingPeriod;
 import com.codenvy.api.account.billing.ResourcesFilter;
 import com.codenvy.api.account.impl.shared.dto.AccountResources;
-import com.codenvy.api.account.metrics.MeterBasedStorage;
 import com.codenvy.api.account.server.dao.Account;
 import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.server.dao.Subscription;
@@ -61,24 +61,24 @@ public class CheckRemainResourcesOnStopSubscriberTest {
     private static final String ACC_ID     = "accountId";
 
     @Mock
-    EventService      eventService;
+    EventService    eventService;
     @Mock
-    WorkspaceDao      workspaceDao;
+    WorkspaceDao    workspaceDao;
     @Mock
-    AccountDao        accountDao;
+    AccountDao      accountDao;
     @Mock
-    MeterBasedStorage storage;
+    BillingService  service;
     @Mock
-    ActiveRunHolder   activeRunHolder;
+    ActiveRunHolder activeRunHolder;
     @Mock
-    AccountLocker     accountLocker;
+    AccountLocker   accountLocker;
 
     CheckRemainResourcesOnStopSubscriber subscriber;
 
     @BeforeMethod
     public void setUp() throws Exception {
-        subscriber = new CheckRemainResourcesOnStopSubscriber(eventService, workspaceDao, accountDao, storage,
-                                                              activeRunHolder, new MonthlyBillingPeriod(), accountLocker, FREE_LIMIT);
+        subscriber = new CheckRemainResourcesOnStopSubscriber(eventService, workspaceDao, accountDao, service,
+                                                              activeRunHolder, new MonthlyBillingPeriod(), accountLocker);
 
         when(workspaceDao.getById(anyString())).thenReturn(new Workspace().withAccountId(ACC_ID)
                                                                           .withId(WS_ID));
@@ -108,7 +108,7 @@ public class CheckRemainResourcesOnStopSubscriberTest {
 
     @Test
     public void shouldNotUpdateAccountAndWorkspacesIfResourcesAreLeft() throws Exception {
-        when(storage.getUsedMemory((ResourcesFilter)anyObject())).thenReturn(Collections.<AccountResources>emptyList());
+        when(service.getEstimatedUsage((ResourcesFilter)anyObject())).thenReturn(Collections.<AccountResources>emptyList());
         when(workspaceDao.getByAccount(anyString())).thenReturn(Arrays.asList(new Workspace().withAccountId(ACC_ID)
                                                                                              .withId(WS_ID)));
 
@@ -119,7 +119,7 @@ public class CheckRemainResourcesOnStopSubscriberTest {
 
     @Test
     public void shouldUpdateAccountAndWorkspacesIfNoResourcesLeft() throws Exception {
-        when(storage.getUsedMemory((ResourcesFilter)anyObject()))
+        when(service.getEstimatedUsage((ResourcesFilter)anyObject()))
                 .thenReturn(Arrays.asList(DtoFactory.getInstance().createDto(AccountResources.class)));
         when(workspaceDao.getByAccount(anyString())).thenReturn(Arrays.asList(new Workspace().withAccountId(ACC_ID)
                                                                                              .withId(WS_ID)));

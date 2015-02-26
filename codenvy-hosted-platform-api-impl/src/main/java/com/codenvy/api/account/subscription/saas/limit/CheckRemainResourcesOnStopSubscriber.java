@@ -19,9 +19,9 @@ package com.codenvy.api.account.subscription.saas.limit;
 
 import com.codenvy.api.account.AccountLocker;
 import com.codenvy.api.account.billing.BillingPeriod;
+import com.codenvy.api.account.billing.BillingService;
 import com.codenvy.api.account.billing.ResourcesFilter;
 import com.codenvy.api.account.impl.shared.dto.AccountResources;
-import com.codenvy.api.account.metrics.MeterBasedStorage;
 import com.codenvy.api.account.server.dao.Account;
 import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.server.dao.Subscription;
@@ -40,7 +40,6 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
-import javax.inject.Named;
 import java.util.List;
 
 /**
@@ -54,28 +53,25 @@ public class CheckRemainResourcesOnStopSubscriber implements EventSubscriber<Run
     private final EventService      eventService;
     private final WorkspaceDao      workspaceDao;
     private final AccountDao        accountDao;
-    private final MeterBasedStorage storage;
+    private final BillingService    service;
     private final ActiveRunHolder   activeRunHolder;
     private final BillingPeriod     billingPeriod;
     private final AccountLocker     accountLocker;
-    private final Double            freeUsageLimit;
 
 
     @Inject
     public CheckRemainResourcesOnStopSubscriber(EventService eventService,
                                                 WorkspaceDao workspaceDao,
                                                 AccountDao accountDao,
-                                                MeterBasedStorage storage,
+                                                BillingService  service,
                                                 ActiveRunHolder activeRunHolder,
                                                 BillingPeriod billingPeriod,
-                                                AccountLocker accountLocker,
-                                                @Named("subscription.saas.usage.free.gbh") Double freeUsage) {
+                                                AccountLocker accountLocker) {
         this.eventService = eventService;
         this.workspaceDao = workspaceDao;
         this.accountDao = accountDao;
         this.billingPeriod = billingPeriod;
-        this.freeUsageLimit = freeUsage;
-        this.storage = storage;
+        this.service = service;
         this.accountLocker = accountLocker;
         this.activeRunHolder = activeRunHolder;
     }
@@ -113,14 +109,15 @@ public class CheckRemainResourcesOnStopSubscriber implements EventSubscriber<Run
                 return;
             }
 
-            final List<AccountResources> usedMemory = storage.getUsedMemory(ResourcesFilter.builder()
-                                                                                           .withAccountId(workspace.getAccountId())
-                                                                                           .withFromDate(
-                                                                                                   billingPeriod.getCurrent().getStartDate()
-                                                                                                                .getTime())
-                                                                                           .withUntilDate(System.currentTimeMillis())
-                                                                                           .withPaidGbHMoreThan(0)
-                                                                                           .build());
+            final List<AccountResources> usedMemory = service.getEstimatedUsage(ResourcesFilter.builder()
+                                                                                               .withAccountId(workspace.getAccountId())
+                                                                                               .withFromDate(
+                                                                                                       billingPeriod.getCurrent()
+                                                                                                                    .getStartDate()
+                                                                                                                    .getTime())
+                                                                                               .withUntilDate(System.currentTimeMillis())
+                                                                                               .withPaidGbHMoreThan(0)
+                                                                                               .build());
             if (!usedMemory.isEmpty()) {
                 accountLocker.lockAccountResources(account.getId());
             }

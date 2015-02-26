@@ -17,10 +17,10 @@
  */
 package com.codenvy.api.account.subscription.saas.limit;
 
+import com.codenvy.api.account.billing.BillingService;
 import com.codenvy.api.account.billing.MonthlyBillingPeriod;
 import com.codenvy.api.account.billing.ResourcesFilter;
 import com.codenvy.api.account.impl.shared.dto.AccountResources;
-import com.codenvy.api.account.metrics.MeterBasedStorage;
 import com.codenvy.api.account.server.dao.Account;
 import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.server.dao.Subscription;
@@ -68,20 +68,20 @@ public class ActiveRunRemainResourcesCheckerTest {
     private static final long   PROCESS_ID = 1L;
 
     @Mock
-    ActiveRunHolder   activeRunHolder;
+    ActiveRunHolder activeRunHolder;
     @Mock
-    AccountDao        accountDao;
+    AccountDao      accountDao;
     @Mock
-    MeterBasedStorage storage;
+    BillingService  service;
     @Mock
-    RunQueue          runQueue;
+    RunQueue        runQueue;
     @Mock
-    RunQueueTask      runQueueTask;
+    RunQueueTask    runQueueTask;
 
 
     @BeforeMethod
     public void setUp() throws Exception {
-        this.checker = new ActiveRunRemainResourcesChecker(activeRunHolder, accountDao, storage, runQueue, new MonthlyBillingPeriod());
+        this.checker = new ActiveRunRemainResourcesChecker(activeRunHolder, accountDao, service, runQueue, new MonthlyBillingPeriod());
         Map<String, Set<Long>> activeRuns = new HashMap<>();
         Set<Long> pIds = new HashSet<>();
         pIds.add(PROCESS_ID);
@@ -100,14 +100,14 @@ public class ActiveRunRemainResourcesCheckerTest {
         checker.run();
 
         //then
-        verifyZeroInteractions(storage);
+        verifyZeroInteractions(service);
         verifyZeroInteractions(runQueue);
     }
 
     @Test
     public void shouldStopRunIfLimitExeeded() throws Exception {
         when(accountDao.getById(anyString())).thenReturn(new Account().withId(ACC_ID));
-        when(storage.getUsedMemory((ResourcesFilter)anyObject())).thenReturn(Arrays.asList(
+        when(service.getEstimatedUsage((ResourcesFilter)anyObject())).thenReturn(Arrays.asList(
                 DtoFactory.getInstance().createDto(AccountResources.class)));
         when(runQueue.getTask(anyLong())).thenReturn(runQueueTask);
 
@@ -118,7 +118,7 @@ public class ActiveRunRemainResourcesCheckerTest {
     @Test
     public void shouldNotStopRunIfLimitNotExeeded() throws Exception {
         when(accountDao.getById(anyString())).thenReturn(new Account().withId(ACC_ID));
-        when(storage.getUsedMemory((ResourcesFilter)anyObject())).thenReturn(Collections.<AccountResources>emptyList());
+        when(service.getEstimatedUsage((ResourcesFilter)anyObject())).thenReturn(Collections.<AccountResources>emptyList());
         when(runQueue.getTask(anyLong())).thenReturn(runQueueTask);
 
         verifyZeroInteractions(runQueue);

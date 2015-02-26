@@ -21,8 +21,11 @@ package com.codenvy.api.dao.sql;
 import com.codenvy.api.account.billing.BillingService;
 import com.codenvy.api.account.billing.InvoiceFilter;
 import com.codenvy.api.account.billing.PaymentState;
+import com.codenvy.api.account.billing.ResourcesFilter;
+import com.codenvy.api.account.impl.shared.dto.AccountResources;
 import com.codenvy.api.account.impl.shared.dto.Charge;
 import com.codenvy.api.account.impl.shared.dto.Invoice;
+import com.codenvy.api.account.impl.shared.dto.Resources;
 import com.codenvy.api.account.subscription.ServiceId;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
@@ -45,6 +48,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static com.codenvy.api.dao.sql.SqlDaoQueries.ACCOUNT_USAGE_SELECT;
 import static com.codenvy.api.dao.sql.SqlDaoQueries.CHARGES_SELECT;
 import static com.codenvy.api.dao.sql.SqlDaoQueries.INVOICES_INSERT;
 import static com.codenvy.api.dao.sql.SqlDaoQueries.INVOICES_MAILING_TIME_UPDATE;
@@ -53,6 +57,7 @@ import static com.codenvy.api.dao.sql.SqlDaoQueries.INVOICES_PAYMENT_STATE_UPDAT
 import static com.codenvy.api.dao.sql.SqlDaoQueries.MEMORY_CHARGES_INSERT;
 import static com.codenvy.api.dao.sql.SqlDaoQueries.MEMORY_CHARGES_SELECT;
 import static com.codenvy.api.dao.sql.SqlDaoQueries.PREPAID_INSERT;
+import static com.codenvy.api.dao.sql.SqlQueryAppender.appendContainsRange;
 
 
 /**
@@ -190,8 +195,8 @@ public class SqlBillingService implements BillingService {
             SqlQueryAppender.appendEqual(invoiceSelect, "FACCOUNT_ID", filter.getAccountId());
             SqlQueryAppender.appendIn(invoiceSelect, "FPAYMENT_STATE", filter.getStates());
             SqlQueryAppender.appendIsNull(invoiceSelect, "FMAILING_TIME", filter.getIsMailNotSend());
-            SqlQueryAppender.appendContainsRange(invoiceSelect, "FPERIOD", filter.getFromDate(),
-                                                 filter.getUntilDate());
+            appendContainsRange(invoiceSelect, "FPERIOD", filter.getFromDate(),
+                                filter.getUntilDate());
 
             invoiceSelect.append(" ORDER BY FACCOUNT_ID, FCREATED_TIME DESC ");
 
@@ -302,6 +307,54 @@ public class SqlBillingService implements BillingService {
         }
     }
 
+    @Override
+    public Resources getEstimatedUsage(long from, long until) throws ServerException {
+        return null;
+    }
+
+    @Override
+    public List<AccountResources> getEstimatedUsage(ResourcesFilter resourcesFilter) throws ServerException {
+        List<AccountResources> usage = new ArrayList<>();
+        try (Connection connection = connectionFactory.getConnection()) {
+            connection.setAutoCommit(false);
+            StringBuilder accountUsageSelect = new StringBuilder(ACCOUNT_USAGE_SELECT).append(" WHERE 1=1 ");
+            appendContainsRange(accountUsageSelect, "M.FDURING", resourcesFilter.getFromDate(), resourcesFilter.getUntilDate());
+            SqlQueryAppender.appendEqual(accountUsageSelect, "M.FACCOUNT_ID", resourcesFilter.getAccountId());
+            accountUsageSelect.append("GROUP BY M.FACCOUNT_ID, P.FAMOUNT");
+            try (PreparedStatement usageStatement = connection.prepareStatement(accountUsageSelect.toString())) {
+                Int8RangeType range = new Int8RangeType(resourcesFilter.getFromDate(), resourcesFilter.getUntilDate(), true, true);
+                usageStatement.setObject(1, range);
+                usageStatement.setObject(2, range);
+                usageStatement.setDouble(3, saasFreeGbH);
+                usageStatement.setObject(4, range);
+                usageStatement.setObject(5, range);
+                usageStatement.setDouble(6, saasFreeGbH);
+                usageStatement.setObject(7, range);
+                usageStatement.setObject(8, range);
+                usageStatement.setDouble(9, saasFreeGbH);
+                usageStatement.setObject(10, range);
+                usageStatement.setObject(11, range);
+                usageStatement.setDouble(12, resourcesFilter.getUntilDate() - resourcesFilter.getFromDate());
+                usageStatement.setObject(13, range);
+
+
+                try (ResultSet usageResultSet = usageStatement.executeQuery()) {
+                    while (usageResultSet.next()) {
+                        usage.add(DtoFactory.getInstance().createDto(AccountResources.class)
+                                            .withAccountId(usageResultSet.getString("FACCOUNT_ID"))
+                                            .withFreeAmount(usageResultSet.getDouble("FFREE_AMOUNT"))
+                                            .withPaidAmount(usageResultSet.getDouble("FPAID_AMOUNT"))
+                                            .withPrePaidAmount(usageResultSet.getDouble("FPREPAID_AMOUNT"))
+                                 );
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            throw new ServerException(e.getLocalizedMessage(), e);
+        }
+        return usage;
+    }
+
     private Map<String, String> getMemoryChargeDetails(Connection connection, String accountId, String calculationID)
             throws SQLException {
 
@@ -365,4 +418,6 @@ public class SqlBillingService implements BillingService {
         }
         return charges;
     }
+
+
 }

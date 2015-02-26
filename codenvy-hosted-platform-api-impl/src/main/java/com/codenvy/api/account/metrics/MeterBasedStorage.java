@@ -42,24 +42,6 @@ public interface MeterBasedStorage {
 
 
     /**
-     * Get total used resources by given period.
-     *
-     * @param from
-     *         starting of period
-     * @param until
-     *         end of period
-     * @return resources related to given account by given period
-     */
-    Resources getUsedMemory(long from, long until) throws ServerException;
-
-    /**
-     * Get resources related to accounts by given period.
-     *
-     * @return resources related to accounts by given period
-     */
-    List<AccountResources> getUsedMemory(ResourcesFilter resourcesFilter) throws ServerException;
-
-    /**
      * Get total consumed GB*h of account by given period group by workspace id's
      *
      * @param accountId

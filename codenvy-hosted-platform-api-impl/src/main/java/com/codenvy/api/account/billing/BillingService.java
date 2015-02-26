@@ -18,7 +18,9 @@
 package com.codenvy.api.account.billing;
 
 
+import com.codenvy.api.account.impl.shared.dto.AccountResources;
 import com.codenvy.api.account.impl.shared.dto.Invoice;
+import com.codenvy.api.account.impl.shared.dto.Resources;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
 
@@ -133,4 +135,25 @@ public interface BillingService {
      *         period when prepaid GB*h is active
      */
     void addPrepaid(String accountId, double amount, long from, long till) throws ServerException;
+
+
+
+    /**
+     * Get total used resources by given period.
+     *
+     * @param from
+     *         starting of period
+     * @param until
+     *         end of period
+     * @return resources related to given account by given period
+     */
+    Resources getEstimatedUsage(long from, long until) throws ServerException;
+
+    /**
+     * Get resources related to accounts by given period.
+     *
+     * @return resources related to accounts by given period
+     */
+    List<AccountResources> getEstimatedUsage(ResourcesFilter resourcesFilter) throws ServerException;
+
 }

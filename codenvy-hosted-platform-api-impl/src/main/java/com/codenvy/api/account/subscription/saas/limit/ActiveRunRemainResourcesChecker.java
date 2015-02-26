@@ -18,9 +18,9 @@
 package com.codenvy.api.account.subscription.saas.limit;
 
 import com.codenvy.api.account.billing.BillingPeriod;
+import com.codenvy.api.account.billing.BillingService;
 import com.codenvy.api.account.billing.ResourcesFilter;
 import com.codenvy.api.account.impl.shared.dto.AccountResources;
-import com.codenvy.api.account.metrics.MeterBasedStorage;
 import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.server.dao.Subscription;
 import com.codenvy.api.account.subscription.ServiceId;
@@ -49,21 +49,21 @@ public class ActiveRunRemainResourcesChecker implements Runnable {
 
     private static final Logger LOG = LoggerFactory.getLogger(ActiveRunRemainResourcesChecker.class);
 
-    private final ActiveRunHolder   activeRunHolder;
-    private final AccountDao        accountDao;
-    private final MeterBasedStorage storage;
-    private final RunQueue          runQueue;
-    private final BillingPeriod     billingPeriod;
+    private final ActiveRunHolder activeRunHolder;
+    private final AccountDao      accountDao;
+    private final BillingService  service;
+    private final RunQueue        runQueue;
+    private final BillingPeriod   billingPeriod;
 
     @Inject
     public ActiveRunRemainResourcesChecker(ActiveRunHolder activeRunHolder,
                                            AccountDao accountDao,
-                                           MeterBasedStorage storage,
+                                           BillingService  service,
                                            RunQueue runQueue,
                                            BillingPeriod billingPeriod) {
         this.activeRunHolder = activeRunHolder;
         this.accountDao = accountDao;
-        this.storage = storage;
+        this.service = service;
         this.runQueue = runQueue;
         this.billingPeriod = billingPeriod;
     }
@@ -79,12 +79,13 @@ public class ActiveRunRemainResourcesChecker implements Runnable {
                 }
 
                 long startBillingPeriod = billingPeriod.getCurrent().getStartDate().getTime();
-                final List<AccountResources> usedMemory = storage.getUsedMemory(ResourcesFilter.builder()
-                                                                                               .withAccountId(accountRuns.getKey())
-                                                                                               .withFromDate(startBillingPeriod)
-                                                                                               .withUntilDate(System.currentTimeMillis())
-                                                                                               .withPaidGbHMoreThan(0)
-                                                                                               .build());
+                final List<AccountResources> usedMemory = service.getEstimatedUsage(ResourcesFilter.builder()
+                                                                                                   .withAccountId(accountRuns.getKey())
+                                                                                                   .withFromDate(startBillingPeriod)
+                                                                                                   .withUntilDate(
+                                                                                                           System.currentTimeMillis())
+                                                                                                   .withPaidGbHMoreThan(0)
+                                                                                                   .build());
                 if (!usedMemory.isEmpty()) {
                     for (Long processId : accountRuns.getValue()) {
                         try {

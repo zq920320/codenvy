@@ -23,6 +23,8 @@ import com.codenvy.api.account.billing.InvoiceFilter;
 import com.codenvy.api.account.billing.MonthlyBillingPeriod;
 import com.codenvy.api.account.billing.PaymentState;
 import com.codenvy.api.account.billing.Period;
+import com.codenvy.api.account.billing.ResourcesFilter;
+import com.codenvy.api.account.impl.shared.dto.AccountResources;
 import com.codenvy.api.account.impl.shared.dto.Charge;
 import com.codenvy.api.account.impl.shared.dto.Invoice;
 import com.codenvy.api.account.metrics.MemoryUsedMetric;
@@ -913,4 +915,118 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
         //given
         billingService.setPaymentState(1, PaymentState.CREDIT_CARD_MISSING, "CC");
     }
+
+
+    @Test(dataProvider = "storage")
+    public void shouldGetSumByAccountWithAllDatesBetweenPeriod(MeterBasedStorage meterBasedStorage,
+                                                               BillingService billingService)
+            throws ServerException, ParseException {
+        //given
+        meterBasedStorage.createMemoryUsedRecord(new MemoryUsedMetric(256,
+                                                                      sdf.parse("10-01-2014 11:00:00").getTime(),
+                                                                      sdf.parse("10-01-2014 11:01:00").getTime(),
+                                                                      "usr-123453",
+                                                                      "ac-348798",
+                                                                      "ws-235675423",
+                                                                      "run-2344567"));
+
+        meterBasedStorage.createMemoryUsedRecord(new MemoryUsedMetric(256,
+                                                                      sdf.parse("10-01-2014 10:00:00").getTime(),
+                                                                      sdf.parse("10-01-2014 10:05:00").getTime(),
+                                                                      "usr-123",
+                                                                      "ac-46534",
+                                                                      "ws-235423",
+                                                                      "run-234"));
+        meterBasedStorage.createMemoryUsedRecord(new MemoryUsedMetric(256,
+                                                                      sdf.parse("10-01-2014 11:00:00").getTime(),
+                                                                      sdf.parse("10-01-2014 11:07:00").getTime(),
+                                                                      "usr-123",
+                                                                      "ac-46534",
+                                                                      "ws-235423",
+                                                                      "run-234"));
+
+        meterBasedStorage.createMemoryUsedRecord(new MemoryUsedMetric(1024,
+                                                                      sdf.parse("10-01-2014 12:00:00").getTime(),
+                                                                      sdf.parse("10-01-2014 12:20:00").getTime(),
+                                                                      "usr-123",
+                                                                      "ac-46534",
+                                                                      "ws-235423",
+                                                                      "run-234"));
+
+        //when
+        List<AccountResources> usage = billingService
+                .getEstimatedUsage(ResourcesFilter.builder()
+                                                  .withFromDate(sdf.parse("10-01-2014 09:00:00").getTime())
+                                                  .withUntilDate(sdf.parse("10-01-2014 14:00:00").getTime())
+                                                  .withAccountId("ac-46534")
+                                                  .build());
+
+        //then
+        Assert.assertEquals(usage.size(), 1);
+        AccountResources resources = get(usage, 0);
+        Assert.assertEquals(resources.getFreeAmount(), 0.383333);
+
+    }
+
+
+    /*
+    @Test(dataProvider = "storage")
+    public void shouldGetSumByAccountWithDatesBetweenPeriod(SqlMeterBasedStorage meterBasedStorage)
+            throws ServerException, ParseException {
+        //given
+        //when
+        meterBasedStorage.createMemoryUsedRecord(new MemoryUsedMetric(256,
+                                                                      sdf.parse("10-01-2014 11:00:00").getTime(),
+                                                                      sdf.parse("10-01-2014 11:01:00").getTime(),
+                                                                      "usr-123453",
+                                                                      "ac-348798",
+                                                                      "ws-235675423",
+                                                                      "run-2344567"));
+
+        meterBasedStorage.createMemoryUsedRecord(new MemoryUsedMetric(256,
+                                                                      sdf.parse("10-01-2013 10:00:00").getTime(),
+                                                                      sdf.parse("10-01-2013 10:05:00").getTime(),
+                                                                      "usr-123",
+                                                                      "ac-46534",
+                                                                      "ws-235423",
+                                                                      "run-234"));
+
+        meterBasedStorage.createMemoryUsedRecord(new MemoryUsedMetric(256,
+                                                                      sdf.parse("10-01-2014 09:55:00").getTime(),
+                                                                      sdf.parse("10-01-2014 10:05:00").getTime(),
+                                                                      "usr-123",
+                                                                      "ac-46534",
+                                                                      "ws-235423",
+                                                                      "run-234"));
+        meterBasedStorage.createMemoryUsedRecord(new MemoryUsedMetric(256,
+                                                                      sdf.parse("10-01-2014 11:00:00").getTime(),
+                                                                      sdf.parse("10-01-2014 11:07:00").getTime(),
+                                                                      "usr-123",
+                                                                      "ac-46534",
+                                                                      "ws-235423",
+                                                                      "run-234"));
+
+        meterBasedStorage.createMemoryUsedRecord(new MemoryUsedMetric(1024,
+                                                                      sdf.parse("10-01-2014 12:00:00").getTime(),
+                                                                      sdf.parse("10-01-2014 12:20:00").getTime(),
+                                                                      "usr-123",
+                                                                      "ac-46534",
+                                                                      "ws-235423",
+                                                                      "run-234"));
+
+        meterBasedStorage.createMemoryUsedRecord(new MemoryUsedMetric(256,
+                                                                      sdf.parse("10-01-2015 10:00:00").getTime(),
+                                                                      sdf.parse("10-01-2015 10:05:00").getTime(),
+                                                                      "usr-123",
+                                                                      "ac-46534",
+                                                                      "ws-235423",
+                                                                      "run-234"));
+
+        //then
+        Assert.assertEquals(meterBasedStorage
+                                    .getEstimatedUsage("ac-46534", sdf.parse("10-01-2014 10:00:00").getTime(),
+                                                   sdf.parse("10-01-2014 12:10:00").getTime()), 0.216667);
+
+    }
+    */
 }
