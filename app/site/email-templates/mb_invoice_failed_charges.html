@@ -27,7 +27,7 @@
              <p><span th:if="${creditCard != null}" th:text="'Charged to: ' + ${creditCard.type} + ' ending ...' + ${#strings.substring(creditCard.Number,12,16)}">Charged to: VISA ending ...2547</span><br/>
                 <span th:text="'Receipt Date: ' + ${#dates.format(sendDate, 'dd-MMM-yyyy')}">Receipt Date: 2-Jan-2015</span><br/>
                 <span th:text="'Receipt ID: ' + ${invoice.id}">Receipt ID: 123</span><br/>
-                <span th:text="'Usage Period: ' + ${#dates.format(fromDate, 'MMM,dd')} + ' - ' + ${#dates.format(untilDate, 'MMM,dd')}">Usage Period: December, 2014</span>&nbsp;
+                <span th:text="'Usage Period: ' + ${#dates.format(fromDate, 'MMM,dd')} + ' - ' + ${#dates.format(tillDate, 'MMM,dd')}">Usage Period: December, 2014</span>&nbsp;
             </p>
         </td>
     </tr>
