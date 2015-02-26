@@ -34,7 +34,6 @@ import com.codenvy.api.workspace.server.dao.WorkspaceDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -52,7 +51,6 @@ import javax.naming.directory.SearchResult;
 import javax.naming.ldap.InitialLdapContext;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -68,55 +66,20 @@ import static java.lang.String.format;
 public class UserDaoImpl implements UserDao {
     private static final Logger LOG = LoggerFactory.getLogger(UserDaoImpl.class);
 
-    protected final String providerUrl;
-    protected final String systemDn;
-    protected final String systemPassword;
-    protected final String authType;
-    protected final String usePool;
-    protected final String initPoolSize;
-    protected final String maxPoolSize;
-    protected final String prefPoolSize;
-    protected final String poolTimeout;
-    protected final String userContainerDn;
+    private final String                    userObjectclassFilter;
+    private final String                    userContainerDn;
+    private final EventService              eventService;
+    private final AccountDao                accountDao;
+    private final MemberDao                 memberDao;
+    private final UserProfileDao            profileDao;
+    private final WorkspaceDao              workspaceDao;
+    private final UserAttributesMapper      userAttributesMapper;
+    private final InitialLdapContextFactory contextFactory;
 
-    protected final UserAttributesMapper userAttributesMapper;
-    private final   String               userObjectclassFilter;
-
-    private final EventService   eventService;
-    private final AccountDao     accountDao;
-    private final MemberDao      memberDao;
-    private final UserProfileDao profileDao;
-    private final WorkspaceDao   workspaceDao;
 
     /**
      * Creates new instance of {@code UserDaoImpl}.
      *
-     * @param providerUrl
-     *         URL of LDAP service provider, e.g. {@code ldap://localhost:389}.
-     * @param systemDn
-     *         principal used to open LDAP connection, e.g. {@code cn=Admin,ou=system,dc=codenvy,dc=com}. May be omitted if authentication
-     *         is not needed, e.g. in tests. See {@link javax.naming.Context#SECURITY_PRINCIPAL}.
-     * @param systemPassword
-     *         password of principal to open LDAP connection.  May be omitted if authentication is not needed, e.g. in tests. See {@link
-     *         javax.naming.Context#SECURITY_CREDENTIALS} .
-     * @param authType
-     *         authentication type, see {@link javax.naming.Context#SECURITY_AUTHENTICATION}
-     * @param usePool
-     *         setup policy for connection pooling. Allowed value of this parameter is "true" or "false". See <a
-     *         href="http://docs.oracle.com/javase/jndi/tutorial/ldap/connect/config.html">details</a> about connection pooling.
-     * @param initPoolSize
-     *         initial size of connection pool. Parameter MUST be string representation of an integer. Make sense ONLY if parameter {@code
-     *         usePool} is equals to "true".
-     * @param maxPoolSize
-     *         max size for connection poll. Parameter MUST be string representation of an integer. Make sense ONLY if parameter {@code
-     *         usePool} is equals to "true".
-     * @param prefPoolSize
-     *         preferred size for connection poll. Parameter MUST be string representation of an integer. Make sense ONLY if parameter
-     *         {@code usePool} is equals to "true". Often this parameter may be omitted.
-     * @param poolTimeout
-     *         time (in milliseconds) that an idle connection may remain in the pool. Parameter MUST be string representation of an
-     *         integer.
-     *         Make sense ONLY if parameter {@code usePool} is equals to "true".
      * @param userContainerDn
      *         full name of root object for user records, e.g. {@code ou=People,dc=codenvy,dc=com}
      * @param userAttributesMapper
@@ -128,27 +91,11 @@ public class UserDaoImpl implements UserDao {
                        MemberDao memberDao,
                        UserProfileDao profileDao,
                        WorkspaceDao workspaceDao,
-                       @Named(Context.PROVIDER_URL) String providerUrl,
-                       @Nullable @Named(Context.SECURITY_PRINCIPAL) String systemDn,
-                       @Nullable @Named(Context.SECURITY_CREDENTIALS) String systemPassword,
-                       @Nullable @Named(Context.SECURITY_AUTHENTICATION) String authType,
-                       @Nullable @Named("com.sun.jndi.ldap.connect.pool") String usePool,
-                       @Nullable @Named("com.sun.jndi.ldap.connect.pool.initsize") String initPoolSize,
-                       @Nullable @Named("com.sun.jndi.ldap.connect.pool.maxsize") String maxPoolSize,
-                       @Nullable @Named("com.sun.jndi.ldap.connect.pool.prefsize") String prefPoolSize,
-                       @Nullable @Named("com.sun.jndi.ldap.connect.pool.timeout") String poolTimeout,
+                       InitialLdapContextFactory contextFactory,
                        @Named("user.ldap.user_container_dn") String userContainerDn,
                        UserAttributesMapper userAttributesMapper,
                        EventService eventService) {
-        this.providerUrl = providerUrl;
-        this.systemDn = systemDn;
-        this.systemPassword = systemPassword;
-        this.authType = authType;
-        this.usePool = usePool;
-        this.initPoolSize = initPoolSize;
-        this.maxPoolSize = maxPoolSize;
-        this.prefPoolSize = prefPoolSize;
-        this.poolTimeout = poolTimeout;
+        this.contextFactory = contextFactory;
         this.userContainerDn = userContainerDn;
         this.userAttributesMapper = userAttributesMapper;
         this.eventService = eventService;
@@ -165,92 +112,6 @@ public class UserDaoImpl implements UserDao {
         this.userObjectclassFilter = sb.toString();
     }
 
-    UserDaoImpl(AccountDao accountDao,
-                MemberDao memberDao,
-                UserProfileDao profileDao,
-                WorkspaceDao workspaceDao,
-                @Named(Context.PROVIDER_URL) String providerUrl,
-                @Nullable @Named(Context.SECURITY_PRINCIPAL) String systemDn,
-                @Nullable @Named(Context.SECURITY_CREDENTIALS) String systemPassword,
-                @Nullable @Named(Context.SECURITY_AUTHENTICATION) String authType,
-                @Named("user.ldap.user_container_dn") String userContainerDn,
-                UserAttributesMapper userAttributesMapper,
-                EventService eventService) {
-        this(accountDao,
-             memberDao,
-             profileDao,
-             workspaceDao,
-             providerUrl,
-             systemDn,
-             systemPassword,
-             authType,
-             null,
-             null,
-             null,
-             null,
-             null,
-             userContainerDn,
-             userAttributesMapper,
-             eventService);
-    }
-
-    UserDaoImpl(AccountDao accountDao,
-                MemberDao memberDao,
-                UserProfileDao profileDao,
-                WorkspaceDao workspaceDao,
-                @Named(Context.PROVIDER_URL) String providerUrl,
-                @Named("user.ldap.user_container_dn") String userContainerDn,
-                UserAttributesMapper userAttributesMapper,
-                EventService eventService) {
-        this(accountDao,
-             memberDao,
-             profileDao,
-             workspaceDao,
-             providerUrl,
-             null,
-             null,
-             null,
-             null,
-             null,
-             null,
-             null,
-             null,
-             userContainerDn,
-             userAttributesMapper,
-             eventService);
-    }
-
-    protected InitialLdapContext getLdapContext() throws NamingException {
-        Hashtable<String, String> env = new Hashtable<>();
-        env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
-        env.put(Context.PROVIDER_URL, providerUrl);
-        if (authType != null) {
-            env.put(Context.SECURITY_AUTHENTICATION, authType);
-        }
-        if (systemDn != null) {
-            env.put(Context.SECURITY_PRINCIPAL, systemDn);
-        }
-        if (systemPassword != null) {
-            env.put(Context.SECURITY_CREDENTIALS, systemPassword);
-        }
-        if ("true".equalsIgnoreCase(usePool)) {
-            env.put("com.sun.jndi.ldap.connect.pool", "true");
-            if (initPoolSize != null) {
-                env.put("com.sun.jndi.ldap.connect.pool.initsize", initPoolSize);
-            }
-            if (maxPoolSize != null) {
-                env.put("com.sun.jndi.ldap.connect.pool.maxsize", maxPoolSize);
-            }
-            if (prefPoolSize != null) {
-                env.put("com.sun.jndi.ldap.connect.pool.prefsize", prefPoolSize);
-            }
-            if (poolTimeout != null) {
-                env.put("com.sun.jndi.ldap.connect.pool.timeout", poolTimeout);
-            }
-        }
-        return new InitialLdapContext(env, null);
-    }
-
     @Override
     public boolean authenticate(String alias, String password) throws NotFoundException, ServerException {
         if (alias == null || alias.isEmpty() || password == null || password.isEmpty()) {
@@ -264,18 +125,9 @@ public class UserDaoImpl implements UserDao {
             }
             final String id = user.getId();
             final String userDn = getUserDn(id);
-            Hashtable<String, String> env = new Hashtable<>();
-            env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
-            env.put(Context.PROVIDER_URL, providerUrl);
-            if (authType != null) {
-                env.put(Context.SECURITY_AUTHENTICATION, authType);
-            }
-            env.put(Context.SECURITY_PRINCIPAL, userDn);
-            env.put(Context.SECURITY_CREDENTIALS, password);
-            env.put("com.sun.jndi.ldap.connect.pool", "false");
             InitialLdapContext authContext = null;
             try {
-                authContext = new InitialLdapContext(env, null);
+                authContext = contextFactory.createContext(userDn, password);
                 return true;
             } catch (AuthenticationException e) {
                 LOG.warn(format("Invalid password for user %s", userDn));
@@ -301,7 +153,7 @@ public class UserDaoImpl implements UserDao {
                             format("Unable create new user '%s'. User alias %s is already in use.", user.getEmail(), alias));
                 }
             }
-            context = getLdapContext();
+            context = contextFactory.createContext();
             newContext = context.createSubcontext(getUserDn(user.getId()), userAttributesMapper.toAttributes(user));
 
             logUserEvent("user-created", user);
@@ -337,7 +189,7 @@ public class UserDaoImpl implements UserDao {
             try {
                 final ModificationItem[] mods = userAttributesMapper.createModifications(existed, user);
                 if (mods.length > 0) {
-                    context = getLdapContext();
+                    context = contextFactory.createContext();
                     context.modifyAttributes(getUserDn(id), mods);
                 }
             } catch (NamingException e) {
@@ -369,7 +221,7 @@ public class UserDaoImpl implements UserDao {
             }
         }
         //remove user relationships with workspaces
-        for (Member member :  memberDao.getUserRelationships(id)) {
+        for (Member member : memberDao.getUserRelationships(id)) {
             memberDao.remove(member);
         }
         //remove user relationships with accounts
@@ -385,7 +237,7 @@ public class UserDaoImpl implements UserDao {
         //remove user
         InitialLdapContext context = null;
         try {
-            context = getLdapContext();
+            context = contextFactory.createContext();
             context.destroySubcontext(getUserDn(id));
             logUserEvent("user-removed", user);
             eventService.publish(new RemoveUserEvent(id));
@@ -447,7 +299,7 @@ public class UserDaoImpl implements UserDao {
         User user = null;
         InitialLdapContext context = null;
         try {
-            context = getLdapContext();
+            context = contextFactory.createContext();
             final Attributes attributes = getUserAttributesByAlias(context, alias);
             if (attributes != null) {
                 user = userAttributesMapper.fromAttributes(attributes);
@@ -462,7 +314,7 @@ public class UserDaoImpl implements UserDao {
         User user = null;
         InitialLdapContext context = null;
         try {
-            context = getLdapContext();
+            context = contextFactory.createContext();
             final Attributes attributes = getUserAttributesById(context, id);
             if (attributes != null) {
                 user = userAttributesMapper.fromAttributes(attributes);

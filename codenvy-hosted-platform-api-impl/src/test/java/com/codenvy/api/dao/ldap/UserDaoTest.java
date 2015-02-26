@@ -28,36 +28,26 @@ import com.codenvy.api.user.server.dao.User;
 import com.codenvy.api.workspace.server.dao.Member;
 import com.codenvy.api.workspace.server.dao.MemberDao;
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
-import com.codenvy.commons.lang.IoUtil;
-import com.codenvy.dto.server.DtoFactory;
 
 import org.mockito.Mock;
 import org.mockito.testng.MockitoTestNGListener;
 import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
-import java.io.File;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import static java.util.Arrays.asList;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.fail;
 
 @Listeners(value = {MockitoTestNGListener.class})
-public class UserDaoTest {
-    UserDaoImpl        userDao;
-    File               server;
-    EmbeddedLdapServer embeddedLdapServer;
-    User[]             users;
+public class UserDaoTest extends BaseTest {
+    UserDaoImpl userDao;
+    User[]      users;
 
     @Mock
     UserProfileDao profileDao;
@@ -70,17 +60,20 @@ public class UserDaoTest {
 
     @BeforeMethod
     public void setUp() throws Exception {
-        URL u = Thread.currentThread().getContextClassLoader().getResource(".");
-        assertNotNull(u);
-        File target = new File(u.toURI()).getParentFile();
-        server = new File(target, "server");
-        Assert.assertTrue(server.mkdirs(), "Unable create directory for temporary data");
-        embeddedLdapServer = EmbeddedLdapServer.start(server);
+        final InitialLdapContextFactory ldapEnv = new InitialLdapContextFactory(embeddedLdapServer.getUrl(),
+                                                            null,
+                                                            null,
+                                                            null,
+                                                            null,
+                                                            null,
+                                                            null,
+                                                            null,
+                                                            null);
         userDao = new UserDaoImpl(accountDao,
                                   memberDao,
                                   profileDao,
                                   workspaceDao,
-                                  embeddedLdapServer.getUrl(),
+                                  ldapEnv,
                                   "dc=codenvy;dc=com",
                                   new UserAttributesMapper(),
                                   new EventService());
@@ -101,12 +94,6 @@ public class UserDaoTest {
         for (User user : users) {
             userDao.create(user);
         }
-    }
-
-    @AfterMethod
-    public void tearDown() throws Exception {
-        embeddedLdapServer.stop();
-        Assert.assertTrue(IoUtil.deleteRecursive(server), "Unable remove temporary data");
     }
 
     @Test
@@ -176,7 +163,7 @@ public class UserDaoTest {
         try {
             userDao.update(copy);
             fail();
-        } catch (NotFoundException e) {
+        } catch (NotFoundException ignored) {
         }
         User updated = userDao.getById(users[0].getId());
         Assert.assertEquals(updated.getId(), users[0].getId());
