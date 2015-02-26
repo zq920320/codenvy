@@ -76,6 +76,12 @@
         <td colspan="1" style="text-align: right; border: 1px solid grey; padding: 10px;">&nbsp;</td>
         <td colspan="1" style="text-align: right; border: 1px solid grey; padding: 10px;">&nbsp;</td>
     </tr>
+    <tr th:if="${saasCharge.prePaidAmount != 0}">
+        <td colspan="1" style="text-align: right; border: 1px solid grey; padding: 10px;">SaaS Monthly Subscription Hours	</td>
+        <td th:text="${#numbers.formatDecimal(saasCharge.prePaidAmount, 1, 6)}" colspan="1" style="text-align: right; border: 1px solid grey; padding: 10px;">6000.00</td>
+        <td colspan="1" style="text-align: right; border: 1px solid grey; padding: 10px;">&nbsp;</td>
+        <td colspan="1" style="text-align: right; border: 1px solid grey; padding: 10px;">Pre-paid</td>
+    </tr>
     <tr>
         <td colspan="1" style="text-align: right; border: 1px solid grey; padding: 10px;">SaaS Chargeable Hours</td>
         <td th:text="${saasCharge != null} ? ${#numbers.formatDecimal(saasCharge.paidAmount, 1, 6)} : '0.000000'" colspan="1" style="text-align: right; border: 1px solid grey; padding: 10px;">465.20</td>
