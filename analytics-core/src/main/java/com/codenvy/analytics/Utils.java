@@ -427,8 +427,8 @@ public class Utils {
 
     /** @return true if given string corresponds to user ID */
     public static boolean isUserID(String value) {
-        return isID(value, User.class.getSimpleName().toLowerCase()) ||
-               isID(value, UserDescriptor.class.getSimpleName().toLowerCase());
+        return isID(value.toUpperCase(), User.class.getSimpleName().toUpperCase()) ||
+        isID(value.toUpperCase(), UserDescriptor.class.getSimpleName().toUpperCase());
     }
 
     private static boolean isID(String value, String prefix) {

@@ -30,7 +30,7 @@ public class TestUtils extends BaseTest {
     }
 
     @DataProvider(name = "truncOperationProvider")
-    public Object[][] TruncOperationTestDataProvider() {
+    public Object[][] truncOperationTestDataProvider() {
         return new Object[][]{{"field", 0, "{ \"$divide\" : [ { \"$subtract\" : [ { \"$multiply\" : [ \"$field\" , 1]} , " +
                                            "{ \"$mod\" : [ { \"$multiply\" : [ \"$field\" , 1]} , 1]}]} , 1]}"},
                               {"field", 4, "{ \"$divide\" : [ { \"$subtract\" : [ { \"$multiply\" : [ \"$field\" , 10000]} , " +
@@ -44,9 +44,23 @@ public class TestUtils extends BaseTest {
     }
 
     @DataProvider(name = "truncOperationExceptionalDataProvider")
-    public Object[][] TruncOperationExceptionalDataProvider() {
+    public Object[][] truncOperationExceptionalDataProvider() {
         return new Object[][]{{"", 4},
                               {null, 4},
                               {"field", -1}};
+    }
+
+
+    @Test(dataProvider = "userIDProvider")
+    public void testIsUserID(String user, boolean result) throws Exception {
+        assertEquals(Utils.isUserID(user), result);
+    }
+    @DataProvider(name = "userIDProvider")
+    public Object[][] userIDProvider() {
+        return new Object[][]{{"User0000000000000001", true},
+                              {"user0000000000000001", true},
+                              {"User000000000000000", false},
+                              {"Usar0000000000000001", false},
+        };
     }
 }
