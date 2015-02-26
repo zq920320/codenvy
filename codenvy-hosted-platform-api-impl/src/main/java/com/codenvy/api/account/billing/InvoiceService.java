@@ -29,7 +29,6 @@ import com.codenvy.dto.server.DtoFactory;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiParam;
 
-
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.ws.rs.DefaultValue;
@@ -52,19 +51,14 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- *
  * @author Max Shaposhnik
- *
  */
 @Api(value = "/invoice",
-        description = "Invoice manager")
+     description = "Invoice manager")
 @Path("/invoice/{accountId}")
 public class InvoiceService extends Service {
-
-    private final BillingService billingService;
-
-
-    private TemplateProcessor templateProcessor;
+    private final BillingService    billingService;
+    private final TemplateProcessor templateProcessor;
 
     @Inject
     public InvoiceService(BillingService billingService, TemplateProcessor initializer) {
@@ -92,25 +86,14 @@ public class InvoiceService extends Service {
                                             .withMaxItems(maxItems)
                                             .withSkipCount(skipCount)
                                             .withFromDate(startPeriod)
-                                            .withUntilDate(endPeriod)
+                                            .withTillDate(endPeriod)
                                             .build();
+
         for (Invoice invoice : billingService.getInvoices(filter)) {
-            result.add(DtoFactory.getInstance().createDto(InvoiceDescriptor.class).withId(invoice.getId())
-                                 .withAccountId(invoice.getAccountId())
-                                 .withCreationDate(invoice.getCreationDate())
-                                 .withFromDate(invoice.getFromDate())
-                                 .withUntilDate(invoice.getUntilDate())
-                                 .withCharges(invoice.getCharges())
-                                 .withCreditCardId(invoice.getCreditCardId())
-                                 .withMailingDate(invoice.getMailingDate())
-                                 .withPaymentDate(invoice.getPaymentDate())
-                                 .withPaymentState(invoice.getPaymentState())
-                                 .withTotal(invoice.getTotal())
-                                 .withLinks(generateLinks(invoice)));
+            result.add(toDescriptor(invoice));
         }
         return result;
     }
-
 
     @GET
     @Path("/{invoiceId}")
@@ -120,19 +103,7 @@ public class InvoiceService extends Service {
                                                    @PathParam("accountId") String accountId,
                                                    @ApiParam(value = "Invoice ID", required = true)
                                                    @PathParam("invoiceId") long invoiceId) throws NotFoundException, ServerException {
-        final Invoice invoice = billingService.getInvoice(invoiceId);
-        return DtoFactory.getInstance().createDto(InvoiceDescriptor.class).withId(invoice.getId())
-                                     .withAccountId(invoice.getAccountId())
-                                     .withCreationDate(invoice.getCreationDate())
-                                     .withFromDate(invoice.getFromDate())
-                                     .withUntilDate(invoice.getUntilDate())
-                                     .withCharges(invoice.getCharges())
-                                     .withCreditCardId(invoice.getCreditCardId())
-                                     .withMailingDate(invoice.getMailingDate())
-                                     .withPaymentDate(invoice.getPaymentDate())
-                                     .withPaymentState(invoice.getPaymentState())
-                                     .withTotal(invoice.getTotal())
-                                     .withLinks(generateLinks(invoice));
+        return toDescriptor(billingService.getInvoice(invoiceId));
     }
 
     @GET
@@ -179,17 +150,31 @@ public class InvoiceService extends Service {
         throw new NotFoundException("No such invoice.");
     }
 
+    private InvoiceDescriptor toDescriptor(Invoice invoice) {
+        return DtoFactory.getInstance().createDto(InvoiceDescriptor.class).withId(invoice.getId())
+                         .withAccountId(invoice.getAccountId())
+                         .withCreationDate(invoice.getCreationDate())
+                         .withFromDate(invoice.getFromDate())
+                         .withTillDate(invoice.getTillDate())
+                         .withCharges(invoice.getCharges())
+                         .withCreditCardId(invoice.getCreditCardId())
+                         .withMailingDate(invoice.getMailingDate())
+                         .withPaymentDate(invoice.getPaymentDate())
+                         .withPaymentState(invoice.getPaymentState())
+                         .withTotal(invoice.getTotal())
+                         .withLinks(generateLinks(invoice));
+    }
 
     private List<Link> generateLinks(Invoice invoice) {
         final UriBuilder uriBuilder = getServiceContext().getServiceUriBuilder();
         final Link jsonLink = LinksHelper.createLink(HttpMethod.GET,
-                                                       uriBuilder.clone()
-                                                                 .path(getClass(), "getAccountInvoiceJson")
-                                                                 .build(invoice.getAccountId(), invoice.getId())
-                                                                 .toString(),
-                                                       MediaType.APPLICATION_JSON,
-                                                       null,
-                                                       "self");
+                                                     uriBuilder.clone()
+                                                               .path(getClass(), "getAccountInvoiceJson")
+                                                               .build(invoice.getAccountId(), invoice.getId())
+                                                               .toString(),
+                                                     MediaType.APPLICATION_JSON,
+                                                     null,
+                                                     "self");
         final Link httpLink = LinksHelper.createLink(HttpMethod.GET,
                                                      uriBuilder.clone()
                                                                .path(getClass(), "getAccountInvoiceHtml")
@@ -200,13 +185,13 @@ public class InvoiceService extends Service {
                                                      "html view");
 
         final Link pdfLink = LinksHelper.createLink(HttpMethod.GET,
-                                                     uriBuilder.clone()
-                                                               .path(getClass(), "getAccountInvoicePdf")
-                                                               .build(invoice.getAccountId(), invoice.getId())
-                                                               .toString(),
-                                                     "application/pdf",
-                                                     null,
-                                                     "pdf view");
-        return Arrays.asList(jsonLink,httpLink,pdfLink);
+                                                    uriBuilder.clone()
+                                                              .path(getClass(), "getAccountInvoicePdf")
+                                                              .build(invoice.getAccountId(), invoice.getId())
+                                                              .toString(),
+                                                    "application/pdf",
+                                                    null,
+                                                    "pdf view");
+        return Arrays.asList(jsonLink, httpLink, pdfLink);
     }
 }

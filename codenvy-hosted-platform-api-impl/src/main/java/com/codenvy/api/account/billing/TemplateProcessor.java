@@ -109,7 +109,7 @@ public class TemplateProcessor {
         context.setVariable("invoice", invoice);
         context.setVariable("creationDate", new Date(invoice.getCreationDate()));
         context.setVariable("fromDate", new Date(invoice.getFromDate()));
-        context.setVariable("untilDate", new Date(invoice.getUntilDate()));
+        context.setVariable("tillDate", new Date(invoice.getTillDate()));
 
         context.setVariable("sendDate", invoice.getMailingDate() == 0 ? new Date() : new Date(invoice.getMailingDate()));
         for (Member member : accountDao.getMembers(invoice.getAccountId())) {

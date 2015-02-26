@@ -25,7 +25,7 @@ package com.codenvy.api.account.billing;
 public class ResourcesFilter {
     private String accountId;
     private Long   fromDate;
-    private Long   untilDate;
+    private Long   tillDate;
     private Double freeGbHMoreThan;
     private Double paidGbHMoreThan;
     private Double prePaidGbHMoreThan;
@@ -41,8 +41,8 @@ public class ResourcesFilter {
         return fromDate;
     }
 
-    public Long getUntilDate() {
-        return untilDate;
+    public Long getTillDate() {
+        return tillDate;
     }
 
     public Double getFreeGbHMoreThan() {
@@ -79,9 +79,9 @@ public class ResourcesFilter {
             return this;
         }
 
-        public Builder withUntilDate(long untilDate) {
-            if (untilDate > 0) {
-                instance.untilDate = untilDate;
+        public Builder withTillDate(long tillDate) {
+            if (tillDate > 0) {
+                instance.tillDate = tillDate;
             }
             return this;
         }

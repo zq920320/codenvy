@@ -63,11 +63,11 @@ public interface Invoice {
     Invoice withFromDate(long fromDate);
 
 
-    long getUntilDate();
+    long getTillDate();
 
-    void setUntilDate(long untilDate);
+    void setTillDate(long tillDate);
 
-    Invoice withUntilDate(long untilDate);
+    Invoice withTillDate(long tillDate);
 
 
     String getCreditCardId();

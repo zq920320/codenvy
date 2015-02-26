@@ -116,7 +116,7 @@ public class CheckRemainResourcesOnStopSubscriber implements EventSubscriber<Run
                                                                                                                 billingPeriod.getCurrent()
                                                                                                                              .getStartDate()
                                                                                                                              .getTime())
-                                                                                                        .withUntilDate(
+                                                                                                        .withTillDate(
                                                                                                                 System.currentTimeMillis())
                                                                                                         .withPaidGbHMoreThan(0)
                                                                                                         .build());

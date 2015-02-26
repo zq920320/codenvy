@@ -132,7 +132,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                 InvoiceFilter.builder()
                              .withAccountId("ac-3")
                              .withFromDate(sdf.parse("01-02-2015 00:00:00").getTime())
-                             .withUntilDate(sdf.parse("01-03-2015 00:00:00").getTime() - 1).build());
+                             .withTillDate(sdf.parse("01-03-2015 00:00:00").getTime() - 1).build());
         //then
         assertEquals(ac3.size(), 1);
         Invoice invoice = get(ac3, 0);
@@ -957,7 +957,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
         List<AccountResources> usage = billingService
                 .getEstimatedUsageByAccount(ResourcesFilter.builder()
                                                            .withFromDate(sdf.parse("10-01-2014 09:00:00").getTime())
-                                                           .withUntilDate(sdf.parse("10-01-2014 14:00:00").getTime())
+                                                           .withTillDate(sdf.parse("10-01-2014 14:00:00").getTime())
                                                            .withAccountId("ac-46534")
                                                            .build());
 
@@ -1026,7 +1026,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
         List<AccountResources> usage = billingService
                 .getEstimatedUsageByAccount(ResourcesFilter.builder()
                                                            .withFromDate(sdf.parse("10-01-2014 10:00:00").getTime())
-                                                           .withUntilDate(sdf.parse("10-01-2014 12:10:00").getTime())
+                                                           .withTillDate(sdf.parse("10-01-2014 12:10:00").getTime())
                                                            .withAccountId("ac-46534")
                                                            .build());
 
@@ -1061,7 +1061,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
         List<AccountResources> usage = billingService
                 .getEstimatedUsageByAccount(ResourcesFilter.builder()
                                                            .withFromDate(period.getStartDate().getTime())
-                                                           .withUntilDate(period.getEndDate().getTime())
+                                                           .withTillDate(period.getEndDate().getTime())
                                                            .withAccountId("ac-5")
                                                            .build());
 

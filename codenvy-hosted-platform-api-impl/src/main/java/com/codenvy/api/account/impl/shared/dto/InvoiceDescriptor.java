@@ -17,7 +17,6 @@
  */
 package com.codenvy.api.account.impl.shared.dto;
 
-import com.codenvy.api.account.shared.dto.MemoryChargeDetails;
 import com.codenvy.api.core.rest.shared.dto.Hyperlinks;
 import com.codenvy.api.core.rest.shared.dto.Link;
 import com.codenvy.dto.shared.DTO;
@@ -26,7 +25,6 @@ import java.util.List;
 
 /**
  * @author Max Shaposhnik
- *
  */
 @DTO
 public interface InvoiceDescriptor extends Hyperlinks {
@@ -65,11 +63,11 @@ public interface InvoiceDescriptor extends Hyperlinks {
     InvoiceDescriptor withFromDate(long fromDate);
 
 
-    long getUntilDate();
+    long getTillDate();
 
-    void setUntilDate(long untilDate);
+    void setTillDate(long tillDate);
 
-    InvoiceDescriptor withUntilDate(long untilDate);
+    InvoiceDescriptor withTillDate(long tillDate);
 
 
     String getCreditCardId();

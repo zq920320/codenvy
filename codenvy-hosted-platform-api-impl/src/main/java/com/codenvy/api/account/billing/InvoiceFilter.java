@@ -30,7 +30,7 @@ public class InvoiceFilter {
     private Integer  maxItems;
     private Integer  skipCount;
     private Long     fromDate;
-    private Long     untilDate;
+    private Long     tillDate;
 
     private InvoiceFilter() {
     }
@@ -66,8 +66,8 @@ public class InvoiceFilter {
     }
 
 
-    public Long getUntilDate() {
-        return untilDate;
+    public Long getTillDate() {
+        return tillDate;
     }
 
 
@@ -129,9 +129,9 @@ public class InvoiceFilter {
             return this;
         }
 
-        public Builder withUntilDate(long untilDate) {
-            if (untilDate > 0) {
-                instance.untilDate = untilDate;
+        public Builder withTillDate(long tillDate) {
+            if (tillDate > 0) {
+                instance.tillDate = tillDate;
             }
             return this;
         }

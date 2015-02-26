@@ -84,7 +84,7 @@ public class ActiveRunRemainResourcesChecker implements Runnable {
                                                                                                                     accountRuns.getKey())
                                                                                                             .withFromDate(
                                                                                                                     startBillingPeriod)
-                                                                                                            .withUntilDate(
+                                                                                                            .withTillDate(
                                                                                                                     System.currentTimeMillis())
                                                                                                             .withPaidGbHMoreThan(0)
                                                                                                             .build());

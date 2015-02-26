@@ -41,7 +41,6 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Types;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -198,7 +197,7 @@ public class SqlBillingService implements BillingService {
             SqlQueryAppender.appendIn(invoiceSelect, "FPAYMENT_STATE", filter.getStates());
             SqlQueryAppender.appendIsNull(invoiceSelect, "FMAILING_TIME", filter.getIsMailNotSend());
             appendContainsRange(invoiceSelect, "FPERIOD", filter.getFromDate(),
-                                filter.getUntilDate());
+                                filter.getTillDate());
 
             invoiceSelect.append(" ORDER BY FACCOUNT_ID, FCREATED_TIME DESC ");
 
@@ -322,11 +321,11 @@ public class SqlBillingService implements BillingService {
             connection.setAutoCommit(false);
             StringBuilder accountUsageSelect = new StringBuilder(ACCOUNT_USAGE_SELECT).append(" WHERE 1=1 ");
             appendOverlapRange(accountUsageSelect, "M.FDURING", resourcesFilter.getFromDate(),
-                               resourcesFilter.getUntilDate());
+                               resourcesFilter.getTillDate());
             appendEqual(accountUsageSelect, "M.FACCOUNT_ID", resourcesFilter.getAccountId());
             accountUsageSelect.append("GROUP BY M.FACCOUNT_ID, P.FAMOUNT");
             try (PreparedStatement usageStatement = connection.prepareStatement(accountUsageSelect.toString())) {
-                Int8RangeType range = new Int8RangeType(resourcesFilter.getFromDate(), resourcesFilter.getUntilDate(), true, true);
+                Int8RangeType range = new Int8RangeType(resourcesFilter.getFromDate(), resourcesFilter.getTillDate(), true, true);
                 usageStatement.setObject(1, range);
                 usageStatement.setObject(2, range);
                 usageStatement.setDouble(3, saasFreeGbH);
@@ -338,7 +337,7 @@ public class SqlBillingService implements BillingService {
                 usageStatement.setDouble(9, saasFreeGbH);
                 usageStatement.setObject(10, range);
                 usageStatement.setObject(11, range);
-                usageStatement.setDouble(12, resourcesFilter.getUntilDate() - resourcesFilter.getFromDate());
+                usageStatement.setDouble(12, resourcesFilter.getTillDate() - resourcesFilter.getFromDate());
                 usageStatement.setObject(13, range);
 
                 System.out.println(usageStatement.toString());
@@ -393,7 +392,7 @@ public class SqlBillingService implements BillingService {
                          .withMailingDate(fmailing_time != null ? fmailing_time.getTime() : 0)
                          .withCreationDate(invoicesResultSet.getLong("FCREATED_TIME"))
                          .withFromDate(range.getFrom())
-                         .withUntilDate(range.getUntil())
+                         .withTillDate(range.getUntil())
                          .withCharges(getCharges(connection,
                                                  invoicesResultSet.getString("FACCOUNT_ID"),
                                                  invoicesResultSet.getString("FCALC_ID")));
