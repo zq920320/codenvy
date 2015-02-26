@@ -157,8 +157,8 @@ public class BraintreeCreditCardDaoImpl implements CreditCardDao {
                                      .withExpiration(card.getExpirationDate()));
             }
         } catch (NotFoundException nf) {
-            LOG.warn(String.format("Failed to get cards - account %s not found.", accountId));
-            throw new ForbiddenException("Failed to get cards - such account id not found in vault.");
+            // nothing found - empty list
+            return result;
         } catch (BraintreeException e) {
             LOG.warn("Braintree exception: ", e);
             throw new ServerException("Internal server error. Please, contact support.");
