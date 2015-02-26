@@ -18,6 +18,8 @@
 package com.codenvy.api.account.subscription.schedulers;
 
 import com.codenvy.api.account.billing.BillingService;
+import com.codenvy.api.account.billing.InvoiceFilter;
+import com.codenvy.api.account.billing.PaymentState;
 import com.codenvy.api.account.billing.TemplateProcessor;
 import com.codenvy.api.account.impl.shared.dto.Invoice;
 import com.codenvy.api.account.subscription.service.util.SubscriptionMailSender;
@@ -89,7 +91,15 @@ public class MailScheduler {
     @ScheduleDelay(delay = 5)
     public void sendEmails() {
         try {
-            for (Invoice notSendInvoice : billingService.getNotSendInvoices(invoices_limit, 0)) {
+            List<Invoice> notSendInvoices = billingService.getInvoices(InvoiceFilter.builder()
+                                                                                    .withIsMailNotSend()
+                                                                                    .withPaymentStates(PaymentState.PAYMENT_FAIL,
+                                                                                                       PaymentState.PAID_SUCCESSFULLY,
+                                                                                                       PaymentState.CREDIT_CARD_MISSING)
+                                                                                    .withMaxItems(invoices_limit)
+                                                                                    .withSkipCount(0)
+                                                                                    .build());
+            for (Invoice notSendInvoice : notSendInvoices) {
                 try {
                     sendMail(notSendInvoice);
 

@@ -22,6 +22,7 @@ import com.codenvy.api.account.AccountLocker;
 import com.codenvy.api.account.PaymentService;
 import com.codenvy.api.account.billing.BillingService;
 import com.codenvy.api.account.billing.CreditCardDao;
+import com.codenvy.api.account.billing.InvoiceFilter;
 import com.codenvy.api.account.billing.PaymentState;
 import com.codenvy.api.account.impl.shared.dto.CreditCard;
 import com.codenvy.api.account.impl.shared.dto.Invoice;
@@ -71,7 +72,13 @@ public class MeterBasedCharger implements Runnable {
     @Override
     public void run() {
         try {
-            for (Invoice invoice : billingService.getInvoices(PaymentState.WAITING_EXECUTOR, invoices_limit, 0)) {
+            List<Invoice> notPaidInvoices = billingService.getInvoices(InvoiceFilter.builder()
+                                                                                    .withIsMailNotSend()
+                                                                                    .withPaymentStates(PaymentState.WAITING_EXECUTOR)
+                                                                                    .withMaxItems(invoices_limit)
+                                                                                    .withSkipCount(0)
+                                                                                    .build());
+            for (Invoice invoice : notPaidInvoices) {
                 doCharge(invoice);
             }
         } catch (ServerException e) {
