@@ -81,9 +81,9 @@ public interface SqlDaoQueries {
 
     String ACCOUNT_USAGE_SELECT = "SELECT " +
                                   "   M.FACCOUNT_ID AS FACCOUNT_ID, " +
-                                  "   LEAST("+GBH_SUM+", ?) AS FFREE_AMOUNT, " +
-                                  "   LEAST(GREATEST("+GBH_SUM+" -?, 0), CASE WHEN P.FAMOUNT IS NULL THEN 0.0 ELSE P.FAMOUNT END) AS FPREPAID_AMOUNT, " +
-                                  "   GREATEST("+GBH_SUM+" - ? -  CASE WHEN P.FAMOUNT IS NULL THEN 0.0 ELSE P.FAMOUNT END , 0) AS FPAID_AMOUNT " +
+                                  "   ROUND(CAST(LEAST("+GBH_SUM+", ?) as numeric), 6) AS FFREE_AMOUNT, " +
+                                  "   ROUND(CAST(LEAST(GREATEST("+GBH_SUM+" -?, 0), CASE WHEN P.FAMOUNT IS NULL THEN 0.0 ELSE P.FAMOUNT END) as numeric), 6) AS FPREPAID_AMOUNT, " +
+                                  "   ROUND(CAST(GREATEST("+GBH_SUM+" - ? -  CASE WHEN P.FAMOUNT IS NULL THEN 0.0 ELSE P.FAMOUNT END , 0) as numeric), 6) AS FPAID_AMOUNT " +
                                   "FROM " +
                                   "   METRICS  AS M " +
                                   "  LEFT JOIN ( " +

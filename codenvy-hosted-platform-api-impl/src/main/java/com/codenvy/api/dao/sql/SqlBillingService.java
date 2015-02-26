@@ -58,6 +58,8 @@ import static com.codenvy.api.dao.sql.SqlDaoQueries.MEMORY_CHARGES_INSERT;
 import static com.codenvy.api.dao.sql.SqlDaoQueries.MEMORY_CHARGES_SELECT;
 import static com.codenvy.api.dao.sql.SqlDaoQueries.PREPAID_INSERT;
 import static com.codenvy.api.dao.sql.SqlQueryAppender.appendContainsRange;
+import static com.codenvy.api.dao.sql.SqlQueryAppender.appendEqual;
+import static com.codenvy.api.dao.sql.SqlQueryAppender.appendOverlapRange;
 
 
 /**
@@ -191,8 +193,8 @@ public class SqlBillingService implements BillingService {
             StringBuilder invoiceSelect = new StringBuilder();
             invoiceSelect.append("SELECT ").append(SqlDaoQueries.INVOICES_FIELDS).append(" FROM INVOICES ");
 
-            SqlQueryAppender.appendEqual(invoiceSelect, "FID", filter.getId());
-            SqlQueryAppender.appendEqual(invoiceSelect, "FACCOUNT_ID", filter.getAccountId());
+            appendEqual(invoiceSelect, "FID", filter.getId());
+            appendEqual(invoiceSelect, "FACCOUNT_ID", filter.getAccountId());
             SqlQueryAppender.appendIn(invoiceSelect, "FPAYMENT_STATE", filter.getStates());
             SqlQueryAppender.appendIsNull(invoiceSelect, "FMAILING_TIME", filter.getIsMailNotSend());
             appendContainsRange(invoiceSelect, "FPERIOD", filter.getFromDate(),
@@ -318,8 +320,9 @@ public class SqlBillingService implements BillingService {
         try (Connection connection = connectionFactory.getConnection()) {
             connection.setAutoCommit(false);
             StringBuilder accountUsageSelect = new StringBuilder(ACCOUNT_USAGE_SELECT).append(" WHERE 1=1 ");
-            appendContainsRange(accountUsageSelect, "M.FDURING", resourcesFilter.getFromDate(), resourcesFilter.getUntilDate());
-            SqlQueryAppender.appendEqual(accountUsageSelect, "M.FACCOUNT_ID", resourcesFilter.getAccountId());
+            appendOverlapRange(accountUsageSelect, "M.FDURING", resourcesFilter.getFromDate(),
+                               resourcesFilter.getUntilDate());
+            appendEqual(accountUsageSelect, "M.FACCOUNT_ID", resourcesFilter.getAccountId());
             accountUsageSelect.append("GROUP BY M.FACCOUNT_ID, P.FAMOUNT");
             try (PreparedStatement usageStatement = connection.prepareStatement(accountUsageSelect.toString())) {
                 Int8RangeType range = new Int8RangeType(resourcesFilter.getFromDate(), resourcesFilter.getUntilDate(), true, true);
@@ -337,7 +340,7 @@ public class SqlBillingService implements BillingService {
                 usageStatement.setDouble(12, resourcesFilter.getUntilDate() - resourcesFilter.getFromDate());
                 usageStatement.setObject(13, range);
 
-
+                System.out.println(usageStatement.toString());
                 try (ResultSet usageResultSet = usageStatement.executeQuery()) {
                     while (usageResultSet.next()) {
                         usage.add(DtoFactory.getInstance().createDto(AccountResources.class)

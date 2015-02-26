@@ -61,6 +61,17 @@ public class SqlQueryAppender {
         }
     }
 
+    public static void appendOverlapRange(StringBuilder queryBuilder, String fieldName, Long from, Long till)
+            throws SQLException {
+        if (from != null && till != null) {
+            appendWhereOrAnd(queryBuilder);
+            queryBuilder.append(" ").append(fieldName).append(" && '").append(new Int8RangeType(from,
+                                                                                                till,
+                                                                                                true,
+                                                                                                true)).append("' ");
+        }
+    }
+
     public static void appendIsNotNull(StringBuilder queryBuilder, String fieldName, Object fieldValue) {
         if (fieldValue != null) {
             appendWhereOrAnd(queryBuilder);

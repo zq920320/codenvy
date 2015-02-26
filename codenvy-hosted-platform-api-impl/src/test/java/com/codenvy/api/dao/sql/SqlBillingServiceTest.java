@@ -918,8 +918,8 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
 
 
     @Test(dataProvider = "storage")
-    public void shouldGetSumByAccountWithAllDatesBetweenPeriod(MeterBasedStorage meterBasedStorage,
-                                                               BillingService billingService)
+    public void shouldGetEstimationByAccountWithAllDatesBetweenPeriod(MeterBasedStorage meterBasedStorage,
+                                                                      BillingService billingService)
             throws ServerException, ParseException {
         //given
         meterBasedStorage.createMemoryUsedRecord(new MemoryUsedMetric(256,
@@ -969,9 +969,9 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
     }
 
 
-    /*
     @Test(dataProvider = "storage")
-    public void shouldGetSumByAccountWithDatesBetweenPeriod(SqlMeterBasedStorage meterBasedStorage)
+    public void shouldGetEstimateByAccountWithDatesBetweenPeriod(MeterBasedStorage meterBasedStorage,
+                                                                   BillingService billingService)
             throws ServerException, ParseException {
         //given
         //when
@@ -1022,11 +1022,58 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                                                       "ws-235423",
                                                                       "run-234"));
 
+        //when
+        List<AccountResources> usage = billingService
+                .getEstimatedUsage(ResourcesFilter.builder()
+                                                  .withFromDate(sdf.parse("10-01-2014 10:00:00").getTime())
+                                                  .withUntilDate(sdf.parse("10-01-2014 12:10:00").getTime())
+                                                  .withAccountId("ac-46534")
+                                                  .build());
+
         //then
-        Assert.assertEquals(meterBasedStorage
-                                    .getEstimatedUsage("ac-46534", sdf.parse("10-01-2014 10:00:00").getTime(),
-                                                   sdf.parse("10-01-2014 12:10:00").getTime()), 0.216667);
+        Assert.assertEquals(usage.size(), 1);
+        AccountResources resources = get(usage, 0);
+        Assert.assertEquals(resources.getFreeAmount(), 0.216667);
+    }
+    @Test(dataProvider = "storage")
+    public void shouldBeAbleToEstimateUsageWithFreePrepaidAndPaidTime(MeterBasedStorage meterBasedStorage,
+                                                                      BillingService billingService) throws ParseException,
+                                                                                                            ServerException {
+        meterBasedStorage.createMemoryUsedRecord(
+                new MemoryUsedMetric(1024,
+                                     sdf.parse("10-01-2015 01:00:00").getTime(),
+                                     sdf.parse("21-01-2015 21:00:00").getTime(),
+                                     "usr-123",
+                                     "ac-5",
+                                     "ws-7",
+                                     "run-1254"));
+        billingService.addPrepaid("ac-5", 100,
+                                  sdf.parse("15-12-2014 00:00:00").getTime(),
+                                  sdf.parse("15-01-2015 00:00:00").getTime() - 1);
+        billingService.addPrepaid("ac-5", 100,
+                                  sdf.parse("20-01-2015 00:00:00").getTime(),
+                                  sdf.parse("15-02-2015 00:00:00").getTime());
+
+
+
+        //when
+        Period period = billingPeriod.get(sdf.parse("01-01-2015 00:00:00"));
+        List<AccountResources> usage = billingService
+                .getEstimatedUsage(ResourcesFilter.builder()
+                                                  .withFromDate(period.getStartDate().getTime())
+                                                  .withUntilDate(period.getEndDate().getTime())
+                                                  .withAccountId("ac-5")
+                                                  .build());
+
+        //then
+        Assert.assertEquals(usage.size(), 1);
+        AccountResources resources = get(usage, 0);
+        Assert.assertEquals(resources.getFreeAmount(), 10.0);
+        Assert.assertEquals(resources.getPrePaidAmount(), 83.870968);
+        Assert.assertEquals(resources.getPaidAmount(), 190.129032);
+
 
     }
-    */
+
+
 }
