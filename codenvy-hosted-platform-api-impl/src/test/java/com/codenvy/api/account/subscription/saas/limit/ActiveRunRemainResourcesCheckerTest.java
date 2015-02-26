@@ -107,7 +107,7 @@ public class ActiveRunRemainResourcesCheckerTest {
     @Test
     public void shouldStopRunIfLimitExeeded() throws Exception {
         when(accountDao.getById(anyString())).thenReturn(new Account().withId(ACC_ID));
-        when(service.getEstimatedUsage((ResourcesFilter)anyObject())).thenReturn(Arrays.asList(
+        when(service.getEstimatedUsageByAccount((ResourcesFilter)anyObject())).thenReturn(Arrays.asList(
                 DtoFactory.getInstance().createDto(AccountResources.class)));
         when(runQueue.getTask(anyLong())).thenReturn(runQueueTask);
 
@@ -118,7 +118,7 @@ public class ActiveRunRemainResourcesCheckerTest {
     @Test
     public void shouldNotStopRunIfLimitNotExeeded() throws Exception {
         when(accountDao.getById(anyString())).thenReturn(new Account().withId(ACC_ID));
-        when(service.getEstimatedUsage((ResourcesFilter)anyObject())).thenReturn(Collections.<AccountResources>emptyList());
+        when(service.getEstimatedUsageByAccount((ResourcesFilter)anyObject())).thenReturn(Collections.<AccountResources>emptyList());
         when(runQueue.getTask(anyLong())).thenReturn(runQueueTask);
 
         verifyZeroInteractions(runQueue);

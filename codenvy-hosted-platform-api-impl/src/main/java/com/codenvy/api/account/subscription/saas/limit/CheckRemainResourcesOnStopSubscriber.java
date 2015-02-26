@@ -109,15 +109,17 @@ public class CheckRemainResourcesOnStopSubscriber implements EventSubscriber<Run
                 return;
             }
 
-            final List<AccountResources> usedMemory = service.getEstimatedUsage(ResourcesFilter.builder()
-                                                                                               .withAccountId(workspace.getAccountId())
-                                                                                               .withFromDate(
-                                                                                                       billingPeriod.getCurrent()
-                                                                                                                    .getStartDate()
-                                                                                                                    .getTime())
-                                                                                               .withUntilDate(System.currentTimeMillis())
-                                                                                               .withPaidGbHMoreThan(0)
-                                                                                               .build());
+            final List<AccountResources> usedMemory = service.getEstimatedUsageByAccount(ResourcesFilter.builder()
+                                                                                                        .withAccountId(
+                                                                                                                workspace.getAccountId())
+                                                                                                        .withFromDate(
+                                                                                                                billingPeriod.getCurrent()
+                                                                                                                             .getStartDate()
+                                                                                                                             .getTime())
+                                                                                                        .withUntilDate(
+                                                                                                                System.currentTimeMillis())
+                                                                                                        .withPaidGbHMoreThan(0)
+                                                                                                        .build());
             if (!usedMemory.isEmpty()) {
                 accountLocker.lockAccountResources(account.getId());
             }

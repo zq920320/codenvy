@@ -141,19 +141,15 @@ public interface BillingService {
     /**
      * Get total used resources by given period.
      *
-     * @param from
-     *         starting of period
-     * @param until
-     *         end of period
      * @return resources related to given account by given period
      */
-    Resources getEstimatedUsage(long from, long until) throws ServerException;
+    Resources getEstimatedUsage(ResourcesFilter resourcesFilter) throws ServerException;
 
     /**
      * Get resources related to accounts by given period.
      *
      * @return resources related to accounts by given period
      */
-    List<AccountResources> getEstimatedUsage(ResourcesFilter resourcesFilter) throws ServerException;
+    List<AccountResources> getEstimatedUsageByAccount(ResourcesFilter resourcesFilter) throws ServerException;
 
 }

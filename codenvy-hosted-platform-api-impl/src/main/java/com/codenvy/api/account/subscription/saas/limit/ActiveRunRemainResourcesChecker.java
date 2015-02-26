@@ -79,13 +79,15 @@ public class ActiveRunRemainResourcesChecker implements Runnable {
                 }
 
                 long startBillingPeriod = billingPeriod.getCurrent().getStartDate().getTime();
-                final List<AccountResources> usedMemory = service.getEstimatedUsage(ResourcesFilter.builder()
-                                                                                                   .withAccountId(accountRuns.getKey())
-                                                                                                   .withFromDate(startBillingPeriod)
-                                                                                                   .withUntilDate(
-                                                                                                           System.currentTimeMillis())
-                                                                                                   .withPaidGbHMoreThan(0)
-                                                                                                   .build());
+                final List<AccountResources> usedMemory = service.getEstimatedUsageByAccount(ResourcesFilter.builder()
+                                                                                                            .withAccountId(
+                                                                                                                    accountRuns.getKey())
+                                                                                                            .withFromDate(
+                                                                                                                    startBillingPeriod)
+                                                                                                            .withUntilDate(
+                                                                                                                    System.currentTimeMillis())
+                                                                                                            .withPaidGbHMoreThan(0)
+                                                                                                            .build());
                 if (!usedMemory.isEmpty()) {
                     for (Long processId : accountRuns.getValue()) {
                         try {

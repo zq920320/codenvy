@@ -955,11 +955,11 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
 
         //when
         List<AccountResources> usage = billingService
-                .getEstimatedUsage(ResourcesFilter.builder()
-                                                  .withFromDate(sdf.parse("10-01-2014 09:00:00").getTime())
-                                                  .withUntilDate(sdf.parse("10-01-2014 14:00:00").getTime())
-                                                  .withAccountId("ac-46534")
-                                                  .build());
+                .getEstimatedUsageByAccount(ResourcesFilter.builder()
+                                                           .withFromDate(sdf.parse("10-01-2014 09:00:00").getTime())
+                                                           .withUntilDate(sdf.parse("10-01-2014 14:00:00").getTime())
+                                                           .withAccountId("ac-46534")
+                                                           .build());
 
         //then
         Assert.assertEquals(usage.size(), 1);
@@ -1024,11 +1024,11 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
 
         //when
         List<AccountResources> usage = billingService
-                .getEstimatedUsage(ResourcesFilter.builder()
-                                                  .withFromDate(sdf.parse("10-01-2014 10:00:00").getTime())
-                                                  .withUntilDate(sdf.parse("10-01-2014 12:10:00").getTime())
-                                                  .withAccountId("ac-46534")
-                                                  .build());
+                .getEstimatedUsageByAccount(ResourcesFilter.builder()
+                                                           .withFromDate(sdf.parse("10-01-2014 10:00:00").getTime())
+                                                           .withUntilDate(sdf.parse("10-01-2014 12:10:00").getTime())
+                                                           .withAccountId("ac-46534")
+                                                           .build());
 
         //then
         Assert.assertEquals(usage.size(), 1);
@@ -1059,11 +1059,11 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
         //when
         Period period = billingPeriod.get(sdf.parse("01-01-2015 00:00:00"));
         List<AccountResources> usage = billingService
-                .getEstimatedUsage(ResourcesFilter.builder()
-                                                  .withFromDate(period.getStartDate().getTime())
-                                                  .withUntilDate(period.getEndDate().getTime())
-                                                  .withAccountId("ac-5")
-                                                  .build());
+                .getEstimatedUsageByAccount(ResourcesFilter.builder()
+                                                           .withFromDate(period.getStartDate().getTime())
+                                                           .withUntilDate(period.getEndDate().getTime())
+                                                           .withAccountId("ac-5")
+                                                           .build());
 
         //then
         Assert.assertEquals(usage.size(), 1);

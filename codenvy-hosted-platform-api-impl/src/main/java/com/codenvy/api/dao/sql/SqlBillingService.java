@@ -310,12 +310,13 @@ public class SqlBillingService implements BillingService {
     }
 
     @Override
-    public Resources getEstimatedUsage(long from, long until) throws ServerException {
+    public Resources getEstimatedUsage(ResourcesFilter resourcesFilter) throws ServerException {
         return null;
     }
 
+
     @Override
-    public List<AccountResources> getEstimatedUsage(ResourcesFilter resourcesFilter) throws ServerException {
+    public List<AccountResources> getEstimatedUsageByAccount(ResourcesFilter resourcesFilter) throws ServerException {
         List<AccountResources> usage = new ArrayList<>();
         try (Connection connection = connectionFactory.getConnection()) {
             connection.setAutoCommit(false);

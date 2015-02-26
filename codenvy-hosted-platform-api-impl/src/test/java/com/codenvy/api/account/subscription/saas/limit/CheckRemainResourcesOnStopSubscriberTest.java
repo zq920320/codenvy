@@ -108,7 +108,7 @@ public class CheckRemainResourcesOnStopSubscriberTest {
 
     @Test
     public void shouldNotUpdateAccountAndWorkspacesIfResourcesAreLeft() throws Exception {
-        when(service.getEstimatedUsage((ResourcesFilter)anyObject())).thenReturn(Collections.<AccountResources>emptyList());
+        when(service.getEstimatedUsageByAccount((ResourcesFilter)anyObject())).thenReturn(Collections.<AccountResources>emptyList());
         when(workspaceDao.getByAccount(anyString())).thenReturn(Arrays.asList(new Workspace().withAccountId(ACC_ID)
                                                                                              .withId(WS_ID)));
 
@@ -119,7 +119,7 @@ public class CheckRemainResourcesOnStopSubscriberTest {
 
     @Test
     public void shouldUpdateAccountAndWorkspacesIfNoResourcesLeft() throws Exception {
-        when(service.getEstimatedUsage((ResourcesFilter)anyObject()))
+        when(service.getEstimatedUsageByAccount((ResourcesFilter)anyObject()))
                 .thenReturn(Arrays.asList(DtoFactory.getInstance().createDto(AccountResources.class)));
         when(workspaceDao.getByAccount(anyString())).thenReturn(Arrays.asList(new Workspace().withAccountId(ACC_ID)
                                                                                              .withId(WS_ID)));
