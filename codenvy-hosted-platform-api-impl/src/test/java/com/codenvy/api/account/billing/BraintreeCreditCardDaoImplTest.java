@@ -28,11 +28,14 @@ import com.braintreegateway.CustomerGateway;
 import com.braintreegateway.CustomerRequest;
 import com.braintreegateway.Result;
 import com.braintreegateway.exceptions.NotFoundException;
+import com.codenvy.api.account.AccountLocker;
+import com.codenvy.api.account.impl.shared.dto.AccountResources;
 import com.codenvy.api.core.ForbiddenException;
 import com.codenvy.api.core.notification.EventService;
 import com.codenvy.api.dao.billing.BraintreeCreditCardDaoImpl;
 import com.codenvy.commons.env.EnvironmentContext;
 import com.codenvy.commons.user.User;
+import com.codenvy.dto.server.DtoFactory;
 
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -41,12 +44,15 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
@@ -92,6 +98,12 @@ public class BraintreeCreditCardDaoImplTest {
     private CreditCard creditCard;
 
     @Mock
+    private BillingService billingService;
+
+    @Mock
+    private AccountLocker accountLocker;
+
+    @Mock
     User user;
 
     @InjectMocks
@@ -104,6 +116,9 @@ public class BraintreeCreditCardDaoImplTest {
         when(gateway.customer()).thenReturn(customerGateway);
         when(gateway.creditCard()).thenReturn(cardGateway);
         when(creditCard.getToken()).thenReturn(TOKEN);
+        Field period = BraintreeCreditCardDaoImpl.class.getDeclaredField("billingPeriod");
+        period.setAccessible(true);
+        period.set(dao, new MonthlyBillingPeriod());
         EnvironmentContext context = new EnvironmentContext();
         context.setUser(user);
         EnvironmentContext.setCurrent(context);
@@ -156,9 +171,21 @@ public class BraintreeCreditCardDaoImplTest {
         when(cardGateway.delete(anyString())).thenReturn(cardResult);
         when(cardResult.isSuccess()).thenReturn(true);
         when(cardResult.getTarget()).thenReturn(creditCard);
+        when(billingService.getEstimatedUsageByAccount(any(ResourcesFilter.class))).thenReturn(Collections.<AccountResources>emptyList());
         dao.deleteCard(ACCOUNT_ID, TOKEN);
         verify(cardGateway).delete(anyString());
+    }
 
+    @Test
+    public void shouldLockAccountIfUnpaidResources() throws Exception {
+        when(cardGateway.delete(anyString())).thenReturn(cardResult);
+        when(cardResult.isSuccess()).thenReturn(true);
+        when(cardResult.getTarget()).thenReturn(creditCard);
+        when(billingService.getEstimatedUsageByAccount(any(ResourcesFilter.class))).thenReturn(
+                Arrays.asList(DtoFactory.getInstance().createDto(AccountResources.class).withAccountId(ACCOUNT_ID).withPaidAmount(255D)));
+        dao.deleteCard(ACCOUNT_ID, TOKEN);
+        verify(cardGateway).delete(anyString());
+        verify(accountLocker).lockAccount(eq(ACCOUNT_ID));
     }
 
     @Test(expectedExceptions = ForbiddenException.class)

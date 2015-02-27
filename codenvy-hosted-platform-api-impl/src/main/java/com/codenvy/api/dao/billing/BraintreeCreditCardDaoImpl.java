@@ -24,8 +24,14 @@ import com.braintreegateway.CustomerRequest;
 import com.braintreegateway.Result;
 import com.braintreegateway.exceptions.BraintreeException;
 import com.braintreegateway.exceptions.NotFoundException;
+import com.codenvy.api.account.AccountLocker;
+import com.codenvy.api.account.billing.BillingPeriod;
+import com.codenvy.api.account.billing.BillingService;
 import com.codenvy.api.account.billing.CreditCardDao;
 import com.codenvy.api.account.billing.CreditCardRegistrationEvent;
+import com.codenvy.api.account.billing.MonthlyBillingPeriod;
+import com.codenvy.api.account.billing.ResourcesFilter;
+import com.codenvy.api.account.impl.shared.dto.AccountResources;
 import com.codenvy.api.account.impl.shared.dto.CreditCard;
 import com.codenvy.api.core.ForbiddenException;
 import com.codenvy.api.core.ServerException;
@@ -53,11 +59,21 @@ public class BraintreeCreditCardDaoImpl implements CreditCardDao {
 
     private final EventService eventService;
 
+    private final BillingService billingService;
+
+    private final BillingPeriod billingPeriod;
+
+    private final AccountLocker accountLocker;
+
 
     @Inject
-    public BraintreeCreditCardDaoImpl(BraintreeGateway gateway, EventService eventService) {
+    public BraintreeCreditCardDaoImpl(BraintreeGateway gateway, EventService eventService, BillingService billingService,
+                                      BillingPeriod billingPeriod, AccountLocker accountLocker) {
         this.gateway = gateway;
         this.eventService = eventService;
+        this.billingService = billingService;
+        this.billingPeriod = billingPeriod;
+        this.accountLocker = accountLocker;
     }
 
     @Override
@@ -183,9 +199,20 @@ public class BraintreeCreditCardDaoImpl implements CreditCardDao {
             eventService.publish(CreditCardRegistrationEvent
                                          .creditCardRemovedEvent(accountId, result.getTarget().getMaskedNumber(),
                                                                EnvironmentContext.getCurrent().getUser().getId()));
+            checkAndLockAccount(accountId);
         } catch (BraintreeException e) {
             LOG.warn("Braintree exception: ", e);
             throw new ServerException("Internal server error. Please, contact support.");
+        }
+    }
+
+
+    private void checkAndLockAccount(String accountId) throws ServerException {
+        ResourcesFilter filter = ResourcesFilter.builder().withAccountId(accountId).withPaidGbHMoreThan(0).withFromDate(
+                billingPeriod.getCurrent().getStartDate().getTime()).withTillDate(System.currentTimeMillis()).build();
+        List<AccountResources> resources = billingService.getEstimatedUsageByAccount(filter);
+        if (!resources.isEmpty()) {
+            accountLocker.lockAccount(accountId);
         }
     }
 }
