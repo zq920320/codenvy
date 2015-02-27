@@ -673,9 +673,9 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
         assertNotNull(actual);
         Charge saasCharge = get(actual.getCharges(), 0);
         assertNotNull(saasCharge);
-        Assert.assertEquals(saasCharge.getFreeAmount(), 10.0);
-        Assert.assertEquals(saasCharge.getPrePaidAmount(), 0.0);
-        Assert.assertEquals(saasCharge.getPaidAmount(), 274.0);
+        assertEquals(saasCharge.getFreeAmount(), 10.0);
+        assertEquals(saasCharge.getPrePaidAmount(), 0.0);
+        assertEquals(saasCharge.getPaidAmount(), 274.0);
 
 
     }
@@ -707,9 +707,9 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
         assertNotNull(actual);
         Charge saasCharge = get(actual.getCharges(), 0);
         assertNotNull(saasCharge);
-        Assert.assertEquals(saasCharge.getFreeAmount(), 10.0);
-        Assert.assertEquals(saasCharge.getPrePaidAmount(), 54.83871);
-        Assert.assertEquals(saasCharge.getPaidAmount(), 219.16129);
+        assertEquals(saasCharge.getFreeAmount(), 10.0);
+        assertEquals(saasCharge.getPrePaidAmount(), 54.83871);
+        assertEquals(saasCharge.getPaidAmount(), 219.16129);
 
 
     }
@@ -741,9 +741,9 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
         assertNotNull(actual);
         Charge saasCharge = get(actual.getCharges(), 0);
         assertNotNull(saasCharge);
-        Assert.assertEquals(saasCharge.getFreeAmount(), 10.0);
-        Assert.assertEquals(saasCharge.getPrePaidAmount(), 45, 16129);
-        Assert.assertEquals(saasCharge.getPaidAmount(), 228, 83871);
+        assertEquals(saasCharge.getFreeAmount(), 10.0);
+        assertEquals(saasCharge.getPrePaidAmount(), 45, 16129);
+        assertEquals(saasCharge.getPaidAmount(), 228, 83871);
 
 
     }
@@ -775,9 +775,9 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
         assertNotNull(actual);
         Charge saasCharge = get(actual.getCharges(), 0);
         assertNotNull(saasCharge);
-        Assert.assertEquals(saasCharge.getFreeAmount(), 10.0);
-        Assert.assertEquals(saasCharge.getPrePaidAmount(), 100.0);
-        Assert.assertEquals(saasCharge.getPaidAmount(), 174.0);
+        assertEquals(saasCharge.getFreeAmount(), 10.0);
+        assertEquals(saasCharge.getPrePaidAmount(), 100.0);
+        assertEquals(saasCharge.getPaidAmount(), 174.0);
 
     }
 
@@ -811,9 +811,9 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
         assertNotNull(actual);
         Charge saasCharge = get(actual.getCharges(), 0);
         assertNotNull(saasCharge);
-        Assert.assertEquals(saasCharge.getFreeAmount(), 10.0);
-        Assert.assertEquals(saasCharge.getPrePaidAmount(), 100.0);
-        Assert.assertEquals(saasCharge.getPaidAmount(), 174.0);
+        assertEquals(saasCharge.getFreeAmount(), 10.0);
+        assertEquals(saasCharge.getPrePaidAmount(), 100.0);
+        assertEquals(saasCharge.getPaidAmount(), 174.0);
 
     }
 
@@ -847,9 +847,9 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
         assertNotNull(actual);
         Charge saasCharge = get(actual.getCharges(), 0);
         assertNotNull(saasCharge);
-        Assert.assertEquals(saasCharge.getFreeAmount(), 10.0);
-        Assert.assertEquals(saasCharge.getPrePaidAmount(), 83.870968);
-        Assert.assertEquals(saasCharge.getPaidAmount(), 190.129032);
+        assertEquals(saasCharge.getFreeAmount(), 10.0);
+        assertEquals(saasCharge.getPrePaidAmount(), 83.870968);
+        assertEquals(saasCharge.getPaidAmount(), 190.129032);
 
     }
 
@@ -962,9 +962,9 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                                            .build());
 
         //then
-        Assert.assertEquals(usage.size(), 1);
+        assertEquals(usage.size(), 1);
         AccountResources resources = get(usage, 0);
-        Assert.assertEquals(resources.getFreeAmount(), 0.383333);
+        assertEquals(resources.getFreeAmount(), 0.383333);
 
     }
 
@@ -1031,9 +1031,9 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                                            .build());
 
         //then
-        Assert.assertEquals(usage.size(), 1);
+        assertEquals(usage.size(), 1);
         AccountResources resources = get(usage, 0);
-        Assert.assertEquals(resources.getFreeAmount(), 0.216667);
+        assertEquals(resources.getFreeAmount(), 0.216667);
     }
     @Test(dataProvider = "storage")
     public void shouldBeAbleToEstimateUsageWithFreePrepaidAndPaidTime(MeterBasedStorage meterBasedStorage,
@@ -1063,15 +1063,66 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                                            .withFromDate(period.getStartDate().getTime())
                                                            .withTillDate(period.getEndDate().getTime())
                                                            .withAccountId("ac-5")
+                                                           .withFreeGbHMoreThan(4.12)
+                                                           .withPrePaidGbHMoreThan(15.0)
+                                                           .withPaidGbHMoreThan(100.0)
+                                                           .withMaxItems(1)
+                                                           .withSkipCount(0)
                                                            .build());
 
         //then
-        Assert.assertEquals(usage.size(), 1);
+        assertEquals(usage.size(), 1);
         AccountResources resources = get(usage, 0);
-        Assert.assertEquals(resources.getFreeAmount(), 10.0);
-        Assert.assertEquals(resources.getPrePaidAmount(), 83.870968);
-        Assert.assertEquals(resources.getPaidAmount(), 190.129032);
+        assertEquals(resources.getFreeAmount(), 10.0);
+        assertEquals(resources.getPrePaidAmount(), 83.870968);
+        assertEquals(resources.getPaidAmount(), 190.129032);
 
+    }
+
+    @Test(dataProvider = "storage")
+    public void shouldBeAbleToLimitAndSkipEstimateUsageWithFreePrepaidAndPaidTime(MeterBasedStorage meterBasedStorage,
+                                                                      BillingService billingService) throws ParseException,
+                                                                                                            ServerException {
+        meterBasedStorage.createMemoryUsedRecord(
+                new MemoryUsedMetric(1024,
+                                     sdf.parse("10-01-2015 01:00:00").getTime(),
+                                     sdf.parse("21-01-2015 21:00:00").getTime(),
+                                     "usr-123",
+                                     "ac-6",
+                                     "ws-7",
+                                     "run-1254"));
+
+        meterBasedStorage.createMemoryUsedRecord(
+                new MemoryUsedMetric(1024,
+                                     sdf.parse("01-01-2015 08:23:00").getTime(),
+                                     sdf.parse("02-01-2015 18:00:00").getTime(),
+                                     "usr-123",
+                                     "ac-5",
+                                     "ws-7",
+                                     "run-1254"));
+
+        billingService.addPrepaid("ac-6", 100,
+                                  sdf.parse("15-12-2014 00:00:00").getTime(),
+                                  sdf.parse("15-01-2015 00:00:00").getTime() - 1);
+
+
+        //when
+        Period period = billingPeriod.get(sdf.parse("01-01-2015 00:00:00"));
+        List<AccountResources> usage = billingService
+                .getEstimatedUsageByAccount(ResourcesFilter.builder()
+                                                           .withFromDate(period.getStartDate().getTime())
+                                                           .withTillDate(period.getEndDate().getTime())
+                                                           .withMaxItems(1)
+                                                           .withSkipCount(1)
+                                                           .build());
+
+        //then
+        assertEquals(usage.size(), 1);
+        AccountResources resources = get(usage, 0);
+        assertEquals(resources.getAccountId(), "ac-6");
+        assertEquals(resources.getFreeAmount(), 10.0);
+        assertEquals(resources.getPrePaidAmount(), 45.161290);
+        assertEquals(resources.getPaidAmount(), 228.838710);
 
     }
 

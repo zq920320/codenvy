@@ -49,6 +49,9 @@ import java.util.UUID;
 
 import static com.codenvy.api.dao.sql.SqlDaoQueries.ACCOUNT_USAGE_SELECT;
 import static com.codenvy.api.dao.sql.SqlDaoQueries.CHARGES_SELECT;
+import static com.codenvy.api.dao.sql.SqlDaoQueries.FFREE_AMOUNT;
+import static com.codenvy.api.dao.sql.SqlDaoQueries.FPAID_AMOUNT;
+import static com.codenvy.api.dao.sql.SqlDaoQueries.FPREPAID_AMOUNT;
 import static com.codenvy.api.dao.sql.SqlDaoQueries.INVOICES_INSERT;
 import static com.codenvy.api.dao.sql.SqlDaoQueries.INVOICES_MAILING_TIME_UPDATE;
 import static com.codenvy.api.dao.sql.SqlDaoQueries.INVOICES_PAYMENT_STATE_AND_CC_UPDATE;
@@ -58,6 +61,11 @@ import static com.codenvy.api.dao.sql.SqlDaoQueries.MEMORY_CHARGES_SELECT;
 import static com.codenvy.api.dao.sql.SqlDaoQueries.PREPAID_INSERT;
 import static com.codenvy.api.dao.sql.SqlQueryAppender.appendContainsRange;
 import static com.codenvy.api.dao.sql.SqlQueryAppender.appendEqual;
+import static com.codenvy.api.dao.sql.SqlQueryAppender.appendHavingGreaterOrEqual;
+import static com.codenvy.api.dao.sql.SqlQueryAppender.appendIn;
+import static com.codenvy.api.dao.sql.SqlQueryAppender.appendIsNull;
+import static com.codenvy.api.dao.sql.SqlQueryAppender.appendLimit;
+import static com.codenvy.api.dao.sql.SqlQueryAppender.appendOffset;
 import static com.codenvy.api.dao.sql.SqlQueryAppender.appendOverlapRange;
 
 
@@ -194,15 +202,14 @@ public class SqlBillingService implements BillingService {
 
             appendEqual(invoiceSelect, "FID", filter.getId());
             appendEqual(invoiceSelect, "FACCOUNT_ID", filter.getAccountId());
-            SqlQueryAppender.appendIn(invoiceSelect, "FPAYMENT_STATE", filter.getStates());
-            SqlQueryAppender.appendIsNull(invoiceSelect, "FMAILING_TIME", filter.getIsMailNotSend());
-            appendContainsRange(invoiceSelect, "FPERIOD", filter.getFromDate(),
-                                filter.getTillDate());
+            appendIn(invoiceSelect, "FPAYMENT_STATE", filter.getStates());
+            appendIsNull(invoiceSelect, "FMAILING_TIME", filter.getIsMailNotSend());
+            appendContainsRange(invoiceSelect, "FPERIOD", filter.getFromDate(), filter.getTillDate());
 
             invoiceSelect.append(" ORDER BY FACCOUNT_ID, FCREATED_TIME DESC ");
 
-            SqlQueryAppender.appendLimit(invoiceSelect, filter.getMaxItems());
-            SqlQueryAppender.appendOffset(invoiceSelect, filter.getSkipCount());
+            appendLimit(invoiceSelect, filter.getMaxItems());
+            appendOffset(invoiceSelect, filter.getSkipCount());
 
 
             try (PreparedStatement statement = connection.prepareStatement(invoiceSelect.toString())) {
@@ -316,15 +323,34 @@ public class SqlBillingService implements BillingService {
 
     @Override
     public List<AccountResources> getEstimatedUsageByAccount(ResourcesFilter resourcesFilter) throws ServerException {
-        List<AccountResources> usage = new ArrayList<>();
+
         try (Connection connection = connectionFactory.getConnection()) {
             connection.setAutoCommit(false);
-            StringBuilder accountUsageSelect = new StringBuilder(ACCOUNT_USAGE_SELECT).append(" WHERE 1=1 ");
-            appendOverlapRange(accountUsageSelect, "M.FDURING", resourcesFilter.getFromDate(),
-                               resourcesFilter.getTillDate());
+            StringBuilder accountUsageSelect = new StringBuilder(ACCOUNT_USAGE_SELECT);
+            appendOverlapRange(accountUsageSelect, "M.FDURING", resourcesFilter.getFromDate(), resourcesFilter.getTillDate());
             appendEqual(accountUsageSelect, "M.FACCOUNT_ID", resourcesFilter.getAccountId());
-            accountUsageSelect.append("GROUP BY M.FACCOUNT_ID, P.FAMOUNT");
+            accountUsageSelect.append(" GROUP BY M.FACCOUNT_ID, P.FAMOUNT ");
+
+            int havingFields = 0;
+            havingFields += appendHavingGreaterOrEqual(accountUsageSelect,
+                                                       FFREE_AMOUNT,
+                                                       resourcesFilter.getFreeGbHMoreThan()) ? 1 : 0;
+            havingFields += appendHavingGreaterOrEqual(accountUsageSelect,
+                                                       FPREPAID_AMOUNT,
+                                                       resourcesFilter.getPrePaidGbHMoreThan()) ? 1 : 0;
+            havingFields += appendHavingGreaterOrEqual(accountUsageSelect,
+                                                       FPAID_AMOUNT,
+                                                       resourcesFilter.getPaidGbHMoreThan()) ? 1 : 0;
+
+            accountUsageSelect.append(" ORDER BY M.FACCOUNT_ID ");
+
+            appendLimit(accountUsageSelect, resourcesFilter.getMaxItems());
+            appendOffset(accountUsageSelect, resourcesFilter.getSkipCount());
+
+
             try (PreparedStatement usageStatement = connection.prepareStatement(accountUsageSelect.toString())) {
+
+                usageStatement.setFetchSize(resourcesFilter.getMaxItems() != null ? resourcesFilter.getMaxItems() : 0);
                 Int8RangeType range = new Int8RangeType(resourcesFilter.getFromDate(), resourcesFilter.getTillDate(), true, true);
                 usageStatement.setObject(1, range);
                 usageStatement.setObject(2, range);
@@ -340,8 +366,18 @@ public class SqlBillingService implements BillingService {
                 usageStatement.setDouble(12, resourcesFilter.getTillDate() - resourcesFilter.getFromDate());
                 usageStatement.setObject(13, range);
 
-                System.out.println(usageStatement.toString());
+                //set variable for 'having' sql part.
+                for (int i = 14; i < 14 + havingFields * 3; ) {
+                    usageStatement.setObject(i++, range);
+                    usageStatement.setObject(i++, range);
+                    usageStatement.setDouble(i++, saasFreeGbH);
+                }
+
+                System.out.println(usageStatement);
                 try (ResultSet usageResultSet = usageStatement.executeQuery()) {
+                    List<AccountResources> usage =
+                            resourcesFilter.getMaxItems() != null ? new ArrayList<AccountResources>(resourcesFilter.getMaxItems())
+                                                                  : new ArrayList<AccountResources>();
                     while (usageResultSet.next()) {
                         usage.add(DtoFactory.getInstance().createDto(AccountResources.class)
                                             .withAccountId(usageResultSet.getString("FACCOUNT_ID"))
@@ -350,12 +386,12 @@ public class SqlBillingService implements BillingService {
                                             .withPrePaidAmount(usageResultSet.getDouble("FPREPAID_AMOUNT"))
                                  );
                     }
+                    return usage;
                 }
             }
         } catch (SQLException e) {
             throw new ServerException(e.getLocalizedMessage(), e);
         }
-        return usage;
     }
 
     private Map<String, String> getMemoryChargeDetails(Connection connection, String accountId, String calculationID)

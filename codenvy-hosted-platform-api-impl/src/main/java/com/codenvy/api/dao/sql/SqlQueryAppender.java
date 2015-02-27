@@ -26,42 +26,61 @@ import java.sql.SQLException;
  */
 public class SqlQueryAppender {
 
-    public static void appendEqual(StringBuilder queryBuilder, String fieldName, Object fieldValue) {
+    public static boolean appendEqual(StringBuilder queryBuilder, String fieldName, Object fieldValue) {
         if (fieldValue != null) {
             appendWhereOrAnd(queryBuilder);
             queryBuilder.append(" ").append(fieldName).append(" = ");
             appendValue(queryBuilder, fieldValue);
+            return true;
         }
+        return false;
     }
 
-    public static void appendGreaterOrEqual(StringBuilder queryBuilder, String fieldName, Object fieldValue) {
+    public static boolean appendGreaterOrEqual(StringBuilder queryBuilder, String fieldName, Object fieldValue) {
         if (fieldValue != null) {
             appendWhereOrAnd(queryBuilder);
             queryBuilder.append(" ").append(fieldName).append(" >= ");
             appendValue(queryBuilder, fieldValue);
+            return true;
         }
+        return false;
     }
 
-    public static void appendIsNull(StringBuilder queryBuilder, String fieldName, Object fieldValue) {
+    public static boolean appendHavingGreaterOrEqual(StringBuilder queryBuilder, String exp, Object value) {
+        if (value != null) {
+            appendHavingOrAnd(queryBuilder);
+            queryBuilder.append(" ").append(exp).append(" >= ");
+            appendValue(queryBuilder, value);
+            return true;
+        }
+        return false;
+    }
+
+
+    public static boolean appendIsNull(StringBuilder queryBuilder, String fieldName, Object fieldValue) {
         if (fieldValue != null) {
             appendWhereOrAnd(queryBuilder);
             queryBuilder.append(" ").append(fieldName).append(" IS NULL ");
+            return true;
         }
+        return false;
     }
 
 
-    public static void appendContainsRange(StringBuilder queryBuilder, String fieldName, Long from, Long till)
+    public static boolean appendContainsRange(StringBuilder queryBuilder, String fieldName, Long from, Long till)
             throws SQLException {
         if (from != null && till != null) {
             appendWhereOrAnd(queryBuilder);
             queryBuilder.append(" ").append(fieldName).append(" <@ '").append(new Int8RangeType(from,
-                                                                                               till,
-                                                                                               true,
-                                                                                               true)).append("' ");
+                                                                                                till,
+                                                                                                true,
+                                                                                                true)).append("' ");
+            return true;
         }
+        return false;
     }
 
-    public static void appendOverlapRange(StringBuilder queryBuilder, String fieldName, Long from, Long till)
+    public static boolean appendOverlapRange(StringBuilder queryBuilder, String fieldName, Long from, Long till)
             throws SQLException {
         if (from != null && till != null) {
             appendWhereOrAnd(queryBuilder);
@@ -69,28 +88,34 @@ public class SqlQueryAppender {
                                                                                                 till,
                                                                                                 true,
                                                                                                 true)).append("' ");
+            return true;
         }
+        return false;
     }
 
-    public static void appendIsNotNull(StringBuilder queryBuilder, String fieldName, Object fieldValue) {
+    public static boolean appendIsNotNull(StringBuilder queryBuilder, String fieldName, Object fieldValue) {
         if (fieldValue != null) {
             appendWhereOrAnd(queryBuilder);
             queryBuilder.append(" ").append(fieldName).append(" IS NOT NULL ");
+            return true;
         }
+        return false;
     }
 
-    public static void appendLessOrEqual(StringBuilder queryBuilder, String fieldName, Object fieldValue) {
+    public static boolean appendLessOrEqual(StringBuilder queryBuilder, String fieldName, Object fieldValue) {
         if (fieldValue != null) {
             appendWhereOrAnd(queryBuilder);
             queryBuilder.append(" ").append(fieldName).append(" >= ");
             appendValue(queryBuilder, fieldValue);
+            return true;
         }
+        return false;
     }
 
-    public static void appendIn(StringBuilder queryBuilder, String fieldName, Object[] fieldValue) {
+    public static boolean appendIn(StringBuilder queryBuilder, String fieldName, Object[] fieldValue) {
         if (fieldValue != null && fieldValue.length > 0) {
             appendWhereOrAnd(queryBuilder);
-            queryBuilder.append(" ").append(fieldName).append(" IN  (");
+            queryBuilder.append(" ").append(fieldName).append(" IN (");
             for (int i = 0; i < fieldValue.length; i++) {
                 appendValue(queryBuilder, fieldValue[i]);
                 if (i < fieldValue.length - 1) {
@@ -98,15 +123,26 @@ public class SqlQueryAppender {
                 }
             }
 
-            queryBuilder.append(" ) ");
+            queryBuilder.append(")");
+            return true;
         }
+        return false;
     }
 
     public static void appendWhereOrAnd(StringBuilder queryBuilder) {
-        if (queryBuilder.indexOf("WHERE") == -1) {
+        if (queryBuilder.indexOf("WHERE") == -1 || queryBuilder.indexOf(") ", queryBuilder.lastIndexOf("WHERE")) > 0) {
             queryBuilder.append(" WHERE ");
         }
         if (queryBuilder.lastIndexOf("WHERE") != queryBuilder.length() - 6) {
+            queryBuilder.append(" AND ");
+        }
+    }
+
+    public static void appendHavingOrAnd(StringBuilder queryBuilder) {
+        if (queryBuilder.indexOf("HAVING") == -1) {
+            queryBuilder.append(" HAVING ");
+        }
+        if (queryBuilder.lastIndexOf("HAVING") != queryBuilder.length() - 7) {
             queryBuilder.append(" AND ");
         }
     }

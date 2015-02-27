@@ -26,11 +26,21 @@ public class ResourcesFilter {
     private String accountId;
     private Long   fromDate;
     private Long   tillDate;
+    private Integer  maxItems;
+    private Integer  skipCount;
     private Double freeGbHMoreThan;
     private Double paidGbHMoreThan;
     private Double prePaidGbHMoreThan;
 
     private ResourcesFilter() {
+    }
+
+    public Integer getMaxItems() {
+        return maxItems;
+    }
+
+    public Integer getSkipCount() {
+        return skipCount;
     }
 
     public String getAccountId() {
@@ -85,6 +95,22 @@ public class ResourcesFilter {
             }
             return this;
         }
+
+        public Builder withMaxItems(int maxItems) {
+            if (maxItems > 0) {
+                instance.maxItems = maxItems;
+            }
+
+            return this;
+        }
+
+        public Builder withSkipCount(int skipCount) {
+            if (skipCount > 0) {
+                instance.skipCount = skipCount;
+            }
+            return this;
+        }
+
 
         public Builder withFreeGbHMoreThan(double freeGbH) {
             instance.freeGbHMoreThan = freeGbH;
