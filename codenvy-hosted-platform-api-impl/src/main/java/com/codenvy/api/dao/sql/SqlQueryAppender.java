@@ -139,7 +139,7 @@ public class SqlQueryAppender {
     }
 
     public static void appendHavingOrAnd(StringBuilder queryBuilder) {
-        if (queryBuilder.indexOf("HAVING") == -1) {
+        if (queryBuilder.indexOf("HAVING") == -1  || queryBuilder.indexOf(") ", queryBuilder.lastIndexOf("HAVING")) > 0) {
             queryBuilder.append(" HAVING ");
         }
         if (queryBuilder.lastIndexOf("HAVING") != queryBuilder.length() - 7) {

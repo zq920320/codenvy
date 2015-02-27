@@ -75,6 +75,8 @@ public interface SqlDaoQueries {
             " M.FACCOUNT_ID, " +
             " M.FWORKSPACE_ID ";
 
+
+
     String PREPAID_AMOUNT =  " SUM(P.FAMOUNT*(upper(P.FPERIOD * ?)-lower(P.FPERIOD * ?))/?)";
     String FFREE_AMOUNT    = "ROUND(CAST(LEAST(" + GBH_SUM + ", ?) as numeric), 6)";
     String FPREPAID_AMOUNT = "ROUND(CAST(LEAST(GREATEST(" + GBH_SUM +
@@ -102,28 +104,6 @@ public interface SqlDaoQueries {
                                   "             ) " +
                                   "       AS P  " +
                                   "       ON M.FACCOUNT_ID = P.FACCOUNT_ID ";
-
-
-    String TOTAL_USAGE_SELECT = "SELECT " +
-                                "   ROUND(CAST(LEAST(" + GBH_SUM + ", ?) as numeric), 6) AS FFREE_AMOUNT, " +
-                                "   ROUND(CAST(LEAST(GREATEST(" + GBH_SUM +
-                                " -?, 0), CASE WHEN P.FAMOUNT IS NULL THEN 0.0 ELSE P.FAMOUNT END) as numeric), 6) AS FPREPAID_AMOUNT, " +
-                                "   ROUND(CAST(GREATEST(" + GBH_SUM +
-                                " - ? -  CASE WHEN P.FAMOUNT IS NULL THEN 0.0 ELSE P.FAMOUNT END , 0) as numeric), 6) AS FPAID_AMOUNT " +
-                                "FROM " +
-                                "   METRICS  AS M " +
-                                "  LEFT JOIN ( " +
-                                "      SELECT " +
-                                "        " + PREPAID_AMOUNT + " AS FAMOUNT, " +
-                                "        FACCOUNT_ID " +
-                                "      FROM  " +
-                                "        PREPAID AS P" +
-                                "      WHERE  " +
-                                "        P.FPERIOD && ? " +
-                                "      GROUP BY P.FACCOUNT_ID " +
-                                "             ) " +
-                                "       AS P  " +
-                                "       ON M.FACCOUNT_ID = P.FACCOUNT_ID ";
 
 
     String CHARGES_MEMORY_INSERT =

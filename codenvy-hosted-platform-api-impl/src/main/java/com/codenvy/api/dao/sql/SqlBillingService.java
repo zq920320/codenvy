@@ -59,6 +59,7 @@ import static com.codenvy.api.dao.sql.SqlDaoQueries.INVOICES_PAYMENT_STATE_UPDAT
 import static com.codenvy.api.dao.sql.SqlDaoQueries.MEMORY_CHARGES_INSERT;
 import static com.codenvy.api.dao.sql.SqlDaoQueries.MEMORY_CHARGES_SELECT;
 import static com.codenvy.api.dao.sql.SqlDaoQueries.PREPAID_INSERT;
+
 import static com.codenvy.api.dao.sql.SqlQueryAppender.appendContainsRange;
 import static com.codenvy.api.dao.sql.SqlQueryAppender.appendEqual;
 import static com.codenvy.api.dao.sql.SqlQueryAppender.appendHavingGreaterOrEqual;
@@ -316,8 +317,57 @@ public class SqlBillingService implements BillingService {
     }
 
     @Override
-    public Resources getEstimatedUsage(ResourcesFilter resourcesFilter) throws ServerException {
-        return null;
+    public Resources getEstimatedUsage(long from, long till) throws ServerException {
+
+        try (Connection connection = connectionFactory.getConnection()) {
+            connection.setAutoCommit(false);
+            StringBuilder select = new StringBuilder("SELECT ")
+                    .append(" SUM(A.FFREE_AMOUNT)    AS FFREE_AMOUNT, ")
+                    .append(" SUM(A.FPAID_AMOUNT)    AS FPAID_AMOUNT, ")
+                    .append(" SUM(A.FPREPAID_AMOUNT) AS FPREPAID_AMOUNT ")
+                    .append(" FROM (")
+                    .append(ACCOUNT_USAGE_SELECT);
+            appendOverlapRange(select, "M.FDURING", from, till);
+            select.append(" GROUP BY M.FACCOUNT_ID, P.FAMOUNT ");
+            select.append(" ) AS A ");
+
+            try (PreparedStatement usageStatement = connection.prepareStatement(select.toString())) {
+
+                usageStatement.setFetchSize(1);
+                Int8RangeType range = new Int8RangeType(from, till, true, true);
+                usageStatement.setObject(1, range);
+                usageStatement.setObject(2, range);
+                usageStatement.setDouble(3, saasFreeGbH);
+                usageStatement.setObject(4, range);
+                usageStatement.setObject(5, range);
+                usageStatement.setDouble(6, saasFreeGbH);
+                usageStatement.setObject(7, range);
+                usageStatement.setObject(8, range);
+                usageStatement.setDouble(9, saasFreeGbH);
+                usageStatement.setObject(10, range);
+                usageStatement.setObject(11, range);
+                usageStatement.setLong(12, till - from);
+                usageStatement.setObject(13, range);
+
+                try (ResultSet usageResultSet = usageStatement.executeQuery()) {
+
+                    while (usageResultSet.next()) {
+                        return DtoFactory.getInstance().createDto(Resources.class)
+                                         .withFreeAmount(usageResultSet.getDouble("FFREE_AMOUNT"))
+                                         .withPaidAmount(usageResultSet.getDouble("FPAID_AMOUNT"))
+                                         .withPrePaidAmount(usageResultSet.getDouble("FPREPAID_AMOUNT"))
+                                ;
+                    }
+
+                }
+            }
+        } catch (SQLException e) {
+            throw new ServerException(e.getLocalizedMessage(), e);
+        }
+        return DtoFactory.getInstance().createDto(Resources.class)
+                         .withFreeAmount(0D)
+                         .withPaidAmount(0D)
+                         .withPrePaidAmount(0D);
     }
 
 
@@ -363,7 +413,7 @@ public class SqlBillingService implements BillingService {
                 usageStatement.setDouble(9, saasFreeGbH);
                 usageStatement.setObject(10, range);
                 usageStatement.setObject(11, range);
-                usageStatement.setDouble(12, resourcesFilter.getTillDate() - resourcesFilter.getFromDate());
+                usageStatement.setLong(12, resourcesFilter.getTillDate() - resourcesFilter.getFromDate());
                 usageStatement.setObject(13, range);
 
                 //set variable for 'having' sql part.
@@ -372,8 +422,6 @@ public class SqlBillingService implements BillingService {
                     usageStatement.setObject(i++, range);
                     usageStatement.setDouble(i++, saasFreeGbH);
                 }
-
-                System.out.println(usageStatement);
                 try (ResultSet usageResultSet = usageStatement.executeQuery()) {
                     List<AccountResources> usage =
                             resourcesFilter.getMaxItems() != null ? new ArrayList<AccountResources>(resourcesFilter.getMaxItems())

@@ -143,7 +143,7 @@ public interface BillingService {
      *
      * @return resources related to given account by given period
      */
-    Resources getEstimatedUsage(ResourcesFilter resourcesFilter) throws ServerException;
+    Resources getEstimatedUsage(long from, long till) throws ServerException;
 
     /**
      * Get resources related to accounts by given period.

@@ -27,6 +27,7 @@ import com.codenvy.api.account.billing.ResourcesFilter;
 import com.codenvy.api.account.impl.shared.dto.AccountResources;
 import com.codenvy.api.account.impl.shared.dto.Charge;
 import com.codenvy.api.account.impl.shared.dto.Invoice;
+import com.codenvy.api.account.impl.shared.dto.Resources;
 import com.codenvy.api.account.metrics.MemoryUsedMetric;
 import com.codenvy.api.account.metrics.MeterBasedStorage;
 import com.codenvy.api.core.NotFoundException;
@@ -1126,5 +1127,63 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
 
     }
 
+
+
+    @Test(dataProvider = "storage")
+    public void shouldBeAbleToGetEstimatedUsage(MeterBasedStorage meterBasedStorage,
+                                                                                  BillingService billingService) throws ParseException,
+                                                                                                                        ServerException {
+        meterBasedStorage.createMemoryUsedRecord(
+                new MemoryUsedMetric(1024,
+                                     sdf.parse("10-01-2015 01:00:00").getTime(),
+                                     sdf.parse("12-01-2015 21:00:00").getTime(),
+                                     "usr-123",
+                                     "ac-6",
+                                     "ws-7",
+                                     "run-1254"));
+
+        meterBasedStorage.createMemoryUsedRecord(
+                new MemoryUsedMetric(1024,
+                                     sdf.parse("10-01-2015 08:23:00").getTime(),
+                                     sdf.parse("11-01-2015 12:23:00").getTime(),
+                                     "usr-123",
+                                     "ac-5",
+                                     "ws-7",
+                                     "run-1256"));
+
+        billingService.addPrepaid("ac-6", 100,
+                                  sdf.parse("15-12-2014 00:00:00").getTime(),
+                                  sdf.parse("15-02-2015 00:00:00").getTime() - 1);
+
+
+        //when
+        Period period = billingPeriod.get(sdf.parse("01-01-2015 00:00:00"));
+
+        Resources usage = billingService
+                .getEstimatedUsage(period.getStartDate().getTime(), period.getEndDate().getTime());
+        List<AccountResources> usageAccount = billingService
+                .getEstimatedUsageByAccount(ResourcesFilter.builder()
+                                                           .withFromDate(period.getStartDate().getTime())
+                                                           .withTillDate(period.getEndDate().getTime())
+                                                           .build());
+
+        //then
+        assertEquals(usage.getFreeAmount(), 20.0);
+        assertEquals(usage.getPrePaidAmount(), 58.0);
+        assertEquals(usage.getPaidAmount(), 18.0);
+        assertEquals(usageAccount.size(), 2);
+        AccountResources ac5 = get(usageAccount, 0);
+        AccountResources ac6 = get(usageAccount, 1);
+
+        assertEquals(ac5.getFreeAmount(), 10.0);
+        assertEquals(ac5.getPrePaidAmount(), 0.0);
+        assertEquals(ac5.getPaidAmount(), 18.0);
+
+        assertEquals(ac6.getFreeAmount(), 10.0);
+        assertEquals(ac6.getPrePaidAmount(), 58.0);
+        assertEquals(ac6.getPaidAmount(), 0.0);
+
+
+    }
 
 }
