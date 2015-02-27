@@ -10,13 +10,13 @@
     <tr>
         <td th:if="${creditCard != null}" style="border: 1px solid grey; padding: 5px;">
         <p><strong>Billed to:</strong></p>
-        <p>
-          <span th:text="${creditCard.cardholder}">Brad Micklea</span><br/>
-          <span><a th:text="${email}" th:href="@{mailto:${email}}" href="mailto:bmicklea@codenvy.com" rel="nofollow">bmicklea@codenvy.com</a></span><br/>
-          <span th:text="${creditCard.streetAddress}">334 Pacific Ave</span><br/>
-          <span th:text="${creditCard.city} + ', ' + ${creditCard.state}">Toronto, ON</span><br/>
-          <span th:text="${creditCard.country}">Canada</span><br/>
-        </p>
+            <p>
+                <span th:text="${creditCard.cardholder}">Brad Micklea</span><br/>
+                <span><a th:text="${email}" th:href="@{mailto:${email}}" href="mailto:bmicklea@codenvy.com" rel="nofollow">bmicklea@codenvy.com</a></span><br/>
+                <span th:text="${creditCard.streetAddress} != null ? ${creditCard.streetAddress} :'' ">334 Pacific Ave</span><br/>
+                <span th:text="(${creditCard.city} != null ? ${creditCard.city} : '') + ((${creditCard.city} != null and ${creditCard.state} != null) ? ', ' : '') + (${creditCard.state} != null ? ${creditCard.state} : '')">Toronto, ON</span><br/>
+                <span th:text="${creditCard.country} != null ? ${creditCard.country} : '' ">Canada</span><br/>
+            </p>
         </td>
         <td style="border: 1px solid grey; padding: 10px;">
             <p><strong th:text="'Receipt Total: $' + ${invoice.total}">Receipt Total: $69.79</strong></p>
