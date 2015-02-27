@@ -45,6 +45,7 @@
                         <ul class="dropdown-menu">
                             <li><a href="/analytics/pages/im-reports/im-downloads.jsp" id="topmenu-im-statistics-downloads">Downloads</a></li>
                             <li><a href="/analytics/pages/im-reports/im-on-prem-trials.jsp" id="topmenu-im-statistics-trials">Trials</a></li>
+                            <li><a href="/analytics/pages/im-reports/im-analysis.jsp" id="topmenu-im-analysis">Analysis</a></li>
                         </ul>
                     </div>
                 <% } %>

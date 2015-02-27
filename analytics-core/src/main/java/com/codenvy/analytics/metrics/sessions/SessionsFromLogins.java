@@ -15,41 +15,39 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.metrics.users;
+package com.codenvy.analytics.metrics.sessions;
 
-import com.codenvy.analytics.metrics.AbstractLongValueResulted;
+import com.codenvy.analytics.datamodel.LongValueData;
+import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.metrics.CalculatedMetric;
 import com.codenvy.analytics.metrics.Context;
-import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.analytics.metrics.OmitFilters;
 
 import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
 
-/** @author Anatoliy Bazko< */
-@RolesAllowed({"system/admin", "system/manager"})
-@OmitFilters({MetricFilter.WS_ID, MetricFilter.PERSISTENT_WS})
-public class CreatedUsers extends AbstractLongValueResulted {
-
-    public CreatedUsers() {
-        super(MetricType.CREATED_USERS, USER);
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+@RolesAllowed(value = {"user", "system/admin", "system/manager"})
+public class SessionsFromLogins extends CalculatedMetric {
+    public SessionsFromLogins() {
+        super(MetricType.SESSIONS_FROM_LOGINS, new MetricType[]{MetricType.PRODUCT_USAGE_SESSIONS, MetricType.PRODUCT_USAGE_FACTORY_SESSIONS});
     }
 
     /** {@inheritDoc} */
     @Override
-    public Context applySpecificFilter(Context context) throws IOException {
-        if (!context.exists(MetricFilter.USER_ID)) {
-            return context.cloneAndPut(MetricFilter.REGISTERED_USER, 1);
-        }
+    public ValueData getValue(Context context) throws IOException {
+        return basedMetric[0].getValue(context).subtract(basedMetric[1].getValue(context));
+    }
 
-        return context;
+    /** {@inheritDoc} */
+    @Override
+    public Class<? extends ValueData> getValueDataClass() {
+        return LongValueData.class;
     }
 
     /** {@inheritDoc} */
     @Override
     public String getDescription() {
-        return "The number of registered users";
+        return null;
     }
-
-
 }

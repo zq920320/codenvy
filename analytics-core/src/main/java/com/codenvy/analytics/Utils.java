@@ -259,14 +259,14 @@ public class Utils {
         return new BasicDBObject(field, dateFilter);
     }
 
-    public static String getFilterAsString(Set<String> values) {
+    public static String getFilterAsString(Set<?> values) {
         StringBuilder result = new StringBuilder();
-        for (String value : values) {
+        for (Object value : values) {
             if (result.length() > 0) {
                 result.append(MongoDataLoader.SEPARATOR);
             }
 
-            result.append(value);
+            result.append(value.toString());
         }
 
         return result.toString();

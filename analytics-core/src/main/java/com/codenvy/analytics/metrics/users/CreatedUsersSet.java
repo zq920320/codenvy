@@ -22,11 +22,10 @@ import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.OmitFilters;
-import com.codenvy.analytics.metrics.Parameters;
 
 import javax.annotation.security.RolesAllowed;
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+/** @author Anatoliy Bazko */
 @RolesAllowed({"system/admin", "system/manager"})
 @OmitFilters({MetricFilter.WS_ID, MetricFilter.PERSISTENT_WS})
 public class CreatedUsersSet extends AbstractSetValueResulted {
@@ -35,22 +34,22 @@ public class CreatedUsersSet extends AbstractSetValueResulted {
         super(MetricType.CREATED_USERS_SET, USER);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getStorageCollectionName() {
         return getStorageCollectionName(MetricType.CREATED_USERS);
     }
 
+    /** {@inheritDoc} */
     @Override
     public Context applySpecificFilter(Context clauses) {
         if (!clauses.exists(MetricFilter.USER)) {
-            Context.Builder builder = new Context.Builder(clauses);
-            builder.put(MetricFilter.USER, Parameters.USER_TYPES.REGISTERED.name());
-            return builder.build();
+            return clauses.cloneAndPut(MetricFilter.REGISTERED_USER, 1);
         }
-
         return clauses;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "Created registered users";

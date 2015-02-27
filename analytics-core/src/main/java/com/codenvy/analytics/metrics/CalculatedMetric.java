@@ -17,7 +17,7 @@
  */
 package com.codenvy.analytics.metrics;
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+/** @author Anatoliy Bazko */
 public abstract class CalculatedMetric extends AbstractMetric {
 
     protected final Metric[] basedMetric;

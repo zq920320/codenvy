@@ -18,6 +18,7 @@
 package com.codenvy.analytics.datamodel;
 
 import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Expandable;
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.Summaraziable;
 
@@ -63,6 +64,11 @@ public class ValueDataUtil {
     /** @return the metric summary value */
     public static ListValueData getSummaryValue(Metric metric, Context context) throws IOException {
         return (ListValueData)((Summaraziable)metric).getSummaryValue(context);
+    }
+
+    /** @return the metric expandable value */
+    public static ListValueData getExpandedValue(Metric metric, Context context) throws IOException {
+        return (ListValueData)((Expandable)metric).getExpandedValue(context);
     }
 
     /** @return the metric value and casts to {@link com.codenvy.analytics.datamodel.SetValueData} */

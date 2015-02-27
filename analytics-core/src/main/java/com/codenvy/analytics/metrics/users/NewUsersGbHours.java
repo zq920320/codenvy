@@ -15,41 +15,31 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
+
 package com.codenvy.analytics.metrics.users;
 
-import com.codenvy.analytics.metrics.AbstractLongValueResulted;
 import com.codenvy.analytics.metrics.Context;
-import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.analytics.metrics.OmitFilters;
 
 import javax.annotation.security.RolesAllowed;
-import java.io.IOException;
 
-/** @author Anatoliy Bazko< */
+/** @author Anatoliy Bazko */
 @RolesAllowed({"system/admin", "system/manager"})
-@OmitFilters({MetricFilter.WS_ID, MetricFilter.PERSISTENT_WS})
-public class CreatedUsers extends AbstractLongValueResulted {
-
-    public CreatedUsers() {
-        super(MetricType.CREATED_USERS, USER);
+public class NewUsersGbHours extends AbstractNewUsersAnalysis {
+    public NewUsersGbHours() {
+        super(MetricType.NEW_USERS_GB_HOURS, MetricType.TASKS_GIGABYTE_RAM_HOURS);
     }
 
     /** {@inheritDoc} */
     @Override
-    public Context applySpecificFilter(Context context) throws IOException {
-        if (!context.exists(MetricFilter.USER_ID)) {
-            return context.cloneAndPut(MetricFilter.REGISTERED_USER, 1);
-        }
-
-        return context;
+    protected void setSpecificFilter(Context.Builder builder) {
     }
 
     /** {@inheritDoc} */
     @Override
     public String getDescription() {
-        return "The number of registered users";
+        return "The number of GB hours for new users";
     }
-
-
 }
+
+

@@ -58,6 +58,10 @@
                 <parameter key="description" value="Sessions"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="sessions_from_logins"/>
+                <parameter key="description" value="Sessions - From Logins"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="factory_sessions"/>
                 <parameter key="description" value="Sessions - From Factories"/>
             </row>

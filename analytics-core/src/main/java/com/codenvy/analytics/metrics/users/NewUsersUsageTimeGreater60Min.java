@@ -15,41 +15,34 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
+
 package com.codenvy.analytics.metrics.users;
 
-import com.codenvy.analytics.metrics.AbstractLongValueResulted;
 import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.analytics.metrics.OmitFilters;
+import com.mongodb.BasicDBObject;
 
 import javax.annotation.security.RolesAllowed;
-import java.io.IOException;
 
-/** @author Anatoliy Bazko< */
+/** @author Anatoliy Bazko */
 @RolesAllowed({"system/admin", "system/manager"})
-@OmitFilters({MetricFilter.WS_ID, MetricFilter.PERSISTENT_WS})
-public class CreatedUsers extends AbstractLongValueResulted {
-
-    public CreatedUsers() {
-        super(MetricType.CREATED_USERS, USER);
+public class NewUsersUsageTimeGreater60Min extends AbstractNewUsersAnalysis {
+    public NewUsersUsageTimeGreater60Min() {
+        super(MetricType.NEW_USERS_USAGE_TIME_GREATER_60_MIN, MetricType.USERS_STATISTICS);
     }
 
     /** {@inheritDoc} */
     @Override
-    public Context applySpecificFilter(Context context) throws IOException {
-        if (!context.exists(MetricFilter.USER_ID)) {
-            return context.cloneAndPut(MetricFilter.REGISTERED_USER, 1);
-        }
-
-        return context;
+    protected void setSpecificFilter(Context.Builder builder) {
+        builder.put(MetricFilter.TIME, new BasicDBObject("$gt", 60 * 60000));
     }
 
     /** {@inheritDoc} */
     @Override
     public String getDescription() {
-        return "The number of registered users";
+        return "The number of new users with cumulative session time greater than 60 min";
     }
-
-
 }
+
+

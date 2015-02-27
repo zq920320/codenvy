@@ -1431,6 +1431,19 @@ function AnalyticsConfiguration() {
             }
         },
 
+        imSignupAnalysis: {
+            widgetLabel: "Signup Analysis",
+            presenterType: "ReportPresenter",
+            modelViewName: "im_analysis",
+
+            defaultModelParams: {
+                "time_unit": "month"
+            },
+
+            displayLineChart: true  // default is false
+        },
+
+
         // drill-down page
         drillDown: {
             widgetLabel: "Drill Down Report",
