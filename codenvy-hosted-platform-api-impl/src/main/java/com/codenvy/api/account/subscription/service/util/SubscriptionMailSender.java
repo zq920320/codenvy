@@ -71,7 +71,7 @@ public class SubscriptionMailSender {
 
     public void sendEmail(String text, List<String> emails) throws IOException, MessagingException {
         mailClient.sendMail("noreply@codenvy.com",
-                            Strings.join(", ", emails.toArray(new String[0])),
+                            Strings.join(", ", emails.toArray(new String[emails.size()])),
                             null,
                             "Subscription notification",
                             MediaType.TEXT_PLAIN,

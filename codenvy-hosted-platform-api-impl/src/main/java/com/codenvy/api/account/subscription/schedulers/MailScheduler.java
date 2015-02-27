@@ -43,7 +43,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.List;
 
-import static com.codenvy.api.account.billing.PaymentState.NOT_REQUIRED;
+import static com.codenvy.api.account.billing.PaymentState.CREDIT_CARD_MISSING;
 import static com.codenvy.api.account.billing.PaymentState.PAID_SUCCESSFULLY;
 
 /**
@@ -60,10 +60,10 @@ public class MailScheduler {
     private final SubscriptionMailSender subscriptionMailSender;
     private final BillingService         billingService;
     private final MailSenderClient       mailSenderClient;
-    private final String                 invoiceSubject;
-    private final String                 invoiceNoPaymentSubject;
-    private final String                 billingFailedSubject;
     private final TemplateProcessor      templateProcessor;
+    private final String                 invoiceSubject;
+    private final String                 invoiceCreditCardMissingSubject;
+    private final String                 billingFailedSubject;
     private final String                 billingAddress;
     private final int                    invoices_limit;
 
@@ -73,14 +73,14 @@ public class MailScheduler {
                          MailSenderClient mailSenderClient,
                          TemplateProcessor templateProcessor,
                          @Named("subscription.saas.mail.invoice.subject") String invoiceSubject,
-                         @Named("subscription.saas.mail.invoice.no_payment.subject") String invoiceNoPaymentSubject,
+                         @Named("subscription.saas.mail.invoice.no_credit_card.subject") String billingCreditCardMissingSubject,
                          @Named("subscription.saas.mail.billing.failed.subject") String billingFailedSubject,
                          @Named("subscription.saas.mail.address") String billingAddress,
                          @Named(INVOICE_FETCH_LIMIT) int invoices_limit) {
         this.billingService = billingService;
         this.subscriptionMailSender = subscriptionMailSender;
         this.invoiceSubject = invoiceSubject;
-        this.invoiceNoPaymentSubject = invoiceNoPaymentSubject;
+        this.invoiceCreditCardMissingSubject = billingCreditCardMissingSubject;
         this.billingFailedSubject = billingFailedSubject;
         this.mailSenderClient = mailSenderClient;
         this.templateProcessor = templateProcessor;
@@ -102,7 +102,6 @@ public class MailScheduler {
             for (Invoice notSendInvoice : notSendInvoices) {
                 try {
                     sendMail(notSendInvoice);
-
                     billingService.markInvoiceAsSent(notSendInvoice.getId());
                 } catch (ApiException e) {
                     LOG.error("Can't send email", e);
@@ -116,10 +115,10 @@ public class MailScheduler {
     private void sendMail(Invoice invoice) throws ServerException, NotFoundException, ForbiddenException {
         String subject;
 
-        if (NOT_REQUIRED.getState().equals(invoice.getPaymentState())) {
-            subject = invoiceNoPaymentSubject;
-        } else if (PAID_SUCCESSFULLY.getState().equals(invoice.getPaymentState())) {
+        if (PAID_SUCCESSFULLY.getState().equals(invoice.getPaymentState())) {
             subject = invoiceSubject;
+        } else if (CREDIT_CARD_MISSING.getState().equals(invoice.getPaymentState())) {
+            subject = invoiceCreditCardMissingSubject;
         } else {
             subject = billingFailedSubject;
         }
@@ -131,7 +130,7 @@ public class MailScheduler {
 
         try {
             mailSenderClient.sendMail(billingAddress,
-                                      Strings.join(", ", accountOwnersEmails.toArray(new String[0])),
+                                      Strings.join(", ", accountOwnersEmails.toArray(new String[accountOwnersEmails.size()])),
                                       null,
                                       subject,
                                       MediaType.TEXT_HTML,

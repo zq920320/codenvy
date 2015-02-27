@@ -44,7 +44,7 @@ import java.util.List;
  * @author Sergii Leschenko
  */
 @Singleton
-public class MeterBasedCharger implements Runnable {
+public class MeterBasedCharger {
     private static final Logger LOG = LoggerFactory.getLogger(MeterBasedCharger.class);
 
     private static final String INVOICE_FETCH_LIMIT = "billing.invoice.fetch.limit";
@@ -69,14 +69,11 @@ public class MeterBasedCharger implements Runnable {
     }
 
     @ScheduleDelay(delay = 5)
-    @Override
-    public void run() {
+    public void chargeInvoices() {
         try {
             List<Invoice> notPaidInvoices = billingService.getInvoices(InvoiceFilter.builder()
-                                                                                    .withIsMailNotSend()
                                                                                     .withPaymentStates(PaymentState.WAITING_EXECUTOR)
                                                                                     .withMaxItems(invoices_limit)
-                                                                                    .withSkipCount(0)
                                                                                     .build());
             for (Invoice invoice : notPaidInvoices) {
                 doCharge(invoice);
@@ -86,7 +83,7 @@ public class MeterBasedCharger implements Runnable {
         }
     }
 
-    public void doCharge(Invoice invoice) {
+    private void doCharge(Invoice invoice) {
         if (invoice.getTotal() <= 0) {
             setPaymentState(invoice.getId(), PaymentState.NOT_REQUIRED);
             return;
@@ -103,7 +100,7 @@ public class MeterBasedCharger implements Runnable {
             paymentService.charge(invoice.withCreditCardId(ccToken));
             setPaymentState(invoice.getId(), PaymentState.PAID_SUCCESSFULLY, ccToken);
         } catch (ForbiddenException | ServerException e) {
-            LOG.error("Can't pay invoice " + invoice.getAccountId(), e);
+            LOG.error("Can't pay invoice " + invoice.getId(), e);
             setPaymentState(invoice.getId(), PaymentState.PAYMENT_FAIL, ccToken);
             accountLocker.lockAccount(invoice.getAccountId());
         }
