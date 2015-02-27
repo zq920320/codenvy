@@ -15,23 +15,30 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.metrics.projects;
+package com.codenvy.analytics.metrics.users;
 
-import com.codenvy.analytics.metrics.AbstractLongValueResulted;
+import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricType;
 
 import javax.annotation.security.RolesAllowed;
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-@RolesAllowed(value = {"user", "system/admin", "system/manager"})
-public class Deploys extends AbstractLongValueResulted {
-    public Deploys() {
-        super(MetricType.DEPLOYS, PROJECT_ID);
+/** @author Anatoliy Bazko */
+@RolesAllowed({"system/admin", "system/manager"})
+public class NewUsersOnPremTrialLicenses extends AbstractNewUsersAnalysis {
+    public NewUsersOnPremTrialLicenses() {
+        super(MetricType.NEW_USERS_ON_PREM_TRIAL_LICENSES, MetricType.IM_ON_PREM_ISSUED);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected void setSpecificFilter(Context.Builder builder) {
     }
 
     /** {@inheritDoc} */
     @Override
     public String getDescription() {
-        return "The number of deploys";
+        return "The number of On-Prem trail licenses issued for new users";
     }
 }
+
+

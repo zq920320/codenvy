@@ -46,6 +46,23 @@
     </view>
 
     <view time-unit="day,week,month,lifetime" name="im_analysis" columns="15">
+        <section name="im_downloads_summary">
+            <row class="com.codenvy.analytics.services.view.DateRow">
+                <parameter key="section-name" value=""/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="total_users"/>
+                <parameter key="description" value="Total Users"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="total_users"/>
+                <parameter key="description" value="Total Users"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="total_users"/>
+                <parameter key="description" value="Total Users"/>
+            </row>
+        </section>
         <section name="im_analysis">
             <row class="com.codenvy.analytics.services.view.DateRow">
                 <parameter key="section-name" value=""/>
@@ -74,26 +91,30 @@
                 <parameter key="name" value="new_users_gb_hours"/>
                 <parameter key="description" value="New Users GB Hrs"/>
             </row>
-            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
-            <!--<parameter key="name" value="users_who_created_project"/>-->
-            <!--<parameter key="description" value="Created Projects"/>-->
-            <!--</row>-->
-            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
-            <!--<parameter key="name" value="users_who_built"/>-->
-            <!--<parameter key="description" value="&amp; Built"/>-->
-            <!--</row>-->
-            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
-            <!--<parameter key="name" value="users_who_deployed"/>-->
-            <!--<parameter key="description" value="&amp; Run"/>-->
-            <!--</row>-->
-            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
-            <!--<parameter key="name" value="users_who_deployed_to_paas"/>-->
-            <!--<parameter key="description" value="&amp; Deployed to PAAS"/>-->
-            <!--</row>-->
-            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
-            <!--<parameter key="name" value="users_who_invited"/>-->
-            <!--<parameter key="description" value="Sent Invites"/>-->
-            <!--</row>-->
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="new_users_builds"/>
+                <parameter key="description" value="New Users Builds"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="new_users_runs"/>
+                <parameter key="description" value="New Users Runs"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="new_users_deploys"/>
+                <parameter key="description" value="New Users Deploys"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="new_users_sent_invites"/>
+                <parameter key="description" value="New Users Sent invites"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="new_users_on_prem_downloads"/>
+                <parameter key="description" value="New Users On-Prem Downloads"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="new_users_on_prem_trial_licenses"/>
+                <parameter key="description" value="New Users Trial Licenses"/>
+            </row>
         </section>
     </view>
 </display>

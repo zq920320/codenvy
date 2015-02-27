@@ -33,14 +33,17 @@ public class Builds extends Tasks {
         super(MetricType.BUILDS);
     }
 
-    @Override public Context applySpecificFilter(Context context) throws IOException {
+    /** {@inheritDoc} */
+    @Override
+    public Context applySpecificFilter(Context context) throws IOException {
         Context.Builder builder = new Context.Builder(super.applySpecificFilter(context));
         builder.put(MetricFilter.TASK_TYPE, BUILDER);
         return builder.build();
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
-        return "The number of times when user build projects";
+        return "The number of builds";
     }
 }

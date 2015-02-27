@@ -521,6 +521,8 @@ public class View {
             }
         } else if (userId.toUpperCase().startsWith("ANONYMOUS")) {
             return "anonymous";
+        } else if (userId.toUpperCase().equals("DEFAULT")) {
+            return "";
         } else {
             return userId;
         }
@@ -543,6 +545,8 @@ public class View {
             return name == null ? wsId : name.getAsString();
         } else if (wsId.toUpperCase().startsWith("TMP-")) {
             return "temporary";
+        } else if (wsId.toUpperCase().equals("DEFAULT")) {
+            return "";
         } else {
             return wsId;
         }

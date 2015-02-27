@@ -32,10 +32,10 @@ import javax.annotation.security.RolesAllowed;
 @RolesAllowed({"system/admin", "system/manager"})
 @OmitFilters({MetricFilter.WS_ID, MetricFilter.PERSISTENT_WS})
 public class IMDownloadStatisticsList extends AbstractListValueResulted implements ReadBasedSummariziable {
-    public static final String CODENVY          = "codenvy";
-    public static final String INSTALL_CODENVY  = "install_codenvy";
-    public static final String CODENVY_BINARIES = "codenvy binaries";
-    public static final String INSTALL_SCRIPT   = "install script";
+    public static final String ARTIFACT_CODENVY         = "codenvy";
+    public static final String ARTIFACT_INSTALL_CODENVY = "install_codenvy";
+    public static final String CODENVY_BINARIES         = "codenvy binaries";
+    public static final String INSTALL_SCRIPT           = "install script";
 
     public IMDownloadStatisticsList() {
         super(MetricType.IM_DOWNLOAD_STATISTICS_LIST);
@@ -69,8 +69,8 @@ public class IMDownloadStatisticsList extends AbstractListValueResulted implemen
     public DBObject[] getSpecificSummarizedDBOperations(Context clauses) {
         DBObject group = new BasicDBObject();
         group.put(ID, null);
-        group.put(CODENVY_BINARIES, new BasicDBObject("$sum", "$" + CODENVY));
-        group.put(INSTALL_SCRIPT, new BasicDBObject("$sum", "$" + INSTALL_CODENVY));
+        group.put(CODENVY_BINARIES, new BasicDBObject("$sum", "$" + ARTIFACT_CODENVY));
+        group.put(INSTALL_SCRIPT, new BasicDBObject("$sum", "$" + ARTIFACT_INSTALL_CODENVY));
         return new DBObject[]{new BasicDBObject("$group", group)};
     }
 }

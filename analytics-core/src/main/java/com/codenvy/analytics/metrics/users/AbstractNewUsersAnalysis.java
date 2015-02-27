@@ -64,7 +64,7 @@ public abstract class AbstractNewUsersAnalysis extends CalculatedMetric implemen
     /** {@inheritDoc} */
     @Override
     public String getExpandedField() {
-        return USER;
+        return ((Expandable)getBasedMetric()).getExpandedField();
     }
 
     /** {@inheritDoc} */

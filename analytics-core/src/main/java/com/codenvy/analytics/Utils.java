@@ -287,11 +287,12 @@ public class Utils {
 
     public static boolean isAnonymousUserName(Object userName) {
         String s = String.valueOf(userName).toUpperCase();
-        return s.startsWith("ANONYMOUSUSER_") || s.equals("DEFAULT");
+        return s.startsWith("ANONYMOUSUSER_") || isDefaultUserName(userName);
     }
 
     public static boolean isDefaultUserName(Object userName) {
-        return String.valueOf(userName).equalsIgnoreCase("DEFAULT");
+        String s = String.valueOf(userName);
+        return s.equalsIgnoreCase("DEFAULT") || s.isEmpty();
     }
 
     public static boolean isAnonymousUser(Object user) {
@@ -320,11 +321,12 @@ public class Utils {
 
     public static boolean isTemporaryWorkspaceName(Object name) {
         String s = String.valueOf(name).toUpperCase();
-        return s.startsWith("TMP-") || s.equals("DEFAULT");
+        return s.startsWith("TMP-") || isDefaultWorkspaceName(name);
     }
 
     public static boolean isDefaultWorkspaceName(Object name) {
-        return String.valueOf(name).equalsIgnoreCase("DEFAULT");
+        String s = String.valueOf(name);
+        return s.equalsIgnoreCase("DEFAULT") || s.isEmpty();
     }
 
     public static boolean isTemporaryWorkspace(Object workspace) {

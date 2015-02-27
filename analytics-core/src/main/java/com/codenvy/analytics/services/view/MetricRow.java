@@ -57,7 +57,7 @@ public class MetricRow extends AbstractRow {
 
     private static final String DEFAULT_NUMERIC_FORMAT = "%,.4f";
     private static final String DEFAULT_INTEGER_FORMAT = "%,d";
-    public static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
+    public static final  String DEFAULT_DATE_FORMAT    = "yyyy-MM-dd HH:mm:ss";
     private static final String DEFAULT_TIME_FORMAT    = "HH:mm:ss";
 
     /** The name of the metric. */
@@ -96,10 +96,9 @@ public class MetricRow extends AbstractRow {
      */
     private static final String DATE_FORMAT = "date-format";
 
-
     private final Metric              metric;
     private final String              numericFormat;
-    private final String dateFormat;
+    private final String              dateFormat;
     private final String[]            fields;
     private final boolean             hideNegativeValues;
     private final List<String>        booleanFields;

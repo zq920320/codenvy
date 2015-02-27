@@ -30,6 +30,7 @@ public class UserInvite extends AbstractLongValueResulted {
         super(MetricType.USER_INVITE, USER);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The number of invites";

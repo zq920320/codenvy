@@ -15,23 +15,31 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.metrics.projects;
 
-import com.codenvy.analytics.metrics.AbstractLongValueResulted;
+package com.codenvy.analytics.metrics.users;
+
+import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricType;
 
 import javax.annotation.security.RolesAllowed;
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-@RolesAllowed(value = {"user", "system/admin", "system/manager"})
-public class Deploys extends AbstractLongValueResulted {
-    public Deploys() {
-        super(MetricType.DEPLOYS, PROJECT_ID);
+/** @author Anatoliy Bazko */
+@RolesAllowed({"system/admin", "system/manager"})
+public class NewUsersBuilds extends AbstractNewUsersAnalysis {
+    public NewUsersBuilds() {
+        super(MetricType.NEW_USERS_BUILDS, MetricType.BUILDS);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected void setSpecificFilter(Context.Builder builder) {
     }
 
     /** {@inheritDoc} */
     @Override
     public String getDescription() {
-        return "The number of deploys";
+        return "The number of builds of new users";
     }
 }
+
+
