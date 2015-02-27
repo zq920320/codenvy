@@ -21,9 +21,8 @@ import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.api.core.notification.EventService;
-import com.codenvy.api.user.server.dao.Profile;
+import com.codenvy.api.user.server.dao.PreferenceDao;
 import com.codenvy.api.user.server.dao.UserDao;
-import com.codenvy.api.user.server.dao.UserProfileDao;
 import com.codenvy.api.workspace.server.dao.Member;
 import com.codenvy.api.workspace.server.dao.MemberDao;
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
@@ -36,6 +35,9 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.util.List;
+import java.util.Map;
+
+import static java.lang.Boolean.parseBoolean;
 
 /**
  * Cache removal listener that remove temporary workspace and its memberships, temporary users.
@@ -45,24 +47,23 @@ import java.util.List;
 public class WorkspaceRemovalListener implements RemovalListener<String, Boolean> {
     private static final Logger LOG = LoggerFactory.getLogger(WorkspaceRemovalListener.class);
 
-    private final EventService eventService;
-
-    private final WorkspaceDao workspaceDao;
-
-    private final MemberDao memberDao;
-
-    private final UserDao userDao;
-
-    private final UserProfileDao userProfileDao;
+    private final EventService  eventService;
+    private final WorkspaceDao  workspaceDao;
+    private final MemberDao     memberDao;
+    private final UserDao       userDao;
+    private final PreferenceDao preferenceDao;
 
     @Inject
-    public WorkspaceRemovalListener(EventService eventService, WorkspaceDao workspaceDao, MemberDao memberDao, UserDao userDao,
-                                    UserProfileDao userProfileDao) {
+    public WorkspaceRemovalListener(EventService eventService,
+                                    WorkspaceDao workspaceDao,
+                                    MemberDao memberDao,
+                                    UserDao userDao,
+                                    PreferenceDao preferenceDao) {
         this.eventService = eventService;
         this.workspaceDao = workspaceDao;
         this.memberDao = memberDao;
         this.userDao = userDao;
-        this.userProfileDao = userProfileDao;
+        this.preferenceDao = preferenceDao;
     }
 
     @Override
@@ -80,8 +81,8 @@ public class WorkspaceRemovalListener implements RemovalListener<String, Boolean
                     }
 
                     for (Member member : members) {
-                        Profile userProfile = userProfileDao.getById(member.getUserId());
-                        if ("true".equals(userProfile.getAttributes().get("temporary"))) {
+                        final Map<String, String> preferences = preferenceDao.getPreferences(member.getUserId());
+                        if (parseBoolean(preferences.get("temporary"))) {
                             userDao.remove(member.getUserId());
                         }
                     }
