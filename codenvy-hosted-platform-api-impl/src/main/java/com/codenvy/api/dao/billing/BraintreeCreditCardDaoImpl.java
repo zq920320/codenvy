@@ -191,13 +191,14 @@ public class BraintreeCreditCardDaoImpl implements CreditCardDao {
             throw new ForbiddenException("Token is required.");
         }
         try {
+            com.braintreegateway.CreditCard  card = gateway.creditCard().find(token);
             Result<com.braintreegateway.CreditCard> result = gateway.creditCard().delete(token);
             if (!result.isSuccess()) {
                 LOG.warn(String.format("Failed to remove card. Error message: %s", result.getMessage()));
                 throw new ForbiddenException(String.format("Failed to remove card. Error message: %s",result.getMessage()));
             }
             eventService.publish(CreditCardRegistrationEvent
-                                         .creditCardRemovedEvent(accountId, result.getTarget().getMaskedNumber(),
+                                         .creditCardRemovedEvent(accountId, card.getMaskedNumber(),
                                                                EnvironmentContext.getCurrent().getUser().getId()));
             checkAndLockAccount(accountId);
         } catch (BraintreeException e) {

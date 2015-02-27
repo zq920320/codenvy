@@ -168,6 +168,7 @@ public class BraintreeCreditCardDaoImplTest {
 
     @Test
     public void shouldBeAbleToRemoveCards() throws Exception {
+        when(cardGateway.find(anyString())).thenReturn(creditCard);
         when(cardGateway.delete(anyString())).thenReturn(cardResult);
         when(cardResult.isSuccess()).thenReturn(true);
         when(cardResult.getTarget()).thenReturn(creditCard);
@@ -178,6 +179,7 @@ public class BraintreeCreditCardDaoImplTest {
 
     @Test
     public void shouldLockAccountIfUnpaidResources() throws Exception {
+        when(cardGateway.find(anyString())).thenReturn(creditCard);
         when(cardGateway.delete(anyString())).thenReturn(cardResult);
         when(cardResult.isSuccess()).thenReturn(true);
         when(cardResult.getTarget()).thenReturn(creditCard);
