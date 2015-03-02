@@ -20,9 +20,8 @@ package com.codenvy.workspace.listener;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.api.core.notification.EventService;
 import com.codenvy.api.core.notification.EventSubscriber;
-import com.codenvy.api.user.server.dao.Profile;
+import com.codenvy.api.user.server.dao.PreferenceDao;
 import com.codenvy.api.user.server.dao.UserDao;
-import com.codenvy.api.user.server.dao.UserProfileDao;
 import com.codenvy.api.workspace.server.dao.Member;
 import com.codenvy.api.workspace.server.dao.MemberDao;
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
@@ -57,13 +56,13 @@ import static org.testng.Assert.assertTrue;
 public class WorkspaceRemovalListenerTest {
     private static final String WS_ID = "wsId";
     @Mock
-    private WorkspaceDao   workspaceDao;
+    private WorkspaceDao  workspaceDao;
     @Mock
-    private MemberDao      memberDao;
+    private MemberDao     memberDao;
     @Mock
-    private UserDao        userDao;
+    private UserDao       userDao;
     @Mock
-    private UserProfileDao userProfileDao;
+    private PreferenceDao preferenceDao;
 
     private RemovalNotification<String, Boolean> notification;
     private TestEventSubscriber                  testEventSubscriber;
@@ -72,7 +71,7 @@ public class WorkspaceRemovalListenerTest {
     @BeforeMethod
     public void setUp() throws Exception {
         EventService eventService = new EventService();
-        listener = new WorkspaceRemovalListener(eventService, workspaceDao, memberDao, userDao, userProfileDao);
+        listener = new WorkspaceRemovalListener(eventService, workspaceDao, memberDao, userDao, preferenceDao);
         testEventSubscriber = new TestEventSubscriber();
 
         final Constructor<RemovalNotification> constructor =
@@ -99,9 +98,8 @@ public class WorkspaceRemovalListenerTest {
         members.add(new Member().withWorkspaceId(WS_ID).withUserId("PERSISTENT_USER_1"));
         members.add(new Member().withWorkspaceId(WS_ID).withUserId("TEMP_USER_2"));
         when(memberDao.getWorkspaceMembers(WS_ID)).thenReturn(members);
-        when(userProfileDao.getById("PERSISTENT_USER_1"))
-                .thenReturn(new Profile().withAttributes(Collections.singletonMap("temporary", "false")));
-        when(userProfileDao.getById("TEMP_USER_2")).thenReturn(new Profile().withAttributes(Collections.singletonMap("temporary", "true")));
+        when(preferenceDao.getPreferences("PERSISTENT_USER_1")).thenReturn(Collections.singletonMap("temporary", "false"));
+        when(preferenceDao.getPreferences("TEMP_USER_2")).thenReturn(Collections.singletonMap("temporary", "true"));
 
         listener.onRemoval(notification);
 
@@ -130,7 +128,7 @@ public class WorkspaceRemovalListenerTest {
 
         listener.onRemoval(notification);
 
-        verifyZeroInteractions(workspaceDao, memberDao, userDao, userProfileDao);
+        verifyZeroInteractions(workspaceDao, memberDao, userDao, preferenceDao);
         assertTrue(testEventSubscriber.isEventPublished());
     }
 

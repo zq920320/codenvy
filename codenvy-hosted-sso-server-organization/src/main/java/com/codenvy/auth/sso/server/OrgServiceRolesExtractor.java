@@ -23,8 +23,9 @@ import com.codenvy.api.account.server.dao.Member;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.api.dao.authentication.AccessTicket;
+import com.codenvy.api.user.server.dao.PreferenceDao;
+import com.codenvy.api.user.server.dao.User;
 import com.codenvy.api.user.server.dao.UserDao;
-import com.codenvy.api.user.server.dao.UserProfileDao;
 import com.codenvy.api.workspace.server.dao.MemberDao;
 
 import org.slf4j.Logger;
@@ -33,7 +34,10 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+
+import static java.lang.Boolean.parseBoolean;
 
 /**
  * Get user principal with roles from account service.
@@ -42,52 +46,53 @@ import java.util.Set;
  */
 public class OrgServiceRolesExtractor implements RolesExtractor {
     private static final Logger LOG = LoggerFactory.getLogger(OrgServiceRolesExtractor.class);
-    private UserDao        userDao;
-    private AccountDao     accountDao;
-    private MemberDao      memberDao;
-    private UserProfileDao profileDao;
+
+    private final UserDao        userDao;
+    private final AccountDao     accountDao;
+    private final MemberDao      memberDao;
+    private final PreferenceDao  preferenceDao;
 
     @Inject
-    public OrgServiceRolesExtractor(UserDao userDao, AccountDao accountDao, MemberDao memberDao,
-                                    UserProfileDao profileDao) {
+    public OrgServiceRolesExtractor(UserDao userDao,
+                                    AccountDao accountDao,
+                                    MemberDao memberDao,
+                                    PreferenceDao preferenceDao) {
         this.userDao = userDao;
         this.accountDao = accountDao;
         this.memberDao = memberDao;
-        this.profileDao = profileDao;
+        this.preferenceDao = preferenceDao;
     }
 
     @Override
     public Set<String> extractRoles(AccessTicket ticket, String workspaceId, String accountId) {
 
         try {
-            com.codenvy.api.user.server.dao.User user = userDao.getById(ticket.getPrincipal().getId());
-            com.codenvy.api.user.server.dao.Profile profile = profileDao.getById(user.getId());
-            boolean isTemporary = false;
-            if (profile.getAttributes() != null && "true".equals(profile.getAttributes().get("temporary"))) {
-                isTemporary = true;
+            final Set<String> userRoles = new HashSet<>();
+
+            final Map<String, String> preferences = preferenceDao.getPreferences(ticket.getPrincipal().getId());
+            if (parseBoolean(preferences.get("temporary"))) {
+                userRoles.add("temp_user");
+            } else {
+                userRoles.add("user");
             }
-            Set<String> setWithUserRoles = new HashSet<>(3);
-            if (!isTemporary)
-                setWithUserRoles.add("user");
-            else
-                setWithUserRoles.add("temp_user");
+
+            User user = userDao.getById(ticket.getPrincipal().getId());
 
             if (accountId != null) {
                 Account account = accountDao.getById(accountId);
                 if (account != null) {
                     for (Member accountMember : accountDao.getMembers(accountId)) {
                         if (accountMember.getUserId().equals(user.getId()))
-                            setWithUserRoles.addAll(accountMember.getRoles());
+                            userRoles.addAll(accountMember.getRoles());
                     }
                 }
             }
 
-            for (com.codenvy.api.workspace.server.dao.Member workspaceMember : memberDao
-                    .getUserRelationships(user.getId())) {
+            for (com.codenvy.api.workspace.server.dao.Member workspaceMember : memberDao.getUserRelationships(user.getId())) {
                 if (workspaceMember.getWorkspaceId().equals(workspaceId))
-                    setWithUserRoles.addAll(workspaceMember.getRoles());
+                    userRoles.addAll(workspaceMember.getRoles());
             }
-            return setWithUserRoles;
+            return userRoles;
         } catch (NotFoundException e) {
             return Collections.emptySet();
         } catch (ServerException e) {

@@ -23,6 +23,7 @@ import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.api.user.server.Constants;
+import com.codenvy.api.user.server.dao.PreferenceDao;
 import com.codenvy.api.user.server.dao.Profile;
 import com.codenvy.api.user.server.dao.UserDao;
 import com.codenvy.api.user.server.dao.UserProfileDao;
@@ -53,6 +54,9 @@ public class OrgServiceUserCreator implements UserCreator {
     @Inject
     private UserProfileDao profileDao;
 
+    @Inject
+    private PreferenceDao preferenceDao;
+
     @Override
     public User createUser(String userName, String firstName, String lastName) throws IOException {
         //TODO check this method should only call if user is not exists.
@@ -61,11 +65,10 @@ public class OrgServiceUserCreator implements UserCreator {
             return new UserImpl(userName, user.getId(), null, Collections.<String>emptyList(), false);
         } catch (NotFoundException e) {
             String id = NameGenerator.generate(User.class.getSimpleName().toLowerCase(), Constants.ID_LENGTH);
-            Map<String, String> attributes = new HashMap<>();
+
+            final Map<String, String> attributes = new HashMap<>();
             attributes.put("firstName", firstName);
             attributes.put("lastName", lastName);
-            attributes.put("codenvy:created", Long.toString(System.currentTimeMillis()));
-            attributes.put("resetPassword", "true");
 
             Profile profile = new Profile()
                     .withId(id)
@@ -78,8 +81,14 @@ public class OrgServiceUserCreator implements UserCreator {
                                                                          .withEmail(userName)
                                                                          .withPassword(password));
                 profileDao.create(profile);
+
+                final Map<String, String> preferences = new HashMap<>();
+                preferences.put("codenvy:created", Long.toString(System.currentTimeMillis()));
+                preferences.put("resetPassword", "true");
+                preferenceDao.setPreferences(id, preferences);
+
                 return new UserImpl(userName, id, null, Collections.<String>emptyList(), false);
-            } catch (ConflictException | ServerException e1) {
+            } catch (ConflictException | ServerException | NotFoundException e1) {
                 throw new IOException(e1.getLocalizedMessage(), e1);
             }
         } catch (ServerException e) {
@@ -114,13 +123,16 @@ public class OrgServiceUserCreator implements UserCreator {
 
             userDao.create(new com.codenvy.api.user.server.dao.User().withId(id).withEmail(anonymousUser)
                                                                      .withPassword(password));
-            Map<String, String> attributes = new HashMap<>();
-            attributes.put("temporary", String.valueOf(true));
-            attributes.put("codenvy:created", Long.toString(System.currentTimeMillis()));
+
             profileDao.create(new Profile()
                                       .withId(id)
-                                      .withUserId(id)
-                                      .withAttributes(attributes));
+                                      .withUserId(id));
+
+            final Map<String, String> preferences = new HashMap<>();
+            preferences.put("temporary", String.valueOf(true));
+            preferences.put("codenvy:created", Long.toString(System.currentTimeMillis()));
+            preferenceDao.setPreferences(id, preferences);
+
             LOG.info("Temporary user {} created", anonymousUser);
             return new UserImpl(anonymousUser, id, null, Collections.<String>emptyList(), true);
         } catch (ApiException e) {
