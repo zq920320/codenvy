@@ -66,7 +66,7 @@ public final class ProfileMigrator {
                            @Named("profile.ldap.allowed_attributes") Pair<String, String>[] allowedAttributes,
                            UserProfileDao profileDao,
                            PreferenceDao preferenceDao,
-                           MongoDatabaseProvider dbProvider) {
+                           @Named("mongo.db.organization") DB db) {
         this.profileDao = profileDao;
         this.preferenceDao = preferenceDao;
 
@@ -75,7 +75,6 @@ public final class ProfileMigrator {
             attributeNames.add(allowedAttribute.second);
         }
 
-        final DB db = dbProvider.get();
         profiles = db.collectionExists(profilesCollection) ? db.getCollection(profilesCollection) : null;
     }
 
