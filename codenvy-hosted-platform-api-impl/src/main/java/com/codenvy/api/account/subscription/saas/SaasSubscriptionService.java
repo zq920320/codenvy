@@ -91,7 +91,7 @@ public class SaasSubscriptionService extends SubscriptionService {
     @Override
     public void afterCreateSubscription(Subscription subscription) throws ApiException {
         //TODO Add checking unpaid old subscription
-        accountLocker.unlockAccountResources(subscription.getAccountId());
+        accountLocker.unlockResources(subscription.getAccountId());
     }
 
     @Override

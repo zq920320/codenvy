@@ -31,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import java.util.Map;
 
 /**
  * Locks and unlocks account and its workspaces
@@ -51,7 +52,7 @@ public class AccountLocker {
         this.eventService = eventService;
     }
 
-    public void unlockAccountResources(String accountId) {
+    public void unlockResources(String accountId) {
         try {
             final Account account;
             account = accountDao.getById(accountId);
@@ -76,7 +77,7 @@ public class AccountLocker {
         eventService.publish(AccountLockEvent.accountUnlockedEvent(accountId));
     }
 
-    public void lockAccountResources(String accountId) {
+    public void locktResources(String accountId) {
         try {
             final Account account = accountDao.getById(accountId);
             account.getAttributes().put(Constants.RESOURCES_LOCKED_PROPERTY, "true");
@@ -100,7 +101,7 @@ public class AccountLocker {
         }
     }
 
-    public void lockAccount(String accountId) {
+    public void lock(String accountId) {
         try {
             final Account account = accountDao.getById(accountId);
             account.getAttributes().put(Constants.PAYMENT_LOCKED_PROPERTY, "true");
@@ -111,7 +112,7 @@ public class AccountLocker {
     }
 
     //TODO Use this method after successfully charging of invoice
-    public void unlockAccount(String accountId) {
+    public void unlock(String accountId) {
         try {
             final Account account;
             account = accountDao.getById(accountId);

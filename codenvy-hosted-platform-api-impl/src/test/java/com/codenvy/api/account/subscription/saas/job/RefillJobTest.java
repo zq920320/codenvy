@@ -57,7 +57,7 @@ public class RefillJobTest {
 
         refillJob.run();
 
-        verify(accountLocker).unlockAccountResources(eq("lockedAccountId"));
+        verify(accountLocker).unlockResources(eq("lockedAccountId"));
     }
 
     @Test

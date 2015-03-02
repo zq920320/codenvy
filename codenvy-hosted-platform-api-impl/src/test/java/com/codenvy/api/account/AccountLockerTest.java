@@ -67,7 +67,7 @@ public class AccountLockerTest {
 
         when(workspaceDao.getByAccount(anyString())).thenReturn(Arrays.asList(createWorkspace("accountId", "ws_1", false),
                                                                               createWorkspace("accountId", "ws_2", false)));
-        accountLocker.lockAccountResources("accountId");
+        accountLocker.locktResources("accountId");
 
         verify(accountDao).update(argThat(new ArgumentMatcher<Account>() {
             @Override
@@ -100,7 +100,7 @@ public class AccountLockerTest {
 
         when(workspaceDao.getByAccount(anyString())).thenReturn(Arrays.asList(createWorkspace("accountId", "ws_1", true),
                                                                               createWorkspace("accountId", "ws_2", true)));
-        accountLocker.unlockAccountResources("accountId");
+        accountLocker.unlockResources("accountId");
 
         verify(accountDao).update(argThat(new ArgumentMatcher<Account>() {
             @Override
@@ -130,7 +130,7 @@ public class AccountLockerTest {
         Account account = new Account().withId("accountId");
         when(accountDao.getById(anyString())).thenReturn(account);
 
-        accountLocker.lockAccount("accountId");
+        accountLocker.lock("accountId");
 
         verify(accountDao).update(argThat(new ArgumentMatcher<Account>() {
             @Override
@@ -148,7 +148,7 @@ public class AccountLockerTest {
         account.getAttributes().put(Constants.RESOURCES_LOCKED_PROPERTY, "true");
         when(accountDao.getById(anyString())).thenReturn(account);
 
-        accountLocker.unlockAccount("accountId");
+        accountLocker.unlock("accountId");
 
         verify(accountDao).update(argThat(new ArgumentMatcher<Account>() {
             @Override

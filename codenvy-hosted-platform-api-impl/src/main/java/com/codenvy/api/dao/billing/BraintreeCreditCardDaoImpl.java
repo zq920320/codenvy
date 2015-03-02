@@ -29,10 +29,10 @@ import com.codenvy.api.account.billing.BillingPeriod;
 import com.codenvy.api.account.billing.BillingService;
 import com.codenvy.api.account.billing.CreditCardDao;
 import com.codenvy.api.account.billing.CreditCardRegistrationEvent;
-import com.codenvy.api.account.billing.MonthlyBillingPeriod;
 import com.codenvy.api.account.billing.ResourcesFilter;
 import com.codenvy.api.account.impl.shared.dto.AccountResources;
 import com.codenvy.api.account.impl.shared.dto.CreditCard;
+import com.codenvy.api.account.subscription.service.util.SubscriptionMailSender;
 import com.codenvy.api.core.ForbiddenException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.api.core.notification.EventService;
@@ -43,8 +43,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import javax.mail.MessagingException;
+import javax.ws.rs.core.MediaType;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import static com.codenvy.commons.lang.IoUtil.getResource;
+import static com.codenvy.commons.lang.IoUtil.readAndCloseQuietly;
 
 /**
  * Implementation of credit card DAO based on Braintree service.
@@ -54,6 +62,10 @@ import java.util.List;
 public class BraintreeCreditCardDaoImpl implements CreditCardDao {
 
     private static final Logger LOG = LoggerFactory.getLogger(BraintreeCreditCardDaoImpl.class);
+
+    private static final String TEMPLATE_CC_OUTSTANDING = "/email-templates/saas-outstanding-balance.html";
+
+    private static final String TEMPLATE_CC_DELETE = "/email-templates/saas-remove-credit-card.html";
 
     private final BraintreeGateway gateway;
 
@@ -65,15 +77,18 @@ public class BraintreeCreditCardDaoImpl implements CreditCardDao {
 
     private final AccountLocker accountLocker;
 
+    private final SubscriptionMailSender subscriptionMailSender;
 
     @Inject
     public BraintreeCreditCardDaoImpl(BraintreeGateway gateway, EventService eventService, BillingService billingService,
-                                      BillingPeriod billingPeriod, AccountLocker accountLocker) {
+                                      BillingPeriod billingPeriod, AccountLocker accountLocker,
+                                      SubscriptionMailSender subscriptionMailSender) {
         this.gateway = gateway;
         this.eventService = eventService;
         this.billingService = billingService;
         this.billingPeriod = billingPeriod;
         this.accountLocker = accountLocker;
+        this.subscriptionMailSender = subscriptionMailSender;
     }
 
     @Override
@@ -82,9 +97,9 @@ public class BraintreeCreditCardDaoImpl implements CreditCardDao {
             throw new ForbiddenException("Account ID required.");
         }
         try {
-            String token =  gateway.clientToken().generate(new ClientTokenRequest().customerId(accountId));
+            String token = gateway.clientToken().generate(new ClientTokenRequest().customerId(accountId));
             if (token == null) { // e.g. account not yet registered in btree
-                return  gateway.clientToken().generate();
+                return gateway.clientToken().generate();
             }
             return token;
         } catch (BraintreeException e) {
@@ -94,7 +109,8 @@ public class BraintreeCreditCardDaoImpl implements CreditCardDao {
     }
 
     @Override
-    public void registerCard(String accountId, String nonce, String streetAddress, String city, String state, String country) throws ServerException, ForbiddenException {
+    public void registerCard(String accountId, String nonce, String streetAddress, String city, String state, String country)
+            throws ServerException, ForbiddenException {
         if (accountId == null) {
             throw new ForbiddenException("Account ID required.");
         }
@@ -105,14 +121,15 @@ public class BraintreeCreditCardDaoImpl implements CreditCardDao {
         try {
             Customer customer = gateway.customer().find(accountId);
             if (customer.getCreditCards().size() >= 1) {
-                String msg = String.format(" Failed to add a new card to account %s, because there is already a card linked with it. ", accountId);
+                String msg = String.format(" Failed to add a new card to account %s, because there is already a card linked with it. ",
+                                           accountId);
                 LOG.error(msg);
                 throw new ForbiddenException(msg);
             }
             CustomerRequest request = new CustomerRequest().creditCard()
                                                            .paymentMethodNonce(nonce)
                                                            .billingAddress()
-                                                               .streetAddress(streetAddress)
+                                                           .streetAddress(streetAddress)
                                                                .locality(city)
                                                                .region(state)
                                                                .countryName(country)
@@ -200,7 +217,7 @@ public class BraintreeCreditCardDaoImpl implements CreditCardDao {
             eventService.publish(CreditCardRegistrationEvent
                                          .creditCardRemovedEvent(accountId, card.getMaskedNumber(),
                                                                EnvironmentContext.getCurrent().getUser().getId()));
-            checkAndLockAccount(accountId);
+            afterDeleteCheckAndNotify(accountId, card);
         } catch (BraintreeException e) {
             LOG.warn("Braintree exception: ", e);
             throw new ServerException("Internal server error. Please, contact support.");
@@ -208,15 +225,32 @@ public class BraintreeCreditCardDaoImpl implements CreditCardDao {
     }
 
 
-    private void checkAndLockAccount(String accountId) throws ServerException {
+    private void afterDeleteCheckAndNotify(String accountId, com.braintreegateway.CreditCard card) throws ServerException {
         ResourcesFilter filter = ResourcesFilter.builder().withAccountId(accountId)
-                                                .withPaidGbHMoreThan(0)
-                                                .withFromDate(billingPeriod.getCurrent().getStartDate().getTime())
-                                                .withTillDate(System.currentTimeMillis())
-                                                .build();
+                                                          .withPaidGbHMoreThan(0)
+                                                          .withFromDate(billingPeriod.getCurrent().getStartDate().getTime())
+                                                          .withTillDate(System.currentTimeMillis())
+                                                          .build();
         List<AccountResources> resources = billingService.getEstimatedUsageByAccount(filter);
-        if (!resources.isEmpty()) {
-            accountLocker.lockAccount(accountId);
+        try {
+            Map<String, String> properties = new HashMap<>();
+            if (!resources.isEmpty()) {
+                accountLocker.lock(accountId);
+                properties.put("total", Double.toString(resources.get(0).getPaidAmount()));
+                subscriptionMailSender
+                        .sendEmail(readAndCloseQuietly(getResource(TEMPLATE_CC_OUTSTANDING)), "Outstanding Balance with Codenvy",
+                                   subscriptionMailSender.getAccountOwnersEmails(accountId), MediaType.TEXT_HTML,
+                                   properties);
+            } else {
+                properties.put("type", card.getCardType());
+                properties.put("number", card.getLast4());
+                subscriptionMailSender
+                        .sendEmail(readAndCloseQuietly(getResource(TEMPLATE_CC_DELETE)), "Credit Card Removed from Codenvy",
+                                   subscriptionMailSender.getAccountOwnersEmails(accountId),  MediaType.TEXT_HTML,
+                                   properties);
+            }
+        } catch (MessagingException | IOException e) {
+            LOG.warn("Unable to send CC deletion email.",  e);
         }
     }
 }

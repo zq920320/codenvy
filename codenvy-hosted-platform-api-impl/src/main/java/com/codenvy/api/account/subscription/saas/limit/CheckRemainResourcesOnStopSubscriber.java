@@ -121,7 +121,7 @@ public class CheckRemainResourcesOnStopSubscriber implements EventSubscriber<Run
                                                                                                         .withPaidGbHMoreThan(0)
                                                                                                         .build());
             if (!usedMemory.isEmpty()) {
-                accountLocker.lockAccountResources(account.getId());
+                accountLocker.locktResources(account.getId());
             }
         } catch (NotFoundException | ServerException e) {
             LOG.error("Error check remaining resources {} in workspace {} .", event.getProcessId(), event.getWorkspace());

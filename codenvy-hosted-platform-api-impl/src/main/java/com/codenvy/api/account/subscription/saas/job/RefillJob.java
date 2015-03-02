@@ -59,7 +59,7 @@ public class RefillJob implements Runnable {
         try {
             for (Account account : accountDao.getAccountsWithLockedResources()) {
                 if (!account.getAttributes().containsKey(Constants.PAYMENT_LOCKED_PROPERTY)) {
-                    accountLocker.unlockAccountResources(account.getId());
+                    accountLocker.unlockResources(account.getId());
                 }
             }
         } catch (ServerException | ForbiddenException e) {

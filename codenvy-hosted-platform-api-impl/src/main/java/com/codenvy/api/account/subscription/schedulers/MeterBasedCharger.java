@@ -102,7 +102,7 @@ public class MeterBasedCharger {
         } catch (ForbiddenException | ServerException e) {
             LOG.error("Can't pay invoice " + invoice.getId(), e);
             setPaymentState(invoice.getId(), PaymentState.PAYMENT_FAIL, ccToken);
-            accountLocker.lockAccount(invoice.getAccountId());
+            accountLocker.lock(invoice.getAccountId());
         }
     }
 
