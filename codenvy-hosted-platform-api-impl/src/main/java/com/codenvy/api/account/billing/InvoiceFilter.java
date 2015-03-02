@@ -35,11 +35,9 @@ public class InvoiceFilter {
     private InvoiceFilter() {
     }
 
-
     public String getAccountId() {
         return accountId;
     }
-
 
     public Long getId() {
         return id;
@@ -64,7 +62,6 @@ public class InvoiceFilter {
     public Long getFromDate() {
         return fromDate;
     }
-
 
     public Long getTillDate() {
         return tillDate;

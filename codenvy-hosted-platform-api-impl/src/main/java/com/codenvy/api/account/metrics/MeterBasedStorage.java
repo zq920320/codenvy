@@ -17,12 +17,8 @@
  */
 package com.codenvy.api.account.metrics;
 
-import com.codenvy.api.account.billing.ResourcesFilter;
-import com.codenvy.api.account.impl.shared.dto.AccountResources;
-import com.codenvy.api.account.impl.shared.dto.Resources;
 import com.codenvy.api.core.ServerException;
 
-import java.util.List;
 import java.util.Map;
 
 /**

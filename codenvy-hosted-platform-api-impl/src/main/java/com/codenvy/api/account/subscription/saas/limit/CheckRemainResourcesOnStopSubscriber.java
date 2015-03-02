@@ -50,20 +50,20 @@ import java.util.List;
 public class CheckRemainResourcesOnStopSubscriber implements EventSubscriber<RunnerEvent> {
     private static final Logger LOG = LoggerFactory.getLogger(CheckRemainResourcesOnStopSubscriber.class);
 
-    private final EventService      eventService;
-    private final WorkspaceDao      workspaceDao;
-    private final AccountDao        accountDao;
-    private final BillingService    service;
-    private final ActiveRunHolder   activeRunHolder;
-    private final BillingPeriod     billingPeriod;
-    private final AccountLocker     accountLocker;
+    private final EventService    eventService;
+    private final WorkspaceDao    workspaceDao;
+    private final AccountDao      accountDao;
+    private final BillingService  service;
+    private final ActiveRunHolder activeRunHolder;
+    private final BillingPeriod   billingPeriod;
+    private final AccountLocker   accountLocker;
 
 
     @Inject
     public CheckRemainResourcesOnStopSubscriber(EventService eventService,
                                                 WorkspaceDao workspaceDao,
                                                 AccountDao accountDao,
-                                                BillingService  service,
+                                                BillingService service,
                                                 ActiveRunHolder activeRunHolder,
                                                 BillingPeriod billingPeriod,
                                                 AccountLocker accountLocker) {

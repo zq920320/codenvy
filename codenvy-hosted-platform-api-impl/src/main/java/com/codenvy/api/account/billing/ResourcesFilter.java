@@ -23,14 +23,14 @@ package com.codenvy.api.account.billing;
  * @author Sergii Leschenko
  */
 public class ResourcesFilter {
-    private String accountId;
-    private Long   fromDate;
-    private Long   tillDate;
-    private Integer  maxItems;
-    private Integer  skipCount;
-    private Double freeGbHMoreThan;
-    private Double paidGbHMoreThan;
-    private Double prePaidGbHMoreThan;
+    private String  accountId;
+    private Long    fromDate;
+    private Long    tillDate;
+    private Integer maxItems;
+    private Integer skipCount;
+    private Double  freeGbHMoreThan;
+    private Double  paidGbHMoreThan;
+    private Double  prePaidGbHMoreThan;
 
     private ResourcesFilter() {
     }
@@ -100,7 +100,6 @@ public class ResourcesFilter {
             if (maxItems > 0) {
                 instance.maxItems = maxItems;
             }
-
             return this;
         }
 
@@ -113,17 +112,23 @@ public class ResourcesFilter {
 
 
         public Builder withFreeGbHMoreThan(double freeGbH) {
-            instance.freeGbHMoreThan = freeGbH;
+            if (freeGbH > 0) {
+                instance.freeGbHMoreThan = freeGbH;
+            }
             return this;
         }
 
         public Builder withPaidGbHMoreThan(double paidGbH) {
-            instance.paidGbHMoreThan = paidGbH;
+            if (paidGbH > 0) {
+                instance.paidGbHMoreThan = paidGbH;
+            }
             return this;
         }
 
         public Builder withPrePaidGbHMoreThan(double prePaidGbH) {
-            instance.prePaidGbHMoreThan = prePaidGbH;
+            if (prePaidGbH > 0) {
+                instance.prePaidGbHMoreThan = prePaidGbH;
+            }
             return this;
         }
 

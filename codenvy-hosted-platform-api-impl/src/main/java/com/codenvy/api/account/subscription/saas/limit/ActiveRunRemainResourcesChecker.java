@@ -58,7 +58,7 @@ public class ActiveRunRemainResourcesChecker implements Runnable {
     @Inject
     public ActiveRunRemainResourcesChecker(ActiveRunHolder activeRunHolder,
                                            AccountDao accountDao,
-                                           BillingService  service,
+                                           BillingService service,
                                            RunQueue runQueue,
                                            BillingPeriod billingPeriod) {
         this.activeRunHolder = activeRunHolder;

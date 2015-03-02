@@ -209,8 +209,11 @@ public class BraintreeCreditCardDaoImpl implements CreditCardDao {
 
 
     private void checkAndLockAccount(String accountId) throws ServerException {
-        ResourcesFilter filter = ResourcesFilter.builder().withAccountId(accountId).withPaidGbHMoreThan(0).withFromDate(
-                billingPeriod.getCurrent().getStartDate().getTime()).withTillDate(System.currentTimeMillis()).build();
+        ResourcesFilter filter = ResourcesFilter.builder().withAccountId(accountId)
+                                                .withPaidGbHMoreThan(0)
+                                                .withFromDate(billingPeriod.getCurrent().getStartDate().getTime())
+                                                .withTillDate(System.currentTimeMillis())
+                                                .build();
         List<AccountResources> resources = billingService.getEstimatedUsageByAccount(filter);
         if (!resources.isEmpty()) {
             accountLocker.lockAccount(accountId);

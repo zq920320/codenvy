@@ -17,18 +17,18 @@
  */
 package com.codenvy.api.account.subscription;
 
+import com.codenvy.api.account.server.subscription.SubscriptionService;
+import com.codenvy.api.account.subscription.factory.FactorySubscriptionService;
+import com.codenvy.api.account.subscription.onpremises.OnPremisesSubscriptionService;
+import com.codenvy.api.account.subscription.saas.SaasSubscriptionService;
+import com.codenvy.api.account.subscription.saas.job.RefillJob;
+import com.codenvy.api.account.subscription.saas.limit.ActiveRunHolder;
+import com.codenvy.api.account.subscription.saas.limit.ActiveRunRemainResourcesChecker;
+import com.codenvy.api.account.subscription.saas.limit.CheckRemainResourcesOnStopSubscriber;
 import com.codenvy.api.account.subscription.schedulers.GenerateInvoicesJob;
 import com.codenvy.api.account.subscription.schedulers.MailScheduler;
 import com.codenvy.api.account.subscription.schedulers.MeterBasedCharger;
 import com.codenvy.api.account.subscription.schedulers.SubscriptionScheduler;
-import com.codenvy.api.account.server.subscription.SubscriptionService;
-import com.codenvy.api.account.subscription.factory.FactorySubscriptionService;
-import com.codenvy.api.account.subscription.onpremises.OnPremisesSubscriptionService;
-import com.codenvy.api.account.subscription.saas.job.RefillJob;
-import com.codenvy.api.account.subscription.saas.SaasSubscriptionService;
-import com.codenvy.api.account.subscription.saas.limit.ActiveRunHolder;
-import com.codenvy.api.account.subscription.saas.limit.ActiveRunRemainResourcesChecker;
-import com.codenvy.api.account.subscription.saas.limit.CheckRemainResourcesOnStopSubscriber;
 import com.google.inject.AbstractModule;
 import com.google.inject.multibindings.Multibinder;
 

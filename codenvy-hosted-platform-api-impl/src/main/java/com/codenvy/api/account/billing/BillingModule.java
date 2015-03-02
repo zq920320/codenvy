@@ -35,6 +35,6 @@ public class BillingModule extends AbstractModule {
 
         bind(CreditCardService.class);
         bind(InvoiceService.class);
-
+        bind(BillingRestService.class);
     }
 }
