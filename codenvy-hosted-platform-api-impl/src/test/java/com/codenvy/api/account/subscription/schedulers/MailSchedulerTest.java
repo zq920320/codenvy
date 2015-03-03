@@ -25,7 +25,6 @@ import com.codenvy.api.account.impl.shared.dto.Invoice;
 import com.codenvy.api.account.subscription.service.util.SubscriptionMailSender;
 import com.codenvy.dto.server.DtoFactory;
 
-import org.codenvy.mail.MailSenderClient;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
 import org.mockito.testng.MockitoTestNGListener;
@@ -33,7 +32,6 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
-import javax.ws.rs.core.MediaType;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,7 +41,6 @@ import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.isNull;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -56,10 +53,7 @@ import static org.mockito.Mockito.when;
 public class MailSchedulerTest {
     private static final int INVOICES_LIMIT = 20;
 
-    private static final String INVOICE_SUBJECT             = "invoice";
-    private static final String CREDIT_CARD_MISSING_SUBJECT = "сс missing";
-    private static final String FAILED_SUBJECT              = "failed";
-    private static final String MAIL_ADDRESS                = "test@codenvy.com";
+    private static final String ACCOUNT_ID                  = "acc213";
 
     final DtoFactory dto = DtoFactory.getInstance();
 
@@ -68,21 +62,19 @@ public class MailSchedulerTest {
     @Mock
     BillingService         billingService;
     @Mock
-    MailSenderClient       mailSenderClient;
-    @Mock
     TemplateProcessor      templateProcessor;
 
     MailScheduler mailScheduler;
 
     @BeforeMethod
     public void setUp() {
-        mailScheduler = new MailScheduler(subscriptionMailSender, billingService, mailSenderClient, templateProcessor, INVOICE_SUBJECT,
-                                          CREDIT_CARD_MISSING_SUBJECT, FAILED_SUBJECT, MAIL_ADDRESS, INVOICES_LIMIT);
+        mailScheduler = new MailScheduler(subscriptionMailSender, billingService,  templateProcessor, INVOICES_LIMIT);
     }
 
     @Test
     public void shouldSendEmailForInvoiceWithStatePaymentSuccessfully() throws Exception {
         final Invoice invoice = dto.createDto(Invoice.class)
+                                   .withAccountId(ACCOUNT_ID)
                                    .withTotal(0D)
                                    .withId(1L)
                                    .withPaymentState(PaymentState.PAID_SUCCESSFULLY.getState());
@@ -107,14 +99,14 @@ public class MailSchedulerTest {
         }));
 
         verify(templateProcessor).processTemplate((Invoice)anyObject(), (Writer)anyObject());
-        verify(mailSenderClient).sendMail(eq(MAIL_ADDRESS), anyString(), (String)isNull(), eq(INVOICE_SUBJECT), eq(MediaType.TEXT_HTML),
-                                          anyString());
+        verify(subscriptionMailSender).sendInvoice(eq(ACCOUNT_ID), eq(invoice.getPaymentState()), anyString());
         verify(billingService).markInvoiceAsSent(eq(1L));
     }
 
     @Test
     public void shouldSendEmailForInvoiceWithStatePaymentFailed() throws Exception {
         final Invoice invoice = dto.createDto(Invoice.class)
+                                   .withAccountId(ACCOUNT_ID)
                                    .withTotal(0D)
                                    .withId(1L)
                                    .withPaymentState(PaymentState.PAYMENT_FAIL.getState());
@@ -139,14 +131,14 @@ public class MailSchedulerTest {
         }));
 
         verify(templateProcessor).processTemplate((Invoice)anyObject(), (Writer)anyObject());
-        verify(mailSenderClient).sendMail(eq(MAIL_ADDRESS), anyString(), (String)isNull(), eq(FAILED_SUBJECT), eq(MediaType.TEXT_HTML),
-                                          anyString());
+        verify(subscriptionMailSender).sendInvoice(eq(ACCOUNT_ID), eq(invoice.getPaymentState()), anyString());
         verify(billingService).markInvoiceAsSent(eq(1L));
     }
 
     @Test
     public void shouldSendEmailForInvoiceWithStateCreditCardMissing() throws Exception {
         final Invoice invoice = dto.createDto(Invoice.class)
+                                   .withAccountId(ACCOUNT_ID)
                                    .withTotal(0D)
                                    .withId(1L)
                                    .withPaymentState(PaymentState.CREDIT_CARD_MISSING.getState());
@@ -171,8 +163,7 @@ public class MailSchedulerTest {
         }));
 
         verify(templateProcessor).processTemplate((Invoice)anyObject(), (Writer)anyObject());
-        verify(mailSenderClient).sendMail(eq(MAIL_ADDRESS), anyString(), (String)isNull(), eq(CREDIT_CARD_MISSING_SUBJECT),
-                                          eq(MediaType.TEXT_HTML), anyString());
+        verify(subscriptionMailSender).sendInvoice(eq(ACCOUNT_ID), eq(invoice.getPaymentState()), anyString());
         verify(billingService).markInvoiceAsSent(eq(1L));
     }
 

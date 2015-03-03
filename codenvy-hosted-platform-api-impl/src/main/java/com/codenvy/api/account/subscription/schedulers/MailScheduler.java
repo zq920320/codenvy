@@ -24,13 +24,9 @@ import com.codenvy.api.account.billing.TemplateProcessor;
 import com.codenvy.api.account.impl.shared.dto.Invoice;
 import com.codenvy.api.account.subscription.service.util.SubscriptionMailSender;
 import com.codenvy.api.core.ApiException;
-import com.codenvy.api.core.ForbiddenException;
-import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
-import com.codenvy.commons.lang.Strings;
 import com.codenvy.commons.schedule.ScheduleDelay;
 
-import org.codenvy.mail.MailSenderClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,13 +34,10 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.mail.MessagingException;
-import javax.ws.rs.core.MediaType;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.List;
 
-import static com.codenvy.api.account.billing.PaymentState.CREDIT_CARD_MISSING;
-import static com.codenvy.api.account.billing.PaymentState.PAID_SUCCESSFULLY;
 
 /**
  * Sends emails about resources consumption and charges
@@ -59,32 +52,17 @@ public class MailScheduler {
 
     private final SubscriptionMailSender subscriptionMailSender;
     private final BillingService         billingService;
-    private final MailSenderClient       mailSenderClient;
     private final TemplateProcessor      templateProcessor;
-    private final String                 invoiceSubject;
-    private final String                 invoiceCreditCardMissingSubject;
-    private final String                 billingFailedSubject;
-    private final String                 billingAddress;
     private final int                    invoices_limit;
 
     @Inject
     public MailScheduler(SubscriptionMailSender subscriptionMailSender,
                          BillingService billingService,
-                         MailSenderClient mailSenderClient,
                          TemplateProcessor templateProcessor,
-                         @Named("subscription.saas.mail.invoice.subject") String invoiceSubject,
-                         @Named("subscription.saas.mail.invoice.no_credit_card.subject") String billingCreditCardMissingSubject,
-                         @Named("subscription.saas.mail.billing.failed.subject") String billingFailedSubject,
-                         @Named("subscription.saas.mail.address") String billingAddress,
                          @Named(INVOICE_FETCH_LIMIT) int invoices_limit) {
         this.billingService = billingService;
         this.subscriptionMailSender = subscriptionMailSender;
-        this.invoiceSubject = invoiceSubject;
-        this.invoiceCreditCardMissingSubject = billingCreditCardMissingSubject;
-        this.billingFailedSubject = billingFailedSubject;
-        this.mailSenderClient = mailSenderClient;
         this.templateProcessor = templateProcessor;
-        this.billingAddress = billingAddress;
         this.invoices_limit = invoices_limit;
     }
 
@@ -101,42 +79,18 @@ public class MailScheduler {
                                                                                     .build());
             for (Invoice notSendInvoice : notSendInvoices) {
                 try {
-                    sendMail(notSendInvoice);
+                    StringWriter htmlBody = new StringWriter();
+                    templateProcessor.processTemplate(notSendInvoice, htmlBody);
+                    subscriptionMailSender.sendInvoice(notSendInvoice.getAccountId(), notSendInvoice.getPaymentState(), htmlBody.toString());
                     billingService.markInvoiceAsSent(notSendInvoice.getId());
                 } catch (ApiException e) {
                     LOG.error("Can't send email", e);
                 }
             }
-        } catch (ServerException e) {
+        } catch (IOException | MessagingException | ServerException e) {
             LOG.error("Can't get not send invoices", e);
         }
     }
 
-    private void sendMail(Invoice invoice) throws ServerException, NotFoundException, ForbiddenException {
-        String subject;
 
-        if (PAID_SUCCESSFULLY.getState().equals(invoice.getPaymentState())) {
-            subject = invoiceSubject;
-        } else if (CREDIT_CARD_MISSING.getState().equals(invoice.getPaymentState())) {
-            subject = invoiceCreditCardMissingSubject;
-        } else {
-            subject = billingFailedSubject;
-        }
-
-        StringWriter htmlBody = new StringWriter();
-        templateProcessor.processTemplate(invoice, htmlBody);
-
-        final List<String> accountOwnersEmails = subscriptionMailSender.getAccountOwnersEmails(invoice.getAccountId());
-
-        try {
-            mailSenderClient.sendMail(billingAddress,
-                                      Strings.join(", ", accountOwnersEmails.toArray(new String[accountOwnersEmails.size()])),
-                                      null,
-                                      subject,
-                                      MediaType.TEXT_HTML,
-                                      htmlBody.toString());
-        } catch (IOException | MessagingException e) {
-            LOG.error(e.getLocalizedMessage(), e);
-        }
-    }
 }

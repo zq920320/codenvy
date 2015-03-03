@@ -33,12 +33,12 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Send to user email notification about subscription expiration
+ * Send to user email notification about subscription expiration and update properties.
  *
  * @author Alexander Garagatyi
  */
-public class SubscriptionExpirationMailSender {
-    private static final Logger LOG = LoggerFactory.getLogger(SubscriptionExpirationMailSender.class);
+public class SubscriptionExpirationManager {
+    private static final Logger LOG = LoggerFactory.getLogger(SubscriptionExpirationManager.class);
 
     @Inject
     private AccountDao accountDao;
@@ -53,14 +53,9 @@ public class SubscriptionExpirationMailSender {
             calendar.add(Calendar.DATE, days);
 
             List<Subscription> subscriptions = accountDao.getSubscriptionQueryBuilder().getExpiringQuery(serviceId, days).execute();
-//                                   String.format("codenvy:subscription-email-trialExpiring-%s", days), "true"))));
-
             for (Subscription subscription : subscriptions) {
                 try {
-                    List<String> accountOwnersEmails = mailUtil.getAccountOwnersEmails(subscription.getAccountId());
-                    LOG.info("Send email about trial removing in {} days to {}", days, accountOwnersEmails);
-                    mailUtil.sendEmail("Send email about trial removing in " + days + " days", accountOwnersEmails);
-
+                    mailUtil.sendSubscriptionExpiredNotification(subscription.getAccountId(), days);
                     subscription.getProperties().put(String.format("codenvy:subscription-email-trialExpiring-%s", days), "true");
                     accountDao.updateSubscription(subscription);
                 } catch (ServerException | NotFoundException | IOException | MessagingException e) {
@@ -77,16 +72,10 @@ public class SubscriptionExpirationMailSender {
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(new Date());
             calendar.add(Calendar.DATE, -days);
-
             List<Subscription> subscriptions = accountDao.getSubscriptionQueryBuilder().getExpiredQuery(serviceId, days).execute();
-//                                    String.format("codenvy:subscription-email-trialExpired-%s", days), "true"))));
-
             for (Subscription subscription : subscriptions) {
                 try {
-                    List<String> accountOwnersEmails = mailUtil.getAccountOwnersEmails(subscription.getAccountId());
-                    LOG.info("Send email about trial removing {} days ago to {}", days, accountOwnersEmails);
-                    mailUtil.sendEmail("Send email about trial removing " + days + " days ago", accountOwnersEmails);
-
+                    mailUtil.sendSubscriptionExpiredNotification(subscription.getAccountId(), days);
                     subscription.getProperties().put(String.format("codenvy:subscription-email-trialExpired-%s", days), "true");
                     accountDao.updateSubscription(subscription);
                 } catch (ServerException | NotFoundException | IOException | MessagingException e) {

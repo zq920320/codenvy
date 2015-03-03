@@ -23,7 +23,7 @@ import com.codenvy.api.account.server.dao.Subscription;
 import com.codenvy.api.account.server.subscription.SubscriptionService;
 import com.codenvy.api.account.shared.dto.UsedAccountResources;
 import com.codenvy.api.account.subscription.service.util.SubscriptionCharger;
-import com.codenvy.api.account.subscription.service.util.SubscriptionExpirationMailSender;
+import com.codenvy.api.account.subscription.service.util.SubscriptionExpirationManager;
 import com.codenvy.api.account.subscription.service.util.SubscriptionTrialRemover;
 import com.codenvy.api.core.ApiException;
 import com.codenvy.api.core.ConflictException;
@@ -49,16 +49,16 @@ import static com.codenvy.api.account.subscription.ServiceId.ONPREMISES;
 @Singleton
 public class OnPremisesSubscriptionService extends SubscriptionService {
     private static final Logger LOG = LoggerFactory.getLogger(OnPremisesSubscriptionService.class);
-    private final AccountDao                       accountDao;
-    private final SubscriptionCharger              chargeUtil;
-    private final SubscriptionExpirationMailSender expirationUtil;
-    private final SubscriptionTrialRemover         removeUtil;
-    private final PaymentService                   paymentService;
+    private final AccountDao                    accountDao;
+    private final SubscriptionCharger           chargeUtil;
+    private final SubscriptionExpirationManager expirationUtil;
+    private final SubscriptionTrialRemover      removeUtil;
+    private final PaymentService                paymentService;
 
     @Inject
     public OnPremisesSubscriptionService(AccountDao accountDao,
                                          SubscriptionCharger chargeUtil,
-                                         SubscriptionExpirationMailSender expirationUtil,
+                                         SubscriptionExpirationManager expirationUtil,
                                          SubscriptionTrialRemover removeUtil,
                                          PaymentService paymentService) {
         super(ONPREMISES, ONPREMISES);

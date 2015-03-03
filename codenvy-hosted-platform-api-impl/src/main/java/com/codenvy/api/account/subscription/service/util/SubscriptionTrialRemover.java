@@ -55,12 +55,8 @@ public class SubscriptionTrialRemover {
             for (Subscription subscription : subscriptions) {
                 try {
                     accountDao.updateSubscription(subscription.withState(SubscriptionState.INACTIVE));
-
                     service.onRemoveSubscription(subscription);
-
-                    List<String> accountOwnersEmails = mailUtil.getAccountOwnersEmails(subscription.getAccountId());
-                    LOG.info("Send email about trial removing to {}", accountOwnersEmails);
-                    mailUtil.sendEmail("Send email about trial removing", accountOwnersEmails);
+                    mailUtil.sendTrialExpiredNotification(subscription.getAccountId());
                 } catch (ApiException | IOException | MessagingException e) {
                     LOG.error(e.getLocalizedMessage(), e);
                 }

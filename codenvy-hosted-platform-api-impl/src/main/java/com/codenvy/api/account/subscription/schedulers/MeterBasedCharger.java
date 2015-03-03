@@ -26,6 +26,7 @@ import com.codenvy.api.account.billing.InvoiceFilter;
 import com.codenvy.api.account.billing.PaymentState;
 import com.codenvy.api.account.impl.shared.dto.CreditCard;
 import com.codenvy.api.account.impl.shared.dto.Invoice;
+import com.codenvy.api.core.ApiException;
 import com.codenvy.api.core.ForbiddenException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.commons.schedule.ScheduleDelay;
@@ -99,7 +100,7 @@ public class MeterBasedCharger {
         try {
             paymentService.charge(invoice.withCreditCardId(ccToken));
             setPaymentState(invoice.getId(), PaymentState.PAID_SUCCESSFULLY, ccToken);
-        } catch (ForbiddenException | ServerException e) {
+        } catch (ApiException e) {
             LOG.error("Can't pay invoice " + invoice.getId(), e);
             setPaymentState(invoice.getId(), PaymentState.PAYMENT_FAIL, ccToken);
             accountLocker.lock(invoice.getAccountId());

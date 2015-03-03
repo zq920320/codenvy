@@ -33,6 +33,7 @@ import com.codenvy.api.account.impl.shared.dto.AccountResources;
 import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.server.dao.Subscription;
 import com.codenvy.api.account.subscription.ServiceId;
+import com.codenvy.api.account.subscription.service.util.SubscriptionMailSender;
 import com.codenvy.api.core.ForbiddenException;
 import com.codenvy.api.core.notification.EventService;
 import com.codenvy.api.dao.billing.BraintreeCreditCardDaoImpl;
@@ -108,6 +109,9 @@ public class BraintreeCreditCardDaoImplTest {
 
     @Mock
     private AccountLocker accountLocker;
+
+    @Mock
+    private SubscriptionMailSender subscriptionMailSender;
 
     @Mock
     User user;
@@ -209,7 +213,7 @@ public class BraintreeCreditCardDaoImplTest {
                 .thenReturn(new Subscription().withId(sId).withPlanId("saas"));
         dao.deleteCard(ACCOUNT_ID, TOKEN);
         verify(cardGateway).delete(anyString());
-        verify(accountDao).removeSubscription(eq(sId));
+        verify(accountDao).updateSubscription(any(Subscription.class));
     }
 
     @Test(expectedExceptions = ForbiddenException.class)

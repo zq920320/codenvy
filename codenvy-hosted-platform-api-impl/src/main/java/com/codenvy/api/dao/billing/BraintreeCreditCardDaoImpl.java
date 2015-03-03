@@ -34,6 +34,7 @@ import com.codenvy.api.account.impl.shared.dto.AccountResources;
 import com.codenvy.api.account.impl.shared.dto.CreditCard;
 import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.server.dao.Subscription;
+import com.codenvy.api.account.shared.dto.SubscriptionState;
 import com.codenvy.api.account.subscription.ServiceId;
 import com.codenvy.api.account.subscription.service.util.SubscriptionMailSender;
 import com.codenvy.api.core.ForbiddenException;
@@ -47,15 +48,9 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.mail.MessagingException;
-import javax.ws.rs.core.MediaType;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import static com.codenvy.commons.lang.IoUtil.getResource;
-import static com.codenvy.commons.lang.IoUtil.readAndCloseQuietly;
 
 /**
  * Implementation of credit card DAO based on Braintree service.
@@ -65,10 +60,6 @@ import static com.codenvy.commons.lang.IoUtil.readAndCloseQuietly;
 public class BraintreeCreditCardDaoImpl implements CreditCardDao {
 
     private static final Logger LOG = LoggerFactory.getLogger(BraintreeCreditCardDaoImpl.class);
-
-    private static final String TEMPLATE_CC_OUTSTANDING = "/email-templates/saas-outstanding-balance.html";
-
-    private static final String TEMPLATE_CC_DELETE = "/email-templates/saas-remove-credit-card.html";
 
     private final BraintreeGateway gateway;
 
@@ -237,7 +228,7 @@ public class BraintreeCreditCardDaoImpl implements CreditCardDao {
         try {
             final Subscription activeSaasSubscription = accountDao.getActiveSubscription(accountId, ServiceId.SAAS);
             if (activeSaasSubscription != null && !"sas-community".equals(activeSaasSubscription.getPlanId())) {
-                accountDao.removeSubscription(activeSaasSubscription.getId());
+                accountDao.updateSubscription(activeSaasSubscription.withState(SubscriptionState.INACTIVE));
             }
         } catch (com.codenvy.api.core.NotFoundException e) {
             LOG.warn("Unable to remove subscription after CC deletion.", e);
@@ -252,21 +243,11 @@ public class BraintreeCreditCardDaoImpl implements CreditCardDao {
                                                           .build();
         List<AccountResources> resources = billingService.getEstimatedUsageByAccount(filter);
         try {
-            Map<String, String> properties = new HashMap<>();
             if (!resources.isEmpty()) {
                 accountLocker.lock(accountId);
-                properties.put("total", Double.toString(resources.get(0).getPaidAmount()));
-                subscriptionMailSender
-                        .sendEmail(readAndCloseQuietly(getResource(TEMPLATE_CC_OUTSTANDING)), "Outstanding Balance with Codenvy",
-                                   subscriptionMailSender.getAccountOwnersEmails(accountId), MediaType.TEXT_HTML,
-                                   properties);
+                subscriptionMailSender.sendAccountLockedNotification(accountId, Double.toString(resources.get(0).getPaidAmount()));
             } else {
-                properties.put("type", card.getCardType());
-                properties.put("number", card.getLast4());
-                subscriptionMailSender
-                        .sendEmail(readAndCloseQuietly(getResource(TEMPLATE_CC_DELETE)), "Credit Card Removed from Codenvy",
-                                   subscriptionMailSender.getAccountOwnersEmails(accountId),  MediaType.TEXT_HTML,
-                                   properties);
+                subscriptionMailSender.sendCCRemovedNotification(accountId, card.getLast4(), card.getCardType());
             }
         } catch (MessagingException | IOException e) {
             LOG.warn("Unable to send CC deletion email.",  e);

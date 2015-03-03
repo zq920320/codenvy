@@ -22,12 +22,13 @@ import com.braintreegateway.Plan;
 import com.braintreegateway.Result;
 import com.braintreegateway.Transaction;
 import com.braintreegateway.TransactionRequest;
+import com.codenvy.api.account.AccountLocker;
 import com.codenvy.api.account.PaymentService;
 import com.codenvy.api.account.impl.shared.dto.CreditCard;
 import com.codenvy.api.account.impl.shared.dto.Invoice;
 import com.codenvy.api.account.server.dao.Subscription;
+import com.codenvy.api.account.subscription.service.util.SubscriptionMailSender;
 import com.codenvy.api.core.ApiException;
-import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.ForbiddenException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.api.core.notification.EventService;
@@ -56,21 +57,26 @@ import java.util.concurrent.TimeUnit;
 public class BraintreePaymentService implements PaymentService {
     private static final Logger LOG = LoggerFactory.getLogger(BraintreePaymentService.class);
 
-    private final CreditCardDao           creditCardDao;
-    private final BraintreeGateway        gateway;
-    private final EventService            eventService;
-    private       Map<String, Double>     prices;
+    private final CreditCardDao          creditCardDao;
+    private final BraintreeGateway       gateway;
+    private final EventService           eventService;
+    private final AccountLocker          accountLocker;
+    private final SubscriptionMailSender subscriptionMailSender;
+    private       Map<String, Double>    prices;
 
     @Inject
-    public BraintreePaymentService(CreditCardDao creditCardDao, BraintreeGateway gateway, EventService eventService) {
+    public BraintreePaymentService(CreditCardDao creditCardDao, BraintreeGateway gateway, AccountLocker accountLocker,
+                                   EventService eventService, SubscriptionMailSender subscriptionMailSender) {
         this.creditCardDao = creditCardDao;
         this.gateway = gateway;
         this.eventService = eventService;
+        this.accountLocker = accountLocker;
         this.prices = Collections.emptyMap();
+        this.subscriptionMailSender = subscriptionMailSender;
     }
 
     @Override
-    public void charge(Subscription subscription) throws ServerException, ConflictException, ForbiddenException {
+    public void charge(Subscription subscription) throws ApiException {
         if (subscription == null) {
             throw new ForbiddenException("No subscription information provided");
         }
@@ -94,7 +100,7 @@ public class BraintreePaymentService implements PaymentService {
 
             final TransactionRequest request = new TransactionRequest()
                     .paymentMethodToken(creditCardToken)
-                    // add subscription id to identify charging reason
+                            // add subscription id to identify charging reason
                     .customField("subscription_id", subscription.getId())
                     .options().submitForSettlement(true).done()
                     .amount(new BigDecimal(price, new MathContext(2)));
@@ -111,6 +117,8 @@ public class BraintreePaymentService implements PaymentService {
                 LOG.error("PAYMENTS# state#Error# subscriptionId#{}# message#{}#", subscription.getId(), result.getMessage());
                 eventService.publish(CreditCardChargeEvent.creditCardChargeFailedEvent(accountId, target.getCreditCard().getMaskedNumber(),
                                                                                        subscription.getId(), price));
+                accountLocker.lock(accountId);
+                subscriptionMailSender.sendAccountLockedNotification(accountId, Double.toString(price));
                 throw new ForbiddenException(result.getMessage());
             }
         } catch (ApiException e) {
@@ -128,8 +136,7 @@ public class BraintreePaymentService implements PaymentService {
     }
 
     @Override
-    public void charge(Invoice invoice)
-            throws ServerException, ForbiddenException {
+    public void charge(Invoice invoice) throws ApiException {
         if (invoice.getCreditCardId() == null) {
             throw new ForbiddenException("Credit card token can't be null");
         }
@@ -159,6 +166,8 @@ public class BraintreePaymentService implements PaymentService {
                           result.getMessage());
                 eventService.publish(CreditCardChargeEvent.creditCardChargeFailedEvent(accountId, target.getCreditCard().getMaskedNumber(),
                                                                                        Long.toString(invoice.getId()), price));
+                accountLocker.lock(accountId);
+                subscriptionMailSender.sendAccountLockedNotification(accountId, Double.toString(price));
                 throw new ForbiddenException(result.getMessage());
             }
         } catch (ApiException e) {

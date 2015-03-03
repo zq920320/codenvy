@@ -79,19 +79,12 @@ public class SubscriptionCharger {
                         nextBillingDate.add(Calendar.MONTH, subscription.getBillingCycle());
                         subscription.setNextBillingDate(nextBillingDate.getTime());
                         accountDao.updateSubscription(subscription);
-
-                        List<String> accountOwnersEmails = mailUtil.getAccountOwnersEmails(subscription.getAccountId());
-                        LOG.info("Send email about subscription charging to {}", accountOwnersEmails);
-                        mailUtil.sendEmail("Send email about subscription charging", accountOwnersEmails);
+                        mailUtil.sendSubscriptionChargedNotification(subscription.getAccountId());
                     } catch (Exception e) {
                         LOG.error(e.getLocalizedMessage(), e);
                         accountDao.updateSubscription(subscription.withState(SubscriptionState.INACTIVE));
-
                         service.onRemoveSubscription(subscription);
-
-                        List<String> accountOwnersEmails = mailUtil.getAccountOwnersEmails(subscription.getAccountId());
-                        LOG.info("Send email about unsuccessful subscription charging to {}", accountOwnersEmails);
-                        mailUtil.sendEmail("Send email about unsuccessful subscription charging", accountOwnersEmails);
+                        mailUtil.sendSubscriptionChargeFailNotification(subscription.getAccountId());
                     }
                 }
             } catch (ApiException | IOException | MessagingException e) {

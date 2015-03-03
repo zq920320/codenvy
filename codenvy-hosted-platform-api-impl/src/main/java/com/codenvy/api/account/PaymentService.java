@@ -19,6 +19,7 @@ package com.codenvy.api.account;
 
 import com.codenvy.api.account.impl.shared.dto.Invoice;
 import com.codenvy.api.account.server.dao.Subscription;
+import com.codenvy.api.core.ApiException;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.ForbiddenException;
 import com.codenvy.api.core.ServerException;
@@ -37,7 +38,7 @@ public interface PaymentService {
      * @throws ServerException
      *         if internal server error occurs
      */
-    void charge(Subscription subscription) throws ConflictException, ServerException, ForbiddenException;
+    void charge(Subscription subscription) throws ApiException;
 
-    void charge(Invoice invoice) throws ServerException, ForbiddenException;
+    void charge(Invoice invoice) throws ApiException;
 }
