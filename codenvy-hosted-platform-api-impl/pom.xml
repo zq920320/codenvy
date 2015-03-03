@@ -29,13 +29,14 @@
     <packaging>jar</packaging>
     <name>Codenvy Hosted :: Organization API Backend</name>
     <properties>
+        <com.braintreepayments.gateway.version>2.39.2</com.braintreepayments.gateway.version>
         <dto-generator-out-directory>${project.build.directory}/generated-sources/dto/</dto-generator-out-directory>
     </properties>
     <dependencies>
         <dependency>
             <groupId>com.braintreepayments.gateway</groupId>
             <artifactId>braintree-java</artifactId>
-            <version>2.39.2</version>
+            <version>${com.braintreepayments.gateway.version}</version>
         </dependency>
         <dependency>
             <groupId>com.codenvy.commons</groupId>
@@ -110,7 +111,7 @@
         <dependency>
             <groupId>org.thymeleaf</groupId>
             <artifactId>thymeleaf</artifactId>
-            <version>2.1.4.RELEASE</version>
+            <version>${org.thymeleaf.version}</version>
         </dependency>
         <dependency>
             <groupId>javax.ws.rs</groupId>

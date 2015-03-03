@@ -32,6 +32,9 @@ import com.codenvy.api.account.billing.CreditCardRegistrationEvent;
 import com.codenvy.api.account.billing.ResourcesFilter;
 import com.codenvy.api.account.impl.shared.dto.AccountResources;
 import com.codenvy.api.account.impl.shared.dto.CreditCard;
+import com.codenvy.api.account.server.dao.AccountDao;
+import com.codenvy.api.account.server.dao.Subscription;
+import com.codenvy.api.account.subscription.ServiceId;
 import com.codenvy.api.account.subscription.service.util.SubscriptionMailSender;
 import com.codenvy.api.core.ForbiddenException;
 import com.codenvy.api.core.ServerException;
@@ -77,17 +80,20 @@ public class BraintreeCreditCardDaoImpl implements CreditCardDao {
 
     private final AccountLocker accountLocker;
 
+    private final AccountDao accountDao;
+
     private final SubscriptionMailSender subscriptionMailSender;
 
     @Inject
     public BraintreeCreditCardDaoImpl(BraintreeGateway gateway, EventService eventService, BillingService billingService,
-                                      BillingPeriod billingPeriod, AccountLocker accountLocker,
+                                      BillingPeriod billingPeriod, AccountLocker accountLocker, AccountDao accountDao,
                                       SubscriptionMailSender subscriptionMailSender) {
         this.gateway = gateway;
         this.eventService = eventService;
         this.billingService = billingService;
         this.billingPeriod = billingPeriod;
         this.accountLocker = accountLocker;
+        this.accountDao = accountDao;
         this.subscriptionMailSender = subscriptionMailSender;
     }
 
@@ -130,7 +136,7 @@ public class BraintreeCreditCardDaoImpl implements CreditCardDao {
                                                            .paymentMethodNonce(nonce)
                                                            .billingAddress()
                                                            .streetAddress(streetAddress)
-                                                               .locality(city)
+                                                           .locality(city)
                                                                .region(state)
                                                                .countryName(country)
                                                                .done()
@@ -226,6 +232,19 @@ public class BraintreeCreditCardDaoImpl implements CreditCardDao {
 
 
     private void afterDeleteCheckAndNotify(String accountId, com.braintreegateway.CreditCard card) throws ServerException {
+
+        // Remove saas subscription
+        try {
+            final Subscription activeSaasSubscription = accountDao.getActiveSubscription(accountId, ServiceId.SAAS);
+            if (activeSaasSubscription != null && !"sas-community".equals(activeSaasSubscription.getPlanId())) {
+                accountDao.removeSubscription(activeSaasSubscription.getId());
+            }
+        } catch (com.codenvy.api.core.NotFoundException e) {
+            LOG.warn("Unable to remove subscription after CC deletion.", e);
+        }
+
+
+        // Check is paid resources used, lock and send notify emails.
         ResourcesFilter filter = ResourcesFilter.builder().withAccountId(accountId)
                                                           .withPaidGbHMoreThan(0)
                                                           .withFromDate(billingPeriod.getCurrent().getStartDate().getTime())

@@ -30,6 +30,9 @@ import com.braintreegateway.Result;
 import com.braintreegateway.exceptions.NotFoundException;
 import com.codenvy.api.account.AccountLocker;
 import com.codenvy.api.account.impl.shared.dto.AccountResources;
+import com.codenvy.api.account.server.dao.AccountDao;
+import com.codenvy.api.account.server.dao.Subscription;
+import com.codenvy.api.account.subscription.ServiceId;
 import com.codenvy.api.core.ForbiddenException;
 import com.codenvy.api.core.notification.EventService;
 import com.codenvy.api.dao.billing.BraintreeCreditCardDaoImpl;
@@ -96,6 +99,9 @@ public class BraintreeCreditCardDaoImplTest {
 
     @Mock
     private CreditCard creditCard;
+
+    @Mock
+    private AccountDao accountDao;
 
     @Mock
     private BillingService billingService;
@@ -188,6 +194,22 @@ public class BraintreeCreditCardDaoImplTest {
         dao.deleteCard(ACCOUNT_ID, TOKEN);
         verify(cardGateway).delete(anyString());
         verify(accountLocker).lock(eq(ACCOUNT_ID));
+    }
+
+    @Test
+    public void shouldRemoveSubscriptionOnCardRemoval() throws Exception {
+        String sId = "id123";
+        when(cardGateway.find(anyString())).thenReturn(creditCard);
+        when(cardGateway.delete(anyString())).thenReturn(cardResult);
+        when(cardResult.isSuccess()).thenReturn(true);
+        when(cardResult.getTarget()).thenReturn(creditCard);
+        when(billingService.getEstimatedUsageByAccount(any(ResourcesFilter.class))).thenReturn(
+                Arrays.asList(DtoFactory.getInstance().createDto(AccountResources.class).withAccountId(ACCOUNT_ID).withPaidAmount(255D)));
+        when(accountDao.getActiveSubscription(eq(ACCOUNT_ID), eq(ServiceId.SAAS)))
+                .thenReturn(new Subscription().withId(sId).withPlanId("saas"));
+        dao.deleteCard(ACCOUNT_ID, TOKEN);
+        verify(cardGateway).delete(anyString());
+        verify(accountDao).removeSubscription(eq(sId));
     }
 
     @Test(expectedExceptions = ForbiddenException.class)
