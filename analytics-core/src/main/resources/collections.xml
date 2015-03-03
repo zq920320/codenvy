@@ -1107,7 +1107,7 @@
         </indexes>
     </collection>
 
-    <collection name="im_download_statistics">
+    <collection name="im_downloads">
         <indexes>
             <index name="user">
                 <field>user</field>

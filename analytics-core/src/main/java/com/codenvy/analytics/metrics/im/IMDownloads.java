@@ -15,34 +15,29 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
+package com.codenvy.analytics.metrics.im;
 
-package com.codenvy.analytics.metrics.users;
-
-import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.AbstractActiveEntities;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.analytics.metrics.im.IMDownloadsList;
+import com.codenvy.analytics.metrics.OmitFilters;
 
 import javax.annotation.security.RolesAllowed;
 
 /** @author Anatoliy Bazko */
 @RolesAllowed({"system/admin", "system/manager"})
-public class NewUsersOnPremDownloads extends AbstractNewUsersAnalysis {
-    public NewUsersOnPremDownloads() {
-        super(MetricType.NEW_USERS_ON_PREM_DOWNLOADS, MetricType.IM_DOWNLOADS);
-    }
+@OmitFilters({MetricFilter.WS_ID, MetricFilter.PERSISTENT_WS})
+public class IMDownloads extends AbstractActiveEntities {
 
-    /** {@inheritDoc} */
-    @Override
-    protected void setSpecificFilter(Context.Builder builder) {
-        builder.put(MetricFilter.ARTIFACT, IMDownloadsList.ARTIFACT_CODENVY);
+    public IMDownloads() {
+        super(MetricType.IM_DOWNLOADS,
+              MetricType.IM_DOWNLOADS_LIST,
+              USER);
     }
 
     /** {@inheritDoc} */
     @Override
     public String getDescription() {
-        return "The number of On-Prem downloads of new users";
+        return "The number of downloaded artifacts";
     }
 }
-
-

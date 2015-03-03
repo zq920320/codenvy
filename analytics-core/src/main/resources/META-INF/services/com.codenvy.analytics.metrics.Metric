@@ -1,7 +1,9 @@
 com.codenvy.analytics.metrics.Zero
 
-com.codenvy.analytics.metrics.im.IMDownloadStatisticsList
-com.codenvy.analytics.metrics.im.IMDownloadStatistics
+com.codenvy.analytics.metrics.im.IMDownloadsList
+com.codenvy.analytics.metrics.im.IMDownloads
+com.codenvy.analytics.metrics.im.IMDownloadsCodenvy
+com.codenvy.analytics.metrics.im.IMDownloadsInstallScript
 com.codenvy.analytics.metrics.im.IMOnPremIssuedList
 com.codenvy.analytics.metrics.im.IMOnPremIssued
 

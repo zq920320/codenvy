@@ -1369,15 +1369,15 @@ function AnalyticsConfiguration() {
         /** for Download statistics */
         imDownloadStatisticsOverview: {
             presenterType: "SummaryTablePresenter",
-            modelViewName: "im_download_statistics_list",
-            modelMetricName: "im_download_statistics",
+            modelViewName: "im_downloads_list",
+            modelMetricName: "im_downloads",
             doNotDisplayCSVButton: true
         },
 
         imDownloadStatistics: {
             widgetLabel: "Download Statistics",
             presenterType: "EntryViewPresenter",
-            modelViewName: "im_download_statistics_list",
+            modelViewName: "im_downloads_list",
 
             defaultModelParams: {
                 "sort": "-date"
@@ -1431,8 +1431,8 @@ function AnalyticsConfiguration() {
             }
         },
 
-        imSignupAnalysis: {
-            widgetLabel: "Signup Analysis",
+        imAnalysis: {
+            widgetLabel: "Analysis",
             presenterType: "ReportPresenter",
             modelViewName: "im_analysis",
 

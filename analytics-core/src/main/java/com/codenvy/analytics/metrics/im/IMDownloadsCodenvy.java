@@ -17,27 +17,45 @@
  */
 package com.codenvy.analytics.metrics.im;
 
-import com.codenvy.analytics.metrics.AbstractActiveEntities;
+import com.codenvy.analytics.metrics.AbstractLongValueResulted;
+import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.OmitFilters;
 
 import javax.annotation.security.RolesAllowed;
+import java.io.IOException;
 
 /** @author Anatoliy Bazko */
 @RolesAllowed({"system/admin", "system/manager"})
 @OmitFilters({MetricFilter.WS_ID, MetricFilter.PERSISTENT_WS})
-public class IMDownloadStatistics extends AbstractActiveEntities {
+public class IMDownloadsCodenvy extends AbstractLongValueResulted {
 
-    public IMDownloadStatistics() {
-        super(MetricType.IM_DOWNLOAD_STATISTICS,
-              MetricType.IM_DOWNLOAD_STATISTICS_LIST,
-              USER);
+    public IMDownloadsCodenvy() {
+        super(MetricType.IM_DOWNLOADS_CODENVY, USER);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Context applySpecificFilter(Context context) throws IOException {
+        return context.cloneAndPut(MetricFilter.ARTIFACT, IMDownloadsList.ARTIFACT_CODENVY);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String[] getTrackedFields() {
+        return new String[]{IMDownloadsList.ARTIFACT_CODENVY};
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String getStorageCollectionName() {
+        return getStorageCollectionName(MetricType.IM_DOWNLOADS);
     }
 
     /** {@inheritDoc} */
     @Override
     public String getDescription() {
-        return "The number of downloaded artifacts";
+        return "The number of downloaded Codenvy binaries";
     }
 }

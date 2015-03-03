@@ -23,7 +23,7 @@ import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.StringValueData;
 import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.im.IMDownloadStatisticsList;
+import com.codenvy.analytics.metrics.im.IMDownloadsList;
 import com.codenvy.analytics.pig.scripts.ScriptType;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
@@ -71,13 +71,13 @@ public class TestIMDownloadStatistics extends BaseTest {
         builder.put(Parameters.TO_DATE, "20130101");
         builder.put(Parameters.LOG, log.getAbsolutePath());
 
-        builder.putAll(scriptsManager.getScript(ScriptType.EVENTS_BY_TYPE, MetricType.IM_DOWNLOAD_STATISTICS).getParamsAsMap());
+        builder.putAll(scriptsManager.getScript(ScriptType.EVENTS_BY_TYPE, MetricType.IM_DOWNLOADS).getParamsAsMap());
         pigServer.execute(ScriptType.EVENTS_BY_TYPE, builder.build());
     }
 
     @Test
     public void testIMDownloadStatisticsList() throws Exception {
-        Metric metric = MetricFactory.getMetric(MetricType.IM_DOWNLOAD_STATISTICS_LIST);
+        Metric metric = MetricFactory.getMetric(MetricType.IM_DOWNLOADS_LIST);
         ListValueData l = getAsList(metric, Context.EMPTY);
         assertEquals(l.size(), 3);
 
@@ -97,21 +97,21 @@ public class TestIMDownloadStatistics extends BaseTest {
 
     @Test
     public void testIMDownloadStatistics() throws Exception {
-        Metric metric = MetricFactory.getMetric(MetricType.IM_DOWNLOAD_STATISTICS);
+        Metric metric = MetricFactory.getMetric(MetricType.IM_DOWNLOADS);
         LongValueData l = getAsLong(metric, Context.EMPTY);
         assertEquals(l, LongValueData.valueOf(3));
     }
 
     @Test
     public void testIMDownloadStatisticsSummary() throws Exception {
-        Metric metric = MetricFactory.getMetric(MetricType.IM_DOWNLOAD_STATISTICS_LIST);
+        Metric metric = MetricFactory.getMetric(MetricType.IM_DOWNLOADS_LIST);
         ListValueData l = getSummaryValue(metric, Context.EMPTY);
 
         assertEquals(l.size(), 1);
 
         Map<String, ValueData> m = treatAsMap(l.getAll().get(0));
-        assertEquals(m.get(IMDownloadStatisticsList.CODENVY_BINARIES), LongValueData.valueOf(2));
-        assertEquals(m.get(IMDownloadStatisticsList.INSTALL_SCRIPT), LongValueData.valueOf(1));
+        assertEquals(m.get(IMDownloadsList.CODENVY_BINARIES), LongValueData.valueOf(2));
+        assertEquals(m.get(IMDownloadsList.INSTALL_SCRIPT), LongValueData.valueOf(1));
     }
 }
 

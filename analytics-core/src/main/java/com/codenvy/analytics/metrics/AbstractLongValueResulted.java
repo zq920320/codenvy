@@ -39,11 +39,14 @@ public abstract class AbstractLongValueResulted extends ReadBasedMetric implemen
         this.expandingField = expandingField;
     }
 
+
+    /** {@inheritDoc} */
     @Override
     public String[] getTrackedFields() {
         return new String[]{VALUE};
     }
 
+    /** {@inheritDoc} */
     @Override
     public Class<? extends ValueData> getValueDataClass() {
         return LongValueData.class;
@@ -60,6 +63,7 @@ public abstract class AbstractLongValueResulted extends ReadBasedMetric implemen
         return new DBObject[]{new BasicDBObject("$group", group)};
     }
 
+    /** {@inheritDoc} */
     @Override
     public DBObject[] getSpecificExpandedDBOperations(Context clauses) {
         DBObject group = new BasicDBObject();
@@ -71,6 +75,7 @@ public abstract class AbstractLongValueResulted extends ReadBasedMetric implemen
                               new BasicDBObject("$project", project)};
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getExpandedField() {
         return expandingField;

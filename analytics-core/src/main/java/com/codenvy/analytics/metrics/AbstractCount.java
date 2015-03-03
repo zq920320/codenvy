@@ -38,26 +38,31 @@ public abstract class AbstractCount extends ReadBasedMetric implements ReadBased
         this.expandingField = expandingField;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getStorageCollectionName() {
         return basedMetric.getStorageCollectionName();
     }
 
+    /** {@inheritDoc} */
     @Override
     public final String[] getTrackedFields() {
         return new String[]{VALUE};
     }
 
+    /** {@inheritDoc} */
     @Override
     public Context applySpecificFilter(Context clauses) throws IOException {
         return basedMetric.applySpecificFilter(clauses);
     }
 
+    /** {@inheritDoc} */
     @Override
     public DBObject[] getSpecificDBOperations(Context clauses) {
         throw new UnsupportedOperationException();
     }
 
+    /** {@inheritDoc} */
     @Override
     public DBObject[] getSpecificExpandedDBOperations(Context clauses) {
         DBObject group = new BasicDBObject();
@@ -69,11 +74,13 @@ public abstract class AbstractCount extends ReadBasedMetric implements ReadBased
                               new BasicDBObject("$project", projection)};
     }
 
+    /** {@inheritDoc} */
     @Override
     public Class<? extends ValueData> getValueDataClass() {
         return LongValueData.class;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getExpandedField() {
         return expandingField;

@@ -32,7 +32,7 @@
 <body>
 
 <jsp:include page="/inclusions/top-menu/top-menu.jsp">
-    <jsp:param name="selectedMenuItemId" value="topmenu-reports"/>
+    <jsp:param name="selectedMenuItemId" value="topmenu-im-statistics"/>
     <jsp:param name="selectedMenuItemId" value="topmenu-im-analysis"/>
 </jsp:include>
 
@@ -104,7 +104,7 @@
                 <div class="single-column-gadget">
                     <div class="view">
                         <div class="tables">
-                            <div id="imSignupAnalysis"></div>
+                            <div id="imAnalysis"></div>
                         </div>
                     </div>
                 </div>

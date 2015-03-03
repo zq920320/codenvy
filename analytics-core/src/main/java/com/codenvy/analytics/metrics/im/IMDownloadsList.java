@@ -31,20 +31,20 @@ import javax.annotation.security.RolesAllowed;
 /** @author Anatoliy Bazko */
 @RolesAllowed({"system/admin", "system/manager"})
 @OmitFilters({MetricFilter.WS_ID, MetricFilter.PERSISTENT_WS})
-public class IMDownloadStatisticsList extends AbstractListValueResulted implements ReadBasedSummariziable {
+public class IMDownloadsList extends AbstractListValueResulted implements ReadBasedSummariziable {
     public static final String ARTIFACT_CODENVY         = "codenvy";
     public static final String ARTIFACT_INSTALL_CODENVY = "install_codenvy";
     public static final String CODENVY_BINARIES         = "codenvy binaries";
     public static final String INSTALL_SCRIPT           = "install script";
 
-    public IMDownloadStatisticsList() {
-        super(MetricType.IM_DOWNLOAD_STATISTICS_LIST);
+    public IMDownloadsList() {
+        super(MetricType.IM_DOWNLOADS_LIST);
     }
 
     /** {@inheritDoc} */
     @Override
     public String getStorageCollectionName() {
-        return getStorageCollectionName(MetricType.IM_DOWNLOAD_STATISTICS);
+        return getStorageCollectionName(MetricType.IM_DOWNLOADS);
     }
 
     /** {@inheritDoc} */

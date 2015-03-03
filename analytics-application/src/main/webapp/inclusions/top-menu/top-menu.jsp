@@ -40,7 +40,7 @@
                 <% if (FrontEndUtil.isCodenvyAdmin(request)) { %>
                     <div class="nav">
                         <div>
-                            <button id="topmenu-im-statistics">IM statistics</button>
+                            <button id="topmenu-im-statistics">On-Prem</button>
                         </div>
                         <ul class="dropdown-menu">
                             <li><a href="/analytics/pages/im-reports/im-downloads.jsp" id="topmenu-im-statistics-downloads">Downloads</a></li>

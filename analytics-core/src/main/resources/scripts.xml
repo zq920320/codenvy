@@ -291,7 +291,7 @@
         <parameter key="USER" value="ANY"/>
         <parameter key="EVENT" value="im-artifact-downloaded"/>
         <parameter key="PARAM" value="ARTIFACT"/>
-        <parameter key="STORAGE_TABLE" value="im_download_statistics"/>
+        <parameter key="STORAGE_TABLE" value="im_downloads"/>
     </script>
     <script name="events">
         <description>On-prem trial licenses issued</description>
