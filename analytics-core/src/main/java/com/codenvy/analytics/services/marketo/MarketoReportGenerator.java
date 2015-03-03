@@ -76,6 +76,7 @@ public class MarketoReportGenerator {
     public static final String PROFILE_COMPLETED  = "Profile Complete";
     public static final String POINTS             = "Product Score";
     public static final String LAST_PRODUCT_LOGIN = "Last Product Login";
+    public static final String NEW_USER           = "New user";
 
     private final Configurator configurator;
 
@@ -90,8 +91,9 @@ public class MarketoReportGenerator {
         put(RUNS, "Runs");
         put(TIME, "Time in Product");
         put(LOGINS, "Logins");
-        put(LAST_PRODUCT_LOGIN, "Last Product Login");        
+        put(LAST_PRODUCT_LOGIN, "Last Product Login");
         put(POINTS, POINTS);
+        put(NEW_USER, NEW_USER);
     }};
 
     @Inject
@@ -110,7 +112,9 @@ public class MarketoReportGenerator {
                                                                     return true;
                                                                 }
                                                             };
-                                                            
+
+        Set<ValueData> newUsers = getNewUsers(context);
+
         final int pageSize = configurator.getInt(MarketoInitializer.PAGE_SIZE, 10000);
         Context.Builder builder = new Context.Builder(context);
         builder.put(Parameters.PER_PAGE, pageSize);
@@ -127,7 +131,7 @@ public class MarketoReportGenerator {
                 context = context.cloneAndPut(Parameters.PAGE, currentPage);
 
                 List<ValueData> profiles = getUsersProfiles(context);
-                writeUsersWithStatistics(activeUsers, profiles, out);
+                writeUsersWithStatistics(activeUsers, newUsers, profiles, out);
 
                 if (profiles.size() < pageSize) {
                     break;
@@ -137,6 +141,7 @@ public class MarketoReportGenerator {
     }
 
     private void writeUsersWithStatistics(Set<ValueData> activeUsers,
+                                          Set<ValueData> createdTodayUsers,
                                           List<ValueData> profiles,
                                           BufferedWriter out) throws IOException, ParseException {
         for (ValueData object : profiles) {
@@ -147,29 +152,30 @@ public class MarketoReportGenerator {
             // Skip users without email which stored in a field ALIASES.
             if (activeUsers.contains(user)
                 && toArray(profile.get(AbstractMetric.ALIASES)).length != 0) {
-                writeUserWithStatistics(out, profile, user);
+                writeUserWithStatistics(out, profile, user, createdTodayUsers.contains(user));
             }
         }
     }
 
     private void writeUserWithStatistics(BufferedWriter out,
                                          Map<String, ValueData> profile,
-                                         ValueData user) throws IOException, ParseException {
+                                         ValueData user,
+                                         boolean isNewUser) throws IOException, ParseException {
         List<ValueData> stat = getUsersStatistics(user.getAsString());
         String lastProductLoginDate = getLastProductLogin(user.getAsString());
-        
+
         if (stat.isEmpty()) {
             MapValueData valueData = MapValueData.DEFAULT;
-            writeStatistics(out, valueData.getAll(), profile, lastProductLoginDate);
+            writeStatistics(out, valueData.getAll(), profile, lastProductLoginDate, isNewUser);
         } else {
             MapValueData valueData = (MapValueData)stat.get(0);
-            writeStatistics(out, valueData.getAll(), profile, lastProductLoginDate);
+            writeStatistics(out, valueData.getAll(), profile, lastProductLoginDate, isNewUser);
         }
     }
 
     /**
-     * @return date of user's last product login from metric USERS_ACTIVITY_LIST, 
-     *         or empty string "" if this metric returns empty result.
+     * @return date of user's last product login from metric USERS_ACTIVITY_LIST,
+     * or empty string "" if this metric returns empty result.
      */
     private String getLastProductLogin(String user) throws IOException {
         Context.Builder builder = new Context.Builder();
@@ -181,6 +187,16 @@ public class MarketoReportGenerator {
         }
 
         return new SimpleDateFormat(MetricRow.DEFAULT_DATE_FORMAT).format(value.getAsLong());
+    }
+
+    private Set<ValueData> getNewUsers(Context context) throws IOException {
+        Context.Builder builder = new Context.Builder(context);
+        builder.put(Parameters.FROM_DATE, context.getAsString(Parameters.TO_DATE));
+
+        Metric activeUsersList = MetricFactory.getMetric(MetricType.CREATED_USERS_SET);
+        SetValueData valueData = (SetValueData)activeUsersList.getValue(builder.build());
+
+        return valueData.getAll();
     }
 
     private Set<ValueData> getActiveUsersByDatePeriod(Context context) throws ParseException, IOException {
@@ -229,7 +245,8 @@ public class MarketoReportGenerator {
     private void writeStatistics(BufferedWriter out,
                                  Map<String, ValueData> stat,
                                  Map<String, ValueData> profile,
-                                 String lastProductLoginDate) throws IOException {
+                                 String lastProductLoginDate,
+                                 boolean isCreatedTodayUser) throws IOException {
         writeString(out, StringValueData.valueOf(toArray(profile.get(AbstractMetric.ALIASES))[0]));
         out.write(",");
 
@@ -262,9 +279,12 @@ public class MarketoReportGenerator {
 
         out.write(lastProductLoginDate);
         out.write(",");
-        
+
         writeInt(out, ActOn.getPoints(stat, profile));
-        
+        out.write(",");
+
+        out.write(isCreatedTodayUser ? "1" :"0");
+
         out.newLine();
     }
 

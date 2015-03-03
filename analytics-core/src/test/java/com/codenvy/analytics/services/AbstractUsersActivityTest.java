@@ -58,6 +58,7 @@ public abstract class AbstractUsersActivityTest extends BaseTest {
         executeScript(ScriptType.ACTIVE_ENTITIES, MetricType.ACTIVE_WORKSPACES_SET, date);
         executeScript(ScriptType.EVENTS_BY_TYPE, MetricType.USERS_LOGGED_IN_TYPES, date);
         executeScript(ScriptType.TASKS, MetricType.TASKS_LIST, date);
+        executeScript(ScriptType.EVENTS, MetricType.CREATED_USERS_SET, date);
         doIntegrity(date);
     }
 
@@ -218,6 +219,9 @@ public abstract class AbstractUsersActivityTest extends BaseTest {
         events.add(Event.Builder.createApplicationCreatedEvent("user3@gmail.com", "ws2___", "project1", "type1", "paas2")
                                 .withTime("10:00:01")
                                 .withDate("2013-11-03").build());
+
+        events.add(Event.Builder.createUserCreatedEvent("id4", "user4@gmail.com", "user4@gmail.com")
+                                .withDate("2013-11-03").withTime("10:00:00,000").build());
 
         return LogGenerator.generateLog(events);
     }
