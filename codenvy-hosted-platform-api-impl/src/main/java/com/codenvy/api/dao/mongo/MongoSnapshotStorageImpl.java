@@ -98,7 +98,9 @@ public class MongoSnapshotStorageImpl implements SnapshotStorage {
     public List<Snapshot> findSnapshots(String owner, String workspaceId, ProjectBinding project) throws ServerException {
         BasicDBObject query = new BasicDBObject("owner", owner);
         query.append("workspaceId", workspaceId);
-        query.append("projectBindings.path", project.getPath());
+        if (project != null) {
+            query.append("projectBindings.path", project.getPath());
+        }
 
         try (DBCursor snapshots = machineCollection.find(query)) {
             final ArrayList<Snapshot> result = new ArrayList<>();
