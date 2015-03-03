@@ -138,9 +138,10 @@ public class BraintreeCreditCardDaoImpl implements CreditCardDao {
                 LOG.error(msg);
                 throw new ForbiddenException(msg);
             }
-            eventService.publish(CreditCardRegistrationEvent
-                                         .creditCardAddedEvent(accountId, result.getTarget().getCreditCards().get(0).getMaskedNumber(),
-                                                               EnvironmentContext.getCurrent().getUser().getId()));
+            com.braintreegateway.CreditCard card = result.getTarget().getCreditCards().get(0);
+            eventService.publish(CreditCardRegistrationEvent.creditCardAddedEvent(accountId, card.getMaskedNumber(),
+                                                                                  EnvironmentContext.getCurrent().getUser().getId()));
+            subscriptionMailSender.sendCCAddedNotification(accountId, card.getLast4(), card.getCardType());
         } catch (NotFoundException nf) {
             CustomerRequest request = new CustomerRequest().id(accountId).creditCard()
                                                            .paymentMethodNonce(nonce)
@@ -157,12 +158,20 @@ public class BraintreeCreditCardDaoImpl implements CreditCardDao {
                 LOG.error(msg);
                 throw new ForbiddenException(msg);
             }
+            com.braintreegateway.CreditCard card = result.getTarget().getCreditCards().get(0);
             eventService.publish(CreditCardRegistrationEvent
-                                         .creditCardAddedEvent(accountId, result.getTarget().getCreditCards().get(0).getMaskedNumber(),
+                                         .creditCardAddedEvent(accountId, card.getMaskedNumber(),
                                                                EnvironmentContext.getCurrent().getUser().getId()));
+            try {
+                subscriptionMailSender.sendCCAddedNotification(accountId, card.getLast4(), card.getCardType());
+            } catch (MessagingException | IOException e) {
+                LOG.warn("Unable to send CC added email.", e);
+            }
         } catch (BraintreeException e) {
             LOG.warn("Braintree exception: ", e);
             throw new ServerException("Internal server error. Please, contact support.");
+        } catch (MessagingException | IOException e) {
+            LOG.warn("Unable to send CC added email.",  e);
         }
     }
 

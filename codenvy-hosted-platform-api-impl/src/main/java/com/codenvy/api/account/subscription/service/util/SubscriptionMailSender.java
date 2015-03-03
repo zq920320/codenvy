@@ -53,6 +53,8 @@ public class SubscriptionMailSender {
 
     private static final Logger LOG = LoggerFactory.getLogger(SubscriptionMailSender.class);
 
+    private static final String TEMPLATE_CC_ADDED = "/email-templates/saas-add-credit-card.html";
+
     private static final String TEMPLATE_CC_OUTSTANDING = "/email-templates/saas-outstanding-balance.html";
 
     private static final String TEMPLATE_CC_DELETE = "/email-templates/saas-remove-credit-card.html";
@@ -126,6 +128,16 @@ public class SubscriptionMailSender {
         LOG.debug("Send email about trial removing in {} days to {}", days, accountOwnersEmails);
         // TODO: replace text with template && check title
         sendEmail("Send email about trial removing in " + days + " days", "Subscription notification", accountOwnersEmails, MediaType.TEXT_PLAIN, null);
+    }
+
+    public void sendCCAddedNotification(String accountId, String ccNumber, String ccType) throws IOException, MessagingException, ServerException {
+        List<String> accountOwnersEmails = getAccountOwnersEmails(accountId);
+        Map<String, String> properties = new HashMap<>();
+        properties.put("type", ccType);
+        properties.put("number", ccNumber);
+        LOG.debug("Send credit card added notifications to {}", accountOwnersEmails);
+        sendEmail(readAndCloseQuietly(getResource(TEMPLATE_CC_ADDED)), "Credit Card Removed from Codenvy",
+                  accountOwnersEmails, MediaType.TEXT_HTML, properties);
     }
 
     public void sendCCRemovedNotification(String accountId, String ccNumber, String ccType) throws IOException, MessagingException, ServerException {
