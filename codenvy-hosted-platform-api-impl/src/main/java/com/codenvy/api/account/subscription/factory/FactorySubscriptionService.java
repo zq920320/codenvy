@@ -17,19 +17,20 @@
  */
 package com.codenvy.api.account.subscription.factory;
 
-import static com.codenvy.api.account.subscription.ServiceId.FACTORY;
-
 import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.server.dao.Subscription;
 import com.codenvy.api.account.server.subscription.SubscriptionService;
 import com.codenvy.api.account.shared.dto.UsedAccountResources;
+import com.codenvy.api.account.subscription.SubscriptionEvent;
 import com.codenvy.api.account.subscription.service.util.SubscriptionCharger;
 import com.codenvy.api.account.subscription.service.util.SubscriptionExpirationManager;
 import com.codenvy.api.account.subscription.service.util.SubscriptionTrialRemover;
 import com.codenvy.api.core.ApiException;
 import com.codenvy.api.core.ConflictException;
+import com.codenvy.api.core.ForbiddenException;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
+import com.codenvy.api.core.notification.EventService;
 import com.codenvy.dto.server.DtoFactory;
 
 import org.slf4j.Logger;
@@ -37,6 +38,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+
+import static com.codenvy.api.account.subscription.ServiceId.FACTORY;
 
 /**
  * Subscription of factories
@@ -53,21 +56,24 @@ public class FactorySubscriptionService extends SubscriptionService {
     private final SubscriptionCharger           chargeUtil;
     private final SubscriptionExpirationManager expirationUtil;
     private final SubscriptionTrialRemover      removeUtil;
+    private final EventService                  eventService;
 
     @Inject
     public FactorySubscriptionService(AccountDao accountDao,
                                       SubscriptionCharger chargeUtil,
                                       SubscriptionExpirationManager expirationUtil,
-                                      SubscriptionTrialRemover removeUtil) {
+                                      SubscriptionTrialRemover removeUtil,
+                                      EventService eventService) {
         super(FACTORY, FACTORY);
         this.accountDao = accountDao;
         this.chargeUtil = chargeUtil;
         this.expirationUtil = expirationUtil;
         this.removeUtil = removeUtil;
+        this.eventService = eventService;
     }
 
     @Override
-    public void beforeCreateSubscription(Subscription subscription) throws ConflictException, ServerException {
+    public void beforeCreateSubscription(Subscription subscription) throws ConflictException, ServerException, ForbiddenException {
         String tariffPackage;
         if (null == (tariffPackage = subscription.getProperties().get("Package"))) {
             throw new ConflictException("Subscription property 'Package' required");
@@ -89,12 +95,17 @@ public class FactorySubscriptionService extends SubscriptionService {
 
     @Override
     public void afterCreateSubscription(Subscription subscription) throws ApiException {
-        //nothing to do
+        eventService.publish(SubscriptionEvent.subscriptionAddedEvent(subscription));
     }
 
     @Override
-    public void onRemoveSubscription(Subscription subscription) {
-        //nothing to do
+    public void onRemoveSubscription(Subscription subscription) throws ApiException {
+        eventService.publish(SubscriptionEvent.subscriptionRemovedEvent(subscription));
+    }
+
+    @Override
+    public void onUpdateSubscription(Subscription oldSubscription, Subscription newSubscription) throws ApiException {
+
     }
 
     @Override
@@ -110,11 +121,6 @@ public class FactorySubscriptionService extends SubscriptionService {
         chargeUtil.charge(this);
 
 //        removeUtil.removeExpiredSubscriptions(this);
-    }
-
-    @Override
-    public void onUpdateSubscription(Subscription oldSubscription, Subscription newSubscription) {
-        //nothing to do
     }
 
     @Override

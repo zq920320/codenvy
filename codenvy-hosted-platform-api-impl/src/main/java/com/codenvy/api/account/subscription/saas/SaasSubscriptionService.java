@@ -17,7 +17,10 @@
  */
 package com.codenvy.api.account.subscription.saas;
 
+import com.codenvy.api.account.AccountLocker;
 import com.codenvy.api.account.billing.BillingPeriod;
+import com.codenvy.api.account.billing.CreditCardDao;
+import com.codenvy.api.account.impl.shared.dto.CreditCard;
 import com.codenvy.api.account.metrics.MeterBasedStorage;
 import com.codenvy.api.account.server.dao.Account;
 import com.codenvy.api.account.server.dao.AccountDao;
@@ -25,11 +28,13 @@ import com.codenvy.api.account.server.dao.Subscription;
 import com.codenvy.api.account.server.subscription.SubscriptionService;
 import com.codenvy.api.account.shared.dto.UsedAccountResources;
 import com.codenvy.api.account.shared.dto.WorkspaceResources;
-import com.codenvy.api.account.AccountLocker;
+import com.codenvy.api.account.subscription.SubscriptionEvent;
 import com.codenvy.api.core.ApiException;
 import com.codenvy.api.core.ConflictException;
+import com.codenvy.api.core.ForbiddenException;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
+import com.codenvy.api.core.notification.EventService;
 import com.codenvy.api.workspace.server.dao.Workspace;
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
 import com.codenvy.dto.server.DtoFactory;
@@ -57,23 +62,30 @@ public class SaasSubscriptionService extends SubscriptionService {
     private final MeterBasedStorage meterBasedStorage;
     private final BillingPeriod     billingPeriod;
     private final AccountLocker     accountLocker;
+    private final CreditCardDao     creditCardDao;
+    private final EventService      eventService;
 
     @Inject
     public SaasSubscriptionService(WorkspaceDao workspaceDao,
                                    AccountDao accountDao,
                                    MeterBasedStorage meterBasedStorage,
                                    BillingPeriod billingPeriod,
-                                   AccountLocker accountLocker) {
+                                   AccountLocker accountLocker,
+                                   CreditCardDao creditCardDao,
+                                   EventService eventService) {
         super(SAAS, SAAS);
         this.workspaceDao = workspaceDao;
         this.accountDao = accountDao;
         this.meterBasedStorage = meterBasedStorage;
         this.billingPeriod = billingPeriod;
         this.accountLocker = accountLocker;
+        this.creditCardDao = creditCardDao;
+        this.eventService = eventService;
     }
 
     @Override
-    public void beforeCreateSubscription(Subscription subscription) throws ConflictException, ServerException {
+    public void beforeCreateSubscription(Subscription subscription) throws ConflictException, ServerException, ForbiddenException {
+        //TODO Add checking unpaid old subscription
         try {
             final Subscription activeSaasSubscription = accountDao.getActiveSubscription(subscription.getAccountId(), getServiceId());
 
@@ -85,12 +97,18 @@ public class SaasSubscriptionService extends SubscriptionService {
             throw new ServerException(e.getLocalizedMessage());
         }
 
-        //TODO Add checking of credit card
+        if (subscription.getUsePaymentSystem()) {//TODO Is need to checking of credit card if account will use trial?
+            final List<CreditCard> cards = creditCardDao.getCards(subscription.getAccountId());
+            if (cards.isEmpty()) {
+                throw new ConflictException("You can't add subscription without credit card");
+            }
+        }
     }
 
     @Override
     public void afterCreateSubscription(Subscription subscription) throws ApiException {
-        //TODO Add checking unpaid old subscription
+        eventService.publish(SubscriptionEvent.subscriptionAddedEvent(subscription));
+
         accountLocker.unlockResources(subscription.getAccountId());
     }
 
@@ -103,16 +121,18 @@ public class SaasSubscriptionService extends SubscriptionService {
         } catch (NotFoundException | ServerException e) {
             LOG.error("Error removing lock property into account  {} .", account.getId());
         }
+
+        eventService.publish(SubscriptionEvent.subscriptionRemovedEvent(subscription));
+    }
+
+    @Override
+    public void onUpdateSubscription(Subscription oldSubscription, Subscription newSubscription) throws ApiException {
+
     }
 
     @Override
     public void onCheckSubscriptions() throws ApiException {
         //TODO Implement
-    }
-
-    @Override
-    public void onUpdateSubscription(Subscription oldSubscription, Subscription newSubscription) throws ApiException {
-        //nothing to do
     }
 
     @Override
@@ -122,12 +142,11 @@ public class SaasSubscriptionService extends SubscriptionService {
                                                                                            billingPeriod.getCurrent().getStartDate()
                                                                                                         .getTime(),
                                                                                            System.currentTimeMillis());
-
-        final List<Workspace> workspaces = workspaceDao.getByAccount(accountId);
-        final List<WorkspaceResources> result = new ArrayList<>();
+        List<Workspace> workspaces = workspaceDao.getByAccount(accountId);
+        List<WorkspaceResources> result = new ArrayList<>();
 
         for (Workspace workspace : workspaces) {
-            final Double usedMemory = memoryUsedReport.get(workspace.getId());
+            Double usedMemory = memoryUsedReport.get(workspace.getId());
             result.add(DtoFactory.getInstance().createDto(WorkspaceResources.class)
                                  .withWorkspaceId(workspace.getId())
                                  .withMemory(usedMemory != null ? usedMemory : 0.0));

@@ -49,8 +49,9 @@ public class SubscriptionTrialRemover {
 
     public void removeExpiredTrial(SubscriptionService service) {
         try {
-            List<Subscription> subscriptions =
-                    accountDao.getSubscriptionQueryBuilder().getTrialExpiredQuery(service.getServiceId()).execute();
+            List<Subscription> subscriptions = accountDao.getSubscriptionQueryBuilder()
+                                                         .getTrialExpiredQuery(service.getServiceId())
+                                                         .execute();
 
             for (Subscription subscription : subscriptions) {
                 try {
