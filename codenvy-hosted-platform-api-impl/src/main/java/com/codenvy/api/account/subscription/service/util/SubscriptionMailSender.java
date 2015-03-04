@@ -53,6 +53,8 @@ public class SubscriptionMailSender {
 
     private static final Logger LOG = LoggerFactory.getLogger(SubscriptionMailSender.class);
 
+    private static final String TEMPLATE_SAAS_SIGNUP = "/email-templates/saas-sign-up.html";
+
     private static final String TEMPLATE_CC_ADDED = "/email-templates/saas-add-credit-card.html";
 
     private static final String TEMPLATE_CC_OUTSTANDING = "/email-templates/saas-outstanding-balance.html";
@@ -130,33 +132,56 @@ public class SubscriptionMailSender {
         sendEmail("Send email about trial removing in " + days + " days", "Subscription notification", accountOwnersEmails, MediaType.TEXT_PLAIN, null);
     }
 
-    public void sendCCAddedNotification(String accountId, String ccNumber, String ccType) throws IOException, MessagingException, ServerException {
+    public void sendSaasSignupNotification(String accountId) throws ServerException {
+        List<String> accountOwnersEmails = getAccountOwnersEmails(accountId);
+        LOG.debug("Send saas signup notifications to {}", accountOwnersEmails);
+        try {
+            sendEmail(readAndCloseQuietly(getResource(TEMPLATE_SAAS_SIGNUP)), "Welcome to Codenvy",
+                      accountOwnersEmails, MediaType.TEXT_HTML, null);
+        } catch (IOException | MessagingException e) {
+            LOG.warn("Unable to send saas signup notifications email, account: {}", accountId);
+        }
+    }
+
+    public void sendCCAddedNotification(String accountId, String ccNumber, String ccType) throws ServerException {
         List<String> accountOwnersEmails = getAccountOwnersEmails(accountId);
         Map<String, String> properties = new HashMap<>();
         properties.put("type", ccType);
         properties.put("number", ccNumber);
         LOG.debug("Send credit card added notifications to {}", accountOwnersEmails);
-        sendEmail(readAndCloseQuietly(getResource(TEMPLATE_CC_ADDED)), "Credit Card Removed from Codenvy",
-                  accountOwnersEmails, MediaType.TEXT_HTML, properties);
+        try {
+            sendEmail(readAndCloseQuietly(getResource(TEMPLATE_CC_ADDED)), "Credit Card Added to Codenvy",
+                      accountOwnersEmails, MediaType.TEXT_HTML, properties);
+        } catch (IOException | MessagingException e) {
+            LOG.warn("Unable to send credit card added notifications email, account: {}", accountId);
+        }
     }
 
-    public void sendCCRemovedNotification(String accountId, String ccNumber, String ccType) throws IOException, MessagingException, ServerException {
+    public void sendCCRemovedNotification(String accountId, String ccNumber, String ccType) throws ServerException {
         List<String> accountOwnersEmails = getAccountOwnersEmails(accountId);
         Map<String, String> properties = new HashMap<>();
         properties.put("type", ccType);
         properties.put("number", ccNumber);
         LOG.debug("Send credit card removed notifications to {}", accountOwnersEmails);
-        sendEmail(readAndCloseQuietly(getResource(TEMPLATE_CC_DELETE)), "Credit Card Removed from Codenvy",
-                  accountOwnersEmails, MediaType.TEXT_HTML, properties);
+        try {
+            sendEmail(readAndCloseQuietly(getResource(TEMPLATE_CC_DELETE)), "Credit Card Removed from Codenvy",
+                      accountOwnersEmails, MediaType.TEXT_HTML, properties);
+        } catch (IOException | MessagingException e) {
+            LOG.warn("Unable to send credit card removed notifications, account: {}", accountId);
+        }
     }
 
-    public void sendAccountLockedNotification(String accountId, String total) throws IOException, MessagingException, ServerException {
+    public void sendAccountLockedNotification(String accountId, String total) throws ServerException {
         List<String> accountOwnersEmails = getAccountOwnersEmails(accountId);
         Map<String, String> properties = new HashMap<>();
         properties.put("total", total);
         LOG.debug("Send account locked notifications to {}", accountOwnersEmails);
-        sendEmail(readAndCloseQuietly(getResource(TEMPLATE_CC_OUTSTANDING)), "Outstanding Balance with Codenvy",
-                  accountOwnersEmails, MediaType.TEXT_HTML,  properties);
+        try {
+            sendEmail(readAndCloseQuietly(getResource(TEMPLATE_CC_OUTSTANDING)), "Outstanding Balance with Codenvy",
+                      accountOwnersEmails, MediaType.TEXT_HTML, properties);
+        } catch (IOException | MessagingException e) {
+            LOG.warn("Unable to send account locked notifications, account: {}", accountId);
+        }
     }
 
 
@@ -178,9 +203,10 @@ public class SubscriptionMailSender {
 
     private void sendEmail(String text, String subject, List<String> emails, String mediaType, Map<String, String> properties)
             throws IOException, MessagingException {
-        if (properties != null) {
-            properties.put("com.codenvy.masterhost.url", apiEndpoint.substring(0, apiEndpoint.lastIndexOf("/")));
+        if (properties == null) {
+            properties = new HashMap<>();
         }
+        properties.put("com.codenvy.masterhost.url", apiEndpoint.substring(0, apiEndpoint.lastIndexOf("/")));
         mailClient.sendMail(billingAddress,
                             Strings.join(", ", emails.toArray(new String[emails.size()])),
                             null,

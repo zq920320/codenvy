@@ -29,6 +29,7 @@ import com.codenvy.api.account.server.subscription.SubscriptionService;
 import com.codenvy.api.account.shared.dto.UsedAccountResources;
 import com.codenvy.api.account.shared.dto.WorkspaceResources;
 import com.codenvy.api.account.subscription.SubscriptionEvent;
+import com.codenvy.api.account.subscription.service.util.SubscriptionMailSender;
 import com.codenvy.api.core.ApiException;
 import com.codenvy.api.core.ConflictException;
 import com.codenvy.api.core.ForbiddenException;
@@ -57,13 +58,14 @@ import static com.codenvy.api.account.subscription.ServiceId.SAAS;
 public class SaasSubscriptionService extends SubscriptionService {
     private static final Logger LOG = LoggerFactory.getLogger(SaasSubscriptionService.class);
 
-    private final WorkspaceDao      workspaceDao;
-    private final AccountDao        accountDao;
-    private final MeterBasedStorage meterBasedStorage;
-    private final BillingPeriod     billingPeriod;
-    private final AccountLocker     accountLocker;
-    private final CreditCardDao     creditCardDao;
-    private final EventService      eventService;
+    private final WorkspaceDao           workspaceDao;
+    private final AccountDao             accountDao;
+    private final MeterBasedStorage      meterBasedStorage;
+    private final BillingPeriod          billingPeriod;
+    private final AccountLocker          accountLocker;
+    private final CreditCardDao          creditCardDao;
+    private final EventService           eventService;
+    private final SubscriptionMailSender mailSender;
 
     @Inject
     public SaasSubscriptionService(WorkspaceDao workspaceDao,
@@ -72,7 +74,8 @@ public class SaasSubscriptionService extends SubscriptionService {
                                    BillingPeriod billingPeriod,
                                    AccountLocker accountLocker,
                                    CreditCardDao creditCardDao,
-                                   EventService eventService) {
+                                   EventService eventService,
+                                   SubscriptionMailSender mailSender) {
         super(SAAS, SAAS);
         this.workspaceDao = workspaceDao;
         this.accountDao = accountDao;
@@ -81,6 +84,7 @@ public class SaasSubscriptionService extends SubscriptionService {
         this.accountLocker = accountLocker;
         this.creditCardDao = creditCardDao;
         this.eventService = eventService;
+        this.mailSender = mailSender;
     }
 
     @Override
@@ -110,18 +114,11 @@ public class SaasSubscriptionService extends SubscriptionService {
         eventService.publish(SubscriptionEvent.subscriptionAddedEvent(subscription));
 
         accountLocker.unlockResources(subscription.getAccountId());
+        mailSender.sendSaasSignupNotification(subscription.getAccountId());
     }
 
     @Override
     public void onRemoveSubscription(Subscription subscription) throws ApiException {
-        final Account account = accountDao.getById(subscription.getAccountId());
-
-        try {
-            accountDao.update(account);
-        } catch (NotFoundException | ServerException e) {
-            LOG.error("Error removing lock property into account  {} .", account.getId());
-        }
-
         eventService.publish(SubscriptionEvent.subscriptionRemovedEvent(subscription));
     }
 

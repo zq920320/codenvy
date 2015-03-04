@@ -32,6 +32,7 @@ import com.codenvy.api.account.AccountLocker;
 import com.codenvy.api.account.impl.shared.dto.AccountResources;
 import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.server.dao.Subscription;
+import com.codenvy.api.account.server.subscription.SubscriptionService;
 import com.codenvy.api.account.subscription.ServiceId;
 import com.codenvy.api.account.subscription.service.util.SubscriptionMailSender;
 import com.codenvy.api.core.ForbiddenException;
@@ -112,6 +113,9 @@ public class BraintreeCreditCardDaoImplTest {
 
     @Mock
     private SubscriptionMailSender subscriptionMailSender;
+
+    @Mock
+    private SubscriptionService subscriptionMailService;
 
     @Mock
     User user;

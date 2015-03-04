@@ -34,9 +34,11 @@ import com.codenvy.api.account.impl.shared.dto.AccountResources;
 import com.codenvy.api.account.impl.shared.dto.CreditCard;
 import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.server.dao.Subscription;
+import com.codenvy.api.account.server.subscription.SubscriptionService;
 import com.codenvy.api.account.shared.dto.SubscriptionState;
 import com.codenvy.api.account.subscription.ServiceId;
 import com.codenvy.api.account.subscription.service.util.SubscriptionMailSender;
+import com.codenvy.api.core.ApiException;
 import com.codenvy.api.core.ForbiddenException;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.api.core.notification.EventService;
@@ -47,8 +49,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-import javax.mail.MessagingException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -75,10 +75,12 @@ public class BraintreeCreditCardDaoImpl implements CreditCardDao {
 
     private final SubscriptionMailSender subscriptionMailSender;
 
+    private final SubscriptionService subscriptionService;
+
     @Inject
     public BraintreeCreditCardDaoImpl(BraintreeGateway gateway, EventService eventService, BillingService billingService,
                                       BillingPeriod billingPeriod, AccountLocker accountLocker, AccountDao accountDao,
-                                      SubscriptionMailSender subscriptionMailSender) {
+                                      SubscriptionMailSender subscriptionMailSender, SubscriptionService subscriptionService) {
         this.gateway = gateway;
         this.eventService = eventService;
         this.billingService = billingService;
@@ -86,6 +88,7 @@ public class BraintreeCreditCardDaoImpl implements CreditCardDao {
         this.accountLocker = accountLocker;
         this.accountDao = accountDao;
         this.subscriptionMailSender = subscriptionMailSender;
+        this.subscriptionService = subscriptionService;
     }
 
     @Override
@@ -162,16 +165,10 @@ public class BraintreeCreditCardDaoImpl implements CreditCardDao {
             eventService.publish(CreditCardRegistrationEvent
                                          .creditCardAddedEvent(accountId, card.getMaskedNumber(),
                                                                EnvironmentContext.getCurrent().getUser().getId()));
-            try {
-                subscriptionMailSender.sendCCAddedNotification(accountId, card.getLast4(), card.getCardType());
-            } catch (MessagingException | IOException e) {
-                LOG.warn("Unable to send CC added email.", e);
-            }
+            subscriptionMailSender.sendCCAddedNotification(accountId, card.getLast4(), card.getCardType());
         } catch (BraintreeException e) {
             LOG.warn("Braintree exception: ", e);
             throw new ServerException("Internal server error. Please, contact support.");
-        } catch (MessagingException | IOException e) {
-            LOG.warn("Unable to send CC added email.",  e);
         }
     }
 
@@ -238,8 +235,9 @@ public class BraintreeCreditCardDaoImpl implements CreditCardDao {
             final Subscription activeSaasSubscription = accountDao.getActiveSubscription(accountId, ServiceId.SAAS);
             if (activeSaasSubscription != null && !"sas-community".equals(activeSaasSubscription.getPlanId())) {
                 accountDao.updateSubscription(activeSaasSubscription.withState(SubscriptionState.INACTIVE));
+                subscriptionService.onRemoveSubscription(activeSaasSubscription);
             }
-        } catch (com.codenvy.api.core.NotFoundException e) {
+        } catch (ApiException e) {
             LOG.warn("Unable to remove subscription after CC deletion.", e);
         }
 
@@ -251,15 +249,11 @@ public class BraintreeCreditCardDaoImpl implements CreditCardDao {
                                                           .withTillDate(System.currentTimeMillis())
                                                           .build();
         List<AccountResources> resources = billingService.getEstimatedUsageByAccount(filter);
-        try {
-            if (!resources.isEmpty()) {
-                accountLocker.lock(accountId);
-                subscriptionMailSender.sendAccountLockedNotification(accountId, Double.toString(resources.get(0).getPaidAmount()));
-            } else {
-                subscriptionMailSender.sendCCRemovedNotification(accountId, card.getLast4(), card.getCardType());
-            }
-        } catch (MessagingException | IOException e) {
-            LOG.warn("Unable to send CC deletion email.",  e);
+        if (!resources.isEmpty()) {
+            accountLocker.lock(accountId);
+            subscriptionMailSender.sendAccountLockedNotification(accountId, Double.toString(resources.get(0).getPaidAmount()));
+        } else {
+            subscriptionMailSender.sendCCRemovedNotification(accountId, card.getLast4(), card.getCardType());
         }
     }
 }
