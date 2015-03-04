@@ -20,7 +20,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Signup Analysis</title>
+    <title>Analysis</title>
     <%@ include file="/inclusions/header.jsp"%>
     <style type="text/css">
         /* redefine style of Accordion Widget of jQuery UI (@see http://api.jqueryui.com/accordion/#method-disable ) */

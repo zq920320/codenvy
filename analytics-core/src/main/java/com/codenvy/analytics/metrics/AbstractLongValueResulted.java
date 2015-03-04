@@ -52,6 +52,7 @@ public abstract class AbstractLongValueResulted extends ReadBasedMetric implemen
         return LongValueData.class;
     }
 
+    /** {@inheritDoc} */
     @Override
     public DBObject[] getSpecificDBOperations(Context clauses) {
         String field = getTrackedFields()[0];

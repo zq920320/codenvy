@@ -109,7 +109,7 @@
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="new_users_on_prem_downloads"/>
-                <parameter key="description" value="New Users On-Prem Downloads"/>
+                <parameter key="description" value="New Users Codenvy Downloads"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="new_users_on_prem_trial_licenses"/>

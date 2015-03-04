@@ -171,8 +171,8 @@ public class TestNewUsersGbHrs extends BaseTest {
         ListValueData l = getExpandedValue(metric, context);
         assertEquals(l.size(), 1);
 
-        Map<String, Map<String, ValueData>> m = listToMap(l, "id");
-        assertTrue(m.containsKey("id1"));
+        Map<String, Map<String, ValueData>> m = listToMap(l, "user");
+        assertTrue(m.containsKey(UID1));
 
         // user1 0.05GbHrs, but wasn't created today
         // user2 0.05GbHrs
@@ -180,19 +180,18 @@ public class TestNewUsersGbHrs extends BaseTest {
         l = getExpandedValue(metric, context);
         assertEquals(l.size(), 1);
 
-        m = listToMap(l, "id");
-        assertTrue(m.containsKey("id3"));
+        m = listToMap(l, "user");
+        assertTrue(m.containsKey(UID2));
 
         // user1 0.10GbHrs
         // user2 0.05GbHrs
         context = new Context.Builder().put(Parameters.FROM_DATE, "20140101").put(Parameters.TO_DATE, "20140102").build();
         l = getExpandedValue(metric, context);
-        assertEquals(l.size(), 3);
+        assertEquals(l.size(), 2);
 
-        m = listToMap(l, "id");
-        assertTrue(m.containsKey("id1"));
-        assertTrue(m.containsKey("id2"));
-        assertTrue(m.containsKey("id3"));
+        m = listToMap(l, "user");
+        assertTrue(m.containsKey(UID1));
+        assertTrue(m.containsKey(UID2));
     }
 }
 

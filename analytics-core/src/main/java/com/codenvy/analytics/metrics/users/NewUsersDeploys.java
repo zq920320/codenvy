@@ -26,7 +26,7 @@ import javax.annotation.security.RolesAllowed;
 @RolesAllowed({"system/admin", "system/manager"})
 public class NewUsersDeploys extends AbstractNewUsersAnalysis {
     public NewUsersDeploys() {
-        super(MetricType.NEW_USERS_DEPLOYS, MetricType.TASKS_GIGABYTE_RAM_HOURS);
+        super(MetricType.NEW_USERS_DEPLOYS, MetricType.DEPLOYS_TO_PAAS);
     }
 
     /** {@inheritDoc} */

@@ -1798,6 +1798,20 @@ function AnalyticsConfiguration() {
         "tasks_stopped_normally": "#TASKS",
         "tasks_stopped_by_timeout": "#TASKS",
 
+        "im_downloads_install_script": "#USERS",
+        "im_downloads_codenvy": "#USERS",
+        "im_on_prem_issued": "#USERS",
+        "created_unique_users": "#USERS",
+        "new_users_usage_time_greater_1_min": "#USERS",
+        "new_users_usage_time_greater_60_min": "#USERS",
+        "new_users_gb_hours": "#USERS",
+        "new_users_builds": "#USERS",
+        "new_users_runs": "#USERS",
+        "new_users_deploys": "#USERS",
+        "new_users_sent_invites": "#USERS",
+        "new_users_on_prem_downloads": "#USERS",
+        "new_users_on_prem_trial_licenses": "#USERS",
+
         /** DEFAULT */
         "total_factories": "#DEFAULT",  // isn't 'FACTORIES' because total factory = created factory, and there could be no some created factories in 'product_usage_factory_sessions_list' collection
         "created_factories": "#DEFAULT"  // isn't 'FACTORIES' because there could be no some created factories in 'product_usage_factory_sessions_list' collection
