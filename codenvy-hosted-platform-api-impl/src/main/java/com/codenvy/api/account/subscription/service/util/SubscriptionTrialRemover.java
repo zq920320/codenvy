@@ -57,8 +57,8 @@ public class SubscriptionTrialRemover {
                 try {
                     accountDao.updateSubscription(subscription.withState(SubscriptionState.INACTIVE));
                     service.onRemoveSubscription(subscription);
-                    mailUtil.sendTrialExpiredNotification(subscription.getAccountId());
-                } catch (ApiException | IOException | MessagingException e) {
+                    //mailUtil.sendTrialExpiredNotification(subscription.getAccountId());
+                } catch (ApiException e) {
                     LOG.error(e.getLocalizedMessage(), e);
                 }
             }

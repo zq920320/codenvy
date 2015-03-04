@@ -26,8 +26,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-import javax.mail.MessagingException;
-import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -55,10 +53,10 @@ public class SubscriptionExpirationManager {
             List<Subscription> subscriptions = accountDao.getSubscriptionQueryBuilder().getExpiringQuery(serviceId, days).execute();
             for (Subscription subscription : subscriptions) {
                 try {
-                    mailUtil.sendSubscriptionExpiredNotification(subscription.getAccountId(), days);
+                    //mailUtil.sendSubscriptionExpiredNotification(subscription.getAccountId(), days);
                     subscription.getProperties().put(String.format("codenvy:subscription-email-trialExpiring-%s", days), "true");
                     accountDao.updateSubscription(subscription);
-                } catch (ServerException | NotFoundException | IOException | MessagingException e) {
+                } catch (ServerException | NotFoundException e) {
                     LOG.error(e.getLocalizedMessage(), e);
                 }
             }
@@ -75,10 +73,10 @@ public class SubscriptionExpirationManager {
             List<Subscription> subscriptions = accountDao.getSubscriptionQueryBuilder().getExpiredQuery(serviceId, days).execute();
             for (Subscription subscription : subscriptions) {
                 try {
-                    mailUtil.sendSubscriptionExpiredNotification(subscription.getAccountId(), days);
+                    //mailUtil.sendSubscriptionExpiredNotification(subscription.getAccountId(), days);
                     subscription.getProperties().put(String.format("codenvy:subscription-email-trialExpired-%s", days), "true");
                     accountDao.updateSubscription(subscription);
-                } catch (ServerException | NotFoundException | IOException | MessagingException e) {
+                } catch (ServerException | NotFoundException e) {
                     LOG.error(e.getLocalizedMessage(), e);
                 }
             }

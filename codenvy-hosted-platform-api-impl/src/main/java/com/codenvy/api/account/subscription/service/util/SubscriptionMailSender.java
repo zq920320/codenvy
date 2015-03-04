@@ -63,15 +63,15 @@ public class SubscriptionMailSender {
 
     @Inject
     @Named("subscription.saas.mail.invoice.subject")
-    private  String  invoiceSubject;
+    private String invoiceSubject;
 
     @Inject
     @Named("subscription.saas.mail.invoice.no_credit_card.subject")
-    private  String  invoiceCreditCardMissingSubject;
+    private String invoiceCreditCardMissingSubject;
 
     @Inject
     @Named("subscription.saas.mail.billing.failed.subject")
-    private  String billingFailedSubject;
+    private String billingFailedSubject;
 
     @Inject
     @Named("subscription.saas.mail.address")
@@ -101,36 +101,51 @@ public class SubscriptionMailSender {
             subject = billingFailedSubject;
         }
         LOG.debug("Send invoice to {}", accountOwnersEmails);
-        sendEmail(text,subject, accountOwnersEmails, MediaType.TEXT_HTML, null);
+        sendEmail(text, subject, accountOwnersEmails, MediaType.TEXT_HTML, null);
     }
 
-    public void sendTrialExpiredNotification(String accountId) throws IOException, MessagingException, ServerException {
-        List<String> accountOwnersEmails = getAccountOwnersEmails(accountId);
-        LOG.debug("Send email about trial removing to {}", accountOwnersEmails);
-        // TODO: replace text with template && check title
-        sendEmail("Send email about trial removing", "Subscription notification", accountOwnersEmails, MediaType.TEXT_PLAIN, null);
-    }
+//    public void sendTrialExpiredNotification(String accountId) throws ServerException {
+//        List<String> accountOwnersEmails = getAccountOwnersEmails(accountId);
+//        LOG.debug("Send email about trial removing to {}", accountOwnersEmails);
+//        // TODO: replace text with template && check title
+//        try {
+//            sendEmail("Send email about trial removing", "Subscription notification", accountOwnersEmails, MediaType.TEXT_PLAIN, null);
+//         } catch (IOException | MessagingException e) {
+//         }
 
-    public void sendSubscriptionChargedNotification(String accountId) throws IOException, MessagingException, ServerException {
-        List<String> accountOwnersEmails = getAccountOwnersEmails(accountId);
-        LOG.debug("Send email about subscription charging to {}", accountOwnersEmails);
-        // TODO: replace text with template && check title
-        sendEmail("Send email about subscription charging", "Subscription notification", accountOwnersEmails, MediaType.TEXT_PLAIN, null);
-    }
+//    }
+//
+//    public void sendSubscriptionChargedNotification(String accountId) throws ServerException {
+//        List<String> accountOwnersEmails = getAccountOwnersEmails(accountId);
+//        LOG.debug("Send email about subscription charging to {}", accountOwnersEmails);
+//        // TODO: replace text with template && check title
+//        try {
+//            sendEmail("Send email about subscription charging", "Subscription notification", accountOwnersEmails, MediaType.TEXT_PLAIN, null);
+//         } catch (IOException | MessagingException e) {
+//         }
 
-    public void sendSubscriptionChargeFailNotification(String accountId) throws IOException, MessagingException, ServerException {
-        List<String> accountOwnersEmails = getAccountOwnersEmails(accountId);
-        LOG.debug("Send email about unsuccessful subscription charging to {}", accountOwnersEmails);
-        // TODO: replace text with template && check title
-        sendEmail("Send email about unsuccessful subscription charging", "Subscription notification", accountOwnersEmails, MediaType.TEXT_PLAIN, null);
-    }
+//    }
+//
+//    public void sendSubscriptionChargeFailNotification(String accountId) throws ServerException {
+//        List<String> accountOwnersEmails = getAccountOwnersEmails(accountId);
+//        LOG.debug("Send email about unsuccessful subscription charging to {}", accountOwnersEmails);
+//        // TODO: replace text with template && check title
+//        try {
+//            sendEmail("Send email about unsuccessful subscription charging", "Subscription notification", accountOwnersEmails, MediaType.TEXT_PLAIN, null);
+//         } catch (IOException | MessagingException e) {
+//         }
 
-    public void sendSubscriptionExpiredNotification(String accountId, Integer days) throws IOException, MessagingException, ServerException {
-        List<String> accountOwnersEmails = getAccountOwnersEmails(accountId);
-        LOG.debug("Send email about trial removing in {} days to {}", days, accountOwnersEmails);
-        // TODO: replace text with template && check title
-        sendEmail("Send email about trial removing in " + days + " days", "Subscription notification", accountOwnersEmails, MediaType.TEXT_PLAIN, null);
-    }
+//    }
+//
+//    public void sendSubscriptionExpiredNotification(String accountId, Integer days) throws ServerException {
+//        List<String> accountOwnersEmails = getAccountOwnersEmails(accountId);
+//        LOG.debug("Send email about trial removing in {} days to {}", days, accountOwnersEmails);
+//        // TODO: replace text with template && check title
+//        try {
+//            sendEmail("Send email about trial removing in " + days + " days", "Subscription notification", accountOwnersEmails, MediaType.TEXT_PLAIN, null);
+//         } catch (IOException | MessagingException e) {
+//         }
+//    }
 
     public void sendSaasSignupNotification(String accountId) throws ServerException {
         List<String> accountOwnersEmails = getAccountOwnersEmails(accountId);

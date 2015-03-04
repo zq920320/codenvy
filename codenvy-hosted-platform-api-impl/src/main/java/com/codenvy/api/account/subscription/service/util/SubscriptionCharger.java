@@ -31,8 +31,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-import javax.mail.MessagingException;
-import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -79,15 +77,15 @@ public class SubscriptionCharger {
                         nextBillingDate.add(Calendar.MONTH, subscription.getBillingCycle());
                         subscription.setNextBillingDate(nextBillingDate.getTime());
                         accountDao.updateSubscription(subscription);
-                        mailUtil.sendSubscriptionChargedNotification(subscription.getAccountId());
+                        //mailUtil.sendSubscriptionChargedNotification(subscription.getAccountId());
                     } catch (Exception e) {
                         LOG.error(e.getLocalizedMessage(), e);
                         accountDao.updateSubscription(subscription.withState(SubscriptionState.INACTIVE));
                         service.onRemoveSubscription(subscription);
-                        mailUtil.sendSubscriptionChargeFailNotification(subscription.getAccountId());
+                        //mailUtil.sendSubscriptionChargeFailNotification(subscription.getAccountId());
                     }
                 }
-            } catch (ApiException | IOException | MessagingException e) {
+            } catch (ApiException  e) {
                 LOG.error(e.getLocalizedMessage(), e);
             }
         }
