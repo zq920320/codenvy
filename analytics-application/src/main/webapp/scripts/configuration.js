@@ -1798,9 +1798,9 @@ function AnalyticsConfiguration() {
         "tasks_stopped_normally": "#TASKS",
         "tasks_stopped_by_timeout": "#TASKS",
 
-        "im_downloads_install_script": "#USERS",
-        "im_downloads_codenvy": "#USERS",
-        "im_on_prem_issued": "#USERS",
+        "im_downloads_install_script": "#ARTIFACTS",
+        "im_downloads_codenvy": "#ARTIFACTS",
+        "im_on_prem_issued": "#TRIALS",
         "created_unique_users": "#USERS",
         "new_users_usage_time_greater_1_min": "#USERS",
         "new_users_usage_time_greater_60_min": "#USERS",
@@ -1824,7 +1824,9 @@ function AnalyticsConfiguration() {
         "#PROJECTS": "/analytics/pages/projects-view.jsp",
         "#SESSIONS": "/analytics/pages/sessions-view.jsp",
         "#FAILED_SESSIONS": "/analytics/pages/failed-sessions-view.jsp",
-        "#TASKS": "/analytics/pages/tasks-view.jsp"
+        "#TASKS": "/analytics/pages/tasks-view.jsp",
+        "#ARTIFACTS": "/analytics/pages/im-reports/im-downloads.jsp",
+        "#TRIALS": "/analytics/pages/im-reports/im-on-prem-trials.jsp",
     };
 
     var factoryUrlColumnNames = ["Factory URL", "Factory"];
