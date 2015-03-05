@@ -72,8 +72,7 @@ public class MailScheduler {
             List<Invoice> notSendInvoices = billingService.getInvoices(InvoiceFilter.builder()
                                                                                     .withIsMailNotSend()
                                                                                     .withPaymentStates(PaymentState.PAYMENT_FAIL,
-                                                                                                       PaymentState.PAID_SUCCESSFULLY,
-                                                                                                       PaymentState.CREDIT_CARD_MISSING)
+                                                                                                       PaymentState.PAID_SUCCESSFULLY)
                                                                                     .withMaxItems(invoices_limit)
                                                                                     .withSkipCount(0)
                                                                                     .build());

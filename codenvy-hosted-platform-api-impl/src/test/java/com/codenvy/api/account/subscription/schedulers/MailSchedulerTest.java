@@ -88,10 +88,9 @@ public class MailSchedulerTest {
                 final InvoiceFilter invoiceFilter = (InvoiceFilter)o;
 
                 final List<String> states = new ArrayList<>(Arrays.asList(invoiceFilter.getStates()));
-                return states.size() == 3
+                return states.size() == 2
                        && states.contains(PaymentState.PAYMENT_FAIL.getState())
                        && states.contains(PaymentState.PAID_SUCCESSFULLY.getState())
-                       && states.contains(PaymentState.CREDIT_CARD_MISSING.getState())
                        && invoiceFilter.getIsMailNotSend()
                        && INVOICES_LIMIT == invoiceFilter.getMaxItems()
                        && invoiceFilter.getSkipCount() == null;
@@ -120,10 +119,9 @@ public class MailSchedulerTest {
                 final InvoiceFilter invoiceFilter = (InvoiceFilter)o;
 
                 final List<String> states = new ArrayList<>(Arrays.asList(invoiceFilter.getStates()));
-                return states.size() == 3
+                return states.size() == 2
                        && states.contains(PaymentState.PAYMENT_FAIL.getState())
                        && states.contains(PaymentState.PAID_SUCCESSFULLY.getState())
-                       && states.contains(PaymentState.CREDIT_CARD_MISSING.getState())
                        && invoiceFilter.getIsMailNotSend()
                        && INVOICES_LIMIT == invoiceFilter.getMaxItems()
                        && invoiceFilter.getSkipCount() == null;
@@ -134,37 +132,4 @@ public class MailSchedulerTest {
         verify(subscriptionMailSender).sendInvoice(eq(ACCOUNT_ID), eq(invoice.getPaymentState()), anyString());
         verify(billingService).markInvoiceAsSent(eq(1L));
     }
-
-    @Test
-    public void shouldSendEmailForInvoiceWithStateCreditCardMissing() throws Exception {
-        final Invoice invoice = dto.createDto(Invoice.class)
-                                   .withAccountId(ACCOUNT_ID)
-                                   .withTotal(0D)
-                                   .withId(1L)
-                                   .withPaymentState(PaymentState.CREDIT_CARD_MISSING.getState());
-        when(billingService.getInvoices((InvoiceFilter)anyObject())).thenReturn(Arrays.asList(invoice));
-
-        mailScheduler.sendEmails();
-
-        verify(billingService).getInvoices(argThat(new ArgumentMatcher<InvoiceFilter>() {
-            @Override
-            public boolean matches(Object o) {
-                final InvoiceFilter invoiceFilter = (InvoiceFilter)o;
-
-                final List<String> states = new ArrayList<>(Arrays.asList(invoiceFilter.getStates()));
-                return states.size() == 3
-                       && states.contains(PaymentState.PAYMENT_FAIL.getState())
-                       && states.contains(PaymentState.PAID_SUCCESSFULLY.getState())
-                       && states.contains(PaymentState.CREDIT_CARD_MISSING.getState())
-                       && invoiceFilter.getIsMailNotSend()
-                       && INVOICES_LIMIT == invoiceFilter.getMaxItems()
-                       && invoiceFilter.getSkipCount() == null;
-            }
-        }));
-
-        verify(templateProcessor).processTemplate((Invoice)anyObject(), (Writer)anyObject());
-        verify(subscriptionMailSender).sendInvoice(eq(ACCOUNT_ID), eq(invoice.getPaymentState()), anyString());
-        verify(billingService).markInvoiceAsSent(eq(1L));
-    }
-
 }

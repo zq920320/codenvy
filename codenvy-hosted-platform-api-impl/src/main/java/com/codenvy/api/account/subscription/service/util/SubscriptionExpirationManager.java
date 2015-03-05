@@ -35,14 +35,18 @@ import java.util.List;
  *
  * @author Alexander Garagatyi
  */
+@Deprecated
 public class SubscriptionExpirationManager {
     private static final Logger LOG = LoggerFactory.getLogger(SubscriptionExpirationManager.class);
 
-    @Inject
-    private AccountDao accountDao;
+    private final AccountDao             accountDao;
+    private final SubscriptionMailSender mailUtil;
 
     @Inject
-    private SubscriptionMailSender mailUtil;
+    public SubscriptionExpirationManager(AccountDao accountDao, SubscriptionMailSender mailUtil) {
+        this.accountDao = accountDao;
+        this.mailUtil = mailUtil;
+    }
 
     public void sendEmailAboutExpiringTrial(String serviceId, Integer days) {
         try {
@@ -50,7 +54,7 @@ public class SubscriptionExpirationManager {
             calendar.setTime(new Date());
             calendar.add(Calendar.DATE, days);
 
-            List<Subscription> subscriptions = accountDao.getSubscriptionQueryBuilder().getExpiringQuery(serviceId, days).execute();
+            List<Subscription> subscriptions = accountDao.getSubscriptionQueryBuilder().getTrialExpiringQuery(serviceId, days).execute();
             for (Subscription subscription : subscriptions) {
                 try {
                     //mailUtil.sendSubscriptionExpiredNotification(subscription.getAccountId(), days);
@@ -70,7 +74,7 @@ public class SubscriptionExpirationManager {
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(new Date());
             calendar.add(Calendar.DATE, -days);
-            List<Subscription> subscriptions = accountDao.getSubscriptionQueryBuilder().getExpiredQuery(serviceId, days).execute();
+            List<Subscription> subscriptions = accountDao.getSubscriptionQueryBuilder().getTrialExpiredQuery(serviceId, days).execute();
             for (Subscription subscription : subscriptions) {
                 try {
                     //mailUtil.sendSubscriptionExpiredNotification(subscription.getAccountId(), days);

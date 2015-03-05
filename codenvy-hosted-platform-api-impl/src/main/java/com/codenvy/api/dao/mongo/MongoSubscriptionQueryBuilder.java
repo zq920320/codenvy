@@ -80,7 +80,7 @@ public class MongoSubscriptionQueryBuilder implements SubscriptionQueryBuilder {
     }
 
     @Override
-    public SubscriptionQuery getExpiringQuery(final String service, final int days) {
+    public SubscriptionQuery getTrialExpiringQuery(final String service, final int days) {
         return new SubscriptionQuery() {
             @Override
             public List<Subscription> execute() throws ServerException {
@@ -99,7 +99,7 @@ public class MongoSubscriptionQueryBuilder implements SubscriptionQueryBuilder {
     }
 
     @Override
-    public SubscriptionQuery getExpiredQuery(final String service, final int days) {
+    public SubscriptionQuery getTrialExpiredQuery(final String service, final int days) {
         return new SubscriptionQuery() {
             @Override
             public List<Subscription> execute() throws ServerException {

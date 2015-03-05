@@ -28,8 +28,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-import javax.mail.MessagingException;
-import java.io.IOException;
 import java.util.List;
 
 
@@ -41,23 +39,25 @@ import java.util.List;
 public class SubscriptionTrialRemover {
     private static final Logger LOG = LoggerFactory.getLogger(SubscriptionTrialRemover.class);
 
-    @Inject
-    private AccountDao accountDao;
+    private final AccountDao accountDao;
 
     @Inject
-    private SubscriptionMailSender mailUtil;
+    public SubscriptionTrialRemover(AccountDao accountDao) {
+        this.accountDao = accountDao;
+    }
 
     public void removeExpiredTrial(SubscriptionService service) {
         try {
             List<Subscription> subscriptions = accountDao.getSubscriptionQueryBuilder()
                                                          .getTrialExpiredQuery(service.getServiceId())
                                                          .execute();
-
             for (Subscription subscription : subscriptions) {
                 try {
+                    //TODO Rework this. When trial is expired then try to charge subscription
                     accountDao.updateSubscription(subscription.withState(SubscriptionState.INACTIVE));
                     service.onRemoveSubscription(subscription);
-                    //mailUtil.sendTrialExpiredNotification(subscription.getAccountId());
+                    //TODO Is it need to send email?
+                    // mailUtil.sendTrialExpiredNotification(subscription.getAccountId());
                 } catch (ApiException e) {
                     LOG.error(e.getLocalizedMessage(), e);
                 }

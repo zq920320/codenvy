@@ -17,10 +17,10 @@
  */
 package com.codenvy.api.account.subscription.service.util;
 
+import com.codenvy.api.account.PaymentService;
 import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.server.dao.PlanDao;
 import com.codenvy.api.account.server.dao.Subscription;
-import com.codenvy.api.account.PaymentService;
 import com.codenvy.api.account.server.subscription.SubscriptionService;
 import com.codenvy.api.account.shared.dto.Plan;
 import com.codenvy.api.account.shared.dto.SubscriptionState;
@@ -35,6 +35,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import static java.lang.String.format;
+
 /**
  * Charges for subscription and sends emails to users on successful or unsuccessful charge
  *
@@ -43,17 +45,16 @@ import java.util.List;
 public class SubscriptionCharger {
     private static final Logger LOG = LoggerFactory.getLogger(SubscriptionCharger.class);
 
-    @Inject
-    private AccountDao accountDao;
+    private final AccountDao     accountDao;
+    private final PaymentService paymentService;
+    private final PlanDao        planDao;
 
     @Inject
-    private PaymentService paymentService;
-
-    @Inject
-    private PlanDao planDao;
-
-    @Inject
-    private SubscriptionMailSender mailUtil;
+    public SubscriptionCharger(AccountDao accountDao, PaymentService paymentService, PlanDao planDao) {
+        this.accountDao = accountDao;
+        this.paymentService = paymentService;
+        this.planDao = planDao;
+    }
 
     public void charge(SubscriptionService service) {
         List<Subscription> subscriptions;
@@ -79,13 +80,13 @@ public class SubscriptionCharger {
                         accountDao.updateSubscription(subscription);
                         //mailUtil.sendSubscriptionChargedNotification(subscription.getAccountId());
                     } catch (Exception e) {
-                        LOG.error(e.getLocalizedMessage(), e);
+                        LOG.error(format("Can't charge subscription %s. %s", subscription.getId(), e.getLocalizedMessage()), e);
                         accountDao.updateSubscription(subscription.withState(SubscriptionState.INACTIVE));
                         service.onRemoveSubscription(subscription);
                         //mailUtil.sendSubscriptionChargeFailNotification(subscription.getAccountId());
                     }
                 }
-            } catch (ApiException  e) {
+            } catch (ApiException e) {
                 LOG.error(e.getLocalizedMessage(), e);
             }
         }

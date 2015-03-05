@@ -23,7 +23,6 @@ import com.codenvy.api.account.server.subscription.SubscriptionService;
 import com.codenvy.api.account.shared.dto.UsedAccountResources;
 import com.codenvy.api.account.subscription.SubscriptionEvent;
 import com.codenvy.api.account.subscription.service.util.SubscriptionCharger;
-import com.codenvy.api.account.subscription.service.util.SubscriptionExpirationManager;
 import com.codenvy.api.account.subscription.service.util.SubscriptionTrialRemover;
 import com.codenvy.api.core.ApiException;
 import com.codenvy.api.core.ConflictException;
@@ -52,22 +51,19 @@ import static com.codenvy.api.account.subscription.ServiceId.FACTORY;
 public class FactorySubscriptionService extends SubscriptionService {
     private static final Logger LOG = LoggerFactory.getLogger(FactorySubscriptionService.class);
 
-    private final AccountDao                    accountDao;
-    private final SubscriptionCharger           chargeUtil;
-    private final SubscriptionExpirationManager expirationUtil;
-    private final SubscriptionTrialRemover      removeUtil;
-    private final EventService                  eventService;
+    private final AccountDao               accountDao;
+    private final SubscriptionCharger      chargeUtil;
+    private final SubscriptionTrialRemover removeUtil;
+    private final EventService             eventService;
 
     @Inject
     public FactorySubscriptionService(AccountDao accountDao,
                                       SubscriptionCharger chargeUtil,
-                                      SubscriptionExpirationManager expirationUtil,
                                       SubscriptionTrialRemover removeUtil,
                                       EventService eventService) {
         super(FACTORY, FACTORY);
         this.accountDao = accountDao;
         this.chargeUtil = chargeUtil;
-        this.expirationUtil = expirationUtil;
         this.removeUtil = removeUtil;
         this.eventService = eventService;
     }
@@ -111,16 +107,12 @@ public class FactorySubscriptionService extends SubscriptionService {
     @Override
     public void onCheckSubscriptions() throws ApiException {
         removeUtil.removeExpiredTrial(this);
-
-        expirationUtil.sendEmailAboutExpiringTrial(getServiceId(), 2);
-
-        expirationUtil.sendEmailAboutExpiredTrial(getServiceId(), 2);
-
-        expirationUtil.sendEmailAboutExpiredTrial(getServiceId(), 7);
-
         chargeUtil.charge(this);
 
-//        removeUtil.removeExpiredSubscriptions(this);
+//        TODO It is need to send emails about trial expiration?
+//        expirationUtil.sendEmailAboutExpiringTrial(getServiceId(), 2);
+//        expirationUtil.sendEmailAboutExpiredTrial(getServiceId(), 2);
+//        expirationUtil.sendEmailAboutExpiredTrial(getServiceId(), 7);
     }
 
     @Override
