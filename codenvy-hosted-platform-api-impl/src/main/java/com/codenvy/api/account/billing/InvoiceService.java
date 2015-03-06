@@ -129,27 +129,6 @@ public class InvoiceService extends Service {
         return Response.ok(response).build();
     }
 
-    @GET
-    @Path("/{invoiceId}")
-    @Produces("application/pdf")
-    @RolesAllowed({"account/owner", "system/admin", "system/manager"})
-    public Response getAccountInvoicePdf(@ApiParam(value = "Account ID", required = true)
-                                         @PathParam("accountId") String accountId,
-                                         @ApiParam(value = "Invoice ID", required = true)
-                                         @PathParam("invoiceId") long invoiceId) throws NotFoundException, ServerException {
-        final Invoice invoice = billingService.getInvoice(invoiceId);
-        if (invoice.getId().equals(invoiceId)) {
-            StreamingOutput response = new StreamingOutput() {
-                @Override
-                public void write(OutputStream outputStream) throws IOException, WebApplicationException {
-//                        outputStream.write(PDFStream);
-                }
-            };
-            return Response.ok(response).build();
-        }
-        throw new NotFoundException("No such invoice.");
-    }
-
     private InvoiceDescriptor toDescriptor(Invoice invoice) {
         return DtoFactory.getInstance().createDto(InvoiceDescriptor.class).withId(invoice.getId())
                          .withAccountId(invoice.getAccountId())
@@ -183,15 +162,6 @@ public class InvoiceService extends Service {
                                                      MediaType.TEXT_HTML,
                                                      null,
                                                      "html view");
-
-        final Link pdfLink = LinksHelper.createLink(HttpMethod.GET,
-                                                    uriBuilder.clone()
-                                                              .path(getClass(), "getAccountInvoicePdf")
-                                                              .build(invoice.getAccountId(), invoice.getId())
-                                                              .toString(),
-                                                    "application/pdf",
-                                                    null,
-                                                    "pdf view");
-        return Arrays.asList(jsonLink, httpLink, pdfLink);
+        return Arrays.asList(jsonLink, httpLink);
     }
 }
