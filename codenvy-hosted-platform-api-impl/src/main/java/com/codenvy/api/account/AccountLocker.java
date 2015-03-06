@@ -76,7 +76,7 @@ public class AccountLocker {
         eventService.publish(AccountLockEvent.accountUnlockedEvent(accountId));
     }
 
-    public void locktResources(String accountId) {
+    public void lockResources(String accountId) {
         try {
             final Account account = accountDao.getById(accountId);
             account.getAttributes().put(Constants.RESOURCES_LOCKED_PROPERTY, "true");

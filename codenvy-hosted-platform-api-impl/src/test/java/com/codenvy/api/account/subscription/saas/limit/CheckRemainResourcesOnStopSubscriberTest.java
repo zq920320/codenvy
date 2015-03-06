@@ -126,7 +126,7 @@ public class CheckRemainResourcesOnStopSubscriberTest {
 
         subscriber.onEvent(RunnerEvent.stoppedEvent(PROCESS_ID, WS_ID, "/project"));
 
-        verify(accountLocker).locktResources(eq(ACC_ID));
+        verify(accountLocker).lockResources(eq(ACC_ID));
     }
 
 

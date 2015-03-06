@@ -90,7 +90,6 @@ public class RunStatusSubscriber implements EventSubscriber<RunnerEvent> {
                 resourcesUsageTracker.resourceUsageStopped(RunTasksActivityChecker.PFX + String.valueOf(event.getProcessId()));
                 break;
             default:
-                return;
         }
     }
 

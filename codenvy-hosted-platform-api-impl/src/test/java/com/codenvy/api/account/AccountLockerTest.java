@@ -67,7 +67,7 @@ public class AccountLockerTest {
 
         when(workspaceDao.getByAccount(anyString())).thenReturn(Arrays.asList(createWorkspace("accountId", "ws_1", false),
                                                                               createWorkspace("accountId", "ws_2", false)));
-        accountLocker.locktResources("accountId");
+        accountLocker.lockResources("accountId");
 
         verify(accountDao).update(argThat(new ArgumentMatcher<Account>() {
             @Override
