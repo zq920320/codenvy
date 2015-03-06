@@ -33,6 +33,7 @@ import com.codenvy.api.account.impl.shared.dto.AccountResources;
 import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.server.dao.Subscription;
 import com.codenvy.api.account.server.subscription.SubscriptionService;
+import com.codenvy.api.account.server.subscription.SubscriptionServiceRegistry;
 import com.codenvy.api.account.subscription.ServiceId;
 import com.codenvy.api.account.subscription.service.util.SubscriptionMailSender;
 import com.codenvy.api.core.ForbiddenException;
@@ -115,7 +116,10 @@ public class BraintreeCreditCardDaoImplTest {
     private SubscriptionMailSender subscriptionMailSender;
 
     @Mock
-    private SubscriptionService subscriptionMailService;
+    private SubscriptionService subscriptionService;
+
+    @Mock
+    private SubscriptionServiceRegistry subscriptionServiceRegistry;
 
     @Mock
     User user;
@@ -130,6 +134,7 @@ public class BraintreeCreditCardDaoImplTest {
         when(gateway.customer()).thenReturn(customerGateway);
         when(gateway.creditCard()).thenReturn(cardGateway);
         when(creditCard.getToken()).thenReturn(TOKEN);
+        when(subscriptionServiceRegistry.get(anyString())).thenReturn(subscriptionService);
         Field period = BraintreeCreditCardDaoImpl.class.getDeclaredField("billingPeriod");
         period.setAccessible(true);
         period.set(dao, new MonthlyBillingPeriod());

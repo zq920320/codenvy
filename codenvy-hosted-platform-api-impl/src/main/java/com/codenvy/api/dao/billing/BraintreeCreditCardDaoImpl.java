@@ -35,6 +35,7 @@ import com.codenvy.api.account.impl.shared.dto.CreditCard;
 import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.server.dao.Subscription;
 import com.codenvy.api.account.server.subscription.SubscriptionService;
+import com.codenvy.api.account.server.subscription.SubscriptionServiceRegistry;
 import com.codenvy.api.account.shared.dto.SubscriptionState;
 import com.codenvy.api.account.subscription.ServiceId;
 import com.codenvy.api.account.subscription.service.util.SubscriptionMailSender;
@@ -75,12 +76,12 @@ public class BraintreeCreditCardDaoImpl implements CreditCardDao {
 
     private final SubscriptionMailSender subscriptionMailSender;
 
-    private final SubscriptionService subscriptionService;
+    private final SubscriptionServiceRegistry registry;
 
     @Inject
     public BraintreeCreditCardDaoImpl(BraintreeGateway gateway, EventService eventService, BillingService billingService,
                                       BillingPeriod billingPeriod, AccountLocker accountLocker, AccountDao accountDao,
-                                      SubscriptionMailSender subscriptionMailSender, SubscriptionService subscriptionService) {
+                                      SubscriptionMailSender subscriptionMailSender, SubscriptionServiceRegistry registry) {
         this.gateway = gateway;
         this.eventService = eventService;
         this.billingService = billingService;
@@ -88,7 +89,7 @@ public class BraintreeCreditCardDaoImpl implements CreditCardDao {
         this.accountLocker = accountLocker;
         this.accountDao = accountDao;
         this.subscriptionMailSender = subscriptionMailSender;
-        this.subscriptionService = subscriptionService;
+        this.registry = registry;
     }
 
     @Override
@@ -235,7 +236,7 @@ public class BraintreeCreditCardDaoImpl implements CreditCardDao {
             final Subscription activeSaasSubscription = accountDao.getActiveSubscription(accountId, ServiceId.SAAS);
             if (activeSaasSubscription != null && !"sas-community".equals(activeSaasSubscription.getPlanId())) {
                 accountDao.updateSubscription(activeSaasSubscription.withState(SubscriptionState.INACTIVE));
-                subscriptionService.onRemoveSubscription(activeSaasSubscription);
+                registry.get(ServiceId.SAAS).onRemoveSubscription(activeSaasSubscription);
             }
         } catch (ApiException e) {
             LOG.warn("Unable to remove subscription after CC deletion.", e);
