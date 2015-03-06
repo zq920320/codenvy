@@ -31,7 +31,7 @@ import java.security.SecureRandom;
 @Singleton
 public class SSHAPasswordEncryptor implements PasswordEncryptor {
 
-    final   String       SSHA_PREFIX = "{SSHA}";
+    final  static String SSHA_PREFIX = "{SSHA}";
     private SecureRandom random      = new SecureRandom();
 
     public String encryptPassword(byte[] password) throws NamingException {

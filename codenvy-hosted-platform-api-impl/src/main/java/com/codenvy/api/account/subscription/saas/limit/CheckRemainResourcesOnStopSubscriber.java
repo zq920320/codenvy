@@ -45,7 +45,7 @@ import java.util.List;
 /**
  * After run stops, checks that remaining RAM resources is enough, or block further runs for given account.
  *
- * @author Max Shaposhnik (mshaposhnik@codenvy.com) on 1/15/15.
+ * @author Max Shaposhnik (mshaposhnik@codenvy.com) on 1/15/15
  */
 public class CheckRemainResourcesOnStopSubscriber implements EventSubscriber<RunnerEvent> {
     private static final Logger LOG = LoggerFactory.getLogger(CheckRemainResourcesOnStopSubscriber.class);
@@ -97,6 +97,8 @@ public class CheckRemainResourcesOnStopSubscriber implements EventSubscriber<Run
                 activeRunHolder.removeRun(event);
                 checkRemainResources(event);
                 break;
+            default:
+                return;
         }
     }
 

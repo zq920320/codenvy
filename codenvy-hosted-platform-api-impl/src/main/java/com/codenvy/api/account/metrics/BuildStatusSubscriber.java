@@ -92,6 +92,8 @@ public class BuildStatusSubscriber implements EventSubscriber<BuilderEvent> {
             case DONE:
                 resourcesUsageTracker.resourceUsageStopped(BuildTasksActivityChecker.PFX + String.valueOf(event.getTaskId()));
                 break;
+            default:
+                return;
         }
     }
 
