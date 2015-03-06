@@ -23,6 +23,7 @@ import com.codenvy.api.account.server.subscription.SubscriptionService;
 import com.codenvy.api.account.shared.dto.UsedAccountResources;
 import com.codenvy.api.account.subscription.SubscriptionEvent;
 import com.codenvy.api.account.subscription.service.util.SubscriptionCharger;
+import com.codenvy.api.account.subscription.service.util.SubscriptionServiceHelper;
 import com.codenvy.api.account.subscription.service.util.SubscriptionTrialRemover;
 import com.codenvy.api.core.ApiException;
 import com.codenvy.api.core.ConflictException;
@@ -51,21 +52,24 @@ import static com.codenvy.api.account.subscription.ServiceId.FACTORY;
 public class FactorySubscriptionService extends SubscriptionService {
     private static final Logger LOG = LoggerFactory.getLogger(FactorySubscriptionService.class);
 
-    private final AccountDao               accountDao;
-    private final SubscriptionCharger      chargeUtil;
-    private final SubscriptionTrialRemover removeUtil;
-    private final EventService             eventService;
+    private final AccountDao                accountDao;
+    private final SubscriptionCharger       chargeUtil;
+    private final SubscriptionTrialRemover  removeUtil;
+    private final EventService              eventService;
+    private final SubscriptionServiceHelper subscriptionServiceHelper;
 
     @Inject
     public FactorySubscriptionService(AccountDao accountDao,
                                       SubscriptionCharger chargeUtil,
                                       SubscriptionTrialRemover removeUtil,
-                                      EventService eventService) {
+                                      EventService eventService,
+                                      SubscriptionServiceHelper subscriptionServiceHelper) {
         super(FACTORY, FACTORY);
         this.accountDao = accountDao;
         this.chargeUtil = chargeUtil;
         this.removeUtil = removeUtil;
         this.eventService = eventService;
+        this.subscriptionServiceHelper = subscriptionServiceHelper;
     }
 
     @Override
@@ -87,10 +91,13 @@ public class FactorySubscriptionService extends SubscriptionService {
             LOG.error(e.getLocalizedMessage(), e);
             throw new ServerException(e.getLocalizedMessage());
         }
+        subscriptionServiceHelper.checkCreditCard(subscription);
+        subscriptionServiceHelper.setDates(subscription);
     }
 
     @Override
     public void afterCreateSubscription(Subscription subscription) throws ApiException {
+        subscriptionServiceHelper.chargeSubscriptionIfNeed(subscription);
         eventService.publish(SubscriptionEvent.subscriptionAddedEvent(subscription));
     }
 

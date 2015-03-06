@@ -22,6 +22,7 @@ import com.codenvy.api.account.metrics.MeterBasedStorage;
 import com.codenvy.api.account.server.dao.Subscription;
 import com.codenvy.api.account.shared.dto.UsedAccountResources;
 import com.codenvy.api.account.shared.dto.WorkspaceResources;
+import com.codenvy.api.account.subscription.service.util.SubscriptionServiceHelper;
 import com.codenvy.api.core.ServerException;
 import com.codenvy.api.workspace.server.dao.Workspace;
 import com.codenvy.api.workspace.server.dao.WorkspaceDao;
@@ -56,6 +57,8 @@ public class SaasSubscriptionServiceTest {
     MeterBasedStorage meterBasedStorage;
     @Mock
     BillingPeriod     billingPeriod;
+    @Mock
+    private SubscriptionServiceHelper subscriptionServiceHelper;
 
     @InjectMocks
     private SaasSubscriptionService service;

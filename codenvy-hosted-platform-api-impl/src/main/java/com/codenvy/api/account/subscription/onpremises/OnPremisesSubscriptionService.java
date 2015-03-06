@@ -17,13 +17,13 @@
  */
 package com.codenvy.api.account.subscription.onpremises;
 
-import com.codenvy.api.account.PaymentService;
 import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.server.dao.Subscription;
 import com.codenvy.api.account.server.subscription.SubscriptionService;
 import com.codenvy.api.account.shared.dto.UsedAccountResources;
 import com.codenvy.api.account.subscription.SubscriptionEvent;
 import com.codenvy.api.account.subscription.service.util.SubscriptionCharger;
+import com.codenvy.api.account.subscription.service.util.SubscriptionServiceHelper;
 import com.codenvy.api.account.subscription.service.util.SubscriptionTrialRemover;
 import com.codenvy.api.core.ApiException;
 import com.codenvy.api.core.ConflictException;
@@ -38,10 +38,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.util.Date;
 
 import static com.codenvy.api.account.subscription.ServiceId.ONPREMISES;
-import static java.lang.String.format;
 
 /**
  * Service provide functionality of On-premises subscription.
@@ -52,24 +50,24 @@ import static java.lang.String.format;
 @Singleton
 public class OnPremisesSubscriptionService extends SubscriptionService {
     private static final Logger LOG = LoggerFactory.getLogger(OnPremisesSubscriptionService.class);
-    private final AccountDao               accountDao;
-    private final SubscriptionCharger      chargeUtil;
-    private final SubscriptionTrialRemover removeUtil;
-    private final PaymentService           paymentService;
-    private final EventService             eventService;
+    private final AccountDao                accountDao;
+    private final SubscriptionCharger       chargeUtil;
+    private final SubscriptionTrialRemover  removeUtil;
+    private final EventService              eventService;
+    private final SubscriptionServiceHelper subscriptionServiceHelper;
 
     @Inject
     public OnPremisesSubscriptionService(AccountDao accountDao,
                                          SubscriptionCharger chargeUtil,
                                          SubscriptionTrialRemover removeUtil,
-                                         PaymentService paymentService,
-                                         EventService eventService) {
+                                         EventService eventService,
+                                         SubscriptionServiceHelper subscriptionServiceHelper) {
         super(ONPREMISES, ONPREMISES);
         this.accountDao = accountDao;
         this.chargeUtil = chargeUtil;
         this.removeUtil = removeUtil;
-        this.paymentService = paymentService;
         this.eventService = eventService;
+        this.subscriptionServiceHelper = subscriptionServiceHelper;
     }
 
     @Override
@@ -89,24 +87,13 @@ public class OnPremisesSubscriptionService extends SubscriptionService {
             LOG.error(e.getLocalizedMessage(), e);
             throw new ServerException(e.getLocalizedMessage());
         }
+        subscriptionServiceHelper.checkCreditCard(subscription);
+        subscriptionServiceHelper.setDates(subscription);
     }
 
     @Override
     public void afterCreateSubscription(Subscription subscription) throws ApiException {
-        Date startTrial = subscription.getTrialStartDate();
-        Date endTrial = subscription.getTrialEndDate();
-        boolean presentTrialPeriod = startTrial != null && endTrial != null && (endTrial.getTime() - startTrial.getTime() > 0);
-
-        if (subscription.getUsePaymentSystem() && !presentTrialPeriod) {
-            try {
-                paymentService.charge(subscription);
-            } catch (ApiException e) {
-                LOG.error(format("Can't charge subscription with id %s. %s", subscription.getId(), e.getLocalizedMessage()), e);
-                removeSubscription(subscription);
-                throw e;
-            }
-        }
-
+        subscriptionServiceHelper.chargeSubscriptionIfNeed(subscription);
         eventService.publish(SubscriptionEvent.subscriptionAddedEvent(subscription));
     }
 
@@ -118,14 +105,6 @@ public class OnPremisesSubscriptionService extends SubscriptionService {
     @Override
     public void onUpdateSubscription(Subscription oldSubscription, Subscription newSubscription) throws ApiException {
 
-    }
-
-    private void removeSubscription(Subscription subscription) {
-        try {
-            accountDao.removeSubscription(subscription.getId());
-        } catch (Exception e) {
-            LOG.error(format("Can't remove subscription %s. %s", subscription.getId(), e.getLocalizedMessage()), e);
-        }
     }
 
     @Override

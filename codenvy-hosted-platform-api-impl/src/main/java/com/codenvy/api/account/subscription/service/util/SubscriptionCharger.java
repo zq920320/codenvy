@@ -59,9 +59,11 @@ public class SubscriptionCharger {
     public void charge(SubscriptionService service) {
         List<Subscription> subscriptions;
         try {
-            subscriptions = accountDao.getSubscriptionQueryBuilder().getChargeQuery(service.getServiceId()).execute();
+            subscriptions = accountDao.getSubscriptionQueryBuilder()
+                                      .getChargeQuery(service.getServiceId())
+                                      .execute();
         } catch (ServerException e) {
-            LOG.error(e.getLocalizedMessage(), e);
+            LOG.error(format("Can't get subscription for payment. %s", e.getLocalizedMessage()), e);
             return;
         }
 
@@ -74,9 +76,9 @@ public class SubscriptionCharger {
                         paymentService.charge(subscription);
 
                         Calendar nextBillingDate = Calendar.getInstance();
-                        nextBillingDate.setTime(new Date());
                         nextBillingDate.add(Calendar.MONTH, subscription.getBillingCycle());
                         subscription.setNextBillingDate(nextBillingDate.getTime());
+
                         accountDao.updateSubscription(subscription);
                         //mailUtil.sendSubscriptionChargedNotification(subscription.getAccountId());
                     } catch (Exception e) {
@@ -87,7 +89,7 @@ public class SubscriptionCharger {
                     }
                 }
             } catch (ApiException e) {
-                LOG.error(e.getLocalizedMessage(), e);
+                LOG.error(format("Can't charge subscription %s. %s", subscription.getId(), e.getLocalizedMessage()), e);
             }
         }
     }

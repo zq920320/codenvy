@@ -21,6 +21,7 @@ import com.codenvy.api.account.PaymentService;
 import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.server.dao.Subscription;
 import com.codenvy.api.account.server.subscription.SubscriptionService;
+import com.codenvy.api.account.subscription.service.util.SubscriptionServiceHelper;
 import com.codenvy.api.core.ApiException;
 import com.codenvy.api.core.ConflictException;
 
@@ -49,6 +50,8 @@ public class FactorySubscriptionServiceTest {
     private AccountDao     accountDao;
     @Mock
     private PaymentService paymentService;
+    @Mock
+    private SubscriptionServiceHelper subscriptionServiceHelper;
 
     @InjectMocks
     private FactorySubscriptionService service;

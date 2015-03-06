@@ -20,6 +20,7 @@ package com.codenvy.api.account.subscription.onpremises;
 import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.server.dao.Subscription;
 import com.codenvy.api.account.server.subscription.SubscriptionService;
+import com.codenvy.api.account.subscription.service.util.SubscriptionServiceHelper;
 import com.codenvy.api.core.ApiException;
 import com.codenvy.api.core.ConflictException;
 
@@ -44,7 +45,9 @@ import static org.mockito.Mockito.when;
 @Listeners(value = {MockitoTestNGListener.class})
 public class OnPremisesSubscriptionServiceTest {
     @Mock
-    private AccountDao accountDao;
+    private AccountDao                accountDao;
+    @Mock
+    private SubscriptionServiceHelper subscriptionServiceHelper;
 
     @InjectMocks
     private OnPremisesSubscriptionService service;
@@ -65,7 +68,7 @@ public class OnPremisesSubscriptionServiceTest {
     }
 
     @Test(expectedExceptions = ConflictException.class,
-          expectedExceptionsMessageRegExp = SubscriptionService.SUBSCRIPTION_LIMIT_EXHAUSTED_MESSAGE)
+            expectedExceptionsMessageRegExp = SubscriptionService.SUBSCRIPTION_LIMIT_EXHAUSTED_MESSAGE)
     public void testBeforeCreateWhenSubscriptionExists() throws ApiException {
         final String accountId = "acc1";
         when(accountDao.getActiveSubscription(accountId, service.getServiceId()))
