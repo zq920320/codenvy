@@ -186,7 +186,7 @@ public class SqlMeterBasedStorage implements MeterBasedStorage {
         return result;
     }
 
-    final class SQLUsageInformer implements UsageInformer {
+    static final class SQLUsageInformer implements UsageInformer {
 
         private long recordId;
 

@@ -30,7 +30,7 @@ import java.util.Locale;
  */
 public class DailyBillingPeriod implements BillingPeriod {
 
-    public final static SimpleDateFormat ID_FORMAT = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+    public final SimpleDateFormat ID_FORMAT = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
 
     @Override
     public Period getCurrent() {
