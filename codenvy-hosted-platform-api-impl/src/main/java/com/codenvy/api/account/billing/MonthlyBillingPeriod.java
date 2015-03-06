@@ -68,13 +68,7 @@ public class MonthlyBillingPeriod implements BillingPeriod {
 
             @Override
             public boolean equals(Object obj) {
-                if (this == obj) {
-                    return true;
-                }
-                if (obj instanceof Period) {
-                    return this.getId().equals(((Period)obj).getId());
-                }
-                return false;
+                return this == obj || obj instanceof Period && this.getId().equals(((Period)obj).getId());
             }
 
             @Override
