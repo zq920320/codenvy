@@ -18,15 +18,15 @@
 package com.codenvy.factory.storage.mongo;
 
 
-import com.codenvy.api.core.ApiException;
-import com.codenvy.api.core.NotFoundException;
-import com.codenvy.api.core.ServerException;
-import com.codenvy.api.factory.FactoryImage;
-import com.codenvy.api.factory.FactoryStore;
-import com.codenvy.api.factory.dto.Factory;
-import com.codenvy.commons.lang.NameGenerator;
-import com.codenvy.commons.lang.Pair;
-import com.codenvy.dto.server.DtoFactory;
+import org.eclipse.che.api.core.ApiException;
+import org.eclipse.che.api.core.NotFoundException;
+import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.api.factory.FactoryImage;
+import org.eclipse.che.api.factory.FactoryStore;
+import org.eclipse.che.api.factory.dto.Factory;
+import org.eclipse.che.commons.lang.NameGenerator;
+import org.eclipse.che.commons.lang.Pair;
+import org.eclipse.che.dto.server.DtoFactory;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.BasicDBObjectBuilder;
@@ -193,8 +193,8 @@ public class MongoDBFactoryStore implements FactoryStore {
      * @param factory
      *         - factory information
      * @return - if of stored factory
-     * @throws com.codenvy.api.core.NotFoundException if the given factory ID is not found
-     * @throws com.codenvy.api.core.ServerException if factory is null
+     * @throws org.eclipse.che.api.core.NotFoundException if the given factory ID is not found
+     * @throws org.eclipse.che.api.core.ServerException if factory is null
      */
     @Override
     public String updateFactory(String factoryId, Factory factory) throws NotFoundException, ServerException {

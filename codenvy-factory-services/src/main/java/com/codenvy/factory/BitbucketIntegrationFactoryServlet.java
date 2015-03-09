@@ -17,7 +17,7 @@
  */
 package com.codenvy.factory;
 
-import com.codenvy.commons.lang.URLEncodedUtils;
+import org.eclipse.che.commons.lang.URLEncodedUtils;
 
 import javax.inject.Singleton;
 import javax.servlet.ServletException;
