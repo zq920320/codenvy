@@ -20,10 +20,10 @@ package com.codenvy.api.dao.mongo;
 import de.bwaldvogel.mongo.MongoServer;
 import de.bwaldvogel.mongo.backend.memory.MemoryBackend;
 
-import com.codenvy.api.account.server.dao.PlanDao;
-import com.codenvy.api.account.shared.dto.Plan;
-import com.codenvy.api.core.ServerException;
-import com.codenvy.dto.server.DtoFactory;
+import org.eclipse.che.api.account.server.dao.PlanDao;
+import org.eclipse.che.api.account.shared.dto.Plan;
+import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.dto.server.DtoFactory;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;

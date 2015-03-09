@@ -17,10 +17,10 @@
  */
 package com.codenvy.workspace.interceptor;
 
-import com.codenvy.api.user.server.dao.UserDao;
-import com.codenvy.api.workspace.shared.dto.WorkspaceDescriptor;
-import com.codenvy.commons.env.EnvironmentContext;
-import com.codenvy.commons.lang.IoUtil;
+import org.eclipse.che.api.user.server.dao.UserDao;
+import org.eclipse.che.api.workspace.shared.dto.WorkspaceDescriptor;
+import org.eclipse.che.commons.env.EnvironmentContext;
+import org.eclipse.che.commons.lang.IoUtil;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;

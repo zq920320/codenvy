@@ -17,8 +17,8 @@
  */
 package com.codenvy.workspace.activity;
 
-import com.codenvy.api.core.notification.EventService;
-import com.codenvy.api.core.notification.EventSubscriber;
+import org.eclipse.che.api.core.notification.EventService;
+import org.eclipse.che.api.core.notification.EventSubscriber;
 import com.codenvy.workspace.event.WsActivityEvent;
 import com.codenvy.workspace.listener.WorkspaceRemovalListener;
 import com.google.common.cache.Cache;

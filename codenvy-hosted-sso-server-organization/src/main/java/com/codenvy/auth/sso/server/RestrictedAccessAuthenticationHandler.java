@@ -17,10 +17,10 @@
  */
 package com.codenvy.auth.sso.server;
 
-import com.codenvy.api.auth.AuthenticationException;
-import com.codenvy.api.core.ApiException;
-import com.codenvy.api.user.server.dao.Profile;
-import com.codenvy.api.user.server.dao.UserProfileDao;
+import org.eclipse.che.api.auth.AuthenticationException;
+import org.eclipse.che.api.core.ApiException;
+import org.eclipse.che.api.user.server.dao.Profile;
+import org.eclipse.che.api.user.server.dao.UserProfileDao;
 import com.codenvy.service.http.IdeVersionHolder;
 
 import org.slf4j.Logger;
@@ -56,9 +56,9 @@ public class RestrictedAccessAuthenticationHandler extends OrgServiceAuthenticat
     }
 
     @Override
-    public com.codenvy.commons.user.User authenticate(final String userName, final String password) throws
+    public org.eclipse.che.commons.user.User authenticate(final String userName, final String password) throws
                                                                                                     AuthenticationException {
-        com.codenvy.commons.user.User user = super.authenticate(userName, password);
+        org.eclipse.che.commons.user.User user = super.authenticate(userName, password);
 
         if (IdeVersionHolder.get()) {
             try {

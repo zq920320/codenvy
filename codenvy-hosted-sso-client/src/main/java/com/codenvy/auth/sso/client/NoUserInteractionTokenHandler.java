@@ -17,10 +17,10 @@
  */
 package com.codenvy.auth.sso.client;
 
-import com.codenvy.api.core.UnauthorizedException;
-import com.codenvy.commons.env.EnvironmentContext;
-import com.codenvy.commons.user.User;
-import com.codenvy.dto.server.DtoFactory;
+import org.eclipse.che.api.core.UnauthorizedException;
+import org.eclipse.che.commons.env.EnvironmentContext;
+import org.eclipse.che.commons.user.User;
+import org.eclipse.che.dto.server.DtoFactory;
 
 import javax.inject.Inject;
 import javax.servlet.FilterChain;

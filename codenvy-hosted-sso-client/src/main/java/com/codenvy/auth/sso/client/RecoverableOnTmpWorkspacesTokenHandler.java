@@ -17,7 +17,7 @@
  */
 package com.codenvy.auth.sso.client;
 
-import com.codenvy.commons.env.EnvironmentContext;
+import org.eclipse.che.commons.env.EnvironmentContext;
 import com.google.inject.name.Named;
 
 import javax.inject.Inject;

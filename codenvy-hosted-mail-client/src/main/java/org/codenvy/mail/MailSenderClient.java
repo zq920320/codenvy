@@ -17,8 +17,8 @@
  */
 package org.codenvy.mail;
 
-import com.codenvy.commons.json.JsonHelper;
-import com.codenvy.commons.lang.Deserializer;
+import org.eclipse.che.commons.json.JsonHelper;
+import org.eclipse.che.commons.lang.Deserializer;
 
 import javax.inject.Inject;
 import javax.inject.Named;

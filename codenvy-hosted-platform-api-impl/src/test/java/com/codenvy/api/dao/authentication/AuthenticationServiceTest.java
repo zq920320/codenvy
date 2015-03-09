@@ -18,15 +18,15 @@
 package com.codenvy.api.dao.authentication;
 
 
-import com.codenvy.api.auth.AuthenticationDao;
-import com.codenvy.api.auth.AuthenticationExceptionMapper;
-import com.codenvy.api.auth.AuthenticationService;
-import com.codenvy.api.auth.server.dto.DtoServerImpls;
-import com.codenvy.api.auth.shared.dto.Credentials;
-import com.codenvy.api.auth.shared.dto.Token;
-import com.codenvy.commons.user.User;
-import com.codenvy.commons.user.UserImpl;
-import com.codenvy.dto.server.DtoFactory;
+import org.eclipse.che.api.auth.AuthenticationDao;
+import org.eclipse.che.api.auth.AuthenticationExceptionMapper;
+import org.eclipse.che.api.auth.AuthenticationService;
+import org.eclipse.che.api.auth.server.dto.DtoServerImpls;
+import org.eclipse.che.api.auth.shared.dto.Credentials;
+import org.eclipse.che.api.auth.shared.dto.Token;
+import org.eclipse.che.commons.user.User;
+import org.eclipse.che.commons.user.UserImpl;
+import org.eclipse.che.dto.server.DtoFactory;
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.mapper.ObjectMapper;
 

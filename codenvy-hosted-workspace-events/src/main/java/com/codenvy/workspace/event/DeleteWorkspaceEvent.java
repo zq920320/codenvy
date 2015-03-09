@@ -17,8 +17,8 @@
  */
 package com.codenvy.workspace.event;
 
-import com.codenvy.api.core.notification.EventOrigin;
-import com.codenvy.api.workspace.server.dao.Workspace;
+import org.eclipse.che.api.core.notification.EventOrigin;
+import org.eclipse.che.api.workspace.server.dao.Workspace;
 
 /**
  * @author Sergii Leschenko 

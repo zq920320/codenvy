@@ -18,14 +18,14 @@
 package com.codenvy.auth.sso.server;
 
 
-import com.codenvy.commons.user.User;
+import org.eclipse.che.commons.user.User;
 
 import java.util.Collection;
 import java.util.Collections;
 
 /**
  * This class represents http transport object.
- * Allows to send com.codenvy.commons.user.User between sso server and sso client.
+ * Allows to send org.eclipse.che.commons.user.User between sso server and sso client.
  *
  * @author Sergii Kabashniuk
  */

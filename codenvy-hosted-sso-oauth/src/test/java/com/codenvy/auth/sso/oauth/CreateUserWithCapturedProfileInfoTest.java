@@ -18,19 +18,19 @@
 package com.codenvy.auth.sso.oauth;
 
 
-import com.codenvy.api.account.server.dao.AccountDao;
-import com.codenvy.api.auth.shared.dto.OAuthToken;
-import com.codenvy.api.core.ApiException;
-import com.codenvy.api.core.NotFoundException;
-import com.codenvy.api.user.server.dao.UserDao;
-import com.codenvy.api.workspace.server.dao.MemberDao;
-import com.codenvy.api.workspace.server.dao.WorkspaceDao;
+import org.eclipse.che.api.account.server.dao.AccountDao;
+import org.eclipse.che.api.auth.shared.dto.OAuthToken;
+import org.eclipse.che.api.core.ApiException;
+import org.eclipse.che.api.core.NotFoundException;
+import org.eclipse.che.api.user.server.dao.UserDao;
+import org.eclipse.che.api.workspace.server.dao.MemberDao;
+import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
 import com.codenvy.auth.sso.server.InputDataValidator;
 import com.codenvy.auth.sso.server.handler.BearerTokenAuthenticationHandler;
-import com.codenvy.dto.server.DtoFactory;
-import com.codenvy.security.oauth.OAuthAuthenticationException;
-import com.codenvy.security.oauth.OAuthAuthenticator;
-import com.codenvy.security.oauth.OAuthAuthenticatorProvider;
+import org.eclipse.che.dto.server.DtoFactory;
+import org.eclipse.che.security.oauth.OAuthAuthenticationException;
+import org.eclipse.che.security.oauth.OAuthAuthenticator;
+import org.eclipse.che.security.oauth.OAuthAuthenticatorProvider;
 
 import org.codenvy.mail.MailSenderClient;
 import org.mockito.InjectMocks;
@@ -77,7 +77,7 @@ public class CreateUserWithCapturedProfileInfoTest {
     @Mock
     private WorkspaceNameProposer                  wsNameProposer;
     @Mock
-    private com.codenvy.security.oauth.shared.User googleUser;
+    private org.eclipse.che.security.oauth.shared.User googleUser;
     @Mock
     private InputDataValidator                     inputDataValidator;
 

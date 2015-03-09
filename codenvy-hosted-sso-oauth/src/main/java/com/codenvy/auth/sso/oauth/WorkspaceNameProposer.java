@@ -17,10 +17,10 @@
  */
 package com.codenvy.auth.sso.oauth;
 
-import com.codenvy.api.core.NotFoundException;
-import com.codenvy.api.core.ServerException;
-import com.codenvy.api.workspace.server.dao.WorkspaceDao;
-import com.codenvy.commons.lang.NameGenerator;
+import org.eclipse.che.api.core.NotFoundException;
+import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
+import org.eclipse.che.commons.lang.NameGenerator;
 
 import javax.inject.Inject;
 import java.util.regex.Matcher;

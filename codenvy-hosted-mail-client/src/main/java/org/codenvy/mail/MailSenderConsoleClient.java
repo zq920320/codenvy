@@ -17,7 +17,7 @@
  */
 package org.codenvy.mail;
 
-import com.codenvy.commons.lang.IoUtil;
+import org.eclipse.che.commons.lang.IoUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +29,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
-import static com.codenvy.commons.lang.Deserializer.resolveVariables;
+import static org.eclipse.che.commons.lang.Deserializer.resolveVariables;
 
 public class MailSenderConsoleClient {
     private static final Logger LOG = LoggerFactory.getLogger(MailSenderConsoleClient.class);

@@ -17,15 +17,15 @@
  */
 package com.codenvy.workspace.listener;
 
-import com.codenvy.api.core.ConflictException;
-import com.codenvy.api.core.NotFoundException;
-import com.codenvy.api.core.ServerException;
-import com.codenvy.api.core.notification.EventService;
-import com.codenvy.api.user.server.dao.PreferenceDao;
-import com.codenvy.api.user.server.dao.UserDao;
-import com.codenvy.api.workspace.server.dao.Member;
-import com.codenvy.api.workspace.server.dao.MemberDao;
-import com.codenvy.api.workspace.server.dao.WorkspaceDao;
+import org.eclipse.che.api.core.ConflictException;
+import org.eclipse.che.api.core.NotFoundException;
+import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.api.core.notification.EventService;
+import org.eclipse.che.api.user.server.dao.PreferenceDao;
+import org.eclipse.che.api.user.server.dao.UserDao;
+import org.eclipse.che.api.workspace.server.dao.Member;
+import org.eclipse.che.api.workspace.server.dao.MemberDao;
+import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
 import com.codenvy.workspace.event.StopWsEvent;
 import com.google.common.cache.RemovalListener;
 import com.google.common.cache.RemovalNotification;

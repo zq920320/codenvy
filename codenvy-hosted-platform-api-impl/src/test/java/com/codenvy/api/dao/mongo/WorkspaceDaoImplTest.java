@@ -18,12 +18,12 @@
 package com.codenvy.api.dao.mongo;
 
 
-import com.codenvy.api.core.ConflictException;
-import com.codenvy.api.core.ServerException;
-import com.codenvy.api.core.notification.EventService;
-import com.codenvy.api.workspace.server.dao.Member;
-import com.codenvy.api.workspace.server.dao.MemberDao;
-import com.codenvy.api.workspace.server.dao.Workspace;
+import org.eclipse.che.api.core.ConflictException;
+import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.api.core.notification.EventService;
+import org.eclipse.che.api.workspace.server.dao.Member;
+import org.eclipse.che.api.workspace.server.dao.MemberDao;
+import org.eclipse.che.api.workspace.server.dao.Workspace;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 

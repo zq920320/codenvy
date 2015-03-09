@@ -17,7 +17,7 @@
  */
 package com.codenvy.auth.sso.server.deploy;
 
-import com.codenvy.api.workspace.server.WorkspaceService;
+import org.eclipse.che.api.workspace.server.WorkspaceService;
 import com.codenvy.auth.sso.server.interceptor.AddWorkspaceMemberInterceptor;
 import com.google.inject.AbstractModule;
 import com.google.inject.matcher.Matchers;

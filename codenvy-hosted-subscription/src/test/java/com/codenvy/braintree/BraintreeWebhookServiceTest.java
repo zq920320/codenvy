@@ -21,11 +21,11 @@ import com.braintreegateway.BraintreeGateway;
 import com.braintreegateway.WebhookNotification;
 import com.braintreegateway.WebhookNotificationGateway;
 import com.braintreegateway.exceptions.InvalidSignatureException;
-import com.codenvy.api.account.server.SubscriptionService;
-import com.codenvy.api.account.server.SubscriptionServiceRegistry;
-import com.codenvy.api.account.server.dao.AccountDao;
-import com.codenvy.api.account.server.dao.Subscription;
-import com.codenvy.api.core.ApiException;
+import org.eclipse.che.api.account.server.SubscriptionService;
+import org.eclipse.che.api.account.server.SubscriptionServiceRegistry;
+import org.eclipse.che.api.account.server.dao.AccountDao;
+import org.eclipse.che.api.account.server.dao.Subscription;
+import org.eclipse.che.api.core.ApiException;
 
 import org.mockito.InjectMocks;
 import org.mockito.Mock;

@@ -17,7 +17,7 @@
  */
 package com.codenvy.workspace.event;
 
-import com.codenvy.api.core.notification.EventOrigin;
+import org.eclipse.che.api.core.notification.EventOrigin;
 
 /**
  * Inform that there is activity in certain workspace.

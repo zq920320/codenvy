@@ -17,8 +17,8 @@
  */
 package com.codenvy.service.http;
 
-import com.codenvy.api.workspace.shared.dto.WorkspaceDescriptor;
-import com.codenvy.commons.env.EnvironmentContext;
+import org.eclipse.che.api.workspace.shared.dto.WorkspaceDescriptor;
+import org.eclipse.che.commons.env.EnvironmentContext;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

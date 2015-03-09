@@ -17,7 +17,7 @@
  */
 package com.codenvy.service.http;
 
-import com.codenvy.commons.env.EnvironmentContext;
+import org.eclipse.che.commons.env.EnvironmentContext;
 
 import javax.inject.Singleton;
 import javax.servlet.*;

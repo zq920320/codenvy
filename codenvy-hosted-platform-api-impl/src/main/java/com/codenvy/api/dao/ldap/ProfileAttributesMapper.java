@@ -17,8 +17,8 @@
  */
 package com.codenvy.api.dao.ldap;
 
-import com.codenvy.api.user.server.dao.Profile;
-import com.codenvy.commons.lang.Pair;
+import org.eclipse.che.api.user.server.dao.Profile;
+import org.eclipse.che.commons.lang.Pair;
 
 import javax.inject.Inject;
 import javax.inject.Named;

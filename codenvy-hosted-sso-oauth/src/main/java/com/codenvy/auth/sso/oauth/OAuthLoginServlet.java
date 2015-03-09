@@ -17,22 +17,22 @@
  */
 package com.codenvy.auth.sso.oauth;
 
-import com.codenvy.api.auth.AuthenticationException;
-import com.codenvy.api.auth.shared.dto.OAuthToken;
-import com.codenvy.api.core.ApiException;
-import com.codenvy.api.core.NotFoundException;
-import com.codenvy.api.core.ServerException;
-import com.codenvy.api.user.server.dao.User;
-import com.codenvy.api.user.server.dao.UserDao;
-import com.codenvy.api.workspace.server.dao.Member;
-import com.codenvy.api.workspace.server.dao.MemberDao;
-import com.codenvy.api.workspace.server.dao.WorkspaceDao;
+import org.eclipse.che.api.auth.AuthenticationException;
+import org.eclipse.che.api.auth.shared.dto.OAuthToken;
+import org.eclipse.che.api.core.ApiException;
+import org.eclipse.che.api.core.NotFoundException;
+import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.api.user.server.dao.User;
+import org.eclipse.che.api.user.server.dao.UserDao;
+import org.eclipse.che.api.workspace.server.dao.Member;
+import org.eclipse.che.api.workspace.server.dao.MemberDao;
+import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
 import com.codenvy.auth.sso.server.InputDataException;
 import com.codenvy.auth.sso.server.InputDataValidator;
 import com.codenvy.auth.sso.server.handler.BearerTokenAuthenticationHandler;
-import com.codenvy.security.oauth.OAuthAuthenticationException;
-import com.codenvy.security.oauth.OAuthAuthenticator;
-import com.codenvy.security.oauth.OAuthAuthenticatorProvider;
+import org.eclipse.che.security.oauth.OAuthAuthenticationException;
+import org.eclipse.che.security.oauth.OAuthAuthenticator;
+import org.eclipse.che.security.oauth.OAuthAuthenticatorProvider;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

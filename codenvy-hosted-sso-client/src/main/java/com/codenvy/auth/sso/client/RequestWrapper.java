@@ -17,7 +17,7 @@
  */
 package com.codenvy.auth.sso.client;
 
-import com.codenvy.commons.user.User;
+import org.eclipse.che.commons.user.User;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;

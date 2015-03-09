@@ -17,9 +17,9 @@
  */
 package com.codenvy.api.dao.ldap;
 
-import com.codenvy.api.core.NotFoundException;
-import com.codenvy.api.user.server.dao.Profile;
-import com.codenvy.commons.lang.Pair;
+import org.eclipse.che.api.core.NotFoundException;
+import org.eclipse.che.api.user.server.dao.Profile;
+import org.eclipse.che.commons.lang.Pair;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;

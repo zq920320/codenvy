@@ -17,14 +17,14 @@
  */
 package com.codenvy.api.dao.util;
 
-import com.codenvy.api.core.ApiException;
-import com.codenvy.api.core.NotFoundException;
-import com.codenvy.api.core.ServerException;
+import org.eclipse.che.api.core.ApiException;
+import org.eclipse.che.api.core.NotFoundException;
+import org.eclipse.che.api.core.ServerException;
 import com.codenvy.api.dao.mongo.MongoDatabaseProvider;
-import com.codenvy.api.user.server.dao.PreferenceDao;
-import com.codenvy.api.user.server.dao.Profile;
-import com.codenvy.api.user.server.dao.UserProfileDao;
-import com.codenvy.commons.lang.Pair;
+import org.eclipse.che.api.user.server.dao.PreferenceDao;
+import org.eclipse.che.api.user.server.dao.Profile;
+import org.eclipse.che.api.user.server.dao.UserProfileDao;
+import org.eclipse.che.commons.lang.Pair;
 import com.mongodb.BasicDBList;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;

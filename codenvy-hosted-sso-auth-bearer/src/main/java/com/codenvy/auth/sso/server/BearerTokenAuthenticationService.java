@@ -17,17 +17,17 @@
  */
 package com.codenvy.auth.sso.server;
 
-import com.codenvy.api.auth.AuthenticationException;
+import org.eclipse.che.api.auth.AuthenticationException;
+
 import com.codenvy.api.dao.authentication.AccessTicket;
 import com.codenvy.api.dao.authentication.CookieBuilder;
 import com.codenvy.api.dao.authentication.TicketManager;
 import com.codenvy.api.dao.authentication.TokenGenerator;
-
 import com.codenvy.auth.sso.server.handler.BearerTokenAuthenticationHandler;
 import com.codenvy.auth.sso.server.organization.UserCreator;
 import com.codenvy.auth.sso.server.organization.WorkspaceCreationValidator;
-import com.codenvy.commons.lang.IoUtil;
-import com.codenvy.commons.user.User;
+import org.eclipse.che.commons.lang.IoUtil;
+import org.eclipse.che.commons.user.User;
 
 import org.codenvy.mail.MailSenderClient;
 import org.slf4j.Logger;

@@ -17,10 +17,10 @@
  */
 package org.codenvy.mail.deploy;
 
-import com.codenvy.inject.DynaModule;
 import com.google.inject.AbstractModule;
 
 import org.codenvy.mail.MailSender;
+import org.eclipse.che.inject.DynaModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

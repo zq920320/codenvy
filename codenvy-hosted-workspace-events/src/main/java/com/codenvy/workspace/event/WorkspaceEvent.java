@@ -17,7 +17,7 @@
  */
 package com.codenvy.workspace.event;
 
-import com.codenvy.api.workspace.server.dao.Workspace;
+import org.eclipse.che.api.workspace.server.dao.Workspace;
 
 /** @author Sergii Leschenko */
 public abstract class WorkspaceEvent {

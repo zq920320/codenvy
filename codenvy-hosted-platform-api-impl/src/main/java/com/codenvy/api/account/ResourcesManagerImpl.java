@@ -17,17 +17,17 @@
  */
 package com.codenvy.api.account;
 
-import com.codenvy.api.account.server.ResourcesManager;
-import com.codenvy.api.account.shared.dto.UpdateResourcesDescriptor;
-import com.codenvy.api.core.ConflictException;
-import com.codenvy.api.core.ForbiddenException;
-import com.codenvy.api.core.NotFoundException;
-import com.codenvy.api.core.ServerException;
-import com.codenvy.api.runner.dto.ResourcesDescriptor;
-import com.codenvy.api.runner.internal.Constants;
-import com.codenvy.api.workspace.server.dao.Workspace;
-import com.codenvy.api.workspace.server.dao.WorkspaceDao;
-import com.codenvy.dto.server.DtoFactory;
+import org.eclipse.che.api.account.server.ResourcesManager;
+import org.eclipse.che.api.account.shared.dto.UpdateResourcesDescriptor;
+import org.eclipse.che.api.core.ConflictException;
+import org.eclipse.che.api.core.ForbiddenException;
+import org.eclipse.che.api.core.NotFoundException;
+import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.api.runner.dto.ResourcesDescriptor;
+import org.eclipse.che.api.runner.internal.Constants;
+import org.eclipse.che.api.workspace.server.dao.Workspace;
+import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
+import org.eclipse.che.dto.server.DtoFactory;
 
 import org.everrest.websockets.WSConnectionContext;
 import org.everrest.websockets.message.ChannelBroadcastMessage;

@@ -17,7 +17,7 @@
  */
 package com.codenvy.workspace.activity;
 
-import com.codenvy.api.core.notification.EventService;
+import org.eclipse.che.api.core.notification.EventService;
 import com.codenvy.workspace.event.WsActivityEvent;
 
 import javax.inject.Inject;

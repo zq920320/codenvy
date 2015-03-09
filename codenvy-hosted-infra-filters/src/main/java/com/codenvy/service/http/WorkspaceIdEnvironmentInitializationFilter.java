@@ -17,11 +17,11 @@
  */
 package com.codenvy.service.http;
 
-import com.codenvy.api.core.NotFoundException;
-import com.codenvy.api.core.ServerException;
-import com.codenvy.api.core.rest.shared.dto.ServiceError;
-import com.codenvy.api.workspace.shared.dto.WorkspaceDescriptor;
-import com.codenvy.dto.server.DtoFactory;
+import org.eclipse.che.api.core.NotFoundException;
+import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.api.core.rest.shared.dto.ServiceError;
+import org.eclipse.che.api.workspace.shared.dto.WorkspaceDescriptor;
+import org.eclipse.che.dto.server.DtoFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

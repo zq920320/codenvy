@@ -18,10 +18,10 @@
 package com.codenvy.auth.sso.client;
 
 import com.codenvy.auth.sso.server.SsoUser;
-import com.codenvy.commons.json.JsonHelper;
-import com.codenvy.commons.json.JsonParseException;
-import com.codenvy.commons.lang.IoUtil;
-import com.codenvy.commons.user.User;
+import org.eclipse.che.commons.json.JsonHelper;
+import org.eclipse.che.commons.json.JsonParseException;
+import org.eclipse.che.commons.lang.IoUtil;
+import org.eclipse.che.commons.user.User;
 import com.google.inject.name.Named;
 
 import org.slf4j.Logger;
