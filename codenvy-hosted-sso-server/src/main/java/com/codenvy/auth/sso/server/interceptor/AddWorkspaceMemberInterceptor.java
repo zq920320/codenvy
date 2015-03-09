@@ -21,9 +21,9 @@ package com.codenvy.auth.sso.server.interceptor;
  * @author Sergii Kabashniuk
  */
 
-import com.codenvy.api.workspace.shared.dto.MemberDescriptor;
+import org.eclipse.che.api.workspace.shared.dto.MemberDescriptor;
 import com.codenvy.auth.sso.server.ticket.RolesInvalidator;
-import com.codenvy.commons.env.EnvironmentContext;
+import org.eclipse.che.commons.env.EnvironmentContext;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;

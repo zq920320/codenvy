@@ -17,10 +17,10 @@
  */
 package com.codenvy.subscription;
 
-import com.codenvy.api.account.shared.dto.NewBilling;
-import com.codenvy.api.account.shared.dto.NewSubscriptionAttributes;
-import com.codenvy.api.core.ConflictException;
-import com.codenvy.dto.server.DtoFactory;
+import org.eclipse.che.api.account.shared.dto.NewBilling;
+import org.eclipse.che.api.account.shared.dto.NewSubscriptionAttributes;
+import org.eclipse.che.api.core.ConflictException;
+import org.eclipse.che.dto.server.DtoFactory;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;

@@ -18,7 +18,7 @@
 package com.codenvy.auth.sso.server.organization;
 
 
-import com.codenvy.commons.user.User;
+import org.eclipse.che.commons.user.User;
 
 import java.io.IOException;
 

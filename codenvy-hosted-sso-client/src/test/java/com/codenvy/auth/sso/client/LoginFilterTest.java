@@ -19,9 +19,9 @@ package com.codenvy.auth.sso.client;
 
 import com.codenvy.auth.sso.client.filter.RequestFilter;
 import com.codenvy.auth.sso.client.token.RequestTokenExtractor;
-import com.codenvy.commons.env.EnvironmentContext;
-import com.codenvy.commons.user.User;
-import com.codenvy.commons.user.UserImpl;
+import org.eclipse.che.commons.env.EnvironmentContext;
+import org.eclipse.che.commons.user.User;
+import org.eclipse.che.commons.user.UserImpl;
 
 import org.everrest.core.impl.RuntimeDelegateImpl;
 import org.everrest.test.mock.MockHttpServletRequest;

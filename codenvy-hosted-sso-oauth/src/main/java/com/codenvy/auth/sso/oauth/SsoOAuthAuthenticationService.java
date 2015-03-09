@@ -23,9 +23,9 @@ package com.codenvy.auth.sso.oauth;
  */
 
 import com.codenvy.auth.sso.server.handler.BearerTokenAuthenticationHandler;
-import com.codenvy.security.oauth.OAuthAuthenticationException;
-import com.codenvy.security.oauth.OAuthAuthenticationService;
-import com.codenvy.security.oauth.OAuthAuthenticator;
+import org.eclipse.che.security.oauth.OAuthAuthenticationException;
+import org.eclipse.che.security.oauth.OAuthAuthenticationService;
+import org.eclipse.che.security.oauth.OAuthAuthenticator;
 
 import javax.inject.Inject;
 import javax.ws.rs.GET;

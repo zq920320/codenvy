@@ -17,6 +17,7 @@
  */
 package com.codenvy.auth.sso.server;
 
+
 import com.codenvy.api.dao.authentication.TokenGenerator;
 
 import javax.inject.Singleton;

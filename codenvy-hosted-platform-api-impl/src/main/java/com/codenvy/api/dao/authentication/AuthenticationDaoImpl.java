@@ -17,12 +17,12 @@
  */
 package com.codenvy.api.dao.authentication;
 
-import com.codenvy.api.auth.AuthenticationDao;
-import com.codenvy.api.auth.AuthenticationException;
-import com.codenvy.api.auth.shared.dto.Credentials;
-import com.codenvy.api.auth.shared.dto.Token;
-import com.codenvy.commons.user.User;
-import com.codenvy.dto.server.DtoFactory;
+import org.eclipse.che.api.auth.AuthenticationDao;
+import org.eclipse.che.api.auth.AuthenticationException;
+import org.eclipse.che.api.auth.shared.dto.Credentials;
+import org.eclipse.che.api.auth.shared.dto.Token;
+import org.eclipse.che.commons.user.User;
+import org.eclipse.che.dto.server.DtoFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

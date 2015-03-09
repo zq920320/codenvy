@@ -20,8 +20,9 @@ package com.codenvy.auth.sso.server.ticket;
 
 import com.codenvy.api.dao.authentication.AccessTicket;
 import com.codenvy.api.dao.authentication.TicketManager;
-import com.codenvy.commons.user.User;
-import com.codenvy.commons.user.UserImpl;
+
+import org.eclipse.che.commons.user.User;
+import org.eclipse.che.commons.user.UserImpl;
 
 import org.testng.annotations.Test;
 

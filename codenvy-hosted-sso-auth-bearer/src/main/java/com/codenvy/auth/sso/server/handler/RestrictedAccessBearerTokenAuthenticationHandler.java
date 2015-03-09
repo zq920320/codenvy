@@ -17,13 +17,13 @@
  */
 package com.codenvy.auth.sso.server.handler;
 
-import com.codenvy.api.auth.AuthenticationException;
-import com.codenvy.api.core.ApiException;
-import com.codenvy.api.core.NotFoundException;
-import com.codenvy.api.user.server.dao.Profile;
-import com.codenvy.api.user.server.dao.UserDao;
-import com.codenvy.api.user.server.dao.UserProfileDao;
-import com.codenvy.api.user.server.dao.User;
+import org.eclipse.che.api.auth.AuthenticationException;
+import org.eclipse.che.api.core.ApiException;
+import org.eclipse.che.api.core.NotFoundException;
+import org.eclipse.che.api.user.server.dao.Profile;
+import org.eclipse.che.api.user.server.dao.UserDao;
+import org.eclipse.che.api.user.server.dao.UserProfileDao;
+import org.eclipse.che.api.user.server.dao.User;
 import com.codenvy.service.http.IdeVersionHolder;
 
 import org.slf4j.Logger;

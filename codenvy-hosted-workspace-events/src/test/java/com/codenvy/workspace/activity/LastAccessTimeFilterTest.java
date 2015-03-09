@@ -17,7 +17,7 @@
  */
 package com.codenvy.workspace.activity;
 
-import com.codenvy.commons.env.EnvironmentContext;
+import org.eclipse.che.commons.env.EnvironmentContext;
 
 import org.mockito.InjectMocks;
 import org.mockito.Mock;

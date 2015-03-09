@@ -19,9 +19,10 @@ package com.codenvy.auth.sso.server;
 
 import com.codenvy.auth.sso.server.handler.BearerTokenAuthenticationHandler;
 import com.codenvy.auth.sso.server.handler.RestrictedAccessBearerTokenAuthenticationHandler;
-import com.codenvy.inject.DynaModule;
 import com.google.inject.AbstractModule;
 import com.google.inject.name.Names;
+
+import org.eclipse.che.inject.DynaModule;
 
 /**
  * Setup BearerTokenAuthenticationService  in guice container.

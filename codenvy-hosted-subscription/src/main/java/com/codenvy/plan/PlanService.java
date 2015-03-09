@@ -17,9 +17,9 @@
  */
 package com.codenvy.plan;
 
-import com.codenvy.api.account.server.dao.PlanDao;
-import com.codenvy.api.account.shared.dto.Plan;
-import com.codenvy.api.core.ServerException;
+import org.eclipse.che.api.account.server.dao.PlanDao;
+import org.eclipse.che.api.account.shared.dto.Plan;
+import org.eclipse.che.api.core.ServerException;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;

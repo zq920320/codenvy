@@ -17,7 +17,7 @@
  */
 package org.codenvy.mail.deploy;
 
-import com.codenvy.inject.DynaModule;
+import org.eclipse.che.inject.DynaModule;
 import com.google.inject.servlet.ServletModule;
 
 import org.everrest.guice.servlet.GuiceEverrestServlet;

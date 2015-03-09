@@ -17,8 +17,8 @@
  */
 package com.codenvy.auth.sso.client;
 
-import com.codenvy.commons.env.EnvironmentContext;
-import com.codenvy.commons.user.User;
+import org.eclipse.che.commons.env.EnvironmentContext;
+import org.eclipse.che.commons.user.User;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

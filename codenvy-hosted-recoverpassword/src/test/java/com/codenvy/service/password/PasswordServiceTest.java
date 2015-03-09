@@ -17,13 +17,13 @@
  */
 package com.codenvy.service.password;
 
-import com.codenvy.api.core.NotFoundException;
-import com.codenvy.api.core.ServerException;
-import com.codenvy.api.user.server.dao.Profile;
-import com.codenvy.api.user.server.dao.UserDao;
-import com.codenvy.api.user.server.dao.User;
-//import com.codenvy.dto.server.DtoFactory;
-import com.codenvy.api.user.server.dao.UserProfileDao;
+import org.eclipse.che.api.core.NotFoundException;
+import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.api.user.server.dao.Profile;
+import org.eclipse.che.api.user.server.dao.UserDao;
+import org.eclipse.che.api.user.server.dao.User;
+//import org.eclipse.che.dto.server.DtoFactory;
+import org.eclipse.che.api.user.server.dao.UserProfileDao;
 import com.jayway.restassured.response.Response;
 
 import org.codenvy.mail.MailSenderClient;

@@ -17,17 +17,17 @@
  */
 package com.codenvy.api.dao.ldap;
 
-import com.codenvy.api.account.server.dao.Account;
-import com.codenvy.api.account.server.dao.AccountDao;
-import com.codenvy.api.core.ConflictException;
-import com.codenvy.api.core.NotFoundException;
-import com.codenvy.api.core.ServerException;
-import com.codenvy.api.core.notification.EventService;
-import com.codenvy.api.user.server.dao.UserProfileDao;
-import com.codenvy.api.user.server.dao.User;
-import com.codenvy.api.workspace.server.dao.Member;
-import com.codenvy.api.workspace.server.dao.MemberDao;
-import com.codenvy.api.workspace.server.dao.WorkspaceDao;
+import org.eclipse.che.api.account.server.dao.Account;
+import org.eclipse.che.api.account.server.dao.AccountDao;
+import org.eclipse.che.api.core.ConflictException;
+import org.eclipse.che.api.core.NotFoundException;
+import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.api.core.notification.EventService;
+import org.eclipse.che.api.user.server.dao.UserProfileDao;
+import org.eclipse.che.api.user.server.dao.User;
+import org.eclipse.che.api.workspace.server.dao.Member;
+import org.eclipse.che.api.workspace.server.dao.MemberDao;
+import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
 
 import org.mockito.Mock;
 import org.mockito.testng.MockitoTestNGListener;
@@ -198,7 +198,7 @@ public class UserDaoTest extends BaseTest {
     public void testRemoveUser() throws Exception {
         final Account testAccount = new Account().withId("account_id");
         when(accountDao.getByOwner(users[0].getId())).thenReturn(asList(testAccount));
-        final com.codenvy.api.account.server.dao.Member accountMember = new com.codenvy.api.account.server.dao.Member();
+        final org.eclipse.che.api.account.server.dao.Member accountMember = new org.eclipse.che.api.account.server.dao.Member();
         accountMember.withUserId(users[0].getId())
                      .withAccountId(testAccount.getId())
                      .withRoles(asList("account/owner"));

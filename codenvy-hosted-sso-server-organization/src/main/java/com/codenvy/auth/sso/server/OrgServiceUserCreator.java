@@ -18,19 +18,19 @@
 package com.codenvy.auth.sso.server;
 
 
-import com.codenvy.api.core.ApiException;
-import com.codenvy.api.core.ConflictException;
-import com.codenvy.api.core.NotFoundException;
-import com.codenvy.api.core.ServerException;
-import com.codenvy.api.user.server.Constants;
-import com.codenvy.api.user.server.dao.PreferenceDao;
-import com.codenvy.api.user.server.dao.Profile;
-import com.codenvy.api.user.server.dao.UserDao;
-import com.codenvy.api.user.server.dao.UserProfileDao;
+import org.eclipse.che.api.core.ApiException;
+import org.eclipse.che.api.core.ConflictException;
+import org.eclipse.che.api.core.NotFoundException;
+import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.api.user.server.Constants;
+import org.eclipse.che.api.user.server.dao.PreferenceDao;
+import org.eclipse.che.api.user.server.dao.Profile;
+import org.eclipse.che.api.user.server.dao.UserDao;
+import org.eclipse.che.api.user.server.dao.UserProfileDao;
 import com.codenvy.auth.sso.server.organization.UserCreator;
-import com.codenvy.commons.lang.NameGenerator;
-import com.codenvy.commons.user.User;
-import com.codenvy.commons.user.UserImpl;
+import org.eclipse.che.commons.lang.NameGenerator;
+import org.eclipse.che.commons.user.User;
+import org.eclipse.che.commons.user.UserImpl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,7 +61,7 @@ public class OrgServiceUserCreator implements UserCreator {
     public User createUser(String userName, String firstName, String lastName) throws IOException {
         //TODO check this method should only call if user is not exists.
         try {
-            com.codenvy.api.user.server.dao.User user = userDao.getByAlias(userName);
+            org.eclipse.che.api.user.server.dao.User user = userDao.getByAlias(userName);
             return new UserImpl(userName, user.getId(), null, Collections.<String>emptyList(), false);
         } catch (NotFoundException e) {
             String id = NameGenerator.generate(User.class.getSimpleName().toLowerCase(), Constants.ID_LENGTH);
@@ -77,7 +77,7 @@ public class OrgServiceUserCreator implements UserCreator {
             String password = UUID.randomUUID().toString().replace("-", "").substring(0, 12);
 
             try {
-                userDao.create(new com.codenvy.api.user.server.dao.User().withId(id)
+                userDao.create(new org.eclipse.che.api.user.server.dao.User().withId(id)
                                                                          .withEmail(userName)
                                                                          .withPassword(password));
                 profileDao.create(profile);
@@ -121,7 +121,7 @@ public class OrgServiceUserCreator implements UserCreator {
             String password = UUID.randomUUID().toString().replace("-", "").substring(0, 12);
 
 
-            userDao.create(new com.codenvy.api.user.server.dao.User().withId(id).withEmail(anonymousUser)
+            userDao.create(new org.eclipse.che.api.user.server.dao.User().withId(id).withEmail(anonymousUser)
                                                                      .withPassword(password));
 
             profileDao.create(new Profile()

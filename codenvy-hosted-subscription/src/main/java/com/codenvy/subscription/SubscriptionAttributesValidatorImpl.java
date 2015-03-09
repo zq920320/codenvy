@@ -17,10 +17,10 @@
  */
 package com.codenvy.subscription;
 
-import com.codenvy.api.account.server.SubscriptionAttributesValidator;
-import com.codenvy.api.account.shared.dto.NewBilling;
-import com.codenvy.api.account.shared.dto.NewSubscriptionAttributes;
-import com.codenvy.api.core.ConflictException;
+import org.eclipse.che.api.account.server.SubscriptionAttributesValidator;
+import org.eclipse.che.api.account.shared.dto.NewBilling;
+import org.eclipse.che.api.account.shared.dto.NewSubscriptionAttributes;
+import org.eclipse.che.api.core.ConflictException;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

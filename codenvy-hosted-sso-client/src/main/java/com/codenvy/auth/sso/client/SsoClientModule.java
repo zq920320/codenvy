@@ -19,8 +19,10 @@ package com.codenvy.auth.sso.client;
 
 import com.codenvy.auth.sso.client.token.ChainedTokenExtractor;
 import com.codenvy.auth.sso.client.token.RequestTokenExtractor;
-import com.codenvy.inject.DynaModule;
+
 import com.google.inject.AbstractModule;
+
+import org.eclipse.che.inject.DynaModule;
 
 /**
  * Initialize all components necessary for sso client work inside of guice container.

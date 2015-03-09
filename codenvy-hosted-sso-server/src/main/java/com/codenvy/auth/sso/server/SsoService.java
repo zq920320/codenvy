@@ -18,14 +18,14 @@
 package com.codenvy.auth.sso.server;
 
 import com.codahale.metrics.annotation.Metered;
-import com.codenvy.api.auth.AuthenticationException;
 import com.codenvy.api.dao.authentication.AccessTicket;
 import com.codenvy.api.dao.authentication.CookieBuilder;
 import com.codenvy.api.dao.authentication.TicketManager;
 import com.codenvy.api.dao.authentication.TokenGenerator;
 import com.codenvy.auth.sso.server.organization.UserCreator;
-import com.codenvy.commons.user.User;
 
+import org.eclipse.che.api.auth.AuthenticationException;
+import org.eclipse.che.commons.user.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -157,7 +157,7 @@ public class SsoService {
         boolean isSecure = uriInfo.getRequestUri().getScheme().equals("https");
 
         try {
-            if (tokenAccessCookie != null ) {
+            if (tokenAccessCookie != null) {
                 AccessTicket accessTicket = ticketManager.getAccessTicket(tokenAccessCookie.getValue());
                 if (accessTicket != null && !(!Boolean.valueOf(allowAnonymous) && accessTicket.getPrincipal().isTemporary())) {
 

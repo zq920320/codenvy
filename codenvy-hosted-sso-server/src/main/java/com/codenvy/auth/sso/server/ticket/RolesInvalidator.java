@@ -19,7 +19,8 @@ package com.codenvy.auth.sso.server.ticket;
 
 import com.codenvy.api.dao.authentication.AccessTicket;
 import com.codenvy.api.dao.authentication.TicketManager;
-import com.codenvy.commons.lang.IoUtil;
+
+import org.eclipse.che.commons.lang.IoUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

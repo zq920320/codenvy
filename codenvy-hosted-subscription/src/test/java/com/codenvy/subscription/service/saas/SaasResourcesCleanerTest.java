@@ -17,9 +17,9 @@
  */
 package com.codenvy.subscription.service.saas;
 
-import com.codenvy.api.core.notification.EventService;
-import com.codenvy.api.workspace.server.dao.Workspace;
-import com.codenvy.api.workspace.server.dao.WorkspaceDao;
+import org.eclipse.che.api.core.notification.EventService;
+import org.eclipse.che.api.workspace.server.dao.Workspace;
+import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
 import com.codenvy.workspace.event.DeleteWorkspaceEvent;
 
 import org.mockito.ArgumentMatcher;

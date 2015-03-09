@@ -17,9 +17,9 @@
  */
 package com.codenvy.service.http;
 
-import com.codenvy.api.core.NotFoundException;
-import com.codenvy.api.core.ServerException;
-import com.codenvy.api.workspace.shared.dto.WorkspaceDescriptor;
+import org.eclipse.che.api.core.NotFoundException;
+import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.api.workspace.shared.dto.WorkspaceDescriptor;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

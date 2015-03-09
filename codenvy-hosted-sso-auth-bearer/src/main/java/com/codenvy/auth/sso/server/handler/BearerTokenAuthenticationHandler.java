@@ -17,7 +17,7 @@
  */
 package com.codenvy.auth.sso.server.handler;
 
-import com.codenvy.api.auth.AuthenticationException;
+import org.eclipse.che.api.auth.AuthenticationException;
 import com.codenvy.api.dao.authentication.TokenGenerator;
 
 import org.slf4j.Logger;

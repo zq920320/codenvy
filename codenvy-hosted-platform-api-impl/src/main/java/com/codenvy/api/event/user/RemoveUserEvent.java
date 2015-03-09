@@ -17,7 +17,7 @@
  */
 package com.codenvy.api.event.user;
 
-import com.codenvy.api.core.notification.EventOrigin;
+import org.eclipse.che.api.core.notification.EventOrigin;
 
 /**
  * Inform that user with certain id was removed.

@@ -17,10 +17,10 @@
  */
 package com.codenvy.auth.sso.server.ldap;
 
-import com.codenvy.api.auth.AuthenticationException;
+import org.eclipse.che.api.auth.AuthenticationException;
 import com.codenvy.api.dao.authentication.AuthenticationHandler;
-import com.codenvy.commons.user.User;
-import com.codenvy.commons.user.UserImpl;
+import org.eclipse.che.commons.user.User;
+import org.eclipse.che.commons.user.UserImpl;
 
 import javax.inject.Inject;
 import java.util.Collections;

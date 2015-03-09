@@ -17,7 +17,7 @@
  */
 package com.codenvy.workspace.activity;
 
-import com.codenvy.commons.env.EnvironmentContext;
+import org.eclipse.che.commons.env.EnvironmentContext;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;

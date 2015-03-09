@@ -17,12 +17,12 @@
  */
 package com.codenvy.auth.sso.server;
 
-import com.codenvy.api.auth.AuthenticationException;
-import com.codenvy.api.core.ApiException;
+import org.eclipse.che.api.auth.AuthenticationException;
+import org.eclipse.che.api.core.ApiException;
 import com.codenvy.api.dao.authentication.AuthenticationHandler;
-import com.codenvy.api.user.server.dao.UserDao;
-import com.codenvy.api.user.server.dao.User;
-import com.codenvy.commons.user.UserImpl;
+import org.eclipse.che.api.user.server.dao.UserDao;
+import org.eclipse.che.api.user.server.dao.User;
+import org.eclipse.che.commons.user.UserImpl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +45,7 @@ public class OrgServiceAuthenticationHandler implements AuthenticationHandler {
     @Inject
     UserDao userDao;
 
-    public com.codenvy.commons.user.User authenticate(final String userName, final String password)
+    public org.eclipse.che.commons.user.User authenticate(final String userName, final String password)
             throws AuthenticationException {
         if (userName == null || userName.isEmpty() || password == null || password.isEmpty()) {
             throw new AuthenticationException(401, "Authentication failed. Please check username and password.");

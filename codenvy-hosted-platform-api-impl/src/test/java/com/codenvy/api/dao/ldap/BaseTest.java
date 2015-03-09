@@ -17,7 +17,7 @@
  */
 package com.codenvy.api.dao.ldap;
 
-import com.codenvy.commons.lang.IoUtil;
+import org.eclipse.che.commons.lang.IoUtil;
 
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
