@@ -17,22 +17,22 @@
  */
 package com.codenvy.factory.workspace;
 
-import com.codenvy.api.account.server.dao.AccountDao;
-import com.codenvy.api.account.server.dao.Subscription;
-import com.codenvy.api.core.ApiException;
-import com.codenvy.api.core.ConflictException;
-import com.codenvy.api.core.ForbiddenException;
-import com.codenvy.api.core.NotFoundException;
-import com.codenvy.api.core.ServerException;
-import com.codenvy.api.core.UnauthorizedException;
-import com.codenvy.api.core.notification.EventService;
-import com.codenvy.api.core.rest.HttpJsonHelper;
-import com.codenvy.api.factory.FactoryBuilder;
-import com.codenvy.api.factory.dto.Author;
-import com.codenvy.api.factory.dto.Factory;
-import com.codenvy.api.workspace.server.dao.Workspace;
-import com.codenvy.api.workspace.server.dao.WorkspaceDao;
-import com.codenvy.commons.lang.Pair;
+import org.eclipse.che.api.account.server.dao.AccountDao;
+import org.eclipse.che.api.account.server.dao.Subscription;
+import org.eclipse.che.api.core.ApiException;
+import org.eclipse.che.api.core.ConflictException;
+import org.eclipse.che.api.core.ForbiddenException;
+import org.eclipse.che.api.core.NotFoundException;
+import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.api.core.UnauthorizedException;
+import org.eclipse.che.api.core.notification.EventService;
+import org.eclipse.che.api.core.rest.HttpJsonHelper;
+import org.eclipse.che.api.factory.FactoryBuilder;
+import org.eclipse.che.api.factory.dto.Author;
+import org.eclipse.che.api.factory.dto.Factory;
+import org.eclipse.che.api.workspace.server.dao.Workspace;
+import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
+import org.eclipse.che.commons.lang.Pair;
 import com.codenvy.workspace.event.CreateWorkspaceEvent;
 
 import org.mockito.Mock;

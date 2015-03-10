@@ -17,19 +17,19 @@
  */
 package com.codenvy.factory.workspace;
 
-import com.codenvy.api.account.server.dao.AccountDao;
-import com.codenvy.api.account.server.dao.Subscription;
-import com.codenvy.api.core.ApiException;
-import com.codenvy.api.core.notification.EventService;
-import com.codenvy.api.core.notification.EventSubscriber;
-import com.codenvy.api.core.rest.HttpJsonHelper;
-import com.codenvy.api.core.rest.shared.dto.Link;
-import com.codenvy.api.factory.FactoryBuilder;
-import com.codenvy.api.factory.dto.Factory;
-import com.codenvy.api.workspace.server.dao.Workspace;
-import com.codenvy.api.workspace.server.dao.WorkspaceDao;
-import com.codenvy.commons.lang.Pair;
-import com.codenvy.dto.server.DtoFactory;
+import org.eclipse.che.api.account.server.dao.AccountDao;
+import org.eclipse.che.api.account.server.dao.Subscription;
+import org.eclipse.che.api.core.ApiException;
+import org.eclipse.che.api.core.notification.EventService;
+import org.eclipse.che.api.core.notification.EventSubscriber;
+import org.eclipse.che.api.core.rest.HttpJsonHelper;
+import org.eclipse.che.api.core.rest.shared.dto.Link;
+import org.eclipse.che.api.factory.FactoryBuilder;
+import org.eclipse.che.api.factory.dto.Factory;
+import org.eclipse.che.api.workspace.server.dao.Workspace;
+import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
+import org.eclipse.che.commons.lang.Pair;
+import org.eclipse.che.dto.server.DtoFactory;
 import com.codenvy.workspace.event.CreateWorkspaceEvent;
 
 import org.slf4j.Logger;
@@ -49,7 +49,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.codenvy.commons.lang.Size.parseSizeToMegabytes;
+import static org.eclipse.che.commons.lang.Size.parseSizeToMegabytes;
 
 /**
  * Set attributes to temporary workspaces that make runner/builder use custom resources for factory
