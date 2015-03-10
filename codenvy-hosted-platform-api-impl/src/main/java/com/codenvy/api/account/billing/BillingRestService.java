@@ -88,8 +88,8 @@ public class BillingRestService extends Service {
                                                       .withSkipCount(skipCount)
                                                       .withMaxItems(maxItems)
                                                       .withFreeGbHMoreThan(freeGbH)
-                                                      .withPrePaidGbHMoreThan(paidGbH)
-                                                      .withPaidGbHMoreThan(prepaidGbH)
+                                                      .withPrePaidGbHMoreThan(prepaidGbH)
+                                                      .withPaidGbHMoreThan(paidGbH)
                                                       .withAccountId(accountId)
                                                       .build();
 
