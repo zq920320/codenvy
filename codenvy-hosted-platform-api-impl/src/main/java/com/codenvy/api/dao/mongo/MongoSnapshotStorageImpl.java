@@ -17,14 +17,14 @@
  */
 package com.codenvy.api.dao.mongo;
 
-import com.codenvy.api.core.ForbiddenException;
-import com.codenvy.api.core.NotFoundException;
-import com.codenvy.api.core.ServerException;
-import com.codenvy.api.machine.server.ProjectBindingImpl;
-import com.codenvy.api.machine.server.Snapshot;
-import com.codenvy.api.machine.server.SnapshotStorage;
-import com.codenvy.api.machine.server.spi.ImageKey;
-import com.codenvy.api.machine.shared.ProjectBinding;
+import org.eclipse.che.api.core.ForbiddenException;
+import org.eclipse.che.api.core.NotFoundException;
+import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.api.machine.server.ProjectBindingImpl;
+import org.eclipse.che.api.machine.server.Snapshot;
+import org.eclipse.che.api.machine.server.SnapshotStorage;
+import org.eclipse.che.api.machine.server.spi.ImageKey;
+import org.eclipse.che.api.machine.shared.ProjectBinding;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
@@ -169,7 +169,7 @@ public class MongoSnapshotStorageImpl implements SnapshotStorage {
      *         object reference to check
      * @param subject
      *         used as subject of exception message "{subject} required"
-     * @throws com.codenvy.api.core.ForbiddenException
+     * @throws ForbiddenException
      *         when object reference is {@code null}
      */
     private void requiredNotNull(Object object, String subject) throws ForbiddenException {
