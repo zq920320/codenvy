@@ -17,15 +17,14 @@
  */
 package com.codenvy.api.account.metrics;
 
-import com.codenvy.api.builder.BuildQueue;
-import com.codenvy.api.builder.BuildQueueTask;
-import com.codenvy.api.builder.BuildStatus;
-import com.codenvy.api.builder.dto.BuildRequest;
-import com.codenvy.api.builder.dto.BuildTaskDescriptor;
-import com.codenvy.api.core.NotFoundException;
-import com.codenvy.api.core.ServerException;
-import com.codenvy.api.project.shared.dto.ProjectDescriptor;
-
+import org.eclipse.che.api.builder.BuildQueue;
+import org.eclipse.che.api.builder.BuildQueueTask;
+import org.eclipse.che.api.builder.BuildStatus;
+import org.eclipse.che.api.builder.dto.BuildRequest;
+import org.eclipse.che.api.builder.dto.BuildTaskDescriptor;
+import org.eclipse.che.api.core.NotFoundException;
+import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.api.project.shared.dto.ProjectDescriptor;
 import org.mockito.Mock;
 import org.mockito.testng.MockitoTestNGListener;
 import org.testng.annotations.BeforeMethod;
@@ -46,8 +45,8 @@ import static org.mockito.Mockito.when;
 
 /**
  * Tests for {@link com.codenvy.api.account.metrics.BuildTasksActivityChecker}
- * @author Max Shaposhnik
  *
+ * @author Max Shaposhnik
  */
 @Listeners(MockitoTestNGListener.class)
 public class BuildTasksActivityCheckerTest {
@@ -61,15 +60,15 @@ public class BuildTasksActivityCheckerTest {
     ResourcesUsageTracker resourcesUsageTracker;
 
     @Mock
-    BuildQueueTask               buildQueueTask;
+    BuildQueueTask      buildQueueTask;
     @Mock
-    BuildTaskDescriptor          applicationDescriptor;
+    BuildTaskDescriptor applicationDescriptor;
     @Mock
-    BuildRequest                 buildRequest;
+    BuildRequest        buildRequest;
     @Mock
-    ProjectDescriptor            projectDescriptor;
+    ProjectDescriptor   projectDescriptor;
 
-    BuildTasksActivityChecker    tasksActivityChecker;
+    BuildTasksActivityChecker tasksActivityChecker;
 
     @BeforeMethod
     public void setUp() throws Exception {
@@ -120,7 +119,8 @@ public class BuildTasksActivityCheckerTest {
 
         when(secondBuildQueueTask.getRequest()).thenReturn(buildRequest);
 
-        final BuildTaskDescriptor secondDescriptor = createProcessDescriptor(2L, currentTimeMillis() - SCHEDULING_PERIOD, BuildStatus.IN_PROGRESS);
+        final BuildTaskDescriptor secondDescriptor =
+                createProcessDescriptor(2L, currentTimeMillis() - SCHEDULING_PERIOD, BuildStatus.IN_PROGRESS);
         when(secondBuildQueueTask.getDescriptor()).thenReturn(secondDescriptor);
 
         for (int i = 0; i < 3; ++i) {

@@ -17,22 +17,22 @@
  */
 package com.codenvy.api.account.server;
 
-import com.codenvy.api.account.billing.MonthlyBillingPeriod;
 import com.codenvy.api.account.metrics.MeterBasedStorage;
-import com.codenvy.api.account.server.dao.Account;
-import com.codenvy.api.account.server.dao.AccountDao;
-import com.codenvy.api.account.server.dao.Subscription;
-import com.codenvy.api.account.shared.dto.UpdateResourcesDescriptor;
 import com.codenvy.api.account.subscription.ServiceId;
-import com.codenvy.api.core.ConflictException;
-import com.codenvy.api.core.ForbiddenException;
-import com.codenvy.api.core.NotFoundException;
-import com.codenvy.api.core.ServerException;
-import com.codenvy.api.runner.internal.Constants;
-import com.codenvy.api.workspace.server.dao.Workspace;
-import com.codenvy.api.workspace.server.dao.WorkspaceDao;
-import com.codenvy.dto.server.DtoFactory;
 
+import org.eclipse.che.api.account.server.ResourcesManager;
+import org.eclipse.che.api.account.server.dao.Account;
+import org.eclipse.che.api.account.server.dao.AccountDao;
+import org.eclipse.che.api.account.server.dao.Subscription;
+import org.eclipse.che.api.account.shared.dto.UpdateResourcesDescriptor;
+import org.eclipse.che.api.core.ConflictException;
+import org.eclipse.che.api.core.ForbiddenException;
+import org.eclipse.che.api.core.NotFoundException;
+import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.api.runner.internal.Constants;
+import org.eclipse.che.api.workspace.server.dao.Workspace;
+import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
+import org.eclipse.che.dto.server.DtoFactory;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -95,8 +95,7 @@ public class ResourcesManagerImplTest {
         when(workspaceDao.getByAccount(ACCOUNT_ID)).thenReturn(Arrays.asList(firstWorkspace, secondWorkspace));
         when(accountDao.getById(anyString())).thenReturn(new Account().withId(ACCOUNT_ID).withName("accountName"));
 
-        resourcesManager =
-                new ResourcesManagerImpl(MAX_LIMIT, accountDao, workspaceDao);
+        resourcesManager = new ResourcesManagerImpl(MAX_LIMIT, accountDao, workspaceDao);
     }
 
     @Test(expectedExceptions = ForbiddenException.class,
@@ -210,7 +209,7 @@ public class ResourcesManagerImplTest {
         verify(workspaceDao, times(2)).update(workspaceArgumentCaptor.capture());
 
         for (Workspace workspace : workspaceArgumentCaptor.getAllValues()) {
-            assertEquals(workspace.getAttributes().get(com.codenvy.api.builder.internal.Constants.BUILDER_EXECUTION_TIME), "10");
+            assertEquals(workspace.getAttributes().get(org.eclipse.che.api.builder.internal.Constants.BUILDER_EXECUTION_TIME), "10");
         }
     }
 

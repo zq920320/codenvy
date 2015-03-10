@@ -17,7 +17,7 @@
  */
 package com.codenvy.api.dao.ldap;
 
-import com.codenvy.api.core.util.CustomPortService;
+import org.eclipse.che.api.core.util.CustomPortService;
 
 import org.apache.directory.server.constants.ServerDNConstants;
 import org.apache.directory.server.core.CoreSession;

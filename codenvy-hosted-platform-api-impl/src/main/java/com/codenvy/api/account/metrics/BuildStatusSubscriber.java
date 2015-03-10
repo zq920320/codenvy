@@ -18,18 +18,18 @@
 package com.codenvy.api.account.metrics;
 
 import com.codenvy.api.account.billing.BillingPeriod;
-import com.codenvy.api.builder.BuildQueue;
-import com.codenvy.api.builder.BuildQueueTask;
-import com.codenvy.api.builder.dto.BaseBuilderRequest;
-import com.codenvy.api.builder.dto.DependencyRequest;
-import com.codenvy.api.builder.internal.BuilderEvent;
-import com.codenvy.api.core.NotFoundException;
-import com.codenvy.api.core.ServerException;
-import com.codenvy.api.core.notification.EventService;
-import com.codenvy.api.core.notification.EventSubscriber;
-import com.codenvy.api.workspace.server.dao.Workspace;
-import com.codenvy.api.workspace.server.dao.WorkspaceDao;
 
+import org.eclipse.che.api.builder.BuildQueue;
+import org.eclipse.che.api.builder.BuildQueueTask;
+import org.eclipse.che.api.builder.dto.BaseBuilderRequest;
+import org.eclipse.che.api.builder.dto.DependencyRequest;
+import org.eclipse.che.api.builder.internal.BuilderEvent;
+import org.eclipse.che.api.core.NotFoundException;
+import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.api.core.notification.EventService;
+import org.eclipse.che.api.core.notification.EventSubscriber;
+import org.eclipse.che.api.workspace.server.dao.Workspace;
+import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

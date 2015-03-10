@@ -18,11 +18,10 @@
 package com.codenvy.api.account;
 
 import com.codenvy.api.account.impl.shared.dto.Invoice;
-import com.codenvy.api.account.server.dao.Subscription;
-import com.codenvy.api.core.ApiException;
-import com.codenvy.api.core.ConflictException;
-import com.codenvy.api.core.ForbiddenException;
-import com.codenvy.api.core.ServerException;
+
+import org.eclipse.che.api.account.server.dao.Subscription;
+import org.eclipse.che.api.core.ApiException;
+import org.eclipse.che.api.core.ServerException;
 
 /**
  * Process payments.

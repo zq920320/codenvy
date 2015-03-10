@@ -20,15 +20,15 @@ package com.codenvy.api.account.billing;
 import com.codenvy.api.account.impl.shared.dto.Charge;
 import com.codenvy.api.account.impl.shared.dto.CreditCard;
 import com.codenvy.api.account.impl.shared.dto.Invoice;
-import com.codenvy.api.account.server.dao.AccountDao;
-import com.codenvy.api.account.server.dao.Member;
 import com.codenvy.api.account.subscription.ServiceId;
-import com.codenvy.api.core.ForbiddenException;
-import com.codenvy.api.core.NotFoundException;
-import com.codenvy.api.core.ServerException;
-import com.codenvy.api.user.server.dao.UserDao;
-import com.codenvy.api.workspace.server.dao.WorkspaceDao;
 
+import org.eclipse.che.api.account.server.dao.AccountDao;
+import org.eclipse.che.api.account.server.dao.Member;
+import org.eclipse.che.api.core.ForbiddenException;
+import org.eclipse.che.api.core.NotFoundException;
+import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.api.user.server.dao.UserDao;
+import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 
@@ -43,8 +43,8 @@ import java.util.Map;
 
 /**
  * Template engine initializer and processor.
- * @author Max Shaposhnik
  *
+ * @author Max Shaposhnik
  */
 @Singleton
 public class TemplateProcessor {

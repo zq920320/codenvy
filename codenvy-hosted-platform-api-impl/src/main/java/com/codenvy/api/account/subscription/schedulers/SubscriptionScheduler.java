@@ -17,10 +17,10 @@
  */
 package com.codenvy.api.account.subscription.schedulers;
 
-import com.codenvy.api.account.server.subscription.SubscriptionService;
-import com.codenvy.api.account.server.subscription.SubscriptionServiceRegistry;
-import com.codenvy.commons.schedule.ScheduleDelay;
 
+import org.eclipse.che.api.account.server.SubscriptionService;
+import org.eclipse.che.api.account.server.SubscriptionServiceRegistry;
+import org.eclipse.che.commons.schedule.ScheduleDelay;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,8 +45,8 @@ public class SubscriptionScheduler {
     }
 
     @ScheduleDelay(initialDelay = 6,
-                   delay = 360,
-                   unit = TimeUnit.MINUTES)
+            delay = 360,
+            unit = TimeUnit.MINUTES)
     public void checkSubscriptions() {
         LOG.info("Subscription scheduler task is started");
         try {

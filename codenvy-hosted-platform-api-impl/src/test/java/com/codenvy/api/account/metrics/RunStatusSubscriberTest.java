@@ -17,29 +17,29 @@
  */
 package com.codenvy.api.account.metrics;
 
-import static org.mockito.Matchers.anyLong;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.argThat;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import com.codenvy.api.account.billing.MonthlyBillingPeriod;
-import com.codenvy.api.core.ServerException;
-import com.codenvy.api.core.notification.EventService;
-import com.codenvy.api.runner.RunQueue;
-import com.codenvy.api.runner.RunQueueTask;
-import com.codenvy.api.runner.dto.RunRequest;
-import com.codenvy.api.runner.internal.RunnerEvent;
-import com.codenvy.api.workspace.server.dao.Workspace;
-import com.codenvy.api.workspace.server.dao.WorkspaceDao;
 
+import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.api.core.notification.EventService;
+import org.eclipse.che.api.runner.RunQueue;
+import org.eclipse.che.api.runner.RunQueueTask;
+import org.eclipse.che.api.runner.dto.RunRequest;
+import org.eclipse.che.api.runner.internal.RunnerEvent;
+import org.eclipse.che.api.workspace.server.dao.Workspace;
+import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
 import org.mockito.testng.MockitoTestNGListener;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
+
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.argThat;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Tests for {@link com.codenvy.api.account.metrics.RunStatusSubscriber}
@@ -114,6 +114,6 @@ public class RunStatusSubscriberTest {
     public void shouldStopUsingResourcesWhenApplicationStopped() throws ServerException {
         runStatusSubscriber.onEvent(RunnerEvent.stoppedEvent(PROCESS_ID, WS_ID, "/project"));
 
-        verify(resourcesUsageTracker).resourceUsageStopped(eq(RunTasksActivityChecker.PFX  + PROCESS_ID));
+        verify(resourcesUsageTracker).resourceUsageStopped(eq(RunTasksActivityChecker.PFX + PROCESS_ID));
     }
 }

@@ -17,22 +17,23 @@
  */
 package com.codenvy.api.account.subscription.onpremises;
 
-import com.codenvy.api.account.server.dao.AccountDao;
-import com.codenvy.api.account.server.dao.Subscription;
-import com.codenvy.api.account.server.subscription.SubscriptionService;
-import com.codenvy.api.account.shared.dto.UsedAccountResources;
+
 import com.codenvy.api.account.subscription.SubscriptionEvent;
 import com.codenvy.api.account.subscription.service.util.SubscriptionCharger;
 import com.codenvy.api.account.subscription.service.util.SubscriptionServiceHelper;
 import com.codenvy.api.account.subscription.service.util.SubscriptionTrialRemover;
-import com.codenvy.api.core.ApiException;
-import com.codenvy.api.core.ConflictException;
-import com.codenvy.api.core.ForbiddenException;
-import com.codenvy.api.core.NotFoundException;
-import com.codenvy.api.core.ServerException;
-import com.codenvy.api.core.notification.EventService;
-import com.codenvy.dto.server.DtoFactory;
 
+import org.eclipse.che.api.account.server.SubscriptionService;
+import org.eclipse.che.api.account.server.dao.AccountDao;
+import org.eclipse.che.api.account.server.dao.Subscription;
+import org.eclipse.che.api.account.shared.dto.UsedAccountResources;
+import org.eclipse.che.api.core.ApiException;
+import org.eclipse.che.api.core.ConflictException;
+import org.eclipse.che.api.core.ForbiddenException;
+import org.eclipse.che.api.core.NotFoundException;
+import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.api.core.notification.EventService;
+import org.eclipse.che.dto.server.DtoFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

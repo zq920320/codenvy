@@ -17,12 +17,13 @@
  */
 package com.codenvy.auth.sso.server.ticket;
 
-import com.codenvy.api.core.notification.EventService;
-import com.codenvy.api.core.notification.EventSubscriber;
 import com.codenvy.api.dao.authentication.AccessTicket;
 import com.codenvy.api.dao.authentication.TicketManager;
 import com.codenvy.api.event.user.RemoveUserEvent;
 
+import org.eclipse.che.api.core.notification.EventService;
+
+import org.eclipse.che.api.core.notification.EventSubscriber;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

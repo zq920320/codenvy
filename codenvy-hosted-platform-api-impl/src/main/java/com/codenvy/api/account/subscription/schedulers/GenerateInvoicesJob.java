@@ -20,9 +20,9 @@ package com.codenvy.api.account.subscription.schedulers;
 import com.codenvy.api.account.billing.BillingPeriod;
 import com.codenvy.api.account.billing.BillingService;
 import com.codenvy.api.account.billing.Period;
-import com.codenvy.api.core.ServerException;
-import com.codenvy.commons.schedule.ScheduleCron;
 
+import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.commons.schedule.ScheduleCron;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

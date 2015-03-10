@@ -17,12 +17,12 @@
  */
 package com.codenvy.workspace.listener;
 
-import com.codenvy.api.core.NotFoundException;
-import com.codenvy.api.core.notification.EventService;
-import com.codenvy.api.core.notification.EventSubscriber;
-import com.codenvy.api.runner.RunQueue;
-import com.codenvy.api.runner.RunQueueTask;
-import com.codenvy.api.runner.internal.RunnerEvent;
+import org.eclipse.che.api.core.NotFoundException;
+import org.eclipse.che.api.core.notification.EventService;
+import org.eclipse.che.api.core.notification.EventSubscriber;
+import org.eclipse.che.api.runner.RunQueue;
+import org.eclipse.che.api.runner.RunQueueTask;
+import org.eclipse.che.api.runner.internal.RunnerEvent;
 import com.codenvy.workspace.event.DeleteWorkspaceEvent;
 
 import org.slf4j.Logger;

@@ -17,12 +17,12 @@
  */
 package com.codenvy.api.account.impl.shared.dto;
 
-import com.codenvy.dto.shared.DTO;import java.lang.String;
+import org.eclipse.che.dto.shared.DTO;
 
 /**
  * Describes the new credit card request.
- * @author Max Shaposhnik (mshaposhnik@codenvy.com) on 1/27/15.
  *
+ * @author Max Shaposhnik (mshaposhnik@codenvy.com) on 1/27/15.
  */
 @DTO
 public interface NewCreditCard {

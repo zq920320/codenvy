@@ -17,24 +17,14 @@
  */
 package com.codenvy.api.account.metrics;
 
-import static com.codenvy.api.runner.ApplicationStatus.RUNNING;
-import static java.lang.System.currentTimeMillis;
-import static org.mockito.Matchers.anyLong;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import com.codenvy.api.core.NotFoundException;
-import com.codenvy.api.core.ServerException;
-import com.codenvy.api.project.shared.dto.ProjectDescriptor;
-import com.codenvy.api.runner.ApplicationStatus;
-import com.codenvy.api.runner.RunQueue;
-import com.codenvy.api.runner.RunQueueTask;
-import com.codenvy.api.runner.dto.ApplicationProcessDescriptor;
-import com.codenvy.api.runner.dto.RunRequest;
-
+import org.eclipse.che.api.core.NotFoundException;
+import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.api.project.shared.dto.ProjectDescriptor;
+import org.eclipse.che.api.runner.ApplicationStatus;
+import org.eclipse.che.api.runner.RunQueue;
+import org.eclipse.che.api.runner.RunQueueTask;
+import org.eclipse.che.api.runner.dto.ApplicationProcessDescriptor;
+import org.eclipse.che.api.runner.dto.RunRequest;
 import org.mockito.Mock;
 import org.mockito.testng.MockitoTestNGListener;
 import org.testng.annotations.BeforeMethod;
@@ -44,6 +34,15 @@ import org.testng.annotations.Test;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
+
+import static java.lang.System.currentTimeMillis;
+import static org.eclipse.che.api.runner.ApplicationStatus.RUNNING;
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 
 /**

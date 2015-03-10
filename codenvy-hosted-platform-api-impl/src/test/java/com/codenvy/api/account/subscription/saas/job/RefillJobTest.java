@@ -18,10 +18,10 @@
 package com.codenvy.api.account.subscription.saas.job;
 
 import com.codenvy.api.account.AccountLocker;
-import com.codenvy.api.account.server.Constants;
-import com.codenvy.api.account.server.dao.Account;
-import com.codenvy.api.account.server.dao.AccountDao;
 
+import org.eclipse.che.api.account.server.Constants;
+import org.eclipse.che.api.account.server.dao.Account;
+import org.eclipse.che.api.account.server.dao.AccountDao;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.testng.MockitoTestNGListener;

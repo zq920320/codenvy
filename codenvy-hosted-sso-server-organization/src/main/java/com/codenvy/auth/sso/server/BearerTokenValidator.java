@@ -17,8 +17,8 @@
  */
 package com.codenvy.auth.sso.server;
 
-import com.codenvy.api.core.ConflictException;
-import com.codenvy.api.user.server.TokenValidator;
+import org.eclipse.che.api.core.ConflictException;
+import org.eclipse.che.api.user.server.TokenValidator;
 import com.codenvy.auth.sso.server.handler.BearerTokenAuthenticationHandler;
 
 import javax.inject.Inject;

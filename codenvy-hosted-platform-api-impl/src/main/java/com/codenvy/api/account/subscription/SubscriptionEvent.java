@@ -17,8 +17,8 @@
  */
 package com.codenvy.api.account.subscription;
 
-import com.codenvy.api.account.server.dao.Subscription;
-import com.codenvy.api.core.notification.EventOrigin;
+import org.eclipse.che.api.account.server.dao.Subscription;
+import org.eclipse.che.api.core.notification.EventOrigin;
 
 /**
  * @author Sergii Leschenko

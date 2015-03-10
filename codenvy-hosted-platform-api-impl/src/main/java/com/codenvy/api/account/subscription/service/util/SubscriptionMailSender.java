@@ -17,15 +17,14 @@
  */
 package com.codenvy.api.account.subscription.service.util;
 
-import com.codenvy.api.account.server.dao.AccountDao;
-import com.codenvy.api.account.server.dao.Member;
-import com.codenvy.api.core.NotFoundException;
-import com.codenvy.api.core.ServerException;
-import com.codenvy.api.user.server.dao.User;
-import com.codenvy.api.user.server.dao.UserDao;
-import com.codenvy.commons.lang.Strings;
-
 import org.codenvy.mail.MailSenderClient;
+import org.eclipse.che.api.account.server.dao.AccountDao;
+import org.eclipse.che.api.account.server.dao.Member;
+import org.eclipse.che.api.core.NotFoundException;
+import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.api.user.server.dao.User;
+import org.eclipse.che.api.user.server.dao.UserDao;
+import org.eclipse.che.commons.lang.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,8 +39,8 @@ import java.util.List;
 import java.util.Map;
 
 import static com.codenvy.api.account.billing.PaymentState.PAID_SUCCESSFULLY;
-import static com.codenvy.commons.lang.IoUtil.getResource;
-import static com.codenvy.commons.lang.IoUtil.readAndCloseQuietly;
+import static org.eclipse.che.commons.lang.IoUtil.getResource;
+import static org.eclipse.che.commons.lang.IoUtil.readAndCloseQuietly;
 
 /**
  * Sends emails and retrieve list of emails of account owners

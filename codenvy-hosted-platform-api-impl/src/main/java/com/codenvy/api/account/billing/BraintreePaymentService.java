@@ -26,14 +26,14 @@ import com.codenvy.api.account.AccountLocker;
 import com.codenvy.api.account.PaymentService;
 import com.codenvy.api.account.impl.shared.dto.CreditCard;
 import com.codenvy.api.account.impl.shared.dto.Invoice;
-import com.codenvy.api.account.server.dao.Subscription;
 import com.codenvy.api.account.subscription.service.util.SubscriptionMailSender;
-import com.codenvy.api.core.ApiException;
-import com.codenvy.api.core.ForbiddenException;
-import com.codenvy.api.core.ServerException;
-import com.codenvy.api.core.notification.EventService;
-import com.codenvy.commons.schedule.ScheduleDelay;
 
+import org.eclipse.che.api.account.server.dao.Subscription;
+import org.eclipse.che.api.core.ApiException;
+import org.eclipse.che.api.core.ForbiddenException;
+import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.api.core.notification.EventService;
+import org.eclipse.che.commons.schedule.ScheduleDelay;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -144,11 +144,11 @@ public class BraintreePaymentService implements PaymentService {
             throw new ForbiddenException("Amount can't be 0");
         }
         String accountId = invoice.getAccountId();
-        Double price =  invoice.getTotal();
+        Double price = invoice.getTotal();
         try {
             final TransactionRequest request = new TransactionRequest()
                     .paymentMethodToken(invoice.getCreditCardId())
-                    // add invoice id to identify charging reason
+                            // add invoice id to identify charging reason
                     .customField("invoice_id", String.valueOf(invoice.getId()))
                     .options().submitForSettlement(true).done()
                     .amount(new BigDecimal(price, new MathContext(2)));

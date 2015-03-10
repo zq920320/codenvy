@@ -17,12 +17,13 @@
  */
 package com.codenvy.auth.sso.server;
 
-import com.codenvy.api.auth.AuthenticationExceptionMapper;
 import com.codenvy.api.dao.authentication.AccessTicket;
 import com.codenvy.api.dao.authentication.CookieBuilder;
 import com.codenvy.api.dao.authentication.TicketManager;
-import com.codenvy.commons.user.User;
-import com.codenvy.commons.user.UserImpl;
+
+import org.eclipse.che.api.auth.AuthenticationExceptionMapper;
+import org.eclipse.che.commons.user.User;
+import org.eclipse.che.commons.user.UserImpl;
 
 import org.everrest.assured.EverrestJetty;
 import org.mockito.InjectMocks;

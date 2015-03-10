@@ -17,19 +17,19 @@
  */
 package com.codenvy.api.dao.ldap;
 
-import com.codenvy.api.account.server.dao.Account;
-import com.codenvy.api.account.server.dao.AccountDao;
-import com.codenvy.api.core.ConflictException;
-import com.codenvy.api.core.NotFoundException;
-import com.codenvy.api.core.ServerException;
-import com.codenvy.api.core.notification.EventService;
+import org.eclipse.che.api.account.server.dao.Account;
+import org.eclipse.che.api.account.server.dao.AccountDao;
+import org.eclipse.che.api.core.ConflictException;
+import org.eclipse.che.api.core.NotFoundException;
+import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.api.core.notification.EventService;
 import com.codenvy.api.event.user.RemoveUserEvent;
-import com.codenvy.api.user.server.dao.UserDao;
-import com.codenvy.api.user.server.dao.UserProfileDao;
-import com.codenvy.api.user.server.dao.User;
-import com.codenvy.api.workspace.server.dao.Member;
-import com.codenvy.api.workspace.server.dao.MemberDao;
-import com.codenvy.api.workspace.server.dao.WorkspaceDao;
+import org.eclipse.che.api.user.server.dao.UserDao;
+import org.eclipse.che.api.user.server.dao.UserProfileDao;
+import org.eclipse.che.api.user.server.dao.User;
+import org.eclipse.che.api.workspace.server.dao.Member;
+import org.eclipse.che.api.workspace.server.dao.MemberDao;
+import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -225,7 +225,7 @@ public class UserDaoImpl implements UserDao {
             memberDao.remove(member);
         }
         //remove user relationships with accounts
-        for (com.codenvy.api.account.server.dao.Member member : accountDao.getByMember(id)) {
+        for (org.eclipse.che.api.account.server.dao.Member member : accountDao.getByMember(id)) {
             accountDao.removeMember(member);
         }
         //remove accounts
@@ -287,7 +287,7 @@ public class UserDaoImpl implements UserDao {
 
     private boolean isOnlyOneOwner(String accountId) throws ServerException {
         int owners = 0;
-        for (com.codenvy.api.account.server.dao.Member member : accountDao.getMembers(accountId)) {
+        for (org.eclipse.che.api.account.server.dao.Member member : accountDao.getMembers(accountId)) {
             if (member.getRoles().contains("account/owner")) {
                 owners++;
             }

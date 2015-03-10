@@ -21,8 +21,8 @@ import com.codenvy.api.account.billing.BillingPeriod;
 import com.codenvy.api.account.billing.MonthlyBillingPeriod;
 import com.codenvy.api.account.metrics.MemoryUsedMetric;
 import com.codenvy.api.account.metrics.UsageInformer;
-import com.codenvy.api.core.ServerException;
 
+import org.eclipse.che.api.core.ServerException;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -33,8 +33,7 @@ import java.util.Date;
 import java.util.Map;
 
 
-public class SQLMeterBasedStorageTest extends  AbstractSQLTest{
-
+public class SQLMeterBasedStorageTest extends AbstractSQLTest {
 
 
     private BillingPeriod billingPeriod = new MonthlyBillingPeriod();
@@ -139,7 +138,6 @@ public class SQLMeterBasedStorageTest extends  AbstractSQLTest{
     }
 
 
-
     @Test(dataProvider = "storage")
     public void shouldGetSumByDifferentWs(SqlMeterBasedStorage meterBasedStorage)
             throws ServerException, ParseException {
@@ -210,8 +208,9 @@ public class SQLMeterBasedStorageTest extends  AbstractSQLTest{
         Assert.assertEquals(2, result.size());
     }
 
-    @Test(dataProvider = "storage",expectedExceptions = ServerException.class , expectedExceptionsMessageRegExp = "Metric with given id and period already exist")
-    public void shouldFailToAddRunWithOverlappingPeriodAdd2Records(SqlMeterBasedStorage meterBasedStorage) throws ParseException, ServerException {
+    @Test(dataProvider = "storage", expectedExceptions = ServerException.class, expectedExceptionsMessageRegExp = "Metric with given id and period already exist")
+    public void shouldFailToAddRunWithOverlappingPeriodAdd2Records(SqlMeterBasedStorage meterBasedStorage)
+            throws ParseException, ServerException {
         //then
         //when
         meterBasedStorage.createMemoryUsedRecord(new MemoryUsedMetric(1024,

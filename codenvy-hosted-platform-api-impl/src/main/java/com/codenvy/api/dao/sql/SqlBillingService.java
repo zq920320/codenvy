@@ -27,11 +27,11 @@ import com.codenvy.api.account.impl.shared.dto.Charge;
 import com.codenvy.api.account.impl.shared.dto.Invoice;
 import com.codenvy.api.account.impl.shared.dto.Resources;
 import com.codenvy.api.account.subscription.ServiceId;
-import com.codenvy.api.core.NotFoundException;
-import com.codenvy.api.core.ServerException;
 import com.codenvy.api.dao.sql.postgresql.Int8RangeType;
-import com.codenvy.dto.server.DtoFactory;
 
+import org.eclipse.che.api.core.NotFoundException;
+import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.dto.server.DtoFactory;
 import org.postgresql.util.PGobject;
 
 import javax.inject.Inject;
@@ -59,7 +59,6 @@ import static com.codenvy.api.dao.sql.SqlDaoQueries.INVOICES_PAYMENT_STATE_UPDAT
 import static com.codenvy.api.dao.sql.SqlDaoQueries.MEMORY_CHARGES_INSERT;
 import static com.codenvy.api.dao.sql.SqlDaoQueries.MEMORY_CHARGES_SELECT;
 import static com.codenvy.api.dao.sql.SqlDaoQueries.PREPAID_INSERT;
-
 import static com.codenvy.api.dao.sql.SqlQueryAppender.appendContainsRange;
 import static com.codenvy.api.dao.sql.SqlQueryAppender.appendEqual;
 import static com.codenvy.api.dao.sql.SqlQueryAppender.appendHavingGreaterOrEqual;

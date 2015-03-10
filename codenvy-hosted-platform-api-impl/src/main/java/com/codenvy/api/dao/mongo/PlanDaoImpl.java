@@ -17,18 +17,19 @@
  */
 package com.codenvy.api.dao.mongo;
 
-import com.codenvy.api.account.server.dao.PlanDao;
-import com.codenvy.api.account.shared.dto.BillingCycleType;
-import com.codenvy.api.account.shared.dto.Plan;
-import com.codenvy.api.core.NotFoundException;
-import com.codenvy.api.core.ServerException;
-import com.codenvy.dto.server.DtoFactory;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoException;
+
+import org.eclipse.che.api.account.server.dao.PlanDao;
+import org.eclipse.che.api.account.shared.dto.BillingCycleType;
+import org.eclipse.che.api.account.shared.dto.Plan;
+import org.eclipse.che.api.core.NotFoundException;
+import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.dto.server.DtoFactory;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -37,7 +38,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * <p>Implementation of {@link com.codenvy.api.account.server.dao.PlanDao} based on MongoDB storage.</p>
+ * <p>Implementation of {@link org.eclipse.che.api.account.server.dao.PlanDao} based on MongoDB storage.</p>
  *
  * @author Alexander Garagatyi
  */

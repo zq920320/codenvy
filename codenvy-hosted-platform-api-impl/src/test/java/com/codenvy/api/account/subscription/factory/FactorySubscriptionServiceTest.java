@@ -18,13 +18,13 @@
 package com.codenvy.api.account.subscription.factory;
 
 import com.codenvy.api.account.PaymentService;
-import com.codenvy.api.account.server.dao.AccountDao;
-import com.codenvy.api.account.server.dao.Subscription;
-import com.codenvy.api.account.server.subscription.SubscriptionService;
 import com.codenvy.api.account.subscription.service.util.SubscriptionServiceHelper;
-import com.codenvy.api.core.ApiException;
-import com.codenvy.api.core.ConflictException;
 
+import org.eclipse.che.api.account.server.SubscriptionService;
+import org.eclipse.che.api.account.server.dao.AccountDao;
+import org.eclipse.che.api.account.server.dao.Subscription;
+import org.eclipse.che.api.core.ApiException;
+import org.eclipse.che.api.core.ConflictException;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.testng.MockitoTestNGListener;
@@ -47,9 +47,9 @@ import static org.mockito.Mockito.when;
 public class FactorySubscriptionServiceTest {
 
     @Mock
-    private AccountDao     accountDao;
+    private AccountDao                accountDao;
     @Mock
-    private PaymentService paymentService;
+    private PaymentService            paymentService;
     @Mock
     private SubscriptionServiceHelper subscriptionServiceHelper;
 
@@ -57,7 +57,7 @@ public class FactorySubscriptionServiceTest {
     private FactorySubscriptionService service;
 
     @Test(expectedExceptions = ConflictException.class,
-          expectedExceptionsMessageRegExp = SubscriptionService.SUBSCRIPTION_LIMIT_EXHAUSTED_MESSAGE)
+            expectedExceptionsMessageRegExp = SubscriptionService.SUBSCRIPTION_LIMIT_EXHAUSTED_MESSAGE)
     public void beforeCreateSubscriptionWhenOneAlreadyExists() throws ApiException {
         final String accountId = "acc1";
         final Map<String, String> properties = new HashMap<>(2);

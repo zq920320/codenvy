@@ -17,8 +17,7 @@
  */
 package com.codenvy.api.account.metrics;
 
-import com.codenvy.api.core.ServerException;
-
+import org.eclipse.che.api.core.ServerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

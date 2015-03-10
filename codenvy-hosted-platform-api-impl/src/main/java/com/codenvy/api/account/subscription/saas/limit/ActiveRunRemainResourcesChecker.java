@@ -21,15 +21,15 @@ import com.codenvy.api.account.billing.BillingPeriod;
 import com.codenvy.api.account.billing.BillingService;
 import com.codenvy.api.account.billing.ResourcesFilter;
 import com.codenvy.api.account.impl.shared.dto.AccountResources;
-import com.codenvy.api.account.server.dao.AccountDao;
-import com.codenvy.api.account.server.dao.Subscription;
 import com.codenvy.api.account.subscription.ServiceId;
-import com.codenvy.api.core.NotFoundException;
-import com.codenvy.api.core.ServerException;
-import com.codenvy.api.runner.RunQueue;
-import com.codenvy.api.runner.RunQueueTask;
-import com.codenvy.commons.schedule.ScheduleRate;
 
+import org.eclipse.che.api.account.server.dao.AccountDao;
+import org.eclipse.che.api.account.server.dao.Subscription;
+import org.eclipse.che.api.core.NotFoundException;
+import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.api.runner.RunQueue;
+import org.eclipse.che.api.runner.RunQueueTask;
+import org.eclipse.che.commons.schedule.ScheduleRate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

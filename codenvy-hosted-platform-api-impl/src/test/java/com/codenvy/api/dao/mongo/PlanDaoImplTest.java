@@ -20,13 +20,6 @@ package com.codenvy.api.dao.mongo;
 import de.bwaldvogel.mongo.MongoServer;
 import de.bwaldvogel.mongo.backend.memory.MemoryBackend;
 
-import com.codenvy.api.account.server.dao.PlanDao;
-import com.codenvy.api.account.server.dao.Subscription;
-import com.codenvy.api.account.shared.dto.BillingCycleType;
-import com.codenvy.api.account.shared.dto.Plan;
-import com.codenvy.api.core.NotFoundException;
-import com.codenvy.api.core.ServerException;
-import com.codenvy.dto.server.DtoFactory;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
@@ -35,6 +28,12 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoException;
 import com.mongodb.ServerAddress;
 
+import org.eclipse.che.api.account.server.dao.PlanDao;
+import org.eclipse.che.api.account.shared.dto.BillingCycleType;
+import org.eclipse.che.api.account.shared.dto.Plan;
+import org.eclipse.che.api.core.NotFoundException;
+import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.dto.server.DtoFactory;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;

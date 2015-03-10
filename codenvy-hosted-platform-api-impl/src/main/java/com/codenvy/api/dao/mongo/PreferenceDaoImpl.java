@@ -17,10 +17,10 @@
  */
 package com.codenvy.api.dao.mongo;
 
-import com.codenvy.api.core.NotFoundException;
-import com.codenvy.api.core.ServerException;
-import com.codenvy.api.user.server.dao.PreferenceDao;
-import com.codenvy.api.user.server.dao.UserDao;
+import org.eclipse.che.api.core.NotFoundException;
+import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.api.user.server.dao.PreferenceDao;
+import org.eclipse.che.api.user.server.dao.UserDao;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.mongodb.BasicDBObject;

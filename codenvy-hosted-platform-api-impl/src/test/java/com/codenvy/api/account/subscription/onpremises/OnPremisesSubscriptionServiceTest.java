@@ -17,13 +17,13 @@
  */
 package com.codenvy.api.account.subscription.onpremises;
 
-import com.codenvy.api.account.server.dao.AccountDao;
-import com.codenvy.api.account.server.dao.Subscription;
-import com.codenvy.api.account.server.subscription.SubscriptionService;
 import com.codenvy.api.account.subscription.service.util.SubscriptionServiceHelper;
-import com.codenvy.api.core.ApiException;
-import com.codenvy.api.core.ConflictException;
 
+import org.eclipse.che.api.account.server.SubscriptionService;
+import org.eclipse.che.api.account.server.dao.AccountDao;
+import org.eclipse.che.api.account.server.dao.Subscription;
+import org.eclipse.che.api.core.ApiException;
+import org.eclipse.che.api.core.ConflictException;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.testng.MockitoTestNGListener;

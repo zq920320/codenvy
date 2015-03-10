@@ -30,9 +30,9 @@ import com.codenvy.api.account.impl.shared.dto.Invoice;
 import com.codenvy.api.account.impl.shared.dto.Resources;
 import com.codenvy.api.account.metrics.MemoryUsedMetric;
 import com.codenvy.api.account.metrics.MeterBasedStorage;
-import com.codenvy.api.core.NotFoundException;
-import com.codenvy.api.core.ServerException;
 
+import org.eclipse.che.api.core.NotFoundException;
+import org.eclipse.che.api.core.ServerException;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -972,7 +972,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
 
     @Test(dataProvider = "storage")
     public void shouldGetEstimateByAccountWithDatesBetweenPeriod(MeterBasedStorage meterBasedStorage,
-                                                                   BillingService billingService)
+                                                                 BillingService billingService)
             throws ServerException, ParseException {
         //given
         //when
@@ -1036,6 +1036,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
         AccountResources resources = get(usage, 0);
         assertEquals(resources.getFreeAmount(), 0.216667);
     }
+
     @Test(dataProvider = "storage")
     public void shouldBeAbleToEstimateUsageWithFreePrepaidAndPaidTime(MeterBasedStorage meterBasedStorage,
                                                                       BillingService billingService) throws ParseException,
@@ -1054,7 +1055,6 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
         billingService.addPrepaid("ac-5", 100,
                                   sdf.parse("20-01-2015 00:00:00").getTime(),
                                   sdf.parse("15-02-2015 00:00:00").getTime());
-
 
 
         //when
@@ -1082,8 +1082,8 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
 
     @Test(dataProvider = "storage")
     public void shouldBeAbleToLimitAndSkipEstimateUsageWithFreePrepaidAndPaidTime(MeterBasedStorage meterBasedStorage,
-                                                                      BillingService billingService) throws ParseException,
-                                                                                                            ServerException {
+                                                                                  BillingService billingService) throws ParseException,
+                                                                                                                        ServerException {
         meterBasedStorage.createMemoryUsedRecord(
                 new MemoryUsedMetric(1024,
                                      sdf.parse("10-01-2015 01:00:00").getTime(),
@@ -1128,11 +1128,10 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
     }
 
 
-
     @Test(dataProvider = "storage")
     public void shouldBeAbleToGetEstimatedUsage(MeterBasedStorage meterBasedStorage,
-                                                                                  BillingService billingService) throws ParseException,
-                                                                                                                        ServerException {
+                                                BillingService billingService) throws ParseException,
+                                                                                      ServerException {
         meterBasedStorage.createMemoryUsedRecord(
                 new MemoryUsedMetric(1024,
                                      sdf.parse("10-01-2015 01:00:00").getTime(),

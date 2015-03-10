@@ -17,7 +17,7 @@
  */
 package com.codenvy.workspace.activity.websocket;
 
-import com.codenvy.commons.env.EnvironmentContext;
+import org.eclipse.che.commons.env.EnvironmentContext;
 import com.codenvy.workspace.activity.WsActivitySender;
 
 import org.everrest.websockets.WSConnection;

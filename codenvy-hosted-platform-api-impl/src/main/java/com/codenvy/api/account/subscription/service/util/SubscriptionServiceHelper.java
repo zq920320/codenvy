@@ -20,13 +20,13 @@ package com.codenvy.api.account.subscription.service.util;
 import com.codenvy.api.account.PaymentService;
 import com.codenvy.api.account.billing.CreditCardDao;
 import com.codenvy.api.account.impl.shared.dto.CreditCard;
-import com.codenvy.api.account.server.dao.AccountDao;
-import com.codenvy.api.account.server.dao.Subscription;
-import com.codenvy.api.core.ApiException;
-import com.codenvy.api.core.ConflictException;
-import com.codenvy.api.core.ForbiddenException;
-import com.codenvy.api.core.ServerException;
 
+import org.eclipse.che.api.account.server.dao.AccountDao;
+import org.eclipse.che.api.account.server.dao.Subscription;
+import org.eclipse.che.api.core.ApiException;
+import org.eclipse.che.api.core.ConflictException;
+import org.eclipse.che.api.core.ForbiddenException;
+import org.eclipse.che.api.core.ServerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -19,13 +19,13 @@
 package com.codenvy.api.account.subscription.saas.job;
 
 import com.codenvy.api.account.AccountLocker;
-import com.codenvy.api.account.server.Constants;
-import com.codenvy.api.account.server.dao.Account;
-import com.codenvy.api.account.server.dao.AccountDao;
-import com.codenvy.api.core.ForbiddenException;
-import com.codenvy.api.core.ServerException;
-import com.codenvy.commons.schedule.ScheduleCron;
 
+import org.eclipse.che.api.account.server.Constants;
+import org.eclipse.che.api.account.server.dao.Account;
+import org.eclipse.che.api.account.server.dao.AccountDao;
+import org.eclipse.che.api.core.ForbiddenException;
+import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.commons.schedule.ScheduleCron;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

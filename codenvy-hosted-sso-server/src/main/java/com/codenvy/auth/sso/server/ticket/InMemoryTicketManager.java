@@ -20,9 +20,10 @@ package com.codenvy.auth.sso.server.ticket;
 
 
 import com.codahale.metrics.annotation.Gauge;
+import org.eclipse.che.commons.lang.IoUtil;
+
 import com.codenvy.api.dao.authentication.AccessTicket;
 import com.codenvy.api.dao.authentication.TicketManager;
-import com.codenvy.commons.lang.IoUtil;
 import com.google.inject.Singleton;
 
 import org.slf4j.Logger;

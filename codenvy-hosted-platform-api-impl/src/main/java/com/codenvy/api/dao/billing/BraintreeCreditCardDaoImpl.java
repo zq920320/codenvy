@@ -32,19 +32,19 @@ import com.codenvy.api.account.billing.CreditCardRegistrationEvent;
 import com.codenvy.api.account.billing.ResourcesFilter;
 import com.codenvy.api.account.impl.shared.dto.AccountResources;
 import com.codenvy.api.account.impl.shared.dto.CreditCard;
-import com.codenvy.api.account.server.dao.AccountDao;
-import com.codenvy.api.account.server.dao.Subscription;
-import com.codenvy.api.account.server.subscription.SubscriptionServiceRegistry;
-import com.codenvy.api.account.shared.dto.SubscriptionState;
 import com.codenvy.api.account.subscription.ServiceId;
 import com.codenvy.api.account.subscription.service.util.SubscriptionMailSender;
-import com.codenvy.api.core.ApiException;
-import com.codenvy.api.core.ForbiddenException;
-import com.codenvy.api.core.ServerException;
-import com.codenvy.api.core.notification.EventService;
-import com.codenvy.commons.env.EnvironmentContext;
-import com.codenvy.dto.server.DtoFactory;
 
+import org.eclipse.che.api.account.server.SubscriptionServiceRegistry;
+import org.eclipse.che.api.account.server.dao.AccountDao;
+import org.eclipse.che.api.account.server.dao.Subscription;
+import org.eclipse.che.api.account.shared.dto.SubscriptionState;
+import org.eclipse.che.api.core.ApiException;
+import org.eclipse.che.api.core.ForbiddenException;
+import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.api.core.notification.EventService;
+import org.eclipse.che.commons.env.EnvironmentContext;
+import org.eclipse.che.dto.server.DtoFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,9 +78,14 @@ public class BraintreeCreditCardDaoImpl implements CreditCardDao {
     private final SubscriptionServiceRegistry registry;
 
     @Inject
-    public BraintreeCreditCardDaoImpl(BraintreeGateway gateway, EventService eventService, BillingService billingService,
-                                      BillingPeriod billingPeriod, AccountLocker accountLocker, AccountDao accountDao,
-                                      SubscriptionMailSender subscriptionMailSender, SubscriptionServiceRegistry registry) {
+    public BraintreeCreditCardDaoImpl(BraintreeGateway gateway,
+                                      EventService eventService,
+                                      BillingService billingService,
+                                      BillingPeriod billingPeriod,
+                                      AccountLocker accountLocker,
+                                      AccountDao accountDao,
+                                      SubscriptionMailSender subscriptionMailSender,
+                                      SubscriptionServiceRegistry registry) {
         this.gateway = gateway;
         this.eventService = eventService;
         this.billingService = billingService;
@@ -131,13 +136,14 @@ public class BraintreeCreditCardDaoImpl implements CreditCardDao {
                                                            .billingAddress()
                                                            .streetAddress(streetAddress)
                                                            .locality(city)
-                                                               .region(state)
-                                                               .countryName(country)
-                                                               .done()
+                                                           .region(state)
+                                                           .countryName(country)
+                                                           .done()
                                                            .done();
             result = gateway.customer().update(customer.getId(), request);
             if (!result.isSuccess()) {
-                String msg = String.format("Failed to register new card for account %s. Error message: %s ", accountId, result.getMessage());
+                String msg =
+                        String.format("Failed to register new card for account %s. Error message: %s ", accountId, result.getMessage());
                 LOG.error(msg);
                 throw new ForbiddenException(msg);
             }
@@ -149,15 +155,16 @@ public class BraintreeCreditCardDaoImpl implements CreditCardDao {
             CustomerRequest request = new CustomerRequest().id(accountId).creditCard()
                                                            .paymentMethodNonce(nonce)
                                                            .billingAddress()
-                                                               .streetAddress(streetAddress)
-                                                               .locality(city)
-                                                               .region(state)
-                                                               .countryName(country)
-                                                               .done()
+                                                           .streetAddress(streetAddress)
+                                                           .locality(city)
+                                                           .region(state)
+                                                           .countryName(country)
+                                                           .done()
                                                            .done();
             result = gateway.customer().create(request);
             if (!result.isSuccess()) {
-                String msg = String.format("Failed to register new card for account %s. Error message: %s ", accountId, result.getMessage());
+                String msg =
+                        String.format("Failed to register new card for account %s. Error message: %s ", accountId, result.getMessage());
                 LOG.error(msg);
                 throw new ForbiddenException(msg);
             }
@@ -179,8 +186,8 @@ public class BraintreeCreditCardDaoImpl implements CreditCardDao {
         }
         List<CreditCard> result = new ArrayList<>();
         try {
-            Customer customer =  gateway.customer().find(accountId);
-            for (com.braintreegateway.CreditCard card : customer.getCreditCards()){
+            Customer customer = gateway.customer().find(accountId);
+            for (com.braintreegateway.CreditCard card : customer.getCreditCards()) {
                 result.add(DtoFactory.getInstance().createDto(CreditCard.class).withAccountId(accountId)
                                      .withToken(card.getToken())
                                      .withType(card.getCardType())
@@ -211,15 +218,15 @@ public class BraintreeCreditCardDaoImpl implements CreditCardDao {
             throw new ForbiddenException("Token is required.");
         }
         try {
-            com.braintreegateway.CreditCard  card = gateway.creditCard().find(token);
+            com.braintreegateway.CreditCard card = gateway.creditCard().find(token);
             Result<com.braintreegateway.CreditCard> result = gateway.creditCard().delete(token);
             if (!result.isSuccess()) {
                 LOG.warn(String.format("Failed to remove card. Error message: %s", result.getMessage()));
-                throw new ForbiddenException(String.format("Failed to remove card. Error message: %s",result.getMessage()));
+                throw new ForbiddenException(String.format("Failed to remove card. Error message: %s", result.getMessage()));
             }
             eventService.publish(CreditCardRegistrationEvent
                                          .creditCardRemovedEvent(accountId, card.getMaskedNumber(),
-                                                               EnvironmentContext.getCurrent().getUser().getId()));
+                                                                 EnvironmentContext.getCurrent().getUser().getId()));
             afterDeleteCheckAndNotify(accountId, card);
         } catch (BraintreeException e) {
             LOG.warn("Braintree exception: ", e);
@@ -244,10 +251,10 @@ public class BraintreeCreditCardDaoImpl implements CreditCardDao {
 
         // Check is paid resources used, lock and send notify emails.
         ResourcesFilter filter = ResourcesFilter.builder().withAccountId(accountId)
-                                                          .withPaidGbHMoreThan(0)
-                                                          .withFromDate(billingPeriod.getCurrent().getStartDate().getTime())
-                                                          .withTillDate(System.currentTimeMillis())
-                                                          .build();
+                                                .withPaidGbHMoreThan(0)
+                                                .withFromDate(billingPeriod.getCurrent().getStartDate().getTime())
+                                                .withTillDate(System.currentTimeMillis())
+                                                .build();
         List<AccountResources> resources = billingService.getEstimatedUsageByAccount(filter);
         if (!resources.isEmpty()) {
             accountLocker.lock(accountId);

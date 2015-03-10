@@ -18,8 +18,8 @@
 package com.codenvy.api.account.billing;
 
 import com.codenvy.api.account.impl.shared.dto.CreditCard;
-import com.codenvy.api.core.ForbiddenException;
-import com.codenvy.api.core.ServerException;
+import org.eclipse.che.api.core.ForbiddenException;
+import org.eclipse.che.api.core.ServerException;
 
 
 import java.util.List;

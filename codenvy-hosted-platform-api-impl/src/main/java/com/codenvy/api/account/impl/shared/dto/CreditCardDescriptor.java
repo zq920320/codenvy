@@ -17,15 +17,14 @@
  */
 package com.codenvy.api.account.impl.shared.dto;
 
-import com.codenvy.api.core.rest.shared.dto.Hyperlinks;
-import com.codenvy.api.core.rest.shared.dto.Link;
-import com.codenvy.dto.shared.DTO;
+import org.eclipse.che.api.core.rest.shared.dto.Hyperlinks;
+import org.eclipse.che.api.core.rest.shared.dto.Link;
+import org.eclipse.che.dto.shared.DTO;
 
-import java.lang.String;import java.util.List;
+import java.util.List;
 
 /**
  * @author Max Shaposhnik (mshaposhnik@codenvy.com) on 1/29/15.
- *
  */
 @DTO
 public interface CreditCardDescriptor extends Hyperlinks {

@@ -18,17 +18,17 @@
 package com.codenvy.api.account.metrics;
 
 import com.codenvy.api.account.billing.MonthlyBillingPeriod;
-import com.codenvy.api.builder.BuildQueue;
-import com.codenvy.api.builder.BuildQueueTask;
-import com.codenvy.api.builder.dto.BaseBuilderRequest;
-import com.codenvy.api.builder.dto.BuildRequest;
-import com.codenvy.api.builder.dto.DependencyRequest;
-import com.codenvy.api.builder.internal.BuilderEvent;
-import com.codenvy.api.core.ServerException;
-import com.codenvy.api.core.notification.EventService;
-import com.codenvy.api.workspace.server.dao.Workspace;
-import com.codenvy.api.workspace.server.dao.WorkspaceDao;
 
+import org.eclipse.che.api.builder.BuildQueue;
+import org.eclipse.che.api.builder.BuildQueueTask;
+import org.eclipse.che.api.builder.dto.BaseBuilderRequest;
+import org.eclipse.che.api.builder.dto.BuildRequest;
+import org.eclipse.che.api.builder.dto.DependencyRequest;
+import org.eclipse.che.api.builder.internal.BuilderEvent;
+import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.api.core.notification.EventService;
+import org.eclipse.che.api.workspace.server.dao.Workspace;
+import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
 import org.mockito.testng.MockitoTestNGListener;
@@ -48,8 +48,8 @@ import static org.mockito.Mockito.when;
 
 /**
  * Tests for {@link com.codenvy.api.account.metrics.BuildStatusSubscriber}
- * @author Max Shaposhnik
  *
+ * @author Max Shaposhnik
  */
 @Listeners(MockitoTestNGListener.class)
 public class BuildStatusSubscriberTest {
@@ -74,7 +74,7 @@ public class BuildStatusSubscriberTest {
     @BeforeMethod
     public void setUp() throws Exception {
         buildStatusSubscriber = new BuildStatusSubscriber(10, eventService, workspaceDao, buildQueue, resourcesUsageTracker,
-                                                        new MonthlyBillingPeriod());
+                                                          new MonthlyBillingPeriod());
         when(workspaceDao.getById(anyString())).thenReturn(new Workspace().withAccountId("accountId")
                                                                           .withId(WS_ID));
 

@@ -23,8 +23,8 @@ import com.codenvy.api.account.billing.PaymentState;
 import com.codenvy.api.account.billing.TemplateProcessor;
 import com.codenvy.api.account.impl.shared.dto.Invoice;
 import com.codenvy.api.account.subscription.service.util.SubscriptionMailSender;
-import com.codenvy.dto.server.DtoFactory;
 
+import org.eclipse.che.dto.server.DtoFactory;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
 import org.mockito.testng.MockitoTestNGListener;
@@ -53,7 +53,7 @@ import static org.mockito.Mockito.when;
 public class MailSchedulerTest {
     private static final int INVOICES_LIMIT = 20;
 
-    private static final String ACCOUNT_ID                  = "acc213";
+    private static final String ACCOUNT_ID = "acc213";
 
     final DtoFactory dto = DtoFactory.getInstance();
 
@@ -68,7 +68,7 @@ public class MailSchedulerTest {
 
     @BeforeMethod
     public void setUp() {
-        mailScheduler = new MailScheduler(subscriptionMailSender, billingService,  templateProcessor, INVOICES_LIMIT);
+        mailScheduler = new MailScheduler(subscriptionMailSender, billingService, templateProcessor, INVOICES_LIMIT);
     }
 
     @Test

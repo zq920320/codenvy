@@ -21,8 +21,9 @@ package com.codenvy.api.account.billing;
 import com.codenvy.api.account.impl.shared.dto.AccountResources;
 import com.codenvy.api.account.impl.shared.dto.Invoice;
 import com.codenvy.api.account.impl.shared.dto.Resources;
-import com.codenvy.api.core.NotFoundException;
-import com.codenvy.api.core.ServerException;
+
+import org.eclipse.che.api.core.NotFoundException;
+import org.eclipse.che.api.core.ServerException;
 
 import java.util.List;
 
@@ -135,7 +136,6 @@ public interface BillingService {
      *         period when prepaid GB*h is active
      */
     void addPrepaid(String accountId, double amount, long from, long till) throws ServerException;
-
 
 
     /**

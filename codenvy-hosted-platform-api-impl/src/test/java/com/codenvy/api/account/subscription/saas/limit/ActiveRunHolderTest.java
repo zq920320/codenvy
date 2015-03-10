@@ -17,14 +17,9 @@
  */
 package com.codenvy.api.account.subscription.saas.limit;
 
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.when;
-import static org.testng.Assert.assertFalse;
-
-import com.codenvy.api.runner.internal.RunnerEvent;
-import com.codenvy.api.workspace.server.dao.Workspace;
-import com.codenvy.api.workspace.server.dao.WorkspaceDao;
-
+import org.eclipse.che.api.runner.internal.RunnerEvent;
+import org.eclipse.che.api.workspace.server.dao.Workspace;
+import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
 import org.mockito.Mock;
 import org.mockito.testng.MockitoTestNGListener;
 import org.testng.Assert;
@@ -32,10 +27,14 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.when;
+import static org.testng.Assert.assertFalse;
+
 /**
  * Tests for ActiveRunHolder.
- * @author Max Shaposhnik (mshaposhnik@codenvy.com) on 1/19/15.
  *
+ * @author Max Shaposhnik (mshaposhnik@codenvy.com) on 1/19/15.
  */
 @Listeners(MockitoTestNGListener.class)
 public class ActiveRunHolderTest {

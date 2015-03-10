@@ -17,14 +17,13 @@
  */
 package com.codenvy.api.account.metrics;
 
-import com.codenvy.api.core.NotFoundException;
-import com.codenvy.api.runner.RunQueue;
-import com.codenvy.api.runner.RunQueueTask;
-import com.codenvy.api.runner.RunnerException;
-import com.codenvy.api.runner.dto.ApplicationProcessDescriptor;
-import com.codenvy.api.runner.dto.RunRequest;
-import com.codenvy.commons.schedule.ScheduleRate;
-
+import org.eclipse.che.api.core.NotFoundException;
+import org.eclipse.che.api.runner.RunQueue;
+import org.eclipse.che.api.runner.RunQueueTask;
+import org.eclipse.che.api.runner.RunnerException;
+import org.eclipse.che.api.runner.dto.ApplicationProcessDescriptor;
+import org.eclipse.che.api.runner.dto.RunRequest;
+import org.eclipse.che.commons.schedule.ScheduleRate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,8 +32,8 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 import java.util.concurrent.TimeUnit;
 
-import static com.codenvy.api.runner.ApplicationStatus.RUNNING;
 import static java.lang.System.currentTimeMillis;
+import static org.eclipse.che.api.runner.ApplicationStatus.RUNNING;
 
 /**
  * Makes ticks about resources usage
@@ -54,7 +53,7 @@ public class RunTasksActivityChecker {
     public static final String RUN_TICK_PERIOD = "metrics.run_tick.period_sec";
 
     /** prefix to store ID in usage tracker (to avoid runner and builder ID's match) */
-    public static final String PFX            = "run-";
+    public static final String PFX = "run-";
 
     private final Integer               runTickPeriod;
     private final Integer               schedulingPeriod;

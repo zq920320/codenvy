@@ -17,16 +17,15 @@
  */
 package com.codenvy.api.account;
 
-import com.codenvy.api.account.server.Constants;
-import com.codenvy.api.account.server.dao.Account;
-import com.codenvy.api.account.server.dao.AccountDao;
-import com.codenvy.api.core.ConflictException;
-import com.codenvy.api.core.NotFoundException;
-import com.codenvy.api.core.ServerException;
-import com.codenvy.api.core.notification.EventService;
-import com.codenvy.api.workspace.server.dao.Workspace;
-import com.codenvy.api.workspace.server.dao.WorkspaceDao;
-
+import org.eclipse.che.api.account.server.Constants;
+import org.eclipse.che.api.account.server.dao.Account;
+import org.eclipse.che.api.account.server.dao.AccountDao;
+import org.eclipse.che.api.core.ConflictException;
+import org.eclipse.che.api.core.NotFoundException;
+import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.api.core.notification.EventService;
+import org.eclipse.che.api.workspace.server.dao.Workspace;
+import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,7 +54,7 @@ public class AccountLocker {
         try {
             final Account account;
             account = accountDao.getById(accountId);
-            account.getAttributes().remove(com.codenvy.api.account.server.Constants.RESOURCES_LOCKED_PROPERTY);
+            account.getAttributes().remove(org.eclipse.che.api.account.server.Constants.RESOURCES_LOCKED_PROPERTY);
             accountDao.update(account);
         } catch (NotFoundException | ServerException e) {
             LOG.error("Error removing lock property from account  {} .", accountId);
@@ -87,14 +86,14 @@ public class AccountLocker {
 
         eventService.publish(AccountLockEvent.accountLockedEvent(accountId));
         try {
-        for (Workspace ws : workspaceDao.getByAccount(accountId)) {
-            ws.getAttributes().put(Constants.RESOURCES_LOCKED_PROPERTY, "true");
-            try {
-                workspaceDao.update(ws);
-            } catch (NotFoundException | ServerException | ConflictException e) {
-                LOG.error("Error writing  lock property into workspace  {} .", ws.getId());
+            for (Workspace ws : workspaceDao.getByAccount(accountId)) {
+                ws.getAttributes().put(Constants.RESOURCES_LOCKED_PROPERTY, "true");
+                try {
+                    workspaceDao.update(ws);
+                } catch (NotFoundException | ServerException | ConflictException e) {
+                    LOG.error("Error writing  lock property into workspace  {} .", ws.getId());
+                }
             }
-        }
         } catch (ServerException e) {
             e.printStackTrace();
         }
@@ -115,7 +114,7 @@ public class AccountLocker {
         try {
             final Account account;
             account = accountDao.getById(accountId);
-            account.getAttributes().remove(com.codenvy.api.account.server.Constants.PAYMENT_LOCKED_PROPERTY);
+            account.getAttributes().remove(org.eclipse.che.api.account.server.Constants.PAYMENT_LOCKED_PROPERTY);
             accountDao.update(account);
         } catch (NotFoundException | ServerException e) {
             LOG.error("Error removing lock property from account  {} .", accountId);

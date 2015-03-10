@@ -19,7 +19,7 @@ package com.codenvy.api.dao.ldap;
 
 import com.codenvy.api.dao.authentication.PasswordEncryptor;
 import com.codenvy.api.dao.authentication.SSHAPasswordEncryptor;
-import com.codenvy.api.user.server.dao.User;
+import org.eclipse.che.api.user.server.dao.User;
 
 import javax.inject.Inject;
 import javax.inject.Named;

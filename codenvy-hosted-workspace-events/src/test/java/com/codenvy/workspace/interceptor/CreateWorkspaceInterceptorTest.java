@@ -17,15 +17,15 @@
  */
 package com.codenvy.workspace.interceptor;
 
-import com.codenvy.api.core.ConflictException;
-import com.codenvy.api.user.server.dao.Profile;
-import com.codenvy.api.user.server.dao.UserDao;
-import com.codenvy.api.user.server.dao.User;
-import com.codenvy.api.workspace.server.WorkspaceService;
-import com.codenvy.api.workspace.shared.dto.NewWorkspace;
-import com.codenvy.api.workspace.shared.dto.WorkspaceDescriptor;
-import com.codenvy.commons.env.EnvironmentContext;
-import com.codenvy.commons.user.UserImpl;
+import org.eclipse.che.api.core.ConflictException;
+import org.eclipse.che.api.user.server.dao.Profile;
+import org.eclipse.che.api.user.server.dao.UserDao;
+import org.eclipse.che.api.user.server.dao.User;
+import org.eclipse.che.api.workspace.server.WorkspaceService;
+import org.eclipse.che.api.workspace.shared.dto.NewWorkspace;
+import org.eclipse.che.api.workspace.shared.dto.WorkspaceDescriptor;
+import org.eclipse.che.commons.env.EnvironmentContext;
+import org.eclipse.che.commons.user.UserImpl;
 
 import org.aopalliance.intercept.MethodInvocation;
 import org.codenvy.mail.MailSenderClient;

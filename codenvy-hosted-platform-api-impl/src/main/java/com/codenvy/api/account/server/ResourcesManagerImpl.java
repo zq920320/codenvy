@@ -17,20 +17,21 @@
  */
 package com.codenvy.api.account.server;
 
-import com.codenvy.api.account.server.dao.AccountDao;
-import com.codenvy.api.account.server.dao.Subscription;
-import com.codenvy.api.account.shared.dto.UpdateResourcesDescriptor;
 import com.codenvy.api.account.subscription.ServiceId;
-import com.codenvy.api.core.ConflictException;
-import com.codenvy.api.core.ForbiddenException;
-import com.codenvy.api.core.NotFoundException;
-import com.codenvy.api.core.ServerException;
-import com.codenvy.api.runner.dto.ResourcesDescriptor;
-import com.codenvy.api.runner.internal.Constants;
-import com.codenvy.api.workspace.server.dao.Workspace;
-import com.codenvy.api.workspace.server.dao.WorkspaceDao;
-import com.codenvy.dto.server.DtoFactory;
 
+import org.eclipse.che.api.account.server.ResourcesManager;
+import org.eclipse.che.api.account.server.dao.AccountDao;
+import org.eclipse.che.api.account.server.dao.Subscription;
+import org.eclipse.che.api.account.shared.dto.UpdateResourcesDescriptor;
+import org.eclipse.che.api.core.ConflictException;
+import org.eclipse.che.api.core.ForbiddenException;
+import org.eclipse.che.api.core.NotFoundException;
+import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.api.runner.dto.ResourcesDescriptor;
+import org.eclipse.che.api.runner.internal.Constants;
+import org.eclipse.che.api.workspace.server.dao.Workspace;
+import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
+import org.eclipse.che.dto.server.DtoFactory;
 import org.everrest.websockets.WSConnectionContext;
 import org.everrest.websockets.message.ChannelBroadcastMessage;
 import org.slf4j.Logger;
@@ -45,7 +46,7 @@ import java.util.Map;
 import static java.lang.String.format;
 
 /**
- * Implementation of {@link com.codenvy.api.account.server.ResourcesManager}
+ * Implementation of {@link org.eclipse.che.api.account.server.ResourcesManager}
  *
  * @author Sergii Leschenko
  * @author Max Shaposhnik
@@ -86,7 +87,7 @@ public class ResourcesManagerImpl implements ResourcesManager {
             }
 
             if (resourcesDescriptor.getBuilderTimeout() != null) {
-                workspace.getAttributes().put(com.codenvy.api.builder.internal.Constants.BUILDER_EXECUTION_TIME,
+                workspace.getAttributes().put(org.eclipse.che.api.builder.internal.Constants.BUILDER_EXECUTION_TIME,
                                               Integer.toString(resourcesDescriptor.getBuilderTimeout()));
             }
 

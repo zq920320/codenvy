@@ -17,14 +17,14 @@
  */
 package com.codenvy.workspace.interceptor;
 
-import com.codenvy.api.user.server.dao.Profile;
-import com.codenvy.api.user.server.dao.UserDao;
-import com.codenvy.api.user.server.dao.UserProfileDao;
-import com.codenvy.api.workspace.server.dao.MemberDao;
-import com.codenvy.api.workspace.server.dao.WorkspaceDao;
-import com.codenvy.api.workspace.shared.dto.MemberDescriptor;
-import com.codenvy.commons.env.EnvironmentContext;
-import com.codenvy.commons.lang.IoUtil;
+import org.eclipse.che.api.user.server.dao.Profile;
+import org.eclipse.che.api.user.server.dao.UserDao;
+import org.eclipse.che.api.user.server.dao.UserProfileDao;
+import org.eclipse.che.api.workspace.server.dao.MemberDao;
+import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
+import org.eclipse.che.api.workspace.shared.dto.MemberDescriptor;
+import org.eclipse.che.commons.env.EnvironmentContext;
+import org.eclipse.che.commons.lang.IoUtil;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;

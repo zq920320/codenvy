@@ -17,7 +17,7 @@
  */
 package com.codenvy.workspace.interceptor;
 
-import com.codenvy.api.workspace.server.WorkspaceService;
+import org.eclipse.che.api.workspace.server.WorkspaceService;
 import com.google.inject.AbstractModule;
 import com.google.inject.matcher.Matchers;
 

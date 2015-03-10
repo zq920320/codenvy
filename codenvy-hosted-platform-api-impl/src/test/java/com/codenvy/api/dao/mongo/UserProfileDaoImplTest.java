@@ -17,9 +17,9 @@
  */
 package com.codenvy.api.dao.mongo;
 
-import com.codenvy.api.core.NotFoundException;
-import com.codenvy.api.core.ServerException;
-import com.codenvy.api.user.server.dao.Profile;
+import org.eclipse.che.api.core.NotFoundException;
+import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.api.user.server.dao.Profile;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 

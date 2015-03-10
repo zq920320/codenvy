@@ -17,18 +17,19 @@
  */
 package com.codenvy.api.dao.mongo;
 
-import com.codenvy.api.account.server.Constants;
-import com.codenvy.api.account.server.dao.Account;
-import com.codenvy.api.account.server.dao.Member;
-import com.codenvy.api.account.server.dao.Subscription;
-import com.codenvy.api.account.server.dao.SubscriptionQueryBuilder;
-import com.codenvy.api.account.shared.dto.BillingCycleType;
-import com.codenvy.api.account.shared.dto.SubscriptionState;
-import com.codenvy.api.core.ConflictException;
-import com.codenvy.api.core.NotFoundException;
-import com.codenvy.api.core.ServerException;
-import com.codenvy.api.workspace.server.dao.Workspace;
-import com.codenvy.api.workspace.server.dao.WorkspaceDao;
+import org.eclipse.che.api.account.server.Constants;
+import org.eclipse.che.api.account.server.dao.Account;
+import org.eclipse.che.api.account.server.dao.Member;
+import org.eclipse.che.api.account.server.dao.Subscription;
+import org.eclipse.che.api.account.server.dao.SubscriptionQueryBuilder;
+import org.eclipse.che.api.account.shared.dto.BillingCycleType;
+import org.eclipse.che.api.account.shared.dto.SubscriptionState;
+import org.eclipse.che.api.core.ConflictException;
+import org.eclipse.che.api.core.ForbiddenException;
+import org.eclipse.che.api.core.NotFoundException;
+import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.api.workspace.server.dao.Workspace;
+import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;

@@ -25,9 +25,9 @@ import com.codenvy.api.account.billing.InvoiceFilter;
 import com.codenvy.api.account.billing.PaymentState;
 import com.codenvy.api.account.impl.shared.dto.CreditCard;
 import com.codenvy.api.account.impl.shared.dto.Invoice;
-import com.codenvy.api.core.ServerException;
-import com.codenvy.dto.server.DtoFactory;
 
+import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.dto.server.DtoFactory;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
 import org.mockito.testng.MockitoTestNGListener;

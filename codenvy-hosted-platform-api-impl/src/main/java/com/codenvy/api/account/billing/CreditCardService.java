@@ -18,23 +18,23 @@
 package com.codenvy.api.account.billing;
 
 import com.codenvy.api.account.AccountLocker;
-import com.codenvy.api.account.impl.shared.dto.AccountResources;
 import com.codenvy.api.account.impl.shared.dto.ClientToken;
 import com.codenvy.api.account.impl.shared.dto.CreditCard;
 import com.codenvy.api.account.impl.shared.dto.CreditCardDescriptor;
 import com.codenvy.api.account.impl.shared.dto.NewCreditCard;
-import com.codenvy.api.core.ForbiddenException;
-import com.codenvy.api.core.NotFoundException;
-import com.codenvy.api.core.ServerException;
-import com.codenvy.api.core.rest.Service;
-import com.codenvy.api.core.rest.annotations.Required;
-import com.codenvy.api.core.rest.shared.dto.Link;
-import com.codenvy.api.core.util.LinksHelper;
-import com.codenvy.dto.server.DtoFactory;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
+
+import org.eclipse.che.api.core.ForbiddenException;
+import org.eclipse.che.api.core.NotFoundException;
+import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.api.core.rest.Service;
+import org.eclipse.che.api.core.rest.annotations.Required;
+import org.eclipse.che.api.core.rest.shared.dto.Link;
+import org.eclipse.che.api.core.util.LinksHelper;
+import org.eclipse.che.dto.server.DtoFactory;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
@@ -72,8 +72,8 @@ public class CreditCardService extends Service {
     }
 
     @ApiOperation(value = "Client token",
-                  notes = "Get client token. Roles: account/owner, system/admin, system/manager.",
-                  position = 14)
+            notes = "Get client token. Roles: account/owner, system/admin, system/manager.",
+            position = 14)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "OK"),
             @ApiResponse(code = 403, message = "Access denied"),
@@ -89,8 +89,8 @@ public class CreditCardService extends Service {
 
 
     @ApiOperation(value = "Add credit card",
-                  notes = "Add credit card to account. Roles: account/owner, system/admin, system/manager.",
-                  position = 14)
+            notes = "Add credit card to account. Roles: account/owner, system/admin, system/manager.",
+            position = 14)
     @ApiResponses(value = {
             @ApiResponse(code = 201, message = "Created"),
             @ApiResponse(code = 403, message = "Access denied"),
@@ -110,8 +110,8 @@ public class CreditCardService extends Service {
     }
 
     @ApiOperation(value = "Get credit cards",
-                  notes = "Get all credit cards registered to account. Roles: account/owner, system/admin, system/manager.",
-                  position = 14)
+            notes = "Get all credit cards registered to account. Roles: account/owner, system/admin, system/manager.",
+            position = 14)
     @ApiResponses(value = {
             @ApiResponse(code = 201, message = "Created"),
             @ApiResponse(code = 403, message = "Access denied"),
@@ -138,8 +138,8 @@ public class CreditCardService extends Service {
 
 
     @ApiOperation(value = "Remove credit card",
-                  notes = "Remove credit card and make account free. Roles: account/owner, system/admin, system/manager.",
-                  position = 15)
+            notes = "Remove credit card and make account free. Roles: account/owner, system/admin, system/manager.",
+            position = 15)
     @ApiResponses(value = {
             @ApiResponse(code = 201, message = "Created"),
             @ApiResponse(code = 403, message = "Access denied"),

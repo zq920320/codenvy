@@ -17,12 +17,12 @@
  */
 package com.codenvy.api.account.billing;
 
-import com.codenvy.api.core.notification.EventOrigin;
+import org.eclipse.che.api.core.notification.EventOrigin;
 
 /**
  * Adding, removing and charging credit card event.
- * @author Max Shaposhnik
  *
+ * @author Max Shaposhnik
  */
 @EventOrigin("creditcard")
 public class CreditCardRegistrationEvent {

@@ -17,12 +17,12 @@
  */
 package com.codenvy.api.account;
 
-import com.codenvy.api.core.notification.EventOrigin;
+import org.eclipse.che.api.core.notification.EventOrigin;
 
 /**
  * Account locking/unlocking event.
- * @author Max Shaposhnik
  *
+ * @author Max Shaposhnik
  */
 @EventOrigin("accountlock")
 public class AccountLockEvent {

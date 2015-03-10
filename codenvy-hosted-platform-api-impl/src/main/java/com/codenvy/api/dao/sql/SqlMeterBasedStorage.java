@@ -20,9 +20,9 @@ package com.codenvy.api.dao.sql;
 import com.codenvy.api.account.metrics.MemoryUsedMetric;
 import com.codenvy.api.account.metrics.MeterBasedStorage;
 import com.codenvy.api.account.metrics.UsageInformer;
-import com.codenvy.api.core.ServerException;
 import com.codenvy.api.dao.sql.postgresql.Int8RangeType;
 
+import org.eclipse.che.api.core.ServerException;
 import org.postgresql.util.PGobject;
 
 import javax.inject.Inject;

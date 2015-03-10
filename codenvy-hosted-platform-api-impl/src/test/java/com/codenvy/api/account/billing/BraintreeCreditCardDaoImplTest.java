@@ -30,19 +30,19 @@ import com.braintreegateway.Result;
 import com.braintreegateway.exceptions.NotFoundException;
 import com.codenvy.api.account.AccountLocker;
 import com.codenvy.api.account.impl.shared.dto.AccountResources;
-import com.codenvy.api.account.server.dao.AccountDao;
-import com.codenvy.api.account.server.dao.Subscription;
-import com.codenvy.api.account.server.subscription.SubscriptionService;
-import com.codenvy.api.account.server.subscription.SubscriptionServiceRegistry;
 import com.codenvy.api.account.subscription.ServiceId;
 import com.codenvy.api.account.subscription.service.util.SubscriptionMailSender;
-import com.codenvy.api.core.ForbiddenException;
-import com.codenvy.api.core.notification.EventService;
 import com.codenvy.api.dao.billing.BraintreeCreditCardDaoImpl;
-import com.codenvy.commons.env.EnvironmentContext;
-import com.codenvy.commons.user.User;
-import com.codenvy.dto.server.DtoFactory;
 
+import org.eclipse.che.api.account.server.SubscriptionService;
+import org.eclipse.che.api.account.server.SubscriptionServiceRegistry;
+import org.eclipse.che.api.account.server.dao.AccountDao;
+import org.eclipse.che.api.account.server.dao.Subscription;
+import org.eclipse.che.api.core.ForbiddenException;
+import org.eclipse.che.api.core.notification.EventService;
+import org.eclipse.che.commons.env.EnvironmentContext;
+import org.eclipse.che.commons.user.User;
+import org.eclipse.che.dto.server.DtoFactory;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.testng.MockitoTestNGListener;
@@ -65,7 +65,6 @@ import static org.testng.Assert.assertEquals;
 
 /**
  * @author Max Shaposhnik (mshaposhnik@codenvy.com) on 1/29/15.
- *
  */
 @Listeners(MockitoTestNGListener.class)
 public class BraintreeCreditCardDaoImplTest {
@@ -239,7 +238,6 @@ public class BraintreeCreditCardDaoImplTest {
     public void shouldThrowExceptionIfNullPassedRegisterCard() throws Exception {
         dao.registerCard(null, "nonce123", null, null, null, null);
     }
-
 
 
 }

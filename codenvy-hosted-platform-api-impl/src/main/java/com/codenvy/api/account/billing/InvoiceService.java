@@ -19,15 +19,16 @@ package com.codenvy.api.account.billing;
 
 import com.codenvy.api.account.impl.shared.dto.Invoice;
 import com.codenvy.api.account.impl.shared.dto.InvoiceDescriptor;
-import com.codenvy.api.core.ForbiddenException;
-import com.codenvy.api.core.NotFoundException;
-import com.codenvy.api.core.ServerException;
-import com.codenvy.api.core.rest.Service;
-import com.codenvy.api.core.rest.shared.dto.Link;
-import com.codenvy.api.core.util.LinksHelper;
-import com.codenvy.dto.server.DtoFactory;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiParam;
+
+import org.eclipse.che.api.core.ForbiddenException;
+import org.eclipse.che.api.core.NotFoundException;
+import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.api.core.rest.Service;
+import org.eclipse.che.api.core.rest.shared.dto.Link;
+import org.eclipse.che.api.core.util.LinksHelper;
+import org.eclipse.che.dto.server.DtoFactory;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
@@ -54,7 +55,7 @@ import java.util.List;
  * @author Max Shaposhnik
  */
 @Api(value = "/invoice",
-     description = "Invoice manager")
+        description = "Invoice manager")
 @Path("/invoice/{accountId}")
 public class InvoiceService extends Service {
     private final BillingService    billingService;

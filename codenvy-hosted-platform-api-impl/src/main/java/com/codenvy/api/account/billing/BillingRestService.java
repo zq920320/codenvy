@@ -19,8 +19,9 @@ package com.codenvy.api.account.billing;
 
 import com.codenvy.api.account.impl.shared.dto.AccountResources;
 import com.codenvy.api.account.impl.shared.dto.Resources;
-import com.codenvy.api.core.ServerException;
-import com.codenvy.api.core.rest.Service;
+
+import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.api.core.rest.Service;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;

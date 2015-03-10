@@ -17,12 +17,12 @@
  */
 package com.codenvy.service.password;
 
-import com.codenvy.api.core.NotFoundException;
-import com.codenvy.api.core.ServerException;
-import com.codenvy.api.user.server.dao.Profile;
-import com.codenvy.api.user.server.dao.UserDao;
-import com.codenvy.api.user.server.dao.User;
-import com.codenvy.api.user.server.dao.UserProfileDao;
+import org.eclipse.che.api.core.NotFoundException;
+import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.api.user.server.dao.Profile;
+import org.eclipse.che.api.user.server.dao.UserDao;
+import org.eclipse.che.api.user.server.dao.User;
+import org.eclipse.che.api.user.server.dao.UserProfileDao;
 
 import org.codenvy.mail.MailSenderClient;
 import org.slf4j.Logger;
@@ -47,8 +47,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import static com.codenvy.commons.lang.IoUtil.getResource;
-import static com.codenvy.commons.lang.IoUtil.readAndCloseQuietly;
+import static org.eclipse.che.commons.lang.IoUtil.getResource;
+import static org.eclipse.che.commons.lang.IoUtil.readAndCloseQuietly;
 
 /** Services for password features */
 @Path("/password")

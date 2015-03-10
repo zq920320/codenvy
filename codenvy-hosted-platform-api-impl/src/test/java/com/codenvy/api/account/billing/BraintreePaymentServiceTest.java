@@ -27,16 +27,16 @@ import com.braintreegateway.TransactionRequest;
 import com.braintreegateway.exceptions.BraintreeException;
 import com.codenvy.api.account.AccountLocker;
 import com.codenvy.api.account.impl.shared.dto.CreditCard;
-import com.codenvy.api.account.server.dao.Subscription;
-import com.codenvy.api.account.shared.dto.BillingCycleType;
-import com.codenvy.api.account.shared.dto.SubscriptionState;
 import com.codenvy.api.account.subscription.service.util.SubscriptionMailSender;
-import com.codenvy.api.core.ForbiddenException;
-import com.codenvy.api.core.ServerException;
-import com.codenvy.api.core.notification.EventService;
-import com.codenvy.commons.schedule.ScheduleDelay;
-import com.codenvy.dto.server.DtoFactory;
 
+import org.eclipse.che.api.account.server.dao.Subscription;
+import org.eclipse.che.api.account.shared.dto.BillingCycleType;
+import org.eclipse.che.api.account.shared.dto.SubscriptionState;
+import org.eclipse.che.api.core.ForbiddenException;
+import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.api.core.notification.EventService;
+import org.eclipse.che.commons.schedule.ScheduleDelay;
+import org.eclipse.che.dto.server.DtoFactory;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.testng.MockitoTestNGListener;
@@ -94,7 +94,7 @@ public class BraintreePaymentServiceTest {
     @Mock
     private com.braintreegateway.CreditCard creditCard;
     @Mock
-    SubscriptionMailSender                  mailSender;
+    SubscriptionMailSender mailSender;
 
     @InjectMocks
     private BraintreePaymentService service;

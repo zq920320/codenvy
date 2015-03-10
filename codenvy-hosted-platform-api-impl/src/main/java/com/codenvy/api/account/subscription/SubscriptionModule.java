@@ -17,7 +17,6 @@
  */
 package com.codenvy.api.account.subscription;
 
-import com.codenvy.api.account.server.subscription.SubscriptionService;
 import com.codenvy.api.account.subscription.factory.FactorySubscriptionService;
 import com.codenvy.api.account.subscription.onpremises.OnPremisesSubscriptionService;
 import com.codenvy.api.account.subscription.saas.SaasSubscriptionService;
@@ -32,6 +31,8 @@ import com.codenvy.api.account.subscription.schedulers.SubscriptionScheduler;
 import com.google.inject.AbstractModule;
 import com.google.inject.multibindings.Multibinder;
 
+import org.eclipse.che.api.account.server.SubscriptionService;
+
 /**
  * @author Sergii Kabashniuk
  */
@@ -39,7 +40,7 @@ public class SubscriptionModule extends AbstractModule {
     @Override
     protected void configure() {
         Multibinder<SubscriptionService> subscriptionServiceBinder =
-                Multibinder.newSetBinder(binder(), com.codenvy.api.account.server.subscription.SubscriptionService.class);
+                Multibinder.newSetBinder(binder(), org.eclipse.che.api.account.server.SubscriptionService.class);
         subscriptionServiceBinder.addBinding().to(FactorySubscriptionService.class);
         subscriptionServiceBinder.addBinding().to(OnPremisesSubscriptionService.class);
         subscriptionServiceBinder.addBinding().to(SaasSubscriptionService.class);

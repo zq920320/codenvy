@@ -17,11 +17,11 @@
  */
 package com.codenvy.api.account.impl.shared.dto;
 
-import com.codenvy.dto.shared.DTO;import java.lang.String;
+
+import org.eclipse.che.dto.shared.DTO;
 
 /**
  * @author Max Shaposhnik (mshaposhnik@codenvy.com) on 1/28/15.
- *
  */
 @DTO
 public interface ClientToken {

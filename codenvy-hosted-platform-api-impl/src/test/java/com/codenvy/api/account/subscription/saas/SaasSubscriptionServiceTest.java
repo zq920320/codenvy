@@ -19,14 +19,14 @@ package com.codenvy.api.account.subscription.saas;
 
 import com.codenvy.api.account.billing.BillingPeriod;
 import com.codenvy.api.account.metrics.MeterBasedStorage;
-import com.codenvy.api.account.server.dao.Subscription;
-import com.codenvy.api.account.shared.dto.UsedAccountResources;
-import com.codenvy.api.account.shared.dto.WorkspaceResources;
 import com.codenvy.api.account.subscription.service.util.SubscriptionServiceHelper;
-import com.codenvy.api.core.ServerException;
-import com.codenvy.api.workspace.server.dao.Workspace;
-import com.codenvy.api.workspace.server.dao.WorkspaceDao;
 
+import org.eclipse.che.api.account.server.dao.Subscription;
+import org.eclipse.che.api.account.shared.dto.UsedAccountResources;
+import org.eclipse.che.api.account.shared.dto.WorkspaceResources;
+import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.api.workspace.server.dao.Workspace;
+import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.testng.MockitoTestNGListener;

@@ -26,11 +26,11 @@ import com.codenvy.api.account.billing.InvoiceFilter;
 import com.codenvy.api.account.billing.PaymentState;
 import com.codenvy.api.account.impl.shared.dto.CreditCard;
 import com.codenvy.api.account.impl.shared.dto.Invoice;
-import com.codenvy.api.core.ApiException;
-import com.codenvy.api.core.ForbiddenException;
-import com.codenvy.api.core.ServerException;
-import com.codenvy.commons.schedule.ScheduleDelay;
 
+import org.eclipse.che.api.core.ApiException;
+import org.eclipse.che.api.core.ForbiddenException;
+import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.commons.schedule.ScheduleDelay;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

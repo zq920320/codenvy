@@ -17,14 +17,13 @@
  */
 package com.codenvy.api.account.billing;
 
-import com.codenvy.api.core.notification.EventOrigin;
 
-import java.math.BigDecimal;
+import org.eclipse.che.api.core.notification.EventOrigin;
 
 /**
  * Adding, removing and charging credit card event.
- * @author Max Shaposhnik
  *
+ * @author Max Shaposhnik
  */
 @EventOrigin("creditcard")
 public class CreditCardChargeEvent {
@@ -103,10 +102,13 @@ public class CreditCardChargeEvent {
         this.price = price;
     }
 
-    public static CreditCardChargeEvent creditCardChargeSuccessEvent(String account, String creditCardNumber, String subscriptionId, Double price) {
+    public static CreditCardChargeEvent creditCardChargeSuccessEvent(String account, String creditCardNumber, String subscriptionId,
+                                                                     Double price) {
         return new CreditCardChargeEvent(EventType.CREDIT_CARD_CHARGE_SUCCESS, account, creditCardNumber, subscriptionId, price);
     }
-    public static CreditCardChargeEvent creditCardChargeFailedEvent(String account, String creditCardNumber, String subscriptionId, Double price) {
+
+    public static CreditCardChargeEvent creditCardChargeFailedEvent(String account, String creditCardNumber, String subscriptionId,
+                                                                    Double price) {
         return new CreditCardChargeEvent(EventType.CREDIT_CARD_CHARGE_FAILED, account, creditCardNumber, subscriptionId, price);
     }
 

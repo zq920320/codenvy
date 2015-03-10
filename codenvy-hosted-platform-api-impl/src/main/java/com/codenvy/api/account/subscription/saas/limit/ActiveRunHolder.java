@@ -17,11 +17,10 @@
  */
 package com.codenvy.api.account.subscription.saas.limit;
 
-import com.codenvy.api.core.NotFoundException;
-import com.codenvy.api.core.ServerException;
-import com.codenvy.api.runner.internal.RunnerEvent;
-import com.codenvy.api.workspace.server.dao.WorkspaceDao;
-
+import org.eclipse.che.api.core.NotFoundException;
+import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.api.runner.internal.RunnerEvent;
+import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,13 +34,13 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
  * Holder for active runs. Contains map accountId to list of runs(processId's).
- * @author Max Shaposhnik (mshaposhnik@codenvy.com) on 1/15/15.
  *
+ * @author Max Shaposhnik (mshaposhnik@codenvy.com) on 1/15/15.
  */
 @Singleton
 public class ActiveRunHolder {
-    private static final Logger LOG =   LoggerFactory.getLogger(ActiveRunHolder.class);
-    private final  ConcurrentMap<String, Set<Long>> activeRuns = new ConcurrentHashMap<>();
+    private static final Logger                           LOG        = LoggerFactory.getLogger(ActiveRunHolder.class);
+    private final        ConcurrentMap<String, Set<Long>> activeRuns = new ConcurrentHashMap<>();
     private final WorkspaceDao workspaceDao;
 
     @Inject

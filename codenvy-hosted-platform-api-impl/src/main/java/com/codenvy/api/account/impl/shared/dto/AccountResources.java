@@ -17,7 +17,7 @@
  */
 package com.codenvy.api.account.impl.shared.dto;
 
-import com.codenvy.dto.shared.DTO;
+import org.eclipse.che.dto.shared.DTO;
 
 /**
  * @author Sergii Leschenko

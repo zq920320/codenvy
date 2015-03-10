@@ -17,13 +17,13 @@
  */
 package com.codenvy.api.dao.mongo;
 
-import com.codenvy.api.core.ConflictException;
-import com.codenvy.api.core.NotFoundException;
-import com.codenvy.api.core.ServerException;
+import org.eclipse.che.api.core.ConflictException;
+import org.eclipse.che.api.core.NotFoundException;
+import org.eclipse.che.api.core.ServerException;
 import com.codenvy.api.dao.ldap.UserDaoImpl;
-import com.codenvy.api.user.server.dao.User;
-import com.codenvy.api.workspace.server.dao.Member;
-import com.codenvy.api.workspace.server.dao.Workspace;
+import org.eclipse.che.api.user.server.dao.User;
+import org.eclipse.che.api.workspace.server.dao.Member;
+import org.eclipse.che.api.workspace.server.dao.Workspace;
 import com.mongodb.BasicDBList;
 import com.mongodb.DBObject;
 

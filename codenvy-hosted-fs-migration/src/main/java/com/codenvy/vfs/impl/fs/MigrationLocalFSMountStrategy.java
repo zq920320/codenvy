@@ -17,9 +17,10 @@
  */
 package com.codenvy.vfs.impl.fs;
 
-import com.codenvy.api.core.ServerException;
-import com.codenvy.commons.env.EnvironmentContext;
-import com.codenvy.commons.lang.IoUtil;
+import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.commons.env.EnvironmentContext;
+import org.eclipse.che.commons.lang.IoUtil;
+import org.eclipse.che.vfs.impl.fs.WorkspaceHashLocalFSMountStrategy;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
@@ -31,7 +32,7 @@ import java.io.IOException;
  * Performs copy FS of given workspace and return new mount path.
  * @author Max Shaposhnik (mshaposhnik@codenvy.com) on 12/26/14.
  */
-public class MigrationLocalFSMountStrategy extends WorkspaceHashLocalFSMountStrategy  {
+public class MigrationLocalFSMountStrategy extends WorkspaceHashLocalFSMountStrategy {
 
     private final java.io.File fsMountRoot;
     private final java.io.File oldFsMountRoot;

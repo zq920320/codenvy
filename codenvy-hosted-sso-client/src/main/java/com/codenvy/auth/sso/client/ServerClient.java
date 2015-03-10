@@ -17,7 +17,7 @@
  */
 package com.codenvy.auth.sso.client;
 
-import com.codenvy.commons.user.User;
+import org.eclipse.che.commons.user.User;
 
 /**
  * Provided communication bridge between sso client and server.

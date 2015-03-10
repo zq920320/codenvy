@@ -17,10 +17,6 @@
  */
 package com.codenvy.api.dao.mongo;
 
-import com.codenvy.api.account.server.dao.Subscription;
-import com.codenvy.api.account.server.dao.SubscriptionQueryBuilder;
-import com.codenvy.api.account.shared.dto.SubscriptionState;
-import com.codenvy.api.core.ServerException;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
@@ -28,8 +24,10 @@ import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoException;
 
-import static com.codenvy.api.dao.mongo.AccountDaoImpl.SUBSCRIPTION_COLLECTION;
-import static com.codenvy.api.dao.mongo.AccountDaoImpl.toSubscription;
+import org.eclipse.che.api.account.server.dao.Subscription;
+import org.eclipse.che.api.account.server.dao.SubscriptionQueryBuilder;
+import org.eclipse.che.api.account.shared.dto.SubscriptionState;
+import org.eclipse.che.api.core.ServerException;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -37,6 +35,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+
+import static com.codenvy.api.dao.mongo.AccountDaoImpl.SUBSCRIPTION_COLLECTION;
+import static com.codenvy.api.dao.mongo.AccountDaoImpl.toSubscription;
 
 /**
  * @author Alexander Garagatyi

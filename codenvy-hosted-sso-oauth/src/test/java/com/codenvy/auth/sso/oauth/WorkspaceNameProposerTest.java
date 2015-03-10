@@ -18,11 +18,11 @@
 package com.codenvy.auth.sso.oauth;
 
 
-import com.codenvy.api.core.ApiException;
-import com.codenvy.api.core.NotFoundException;
-import com.codenvy.api.workspace.server.dao.Workspace;
-import com.codenvy.api.workspace.server.dao.WorkspaceDao;
-import com.codenvy.dto.server.DtoFactory;
+import org.eclipse.che.api.core.ApiException;
+import org.eclipse.che.api.core.NotFoundException;
+import org.eclipse.che.api.workspace.server.dao.Workspace;
+import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
+import org.eclipse.che.dto.server.DtoFactory;
 
 import org.mockito.InjectMocks;
 import org.mockito.Mock;

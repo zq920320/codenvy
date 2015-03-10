@@ -17,15 +17,14 @@
  */
 package com.codenvy.api.account.metrics;
 
-import com.codenvy.api.builder.BuildQueue;
-import com.codenvy.api.builder.BuildQueueTask;
-import com.codenvy.api.builder.BuilderException;
-import com.codenvy.api.builder.dto.BaseBuilderRequest;
-import com.codenvy.api.builder.dto.BuildTaskDescriptor;
-import com.codenvy.api.builder.dto.DependencyRequest;
-import com.codenvy.api.core.NotFoundException;
-import com.codenvy.commons.schedule.ScheduleRate;
-
+import org.eclipse.che.api.builder.BuildQueue;
+import org.eclipse.che.api.builder.BuildQueueTask;
+import org.eclipse.che.api.builder.BuilderException;
+import org.eclipse.che.api.builder.dto.BaseBuilderRequest;
+import org.eclipse.che.api.builder.dto.BuildTaskDescriptor;
+import org.eclipse.che.api.builder.dto.DependencyRequest;
+import org.eclipse.che.api.core.NotFoundException;
+import org.eclipse.che.commons.schedule.ScheduleRate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,8 +33,8 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 import java.util.concurrent.TimeUnit;
 
-import static com.codenvy.api.builder.BuildStatus.IN_PROGRESS;
 import static java.lang.System.currentTimeMillis;
+import static org.eclipse.che.api.builder.BuildStatus.IN_PROGRESS;
 
 /**
  * Periodically checks for build resources usage.
