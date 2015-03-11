@@ -32,13 +32,22 @@ DEFINE loadResources(resourceParam, from, to, userType, wsType) RETURNS Y {
   l5 = extractParam(l4, 'WS-ID', 'wsId');
   l6 = extractParam(l5, 'USER-ID', 'userId');
   l7 = extractParam(l6, 'TIME', 'time');
-  l = FOREACH l7 GENERATE user,
+  l1 = FOREACH l7 GENERATE user,
                           userId,
                           ws,
                           wsId,
                           message,
                           time,
                           REGEX_EXTRACT_ALL(message, '([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}) ([0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2},[0-9]{3}).*\\s-(\\s.*)') AS pattern;
+
+  -- exchange WS and TIME params for run-started and run-finished events
+  l = FOREACH l1 GENERATE user,
+                           userId,
+                           (time IS NOT NULL AND INDEXOF(UPPER(time), 'WORKSPACE', 0) == 0 ? time : ws) AS ws,
+                           wsId,
+                           message,
+                           (time IS NOT NULL AND INDEXOF(UPPER(time), 'WORKSPACE', 0) == 0 ? ws : time) AS time,
+                           pattern;
 
   k1 = FOREACH l GENERATE ReplaceUserWithId(user, userId) AS user,
                           ReplaceWsWithId(ws, wsId) AS ws,
