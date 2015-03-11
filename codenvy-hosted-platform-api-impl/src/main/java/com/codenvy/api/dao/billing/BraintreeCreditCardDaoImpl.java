@@ -126,8 +126,9 @@ public class BraintreeCreditCardDaoImpl implements CreditCardDao {
         try {
             Customer customer = gateway.customer().find(accountId);
             if (customer.getCreditCards().size() >= 1) {
-                String msg = String.format(" Failed to add a new card to account %s, because there is already a card linked with it. ",
-                                           accountId);
+                String msg = String.format(
+                        " We were unable to add your credit card, because there is already a card linked with it. If you have questions " +
+                        "send an email to account-help@codenvy.com and include this ID (%s)", accountId);
                 LOG.error(msg);
                 throw new ForbiddenException(msg);
             }
@@ -143,7 +144,10 @@ public class BraintreeCreditCardDaoImpl implements CreditCardDao {
             result = gateway.customer().update(customer.getId(), request);
             if (!result.isSuccess()) {
                 String msg =
-                        String.format("Failed to register new card for account %s. Error message: %s ", accountId, result.getMessage());
+                        String.format("We were unable to add your credit card, please check card number and CVV which must be 4 digits " +
+                                      "for American Express cards and 3 digits for all other card types. If problems persist send an " +
+                                      "email to account-help@codenvy.com and include this ID (%s). Error Message: %s ", accountId,
+                                      result.getMessage());
                 LOG.error(msg);
                 throw new ForbiddenException(msg);
             }
@@ -164,7 +168,11 @@ public class BraintreeCreditCardDaoImpl implements CreditCardDao {
             result = gateway.customer().create(request);
             if (!result.isSuccess()) {
                 String msg =
-                        String.format("Failed to register new card for account %s. Error message: %s ", accountId, result.getMessage());
+                        String.format("We were unable to add your credit card, please check card number and CVV which must be 4 digits " +
+                                      "for American Express cards and 3 digits for all other card types. If problems persist send an " +
+                                      "email to account-help@codenvy.com and include this ID (%s). Error Message: %s ", accountId,
+                                      result.getMessage());
+
                 LOG.error(msg);
                 throw new ForbiddenException(msg);
             }
@@ -222,7 +230,10 @@ public class BraintreeCreditCardDaoImpl implements CreditCardDao {
             Result<com.braintreegateway.CreditCard> result = gateway.creditCard().delete(token);
             if (!result.isSuccess()) {
                 LOG.warn(String.format("Failed to remove card. Error message: %s", result.getMessage()));
-                throw new ForbiddenException(String.format("Failed to remove card. Error message: %s", result.getMessage()));
+                throw new ForbiddenException(String.format(
+                        "Failed to remove card. If problems persist send an email to account-help@codenvy.com and include this ID (%s). " +
+                        "Error Message: %s",
+                        accountId, result.getMessage()));
             }
             eventService.publish(CreditCardRegistrationEvent
                                          .creditCardRemovedEvent(accountId, card.getMaskedNumber(),
