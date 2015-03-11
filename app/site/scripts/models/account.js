@@ -453,7 +453,49 @@
                         }
                     );
 
-            },            
+            },
+
+            onpremLogin: function(username, password, redirect_url, success, error) {
+                if (isWebsocketEnabled()) {
+                    var loginUrl = "/api/auth/login?" + window.location.search.substring(1);
+                    var selectWsUrl = "../site/private/select-tenant?cookiePresent&" + window.location.search.substring(1);
+                    var data = {
+                        username: username,
+                        password: password
+                    };
+                    $.ajax({
+                        url: loginUrl,
+                        type: "POST",
+                        contentType: "application/json",
+                        data: JSON.stringify(data),
+                        success: function() {
+                            if (redirect_url) {
+                                success({
+                                    url: redirect_url
+                                });
+                            } else {
+                                success({
+                                    url: selectWsUrl
+                                });
+                            }
+                        },
+                        error: function(response /*, status , err*/ ) {
+                            var responseErr;
+                            try{
+                                responseErr = JSON.parse(response.responseText).message;
+                            }catch(e){
+                                responseErr = "Authentication: Something went wrong. Please try again or contact support";
+                            }
+
+                            
+                            error([
+                                new AccountError(null, responseErr)
+                            ]);
+                        }
+                    });
+                }
+            },
+
             adminLogin: function(email, password, redirect_url, success, error) {
                 if (isWebsocketEnabled()) {
                     var loginUrl = "/api/auth/login?" + window.location.search.substring(1);

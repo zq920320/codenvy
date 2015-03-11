@@ -29,7 +29,8 @@ define(["jquery","config",
         "views/create_ws",
         "views/join_ws",
         "views/adminform",
-        "views/create_ws_add_member"
+        "views/create_ws_add_member",
+        "views/onpremises-login"
         ],
 
     function($,Config,
@@ -45,7 +46,8 @@ define(["jquery","config",
         CreatingWorkspace,
         JoiningWorkspace,
         AdminForm,
-        CreateWsAdd_Member){
+        CreateWsAdd_Member,
+        OnPremisesLogin){
 
         function modernize(){
             Modernizr.load({
@@ -80,8 +82,29 @@ define(["jquery","config",
                         creatingWorkspace = $(".creating-ws"),
                         joiningWorkspace = $(".invite"),
                         adminForm = $(".admin-form"),
-                        creatWsAddMember = $(".create-ws-add-memeber");
+                        creatWsAddMember = $(".create-ws-add-memeber"),
+                        onpremloginForm = $(".onpremloginForm");
 
+                    if(onpremloginForm.length !== 0){
+                        (function(){
+                            var form = OnPremisesLogin.get(onpremloginForm),
+                            errorReport = ErrorReport.get(errorContainer);
+
+                            form.on("submitting", function(){
+                                errorReport.hide();
+                            });
+
+                            form.on("success", function(d){
+                                window.location.href = d.url;
+                            });
+
+                            form.on("invalid", function(field,message){
+                                errorReport.show(message);
+                            });
+                            
+                        }());
+                    }
+                    
                     if(creatWsAddMember.length !== 0){
                         (function(){
                             var form = CreateWsAdd_Member.get(creatWsAddMember),
