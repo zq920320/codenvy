@@ -61,7 +61,7 @@ import static com.codenvy.api.dao.sql.SqlDaoQueries.MEMORY_CHARGES_SELECT;
 import static com.codenvy.api.dao.sql.SqlDaoQueries.PREPAID_INSERT;
 import static com.codenvy.api.dao.sql.SqlQueryAppender.appendContainsRange;
 import static com.codenvy.api.dao.sql.SqlQueryAppender.appendEqual;
-import static com.codenvy.api.dao.sql.SqlQueryAppender.appendHavingGreaterOrEqual;
+import static com.codenvy.api.dao.sql.SqlQueryAppender.appendHavingGreater;
 import static com.codenvy.api.dao.sql.SqlQueryAppender.appendIn;
 import static com.codenvy.api.dao.sql.SqlQueryAppender.appendIsNull;
 import static com.codenvy.api.dao.sql.SqlQueryAppender.appendLimit;
@@ -386,15 +386,15 @@ public class SqlBillingService implements BillingService {
             accountUsageSelect.append(" GROUP BY M.FACCOUNT_ID, P.FAMOUNT ");
 
             int havingFields = 0;
-            havingFields += appendHavingGreaterOrEqual(accountUsageSelect,
-                                                       FFREE_AMOUNT,
-                                                       resourcesFilter.getFreeGbHMoreThan()) ? 1 : 0;
-            havingFields += appendHavingGreaterOrEqual(accountUsageSelect,
-                                                       FPREPAID_AMOUNT,
-                                                       resourcesFilter.getPrePaidGbHMoreThan()) ? 1 : 0;
-            havingFields += appendHavingGreaterOrEqual(accountUsageSelect,
-                                                       FPAID_AMOUNT,
-                                                       resourcesFilter.getPaidGbHMoreThan()) ? 1 : 0;
+            havingFields += appendHavingGreater(accountUsageSelect,
+                                                FFREE_AMOUNT,
+                                                resourcesFilter.getFreeGbHMoreThan()) ? 1 : 0;
+            havingFields += appendHavingGreater(accountUsageSelect,
+                                                FPREPAID_AMOUNT,
+                                                resourcesFilter.getPrePaidGbHMoreThan()) ? 1 : 0;
+            havingFields += appendHavingGreater(accountUsageSelect,
+                                                FPAID_AMOUNT,
+                                                resourcesFilter.getPaidGbHMoreThan()) ? 1 : 0;
 
             accountUsageSelect.append(" ORDER BY M.FACCOUNT_ID ");
 

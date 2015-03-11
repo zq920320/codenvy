@@ -70,9 +70,9 @@ public class BillingRestService extends Service {
                                                                   @QueryParam("endPeriod") Long endPeriod,
                                                                   @DefaultValue("-1") @QueryParam("maxItems") int maxItems,
                                                                   @QueryParam("skipCount") int skipCount,
-                                                                  @QueryParam("freeGbH") double freeGbH,
-                                                                  @QueryParam("paidGbH") double paidGbH,
-                                                                  @QueryParam("prepaidGbH") double prepaidGbH,
+                                                                  @QueryParam("freeGbH") Double freeGbH,
+                                                                  @QueryParam("paidGbH") Double paidGbH,
+                                                                  @QueryParam("prepaidGbH") Double prepaidGbH,
                                                                   @QueryParam("accountId") String accountId) throws ServerException {
         if (startPeriod == null) {
             startPeriod = billingPeriod.getCurrent().getStartDate().getTime();
@@ -82,17 +82,24 @@ public class BillingRestService extends Service {
             endPeriod = System.currentTimeMillis();
         }
 
-        final ResourcesFilter filter = ResourcesFilter.builder()
-                                                      .withFromDate(startPeriod)
-                                                      .withTillDate(endPeriod)
-                                                      .withSkipCount(skipCount)
-                                                      .withMaxItems(maxItems)
-                                                      .withFreeGbHMoreThan(freeGbH)
-                                                      .withPrePaidGbHMoreThan(prepaidGbH)
-                                                      .withPaidGbHMoreThan(paidGbH)
-                                                      .withAccountId(accountId)
-                                                      .build();
+        ResourcesFilter.Builder builder = ResourcesFilter.builder()
+                                                         .withFromDate(startPeriod)
+                                                         .withTillDate(endPeriod)
+                                                         .withSkipCount(skipCount)
+                                                         .withMaxItems(maxItems)
+                                                         .withAccountId(accountId);
 
-        return billingService.getEstimatedUsageByAccount(filter);
+        if (freeGbH != null) {
+            builder.withFreeGbHMoreThan(freeGbH);
+        }
+
+        if (prepaidGbH != null) {
+            builder.withPrePaidGbHMoreThan(prepaidGbH);
+        }
+        if (paidGbH != null) {
+            builder.withPaidGbHMoreThan(paidGbH);
+        }
+
+        return billingService.getEstimatedUsageByAccount(builder.build());
     }
 }

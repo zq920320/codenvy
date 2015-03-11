@@ -112,21 +112,21 @@ public class ResourcesFilter {
 
 
         public Builder withFreeGbHMoreThan(double freeGbH) {
-            if (freeGbH > 0) {
+            if (freeGbH >= 0) {
                 instance.freeGbHMoreThan = freeGbH;
             }
             return this;
         }
 
         public Builder withPaidGbHMoreThan(double paidGbH) {
-            if (paidGbH > 0) {
+            if (paidGbH >= 0) {
                 instance.paidGbHMoreThan = paidGbH;
             }
             return this;
         }
 
         public Builder withPrePaidGbHMoreThan(double prePaidGbH) {
-            if (prePaidGbH > 0) {
+            if (prePaidGbH >= 0) {
                 instance.prePaidGbHMoreThan = prePaidGbH;
             }
             return this;

@@ -111,8 +111,7 @@ public class CheckRemainResourcesOnStopSubscriber implements EventSubscriber<Run
             }
 
             final List<AccountResources> usedMemory = service.getEstimatedUsageByAccount(ResourcesFilter.builder()
-                                                                                                        .withAccountId(
-                                                                                                                workspace.getAccountId())
+                                                                                                        .withAccountId(workspace.getAccountId())
                                                                                                         .withFromDate(
                                                                                                                 billingPeriod.getCurrent()
                                                                                                                              .getStartDate()

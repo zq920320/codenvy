@@ -56,6 +56,15 @@ public class SqlQueryAppender {
         return false;
     }
 
+    public static boolean appendHavingGreater(StringBuilder queryBuilder, String exp, Object value) {
+        if (value != null) {
+            appendHavingOrAnd(queryBuilder);
+            queryBuilder.append(" ").append(exp).append(" > ");
+            appendValue(queryBuilder, value);
+            return true;
+        }
+        return false;
+    }
 
     public static boolean appendIsNull(StringBuilder queryBuilder, String fieldName, Object fieldValue) {
         if (fieldValue != null) {
