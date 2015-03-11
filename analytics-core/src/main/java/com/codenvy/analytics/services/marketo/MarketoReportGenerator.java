@@ -76,7 +76,7 @@ public class MarketoReportGenerator {
     public static final String PROFILE_COMPLETED  = "Profile Complete";
     public static final String POINTS             = "Product Score";
     public static final String LAST_PRODUCT_LOGIN = "Last Product Login";
-    public static final String NEW_USER           = "New user";
+    public static final String NEW_USER           = "New User";
 
     private final Configurator configurator;
 

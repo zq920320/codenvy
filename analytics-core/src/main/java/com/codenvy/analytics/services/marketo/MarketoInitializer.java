@@ -93,18 +93,14 @@ public class MarketoInitializer extends Feature {
         this.reportGenerator = reportGenerator;
         this.reportHolder = cleaner;
 
-        if (isAvailable()) {
-            validateConfiguration();
-
-            this.soapEndPoint = configurator.getString(SOAP_END_POINT);
-            this.userId = configurator.getString(USER_ID);
-            this.secretKey = configurator.getString(SECRET_KEY);
-            this.programName = configurator.getString(PROGRAM_NAME);
-            this.serviceUrl = configurator.getString(SERVICE_URL);
-            this.serviceName = configurator.getString(SERVICE_NAME);
-            this.listName = configurator.getString(LIST_NAME);
-            this.pageSize = configurator.getInt(PAGE_SIZE, 1000);
-        }
+        this.soapEndPoint = configurator.getString(SOAP_END_POINT);
+        this.userId = configurator.getString(USER_ID);
+        this.secretKey = configurator.getString(SECRET_KEY);
+        this.programName = configurator.getString(PROGRAM_NAME);
+        this.serviceUrl = configurator.getString(SERVICE_URL);
+        this.serviceName = configurator.getString(SERVICE_NAME);
+        this.listName = configurator.getString(LIST_NAME);
+        this.pageSize = configurator.getInt(PAGE_SIZE, 1000);
     }
 
     private void validateConfiguration() throws IllegalStateException {
