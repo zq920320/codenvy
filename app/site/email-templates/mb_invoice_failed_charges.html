@@ -7,7 +7,7 @@
 <body>
 <span th:inline="text">Your credit card ([[${creditCard.type}]] ending ...[[${#strings.substring(creditCard.Number,12,16)}]]) was not able to be charged this month.</span><br/>
 
-<span><strong  th:inline="text">You currently owe $[[${invoice.total}]] and you not be allowed to build or run your projects until the invoice below is paid.</strong> If you wish to pay now you can do so with the <a href="/dashboard">User Dashboard</a>.</span><br/>
+<span><strong  th:inline="text">You currently owe $[[${#numbers.formatDecimal(invoice.total, 1, 2)}]] and you not be allowed to build or run your projects until the invoice below is paid.</strong> If you wish to pay now you can do so with the <a href="/dashboard">User Dashboard</a>.</span><br/>
 <table style="border: 1px solid grey; border-collapse: collapse;">
     <tbody>
     <tr>
