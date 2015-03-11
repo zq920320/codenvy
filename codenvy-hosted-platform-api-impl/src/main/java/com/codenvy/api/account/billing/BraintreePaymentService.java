@@ -91,6 +91,12 @@ public class BraintreePaymentService implements PaymentService {
         }
         // prices should be set already by getPrices method
         final Double price = prices.get(subscription.getPlanId());
+
+        //TODO
+        if (price == 0) {
+            return;
+        }
+
         try {
             if (price == null) {
                 LOG.error("PAYMENTS# state#Error# subscriptionId#{}# message#{}#", subscription.getId(),
