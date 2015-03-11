@@ -290,7 +290,7 @@ public class SqlBillingService implements BillingService {
     }
 
     @Override
-    public void addPrepaid(String accountId, double amount, long from, long till) throws ServerException {
+    public void addSubscription(String accountId, double amount, long from, long till) throws ServerException {
         try (Connection connection = connectionFactory.getConnection()) {
             try {
                 connection.setAutoCommit(false);
@@ -313,6 +313,11 @@ public class SqlBillingService implements BillingService {
         } catch (SQLException e) {
             throw new ServerException(e.getLocalizedMessage(), e);
         }
+    }
+
+    @Override
+    public void removeSubscription(String accountId, long till) throws ServerException {
+        //TODO Implement it
     }
 
     @Override

@@ -117,16 +117,17 @@ public class SaasSubscriptionService extends SubscriptionService {
         accountLocker.unlockResources(subscription.getAccountId());
 
         final String prepaidGbH = subscription.getProperties().get("PrepaidGbH");
-        billingService.addPrepaid(subscription.getAccountId(),
-                                  Double.parseDouble(prepaidGbH),
-                                  subscription.getStartDate().getTime(),
-                                  subscription.getEndDate().getTime());
+        billingService.addSubscription(subscription.getAccountId(),
+                                       Double.parseDouble(prepaidGbH),
+                                       subscription.getStartDate().getTime(),
+                                       subscription.getEndDate().getTime());
 
         mailSender.sendSaasSignupNotification(subscription.getAccountId());
     }
 
     @Override
     public void onRemoveSubscription(Subscription subscription) throws ApiException {
+        billingService.removeSubscription(subscription.getAccountId(), subscription.getEndDate().getTime());
         eventService.publish(SubscriptionEvent.subscriptionRemovedEvent(subscription));
     }
 

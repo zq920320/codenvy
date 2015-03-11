@@ -630,9 +630,9 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                              BillingService billingService)
             throws ParseException, ServerException, NotFoundException {
         //when
-        billingService.addPrepaid("ac-1", 34.34,
-                                  sdf.parse("01-01-2015 00:00:00").getTime(),
-                                  sdf.parse("01-02-2015 00:00:00").getTime());
+        billingService.addSubscription("ac-1", 34.34,
+                                       sdf.parse("01-01-2015 00:00:00").getTime(),
+                                       sdf.parse("01-02-2015 00:00:00").getTime());
     }
 
     @Test(dataProvider = "storage", expectedExceptions = ServerException.class, expectedExceptionsMessageRegExp =
@@ -641,12 +641,12 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                                                     BillingService billingService)
             throws ParseException, ServerException, NotFoundException {
         //when
-        billingService.addPrepaid("ac-1", 34.34,
-                                  sdf.parse("01-01-2015 00:00:00").getTime(),
-                                  sdf.parse("01-02-2015 00:00:00").getTime());
-        billingService.addPrepaid("ac-1", 34.34,
-                                  sdf.parse("15-01-2015 00:00:00").getTime(),
-                                  sdf.parse("15-02-2015 00:00:00").getTime());
+        billingService.addSubscription("ac-1", 34.34,
+                                       sdf.parse("01-01-2015 00:00:00").getTime(),
+                                       sdf.parse("01-02-2015 00:00:00").getTime());
+        billingService.addSubscription("ac-1", 34.34,
+                                       sdf.parse("15-01-2015 00:00:00").getTime(),
+                                       sdf.parse("15-02-2015 00:00:00").getTime());
 
     }
 
@@ -695,9 +695,9 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                      "ac-5",
                                      "ws-7",
                                      "run-1254"));
-        billingService.addPrepaid("ac-5", 100,
-                                  sdf.parse("15-01-2015 00:00:00").getTime(),
-                                  sdf.parse("15-05-2015 00:00:00").getTime());
+        billingService.addSubscription("ac-5", 100,
+                                       sdf.parse("15-01-2015 00:00:00").getTime(),
+                                       sdf.parse("15-05-2015 00:00:00").getTime());
 
 
         //when
@@ -729,9 +729,9 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                      "ac-5",
                                      "ws-7",
                                      "run-1254"));
-        billingService.addPrepaid("ac-5", 100,
-                                  sdf.parse("15-12-2014 00:00:00").getTime(),
-                                  sdf.parse("15-01-2015 00:00:00").getTime());
+        billingService.addSubscription("ac-5", 100,
+                                       sdf.parse("15-12-2014 00:00:00").getTime(),
+                                       sdf.parse("15-01-2015 00:00:00").getTime());
 
 
         //when
@@ -763,9 +763,9 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                      "ac-5",
                                      "ws-7",
                                      "run-1254"));
-        billingService.addPrepaid("ac-5", 100,
-                                  sdf.parse("15-12-2014 00:00:00").getTime(),
-                                  sdf.parse("15-05-2015 00:00:00").getTime());
+        billingService.addSubscription("ac-5", 100,
+                                       sdf.parse("15-12-2014 00:00:00").getTime(),
+                                       sdf.parse("15-05-2015 00:00:00").getTime());
 
 
         //when
@@ -796,12 +796,12 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                      "ac-5",
                                      "ws-7",
                                      "run-1254"));
-        billingService.addPrepaid("ac-5", 100,
-                                  sdf.parse("15-12-2014 00:00:00").getTime(),
-                                  sdf.parse("15-01-2015 00:00:00").getTime() - 1);
-        billingService.addPrepaid("ac-5", 100,
-                                  sdf.parse("15-01-2015 00:00:00").getTime(),
-                                  sdf.parse("15-02-2015 00:00:00").getTime());
+        billingService.addSubscription("ac-5", 100,
+                                       sdf.parse("15-12-2014 00:00:00").getTime(),
+                                       sdf.parse("15-01-2015 00:00:00").getTime() - 1);
+        billingService.addSubscription("ac-5", 100,
+                                       sdf.parse("15-01-2015 00:00:00").getTime(),
+                                       sdf.parse("15-02-2015 00:00:00").getTime());
 
 
         //when
@@ -832,12 +832,12 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                      "ac-5",
                                      "ws-7",
                                      "run-1254"));
-        billingService.addPrepaid("ac-5", 100,
-                                  sdf.parse("15-12-2014 00:00:00").getTime(),
-                                  sdf.parse("15-01-2015 00:00:00").getTime() - 1);
-        billingService.addPrepaid("ac-5", 100,
-                                  sdf.parse("20-01-2015 00:00:00").getTime(),
-                                  sdf.parse("15-02-2015 00:00:00").getTime());
+        billingService.addSubscription("ac-5", 100,
+                                       sdf.parse("15-12-2014 00:00:00").getTime(),
+                                       sdf.parse("15-01-2015 00:00:00").getTime() - 1);
+        billingService.addSubscription("ac-5", 100,
+                                       sdf.parse("20-01-2015 00:00:00").getTime(),
+                                       sdf.parse("15-02-2015 00:00:00").getTime());
 
 
         //when
@@ -1049,12 +1049,12 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                      "ac-5",
                                      "ws-7",
                                      "run-1254"));
-        billingService.addPrepaid("ac-5", 100,
-                                  sdf.parse("15-12-2014 00:00:00").getTime(),
-                                  sdf.parse("15-01-2015 00:00:00").getTime() - 1);
-        billingService.addPrepaid("ac-5", 100,
-                                  sdf.parse("20-01-2015 00:00:00").getTime(),
-                                  sdf.parse("15-02-2015 00:00:00").getTime());
+        billingService.addSubscription("ac-5", 100,
+                                       sdf.parse("15-12-2014 00:00:00").getTime(),
+                                       sdf.parse("15-01-2015 00:00:00").getTime() - 1);
+        billingService.addSubscription("ac-5", 100,
+                                       sdf.parse("20-01-2015 00:00:00").getTime(),
+                                       sdf.parse("15-02-2015 00:00:00").getTime());
 
 
         //when
@@ -1102,9 +1102,9 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                      "ws-7",
                                      "run-1254"));
 
-        billingService.addPrepaid("ac-6", 100,
-                                  sdf.parse("15-12-2014 00:00:00").getTime(),
-                                  sdf.parse("15-01-2015 00:00:00").getTime() - 1);
+        billingService.addSubscription("ac-6", 100,
+                                       sdf.parse("15-12-2014 00:00:00").getTime(),
+                                       sdf.parse("15-01-2015 00:00:00").getTime() - 1);
 
 
         //when
@@ -1150,9 +1150,9 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                      "ws-7",
                                      "run-1256"));
 
-        billingService.addPrepaid("ac-6", 100,
-                                  sdf.parse("15-12-2014 00:00:00").getTime(),
-                                  sdf.parse("15-02-2015 00:00:00").getTime() - 1);
+        billingService.addSubscription("ac-6", 100,
+                                       sdf.parse("15-12-2014 00:00:00").getTime(),
+                                       sdf.parse("15-02-2015 00:00:00").getTime() - 1);
 
 
         //when

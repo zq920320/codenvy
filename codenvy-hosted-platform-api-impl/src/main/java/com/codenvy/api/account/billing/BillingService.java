@@ -135,8 +135,17 @@ public interface BillingService {
      * @param till
      *         period when prepaid GB*h is active
      */
-    void addPrepaid(String accountId, double amount, long from, long till) throws ServerException;
+    void addSubscription(String accountId, double amount, long from, long till) throws ServerException;
 
+    /**
+     * Deactivate prepaid GB*h for account
+     *
+     * @param accountId
+     *         id of account for whom will be deactivated prepaid GB*h
+     * @param till
+     *         period when prepaid GB*h is inactive
+     */
+    void removeSubscription(String accountId, long till) throws ServerException;
 
     /**
      * Get total used resources by given period.
