@@ -57,6 +57,7 @@ import java.util.Map;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
@@ -139,6 +140,17 @@ public class BraintreePaymentServiceTest {
         prices.set(service, Collections.emptyMap());
 
         service.charge(createSubscription());
+    }
+
+    @Test
+    public void shouldDoNotChargeSubscriptionIfHimPriceEqualsTo0() throws Exception {
+        Field prices = BraintreePaymentService.class.getDeclaredField("prices");
+        prices.setAccessible(true);
+        prices.set(service, Collections.singletonMap(PLAN_ID, 0D));
+
+        service.charge(createSubscription());
+
+        verifyZeroInteractions(gateway);
     }
 
     @Test(expectedExceptions = ForbiddenException.class, expectedExceptionsMessageRegExp = "error message")

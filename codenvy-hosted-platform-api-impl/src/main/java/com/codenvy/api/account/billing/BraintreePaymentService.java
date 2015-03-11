@@ -92,16 +92,16 @@ public class BraintreePaymentService implements PaymentService {
         // prices should be set already by getPrices method
         final Double price = prices.get(subscription.getPlanId());
 
-        //TODO
-        if (price == 0) {
-            return;
-        }
-
         try {
             if (price == null) {
                 LOG.error("PAYMENTS# state#Error# subscriptionId#{}# message#{}#", subscription.getId(),
                           "Price of plan is not found " + subscription.getPlanId());
                 throw new ServerException("Internal server error occurs. Please, contact support");
+            }
+
+            if (price == 0) {
+                //If price == 0 then don't charge it
+                return;
             }
 
             final TransactionRequest request = new TransactionRequest()
