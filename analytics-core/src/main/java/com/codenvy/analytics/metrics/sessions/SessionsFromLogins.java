@@ -21,6 +21,7 @@ import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.CalculatedMetric;
 import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Expandable;
 import com.codenvy.analytics.metrics.MetricType;
 
 import javax.annotation.security.RolesAllowed;
@@ -28,7 +29,7 @@ import java.io.IOException;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed(value = {"user", "system/admin", "system/manager"})
-public class SessionsFromLogins extends CalculatedMetric {
+public class SessionsFromLogins extends CalculatedMetric implements Expandable {
     public SessionsFromLogins() {
         super(MetricType.SESSIONS_FROM_LOGINS, new MetricType[]{MetricType.PRODUCT_USAGE_SESSIONS, MetricType.PRODUCT_USAGE_FACTORY_SESSIONS});
     }
@@ -48,6 +49,20 @@ public class SessionsFromLogins extends CalculatedMetric {
     /** {@inheritDoc} */
     @Override
     public String getDescription() {
-        return null;
+        return "Number of logins from sessions";
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String getExpandedField() {
+        return ((Expandable)basedMetric[0]).getExpandedField();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public ValueData getExpandedValue(Context context) throws IOException {
+        ValueData allSessions = ((Expandable)basedMetric[0]).getExpandedValue(context);
+        ValueData factorySessions = ((Expandable)basedMetric[1]).getExpandedValue(context);
+        return allSessions.subtract(factorySessions);
     }
 }

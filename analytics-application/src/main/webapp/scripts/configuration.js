@@ -1727,6 +1727,7 @@ function AnalyticsConfiguration() {
         "converted_factory_sessions": "#SESSIONS",
         "product_usage_sessions": "#SESSIONS",
         "factory_sessions": "#SESSIONS",
+        "sessions_from_logins": "#SESSIONS",
         "product_usage_factory_sessions": "#SESSIONS",
         "factory_product_usage_time_total": "#SESSIONS",
 
