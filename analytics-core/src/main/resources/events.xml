@@ -420,7 +420,7 @@
         </parameters>
     </event>
     <event name="im-artifact-downloaded">
-        <description>User update profile</description>
+        <description>Artifact downloaded</description>
         <parameters>
             <param allow-empty-value="true">USER</param>
             <param>ARTIFACT</param>
@@ -428,7 +428,7 @@
         </parameters>
     </event>
     <event name="im-subscription-added">
-        <description>User update profile</description>
+        <description>Trial subscription obtained</description>
         <parameters>
             <param>USER</param>
             <param>PLAN</param>
