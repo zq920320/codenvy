@@ -53,6 +53,17 @@ builds_started = FOREACH build_started GENERATE UUIDFrom(id),
                                               TOTUPLE('launch_type', launch_type),
                                               TOTUPLE('factory_id', GetFactoryId(ws));
 
+build_usage = filterByEvent(l, 'build-usage');
+build_usage = extractParam(build_usage, 'ID', id);
+build_usage = extractParam(build_usage, 'MEMORY', memory_mb);
+build_usage = FOREACH build_usage GENERATE dt,
+                                           id,
+                                           memory_mb;
+build_usage = FOREACH build_usage GENERATE UUIDFrom(id),
+                                           TOTUPLE('id', id),
+                                           TOTUPLE('memory', memory_mb),
+                                           TOTUPLE('stop_time', ToMilliSeconds(dt));
+
 build_finished = filterByEvent(l, 'build-finished');
 build_finished = extractParam(build_finished, 'PROJECT', project);
 build_finished = extractParam(build_finished, 'TYPE', project_type);
@@ -108,6 +119,17 @@ runs_started = FOREACH runs_started GENERATE UUIDFrom(id),
                                               TOTUPLE('timeout', timeout),
                                               TOTUPLE('launch_type', launch_type),
                                               TOTUPLE('factory_id', GetFactoryId(ws));
+
+run_usage = filterByEvent(l, 'build-usage');
+run_usage = extractParam(run_usage, 'ID', id);
+run_usage = extractParam(run_usage, 'MEMORY', memory_mb);
+run_usage = FOREACH run_usage GENERATE dt,
+                                       id,
+                                       memory_mb;
+run_usage = FOREACH run_usage GENERATE UUIDFrom(id),
+                                       TOTUPLE('id', id),
+                                       TOTUPLE('memory', memory_mb),
+                                       TOTUPLE('stop_time', ToMilliSeconds(dt));
 
 runs_finished = filterByEvent(l, 'run-finished');
 runs_finished = extractParam(runs_finished, 'ID', id);
@@ -258,8 +280,10 @@ edits_in_factory = FOREACH edits_in_factory GENERATE sessionID,
 STORE edits INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 STORE edits_in_factory INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 STORE builds_started INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
+STORE build_usage INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 STORE builds_finished INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 STORE runs_started INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
+STORE run_usage INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 STORE runs_finished INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 STORE debugs_started INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 STORE debugs_finished INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;

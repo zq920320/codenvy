@@ -208,13 +208,8 @@ public class TestRunMetrics extends BaseTest {
         events.add(new Event.Builder().withDate("2013-10-20")
                                       .withTime("11:01:00")
                                       .withParam("EVENT", "run-finished")
-                                      .withParam("WS", "ws")
-                                      .withParam("USER", "user")
-                                      .withParam("PROJECT", "project")
-                                      .withParam("TYPE", "projectType")
                                       .withParam("ID", "id3")
                                       .withParam("MEMORY", "128")
-                                      .withParam("LIFETIME", "50000")
                                       .build());
 
         return LogGenerator.generateLog(events);

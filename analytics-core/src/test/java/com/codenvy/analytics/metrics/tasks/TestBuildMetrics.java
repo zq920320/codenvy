@@ -193,13 +193,9 @@ public class TestBuildMetrics extends BaseTest {
                                       .build());
         events.add(new Event.Builder().withDate("2013-10-20")
                                       .withTime("11:01:00")
-                                      .withParam("EVENT", "build-finished")
-                                      .withParam("WS", "ws")
-                                      .withParam("USER", "user")
-                                      .withParam("PROJECT", "project")
-                                      .withParam("TYPE", "projectType")
+                                      .withParam("EVENT", "build-usage")
                                       .withParam("ID", "id3")
-                                      .withParam("TIMEOUT", "50000")
+                                      .withParam("MEMORY", "1536")
                                       .build());
 
         return LogGenerator.generateLog(events);

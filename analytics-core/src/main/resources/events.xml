@@ -435,4 +435,18 @@
             <param type="long">STOP-TIME</param>
         </parameters>
     </event>
+    <event name="build-usage">
+        <description>Build is active</description>
+        <parameters>
+            <param>ID</param>
+            <param type="long">MEMORY</param>
+        </parameters>
+    </event>
+    <event name="run-usage">
+        <description>Run is active</description>
+        <parameters>
+            <param>ID</param>
+            <param type="long">MEMORY</param>
+        </parameters>
+    </event>
 </events>
