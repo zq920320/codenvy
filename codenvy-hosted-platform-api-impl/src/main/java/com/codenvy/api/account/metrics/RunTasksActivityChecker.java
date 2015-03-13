@@ -22,6 +22,7 @@ import org.eclipse.che.api.runner.RunQueue;
 import org.eclipse.che.api.runner.RunQueueTask;
 import org.eclipse.che.api.runner.RunnerException;
 import org.eclipse.che.api.runner.dto.ApplicationProcessDescriptor;
+import org.eclipse.che.api.runner.dto.RunRequest;
 import org.eclipse.che.commons.schedule.ScheduleRate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,12 +85,13 @@ public class RunTasksActivityChecker {
                 continue;
             }
 
+            final RunRequest request = runTask.getRequest();
             if (RUNNING.equals(descriptor.getStatus()) && isExpiredTickPeriod(descriptor.getStartTime())) {
                 resourcesUsageTracker.resourceInUse(PFX + String.valueOf(descriptor.getProcessId()));
 
                 final long time = currentTimeMillis();
                 final String analyticsID = descriptor.getCreationTime() + "-" + descriptor.getProcessId();
-                LOG.info("EVENT#build-usage# TIME#{}# ID#{}#", time, analyticsID);
+                LOG.info("EVENT#build-usage# TIME#{}# ID#{}# MEMORY#{}#", time, analyticsID, request.getMemorySize());
             }
         }
     }

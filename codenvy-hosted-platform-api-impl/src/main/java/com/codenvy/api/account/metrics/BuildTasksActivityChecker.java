@@ -95,7 +95,7 @@ public class BuildTasksActivityChecker {
 
                 final long time = currentTimeMillis();
                 final String analyticsID = task.getCreationTime() + "-" + descriptor.getTaskId();
-                LOG.info("EVENT#build-usage# TIME#{}# ID#{}#", time, analyticsID);
+                LOG.info("EVENT#build-usage# TIME#{}# ID#{}# MEMORY#{}#", time, analyticsID, BUILDER_MEMORY_SIZE);
             }
         }
     }
