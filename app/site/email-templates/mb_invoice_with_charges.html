@@ -1,14 +1,15 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; box-sizing: border-box; box-sizing: border-box; font-size: 14px; margin: 0; padding: 0;">
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<meta name=" viewport" content="width=device-width" />
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Codenvy receipt</title>
 </head>
-<body>
+<body style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: 14px; margin: 0; padding: 0;">
 <table style="border: 1px solid grey; border-collapse: collapse;">
     <tbody>
     <tr>
-        <td th:if="${creditCard != null}" style="border: 1px solid grey; padding: 5px;">
+        <td th:if="${creditCard != null}" style="border: 1px solid grey; padding: 10px;">
         <p><strong>Billed to:</strong></p>
         <p>
           <span th:text="${creditCard.cardholder}">Brad Micklea</span><br/>
@@ -34,16 +35,16 @@
 <table style="border: 1px solid grey; border-collapse: collapse;">
     <thead style="background: #ccc;">
     <tr>
-        <th data-column="0" colspan="1" style="border: 1px solid grey; padding: 10px;">
+        <th colspan="1" style="border: 1px solid grey; padding: 10px;">
             <div>Usage</div>
         </th>
-        <th data-column="1" style="text-align: right; border: 1px solid grey; padding: 10px;" >
+        <th style="text-align: right; border: 1px solid grey; padding: 10px;" >
             <div>GB Hours</div>
         </th>
-        <th data-column="2" style="text-align: right; border: 1px solid grey; padding: 10px;">
+        <th style="text-align: right; border: 1px solid grey; padding: 10px;">
             <div>USD / GB Hour</div>
         </th>
-        <th data-column="3" style="text-align: right; border: 1px solid grey; padding: 10px;">
+        <th style="text-align: right; border: 1px solid grey; padding: 10px;">
             <div>Total</div>
         </th>
     </tr>
@@ -95,10 +96,10 @@
 <table th:if="${saasCharge != null}" style="border: 1px solid grey; border-collapse: collapse;">
     <thead style="background: #ccc;">
     <tr>
-        <th data-column="0" colspan="1" style="text-align: right; border: 1px solid grey; padding: 10px;">
+        <th colspan="1" style="text-align: right; border: 1px solid grey; padding: 10px;">
             <div>SaaS Usage By Workspace</div>
         </th>
-        <th data-column="1" style="text-align: right; border: 1px solid grey; padding: 10px;">
+        <th style="text-align: right; border: 1px solid grey; padding: 10px;">
             <div>GB Hours</div>
         </th>
     </tr>
@@ -120,10 +121,10 @@
 <table th:if="${factoryCharge != null}" style="border: 1px solid grey; border-collapse: collapse;" >
     <thead style="background: #ccc;">
     <tr>
-        <th data-column="0" colspan="1" style="text-align: right; border: 1px solid grey; padding: 10px;">
+        <th colspan="1" style="text-align: right; border: 1px solid grey; padding: 10px;">
             <div>Tracked Factory Usage By Workspace</div>
         </th>
-        <th data-column="1" style="text-align: right; border: 1px solid grey; padding: 10px;">
+        <th style="text-align: right; border: 1px solid grey; padding: 10px;">
             <div>GB Hours</div>
         </th>
     </tr>
