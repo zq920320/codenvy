@@ -17,12 +17,15 @@
  */
 package com.codenvy.auth.sso.server;
 
-import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.server.dao.Account;
+import com.codenvy.api.account.server.dao.AccountDao;
 import com.codenvy.api.account.server.dao.Member;
 import com.codenvy.api.core.NotFoundException;
 import com.codenvy.api.core.ServerException;
+
 import com.codenvy.api.dao.authentication.AccessTicket;
+import com.codenvy.api.dao.ldap.InitialLdapContextFactory;
+
 import com.codenvy.api.user.server.dao.PreferenceDao;
 import com.codenvy.api.user.server.dao.User;
 import com.codenvy.api.user.server.dao.UserDao;
@@ -31,14 +34,22 @@ import com.codenvy.api.workspace.server.dao.MemberDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
-import java.util.Collections;
+import javax.inject.Named;
+import javax.naming.Context;
+import javax.naming.NameNotFoundException;
+import javax.naming.NamingEnumeration;
+import javax.naming.NamingException;
+import javax.naming.directory.Attributes;
+import javax.naming.ldap.InitialLdapContext;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import static java.lang.Boolean.parseBoolean;
-
+import static java.lang.String.format;
+import static java.util.Collections.emptySet;
 /**
  * Get user principal with roles from account service.
  *
@@ -47,26 +58,46 @@ import static java.lang.Boolean.parseBoolean;
 public class OrgServiceRolesExtractor implements RolesExtractor {
     private static final Logger LOG = LoggerFactory.getLogger(OrgServiceRolesExtractor.class);
 
-    private final UserDao        userDao;
-    private final AccountDao     accountDao;
-    private final MemberDao      memberDao;
-    private final PreferenceDao  preferenceDao;
+    private final UserDao                   userDao;
+    private final AccountDao                accountDao;
+    private final MemberDao                 memberDao;
+    private final PreferenceDao             preferenceDao;
+    private final InitialLdapContextFactory contextFactory;
+    private final String                    userContainerDn;
+    private final String                    userDn;
+    private final String                    roleAttrName;
+    private final String                    allowedRole;
 
     @Inject
     public OrgServiceRolesExtractor(UserDao userDao,
                                     AccountDao accountDao,
                                     MemberDao memberDao,
-                                    PreferenceDao preferenceDao) {
+                                    PreferenceDao preferenceDao,
+                                    @Named("user.ldap.user_container_dn") String userContainerDn,
+                                    @Named("user.ldap.user_dn") String userDn,
+                                    @Nullable @Named("user.ldap.attr.role_name") String roleAttrName,
+                                    @Nullable @Named("user.ldap.allowed_role") String allowedRole,
+                                    InitialLdapContextFactory contextFactory) {
         this.userDao = userDao;
         this.accountDao = accountDao;
         this.memberDao = memberDao;
         this.preferenceDao = preferenceDao;
+        this.roleAttrName = roleAttrName;
+        this.allowedRole = allowedRole;
+        this.userContainerDn = userContainerDn;
+        this.userDn = userDn;
+        this.contextFactory = contextFactory;
     }
 
     @Override
     public Set<String> extractRoles(AccessTicket ticket, String workspaceId, String accountId) {
 
         try {
+
+            if (allowedRole != null && !getRoles(ticket.getPrincipal().getId()).contains(allowedRole)) {
+                return emptySet();
+            }
+
             final Set<String> userRoles = new HashSet<>();
 
             final Map<String, String> preferences = preferenceDao.getPreferences(ticket.getPrincipal().getId());
@@ -94,7 +125,7 @@ public class OrgServiceRolesExtractor implements RolesExtractor {
             }
             return userRoles;
         } catch (NotFoundException e) {
-            return Collections.emptySet();
+            return emptySet();
         } catch (ServerException e) {
             LOG.error(e.getLocalizedMessage(), e);
             throw new RuntimeException(e.getLocalizedMessage());
@@ -102,4 +133,54 @@ public class OrgServiceRolesExtractor implements RolesExtractor {
 
     }
 
+    //package-private used in test
+    Set<String> getRoles(String id) throws ServerException, NotFoundException {
+        InitialLdapContext context = null;
+        NamingEnumeration rolesEnum = null;
+        try {
+            context = contextFactory.createContext();
+
+            final Attributes userAttrs = context.getAttributes(getUserDn(id));
+
+            rolesEnum = userAttrs.get(roleAttrName).getAll();
+
+            final Set<String> roles = new HashSet<>();
+            while (rolesEnum.hasMoreElements()) {
+                roles.add(rolesEnum.next().toString());
+            }
+
+            return roles;
+        } catch (NameNotFoundException nfEx) {
+            throw new NotFoundException(format("User with id '%s' was not found", id));
+        } catch (NamingException e) {
+            throw new ServerException(e.getMessage(), e);
+        } finally {
+            close(context);
+            close(rolesEnum);
+        }
+    }
+
+    private String getUserDn(String userId) {
+        return userDn + '=' + userId + ',' + userContainerDn;
+    }
+
+    private void close(Context ctx) {
+        if (ctx != null) {
+            try {
+                ctx.close();
+            } catch (NamingException e) {
+                LOG.error(e.getMessage(), e);
+            }
+        }
+    }
+
+    private void close(NamingEnumeration<?> enumeration) {
+        if (enumeration != null) {
+            try {
+                enumeration.close();
+            } catch (NamingException e) {
+                LOG.warn(e.getMessage(), e);
+            }
+        }
+    }
 }
