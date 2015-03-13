@@ -92,11 +92,10 @@ public class BuildTasksActivityChecker {
             if (IN_PROGRESS.equals(descriptor.getStatus()) && isExpiredTickPeriod(descriptor.getStartTime())
                 && !(request instanceof DependencyRequest)) {
                 resourcesUsageTracker.resourceInUse(PFX + String.valueOf(descriptor.getTaskId()));
-                LOG.info("EVENT#build-usage# TYPE#{}# ID#{}# MEMORY#{}# USAGE-TIME#{}#",
-                         request.getProjectDescriptor().getType(),
-                         descriptor.getCreationTime() + "-" + descriptor.getTaskId(),
-                         BUILDER_MEMORY_SIZE,
-                         currentTimeMillis() - descriptor.getStartTime());
+
+                final long time = currentTimeMillis();
+                final String analyticsID = task.getCreationTime() + "-" + descriptor.getTaskId();
+                LOG.info("EVENT#build-usage# TIME#{}# ID#{}#", time, analyticsID);
             }
         }
     }
