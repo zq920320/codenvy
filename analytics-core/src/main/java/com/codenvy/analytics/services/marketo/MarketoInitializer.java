@@ -100,7 +100,11 @@ public class MarketoInitializer extends Feature {
         this.serviceUrl = configurator.getString(SERVICE_URL);
         this.serviceName = configurator.getString(SERVICE_NAME);
         this.listName = configurator.getString(LIST_NAME);
-        this.pageSize = configurator.getInt(PAGE_SIZE, 1000);
+        try {
+            this.pageSize = configurator.getInt(PAGE_SIZE, 1000);
+        } catch(NumberFormatException e) {
+            this.pageSize = 1000;
+        }
     }
 
     private void validateConfiguration() throws IllegalStateException {
