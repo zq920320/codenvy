@@ -71,7 +71,7 @@ public class TestTaskMetrics extends BaseTest {
     }
 
     @Test
-    public void testTasksList() throws IOException {
+    public void testTasksList() throws Exception {
         Metric metric = MetricFactory.getMetric(MetricType.TASKS_LIST);
 
         ListValueData value = (ListValueData)(metric).getValue(Context.EMPTY);
@@ -79,7 +79,7 @@ public class TestTaskMetrics extends BaseTest {
 
         Map<String, Map<String, ValueData>> m = listToMap(value, "id");
         assertEquals(m.get("id1_b").toString(), "{"
-                                                + "date=1382252400000, "
+                                                + "date=" + fullDateFormat.parse("2013-10-20 10:00:00").getTime() + ", "
                                                 + "user=user, "
                                                 + "ws=temp-ws2, "
                                                 + "project=project1, "
@@ -90,8 +90,8 @@ public class TestTaskMetrics extends BaseTest {
                                                 + "task_type=builder, "
                                                 + "memory=1536, "
                                                 + "usage_time=120000, "
-                                                + "start_time=1382252400000, "
-                                                + "stop_time=1382252520000, "
+                                                + "start_time=" + fullDateFormat.parse("2013-10-20 10:00:00").getTime() + ", "
+                                                + "stop_time=" + fullDateFormat.parse("2013-10-20 10:02:00").getTime() + ", "
                                                 + "gigabyte_ram_hours=0.05, "
                                                 + "is_factory=1, "
                                                 + "launch_type=timeout, "
@@ -100,7 +100,7 @@ public class TestTaskMetrics extends BaseTest {
                                                 + "}");
 
         assertEquals(m.get("id2_b").toString(), "{"
-                                                + "date=1382256000000, "
+                                                + "date=" + fullDateFormat.parse("2013-10-20 11:00:00").getTime() + ", "
                                                 + "user=user, "
                                                 + "ws=ws, "
                                                 + "project=project2, "
@@ -111,8 +111,8 @@ public class TestTaskMetrics extends BaseTest {
                                                 + "task_type=builder, "
                                                 + "memory=250, "
                                                 + "usage_time=60000, "
-                                                + "start_time=1382256000000, "
-                                                + "stop_time=1382256060000, "
+                                                + "start_time=" + fullDateFormat.parse("2013-10-20 11:00:00").getTime() + ", "
+                                                + "stop_time=" + fullDateFormat.parse("2013-10-20 11:01:00").getTime() + ", "
                                                 + "gigabyte_ram_hours=0.004069010416666667, "
                                                 + "is_factory=1, "
                                                 + "launch_type=always-on, "
@@ -120,7 +120,7 @@ public class TestTaskMetrics extends BaseTest {
                                                 + "}");
 
         assertEquals(m.get("id3_b").toString(), "{"
-                                                + "date=1382256000000, "
+                                                + "date=" + fullDateFormat.parse("2013-10-20 11:00:00").getTime() + ", "
                                                 + "user=user, "
                                                 + "ws=ws, "
                                                 + "project=project3, "
@@ -131,8 +131,8 @@ public class TestTaskMetrics extends BaseTest {
                                                 + "task_type=builder, "
                                                 + "memory=1536, "
                                                 + "usage_time=120000, "
-                                                + "start_time=1382256000000, "
-                                                + "stop_time=1382256120000, "
+                                                + "start_time=" + fullDateFormat.parse("2013-10-20 11:00:00").getTime() + ", "
+                                                + "stop_time=" + fullDateFormat.parse("2013-10-20 11:02:00").getTime() + ", "
                                                 + "gigabyte_ram_hours=0.05, "
                                                 + "is_factory=1, "
                                                 + "launch_type=timeout, "
@@ -140,7 +140,7 @@ public class TestTaskMetrics extends BaseTest {
                                                 + "}");
 
         assertEquals(m.get("id1_r").toString(), "{"
-                                                + "date=1382252400000, "
+                                                + "date=" + fullDateFormat.parse("2013-10-20 10:00:00").getTime() + ", "
                                                 + "user=user, "
                                                 + "ws=ws, "
                                                 + "project=project1, "
@@ -151,8 +151,8 @@ public class TestTaskMetrics extends BaseTest {
                                                 + "task_type=runner, "
                                                 + "memory=128, "
                                                 + "usage_time=120000, "
-                                                + "start_time=1382252400000, "
-                                                + "stop_time=1382252520000, "
+                                                + "start_time=" + fullDateFormat.parse("2013-10-20 10:00:00").getTime() + ", "
+                                                + "stop_time=" + fullDateFormat.parse("2013-10-20 10:02:00").getTime() + ", "
                                                 + "gigabyte_ram_hours=0.004166666666666667, "
                                                 + "is_factory=1, "
                                                 + "launch_type=timeout, "
@@ -160,7 +160,7 @@ public class TestTaskMetrics extends BaseTest {
                                                 + "}");
 
         assertEquals(m.get("id2_r").toString(), "{"
-                                                + "date=1382256000000, "
+                                                + "date=" + fullDateFormat.parse("2013-10-20 11:00:00").getTime() + ", "
                                                 + "user=user, "
                                                 + "ws=ws, "
                                                 + "project=project2, "
@@ -171,8 +171,8 @@ public class TestTaskMetrics extends BaseTest {
                                                 + "task_type=runner, "
                                                 + "memory=128, "
                                                 + "usage_time=120000, "
-                                                + "start_time=1382256000000, "
-                                                + "stop_time=1382256120000, "
+                                                + "start_time=" + fullDateFormat.parse("2013-10-20 11:00:00").getTime() + ", "
+                                                + "stop_time=" + fullDateFormat.parse("2013-10-20 11:02:00").getTime() + ", "
                                                 + "gigabyte_ram_hours=0.004166666666666667, "
                                                 + "is_factory=1, "
                                                 + "launch_type=always-on, "
@@ -180,7 +180,7 @@ public class TestTaskMetrics extends BaseTest {
                                                 + "}");
 
         assertEquals(m.get("id3_r").toString(), "{"
-                                                + "date=1382256000000, "
+                                                + "date=" + fullDateFormat.parse("2013-10-20 11:00:00").getTime() + ", "
                                                 + "user=user, "
                                                 + "ws=ws, "
                                                 + "project=project3, "
@@ -191,8 +191,8 @@ public class TestTaskMetrics extends BaseTest {
                                                 + "task_type=runner, "
                                                 + "memory=128, "
                                                 + "usage_time=60000, "
-                                                + "start_time=1382256000000, "
-                                                + "stop_time=1382256060000, "
+                                                + "start_time=" + fullDateFormat.parse("2013-10-20 11:00:00").getTime() + ", "
+                                                + "stop_time=" + fullDateFormat.parse("2013-10-20 11:01:00").getTime() + ", "
                                                 + "gigabyte_ram_hours=0.0020833333333333333, "
                                                 + "is_factory=1, "
                                                 + "launch_type=timeout, "
@@ -200,7 +200,7 @@ public class TestTaskMetrics extends BaseTest {
                                                 + "}");
 
         assertEquals(m.get("id4_r").toString(), "{"
-                                                + "date=1382259600000, "
+                                                + "date=" + fullDateFormat.parse("2013-10-20 12:00:00").getTime() + ", "
                                                 + "user=user, "
                                                 + "ws=ws, "
                                                 + "project=project1, "
@@ -209,13 +209,13 @@ public class TestTaskMetrics extends BaseTest {
                                                 + "persistent_ws=0, "
                                                 + "id=id4_r, "
                                                 + "task_type=runner, "
-                                                + "start_time=1382259600000, "
+                                                + "start_time=" + fullDateFormat.parse("2013-10-20 12:00:00").getTime() + ", "
                                                 + "is_factory=1, "
                                                 + "launch_type=timeout"
                                                 + "}");
 
         assertEquals(m.get("id1_d").toString(), "{"
-                                                + "date=1382263200000, "
+                                                + "date=" + fullDateFormat.parse("2013-10-20 13:00:00").getTime() + ", "
                                                 + "user=user, "
                                                 + "ws=ws, "
                                                 + "project=project, "
@@ -226,8 +226,8 @@ public class TestTaskMetrics extends BaseTest {
                                                 + "task_type=debugger, "
                                                 + "memory=128, "
                                                 + "usage_time=120000, "
-                                                + "start_time=1382263200000, "
-                                                + "stop_time=1382263320000, "
+                                                + "start_time=" + fullDateFormat.parse("2013-10-20 13:00:00").getTime() + ", "
+                                                + "stop_time=" + fullDateFormat.parse("2013-10-20 13:02:00").getTime() + ", "
                                                 + "gigabyte_ram_hours=0.004166666666666667, "
                                                 + "is_factory=1, "
                                                 + "launch_type=timeout, "
@@ -235,7 +235,7 @@ public class TestTaskMetrics extends BaseTest {
                                                 + "}");
 
         assertEquals(m.get("id2_d").toString(), "{"
-                                                + "date=1382266800000, "
+                                                + "date=" + fullDateFormat.parse("2013-10-20 14:00:00").getTime() + ", "
                                                 + "user=user, "
                                                 + "ws=ws, "
                                                 + "project=project, "
@@ -246,8 +246,8 @@ public class TestTaskMetrics extends BaseTest {
                                                 + "task_type=debugger, "
                                                 + "memory=128, "
                                                 + "usage_time=60000, "
-                                                + "start_time=1382266800000, "
-                                                + "stop_time=1382266860000, "
+                                                + "start_time=" + fullDateFormat.parse("2013-10-20 14:00:00").getTime() + ", "
+                                                + "stop_time=" + fullDateFormat.parse("2013-10-20 14:01:00").getTime() + ", "
                                                 + "gigabyte_ram_hours=0.0020833333333333333, "
                                                 + "is_factory=1, "
                                                 + "launch_type=always-on, "
@@ -255,7 +255,7 @@ public class TestTaskMetrics extends BaseTest {
                                                 + "}");
 
         assertEquals(m.get("id3_d").toString(), "{"
-                                                + "date=1382270400000, "
+                                                + "date=" + fullDateFormat.parse("2013-10-20 15:00:00").getTime() + ", "
                                                 + "user=user, "
                                                 + "ws=ws, "
                                                 + "project=project, "
@@ -266,8 +266,8 @@ public class TestTaskMetrics extends BaseTest {
                                                 + "task_type=debugger, "
                                                 + "memory=128, "
                                                 + "usage_time=120000, "
-                                                + "start_time=1382270400000, "
-                                                + "stop_time=1382270520000, "
+                                                + "start_time=" + fullDateFormat.parse("2013-10-20 15:00:00").getTime() + ", "
+                                                + "stop_time=" + fullDateFormat.parse("2013-10-20 15:02:00").getTime() + ", "
                                                 + "gigabyte_ram_hours=0.004166666666666667, "
                                                 + "is_factory=1, "
                                                 + "launch_type=timeout, "
@@ -275,7 +275,7 @@ public class TestTaskMetrics extends BaseTest {
                                                 + "}");
 
         assertEquals(m.get("session2").toString(), "{"
-                                                   + "date=1382275200000, "
+                                                   + "date=" + fullDateFormat.parse("2013-10-20 16:20:00").getTime() + ", "
                                                    + "user=user1@gmail.com, "
                                                    + "ws=ws1, "
                                                    + "persistent_ws=0, "
@@ -283,8 +283,8 @@ public class TestTaskMetrics extends BaseTest {
                                                    + "task_type=editor, "
                                                    + "memory=25, "
                                                    + "usage_time=180000, "
-                                                   + "start_time=1382275200000, "
-                                                   + "stop_time=1382275380000, "
+                                                   + "start_time=" + fullDateFormat.parse("2013-10-20 16:20:00").getTime() + ", "
+                                                   + "stop_time=" + fullDateFormat.parse("2013-10-20 16:23:00").getTime() + ", "
                                                    + "gigabyte_ram_hours=0.001220703125, "
                                                    + "is_factory=0, "
                                                    + "launch_type=always-on, "
@@ -292,7 +292,7 @@ public class TestTaskMetrics extends BaseTest {
                                                    + "}");
 
         assertEquals(m.get("session1").toString(), "{"
-                                                   + "date=1382274000000, "
+                                                   + "date=" + fullDateFormat.parse("2013-10-20 16:00:00").getTime() + ", "
                                                    + "user=anonymoususer_user11, "
                                                    + "ws=temp-ws1, "
                                                    + "persistent_ws=0, "
@@ -300,8 +300,8 @@ public class TestTaskMetrics extends BaseTest {
                                                    + "task_type=editor, "
                                                    + "memory=25, "
                                                    + "usage_time=180000, "
-                                                   + "start_time=1382274000000, "
-                                                   + "stop_time=1382274180000, "
+                                                   + "start_time=" + fullDateFormat.parse("2013-10-20 16:00:00").getTime() + ", "
+                                                   + "stop_time=" + fullDateFormat.parse("2013-10-20 16:03:00").getTime() + ", "
                                                    + "gigabyte_ram_hours=0.001220703125, "
                                                    + "is_factory=1, "
                                                    + "launch_type=always-on, "
@@ -323,7 +323,7 @@ public class TestTaskMetrics extends BaseTest {
         Map<String, Map<String, ValueData>> m = listToMap(value, "id");
 
         assertEquals(m.get("id1_r").toString(), "{"
-                                                + "date=1382252400000, "
+                                                + "date=" + fullDateFormat.parse("2013-10-20 10:00:00").getTime() + ", "
                                                 + "user=user, "
                                                 + "ws=ws, "
                                                 + "project=project1, "
@@ -334,8 +334,8 @@ public class TestTaskMetrics extends BaseTest {
                                                 + "task_type=runner, "
                                                 + "memory=128, "
                                                 + "usage_time=120000, "
-                                                + "start_time=1382252400000, "
-                                                + "stop_time=1382252520000, "
+                                                + "start_time=" + fullDateFormat.parse("2013-10-20 10:00:00").getTime() + ", "
+                                                + "stop_time=" + fullDateFormat.parse("2013-10-20 10:02:00").getTime() + ", "
                                                 + "gigabyte_ram_hours=0.004166666666666667, "
                                                 + "is_factory=1, "
                                                 + "launch_type=timeout, "
@@ -343,7 +343,7 @@ public class TestTaskMetrics extends BaseTest {
                                                 + "}");
 
         assertEquals(m.get("id2_r").toString(), "{"
-                                                + "date=1382256000000, "
+                                                + "date=" + fullDateFormat.parse("2013-10-20 11:00:00").getTime() + ", "
                                                 + "user=user, "
                                                 + "ws=ws, "
                                                 + "project=project2, "
@@ -354,8 +354,8 @@ public class TestTaskMetrics extends BaseTest {
                                                 + "task_type=runner, "
                                                 + "memory=128, "
                                                 + "usage_time=120000, "
-                                                + "start_time=1382256000000, "
-                                                + "stop_time=1382256120000, "
+                                                + "start_time=" + fullDateFormat.parse("2013-10-20 11:00:00").getTime() + ", "
+                                                + "stop_time=" + fullDateFormat.parse("2013-10-20 11:02:00").getTime() + ", "
                                                 + "gigabyte_ram_hours=0.004166666666666667, "
                                                 + "is_factory=1, "
                                                 + "launch_type=always-on, "
@@ -363,7 +363,7 @@ public class TestTaskMetrics extends BaseTest {
                                                 + "}");
 
         assertEquals(m.get("id3_r").toString(), "{"
-                                                + "date=1382256000000, "
+                                                + "date=" + fullDateFormat.parse("2013-10-20 11:00:00").getTime() + ", "
                                                 + "user=user, "
                                                 + "ws=ws, "
                                                 + "project=project3, "
@@ -374,8 +374,8 @@ public class TestTaskMetrics extends BaseTest {
                                                 + "task_type=runner, "
                                                 + "memory=128, "
                                                 + "usage_time=60000, "
-                                                + "start_time=1382256000000, "
-                                                + "stop_time=1382256060000, "
+                                                + "start_time=" + fullDateFormat.parse("2013-10-20 11:00:00").getTime() + ", "
+                                                + "stop_time=" + fullDateFormat.parse("2013-10-20 11:01:00").getTime() + ", "
                                                 + "gigabyte_ram_hours=0.0020833333333333333, "
                                                 + "is_factory=1, "
                                                 + "launch_type=timeout, "
@@ -383,7 +383,7 @@ public class TestTaskMetrics extends BaseTest {
                                                 + "}");
 
         assertEquals(m.get("id4_r").toString(), "{"
-                                                + "date=1382259600000, "
+                                                + "date=" + fullDateFormat.parse("2013-10-20 12:00:00").getTime() + ", "
                                                 + "user=user, "
                                                 + "ws=ws, "
                                                 + "project=project1, "
@@ -392,7 +392,7 @@ public class TestTaskMetrics extends BaseTest {
                                                 + "persistent_ws=0, "
                                                 + "id=id4_r, "
                                                 + "task_type=runner, "
-                                                + "start_time=1382259600000, "
+                                                + "start_time=" + fullDateFormat.parse("2013-10-20 12:00:00").getTime() + ", "
                                                 + "is_factory=1, "
                                                 + "launch_type=timeout"
                                                 + "}");
