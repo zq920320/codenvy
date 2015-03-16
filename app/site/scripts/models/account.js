@@ -406,7 +406,7 @@
 
             processLogin: function(email, password, redirect_url, success, error){
                 var selectWsUrl = "/site/private/select-tenant?cookiePresent&" + window.location.search.substring(1);
-                var userId;
+                var workspaceId;
                 //TODO login refactoring
                 login(email, password)
                 .then(function() {
@@ -414,15 +414,18 @@
                         .then(function(accounts){
                             var account = getOwnAccount(accounts);
                             if(!account.accountReference.id){//if user has no account
-                                var accountName = email.substring(0, email.indexOf('@'));
+                                var accountName = email.indexOf('@')>=0?email.substring(0, email.indexOf('@')):email; //email.substring(0, email.indexOf('@'));
                                 return createAccount(accountName)//create account
                                 .then(function(newAccount){
-                                    userId = newAccount.userId;
                                     account = newAccount;
                                     return createWorkspace(accountName, account.id);//create WS
                                 })
                                 .then(function(workspace){
-                                    return addMemberToWorkspace(workspace.id,userId);//add User to WS
+                                    workspaceId = workspace.id;
+                                    return getUserInfo();
+                                })
+                                .then(function(user){
+                                    return addMemberToWorkspace(workspaceId,user.id);//add User to WS
                                 });
                                 
                             }
