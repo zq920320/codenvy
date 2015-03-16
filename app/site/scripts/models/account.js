@@ -406,6 +406,7 @@
 
             processLogin: function(email, password, redirect_url, success, error){
                 var selectWsUrl = "/site/private/select-tenant?cookiePresent&" + window.location.search.substring(1);
+                var userId;
                 //TODO login refactoring
                 login(email, password)
                 .then(function() {
@@ -413,10 +414,10 @@
                         .then(function(accounts){
                             var account = getOwnAccount(accounts);
                             if(!account.accountReference.id){//if user has no account
-                                var userId = accounts[0].userId;
                                 var accountName = email.substring(0, email.indexOf('@'));
                                 return createAccount(accountName)//create account
                                 .then(function(newAccount){
+                                    userId = newAccount.userId;
                                     account = newAccount;
                                     return createWorkspace(accountName, account.id);//create WS
                                 })
