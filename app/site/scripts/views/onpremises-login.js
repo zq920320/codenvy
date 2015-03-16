@@ -47,7 +47,7 @@
                 },
 
                 __submit : function(){
-                    Account.onpremLogin(
+                    Account.processLogin(
                             $(this.el).find("input[name='username']").val(),
                             $(this.el).find("input[name='password']").val(),
                             Account.getQueryParameterByName('redirect_url'),

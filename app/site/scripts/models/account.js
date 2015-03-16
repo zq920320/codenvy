@@ -405,7 +405,7 @@
             },
 
             processLogin: function(email, password, redirect_url, success, error){
-                var selectWsUrl = "../site/private/select-tenant?cookiePresent&" + window.location.search.substring(1);
+                var selectWsUrl = "/site/private/select-tenant?cookiePresent&" + window.location.search.substring(1);
                 //TODO login refactoring
                 login(email, password)
                 .then(function() {
@@ -499,7 +499,7 @@
             adminLogin: function(email, password, redirect_url, success, error) {
                 if (isWebsocketEnabled()) {
                     var loginUrl = "/api/auth/login?" + window.location.search.substring(1);
-                    var selectWsUrl = "../site/private/select-tenant?cookiePresent&" + window.location.search.substring(1);
+                    var selectWsUrl = "/site/private/select-tenant?cookiePresent&" + window.location.search.substring(1);
                     var data = {
                         username: email,
                         password: password,

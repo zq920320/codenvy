@@ -1,4 +1,4 @@
-# jekyll configuration used for the staging build
+# jekyll configuration used for the enterprise build
 
 port: 4000
 destination: ../enterprise

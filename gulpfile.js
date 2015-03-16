@@ -34,6 +34,7 @@ var paths = {
         src: 'app/',
         prod: './target/prod/',
         stage: './target/stage/',
+        enterprise: './target/enterprise/',
         gh: './target/gh/',
         temp: 'target/temp/',
         dist: 'target/dist/',
@@ -174,7 +175,10 @@ gulp.task('copy_prod',['copy_src','duplicate_html','prod_cfg','css','rjs','jekyl
 
 // Cleans gulp's folders
 gulp.task('clean',function(){
-  return gulp.src([paths.temp,paths.prod,paths.stage,paths.dist],{ read: false }) // much faster
+  return gulp.src([paths.temp,paths.prod,paths.stage,paths.dist,paths.enterprise],{ read: false }) // much faster
+    .pipe(print(function(filepath) {
+      return "Delete: " + filepath;
+    }))
     .pipe(rimraf());
 })
 
@@ -247,11 +251,80 @@ gulp.task('copy_stage',['copy_src','stage_cfg','css_stage','jekyll_stage'], func
   .pipe(gulp.dest(paths.dist+'stage'));
 });
 
-// Cleans gulp's folders
-gulp.task('clean',function(){
-  return gulp.src([paths.temp,paths.prod,paths.stage,paths.dist],{ read: false }) // much faster
-    .pipe(rimraf());
+
+// --------------------------- Building On-premises ----------------------------- 
+//----------------
+//----------
+gulp.task('enterprise',['copy_src','enterprise_cfg','css_enterprise','jekyll_enterprise','copy_enterprise','onprem_login_page'], function(){
+
 })
+
+gulp.task('enterprise_cfg', function(){
+  return gulp.src(paths.config + buildConfig.jekyllEEConfig)
+  .pipe(rename('_config.yml'))
+  .pipe(gulp.dest(paths.temp))
+})
+
+gulp.task('css_enterprise', ['copy_src'], function() {
+  return gulp.src(paths.temp+'site/styles/*.scss')
+  .pipe(compass({
+    //config_file: './compass-config.rb',
+    css: paths.temp +'site/styles',
+    sass: paths.temp +'site/styles'
+  }))
+  .pipe(gulp.dest(paths.enterprise + 'site/styles/'));
+});
+// Ensure waiting for Jekill job finishing
+gulp.task('jekyll_enterprise',['copy_src','enterprise_cfg'], function () {
+         console.log('Jekyll enterprise......... ');
+   return gulp.src(paths.temp+'_config.yml', {read: false})
+    .pipe(shell([
+      'jekyll build'
+    ], {
+      cwd: 'target/temp',
+      templateData: {
+        f: function (s) {
+          return s.replace(/$/, '.bak')
+        }
+      }
+    }))
+});
+
+gulp.task('copy_enterprise',['copy_src','enterprise_cfg','css_enterprise','jekyll_enterprise'], function(){
+  gulp.src([paths.enterprise+'**/*.html', // all HTML
+    '!'+paths.enterprise+'site/onpremises_pages/*.html',
+    '!'+paths.enterprise+'site/login.html',
+    '!'+paths.enterprise+'site/create-account.html',
+    '!'+paths.enterprise+'index.html',
+    paths.enterprise+'**/*.js',
+    paths.enterprise+'**/*.css',
+    paths.enterprise+'**/*.jpg',
+    paths.prod+'**/*.ico',
+    paths.enterprise+'**/*.png',
+    paths.enterprise+'**/*.svg',
+    paths.enterprise+'**/*.txt'  // robots.txt
+    ])
+  .pipe(gulp.dest(paths.dist+'enterprise'));
+});
+
+// Copy omprem login page to as index.html and /site/login.html
+gulp.task('onprem_login_page', ['copy_src','enterprise_cfg','css_enterprise','jekyll_enterprise','copy_enterprise'], function(){
+  return   gulp.src(paths.enterprise + 'site/onpremises_pages/onpremises-login.html')
+  //.pipe(print())
+  .pipe(rename('index.html'))
+  /*.pipe(print(function(filepath) {
+    return "renamed to: " + filepath;
+    }))*/
+  .pipe(gulp.dest(paths.dist+'enterprise'))
+/*  .pipe(print(function(filepath) {
+    return "Copied to: " + filepath;
+    }))*/
+  .pipe(rename('login.html'))
+  .pipe(gulp.dest(paths.dist+'enterprise/site'));
+});
+
+//***************************************************************** enterprise
+
 
 // --------------------------- Building GitHub pages (localhost:8080) -----------------------------
 //----------------

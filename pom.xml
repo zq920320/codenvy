@@ -63,6 +63,9 @@
                                 <exec dir="${basedir}" executable="gulp" failonerror="true">
                                     <arg value="stage" />
                                 </exec>
+                                <exec dir="${basedir}" executable="gulp" failonerror="true">
+                                    <arg value="enterprise" />
+                                </exec>
                             </target>
                         </configuration>
                     </execution>
@@ -123,7 +126,7 @@
                             </descriptors>
                         </configuration>
                     </execution>
-                    <!--                     <execution>
+                    <execution>
                         <id>enterprise</id>
                         <phase>package</phase>
                         <goals>
@@ -135,7 +138,7 @@
                                 <descriptor>${basedir}/assembly/assembly-enterprise.xml</descriptor>
                             </descriptors>
                         </configuration>
-                    </execution> -->
+                    </execution>
                 </executions>
             </plugin>
         </plugins>
