@@ -93,7 +93,7 @@ public class MarketoReportGenerator {
         put(LOGINS, "Logins");
         put(LAST_PRODUCT_LOGIN, "Last Product Login");
         put(POINTS, POINTS);
-        put(NEW_USER, NEW_USER);
+        //put(NEW_USER, NEW_USER);
     }};
 
     @Inject
@@ -281,9 +281,9 @@ public class MarketoReportGenerator {
         out.write(",");
 
         writeInt(out, ActOn.getPoints(stat, profile));
-        out.write(",");
+        //out.write(",");
 
-        out.write(isCreatedTodayUser ? "1" :"0");
+        //out.write(isCreatedTodayUser ? "1" :"0");
 
         out.newLine();
     }
