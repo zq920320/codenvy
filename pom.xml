@@ -27,7 +27,7 @@
     </parent>
     <groupId>com.codenvy.hosted-infrastructure</groupId>
     <artifactId>codenvy-hosted-infrastructure-parent</artifactId>
-    <version>0.14.2-SNAPSHOT</version>
+    <version>0.14.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Codenvy :: Hosted Infrastructure</name>
     <modules>
