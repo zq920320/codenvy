@@ -1146,4 +1146,126 @@
             </index>
         </indexes>
     </collection>
+
+    <collection name="credit_card_added">
+        <indexes>
+            <index name="date">
+                <field>date</field>
+            </index>
+            <index name="account">
+                <field>account</field>
+                <field>date</field>
+            </index>
+        </indexes>
+    </collection>
+    <collection name="credit_card_removed">
+        <indexes>
+            <index name="date">
+                <field>date</field>
+                <index name="account">
+                    <field>account</field>
+                    <field>date</field>
+                </index>
+            </index>
+        </indexes>
+    </collection>
+    <collection name="credit_card_charge_success">
+        <indexes>
+            <index name="date">
+                <field>date</field>
+            </index>
+            <index name="account">
+                <field>account</field>
+                <field>date</field>
+            </index>
+        </indexes>
+    </collection>
+    <collection name="credit_card_charge_failed">
+        <indexes>
+            <index name="date">
+                <field>date</field>
+            </index>
+            <index name="account">
+                <field>account</field>
+                <field>date</field>
+            </index>
+        </indexes>
+    </collection>
+    <collection name="account_locked">
+        <indexes>
+            <index name="date">
+                <field>date</field>
+            </index>
+            <index name="account">
+                <field>account</field>
+                <field>date</field>
+            </index>
+        </indexes>
+    </collection>
+    <collection name="account_unlocked">
+        <indexes>
+            <index name="date">
+                <field>date</field>
+            </index>
+            <index name="account">
+                <field>account</field>
+                <field>date</field>
+            </index>
+        </indexes>
+    </collection>
+    <collection name="subscription_added">
+        <indexes>
+            <index name="date">
+                <field>date</field>
+            </index>
+            <index name="account">
+                <field>account</field>
+                <field>date</field>
+            </index>
+        </indexes>
+    </collection>
+    <collection name="subscription_removed">
+        <indexes>
+            <index name="date">
+                <field>date</field>
+            </index>
+            <index name="account">
+                <field>account</field>
+                <field>date</field>
+            </index>
+        </indexes>
+    </collection>
+    <collection name="subscription_renewed">
+        <indexes>
+            <index name="date">
+                <field>date</field>
+            </index>
+            <index name="account">
+                <field>account</field>
+                <field>date</field>
+            </index>
+        </indexes>
+    </collection>
+    <collection name="trial_started">
+        <indexes>
+            <index name="date">
+                <field>date</field>
+            </index>
+            <index name="account">
+                <field>account</field>
+                <field>date</field>
+            </index>
+        </indexes>
+    </collection>
+    <collection name="trial_expired">
+        <indexes>
+            <index name="date">
+                <field>date</field>
+            </index>
+            <index name="account">
+                <field>account</field>
+                <field>date</field>
+            </index>
+        </indexes>
+    </collection>
 </collections>

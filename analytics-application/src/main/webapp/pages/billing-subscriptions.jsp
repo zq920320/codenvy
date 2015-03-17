@@ -20,7 +20,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Analysis</title>
+    <title>Billing and subscriptions</title>
     <%@ include file="/inclusions/header.jsp"%>
     <style type="text/css">
         /* redefine style of Accordion Widget of jQuery UI (@see http://api.jqueryui.com/accordion/#method-disable ) */
@@ -33,7 +33,7 @@
 
 <jsp:include page="/inclusions/top-menu/top-menu.jsp">
     <jsp:param name="selectedMenuItemId" value="topmenu-admin-statistics"/>
-    <jsp:param name="selectedMenuItemId" value="topmenu-im-analysis"/>
+    <jsp:param name="selectedMenuItemId" value="topmenu-billing-subscriptions"/>
 </jsp:include>
 
 <div class="container-fluid">
@@ -43,26 +43,6 @@
                 <div id="filter-by" class="left" targetWidgets="_all">
                     <div class="collabsiblePanelTitle">Filter</div>
                     <div class="collabsiblePanelBody">
-                        <table>
-                            <tr>
-                                <td><label for="input-ws">Workspace:</label></td>
-                                <td><div class="filter-item">
-                                    <input type="text" id="input-ws" name="ws" class="text-box" />
-                                </div></td>
-                            </tr>
-                            <tr>
-                                <td><label for="input-user">User:</label></td>
-                                <td><div class="filter-item">
-                                    <input type="text" id="input-user" name="user" class="text-box" />
-                                </div></td>
-                            </tr>
-                            <tr>
-                                <td><label for="input-factory">Factory ID:</label></td>
-                                <td><div class="filter-item">
-                                    <input type="text" id="input-factory" name="factory_id" class="text-box" />
-                                </div></td>
-                            </tr>
-                        </table>
                         <table>
                             <tr>
                                 <td><label for="datepicker-from-date">From Date:</label></td>
@@ -87,12 +67,13 @@
                         </table>
                     </div>
                 </div>
+
                 <div id="ui-preferences" class="btn-group preferences right">
                     <button class="btn command-btn" default value="table">Table</button>
                     <button class="btn command-btn" value="chart">Chart</button>
                     <button class="btn command-btn" value="table&chart">Table & Chart</button>
                 </div>
-            
+
                 <div id="timely-dd" class="btn-group right" targetWidgets="_all">
                     <button class="btn command-btn" value="Day">Day</button>
                     <button class="btn command-btn" value="Week">Week</button>
@@ -104,11 +85,11 @@
                 <div class="single-column-gadget">
                     <div class="view">
                         <div class="tables">
-                            <div id="imAnalysis"></div>
+                            <div id="billingSubscriptions"></div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> 
         </div>
     </div>
 </div>

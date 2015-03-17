@@ -40,12 +40,13 @@
                 <% if (FrontEndUtil.isCodenvyAdmin(request)) { %>
                     <div class="nav">
                         <div>
-                            <button id="topmenu-im-statistics">On-Prem</button>
+                            <button id="topmenu-admin-statistics">On-Prem</button>
                         </div>
                         <ul class="dropdown-menu">
-                            <li><a href="/analytics/pages/im-reports/im-downloads.jsp" id="topmenu-im-statistics-downloads">Downloads</a></li>
-                            <li><a href="/analytics/pages/im-reports/im-on-prem-trials.jsp" id="topmenu-im-statistics-trials">Trials</a></li>
+                            <li><a href="/analytics/pages/im-reports/im-downloads.jsp" id="topmenu-im-downloads">Downloads</a></li>
+                            <li><a href="/analytics/pages/im-reports/im-on-prem-trials.jsp" id="topmenu-im-trials">Trials</a></li>
                             <li><a href="/analytics/pages/im-reports/im-analysis.jsp" id="topmenu-im-analysis">Analysis</a></li>
+                            <li><a href="/analytics/pages/billing-subscriptions.jsp" id="topmenu-billing-subscriptions">Billing and Subscriptions</a></li>
                         </ul>
                     </div>
                 <% } %>
@@ -127,7 +128,7 @@
     $(function() {
         analytics.views.topMenu.turnOnNavButtons();
         <% if (FrontEndUtil.isCodenvyAdmin(request)) { %>
-            analytics.views.topMenu.turnOnDropdownButton("topmenu-im-statistics", false);    // turn-on im statistics menu button
+            analytics.views.topMenu.turnOnDropdownButton("topmenu-admin-statistics", false);    // turn-on im statistics menu button
         <% } %>
         analytics.views.topMenu.turnOnDropdownButton("topmenu-reports", false);    // turn-on reports menu button
         analytics.views.topMenu.turnOnDropdownButton("topmenu-user", false);    // turn-on user menu button

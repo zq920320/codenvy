@@ -449,4 +449,82 @@
             <param type="long">MEMORY</param>
         </parameters>
     </event>
+    <event name="credit-card-added">
+        <description>Credit card added</description>
+        <parameters>
+            <param>USER</param>
+            <param>ACCOUNT</param>
+        </parameters>
+    </event>
+    <event name="credit-card-removed">
+        <description>Credit card removed</description>
+        <parameters>
+            <param>USER</param>
+            <param>ACCOUNT</param>
+        </parameters>
+    </event>
+    <event name="credit-card-charge-success">
+        <description>Credit card charge success</description>
+        <parameters>
+            <param>ACCOUNT</param>
+        </parameters>
+    </event>
+    <event name="credit-card-charge-failed">
+        <description>Credit card charge failed</description>
+        <parameters>
+            <param>ACCOUNT</param>
+        </parameters>
+    </event>
+    <event name="account-locked">
+        <description>Account placed in lockdown</description>
+        <parameters>
+            <param>ACCOUNT</param>
+        </parameters>
+    </event>
+    <event name="account-unlocked">
+        <description>Account removed from lockdown</description>
+        <parameters>
+            <param>ACCOUNT</param>
+        </parameters>
+    </event>
+    <event name="subscription-added">
+        <description>Subscription added</description>
+        <parameters>
+            <param>ACCOUNT</param>
+            <param>SERVICE</param>
+            <param>PLAN</param>
+        </parameters>
+    </event>
+    <event name="subscription-removed">
+        <description>Subscription removed</description>
+        <parameters>
+            <param>ACCOUNT</param>
+            <param>SERVICE</param>
+            <param>PLAN</param>
+        </parameters>
+    </event>
+    <event name="subscription-renewed">
+        <description>Subscription renewed</description>
+        <parameters>
+            <param>ACCOUNT</param>
+            <param>SERVICE</param>
+            <param>PLAN</param>
+        </parameters>
+    </event>
+    <event name="trial-started">
+        <description>Trial subscription started</description>
+        <parameters>
+            <param>ACCOUNT</param>
+            <param>SERVICE</param>
+            <param>PLAN</param>
+        </parameters>
+    </event>
+    <event name="trial-expired">
+        <description>Trial subscription expired</description>
+        <parameters>
+            <param>ACCOUNT</param>
+            <param>SERVICE</param>
+            <param>PLAN</param>
+        </parameters>
+    </event>
 </events>

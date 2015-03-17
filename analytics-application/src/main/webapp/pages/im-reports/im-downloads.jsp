@@ -26,8 +26,8 @@
 <body>
 
 <jsp:include page="/inclusions/top-menu/top-menu.jsp">
-    <jsp:param name="selectedMenuItemId" value="topmenu-im-statistics"/>
-    <jsp:param name="selectedMenuItemId" value="topmenu-im-statistics-downloads"/>
+    <jsp:param name="selectedMenuItemId" value="topmenu-admin-statistics"/>
+    <jsp:param name="selectedMenuItemId" value="topmenu-im-downloads"/>
 </jsp:include>
 
 <div class="container-fluid">

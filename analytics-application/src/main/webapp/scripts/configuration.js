@@ -179,6 +179,23 @@ function AnalyticsConfiguration() {
             displayLineChart: true  // default is false
         },
 
+        billingSubscriptions: {
+            widgetLabel: "Billing And Subscriptions",
+            presenterType: "ReportPresenter",
+            modelViewName: "billing_subscriptions",
+
+            defaultModelParams: {
+                "time_unit": "month"
+            },
+
+            /** @see DatabaseTable::makeTableSortable() method docs */
+            clientSortParams: {
+                "ascSortColumnNumber": 0
+            },
+
+            displayLineChart: true  // default is false
+        },
+
         topFactorySessions: {
             widgetLabel: "Top Factory Sessions",
             presenterType: "TopMetricsPresenter",
