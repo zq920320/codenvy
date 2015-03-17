@@ -295,6 +295,8 @@ gulp.task('copy_enterprise',['copy_src','enterprise_cfg','css_enterprise','jekyl
     '!'+paths.enterprise+'site/onpremises_pages/*.html',
     '!'+paths.enterprise+'site/login.html',
     '!'+paths.enterprise+'site/create-account.html',
+    '!'+paths.enterprise+'site/recover-password.html',
+    '!'+paths.enterprise+'site/setup-password.html',
     '!'+paths.enterprise+'index.html',
     paths.enterprise+'**/*.js',
     paths.enterprise+'**/*.css',
