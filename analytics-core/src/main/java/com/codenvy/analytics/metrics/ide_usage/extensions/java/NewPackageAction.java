@@ -27,7 +27,10 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class NewPackageAction extends AbstractIdeUsage {
-    public static final String SOURCE = "com.codenvy.ide.ext.java.client.action.NewPackageAction";
+    public static final String[] SOURCE = {
+            "com.codenvy.ide.ext.java.client.action.NewPackageAction",
+            "org.eclipse.che.ide.ext.java.client.action.NewPackageAction"
+    };
 
     public NewPackageAction() {
         super(MetricType.NEW_PACKAGE_ACTION, SOURCE);

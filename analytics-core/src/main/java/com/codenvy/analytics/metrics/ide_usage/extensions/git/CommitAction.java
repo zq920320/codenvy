@@ -27,7 +27,10 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class CommitAction extends AbstractIdeUsage {
-    public static final String SOURCE = "com.codenvy.ide.ext.git.client.action.CommitAction";
+    public static final String[] SOURCE = {
+            "com.codenvy.ide.ext.git.client.action.CommitAction",
+            "org.eclipse.che.ide.ext.git.client.action.CommitAction"
+    };
 
     public CommitAction() {
         super(MetricType.COMMIT_ACTION, SOURCE);

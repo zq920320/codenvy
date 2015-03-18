@@ -27,7 +27,10 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class OpenDeclarationAction extends AbstractIdeUsage {
-    public static final String SOURCE = "com.codenvy.ide.ext.java.client.action.OpenDeclarationAction";
+    public static final String[] SOURCE = {
+            "com.codenvy.ide.ext.java.client.action.OpenDeclarationAction",
+            "org.eclipse.che.ide.ext.java.client.action.OpenDeclarationAction"
+    };
 
     public OpenDeclarationAction() {
         super(MetricType.OPEN_DECLARATION_ACTION, SOURCE);

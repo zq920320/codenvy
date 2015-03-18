@@ -26,8 +26,10 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class NavigateToFileAction extends AbstractIdeUsage {
-    public static final String SOURCE = "com.codenvy.ide.actions.NavigateToFileAction";
-
+    public static final String[] SOURCE = {
+            "com.codenvy.ide.actions.NavigateToFileAction",
+            "org.eclipse.che.ide.actions.NavigateToFileAction"
+    };
     public NavigateToFileAction() {
         super(MetricType.NAVIGATE_TO_FILE_ACTION, SOURCE);
     }

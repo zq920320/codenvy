@@ -27,8 +27,10 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class DebugAction extends AbstractIdeUsage {
-    public static final String SOURCE = "com.codenvy.ide.ext.java.jdi.client.actions.DebugAction";
-
+    public static final String[] SOURCE = {
+            "com.codenvy.ide.ext.java.jdi.client.actions.DebugAction",
+            "org.eclipse.che.ide.ext.java.jdi.client.actions.DebugAction"
+    };
     public DebugAction() {
         super(MetricType.DEBUG_ACTION, SOURCE);
     }

@@ -27,7 +27,10 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class BowerInstallAction extends AbstractIdeUsage {
-    public static final String SOURCE = "com.codenvy.plugin.bower.client.menu.BowerInstallAction";
+    public static final String[] SOURCE = {
+            "com.codenvy.plugin.bower.client.menu.BowerInstallAction",
+            "org.eclipse.che.plugin.bower.client.menu.BowerInstallAction"
+    };
 
     public BowerInstallAction() {
         super(MetricType.BOWER_INSTALL_ACTION, SOURCE);

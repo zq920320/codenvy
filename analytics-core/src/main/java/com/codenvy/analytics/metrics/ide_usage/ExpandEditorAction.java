@@ -26,8 +26,10 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class ExpandEditorAction extends AbstractIdeUsage {
-    public static final String SOURCE = "com.codenvy.ide.actions.ExpandEditorAction";
-
+    public static final String[] SOURCE = {
+            "com.codenvy.ide.actions.ExpandEditorAction",
+            "org.eclipse.che.ide.actions.ExpandEditorAction"
+    };
     public ExpandEditorAction() {
         super(MetricType.EXPAND_EDITOR_ACTION, SOURCE);
     }

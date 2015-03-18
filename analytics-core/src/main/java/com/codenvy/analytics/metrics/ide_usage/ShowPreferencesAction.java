@@ -26,7 +26,10 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class ShowPreferencesAction extends AbstractIdeUsage {
-    public static final String SOURCE = "com.codenvy.ide.actions.ShowPreferencesAction";
+    public static final String[] SOURCE = {
+            "com.codenvy.ide.actions.ShowPreferencesAction",
+            "org.eclipse.che.ide.actions.ShowPreferencesAction"
+    };
 
     public ShowPreferencesAction() {
         super(MetricType.SHOW_PREFERENCES_ACTION, SOURCE);

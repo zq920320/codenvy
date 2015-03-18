@@ -21,23 +21,27 @@ import com.codenvy.analytics.metrics.MetricType;
 
 import javax.annotation.security.RolesAllowed;
 
-/**
- * @author Anatoliy Bazko
- */
+/** @author Anatoliy Bazko */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class CodeCompletionsBasedOnIdeUsage extends AbstractIdeUsage {
-    public static final String SOURCE = "com.codenvy.ide.ext.java.client.editor.JavaCodeAssistProcessor";
+    public static final String[] SOURCE = {
+            "com.codenvy.ide.ext.java.client.editor.JavaCodeAssistProcessor",
+            "com.codenvy.ide.jseditor.java.client.editor.JavaCodeAssistProcessor",
+            "org.eclipse.che.ide.jseditor.java.client.editor.JavaCodeAssistProcessor"
+    };
     public static final String ACTION = "Autocompleting";
 
     public CodeCompletionsBasedOnIdeUsage() {
         super(ACTION, MetricType.CODE_COMPLETIONS_BASED_ON_IDE_USAGES, SOURCE);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The number of code completion actions";
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getExpandedField() {
         return PROJECT_ID;

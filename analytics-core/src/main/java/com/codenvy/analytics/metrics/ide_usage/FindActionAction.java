@@ -26,7 +26,10 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class FindActionAction extends AbstractIdeUsage {
-    public static final String SOURCE = "com.codenvy.ide.actions.find.FindActionAction";
+    public static final String[] SOURCE = {
+            "com.codenvy.ide.actions.find.FindActionAction",
+            "org.eclipse.che.ide.actions.find.FindActionAction"
+    };
 
     public FindActionAction() {
         super(MetricType.FIND_ACTION_ACTION, SOURCE);

@@ -26,8 +26,10 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class SaveAction extends AbstractIdeUsage {
-    public static final String SOURCE = "com.codenvy.ide.actions.SaveAction";
-
+    public static final String[] SOURCE = {
+            "com.codenvy.ide.actions.SaveAction",
+            "org.eclipse.che.ide.actions.SaveAction"
+    };
     public SaveAction() {
         super(MetricType.SAVE_ACTION, SOURCE);
     }

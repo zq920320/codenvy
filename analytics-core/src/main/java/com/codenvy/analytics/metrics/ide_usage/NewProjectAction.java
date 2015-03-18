@@ -26,9 +26,10 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class NewProjectAction extends AbstractIdeUsage {
-    public static final String[] SOURCE = new String[] {
-        "com.codenvy.ide.actions.NewProjectWizardAction",
-        "com.codenvy.ide.actions.NewProjectAction"
+    public static final String[] SOURCE = new String[]{
+            "com.codenvy.ide.actions.NewProjectWizardAction",
+            "com.codenvy.ide.actions.NewProjectAction",
+            "org.eclipse.che.ide.actions.NewProjectAction"
     };
 
     public NewProjectAction() {

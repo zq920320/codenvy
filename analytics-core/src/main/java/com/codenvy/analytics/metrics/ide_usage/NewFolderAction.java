@@ -26,7 +26,10 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class NewFolderAction extends AbstractIdeUsage {
-    public static final String SOURCE = "com.codenvy.ide.newresource.NewFolderAction";
+    public static final String[] SOURCE = {
+            "com.codenvy.ide.newresource.NewFolderAction",
+            "org.eclipse.che.ide.newresource.NewFolderAction"
+    };
 
     public NewFolderAction() {
         super(MetricType.NEW_FOLDER_ACTION, SOURCE);

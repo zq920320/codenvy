@@ -26,8 +26,10 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class RedoAction extends AbstractIdeUsage {
-    public static final String SOURCE = "com.codenvy.ide.actions.RedoAction";
-
+    public static final String[] SOURCE = {
+            "com.codenvy.ide.actions.RedoAction",
+            "org.eclipse.che.ide.actions.RedoAction"
+    };
     public RedoAction() {
         super(MetricType.REDO_ACTION, SOURCE);
     }

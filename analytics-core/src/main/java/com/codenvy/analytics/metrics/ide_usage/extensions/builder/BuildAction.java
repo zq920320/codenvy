@@ -27,7 +27,10 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class BuildAction extends AbstractIdeUsage {
-    public static final String SOURCE = "com.codenvy.ide.extension.builder.client.actions.BuildAction";
+    public static final String[] SOURCE = {
+            "com.codenvy.ide.extension.builder.client.actions.BuildAction",
+            "org.eclipse.che.ide.extension.builder.client.actions.BuildAction"
+    };
 
     public BuildAction() {
         super(MetricType.BUILD_ACTION, SOURCE);

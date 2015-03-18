@@ -27,7 +27,10 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class DeleteRepositoryAction extends AbstractIdeUsage {
-    public static final String SOURCE = "com.codenvy.ide.ext.git.client.action.DeleteRepositoryAction";
+    public static final String[] SOURCE = {
+            "com.codenvy.ide.ext.git.client.action.DeleteRepositoryAction",
+            "org.eclipse.che.ide.ext.git.client.action.DeleteRepositoryAction"
+    };
 
     public DeleteRepositoryAction() {
         super(MetricType.DELETE_REPOSITORY_ACTION, SOURCE);

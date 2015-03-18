@@ -27,8 +27,10 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class ShowStatusAction extends AbstractIdeUsage {
-    public static final String SOURCE = "com.codenvy.ide.ext.git.client.action.ShowStatusAction";
-
+    public static final String[] SOURCE = {
+            "com.codenvy.ide.ext.git.client.action.ShowStatusAction",
+            "org.eclipse.che.ide.ext.git.client.action.ShowStatusAction"
+    };
     public ShowStatusAction() {
         super(MetricType.SHOW_STATUS_ACTION, SOURCE);
     }

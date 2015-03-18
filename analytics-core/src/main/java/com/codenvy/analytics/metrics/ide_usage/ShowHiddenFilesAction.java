@@ -26,7 +26,10 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class ShowHiddenFilesAction extends AbstractIdeUsage {
-    public static final String SOURCE = "com.codenvy.ide.actions.ShowHiddenFilesAction";
+    public static final String[] SOURCE = {
+            "com.codenvy.ide.actions.ShowHiddenFilesAction",
+            "org.eclipse.che.ide.actions.ShowHiddenFilesAction"
+    };
 
     public ShowHiddenFilesAction() {
         super(MetricType.SHOW_HIDDEN_FILES_ACTION, SOURCE);

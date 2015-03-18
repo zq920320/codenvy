@@ -27,7 +27,10 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class BrowseTargetFolderAction extends AbstractIdeUsage {
-    public static final String SOURCE = "com.codenvy.ide.extension.builder.client.actions.BrowseTargetFolderAction";
+    public static final String[] SOURCE = {
+            "com.codenvy.ide.extension.builder.client.actions.BrowseTargetFolderAction",
+            "org.eclipse.che.ide.extension.builder.client.actions.BrowseTargetFolderAction"
+    };
 
     public BrowseTargetFolderAction() {
         super(MetricType.BROWSE_TARGET_FOLDER_ACTION, SOURCE);

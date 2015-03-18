@@ -27,7 +27,10 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class CustomGruntRunAction extends AbstractIdeUsage {
-    public static final String SOURCE = "com.codenvy.plugin.grunt.client.menu.CustomGruntRunAction";
+    public static final String[] SOURCE = {
+            "com.codenvy.plugin.grunt.client.menu.CustomGruntRunAction",
+            "org.eclipse.che.plugin.grunt.client.menu.CustomGruntRunAction"
+    };
 
     public CustomGruntRunAction() {
         super(MetricType.CUSTOM_GRUNT_RUN_ACTION, SOURCE);

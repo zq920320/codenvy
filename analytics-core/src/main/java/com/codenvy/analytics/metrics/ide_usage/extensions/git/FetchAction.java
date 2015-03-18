@@ -27,7 +27,10 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class FetchAction extends AbstractIdeUsage {
-    public static final String SOURCE = "com.codenvy.ide.ext.git.client.action.FetchAction";
+    public static final String[] SOURCE = {
+            "com.codenvy.ide.ext.git.client.action.FetchAction",
+            "org.eclipse.che.ide.ext.git.client.action.FetchAction"
+    };
 
     public FetchAction() {
         super(MetricType.FETCH_ACTION, SOURCE);

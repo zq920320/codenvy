@@ -26,7 +26,10 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class FindReplaceAction extends AbstractIdeUsage {
-    public static final String SOURCE = "com.codenvy.ide.actions.FindReplaceAction";
+    public static final String[] SOURCE = {
+            "com.codenvy.ide.actions.FindReplaceAction",
+            "org.eclipse.che.ide.actions.FindReplaceAction"
+    };
 
     public FindReplaceAction() {
         super(MetricType.FIND_REPLACE_ACTION, SOURCE);

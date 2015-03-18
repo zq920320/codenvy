@@ -26,8 +26,10 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class OpenSelectedFileAction extends AbstractIdeUsage {
-    public static final String SOURCE = "com.codenvy.ide.actions.OpenSelectedFileAction";
-
+    public static final String[] SOURCE = {
+            "com.codenvy.ide.actions.OpenSelectedFileAction",
+            "org.eclipse.che.ide.actions.OpenSelectedFileAction"
+    };
     public OpenSelectedFileAction() {
         super(MetricType.OPEN_SELECTED_FILE_ACTION, SOURCE);
     }

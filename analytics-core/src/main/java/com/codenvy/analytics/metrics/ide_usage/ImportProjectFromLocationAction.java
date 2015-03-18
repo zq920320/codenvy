@@ -26,7 +26,10 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class ImportProjectFromLocationAction extends AbstractIdeUsage {
-    public static final String SOURCE = "com.codenvy.ide.actions.ImportProjectFromLocationAction";
+    public static final String[] SOURCE = {
+            "com.codenvy.ide.actions.ImportProjectFromLocationAction",
+            "org.eclipse.che.ide.actions.ImportProjectFromLocationAction"
+    };
 
     public ImportProjectFromLocationAction() {
         super(MetricType.IMPORT_PROJECT_FROM_LOCATION_ACTION, SOURCE);

@@ -27,8 +27,10 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class NewHtmlFileAction extends AbstractIdeUsage {
-    public static final String SOURCE = "com.codenvy.ide.ext.web.html.NewHtmlFileAction";
-
+    public static final String[] SOURCE = {
+            "com.codenvy.ide.ext.web.html.NewHtmlFileAction",
+            "org.eclipse.che.ide.ext.web.html.NewHtmlFileAction"
+    };
     public NewHtmlFileAction() {
         super(MetricType.NEW_HTML_FILE_ACTION, SOURCE);
     }

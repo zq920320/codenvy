@@ -27,8 +27,10 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class NewDatasourceWizardAction extends AbstractIdeUsage {
-    public static final String SOURCE = "com.codenvy.ide.ext.datasource.client.newdatasource.NewDatasourceWizardAction";
-
+    public static final String[] SOURCE = {
+            "com.codenvy.ide.ext.datasource.client.newdatasource.NewDatasourceWizardAction",
+            "org.eclipse.che.ide.ext.datasource.client.newdatasource.NewDatasourceWizardAction"
+    };
     public NewDatasourceWizardAction() {
         super(MetricType.NEW_DATASOURCE_WIZARD_ACTION, SOURCE);
     }

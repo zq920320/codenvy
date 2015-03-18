@@ -27,8 +27,10 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class NpmInstallAction extends AbstractIdeUsage {
-    public static final String SOURCE = "com.codenvy.plugin.npm.client.menu.NpmInstallAction";
-
+    public static final String[] SOURCE = {
+            "com.codenvy.plugin.npm.client.menu.NpmInstallAction",
+            "org.eclipse.che.plugin.npm.client.menu.NpmInstallAction"
+    };
     public NpmInstallAction() {
         super(MetricType.NPM_INSTALL_ACTION, SOURCE);
     }

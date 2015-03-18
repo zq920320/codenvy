@@ -107,22 +107,6 @@ public class MarketoInitializer extends Feature {
         }
     }
 
-    private void validateConfiguration() throws IllegalStateException {
-        checkProperty(SOAP_END_POINT);
-        checkProperty(USER_ID);
-        checkProperty(SECRET_KEY);
-        checkProperty(PROGRAM_NAME);
-        checkProperty(SERVICE_URL);
-        checkProperty(SERVICE_NAME);
-        checkProperty(LIST_NAME);
-    }
-
-
-    private void checkProperty(String property) throws IllegalStateException {
-        if (!configurator.exists(property)) {
-            throw new IllegalStateException("The property  " + property + " does not exist in configuration.");
-        }
-    }
 
     @Override
     public boolean isAvailable() {

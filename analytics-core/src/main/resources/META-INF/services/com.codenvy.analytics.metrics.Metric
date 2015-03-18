@@ -277,18 +277,14 @@ com.codenvy.analytics.metrics.ide_usage.CodeCompletionsBasedOnIdeUsage
 com.codenvy.analytics.metrics.ide_usage.extensions.git.CommitAction
 com.codenvy.analytics.metrics.ide_usage.extensions.maven.CustomBuildAction
 com.codenvy.analytics.metrics.ide_usage.extensions.grunt.CustomGruntRunAction
-com.codenvy.analytics.metrics.ide_usage.extensions.runner.CustomRunAction
 com.codenvy.analytics.metrics.ide_usage.extensions.java.DebugAction
 com.codenvy.analytics.metrics.ide_usage.DeleteItemAction
 com.codenvy.analytics.metrics.ide_usage.extensions.git.DeleteRepositoryAction
-com.codenvy.analytics.metrics.ide_usage.extensions.runner.EditCustomEnvironmentsAction
-com.codenvy.analytics.metrics.ide_usage.extensions.runner.EnvironmentAction
 com.codenvy.analytics.metrics.ide_usage.ExpandEditorAction
 com.codenvy.analytics.metrics.ide_usage.extensions.factory.ExportConfigAction
 com.codenvy.analytics.metrics.ide_usage.extensions.git.FetchAction
 com.codenvy.analytics.metrics.ide_usage.FindActionAction
 com.codenvy.analytics.metrics.ide_usage.FormatterAction
-com.codenvy.analytics.metrics.ide_usage.extensions.runner.GetLogsAction
 com.codenvy.analytics.metrics.ide_usage.extensions.git.HistoryAction
 com.codenvy.analytics.metrics.ide_usage.extensions.factory.ImportFromConfigAction
 com.codenvy.analytics.metrics.ide_usage.ImportProjectFromLocationAction
@@ -323,7 +319,6 @@ com.codenvy.analytics.metrics.ide_usage.extensions.git.ResetToCommitAction
 com.codenvy.analytics.metrics.ide_usage.extensions.runner.RunAction
 com.codenvy.analytics.metrics.ide_usage.SaveAction
 com.codenvy.analytics.metrics.ide_usage.SaveAllAction
-com.codenvy.analytics.metrics.ide_usage.extensions.factory.ShareFactoryAction
 com.codenvy.analytics.metrics.ide_usage.ShowAboutAction
 com.codenvy.analytics.metrics.ide_usage.extensions.git.ShowBranchesAction
 com.codenvy.analytics.metrics.ide_usage.extensions.git.ShowGitUrlAction
@@ -335,7 +330,6 @@ com.codenvy.analytics.metrics.ide_usage.extensions.runner.ShutdownAction
 com.codenvy.analytics.metrics.ide_usage.UndoAction
 com.codenvy.analytics.metrics.ide_usage.extensions.maven.UpdateDependencyAction
 com.codenvy.analytics.metrics.ide_usage.UploadFileAction
-com.codenvy.analytics.metrics.ide_usage.extensions.runner.ViewRecipeAction
 com.codenvy.analytics.metrics.ide_usage.ShowHiddenFilesAction
 com.codenvy.analytics.metrics.ide_usage.extensions.builder.BrowseTargetFolderAction
 com.codenvy.analytics.metrics.ide_usage.extensions.maven.CreateMavenModuleAction

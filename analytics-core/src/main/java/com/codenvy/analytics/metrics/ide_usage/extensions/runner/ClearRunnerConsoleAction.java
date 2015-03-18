@@ -27,7 +27,10 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class ClearRunnerConsoleAction extends AbstractIdeUsage {
-    public static final String SOURCE = "com.codenvy.ide.extension.runner.client.console.ClearConsoleAction";
+    public static final String[] SOURCE = {
+            "com.codenvy.ide.extension.runner.client.console.ClearConsoleAction",
+            "org.eclipse.che.ide.extension.builder.client.console.ClearConsoleAction"
+    };
 
     public ClearRunnerConsoleAction() {
         super(MetricType.CLEAR_RUNNER_CONSOLE_ACTION, SOURCE);

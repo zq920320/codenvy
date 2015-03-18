@@ -27,8 +27,10 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class NewCssFileAction extends AbstractIdeUsage {
-    public static final String SOURCE = "com.codenvy.ide.ext.web.css.NewCssFileAction";
-
+    public static final String[] SOURCE = {
+            "com.codenvy.ide.ext.web.css.NewCssFileAction",
+            "org.eclipse.che.ide.ext.web.css.NewCssFileAction"
+    };
     public NewCssFileAction() {
         super(MetricType.NEW_CSS_FILE_ACTION, SOURCE);
     }

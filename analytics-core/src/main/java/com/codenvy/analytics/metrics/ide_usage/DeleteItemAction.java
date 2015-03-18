@@ -26,7 +26,10 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class DeleteItemAction extends AbstractIdeUsage {
-    public static final String SOURCE = "com.codenvy.ide.actions.DeleteItemAction";
+    public static final String[] SOURCE = {
+            "com.codenvy.ide.actions.DeleteItemAction",
+            "org.eclipse.che.ide.actions.DeleteItemAction"
+    };
 
     public DeleteItemAction() {
         super(MetricType.DELETE_ITEM_ACTION, SOURCE);

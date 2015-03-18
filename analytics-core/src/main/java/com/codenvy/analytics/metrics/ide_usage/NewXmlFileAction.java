@@ -26,7 +26,10 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class NewXmlFileAction extends AbstractIdeUsage {
-    public static final String SOURCE = "com.codenvy.ide.xml.NewXmlFileAction";
+    public static final String[] SOURCE = {
+            "com.codenvy.ide.xml.NewXmlFileAction",
+            "org.eclipse.che.ide.xml.NewXmlFileAction"
+    };
 
     public NewXmlFileAction() {
         super(MetricType.NEW_XML_FILE_ACTION, SOURCE);

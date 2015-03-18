@@ -27,7 +27,10 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class CreateMavenModuleAction extends AbstractIdeUsage {
-    public static final String SOURCE = "com.codenvy.ide.extension.maven.client.actions.CreateMavenModuleAction";
+    public static final String[] SOURCE = {
+            "com.codenvy.ide.extension.maven.client.actions.CreateMavenModuleAction",
+            "org.eclipse.che.ide.extension.maven.client.actions.CreateMavenModuleAction"
+    };
 
     public CreateMavenModuleAction() {
         super(MetricType.CREATE_MAVEN_MODULE_ACTION, SOURCE);

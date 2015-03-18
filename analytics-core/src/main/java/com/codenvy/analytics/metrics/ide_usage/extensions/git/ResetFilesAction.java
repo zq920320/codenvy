@@ -27,7 +27,10 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class ResetFilesAction extends AbstractIdeUsage {
-    public static final String SOURCE = "com.codenvy.ide.ext.git.client.action.ResetFilesAction";
+    public static final String[] SOURCE = {
+            "com.codenvy.ide.ext.git.client.action.ResetFilesAction",
+            "org.eclipse.che.ide.ext.git.client.action.ResetFilesAction"
+    };
 
     public ResetFilesAction() {
         super(MetricType.RESET_FILES_ACTION, SOURCE);

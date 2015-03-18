@@ -27,7 +27,10 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class ShutdownAction extends AbstractIdeUsage {
-    public static final String SOURCE = "com.codenvy.ide.extension.runner.client.actions.ShutdownAction";
+    public static final String[] SOURCE = {
+            "com.codenvy.ide.extension.runner.client.actions.ShutdownAction",
+            "org.eclipse.che.ide.ext.runner.client.runneractions.impl.StopAction"
+    };
 
     public ShutdownAction() {
         super(MetricType.SHUTDOWN_ACTION, SOURCE);

@@ -27,7 +27,10 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class UpdateDependencyAction extends AbstractIdeUsage {
-    public static final String SOURCE = "com.codenvy.ide.extension.maven.client.actions.UpdateDependencyAction";
+    public static final String[] SOURCE = {
+            "com.codenvy.ide.extension.maven.client.actions.UpdateDependencyAction",
+            "org.eclipse.che.ide.extension.maven.client.actions.UpdateDependencyAction"
+    };
 
     public UpdateDependencyAction() {
         super(MetricType.UPDATE_DEPENDENCY_ACTION, SOURCE);

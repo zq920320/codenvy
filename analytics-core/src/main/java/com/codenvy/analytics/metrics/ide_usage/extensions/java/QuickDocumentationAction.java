@@ -27,7 +27,10 @@ import javax.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"user", "system/admin", "system/manager"})
 public class QuickDocumentationAction extends AbstractIdeUsage {
-    public static final String SOURCE = "com.codenvy.ide.ext.java.client.action.QuickDocumentationAction";
+    public static final String[] SOURCE = {
+            "com.codenvy.ide.ext.java.client.action.QuickDocumentationAction",
+            "org.eclipse.che.ide.ext.java.client.action.QuickDocumentationAction"
+    };
 
     public QuickDocumentationAction() {
         super(MetricType.QUICK_DOCUMENTATION_ACTION, SOURCE);
