@@ -64,6 +64,11 @@ import static java.net.URLDecoder.decode;
  */
 public class Utils {
 
+    private static final String USER_ID_PREFIX     = User.class.getSimpleName().toUpperCase();
+    private static final String USER_ID_OLD_PREFIX = User.class.getSimpleName().toUpperCase() + "ID_";
+    private static final String USER_DESCRIPTOR_PREFIX = UserDescriptor.class.getSimpleName().toUpperCase();
+    private static final String WORKSPACE_ID_PREFIX    = Workspace.class.getSimpleName().toLowerCase();
+
     private static Pattern VALID_EMAIL_ADDRESS_RFC822 = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
 
     private Utils() {
@@ -424,13 +429,14 @@ public class Utils {
 
     /** @return true if given string corresponds to workspace ID */
     public static boolean isWorkspaceID(String value) {
-        return isID(value, Workspace.class.getSimpleName().toLowerCase());
+        return isID(value, WORKSPACE_ID_PREFIX);
     }
 
     /** @return true if given string corresponds to user ID */
     public static boolean isUserID(String value) {
-        return isID(value.toUpperCase(), User.class.getSimpleName().toUpperCase()) ||
-        isID(value.toUpperCase(), UserDescriptor.class.getSimpleName().toUpperCase());
+        return isID(value.toUpperCase(), USER_ID_PREFIX) ||
+               isID(value.toUpperCase(), USER_ID_OLD_PREFIX) ||
+               isID(value.toUpperCase(), USER_DESCRIPTOR_PREFIX);
     }
 
     private static boolean isID(String value, String prefix) {
