@@ -43,6 +43,7 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.singleton;
 import static java.util.Collections.singletonMap;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
@@ -162,5 +163,12 @@ public class OrgServiceRolesExtractorTest {
         when(userDao.getById(ticket.getPrincipal().getId())).thenThrow(new ServerException("fake"));
 
         extractor.extractRoles(ticket, "wsId", "accId");
+    }
+
+    @Test
+    public void shouldReturnEmptySetWhenAuthHandlerTypeIsSysLdap() {
+        final AccessTicket ticket = new AccessTicket("token", mock(UserImpl.class), "sysldap");
+
+        assertTrue(extractor.extractRoles(ticket, null, null).isEmpty());
     }
 }
