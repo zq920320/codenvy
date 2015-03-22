@@ -20,28 +20,15 @@ package com.codenvy.machine;
 import com.google.inject.assistedinject.Assisted;
 
 import org.eclipse.che.api.core.ServerException;
-import org.eclipse.che.api.core.util.CommandLine;
 import org.eclipse.che.api.core.util.CustomPortService;
-import org.eclipse.che.api.core.util.FileLineConsumer;
-import org.eclipse.che.api.core.util.LineConsumer;
-import org.eclipse.che.api.core.util.ProcessUtil;
-import org.eclipse.che.api.machine.server.MachineImpl;
 import org.eclipse.che.api.machine.server.SynchronizeTask;
-import org.eclipse.che.api.machine.shared.Machine;
 import org.eclipse.che.api.machine.shared.ProjectBinding;
 import org.eclipse.che.commons.lang.NamedThreadFactory;
 import org.eclipse.che.vfs.impl.fs.LocalFSMountStrategy;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -49,18 +36,18 @@ import java.util.concurrent.Executors;
  * @author Alexander Garagatyi
  */
 public class SynchronizeTaskImpl implements SynchronizeTask {
-    private static final Logger LOG = LoggerFactory.getLogger(SyncthingSynchronizeTask.class);
+    private final CustomPortService        portService;
+    private final SynchronizeEventListener synchronizeEventListener;
+    private final ExecutorService          executorService;
 
-    private final CustomPortService portService;
-    private final ExecutorService executorService;
+    private final int            apiListenPort;
+    private final int            apiGuiPort;
+    private final int            runnerListenPort;
+    private final int            runnerGuiPort;
 
-    private final int               apiListenPort;
-    private final int               apiGuiPort;
-    private final int               runnerListenPort;
-    private final int               runnerGuiPort;
-
-    private SyncthingSynchronizeTask apiSyncTask;
-    private SyncthingSynchronizeTask runnerSyncTask;
+    private final SyncthingSynchronizeTask     apiSyncTask;
+    private final SyncthingSynchronizeTask     runnerSyncTask;
+    private final SyncthingSynchronizeNotifier apiSynchronizeNotifier;
 
     @Inject
     public SynchronizeTaskImpl(@Named("machine.sync.vfs.exec") String apiSyncTaskExecutable,
@@ -71,13 +58,17 @@ public class SynchronizeTaskImpl implements SynchronizeTask {
                                @Named("machine.sync.vfs.port.max") int apiMaxSyncPort,
                                @Named("machine.sync.runner.port.min") int runnerMinSyncPort,
                                @Named("machine.sync.runner.port.max") int runnerMaxSyncPort,
+                               @Named("machine.sync.vfs.gui_token") String apiGuiToken,
+                               @Named("machine.sync.runner.gui_token") String runnerGuiToken,
                                CustomPortService portService,
                                LocalFSMountStrategy mountStrategy,
+                               SynchronizeEventListener synchronizeEventListener,
                                @Assisted("workspaceId") String workspaceId,
                                @Assisted ProjectBinding projectBinding,
                                @Assisted("machineProjectFolder") String machineProjectFolder) throws ServerException {
 
         this.portService = portService;
+        this.synchronizeEventListener = synchronizeEventListener;
 
         try {
             if ((this.runnerListenPort = portService.acquire(runnerMinSyncPort, runnerMaxSyncPort)) == -1) {
@@ -98,7 +89,8 @@ public class SynchronizeTaskImpl implements SynchronizeTask {
                                                           runnerSyncPath,
                                                           runnerListenPort,
                                                           runnerGuiPort,
-                                                          "127.0.0.1:" + apiListenPort);
+                                                          "127.0.0.1:" + apiListenPort,
+                                                          runnerGuiToken);
 
             final File mountPath = mountStrategy.getMountPath(workspaceId);
             String apiSyncPath = new File(mountPath, projectBinding.getPath()).toString();
@@ -112,9 +104,15 @@ public class SynchronizeTaskImpl implements SynchronizeTask {
                                                        apiSyncPath,
                                                        apiListenPort,
                                                        apiGuiPort,
-                                                       "127.0.0.1:" + runnerListenPort);
+                                                       "127.0.0.1:" + runnerListenPort,
+                                                       apiGuiToken);
 
             this.executorService = Executors.newSingleThreadExecutor(new NamedThreadFactory("MachineSynchronization-", true));
+
+            apiSynchronizeNotifier = new SyncthingSynchronizeNotifier(workspaceId,
+                                                                      projectBinding.getPath(),
+                                                                      apiGuiPort,
+                                                                      apiGuiToken);
         } catch (Exception e) {
             releasePorts();
             throw e;
@@ -139,12 +137,14 @@ public class SynchronizeTaskImpl implements SynchronizeTask {
     @Override
     public void run() {
         executorService.submit(runnerSyncTask);
+        synchronizeEventListener.addProjectSynchronizeNotifier(apiSynchronizeNotifier);
         apiSyncTask.run();
     }
 
     @Override
     public void cancel() throws Exception {
         apiSyncTask.cancel();
+        synchronizeEventListener.removeProjectSynchronizeNotifier(apiSynchronizeNotifier);
         runnerSyncTask.cancel();
 
         releasePorts();

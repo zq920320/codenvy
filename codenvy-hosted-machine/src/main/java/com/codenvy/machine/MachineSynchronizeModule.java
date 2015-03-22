@@ -20,10 +20,6 @@ package com.codenvy.machine;
 import com.google.inject.AbstractModule;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 
-//import org.eclipse.che.api.machine.server.RunnerSynchronizeTask;
-//import org.eclipse.che.api.machine.server.RunnerSynchronizeTaskFactory;
-import org.eclipse.che.api.machine.server.SynchronizeTask;
-import org.eclipse.che.api.machine.server.SynchronizeTaskFactory;
 import org.eclipse.che.inject.DynaModule;
 
 /**
@@ -34,11 +30,9 @@ public class MachineSynchronizeModule extends AbstractModule {
     @Override
     protected void configure() {
         install(new FactoryModuleBuilder()
-                        .implement(SynchronizeTask.class, SynchronizeTaskImpl.class)
-                        .build(SynchronizeTaskFactory.class));
+                        .implement(org.eclipse.che.api.machine.server.SynchronizeTask.class, SynchronizeTaskImpl.class)
+                        .build(org.eclipse.che.api.machine.server.SynchronizeTaskFactory.class));
 
-//        install(new FactoryModuleBuilder()
-//                        .implement(RunnerSynchronizeTask.class, RunnerSyncTask.class)
-//                        .build(RunnerSynchronizeTaskFactory.class));
+        bind(com.codenvy.machine.SynchronizeEventListener.class).asEagerSingleton();
     }
 }

@@ -40,12 +40,13 @@ import java.nio.file.Path;
 public class SyncthingSynchronizeTask implements SynchronizeTask {
     private static final Logger LOG = LoggerFactory.getLogger(SyncthingSynchronizeTask.class);
 
-    private final String            syncTaskExecutable;
-    private final String            syncTaskConfTemplate;
-    private final String            syncPath;
-    private final int               listenPort;
-    private final int               apiPort;
-    private final String            remoteClientAddress;
+    private final String syncTaskExecutable;
+    private final String syncTaskConfTemplate;
+    private final String syncPath;
+    private final int    listenPort;
+    private final int    apiPort;
+    private final String remoteClientAddress;
+    private final String guiApiToken;
 
     private Process process;
 
@@ -55,7 +56,8 @@ public class SyncthingSynchronizeTask implements SynchronizeTask {
                                     String syncPath,
                                     int listenPort,
                                     int apiPort,
-                                    String remoteClientAddress) throws ServerException {
+                                    String remoteClientAddress,
+                                    String guiApiToken) throws ServerException {
 
         this.syncTaskExecutable = syncTaskExecutable;
         this.syncTaskConfTemplate = syncTaskConfTemplate;
@@ -63,6 +65,7 @@ public class SyncthingSynchronizeTask implements SynchronizeTask {
         this.listenPort = listenPort;
         this.apiPort = apiPort;
         this.remoteClientAddress = remoteClientAddress;
+        this.guiApiToken = guiApiToken;
     }
 
     @Override
@@ -71,12 +74,13 @@ public class SyncthingSynchronizeTask implements SynchronizeTask {
         try {
             final Path tempDirectory = Files.createTempDirectory("machine-sync-");
             CommandLine cl = new CommandLine(syncTaskExecutable)
-                    .add(syncTaskConfTemplate + "/*")
+                    .add(syncTaskConfTemplate)
                     .add(tempDirectory.toString())
                     .add(syncPath)
                     .add(String.valueOf(listenPort))
                     .add(String.valueOf(apiPort))
-                    .add(remoteClientAddress);
+                    .add(remoteClientAddress)
+                    .add(guiApiToken);
 
             ProcessBuilder processBuilder = new ProcessBuilder().redirectErrorStream(true).command(cl.toShellCommand());
             process = processBuilder.start();
